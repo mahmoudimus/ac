@@ -52,7 +52,7 @@ public class RemoteManifestProducer implements ManifestProducer
 
             public String getVersion()
             {
-                return "1";
+                return null;
             }
 
             public Long getBuildNumber()

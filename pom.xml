@@ -127,7 +127,7 @@
     </build>
 
     <properties>
-        <refapp.version>2.11.0</refapp.version>
+        <refapp.version>2.13.0</refapp.version>
         <applinks.version>3.5.1</applinks.version>
     </properties>
 
