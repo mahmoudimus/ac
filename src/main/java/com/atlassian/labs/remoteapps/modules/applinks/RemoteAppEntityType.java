@@ -1,4 +1,4 @@
-package com.atlassian.labs.remoteapps.applinks;
+package com.atlassian.labs.remoteapps.modules.applinks;
 
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.applinks.api.ApplicationType;

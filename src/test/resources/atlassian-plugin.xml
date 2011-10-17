@@ -3,8 +3,17 @@
         <version>1</version>
     </plugin-info>
 
-    <remote-app key="github" i18n-name-key="GitHub" icon-url="https://github.com/favicon.ico"
-                display-url="https://github.com" rpc-url="http://github.com">
+    <remote-app key="myapp" i18n-name-key="My App" icon-url="https://github.com/favicon.ico"
+                display-url="http://localhost.localdomain:5990/refapp" rpc-url="http://127.0.0.1:5990/refapp">
         <entity-type key="repository" i18n-key="Repository" pluralized-i18n-key="Repositories" icon-url="https://github.com/favicon.ico"/>
+
+        <admin-page key="admin" name="My Admin" url="/plugins/servlet/myadmin" />
     </remote-app>
+
+    <!-- impl -->
+    <servlet key="myadmin" class="com.atlassian.labs.remoteapps.test.MyAdminServlet">
+        <url-pattern>/myadmin</url-pattern>
+    </servlet>
+
+    <component-import key="templateRenderer" interface="com.atlassian.templaterenderer.TemplateRenderer" />
 </atlassian-plugin>

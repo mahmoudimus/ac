@@ -1,14 +1,16 @@
-package com.atlassian.labs.remoteapps.applinks;
+package com.atlassian.labs.remoteapps.modules.applinks;
 
 import com.atlassian.applinks.api.ApplicationId;
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.applinks.spi.application.ApplicationIdUtil;
 import com.atlassian.applinks.spi.link.MutatingApplicationLinkService;
+import com.atlassian.labs.remoteapps.descriptor.RemoteAppModuleDescriptor;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.event.PluginEventListener;
 import com.atlassian.plugin.event.PluginEventManager;
 import com.atlassian.plugin.event.events.PluginEnabledEvent;
+import com.atlassian.plugin.event.events.PluginModuleEnabledEvent;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
@@ -16,7 +18,7 @@ import org.osgi.util.tracker.ServiceTrackerCustomizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.UUID;
+import static com.atlassian.labs.remoteapps.modules.applinks.ApplicationTypeModuleGenerator.getGeneratedApplicationTypeModuleKey;
 
 /**
  *
@@ -65,9 +67,9 @@ public class ApplinkCreator
     }
     
     @PluginEventListener
-    public void onPluginEnabledEvent(PluginEnabledEvent event)
+    public void onPluginModuleEnabledEvent(PluginModuleEnabledEvent event)
     {
-        if (event.getPlugin() == plugin)
+        if (event.getModule().getPlugin() == plugin)
         {
             evaluate();
         }
@@ -81,7 +83,7 @@ public class ApplinkCreator
         }
 
         
-        final ModuleDescriptor<?> moduleDescriptor = plugin.getModuleDescriptor(RemoteAppModuleDescriptor.getGeneratedApplicationTypeModuleKey(applicationType.getId().get()));
+        final ModuleDescriptor<?> moduleDescriptor = plugin.getModuleDescriptor(getGeneratedApplicationTypeModuleKey(applicationType.getId().get()));
         if (moduleDescriptor != null)
         {
             ApplicationLink link = applicationLinkService.getPrimaryApplicationLink(applicationType.getClass());

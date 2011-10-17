@@ -1,4 +1,4 @@
-package com.atlassian.labs.remoteapps.applinks;
+package com.atlassian.labs.remoteapps.modules.applinks;
 
 import com.atlassian.applinks.api.ApplicationId;
 import com.atlassian.applinks.api.auth.AuthenticationProvider;

@@ -1,0 +1,33 @@
+<html>
+<head>
+    <title>$!title</title>
+
+    <meta name="decorator" content="$decorator"></meta>
+
+
+</head>
+
+<body>
+    <div id="embedded"></div>
+<script type="text/javascript" language="javascript">
+
+            var transport = new easyXDM.Socket(/** The configuration */{
+            remote: "$iframeSrc",
+
+            //ID of the element to attach the inline frame to
+            container: "embedded",
+            onMessage: function (message, origin) {
+                var settings = message.split(",");
+                //Use jquery on a masterpage.
+                //$('iframe').height(settings[0]);
+                //$('iframe').width(settings[1]);
+
+                //The normal solution without jquery if not using any complex pages (default)
+                this.container.getElementsByTagName("iframe")[0].style.height = settings[1] + "px";
+                this.container.getElementsByTagName("iframe")[0].style.width = settings[0] + "px";
+            }
+        });
+
+</script>
+</body>
+</html>

@@ -5,9 +5,35 @@
         <vendor name="${project.organization.name}" url="${project.organization.url}" />
     </plugin-info>
 
-    <servlet name="remoteapps-plugin" class="com.atlassian.labs.remoteapps.ExampleServlet" key="test">
-        <url-pattern>/test</url-pattern>
-    </servlet>
+    <servlet-filter key="iframe-resources" class="com.atlassian.labs.remoteapps.iframe.StaticResourcesFilter"
+            location="after-encoding">
+        <url-pattern>/remoteapps/*</url-pattern>
+    </servlet-filter>
 
-    <module-type key="remote-app" class="com.atlassian.labs.remoteapps.applinks.RemoteAppModuleDescriptor" />
+    <module-type key="remote-app" class="com.atlassian.labs.remoteapps.descriptor.RemoteAppModuleDescriptor" />
+
+    <web-resource key="xdm">
+        <context>remoteapps-iframe</context>
+        <dependency>com.atlassian.auiplugin:ajs</dependency>
+        <resource type="download" name="easyXDM.js" location="/js/iframe/easyXDM.js" />
+    </web-resource>
+
+    <web-resource key="iframe">
+        <resource type="download" name="easyXDM.js" location="/js/iframe/easyXDM.js" />
+        <resource type="download" name="main.js" location="/js/iframe/main.js" />
+    </web-resource>
+
+    <component key="applicationTypeGenerator" class="com.atlassian.labs.remoteapps.modules.applinks.ApplicationTypeModuleGenerator" />
+    <component key="entityTypeGenerator" class="com.atlassian.labs.remoteapps.modules.applinks.EntityTypeModuleGenerator" />
+    <component key="adminPageGenerator" class="com.atlassian.labs.remoteapps.modules.admin.AdminPageModuleGenerator" />
+
+
+    <component key="jiraProductAccessor" class="com.atlassian.labs.remoteapps.product.JiraProductAccessor" application="jira" />
+    <component key="refappProductAccessor" class="com.atlassian.labs.remoteapps.product.RefappProductAccessor" application="refapp" />
+
+    <component-import key="templateRenderer" interface="com.atlassian.templaterenderer.TemplateRenderer"/>
+    <component-import key="servletModuleManager" interface="com.atlassian.plugin.servlet.ServletModuleManager" />
+    <component-import key="webInterfaceManager" interface="com.atlassian.plugin.web.WebInterfaceManager" />
+    <component-import key="pluginRetrievalService" interface="com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService" />
+
 </atlassian-plugin>
