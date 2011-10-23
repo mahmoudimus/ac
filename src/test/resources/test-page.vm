@@ -1,60 +1,12 @@
 <html>
-
-<head>
-    <title>foo</title>
-    <script src="http://localhost:5990/refapp/download/resources/com.atlassian.labs.remoteapps-plugin:iframe/easyXDM.js" type="text/javascript"></script>
-    <script src="http://localhost:5990/refapp/download/resources/com.atlassian.labs.remoteapps-plugin:iframe/main.js" type="text/javascript"></script>
-</head>
-<body>
-fosssso<br />
-bar<br />
-hello world <br />
-hello world <br />
-hello world <br />
-hello world <br />
-hello world <br />
-hello world <br />
-hello world <br />
-hello world <br />
-hello world <br />
-hello world <br />
-hello world <br />
-hello world <br />
-hello world <br />
-hello world <br />
-hello world <br />
-hello world <br />
-hello world <br />
-hello world <br />
-hello world <br />
-hello world <br />
-hello world <br />
-hello world <br />
-hello world <br />
-hello world <br />
-<script type="text/javascript">
-    RA.init();
-    RA.resize();
-//  window.fbAsyncInit = function() {
-//    FB.init({
-//      appId      : 'YOUR_APP_ID', // App ID
-//      channelURL : '//WWW.YOUR_DOMAIN.COM/channel.html', // Channel File
-//      status     : true, // check login status
-//      cookie     : true, // enable cookies to allow the server to access the session
-//      oauth      : true, // enable OAuth 2.0
-//      xfbml      : true  // parse XFBML
-//    });
-//
-//    // Additional initialization code here
-//  };
-//
-//  // Load the SDK Asynchronously
-//  (function(d){
-//     var js, id = 'facebook-jssdk'; if (d.getElementById(id)) {return;}
-//     js = d.createElement('script'); js.id = id; js.async = true;
-//     js.src = "//connect.facebook.net/en_US/all.js";
-//     d.getElementsByTagName('head')[0].appendChild(js);
-//   }(document));
-</script>
-</body>
+    <head>
+        <script src="http://localhost:5990/refapp/remoteapps/all.js" type="text/javascript"></script>
+    </head>
+    <body>
+        Hello world
+        <script type="text/javascript">
+            RA.init();
+            RA.resize();
+        </script>
+    </body>
 </html>
