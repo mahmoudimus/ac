@@ -3,6 +3,8 @@ package com.atlassian.labs.remoteapps.modules.applinks;
 import com.atlassian.applinks.api.ApplicationType;
 import com.atlassian.applinks.spi.application.TypeId;
 import com.atlassian.applinks.spi.link.ApplicationLinkDetails;
+import com.atlassian.applinks.spi.link.MutatingApplicationLinkService;
+import com.atlassian.applinks.spi.util.TypeAccessor;
 import com.atlassian.labs.remoteapps.modules.RemoteAppCreationContext;
 import com.atlassian.labs.remoteapps.modules.RemoteModule;
 import com.atlassian.labs.remoteapps.modules.RemoteModuleGenerator;
@@ -31,11 +33,11 @@ import static org.objectweb.asm.Opcodes.*;
  */
 public class ApplicationTypeModuleGenerator implements RemoteModuleGenerator
 {
-    private final PluginEventManager pluginEventManager;
+    private final MutatingApplicationLinkService mutatingApplicationLinkService;
 
-    public ApplicationTypeModuleGenerator(PluginEventManager pluginEventManager)
+    public ApplicationTypeModuleGenerator(MutatingApplicationLinkService mutatingApplicationLinkService)
     {
-        this.pluginEventManager = pluginEventManager;
+        this.mutatingApplicationLinkService = mutatingApplicationLinkService;
     }
 
     @Override
@@ -55,8 +57,7 @@ public class ApplicationTypeModuleGenerator implements RemoteModuleGenerator
     {
         AppTypesClassLoader appTypesClassLoader = new AppTypesClassLoader();
         RemoteAppApplicationType applicationType = createApplicationType(appTypesClassLoader, element);
-        ApplinkCreator applinkCreator = new ApplinkCreator(ctx.getPlugin(), ctx.getBundle().getBundleContext(), pluginEventManager, applicationType);
-        return new ApplicationTypeModule(applicationType, createApplicationTypeDescriptor(appTypesClassLoader, ctx, applicationType, element), applinkCreator);
+        return new ApplicationTypeModule(applicationType, createApplicationTypeDescriptor(appTypesClassLoader, ctx, applicationType, element), mutatingApplicationLinkService);
 
     }
 

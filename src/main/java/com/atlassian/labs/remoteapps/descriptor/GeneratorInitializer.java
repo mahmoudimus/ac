@@ -1,14 +1,17 @@
 package com.atlassian.labs.remoteapps.descriptor;
 
-import com.atlassian.labs.remoteapps.modules.RemoteAppCreationContext;
-import com.atlassian.labs.remoteapps.modules.RemoteModule;
-import com.atlassian.labs.remoteapps.modules.RemoteModuleGenerator;
+import com.atlassian.labs.remoteapps.modules.*;
 import com.atlassian.labs.remoteapps.modules.applinks.ApplicationTypeModule;
 import com.atlassian.labs.remoteapps.modules.applinks.ApplicationTypeModuleGenerator;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.ModuleDescriptorFactory;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.descriptors.ChainModuleDescriptorFactory;
+import com.atlassian.plugin.event.PluginEventListener;
+import com.atlassian.plugin.event.PluginEventManager;
+import com.atlassian.plugin.event.events.PluginDisabledEvent;
+import com.atlassian.plugin.event.events.PluginEnabledEvent;
+import com.atlassian.sal.api.lifecycle.LifecycleAware;
 import com.google.common.collect.Lists;
 import org.dom4j.Element;
 import org.osgi.framework.Bundle;
@@ -28,21 +31,23 @@ import static org.apache.commons.lang.Validate.notNull;
 /**
  *
  */
-public class GeneratorInitializer
+class GeneratorInitializer
 {
     private final Set<String> expected;
     private final Set<ModuleDescriptorFactory> factories = new CopyOnWriteArraySet<ModuleDescriptorFactory>();
     private final ApplicationTypeModuleGenerator applicationTypeModuleGenerator;
     private final Map<String,RemoteModuleGenerator> generators;
+    private final StartableForPlugins startableForPlugins;
     private final Plugin plugin;
     private final Bundle bundle;
     private final Element element;
 
-    private final Set<RemoteModule> remoteModules = new CopyOnWriteArraySet<RemoteModule>();
+    private final Collection<RemoteModule> remoteModules = new CopyOnWriteArrayList<RemoteModule>();
     private final List<ServiceRegistration> serviceRegistrations = new CopyOnWriteArrayList<ServiceRegistration>();
 
-    public GeneratorInitializer(Plugin plugin, Bundle bundle, Iterable<RemoteModuleGenerator> generatorList, Element element)
+    GeneratorInitializer(StartableForPlugins startableForPlugins, Plugin plugin, Bundle bundle, Iterable<RemoteModuleGenerator> generatorList, Element element)
     {
+        this.startableForPlugins = startableForPlugins;
         this.plugin = plugin;
         this.bundle = bundle;
         this.element = element;
@@ -95,7 +100,22 @@ public class GeneratorInitializer
                 if (generators.containsKey(type))
                 {
                     RemoteModuleGenerator generator = generators.get(type);
-                    remoteModules.add(generator.generate(ctx, e));
+                    final RemoteModule remoteModule = generator.generate(ctx, e);
+                    remoteModules.add(remoteModule);
+                }
+            }
+            for (final RemoteModule remoteModule : remoteModules)
+            {
+                if (remoteModule instanceof StartableRemoteModule)
+                {
+                    startableForPlugins.register(plugin.getKey(), new Runnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            ((StartableRemoteModule)remoteModule).start();
+                        }
+                    });
                 }
             }
             registerDescriptors(remoteModules);
@@ -103,7 +123,7 @@ public class GeneratorInitializer
         return added;
     }
 
-    private void registerDescriptors(Set<RemoteModule> modules)
+    private void registerDescriptors(Iterable<RemoteModule> modules)
     {
         BundleContext targetBundleContext = bundle.getBundleContext();
         for (RemoteModule module : modules)
@@ -131,9 +151,12 @@ public class GeneratorInitializer
         serviceRegistrations.clear();
         for (RemoteModule module : remoteModules)
         {
-            module.close();
+            if (module instanceof ClosableRemoteModule)
+            {
+                ((ClosableRemoteModule)module).close();
+            }
         }
         remoteModules.clear();
+        startableForPlugins.unregister(plugin.getKey());
     }
-
 }

@@ -69,11 +69,6 @@ public class AdminPageModuleGenerator implements RemoteModuleGenerator
             {
                 return descriptors;
             }
-
-            @Override
-            public void close()
-            {
-            }
         };
     }
 

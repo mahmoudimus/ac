@@ -10,6 +10,4 @@ import java.util.Set;
 public interface RemoteModule
 {
     Set<ModuleDescriptor> getModuleDescriptors();
-
-    void close();
 }

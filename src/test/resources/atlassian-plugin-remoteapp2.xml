@@ -1,0 +1,17 @@
+<atlassian-plugin key="remoteapp2" name="Remote App 2" plugins-version="2">
+    <plugin-info>
+        <version>1</version>
+    </plugin-info>
+
+    <remote-app key="remoteapp2" i18n-name-key="My App 2" icon-url="https://github.com/favicon.ico"
+                display-url="%baseurl%">
+        <entity-type key="project" i18n-key="Project" pluralized-i18n-key="Projects" icon-url="https://github.com/favicon.ico"/>
+        <oauth callback="http://localhost" requestTokenUrl="http://localhost" accessTokenUrl="http://localhost" authorizeUrl="http://localhost">
+            <public-key>
+
+            </public-key>
+        </oauth>
+        <admin-page key="admin2" name="My Admin 2" url="/plugins/servlet/myadmin?name=Second" />
+    </remote-app>
+
+</atlassian-plugin>

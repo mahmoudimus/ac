@@ -5,6 +5,7 @@ import com.atlassian.plugin.ModuleDescriptorFactory;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
+import com.atlassian.plugin.event.PluginEventManager;
 import com.atlassian.plugin.module.LegacyModuleFactory;
 import com.atlassian.util.concurrent.NotNull;
 import com.google.common.collect.ImmutableSet;
@@ -31,16 +32,18 @@ public class RemoteAppModuleDescriptor extends AbstractModuleDescriptor<Void>
 {
     private final BundleContext bundleContext;
     private final ApplicationContext applicationContext;
+    private final StartableForPlugins startableForPlugins;
 
     private ServiceTracker serviceTracker;
     private Element originalElement;
     private Iterable<RemoteModuleGenerator> generators;
 
-    public RemoteAppModuleDescriptor(BundleContext bundleContext, ApplicationContext applicationContext)
+    public RemoteAppModuleDescriptor(BundleContext bundleContext, ApplicationContext applicationContext, StartableForPlugins startableForPlugins)
     {
         super(new LegacyModuleFactory());
         this.bundleContext = bundleContext;
         this.applicationContext = applicationContext;
+        this.startableForPlugins = startableForPlugins;
     }
 
     @Override
@@ -60,7 +63,7 @@ public class RemoteAppModuleDescriptor extends AbstractModuleDescriptor<Void>
             // generate and register new services
             Bundle targetBundle = findBundleForPlugin(bundleContext, getPluginKey());
             final BundleContext targetBundleContext = targetBundle.getBundleContext();
-            final GeneratorInitializer generatorInitializer = new GeneratorInitializer(getPlugin(), targetBundle, generators, originalElement);
+            final GeneratorInitializer generatorInitializer = new GeneratorInitializer(startableForPlugins, getPlugin(), targetBundle, generators, originalElement);
             this.serviceTracker = new ServiceTracker(targetBundleContext, ModuleDescriptorFactory.class.getName(), new ServiceTrackerCustomizer()
             {
                 private Map<String,ModuleDescriptorFactory> factories;

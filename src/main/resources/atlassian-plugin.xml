@@ -23,10 +23,17 @@
         <resource type="download" name="main.js" location="/js/iframe/main.js" />
     </web-resource>
 
+    <rest key="rest" path="/remoteapps" version="1" package="com.atlassian.labs.remoteapps.rest">
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>INCLUDE</dispatcher>
+    </rest>
+
     <component key="applicationTypeGenerator" class="com.atlassian.labs.remoteapps.modules.applinks.ApplicationTypeModuleGenerator" />
     <component key="entityTypeGenerator" class="com.atlassian.labs.remoteapps.modules.applinks.EntityTypeModuleGenerator" />
     <component key="adminPageGenerator" class="com.atlassian.labs.remoteapps.modules.admin.AdminPageModuleGenerator" />
-
+    <component key="oauthGenerator" class="com.atlassian.labs.remoteapps.modules.oauth.OauthModuleGenerator" />
+    <component key="remoteAppInstaller" class="com.atlassian.labs.remoteapps.installer.DefaultRemoteAppInstaller" />
+    <component key="startableForPlugins" class="com.atlassian.labs.remoteapps.descriptor.StartableForPlugins" public="true" interface="com.atlassian.sal.api.lifecycle.LifecycleAware" />
 
     <component key="jiraProductAccessor" class="com.atlassian.labs.remoteapps.product.JiraProductAccessor" application="jira" />
     <component key="refappProductAccessor" class="com.atlassian.labs.remoteapps.product.RefappProductAccessor" application="refapp" />
@@ -35,5 +42,12 @@
     <component-import key="servletModuleManager" interface="com.atlassian.plugin.servlet.ServletModuleManager" />
     <component-import key="webInterfaceManager" interface="com.atlassian.plugin.web.WebInterfaceManager" />
     <component-import key="pluginRetrievalService" interface="com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService" />
+    <component-import key="oauthConsumerService" interface="com.atlassian.oauth.consumer.ConsumerService" />
+    <component-import key="requestFactory" interface="com.atlassian.sal.api.net.RequestFactory" />
+    <component-import key="pluginController" interface="com.atlassian.plugin.PluginController" />
+    <component-import key="applicationProperties" interface="com.atlassian.sal.api.ApplicationProperties" />
+    <component-import key="serviceProviderConsumerStore" interface="com.atlassian.oauth.serviceprovider.ServiceProviderConsumerStore" />
+    <component-import key="applicationLinkService" interface="com.atlassian.applinks.spi.link.MutatingApplicationLinkService" />
+    <component-import key="authenticationConfigurationManager" interface="com.atlassian.applinks.spi.auth.AuthenticationConfigurationManager" />
 
 </atlassian-plugin>

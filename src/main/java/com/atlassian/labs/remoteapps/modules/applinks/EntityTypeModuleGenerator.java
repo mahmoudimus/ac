@@ -54,11 +54,6 @@ public class EntityTypeModuleGenerator implements RemoteModuleGenerator
             {
                 return descriptors;
             }
-
-            @Override
-            public void close()
-            {
-            }
         };
     }
 

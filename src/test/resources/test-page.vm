@@ -3,7 +3,7 @@
         <script src="http://localhost:5990/refapp/remoteapps/all.js" type="text/javascript"></script>
     </head>
     <body>
-        Hello world
+        <b>Name</b>: $name <br />
         <script type="text/javascript">
             RA.init();
             RA.resize();
