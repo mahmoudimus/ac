@@ -3,16 +3,17 @@ package com.atlassian.labs.remoteapps.modules.applinks;
 import com.atlassian.applinks.api.ApplicationId;
 import com.atlassian.applinks.api.auth.AuthenticationProvider;
 import com.atlassian.applinks.api.auth.types.BasicAuthenticationProvider;
+import com.atlassian.applinks.api.auth.types.OAuthAuthenticationProvider;
 import com.atlassian.applinks.spi.Manifest;
 import com.atlassian.applinks.spi.application.ApplicationIdUtil;
 import com.atlassian.applinks.spi.application.TypeId;
 import com.atlassian.applinks.spi.manifest.ApplicationStatus;
 import com.atlassian.applinks.spi.manifest.ManifestNotFoundException;
 import com.atlassian.applinks.spi.manifest.ManifestProducer;
+import com.google.common.collect.ImmutableSet;
 import org.osgi.framework.Version;
 
 import java.net.URI;
-import java.util.Collections;
 import java.util.Set;
 import java.util.UUID;
 
@@ -70,14 +71,16 @@ public class RemoteManifestProducer implements ManifestProducer
                 return null;
             }
 
+            @Override
             public Set<Class<? extends AuthenticationProvider>> getInboundAuthenticationTypes()
             {
-                return Collections.<Class<? extends AuthenticationProvider>>singleton(BasicAuthenticationProvider.class);
+                return ImmutableSet.<Class<? extends AuthenticationProvider>>of(OAuthAuthenticationProvider.class);
             }
 
+            @Override
             public Set<Class<? extends AuthenticationProvider>> getOutboundAuthenticationTypes()
             {
-                return Collections.emptySet();
+                return ImmutableSet.<Class<? extends AuthenticationProvider>>of(OAuthAuthenticationProvider.class);
             }
 
             @Override
