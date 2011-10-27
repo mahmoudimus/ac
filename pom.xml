@@ -160,7 +160,7 @@
             <plugin>
                 <groupId>com.atlassian.maven.plugins</groupId>
                 <artifactId>maven-amps-plugin</artifactId>
-                <version>3.6</version>
+                <version>3.6.2</version>
                 <extensions>true</extensions>
                 <configuration>
                     <enableFastdev>false</enableFastdev>
@@ -177,6 +177,13 @@
                             *;resolution:=optional
                         </Import-Package>
                     </instructions>
+                    <pluginArtifacts>
+                        <pluginArtifact>
+                            <groupId>com.atlassian.devrel</groupId>
+                            <artifactId>developer-toolbox-plugin</artifactId>
+                            <version>1.0.3-SNAPSHOT</version>
+                        </pluginArtifact>
+                    </pluginArtifacts>
                     <products>
                         <product>
                             <id>refapp</id>
