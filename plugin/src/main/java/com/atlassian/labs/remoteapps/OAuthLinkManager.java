@@ -109,6 +109,8 @@ public class OAuthLinkManager
         String host = hostUri.getScheme() + "://" + hostUri.getHost() + ":" + hostUri.getPort();
         String currentUser = userManager.getRemoteUsername();
         Map<String,List<String>> params = newHashMap(originalParams);
+        Consumer self = consumerService.getConsumer();
+        params.put(OAuth.OAUTH_CONSUMER_KEY, singletonList(self.getKey()));
         params.put("user_id", singletonList(currentUser));
         params.put("xdm_e", singletonList(host));
         params.put("xdm_c", singletonList("channel01"));

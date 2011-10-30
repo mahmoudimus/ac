@@ -39,6 +39,18 @@ public class MyAdminPage
         });
     }
 
+    public String getConsumerKey()
+    {
+        return runInFrame(new Callable<String>(){
+
+            @Override
+            public String call() throws Exception
+            {
+                return driver.findElement(By.id("consumerKey")).getText();
+            }
+        });
+    }
+
     private <T> T runInFrame(Callable<T> runnable)
     {
         final WebElement iframe = containerDiv.findElement(By.tagName("iframe"));
@@ -65,6 +77,4 @@ public class MyAdminPage
     {
         driver.getDriver().switchTo().frame(containerDiv);
     }
-
-
 }

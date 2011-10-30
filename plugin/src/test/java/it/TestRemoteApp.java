@@ -1,6 +1,7 @@
 package it;
 
 import com.atlassian.labs.remoteapps.test.MyAdminPage;
+import com.atlassian.labs.remoteapps.test.OAuthUtils;
 import com.atlassian.labs.remoteapps.test.RemoteAppAwareAdminPage;
 import com.atlassian.labs.remoteapps.test.OwnerOfTestedProduct;
 import com.atlassian.pageobjects.TestedProduct;
@@ -37,6 +38,7 @@ public class TestRemoteApp
         assertTrue(page.isRemoteAppLinkPresent());
         MyAdminPage myAdmin = page.clickRemoteAppAdminLink();
         assertEquals("Success", myAdmin.getMessage());
+        assertEquals(OAuthUtils.getConsumerKey(), myAdmin.getConsumerKey());
 
 	}
 }

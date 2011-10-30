@@ -65,12 +65,10 @@ public class IFramePageServlet extends HttpServlet
         String timestamp = System.currentTimeMillis() / 1000 + "";
         String nonce = System.nanoTime() + "";
         String signatureMethod = OAuth.RSA_SHA1;
-        String consumerKey = applicationLink.getId().get();
         String oauthVersion = "1.0";
 
         URI uri = URI.create(iframeSrc);
         OAuthMessage message = oAuthLinkManager.sign(applicationLink, "GET", iframeSrc, ImmutableMap.<String, List<String>>of(
-                OAuth.OAUTH_CONSUMER_KEY, singletonList(consumerKey),
                 OAuth.OAUTH_SIGNATURE_METHOD, singletonList(signatureMethod),
                 OAuth.OAUTH_NONCE, singletonList(nonce),
                 OAuth.OAUTH_VERSION, singletonList(oauthVersion),
