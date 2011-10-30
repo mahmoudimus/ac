@@ -1,0 +1,18 @@
+<atlassian-plugin key="remoteapp-installer" name="Remoteapp installer plugin" plugins-version="2">
+    <plugin-info>
+        <version>1</version>
+    </plugin-info>
+
+    <!-- registers the remote app -->
+    <component key="rego" class="com.atlassian.labs.remoteapps.test.RegistrationOnStartListener" public="true"
+               interface="com.atlassian.sal.api.lifecycle.LifecycleAware" />
+
+
+    <!-- remote app impl -->
+    <servlet-filter key="remoteapp-filter" class="com.atlassian.labs.remoteapps.test.remoteapp.RemoteAppFilter"
+            location="after-encoding">
+        <url-pattern>/remoteapp/*</url-pattern>
+    </servlet-filter>
+    <component-import key="templateRenderer" interface="com.atlassian.templaterenderer.TemplateRenderer" />
+
+</atlassian-plugin>
