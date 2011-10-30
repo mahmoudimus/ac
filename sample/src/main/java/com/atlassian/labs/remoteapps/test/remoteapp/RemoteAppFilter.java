@@ -3,6 +3,8 @@ package com.atlassian.labs.remoteapps.test.remoteapp;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServlet;
@@ -21,11 +23,13 @@ import static com.google.common.collect.Lists.newArrayList;
 public class RemoteAppFilter implements Filter
 {
     private static TemplateRenderer templateRenderer;
+    private final AutowireCapableBeanFactory beanFactory;
     private Multimap<String,Route> allRoutes = ArrayListMultimap.create();
 
-    public RemoteAppFilter(TemplateRenderer templateRenderer)
+    public RemoteAppFilter(TemplateRenderer templateRenderer, AutowireCapableBeanFactory beanFactory)
     {
         this.templateRenderer = templateRenderer;
+        this.beanFactory = beanFactory;
     }
 
     @Override

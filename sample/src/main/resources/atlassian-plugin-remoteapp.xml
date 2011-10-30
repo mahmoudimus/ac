@@ -9,17 +9,17 @@
         <oauth callback="http://localhost" request-token-url="http://localhost" access-token-url="http://localhost" authorize-url="http://localhost">
             <public-key>
                 -----BEGIN PUBLIC KEY-----
-                MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC+TW3Ny68Nj+VVkfYhmSXNtn3q
-                sy4Y3duWU+TL60TQQARN2INbaASnA/hRICxFQhUXKeVrDOEVOjA/nDNakNiqIsrv
-                WLXCg5lkaaq6BYDSCKa5b9UMivqVxqQfWD8FguM8Na2E+hwWUQJfhHbRqc5rONil
-                hbXSULulBg9HyaJrgwIDAQAB
+                MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCdZ4NjFq7phYw2FAvg2r3bS0Vw
+                kX07mBsYP5iPH0tsy9Boo4PfQTXxPrd6NFP6Gm0QXsgERgFgDt/344WhxMqt4rJi
+                udINI51n0bXNz9ct5ZnUJSnwC4GzNkDmvjpJ/Ewdmq5Ye3BfaThZnlsXA+csT3IU
+                /strFeKjydl1lyXNswIDAQAB
                 -----END PUBLIC KEY-----
             </public-key>
         </oauth>
         <permissions>
             <permission rest-api="applinks" />
         </permissions>
-        <admin-page key="remoteAppAdmin" name="Remote App Admin" url="/remoteapp/myadmin?message=Success" />
+        <admin-page key="remoteAppAdmin" name="Remote App Admin" url="/remoteapp/myadmin" />
     </remote-app>
 
 </atlassian-plugin>

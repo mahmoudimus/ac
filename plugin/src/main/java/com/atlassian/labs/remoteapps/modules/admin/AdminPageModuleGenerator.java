@@ -1,5 +1,9 @@
 package com.atlassian.labs.remoteapps.modules.admin;
 
+import com.atlassian.applinks.api.ApplicationLink;
+import com.atlassian.applinks.api.ApplicationLinkService;
+import com.atlassian.applinks.spi.auth.AuthenticationConfigurationManager;
+import com.atlassian.labs.remoteapps.OAuthLinkManager;
 import com.atlassian.labs.remoteapps.modules.IFramePageServlet;
 import com.atlassian.labs.remoteapps.modules.RemoteAppCreationContext;
 import com.atlassian.labs.remoteapps.modules.RemoteModule;
@@ -28,13 +32,21 @@ public class AdminPageModuleGenerator implements RemoteModuleGenerator
     private final TemplateRenderer templateRenderer;
     private final ProductAccessor productAccessor;
     private final WebResourceManager webResourceManager;
+    private final ApplicationLinkService applicationLinkService;
+    private final OAuthLinkManager oAuthLinkManager;
 
-    public AdminPageModuleGenerator(ServletModuleManager servletModuleManager, TemplateRenderer templateRenderer, ProductAccessor productAccessor, WebResourceManager webResourceManager)
+    public AdminPageModuleGenerator(ServletModuleManager servletModuleManager,
+                                    TemplateRenderer templateRenderer,
+                                    ProductAccessor productAccessor,
+                                    WebResourceManager webResourceManager,
+                                    ApplicationLinkService applicationLinkService, OAuthLinkManager oAuthLinkManager)
     {
         this.servletModuleManager = servletModuleManager;
         this.templateRenderer = templateRenderer;
         this.productAccessor = productAccessor;
         this.webResourceManager = webResourceManager;
+        this.applicationLinkService = applicationLinkService;
+        this.oAuthLinkManager = oAuthLinkManager;
     }
 
     @Override
@@ -58,10 +70,11 @@ public class AdminPageModuleGenerator implements RemoteModuleGenerator
         final String fullUrl = e.getParent().attributeValue("display-url") + url;
         String localUrl = "/" + ctx.getApplicationType().getId().get() + "/" + key;
 
-        final Set<ModuleDescriptor> descriptors = ImmutableSet.<ModuleDescriptor>of(
-                createServletDescriptor(ctx, e, key, fullUrl, localUrl),
-                createWebItemDescriptor(ctx, e, key, fullUrl, localUrl)
-        );
+        final Set<ModuleDescriptor> descriptors = ImmutableSet.<ModuleDescriptor>of(createServletDescriptor(ctx,
+                e,
+                key,
+                fullUrl,
+                localUrl), createWebItemDescriptor(ctx, e, key, fullUrl, localUrl));
         return new RemoteModule()
         {
             @Override
@@ -72,7 +85,11 @@ public class AdminPageModuleGenerator implements RemoteModuleGenerator
         };
     }
 
-    private ServletModuleDescriptor createServletDescriptor(RemoteAppCreationContext ctx, Element e, String key, final String fullUrl, String localUrl)
+    private ServletModuleDescriptor createServletDescriptor(final RemoteAppCreationContext ctx,
+                                                            Element e,
+                                                            String key,
+                                                            final String fullUrl,
+                                                            String localUrl)
     {
         final String pageName = e.attributeValue("name");
         Element config = e.createCopy();
@@ -86,14 +103,25 @@ public class AdminPageModuleGenerator implements RemoteModuleGenerator
             @Override
             public <T> T createModule(String name, ModuleDescriptor<T> moduleDescriptor) throws PluginParseException
             {
-                return (T) new IFramePageServlet(templateRenderer, pageName, fullUrl, "atl.admin", webResourceManager);
+                return (T) new IFramePageServlet(templateRenderer,
+                        oAuthLinkManager,
+                        applicationLinkService,
+                        ctx.getApplicationType(),
+                        pageName,
+                        fullUrl,
+                        "atl.admin",
+                        webResourceManager);
             }
         }, servletModuleManager);
         descriptor.init(ctx.getPlugin(), config);
         return descriptor;
     }
 
-    private WebItemModuleDescriptor createWebItemDescriptor(RemoteAppCreationContext ctx, Element e, String key, final String fullUrl, String localUrl)
+    private WebItemModuleDescriptor createWebItemDescriptor(RemoteAppCreationContext ctx,
+                                                            Element e,
+                                                            String key,
+                                                            final String fullUrl,
+                                                            String localUrl)
     {
         Element config = e.createCopy();
         final String webItemKey = "webitem-" + key;

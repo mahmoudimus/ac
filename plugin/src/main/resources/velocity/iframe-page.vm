@@ -12,10 +12,11 @@
 <script type="text/javascript" language="javascript">
 
             var transport = new easyXDM.Socket(/** The configuration */{
-            remote: "$iframeSrc",
+            remote: "$iframeSrcHtml",
 
             //ID of the element to attach the inline frame to
             container: "embedded",
+            channel: "channel01",
             onMessage: function (message, origin) {
                 var settings = message.split(",");
                 //Use jquery on a masterpage.

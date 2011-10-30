@@ -2,6 +2,7 @@ package com.atlassian.labs.remoteapps.test.remoteapp;
 
 import com.atlassian.labs.remoteapps.test.RegistrationOnStartListener;
 import com.google.common.collect.ImmutableSet;
+import net.oauth.OAuthServiceProvider;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,7 +11,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.Set;
 
 /**
@@ -19,7 +19,14 @@ import java.util.Set;
 public class RegisterRoute extends RemoteAppFilter.Route
 {
     private static final Logger log = LoggerFactory.getLogger(RegisterRoute.class);
-    private static final Set<String> POST_PARAMS = ImmutableSet.of("token", "key", "publicKey", "description", "requestTokenUrl", "accessTokenUrl", "authorizeUrl");
+    private static final Set<String> POST_PARAMS = ImmutableSet.of("token",
+            "key",
+            "publicKey",
+            "description",
+            "requestTokenUrl",
+            "accessTokenUrl",
+            "authorizeUrl");
+
     public RegisterRoute(String path)
     {
         super(path);
@@ -29,6 +36,12 @@ public class RegisterRoute extends RemoteAppFilter.Route
     public String handle(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException
     {
         resp.setContentType("text/xml");
+        OAuthContext.INSTANCE
+                .setHost(req.getParameter("key"),
+                        req.getParameter("publicKey"),
+                        new OAuthServiceProvider(req.getParameter("requestTokenUrl"),
+                                req.getParameter("authorizeUrl"),
+                                req.getParameter("accessTokenUrl")));
         return replaceTokens(req, IOUtils.toString(getClass().getResourceAsStream("/atlassian-plugin-remoteapp.xml")));
     }
 

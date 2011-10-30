@@ -61,5 +61,6 @@
     <component-import key="serviceProviderConsumerStore" interface="com.atlassian.oauth.serviceprovider.ServiceProviderConsumerStore" />
     <component-import key="applicationLinkService" interface="com.atlassian.applinks.spi.link.MutatingApplicationLinkService" />
     <component-import key="authenticationConfigurationManager" interface="com.atlassian.applinks.spi.auth.AuthenticationConfigurationManager" />
+    <component-import key="userManager" interface="com.atlassian.sal.api.user.UserManager" />
 
 </atlassian-plugin>

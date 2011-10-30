@@ -33,7 +33,9 @@ public class MyAdminRoute extends RemoteAppFilter.Route
     String handle(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException
     {
         resp.setContentType("text/html");
+        String consumerKey = OAuthContext.INSTANCE.validate2LOFromParameters(req);
         final Map<String, Object> context = getRequestMap(req);
+        context.put("consumerKey", consumerKey);
         return render("test-page.vm", context);
     }
 }

@@ -4,11 +4,14 @@
     </head>
     <body>
         <div>
-            Message: <span id="message">$message</span>
+            Message: <span id="message">Success</span>
+        </div>
+        <div>
+            Consumer: <span id="consumerKey">$consumerKey</span>
         </div>
         <script type="text/javascript">
             RA.init();
-            RA.resize();
+            RA.resize(600,400);
         </script>
     </body>
 </html>
