@@ -3,6 +3,7 @@ package com.atlassian.labs.remoteapps.modules.permissions;
 import com.atlassian.labs.remoteapps.ApiPermissionManager;
 import com.google.common.collect.ImmutableSet;
 import electric.server.http.HTTP;
+import net.oauth.OAuth;
 import org.apache.commons.lang.StringUtils;
 
 import javax.servlet.Filter;
@@ -46,7 +47,7 @@ public class ApiScopingFilter implements Filter
         if (clientKey != null)
         {
             boolean allow = false;
-            final String pathInfo = URI.create(req.getPathInfo()).normalize().toString();
+            final String pathInfo = URI.create(req.getRequestURI().substring(req.getContextPath().length())).normalize().toString();
             final String[] elements = StringUtils.split(pathInfo, '/');
             if (elements.length > 2 && "rest".equals(elements[0]))
             {
@@ -55,25 +56,24 @@ public class ApiScopingFilter implements Filter
 
                 if (writeRequest)
                 {
-                    allow = apiPermissionManager.isWritable(api);
+                    allow = apiPermissionManager.isWritable(clientKey, api);
                 }
                 else
                 {
-                    allow = apiPermissionManager.isReadable(api);
+                    allow = apiPermissionManager.isReadable(clientKey, api);
                 }
                 if (allow)
                 {
                     chain.doFilter(request, response);
                     return;
                 }
+                // todo: be nicer and more helpful
+                res.sendError(HttpServletResponse.SC_FORBIDDEN);
             }
             else
             {
                 chain.doFilter(request, response);
             }
-
-            // todo: be nicer and more helpful
-            res.sendError(HttpServletResponse.SC_FORBIDDEN);
         }
         else
         {
@@ -84,8 +84,7 @@ public class ApiScopingFilter implements Filter
 
     private String extractClientKey(HttpServletRequest req)
     {
-        // todo
-        return null;
+        return (String) req.getAttribute(OAuth.OAUTH_CONSUMER_KEY);
     }
 
     @Override

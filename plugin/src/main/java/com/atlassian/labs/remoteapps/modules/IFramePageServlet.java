@@ -67,7 +67,6 @@ public class IFramePageServlet extends HttpServlet
         String signatureMethod = OAuth.RSA_SHA1;
         String oauthVersion = "1.0";
 
-        URI uri = URI.create(iframeSrc);
         OAuthMessage message = oAuthLinkManager.sign(applicationLink, "GET", iframeSrc, ImmutableMap.<String, List<String>>of(
                 OAuth.OAUTH_SIGNATURE_METHOD, singletonList(signatureMethod),
                 OAuth.OAUTH_NONCE, singletonList(nonce),

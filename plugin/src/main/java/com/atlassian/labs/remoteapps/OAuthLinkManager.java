@@ -13,12 +13,14 @@ import com.atlassian.oauth.serviceprovider.ServiceProviderConsumerStore;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.user.UserManager;
 import com.google.common.collect.ImmutableMap;
-import net.oauth.OAuth;
-import net.oauth.OAuthMessage;
+import net.oauth.*;
+import net.oauth.signature.RSA_SHA1;
 import org.apache.axis.encoding.ser.ElementSerializer;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +44,7 @@ public class OAuthLinkManager
     private final ConsumerService consumerService;
     private final UserManager userManager;
     private final ApplicationProperties applicationProperties;
+    private final OAuthValidator oauthValidator;
 
     public OAuthLinkManager(ServiceProviderConsumerStore serviceProviderConsumerStore,
                             AuthenticationConfigurationManager authenticationConfigurationManager,
@@ -56,6 +59,7 @@ public class OAuthLinkManager
         this.consumerService = consumerService;
         this.userManager = userManager;
         this.applicationProperties = applicationProperties;
+        this.oauthValidator = new SimpleOAuthValidator();
     }
 
     public void associateConsumerWithLink(ApplicationLink link, Consumer consumer)
@@ -85,6 +89,19 @@ public class OAuthLinkManager
                     SERVICE_PROVIDER_ACCESS_TOKEN_URL, serviceProvider.getAccessTokenUri().toString(),
                     SERVICE_PROVIDER_AUTHORIZE_URL, serviceProvider.getAccessTokenUri().toString()
             ));
+    }
+
+    public void validateOAuth2LORequest(OAuthMessage message) throws IOException, URISyntaxException, OAuthException
+    {
+        String consumerKey = message.getConsumerKey();
+        Consumer consumer = serviceProviderConsumerStore.get(consumerKey);
+        final OAuthConsumer oauthConsumer = new OAuthConsumer(null,
+                consumer.getKey(),
+                null,
+                new OAuthServiceProvider(null, null, null));
+        oauthConsumer.setProperty(RSA_SHA1.PUBLIC_KEY, consumer.getPublicKey().getEncoded());
+        final OAuthAccessor accessor = new OAuthAccessor(oauthConsumer);
+        oauthValidator.validateMessage(message, accessor);
     }
 
     public ServiceProvider getServiceProvider(ApplicationLink link)

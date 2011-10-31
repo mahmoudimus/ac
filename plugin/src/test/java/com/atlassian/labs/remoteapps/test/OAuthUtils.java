@@ -32,6 +32,7 @@ public class OAuthUtils
         {
             throw new RuntimeException("Cannot retrieve oauth info");
         }
+        httpclient.getConnectionManager().shutdown();
     }
 
     public static String getConsumerKey()

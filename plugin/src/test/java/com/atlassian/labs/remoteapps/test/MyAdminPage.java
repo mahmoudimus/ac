@@ -29,24 +29,33 @@ public class MyAdminPage
 
     public String getMessage()
     {
-        return runInFrame(new Callable<String>(){
-
-            @Override
-            public String call() throws Exception
-            {
-                return driver.findElement(By.id("message")).getText();
-            }
-        });
+        return getValue("message");
     }
 
     public String getConsumerKey()
     {
-        return runInFrame(new Callable<String>(){
+        return getValue("consumerKey");
+    }
+
+    public String getRemoteUsername()
+    {
+        return getValue("remoteUser");
+    }
+
+    public String getForbiddenApiStatusCode()
+    {
+        return getValue("forbiddenGet");
+    }
+
+    private String getValue(final String key)
+    {
+        return runInFrame(new Callable<String>()
+        {
 
             @Override
             public String call() throws Exception
             {
-                return driver.findElement(By.id("consumerKey")).getText();
+                return driver.findElement(By.id(key)).getText();
             }
         });
     }

@@ -17,7 +17,7 @@
             </public-key>
         </oauth>
         <permissions>
-            <permission rest-api="applinks" />
+            <permission rest-api="remoteapptest" />
         </permissions>
         <admin-page key="remoteAppAdmin" name="Remote App Admin" url="/remoteapp/myadmin" />
     </remote-app>

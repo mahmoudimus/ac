@@ -7,7 +7,13 @@
             Message: <span id="message">Success</span>
         </div>
         <div>
-            Consumer: <span id="consumerKey">$consumerKey</span>
+            Host Consumer Key: <span id="consumerKey">$consumerKey</span>
+        </div>
+        <div>
+            Remote User: <span id="remoteUser">$remoteUser</span>
+        </div>
+        <div>
+            Forbidden GET: <span id="forbiddenGet">$forbiddenGet</span>
         </div>
         <script type="text/javascript">
             RA.init();

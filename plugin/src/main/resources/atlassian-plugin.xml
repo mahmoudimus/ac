@@ -19,6 +19,11 @@
         <url-pattern>/*</url-pattern>
     </servlet-filter>
 
+    <servlet-filter key="oauth-2lo-authentication" class="com.atlassian.labs.remoteapps.modules.oauth.OAuth2LOFilter"
+            location="after-encoding">
+        <url-pattern>/*</url-pattern>
+    </servlet-filter>
+
     <module-type key="remote-app" class="com.atlassian.labs.remoteapps.descriptor.RemoteAppModuleDescriptor" />
 
     <web-resource key="xdm">
@@ -46,6 +51,7 @@
     <component key="apiPermissionManager" class="com.atlassian.labs.remoteapps.ApiPermissionManager" />
     <component key="oauthLinkManager" class="com.atlassian.labs.remoteapps.OAuthLinkManager" />
     <component key="startableForPlugins" class="com.atlassian.labs.remoteapps.descriptor.StartableForPlugins" public="true" interface="com.atlassian.sal.api.lifecycle.LifecycleAware" />
+    <component key="2loAuthenticator" class="com.atlassian.labs.remoteapps.modules.oauth.OAuth2LOAuthenticator" />
 
     <component key="jiraProductAccessor" class="com.atlassian.labs.remoteapps.product.JiraProductAccessor" application="jira" />
     <component key="refappProductAccessor" class="com.atlassian.labs.remoteapps.product.RefappProductAccessor" application="refapp" />
@@ -62,5 +68,8 @@
     <component-import key="applicationLinkService" interface="com.atlassian.applinks.spi.link.MutatingApplicationLinkService" />
     <component-import key="authenticationConfigurationManager" interface="com.atlassian.applinks.spi.auth.AuthenticationConfigurationManager" />
     <component-import key="userManager" interface="com.atlassian.sal.api.user.UserManager" />
+    <component-import key="authenticationListener" interface="com.atlassian.sal.api.auth.AuthenticationListener" />
+    <component-import key="authenticationController" interface="com.atlassian.sal.api.auth.AuthenticationController" />
+    <component-import key="transactionTemplate" interface="com.atlassian.sal.api.transaction.TransactionTemplate" />
 
 </atlassian-plugin>

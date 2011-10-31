@@ -33,6 +33,11 @@
             <artifactId>json</artifactId>
             <version>20080701</version>
         </dependency>
+        <dependency>
+            <groupId>net.oauth.core</groupId>
+            <artifactId>oauth-provider</artifactId>
+            <version>20090531</version>
+        </dependency>
 
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -237,6 +242,7 @@
                 <configuration>
                     <nosuffix>true</nosuffix>
                     <gzip>true</gzip>
+                    <jswarn>false</jswarn>
                     <aggregations>
                         <aggregation>
                             <removeIncluded>false</removeIncluded>

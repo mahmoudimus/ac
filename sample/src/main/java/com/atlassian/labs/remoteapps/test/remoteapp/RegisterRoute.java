@@ -57,7 +57,7 @@ public class RegisterRoute extends RemoteAppFilter.Route
             log.info("param: " + name + " : " + value);
             originalXml = originalXml.replaceAll("%" + name + "%", value);
         }
-        originalXml = originalXml.replaceAll("%baseurl%", RegistrationOnStartListener.BASEURL);
+        originalXml = originalXml.replaceAll("%baseurl%", RegistrationOnStartListener.OUR_BASEURL);
         return originalXml;
     }
 }

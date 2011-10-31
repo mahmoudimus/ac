@@ -1,22 +1,23 @@
 package com.atlassian.labs.remoteapps.test.remoteapp;
 
 import com.atlassian.labs.remoteapps.test.RegistrationOnStartListener;
-import com.google.common.base.Function;
+import com.google.common.collect.ImmutableMap;
 import net.oauth.*;
 import net.oauth.server.HttpRequestMessage;
 import net.oauth.signature.RSA_SHA1;
+import org.apache.http.client.methods.HttpGet;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import static com.google.common.collect.Iterables.transform;
 import static com.google.common.collect.Maps.newHashMap;
+import static java.util.Collections.singletonList;
 
 /**
  *
@@ -47,7 +48,7 @@ public class OAuthContext
 
     public OAuthContext()
     {
-        final String baseUrl = RegistrationOnStartListener.BASEURL;
+        final String baseUrl = RegistrationOnStartListener.OUR_BASEURL;
 
         local = new OAuthConsumer(null, // our callback
                 "remoteapp", null, // certs used instead
@@ -108,4 +109,38 @@ public class OAuthContext
         }
     }
 
+    public void sign(HttpGet get)
+    {
+        try
+        {
+            final String timestamp = System.currentTimeMillis() / 1000 + "";
+            final String nonce = System.nanoTime() + "";
+            Map<String,String> params = new HashMap<String,String>() {{
+                put(OAuth.OAUTH_SIGNATURE_METHOD, OAuth.RSA_SHA1);
+                put(OAuth.OAUTH_VERSION, "1.0");
+                put(OAuth.OAUTH_CONSUMER_KEY, local.consumerKey);
+                put(OAuth.OAUTH_NONCE, nonce);
+                put(OAuth.OAUTH_TIMESTAMP, timestamp);
+            }};
+            OAuthMessage oauthMessage = new OAuthMessage(get.getMethod(), get.getURI().toString(), params.entrySet());
+            oauthMessage.sign(new OAuthAccessor(local));
+            get.addHeader("Authorization", oauthMessage.getAuthorizationHeader(null));
+        }
+        catch (net.oauth.OAuthException e)
+        {
+            // todo: do something better
+            throw new RuntimeException("Failed to sign the request", e);
+        }
+        catch (IOException e)
+        {
+            // this shouldn't happen as the message is not being read from any IO streams, but the OAuth library throws
+            // these around like they're candy, but far less sweet and tasty.
+            throw new RuntimeException(e);
+        }
+        catch (URISyntaxException e)
+        {
+            // this shouldn't happen unless the caller somehow passed us an invalid URI object
+            throw new RuntimeException(e);
+        }
+    }
 }
