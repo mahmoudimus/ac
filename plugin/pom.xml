@@ -235,12 +235,14 @@
                         <product>
                             <id>jira</id>
                             <version>${jira.version}</version>
-                            <dataVersion>${jira.data.version}</dataVersion>
+                            <productDataPath>${basedir}/src/test/resources/jira-generated-test-resources.zip
+                            </productDataPath>
                         </product>
                         <product>
                             <id>confluence</id>
                             <version>${confluence.version}</version>
-                            <dataVersion>${confluence.data.version}</dataVersion>
+                            <productDataPath>${basedir}/src/test/resources/confluence-generated-test-resources.zip
+                            </productDataPath>
                         </product>
                     </products>
                     <testGroups>
