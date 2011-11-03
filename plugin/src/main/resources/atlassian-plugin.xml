@@ -53,6 +53,7 @@
     <component key="startableForPlugins" class="com.atlassian.labs.remoteapps.descriptor.StartableForPlugins" public="true" interface="com.atlassian.sal.api.lifecycle.LifecycleAware" />
     <component key="2loAuthenticator" class="com.atlassian.labs.remoteapps.modules.oauth.OAuth2LOAuthenticator" />
 
+    <component key="confluenceProductAccessor" class="com.atlassian.labs.remoteapps.product.ConfluenceProductAccessor" application="confluence" />
     <component key="jiraProductAccessor" class="com.atlassian.labs.remoteapps.product.JiraProductAccessor" application="jira" />
     <component key="refappProductAccessor" class="com.atlassian.labs.remoteapps.product.RefappProductAccessor" application="refapp" />
 

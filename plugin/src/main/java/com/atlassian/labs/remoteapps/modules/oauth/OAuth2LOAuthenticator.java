@@ -6,6 +6,7 @@ import com.atlassian.oauth.util.Check;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.auth.AuthenticationController;
 import com.atlassian.sal.api.auth.Authenticator;
+import com.atlassian.sal.api.user.UserManager;
 import net.oauth.OAuth;
 import net.oauth.OAuthException;
 import net.oauth.OAuthMessage;
@@ -33,12 +34,14 @@ public class OAuth2LOAuthenticator implements Authenticator
     private final OAuthLinkManager oAuthLinkManager;
     private final AuthenticationController authenticationController;
     private final ApplicationProperties applicationProperties;
+    private final UserManager userManager;
 
     public OAuth2LOAuthenticator(AuthenticationController authenticationController,
                                  ApplicationProperties applicationProperties,
-                                 OAuthLinkManager oAuthLinkManager)
+                                 OAuthLinkManager oAuthLinkManager, UserManager userManager)
     {
         this.oAuthLinkManager = oAuthLinkManager;
+        this.userManager = userManager;
         this.authenticationController = Check.notNull(authenticationController, "authenticationController");
         this.applicationProperties = Check.notNull(applicationProperties, "applicationProperties");
     }
@@ -70,14 +73,7 @@ public class OAuth2LOAuthenticator implements Authenticator
         }
 
         final String userId = request.getParameter(OAuth2LOFilter.USER_ID);
-        final Principal user = new Principal()
-        {
-            @Override
-            public String getName()
-            {
-                return userId;
-            }
-        };
+        final Principal user = userManager.resolve(userId);
         if (!authenticationController.canLogin(user, request))
         {
             // user exists but is not allowed to login

@@ -50,6 +50,9 @@
     <properties>
         <refapp.version>2.13.0</refapp.version>
         <jira.version>4.4.2</jira.version>
+        <jira.data.version>4.1.1</jira.data.version>
+        <confluence.version>4.0.1</confluence.version>
+        <confluence.data.version>3.0</confluence.data.version>
         <applinks.version>3.5.1</applinks.version>
     </properties>
 
