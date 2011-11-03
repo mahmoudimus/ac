@@ -230,17 +230,19 @@
                         <product>
                             <id>refapp</id>
                             <version>${refapp.version}</version>
-                            <log4jProperties>src/test/resources/log4j.properties</log4jProperties>
+                            <log4jProperties>src/test/resources/log4j-refapp.properties</log4jProperties>
                         </product>
                         <product>
                             <id>jira</id>
                             <version>${jira.version}</version>
+                            <log4jProperties>src/test/resources/log4j-jira.properties</log4jProperties>
                             <productDataPath>${basedir}/src/test/resources/jira-generated-test-resources.zip
                             </productDataPath>
                         </product>
                         <product>
                             <id>confluence</id>
                             <version>${confluence.version}</version>
+                            <log4jProperties>src/test/resources/log4j-confluence.properties</log4jProperties>
                             <productDataPath>${basedir}/src/test/resources/confluence-generated-test-resources.zip
                             </productDataPath>
                         </product>

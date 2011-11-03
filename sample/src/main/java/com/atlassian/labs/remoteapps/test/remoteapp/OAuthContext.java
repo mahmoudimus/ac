@@ -6,6 +6,8 @@ import net.oauth.*;
 import net.oauth.server.HttpRequestMessage;
 import net.oauth.signature.RSA_SHA1;
 import org.apache.http.client.methods.HttpGet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -24,6 +26,7 @@ import static java.util.Collections.singletonList;
  */
 public class OAuthContext
 {
+    private static final Logger log = LoggerFactory.getLogger(OAuthContext.class);
     public static final OAuthContext INSTANCE = new OAuthContext();
 
     private static final String PRIVATE_KEY =
@@ -82,14 +85,26 @@ public class OAuthContext
         return result;
     }
 
-    public String validate2LOFromHeaders(HttpServletRequest req) throws ServletException
-    {
-        HttpRequestMessage message = new HttpRequestMessage(req, req.getRequestURL().toString());
-        return validateAndExtractKey(message);
-    }
-
     private String validateAndExtractKey(OAuthMessage message) throws ServletException
     {
+        if (log.isDebugEnabled())
+        {
+            StringBuilder sb = new StringBuilder("Validating incoming OAuth request for sample remoteapp:\n");
+            sb.append("\turl: ").append(message.URL.toString()).append("\n");
+            sb.append("\tmethod: ").append(message.method.toString()).append("\n");
+            try
+            {
+                for (Map.Entry<String,String> entry : message.getParameters())
+                {
+                    sb.append("\t").append(entry.getKey()).append(": ").append(entry.getValue()).append("\n");
+                }
+            }
+            catch (IOException e)
+            {
+                throw new RuntimeException(e);
+            }
+            log.debug(sb.toString());
+        }
         try
         {
             message.validateMessage(new OAuthAccessor(host), new SimpleOAuthValidator());

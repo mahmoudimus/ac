@@ -16,6 +16,9 @@ import com.google.common.collect.ImmutableMap;
 import net.oauth.*;
 import net.oauth.signature.RSA_SHA1;
 import org.apache.axis.encoding.ser.ElementSerializer;
+import org.netbeans.lib.cvsclient.commandLine.command.log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -38,6 +41,8 @@ public class OAuthLinkManager
     public static final String SERVICE_PROVIDER_REQUEST_TOKEN_URL = "serviceProvider.requestTokenUrl";
     public static final String SERVICE_PROVIDER_ACCESS_TOKEN_URL = "serviceProvider.accessTokenUrl";
     public static final String SERVICE_PROVIDER_AUTHORIZE_URL = "serviceProvider.authorizeUrl";
+
+    private static final Logger log = LoggerFactory.getLogger(OAuthLinkManager.class);
     private final ServiceProviderConsumerStore serviceProviderConsumerStore;
     private final AuthenticationConfigurationManager authenticationConfigurationManager;
     private final ApplicationLinkService applicationLinkService;
@@ -101,6 +106,17 @@ public class OAuthLinkManager
                 new OAuthServiceProvider(null, null, null));
         oauthConsumer.setProperty(RSA_SHA1.PUBLIC_KEY, consumer.getPublicKey().getEncoded());
         final OAuthAccessor accessor = new OAuthAccessor(oauthConsumer);
+        if (log.isDebugEnabled())
+        {
+            StringBuilder sb = new StringBuilder("Validating incoming OAuth 2LO request:\n");
+            sb.append("\turl: ").append(message.URL.toString()).append("\n");
+            sb.append("\tmethod: ").append(message.method.toString()).append("\n");
+            for (Map.Entry<String,String> entry : message.getParameters())
+            {
+                sb.append("\t").append(entry.getKey()).append(": ").append(entry.getValue()).append("\n");
+            }
+            log.debug(sb.toString());
+        }
         oauthValidator.validateMessage(message, accessor);
     }
 
@@ -132,6 +148,16 @@ public class OAuthLinkManager
         params.put("xdm_e", singletonList(host));
         params.put("xdm_c", singletonList("channel01"));
         params.put("xdm_p", singletonList("1"));
+        if (log.isDebugEnabled())
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.append("Sigining outgoing with: \n");
+            for (Map.Entry<String,List<String>> entry : params.entrySet())
+            {
+                sb.append("\t").append(entry.getKey()).append(": ").append(entry.getValue().toString()).append("\n");
+            }
+            log.debug(sb.toString());
+        }
         ServiceProvider serviceProvider = getServiceProvider(link);
         Request oAuthRequest = new Request(Request.HttpMethod.valueOf(method),
                 URI.create(url), convertParameters(params));
