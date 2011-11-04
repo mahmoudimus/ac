@@ -48,7 +48,7 @@
     <component key="oauthGenerator" class="com.atlassian.labs.remoteapps.modules.oauth.OauthModuleGenerator" />
     <component key="permissionsManager" class="com.atlassian.labs.remoteapps.modules.permissions.PermissionsModuleGenerator" />
     <component key="remoteAppInstaller" class="com.atlassian.labs.remoteapps.installer.DefaultRemoteAppInstaller" />
-    <component key="apiPermissionManager" class="com.atlassian.labs.remoteapps.ApiPermissionManager" />
+    <component key="apiPermissionManager" class="com.atlassian.labs.remoteapps.PermissionManager" />
     <component key="oauthLinkManager" class="com.atlassian.labs.remoteapps.OAuthLinkManager" />
     <component key="startableForPlugins" class="com.atlassian.labs.remoteapps.descriptor.StartableForPlugins" public="true" interface="com.atlassian.sal.api.lifecycle.LifecycleAware" />
     <component key="2loAuthenticator" class="com.atlassian.labs.remoteapps.modules.oauth.OAuth2LOAuthenticator" />

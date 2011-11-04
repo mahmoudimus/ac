@@ -1,8 +1,7 @@
 package com.atlassian.labs.remoteapps.modules.permissions;
 
-import com.atlassian.labs.remoteapps.ApiPermissionManager;
+import com.atlassian.labs.remoteapps.PermissionManager;
 import com.google.common.collect.ImmutableSet;
-import electric.server.http.HTTP;
 import net.oauth.OAuth;
 import org.apache.commons.lang.StringUtils;
 
@@ -24,12 +23,12 @@ import java.util.Set;
  */
 public class ApiScopingFilter implements Filter
 {
-    private ApiPermissionManager apiPermissionManager;
+    private PermissionManager permissionManager;
     private static final Set<String> READ_METHODS = ImmutableSet.of(HttpMethod.GET, HttpMethod.HEAD, "OPTIONS");
 
-    public ApiScopingFilter(ApiPermissionManager apiPermissionManager)
+    public ApiScopingFilter(PermissionManager permissionManager)
     {
-        this.apiPermissionManager = apiPermissionManager;
+        this.permissionManager = permissionManager;
     }
 
     @Override
@@ -56,11 +55,11 @@ public class ApiScopingFilter implements Filter
 
                 if (writeRequest)
                 {
-                    allow = apiPermissionManager.isWritable(clientKey, api);
+                    allow = permissionManager.isApiWritable(clientKey, api);
                 }
                 else
                 {
-                    allow = apiPermissionManager.isReadable(clientKey, api);
+                    allow = permissionManager.isApiReadable(clientKey, api);
                 }
                 if (allow)
                 {

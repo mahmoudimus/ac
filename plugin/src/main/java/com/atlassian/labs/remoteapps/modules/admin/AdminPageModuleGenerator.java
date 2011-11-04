@@ -4,6 +4,7 @@ import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.applinks.api.ApplicationLinkService;
 import com.atlassian.applinks.spi.auth.AuthenticationConfigurationManager;
 import com.atlassian.labs.remoteapps.OAuthLinkManager;
+import com.atlassian.labs.remoteapps.PermissionManager;
 import com.atlassian.labs.remoteapps.modules.IFramePageServlet;
 import com.atlassian.labs.remoteapps.modules.RemoteAppCreationContext;
 import com.atlassian.labs.remoteapps.modules.RemoteModule;
@@ -34,12 +35,13 @@ public class AdminPageModuleGenerator implements RemoteModuleGenerator
     private final WebResourceManager webResourceManager;
     private final ApplicationLinkService applicationLinkService;
     private final OAuthLinkManager oAuthLinkManager;
+    private final PermissionManager permissionManager;
 
     public AdminPageModuleGenerator(ServletModuleManager servletModuleManager,
                                     TemplateRenderer templateRenderer,
                                     ProductAccessor productAccessor,
                                     WebResourceManager webResourceManager,
-                                    ApplicationLinkService applicationLinkService, OAuthLinkManager oAuthLinkManager)
+                                    ApplicationLinkService applicationLinkService, OAuthLinkManager oAuthLinkManager, PermissionManager permissionManager)
     {
         this.servletModuleManager = servletModuleManager;
         this.templateRenderer = templateRenderer;
@@ -47,6 +49,7 @@ public class AdminPageModuleGenerator implements RemoteModuleGenerator
         this.webResourceManager = webResourceManager;
         this.applicationLinkService = applicationLinkService;
         this.oAuthLinkManager = oAuthLinkManager;
+        this.permissionManager = permissionManager;
     }
 
     @Override
@@ -106,6 +109,7 @@ public class AdminPageModuleGenerator implements RemoteModuleGenerator
                 return (T) new IFramePageServlet(templateRenderer,
                         oAuthLinkManager,
                         applicationLinkService,
+                        permissionManager,
                         ctx.getApplicationType(),
                         pageName,
                         fullUrl,

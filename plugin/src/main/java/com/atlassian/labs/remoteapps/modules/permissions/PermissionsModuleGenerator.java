@@ -1,8 +1,6 @@
 package com.atlassian.labs.remoteapps.modules.permissions;
 
-import com.atlassian.applinks.api.ApplicationLink;
-import com.atlassian.applinks.api.ApplicationLinkService;
-import com.atlassian.labs.remoteapps.ApiPermissionManager;
+import com.atlassian.labs.remoteapps.PermissionManager;
 import com.atlassian.labs.remoteapps.modules.RemoteAppCreationContext;
 import com.atlassian.labs.remoteapps.modules.RemoteModule;
 import com.atlassian.labs.remoteapps.modules.RemoteModuleGenerator;
@@ -21,11 +19,11 @@ import static java.util.Collections.emptySet;
  */
 public class PermissionsModuleGenerator implements RemoteModuleGenerator
 {
-    private final ApiPermissionManager apiPermissionManager;
+    private final PermissionManager permissionManager;
 
-    public PermissionsModuleGenerator(ApiPermissionManager apiPermissionManager)
+    public PermissionsModuleGenerator(PermissionManager permissionManager)
     {
-        this.apiPermissionManager = apiPermissionManager;
+        this.permissionManager = permissionManager;
     }
 
 
@@ -67,7 +65,7 @@ public class PermissionsModuleGenerator implements RemoteModuleGenerator
                         writeApis.add(api);
                     }
                 }
-                apiPermissionManager.setPermissions(ctx.getApplicationType(), readApis, writeApis);
+                permissionManager.setApiPermissions(ctx.getApplicationType(), readApis, writeApis);
             }
         };
     }

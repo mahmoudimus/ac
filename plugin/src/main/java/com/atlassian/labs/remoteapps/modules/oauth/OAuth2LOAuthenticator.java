@@ -1,6 +1,7 @@
 package com.atlassian.labs.remoteapps.modules.oauth;
 
 import com.atlassian.labs.remoteapps.OAuthLinkManager;
+import com.atlassian.labs.remoteapps.PermissionManager;
 import com.atlassian.labs.remoteapps.util.DefaultMessage;
 import com.atlassian.oauth.util.Check;
 import com.atlassian.sal.api.ApplicationProperties;
@@ -35,13 +36,15 @@ public class OAuth2LOAuthenticator implements Authenticator
     private final AuthenticationController authenticationController;
     private final ApplicationProperties applicationProperties;
     private final UserManager userManager;
+    private final PermissionManager permissionManager;
 
     public OAuth2LOAuthenticator(AuthenticationController authenticationController,
                                  ApplicationProperties applicationProperties,
-                                 OAuthLinkManager oAuthLinkManager, UserManager userManager)
+                                 OAuthLinkManager oAuthLinkManager, UserManager userManager, PermissionManager permissionManager)
     {
         this.oAuthLinkManager = oAuthLinkManager;
         this.userManager = userManager;
+        this.permissionManager = permissionManager;
         this.authenticationController = Check.notNull(authenticationController, "authenticationController");
         this.applicationProperties = Check.notNull(applicationProperties, "applicationProperties");
     }
@@ -78,6 +81,13 @@ public class OAuth2LOAuthenticator implements Authenticator
         {
             // user exists but is not allowed to login
             log.warn("Access denied to user '{}' because that user cannot login", userId);
+            sendError(response, HttpServletResponse.SC_UNAUTHORIZED, message);
+            return new Result.Failure(new DefaultMessage("Permission denied"));
+        }
+        else if (!permissionManager.canAccessApi(userId, consumerKey))
+        {
+            // user exists but is not allowed to access this remote app
+            log.warn("Access denied to user '{}' because that user is not allowed to make api calls from the remote app '{}'", userId, consumerKey);
             sendError(response, HttpServletResponse.SC_UNAUTHORIZED, message);
             return new Result.Failure(new DefaultMessage("Permission denied"));
         }

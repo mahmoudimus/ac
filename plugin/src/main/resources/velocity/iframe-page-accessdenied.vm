@@ -1,0 +1,13 @@
+<html>
+<head>
+    <title>$!title</title>
+
+    <meta name="decorator" content="$decorator"></meta>
+
+
+</head>
+
+<body>
+    <div id="errorMessage">You do not have the correct permissions to view the page $!title.</div>
+</body>
+</html>

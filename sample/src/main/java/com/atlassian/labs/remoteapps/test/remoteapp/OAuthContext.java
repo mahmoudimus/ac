@@ -110,6 +110,15 @@ public class OAuthContext
             message.validateMessage(new OAuthAccessor(host), new SimpleOAuthValidator());
             return message.getConsumerKey();
         }
+        catch (OAuthProblemException ex)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.append("Validation failed: \n");
+            sb.append("problem: ").append(ex.getProblem()).append("\n");
+            sb.append("parameters: ").append(ex.getParameters()).append("\n");
+            log.error(sb.toString());
+            throw new ServletException(ex);
+        }
         catch (OAuthException e)
         {
             throw new ServletException(e);

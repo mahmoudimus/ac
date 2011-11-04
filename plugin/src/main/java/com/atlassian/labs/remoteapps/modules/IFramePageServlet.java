@@ -5,6 +5,7 @@ import com.atlassian.applinks.api.ApplicationLinkService;
 import com.atlassian.applinks.api.ApplicationType;
 import com.atlassian.applinks.spi.application.NonAppLinksApplicationType;
 import com.atlassian.labs.remoteapps.OAuthLinkManager;
+import com.atlassian.labs.remoteapps.PermissionManager;
 import com.atlassian.plugin.webresource.WebResourceManager;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.google.common.collect.ImmutableMap;
@@ -32,6 +33,7 @@ public class IFramePageServlet extends HttpServlet
 {
     private final TemplateRenderer templateRenderer;
     private final ApplicationLinkService applicationLinkService;
+    private final PermissionManager permissionManager;
     private final NonAppLinksApplicationType applicationType;
     private final OAuthLinkManager oAuthLinkManager;
     private final WebResourceManager webResourceManager;
@@ -42,6 +44,7 @@ public class IFramePageServlet extends HttpServlet
     public IFramePageServlet(TemplateRenderer templateRenderer,
                              OAuthLinkManager oAuthLinkManager,
                              ApplicationLinkService applicationLinkService,
+                             PermissionManager permissionManager,
                              NonAppLinksApplicationType applicationType,
                              String title,
                              String iframeSrc,
@@ -50,6 +53,7 @@ public class IFramePageServlet extends HttpServlet
     {
         this.templateRenderer = templateRenderer;
         this.applicationLinkService = applicationLinkService;
+        this.permissionManager = permissionManager;
         this.applicationType = applicationType;
         this.oAuthLinkManager = oAuthLinkManager;
         this.title = title;
@@ -61,7 +65,20 @@ public class IFramePageServlet extends HttpServlet
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
     {
+        PrintWriter out = resp.getWriter();
+        resp.setContentType("text/html");
         ApplicationLink applicationLink = applicationLinkService.getPrimaryApplicationLink(applicationType.getClass());
+        if (!permissionManager.canCurrentUserAccessRemoteApp(req, applicationLink.getId().get()))
+        {
+            templateRenderer.render("velocity/iframe-page-accessdenied.vm",
+                ImmutableMap.<String, Object>of("title",
+                        title,
+                        "decorator",
+                        decorator
+                        ),
+                out);
+            return;
+        }
         String timestamp = System.currentTimeMillis() / 1000 + "";
         String nonce = System.nanoTime() + "";
         String signatureMethod = OAuth.RSA_SHA1;
@@ -80,8 +97,7 @@ public class IFramePageServlet extends HttpServlet
         }
 
         webResourceManager.requireResourcesForContext("remoteapps-iframe");
-        PrintWriter out = resp.getWriter();
-        resp.setContentType("text/html");
+
         templateRenderer.render("velocity/iframe-page.vm",
                 ImmutableMap.<String, Object>of("title",
                         title,
