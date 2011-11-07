@@ -1,0 +1,3 @@
+<application key="refapp">
+    <component key="refappProductAccessor" class="com.atlassian.labs.remoteapps.product.refapp.RefappProductAccessor" />
+</application>

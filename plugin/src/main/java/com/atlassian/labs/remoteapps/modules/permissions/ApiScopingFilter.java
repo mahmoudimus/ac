@@ -24,7 +24,6 @@ import java.util.Set;
 public class ApiScopingFilter implements Filter
 {
     private PermissionManager permissionManager;
-    private static final Set<String> READ_METHODS = ImmutableSet.of(HttpMethod.GET, HttpMethod.HEAD, "OPTIONS");
 
     public ApiScopingFilter(PermissionManager permissionManager)
     {
@@ -34,7 +33,6 @@ public class ApiScopingFilter implements Filter
     @Override
     public void init(FilterConfig filterConfig) throws ServletException
     {
-
     }
 
     @Override
@@ -45,39 +43,16 @@ public class ApiScopingFilter implements Filter
         String clientKey = extractClientKey(req);
         if (clientKey != null)
         {
-            boolean allow = false;
-            final String pathInfo = URI.create(req.getRequestURI().substring(req.getContextPath().length())).normalize().toString();
-            final String[] elements = StringUtils.split(pathInfo, '/');
-            if (elements.length > 2 && "rest".equals(elements[0]))
+            InputConsumingHttpServletRequest inputConsumingRequest = new InputConsumingHttpServletRequest(req);
+            if (!permissionManager.isRequestInApiScope(inputConsumingRequest, clientKey))
             {
-                String api = elements[1];
-                boolean writeRequest = !READ_METHODS.contains(req.getMethod());
-
-                if (writeRequest)
-                {
-                    allow = permissionManager.isApiWritable(clientKey, api);
-                }
-                else
-                {
-                    allow = permissionManager.isApiReadable(clientKey, api);
-                }
-                if (allow)
-                {
-                    chain.doFilter(request, response);
-                    return;
-                }
                 // todo: be nicer and more helpful
                 res.sendError(HttpServletResponse.SC_FORBIDDEN);
+                return;
             }
-            else
-            {
-                chain.doFilter(request, response);
-            }
+            chain.doFilter(inputConsumingRequest, response);
         }
-        else
-        {
-            chain.doFilter(request, response);
-        }
+        chain.doFilter(request, response);
 
     }
 

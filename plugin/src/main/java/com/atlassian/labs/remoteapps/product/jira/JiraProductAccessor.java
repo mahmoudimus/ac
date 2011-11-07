@@ -1,7 +1,8 @@
-package com.atlassian.labs.remoteapps.product;
+package com.atlassian.labs.remoteapps.product.jira;
 
 import com.atlassian.jira.ComponentManager;
 import com.atlassian.jira.plugin.webfragment.descriptors.JiraWebItemModuleDescriptor;
+import com.atlassian.labs.remoteapps.product.ProductAccessor;
 import com.atlassian.plugin.web.WebInterfaceManager;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 
@@ -33,5 +34,11 @@ public class JiraProductAccessor implements ProductAccessor
     public int getPreferredAdminWeight()
     {
         return 150;
+    }
+
+    @Override
+    public String getKey()
+    {
+        return "jira";
     }
 }

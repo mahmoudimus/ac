@@ -5,7 +5,9 @@ import com.atlassian.labs.remoteapps.modules.RemoteAppCreationContext;
 import com.atlassian.labs.remoteapps.modules.RemoteModule;
 import com.atlassian.labs.remoteapps.modules.RemoteModuleGenerator;
 import com.atlassian.labs.remoteapps.modules.StartableRemoteModule;
+import com.atlassian.labs.remoteapps.product.ProductAccessor;
 import com.atlassian.plugin.ModuleDescriptor;
+import com.atlassian.sal.api.ApplicationProperties;
 import org.dom4j.Element;
 
 import java.util.List;
@@ -20,10 +22,12 @@ import static java.util.Collections.emptySet;
 public class PermissionsModuleGenerator implements RemoteModuleGenerator
 {
     private final PermissionManager permissionManager;
+    private final String applicationKey;
 
-    public PermissionsModuleGenerator(PermissionManager permissionManager)
+    public PermissionsModuleGenerator(PermissionManager permissionManager, ProductAccessor productAccessor)
     {
         this.permissionManager = permissionManager;
+        this.applicationKey = productAccessor.getKey();
     }
 
 
@@ -53,19 +57,18 @@ public class PermissionsModuleGenerator implements RemoteModuleGenerator
             @Override
             public void start()
             {
-                List<String> readApis = newArrayList();
-                List<String> writeApis = newArrayList();
+                List<String> apiScopes = newArrayList();
                 for (Element e : (List<Element>)element.elements("permission"))
                 {
-                    String api = e.attributeValue("rest-api");
-                    boolean writable = Boolean.parseBoolean(e.attributeValue("write"));
-                    readApis.add(api);
-                    if (writable)
+                    String targetApp = e.attributeValue("application");
+                    if (targetApp == null || targetApp.equals(applicationKey))
                     {
-                        writeApis.add(api);
+                        String scopeKey = e.attributeValue("key");
+                        apiScopes.add(scopeKey);
+
                     }
                 }
-                permissionManager.setApiPermissions(ctx.getApplicationType(), readApis, writeApis);
+                permissionManager.setApiPermissions(ctx.getApplicationType(), apiScopes);
             }
         };
     }

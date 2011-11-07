@@ -1,0 +1,11 @@
+<application key="confluence">
+    <component key="confluenceProductAccessor"
+               class="com.atlassian.labs.remoteapps.product.confluence.ConfluenceProductAccessor"/>
+
+    <api-scope key="read_content" class="com.atlassian.labs.remoteapps.product.confluence.ReadContentScope"
+            name="Read Content">
+        <description>
+            Read spaces, blogs, and pages and associated metadata
+        </description>
+    </api-scope>
+</application>

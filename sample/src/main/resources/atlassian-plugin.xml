@@ -15,4 +15,7 @@
     </servlet-filter>
     <component-import key="templateRenderer" interface="com.atlassian.templaterenderer.TemplateRenderer" />
 
+    <junit key="all" package="com.atlassian.labs.remoteapps.test.remoteapp.junit.all" />
+    <junit key="confluence" package="com.atlassian.labs.remoteapps.test.remoteapp.junit.confluence" application="confluence"/>
+
 </atlassian-plugin>

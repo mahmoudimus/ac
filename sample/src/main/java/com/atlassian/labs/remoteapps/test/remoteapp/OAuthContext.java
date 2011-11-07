@@ -1,6 +1,7 @@
 package com.atlassian.labs.remoteapps.test.remoteapp;
 
 import com.atlassian.labs.remoteapps.test.RegistrationOnStartListener;
+import com.atlassian.labs.remoteapps.test.remoteapp.junit.XmlRpcClient;
 import com.google.common.collect.ImmutableMap;
 import net.oauth.*;
 import net.oauth.server.HttpRequestMessage;
@@ -13,12 +14,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.google.common.collect.Maps.newHashMap;
+import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
 
 /**
@@ -135,6 +134,12 @@ public class OAuthContext
 
     public void sign(HttpGet get)
     {
+        String authorization = getAuthorizationHeaderValue(get.getURI().toString(), get.getMethod());
+        get.addHeader("Authorization", authorization);
+    }
+
+    private String getAuthorizationHeaderValue(String uri, String method)
+    {
         try
         {
             final String timestamp = System.currentTimeMillis() / 1000 + "";
@@ -146,11 +151,11 @@ public class OAuthContext
                 put(OAuth.OAUTH_NONCE, nonce);
                 put(OAuth.OAUTH_TIMESTAMP, timestamp);
             }};
-            OAuthMessage oauthMessage = new OAuthMessage(get.getMethod(), get.getURI().toString(), params.entrySet());
+            OAuthMessage oauthMessage = new OAuthMessage(method, uri, params.entrySet());
             oauthMessage.sign(new OAuthAccessor(local));
-            get.addHeader("Authorization", oauthMessage.getAuthorizationHeader(null));
+            return oauthMessage.getAuthorizationHeader(null);
         }
-        catch (net.oauth.OAuthException e)
+        catch (OAuthException e)
         {
             // todo: do something better
             throw new RuntimeException("Failed to sign the request", e);
@@ -166,5 +171,11 @@ public class OAuthContext
             // this shouldn't happen unless the caller somehow passed us an invalid URI object
             throw new RuntimeException(e);
         }
+    }
+
+    public void sign(String uri, XmlRpcClient client)
+    {
+        String authorization = getAuthorizationHeaderValue(uri, "POST");
+        client.setRequestProperty("Authorization", authorization);
     }
 }

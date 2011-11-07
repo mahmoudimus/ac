@@ -3,9 +3,16 @@ package com.atlassian.labs.remoteapps;
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.applinks.api.ApplicationLinkService;
 import com.atlassian.applinks.api.ApplicationType;
+import com.atlassian.labs.remoteapps.modules.permissions.scope.ApiScope;
+import com.atlassian.labs.remoteapps.modules.permissions.scope.ApiScopeModuleDescriptor;
+import com.atlassian.plugin.PluginAccessor;
+import com.atlassian.plugin.event.PluginEventManager;
+import com.atlassian.plugin.tracker.DefaultPluginModuleTracker;
+import com.atlassian.plugin.tracker.PluginModuleTracker;
 import com.atlassian.sal.api.user.UserManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.DisposableBean;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -13,39 +20,37 @@ import java.util.List;
 /**
  *
  */
-public class PermissionManager
+public class PermissionManager implements DisposableBean
 {
     private static final Logger log = LoggerFactory.getLogger(PermissionManager.class);
     private final ApplicationLinkService applicationLinkService;
     private final OAuthLinkManager linkManager;
     private final UserManager userManager;
+    private final PluginModuleTracker<ApiScope, ApiScopeModuleDescriptor> apiScopeTracker;
 
-    public PermissionManager(ApplicationLinkService applicationLinkService, OAuthLinkManager linkManager, UserManager userManager)
+    public PermissionManager(ApplicationLinkService applicationLinkService,
+                             OAuthLinkManager linkManager,
+                             UserManager userManager,
+                             PluginEventManager pluginEventManager, PluginAccessor pluginAccessor)
     {
         this.applicationLinkService = applicationLinkService;
         this.linkManager = linkManager;
         this.userManager = userManager;
+        this.apiScopeTracker = new DefaultPluginModuleTracker<ApiScope, ApiScopeModuleDescriptor>(pluginAccessor, pluginEventManager,
+                ApiScopeModuleDescriptor.class);
     }
 
-    public void setApiPermissions(ApplicationType type, List<String> readApis, List<String> writeApis)
+    public void setApiPermissions(ApplicationType type, List<String> scopes)
     {
         ApplicationLink link = applicationLinkService.getPrimaryApplicationLink(type.getClass());
-        link.putProperty("read-apis", readApis);
-        link.putProperty("write-apis", writeApis);
-    }
-
-    public boolean isApiWritable(String consumerKey, String api)
-    {
-        ApplicationLink link = linkManager.getLinkForOAuthClientKey(consumerKey);
-        List<String> writeApis = (List<String>) link.getProperty("write-apis");
-        return writeApis != null && writeApis.contains(api);
-    }
-
-    public boolean isApiReadable(String consumerKey, String api)
-    {
-        ApplicationLink link = linkManager.getLinkForOAuthClientKey(consumerKey);
-        List<String> readApis = (List<String>) link.getProperty("read-apis");
-        return readApis != null && readApis.contains(api);
+        if (scopes.isEmpty())
+        {
+            link.removeProperty("api-scopes");
+        }
+        else
+        {
+            link.putProperty("api-scopes", scopes);
+        }
     }
 
     public boolean canCurrentUserAccessRemoteApp(HttpServletRequest request, String consumerKey)
@@ -62,5 +67,28 @@ public class PermissionManager
     {
         return canAccessRemoteApp(userId, consumerKey);
 
+    }
+
+    @Override
+    public void destroy() throws Exception
+    {
+        apiScopeTracker.close();
+    }
+
+    public boolean isRequestInApiScope(HttpServletRequest req, String clientKey)
+    {
+        ApplicationLink link = linkManager.getLinkForOAuthClientKey(clientKey);
+        List<String> apiScopes = (List<String>) link.getProperty("api-scopes");
+        if (apiScopes != null)
+        {
+            for (ApiScope scope : apiScopeTracker.getModules())
+            {
+                if (scope.allow(req))
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

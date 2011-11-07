@@ -17,7 +17,8 @@
             </public-key>
         </oauth>
         <permissions>
-            <permission rest-api="remoteapptest" />
+            <permission key="resttest" />
+            <permission application="confluence" key="read_content" />
         </permissions>
         <admin-page key="remoteAppAdmin" name="Remote App Admin" url="/remoteapp/myadmin" />
     </remote-app>

@@ -13,4 +13,6 @@ public interface ProductAccessor
 
     String getPreferredAdminSectionKey();
     int getPreferredAdminWeight();
+
+    String getKey();
 }
