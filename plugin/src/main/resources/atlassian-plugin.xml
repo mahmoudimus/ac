@@ -15,7 +15,7 @@
     </servlet-filter>
 
     <servlet-filter key="api-scoping" class="com.atlassian.labs.remoteapps.modules.permissions.ApiScopingFilter"
-            location="before-decoration">
+            location="before-login">
         <url-pattern>/*</url-pattern>
     </servlet-filter>
 

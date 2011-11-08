@@ -43,6 +43,7 @@ public class ApiScopingFilter implements Filter
         String clientKey = extractClientKey(req);
         if (clientKey != null)
         {
+            // we consume the input to allow inspection of the body via getInputStream
             InputConsumingHttpServletRequest inputConsumingRequest = new InputConsumingHttpServletRequest(req);
             if (!permissionManager.isRequestInApiScope(inputConsumingRequest, clientKey))
             {
@@ -52,7 +53,10 @@ public class ApiScopingFilter implements Filter
             }
             chain.doFilter(inputConsumingRequest, response);
         }
-        chain.doFilter(request, response);
+        else
+        {
+            chain.doFilter(request, response);
+        }
 
     }
 
