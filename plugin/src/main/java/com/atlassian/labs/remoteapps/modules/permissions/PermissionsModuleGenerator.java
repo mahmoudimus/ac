@@ -63,7 +63,7 @@ public class PermissionsModuleGenerator implements RemoteModuleGenerator
                     String targetApp = e.attributeValue("application");
                     if (targetApp == null || targetApp.equals(applicationKey))
                     {
-                        String scopeKey = e.attributeValue("key");
+                        String scopeKey = e.attributeValue("scope");
                         apiScopes.add(scopeKey);
 
                     }
