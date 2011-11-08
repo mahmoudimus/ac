@@ -5,9 +5,9 @@ import it.AbstractGroupClient;
 /**
  *
  */
-public class TestAllGroup extends AbstractGroupClient
+public class TestEveryGroup extends AbstractGroupClient
 {
-    public TestAllGroup()
+    public TestEveryGroup()
     {
         super(null);
     }

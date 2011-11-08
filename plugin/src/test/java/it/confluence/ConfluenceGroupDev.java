@@ -4,7 +4,7 @@ import it.AbstractGroupClient;
 import org.junit.Ignore;
 
 /**
- *
+ * Only runs confluence tests, used for development
  */
 public class ConfluenceGroupDev extends AbstractGroupClient
 {
