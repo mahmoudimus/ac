@@ -9,6 +9,8 @@ import com.atlassian.labs.remoteapps.product.ProductAccessor;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.sal.api.ApplicationProperties;
 import org.dom4j.Element;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Set;
@@ -19,11 +21,13 @@ import static java.util.Collections.emptySet;
 /**
  *
  */
+@Component
 public class PermissionsModuleGenerator implements RemoteModuleGenerator
 {
     private final PermissionManager permissionManager;
     private final String applicationKey;
 
+    @Autowired
     public PermissionsModuleGenerator(PermissionManager permissionManager, ProductAccessor productAccessor)
     {
         this.permissionManager = permissionManager;

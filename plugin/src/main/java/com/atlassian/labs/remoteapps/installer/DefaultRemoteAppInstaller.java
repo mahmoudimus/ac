@@ -15,6 +15,8 @@ import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -25,6 +27,7 @@ import java.util.Set;
 /**
  *
  */
+@Component
 public class DefaultRemoteAppInstaller implements RemoteAppInstaller
 {
     private final ConsumerService consumerService;
@@ -34,6 +37,7 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
 
     private static final Set<String> ALLOWED_MODULES = ImmutableSet.of("plugin-info", "remote-app");
 
+    @Autowired
     public DefaultRemoteAppInstaller(ConsumerService consumerService, RequestFactory requestFactory, PluginController pluginController, ApplicationProperties applicationProperties)
     {
         this.consumerService = consumerService;

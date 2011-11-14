@@ -5,6 +5,7 @@ import com.atlassian.applinks.api.ApplicationLinkService;
 import com.atlassian.applinks.spi.auth.AuthenticationConfigurationManager;
 import com.atlassian.labs.remoteapps.OAuthLinkManager;
 import com.atlassian.labs.remoteapps.PermissionManager;
+import com.atlassian.labs.remoteapps.descriptor.DescriptorFactory;
 import com.atlassian.labs.remoteapps.modules.IFramePageServlet;
 import com.atlassian.labs.remoteapps.modules.RemoteAppCreationContext;
 import com.atlassian.labs.remoteapps.modules.RemoteModule;
@@ -20,6 +21,8 @@ import com.atlassian.plugin.webresource.WebResourceManager;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.google.common.collect.ImmutableSet;
 import org.dom4j.Element;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.Set;
@@ -27,21 +30,24 @@ import java.util.Set;
 /**
  *
  */
+@Component
 public class AdminPageModuleGenerator implements RemoteModuleGenerator
 {
     private final ServletModuleManager servletModuleManager;
     private final TemplateRenderer templateRenderer;
     private final ProductAccessor productAccessor;
+    private final DescriptorFactory descriptorFactory;
     private final WebResourceManager webResourceManager;
     private final ApplicationLinkService applicationLinkService;
     private final OAuthLinkManager oAuthLinkManager;
     private final PermissionManager permissionManager;
 
+    @Autowired
     public AdminPageModuleGenerator(ServletModuleManager servletModuleManager,
                                     TemplateRenderer templateRenderer,
                                     ProductAccessor productAccessor,
                                     WebResourceManager webResourceManager,
-                                    ApplicationLinkService applicationLinkService, OAuthLinkManager oAuthLinkManager, PermissionManager permissionManager)
+                                    ApplicationLinkService applicationLinkService, OAuthLinkManager oAuthLinkManager, PermissionManager permissionManager, DescriptorFactory descriptorFactory)
     {
         this.servletModuleManager = servletModuleManager;
         this.templateRenderer = templateRenderer;
@@ -50,6 +56,7 @@ public class AdminPageModuleGenerator implements RemoteModuleGenerator
         this.applicationLinkService = applicationLinkService;
         this.oAuthLinkManager = oAuthLinkManager;
         this.permissionManager = permissionManager;
+        this.descriptorFactory = descriptorFactory;
     }
 
     @Override
@@ -121,7 +128,7 @@ public class AdminPageModuleGenerator implements RemoteModuleGenerator
         return descriptor;
     }
 
-    private WebItemModuleDescriptor createWebItemDescriptor(RemoteAppCreationContext ctx,
+    private ModuleDescriptor createWebItemDescriptor(RemoteAppCreationContext ctx,
                                                             Element e,
                                                             String key,
                                                             final String fullUrl,
@@ -139,7 +146,7 @@ public class AdminPageModuleGenerator implements RemoteModuleGenerator
                 addAttribute("linkId", webItemKey).
                 setText("/plugins/servlet" + localUrl);
 
-        WebItemModuleDescriptor descriptor = productAccessor.createWebItemModuleDescriptor();
+        ModuleDescriptor descriptor = descriptorFactory.createWebItemModuleDescriptor(ctx.getBundle().getBundleContext());
         descriptor.init(ctx.getPlugin(), config);
         return descriptor;
     }

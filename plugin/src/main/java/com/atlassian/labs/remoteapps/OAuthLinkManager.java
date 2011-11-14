@@ -19,6 +19,8 @@ import org.apache.axis.encoding.ser.ElementSerializer;
 import org.netbeans.lib.cvsclient.commandLine.command.log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -34,6 +36,7 @@ import static java.util.Collections.singletonList;
 /**
  *
  */
+@Component
 public class OAuthLinkManager
 {
 
@@ -51,6 +54,7 @@ public class OAuthLinkManager
     private final ApplicationProperties applicationProperties;
     private final OAuthValidator oauthValidator;
 
+    @Autowired
     public OAuthLinkManager(ServiceProviderConsumerStore serviceProviderConsumerStore,
                             AuthenticationConfigurationManager authenticationConfigurationManager,
                             ApplicationLinkService applicationLinkService,

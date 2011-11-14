@@ -13,6 +13,8 @@ import com.atlassian.oauth.util.RSAKeys;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.PluginInformation;
 import org.dom4j.Element;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.net.URI;
 import java.security.GeneralSecurityException;
@@ -24,12 +26,14 @@ import static java.util.Collections.emptySet;
 /**
  *
  */
+@Component
 public class OauthModuleGenerator implements RemoteModuleGenerator
 {
     private final ApplicationLinkService applicationLinkService;
 
     private final OAuthLinkManager oAuthLinkManager;
 
+    @Autowired
     public OauthModuleGenerator(ApplicationLinkService applicationLinkService, OAuthLinkManager oAuthLinkManager)
     {
         this.applicationLinkService = applicationLinkService;

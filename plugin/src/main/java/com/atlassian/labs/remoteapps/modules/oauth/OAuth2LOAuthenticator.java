@@ -14,6 +14,8 @@ import net.oauth.OAuthMessage;
 import net.oauth.server.OAuthServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -22,6 +24,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.Principal;
 
+@Component
 public class OAuth2LOAuthenticator implements Authenticator
 {
     /**
@@ -38,6 +41,7 @@ public class OAuth2LOAuthenticator implements Authenticator
     private final UserManager userManager;
     private final PermissionManager permissionManager;
 
+    @Autowired
     public OAuth2LOAuthenticator(AuthenticationController authenticationController,
                                  ApplicationProperties applicationProperties,
                                  OAuthLinkManager oAuthLinkManager, UserManager userManager, PermissionManager permissionManager)

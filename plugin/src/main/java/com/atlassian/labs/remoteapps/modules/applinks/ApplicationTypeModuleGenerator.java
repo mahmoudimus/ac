@@ -19,6 +19,8 @@ import com.atlassian.plugin.module.ModuleFactory;
 import org.dom4j.Element;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
@@ -31,10 +33,12 @@ import static org.objectweb.asm.Opcodes.*;
 /**
  *
  */
+@Component
 public class ApplicationTypeModuleGenerator implements RemoteModuleGenerator
 {
     private final MutatingApplicationLinkService mutatingApplicationLinkService;
 
+    @Autowired
     public ApplicationTypeModuleGenerator(MutatingApplicationLinkService mutatingApplicationLinkService)
     {
         this.mutatingApplicationLinkService = mutatingApplicationLinkService;

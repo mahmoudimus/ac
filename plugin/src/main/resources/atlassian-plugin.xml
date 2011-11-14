@@ -42,16 +42,8 @@
         <dispatcher>INCLUDE</dispatcher>
     </rest>
 
-    <component key="applicationTypeGenerator" class="com.atlassian.labs.remoteapps.modules.applinks.ApplicationTypeModuleGenerator" />
-    <component key="entityTypeGenerator" class="com.atlassian.labs.remoteapps.modules.applinks.EntityTypeModuleGenerator" />
-    <component key="adminPageGenerator" class="com.atlassian.labs.remoteapps.modules.admin.AdminPageModuleGenerator" />
-    <component key="oauthGenerator" class="com.atlassian.labs.remoteapps.modules.oauth.OauthModuleGenerator" />
-    <component key="permissionsManager" class="com.atlassian.labs.remoteapps.modules.permissions.PermissionsModuleGenerator" />
-    <component key="remoteAppInstaller" class="com.atlassian.labs.remoteapps.installer.DefaultRemoteAppInstaller" />
-    <component key="apiPermissionManager" class="com.atlassian.labs.remoteapps.PermissionManager" />
-    <component key="oauthLinkManager" class="com.atlassian.labs.remoteapps.OAuthLinkManager" />
-    <component key="startableForPlugins" class="com.atlassian.labs.remoteapps.descriptor.StartableForPlugins" public="true" interface="com.atlassian.sal.api.lifecycle.LifecycleAware" />
-    <component key="2loAuthenticator" class="com.atlassian.labs.remoteapps.modules.oauth.OAuth2LOAuthenticator" />
+    <component key="startableForPlugins" class="com.atlassian.labs.remoteapps.descriptor.StartableForPlugins" public="true"
+               interface="com.atlassian.sal.api.lifecycle.LifecycleAware" />
 
     <component-import key="templateRenderer" interface="com.atlassian.templaterenderer.TemplateRenderer"/>
     <component-import key="servletModuleManager" interface="com.atlassian.plugin.servlet.ServletModuleManager" />
@@ -68,6 +60,9 @@
     <component-import key="authenticationListener" interface="com.atlassian.sal.api.auth.AuthenticationListener" />
     <component-import key="authenticationController" interface="com.atlassian.sal.api.auth.AuthenticationController" />
     <component-import key="transactionTemplate" interface="com.atlassian.sal.api.transaction.TransactionTemplate" />
+    <component-import key="pluginEventManager" interface="com.atlassian.plugin.event.PluginEventManager" />
+    <component-import key="pluginAccessor" interface="com.atlassian.plugin.PluginAccessor" />
+    <component-import key="webResourceManager" interface="com.atlassian.plugin.webresource.WebResourceManager" />
 
     <module-type key="api-scope" class="com.atlassian.labs.remoteapps.modules.permissions.scope.ApiScopeModuleDescriptor" />
 

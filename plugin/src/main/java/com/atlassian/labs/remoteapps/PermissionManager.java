@@ -13,6 +13,8 @@ import com.atlassian.sal.api.user.UserManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -20,6 +22,7 @@ import java.util.List;
 /**
  *
  */
+@Component
 public class PermissionManager implements DisposableBean
 {
     private static final Logger log = LoggerFactory.getLogger(PermissionManager.class);
@@ -28,6 +31,7 @@ public class PermissionManager implements DisposableBean
     private final UserManager userManager;
     private final PluginModuleTracker<ApiScope, ApiScopeModuleDescriptor> apiScopeTracker;
 
+    @Autowired
     public PermissionManager(ApplicationLinkService applicationLinkService,
                              OAuthLinkManager linkManager,
                              UserManager userManager,

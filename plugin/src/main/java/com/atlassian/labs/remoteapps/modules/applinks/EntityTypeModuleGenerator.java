@@ -13,6 +13,7 @@ import com.google.common.collect.ImmutableSet;
 import org.dom4j.Element;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
+import org.springframework.stereotype.Component;
 
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
@@ -27,6 +28,7 @@ import static org.objectweb.asm.Opcodes.RETURN;
 /**
  *
  */
+@Component
 public class EntityTypeModuleGenerator implements RemoteModuleGenerator
 {
     @Override
