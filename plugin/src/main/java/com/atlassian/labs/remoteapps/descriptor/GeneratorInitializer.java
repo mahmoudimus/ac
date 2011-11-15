@@ -30,7 +30,7 @@ import static org.apache.commons.collections.MapUtils.unmodifiableMap;
 import static org.apache.commons.lang.Validate.notNull;
 
 /**
- *
+ * Manages RemoteModuleGenerators
  */
 class GeneratorInitializer
 {
@@ -67,7 +67,7 @@ class GeneratorInitializer
                 map.put(generator.getType(), generator);
             }
         }
-        generators = unmodifiableMap(map);
+        generators = Collections.unmodifiableMap(map);
         notNull(appTypeGen);
         applicationTypeModuleGenerator = appTypeGen;
         this.expected = set;

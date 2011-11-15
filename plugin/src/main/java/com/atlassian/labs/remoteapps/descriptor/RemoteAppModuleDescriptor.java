@@ -25,7 +25,7 @@ import static com.atlassian.labs.remoteapps.util.BundleUtil.findBundleForPlugin;
 import static com.google.common.collect.Sets.newHashSet;
 
 /**
- *
+ * The module descriptor for remote-app
  */
 public class RemoteAppModuleDescriptor extends AbstractModuleDescriptor<Void>
 {

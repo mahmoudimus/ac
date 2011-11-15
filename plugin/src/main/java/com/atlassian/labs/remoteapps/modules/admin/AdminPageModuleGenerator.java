@@ -25,10 +25,13 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
+import static com.atlassian.labs.remoteapps.util.Dom4jUtils.copyDescriptorXml;
+import static com.atlassian.labs.remoteapps.util.Dom4jUtils.getOptionalAttribute;
+import static com.atlassian.labs.remoteapps.util.Dom4jUtils.getRequiredAttribute;
 import static com.google.common.collect.Maps.newHashMap;
 
 /**
- *
+ * Module type for admin pages, generating a web item and servlet with iframe
  */
 @Component
 public class AdminPageModuleGenerator implements RemoteModuleGenerator
@@ -75,19 +78,17 @@ public class AdminPageModuleGenerator implements RemoteModuleGenerator
     @Override
     public RemoteModule generate(RemoteAppCreationContext ctx, Element e)
     {
-        String key = e.attributeValue("key");
-        final String url = e.attributeValue("url");
+        String key = getRequiredAttribute(e, "key");
+        final String url = getRequiredAttribute(e, "url");
         addToParams(e, "height");
         addToParams(e, "width");
 
         final String fullUrl = e.getParent().attributeValue("display-url") + url;
         String localUrl = "/" + ctx.getApplicationType().getId().get() + "/" + key;
 
-        final Set<ModuleDescriptor> descriptors = ImmutableSet.<ModuleDescriptor>of(createServletDescriptor(ctx,
-                e,
-                key,
-                fullUrl,
-                localUrl), createWebItemDescriptor(ctx, e, key, fullUrl, localUrl));
+        final Set<ModuleDescriptor> descriptors = ImmutableSet.<ModuleDescriptor>of(
+                createServletDescriptor(ctx, e, key, fullUrl, localUrl),
+                createWebItemDescriptor(ctx, e, key, fullUrl, localUrl));
         return new RemoteModule()
         {
             @Override
@@ -113,8 +114,8 @@ public class AdminPageModuleGenerator implements RemoteModuleGenerator
                                                             final String fullUrl,
                                                             String localUrl)
     {
-        final String pageName = e.attributeValue("name");
-        Element config = e.createCopy();
+        final String pageName = getRequiredAttribute(e, "name");
+        Element config = copyDescriptorXml(e);
         config.addAttribute("key", "servlet-" + key);
         config.addAttribute("class", IFramePageServlet.class.getName());
         config.addElement("url-pattern").setText(localUrl + "");
@@ -146,13 +147,13 @@ public class AdminPageModuleGenerator implements RemoteModuleGenerator
                                                             final String fullUrl,
                                                             String localUrl)
     {
-        Element config = e.createCopy();
+        Element config = copyDescriptorXml(e);
         final String webItemKey = "webitem-" + key;
         config.addAttribute("key", webItemKey);
-        config.addAttribute("section", productAccessor.getPreferredAdminSectionKey());
-        config.addAttribute("weight", String.valueOf(productAccessor.getPreferredAdminWeight()));
+        config.addAttribute("section", getOptionalAttribute(e, "section", productAccessor.getPreferredAdminSectionKey()));
+        config.addAttribute("weight", getOptionalAttribute(e, "weight", productAccessor.getPreferredAdminWeight()));
 
-        String name = e.attributeValue("name");
+        String name = getRequiredAttribute(e, "name");
         config.addElement("label").setText(name);
         config.addElement("link").
                 addAttribute("linkId", webItemKey).

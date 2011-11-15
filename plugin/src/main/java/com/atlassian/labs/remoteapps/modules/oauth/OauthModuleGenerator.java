@@ -12,6 +12,7 @@ import com.atlassian.oauth.ServiceProvider;
 import com.atlassian.oauth.util.RSAKeys;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.PluginInformation;
+import com.atlassian.plugin.PluginParseException;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -21,10 +22,11 @@ import java.security.GeneralSecurityException;
 import java.security.PublicKey;
 import java.util.Set;
 
+import static com.atlassian.labs.remoteapps.util.Dom4jUtils.*;
 import static java.util.Collections.emptySet;
 
 /**
- *
+ * Sets up a 2LO connection to allow incoming requests from the remote app
  */
 @Component
 public class OauthModuleGenerator implements RemoteModuleGenerator
@@ -55,15 +57,15 @@ public class OauthModuleGenerator implements RemoteModuleGenerator
     @Override
     public RemoteModule generate(final RemoteAppCreationContext ctx, Element e)
     {
-        final String key = e.attributeValue("key") != null ? e.attributeValue("key") : ctx.getApplicationType().getId().get();
+        final String key = getOptionalAttribute(e, "key", ctx.getApplicationType().getId().get());
         final PluginInformation pluginInfo = ctx.getPlugin().getPluginInformation();
         final String name = ctx.getApplicationType().getI18nKey();
         final String description = pluginInfo.getDescription();
-        final URI callback = URI.create(e.attributeValue("callback"));
-        final PublicKey publicKey = getPublicKey(e.element("public-key").getTextTrim());
-        final URI requestTokenUrl = extractOptionalUri(e, "request-token-url");
-        final URI accessTokenUrl = extractOptionalUri(e, "access-token-url");
-        final URI authorizeUrl = extractOptionalUri(e, "authorize-url");
+        final URI callback = getRequiredUriAttribute(e, "callback");
+        final PublicKey publicKey = getPublicKey(getRequiredElementText(e, "public-key"));
+        final URI requestTokenUrl = getOptionalUriAttribute(e, "request-token-url");
+        final URI accessTokenUrl = getOptionalUriAttribute(e, "access-token-url");
+        final URI authorizeUrl = getOptionalUriAttribute(e, "authorize-url");
 
         return new StartableRemoteModule()
         {
@@ -87,20 +89,9 @@ public class OauthModuleGenerator implements RemoteModuleGenerator
         };
     }
 
-    private URI extractOptionalUri(Element e, String property)
-    {
-        String value = e.attributeValue(property);
-        if (value != null)
-        {
-            return URI.create(value);
-        }
-        return null;
-    }
-
-
     protected final PublicKey getPublicKey(String publicKeyText)
     {
-        PublicKey publicKey = null;
+        PublicKey publicKey;
         try
         {
             if (publicKeyText.startsWith("-----BEGIN CERTIFICATE-----"))
@@ -114,7 +105,7 @@ public class OauthModuleGenerator implements RemoteModuleGenerator
         }
         catch (GeneralSecurityException e)
         {
-            throw new RuntimeException("Invalid public key", e);
+            throw new PluginParseException("Invalid public key", e);
         }
         return publicKey;
     }

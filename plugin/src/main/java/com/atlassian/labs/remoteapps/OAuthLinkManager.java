@@ -34,7 +34,7 @@ import static com.google.common.collect.Maps.newHashMap;
 import static java.util.Collections.singletonList;
 
 /**
- *
+ * Manages oauth link operations
  */
 @Component
 public class OAuthLinkManager
@@ -112,16 +112,21 @@ public class OAuthLinkManager
         final OAuthAccessor accessor = new OAuthAccessor(oauthConsumer);
         if (log.isDebugEnabled())
         {
-            StringBuilder sb = new StringBuilder("Validating incoming OAuth 2LO request:\n");
-            sb.append("\turl: ").append(message.URL.toString()).append("\n");
-            sb.append("\tmethod: ").append(message.method.toString()).append("\n");
-            for (Map.Entry<String,String> entry : message.getParameters())
-            {
-                sb.append("\t").append(entry.getKey()).append(": ").append(entry.getValue()).append("\n");
-            }
-            log.debug(sb.toString());
+            printMessageToDebug(message);
         }
         oauthValidator.validateMessage(message, accessor);
+    }
+
+    private void printMessageToDebug(OAuthMessage message) throws IOException
+    {
+        StringBuilder sb = new StringBuilder("Validating incoming OAuth 2LO request:\n");
+        sb.append("\turl: ").append(message.URL).append("\n");
+        sb.append("\tmethod: ").append(message.method).append("\n");
+        for (Map.Entry<String,String> entry : message.getParameters())
+        {
+            sb.append("\t").append(entry.getKey()).append(": ").append(entry.getValue()).append("\n");
+        }
+        log.debug(sb.toString());
     }
 
     public ServiceProvider getServiceProvider(ApplicationLink link)
@@ -154,19 +159,24 @@ public class OAuthLinkManager
         params.put("xdm_p", singletonList("1"));
         if (log.isDebugEnabled())
         {
-            StringBuilder sb = new StringBuilder();
-            sb.append("Sigining outgoing with: \n");
-            for (Map.Entry<String,List<String>> entry : params.entrySet())
-            {
-                sb.append("\t").append(entry.getKey()).append(": ").append(entry.getValue().toString()).append("\n");
-            }
-            log.debug(sb.toString());
+            dumpParamsToSign(params);
         }
         ServiceProvider serviceProvider = getServiceProvider(link);
         Request oAuthRequest = new Request(Request.HttpMethod.valueOf(method),
                 URI.create(url), convertParameters(params));
         final com.atlassian.oauth.Request signedRequest = consumerService.sign(oAuthRequest, serviceProvider);
         return OAuthHelper.asOAuthMessage(signedRequest);
+    }
+
+    private void dumpParamsToSign(Map<String, List<String>> params)
+    {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Sigining outgoing with: \n");
+        for (Map.Entry<String,List<String>> entry : params.entrySet())
+        {
+            sb.append("\t").append(entry.getKey()).append(": ").append(entry.getValue().toString()).append("\n");
+        }
+        log.debug(sb.toString());
     }
 
     private List<com.atlassian.oauth.Request.Parameter> convertParameters(Map<String,List<String>> reqParameters)

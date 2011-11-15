@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- *
+ * Handles the remote app installation dance
  */
 @Component
 public class DefaultRemoteAppInstaller implements RemoteAppInstaller
@@ -38,7 +38,11 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
     private static final Set<String> ALLOWED_MODULES = ImmutableSet.of("plugin-info", "remote-app");
 
     @Autowired
-    public DefaultRemoteAppInstaller(ConsumerService consumerService, RequestFactory requestFactory, PluginController pluginController, ApplicationProperties applicationProperties)
+    public DefaultRemoteAppInstaller(ConsumerService consumerService,
+                                     RequestFactory requestFactory,
+                                     PluginController pluginController,
+                                     ApplicationProperties applicationProperties
+    )
     {
         this.consumerService = consumerService;
         this.requestFactory = requestFactory;
@@ -53,61 +57,67 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
         Request request = requestFactory.createRequest(Request.MethodType.POST, registrationUrl);
         Consumer consumer = consumerService.getConsumer();
 
-        request.addRequestParameters("token", registrationSecret, "key", consumer.getKey(), "publicKey", RSAKeys.toPemEncoding(consumer.getPublicKey()), "description", consumer.getDescription(), "requestTokenUrl", applicationProperties.getBaseUrl() + "/plugins/servlet/oauth/request-token", "accessTokenUrl", applicationProperties.getBaseUrl() + "/plugins/servlet/oauth/access-token", "authorizeUrl", applicationProperties.getBaseUrl() + "/plugins/servlet/oauth/authorize");
+        request.addRequestParameters(
+                "token", registrationSecret,
+                "key", consumer.getKey(),
+                "publicKey", RSAKeys.toPemEncoding(consumer.getPublicKey()),
+                "description", consumer.getDescription(),
+                "requestTokenUrl", applicationProperties.getBaseUrl() + "/plugins/servlet/oauth/request-token",
+                "accessTokenUrl", applicationProperties.getBaseUrl() + "/plugins/servlet/oauth/access-token",
+                "authorizeUrl", applicationProperties.getBaseUrl() + "/plugins/servlet/oauth/authorize");
         try
         {
-            request.execute(new ResponseHandler() {
+            request.execute(new ResponseHandler()
+            {
                 @Override
                 public void handle(Response response) throws ResponseException
                 {
                     String pluginXml = response.getResponseBodyAsString();
                     validatePluginXml(registrationUrl, pluginXml);
                     JarPluginArtifact jar = createJarPluginArtifact(registrationUri.getHost(), pluginXml);
-
-                    // todo: validate remote app url,
                     pluginController.installPlugins(jar);
                 }
             });
         }
         catch (ResponseException e)
         {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            throw new InstallationFailedException(e);
         }
     }
 
     private void validatePluginXml(String registrationUrl, String pluginXml)
     {
-        Document doc = null;
+        Document doc;
         try
         {
             doc = new SAXReader().read(new StringReader(pluginXml));
         }
         catch (DocumentException e)
         {
-            throw new PluginParseException("Invalid plugin xml: \n" + pluginXml, e);
+            throw new InstallationFailedException("Invalid plugin xml: \n" + pluginXml, e);
         }
         Element root = doc.getRootElement();
         if (!"2".equals(root.attributeValue("plugins-version")))
         {
-            throw new PluginParseException("Plugins version must be 2");
+            throw new InstallationFailedException("Plugins version must be 2");
         }
-        for (Element e : ((List<Element>)root.elements()))
+        for (Element e : ((List<Element>) root.elements()))
         {
             if (!ALLOWED_MODULES.contains(e.getName()))
             {
-                throw new PluginParseException("Illegal module: " + e.getName());
+                throw new InstallationFailedException("Illegal module: " + e.getName());
             }
         }
 
         if (root.element("remote-app").attribute("rpc-url") != null)
         {
-            throw new PluginParseException("rpc-url not allowed");
+            throw new InstallationFailedException("rpc-url not allowed");
         }
 
         String displayUrl = root.element("remote-app").attributeValue("display-url");
         if (displayUrl == null || !registrationUrl.startsWith(displayUrl))
         {
-            throw new PluginParseException("Invalid display-url '" + displayUrl + "'");
+            throw new InstallationFailedException("display-url '" + displayUrl + "' must match registration URL");
         }
     }
 

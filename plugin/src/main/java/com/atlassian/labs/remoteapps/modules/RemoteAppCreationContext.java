@@ -8,7 +8,7 @@ import com.atlassian.plugin.Plugin;
 import org.osgi.framework.Bundle;
 
 /**
- *
+ * Context for remote app creation and initialization
  */
 public class RemoteAppCreationContext
 {

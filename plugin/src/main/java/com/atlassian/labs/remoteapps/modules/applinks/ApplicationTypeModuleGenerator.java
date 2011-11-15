@@ -27,11 +27,12 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Set;
 
+import static com.atlassian.labs.remoteapps.util.Dom4jUtils.*;
 import static com.google.common.collect.Sets.newHashSet;
 import static org.objectweb.asm.Opcodes.*;
 
 /**
- *
+ * Generates application-type modules
  */
 @Component
 public class ApplicationTypeModuleGenerator implements RemoteModuleGenerator
@@ -61,7 +62,9 @@ public class ApplicationTypeModuleGenerator implements RemoteModuleGenerator
     {
         AppTypesClassLoader appTypesClassLoader = new AppTypesClassLoader();
         RemoteAppApplicationType applicationType = createApplicationType(appTypesClassLoader, element);
-        return new ApplicationTypeModule(applicationType, createApplicationTypeDescriptor(appTypesClassLoader, ctx, applicationType, element), mutatingApplicationLinkService);
+        return new ApplicationTypeModule(applicationType,
+                createApplicationTypeDescriptor(appTypesClassLoader, ctx, applicationType, element),
+                mutatingApplicationLinkService);
 
     }
 
@@ -69,49 +72,58 @@ public class ApplicationTypeModuleGenerator implements RemoteModuleGenerator
     {
         try
         {
-            String key = element.attributeValue("key");
-            Class<? extends RemoteAppApplicationType> applicationTypeClass = appTypesClassLoader.generateApplicationType(key);
-            URI icon = element.attribute("icon") != null ? new URI(element.attributeValue("icon")) : null;
-            String label = element.attributeValue("i18n-name-key");
+            String key = getRequiredAttribute(element, "key");
+            Class<? extends RemoteAppApplicationType> applicationTypeClass = appTypesClassLoader.generateApplicationType(
+                    key);
+            URI icon = getOptionalUriAttribute(element, "icon-url");
+            String label = getRequiredAttribute(element, "name");
             TypeId appId = new TypeId(key);
-            String displayUrl = element.attributeValue("display-url");
-            String rpcUrl = element.attributeValue("rpc-url");
-            rpcUrl = rpcUrl != null ? rpcUrl : displayUrl;
-            ApplicationLinkDetails details = ApplicationLinkDetails.builder().displayUrl(new URI(displayUrl)).rpcUrl(rpcUrl != null ? new URI(rpcUrl) : new URI(displayUrl)).isPrimary(true).name(label).build();
-            return applicationTypeClass.getConstructor(TypeId.class, String.class, URI.class, ApplicationLinkDetails.class).newInstance(appId, label, icon, details);
-        }
-        catch (URISyntaxException e)
-        {
-            throw new RuntimeException(e);
+            URI displayUrl = getRequiredUriAttribute(element, "display-url");
+            URI rpcUrl = displayUrl;
+            ApplicationLinkDetails details = ApplicationLinkDetails.builder()
+                                                                   .displayUrl(displayUrl)
+                                                                   .rpcUrl(rpcUrl)
+                                                                   .isPrimary(true)
+                                                                   .name(label)
+                                                                   .build();
+            return applicationTypeClass.getConstructor(TypeId.class, String.class, URI.class,
+                    ApplicationLinkDetails.class).newInstance(appId, label, icon, details);
         }
         catch (NoSuchMethodException e)
         {
-            throw new RuntimeException(e);
+            throw new PluginParseException(e);
         }
         catch (InvocationTargetException e)
         {
-            throw new RuntimeException(e);
+            throw new PluginParseException(e);
         }
         catch (InstantiationException e)
         {
-            throw new RuntimeException(e);
+            throw new PluginParseException(e);
         }
         catch (IllegalAccessException e)
         {
-            throw new RuntimeException(e);
+            throw new PluginParseException(e);
         }
     }
 
-    private ModuleDescriptor<ApplicationType> createApplicationTypeDescriptor(AppTypesClassLoader appTypesClassLoader, RemoteAppCreationContext ctx, final RemoteAppApplicationType applicationType, Element element)
+    private ModuleDescriptor<ApplicationType> createApplicationTypeDescriptor(AppTypesClassLoader appTypesClassLoader,
+                                                                              RemoteAppCreationContext ctx,
+                                                                              final RemoteAppApplicationType applicationType,
+                                                                              Element element
+    )
     {
-        final Class<? extends RemoteManifestProducer> manifestProducerClass = appTypesClassLoader.generateManifestProducer(applicationType.getId().get(), applicationType.getI18nKey());
+        final Class<? extends RemoteManifestProducer> manifestProducerClass = appTypesClassLoader.generateManifestProducer(
+                applicationType.getId().get(), applicationType.getI18nKey());
 
-        Element desc = element.createCopy();
+        Element desc = copyDescriptorXml(element);
+        copyRequiredAttributes(element, desc, "icon-url", "display-url");
         desc.addAttribute("key", getGeneratedApplicationTypeModuleKey(applicationType.getId().get()));
         desc.addAttribute("class", applicationType.getClass().getName());
         desc.addElement("manifest-producer").addAttribute("class", manifestProducerClass.getName());
 
-        Class<? extends ModuleDescriptor> descClass = ctx.getModuleDescriptorFactory().getModuleDescriptorClass("applinks-application-type");
+        Class<? extends ModuleDescriptor> descClass = ctx.getModuleDescriptorFactory()
+                                                         .getModuleDescriptorClass("applinks-application-type");
         try
         {
             ModuleDescriptor descriptor = descClass.getConstructor(ModuleFactory.class).newInstance(new ModuleFactory()
@@ -141,19 +153,19 @@ public class ApplicationTypeModuleGenerator implements RemoteModuleGenerator
         }
         catch (InstantiationException e)
         {
-            throw new RuntimeException(e);
+            throw new PluginParseException(e);
         }
         catch (IllegalAccessException e)
         {
-            throw new RuntimeException(e);
+            throw new PluginParseException(e);
         }
         catch (InvocationTargetException e)
         {
-            throw new RuntimeException(e);
+            throw new PluginParseException(e);
         }
         catch (NoSuchMethodException e)
         {
-            throw new RuntimeException(e);
+            throw new PluginParseException(e);
         }
     }
 
@@ -175,23 +187,29 @@ public class ApplicationTypeModuleGenerator implements RemoteModuleGenerator
             String genClassName = "generatedApplicationType/" + key + "/_type";
             ClassWriter cw = new ClassWriter(0);
             MethodVisitor mv;
-            cw.visit(V1_6, ACC_PUBLIC + ACC_SUPER, genClassName, null, "com/atlassian/labs/remoteapps/modules/applinks/RemoteAppApplicationType", null);
+            cw.visit(V1_6, ACC_PUBLIC + ACC_SUPER, genClassName, null,
+                    "com/atlassian/labs/remoteapps/modules/applinks/RemoteAppApplicationType", null);
 
-            mv = cw.visitMethod(ACC_PUBLIC, "<init>", "(Lcom/atlassian/applinks/spi/application/TypeId;Ljava/lang/String;Ljava/net/URI;Lcom/atlassian/applinks/spi/link/ApplicationLinkDetails;)V", null, null);
+            mv = cw.visitMethod(ACC_PUBLIC, "<init>",
+                    "(Lcom/atlassian/applinks/spi/application/TypeId;Ljava/lang/String;Ljava/net/URI;Lcom/atlassian/applinks/spi/link/ApplicationLinkDetails;)V",
+                    null, null);
             mv.visitCode();
             mv.visitVarInsn(ALOAD, 0);
             mv.visitVarInsn(ALOAD, 1);
             mv.visitVarInsn(ALOAD, 2);
             mv.visitVarInsn(ALOAD, 3);
             mv.visitVarInsn(ALOAD, 4);
-            mv.visitMethodInsn(INVOKESPECIAL, "com/atlassian/labs/remoteapps/modules/applinks/RemoteAppApplicationType", "<init>", "(Lcom/atlassian/applinks/spi/application/TypeId;Ljava/lang/String;Ljava/net/URI;Lcom/atlassian/applinks/spi/link/ApplicationLinkDetails;)V");
+            mv.visitMethodInsn(INVOKESPECIAL, "com/atlassian/labs/remoteapps/modules/applinks/RemoteAppApplicationType",
+                    "<init>",
+                    "(Lcom/atlassian/applinks/spi/application/TypeId;Ljava/lang/String;Ljava/net/URI;Lcom/atlassian/applinks/spi/link/ApplicationLinkDetails;)V");
             mv.visitInsn(RETURN);
             mv.visitMaxs(5, 5);
             mv.visitEnd();
 
             cw.visitEnd();
             byte[] b = cw.toByteArray();
-            return (Class<? extends RemoteAppApplicationType>) defineClass(genClassName.replace("/", "."), b, 0, b.length);
+            return (Class<? extends RemoteAppApplicationType>) defineClass(genClassName.replace("/", "."), b, 0,
+                    b.length);
         }
 
         public Class<? extends RemoteManifestProducer> generateManifestProducer(String typeId, String name)
@@ -200,7 +218,8 @@ public class ApplicationTypeModuleGenerator implements RemoteModuleGenerator
             ClassWriter cw = new ClassWriter(0);
             MethodVisitor mv;
 
-            cw.visit(V1_5, ACC_PUBLIC + ACC_SUPER, genClassName, null, "com/atlassian/labs/remoteapps/modules/applinks/RemoteManifestProducer", null);
+            cw.visit(V1_5, ACC_PUBLIC + ACC_SUPER, genClassName, null,
+                    "com/atlassian/labs/remoteapps/modules/applinks/RemoteManifestProducer", null);
 
             // constructor that encodes the parameters in the constructor super call
             mv = cw.visitMethod(ACC_PUBLIC, "<init>", "()V", null, null);
@@ -209,16 +228,19 @@ public class ApplicationTypeModuleGenerator implements RemoteModuleGenerator
             mv.visitTypeInsn(NEW, "com/atlassian/applinks/spi/application/TypeId");
             mv.visitInsn(DUP);
             mv.visitLdcInsn(typeId);
-            mv.visitMethodInsn(INVOKESPECIAL, "com/atlassian/applinks/spi/application/TypeId", "<init>", "(Ljava/lang/String;)V");
+            mv.visitMethodInsn(INVOKESPECIAL, "com/atlassian/applinks/spi/application/TypeId", "<init>",
+                    "(Ljava/lang/String;)V");
             mv.visitLdcInsn(name);
-            mv.visitMethodInsn(INVOKESPECIAL, "com/atlassian/labs/remoteapps/modules/applinks/RemoteManifestProducer", "<init>", "(Lcom/atlassian/applinks/spi/application/TypeId;Ljava/lang/String;)V");
+            mv.visitMethodInsn(INVOKESPECIAL, "com/atlassian/labs/remoteapps/modules/applinks/RemoteManifestProducer",
+                    "<init>", "(Lcom/atlassian/applinks/spi/application/TypeId;Ljava/lang/String;)V");
             mv.visitInsn(RETURN);
             mv.visitMaxs(4, 1);
             mv.visitEnd();
 
             cw.visitEnd();
             byte[] b = cw.toByteArray();
-            return (Class<? extends RemoteManifestProducer>) defineClass(genClassName.replace("/", "."), b, 0, b.length);
+            return (Class<? extends RemoteManifestProducer>) defineClass(genClassName.replace("/", "."), b, 0,
+                    b.length);
         }
     }
 
@@ -233,7 +255,7 @@ public class ApplicationTypeModuleGenerator implements RemoteModuleGenerator
         @Override
         public ContainerAccessor getContainerAccessor()
         {
-            return((ContainerManagedPlugin) getDelegate()).getContainerAccessor();
+            return ((ContainerManagedPlugin) getDelegate()).getContainerAccessor();
         }
     }
 }

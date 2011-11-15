@@ -19,7 +19,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
- *
+ * Provides the aggregated js for iframes
  */
 public class StaticResourcesFilter implements Filter
 {

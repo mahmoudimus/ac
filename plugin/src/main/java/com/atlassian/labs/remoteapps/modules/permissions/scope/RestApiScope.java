@@ -12,7 +12,7 @@ import java.util.Locale;
 import static com.google.common.collect.Collections2.transform;
 
 /**
- *
+ * An api scope implementation for REST resources
  */
 public class RestApiScope implements ApiScope
 {
@@ -76,21 +76,6 @@ public class RestApiScope implements ApiScope
         public String getName()
         {
             return name;
-        }
-
-        public String getBasePath()
-        {
-            return basePath;
-        }
-
-        public Iterable<String> getMethods()
-        {
-            return methods;
-        }
-
-        public Iterable<String> getVersions()
-        {
-            return versions;
         }
 
         public boolean match(String name, String version, String path, String method)

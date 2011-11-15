@@ -1,7 +1,5 @@
 package com.atlassian.labs.remoteapps.descriptor;
 
-import com.atlassian.labs.remoteapps.modules.RemoteModule;
-import com.atlassian.labs.remoteapps.modules.StartableRemoteModule;
 import com.atlassian.plugin.event.PluginEventListener;
 import com.atlassian.plugin.event.PluginEventManager;
 import com.atlassian.plugin.event.events.PluginEnabledEvent;
@@ -13,7 +11,7 @@ import org.springframework.beans.factory.DisposableBean;
 import java.util.Iterator;
 
 /**
- *
+ * Handles executing runnables when the plugin has been loaded and the system is fully up
  */
 public class StartableForPlugins implements LifecycleAware, DisposableBean
 {

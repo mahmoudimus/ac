@@ -19,7 +19,8 @@ import java.net.URI;
 import java.util.Set;
 
 /**
- *
+ * A filter to restrict incoming requests unless they have been authorized via api scopes.  Only handles 2LO-authenticated
+ * requests by looking for the client key as a request attribute.
  */
 public class ApiScopingFilter implements Filter
 {
@@ -47,8 +48,7 @@ public class ApiScopingFilter implements Filter
             InputConsumingHttpServletRequest inputConsumingRequest = new InputConsumingHttpServletRequest(req);
             if (!permissionManager.isRequestInApiScope(inputConsumingRequest, clientKey))
             {
-                // todo: be nicer and more helpful
-                res.sendError(HttpServletResponse.SC_FORBIDDEN);
+                res.sendError(HttpServletResponse.SC_FORBIDDEN, "Request not in an authorized API scope");
                 return;
             }
             chain.doFilter(inputConsumingRequest, response);

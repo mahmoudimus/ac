@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
 /**
- *
+ * Fixes the authentication header to allows a BASIC WWW-Authenticate header value
  */
 public class FixAuthenticateHeaderFilter implements Filter
 {

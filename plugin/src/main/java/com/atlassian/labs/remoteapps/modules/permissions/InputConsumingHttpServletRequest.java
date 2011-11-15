@@ -10,7 +10,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 /**
- *
+ * Consumes the input stream for a request, allowing multiple executions
  */
 public class InputConsumingHttpServletRequest extends HttpServletRequestWrapper
 {

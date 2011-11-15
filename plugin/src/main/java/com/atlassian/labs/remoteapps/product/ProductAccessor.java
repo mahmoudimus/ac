@@ -5,7 +5,7 @@ import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import java.security.Principal;
 
 /**
- *
+ * Product-specific accessors
  */
 public interface ProductAccessor
 {

@@ -20,12 +20,13 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
- *
+ * Handles permissions for remote app operations
  */
 @Component
 public class PermissionManager implements DisposableBean
 {
     private static final Logger log = LoggerFactory.getLogger(PermissionManager.class);
+    public static final String API_SCOPES_LINK_KEY = "api-scopes";
     private final ApplicationLinkService applicationLinkService;
     private final OAuthLinkManager linkManager;
     private final UserManager userManager;
@@ -49,11 +50,11 @@ public class PermissionManager implements DisposableBean
         ApplicationLink link = applicationLinkService.getPrimaryApplicationLink(type.getClass());
         if (scopes.isEmpty())
         {
-            link.removeProperty("api-scopes");
+            link.removeProperty(API_SCOPES_LINK_KEY);
         }
         else
         {
-            link.putProperty("api-scopes", scopes);
+            link.putProperty(API_SCOPES_LINK_KEY, scopes);
         }
     }
 
@@ -82,7 +83,7 @@ public class PermissionManager implements DisposableBean
     public boolean isRequestInApiScope(HttpServletRequest req, String clientKey)
     {
         ApplicationLink link = linkManager.getLinkForOAuthClientKey(clientKey);
-        List<String> apiScopes = (List<String>) link.getProperty("api-scopes");
+        List<String> apiScopes = (List<String>) link.getProperty(API_SCOPES_LINK_KEY);
         if (apiScopes != null)
         {
             for (ApiScope scope : apiScopeTracker.getModules())

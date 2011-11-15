@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Set;
 
 /**
- *
+ * Module type for applink application-types
  */
 public class ApplicationTypeModule implements ClosableRemoteModule, StartableRemoteModule
 {
@@ -26,7 +26,10 @@ public class ApplicationTypeModule implements ClosableRemoteModule, StartableRem
     private final Set<ModuleDescriptor> descriptors;
     private final MutatingApplicationLinkService applicationLinkService;
 
-    public ApplicationTypeModule(RemoteAppApplicationType applicationType, ModuleDescriptor<ApplicationType> applicationTypeDescriptor, MutatingApplicationLinkService mutatingApplicationLinkService)
+    public ApplicationTypeModule(RemoteAppApplicationType applicationType,
+                                 ModuleDescriptor<ApplicationType> applicationTypeDescriptor,
+                                 MutatingApplicationLinkService mutatingApplicationLinkService
+    )
     {
         this.applicationType = applicationType;
         this.descriptors = ImmutableSet.<ModuleDescriptor>of(applicationTypeDescriptor);
@@ -47,7 +50,8 @@ public class ApplicationTypeModule implements ClosableRemoteModule, StartableRem
         if (link == null)
         {
             log.info("Creating an application link for the remote app type " + applicationType.getId());
-            final ApplicationId applicationId = ApplicationIdUtil.generate(applicationType.getDefaultDetails().getRpcUrl());
+            final ApplicationId applicationId = ApplicationIdUtil.generate(applicationType.getDefaultDetails()
+                                                                                          .getRpcUrl());
             try
             {
                 if (applicationLinkService.getApplicationLink(applicationId) == null)

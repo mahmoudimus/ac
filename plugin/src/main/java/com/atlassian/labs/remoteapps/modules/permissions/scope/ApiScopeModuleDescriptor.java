@@ -4,7 +4,7 @@ import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
 import com.atlassian.plugin.module.ModuleFactory;
 
 /**
- *
+ * A module type for api scopes, usually api-scope
  */
 public class ApiScopeModuleDescriptor extends AbstractModuleDescriptor<ApiScope>
 {

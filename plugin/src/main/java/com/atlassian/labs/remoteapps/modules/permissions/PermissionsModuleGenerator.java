@@ -15,11 +15,13 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Set;
 
+import static com.atlassian.labs.remoteapps.util.Dom4jUtils.getOptionalAttribute;
+import static com.atlassian.labs.remoteapps.util.Dom4jUtils.getRequiredAttribute;
 import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Collections.emptySet;
 
 /**
- *
+ * Allows a remote app to declare multiple permissions, usually api scopes
  */
 @Component
 public class PermissionsModuleGenerator implements RemoteModuleGenerator
@@ -64,10 +66,10 @@ public class PermissionsModuleGenerator implements RemoteModuleGenerator
                 List<String> apiScopes = newArrayList();
                 for (Element e : (List<Element>)element.elements("permission"))
                 {
-                    String targetApp = e.attributeValue("application");
+                    String targetApp = getOptionalAttribute(e, "application", null);
                     if (targetApp == null || targetApp.equals(applicationKey))
                     {
-                        String scopeKey = e.attributeValue("scope");
+                        String scopeKey = getRequiredAttribute(e, "scope");
                         apiScopes.add(scopeKey);
 
                     }

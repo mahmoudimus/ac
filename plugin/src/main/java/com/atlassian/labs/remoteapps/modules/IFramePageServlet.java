@@ -28,7 +28,7 @@ import static com.google.common.collect.Maps.newHashMap;
 import static java.util.Collections.singletonList;
 
 /**
- *
+ * A servlet that loads its content from a remote app's iframe
  */
 public class IFramePageServlet extends HttpServlet
 {
@@ -75,24 +75,14 @@ public class IFramePageServlet extends HttpServlet
         if (!permissionManager.canCurrentUserAccessRemoteApp(req, applicationLink.getId().get()))
         {
             templateRenderer.render("velocity/iframe-page-accessdenied.vm",
-                ImmutableMap.<String, Object>of("title",
-                        title,
-                        "decorator",
-                        decorator
+                ImmutableMap.<String, Object>of(
+                        "title", title,
+                        "decorator", decorator
                         ),
                 out);
             return;
         }
-        String timestamp = System.currentTimeMillis() / 1000 + "";
-        String nonce = System.nanoTime() + "";
-        String signatureMethod = OAuth.RSA_SHA1;
-        String oauthVersion = "1.0";
-
-        OAuthMessage message = oAuthLinkManager.sign(applicationLink, "GET", iframeSrc, ImmutableMap.<String, List<String>>of(
-                OAuth.OAUTH_SIGNATURE_METHOD, singletonList(signatureMethod),
-                OAuth.OAUTH_NONCE, singletonList(nonce),
-                OAuth.OAUTH_VERSION, singletonList(oauthVersion),
-                OAuth.OAUTH_TIMESTAMP, singletonList(timestamp)));
+        OAuthMessage message = signIframeUrl(applicationLink);
 
         UriBuilder uriBuilder = UriBuilder.fromUri(iframeSrc);
         for (Map.Entry<String,String> entry : message.getParameters())
@@ -109,5 +99,17 @@ public class IFramePageServlet extends HttpServlet
         ctx.put("decorator", decorator);
 
         templateRenderer.render("velocity/iframe-page.vm", ctx, out);
+    }
+
+    private OAuthMessage signIframeUrl(ApplicationLink applicationLink)
+    {
+        String timestamp = System.currentTimeMillis() / 1000 + "";
+        String nonce = System.nanoTime() + "";
+        String signatureMethod = OAuth.RSA_SHA1;
+        String oauthVersion = "1.0";
+
+        return oAuthLinkManager.sign(applicationLink, "GET", iframeSrc, ImmutableMap.<String, List<String>>of(
+                OAuth.OAUTH_SIGNATURE_METHOD, singletonList(signatureMethod), OAuth.OAUTH_NONCE, singletonList(nonce),
+                OAuth.OAUTH_VERSION, singletonList(oauthVersion), OAuth.OAUTH_TIMESTAMP, singletonList(timestamp)));
     }
 }

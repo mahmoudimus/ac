@@ -10,6 +10,7 @@ var RA = (function() {
         socket.postMessage(JSON.stringify({
             id : 'init'
         }));
+
     };
 
     RA.resize = function(width, height) {

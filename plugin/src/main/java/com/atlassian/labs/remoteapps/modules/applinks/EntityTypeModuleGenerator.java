@@ -20,13 +20,14 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Set;
 
+import static com.atlassian.labs.remoteapps.util.Dom4jUtils.*;
 import static com.google.common.collect.Sets.newHashSet;
 import static org.objectweb.asm.Opcodes.*;
 import static org.objectweb.asm.Opcodes.INVOKESPECIAL;
 import static org.objectweb.asm.Opcodes.RETURN;
 
 /**
- *
+ * Creates applink entity types
  */
 @Component
 public class EntityTypeModuleGenerator implements RemoteModuleGenerator
@@ -63,42 +64,38 @@ public class EntityTypeModuleGenerator implements RemoteModuleGenerator
     {
         try
         {
-            String key = element.attributeValue("key");
+            String key = getRequiredAttribute(element, "key");
             Class<? extends RemoteAppEntityType> entityTypeClass = appTypesClassLoader.generateEntityType(type.getId().get(), key);
-            URI icon = element.attribute("icon") != null ? new URI(element.attributeValue("icon")) : null;
-            String label = element.attributeValue("i18n-key");
+            URI icon = getOptionalUriAttribute(element, "icon-url");
+            String label = getRequiredAttribute(element, "name");
             TypeId entityId = new TypeId(type.getId().get() + "." + key);
-            String pluralizedI18nKey = element.attributeValue("pluralized-i18n-key");
+            String pluralizedI18nKey = getRequiredAttribute(element, "pluralized-name");
             return entityTypeClass.getConstructor(TypeId.class, Class.class, String.class, String.class, URI.class)
                                 .newInstance(entityId, type.getClass(), label, pluralizedI18nKey, icon);
         }
-        catch (URISyntaxException e)
-        {
-            throw new RuntimeException(e);
-        }
         catch (NoSuchMethodException e)
         {
-            throw new RuntimeException(e);
+            throw new PluginParseException(e);
         }
         catch (InvocationTargetException e)
         {
-            throw new RuntimeException(e);
+            throw new PluginParseException(e);
         }
         catch (InstantiationException e)
         {
-            throw new RuntimeException(e);
+            throw new PluginParseException(e);
         }
         catch (IllegalAccessException e)
         {
-            throw new RuntimeException(e);
+            throw new PluginParseException(e);
         }
     }
 
 
     private ModuleDescriptor<EntityType> createEntityTypeDescriptor(RemoteAppCreationContext ctx, final RemoteAppEntityType entityType, Element element)
     {
-        Element desc = element.createCopy();
-        String key = element.attributeValue("key");
+        Element desc = copyDescriptorXml(element);
+        String key = getRequiredAttribute(element, "key");
         desc.addAttribute("key", "entityType-" + key);
         desc.addAttribute("class", entityType.getClass().getName());
 
@@ -118,19 +115,19 @@ public class EntityTypeModuleGenerator implements RemoteModuleGenerator
         }
         catch (InstantiationException e)
         {
-            throw new RuntimeException(e);
+            throw new PluginParseException(e);
         }
         catch (IllegalAccessException e)
         {
-            throw new RuntimeException(e);
+            throw new PluginParseException(e);
         }
         catch (InvocationTargetException e)
         {
-            throw new RuntimeException(e);
+            throw new PluginParseException(e);
         }
         catch (NoSuchMethodException e)
         {
-            throw new RuntimeException(e);
+            throw new PluginParseException(e);
         }
     }
 

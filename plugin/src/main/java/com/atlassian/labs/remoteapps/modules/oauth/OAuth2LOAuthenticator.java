@@ -24,6 +24,9 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.Principal;
 
+/**
+ * Authenticates an incoming 2LO request
+ */
 @Component
 public class OAuth2LOAuthenticator implements Authenticator
 {
@@ -57,7 +60,7 @@ public class OAuth2LOAuthenticator implements Authenticator
     {
         OAuthMessage message = OAuthServlet.getMessage(request, getLogicalUri(request));
 
-        String consumerKey = null;
+        String consumerKey;
         try
         {
             consumerKey = message.getConsumerKey();
@@ -65,21 +68,22 @@ public class OAuth2LOAuthenticator implements Authenticator
         }
         catch (IOException e)
         {
-            e.printStackTrace();
+            log.warn("Exception authenticating request", e);
             return new Result.Failure(new DefaultMessage("OAuth exception:" + e.getMessage()));
         }
         catch (URISyntaxException e)
         {
-            e.printStackTrace();
+            log.warn("Exception authenticating request", e);
             return new Result.Failure(new DefaultMessage("OAuth exception:" + e.getMessage()));
         }
         catch (OAuthException e)
         {
-            e.printStackTrace();
+            log.warn("Exception authenticating request", e);
             return new Result.Failure(new DefaultMessage("OAuth exception:" + e.getMessage()));
         }
 
         final String userId = request.getParameter(OAuth2LOFilter.USER_ID);
+        Check.notNull(userId);
         final Principal user = userManager.resolve(userId);
         if (!authenticationController.canLogin(user, request))
         {

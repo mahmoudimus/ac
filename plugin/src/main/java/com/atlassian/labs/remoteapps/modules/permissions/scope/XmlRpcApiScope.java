@@ -11,7 +11,7 @@ import java.io.InputStream;
 import java.util.Collection;
 
 /**
- *
+ * An api scope for xml-rpc requests
  */
 public class XmlRpcApiScope
 {
@@ -30,7 +30,11 @@ public class XmlRpcApiScope
         if (path.equals(pathInfo))
         {
             String method = extractMethod(request);
-            if (methods.contains(method))
+            if (method == null)
+            {
+                return false;
+            }
+            else if (methods.contains(method))
             {
                 return true;
             }
@@ -41,7 +45,7 @@ public class XmlRpcApiScope
     private String extractMethod(HttpServletRequest request)
     {
         SAXReader build = new SAXReader();
-        InputStream in = null;
+        InputStream in;
         try
         {
             in = request.getInputStream();
@@ -50,12 +54,13 @@ public class XmlRpcApiScope
         }
         catch (IOException e)
         {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            // don't care why
+            return null;
         }
         catch (DocumentException e)
         {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            // don't care why
+            return null;
         }
-        return null;
     }
 }

@@ -43,6 +43,7 @@ public class MyAdminRoute extends RemoteAppFilter.Route
         context.put("consumerKey", consumerKey);
         context.put("remoteUser", getCurrentRemoteUser(req.getParameter("user_id")));
         context.put("forbiddenGet", getForbiddenStatusCode(req.getParameter("user_id")));
+        context.put("baseurl", RegistrationOnStartListener.HOST_BASEURL);
         return render("test-page.vm", context);
     }
 

@@ -5,7 +5,7 @@ import org.dom4j.Element;
 import java.util.Set;
 
 /**
- *
+ * A remote module generator
  */
 public interface RemoteModuleGenerator
 {

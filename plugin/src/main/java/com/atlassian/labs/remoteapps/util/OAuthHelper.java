@@ -13,7 +13,7 @@ import java.util.Map;
 import static com.google.common.collect.Iterables.transform;
 
 /**
- *
+ * Helps with oauth operations
  */
 public class OAuthHelper
 {
