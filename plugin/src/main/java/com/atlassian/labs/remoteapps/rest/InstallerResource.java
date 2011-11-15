@@ -35,7 +35,7 @@ public class InstallerResource
         }
         catch (URISyntaxException e)
         {
-            return Response.status(Response.Status.BAD_REQUEST).build();
+            return Response.status(Response.Status.BAD_REQUEST).entity("Invalid URI: '" + registrationUrl + "'").build();
         }
         try
         {
@@ -44,7 +44,7 @@ public class InstallerResource
         catch (RuntimeException ex)
         {
             ex.printStackTrace();
-            return Response.status(Response.Status.BAD_REQUEST).build();
+            return Response.status(Response.Status.BAD_REQUEST).entity(ex.getMessage()).build();
         }
         return Response.ok().build();
     }

@@ -37,6 +37,13 @@
         <resource type="download" name="main.js" location="/js/iframe/main.js" />
     </web-resource>
 
+    <commonjs key="speakeasy-commonjs" location="/js/speakeasy" />
+
+    <web-resource key="speakeasy-integration">
+        <context>speakeasy.user-profile</context>
+        <dependency>com.atlassian.labs.remoteapps-plugin:remoteapps_installer</dependency>
+    </web-resource>
+
     <rest key="rest" path="/remoteapps" version="1" package="com.atlassian.labs.remoteapps.rest">
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>INCLUDE</dispatcher>

@@ -418,7 +418,7 @@
     <properties>
         <webdriver.browser>firefox-3.6</webdriver.browser>
         <xvfb.enable>true</xvfb.enable>
-        <speakeasy.version>1.3.2-SNAPSHOT</speakeasy.version>
+        <speakeasy.version>1.3.2</speakeasy.version>
     </properties>
 
 </project>

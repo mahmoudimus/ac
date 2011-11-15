@@ -3,11 +3,15 @@ package com.atlassian.labs.remoteapps.test;
 import com.atlassian.pageobjects.binder.Init;
 import com.atlassian.pageobjects.binder.WaitUntil;
 import com.atlassian.webdriver.AtlassianWebDriver;
+import com.google.common.base.Function;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
+import javax.xml.rpc.Call;
 import java.util.concurrent.Callable;
 
 /**
@@ -24,7 +28,7 @@ public class MyAdminPage
     @WaitUntil
     public void waitForInit()
     {
-        driver.waitUntilElementIsLocatedAt(By.tagName("iframe"), containerDiv);
+        driver.waitUntilElementIsLocated(By.className("iframe-init"));
     }
 
     public String getMessage()
