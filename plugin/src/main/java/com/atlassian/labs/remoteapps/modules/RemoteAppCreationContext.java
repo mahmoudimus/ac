@@ -2,6 +2,7 @@ package com.atlassian.labs.remoteapps.modules;
 
 import com.atlassian.applinks.api.ApplicationType;
 import com.atlassian.applinks.spi.application.NonAppLinksApplicationType;
+import com.atlassian.labs.remoteapps.installer.AccessLevel;
 import com.atlassian.plugin.ModuleDescriptorFactory;
 import com.atlassian.plugin.Plugin;
 import org.osgi.framework.Bundle;
@@ -15,13 +16,16 @@ public class RemoteAppCreationContext
     private final ModuleDescriptorFactory moduleDescriptorFactory;
     private final Bundle bundle;
     private final NonAppLinksApplicationType applicationType;
+    private final AccessLevel accessLevel;
 
-    public RemoteAppCreationContext(Plugin plugin, ModuleDescriptorFactory moduleDescriptorFactory, Bundle bundle, NonAppLinksApplicationType applicationType)
+    public RemoteAppCreationContext(Plugin plugin, ModuleDescriptorFactory moduleDescriptorFactory, Bundle bundle, NonAppLinksApplicationType applicationType,
+                                    AccessLevel accessLevel)
     {
         this.plugin = plugin;
         this.moduleDescriptorFactory = moduleDescriptorFactory;
         this.bundle = bundle;
         this.applicationType = applicationType;
+        this.accessLevel = accessLevel;
     }
 
     public Plugin getPlugin()
@@ -42,5 +46,10 @@ public class RemoteAppCreationContext
     public NonAppLinksApplicationType getApplicationType()
     {
         return applicationType;
+    }
+
+    public AccessLevel getAccessLevel()
+    {
+        return accessLevel;
     }
 }

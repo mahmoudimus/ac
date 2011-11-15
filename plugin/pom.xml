@@ -268,7 +268,6 @@
                         <webdriver.browser>${webdriver.browser}</webdriver.browser>
                         <atlassian.mail.senddisabled>false</atlassian.mail.senddisabled>
                         <sun.net.http.allowRestrictedHeaders>true</sun.net.http.allowRestrictedHeaders>
-                        <remoteapps.speakeasy.ignore>true</remoteapps.speakeasy.ignore>
                         <!--atlassian.dev.mode>false</atlassian.dev.mode-->
                     </systemPropertyVariables>
                     <enableFastdev>false</enableFastdev>
@@ -295,6 +294,20 @@
                             <id>refapp</id>
                             <version>${refapp.version}</version>
                             <log4jProperties>src/test/resources/log4j-refapp.properties</log4jProperties>
+                            <libArtifacts>
+                                <!-- necessary for Speakeasy mail handling -->
+                                <libArtifact>
+                                    <groupId>org.apache.commons</groupId>
+                                    <artifactId>commons-email</artifactId>
+                                    <version>1.2</version>
+                                </libArtifact>
+                                <libArtifact>
+                                    <groupId>javax.mail</groupId>
+                                    <artifactId>mail</artifactId>
+                                    <version>1.4.1</version>
+                                </libArtifact>
+                            </libArtifacts>
+
                         </product>
                         <product>
                             <id>jira</id>

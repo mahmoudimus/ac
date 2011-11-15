@@ -1,5 +1,6 @@
 package com.atlassian.labs.remoteapps.descriptor;
 
+import com.atlassian.labs.remoteapps.installer.AccessLevel;
 import com.atlassian.labs.remoteapps.modules.*;
 import com.atlassian.labs.remoteapps.modules.applinks.ApplicationTypeModule;
 import com.atlassian.labs.remoteapps.modules.applinks.ApplicationTypeModuleGenerator;
@@ -72,7 +73,7 @@ class GeneratorInitializer
         this.expected = set;
     }
 
-    public boolean registerNewModuleDescriptorFactory(ModuleDescriptorFactory factory)
+    public boolean registerNewModuleDescriptorFactory(ModuleDescriptorFactory factory, AccessLevel accessLevel)
     {
         boolean added = false;
         for (Iterator<String> i = expected.iterator(); i.hasNext(); )
@@ -89,10 +90,10 @@ class GeneratorInitializer
         {
             ModuleDescriptorFactory aggFactory = new ChainModuleDescriptorFactory(factories.toArray(new ModuleDescriptorFactory[factories.size()]));
 
-            RemoteAppCreationContext ctx = new RemoteAppCreationContext(plugin, aggFactory, bundle, null);
+            RemoteAppCreationContext ctx = new RemoteAppCreationContext(plugin, aggFactory, bundle, null, accessLevel);
             ApplicationTypeModule module = (ApplicationTypeModule) applicationTypeModuleGenerator.generate(ctx, element);
             remoteModules.add(module);
-            ctx = new RemoteAppCreationContext(plugin, aggFactory, bundle, module.getApplicationType());
+            ctx = new RemoteAppCreationContext(plugin, aggFactory, bundle, module.getApplicationType(), accessLevel);
 
             for (Element e : ((Collection<Element>)element.elements()))
             {

@@ -1,11 +1,9 @@
 package com.atlassian.labs.remoteapps.modules.admin;
 
-import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.applinks.api.ApplicationLinkService;
-import com.atlassian.applinks.spi.auth.AuthenticationConfigurationManager;
 import com.atlassian.labs.remoteapps.OAuthLinkManager;
 import com.atlassian.labs.remoteapps.PermissionManager;
-import com.atlassian.labs.remoteapps.descriptor.DescriptorFactory;
+import com.atlassian.labs.remoteapps.descriptor.factory.AggregateDescriptorFactory;
 import com.atlassian.labs.remoteapps.modules.IFramePageServlet;
 import com.atlassian.labs.remoteapps.modules.RemoteAppCreationContext;
 import com.atlassian.labs.remoteapps.modules.RemoteModule;
@@ -16,7 +14,6 @@ import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.servlet.ServletModuleManager;
 import com.atlassian.plugin.servlet.descriptors.ServletModuleDescriptor;
-import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.atlassian.plugin.webresource.WebResourceManager;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.google.common.collect.ImmutableSet;
@@ -25,7 +22,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
+import java.util.Map;
 import java.util.Set;
+
+import static com.google.common.collect.Maps.newHashMap;
 
 /**
  *
@@ -36,18 +36,19 @@ public class AdminPageModuleGenerator implements RemoteModuleGenerator
     private final ServletModuleManager servletModuleManager;
     private final TemplateRenderer templateRenderer;
     private final ProductAccessor productAccessor;
-    private final DescriptorFactory descriptorFactory;
+    private final AggregateDescriptorFactory descriptorFactory;
     private final WebResourceManager webResourceManager;
     private final ApplicationLinkService applicationLinkService;
     private final OAuthLinkManager oAuthLinkManager;
     private final PermissionManager permissionManager;
+    private Map<String,Object> iframeParams = newHashMap();
 
     @Autowired
     public AdminPageModuleGenerator(ServletModuleManager servletModuleManager,
                                     TemplateRenderer templateRenderer,
                                     ProductAccessor productAccessor,
                                     WebResourceManager webResourceManager,
-                                    ApplicationLinkService applicationLinkService, OAuthLinkManager oAuthLinkManager, PermissionManager permissionManager, DescriptorFactory descriptorFactory)
+                                    ApplicationLinkService applicationLinkService, OAuthLinkManager oAuthLinkManager, PermissionManager permissionManager, AggregateDescriptorFactory descriptorFactory)
     {
         this.servletModuleManager = servletModuleManager;
         this.templateRenderer = templateRenderer;
@@ -76,6 +77,8 @@ public class AdminPageModuleGenerator implements RemoteModuleGenerator
     {
         String key = e.attributeValue("key");
         final String url = e.attributeValue("url");
+        addToParams(e, "height");
+        addToParams(e, "width");
 
         final String fullUrl = e.getParent().attributeValue("display-url") + url;
         String localUrl = "/" + ctx.getApplicationType().getId().get() + "/" + key;
@@ -93,6 +96,15 @@ public class AdminPageModuleGenerator implements RemoteModuleGenerator
                 return descriptors;
             }
         };
+    }
+
+    private void addToParams(Element e, String key)
+    {
+        String val = e.attributeValue(key);
+        if (val != null)
+        {
+            iframeParams.put(key, val);
+        }
     }
 
     private ServletModuleDescriptor createServletDescriptor(final RemoteAppCreationContext ctx,
@@ -121,7 +133,7 @@ public class AdminPageModuleGenerator implements RemoteModuleGenerator
                         pageName,
                         fullUrl,
                         "atl.admin",
-                        webResourceManager);
+                        webResourceManager, iframeParams);
             }
         }, servletModuleManager);
         descriptor.init(ctx.getPlugin(), config);
@@ -146,7 +158,7 @@ public class AdminPageModuleGenerator implements RemoteModuleGenerator
                 addAttribute("linkId", webItemKey).
                 setText("/plugins/servlet" + localUrl);
 
-        ModuleDescriptor descriptor = descriptorFactory.createWebItemModuleDescriptor(ctx.getBundle().getBundleContext());
+        ModuleDescriptor descriptor = descriptorFactory.createWebItemModuleDescriptor(ctx.getBundle().getBundleContext(), ctx.getAccessLevel());
         descriptor.init(ctx.getPlugin(), config);
         return descriptor;
     }

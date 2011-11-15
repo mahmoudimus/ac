@@ -17,6 +17,7 @@
             //ID of the element to attach the inline frame to
             container: "embedded",
             channel: "channel01",
+            props: {style: {height : '#if($height)$height#else 10em #end', width : '#if($width)$width#else 700px#end'} },
             onMessage: function (message, origin) {
                 var settings = message.split(",");
                 //Use jquery on a masterpage.

@@ -1,4 +1,4 @@
-package com.atlassian.labs.remoteapps.descriptor;
+package com.atlassian.labs.remoteapps.descriptor.factory;
 
 import com.atlassian.labs.speakeasy.descriptor.external.DescriptorGeneratorManager;
 import com.atlassian.labs.speakeasy.descriptor.external.webfragment.SpeakeasyWebItemModuleDescriptor;
@@ -11,13 +11,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  *
  */
-public class SpeakeasyDescriptorFactory implements DescriptorFactory
+public class SpeakeasyAccessLevelDescriptorFactory implements UserAccessLevelDescriptorFactory
 {
     private final WebResourceManager webResourceManager;
     private final ServiceTracker tracker;
 
     @Autowired
-    public SpeakeasyDescriptorFactory(WebResourceManager webResourceManager, BundleContext bundleContext)
+    public SpeakeasyAccessLevelDescriptorFactory(WebResourceManager webResourceManager,
+                                                 BundleContext bundleContext)
     {
         this.tracker = new ServiceTracker(bundleContext, DescriptorGeneratorManager.class.getName(), null);
         tracker.open();

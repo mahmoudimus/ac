@@ -24,6 +24,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
+import static com.google.common.collect.Maps.newHashMap;
 import static java.util.Collections.singletonList;
 
 /**
@@ -37,6 +38,7 @@ public class IFramePageServlet extends HttpServlet
     private final NonAppLinksApplicationType applicationType;
     private final OAuthLinkManager oAuthLinkManager;
     private final WebResourceManager webResourceManager;
+    private final Map<String, Object> params;
     private final String title;
     private final String iframeSrc;
     private final String decorator;
@@ -49,7 +51,8 @@ public class IFramePageServlet extends HttpServlet
                              String title,
                              String iframeSrc,
                              String decorator,
-                             WebResourceManager webResourceManager)
+                             WebResourceManager webResourceManager,
+                             Map<String,Object> params)
     {
         this.templateRenderer = templateRenderer;
         this.applicationLinkService = applicationLinkService;
@@ -60,6 +63,7 @@ public class IFramePageServlet extends HttpServlet
         this.iframeSrc = iframeSrc;
         this.decorator = decorator;
         this.webResourceManager = webResourceManager;
+        this.params = params;
     }
 
     @Override
@@ -98,16 +102,12 @@ public class IFramePageServlet extends HttpServlet
 
         webResourceManager.requireResourcesForContext("remoteapps-iframe");
 
-        templateRenderer.render("velocity/iframe-page.vm",
-                ImmutableMap.<String, Object>of("title",
-                        title,
-                        "iframeSrcHtml",
-                        uriBuilder.build().toString(),
-                        "extraPath",
-                        req.getPathInfo() != null ? req.getPathInfo() : "",
-                        "decorator",
-                        decorator
-                        ),
-                out);
+        Map<String,Object> ctx = newHashMap(params);
+        ctx.put("title", title);
+        ctx.put("iframeSrcHtml", uriBuilder.build().toString());
+        ctx.put("extraPath", req.getPathInfo() != null ? req.getPathInfo() : "");
+        ctx.put("decorator", decorator);
+
+        templateRenderer.render("velocity/iframe-page.vm", ctx, out);
     }
 }

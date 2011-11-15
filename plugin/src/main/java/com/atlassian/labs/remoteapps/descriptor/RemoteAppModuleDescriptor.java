@@ -1,5 +1,6 @@
 package com.atlassian.labs.remoteapps.descriptor;
 
+import com.atlassian.labs.remoteapps.installer.AccessLevel;
 import com.atlassian.labs.remoteapps.modules.RemoteModuleGenerator;
 import com.atlassian.plugin.ModuleDescriptorFactory;
 import com.atlassian.plugin.Plugin;
@@ -9,6 +10,7 @@ import com.atlassian.plugin.event.PluginEventManager;
 import com.atlassian.plugin.module.LegacyModuleFactory;
 import com.atlassian.util.concurrent.NotNull;
 import com.google.common.collect.ImmutableSet;
+import org.dom4j.Attribute;
 import org.dom4j.Element;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -17,10 +19,7 @@ import org.osgi.util.tracker.ServiceTracker;
 import org.osgi.util.tracker.ServiceTrackerCustomizer;
 import org.springframework.context.ApplicationContext;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.atlassian.labs.remoteapps.util.BundleUtil.findBundleForPlugin;
 import static com.google.common.collect.Sets.newHashSet;
@@ -36,6 +35,7 @@ public class RemoteAppModuleDescriptor extends AbstractModuleDescriptor<Void>
 
     private ServiceTracker serviceTracker;
     private Element originalElement;
+    private AccessLevel accessLevel = AccessLevel.GLOBAL;
     private Iterable<RemoteModuleGenerator> generators;
 
     public RemoteAppModuleDescriptor(BundleContext bundleContext, ApplicationContext applicationContext, StartableForPlugins startableForPlugins)
@@ -51,6 +51,7 @@ public class RemoteAppModuleDescriptor extends AbstractModuleDescriptor<Void>
     {
         super.init(plugin, element);
         this.originalElement = element;
+       this.accessLevel = AccessLevel.parse(element.attributeValue("access-level"));
         this.generators = Collections.unmodifiableCollection((Collection<RemoteModuleGenerator>) applicationContext.getBeansOfType(RemoteModuleGenerator.class).values());
     }
 
@@ -73,7 +74,7 @@ public class RemoteAppModuleDescriptor extends AbstractModuleDescriptor<Void>
                 {
                     Object svc = targetBundleContext.getService(reference);
                     ModuleDescriptorFactory factory = (ModuleDescriptorFactory) svc;
-                    if (generatorInitializer.registerNewModuleDescriptorFactory(factory))
+                    if (generatorInitializer.registerNewModuleDescriptorFactory(factory, accessLevel))
                     {
                         return factory;
                     }

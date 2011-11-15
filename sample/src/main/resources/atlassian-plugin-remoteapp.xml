@@ -4,7 +4,7 @@
     </plugin-info>
 
     <remote-app key="remoteapp" i18n-name-key="Remote App" icon-url="https://github.com/favicon.ico"
-                display-url="%baseurl%">
+                display-url="%baseurl%"> <!-- access-level="user"> -->
         <entity-type key="project" i18n-key="Project" pluralized-i18n-key="Projects" icon-url="https://github.com/favicon.ico"/>
         <oauth callback="http://localhost" request-token-url="http://localhost" access-token-url="http://localhost" authorize-url="http://localhost">
             <public-key>
