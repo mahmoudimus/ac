@@ -47,6 +47,13 @@
         </plugins>
     </build>
 
+    <scm>
+        <connection>scm:git:git://bitbucket.org/mrdon/remoteapps-plugin.git</connection>
+        <developerConnection>scm:git:git://bitbucket.org/mrdon/remoteapps-plugin.git</developerConnection>
+        <url>scm:git:git://bitbucket.org/mrdon/remoteapps-plugin.git</url>
+    </scm>
+
+
     <properties>
         <refapp.version>2.13.0</refapp.version>
         <jira.version>4.4.2</jira.version>
