@@ -1,26 +1,26 @@
-<atlassian-plugin key="remoteapp" name="Remote App" plugins-version="2">
-    <plugin-info>
-        <version>1</version>
-    </plugin-info>
+<remote-app key="remoteapp" name="Remote App" version="1" icon-url="https://github.com/favicon.ico"
+            display-url="%baseurl%">
+    <vendor name="Atlassian" url="http://atlassian.com" />
+    <description>
+        This really great app
+    </description>
 
-    <remote-app key="remoteapp" name="Remote App" icon-url="https://github.com/favicon.ico"
-                display-url="%baseurl%"> <!-- access-level="user"> -->
-        <entity-type key="project" name="Project" pluralized-name="Projects" icon-url="https://github.com/favicon.ico"/>
-        <oauth callback="http://localhost" request-token-url="http://localhost" access-token-url="http://localhost" authorize-url="http://localhost">
-            <public-key>
-                -----BEGIN PUBLIC KEY-----
-                MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCdZ4NjFq7phYw2FAvg2r3bS0Vw
-                kX07mBsYP5iPH0tsy9Boo4PfQTXxPrd6NFP6Gm0QXsgERgFgDt/344WhxMqt4rJi
-                udINI51n0bXNz9ct5ZnUJSnwC4GzNkDmvjpJ/Ewdmq5Ye3BfaThZnlsXA+csT3IU
-                /strFeKjydl1lyXNswIDAQAB
-                -----END PUBLIC KEY-----
-            </public-key>
-        </oauth>
-        <permissions>
-            <permission scope="resttest" />
-            <permission application="confluence" scope="read_content" />
-        </permissions>
-        <admin-page key="remoteAppAdmin" name="Remote App Admin" url="/remoteapp/myadmin" />
-    </remote-app>
-
-</atlassian-plugin>
+    <entity-type key="project" name="Project" pluralized-name="Projects" icon-url="https://github.com/favicon.ico"/>
+    <oauth callback="http://localhost" request-token-url="http://localhost" access-token-url="http://localhost" authorize-url="http://localhost">
+        <public-key>
+            -----BEGIN PUBLIC KEY-----
+            MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCdZ4NjFq7phYw2FAvg2r3bS0Vw
+            kX07mBsYP5iPH0tsy9Boo4PfQTXxPrd6NFP6Gm0QXsgERgFgDt/344WhxMqt4rJi
+            udINI51n0bXNz9ct5ZnUJSnwC4GzNkDmvjpJ/Ewdmq5Ye3BfaThZnlsXA+csT3IU
+            /strFeKjydl1lyXNswIDAQAB
+            -----END PUBLIC KEY-----
+        </public-key>
+    </oauth>
+    <permissions>
+        <permission scope="resttest" />
+        <permission application="confluence" scope="read_content" />
+    </permissions>
+    <admin-page key="remoteAppAdmin" name="Remote App Admin" url="/remoteapp/myadmin" />
+    <general-page key="remoteAppGeneral" name="Remote App General" url="/remoteapp/myadmin" />
+    <profile-page key="remoteAppProfile" name="Remote App Profile" url="/remoteapp/myadmin" />
+</remote-app>

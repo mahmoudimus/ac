@@ -8,4 +8,10 @@
             Read spaces, blogs, and pages and associated metadata
         </description>
     </api-scope>
+
+    <web-section key="admin.pages" name="Remote Apps" location="system.admin" weight="100">
+        <label>Remote Apps</label>
+    </web-section>
+
+    <component key="profile-page-module-generator" class="com.atlassian.labs.remoteapps.modules.page.ProfilePageModuleGenerator" />
 </application>

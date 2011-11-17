@@ -41,4 +41,28 @@ public class JiraProductAccessor implements ProductAccessor
     {
         return "jira";
     }
+
+    @Override
+    public int getPreferredGeneralWeight()
+    {
+        return 100;
+    }
+
+    @Override
+    public String getPreferredGeneralSectionKey()
+    {
+        return "general_dropdown_linkId/remoteapps.general";
+    }
+
+    @Override
+    public int getPreferredProfileWeight()
+    {
+        return 100;
+    }
+
+    @Override
+    public String getPreferredProfileSectionKey()
+    {
+        return "system.user.options/personal";
+    }
 }

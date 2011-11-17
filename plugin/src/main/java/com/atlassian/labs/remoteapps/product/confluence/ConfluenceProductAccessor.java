@@ -25,7 +25,7 @@ public class ConfluenceProductAccessor implements ProductAccessor
     @Override
     public String getPreferredAdminSectionKey()
     {
-        return "system.admin/configuration";
+        return "system.admin/admin.pages";
     }
 
     @Override
@@ -38,5 +38,29 @@ public class ConfluenceProductAccessor implements ProductAccessor
     public String getKey()
     {
         return "confluence";
+    }
+
+    @Override
+    public int getPreferredGeneralWeight()
+    {
+        return 1000;
+    }
+
+    @Override
+    public String getPreferredGeneralSectionKey()
+    {
+        return "system.browse";
+    }
+
+    @Override
+    public int getPreferredProfileWeight()
+    {
+        return 100;
+    }
+
+    @Override
+    public String getPreferredProfileSectionKey()
+    {
+        return "system.profile";
     }
 }

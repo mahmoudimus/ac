@@ -1,5 +1,6 @@
 package com.atlassian.labs.remoteapps.descriptor;
 
+import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.event.PluginEventListener;
 import com.atlassian.plugin.event.PluginEventManager;
 import com.atlassian.plugin.event.events.PluginEnabledEvent;
@@ -19,16 +20,18 @@ public class StartableForPlugins implements LifecycleAware, DisposableBean
     private boolean started = false;
 
     private final PluginEventManager pluginEventManager;
+    private final PluginAccessor pluginAccessor;
 
-    public StartableForPlugins(PluginEventManager pluginEventManager)
+    public StartableForPlugins(PluginEventManager pluginEventManager, PluginAccessor pluginAccessor)
     {
         this.pluginEventManager = pluginEventManager;
+        this.pluginAccessor = pluginAccessor;
         pluginEventManager.register(this);
     }
 
     public synchronized void register(String pluginKey, Runnable runnable)
     {
-        if (started)
+        if (pluginAccessor.isPluginEnabled(pluginKey))
         {
             runnable.run();
         }

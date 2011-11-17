@@ -1,3 +1,5 @@
 <application key="refapp">
     <component key="refappProductAccessor" class="com.atlassian.labs.remoteapps.product.refapp.RefappProductAccessor" />
+
+    <component key="profile-page-module-generator" class="com.atlassian.labs.remoteapps.modules.page.ProfilePageModuleGenerator" />
 </application>

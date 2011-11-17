@@ -1,3 +1,20 @@
 <application key="jira">
     <component key="jiraProductAccessor" class="com.atlassian.labs.remoteapps.product.jira.JiraProductAccessor" />
+
+    <web-item key="general-dropdown-item" section="system.top.navigation.bar" weight="100">
+        <label>Remote Apps</label>
+        <link linkId="general_dropdown_linkId" />
+    </web-item>
+
+    <web-section key="remoteapps.general" location="general_dropdown_linkId">
+    </web-section>
+
+    <component key="profile-page-module-generator" class="com.atlassian.labs.remoteapps.modules.page.jira.JiraProfileTabModuleGenerator" />
 </application>
+
+
+
+        
+
+
+

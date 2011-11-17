@@ -40,4 +40,28 @@ public class RefappProductAccessor implements ProductAccessor
     {
         return "refapp";
     }
+
+    @Override
+    public int getPreferredGeneralWeight()
+    {
+        return 100;
+    }
+
+    @Override
+    public String getPreferredGeneralSectionKey()
+    {
+        return "index.links";
+    }
+
+    @Override
+    public int getPreferredProfileWeight()
+    {
+        return 100;
+    }
+
+    @Override
+    public String getPreferredProfileSectionKey()
+    {
+        return "system.admin/general";
+    }
 }

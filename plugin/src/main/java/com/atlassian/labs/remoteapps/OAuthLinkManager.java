@@ -153,7 +153,10 @@ public class OAuthLinkManager
         Map<String,List<String>> params = newHashMap(originalParams);
         Consumer self = consumerService.getConsumer();
         params.put(OAuth.OAUTH_CONSUMER_KEY, singletonList(self.getKey()));
-        params.put("user_id", singletonList(currentUser));
+        if (currentUser != null)
+        {
+            params.put("user_id", singletonList(currentUser));
+        }
         params.put("xdm_e", singletonList(host));
         params.put("xdm_c", singletonList("channel01"));
         params.put("xdm_p", singletonList("1"));

@@ -8,37 +8,6 @@
 </head>
 
 <body>
-    <div id="embedded"></div>
-<script type="text/javascript" language="javascript">
-    (function($) {
-        var container = $('#embedded');
-        var initHeight = '#if($height)$height#else 10em #end';
-        var initWidth = '#if($width)$width#else 700px#end';
-        var iframeSrc = '$iframeSrcHtml';
-        function resize(height, width){
-            var iframe = $('iframe', container);
-            iframe.css('height', settings[1] + "px");
-            iframe.css('width', settings[0] + "px");
-        }
-        var transport = new easyXDM.Socket(/** The configuration */{
-            remote: iframeSrc,
-
-            //ID of the element to attach the inline frame to
-            container: "embedded",
-            channel: "channel01",
-            props: {style: {height : initHeight, width : initWidth} },
-            onMessage: function (messageText, origin) {
-                var message = JSON.parse(messageText);
-                switch (message.id) {
-                    case 'init' : container.addClass('iframe-init');
-                                  container.append("loaded");
-                                  break;
-                    case 'resize' : resize(message.height, message.width);
-                                    break;
-                }
-            }
-        });
-    })(jQuery);
-</script>
+    #parse( "velocity/iframe-body.vm" )
 </body>
 </html>

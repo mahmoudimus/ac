@@ -15,4 +15,12 @@ public interface ProductAccessor
     int getPreferredAdminWeight();
 
     String getKey();
+
+    int getPreferredGeneralWeight();
+
+    String getPreferredGeneralSectionKey();
+
+    int getPreferredProfileWeight();
+
+    String getPreferredProfileSectionKey();
 }
