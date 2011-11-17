@@ -4,14 +4,13 @@ import com.atlassian.applinks.api.ApplicationType;
 import com.atlassian.applinks.spi.application.TypeId;
 import com.atlassian.applinks.spi.link.ApplicationLinkDetails;
 import com.atlassian.applinks.spi.link.MutatingApplicationLinkService;
-import com.atlassian.applinks.spi.util.TypeAccessor;
+import com.atlassian.labs.remoteapps.PermissionManager;
 import com.atlassian.labs.remoteapps.modules.RemoteAppCreationContext;
 import com.atlassian.labs.remoteapps.modules.RemoteModule;
 import com.atlassian.labs.remoteapps.modules.RemoteModuleGenerator;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
-import com.atlassian.plugin.event.PluginEventManager;
 import com.atlassian.plugin.impl.AbstractDelegatingPlugin;
 import com.atlassian.plugin.module.ContainerAccessor;
 import com.atlassian.plugin.module.ContainerManagedPlugin;
@@ -24,7 +23,6 @@ import org.springframework.stereotype.Component;
 
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Set;
 
 import static com.atlassian.labs.remoteapps.util.Dom4jUtils.*;
@@ -38,11 +36,15 @@ import static org.objectweb.asm.Opcodes.*;
 public class ApplicationTypeModuleGenerator implements RemoteModuleGenerator
 {
     private final MutatingApplicationLinkService mutatingApplicationLinkService;
+    private final PermissionManager permissionManager;
 
     @Autowired
-    public ApplicationTypeModuleGenerator(MutatingApplicationLinkService mutatingApplicationLinkService)
+    public ApplicationTypeModuleGenerator(MutatingApplicationLinkService mutatingApplicationLinkService,
+                                          PermissionManager permissionManager
+    )
     {
         this.mutatingApplicationLinkService = mutatingApplicationLinkService;
+        this.permissionManager = permissionManager;
     }
 
     @Override
@@ -64,7 +66,7 @@ public class ApplicationTypeModuleGenerator implements RemoteModuleGenerator
         RemoteAppApplicationType applicationType = createApplicationType(appTypesClassLoader, element);
         return new ApplicationTypeModule(applicationType,
                 createApplicationTypeDescriptor(appTypesClassLoader, ctx, applicationType, element),
-                mutatingApplicationLinkService);
+                mutatingApplicationLinkService, permissionManager, ctx.getAccessLevel());
 
     }
 

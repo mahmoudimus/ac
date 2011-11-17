@@ -28,7 +28,14 @@ public class StartableForPlugins implements LifecycleAware, DisposableBean
 
     public synchronized void register(String pluginKey, Runnable runnable)
     {
-        runnables.put(pluginKey, runnable);
+        if (started)
+        {
+            runnable.run();
+        }
+        else
+        {
+            runnables.put(pluginKey, runnable);
+        }
     }
 
     @Override
@@ -46,11 +53,9 @@ public class StartableForPlugins implements LifecycleAware, DisposableBean
     {
         if (runnables.containsKey(key))
         {
-            for (Iterator<Runnable> i = runnables.get(key).iterator(); i.hasNext(); )
+            for (Runnable runnable : runnables.get(key))
             {
-                Runnable runnable = i.next();
                 runnable.run();
-                i.remove();
             }
         }
     }
@@ -58,10 +63,10 @@ public class StartableForPlugins implements LifecycleAware, DisposableBean
     @PluginEventListener
     public synchronized void onPluginEnabledEvent(PluginEnabledEvent event)
     {
-
         if (started)
         {
             runRunnablesForPlugin(event.getPlugin().getKey());
+            runnables.removeAll(event.getPlugin().getKey());
         }
     }
 

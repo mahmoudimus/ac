@@ -3,7 +3,6 @@ package com.atlassian.labs.remoteapps.modules.admin;
 import com.atlassian.applinks.api.ApplicationLinkService;
 import com.atlassian.labs.remoteapps.OAuthLinkManager;
 import com.atlassian.labs.remoteapps.PermissionManager;
-import com.atlassian.labs.remoteapps.descriptor.factory.AggregateDescriptorFactory;
 import com.atlassian.labs.remoteapps.modules.IFramePageServlet;
 import com.atlassian.labs.remoteapps.modules.RemoteAppCreationContext;
 import com.atlassian.labs.remoteapps.modules.RemoteModule;
@@ -17,6 +16,7 @@ import com.atlassian.plugin.servlet.descriptors.ServletModuleDescriptor;
 import com.atlassian.plugin.webresource.WebResourceManager;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.google.common.collect.ImmutableSet;
+import com.opensymphony.workflow.loader.DescriptorFactory;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -39,19 +39,21 @@ public class AdminPageModuleGenerator implements RemoteModuleGenerator
     private final ServletModuleManager servletModuleManager;
     private final TemplateRenderer templateRenderer;
     private final ProductAccessor productAccessor;
-    private final AggregateDescriptorFactory descriptorFactory;
     private final WebResourceManager webResourceManager;
     private final ApplicationLinkService applicationLinkService;
     private final OAuthLinkManager oAuthLinkManager;
     private final PermissionManager permissionManager;
-    private Map<String,Object> iframeParams = newHashMap();
+    private Map<String, Object> iframeParams = newHashMap();
 
     @Autowired
     public AdminPageModuleGenerator(ServletModuleManager servletModuleManager,
                                     TemplateRenderer templateRenderer,
                                     ProductAccessor productAccessor,
                                     WebResourceManager webResourceManager,
-                                    ApplicationLinkService applicationLinkService, OAuthLinkManager oAuthLinkManager, PermissionManager permissionManager, AggregateDescriptorFactory descriptorFactory)
+                                    ApplicationLinkService applicationLinkService,
+                                    OAuthLinkManager oAuthLinkManager,
+                                    PermissionManager permissionManager
+    )
     {
         this.servletModuleManager = servletModuleManager;
         this.templateRenderer = templateRenderer;
@@ -60,7 +62,6 @@ public class AdminPageModuleGenerator implements RemoteModuleGenerator
         this.applicationLinkService = applicationLinkService;
         this.oAuthLinkManager = oAuthLinkManager;
         this.permissionManager = permissionManager;
-        this.descriptorFactory = descriptorFactory;
     }
 
     @Override
@@ -112,7 +113,8 @@ public class AdminPageModuleGenerator implements RemoteModuleGenerator
                                                             Element e,
                                                             String key,
                                                             final String fullUrl,
-                                                            String localUrl)
+                                                            String localUrl
+    )
     {
         final String pageName = getRequiredAttribute(e, "name");
         Element config = copyDescriptorXml(e);
@@ -126,15 +128,9 @@ public class AdminPageModuleGenerator implements RemoteModuleGenerator
             @Override
             public <T> T createModule(String name, ModuleDescriptor<T> moduleDescriptor) throws PluginParseException
             {
-                return (T) new IFramePageServlet(templateRenderer,
-                        oAuthLinkManager,
-                        applicationLinkService,
-                        permissionManager,
-                        ctx.getApplicationType(),
-                        pageName,
-                        fullUrl,
-                        "atl.admin",
-                        webResourceManager, iframeParams);
+                return (T) new IFramePageServlet(templateRenderer, oAuthLinkManager, applicationLinkService,
+                        permissionManager, ctx.getApplicationType(), pageName, fullUrl, "atl.admin", webResourceManager,
+                        iframeParams);
             }
         }, servletModuleManager);
         descriptor.init(ctx.getPlugin(), config);
@@ -142,15 +138,17 @@ public class AdminPageModuleGenerator implements RemoteModuleGenerator
     }
 
     private ModuleDescriptor createWebItemDescriptor(RemoteAppCreationContext ctx,
-                                                            Element e,
-                                                            String key,
-                                                            final String fullUrl,
-                                                            String localUrl)
+                                                     Element e,
+                                                     String key,
+                                                     final String fullUrl,
+                                                     String localUrl
+    )
     {
         Element config = copyDescriptorXml(e);
         final String webItemKey = "webitem-" + key;
         config.addAttribute("key", webItemKey);
-        config.addAttribute("section", getOptionalAttribute(e, "section", productAccessor.getPreferredAdminSectionKey()));
+        config.addAttribute("section",
+                getOptionalAttribute(e, "section", productAccessor.getPreferredAdminSectionKey()));
         config.addAttribute("weight", getOptionalAttribute(e, "weight", productAccessor.getPreferredAdminWeight()));
 
         String name = getRequiredAttribute(e, "name");
@@ -159,7 +157,8 @@ public class AdminPageModuleGenerator implements RemoteModuleGenerator
                 addAttribute("linkId", webItemKey).
                 setText("/plugins/servlet" + localUrl);
 
-        ModuleDescriptor descriptor = descriptorFactory.createWebItemModuleDescriptor(ctx.getBundle().getBundleContext(), ctx.getAccessLevel());
+        ModuleDescriptor descriptor = ctx.getAccessLevel()
+                                         .createWebItemModuleDescriptor(ctx.getBundle().getBundleContext());
         descriptor.init(ctx.getPlugin(), config);
         return descriptor;
     }

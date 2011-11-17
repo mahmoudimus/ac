@@ -204,6 +204,6 @@ public class OAuthLinkManager
             }
         }
         // todo: handle this better
-        throw new IllegalArgumentException();
+        throw new IllegalArgumentException("unknown client key: " + clientKey);
     }
 }

@@ -6,6 +6,8 @@ import com.atlassian.applinks.api.ApplicationType;
 import com.atlassian.applinks.api.TypeNotInstalledException;
 import com.atlassian.applinks.spi.application.ApplicationIdUtil;
 import com.atlassian.applinks.spi.link.MutatingApplicationLinkService;
+import com.atlassian.labs.remoteapps.PermissionManager;
+import com.atlassian.labs.remoteapps.descriptor.external.AccessLevel;
 import com.atlassian.labs.remoteapps.modules.ClosableRemoteModule;
 import com.atlassian.labs.remoteapps.modules.StartableRemoteModule;
 import com.atlassian.plugin.ModuleDescriptor;
@@ -25,13 +27,18 @@ public class ApplicationTypeModule implements ClosableRemoteModule, StartableRem
     private final RemoteAppApplicationType applicationType;
     private final Set<ModuleDescriptor> descriptors;
     private final MutatingApplicationLinkService applicationLinkService;
+    private final PermissionManager permissionManager;
+    private final AccessLevel accessLevel;
 
     public ApplicationTypeModule(RemoteAppApplicationType applicationType,
                                  ModuleDescriptor<ApplicationType> applicationTypeDescriptor,
-                                 MutatingApplicationLinkService mutatingApplicationLinkService
+                                 MutatingApplicationLinkService mutatingApplicationLinkService,
+                                 PermissionManager permissionManager, AccessLevel accessLevel
     )
     {
         this.applicationType = applicationType;
+        this.permissionManager = permissionManager;
+        this.accessLevel = accessLevel;
         this.descriptors = ImmutableSet.<ModuleDescriptor>of(applicationTypeDescriptor);
         this.applicationLinkService = mutatingApplicationLinkService;
     }
@@ -68,6 +75,7 @@ public class ApplicationTypeModule implements ClosableRemoteModule, StartableRem
         {
             log.info("Applink of type {} already exists", applicationType.getId());
         }
+        permissionManager.setRestrictRemoteApp(applicationType, accessLevel);
     }
 
     @Override

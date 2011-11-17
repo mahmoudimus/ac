@@ -74,6 +74,10 @@
 
     <module-type key="api-scope" class="com.atlassian.labs.remoteapps.modules.permissions.scope.ApiScopeModuleDescriptor" />
 
+    <module-type key="access-level" class="com.atlassian.labs.remoteapps.descriptor.external.AccessLevelModuleDescriptor" />
+
+    <access-level key="global" class="com.atlassian.labs.remoteapps.GlobalAccessLevel" />
+
     <!-- product-specific modules included via xslt build process -->
 
 </atlassian-plugin>

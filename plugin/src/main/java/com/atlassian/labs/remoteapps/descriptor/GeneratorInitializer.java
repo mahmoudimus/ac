@@ -1,6 +1,7 @@
 package com.atlassian.labs.remoteapps.descriptor;
 
-import com.atlassian.labs.remoteapps.installer.AccessLevel;
+import com.atlassian.labs.remoteapps.AccessLevelManager;
+import com.atlassian.labs.remoteapps.descriptor.external.AccessLevel;
 import com.atlassian.labs.remoteapps.modules.*;
 import com.atlassian.labs.remoteapps.modules.applinks.ApplicationTypeModule;
 import com.atlassian.labs.remoteapps.modules.applinks.ApplicationTypeModuleGenerator;
@@ -8,12 +9,6 @@ import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.ModuleDescriptorFactory;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.descriptors.ChainModuleDescriptorFactory;
-import com.atlassian.plugin.event.PluginEventListener;
-import com.atlassian.plugin.event.PluginEventManager;
-import com.atlassian.plugin.event.events.PluginDisabledEvent;
-import com.atlassian.plugin.event.events.PluginEnabledEvent;
-import com.atlassian.sal.api.lifecycle.LifecycleAware;
-import com.google.common.collect.Lists;
 import org.dom4j.Element;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -26,7 +21,6 @@ import java.util.concurrent.CopyOnWriteArraySet;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Sets.newHashSet;
-import static org.apache.commons.collections.MapUtils.unmodifiableMap;
 import static org.apache.commons.lang.Validate.notNull;
 
 /**
@@ -38,6 +32,7 @@ class GeneratorInitializer
     private final Set<ModuleDescriptorFactory> factories = new CopyOnWriteArraySet<ModuleDescriptorFactory>();
     private final ApplicationTypeModuleGenerator applicationTypeModuleGenerator;
     private final Map<String,RemoteModuleGenerator> generators;
+    private final AccessLevelManager accessLevelManager;
     private final StartableForPlugins startableForPlugins;
     private final Plugin plugin;
     private final Bundle bundle;
@@ -46,8 +41,9 @@ class GeneratorInitializer
     private final Collection<RemoteModule> remoteModules = new CopyOnWriteArrayList<RemoteModule>();
     private final List<ServiceRegistration> serviceRegistrations = new CopyOnWriteArrayList<ServiceRegistration>();
 
-    GeneratorInitializer(StartableForPlugins startableForPlugins, Plugin plugin, Bundle bundle, Iterable<RemoteModuleGenerator> generatorList, Element element)
+    GeneratorInitializer(AccessLevelManager accessLevelManager, StartableForPlugins startableForPlugins, Plugin plugin, Bundle bundle, Iterable<RemoteModuleGenerator> generatorList, Element element)
     {
+        this.accessLevelManager = accessLevelManager;
         this.startableForPlugins = startableForPlugins;
         this.plugin = plugin;
         this.bundle = bundle;
@@ -73,7 +69,7 @@ class GeneratorInitializer
         this.expected = set;
     }
 
-    public boolean registerNewModuleDescriptorFactory(ModuleDescriptorFactory factory, AccessLevel accessLevel)
+    public boolean registerNewModuleDescriptorFactory(ModuleDescriptorFactory factory)
     {
         boolean added = false;
         for (Iterator<String> i = expected.iterator(); i.hasNext(); )
@@ -86,10 +82,16 @@ class GeneratorInitializer
                 break;
             }
         }
+        return added;
+    }
+
+    public void init(String accessLevelValue)
+    {
         if (expected.isEmpty() && remoteModules.isEmpty())
         {
             ModuleDescriptorFactory aggFactory = new ChainModuleDescriptorFactory(factories.toArray(new ModuleDescriptorFactory[factories.size()]));
 
+            AccessLevel accessLevel = accessLevelManager.getAccessLevel(accessLevelValue);
             RemoteAppCreationContext ctx = new RemoteAppCreationContext(plugin, aggFactory, bundle, null, accessLevel);
             ApplicationTypeModule module = (ApplicationTypeModule) applicationTypeModuleGenerator.generate(ctx, element);
             remoteModules.add(module);
@@ -105,6 +107,8 @@ class GeneratorInitializer
                     remoteModules.add(remoteModule);
                 }
             }
+
+            registerDescriptors(remoteModules);
             for (final RemoteModule remoteModule : remoteModules)
             {
                 if (remoteModule instanceof StartableRemoteModule)
@@ -119,9 +123,11 @@ class GeneratorInitializer
                     });
                 }
             }
-            registerDescriptors(remoteModules);
         }
-        return added;
+        else
+        {
+            throw new IllegalStateException("All required module types '" + expected + "' not found or this hasn't been shut down properly");
+        }
     }
 
     private void registerDescriptors(Iterable<RemoteModule> modules)

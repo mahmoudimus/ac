@@ -1,8 +1,7 @@
 package com.atlassian.labs.remoteapps.modules;
 
-import com.atlassian.applinks.api.ApplicationType;
 import com.atlassian.applinks.spi.application.NonAppLinksApplicationType;
-import com.atlassian.labs.remoteapps.installer.AccessLevel;
+import com.atlassian.labs.remoteapps.descriptor.external.AccessLevel;
 import com.atlassian.plugin.ModuleDescriptorFactory;
 import com.atlassian.plugin.Plugin;
 import org.osgi.framework.Bundle;

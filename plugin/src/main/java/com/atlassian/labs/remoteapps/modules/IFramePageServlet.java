@@ -72,7 +72,7 @@ public class IFramePageServlet extends HttpServlet
         PrintWriter out = resp.getWriter();
         resp.setContentType("text/html");
         ApplicationLink applicationLink = applicationLinkService.getPrimaryApplicationLink(applicationType.getClass());
-        if (!permissionManager.canCurrentUserAccessRemoteApp(req, applicationLink.getId().get()))
+        if (!permissionManager.canCurrentUserAccessRemoteApp(req, applicationLink))
         {
             templateRenderer.render("velocity/iframe-page-accessdenied.vm",
                 ImmutableMap.<String, Object>of(
