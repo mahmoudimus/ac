@@ -1,12 +1,12 @@
-<remote-app key="remoteapp" name="Remote App" version="1" icon-url="https://github.com/favicon.ico"
-            display-url="%baseurl%">
+<remote-app key="{{appkey}}" name="Remote App - {{appkey}}" version="1" icon-url="https://github.com/favicon.ico"
+            display-url="{{baseurl}}" access-level="{{accessLevel}}">
     <vendor name="Atlassian" url="http://atlassian.com" />
     <description>
         This really great app
     </description>
 
     <entity-type key="project" name="Project" pluralized-name="Projects" icon-url="https://github.com/favicon.ico"/>
-    <oauth callback="http://localhost" request-token-url="http://localhost" access-token-url="http://localhost" authorize-url="http://localhost">
+    <oauth callback="{{baseurl}}" request-token-url="{{baseurl}}" access-token-url="{{baseurl}}" authorize-url="{{baseurl}}">
         <public-key>
             -----BEGIN PUBLIC KEY-----
             MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCdZ4NjFq7phYw2FAvg2r3bS0Vw
@@ -20,7 +20,7 @@
         <permission scope="resttest" />
         <permission application="confluence" scope="read_content" />
     </permissions>
-    <admin-page key="remoteAppAdmin" name="Remote App Admin" url="/remoteapp/myadmin" />
-    <general-page key="remoteAppGeneral" name="Remote App General" url="/remoteapp/myadmin" />
-    <profile-page key="remoteAppProfile" name="Remote App Profile" url="/remoteapp/myadmin" />
+    <admin-page key="remoteAppAdmin" name="Remote App {{appkey}} Admin" url="/myadmin" />
+    <general-page key="remoteAppGeneral" name="Remote App {{appkey}} General" url="/myadmin" />
+    <profile-page key="remoteAppProfile" name="Remote App {{appkey}} Profile" url="/myadmin" />
 </remote-app>

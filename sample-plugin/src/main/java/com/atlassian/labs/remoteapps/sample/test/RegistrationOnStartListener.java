@@ -1,5 +1,6 @@
-package com.atlassian.labs.remoteapps.test;
+package com.atlassian.labs.remoteapps.sample.test;
 
+import com.atlassian.labs.remoteapps.sample.HttpServer;
 import com.atlassian.plugin.event.PluginEventListener;
 import com.atlassian.plugin.event.PluginEventManager;
 import com.atlassian.plugin.event.events.PluginEnabledEvent;
@@ -20,6 +21,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,12 +36,29 @@ public class RegistrationOnStartListener implements LifecycleAware, DisposableBe
     private static final Logger log = LoggerFactory.getLogger(RegistrationOnStartListener.class);
     public static final String SECRET_TOKEN = "token";
     public static final String HOST_BASEURL = System.getProperty("baseurl");
-    public static final String OUR_BASEURL = HOST_BASEURL.replace("localhost", "127.0.0.1");
+    private static final URI APP_BASEURL;
 
     private volatile boolean started = false;
     private volatile boolean enabled = false;
 
     private final PluginEventManager pluginEventManager;
+    private HttpServer server;
+
+    static
+    {
+        URI host = URI.create(HOST_BASEURL);
+        URI url = null;
+        try
+        {
+            url = new URI(host.getScheme(), host.getUserInfo(), host.getHost(), host.getPort() + 1, null, null, null);
+        }
+        catch (URISyntaxException e)
+        {
+            throw new RuntimeException(e);
+        }
+        APP_BASEURL = url;
+
+    }
 
     public RegistrationOnStartListener(PluginEventManager pluginEventManager)
     {
@@ -50,6 +70,10 @@ public class RegistrationOnStartListener implements LifecycleAware, DisposableBe
     public void destroy() throws Exception
     {
         pluginEventManager.unregister(this);
+        if (server != null)
+        {
+            server.stop();
+        }
     }
 
     @Override
@@ -65,7 +89,7 @@ public class RegistrationOnStartListener implements LifecycleAware, DisposableBe
     @PluginEventListener
     public void onEnable(PluginEnabledEvent event)
     {
-        if ("remoteapp-installer".equals(event.getPlugin().getKey()))
+        if ("sample-installer".equals(event.getPlugin().getKey()))
         {
             enabled = true;
             if (started)
@@ -75,8 +99,16 @@ public class RegistrationOnStartListener implements LifecycleAware, DisposableBe
         }
     }
 
+    private void startRemoteApp()
+    {
+        server = new HttpServer("app1", HOST_BASEURL, APP_BASEURL.toString());
+        server.start();
+    }
+
     private void register()
     {
+        startRemoteApp();
+
         Thread t = new Thread(new Runnable()
         {
 
@@ -92,12 +124,12 @@ public class RegistrationOnStartListener implements LifecycleAware, DisposableBe
                         URLEncodedUtils.format(singletonList(new BasicNameValuePair("os_authType", "basic")), "UTF-8"));
 
                     List<NameValuePair> formparams = new ArrayList<NameValuePair>();
-                    formparams.add(new BasicNameValuePair("url", OUR_BASEURL + "/remoteapp/register"));
+                    formparams.add(new BasicNameValuePair("url", APP_BASEURL + "/register"));
                     formparams.add(new BasicNameValuePair("token", SECRET_TOKEN));
                     UrlEncodedFormEntity entity = new UrlEncodedFormEntity(formparams, "UTF-8");
                     post.setEntity(entity);
 
-                    log.error("registering remoteapp...");
+                    log.error("registering app1...");
                     // Create a response handler
                     ResponseHandler<String> responseHandler = new BasicResponseHandler();
                     String responseBody = httpclient.execute(post, responseHandler);
@@ -109,11 +141,11 @@ public class RegistrationOnStartListener implements LifecycleAware, DisposableBe
                 }
                 catch (ClientProtocolException e)
                 {
-                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                    throw new RuntimeException(e);
                 }
                 catch (IOException e)
                 {
-                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                    throw new RuntimeException(e);
                 }
                 finally
                 {

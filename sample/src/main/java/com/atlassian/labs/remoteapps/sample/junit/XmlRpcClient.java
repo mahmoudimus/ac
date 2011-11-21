@@ -14,7 +14,7 @@
     Boston, MA  02111-1307  USA
 */
 
-package com.atlassian.labs.remoteapps.test.remoteapp.junit;
+package com.atlassian.labs.remoteapps.sample.junit;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -62,7 +62,7 @@ public class XmlRpcClient extends XmlRpcParser implements XmlRpcInvocationHandle
 
 
     /**
-     *  @see com.atlassian.labs.remoteapps.test.remoteapp.junit.XmlRpcClient (String,boolean)
+     *  @see XmlRpcClient (String,boolean)
      */
 
     public XmlRpcClient(URL url, boolean streamMessages)
@@ -151,7 +151,7 @@ public class XmlRpcClient extends XmlRpcParser implements XmlRpcInvocationHandle
                 catch ( IOException ioe )
                 {
                     throw new XmlRpcException(
-                        XmlRpcMessages.getString( "XmlRpcClient.NetworkError" ), ioe );
+                        XmlRpcMessages.getString("XmlRpcClient.NetworkError"), ioe );
                 }
             }
         }

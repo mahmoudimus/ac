@@ -68,7 +68,7 @@ public abstract class AbstractPageModuleGenerator implements RemoteModuleGenerat
         addToParams(e, "width");
 
         final String fullUrl = e.getParent().attributeValue("display-url") + url;
-        String localUrl = "/" + ctx.getApplicationType().getId().get() + "/" + key;
+        String localUrl = "/remoteapps/" + ctx.getApplicationType().getId().get() + "/" + key;
 
         final Set<ModuleDescriptor> descriptors = ImmutableSet.<ModuleDescriptor>of(
                 createServletDescriptor(ctx, e, key, fullUrl, localUrl),

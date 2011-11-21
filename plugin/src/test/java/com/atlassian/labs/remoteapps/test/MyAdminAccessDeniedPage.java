@@ -29,6 +29,6 @@ public class MyAdminAccessDeniedPage implements Page
     @Override
     public String getUrl()
     {
-        return "/plugins/servlet/remoteapp/remoteAppAdmin";
+        return "/plugins/servlet/remoteapps/app1/remoteAppAdmin";
     }
 }

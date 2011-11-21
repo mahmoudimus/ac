@@ -35,8 +35,6 @@ public class TestRemoteApp
         MyAdminPage myAdmin = page.clickRemoteAppAdminLink();
         assertEquals("Success", myAdmin.getMessage());
         assertEquals(OAuthUtils.getConsumerKey(), myAdmin.getConsumerKey());
-        assertEquals("betty", myAdmin.getRemoteUsername());
-        assertEquals("403", myAdmin.getForbiddenApiStatusCode());
 	}
 
     @Test

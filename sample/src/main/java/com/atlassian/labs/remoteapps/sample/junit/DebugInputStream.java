@@ -1,4 +1,4 @@
-package com.atlassian.labs.remoteapps.test.remoteapp.junit;
+package com.atlassian.labs.remoteapps.sample.junit;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

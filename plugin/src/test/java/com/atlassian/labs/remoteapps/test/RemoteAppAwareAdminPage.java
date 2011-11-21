@@ -19,12 +19,12 @@ public class RemoteAppAwareAdminPage
     @Inject
     private PageBinder pageBinder;
 
-    @FindBy(linkText = "Remote App Admin")
+    @FindBy(linkText = "Remote App app1 Admin")
     WebElement adminLink;
 
     public boolean isRemoteAppLinkPresent()
     {
-        return driver.elementExists(By.linkText("Remote App Admin"));
+        return driver.elementExists(By.linkText("Remote App app1 Admin"));
     }
 
     public MyAdminPage clickRemoteAppAdminLink()

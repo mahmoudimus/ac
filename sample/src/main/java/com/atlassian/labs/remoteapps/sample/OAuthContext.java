@@ -1,32 +1,27 @@
-package com.atlassian.labs.remoteapps.test.remoteapp;
+package com.atlassian.labs.remoteapps.sample;
 
-import com.atlassian.labs.remoteapps.test.RegistrationOnStartListener;
-import com.atlassian.labs.remoteapps.test.remoteapp.junit.XmlRpcClient;
-import com.google.common.collect.ImmutableMap;
+import com.atlassian.labs.remoteapps.sample.junit.XmlRpcClient;
 import net.oauth.*;
-import net.oauth.server.HttpRequestMessage;
 import net.oauth.signature.RSA_SHA1;
-import org.apache.http.client.methods.HttpGet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URISyntaxException;
-import java.util.*;
-
-import static com.google.common.collect.Maps.newHashMap;
-import static java.util.Collections.emptyMap;
-import static java.util.Collections.singletonList;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
  */
 public class OAuthContext
 {
-    private static final Logger log = LoggerFactory.getLogger(OAuthContext.class);
-    public static final OAuthContext INSTANCE = new OAuthContext();
+    public static OAuthContext INSTANCE;
 
     private static final String PRIVATE_KEY =
             "-----BEGIN RSA PRIVATE KEY-----\n" +
@@ -48,12 +43,16 @@ public class OAuthContext
     private OAuthConsumer host = null;
     private final OAuthConsumer local;
 
-    public OAuthContext()
+    public static void init(String appKey, String ourBaseUrl)
     {
-        final String baseUrl = RegistrationOnStartListener.OUR_BASEURL;
+        INSTANCE = new OAuthContext(appKey, ourBaseUrl);
+    }
+
+    public OAuthContext(String appKey, String baseUrl)
+    {
 
         local = new OAuthConsumer(null, // our callback
-                "remoteapp", null, // certs used instead
+                appKey, null, // certs used instead
                 new OAuthServiceProvider(baseUrl + "/remoteapp/oauth/requestTokenUrl",
                         baseUrl + "/remoteapp/oauth/accessTokenUrl",
                         baseUrl + "/remoteapp/oauth/authorizeUrl"));
@@ -76,7 +75,7 @@ public class OAuthContext
 
     private Map<String,String> convertToSingleValues(Map<String,String[]> params)
     {
-        Map<String,String> result = newHashMap();
+        Map<String,String> result = new HashMap<String,String>();
         for (Map.Entry<String,String[]> param : params.entrySet())
         {
             result.put(param.getKey(), param.getValue()[0]);
@@ -86,24 +85,7 @@ public class OAuthContext
 
     private String validateAndExtractKey(OAuthMessage message) throws ServletException
     {
-        if (log.isDebugEnabled())
-        {
-            StringBuilder sb = new StringBuilder("Validating incoming OAuth request for sample remoteapp:\n");
-            sb.append("\turl: ").append(message.URL.toString()).append("\n");
-            sb.append("\tmethod: ").append(message.method.toString()).append("\n");
-            try
-            {
-                for (Map.Entry<String,String> entry : message.getParameters())
-                {
-                    sb.append("\t").append(entry.getKey()).append(": ").append(entry.getValue()).append("\n");
-                }
-            }
-            catch (IOException e)
-            {
-                throw new RuntimeException(e);
-            }
-            log.debug(sb.toString());
-        }
+        printMessage(message);
         try
         {
             message.validateMessage(new OAuthAccessor(host), new SimpleOAuthValidator());
@@ -115,7 +97,7 @@ public class OAuthContext
             sb.append("Validation failed: \n");
             sb.append("problem: ").append(ex.getProblem()).append("\n");
             sb.append("parameters: ").append(ex.getParameters()).append("\n");
-            log.error(sb.toString());
+            System.err.println(sb.toString());
             throw new ServletException(ex);
         }
         catch (OAuthException e)
@@ -132,10 +114,23 @@ public class OAuthContext
         }
     }
 
-    public void sign(HttpGet get)
+    private void printMessage(OAuthMessage message)
     {
-        String authorization = getAuthorizationHeaderValue(get.getURI().toString(), get.getMethod());
-        get.addHeader("Authorization", authorization);
+        StringBuilder sb = new StringBuilder("Validating incoming OAuth request for sample remoteapp:\n");
+        sb.append("\turl: ").append(message.URL.toString()).append("\n");
+        sb.append("\tmethod: ").append(message.method.toString()).append("\n");
+        try
+        {
+            for (Map.Entry<String,String> entry : message.getParameters())
+            {
+                sb.append("\t").append(entry.getKey()).append(": ").append(entry.getValue()).append("\n");
+            }
+        }
+        catch (IOException e)
+        {
+            throw new RuntimeException(e);
+        }
+        System.out.println(sb.toString());
     }
 
     private String getAuthorizationHeaderValue(String uri, String method)
@@ -177,5 +172,76 @@ public class OAuthContext
     {
         String authorization = getAuthorizationHeaderValue(uri, "POST");
         client.setRequestProperty("Authorization", authorization);
+    }
+
+    public void sign(String uri, String method, HttpURLConnection yc)
+    {
+        String authorization = getAuthorizationHeaderValue(uri, method);
+        yc.setRequestProperty("Authorization", authorization);
+    }
+
+    public String sendSignedGet(String uri)
+    {
+        try
+        {
+            URL url = new URL(uri);
+            HttpURLConnection yc = (HttpURLConnection) url.openConnection();
+            sign(uri, "GET", yc);
+            BufferedReader in = new BufferedReader(
+                                    new InputStreamReader(
+                                    yc.getInputStream()));
+            StringBuilder result = new StringBuilder();
+            String line;
+            while ((line = in.readLine()) != null)
+            {
+                result.append(line);
+                result.append("\n");
+            }
+            result.deleteCharAt(result.length() - 1);
+            in.close();
+            return result.toString();
+        }
+        catch (MalformedURLException e)
+        {
+            throw new RuntimeException(e);
+        }
+        catch (IOException e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public int sendFailedSignedGet(String uri)
+    {
+        HttpURLConnection yc = null;
+        try
+        {
+            URL url = new URL(uri);
+            yc = (HttpURLConnection) url.openConnection();
+            sign(uri, "GET", yc);
+            BufferedReader in = new BufferedReader(
+                                    new InputStreamReader(
+                                    yc.getInputStream()));
+            return yc.getResponseCode();
+        }
+        catch (MalformedURLException e)
+        {
+            throw new RuntimeException(e);
+        }
+        catch (IOException e)
+        {
+            try
+            {
+                if (yc != null)
+                {
+                    return yc.getResponseCode();
+                }
+                throw new RuntimeException("no status code");
+            }
+            catch (IOException e1)
+            {
+                throw new RuntimeException(e);
+            }
+        }
     }
 }

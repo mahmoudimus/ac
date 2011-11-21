@@ -1,32 +1,40 @@
-<div id="embedded"></div>
-<script type="text/javascript" language="javascript">
-    (function($) {
-        var container = $('#embedded');
-        var initHeight = '#if($height)$height#else 10em #end';
-        var initWidth = '#if($width)$width#else 700px#end';
-        var iframeSrc = '$iframeSrcHtml';
-        function resize(height, width){
-            var iframe = $('iframe', container);
-            iframe.css('height', settings[1] + "px");
-            iframe.css('width', settings[0] + "px");
-        }
-        var transport = new easyXDM.Socket(/** The configuration */{
-            remote: iframeSrc,
-
-            //ID of the element to attach the inline frame to
-            container: "embedded",
-            channel: "channel01",
-            props: {style: {height : initHeight, width : initWidth} },
-            onMessage: function (messageText, origin) {
-                var message = JSON.parse(messageText);
-                switch (message.id) {
-                    case 'init' : container.addClass('iframe-init');
-                                  container.append("loaded");
-                                  break;
-                    case 'resize' : resize(message.height, message.width);
-                                    break;
-                }
+<div>
+    <div id="embedded"></div>
+    <hr />
+    <div id="ra-stats" style="color: gray; font-size: smaller">
+        Loaded from <span id="ra-key"><a href="$remoteapp.displayUrl">$remoteapp.name</a></span>  in
+        <span id="ra-time">...</span> ms
+    </div>
+    <script type="text/javascript" language="javascript">
+        (function($) {
+            var container = $('#embedded');
+            var initHeight = '#if($height)$height#else 10em #end';
+            var initWidth = '#if($width)$width#else 700px#end';
+            var iframeSrc = '$iframeSrcHtml';
+            function resize(height, width){
+                var iframe = $('iframe', container);
+                iframe.css('height', settings[1] + "px");
+                iframe.css('width', settings[0] + "px");
             }
-        });
-    })(jQuery);
-</script>
+            var now = new Date().getMilliseconds();
+            var transport = new easyXDM.Socket(/** The configuration */{
+                remote: iframeSrc,
+
+                //ID of the element to attach the inline frame to
+                container: "embedded",
+                channel: "channel01",
+                props: {style: {height : initHeight, width : initWidth} },
+                onMessage: function (messageText, origin) {
+                    var message = JSON.parse(messageText);
+                    switch (message.id) {
+                        case 'init' : container.addClass('iframe-init');
+                                      $('#ra-time').text(new Date().getMilliseconds() - now);
+                                      break;
+                        case 'resize' : resize(message.height, message.width);
+                                        break;
+                    }
+                }
+            });
+        })(jQuery);
+    </script>
+</div>

@@ -24,6 +24,7 @@
 
     <modules>
         <module>sample</module>
+        <module>sample-plugin</module>
         <module>plugin</module>
     </modules>
 

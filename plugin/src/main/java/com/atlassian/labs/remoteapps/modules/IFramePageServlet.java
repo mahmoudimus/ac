@@ -96,6 +96,7 @@ public class IFramePageServlet extends HttpServlet
         ctx.put("title", title);
         ctx.put("iframeSrcHtml", uriBuilder.build().toString());
         ctx.put("extraPath", req.getPathInfo() != null ? req.getPathInfo() : "");
+        ctx.put("remoteapp", applicationLink);
         ctx.put("decorator", decorator);
 
         templateRenderer.render("velocity/iframe-page.vm", ctx, out);

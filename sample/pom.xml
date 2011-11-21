@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
         <groupId>com.atlassian.labs</groupId>
         <artifactId>remoteapps-parent</artifactId>
@@ -11,7 +12,9 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>remoteapps-sample</artifactId>
     <name>Atlassian Remote Apps - Sample</name>
-    <packaging>atlassian-plugin</packaging>
+    <description>
+        A sample remote app to demonstrate basic usage of the available extension points.
+    </description>
 
     <dependencies>
         <dependency>
@@ -26,15 +29,28 @@
         </dependency>
         <dependency>
             <groupId>net.oauth.core</groupId>
-            <artifactId>oauth-httpclient4</artifactId>
+            <artifactId>oauth-consumer</artifactId>
             <version>20090617</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>commons-logging</groupId>
-                    <artifactId>commons-logging</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
+
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>1.1.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.samskivert</groupId>
+            <artifactId>jmustache</artifactId>
+            <version>1.3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-server</artifactId>
+            <version>7.1.6.v20100715</version>
+        </dependency>
+
         <dependency>
             <groupId>org.kohsuke.redstone</groupId>
             <artifactId>redstone</artifactId>
@@ -42,26 +58,11 @@
         </dependency>
 
         <dependency>
-            <groupId>com.atlassian.plugins</groupId>
-            <artifactId>atlassian-plugins-core</artifactId>
-            <scope>provided</scope>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-servlet</artifactId>
+            <version>7.1.6.v20100715</version>
         </dependency>
-        <dependency>
-            <groupId>com.atlassian.templaterenderer</groupId>
-            <artifactId>atlassian-template-renderer-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.atlassian.sal</groupId>
-            <artifactId>sal-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>org.springframework.context</artifactId>
-            <version>2.5.6</version>
-            <scope>provided</scope>
-        </dependency>
+
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -72,19 +73,60 @@
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
             <version>2.4</version>
-            <scope>provided</scope>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <excludes>
+                    <exclude>info-page.mu</exclude>
+                </excludes>
+                <filtering>false</filtering>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>info-page.mu</include>
+                </includes>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
-                <groupId>com.atlassian.maven.plugins</groupId>
-                <artifactId>maven-amps-plugin</artifactId>
-                <version>3.6.2</version>
-                <extensions>true</extensions>
-                <configuration>
-                </configuration>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>1.5</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <shadedArtifactAttached>true</shadedArtifactAttached>
+                            <shadedClassifierName>standalone</shadedClassifierName>
+                            <transformers>
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>com.atlassian.labs.remoteapps.sample.HttpServer</mainClass>
+                                </transformer>
+                            </transformers>
+                            <artifactSet>
+                                <includes>
+                                    <include>net.oauth.core:*</include>
+                                    <include>org.eclipse.jetty:*</include>
+                                    <include>org.kohsuke.redstone:*</include>
+                                    <include>com.samskivert:*</include>
+                                    <include>javax.servlet:servlet-api</include>
+                                    <include>commons-logging:commons-logging</include>
+                                </includes>
+                            </artifactSet>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

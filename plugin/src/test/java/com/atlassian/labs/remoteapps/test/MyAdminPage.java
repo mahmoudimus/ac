@@ -41,16 +41,6 @@ public class MyAdminPage
         return getValue("consumerKey");
     }
 
-    public String getRemoteUsername()
-    {
-        return getValue("remoteUser");
-    }
-
-    public String getForbiddenApiStatusCode()
-    {
-        return getValue("forbiddenGet");
-    }
-
     private String getValue(final String key)
     {
         return runInFrame(new Callable<String>()
