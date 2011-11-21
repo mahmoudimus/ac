@@ -23,6 +23,7 @@ import java.io.StringWriter;
 import java.util.List;
 import java.util.Map;
 
+import static com.atlassian.labs.remoteapps.util.ServletUtils.encodeIFrameSrc;
 import static com.google.common.collect.Maps.newHashMap;
 import static java.util.Collections.singletonList;
 
@@ -76,24 +77,12 @@ public class IFrameViewProfilePanel implements CompatViewProfilePanel
         ApplicationLink applicationLink = applicationLinkService.getPrimaryApplicationLink(applicationType.getClass());
         OAuthMessage message = signIframeUrl(applicationLink);
 
-        UriBuilder uriBuilder = UriBuilder.fromUri(iframeSrc);
-        try
-        {
-            for (Map.Entry<String,String> entry : message.getParameters())
-            {
-                uriBuilder.queryParam(entry.getKey(), entry.getValue());
-            }
-        }
-        catch (IOException e)
-        {
-            throw new RuntimeException(e);
-        }
-
         webResourceManager.requireResourcesForContext("remoteapps-iframe");
 
         Map<String,Object> ctx = newHashMap(params);
         ctx.put("title", title);
-        ctx.put("iframeSrcHtml", uriBuilder.build().toString());
+        ctx.put("iframeSrcHtml", encodeIFrameSrc(iframeSrc, message));
+        ctx.put("remoteapp", applicationLink);
         ctx.put("extraPath", "");
 
         StringWriter writer = new StringWriter();

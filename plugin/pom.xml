@@ -272,6 +272,7 @@
                         <webdriver.browser>${webdriver.browser}</webdriver.browser>
                         <atlassian.mail.senddisabled>false</atlassian.mail.senddisabled>
                         <sun.net.http.allowRestrictedHeaders>true</sun.net.http.allowRestrictedHeaders>
+                        <remoteapps.access.levels>user,global</remoteapps.access.levels>
                         <!--atlassian.dev.mode>false</atlassian.dev.mode-->
                     </systemPropertyVariables>
                     <enableFastdev>false</enableFastdev>

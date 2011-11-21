@@ -19,10 +19,12 @@ import static com.atlassian.labs.remoteapps.sample.HttpUtils.render;
 public class RegisterServlet extends HttpServlet
 {
     private final String appKey;
+    private final String accessLevel;
 
-    public RegisterServlet(String appKey)
+    public RegisterServlet(String appKey, String accessLevel)
     {
         this.appKey = appKey;
+        this.accessLevel = accessLevel;
     }
 
     @Override
@@ -36,8 +38,6 @@ public class RegisterServlet extends HttpServlet
                                 req.getParameter("authorizeUrl"),
                                 req.getParameter("accessTokenUrl")));
 
-        final String accessLevel = req.getParameter("preferred_access_level") != null ?
-                req.getParameter("preferred_access_level") : "global";
         final String output = render("sample-descriptor.mu.xml", new HashMap<String,Object>() {{
             put("baseurl", getOurBaseUrl());
             put("appkey", appKey);

@@ -6,7 +6,7 @@ var installDialog = require('speakeasy/user/install/install');
 
 function sendRegistrationToken(url, callbacks) {
     $.ajax({
-      url: host.findContextPath() + "/rest/remoteapps/latest/installer?preferred_access_level=user",
+      url: host.findContextPath() + "/rest/remoteapps/latest/installer",
       type: 'POST',
       beforeSend: function(jqXHR, settings) {
         jqXHR.setRequestHeader("X-Atlassian-Token", "nocheck");

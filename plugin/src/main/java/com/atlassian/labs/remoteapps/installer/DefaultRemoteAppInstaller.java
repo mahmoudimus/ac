@@ -10,6 +10,7 @@ import com.atlassian.plugin.JarPluginArtifact;
 import com.atlassian.plugin.PluginController;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.net.*;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import org.dom4j.*;
 import org.dom4j.io.SAXReader;
@@ -25,6 +26,7 @@ import java.util.List;
 import java.util.Set;
 
 import static com.atlassian.labs.remoteapps.util.Dom4jUtils.getRequiredAttribute;
+import static com.google.common.collect.Sets.newHashSet;
 
 /**
  * Handles the remote app installation dance
@@ -36,6 +38,9 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
     private final RequestFactory requestFactory;
     private final PluginController pluginController;
     private final ApplicationProperties applicationProperties;
+
+    private static final Set<String> ALLOWED_ACCESS_LEVELS = ImmutableSet.of(
+            (System.getProperty("remoteapps.access.levels", "user").split(",")));
 
     @Autowired
     public DefaultRemoteAppInstaller(ConsumerService consumerService,
@@ -108,6 +113,12 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
         if (displayUrl == null || !registrationUrl.startsWith(displayUrl))
         {
             throw new InstallationFailedException("display-url '" + displayUrl + "' must match registration URL");
+        }
+
+        String accessLevel = root.attributeValue("access-level");
+        if (!ALLOWED_ACCESS_LEVELS.contains(accessLevel))
+        {
+            throw new InstallationFailedException("access-level '" + accessLevel + "' must be one of " + ALLOWED_ACCESS_LEVELS);
         }
     }
 

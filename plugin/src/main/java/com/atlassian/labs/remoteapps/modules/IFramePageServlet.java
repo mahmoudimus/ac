@@ -24,6 +24,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
+import static com.atlassian.labs.remoteapps.util.ServletUtils.encodeIFrameSrc;
 import static com.google.common.collect.Maps.newHashMap;
 import static java.util.Collections.singletonList;
 
@@ -63,7 +64,7 @@ public class IFramePageServlet extends HttpServlet
         this.iframeSrc = iframeSrc;
         this.decorator = decorator;
         this.webResourceManager = webResourceManager;
-        this.params = params;
+        this.params = params; 
     }
 
     @Override
@@ -84,17 +85,11 @@ public class IFramePageServlet extends HttpServlet
         }
         OAuthMessage message = signIframeUrl(applicationLink);
 
-        UriBuilder uriBuilder = UriBuilder.fromUri(iframeSrc);
-        for (Map.Entry<String,String> entry : message.getParameters())
-        {
-            uriBuilder.queryParam(entry.getKey(), entry.getValue());
-        }
-
         webResourceManager.requireResourcesForContext("remoteapps-iframe");
 
         Map<String,Object> ctx = newHashMap(params);
         ctx.put("title", title);
-        ctx.put("iframeSrcHtml", uriBuilder.build().toString());
+        ctx.put("iframeSrcHtml", encodeIFrameSrc(iframeSrc, message));
         ctx.put("extraPath", req.getPathInfo() != null ? req.getPathInfo() : "");
         ctx.put("remoteapp", applicationLink);
         ctx.put("decorator", decorator);

@@ -1,7 +1,6 @@
 package com.atlassian.labs.remoteapps.sample;
 
 
-import net.oauth.OAuth;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -32,7 +31,8 @@ public class HttpServer
 
         context.addServlet(new ServletHolder(new InfoServlet(appKey)),"/");
         context.addServlet(new ServletHolder(new MyAdminServlet()),"/myadmin");
-        context.addServlet(new ServletHolder(new RegisterServlet(appKey)),"/register");
+        context.addServlet(new ServletHolder(new RegisterServlet(appKey, "global")),"/register");
+        context.addServlet(new ServletHolder(new RegisterServlet(appKey, "user")),"/user-register");
 
         start();
     }
