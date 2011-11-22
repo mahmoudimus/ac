@@ -8,10 +8,11 @@ To get started, build the app:
   mvn package
   
 To run the app, execute the standalone jar:
-  java -jar target/remoteapps-sample-VERSION-standalone.jar APP_KEY HOST_BASE_URL APP_BASE_URL
+  java -jar target/remoteapps-sample-VERSION-standalone.jar APP_KEY HOST_BASE_URL APP_BASE_URL PORT
 
-For example, this command would run the app to be embedded into a local JIRA instance:
-  java -jar target/remoteapps-sample-VERSION-standalone.jar myAppKey http://localhost:2990/jira http://localhost:5432
+For example, this command would run the app on port 5432, proxied as https://mydomain.com to the 
+world, to be embedded into the remoteapps.jira.com JIRA instance:
+  java -jar target/remoteapps-sample-VERSION-standalone.jar myAppKey https://remoteapps.jira.com https://mydomain.com 5432 
 
 Then, to install the Remote App via the "Extensions" user profile page (Speakeasy), enter the URL:
-  http://localhost:5432/user-register
+  https://mydomain.com/user-register
