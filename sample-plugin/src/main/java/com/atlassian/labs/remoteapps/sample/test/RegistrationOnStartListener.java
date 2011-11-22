@@ -101,7 +101,7 @@ public class RegistrationOnStartListener implements LifecycleAware, DisposableBe
 
     private void startRemoteApp()
     {
-        server = new HttpServer("app1", HOST_BASEURL, APP_BASEURL.toString());
+        server = new HttpServer("app1", HOST_BASEURL, APP_BASEURL.toString(), APP_BASEURL.getPort());
         server.start();
     }
 

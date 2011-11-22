@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
@@ -68,7 +69,8 @@ public class OAuthContext
 
     public String validate2LOFromParameters(HttpServletRequest req) throws ServletException
     {
-        OAuthMessage message = new OAuthMessage(req.getMethod(), req.getRequestURL().toString(),
+        String url = HttpServer.getOurBaseUrl() + URI.create(req.getRequestURI()).getPath();
+        OAuthMessage message = new OAuthMessage(req.getMethod(), url,
                 convertToSingleValues(req.getParameterMap()).entrySet());
         return validateAndExtractKey(message);
     }

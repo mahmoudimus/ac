@@ -2,11 +2,12 @@ var dialog = require('speakeasy/dialog');
 var $ = require('speakeasy/jquery').jQuery;
 var addMessage = require('speakeasy/messages').add;
 var host = require('speakeasy/host');
+var contextPath = window.contextPath === undefined ? host.findContextPath() : window.contextPath;
 var installDialog = require('speakeasy/user/install/install');
 
 function sendRegistrationToken(url, callbacks) {
     $.ajax({
-      url: host.findContextPath() + "/rest/remoteapps/latest/installer",
+      url: contextPath + "/rest/remoteapps/latest/installer",
       type: 'POST',
       beforeSend: function(jqXHR, settings) {
         jqXHR.setRequestHeader("X-Atlassian-Token", "nocheck");

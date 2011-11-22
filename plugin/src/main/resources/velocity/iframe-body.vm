@@ -1,4 +1,5 @@
 <div>
+
     <div id="embedded"></div>
     <hr />
     <div id="ra-stats" style="color: gray; font-size: smaller">
@@ -16,7 +17,7 @@
                 iframe.css('height', settings[1] + "px");
                 iframe.css('width', settings[0] + "px");
             }
-            var now = new Date().getMilliseconds();
+            var now = new Date().getTime();
             var transport = new easyXDM.Socket(/** The configuration */{
                 remote: iframeSrc,
 
@@ -28,7 +29,7 @@
                     var message = JSON.parse(messageText);
                     switch (message.id) {
                         case 'init' : container.addClass('iframe-init');
-                                      $('#ra-time').text(new Date().getMilliseconds() - now);
+                                      $('#ra-time').text(new Date().getTime() - now);
                                       break;
                         case 'resize' : resize(message.height, message.width);
                                         break;

@@ -160,14 +160,15 @@ public class OAuthLinkManager
         params.put("xdm_e", singletonList(host));
         params.put("xdm_c", singletonList("channel01"));
         params.put("xdm_p", singletonList("1"));
-        if (log.isDebugEnabled())
-        {
+        //if (log.isDebugEnabled())
+       // {
             dumpParamsToSign(params);
-        }
+        //}
         ServiceProvider serviceProvider = getServiceProvider(link);
         Request oAuthRequest = new Request(Request.HttpMethod.valueOf(method),
                 URI.create(url), convertParameters(params));
         final com.atlassian.oauth.Request signedRequest = consumerService.sign(oAuthRequest, serviceProvider);
+        log.error("signature: " + signedRequest.getParameter("oauth_signature"));
         return OAuthHelper.asOAuthMessage(signedRequest);
     }
 
@@ -179,7 +180,7 @@ public class OAuthLinkManager
         {
             sb.append("\t").append(entry.getKey()).append(": ").append(entry.getValue().toString()).append("\n");
         }
-        log.debug(sb.toString());
+        log.error(sb.toString());
     }
 
     private List<com.atlassian.oauth.Request.Parameter> convertParameters(Map<String,List<String>> reqParameters)

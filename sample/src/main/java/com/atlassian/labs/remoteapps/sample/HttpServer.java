@@ -17,10 +17,9 @@ public class HttpServer
     private final Server server;
     private static String OUR_BASE_URL;
 
-    public HttpServer(String appKey, String hostBaseUrl, String ourBaseUrl)
+    public HttpServer(String appKey, String hostBaseUrl, String ourBaseUrl, int port)
     {
-        URI url = URI.create(ourBaseUrl);
-        server = new Server(url.getPort());
+        server = new Server(port);
         HOST_BASE_URL = hostBaseUrl;
         OUR_BASE_URL = ourBaseUrl;
         OAuthContext.init(appKey, ourBaseUrl);
@@ -73,12 +72,12 @@ public class HttpServer
 
     public static void  main(String[] args)
     {
-        if (args.length != 3)
+        if (args.length != 4)
         {
-            System.err.println("Usage: java -jar remoteapps-sample-VERSION-standalone.jar APP_KEY, HOST_BASE_URL APP_BASE_URL");
+            System.err.println("Usage: java -jar remoteapps-sample-VERSION-standalone.jar APP_KEY, HOST_BASE_URL APP_BASE_URL INTERNAL_PORT");
             System.exit(1);
         }
-        HttpServer server = new HttpServer(args[0], args[1], args[2]);
+        HttpServer server = new HttpServer(args[0], args[1], args[2], Integer.parseInt(args[3]));
         server.start();
         try
         {
