@@ -51,7 +51,6 @@ public class OAuthLinkManager
     private final ApplicationLinkService applicationLinkService;
     private final ConsumerService consumerService;
     private final UserManager userManager;
-    private final ApplicationProperties applicationProperties;
     private final OAuthValidator oauthValidator;
 
     @Autowired
@@ -59,15 +58,13 @@ public class OAuthLinkManager
                             AuthenticationConfigurationManager authenticationConfigurationManager,
                             ApplicationLinkService applicationLinkService,
                             ConsumerService consumerService,
-                            UserManager userManager,
-                            ApplicationProperties applicationProperties)
+                            UserManager userManager)
     {
         this.serviceProviderConsumerStore = serviceProviderConsumerStore;
         this.authenticationConfigurationManager = authenticationConfigurationManager;
         this.applicationLinkService = applicationLinkService;
         this.consumerService = consumerService;
         this.userManager = userManager;
-        this.applicationProperties = applicationProperties;
         this.oauthValidator = new SimpleOAuthValidator();
     }
 
@@ -145,10 +142,34 @@ public class OAuthLinkManager
         }
     }
 
-    public OAuthMessage sign(ApplicationLink link, String method, String url, Map<String,List<String>> originalParams)
+    public String signAsHeader(ApplicationLink link, String method, String url, Map<String, List<String>> originalParams)
     {
-        URI hostUri = URI.create(applicationProperties.getBaseUrl());
-        String host = hostUri.getScheme() + "://" + hostUri.getHost() + ":" + hostUri.getPort();
+        OAuthMessage message = sign(link, method, url, originalParams);
+        try
+        {
+            return message.getAuthorizationHeader(null);
+        }
+        catch (IOException e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public List<Map.Entry<String, String>> signAsParameters(ApplicationLink link, String method, String url, Map<String, List<String>> originalParams)
+    {
+        OAuthMessage message = sign(link, method, url, originalParams);
+        try
+        {
+            return message.getParameters();
+        }
+        catch (IOException e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private OAuthMessage sign(ApplicationLink link, String method, String url, Map<String, List<String>> originalParams)
+    {
         String currentUser = userManager.getRemoteUsername();
         Map<String,List<String>> params = newHashMap(originalParams);
         Consumer self = consumerService.getConsumer();
@@ -157,18 +178,14 @@ public class OAuthLinkManager
         {
             params.put("user_id", singletonList(currentUser));
         }
-        params.put("xdm_e", singletonList(host));
-        params.put("xdm_c", singletonList("channel01"));
-        params.put("xdm_p", singletonList("1"));
-        //if (log.isDebugEnabled())
-       // {
+        if (log.isDebugEnabled())
+        {
             dumpParamsToSign(params);
-        //}
+        }
         ServiceProvider serviceProvider = getServiceProvider(link);
         Request oAuthRequest = new Request(Request.HttpMethod.valueOf(method),
                 URI.create(url), convertParameters(params));
-        final com.atlassian.oauth.Request signedRequest = consumerService.sign(oAuthRequest, serviceProvider);
-        log.error("signature: " + signedRequest.getParameter("oauth_signature"));
+        final Request signedRequest = consumerService.sign(oAuthRequest, serviceProvider);
         return OAuthHelper.asOAuthMessage(signedRequest);
     }
 
@@ -180,7 +197,7 @@ public class OAuthLinkManager
         {
             sb.append("\t").append(entry.getKey()).append(": ").append(entry.getValue().toString()).append("\n");
         }
-        log.error(sb.toString());
+        log.debug(sb.toString());
     }
 
     private List<com.atlassian.oauth.Request.Parameter> convertParameters(Map<String,List<String>> reqParameters)

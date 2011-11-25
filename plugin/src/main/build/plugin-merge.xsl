@@ -21,9 +21,9 @@
     <xsl:template match="atlassian-plugin">
         <xsl:copy>
             <xsl:apply-templates select="@*|node()"/>
-            <xsl:apply-templates select="document(concat($baseDir,'/atlassian-plugin-refapp.xml'))"/>
-            <xsl:apply-templates select="document(concat($baseDir,'/atlassian-plugin-confluence.xml'))"/>
-            <xsl:apply-templates select="document(concat($baseDir,'/atlassian-plugin-jira.xml'))"/>
+            <xsl:apply-templates select="document(concat('file:///',$baseDir,'/atlassian-plugin-refapp.xml'))"/>
+            <xsl:apply-templates select="document(concat('file:///',$baseDir,'/atlassian-plugin-confluence.xml'))"/>
+            <xsl:apply-templates select="document(concat('file:///',$baseDir,'/atlassian-plugin-jira.xml'))"/>
         </xsl:copy>
     </xsl:template>
 

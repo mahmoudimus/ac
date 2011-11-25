@@ -48,6 +48,17 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.1.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient-cache</artifactId>
+            <version>4.1.2</version>
+        </dependency>
 
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -225,6 +236,17 @@
 
     </dependencies>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>commons-logging</groupId>
+                <artifactId>commons-logging</artifactId>
+                <version>1.1.1</version>
+                <scope>provided</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <build>
         <pluginManagement>
             <plugins>
@@ -355,6 +377,9 @@
                                 <testedProductClass>com.atlassian.webdriver.confluence.ConfluenceTestedProduct
                                 </testedProductClass>
                             </systemProperties>
+                            <includes>
+                                <include>it/confluence/Test*.java</include>
+                            </includes>
                         </testGroup>
                     </testGroups>
                 </configuration>

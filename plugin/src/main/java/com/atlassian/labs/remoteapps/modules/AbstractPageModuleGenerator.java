@@ -1,9 +1,5 @@
 package com.atlassian.labs.remoteapps.modules;
 
-import com.atlassian.applinks.api.ApplicationLinkService;
-import com.atlassian.labs.remoteapps.OAuthLinkManager;
-import com.atlassian.labs.remoteapps.PermissionManager;
-import com.atlassian.labs.remoteapps.product.ProductAccessor;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.module.ModuleFactory;
@@ -14,7 +10,6 @@ import com.atlassian.templaterenderer.TemplateRenderer;
 import com.google.common.collect.ImmutableSet;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.Map;
@@ -31,26 +26,19 @@ public abstract class AbstractPageModuleGenerator implements RemoteModuleGenerat
     private final ServletModuleManager servletModuleManager;
     private final TemplateRenderer templateRenderer;
     private final WebResourceManager webResourceManager;
-    private final ApplicationLinkService applicationLinkService;
-    private final OAuthLinkManager oAuthLinkManager;
-    private final PermissionManager permissionManager;
+    private final ApplicationLinkOperationsFactory applicationLinkSignerFactory;
     private Map<String, Object> iframeParams = newHashMap();
 
     @Autowired
     public AbstractPageModuleGenerator(ServletModuleManager servletModuleManager,
                                        TemplateRenderer templateRenderer,
                                        WebResourceManager webResourceManager,
-                                       ApplicationLinkService applicationLinkService,
-                                       OAuthLinkManager oAuthLinkManager,
-                                       PermissionManager permissionManager
-    )
+                                       ApplicationLinkOperationsFactory applicationLinkSignerFactory)
     {
         this.servletModuleManager = servletModuleManager;
         this.templateRenderer = templateRenderer;
         this.webResourceManager = webResourceManager;
-        this.applicationLinkService = applicationLinkService;
-        this.oAuthLinkManager = oAuthLinkManager;
-        this.permissionManager = permissionManager;
+        this.applicationLinkSignerFactory = applicationLinkSignerFactory;
     }
 
     @Override
@@ -67,11 +55,10 @@ public abstract class AbstractPageModuleGenerator implements RemoteModuleGenerat
         addToParams(e, "height");
         addToParams(e, "width");
 
-        final String fullUrl = e.getParent().attributeValue("display-url") + url;
         String localUrl = "/remoteapps/" + ctx.getApplicationType().getId().get() + "/" + key;
 
         final Set<ModuleDescriptor> descriptors = ImmutableSet.<ModuleDescriptor>of(
-                createServletDescriptor(ctx, e, key, fullUrl, localUrl),
+                createServletDescriptor(ctx, e, key, url, localUrl),
                 createWebItemDescriptor(ctx, e, key, localUrl));
         return new RemoteModule()
         {
@@ -95,7 +82,7 @@ public abstract class AbstractPageModuleGenerator implements RemoteModuleGenerat
     private ServletModuleDescriptor createServletDescriptor(final RemoteAppCreationContext ctx,
                                                             Element e,
                                                             String key,
-                                                            final String fullUrl,
+                                                            final String path,
                                                             String localUrl
     )
     {
@@ -111,9 +98,8 @@ public abstract class AbstractPageModuleGenerator implements RemoteModuleGenerat
             @Override
             public <T> T createModule(String name, ModuleDescriptor<T> moduleDescriptor) throws PluginParseException
             {
-                return (T) new IFramePageServlet(templateRenderer, oAuthLinkManager, applicationLinkService,
-                        permissionManager, ctx.getApplicationType(), pageName, fullUrl, getDecorator(), webResourceManager,
-                        iframeParams);
+                return (T) new IFramePageServlet(templateRenderer, applicationLinkSignerFactory.create(ctx.getApplicationType()),
+                        pageName, path, getDecorator(), webResourceManager, iframeParams);
             }
         }, servletModuleManager);
         descriptor.init(ctx.getPlugin(), config);

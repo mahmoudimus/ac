@@ -14,4 +14,10 @@
     </web-section>
 
     <component key="profile-page-module-generator" class="com.atlassian.labs.remoteapps.modules.page.ProfilePageModuleGenerator" />
+    <component key="macro-module-generator" class="com.atlassian.labs.remoteapps.modules.confluence.MacroModuleGenerator" />
+    <component key="macroContentManager" class="com.atlassian.labs.remoteapps.modules.confluence.MacroContentManager" />
+
+    <component-import key="systemInfoService" interface="com.atlassian.confluence.status.service.SystemInformationService" />
+    <component-import key="xmlService" interface="com.atlassian.confluence.xhtml.api.XhtmlContent" />
+    <component-import key="i18nBean" interface="com.atlassian.confluence.util.i18n.I18NBeanFactory" />
 </application>

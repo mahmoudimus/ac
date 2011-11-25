@@ -2,10 +2,13 @@ package com.atlassian.labs.remoteapps.util;
 
 import com.atlassian.plugin.PluginParseException;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 import org.dom4j.DocumentFactory;
 import org.dom4j.Element;
 
 import java.net.URI;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -44,6 +47,35 @@ public class Dom4jUtils
             copyDesc.setText(sourceDesc.getText());
         }
         return copy;
+    }
+
+    public static Element copyRequiredElements(Element source, Element dest, String... keys)
+    {
+        for (String name : keys)
+        {
+            HashSet<Element> elements = Sets.<Element>newHashSet(source.elements(name));
+            if (elements.isEmpty())
+            {
+                throw new PluginParseException("Element '" + name + "' is required on '" + source.getName() + "'");
+            }
+            for (Element e : elements)
+            {
+                dest.add(e.createCopy());
+            }
+        }
+        return dest;
+    }
+
+    public static Element copyOptionalElements(Element source, Element dest, String... keys)
+    {
+        for (String name : keys)
+        {
+            for (Element e : (List<Element>)source.elements(name))
+            {
+                dest.add(e.createCopy());
+            }
+        }
+        return dest;
     }
 
     public static Element copyRequiredAttributes(Element source, Element dest, String... keys)

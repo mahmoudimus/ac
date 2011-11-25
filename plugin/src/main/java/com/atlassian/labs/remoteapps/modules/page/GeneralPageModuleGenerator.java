@@ -1,9 +1,7 @@
 package com.atlassian.labs.remoteapps.modules.page;
 
-import com.atlassian.applinks.api.ApplicationLinkService;
-import com.atlassian.labs.remoteapps.OAuthLinkManager;
-import com.atlassian.labs.remoteapps.PermissionManager;
 import com.atlassian.labs.remoteapps.modules.AbstractPageModuleGenerator;
+import com.atlassian.labs.remoteapps.modules.ApplicationLinkOperationsFactory;
 import com.atlassian.labs.remoteapps.product.ProductAccessor;
 import com.atlassian.plugin.servlet.ServletModuleManager;
 import com.atlassian.plugin.webresource.WebResourceManager;
@@ -24,12 +22,10 @@ public class GeneralPageModuleGenerator extends AbstractPageModuleGenerator
                                       TemplateRenderer templateRenderer,
                                       ProductAccessor productAccessor,
                                       WebResourceManager webResourceManager,
-                                      ApplicationLinkService applicationLinkService,
-                                      OAuthLinkManager oAuthLinkManager,
-                                      PermissionManager permissionManager
+                                      ApplicationLinkOperationsFactory applicationLinkSignerFactory
     )
     {
-        super(servletModuleManager, templateRenderer, webResourceManager, applicationLinkService, oAuthLinkManager, permissionManager);
+        super(servletModuleManager, templateRenderer, webResourceManager, applicationLinkSignerFactory);
         this.productAccessor = productAccessor;
     }
 

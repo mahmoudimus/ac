@@ -13,6 +13,8 @@ import org.dom4j.Element;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -37,6 +39,7 @@ class GeneratorInitializer
     private final Plugin plugin;
     private final Bundle bundle;
     private final Element element;
+    private static final Logger log = LoggerFactory.getLogger(GeneratorInitializer.class);
 
     private final Collection<RemoteModule> remoteModules = new CopyOnWriteArrayList<RemoteModule>();
     private final List<ServiceRegistration> serviceRegistrations = new CopyOnWriteArrayList<ServiceRegistration>();
@@ -105,6 +108,10 @@ class GeneratorInitializer
                     RemoteModuleGenerator generator = generators.get(type);
                     final RemoteModule remoteModule = generator.generate(ctx, e);
                     remoteModules.add(remoteModule);
+                }
+                else
+                {
+                    log.warn("Unknown module: " + type);
                 }
             }
 

@@ -23,4 +23,18 @@
     <admin-page key="remoteAppAdmin" name="Remote App {{appkey}} Admin" url="/myadmin" />
     <general-page key="remoteAppGeneral" name="Remote App {{appkey}} General" url="/myadmin" />
     <profile-page key="remoteAppProfile" name="Remote App {{appkey}} Profile" url="/myadmin" />
+
+    <!-- Confluence only -->
+    <macro key="{{appkey}}" url="/mymacro" output-type="block" body-type="rich-text">
+        <description>Example macro</description>
+        <category name="development" />
+        <parameters>
+            <parameter name="footy" title="Favorite Footy" type="enum">
+                <value name="American Football"/>
+                <value name="Soccer"/>
+                <value name="Rugby Union"/>
+                <value name="Rugby League"/>
+            </parameter>
+        </parameters>
+    </macro>
 </remote-app>
