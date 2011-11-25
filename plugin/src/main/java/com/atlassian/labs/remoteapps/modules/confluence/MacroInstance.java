@@ -52,6 +52,12 @@ public class MacroInstance
 
     public String getHashKey()
     {
-        return String.valueOf(linkOperations.get().getId().get().hashCode() & parameters.hashCode() & body.hashCode() & path.hashCode() & pageId.hashCode());
+        StringBuilder sb = new StringBuilder();
+        sb.append(linkOperations.get().getId().get()).append("|");
+        sb.append(parameters.toString()).append("|");
+        sb.append(body).append("|");
+        sb.append(path).append("|");
+        sb.append(pageId);
+        return String.valueOf(sb.toString().hashCode());
     }
 }
