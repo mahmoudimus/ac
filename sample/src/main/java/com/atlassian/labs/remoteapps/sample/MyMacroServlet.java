@@ -21,9 +21,9 @@ public class MyMacroServlet extends HttpServlet
 
         resp.setContentType("text/html");
         PrintWriter writer = resp.getWriter();
-        writer.print("<p>Page ID: " + pageId + "</p>");
-        writer.print("<p>Favorite Footy: " + favoriteFooty + "</p>");
-        writer.print("<p>Body: " + body + "</p>");
-        writer.close();
+        writer.print("<p>Page ID: <span class=\"rp-page-id\">" + pageId + "</span></p>");
+        writer.print("<p>Favorite Footy: <span class=\"rp-footy\">" + favoriteFooty + "</span></p>");
+        writer.print("<p>Body: <div  class=\"rp-body\">" + body + "</div></p>");
+        writer.close(); 
     }
 }

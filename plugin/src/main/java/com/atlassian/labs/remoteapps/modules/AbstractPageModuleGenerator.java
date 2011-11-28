@@ -119,6 +119,10 @@ public abstract class AbstractPageModuleGenerator implements RemoteModuleGenerat
                 getOptionalAttribute(e, "section", getPreferredSectionKey()));
         config.addAttribute("weight", getOptionalAttribute(e, "weight", getPreferredWeight()));
 
+        if (localUrl.contains("$"))
+        {
+            throw new PluginParseException("Invalid url '" + localUrl + "', cannot contain velocity expressions");
+        }
         String name = getRequiredAttribute(e, "name");
         config.addElement("label").setText(name);
         config.addElement("link").

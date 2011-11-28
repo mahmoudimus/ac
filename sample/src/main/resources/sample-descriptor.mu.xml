@@ -37,4 +37,9 @@
             </parameter>
         </parameters>
     </macro>
+
+    <macro key="{{appkey}}-slow" url="/myslowmacro" output-type="block" body-type="none">
+        <description>Slow macro that takes too long to render (for testing)</description>
+        <parameters />
+    </macro>
 </remote-app>

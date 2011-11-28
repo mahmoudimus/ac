@@ -4,14 +4,9 @@ import com.atlassian.confluence.event.events.content.page.PageEvent;
 import com.atlassian.confluence.event.events.content.page.PageViewEvent;
 import com.atlassian.event.api.EventListener;
 import com.atlassian.event.api.EventPublisher;
-import com.google.common.collect.LinkedHashMultimap;
-import com.google.common.collect.MapMaker;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
+import com.atlassian.labs.remoteapps.ContentRetrievalException;
+import com.google.common.collect.*;
 import org.springframework.beans.factory.DisposableBean;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
@@ -45,7 +40,7 @@ public class MacroContentManager implements DisposableBean
         }
     }
 
-    public String getStaticContent(MacroInstance macroInstance)
+    public String getStaticContent(MacroInstance macroInstance) throws ContentRetrievalException
     {
         String key = macroInstance.getHashKey();
 

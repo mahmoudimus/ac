@@ -6,6 +6,7 @@ import com.atlassian.confluence.content.render.xhtml.macro.annotation.RequiresFo
 import com.atlassian.confluence.macro.Macro;
 import com.atlassian.confluence.macro.MacroExecutionException;
 import com.atlassian.confluence.xhtml.api.XhtmlContent;
+import com.atlassian.labs.remoteapps.ContentRetrievalException;
 import com.atlassian.labs.remoteapps.modules.ApplicationLinkOperationsFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,16 +52,26 @@ public class RemoteMacro implements Macro
     @RequiresFormat(Format.Storage)
     public String execute(Map<String, String> parameters, String storageFormatBody, ConversionContext conversionContext) throws MacroExecutionException
     {
-        String storageFormatContent = macroContentManager.getStaticContent(new MacroInstance(conversionContext.getEntity().getIdAsString(), remoteUrl, storageFormatBody, parameters, linkOps));
+        String storageFormatContent;
+        try
+        {
+            storageFormatContent = macroContentManager.getStaticContent(new MacroInstance(conversionContext.getEntity().getIdAsString(), remoteUrl, storageFormatBody, parameters, linkOps));
+        }
+        catch (ContentRetrievalException ex)
+        {
+            log.error("Error retrieving macro '" + remoteUrl + "' content", ex);
+            return "ERROR: Unable to retrieve macro content from Remote App '" + linkOps.get().getName() + "': " + ex.getMessage();
+        }
 
         try
         {
-            return xhtmlUtils.convertStorageToView(storageFormatContent, conversionContext);
+            final String htmlContent = xhtmlUtils.convertStorageToView(storageFormatContent, conversionContext);
+            return htmlContent;
         }
         catch (Exception e)
         {
             log.error("Error converting macro content", e);
-            return "Unable to retrieve and convert macro content: " + e.getMessage();
+            return "ERROR: Unable to convert macro content from Remote App '" + linkOps.get().getName() + "': " + e.getMessage();
         }
     }
 }

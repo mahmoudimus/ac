@@ -13,6 +13,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.cache.CacheConfig;
 import org.apache.http.impl.client.cache.CachingHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
@@ -47,7 +49,7 @@ public class HttpContentRetriever
         httpClient = new CachingHttpClient(new DefaultHttpClient(), cacheConfig);
     } 
 
-    public String get(ApplicationLink link, String url, Map<String,String> parameters)
+    public String get(ApplicationLink link, String url, Map<String,String> parameters) throws ContentRetrievalException
     {
         List<NameValuePair> qparams = new ArrayList<NameValuePair>();
         for (String key : parameters.keySet())
@@ -68,15 +70,17 @@ public class HttpContentRetriever
                 }
             }));
             httpget.setHeader(HttpHeaders.AUTHORIZATION, authorizationHeader);
-            
+
+            HttpParams params = httpClient.getParams();
+            HttpConnectionParams.setConnectionTimeout(params, 10 * 1000);
+            HttpConnectionParams.setSoTimeout(params, 5 * 1000);
             response = httpClient.execute(httpget, localContext);
             HttpEntity entity = response.getEntity();
             return EntityUtils.toString(entity);
         }
         catch (IOException e)
         {
-            // fixme: throw more specific here
-            throw new RuntimeException(e);
+            throw new ContentRetrievalException(e);
         }
 
     }

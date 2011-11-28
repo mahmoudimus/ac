@@ -1,24 +1,27 @@
 package it.confluence;
 
-import com.atlassian.labs.remoteapps.test.MyAdminAccessDeniedPage;
-import com.atlassian.labs.remoteapps.test.MyAdminPage;
-import com.atlassian.labs.remoteapps.test.OAuthUtils;
 import com.atlassian.labs.remoteapps.test.OwnerOfTestedProduct;
-import com.atlassian.labs.remoteapps.test.RemoteAppAwareAdminPage;
+import com.atlassian.labs.remoteapps.test.confluence.ConfluenceMacroPage;
+import com.atlassian.labs.remoteapps.test.confluence.ConfluenceOps;
 import com.atlassian.pageobjects.TestedProduct;
-import com.atlassian.pageobjects.page.AdminHomePage;
+import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
 import com.atlassian.webdriver.pageobjects.WebDriverTester;
 import org.junit.After;
 import org.junit.Test;
+import redstone.xmlrpc.XmlRpcFault;
 
+import java.io.IOException;
+import java.util.Map;
+
+import static com.atlassian.labs.remoteapps.test.Utils.loadResourceAsString;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class TestConfluence
 {
     private static TestedProduct<?> product = OwnerOfTestedProduct.INSTANCE;
+    private static ConfluenceOps confluenceOps = new ConfluenceOps();
 
     @After
     public void logout()
@@ -27,15 +30,16 @@ public class TestConfluence
     }
 
     @Test
-	public void testMacro()
-	{
-        /*product.visit(LoginPage.class).login("betty", "betty", AdminHomePage.class);
-        MoreInformationPage page = product.getPageBinder().bind(MoreInformationPage.class);
+	public void testMacro() throws XmlRpcFault, IOException
+    {
+        Map pageData = confluenceOps.setPage(product.getProductInstance(), "ds", "test", loadResourceAsString(
+                "confluence/test-page.xhtml"));
+        product.visit(LoginPage.class).login("betty", "betty", HomePage.class);
+        ConfluenceMacroPage page = product.visit(ConfluenceMacroPage.class, pageData.get("title"));
 
-        assertTrue(page.isRemoteAppLinkPresent());
-        MyAdminPage myAdmin = page.clickRemoteAppAdminLink();
-        assertEquals("Success", myAdmin.getMessage());
-        assertEquals(OAuthUtils.getConsumerKey(), myAdmin.getConsumerKey());
-        */
+        assertEquals(pageData.get("id"), page.getPageIdFromMacro());
+        assertEquals("some note", page.getBodyNoteFromMacro());
+
+        assertTrue(page.getSlowMacroBody().startsWith("ERROR"));
 	}
 }

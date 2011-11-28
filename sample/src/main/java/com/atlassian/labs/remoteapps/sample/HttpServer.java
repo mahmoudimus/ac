@@ -31,6 +31,7 @@ public class HttpServer
         context.addServlet(new ServletHolder(new InfoServlet(appKey)),"/");
         context.addServlet(new ServletHolder(new MyAdminServlet()),"/myadmin");
         context.addServlet(new ServletHolder(new MyMacroServlet()),"/mymacro");
+        context.addServlet(new ServletHolder(new MySlowMacroServlet()),"/myslowmacro");
         context.addServlet(new ServletHolder(new RegisterServlet(appKey, "global")),"/register");
         context.addServlet(new ServletHolder(new RegisterServlet(appKey, "user")),"/user-register");
 

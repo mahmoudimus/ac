@@ -3,10 +3,7 @@ package com.atlassian.labs.remoteapps.modules;
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.applinks.api.ApplicationLinkService;
 import com.atlassian.applinks.api.ApplicationType;
-import com.atlassian.labs.remoteapps.HttpContentRetriever;
-import com.atlassian.labs.remoteapps.OAuthLinkManager;
-import com.atlassian.labs.remoteapps.PermissionDeniedException;
-import com.atlassian.labs.remoteapps.PermissionManager;
+import com.atlassian.labs.remoteapps.*;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.user.UserManager;
 import com.google.common.base.Function;
@@ -44,7 +41,7 @@ public class ApplicationLinkOperationsFactory
         boolean canAccess(String user);
         String signGetUrl(HttpServletRequest req, String targetPath);
         String signGetUrl(String user, String targetPath);
-        String executeGet(String path, Map<String,Object> params);
+        String executeGet(String path, Map<String,Object> params) throws ContentRetrievalException;
     }
 
     @Autowired
@@ -92,14 +89,14 @@ public class ApplicationLinkOperationsFactory
             }
 
             @Override
-            public String executeGet(String path, Map<String, Object> params)
+            public String executeGet(String path, Map<String, Object> params) throws ContentRetrievalException
             {
                 return executeGetForType(get(), path, params);
             }
         };
     }
 
-    private String executeGetForType(ApplicationLink applicationLink, String path, Map<String, Object> params)
+    private String executeGetForType(ApplicationLink applicationLink, String path, Map<String, Object> params) throws ContentRetrievalException
     {
         String targetUrl = getTargetUrl(applicationLink, path);
         return httpContentRetriever.get(applicationLink, targetUrl, Maps.transformValues(params, new Function<Object, String>() {

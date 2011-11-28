@@ -1,0 +1,11 @@
+<ac:macro ac:name="app1">
+    <ac:parameter ac:name="footy">Soccer</ac:parameter>
+    <ac:rich-text-body><p>outside note</p>
+        <ac:macro ac:name="note">
+            <ac:rich-text-body><p>some note</p></ac:rich-text-body>
+        </ac:macro>
+    </ac:rich-text-body>
+</ac:macro>
+<div class="slow-macro">
+   <ac:macro ac:name="app1-slow" />
+</div>

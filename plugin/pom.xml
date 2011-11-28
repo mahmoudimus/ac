@@ -168,6 +168,12 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>org.kohsuke.redstone</groupId>
+            <artifactId>redstone</artifactId>
+            <version>1.1.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.6</version>
@@ -298,7 +304,7 @@
                         <!--atlassian.dev.mode>false</atlassian.dev.mode-->
                     </systemPropertyVariables>
                     <enableFastdev>false</enableFastdev>
-                    <functionalTestPattern>it/Test*.java</functionalTestPattern>
+                    <functionalTestPattern>it/**/Test*.java</functionalTestPattern>
                     <pluginArtifacts>
                         <pluginArtifact>
                             <groupId>${project.groupId}</groupId>
@@ -361,12 +367,18 @@
                                 <testedProductClass>com.atlassian.jira.pageobjects.JiraTestedProduct
                                 </testedProductClass>
                             </systemProperties>
+                            <excludes>
+                                <exclude>it/confluence/*.java</exclude>
+                            </excludes>
                         </testGroup>
                         <testGroup>
                             <id>refapp</id>
                             <productIds>
                                 <productId>refapp</productId>
                             </productIds>
+                            <excludes>
+                                <exclude>it/confluence/*.java</exclude>
+                            </excludes>
                         </testGroup>
                         <testGroup>
                             <id>confluence</id>
@@ -377,9 +389,6 @@
                                 <testedProductClass>com.atlassian.webdriver.confluence.ConfluenceTestedProduct
                                 </testedProductClass>
                             </systemProperties>
-                            <includes>
-                                <include>it/confluence/Test*.java</include>
-                            </includes>
                         </testGroup>
                     </testGroups>
                 </configuration>
