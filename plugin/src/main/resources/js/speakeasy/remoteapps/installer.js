@@ -3,7 +3,6 @@ var $ = require('speakeasy/jquery').jQuery;
 var addMessage = require('speakeasy/messages').add;
 var host = require('speakeasy/host');
 var contextPath = window.contextPath === undefined ? host.findContextPath() : window.contextPath;
-var installDialog = require('speakeasy/user/install/install');
 
 function sendRegistrationToken(url, callbacks) {
     $.ajax({
@@ -29,10 +28,9 @@ function sendRegistrationToken(url, callbacks) {
 
 
 $(document).ready(function() {
-    installDialog.addInstallLink(
-            'remoteapps-install-link',
-            "Install Remote App", function(e) {
-                dialog.openOnePanelDialog({
+    $('#rp-install').click(function(e) {
+        e.preventDefault();
+        dialog.openOnePanelDialog({
                     id : 'remoteapps-install-dialog',
                     width : 500,
                     height : 450,
@@ -44,5 +42,5 @@ $(document).ready(function() {
                     },
                     submitClass : 'remoteapps-submit'
                 });
-            });
+    });
 });

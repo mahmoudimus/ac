@@ -101,6 +101,10 @@ public class OAuthLinkManager
     {
         String consumerKey = message.getConsumerKey();
         Consumer consumer = serviceProviderConsumerStore.get(consumerKey);
+        if (consumer == null)
+        {
+            throw new OAuthException("Unknown consumer: " + consumerKey);
+        }
         final OAuthConsumer oauthConsumer = new OAuthConsumer(null,
                 consumer.getKey(),
                 null,

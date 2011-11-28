@@ -123,4 +123,12 @@ public class PermissionManager implements DisposableBean
         }
         return false;
     }
+
+    public boolean canInstallRemoteApps(String username)
+    {
+        // todo: make configurable
+        return username != null &&
+                (userManager.isUserInGroup(username, "developers") ||
+                 userManager.isAdmin(username));
+    }
 }

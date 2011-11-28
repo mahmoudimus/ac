@@ -1,5 +1,7 @@
 package com.atlassian.labs.remoteapps.installer;
 
+import com.atlassian.labs.remoteapps.PermissionDeniedException;
+import com.atlassian.labs.remoteapps.PermissionManager;
 import com.atlassian.labs.remoteapps.modules.page.jira.JiraProfileTabModuleGenerator;
 import com.atlassian.labs.remoteapps.util.zip.ZipBuilder;
 import com.atlassian.labs.remoteapps.util.zip.ZipHandler;
@@ -38,6 +40,7 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
     private final RequestFactory requestFactory;
     private final PluginController pluginController;
     private final ApplicationProperties applicationProperties;
+    private final PermissionManager permissionManager;
 
     private static final Set<String> ALLOWED_ACCESS_LEVELS = ImmutableSet.of(
             (System.getProperty("remoteapps.access.levels", "user").split(",")));
@@ -46,18 +49,23 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
     public DefaultRemoteAppInstaller(ConsumerService consumerService,
                                      RequestFactory requestFactory,
                                      PluginController pluginController,
-                                     ApplicationProperties applicationProperties
+                                     ApplicationProperties applicationProperties, PermissionManager permissionManager
     )
     {
         this.consumerService = consumerService;
         this.requestFactory = requestFactory;
         this.pluginController = pluginController;
         this.applicationProperties = applicationProperties;
+        this.permissionManager = permissionManager;
     }
 
     @Override
-    public void install(final String registrationUrl, String registrationSecret)
+    public void install(String username, final String registrationUrl, String registrationSecret) throws PermissionDeniedException
     {
+        if (!permissionManager.canInstallRemoteApps(username))
+        {
+            throw new PermissionDeniedException("Unauthorized access by '" + username + "'");
+        }
         final URI registrationUri = URI.create(registrationUrl);
         Request request = requestFactory.createRequest(Request.MethodType.POST, registrationUrl);
         Consumer consumer = consumerService.getConsumer();

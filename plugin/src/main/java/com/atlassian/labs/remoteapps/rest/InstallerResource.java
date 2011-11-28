@@ -1,6 +1,8 @@
 package com.atlassian.labs.remoteapps.rest;
 
+import com.atlassian.labs.remoteapps.PermissionDeniedException;
 import com.atlassian.labs.remoteapps.installer.RemoteAppInstaller;
+import com.atlassian.sal.api.user.UserManager;
 import com.sun.research.ws.wadl.Param;
 
 import javax.ws.rs.FormParam;
@@ -18,10 +20,12 @@ import java.net.URISyntaxException;
 public class InstallerResource
 {
     private final RemoteAppInstaller remoteAppInstaller;
+    private final UserManager userManager;
 
-    public InstallerResource(RemoteAppInstaller remoteAppInstaller)
+    public InstallerResource(RemoteAppInstaller remoteAppInstaller, UserManager userManager)
     {
         this.remoteAppInstaller = remoteAppInstaller;
+        this.userManager = userManager;
     }
 
     @POST
@@ -39,7 +43,11 @@ public class InstallerResource
         }
         try
         {
-            remoteAppInstaller.install(registrationUrl, token);
+            remoteAppInstaller.install(userManager.getRemoteUsername(), registrationUrl, token);
+        }
+        catch (PermissionDeniedException ex)
+        {
+            return Response.status(Response.Status.FORBIDDEN).entity(ex.getMessage()).build();
         }
         catch (RuntimeException ex)
         {

@@ -44,6 +44,12 @@
         <dependency>com.atlassian.labs.remoteapps-plugin:remoteapps_installer</dependency>
     </web-resource>
 
+    <web-item key="speakeasy-install" section="speakeasy.user-profile/actions" weight="100">
+        <label>Install Remote App</label>
+        <link linkId="rp-install" />
+        <condition class="com.atlassian.labs.remoteapps.descriptor.CanInstallRemoteAppsCondition" />
+    </web-item>
+
     <rest key="rest" path="/remoteapps" version="1" package="com.atlassian.labs.remoteapps.rest">
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>INCLUDE</dispatcher>
