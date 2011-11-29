@@ -85,6 +85,10 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
                 @Override
                 public void handle(Response response) throws ResponseException
                 {
+                    if (response.getStatusCode() != 200)
+                    {
+                        throw new InstallationFailedException("Missing registration url: " + response.getStatusCode());
+                    }
                     String descriptorXml = response.getResponseBodyAsString();
                     validateDescriptorXml(registrationUrl, descriptorXml);
                     String pluginXml = transformDescriptorToPluginXml(descriptorXml);

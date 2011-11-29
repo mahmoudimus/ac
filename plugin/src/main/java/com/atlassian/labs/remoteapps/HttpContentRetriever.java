@@ -1,6 +1,7 @@
 package com.atlassian.labs.remoteapps;
 
 import com.atlassian.applinks.api.ApplicationLink;
+import com.atlassian.sal.api.user.UserManager;
 import com.google.common.base.Function;
 import com.google.common.collect.Maps;
 import org.apache.http.HttpEntity;
@@ -37,11 +38,13 @@ public class HttpContentRetriever
 {
     private final CachingHttpClient httpClient;
     private final OAuthLinkManager oAuthLinkManager;
+    private final UserManager userManager;
 
     @Autowired
-    public HttpContentRetriever(OAuthLinkManager oAuthLinkManager)
+    public HttpContentRetriever(OAuthLinkManager oAuthLinkManager, UserManager userManager)
     {
         this.oAuthLinkManager = oAuthLinkManager;
+        this.userManager = userManager;
         CacheConfig cacheConfig = new CacheConfig();
         cacheConfig.setMaxCacheEntries(1000);
         cacheConfig.setMaxObjectSizeBytes(8192);
@@ -56,6 +59,7 @@ public class HttpContentRetriever
         {
             qparams.add(new BasicNameValuePair(key, parameters.get(key)));
         }
+        qparams.add(new BasicNameValuePair("user_id", userManager.getRemoteUsername()));
         HttpGet httpget = new HttpGet(url + "?" + URLEncodedUtils.format(qparams, "UTF-8"));
         HttpContext localContext = new BasicHttpContext();
         HttpResponse response = null;
