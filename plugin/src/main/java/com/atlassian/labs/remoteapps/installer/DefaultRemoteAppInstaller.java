@@ -13,6 +13,7 @@ import com.atlassian.plugin.PluginController;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.net.*;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import org.dom4j.*;
 import org.dom4j.io.SAXReader;
@@ -20,6 +21,7 @@ import org.dom4j.io.XMLWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.ws.rs.core.UriBuilder;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -28,6 +30,7 @@ import java.util.List;
 import java.util.Set;
 
 import static com.atlassian.labs.remoteapps.util.Dom4jUtils.getRequiredAttribute;
+import static com.atlassian.labs.remoteapps.util.ServletUtils.encodeGetUrl;
 import static com.google.common.collect.Sets.newHashSet;
 
 /**
@@ -66,18 +69,13 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
         {
             throw new PermissionDeniedException("Unauthorized access by '" + username + "'");
         }
-        final URI registrationUri = URI.create(registrationUrl);
-        Request request = requestFactory.createRequest(Request.MethodType.POST, registrationUrl);
         Consumer consumer = consumerService.getConsumer();
-
-        request.addRequestParameters(
-                "token", registrationSecret,
+        final URI registrationUri = URI.create(encodeGetUrl(registrationUrl, ImmutableMap.of(
                 "key", consumer.getKey(),
                 "publicKey", RSAKeys.toPemEncoding(consumer.getPublicKey()),
-                "description", consumer.getDescription(),
-                "requestTokenUrl", applicationProperties.getBaseUrl() + "/plugins/servlet/oauth/request-token",
-                "accessTokenUrl", applicationProperties.getBaseUrl() + "/plugins/servlet/oauth/access-token",
-                "authorizeUrl", applicationProperties.getBaseUrl() + "/plugins/servlet/oauth/authorize");
+                "description", consumer.getDescription())));
+
+        Request request = requestFactory.createRequest(Request.MethodType.GET, registrationUri.toString());
         try
         {
             request.execute(new ResponseHandler()

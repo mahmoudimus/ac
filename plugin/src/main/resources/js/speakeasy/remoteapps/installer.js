@@ -26,14 +26,28 @@ function sendRegistrationToken(url, callbacks) {
     });
 }
 
+function wordwrap( str, width, brk, cut ) {
+
+    brk = brk || '\n';
+    width = width || 75;
+    cut = cut || false;
+
+    if (!str) { return str; }
+
+    var regex = '.{1,' +width+ '}';
+
+    return str.match( RegExp(regex, 'g') ).join( brk );
+
+}
+
 
 $(document).ready(function() {
     $('#rp-install').click(function(e) {
         e.preventDefault();
         dialog.openOnePanelDialog({
                     id : 'remoteapps-install-dialog',
-                    width : 500,
-                    height : 450,
+                    width : 700,
+                    height : 500,
                     header : 'Install Remote App',
                     content : require('./install-dialog').render({}),
                     submit : function(dialog, callbacks) {
@@ -42,5 +56,18 @@ $(document).ready(function() {
                     },
                     submitClass : 'remoteapps-submit'
                 });
+        $.ajax({
+          url: contextPath + "/plugins/servlet/oauth/consumer-info",
+          type: 'GET',
+          dataType : 'xml',
+          success: function(data) {
+            var publicKey = "-----BEGIN PUBLIC KEY-----\n" +
+                            wordwrap($(data).find('publicKey').text(), 64) +
+                            "\n-----END PUBLIC KEY-----";
+            
+            $('#oauth-consumer-key').text($(data).find('key').text());
+            $('#oauth-consumer-public-key').text(publicKey);
+          }
+        });
     });
 });

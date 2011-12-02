@@ -6,6 +6,8 @@ import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
+import static com.google.common.collect.Lists.newArrayList;
+
 /**
  *
  */
@@ -14,6 +16,11 @@ public class ServletUtils
     public static String extractPathInfo(HttpServletRequest request)
     {
         return URI.create(request.getRequestURI().substring(request.getContextPath().length())).normalize().toString();
+    }
+
+    public static String encodeGetUrl(String iframeSrc, Map<String, String> parameters)
+    {
+        return encodeGetUrl(iframeSrc, newArrayList(parameters.entrySet()));
     }
 
     public static String encodeGetUrl(String iframeSrc, List<Map.Entry<String, String>> parameters)

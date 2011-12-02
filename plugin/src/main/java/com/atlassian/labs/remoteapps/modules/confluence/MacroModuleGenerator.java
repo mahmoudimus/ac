@@ -112,6 +112,10 @@ public class MacroModuleGenerator implements RemoteModuleGenerator
         {
             bodyType = Macro.BodyType.RICH_TEXT;
         }
+        else if ("plain-text".equals(bodyTypeValue))
+        {
+            bodyType = Macro.BodyType.PLAIN_TEXT;
+        }
         else if ("none".equals(bodyTypeValue))
         {
             bodyType = Macro.BodyType.NONE;
