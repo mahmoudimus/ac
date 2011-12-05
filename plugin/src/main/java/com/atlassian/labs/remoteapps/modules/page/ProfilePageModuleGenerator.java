@@ -6,8 +6,13 @@ import com.atlassian.labs.remoteapps.product.ProductAccessor;
 import com.atlassian.plugin.servlet.ServletModuleManager;
 import com.atlassian.plugin.webresource.WebResourceManager;
 import com.atlassian.templaterenderer.TemplateRenderer;
+import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.Map;
+
+import static java.util.Collections.emptyMap;
 
 /**
  * Module type for user profile pages, generating a web item and servlet with iframe
@@ -35,6 +40,12 @@ public class ProfilePageModuleGenerator extends AbstractPageModuleGenerator
     public String getType()
     {
         return "profile-page";
+    }
+
+    @Override
+    public Map<String, String> getI18nMessages(String pluginKey, Element element)
+    {
+        return emptyMap();
     }
 
     @Override

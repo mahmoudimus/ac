@@ -16,14 +16,14 @@ import com.atlassian.plugin.module.ModuleFactory;
 import com.google.common.collect.ImmutableSet;
 import org.dom4j.Element;
 
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 
 import static com.atlassian.labs.remoteapps.util.Dom4jUtils.copyDescriptorXml;
 import static com.atlassian.labs.remoteapps.util.Dom4jUtils.copyOptionalElements;
 import static com.atlassian.labs.remoteapps.util.Dom4jUtils.copyRequiredElements;
 import static com.atlassian.labs.remoteapps.util.Dom4jUtils.getOptionalAttribute;
 import static com.atlassian.labs.remoteapps.util.Dom4jUtils.getRequiredAttribute;
+import static com.google.common.collect.Maps.newHashMap;
 import static java.util.Collections.emptySet;
 
 /**
@@ -59,8 +59,25 @@ public class MacroModuleGenerator implements RemoteModuleGenerator
     }
 
     @Override
+    public Map<String, String> getI18nMessages(String pluginKey, Element element)
+    {
+        Map<String,String> i18n = newHashMap();
+        String key = element.attributeValue("key");
+        for (Element parameter : new ArrayList<Element>(element.element("parameters").elements("parameter")))
+        {
+            String title = parameter.attributeValue("title");
+            if (title != null)
+            {
+                i18n.put(pluginKey + "." + key + ".param." + parameter.attributeValue("name") + ".label", title);
+            }
+        }
+        return i18n;
+    }
+
+    @Override
     public RemoteModule generate(final RemoteAppCreationContext ctx, Element entity)
     {
+        final Map<String,String> i18n = newHashMap();
         Element config = copyDescriptorXml(entity);
         String key = getRequiredAttribute(entity, "key");
         config.addAttribute("key", key);
@@ -69,6 +86,10 @@ public class MacroModuleGenerator implements RemoteModuleGenerator
         copyRequiredElements(entity, config, "parameters");
         copyOptionalElements(entity, config, "property-panel");
         copyOptionalElements(entity, config, "category");
+        if (config.element("parameters") != null)
+        {
+            config.addElement("parameters");
+        }
 
         ModuleDescriptor descriptor = createXhtmlMacroModuleDescriptor(ctx, entity);
         descriptor.init(ctx.getPlugin(), config);

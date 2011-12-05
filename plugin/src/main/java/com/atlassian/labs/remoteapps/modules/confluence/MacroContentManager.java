@@ -50,6 +50,8 @@ public class MacroContentManager implements DisposableBean
         {
             Map<String,Object> params = Maps.<String,Object>newHashMap(macroInstance.getParameters());
             params.put("body", macroInstance.getBody());
+            params.put("key", key);
+            params.put("pageTitle", macroInstance.getPageTitle());
             String pageId = String.valueOf(macroInstance.getPageId());
             params.put("pageId", pageId);
 

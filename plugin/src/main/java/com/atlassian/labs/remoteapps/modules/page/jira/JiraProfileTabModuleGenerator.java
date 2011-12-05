@@ -22,6 +22,7 @@ import java.util.Set;
 import static com.atlassian.labs.remoteapps.util.Dom4jUtils.copyDescriptorXml;
 import static com.atlassian.labs.remoteapps.util.Dom4jUtils.getRequiredAttribute;
 import static com.google.common.collect.Maps.newHashMap;
+import static java.util.Collections.emptyMap;
 
 /**
  *
@@ -56,6 +57,12 @@ public class JiraProfileTabModuleGenerator implements RemoteModuleGenerator
     public Set<String> getDynamicModuleTypeDependencies()
     {
         return Collections.singleton("compat-view-profile-panel");
+    }
+
+    @Override
+    public Map<String, String> getI18nMessages(String pluginKey, Element element)
+    {
+        return emptyMap();
     }
 
     @Override

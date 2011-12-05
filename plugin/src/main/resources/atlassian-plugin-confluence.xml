@@ -9,6 +9,13 @@
         </description>
     </api-scope>
 
+    <api-scope key="modify_attachments" class="com.atlassian.labs.remoteapps.product.confluence.ModifyAttachmentsScope"
+            name="Modify Attachments">
+        <description>
+            Add, remove, or move attachments for pages or blog posts
+        </description>
+    </api-scope>
+
     <web-section key="admin.pages" name="Remote Apps" location="system.admin" weight="100">
         <label>Remote Apps</label>
     </web-section>

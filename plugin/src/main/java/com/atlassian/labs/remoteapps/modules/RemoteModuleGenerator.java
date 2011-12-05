@@ -2,6 +2,7 @@ package com.atlassian.labs.remoteapps.modules;
 
 import org.dom4j.Element;
 
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -12,6 +13,8 @@ public interface RemoteModuleGenerator
     String getType();
 
     Set<String> getDynamicModuleTypeDependencies();
+
+    Map<String,String> getI18nMessages(String pluginKey, Element element);
 
     RemoteModule generate(RemoteAppCreationContext ctx, Element element);
 

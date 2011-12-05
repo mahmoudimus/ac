@@ -23,10 +23,12 @@ import org.springframework.stereotype.Component;
 
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
+import java.util.Map;
 import java.util.Set;
 
 import static com.atlassian.labs.remoteapps.util.Dom4jUtils.*;
 import static com.google.common.collect.Sets.newHashSet;
+import static java.util.Collections.emptyMap;
 import static org.objectweb.asm.Opcodes.*;
 
 /**
@@ -57,6 +59,12 @@ public class ApplicationTypeModuleGenerator implements RemoteModuleGenerator
     public Set<String> getDynamicModuleTypeDependencies()
     {
         return newHashSet("applinks-application-type");
+    }
+
+    @Override
+    public Map<String, String> getI18nMessages(String pluginKey, Element element)
+    {
+        return emptyMap();
     }
 
     @Override

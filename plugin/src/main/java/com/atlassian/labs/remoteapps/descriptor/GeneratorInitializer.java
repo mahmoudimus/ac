@@ -20,7 +20,6 @@ import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CopyOnWriteArraySet;
 
-import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Sets.newHashSet;
 import static org.apache.commons.lang.Validate.notNull;
@@ -114,7 +113,6 @@ class GeneratorInitializer
                     log.warn("Unknown module: " + type);
                 }
             }
-
             registerDescriptors(remoteModules);
             for (final RemoteModule remoteModule : remoteModules)
             {

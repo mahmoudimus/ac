@@ -20,9 +20,11 @@ import org.springframework.stereotype.Component;
 import java.net.URI;
 import java.security.GeneralSecurityException;
 import java.security.PublicKey;
+import java.util.Map;
 import java.util.Set;
 
 import static com.atlassian.labs.remoteapps.util.Dom4jUtils.*;
+import static java.util.Collections.emptyMap;
 import static java.util.Collections.emptySet;
 
 /**
@@ -52,6 +54,12 @@ public class OauthModuleGenerator implements RemoteModuleGenerator
     public Set<String> getDynamicModuleTypeDependencies()
     {
         return emptySet();
+    }
+
+    @Override
+    public Map<String, String> getI18nMessages(String pluginKey, Element element)
+    {
+        return emptyMap();
     }
 
     @Override

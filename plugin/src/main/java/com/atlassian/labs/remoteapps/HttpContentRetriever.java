@@ -79,6 +79,10 @@ public class HttpContentRetriever
             HttpConnectionParams.setConnectionTimeout(params, 10 * 1000);
             HttpConnectionParams.setSoTimeout(params, 5 * 1000);
             response = httpClient.execute(httpget, localContext);
+            if (response.getStatusLine().getStatusCode() != 200)
+            {
+                throw new ContentRetrievalException("Unable to retrieve content: " + response.getStatusLine().getReasonPhrase());
+            }
             HttpEntity entity = response.getEntity();
             return EntityUtils.toString(entity);
         }

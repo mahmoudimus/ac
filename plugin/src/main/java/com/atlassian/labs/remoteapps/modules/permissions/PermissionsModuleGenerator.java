@@ -7,17 +7,18 @@ import com.atlassian.labs.remoteapps.modules.RemoteModuleGenerator;
 import com.atlassian.labs.remoteapps.modules.StartableRemoteModule;
 import com.atlassian.labs.remoteapps.product.ProductAccessor;
 import com.atlassian.plugin.ModuleDescriptor;
-import com.atlassian.sal.api.ApplicationProperties;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static com.atlassian.labs.remoteapps.util.Dom4jUtils.getOptionalAttribute;
 import static com.atlassian.labs.remoteapps.util.Dom4jUtils.getRequiredAttribute;
 import static com.google.common.collect.Lists.newArrayList;
+import static java.util.Collections.emptyMap;
 import static java.util.Collections.emptySet;
 
 /**
@@ -47,6 +48,12 @@ public class PermissionsModuleGenerator implements RemoteModuleGenerator
     public Set<String> getDynamicModuleTypeDependencies()
     {
         return emptySet();
+    }
+
+    @Override
+    public Map<String, String> getI18nMessages(String pluginKey, Element element)
+    {
+        return emptyMap();
     }
 
     @Override

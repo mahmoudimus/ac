@@ -10,14 +10,16 @@ import java.util.Map;
 public class MacroInstance
 {
     final String pageId;
+    final String pageTitle;
     final String path;
     final ApplicationLinkOperationsFactory.LinkOperations linkOperations;
     final String body;
     final Map<String,String> parameters;
 
-    public MacroInstance(String pageId, String path, String body, Map<String, String> parameters, ApplicationLinkOperationsFactory.LinkOperations linkOperations)
+    public MacroInstance(String pageId, String pageTitle, String path, String body, Map<String, String> parameters, ApplicationLinkOperationsFactory.LinkOperations linkOperations)
     {
         this.pageId = pageId;
+        this.pageTitle = pageTitle;
         this.path = path;
         this.body = body;
         this.parameters = parameters;
@@ -29,6 +31,10 @@ public class MacroInstance
         return pageId;
     }
 
+    public String getPageTitle()
+    {
+        return pageTitle;
+    }
 
     public String getPath()
     {

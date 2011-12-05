@@ -2,6 +2,7 @@ package com.atlassian.labs.remoteapps.installer;
 
 import com.atlassian.labs.remoteapps.PermissionDeniedException;
 import com.atlassian.labs.remoteapps.PermissionManager;
+import com.atlassian.labs.remoteapps.modules.RemoteModuleGenerator;
 import com.atlassian.labs.remoteapps.modules.page.jira.JiraProfileTabModuleGenerator;
 import com.atlassian.labs.remoteapps.util.zip.ZipBuilder;
 import com.atlassian.labs.remoteapps.util.zip.ZipHandler;
@@ -12,26 +13,26 @@ import com.atlassian.plugin.JarPluginArtifact;
 import com.atlassian.plugin.PluginController;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.net.*;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import org.dom4j.*;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
-import javax.ws.rs.core.UriBuilder;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URI;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static com.atlassian.labs.remoteapps.util.Dom4jUtils.getRequiredAttribute;
 import static com.atlassian.labs.remoteapps.util.ServletUtils.encodeGetUrl;
-import static com.google.common.collect.Sets.newHashSet;
+import static com.google.common.collect.Maps.newHashMap;
 
 /**
  * Handles the remote app installation dance
@@ -47,12 +48,14 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
 
     private static final Set<String> ALLOWED_ACCESS_LEVELS = ImmutableSet.of(
             (System.getProperty("remoteapps.access.levels", "user").split(",")));
+    private final Map<String, RemoteModuleGenerator> generators;
 
     @Autowired
     public DefaultRemoteAppInstaller(ConsumerService consumerService,
                                      RequestFactory requestFactory,
                                      PluginController pluginController,
-                                     ApplicationProperties applicationProperties, PermissionManager permissionManager
+                                     ApplicationProperties applicationProperties, PermissionManager permissionManager,
+                                     ApplicationContext applicationContext
     )
     {
         this.consumerService = consumerService;
@@ -60,6 +63,12 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
         this.pluginController = pluginController;
         this.applicationProperties = applicationProperties;
         this.permissionManager = permissionManager;
+        Map<String,RemoteModuleGenerator> map = newHashMap();
+        for (RemoteModuleGenerator generator : (Collection<RemoteModuleGenerator>) applicationContext.getBeansOfType(RemoteModuleGenerator.class).values())
+        {
+            map.put(generator.getType(), generator);
+        }
+        this.generators = Collections.unmodifiableMap(map);
     }
 
     @Override
@@ -73,6 +82,7 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
         final URI registrationUri = URI.create(encodeGetUrl(registrationUrl, ImmutableMap.of(
                 "key", consumer.getKey(),
                 "publicKey", RSAKeys.toPemEncoding(consumer.getPublicKey()),
+                "baseUrl", applicationProperties.getBaseUrl(),
                 "description", consumer.getDescription())));
 
         Request request = requestFactory.createRequest(Request.MethodType.GET, registrationUri.toString());
@@ -89,7 +99,7 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
                     }
                     String descriptorXml = response.getResponseBodyAsString();
                     validateDescriptorXml(registrationUrl, descriptorXml);
-                    String pluginXml = transformDescriptorToPluginXml(descriptorXml);
+                    Document pluginXml = transformDescriptorToPluginXml(descriptorXml);
                     JarPluginArtifact jar = createJarPluginArtifact(registrationUri.getHost(), pluginXml);
                     pluginController.installPlugins(jar);
                 }
@@ -132,19 +142,57 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
         }
     }
 
-    private static JarPluginArtifact createJarPluginArtifact(String host, final String pluginXml)
+    private JarPluginArtifact createJarPluginArtifact(String host, final Document pluginXml)
     {
         return new JarPluginArtifact(ZipBuilder.buildZip("install-" + host, new ZipHandler()
         {
             @Override
             public void build(ZipBuilder builder) throws IOException
             {
-                builder.addFile("atlassian-plugin.xml", pluginXml);
+                attachResources(pluginXml, builder, generators);
+                StringWriter out = new StringWriter();
+                new XMLWriter(out).write(pluginXml);
+                String descriptorXml = out.toString();
+                builder.addFile("atlassian-plugin.xml", descriptorXml);
             }
         }));
     }
 
-    private static String transformDescriptorToPluginXml(String descriptorXml)
+    private static void attachResources(Document pluginXml, ZipBuilder builder, Map<String, RemoteModuleGenerator> generators
+    ) throws IOException
+    {
+        String pluginKey = pluginXml.getRootElement().attributeValue("key");
+
+        Properties props = new Properties();
+        for (Element e : ((Collection<Element>)pluginXml.getRootElement().element("remote-app").elements()))
+        {
+            String type = e.getName();
+            if (generators.containsKey(type))
+            {
+                RemoteModuleGenerator generator = generators.get(type);
+                props.putAll(generator.getI18nMessages(pluginKey, e));
+            }
+        }
+        final StringWriter writer = new StringWriter();
+        try
+        {
+            props.store(writer, "");
+        }
+        catch (IOException e)
+        {
+            // todo: do better
+            throw new RuntimeException(e);
+        }
+
+        pluginXml.getRootElement().addElement("resource")
+                .addAttribute("type", "i18n")
+                .addAttribute("name", "i18n")
+                .addAttribute("location", pluginKey.hashCode() + ".i18n");
+
+        builder.addFile(pluginKey.hashCode() + "/i18n.properties", writer.toString());
+    }
+
+    private static Document transformDescriptorToPluginXml(String descriptorXml)
     {
         try
         {
@@ -173,19 +221,12 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
             plugin.add(oldRoot.detach());
             doc.setRootElement(plugin);
 
-            StringWriter out = new StringWriter();
-            new XMLWriter(out).write(doc);
-            descriptorXml = out.toString();
+            return doc;
         }
         catch (DocumentException e)
         {
             throw new InstallationFailedException("Invalid document", e);
         }
-        catch (IOException e)
-        {
-            throw new InstallationFailedException("Unable to transform descriptor", e);
-        }
-        return descriptorXml;
     }
 
 }

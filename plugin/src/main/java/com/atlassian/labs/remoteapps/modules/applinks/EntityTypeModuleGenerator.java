@@ -17,14 +17,12 @@ import org.springframework.stereotype.Component;
 
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
-import java.net.URISyntaxException;
+import java.util.Map;
 import java.util.Set;
 
 import static com.atlassian.labs.remoteapps.util.Dom4jUtils.*;
-import static com.google.common.collect.Sets.newHashSet;
+import static java.util.Collections.emptyMap;
 import static org.objectweb.asm.Opcodes.*;
-import static org.objectweb.asm.Opcodes.INVOKESPECIAL;
-import static org.objectweb.asm.Opcodes.RETURN;
 
 /**
  * Creates applink entity types
@@ -42,6 +40,12 @@ public class EntityTypeModuleGenerator implements RemoteModuleGenerator
     public Set<String> getDynamicModuleTypeDependencies()
     {
         return ImmutableSet.of("applinks-entity-type");
+    }
+
+    @Override
+    public Map<String, String> getI18nMessages(String pluginKey, Element element)
+    {
+        return emptyMap();
     }
 
     @Override
