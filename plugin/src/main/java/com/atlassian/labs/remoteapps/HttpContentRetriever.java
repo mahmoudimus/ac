@@ -76,8 +76,8 @@ public class HttpContentRetriever
             httpget.setHeader(HttpHeaders.AUTHORIZATION, authorizationHeader);
 
             HttpParams params = httpClient.getParams();
-            HttpConnectionParams.setConnectionTimeout(params, 10 * 1000);
-            HttpConnectionParams.setSoTimeout(params, 5 * 1000);
+            HttpConnectionParams.setConnectionTimeout(params, 3 * 1000);
+            HttpConnectionParams.setSoTimeout(params, 10 * 1000);
             response = httpClient.execute(httpget, localContext);
             if (response.getStatusLine().getStatusCode() != 200)
             {
