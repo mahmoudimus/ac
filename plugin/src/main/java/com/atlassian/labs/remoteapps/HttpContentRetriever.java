@@ -13,6 +13,7 @@ import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.cache.CacheConfig;
 import org.apache.http.impl.client.cache.CachingHttpClient;
+import org.apache.http.impl.conn.ProxySelectorRoutePlanner;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Component;
 
 import javax.ws.rs.HttpMethod;
 import java.io.IOException;
+import java.net.ProxySelector;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -49,8 +51,13 @@ public class HttpContentRetriever
         cacheConfig.setMaxCacheEntries(1000);
         cacheConfig.setMaxObjectSizeBytes(8192);
 
-        httpClient = new CachingHttpClient(new DefaultHttpClient(), cacheConfig);
-    } 
+        DefaultHttpClient client = new DefaultHttpClient();
+        ProxySelectorRoutePlanner routePlanner = new ProxySelectorRoutePlanner(
+            client.getConnectionManager().getSchemeRegistry(),
+            ProxySelector.getDefault());
+        client.setRoutePlanner(routePlanner);
+        httpClient = new CachingHttpClient(client, cacheConfig);
+    }
 
     public String get(ApplicationLink link, String url, Map<String,String> parameters) throws ContentRetrievalException
     {
