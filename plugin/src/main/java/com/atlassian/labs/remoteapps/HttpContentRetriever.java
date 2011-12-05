@@ -58,7 +58,17 @@ public class HttpContentRetriever implements DisposableBean
 
         DefaultHttpClient client = new DefaultHttpClient(new ThreadSafeClientConnManager(
                 SchemeRegistryFactory.createDefault(), 2, TimeUnit.SECONDS
-        ));
+        )
+        {
+            @Override
+            protected void finalize() throws Throwable
+            {   
+                // prevent the ThreadSafeClientConnManager from logging - this causes exceptions due to
+                // the ClassLoader probably having been removed when the plugin shuts down.  Added a
+                // PluginEventListener to make sure the shutdown method is called while the plugin classloader
+                // is still active.
+            }
+        });
         ProxySelectorRoutePlanner routePlanner = new ProxySelectorRoutePlanner(
             client.getConnectionManager().getSchemeRegistry(),
             ProxySelector.getDefault());
