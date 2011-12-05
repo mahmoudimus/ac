@@ -2,6 +2,7 @@ package com.atlassian.labs.remoteapps.installer;
 
 import com.atlassian.labs.remoteapps.PermissionDeniedException;
 import com.atlassian.labs.remoteapps.PermissionManager;
+import com.atlassian.labs.remoteapps.descriptor.external.AccessLevelModuleDescriptor;
 import com.atlassian.labs.remoteapps.modules.RemoteModuleGenerator;
 import com.atlassian.labs.remoteapps.modules.page.jira.JiraProfileTabModuleGenerator;
 import com.atlassian.labs.remoteapps.util.zip.ZipBuilder;
@@ -216,7 +217,8 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
             }
             info.addElement("bundle-instructions")
                     .addElement("Import-Package")
-                        .setText(JiraProfileTabModuleGenerator.class.getPackage().getName() + ";resolution:=optional");
+                        .setText(JiraProfileTabModuleGenerator.class.getPackage().getName() + ";resolution:=optional," +
+                                AccessLevelModuleDescriptor.class.getPackage().getName());
 
             plugin.add(oldRoot.detach());
             doc.setRootElement(plugin);

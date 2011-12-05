@@ -8,6 +8,7 @@ import com.atlassian.labs.remoteapps.modules.applinks.ApplicationTypeModuleGener
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.ModuleDescriptorFactory;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.descriptors.ChainModuleDescriptorFactory;
 import org.dom4j.Element;
 import org.osgi.framework.Bundle;
@@ -142,7 +143,14 @@ class GeneratorInitializer
         {
             for (ModuleDescriptor descriptor : module.getModuleDescriptors())
             {
-                serviceRegistrations.add(targetBundleContext.registerService(ModuleDescriptor.class.getName(), descriptor, null));
+                if (plugin.getModuleDescriptor(descriptor.getKey()) != null)
+                {
+                    log.error("Duplicate key '" + descriptor.getKey() + "' detected, skipping");
+                }
+                else
+                {
+                    serviceRegistrations.add(targetBundleContext.registerService(ModuleDescriptor.class.getName(), descriptor, null));
+                }
             }
         }
     }

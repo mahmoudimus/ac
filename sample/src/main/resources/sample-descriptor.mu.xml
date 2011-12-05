@@ -25,7 +25,7 @@
     <profile-page key="remoteAppProfile" name="Remote App {{appkey}} Profile" url="/myadmin" />
 
     <!-- Confluence only -->
-    <macro key="{{appkey}}" url="/mymacro" output-type="block" body-type="rich-text">
+    <macro key="{{appkey}}-macro" url="/mymacro" output-type="block" body-type="rich-text">
         <description>Example macro</description>
         <category name="development" />
         <parameters>
