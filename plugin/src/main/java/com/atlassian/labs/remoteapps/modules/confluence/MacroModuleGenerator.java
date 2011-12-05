@@ -93,7 +93,7 @@ public class MacroModuleGenerator implements RemoteModuleGenerator
 
         ModuleDescriptor descriptor = createXhtmlMacroModuleDescriptor(ctx, entity);
         descriptor.init(ctx.getPlugin(), config);
-        final Set<ModuleDescriptor> descriptors = ImmutableSet.of(descriptor);
+        final Set<ModuleDescriptor> descriptors = ImmutableSet.of(descriptor, createDummyWebItemDescriptor(ctx, entity, descriptor.getKey()));
         return new RemoteModule()
         {
             @Override
@@ -102,6 +102,26 @@ public class MacroModuleGenerator implements RemoteModuleGenerator
                 return descriptors;
             }
         };
+    }
+
+    private ModuleDescriptor createDummyWebItemDescriptor(RemoteAppCreationContext ctx,
+                                                     Element e,
+                                                     String key
+    )
+    {
+        Element config = copyDescriptorXml(e);
+        final String webItemKey = "webitem-" + key;
+        config.addAttribute("key", webItemKey);
+        config.addAttribute("section", "shouldnot/exist");
+
+        config.addElement("label").setText("Does not matter");
+        config.addElement("link").
+                setText("#");
+
+        ModuleDescriptor descriptor = ctx.getAccessLevel()
+                                         .createWebItemModuleDescriptor(ctx.getBundle().getBundleContext());
+        descriptor.init(ctx.getPlugin(), config);
+        return descriptor;
     }
 
     private ModuleDescriptor createXhtmlMacroModuleDescriptor(final RemoteAppCreationContext ctx, Element originalEntity)

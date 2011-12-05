@@ -47,7 +47,7 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
     private final PermissionManager permissionManager;
 
     private static final Set<String> ALLOWED_ACCESS_LEVELS = ImmutableSet.of(
-            (System.getProperty("remoteapps.access.levels", "user,global").split(",")));
+            (System.getProperty("remoteapps.access.levels", "user").split(",")));
     private final Map<String, RemoteModuleGenerator> generators;
 
     @Autowired
