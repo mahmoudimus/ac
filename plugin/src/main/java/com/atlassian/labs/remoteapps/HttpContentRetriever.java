@@ -14,12 +14,14 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.cache.CacheConfig;
 import org.apache.http.impl.client.cache.CachingHttpClient;
 import org.apache.http.impl.conn.ProxySelectorRoutePlanner;
+import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -36,7 +38,7 @@ import static java.util.Collections.singletonList;
  *
  */
 @Component
-public class HttpContentRetriever
+public class HttpContentRetriever implements DisposableBean
 {
     private final CachingHttpClient httpClient;
     private final OAuthLinkManager oAuthLinkManager;
@@ -51,7 +53,7 @@ public class HttpContentRetriever
         cacheConfig.setMaxCacheEntries(1000);
         cacheConfig.setMaxObjectSizeBytes(8192);
 
-        DefaultHttpClient client = new DefaultHttpClient();
+        DefaultHttpClient client = new DefaultHttpClient(new ThreadSafeClientConnManager());
         ProxySelectorRoutePlanner routePlanner = new ProxySelectorRoutePlanner(
             client.getConnectionManager().getSchemeRegistry(),
             ProxySelector.getDefault());
@@ -72,15 +74,15 @@ public class HttpContentRetriever
         HttpResponse response = null;
         try
         {
-            String authorizationHeader = oAuthLinkManager.signAsHeader(link, HttpMethod.GET, url, Maps.transformValues(parameters, new Function<String, List<String>>()
-            {
-                @Override
-                public List<String> apply(String from)
-                {
-                    return singletonList(from);
-                }
-            }));
-            httpget.setHeader(HttpHeaders.AUTHORIZATION, authorizationHeader);
+            oAuthLinkManager.sign(httpget, link, url,
+                    Maps.transformValues(parameters, new Function<String, List<String>>()
+                    {
+                        @Override
+                        public List<String> apply(String from)
+                        {
+                            return singletonList(from);
+                        }
+                    }));
 
             HttpParams params = httpClient.getParams();
             HttpConnectionParams.setConnectionTimeout(params, 3 * 1000);
@@ -98,5 +100,11 @@ public class HttpContentRetriever
             throw new ContentRetrievalException(e);
         }
 
+    }
+
+    @Override
+    public void destroy() throws Exception
+    {
+        httpClient.getConnectionManager().shutdown();
     }
 }

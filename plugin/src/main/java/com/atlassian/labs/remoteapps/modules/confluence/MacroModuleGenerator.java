@@ -63,12 +63,15 @@ public class MacroModuleGenerator implements RemoteModuleGenerator
     {
         Map<String,String> i18n = newHashMap();
         String key = element.attributeValue("key");
-        for (Element parameter : new ArrayList<Element>(element.element("parameters").elements("parameter")))
+        if (element.element("parameters") != null)
         {
-            String title = parameter.attributeValue("title");
-            if (title != null)
+            for (Element parameter : new ArrayList<Element>(element.element("parameters").elements("parameter")))
             {
-                i18n.put(pluginKey + "." + key + ".param." + parameter.attributeValue("name") + ".label", title);
+                String title = parameter.attributeValue("title");
+                if (title != null)
+                {
+                    i18n.put(pluginKey + "." + key + ".param." + parameter.attributeValue("name") + ".label", title);
+                }
             }
         }
         return i18n;

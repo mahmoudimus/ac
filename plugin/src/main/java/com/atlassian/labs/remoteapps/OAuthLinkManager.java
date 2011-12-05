@@ -12,10 +12,14 @@ import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.oauth.serviceprovider.ServiceProviderConsumerStore;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.user.UserManager;
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
 import net.oauth.*;
 import net.oauth.signature.RSA_SHA1;
 import org.apache.axis.encoding.ser.ElementSerializer;
+import org.apache.http.HttpHeaders;
+import org.apache.http.HttpMessage;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.netbeans.lib.cvsclient.commandLine.command.log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,10 +31,15 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Lists.transform;
 import static com.google.common.collect.Maps.newHashMap;
+import static com.google.common.collect.Maps.transformValues;
+import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
 
 /**
@@ -133,7 +142,7 @@ public class OAuthLinkManager
     public ServiceProvider getServiceProvider(ApplicationLink link)
     {
         Map<String,String> config = authenticationConfigurationManager.getConfiguration(link.getId(), OAuthAuthenticationProvider.class);
-        if (config.containsKey(CONSUMER_KEY_OUTBOUND))
+        if (config != null && config.containsKey(CONSUMER_KEY_OUTBOUND))
         {
             final String accessTokenUrl = config.get(SERVICE_PROVIDER_ACCESS_TOKEN_URL);
             final String requestTokenUrl = config.get(SERVICE_PROVIDER_REQUEST_TOKEN_URL);
@@ -142,33 +151,44 @@ public class OAuthLinkManager
         }
         else
         {
-            throw new IllegalStateException("Should have oauth configured");
+            log.debug("No oauth configured for application link '" + link.getId().get() + "'");
+            return null;
         }
     }
 
-    public String signAsHeader(ApplicationLink link, String method, String url, Map<String, List<String>> originalParams)
+    public void sign(HttpRequestBase httpMessage, ApplicationLink link, String url, Map<String, List<String>> originalParams)
     {
-        OAuthMessage message = sign(link, method, url, originalParams);
-        try
+        OAuthMessage message = sign(link, httpMessage.getMethod(), url, originalParams);
+        if (message != null)
         {
-            return message.getAuthorizationHeader(null);
-        }
-        catch (IOException e)
-        {
-            throw new RuntimeException(e);
+            try
+            {
+                httpMessage.addHeader(HttpHeaders.AUTHORIZATION, message.getAuthorizationHeader(null));
+            }
+            catch (IOException e)
+            {
+                throw new RuntimeException(e);
+            }
         }
     }
 
     public List<Map.Entry<String, String>> signAsParameters(ApplicationLink link, String method, String url, Map<String, List<String>> originalParams)
     {
         OAuthMessage message = sign(link, method, url, originalParams);
-        try
+        if (message != null)
         {
-            return message.getParameters();
+            try
+            {
+                return message.getParameters();
+            }
+            catch (IOException e)
+            {
+                throw new RuntimeException(e);
+            }
         }
-        catch (IOException e)
+        else
         {
-            throw new RuntimeException(e);
+            return newArrayList(Collections.<String,String>emptyMap().entrySet());
         }
     }
 
@@ -187,10 +207,17 @@ public class OAuthLinkManager
             dumpParamsToSign(params);
         }
         ServiceProvider serviceProvider = getServiceProvider(link);
-        Request oAuthRequest = new Request(Request.HttpMethod.valueOf(method),
-                URI.create(url), convertParameters(params));
-        final Request signedRequest = consumerService.sign(oAuthRequest, serviceProvider);
-        return OAuthHelper.asOAuthMessage(signedRequest);
+        if (serviceProvider != null)
+        {
+            Request oAuthRequest = new Request(Request.HttpMethod.valueOf(method),
+                    URI.create(url), convertParameters(params));
+            final Request signedRequest = consumerService.sign(oAuthRequest, serviceProvider);
+            return OAuthHelper.asOAuthMessage(signedRequest);
+        }
+        else
+        {
+            return null;
+        }
     }
 
     private void dumpParamsToSign(Map<String, List<String>> params)
