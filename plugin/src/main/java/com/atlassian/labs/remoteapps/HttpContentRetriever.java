@@ -10,10 +10,12 @@ import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.cache.CacheConfig;
 import org.apache.http.impl.client.cache.CachingHttpClient;
 import org.apache.http.impl.conn.ProxySelectorRoutePlanner;
+import org.apache.http.impl.conn.SchemeRegistryFactory;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.HttpConnectionParams;
@@ -31,6 +33,7 @@ import java.net.ProxySelector;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import static java.util.Collections.singletonList;
 
@@ -53,7 +56,9 @@ public class HttpContentRetriever implements DisposableBean
         cacheConfig.setMaxCacheEntries(1000);
         cacheConfig.setMaxObjectSizeBytes(8192);
 
-        DefaultHttpClient client = new DefaultHttpClient(new ThreadSafeClientConnManager());
+        DefaultHttpClient client = new DefaultHttpClient(new ThreadSafeClientConnManager(
+                SchemeRegistryFactory.createDefault(), 2, TimeUnit.SECONDS
+        ));
         ProxySelectorRoutePlanner routePlanner = new ProxySelectorRoutePlanner(
             client.getConnectionManager().getSchemeRegistry(),
             ProxySelector.getDefault());
@@ -88,18 +93,19 @@ public class HttpContentRetriever implements DisposableBean
             HttpConnectionParams.setConnectionTimeout(params, 3 * 1000);
             HttpConnectionParams.setSoTimeout(params, 10 * 1000);
             response = httpClient.execute(httpget, localContext);
+            HttpEntity entity = response.getEntity();
             if (response.getStatusLine().getStatusCode() != 200)
             {
+                EntityUtils.consume(entity);
                 throw new ContentRetrievalException("Unable to retrieve content: " + response.getStatusLine().getReasonPhrase());
             }
-            HttpEntity entity = response.getEntity();
+
             return EntityUtils.toString(entity);
         }
         catch (IOException e)
         {
             throw new ContentRetrievalException(e);
         }
-
     }
 
     @Override
