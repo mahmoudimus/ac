@@ -4,7 +4,7 @@ var addMessage = require('speakeasy/messages').add;
 var host = require('speakeasy/host');
 var contextPath = window.contextPath === undefined ? host.findContextPath() : window.contextPath;
 
-function sendRegistrationToken(url, callbacks) {
+function sendRegistrationToken(url, token, callbacks) {
     $.ajax({
       url: contextPath + "/rest/remoteapps/latest/installer",
       type: 'POST',
@@ -13,7 +13,7 @@ function sendRegistrationToken(url, callbacks) {
       },
       data: {
           url : url,
-          token : ''
+          token : token
       },
       success: function(data) {
           addMessage('success', {body: "Registration successful"});
@@ -52,7 +52,8 @@ $(document).ready(function() {
                     content : require('./install-dialog').render({}),
                     submit : function(dialog, callbacks) {
                         var url = $('#remoteapps-url').val();
-                        sendRegistrationToken(url, callbacks);
+                        var token = $('#remoteapps-token').val();
+                        sendRegistrationToken(url, token, callbacks);
                     },
                     submitClass : 'remoteapps-submit'
                 });

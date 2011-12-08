@@ -14,6 +14,10 @@
             <label for="remoteapps-url">Registration URL</label>
             <input type="text" name="remoteapps-url" size="40" id="remoteapps-url" />
         </div>
+        <div class="field-group">
+            <label for="remoteapps-token">Registration Token (optional)</label>
+            <input type="text" name="remoteapps-token" size="40" id="remoteapps-token" />
+        </div>
     </fieldset>
 </form>
 <p>
