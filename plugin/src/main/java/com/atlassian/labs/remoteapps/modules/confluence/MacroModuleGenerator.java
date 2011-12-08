@@ -1,6 +1,7 @@
 package com.atlassian.labs.remoteapps.modules.confluence;
 
 import com.atlassian.confluence.macro.Macro;
+import com.atlassian.confluence.pages.thumbnail.Dimensions;
 import com.atlassian.confluence.plugin.descriptor.MacroMetadataParser;
 import com.atlassian.confluence.plugin.descriptor.XhtmlMacroModuleDescriptor;
 import com.atlassian.confluence.status.service.SystemInformationService;
@@ -118,8 +119,7 @@ public class MacroModuleGenerator implements RemoteModuleGenerator
         config.addAttribute("section", "shouldnot/exist");
 
         config.addElement("label").setText("Does not matter");
-        config.addElement("link").
-                setText("#");
+        config.addElement("link").setText("#");
 
         ModuleDescriptor descriptor = ctx.getAccessLevel()
                                          .createWebItemModuleDescriptor(ctx.getBundle().getBundleContext());
@@ -127,17 +127,28 @@ public class MacroModuleGenerator implements RemoteModuleGenerator
         return descriptor;
     }
 
-    private ModuleDescriptor createXhtmlMacroModuleDescriptor(final RemoteAppCreationContext ctx, Element originalEntity)
+    private ModuleDescriptor createXhtmlMacroModuleDescriptor(final RemoteAppCreationContext ctx, final Element originalEntity)
     {
         final Macro.BodyType bodyType = parseBodyType(originalEntity);
         final Macro.OutputType outputType = parseOutputType(originalEntity);
         final String url = getRequiredAttribute(originalEntity, "url");
+
+        final ImagePlaceholderConfig placeholder = parseImagePlaceholder(originalEntity);
+
         ModuleFactory factory = new ModuleFactory()
         {
             @Override
             public <T> T createModule(String name, ModuleDescriptor<T> moduleDescriptor) throws PluginParseException
             {
-                return (T) new RemoteMacro(xhtmlContent, bodyType, outputType, url, applicationLinkOperationsFactory.create(ctx.getApplicationType()), macroContentManager);
+                if (placeholder != null && Macro.BodyType.NONE.equals(bodyType))
+                {
+                    return (T) new ImagePlaceholderRemoteMacro(ctx.getPlugin().getKey(), originalEntity.attributeValue("key"), placeholder.imageUrl, new Dimensions(placeholder.width, placeholder.height),
+                            placeholder.applyChrome, xhtmlContent, bodyType, outputType, url, applicationLinkOperationsFactory.create(ctx.getApplicationType()), macroContentManager);
+                }
+                else
+                {
+                    return (T) new RemoteMacro(xhtmlContent, bodyType, outputType, url, applicationLinkOperationsFactory.create(ctx.getApplicationType()), macroContentManager);
+                }
             }
         };
         return new XhtmlMacroModuleDescriptor(factory, new MacroMetadataParser(systemInformationService, i18NBeanFactory));
@@ -169,5 +180,39 @@ public class MacroModuleGenerator implements RemoteModuleGenerator
             throw new IllegalArgumentException("Invalid body type '" + bodyTypeValue);
         }
         return bodyType;
+    }
+
+    private ImagePlaceholderConfig parseImagePlaceholder(Element entity)
+    {
+        Element placeholder = entity.element("image-placeholder");
+        if (placeholder == null)
+        {
+            return null;
+        }
+        String url = placeholder.attributeValue("url");
+        String width = placeholder.attributeValue("width");
+        String height = placeholder.attributeValue("height");
+        String applyChrome = placeholder.attributeValue("apply-chrome");
+
+        return new ImagePlaceholderConfig(url,
+                width == null ? null : Integer.parseInt(width),
+                height == null ? null : Integer.parseInt(height),
+                applyChrome == null || Boolean.parseBoolean(applyChrome)); // applyChrome defaults to true
+    }
+
+    private static class ImagePlaceholderConfig
+    {
+        String imageUrl;
+        int width;
+        int height;
+        boolean applyChrome;
+
+        private ImagePlaceholderConfig(String imageUrl, int width, int height, boolean applyChrome)
+        {
+            this.imageUrl = imageUrl;
+            this.width = width;
+            this.height = height;
+            this.applyChrome = applyChrome;
+        }
     }
 }

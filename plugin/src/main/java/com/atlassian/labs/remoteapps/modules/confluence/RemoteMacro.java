@@ -75,4 +75,9 @@ public class RemoteMacro implements Macro
             return "ERROR: Unable to convert macro content from Remote App '" + linkOps.get().getName() + "': " + e.getMessage();
         }
     }
+
+    public ApplicationLinkOperationsFactory.LinkOperations getLinkOps()
+    {
+        return linkOps;
+    }
 }
