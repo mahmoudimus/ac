@@ -73,7 +73,7 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
     }
 
     @Override
-    public void install(String username, final String registrationUrl, String registrationSecret) throws PermissionDeniedException
+    public void install(final String username, final String registrationUrl, String registrationSecret) throws PermissionDeniedException
     {
         if (!permissionManager.canInstallRemoteApps(username))
         {
@@ -100,7 +100,7 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
                     }
                     String descriptorXml = response.getResponseBodyAsString();
                     validateDescriptorXml(registrationUrl, descriptorXml);
-                    Document pluginXml = transformDescriptorToPluginXml(descriptorXml);
+                    Document pluginXml = transformDescriptorToPluginXml(username, descriptorXml);
                     JarPluginArtifact jar = createJarPluginArtifact(registrationUri.getHost(), pluginXml);
                     pluginController.installPlugins(jar);
                 }
@@ -193,7 +193,7 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
         builder.addFile(pluginKey.hashCode() + "/i18n.properties", writer.toString());
     }
 
-    private static Document transformDescriptorToPluginXml(String descriptorXml)
+    private static Document transformDescriptorToPluginXml(String username, String descriptorXml)
     {
         try
         {
@@ -215,10 +215,13 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
             {
                 info.add(oldRoot.element("vendor").detach());
             }
-            info.addElement("bundle-instructions")
+            Element instructions = info.addElement("bundle-instructions");
+            instructions
                     .addElement("Import-Package")
                         .setText(JiraProfileTabModuleGenerator.class.getPackage().getName() + ";resolution:=optional," +
                                 AccessLevelModuleDescriptor.class.getPackage().getName());
+            instructions.addElement("Remote-App").setText("installer;user=\"" + username + "\";date=\"" + System.currentTimeMillis() + "\"");
+
 
             plugin.add(oldRoot.detach());
             doc.setRootElement(plugin);
