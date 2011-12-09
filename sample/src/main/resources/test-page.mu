@@ -12,7 +12,7 @@
         </div>
         <script type="text/javascript">
             RA.init();
-            //RA.resize(600,400);
+            RA.resize(600,400);
         </script>
     </body>
 </html>

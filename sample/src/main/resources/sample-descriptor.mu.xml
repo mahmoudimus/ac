@@ -21,7 +21,7 @@
         <permission application="confluence" scope="read_content" />
     </permissions>
     <admin-page key="remoteAppAdmin" name="Remote App {{appkey}} Admin" url="/myadmin" />
-    <general-page key="remoteAppGeneral" name="Remote App {{appkey}} General" url="/myadmin" />
+    <general-page key="remoteAppGeneral" name="Remote App {{appkey}} General" url="/myadmin" height="600" width="700"/>
     <profile-page key="remoteAppProfile" name="Remote App {{appkey}} Profile" url="/myadmin" />
 
     <!-- Confluence only -->

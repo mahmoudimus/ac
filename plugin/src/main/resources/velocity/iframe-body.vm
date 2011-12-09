@@ -14,8 +14,8 @@
             var iframeSrc = '$iframeSrcHtml';
             function resize(height, width){
                 var iframe = $('iframe', container);
-                iframe.css('height', settings[1] + "px");
-                iframe.css('width', settings[0] + "px");
+                iframe.css('height', height + "px");
+                iframe.css('width', width + "px");
             }
             var now = new Date().getTime();
             var transport = new easyXDM.Socket(/** The configuration */{
@@ -24,7 +24,7 @@
                 //ID of the element to attach the inline frame to
                 container: "embedded",
                 channel: "channel01",
-                props: {style: {height : initHeight, width : initWidth} },
+                props: {height : initHeight, width : initWidth},
                 onMessage: function (messageText, origin) {
                     var message = JSON.parse(messageText);
                     switch (message.id) {
