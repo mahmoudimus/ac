@@ -5,11 +5,9 @@ import com.atlassian.labs.remoteapps.ModuleGeneratorManager;
 import com.atlassian.labs.remoteapps.descriptor.external.AccessLevel;
 import com.atlassian.labs.remoteapps.modules.*;
 import com.atlassian.labs.remoteapps.modules.applinks.ApplicationTypeModule;
-import com.atlassian.labs.remoteapps.modules.applinks.ApplicationTypeModuleGenerator;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.ModuleDescriptorFactory;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.descriptors.ChainModuleDescriptorFactory;
 import com.google.common.base.Function;
 import org.dom4j.DocumentFactory;
@@ -24,11 +22,9 @@ import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CopyOnWriteArraySet;
 
-import static com.atlassian.labs.remoteapps.util.Dom4jUtils.copyDescriptorXml;
 import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.transform;
 import static com.google.common.collect.Maps.newHashMap;
-import static com.google.common.collect.Maps.transformValues;
 import static com.google.common.collect.Sets.newHashSet;
 import static java.util.Collections.singleton;
 import static org.apache.commons.lang.Validate.notNull;
@@ -96,7 +92,7 @@ class GeneratorInitializer
             final RemoteAppCreationContext firstContext = new RemoteAppCreationContext(plugin, aggFactory, bundle, null, accessLevel);
             ApplicationTypeModule module = (ApplicationTypeModule) moduleGeneratorManager.getApplicationTypeModuleGenerator().generate(firstContext, element);
             remoteModules.add(module);
-            remoteModules.add(new DummyModule(firstContext));
+            remoteModules.add(new DummyModule(firstContext, accessLevelManager));
             final RemoteAppCreationContext childContext = new RemoteAppCreationContext(plugin, aggFactory, bundle, module.getApplicationType(), accessLevel);
 
             moduleGeneratorManager.processDescriptor(element, new ModuleGeneratorManager.ModuleHandler()
@@ -179,28 +175,30 @@ class GeneratorInitializer
     private static class DummyModule implements RemoteModule
     {
         private final RemoteAppCreationContext firstContext;
+        private final AccessLevelManager accessLevelManager;
 
-        public DummyModule(RemoteAppCreationContext firstContext)
+        public DummyModule(RemoteAppCreationContext firstContext, AccessLevelManager accessLevelManager)
         {
             this.firstContext = firstContext;
+            this.accessLevelManager = accessLevelManager;
         }
 
         @Override
         public Set<ModuleDescriptor> getModuleDescriptors()
         {
-            return singleton(createDummyWebItemDescriptor(firstContext));
+            return singleton(createDummyWebItemDescriptor(firstContext, accessLevelManager));
         }
-        private ModuleDescriptor createDummyWebItemDescriptor(RemoteAppCreationContext ctx)
+        private ModuleDescriptor createDummyWebItemDescriptor(RemoteAppCreationContext ctx, AccessLevelManager accessLevelManager)
         {
-            Element config = DocumentFactory.getInstance().createElement("web-item");
+            Element config = DocumentFactory.getInstance().createElement("scoped-web-item");
             config.addAttribute("key", "webitem-dummy__");
             config.addAttribute("section", "shouldnot/exist");
 
             config.addElement("label").setText("Does not matter");
             config.addElement("link").setText("#");
 
-            ModuleDescriptor descriptor = ctx.getAccessLevel()
-                                             .createWebItemModuleDescriptor(ctx.getBundle().getBundleContext());
+            AccessLevel lvl = accessLevelManager.getAccessLevel("user") != null ? accessLevelManager.getAccessLevel("user") : ctx.getAccessLevel();
+            ModuleDescriptor descriptor = lvl.createWebItemModuleDescriptor(ctx.getBundle().getBundleContext());
             descriptor.init(ctx.getPlugin(), config);
             return descriptor;
         }

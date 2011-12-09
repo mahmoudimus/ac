@@ -126,7 +126,9 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
                     Document pluginXml = transformDescriptorToPluginXml(username, document);
                     JarPluginArtifact jar = createJarPluginArtifact(pluginKey, registrationUri.getHost(), pluginXml, props);
                     pluginController.installPlugins(jar);
-                    eventPublisher.publish(new RemoteAppInstalledEvent(pluginKey, accessLevel));
+
+                    // todo: retrieve the access level because it may have been modified.  Should be fixed as that sucks.
+                    eventPublisher.publish(new RemoteAppInstalledEvent(pluginKey, root.attributeValue("access-level")));
                 }
             });
         }
