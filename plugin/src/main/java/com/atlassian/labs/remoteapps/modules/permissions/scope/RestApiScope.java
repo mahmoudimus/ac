@@ -32,7 +32,7 @@ public class RestApiScope implements ApiScope
         this.scopes = scopes;
     }
 
-    public boolean allow(HttpServletRequest request)
+    public boolean allow(HttpServletRequest request, String user)
     {
         final String pathInfo = ServletUtils.extractPathInfo(request);
         final String[] elements = StringUtils.split(pathInfo, '/');

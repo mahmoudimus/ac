@@ -10,12 +10,16 @@ import static java.util.Arrays.asList;
 /**
  *
  */
-public class ModifyAttachmentsScope implements ApiScope
+public class ReadUsersAndGroupsScope implements ApiScope
 {
     private final XmlRpcApiScope xmlrpcScope = new XmlRpcApiScope("/rpc/xmlrpc", asList(
-            "confluence2.addAttachment",
-            "confluence2.removeAttachment",
-            "confluence2.moveAttachment"
+            "confluence2.getUser",
+            "confluence2.getUserGroups",
+            "confluence2.getGroups",
+            "confluence2.hasUser",
+            "confluence2.hasGroup",
+            "confluence2.getActiveUsers",
+            "confluence2.getUserInformation"
     ));
     @Override
     public boolean allow(HttpServletRequest request, String user)

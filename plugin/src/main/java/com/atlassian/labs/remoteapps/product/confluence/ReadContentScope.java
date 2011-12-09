@@ -52,7 +52,7 @@ public class ReadContentScope implements ApiScope
             "confluence2.getSpacesContainingContentWithLabel"
     ));
     @Override
-    public boolean allow(HttpServletRequest request)
+    public boolean allow(HttpServletRequest request, String user)
     {
         return xmlrpcScope.allow(request);
     }

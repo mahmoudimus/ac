@@ -83,11 +83,6 @@ public class PermissionManager implements DisposableBean
 
     public boolean canAccessRemoteApp(String username, ApplicationLink link)
     {
-        // never allow sysadmins
-        if (userManager.isSystemAdmin(username))
-        {
-            return false;
-        }
         AccessLevel accessLevel = accessLevelManager.getAccessLevel(
                 (String)link.getProperty(ACCESS_LEVEL_KEY));
 
@@ -107,7 +102,7 @@ public class PermissionManager implements DisposableBean
         apiScopeTracker.close();
     }
 
-    public boolean isRequestInApiScope(HttpServletRequest req, String clientKey)
+    public boolean isRequestInApiScope(HttpServletRequest req, String clientKey, String user)
     {
         ApplicationLink link = linkManager.getLinkForOAuthClientKey(clientKey);
         List<String> apiScopes = (List<String>) link.getProperty(API_SCOPES_LINK_KEY);
@@ -115,7 +110,7 @@ public class PermissionManager implements DisposableBean
         {
             for (ApiScope scope : apiScopeTracker.getModules())
             {
-                if (scope.allow(req))
+                if (scope.allow(req, user))
                 {
                     return true;
                 }

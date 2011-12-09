@@ -1,6 +1,7 @@
 package com.atlassian.labs.remoteapps.modules.permissions;
 
 import com.atlassian.labs.remoteapps.PermissionManager;
+import com.atlassian.sal.api.user.UserManager;
 import com.google.common.collect.ImmutableSet;
 import net.oauth.OAuth;
 import org.apache.commons.lang.StringUtils;
@@ -24,11 +25,13 @@ import java.util.Set;
  */
 public class ApiScopingFilter implements Filter
 {
-    private PermissionManager permissionManager;
+    private final PermissionManager permissionManager;
+    private final UserManager userManager;
 
-    public ApiScopingFilter(PermissionManager permissionManager)
+    public ApiScopingFilter(PermissionManager permissionManager, UserManager userManager)
     {
         this.permissionManager = permissionManager;
+        this.userManager = userManager;
     }
 
     @Override
@@ -46,7 +49,8 @@ public class ApiScopingFilter implements Filter
         {
             // we consume the input to allow inspection of the body via getInputStream
             InputConsumingHttpServletRequest inputConsumingRequest = new InputConsumingHttpServletRequest(req);
-            if (!permissionManager.isRequestInApiScope(inputConsumingRequest, clientKey))
+            String user = userManager.getRemoteUsername(req);
+            if (!permissionManager.isRequestInApiScope(inputConsumingRequest, clientKey, user))
             {
                 res.sendError(HttpServletResponse.SC_FORBIDDEN, "Request not in an authorized API scope");
                 return;

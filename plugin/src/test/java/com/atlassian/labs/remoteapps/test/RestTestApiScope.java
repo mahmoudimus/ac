@@ -17,8 +17,8 @@ public class RestTestApiScope implements ApiScope
     ));
 
     @Override
-    public boolean allow(HttpServletRequest request)
+    public boolean allow(HttpServletRequest request, String user)
     {
-        return validator.allow(request);
+        return validator.allow(request, user);
     }
 }

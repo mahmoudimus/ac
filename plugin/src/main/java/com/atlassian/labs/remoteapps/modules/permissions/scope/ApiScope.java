@@ -9,8 +9,10 @@ public interface ApiScope
 {
     /**
      * Whether to allow the request or not in this scope
+     *
      * @param request The request.  The body can be read repeatedly via getInputStream()
+     * @param user The logged in user name
      * @return True if allowed
      */
-    boolean allow(HttpServletRequest request);
+    boolean allow(HttpServletRequest request, String user);
 }
