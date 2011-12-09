@@ -11,7 +11,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.atlassian.labs</groupId>
     <artifactId>remoteapps-parent</artifactId>
-    <version>0.3-SNAPSHOT</version>
+    <version>0.3</version>
 
     <organization>
         <name>Atlassian</name>
