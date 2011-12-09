@@ -1,6 +1,7 @@
 package com.atlassian.labs.remoteapps.descriptor;
 
 import com.atlassian.labs.remoteapps.AccessLevelManager;
+import com.atlassian.labs.remoteapps.ModuleGeneratorManager;
 import com.atlassian.labs.remoteapps.descriptor.external.AccessLevel;
 import com.atlassian.labs.remoteapps.modules.*;
 import com.atlassian.labs.remoteapps.modules.applinks.ApplicationTypeModule;
@@ -10,6 +11,8 @@ import com.atlassian.plugin.ModuleDescriptorFactory;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.descriptors.ChainModuleDescriptorFactory;
+import com.google.common.base.Function;
+import org.dom4j.DocumentFactory;
 import org.dom4j.Element;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -21,8 +24,13 @@ import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CopyOnWriteArraySet;
 
+import static com.atlassian.labs.remoteapps.util.Dom4jUtils.copyDescriptorXml;
+import static com.google.common.collect.Iterables.concat;
+import static com.google.common.collect.Iterables.transform;
 import static com.google.common.collect.Maps.newHashMap;
+import static com.google.common.collect.Maps.transformValues;
 import static com.google.common.collect.Sets.newHashSet;
+import static java.util.Collections.singleton;
 import static org.apache.commons.lang.Validate.notNull;
 
 /**
@@ -32,44 +40,34 @@ class GeneratorInitializer
 {
     private final Set<String> expected;
     private final Set<ModuleDescriptorFactory> factories = new CopyOnWriteArraySet<ModuleDescriptorFactory>();
-    private final ApplicationTypeModuleGenerator applicationTypeModuleGenerator;
-    private final Map<String,RemoteModuleGenerator> generators;
     private final AccessLevelManager accessLevelManager;
     private final StartableForPlugins startableForPlugins;
     private final Plugin plugin;
     private final Bundle bundle;
+    private final ModuleGeneratorManager moduleGeneratorManager;
     private final Element element;
     private static final Logger log = LoggerFactory.getLogger(GeneratorInitializer.class);
 
     private final Collection<RemoteModule> remoteModules = new CopyOnWriteArrayList<RemoteModule>();
     private final List<ServiceRegistration> serviceRegistrations = new CopyOnWriteArrayList<ServiceRegistration>();
 
-    GeneratorInitializer(AccessLevelManager accessLevelManager, StartableForPlugins startableForPlugins, Plugin plugin, Bundle bundle, Iterable<RemoteModuleGenerator> generatorList, Element element)
+    GeneratorInitializer(AccessLevelManager accessLevelManager, StartableForPlugins startableForPlugins, Plugin plugin, Bundle bundle,
+                         ModuleGeneratorManager moduleGeneratorManager, Element element)
     {
         this.accessLevelManager = accessLevelManager;
         this.startableForPlugins = startableForPlugins;
         this.plugin = plugin;
         this.bundle = bundle;
+        this.moduleGeneratorManager = moduleGeneratorManager;
         this.element = element;
-        Set<String> set = newHashSet();
-        ApplicationTypeModuleGenerator appTypeGen = null;
-        Map<String,RemoteModuleGenerator> map = newHashMap();
-        for (RemoteModuleGenerator generator : generatorList)
+        this.expected = newHashSet(concat(transform(moduleGeneratorManager.getAllGenerators(), new Function<RemoteModuleGenerator,Iterable<String>>()
         {
-            set.addAll(generator.getDynamicModuleTypeDependencies());
-            if (generator instanceof ApplicationTypeModuleGenerator)
+            @Override
+            public Iterable<String> apply(RemoteModuleGenerator from)
             {
-                appTypeGen = (ApplicationTypeModuleGenerator) generator;
+                return from.getDynamicModuleTypeDependencies();
             }
-            else
-            {
-                map.put(generator.getType(), generator);
-            }
-        }
-        generators = Collections.unmodifiableMap(map);
-        notNull(appTypeGen);
-        applicationTypeModuleGenerator = appTypeGen;
-        this.expected = set;
+        })));
     }
 
     public boolean registerNewModuleDescriptorFactory(ModuleDescriptorFactory factory)
@@ -95,25 +93,20 @@ class GeneratorInitializer
             ModuleDescriptorFactory aggFactory = new ChainModuleDescriptorFactory(factories.toArray(new ModuleDescriptorFactory[factories.size()]));
 
             AccessLevel accessLevel = accessLevelManager.getAccessLevel(accessLevelValue);
-            RemoteAppCreationContext ctx = new RemoteAppCreationContext(plugin, aggFactory, bundle, null, accessLevel);
-            ApplicationTypeModule module = (ApplicationTypeModule) applicationTypeModuleGenerator.generate(ctx, element);
+            final RemoteAppCreationContext firstContext = new RemoteAppCreationContext(plugin, aggFactory, bundle, null, accessLevel);
+            ApplicationTypeModule module = (ApplicationTypeModule) moduleGeneratorManager.getApplicationTypeModuleGenerator().generate(firstContext, element);
             remoteModules.add(module);
-            ctx = new RemoteAppCreationContext(plugin, aggFactory, bundle, module.getApplicationType(), accessLevel);
+            remoteModules.add(new DummyModule(firstContext));
+            final RemoteAppCreationContext childContext = new RemoteAppCreationContext(plugin, aggFactory, bundle, module.getApplicationType(), accessLevel);
 
-            for (Element e : ((Collection<Element>)element.elements()))
+            moduleGeneratorManager.processDescriptor(element, new ModuleGeneratorManager.ModuleHandler()
             {
-                String type = e.getName();
-                if (generators.containsKey(type))
+                @Override
+                public void handle(Element element, RemoteModuleGenerator generator)
                 {
-                    RemoteModuleGenerator generator = generators.get(type);
-                    final RemoteModule remoteModule = generator.generate(ctx, e);
-                    remoteModules.add(remoteModule);
+                    remoteModules.add(generator.generate(childContext, element));
                 }
-                else
-                {
-                    log.warn("Unknown module: " + type);
-                }
-            }
+            });
             registerDescriptors(remoteModules);
             for (final RemoteModule remoteModule : remoteModules)
             {
@@ -178,5 +171,38 @@ class GeneratorInitializer
         }
         remoteModules.clear();
         startableForPlugins.unregister(plugin.getKey());
+    }
+
+    /**
+     * This module only exists to register an unused web item to ensure the app shows up in the speakeasy screen
+     */
+    private static class DummyModule implements RemoteModule
+    {
+        private final RemoteAppCreationContext firstContext;
+
+        public DummyModule(RemoteAppCreationContext firstContext)
+        {
+            this.firstContext = firstContext;
+        }
+
+        @Override
+        public Set<ModuleDescriptor> getModuleDescriptors()
+        {
+            return singleton(createDummyWebItemDescriptor(firstContext));
+        }
+        private ModuleDescriptor createDummyWebItemDescriptor(RemoteAppCreationContext ctx)
+        {
+            Element config = DocumentFactory.getInstance().createElement("web-item");
+            config.addAttribute("key", "webitem-dummy__");
+            config.addAttribute("section", "shouldnot/exist");
+
+            config.addElement("label").setText("Does not matter");
+            config.addElement("link").setText("#");
+
+            ModuleDescriptor descriptor = ctx.getAccessLevel()
+                                             .createWebItemModuleDescriptor(ctx.getBundle().getBundleContext());
+            descriptor.init(ctx.getPlugin(), config);
+            return descriptor;
+        }
     }
 }

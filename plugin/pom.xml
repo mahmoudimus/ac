@@ -304,7 +304,8 @@
                         <Export-Package>
                             com.atlassian.labs.remoteapps.modules.permissions.scope,
                             com.atlassian.labs.remoteapps.modules.page.jira,
-                            com.atlassian.labs.remoteapps.descriptor.external
+                            com.atlassian.labs.remoteapps.descriptor.external,
+                            com.atlassian.labs.remoteapps.event
                         </Export-Package>
                     </instructions>
                     <systemPropertyVariables>
@@ -481,7 +482,7 @@
     <properties>
         <webdriver.browser>firefox-3.6</webdriver.browser>
         <xvfb.enable>true</xvfb.enable>
-        <speakeasy.version>1.3.8-SNAPSHOT</speakeasy.version>
+        <speakeasy.version>1.3.7</speakeasy.version>
     </properties>
 
 </project>

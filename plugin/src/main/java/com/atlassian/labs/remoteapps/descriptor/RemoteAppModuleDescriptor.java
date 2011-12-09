@@ -1,6 +1,7 @@
 package com.atlassian.labs.remoteapps.descriptor;
 
 import com.atlassian.labs.remoteapps.AccessLevelManager;
+import com.atlassian.labs.remoteapps.ModuleGeneratorManager;
 import com.atlassian.labs.remoteapps.descriptor.external.AccessLevel;
 import com.atlassian.labs.remoteapps.modules.RemoteModuleGenerator;
 import com.atlassian.plugin.ModuleDescriptorFactory;
@@ -30,26 +31,24 @@ import static com.google.common.collect.Sets.newHashSet;
 public class RemoteAppModuleDescriptor extends AbstractModuleDescriptor<Void>
 {
     private final BundleContext bundleContext;
-    private final ApplicationContext applicationContext;
     private final StartableForPlugins startableForPlugins;
     private final AccessLevelManager accessLevelManager;
 
     private ServiceTracker serviceTracker;
     private Element originalElement;
     private String accessLevel;
-    private Iterable<RemoteModuleGenerator> generators;
+    private final ModuleGeneratorManager moduleGeneratorManager;
 
     public RemoteAppModuleDescriptor(BundleContext bundleContext,
-                                     ApplicationContext applicationContext,
                                      StartableForPlugins startableForPlugins,
-                                     AccessLevelManager accessLevelManager
-    )
+                                     AccessLevelManager accessLevelManager,
+                                     ModuleGeneratorManager moduleGeneratorManager)
     {
         super(new LegacyModuleFactory());
         this.bundleContext = bundleContext;
-        this.applicationContext = applicationContext;
         this.startableForPlugins = startableForPlugins;
         this.accessLevelManager = accessLevelManager;
+        this.moduleGeneratorManager = moduleGeneratorManager;
     }
 
     @Override
@@ -58,8 +57,6 @@ public class RemoteAppModuleDescriptor extends AbstractModuleDescriptor<Void>
         super.init(plugin, element);
         this.originalElement = element;
         this.accessLevel = getOptionalAttribute(element, "access-level", "global");
-        this.generators = Collections.unmodifiableCollection(
-                (Collection<RemoteModuleGenerator>) applicationContext.getBeansOfType(RemoteModuleGenerator.class).values());
     }
 
     @Override
@@ -71,11 +68,9 @@ public class RemoteAppModuleDescriptor extends AbstractModuleDescriptor<Void>
             // generate and register new services
             Bundle targetBundle = findBundleForPlugin(bundleContext, getPluginKey());
             final BundleContext targetBundleContext = targetBundle.getBundleContext();
-            final GeneratorInitializer generatorInitializer = new GeneratorInitializer(accessLevelManager, startableForPlugins, getPlugin(), targetBundle, generators, originalElement);
+            final GeneratorInitializer generatorInitializer = new GeneratorInitializer(accessLevelManager, startableForPlugins, getPlugin(), targetBundle, moduleGeneratorManager, originalElement);
             this.serviceTracker = new ServiceTracker(targetBundleContext, ModuleDescriptorFactory.class.getName(), new ServiceTrackerCustomizer()
             {
-                private Map<String,ModuleDescriptorFactory> factories;
-
                 @Override
                 public Object addingService(ServiceReference reference)
                 {

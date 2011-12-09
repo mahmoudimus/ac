@@ -48,6 +48,11 @@ public abstract class AbstractPageModuleGenerator implements RemoteModuleGenerat
     }
 
     @Override
+    public void validate(Element element) throws PluginParseException
+    {
+    }
+
+    @Override
     public RemoteModule generate(RemoteAppCreationContext ctx, Element e)
     {
         String key = getRequiredAttribute(e, "key");

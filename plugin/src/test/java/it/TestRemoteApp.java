@@ -36,13 +36,4 @@ public class TestRemoteApp
         assertEquals("Success", myAdmin.getMessage());
         assertEquals(OAuthUtils.getConsumerKey(), myAdmin.getConsumerKey());
 	}
-
-    @Test
-	public void testMyAdminBockedForSysAdmin()
-	{
-        MyAdminAccessDeniedPage page = product
-                .visit(LoginPage.class)
-                .loginAsSysAdmin(MyAdminAccessDeniedPage.class);
-        assertNotNull(page.getMessage());
-	}
 }

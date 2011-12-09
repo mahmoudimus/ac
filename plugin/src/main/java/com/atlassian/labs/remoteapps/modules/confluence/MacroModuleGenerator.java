@@ -7,6 +7,8 @@ import com.atlassian.confluence.plugin.descriptor.XhtmlMacroModuleDescriptor;
 import com.atlassian.confluence.status.service.SystemInformationService;
 import com.atlassian.confluence.util.i18n.I18NBeanFactory;
 import com.atlassian.confluence.xhtml.api.XhtmlContent;
+import com.atlassian.labs.remoteapps.GlobalAccessLevel;
+import com.atlassian.labs.remoteapps.descriptor.external.AccessLevel;
 import com.atlassian.labs.remoteapps.modules.ApplicationLinkOperationsFactory;
 import com.atlassian.labs.remoteapps.modules.RemoteAppCreationContext;
 import com.atlassian.labs.remoteapps.modules.RemoteModule;
@@ -81,7 +83,6 @@ public class MacroModuleGenerator implements RemoteModuleGenerator
     @Override
     public RemoteModule generate(final RemoteAppCreationContext ctx, Element entity)
     {
-        final Map<String,String> i18n = newHashMap();
         Element config = copyDescriptorXml(entity);
         String key = getRequiredAttribute(entity, "key");
         config.addAttribute("key", key);
@@ -97,7 +98,7 @@ public class MacroModuleGenerator implements RemoteModuleGenerator
 
         ModuleDescriptor descriptor = createXhtmlMacroModuleDescriptor(ctx, entity);
         descriptor.init(ctx.getPlugin(), config);
-        final Set<ModuleDescriptor> descriptors = ImmutableSet.of(descriptor, createDummyWebItemDescriptor(ctx, entity, descriptor.getKey()));
+        final Set<ModuleDescriptor> descriptors = ImmutableSet.of(descriptor);
         return new RemoteModule()
         {
             @Override
@@ -108,23 +109,15 @@ public class MacroModuleGenerator implements RemoteModuleGenerator
         };
     }
 
-    private ModuleDescriptor createDummyWebItemDescriptor(RemoteAppCreationContext ctx,
-                                                     Element e,
-                                                     String key
-    )
+    @Override
+    public void validate(Element element) throws PluginParseException
     {
-        Element config = copyDescriptorXml(e);
-        final String webItemKey = "webitem-" + key;
-        config.addAttribute("key", webItemKey);
-        config.addAttribute("section", "shouldnot/exist");
-
-        config.addElement("label").setText("Does not matter");
-        config.addElement("link").setText("#");
-
-        ModuleDescriptor descriptor = ctx.getAccessLevel()
-                                         .createWebItemModuleDescriptor(ctx.getBundle().getBundleContext());
-        descriptor.init(ctx.getPlugin(), config);
-        return descriptor;
+        // todo: should find a better way to ensure modules are global
+        String accessLevel = element.getParent().attributeValue("access-level");
+        if (!"global".equals(accessLevel))
+        {
+            element.getParent().addAttribute("access-level", "global");
+        }
     }
 
     private ModuleDescriptor createXhtmlMacroModuleDescriptor(final RemoteAppCreationContext ctx, final Element originalEntity)

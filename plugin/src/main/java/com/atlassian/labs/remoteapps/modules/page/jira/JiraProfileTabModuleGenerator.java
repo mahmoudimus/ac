@@ -85,6 +85,11 @@ public class JiraProfileTabModuleGenerator implements RemoteModuleGenerator
         };
     }
 
+    @Override
+    public void validate(Element element) throws PluginParseException
+    {
+    }
+
     private void addToParams(Element e, String key)
     {
         String val = e.attributeValue(key);

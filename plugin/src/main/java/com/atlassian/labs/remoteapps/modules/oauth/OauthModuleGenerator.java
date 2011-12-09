@@ -97,6 +97,11 @@ public class OauthModuleGenerator implements RemoteModuleGenerator
         };
     }
 
+    @Override
+    public void validate(Element element) throws PluginParseException
+    {
+    }
+
     protected final PublicKey getPublicKey(String publicKeyText)
     {
         PublicKey publicKey;

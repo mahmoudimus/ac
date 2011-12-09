@@ -64,6 +64,11 @@ public class EntityTypeModuleGenerator implements RemoteModuleGenerator
         };
     }
 
+    @Override
+    public void validate(Element element) throws PluginParseException
+    {
+    }
+
     private RemoteAppEntityType createEntityType(AppTypesClassLoader appTypesClassLoader, NonAppLinksApplicationType type, Element element)
     {
         try

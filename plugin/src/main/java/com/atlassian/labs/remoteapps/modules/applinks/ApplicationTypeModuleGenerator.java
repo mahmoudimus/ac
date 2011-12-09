@@ -5,6 +5,7 @@ import com.atlassian.applinks.spi.application.TypeId;
 import com.atlassian.applinks.spi.link.ApplicationLinkDetails;
 import com.atlassian.applinks.spi.link.MutatingApplicationLinkService;
 import com.atlassian.labs.remoteapps.PermissionManager;
+import com.atlassian.labs.remoteapps.installer.InstallationFailedException;
 import com.atlassian.labs.remoteapps.modules.RemoteAppCreationContext;
 import com.atlassian.labs.remoteapps.modules.RemoteModule;
 import com.atlassian.labs.remoteapps.modules.RemoteModuleGenerator;
@@ -15,6 +16,7 @@ import com.atlassian.plugin.impl.AbstractDelegatingPlugin;
 import com.atlassian.plugin.module.ContainerAccessor;
 import com.atlassian.plugin.module.ContainerManagedPlugin;
 import com.atlassian.plugin.module.ModuleFactory;
+import com.google.common.collect.ImmutableSet;
 import org.dom4j.Element;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
@@ -39,6 +41,8 @@ public class ApplicationTypeModuleGenerator implements RemoteModuleGenerator
 {
     private final MutatingApplicationLinkService mutatingApplicationLinkService;
     private final PermissionManager permissionManager;
+    private static final Set<String> ALLOWED_ACCESS_LEVELS = ImmutableSet.of(
+            (System.getProperty("remoteapps.access.levels", "user").split(",")));
 
     @Autowired
     public ApplicationTypeModuleGenerator(MutatingApplicationLinkService mutatingApplicationLinkService,
@@ -76,6 +80,11 @@ public class ApplicationTypeModuleGenerator implements RemoteModuleGenerator
                 createApplicationTypeDescriptor(appTypesClassLoader, ctx, applicationType, element),
                 mutatingApplicationLinkService, permissionManager, ctx.getAccessLevel());
 
+    }
+
+    @Override
+    public void validate(Element element) throws PluginParseException
+    {
     }
 
     private RemoteAppApplicationType createApplicationType(AppTypesClassLoader appTypesClassLoader, Element element)
@@ -182,6 +191,27 @@ public class ApplicationTypeModuleGenerator implements RemoteModuleGenerator
     public static String getGeneratedApplicationTypeModuleKey(String key)
     {
         return "applicationType-" + key;
+    }
+
+    // todo: this should also be done better so in sync with other validation
+    public void validate(Element root, String registrationUrl)
+    {
+        if (root.attribute("rpc-url") != null)
+        {
+            throw new PluginParseException("rpc-url not allowed");
+        }
+
+        String displayUrl = root.attributeValue("display-url");
+        if (displayUrl == null || !registrationUrl.startsWith(displayUrl))
+        {
+            throw new PluginParseException("display-url '" + displayUrl + "' must match registration URL");
+        }
+
+        String accessLevel = root.attributeValue("access-level");
+        if (!ALLOWED_ACCESS_LEVELS.contains(accessLevel))
+        {
+            throw new InstallationFailedException("access-level '" + accessLevel + "' must be one of " + ALLOWED_ACCESS_LEVELS);
+        }
     }
 
 

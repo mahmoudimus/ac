@@ -7,6 +7,7 @@ import com.atlassian.labs.remoteapps.modules.RemoteModuleGenerator;
 import com.atlassian.labs.remoteapps.modules.StartableRemoteModule;
 import com.atlassian.labs.remoteapps.product.ProductAccessor;
 import com.atlassian.plugin.ModuleDescriptor;
+import com.atlassian.plugin.PluginParseException;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -84,5 +85,10 @@ public class PermissionsModuleGenerator implements RemoteModuleGenerator
                 permissionManager.setApiPermissions(ctx.getApplicationType(), apiScopes);
             }
         };
+    }
+
+    @Override
+    public void validate(Element element) throws PluginParseException
+    {
     }
 }

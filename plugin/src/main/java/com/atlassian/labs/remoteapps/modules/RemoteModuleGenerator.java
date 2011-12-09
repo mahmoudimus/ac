@@ -1,5 +1,6 @@
 package com.atlassian.labs.remoteapps.modules;
 
+import com.atlassian.plugin.PluginParseException;
 import org.dom4j.Element;
 
 import java.util.Map;
@@ -18,4 +19,5 @@ public interface RemoteModuleGenerator
 
     RemoteModule generate(RemoteAppCreationContext ctx, Element element);
 
+    void validate(Element element) throws PluginParseException;
 }
