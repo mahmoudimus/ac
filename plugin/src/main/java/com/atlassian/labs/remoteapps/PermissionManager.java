@@ -4,9 +4,8 @@ import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.applinks.api.ApplicationLinkService;
 import com.atlassian.applinks.api.ApplicationType;
 import com.atlassian.labs.remoteapps.descriptor.external.AccessLevel;
-import com.atlassian.labs.remoteapps.descriptor.external.AccessLevelModuleDescriptor;
+import com.atlassian.labs.remoteapps.descriptor.external.ApiScopeModuleDescriptor;
 import com.atlassian.labs.remoteapps.modules.permissions.scope.ApiScope;
-import com.atlassian.labs.remoteapps.modules.permissions.scope.ApiScopeModuleDescriptor;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.event.PluginEventManager;
 import com.atlassian.plugin.tracker.DefaultPluginModuleTracker;
@@ -94,6 +93,11 @@ public class PermissionManager implements DisposableBean
         ApplicationLink link = linkManager.getLinkForOAuthClientKey(consumerKey);
         return canAccessRemoteApp(userId, link);
 
+    }
+
+    public Iterable<ApiScopeModuleDescriptor> getApiScopeDescriptors()
+    {
+        return apiScopeTracker.getModuleDescriptors();
     }
 
     @Override

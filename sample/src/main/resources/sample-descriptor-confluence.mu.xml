@@ -5,8 +5,12 @@
         This really great app
     </description>
 
-    <entity-type key="project" name="Project" pluralized-name="Projects" icon-url="https://github.com/favicon.ico"/>
-    <oauth callback="{{baseurl}}" request-token-url="{{baseurl}}" access-token-url="{{baseurl}}" authorize-url="{{baseurl}}">
+    <permissions>
+        <permission scope="resttest" />
+        <permission scope="read_content" />
+    </permissions>
+
+    <oauth>
         <public-key>
             -----BEGIN PUBLIC KEY-----
             MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCdZ4NjFq7phYw2FAvg2r3bS0Vw
@@ -16,15 +20,12 @@
             -----END PUBLIC KEY-----
         </public-key>
     </oauth>
-    <permissions>
-        <permission scope="resttest" />
-        <permission application="confluence" scope="read_content" />
-    </permissions>
+    <entity-type key="project" name="Project" pluralized-name="Projects" icon-url="https://github.com/favicon.ico"/>
+
     <admin-page key="remoteAppAdmin" name="Remote App {{appkey}} Admin" url="/myadmin" />
     <general-page key="remoteAppGeneral" name="Remote App {{appkey}} General" url="/myadmin" height="600" width="700"/>
     <profile-page key="remoteAppProfile" name="Remote App {{appkey}} Profile" url="/myadmin" />
 
-    <!-- Confluence only -->
     <macro key="{{appkey}}-macro" url="/mymacro" output-type="block" body-type="rich-text">
         <description>Example macro</description>
         <category name="development" />
@@ -40,6 +41,5 @@
 
     <macro key="{{appkey}}-slow" url="/myslowmacro" output-type="block" body-type="none">
         <description>Slow macro that takes too long to render (for testing)</description>
-        <parameters />
     </macro>
 </remote-app>

@@ -3,25 +3,36 @@
                class="com.atlassian.labs.remoteapps.product.confluence.ConfluenceProductAccessor"/>
 
     <api-scope key="read_content" class="com.atlassian.labs.remoteapps.product.confluence.ReadContentScope"
-            name="Read Content">
+               name="Read Content">
         <description>
             Read spaces, blogs, and pages and associated metadata
         </description>
     </api-scope>
 
     <api-scope key="modify_attachments" class="com.atlassian.labs.remoteapps.product.confluence.ModifyAttachmentsScope"
-            name="Modify Attachments">
+               name="Modify Attachments">
         <description>
             Add, remove, or move attachments for pages or blog posts
         </description>
     </api-scope>
 
-    <api-scope key="read_users_and_groups" class="com.atlassian.labs.remoteapps.product.confluence.ReadUsersAndGroupsScope"
-            name="Read Users and Groups">
+    <api-scope key="read_users_and_groups"
+               class="com.atlassian.labs.remoteapps.product.confluence.ReadUsersAndGroupsScope"
+               name="Read Users and Groups">
         <description>
             View users, users info, and groups
         </description>
     </api-scope>
+
+    <remote-module key="macro" class="com.atlassian.labs.remoteapps.modules.confluence.MacroModuleGenerator">
+        <description>A Confluence macro</description>
+        <schema id="macro.xsd" path="/xsd/macro.xsd" type="MacroType"/>
+    </remote-module>
+
+    <remote-module key="confluence-profile-page" class="com.atlassian.labs.remoteapps.modules.page.ProfilePageModuleGenerator">
+        <description>An user profile page</description>
+        <schema id="page.xsd" path="/xsd/page.xsd"  type="PageType"/>
+    </remote-module>
 
     <web-section key="admin.pages" name="Remote Apps" location="system.admin" weight="100">
         <label>Remote Apps</label>
@@ -34,17 +45,16 @@
         <url-pattern>/remoteImage</url-pattern>
     </servlet>
 
-    <component key="profile-page-module-generator" class="com.atlassian.labs.remoteapps.modules.page.ProfilePageModuleGenerator" />
-    <component key="macro-module-generator" class="com.atlassian.labs.remoteapps.modules.confluence.MacroModuleGenerator" />
-    <component key="macroContentManager" class="com.atlassian.labs.remoteapps.modules.confluence.MacroContentManager" />
+    <component key="macroContentManager" class="com.atlassian.labs.remoteapps.modules.confluence.MacroContentManager"/>
 
-    <component-import key="systemInfoService" interface="com.atlassian.confluence.status.service.SystemInformationService" />
-    <component-import key="xmlService" interface="com.atlassian.confluence.xhtml.api.XhtmlContent" />
-    <component-import key="i18nBean" interface="com.atlassian.confluence.util.i18n.I18NBeanFactory" />
+    <component-import key="systemInfoService"
+                      interface="com.atlassian.confluence.status.service.SystemInformationService"/>
+    <component-import key="xmlService" interface="com.atlassian.confluence.xhtml.api.XhtmlContent"/>
+    <component-import key="i18nBean" interface="com.atlassian.confluence.util.i18n.I18NBeanFactory"/>
 
     <!-- activity streams -->
-    <component-import key="confluenceUserProfileAccessor" interface="com.atlassian.streams.spi.UserProfileAccessor" />
+    <component-import key="confluenceUserProfileAccessor" interface="com.atlassian.streams.spi.UserProfileAccessor"/>
     <activity-streams-provider key="apps-provider" name="Remote Apps Provider"
-                       class="com.atlassian.labs.remoteapps.streams.RemoteAppsActivityProvider">
+                               class="com.atlassian.labs.remoteapps.streams.RemoteAppsActivityProvider">
     </activity-streams-provider>
 </application>

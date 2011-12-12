@@ -2,9 +2,10 @@ package com.atlassian.labs.remoteapps.descriptor;
 
 import com.atlassian.labs.remoteapps.AccessLevelManager;
 import com.atlassian.labs.remoteapps.ModuleGeneratorManager;
-import com.atlassian.labs.remoteapps.descriptor.external.AccessLevel;
+import com.atlassian.labs.remoteapps.descriptor.external.*;
 import com.atlassian.labs.remoteapps.modules.*;
 import com.atlassian.labs.remoteapps.modules.applinks.ApplicationTypeModule;
+import com.atlassian.labs.remoteapps.modules.external.*;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.ModuleDescriptorFactory;
 import com.atlassian.plugin.Plugin;
@@ -34,7 +35,6 @@ import static org.apache.commons.lang.Validate.notNull;
  */
 class GeneratorInitializer
 {
-    private final Set<String> expected;
     private final Set<ModuleDescriptorFactory> factories = new CopyOnWriteArraySet<ModuleDescriptorFactory>();
     private final AccessLevelManager accessLevelManager;
     private final StartableForPlugins startableForPlugins;
@@ -47,6 +47,8 @@ class GeneratorInitializer
     private final Collection<RemoteModule> remoteModules = new CopyOnWriteArrayList<RemoteModule>();
     private final List<ServiceRegistration> serviceRegistrations = new CopyOnWriteArrayList<ServiceRegistration>();
 
+    private volatile Set<String> expected;
+
     GeneratorInitializer(AccessLevelManager accessLevelManager, StartableForPlugins startableForPlugins, Plugin plugin, Bundle bundle,
                          ModuleGeneratorManager moduleGeneratorManager, Element element)
     {
@@ -56,19 +58,12 @@ class GeneratorInitializer
         this.bundle = bundle;
         this.moduleGeneratorManager = moduleGeneratorManager;
         this.element = element;
-        this.expected = newHashSet(concat(transform(moduleGeneratorManager.getAllGenerators(), new Function<RemoteModuleGenerator,Iterable<String>>()
-        {
-            @Override
-            public Iterable<String> apply(RemoteModuleGenerator from)
-            {
-                return from.getDynamicModuleTypeDependencies();
-            }
-        })));
     }
 
     public boolean registerNewModuleDescriptorFactory(ModuleDescriptorFactory factory)
     {
         boolean added = false;
+        ensureExpected();
         for (Iterator<String> i = expected.iterator(); i.hasNext(); )
         {
             if (factory.hasModuleDescriptor(i.next()))
@@ -84,22 +79,24 @@ class GeneratorInitializer
 
     public void init(String accessLevelValue)
     {
+        ensureExpected();
         if (expected.isEmpty() && remoteModules.isEmpty())
         {
             ModuleDescriptorFactory aggFactory = new ChainModuleDescriptorFactory(factories.toArray(new ModuleDescriptorFactory[factories.size()]));
 
             AccessLevel accessLevel = accessLevelManager.getAccessLevel(accessLevelValue);
-            final RemoteAppCreationContext firstContext = new RemoteAppCreationContext(plugin, aggFactory, bundle, null, accessLevel);
+            final RemoteAppCreationContext firstContext = new DefaultRemoteAppCreationContext(plugin, aggFactory, bundle, null, accessLevel);
             ApplicationTypeModule module = (ApplicationTypeModule) moduleGeneratorManager.getApplicationTypeModuleGenerator().generate(firstContext, element);
             remoteModules.add(module);
             remoteModules.add(new DummyModule(firstContext, accessLevelManager));
-            final RemoteAppCreationContext childContext = new RemoteAppCreationContext(plugin, aggFactory, bundle, module.getApplicationType(), accessLevel);
+            final RemoteAppCreationContext childContext = new DefaultRemoteAppCreationContext(plugin, aggFactory, bundle, module.getApplicationType(), accessLevel);
 
             moduleGeneratorManager.processDescriptor(element, new ModuleGeneratorManager.ModuleHandler()
             {
                 @Override
                 public void handle(Element element, RemoteModuleGenerator generator)
                 {
+                    log.info("Registering module '" + generator.getType() + "' for key '" + element.attributeValue("key") + "'");
                     remoteModules.add(generator.generate(childContext, element));
                 }
             });
@@ -122,6 +119,21 @@ class GeneratorInitializer
         else
         {
             throw new IllegalStateException("All required module types '" + expected + "' not found or this hasn't been shut down properly");
+        }
+    }
+
+    private void ensureExpected()
+    {
+        if (expected == null)
+        {
+            this.expected = newHashSet(concat(transform(moduleGeneratorManager.getAllGenerators(element), new Function<RemoteModuleGenerator,Iterable<String>>()
+            {
+                @Override
+                public Iterable<String> apply(RemoteModuleGenerator from)
+                {
+                    return from.getDynamicModuleTypeDependencies();
+                }
+            })));
         }
     }
 

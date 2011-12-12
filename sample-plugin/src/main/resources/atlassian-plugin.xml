@@ -5,6 +5,7 @@
 
     <component key="registration" class="com.atlassian.labs.remoteapps.sample.test.RegistrationOnStartListener" public="true"
             interface="com.atlassian.sal.api.lifecycle.LifecycleAware" />
+    <component-import key="approps" interface="com.atlassian.sal.api.ApplicationProperties" />
 
     <junit key="all" package="com.atlassian.labs.remoteapps.sample.junit.all" />
     <junit key="confluence" package="com.atlassian.labs.remoteapps.sample.junit.confluence" application="confluence"/>

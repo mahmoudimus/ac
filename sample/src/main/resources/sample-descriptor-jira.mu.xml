@@ -1,0 +1,28 @@
+<remote-app key="{{appkey}}" name="Remote App - {{appkey}}" version="1" icon-url="https://github.com/favicon.ico"
+            display-url="{{baseurl}}" access-level="{{accessLevel}}">
+    <vendor name="Atlassian" url="http://atlassian.com" />
+    <description>
+        This really great app
+    </description>
+
+    <permissions>
+        <permission scope="resttest" />
+    </permissions>
+
+    <oauth>
+        <public-key>
+            -----BEGIN PUBLIC KEY-----
+            MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCdZ4NjFq7phYw2FAvg2r3bS0Vw
+            kX07mBsYP5iPH0tsy9Boo4PfQTXxPrd6NFP6Gm0QXsgERgFgDt/344WhxMqt4rJi
+            udINI51n0bXNz9ct5ZnUJSnwC4GzNkDmvjpJ/Ewdmq5Ye3BfaThZnlsXA+csT3IU
+            /strFeKjydl1lyXNswIDAQAB
+            -----END PUBLIC KEY-----
+        </public-key>
+    </oauth>
+    <entity-type key="project" name="Project" pluralized-name="Projects" icon-url="https://github.com/favicon.ico"/>
+
+    <admin-page key="remoteAppAdmin" name="Remote App {{appkey}} Admin" url="/myadmin" />
+    <general-page key="remoteAppGeneral" name="Remote App {{appkey}} General" url="/myadmin" height="600" width="700"/>
+    <profile-page key="remoteAppProfile" name="Remote App {{appkey}} Profile" url="/myadmin" />
+
+</remote-app>

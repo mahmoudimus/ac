@@ -1,4 +1,4 @@
-package com.atlassian.labs.remoteapps.modules;
+package com.atlassian.labs.remoteapps.modules.external;
 
 import com.atlassian.plugin.ModuleDescriptor;
 

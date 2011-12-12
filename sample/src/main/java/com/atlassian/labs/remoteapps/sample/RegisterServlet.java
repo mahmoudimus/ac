@@ -20,11 +20,13 @@ public class RegisterServlet extends HttpServlet
 {
     private final String appKey;
     private final String accessLevel;
+    private final String template;
 
-    public RegisterServlet(String appKey, String accessLevel)
+    public RegisterServlet(String appKey, String accessLevel, String templateType)
     {
         this.appKey = appKey;
         this.accessLevel = accessLevel;
+        this.template = "sample-descriptor-" + templateType + ".mu.xml";
     }
 
     @Override
@@ -38,7 +40,7 @@ public class RegisterServlet extends HttpServlet
                                 req.getParameter("authorizeUrl"),
                                 req.getParameter("accessTokenUrl")));
 
-        final String output = render("sample-descriptor.mu.xml", new HashMap<String,Object>() {{
+        final String output = render(template, new HashMap<String,Object>() {{
             put("baseurl", getOurBaseUrl());
             put("appkey", appKey);
             put("accessLevel", accessLevel);

@@ -7,12 +7,10 @@ import com.atlassian.confluence.plugin.descriptor.XhtmlMacroModuleDescriptor;
 import com.atlassian.confluence.status.service.SystemInformationService;
 import com.atlassian.confluence.util.i18n.I18NBeanFactory;
 import com.atlassian.confluence.xhtml.api.XhtmlContent;
-import com.atlassian.labs.remoteapps.GlobalAccessLevel;
-import com.atlassian.labs.remoteapps.descriptor.external.AccessLevel;
 import com.atlassian.labs.remoteapps.modules.ApplicationLinkOperationsFactory;
-import com.atlassian.labs.remoteapps.modules.RemoteAppCreationContext;
-import com.atlassian.labs.remoteapps.modules.RemoteModule;
-import com.atlassian.labs.remoteapps.modules.RemoteModuleGenerator;
+import com.atlassian.labs.remoteapps.modules.external.RemoteAppCreationContext;
+import com.atlassian.labs.remoteapps.modules.external.RemoteModule;
+import com.atlassian.labs.remoteapps.modules.external.RemoteModuleGenerator;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.module.ModuleFactory;
@@ -88,7 +86,7 @@ public class MacroModuleGenerator implements RemoteModuleGenerator
         config.addAttribute("key", key);
         config.addAttribute("name", key);
         config.addAttribute("class", RemoteMacro.class.getName());
-        copyRequiredElements(entity, config, "parameters");
+        copyOptionalElements(entity, config, "parameters");
         copyOptionalElements(entity, config, "property-panel");
         copyOptionalElements(entity, config, "category");
         if (config.element("parameters") != null)
@@ -118,6 +116,11 @@ public class MacroModuleGenerator implements RemoteModuleGenerator
         {
             element.getParent().addAttribute("access-level", "global");
         }
+    }
+
+    @Override
+    public void convertDescriptor(Element descriptorElement, Element pluginDescriptorRoot)
+    {
     }
 
     private ModuleDescriptor createXhtmlMacroModuleDescriptor(final RemoteAppCreationContext ctx, final Element originalEntity)

@@ -1,5 +1,6 @@
-package com.atlassian.labs.remoteapps.modules.permissions.scope;
+package com.atlassian.labs.remoteapps.descriptor.external;
 
+import com.atlassian.labs.remoteapps.modules.permissions.scope.ApiScope;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
 import com.atlassian.plugin.module.ModuleFactory;
 

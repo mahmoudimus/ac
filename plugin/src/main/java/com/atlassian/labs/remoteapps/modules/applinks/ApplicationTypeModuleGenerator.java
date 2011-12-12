@@ -6,9 +6,9 @@ import com.atlassian.applinks.spi.link.ApplicationLinkDetails;
 import com.atlassian.applinks.spi.link.MutatingApplicationLinkService;
 import com.atlassian.labs.remoteapps.PermissionManager;
 import com.atlassian.labs.remoteapps.installer.InstallationFailedException;
-import com.atlassian.labs.remoteapps.modules.RemoteAppCreationContext;
-import com.atlassian.labs.remoteapps.modules.RemoteModule;
-import com.atlassian.labs.remoteapps.modules.RemoteModuleGenerator;
+import com.atlassian.labs.remoteapps.modules.external.RemoteAppCreationContext;
+import com.atlassian.labs.remoteapps.modules.external.RemoteModule;
+import com.atlassian.labs.remoteapps.modules.external.RemoteModuleGenerator;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
@@ -84,6 +84,11 @@ public class ApplicationTypeModuleGenerator implements RemoteModuleGenerator
 
     @Override
     public void validate(Element element) throws PluginParseException
+    {
+    }
+
+    @Override
+    public void convertDescriptor(Element descriptorElement, Element pluginDescriptorRoot)
     {
     }
 

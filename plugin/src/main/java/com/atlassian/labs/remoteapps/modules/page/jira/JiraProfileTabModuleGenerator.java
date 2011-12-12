@@ -3,9 +3,9 @@ package com.atlassian.labs.remoteapps.modules.page.jira;
 import com.atlassian.labs.jira4compat.CompatViewProfilePanelModuleDescriptor;
 import com.atlassian.labs.jira4compat.spi.CompatViewProfilePanelFactory;
 import com.atlassian.labs.remoteapps.modules.ApplicationLinkOperationsFactory;
-import com.atlassian.labs.remoteapps.modules.RemoteAppCreationContext;
-import com.atlassian.labs.remoteapps.modules.RemoteModule;
-import com.atlassian.labs.remoteapps.modules.RemoteModuleGenerator;
+import com.atlassian.labs.remoteapps.modules.external.RemoteAppCreationContext;
+import com.atlassian.labs.remoteapps.modules.external.RemoteModule;
+import com.atlassian.labs.remoteapps.modules.external.RemoteModuleGenerator;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.module.ModuleFactory;
@@ -35,7 +35,6 @@ public class JiraProfileTabModuleGenerator implements RemoteModuleGenerator
     private final CompatViewProfilePanelFactory compatViewProfilePanelFactory;
     private Map<String, Object> iframeParams = newHashMap();
 
-    @Autowired
     public JiraProfileTabModuleGenerator(TemplateRenderer templateRenderer,
                                          WebResourceManager webResourceManager,
                                          CompatViewProfilePanelFactory compatViewProfilePanelFactory,
@@ -87,6 +86,11 @@ public class JiraProfileTabModuleGenerator implements RemoteModuleGenerator
 
     @Override
     public void validate(Element element) throws PluginParseException
+    {
+    }
+
+    @Override
+    public void convertDescriptor(Element descriptorElement, Element pluginDescriptorRoot)
     {
     }
 

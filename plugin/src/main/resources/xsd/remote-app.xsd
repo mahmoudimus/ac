@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+    <xs:include schemaLocation="common.xsd" />
+
+    <xs:simpleType name="AccessLevelType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="user"/>
+            <xs:enumeration value="global"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="RemoteAppType">
+        <xs:choice minOccurs="1" maxOccurs="unbounded">
+        </xs:choice>
+        <xs:attribute name="key" type="KeyType" use="required">
+            <xs:annotation>
+                <xs:documentation>
+                    The plugin key.  Must be unique in the target application.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="name" type="NameType" use="required"/>
+        <xs:attribute name="version" type="VersionType" use="required"/>
+        <xs:attribute name="icon-url" type="HttpUrlType"/>
+        <xs:attribute name="display-url" type="HttpUrlType" use="required"/>
+        <xs:attribute name="access-level" type="AccessLevelType" default="global"/>
+        <xs:anyAttribute />
+    </xs:complexType>
+
+    <xs:element name="remote-app" type="RemoteAppType" />
+</xs:schema>

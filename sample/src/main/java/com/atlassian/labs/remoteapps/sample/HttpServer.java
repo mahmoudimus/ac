@@ -32,8 +32,11 @@ public class HttpServer
         context.addServlet(new ServletHolder(new MyAdminServlet()),"/myadmin");
         context.addServlet(new ServletHolder(new MyMacroServlet()),"/mymacro");
         context.addServlet(new ServletHolder(new MySlowMacroServlet()),"/myslowmacro");
-        context.addServlet(new ServletHolder(new RegisterServlet(appKey, "global")),"/register");
-        context.addServlet(new ServletHolder(new RegisterServlet(appKey, "user")),"/user-register");
+        context.addServlet(new ServletHolder(new RegisterServlet(appKey, "global", "refapp")),"/register");
+        context.addServlet(new ServletHolder(new RegisterServlet(appKey, "global", "confluence")),"/confluence-register");
+        context.addServlet(new ServletHolder(new RegisterServlet(appKey, "global", "jira")),"/jira-register");
+        context.addServlet(new ServletHolder(new RegisterServlet(appKey, "global", "refapp")),"/refapp-register");
+        context.addServlet(new ServletHolder(new RegisterServlet(appKey, "user", "refapp")),"/user-register");
 
         start();
     }

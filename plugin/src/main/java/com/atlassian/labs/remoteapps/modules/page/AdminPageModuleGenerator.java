@@ -17,12 +17,10 @@ import static java.util.Collections.emptyMap;
 /**
  * Module type for admin pages, generating a web item and servlet with iframe
  */
-@Component
 public class AdminPageModuleGenerator extends AbstractPageModuleGenerator
 {
     private final ProductAccessor productAccessor;
 
-    @Autowired
     public AdminPageModuleGenerator(ServletModuleManager servletModuleManager,
                                     TemplateRenderer templateRenderer,
                                     ProductAccessor productAccessor,

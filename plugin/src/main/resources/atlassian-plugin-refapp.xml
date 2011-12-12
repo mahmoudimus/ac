@@ -1,5 +1,8 @@
 <application key="refapp">
     <component key="refappProductAccessor" class="com.atlassian.labs.remoteapps.product.refapp.RefappProductAccessor" />
 
-    <component key="profile-page-module-generator" class="com.atlassian.labs.remoteapps.modules.page.ProfilePageModuleGenerator" />
+    <remote-module key="refapp-profile-page" class="com.atlassian.labs.remoteapps.modules.page.ProfilePageModuleGenerator">
+        <description>An user profile page</description>
+        <schema id="page.xsd" path="/xsd/page.xsd" type="PageType" />
+    </remote-module>
 </application>

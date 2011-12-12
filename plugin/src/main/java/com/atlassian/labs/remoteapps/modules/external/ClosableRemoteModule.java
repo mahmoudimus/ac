@@ -1,4 +1,4 @@
-package com.atlassian.labs.remoteapps.modules;
+package com.atlassian.labs.remoteapps.modules.external;
 
 /**
  * A remote module that wants to execute code on remote app descriptor shutdown

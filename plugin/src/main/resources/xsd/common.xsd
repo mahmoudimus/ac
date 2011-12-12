@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+    <xs:simpleType name="KeyType">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[-0-9a-zA-Z_.]{2,30}"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="NameType">
+        <xs:restriction base="xs:string">
+            <xs:minLength value="3"/>
+            <xs:maxLength value="30"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="VersionType">
+        <xs:annotation>
+            <xs:documentation>hi</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+            <xs:maxLength value="20"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="HttpUrlType">
+        <xs:restriction base="xs:anyURI">
+            <xs:pattern value="http[s]?://.*"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="RelativeUrlType">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="/.*"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="DescriptionType">
+        <xs:restriction base="xs:string"/>
+    </xs:simpleType>
+
+    <xs:simpleType name="PixelType">
+        <xs:restriction base="xs:integer">
+            <xs:minInclusive value="0" />
+            <xs:maxInclusive value="2000" />
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>

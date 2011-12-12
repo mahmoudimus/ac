@@ -1,14 +1,12 @@
 package com.atlassian.labs.remoteapps.rest;
 
+import com.atlassian.labs.remoteapps.DescriptorValidator;
 import com.atlassian.labs.remoteapps.PermissionDeniedException;
 import com.atlassian.labs.remoteapps.installer.RemoteAppInstaller;
 import com.atlassian.sal.api.user.UserManager;
 import com.sun.research.ws.wadl.Param;
 
-import javax.ws.rs.FormParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -21,11 +19,16 @@ public class InstallerResource
 {
     private final RemoteAppInstaller remoteAppInstaller;
     private final UserManager userManager;
+    private final DescriptorValidator descriptorValidator;
 
-    public InstallerResource(RemoteAppInstaller remoteAppInstaller, UserManager userManager)
+    public InstallerResource(RemoteAppInstaller remoteAppInstaller,
+                             UserManager userManager,
+                             DescriptorValidator descriptorValidator
+    )
     {
         this.remoteAppInstaller = remoteAppInstaller;
         this.userManager = userManager;
+        this.descriptorValidator = descriptorValidator;
     }
 
     @POST
@@ -55,5 +58,29 @@ public class InstallerResource
             return Response.status(Response.Status.BAD_REQUEST).entity(ex.getMessage()).build();
         }
         return Response.ok().build();
+    }
+
+    @GET
+    @Path("/schema")
+    @Produces("text/xml")
+    public Response getSchema()
+    {
+        return Response.ok().entity(descriptorValidator.getSchema()).build();
+    }
+
+    @GET
+    @Path("/schema/{id}")
+    @Produces("text/xml")
+    public Response getSchemaFile(@PathParam("id") String includeFile)
+    {
+        final String entity = descriptorValidator.getSchemaInclude(includeFile);
+        if (entity == null)
+        {
+            return Response.status(Response.Status.NOT_FOUND).entity(includeFile).build();
+        }
+        else
+        {
+            return Response.ok().entity(entity).build();
+        }
     }
 }

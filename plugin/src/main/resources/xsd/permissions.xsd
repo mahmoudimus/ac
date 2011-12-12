@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+    <xs:include schemaLocation="common.xsd" />
+
+    <xs:simpleType name="ScopeType">
+        <xs:restriction base="xs:string">
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="PermissionType">
+        <xs:attribute name="scope" type="ScopeType" use="required" />
+        <xs:anyAttribute />
+    </xs:complexType>
+
+    <xs:complexType name="PermissionsType">
+        <xs:sequence>
+            <xs:element name="permission" type="PermissionType" minOccurs="1" maxOccurs="unbounded"/>
+            <xs:any minOccurs="0"/>
+        </xs:sequence>
+        <xs:anyAttribute />
+    </xs:complexType>
+
+</xs:schema>

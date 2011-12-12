@@ -19,12 +19,10 @@ import static java.util.Collections.emptyMap;
  *
  * todo: make this use the velocity template for profiles
  */
-@Component
 public class ProfilePageModuleGenerator extends AbstractPageModuleGenerator
 {
     private final ProductAccessor productAccessor;
 
-    @Autowired
     public ProfilePageModuleGenerator(ServletModuleManager servletModuleManager,
                                       TemplateRenderer templateRenderer,
                                       ProductAccessor productAccessor,

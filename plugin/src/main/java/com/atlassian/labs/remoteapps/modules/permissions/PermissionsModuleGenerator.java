@@ -1,10 +1,10 @@
 package com.atlassian.labs.remoteapps.modules.permissions;
 
 import com.atlassian.labs.remoteapps.PermissionManager;
-import com.atlassian.labs.remoteapps.modules.RemoteAppCreationContext;
-import com.atlassian.labs.remoteapps.modules.RemoteModule;
-import com.atlassian.labs.remoteapps.modules.RemoteModuleGenerator;
-import com.atlassian.labs.remoteapps.modules.StartableRemoteModule;
+import com.atlassian.labs.remoteapps.modules.external.RemoteAppCreationContext;
+import com.atlassian.labs.remoteapps.modules.external.RemoteModule;
+import com.atlassian.labs.remoteapps.modules.external.RemoteModuleGenerator;
+import com.atlassian.labs.remoteapps.modules.external.StartableRemoteModule;
 import com.atlassian.labs.remoteapps.product.ProductAccessor;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.PluginParseException;
@@ -25,7 +25,6 @@ import static java.util.Collections.emptySet;
 /**
  * Allows a remote app to declare multiple permissions, usually api scopes
  */
-@Component
 public class PermissionsModuleGenerator implements RemoteModuleGenerator
 {
     private final PermissionManager permissionManager;
@@ -89,6 +88,11 @@ public class PermissionsModuleGenerator implements RemoteModuleGenerator
 
     @Override
     public void validate(Element element) throws PluginParseException
+    {
+    }
+
+    @Override
+    public void convertDescriptor(Element descriptorElement, Element pluginDescriptorRoot)
     {
     }
 }

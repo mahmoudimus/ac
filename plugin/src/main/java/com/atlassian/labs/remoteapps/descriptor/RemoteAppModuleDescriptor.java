@@ -2,13 +2,10 @@ package com.atlassian.labs.remoteapps.descriptor;
 
 import com.atlassian.labs.remoteapps.AccessLevelManager;
 import com.atlassian.labs.remoteapps.ModuleGeneratorManager;
-import com.atlassian.labs.remoteapps.descriptor.external.AccessLevel;
-import com.atlassian.labs.remoteapps.modules.RemoteModuleGenerator;
 import com.atlassian.plugin.ModuleDescriptorFactory;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
-import com.atlassian.plugin.event.PluginEventManager;
 import com.atlassian.plugin.module.LegacyModuleFactory;
 import com.atlassian.util.concurrent.NotNull;
 import org.dom4j.Element;
@@ -17,9 +14,6 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 import org.osgi.util.tracker.ServiceTrackerCustomizer;
-import org.springframework.context.ApplicationContext;
-
-import java.util.*;
 
 import static com.atlassian.labs.remoteapps.util.BundleUtil.findBundleForPlugin;
 import static com.atlassian.labs.remoteapps.util.Dom4jUtils.getOptionalAttribute;
@@ -98,7 +92,6 @@ public class RemoteAppModuleDescriptor extends AbstractModuleDescriptor<Void>
                     // todo: recover in case a dependent factory is just being reloaded
                 }
             });
-            serviceTracker.open();
             startableForPlugins.register(getPluginKey(), new Runnable()
             {
 
@@ -110,6 +103,7 @@ public class RemoteAppModuleDescriptor extends AbstractModuleDescriptor<Void>
                         @Override
                         public void run()
                         {
+                            serviceTracker.open();
                             generatorInitializer.init(accessLevel);
                         }
                     }).start();

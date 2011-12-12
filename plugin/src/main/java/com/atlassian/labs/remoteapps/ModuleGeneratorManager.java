@@ -1,87 +1,114 @@
 package com.atlassian.labs.remoteapps;
 
-import com.atlassian.labs.remoteapps.modules.RemoteModule;
-import com.atlassian.labs.remoteapps.modules.RemoteModuleGenerator;
+import com.atlassian.labs.remoteapps.descriptor.external.RemoteModuleDescriptor;
 import com.atlassian.labs.remoteapps.modules.applinks.ApplicationTypeModuleGenerator;
+import com.atlassian.labs.remoteapps.modules.external.RemoteModuleGenerator;
+import com.atlassian.plugin.PluginAccessor;
+import com.atlassian.plugin.PluginParseException;
+import com.atlassian.plugin.event.PluginEventManager;
+import com.atlassian.plugin.tracker.DefaultPluginModuleTracker;
+import com.atlassian.plugin.tracker.PluginModuleTracker;
+import com.atlassian.plugin.util.concurrent.CopyOnWriteMap;
 import org.dom4j.Element;
-import org.netbeans.lib.cvsclient.commandLine.command.log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
-import sun.security.pkcs11.Secmod;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
-import static com.google.common.collect.Maps.newHashMap;
+import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Sets.newHashSet;
-import static org.apache.commons.lang.Validate.notNull;
+import static java.util.Collections.singleton;
 
 /**
  *
  */
 @Component
-public class ModuleGeneratorManager
+public class ModuleGeneratorManager implements DisposableBean
 {
     private final static Logger log = LoggerFactory.getLogger(ModuleGeneratorManager.class);
-    private final Map<String,RemoteModuleGenerator> childGenerators;
-    private final Set<RemoteModuleGenerator> allGenerators;
+    private final PluginModuleTracker<RemoteModuleGenerator, RemoteModuleDescriptor> moduleTracker;
     private final ApplicationTypeModuleGenerator applicationTypeModuleGenerator;
+    private final Map<String,RemoteModuleGenerator> generatorsByKey = CopyOnWriteMap.newHashMap();
 
     @Autowired
-    public ModuleGeneratorManager(ApplicationContext applicationContext)
+    public ModuleGeneratorManager(ApplicationTypeModuleGenerator applicationTypeModuleGenerator, PluginAccessor pluginAccessor,
+                                  PluginEventManager pluginEventManager)
     {
-        Map<String,RemoteModuleGenerator> map = newHashMap();
-        ApplicationTypeModuleGenerator appTypeGen = null;
-        Set<RemoteModuleGenerator> set = newHashSet();
-        for (RemoteModuleGenerator generator : (Collection<RemoteModuleGenerator>) applicationContext.getBeansOfType(RemoteModuleGenerator.class).values())
+        this.moduleTracker = new DefaultPluginModuleTracker<RemoteModuleGenerator, RemoteModuleDescriptor>(
+                pluginAccessor, pluginEventManager, RemoteModuleDescriptor.class, new PluginModuleTracker.Customizer<RemoteModuleGenerator, RemoteModuleDescriptor>()
         {
-            set.add(generator);
-            if (generator instanceof ApplicationTypeModuleGenerator)
+            @Override
+            public RemoteModuleDescriptor adding(RemoteModuleDescriptor descriptor)
             {
-                appTypeGen = (ApplicationTypeModuleGenerator) generator;
+                final RemoteModuleGenerator module = descriptor.getModule();
+                generatorsByKey.put(module.getType(), module);
+                synchronized(generatorsByKey)
+                {
+                    generatorsByKey.notifyAll();
+                }
+                return descriptor;
             }
-            else
-            {
-                map.put(generator.getType(), generator);
-            }
-        }
 
-        childGenerators = Collections.unmodifiableMap(map);
-        notNull(appTypeGen);
-        applicationTypeModuleGenerator = appTypeGen;
-        allGenerators = Collections.unmodifiableSet(set);
+            @Override
+            public void removed(RemoteModuleDescriptor descriptor)
+            {
+                generatorsByKey.remove(descriptor.getModule().getType());
+            }
+        });
+        this.applicationTypeModuleGenerator = applicationTypeModuleGenerator;
     }
 
     public void processDescriptor(Element root, ModuleHandler handler)
     {
+        waitForModules(root);
+
         for (Element e : ((Collection<Element>)root.elements()))
         {
-            String type = e.getName();
-            if (childGenerators.containsKey(type))
-            {
-                RemoteModuleGenerator generator = childGenerators.get(type);
-                handler.handle(e, generator);
-            }
-            else
-            {
-                log.warn("Unknown module: " + type);
-            }
+            String key = e.getName();
+            RemoteModuleGenerator generator = generatorsByKey.get(key);
+            handler.handle(e, generator);
         }
     }
 
-    public Map<String, RemoteModuleGenerator> getChildGenerators()
+    private void waitForModules(Element root)
     {
-        return childGenerators;
+        Set<String> keys = newHashSet();
+        for (Element e : ((Collection<Element>)root.elements()))
+        {
+            keys.add(e.getName());
+        }
+
+        try
+        {
+            long timeout = System.currentTimeMillis() + 20 * 1000;
+            synchronized(generatorsByKey)
+            {
+                while (!generatorsByKey.keySet().containsAll(keys))
+                {
+                    generatorsByKey.wait(20 * 1000);
+                    if (System.currentTimeMillis() > timeout)
+                    {
+                        throw new InterruptedException();
+                    }
+                }
+            }
+        }
+        catch (InterruptedException e)
+        {
+            keys.removeAll(generatorsByKey.keySet());
+            throw new PluginParseException("Unable to locate all modules: " + keys);
+        }
     }
 
-    public Set<RemoteModuleGenerator> getAllGenerators()
+    public Iterable<RemoteModuleGenerator> getAllGenerators(Element root)
     {
-        return allGenerators;
+        waitForModules(root);
+        return concat(generatorsByKey.values(), singleton(applicationTypeModuleGenerator));
     }
 
     public ApplicationTypeModuleGenerator getApplicationTypeModuleGenerator()
@@ -89,8 +116,20 @@ public class ModuleGeneratorManager
         return applicationTypeModuleGenerator;
     }
 
+    public Iterable<RemoteModuleDescriptor> getDescriptors()
+    {
+        return moduleTracker.getModuleDescriptors();
+    }
+
+    @Override
+    public void destroy() throws Exception
+    {
+        moduleTracker.close();
+    }
+
     public static interface ModuleHandler
     {
         public void handle(Element element, RemoteModuleGenerator generator);
     }
+
 }

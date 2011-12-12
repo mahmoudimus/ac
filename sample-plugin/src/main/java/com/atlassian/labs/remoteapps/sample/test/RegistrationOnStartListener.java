@@ -4,6 +4,7 @@ import com.atlassian.labs.remoteapps.sample.HttpServer;
 import com.atlassian.plugin.event.PluginEventListener;
 import com.atlassian.plugin.event.PluginEventManager;
 import com.atlassian.plugin.event.events.PluginEnabledEvent;
+import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.lifecycle.LifecycleAware;
 import org.apache.http.NameValuePair;
 import org.apache.http.auth.AuthScope;
@@ -42,6 +43,7 @@ public class RegistrationOnStartListener implements LifecycleAware, DisposableBe
     private volatile boolean enabled = false;
 
     private final PluginEventManager pluginEventManager;
+    private final ApplicationProperties applicationProperties;
     private HttpServer server;
 
     static
@@ -60,9 +62,12 @@ public class RegistrationOnStartListener implements LifecycleAware, DisposableBe
 
     }
 
-    public RegistrationOnStartListener(PluginEventManager pluginEventManager)
+    public RegistrationOnStartListener(PluginEventManager pluginEventManager,
+                                       ApplicationProperties applicationProperties
+    )
     {
         this.pluginEventManager = pluginEventManager;
+        this.applicationProperties = applicationProperties;
         pluginEventManager.register(this);
     }
 
@@ -118,18 +123,18 @@ public class RegistrationOnStartListener implements LifecycleAware, DisposableBe
                 DefaultHttpClient httpclient = new DefaultHttpClient();
                 try
                 {
-                    httpclient.getCredentialsProvider().setCredentials(AuthScope.ANY, new UsernamePasswordCredentials("admin", "admin"));
+                    httpclient.getCredentialsProvider().setCredentials(AuthScope.ANY, new UsernamePasswordCredentials("betty", "betty"));
                     URLEncodedUtils.format(singletonList(new BasicNameValuePair("os_authType", "basic")), "UTF-8");
                     HttpPost post = new HttpPost(HOST_BASEURL + "/rest/remoteapps/latest/installer?" +
                         URLEncodedUtils.format(singletonList(new BasicNameValuePair("os_authType", "basic")), "UTF-8"));
 
                     List<NameValuePair> formparams = new ArrayList<NameValuePair>();
-                    formparams.add(new BasicNameValuePair("url", APP_BASEURL + "/register"));
+                    formparams.add(new BasicNameValuePair("url", getRegistrationUrl()));
                     formparams.add(new BasicNameValuePair("token", SECRET_TOKEN));
                     UrlEncodedFormEntity entity = new UrlEncodedFormEntity(formparams, "UTF-8");
                     post.setEntity(entity);
 
-                    log.error("registering app1...");
+                    log.error("registering app1 via '" + getRegistrationUrl() + "'...");
                     // Create a response handler
                     ResponseHandler<String> responseHandler = new BasicResponseHandler();
                     String responseBody = httpclient.execute(post, responseHandler);
@@ -157,5 +162,11 @@ public class RegistrationOnStartListener implements LifecycleAware, DisposableBe
             }
         });
         t.start();
+    }
+
+    private String getRegistrationUrl()
+    {
+        String product = System.getProperty("product", "refapp");
+        return APP_BASEURL + "/" + product + "-register";
     }
 }

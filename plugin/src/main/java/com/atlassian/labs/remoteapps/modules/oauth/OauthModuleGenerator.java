@@ -3,10 +3,10 @@ package com.atlassian.labs.remoteapps.modules.oauth;
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.applinks.api.ApplicationLinkService;
 import com.atlassian.labs.remoteapps.OAuthLinkManager;
-import com.atlassian.labs.remoteapps.modules.RemoteAppCreationContext;
-import com.atlassian.labs.remoteapps.modules.RemoteModule;
-import com.atlassian.labs.remoteapps.modules.RemoteModuleGenerator;
-import com.atlassian.labs.remoteapps.modules.StartableRemoteModule;
+import com.atlassian.labs.remoteapps.modules.external.RemoteAppCreationContext;
+import com.atlassian.labs.remoteapps.modules.external.RemoteModule;
+import com.atlassian.labs.remoteapps.modules.external.RemoteModuleGenerator;
+import com.atlassian.labs.remoteapps.modules.external.StartableRemoteModule;
 import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.ServiceProvider;
 import com.atlassian.oauth.util.RSAKeys;
@@ -30,14 +30,12 @@ import static java.util.Collections.emptySet;
 /**
  * Sets up a 2LO connection to allow incoming requests from the remote app
  */
-@Component
 public class OauthModuleGenerator implements RemoteModuleGenerator
 {
     private final ApplicationLinkService applicationLinkService;
 
     private final OAuthLinkManager oAuthLinkManager;
 
-    @Autowired
     public OauthModuleGenerator(ApplicationLinkService applicationLinkService, OAuthLinkManager oAuthLinkManager)
     {
         this.applicationLinkService = applicationLinkService;
@@ -69,11 +67,13 @@ public class OauthModuleGenerator implements RemoteModuleGenerator
         final PluginInformation pluginInfo = ctx.getPlugin().getPluginInformation();
         final String name = ctx.getApplicationType().getI18nKey();
         final String description = pluginInfo.getDescription();
-        final URI callback = getRequiredUriAttribute(e, "callback");
+        // todo: this is crap, get it from somewhere else
+        String baseUrl = e.getParent().attributeValue("display-url");
+        final URI callback = URI.create(baseUrl + getOptionalAttribute(e, "callback", "/callback"));
         final PublicKey publicKey = getPublicKey(getRequiredElementText(e, "public-key"));
-        final URI requestTokenUrl = getOptionalUriAttribute(e, "request-token-url");
-        final URI accessTokenUrl = getOptionalUriAttribute(e, "access-token-url");
-        final URI authorizeUrl = getOptionalUriAttribute(e, "authorize-url");
+        final URI requestTokenUrl = URI.create(baseUrl + getOptionalAttribute(e, "request-token-url", "/request-token"));
+        final URI accessTokenUrl = URI.create(baseUrl + getOptionalAttribute(e, "access-token-url", "/access-token"));
+        final URI authorizeUrl = URI.create(baseUrl + getOptionalAttribute(e, "authorize-url", "/authorize"));
 
         return new StartableRemoteModule()
         {
@@ -99,6 +99,11 @@ public class OauthModuleGenerator implements RemoteModuleGenerator
 
     @Override
     public void validate(Element element) throws PluginParseException
+    {
+    }
+
+    @Override
+    public void convertDescriptor(Element descriptorElement, Element pluginDescriptorRoot)
     {
     }
 

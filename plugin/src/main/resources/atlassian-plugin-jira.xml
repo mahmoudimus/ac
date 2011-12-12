@@ -9,7 +9,11 @@
     <web-section key="remoteapps.general" location="general_dropdown_linkId">
     </web-section>
 
-    <component key="profile-page-module-generator" class="com.atlassian.labs.remoteapps.modules.page.jira.JiraProfileTabModuleGenerator" />
+    <remote-module key="jira-profile-page" class="com.atlassian.labs.remoteapps.modules.page.jira.JiraProfileTabModuleGenerator">
+        <description>An profile page</description>
+        <schema id="page.xsd" path="/xsd/page.xsd"  type="PageType"/>
+    </remote-module>
+
 
     <!-- activity streams -->
     <component-import key="jiraUserProfileAccessor" interface="com.atlassian.streams.spi.UserProfileAccessor" />

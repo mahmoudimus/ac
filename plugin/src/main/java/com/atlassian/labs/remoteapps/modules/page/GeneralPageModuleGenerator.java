@@ -17,7 +17,6 @@ import static java.util.Collections.emptyMap;
 /**
  * Module type for general pages, generating a web item and servlet with iframe
  */
-@Component
 public class GeneralPageModuleGenerator extends AbstractPageModuleGenerator
 {
     private final ProductAccessor productAccessor;

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation="common.xsd" />
+    <xs:simpleType name="MacroEnumType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="enum"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="MacroOutputTypeType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="block"/>
+            <xs:enumeration value="inline"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="MacroBodyTypeType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="rich-text"/>
+            <xs:enumeration value="plain-text"/>
+            <xs:enumeration value="none"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="CategoryType">
+        <xs:attribute name="name" type="xs:string" use="required"/>
+        <xs:anyAttribute/>
+    </xs:complexType>
+
+    <xs:complexType name="MacroParameterEnumValueType">
+        <xs:attribute name="name" type="xs:string" use="required"/>
+        <xs:anyAttribute/>
+    </xs:complexType>
+
+    <xs:complexType name="MacroParameterEnumType">
+        <xs:sequence>
+            <xs:element name="value" type="MacroParameterEnumValueType" minOccurs="1" maxOccurs="unbounded"/>
+            <xs:any minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string"/>
+        <xs:attribute name="title" type="xs:string" use="required"/>
+        <xs:attribute name="type" type="MacroEnumType" use="required"/>
+        <xs:anyAttribute/>
+    </xs:complexType>
+
+    <xs:complexType name="MacroParametersType">
+        <xs:sequence minOccurs="1" maxOccurs="unbounded">
+            <xs:choice>
+                <xs:element name="parameter" type="MacroParameterEnumType"/>
+                <xs:any/>
+            </xs:choice>
+        </xs:sequence>
+        <xs:anyAttribute/>
+    </xs:complexType>
+
+    <xs:complexType name="MacroType">
+        <xs:sequence>
+            <xs:element name="description" type="DescriptionType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="category" type="CategoryType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="parameters" type="MacroParametersType" minOccurs="0" maxOccurs="1"/>
+            <xs:any minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="key" type="KeyType" use="required"/>
+        <xs:attribute name="name" type="NameType"/>
+        <xs:attribute name="url" type="RelativeUrlType" use="required"/>
+        <xs:attribute name="output-type" type="MacroOutputTypeType" default="block"/>
+        <xs:attribute name="body-type" type="MacroBodyTypeType" default="rich-text"/>
+        <xs:anyAttribute/>
+    </xs:complexType>
+</xs:schema>

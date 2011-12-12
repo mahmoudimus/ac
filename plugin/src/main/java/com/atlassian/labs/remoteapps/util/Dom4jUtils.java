@@ -1,12 +1,27 @@
 package com.atlassian.labs.remoteapps.util;
 
+import com.atlassian.labs.remoteapps.descriptor.external.RemoteModuleDescriptor;
+import com.atlassian.labs.remoteapps.installer.InstallationFailedException;
 import com.atlassian.plugin.PluginParseException;
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
+import org.apache.commons.io.IOUtils;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
 import org.dom4j.DocumentFactory;
 import org.dom4j.Element;
+import org.dom4j.io.OutputFormat;
+import org.dom4j.io.SAXReader;
+import org.dom4j.io.XMLWriter;
+import org.xml.sax.InputSource;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
+import java.io.StringWriter;
 import java.net.URI;
+import java.net.URL;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -18,8 +33,7 @@ public class Dom4jUtils
 {
     private static final Set<String> STANDARD_ATTRIBUTES = ImmutableSet.of(
             "key",
-            "name",
-            "i18n-name-key"
+            "name"
     );
 
     public static Element copyDescriptorXml(Element source)
@@ -124,6 +138,57 @@ public class Dom4jUtils
         String value = e.attributeValue(name);
         return value != null ? value :
                 defaultValue != null ? defaultValue.toString() : null;
+    }
+
+    public static String transformDocument(URL xmlUrl, Function<Document, Document> transformer)
+    {
+        Document source;
+        try
+        {
+            source = new SAXReader().read(xmlUrl);
+        }
+        catch (DocumentException e)
+        {
+            throw new IllegalArgumentException("Unable to parse XML", e);
+        }
+
+
+        Document transformedDoc = transformer.apply(source);
+
+        StringWriter writer = new StringWriter();
+        XMLWriter xmlWriter = new XMLWriter(writer, OutputFormat.createPrettyPrint());
+        try
+        {
+            xmlWriter.write(transformedDoc);
+        }
+        catch (IOException e)
+        {
+            throw new IllegalArgumentException("Unable to write transformed document", e);
+        }
+        return writer.toString();
+    }
+
+    public static String printInputSource(InputSource source) throws IOException
+    {
+        Reader reader = source.getCharacterStream();
+        if (reader != null)
+        {
+            return IOUtils.toString(source.getCharacterStream());
+        }
+
+        InputStream in = source.getByteStream();
+        if (in != null)
+        {
+            return IOUtils.toString(in);
+        }
+
+        String systemId = source.getSystemId();
+        if (systemId != null)
+        {
+            return IOUtils.toString(new URL(systemId).openStream());
+        }
+
+        throw new IllegalArgumentException("Input source has no data");
     }
 
 

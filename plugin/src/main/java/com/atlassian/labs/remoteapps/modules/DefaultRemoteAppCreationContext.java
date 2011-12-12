@@ -2,6 +2,7 @@ package com.atlassian.labs.remoteapps.modules;
 
 import com.atlassian.applinks.spi.application.NonAppLinksApplicationType;
 import com.atlassian.labs.remoteapps.descriptor.external.AccessLevel;
+import com.atlassian.labs.remoteapps.modules.external.RemoteAppCreationContext;
 import com.atlassian.plugin.ModuleDescriptorFactory;
 import com.atlassian.plugin.Plugin;
 import org.osgi.framework.Bundle;
@@ -9,7 +10,7 @@ import org.osgi.framework.Bundle;
 /**
  * Context for remote app creation and initialization
  */
-public class RemoteAppCreationContext
+public class DefaultRemoteAppCreationContext implements RemoteAppCreationContext
 {
     private final Plugin plugin;
     private final ModuleDescriptorFactory moduleDescriptorFactory;
@@ -17,8 +18,12 @@ public class RemoteAppCreationContext
     private final NonAppLinksApplicationType applicationType;
     private final AccessLevel accessLevel;
 
-    public RemoteAppCreationContext(Plugin plugin, ModuleDescriptorFactory moduleDescriptorFactory, Bundle bundle, NonAppLinksApplicationType applicationType,
-                                    AccessLevel accessLevel)
+    public DefaultRemoteAppCreationContext(Plugin plugin,
+                                           ModuleDescriptorFactory moduleDescriptorFactory,
+                                           Bundle bundle,
+                                           NonAppLinksApplicationType applicationType,
+                                           AccessLevel accessLevel
+    )
     {
         this.plugin = plugin;
         this.moduleDescriptorFactory = moduleDescriptorFactory;
@@ -27,26 +32,31 @@ public class RemoteAppCreationContext
         this.accessLevel = accessLevel;
     }
 
+    @Override
     public Plugin getPlugin()
     {
         return plugin;
     }
 
+    @Override
     public ModuleDescriptorFactory getModuleDescriptorFactory()
     {
         return moduleDescriptorFactory;
     }
 
+    @Override
     public Bundle getBundle()
     {
         return bundle;
     }
 
+    @Override
     public NonAppLinksApplicationType getApplicationType()
     {
         return applicationType;
     }
 
+    @Override
     public AccessLevel getAccessLevel()
     {
         return accessLevel;

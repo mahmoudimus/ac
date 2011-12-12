@@ -3,9 +3,9 @@ package com.atlassian.labs.remoteapps.modules.applinks;
 import com.atlassian.applinks.api.EntityType;
 import com.atlassian.applinks.spi.application.NonAppLinksApplicationType;
 import com.atlassian.applinks.spi.application.TypeId;
-import com.atlassian.labs.remoteapps.modules.RemoteAppCreationContext;
-import com.atlassian.labs.remoteapps.modules.RemoteModule;
-import com.atlassian.labs.remoteapps.modules.RemoteModuleGenerator;
+import com.atlassian.labs.remoteapps.modules.external.RemoteAppCreationContext;
+import com.atlassian.labs.remoteapps.modules.external.RemoteModule;
+import com.atlassian.labs.remoteapps.modules.external.RemoteModuleGenerator;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.module.ModuleFactory;
@@ -27,7 +27,6 @@ import static org.objectweb.asm.Opcodes.*;
 /**
  * Creates applink entity types
  */
-@Component
 public class EntityTypeModuleGenerator implements RemoteModuleGenerator
 {
     @Override
@@ -66,6 +65,11 @@ public class EntityTypeModuleGenerator implements RemoteModuleGenerator
 
     @Override
     public void validate(Element element) throws PluginParseException
+    {
+    }
+
+    @Override
+    public void convertDescriptor(Element descriptorElement, Element pluginDescriptorRoot)
     {
     }
 

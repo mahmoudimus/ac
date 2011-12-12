@@ -1,5 +1,8 @@
 package com.atlassian.labs.remoteapps.modules;
 
+import com.atlassian.labs.remoteapps.modules.external.RemoteAppCreationContext;
+import com.atlassian.labs.remoteapps.modules.external.RemoteModule;
+import com.atlassian.labs.remoteapps.modules.external.RemoteModuleGenerator;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.module.ModuleFactory;
@@ -138,6 +141,11 @@ public abstract class AbstractPageModuleGenerator implements RemoteModuleGenerat
                                          .createWebItemModuleDescriptor(ctx.getBundle().getBundleContext());
         descriptor.init(ctx.getPlugin(), config);
         return descriptor;
+    }
+
+    @Override
+    public void convertDescriptor(Element descriptorElement, Element pluginDescriptorRoot)
+    {
     }
 
     protected abstract String getDecorator();
