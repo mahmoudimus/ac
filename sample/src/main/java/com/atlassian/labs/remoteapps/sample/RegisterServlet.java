@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 
+import static com.atlassian.labs.remoteapps.sample.HttpServer.getHostBaseUrl;
 import static com.atlassian.labs.remoteapps.sample.HttpServer.getOurBaseUrl;
 import static com.atlassian.labs.remoteapps.sample.HttpUtils.render;
 
@@ -44,6 +45,7 @@ public class RegisterServlet extends HttpServlet
             put("baseurl", getOurBaseUrl());
             put("appkey", appKey);
             put("accessLevel", accessLevel);
+            put("appbaseurl", getHostBaseUrl());
         }});
         byte[] bytes = output.getBytes(Charset.forName("UTF-8"));
         resp.setContentLength(bytes.length);

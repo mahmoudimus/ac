@@ -140,7 +140,7 @@ public class Dom4jUtils
                 defaultValue != null ? defaultValue.toString() : null;
     }
 
-    public static String transformDocument(URL xmlUrl, Function<Document, Document> transformer)
+    public static Document parseDocument(URL xmlUrl)
     {
         Document source;
         try
@@ -152,45 +152,22 @@ public class Dom4jUtils
             throw new IllegalArgumentException("Unable to parse XML", e);
         }
 
+        return source;
+    }
 
-        Document transformedDoc = transformer.apply(source);
-
+    public static String printDocument(Document document)
+    {
         StringWriter writer = new StringWriter();
         XMLWriter xmlWriter = new XMLWriter(writer, OutputFormat.createPrettyPrint());
         try
         {
-            xmlWriter.write(transformedDoc);
+            xmlWriter.write(document);
         }
         catch (IOException e)
         {
-            throw new IllegalArgumentException("Unable to write transformed document", e);
+            throw new IllegalArgumentException("Unable to write document", e);
         }
         return writer.toString();
     }
-
-    public static String printInputSource(InputSource source) throws IOException
-    {
-        Reader reader = source.getCharacterStream();
-        if (reader != null)
-        {
-            return IOUtils.toString(source.getCharacterStream());
-        }
-
-        InputStream in = source.getByteStream();
-        if (in != null)
-        {
-            return IOUtils.toString(in);
-        }
-
-        String systemId = source.getSystemId();
-        if (systemId != null)
-        {
-            return IOUtils.toString(new URL(systemId).openStream());
-        }
-
-        throw new IllegalArgumentException("Input source has no data");
-    }
-
-
 
 }

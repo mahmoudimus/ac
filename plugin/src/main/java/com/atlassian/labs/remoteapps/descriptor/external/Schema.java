@@ -1,5 +1,6 @@
 package com.atlassian.labs.remoteapps.descriptor.external;
 
+import org.dom4j.Document;
 import org.xml.sax.InputSource;
 
 /**
@@ -13,5 +14,5 @@ public interface Schema
 
     String getMaxOccurs();
 
-    InputSource getInputSource();
+    Document getDocument();
 }

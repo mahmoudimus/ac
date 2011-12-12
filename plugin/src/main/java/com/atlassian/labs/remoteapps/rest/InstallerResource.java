@@ -3,6 +3,7 @@ package com.atlassian.labs.remoteapps.rest;
 import com.atlassian.labs.remoteapps.DescriptorValidator;
 import com.atlassian.labs.remoteapps.PermissionDeniedException;
 import com.atlassian.labs.remoteapps.installer.RemoteAppInstaller;
+import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import com.atlassian.sal.api.user.UserManager;
 import com.sun.research.ws.wadl.Param;
 
@@ -61,26 +62,11 @@ public class InstallerResource
     }
 
     @GET
-    @Path("/schema")
+    @Path("/schema/remote-app")
     @Produces("text/xml")
+    @AnonymousAllowed
     public Response getSchema()
     {
         return Response.ok().entity(descriptorValidator.getSchema()).build();
-    }
-
-    @GET
-    @Path("/schema/{id}")
-    @Produces("text/xml")
-    public Response getSchemaFile(@PathParam("id") String includeFile)
-    {
-        final String entity = descriptorValidator.getSchemaInclude(includeFile);
-        if (entity == null)
-        {
-            return Response.status(Response.Status.NOT_FOUND).entity(includeFile).build();
-        }
-        else
-        {
-            return Response.ok().entity(entity).build();
-        }
     }
 }

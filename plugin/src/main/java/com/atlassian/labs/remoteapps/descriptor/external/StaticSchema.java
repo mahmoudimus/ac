@@ -1,8 +1,10 @@
 package com.atlassian.labs.remoteapps.descriptor.external;
 
 import com.atlassian.plugin.Plugin;
+import org.dom4j.Document;
 import org.xml.sax.InputSource;
 
+import static com.atlassian.labs.remoteapps.util.Dom4jUtils.parseDocument;
 import static org.apache.commons.lang.Validate.notNull;
 
 /**
@@ -34,11 +36,6 @@ public class StaticSchema implements Schema
         return id;
     }
 
-    public String getPath()
-    {
-        return path;
-    }
-
     @Override
     public String getComplexType()
     {
@@ -52,8 +49,8 @@ public class StaticSchema implements Schema
     }
 
     @Override
-    public InputSource getInputSource()
+    public Document getDocument()
     {
-        return new InputSource(plugin.getResource(path).toString());
+        return parseDocument(plugin.getResource(path));
     }
 }

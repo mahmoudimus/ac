@@ -1,5 +1,5 @@
 <remote-app key="{{appkey}}" name="Remote App - {{appkey}}" version="1" icon-url="https://github.com/favicon.ico"
-            display-url="{{baseurl}}" access-level="{{accessLevel}}">
+            display-url="{{baseurl}}" access-level="{{accessLevel}}" xmlns="{{appbaseurl}}/rest/remoteapps/1/installer/schema/remote-app">
     <vendor name="Atlassian" url="http://atlassian.com" />
     <description>
         This really great app

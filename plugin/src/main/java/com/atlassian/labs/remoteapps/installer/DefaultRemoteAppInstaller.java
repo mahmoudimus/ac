@@ -110,7 +110,6 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
                     final Document document = descriptorValidator.parseAndValidate(registrationUrl, descriptorXml);
                     Element root = document.getRootElement();
                     final String pluginKey = root.attributeValue("key");
-                    String accessLevel = root.attributeValue("access-level");
                     final Properties props = new Properties();
 
                     try
