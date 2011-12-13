@@ -46,4 +46,13 @@
             <xs:maxInclusive value="2000" />
         </xs:restriction>
     </xs:simpleType>
+
+    <xs:simpleType name="LinkContextParamNameType">
+        <xs:restriction base="xs:string">
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="LinkContextParamType">
+        <xs:attribute name="name" type="xs:string" use="required" />
+    </xs:complexType>
 </xs:schema>

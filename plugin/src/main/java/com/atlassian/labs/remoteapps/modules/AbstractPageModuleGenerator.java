@@ -36,7 +36,8 @@ public abstract class AbstractPageModuleGenerator implements RemoteModuleGenerat
     public AbstractPageModuleGenerator(ServletModuleManager servletModuleManager,
                                        TemplateRenderer templateRenderer,
                                        WebResourceManager webResourceManager,
-                                       ApplicationLinkOperationsFactory applicationLinkSignerFactory)
+                                       ApplicationLinkOperationsFactory applicationLinkSignerFactory
+    )
     {
         this.servletModuleManager = servletModuleManager;
         this.templateRenderer = templateRenderer;
@@ -131,17 +132,34 @@ public abstract class AbstractPageModuleGenerator implements RemoteModuleGenerat
         {
             throw new PluginParseException("Invalid url '" + localUrl + "', cannot contain velocity expressions");
         }
+
+        StringBuilder url = new StringBuilder();
+        url.append("/plugins/servlet");
+        url.append(localUrl);
+        if (!localUrl.contains("?"))
+        {
+            url.append("?");
+        }
+
+        for (Map.Entry<String,String> entry : getContextParams().entrySet())
+        {
+            url.append(entry.getKey());
+            url.append("=");
+            url.append(entry.getValue());
+        }
         String name = getRequiredAttribute(e, "name");
         config.addElement("label").setText(name);
         config.addElement("link").
                 addAttribute("linkId", webItemKey).
-                setText("/plugins/servlet" + localUrl);
+                setText(url.toString());
 
         ModuleDescriptor descriptor = ctx.getAccessLevel()
                                          .createWebItemModuleDescriptor(ctx.getBundle().getBundleContext());
         descriptor.init(ctx.getPlugin(), config);
         return descriptor;
     }
+
+    protected abstract Map<String, String> getContextParams();
 
     @Override
     public void convertDescriptor(Element descriptorElement, Element pluginDescriptorRoot)

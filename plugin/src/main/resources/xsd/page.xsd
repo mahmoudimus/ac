@@ -5,6 +5,7 @@
     <xs:complexType name="PageType">
         <xs:sequence>
             <xs:element name="description" type="DescriptionType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="context-param" type="LinkContextParamType" minOccurs="0" maxOccurs="unbounded" />
             <xs:any minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
         <xs:attribute name="key" type="KeyType" use="required" />

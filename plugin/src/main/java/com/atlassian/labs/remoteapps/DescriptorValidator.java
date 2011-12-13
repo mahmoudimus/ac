@@ -2,36 +2,27 @@ package com.atlassian.labs.remoteapps;
 
 import com.atlassian.labs.remoteapps.descriptor.external.RemoteModuleDescriptor;
 import com.atlassian.labs.remoteapps.installer.InstallationFailedException;
+import com.atlassian.labs.remoteapps.product.ProductAccessor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.sal.api.ApplicationProperties;
-import com.google.common.base.Function;
-import org.apache.commons.io.IOUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
-import org.dom4j.Node;
-import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
-import org.dom4j.io.XMLWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import java.io.*;
+import java.io.StringReader;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.Callable;
 
-import static com.atlassian.labs.remoteapps.util.Dom4jUtils.*;
-import static com.google.common.collect.Maps.newHashMap;
+import static com.atlassian.labs.remoteapps.util.Dom4jUtils.parseDocument;
+import static com.atlassian.labs.remoteapps.util.Dom4jUtils.printDocument;
 import static com.google.common.collect.Maps.newLinkedHashMap;
-import static com.google.common.collect.Maps.transformValues;
-import static com.google.common.collect.Sets.newHashSet;
 
 /**
  *
@@ -42,13 +33,15 @@ public class DescriptorValidator
     private final ModuleGeneratorManager moduleGeneratorManager;
     private final ApplicationProperties applicationProperties;
     private final Plugin plugin;
+    private final ProductAccessor productAccessor;
 
     @Autowired
     public DescriptorValidator(ModuleGeneratorManager moduleGeneratorManager,
                                ApplicationProperties applicationProperties,
-                               PluginRetrievalService pluginRetrievalService
+                               PluginRetrievalService pluginRetrievalService, ProductAccessor productAccessor
     )
     {
+        this.productAccessor = productAccessor;
         this.plugin = pluginRetrievalService.getPlugin();
         this.moduleGeneratorManager = moduleGeneratorManager;
         this.applicationProperties = applicationProperties;
@@ -104,9 +97,11 @@ public class DescriptorValidator
         for (Element include : rootIncludes)
         {
             String schemaLocation = include.attributeValue("schemaLocation");
-            entities.put(schemaLocation, parseDocument(plugin.getResource("/xsd/" + schemaLocation)));
+            final Document includeDoc = parseDocument(plugin.getResource("/xsd/" + schemaLocation));
+            insertAvailableLinkContextParams(includeDoc, productAccessor.getLinkContextParams());
+            entities.put(schemaLocation, includeDoc);
         }
-        rootIncludes.clear();
+        rootIncludes.clear(); 
 
         for (final RemoteModuleDescriptor descriptor : this.moduleGeneratorManager.getDescriptors())
         {
@@ -145,6 +140,19 @@ public class DescriptorValidator
         }
 
         return printDocument(schema);
+    }
+
+    private void insertAvailableLinkContextParams(Document includeDoc, Map<String, String> linkContextParams)
+    {
+        Element restriction = (Element) includeDoc.selectSingleNode("/xs:schema/xs:simpleType[@name='LinkContextParamNameType']/xs:restriction");
+        if (restriction != null)
+        {
+            for (Map.Entry<String,String> entry : linkContextParams.entrySet())
+            {
+                String name = entry.getKey();
+                restriction.addElement("xs:enumeration").addAttribute("value", name);
+            }
+        }
     }
 
     private String getSchemaNamespace()

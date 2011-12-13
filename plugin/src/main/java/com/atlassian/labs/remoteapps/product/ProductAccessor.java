@@ -2,7 +2,7 @@ package com.atlassian.labs.remoteapps.product;
 
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 
-import java.security.Principal;
+import java.util.Map;
 
 /**
  * Product-specific accessors
@@ -23,4 +23,6 @@ public interface ProductAccessor
     int getPreferredProfileWeight();
 
     String getPreferredProfileSectionKey();
+
+    Map<String,String> getLinkContextParams();
 }

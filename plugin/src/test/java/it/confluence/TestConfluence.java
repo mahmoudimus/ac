@@ -106,4 +106,17 @@ public class TestConfluence
 
         assertTrue(page.getSlowMacroBody().startsWith("ERROR"));
 	}
+
+    @Test
+	public void testContextParam() throws XmlRpcFault, IOException
+    {
+        Map pageData = confluenceOps.setPage(product.getProductInstance(), "ds", "test", loadResourceAsString(
+                "confluence/test-page.xhtml"));
+        product.visit(LoginPage.class).login("betty", "betty", HomePage.class);
+        Map<String,String> params = product.visit(ConfluenceMacroPage.class, pageData.get("title"))
+                                          .visitGeneralLink()
+                                          .getIframeQueryParams();
+
+        assertEquals(pageData.get("id"), params.get("page_id"));
+	}
 }

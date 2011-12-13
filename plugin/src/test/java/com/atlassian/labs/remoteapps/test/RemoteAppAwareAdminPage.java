@@ -27,9 +27,9 @@ public class RemoteAppAwareAdminPage
         return driver.elementExists(By.linkText("Remote App app1 Admin"));
     }
 
-    public MyAdminPage clickRemoteAppAdminLink()
+    public MyIframePage clickRemoteAppAdminLink()
     {
         adminLink.click();
-        return pageBinder.bind(MyAdminPage.class);
+        return pageBinder.bind(MyIframePage.class);
     }
 }

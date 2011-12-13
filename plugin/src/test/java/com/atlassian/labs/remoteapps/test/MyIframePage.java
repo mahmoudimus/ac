@@ -1,23 +1,24 @@
 package com.atlassian.labs.remoteapps.test;
 
-import com.atlassian.pageobjects.binder.Init;
 import com.atlassian.pageobjects.binder.WaitUntil;
 import com.atlassian.webdriver.AtlassianWebDriver;
-import com.google.common.base.Function;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.utils.URLEncodedUtils;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
-import javax.annotation.Nullable;
 import javax.inject.Inject;
-import javax.xml.rpc.Call;
+import java.net.URI;
+import java.util.Map;
 import java.util.concurrent.Callable;
+
+import static com.google.common.collect.Maps.newHashMap;
 
 /**
  *
  */
-public class MyAdminPage
+public class MyIframePage
 {
     @Inject
     private AtlassianWebDriver driver;
@@ -39,6 +40,18 @@ public class MyAdminPage
     public String getConsumerKey()
     {
         return getValue("consumerKey");
+    }
+
+    public Map<String,String> getIframeQueryParams()
+    {
+        final WebElement iframe = containerDiv.findElement(By.tagName("iframe"));
+        String iframeSrc = iframe.getAttribute("src");
+        Map<String,String> result = newHashMap();
+        for (NameValuePair pair : URLEncodedUtils.parse(URI.create(iframeSrc), "UTF-8"))
+        {
+            result.put(pair.getName(), pair.getValue());
+        }
+        return result;
     }
 
     private String getValue(final String key)

@@ -7,8 +7,6 @@ import com.atlassian.plugin.servlet.ServletModuleManager;
 import com.atlassian.plugin.webresource.WebResourceManager;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import org.dom4j.Element;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
@@ -60,5 +58,11 @@ public class AdminPageModuleGenerator extends AbstractPageModuleGenerator
     protected String getPreferredSectionKey()
     {
         return productAccessor.getPreferredAdminSectionKey();
+    }
+
+    @Override
+    protected Map<String, String> getContextParams()
+    {
+        return productAccessor.getLinkContextParams();
     }
 }

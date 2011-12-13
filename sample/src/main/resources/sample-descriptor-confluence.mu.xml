@@ -23,7 +23,9 @@
     <entity-type key="project" name="Project" pluralized-name="Projects" icon-url="https://github.com/favicon.ico"/>
 
     <admin-page key="remoteAppAdmin" name="Remote App {{appkey}} Admin" url="/myadmin" />
-    <general-page key="remoteAppGeneral" name="Remote App {{appkey}} General" url="/myadmin" height="600" width="700"/>
+    <general-page key="remoteAppGeneral" name="Remote App {{appkey}} General" url="/myadmin" height="600" width="700">
+        <context-param name="page_id" />
+    </general-page>
     <profile-page key="remoteAppProfile" name="Remote App {{appkey}} Profile" url="/myadmin" />
 
     <macro key="{{appkey}}-macro" url="/mymacro" output-type="block" body-type="rich-text">

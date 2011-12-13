@@ -1,8 +1,7 @@
 package it;
 
-import com.atlassian.labs.remoteapps.test.MyAdminPage;
+import com.atlassian.labs.remoteapps.test.MyIframePage;
 import com.atlassian.labs.remoteapps.test.OAuthUtils;
-import com.atlassian.labs.remoteapps.test.MyAdminAccessDeniedPage;
 import com.atlassian.labs.remoteapps.test.RemoteAppAwareAdminPage;
 import com.atlassian.labs.remoteapps.test.OwnerOfTestedProduct;
 import com.atlassian.pageobjects.TestedProduct;
@@ -13,7 +12,6 @@ import org.junit.After;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class TestRemoteApp
@@ -32,8 +30,8 @@ public class TestRemoteApp
         product.visit(LoginPage.class).login("betty", "betty", AdminHomePage.class);
         RemoteAppAwareAdminPage page = product.getPageBinder().bind(RemoteAppAwareAdminPage.class);
         assertTrue(page.isRemoteAppLinkPresent());
-        MyAdminPage myAdmin = page.clickRemoteAppAdminLink();
-        assertEquals("Success", myAdmin.getMessage());
-        assertEquals(OAuthUtils.getConsumerKey(), myAdmin.getConsumerKey());
+        MyIframePage myIframe = page.clickRemoteAppAdminLink();
+        assertEquals("Success", myIframe.getMessage());
+        assertEquals(OAuthUtils.getConsumerKey(), myIframe.getConsumerKey());
 	}
 }

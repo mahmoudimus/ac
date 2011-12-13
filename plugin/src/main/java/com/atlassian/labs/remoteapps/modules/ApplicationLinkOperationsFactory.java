@@ -15,11 +15,14 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.HttpMethod;
 import java.net.URI;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import static com.atlassian.labs.remoteapps.util.ServletUtils.encodeGetUrl;
 import static com.google.common.collect.Maps.newHashMap;
+import static com.google.common.collect.Maps.transformValues;
 import static java.util.Collections.singletonList;
 
 /**
@@ -79,13 +82,13 @@ public class ApplicationLinkOperationsFactory
             @Override
             public String signGetUrl(HttpServletRequest req, String targetPath)
             {
-                return signGetUrlForType(get(), userManager.getRemoteUsername(req), targetPath);
+                return signGetUrlForType(get(), userManager.getRemoteUsername(req), targetPath, req.getParameterMap());
             }
 
             @Override
             public String signGetUrl(String user, String targetPath)
             {
-                return signGetUrlForType(get(), user, targetPath);
+                return signGetUrlForType(get(), user, targetPath, Collections.<String, String[]>emptyMap());
             }
 
             @Override
@@ -109,14 +112,18 @@ public class ApplicationLinkOperationsFactory
         }));
     }
 
-    private String signGetUrlForType(ApplicationLink applicationLink, String user, String targetPath) throws PermissionDeniedException
+    private String signGetUrlForType(ApplicationLink applicationLink,
+                                     String user,
+                                     String targetPath,
+                                     Map<String, String[]> params
+    ) throws PermissionDeniedException
     {
         if (!permissionManager.canAccessRemoteApp(user, applicationLink))
         {
             throw new PermissionDeniedException("User not authorized");
         }
         String targetUrl = getTargetUrl(applicationLink, targetPath);
-        List<Map.Entry<String, String>> message = signRequest(applicationLink, targetUrl, HttpMethod.GET);
+        List<Map.Entry<String, String>> message = signRequest(applicationLink, targetUrl, params, HttpMethod.GET);
 
         return encodeGetUrl(targetUrl, message);
     }
@@ -126,7 +133,11 @@ public class ApplicationLinkOperationsFactory
         return applicationLink.getRpcUrl() + targetPath;
     }
 
-    private List<Map.Entry<String, String>> signRequest(ApplicationLink applicationLink, String url, String method)
+    private List<Map.Entry<String, String>> signRequest(ApplicationLink applicationLink,
+                                                        String url,
+                                                        Map<String, String[]> queryParams,
+                                                        String method
+    )
     {
         String timestamp = System.currentTimeMillis() / 1000 + "";
         String nonce = System.nanoTime() + "";
@@ -135,7 +146,14 @@ public class ApplicationLinkOperationsFactory
         URI hostUri = URI.create(applicationProperties.getBaseUrl());
         String host = hostUri.getScheme() + "://" + hostUri.getHost() + ":" + hostUri.getPort();
 
-        Map<String,List<String>> params = newHashMap();
+        Map<String,List<String>> params = newHashMap(transformValues(queryParams, new Function<String[], List<String>>()
+        {
+            @Override
+            public List<String> apply(String[] from)
+            {
+                return Arrays.asList(from);
+            }
+        }));
 
         params.put(OAuth.OAUTH_SIGNATURE_METHOD, singletonList(signatureMethod));
         params.put(OAuth.OAUTH_NONCE, singletonList(nonce));

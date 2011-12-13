@@ -5,6 +5,10 @@ import com.atlassian.plugin.web.WebInterfaceManager;
 import com.atlassian.plugin.web.descriptors.DefaultWebItemModuleDescriptor;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 
+import java.util.Map;
+
+import static java.util.Collections.emptyMap;
+
 /**
  *
  */
@@ -63,5 +67,11 @@ public class RefappProductAccessor implements ProductAccessor
     public String getPreferredProfileSectionKey()
     {
         return "system.admin/general";
+    }
+
+    @Override
+    public Map<String, String> getLinkContextParams()
+    {
+        return emptyMap();
     }
 }

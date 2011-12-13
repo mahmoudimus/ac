@@ -1,6 +1,8 @@
 package com.atlassian.labs.remoteapps.test.confluence;
 
+import com.atlassian.labs.remoteapps.test.MyIframePage;
 import com.atlassian.pageobjects.Page;
+import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.webdriver.AtlassianWebDriver;
 import org.openqa.selenium.By;
 
@@ -13,6 +15,9 @@ public class ConfluenceMacroPage implements Page
 {
     @Inject
     AtlassianWebDriver driver;
+
+    @Inject
+    PageBinder pageBinder;
     private String title;
 
     public ConfluenceMacroPage(String title)
@@ -39,5 +44,12 @@ public class ConfluenceMacroPage implements Page
     public String getSlowMacroBody()
     {
         return driver.findElement(By.className("slow-macro")).getText();
+    }
+
+    public MyIframePage visitGeneralLink()
+    {
+        driver.findElement(By.id("browse-menu-link")).click();
+        driver.findElement(By.id("webitem-remoteAppGeneral")).click();
+        return pageBinder.bind(MyIframePage.class);
     }
 }

@@ -6,6 +6,10 @@ import com.atlassian.labs.remoteapps.product.ProductAccessor;
 import com.atlassian.plugin.web.WebInterfaceManager;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 
+import java.util.Map;
+
+import static java.util.Collections.emptyMap;
+
 /**
  *
  */
@@ -64,5 +68,11 @@ public class JiraProductAccessor implements ProductAccessor
     public String getPreferredProfileSectionKey()
     {
         return "system.user.options/personal";
+    }
+
+    @Override
+    public Map<String, String> getLinkContextParams()
+    {
+        return emptyMap();
     }
 }
