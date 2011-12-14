@@ -12,6 +12,7 @@ import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.Namespace;
 import org.dom4j.VisitorSupport;
+import org.dom4j.io.DocumentSource;
 import org.dom4j.io.SAXReader;
 import org.dom4j.tree.DefaultElement;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,13 @@ import org.springframework.stereotype.Component;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import javax.xml.XMLConstants;
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import javax.xml.validation.Validator;
+import java.io.IOException;
 import java.io.StringReader;
 import java.net.URL;
 import java.util.Collection;
@@ -56,28 +64,54 @@ public class DescriptorValidator
         SAXReader reader = new SAXReader(true);
         try
         {
-            reader.setFeature("http://apache.org/xml/features/validation/schema", true);
-            reader.setProperty("http://java.sun.com/xml/jaxp/properties/schemaLanguage",
-                    "http://www.w3.org/2001/XMLSchema");
-            final InputSource schemaSource = new InputSource(new StringReader(buildSchema()));
-            schemaSource.setSystemId(getSchemaUrl().toString());
-            reader.setProperty("http://java.sun.com/xml/jaxp/properties/schemaSource", schemaSource);
-
             InputSource source = new InputSource(new StringReader(descriptorXml));
             source.setSystemId(url);
             source.setEncoding("UTF-8");
+            reader.setValidation(false);
             Document document = reader.read(source);
+            document.accept(new NamespaceSetter(new Namespace("", getSchemaNamespace())));
+
+            validate(document);
             document.accept(new NamespaceCleaner());
             return document;
         }
-        catch (SAXException e)
-        {
-            throw new IllegalArgumentException(e);
-        }
         catch (DocumentException e)
         {
-            throw new InstallationFailedException("Unable to parse and validate the descriptor.  Ensure you have defined " +
-                    "the correct namespace: " + getSchemaNamespace() + ". Error was: " + e.getMessage(), e);
+            throw new InstallationFailedException("Unable to parse the descriptor: " + e.getMessage(), e);
+        }
+    }
+
+    private void validate(Document doc)
+    {
+        SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+
+        // load a WXS schema, represented by a Schema instance
+        Source schemaFile = new StreamSource(new StringReader(buildSchema()));
+        Schema schema = null;
+        try
+        {
+            schema = factory.newSchema(schemaFile);
+        }
+        catch (SAXException e)
+        {
+            throw new RuntimeException("Unable to build schema", e);
+        }
+
+        // create a Validator instance, which can be used to validate an instance document
+        Validator validator = schema.newValidator();
+
+        // validate the DOM tree
+        try
+        {
+            validator.validate(new DocumentSource(doc));
+        }
+        catch (SAXException e)
+        {
+            throw new InstallationFailedException("Unable to validate the descriptor: " + e.getMessage(), e);
+        }
+        catch (IOException e)
+        {
+            throw new RuntimeException("Shouldn't happen", e);
         }
     }
 
@@ -194,6 +228,31 @@ public class DescriptorValidator
             if (node instanceof DefaultElement)
             {
                 ((DefaultElement) node).setNamespace(Namespace.NO_NAMESPACE);
+            }
+        }
+
+    }
+
+    private static class NamespaceSetter extends VisitorSupport
+    {
+        private final Namespace namespace;
+
+        public NamespaceSetter(Namespace namespace)
+        {
+            this.namespace = namespace;
+        }
+
+        public void visit(Document document)
+        {
+            ((DefaultElement) document.getRootElement())
+                    .setNamespace(namespace);
+        }
+
+        public void visit(Element node)
+        {
+            if (node instanceof DefaultElement)
+            {
+                ((DefaultElement) node).setNamespace(namespace);
             }
         }
 

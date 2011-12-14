@@ -40,46 +40,27 @@
         <xs:attribute name="name" type="xs:string" use="required"/>
     </xs:complexType>
 
-    <xs:simpleType name="MacroEnumType">
-        <xs:restriction base="xs:string">
-            <xs:enumeration value="enum"/>
-        </xs:restriction>
-    </xs:simpleType>
-
     <xs:complexType name="MacroParameterEnumValueType">
         <xs:attribute name="name" type="xs:string" use="required"/>
     </xs:complexType>
 
-    <xs:complexType name="MacroParameterEnumType">
+    <xs:complexType name="MacroParameterType">
         <xs:sequence>
             <xs:element name="alias" type="MacroParameterAliasType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="value" type="MacroParameterEnumValueType" minOccurs="1" maxOccurs="unbounded"/>
         </xs:sequence>
         <xs:attribute name="name" type="xs:string" use="required"/>
         <xs:attribute name="title" type="xs:string"/>
-        <xs:attribute name="type" type="MacroEnumType" use="required"/>
+        <xs:attribute name="type" type="MacroParameterTypeType" use="required"/>
         <xs:attribute name="required" type="xs:boolean" default="false"/>
+        <xs:attribute name="multiple" type="xs:boolean" default="false"/>
         <xs:attribute name="default" type="xs:string"/>
     </xs:complexType>
 
-    <xs:simpleType name="MacroBooleanType">
+    <xs:simpleType name="MacroParameterTypeType">
         <xs:restriction base="xs:string">
+            <xs:enumeration value="enum"/>
             <xs:enumeration value="boolean"/>
-        </xs:restriction>
-    </xs:simpleType>
-    <xs:complexType name="MacroParameterBooleanType">
-        <xs:sequence>
-            <xs:element name="alias" type="MacroParameterAliasType" minOccurs="0" maxOccurs="1"/>
-        </xs:sequence>
-        <xs:attribute name="name" type="xs:string" use="required"/>
-        <xs:attribute name="title" type="xs:string"/>
-        <xs:attribute name="type" type="MacroBooleanType" use="required"/>
-        <xs:attribute name="required" type="xs:boolean" default="false"/>
-        <xs:attribute name="default" type="xs:boolean"/>
-    </xs:complexType>
-
-    <xs:simpleType name="MacroStringType">
-        <xs:restriction base="xs:string">
             <xs:enumeration value="string"/>
             <xs:enumeration value="spacekey"/>
             <xs:enumeration value="attachment"/>
@@ -87,24 +68,11 @@
             <xs:enumeration value="confluence"/>
         </xs:restriction>
     </xs:simpleType>
-    <xs:complexType name="MacroParameterStringType">
-        <xs:sequence>
-            <xs:element name="alias" type="MacroParameterAliasType" minOccurs="0" maxOccurs="1"/>
-        </xs:sequence>
-        <xs:attribute name="name" type="xs:string" use="required"/>
-        <xs:attribute name="title" type="xs:string"/>
-        <xs:attribute name="type" type="MacroStringType" use="required"/>
-        <xs:attribute name="required" type="xs:boolean" default="false"/>
-        <xs:attribute name="multiple" type="xs:boolean" default="false"/>
-        <xs:attribute name="default" type="xs:string"/>
-    </xs:complexType>
 
     <xs:complexType name="MacroParametersType">
         <xs:sequence minOccurs="1" maxOccurs="unbounded">
             <xs:choice>
-                <xs:element name="parameter" type="MacroParameterEnumType"/>
-                <xs:element name="parameter" type="MacroParameterBooleanType"/>
-                <xs:element name="parameter" type="MacroParameterStringType"/>
+                <xs:element name="parameter" type="MacroParameterType"/>
             </xs:choice>
         </xs:sequence>
     </xs:complexType>
