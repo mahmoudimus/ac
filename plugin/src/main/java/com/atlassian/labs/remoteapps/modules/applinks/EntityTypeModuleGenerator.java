@@ -107,7 +107,7 @@ public class EntityTypeModuleGenerator implements RemoteModuleGenerator
 
     private ModuleDescriptor<EntityType> createEntityTypeDescriptor(RemoteAppCreationContext ctx, final RemoteAppEntityType entityType, Element element)
     {
-        Element desc = copyDescriptorXml(element);
+        Element desc = element.createCopy();
         String key = getRequiredAttribute(element, "key");
         desc.addAttribute("key", "entityType-" + key);
         desc.addAttribute("class", entityType.getClass().getName());

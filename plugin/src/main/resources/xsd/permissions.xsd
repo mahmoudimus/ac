@@ -10,15 +10,12 @@
 
     <xs:complexType name="PermissionType">
         <xs:attribute name="scope" type="ScopeType" use="required" />
-        <xs:anyAttribute />
     </xs:complexType>
 
     <xs:complexType name="PermissionsType">
         <xs:sequence>
             <xs:element name="permission" type="PermissionType" minOccurs="1" maxOccurs="unbounded"/>
-            <xs:any minOccurs="0"/>
         </xs:sequence>
-        <xs:anyAttribute />
     </xs:complexType>
 
 </xs:schema>

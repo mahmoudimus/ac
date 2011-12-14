@@ -103,6 +103,7 @@ public class TestConfluence
 
         assertEquals(pageData.get("id"), page.getPageIdFromMacro());
         assertEquals("some note", page.getBodyNoteFromMacro());
+        assertEquals("sandcastles", page.getImageMacroAlt());
 
         assertTrue(page.getSlowMacroBody().startsWith("ERROR"));
 	}

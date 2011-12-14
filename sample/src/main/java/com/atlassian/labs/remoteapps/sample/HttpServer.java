@@ -1,7 +1,10 @@
 package com.atlassian.labs.remoteapps.sample;
 
 
+import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.HandlerList;
+import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 
@@ -24,20 +27,31 @@ public class HttpServer
         OUR_BASE_URL = ourBaseUrl;
         OAuthContext.init(appKey, ourBaseUrl);
 
+        ResourceHandler staticResourceHandler = new ResourceHandler();
+        String resourceBase = getClass().getResource("/static/").toString();
+        System.out.println("resource base: " + resourceBase);
+        staticResourceHandler.setResourceBase(resourceBase);
+        staticResourceHandler.setDirectoriesListed(true);
+
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.setContextPath("/");
-        server.setHandler(context);
 
-        context.addServlet(new ServletHolder(new InfoServlet(appKey)),"/");
-        context.addServlet(new ServletHolder(new MyAdminServlet()),"/myadmin");
-        context.addServlet(new ServletHolder(new MyMacroServlet()),"/mymacro");
-        context.addServlet(new ServletHolder(new MySlowMacroServlet()),"/myslowmacro");
-        context.addServlet(new ServletHolder(new RegisterServlet(appKey, "global", "refapp")),"/register");
-        context.addServlet(new ServletHolder(new RegisterServlet(appKey, "global", "confluence")),"/confluence-register");
-        context.addServlet(new ServletHolder(new RegisterServlet(appKey, "global", "jira")),"/jira-register");
-        context.addServlet(new ServletHolder(new RegisterServlet(appKey, "global", "refapp")),"/refapp-register");
-        context.addServlet(new ServletHolder(new RegisterServlet(appKey, "user", "refapp")),"/user-register");
+        context.setResourceBase(resourceBase);
 
+        context.addServlet(new ServletHolder(new InfoServlet(appKey)), "/");
+        context.addServlet(new ServletHolder(new MyAdminServlet()), "/myadmin");
+        context.addServlet(new ServletHolder(new MyMacroServlet()), "/mymacro");
+        context.addServlet(new ServletHolder(new MyImageMacroServlet()), "/myimagemacro");
+        context.addServlet(new ServletHolder(new MySlowMacroServlet()), "/myslowmacro");
+        context.addServlet(new ServletHolder(new RegisterServlet(appKey, "global", "refapp")), "/register");
+        context.addServlet(new ServletHolder(new RegisterServlet(appKey, "global", "confluence")), "/confluence-register");
+        context.addServlet(new ServletHolder(new RegisterServlet(appKey, "global", "jira")), "/jira-register");
+        context.addServlet(new ServletHolder(new RegisterServlet(appKey, "global", "refapp")), "/refapp-register");
+        context.addServlet(new ServletHolder(new RegisterServlet(appKey, "user", "refapp")), "/user-register");
+
+        HandlerList list = new HandlerList();
+        list.setHandlers(new Handler[] {staticResourceHandler, context});
+        server.setHandler(list);
         start();
     }
 

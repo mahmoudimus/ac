@@ -17,11 +17,11 @@ import com.atlassian.plugin.module.ModuleFactory;
 import com.google.common.collect.ImmutableSet;
 import org.dom4j.Element;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
-import static com.atlassian.labs.remoteapps.util.Dom4jUtils.copyDescriptorXml;
-import static com.atlassian.labs.remoteapps.util.Dom4jUtils.copyOptionalElements;
-import static com.atlassian.labs.remoteapps.util.Dom4jUtils.copyRequiredElements;
 import static com.atlassian.labs.remoteapps.util.Dom4jUtils.getOptionalAttribute;
 import static com.atlassian.labs.remoteapps.util.Dom4jUtils.getRequiredAttribute;
 import static com.google.common.collect.Maps.newHashMap;
@@ -81,15 +81,12 @@ public class MacroModuleGenerator implements RemoteModuleGenerator
     @Override
     public RemoteModule generate(final RemoteAppCreationContext ctx, Element entity)
     {
-        Element config = copyDescriptorXml(entity);
+        Element config = entity.createCopy();
+
         String key = getRequiredAttribute(entity, "key");
-        config.addAttribute("key", key);
         config.addAttribute("name", key);
         config.addAttribute("class", RemoteMacro.class.getName());
-        copyOptionalElements(entity, config, "parameters");
-        copyOptionalElements(entity, config, "property-panel");
-        copyOptionalElements(entity, config, "category");
-        if (config.element("parameters") != null)
+        if (config.element("parameters") == null)
         {
             config.addElement("parameters");
         }
@@ -138,7 +135,7 @@ public class MacroModuleGenerator implements RemoteModuleGenerator
             {
                 if (placeholder != null && Macro.BodyType.NONE.equals(bodyType))
                 {
-                    return (T) new ImagePlaceholderRemoteMacro(ctx.getPlugin().getKey(), originalEntity.attributeValue("key"), placeholder.imageUrl, new Dimensions(placeholder.width, placeholder.height),
+                    return (T) new ImagePlaceholderRemoteMacro(ctx.getPlugin().getKey(), originalEntity.attributeValue("key"), placeholder.imageUrl, placeholder.getDimensions(),
                             placeholder.applyChrome, xhtmlContent, bodyType, outputType, url, applicationLinkOperationsFactory.create(ctx.getApplicationType()), macroContentManager);
                 }
                 else
@@ -176,7 +173,7 @@ public class MacroModuleGenerator implements RemoteModuleGenerator
             throw new IllegalArgumentException("Invalid body type '" + bodyTypeValue);
         }
         return bodyType;
-    }
+    } 
 
     private ImagePlaceholderConfig parseImagePlaceholder(Element entity)
     {
@@ -199,16 +196,28 @@ public class MacroModuleGenerator implements RemoteModuleGenerator
     private static class ImagePlaceholderConfig
     {
         String imageUrl;
-        int width;
-        int height;
+        Integer width;
+        Integer height;
         boolean applyChrome;
 
-        private ImagePlaceholderConfig(String imageUrl, int width, int height, boolean applyChrome)
+        private ImagePlaceholderConfig(String imageUrl, Integer width, Integer height, boolean applyChrome)
         {
             this.imageUrl = imageUrl;
             this.width = width;
             this.height = height;
             this.applyChrome = applyChrome;
+        }
+
+        public Dimensions getDimensions()
+        {
+            if (height != null && width != null)
+            {
+                return new Dimensions(width, height);
+            }
+            else
+            {
+                return null;
+            }
         }
     }
 }

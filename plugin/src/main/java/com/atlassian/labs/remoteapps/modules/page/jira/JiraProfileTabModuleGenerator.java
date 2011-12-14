@@ -19,7 +19,6 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
-import static com.atlassian.labs.remoteapps.util.Dom4jUtils.copyDescriptorXml;
 import static com.atlassian.labs.remoteapps.util.Dom4jUtils.getRequiredAttribute;
 import static com.google.common.collect.Maps.newHashMap;
 import static java.util.Collections.emptyMap;
@@ -110,7 +109,7 @@ public class JiraProfileTabModuleGenerator implements RemoteModuleGenerator
     )
     {
         final String panelName = getRequiredAttribute(e, "name");
-        Element config = copyDescriptorXml(e);
+        Element config = e.createCopy();
         config.addAttribute("key", "profile-" + key);
         config.addAttribute("i18n-key", panelName);
         config.addAttribute("class", IFrameViewProfilePanel.class.getName());

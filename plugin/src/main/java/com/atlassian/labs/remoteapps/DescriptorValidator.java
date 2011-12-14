@@ -6,10 +6,14 @@ import com.atlassian.labs.remoteapps.product.ProductAccessor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.sal.api.ApplicationProperties;
+import org.dom4j.Attribute;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
+import org.dom4j.Namespace;
+import org.dom4j.VisitorSupport;
 import org.dom4j.io.SAXReader;
+import org.dom4j.tree.DefaultElement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.xml.sax.InputSource;
@@ -61,8 +65,10 @@ public class DescriptorValidator
 
             InputSource source = new InputSource(new StringReader(descriptorXml));
             source.setSystemId(url);
-            source.setEncoding("UTF-8"); 
-            return reader.read(source);
+            source.setEncoding("UTF-8");
+            Document document = reader.read(source);
+            document.accept(new NamespaceCleaner());
+            return document;
         }
         catch (SAXException e)
         {
@@ -88,7 +94,7 @@ public class DescriptorValidator
 
     private String buildSchema()
     {
-        Map<String,Document> entities = newLinkedHashMap();
+        Map<String, Document> entities = newLinkedHashMap();
 
         final URL schemaUrl = getSchemaUrl();
         Document schema = parseDocument(schemaUrl);
@@ -101,7 +107,7 @@ public class DescriptorValidator
             insertAvailableLinkContextParams(includeDoc, productAccessor.getLinkContextParams());
             entities.put(schemaLocation, includeDoc);
         }
-        rootIncludes.clear(); 
+        rootIncludes.clear();
 
         for (final RemoteModuleDescriptor descriptor : this.moduleGeneratorManager.getDescriptors())
         {
@@ -119,7 +125,7 @@ public class DescriptorValidator
         for (String id : entities.keySet())
         {
             Element importRoot = entities.get(id).getRootElement();
-            for (Element child : ((Collection <Element>)importRoot.elements()))
+            for (Element child : ((Collection<Element>) importRoot.elements()))
             {
                 // todo: handle new includes not caught previously
                 if (!"include".equals(child.getName()))
@@ -147,7 +153,7 @@ public class DescriptorValidator
         Element restriction = (Element) includeDoc.selectSingleNode("/xs:schema/xs:simpleType[@name='LinkContextParamNameType']/xs:restriction");
         if (restriction != null)
         {
-            for (Map.Entry<String,String> entry : linkContextParams.entrySet())
+            for (Map.Entry<String, String> entry : linkContextParams.entrySet())
             {
                 String name = entry.getKey();
                 restriction.addElement("xs:enumeration").addAttribute("value", name);
@@ -158,5 +164,38 @@ public class DescriptorValidator
     private String getSchemaNamespace()
     {
         return applicationProperties.getBaseUrl() + "/rest/remoteapps/1/installer/schema/remote-app";
+    }
+
+    private static class NamespaceCleaner extends VisitorSupport
+    {
+        public void visit(Document document)
+        {
+            ((DefaultElement) document.getRootElement())
+                    .setNamespace(Namespace.NO_NAMESPACE);
+            document.getRootElement().additionalNamespaces().clear();
+        }
+
+        public void visit(Namespace namespace)
+        {
+            namespace.detach();
+        }
+
+        public void visit(Attribute node)
+        {
+            if (node.toString().contains("xmlns")
+                    || node.toString().contains("xsi:"))
+            {
+                node.detach();
+            }
+        }
+
+        public void visit(Element node)
+        {
+            if (node instanceof DefaultElement)
+            {
+                ((DefaultElement) node).setNamespace(Namespace.NO_NAMESPACE);
+            }
+        }
+
     }
 }

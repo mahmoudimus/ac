@@ -25,7 +25,6 @@
         <xs:attribute name="icon-url" type="HttpUrlType"/>
         <xs:attribute name="display-url" type="HttpUrlType" use="required"/>
         <xs:attribute name="access-level" type="AccessLevelType" default="global"/>
-        <xs:anyAttribute />
     </xs:complexType>
 
     <xs:element name="remote-app" type="RemoteAppType" />

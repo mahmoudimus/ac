@@ -140,8 +140,8 @@ public class ApplicationTypeModuleGenerator implements RemoteModuleGenerator
         final Class<? extends RemoteManifestProducer> manifestProducerClass = appTypesClassLoader.generateManifestProducer(
                 applicationType.getId().get(), applicationType.getI18nKey());
 
-        Element desc = copyDescriptorXml(element);
-        copyRequiredAttributes(element, desc, "icon-url", "display-url");
+        Element desc = element.createCopy();
+        desc.elements().clear();
         desc.addAttribute("key", getGeneratedApplicationTypeModuleKey(applicationType.getId().get()));
         desc.addAttribute("class", applicationType.getClass().getName());
         desc.addElement("manifest-producer").addAttribute("class", manifestProducerClass.getName());
@@ -201,11 +201,6 @@ public class ApplicationTypeModuleGenerator implements RemoteModuleGenerator
     // todo: this should also be done better so in sync with other validation
     public void validate(Element root, String registrationUrl)
     {
-        if (root.attribute("rpc-url") != null)
-        {
-            throw new PluginParseException("rpc-url not allowed");
-        }
-
         String displayUrl = root.attributeValue("display-url");
         if (displayUrl == null || !registrationUrl.startsWith(displayUrl))
         {

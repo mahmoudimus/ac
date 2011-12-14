@@ -96,7 +96,7 @@ public abstract class AbstractPageModuleGenerator implements RemoteModuleGenerat
     )
     {
         final String pageName = getRequiredAttribute(e, "name");
-        Element config = copyDescriptorXml(e);
+        Element config = e.createCopy();
         config.addAttribute("key", "servlet-" + key);
         config.addAttribute("class", IFramePageServlet.class.getName());
         config.addElement("url-pattern").setText(localUrl + "");
@@ -121,7 +121,7 @@ public abstract class AbstractPageModuleGenerator implements RemoteModuleGenerat
                                                      String localUrl
     )
     {
-        Element config = copyDescriptorXml(e);
+        Element config = e.createCopy();
         final String webItemKey = "webitem-" + key;
         config.addAttribute("key", webItemKey);
         config.addAttribute("section",

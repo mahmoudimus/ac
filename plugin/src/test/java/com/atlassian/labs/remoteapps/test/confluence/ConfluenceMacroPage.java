@@ -46,6 +46,11 @@ public class ConfluenceMacroPage implements Page
         return driver.findElement(By.className("slow-macro")).getText();
     }
 
+    public String getImageMacroAlt()
+    {
+        return driver.findElement(By.className("image-macro")).findElement(By.tagName("img")).getAttribute("alt");
+    }
+
     public MyIframePage visitGeneralLink()
     {
         driver.findElement(By.id("browse-menu-link")).click();

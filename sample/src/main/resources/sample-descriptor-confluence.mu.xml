@@ -44,4 +44,9 @@
     <macro key="{{appkey}}-slow" url="/myslowmacro" output-type="block" body-type="none">
         <description>Slow macro that takes too long to render (for testing)</description>
     </macro>
+
+    <macro key="{{appkey}}-image" url="/myimagemacro" output-type="block" body-type="none">
+        <description>Slow macro that takes too long to render (for testing)</description>
+        <image-placeholder url="/sandcastles.jpg" />
+    </macro>
 </remote-app>

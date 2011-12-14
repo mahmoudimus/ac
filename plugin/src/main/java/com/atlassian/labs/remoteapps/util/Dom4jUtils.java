@@ -31,38 +31,6 @@ import java.util.Set;
  */
 public class Dom4jUtils
 {
-    private static final Set<String> STANDARD_ATTRIBUTES = ImmutableSet.of(
-            "key",
-            "name"
-    );
-
-    public static Element copyDescriptorXml(Element source)
-    {
-        DocumentFactory factory = DocumentFactory.getInstance();
-        Element copy = factory.createElement(source.getName());
-        for (String name : STANDARD_ATTRIBUTES)
-        {
-            String value = source.attributeValue(name);
-            if (value != null)
-            {
-                copy.addAttribute(name, value);
-            }
-        }
-
-        Element sourceDesc = source.element("description");
-        if (sourceDesc != null)
-        {
-            Element copyDesc = copy.addElement("description");
-            String key = sourceDesc.attributeValue("key");
-            if (key != null)
-            {
-                copyDesc.addAttribute("key", key);
-            }
-            copyDesc.setText(sourceDesc.getText());
-        }
-        return copy;
-    }
-
     public static Element copyRequiredElements(Element source, Element dest, String... keys)
     {
         for (String name : keys)
@@ -97,6 +65,19 @@ public class Dom4jUtils
         for (String name : keys)
         {
             dest.addAttribute(name, getRequiredAttribute(source, name));
+        }
+        return dest;
+    }
+
+    public static Element copyOptionalAttributes(Element source, Element dest, String... keys)
+    {
+        for (String name : keys)
+        {
+            String value = getOptionalAttribute(source, name, null);
+            if (value != null)
+            {
+                dest.addAttribute(name, value);
+            }
         }
         return dest;
     }
