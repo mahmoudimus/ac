@@ -5,4 +5,9 @@
         <description>An user profile page</description>
         <schema id="page.xsd" path="/xsd/page.xsd" type="PageType" />
     </remote-module>
+
+    <remote-module key="refapp-webhooks" class="com.atlassian.labs.remoteapps.modules.webhook.WebHookModuleGenerator">
+        <description>Registration for a web hook callback from an internal event</description>
+        <schema id="webhook.xsd" path="/xsd/webhook-refapp.xsd" type="WebHookType" />
+    </remote-module>
 </application>

@@ -10,6 +10,8 @@ import com.atlassian.pageobjects.page.LoginPage;
 import com.atlassian.webdriver.AtlassianWebDriver;
 import com.atlassian.webdriver.AtlassianWebDriverTestBase;
 import com.atlassian.webdriver.pageobjects.WebDriverTester;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.After;
 import org.junit.Rule;
 import org.junit.Test;
@@ -25,6 +27,7 @@ import java.io.IOException;
 import java.util.Map;
 
 import static com.atlassian.labs.remoteapps.test.Utils.loadResourceAsString;
+import static com.atlassian.labs.remoteapps.test.WebHookUtils.waitForEvent;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -119,5 +122,24 @@ public class TestConfluence
                                           .getIframeQueryParams();
 
         assertEquals(pageData.get("id"), params.get("page_id"));
+	}
+
+    @Test
+	public void testPageCreatedWebHookFired() throws IOException, JSONException, InterruptedException, XmlRpcFault
+    {
+        String content = "<h1>Love me</h1>";
+        Map pageData = confluenceOps.setPage(product.getProductInstance(), "ds", "test", content);
+
+        JSONObject event = null;
+        for (int x=0; x<5; x++)
+        {
+            event = waitForEvent(product.getProductInstance(), "page_created");
+            if (pageData.get("id").equals(event.getString("pageId")))
+            {
+                break;
+            }
+        }
+        assertEquals(pageData.get("creator"), event.getString("author"));
+        assertEquals(content, event.getString("content"));
 	}
 }

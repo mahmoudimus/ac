@@ -1,7 +1,9 @@
 package com.atlassian.labs.remoteapps.descriptor;
 
+import com.atlassian.event.api.EventPublisher;
 import com.atlassian.labs.remoteapps.AccessLevelManager;
 import com.atlassian.labs.remoteapps.ModuleGeneratorManager;
+import com.atlassian.labs.remoteapps.event.RemoteAppStartedEvent;
 import com.atlassian.plugin.ModuleDescriptorFactory;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
@@ -27,6 +29,7 @@ public class RemoteAppModuleDescriptor extends AbstractModuleDescriptor<Void>
     private final BundleContext bundleContext;
     private final StartableForPlugins startableForPlugins;
     private final AccessLevelManager accessLevelManager;
+    private final EventPublisher eventPublisher;
 
     private ServiceTracker serviceTracker;
     private Element originalElement;
@@ -36,13 +39,14 @@ public class RemoteAppModuleDescriptor extends AbstractModuleDescriptor<Void>
     public RemoteAppModuleDescriptor(BundleContext bundleContext,
                                      StartableForPlugins startableForPlugins,
                                      AccessLevelManager accessLevelManager,
-                                     ModuleGeneratorManager moduleGeneratorManager)
+                                     ModuleGeneratorManager moduleGeneratorManager, EventPublisher eventPublisher)
     {
         super(new LegacyModuleFactory());
         this.bundleContext = bundleContext;
         this.startableForPlugins = startableForPlugins;
         this.accessLevelManager = accessLevelManager;
         this.moduleGeneratorManager = moduleGeneratorManager;
+        this.eventPublisher = eventPublisher;
     }
 
     @Override
@@ -105,6 +109,7 @@ public class RemoteAppModuleDescriptor extends AbstractModuleDescriptor<Void>
                         {
                             serviceTracker.open();
                             generatorInitializer.init(accessLevel);
+                            eventPublisher.publish(new RemoteAppStartedEvent(getPluginKey()));
                         }
                     }).start();
                 }

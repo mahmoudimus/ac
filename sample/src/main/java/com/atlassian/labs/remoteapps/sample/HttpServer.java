@@ -43,6 +43,7 @@ public class HttpServer
         context.addServlet(new ServletHolder(new MyMacroServlet()), "/mymacro");
         context.addServlet(new ServletHolder(new MyImageMacroServlet()), "/myimagemacro");
         context.addServlet(new ServletHolder(new MySlowMacroServlet()), "/myslowmacro");
+        context.addServlet(new ServletHolder(new WebHookServlet()), "/webhook/*");
         context.addServlet(new ServletHolder(new RegisterServlet(appKey, "global", "refapp")), "/register");
         context.addServlet(new ServletHolder(new RegisterServlet(appKey, "global", "confluence")), "/confluence-register");
         context.addServlet(new ServletHolder(new RegisterServlet(appKey, "global", "jira")), "/jira-register");

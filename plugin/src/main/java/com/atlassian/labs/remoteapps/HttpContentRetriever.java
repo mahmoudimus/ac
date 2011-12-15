@@ -5,14 +5,13 @@ import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.sal.api.user.UserManager;
 import com.google.common.base.Function;
 import com.google.common.collect.Maps;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpHeaders;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
+import org.apache.http.*;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.params.HttpClientParams;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.conn.scheme.SchemeRegistry;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.cache.CacheConfig;
 import org.apache.http.impl.client.cache.CachingHttpClient;
@@ -26,14 +25,19 @@ import org.apache.http.params.HttpProtocolParams;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.ws.rs.HttpMethod;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.ProxySelector;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -49,6 +53,7 @@ public class HttpContentRetriever implements DisposableBean
     private final CachingHttpClient httpClient;
     private final OAuthLinkManager oAuthLinkManager;
     private final UserManager userManager;
+    private final Logger log = LoggerFactory.getLogger(HttpContentRetriever.class);
 
     @Autowired
     public HttpContentRetriever(OAuthLinkManager oAuthLinkManager, UserManager userManager, PluginRetrievalService pluginRetrievalService)
@@ -72,7 +77,12 @@ public class HttpContentRetriever implements DisposableBean
                 // is still active.
             }
         });
-        HttpProtocolParams.setUserAgent(client.getParams(), "Atlassian-RemoteApps/" + pluginRetrievalService.getPlugin().getPluginInformation().getVersion());
+        HttpParams params = client.getParams();
+        HttpProtocolParams.setUserAgent(params, "Atlassian-RemoteApps/" + pluginRetrievalService.getPlugin().getPluginInformation().getVersion());
+        HttpConnectionParams.setConnectionTimeout(params, 3 * 1000);
+        HttpConnectionParams.setSoTimeout(params, 10 * 1000);
+
+
         ProxySelectorRoutePlanner routePlanner = new ProxySelectorRoutePlanner(
             client.getConnectionManager().getSchemeRegistry(),
             ProxySelector.getDefault());
@@ -103,9 +113,7 @@ public class HttpContentRetriever implements DisposableBean
                         }
                     }));
 
-            HttpParams params = httpClient.getParams();
-            HttpConnectionParams.setConnectionTimeout(params, 3 * 1000);
-            HttpConnectionParams.setSoTimeout(params, 10 * 1000);
+
             response = httpClient.execute(httpget, localContext);
             HttpEntity entity = response.getEntity();
             if (response.getStatusLine().getStatusCode() != 200)
@@ -126,5 +134,27 @@ public class HttpContentRetriever implements DisposableBean
     public void destroy() throws Exception
     {
         httpClient.getConnectionManager().shutdown();
+    }
+
+    public void postIgnoreResponse(ApplicationLink link, String url, String jsonBody)
+    {
+        HttpPost httpPost = new HttpPost(url);
+        HttpResponse response = null;
+        try
+        {
+            oAuthLinkManager.sign(httpPost, link, url, Collections.<String, List<String>>emptyMap());
+            httpPost.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
+            httpPost.setEntity(new StringEntity(jsonBody));
+            response = httpClient.execute(httpPost);
+            if (response.getStatusLine().getStatusCode() != 200)
+            {
+                log.error("Unable to post to " + url + " due to " + response.getStatusLine().toString());
+            }
+            EntityUtils.consume(response.getEntity());
+        }
+        catch (IOException e)
+        {
+            throw new ContentRetrievalException(e);
+        }
     }
 }

@@ -12,7 +12,7 @@ import static java.util.Collections.singletonMap;
  *
  */
 public class ConfluenceProductAccessor implements ProductAccessor
-{ 
+{
 
     @Override
     public WebItemModuleDescriptor createWebItemModuleDescriptor()

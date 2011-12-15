@@ -4,6 +4,7 @@ import com.samskivert.mustache.Mustache;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.nio.charset.Charset;
@@ -26,9 +27,25 @@ public class HttpUtils
     public static String render(String template, Map<String,Object> context)
     {
         StringWriter writer = new StringWriter();
-        Mustache.compiler().compile(
-                new InputStreamReader(MyAdminServlet.class.getClassLoader().getResourceAsStream(template))).execute(context,
+        InputStream resourceAsStream = null;
+        try
+        {
+            resourceAsStream = MyAdminServlet.class.getClassLoader().getResourceAsStream(template);
+            Mustache.compiler().compile(
+                new InputStreamReader(resourceAsStream)).execute(context,
                 writer);
+        }
+        finally
+        {
+            try
+            {
+                resourceAsStream.close();
+            }
+            catch (IOException e)
+            {
+                throw new RuntimeException(e);
+            }
+        }
         return writer.toString();
     }
 }

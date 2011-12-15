@@ -14,6 +14,11 @@
         <schema id="page.xsd" path="/xsd/page.xsd"  type="PageType"/>
     </remote-module>
 
+    <remote-module key="jira-webhooks" class="com.atlassian.labs.remoteapps.modules.webhook.WebHookModuleGenerator">
+        <description>Registration for a web hook callback from an internal event</description>
+        <schema id="webhook.xsd" path="/xsd/webhook-jira.xsd" type="WebHookType" />
+    </remote-module>
+
 
     <!-- activity streams -->
     <component-import key="jiraUserProfileAccessor" interface="com.atlassian.streams.spi.UserProfileAccessor" />

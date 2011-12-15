@@ -25,4 +25,5 @@
     <general-page key="remoteAppGeneral" name="Remote App {{appkey}} General" url="/myadmin" height="600" width="700"/>
     <profile-page key="remoteAppProfile" name="Remote App {{appkey}} Profile" url="/myadmin" />
 
+    <web-hook event="remote_app_started" url="/webhook/remote_app_started" />
 </remote-app>

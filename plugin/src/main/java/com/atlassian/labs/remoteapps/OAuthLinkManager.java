@@ -19,6 +19,7 @@ import net.oauth.signature.RSA_SHA1;
 import org.apache.axis.encoding.ser.ElementSerializer;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpMessage;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.netbeans.lib.cvsclient.commandLine.command.log;
 import org.slf4j.Logger;
@@ -258,4 +259,5 @@ public class OAuthLinkManager
         // todo: handle this better
         throw new IllegalArgumentException("unknown client key: " + clientKey);
     }
+
 }

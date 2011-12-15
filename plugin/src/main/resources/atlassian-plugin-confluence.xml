@@ -34,6 +34,11 @@
         <schema id="page.xsd" path="/xsd/page.xsd"  type="PageType"/>
     </remote-module>
 
+    <remote-module key="confluence-webhooks" class="com.atlassian.labs.remoteapps.modules.webhook.WebHookModuleGenerator">
+        <description>Registration for a web hook callback from an internal event</description>
+        <schema id="webhook.xsd" path="/xsd/webhook-confluence.xsd" type="WebHookType" />
+    </remote-module>
+
     <web-section key="admin.pages" name="Remote Apps" location="system.admin" weight="100">
         <label>Remote Apps</label>
     </web-section>
@@ -46,6 +51,7 @@
     </servlet>
 
     <component key="macroContentManager" class="com.atlassian.labs.remoteapps.modules.confluence.MacroContentManager"/>
+    <component key="confluenceEventHandler" class="com.atlassian.labs.remoteapps.product.confluence.ConfluenceEventHandler" />
 
     <component-import key="systemInfoService"
                       interface="com.atlassian.confluence.status.service.SystemInformationService"/>

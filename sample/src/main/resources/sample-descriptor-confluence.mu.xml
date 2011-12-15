@@ -49,4 +49,7 @@
         <description>Slow macro that takes too long to render (for testing)</description>
         <image-placeholder url="/sandcastles.jpg" />
     </macro>
+
+    <web-hook event="remote_app_started" url="/webhook/remote_app_started" />
+    <web-hook event="page_created" url="/webhook/page_created" />
 </remote-app>

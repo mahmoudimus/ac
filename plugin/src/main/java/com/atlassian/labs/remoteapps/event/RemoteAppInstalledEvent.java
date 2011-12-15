@@ -3,24 +3,24 @@ package com.atlassian.labs.remoteapps.event;
 /**
  *
  */
-public class RemoteAppInstalledEvent
+public class RemoteAppInstalledEvent extends RemoteAppEvent
 {
-    private final String pluginKey;
     private final String accessLevel;
 
     public RemoteAppInstalledEvent(String pluginKey, String accessLevel)
     {
-        this.pluginKey = pluginKey;
+        super(pluginKey);
         this.accessLevel = accessLevel;
-    }
-
-    public String getPluginKey()
-    {
-        return pluginKey;
     }
 
     public String getAccessLevel()
     {
         return accessLevel;
+    }
+
+    @Deprecated
+    public String getPluginKey()
+    {
+        return getRemoteAppKey();
     }
 }
