@@ -12,7 +12,6 @@ import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.Namespace;
 import org.dom4j.VisitorSupport;
-import org.dom4j.io.DocumentSource;
 import org.dom4j.io.SAXReader;
 import org.dom4j.tree.DefaultElement;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,13 +19,6 @@ import org.springframework.stereotype.Component;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import javax.xml.XMLConstants;
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
-import javax.xml.validation.Validator;
-import java.io.IOException;
 import java.io.StringReader;
 import java.net.URL;
 import java.util.Collection;
@@ -64,14 +56,19 @@ public class DescriptorValidator
         SAXReader reader = new SAXReader(true);
         try
         {
+            reader.setFeature("http://apache.org/xml/features/validation/schema", true);
+            reader.setProperty("http://java.sun.com/xml/jaxp/properties/schemaLanguage",
+                    "http://www.w3.org/2001/XMLSchema");
+            boolean useNamespace = descriptorXml.contains(getSchemaNamespace());
+            final InputSource schemaSource = new InputSource(new StringReader(buildSchema(useNamespace)));
+            schemaSource.setSystemId(getSchemaUrl().toString());
+            reader.setProperty("http://java.sun.com/xml/jaxp/properties/schemaSource", schemaSource);
+
             InputSource source = new InputSource(new StringReader(descriptorXml));
             source.setSystemId(url);
             source.setEncoding("UTF-8");
-            reader.setValidation(false);
             Document document = reader.read(source);
-            document.accept(new NamespaceSetter(new Namespace("", getSchemaNamespace())));
 
-            validate(document);
             document.accept(new NamespaceCleaner());
             return document;
         }
@@ -79,39 +76,9 @@ public class DescriptorValidator
         {
             throw new InstallationFailedException("Unable to parse the descriptor: " + e.getMessage(), e);
         }
-    }
-
-    private void validate(Document doc)
-    {
-        SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-
-        // load a WXS schema, represented by a Schema instance
-        Source schemaFile = new StreamSource(new StringReader(buildSchema()));
-        Schema schema = null;
-        try
-        {
-            schema = factory.newSchema(schemaFile);
-        }
         catch (SAXException e)
         {
-            throw new RuntimeException("Unable to build schema", e);
-        }
-
-        // create a Validator instance, which can be used to validate an instance document
-        Validator validator = schema.newValidator();
-
-        // validate the DOM tree
-        try
-        {
-            validator.validate(new DocumentSource(doc));
-        }
-        catch (SAXException e)
-        {
-            throw new InstallationFailedException("Unable to validate the descriptor: " + e.getMessage(), e);
-        }
-        catch (IOException e)
-        {
-            throw new RuntimeException("Shouldn't happen", e);
+            throw new RuntimeException(e);
         }
     }
 
@@ -123,10 +90,10 @@ public class DescriptorValidator
 
     public String getSchema()
     {
-        return buildSchema();
+        return buildSchema(false);
     }
 
-    private String buildSchema()
+    private String buildSchema(boolean usesNamespace)
     {
         Map<String, Document> entities = newLinkedHashMap();
 
@@ -154,8 +121,12 @@ public class DescriptorValidator
 
 
         final String ns = getSchemaNamespace();
-        root.addAttribute("targetNamespace", ns);
-        root.addAttribute("xmlns", ns);
+        if (usesNamespace)
+        {
+            root.addAttribute("targetNamespace", ns);
+            root.addAttribute("xmlns", ns);
+        }
+
         for (String id : entities.keySet())
         {
             Element importRoot = entities.get(id).getRootElement();
