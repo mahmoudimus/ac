@@ -47,7 +47,7 @@
     <xs:complexType name="MacroParameterType">
         <xs:sequence>
             <xs:element name="alias" type="MacroParameterAliasType" minOccurs="0" maxOccurs="1"/>
-            <xs:element name="value" type="MacroParameterEnumValueType" minOccurs="1" maxOccurs="unbounded"/>
+            <xs:element name="value" type="MacroParameterEnumValueType" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
         <xs:attribute name="name" type="xs:string" use="required"/>
         <xs:attribute name="title" type="xs:string"/>

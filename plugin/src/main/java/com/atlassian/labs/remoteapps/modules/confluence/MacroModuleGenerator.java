@@ -12,6 +12,7 @@ import com.atlassian.labs.remoteapps.modules.external.RemoteAppCreationContext;
 import com.atlassian.labs.remoteapps.modules.external.RemoteModule;
 import com.atlassian.labs.remoteapps.modules.external.RemoteModuleGenerator;
 import com.atlassian.plugin.ModuleDescriptor;
+import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.google.common.collect.ImmutableSet;
@@ -37,14 +38,16 @@ public class MacroModuleGenerator implements RemoteModuleGenerator
     private final ApplicationLinkOperationsFactory applicationLinkOperationsFactory;
     private final MacroContentManager macroContentManager;
     private final I18NBeanFactory i18NBeanFactory;
+    private final PluginAccessor pluginAccessor;
 
-    public MacroModuleGenerator(SystemInformationService systemInformationService, XhtmlContent xhtmlContent, ApplicationLinkOperationsFactory applicationLinkOperationsFactory, MacroContentManager macroContentManager, I18NBeanFactory i18NBeanFactory)
+    public MacroModuleGenerator(SystemInformationService systemInformationService, XhtmlContent xhtmlContent, ApplicationLinkOperationsFactory applicationLinkOperationsFactory, MacroContentManager macroContentManager, I18NBeanFactory i18NBeanFactory, PluginAccessor pluginAccessor)
     {
         this.systemInformationService = systemInformationService;
         this.xhtmlContent = xhtmlContent;
         this.applicationLinkOperationsFactory = applicationLinkOperationsFactory;
         this.macroContentManager = macroContentManager;
         this.i18NBeanFactory = i18NBeanFactory;
+        this.pluginAccessor = pluginAccessor;
     }
 
     @Override
@@ -108,10 +111,22 @@ public class MacroModuleGenerator implements RemoteModuleGenerator
     public void validate(Element element) throws PluginParseException
     {
         // todo: should find a better way to ensure modules are global
-        String accessLevel = element.getParent().attributeValue("access-level");
+        Element root = element.getParent();
+        String accessLevel = root.attributeValue("access-level");
         if (!"global".equals(accessLevel))
         {
-            element.getParent().addAttribute("access-level", "global");
+            root.addAttribute("access-level", "global");
+        }
+
+        String key = element.attributeValue("key");
+        String appKey = root.attributeValue("key");
+
+        for (XhtmlMacroModuleDescriptor descriptor : pluginAccessor.getEnabledModuleDescriptorsByClass(XhtmlMacroModuleDescriptor.class))
+        {
+            if (key.equals(descriptor.getKey()) && !appKey.equals(descriptor.getPluginKey()))
+            {
+                throw new PluginParseException("Macro key '" + key + "' already used by app '" + descriptor.getPluginKey() + "'");
+            }
         }
     }
 
