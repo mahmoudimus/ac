@@ -1,6 +1,7 @@
 package com.atlassian.labs.remoteapps.product.confluence;
 
 import com.atlassian.labs.remoteapps.modules.permissions.scope.ApiScope;
+import com.atlassian.labs.remoteapps.modules.permissions.scope.JsonRpcApiScope;
 import com.atlassian.labs.remoteapps.modules.permissions.scope.XmlRpcApiScope;
 
 import javax.servlet.http.HttpServletRequest;
@@ -51,9 +52,50 @@ public class ReadContentScope implements ApiScope
             "confluence2.getLabelContentByObject",
             "confluence2.getSpacesContainingContentWithLabel"
     ));
+
+    private final JsonRpcApiScope jsonrpcScope = new JsonRpcApiScope("/rpc/json-rpc/confluenceservice-v2", asList(
+            "getSpaces",
+            "getSpace",
+            "exportSpace",
+            "getPages",
+            "getPage",
+            "getPageHistory",
+            "getAttachments",
+            "getAncestors",
+            "getChildren",
+            "getDescendents",
+            "getComments",
+            "getComment",
+            "renderContent",
+            "getAttachment",
+            "getAttachmentData",
+            "getBlogEntry",
+            "getBlogEntries",
+            "getBlogEntryByDayAndTitle",
+            "getBlogEntryByDateAndTitle",
+            "isWatchingPage",
+            "isWatchingSpace",
+            "getWatchersForPage",
+            "getWatchersForPage",
+            "search",
+            "getLabelsById",
+            "getMostPopularLabels",
+            "getMostPopularLabelsInSpace",
+            "getRecentlyUsedLabels",
+            "getRecentlyUsedLabelsInSpace",
+            "getSpacesWithLabel",
+            "getRelatedLabels",
+            "getRelatedLabelsInSpace",
+            "getLabelsByDetail",
+            "getLabelContentById",
+            "getLabelContentByName",
+            "getLabelContentByObject",
+            "getSpacesContainingContentWithLabel"
+    ));
+
     @Override
     public boolean allow(HttpServletRequest request, String user)
     {
-        return xmlrpcScope.allow(request);
+        return xmlrpcScope.allow(request) && jsonrpcScope.allow(request);
     }
 }

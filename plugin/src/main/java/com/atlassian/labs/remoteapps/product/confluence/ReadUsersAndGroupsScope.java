@@ -1,6 +1,7 @@
 package com.atlassian.labs.remoteapps.product.confluence;
 
 import com.atlassian.labs.remoteapps.modules.permissions.scope.ApiScope;
+import com.atlassian.labs.remoteapps.modules.permissions.scope.JsonRpcApiScope;
 import com.atlassian.labs.remoteapps.modules.permissions.scope.XmlRpcApiScope;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,9 +22,18 @@ public class ReadUsersAndGroupsScope implements ApiScope
             "confluence2.getActiveUsers",
             "confluence2.getUserInformation"
     ));
+    private final JsonRpcApiScope jsonrpcScope = new JsonRpcApiScope("/rpc/xmlrpc", asList(
+            "getUser",
+            "getUserGroups",
+            "getGroups",
+            "hasUser",
+            "hasGroup",
+            "getActiveUsers",
+            "getUserInformation"
+    ));
     @Override
     public boolean allow(HttpServletRequest request, String user)
     {
-        return xmlrpcScope.allow(request);
+        return xmlrpcScope.allow(request) && jsonrpcScope.allow(request);
     }
 }
