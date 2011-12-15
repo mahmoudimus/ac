@@ -1,6 +1,7 @@
 package com.atlassian.labs.remoteapps;
 
 import com.atlassian.applinks.api.ApplicationLink;
+import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.sal.api.user.UserManager;
 import com.google.common.base.Function;
 import com.google.common.collect.Maps;
@@ -9,6 +10,7 @@ import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.params.HttpClientParams;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -20,6 +22,7 @@ import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
+import org.apache.http.params.HttpProtocolParams;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
@@ -48,7 +51,7 @@ public class HttpContentRetriever implements DisposableBean
     private final UserManager userManager;
 
     @Autowired
-    public HttpContentRetriever(OAuthLinkManager oAuthLinkManager, UserManager userManager)
+    public HttpContentRetriever(OAuthLinkManager oAuthLinkManager, UserManager userManager, PluginRetrievalService pluginRetrievalService)
     {
         this.oAuthLinkManager = oAuthLinkManager;
         this.userManager = userManager;
@@ -69,6 +72,7 @@ public class HttpContentRetriever implements DisposableBean
                 // is still active.
             }
         });
+        HttpProtocolParams.setUserAgent(client.getParams(), "Atlassian-RemoteApps/" + pluginRetrievalService.getPlugin().getPluginInformation().getVersion());
         ProxySelectorRoutePlanner routePlanner = new ProxySelectorRoutePlanner(
             client.getConnectionManager().getSchemeRegistry(),
             ProxySelector.getDefault());

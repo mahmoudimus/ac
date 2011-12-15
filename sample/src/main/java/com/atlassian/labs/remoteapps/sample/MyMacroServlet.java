@@ -6,6 +6,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
+
+import static com.atlassian.labs.remoteapps.sample.HttpUtils.renderHtml;
 
 /**
  *
@@ -15,15 +18,14 @@ public class MyMacroServlet extends HttpServlet
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
     {
-        String pageId = req.getParameter("pageId");
-        String favoriteFooty = req.getParameter("footy");
-        String body = req.getParameter("body");
+        final String pageId = req.getParameter("pageId");
+        final String favoriteFooty = req.getParameter("footy");
+        final String body = req.getParameter("body");
 
-        resp.setContentType("text/html");
-        PrintWriter writer = resp.getWriter();
-        writer.print("<p>Page ID: <span class=\"rp-page-id\">" + pageId + "</span></p>");
-        writer.print("<p>Favorite Footy: <span class=\"rp-footy\">" + favoriteFooty + "</span></p>");
-        writer.print("<p>Body: <div  class=\"rp-body\">" + body + "</div></p>");
-        writer.close(); 
+        renderHtml(resp, "/macro.mu", new HashMap<String,Object>() {{
+                put("pageId", pageId);
+                put("favoriteFooty", favoriteFooty);
+                put("body", body);
+        }});
     }
 }
