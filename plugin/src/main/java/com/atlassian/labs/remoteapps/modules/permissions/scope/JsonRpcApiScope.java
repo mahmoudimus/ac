@@ -42,7 +42,7 @@ public class JsonRpcApiScope {
         else
         {
             // methodName in path
-            String method = request.getPathInfo().replaceAll(path + "/","");
+            String method = pathInfo.replaceAll(path.toString() + "/","");
             return methods.contains(method);
         }
         return false;
