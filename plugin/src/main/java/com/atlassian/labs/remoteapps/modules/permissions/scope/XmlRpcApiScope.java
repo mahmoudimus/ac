@@ -50,6 +50,7 @@ public class XmlRpcApiScope
         {
             in = request.getInputStream();
             Document doc = build.read(in);
+            in.close();
             return doc.getRootElement().element("methodName").getTextTrim();
         }
         catch (IOException e)

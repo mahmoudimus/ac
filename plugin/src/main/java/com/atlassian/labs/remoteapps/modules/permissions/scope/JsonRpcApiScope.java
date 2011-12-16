@@ -56,6 +56,7 @@ public class JsonRpcApiScope {
             in = request.getInputStream();
             InputStreamReader reader = new InputStreamReader(in);
             JSONObject json = new JSONObject(new JSONTokener(reader));
+            in.close();
             return json.get("method").toString();
         }
         catch (JSONException e)
