@@ -61,9 +61,10 @@ public class ApplicationTypeModule implements ClosableRemoteModule, StartableRem
                                                                                           .getRpcUrl());
             try
             {
-                if (applicationLinkService.getApplicationLink(applicationId) == null)
+                link = applicationLinkService.getApplicationLink(applicationId);
+                if (link == null)
                 {
-                    applicationLinkService.addApplicationLink(applicationId, applicationType, applicationType.getDefaultDetails());
+                    link = applicationLinkService.addApplicationLink(applicationId, applicationType, applicationType.getDefaultDetails());
                 }
             }
             catch (TypeNotInstalledException e)
@@ -75,6 +76,7 @@ public class ApplicationTypeModule implements ClosableRemoteModule, StartableRem
         {
             log.info("Applink of type {} already exists", applicationType.getId());
         }
+        link.putProperty("IS_ACTIVITY_ITEM_PROVIDER", Boolean.FALSE.toString());
         permissionManager.setRestrictRemoteApp(applicationType, accessLevel);
     }
 
