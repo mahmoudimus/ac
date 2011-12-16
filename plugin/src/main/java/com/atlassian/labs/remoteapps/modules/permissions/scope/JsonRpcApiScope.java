@@ -1,25 +1,24 @@
 package com.atlassian.labs.remoteapps.modules.permissions.scope;
 
 import com.atlassian.labs.remoteapps.util.ServletUtils;
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.io.SAXReader;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Collection;
 
 /**
- * An api scope for xml-rpc requests
+ * An api scope for json-rpc requests
  */
-public class XmlRpcApiScope
-{
-    private final String path;
-    private final Collection<String> methods;
+public class JsonRpcApiScope {
+    private Collection<String> methods;
+    private String path;
 
-    public XmlRpcApiScope(String path, Collection<String> methods)
-    {
+    public JsonRpcApiScope(String path, Collection<String> methods) {
         this.path = path;
         this.methods = methods;
     }
@@ -29,6 +28,7 @@ public class XmlRpcApiScope
         final String pathInfo = ServletUtils.extractPathInfo(request);
         if (path.equals(pathInfo))
         {
+            // methodName not in path so extract it from body
             String method = extractMethod(request);
             if (method == null)
             {
@@ -39,29 +39,34 @@ public class XmlRpcApiScope
                 return true;
             }
         }
+        else
+        {
+            // methodName in path
+            String method = pathInfo.replaceAll(path.toString() + "/","");
+            return methods.contains(method);
+        }
         return false;
     }
 
     private String extractMethod(HttpServletRequest request)
     {
-        SAXReader build = new SAXReader();
-        InputStream in;
         try
         {
+            InputStream in;
             in = request.getInputStream();
-            Document doc = build.read(in);
+            InputStreamReader reader = new InputStreamReader(in);
+            JSONObject json = new JSONObject(new JSONTokener(reader));
             in.close();
-            return doc.getRootElement().element("methodName").getTextTrim();
+            return json.get("method").toString();
+        }
+        catch (JSONException e)
+        {
+            return null;
         }
         catch (IOException e)
         {
-            // don't care why
-            return null;
-        }
-        catch (DocumentException e)
-        {
-            // don't care why
             return null;
         }
     }
+
 }
