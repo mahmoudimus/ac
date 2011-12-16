@@ -1,6 +1,7 @@
 package com.atlassian.labs.remoteapps.modules.permissions.scope;
 
 import com.atlassian.labs.remoteapps.util.ServletUtils;
+import org.apache.commons.io.IOUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.io.SAXReader;
@@ -45,12 +46,11 @@ public class XmlRpcApiScope
     private String extractMethod(HttpServletRequest request)
     {
         SAXReader build = new SAXReader();
-        InputStream in;
+        InputStream in = null;
         try
         {
             in = request.getInputStream();
             Document doc = build.read(in);
-            in.close();
             return doc.getRootElement().element("methodName").getTextTrim();
         }
         catch (IOException e)
@@ -62,6 +62,10 @@ public class XmlRpcApiScope
         {
             // don't care why
             return null;
+        }
+        finally
+        {
+            IOUtils.closeQuietly(in);
         }
     }
 }

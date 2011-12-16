@@ -1,6 +1,7 @@
 package com.atlassian.labs.remoteapps.modules.permissions.scope;
 
 import com.atlassian.labs.remoteapps.util.ServletUtils;
+import org.apache.commons.io.IOUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -50,13 +51,12 @@ public class JsonRpcApiScope {
 
     private String extractMethod(HttpServletRequest request)
     {
+        InputStream in = null;
         try
         {
-            InputStream in;
             in = request.getInputStream();
             InputStreamReader reader = new InputStreamReader(in);
             JSONObject json = new JSONObject(new JSONTokener(reader));
-            in.close();
             return json.get("method").toString();
         }
         catch (JSONException e)
@@ -67,6 +67,9 @@ public class JsonRpcApiScope {
         {
             return null;
         }
+        finally
+        {
+            IOUtils.closeQuietly(in);
+        }
     }
-
 }
