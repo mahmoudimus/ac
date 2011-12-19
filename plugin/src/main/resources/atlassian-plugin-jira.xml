@@ -1,22 +1,23 @@
 <application key="jira">
-    <component key="jiraProductAccessor" class="com.atlassian.labs.remoteapps.product.jira.JiraProductAccessor" />
+    <component key="jiraProductAccessor" class="com.atlassian.labs.remoteapps.product.jira.JiraProductAccessor"/>
 
     <web-item key="general-dropdown-item" section="system.top.navigation.bar" weight="100">
         <label>Remote Apps</label>
-        <link linkId="general_dropdown_linkId" />
+        <link linkId="general_dropdown_linkId"/>
     </web-item>
 
     <web-section key="remoteapps.general" location="general_dropdown_linkId">
     </web-section>
 
-    <remote-module key="jira-profile-page" class="com.atlassian.labs.remoteapps.modules.page.jira.JiraProfileTabModuleGenerator">
+    <remote-module key="jira-profile-page"
+                   class="com.atlassian.labs.remoteapps.modules.page.jira.JiraProfileTabModuleGenerator">
         <description>An profile page</description>
-        <schema id="page.xsd" path="/xsd/page.xsd"  type="PageType"/>
+        <schema id="page.xsd" path="/xsd/page.xsd" type="PageType"/>
     </remote-module>
 
     <remote-module key="jira-webhooks" class="com.atlassian.labs.remoteapps.modules.webhook.WebHookModuleGenerator">
         <description>Registration for a web hook callback from an internal event</description>
-        <schema id="webhook.xsd" path="/xsd/webhook-jira.xsd" type="WebHookType" />
+        <schema id="webhook.xsd" path="/xsd/webhook-jira.xsd" type="WebHookType"/>
     </remote-module>
 
     <api-scope key="read_users_and_groups"
@@ -27,11 +28,49 @@
         </description>
     </api-scope>
 
+    <api-scope key="browse_projects"
+               class="com.atlassian.labs.remoteapps.product.jira.BrowseProjectsScope"
+               name="Browse Projects">
+        <description>
+            Permission to browse projects, search issues, and view individual issues (except issues that have
+            been restricted via Issue Security). 
+        </description>
+    </api-scope>
+
+    <api-scope key="create_issues"
+               class="com.atlassian.labs.remoteapps.product.jira.JiraCreateIssuesScope"
+               name="Create Issues">
+        <description>
+            Permission to create issues in the project. (Note that the Create Attachments permission is required in
+            order to create
+            attachments.) Includes the ability to create sub-tasks (if sub-tasks are enabled).
+        </description>
+    </api-scope>
+
+    <api-scope key="edit_issues"
+               class="com.atlassian.labs.remoteapps.product.jira.JiraEditIssuesScope"
+               name="Edit Issues">
+        <description>
+            Permission to edit issues (excluding the 'Due Date' field — see the Schedule Issues permission). Includes
+            the ability to convert issues to sub-tasks and vice versa (if sub-tasks are enabled). Note that the Delete
+            Issue permission is required in order to delete issues.
+        </description>
+    </api-scope>
+
+    <api-scope key="resolve_issues"
+               class="com.atlassian.labs.remoteapps.product.jira.JiraResolveIssuesScope"
+               name="Resolve Issues">
+        <description>
+            Permission to resolve and reopen issues. This also includes the ability to set the 'Fix For version' field
+            for issues. Also see the Close Issues permission.
+        </description>
+    </api-scope>
+
 
     <!-- activity streams -->
-    <component-import key="jiraUserProfileAccessor" interface="com.atlassian.streams.spi.UserProfileAccessor" />
+    <component-import key="jiraUserProfileAccessor" interface="com.atlassian.streams.spi.UserProfileAccessor"/>
     <activity-streams-provider key="apps-provider" name="Remote Apps Provider"
-                       class="com.atlassian.labs.remoteapps.streams.RemoteAppsActivityProvider">
+                               class="com.atlassian.labs.remoteapps.streams.RemoteAppsActivityProvider">
     </activity-streams-provider>
 
 </application>

@@ -14,18 +14,13 @@ import static java.util.Arrays.asList;
 /**
  *
  */
-public class JiraReadUsersAndGroupsScope implements ApiScope
+public class JiraReadUsersAndGroupsScope extends JiraScope
 {
-    private final Collection<String> methods = asList(
+    public JiraReadUsersAndGroupsScope()
+    {
+        super(asList(
             "getUser",
             "getGroup"
-    );
-    private final RpcEncodedSoapApiScope soapScope = new RpcEncodedSoapApiScope("/rpc/soap/jirasoapservice-v2", "http://soap.rpc.jira.atlassian.com", methods);
-    private final JsonRpcApiScope jsonrpcScope = new JsonRpcApiScope("/rpc/json-rpc/jirasoapservice-v2", methods);
-
-    @Override
-    public boolean allow(HttpServletRequest request, String user)
-    {
-        return soapScope.allow(request) || jsonrpcScope.allow(request);
+        ));
     }
 }

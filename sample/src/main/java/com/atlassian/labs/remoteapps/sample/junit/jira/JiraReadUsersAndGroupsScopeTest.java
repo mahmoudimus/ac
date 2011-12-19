@@ -72,4 +72,28 @@ public class JiraReadUsersAndGroupsScopeTest
         System.out.println("response: " + result.toString(2));
         assertEquals("betty", result.getJSONObject("result").getString("name"));
     }
+
+    @Test
+    public void testJsonLightCall() throws Exception
+    {
+        String url = getHostBaseUrl() + "/rpc/json-rpc/jirasoapservice-v2/getUser";
+        HttpURLConnection conn = (HttpURLConnection) new URL(url + "?user_id=betty").openConnection();
+        conn.setDoOutput(true);
+        conn.setDoInput(true);
+        conn.setRequestMethod("POST");
+        conn.setRequestProperty("Content-Type", "application/json");
+        OAuthContext.INSTANCE.sign(url, "POST", "betty", conn);
+        PrintWriter out = new PrintWriter(new OutputStreamWriter(conn.getOutputStream()));
+        String body = new JSONArray()
+                                .put("")
+                                .put("betty")
+                .toString(2);
+        System.out.println("sending body: " + body);
+        out.write(body);
+        out.close();
+
+        JSONObject result = new JSONObject(new JSONTokener(new InputStreamReader(conn.getInputStream())));
+        System.out.println("response: " + result.toString(2));
+        assertEquals("betty", result.getString("name"));
+    }
 }
