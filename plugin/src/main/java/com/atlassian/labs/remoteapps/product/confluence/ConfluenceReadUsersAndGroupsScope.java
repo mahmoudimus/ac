@@ -13,7 +13,7 @@ import static java.util.Arrays.asList;
 /**
  *
  */
-public class ReadUsersAndGroupsScope implements ApiScope
+public class ConfluenceReadUsersAndGroupsScope implements ApiScope
 {
     private final XmlRpcApiScope xmlrpcScope = new XmlRpcApiScope("/rpc/xmlrpc", methodList("confluence2."));
     private final JsonRpcApiScope jsonrpcScope = new JsonRpcApiScope("/rpc/xmlrpc", methodList(""));

@@ -17,7 +17,7 @@
     </api-scope>
 
     <api-scope key="read_users_and_groups"
-               class="com.atlassian.labs.remoteapps.product.confluence.ReadUsersAndGroupsScope"
+               class="com.atlassian.labs.remoteapps.product.confluence.ConfluenceReadUsersAndGroupsScope"
                name="Read Users and Groups">
         <description>
             View users, users info, and groups

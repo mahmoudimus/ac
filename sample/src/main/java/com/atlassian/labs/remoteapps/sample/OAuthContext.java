@@ -3,6 +3,9 @@ package com.atlassian.labs.remoteapps.sample;
 import com.atlassian.labs.remoteapps.sample.junit.XmlRpcClient;
 import net.oauth.*;
 import net.oauth.signature.RSA_SHA1;
+import org.apache.axis.client.Stub;
+import org.apache.axis.handlers.soap.SOAPService;
+import org.apache.axis.transport.http.HTTPConstants;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -15,7 +18,10 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Map;
+
+import static java.util.Collections.singletonMap;
 
 /**
  *
@@ -174,6 +180,12 @@ public class OAuthContext
     {
         String authorization = getAuthorizationHeaderValue(uri, "POST");
         client.setRequestProperty("Authorization", authorization);
+    }
+
+    public void sign(String uri, Stub service)
+    {
+        String authorization = getAuthorizationHeaderValue(uri, "POST");
+        service._setProperty(HTTPConstants.REQUEST_HEADERS, new Hashtable(singletonMap(HTTPConstants.HEADER_AUTHORIZATION, authorization)));
     }
 
     public void sign(String uri, String method, HttpURLConnection yc)

@@ -1,30 +1,26 @@
 package com.atlassian.labs.remoteapps.util;
 
-import com.atlassian.labs.remoteapps.descriptor.external.RemoteModuleDescriptor;
-import com.atlassian.labs.remoteapps.installer.InstallationFailedException;
 import com.atlassian.plugin.PluginParseException;
-import com.google.common.base.Function;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import org.apache.commons.io.IOUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
-import org.dom4j.DocumentFactory;
 import org.dom4j.Element;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
+import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
+import javax.servlet.ServletRequest;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Reader;
 import java.io.StringWriter;
 import java.net.URI;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  *
@@ -52,7 +48,7 @@ public class Dom4jUtils
     {
         for (String name : keys)
         {
-            for (Element e : (List<Element>)source.elements(name))
+            for (Element e : (List<Element>) source.elements(name))
             {
                 dest.add(e.createCopy());
             }
@@ -149,6 +145,44 @@ public class Dom4jUtils
             throw new IllegalArgumentException("Unable to write document", e);
         }
         return writer.toString();
+    }
+
+    public static Document readDocument(ServletRequest request)
+    {
+        try
+        {
+            return readDocument(request.getInputStream());
+        }
+        catch (IOException e)
+        {
+            // ignore
+            return null;
+        }
+    }
+    public static Document readDocument(InputStream in)
+    {
+        SAXReader build = new SAXReader();
+        try
+        {
+            build.setEntityResolver(new EntityResolver()
+            {
+                @Override
+                public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException
+                {
+                    return null;
+                }
+            });
+            return build.read(in);
+        }
+        catch (DocumentException e)
+        {
+            // don't care why
+            return null;
+        }
+        finally
+        {
+            IOUtils.closeQuietly(in);
+        }
     }
 
 }

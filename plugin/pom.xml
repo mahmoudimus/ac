@@ -361,6 +361,13 @@
                             <log4jProperties>src/test/resources/log4j-jira.properties</log4jProperties>
                             <productDataPath>${basedir}/src/test/resources/jira-generated-test-resources.zip
                             </productDataPath>
+                            <libArtifacts>
+                                <libArtifact>
+                                    <groupId>com.atlassian.jira.plugins</groupId>
+                                    <artifactId>atlassian-jira-rpc-plugin</artifactId>
+                                    <version>${jira.version}</version>
+                                </libArtifact>
+                            </libArtifacts>
                             <systemPropertyVariables>
                                 <product>jira</product>
                             </systemPropertyVariables>

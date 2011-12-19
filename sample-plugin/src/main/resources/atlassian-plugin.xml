@@ -9,4 +9,5 @@
 
     <junit key="all" package="com.atlassian.labs.remoteapps.sample.junit.all" />
     <junit key="confluence" package="com.atlassian.labs.remoteapps.sample.junit.confluence" application="confluence"/>
+    <junit key="jira" package="com.atlassian.labs.remoteapps.sample.junit.jira" application="jira"/>
 </atlassian-plugin>

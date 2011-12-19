@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 
+import static com.atlassian.labs.remoteapps.util.Dom4jUtils.readDocument;
+
 /**
  * An api scope for xml-rpc requests
  */
@@ -30,7 +32,8 @@ public class XmlRpcApiScope
         final String pathInfo = ServletUtils.extractPathInfo(request);
         if (path.equals(pathInfo))
         {
-            String method = extractMethod(request);
+            Document doc = readDocument(request);
+            String method = doc.getRootElement().element("methodName").getTextTrim();
             if (method == null)
             {
                 return false;
@@ -41,31 +44,5 @@ public class XmlRpcApiScope
             }
         }
         return false;
-    }
-
-    private String extractMethod(HttpServletRequest request)
-    {
-        SAXReader build = new SAXReader();
-        InputStream in = null;
-        try
-        {
-            in = request.getInputStream();
-            Document doc = build.read(in);
-            return doc.getRootElement().element("methodName").getTextTrim();
-        }
-        catch (IOException e)
-        {
-            // don't care why
-            return null;
-        }
-        catch (DocumentException e)
-        {
-            // don't care why
-            return null;
-        }
-        finally
-        {
-            IOUtils.closeQuietly(in);
-        }
     }
 }
