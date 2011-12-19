@@ -6,6 +6,7 @@ import com.atlassian.labs.remoteapps.modules.permissions.scope.RpcEncodedSoapApi
 import com.atlassian.labs.remoteapps.modules.permissions.scope.XmlRpcApiScope;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Collection;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -15,14 +16,16 @@ import static java.util.Arrays.asList;
  */
 public class JiraReadUsersAndGroupsScope implements ApiScope
 {
-    private final RpcEncodedSoapApiScope soapScope = new RpcEncodedSoapApiScope("/rpc/soap/jirasoapservice-v2", asList(
-        new RpcEncodedSoapApiScope.SoapScope("http://soap.rpc.jira.atlassian.com", "getUser"),
-        new RpcEncodedSoapApiScope.SoapScope("http://soap.rpc.jira.atlassian.com", "getGroup")
-    ));
+    private final Collection<String> methods = asList(
+            "getUser",
+            "getGroup"
+    );
+    private final RpcEncodedSoapApiScope soapScope = new RpcEncodedSoapApiScope("/rpc/soap/jirasoapservice-v2", "http://soap.rpc.jira.atlassian.com", methods);
+    private final JsonRpcApiScope jsonrpcScope = new JsonRpcApiScope("/rpc/json-rpc/jirasoapservice-v2", methods);
 
     @Override
     public boolean allow(HttpServletRequest request, String user)
     {
-        return soapScope.allow(request);
+        return soapScope.allow(request) || jsonrpcScope.allow(request);
     }
 }

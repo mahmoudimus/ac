@@ -16,9 +16,9 @@ public class ReadContentScopeTest
     @Test
     public void testCall() throws Exception
     {
-        final String url = getHostBaseUrl() + "/rpc/xmlrpc?user_id=betty";
-        XmlRpcClient client = new XmlRpcClient(url, false);
-        OAuthContext.INSTANCE.sign(url, client);
+        final String url = getHostBaseUrl() + "/rpc/xmlrpc";
+        XmlRpcClient client = new XmlRpcClient(url + "?user_id=betty", false);
+        OAuthContext.INSTANCE.sign(url, "betty", client);
         XmlRpcStruct space = (XmlRpcStruct) client.invoke( "confluence2.getSpace", new Object[] { "", "DS" } );
         assertEquals("ds", space.getString("key"));
         assertEquals("Demonstration Space", space.getString("name"));

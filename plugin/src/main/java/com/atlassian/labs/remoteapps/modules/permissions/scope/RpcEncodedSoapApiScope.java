@@ -1,6 +1,7 @@
 package com.atlassian.labs.remoteapps.modules.permissions.scope;
 
 import com.atlassian.labs.remoteapps.util.ServletUtils;
+import com.google.common.base.Function;
 import org.apache.commons.io.IOUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -8,6 +9,7 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.xml.sax.EntityResolver;
 
+import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,6 +30,18 @@ public class RpcEncodedSoapApiScope
     {
         this.path = path;
         this.soapActions = soapActions;
+    }
+
+    public RpcEncodedSoapApiScope(String path, final String namespace, Collection<String> methods)
+    {
+        this(path, transform(methods, new Function<String, SoapScope>()
+        {
+            @Override
+            public SoapScope apply(String from)
+            {
+                return new SoapScope(namespace, from);
+            }
+        }));
     }
 
     public boolean allow(HttpServletRequest request)

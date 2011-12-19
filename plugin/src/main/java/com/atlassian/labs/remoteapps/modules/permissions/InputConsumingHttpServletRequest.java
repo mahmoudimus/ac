@@ -5,9 +5,12 @@ import org.apache.commons.io.IOUtils;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 
 /**
  * Consumes the input stream for a request, allowing multiple executions
@@ -29,12 +32,7 @@ public class InputConsumingHttpServletRequest extends HttpServletRequestWrapper
     @Override
     public ServletInputStream getInputStream() throws IOException
     {
-        if (input == null)
-        {
-            ByteArrayOutputStream bout = new ByteArrayOutputStream();
-            IOUtils.copy(super.getInputStream(), bout);
-            input = bout.toByteArray();
-        }
+        lazilyLoadInput();
         final ByteArrayInputStream bin = new ByteArrayInputStream(input);
         return new ServletInputStream()
         {
@@ -44,5 +42,22 @@ public class InputConsumingHttpServletRequest extends HttpServletRequestWrapper
                 return bin.read();
             }
         };
+    }
+
+    private void lazilyLoadInput() throws IOException
+    {
+        if (input == null)
+        {
+            ByteArrayOutputStream bout = new ByteArrayOutputStream();
+            IOUtils.copy(super.getInputStream(), bout);
+            input = bout.toByteArray();
+        }
+    }
+
+    @Override
+    public BufferedReader getReader() throws IOException
+    {
+        lazilyLoadInput();
+        return new BufferedReader(new InputStreamReader(new ByteArrayInputStream(input), "UTF-8"));
     }
 }

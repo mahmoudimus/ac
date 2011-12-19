@@ -141,20 +141,23 @@ public class OAuthContext
         System.out.println(sb.toString());
     }
 
-    private String getAuthorizationHeaderValue(String uri, String method)
+    private String getAuthorizationHeaderValue(String uri, String method, final String user)
     {
         try
         {
             final String timestamp = System.currentTimeMillis() / 1000 + "";
             final String nonce = System.nanoTime() + "";
+
             Map<String,String> params = new HashMap<String,String>() {{
                 put(OAuth.OAUTH_SIGNATURE_METHOD, OAuth.RSA_SHA1);
                 put(OAuth.OAUTH_VERSION, "1.0");
                 put(OAuth.OAUTH_CONSUMER_KEY, local.consumerKey);
                 put(OAuth.OAUTH_NONCE, nonce);
                 put(OAuth.OAUTH_TIMESTAMP, timestamp);
+                put("user_id", user);
             }};
             OAuthMessage oauthMessage = new OAuthMessage(method, uri, params.entrySet());
+            dumpOutgoingMessage(oauthMessage);
             oauthMessage.sign(new OAuthAccessor(local));
             return oauthMessage.getAuthorizationHeader(null);
         }
@@ -176,31 +179,43 @@ public class OAuthContext
         }
     }
 
-    public void sign(String uri, XmlRpcClient client)
+    private void dumpOutgoingMessage(OAuthMessage message) throws IOException
     {
-        String authorization = getAuthorizationHeaderValue(uri, "POST");
+        StringBuilder sb = new StringBuilder("Signing outgoing OAuth 2LO request:\n");
+        sb.append("\turl: ").append(message.URL).append("\n");
+        sb.append("\tmethod: ").append(message.method).append("\n");
+        for (Map.Entry<String,String> entry : message.getParameters())
+        {
+            sb.append("\t").append(entry.getKey()).append(": ").append(entry.getValue()).append("\n");
+        }
+        System.out.println(sb.toString());
+    }
+
+    public void sign(String uri, String user, XmlRpcClient client)
+    {
+        String authorization = getAuthorizationHeaderValue(uri, "POST", user);
         client.setRequestProperty("Authorization", authorization);
     }
 
-    public void sign(String uri, Stub service)
+    public void sign(String uri, String user, Stub service)
     {
-        String authorization = getAuthorizationHeaderValue(uri, "POST");
+        String authorization = getAuthorizationHeaderValue(uri, "POST", user);
         service._setProperty(HTTPConstants.REQUEST_HEADERS, new Hashtable(singletonMap(HTTPConstants.HEADER_AUTHORIZATION, authorization)));
     }
 
-    public void sign(String uri, String method, HttpURLConnection yc)
+    public void sign(String uri, String method, String username, HttpURLConnection yc)
     {
-        String authorization = getAuthorizationHeaderValue(uri, method);
+        String authorization = getAuthorizationHeaderValue(uri, method, username);
         yc.setRequestProperty("Authorization", authorization);
     }
 
-    public String sendSignedGet(String uri)
+    public String sendSignedGet(String uri, String user)
     {
         try
         {
-            URL url = new URL(uri);
+            URL url = new URL(uri + "?user_id=" + user);
             HttpURLConnection yc = (HttpURLConnection) url.openConnection();
-            sign(uri, "GET", yc);
+            sign(uri, "GET", user, yc);
             BufferedReader in = new BufferedReader(
                                     new InputStreamReader(
                                     yc.getInputStream()));
@@ -225,14 +240,14 @@ public class OAuthContext
         }
     }
 
-    public int sendFailedSignedGet(String uri)
+    public int sendFailedSignedGet(String uri, String user)
     {
         HttpURLConnection yc = null;
         try
         {
-            URL url = new URL(uri);
+            URL url = new URL(uri + "?user_id=" + user);
             yc = (HttpURLConnection) url.openConnection();
-            sign(uri, "GET", yc);
+            sign(uri, "GET", user, yc);
             BufferedReader in = new BufferedReader(
                                     new InputStreamReader(
                                     yc.getInputStream()));
@@ -258,4 +273,5 @@ public class OAuthContext
             }
         }
     }
+
 }

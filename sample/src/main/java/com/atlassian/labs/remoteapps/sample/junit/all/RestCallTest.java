@@ -14,7 +14,7 @@ public class RestCallTest
     @Test
     public void testCall() throws Exception
     {
-        String result = OAuthContext.INSTANCE.sendSignedGet(HttpServer.getHostBaseUrl() + "/rest/remoteapptest/latest/?user_id=betty");
+        String result = OAuthContext.INSTANCE.sendSignedGet(HttpServer.getHostBaseUrl() + "/rest/remoteapptest/latest/", "betty");
         assertEquals("betty", result);
     }
 
@@ -22,7 +22,7 @@ public class RestCallTest
     public void testUnauthorizedCall() throws Exception
     {
         int status = OAuthContext.INSTANCE.sendFailedSignedGet(
-                HttpServer.getHostBaseUrl() + "/rest/remoteappforbidden/latest/?user_id=betty");
+                HttpServer.getHostBaseUrl() + "/rest/remoteappforbidden/latest/", "betty");
         assertEquals(403, status);
     }
 }
