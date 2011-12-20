@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 public class StaticResourcesFilter implements Filter
 {
     // todo: support languages
-    private static final Pattern RESOURCE_PATTERN = Pattern.compile("/.+\\.(?:js|css)");
+    private static final Pattern RESOURCE_PATTERN = Pattern.compile("/[a-zA-Z0-9]+\\.(?:js|css)");
     private static Map<String,CacheEntry> resCache = new MapMaker().makeComputingMap(new Function<String, CacheEntry>() {
 
         @Override
