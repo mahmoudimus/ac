@@ -9,6 +9,7 @@ import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import java.util.Map;
 
 import static java.util.Collections.emptyMap;
+import static java.util.Collections.singletonMap;
 
 /**
  *
@@ -73,6 +74,6 @@ public class JiraProductAccessor implements ProductAccessor
     @Override
     public Map<String, String> getLinkContextParams()
     {
-        return emptyMap();
+        return singletonMap("project_id", "$!helper.project.id");
     }
 }
