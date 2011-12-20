@@ -6,6 +6,8 @@ import com.atlassian.labs.remoteapps.installer.RemoteAppInstaller;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import com.atlassian.sal.api.user.UserManager;
 import com.sun.research.ws.wadl.Param;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
@@ -18,6 +20,7 @@ import java.net.URISyntaxException;
 @Path("/installer")
 public class InstallerResource
 {
+    private static final Logger log = LoggerFactory.getLogger(InstallerResource.class);
     private final RemoteAppInstaller remoteAppInstaller;
     private final UserManager userManager;
     private final DescriptorValidator descriptorValidator;
@@ -55,7 +58,7 @@ public class InstallerResource
         }
         catch (RuntimeException ex)
         {
-            ex.printStackTrace();
+            log.error("Unable to install extension: " + ex.getMessage(), ex);
             return Response.status(Response.Status.BAD_REQUEST).entity(ex.getMessage()).build();
         }
         return Response.ok().build();
