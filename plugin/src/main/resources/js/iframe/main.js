@@ -14,8 +14,8 @@ var RA = (function() {
     };
 
     RA.resize = function(width, height) {
-        var w = width || document.body.scrollWidth;
-        var h = height || document.body.scrollHeight;
+        var w = width || "100%";
+        var h = height || document.body.offsetHeight;
         socket.postMessage(JSON.stringify({
                 id : 'resize',
                 width : w,

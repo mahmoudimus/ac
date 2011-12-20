@@ -10,12 +10,12 @@
         (function($) {
             var container = $('#embedded');
             var initHeight = '#if($height)$height#else 10em #end';
-            var initWidth = '#if($width)$width#else 700px#end';
+            var initWidth = '#if($width)$width#else 100%#end';
             var iframeSrc = '$iframeSrcHtml';
             function resize(height, width){
                 var iframe = $('iframe', container);
                 iframe.css('height', height + "px");
-                iframe.css('width', width + "px");
+                iframe.css('width', width + (/%/.test(width)? "" : "px"));
             }
             var now = new Date().getTime();
             var transport = new easyXDM.Socket(/** The configuration */{
