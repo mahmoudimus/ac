@@ -97,7 +97,8 @@ public class HttpContentRetriever implements DisposableBean
         {
             qparams.add(new BasicNameValuePair(key, parameters.get(key)));
         }
-        qparams.add(new BasicNameValuePair("user_id", userManager.getRemoteUsername()));
+        String remoteUsername = userManager.getRemoteUsername();
+        qparams.add(new BasicNameValuePair("user_id", remoteUsername));
         HttpGet httpget = new HttpGet(url + "?" + URLEncodedUtils.format(qparams, "UTF-8"));
         HttpContext localContext = new BasicHttpContext();
         HttpResponse response = null;
@@ -114,6 +115,7 @@ public class HttpContentRetriever implements DisposableBean
                     }));
 
 
+            log.info("Retrieving content from remote app '{}' on URL '{}' for user '{}'", new Object[]{link.getId().get(), url, remoteUsername});
             response = httpClient.execute(httpget, localContext);
             HttpEntity entity = response.getEntity();
             if (response.getStatusLine().getStatusCode() != 200)
@@ -126,6 +128,7 @@ public class HttpContentRetriever implements DisposableBean
         }
         catch (IOException e)
         {
+            log.warn("Unable to retrieve information from '{}' as user '{}' due to: {}", new Object[]{url, remoteUsername, e.getMessage()});
             throw new ContentRetrievalException(e);
         }
     }
@@ -145,6 +148,7 @@ public class HttpContentRetriever implements DisposableBean
             oAuthLinkManager.sign(httpPost, link, url, Collections.<String, List<String>>emptyMap());
             httpPost.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
             httpPost.setEntity(new StringEntity(jsonBody));
+            log.info("Posting information to '{}' as user '{}'", url, userManager.getRemoteUsername());
             response = httpClient.execute(httpPost);
             if (response.getStatusLine().getStatusCode() != 200)
             {
@@ -154,6 +158,7 @@ public class HttpContentRetriever implements DisposableBean
         }
         catch (IOException e)
         {
+            log.warn("Unable to post information to '{}' as user '{}' due to: {}", new Object[]{url, userManager.getRemoteUsername(), e.getMessage()});
             throw new ContentRetrievalException(e);
         }
     }

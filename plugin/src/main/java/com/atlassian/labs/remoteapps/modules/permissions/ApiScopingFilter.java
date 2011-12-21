@@ -1,10 +1,14 @@
 package com.atlassian.labs.remoteapps.modules.permissions;
 
 import com.atlassian.labs.remoteapps.PermissionManager;
+import com.atlassian.labs.remoteapps.modules.permissions.scope.ApiScope;
 import com.atlassian.sal.api.user.UserManager;
 import com.google.common.collect.ImmutableSet;
 import net.oauth.OAuth;
 import org.apache.commons.lang.StringUtils;
+import org.netbeans.lib.cvsclient.commandLine.command.log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -27,6 +31,7 @@ public class ApiScopingFilter implements Filter
 {
     private final PermissionManager permissionManager;
     private final UserManager userManager;
+    private static final Logger log = LoggerFactory.getLogger(ApiScopingFilter.class);
 
     public ApiScopingFilter(PermissionManager permissionManager, UserManager userManager)
     {
@@ -52,9 +57,13 @@ public class ApiScopingFilter implements Filter
             String user = userManager.getRemoteUsername(req);
             if (!permissionManager.isRequestInApiScope(inputConsumingRequest, clientKey, user))
             {
+                log.warn("Request not in an authorized API scope from app '{}' as user '{}' on URL '{}'",
+                        new Object[]{clientKey, user, req.getRequestURI()});
                 res.sendError(HttpServletResponse.SC_FORBIDDEN, "Request not in an authorized API scope");
                 return;
             }
+            log.info("Authorized app '{}' to access API at URL '{}' for user '{}'",
+                    new Object[]{clientKey, req.getRequestURI(), user});
             chain.doFilter(inputConsumingRequest, response);
         }
         else

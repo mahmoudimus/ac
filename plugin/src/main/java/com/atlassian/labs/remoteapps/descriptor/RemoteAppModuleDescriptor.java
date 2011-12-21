@@ -16,6 +16,8 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 import org.osgi.util.tracker.ServiceTrackerCustomizer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static com.atlassian.labs.remoteapps.util.BundleUtil.findBundleForPlugin;
 import static com.atlassian.labs.remoteapps.util.Dom4jUtils.getOptionalAttribute;
@@ -30,6 +32,8 @@ public class RemoteAppModuleDescriptor extends AbstractModuleDescriptor<Void>
     private final StartableForPlugins startableForPlugins;
     private final AccessLevelManager accessLevelManager;
     private final EventPublisher eventPublisher;
+
+    private static final Logger log = LoggerFactory.getLogger(RemoteAppModuleDescriptor.class);
 
     private ServiceTracker serviceTracker;
     private Element originalElement;
@@ -110,6 +114,7 @@ public class RemoteAppModuleDescriptor extends AbstractModuleDescriptor<Void>
                             serviceTracker.open();
                             generatorInitializer.init(accessLevel);
                             eventPublisher.publish(new RemoteAppStartedEvent(getPluginKey()));
+                            log.info("Remote app '{}' started successfully", getPluginKey());
                         }
                     }).start();
                 }

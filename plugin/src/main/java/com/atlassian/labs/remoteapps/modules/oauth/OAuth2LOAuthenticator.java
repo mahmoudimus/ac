@@ -100,6 +100,7 @@ public class OAuth2LOAuthenticator implements Authenticator
             return new Result.Failure(new DefaultMessage("Permission denied"));
         }
         request.setAttribute(OAuth.OAUTH_CONSUMER_KEY, consumerKey);
+        log.info("Authenticated app '{}' as user '{}' successfully", consumerKey, userId);
         return new Result.Success(user);
     }
 

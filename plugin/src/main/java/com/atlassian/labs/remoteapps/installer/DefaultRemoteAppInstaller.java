@@ -94,6 +94,7 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
                 "baseUrl", applicationProperties.getBaseUrl(),
                 "description", consumer.getDescription())));
 
+        log.info("Retrieving descriptor XML from '{}' by user '{}'", registrationUrl, username);
         Request request = requestFactory.createRequest(Request.MethodType.GET, registrationUri.toString());
         try
         {
@@ -133,7 +134,7 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
                     JarPluginArtifact jar = createJarPluginArtifact(pluginKey, registrationUri.getHost(), pluginXml, props);
                     pluginController.installPlugins(jar);
 
-                    log.info("Registered app '" + pluginKey + "'");
+                    log.info("Registered app '{}' by '{}'", pluginKey, username);
 
                     // todo: retrieve the access level because it may have been modified.  Should be fixed as that sucks.
                     eventPublisher.publish(new RemoteAppInstalledEvent(pluginKey, root.attributeValue("access-level")));
@@ -142,10 +143,18 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
         }
         catch (InstallationFailedException ex)
         {
+            log.warn("Unable to install remote app from '{}' by user '{}'", registrationUrl, username);
             throw ex;
+        }
+        catch (ResponseException e)
+        {
+            log.warn("Unable to retrieve registration XML from '{}' for user '{}' due to: {}",
+                    new Object[]{registrationUrl, username, e.getMessage()});
+            throw new InstallationFailedException(e);
         }
         catch (Exception e)
         {
+            log.warn("Unable to install remote app from '{}' by user '{}'", registrationUrl, username);
             Throwable ex = e.getCause() != null ? e.getCause() : e;
 
             throw new InstallationFailedException(ex);
