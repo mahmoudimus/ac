@@ -6,6 +6,7 @@ import com.atlassian.labs.remoteapps.ModuleGeneratorManager;
 import com.atlassian.labs.remoteapps.PermissionDeniedException;
 import com.atlassian.labs.remoteapps.PermissionManager;
 import com.atlassian.labs.remoteapps.descriptor.external.AccessLevelModuleDescriptor;
+import com.atlassian.labs.remoteapps.modules.GlobalModule;
 import com.atlassian.labs.remoteapps.modules.external.RemoteModuleGenerator;
 import com.atlassian.labs.remoteapps.event.RemoteAppInstalledEvent;
 import com.atlassian.labs.remoteapps.modules.page.jira.JiraProfileTabModuleGenerator;
@@ -39,6 +40,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URI;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static com.atlassian.labs.remoteapps.util.Dom4jUtils.getRequiredAttribute;
 import static com.atlassian.labs.remoteapps.util.ServletUtils.encodeGetUrl;
@@ -112,16 +114,22 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
                     Element root = document.getRootElement();
                     final String pluginKey = root.attributeValue("key");
                     final Properties props = new Properties();
-
+                    final AtomicReference<String> accessLevel = new AtomicReference<String>("user");
                     try
                     {
                         moduleGeneratorManager.getApplicationTypeModuleGenerator().validate(root, registrationUrl);
+
                         moduleGeneratorManager.processDescriptor(root, new ModuleGeneratorManager.ModuleHandler()
                         {
                             @Override
                             public void handle(Element element, RemoteModuleGenerator generator)
                             {
                                 generator.validate(element);
+                                if (generator.getClass().getAnnotation(GlobalModule.class) != null)
+                                {
+                                    // todo: restrict installation of global remote apps to admins
+                                    accessLevel.set("global");
+                                }
                                 props.putAll(generator.getI18nMessages(pluginKey, element));
                             }
                         });
@@ -137,7 +145,7 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
                     log.info("Registered app '{}' by '{}'", pluginKey, username);
 
                     // todo: retrieve the access level because it may have been modified.  Should be fixed as that sucks.
-                    eventPublisher.publish(new RemoteAppInstalledEvent(pluginKey, root.attributeValue("access-level")));
+                    eventPublisher.publish(new RemoteAppInstalledEvent(pluginKey, accessLevel.get()));
                 }
             });
         }

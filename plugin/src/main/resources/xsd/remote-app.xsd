@@ -3,13 +3,6 @@
 
     <xs:include schemaLocation="common.xsd" />
 
-    <xs:simpleType name="AccessLevelType">
-        <xs:restriction base="xs:string">
-            <xs:enumeration value="user"/>
-            <xs:enumeration value="global"/>
-        </xs:restriction>
-    </xs:simpleType>
-
     <xs:complexType name="RemoteAppType">
         <xs:choice minOccurs="1" maxOccurs="unbounded">
         </xs:choice>
@@ -24,7 +17,8 @@
         <xs:attribute name="version" type="VersionType" use="required"/>
         <xs:attribute name="icon-url" type="HttpUrlType"/>
         <xs:attribute name="display-url" type="HttpUrlType" use="required"/>
-        <xs:attribute name="access-level" type="AccessLevelType" default="global"/>
+        <!-- Deprecated -->
+        <xs:attribute name="access-level" type="xs:string" />
     </xs:complexType>
 
     <xs:element name="remote-app" type="RemoteAppType" />

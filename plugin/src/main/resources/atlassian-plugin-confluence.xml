@@ -39,6 +39,11 @@
         <schema id="webhook.xsd" path="/xsd/webhook-confluence.xsd" type="WebHookType" />
     </remote-module>
 
+    <web-item key="remoteapps.all.link" section="system.browse" weight="1">
+        <label>All Remote Apps</label>
+        <link>/plugins/servlet/speakeasy/user</link>
+    </web-item>
+
     <web-section key="admin.pages" name="Remote Apps" location="system.admin" weight="100">
         <label>Remote Apps</label>
     </web-section>

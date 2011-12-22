@@ -20,13 +20,11 @@ import static com.atlassian.labs.remoteapps.sample.HttpUtils.render;
 public class RegisterServlet extends HttpServlet
 {
     private final String appKey;
-    private final String accessLevel;
     private final String template;
 
-    public RegisterServlet(String appKey, String accessLevel, String templateType)
+    public RegisterServlet(String appKey, String templateType)
     {
         this.appKey = appKey;
-        this.accessLevel = accessLevel;
         this.template = "sample-descriptor-" + templateType + ".mu.xml";
     }
 
@@ -44,7 +42,6 @@ public class RegisterServlet extends HttpServlet
         final String output = render(template, new HashMap<String,Object>() {{
             put("baseurl", getOurBaseUrl());
             put("appkey", appKey);
-            put("accessLevel", accessLevel);
             put("appbaseurl", getHostBaseUrl());
         }});
         byte[] bytes = output.getBytes(Charset.forName("UTF-8"));

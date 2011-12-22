@@ -44,11 +44,10 @@ public class HttpServer
         context.addServlet(new ServletHolder(new MyImageMacroServlet()), "/myimagemacro");
         context.addServlet(new ServletHolder(new MySlowMacroServlet()), "/myslowmacro");
         context.addServlet(new ServletHolder(new WebHookServlet()), "/webhook/*");
-        context.addServlet(new ServletHolder(new RegisterServlet(appKey, "global", "refapp")), "/register");
-        context.addServlet(new ServletHolder(new RegisterServlet(appKey, "global", "confluence")), "/confluence-register");
-        context.addServlet(new ServletHolder(new RegisterServlet(appKey, "global", "jira")), "/jira-register");
-        context.addServlet(new ServletHolder(new RegisterServlet(appKey, "global", "refapp")), "/refapp-register");
-        context.addServlet(new ServletHolder(new RegisterServlet(appKey, "user", "refapp")), "/user-register");
+        context.addServlet(new ServletHolder(new RegisterServlet(appKey, "refapp")), "/register");
+        context.addServlet(new ServletHolder(new RegisterServlet(appKey, "confluence")), "/confluence-register");
+        context.addServlet(new ServletHolder(new RegisterServlet(appKey, "jira")), "/jira-register");
+        context.addServlet(new ServletHolder(new RegisterServlet(appKey, "refapp")), "/refapp-register");
 
         HandlerList list = new HandlerList();
         list.setHandlers(new Handler[] {staticResourceHandler, context});

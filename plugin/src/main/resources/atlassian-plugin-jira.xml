@@ -9,6 +9,11 @@
     <web-section key="remoteapps.general" location="general_dropdown_linkId">
     </web-section>
 
+    <web-item key="remoteapps.all.link" section="general_dropdown_linkId/remoteapps.general" weight="1">
+        <label>All Remote Apps</label>
+        <link>/secure/ViewProfile.jspa#selectedTab=com.atlassian.labs.speakeasy-plugin:jira5compat-speakeasy-plugins</link>
+    </web-item>
+
     <remote-module key="jira-profile-page"
                    class="com.atlassian.labs.remoteapps.modules.page.jira.JiraProfileTabModuleGenerator">
         <description>An profile page</description>
