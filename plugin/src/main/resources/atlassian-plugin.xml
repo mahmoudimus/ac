@@ -80,14 +80,6 @@
         <dependency>com.atlassian.labs.remoteapps-plugin:remoteapps_installer</dependency>
     </web-resource>
 
-    <web-resource key="iframe-intermediate">
-        <transformation extension="html">
-            <transformer key="iframe-intermediate-transformer"/>
-        </transformation>
-        <resource type="download" name="iframe-intermediate.html" location="/html/iframe-intermediate.html" />
-    </web-resource>
-    <web-resource-transformer key="iframe-intermediate-transformer" class="com.atlassian.labs.remoteapps.util.IframeIntermediateTransformer" />
-
     <web-item key="speakeasy-install" section="speakeasy.user-profile/actions" weight="100">
         <label>Install Remote App</label>
         <link linkId="rp-install" />
