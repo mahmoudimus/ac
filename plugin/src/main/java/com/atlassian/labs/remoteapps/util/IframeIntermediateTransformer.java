@@ -21,12 +21,12 @@ public class IframeIntermediateTransformer implements WebResourceTransformer {
     @Override
     public DownloadableResource transform(Element element, ResourceLocation resourceLocation, String filePath,
                                           DownloadableResource origResource) {
-        return null;
+        return new IframeIntermediateDownloadResource(origResource);
     }
 
-    public class StaticHtmlDownloadResource extends CharSequenceDownloadableResource {
+    public class IframeIntermediateDownloadResource extends CharSequenceDownloadableResource {
 
-        public StaticHtmlDownloadResource(DownloadableResource originalResource) {
+        public IframeIntermediateDownloadResource(DownloadableResource originalResource) {
             super(originalResource);
         }
 
