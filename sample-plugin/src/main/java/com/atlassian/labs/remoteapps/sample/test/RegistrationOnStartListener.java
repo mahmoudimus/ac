@@ -1,6 +1,7 @@
 package com.atlassian.labs.remoteapps.sample.test;
 
 import com.atlassian.labs.remoteapps.sample.HttpServer;
+import com.atlassian.labs.speakeasy.external.SpeakeasyService;
 import com.atlassian.plugin.event.PluginEventListener;
 import com.atlassian.plugin.event.PluginEventManager;
 import com.atlassian.plugin.event.events.PluginEnabledEvent;
@@ -43,7 +44,7 @@ public class RegistrationOnStartListener implements LifecycleAware, DisposableBe
     private volatile boolean enabled = false;
 
     private final PluginEventManager pluginEventManager;
-    private final ApplicationProperties applicationProperties;
+    private final SpeakeasyService speakeasyService;
     private HttpServer server;
 
     static
@@ -62,12 +63,10 @@ public class RegistrationOnStartListener implements LifecycleAware, DisposableBe
 
     }
 
-    public RegistrationOnStartListener(PluginEventManager pluginEventManager,
-                                       ApplicationProperties applicationProperties
-    )
+    public RegistrationOnStartListener(PluginEventManager pluginEventManager, SpeakeasyService speakeasyService)
     {
         this.pluginEventManager = pluginEventManager;
-        this.applicationProperties = applicationProperties;
+        this.speakeasyService = speakeasyService;
         pluginEventManager.register(this);
     }
 
@@ -142,6 +141,11 @@ public class RegistrationOnStartListener implements LifecycleAware, DisposableBe
                     log.error("----------------------------------------");
                     log.error(responseBody);
                     log.error("----------------------------------------");
+
+                    if (speakeasyService.getRemotePlugin("app1", "betty").isCanEnable())
+                    {
+                        speakeasyService.enableExtension("app1", "betty");
+                    }
 
                 }
                 catch (ClientProtocolException e)

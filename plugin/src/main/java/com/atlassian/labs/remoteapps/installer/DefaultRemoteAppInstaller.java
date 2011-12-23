@@ -111,7 +111,7 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
                     }
                     String descriptorXml = response.getResponseBodyAsString();
                     final Document document = descriptorValidator.parseAndValidate(registrationUrl, descriptorXml);
-                    Element root = document.getRootElement();
+                    final Element root = document.getRootElement();
                     final String pluginKey = root.attributeValue("key");
                     final Properties props = new Properties();
                     final AtomicReference<String> accessLevel = new AtomicReference<String>("user");
@@ -120,7 +120,7 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
                         moduleGeneratorManager.getApplicationTypeModuleGenerator().validate(root, registrationUrl);
 
                         moduleGeneratorManager.processDescriptor(root, new ModuleGeneratorManager.ModuleHandler()
-                        {
+                        { 
                             @Override
                             public void handle(Element element, RemoteModuleGenerator generator)
                             {
@@ -138,6 +138,7 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
                     {
                         throw new InstallationFailedException("Validation of the descriptor failed: " + ex.getMessage(), ex);
                     }
+                    root.addAttribute("access-level", accessLevel.get());
                     Document pluginXml = transformDescriptorToPluginXml(username, document);
                     JarPluginArtifact jar = createJarPluginArtifact(pluginKey, registrationUri.getHost(), pluginXml, props);
                     pluginController.installPlugins(jar);
