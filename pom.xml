@@ -11,7 +11,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.atlassian.labs</groupId>
     <artifactId>remoteapps-parent</artifactId>
-    <version>0.4.2-SNAPSHOT</version>
+    <version>0.4.3-SNAPSHOT</version>
 
     <organization>
         <name>Atlassian</name>
@@ -66,6 +66,7 @@
         <confluence.version>4.1</confluence.version>
         <confluence.data.version>3.0</confluence.data.version>
         <applinks.version>3.5.1</applinks.version>
+        <speakeasy.version>1.3.10</speakeasy.version>
     </properties>
 
 </project>

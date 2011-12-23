@@ -11,7 +11,16 @@
 
     <xs:simpleType name="MacroBodyTypeType">
         <xs:restriction base="xs:string">
-            <xs:enumeration value="rich-text"/>
+            <xs:enumeration value="rich-text">
+                <xs:annotation>
+                    <xs:documentation>
+                        <description>bar</description>
+                        <resources>
+                            <resource path="/foo" httpMethod="GET" rpcMethod="foo" />
+                        </resources>
+                    </xs:documentation>
+                </xs:annotation>
+                    </xs:enumeration>
             <xs:enumeration value="plain-text"/>
             <xs:enumeration value="none"/>
         </xs:restriction>

@@ -7,6 +7,8 @@ import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import org.dom4j.Document;
 import org.dom4j.Element;
 
+import static com.atlassian.labs.remoteapps.util.Dom4jUtils.addSchemaDocumentation;
+
 /**
  *
  */
@@ -26,7 +28,20 @@ public class ApiScopeSchema extends DynamicSchema
 
         for (ApiScopeModuleDescriptor descriptor : permissionManager.getApiScopeDescriptors())
         {
-            parent.addElement("xs:enumeration").addAttribute("value", descriptor.getKey());
+            Element enumeration = parent.addElement("xs:enumeration").addAttribute("value", descriptor.getKey());
+            Element doc = addSchemaDocumentation(enumeration, descriptor);
+            Element resources = doc.addElement("resources");
+            for (ApiResourceInfo resource : descriptor.getModule().getApiResourceInfos())
+            {
+
+                Element res = resources.addElement("resource").
+                    addAttribute("path", resource.getPath()).
+                    addAttribute("httpMethod", resource.getHttpMethod());
+                if (resource.getRpcMethod() != null)
+                {
+                    res.addAttribute("rpcMethod", resource.getRpcMethod());
+                }
+            }
         }
         return from;
     }

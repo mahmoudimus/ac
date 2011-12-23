@@ -2,6 +2,7 @@ package com.atlassian.labs.remoteapps.modules.permissions.scope;
 
 import com.atlassian.labs.remoteapps.util.ServletUtils;
 import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
 import org.apache.commons.io.IOUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -11,6 +12,7 @@ import org.xml.sax.EntityResolver;
 
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.HttpMethod;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
@@ -21,15 +23,24 @@ import static com.google.common.collect.Collections2.transform;
 /**
  * An api scope for SOAP requests
  */
-public class RpcEncodedSoapApiScope
+public class RpcEncodedSoapApiScope implements ApiScope
 {
     private final String path;
     private final Collection<SoapScope> soapActions;
+    private final Iterable<ApiResourceInfo> apiResourceInfo;
 
-    public RpcEncodedSoapApiScope(String path, Collection<SoapScope> soapActions)
+    public RpcEncodedSoapApiScope(final String path, Collection<SoapScope> soapActions)
     {
         this.path = path;
         this.soapActions = soapActions;
+        this.apiResourceInfo = Iterables.transform(soapActions, new Function<SoapScope, ApiResourceInfo>()
+        {
+            @Override
+            public ApiResourceInfo apply(SoapScope from)
+            {
+                return new ApiResourceInfo(path, HttpMethod.POST, from.name);
+            }
+        });
     }
 
     public RpcEncodedSoapApiScope(String path, final String namespace, Collection<String> methods)
@@ -44,7 +55,8 @@ public class RpcEncodedSoapApiScope
         }));
     }
 
-    public boolean allow(HttpServletRequest request)
+    @Override
+    public boolean allow(HttpServletRequest request, String user)
     {
         final String pathInfo = ServletUtils.extractPathInfo(request);
         if (path.equals(pathInfo))
@@ -63,6 +75,12 @@ public class RpcEncodedSoapApiScope
             }
         }
         return false;
+    }
+
+    @Override
+    public Iterable<ApiResourceInfo> getApiResourceInfos()
+    {
+        return apiResourceInfo;
     }
 
     public static class SoapScope

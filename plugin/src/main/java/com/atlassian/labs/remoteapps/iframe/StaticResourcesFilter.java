@@ -109,7 +109,7 @@ public class StaticResourcesFilter implements Filter
 
     private void send404(String path, HttpServletResponse res) throws IOException
     {
-        res.sendError(HttpServletResponse.SC_NOT_FOUND, "Cannot find resource '" + path + "'");
+        res.sendError(HttpServletResponse.SC_NOT_FOUND, "Cannot find resource");
     }
 
     @Override

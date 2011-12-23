@@ -1,30 +1,46 @@
 package com.atlassian.labs.remoteapps.modules.permissions.scope;
 
 import com.atlassian.labs.remoteapps.util.ServletUtils;
+import com.google.common.base.Function;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.HttpMethod;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Collection;
 
+import static com.google.common.collect.Iterables.transform;
+
 /**
  * An api scope for json-rpc requests
  */
-public class JsonRpcApiScope {
-    private Collection<String> methods;
-    private String path;
+public class JsonRpcApiScope implements ApiScope
+{
+    private final Collection<String> methods;
+    private final String path;
+    private final Iterable<ApiResourceInfo> apiResourceInfo;
 
-    public JsonRpcApiScope(String path, Collection<String> methods) {
+    public JsonRpcApiScope(final String path, Collection<String> methods) {
         this.path = path;
         this.methods = methods;
+        this.apiResourceInfo = transform(methods, new Function<String,ApiResourceInfo>()
+        {
+            @Override
+            public ApiResourceInfo apply(@Nullable String from)
+            {
+                return new ApiResourceInfo(path, HttpMethod.POST, from);
+            }
+        });
     }
 
-    public boolean allow(HttpServletRequest request)
+    @Override
+    public boolean allow(HttpServletRequest request, String user)
     {
         final String pathInfo = ServletUtils.extractPathInfo(request);
         if (path.equals(pathInfo))
@@ -47,6 +63,12 @@ public class JsonRpcApiScope {
             return methods.contains(method);
         }
         return false;
+    }
+
+    @Override
+    public Iterable<ApiResourceInfo> getApiResourceInfos()
+    {
+        return apiResourceInfo;
     }
 
     private String extractMethod(HttpServletRequest request)

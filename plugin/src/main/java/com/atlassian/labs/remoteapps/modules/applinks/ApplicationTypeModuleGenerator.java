@@ -41,8 +41,6 @@ public class ApplicationTypeModuleGenerator implements RemoteModuleGenerator
 {
     private final MutatingApplicationLinkService mutatingApplicationLinkService;
     private final PermissionManager permissionManager;
-    private static final Set<String> ALLOWED_ACCESS_LEVELS = ImmutableSet.of(
-            (System.getProperty("remoteapps.access.levels", "user").split(",")));
 
     @Autowired
     public ApplicationTypeModuleGenerator(MutatingApplicationLinkService mutatingApplicationLinkService,
@@ -205,12 +203,6 @@ public class ApplicationTypeModuleGenerator implements RemoteModuleGenerator
         if (displayUrl == null || !registrationUrl.startsWith(displayUrl))
         {
             throw new PluginParseException("display-url '" + displayUrl + "' must match registration URL");
-        }
-
-        String accessLevel = root.attributeValue("access-level");
-        if (!ALLOWED_ACCESS_LEVELS.contains(accessLevel))
-        {
-            throw new InstallationFailedException("access-level '" + accessLevel + "' must be one of " + ALLOWED_ACCESS_LEVELS);
         }
     }
 

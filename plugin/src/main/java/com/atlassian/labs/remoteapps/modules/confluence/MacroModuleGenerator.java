@@ -8,6 +8,7 @@ import com.atlassian.confluence.status.service.SystemInformationService;
 import com.atlassian.confluence.util.i18n.I18NBeanFactory;
 import com.atlassian.confluence.xhtml.api.XhtmlContent;
 import com.atlassian.labs.remoteapps.modules.ApplicationLinkOperationsFactory;
+import com.atlassian.labs.remoteapps.modules.GlobalModule;
 import com.atlassian.labs.remoteapps.modules.external.RemoteAppCreationContext;
 import com.atlassian.labs.remoteapps.modules.external.RemoteModule;
 import com.atlassian.labs.remoteapps.modules.external.RemoteModuleGenerator;
@@ -31,6 +32,7 @@ import static java.util.Collections.emptySet;
 /**
  *
  */
+@GlobalModule
 public class MacroModuleGenerator implements RemoteModuleGenerator
 {
     private final SystemInformationService systemInformationService;
@@ -110,13 +112,7 @@ public class MacroModuleGenerator implements RemoteModuleGenerator
     @Override
     public void validate(Element element) throws PluginParseException
     {
-        // todo: should find a better way to ensure modules are global
         Element root = element.getParent();
-        String accessLevel = root.attributeValue("access-level");
-        if (!"global".equals(accessLevel))
-        {
-            root.addAttribute("access-level", "global");
-        }
 
         String key = element.attributeValue("key");
         String appKey = root.attributeValue("key");
