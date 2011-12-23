@@ -24,6 +24,7 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.Map;
 
+import static com.atlassian.labs.remoteapps.util.Dom4jUtils.addSchemaDocumentation;
 import static com.atlassian.labs.remoteapps.util.Dom4jUtils.parseDocument;
 import static com.atlassian.labs.remoteapps.util.Dom4jUtils.printDocument;
 import static com.google.common.collect.Maps.newLinkedHashMap;
@@ -144,10 +145,11 @@ public class DescriptorValidator
 
         for (RemoteModuleDescriptor descriptor : moduleGeneratorManager.getDescriptors())
         {
-            choice.addElement("xs:element")
+            Element module = choice.addElement("xs:element")
                     .addAttribute("name", descriptor.getModule().getType())
                     .addAttribute("type", descriptor.getSchema().getComplexType())
                     .addAttribute("maxOccurs", descriptor.getSchema().getMaxOccurs());
+            addSchemaDocumentation(module, descriptor);
         }
 
         return printDocument(schema);

@@ -2,10 +2,14 @@ package com.atlassian.labs.remoteapps.test;
 
 import com.atlassian.pageobjects.ProductInstance;
 import org.apache.commons.io.IOUtils;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.io.SAXReader;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
@@ -25,6 +29,12 @@ public class Utils
         IOUtils.copy(in, writer);
         in.close();
         return writer.toString();
+    }
+
+    public static Document getXml(String url) throws IOException, DocumentException
+    {
+        InputStream inputStream = new URL(url).openStream();
+        return new SAXReader().read(inputStream);
     }
 
 

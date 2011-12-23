@@ -12,6 +12,7 @@ public interface ProductAccessor
     WebItemModuleDescriptor createWebItemModuleDescriptor();
 
     String getPreferredAdminSectionKey();
+
     int getPreferredAdminWeight();
 
     String getKey();

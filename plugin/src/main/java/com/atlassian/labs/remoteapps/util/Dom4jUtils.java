@@ -1,5 +1,6 @@
 package com.atlassian.labs.remoteapps.util;
 
+import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.PluginParseException;
 import com.google.common.collect.Sets;
 import org.apache.commons.io.IOUtils;
@@ -44,6 +45,21 @@ public class Dom4jUtils
         return dest;
     }
 
+    public static Element addSchemaDocumentation(Element source, ModuleDescriptor descriptor)
+    {
+        Element doc = source.addElement("xs:annotation").addElement("xs:documentation");
+        Element name = doc.addElement("name");
+        if (descriptor.getName() != null)
+        {
+            name.setText(descriptor.getName());
+        }
+        Element desc = doc.addElement("description");
+        if (descriptor.getDescription() != null)
+        {
+            desc.setText(descriptor.getDescription());
+        }
+        return doc;
+    }
     public static Element copyOptionalElements(Element source, Element dest, String... keys)
     {
         for (String name : keys)

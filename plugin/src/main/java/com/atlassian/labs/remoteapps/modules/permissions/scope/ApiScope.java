@@ -15,4 +15,6 @@ public interface ApiScope
      * @return True if allowed
      */
     boolean allow(HttpServletRequest request, String user);
+
+    Iterable<ApiResourceInfo> getApiResourceInfos();
 }

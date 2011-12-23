@@ -13,25 +13,14 @@ import static java.util.Arrays.asList;
 /**
  *
  */
-public class ModifyAttachmentsScope implements ApiScope
+public class ModifyAttachmentsScope extends ConfluenceScope
 {
-    private final XmlRpcApiScope xmlrpcScope = new XmlRpcApiScope("/rpc/xmlrpc", methodList("confluence2."));
-
-    private final JsonRpcApiScope jsonrpcScope = new JsonRpcApiScope("/rpc/json-rpc/confluenceservice-v2",
-            methodList(""));
-
-    private final List<String> methodList(String prefix)
+    public ModifyAttachmentsScope()
     {
-        return asList(
-                prefix + "addAttachment",
-                prefix + "removeAttachment",
-                prefix + "moveAttachment"
-        );
-    }
-
-    @Override
-    public boolean allow(HttpServletRequest request, String user)
-    {
-        return xmlrpcScope.allow(request) || jsonrpcScope.allow(request);
+        super(asList(
+                "addAttachment",
+                "removeAttachment",
+                "moveAttachment"
+        ));
     }
 }
