@@ -1,4 +1,4 @@
-var dialog = require('speakeasy/dialog');
+var openOnePanelDialog = require('speakeasy/dialog').openOnePanelDialog;
 var $ = require('speakeasy/jquery').jQuery;
 var addMessage = require('speakeasy/messages').add;
 var host = require('speakeasy/host');
@@ -40,16 +40,39 @@ function wordwrap( str, width, brk, cut ) {
 
 }
 
+function openKeygen() {
+
+    var dialog = new AJS.Dialog({width:600, height:700, id:'keygen-dialog'});
+    dialog.addHeader("Generated RSA Keys for OAuth");
+    var keygenDialogContents = require('./keygen-dialog').render({});
+    dialog.addPanel("Keygen", keygenDialogContents, "panel-body");
+    dialog.show();
+    $.ajax({
+          url: contextPath + "/rest/remoteapps/latest/installer/keygen",
+          type: 'POST',
+          dataType : 'json',
+          success: function(data) {
+            $('#remoteapps-public-key').text(data.publicKey);
+            $('#remoteapps-private-key').text(data.privateKey);
+          }
+        });
+    $('#keygen-close-link').click(function(e) {
+        dialog.remove();
+    });
+}
+
 
 $(document).ready(function() {
     $('#rp-install').click(function(e) {
         e.preventDefault();
-        dialog.openOnePanelDialog({
+        var dialog = openOnePanelDialog({
                     id : 'remoteapps-install-dialog',
                     width : 700,
-                    height : 500,
+                    height : 550,
                     header : 'Install Remote App',
-                    content : require('./install-dialog').render({}),
+                    content : require('./install-dialog').render({
+                      contextPath : contextPath
+                    }),
                     submit : function(dialog, callbacks) {
                         var url = $('#remoteapps-url').val();
                         var token = $('#remoteapps-token').val();
@@ -57,6 +80,11 @@ $(document).ready(function() {
                     },
                     submitClass : 'remoteapps-submit'
                 });
+        $('#rp-keygen').click(function(e) {
+            e.preventDefault();
+            dialog.remove();
+            openKeygen();
+        });
         $.ajax({
           url: contextPath + "/plugins/servlet/oauth/consumer-info",
           type: 'GET',

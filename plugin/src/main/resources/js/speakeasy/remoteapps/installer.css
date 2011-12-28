@@ -2,3 +2,14 @@
     padding-left: 24px;
     background: url("@modulePrefix/remoteapps/add_20.png") no-repeat 0 50%;
 }
+
+#rp-started {
+    float: right;
+}
+#rp-install-form {
+    float: left;
+}
+
+#rp-oauth-consumer {
+    clear: both;
+}
