@@ -90,14 +90,13 @@ public class HttpContentRetriever implements DisposableBean
         httpClient = new CachingHttpClient(client, cacheConfig);
     }
 
-    public String get(ApplicationLink link, String url, Map<String,String> parameters) throws ContentRetrievalException
+    public String get(ApplicationLink link, String remoteUsername, String url, Map<String,String> parameters) throws ContentRetrievalException
     {
         List<NameValuePair> qparams = new ArrayList<NameValuePair>();
         for (String key : parameters.keySet())
         {
             qparams.add(new BasicNameValuePair(key, parameters.get(key)));
         }
-        String remoteUsername = userManager.getRemoteUsername();
         qparams.add(new BasicNameValuePair("user_id", remoteUsername));
         HttpGet httpget = new HttpGet(url + "?" + URLEncodedUtils.format(qparams, "UTF-8"));
         HttpContext localContext = new BasicHttpContext();

@@ -68,6 +68,13 @@
         </dependency>
 
         <dependency>
+            <groupId>com.atlassian.bandana</groupId>
+            <artifactId>atlassian-bandana</artifactId>
+            <version>3.1</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
             <groupId>com.atlassian.jira</groupId>
             <artifactId>atlassian-jira</artifactId>
             <version>${jira.version}</version>

@@ -1,5 +1,6 @@
 package com.atlassian.labs.remoteapps.modules.confluence;
 
+import com.atlassian.confluence.core.ContentEntityObject;
 import com.atlassian.labs.remoteapps.modules.ApplicationLinkOperationsFactory;
 
 import java.util.Map;
@@ -9,31 +10,24 @@ import java.util.Map;
  */
 public class MacroInstance
 {
-    final String pageId;
-    final String pageTitle;
+    final ContentEntityObject entity;
     final String path;
     final ApplicationLinkOperationsFactory.LinkOperations linkOperations;
     final String body;
     final Map<String,String> parameters;
 
-    public MacroInstance(String pageId, String pageTitle, String path, String body, Map<String, String> parameters, ApplicationLinkOperationsFactory.LinkOperations linkOperations)
+    public MacroInstance(ContentEntityObject entity, String path, String body, Map<String, String> parameters, ApplicationLinkOperationsFactory.LinkOperations linkOperations)
     {
-        this.pageId = pageId;
-        this.pageTitle = pageTitle;
+        this.entity = entity;
         this.path = path;
         this.body = body;
         this.parameters = parameters;
         this.linkOperations = linkOperations;
     }
 
-    public String getPageId()
+    public ContentEntityObject getEntity()
     {
-        return pageId;
-    }
-
-    public String getPageTitle()
-    {
-        return pageTitle;
+        return entity;
     }
 
     public String getPath()
@@ -63,7 +57,7 @@ public class MacroInstance
         sb.append(parameters.toString()).append("|");
         sb.append(body).append("|");
         sb.append(path).append("|");
-        sb.append(pageId);
+        sb.append(entity.getIdAsString());
         return String.valueOf(sb.toString().hashCode());
     }
 }

@@ -2,6 +2,7 @@ package it.confluence;
 
 import com.atlassian.functest.selenium.internal.ConfluenceTestedProduct;
 import com.atlassian.labs.remoteapps.test.OwnerOfTestedProduct;
+import com.atlassian.labs.remoteapps.test.confluence.ConfluenceCounterMacroPage;
 import com.atlassian.labs.remoteapps.test.confluence.ConfluenceMacroPage;
 import com.atlassian.labs.remoteapps.test.confluence.ConfluenceOps;
 import com.atlassian.pageobjects.TestedProduct;
@@ -122,6 +123,28 @@ public class TestConfluence
                                           .getIframeQueryParams();
 
         assertEquals(pageData.get("id"), params.get("page_id"));
+	}
+
+    @Test
+	public void testMacroCacheFlushes() throws XmlRpcFault, IOException
+    {
+        Map pageData = confluenceOps.setPage(product.getProductInstance(), "ds", "test", loadResourceAsString(
+                "confluence/counter-page.xhtml"));
+        product.visit(LoginPage.class).login("betty", "betty", HomePage.class);
+        ConfluenceCounterMacroPage page = product.visit(ConfluenceCounterMacroPage.class, pageData.get("title"));
+        assertEquals("1", page.getCounterMacroBody());
+
+        // stays the same on a new visit
+        page = product.visit(ConfluenceCounterMacroPage.class, pageData.get("title"));
+        assertEquals("1", page.getCounterMacroBody());
+
+        confluenceOps.resetMacrosOnPage(product.getProductInstance(), (String) pageData.get("id"));
+        page = product.visit(ConfluenceCounterMacroPage.class, pageData.get("title"));
+        assertEquals("2", page.getCounterMacroBody());
+
+        confluenceOps.resetMacrosForPlugin(product.getProductInstance(), "app1");
+        page = product.visit(ConfluenceCounterMacroPage.class, pageData.get("title"));
+        assertEquals("3", page.getCounterMacroBody());
 	}
 
     @Test

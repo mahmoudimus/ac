@@ -44,7 +44,7 @@ public class ApplicationLinkOperationsFactory
         boolean canAccess(String user);
         String signGetUrl(HttpServletRequest req, String targetPath);
         String signGetUrl(String user, String targetPath);
-        String executeGet(String path, Map<String,Object> params) throws ContentRetrievalException;
+        String executeGet(String user, String path, Map<String,Object> params) throws ContentRetrievalException;
     }
 
     @Autowired
@@ -92,17 +92,17 @@ public class ApplicationLinkOperationsFactory
             }
 
             @Override
-            public String executeGet(String path, Map<String, Object> params) throws ContentRetrievalException
+            public String executeGet(String username, String path, Map<String, Object> params) throws ContentRetrievalException
             {
-                return executeGetForType(get(), path, params);
+                return executeGetForType(get(), username, path, params);
             }
         };
     }
 
-    private String executeGetForType(ApplicationLink applicationLink, String path, Map<String, Object> params) throws ContentRetrievalException
+    private String executeGetForType(ApplicationLink applicationLink, String username, String path, Map<String, Object> params) throws ContentRetrievalException
     {
         String targetUrl = getTargetUrl(applicationLink, path);
-        return httpContentRetriever.get(applicationLink, targetUrl, Maps.transformValues(params, new Function<Object, String>() {
+        return httpContentRetriever.get(applicationLink, username, targetUrl, Maps.transformValues(params, new Function<Object, String>() {
 
             @Override
             public String apply(Object from)
