@@ -71,6 +71,12 @@
         </description>
     </api-scope>
 
+    <rest key="rest-jira" path="/remoteapps" version="1">
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>INCLUDE</dispatcher>
+        <package>com.atlassian.labs.remoteapps.rest</package>
+    </rest>
+
 
     <!-- activity streams -->
     <component-import key="jiraUserProfileAccessor" interface="com.atlassian.streams.spi.UserProfileAccessor"/>

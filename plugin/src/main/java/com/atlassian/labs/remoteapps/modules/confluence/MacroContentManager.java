@@ -85,7 +85,6 @@ public class MacroContentManager implements DisposableBean
             params.put("pageTitle", entity.getTitle());
             params.put("pageId", pageId);
 
-            // todo: handle errors
             value = macroInstance.getLinkOperations().executeGet(entity.getLastModifierName(), macroInstance.getPath(), params);
 
             saveToBandana(pluginKey, spaceKey, pageId, key, value);

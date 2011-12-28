@@ -1,4 +1,4 @@
-package com.atlassian.labs.remoteapps.rest.confluence;
+package com.atlassian.labs.remoteapps.product.confluence.rest;
 
 import com.atlassian.labs.remoteapps.modules.confluence.MacroContentManager;
 

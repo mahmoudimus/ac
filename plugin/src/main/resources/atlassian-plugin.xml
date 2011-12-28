@@ -93,11 +93,6 @@
         <condition class="com.atlassian.labs.remoteapps.descriptor.CanInstallRemoteAppsCondition" />
     </web-item>
 
-    <rest key="rest" path="/remoteapps" version="1" package="com.atlassian.labs.remoteapps.rest">
-        <dispatcher>REQUEST</dispatcher>
-        <dispatcher>INCLUDE</dispatcher>
-    </rest>
-
     <component key="startableForPlugins" class="com.atlassian.labs.remoteapps.descriptor.StartableForPlugins" public="true"
                interface="com.atlassian.sal.api.lifecycle.LifecycleAware" />
     <component key="classPrefixModuleFactory" class="com.atlassian.plugin.module.ClassPrefixModuleFactory"/>

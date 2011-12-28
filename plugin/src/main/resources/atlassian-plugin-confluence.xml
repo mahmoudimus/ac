@@ -48,6 +48,13 @@
         <label>Remote Apps</label>
     </web-section>
 
+    <rest key="rest-confluence" path="/remoteapps" version="1">
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>INCLUDE</dispatcher>
+        <package>com.atlassian.labs.remoteapps.rest</package>
+        <package>com.atlassian.labs.remoteapps.product.confluence.rest</package>
+    </rest>
+
     <servlet key="remoteAppsImagePlaceholderServlet"
              name="Remote Apps Image Placeholder Servlet"
              class="com.atlassian.labs.remoteapps.product.confluence.RemoteAppsImagePlaceholderServlet">
