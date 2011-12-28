@@ -7,13 +7,20 @@ import com.google.common.base.Function;
 import com.google.common.collect.MapMaker;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import javax.servlet.*;
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.Calendar;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -25,6 +32,7 @@ public class StaticResourcesFilter implements Filter
 {
     // todo: support languages
     private static final Pattern RESOURCE_PATTERN = Pattern.compile("/[a-zA-Z0-9]+\\.(?:js|css)");
+    private static final Logger log = LoggerFactory.getLogger(StaticResourcesFilter.class);
     private static Map<String,CacheEntry> resCache = new MapMaker().makeComputingMap(new Function<String, CacheEntry>() {
 
         @Override
@@ -144,7 +152,7 @@ public class StaticResourcesFilter implements Filter
             }
             catch (IOException e)
             {
-                // todo: record exception
+                log.error("Unable to retrieve content", e);
                 data = new byte[0];
                 etag = "";
             }

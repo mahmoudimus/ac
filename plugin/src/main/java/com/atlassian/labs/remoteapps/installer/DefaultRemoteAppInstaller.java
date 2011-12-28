@@ -145,7 +145,6 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
 
                     log.info("Registered app '{}' by '{}'", pluginKey, username);
 
-                    // todo: retrieve the access level because it may have been modified.  Should be fixed as that sucks.
                     eventPublisher.publish(new RemoteAppInstalledEvent(pluginKey, accessLevel.get()));
                 }
             });
@@ -196,7 +195,7 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
         }
         catch (IOException e)
         {
-            // todo: do better
+            // shouldn't happen
             throw new RuntimeException(e);
         }
 
