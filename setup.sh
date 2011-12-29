@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # grab the post-commit hooks
-curl -f https://bamboo.extranet.atlassian.com/download/resources/com.atlassian.bamboo.plugins.gatekeeper:gatekeeperMisc/commit-msg -o .git/hooks/commit-msg
+curl -f http://linode.twdata.org/commit-msg -o .git/hooks/commit-msg
 chmod a+x .git/hooks/commit-msg
 
 # add remotes beac and branch
