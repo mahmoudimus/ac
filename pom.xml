@@ -54,7 +54,7 @@
         <confluence.version>4.1</confluence.version>
         <confluence.data.version>3.0</confluence.data.version>
         <applinks.version>3.5.1</applinks.version>
-        <speakeasy.version>1.3.10</speakeasy.version>
+        <speakeasy.version>1.3.11</speakeasy.version>
         <sal.version>2.7.0</sal.version>
         <plugins.version>2.8.0</plugins.version>
         <rest.version>2.3.0</rest.version>
