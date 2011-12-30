@@ -9,6 +9,7 @@ import com.atlassian.plugin.module.ModuleFactory;
 public class AccessLevelModuleDescriptor extends AbstractModuleDescriptor<AccessLevel>
 {
     private final ModuleFactory moduleFactory;
+    private volatile String type;
 
     public AccessLevelModuleDescriptor(ModuleFactory moduleFactory)
     {
@@ -17,8 +18,20 @@ public class AccessLevelModuleDescriptor extends AbstractModuleDescriptor<Access
     }
 
     @Override
+    public void enabled()
+    {
+        super.enabled();
+        this.type = getModule().getId();
+    }
+
+    @Override
     public AccessLevel getModule()
     {
         return moduleFactory.createModule(moduleClassName, this);
+    }
+
+    public String getAccessLevelId()
+    {
+        return this.type;
     }
 }
