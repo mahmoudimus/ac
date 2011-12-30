@@ -309,9 +309,8 @@
                 <version>3.5.2</version>
                 <extensions>true</extensions>
                 <configuration>
-                    <enableDevToolbox>false</enableDevToolbox>
                     <skipManifestValidation>true</skipManifestValidation>
-
+                    <jvmArgs>-Xmx512m -XX:MaxPermSize=192m</jvmArgs>
                     <instructions>
                         <Import-Package>
                             com.atlassian.confluence.plugin.descriptor.web.descriptors;resolution:=optional,
@@ -340,7 +339,9 @@
                         <sun.net.http.allowRestrictedHeaders>true</sun.net.http.allowRestrictedHeaders>
                         <!--atlassian.dev.mode>false</atlassian.dev.mode-->
                     </systemPropertyVariables>
-                    <enableFastdev>false</enableFastdev>
+                    <!-- uncomment when it is safe to upgrade amps:  https://studio.atlassian.com/browse/AMPS-663 -->
+                    <!--enableDevToolbox>false</enableDevToolbox>
+                    <enableFastdev>false</enableFastdev-->
                     <functionalTestPattern>it/**/Test*.java</functionalTestPattern>
                     <pluginArtifacts>
                         <pluginArtifact>
