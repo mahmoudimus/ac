@@ -131,6 +131,7 @@
                                     <include>com.samskivert:*</include>
                                     <include>javax.servlet:servlet-api</include>
                                     <include>commons-logging:commons-logging</include>
+                                    <include>org.json:json</include>
                                 </includes>
                             </artifactSet>
                         </configuration>
