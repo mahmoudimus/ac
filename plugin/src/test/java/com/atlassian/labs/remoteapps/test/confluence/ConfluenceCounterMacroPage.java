@@ -1,6 +1,5 @@
 package com.atlassian.labs.remoteapps.test.confluence;
 
-import com.atlassian.labs.remoteapps.test.MyIframePage;
 import com.atlassian.pageobjects.Page;
 import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.webdriver.AtlassianWebDriver;

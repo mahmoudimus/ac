@@ -1,5 +1,9 @@
-package com.atlassian.labs.remoteapps.modules;
+package com.atlassian.labs.remoteapps.modules.page;
 
+import com.atlassian.labs.remoteapps.modules.ApplicationLinkOperationsFactory;
+import com.atlassian.labs.remoteapps.modules.IFrameRenderer;
+import com.atlassian.labs.remoteapps.modules.WebItemContext;
+import com.atlassian.labs.remoteapps.modules.WebItemCreator;
 import com.atlassian.labs.remoteapps.modules.external.RemoteAppCreationContext;
 import com.atlassian.labs.remoteapps.modules.external.RemoteModule;
 import com.atlassian.labs.remoteapps.modules.external.RemoteModuleGenerator;
@@ -9,6 +13,7 @@ import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.servlet.ServletModuleManager;
 import com.atlassian.plugin.servlet.descriptors.ServletModuleDescriptor;
 import com.atlassian.plugin.webresource.WebResourceManager;
+import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.google.common.collect.ImmutableSet;
 import org.dom4j.Element;
@@ -28,21 +33,25 @@ public abstract class AbstractPageModuleGenerator implements RemoteModuleGenerat
 {
     private final ServletModuleManager servletModuleManager;
     private final TemplateRenderer templateRenderer;
-    private final WebResourceManager webResourceManager;
     private final ApplicationLinkOperationsFactory applicationLinkSignerFactory;
+    private final WebItemCreator webItemCreator;
+    private final IFrameRenderer iFrameRenderer;
     private Map<String, Object> iframeParams = newHashMap();
+
 
     @Autowired
     public AbstractPageModuleGenerator(ServletModuleManager servletModuleManager,
                                        TemplateRenderer templateRenderer,
-                                       WebResourceManager webResourceManager,
-                                       ApplicationLinkOperationsFactory applicationLinkSignerFactory
+                                       ApplicationLinkOperationsFactory applicationLinkSignerFactory,
+                                       IFrameRenderer iFrameRenderer,
+                                       WebItemContext webItemContext
     )
     {
         this.servletModuleManager = servletModuleManager;
         this.templateRenderer = templateRenderer;
-        this.webResourceManager = webResourceManager;
         this.applicationLinkSignerFactory = applicationLinkSignerFactory;
+        this.iFrameRenderer = iFrameRenderer;
+        this.webItemCreator = new WebItemCreator(webItemContext);
     }
 
     @Override
@@ -68,7 +77,7 @@ public abstract class AbstractPageModuleGenerator implements RemoteModuleGenerat
 
         final Set<ModuleDescriptor> descriptors = ImmutableSet.<ModuleDescriptor>of(
                 createServletDescriptor(ctx, e, key, url, localUrl),
-                createWebItemDescriptor(ctx, e, key, localUrl));
+                webItemCreator.createWebItemDescriptor(ctx, e, key, localUrl));
         return new RemoteModule()
         {
             @Override
@@ -97,7 +106,8 @@ public abstract class AbstractPageModuleGenerator implements RemoteModuleGenerat
     {
         final String pageName = getRequiredAttribute(e, "name");
         Element config = e.createCopy();
-        config.addAttribute("key", "servlet-" + key);
+        final String moduleKey = "servlet-" + key;
+        config.addAttribute("key", moduleKey);
         config.addAttribute("class", IFramePageServlet.class.getName());
         config.addElement("url-pattern").setText(localUrl + "");
         config.addElement("url-pattern").setText(localUrl + "/*");
@@ -107,59 +117,13 @@ public abstract class AbstractPageModuleGenerator implements RemoteModuleGenerat
             @Override
             public <T> T createModule(String name, ModuleDescriptor<T> moduleDescriptor) throws PluginParseException
             {
-                return (T) new IFramePageServlet(templateRenderer, applicationLinkSignerFactory.create(ctx.getApplicationType()),
-                        pageName, path, getDecorator(), webResourceManager, iframeParams);
+                return (T) new IFramePageServlet(templateRenderer, iFrameRenderer, getDecorator(), pageName,
+                        new IFrameContext(applicationLinkSignerFactory.create(ctx.getApplicationType()), path, moduleKey, iframeParams));
             }
         }, servletModuleManager);
         descriptor.init(ctx.getPlugin(), config);
         return descriptor;
     }
-
-    private ModuleDescriptor createWebItemDescriptor(RemoteAppCreationContext ctx,
-                                                     Element e,
-                                                     String key,
-                                                     String localUrl
-    )
-    {
-        Element config = e.createCopy();
-        final String webItemKey = "webitem-" + key;
-        config.addAttribute("key", webItemKey);
-        config.addAttribute("section",
-                getOptionalAttribute(e, "section", getPreferredSectionKey()));
-        config.addAttribute("weight", getOptionalAttribute(e, "weight", getPreferredWeight()));
-
-        if (localUrl.contains("$"))
-        {
-            throw new PluginParseException("Invalid url '" + localUrl + "', cannot contain velocity expressions");
-        }
-
-        StringBuilder url = new StringBuilder();
-        url.append("/plugins/servlet");
-        url.append(localUrl);
-        if (!localUrl.contains("?"))
-        {
-            url.append("?");
-        }
-
-        for (Map.Entry<String,String> entry : getContextParams().entrySet())
-        {
-            url.append(entry.getKey());
-            url.append("=");
-            url.append(entry.getValue());
-        }
-        String name = getRequiredAttribute(e, "name");
-        config.addElement("label").setText(name);
-        config.addElement("link").
-                addAttribute("linkId", webItemKey).
-                setText(url.toString());
-
-        ModuleDescriptor descriptor = ctx.getAccessLevel()
-                                         .createWebItemModuleDescriptor(ctx.getBundle().getBundleContext());
-        descriptor.init(ctx.getPlugin(), config);
-        return descriptor;
-    }
-
-    protected abstract Map<String, String> getContextParams();
 
     @Override
     public void convertDescriptor(Element descriptorElement, Element pluginDescriptorRoot)
@@ -167,8 +131,4 @@ public abstract class AbstractPageModuleGenerator implements RemoteModuleGenerat
     }
 
     protected abstract String getDecorator();
-
-    protected abstract int getPreferredWeight();
-
-    protected abstract String getPreferredSectionKey();
 }

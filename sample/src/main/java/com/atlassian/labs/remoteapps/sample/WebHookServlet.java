@@ -67,6 +67,7 @@ public class WebHookServlet extends HttpServlet
         {
             throw new ServletException(e);
         }
+        publications.clear();
     }
 
     private static class Publication
