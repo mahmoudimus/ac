@@ -1,5 +1,6 @@
 package com.atlassian.labs.remoteapps.test;
 
+import com.atlassian.pageobjects.binder.Init;
 import com.atlassian.pageobjects.binder.WaitUntil;
 import com.atlassian.webdriver.AtlassianWebDriver;
 import org.apache.http.NameValuePair;
@@ -23,8 +24,19 @@ public class MyIframePage
     @Inject
     private AtlassianWebDriver driver;
 
-    @FindBy(id="embedded")
+    private final String key;
     private WebElement containerDiv;
+
+    public MyIframePage(String key)
+    {
+        this.key = key;
+    }
+
+    @Init
+    public void init()
+    {
+        this.containerDiv = driver.findElement(By.id("embedded-" + key));
+    }
 
     @WaitUntil
     public void waitForInit()

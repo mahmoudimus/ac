@@ -3,9 +3,11 @@ package com.atlassian.labs.remoteapps.modules.page.jira;
 import com.atlassian.labs.jira4compat.CompatViewProfilePanelModuleDescriptor;
 import com.atlassian.labs.jira4compat.spi.CompatViewProfilePanelFactory;
 import com.atlassian.labs.remoteapps.modules.ApplicationLinkOperationsFactory;
+import com.atlassian.labs.remoteapps.modules.IFrameRenderer;
 import com.atlassian.labs.remoteapps.modules.external.RemoteAppCreationContext;
 import com.atlassian.labs.remoteapps.modules.external.RemoteModule;
 import com.atlassian.labs.remoteapps.modules.external.RemoteModuleGenerator;
+import com.atlassian.labs.remoteapps.modules.page.IFrameContext;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.module.ModuleFactory;
@@ -28,21 +30,19 @@ import static java.util.Collections.emptyMap;
  */
 public class JiraProfileTabModuleGenerator implements RemoteModuleGenerator
 {
-    private final TemplateRenderer templateRenderer;
-    private final WebResourceManager webResourceManager;
     private final ApplicationLinkOperationsFactory applicationLinkOperationsFactory;
     private final CompatViewProfilePanelFactory compatViewProfilePanelFactory;
+    private final IFrameRenderer iFrameRenderer;
     private Map<String, Object> iframeParams = newHashMap();
 
-    public JiraProfileTabModuleGenerator(TemplateRenderer templateRenderer,
-                                         WebResourceManager webResourceManager,
-                                         CompatViewProfilePanelFactory compatViewProfilePanelFactory,
-                                         ApplicationLinkOperationsFactory applicationLinkOperationsFactory)
+    public JiraProfileTabModuleGenerator(CompatViewProfilePanelFactory compatViewProfilePanelFactory,
+                                         ApplicationLinkOperationsFactory applicationLinkOperationsFactory,
+                                         IFrameRenderer iFrameRenderer
+    )
     {
-        this.templateRenderer = templateRenderer;
-        this.webResourceManager = webResourceManager;
         this.applicationLinkOperationsFactory = applicationLinkOperationsFactory;
         this.compatViewProfilePanelFactory = compatViewProfilePanelFactory;
+        this.iFrameRenderer = iFrameRenderer;
     }
 
     @Override
@@ -110,7 +110,8 @@ public class JiraProfileTabModuleGenerator implements RemoteModuleGenerator
     {
         final String panelName = getRequiredAttribute(e, "name");
         Element config = e.createCopy();
-        config.addAttribute("key", "profile-" + key);
+        final String moduleKey = "profile-" + key;
+        config.addAttribute("key", moduleKey);
         config.addAttribute("i18n-key", panelName);
         config.addAttribute("class", IFrameViewProfilePanel.class.getName());
 
@@ -120,7 +121,9 @@ public class JiraProfileTabModuleGenerator implements RemoteModuleGenerator
             public <T> T createModule(String name, ModuleDescriptor<T> moduleDescriptor) throws PluginParseException
             {
                 ApplicationLinkOperationsFactory.LinkOperations linkOps = applicationLinkOperationsFactory.create(ctx.getApplicationType());
-                return (T) new IFrameViewProfilePanel(templateRenderer, webResourceManager, linkOps, iframeParams, panelName, path);
+                return (T) new IFrameViewProfilePanel(
+                        iFrameRenderer,
+                        new IFrameContext(linkOps, path, moduleKey, iframeParams));
             }
         }, ctx.getBundle().getBundleContext(), compatViewProfilePanelFactory);
         descriptor.init(ctx.getPlugin(), config);

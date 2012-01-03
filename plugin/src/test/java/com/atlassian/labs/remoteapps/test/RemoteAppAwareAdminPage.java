@@ -30,6 +30,6 @@ public class RemoteAppAwareAdminPage
     public MyIframePage clickRemoteAppAdminLink()
     {
         adminLink.click();
-        return pageBinder.bind(MyIframePage.class);
+        return pageBinder.bind(MyIframePage.class, "servlet-remoteAppAdmin");
     }
 }

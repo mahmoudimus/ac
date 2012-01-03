@@ -10,13 +10,6 @@ import java.util.Map;
 import static com.atlassian.labs.remoteapps.util.Dom4jUtils.getOptionalAttribute;
 import static com.atlassian.labs.remoteapps.util.Dom4jUtils.getRequiredAttribute;
 
-/**
- * Created by IntelliJ IDEA.
- * User: mrdon
- * Date: 3/01/12
- * Time: 8:45 PM
- * To change this template use File | Settings | File Templates.
- */
 public class WebItemCreator
 {
     private final WebItemContext webItemContext;
