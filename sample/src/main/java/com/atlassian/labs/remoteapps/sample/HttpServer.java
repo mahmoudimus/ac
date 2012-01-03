@@ -24,7 +24,7 @@ public class HttpServer
     {
         server = new Server(port);
         HOST_BASE_URL = hostBaseUrl;
-        OUR_BASE_URL = ourBaseUrl + ":" + port;
+        OUR_BASE_URL = ourBaseUrl;
         OAuthContext.init(appKey, ourBaseUrl);
 
         ResourceHandler staticResourceHandler = new ResourceHandler();
