@@ -521,6 +521,7 @@
                     </excludes>
                 </configuration>
             </plugin>
+            <!-- necessary for build to deploy-->
             <plugin>
                 <artifactId>maven-antrun-plugin</artifactId>
                 <version>1.7</version>
