@@ -12,7 +12,6 @@ public class ReadContentScope extends ConfluenceScope
         super(asList(
                 "getSpaces",
                 "getSpace",
-                "exportSpace",
                 "getPages",
                 "getPage",
                 "getPageHistory",
