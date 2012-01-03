@@ -1,7 +1,7 @@
-package com.atlassian.labs.remoteapps.modules;
+package com.atlassian.labs.remoteapps.modules.page;
 
 import com.atlassian.labs.remoteapps.PermissionDeniedException;
-import com.atlassian.plugin.webresource.WebResourceManager;
+import com.atlassian.labs.remoteapps.modules.IFrameRenderer;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.google.common.collect.ImmutableMap;
 
@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URI;
 import java.util.Map;
 
 import static com.google.common.collect.Maps.newHashMap;
@@ -21,28 +22,23 @@ import static com.google.common.collect.Maps.newHashMap;
 public class IFramePageServlet extends HttpServlet
 {
     private final TemplateRenderer templateRenderer;
-    private final ApplicationLinkOperationsFactory.LinkOperations linkOps;
-    private final WebResourceManager webResourceManager;
-    private final Map<String, Object> params;
-    private final String title;
-    private final String iframePath;
+    private final IFrameContext iframeContext;
+    private final IFrameRenderer iFrameRenderer;
     private final String decorator;
+    private final String title;
 
     public IFramePageServlet(TemplateRenderer templateRenderer,
-                             ApplicationLinkOperationsFactory.LinkOperations linkOps,
-                             String title,
-                             String iframePath,
+                             IFrameRenderer iFrameRenderer,
                              String decorator,
-                             WebResourceManager webResourceManager,
-                             Map<String,Object> params)
+                             String title,
+                             IFrameContext iframeContext
+                             )
     {
         this.templateRenderer = templateRenderer;
-        this.linkOps = linkOps;
-        this.title = title;
-        this.iframePath = iframePath;
+        this.iframeContext = iframeContext;
+        this.iFrameRenderer = iFrameRenderer;
         this.decorator = decorator;
-        this.webResourceManager = webResourceManager;
-        this.params = params; 
+        this.title = title;
     }
 
     @Override
@@ -52,14 +48,10 @@ public class IFramePageServlet extends HttpServlet
         resp.setContentType("text/html");
         try
         {
-            String signedUrl = linkOps.signGetUrl(req, iframePath);
-            webResourceManager.requireResourcesForContext("remoteapps-iframe");
 
-            Map<String,Object> ctx = newHashMap(params);
+            Map<String,Object> ctx = newHashMap(iframeContext.getTemplateParams());
             ctx.put("title", title);
-            ctx.put("iframeSrcHtml", signedUrl);
-            ctx.put("extraPath", req.getPathInfo() != null ? req.getPathInfo() : "");
-            ctx.put("remoteapp", linkOps.get());
+            ctx.put("iframeHtml", iFrameRenderer.render(iframeContext, req.getPathInfo(), req.getParameterMap()));
             ctx.put("decorator", decorator);
 
             templateRenderer.render("velocity/iframe-page.vm", ctx, out);
@@ -67,11 +59,9 @@ public class IFramePageServlet extends HttpServlet
         catch (PermissionDeniedException ex)
         {
             templateRenderer.render("velocity/iframe-page-accessdenied.vm",
-                ImmutableMap.<String, Object>of(
-                        "title", title,
-                        "decorator", decorator
-                        ),
-                out);
+                    ImmutableMap.<String, Object>of(
+                            "title", title,
+                            "decorator", decorator), out);
         }
     }
 }

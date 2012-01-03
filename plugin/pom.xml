@@ -297,13 +297,7 @@
                     <version>1.0.4</version>
                     <configuration>
                         <commands>
-                            <pi>resources com.atlassian.maven.plugins:maven-amps-plugin:filter-plugin-descriptor compile
-                                com.atlassian.maven.plugins:maven-amps-plugin:copy-bundled-dependencies
-                                net.alchim31.maven:yuicompressor-maven-plugin:compress
-                                org.codehaus.mojo:xml-maven-plugin:transform
-                                com.atlassian.maven.plugins:maven-amps-plugin:generate-manifest
-                                com.atlassian.maven.plugins:maven-amps-plugin:jar
-                                com.atlassian.maven.plugins:maven-amps-plugin:install
+                            <pi>resources com.atlassian.maven.plugins:maven-amps-plugin:filter-plugin-descriptor compile com.atlassian.maven.plugins:maven-amps-plugin:copy-bundled-dependencies net.alchim31.maven:yuicompressor-maven-plugin:compress org.codehaus.mojo:xml-maven-plugin:transform com.atlassian.maven.plugins:maven-amps-plugin:generate-manifest com.atlassian.maven.plugins:maven-amps-plugin:jar com.atlassian.maven.plugins:maven-amps-plugin:install
                             </pi>
                         </commands>
                     </configuration>
@@ -314,7 +308,7 @@
             <plugin>
                 <groupId>com.atlassian.maven.plugins</groupId>
                 <artifactId>maven-amps-plugin</artifactId>
-                <version>3.5.2</version>
+                <version>3.6-rc2</version>
                 <extensions>true</extensions>
                 <configuration>
                     <skipManifestValidation>true</skipManifestValidation>
