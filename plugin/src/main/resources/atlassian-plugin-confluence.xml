@@ -24,6 +24,62 @@
         </description>
     </api-scope>
 
+    <api-scope key="edit_spaces"
+               class="com.atlassian.labs.remoteapps.product.confluence.EditSpacesScope"
+               name="Edit Spaces">
+        <description>
+            Add, edit and remove spaces.
+        </description>
+    </api-scope>
+
+    <api-scope key="read_server_information"
+               class="com.atlassian.labs.remoteapps.product.confluence.ReadServerInformationScope"
+               name="Read Server Information">
+        <description>
+            View Confluence version number, Base URL and build information
+        </description>
+    </api-scope>
+
+    <api-scope key="modify_users"
+               class="com.atlassian.labs.remoteapps.product.confluence.ModifyUsersScope"
+               name="Modify Users">
+        <description>
+            Change users' profile pictures
+        </description>
+    </api-scope>
+
+    <api-scope key="manage_watchers"
+               class="com.atlassian.labs.remoteapps.product.confluence.ManageWatchersScope"
+               name="Manage Watchers">
+        <description>
+            View space, page and blog post watchers. Add new watchers
+        </description>
+    </api-scope>
+
+    <api-scope key="label_content"
+               class="com.atlassian.labs.remoteapps.product.confluence.LabelContentScope"
+               name="Label Content">
+        <description>
+            Add and remove labels from spaces, pages and blog posts
+        </description>
+    </api-scope>
+
+    <api-scope key="render_content"
+               class="com.atlassian.labs.remoteapps.product.confluence.RenderContentScope"
+               name="Render Content">
+        <description>
+            Convert content into viewable HTML
+        </description>
+    </api-scope>
+
+    <api-scope key="edit_content"
+               class="com.atlassian.labs.remoteapps.product.confluence.EditContentScope"
+               name="Edit Content">
+        <description>
+            Add, edit and remove pages, blogs and comments
+        </description>
+    </api-scope>
+
     <remote-module key="macro" name="Macro" class="com.atlassian.labs.remoteapps.modules.confluence.MacroModuleGenerator">
         <description>A Confluence macro that returns XHTML in the Confluence storage format to be cached forever</description>
         <schema id="macro.xsd" path="/xsd/macro.xsd" type="MacroType"/>
