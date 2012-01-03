@@ -1,7 +1,7 @@
 package com.atlassian.labs.remoteapps.modules.page;
 
-import com.atlassian.labs.remoteapps.modules.AbstractPageModuleGenerator;
 import com.atlassian.labs.remoteapps.modules.ApplicationLinkOperationsFactory;
+import com.atlassian.labs.remoteapps.modules.DefaultWebItemContext;
 import com.atlassian.labs.remoteapps.product.ProductAccessor;
 import com.atlassian.plugin.servlet.ServletModuleManager;
 import com.atlassian.plugin.webresource.WebResourceManager;
@@ -17,8 +17,6 @@ import static java.util.Collections.emptyMap;
  */
 public class AdminPageModuleGenerator extends AbstractPageModuleGenerator
 {
-    private final ProductAccessor productAccessor;
-
     public AdminPageModuleGenerator(ServletModuleManager servletModuleManager,
                                     TemplateRenderer templateRenderer,
                                     ProductAccessor productAccessor,
@@ -26,8 +24,12 @@ public class AdminPageModuleGenerator extends AbstractPageModuleGenerator
                                     ApplicationLinkOperationsFactory applicationLinkSignerFactory
     )
     {
-        super(servletModuleManager, templateRenderer, webResourceManager, applicationLinkSignerFactory);
-        this.productAccessor = productAccessor;
+        super(servletModuleManager, templateRenderer, webResourceManager, applicationLinkSignerFactory,
+              new DefaultWebItemContext(
+                      productAccessor.getPreferredAdminSectionKey(),
+                      productAccessor.getPreferredAdminWeight(),
+                      productAccessor.getLinkContextParams()
+              ));
     }
 
     @Override
@@ -46,23 +48,5 @@ public class AdminPageModuleGenerator extends AbstractPageModuleGenerator
     protected String getDecorator()
     {
         return "atl.admin";
-    }
-
-    @Override
-    protected int getPreferredWeight()
-    {
-        return productAccessor.getPreferredAdminWeight();
-    }
-
-    @Override
-    protected String getPreferredSectionKey()
-    {
-        return productAccessor.getPreferredAdminSectionKey();
-    }
-
-    @Override
-    protected Map<String, String> getContextParams()
-    {
-        return productAccessor.getLinkContextParams();
     }
 }

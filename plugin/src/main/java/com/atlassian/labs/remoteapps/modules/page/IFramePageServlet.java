@@ -1,6 +1,7 @@
-package com.atlassian.labs.remoteapps.modules;
+package com.atlassian.labs.remoteapps.modules.page;
 
 import com.atlassian.labs.remoteapps.PermissionDeniedException;
+import com.atlassian.labs.remoteapps.modules.ApplicationLinkOperationsFactory;
 import com.atlassian.plugin.webresource.WebResourceManager;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.google.common.collect.ImmutableMap;

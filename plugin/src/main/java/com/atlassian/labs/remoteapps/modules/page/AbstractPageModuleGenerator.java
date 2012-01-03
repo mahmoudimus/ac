@@ -1,5 +1,8 @@
-package com.atlassian.labs.remoteapps.modules;
+package com.atlassian.labs.remoteapps.modules.page;
 
+import com.atlassian.labs.remoteapps.modules.ApplicationLinkOperationsFactory;
+import com.atlassian.labs.remoteapps.modules.WebItemContext;
+import com.atlassian.labs.remoteapps.modules.WebItemCreator;
 import com.atlassian.labs.remoteapps.modules.external.RemoteAppCreationContext;
 import com.atlassian.labs.remoteapps.modules.external.RemoteModule;
 import com.atlassian.labs.remoteapps.modules.external.RemoteModuleGenerator;
@@ -30,19 +33,21 @@ public abstract class AbstractPageModuleGenerator implements RemoteModuleGenerat
     private final TemplateRenderer templateRenderer;
     private final WebResourceManager webResourceManager;
     private final ApplicationLinkOperationsFactory applicationLinkSignerFactory;
+    private final WebItemCreator webItemCreator;
     private Map<String, Object> iframeParams = newHashMap();
 
     @Autowired
     public AbstractPageModuleGenerator(ServletModuleManager servletModuleManager,
                                        TemplateRenderer templateRenderer,
                                        WebResourceManager webResourceManager,
-                                       ApplicationLinkOperationsFactory applicationLinkSignerFactory
-    )
+                                       ApplicationLinkOperationsFactory applicationLinkSignerFactory,
+                                       WebItemContext webItemContext)
     {
         this.servletModuleManager = servletModuleManager;
         this.templateRenderer = templateRenderer;
         this.webResourceManager = webResourceManager;
         this.applicationLinkSignerFactory = applicationLinkSignerFactory;
+        this.webItemCreator = new WebItemCreator(webItemContext);
     }
 
     @Override
@@ -68,7 +73,7 @@ public abstract class AbstractPageModuleGenerator implements RemoteModuleGenerat
 
         final Set<ModuleDescriptor> descriptors = ImmutableSet.<ModuleDescriptor>of(
                 createServletDescriptor(ctx, e, key, url, localUrl),
-                createWebItemDescriptor(ctx, e, key, localUrl));
+                webItemCreator.createWebItemDescriptor(ctx, e, key, localUrl));
         return new RemoteModule()
         {
             @Override
@@ -115,60 +120,10 @@ public abstract class AbstractPageModuleGenerator implements RemoteModuleGenerat
         return descriptor;
     }
 
-    private ModuleDescriptor createWebItemDescriptor(RemoteAppCreationContext ctx,
-                                                     Element e,
-                                                     String key,
-                                                     String localUrl
-    )
-    {
-        Element config = e.createCopy();
-        final String webItemKey = "webitem-" + key;
-        config.addAttribute("key", webItemKey);
-        config.addAttribute("section",
-                getOptionalAttribute(e, "section", getPreferredSectionKey()));
-        config.addAttribute("weight", getOptionalAttribute(e, "weight", getPreferredWeight()));
-
-        if (localUrl.contains("$"))
-        {
-            throw new PluginParseException("Invalid url '" + localUrl + "', cannot contain velocity expressions");
-        }
-
-        StringBuilder url = new StringBuilder();
-        url.append("/plugins/servlet");
-        url.append(localUrl);
-        if (!localUrl.contains("?"))
-        {
-            url.append("?");
-        }
-
-        for (Map.Entry<String,String> entry : getContextParams().entrySet())
-        {
-            url.append(entry.getKey());
-            url.append("=");
-            url.append(entry.getValue());
-        }
-        String name = getRequiredAttribute(e, "name");
-        config.addElement("label").setText(name);
-        config.addElement("link").
-                addAttribute("linkId", webItemKey).
-                setText(url.toString());
-
-        ModuleDescriptor descriptor = ctx.getAccessLevel()
-                                         .createWebItemModuleDescriptor(ctx.getBundle().getBundleContext());
-        descriptor.init(ctx.getPlugin(), config);
-        return descriptor;
-    }
-
-    protected abstract Map<String, String> getContextParams();
-
     @Override
     public void convertDescriptor(Element descriptorElement, Element pluginDescriptorRoot)
     {
     }
 
     protected abstract String getDecorator();
-
-    protected abstract int getPreferredWeight();
-
-    protected abstract String getPreferredSectionKey();
 }
