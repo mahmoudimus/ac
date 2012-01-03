@@ -22,7 +22,7 @@ public class MyMacroServlet extends HttpServlet
         final String favoriteFooty = req.getParameter("footy");
         final String body = req.getParameter("body");
 
-        renderHtml(resp, "/macro.mu", new HashMap<String,Object>() {{
+        renderHtml(resp, "macro.mu", new HashMap<String,Object>() {{
                 put("pageId", pageId);
                 put("favoriteFooty", favoriteFooty);
                 put("body", body);
