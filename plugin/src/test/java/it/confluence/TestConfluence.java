@@ -6,6 +6,7 @@ import com.atlassian.labs.remoteapps.test.confluence.ConfluenceCounterMacroPage;
 import com.atlassian.labs.remoteapps.test.confluence.ConfluenceMacroPage;
 import com.atlassian.labs.remoteapps.test.confluence.ConfluenceOps;
 import com.atlassian.pageobjects.TestedProduct;
+import com.atlassian.pageobjects.TestedProductFactory;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
 import com.atlassian.webdriver.AtlassianWebDriver;
@@ -35,7 +36,7 @@ import static org.junit.Assert.assertTrue;
 
 public class TestConfluence
 {
-    private static TestedProduct<WebDriverTester> product = OwnerOfTestedProduct.INSTANCE;
+    private static TestedProduct<WebDriverTester> product = TestedProductFactory.create(com.atlassian.webdriver.confluence.ConfluenceTestedProduct.class);
     private static ConfluenceOps confluenceOps = new ConfluenceOps();
 
     private final Logger log = LoggerFactory.getLogger(TestConfluence.class);
@@ -149,7 +150,6 @@ public class TestConfluence
 	}
 
     @Test
-    @Ignore
 	public void testPageCreatedWebHookFired() throws IOException, JSONException, InterruptedException, XmlRpcFault
     {
         String content = "<h1>Love me</h1>";
