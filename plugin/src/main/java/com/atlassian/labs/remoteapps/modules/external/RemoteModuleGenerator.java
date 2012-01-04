@@ -19,7 +19,7 @@ public interface RemoteModuleGenerator
 
     RemoteModule generate(RemoteAppCreationContext ctx, Element element);
 
-    void validate(Element element) throws PluginParseException;
+    void validate(Element element, String registrationUrl, String username) throws PluginParseException;
 
     void convertDescriptor(Element descriptorElement, Element pluginDescriptorRoot);
 }
