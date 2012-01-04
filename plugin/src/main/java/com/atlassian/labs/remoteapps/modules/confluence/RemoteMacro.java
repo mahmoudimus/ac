@@ -55,24 +55,34 @@ public class RemoteMacro implements Macro
         String storageFormatContent;
         try
         {
-            storageFormatContent = macroContentManager.getStaticContent(new MacroInstance(conversionContext.getEntity().getIdAsString(),
-                    conversionContext.getEntity().getTitle(), remoteUrl, storageFormatBody, parameters, linkOps));
+            storageFormatContent = macroContentManager.getStaticContent(new MacroInstance(conversionContext.getEntity(), remoteUrl, storageFormatBody, parameters, linkOps));
         }
         catch (ContentRetrievalException ex)
         {
-            log.error("Error retrieving macro '" + remoteUrl + "' content", ex);
-            return "ERROR: Unable to retrieve macro content from Remote App '" + linkOps.get().getName() + "': " + ex.getMessage();
+            String message = "ERROR: Unable to retrieve macro content from Remote App '" + linkOps.get().getName() + "': " + ex.getMessage();
+            log.error(message + " on page '{}' for url '{}'", conversionContext.getEntity().getTitle(), remoteUrl);
+            if (log.isDebugEnabled())
+            {
+                log.debug("Unable to retrieve content", ex);
+            }
+            return message;
         }
 
+        String htmlContent = null;
         try
         {
-            final String htmlContent = xhtmlUtils.convertStorageToView(storageFormatContent, conversionContext);
+            htmlContent = xhtmlUtils.convertStorageToView(storageFormatContent, conversionContext);
             return htmlContent;
         }
         catch (Exception e)
         {
-            log.error("Error converting macro content", e);
-            return "ERROR: Unable to convert macro content from Remote App '" + linkOps.get().getName() + "': " + e.getMessage();
+            String message = "ERROR: Unable to convert macro content from Remote App '" + linkOps.get().getName() + "': " + e.getMessage();
+            log.error(message + " on page {}", conversionContext.getEntity().getTitle());
+            if (log.isDebugEnabled())
+            {
+                log.debug("Error converting macro content: " + htmlContent, e);
+            }
+            return message;
         }
     }
 

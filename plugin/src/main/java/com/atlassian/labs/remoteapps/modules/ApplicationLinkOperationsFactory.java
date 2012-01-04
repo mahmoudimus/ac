@@ -7,6 +7,7 @@ import com.atlassian.labs.remoteapps.*;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.user.UserManager;
 import com.google.common.base.Function;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import net.oauth.OAuth;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,26 +36,24 @@ public class ApplicationLinkOperationsFactory
     private final OAuthLinkManager oAuthLinkManager;
     private final PermissionManager permissionManager;
     private final UserManager userManager;
-    private final ApplicationProperties applicationProperties;
     private final HttpContentRetriever httpContentRetriever;
 
     public static interface LinkOperations
     {
         ApplicationLink get();
         boolean canAccess(String user);
-        String signGetUrl(HttpServletRequest req, String targetPath);
-        String signGetUrl(String user, String targetPath);
-        String executeGet(String path, Map<String,Object> params) throws ContentRetrievalException;
+        String signGetUrl(String user, String targetPath, Map<String, String[]> params);
+        String executeGet(String user, String path, Map<String,Object> params) throws ContentRetrievalException;
     }
 
     @Autowired
-    public ApplicationLinkOperationsFactory(ApplicationLinkService applicationLinkService, OAuthLinkManager oAuthLinkManager, PermissionManager permissionManager, UserManager userManager, ApplicationProperties applicationProperties, HttpContentRetriever httpContentRetriever)
+    public ApplicationLinkOperationsFactory(ApplicationLinkService applicationLinkService, OAuthLinkManager oAuthLinkManager,
+                                            PermissionManager permissionManager, UserManager userManager, HttpContentRetriever httpContentRetriever)
     {
         this.applicationLinkService = applicationLinkService;
         this.oAuthLinkManager = oAuthLinkManager;
         this.permissionManager = permissionManager;
         this.userManager = userManager;
-        this.applicationProperties = applicationProperties;
         this.httpContentRetriever = httpContentRetriever;
     }
 
@@ -80,29 +79,23 @@ public class ApplicationLinkOperationsFactory
             }
 
             @Override
-            public String signGetUrl(HttpServletRequest req, String targetPath)
+            public String signGetUrl(String user, String targetPath, Map<String, String[]> params)
             {
-                return signGetUrlForType(get(), userManager.getRemoteUsername(req), targetPath, req.getParameterMap());
+                return signGetUrlForType(get(), user, targetPath, params);
             }
 
             @Override
-            public String signGetUrl(String user, String targetPath)
+            public String executeGet(String username, String path, Map<String, Object> params) throws ContentRetrievalException
             {
-                return signGetUrlForType(get(), user, targetPath, Collections.<String, String[]>emptyMap());
-            }
-
-            @Override
-            public String executeGet(String path, Map<String, Object> params) throws ContentRetrievalException
-            {
-                return executeGetForType(get(), path, params);
+                return executeGetForType(get(), username, path, params);
             }
         };
     }
 
-    private String executeGetForType(ApplicationLink applicationLink, String path, Map<String, Object> params) throws ContentRetrievalException
+    private String executeGetForType(ApplicationLink applicationLink, String username, String path, Map<String, Object> params) throws ContentRetrievalException
     {
         String targetUrl = getTargetUrl(applicationLink, path);
-        return httpContentRetriever.get(applicationLink, targetUrl, Maps.transformValues(params, new Function<Object, String>() {
+        return httpContentRetriever.get(applicationLink, username, targetUrl, Maps.transformValues(params, new Function<Object, String>() {
 
             @Override
             public String apply(Object from)
@@ -143,8 +136,6 @@ public class ApplicationLinkOperationsFactory
         String nonce = System.nanoTime() + "";
         String signatureMethod = OAuth.RSA_SHA1;
         String oauthVersion = "1.0";
-        URI hostUri = URI.create(applicationProperties.getBaseUrl());
-        String host = hostUri.getScheme() + "://" + hostUri.getHost() + ":" + hostUri.getPort();
 
         Map<String,List<String>> params = newHashMap(transformValues(queryParams, new Function<String[], List<String>>()
         {
@@ -159,9 +150,6 @@ public class ApplicationLinkOperationsFactory
         params.put(OAuth.OAUTH_NONCE, singletonList(nonce));
         params.put(OAuth.OAUTH_VERSION, singletonList(oauthVersion));
         params.put(OAuth.OAUTH_TIMESTAMP, singletonList(timestamp));
-        params.put("xdm_e", singletonList(host));
-        params.put("xdm_c", singletonList("channel01"));
-        params.put("xdm_p", singletonList("1"));
 
         return oAuthLinkManager.signAsParameters(applicationLink, method, url, params);
     }

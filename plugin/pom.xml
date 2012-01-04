@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
         <groupId>com.atlassian.labs</groupId>
         <artifactId>remoteapps-parent</artifactId>
-        <version>0.4.3-SNAPSHOT</version>
+        <version>${VERSION_NUMBER}</version>
     </parent>
 
 
@@ -47,7 +48,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        
+
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
@@ -64,6 +65,13 @@
             <artifactId>remoteapps-sample-plugin</artifactId>
             <version>${project.version}</version>
             <type>atlassian-plugin</type>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.atlassian.bandana</groupId>
+            <artifactId>atlassian-bandana</artifactId>
+            <version>3.1</version>
             <scope>provided</scope>
         </dependency>
 
@@ -89,46 +97,55 @@
         <dependency>
             <groupId>com.atlassian.plugins</groupId>
             <artifactId>atlassian-plugins-core</artifactId>
+            <version>${plugins.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.atlassian.sal</groupId>
             <artifactId>sal-api</artifactId>
+            <version>${sal.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.atlassian.oauth</groupId>
             <artifactId>atlassian-oauth-api</artifactId>
+            <version>${oauth.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.atlassian.oauth</groupId>
             <artifactId>atlassian-oauth-consumer-spi</artifactId>
+            <version>${oauth.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.atlassian.oauth</groupId>
             <artifactId>atlassian-oauth-service-provider-spi</artifactId>
+            <version>${oauth.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.atlassian.plugins.rest</groupId>
             <artifactId>atlassian-rest-common</artifactId>
+            <version>${rest.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.atlassian.plugins</groupId>
             <artifactId>atlassian-plugins-osgi</artifactId>
+            <version>${plugins.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.atlassian.plugins</groupId>
             <artifactId>atlassian-plugins-servlet</artifactId>
+            <version>${plugins.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.atlassian.plugins</groupId>
             <artifactId>atlassian-plugins-webfragment</artifactId>
+            <version>${plugins.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -140,12 +157,13 @@
         <dependency>
             <groupId>com.atlassian.plugins</groupId>
             <artifactId>atlassian-plugins-osgi-bridge</artifactId>
-            <version>2.6.0</version>
+            <version>${plugins.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.atlassian.templaterenderer</groupId>
             <artifactId>atlassian-template-renderer-api</artifactId>
+            <version>${templaterenderer.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -261,6 +279,12 @@
                 <version>1.1.1</version>
                 <scope>provided</scope>
             </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>1.5.8</version>
+                <scope>provided</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -273,7 +297,8 @@
                     <version>1.0.4</version>
                     <configuration>
                         <commands>
-                            <pi>resources com.atlassian.maven.plugins:maven-amps-plugin:filter-plugin-descriptor compile com.atlassian.maven.plugins:maven-amps-plugin:copy-bundled-dependencies net.alchim31.maven:yuicompressor-maven-plugin:compress org.codehaus.mojo:xml-maven-plugin:transform com.atlassian.maven.plugins:maven-amps-plugin:generate-manifest com.atlassian.maven.plugins:maven-amps-plugin:jar com.atlassian.maven.plugins:maven-amps-plugin:install</pi>
+                            <pi>resources com.atlassian.maven.plugins:maven-amps-plugin:filter-plugin-descriptor compile com.atlassian.maven.plugins:maven-amps-plugin:copy-bundled-dependencies net.alchim31.maven:yuicompressor-maven-plugin:compress org.codehaus.mojo:xml-maven-plugin:transform com.atlassian.maven.plugins:maven-amps-plugin:generate-manifest com.atlassian.maven.plugins:maven-amps-plugin:jar com.atlassian.maven.plugins:maven-amps-plugin:install
+                            </pi>
                         </commands>
                     </configuration>
                 </plugin>
@@ -283,10 +308,11 @@
             <plugin>
                 <groupId>com.atlassian.maven.plugins</groupId>
                 <artifactId>maven-amps-plugin</artifactId>
-                <version>3.6.2</version>
+                <version>3.6-rc2</version>
                 <extensions>true</extensions>
                 <configuration>
                     <skipManifestValidation>true</skipManifestValidation>
+                    <jvmArgs>-Xmx512m -XX:MaxPermSize=192m</jvmArgs>
                     <instructions>
                         <Import-Package>
                             com.atlassian.confluence.plugin.descriptor.web.descriptors;resolution:=optional,
@@ -315,7 +341,9 @@
                         <sun.net.http.allowRestrictedHeaders>true</sun.net.http.allowRestrictedHeaders>
                         <!--atlassian.dev.mode>false</atlassian.dev.mode-->
                     </systemPropertyVariables>
-                    <enableFastdev>false</enableFastdev>
+                    <!-- uncomment when it is safe to upgrade amps:  https://studio.atlassian.com/browse/AMPS-663 -->
+                    <!--enableDevToolbox>false</enableDevToolbox>
+                    <enableFastdev>false</enableFastdev-->
                     <functionalTestPattern>it/**/Test*.java</functionalTestPattern>
                     <pluginArtifacts>
                         <pluginArtifact>
@@ -486,6 +514,25 @@
                         <exclude>it/**</exclude>
                     </excludes>
                 </configuration>
+            </plugin>
+            <!-- necessary for build to deploy-->
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.7</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <configuration>
+                            <target>
+                                <copy file="${project.build.directory}/${project.build.finalName}.jar"
+                                      tofile="${project.build.directory}/deployable.jar"/>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 
         </plugins>

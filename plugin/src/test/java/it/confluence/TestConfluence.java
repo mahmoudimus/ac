@@ -2,9 +2,11 @@ package it.confluence;
 
 import com.atlassian.functest.selenium.internal.ConfluenceTestedProduct;
 import com.atlassian.labs.remoteapps.test.OwnerOfTestedProduct;
+import com.atlassian.labs.remoteapps.test.confluence.ConfluenceCounterMacroPage;
 import com.atlassian.labs.remoteapps.test.confluence.ConfluenceMacroPage;
 import com.atlassian.labs.remoteapps.test.confluence.ConfluenceOps;
 import com.atlassian.pageobjects.TestedProduct;
+import com.atlassian.pageobjects.TestedProductFactory;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
 import com.atlassian.webdriver.AtlassianWebDriver;
@@ -13,6 +15,7 @@ import com.atlassian.webdriver.pageobjects.WebDriverTester;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.After;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.MethodRule;
@@ -33,7 +36,7 @@ import static org.junit.Assert.assertTrue;
 
 public class TestConfluence
 {
-    private static TestedProduct<WebDriverTester> product = OwnerOfTestedProduct.INSTANCE;
+    private static TestedProduct<WebDriverTester> product = TestedProductFactory.create(com.atlassian.webdriver.confluence.ConfluenceTestedProduct.class);
     private static ConfluenceOps confluenceOps = new ConfluenceOps();
 
     private final Logger log = LoggerFactory.getLogger(TestConfluence.class);
@@ -122,6 +125,28 @@ public class TestConfluence
                                           .getIframeQueryParams();
 
         assertEquals(pageData.get("id"), params.get("page_id"));
+	}
+
+    @Test
+	public void testMacroCacheFlushes() throws XmlRpcFault, IOException
+    {
+        Map pageData = confluenceOps.setPage(product.getProductInstance(), "ds", "test", loadResourceAsString(
+                "confluence/counter-page.xhtml"));
+        product.visit(LoginPage.class).login("betty", "betty", HomePage.class);
+        ConfluenceCounterMacroPage page = product.visit(ConfluenceCounterMacroPage.class, pageData.get("title"));
+        assertEquals("1", page.getCounterMacroBody());
+
+        // stays the same on a new visit
+        page = product.visit(ConfluenceCounterMacroPage.class, pageData.get("title"));
+        assertEquals("1", page.getCounterMacroBody());
+
+        confluenceOps.resetMacrosOnPage(product.getProductInstance(), (String) pageData.get("id"));
+        page = product.visit(ConfluenceCounterMacroPage.class, pageData.get("title"));
+        assertEquals("2", page.getCounterMacroBody());
+
+        confluenceOps.resetMacrosForPlugin(product.getProductInstance(), "app1");
+        page = product.visit(ConfluenceCounterMacroPage.class, pageData.get("title"));
+        assertEquals("3", page.getCounterMacroBody());
 	}
 
     @Test

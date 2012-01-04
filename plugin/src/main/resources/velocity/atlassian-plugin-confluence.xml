@@ -1,3 +1,0 @@
-<application key="refapp">
-    <component key="confluenceProductAccessor" class="com.atlassian.labs.remoteapps.product.confluence.ConfluenceProductAccessor" />
-</application>

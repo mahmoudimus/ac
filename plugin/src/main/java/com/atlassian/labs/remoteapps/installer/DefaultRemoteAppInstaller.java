@@ -117,14 +117,14 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
                     final AtomicReference<String> accessLevel = new AtomicReference<String>("user");
                     try
                     {
-                        moduleGeneratorManager.getApplicationTypeModuleGenerator().validate(root, registrationUrl);
+                        moduleGeneratorManager.getApplicationTypeModuleGenerator().validate(root, registrationUrl, username);
 
                         moduleGeneratorManager.processDescriptor(root, new ModuleGeneratorManager.ModuleHandler()
                         { 
                             @Override
                             public void handle(Element element, RemoteModuleGenerator generator)
                             {
-                                generator.validate(element);
+                                generator.validate(element, registrationUrl, username);
                                 if (generator.getClass().getAnnotation(GlobalModule.class) != null)
                                 {
                                     // todo: restrict installation of global remote apps to admins
@@ -145,7 +145,6 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
 
                     log.info("Registered app '{}' by '{}'", pluginKey, username);
 
-                    // todo: retrieve the access level because it may have been modified.  Should be fixed as that sucks.
                     eventPublisher.publish(new RemoteAppInstalledEvent(pluginKey, accessLevel.get()));
                 }
             });
@@ -196,7 +195,7 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
         }
         catch (IOException e)
         {
-            // todo: do better
+            // shouldn't happen
             throw new RuntimeException(e);
         }
 

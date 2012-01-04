@@ -60,6 +60,6 @@
     </xs:simpleType>
 
     <xs:complexType name="LinkContextParamType">
-        <xs:attribute name="name" type="xs:string" use="required" />
+        <xs:attribute name="name" type="LinkContextParamNameType" use="required" />
     </xs:complexType>
 </xs:schema>

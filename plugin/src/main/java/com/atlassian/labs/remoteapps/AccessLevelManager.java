@@ -41,7 +41,7 @@ public class AccessLevelManager implements DisposableBean
             @Override
             public void removed(AccessLevelModuleDescriptor descriptor)
             {
-                accessLevels.remove(descriptor.getModule().getId());
+                accessLevels.remove(descriptor.getAccessLevelId());
             }
         });
     }

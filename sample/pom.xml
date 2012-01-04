@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.atlassian.labs</groupId>
         <artifactId>remoteapps-parent</artifactId>
-        <version>0.4.3-SNAPSHOT</version>
+        <version>${VERSION_NUMBER}</version>
     </parent>
 
 
@@ -131,6 +131,7 @@
                                     <include>com.samskivert:*</include>
                                     <include>javax.servlet:servlet-api</include>
                                     <include>commons-logging:commons-logging</include>
+                                    <include>org.json:json</include>
                                 </includes>
                             </artifactSet>
                         </configuration>

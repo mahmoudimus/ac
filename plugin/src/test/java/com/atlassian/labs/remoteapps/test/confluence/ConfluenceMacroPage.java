@@ -55,6 +55,6 @@ public class ConfluenceMacroPage implements Page
     {
         driver.findElement(By.id("browse-menu-link")).click();
         driver.findElement(By.id("webitem-remoteAppGeneral")).click();
-        return pageBinder.bind(MyIframePage.class);
+        return pageBinder.bind(MyIframePage.class, "servlet-remoteAppGeneral");
     }
 }

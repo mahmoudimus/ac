@@ -48,6 +48,13 @@
         <label>Remote Apps</label>
     </web-section>
 
+    <rest key="rest-confluence" path="/remoteapps" version="1">
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>INCLUDE</dispatcher>
+        <package>com.atlassian.labs.remoteapps.rest</package>
+        <package>com.atlassian.labs.remoteapps.product.confluence.rest</package>
+    </rest>
+
     <servlet key="remoteAppsImagePlaceholderServlet"
              name="Remote Apps Image Placeholder Servlet"
              class="com.atlassian.labs.remoteapps.product.confluence.RemoteAppsImagePlaceholderServlet">
@@ -57,6 +64,10 @@
 
     <component key="macroContentManager" class="com.atlassian.labs.remoteapps.modules.confluence.MacroContentManager"/>
     <component key="confluenceEventHandler" class="com.atlassian.labs.remoteapps.product.confluence.ConfluenceEventHandler" />
+
+    <component-import key="bandanaManager" interface="com.atlassian.bandana.BandanaManager" />
+    <component-import key="spaceManager" interface="com.atlassian.confluence.spaces.SpaceManager" />
+    <component-import key="pageManager" interface="com.atlassian.confluence.pages.PageManager" />
 
     <component-import key="systemInfoService"
                       interface="com.atlassian.confluence.status.service.SystemInformationService"/>

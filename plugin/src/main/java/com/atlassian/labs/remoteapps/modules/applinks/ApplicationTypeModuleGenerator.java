@@ -81,11 +81,6 @@ public class ApplicationTypeModuleGenerator implements RemoteModuleGenerator
     }
 
     @Override
-    public void validate(Element element) throws PluginParseException
-    {
-    }
-
-    @Override
     public void convertDescriptor(Element descriptorElement, Element pluginDescriptorRoot)
     {
     }
@@ -196,8 +191,8 @@ public class ApplicationTypeModuleGenerator implements RemoteModuleGenerator
         return "applicationType-" + key;
     }
 
-    // todo: this should also be done better so in sync with other validation
-    public void validate(Element root, String registrationUrl)
+    @Override
+    public void validate(Element root, String registrationUrl, String username)
     {
         String displayUrl = root.attributeValue("display-url");
         if (displayUrl == null || !registrationUrl.startsWith(displayUrl))

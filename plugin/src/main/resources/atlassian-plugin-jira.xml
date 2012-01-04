@@ -71,12 +71,18 @@
         </description>
     </api-scope>
 
+    <rest key="rest-jira" path="/remoteapps" version="1">
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>INCLUDE</dispatcher>
+        <package>com.atlassian.labs.remoteapps.rest</package>
+    </rest>
 
-    <!-- activity streams -->
+
+    <!-- activity streams>
     <component-import key="jiraUserProfileAccessor" interface="com.atlassian.streams.spi.UserProfileAccessor"/>
     <activity-streams-provider key="apps-provider" name="Remote Apps Provider"
                                class="com.atlassian.labs.remoteapps.streams.RemoteAppsActivityProvider">
-    </activity-streams-provider>
+    </activity-streams-provider-->
 
 </application>
 
