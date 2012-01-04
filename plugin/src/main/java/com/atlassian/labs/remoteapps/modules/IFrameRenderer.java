@@ -8,6 +8,7 @@ import com.atlassian.templaterenderer.TemplateRenderer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.ws.rs.core.UriBuilder;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.net.URI;
@@ -62,6 +63,13 @@ public class IFrameRenderer
         allParams.put("xdm_c", new String[]{"channel-" + iframeContext.getModuleKey()});
         allParams.put("xdm_p", new String[]{"1"});
         String signedUrl = iframeContext.getLinkOps().signGetUrl(remoteUser, iframeContext.getIframePath(), allParams);
+
+        // clear xdm params as they are added by easyxdm later
+        signedUrl = UriBuilder.fromUri(signedUrl)
+                    .replaceQueryParam("xdm_e")
+                    .replaceQueryParam("xdm_c")
+                    .replaceQueryParam("xdm_p").build().toString();
+
 
         Map<String,Object> ctx = newHashMap(iframeContext.getTemplateParams());
         ctx.put("iframeSrcHtml", signedUrl);

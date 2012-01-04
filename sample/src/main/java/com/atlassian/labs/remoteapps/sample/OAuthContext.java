@@ -86,6 +86,10 @@ public class OAuthContext
         Map<String,String> result = new HashMap<String,String>();
         for (Map.Entry<String,String[]> param : params.entrySet())
         {
+            if (param.getValue().length > 1)
+            {
+                throw new IllegalArgumentException("Must not have multiples of query parameters");
+            }
             result.put(param.getKey(), param.getValue()[0]);
         }
         return result;
