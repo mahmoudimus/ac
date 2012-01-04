@@ -14,6 +14,7 @@ import com.atlassian.webdriver.pageobjects.WebDriverTester;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.After;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.MethodRule;
@@ -148,6 +149,7 @@ public class TestConfluence
 	}
 
     @Test
+    @Ignore
 	public void testPageCreatedWebHookFired() throws IOException, JSONException, InterruptedException, XmlRpcFault
     {
         String content = "<h1>Love me</h1>";
