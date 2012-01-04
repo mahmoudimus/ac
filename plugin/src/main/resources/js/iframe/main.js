@@ -15,7 +15,7 @@ var RA = (function() {
 
     RA.resize = function(width, height) {
         var w = width || "100%";
-        var h = height || document.body.offsetHeight;
+        var h = height || (document.body.offsetHeight + 20);
         socket.postMessage(JSON.stringify({
                 id : 'resize',
                 width : w,
