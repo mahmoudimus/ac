@@ -5,9 +5,9 @@ import static java.util.Arrays.asList;
 /**
  *
  */
-public class EditSpacesScope extends ConfluenceScope
+public class ModifySpacesScope extends ConfluenceScope
 {
-    public EditSpacesScope()
+    public ModifySpacesScope()
     {
         super(asList(
                 "getSpaces",

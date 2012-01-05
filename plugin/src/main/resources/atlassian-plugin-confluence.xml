@@ -38,9 +38,9 @@
         </description>
     </api-scope>
 
-    <api-scope key="edit_spaces"
-               class="com.atlassian.labs.remoteapps.product.confluence.EditSpacesScope"
-               name="Edit Spaces">
+    <api-scope key="modify_spaces"
+               class="com.atlassian.labs.remoteapps.product.confluence.ModifySpacesScope"
+               name="Modify Spaces">
         <description>
             Add, edit and remove spaces.
         </description>
