@@ -12,7 +12,8 @@
     <api-scope key="modify_pages" class="com.atlassian.labs.remoteapps.product.confluence.ModifyPagesScope"
                name="Modify Pages">
         <description>
-            Add, update, remove, or move pages
+            Add, update, remove, or move pages.
+            DEPRECATED: Request the 'modify_content' scope instead.
         </description>
     </api-scope>
 
@@ -20,6 +21,7 @@
                name="Modify Blog Entries">
         <description>
             Add or update blog entires.  To remove, request the 'modify_pages' scope.
+            DEPRECATED: Request the 'modify_content' scope instead.
         </description>
     </api-scope>
 
@@ -86,11 +88,11 @@
         </description>
     </api-scope>
 
-    <api-scope key="edit_content"
-               class="com.atlassian.labs.remoteapps.product.confluence.EditContentScope"
-               name="Edit Content">
+    <api-scope key="modify_content"
+               class="com.atlassian.labs.remoteapps.product.confluence.ModifyContentScope"
+               name="Modify Content">
         <description>
-            Add, edit and remove pages, blogs and comments
+            Add, edit and remove pages and blog posts
         </description>
     </api-scope>
 

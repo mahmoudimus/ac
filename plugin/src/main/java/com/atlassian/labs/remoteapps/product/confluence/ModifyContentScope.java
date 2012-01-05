@@ -3,11 +3,11 @@ package com.atlassian.labs.remoteapps.product.confluence;
 import static java.util.Arrays.asList;
 
 /**
- * API Scope for Confluence that grants Remote Apps the ability to add, edit and remove pages, blogs and comments.
+ * API Scope for Confluence that grants Remote Apps the ability to add, edit and remove pages and blogs.
  */
-public class EditContentScope extends ConfluenceScope
+public class ModifyContentScope extends ConfluenceScope
 {
-    protected EditContentScope()
+    protected ModifyContentScope()
     {
         super(asList(
                 "storePage",
@@ -15,9 +15,7 @@ public class EditContentScope extends ConfluenceScope
                 "removePage",
                 "movePage",
                 "movePageToTopLevel",
-                "storeBlogEntry",
-                "addComment",
-                "removeComment"
+                "storeBlogEntry"
         ));
     }
 }
