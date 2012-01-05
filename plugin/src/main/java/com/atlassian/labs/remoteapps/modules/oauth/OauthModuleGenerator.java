@@ -98,7 +98,7 @@ public class OauthModuleGenerator implements RemoteModuleGenerator
     }
 
     @Override
-    public void validate(Element element) throws PluginParseException
+    public void validate(Element element, String registrationUrl, String username) throws PluginParseException
     {
     }
 

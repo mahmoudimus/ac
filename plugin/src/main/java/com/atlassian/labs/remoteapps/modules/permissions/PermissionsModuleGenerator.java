@@ -6,11 +6,14 @@ import com.atlassian.labs.remoteapps.modules.external.RemoteModule;
 import com.atlassian.labs.remoteapps.modules.external.RemoteModuleGenerator;
 import com.atlassian.labs.remoteapps.modules.external.StartableRemoteModule;
 import com.atlassian.labs.remoteapps.product.ProductAccessor;
+import com.atlassian.labs.remoteapps.settings.SettingsManager;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.PluginParseException;
+import com.atlassian.sal.api.ApplicationProperties;
+import com.atlassian.sal.api.user.UserManager;
+import com.google.common.collect.ImmutableSet;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
@@ -30,10 +33,15 @@ public class PermissionsModuleGenerator implements RemoteModuleGenerator
     private final PermissionManager permissionManager;
     private final String applicationKey;
 
+    private final UserManager userManager;
+    private final SettingsManager settingsManager;
+
     @Autowired
-    public PermissionsModuleGenerator(PermissionManager permissionManager, ProductAccessor productAccessor)
+    public PermissionsModuleGenerator(PermissionManager permissionManager, ProductAccessor productAccessor, UserManager userManager, SettingsManager settingsManager)
     {
         this.permissionManager = permissionManager;
+        this.userManager = userManager;
+        this.settingsManager = settingsManager;
         this.applicationKey = productAccessor.getKey();
     }
 
@@ -87,8 +95,12 @@ public class PermissionsModuleGenerator implements RemoteModuleGenerator
     }
 
     @Override
-    public void validate(Element element) throws PluginParseException
+    public void validate(Element element, String registrationUrl, String username) throws PluginParseException
     {
+        if (!settingsManager.isAllowDogfooding() && !element.elements().isEmpty() && !userManager.isAdmin(username))
+        {
+            throw new PluginParseException("Cannot install remote app that contains permissions if not either a dogfood server or an administrator");
+        }
     }
 
     @Override

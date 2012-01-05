@@ -3,6 +3,7 @@ package com.atlassian.labs.remoteapps.rest;
 import com.atlassian.labs.remoteapps.DescriptorValidator;
 import com.atlassian.labs.remoteapps.PermissionDeniedException;
 import com.atlassian.labs.remoteapps.installer.RemoteAppInstaller;
+import com.atlassian.labs.remoteapps.settings.SettingsManager;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import com.atlassian.sal.api.user.UserManager;
 import org.bouncycastle.openssl.PEMWriter;
@@ -11,9 +12,11 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
@@ -35,15 +38,55 @@ public class InstallerResource
     private final RemoteAppInstaller remoteAppInstaller;
     private final UserManager userManager;
     private final DescriptorValidator descriptorValidator;
+    private final SettingsManager settingsManager;
 
     public InstallerResource(RemoteAppInstaller remoteAppInstaller,
                              UserManager userManager,
-                             DescriptorValidator descriptorValidator
-    )
+                             DescriptorValidator descriptorValidator,
+                             SettingsManager settingsManager)
     {
         this.remoteAppInstaller = remoteAppInstaller;
         this.userManager = userManager;
         this.descriptorValidator = descriptorValidator;
+        this.settingsManager = settingsManager;
+    }
+
+    @PUT
+    @Path("/allow-dogfooding")
+    public Response allowDogfooding()
+    {
+        if (!userManager.isAdmin(userManager.getRemoteUsername()))
+        {
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
+        settingsManager.setAllowDogfooding(true);
+        return Response.noContent().build();
+    }
+
+    @DELETE
+    @Path("/allow-dogfooding")
+    public Response disallowDogfooding()
+    {
+        if (!userManager.isAdmin(userManager.getRemoteUsername()))
+        {
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
+        settingsManager.setAllowDogfooding(false);
+        return Response.noContent().build();
+    }
+    
+    @GET
+    @Path("/allow-dogfooding")
+    public Response doesAllowDogfooding()
+    {
+        if (settingsManager.isAllowDogfooding())
+        {
+            return Response.noContent().build();
+        }
+        else
+        {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
     }
 
     @POST

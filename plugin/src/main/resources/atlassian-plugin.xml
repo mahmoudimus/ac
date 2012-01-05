@@ -116,6 +116,7 @@
     <component-import key="webResourceManager" interface="com.atlassian.plugin.webresource.WebResourceManager" />
     <component-import key="eventPublisher" interface="com.atlassian.event.api.EventPublisher" />
     <component-import key="i18nResolver" interface="com.atlassian.sal.api.message.I18nResolver" />
+    <component-import key="pluginSettingsFactory" interface="com.atlassian.sal.api.pluginsettings.PluginSettingsFactory" />
 
     <module-type key="api-scope" class="com.atlassian.labs.remoteapps.descriptor.external.ApiScopeModuleDescriptor" />
 
