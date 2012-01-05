@@ -27,7 +27,7 @@ public class WebHookServlet extends HttpServlet
 {
     private final List<Publication> publications = new CopyOnWriteArrayList<Publication>();
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
+    protected synchronized void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
     {
         String eventIdentifier = req.getPathInfo().substring(req.getPathInfo().lastIndexOf('/') + 1);
         StringBuilder body = new StringBuilder();
@@ -42,7 +42,7 @@ public class WebHookServlet extends HttpServlet
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
+    protected synchronized void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
     {
         resp.setContentType("application/json");
         JSONArray result = new JSONArray();

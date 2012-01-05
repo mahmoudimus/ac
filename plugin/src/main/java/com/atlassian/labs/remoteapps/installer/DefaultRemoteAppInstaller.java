@@ -117,14 +117,14 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
                     final AtomicReference<String> accessLevel = new AtomicReference<String>("user");
                     try
                     {
-                        moduleGeneratorManager.getApplicationTypeModuleGenerator().validate(root, registrationUrl);
+                        moduleGeneratorManager.getApplicationTypeModuleGenerator().validate(root, registrationUrl, username);
 
                         moduleGeneratorManager.processDescriptor(root, new ModuleGeneratorManager.ModuleHandler()
                         { 
                             @Override
                             public void handle(Element element, RemoteModuleGenerator generator)
                             {
-                                generator.validate(element);
+                                generator.validate(element, registrationUrl, username);
                                 if (generator.getClass().getAnnotation(GlobalModule.class) != null)
                                 {
                                     // todo: restrict installation of global remote apps to admins

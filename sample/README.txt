@@ -15,4 +15,4 @@ world, to be embedded into the remoteapps.jira.com JIRA instance:
   java -jar target/remoteapps-sample-VERSION-standalone.jar myAppKey https://remoteapps.jira.com https://mydomain.com 5432 
 
 Then, to install the Remote App via the "Extensions" user profile page (Speakeasy), enter the URL:
-  https://mydomain.com/user-register
+  https://mydomain.com/register
