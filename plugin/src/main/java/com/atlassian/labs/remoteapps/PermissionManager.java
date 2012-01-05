@@ -127,7 +127,17 @@ public class PermissionManager implements DisposableBean
     {
         // todo: make configurable
         return username != null &&
+
+                // for OnDemand dogfooding
                 (userManager.isUserInGroup(username, "developers") ||
+
+                 // for internal Atlassian dogfooding
+                 userManager.isUserInGroup(username, "atlassian-staff") ||
+
+                 // for smoke tests
+                 userManager.isUserInGroup(username, "test-users") ||
+
+                 // the default
                  userManager.isAdmin(username));
     }
 }
