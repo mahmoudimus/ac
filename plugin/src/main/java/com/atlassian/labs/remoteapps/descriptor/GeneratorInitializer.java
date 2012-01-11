@@ -1,8 +1,10 @@
 package com.atlassian.labs.remoteapps.descriptor;
 
+import com.atlassian.event.api.EventListener;
 import com.atlassian.labs.remoteapps.AccessLevelManager;
 import com.atlassian.labs.remoteapps.ModuleGeneratorManager;
 import com.atlassian.labs.remoteapps.descriptor.external.*;
+import com.atlassian.labs.remoteapps.event.RemoteAppUninstalledEvent;
 import com.atlassian.labs.remoteapps.modules.*;
 import com.atlassian.labs.remoteapps.modules.applinks.ApplicationTypeModule;
 import com.atlassian.labs.remoteapps.modules.external.*;
@@ -19,7 +21,10 @@ import org.osgi.framework.ServiceRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CopyOnWriteArraySet;
 
@@ -58,6 +63,19 @@ class GeneratorInitializer
         this.bundle = bundle;
         this.moduleGeneratorManager = moduleGeneratorManager;
         this.element = element;
+    }
+
+    @EventListener
+    public void onAppUninstall(RemoteAppUninstalledEvent event)
+    {
+        // todo: This only works for loaded apps but should work for apps that had errors loading
+        for (RemoteModule module : remoteModules)
+        {
+            if (module instanceof UninstallableRemoteModule)
+            {
+                ((UninstallableRemoteModule)module).uninstall();
+            }
+        }
     }
 
     public boolean registerNewModuleDescriptorFactory(ModuleDescriptorFactory factory)

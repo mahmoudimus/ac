@@ -5,7 +5,9 @@ import com.atlassian.labs.remoteapps.DescriptorValidator;
 import com.atlassian.labs.remoteapps.ModuleGeneratorManager;
 import com.atlassian.labs.remoteapps.PermissionDeniedException;
 import com.atlassian.labs.remoteapps.PermissionManager;
+import com.atlassian.labs.remoteapps.descriptor.RemoteAppModuleDescriptor;
 import com.atlassian.labs.remoteapps.descriptor.external.AccessLevelModuleDescriptor;
+import com.atlassian.labs.remoteapps.event.RemoteAppUninstalledEvent;
 import com.atlassian.labs.remoteapps.modules.GlobalModule;
 import com.atlassian.labs.remoteapps.modules.external.RemoteModuleGenerator;
 import com.atlassian.labs.remoteapps.event.RemoteAppInstalledEvent;
@@ -15,20 +17,12 @@ import com.atlassian.labs.remoteapps.util.zip.ZipHandler;
 import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.oauth.util.RSAKeys;
-import com.atlassian.plugin.JarPluginArtifact;
-import com.atlassian.plugin.PluginController;
-import com.atlassian.plugin.PluginParseException;
+import com.atlassian.plugin.*;
 import com.atlassian.sal.api.ApplicationProperties;
-import com.atlassian.sal.api.net.Request;
-import com.atlassian.sal.api.net.RequestFactory;
-import com.atlassian.sal.api.net.Response;
-import com.atlassian.sal.api.net.ResponseException;
-import com.atlassian.sal.api.net.ResponseHandler;
+import com.atlassian.sal.api.net.*;
 import com.google.common.collect.ImmutableMap;
 import org.dom4j.Document;
-import org.dom4j.DocumentException;
 import org.dom4j.Element;
-import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +30,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URI;
 import java.util.Properties;
@@ -55,10 +48,10 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
     private final RequestFactory requestFactory;
     private final PluginController pluginController;
     private final ApplicationProperties applicationProperties;
-    private final PermissionManager permissionManager;
     private final ModuleGeneratorManager moduleGeneratorManager;
     private final EventPublisher eventPublisher;
     private final DescriptorValidator descriptorValidator;
+    private final PluginAccessor pluginAccessor;
 
     private static final Logger log = LoggerFactory.getLogger(DefaultRemoteAppInstaller.class);
 
@@ -66,29 +59,26 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
     public DefaultRemoteAppInstaller(ConsumerService consumerService,
                                      RequestFactory requestFactory,
                                      PluginController pluginController,
-                                     ApplicationProperties applicationProperties, PermissionManager permissionManager,
+                                     ApplicationProperties applicationProperties,
                                      ModuleGeneratorManager moduleGeneratorManager,
                                      EventPublisher eventPublisher,
-                                     DescriptorValidator descriptorValidator
-    )
+                                     DescriptorValidator descriptorValidator,
+                                     PluginAccessor pluginAccessor)
     {
         this.consumerService = consumerService;
         this.requestFactory = requestFactory;
         this.pluginController = pluginController;
         this.applicationProperties = applicationProperties;
-        this.permissionManager = permissionManager;
         this.moduleGeneratorManager = moduleGeneratorManager;
         this.eventPublisher = eventPublisher;
         this.descriptorValidator = descriptorValidator;
+        this.pluginAccessor = pluginAccessor;
     }
 
     @Override
-    public void install(final String username, final String registrationUrl, String registrationSecret) throws PermissionDeniedException
+    public String install(final String username, final String registrationUrl,
+                          String registrationSecret, final KeyValidator keyValidator) throws PermissionDeniedException
     {
-        if (!permissionManager.canInstallRemoteApps(username))
-        {
-            throw new PermissionDeniedException("Unauthorized access by '" + username + "'");
-        }
         Consumer consumer = consumerService.getConsumer();
         final URI registrationUri = URI.create(encodeGetUrl(registrationUrl, ImmutableMap.of(
                 "key", consumer.getKey(),
@@ -100,10 +90,10 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
         Request request = requestFactory.createRequest(Request.MethodType.GET, registrationUri.toString());
         try
         {
-            request.execute(new ResponseHandler()
+            return (String)request.executeAndReturn(new ReturningResponseHandler<Response, String>()
             {
                 @Override
-                public void handle(Response response) throws ResponseException
+                public String handle(Response response) throws ResponseException
                 {
                     if (response.getStatusCode() != 200)
                     {
@@ -113,14 +103,21 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
                     final Document document = descriptorValidator.parseAndValidate(registrationUrl, descriptorXml);
                     final Element root = document.getRootElement();
                     final String pluginKey = root.attributeValue("key");
+                    keyValidator.validate(pluginKey);
+
+                    if (pluginAccessor.getPlugin(pluginKey) != null)
+                    {
+                        uninstall(pluginKey);
+                    }
                     final Properties props = new Properties();
                     final AtomicReference<String> accessLevel = new AtomicReference<String>("user");
                     try
                     {
-                        moduleGeneratorManager.getApplicationTypeModuleGenerator().validate(root, registrationUrl, username);
+                        moduleGeneratorManager.getApplicationTypeModuleGenerator().validate(root, registrationUrl,
+                                                                                            username);
 
                         moduleGeneratorManager.processDescriptor(root, new ModuleGeneratorManager.ModuleHandler()
-                        { 
+                        {
                             @Override
                             public void handle(Element element, RemoteModuleGenerator generator)
                             {
@@ -133,25 +130,31 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
                                 props.putAll(generator.getI18nMessages(pluginKey, element));
                             }
                         });
-                    }
-                    catch (PluginParseException ex)
+                    } catch (PluginParseException ex)
                     {
-                        throw new InstallationFailedException("Validation of the descriptor failed: " + ex.getMessage(), ex);
+                        throw new InstallationFailedException("Validation of the descriptor failed: " + ex.getMessage(),
+                                                              ex);
                     }
                     root.addAttribute("access-level", accessLevel.get());
                     Document pluginXml = transformDescriptorToPluginXml(username, document);
-                    JarPluginArtifact jar = createJarPluginArtifact(pluginKey, registrationUri.getHost(), pluginXml, props);
+                    JarPluginArtifact jar = createJarPluginArtifact(pluginKey, registrationUri.getHost(), pluginXml,
+                                                                    props);
                     pluginController.installPlugins(jar);
 
                     log.info("Registered app '{}' by '{}'", pluginKey, username);
 
                     eventPublisher.publish(new RemoteAppInstalledEvent(pluginKey, accessLevel.get()));
+
+                    return pluginKey;
                 }
             });
         }
+        catch (PermissionDeniedException ex)
+        {
+            throw ex;
+        }
         catch (InstallationFailedException ex)
         {
-            log.warn("Unable to install remote app from '{}' by user '{}'", registrationUrl, username);
             throw ex;
         }
         catch (ResponseException e)
@@ -167,6 +170,14 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
 
             throw new InstallationFailedException(ex);
         }
+    }
+
+    @Override
+    public void uninstall(String appKey) throws PermissionDeniedException
+    {
+        Plugin plugin = pluginAccessor.getPlugin(appKey);
+        eventPublisher.publish(new RemoteAppUninstalledEvent(appKey));
+        pluginController.uninstall(plugin);
     }
 
     private JarPluginArtifact createJarPluginArtifact(final String pluginKey, String host, final Document pluginXml, final Properties props)

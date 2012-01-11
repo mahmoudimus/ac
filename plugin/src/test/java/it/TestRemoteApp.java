@@ -1,30 +1,22 @@
 package it;
 
-import com.atlassian.labs.remoteapps.test.MyIframePage;
-import com.atlassian.labs.remoteapps.test.OAuthUtils;
-import com.atlassian.labs.remoteapps.test.RemoteAppAwareAdminPage;
-import com.atlassian.labs.remoteapps.test.OwnerOfTestedProduct;
+import com.atlassian.labs.remoteapps.test.*;
 import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.pageobjects.page.AdminHomePage;
+import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
 import com.atlassian.webdriver.pageobjects.WebDriverTester;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
-import org.dom4j.io.SAXReader;
-import org.jdom.input.SAXBuilder;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.After;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 import java.util.List;
 
-import static com.atlassian.labs.remoteapps.test.Utils.getJson;
 import static com.atlassian.labs.remoteapps.test.Utils.getXml;
 import static com.atlassian.labs.remoteapps.test.WebHookUtils.waitForEvent;
 import static org.junit.Assert.assertEquals;
@@ -45,9 +37,10 @@ public class TestRemoteApp
 	public void testMyAdminLoaded()
 	{
         product.visit(LoginPage.class).login("betty", "betty", AdminHomePage.class);
-        RemoteAppAwareAdminPage page = product.getPageBinder().bind(RemoteAppAwareAdminPage.class);
+        RemoteAppAwarePage page = product.getPageBinder().bind(RemoteAppAwarePage.class, "remoteAppAdmin",
+                                                               "Remote App app1 Admin");
         assertTrue(page.isRemoteAppLinkPresent());
-        MyIframePage myIframe = page.clickRemoteAppAdminLink();
+        MyIframePage myIframe = page.clickRemoteAppLink();
         assertEquals("Success", myIframe.getMessage());
         assertEquals(OAuthUtils.getConsumerKey(), myIframe.getConsumerKey());
 	}
@@ -73,5 +66,27 @@ public class TestRemoteApp
         assertEquals("GET", resources.get(0).attributeValue("httpMethod"));
         assertEquals("/rest/remoteapptest/1/", resources.get(1).attributeValue("path"));
         assertEquals("GET", resources.get(1).attributeValue("httpMethod"));
+    }
+
+    @Test
+    public void testChangedKey() throws Exception
+    {
+        RemoteAppRunner appFirst = new RemoteAppRunner(product.getProductInstance().getBaseUrl(), "appFirst")
+                .addAdminPage("changedPage", "Changed Page", "/page", "hello-world-page.mu")
+                .start();
+        product.visit(LoginPage.class).login("betty", "betty", AdminHomePage.class);
+        assertTrue(product.getPageBinder().bind(RemoteAppAwarePage.class, "changedPage", "Changed Page")
+                .clickRemoteAppLink()
+                .getLoadTime() > 0);
+        appFirst.stop();
+
+        RemoteAppRunner appSecond = new RemoteAppRunner(product.getProductInstance().getBaseUrl(), "appSecond")
+                .addAdminPage("changedPage", "Changed Page", "/page", "hello-world-page.mu")
+                .start();
+        product.visit(AdminHomePage.class);
+        assertTrue(product.getPageBinder().bind(RemoteAppAwarePage.class, "changedPage", "Changed Page")
+                .clickRemoteAppLink()
+                .getLoadTime() > 0);
+        appSecond.stop();
     }
 }

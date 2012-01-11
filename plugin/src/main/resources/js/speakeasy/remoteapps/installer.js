@@ -16,7 +16,7 @@ function sendRegistrationToken(url, token, callbacks) {
           token : token
       },
       success: function(data) {
-          addMessage('success', {body: "Registration successful"});
+          addMessage('success', {body: "Registration successful <a href='javascript:window.location.reload();'>(refresh)</a> "});
           callbacks.success();
       },
       error: function(xhr) {
@@ -85,6 +85,7 @@ $(document).ready(function() {
             dialog.remove();
             openKeygen();
         });
+
         $.ajax({
           url: contextPath + "/plugins/servlet/oauth/consumer-info",
           type: 'GET',
@@ -98,5 +99,30 @@ $(document).ready(function() {
             $('#oauth-consumer-public-key').text(publicKey);
           }
         });
+    });
+    $.each($('tr[data-pluginkey]'), function() {
+        var $row = $(this);
+        var key = $row.attr("data-pluginkey");
+        if ($('a.pk-viewsource', $row).length == 0) {
+            $('.toolbar-item:last', $row).before('<li class="toolbar-item"><button class="toolbar-trigger rp-uninstall">Uninstall</button></li>')
+        }
+        $('.rp-uninstall', $row).click(function(e) {
+            e.preventDefault();
+            $.ajax({
+              url: contextPath + "/rest/remoteapps/latest/uninstaller/" + key,
+              type: 'DELETE',
+              success: function(data) {
+                addMessage('success', {body: "Uninstallation successful <a href='javascript:window.location.reload();'>(refresh)</a> "});
+              },
+              error: function(data) {
+                  addMessage('error', {body: 'Unable to uninstall: ' + data.responseText});
+              }
+            });
+        });
+    });
+
+    $('.rp-uninstall').click(function(e) {
+        e.preventDefault();
+
     });
 });

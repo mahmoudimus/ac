@@ -10,6 +10,7 @@ import com.atlassian.labs.remoteapps.PermissionManager;
 import com.atlassian.labs.remoteapps.descriptor.external.AccessLevel;
 import com.atlassian.labs.remoteapps.modules.external.ClosableRemoteModule;
 import com.atlassian.labs.remoteapps.modules.external.StartableRemoteModule;
+import com.atlassian.labs.remoteapps.modules.external.UninstallableRemoteModule;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.google.common.collect.ImmutableSet;
 import org.slf4j.Logger;
@@ -20,7 +21,7 @@ import java.util.Set;
 /**
  * Module type for applink application-types
  */
-public class ApplicationTypeModule implements ClosableRemoteModule, StartableRemoteModule
+public class ApplicationTypeModule implements ClosableRemoteModule, StartableRemoteModule, UninstallableRemoteModule
 {
 
     private static final Logger log = LoggerFactory.getLogger(ApplicationTypeModule.class);
@@ -54,17 +55,18 @@ public class ApplicationTypeModule implements ClosableRemoteModule, StartableRem
     public void start()
     {
         ApplicationLink link = applicationLinkService.getPrimaryApplicationLink(applicationType.getClass());
+        final ApplicationId expectedApplicationId = ApplicationIdUtil.generate(applicationType.getDefaultDetails()
+                                                                                          .getRpcUrl());
         if (link == null)
         {
             log.info("Creating an application link for the remote app type " + applicationType.getId());
-            final ApplicationId applicationId = ApplicationIdUtil.generate(applicationType.getDefaultDetails()
-                                                                                          .getRpcUrl());
+
             try
             {
-                link = applicationLinkService.getApplicationLink(applicationId);
+                link = applicationLinkService.getApplicationLink(expectedApplicationId);
                 if (link == null)
                 {
-                    link = applicationLinkService.addApplicationLink(applicationId, applicationType, applicationType.getDefaultDetails());
+                    link = applicationLinkService.addApplicationLink(expectedApplicationId, applicationType, applicationType.getDefaultDetails());
                 }
             }
             catch (TypeNotInstalledException e)
@@ -74,7 +76,16 @@ public class ApplicationTypeModule implements ClosableRemoteModule, StartableRem
         }
         else
         {
-            log.info("Applink of type {} already exists", applicationType.getId());
+            if (!expectedApplicationId.equals(link.getId()))
+            {
+                log.debug("Unexpected application id, removing and adding link");
+                applicationLinkService.deleteApplicationLink(link);
+                applicationLinkService.addApplicationLink(expectedApplicationId, applicationType, applicationType.getDefaultDetails());
+            }
+            else
+            {
+                log.info("Applink of type {} already exists", applicationType.getId());
+            }
         }
         link.putProperty("IS_ACTIVITY_ITEM_PROVIDER", Boolean.FALSE.toString());
         permissionManager.setRestrictRemoteApp(applicationType, accessLevel);
@@ -88,5 +99,14 @@ public class ApplicationTypeModule implements ClosableRemoteModule, StartableRem
     public RemoteAppApplicationType getApplicationType()
     {
         return applicationType;
+    }
+
+    @Override
+    public void uninstall()
+    {
+        for (ApplicationLink link : applicationLinkService.getApplicationLinks(applicationType.getClass()))
+        {
+            applicationLinkService.deleteApplicationLink(link);
+        }
     }
 }

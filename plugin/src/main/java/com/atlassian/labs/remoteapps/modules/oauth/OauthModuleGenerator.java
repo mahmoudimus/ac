@@ -75,26 +75,9 @@ public class OauthModuleGenerator implements RemoteModuleGenerator
         final URI accessTokenUrl = URI.create(baseUrl + getOptionalAttribute(e, "access-token-url", "/access-token"));
         final URI authorizeUrl = URI.create(baseUrl + getOptionalAttribute(e, "authorize-url", "/authorize"));
 
-        return new StartableRemoteModule()
-        {
-            @Override
-            public Set<ModuleDescriptor> getModuleDescriptors()
-            {
-                return emptySet();
-            }
-
-            @Override
-            public void start()
-            {
-                ApplicationLink link = applicationLinkService.getPrimaryApplicationLink(ctx.getApplicationType().getClass());
-                Consumer consumer = Consumer.key(key).name(name).publicKey(publicKey).description(description).callback(callback).build();
-
-                oAuthLinkManager.associateConsumerWithLink(link, consumer);
-
-                oAuthLinkManager.associateProviderWithLink(link, consumer.getKey(), new ServiceProvider(requestTokenUrl, accessTokenUrl, authorizeUrl));
-
-            }
-        };
+        return new OAuthModule(oAuthLinkManager, applicationLinkService,
+                               Consumer.key(key).name(name).publicKey(publicKey).description(description).callback(
+                callback).build(), new ServiceProvider(requestTokenUrl, accessTokenUrl, authorizeUrl), ctx.getApplicationType());
     }
 
     @Override

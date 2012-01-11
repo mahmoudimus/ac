@@ -80,23 +80,25 @@ public class OAuthLinkManager
 
     public void associateConsumerWithLink(ApplicationLink link, Consumer consumer)
     {
-        String key = consumer.getKey();
-        if (serviceProviderConsumerStore.get(key) != null)
-        {
-            serviceProviderConsumerStore.remove(key);
-        }
+        unassociateConsumerWithLink(link, consumer);
 
         // fixme: this logic was copied from ual
         serviceProviderConsumerStore.put(consumer);
         link.putProperty("oauth.incoming.consumerkey", consumer.getKey());
     }
 
+    public void unassociateConsumerWithLink(ApplicationLink link, Consumer consumer)
+    {
+        String key = consumer.getKey();
+        if (serviceProviderConsumerStore.get(key) != null)
+        {
+            serviceProviderConsumerStore.remove(key);
+        }
+    }
+
     public void associateProviderWithLink(ApplicationLink link, String key, ServiceProvider serviceProvider)
     {
-        if (authenticationConfigurationManager.isConfigured(link.getId(), OAuthAuthenticationProvider.class))
-        {
-            authenticationConfigurationManager.unregisterProvider(link.getId(), OAuthAuthenticationProvider.class);
-        }
+        unassociateProviderWithLink(link);
         authenticationConfigurationManager.registerProvider(
             link.getId(),
             OAuthAuthenticationProvider.class,
@@ -105,6 +107,14 @@ public class OAuthLinkManager
                     SERVICE_PROVIDER_ACCESS_TOKEN_URL, serviceProvider.getAccessTokenUri().toString(),
                     SERVICE_PROVIDER_AUTHORIZE_URL, serviceProvider.getAccessTokenUri().toString()
             ));
+    }
+
+    public void unassociateProviderWithLink(ApplicationLink link)
+    {
+        if (authenticationConfigurationManager.isConfigured(link.getId(), OAuthAuthenticationProvider.class))
+        {
+            authenticationConfigurationManager.unregisterProvider(link.getId(), OAuthAuthenticationProvider.class);
+        }
     }
 
     public void validateOAuth2LORequest(OAuthMessage message) throws IOException, URISyntaxException, OAuthException
@@ -259,5 +269,4 @@ public class OAuthLinkManager
         // todo: handle this better
         throw new IllegalArgumentException("unknown client key: " + clientKey);
     }
-
 }

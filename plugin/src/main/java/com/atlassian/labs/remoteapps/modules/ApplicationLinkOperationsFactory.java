@@ -61,7 +61,7 @@ public class ApplicationLinkOperationsFactory
     {
         return new LinkOperations()
         {
-            ApplicationLink link;
+            ApplicationLink link; 
             @Override
             public synchronized ApplicationLink get()
             {
@@ -123,7 +123,7 @@ public class ApplicationLinkOperationsFactory
 
     private String getTargetUrl(ApplicationLink applicationLink, String targetPath)
     {
-        return applicationLink.getRpcUrl() + targetPath;
+        return applicationLink.getDisplayUrl() + targetPath;
     }
 
     private List<Map.Entry<String, String>> signRequest(ApplicationLink applicationLink,

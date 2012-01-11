@@ -54,6 +54,11 @@ public class MyIframePage
         return getValue("consumerKey");
     }
 
+    public long getLoadTime()
+    {
+        return Long.parseLong(driver.findElement(By.id("ra-time-" + key)).getText());
+    }
+
     public Map<String,String> getIframeQueryParams()
     {
         final WebElement iframe = containerDiv.findElement(By.tagName("iframe"));

@@ -2,6 +2,8 @@ package com.atlassian.labs.remoteapps.rest;
 
 import com.atlassian.labs.remoteapps.DescriptorValidator;
 import com.atlassian.labs.remoteapps.PermissionDeniedException;
+import com.atlassian.labs.remoteapps.RemoteAppsService;
+import com.atlassian.labs.remoteapps.installer.InstallationFailedException;
 import com.atlassian.labs.remoteapps.installer.RemoteAppInstaller;
 import com.atlassian.labs.remoteapps.settings.SettingsManager;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
@@ -35,17 +37,16 @@ import java.security.NoSuchAlgorithmException;
 public class InstallerResource
 {
     private static final Logger log = LoggerFactory.getLogger(InstallerResource.class);
-    private final RemoteAppInstaller remoteAppInstaller;
+    private final RemoteAppsService remoteAppsService;
     private final UserManager userManager;
     private final DescriptorValidator descriptorValidator;
     private final SettingsManager settingsManager;
 
-    public InstallerResource(RemoteAppInstaller remoteAppInstaller,
-                             UserManager userManager,
+    public InstallerResource(UserManager userManager,
                              DescriptorValidator descriptorValidator,
-                             SettingsManager settingsManager)
+                             SettingsManager settingsManager, RemoteAppsService remoteAppsService)
     {
-        this.remoteAppInstaller = remoteAppInstaller;
+        this.remoteAppsService = remoteAppsService;
         this.userManager = userManager;
         this.descriptorValidator = descriptorValidator;
         this.settingsManager = settingsManager;
@@ -94,25 +95,17 @@ public class InstallerResource
                             String registrationToken)
     {
         String token = registrationToken != null ? registrationToken : "";
+
         try
         {
-            new URI(registrationUrl);
-        }
-        catch (URISyntaxException e)
-        {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Invalid URI: '" + registrationUrl + "'").build();
-        } 
-        try
-        {
-            remoteAppInstaller.install(userManager.getRemoteUsername(), registrationUrl, token);
+            remoteAppsService.install(userManager.getRemoteUsername(), registrationUrl, token);
         }
         catch (PermissionDeniedException ex)
         {
             return Response.status(Response.Status.FORBIDDEN).entity(ex.getMessage()).build();
         }
-        catch (RuntimeException ex)
+        catch (InstallationFailedException ex)
         {
-            log.error("Unable to install extension: " + ex.getMessage(), ex);
             return Response.status(Response.Status.BAD_REQUEST).entity(ex.getMessage()).build();
         }
         return Response.ok().build();

@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
+import java.net.ServerSocket;
 import java.net.URL;
 
 /**
@@ -35,6 +36,31 @@ public class Utils
     {
         InputStream inputStream = new URL(url).openStream();
         return new SAXReader().read(inputStream);
+    }
+
+    public static int pickFreePort()
+    {
+        ServerSocket socket = null;
+        try
+        {
+            socket = new ServerSocket(0);
+            return socket.getLocalPort();
+        } catch (IOException e)
+        {
+            throw new RuntimeException("Error opening socket", e);
+        } finally
+        {
+            if (socket != null)
+            {
+                try
+                {
+                    socket.close();
+                } catch (IOException e)
+                {
+                    throw new RuntimeException("Error closing socket", e);
+                }
+            }
+        }
     }
 
 

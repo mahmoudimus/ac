@@ -1,0 +1,183 @@
+package com.atlassian.labs.remoteapps.test;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.http.impl.client.BasicResponseHandler;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.SingleClientConnManager;
+import org.apache.http.message.BasicNameValuePair;
+import org.dom4j.Document;
+import org.dom4j.DocumentFactory;
+import org.dom4j.io.XMLWriter;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.HandlerList;
+import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.servlet.ServletHolder;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static com.atlassian.labs.remoteapps.test.HttpUtils.renderHtml;
+import static com.atlassian.labs.remoteapps.test.Utils.pickFreePort;
+import static com.google.common.collect.Maps.newHashMap;
+import static java.util.Collections.singletonList;
+
+/**
+ * Created by IntelliJ IDEA.
+ * User: mrdon
+ * Date: 11/01/12
+ * Time: 9:57 PM
+ * To change this template use File | Settings | File Templates.
+ */
+public class RemoteAppRunner
+{
+    private Server server;
+    private final Document doc;
+    private final Map<String,String> routes = newHashMap();
+    private final int port;
+    private final String baseUrl;
+    private final DefaultHttpClient httpclient;
+    private final String appKey;
+
+    public RemoteAppRunner(String baseUrl, String appKey)
+    {
+        this.baseUrl = baseUrl;
+        this.appKey = appKey;
+        port = pickFreePort();
+        doc = DocumentFactory.getInstance().createDocument()
+                .addElement("remote-app")
+                    .addAttribute("key", appKey)
+                    .addAttribute("name", appKey)
+                    .addAttribute("version", "1")
+                    .addAttribute("display-url", "http://localhost:" + port)
+                .getDocument();
+        httpclient = new DefaultHttpClient(new SingleClientConnManager());
+        httpclient.getCredentialsProvider().setCredentials(
+                AuthScope.ANY, new UsernamePasswordCredentials("betty", "betty"));
+    }
+
+    public RemoteAppRunner addAdminPage(String key, String name, String path, String resource)
+    {
+        doc.getRootElement().addElement("admin-page")
+                .addAttribute("url", path)
+                .addAttribute("name", name)
+                .addAttribute("key", key);
+        routes.put(path, resource);
+        return this;
+    }
+
+    public RemoteAppRunner start() throws Exception
+    {
+        server = new Server(port);
+        HandlerList list = new HandlerList();
+        server.setHandler(list);
+        ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
+        context.setContextPath("/");
+
+        context.addServlet(new ServletHolder(new DescriptorServlet()), "/register");
+
+        for (final Map.Entry<String,String> entry : routes.entrySet())
+        {
+            context.addServlet(new ServletHolder(new MustacheServlet(entry.getValue())), entry.getKey());
+        }
+
+        list.addHandler(context);
+        server.start();
+
+        register();
+        enable();
+        return this;
+    }
+
+    private void enable() throws IOException
+    {
+        HttpPut post = new HttpPut(baseUrl + "/rest/speakeasy/latest/user/" + appKey + "?" +
+            URLEncodedUtils.format(singletonList(new BasicNameValuePair("os_authType", "basic")), "UTF-8"));
+
+        httpclient.execute(post, new BasicResponseHandler());
+    }
+
+    private void disable() throws IOException
+    {
+        HttpDelete post = new HttpDelete(baseUrl + "/rest/speakeasy/latest/user/" + appKey + "?" +
+            URLEncodedUtils.format(singletonList(new BasicNameValuePair("os_authType", "basic")), "UTF-8"));
+
+        httpclient.execute(post, new BasicResponseHandler());
+    }
+
+    private void register() throws IOException
+    {
+        HttpPost post = new HttpPost(baseUrl + "/rest/remoteapps/latest/installer?" +
+            URLEncodedUtils.format(singletonList(new BasicNameValuePair("os_authType", "basic")), "UTF-8"));
+
+        List<NameValuePair> formparams = new ArrayList<NameValuePair>();
+        formparams.add(new BasicNameValuePair("url", "http://localhost:" + port + "/register"));
+        formparams.add(new BasicNameValuePair("token", ""));
+        UrlEncodedFormEntity entity = new UrlEncodedFormEntity(formparams, "UTF-8");
+        post.setEntity(entity);
+
+        ResponseHandler<String> responseHandler = new BasicResponseHandler();
+        httpclient.execute(post, responseHandler);
+    }
+
+    private void unregister() throws IOException
+    {
+        HttpDelete post = new HttpDelete(baseUrl + "/rest/remoteapps/latest/uninstaller/" + appKey + "?" +
+            URLEncodedUtils.format(singletonList(new BasicNameValuePair("os_authType", "basic")), "UTF-8"));
+
+        ResponseHandler<String> responseHandler = new BasicResponseHandler();
+        httpclient.execute(post, responseHandler);
+    }
+
+    public void stop() throws Exception
+    {
+        server.stop();
+        disable();
+        unregister();
+    }
+
+
+    private class MustacheServlet extends HttpServlet
+    {
+        private final String path;
+
+        public MustacheServlet(String path)
+        {
+            this.path = path;
+        }
+
+        @Override
+        protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
+        {
+            renderHtml(resp, path, new HashMap<String, Object>()
+            {{
+                put("port", port);
+                put("baseurl", baseUrl);
+            }});
+        }
+    }
+
+    private class DescriptorServlet extends HttpServlet
+    {
+        @Override
+        protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
+        {
+            new XMLWriter(response.getWriter()).write(doc);
+            response.getWriter().close();
+        }
+    }
+}
