@@ -106,6 +106,7 @@ public class InstallerResource
         }
         catch (InstallationFailedException ex)
         {
+            log.debug(ex.getMessage(), ex);
             return Response.status(Response.Status.BAD_REQUEST).entity(ex.getMessage()).build();
         }
         return Response.ok().build();

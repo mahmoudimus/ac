@@ -59,9 +59,6 @@ public class OAuthModule implements StartableRemoteModule, UninstallableRemoteMo
     @Override
     public void uninstall()
     {
-        ApplicationLink link = applicationLinkService.getPrimaryApplicationLink(applicationType.getClass());
-
-        oAuthLinkManager.unassociateConsumerWithLink(link, consumer);
-        oAuthLinkManager.unassociateProviderWithLink(link);
+        oAuthLinkManager.unassociateConsumer(consumer);
     }
 }

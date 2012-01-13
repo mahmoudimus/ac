@@ -10,24 +10,17 @@ import com.atlassian.oauth.Request;
 import com.atlassian.oauth.ServiceProvider;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.oauth.serviceprovider.ServiceProviderConsumerStore;
-import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.user.UserManager;
-import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
 import net.oauth.*;
 import net.oauth.signature.RSA_SHA1;
-import org.apache.axis.encoding.ser.ElementSerializer;
 import org.apache.http.HttpHeaders;
-import org.apache.http.HttpMessage;
-import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
-import org.netbeans.lib.cvsclient.commandLine.command.log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -37,10 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Lists.transform;
 import static com.google.common.collect.Maps.newHashMap;
-import static com.google.common.collect.Maps.transformValues;
-import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
 
 /**
@@ -80,14 +70,14 @@ public class OAuthLinkManager
 
     public void associateConsumerWithLink(ApplicationLink link, Consumer consumer)
     {
-        unassociateConsumerWithLink(link, consumer);
+        unassociateConsumer(consumer);
 
         // fixme: this logic was copied from ual
         serviceProviderConsumerStore.put(consumer);
         link.putProperty("oauth.incoming.consumerkey", consumer.getKey());
     }
 
-    public void unassociateConsumerWithLink(ApplicationLink link, Consumer consumer)
+    public void unassociateConsumer(Consumer consumer)
     {
         String key = consumer.getKey();
         if (serviceProviderConsumerStore.get(key) != null)

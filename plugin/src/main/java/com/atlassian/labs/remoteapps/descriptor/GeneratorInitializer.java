@@ -38,7 +38,7 @@ import static org.apache.commons.lang.Validate.notNull;
 /**
  * Manages RemoteModuleGenerators
  */
-class GeneratorInitializer
+public class GeneratorInitializer
 {
     private final Set<ModuleDescriptorFactory> factories = new CopyOnWriteArraySet<ModuleDescriptorFactory>();
     private final AccessLevelManager accessLevelManager;
@@ -68,6 +68,10 @@ class GeneratorInitializer
     @EventListener
     public void onAppUninstall(RemoteAppUninstalledEvent event)
     {
+        if (!plugin.getKey().equals(event.getRemoteAppKey()))
+        {
+            return;
+        }
         // todo: This only works for loaded apps but should work for apps that had errors loading
         for (RemoteModule module : remoteModules)
         {

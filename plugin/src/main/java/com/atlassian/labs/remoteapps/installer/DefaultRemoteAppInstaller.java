@@ -136,7 +136,7 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
                                                               ex);
                     }
                     root.addAttribute("access-level", accessLevel.get());
-                    Document pluginXml = transformDescriptorToPluginXml(username, document);
+                    Document pluginXml = transformDescriptorToPluginXml(username,  registrationUrl, document);
                     JarPluginArtifact jar = createJarPluginArtifact(pluginKey, registrationUri.getHost(), pluginXml,
                                                                     props);
                     pluginController.installPlugins(jar);
@@ -218,7 +218,7 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
         builder.addFile(pluginKey.hashCode() + "/i18n.properties", writer.toString());
     }
 
-    private Document transformDescriptorToPluginXml(String username, Document doc)
+    private Document transformDescriptorToPluginXml(String username, String registrationUrl, Document doc)
     {
         Element oldRoot = doc.getRootElement();
 
@@ -248,7 +248,9 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
                 .addElement("Import-Package")
                 .setText(JiraProfileTabModuleGenerator.class.getPackage().getName() + ";resolution:=optional," +
                         AccessLevelModuleDescriptor.class.getPackage().getName());
-        instructions.addElement("Remote-App").setText("installer;user=\"" + username + "\";date=\"" + System.currentTimeMillis() + "\"");
+        instructions.addElement("Remote-App").
+                setText("installer;user=\"" + username + "\";date=\"" + System.currentTimeMillis() + "\"" +
+                    ";registration-url=\"" + registrationUrl + "\"");
 
 
         plugin.add(oldRoot.detach());

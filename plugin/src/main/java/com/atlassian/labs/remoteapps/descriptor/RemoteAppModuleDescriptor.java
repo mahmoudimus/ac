@@ -71,6 +71,7 @@ public class RemoteAppModuleDescriptor extends AbstractModuleDescriptor<Void>
             Bundle targetBundle = findBundleForPlugin(bundleContext, getPluginKey());
             final BundleContext targetBundleContext = targetBundle.getBundleContext();
             final GeneratorInitializer generatorInitializer = new GeneratorInitializer(accessLevelManager, startableForPlugins, getPlugin(), targetBundle, moduleGeneratorManager, originalElement);
+            eventPublisher.register(generatorInitializer);
             this.serviceTracker = new ServiceTracker(targetBundleContext, ModuleDescriptorFactory.class.getName(), new ServiceTrackerCustomizer()
             {
                 @Override
@@ -97,6 +98,7 @@ public class RemoteAppModuleDescriptor extends AbstractModuleDescriptor<Void>
                 public void removedService(ServiceReference reference, Object service)
                 {
                     generatorInitializer.close();
+                    eventPublisher.unregister(generatorInitializer);
                     // todo: recover in case a dependent factory is just being reloaded
                 }
             });
