@@ -4,6 +4,7 @@ import com.atlassian.applinks.spi.application.NonAppLinksApplicationType;
 import com.atlassian.bandana.BandanaManager;
 import com.atlassian.confluence.content.render.xhtml.XhtmlCleaner;
 import com.atlassian.confluence.core.ContentEntityObject;
+import com.atlassian.confluence.core.SpaceContentEntityObject;
 import com.atlassian.confluence.event.events.content.page.PageEvent;
 import com.atlassian.confluence.event.events.content.page.PageViewEvent;
 import com.atlassian.confluence.pages.Page;
@@ -11,6 +12,7 @@ import com.atlassian.confluence.pages.PageManager;
 import com.atlassian.confluence.setup.bandana.ConfluenceBandanaContext;
 import com.atlassian.confluence.spaces.Space;
 import com.atlassian.confluence.spaces.SpaceManager;
+import com.atlassian.confluence.spaces.Spaced;
 import com.atlassian.event.api.EventListener;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.labs.remoteapps.ContentRetrievalException;
@@ -77,7 +79,7 @@ public class MacroContentManager implements DisposableBean
         ContentEntityObject entity = macroInstance.getEntity();
         String key = macroInstance.getHashKey();
         String pluginKey = ((NonAppLinksApplicationType) macroInstance.getLinkOperations().get().getType()).getId().get();
-        String spaceKey = entity instanceof Page ? ((Page)entity).getSpaceKey() : null;
+        String spaceKey = entity instanceof SpaceContentEntityObject ? ((SpaceContentEntityObject)entity).getSpaceKey() : null;
         String pageId = entity.getIdAsString();
 
         // we don't care about retrieving twice
