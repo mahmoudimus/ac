@@ -55,7 +55,7 @@ public class RemoteMacro implements Macro
         String storageFormatContent;
         try
         {
-            storageFormatContent = macroContentManager.getStaticContent(new MacroInstance(conversionContext.getEntity(), remoteUrl, storageFormatBody, parameters, linkOps));
+            storageFormatContent = macroContentManager.getStaticContent(new MacroInstance(conversionContext, remoteUrl, storageFormatBody, parameters, linkOps));
         }
         catch (ContentRetrievalException ex)
         {

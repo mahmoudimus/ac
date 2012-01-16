@@ -1,5 +1,6 @@
 package com.atlassian.labs.remoteapps.modules.confluence;
 
+import com.atlassian.confluence.content.render.xhtml.ConversionContext;
 import com.atlassian.confluence.core.ContentEntityObject;
 import com.atlassian.labs.remoteapps.modules.ApplicationLinkOperationsFactory;
 
@@ -10,24 +11,29 @@ import java.util.Map;
  */
 public class MacroInstance
 {
-    final ContentEntityObject entity;
+    final ConversionContext conversionContext;
     final String path;
     final ApplicationLinkOperationsFactory.LinkOperations linkOperations;
     final String body;
     final Map<String,String> parameters;
 
-    public MacroInstance(ContentEntityObject entity, String path, String body, Map<String, String> parameters, ApplicationLinkOperationsFactory.LinkOperations linkOperations)
+    public MacroInstance(ConversionContext conversionContext, String path, String body, Map<String, String> parameters, ApplicationLinkOperationsFactory.LinkOperations linkOperations)
     {
-        this.entity = entity;
+        this.conversionContext = conversionContext;
         this.path = path;
         this.body = body;
         this.parameters = parameters;
         this.linkOperations = linkOperations;
     }
 
+    public ConversionContext getConversionContext()
+    {
+        return conversionContext;
+    }
+
     public ContentEntityObject getEntity()
     {
-        return entity;
+        return conversionContext.getEntity();
     }
 
     public String getPath()
@@ -57,7 +63,7 @@ public class MacroInstance
         sb.append(parameters.toString()).append("|");
         sb.append(body).append("|");
         sb.append(path).append("|");
-        sb.append(entity.getIdAsString());
+        sb.append(conversionContext.getEntity().getIdAsString());
         return String.valueOf(sb.toString().hashCode());
     }
 }

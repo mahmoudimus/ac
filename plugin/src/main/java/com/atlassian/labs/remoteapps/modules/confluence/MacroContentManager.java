@@ -2,6 +2,7 @@ package com.atlassian.labs.remoteapps.modules.confluence;
 
 import com.atlassian.applinks.spi.application.NonAppLinksApplicationType;
 import com.atlassian.bandana.BandanaManager;
+import com.atlassian.confluence.content.render.xhtml.XhtmlCleaner;
 import com.atlassian.confluence.core.ContentEntityObject;
 import com.atlassian.confluence.event.events.content.page.PageEvent;
 import com.atlassian.confluence.event.events.content.page.PageViewEvent;
@@ -13,6 +14,7 @@ import com.atlassian.confluence.spaces.SpaceManager;
 import com.atlassian.event.api.EventListener;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.labs.remoteapps.ContentRetrievalException;
+import com.atlassian.sal.api.component.ComponentLocator;
 import com.google.common.collect.Maps;
 import org.springframework.beans.factory.DisposableBean;
 
@@ -31,6 +33,7 @@ public class MacroContentManager implements DisposableBean
     private final BandanaManager bandanaManager;
     private final SpaceManager spaceManager;
     private final PageManager pageManager;
+    private final XhtmlCleaner xhtmlCleaner;
 
     public MacroContentManager(EventPublisher eventPublisher, BandanaManager bandanaManager, SpaceManager spaceManager, PageManager pageManager)
     {
@@ -39,6 +42,8 @@ public class MacroContentManager implements DisposableBean
         this.spaceManager = spaceManager;
         this.pageManager = pageManager;
         this.eventPublisher.register(this);
+        // HACK: Use ComponentLocator until fix for CONFDEV-7103 is available.
+        this.xhtmlCleaner = ComponentLocator.getComponent(XhtmlCleaner.class);
     }
 
     @EventListener
@@ -86,6 +91,7 @@ public class MacroContentManager implements DisposableBean
             params.put("pageId", pageId);
 
             value = macroInstance.getLinkOperations().executeGet(entity.getLastModifierName(), macroInstance.getPath(), params);
+            value = xhtmlCleaner.cleanQuietly(value, macroInstance.getConversionContext());
 
             saveToBandana(pluginKey, spaceKey, pageId, key, value);
         }
