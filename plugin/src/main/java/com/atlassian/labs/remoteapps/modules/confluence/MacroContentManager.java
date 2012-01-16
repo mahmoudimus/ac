@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -49,6 +50,7 @@ public class MacroContentManager implements DisposableBean
     private final BandanaManager bandanaManager;
     private final SpaceManager spaceManager;
     private final XhtmlCleaner xhtmlCleaner;
+    private final MacroContentLinkParser macroContentLinkParser;
     private final CachingHttpContentRetriever cachingHttpContentRetriever;
     private final ApplicationLinkAccessor applicationLinkAccessor;
 
@@ -56,7 +58,8 @@ public class MacroContentManager implements DisposableBean
 
     public MacroContentManager(EventPublisher eventPublisher, BandanaManager bandanaManager, SpaceManager spaceManager,
                                CachingHttpContentRetriever cachingHttpContentRetriever,
-                               ApplicationLinkAccessor applicationLinkAccessor)
+                               ApplicationLinkAccessor applicationLinkAccessor,
+                               MacroContentLinkParser macroContentLinkParser)
     {
         this.eventPublisher = eventPublisher;
         this.bandanaManager = bandanaManager;
@@ -66,6 +69,7 @@ public class MacroContentManager implements DisposableBean
         this.eventPublisher.register(this);
         // HACK: Use ComponentLocator until fix for CONFDEV-7103 is available.
         this.xhtmlCleaner = ComponentLocator.getComponent(XhtmlCleaner.class);
+        this.macroContentLinkParser = macroContentLinkParser;
     }
 
     @EventListener
@@ -113,6 +117,10 @@ public class MacroContentManager implements DisposableBean
         if (instance == null)
         {
             String value = macroInstance.getLinkOperations().executeGet(entity.getLastModifierName(), macroInstance.getPath(), params);
+
+            HashMap<String,String> linkParams = Maps.newHashMap(macroInstance.getParameters());
+            linkParams.put("page_id", pageId);
+            value = macroContentLinkParser.parse(macroInstance.getLinkOperations().get(), value, linkParams);
 
             // todo: do we want to give feedback to the app of what was cleaned?
             value = xhtmlCleaner.cleanQuietly(value, macroInstance.getConversionContext());

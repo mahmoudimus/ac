@@ -8,6 +8,7 @@ import com.atlassian.confluence.macro.MacroExecutionException;
 import com.atlassian.confluence.xhtml.api.XhtmlContent;
 import com.atlassian.labs.remoteapps.ContentRetrievalException;
 import com.atlassian.labs.remoteapps.modules.ApplicationLinkOperationsFactory;
+import com.google.common.collect.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,20 +69,14 @@ public class RemoteMacro implements Macro
             return message;
         }
 
-        String htmlContent = null;
         try
         {
-            htmlContent = xhtmlUtils.convertStorageToView(storageFormatContent, conversionContext);
-            return htmlContent;
+            return xhtmlUtils.convertStorageToView(storageFormatContent, conversionContext);
         }
         catch (Exception e)
         {
             String message = "ERROR: Unable to convert macro content from Remote App '" + linkOps.get().getName() + "': " + e.getMessage();
             log.error(message + " on page {}", conversionContext.getEntity().getTitle());
-            if (log.isDebugEnabled())
-            {
-                log.debug("Error converting macro content: " + htmlContent, e);
-            }
             return message;
         }
     }

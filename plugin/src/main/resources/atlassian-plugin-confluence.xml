@@ -2,6 +2,9 @@
     <component key="confluenceProductAccessor"
                class="com.atlassian.labs.remoteapps.product.confluence.ConfluenceProductAccessor"/>
 
+    <component-import key="confluenceSettingsManager"
+                      interface="com.atlassian.confluence.setup.settings.SettingsManager"/>
+
     <api-scope key="read_content" class="com.atlassian.labs.remoteapps.product.confluence.ReadContentScope"
                name="Read Content">
         <description>
@@ -118,6 +121,14 @@
         <url-pattern>/remoteImage</url-pattern>
     </servlet>
 
+    <servlet key="remoteApps2LORedirectingServlet"
+             name="Remote Apps 2-Legged OAuth Signing and Redirecting Servlet"
+             class="com.atlassian.labs.remoteapps.product.confluence.servlet.Confluence2LORedirectingServlet">
+        <description>Redirects to Remote Apps, using 2-legged OAuth to sign the outgoing request</description>
+        <url-pattern>/oauthRedirect</url-pattern>
+    </servlet>
+
+    <component key="macroContentLinkParser" class="com.atlassian.labs.remoteapps.modules.confluence.MacroContentLinkParser" />
     <component key="macroContentManager" class="com.atlassian.labs.remoteapps.modules.confluence.MacroContentManager"/>
     <component key="confluenceEventHandler" class="com.atlassian.labs.remoteapps.product.confluence.ConfluenceEventHandler" />
 

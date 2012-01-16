@@ -50,6 +50,7 @@ public class HttpServer
         context.addServlet(new ServletHolder(new RegisterServlet("sample-descriptor-confluence.mu.xml", oauthContext)), "/confluence-register");
         context.addServlet(new ServletHolder(new RegisterServlet("sample-descriptor-jira.mu.xml", oauthContext)), "/jira-register");
         context.addServlet(new ServletHolder(new RegisterServlet("sample-descriptor-refapp.mu.xml", oauthContext)), "/refapp-register");
+        context.addServlet(new ServletHolder(new MyCurrentUserServlet(oauthContext)), "/currentUser");
 
         HandlerList list = new HandlerList();
         list.setHandlers(new Handler[] {staticResourceHandler, context});

@@ -39,15 +39,17 @@ public class MacroModuleGenerator implements RemoteModuleGenerator
     private final XhtmlContent xhtmlContent;
     private final ApplicationLinkOperationsFactory applicationLinkOperationsFactory;
     private final MacroContentManager macroContentManager;
+    private final MacroContentLinkParser macroContentLinkParser;
     private final I18NBeanFactory i18NBeanFactory;
     private final PluginAccessor pluginAccessor;
 
-    public MacroModuleGenerator(SystemInformationService systemInformationService, XhtmlContent xhtmlContent, ApplicationLinkOperationsFactory applicationLinkOperationsFactory, MacroContentManager macroContentManager, I18NBeanFactory i18NBeanFactory, PluginAccessor pluginAccessor)
+    public MacroModuleGenerator(SystemInformationService systemInformationService, XhtmlContent xhtmlContent, ApplicationLinkOperationsFactory applicationLinkOperationsFactory, MacroContentManager macroContentManager, I18NBeanFactory i18NBeanFactory, PluginAccessor pluginAccessor, MacroContentLinkParser macroContentLinkParser)
     {
         this.systemInformationService = systemInformationService;
         this.xhtmlContent = xhtmlContent;
         this.applicationLinkOperationsFactory = applicationLinkOperationsFactory;
         this.macroContentManager = macroContentManager;
+        this.macroContentLinkParser = macroContentLinkParser;
         this.i18NBeanFactory = i18NBeanFactory;
         this.pluginAccessor = pluginAccessor;
     }
