@@ -12,7 +12,9 @@ import org.dom4j.Element;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.After;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.MethodRule;
 
 import java.io.IOException;
 import java.util.List;
@@ -25,12 +27,15 @@ import static org.junit.Assert.assertTrue;
 
 public class TestRemoteApp
 {
-    private static TestedProduct<?> product = OwnerOfTestedProduct.INSTANCE;
+    private static TestedProduct<WebDriverTester> product = OwnerOfTestedProduct.INSTANCE;
+
+    @Rule
+    public MethodRule rule = new HtmlDumpRule(product.getTester().getDriver());
 
     @After
     public void logout()
     {
-        ((WebDriverTester)product.getTester()).getDriver().manage().deleteAllCookies();
+        product.getTester().getDriver().manage().deleteAllCookies();
     }
 
     @Test

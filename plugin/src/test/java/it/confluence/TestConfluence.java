@@ -1,6 +1,7 @@
 package it.confluence;
 
 import com.atlassian.functest.selenium.internal.ConfluenceTestedProduct;
+import com.atlassian.labs.remoteapps.test.HtmlDumpRule;
 import com.atlassian.labs.remoteapps.test.OwnerOfTestedProduct;
 import com.atlassian.labs.remoteapps.test.confluence.ConfluenceCounterMacroPage;
 import com.atlassian.labs.remoteapps.test.confluence.ConfluenceMacroPage;
@@ -42,56 +43,7 @@ public class TestConfluence
     private final Logger log = LoggerFactory.getLogger(TestConfluence.class);
 
     @Rule
-    public MethodRule rule = new TestWatchman() {
-
-        private String destinationFolder;
-
-        @Override
-        public void starting(final FrameworkMethod method)
-        {
-            log.info("----- Starting " + method.getName());
-
-            destinationFolder = "target/webdriverTests/" + method.getMethod().getDeclaringClass().getName();
-
-            File dir = new File(destinationFolder);
-            // Clean up the directory for the next run
-            if (dir.exists()) {
-                dir.delete();
-            }
-
-            dir.mkdirs();
-        }
-
-        @Override
-        public void succeeded(final FrameworkMethod method)
-        {
-            log.info("----- Succeeded " + method.getName());
-        }
-
-        @Override
-        public void failed(final Throwable e, final FrameworkMethod method)
-        {
-            final AtlassianWebDriver driver = product.getTester().getDriver();
-            String baseFileName =  destinationFolder + "/" + method.getName();
-            File dumpFile = new File(baseFileName + ".html");
-            log.error(e.getMessage(), e);
-            log.info("----- Test Failed. " + e.getMessage());
-
-            log.info("----- At page: " + driver.getCurrentUrl());
-            log.info("----- Dumping page source to: " + dumpFile.getAbsolutePath());
-
-            // Take a screen shot and dump it.
-            driver.dumpSourceTo(dumpFile);
-            driver.takeScreenshotTo(new File(baseFileName + ".png"));
-
-        }
-
-        @Override
-        public void finished(final FrameworkMethod method)
-        {
-            log.info("----- Finished " + method.getName());
-        }
-    };
+    public MethodRule rule = new HtmlDumpRule(product.getTester().getDriver());
 
     @After
     public void logout()
