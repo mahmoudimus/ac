@@ -23,6 +23,7 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>apputils</module>
         <module>sample</module>
         <module>sample-plugin</module>
         <module>plugin</module>

@@ -1,6 +1,8 @@
 package com.atlassian.labs.remoteapps.sample;
 
 
+import com.atlassian.labs.remoteapps.apputils.OAuthContext;
+import com.atlassian.labs.remoteapps.apputils.RegisterServlet;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.HandlerList;
@@ -8,7 +10,8 @@ import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 
-import java.net.URI;
+import static com.atlassian.labs.remoteapps.apputils.Environment.getEnv;
+import static com.atlassian.labs.remoteapps.apputils.Environment.getEnvAsInt;
 
 /**
  *
@@ -16,16 +19,11 @@ import java.net.URI;
 public class HttpServer
 {
 
-    private static String HOST_BASE_URL;
     private final Server server;
-    private static String OUR_BASE_URL;
 
-    public HttpServer(String appKey, String hostBaseUrl, String ourBaseUrl, int port)
+    public HttpServer()
     {
-        server = new Server(port);
-        HOST_BASE_URL = hostBaseUrl;
-        OUR_BASE_URL = ourBaseUrl;
-        OAuthContext.init(appKey, ourBaseUrl);
+        server = new Server(getEnvAsInt("PORT"));
 
         ResourceHandler staticResourceHandler = new ResourceHandler();
         String resourceBase = getClass().getResource("/static/").toString();
@@ -37,33 +35,26 @@ public class HttpServer
         context.setContextPath("/");
 
         context.setResourceBase(resourceBase);
+        String appKey = getEnv("OAUTH_LOCAL_KEY");
+        OAuthContext oauthContext = new OAuthContext();
 
         context.addServlet(new ServletHolder(new InfoServlet(appKey)), "/");
-        context.addServlet(new ServletHolder(new MyAdminServlet()), "/myadmin");
+        context.addServlet(new ServletHolder(new MyAdminServlet(oauthContext)), "/myadmin");
         context.addServlet(new ServletHolder(new MyMacroServlet()), "/mymacro");
-        context.addServlet(new ServletHolder(new MyImageMacroServlet()), "/myimagemacro");
+        context.addServlet(new ServletHolder(new MyImageMacroServlet(oauthContext)), "/myimagemacro");
         context.addServlet(new ServletHolder(new MySlowMacroServlet()), "/myslowmacro");
         context.addServlet(new ServletHolder(new MyCounterMacroServlet()), "/mycountermacro");
         context.addServlet(new ServletHolder(new WebHookServlet()), "/webhook/*");
-        context.addServlet(new ServletHolder(new RegisterServlet(appKey, "refapp")), "/register");
-        context.addServlet(new ServletHolder(new RegisterServlet(appKey, "confluence")), "/confluence-register");
-        context.addServlet(new ServletHolder(new RegisterServlet(appKey, "jira")), "/jira-register");
-        context.addServlet(new ServletHolder(new RegisterServlet(appKey, "refapp")), "/refapp-register");
+        context.addServlet(new ServletHolder(new MacroResetServlet(appKey, oauthContext)), "/macro-reset");
+        context.addServlet(new ServletHolder(new RegisterServlet("sample-descriptor-refapp.mu.xml", oauthContext)), "/register");
+        context.addServlet(new ServletHolder(new RegisterServlet("sample-descriptor-confluence.mu.xml", oauthContext)), "/confluence-register");
+        context.addServlet(new ServletHolder(new RegisterServlet("sample-descriptor-jira.mu.xml", oauthContext)), "/jira-register");
+        context.addServlet(new ServletHolder(new RegisterServlet("sample-descriptor-refapp.mu.xml", oauthContext)), "/refapp-register");
 
         HandlerList list = new HandlerList();
         list.setHandlers(new Handler[] {staticResourceHandler, context});
         server.setHandler(list);
         start();
-    }
-
-    public static String getHostBaseUrl()
-    {
-        return HOST_BASE_URL;
-    }
-
-    public static String getOurBaseUrl()
-    {
-        return OUR_BASE_URL;
     }
 
     public void start()
@@ -92,12 +83,7 @@ public class HttpServer
 
     public static void  main(String[] args)
     {
-        if (args.length != 4)
-        {
-            System.err.println("Usage: java -jar remoteapps-sample-VERSION-standalone.jar APP_KEY, HOST_BASE_URL APP_BASE_URL INTERNAL_PORT");
-            System.exit(1);
-        }
-        HttpServer server = new HttpServer(args[0], args[1], args[2], Integer.parseInt(args[3]));
+        HttpServer server = new HttpServer();
         server.start();
         try
         {

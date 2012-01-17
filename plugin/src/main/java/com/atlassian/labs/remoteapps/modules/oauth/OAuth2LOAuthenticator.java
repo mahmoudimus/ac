@@ -83,24 +83,32 @@ public class OAuth2LOAuthenticator implements Authenticator
         }
 
         final String userId = request.getParameter(OAuth2LOFilter.USER_ID);
-        Check.notNull(userId);
-        final Principal user = userManager.resolve(userId);
-        if (!authenticationController.canLogin(user, request))
+
+        Principal user = null;
+        if (userId != null)
         {
-            // user exists but is not allowed to login
-            log.warn("Access denied to user '{}' because that user cannot login", userId);
-            sendError(response, HttpServletResponse.SC_UNAUTHORIZED, message);
-            return new Result.Failure(new DefaultMessage("Permission denied"));
+            user = userManager.resolve(userId);
+            if (!authenticationController.canLogin(user, request))
+            {
+                // user exists but is not allowed to login
+                log.warn("Access denied to user '{}' because that user cannot login", userId);
+                sendError(response, HttpServletResponse.SC_UNAUTHORIZED, message);
+                return new Result.Failure(new DefaultMessage("Permission denied"));
+            }
+            else if (!permissionManager.canAccessApi(userId, consumerKey))
+            {
+                // user exists but is not allowed to access this remote app
+                log.warn("Access denied to user '{}' because that user is not allowed to make api calls from the remote app '{}'", userId, consumerKey);
+                sendError(response, HttpServletResponse.SC_UNAUTHORIZED, message);
+                return new Result.Failure(new DefaultMessage("Permission denied"));
+            }
         }
-        else if (!permissionManager.canAccessApi(userId, consumerKey))
+        else
         {
-            // user exists but is not allowed to access this remote app
-            log.warn("Access denied to user '{}' because that user is not allowed to make api calls from the remote app '{}'", userId, consumerKey);
-            sendError(response, HttpServletResponse.SC_UNAUTHORIZED, message);
-            return new Result.Failure(new DefaultMessage("Permission denied"));
+            user = NonUserAdminPrincipal.INSTANCE;
         }
         request.setAttribute(OAuth.OAUTH_CONSUMER_KEY, consumerKey);
-        log.info("Authenticated app '{}' as user '{}' successfully", consumerKey, userId);
+        log.info("Authenticated app '{}' as user '{}' successfully", consumerKey, user.getName());
         return new Result.Success(user);
     }
 

@@ -3,7 +3,6 @@ package it;
 import com.atlassian.labs.remoteapps.test.*;
 import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.pageobjects.page.AdminHomePage;
-import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
 import com.atlassian.webdriver.pageobjects.WebDriverTester;
 import org.dom4j.Document;
@@ -20,7 +19,7 @@ import java.io.IOException;
 import java.util.List;
 
 import static com.atlassian.labs.remoteapps.test.Utils.getXml;
-import static com.atlassian.labs.remoteapps.test.WebHookUtils.waitForEvent;
+import static com.atlassian.labs.remoteapps.test.RemoteAppUtils.waitForEvent;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;

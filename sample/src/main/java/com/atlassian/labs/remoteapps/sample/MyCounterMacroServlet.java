@@ -7,8 +7,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import static com.atlassian.labs.remoteapps.sample.HttpServer.getOurBaseUrl;
-
 /**
  *
  */

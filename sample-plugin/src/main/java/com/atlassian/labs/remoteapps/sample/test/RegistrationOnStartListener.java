@@ -5,7 +5,6 @@ import com.atlassian.labs.speakeasy.external.SpeakeasyService;
 import com.atlassian.plugin.event.PluginEventListener;
 import com.atlassian.plugin.event.PluginEventManager;
 import com.atlassian.plugin.event.events.PluginEnabledEvent;
-import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.lifecycle.LifecycleAware;
 import org.apache.http.NameValuePair;
 import org.apache.http.auth.AuthScope;
@@ -28,6 +27,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.atlassian.labs.remoteapps.apputils.Environment.setEnv;
 import static java.util.Collections.singletonList;
 
 /**
@@ -105,7 +105,11 @@ public class RegistrationOnStartListener implements LifecycleAware, DisposableBe
 
     private void startRemoteApp()
     {
-        server = new HttpServer("app1", HOST_BASEURL, APP_BASEURL.toString(), APP_BASEURL.getPort());
+        setEnv("BASE_URL", APP_BASEURL.toString());
+        setEnv("PORT", String.valueOf(APP_BASEURL.getPort()));
+        setEnv("OAUTH_LOCAL_KEY", "app1");
+
+        server = new HttpServer();
         server.start();
     }
 

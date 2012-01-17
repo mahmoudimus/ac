@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
-import static com.atlassian.oauth.util.RequestAnnotations.markAsOAuthRequest;
 import static net.oauth.OAuth.*;
 
 public class OAuth2LOFilter implements Filter
@@ -28,8 +27,7 @@ public class OAuth2LOFilter implements Filter
             OAUTH_SIGNATURE_METHOD,
             OAUTH_SIGNATURE,
             OAUTH_TIMESTAMP,
-            OAUTH_NONCE,
-            USER_ID);
+            OAUTH_NONCE);
 
     private final Authenticator authenticator;
     private final AuthenticationListener authenticationListener;
@@ -102,7 +100,12 @@ public class OAuth2LOFilter implements Filter
             return false;
         }
 
-        authenticationListener.authenticationSuccess(result, request, response);
+        // can only mark the request as successfully authenticated if the user is a real one
+        if (result.getPrincipal() != NonUserAdminPrincipal.INSTANCE)
+        {
+            authenticationListener.authenticationSuccess(result, request, response);
+        }
+
         //markAsOAuthRequest(request);
 
         return true;
@@ -117,8 +120,7 @@ public class OAuth2LOFilter implements Filter
     {
         final Set<String> params = parameterNames(request);
         return  params.containsAll(OAUTH_DATA_REQUEST_PARAMS) &&
-                !params.contains(OAuth.OAUTH_TOKEN) &&
-                !request.getRequestURI().contains("/remoteapp/");
+                !params.contains(OAuth.OAUTH_TOKEN);
     }
 
     private Set<String> parameterNames(HttpServletRequest request)

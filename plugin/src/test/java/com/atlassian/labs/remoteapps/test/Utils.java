@@ -38,6 +38,12 @@ public class Utils
         return new SAXReader().read(inputStream);
     }
 
+    public static void emptyGet(String url) throws IOException
+    {
+        InputStream in = new URL(url).openStream();
+        in.close();
+    }
+
     public static int pickFreePort()
     {
         ServerSocket socket = null;

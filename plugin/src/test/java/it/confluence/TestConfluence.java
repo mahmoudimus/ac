@@ -1,8 +1,6 @@
 package it.confluence;
 
-import com.atlassian.functest.selenium.internal.ConfluenceTestedProduct;
 import com.atlassian.labs.remoteapps.test.HtmlDumpRule;
-import com.atlassian.labs.remoteapps.test.OwnerOfTestedProduct;
 import com.atlassian.labs.remoteapps.test.confluence.ConfluenceCounterMacroPage;
 import com.atlassian.labs.remoteapps.test.confluence.ConfluenceMacroPage;
 import com.atlassian.labs.remoteapps.test.confluence.ConfluenceOps;
@@ -10,28 +8,24 @@ import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.pageobjects.TestedProductFactory;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
-import com.atlassian.webdriver.AtlassianWebDriver;
-import com.atlassian.webdriver.AtlassianWebDriverTestBase;
 import com.atlassian.webdriver.pageobjects.WebDriverTester;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.After;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.MethodRule;
-import org.junit.rules.TestWatchman;
-import org.junit.runners.model.FrameworkMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import redstone.xmlrpc.XmlRpcFault;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
+import static com.atlassian.labs.remoteapps.test.RemoteAppUtils.clearMacroCaches;
+import static com.atlassian.labs.remoteapps.test.Utils.emptyGet;
 import static com.atlassian.labs.remoteapps.test.Utils.loadResourceAsString;
-import static com.atlassian.labs.remoteapps.test.WebHookUtils.waitForEvent;
+import static com.atlassian.labs.remoteapps.test.RemoteAppUtils.waitForEvent;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -92,13 +86,9 @@ public class TestConfluence
         page = product.visit(ConfluenceCounterMacroPage.class, pageData.get("title"));
         assertEquals("1", page.getCounterMacroBody());
 
-        confluenceOps.resetMacrosOnPage(product.getProductInstance(), (String) pageData.get("id"));
+        clearMacroCaches(product.getProductInstance(), "app1");
         page = product.visit(ConfluenceCounterMacroPage.class, pageData.get("title"));
         assertEquals("2", page.getCounterMacroBody());
-
-        confluenceOps.resetMacrosForPlugin(product.getProductInstance(), "app1");
-        page = product.visit(ConfluenceCounterMacroPage.class, pageData.get("title"));
-        assertEquals("3", page.getCounterMacroBody());
 	}
 
     @Test

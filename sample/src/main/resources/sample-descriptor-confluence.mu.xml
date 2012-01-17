@@ -1,5 +1,5 @@
-<remote-app key="{{appkey}}" name="Remote App - {{appkey}}" version="1" icon-url="https://github.com/favicon.ico"
-            display-url="{{baseurl}}">
+<remote-app key="{{appKey}}" name="Remote App - {{appKey}}" version="1" icon-url="https://github.com/favicon.ico"
+            display-url="{{baseUrl}}">
     <vendor name="Atlassian" url="http://atlassian.com" />
     <description>
         This really great app
@@ -12,23 +12,18 @@
 
     <oauth>
         <public-key>
-            -----BEGIN PUBLIC KEY-----
-            MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCdZ4NjFq7phYw2FAvg2r3bS0Vw
-            kX07mBsYP5iPH0tsy9Boo4PfQTXxPrd6NFP6Gm0QXsgERgFgDt/344WhxMqt4rJi
-            udINI51n0bXNz9ct5ZnUJSnwC4GzNkDmvjpJ/Ewdmq5Ye3BfaThZnlsXA+csT3IU
-            /strFeKjydl1lyXNswIDAQAB
-            -----END PUBLIC KEY-----
+            {{publicKey}}
         </public-key>
     </oauth>
     <entity-type key="project" name="Project" pluralized-name="Projects" icon-url="https://github.com/favicon.ico"/>
 
-    <admin-page key="remoteAppAdmin" name="Remote App {{appkey}} Admin" url="/myadmin" />
-    <general-page key="remoteAppGeneral" name="Remote App {{appkey}} General" url="/myadmin" height="600" width="700">
+    <admin-page key="remoteAppAdmin" name="Remote App {{appKey}} Admin" url="/myadmin" />
+    <general-page key="remoteAppGeneral" name="Remote App {{appKey}} General" url="/myadmin" height="600" width="700">
         <context-param name="page_id" />
     </general-page>
-    <profile-page key="remoteAppProfile" name="Remote App {{appkey}} Profile" url="/myadmin" />
+    <profile-page key="remoteAppProfile" name="Remote App {{appKey}} Profile" url="/myadmin" />
 
-    <macro key="{{appkey}}-macro" url="/mymacro" output-type="block" body-type="rich-text">
+    <macro key="{{appKey}}-macro" url="/mymacro" output-type="block" body-type="rich-text">
         <description>Example macro</description>
         <category name="development" />
         <parameters>
@@ -41,15 +36,15 @@
         </parameters>
     </macro>
 
-    <macro key="{{appkey}}-slow" url="/myslowmacro" output-type="block" body-type="none">
+    <macro key="{{appKey}}-slow" url="/myslowmacro" output-type="block" body-type="none">
         <description>Slow macro that takes too long to render (for testing)</description>
     </macro>
 
-    <macro key="{{appkey}}-counter" url="/mycountermacro" output-type="block" body-type="none">
+    <macro key="{{appKey}}-counter" url="/mycountermacro" output-type="block" body-type="none">
         <description>Counter macro that increments a number (for testing)</description>
     </macro>
 
-    <macro key="{{appkey}}-image" url="/myimagemacro" output-type="block" body-type="none">
+    <macro key="{{appKey}}-image" url="/myimagemacro" output-type="block" body-type="none">
         <description>Slow macro that takes too long to render (for testing)</description>
         <image-placeholder url="/sandcastles.jpg" />
     </macro>

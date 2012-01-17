@@ -34,15 +34,13 @@ public class MacroContentManager implements DisposableBean
     private final EventPublisher eventPublisher;
     private final BandanaManager bandanaManager;
     private final SpaceManager spaceManager;
-    private final PageManager pageManager;
     private final XhtmlCleaner xhtmlCleaner;
 
-    public MacroContentManager(EventPublisher eventPublisher, BandanaManager bandanaManager, SpaceManager spaceManager, PageManager pageManager)
+    public MacroContentManager(EventPublisher eventPublisher, BandanaManager bandanaManager, SpaceManager spaceManager)
     {
         this.eventPublisher = eventPublisher;
         this.bandanaManager = bandanaManager;
         this.spaceManager = spaceManager;
-        this.pageManager = pageManager;
         this.eventPublisher.register(this);
         // HACK: Use ComponentLocator until fix for CONFDEV-7103 is available.
         this.xhtmlCleaner = ComponentLocator.getComponent(XhtmlCleaner.class);
@@ -57,21 +55,14 @@ public class MacroContentManager implements DisposableBean
         }
     }
 
-    public void clearContentByPageId(long pageId)
-    {
-        Page page = pageManager.getPage(pageId);
-        clearFromBandanaByPageId(page.getSpaceKey(), page.getIdAsString());
-    }
-
     public void clearContentByPluginKey(String pluginKey)
     {
         clearFromBandanaByPluginKey(pluginKey);
     }
 
-    public void clearContentByKey(long pageId, String key)
+    public void clearContentByInstance(String pluginKey, String instanceKey)
     {
-        Page page = pageManager.getPage(pageId);
-        clearFromBandanaByPageIdAndKey(page.getSpaceKey(), page.getIdAsString(), key);
+        clearFromBandanaByPluginKeyAndInstance(pluginKey, instanceKey);
     }
 
     public String getStaticContent(MacroInstance macroInstance) throws ContentRetrievalException
@@ -123,15 +114,18 @@ public class MacroContentManager implements DisposableBean
         }
     }
 
-    private void clearFromBandanaByPageIdAndKey(String spaceKey, String pageId, String key)
+    private void clearFromBandanaByPluginKeyAndInstance(String pluginKey, String instanceKey)
     {
-        Pattern PAGE_ID_FILTER = Pattern.compile("remoteMacro__[0-9]+__" + pageId + "__" + key);
-        ConfluenceBandanaContext context = new ConfluenceBandanaContext(spaceKey);
-        for (String bandanaKey : newHashSet(bandanaManager.getKeys(context)))
+        Pattern PLUGIN_KEY_FILTER = Pattern.compile("remoteMacro__" + pluginKey.hashCode() + "__[0-9]+__" + instanceKey);
+        for (Space space : spaceManager.getAllSpaces())
         {
-            if (PAGE_ID_FILTER.matcher(bandanaKey).matches())
+            ConfluenceBandanaContext context = new ConfluenceBandanaContext(space.getKey());
+            for (String key : newHashSet(bandanaManager.getKeys(context)))
             {
-                bandanaManager.removeValue(context, bandanaKey);
+                if (PLUGIN_KEY_FILTER.matcher(key).matches())
+                {
+                    bandanaManager.removeValue(context, key);
+                }
             }
         }
     }

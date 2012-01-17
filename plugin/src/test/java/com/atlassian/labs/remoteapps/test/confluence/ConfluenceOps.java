@@ -2,18 +2,11 @@ package com.atlassian.labs.remoteapps.test.confluence;
 
 import com.atlassian.pageobjects.ProductInstance;
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.io.IOUtils;
-import org.apache.tools.ant.taskdefs.condition.Http;
 import redstone.xmlrpc.XmlRpcClient;
 import redstone.xmlrpc.XmlRpcFault;
 import redstone.xmlrpc.XmlRpcStruct;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringWriter;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.Map;
 
@@ -42,26 +35,10 @@ public class ConfluenceOps
         return client;
     }
 
-    public void resetMacrosOnPage(ProductInstance productInstance, String pageId) throws IOException
-    {
-        HttpURLConnection conn = (HttpURLConnection) new URL(productInstance.getBaseUrl() + "/rest/remoteapps/latest/macro/page/" + pageId).openConnection();
-        conn.setRequestMethod("DELETE");
-        conn.setRequestProperty("Authorization", getAuthHeader());
-
-        conn.getInputStream().close();
-    }
-
     private String getAuthHeader()
     {
         byte[] authBytes = "admin:admin".getBytes(Charset.defaultCharset());
         return "Basic " + new String(Base64.encodeBase64(authBytes));
     }
 
-    public void resetMacrosForPlugin(ProductInstance productInstance, String pluginKey) throws IOException
-    {
-        HttpURLConnection conn = (HttpURLConnection) new URL(productInstance.getBaseUrl() + "/rest/remoteapps/latest/macro/app/" + pluginKey).openConnection();
-        conn.setRequestMethod("DELETE");
-        conn.setRequestProperty("Authorization", getAuthHeader());
-        conn.getInputStream().close();
-    }
 }

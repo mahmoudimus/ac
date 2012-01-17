@@ -1,9 +1,11 @@
 package com.atlassian.labs.remoteapps.sample.junit.all;
 
-import com.atlassian.labs.remoteapps.sample.HttpServer;
-import com.atlassian.labs.remoteapps.sample.OAuthContext;
+import com.atlassian.labs.remoteapps.apputils.Environment;
+import com.atlassian.labs.remoteapps.apputils.OAuthContext;
 import org.junit.Test;
 
+import static com.atlassian.labs.remoteapps.sample.HttpUtils.sendFailedSignedGet;
+import static com.atlassian.labs.remoteapps.sample.HttpUtils.sendSignedGet;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -11,18 +13,20 @@ import static org.junit.Assert.assertEquals;
  */
 public class RestCallTest
 {
+    private final OAuthContext oAuthContext = new OAuthContext();
+    private final String clientKey = Environment.getAllClients().iterator().next();
     @Test
     public void testCall() throws Exception
     {
-        String result = OAuthContext.INSTANCE.sendSignedGet(HttpServer.getHostBaseUrl() + "/rest/remoteapptest/latest/", "betty");
+        String result = sendSignedGet(oAuthContext, oAuthContext.getHostBaseUrl(clientKey) + "/rest/remoteapptest/latest/", "betty");
         assertEquals("betty", result);
     }
 
     @Test
     public void testUnauthorizedCall() throws Exception
     {
-        int status = OAuthContext.INSTANCE.sendFailedSignedGet(
-                HttpServer.getHostBaseUrl() + "/rest/remoteappforbidden/latest/", "betty");
+        int status = sendFailedSignedGet(oAuthContext,
+                oAuthContext.getHostBaseUrl(clientKey) + "/rest/remoteappforbidden/latest/", "betty");
         assertEquals(403, status);
     }
 }

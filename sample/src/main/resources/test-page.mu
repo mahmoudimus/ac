@@ -1,6 +1,6 @@
 <html>
     <head>
-        <script src="{{baseurl}}/remoteapps/all.js" type="text/javascript"></script>
+        <script src="{{baseUrl}}/remoteapps/all.js" type="text/javascript"></script>
     </head>
     <body>
         <h2>It worked!</h2>

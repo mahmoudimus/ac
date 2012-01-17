@@ -7,12 +7,13 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
+import static com.atlassian.labs.remoteapps.test.Utils.emptyGet;
 import static com.atlassian.labs.remoteapps.test.Utils.getJson;
 
 /**
  *
  */
-public class WebHookUtils
+public class RemoteAppUtils
 {
     public static JSONObject waitForEvent(ProductInstance productInstance, String id) throws IOException, JSONException, InterruptedException
     {
@@ -32,5 +33,10 @@ public class WebHookUtils
             Thread.sleep(100);
         }
         throw new AssertionError("Event '" + id + "' not published");
+    }
+
+    public static void clearMacroCaches(ProductInstance productInstance, String appKey) throws IOException
+    {
+        emptyGet("http://localhost:" + (productInstance.getHttpPort() + 1) + "/macro-reset");
     }
 }
