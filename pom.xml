@@ -8,7 +8,6 @@
         <version>24</version>
     </parent>
 
-
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.atlassian.labs</groupId>
     <artifactId>remoteapps-parent</artifactId>
