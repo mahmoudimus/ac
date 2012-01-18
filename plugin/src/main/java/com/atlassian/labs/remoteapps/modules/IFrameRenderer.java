@@ -56,7 +56,11 @@ public class IFrameRenderer
         webResourceManager.requireResourcesForContext("remoteapps-iframe");
 
         URI hostUri = URI.create(applicationProperties.getBaseUrl());
-        String host = hostUri.getScheme() + "://" + hostUri.getHost() + ":" + hostUri.getPort();
+        String host = hostUri.getScheme() + "://" + hostUri.getHost();
+        if (hostUri.getPort() > 0)
+        {
+            host = host + ":" + hostUri.getPort();
+        }
 
         Map<String,String[]> allParams = newHashMap(queryParams);
         allParams.put("xdm_e", new String[]{host});
