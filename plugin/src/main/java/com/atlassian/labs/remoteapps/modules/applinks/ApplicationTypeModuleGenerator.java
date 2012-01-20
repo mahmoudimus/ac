@@ -5,7 +5,6 @@ import com.atlassian.applinks.spi.application.TypeId;
 import com.atlassian.applinks.spi.link.ApplicationLinkDetails;
 import com.atlassian.applinks.spi.link.MutatingApplicationLinkService;
 import com.atlassian.labs.remoteapps.PermissionManager;
-import com.atlassian.labs.remoteapps.installer.InstallationFailedException;
 import com.atlassian.labs.remoteapps.modules.external.RemoteAppCreationContext;
 import com.atlassian.labs.remoteapps.modules.external.RemoteModule;
 import com.atlassian.labs.remoteapps.modules.external.RemoteModuleGenerator;
@@ -16,10 +15,7 @@ import com.atlassian.plugin.impl.AbstractDelegatingPlugin;
 import com.atlassian.plugin.module.ContainerAccessor;
 import com.atlassian.plugin.module.ContainerManagedPlugin;
 import com.atlassian.plugin.module.ModuleFactory;
-import com.google.common.collect.ImmutableSet;
 import org.dom4j.Element;
-import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.MethodVisitor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -31,7 +27,6 @@ import java.util.Set;
 import static com.atlassian.labs.remoteapps.util.Dom4jUtils.*;
 import static com.google.common.collect.Sets.newHashSet;
 import static java.util.Collections.emptyMap;
-import static org.objectweb.asm.Opcodes.*;
 
 /**
  * Generates application-type modules
@@ -41,14 +36,16 @@ public class ApplicationTypeModuleGenerator implements RemoteModuleGenerator
 {
     private final MutatingApplicationLinkService mutatingApplicationLinkService;
     private final PermissionManager permissionManager;
+    private final ApplicationTypeClassLoader applicationTypeClassLoader;
 
     @Autowired
     public ApplicationTypeModuleGenerator(MutatingApplicationLinkService mutatingApplicationLinkService,
-                                          PermissionManager permissionManager
-    )
+                                          PermissionManager permissionManager,
+                                          ApplicationTypeClassLoader applicationTypeClassLoader)
     {
         this.mutatingApplicationLinkService = mutatingApplicationLinkService;
         this.permissionManager = permissionManager;
+        this.applicationTypeClassLoader = applicationTypeClassLoader;
     }
 
     @Override
@@ -72,10 +69,9 @@ public class ApplicationTypeModuleGenerator implements RemoteModuleGenerator
     @Override
     public RemoteModule generate(RemoteAppCreationContext ctx, Element element)
     {
-        AppTypesClassLoader appTypesClassLoader = new AppTypesClassLoader();
-        RemoteAppApplicationType applicationType = createApplicationType(appTypesClassLoader, element);
+        RemoteAppApplicationType applicationType = createApplicationType(applicationTypeClassLoader, element);
         return new ApplicationTypeModule(applicationType,
-                createApplicationTypeDescriptor(appTypesClassLoader, ctx, applicationType, element),
+                createApplicationTypeDescriptor(applicationTypeClassLoader, ctx, applicationType, element),
                 mutatingApplicationLinkService, permissionManager, ctx.getAccessLevel());
 
     }
@@ -85,12 +81,12 @@ public class ApplicationTypeModuleGenerator implements RemoteModuleGenerator
     {
     }
 
-    private RemoteAppApplicationType createApplicationType(AppTypesClassLoader appTypesClassLoader, Element element)
+    private RemoteAppApplicationType createApplicationType(ApplicationTypeClassLoader applicationTypeClassLoader, Element element)
     {
         try
         {
             String key = getRequiredAttribute(element, "key");
-            Class<? extends RemoteAppApplicationType> applicationTypeClass = appTypesClassLoader.generateApplicationType(
+            Class<? extends RemoteAppApplicationType> applicationTypeClass = applicationTypeClassLoader.getApplicationType(
                     key);
             URI icon = getOptionalUriAttribute(element, "icon-url");
             String label = getRequiredAttribute(element, "name");
@@ -124,14 +120,14 @@ public class ApplicationTypeModuleGenerator implements RemoteModuleGenerator
         }
     }
 
-    private ModuleDescriptor<ApplicationType> createApplicationTypeDescriptor(AppTypesClassLoader appTypesClassLoader,
+    private ModuleDescriptor<ApplicationType> createApplicationTypeDescriptor(ApplicationTypeClassLoader applicationTypeClassLoader,
                                                                               RemoteAppCreationContext ctx,
                                                                               final RemoteAppApplicationType applicationType,
                                                                               Element element
     )
     {
-        final Class<? extends RemoteManifestProducer> manifestProducerClass = appTypesClassLoader.generateManifestProducer(
-                applicationType.getId().get(), applicationType.getI18nKey());
+        final Class<? extends RemoteManifestProducer> manifestProducerClass = applicationTypeClassLoader.getManifestProducer(
+                applicationType);
 
         Element desc = element.createCopy();
         desc.elements().clear();
@@ -201,75 +197,6 @@ public class ApplicationTypeModuleGenerator implements RemoteModuleGenerator
         }
     }
 
-
-    private static class AppTypesClassLoader extends ClassLoader
-    {
-        public AppTypesClassLoader()
-        {
-            super(ApplicationTypeModuleGenerator.class.getClassLoader());
-        }
-
-        public Class<? extends RemoteAppApplicationType> generateApplicationType(String key)
-        {
-            String genClassName = "generatedApplicationType/" + key + "/_type";
-            ClassWriter cw = new ClassWriter(0);
-            MethodVisitor mv;
-            cw.visit(V1_6, ACC_PUBLIC + ACC_SUPER, genClassName, null,
-                    "com/atlassian/labs/remoteapps/modules/applinks/RemoteAppApplicationType", null);
-
-            mv = cw.visitMethod(ACC_PUBLIC, "<init>",
-                    "(Lcom/atlassian/applinks/spi/application/TypeId;Ljava/lang/String;Ljava/net/URI;Lcom/atlassian/applinks/spi/link/ApplicationLinkDetails;)V",
-                    null, null);
-            mv.visitCode();
-            mv.visitVarInsn(ALOAD, 0);
-            mv.visitVarInsn(ALOAD, 1);
-            mv.visitVarInsn(ALOAD, 2);
-            mv.visitVarInsn(ALOAD, 3);
-            mv.visitVarInsn(ALOAD, 4);
-            mv.visitMethodInsn(INVOKESPECIAL, "com/atlassian/labs/remoteapps/modules/applinks/RemoteAppApplicationType",
-                    "<init>",
-                    "(Lcom/atlassian/applinks/spi/application/TypeId;Ljava/lang/String;Ljava/net/URI;Lcom/atlassian/applinks/spi/link/ApplicationLinkDetails;)V");
-            mv.visitInsn(RETURN);
-            mv.visitMaxs(5, 5);
-            mv.visitEnd();
-
-            cw.visitEnd();
-            byte[] b = cw.toByteArray();
-            return (Class<? extends RemoteAppApplicationType>) defineClass(genClassName.replace("/", "."), b, 0,
-                    b.length);
-        }
-
-        public Class<? extends RemoteManifestProducer> generateManifestProducer(String typeId, String name)
-        {
-            String genClassName = "generatedManifestProducer/" + typeId + "/_manifest";
-            ClassWriter cw = new ClassWriter(0);
-            MethodVisitor mv;
-
-            cw.visit(V1_5, ACC_PUBLIC + ACC_SUPER, genClassName, null,
-                    "com/atlassian/labs/remoteapps/modules/applinks/RemoteManifestProducer", null);
-
-            // constructor that encodes the parameters in the constructor super call
-            mv = cw.visitMethod(ACC_PUBLIC, "<init>", "()V", null, null);
-            mv.visitCode();
-            mv.visitVarInsn(ALOAD, 0);
-            mv.visitTypeInsn(NEW, "com/atlassian/applinks/spi/application/TypeId");
-            mv.visitInsn(DUP);
-            mv.visitLdcInsn(typeId);
-            mv.visitMethodInsn(INVOKESPECIAL, "com/atlassian/applinks/spi/application/TypeId", "<init>",
-                    "(Ljava/lang/String;)V");
-            mv.visitLdcInsn(name);
-            mv.visitMethodInsn(INVOKESPECIAL, "com/atlassian/labs/remoteapps/modules/applinks/RemoteManifestProducer",
-                    "<init>", "(Lcom/atlassian/applinks/spi/application/TypeId;Ljava/lang/String;)V");
-            mv.visitInsn(RETURN);
-            mv.visitMaxs(4, 1);
-            mv.visitEnd();
-
-            cw.visitEnd();
-            byte[] b = cw.toByteArray();
-            return (Class<? extends RemoteManifestProducer>) defineClass(genClassName.replace("/", "."), b, 0,
-                    b.length);
-        }
-    }
 
     private static class DelegatePlugin extends AbstractDelegatingPlugin implements ContainerManagedPlugin
     {

@@ -1,6 +1,8 @@
-package com.atlassian.labs.remoteapps;
+package com.atlassian.labs.remoteapps.util.http;
 
 import com.atlassian.applinks.api.ApplicationLink;
+import com.atlassian.labs.remoteapps.ContentRetrievalException;
+import com.atlassian.labs.remoteapps.OAuthLinkManager;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.sal.api.user.UserManager;
 import com.google.common.base.Function;
@@ -8,9 +10,7 @@ import com.google.common.collect.Maps;
 import org.apache.http.*;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.params.HttpClientParams;
 import org.apache.http.client.utils.URLEncodedUtils;
-import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.cache.CacheConfig;
@@ -28,35 +28,36 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-import javax.ws.rs.HttpMethod;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.ProxySelector;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 
 import static java.util.Collections.singletonList;
 
 /**
- *
+ * This is a public component
  */
-@Component
-public class HttpContentRetriever implements DisposableBean
+public class CachingHttpContentRetriever implements DisposableBean, HttpContentRetriever
 {
+    private final FlushableHttpCacheStorage httpCacheStorage;
     private final CachingHttpClient httpClient;
     private final OAuthLinkManager oAuthLinkManager;
     private final UserManager userManager;
-    private final Logger log = LoggerFactory.getLogger(HttpContentRetriever.class);
+    private final Logger log = LoggerFactory.getLogger(CachingHttpContentRetriever.class);
 
-    @Autowired
-    public HttpContentRetriever(OAuthLinkManager oAuthLinkManager, UserManager userManager, PluginRetrievalService pluginRetrievalService)
+    // fixme: change to a bounded queue
+    private final Executor asyncRequestExecutor = Executors.newSingleThreadExecutor();
+
+    public CachingHttpContentRetriever(OAuthLinkManager oAuthLinkManager, UserManager userManager,
+                                       PluginRetrievalService pluginRetrievalService)
     {
         this.oAuthLinkManager = oAuthLinkManager;
         this.userManager = userManager;
@@ -87,10 +88,44 @@ public class HttpContentRetriever implements DisposableBean
             client.getConnectionManager().getSchemeRegistry(),
             ProxySelector.getDefault());
         client.setRoutePlanner(routePlanner);
-        httpClient = new CachingHttpClient(client, cacheConfig);
+
+        httpCacheStorage = new FlushableHttpCacheStorage(cacheConfig);
+        // todo: change storage to not be unbounded heap
+        httpClient = new CachingHttpClient(client, httpCacheStorage, cacheConfig);
     }
 
-    public String get(ApplicationLink link, String remoteUsername, String url, Map<String,String> parameters) throws ContentRetrievalException
+    @Override
+    public void flushCacheByUrlPattern(Pattern urlPattern)
+    {
+        httpCacheStorage.flushByUrlPattern(urlPattern);
+    }
+
+    @Override
+    public void getAsync(final ApplicationLink link, final String remoteUsername, final String url,
+                         final Map<String, String> parameters,
+                         final HttpContentHandler handler)
+    {
+        asyncRequestExecutor.execute(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                try
+                {
+                    String content = get(link, remoteUsername, url, parameters);
+                    handler.onSuccess(content);
+                }
+                catch (ContentRetrievalException ex)
+                {
+                    handler.onError(ex);
+                }
+            }
+        });
+    }
+    
+    @Override
+    public String get(ApplicationLink link, String remoteUsername, String url, Map<String, String> parameters) throws
+                                                                                                              ContentRetrievalException
     {
         List<NameValuePair> qparams = new ArrayList<NameValuePair>();
         for (String key : parameters.keySet())
@@ -103,7 +138,7 @@ public class HttpContentRetriever implements DisposableBean
         HttpResponse response = null;
         try
         {
-            oAuthLinkManager.sign(httpget, link, url,
+            oAuthLinkManager.sign(httpget, link, url, remoteUsername,
                     Maps.transformValues(parameters, new Function<String, List<String>>()
                     {
                         @Override
@@ -120,7 +155,7 @@ public class HttpContentRetriever implements DisposableBean
             if (response.getStatusLine().getStatusCode() != 200)
             {
                 EntityUtils.consume(entity);
-                throw new ContentRetrievalException("Unable to retrieve content: " + response.getStatusLine().getReasonPhrase());
+                throw new ContentRetrievalException(response.getStatusLine().getReasonPhrase());
             }
 
             return EntityUtils.toString(entity);
@@ -138,13 +173,14 @@ public class HttpContentRetriever implements DisposableBean
         httpClient.getConnectionManager().shutdown();
     }
 
+    @Override
     public void postIgnoreResponse(ApplicationLink link, String url, String jsonBody)
     {
         HttpPost httpPost = new HttpPost(url);
         HttpResponse response = null;
         try
         {
-            oAuthLinkManager.sign(httpPost, link, url, Collections.<String, List<String>>emptyMap());
+            oAuthLinkManager.sign(httpPost, link, url, userManager.getRemoteUsername(), Collections.<String, List<String>>emptyMap());
             httpPost.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
             httpPost.setEntity(new StringEntity(jsonBody));
             log.info("Posting information to '{}' as user '{}'", url, userManager.getRemoteUsername());

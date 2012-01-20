@@ -42,7 +42,7 @@ public class TestConfluence
     @After
     public void logout()
     {
-        ((WebDriverTester)product.getTester()).getDriver().manage().deleteAllCookies();
+        product.getTester().getDriver().manage().deleteAllCookies();
     }
 
     @Test

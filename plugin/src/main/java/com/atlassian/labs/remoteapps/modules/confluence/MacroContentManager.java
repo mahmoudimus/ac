@@ -1,5 +1,7 @@
 package com.atlassian.labs.remoteapps.modules.confluence;
 
+import com.atlassian.applinks.api.ApplicationLink;
+import com.atlassian.applinks.api.ApplicationLinkService;
 import com.atlassian.applinks.spi.application.NonAppLinksApplicationType;
 import com.atlassian.bandana.BandanaManager;
 import com.atlassian.confluence.content.render.xhtml.XhtmlCleaner;
@@ -7,40 +9,60 @@ import com.atlassian.confluence.core.ContentEntityObject;
 import com.atlassian.confluence.core.SpaceContentEntityObject;
 import com.atlassian.confluence.event.events.content.page.PageEvent;
 import com.atlassian.confluence.event.events.content.page.PageViewEvent;
-import com.atlassian.confluence.pages.Page;
-import com.atlassian.confluence.pages.PageManager;
 import com.atlassian.confluence.setup.bandana.ConfluenceBandanaContext;
 import com.atlassian.confluence.spaces.Space;
 import com.atlassian.confluence.spaces.SpaceManager;
-import com.atlassian.confluence.spaces.Spaced;
 import com.atlassian.event.api.EventListener;
 import com.atlassian.event.api.EventPublisher;
+import com.atlassian.labs.remoteapps.ApplicationLinkAccessor;
 import com.atlassian.labs.remoteapps.ContentRetrievalException;
+import com.atlassian.labs.remoteapps.util.http.CachingHttpContentRetriever;
+import com.atlassian.labs.remoteapps.util.http.HttpContentHandler;
 import com.atlassian.sal.api.component.ComponentLocator;
 import com.google.common.collect.Maps;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 
 import java.util.Map;
 import java.util.regex.Pattern;
 
 import static com.google.common.collect.Sets.newHashSet;
+import static org.apache.commons.lang.Validate.notNull;
 
 
 /**
- *
+ * Macro content is cached as follows:
+ * <ol>
+ *     <li>Bandana is checked.  If found and hasn't expired (one hour), the content is returned.  If has expired, the content
+ *     is returned, but the content is refreshed asynchronously.</li>
+ *     <li>When retrieving content either due to no cache or expired cache, an in-memory cache maintained by http client
+ *     is used that respects HTTP 1.1 cache headers.  This is managed by
+ *     {@link com.atlassian.labs.remoteapps.util.http.CachingHttpContentRetriever}.  This gives the macro control over how
+ *     their content is cached but without allowing the content to expire too often.</li>
+ * </ol>
  */
 public class MacroContentManager implements DisposableBean
 {
+    private static final int HOUR_IN_MILLIS = 1000 * 60 * 60;
     private final EventPublisher eventPublisher;
     private final BandanaManager bandanaManager;
     private final SpaceManager spaceManager;
     private final XhtmlCleaner xhtmlCleaner;
+    private final CachingHttpContentRetriever cachingHttpContentRetriever;
+    private final ApplicationLinkAccessor applicationLinkAccessor;
 
-    public MacroContentManager(EventPublisher eventPublisher, BandanaManager bandanaManager, SpaceManager spaceManager)
+    private static final Logger log = LoggerFactory.getLogger(MacroContentManager.class);
+
+    public MacroContentManager(EventPublisher eventPublisher, BandanaManager bandanaManager, SpaceManager spaceManager,
+                               CachingHttpContentRetriever cachingHttpContentRetriever,
+                               ApplicationLinkAccessor applicationLinkAccessor)
     {
         this.eventPublisher = eventPublisher;
         this.bandanaManager = bandanaManager;
         this.spaceManager = spaceManager;
+        this.cachingHttpContentRetriever = cachingHttpContentRetriever;
+        this.applicationLinkAccessor = applicationLinkAccessor;
         this.eventPublisher.register(this);
         // HACK: Use ComponentLocator until fix for CONFDEV-7103 is available.
         this.xhtmlCleaner = ComponentLocator.getComponent(XhtmlCleaner.class);
@@ -51,59 +73,107 @@ public class MacroContentManager implements DisposableBean
     {
         if (!(pageEvent instanceof PageViewEvent))
         {
-            clearFromBandanaByPageId(pageEvent.getPage().getSpaceKey(), pageEvent.getPage().getIdAsString());
+            String pageId = pageEvent.getPage().getIdAsString();
+            clearFromBandanaByPageId(pageEvent.getPage().getSpaceKey(), pageId);
+            cachingHttpContentRetriever.flushCacheByUrlPattern(
+                    Pattern.compile(".*pageId=" + pageId + ".*")
+                    );
         }
     }
 
     public void clearContentByPluginKey(String pluginKey)
     {
         clearFromBandanaByPluginKey(pluginKey);
+        ApplicationLink link = applicationLinkAccessor.getApplicationLink(pluginKey);
+        cachingHttpContentRetriever.flushCacheByUrlPattern(
+                Pattern.compile("^" + link.getDisplayUrl() + "/.*"));
     }
 
     public void clearContentByInstance(String pluginKey, String instanceKey)
     {
         clearFromBandanaByPluginKeyAndInstance(pluginKey, instanceKey);
+        ApplicationLink link = applicationLinkAccessor.getApplicationLink(pluginKey);
+        cachingHttpContentRetriever.flushCacheByUrlPattern(
+                Pattern.compile("^" + link.getDisplayUrl() + "/.*key=" + instanceKey + ".*"));
     }
 
-    public String getStaticContent(MacroInstance macroInstance) throws ContentRetrievalException
+    public String getStaticContent(final MacroInstance macroInstance) throws ContentRetrievalException
     {
         ContentEntityObject entity = macroInstance.getEntity();
-        String key = macroInstance.getHashKey();
-        String pluginKey = ((NonAppLinksApplicationType) macroInstance.getLinkOperations().get().getType()).getId().get();
-        String spaceKey = entity instanceof SpaceContentEntityObject ? ((SpaceContentEntityObject)entity).getSpaceKey() : null;
-        String pageId = entity.getIdAsString();
+        final String key = macroInstance.getHashKey();
+        final String pluginKey = ((NonAppLinksApplicationType) macroInstance.getLinkOperations().get().getType()).getId().get();
+        final String spaceKey = entity instanceof SpaceContentEntityObject ? ((SpaceContentEntityObject)entity).getSpaceKey() : null;
+        final String pageId = entity.getIdAsString();
 
         // we don't care about retrieving twice
-        String value = getFromBandana(pluginKey, spaceKey, pageId, key);
-        if (value == null)
+        SavedMacroInstance instance = getFromBandana(pluginKey, spaceKey, pageId, key);
+
+        // we only want to try to refresh macro content after expiry to ensure a badly-configured app can't disable caching
+        Map<String, Object> params = createMacroParameters(macroInstance, entity, key, pageId);
+        if (instance == null)
         {
-            Map<String,Object> params = Maps.<String,Object>newHashMap(macroInstance.getParameters());
-            params.put("body", macroInstance.getBody());
-            params.put("key", key);
-            params.put("pageTitle", entity.getTitle());
-            params.put("pageId", pageId);
+            String value = macroInstance.getLinkOperations().executeGet(entity.getLastModifierName(), macroInstance.getPath(), params);
 
-            value = macroInstance.getLinkOperations().executeGet(entity.getLastModifierName(), macroInstance.getPath(), params);
+            // todo: do we want to give feedback to the app of what was cleaned?
             value = xhtmlCleaner.cleanQuietly(value, macroInstance.getConversionContext());
+            instance = saveToBandana(pluginKey, spaceKey, pageId, key, value);
+        } else if (instance.getExpiry() < System.currentTimeMillis())
+        { 
+            // back fill cache for next call, but don't block the current one
+            macroInstance.getLinkOperations().executeGetAsync(entity.getLastModifierName(), macroInstance.getPath(),
+                                                              params,
+                new HttpContentHandler()
+                {
+                    @Override
+                    public void onSuccess(String content)
+                    {
+                        String value = xhtmlCleaner.cleanQuietly(content, macroInstance.getConversionContext());
+                        saveToBandana(pluginKey, spaceKey, pageId, key, value);
+                    }
 
-            saveToBandana(pluginKey, spaceKey, pageId, key, value);
+                    @Override
+                    public void onError(ContentRetrievalException ex)
+                    {
+                        // todo: this should be made available to the app dev somehow
+                        log.warn("Unable to refresh macro content for app '{}' due to: '{}'", pluginKey, ex.getMessage());
+
+                    }
+                }
+            );
         }
-        return value;
+        return instance.getValue();
     }
 
-    private void saveToBandana(String pluginKey, String spaceKey, String pageId, String key, String value)
+    private Map<String, Object> createMacroParameters(MacroInstance macroInstance, ContentEntityObject entity,
+                                                      String key, String pageId)
     {
-        bandanaManager.setValue(new ConfluenceBandanaContext(spaceKey), generateCacheKey(pluginKey, pageId, key), value);
+        Map<String,Object> params = Maps.<String,Object>newHashMap(macroInstance.getParameters());
+        params.put("body", macroInstance.getBody());
+        params.put("key", key);
+        params.put("pageTitle", entity.getTitle());
+        params.put("pageId", pageId);
+        return params;
     }
 
-    private String getFromBandana(String pluginKey, String spaceKey, String pageId, String key)
+    private SavedMacroInstance saveToBandana(String pluginKey, String spaceKey, String pageId, String key, String value)
     {
-        return (String) bandanaManager.getValue(new ConfluenceBandanaContext(spaceKey), generateCacheKey(pluginKey, pageId, key));
+        long expiry = System.currentTimeMillis() + HOUR_IN_MILLIS;
+        SavedMacroInstance savedMacroInstance = new SavedMacroInstance(value, expiry);
+        bandanaManager.setValue(new ConfluenceBandanaContext(spaceKey),
+                                generateCacheKey(pluginKey, pageId, key),
+                                savedMacroInstance.toJson());
+        return savedMacroInstance;
+    }
+
+    private SavedMacroInstance getFromBandana(String pluginKey, String spaceKey, String pageId, String key)
+    {
+        String value = (String) bandanaManager.getValue(new ConfluenceBandanaContext(spaceKey), generateCacheKey(pluginKey, pageId, key));
+        return value != null ? new SavedMacroInstance(value) : null;
     }
 
     private void clearFromBandanaByPageId(String spaceKey, String pageId)
     {
-        Pattern PAGE_ID_FILTER = Pattern.compile("remoteMacro__[0-9]+__" + pageId + "__[-0-9]+");
+        Pattern PAGE_ID_FILTER = Pattern.compile("remoteMacro__[-0-9]+__" + pageId + "__[-0-9]+");
         ConfluenceBandanaContext context = new ConfluenceBandanaContext(spaceKey);
         for (String key : newHashSet(bandanaManager.getKeys(context)))
         {

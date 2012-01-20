@@ -4,10 +4,8 @@ import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.applinks.api.ApplicationLinkService;
 import com.atlassian.applinks.api.ApplicationType;
 import com.atlassian.applinks.spi.application.NonAppLinksApplicationType;
-import com.atlassian.labs.remoteapps.HttpContentRetriever;
+import com.atlassian.labs.remoteapps.util.http.CachingHttpContentRetriever;
 import com.atlassian.labs.remoteapps.event.RemoteAppEvent;
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import com.google.common.base.Supplier;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
@@ -33,7 +31,7 @@ import java.util.concurrent.Executors;
 public class WebHookPublisher
 {
     private final Executor publisher;
-    private final HttpContentRetriever httpContentRetriever;
+    private final CachingHttpContentRetriever httpContentRetriever;
     private final ApplicationLinkService applicationLinkService;
     private static final Logger log = LoggerFactory.getLogger(WebHookPublisher.class);
 
@@ -41,7 +39,7 @@ public class WebHookPublisher
 
 
     @Autowired
-    public WebHookPublisher(HttpContentRetriever httpContentRetriever, ApplicationLinkService applicationLinkService)
+    public WebHookPublisher(CachingHttpContentRetriever httpContentRetriever, ApplicationLinkService applicationLinkService)
     {
         this.httpContentRetriever = httpContentRetriever;
         this.applicationLinkService = applicationLinkService;
@@ -96,12 +94,12 @@ public class WebHookPublisher
 
     private static class PublishTask implements Runnable
     {
-        private final HttpContentRetriever httpContentRetriever;
+        private final CachingHttpContentRetriever httpContentRetriever;
         private final Registration registration;
         private final ApplicationLink applicationLink;
         private final String body;
 
-        public PublishTask(HttpContentRetriever httpContentRetriever, Registration registration, ApplicationLink applicationLink,
+        public PublishTask(CachingHttpContentRetriever httpContentRetriever, Registration registration, ApplicationLink applicationLink,
                            String body)
         {
             this.httpContentRetriever = httpContentRetriever;

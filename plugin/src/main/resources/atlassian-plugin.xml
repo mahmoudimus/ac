@@ -93,6 +93,9 @@
         <condition class="com.atlassian.labs.remoteapps.descriptor.CanInstallRemoteAppsCondition" />
     </web-item>
 
+    <component key="httpContentRetriever" class="com.atlassian.labs.remoteapps.util.http.CachingHttpContentRetriever"
+               public="true" interface="com.atlassian.labs.remoteapps.util.http.HttpContentRetriever" />
+
     <component key="startableForPlugins" class="com.atlassian.labs.remoteapps.descriptor.StartableForPlugins" public="true"
                interface="com.atlassian.sal.api.lifecycle.LifecycleAware" />
 
@@ -117,6 +120,7 @@
     <component-import key="eventPublisher" interface="com.atlassian.event.api.EventPublisher" />
     <component-import key="i18nResolver" interface="com.atlassian.sal.api.message.I18nResolver" />
     <component-import key="pluginSettingsFactory" interface="com.atlassian.sal.api.pluginsettings.PluginSettingsFactory" />
+    <component-import key="typeAccessor" interface="com.atlassian.applinks.spi.util.TypeAccessor" />
 
     <module-type key="api-scope" class="com.atlassian.labs.remoteapps.descriptor.external.ApiScopeModuleDescriptor" />
 
