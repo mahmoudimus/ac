@@ -1,5 +1,6 @@
 package com.atlassian.labs.remoteapps.modules.applinks;
 
+import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.applinks.api.ApplicationType;
 import com.atlassian.applinks.spi.application.TypeId;
 import com.atlassian.applinks.spi.link.ApplicationLinkDetails;
@@ -194,6 +195,15 @@ public class ApplicationTypeModuleGenerator implements RemoteModuleGenerator
         if (displayUrl == null || !registrationUrl.startsWith(displayUrl))
         {
             throw new PluginParseException("display-url '" + displayUrl + "' must match registration URL");
+        }
+
+        for (ApplicationLink link : mutatingApplicationLinkService.getApplicationLinks())
+        {
+            if (displayUrl.equals(link.getRpcUrl().toString()))
+            {
+                throw new PluginParseException("The display url '" + displayUrl + "' is already used by app " +
+                    "'" + link.getName() + "'");
+            }
         }
     }
 
