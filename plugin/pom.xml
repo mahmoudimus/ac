@@ -428,6 +428,14 @@
                             <systemPropertyVariables>
                                 <product>confluence</product>
                             </systemPropertyVariables>
+                            <libArtifacts>
+                                <!-- override to allow bug fixes for memory leaks when developing.  See PLUG-484 -->
+                                <libArtifact>
+                                    <groupId>com.atlassian.plugins</groupId>
+                                    <artifactId>atlassian-plugins-webfragment</artifactId>
+                                    <version>${confluence.plugins.version}</version>
+                                </libArtifact>
+                            </libArtifacts>
                         </product>
                     </products>
                     <testGroups>
@@ -562,6 +570,7 @@
         <webdriver.browser>firefox-3.6</webdriver.browser>
         <xvfb.enable>true</xvfb.enable>
         <product>refapp</product>
+        <confluence.plugins.version>2.10.1</confluence.plugins.version>
     </properties>
 
 </project>
