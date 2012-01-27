@@ -1,11 +1,14 @@
 package com.atlassian.labs.remoteapps.test;
 
+import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.utils.URLEncodedUtils;
@@ -20,6 +23,8 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -103,12 +108,20 @@ public class RemoteAppRunner
         return this;
     }
 
-    private void enable() throws IOException
+    private void enable() throws IOException, JSONException
     {
         HttpPut post = new HttpPut(baseUrl + "/rest/speakeasy/latest/user/" + appKey + "?" +
             URLEncodedUtils.format(singletonList(new BasicNameValuePair("os_authType", "basic")), "UTF-8"));
 
         httpclient.execute(post, new BasicResponseHandler());
+        while (true)
+        {
+            HttpGet get = new HttpGet(baseUrl + "/rest/speakeasy/latest/user?" +
+            URLEncodedUtils.format(singletonList(new BasicNameValuePair("os_authType", "basic")), "UTF-8"));
+            String response = httpclient.execute(get, new BasicResponseHandler());
+            JSONObject obj = new JSONObject(response);
+
+        }
     }
 
     private void disable() throws IOException

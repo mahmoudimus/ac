@@ -87,7 +87,9 @@ public class TestRemoteApp
         RemoteAppRunner appSecond = new RemoteAppRunner(product.getProductInstance().getBaseUrl(), "appSecond")
                 .addAdminPage("changedPage", "Changed Page", "/page", "hello-world-page.mu")
                 .start();
-        product.visit(AdminHomePage.class);
+        // todo: isn't strictly necessary, but the web item we are looking for sometimes isn't ready by the time the
+        // page is requested
+        product.visit(LoginPage.class).login("betty", "betty", AdminHomePage.class);
         assertTrue(product.getPageBinder().bind(RemoteAppAwarePage.class, "changedPage", "Changed Page")
                 .clickRemoteAppLink()
                 .getLoadTime() > 0);

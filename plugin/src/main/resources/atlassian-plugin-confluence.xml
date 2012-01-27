@@ -142,8 +142,8 @@
     <component-import key="i18nBean" interface="com.atlassian.confluence.util.i18n.I18NBeanFactory"/>
 
     <!-- activity streams -->
-    <component-import key="confluenceUserProfileAccessor" interface="com.atlassian.streams.spi.UserProfileAccessor"/>
+    <!--component-import key="confluenceUserProfileAccessor" interface="com.atlassian.streams.spi.UserProfileAccessor"/>
     <activity-streams-provider key="apps-provider" name="Remote Apps Provider"
                                class="com.atlassian.labs.remoteapps.streams.RemoteAppsActivityProvider">
-    </activity-streams-provider>
+    </activity-streams-provider-->
 </application>
