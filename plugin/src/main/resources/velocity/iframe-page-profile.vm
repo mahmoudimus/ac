@@ -17,6 +17,6 @@
 </head>
 
 <body>
-    #parse( "velocity/iframe-body.vm" )
+     $iframeHtml
 </body>
 </html>

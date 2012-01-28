@@ -46,7 +46,7 @@ public class ApplicationTypeClassLoader extends ClassLoader
             return (Class<? extends RemoteAppApplicationType>) loadClass(appKeyToClassName(key), true);
         } catch (ClassNotFoundException e)
         {
-            // todo: handle better
+            // should never happen as we always generate it ondemand if not found
             throw new RuntimeException(e);
         }
     }

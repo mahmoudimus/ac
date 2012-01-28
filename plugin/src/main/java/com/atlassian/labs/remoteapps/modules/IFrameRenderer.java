@@ -52,7 +52,7 @@ public class IFrameRenderer
     }
 
     private String render(IFrameContext iframeContext, String extraPath, Map<String, String[]> queryParams, String remoteUser) throws IOException
-    {  
+    {
         webResourceManager.requireResourcesForContext("remoteapps-iframe");
 
         URI hostUri = URI.create(applicationProperties.getBaseUrl());

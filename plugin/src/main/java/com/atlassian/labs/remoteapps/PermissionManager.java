@@ -6,6 +6,7 @@ import com.atlassian.applinks.api.ApplicationType;
 import com.atlassian.labs.remoteapps.descriptor.external.AccessLevel;
 import com.atlassian.labs.remoteapps.descriptor.external.ApiScopeModuleDescriptor;
 import com.atlassian.labs.remoteapps.modules.permissions.scope.ApiScope;
+import com.atlassian.labs.remoteapps.settings.SettingsManager;
 import com.atlassian.labs.remoteapps.util.ServletUtils;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.event.PluginEventManager;
@@ -35,6 +36,7 @@ public class PermissionManager implements DisposableBean
     private final OAuthLinkManager linkManager;
     private final UserManager userManager;
     private final AccessLevelManager accessLevelManager;
+    private final SettingsManager settingsManager;
     private final PluginModuleTracker<ApiScope, ApiScopeModuleDescriptor> apiScopeTracker;
 
     private static final String ACCESS_LEVEL_KEY = "access-level";
@@ -50,13 +52,14 @@ public class PermissionManager implements DisposableBean
                              UserManager userManager,
                              PluginEventManager pluginEventManager,
                              PluginAccessor pluginAccessor,
-                             AccessLevelManager accessLevelManager
-    )
+                             AccessLevelManager accessLevelManager,
+                             SettingsManager settingsManager)
     {
         this.applicationLinkService = applicationLinkService;
         this.linkManager = linkManager;
         this.userManager = userManager;
         this.accessLevelManager = accessLevelManager;
+        this.settingsManager = settingsManager;
         this.apiScopeTracker = new DefaultPluginModuleTracker<ApiScope, ApiScopeModuleDescriptor>(pluginAccessor, pluginEventManager,
                 ApiScopeModuleDescriptor.class);
     }
@@ -100,7 +103,7 @@ public class PermissionManager implements DisposableBean
     public boolean canAccessApi(String userId, String consumerKey)
     {
         ApplicationLink link = linkManager.getLinkForOAuthClientKey(consumerKey);
-        return canAccessRemoteApp(userId, link);
+        return link != null && canAccessRemoteApp(userId, link);
 
     }
 
@@ -131,6 +134,11 @@ public class PermissionManager implements DisposableBean
         }
 
         ApplicationLink link = linkManager.getLinkForOAuthClientKey(clientKey);
+        if (link == null)
+        {
+            return false;
+        }
+
         List<String> apiScopes = (List<String>) link.getProperty(API_SCOPES_LINK_KEY);
         if (apiScopes != null)
         {
@@ -161,5 +169,10 @@ public class PermissionManager implements DisposableBean
 
                  // the default
                  userManager.isAdmin(username));
+    }
+
+    public boolean canInstallGlobalRemoteApps(String username)
+    {
+        return userManager.isAdmin(username) || settingsManager.isAllowDogfooding();
     }
 }

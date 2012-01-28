@@ -160,6 +160,7 @@ public class OAuthContext
     }
 
     public String getAuthorizationHeaderValue(String uri, String method, final String username)
+            throws IllegalArgumentException
     {
         try
         {
@@ -182,8 +183,8 @@ public class OAuthContext
         }
         catch (OAuthException e)
         {
-            // todo: do something better
-            throw new RuntimeException("Failed to sign the request", e);
+            // shouldn't really happen...
+            throw new IllegalArgumentException("Failed to sign the request", e);
         }
         catch (IOException e)
         {

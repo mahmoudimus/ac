@@ -117,12 +117,17 @@ public abstract class AbstractPageModuleGenerator implements RemoteModuleGenerat
             @Override
             public <T> T createModule(String name, ModuleDescriptor<T> moduleDescriptor) throws PluginParseException
             {
-                return (T) new IFramePageServlet(templateRenderer, iFrameRenderer, getDecorator(), pageName,
+                return (T) new IFramePageServlet(templateRenderer, iFrameRenderer, getDecorator(), getTemplateSuffix(), pageName,
                         new IFrameContext(applicationLinkSignerFactory.create(ctx.getApplicationType()), path, moduleKey, iframeParams));
             }
         }, servletModuleManager);
         descriptor.init(ctx.getPlugin(), config);
         return descriptor;
+    }
+
+    protected String getTemplateSuffix()
+    {
+        return "";
     }
 
     @Override

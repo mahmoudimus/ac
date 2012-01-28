@@ -245,9 +245,11 @@ public class OAuthLinkManager
         return parameters;
     }
 
+    /**
+     * @return The link for the oauth client key, null if not found
+     */
     public ApplicationLink getLinkForOAuthClientKey(String clientKey)
     {
-        // todo: optimise
         for (ApplicationLink link : applicationLinkService.getApplicationLinks())
         {
             if (clientKey.equals(link.getProperty("oauth.incoming.consumerkey")))
@@ -255,7 +257,6 @@ public class OAuthLinkManager
                 return link;
             }
         }
-        // todo: handle this better
-        throw new IllegalArgumentException("unknown client key: " + clientKey);
+        return null;
     }
 }

@@ -72,7 +72,6 @@ public class GeneratorInitializer
         {
             return;
         }
-        // todo: This only works for loaded apps but should work for apps that had errors loading
         for (RemoteModule module : remoteModules)
         {
             if (module instanceof UninstallableRemoteModule)

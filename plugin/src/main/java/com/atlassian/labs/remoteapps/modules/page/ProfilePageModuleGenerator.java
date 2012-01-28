@@ -16,8 +16,6 @@ import static java.util.Collections.emptyMap;
 
 /**
  * Module type for user profile pages, generating a web item and servlet with iframe
- *
- * todo: make this use the velocity template for profiles
  */
 public class ProfilePageModuleGenerator extends AbstractPageModuleGenerator
 {
@@ -52,5 +50,11 @@ public class ProfilePageModuleGenerator extends AbstractPageModuleGenerator
     protected String getDecorator()
     {
         return "atl.userprofile";
+    }
+
+    @Override
+    protected String getTemplateSuffix()
+    {
+        return "-profile";
     }
 }

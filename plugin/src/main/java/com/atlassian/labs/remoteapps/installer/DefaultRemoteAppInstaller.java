@@ -56,6 +56,7 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
     private final EventPublisher eventPublisher;
     private final DescriptorValidator descriptorValidator;
     private final PluginAccessor pluginAccessor;
+    private final PermissionManager permissionManager;
 
     private static final Logger log = LoggerFactory.getLogger(DefaultRemoteAppInstaller.class);
 
@@ -67,7 +68,7 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
                                      ModuleGeneratorManager moduleGeneratorManager,
                                      EventPublisher eventPublisher,
                                      DescriptorValidator descriptorValidator,
-                                     PluginAccessor pluginAccessor)
+                                     PluginAccessor pluginAccessor, PermissionManager permissionManager)
     {
         this.consumerService = consumerService;
         this.requestFactory = requestFactory;
@@ -77,6 +78,7 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
         this.eventPublisher = eventPublisher;
         this.descriptorValidator = descriptorValidator;
         this.pluginAccessor = pluginAccessor;
+        this.permissionManager = permissionManager;
     }
 
     @Override
@@ -128,7 +130,11 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
                                 generator.validate(element, registrationUrl, username);
                                 if (generator.getClass().getAnnotation(GlobalModule.class) != null)
                                 {
-                                    // todo: restrict installation of global remote apps to admins
+                                    if (!permissionManager.canInstallGlobalRemoteApps(username))
+                                    {
+                                        throw new PluginParseException("Cannot install global remote apps by user " +
+                                                                               "'" + username + "'");
+                                    }
                                     accessLevel.set("global");
                                 }
                                 props.putAll(generator.getI18nMessages(pluginKey, element));

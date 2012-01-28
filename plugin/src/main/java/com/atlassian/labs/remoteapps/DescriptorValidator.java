@@ -120,7 +120,6 @@ public class DescriptorValidator
             }
         }
 
-
         final String ns = getSchemaNamespace();
         if (usesNamespace)
         {
@@ -133,8 +132,15 @@ public class DescriptorValidator
             Element importRoot = entities.get(id).getRootElement();
             for (Element child : ((Collection<Element>) importRoot.elements()))
             {
-                // todo: handle new includes not caught previously
-                if (!"include".equals(child.getName()))
+                if ("include".equals(child.getName()))
+                {
+                    String schemaLocation = child.attributeValue("schemaLocation");
+                    if (!entities.containsKey(schemaLocation))
+                    {
+                        throw new RuntimeException("Unreferenced common schema: " + schemaLocation);
+                    }
+                }
+                else
                 {
                     root.elements().add(0, child.detach());
                 }

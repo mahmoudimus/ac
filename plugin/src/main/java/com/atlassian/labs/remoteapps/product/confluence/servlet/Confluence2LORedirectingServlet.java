@@ -6,8 +6,8 @@ import com.atlassian.applinks.api.ApplicationLinkService;
 import com.atlassian.applinks.api.TypeNotInstalledException;
 import com.atlassian.labs.remoteapps.PermissionManager;
 import com.atlassian.labs.remoteapps.modules.ApplicationLinkOperationsFactory;
+import com.atlassian.labs.remoteapps.util.uri.Uri;
 import com.atlassian.sal.api.user.UserManager;
-import com.atlassian.streams.api.common.uri.Uri;
 import com.google.common.base.Function;
 import com.google.common.collect.Maps;
 import org.apache.commons.lang.Validate;
@@ -97,7 +97,6 @@ public class Confluence2LORedirectingServlet extends HttpServlet
     private String getFullSignedUrl(ApplicationLink appLink, String appRelativeUrl)
     {
         // Build & Sign the URL
-        // TODO: Remove this dependency on the Uri in ActivityStreams. It's so hard to find a nice URI builder/parser in Java :-(
         Uri targetUrl = Uri.parse(appRelativeUrl);
 
         ApplicationLinkOperationsFactory.LinkOperations linkOps = appLinkOperationsFactory.create(appLink.getType());

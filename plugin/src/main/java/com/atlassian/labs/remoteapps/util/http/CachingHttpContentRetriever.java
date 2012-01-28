@@ -90,7 +90,6 @@ public class CachingHttpContentRetriever implements DisposableBean, HttpContentR
         client.setRoutePlanner(routePlanner);
 
         httpCacheStorage = new FlushableHttpCacheStorage(cacheConfig);
-        // todo: change storage to not be unbounded heap
         httpClient = new CachingHttpClient(client, httpCacheStorage, cacheConfig);
     }
 

@@ -11,7 +11,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.URI;
 import java.util.Map;
 
 import static com.google.common.collect.Maps.newHashMap;
@@ -22,6 +21,7 @@ import static com.google.common.collect.Maps.newHashMap;
 public class IFramePageServlet extends HttpServlet
 {
     private final TemplateRenderer templateRenderer;
+    private final String templateSuffix;
     private final IFrameContext iframeContext;
     private final IFrameRenderer iFrameRenderer;
     private final String decorator;
@@ -30,11 +30,13 @@ public class IFramePageServlet extends HttpServlet
     public IFramePageServlet(TemplateRenderer templateRenderer,
                              IFrameRenderer iFrameRenderer,
                              String decorator,
+                             String templateSuffix,
                              String title,
                              IFrameContext iframeContext
                              )
     {
         this.templateRenderer = templateRenderer;
+        this.templateSuffix = templateSuffix;
         this.iframeContext = iframeContext;
         this.iFrameRenderer = iFrameRenderer;
         this.decorator = decorator;
@@ -54,11 +56,11 @@ public class IFramePageServlet extends HttpServlet
             ctx.put("iframeHtml", iFrameRenderer.render(iframeContext, req.getPathInfo(), req.getParameterMap()));
             ctx.put("decorator", decorator);
 
-            templateRenderer.render("velocity/iframe-page.vm", ctx, out);
+            templateRenderer.render("velocity/iframe-page" + templateSuffix + ".vm", ctx, out);
         }
         catch (PermissionDeniedException ex)
         {
-            templateRenderer.render("velocity/iframe-page-accessdenied.vm",
+            templateRenderer.render("velocity/iframe-page-accessdenied" + templateSuffix + ".vm",
                     ImmutableMap.<String, Object>of(
                             "title", title,
                             "decorator", decorator), out);

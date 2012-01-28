@@ -67,8 +67,7 @@ public class OauthModuleGenerator implements RemoteModuleGenerator
         final PluginInformation pluginInfo = ctx.getPlugin().getPluginInformation();
         final String name = ctx.getApplicationType().getI18nKey();
         final String description = pluginInfo.getDescription();
-        // todo: this is crap, get it from somewhere else
-        String baseUrl = e.getParent().attributeValue("display-url");
+        URI baseUrl = ctx.getApplicationType().getDefaultDetails().getDisplayUrl();
         final URI callback = URI.create(baseUrl + getOptionalAttribute(e, "callback", "/callback"));
         final PublicKey publicKey = getPublicKey(getRequiredElementText(e, "public-key"));
         final URI requestTokenUrl = URI.create(baseUrl + getOptionalAttribute(e, "request-token-url", "/request-token"));

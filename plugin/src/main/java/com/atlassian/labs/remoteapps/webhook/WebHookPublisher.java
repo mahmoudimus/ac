@@ -4,8 +4,11 @@ import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.applinks.api.ApplicationLinkService;
 import com.atlassian.applinks.api.ApplicationType;
 import com.atlassian.applinks.spi.application.NonAppLinksApplicationType;
+import com.atlassian.event.api.EventPublisher;
 import com.atlassian.labs.remoteapps.util.http.CachingHttpContentRetriever;
 import com.atlassian.labs.remoteapps.event.RemoteAppEvent;
+import com.atlassian.labs.remoteapps.util.http.HttpContentRetriever;
+import com.atlassian.labs.remoteapps.webhook.event.WebHookPublishQueueFullEvent;
 import com.google.common.base.Supplier;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
@@ -13,39 +16,39 @@ import com.google.common.collect.Multimaps;
 import com.google.common.collect.Sets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 
 /**
- * Created by IntelliJ IDEA.
- * User: mrdon
- * Date: 15/12/11
- * Time: 8:07 PM
- * To change this template use File | Settings | File Templates.
+ * Publishes events to registered remote apps
  */
 @Component
-public class WebHookPublisher
+public class WebHookPublisher implements DisposableBean
 {
-    private final Executor publisher;
-    private final CachingHttpContentRetriever httpContentRetriever;
+    public static final int PUBLISH_QUEUE_SIZE = 100;
+    private final ThreadPoolExecutor publisher;
+    private final HttpContentRetriever httpContentRetriever;
     private final ApplicationLinkService applicationLinkService;
+    private final EventPublisher eventPublisher;
     private static final Logger log = LoggerFactory.getLogger(WebHookPublisher.class);
 
     private final Multimap<String, Registration> registrationsByEvent = newMultimap();
 
-
     @Autowired
-    public WebHookPublisher(CachingHttpContentRetriever httpContentRetriever, ApplicationLinkService applicationLinkService)
+    public WebHookPublisher(HttpContentRetriever httpContentRetriever, ApplicationLinkService applicationLinkService,
+                            EventPublisher eventPublisher)
     {
         this.httpContentRetriever = httpContentRetriever;
         this.applicationLinkService = applicationLinkService;
+        this.eventPublisher = eventPublisher;
 
-        // todo: This is unbounded, which is generally bad
-        publisher = Executors.newFixedThreadPool(3);
+        publisher = new ThreadPoolExecutor(3, 3,
+                                      0L, TimeUnit.MILLISECONDS,
+                                      new LinkedBlockingQueue<Runnable>(PUBLISH_QUEUE_SIZE));
     }
 
     public void register(NonAppLinksApplicationType applicationType, String eventIdentifier, String path)
@@ -69,7 +72,16 @@ public class WebHookPublisher
                 if (link != null)
                 {
                     body = body != null ? body : eventSerializer.getJson();
-                    publisher.execute(new PublishTask(httpContentRetriever, registration, link, body));
+                    PublishTask task = new PublishTask(httpContentRetriever, registration, link, body);
+                    try
+                    {
+                        publisher.execute(task);
+                    }
+                    catch (RejectedExecutionException ex)
+                    {
+                        log.warn("Web hook queue full, rejecting '{}'", task);
+                        eventPublisher.publish(new WebHookPublishQueueFullEvent(eventIdentifier, link));
+                    }
                 }
                 else
                 {
@@ -92,14 +104,20 @@ public class WebHookPublisher
                                       }));
     }
 
+    @Override
+    public void destroy() throws Exception
+    {
+        publisher.shutdownNow();
+    }
+
     private static class PublishTask implements Runnable
     {
-        private final CachingHttpContentRetriever httpContentRetriever;
+        private final HttpContentRetriever httpContentRetriever;
         private final Registration registration;
         private final ApplicationLink applicationLink;
         private final String body;
 
-        public PublishTask(CachingHttpContentRetriever httpContentRetriever, Registration registration, ApplicationLink applicationLink,
+        public PublishTask(HttpContentRetriever httpContentRetriever, Registration registration, ApplicationLink applicationLink,
                            String body)
         {
             this.httpContentRetriever = httpContentRetriever;
@@ -114,6 +132,16 @@ public class WebHookPublisher
             String url = registration.getUrl(applicationLink);
             log.debug("Posting to web hook at " + url + "\n" + body);
             httpContentRetriever.postIgnoreResponse(applicationLink, url, body);
+        }
+
+        @Override
+        public String toString()
+        {
+            return "PublishTask{" +
+                    "registration=" + registration +
+                    ", applicationLink=" + applicationLink +
+                    ", body='" + body + '\'' +
+                    '}';
         }
     }
 
@@ -176,6 +204,15 @@ public class WebHookPublisher
         {
             return !(event instanceof RemoteAppEvent) ||
                 ((RemoteAppEvent)event).getRemoteAppKey().equals(applicationType.getId().get());
+        }
+
+        @Override
+        public String toString()
+        {
+            return "Registration{" +
+                    "applicationType=" + applicationType +
+                    ", path='" + path + '\'' +
+                    '}';
         }
     }
 

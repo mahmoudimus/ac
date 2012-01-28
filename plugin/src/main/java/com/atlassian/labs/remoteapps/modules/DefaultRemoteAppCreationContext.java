@@ -1,7 +1,7 @@
 package com.atlassian.labs.remoteapps.modules;
 
-import com.atlassian.applinks.spi.application.NonAppLinksApplicationType;
 import com.atlassian.labs.remoteapps.descriptor.external.AccessLevel;
+import com.atlassian.labs.remoteapps.modules.applinks.RemoteAppApplicationType;
 import com.atlassian.labs.remoteapps.modules.external.RemoteAppCreationContext;
 import com.atlassian.plugin.ModuleDescriptorFactory;
 import com.atlassian.plugin.Plugin;
@@ -15,13 +15,13 @@ public class DefaultRemoteAppCreationContext implements RemoteAppCreationContext
     private final Plugin plugin;
     private final ModuleDescriptorFactory moduleDescriptorFactory;
     private final Bundle bundle;
-    private final NonAppLinksApplicationType applicationType;
+    private final RemoteAppApplicationType applicationType;
     private final AccessLevel accessLevel;
 
     public DefaultRemoteAppCreationContext(Plugin plugin,
                                            ModuleDescriptorFactory moduleDescriptorFactory,
                                            Bundle bundle,
-                                           NonAppLinksApplicationType applicationType,
+                                           RemoteAppApplicationType applicationType,
                                            AccessLevel accessLevel
     )
     {
@@ -51,7 +51,7 @@ public class DefaultRemoteAppCreationContext implements RemoteAppCreationContext
     }
 
     @Override
-    public NonAppLinksApplicationType getApplicationType()
+    public RemoteAppApplicationType getApplicationType()
     {
         return applicationType;
     }
