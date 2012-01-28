@@ -114,14 +114,6 @@ public class RemoteAppRunner
             URLEncodedUtils.format(singletonList(new BasicNameValuePair("os_authType", "basic")), "UTF-8"));
 
         httpclient.execute(post, new BasicResponseHandler());
-        while (true)
-        {
-            HttpGet get = new HttpGet(baseUrl + "/rest/speakeasy/latest/user?" +
-            URLEncodedUtils.format(singletonList(new BasicNameValuePair("os_authType", "basic")), "UTF-8"));
-            String response = httpclient.execute(get, new BasicResponseHandler());
-            JSONObject obj = new JSONObject(response);
-
-        }
     }
 
     private void disable() throws IOException

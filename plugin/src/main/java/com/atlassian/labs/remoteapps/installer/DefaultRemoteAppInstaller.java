@@ -1,5 +1,6 @@
 package com.atlassian.labs.remoteapps.installer;
 
+import com.atlassian.event.api.EventListener;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.labs.remoteapps.DescriptorValidator;
 import com.atlassian.labs.remoteapps.ModuleGeneratorManager;
@@ -7,6 +8,7 @@ import com.atlassian.labs.remoteapps.PermissionDeniedException;
 import com.atlassian.labs.remoteapps.PermissionManager;
 import com.atlassian.labs.remoteapps.descriptor.RemoteAppModuleDescriptor;
 import com.atlassian.labs.remoteapps.descriptor.external.AccessLevelModuleDescriptor;
+import com.atlassian.labs.remoteapps.event.RemoteAppStartedEvent;
 import com.atlassian.labs.remoteapps.event.RemoteAppUninstalledEvent;
 import com.atlassian.labs.remoteapps.modules.GlobalModule;
 import com.atlassian.labs.remoteapps.modules.external.RemoteModuleGenerator;
@@ -33,6 +35,8 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.net.URI;
 import java.util.Properties;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static com.atlassian.labs.remoteapps.util.Dom4jUtils.getRequiredAttribute;
@@ -139,7 +143,37 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
                     Document pluginXml = transformDescriptorToPluginXml(username,  registrationUrl, document);
                     JarPluginArtifact jar = createJarPluginArtifact(pluginKey, registrationUri.getHost(), pluginXml,
                                                                     props);
-                    pluginController.installPlugins(jar);
+                    final CountDownLatch latch = new CountDownLatch(1);
+                    Object startListener = new Object()
+                    {
+                        @EventListener
+                        public void onAppStart(RemoteAppStartedEvent event)
+                        {
+                            if (event.getRemoteAppKey().equals(pluginKey))
+                            {
+                                latch.countDown();
+                            }
+                        }
+                    };
+                    eventPublisher.register(startListener);
+
+                    try
+                    {
+                        pluginController.installPlugins(jar);
+
+                        if (!latch.await(10, TimeUnit.SECONDS))
+                        {
+                            log.info("Remote app '{}' was not started successfully and is disabled");
+                        }
+                    }
+                    catch (InterruptedException e)
+                    {
+                        // ignore
+                    }
+                    finally
+                    {
+                        eventPublisher.unregister(startListener);
+                    }
 
                     log.info("Registered app '{}' by '{}'", pluginKey, username);
 
