@@ -54,5 +54,59 @@
     </page-macro>
 
     <web-hook event="remote_app_started" url="/webhook/remote_app_started" />
+
+    <web-hook event="blog_created" url="/webhook/blog_created" />
+    <web-hook event="blog_removed" url="/webhook/blog_removed" />
+    <web-hook event="blog_trashed" url="/webhook/blog_trashed" />
+    <web-hook event="blog_restored" url="/webhook/blog_restored" />
+    <web-hook event="blog_updated" url="/webhook/blog_updated" />
+    <web-hook event="blog_viewed" url="/webhook/blog_viewed" />
+
     <web-hook event="page_created" url="/webhook/page_created" />
+    <web-hook event="page_updated" url="/webhook/page_updated" />
+    <web-hook event="page_removed" url="/webhook/page_removed" />
+    <web-hook event="page_trashed" url="/webhook/page_trashed" />
+    <web-hook event="page_restored" url="/webhook/page_restored" />
+    <web-hook event="page_moved" url="/webhook/page_moved" />
+    <web-hook event="page_children_reordered" url="/webhook/page_children_reordered" />
+    <web-hook event="page_viewed" url="/webhook/page_viewed" />
+
+    <web-hook event="comment_created" url="/webhook/comment_created" />
+    <web-hook event="comment_updated" url="/webhook/comment_updated" />
+    <web-hook event="comment_removed" url="/webhook/comment_removed" />
+
+    <web-hook event="attachment_created" url="/webhook/attachment_created" />
+    <web-hook event="attachment_updated" url="/webhook/attachment_updated" />
+    <web-hook event="attachment_removed" url="/webhook/attachment_removed" />
+    <web-hook event="attachment_viewed" url="/webhook/attachment_viewed" />
+
+    <web-hook event="space_created" url="/webhook/space_created" />
+    <web-hook event="space_updated" url="/webhook/space_updated" />  // TODO: Is this getting fired?!
+    <web-hook event="space_logo_updated" url="/webhook/space_logo_updated" />
+    <web-hook event="space_removed" url="/webhook/space_removed" />
+    <web-hook event="space_permissions_updated" url="/webhook/space_permissions_updated" />
+
+    <web-hook event="status_created" url="/webhook/status_created" />
+    <web-hook event="status_removed" url="/webhook/status_removed" />
+    <web-hook event="status_cleared" url="/webhook/status_cleared" />
+
+    <web-hook event="user_followed" url="/webhook/user_followed" />
+
+    <web-hook event="label_created" url="/webhook/label_created" />
+    <web-hook event="label_added" url="/webhook/label_added" />
+    <web-hook event="label_removed" url="/webhook/label_removed" />
+    <web-hook event="label_deleted" url="/webhook/label_deleted" />
+
+    <web-hook event="search_performed" url="/webhook/search_performed" />
+
+    <web-hook event="user_created" url="/webhook/user_created" />
+    <web-hook event="user_deactivated" url="/webhook/user_deactivated" />
+    <web-hook event="user_reactivated" url="/webhook/user_reactivated" />
+    <web-hook event="user_removed" url="/webhook/user_removed" />
+    <web-hook event="group_created" url="/webhook/group_created" />
+    <web-hook event="group_removed" url="/webhook/group_removed" />
+
+    <web-hook event="login" url="/webhook/login" />
+    <web-hook event="logout" url="/webhook/logout" />
+    <web-hook event="login_failed" url="/webhook/login_failed" />
 </remote-app>

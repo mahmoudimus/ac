@@ -136,6 +136,7 @@
     <component key="macroContentLinkParser" class="com.atlassian.labs.remoteapps.modules.confluence.MacroContentLinkParser" />
     <component key="macroContentManager" class="com.atlassian.labs.remoteapps.modules.confluence.MacroContentManager"/>
     <component key="confluenceEventHandler" class="com.atlassian.labs.remoteapps.product.confluence.ConfluenceEventHandler" />
+    <component key="confluenceEventSerializerFactory" class="com.atlassian.labs.remoteapps.product.confluence.webhook.ConfluenceEventSerializerFactory" />
 
     <component-import key="bandanaManager" interface="com.atlassian.bandana.BandanaManager" />
     <component-import key="spaceManager" interface="com.atlassian.confluence.spaces.SpaceManager" />

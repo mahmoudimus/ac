@@ -5,8 +5,71 @@
 
     <xs:simpleType name="ConfluenceWebHookEventType">
         <xs:restriction base="xs:string">
+            <!-- Blogs -->
+            <xs:enumeration value="blog_created" />
+            <xs:enumeration value="blog_removed" />
+            <xs:enumeration value="blog_trashed" />
+            <xs:enumeration value="blog_restored" />
+            <xs:enumeration value="blog_updated" />
+            <xs:enumeration value="blog_viewed" />
+
+            <!-- Pages -->
             <xs:enumeration value="page_updated" />
             <xs:enumeration value="page_created" />
+            <xs:enumeration value="page_removed" />
+            <xs:enumeration value="page_trashed" />
+            <xs:enumeration value="page_restored" />
+            <xs:enumeration value="page_moved" />
+            <xs:enumeration value="page_children_reordered" />
+            <xs:enumeration value="page_viewed" />
+
+            <!-- Comments -->
+            <xs:enumeration value="comment_created" />
+            <xs:enumeration value="comment_updated" />
+            <xs:enumeration value="comment_removed" />
+
+            <!-- Attachments -->
+            <xs:enumeration value="attachment_created" />
+            <xs:enumeration value="attachment_updated" />
+            <xs:enumeration value="attachment_removed" />
+            <xs:enumeration value="attachment_viewed" />
+
+            <!-- Spaces -->
+            <xs:enumeration value="space_created" />
+            <xs:enumeration value="space_updated" />
+            <xs:enumeration value="space_logo_updated" />
+            <xs:enumeration value="space_removed" />
+            <xs:enumeration value="space_permissions_updated" />
+
+            <!-- User Status -->
+            <xs:enumeration value="status_created" />
+            <xs:enumeration value="status_removed" />
+            <xs:enumeration value="status_cleared" />
+
+            <!-- Social Network -->
+            <xs:enumeration value="user_followed" />
+
+            <!-- Labels -->
+            <xs:enumeration value="label_created" />
+            <xs:enumeration value="label_added" />
+            <xs:enumeration value="label_removed" />
+            <xs:enumeration value="label_deleted" />
+
+            <!-- Search -->
+            <xs:enumeration value="search_performed" />
+
+            <!-- User Management -->
+            <xs:enumeration value="user_created" />
+            <xs:enumeration value="user_deactivated" />
+            <xs:enumeration value="user_reactivated" />
+            <xs:enumeration value="user_removed" />
+            <xs:enumeration value="group_created" />
+            <xs:enumeration value="group_removed" />
+            
+            <!-- Authentication -->
+            <xs:enumeration value="login" />
+            <xs:enumeration value="logout" />
+            <xs:enumeration value="login_failed" />
         </xs:restriction>
     </xs:simpleType>
 
