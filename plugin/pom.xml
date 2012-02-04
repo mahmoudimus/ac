@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
         <groupId>com.atlassian.labs</groupId>
@@ -309,6 +310,14 @@
     </dependencyManagement>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/build</directory>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+        </resources>
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -317,14 +326,33 @@
                     <version>1.0.4</version>
                     <configuration>
                         <commands>
-                            <pi>resources com.atlassian.maven.plugins:maven-amps-plugin:filter-plugin-descriptor compile com.atlassian.maven.plugins:maven-amps-plugin:copy-bundled-dependencies net.alchim31.maven:yuicompressor-maven-plugin:compress org.codehaus.mojo:xml-maven-plugin:transform com.atlassian.maven.plugins:maven-amps-plugin:generate-manifest com.atlassian.maven.plugins:maven-amps-plugin:jar com.atlassian.maven.plugins:maven-amps-plugin:install
-                            </pi>
+                            <pi>resources com.atlassian.maven.plugins:maven-amps-plugin:filter-plugin-descriptor compile com.atlassian.maven.plugins:maven-amps-plugin:copy-bundled-dependencies net.alchim31.maven:yuicompressor-maven-plugin:compress org.codehaus.mojo:xml-maven-plugin:transform com.atlassian.maven.plugins:maven-amps-plugin:generate-manifest com.atlassian.maven.plugins:maven-amps-plugin:jar com.atlassian.maven.plugins:maven-amps-plugin:install</pi>
                         </commands>
                     </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
+            <plugin>
+                <groupId>ru.circumflex</groupId>
+                <artifactId>maven-cx-plugin</artifactId>
+                <version>3.0-20120212.165911-2</version>
+                <executions>
+                    <execution>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>docco</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>log4j</groupId>
+                        <artifactId>log4j</artifactId>
+                        <version>1.2.15</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
             <plugin>
                 <groupId>com.atlassian.maven.plugins</groupId>
                 <artifactId>maven-amps-plugin</artifactId>
@@ -358,7 +386,8 @@
                         <xvfb.enable>${xvfb.enable}</xvfb.enable>
                         <webdriver.browser>${webdriver.browser}</webdriver.browser>
                         <atlassian.mail.senddisabled>false</atlassian.mail.senddisabled>
-                        <sun.net.http.allowRestrictedHeaders>true</sun.net.http.allowRestrictedHeaders>
+                        <sun.net.http.allowRestrictedHeaders>true
+                        </sun.net.http.allowRestrictedHeaders>
                         <!--atlassian.dev.mode>false</atlassian.dev.mode-->
                     </systemPropertyVariables>
                     <!-- uncomment when it is safe to upgrade amps:  https://studio.atlassian.com/browse/AMPS-663 -->
@@ -386,7 +415,8 @@
                         <product>
                             <id>refapp</id>
                             <version>${refapp.version}</version>
-                            <log4jProperties>src/test/resources/log4j-refapp.properties</log4jProperties>
+                            <log4jProperties>src/test/resources/log4j-refapp.properties
+                            </log4jProperties>
                             <libArtifacts>
                                 <!-- necessary for Speakeasy mail handling -->
                                 <libArtifact>
@@ -405,8 +435,10 @@
                         <product>
                             <id>jira</id>
                             <version>${jira.version}</version>
-                            <log4jProperties>src/test/resources/log4j-jira.properties</log4jProperties>
-                            <productDataPath>${basedir}/src/test/resources/jira-generated-test-resources.zip
+                            <log4jProperties>src/test/resources/log4j-jira.properties
+                            </log4jProperties>
+                            <productDataPath>
+                                ${basedir}/src/test/resources/jira-generated-test-resources.zip
                             </productDataPath>
                             <libArtifacts>
                                 <libArtifact>
@@ -422,8 +454,10 @@
                         <product>
                             <id>confluence</id>
                             <version>${confluence.version}</version>
-                            <log4jProperties>src/test/resources/log4j-confluence.properties</log4jProperties>
-                            <productDataPath>${basedir}/src/test/resources/confluence-generated-test-resources.zip
+                            <log4jProperties>src/test/resources/log4j-confluence.properties
+                            </log4jProperties>
+                            <productDataPath>
+                                ${basedir}/src/test/resources/confluence-generated-test-resources.zip
                             </productDataPath>
                             <systemPropertyVariables>
                                 <product>confluence</product>
@@ -467,7 +501,8 @@
                                 <productId>confluence</productId>
                             </productIds>
                             <systemProperties>
-                                <testedProductClass>com.atlassian.webdriver.confluence.ConfluenceTestedProduct
+                                <testedProductClass>
+                                    com.atlassian.webdriver.confluence.ConfluenceTestedProduct
                                 </testedProductClass>
                             </systemProperties>
                         </testGroup>
@@ -566,11 +601,24 @@
         </plugins>
     </build>
 
+    <pluginRepositories>
+        <pluginRepository>
+            <id>twdata-m2-repository</id>
+            <name>Don's repo, used for circumflex fork</name>
+            <url>http://twdata-m2-repository.googlecode.com/svn</url>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
+
     <properties>
         <webdriver.browser>firefox-3.6</webdriver.browser>
         <xvfb.enable>true</xvfb.enable>
         <product>refapp</product>
         <confluence.plugins.version>2.10.1</confluence.plugins.version>
+        <docco.pageTemplate>${basedir}/src/main/build/page.html.ftl</docco.pageTemplate>
     </properties>
 
 </project>
