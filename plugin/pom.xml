@@ -362,8 +362,8 @@
                         <!--atlassian.dev.mode>false</atlassian.dev.mode-->
                     </systemPropertyVariables>
                     <!-- uncomment when it is safe to upgrade amps:  https://studio.atlassian.com/browse/AMPS-663 -->
-                    <!--enableDevToolbox>false</enableDevToolbox>
-                    <enableFastdev>false</enableFastdev-->
+                    <!--enableDevToolbox>false</enableDevToolbox-->
+                    <enableFastdev>false</enableFastdev>
                     <functionalTestPattern>it/**/Test*.java</functionalTestPattern>
                     <pluginArtifacts>
                         <pluginArtifact>
