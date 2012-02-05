@@ -37,7 +37,7 @@ public class ConfluenceEventHandler implements DisposableBean
         webHookPublisher.publish("page_updated", new MapEventSerializer(event, ImmutableMap.<String, Object>of(
             "pageId", event.getPage().getId(),
             "pageTitle", event.getPage().getTitle(),
-            "author", event.getNew().getCreatorName(),
+            "author", event.getPage().getLastModifierName(),
             "content", event.getContent().getBodyAsString()
         )));
     }
