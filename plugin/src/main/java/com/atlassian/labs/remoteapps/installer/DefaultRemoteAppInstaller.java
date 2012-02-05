@@ -150,17 +150,7 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
                     JarPluginArtifact jar = createJarPluginArtifact(pluginKey, registrationUri.getHost(), pluginXml,
                                                                     props);
                     final CountDownLatch latch = new CountDownLatch(1);
-                    Object startListener = new Object()
-                    {
-                        @EventListener
-                        public void onAppStart(RemoteAppStartedEvent event)
-                        {
-                            if (event.getRemoteAppKey().equals(pluginKey))
-                            {
-                                latch.countDown();
-                            }
-                        }
-                    };
+                    Object startListener = new StartedListener(pluginKey, latch);
                     eventPublisher.register(startListener);
 
                     try
@@ -297,5 +287,26 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
         doc.setRootElement(plugin);
 
         return doc;
+    }
+
+    public static class StartedListener
+    {
+        private final String pluginKey;
+        private final CountDownLatch latch;
+
+        public StartedListener(String pluginKey, CountDownLatch latch)
+        {
+            this.pluginKey = pluginKey;
+            this.latch = latch;
+        }
+
+        @EventListener
+        public void onAppStart(RemoteAppStartedEvent event)
+        {
+            if (event.getRemoteAppKey().equals(pluginKey))
+            {
+                latch.countDown();
+            }
+        }
     }
 }
