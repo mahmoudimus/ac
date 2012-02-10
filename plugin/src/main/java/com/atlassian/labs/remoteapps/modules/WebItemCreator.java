@@ -2,13 +2,17 @@ package com.atlassian.labs.remoteapps.modules;
 
 import com.atlassian.labs.remoteapps.modules.external.RemoteAppCreationContext;
 import com.atlassian.plugin.ModuleDescriptor;
+import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
+import com.atlassian.plugin.impl.AbstractDelegatingPlugin;
+import com.atlassian.plugin.web.Condition;
 import org.dom4j.Element;
 
 import java.util.Map;
 
 import static com.atlassian.labs.remoteapps.util.Dom4jUtils.getOptionalAttribute;
 import static com.atlassian.labs.remoteapps.util.Dom4jUtils.getRequiredAttribute;
+import static org.apache.commons.lang.Validate.notNull;
 
 public class WebItemCreator
 {
@@ -22,9 +26,11 @@ public class WebItemCreator
     public ModuleDescriptor createWebItemDescriptor(RemoteAppCreationContext ctx,
                                                      Element e,
                                                      String key,
-                                                     String localUrl
+                                                     String localUrl,
+                                                     Condition condition
     )
     {
+        notNull(condition);
         Element config = e.createCopy();
         final String webItemKey = "webitem-" + key;
         config.addAttribute("key", webItemKey);
@@ -57,9 +63,61 @@ public class WebItemCreator
                 addAttribute("linkId", webItemKey).
                 setText(url.toString());
 
+        config.addElement("condition")
+                .addAttribute("class", DynamicMarkerCondition.class.getName());
+
+        ConditionLoadingPlugin plugin = new ConditionLoadingPlugin(ctx.getPlugin(), condition);
         ModuleDescriptor descriptor = ctx.getAccessLevel()
                                          .createWebItemModuleDescriptor(ctx.getBundle().getBundleContext());
-        descriptor.init(ctx.getPlugin(), config);
+        descriptor.init(plugin, config);
         return descriptor;
+    }
+
+    private static class ConditionLoadingPlugin extends AbstractDelegatingPlugin
+    {
+        private final Condition condition;
+        public ConditionLoadingPlugin(Plugin delegate, Condition condition)
+        {
+            super(delegate);
+            this.condition = condition;
+        }
+
+        @Override
+        public <T> Class<T> loadClass(String clazz, Class<?> callingClass) throws ClassNotFoundException
+        {
+            try
+            {
+                return super.loadClass(clazz, callingClass);
+            }
+            catch (ClassNotFoundException ex)
+            {
+                return (Class<T>) getClass().getClassLoader().loadClass(clazz);
+            }
+        }
+
+        @Override
+        public <T> T autowire(Class<T> clazz) throws UnsupportedOperationException
+        {
+            if (clazz == DynamicMarkerCondition.class)
+            {
+                return (T) condition;
+            }
+
+            return super.autowire(clazz);
+        }
+
+        @Override
+        public <T> T autowire(Class<T> clazz,
+                AutowireStrategy autowireStrategy) throws
+                                                   UnsupportedOperationException
+        {
+            if (clazz == DynamicMarkerCondition.class)
+            {
+                return (T) condition;
+            }
+
+            return super.autowire(clazz,
+                    autowireStrategy);
+        }
     }
 }

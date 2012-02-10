@@ -12,8 +12,9 @@ import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.servlet.ServletModuleManager;
 import com.atlassian.plugin.servlet.descriptors.ServletModuleDescriptor;
-import com.atlassian.plugin.webresource.WebResourceManager;
-import com.atlassian.sal.api.ApplicationProperties;
+import com.atlassian.plugin.web.Condition;
+import com.atlassian.plugin.web.conditions.AlwaysDisplayCondition;
+import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.google.common.collect.ImmutableSet;
 import org.dom4j.Element;
@@ -33,24 +34,25 @@ public abstract class AbstractPageModuleGenerator implements RemoteModuleGenerat
 {
     private final ServletModuleManager servletModuleManager;
     private final TemplateRenderer templateRenderer;
+    private final UserManager userManager;
     private final ApplicationLinkOperationsFactory applicationLinkSignerFactory;
     private final WebItemCreator webItemCreator;
     private final IFrameRenderer iFrameRenderer;
     private Map<String, Object> iframeParams = newHashMap();
 
-
     @Autowired
     public AbstractPageModuleGenerator(ServletModuleManager servletModuleManager,
-                                       TemplateRenderer templateRenderer,
-                                       ApplicationLinkOperationsFactory applicationLinkSignerFactory,
-                                       IFrameRenderer iFrameRenderer,
-                                       WebItemContext webItemContext
-    )
+            TemplateRenderer templateRenderer,
+            ApplicationLinkOperationsFactory applicationLinkSignerFactory,
+            IFrameRenderer iFrameRenderer,
+            WebItemContext webItemContext,
+            UserManager userManager)
     {
         this.servletModuleManager = servletModuleManager;
         this.templateRenderer = templateRenderer;
         this.applicationLinkSignerFactory = applicationLinkSignerFactory;
         this.iFrameRenderer = iFrameRenderer;
+        this.userManager = userManager;
         this.webItemCreator = new WebItemCreator(webItemContext);
     }
 
@@ -77,7 +79,7 @@ public abstract class AbstractPageModuleGenerator implements RemoteModuleGenerat
 
         final Set<ModuleDescriptor> descriptors = ImmutableSet.<ModuleDescriptor>of(
                 createServletDescriptor(ctx, e, key, url, localUrl),
-                webItemCreator.createWebItemDescriptor(ctx, e, key, localUrl));
+                webItemCreator.createWebItemDescriptor(ctx, e, key, localUrl, getCondition()));
         return new RemoteModule()
         {
             @Override
@@ -117,12 +119,21 @@ public abstract class AbstractPageModuleGenerator implements RemoteModuleGenerat
             @Override
             public <T> T createModule(String name, ModuleDescriptor<T> moduleDescriptor) throws PluginParseException
             {
-                return (T) new IFramePageServlet(templateRenderer, iFrameRenderer, getDecorator(), getTemplateSuffix(), pageName,
-                        new IFrameContext(applicationLinkSignerFactory.create(ctx.getApplicationType()), path, moduleKey, iframeParams));
+                PageInfo pageInfo = new PageInfo(getDecorator(), getTemplateSuffix(), pageName, getCondition());
+                return (T) new IFramePageServlet(
+                        pageInfo,
+                        templateRenderer, iFrameRenderer,
+                        new IFrameContext(applicationLinkSignerFactory.create(ctx.getApplicationType()), path, moduleKey, iframeParams), userManager
+                        );
             }
         }, servletModuleManager);
         descriptor.init(ctx.getPlugin(), config);
         return descriptor;
+    }
+
+    protected Condition getCondition()
+    {
+        return new AlwaysDisplayCondition();
     }
 
     protected String getTemplateSuffix()

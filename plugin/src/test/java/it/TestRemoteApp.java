@@ -20,9 +20,7 @@ import java.util.List;
 
 import static com.atlassian.labs.remoteapps.test.Utils.getXml;
 import static com.atlassian.labs.remoteapps.test.RemoteAppUtils.waitForEvent;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class TestRemoteApp
 {
@@ -48,6 +46,15 @@ public class TestRemoteApp
         assertEquals("Success", myIframe.getMessage());
         assertEquals(OAuthUtils.getConsumerKey(), myIframe.getConsumerKey());
 	}
+
+    @Test
+    public void testNoAdminPageForNonAdmin()
+    {
+        product.visit(LoginPage.class).login("barney", "barney", AdminHomePage.class);
+        AccessDeniedIFramePage page = product.getPageBinder().bind(AccessDeniedIFramePage.class,
+                "app1", "remoteAppAdmin");
+        assertFalse(page.isIframeAvailable());
+    }
 
     @Test
 	public void testAppStartedWebHookFired() throws IOException, JSONException, InterruptedException

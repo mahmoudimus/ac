@@ -5,8 +5,7 @@ import com.atlassian.labs.remoteapps.modules.DefaultWebItemContext;
 import com.atlassian.labs.remoteapps.modules.IFrameRenderer;
 import com.atlassian.labs.remoteapps.product.ProductAccessor;
 import com.atlassian.plugin.servlet.ServletModuleManager;
-import com.atlassian.plugin.webresource.WebResourceManager;
-import com.atlassian.sal.api.ApplicationProperties;
+import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +24,8 @@ public class GeneralPageModuleGenerator extends AbstractPageModuleGenerator
                                     TemplateRenderer templateRenderer,
                                     ProductAccessor productAccessor,
                                     ApplicationLinkOperationsFactory applicationLinkSignerFactory,
-                                    IFrameRenderer iFrameRenderer
+                                    IFrameRenderer iFrameRenderer,
+                                    UserManager userManager
     )
     {
         super(servletModuleManager, templateRenderer, applicationLinkSignerFactory, iFrameRenderer,
@@ -33,7 +33,7 @@ public class GeneralPageModuleGenerator extends AbstractPageModuleGenerator
                       productAccessor.getPreferredGeneralSectionKey(),
                       productAccessor.getPreferredGeneralWeight(),
                       productAccessor.getLinkContextParams()
-              ));
+              ), userManager);
     }
 
     @Override

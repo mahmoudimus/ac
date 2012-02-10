@@ -26,24 +26,16 @@ public class IFrameRenderer
     private final TemplateRenderer templateRenderer;
     private final WebResourceManager webResourceManager;
     private final ApplicationProperties applicationProperties;
-    private final UserManager userManager;
 
     @Autowired
     public IFrameRenderer(TemplateRenderer templateRenderer,
                           WebResourceManager webResourceManager,
-                          ApplicationProperties applicationProperties,
-                          UserManager userManager
+                          ApplicationProperties applicationProperties
     )
     {
         this.templateRenderer = templateRenderer;
         this.webResourceManager = webResourceManager;
         this.applicationProperties = applicationProperties;
-        this.userManager = userManager;
-    }
-
-    public String render(IFrameContext iframeContext, String extraPath, Map<String, String[]> queryParams) throws IOException
-    {
-        return render(iframeContext, extraPath, queryParams, userManager.getRemoteUsername());
     }
 
     public String render(IFrameContext iframeContext, String remoteUser) throws IOException
@@ -51,7 +43,7 @@ public class IFrameRenderer
         return render(iframeContext, "", Collections.<String, String[]>emptyMap(), remoteUser);
     }
 
-    private String render(IFrameContext iframeContext, String extraPath, Map<String, String[]> queryParams, String remoteUser) throws IOException
+    public String render(IFrameContext iframeContext, String extraPath, Map<String, String[]> queryParams, String remoteUser) throws IOException
     {
         webResourceManager.requireResourcesForContext("remoteapps-iframe");
 
