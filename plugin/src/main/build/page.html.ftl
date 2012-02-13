@@ -48,10 +48,13 @@
                    else {
                        $target.text("Show");
                    }
+                   RA.resize();
                });
             });
+          RA.resize();
         });
     </script>
+  <script src="https://remoteapps.jira.com/wiki/remoteapps/all.js" type="text/javascript"></script>
     <style type="text/css">
         pre.prettyprint {
             border: 0 !important;
@@ -64,14 +67,6 @@
 <body>
 <div id="container">
   <table cellspacing="0" cellpadding="0">
-    <thead>
-    <tr>
-      <th class="docs">
-        <h1><a href="${basePath}index.html" title="Back to index">&larr;</a>&nbsp;&nbsp;${title}</h1>
-      </th>
-      <th class="code"></th>
-    </tr>
-    </thead>
     <tbody>
     [#list sections as sec]
     [#assign secDoc = sec.doc]
@@ -110,5 +105,8 @@
     [/#list]
   </table>
 </div>
+<script type="text/javascript">
+  RA.init();
+</script>
 </body>
 </html>

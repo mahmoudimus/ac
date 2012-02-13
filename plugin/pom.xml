@@ -336,7 +336,7 @@
             <plugin>
                 <groupId>ru.circumflex</groupId>
                 <artifactId>maven-cx-plugin</artifactId>
-                <version>3.0-20120212.165911-2</version>
+                <version>3.0-20120213.165004-3</version>
                 <executions>
                     <execution>
                         <phase>generate-resources</phase>
@@ -619,6 +619,8 @@
         <product>refapp</product>
         <confluence.plugins.version>2.10.1</confluence.plugins.version>
         <docco.pageTemplate>${basedir}/src/main/build/page.html.ftl</docco.pageTemplate>
+        <docco.indexTemplate>${basedir}/src/main/build/atlassian-remote-app.xml.ftl</docco.indexTemplate>
+        <docco.indexFile>atlassian-remote-app.xml</docco.indexFile>
     </properties>
 
 </project>
