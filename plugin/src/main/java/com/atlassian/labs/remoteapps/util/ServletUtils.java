@@ -29,8 +29,9 @@ public class ServletUtils
         UriBuilder uriBuilder = UriBuilder.fromUri(iframeSrc);
         for (Map.Entry<String,String> entry : parameters)
         {
+            String value = entry.getValue() != null ? entry.getValue() : "";
             // encode slashes as the uri builder turns double slashes into a single slash
-            uriBuilder.queryParam(entry.getKey(), entry.getValue().replaceAll("/", "%2f"));
+            uriBuilder.queryParam(entry.getKey(), value.replaceAll("/", "%2f"));
         }
         return uriBuilder.build().toString();
     }

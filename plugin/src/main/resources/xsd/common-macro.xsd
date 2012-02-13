@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation="common.xsd"/>
+
+    <xs:simpleType name="MacroOutputTypeType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="block"/>
+            <xs:enumeration value="inline"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="MacroBodyTypeType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="rich-text">
+                <xs:annotation>
+                    <xs:documentation>
+                        <description>bar</description>
+                        <resources>
+                            <resource path="/foo" httpMethod="GET" rpcMethod="foo" />
+                        </resources>
+                    </xs:documentation>
+                </xs:annotation>
+                    </xs:enumeration>
+            <xs:enumeration value="plain-text"/>
+            <xs:enumeration value="none"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="CategoryNameType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="formatting"/>
+            <xs:enumeration value="confluence-content"/>
+            <xs:enumeration value="media"/>
+            <xs:enumeration value="visuals"/>
+            <xs:enumeration value="navigation"/>
+            <xs:enumeration value="external-content"/>
+            <xs:enumeration value="communication"/>
+            <xs:enumeration value="reporting"/>
+            <xs:enumeration value="admin"/>
+            <xs:enumeration value="development"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="CategoryType">
+        <xs:attribute name="name" type="CategoryNameType" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="MacroParameterAliasType">
+        <xs:attribute name="name" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="MacroParameterEnumValueType">
+        <xs:attribute name="name" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="MacroParameterType">
+        <xs:sequence>
+            <xs:element name="alias" type="MacroParameterAliasType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="value" type="MacroParameterEnumValueType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string" use="required"/>
+        <xs:attribute name="title" type="xs:string"/>
+        <xs:attribute name="type" type="MacroParameterTypeType" use="required"/>
+        <xs:attribute name="required" type="xs:boolean" default="false"/>
+        <xs:attribute name="multiple" type="xs:boolean" default="false"/>
+        <xs:attribute name="default" type="xs:string"/>
+    </xs:complexType>
+
+    <xs:simpleType name="MacroParameterTypeType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="enum"/>
+            <xs:enumeration value="boolean"/>
+            <xs:enumeration value="string"/>
+            <xs:enumeration value="spacekey"/>
+            <xs:enumeration value="attachment"/>
+            <xs:enumeration value="username"/>
+            <xs:enumeration value="confluence"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="MacroParametersType">
+        <xs:sequence minOccurs="1" maxOccurs="unbounded">
+            <xs:choice>
+                <xs:element name="parameter" type="MacroParameterType"/>
+            </xs:choice>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="MacroImagePlaceholderType">
+        <xs:attribute name="url" type="RelativeUrlType" use="required"/>
+        <xs:attribute name="width" type="PixelType" />
+        <xs:attribute name="height" type="PixelType"/>
+        <xs:attribute name="apply-chrome" type="xs:boolean" default="true"/>
+    </xs:complexType>
+
+    <xs:complexType name="MacroType">
+        <xs:sequence>
+            <xs:element name="description" type="DescriptionType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="alias" type="KeyType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="category" type="CategoryType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="image-placeholder" type="MacroImagePlaceholderType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="parameters" type="MacroParametersType" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+        <xs:attribute name="key" type="KeyType" use="required"/>
+        <xs:attribute name="name" type="NameType"/>
+        <xs:attribute name="url" type="RelativeUrlType" use="required"/>
+        <xs:attribute name="documentation-url" type="RelativeUrlType"/>
+        <xs:attribute name="output-type" type="MacroOutputTypeType" default="block"/>
+        <xs:attribute name="body-type" type="MacroBodyTypeType" default="rich-text"/>
+    </xs:complexType>
+</xs:schema>

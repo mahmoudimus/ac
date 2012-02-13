@@ -49,6 +49,10 @@
         <image-placeholder url="/sandcastles.jpg" />
     </macro>
 
+    <page-macro key="{{appKey}}-page" url="/mypagemacro" output-type="block" body-type="none">
+        <description>Page macro that displays info (for testing)</description>
+    </page-macro>
+
     <web-hook event="remote_app_started" url="/webhook/remote_app_started" />
     <web-hook event="page_created" url="/webhook/page_created" />
 </remote-app>

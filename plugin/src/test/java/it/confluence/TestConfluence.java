@@ -1,9 +1,11 @@
 package it.confluence;
 
 import com.atlassian.labs.remoteapps.test.HtmlDumpRule;
+import com.atlassian.labs.remoteapps.test.OAuthUtils;
 import com.atlassian.labs.remoteapps.test.confluence.ConfluenceCounterMacroPage;
 import com.atlassian.labs.remoteapps.test.confluence.ConfluenceMacroPage;
 import com.atlassian.labs.remoteapps.test.confluence.ConfluenceOps;
+import com.atlassian.labs.remoteapps.test.confluence.ConfluencePageMacroPage;
 import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.pageobjects.TestedProductFactory;
 import com.atlassian.pageobjects.page.HomePage;
@@ -23,9 +25,8 @@ import java.io.IOException;
 import java.util.Map;
 
 import static com.atlassian.labs.remoteapps.test.RemoteAppUtils.clearMacroCaches;
-import static com.atlassian.labs.remoteapps.test.Utils.emptyGet;
-import static com.atlassian.labs.remoteapps.test.Utils.loadResourceAsString;
 import static com.atlassian.labs.remoteapps.test.RemoteAppUtils.waitForEvent;
+import static com.atlassian.labs.remoteapps.test.Utils.loadResourceAsString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -33,8 +34,6 @@ public class TestConfluence
 {
     private static TestedProduct<WebDriverTester> product = TestedProductFactory.create(com.atlassian.webdriver.confluence.ConfluenceTestedProduct.class);
     private static ConfluenceOps confluenceOps = new ConfluenceOps();
-
-    private final Logger log = LoggerFactory.getLogger(TestConfluence.class);
 
     @Rule
     public MethodRule rule = new HtmlDumpRule(product.getTester().getDriver());
@@ -59,6 +58,18 @@ public class TestConfluence
 
         assertTrue(page.getSlowMacroBody().startsWith("ERROR"));
 	}
+
+    @Test
+    public void testPageMacro() throws XmlRpcFault, IOException
+    {
+        Map pageData = confluenceOps.setPage(product.getProductInstance(), "ds", "test", loadResourceAsString(
+                "confluence/test-page-macro.xhtml"));
+        product.visit(LoginPage.class).login("betty", "betty", HomePage.class);
+        ConfluencePageMacroPage page = product.visit(ConfluencePageMacroPage.class, pageData.get("title"), "app1-page-0");
+
+        assertEquals("Success", page.getMessage());
+        assertEquals(OAuthUtils.getConsumerKey(), page.getConsumerKey());
+    }
 
     @Test
 	public void testContextParam() throws XmlRpcFault, IOException

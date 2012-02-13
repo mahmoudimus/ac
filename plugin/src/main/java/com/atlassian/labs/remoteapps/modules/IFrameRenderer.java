@@ -3,7 +3,6 @@ package com.atlassian.labs.remoteapps.modules;
 import com.atlassian.labs.remoteapps.modules.page.IFrameContext;
 import com.atlassian.plugin.webresource.WebResourceManager;
 import com.atlassian.sal.api.ApplicationProperties;
-import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -56,7 +55,7 @@ public class IFrameRenderer
 
         Map<String,String[]> allParams = newHashMap(queryParams);
         allParams.put("xdm_e", new String[]{host});
-        allParams.put("xdm_c", new String[]{"channel-" + iframeContext.getModuleKey()});
+        allParams.put("xdm_c", new String[]{"channel-" + iframeContext.getNamespace()});
         allParams.put("xdm_p", new String[]{"1"});
         String signedUrl = iframeContext.getLinkOps().signGetUrl(remoteUser, iframeContext.getIframePath(), allParams);
 
@@ -67,11 +66,11 @@ public class IFrameRenderer
                     .replaceQueryParam("xdm_p").build().toString();
 
 
-        Map<String,Object> ctx = newHashMap(iframeContext.getTemplateParams());
+        Map<String,Object> ctx = newHashMap(iframeContext.getIFrameParams().getAsMap());
         ctx.put("iframeSrcHtml", signedUrl);
         ctx.put("extraPath", extraPath != null ? extraPath : "");
         ctx.put("remoteapp", iframeContext.getLinkOps().get());
-        ctx.put("namespace", iframeContext.getModuleKey());
+        ctx.put("namespace", iframeContext.getNamespace());
 
         StringWriter output = new StringWriter();
         templateRenderer.render("velocity/iframe-body.vm", ctx, output);

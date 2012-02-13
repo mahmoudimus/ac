@@ -44,6 +44,7 @@ public class HttpServer
         context.addServlet(new ServletHolder(new MyImageMacroServlet(oauthContext)), "/myimagemacro");
         context.addServlet(new ServletHolder(new MySlowMacroServlet()), "/myslowmacro");
         context.addServlet(new ServletHolder(new MyCounterMacroServlet()), "/mycountermacro");
+        context.addServlet(new ServletHolder(new MyAdminServlet(oauthContext)), "/mypagemacro");
         context.addServlet(new ServletHolder(new WebHookServlet()), "/webhook/*");
         context.addServlet(new ServletHolder(new MacroResetServlet(appKey, oauthContext)), "/macro-reset");
         context.addServlet(new ServletHolder(new RegisterServlet("sample-descriptor-refapp.mu.xml", oauthContext)), "/register");

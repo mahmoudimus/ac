@@ -2,7 +2,7 @@ package com.atlassian.labs.remoteapps.product.confluence;
 
 import com.atlassian.confluence.macro.Macro;
 import com.atlassian.confluence.plugin.descriptor.XhtmlMacroModuleDescriptor;
-import com.atlassian.labs.remoteapps.modules.confluence.ImagePlaceholderRemoteMacro;
+import com.atlassian.labs.remoteapps.modules.confluence.ImagePlaceholderMacroWrapper;
 import com.atlassian.plugin.PluginAccessor;
 import com.google.common.collect.Maps;
 
@@ -50,14 +50,14 @@ public class RemoteAppsImagePlaceholderServlet extends HttpServlet
 
         XhtmlMacroModuleDescriptor xhtmlMacroModuleDescriptor = (XhtmlMacroModuleDescriptor) pluginAccessor.getEnabledPluginModule(pluginKey + ":" + macroKey);
         Macro macro = xhtmlMacroModuleDescriptor.getModule();
-        if (!(macro instanceof ImagePlaceholderRemoteMacro))
+        if (!(macro instanceof ImagePlaceholderMacroWrapper))
         {
             resp.sendError(500);
             return;
         }
 
-        ImagePlaceholderRemoteMacro remoteMacro = (ImagePlaceholderRemoteMacro) macro;
-        UriBuilder builder = UriBuilder.fromUri(remoteMacro.getLinkOps().get().getRpcUrl());
+        ImagePlaceholderMacroWrapper remoteMacro = (ImagePlaceholderMacroWrapper) macro;
+        UriBuilder builder = UriBuilder.fromUri(remoteMacro.getBaseUrl());
         builder.path(remoteMacro.getImageUrl());
         for (Pair p : params)
         {

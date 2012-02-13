@@ -84,8 +84,13 @@
     </api-scope>
 
     <remote-module key="macro" name="Macro" class="com.atlassian.labs.remoteapps.modules.confluence.MacroModuleGenerator">
-        <description>A Confluence macro that returns XHTML in the Confluence storage format to be cached forever</description>
+        <description>A Confluence macro that returns XHTML in the Confluence storage format to be cached for at least one hour</description>
         <schema id="macro.xsd" path="/xsd/macro.xsd" type="MacroType"/>
+    </remote-module>
+
+    <remote-module key="page-macro" name="Page Macro" class="com.atlassian.labs.remoteapps.modules.confluence.PageMacroModuleGenerator">
+        <description>A Confluence macro that loads the remote page as an IFrame</description>
+        <schema id="macro.xsd" path="/xsd/page-macro.xsd" type="MacroType"/>
     </remote-module>
 
     <remote-module key="confluence-profile-page" name="User Profile Page" class="com.atlassian.labs.remoteapps.modules.page.ProfilePageModuleGenerator">

@@ -3,6 +3,7 @@ package com.atlassian.labs.remoteapps.modules.page.jira;
 import com.atlassian.labs.jira4compat.CompatViewProfilePanelModuleDescriptor;
 import com.atlassian.labs.jira4compat.spi.CompatViewProfilePanelFactory;
 import com.atlassian.labs.remoteapps.modules.ApplicationLinkOperationsFactory;
+import com.atlassian.labs.remoteapps.modules.IFrameParams;
 import com.atlassian.labs.remoteapps.modules.IFrameRenderer;
 import com.atlassian.labs.remoteapps.modules.external.RemoteAppCreationContext;
 import com.atlassian.labs.remoteapps.modules.external.RemoteModule;
@@ -11,11 +12,8 @@ import com.atlassian.labs.remoteapps.modules.page.IFrameContext;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.module.ModuleFactory;
-import com.atlassian.plugin.webresource.WebResourceManager;
-import com.atlassian.templaterenderer.TemplateRenderer;
 import com.google.common.collect.ImmutableSet;
 import org.dom4j.Element;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collections;
 import java.util.Map;
@@ -68,8 +66,6 @@ public class JiraProfileTabModuleGenerator implements RemoteModuleGenerator
     {
         String key = getRequiredAttribute(e, "key");
         final String url = getRequiredAttribute(e, "url");
-        addToParams(e, "height");
-        addToParams(e, "width");
 
         final Set<ModuleDescriptor> descriptors = ImmutableSet.<ModuleDescriptor>of(
                 createProfilePanelDescriptor(ctx, e, key, url));
@@ -93,17 +89,8 @@ public class JiraProfileTabModuleGenerator implements RemoteModuleGenerator
     {
     }
 
-    private void addToParams(Element e, String key)
-    {
-        String val = e.attributeValue(key);
-        if (val != null)
-        {
-            iframeParams.put(key, val);
-        }
-    }
-
     private CompatViewProfilePanelModuleDescriptor createProfilePanelDescriptor(final RemoteAppCreationContext ctx,
-                                                            Element e,
+                                                            final Element e,
                                                             String key,
                                                             final String path
     )
@@ -123,7 +110,7 @@ public class JiraProfileTabModuleGenerator implements RemoteModuleGenerator
                 ApplicationLinkOperationsFactory.LinkOperations linkOps = applicationLinkOperationsFactory.create(ctx.getApplicationType());
                 return (T) new IFrameViewProfilePanel(
                         iFrameRenderer,
-                        new IFrameContext(linkOps, path, moduleKey, iframeParams));
+                        new IFrameContext(linkOps, path, moduleKey, new IFrameParams(e)));
             }
         }, ctx.getBundle().getBundleContext(), compatViewProfilePanelFactory);
         descriptor.init(ctx.getPlugin(), config);

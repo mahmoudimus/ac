@@ -1,9 +1,6 @@
 package com.atlassian.labs.remoteapps.modules.page;
 
-import com.atlassian.labs.remoteapps.modules.ApplicationLinkOperationsFactory;
-import com.atlassian.labs.remoteapps.modules.IFrameRenderer;
-import com.atlassian.labs.remoteapps.modules.WebItemContext;
-import com.atlassian.labs.remoteapps.modules.WebItemCreator;
+import com.atlassian.labs.remoteapps.modules.*;
 import com.atlassian.labs.remoteapps.modules.external.RemoteAppCreationContext;
 import com.atlassian.labs.remoteapps.modules.external.RemoteModule;
 import com.atlassian.labs.remoteapps.modules.external.RemoteModuleGenerator;
@@ -21,11 +18,9 @@ import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collections;
-import java.util.Map;
 import java.util.Set;
 
-import static com.atlassian.labs.remoteapps.util.Dom4jUtils.*;
-import static com.google.common.collect.Maps.newHashMap;
+import static com.atlassian.labs.remoteapps.util.Dom4jUtils.getRequiredAttribute;
 
 /**
  * Abstract module type for canvas pages, generating a web item and servlet with iframe
@@ -38,7 +33,6 @@ public abstract class AbstractPageModuleGenerator implements RemoteModuleGenerat
     private final ApplicationLinkOperationsFactory applicationLinkSignerFactory;
     private final WebItemCreator webItemCreator;
     private final IFrameRenderer iFrameRenderer;
-    private Map<String, Object> iframeParams = newHashMap();
 
     @Autowired
     public AbstractPageModuleGenerator(ServletModuleManager servletModuleManager,
@@ -72,8 +66,6 @@ public abstract class AbstractPageModuleGenerator implements RemoteModuleGenerat
     {
         String key = getRequiredAttribute(e, "key");
         final String url = getRequiredAttribute(e, "url");
-        addToParams(e, "height");
-        addToParams(e, "width");
 
         String localUrl = "/remoteapps/" + ctx.getApplicationType().getId().get() + "/" + key;
 
@@ -88,15 +80,6 @@ public abstract class AbstractPageModuleGenerator implements RemoteModuleGenerat
                 return descriptors;
             }
         };
-    }
-
-    private void addToParams(Element e, String key)
-    {
-        String val = e.attributeValue(key);
-        if (val != null)
-        {
-            iframeParams.put(key, val);
-        }
     }
 
     private ServletModuleDescriptor createServletDescriptor(final RemoteAppCreationContext ctx,
@@ -114,16 +97,18 @@ public abstract class AbstractPageModuleGenerator implements RemoteModuleGenerat
         config.addElement("url-pattern").setText(localUrl + "");
         config.addElement("url-pattern").setText(localUrl + "/*");
 
+        final IFrameParams params = new IFrameParams(e);
         final ServletModuleDescriptor descriptor = new ServletModuleDescriptor(new ModuleFactory()
         {
             @Override
             public <T> T createModule(String name, ModuleDescriptor<T> moduleDescriptor) throws PluginParseException
             {
                 PageInfo pageInfo = new PageInfo(getDecorator(), getTemplateSuffix(), pageName, getCondition());
+                
                 return (T) new IFramePageServlet(
                         pageInfo,
                         templateRenderer, iFrameRenderer,
-                        new IFrameContext(applicationLinkSignerFactory.create(ctx.getApplicationType()), path, moduleKey, iframeParams), userManager
+                        new IFrameContext(applicationLinkSignerFactory.create(ctx.getApplicationType()), path, moduleKey, params), userManager
                         );
             }
         }, servletModuleManager);

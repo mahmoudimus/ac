@@ -1,9 +1,7 @@
 package com.atlassian.labs.remoteapps.modules.page;
 
 import com.atlassian.labs.remoteapps.modules.ApplicationLinkOperationsFactory;
-
-import java.util.Collections;
-import java.util.Map;
+import com.atlassian.labs.remoteapps.modules.IFrameParams;
 
 public class IFrameContext
 {
@@ -11,19 +9,27 @@ public class IFrameContext
     private final ApplicationLinkOperationsFactory.LinkOperations linkOps;
     private final String iframePath;
 
-    private final String moduleKey;
-    private final Map<String, Object> templateParams;
+    private final String namespace;
+    private final IFrameParams iframeParams;
 
     public IFrameContext(ApplicationLinkOperationsFactory.LinkOperations linkOps,
                          String iframePath,
-                         String moduleKey,
-                         Map<String, Object> templateParams
+                         String namespace,
+                         IFrameParams iframeParams
     )
     {
         this.linkOps = linkOps;
         this.iframePath = iframePath;
-        this.moduleKey = moduleKey;
-        this.templateParams = templateParams;
+        this.namespace = namespace;
+        this.iframeParams = iframeParams;
+    }
+
+    public IFrameContext(IFrameContext iframeContext, String namespaceSuffix)
+    {
+        this(iframeContext.getLinkOps(),
+             iframeContext.getIframePath(),
+             iframeContext.getNamespace() + namespaceSuffix,
+             iframeContext.getIFrameParams());
     }
 
     public ApplicationLinkOperationsFactory.LinkOperations getLinkOps()
@@ -36,14 +42,14 @@ public class IFrameContext
         return iframePath;
     }
 
-    public String getModuleKey()
+    public String getNamespace()
     {
-        return moduleKey;
+        return namespace;
     }
 
-    public Map<String, Object> getTemplateParams()
+    public IFrameParams getIFrameParams()
     {
-        return templateParams;
+        return iframeParams;
     }
 }
 

@@ -4,16 +4,19 @@ import com.atlassian.confluence.content.render.xhtml.ConversionContext;
 import com.atlassian.confluence.macro.DefaultImagePlaceholder;
 import com.atlassian.confluence.macro.EditorImagePlaceholder;
 import com.atlassian.confluence.macro.ImagePlaceholder;
+import com.atlassian.confluence.macro.MacroExecutionException;
 import com.atlassian.confluence.pages.thumbnail.Dimensions;
-import com.atlassian.confluence.xhtml.api.XhtmlContent;
-import com.atlassian.labs.remoteapps.modules.ApplicationLinkOperationsFactory;
 
 import javax.ws.rs.core.UriBuilder;
 import java.net.URI;
 import java.util.Map;
 
-public class ImagePlaceholderRemoteMacro extends RemoteMacro implements EditorImagePlaceholder
+/**
+ * Wrapper to give a macro an image placeholder
+ */
+public class ImagePlaceholderMacroWrapper implements EditorImagePlaceholder, RemoteMacro
 {
+    private final RemoteMacro delegate;
     public static final String REMOTE_IMAGE_SERVLET = "plugins/servlet/remoteImage";
 
     private final String pluginKey;
@@ -22,24 +25,16 @@ public class ImagePlaceholderRemoteMacro extends RemoteMacro implements EditorIm
     private final Dimensions dimensions;
     private final boolean applyChrome;
 
-    public ImagePlaceholderRemoteMacro(String pluginKey,
-                                       String macroKey,
-                                       String imageUrl,
-                                       Dimensions dimensions,
-                                       boolean applyChrome,
-                                       XhtmlContent xhtmlUtils,
-                                       BodyType bodyType,
-                                       OutputType outputType,
-                                       String remoteUrl,
-                                       ApplicationLinkOperationsFactory.LinkOperations linkOps,
-                                       MacroContentManager macroContentManager)
+    public ImagePlaceholderMacroWrapper(RemoteMacro delegate, boolean applyChrome,
+            Dimensions dimensions,
+            String imageUrl, String macroKey, String pluginKey)
     {
-        super(xhtmlUtils, bodyType, outputType, remoteUrl, linkOps, macroContentManager);
-        this.pluginKey = pluginKey;
-        this.macroKey = macroKey;
-        this.imageUrl = imageUrl;
-        this.dimensions = dimensions;
+        this.delegate = delegate;
         this.applyChrome = applyChrome;
+        this.dimensions = dimensions;
+        this.imageUrl = imageUrl;
+        this.macroKey = macroKey;
+        this.pluginKey = pluginKey;
     }
 
     public String getImageUrl()
@@ -62,5 +57,30 @@ public class ImagePlaceholderRemoteMacro extends RemoteMacro implements EditorIm
         URI servletUri = builder.build();
 
         return new DefaultImagePlaceholder(servletUri.toString(), dimensions, applyChrome);
+    }
+
+    @Override
+    public OutputType getOutputType()
+    {
+        return delegate.getOutputType();
+    }
+
+    @Override
+    public String execute(Map<String, String> parameters, String body,
+            ConversionContext context) throws MacroExecutionException
+    {
+        return delegate.execute(parameters, body, context);
+    }
+
+    @Override
+    public BodyType getBodyType()
+    {
+        return delegate.getBodyType();
+    }
+
+    @Override
+    public URI getBaseUrl()
+    {
+        return delegate.getBaseUrl();
     }
 }

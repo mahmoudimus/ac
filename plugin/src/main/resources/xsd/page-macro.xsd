@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation="common-macro.xsd"/>
+
+    <xs:complexType name="PageMacroType">
+        <xs:complexContent>
+            <xs:extension base="MacroType">
+                <xs:attribute name="width" type="PixelType"/>
+                <xs:attribute name="height" type="PixelType"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+</xs:schema>

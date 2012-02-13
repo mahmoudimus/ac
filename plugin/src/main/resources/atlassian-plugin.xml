@@ -11,7 +11,7 @@
     </remote-module>
 
     <remote-module key="admin-page" name="Administration Page" class="com.atlassian.labs.remoteapps.modules.page.AdminPageModuleGenerator">
-        <description>An admin page page decorated in the admin section, with a link in the admin menu</description>
+        <description>An admin page decorated in the admin section, with a link in the admin menu</description>
         <schema id="page.xsd" path="/xsd/page.xsd" type="PageType" />
     </remote-module>
 

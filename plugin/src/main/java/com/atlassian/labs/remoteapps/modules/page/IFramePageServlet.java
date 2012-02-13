@@ -56,7 +56,7 @@ public class IFramePageServlet extends HttpServlet
                 throw new PermissionDeniedException();
             }
 
-            Map<String, Object> ctx = newHashMap(iframeContext.getTemplateParams());
+            Map<String, Object> ctx = newHashMap(iframeContext.getIFrameParams().getAsMap());
             ctx.put("title", pageInfo.getTitle());
             ctx.put("iframeHtml",
                     iFrameRenderer.render(iframeContext, req.getPathInfo(), req.getParameterMap(),
