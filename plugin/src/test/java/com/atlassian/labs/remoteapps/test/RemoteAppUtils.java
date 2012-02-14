@@ -24,10 +24,13 @@ public class RemoteAppUtils
             JSONArray events = new JSONArray(getJson("http://localhost:" + (productInstance.getHttpPort() + 1) + "/webhook/"));
             if (events.length() > 0)
             {
-                org.json.JSONObject event = events.getJSONObject(events.length() - 1);
-                if (id.equals(event.getString("event")))
+                for (int i = events.length() -1; i >= 0; i--)
                 {
-                    return event.getJSONObject("body");
+                    org.json.JSONObject event = events.getJSONObject(i);
+                    if (id.equals(event.getString("event")))
+                    {
+                        return event.getJSONObject("body");
+                    }
                 }
             }
             Thread.sleep(100);

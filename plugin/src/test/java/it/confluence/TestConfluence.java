@@ -108,16 +108,17 @@ public class TestConfluence
         String content = "<h1>Love me</h1>";
         Map pageData = confluenceOps.setPage(product.getProductInstance(), "ds", "test", content);
 
-        JSONObject event = null;
+
+        JSONObject page = null;
         for (int x=0; x<5; x++)
         {
-            event = waitForEvent(product.getProductInstance(), "page_created");
-            if (pageData.get("id").equals(event.getString("pageId")))
+            JSONObject event = waitForEvent(product.getProductInstance(), "page_created");
+            page = event.getJSONObject("page");
+            if (pageData.get("id").equals(page.getString("id")))
             {
                 break;
             }
         }
-        assertEquals(pageData.get("creator"), event.getString("author"));
-        assertEquals(content, event.getString("content"));
+        assertEquals(pageData.get("creator"), page.getString("creatorName"));
 	}
 }

@@ -81,7 +81,7 @@
     <web-hook event="attachment_viewed" url="/webhook/attachment_viewed" />
 
     <web-hook event="space_created" url="/webhook/space_created" />
-    <web-hook event="space_updated" url="/webhook/space_updated" />  // TODO: Is this getting fired?!
+    <web-hook event="space_updated" url="/webhook/space_updated" />
     <web-hook event="space_logo_updated" url="/webhook/space_logo_updated" />
     <web-hook event="space_removed" url="/webhook/space_removed" />
     <web-hook event="space_permissions_updated" url="/webhook/space_permissions_updated" />
