@@ -65,6 +65,6 @@ public class IFrameViewProfilePanel implements CompatViewProfilePanel
     @Override
     public boolean showPanel(User profileUser, User currentUser)
     {
-        return iFrameContext.getLinkOps().canAccess(profileUser.getName());
+        return true;
     }
 }

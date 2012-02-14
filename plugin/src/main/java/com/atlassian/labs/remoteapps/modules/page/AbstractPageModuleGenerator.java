@@ -4,6 +4,7 @@ import com.atlassian.labs.remoteapps.modules.*;
 import com.atlassian.labs.remoteapps.modules.external.RemoteAppCreationContext;
 import com.atlassian.labs.remoteapps.modules.external.RemoteModule;
 import com.atlassian.labs.remoteapps.modules.external.RemoteModuleGenerator;
+import com.atlassian.labs.remoteapps.product.ProductAccessor;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.module.ModuleFactory;
@@ -27,6 +28,7 @@ import static com.atlassian.labs.remoteapps.util.Dom4jUtils.getRequiredAttribute
  */
 public abstract class AbstractPageModuleGenerator implements RemoteModuleGenerator
 {
+    private final ProductAccessor productAccessor;
     private final ServletModuleManager servletModuleManager;
     private final TemplateRenderer templateRenderer;
     private final UserManager userManager;
@@ -40,14 +42,15 @@ public abstract class AbstractPageModuleGenerator implements RemoteModuleGenerat
             ApplicationLinkOperationsFactory applicationLinkSignerFactory,
             IFrameRenderer iFrameRenderer,
             WebItemContext webItemContext,
-            UserManager userManager)
+            UserManager userManager, ProductAccessor productAccessor)
     {
         this.servletModuleManager = servletModuleManager;
         this.templateRenderer = templateRenderer;
         this.applicationLinkSignerFactory = applicationLinkSignerFactory;
         this.iFrameRenderer = iFrameRenderer;
         this.userManager = userManager;
-        this.webItemCreator = new WebItemCreator(webItemContext);
+        this.productAccessor = productAccessor;
+        this.webItemCreator = new WebItemCreator(webItemContext, this.productAccessor);
     }
 
     @Override

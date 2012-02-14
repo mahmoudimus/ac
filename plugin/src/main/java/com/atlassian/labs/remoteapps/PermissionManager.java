@@ -3,10 +3,8 @@ package com.atlassian.labs.remoteapps;
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.applinks.api.ApplicationLinkService;
 import com.atlassian.applinks.api.ApplicationType;
-import com.atlassian.labs.remoteapps.descriptor.external.AccessLevel;
 import com.atlassian.labs.remoteapps.descriptor.external.ApiScopeModuleDescriptor;
 import com.atlassian.labs.remoteapps.modules.permissions.scope.ApiScope;
-import com.atlassian.labs.remoteapps.settings.SettingsManager;
 import com.atlassian.labs.remoteapps.util.ServletUtils;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.event.PluginEventManager;
@@ -35,11 +33,7 @@ public class PermissionManager implements DisposableBean
     private final ApplicationLinkService applicationLinkService;
     private final OAuthLinkManager linkManager;
     private final UserManager userManager;
-    private final AccessLevelManager accessLevelManager;
-    private final SettingsManager settingsManager;
     private final PluginModuleTracker<ApiScope, ApiScopeModuleDescriptor> apiScopeTracker;
-
-    private static final String ACCESS_LEVEL_KEY = "access-level";
 
     private final Set<String> NON_USER_ADMIN_PATHS = ImmutableSet.of(
         "/rest/remoteapps/latest/macro/",
@@ -51,15 +45,11 @@ public class PermissionManager implements DisposableBean
                              OAuthLinkManager linkManager,
                              UserManager userManager,
                              PluginEventManager pluginEventManager,
-                             PluginAccessor pluginAccessor,
-                             AccessLevelManager accessLevelManager,
-                             SettingsManager settingsManager)
+                             PluginAccessor pluginAccessor)
     {
         this.applicationLinkService = applicationLinkService;
         this.linkManager = linkManager;
         this.userManager = userManager;
-        this.accessLevelManager = accessLevelManager;
-        this.settingsManager = settingsManager;
         this.apiScopeTracker = new DefaultPluginModuleTracker<ApiScope, ApiScopeModuleDescriptor>(pluginAccessor, pluginEventManager,
                 ApiScopeModuleDescriptor.class);
     }
@@ -75,36 +65,6 @@ public class PermissionManager implements DisposableBean
         {
             link.putProperty(API_SCOPES_LINK_KEY, scopes);
         }
-    }
-
-    public void setRestrictRemoteApp(ApplicationType type, AccessLevel accessLevel)
-    {
-        ApplicationLink link = applicationLinkService.getPrimaryApplicationLink(type.getClass());
-        if (link == null)
-        {
-            throw new IllegalStateException("Application link cannot be found for type '" + type.getI18nKey() + "'");
-        }
-        link.putProperty(ACCESS_LEVEL_KEY, accessLevel.getId());
-    }
-
-    public boolean canCurrentUserAccessRemoteApp(HttpServletRequest request, ApplicationLink link)
-    {
-        return canAccessRemoteApp(userManager.getRemoteUsername(request), link);
-    }
-
-    public boolean canAccessRemoteApp(String username, ApplicationLink link)
-    {
-        AccessLevel accessLevel = accessLevelManager.getAccessLevel(
-                (String)link.getProperty(ACCESS_LEVEL_KEY));
-
-        return accessLevel.canAccessRemoteApp(username, link);
-    }
-
-    public boolean canAccessApi(String userId, String consumerKey)
-    {
-        ApplicationLink link = linkManager.getLinkForOAuthClientKey(consumerKey);
-        return link != null && canAccessRemoteApp(userId, link);
-
     }
 
     public Iterable<ApiScopeModuleDescriptor> getApiScopeDescriptors()
@@ -169,10 +129,5 @@ public class PermissionManager implements DisposableBean
 
                  // the default
                  userManager.isAdmin(username));
-    }
-
-    public boolean canInstallGlobalRemoteApps(String username)
-    {
-        return userManager.isAdmin(username) || settingsManager.isAllowDogfooding();
     }
 }

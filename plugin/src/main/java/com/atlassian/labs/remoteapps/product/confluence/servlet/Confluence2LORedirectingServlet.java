@@ -83,14 +83,6 @@ public class Confluence2LORedirectingServlet extends HttpServlet
             return;
         }
 
-        // Does the current user have permission to use the desired Remote App? (this is actually also checked in linkOps#signGetUrl,
-        // but it doesn't hurt to be cautious.
-        if (!permissionManager.canCurrentUserAccessRemoteApp(req, applicationLink))
-        {
-            sendResponse(resp, HttpServletResponse.SC_FORBIDDEN, "You cannot access that Remote Application.");
-            return;
-        }
-
         resp.sendRedirect(getFullSignedUrl(applicationLink, appUrl));
     }
 

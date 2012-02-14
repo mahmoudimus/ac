@@ -36,16 +36,13 @@ import static java.util.Collections.emptyMap;
 public class ApplicationTypeModuleGenerator implements RemoteModuleGenerator
 {
     private final MutatingApplicationLinkService mutatingApplicationLinkService;
-    private final PermissionManager permissionManager;
     private final ApplicationTypeClassLoader applicationTypeClassLoader;
 
     @Autowired
     public ApplicationTypeModuleGenerator(MutatingApplicationLinkService mutatingApplicationLinkService,
-                                          PermissionManager permissionManager,
                                           ApplicationTypeClassLoader applicationTypeClassLoader)
     {
         this.mutatingApplicationLinkService = mutatingApplicationLinkService;
-        this.permissionManager = permissionManager;
         this.applicationTypeClassLoader = applicationTypeClassLoader;
     }
 
@@ -73,7 +70,7 @@ public class ApplicationTypeModuleGenerator implements RemoteModuleGenerator
         RemoteAppApplicationType applicationType = createApplicationType(applicationTypeClassLoader, element);
         return new ApplicationTypeModule(applicationType,
                 createApplicationTypeDescriptor(applicationTypeClassLoader, ctx, applicationType, element),
-                mutatingApplicationLinkService, permissionManager, ctx.getAccessLevel());
+                mutatingApplicationLinkService);
 
     }
 

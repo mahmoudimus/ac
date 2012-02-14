@@ -39,14 +39,11 @@ public class ApplicationLinkOperationsFactory
     };
     private final ApplicationLinkService applicationLinkService;
     private final OAuthLinkManager oAuthLinkManager;
-    private final PermissionManager permissionManager;
-    private final UserManager userManager;
     private final CachingHttpContentRetriever httpContentRetriever;
 
     public static interface LinkOperations
     {
         ApplicationLink get();
-        boolean canAccess(String user);
         String signGetUrl(String user, String targetPath, Map<String, String[]> params);
         String executeGet(String user, String path, Map<String,Object> params) throws ContentRetrievalException;
         void executeGetAsync(String user, String path, Map<String,Object> params, HttpContentHandler handler);
@@ -54,12 +51,10 @@ public class ApplicationLinkOperationsFactory
 
     @Autowired
     public ApplicationLinkOperationsFactory(ApplicationLinkService applicationLinkService, OAuthLinkManager oAuthLinkManager,
-                                            PermissionManager permissionManager, UserManager userManager, CachingHttpContentRetriever httpContentRetriever)
+                                            CachingHttpContentRetriever httpContentRetriever)
     {
         this.applicationLinkService = applicationLinkService;
         this.oAuthLinkManager = oAuthLinkManager;
-        this.permissionManager = permissionManager;
-        this.userManager = userManager;
         this.httpContentRetriever = httpContentRetriever;
     }
 
@@ -76,12 +71,6 @@ public class ApplicationLinkOperationsFactory
                     link = applicationLinkService.getPrimaryApplicationLink(applicationType.getClass());
                 }
                 return link;
-            }
-
-            @Override
-            public boolean canAccess(String user)
-            {
-                return permissionManager.canAccessRemoteApp(user, get());
             }
 
             @Override
@@ -126,10 +115,6 @@ public class ApplicationLinkOperationsFactory
                                      Map<String, String[]> params
     ) throws PermissionDeniedException
     {
-        if (!permissionManager.canAccessRemoteApp(user, applicationLink))
-        {
-            throw new PermissionDeniedException("User not authorized");
-        }
         String targetUrl = getTargetUrl(applicationLink, targetPath);
         List<Map.Entry<String, String>> message = signRequest(applicationLink, targetUrl, params, HttpMethod.GET);
 

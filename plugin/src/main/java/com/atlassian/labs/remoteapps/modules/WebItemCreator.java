@@ -1,6 +1,7 @@
 package com.atlassian.labs.remoteapps.modules;
 
 import com.atlassian.labs.remoteapps.modules.external.RemoteAppCreationContext;
+import com.atlassian.labs.remoteapps.product.ProductAccessor;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
@@ -16,11 +17,13 @@ import static org.apache.commons.lang.Validate.notNull;
 
 public class WebItemCreator
 {
+    private final ProductAccessor productAccessor;
     private final WebItemContext webItemContext;
 
-    public WebItemCreator(WebItemContext webItemContext)
+    public WebItemCreator(WebItemContext webItemContext, ProductAccessor productAccessor)
     {
         this.webItemContext = webItemContext;
+        this.productAccessor = productAccessor;
     }
 
     public ModuleDescriptor createWebItemDescriptor(RemoteAppCreationContext ctx,
@@ -67,8 +70,7 @@ public class WebItemCreator
                 .addAttribute("class", DynamicMarkerCondition.class.getName());
 
         ConditionLoadingPlugin plugin = new ConditionLoadingPlugin(ctx.getPlugin(), condition);
-        ModuleDescriptor descriptor = ctx.getAccessLevel()
-                                         .createWebItemModuleDescriptor(ctx.getBundle().getBundleContext());
+        ModuleDescriptor descriptor = productAccessor.createWebItemModuleDescriptor();
         descriptor.init(plugin, config);
         return descriptor;
     }

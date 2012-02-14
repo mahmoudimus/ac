@@ -31,7 +31,7 @@ public class ProfilePageModuleGenerator extends AbstractPageModuleGenerator
                       productAccessor.getPreferredProfileSectionKey(),
                       productAccessor.getPreferredProfileWeight(),
                       productAccessor.getLinkContextParams()
-              ), userManager);
+              ), userManager, productAccessor);
     }
 
     @Override

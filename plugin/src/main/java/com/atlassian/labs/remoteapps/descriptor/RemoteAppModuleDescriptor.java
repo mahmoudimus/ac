@@ -1,9 +1,9 @@
 package com.atlassian.labs.remoteapps.descriptor;
 
 import com.atlassian.event.api.EventPublisher;
-import com.atlassian.labs.remoteapps.AccessLevelManager;
 import com.atlassian.labs.remoteapps.ModuleGeneratorManager;
 import com.atlassian.labs.remoteapps.event.RemoteAppStartedEvent;
+import com.atlassian.labs.speakeasy.external.SpeakeasyBackendService;
 import com.atlassian.plugin.ModuleDescriptorFactory;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
@@ -20,8 +20,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static com.atlassian.labs.remoteapps.util.BundleUtil.findBundleForPlugin;
-import static com.atlassian.labs.remoteapps.util.Dom4jUtils.getOptionalAttribute;
-import static com.google.common.collect.Sets.newHashSet;
 
 /**
  * The module descriptor for remote-app
@@ -30,27 +28,25 @@ public class RemoteAppModuleDescriptor extends AbstractModuleDescriptor<Void>
 {
     private final BundleContext bundleContext;
     private final StartableForPlugins startableForPlugins;
-    private final AccessLevelManager accessLevelManager;
     private final EventPublisher eventPublisher;
-
+    private final SpeakeasyBackendService speakeasyBackendService;
     private static final Logger log = LoggerFactory.getLogger(RemoteAppModuleDescriptor.class);
 
     private ServiceTracker serviceTracker;
     private Element originalElement;
-    private String accessLevel;
     private final ModuleGeneratorManager moduleGeneratorManager;
 
     public RemoteAppModuleDescriptor(BundleContext bundleContext,
-                                     StartableForPlugins startableForPlugins,
-                                     AccessLevelManager accessLevelManager,
-                                     ModuleGeneratorManager moduleGeneratorManager, EventPublisher eventPublisher)
+            StartableForPlugins startableForPlugins,
+            ModuleGeneratorManager moduleGeneratorManager, EventPublisher eventPublisher,
+            SpeakeasyBackendService speakeasyBackendService)
     {
         super(new LegacyModuleFactory());
         this.bundleContext = bundleContext;
         this.startableForPlugins = startableForPlugins;
-        this.accessLevelManager = accessLevelManager;
         this.moduleGeneratorManager = moduleGeneratorManager;
         this.eventPublisher = eventPublisher;
+        this.speakeasyBackendService = speakeasyBackendService;
     }
 
     @Override
@@ -58,7 +54,6 @@ public class RemoteAppModuleDescriptor extends AbstractModuleDescriptor<Void>
     {
         super.init(plugin, element);
         this.originalElement = element;
-        this.accessLevel = getOptionalAttribute(element, "access-level", "global");
     }
 
     @Override
@@ -67,10 +62,17 @@ public class RemoteAppModuleDescriptor extends AbstractModuleDescriptor<Void>
         super.enabled();
         if (serviceTracker == null)
         {
+            // todo: Remove this eventually.  It ensures any remote apps installed after
+            // Speakeasy 1.3.15 will show up as globally-enabled extensions correctly.
+            if (!speakeasyBackendService.isGlobalExtension(getPluginKey()))
+            {
+                speakeasyBackendService.addGlobalExtension(getPluginKey());
+            }
+
             // generate and register new services
             Bundle targetBundle = findBundleForPlugin(bundleContext, getPluginKey());
             final BundleContext targetBundleContext = targetBundle.getBundleContext();
-            final GeneratorInitializer generatorInitializer = new GeneratorInitializer(accessLevelManager, startableForPlugins, getPlugin(), targetBundle, moduleGeneratorManager, originalElement);
+            final GeneratorInitializer generatorInitializer = new GeneratorInitializer(startableForPlugins, getPlugin(), targetBundle, moduleGeneratorManager, originalElement);
             eventPublisher.register(generatorInitializer);
             this.serviceTracker = new ServiceTracker(targetBundleContext, ModuleDescriptorFactory.class.getName(), new ServiceTrackerCustomizer()
             {
@@ -114,7 +116,7 @@ public class RemoteAppModuleDescriptor extends AbstractModuleDescriptor<Void>
                         public void run()
                         {
                             serviceTracker.open();
-                            generatorInitializer.init(accessLevel);
+                            generatorInitializer.init();
                             eventPublisher.publish(new RemoteAppStartedEvent(getPluginKey()));
                             log.info("Remote app '{}' started successfully", getPluginKey());
                         }

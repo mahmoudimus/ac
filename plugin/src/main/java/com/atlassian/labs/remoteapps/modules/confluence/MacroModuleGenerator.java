@@ -4,14 +4,12 @@ import com.atlassian.confluence.status.service.SystemInformationService;
 import com.atlassian.confluence.util.i18n.I18NBeanFactory;
 import com.atlassian.confluence.xhtml.api.XhtmlContent;
 import com.atlassian.labs.remoteapps.modules.ApplicationLinkOperationsFactory;
-import com.atlassian.labs.remoteapps.modules.GlobalModule;
 import com.atlassian.labs.remoteapps.modules.external.RemoteAppCreationContext;
 import com.atlassian.plugin.PluginAccessor;
 
 /**
  *
  */
-@GlobalModule
 public class MacroModuleGenerator extends AbstractMacroModuleGenerator
 {
 

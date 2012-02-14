@@ -121,13 +121,11 @@
     <component-import key="i18nResolver" interface="com.atlassian.sal.api.message.I18nResolver" />
     <component-import key="pluginSettingsFactory" interface="com.atlassian.sal.api.pluginsettings.PluginSettingsFactory" />
     <component-import key="typeAccessor" interface="com.atlassian.applinks.spi.util.TypeAccessor" />
+    <component-import key="speakeasyBackend" interface="com.atlassian.labs.speakeasy.external.SpeakeasyBackendService" />
 
     <module-type key="api-scope" class="com.atlassian.labs.remoteapps.descriptor.external.ApiScopeModuleDescriptor" />
 
-    <module-type key="access-level" class="com.atlassian.labs.remoteapps.descriptor.external.AccessLevelModuleDescriptor" />
     <module-type key="remote-module" class="com.atlassian.labs.remoteapps.descriptor.external.RemoteModuleDescriptor" />
-
-    <access-level key="global" class="com.atlassian.labs.remoteapps.GlobalAccessLevel" />
 
     <!-- product-specific modules included via xslt build process -->
 

@@ -1,11 +1,9 @@
 package com.atlassian.labs.remoteapps.descriptor;
 
 import com.atlassian.event.api.EventListener;
-import com.atlassian.labs.remoteapps.AccessLevelManager;
 import com.atlassian.labs.remoteapps.ModuleGeneratorManager;
-import com.atlassian.labs.remoteapps.descriptor.external.*;
 import com.atlassian.labs.remoteapps.event.RemoteAppUninstalledEvent;
-import com.atlassian.labs.remoteapps.modules.*;
+import com.atlassian.labs.remoteapps.modules.DefaultRemoteAppCreationContext;
 import com.atlassian.labs.remoteapps.modules.applinks.ApplicationTypeModule;
 import com.atlassian.labs.remoteapps.modules.external.*;
 import com.atlassian.plugin.ModuleDescriptor;
@@ -13,7 +11,6 @@ import com.atlassian.plugin.ModuleDescriptorFactory;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.descriptors.ChainModuleDescriptorFactory;
 import com.google.common.base.Function;
-import org.dom4j.DocumentFactory;
 import org.dom4j.Element;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -30,10 +27,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.transform;
-import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Sets.newHashSet;
-import static java.util.Collections.singleton;
-import static org.apache.commons.lang.Validate.notNull;
 
 /**
  * Manages RemoteModuleGenerators
@@ -41,7 +35,6 @@ import static org.apache.commons.lang.Validate.notNull;
 public class GeneratorInitializer
 {
     private final Set<ModuleDescriptorFactory> factories = new CopyOnWriteArraySet<ModuleDescriptorFactory>();
-    private final AccessLevelManager accessLevelManager;
     private final StartableForPlugins startableForPlugins;
     private final Plugin plugin;
     private final Bundle bundle;
@@ -54,10 +47,9 @@ public class GeneratorInitializer
 
     private volatile Set<String> expected;
 
-    GeneratorInitializer(AccessLevelManager accessLevelManager, StartableForPlugins startableForPlugins, Plugin plugin, Bundle bundle,
-                         ModuleGeneratorManager moduleGeneratorManager, Element element)
+    GeneratorInitializer(StartableForPlugins startableForPlugins, Plugin plugin, Bundle bundle,
+            ModuleGeneratorManager moduleGeneratorManager, Element element)
     {
-        this.accessLevelManager = accessLevelManager;
         this.startableForPlugins = startableForPlugins;
         this.plugin = plugin;
         this.bundle = bundle;
@@ -98,19 +90,17 @@ public class GeneratorInitializer
         return added;
     }
 
-    public void init(String accessLevelValue)
+    public void init()
     {
         ensureExpected();
         if (expected.isEmpty() && remoteModules.isEmpty())
         {
             ModuleDescriptorFactory aggFactory = new ChainModuleDescriptorFactory(factories.toArray(new ModuleDescriptorFactory[factories.size()]));
 
-            AccessLevel accessLevel = accessLevelManager.getAccessLevel(accessLevelValue);
-            final RemoteAppCreationContext firstContext = new DefaultRemoteAppCreationContext(plugin, aggFactory, bundle, null, accessLevel);
+            final RemoteAppCreationContext firstContext = new DefaultRemoteAppCreationContext(plugin, aggFactory, bundle, null);
             ApplicationTypeModule module = (ApplicationTypeModule) moduleGeneratorManager.getApplicationTypeModuleGenerator().generate(firstContext, element);
             remoteModules.add(module);
-            remoteModules.add(new DummyModule(firstContext, accessLevelManager));
-            final RemoteAppCreationContext childContext = new DefaultRemoteAppCreationContext(plugin, aggFactory, bundle, module.getApplicationType(), accessLevel);
+            final RemoteAppCreationContext childContext = new DefaultRemoteAppCreationContext(plugin, aggFactory, bundle, module.getApplicationType());
 
             moduleGeneratorManager.processDescriptor(element, new ModuleGeneratorManager.ModuleHandler()
             {
@@ -200,40 +190,5 @@ public class GeneratorInitializer
         }
         remoteModules.clear();
         startableForPlugins.unregister(plugin.getKey());
-    }
-
-    /**
-     * This module only exists to register an unused web item to ensure the app shows up in the speakeasy screen
-     */
-    private static class DummyModule implements RemoteModule
-    {
-        private final RemoteAppCreationContext firstContext;
-        private final AccessLevelManager accessLevelManager;
-
-        public DummyModule(RemoteAppCreationContext firstContext, AccessLevelManager accessLevelManager)
-        {
-            this.firstContext = firstContext;
-            this.accessLevelManager = accessLevelManager;
-        }
-
-        @Override
-        public Set<ModuleDescriptor> getModuleDescriptors()
-        {
-            return singleton(createDummyWebItemDescriptor(firstContext, accessLevelManager));
-        }
-        private ModuleDescriptor createDummyWebItemDescriptor(RemoteAppCreationContext ctx, AccessLevelManager accessLevelManager)
-        {
-            Element config = DocumentFactory.getInstance().createElement("scoped-web-item");
-            config.addAttribute("key", "webitem-dummy__");
-            config.addAttribute("section", "shouldnot/exist");
-
-            config.addElement("label").setText("Does not matter");
-            config.addElement("link").setText("#");
-
-            AccessLevel lvl = accessLevelManager.getAccessLevel("user") != null ? accessLevelManager.getAccessLevel("user") : ctx.getAccessLevel();
-            ModuleDescriptor descriptor = lvl.createWebItemModuleDescriptor(ctx.getBundle().getBundleContext());
-            descriptor.init(ctx.getPlugin(), config);
-            return descriptor;
-        }
     }
 }

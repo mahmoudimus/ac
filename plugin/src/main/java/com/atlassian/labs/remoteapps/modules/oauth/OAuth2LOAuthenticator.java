@@ -116,21 +116,13 @@ public class OAuth2LOAuthenticator implements Authenticator
         if (userId != null)
         {
             /*!
-            The user must be a valid user in the system and must be able to both log in and have access
-            to the specified remote app.  If either of these cases fail, a 401 is returned.
+            The user must be a valid user in the system and must be able to both log in.
+            If either of these cases fail, a 401 is returned.
              */
             user = userManager.resolve(userId);
             if (!authenticationController.canLogin(user, request))
             {
                 log.warn("Access denied to user '{}' because that user cannot login", userId);
-                sendError(response, HttpServletResponse.SC_UNAUTHORIZED, message);
-                return new Result.Failure(new DefaultMessage("Permission denied"));
-            }
-
-            else if (!permissionManager.canAccessApi(userId, consumerKey))
-            {
-                log.warn("Access denied to user '{}' because that user is not allowed " +
-                                "to make api calls from the remote app '{}'", userId, consumerKey);
                 sendError(response, HttpServletResponse.SC_UNAUTHORIZED, message);
                 return new Result.Failure(new DefaultMessage("Permission denied"));
             }

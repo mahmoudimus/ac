@@ -33,7 +33,7 @@ public class GeneralPageModuleGenerator extends AbstractPageModuleGenerator
                       productAccessor.getPreferredGeneralSectionKey(),
                       productAccessor.getPreferredGeneralWeight(),
                       productAccessor.getLinkContextParams()
-              ), userManager);
+              ), userManager, productAccessor);
     }
 
     @Override

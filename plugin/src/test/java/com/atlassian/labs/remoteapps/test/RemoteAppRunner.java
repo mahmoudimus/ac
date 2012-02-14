@@ -104,24 +104,7 @@ public class RemoteAppRunner
         server.start();
 
         register();
-        enable();
         return this;
-    }
-
-    private void enable() throws IOException, JSONException
-    {
-        HttpPut post = new HttpPut(baseUrl + "/rest/speakeasy/latest/user/" + appKey + "?" +
-            URLEncodedUtils.format(singletonList(new BasicNameValuePair("os_authType", "basic")), "UTF-8"));
-
-        httpclient.execute(post, new BasicResponseHandler());
-    }
-
-    private void disable() throws IOException
-    {
-        HttpDelete post = new HttpDelete(baseUrl + "/rest/speakeasy/latest/user/" + appKey + "?" +
-            URLEncodedUtils.format(singletonList(new BasicNameValuePair("os_authType", "basic")), "UTF-8"));
-
-        httpclient.execute(post, new BasicResponseHandler());
     }
 
     private void register() throws IOException
@@ -151,7 +134,6 @@ public class RemoteAppRunner
     public void stop() throws Exception
     {
         server.stop();
-        disable();
         unregister();
     }
 

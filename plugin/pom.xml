@@ -197,6 +197,13 @@
             <version>4.1.2</version>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>com.atlassian.labs</groupId>
+            <artifactId>speakeasy-plugin</artifactId>
+            <version>${speakeasy.version}</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>org.kohsuke.redstone</groupId>
             <artifactId>redstone</artifactId>

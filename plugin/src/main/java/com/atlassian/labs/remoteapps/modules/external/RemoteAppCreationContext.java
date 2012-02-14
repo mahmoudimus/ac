@@ -1,6 +1,5 @@
 package com.atlassian.labs.remoteapps.modules.external;
 
-import com.atlassian.labs.remoteapps.descriptor.external.AccessLevel;
 import com.atlassian.labs.remoteapps.modules.applinks.RemoteAppApplicationType;
 import com.atlassian.plugin.ModuleDescriptorFactory;
 import com.atlassian.plugin.Plugin;
@@ -18,6 +17,4 @@ public interface RemoteAppCreationContext
     Bundle getBundle();
 
     RemoteAppApplicationType getApplicationType();
-
-    AccessLevel getAccessLevel();
 }

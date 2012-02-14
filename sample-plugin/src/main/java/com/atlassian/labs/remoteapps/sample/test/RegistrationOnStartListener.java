@@ -44,7 +44,6 @@ public class RegistrationOnStartListener implements LifecycleAware, DisposableBe
     private volatile boolean enabled = false;
 
     private final PluginEventManager pluginEventManager;
-    private final SpeakeasyService speakeasyService;
     private HttpServer server;
 
     static
@@ -63,10 +62,9 @@ public class RegistrationOnStartListener implements LifecycleAware, DisposableBe
 
     }
 
-    public RegistrationOnStartListener(PluginEventManager pluginEventManager, SpeakeasyService speakeasyService)
+    public RegistrationOnStartListener(PluginEventManager pluginEventManager)
     {
         this.pluginEventManager = pluginEventManager;
-        this.speakeasyService = speakeasyService;
         pluginEventManager.register(this);
     }
 
@@ -145,12 +143,6 @@ public class RegistrationOnStartListener implements LifecycleAware, DisposableBe
                     log.error("----------------------------------------");
                     log.error(responseBody);
                     log.error("----------------------------------------");
-
-                    if (speakeasyService.getRemotePlugin("app1", "betty").isCanEnable())
-                    {
-                        speakeasyService.enableExtension("app1", "betty");
-                    }
-
                 }
                 catch (ClientProtocolException e)
                 {

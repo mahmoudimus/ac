@@ -35,7 +35,7 @@ public class AdminPageModuleGenerator extends AbstractPageModuleGenerator
                       productAccessor.getPreferredAdminSectionKey(),
                       productAccessor.getPreferredAdminWeight(),
                       productAccessor.getLinkContextParams()
-              ), userManager);
+              ), userManager, productAccessor);
         this.userManager = userManager;
     }
 
