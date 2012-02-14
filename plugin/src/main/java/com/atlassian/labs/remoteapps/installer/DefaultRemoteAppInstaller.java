@@ -392,13 +392,6 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
                         + System.currentTimeMillis() + "\"" +
                         ";registration-url=\"" + registrationUrl + "\"");
 
-
-        // This module only exists to register an unused web item to ensure the app shows up in the speakeasy screen
-        plugin.addElement("scoped-web-item")
-                .addAttribute("key", "webitem-dummy__")
-                .addAttribute("section", "shouldnot/exist")
-                .addElement("label").addText("Does not matter").getParent()
-                .addElement("link").addText("#");
         plugin.add(oldRoot.detach());
         doc.setRootElement(plugin);
 
