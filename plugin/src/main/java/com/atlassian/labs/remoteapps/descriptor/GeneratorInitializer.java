@@ -13,6 +13,7 @@ import com.atlassian.plugin.ModuleDescriptorFactory;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
 import com.atlassian.plugin.descriptors.ChainModuleDescriptorFactory;
+import com.atlassian.plugin.module.LegacyModuleFactory;
 import com.google.common.base.Function;
 import com.google.common.collect.Sets;
 import org.dom4j.DocumentFactory;
@@ -110,7 +111,7 @@ public class GeneratorInitializer
                 @Override
                 public Set<ModuleDescriptor> getModuleDescriptors()
                 {
-                    return Sets.<ModuleDescriptor>newHashSet(new SpeakeasyMarkerModuleDescriptor());
+                    return Sets.<ModuleDescriptor>newHashSet(new SpeakeasyMarkerModuleDescriptor(plugin));
                 }
             });
             final RemoteAppCreationContext childContext = new DefaultRemoteAppCreationContext(plugin, aggFactory, bundle, module.getApplicationType());
@@ -208,6 +209,12 @@ public class GeneratorInitializer
     public static class SpeakeasyMarkerModuleDescriptor extends AbstractModuleDescriptor implements
             DescriptorGenerator
     {
+        public SpeakeasyMarkerModuleDescriptor(Plugin plugin)
+        {
+            super(new LegacyModuleFactory());
+            init(plugin, DocumentFactory.getInstance().createElement("marker")
+                .addAttribute("key", "__speakeasy_marker"));
+        }
 
         @Override
         public Object getModule()
