@@ -76,7 +76,7 @@ public class OAuthLinkManager
         serviceProviderConsumerStore.put(consumer);
         link.putProperty("oauth.incoming.consumerkey", consumer.getKey());
     }
-
+    
     public void unassociateConsumer(Consumer consumer)
     {
         String key = consumer.getKey();

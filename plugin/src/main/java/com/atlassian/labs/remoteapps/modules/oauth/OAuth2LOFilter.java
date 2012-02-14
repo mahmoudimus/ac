@@ -1,5 +1,7 @@
 package com.atlassian.labs.remoteapps.modules.oauth;
 
+import com.atlassian.oauth.consumer.ConsumerService;
+import com.atlassian.oauth.serviceprovider.ServiceProviderConsumerStore;
 import com.atlassian.oauth.util.Check;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.auth.AuthenticationController;
@@ -36,9 +38,9 @@ public class OAuth2LOFilter implements Filter
     private final ApplicationProperties applicationProperties;
 
     public OAuth2LOFilter(Authenticator authenticator,
-                          AuthenticationListener authenticationListener,
-                          AuthenticationController authenticationController,
-                          ApplicationProperties applicationProperties)
+            AuthenticationListener authenticationListener,
+            AuthenticationController authenticationController,
+            ApplicationProperties applicationProperties)
     {
         this.authenticator = Check.notNull(authenticator, "authenticator");
         this.authenticationListener = Check.notNull(authenticationListener, "authenticationListener");
@@ -118,9 +120,13 @@ public class OAuth2LOFilter implements Filter
      */
     private boolean isOAuth2LOAccessAttempt(HttpServletRequest request)
     {
+        
+        boolean isRequestTokenRequest = request.getRequestURL().toString().endsWith(
+                "/plugins/servlet/oauth/request-token");
         final Set<String> params = parameterNames(request);
         return  params.containsAll(OAUTH_DATA_REQUEST_PARAMS) &&
-                !params.contains(OAuth.OAUTH_TOKEN);
+                !params.contains(OAuth.OAUTH_TOKEN) &&
+                !isRequestTokenRequest;
     }
 
     private Set<String> parameterNames(HttpServletRequest request)

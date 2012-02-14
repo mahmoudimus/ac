@@ -70,6 +70,9 @@
                 <artifactId>maven-amps-plugin</artifactId>
                 <version>3.6.2</version>
                 <extensions>true</extensions>
+                <configuration>
+                    <extractDependencies>true</extractDependencies>
+                </configuration>
             </plugin>
         </plugins>
     </build>

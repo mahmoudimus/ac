@@ -49,11 +49,11 @@ public class OAuthContext
 
     public OAuthConsumer getHostConsumer(String key)
     {
-
+        String baseUrl = getHostBaseUrl(key);
         OAuthServiceProvider serviceProvider = new OAuthServiceProvider(
-                                "http://example.com",
-                                "http://example.com",
-                                "http://example.com");
+                                baseUrl + "/plugins/servlet/oauth/request-token",
+                                baseUrl + "/plugins/servlet/oauth/authorize",
+                                baseUrl + "/plugins/servlet/oauth/access-token");
         OAuthConsumer host = new OAuthConsumer(null, key, null, serviceProvider);
         host.setProperty(RSA_SHA1.PUBLIC_KEY, getEnv("OAUTH_HOST_PUBLIC_KEY." + key));
         return host;
