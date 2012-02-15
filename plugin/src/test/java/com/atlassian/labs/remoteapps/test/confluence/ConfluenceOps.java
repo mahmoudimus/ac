@@ -2,6 +2,7 @@ package com.atlassian.labs.remoteapps.test.confluence;
 
 import com.atlassian.pageobjects.ProductInstance;
 import org.apache.commons.codec.binary.Base64;
+import redstone.xmlrpc.XmlRpcArray;
 import redstone.xmlrpc.XmlRpcClient;
 import redstone.xmlrpc.XmlRpcFault;
 import redstone.xmlrpc.XmlRpcStruct;
@@ -25,6 +26,15 @@ public class ConfluenceOps
         struct.put("content", content);
         XmlRpcStruct page = (XmlRpcStruct) client.invoke( "confluence2.storePage", new Object[] { "", struct } );
         return page;
+    }
+
+    public int search(ProductInstance product, String query) throws MalformedURLException, XmlRpcFault
+    {
+        final int maxResults = 10;
+        XmlRpcClient client = getClient(product);
+
+        XmlRpcArray searchResults = (XmlRpcArray) client.invoke("confluence2.search", new Object[] {"", query, maxResults});
+        return searchResults.size();
     }
 
     private XmlRpcClient getClient(ProductInstance product) throws MalformedURLException

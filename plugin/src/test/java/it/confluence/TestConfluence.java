@@ -103,6 +103,17 @@ public class TestConfluence
 	}
 
     @Test
+    public void testSearchPerformedWebHookFired() throws XmlRpcFault, IOException, InterruptedException, JSONException
+    {
+        final String testQuery = "test";
+        int results = confluenceOps.search(product.getProductInstance(), testQuery);
+
+        JSONObject event = waitForEvent(product.getProductInstance(), "search_performed");
+        assertEquals(testQuery, event.getString("query"));
+        assertEquals(results, event.getInt("results"));
+    }
+
+    @Test
 	public void testPageCreatedWebHookFired() throws IOException, JSONException, InterruptedException, XmlRpcFault
     {
         String content = "<h1>Love me</h1>";

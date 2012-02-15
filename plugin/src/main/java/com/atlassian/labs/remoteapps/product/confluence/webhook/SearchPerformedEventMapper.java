@@ -2,6 +2,7 @@ package com.atlassian.labs.remoteapps.product.confluence.webhook;
 
 import com.atlassian.confluence.event.events.ConfluenceEvent;
 import com.atlassian.confluence.event.events.search.SearchPerformedEvent;
+import com.atlassian.confluence.search.v2.query.BoostingQuery;
 import com.atlassian.confluence.setup.settings.SettingsManager;
 import com.atlassian.sal.api.user.UserManager;
 import com.google.common.collect.ImmutableMap;
@@ -26,12 +27,21 @@ public class SearchPerformedEventMapper extends ConfluenceEventMapper
     {
         SearchPerformedEvent event = (SearchPerformedEvent) e;
 
-        ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();
-        builder.putAll(super.toMap(event));
-        builder.put("query", event.getSearchQuery().toString());
-        builder.put("user", event.getUser().getName());
-        builder.put("results", event.getNumberOfResults());
+        String queryText = "";
+        // non-empircal testing indicates that BoostingQuery is always the top-level query used when searching Confluence.
+        // unfortunately, because the SearchQuery interface is so sparse, the only way to easily get the original query
+        // text is to cast to a specific query type. sad-face.
+        if (event.getSearchQuery() instanceof BoostingQuery)
+        {
+            queryText = ((BoostingQuery)event.getSearchQuery()).getSearchQueryParameters().getQuery();
+        }
 
-        return builder.build();
+        // Note: don't call the base implementation because we want to populate the 'user' parameter differently.
+        return ImmutableMap.<String, Object>of(
+                "timestamp", event.getTimestamp(),
+                "query", queryText,
+                "user", event.getUser().getName(),
+                "results", event.getNumberOfResults()
+        );
     }
 }
