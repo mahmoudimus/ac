@@ -1,7 +1,5 @@
 package com.atlassian.labs.remoteapps.modules.oauth;
 
-import com.atlassian.oauth.consumer.ConsumerService;
-import com.atlassian.oauth.serviceprovider.ServiceProviderConsumerStore;
 import com.atlassian.oauth.util.Check;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.auth.AuthenticationController;

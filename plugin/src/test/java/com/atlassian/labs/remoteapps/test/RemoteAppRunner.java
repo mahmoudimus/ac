@@ -55,7 +55,7 @@ public class RemoteAppRunner
     private final Map<String,String> routes = newHashMap();
     private final int port;
     private final String baseUrl;
-    private final DefaultHttpClient httpclient;
+    private final RemoteAppInstallerClient installer;
     private final String appKey;
 
     public RemoteAppRunner(String baseUrl, String appKey)
@@ -70,9 +70,7 @@ public class RemoteAppRunner
                     .addAttribute("version", "1")
                     .addAttribute("display-url", "http://localhost:" + port)
                 .getDocument();
-        httpclient = new DefaultHttpClient(new SingleClientConnManager());
-        httpclient.getCredentialsProvider().setCredentials(
-                AuthScope.ANY, new UsernamePasswordCredentials("betty", "betty"));
+        installer = new RemoteAppInstallerClient(baseUrl, "betty", "betty");
     }
 
     public RemoteAppRunner addAdminPage(String key, String name, String path, String resource)
@@ -109,26 +107,12 @@ public class RemoteAppRunner
 
     private void register() throws IOException
     {
-        HttpPost post = new HttpPost(baseUrl + "/rest/remoteapps/latest/installer?" +
-            URLEncodedUtils.format(singletonList(new BasicNameValuePair("os_authType", "basic")), "UTF-8"));
-
-        List<NameValuePair> formparams = new ArrayList<NameValuePair>();
-        formparams.add(new BasicNameValuePair("url", "http://localhost:" + port + "/register"));
-        formparams.add(new BasicNameValuePair("token", ""));
-        UrlEncodedFormEntity entity = new UrlEncodedFormEntity(formparams, "UTF-8");
-        post.setEntity(entity);
-
-        ResponseHandler<String> responseHandler = new BasicResponseHandler();
-        httpclient.execute(post, responseHandler);
+        installer.install("http://localhost:" + port + "/register");
     }
 
     private void unregister() throws IOException
     {
-        HttpDelete post = new HttpDelete(baseUrl + "/rest/remoteapps/latest/uninstaller/" + appKey + "?" +
-            URLEncodedUtils.format(singletonList(new BasicNameValuePair("os_authType", "basic")), "UTF-8"));
-
-        ResponseHandler<String> responseHandler = new BasicResponseHandler();
-        httpclient.execute(post, responseHandler);
+        installer.uninstall(appKey);
     }
 
     public void stop() throws Exception

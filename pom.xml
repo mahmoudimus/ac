@@ -27,6 +27,7 @@
         <module>sample</module>
         <module>sample-plugin</module>
         <module>plugin</module>
+        <module>smoke-tests</module>
     </modules>
 
     <build>
