@@ -1,8 +1,10 @@
 package it;
 
 import com.atlassian.labs.remoteapps.test.*;
+import com.atlassian.labs.remoteapps.test.confluence.ConfluenceGeneralPage;
 import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.pageobjects.page.AdminHomePage;
+import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
 import com.atlassian.webdriver.pageobjects.WebDriverTester;
 import org.dom4j.Document;
@@ -36,15 +38,15 @@ public class TestRemoteApp
     }
 
     @Test
-	public void testMyAdminLoaded()
+	public void testMyGeneralLoaded()
 	{
-        product.visit(LoginPage.class).login("betty", "betty", AdminHomePage.class);
-        RemoteAppAwarePage page = product.getPageBinder().bind(RemoteAppAwarePage.class, "remoteAppAdmin",
-                                                               "Remote App app1 Admin");
+        product.visit(LoginPage.class).login("betty", "betty", HomePage.class);
+        RemoteAppAwarePage page = product.getPageBinder().bind(GeneralPage.class, "remoteAppGeneral",
+                                                               "Remote App app1 General");
         assertTrue(page.isRemoteAppLinkPresent());
-        MyIframePage myIframe = page.clickRemoteAppLink();
-        assertEquals("Success", myIframe.getMessage());
-        assertEquals(OAuthUtils.getConsumerKey(), myIframe.getConsumerKey());
+        RemoteAppTestPage remoteAppTest = page.clickRemoteAppLink();
+        assertEquals("Success", remoteAppTest.getMessage());
+        assertEquals(OAuthUtils.getConsumerKey(), remoteAppTest.getConsumerKey());
 	}
 
     @Test
@@ -82,21 +84,21 @@ public class TestRemoteApp
     @Test
     public void testChangedKey() throws Exception
     {
-        product.visit(LoginPage.class).login("betty", "betty", AdminHomePage.class);
+        product.visit(LoginPage.class).login("betty", "betty", HomePage.class);
         RemoteAppRunner appFirst = new RemoteAppRunner(product.getProductInstance().getBaseUrl(), "appFirst")
-                .addAdminPage("changedPage", "Changed Page", "/page", "hello-world-page.mu")
+                .addGeneralPage("changedPage", "Changed Page", "/page", "hello-world-page.mu")
                 .start();
-        product.visit(AdminHomePage.class);
-        assertTrue(product.getPageBinder().bind(RemoteAppAwarePage.class, "changedPage", "Changed Page")
+        product.visit(HomePage.class);
+        assertTrue(product.getPageBinder().bind(GeneralPage.class, "changedPage", "Changed Page")
                 .clickRemoteAppLink()
                 .getLoadTime() > 0);
         appFirst.stop();
 
         RemoteAppRunner appSecond = new RemoteAppRunner(product.getProductInstance().getBaseUrl(), "appSecond")
-                .addAdminPage("changedPage", "Changed Page", "/page", "hello-world-page.mu")
+                .addGeneralPage("changedPage", "Changed Page", "/page", "hello-world-page.mu")
                 .start();
-        product.visit(AdminHomePage.class);
-        assertTrue(product.getPageBinder().bind(RemoteAppAwarePage.class, "changedPage", "Changed Page")
+        product.visit(HomePage.class);
+        assertTrue(product.getPageBinder().bind(GeneralPage.class, "changedPage", "Changed Page")
                 .clickRemoteAppLink()
                 .getLoadTime() > 0);
         appSecond.stop();

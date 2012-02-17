@@ -83,6 +83,16 @@ public class RemoteAppRunner
         return this;
     }
 
+    public RemoteAppRunner addGeneralPage(String key, String name, String path, String resource)
+    {
+        doc.getRootElement().addElement("general-page")
+                .addAttribute("url", path)
+                .addAttribute("name", name)
+                .addAttribute("key", key);
+        routes.put(path, resource);
+        return this;
+    }
+
     public RemoteAppRunner start() throws Exception
     {
         server = new Server(port);

@@ -19,7 +19,7 @@ import static com.google.common.collect.Maps.newHashMap;
 /**
  *
  */
-public class MyIframePage
+public class RemoteAppEmbeddedTestPage
 {
     @Inject
     private AtlassianWebDriver driver;
@@ -27,9 +27,9 @@ public class MyIframePage
     private final String key;
     private WebElement containerDiv;
 
-    public MyIframePage(String key)
+    public RemoteAppEmbeddedTestPage(String pageKey)
     {
-        this.key = key;
+        this.key = pageKey;
     }
 
     @Init

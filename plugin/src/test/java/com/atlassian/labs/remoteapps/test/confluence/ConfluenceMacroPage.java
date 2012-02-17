@@ -1,6 +1,6 @@
 package com.atlassian.labs.remoteapps.test.confluence;
 
-import com.atlassian.labs.remoteapps.test.MyIframePage;
+import com.atlassian.labs.remoteapps.test.RemoteAppTestPage;
 import com.atlassian.pageobjects.Page;
 import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.webdriver.AtlassianWebDriver;
@@ -51,10 +51,10 @@ public class ConfluenceMacroPage implements Page
         return driver.findElement(By.className("image-macro")).findElement(By.tagName("img")).getAttribute("alt");
     }
 
-    public MyIframePage visitGeneralLink()
+    public RemoteAppTestPage visitGeneralLink()
     {
         driver.findElement(By.id("browse-menu-link")).click();
         driver.findElement(By.id("webitem-remoteAppGeneral")).click();
-        return pageBinder.bind(MyIframePage.class, "servlet-remoteAppGeneral");
+        return pageBinder.bind(RemoteAppTestPage.class, "remoteAppGeneral");
     }
 }

@@ -1,6 +1,7 @@
 package com.atlassian.labs.remoteapps.test.confluence;
 
-import com.atlassian.labs.remoteapps.test.MyIframePage;
+import com.atlassian.labs.remoteapps.test.RemoteAppEmbeddedTestPage;
+import com.atlassian.labs.remoteapps.test.RemoteAppTestPage;
 import com.atlassian.pageobjects.Page;
 import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.webdriver.AtlassianWebDriver;
@@ -10,7 +11,7 @@ import javax.inject.Inject;
 /**
  *
  */
-public class ConfluencePageMacroPage extends MyIframePage implements Page
+public class ConfluencePageMacroPage extends RemoteAppEmbeddedTestPage implements Page
 {
     @Inject
     AtlassianWebDriver driver;
