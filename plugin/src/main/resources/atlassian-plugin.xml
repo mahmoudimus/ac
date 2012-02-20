@@ -80,6 +80,16 @@
         <resource type="download" name="main.js" location="/js/iframe/main.js" />
     </web-resource>
 
+    <web-resource key="smoke-test">
+        <resource type="download" content-type="application/xml" name="atlassian-remote-app.xml" location="/remoteapps-smoke-test/atlassian-remote-app.xml" />
+        <resource type="download" name="general-page.html" content-type="text/html" location="/remoteapps-smoke-test/general-page.html" />
+        <transformation extension="xml">
+            <transformer key="baseUrlTransformer"/>
+        </transformation>
+    </web-resource>
+
+    <web-resource-transformer key="baseUrlTransformer" class="com.atlassian.labs.remoteapps.descriptor.BaseUrlTransformer"/>
+
     <commonjs key="speakeasy-commonjs" location="/js/speakeasy" />
 
     <web-resource key="speakeasy-integration">

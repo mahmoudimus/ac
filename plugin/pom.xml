@@ -481,19 +481,6 @@
                     </products>
                     <testGroups>
                         <testGroup>
-                            <id>jira</id>
-                            <productIds>
-                                <productId>jira</productId>
-                            </productIds>
-                            <systemProperties>
-                                <testedProductClass>com.atlassian.jira.pageobjects.JiraTestedProduct
-                                </testedProductClass>
-                            </systemProperties>
-                            <excludes>
-                                <exclude>it/confluence/*.java</exclude>
-                            </excludes>
-                        </testGroup>
-                        <testGroup>
                             <id>refapp</id>
                             <productIds>
                                 <productId>refapp</productId>
@@ -512,6 +499,19 @@
                                     com.atlassian.webdriver.confluence.ConfluenceTestedProduct
                                 </testedProductClass>
                             </systemProperties>
+                        </testGroup>
+                        <testGroup>
+                            <id>jira</id>
+                            <productIds>
+                                <productId>jira</productId>
+                            </productIds>
+                            <systemProperties>
+                                <testedProductClass>com.atlassian.jira.pageobjects.JiraTestedProduct
+                                </testedProductClass>
+                            </systemProperties>
+                            <excludes>
+                                <exclude>it/confluence/*.java</exclude>
+                            </excludes>
                         </testGroup>
                     </testGroups>
                 </configuration>

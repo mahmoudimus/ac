@@ -26,7 +26,7 @@ public class TestRemoteApps
     private static final String adminPassword = System.getProperty("remoteapps.adminPassword");
     
     private static final String displayUrl = System.getProperty("remoteapps.displayUrl",
-            "https://bitbucket.org/mrdon/remoteapps-plugin/raw/master/smoke-tests/src/test/app");
+            targetBaseUrl + "/download/resources/com.atlassian.labs.remoteapps-plugin:smoke-test");
     private static final RemoteAppInstallerClient installer = new RemoteAppInstallerClient(targetBaseUrl, adminUsername,
             adminPassword);
 
@@ -60,7 +60,7 @@ public class TestRemoteApps
     }
 
     @Test
-    public void testAdminPage()
+    public void testGeneralPage()
     {
         product.visit(LoginPage.class).login(adminUsername, adminPassword, HomePage.class);
         GeneralPage page = product.getPageBinder().bind(GeneralPage.class, "smoke-admin-page",

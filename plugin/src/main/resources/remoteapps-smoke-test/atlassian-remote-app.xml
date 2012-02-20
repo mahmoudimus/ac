@@ -2,7 +2,7 @@
             name="Remote Apps Smoke Tests"
             version="1"
             icon-url="http://atlassian.com/favicon.ico"
-            display-url="https://bitbucket.org/mrdon/remoteapps-plugin/raw/master/smoke-tests/src/test/app">
+            display-url="%%BASEURL%%/download/resources/com.atlassian.labs.remoteapps-plugin:smoke-test">
     <vendor name="Atlassian" url="http://atlassian.com" />
     <description>
         Smoke test app to verify a valid installation

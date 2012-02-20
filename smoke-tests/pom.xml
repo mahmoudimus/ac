@@ -81,7 +81,7 @@
                         <configuration>
                             <skipTests>false</skipTests>
                             <systemPropertyVariables>
-                                <remoteapps.adminUsername>kkkk</remoteapps.adminUsername>
+                                <remoteapps.adminUsername>${remoteapps.adminUsername}</remoteapps.adminUsername>
                                 <remoteapps.adminPassword>${remoteapps.adminPassword}</remoteapps.adminPassword>
                                 <remoteapps.targetBaseUrl>${remoteapps.targetBaseUrl}</remoteapps.targetBaseUrl>
                                 <baseurl.jira>${remoteapps.targetBaseUrl}</baseurl.jira>
