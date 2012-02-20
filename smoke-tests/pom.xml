@@ -109,6 +109,8 @@
                                 <remoteapps.adminPassword>${remoteapps.adminPassword}</remoteapps.adminPassword>
                                 <remoteapps.targetBaseUrl>${remoteapps.targetBaseUrl}</remoteapps.targetBaseUrl>
                                 <baseurl.confluence>${remoteapps.targetBaseUrl}</baseurl.confluence>
+                                <http.confluence.port>443</http.confluence.port>
+                                <context.confluence.path>/wiki</context.confluence.path>
                                 <testedProductClass>com.atlassian.webdriver.confluence.ConfluenceTestedProduct</testedProductClass>
                                 <xvfb.enable>${xvfb.enable}</xvfb.enable>
                                 <webdriver.browser>${webdriver.browser}</webdriver.browser>
