@@ -21,5 +21,3 @@ commands in the '/plugin' directory.
 
 * Test your changes in all three products at once - open up three terminals and execute the above amps:debug commands,
   one per product.  You will also need three more tabs for each of the 'cli' invocations.
-
-For help writing your own Remote App, see the README.txt in the sample/ directory.
