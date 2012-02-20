@@ -1,6 +1,6 @@
 Atlassian Remote Apps Plugin is a plugin that supports a type of plugin called a Remote App.
 
-https://bitbucket.org/mrdon/remoteapps-plugin
+https://remoteapps.jira.com/wiki/display/ARA
 
 When getting started developing the Atlassian Remote Apps plugin, these commands will come in handy.
 You may need to run a 'mvn install' from the project directory first before running these 
