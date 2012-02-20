@@ -108,6 +108,8 @@
                                 <remoteapps.targetBaseUrl>${remoteapps.targetBaseUrl}</remoteapps.targetBaseUrl>
                                 <baseurl.confluence>${remoteapps.targetBaseUrl}</baseurl.confluence>
                                 <testedProductClass>com.atlassian.webdriver.confluence.ConfluenceTestedProduct</testedProductClass>
+                                <xvfb.enable>${xvfb.enable}</xvfb.enable>
+                                <webdriver.browser>${webdriver.browser}</webdriver.browser>
                             </systemPropertyVariables>
                         </configuration>
                     </plugin>
@@ -120,6 +122,5 @@
         <remoteapps.adminUsername/>
         <remoteapps.adminPassword/>
         <remoteapps.targetBaseUrl/>
-        <webdriver.browser>firefox-3.6</webdriver.browser>
     </properties>
 </project>

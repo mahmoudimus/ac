@@ -633,8 +633,6 @@
     </pluginRepositories>
 
     <properties>
-        <webdriver.browser>firefox-3.6</webdriver.browser>
-        <xvfb.enable>true</xvfb.enable>
         <product>refapp</product>
         <confluence.plugins.version>2.10.1</confluence.plugins.version>
         <docco.pageTemplate>${basedir}/src/main/build/page.html.ftl</docco.pageTemplate>
