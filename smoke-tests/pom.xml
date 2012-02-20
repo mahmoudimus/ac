@@ -88,6 +88,8 @@
                                 <http.jira.port>443</http.jira.port>
                                 <context.jira.path>/</context.jira.path>
                                 <testedProductClass>com.atlassian.jira.pageobjects.JiraTestedProduct</testedProductClass>
+                                <xvfb.enable>${xvfb.enable}</xvfb.enable>
+                                <webdriver.browser>${webdriver.browser}</webdriver.browser>
                             </systemPropertyVariables>
                         </configuration>
                     </plugin>
