@@ -1,8 +1,8 @@
 Standalone sample Atlassian Remote App
 
-This is a standalone, sample remote app for those interested in developing
-their own Remote App.  While it relies on Java and Maven, Remote Apps
-aren't restricted to any particular language, platform, or library.
+This is a standalone, sample remote app used for testing Remote Apps features.
+While it relies on Java and Maven, Remote Apps aren't restricted to any 
+particular language, platform, or library.
 
 To get started, build the app:
   mvn package
