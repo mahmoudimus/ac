@@ -63,7 +63,7 @@ public class TestRemoteApps
     public void testGeneralPage()
     {
         product.visit(LoginPage.class).login(adminUsername, adminPassword, HomePage.class);
-        GeneralPage page = product.getPageBinder().bind(GeneralPage.class, "smoke-admin-page",
+        GeneralPage page = product.getPageBinder().bind(GeneralPage.class, "smoke-general-page",
                 "General Page (smoke test)");
         assertTrue(page.isRemoteAppLinkPresent());
         RemoteAppTestPage remoteAppTest = page.clickRemoteAppLink();

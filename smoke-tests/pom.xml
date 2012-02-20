@@ -120,5 +120,6 @@
         <remoteapps.adminUsername/>
         <remoteapps.adminPassword/>
         <remoteapps.targetBaseUrl/>
+        <webdriver.browser>firefox-3.6</webdriver.browser>
     </properties>
 </project>
