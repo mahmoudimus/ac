@@ -98,7 +98,7 @@
             <repositories>
                 <repository>
                     <id>local</id>
-                    <url>file://${project.build.directory}</url>
+                    <url>file://${basedir}/repository</url>
                 </repository>
             </repositories>
         </profile>

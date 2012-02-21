@@ -607,8 +607,8 @@
                         <phase>package</phase>
                         <configuration>
                             <target>
-                                <echo message="Making ${parent.dir}/smoke-tests/target" />
-                                <mkdir dir="${parent.dir}/smoke-tests/target"/>
+                                <echo message="Making ${parent.dir}/smoke-tests/repository" />
+                                <mkdir dir="${parent.dir}/smoke-tests/repository"/>
                             </target>
                         </configuration>
                         <goals>
@@ -661,7 +661,7 @@
                             <goal>deploy</goal>
                         </goals>
                         <configuration>
-                            <altDeploymentRepository>smoke-tests::default::file://${parent.dir}/smoke-tests/target</altDeploymentRepository>
+                            <altDeploymentRepository>smoke-tests::default::file://${parent.dir}/smoke-tests/repository</altDeploymentRepository>
                         </configuration>
                     </execution>
                 </executions>
