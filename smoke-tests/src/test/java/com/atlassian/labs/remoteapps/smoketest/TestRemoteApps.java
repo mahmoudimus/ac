@@ -1,11 +1,13 @@
 package com.atlassian.labs.remoteapps.smoketest;
 
+import com.atlassian.jira.pageobjects.pages.JiraLoginPage;
 import com.atlassian.labs.remoteapps.test.*;
 import com.atlassian.labs.remoteapps.test.confluence.ConfluenceGeneralPage;
 import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.pageobjects.page.AdminHomePage;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
+import com.atlassian.webdriver.confluence.ConfluenceTestedProduct;
 import com.atlassian.webdriver.pageobjects.WebDriverTester;
 import org.junit.*;
 import org.junit.rules.MethodRule;
@@ -30,7 +32,16 @@ public class TestRemoteApps
     private static final RemoteAppInstallerClient installer = new RemoteAppInstallerClient(targetBaseUrl, adminUsername,
             adminPassword);
 
-    private static TestedProduct<WebDriverTester> product = OwnerOfTestedProduct.INSTANCE;
+    private static TestedProduct<WebDriverTester> product;
+    static
+    {
+        product = OwnerOfTestedProduct.INSTANCE;
+        if (product instanceof ConfluenceTestedProduct)
+        {
+            product.getPageBinder().override(LoginPage.class, OnDemandConfluenceLoginPage.class);
+            product.getPageBinder().override(HomePage.class, OnDemandConfluenceHomePage.class);
+        }
+    }
     @Rule
     public MethodRule rule = new HtmlDumpRule(product.getTester().getDriver());
 
@@ -39,7 +50,7 @@ public class TestRemoteApps
     {
         product.getTester().getDriver().manage().deleteAllCookies();
     }
-
+    
     @BeforeClass
     public static void installApp() throws IOException
     {
