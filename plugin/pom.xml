@@ -628,7 +628,8 @@
                             <goal>deploy</goal>
                         </goals>
                         <configuration>
-                            <altDeploymentRepository>smoke-tests::default::file://${basedir}/../smoke-tests/repository</altDeploymentRepository>                        </configuration>
+                            <altDeploymentRepository>smoke-tests::default::file://${basedir}/../smoke-tests/repository</altDeploymentRepository>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
