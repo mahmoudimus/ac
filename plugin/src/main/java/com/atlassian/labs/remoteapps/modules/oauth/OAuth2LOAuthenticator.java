@@ -42,17 +42,14 @@ public class OAuth2LOAuthenticator implements Authenticator
     private final AuthenticationController authenticationController;
     private final ApplicationProperties applicationProperties;
     private final UserManager userManager;
-    private final PermissionManager permissionManager;
 
     @Autowired
     public OAuth2LOAuthenticator(AuthenticationController authenticationController,
             ApplicationProperties applicationProperties,
-            OAuthLinkManager oAuthLinkManager, UserManager userManager,
-            PermissionManager permissionManager)
+            OAuthLinkManager oAuthLinkManager, UserManager userManager)
     {
         this.oAuthLinkManager = oAuthLinkManager;
         this.userManager = userManager;
-        this.permissionManager = permissionManager;
         this.authenticationController = Check.notNull(authenticationController,
                 "authenticationController");
         this.applicationProperties = Check.notNull(applicationProperties, "applicationProperties");
