@@ -98,6 +98,7 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
           excluding the final slash.</li>
           <li><strong>description</strong> - The description of the host application for display
           purposes</li>
+          <li><strong>registrationSecret</strong> - The registration secret provided in the registration form, if any.  This is used to secure app registrations on the app side and is not stored or used again.</li>
         </ul>
          */
         Consumer consumer = consumerService.getConsumer();
@@ -107,7 +108,8 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
                         "publicKey",
                         RSAKeys.toPemEncoding(consumer.getPublicKey()),
                         "baseUrl", applicationProperties.getBaseUrl(),
-                        "description", consumer.getDescription())));
+                        "description", consumer.getDescription(),
+                        "registrationSecret", registrationSecret != null ? registrationSecret : "")));
 
         log.info("Retrieving descriptor XML from '{}' by user '{}'", registrationUrl, username);
         Request request = requestFactory.createRequest(Request.MethodType.GET,
@@ -176,11 +178,6 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
                            <ul>
                              <li>The display-url property is checked to ensure it shares the same
                               stem as the registration URL </li>
-                             <li>If any global modules such as Confluence macros are used,
-                             the installation user should have the correct permission to install
-                             global apps as the Remote App will then be treated as a global app
-                             .</li>
-                             <li>
                              <li>If any permissions are specified, the installation user must be
                              an administrator</li>
                            </ul>
