@@ -14,6 +14,12 @@
         <link>/secure/ViewProfile.jspa#selectedTab=com.atlassian.labs.speakeasy-plugin:jira5compat-speakeasy-plugins</link>
     </web-item>
 
+
+    <web-resource name="Resources" key="resources">
+            <resource name="viewIssueMessage.js" type="download" location="js/viewIssueMessage.js"></resource>
+            <context>jira.view.issue</context>
+    </web-resource>
+
     <remote-module key="jira-profile-page" name="User Profile Page"
                    class="com.atlassian.labs.remoteapps.modules.page.jira.JiraProfileTabModuleGenerator">
         <description>A user profile page decorated as a user profile tab</description>
@@ -38,7 +44,7 @@
                name="Browse Projects">
         <description>
             Permission to browse projects, search issues, and view individual issues (except issues that have
-            been restricted via Issue Security). 
+            been restricted via Issue Security).
         </description>
     </api-scope>
 
@@ -88,7 +94,7 @@
 
 
 
-        
+
 
 
 

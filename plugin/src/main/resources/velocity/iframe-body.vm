@@ -30,8 +30,16 @@
                         case 'init' : container.addClass('iframe-init');
                                       $('#ra-time-$namespace').text(new Date().getTime() - now);
                                       break;
+
                         case 'resize' : resize(message.height, message.width);
                                         break;
+
+                        case 'getIssue' : transport.postMessage(JSON.stringify({id:"issue", value:"their whoslookin remote app profile"}));
+                                       	  break;
+
+                        case 'getUsername' : var username = jQuery('a#header-details-user-fullname').text();
+                        			         transport.postMessage(JSON.stringify({id:"username", value:username}));
+                                             break;
                     }
                 }
             });
