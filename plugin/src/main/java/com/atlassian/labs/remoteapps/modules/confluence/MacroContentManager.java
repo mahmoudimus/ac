@@ -18,6 +18,7 @@ import com.atlassian.labs.remoteapps.ApplicationLinkAccessor;
 import com.atlassian.labs.remoteapps.ContentRetrievalException;
 import com.atlassian.labs.remoteapps.util.http.CachingHttpContentRetriever;
 import com.atlassian.labs.remoteapps.util.http.HttpContentHandler;
+import com.atlassian.renderer.RenderContextOutputType;
 import com.atlassian.sal.api.component.ComponentLocator;
 import com.google.common.collect.Maps;
 import org.slf4j.Logger;
@@ -113,30 +114,33 @@ public class MacroContentManager implements DisposableBean
         SavedMacroInstance instance = getFromBandana(pluginKey, spaceKey, pageId, key);
 
         // we only want to try to refresh macro content after expiry to ensure a badly-configured app can't disable caching
-        Map<String, Object> params = createMacroParameters(macroInstance, entity, key, pageId);
         if (instance == null)
         {
-            String value = macroInstance.getLinkOperations().executeGet(entity.getLastModifierName(), macroInstance.getPath(), params);
+            String value = macroInstance.getLinkOperations().executeGet(entity.getLastModifierName(), macroInstance.getPath(), macroInstance.getUrlParameters());
 
-            HashMap<String,String> linkParams = Maps.newHashMap(macroInstance.getParameters());
-            linkParams.put("page_id", pageId);
-            value = macroContentLinkParser.parse(macroInstance.getLinkOperations().get(), value, linkParams);
+
+            value = macroContentLinkParser.parse(macroInstance.getLinkOperations().get(), value,
+                    macroInstance.getUrlParameters());
 
             // todo: do we want to give feedback to the app of what was cleaned?
             value = xhtmlCleaner.cleanQuietly(value, macroInstance.getConversionContext());
-            instance = saveToBandana(pluginKey, spaceKey, pageId, key, value);
+            instance = createSavedInstance(value);
+            if (!RenderContextOutputType.PREVIEW.equals(macroInstance.getConversionContext().getOutputType()))
+            {
+                saveToBandana(pluginKey, spaceKey, pageId, key, instance);
+            }
         } else if (instance.getExpiry() < System.currentTimeMillis())
         { 
             // back fill cache for next call, but don't block the current one
             macroInstance.getLinkOperations().executeGetAsync(entity.getLastModifierName(), macroInstance.getPath(),
-                                                              params,
+                                                              macroInstance.getUrlParameters(),
                 new HttpContentHandler()
                 {
                     @Override
                     public void onSuccess(String content)
                     {
                         String value = xhtmlCleaner.cleanQuietly(content, macroInstance.getConversionContext());
-                        saveToBandana(pluginKey, spaceKey, pageId, key, value);
+                        saveToBandana(pluginKey, spaceKey, pageId, key, createSavedInstance(value));
                     }
 
                     @Override
@@ -152,25 +156,18 @@ public class MacroContentManager implements DisposableBean
         return instance.getValue();
     }
 
-    private Map<String, Object> createMacroParameters(MacroInstance macroInstance, ContentEntityObject entity,
-                                                      String key, String pageId)
+    private SavedMacroInstance saveToBandana(String pluginKey, String spaceKey, String pageId, String key, SavedMacroInstance savedMacroInstance)
     {
-        Map<String,Object> params = Maps.<String,Object>newHashMap(macroInstance.getParameters());
-        params.put("body", macroInstance.getBody());
-        params.put("key", key);
-        params.put("pageTitle", entity.getTitle());
-        params.put("pageId", pageId);
-        return params;
-    }
-
-    private SavedMacroInstance saveToBandana(String pluginKey, String spaceKey, String pageId, String key, String value)
-    {
-        long expiry = System.currentTimeMillis() + HOUR_IN_MILLIS;
-        SavedMacroInstance savedMacroInstance = new SavedMacroInstance(value, expiry);
         bandanaManager.setValue(new ConfluenceBandanaContext(spaceKey),
                                 generateCacheKey(pluginKey, pageId, key),
                                 savedMacroInstance.toJson());
         return savedMacroInstance;
+    }
+
+    private SavedMacroInstance createSavedInstance(String value)
+    {
+        long expiry = System.currentTimeMillis() + HOUR_IN_MILLIS;
+        return new SavedMacroInstance(value, expiry);
     }
 
     private SavedMacroInstance getFromBandana(String pluginKey, String spaceKey, String pageId, String key)

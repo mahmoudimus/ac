@@ -36,8 +36,17 @@ public class PageMacro extends AbstractRemoteMacro
         String counter = incrementCounter(conversionContext);
         try
         {
-             return iFrameRenderer.render(new IFrameContext(iframeContext, "-" + counter), "", convertParams(parameters),
-                            remoteUser);
+            MacroInstance macroInstance = new MacroInstance(
+                    conversionContext,
+                    remoteMacroInfo.getUrl(),
+                    storageFormatBody,
+                    parameters,
+                    remoteMacroInfo.getApplicationLinkOperations());
+             return iFrameRenderer.render(
+                     new IFrameContext(iframeContext, "-" + counter),
+                     "",
+                     convertParams(macroInstance.getUrlParameters()),
+                     remoteUser);
 
         } catch (IOException e)
         {
