@@ -57,13 +57,13 @@ public class MacroInstance
     public Map<String, String> getUrlParameters()
     {
         Map<String,String> params = newHashMap();
-        params.put("cx_output_type", conversionContext.getOutputType());
+        params.put("ctx_output_type", conversionContext.getOutputType());
         if (conversionContext.getEntity() != null)
         {
             String pageId = conversionContext.getEntity().getIdAsString();
             String pageTitle = conversionContext.getEntity().getTitle();
-            params.put("cx_page_id", pageId);
-            params.put("cx_page_title", pageTitle);
+            params.put("ctx_page_id", pageId);
+            params.put("ctx_page_title", pageTitle);
 
             // deprecated
             params.put("page_id", pageId);
