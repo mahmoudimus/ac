@@ -17,23 +17,26 @@
                 iframe.css('width', width + (/%/.test(width)? "" : "px"));
             }
             var now = new Date().getTime();
-            var transport = new easyXDM.Socket(/** The configuration */{
+            var rpc = new easyXDM.Rpc(/** The configuration */{
                 remote: iframeSrc,
 
                 //ID of the element to attach the inline frame to
                 container: "embedded-$namespace",
                 channel: "channel-$namespace",
-                props: {height : initHeight, width : initWidth},
-                onMessage: function (messageText, origin) {
-                    var message = JSON.parse(messageText);
-                    switch (message.id) {
-                        case 'init' : container.addClass('iframe-init');
-                                      $('#ra-time-$namespace').text(new Date().getTime() - now);
-                                      break;
-                        case 'resize' : resize(message.height, message.width);
-                                        break;
-                    }
+                props: {height : initHeight, width : initWidth}
+            }, {
+              local : {
+                init : function() {
+                  container.addClass('iframe-init');
+                  $('#ra-time-$namespace').text(new Date().getTime() - now);
+                },
+                resize : function(height, width) {
+                  resize(height, width);RA.getLocation().hash
+                },
+                getLocation : function() {
+                  return window.location;
                 }
+              }
             });
         })(jQuery);
     </script>

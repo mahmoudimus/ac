@@ -77,7 +77,7 @@ public class MacroContentManager implements DisposableBean
 
         /*!
         First, the database cache is checked for the content matching the
-        <a href="Macro+Instance#hash">macro key</a>.
+        <a href="https://remoteapps.jira.com/wiki/display/ARA/Macro+Instance#hash" target="_top">macro key</a>.
         */
         SavedMacroInstance instance = getFromBandana(pluginKey, spaceKey, pageId, key);
 
@@ -86,7 +86,7 @@ public class MacroContentManager implements DisposableBean
 
         If cached content cannot be found, the HTTP client is instructed to retrieve the content via
         a synchronous GET request.  This request will be made with a
-        <a href="Macro+Instance#url-parameters">set of query parameters</a> to assist the Remote
+        <a href="https://remoteapps.jira.com/wiki/display/ARA/Macro+Instance#url-parameters" target="_top">set of query parameters</a> to assist the Remote
         App in returning the correct content.
 
         The HTTP client is configured to have a three second connection timeout and an 5 second
@@ -202,7 +202,7 @@ public class MacroContentManager implements DisposableBean
     flushes:
 
     1. Flush by app key
-    2. Flush by <a href="Macro+Instance#hash">macro key</a>
+    2. Flush by <a href="https://remoteapps.jira.com/wiki/display/ARA/Macro+Instance#hash" target="_top">macro key</a>
 
     These operations are executed through REST resource DELETEs.
      */

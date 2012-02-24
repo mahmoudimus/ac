@@ -53,7 +53,7 @@ public class StorageFormatMacro extends AbstractRemoteMacro
         Next, the remote apps is called and its returned storage-format XML is rendered.  If the
         content was unable to be retrieved for any reason, an error message is displayed to the user
         as the macro content.  For more information on the macro content retrieval process, see the
-        <a href="Macro+Retrieval+Process">macro retrieval process</a> walkthrough.
+        <a href="https://remoteapps.jira.com/wiki/display/ARA/Macro+Retrieval+Process" target="_top">macro retrieval process</a> walkthrough.
          */
         try
         {

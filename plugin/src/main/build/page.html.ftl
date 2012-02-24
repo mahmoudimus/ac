@@ -19,6 +19,7 @@
         $.SyntaxHighlighter.init({
             'lineNumbers': false
          });
+
         $(document).ready(function() {
 
            $.each($('.code'), function() {
@@ -52,6 +53,10 @@
                });
             });
           RA.resize();
+          var topLocationHash = RA.getLocation().hash;
+          if (topLocationHash) {
+            $('a[name="' + topLocationHash + '"]').scrollIntoView(true);
+          }
         });
     </script>
   <script src="https://remoteapps.jira.com/wiki/remoteapps/all.js" type="text/javascript"></script>

@@ -1,26 +1,25 @@
 var RA = (function() {
     var RA = RA || {};
-    var socket;
+    var rpc;
     RA.init = function(options) {
-        socket = new easyXDM.Socket({
-            onMessage:function(message, origin) {
-                //do something with message
+        rpc = new easyXDM.Rpc({}, {
+            remote : {
+                resize : {},
+                init : {},
+                getLocation : {}
             }
         });
-        socket.postMessage(JSON.stringify({
-            id : 'init'
-        }));
-
+        rpc.init();
     };
 
     RA.resize = function(width, height) {
         var w = width || "100%";
         var h = height || (document.body.offsetHeight + 40);
-        socket.postMessage(JSON.stringify({
-                id : 'resize',
-                width : w,
-                height : h
-        }));
+        rpc.resize(h, w);
+    };
+
+    RA.getLocation = function() {
+        return rpc.getLocation();
     };
 
     return RA;
