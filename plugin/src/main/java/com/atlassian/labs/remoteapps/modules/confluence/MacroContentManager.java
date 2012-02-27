@@ -77,9 +77,17 @@ public class MacroContentManager implements DisposableBean
 
         /*!
         First, the database cache is checked for the content matching the
-        <a href="https://remoteapps.jira.com/wiki/display/ARA/Macro+Instance#hash" target="_top">macro key</a>.
+        <a href="https://remoteapps.jira.com/wiki/display/ARA/Macro+Instance#hash" target="_top">macro key</a>.  This only happens for renderings not made when the macro is being previewed.  All other
+        output types like view or export_html are cached with the same key.  This means a macro
+        cannot currently customize its content differently for a page view than an HTML export.
         */
-        SavedMacroInstance instance = getFromBandana(pluginKey, spaceKey, pageId, key);
+        boolean isCachable = !RenderContextOutputType.PREVIEW.equals(macroInstance.getConversionContext().getOutputType());
+
+        SavedMacroInstance instance = null;
+        if (isCachable)
+        {
+            instance = getFromBandana(pluginKey, spaceKey, pageId, key);
+        }
 
         /*!
         ### Case: Cached Content Not Found
@@ -115,7 +123,7 @@ public class MacroContentManager implements DisposableBean
             rendered as part of the preview operation.
              */
             instance = createSavedInstance(value);
-            if (!RenderContextOutputType.PREVIEW.equals(macroInstance.getConversionContext().getOutputType()))
+            if (isCachable)
             {
                 saveToBandana(pluginKey, spaceKey, pageId, key, instance);
             }
