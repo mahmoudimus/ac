@@ -14,12 +14,6 @@
         <link>/secure/ViewProfile.jspa#selectedTab=com.atlassian.labs.speakeasy-plugin:jira5compat-speakeasy-plugins</link>
     </web-item>
 
-
-    <web-resource name="Resources" key="resources">
-            <resource name="viewIssueMessage.js" type="download" location="js/viewIssueMessage.js"></resource>
-            <context>jira.view.issue</context>
-    </web-resource>
-
     <remote-module key="jira-profile-page" name="User Profile Page"
                    class="com.atlassian.labs.remoteapps.modules.page.jira.JiraProfileTabModuleGenerator">
         <description>A user profile page decorated as a user profile tab</description>
@@ -28,7 +22,7 @@
 
     <remote-module key="jira-issue-panel" name="ViewIssue Panel"
                    class="com.atlassian.labs.remoteapps.modules.panel.jira.ViewIssuePanelModuleGenerator">
-        <description>A panel on the viewissue page.</description>
+        <description>A panel on the view issue page.</description>
         <schema id="panel.xsd" path="/xsd/panel.xsd" type="PanelType"/>
     </remote-module>
 
@@ -88,12 +82,6 @@
         <dispatcher>INCLUDE</dispatcher>
         <package>com.atlassian.labs.remoteapps.rest</package>
     </rest>
-
-
-
-    <web-panel key="myPanel" location="atl.jira.view.issue.right.context">
-           <resource name="view" type="static"><![CDATA[<b>Hello World!</b>]]></resource>
-       </web-panel>
 
     <!-- activity streams>
     <component-import key="jiraUserProfileAccessor" interface="com.atlassian.streams.spi.UserProfileAccessor"/>

@@ -9,6 +9,7 @@ import com.atlassian.labs.remoteapps.modules.external.RemoteAppCreationContext;
 import com.atlassian.labs.remoteapps.modules.external.RemoteModule;
 import com.atlassian.labs.remoteapps.modules.external.RemoteModuleGenerator;
 import com.atlassian.labs.remoteapps.modules.page.IFrameContext;
+import com.atlassian.labs.remoteapps.modules.page.jira.IFrameViewProfilePanel;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.ModuleDescriptorFactory;
 import com.atlassian.plugin.PluginParseException;
@@ -38,16 +39,18 @@ import static java.util.Collections.emptyMap;
 public class ViewIssuePanelModuleGenerator implements RemoteModuleGenerator
 {
     private final IFrameRenderer iFrameRenderer;
-    private Map<String, Object> iframeParams = newHashMap();
     private final WebInterfaceManager webInterfaceManager;
-    private final ModuleFactory moduleFactory;
     private final HostContainer hostContainer;
+    private final ApplicationLinkOperationsFactory applicationLinkOperationsFactory;
 
-    public ViewIssuePanelModuleGenerator(final IFrameRenderer iFrameRenderer, final WebInterfaceManager webInterfaceManager, final ModuleFactory moduleFactory, final HostContainer hostContainer)
+    public ViewIssuePanelModuleGenerator(final IFrameRenderer iFrameRenderer,
+                                         final WebInterfaceManager webInterfaceManager,
+                                         final ApplicationLinkOperationsFactory applicationLinkOperationsFactory,
+                                         final HostContainer hostContainer)
     {
         this.iFrameRenderer = iFrameRenderer;
         this.webInterfaceManager = webInterfaceManager;
-        this.moduleFactory = moduleFactory;
+        this.applicationLinkOperationsFactory = applicationLinkOperationsFactory;
         this.hostContainer = hostContainer;
     }
 
@@ -65,20 +68,34 @@ public class ViewIssuePanelModuleGenerator implements RemoteModuleGenerator
 
 
     @Override
-    public RemoteModule generate(RemoteAppCreationContext ctx, Element element)
+    public RemoteModule generate(final RemoteAppCreationContext ctx, final Element element)
     {
         Element desc = element.createCopy();
         ModuleDescriptor<WebPanel> moduleDescriptor = null;
 
+        final String moduleKey = "viewissue-" + getRequiredAttribute(element, "key");
+        final String url = getRequiredAttribute(element, "url");
+        final String panelName = getRequiredAttribute(element, "name");
+
+        desc.addAttribute("key", moduleKey);
+        desc.addAttribute("i18n-key", panelName);
+        desc.addAttribute("class", IFrameViewProfilePanel.class.getName());
         desc.addAttribute("location", "atl.jira.view.issue.right.context");
-        Element resourceChild = desc.addElement("resource");
-        resourceChild.addAttribute("name", "view");
-        resourceChild.addAttribute("type", "static");
-        resourceChild.addCDATA("<b>Hello World 2!</b>");
+        desc.addAttribute("class", IFrameViewIssuePanel.class.getName());
+
         try
         {
-            // Explicit instantiation feels wrong here - should I be using a ModuleDescriptor factory? which one? Where do I get it?
-            moduleDescriptor = new DefaultWebPanelModuleDescriptor(hostContainer, moduleFactory, webInterfaceManager);
+            moduleDescriptor = new DefaultWebPanelModuleDescriptor(hostContainer, new ModuleFactory()
+            {
+                @Override
+                public <T> T createModule(String name, ModuleDescriptor<T> moduleDescriptor) throws PluginParseException
+                {
+                    ApplicationLinkOperationsFactory.LinkOperations linkOps = applicationLinkOperationsFactory.create(ctx.getApplicationType());
+                    return (T) new IFrameViewIssuePanel(
+                            iFrameRenderer,
+                            new IFrameContext(linkOps , url, moduleKey, new IFrameParams(element)));
+                }
+            }, webInterfaceManager);
             moduleDescriptor.init(ctx.getPlugin(), desc);
         }
         catch (Exception ex)

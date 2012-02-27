@@ -11,11 +11,27 @@
             var initHeight = '#if($height)$height#else 10em #end';
             var initWidth = '#if($width)$width#else 100%#end';
             var iframeSrc = '$iframeSrcHtml';
+
+            function initMessageBar() {
+				// TODO - this only works for the view-issue page.
+
+				if (jQuery('#aui-message-bar').length != 0) {
+					return;
+				}
+				var parentElement = jQuery("#details-module")
+				if (parentElement.length == 0) {
+					return;
+				}
+				var messageBar = jQuery(document.createElement('div')).attr("id", "aui-message-bar");
+				messageBar.prependTo(parentElement);
+            }
+
             function resize(height, width){
                 var iframe = $('iframe', container);
                 iframe.css('height', height + "px");
                 iframe.css('width', width + (/%/.test(width)? "" : "px"));
             }
+
             var now = new Date().getTime();
             var transport = new easyXDM.Socket(/** The configuration */{
                 remote: iframeSrc,
@@ -34,12 +50,29 @@
                         case 'resize' : resize(message.height, message.width);
                                         break;
 
-                        case 'getIssue' : transport.postMessage(JSON.stringify({id:"issue", value:"their whoslookin remote app profile"}));
-                                       	  break;
+                        case 'getIssue' : var issue = jQuery('a#key-val').text();
+                        			      transport.postMessage(JSON.stringify({id:"issue", value:issue}));
+                                          break;
 
                         case 'getUsername' : var username = jQuery('a#header-details-user-fullname').text();
+                        					 if (!username) {
+                        					 	username = jQuery('meta[name=ajs-remote-user-fullname]').attr("content");
+                        					 }
                         			         transport.postMessage(JSON.stringify({id:"username", value:username}));
                                              break;
+
+                        case 'showMessage' : initMessageBar();
+                        					 jQuery('.aui-message#' + message.messageId).remove();
+                        					 AJS.messages.info({
+   												title: message.title,
+   												body: '<p>' + jQuery('<div />').text(message.body).html() + '<p>',
+   												id: message.messageId,
+   												closeable: false
+											 });
+                                             break;
+
+                        case 'clearMessage' : jQuery('.aui-message#' + message.messageId).remove();
+                        					  break;
                     }
                 }
             });

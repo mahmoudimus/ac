@@ -2,7 +2,7 @@ var RA = (function() {
     var RA = RA || {};
     var socket;
     RA.onMessage = function (message, origin) {
-      // Replace to handle messages from parent frame.
+      // Client code supplies this function to handle inbound messages from the parent frame.
     }
 
     RA.init = function(options) {
@@ -37,7 +37,23 @@ var RA = (function() {
       socket.postMessage(JSON.stringify({
               id : 'getUsername'
       }));
-  };
+    };
+
+    RA.showMessage = function(messageId, title, body) {
+      socket.postMessage(JSON.stringify({
+              id : 'showMessage',
+              messageId : messageId,
+              title : title,
+              body : body
+      }));
+    };
+
+    RA.clearMessage = function(messageId) {
+      socket.postMessage(JSON.stringify({
+              id : 'clearMessage',
+              messageId : messageId
+      }));
+    };
 
     return RA;
 })();
