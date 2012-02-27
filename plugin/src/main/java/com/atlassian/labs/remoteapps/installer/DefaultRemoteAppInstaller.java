@@ -13,7 +13,6 @@ import com.atlassian.labs.remoteapps.modules.page.jira.JiraProfileTabModuleGener
 import com.atlassian.labs.remoteapps.modules.permissions.scope.ApiScope;
 import com.atlassian.labs.remoteapps.util.zip.ZipBuilder;
 import com.atlassian.labs.remoteapps.util.zip.ZipHandler;
-import com.atlassian.labs.speakeasy.external.SpeakeasyBackendService;
 import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.oauth.util.RSAKeys;
@@ -53,7 +52,6 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
     private final EventPublisher eventPublisher;
     private final DescriptorValidator descriptorValidator;
     private final PluginAccessor pluginAccessor;
-    private final SpeakeasyBackendService speakeasyBackendService;
 
     private static final Logger log = LoggerFactory.getLogger(
             DefaultRemoteAppInstaller.class);
@@ -66,7 +64,7 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
             ModuleGeneratorManager moduleGeneratorManager,
             EventPublisher eventPublisher,
             DescriptorValidator descriptorValidator,
-            PluginAccessor pluginAccessor, SpeakeasyBackendService speakeasyBackendService)
+            PluginAccessor pluginAccessor)
     {
         this.consumerService = consumerService;
         this.requestFactory = requestFactory;
@@ -76,7 +74,6 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
         this.eventPublisher = eventPublisher;
         this.descriptorValidator = descriptorValidator;
         this.pluginAccessor = pluginAccessor;
-        this.speakeasyBackendService = speakeasyBackendService;
     }
 
     @Override
@@ -209,16 +206,6 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
                             Document pluginXml = transformDescriptorToPluginXml(username,
                                     registrationUrl, document);
 
-                            /*!
-                            To ensure the app shows up as a globally-enabled extension in Speakeasy,
-                            the app is marked as such.  This is only temporary until the Remote
-                            App plugin gets its own UI, likely integrated with the normal plugin
-                            management UI.
-                             */
-                            if (!speakeasyBackendService.isGlobalExtension(pluginKey))
-                            {
-                                speakeasyBackendService.addGlobalExtension(pluginKey);
-                            }
 
                             /*!
                             To create the final jar that will be installed into the plugin system,

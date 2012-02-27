@@ -375,6 +375,7 @@
                             com.atlassian.jira.config;resolution:=optional,
                             *;resolution:=optional
                         </Import-Package>
+                        <DynamicImport-Package>com.atlassian.labs.speakeasy.*</DynamicImport-Package>
                         <Export-Package>
                             com.atlassian.labs.remoteapps.modules.permissions.scope,
                             com.atlassian.labs.remoteapps.modules.page.jira,

@@ -106,6 +106,7 @@ $(document).ready(function() {
         if ($('a.pk-viewsource', $row).length == 0) {
             $('.toolbar-item:last', $row).before('<li class="toolbar-item"><button class="toolbar-trigger rp-uninstall">Uninstall</button></li>')
         }
+
         $('.rp-uninstall', $row).click(function(e) {
             e.preventDefault();
             $.ajax({

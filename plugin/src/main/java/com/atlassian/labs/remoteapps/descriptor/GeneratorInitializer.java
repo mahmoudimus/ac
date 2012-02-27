@@ -6,17 +6,11 @@ import com.atlassian.labs.remoteapps.event.RemoteAppUninstalledEvent;
 import com.atlassian.labs.remoteapps.modules.DefaultRemoteAppCreationContext;
 import com.atlassian.labs.remoteapps.modules.applinks.ApplicationTypeModule;
 import com.atlassian.labs.remoteapps.modules.external.*;
-import com.atlassian.labs.speakeasy.descriptor.external.ConditionGenerator;
-import com.atlassian.labs.speakeasy.descriptor.external.DescriptorGenerator;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.ModuleDescriptorFactory;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
 import com.atlassian.plugin.descriptors.ChainModuleDescriptorFactory;
-import com.atlassian.plugin.module.LegacyModuleFactory;
 import com.google.common.base.Function;
-import com.google.common.collect.Sets;
-import org.dom4j.DocumentFactory;
 import org.dom4j.Element;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -24,7 +18,10 @@ import org.osgi.framework.ServiceRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CopyOnWriteArraySet;
 
@@ -104,16 +101,6 @@ public class GeneratorInitializer
             ApplicationTypeModule module = (ApplicationTypeModule) moduleGeneratorManager.getApplicationTypeModuleGenerator().generate(firstContext, element);
             remoteModules.add(module);
 
-            // ensure the app is visible by speakeasy
-            // todo: remove when the speakeasy UI has been ditched
-            remoteModules.add(new RemoteModule()
-            {
-                @Override
-                public Set<ModuleDescriptor> getModuleDescriptors()
-                {
-                    return Sets.<ModuleDescriptor>newHashSet(new SpeakeasyMarkerModuleDescriptor(plugin));
-                }
-            });
             final RemoteAppCreationContext childContext = new DefaultRemoteAppCreationContext(plugin, aggFactory, bundle, module.getApplicationType());
 
             moduleGeneratorManager.processDescriptor(element, new ModuleGeneratorManager.ModuleHandler()
@@ -204,29 +191,5 @@ public class GeneratorInitializer
         }
         remoteModules.clear();
         startableForPlugins.unregister(plugin.getKey());
-    }
-
-    public static class SpeakeasyMarkerModuleDescriptor extends AbstractModuleDescriptor implements
-            DescriptorGenerator
-    {
-        public SpeakeasyMarkerModuleDescriptor(Plugin plugin)
-        {
-            super(new LegacyModuleFactory());
-            init(plugin, DocumentFactory.getInstance().createElement("marker")
-                .addAttribute("key", "__speakeasy_marker"));
-        }
-
-        @Override
-        public Object getModule()
-        {
-            return null;
-        }
-
-        @Override
-        public Iterable getDescriptorsToExposeForUsers(ConditionGenerator conditionGenerator,
-                long l)
-        {
-            return Collections.emptyList();
-        }
     }
 }
