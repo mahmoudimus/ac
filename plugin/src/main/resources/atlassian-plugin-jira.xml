@@ -9,15 +9,20 @@
     <web-section key="remoteapps.general" location="general_dropdown_linkId">
     </web-section>
 
+    <web-item key="remoteapps.all.link" section="general_dropdown_linkId/remoteapps.general" weight="1">
+        <label>All Remote Apps</label>
+        <link>/secure/ViewProfile.jspa#selectedTab=com.atlassian.labs.speakeasy-plugin:jira5compat-speakeasy-plugins</link>
+    </web-item>
+
     <remote-module key="jira-profile-page" name="User Profile Page"
                    class="com.atlassian.labs.remoteapps.modules.page.jira.JiraProfileTabModuleGenerator">
         <description>A user profile page decorated as a user profile tab</description>
         <schema id="page.xsd" path="/xsd/page.xsd" type="PageType"/>
     </remote-module>
 
-    <remote-module key="jira-issue-panel" name="ViewIssue Panel"
+    <remote-module key="jira-issue-panel" name="Issue Tab Page"
                    class="com.atlassian.labs.remoteapps.modules.panel.jira.ViewIssuePanelModuleGenerator">
-        <description>A panel on the view issue page.</description>
+        <description>A remote page decorated as a web panel on the view issue page.</description>
         <schema id="panel.xsd" path="/xsd/panel.xsd" type="PanelType"/>
     </remote-module>
 
