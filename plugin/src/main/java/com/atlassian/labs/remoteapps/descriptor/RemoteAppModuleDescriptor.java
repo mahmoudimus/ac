@@ -61,9 +61,11 @@ public class RemoteAppModuleDescriptor extends AbstractModuleDescriptor<Void>
     @Override
     public void enabled()
     {
+        log.debug("Enabling remote app " + getPluginKey());
         super.enabled();
         if (serviceTracker == null)
         {
+            log.debug("Really enabling remote app '{}'", getPluginKey());
             validateAgainstSchema(originalElement);
 
             // generate and register new services
@@ -96,6 +98,7 @@ public class RemoteAppModuleDescriptor extends AbstractModuleDescriptor<Void>
                 @Override
                 public void removedService(ServiceReference reference, Object service)
                 {
+                    log.debug("Shutting down " + getPluginKey());
                     generatorInitializer.close();
                     eventPublisher.unregister(generatorInitializer);
                     eventPublisher.publish(new RemoteAppStoppedEvent(getPluginKey()));
@@ -113,6 +116,7 @@ public class RemoteAppModuleDescriptor extends AbstractModuleDescriptor<Void>
                         @Override
                         public void run()
                         {
+                            log.debug("Finalizing initialisation for remote app '{}'", getPluginKey());
                             serviceTracker.open();
                             generatorInitializer.init();
                             eventPublisher.publish(new RemoteAppStartedEvent(getPluginKey()));
@@ -139,6 +143,7 @@ public class RemoteAppModuleDescriptor extends AbstractModuleDescriptor<Void>
     @Override
     public void disabled()
     {
+        log.debug("Disabling '{}'", getPluginKey());
         super.disabled();
         if (serviceTracker != null)
         {
