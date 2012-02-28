@@ -54,9 +54,19 @@
                   return "" + window.location.hostname + window.location.pathname;
                 },
                 getUser : function(fn) {
+                  // JIRA 5.0
                   var fullName = jQuery('meta[name=ajs-remote-user-fullname]').attr("content");
-                   if (!fullName) {
+                  if (!fullName) {
+                    // JIRA 4.4
                     fullName = jQuery('a#header-details-user-fullname').text();
+                  }
+                  if (!fullName) {
+                    // Confluence 4.1
+                  	fullName = jQuery(".user.ajs-menu-title").text();
+                  }
+                  if (!fullName) {
+                    // Refapp 2.15.0
+                  	fullName = jQuery('a#user').text();
                   }
                   var user = { fullName : fullName };
                   console.log("returning: " + user);

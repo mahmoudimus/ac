@@ -125,7 +125,7 @@
         <webdriver.browser>firefox-3.6</webdriver.browser>
         <xvfb.enable>true</xvfb.enable>
 
-        <refapp.version>2.13.0</refapp.version>
+        <refapp.version>2.15.0</refapp.version>
         <jira.version>4.4.4</jira.version>
         <jira.data.version>4.1.1</jira.data.version>
         <confluence.version>4.1</confluence.version>

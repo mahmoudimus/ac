@@ -44,6 +44,21 @@ public class RemoteAppEmbeddedTestPage
         driver.waitUntilElementIsLocated(By.className("iframe-init"));
     }
 
+    public String getFullName()
+    {
+        runInFrame(new Callable<Void>()
+        {
+            @Override
+            public Void call() throws Exception
+            {
+                driver.waitUntilElementIsLocated(By.id("fullName"));
+                return null;
+            }
+        });
+
+        return getValue("fullName");
+    }
+
     public String getMessage()
     {
         return getValue("message");

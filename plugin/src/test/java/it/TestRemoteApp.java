@@ -50,6 +50,16 @@ public class TestRemoteApp
 	}
 
     @Test
+    public void testGetFullnameFromGeneralPage()
+    {
+        product.visit(LoginPage.class).login("betty", "betty", HomePage.class);
+        RemoteAppAwarePage page = product.getPageBinder().bind(GeneralPage.class, "remoteAppGeneral",
+                                                               "Remote App app1 General");
+        RemoteAppTestPage remoteAppTest = page.clickRemoteAppLink();
+        assertEquals("Betty Admin", remoteAppTest.getFullName());
+    }
+
+    @Test
     public void testNoAdminPageForNonAdmin()
     {
         product.visit(LoginPage.class).login("barney", "barney", AdminHomePage.class);

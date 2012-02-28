@@ -18,7 +18,7 @@ public final class Pair<A, B>
         this.first = checkNotNull(first, "first");
         this.second = checkNotNull(second, "second");
     }
-    
+
     /**
      * @return the first value
      */
@@ -26,7 +26,7 @@ public final class Pair<A, B>
     {
         return first;
     }
-    
+
     /**
      * @return the second value
      */
@@ -41,6 +41,11 @@ public final class Pair<A, B>
         if (this == o)
         {
             return true;
+        }
+
+        if (o == null)
+        {
+            return false;
         }
 
         final Pair<?, ?> pair = Pair.class.cast(o);
@@ -59,10 +64,10 @@ public final class Pair<A, B>
     {
         return "(" + first + ", " + second + ")";
     }
-    
+
     /**
      * Static factory method for creating pairs.
-     * 
+     *
      * @param <A> type of the first value
      * @param <B> type of the second value
      * @param first the first value of the pair
