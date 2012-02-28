@@ -31,7 +31,7 @@
                   $('#ra-time-$namespace').text(new Date().getTime() - now);
                 },
                 resize : function(height, width) {
-                  resize(height, width);RA.getLocation().hash
+                  resize(height, width);
                 },
                 getLocation : function() {
                   return window.location;
