@@ -1,9 +1,11 @@
 package com.atlassian.labs.remoteapps.descriptor;
 
 import com.atlassian.event.api.EventPublisher;
+import com.atlassian.labs.remoteapps.DescriptorValidator;
 import com.atlassian.labs.remoteapps.ModuleGeneratorManager;
 import com.atlassian.labs.remoteapps.event.RemoteAppStartedEvent;
 import com.atlassian.labs.remoteapps.event.RemoteAppStoppedEvent;
+import com.atlassian.labs.remoteapps.installer.InstallationFailedException;
 import com.atlassian.plugin.ModuleDescriptorFactory;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
@@ -34,16 +36,19 @@ public class RemoteAppModuleDescriptor extends AbstractModuleDescriptor<Void>
     private ServiceTracker serviceTracker;
     private Element originalElement;
     private final ModuleGeneratorManager moduleGeneratorManager;
+    private final DescriptorValidator descriptorValidator;
 
     public RemoteAppModuleDescriptor(BundleContext bundleContext,
             StartableForPlugins startableForPlugins,
-            ModuleGeneratorManager moduleGeneratorManager, EventPublisher eventPublisher)
+            ModuleGeneratorManager moduleGeneratorManager, EventPublisher eventPublisher,
+            DescriptorValidator descriptorValidator)
     {
         super(new LegacyModuleFactory());
         this.bundleContext = bundleContext;
         this.startableForPlugins = startableForPlugins;
         this.moduleGeneratorManager = moduleGeneratorManager;
         this.eventPublisher = eventPublisher;
+        this.descriptorValidator = descriptorValidator;
     }
 
     @Override
@@ -59,6 +64,8 @@ public class RemoteAppModuleDescriptor extends AbstractModuleDescriptor<Void>
         super.enabled();
         if (serviceTracker == null)
         {
+            validateAgainstSchema(originalElement);
+
             // generate and register new services
             Bundle targetBundle = findBundleForPlugin(bundleContext, getPluginKey());
             final BundleContext targetBundleContext = targetBundle.getBundleContext();
@@ -114,6 +121,18 @@ public class RemoteAppModuleDescriptor extends AbstractModuleDescriptor<Void>
                     }).start();
                 }
             });
+        }
+    }
+
+    private void validateAgainstSchema(Element originalElement)
+    {
+        try
+        {
+            descriptorValidator.validate(getPlugin().getResource("atlassian-plugin.xml").toString(), originalElement);
+        }
+        catch (InstallationFailedException ex)
+        {
+            throw new PluginParseException("Unable to validate: " + ex.getMessage(), ex);
         }
     }
 

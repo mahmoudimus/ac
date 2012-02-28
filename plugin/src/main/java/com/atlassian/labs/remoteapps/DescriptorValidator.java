@@ -7,6 +7,7 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.sal.api.ApplicationProperties;
 import org.dom4j.*;
+import org.dom4j.io.DocumentSource;
 import org.dom4j.io.SAXReader;
 import org.dom4j.tree.DefaultElement;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,12 @@ import org.springframework.stereotype.Component;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import javax.xml.XMLConstants;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import javax.xml.validation.Validator;
+import java.io.IOException;
 import java.io.StringReader;
 import java.net.URL;
 import java.util.*;
@@ -53,7 +60,8 @@ public class DescriptorValidator
             reader.setProperty("http://java.sun.com/xml/jaxp/properties/schemaLanguage",
                     "http://www.w3.org/2001/XMLSchema");
             boolean useNamespace = descriptorXml.contains(getSchemaNamespace());
-            final InputSource schemaSource = new InputSource(new StringReader(buildSchema(useNamespace)));
+            final InputSource schemaSource = new InputSource(new StringReader(
+                    buildSchema(getSchemaUrl(), useNamespace)));
             schemaSource.setSystemId(getSchemaUrl().toString());
             reader.setProperty("http://java.sun.com/xml/jaxp/properties/schemaSource", schemaSource);
 
@@ -75,6 +83,40 @@ public class DescriptorValidator
         }
     }
 
+    public void validate(String url, Element descriptorElement)
+    {
+        SchemaFactory schemaFactory = SchemaFactory
+                .newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+        StreamSource schemaSource = new StreamSource(new StringReader(buildSchema(getSchemaUrl(), false)));
+        Schema schema;
+        try
+        {
+            schema = schemaFactory.newSchema(schemaSource);
+        }
+        catch (SAXException e)
+        {
+            throw new RuntimeException("Couldn't parse built schema", e);
+        }
+        
+        Validator validator = schema.newValidator();
+        try
+        {
+            Document document = DocumentHelper.createDocument();
+            document.setRootElement(descriptorElement.createCopy()) ;
+            DocumentSource source = new DocumentSource(document);
+            source.setSystemId(url);
+            validator.validate(source);
+        }
+        catch (SAXException e)
+        {
+            throw new InstallationFailedException("Unable to parse the descriptor: " + e.getMessage(), e);
+        }
+        catch (IOException e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
+    
     private URL getSchemaUrl()
     {
         return plugin.getResource("/xsd/remote-app.xsd");
@@ -83,13 +125,13 @@ public class DescriptorValidator
 
     public String getSchema()
     {
-        return buildSchema(false);
+        return buildSchema(getSchemaUrl(), false);
     }
 
-    private String buildSchema(boolean usesNamespace)
+    private String buildSchema(URL schemaUrl, boolean usesNamespace)
     {
         Set<String> includedDocIds = newHashSet();
-        Element root = parseDocument(getSchemaUrl()).getRootElement();
+        Element root = parseDocument(schemaUrl).getRootElement();
         final String ns = getSchemaNamespace();
         if (usesNamespace)
         {
