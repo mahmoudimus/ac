@@ -1,7 +1,6 @@
 package com.atlassian.labs.remoteapps.sample.test;
 
 import com.atlassian.labs.remoteapps.sample.HttpServer;
-import com.atlassian.labs.speakeasy.external.SpeakeasyService;
 import com.atlassian.plugin.event.PluginEventListener;
 import com.atlassian.plugin.event.PluginEventManager;
 import com.atlassian.plugin.event.events.PluginEnabledEvent;

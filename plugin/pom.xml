@@ -317,14 +317,6 @@
     </dependencyManagement>
 
     <build>
-        <resources>
-            <resource>
-                <directory>src/build</directory>
-            </resource>
-            <resource>
-                <directory>src/main/resources</directory>
-            </resource>
-        </resources>
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -334,6 +326,7 @@
                     <configuration>
                         <commands>
                             <pi>resources com.atlassian.maven.plugins:maven-amps-plugin:filter-plugin-descriptor compile com.atlassian.maven.plugins:maven-amps-plugin:copy-bundled-dependencies net.alchim31.maven:yuicompressor-maven-plugin:compress org.codehaus.mojo:xml-maven-plugin:transform com.atlassian.maven.plugins:maven-amps-plugin:generate-manifest com.atlassian.maven.plugins:maven-amps-plugin:jar com.atlassian.maven.plugins:maven-amps-plugin:install</pi>
+                            <docco>ru.circumflex:maven-cx-plugin:docco#docco</docco>
                         </commands>
                     </configuration>
                 </plugin>
@@ -346,6 +339,7 @@
                 <version>3.0-20120213.165004-3</version>
                 <executions>
                     <execution>
+                        <id>docco</id>
                         <phase>generate-resources</phase>
                         <goals>
                             <goal>docco</goal>
@@ -381,6 +375,7 @@
                             com.atlassian.jira.config;resolution:=optional,
                             *;resolution:=optional
                         </Import-Package>
+                        <DynamicImport-Package>com.atlassian.labs.speakeasy.*</DynamicImport-Package>
                         <Export-Package>
                             com.atlassian.labs.remoteapps.modules.permissions.scope,
                             com.atlassian.labs.remoteapps.modules.page.jira,

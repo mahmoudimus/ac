@@ -13,7 +13,6 @@ import com.atlassian.labs.remoteapps.modules.page.jira.JiraProfileTabModuleGener
 import com.atlassian.labs.remoteapps.modules.permissions.scope.ApiScope;
 import com.atlassian.labs.remoteapps.util.zip.ZipBuilder;
 import com.atlassian.labs.remoteapps.util.zip.ZipHandler;
-import com.atlassian.labs.speakeasy.external.SpeakeasyBackendService;
 import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.oauth.util.RSAKeys;
@@ -53,7 +52,6 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
     private final EventPublisher eventPublisher;
     private final DescriptorValidator descriptorValidator;
     private final PluginAccessor pluginAccessor;
-    private final SpeakeasyBackendService speakeasyBackendService;
 
     private static final Logger log = LoggerFactory.getLogger(
             DefaultRemoteAppInstaller.class);
@@ -66,7 +64,7 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
             ModuleGeneratorManager moduleGeneratorManager,
             EventPublisher eventPublisher,
             DescriptorValidator descriptorValidator,
-            PluginAccessor pluginAccessor, SpeakeasyBackendService speakeasyBackendService)
+            PluginAccessor pluginAccessor)
     {
         this.consumerService = consumerService;
         this.requestFactory = requestFactory;
@@ -76,7 +74,6 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
         this.eventPublisher = eventPublisher;
         this.descriptorValidator = descriptorValidator;
         this.pluginAccessor = pluginAccessor;
-        this.speakeasyBackendService = speakeasyBackendService;
     }
 
     @Override
@@ -98,6 +95,7 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
           excluding the final slash.</li>
           <li><strong>description</strong> - The description of the host application for display
           purposes</li>
+          <li><strong>registrationSecret</strong> - The registration secret provided in the registration form, if any.  This is used to secure app registrations on the app side and is not stored or used again.</li>
         </ul>
          */
         Consumer consumer = consumerService.getConsumer();
@@ -107,7 +105,8 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
                         "publicKey",
                         RSAKeys.toPemEncoding(consumer.getPublicKey()),
                         "baseUrl", applicationProperties.getBaseUrl(),
-                        "description", consumer.getDescription())));
+                        "description", consumer.getDescription(),
+                        "registrationSecret", registrationSecret != null ? registrationSecret : "")));
 
         log.info("Retrieving descriptor XML from '{}' by user '{}'", registrationUrl, username);
         Request request = requestFactory.createRequest(Request.MethodType.GET,
@@ -176,11 +175,6 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
                            <ul>
                              <li>The display-url property is checked to ensure it shares the same
                               stem as the registration URL </li>
-                             <li>If any global modules such as Confluence macros are used,
-                             the installation user should have the correct permission to install
-                             global apps as the Remote App will then be treated as a global app
-                             .</li>
-                             <li>
                              <li>If any permissions are specified, the installation user must be
                              an administrator</li>
                            </ul>
@@ -212,16 +206,6 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
                             Document pluginXml = transformDescriptorToPluginXml(username,
                                     registrationUrl, document);
 
-                            /*!
-                            To ensure the app shows up as a globally-enabled extension in Speakeasy,
-                            the app is marked as such.  This is only temporary until the Remote
-                            App plugin gets its own UI, likely integrated with the normal plugin
-                            management UI.
-                             */
-                            if (!speakeasyBackendService.isGlobalExtension(pluginKey))
-                            {
-                                speakeasyBackendService.addGlobalExtension(pluginKey);
-                            }
 
                             /*!
                             To create the final jar that will be installed into the plugin system,

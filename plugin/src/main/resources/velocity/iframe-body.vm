@@ -13,17 +13,16 @@
             var iframeSrc = '$iframeSrcHtml';
 
             function initMessageBar() {
-				// TODO - this only works for the view-issue page.
-
-				if (jQuery('#aui-message-bar').length != 0) {
-					return;
-				}
-				var parentElement = jQuery("#details-module")
-				if (parentElement.length == 0) {
-					return;
-				}
-				var messageBar = jQuery(document.createElement('div')).attr("id", "aui-message-bar");
-				messageBar.prependTo(parentElement);
+                if (jQuery('#aui-message-bar').length != 0) {
+                    return;
+                }
+                var parentElement = jQuery("#details-module")
+                if (parentElement.length == 0) {
+                	// TODO - adding #aui-message-bar only works for the view-issue page for now.
+                    return;
+                }
+                var messageBar = jQuery(document.createElement('div')).attr("id", "aui-message-bar");
+                messageBar.prependTo(parentElement);
             }
 
             function resize(height, width){
@@ -31,50 +30,52 @@
                 iframe.css('height', height + "px");
                 iframe.css('width', width + (/%/.test(width)? "" : "px"));
             }
-
             var now = new Date().getTime();
-            var transport = new easyXDM.Socket(/** The configuration */{
+            var rpc = new easyXDM.Rpc(/** The configuration */{
                 remote: iframeSrc,
 
                 //ID of the element to attach the inline frame to
                 container: "embedded-$namespace",
                 channel: "channel-$namespace",
-                props: {height : initHeight, width : initWidth},
-                onMessage: function (messageText, origin) {
-                    var message = JSON.parse(messageText);
-                    switch (message.id) {
-                        case 'init' : container.addClass('iframe-init');
-                                      $('#ra-time-$namespace').text(new Date().getTime() - now);
-                                      break;
-
-                        case 'resize' : resize(message.height, message.width);
-                                        break;
-
-                        case 'getIssue' : var issue = jQuery('a#key-val').text();
-                        			      transport.postMessage(JSON.stringify({id:"issue", value:issue}));
-                                          break;
-
-                        case 'getUsername' : var username = jQuery('a#header-details-user-fullname').text();
-                        					 if (!username) {
-                        					 	username = jQuery('meta[name=ajs-remote-user-fullname]').attr("content");
-                        					 }
-                        			         transport.postMessage(JSON.stringify({id:"username", value:username}));
-                                             break;
-
-                        case 'showMessage' : initMessageBar();
-                        					 jQuery('.aui-message#' + message.messageId).remove();
-                        					 AJS.messages.info({
-   												title: message.title,
-   												body: '<p>' + jQuery('<div />').text(message.body).html() + '<p>',
-   												id: message.messageId,
-   												closeable: false
-											 });
-                                             break;
-
-                        case 'clearMessage' : jQuery('.aui-message#' + message.messageId).remove();
-                        					  break;
-                    }
+                props: {height : initHeight, width : initWidth}
+            }, {
+              local : {
+                init : function() {
+                  container.addClass('iframe-init');
+                  $('#ra-time-$namespace').text(new Date().getTime() - now);
+                },
+                resize : function(height, width) {
+                  resize(height, width);
+                },
+                getLocation : function(fn) {
+                  return window.location;
+                },
+                getPath : function(fn) {
+                  return "" + window.location.hostname + window.location.pathname;
+                },
+                getUser : function(fn) {
+                  var fullName = jQuery('meta[name=ajs-remote-user-fullname]').attr("content");
+                   if (!fullName) {
+                    fullName = jQuery('a#header-details-user-fullname').text();
+                  }
+                  var user = { fullName : fullName };
+                  console.log("returning: " + user);
+                  return user;
+                },
+                showMessage : function(id, title, body) {
+                  initMessageBar();
+                  jQuery('.aui-message#' + id).remove();
+                  AJS.messages.info({
+                    title: title,
+                    body: '<p>' + jQuery('<div />').text(body).html() + '<p>',
+                    id: id,
+                    closeable: false
+                  });
+                },
+                clearMessage : function(id) {
+                  jQuery('.aui-message#' + id).remove();
                 }
+              }
             });
         })(jQuery);
     </script>

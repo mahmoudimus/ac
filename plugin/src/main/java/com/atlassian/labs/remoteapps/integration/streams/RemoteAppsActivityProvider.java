@@ -1,11 +1,10 @@
-package com.atlassian.labs.remoteapps.streams;
+package com.atlassian.labs.remoteapps.integration.streams;
 
 import com.atlassian.applinks.api.ApplicationType;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.osgi.util.OsgiHeaderUtil;
-import com.atlassian.plugin.webresource.UrlMode;
 import com.atlassian.plugin.webresource.WebResourceManager;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.message.I18nResolver;

@@ -38,12 +38,6 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.atlassian.labs</groupId>
-            <artifactId>speakeasy-plugin</artifactId>
-            <version>${speakeasy.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>com.atlassian.sal</groupId>
             <artifactId>sal-api</artifactId>
             <version>${sal.version}</version>

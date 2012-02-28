@@ -37,7 +37,7 @@ public class FixAuthenticateHeaderFilter implements Filter
 
     /**
      * Wraps a HttpServletResponse and listens for the status to be set to a "401 Not authorized" or a 401 error to
-     * be sent so that it can add the WWW-Authenticate headers for Speakeasy.  Necessary because of OAuth filter.
+     * be sent so that it can add the WWW-Authenticate headers for Remote Apps.  Necessary because of OAuth filter.
      */
     private static final class BasicWWWAuthenticateAddingResponse extends HttpServletResponseWrapper
     {

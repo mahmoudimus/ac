@@ -49,7 +49,7 @@ public class OAuth2LOFilter implements Filter
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException
     {
         final HttpServletRequest request = (HttpServletRequest) req;
-        final HttpServletResponse response = new OAuthWWWAuthenticateAddingResponse((HttpServletResponse) res, applicationProperties);
+        final HttpServletResponse response = (HttpServletResponse) res;
 
         if (!mayProceed(request, response))
         {
@@ -140,73 +140,4 @@ public class OAuth2LOFilter implements Filter
     public void init(FilterConfig filterConfig) throws ServletException
     {}
     public void destroy() {}
-
-    /**
-     * Wraps a HttpServletResponse and listens for the status to be set to a "401 Not authorized" or a 401 error to
-     * be sent so that it can add the WWW-Authenticate headers for OAuth.
-     */
-    private static final class OAuthWWWAuthenticateAddingResponse extends HttpServletResponseWrapper
-    {
-        private final ApplicationProperties applicationProperties;
-
-        public OAuthWWWAuthenticateAddingResponse(HttpServletResponse response, ApplicationProperties applicationProperties)
-        {
-            super(response);
-            this.applicationProperties = Check.notNull(applicationProperties, "applicationProperties");
-        }
-        
-        @Override
-        public void sendError(int sc, String msg) throws IOException
-        {
-            if (sc == SC_UNAUTHORIZED)
-            {
-                addOAuthAuthenticateHeader();
-            }
-            super.sendError(sc, msg);
-        }
-
-        @Override
-        public void sendError(int sc) throws IOException
-        {
-            if (sc == SC_UNAUTHORIZED)
-            {
-                addOAuthAuthenticateHeader();
-            }
-            super.sendError(sc);
-        }
-
-        @Override
-        public void setStatus(int sc, String sm)
-        {
-            if (sc == SC_UNAUTHORIZED)
-            {
-                addOAuthAuthenticateHeader();
-            }
-            super.setStatus(sc, sm);
-        }
-
-        @Override
-        public void setStatus(int sc)
-        {
-            if (sc == SC_UNAUTHORIZED)
-            {
-                addOAuthAuthenticateHeader();
-            }
-            super.setStatus(sc);
-        }
-
-        private void addOAuthAuthenticateHeader()
-        {
-            try
-            {
-                OAuthMessage message = new OAuthMessage(null, null, null);
-                super.addHeader("WWW-Authenticate", message.getAuthorizationHeader(applicationProperties.getBaseUrl()));
-            }
-            catch (IOException e)
-            {
-                // ignore, this will never happen
-                throw new RuntimeException("Somehow the OAuth.net library threw an IOException, even though it's not doing any IO operations", e);
-            }
-        }
-    }
 }

@@ -3,7 +3,7 @@ package com.atlassian.labs.remoteapps.descriptor;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.labs.remoteapps.ModuleGeneratorManager;
 import com.atlassian.labs.remoteapps.event.RemoteAppStartedEvent;
-import com.atlassian.labs.speakeasy.external.SpeakeasyBackendService;
+import com.atlassian.labs.remoteapps.event.RemoteAppStoppedEvent;
 import com.atlassian.plugin.ModuleDescriptorFactory;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
@@ -29,7 +29,6 @@ public class RemoteAppModuleDescriptor extends AbstractModuleDescriptor<Void>
     private final BundleContext bundleContext;
     private final StartableForPlugins startableForPlugins;
     private final EventPublisher eventPublisher;
-    private final SpeakeasyBackendService speakeasyBackendService;
     private static final Logger log = LoggerFactory.getLogger(RemoteAppModuleDescriptor.class);
 
     private ServiceTracker serviceTracker;
@@ -38,15 +37,13 @@ public class RemoteAppModuleDescriptor extends AbstractModuleDescriptor<Void>
 
     public RemoteAppModuleDescriptor(BundleContext bundleContext,
             StartableForPlugins startableForPlugins,
-            ModuleGeneratorManager moduleGeneratorManager, EventPublisher eventPublisher,
-            SpeakeasyBackendService speakeasyBackendService)
+            ModuleGeneratorManager moduleGeneratorManager, EventPublisher eventPublisher)
     {
         super(new LegacyModuleFactory());
         this.bundleContext = bundleContext;
         this.startableForPlugins = startableForPlugins;
         this.moduleGeneratorManager = moduleGeneratorManager;
         this.eventPublisher = eventPublisher;
-        this.speakeasyBackendService = speakeasyBackendService;
     }
 
     @Override
@@ -62,13 +59,6 @@ public class RemoteAppModuleDescriptor extends AbstractModuleDescriptor<Void>
         super.enabled();
         if (serviceTracker == null)
         {
-            // todo: Remove this eventually.  It ensures any remote apps installed after
-            // Speakeasy 1.3.15 will show up as globally-enabled extensions correctly.
-            if (!speakeasyBackendService.isGlobalExtension(getPluginKey()))
-            {
-                speakeasyBackendService.addGlobalExtension(getPluginKey());
-            }
-
             // generate and register new services
             Bundle targetBundle = findBundleForPlugin(bundleContext, getPluginKey());
             final BundleContext targetBundleContext = targetBundle.getBundleContext();
@@ -101,6 +91,7 @@ public class RemoteAppModuleDescriptor extends AbstractModuleDescriptor<Void>
                 {
                     generatorInitializer.close();
                     eventPublisher.unregister(generatorInitializer);
+                    eventPublisher.publish(new RemoteAppStoppedEvent(getPluginKey()));
                     // todo: recover in case a dependent factory is just being reloaded
                 }
             });

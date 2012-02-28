@@ -6,7 +6,6 @@ import com.atlassian.applinks.api.ApplicationType;
 import com.atlassian.labs.remoteapps.*;
 import com.atlassian.labs.remoteapps.util.http.CachingHttpContentRetriever;
 import com.atlassian.labs.remoteapps.util.http.HttpContentHandler;
-import com.atlassian.sal.api.user.UserManager;
 import com.google.common.base.Function;
 import com.google.common.collect.Maps;
 import net.oauth.OAuth;
@@ -45,8 +44,8 @@ public class ApplicationLinkOperationsFactory
     {
         ApplicationLink get();
         String signGetUrl(String user, String targetPath, Map<String, String[]> params);
-        String executeGet(String user, String path, Map<String,Object> params) throws ContentRetrievalException;
-        void executeGetAsync(String user, String path, Map<String,Object> params, HttpContentHandler handler);
+        String executeGet(String user, String path, Map<String, String> params) throws ContentRetrievalException;
+        void executeGetAsync(String user, String path, Map<String, String> params, HttpContentHandler handler);
     }
 
     @Autowired
@@ -80,13 +79,13 @@ public class ApplicationLinkOperationsFactory
             }
 
             @Override
-            public String executeGet(String username, String path, Map<String, Object> params) throws ContentRetrievalException
+            public String executeGet(String username, String path, Map<String, String> params) throws ContentRetrievalException
             {
                 return executeGetForType(get(), username, path, params);
             }
 
             @Override
-            public void executeGetAsync(String username, String path, Map<String, Object> params,
+            public void executeGetAsync(String username, String path, Map<String, String> params,
                                         HttpContentHandler handler)
             {
                 executeAsyncGetForType(get(), username, path, params, handler);
@@ -94,14 +93,14 @@ public class ApplicationLinkOperationsFactory
         };
     }
 
-    private String executeGetForType(ApplicationLink applicationLink, String username, String path, Map<String, Object> params) throws ContentRetrievalException
+    private String executeGetForType(ApplicationLink applicationLink, String username, String path, Map<String, String> params) throws ContentRetrievalException
     {
         String targetUrl = getTargetUrl(applicationLink, path);
         return httpContentRetriever.get(applicationLink, username, targetUrl, Maps.transformValues(params,
                                                                                                    MAP_TO_PARAMS));
     }
 
-    private void executeAsyncGetForType(ApplicationLink applicationLink, String username, String path, Map<String, Object> params,
+    private void executeAsyncGetForType(ApplicationLink applicationLink, String username, String path, Map<String, String> params,
                                         HttpContentHandler httpContentHandler)
     {
         String targetUrl = getTargetUrl(applicationLink, path);

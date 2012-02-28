@@ -1,61 +1,46 @@
 var RA = (function() {
     var RA = RA || {};
-    var socket;
-    RA.onMessage = function (message, origin) {
-      // Client code supplies this function to handle inbound messages from the parent frame.
-    }
-
+    var rpc;
     RA.init = function(options) {
-        socket = new easyXDM.Socket({
-            onMessage:function(message, origin) {
-              RA.onMessage(message, origin);
+        rpc = new easyXDM.Rpc({}, {
+            remote : {
+                resize : {},
+                init : {},
+                getLocation : {},
+                getPath : {},
+                getUser : {},
+                showMessage : {},
+                clearMessage : {}
             }
         });
-        socket.postMessage(JSON.stringify({
-            id : 'init'
-        }));
-
+        rpc.init();
     };
 
     RA.resize = function(width, height) {
         var w = width || "100%";
         var h = height || (document.body.offsetHeight + 40);
-        socket.postMessage(JSON.stringify({
-                id : 'resize',
-                width : w,
-                height : h
-        }));
+        rpc.resize(h, w);
     };
 
-    RA.getCurrentIssue = function() {
-        socket.postMessage(JSON.stringify({
-                id : 'getIssue'
-        }));
+    RA.getLocation = function(fn) {
+        return rpc.getLocation(fn);
     };
 
-    RA.getCurrentUsername = function() {
-      socket.postMessage(JSON.stringify({
-              id : 'getUsername'
-      }));
+    RA.getPath = function(fn) {
+      return rpc.getPath(fn);
     };
 
-    RA.showMessage = function(messageId, title, body) {
-      socket.postMessage(JSON.stringify({
-              id : 'showMessage',
-              messageId : messageId,
-              title : title,
-              body : body
-      }));
+    RA.getUser = function(fn) {
+        return rpc.getUser(fn);
     };
 
-    RA.clearMessage = function(messageId) {
-      socket.postMessage(JSON.stringify({
-              id : 'clearMessage',
-              messageId : messageId
-      }));
+    RA.showMessage = function(id, title, body) {
+      rpc.showMessage(id, title, body);
+    };
+
+    RA.clearMessage = function(id) {
+      rpc.clearMessage(id);
     };
 
     return RA;
 })();
-
-
