@@ -7,12 +7,12 @@
 
     <remote-module key="general-page" name="General Page" class="com.atlassian.labs.remoteapps.modules.page.GeneralPageModuleGenerator">
         <description>A non-admin general page decorated by the application, with a link in a globally-accessible place</description>
-        <schema id="page.xsd" path="/xsd/page.xsd"  type="PageType"/>
+        <schema id="page.xsd" path="/xsd/page.xsd" type="PageType"/>
     </remote-module>
 
     <remote-module key="admin-page" name="Administration Page" class="com.atlassian.labs.remoteapps.modules.page.AdminPageModuleGenerator">
         <description>An admin page decorated in the admin section, with a link in the admin menu</description>
-        <schema id="page.xsd" path="/xsd/page.xsd" type="PageType" />
+        <schema id="page.xsd" path="/xsd/page.xsd" type="PageType"/>
     </remote-module>
 
     <remote-module key="entity-type" name="Entity Type" class="com.atlassian.labs.remoteapps.modules.applinks.EntityTypeModuleGenerator">

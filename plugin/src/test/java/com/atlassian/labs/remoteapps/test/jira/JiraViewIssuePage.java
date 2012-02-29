@@ -1,12 +1,9 @@
 package com.atlassian.labs.remoteapps.test.jira;
 
-import javax.inject.Inject;
-
 import com.atlassian.jira.pageobjects.pages.viewissue.ViewIssuePage;
 import com.atlassian.labs.remoteapps.test.RemoteAppEmbeddedTestPage;
 import com.atlassian.pageobjects.Page;
 import com.atlassian.pageobjects.PageBinder;
-import com.atlassian.webdriver.AtlassianWebDriver;
 
 /**
  * A ViewIssue page that is expected to have a panel provided by a remote app.

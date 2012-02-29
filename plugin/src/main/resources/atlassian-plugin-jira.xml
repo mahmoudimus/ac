@@ -20,10 +20,10 @@
         <schema id="page.xsd" path="/xsd/page.xsd" type="PageType"/>
     </remote-module>
 
-    <remote-module key="jira-issue-panel" name="Issue Tab Page"
+    <remote-module key="jira-issue-tab-page" name="Issue Tab Page"
                    class="com.atlassian.labs.remoteapps.modules.panel.jira.ViewIssuePanelModuleGenerator">
         <description>A remote page decorated as a web panel on the view issue page.</description>
-        <schema id="panel.xsd" path="/xsd/panel.xsd" type="PanelType"/>
+        <schema id="page.xsd" path="/xsd/page.xsd" type="PageType"/>
     </remote-module>
 
     <remote-module key="jira-webhooks" name="Web Hook" class="com.atlassian.labs.remoteapps.modules.webhook.WebHookModuleGenerator">

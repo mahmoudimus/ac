@@ -21,7 +21,7 @@ import static org.junit.Assert.assertEquals;
 
 public class TestJira
 {
-    private static final String EMBEDDED_ISSUE_TAB_PAGE_ID = "viewissue-remoteAppViewIssue";
+    private static final String EMBEDDED_ISSUE_TAB_PAGE_ID = "issue-tab-page-remoteAppIssueTabPage";
 
     private static TestedProduct<WebDriverTester> product = TestedProductFactory.create(com.atlassian.webdriver.jira.JiraTestedProduct.class);
 

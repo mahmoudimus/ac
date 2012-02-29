@@ -488,6 +488,7 @@
                             </productIds>
                             <excludes>
                                 <exclude>it/confluence/*.java</exclude>
+                                <exclude>it/jira/*.java</exclude>
                             </excludes>
                         </testGroup>
                         <testGroup>
@@ -500,6 +501,9 @@
                                     com.atlassian.webdriver.confluence.ConfluenceTestedProduct
                                 </testedProductClass>
                             </systemProperties>
+                            <excludes>
+                                <exclude>it/jira/*.java</exclude>
+                            </excludes>
                         </testGroup>
                         <testGroup>
                             <id>jira</id>

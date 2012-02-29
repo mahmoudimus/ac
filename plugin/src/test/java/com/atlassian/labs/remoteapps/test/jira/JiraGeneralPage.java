@@ -1,19 +1,20 @@
 package com.atlassian.labs.remoteapps.test.jira;
 
+import javax.annotation.Nullable;
+import javax.inject.Inject;
+
 import com.atlassian.labs.remoteapps.test.GeneralPage;
 import com.atlassian.labs.remoteapps.test.RemoteAppTestPage;
 import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.pageobjects.binder.Init;
-import com.atlassian.pageobjects.binder.WaitUntil;
 import com.atlassian.webdriver.AtlassianWebDriver;
+
 import com.google.common.base.Function;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-
-import javax.annotation.Nullable;
-import javax.inject.Inject;
 
 /**
  *
@@ -31,13 +32,13 @@ public class JiraGeneralPage implements GeneralPage
 
     @FindBy(id = "general_dropdown_linkId_drop")
     private WebElement remoteappsGeneralMenuLink;
-    
+
     public JiraGeneralPage(String pageKey, String linkText)
     {
         this.pageKey = pageKey;
         this.linkText = linkText;
     }
-    
+
     @Init
     public void init()
     {
