@@ -66,7 +66,8 @@ public class RemoteAppModuleDescriptor extends AbstractModuleDescriptor<Void>
         if (serviceTracker == null)
         {
             log.debug("Really enabling remote app '{}'", getPluginKey());
-            validateAgainstSchema(originalElement);
+            // disable for now as causing issues
+            // validateAgainstSchema(originalElement);
 
             // generate and register new services
             Bundle targetBundle = findBundleForPlugin(bundleContext, getPluginKey());
