@@ -69,7 +69,11 @@ public class ConfluenceEventMapper implements EventMapper
             if (ceo instanceof Spaced)
             {
                 // TODO: Consider adding additional information about the space, eg. title, logo & description.
-                builder.put("spaceKey", ((Spaced)ceo).getSpace().getKey());
+                Space space = ((Spaced)ceo).getSpace();
+                if (space != null)
+                {
+                    builder.put("spaceKey", space.getKey());
+                }
             }
         }
         return builder.build();
