@@ -1,27 +1,20 @@
 package com.atlassian.labs.remoteapps.sample;
 
-import org.eclipse.jetty.util.ajax.JSONObjectConvertor;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * Created by IntelliJ IDEA.
- * User: mrdon
- * Date: 15/12/11
- * Time: 10:13 PM
- * To change this template use File | Settings | File Templates.
+ * Receives and stores web hooks
  */
 public class WebHookServlet extends HttpServlet
 {
@@ -67,7 +60,6 @@ public class WebHookServlet extends HttpServlet
         {
             throw new ServletException(e);
         }
-        publications.clear();
     }
 
     private static class Publication

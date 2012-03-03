@@ -3,8 +3,9 @@ package com.atlassian.labs.remoteapps.webhook.impl;
 import com.atlassian.labs.remoteapps.webhook.WebHookRegistration;
 import com.atlassian.labs.remoteapps.webhook.external.EventSerializerFactory;
 import com.atlassian.labs.remoteapps.webhook.external.MapperBuilder;
+import com.google.common.base.Predicate;
 
-public class MapperBuilderImpl implements MapperBuilder
+public class MapperBuilderImpl<E> implements MapperBuilder<E>
 {
     private final WebHookRegistration registration;
 
@@ -17,5 +18,12 @@ public class MapperBuilderImpl implements MapperBuilder
     public void serializedWith(EventSerializerFactory eventSerializerFactory)
     {
         registration.setEventSerializerFactory(eventSerializerFactory);
+    }
+
+    @Override
+    public MapperBuilder<E> matchedBy(Predicate<E> eventTypeMatcher)
+    {
+        registration.setEventMatcher(eventTypeMatcher);
+        return this;
     }
 }

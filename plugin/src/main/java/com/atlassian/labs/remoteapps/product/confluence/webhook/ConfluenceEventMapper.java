@@ -8,13 +8,14 @@ import com.atlassian.confluence.pages.Comment;
 import com.atlassian.confluence.setup.settings.SettingsManager;
 import com.atlassian.confluence.spaces.Space;
 import com.atlassian.confluence.spaces.Spaced;
+import com.atlassian.labs.remoteapps.product.EventMapper;
 import com.atlassian.sal.api.user.UserManager;
 import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.Map;
 
-public class ConfluenceEventMapper implements EventMapper
+public class ConfluenceEventMapper implements EventMapper<ConfluenceEvent>
 {
     private final UserManager userManager;
     private final SettingsManager confluenceSettingsManager;

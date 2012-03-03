@@ -32,6 +32,9 @@
         <package>com.atlassian.labs.remoteapps.rest</package>
     </rest>
 
+    <component key="jiraWebHookProvider" class="com.atlassian.labs.remoteapps.product.jira.JiraWebHookProvider" />
+
+    <component key="jiraEventSerializerFactory" class="com.atlassian.labs.remoteapps.product.jira.webhook.JiraEventSerializerFactory" />
 
     <!-- activity streams>
     <component-import key="jiraUserProfileAccessor" interface="com.atlassian.streams.spi.UserProfileAccessor"/>

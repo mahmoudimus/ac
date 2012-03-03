@@ -14,7 +14,7 @@ public class EventBuilderImpl implements EventBuilder
     }
 
     @Override
-    public MapperBuilder whenFired(Class<?> eventClass)
+    public <E> MapperBuilder<E> whenFired(Class<E> eventClass)
     {
         registration.setEventTrigger(eventClass);
         return new MapperBuilderImpl(registration);

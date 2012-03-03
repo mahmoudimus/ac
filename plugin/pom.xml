@@ -476,6 +476,7 @@
                             </productIds>
                             <excludes>
                                 <exclude>it/confluence/*.java</exclude>
+                                <exclude>it/jira/*.java</exclude>
                             </excludes>
                         </testGroup>
                         <testGroup>
@@ -483,6 +484,9 @@
                             <productIds>
                                 <productId>confluence</productId>
                             </productIds>
+                            <excludes>
+                                <exclude>it/jira/*.java</exclude>
+                            </excludes>
                             <systemProperties>
                                 <testedProductClass>
                                     com.atlassian.confluence.pageobjects.ConfluenceTestedProduct

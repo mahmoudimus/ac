@@ -2,6 +2,7 @@ package com.atlassian.labs.remoteapps.product.confluence.webhook;
 
 import com.atlassian.confluence.event.events.ConfluenceEvent;
 import com.atlassian.confluence.setup.settings.SettingsManager;
+import com.atlassian.labs.remoteapps.product.EventMapper;
 import com.atlassian.labs.remoteapps.webhook.EventSerializer;
 import com.atlassian.labs.remoteapps.webhook.MapEventSerializer;
 import com.atlassian.labs.remoteapps.webhook.external.EventSerializerFactory;
@@ -21,13 +22,13 @@ public class ConfluenceEventSerializerFactory implements EventSerializerFactory<
 {
     private static final Logger log = LoggerFactory.getLogger(ConfluenceEventSerializerFactory.class);
 
-    private final List<EventMapper> mappers;
+    private final List<EventMapper<ConfluenceEvent>> mappers;
 
     public ConfluenceEventSerializerFactory(UserManager userManager, SettingsManager confluenceSettingsManager)
     {
         // This list is deliberately ordered. More-specific mappers such as PageMoveEventMapper must appear in the
         // list _before_ less-specific mappers such as PageEventMapper, or else they will never get invoked.
-        mappers = ImmutableList.<EventMapper>of(
+        mappers = ImmutableList.<EventMapper<ConfluenceEvent>>of(
                 new LabelEventMapper(userManager, confluenceSettingsManager),
                 new UserStatusEventMapper(userManager, confluenceSettingsManager),
                 new SearchPerformedEventMapper(userManager, confluenceSettingsManager),
@@ -46,7 +47,7 @@ public class ConfluenceEventSerializerFactory implements EventSerializerFactory<
     @Override
     public EventSerializer create(ConfluenceEvent event)
     {
-        for (EventMapper mapper : mappers)
+        for (EventMapper<ConfluenceEvent> mapper : mappers)
         {
             if (mapper.handles(event))
                 return new MapEventSerializer(event, mapper.toMap(event));

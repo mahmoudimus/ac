@@ -88,7 +88,10 @@ public class WebHookRegistrationManager implements DisposableBean
         WebHookRegistration reg = registrationsByEvent.get(event.getClass());
         if (reg != null)
         {
-            webHookPublisher.publish(reg.getId(), reg.getEventSerializer(event));
+            if (reg.matches(event))
+            {
+                webHookPublisher.publish(reg.getId(), reg.getEventSerializer(event));
+            }
         }
     }
     
