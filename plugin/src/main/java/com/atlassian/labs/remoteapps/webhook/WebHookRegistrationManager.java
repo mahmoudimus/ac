@@ -12,7 +12,6 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Nullable;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -109,7 +108,7 @@ public class WebHookRegistrationManager implements DisposableBean
         waitableServiceTracker.waitFor(new Predicate<Map<WebHookProvider, WebHookProvider>>()
         {
             @Override
-            public boolean apply(@Nullable Map<WebHookProvider, WebHookProvider> input)
+            public boolean apply(Map<WebHookProvider, WebHookProvider> input)
             {
                 return registrationsByKey.containsKey(webHookId);
             }

@@ -2,16 +2,10 @@ package com.atlassian.labs.remoteapps.modules.permissions.scope;
 
 import com.atlassian.labs.remoteapps.util.ServletUtils;
 import com.google.common.base.Function;
-import org.apache.commons.io.IOUtils;
 import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.io.SAXReader;
 
-import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.HttpMethod;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Collection;
 
 import static com.atlassian.labs.remoteapps.util.Dom4jUtils.readDocument;
@@ -33,7 +27,7 @@ public class XmlRpcApiScopeHelper
         this.apiResourceInfo = transform(methods, new Function<String,ApiResourceInfo>()
         {
             @Override
-            public ApiResourceInfo apply(@Nullable String from)
+            public ApiResourceInfo apply(String from)
             {
                 return new ApiResourceInfo(path, HttpMethod.POST, from);
             }

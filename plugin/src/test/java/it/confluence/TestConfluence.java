@@ -1,7 +1,9 @@
 package it.confluence;
 
+import com.atlassian.confluence.pageobjects.ConfluenceTestedProduct;
 import com.atlassian.labs.remoteapps.test.HtmlDumpRule;
 import com.atlassian.labs.remoteapps.test.OAuthUtils;
+import com.atlassian.labs.remoteapps.test.OwnerOfTestedProduct;
 import com.atlassian.labs.remoteapps.test.confluence.ConfluenceCounterMacroPage;
 import com.atlassian.labs.remoteapps.test.confluence.ConfluenceMacroPage;
 import com.atlassian.labs.remoteapps.test.confluence.ConfluenceOps;
@@ -32,7 +34,7 @@ import static org.junit.Assert.assertTrue;
 
 public class TestConfluence
 {
-    private static TestedProduct<WebDriverTester> product = TestedProductFactory.create(com.atlassian.webdriver.confluence.ConfluenceTestedProduct.class);
+    private static TestedProduct<WebDriverTester> product = OwnerOfTestedProduct.INSTANCE;
     private static ConfluenceOps confluenceOps = new ConfluenceOps();
 
     @Rule

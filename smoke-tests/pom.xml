@@ -20,19 +20,24 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.atlassian.selenium</groupId>
-            <artifactId>atlassian-webdriver-refapp</artifactId>
-            <version>2.0</version>
+            <groupId>com.atlassian.refapp</groupId>
+            <artifactId>atlassian-refapp-pageobjects</artifactId>
+            <version>${refapp.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.atlassian.selenium</groupId>
-            <artifactId>atlassian-webdriver-confluence</artifactId>
-            <version>2.0</version>
+            <groupId>com.atlassian.confluence</groupId>
+            <artifactId>atlassian-confluence-pageobjects</artifactId>
+            <version>${confluence.version}</version>
         </dependency>
         <dependency>
             <groupId>com.atlassian.jira</groupId>
             <artifactId>atlassian-jira-pageobjects</artifactId>
             <version>${jira.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.selenium</groupId>
+            <artifactId>atlassian-webdriver-core</artifactId>
+            <version>${atlassian.selenium.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>

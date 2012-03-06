@@ -7,7 +7,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
-import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.HttpMethod;
 import java.io.IOException;
@@ -32,7 +31,7 @@ public class JsonRpcApiScopeHelper
         this.apiResourceInfo = transform(methods, new Function<String,ApiResourceInfo>()
         {
             @Override
-            public ApiResourceInfo apply(@Nullable String from)
+            public ApiResourceInfo apply(String from)
             {
                 return new ApiResourceInfo(path, HttpMethod.POST, from);
             }

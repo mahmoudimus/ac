@@ -5,27 +5,17 @@ import com.atlassian.labs.remoteapps.util.tracker.WaitableServiceTrackerFactory;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.ModuleDescriptorFactory;
 import com.atlassian.plugin.PluginParseException;
-import com.atlassian.plugin.osgi.external.ListableModuleDescriptorFactory;
-import com.atlassian.plugin.osgi.external.SingleModuleDescriptorFactory;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
-import org.osgi.util.tracker.ServiceTracker;
-import org.osgi.util.tracker.ServiceTrackerCustomizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 import static com.google.common.collect.Sets.newHashSet;
 import static java.util.Arrays.asList;
@@ -48,14 +38,14 @@ public class AggregateModuleDescriptorFactory implements ModuleDescriptorFactory
                 new Function<ModuleDescriptorFactory,ModuleDescriptorFactory>()
                 {
                     @Override
-                    public ModuleDescriptorFactory apply(@Nullable ModuleDescriptorFactory from)
+                    public ModuleDescriptorFactory apply(ModuleDescriptorFactory from)
                     {
                         return from == AggregateModuleDescriptorFactory.this ? null : from;
                     }
                 }
             );
     }
-    
+
     public void waitForRequiredDescriptors(String... requiredKeys)
     {
         waitForRequiredDescriptors(asList(requiredKeys));
@@ -81,7 +71,7 @@ public class AggregateModuleDescriptorFactory implements ModuleDescriptorFactory
                     }
                 }
                 log.info("Waiting on dynamic module types: " + keys);
-                
+
                 return keys.isEmpty();
             }
 
@@ -92,7 +82,7 @@ public class AggregateModuleDescriptorFactory implements ModuleDescriptorFactory
             }
         });
     }
-    
+
     private ModuleDescriptorFactory getTrackedModuleDescriptorFactory(String key)
     {
         for (ModuleDescriptorFactory factory : tracker.getAll())
@@ -117,7 +107,7 @@ public class AggregateModuleDescriptorFactory implements ModuleDescriptorFactory
     @Override
     public Class<? extends ModuleDescriptor> getModuleDescriptorClass(String type)
     {
-        return getTrackedModuleDescriptorFactory(type).getModuleDescriptorClass(type); 
+        return getTrackedModuleDescriptorFactory(type).getModuleDescriptorClass(type);
     }
 
     @Override

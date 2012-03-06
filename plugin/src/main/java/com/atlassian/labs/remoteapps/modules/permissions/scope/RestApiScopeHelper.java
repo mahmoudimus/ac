@@ -3,16 +3,11 @@ package com.atlassian.labs.remoteapps.modules.permissions.scope;
 import com.atlassian.labs.remoteapps.util.ServletUtils;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
-import com.google.common.collect.Iterables;
 import org.apache.commons.lang.StringUtils;
 
-import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.HttpMethod;
-import javax.ws.rs.core.UriBuilder;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 

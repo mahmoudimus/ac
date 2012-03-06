@@ -1,20 +1,15 @@
 package com.atlassian.labs.remoteapps.util.tracker;
 
-import com.atlassian.labs.remoteapps.modules.permissions.scope.ApiScope;
 import com.google.common.base.Function;
 import org.osgi.framework.BundleContext;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Nullable;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
@@ -99,7 +94,7 @@ public class WaitableServiceTrackerFactory implements DisposableBean, Applicatio
     private static class ValueAsKeyFunction<T> implements Function<T, T>
     {
         @Override
-        public T apply(@Nullable T from)
+        public T apply(T from)
         {
             return from;
         }
