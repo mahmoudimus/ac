@@ -4,6 +4,7 @@ import com.atlassian.confluence.event.events.ConfluenceEvent;
 import com.atlassian.confluence.setup.settings.SettingsManager;
 import com.atlassian.labs.remoteapps.webhook.EventSerializer;
 import com.atlassian.labs.remoteapps.webhook.MapEventSerializer;
+import com.atlassian.labs.remoteapps.webhook.external.EventSerializerFactory;
 import com.atlassian.sal.api.user.UserManager;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -16,7 +17,7 @@ import java.util.List;
  * Maps {@link ConfluenceEvent} instances to {@EventSerializer} instances so that the event information
  * can be transmitted via the {@link com.atlassian.labs.remoteapps.webhook.WebHookPublisher}.
  */
-public class ConfluenceEventSerializerFactory
+public class ConfluenceEventSerializerFactory implements EventSerializerFactory<ConfluenceEvent>
 {
     private static final Logger log = LoggerFactory.getLogger(ConfluenceEventSerializerFactory.class);
 
@@ -42,7 +43,8 @@ public class ConfluenceEventSerializerFactory
         );
     }
 
-    public EventSerializer getSerializer(ConfluenceEvent event)
+    @Override
+    public EventSerializer create(ConfluenceEvent event)
     {
         for (EventMapper mapper : mappers)
         {
@@ -54,4 +56,5 @@ public class ConfluenceEventSerializerFactory
         log.warn(String.format("Event %s was not recognised by any Event to WebHook mapper.", event.getClass().getName()));
         return new MapEventSerializer(event, ImmutableMap.<String, Object>builder().build());
     }
+
 }

@@ -11,11 +11,7 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 
 /**
- * Created by IntelliJ IDEA.
- * User: mrdon
- * Date: 11/01/12
- * Time: 11:56 PM
- * To change this template use File | Settings | File Templates.
+ * Reads the manifest entries stored by remote apps
  */
 public class RemoteAppManifestReader
 {

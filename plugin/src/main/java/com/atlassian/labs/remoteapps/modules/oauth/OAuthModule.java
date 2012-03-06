@@ -15,11 +15,7 @@ import java.util.Set;
 import static java.util.Collections.emptySet;
 
 /**
- * Created by IntelliJ IDEA.
- * User: mrdon
- * Date: 12/01/12
- * Time: 12:54 AM
- * To change this template use File | Settings | File Templates.
+ * Establishes a bi-directional oauth link
  */
 public class OAuthModule implements StartableRemoteModule, UninstallableRemoteModule
 {

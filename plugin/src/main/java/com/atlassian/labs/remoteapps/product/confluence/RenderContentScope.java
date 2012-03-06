@@ -16,4 +16,22 @@ public class RenderContentScope extends ConfluenceScope
                 "renderContent"
         ));
     }
+
+    @Override
+    public String getKey()
+    {
+        return "render_content";
+    }
+
+    @Override
+    public String getName()
+    {
+        return "Render Content";
+    }
+
+    @Override
+    public String getDescription()
+    {
+        return "Convert content into viewable HTML";
+    }
 }

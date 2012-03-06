@@ -11,8 +11,7 @@
     </rest>
     <component-import key="userManager" interface="com.atlassian.sal.api.user.UserManager" />
 
-    <api-scope key="resttest" name="Rest Test" class="com.atlassian.labs.remoteapps.test.RestTestApiScope">
-        <description>A test resource</description>
-    </api-scope>
+    <component key="resttest" class="com.atlassian.labs.remoteapps.test.RestTestApiScope"
+            interface="com.atlassian.labs.remoteapps.modules.permissions.scope.ApiScope" public="true"/>
 
 </atlassian-plugin>

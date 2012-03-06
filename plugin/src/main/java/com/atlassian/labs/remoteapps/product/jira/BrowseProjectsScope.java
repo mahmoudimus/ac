@@ -1,6 +1,6 @@
 package com.atlassian.labs.remoteapps.product.jira;
 
-import com.atlassian.labs.remoteapps.modules.permissions.scope.RestApiScope;
+import com.atlassian.labs.remoteapps.modules.permissions.scope.RestApiScopeHelper;
 
 import static java.util.Arrays.asList;
 
@@ -32,8 +32,27 @@ public class BrowseProjectsScope extends JiraScope
                         "getSecurityLevel"
                 ),
                 asList(
-                        new RestApiScope.RestScope("api", asList("latest", "2", "2.0.alpha1"), "/project", asList("get"))
+                        new RestApiScopeHelper.RestScope("api", asList("latest", "2", "2.0.alpha1"), "/project", asList("get"))
                 )
         );
+    }
+
+    @Override
+    public String getKey()
+    {
+        return "browse_projects";
+    }
+
+    @Override
+    public String getName()
+    {
+        return "Browse Projects";
+    }
+
+    @Override
+    public String getDescription()
+    {
+        return "Permission to browse projects, search issues, and view individual issues (except " +
+                "issues that have been restricted via Issue Security)";
     }
 }

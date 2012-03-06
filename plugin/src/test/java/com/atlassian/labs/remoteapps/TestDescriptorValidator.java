@@ -1,7 +1,6 @@
 package com.atlassian.labs.remoteapps;
 
-import com.atlassian.labs.remoteapps.descriptor.external.RemoteModuleDescriptor;
-import com.atlassian.labs.remoteapps.descriptor.external.Schema;
+import com.atlassian.labs.remoteapps.modules.external.Schema;
 import com.atlassian.labs.remoteapps.modules.external.RemoteModuleGenerator;
 import com.atlassian.labs.remoteapps.product.ProductAccessor;
 import com.atlassian.plugin.Plugin;
@@ -48,8 +47,8 @@ public class TestDescriptorValidator
     {
         when(plugin.getResource("/xsd/remote-app.xsd")).thenReturn(getClass().getResource("root-one-include.xsd"));
         when(plugin.getResource("/xsd/first-child.xsd")).thenReturn(getClass().getResource("first-child.xsd"));
-        when(moduleGeneratorManager.getDescriptors()).thenReturn(
-                Lists.<RemoteModuleDescriptor>newArrayList());
+        when(moduleGeneratorManager.getAllValidatableGenerators()).thenReturn(
+                Lists.<RemoteModuleGenerator>newArrayList());
         DescriptorValidator validator = new DescriptorValidator(moduleGeneratorManager, applicationProperties,
                 pluginRetrievalService, productAccessor);
         String doc = validator.getSchema();
@@ -61,24 +60,22 @@ public class TestDescriptorValidator
     @Test
     public void testOneModuleOneEmbeddedInclude()
     {
-        RemoteModuleDescriptor mockModule = mock(RemoteModuleDescriptor.class);
         Schema schema = mock(Schema.class);
         when(schema.getDocument()).thenReturn(parseDocument(
                 getClass().getResource("module-one-include.xsd")));
         when(schema.getComplexType()).thenReturn("ModuleType");
         when(schema.getId()).thenReturn("module1");
         when(schema.getMaxOccurs()).thenReturn("0");
-        when(mockModule.getSchema()).thenReturn(schema);
 
         RemoteModuleGenerator moduleGenerator = mock(RemoteModuleGenerator.class);
+        when(moduleGenerator.getSchema()).thenReturn(schema);
         when(moduleGenerator.getType()).thenReturn("module1");
-        when(mockModule.getModule()).thenReturn(moduleGenerator);
         when(plugin.getResource("/xsd/remote-app.xsd")).thenReturn(getClass().getResource("root-one-include.xsd"));
         when(plugin.getResource("/xsd/module-child.xsd")).thenReturn(getClass().getResource("module-child.xsd"));
         when(plugin.getResource("/xsd/first-child.xsd")).thenReturn(getClass().getResource("first-child.xsd"));
         
-        when(moduleGeneratorManager.getDescriptors()).thenReturn(
-                Lists.<RemoteModuleDescriptor>newArrayList(mockModule));
+        when(moduleGeneratorManager.getAllValidatableGenerators()).thenReturn(
+                Lists.<RemoteModuleGenerator>newArrayList(moduleGenerator));
         DescriptorValidator validator = new DescriptorValidator(moduleGeneratorManager, applicationProperties,
                 pluginRetrievalService, productAccessor);
         String doc = validator.getSchema();

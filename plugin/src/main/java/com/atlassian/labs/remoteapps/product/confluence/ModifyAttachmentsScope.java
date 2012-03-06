@@ -1,13 +1,5 @@
 package com.atlassian.labs.remoteapps.product.confluence;
 
-import com.atlassian.labs.remoteapps.modules.permissions.scope.ApiScope;
-import com.atlassian.labs.remoteapps.modules.permissions.scope.JsonRpcApiScope;
-import com.atlassian.labs.remoteapps.modules.permissions.scope.XmlRpcApiScope;
-
-import javax.servlet.http.HttpServletRequest;
-
-import java.util.List;
-
 import static java.util.Arrays.asList;
 
 /**
@@ -22,5 +14,23 @@ public class ModifyAttachmentsScope extends ConfluenceScope
                 "removeAttachment",
                 "moveAttachment"
         ));
+    }
+
+    @Override
+    public String getKey()
+    {
+        return "modify_attachments";
+    }
+
+    @Override
+    public String getName()
+    {
+        return "Modify Attachments";
+    }
+
+    @Override
+    public String getDescription()
+    {
+        return "Add, remove, or move attachments for pages or blog posts";
     }
 }

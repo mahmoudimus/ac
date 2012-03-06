@@ -35,12 +35,6 @@ public class DefaultRemoteAppCreationContext implements RemoteAppCreationContext
     }
 
     @Override
-    public ModuleDescriptorFactory getModuleDescriptorFactory()
-    {
-        return moduleDescriptorFactory;
-    }
-
-    @Override
     public Bundle getBundle()
     {
         return bundle;
@@ -50,5 +44,11 @@ public class DefaultRemoteAppCreationContext implements RemoteAppCreationContext
     public RemoteAppApplicationType getApplicationType()
     {
         return applicationType;
+    }
+
+    @Override
+    public ModuleDescriptorFactory getModuleDescriptorFactory()
+    {
+        return moduleDescriptorFactory;
     }
 }

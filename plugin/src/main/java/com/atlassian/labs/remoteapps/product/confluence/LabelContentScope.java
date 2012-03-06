@@ -19,4 +19,22 @@ public class LabelContentScope extends ConfluenceScope
                 "removeLabelByNameFromSpace"
         ));
     }
+
+    @Override
+    public String getKey()
+    {
+        return "label_content";
+    }
+
+    @Override
+    public String getName()
+    {
+        return "Label Content";
+    }
+
+    @Override
+    public String getDescription()
+    {
+        return "Add and remove labels from spaces, pages and blog posts";
+    }
 }

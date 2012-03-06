@@ -18,4 +18,22 @@ public class ModifyContentScope extends ConfluenceScope
                 "storeBlogEntry"
         ));
     }
+
+    @Override
+    public String getKey()
+    {
+        return "modify_content";
+    }
+
+    @Override
+    public String getName()
+    {
+        return "Modify Content";
+    }
+
+    @Override
+    public String getDescription()
+    {
+        return "Add, edit and remove pages and blog posts";
+    }
 }

@@ -381,7 +381,9 @@
                             com.atlassian.labs.remoteapps.modules.page.jira,
                             com.atlassian.labs.remoteapps.descriptor.external,
                             com.atlassian.labs.remoteapps.modules.external,
-                            com.atlassian.labs.remoteapps.event
+                            com.atlassian.labs.remoteapps.event,
+                            com.atlassian.labs.remoteapps.loader.external,
+                            com.atlassian.labs.remoteapps.webhook.external
                         </Export-Package>
                     </instructions>
                     <systemPropertyVariables>

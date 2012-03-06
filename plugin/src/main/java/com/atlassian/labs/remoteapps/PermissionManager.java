@@ -3,22 +3,20 @@ package com.atlassian.labs.remoteapps;
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.applinks.api.ApplicationLinkService;
 import com.atlassian.applinks.api.ApplicationType;
-import com.atlassian.labs.remoteapps.descriptor.external.ApiScopeModuleDescriptor;
 import com.atlassian.labs.remoteapps.modules.permissions.scope.ApiScope;
 import com.atlassian.labs.remoteapps.util.ServletUtils;
-import com.atlassian.plugin.PluginAccessor;
-import com.atlassian.plugin.event.PluginEventManager;
-import com.atlassian.plugin.tracker.DefaultPluginModuleTracker;
-import com.atlassian.plugin.tracker.PluginModuleTracker;
+import com.atlassian.labs.remoteapps.util.tracker.WaitableServiceTracker;
+import com.atlassian.labs.remoteapps.util.tracker.WaitableServiceTrackerFactory;
 import com.atlassian.sal.api.user.UserManager;
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -26,14 +24,14 @@ import java.util.Set;
  * Handles permissions for remote app operations
  */
 @Component
-public class PermissionManager implements DisposableBean
+public class PermissionManager
 {
     private static final Logger log = LoggerFactory.getLogger(PermissionManager.class);
     public static final String API_SCOPES_LINK_KEY = "api-scopes";
     private final ApplicationLinkService applicationLinkService;
     private final OAuthLinkManager linkManager;
     private final UserManager userManager;
-    private final PluginModuleTracker<ApiScope, ApiScopeModuleDescriptor> apiScopeTracker;
+    private final WaitableServiceTracker<String,ApiScope> apiScopeTracker;
 
     private final Set<String> NON_USER_ADMIN_PATHS = ImmutableSet.of(
         "/rest/remoteapps/latest/macro/",
@@ -44,15 +42,22 @@ public class PermissionManager implements DisposableBean
     public PermissionManager(ApplicationLinkService applicationLinkService,
                              OAuthLinkManager linkManager,
                              UserManager userManager,
-                             PluginEventManager pluginEventManager,
-                             PluginAccessor pluginAccessor)
+                             WaitableServiceTrackerFactory waitableServiceTrackerFactory)
     {
         this.applicationLinkService = applicationLinkService;
         this.linkManager = linkManager;
         this.userManager = userManager;
-        this.apiScopeTracker = new DefaultPluginModuleTracker<ApiScope, ApiScopeModuleDescriptor>(pluginAccessor, pluginEventManager,
-                ApiScopeModuleDescriptor.class);
+        this.apiScopeTracker = waitableServiceTrackerFactory.create(ApiScope.class,
+                new Function<ApiScope, String>()
+                {
+                    @Override
+                    public String apply(ApiScope from)
+                    {
+                        return from.getKey();
+                    }
+                });
     }
+
 
     public void setApiPermissions(ApplicationType type, List<String> scopes)
     {
@@ -67,15 +72,14 @@ public class PermissionManager implements DisposableBean
         }
     }
 
-    public Iterable<ApiScopeModuleDescriptor> getApiScopeDescriptors()
+    public Iterable<ApiScope> getApiScopes()
     {
-        return apiScopeTracker.getModuleDescriptors();
+        return apiScopeTracker.getAll();
     }
-
-    @Override
-    public void destroy() throws Exception
+    
+    public void waitForApiScopes(Collection<String> scopeKeys)
     {
-        apiScopeTracker.close();
+        apiScopeTracker.waitForKeys(scopeKeys);
     }
 
     public boolean isRequestInApiScope(HttpServletRequest req, String clientKey, String user)
@@ -99,10 +103,10 @@ public class PermissionManager implements DisposableBean
             return false;
         }
 
-        List<String> apiScopes = (List<String>) link.getProperty(API_SCOPES_LINK_KEY);
-        if (apiScopes != null)
+        List<String> appScopeKeys = (List<String>) link.getProperty(API_SCOPES_LINK_KEY);
+        if (appScopeKeys != null)
         {
-            for (ApiScope scope : apiScopeTracker.getModules())
+            for (ApiScope scope : apiScopeTracker.getAll())
             {
                 if (scope.allow(req, user))
                 {

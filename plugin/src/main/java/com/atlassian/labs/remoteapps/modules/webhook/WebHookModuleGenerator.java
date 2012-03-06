@@ -1,14 +1,13 @@
 package com.atlassian.labs.remoteapps.modules.webhook;
 
-import com.atlassian.labs.remoteapps.modules.external.ClosableRemoteModule;
-import com.atlassian.labs.remoteapps.modules.external.RemoteAppCreationContext;
-import com.atlassian.labs.remoteapps.modules.external.RemoteModule;
-import com.atlassian.labs.remoteapps.modules.external.RemoteModuleGenerator;
-import com.atlassian.labs.remoteapps.product.ProductAccessor;
+import com.atlassian.labs.remoteapps.modules.external.*;
 import com.atlassian.labs.remoteapps.webhook.WebHookPublisher;
+import com.atlassian.labs.remoteapps.webhook.WebHookRegistrationManager;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.PluginParseException;
 import org.dom4j.Element;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.Map;
 import java.util.Set;
@@ -17,19 +16,22 @@ import static java.util.Collections.emptyMap;
 import static java.util.Collections.emptySet;
 
 /**
- * Created by IntelliJ IDEA.
- * User: mrdon
- * Date: 15/12/11
- * Time: 9:33 PM
- * To change this template use File | Settings | File Templates.
+ * Registers webhooks
  */
-public class WebHookModuleGenerator implements RemoteModuleGenerator
+@Component
+public class WebHookModuleGenerator implements WaitableRemoteModuleGenerator
 {
     private final WebHookPublisher webHookPublisher;
+    private final WebHookSchema webHookSchema;
+    private final WebHookRegistrationManager webHookRegistrationManager;
 
-    public WebHookModuleGenerator(WebHookPublisher webHookPublisher)
+    @Autowired
+    public WebHookModuleGenerator(WebHookPublisher webHookPublisher, WebHookSchema webHookSchema,
+            WebHookRegistrationManager webHookRegistrationManager)
     {
         this.webHookPublisher = webHookPublisher;
+        this.webHookSchema = webHookSchema;
+        this.webHookRegistrationManager = webHookRegistrationManager;
     }
 
     @Override
@@ -39,9 +41,21 @@ public class WebHookModuleGenerator implements RemoteModuleGenerator
     }
 
     @Override
-    public Set<String> getDynamicModuleTypeDependencies()
+    public String getName()
     {
-        return emptySet();
+        return "Web Hook";
+    }
+
+    @Override
+    public String getDescription()
+    {
+        return "Registration for a web hook callback from an internal event";
+    }
+
+    @Override
+    public Schema getSchema()
+    {
+        return webHookSchema;
     }
 
     @Override
@@ -53,7 +67,7 @@ public class WebHookModuleGenerator implements RemoteModuleGenerator
     @Override
     public RemoteModule generate(final RemoteAppCreationContext ctx, Element element)
     {
-        final String eventIdentifier = element.attributeValue("event");
+        final String eventIdentifier = getWebHookId(element);
         final String url = element.attributeValue("url");
         webHookPublisher.register(ctx.getApplicationType(), eventIdentifier, url);
         return new ClosableRemoteModule()
@@ -72,13 +86,24 @@ public class WebHookModuleGenerator implements RemoteModuleGenerator
         };
     }
 
+    private String getWebHookId(Element element)
+    {
+        return element.attributeValue("event");
+    }
+
     @Override
     public void validate(Element element, String registrationUrl, String username) throws PluginParseException
     {
     }
 
     @Override
-    public void convertDescriptor(Element descriptorElement, Element pluginDescriptorRoot)
+    public void generatePluginDescriptor(Element descriptorElement, Element pluginDescriptorRoot)
     {
+    }
+
+    @Override
+    public void waitToLoad(Element element)
+    {
+        webHookRegistrationManager.waitForId(getWebHookId(element));
     }
 }

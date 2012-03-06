@@ -5,10 +5,11 @@ import com.atlassian.applinks.api.ApplicationType;
 import com.atlassian.applinks.spi.application.TypeId;
 import com.atlassian.applinks.spi.link.ApplicationLinkDetails;
 import com.atlassian.applinks.spi.link.MutatingApplicationLinkService;
-import com.atlassian.labs.remoteapps.PermissionManager;
+import com.atlassian.labs.remoteapps.loader.AggregateModuleDescriptorFactory;
 import com.atlassian.labs.remoteapps.modules.external.RemoteAppCreationContext;
 import com.atlassian.labs.remoteapps.modules.external.RemoteModule;
-import com.atlassian.labs.remoteapps.modules.external.RemoteModuleGenerator;
+import com.atlassian.labs.remoteapps.modules.external.Schema;
+import com.atlassian.labs.remoteapps.modules.external.WaitableRemoteModuleGenerator;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
@@ -23,27 +24,47 @@ import org.springframework.stereotype.Component;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.Map;
-import java.util.Set;
 
 import static com.atlassian.labs.remoteapps.util.Dom4jUtils.*;
-import static com.google.common.collect.Sets.newHashSet;
 import static java.util.Collections.emptyMap;
 
 /**
  * Generates application-type modules
  */
 @Component
-public class ApplicationTypeModuleGenerator implements RemoteModuleGenerator
+public class ApplicationTypeModuleGenerator implements WaitableRemoteModuleGenerator
 {
     private final MutatingApplicationLinkService mutatingApplicationLinkService;
     private final ApplicationTypeClassLoader applicationTypeClassLoader;
+    private final AggregateModuleDescriptorFactory aggregateModuleDescriptorFactory;
 
     @Autowired
-    public ApplicationTypeModuleGenerator(MutatingApplicationLinkService mutatingApplicationLinkService,
-                                          ApplicationTypeClassLoader applicationTypeClassLoader)
+    public ApplicationTypeModuleGenerator(
+            MutatingApplicationLinkService mutatingApplicationLinkService,
+            ApplicationTypeClassLoader applicationTypeClassLoader,
+            AggregateModuleDescriptorFactory aggregateModuleDescriptorFactory)
     {
         this.mutatingApplicationLinkService = mutatingApplicationLinkService;
         this.applicationTypeClassLoader = applicationTypeClassLoader;
+        this.aggregateModuleDescriptorFactory = aggregateModuleDescriptorFactory;
+    }
+
+    @Override
+    public Schema getSchema()
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public String getName()
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public String getDescription()
+    {
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -53,9 +74,9 @@ public class ApplicationTypeModuleGenerator implements RemoteModuleGenerator
     }
 
     @Override
-    public Set<String> getDynamicModuleTypeDependencies()
+    public void waitToLoad(Element element)
     {
-        return newHashSet("applinks-application-type");
+        aggregateModuleDescriptorFactory.waitForRequiredDescriptors("applinks-application-type");
     }
 
     @Override
@@ -75,7 +96,7 @@ public class ApplicationTypeModuleGenerator implements RemoteModuleGenerator
     }
 
     @Override
-    public void convertDescriptor(Element descriptorElement, Element pluginDescriptorRoot)
+    public void generatePluginDescriptor(Element descriptorElement, Element pluginDescriptorRoot)
     {
     }
 
@@ -137,14 +158,17 @@ public class ApplicationTypeModuleGenerator implements RemoteModuleGenerator
                                                          .getModuleDescriptorClass("applinks-application-type");
         try
         {
-            ModuleDescriptor descriptor = descClass.getConstructor(ModuleFactory.class).newInstance(new ModuleFactory()
-            {
-                @Override
-                public <T> T createModule(String s, ModuleDescriptor<T> tModuleDescriptor) throws PluginParseException
-                {
-                    return (T) applicationType;
-                }
-            });
+            ModuleDescriptor descriptor = descClass.getConstructor(ModuleFactory.class)
+                    .newInstance(
+                    new ModuleFactory()
+                    {
+                        @Override
+                        public <T> T createModule(String s,
+                                ModuleDescriptor<T> tModuleDescriptor) throws PluginParseException
+                        {
+                            return (T) applicationType;
+                        }
+                    });
             descriptor.init(new DelegatePlugin(ctx.getPlugin())
             {
                 @Override

@@ -1,8 +1,7 @@
 package com.atlassian.labs.remoteapps.util;
 
-import com.atlassian.plugin.ModuleDescriptor;
+import com.atlassian.labs.remoteapps.modules.external.SchemaDocumented;
 import com.atlassian.plugin.PluginParseException;
-import com.google.common.collect.Sets;
 import org.apache.commons.io.IOUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -20,78 +19,26 @@ import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.URI;
 import java.net.URL;
-import java.util.HashSet;
-import java.util.List;
 
 /**
  *
  */
 public class Dom4jUtils
 {
-    public static Element copyRequiredElements(Element source, Element dest, String... keys)
-    {
-        for (String name : keys)
-        {
-            HashSet<Element> elements = Sets.<Element>newHashSet(source.elements(name));
-            if (elements.isEmpty())
-            {
-                throw new PluginParseException("Element '" + name + "' is required on '" + source.getName() + "'");
-            }
-            for (Element e : elements)
-            {
-                dest.add(e.createCopy());
-            }
-        }
-        return dest;
-    }
-
-    public static Element addSchemaDocumentation(Element source, ModuleDescriptor descriptor)
+    public static Element addSchemaDocumentation(Element source, SchemaDocumented generator)
     {
         Element doc = source.addElement("xs:annotation").addElement("xs:documentation");
         Element name = doc.addElement("name");
-        if (descriptor.getName() != null)
+        if (generator.getName() != null)
         {
-            name.setText(descriptor.getName());
+            name.setText(generator.getName());
         }
         Element desc = doc.addElement("description");
-        if (descriptor.getDescription() != null)
+        if (generator.getDescription() != null)
         {
-            desc.setText(descriptor.getDescription());
+            desc.setText(generator.getDescription());
         }
         return doc;
-    }
-    public static Element copyOptionalElements(Element source, Element dest, String... keys)
-    {
-        for (String name : keys)
-        {
-            for (Element e : (List<Element>) source.elements(name))
-            {
-                dest.add(e.createCopy());
-            }
-        }
-        return dest;
-    }
-
-    public static Element copyRequiredAttributes(Element source, Element dest, String... keys)
-    {
-        for (String name : keys)
-        {
-            dest.addAttribute(name, getRequiredAttribute(source, name));
-        }
-        return dest;
-    }
-
-    public static Element copyOptionalAttributes(Element source, Element dest, String... keys)
-    {
-        for (String name : keys)
-        {
-            String value = getOptionalAttribute(source, name, null);
-            if (value != null)
-            {
-                dest.addAttribute(name, value);
-            }
-        }
-        return dest;
     }
 
     public static String getRequiredAttribute(Element e, String name)

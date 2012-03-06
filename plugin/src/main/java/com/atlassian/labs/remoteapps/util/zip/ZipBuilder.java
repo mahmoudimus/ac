@@ -1,6 +1,8 @@
 package com.atlassian.labs.remoteapps.util.zip;
 
 import org.apache.commons.io.IOUtils;
+import org.dom4j.Document;
+import org.dom4j.io.XMLWriter;
 
 import java.io.*;
 import java.util.zip.ZipEntry;
@@ -72,4 +74,10 @@ public class ZipBuilder
         return File.createTempFile(key + KEY_SEPARATOR, suffix);
     }
 
+    public void addFile(String path, Document document) throws IOException
+    {
+        StringWriter out = new StringWriter();
+        new XMLWriter(out).write(document);
+        addFile(path, out.toString());
+    }
 }

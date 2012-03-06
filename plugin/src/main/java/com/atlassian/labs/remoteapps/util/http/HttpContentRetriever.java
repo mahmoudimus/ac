@@ -8,11 +8,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
- * Created by IntelliJ IDEA.
- * User: mrdon
- * Date: 21/01/12
- * Time: 7:50 PM
- * To change this template use File | Settings | File Templates.
+ * Retrieves http content
  */
 public interface HttpContentRetriever
 {

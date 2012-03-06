@@ -11,11 +11,7 @@ import org.springframework.stereotype.Component;
 import static org.apache.commons.lang.Validate.notNull;
 
 /**
- * Created by IntelliJ IDEA.
- * User: mrdon
- * Date: 22/01/12
- * Time: 2:56 AM
- * To change this template use File | Settings | File Templates.
+ * Accesses an application link
  */
 @Component
 public class ApplicationLinkAccessor

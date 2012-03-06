@@ -1,7 +1,7 @@
 package com.atlassian.labs.remoteapps;
 
-import com.atlassian.labs.remoteapps.descriptor.external.RemoteModuleDescriptor;
 import com.atlassian.labs.remoteapps.installer.InstallationFailedException;
+import com.atlassian.labs.remoteapps.modules.external.RemoteModuleGenerator;
 import com.atlassian.labs.remoteapps.product.ProductAccessor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
@@ -83,11 +83,13 @@ public class DescriptorValidator
         }
     }
 
-    public void validate(String url, Element descriptorElement)
+    public void validate(String url, Document document)
     {
         SchemaFactory schemaFactory = SchemaFactory
                 .newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-        StreamSource schemaSource = new StreamSource(new StringReader(buildSchema(getSchemaUrl(), false)));
+        boolean useNamespace = document.getRootElement().getNamespaceURI().equals(getSchemaNamespace());
+        StreamSource schemaSource = new StreamSource(new StringReader(
+                buildSchema(getSchemaUrl(), useNamespace)));
         Schema schema;
         try
         {
@@ -101,8 +103,6 @@ public class DescriptorValidator
         Validator validator = schema.newValidator();
         try
         {
-            Document document = DocumentHelper.createDocument();
-            document.setRootElement(descriptorElement.createCopy()) ;
             DocumentSource source = new DocumentSource(document);
             source.setSystemId(url);
             validator.validate(source);
@@ -141,13 +141,13 @@ public class DescriptorValidator
         
         processIncludes(root.getDocument(), includedDocIds);
         Element modulesChoice = (Element) root.selectSingleNode("/xs:schema/xs:complexType[@name='RemoteAppType']/xs:choice");
-        for (final RemoteModuleDescriptor descriptor : this.moduleGeneratorManager.getDescriptors())
+        for (final RemoteModuleGenerator generator : this.moduleGeneratorManager.getAllValidatableGenerators())
         {
-            final String id = descriptor.getSchema().getId();
+            final String id = generator.getSchema().getId();
             if (!includedDocIds.contains(id))
             {
                 includedDocIds.add(id);
-                Document doc = descriptor.getSchema().getDocument();
+                Document doc = generator.getSchema().getDocument();
                 processIncludes(doc, includedDocIds);
                 for (Element child : (List<Element>)doc.getRootElement().elements())
                 {
@@ -155,10 +155,10 @@ public class DescriptorValidator
                 }
             }
             Element module = modulesChoice.addElement("xs:element")
-                    .addAttribute("name", descriptor.getModule().getType())
-                    .addAttribute("type", descriptor.getSchema().getComplexType())
-                    .addAttribute("maxOccurs", descriptor.getSchema().getMaxOccurs());
-            addSchemaDocumentation(module, descriptor);
+                    .addAttribute("name", generator.getType())
+                    .addAttribute("type", generator.getSchema().getComplexType())
+                    .addAttribute("maxOccurs", generator.getSchema().getMaxOccurs());
+            addSchemaDocumentation(module, generator);
         }
 
         return printDocument(root.getDocument());
