@@ -94,7 +94,6 @@
                                 <context.jira.path>/</context.jira.path>
                                 <testedProductClass>com.atlassian.jira.pageobjects.JiraTestedProduct</testedProductClass>
                                 <xvfb.enable>${xvfb.enable}</xvfb.enable>
-                                <webdriver.browser>${webdriver.browser}</webdriver.browser>
                             </systemPropertyVariables>
                         </configuration>
                     </plugin>
@@ -123,9 +122,8 @@
                                 <baseurl.confluence>${remoteapps.targetBaseUrl}</baseurl.confluence>
                                 <http.confluence.port>443</http.confluence.port>
                                 <context.confluence.path>/wiki</context.confluence.path>
-                                <testedProductClass>com.atlassian.webdriver.confluence.ConfluenceTestedProduct</testedProductClass>
+                                <testedProductClass>com.atlassian.confluence.pageobjects.ConfluenceTestedProduct</testedProductClass>
                                 <xvfb.enable>${xvfb.enable}</xvfb.enable>
-                                <webdriver.browser>${webdriver.browser}</webdriver.browser>
                             </systemPropertyVariables>
                         </configuration>
                     </plugin>
