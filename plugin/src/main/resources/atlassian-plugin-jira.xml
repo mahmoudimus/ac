@@ -9,73 +9,29 @@
     <web-section key="remoteapps.general" location="general_dropdown_linkId">
     </web-section>
 
-    <web-item key="remoteapps.all.link" section="general_dropdown_linkId/remoteapps.general" weight="1">
-        <label>All Remote Apps</label>
-        <link>/secure/ViewProfile.jspa#selectedTab=com.atlassian.labs.speakeasy-plugin:jira5compat-speakeasy-plugins</link>
-    </web-item>
+    <!-- remote module generators -->
 
-    <remote-module key="jira-profile-page" name="User Profile Page"
-                   class="com.atlassian.labs.remoteapps.modules.page.jira.JiraProfileTabModuleGenerator">
-        <description>A user profile page decorated as a user profile tab</description>
-        <schema id="page.xsd" path="/xsd/page.xsd" type="PageType"/>
-    </remote-module>
+    <component key="jira-issue-tab-page" class="com.atlassian.labs.remoteapps.modules.panel.jira.ViewIssuePanelModuleGenerator" />
+    <component key="jira-profile-page" class="com.atlassian.labs.remoteapps.modules.page.jira.JiraProfileTabModuleGenerator" />
 
-    <remote-module key="jira-issue-tab-page" name="Issue Tab Page"
-                   class="com.atlassian.labs.remoteapps.modules.panel.jira.ViewIssuePanelModuleGenerator">
-        <description>A remote page decorated as a web panel on the view issue page.</description>
-        <schema id="page.xsd" path="/xsd/page.xsd" type="PageType"/>
-    </remote-module>
-
-    <remote-module key="jira-webhooks" name="Web Hook" class="com.atlassian.labs.remoteapps.modules.webhook.WebHookModuleGenerator">
-        <description>Registration for a web hook callback from an internal event</description>
-        <schema id="webhook.xsd" path="/xsd/webhook-jira.xsd" type="WebHookType"/>
-    </remote-module>
-
-    <api-scope key="read_users_and_groups"
+    <!-- api scopes -->
+    <component key="jira-read_users_and_groups"
                class="com.atlassian.labs.remoteapps.product.jira.JiraReadUsersAndGroupsScope"
-               name="Read Users and Groups">
-        <description>
-            View users and groups
-        </description>
-    </api-scope>
-
-    <api-scope key="browse_projects"
+               />
+    <component key="jira-browse_projects"
                class="com.atlassian.labs.remoteapps.product.jira.BrowseProjectsScope"
-               name="Browse Projects">
-        <description>
-            Permission to browse projects, search issues, and view individual issues (except issues that have
-            been restricted via Issue Security).
-        </description>
-    </api-scope>
+               name="Browse Projects"
+                />
+    <component key="jira-create_issues"
+               class="com.atlassian.labs.remoteapps.product.jira.JiraCreateIssuesScope" />
+    <component key="jira-edit_issues"
+               class="com.atlassian.labs.remoteapps.product.jira.JiraEditIssuesScope" />
+    <component key="jira-resolve_issues"
+               class="com.atlassian.labs.remoteapps.product.jira.JiraResolveIssuesScope" />
 
-    <api-scope key="create_issues"
-               class="com.atlassian.labs.remoteapps.product.jira.JiraCreateIssuesScope"
-               name="Create Issues">
-        <description>
-            Permission to create issues in the project. (Note that the Create Attachments permission is required in
-            order to create
-            attachments.) Includes the ability to create sub-tasks (if sub-tasks are enabled).
-        </description>
-    </api-scope>
+    <component key="jiraWebHookProvider" class="com.atlassian.labs.remoteapps.product.jira.JiraWebHookProvider" />
 
-    <api-scope key="edit_issues"
-               class="com.atlassian.labs.remoteapps.product.jira.JiraEditIssuesScope"
-               name="Edit Issues">
-        <description>
-            Permission to edit issues (excluding the 'Due Date' field — see the Schedule Issues permission). Includes
-            the ability to convert issues to sub-tasks and vice versa (if sub-tasks are enabled). Note that the Delete
-            Issue permission is required in order to delete issues.
-        </description>
-    </api-scope>
-
-    <api-scope key="resolve_issues"
-               class="com.atlassian.labs.remoteapps.product.jira.JiraResolveIssuesScope"
-               name="Resolve Issues">
-        <description>
-            Permission to resolve and reopen issues. This also includes the ability to set the 'Fix For version' field
-            for issues. Also see the Close Issues permission.
-        </description>
-    </api-scope>
+    <component key="jiraEventSerializerFactory" class="com.atlassian.labs.remoteapps.product.jira.webhook.JiraEventSerializerFactory" />
 
     <rest key="rest-jira" path="/remoteapps" version="1">
         <dispatcher>REQUEST</dispatcher>

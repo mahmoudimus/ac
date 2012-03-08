@@ -14,6 +14,7 @@ var RA = (function() {
             }
         });
         rpc.init();
+        RA.resize();
     };
 
     RA.resize = function(width, height) {

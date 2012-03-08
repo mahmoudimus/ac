@@ -26,7 +26,6 @@ import java.util.Set;
 import static com.atlassian.labs.remoteapps.util.Dom4jUtils.getOptionalAttribute;
 import static com.atlassian.labs.remoteapps.util.Dom4jUtils.getRequiredAttribute;
 import static com.google.common.collect.Maps.newHashMap;
-import static java.util.Collections.emptySet;
 
 /**
  * Parent for all macro types
@@ -52,12 +51,6 @@ public abstract class AbstractMacroModuleGenerator implements RemoteModuleGenera
         this.applicationLinkOperationsFactory = applicationLinkOperationsFactory;
         this.systemInformationService = systemInformationService;
         this.pluginAccessor = pluginAccessor;
-    }
-
-    @Override
-    public Set<String> getDynamicModuleTypeDependencies()
-    {
-        return emptySet();
     }
 
     @Override
@@ -124,7 +117,7 @@ public abstract class AbstractMacroModuleGenerator implements RemoteModuleGenera
     }
 
     @Override
-    public void convertDescriptor(Element descriptorElement, Element pluginDescriptorRoot)
+    public void generatePluginDescriptor(Element descriptorElement, Element pluginDescriptorRoot)
     {
     }
 

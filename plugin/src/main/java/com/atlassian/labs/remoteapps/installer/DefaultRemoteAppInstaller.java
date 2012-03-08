@@ -6,11 +6,12 @@ import com.atlassian.labs.remoteapps.DescriptorValidator;
 import com.atlassian.labs.remoteapps.ModuleGeneratorManager;
 import com.atlassian.labs.remoteapps.PermissionDeniedException;
 import com.atlassian.labs.remoteapps.event.RemoteAppInstalledEvent;
+import com.atlassian.labs.remoteapps.event.RemoteAppStartFailedEvent;
 import com.atlassian.labs.remoteapps.event.RemoteAppStartedEvent;
 import com.atlassian.labs.remoteapps.event.RemoteAppUninstalledEvent;
+import com.atlassian.labs.remoteapps.loader.external.DescriptorGenerator;
 import com.atlassian.labs.remoteapps.modules.external.RemoteModuleGenerator;
 import com.atlassian.labs.remoteapps.modules.page.jira.JiraProfileTabModuleGenerator;
-import com.atlassian.labs.remoteapps.modules.permissions.scope.ApiScope;
 import com.atlassian.labs.remoteapps.util.zip.ZipBuilder;
 import com.atlassian.labs.remoteapps.util.zip.ZipHandler;
 import com.atlassian.oauth.Consumer;
@@ -21,8 +22,8 @@ import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.net.*;
 import com.google.common.collect.ImmutableMap;
 import org.dom4j.Document;
+import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
-import org.dom4j.io.XMLWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -201,26 +202,38 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
 
                             /*!
                             Finally, the descriptor XML is transformed into an Atlassian OSGi
-                            plugin artifact and installed into the host application.
+                            plugin descriptor file that contains general metadata about the app. The
+                             contents of the plugin descriptor are derived from the remote app
+                             descriptor.
                             */
-                            Document pluginXml = transformDescriptorToPluginXml(username,
+                            Document pluginXml = generatePluginDescriptor(username,
                                     registrationUrl, document);
 
 
                             /*!
                             To create the final jar that will be installed into the plugin system,
-                            The transformed plugin XML will be combined with an internationalization
-                            properties file containing keys extracted out of the registration XML.
+                            several generated files are combined into one plugin artifact.
+                            This artifact will contain:
+                            1. atlassian-remote-app.xml - The remote app descriptor
+                            2. atlassian-plugin.xml - Metadata about the app used to display the app
+                               in the plugin system.  The contents of this file are derived from the
+                               app descriptor.
+                            3. META-INF/spring/remoteapps-loader.xml - A Spring XML configuration file
+                               that references the loader service from the remote apps plugin, used
+                               to kick off the descriptor generation step before the app-plugin is
+                               finished loading.
+                            4. i18n.properties - An internationalization properties file containing
+                               keys extracted out of the app descriptor XML.
                              */
                             JarPluginArtifact jar = createJarPluginArtifact(pluginKey,
-                                    registrationUri.getHost(), pluginXml, i18nMessages);
+                                    registrationUri.getHost(), pluginXml, document, i18nMessages);
 
                             /*!
                             The registration process should only return once the Remote App has
                             successfully installed and started.
                             */
                             final CountDownLatch latch = new CountDownLatch(1);
-                            Object startListener = new StartedListener(pluginKey, latch);
+                            StartedListener startListener = new StartedListener(pluginKey, latch);
                             eventPublisher.register(startListener);
 
 
@@ -228,10 +241,16 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
                             {
                                 pluginController.installPlugins(jar);
 
-                                if (!latch.await(10, TimeUnit.SECONDS))
+                                Exception cause = startListener.getFailedCause();
+                                if (!latch.await(10, TimeUnit.SECONDS)
+                                        || cause != null)
                                 {
                                     log.info("Remote app '{}' was not started successfully and is "
-                                            + "disabled");
+                                            + "disabled due to: {}", pluginKey,
+                                            cause);
+                                    throw new InstallationFailedException("Error starting app: "
+                                            + cause.getMessage(),
+                                            cause);
                                 }
                             }
                             catch (InterruptedException e)
@@ -290,7 +309,7 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
     }
 
     private JarPluginArtifact createJarPluginArtifact(final String pluginKey,
-            String host, final Document pluginXml, final Properties props)
+            String host, final Document pluginXml, final Document appXml, final Properties props)
     {
         return new JarPluginArtifact(
                 ZipBuilder.buildZip("install-" + host, new ZipHandler()
@@ -299,10 +318,9 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
                     public void build(ZipBuilder builder) throws IOException
                     {
                         attachResources(pluginKey, props, pluginXml, builder);
-                        StringWriter out = new StringWriter();
-                        new XMLWriter(out).write(pluginXml);
-                        String descriptorXml = out.toString();
-                        builder.addFile("atlassian-plugin.xml", descriptorXml);
+                        builder.addFile("atlassian-plugin.xml", pluginXml);
+                        builder.addFile("META-INF/spring/remoteapps-loader.xml", getClass().getResourceAsStream("remoteapps-loader.xml"));
+                        builder.addFile("atlassian-remote-app.xml", appXml);
                     }
                 }));
     }
@@ -331,14 +349,12 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
                 writer.toString());
     }
 
-    private Document transformDescriptorToPluginXml(String username,
+    private Document generatePluginDescriptor(String username,
             String registrationUrl, Document doc)
     {
         Element oldRoot = doc.getRootElement();
 
-        final Element plugin = doc.getRootElement().addElement(
-                "atlassian-plugin");
-        plugin.detach();
+        final Element plugin = DocumentHelper.createElement("atlassian-plugin");
         plugin.addAttribute("plugins-version", "2");
         plugin.addAttribute("key", getRequiredAttribute(oldRoot, "key"));
         plugin.addAttribute("name", getRequiredAttribute(oldRoot, "name"));
@@ -354,7 +370,7 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
                             Element element,
                             RemoteModuleGenerator generator)
                     {
-                        generator.convertDescriptor(
+                        generator.generatePluginDescriptor(
                                 element,
                                 plugin);
                     }
@@ -370,22 +386,24 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
                 .setText(
                         JiraProfileTabModuleGenerator.class.getPackage().getName() +
                                 ";resolution:=optional," +
-                                ApiScope.class.getPackage().getName());
+                                DescriptorGenerator.class.getPackage().getName());
         instructions.addElement("Remote-App").
                 setText("installer;user=\"" + username + "\";date=\""
                         + System.currentTimeMillis() + "\"" +
                         ";registration-url=\"" + registrationUrl + "\"");
 
-        plugin.add(oldRoot.detach());
-        doc.setRootElement(plugin);
+        Document appDoc = DocumentHelper.createDocument();
+        appDoc.setRootElement(plugin);
 
-        return doc;
+        return appDoc;
     }
 
     public static class StartedListener
     {
         private final String pluginKey;
         private final CountDownLatch latch;
+
+        private volatile Exception cause;
 
         public StartedListener(String pluginKey, CountDownLatch latch)
         {
@@ -400,6 +418,20 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
             {
                 latch.countDown();
             }
+        }
+
+        @EventListener
+        public void onAppStartFailed(RemoteAppStartFailedEvent event)
+        {
+            if (event.getRemoteAppKey().equals(pluginKey))
+            {
+                cause = event.getCause();
+                latch.countDown();
+            }
+        }
+        public Exception getFailedCause()
+        {
+            return cause;
         }
     }
 

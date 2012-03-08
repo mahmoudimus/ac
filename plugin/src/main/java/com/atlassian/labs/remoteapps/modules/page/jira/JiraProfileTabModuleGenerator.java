@@ -2,20 +2,20 @@ package com.atlassian.labs.remoteapps.modules.page.jira;
 
 import com.atlassian.labs.jira4compat.CompatViewProfilePanelModuleDescriptor;
 import com.atlassian.labs.jira4compat.spi.CompatViewProfilePanelFactory;
+import com.atlassian.labs.remoteapps.loader.AggregateModuleDescriptorFactory;
 import com.atlassian.labs.remoteapps.modules.ApplicationLinkOperationsFactory;
 import com.atlassian.labs.remoteapps.modules.IFrameParams;
 import com.atlassian.labs.remoteapps.modules.IFrameRenderer;
-import com.atlassian.labs.remoteapps.modules.external.RemoteAppCreationContext;
-import com.atlassian.labs.remoteapps.modules.external.RemoteModule;
-import com.atlassian.labs.remoteapps.modules.external.RemoteModuleGenerator;
+import com.atlassian.labs.remoteapps.modules.external.*;
 import com.atlassian.labs.remoteapps.modules.page.IFrameContext;
 import com.atlassian.plugin.ModuleDescriptor;
+import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.module.ModuleFactory;
+import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.google.common.collect.ImmutableSet;
 import org.dom4j.Element;
 
-import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
@@ -26,21 +26,27 @@ import static java.util.Collections.emptyMap;
 /**
  *
  */
-public class JiraProfileTabModuleGenerator implements RemoteModuleGenerator
+public class JiraProfileTabModuleGenerator implements WaitableRemoteModuleGenerator
 {
     private final ApplicationLinkOperationsFactory applicationLinkOperationsFactory;
     private final CompatViewProfilePanelFactory compatViewProfilePanelFactory;
+    private final AggregateModuleDescriptorFactory moduleDescriptorFactory;
     private final IFrameRenderer iFrameRenderer;
+    private final Plugin plugin;
     private Map<String, Object> iframeParams = newHashMap();
 
-    public JiraProfileTabModuleGenerator(CompatViewProfilePanelFactory compatViewProfilePanelFactory,
-                                         ApplicationLinkOperationsFactory applicationLinkOperationsFactory,
-                                         IFrameRenderer iFrameRenderer
-    )
+    public JiraProfileTabModuleGenerator(
+            CompatViewProfilePanelFactory compatViewProfilePanelFactory,
+            ApplicationLinkOperationsFactory applicationLinkOperationsFactory,
+            IFrameRenderer iFrameRenderer,
+            AggregateModuleDescriptorFactory moduleDescriptorFactory,
+            PluginRetrievalService pluginRetrievalService)
     {
         this.applicationLinkOperationsFactory = applicationLinkOperationsFactory;
         this.compatViewProfilePanelFactory = compatViewProfilePanelFactory;
         this.iFrameRenderer = iFrameRenderer;
+        this.moduleDescriptorFactory = moduleDescriptorFactory;
+        this.plugin = pluginRetrievalService.getPlugin();
     }
 
     @Override
@@ -50,9 +56,30 @@ public class JiraProfileTabModuleGenerator implements RemoteModuleGenerator
     }
 
     @Override
-    public Set<String> getDynamicModuleTypeDependencies()
+    public String getName()
     {
-        return Collections.singleton("compat-view-profile-panel");
+        return "User Profile Page";
+    }
+
+    @Override
+    public String getDescription()
+    {
+        return "A user profile page decorated as a user profile tab";
+    }
+
+    @Override
+    public Schema getSchema()
+    {
+        return new StaticSchema(plugin,
+                "page.xsd",
+                "/xsd/page.xsd",
+                "PageType");
+    }
+
+    @Override
+    public void waitToLoad(Element element)
+    {
+        moduleDescriptorFactory.waitForRequiredDescriptors("compat-view-profile-panel");
     }
 
     @Override
@@ -85,7 +112,7 @@ public class JiraProfileTabModuleGenerator implements RemoteModuleGenerator
     }
 
     @Override
-    public void convertDescriptor(Element descriptorElement, Element pluginDescriptorRoot)
+    public void generatePluginDescriptor(Element descriptorElement, Element pluginDescriptorRoot)
     {
     }
 

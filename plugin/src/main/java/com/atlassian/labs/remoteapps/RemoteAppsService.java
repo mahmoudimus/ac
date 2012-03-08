@@ -3,11 +3,7 @@ package com.atlassian.labs.remoteapps;
 import com.atlassian.labs.remoteapps.installer.InstallationFailedException;
 
 /**
- * Created by IntelliJ IDEA.
- * User: mrdon
- * Date: 12/01/12
- * Time: 12:02 AM
- * To change this template use File | Settings | File Templates.
+ * Main remote apps functions
  */
 public interface RemoteAppsService
 {

@@ -3,16 +3,20 @@ package com.atlassian.labs.remoteapps.modules.applinks;
 import com.atlassian.applinks.api.EntityType;
 import com.atlassian.applinks.spi.application.NonAppLinksApplicationType;
 import com.atlassian.applinks.spi.application.TypeId;
-import com.atlassian.labs.remoteapps.modules.external.RemoteAppCreationContext;
-import com.atlassian.labs.remoteapps.modules.external.RemoteModule;
-import com.atlassian.labs.remoteapps.modules.external.RemoteModuleGenerator;
+import com.atlassian.labs.remoteapps.loader.AggregateModuleDescriptorFactory;
+import com.atlassian.labs.remoteapps.modules.external.Schema;
+import com.atlassian.labs.remoteapps.modules.external.*;
+import com.atlassian.labs.remoteapps.modules.external.StaticSchema;
 import com.atlassian.plugin.ModuleDescriptor;
+import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.module.ModuleFactory;
+import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.google.common.collect.ImmutableSet;
 import org.dom4j.Element;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.InvocationTargetException;
@@ -27,8 +31,20 @@ import static org.objectweb.asm.Opcodes.*;
 /**
  * Creates applink entity types
  */
-public class EntityTypeModuleGenerator implements RemoteModuleGenerator
+@Component
+public class EntityTypeModuleGenerator implements WaitableRemoteModuleGenerator
 {
+    private final Plugin plugin;
+    private final AggregateModuleDescriptorFactory aggregateModuleDescriptorFactory;
+
+    @Autowired
+    public EntityTypeModuleGenerator(PluginRetrievalService pluginRetrievalService,
+            AggregateModuleDescriptorFactory aggregateModuleDescriptorFactory)
+    {
+        this.aggregateModuleDescriptorFactory = aggregateModuleDescriptorFactory;
+        this.plugin = pluginRetrievalService.getPlugin();
+    }
+
     @Override
     public String getType()
     {
@@ -36,9 +52,32 @@ public class EntityTypeModuleGenerator implements RemoteModuleGenerator
     }
 
     @Override
-    public Set<String> getDynamicModuleTypeDependencies()
+    public String getName()
     {
-        return ImmutableSet.of("applinks-entity-type");
+        return "Entity Type";
+    }
+
+    @Override
+    public String getDescription()
+    {
+        return "An application links entity type used for storing the relationship with a local " +
+                "application entity like" +
+                "            a JIRA project or Confluence space with a similar entity in the Remote App";
+    }
+
+    @Override
+    public Schema getSchema()
+    {
+        return new StaticSchema(plugin,
+                "entity.xsd",
+                "/xsd/entity.xsd",
+                "EntityTypeType");
+    }
+
+    @Override
+    public void waitToLoad(Element element)
+    {
+        aggregateModuleDescriptorFactory.waitForRequiredDescriptors("applinks-entity-type");
     }
 
     @Override
@@ -69,7 +108,7 @@ public class EntityTypeModuleGenerator implements RemoteModuleGenerator
     }
 
     @Override
-    public void convertDescriptor(Element descriptorElement, Element pluginDescriptorRoot)
+    public void generatePluginDescriptor(Element descriptorElement, Element pluginDescriptorRoot)
     {
     }
 

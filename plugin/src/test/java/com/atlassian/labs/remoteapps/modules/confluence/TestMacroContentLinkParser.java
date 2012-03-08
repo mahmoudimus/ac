@@ -9,7 +9,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import sun.security.pkcs11.P11Util;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
@@ -17,7 +16,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
-import java.security.PrivateKey;
 import java.util.Map;
 import java.util.UUID;
 

@@ -48,4 +48,22 @@ public class ReadContentScope extends ConfluenceScope
                 "getSpacesContainingContentWithLabel"
         ));
     }
+
+    @Override
+    public String getKey()
+    {
+        return "read_content";
+    }
+
+    @Override
+    public String getName()
+    {
+        return "Read Content";
+    }
+
+    @Override
+    public String getDescription()
+    {
+        return "Read spaces, blogs, and pages and associated metadata";
+    }
 }

@@ -1,12 +1,13 @@
 package com.atlassian.labs.remoteapps;
 
-import com.atlassian.labs.remoteapps.descriptor.external.RemoteModuleDescriptor;
 import com.atlassian.labs.remoteapps.installer.InstallationFailedException;
+import com.atlassian.labs.remoteapps.modules.external.RemoteModuleGenerator;
 import com.atlassian.labs.remoteapps.product.ProductAccessor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.sal.api.ApplicationProperties;
 import org.dom4j.*;
+import org.dom4j.io.DocumentSource;
 import org.dom4j.io.SAXReader;
 import org.dom4j.tree.DefaultElement;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,12 @@ import org.springframework.stereotype.Component;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import javax.xml.XMLConstants;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import javax.xml.validation.Validator;
+import java.io.IOException;
 import java.io.StringReader;
 import java.net.URL;
 import java.util.*;
@@ -53,7 +60,8 @@ public class DescriptorValidator
             reader.setProperty("http://java.sun.com/xml/jaxp/properties/schemaLanguage",
                     "http://www.w3.org/2001/XMLSchema");
             boolean useNamespace = descriptorXml.contains(getSchemaNamespace());
-            final InputSource schemaSource = new InputSource(new StringReader(buildSchema(useNamespace)));
+            final InputSource schemaSource = new InputSource(new StringReader(
+                    buildSchema(getSchemaUrl(), useNamespace)));
             schemaSource.setSystemId(getSchemaUrl().toString());
             reader.setProperty("http://java.sun.com/xml/jaxp/properties/schemaSource", schemaSource);
 
@@ -75,6 +83,40 @@ public class DescriptorValidator
         }
     }
 
+    public void validate(String url, Document document)
+    {
+        SchemaFactory schemaFactory = SchemaFactory
+                .newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+        boolean useNamespace = document.getRootElement().getNamespaceURI().equals(getSchemaNamespace());
+        StreamSource schemaSource = new StreamSource(new StringReader(
+                buildSchema(getSchemaUrl(), useNamespace)));
+        Schema schema;
+        try
+        {
+            schema = schemaFactory.newSchema(schemaSource);
+        }
+        catch (SAXException e)
+        {
+            throw new RuntimeException("Couldn't parse built schema", e);
+        }
+        
+        Validator validator = schema.newValidator();
+        try
+        {
+            DocumentSource source = new DocumentSource(document);
+            source.setSystemId(url);
+            validator.validate(source);
+        }
+        catch (SAXException e)
+        {
+            throw new InstallationFailedException("Unable to parse the descriptor: " + e.getMessage(), e);
+        }
+        catch (IOException e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
+    
     private URL getSchemaUrl()
     {
         return plugin.getResource("/xsd/remote-app.xsd");
@@ -83,13 +125,13 @@ public class DescriptorValidator
 
     public String getSchema()
     {
-        return buildSchema(false);
+        return buildSchema(getSchemaUrl(), false);
     }
 
-    private String buildSchema(boolean usesNamespace)
+    private String buildSchema(URL schemaUrl, boolean usesNamespace)
     {
         Set<String> includedDocIds = newHashSet();
-        Element root = parseDocument(getSchemaUrl()).getRootElement();
+        Element root = parseDocument(schemaUrl).getRootElement();
         final String ns = getSchemaNamespace();
         if (usesNamespace)
         {
@@ -99,13 +141,13 @@ public class DescriptorValidator
         
         processIncludes(root.getDocument(), includedDocIds);
         Element modulesChoice = (Element) root.selectSingleNode("/xs:schema/xs:complexType[@name='RemoteAppType']/xs:choice");
-        for (final RemoteModuleDescriptor descriptor : this.moduleGeneratorManager.getDescriptors())
+        for (final RemoteModuleGenerator generator : this.moduleGeneratorManager.getAllValidatableGenerators())
         {
-            final String id = descriptor.getSchema().getId();
+            final String id = generator.getSchema().getId();
             if (!includedDocIds.contains(id))
             {
                 includedDocIds.add(id);
-                Document doc = descriptor.getSchema().getDocument();
+                Document doc = generator.getSchema().getDocument();
                 processIncludes(doc, includedDocIds);
                 for (Element child : (List<Element>)doc.getRootElement().elements())
                 {
@@ -113,10 +155,10 @@ public class DescriptorValidator
                 }
             }
             Element module = modulesChoice.addElement("xs:element")
-                    .addAttribute("name", descriptor.getModule().getType())
-                    .addAttribute("type", descriptor.getSchema().getComplexType())
-                    .addAttribute("maxOccurs", descriptor.getSchema().getMaxOccurs());
-            addSchemaDocumentation(module, descriptor);
+                    .addAttribute("name", generator.getType())
+                    .addAttribute("type", generator.getSchema().getComplexType())
+                    .addAttribute("maxOccurs", generator.getSchema().getMaxOccurs());
+            addSchemaDocumentation(module, generator);
         }
 
         return printDocument(root.getDocument());

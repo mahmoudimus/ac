@@ -56,4 +56,6 @@ public class ConfluenceGeneralPage implements GeneralPage
         driver.findElement(By.linkText(linkText)).click();
         return pageBinder.bind(RemoteAppTestPage.class, pageKey);
     }
+
+
 }

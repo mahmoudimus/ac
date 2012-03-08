@@ -1,15 +1,7 @@
 <application key="refapp">
     <component key="refappProductAccessor" class="com.atlassian.labs.remoteapps.product.refapp.RefappProductAccessor" />
 
-    <remote-module key="refapp-profile-page" name="User Profile Page" class="com.atlassian.labs.remoteapps.modules.page.ProfilePageModuleGenerator">
-        <description>A user profile page decorated as normal page in the user profile area</description>
-        <schema id="page.xsd" path="/xsd/page.xsd" type="PageType" />
-    </remote-module>
-
-    <remote-module key="refapp-webhooks" name="Web Hook" class="com.atlassian.labs.remoteapps.modules.webhook.WebHookModuleGenerator">
-        <description>Registration for a web hook callback from an internal event</description>
-        <schema id="webhook.xsd" path="/xsd/webhook-refapp.xsd" type="WebHookType" />
-    </remote-module>
+    <component key="refapp-profile-page" class="com.atlassian.labs.remoteapps.modules.page.ProfilePageModuleGenerator" />
 
     <rest key="rest-refapp" path="/remoteapps" version="1">
         <dispatcher>REQUEST</dispatcher>

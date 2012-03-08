@@ -1,6 +1,8 @@
 package com.atlassian.labs.remoteapps.integration.speakeasy;
 
 import com.atlassian.event.api.EventListener;
+import com.atlassian.labs.remoteapps.event.RemoteAppEvent;
+import com.atlassian.labs.remoteapps.event.RemoteAppStartFailedEvent;
 import com.atlassian.labs.remoteapps.event.RemoteAppStartedEvent;
 import com.atlassian.labs.remoteapps.event.RemoteAppStoppedEvent;
 import com.atlassian.labs.remoteapps.util.BundleUtil;
@@ -36,7 +38,19 @@ public class SpeakeasyEventListener
     }
 
     @EventListener
+    public void onAppStartFailed(RemoteAppStartFailedEvent event)
+    {
+        makeAppVisibleInSpeakeasy(event);
+    }
+
+    @EventListener
     public void onAppStarted(RemoteAppStartedEvent event)
+    {
+        makeAppVisibleInSpeakeasy(event);
+
+    }
+
+    private void makeAppVisibleInSpeakeasy(RemoteAppEvent event)
     {
         // ensure the app is visible by speakeasy
         String remoteAppKey = event.getRemoteAppKey();
@@ -53,7 +67,7 @@ public class SpeakeasyEventListener
             speakeasyBackendService.addGlobalExtension(remoteAppKey);
         }
     }
-    
+
     @EventListener
     public void onAppStopped(RemoteAppStoppedEvent event)
     {

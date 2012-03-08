@@ -14,4 +14,22 @@ public class ModifyUsersScope extends ConfluenceScope
                 // TODO: Additional methods could be added here in future, once Remote Apps are not able to be installed by random Joe Bloggs Users
         ));
     }
+
+    @Override
+    public String getKey()
+    {
+        return "modify_users";
+    }
+
+    @Override
+    public String getName()
+    {
+        return "Modify Users";
+    }
+
+    @Override
+    public String getDescription()
+    {
+        return "Change users' profile pictures";
+    }
 }

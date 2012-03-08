@@ -85,7 +85,7 @@ public class WebHookPublisher implements DisposableBean
                 }
                 else
                 {
-                    log.warn("Primary link for '" + registration.getApplicationType().getI18nKey() + "' not found");
+                    log.warn("Primary link for '" + registration.getApplicationType().getI18nKey() + "' not found when dispatching " + eventIdentifier);
                 }
             }
         }

@@ -5,49 +5,6 @@
         <vendor name="${project.organization.name}" url="${project.organization.url}" />
     </plugin-info>
 
-    <remote-module key="general-page" name="General Page" class="com.atlassian.labs.remoteapps.modules.page.GeneralPageModuleGenerator">
-        <description>A non-admin general page decorated by the application, with a link in a globally-accessible place</description>
-        <schema id="page.xsd" path="/xsd/page.xsd" type="PageType"/>
-    </remote-module>
-
-    <remote-module key="admin-page" name="Administration Page" class="com.atlassian.labs.remoteapps.modules.page.AdminPageModuleGenerator">
-        <description>An admin page decorated in the admin section, with a link in the admin menu</description>
-        <schema id="page.xsd" path="/xsd/page.xsd" type="PageType"/>
-    </remote-module>
-
-    <remote-module key="entity-type" name="Entity Type" class="com.atlassian.labs.remoteapps.modules.applinks.EntityTypeModuleGenerator">
-        <description>
-            An application links entity type used for storing the relationship with a local application entity like
-            a JIRA project or Confluence space with a similar entity in the Remote App
-        </description>
-        <schema id="entity.xsd" path="/xsd/entity.xsd" type="EntityTypeType"/>
-    </remote-module>
-
-    <remote-module key="oauth" name="OAuth" class="com.atlassian.labs.remoteapps.modules.oauth.OauthModuleGenerator">
-        <description>
-            Creates an outgoing oauth link to allow the host application to call the Remote App in an authenticated manner
-        </description>
-        <schema id="oauth.xsd" path="/xsd/oauth.xsd" type="OauthType" maxOccurs="1"/>
-    </remote-module>
-
-    <remote-module key="permissions" name="Permissions" class="com.atlassian.labs.remoteapps.modules.permissions.PermissionsModuleGenerator">
-        <description>
-            Defines API scopes for incoming authenticated requests
-        </description>
-        <schema id="permissions.xsd" path="/xsd/permissions.xsd" type="PermissionsType" maxOccurs="1"
-                class="com.atlassian.labs.remoteapps.modules.permissions.scope.ApiScopeSchema"/>
-    </remote-module>
-
-    <remote-module key="description" name="Description" class="com.atlassian.labs.remoteapps.modules.plugin.DescriptorModuleGenerator">
-        <description>Defines the Remote App description</description>
-        <schema id="description.xsd" path="/xsd/description.xsd" type="DescriptionType" maxOccurs="1"/>
-    </remote-module>
-
-    <remote-module key="vendor" name="Vendor" class="com.atlassian.labs.remoteapps.modules.plugin.VendorModuleGenerator">
-        <description>Defines the remote app vendor information</description>
-        <schema id="vendor.xsd" path="/xsd/vendor.xsd" type="VendorType" maxOccurs="1"/>
-    </remote-module>
-
     <servlet-filter key="fixAuthenticateHeader" class="com.atlassian.labs.remoteapps.installer.FixAuthenticateHeaderFilter"
             location="after-encoding">
         <url-pattern>/rest/remoteapps/*</url-pattern>
@@ -66,8 +23,6 @@
             location="after-encoding">
         <url-pattern>/*</url-pattern>
     </servlet-filter>
-
-    <module-type key="remote-app" class="com.atlassian.labs.remoteapps.descriptor.RemoteAppModuleDescriptor" />
 
     <web-resource key="xdm">
         <context>remoteapps-iframe</context>
@@ -88,13 +43,15 @@
         </transformation>
     </web-resource>
 
-    <web-resource-transformer key="baseUrlTransformer" class="com.atlassian.labs.remoteapps.descriptor.BaseUrlTransformer"/>
+    <web-resource-transformer key="baseUrlTransformer" class="com.atlassian.labs.remoteapps.integration.smoketest.BaseUrlTransformer"/>
 
     <component key="httpContentRetriever" class="com.atlassian.labs.remoteapps.util.http.CachingHttpContentRetriever"
                public="true" interface="com.atlassian.labs.remoteapps.util.http.HttpContentRetriever" />
 
-    <component key="startableForPlugins" class="com.atlassian.labs.remoteapps.descriptor.StartableForPlugins" public="true"
+    <component key="startableForPlugins" class="com.atlassian.labs.remoteapps.loader.StartableForPlugins" public="true"
                interface="com.atlassian.sal.api.lifecycle.LifecycleAware" />
+
+    <component key="descriptorGenerator" class="com.atlassian.labs.remoteapps.loader.DescriptorGeneratorServiceFactory" interface="com.atlassian.labs.remoteapps.loader.external.DescriptorGenerator" public="true" />
 
     <component-import key="templateRenderer" interface="com.atlassian.templaterenderer.TemplateRenderer"/>
     <component-import key="servletModuleManager" interface="com.atlassian.plugin.servlet.ServletModuleManager" />
@@ -119,10 +76,6 @@
     <component-import key="pluginSettingsFactory" interface="com.atlassian.sal.api.pluginsettings.PluginSettingsFactory" />
     <component-import key="typeAccessor" interface="com.atlassian.applinks.spi.util.TypeAccessor" />
 
-    <module-type key="api-scope" class="com.atlassian.labs.remoteapps.descriptor.external.ApiScopeModuleDescriptor" />
-
-    <module-type key="remote-module" class="com.atlassian.labs.remoteapps.descriptor.external.RemoteModuleDescriptor" />
-
     <!-- speakeasy integration -->
     <commonjs key="speakeasy-commonjs" location="/js/speakeasy" />
 
@@ -134,9 +87,11 @@
     <web-item key="speakeasy-install" section="speakeasy.user-profile/actions" weight="100">
         <label>Install Remote App</label>
         <link linkId="rp-install" />
-        <condition class="com.atlassian.labs.remoteapps.descriptor.CanInstallRemoteAppsCondition" />
+        <condition class="com.atlassian.labs.remoteapps.integration.speakeasy.CanInstallRemoteAppsCondition" />
     </web-item>
 
+    <!-- legacy -->
+    <module-type key="remote-app" class="com.atlassian.labs.remoteapps.descriptor.external.RemoteAppModuleDescriptor" />
     <!-- product-specific modules included via xslt build process -->
 
 </atlassian-plugin>

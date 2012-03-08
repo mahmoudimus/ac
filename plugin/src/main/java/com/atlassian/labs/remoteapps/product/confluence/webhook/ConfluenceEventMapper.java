@@ -8,13 +8,14 @@ import com.atlassian.confluence.pages.Comment;
 import com.atlassian.confluence.setup.settings.SettingsManager;
 import com.atlassian.confluence.spaces.Space;
 import com.atlassian.confluence.spaces.Spaced;
+import com.atlassian.labs.remoteapps.product.EventMapper;
 import com.atlassian.sal.api.user.UserManager;
 import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.Map;
 
-public class ConfluenceEventMapper implements EventMapper
+public class ConfluenceEventMapper implements EventMapper<ConfluenceEvent>
 {
     private final UserManager userManager;
     private final SettingsManager confluenceSettingsManager;
@@ -69,7 +70,11 @@ public class ConfluenceEventMapper implements EventMapper
             if (ceo instanceof Spaced)
             {
                 // TODO: Consider adding additional information about the space, eg. title, logo & description.
-                builder.put("spaceKey", ((Spaced)ceo).getSpace().getKey());
+                Space space = ((Spaced)ceo).getSpace();
+                if (space != null)
+                {
+                    builder.put("spaceKey", space.getKey());
+                }
             }
         }
         return builder.build();

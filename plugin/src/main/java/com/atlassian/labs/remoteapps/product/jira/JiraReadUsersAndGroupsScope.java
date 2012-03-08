@@ -1,6 +1,6 @@
 package com.atlassian.labs.remoteapps.product.jira;
 
-import com.atlassian.labs.remoteapps.modules.permissions.scope.RestApiScope;
+import com.atlassian.labs.remoteapps.modules.permissions.scope.RestApiScopeHelper;
 
 import static java.util.Arrays.asList;
 
@@ -17,8 +17,26 @@ public class JiraReadUsersAndGroupsScope extends JiraScope
                         "getGroup"
                 ),
                 asList(
-                        new RestApiScope.RestScope("api", asList("latest", "2", "2.0.alpha1"), "/user", asList("get")),
-                        new RestApiScope.RestScope("api", asList("latest", "2", "2.0.alpha1"), "/group", asList("get"))
+                        new RestApiScopeHelper.RestScope("api", asList("latest", "2", "2.0.alpha1"), "/user", asList("get")),
+                        new RestApiScopeHelper.RestScope("api", asList("latest", "2", "2.0.alpha1"), "/group", asList("get"))
                 ));
+    }
+
+    @Override
+    public String getKey()
+    {
+        return "read_users_and_groups";
+    }
+
+    @Override
+    public String getName()
+    {
+        return "Read Users and Groups";
+    }
+
+    @Override
+    public String getDescription()
+    {
+        return "View users and groups";
     }
 }

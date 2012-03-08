@@ -4,6 +4,7 @@ import com.atlassian.labs.remoteapps.modules.ApplicationLinkOperationsFactory;
 import com.atlassian.labs.remoteapps.modules.DefaultWebItemContext;
 import com.atlassian.labs.remoteapps.modules.IFrameRenderer;
 import com.atlassian.labs.remoteapps.product.ProductAccessor;
+import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.servlet.ServletModuleManager;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.templaterenderer.TemplateRenderer;
@@ -23,6 +24,7 @@ public class ProfilePageModuleGenerator extends AbstractPageModuleGenerator
                                     ProductAccessor productAccessor,
                                     ApplicationLinkOperationsFactory applicationLinkSignerFactory,
                                     IFrameRenderer iFrameRenderer,
+            PluginRetrievalService pluginRetrievalService,
             UserManager userManager
     )
     {
@@ -31,13 +33,25 @@ public class ProfilePageModuleGenerator extends AbstractPageModuleGenerator
                       productAccessor.getPreferredProfileSectionKey(),
                       productAccessor.getPreferredProfileWeight(),
                       productAccessor.getLinkContextParams()
-              ), userManager, productAccessor);
+              ), userManager, productAccessor, pluginRetrievalService);
     }
 
     @Override
     public String getType()
     {
         return "profile-page";
+    }
+
+    @Override
+    public String getDescription()
+    {
+        return "A user profile page decorated as normal page in the user profile area";
+    }
+
+    @Override
+    public String getName()
+    {
+        return "User Profile Page";
     }
 
     @Override

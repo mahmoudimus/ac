@@ -1,32 +1,42 @@
 package it.jira;
 
-import com.atlassian.jira.pageobjects.project.DeleteProjectPage;
-import com.atlassian.jira.pageobjects.project.ViewProjectsPage;
+import com.atlassian.jira.pageobjects.JiraTestedProduct;
+import com.atlassian.jira.pageobjects.pages.DashboardPage;
 import com.atlassian.labs.remoteapps.test.HtmlDumpRule;
-import com.atlassian.labs.remoteapps.test.jira.JiraCreateIssuePage;
+import com.atlassian.labs.remoteapps.test.jira.JiraOps;
 import com.atlassian.labs.remoteapps.test.jira.JiraViewIssuePage;
 import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.pageobjects.TestedProductFactory;
-import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
 import com.atlassian.webdriver.pageobjects.WebDriverTester;
-
-import org.apache.commons.lang.RandomStringUtils;
+import hudson.plugins.jira.soap.RemoteAuthenticationException;
+import hudson.plugins.jira.soap.RemoteIssue;
+import hudson.plugins.jira.soap.RemoteProject;
+import org.json.JSONObject;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.MethodRule;
 
-import static org.junit.Assert.assertEquals;
+import java.rmi.RemoteException;
+
+import static com.atlassian.labs.remoteapps.test.RemoteAppUtils.waitForEvent;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
 
 public class TestJira
 {
     private static final String EMBEDDED_ISSUE_TAB_PAGE_ID = "issue-tab-page-remoteAppIssueTabPage";
+    private static TestedProduct<WebDriverTester> product = TestedProductFactory.create(JiraTestedProduct.class);
+    private static JiraOps jiraOps = new JiraOps(product.getProductInstance());
 
-    private static TestedProduct<WebDriverTester> product = TestedProductFactory.create(com.atlassian.webdriver.jira.JiraTestedProduct.class);
+    public static final String ADMIN = "admin";
+
 
     @Rule
     public MethodRule rule = new HtmlDumpRule(product.getTester().getDriver());
+    private RemoteProject project;
 
     @After
     public void logout()
@@ -34,49 +44,44 @@ public class TestJira
         product.getTester().getDriver().manage().deleteAllCookies();
     }
 
-    @Test
-	public void testViewIssuePageWithEmbeddedPanel() throws InterruptedException
+    @Before
+    public void setUp() throws RemoteException, RemoteAuthenticationException
     {
-        product.visit(LoginPage.class).login("admin", "admin", HomePage.class);
-        long projectId = createProject();
-        String issueKey = createIssue(projectId);
-
-        try
-        {
-            JiraViewIssuePage viewIssuePage = product.visit(JiraViewIssuePage.class, issueKey, EMBEDDED_ISSUE_TAB_PAGE_ID);
-            assertEquals("Success", viewIssuePage.getMessage());
-        }
-        finally
-        {
-            deleteProject(projectId);
-        }
+        project = jiraOps.createProject();
+        product.visit(LoginPage.class).login(ADMIN, ADMIN, DashboardPage.class);
+        
+    }
+    
+    @After
+    public void tearDown() throws RemoteException
+    {
+        jiraOps.deleteProject(project.getKey());
+    }
+    @Test
+	public void testViewIssuePageWithEmbeddedPanel() throws InterruptedException, RemoteException,
+                                                            RemoteAuthenticationException
+    {
+        RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Test issue for panel");
+        JiraViewIssuePage viewIssuePage = product.visit(JiraViewIssuePage.class, issue.getKey(), EMBEDDED_ISSUE_TAB_PAGE_ID);
+        assertEquals("Success", viewIssuePage.getMessage());
 	}
 
-    public void deleteProject(long projectId)
+    @Test
+    public void testIssueCreatedWebHookFired() throws Exception
     {
-        product.visit(DeleteProjectPage.class, projectId)
-            .submitConfirm();
-    }
+        String issueKey = jiraOps.createIssue(project.getKey(), "Test issue").getKey();
+        JSONObject issue = null;
+        for (int x=0; x<5; x++)
+        {
+            JSONObject event = waitForEvent(product.getProductInstance(), "issue_created");
+            issue = event.getJSONObject("issue");
+            if (issueKey.equals(issue.getString("key")))
+            {
+                break;
+            }
+        }
 
-    public String createIssue(final long projectId)
-    {
-        String issueKey = product.visit(JiraCreateIssuePage.class, projectId)
-            .summary("Please prevent the heat death of the universe ASAP")
-            .submit()
-            .readKeyFromPage();
-        return issueKey;
-    }
-
-    private long createProject()
-    {
-        String projectKey = RandomStringUtils.randomAlphabetic(4);
-        String projectName = "Project " + projectKey;
-
-        return product.visit(ViewProjectsPage.class)
-            .openCreateProjectDialog()
-            .setKey(projectKey)
-            .setName(projectName)
-            .submitSuccess()
-            .getProjectId();
+        assertNotNull(issue);
+        assertEquals(ADMIN, issue.getString("reporterName"));
     }
 }

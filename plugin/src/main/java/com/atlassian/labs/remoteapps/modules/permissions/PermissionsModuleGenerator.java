@@ -1,19 +1,16 @@
 package com.atlassian.labs.remoteapps.modules.permissions;
 
 import com.atlassian.labs.remoteapps.PermissionManager;
-import com.atlassian.labs.remoteapps.modules.external.RemoteAppCreationContext;
-import com.atlassian.labs.remoteapps.modules.external.RemoteModule;
-import com.atlassian.labs.remoteapps.modules.external.RemoteModuleGenerator;
-import com.atlassian.labs.remoteapps.modules.external.StartableRemoteModule;
+import com.atlassian.labs.remoteapps.modules.external.*;
+import com.atlassian.labs.remoteapps.modules.permissions.scope.ApiScopeSchema;
 import com.atlassian.labs.remoteapps.product.ProductAccessor;
 import com.atlassian.labs.remoteapps.settings.SettingsManager;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.PluginParseException;
-import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.user.UserManager;
-import com.google.common.collect.ImmutableSet;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
@@ -28,20 +25,25 @@ import static java.util.Collections.emptySet;
 /**
  * Allows a remote app to declare multiple permissions, usually api scopes
  */
-public class PermissionsModuleGenerator implements RemoteModuleGenerator
+@Component
+public class PermissionsModuleGenerator implements WaitableRemoteModuleGenerator
 {
     private final PermissionManager permissionManager;
     private final String applicationKey;
 
     private final UserManager userManager;
     private final SettingsManager settingsManager;
+    private final ApiScopeSchema apiScopeSchema;
 
     @Autowired
-    public PermissionsModuleGenerator(PermissionManager permissionManager, ProductAccessor productAccessor, UserManager userManager, SettingsManager settingsManager)
+    public PermissionsModuleGenerator(PermissionManager permissionManager,
+            ProductAccessor productAccessor, UserManager userManager,
+            SettingsManager settingsManager, ApiScopeSchema apiScopeSchema)
     {
         this.permissionManager = permissionManager;
         this.userManager = userManager;
         this.settingsManager = settingsManager;
+        this.apiScopeSchema = apiScopeSchema;
         this.applicationKey = productAccessor.getKey();
     }
 
@@ -53,9 +55,21 @@ public class PermissionsModuleGenerator implements RemoteModuleGenerator
     }
 
     @Override
-    public Set<String> getDynamicModuleTypeDependencies()
+    public String getName()
     {
-        return emptySet();
+        return "Permissions";
+    }
+
+    @Override
+    public String getDescription()
+    {
+        return "Defines API scopes for incoming authenticated requests";
+    }
+
+    @Override
+    public Schema getSchema()
+    {
+        return apiScopeSchema;
     }
 
     @Override
@@ -78,20 +92,26 @@ public class PermissionsModuleGenerator implements RemoteModuleGenerator
             @Override
             public void start()
             {
-                List<String> apiScopes = newArrayList();
-                for (Element e : (List<Element>)element.elements("permission"))
-                {
-                    String targetApp = getOptionalAttribute(e, "application", null);
-                    if (targetApp == null || targetApp.equals(applicationKey))
-                    {
-                        String scopeKey = getRequiredAttribute(e, "scope");
-                        apiScopes.add(scopeKey);
-
-                    }
-                }
+                List<String> apiScopes = extractApiScopeKeys(element);
                 permissionManager.setApiPermissions(ctx.getApplicationType(), apiScopes);
             }
         };
+    }
+
+    private List<String> extractApiScopeKeys(Element element)
+    {
+        List<String> apiScopes = newArrayList();
+        for (Element e : (List<Element>)element.elements("permission"))
+        {
+            String targetApp = getOptionalAttribute(e, "application", null);
+            if (targetApp == null || targetApp.equals(applicationKey))
+            {
+                String scopeKey = getRequiredAttribute(e, "scope");
+                apiScopes.add(scopeKey);
+
+            }
+        }
+        return apiScopes;
     }
 
     @Override
@@ -104,7 +124,13 @@ public class PermissionsModuleGenerator implements RemoteModuleGenerator
     }
 
     @Override
-    public void convertDescriptor(Element descriptorElement, Element pluginDescriptorRoot)
+    public void generatePluginDescriptor(Element descriptorElement, Element pluginDescriptorRoot)
     {
+    }
+
+    @Override
+    public void waitToLoad(Element moduleElement)
+    {
+        permissionManager.waitForApiScopes(extractApiScopeKeys(moduleElement));
     }
 }

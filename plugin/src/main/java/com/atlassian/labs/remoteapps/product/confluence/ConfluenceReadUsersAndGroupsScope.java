@@ -19,4 +19,22 @@ public class ConfluenceReadUsersAndGroupsScope extends ConfluenceScope
                 "getUserInformation"
         ));
     }
+
+    @Override
+    public String getKey()
+    {
+        return "read_users_and_groups";
+    }
+
+    @Override
+    public String getName()
+    {
+        return "Read Users and Groups";
+    }
+
+    @Override
+    public String getDescription()
+    {
+        return "View users, users info, and groups";
+    }
 }

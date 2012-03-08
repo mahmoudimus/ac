@@ -13,4 +13,22 @@ public class ReadServerInformationScope extends ConfluenceScope
                 "getServerInfo"
         ));
     }
+
+    @Override
+    public String getKey()
+    {
+        return "read_server_information";
+    }
+
+    @Override
+    public String getName()
+    {
+        return "Read Server Information";
+    }
+
+    @Override
+    public String getDescription()
+    {
+        return "View Confluence version number, base URL and build information";
+    }
 }

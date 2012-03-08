@@ -10,27 +10,27 @@ import static com.google.common.collect.Iterables.concat;
 /**
  *
  */
-class JiraScope implements ApiScope
+abstract class JiraScope implements ApiScope
 {
-    private final RpcEncodedSoapApiScope soapScope;
-    private final JsonRpcApiScope jsonrpcScope;
+    private final RpcEncodedSoapApiScopeHelper soapScopeHelper;
+    private final JsonRpcApiScopeHelper jsonrpcScopeHelper;
     private final Iterable<ApiResourceInfo> apiResourceInfo;
-    private RestApiScope restApiScope;
+    private RestApiScopeHelper restApiScopeHelper;
 
-    protected JiraScope(Collection<String> methods, Collection<RestApiScope.RestScope> resources)
+    protected JiraScope(Collection<String> methods, Collection<RestApiScopeHelper.RestScope> resources)
     {
-        soapScope = new RpcEncodedSoapApiScope("/rpc/soap/jirasoapservice-v2", "http://soap.rpc.jira.atlassian.com",
+        soapScopeHelper = new RpcEncodedSoapApiScopeHelper("/rpc/soap/jirasoapservice-v2", "http://soap.rpc.jira.atlassian.com",
                 methods);
-        jsonrpcScope = new JsonRpcApiScope("/rpc/json-rpc/jirasoapservice-v2", methods);
-        restApiScope = new RestApiScope(resources);
-        this.apiResourceInfo = concat(soapScope.getApiResourceInfos(), jsonrpcScope.getApiResourceInfos(),
-                restApiScope.getApiResourceInfos());
+        jsonrpcScopeHelper = new JsonRpcApiScopeHelper("/rpc/json-rpc/jirasoapservice-v2", methods);
+        restApiScopeHelper = new RestApiScopeHelper(resources);
+        this.apiResourceInfo = concat(soapScopeHelper.getApiResourceInfos(), jsonrpcScopeHelper.getApiResourceInfos(),
+                restApiScopeHelper.getApiResourceInfos());
     }
 
     @Override
     public boolean allow(HttpServletRequest request, String user)
     {
-        return soapScope.allow(request, user) || jsonrpcScope.allow(request, user) || restApiScope.allow(request, user);
+        return soapScopeHelper.allow(request, user) || jsonrpcScopeHelper.allow(request, user) || restApiScopeHelper.allow(request, user);
     }
 
     @Override

@@ -20,19 +20,24 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.atlassian.selenium</groupId>
-            <artifactId>atlassian-webdriver-refapp</artifactId>
-            <version>2.0</version>
+            <groupId>com.atlassian.refapp</groupId>
+            <artifactId>atlassian-refapp-pageobjects</artifactId>
+            <version>${refapp.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.atlassian.selenium</groupId>
-            <artifactId>atlassian-webdriver-confluence</artifactId>
-            <version>2.0</version>
+            <groupId>com.atlassian.confluence</groupId>
+            <artifactId>atlassian-confluence-pageobjects</artifactId>
+            <version>${confluence.version}</version>
         </dependency>
         <dependency>
             <groupId>com.atlassian.jira</groupId>
             <artifactId>atlassian-jira-pageobjects</artifactId>
             <version>${jira.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.selenium</groupId>
+            <artifactId>atlassian-webdriver-core</artifactId>
+            <version>${atlassian.selenium.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -89,7 +94,6 @@
                                 <context.jira.path>/</context.jira.path>
                                 <testedProductClass>com.atlassian.jira.pageobjects.JiraTestedProduct</testedProductClass>
                                 <xvfb.enable>${xvfb.enable}</xvfb.enable>
-                                <webdriver.browser>${webdriver.browser}</webdriver.browser>
                             </systemPropertyVariables>
                         </configuration>
                     </plugin>
@@ -118,9 +122,8 @@
                                 <baseurl.confluence>${remoteapps.targetBaseUrl}</baseurl.confluence>
                                 <http.confluence.port>443</http.confluence.port>
                                 <context.confluence.path>/wiki</context.confluence.path>
-                                <testedProductClass>com.atlassian.webdriver.confluence.ConfluenceTestedProduct</testedProductClass>
+                                <testedProductClass>com.atlassian.confluence.pageobjects.ConfluenceTestedProduct</testedProductClass>
                                 <xvfb.enable>${xvfb.enable}</xvfb.enable>
-                                <webdriver.browser>${webdriver.browser}</webdriver.browser>
                             </systemPropertyVariables>
                         </configuration>
                     </plugin>

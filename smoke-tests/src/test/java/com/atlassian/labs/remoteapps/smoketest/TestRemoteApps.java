@@ -1,22 +1,17 @@
 package com.atlassian.labs.remoteapps.smoketest;
 
-import com.atlassian.jira.pageobjects.pages.JiraLoginPage;
+import com.atlassian.confluence.pageobjects.ConfluenceTestedProduct;
 import com.atlassian.labs.remoteapps.test.*;
-import com.atlassian.labs.remoteapps.test.confluence.ConfluenceGeneralPage;
 import com.atlassian.pageobjects.TestedProduct;
-import com.atlassian.pageobjects.page.AdminHomePage;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
-import com.atlassian.webdriver.confluence.ConfluenceTestedProduct;
 import com.atlassian.webdriver.pageobjects.WebDriverTester;
 import org.junit.*;
 import org.junit.rules.MethodRule;
 
 import java.io.IOException;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * Smoke tests for a Remote Apps instance that can access the Internet

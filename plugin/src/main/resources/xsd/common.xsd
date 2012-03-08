@@ -52,13 +52,6 @@
         </xs:restriction>
     </xs:simpleType>
 
-    <xs:simpleType name="BaseWebHookEventType">
-        <xs:restriction base="xs:string">
-            <xs:enumeration value="remote_app_installed" />
-            <xs:enumeration value="remote_app_started" />
-        </xs:restriction>
-    </xs:simpleType>
-
     <xs:complexType name="LinkContextParamType">
         <xs:attribute name="name" type="LinkContextParamNameType" use="required" />
     </xs:complexType>

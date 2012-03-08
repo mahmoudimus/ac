@@ -23,4 +23,22 @@ public class ManageWatchersScope extends ConfluenceScope
                 "isWatchingSpaceForType"
         ));
     }
+
+    @Override
+    public String getKey()
+    {
+        return "manage_watchers";
+    }
+
+    @Override
+    public String getName()
+    {
+        return "Manage Watchers";
+    }
+
+    @Override
+    public String getDescription()
+    {
+        return "View space, page and blog post watchers. Add new watchers.";
+    }
 }

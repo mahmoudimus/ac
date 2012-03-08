@@ -2,12 +2,12 @@ package it.confluence;
 
 import com.atlassian.labs.remoteapps.test.HtmlDumpRule;
 import com.atlassian.labs.remoteapps.test.OAuthUtils;
+import com.atlassian.labs.remoteapps.test.OwnerOfTestedProduct;
 import com.atlassian.labs.remoteapps.test.confluence.ConfluenceCounterMacroPage;
 import com.atlassian.labs.remoteapps.test.confluence.ConfluenceMacroPage;
 import com.atlassian.labs.remoteapps.test.confluence.ConfluenceOps;
 import com.atlassian.labs.remoteapps.test.confluence.ConfluencePageMacroPage;
 import com.atlassian.pageobjects.TestedProduct;
-import com.atlassian.pageobjects.TestedProductFactory;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
 import com.atlassian.webdriver.pageobjects.WebDriverTester;
@@ -17,8 +17,6 @@ import org.junit.After;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.MethodRule;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import redstone.xmlrpc.XmlRpcFault;
 
 import java.io.IOException;
@@ -32,7 +30,7 @@ import static org.junit.Assert.assertTrue;
 
 public class TestConfluence
 {
-    private static TestedProduct<WebDriverTester> product = TestedProductFactory.create(com.atlassian.webdriver.confluence.ConfluenceTestedProduct.class);
+    private static TestedProduct<WebDriverTester> product = OwnerOfTestedProduct.INSTANCE;
     private static ConfluenceOps confluenceOps = new ConfluenceOps();
 
     @Rule

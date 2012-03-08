@@ -2,14 +2,18 @@ package com.atlassian.labs.remoteapps.test;
 
 import com.atlassian.jira.pageobjects.JiraTestedProduct;
 import com.atlassian.labs.remoteapps.test.confluence.ConfluenceGeneralPage;
+import com.atlassian.labs.remoteapps.test.confluence.FixedConfluenceAdminHomePage;
+import com.atlassian.labs.remoteapps.test.confluence.FixedConfluenceDashboardPage;
+import com.atlassian.labs.remoteapps.test.confluence.FixedConfluenceLoginPage;
 import com.atlassian.labs.remoteapps.test.jira.JiraGeneralPage;
 import com.atlassian.labs.remoteapps.test.refapp.RefappFixedLoginPage;
 import com.atlassian.labs.remoteapps.test.refapp.RefappGeneralPage;
 import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.pageobjects.TestedProductFactory;
 import com.atlassian.pageobjects.page.AdminHomePage;
+import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
-import com.atlassian.webdriver.confluence.ConfluenceTestedProduct;
+import com.atlassian.confluence.pageobjects.ConfluenceTestedProduct;
 import com.atlassian.webdriver.refapp.RefappTestedProduct;
 
 public class OwnerOfTestedProduct
@@ -27,6 +31,10 @@ public class OwnerOfTestedProduct
         else if (INSTANCE instanceof ConfluenceTestedProduct)
         {
             INSTANCE.getPageBinder().override(GeneralPage.class, ConfluenceGeneralPage.class);
+            INSTANCE.getPageBinder().override(LoginPage.class, FixedConfluenceLoginPage.class);
+            INSTANCE.getPageBinder().override(AdminHomePage.class, FixedConfluenceAdminHomePage.class);
+            INSTANCE.getPageBinder().override(HomePage.class, FixedConfluenceDashboardPage.class);
+
         }
         else if (INSTANCE instanceof RefappTestedProduct)
         {

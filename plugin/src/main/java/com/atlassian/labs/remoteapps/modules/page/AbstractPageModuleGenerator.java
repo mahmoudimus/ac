@@ -1,13 +1,13 @@
 package com.atlassian.labs.remoteapps.modules.page;
 
 import com.atlassian.labs.remoteapps.modules.*;
-import com.atlassian.labs.remoteapps.modules.external.RemoteAppCreationContext;
-import com.atlassian.labs.remoteapps.modules.external.RemoteModule;
-import com.atlassian.labs.remoteapps.modules.external.RemoteModuleGenerator;
+import com.atlassian.labs.remoteapps.modules.external.*;
 import com.atlassian.labs.remoteapps.product.ProductAccessor;
 import com.atlassian.plugin.ModuleDescriptor;
+import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.module.ModuleFactory;
+import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.servlet.ServletModuleManager;
 import com.atlassian.plugin.servlet.descriptors.ServletModuleDescriptor;
 import com.atlassian.plugin.web.Condition;
@@ -18,7 +18,6 @@ import com.google.common.collect.ImmutableSet;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Collections;
 import java.util.Set;
 
 import static com.atlassian.labs.remoteapps.util.Dom4jUtils.getRequiredAttribute;
@@ -35,6 +34,7 @@ public abstract class AbstractPageModuleGenerator implements RemoteModuleGenerat
     private final ApplicationLinkOperationsFactory applicationLinkSignerFactory;
     private final WebItemCreator webItemCreator;
     private final IFrameRenderer iFrameRenderer;
+    private final Plugin plugin;
 
     @Autowired
     public AbstractPageModuleGenerator(ServletModuleManager servletModuleManager,
@@ -42,7 +42,8 @@ public abstract class AbstractPageModuleGenerator implements RemoteModuleGenerat
             ApplicationLinkOperationsFactory applicationLinkSignerFactory,
             IFrameRenderer iFrameRenderer,
             WebItemContext webItemContext,
-            UserManager userManager, ProductAccessor productAccessor)
+            UserManager userManager, ProductAccessor productAccessor,
+            PluginRetrievalService pluginRetrievalService)
     {
         this.servletModuleManager = servletModuleManager;
         this.templateRenderer = templateRenderer;
@@ -51,12 +52,17 @@ public abstract class AbstractPageModuleGenerator implements RemoteModuleGenerat
         this.userManager = userManager;
         this.productAccessor = productAccessor;
         this.webItemCreator = new WebItemCreator(webItemContext, this.productAccessor);
+        this.plugin = pluginRetrievalService.getPlugin();
     }
 
     @Override
-    public Set<String> getDynamicModuleTypeDependencies()
+    public Schema getSchema()
     {
-        return Collections.emptySet();
+        return new StaticSchema(getPlugin(),
+                "page.xsd",
+                "/xsd/page.xsd",
+                "PageType",
+                "unbounded");
     }
 
     @Override
@@ -130,8 +136,13 @@ public abstract class AbstractPageModuleGenerator implements RemoteModuleGenerat
     }
 
     @Override
-    public void convertDescriptor(Element descriptorElement, Element pluginDescriptorRoot)
+    public void generatePluginDescriptor(Element descriptorElement, Element pluginDescriptorRoot)
     {
+    }
+
+    protected Plugin getPlugin()
+    {
+        return plugin;
     }
 
     protected abstract String getDecorator();

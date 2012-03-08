@@ -1,11 +1,13 @@
 package com.atlassian.labs.remoteapps.modules.plugin;
 
-import com.atlassian.labs.remoteapps.modules.external.RemoteAppCreationContext;
-import com.atlassian.labs.remoteapps.modules.external.RemoteModule;
-import com.atlassian.labs.remoteapps.modules.external.RemoteModuleGenerator;
+import com.atlassian.labs.remoteapps.modules.external.*;
 import com.atlassian.plugin.ModuleDescriptor;
+import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
+import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import org.dom4j.Element;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.Map;
 import java.util.Set;
@@ -16,8 +18,17 @@ import static java.util.Collections.emptySet;
 /**
  *
  */
+@Component
 public class VendorModuleGenerator implements RemoteModuleGenerator
 {
+    private final Plugin plugin;
+
+    @Autowired
+    public VendorModuleGenerator(PluginRetrievalService pluginRetrievalService)
+    {
+        this.plugin = pluginRetrievalService.getPlugin();
+    }
+      
     @Override
     public String getType()
     {
@@ -25,9 +36,25 @@ public class VendorModuleGenerator implements RemoteModuleGenerator
     }
 
     @Override
-    public Set<String> getDynamicModuleTypeDependencies()
+    public Schema getSchema()
     {
-        return emptySet();
+        return new StaticSchema(plugin,
+                "vendor.xsd",
+                "/xsd/vendor.xsd",
+                "VendorType",
+                "1");
+    }
+
+    @Override
+    public String getName()
+    {
+        return "Vendor";
+    }
+
+    @Override
+    public String getDescription()
+    {
+        return "Defines the remote app vendor information";
     }
 
     @Override
@@ -55,7 +82,7 @@ public class VendorModuleGenerator implements RemoteModuleGenerator
     }
 
     @Override
-    public void convertDescriptor(Element descriptorElement, Element pluginDescriptorRoot)
+    public void generatePluginDescriptor(Element descriptorElement, Element pluginDescriptorRoot)
     {
         pluginDescriptorRoot.element("plugin-info").add(descriptorElement.detach());
     }
