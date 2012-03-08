@@ -19,7 +19,7 @@
     <admin-page key="remoteAppAdmin" name="Remote App {{appKey}} Admin" url="/myadmin" />
     <general-page key="remoteAppGeneral" name="Remote App {{appKey}} General" url="/myadmin" height="600" width="700"/>
     <profile-page key="remoteAppProfile" name="Remote App {{appKey}} Profile" url="/myadmin" />
-    <issue-tab-page key="remoteAppIssueTabPage" name="Remote App {{appKey}} Issue Page" url="/myadmin" />
+    <issue-panel-page key="remoteAppIssueTabPage" name="Remote App {{appKey}} Issue Page" url="/myadmin" />
 
     <web-hook event="remote_app_started" url="/webhook/remote_app_started" />
 

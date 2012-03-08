@@ -51,7 +51,7 @@ public class ViewIssuePanelModuleGenerator implements RemoteModuleGenerator
     @Override
     public String getType()
     {
-        return "issue-tab-page";
+        return "issue-panel-page";
     }
 
     @Override
