@@ -9,7 +9,7 @@ public interface RemoteAppInstaller
 {
     public static interface KeyValidator
     {
-        void validate(String appKey) throws PermissionDeniedException;
+        void validatePermissions(String appKey) throws PermissionDeniedException;
     }
     /**
      * Installs a remote app using a registration URL
@@ -18,6 +18,4 @@ public interface RemoteAppInstaller
      * @param registrationSecret The secret token to send to the registration URL.  Can be null.
      */
     String install(String username, String registrationUrl, String registrationSecret, KeyValidator keyValidator) throws PermissionDeniedException;
-
-    void uninstall(String username) throws PermissionDeniedException;
 }

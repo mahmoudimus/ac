@@ -13,7 +13,9 @@ import org.springframework.stereotype.Component;
 import java.util.Collection;
 import java.util.Set;
 
+import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Sets.newHashSet;
+import static java.util.Collections.singleton;
 
 /**
  *
@@ -75,6 +77,11 @@ public class ModuleGeneratorManager
     public Iterable<RemoteModuleGenerator> getAllValidatableGenerators()
     {
         return moduleTracker.getAll();
+    }
+    
+    public Iterable<RemoteModuleGenerator> getRemoteModuleGenerators()
+    {
+        return concat(moduleTracker.getAll(), singleton(applicationTypeModuleGenerator));
     }
 
     public ApplicationTypeModuleGenerator getApplicationTypeModuleGenerator()

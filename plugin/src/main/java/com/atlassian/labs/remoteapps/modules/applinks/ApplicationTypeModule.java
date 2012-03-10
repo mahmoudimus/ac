@@ -6,10 +6,8 @@ import com.atlassian.applinks.api.ApplicationType;
 import com.atlassian.applinks.api.TypeNotInstalledException;
 import com.atlassian.applinks.spi.application.ApplicationIdUtil;
 import com.atlassian.applinks.spi.link.MutatingApplicationLinkService;
-import com.atlassian.labs.remoteapps.PermissionManager;
 import com.atlassian.labs.remoteapps.modules.external.ClosableRemoteModule;
 import com.atlassian.labs.remoteapps.modules.external.StartableRemoteModule;
-import com.atlassian.labs.remoteapps.modules.external.UninstallableRemoteModule;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.google.common.collect.ImmutableSet;
 import org.slf4j.Logger;
@@ -20,7 +18,7 @@ import java.util.Set;
 /**
  * Module type for applink application-types
  */
-public class ApplicationTypeModule implements ClosableRemoteModule, StartableRemoteModule, UninstallableRemoteModule
+public class ApplicationTypeModule implements ClosableRemoteModule, StartableRemoteModule
 {
 
     private static final Logger log = LoggerFactory.getLogger(ApplicationTypeModule.class);
@@ -92,14 +90,5 @@ public class ApplicationTypeModule implements ClosableRemoteModule, StartableRem
     public RemoteAppApplicationType getApplicationType()
     {
         return applicationType;
-    }
-
-    @Override
-    public void uninstall()
-    {
-        for (ApplicationLink link : applicationLinkService.getApplicationLinks(applicationType.getClass()))
-        {
-            applicationLinkService.deleteApplicationLink(link);
-        }
     }
 }

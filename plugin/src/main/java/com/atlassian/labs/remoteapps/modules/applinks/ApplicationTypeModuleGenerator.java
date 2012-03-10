@@ -6,10 +6,7 @@ import com.atlassian.applinks.spi.application.TypeId;
 import com.atlassian.applinks.spi.link.ApplicationLinkDetails;
 import com.atlassian.applinks.spi.link.MutatingApplicationLinkService;
 import com.atlassian.labs.remoteapps.loader.AggregateModuleDescriptorFactory;
-import com.atlassian.labs.remoteapps.modules.external.RemoteAppCreationContext;
-import com.atlassian.labs.remoteapps.modules.external.RemoteModule;
-import com.atlassian.labs.remoteapps.modules.external.Schema;
-import com.atlassian.labs.remoteapps.modules.external.WaitableRemoteModuleGenerator;
+import com.atlassian.labs.remoteapps.modules.external.*;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
@@ -32,7 +29,8 @@ import static java.util.Collections.emptyMap;
  * Generates application-type modules
  */
 @Component
-public class ApplicationTypeModuleGenerator implements WaitableRemoteModuleGenerator
+public class ApplicationTypeModuleGenerator implements WaitableRemoteModuleGenerator,
+        UninstallableRemoteModuleGenerator
 {
     private final MutatingApplicationLinkService mutatingApplicationLinkService;
     private final ApplicationTypeClassLoader applicationTypeClassLoader;
@@ -224,6 +222,19 @@ public class ApplicationTypeModuleGenerator implements WaitableRemoteModuleGener
             {
                 throw new PluginParseException("The display url '" + displayUrl + "' is already used by app " +
                     "'" + link.getName() + "'");
+            }
+        }
+    }
+
+    @Override
+    public void uninstall(String pluginKey)
+    {
+        if (applicationTypeClassLoader.hasApplicationType(pluginKey))
+        {
+            Class<? extends ApplicationType> applicationTypeClass = applicationTypeClassLoader.getApplicationType(pluginKey);
+            for (ApplicationLink link : mutatingApplicationLinkService.getApplicationLinks(applicationTypeClass))
+            {
+                mutatingApplicationLinkService.deleteApplicationLink(link);
             }
         }
     }

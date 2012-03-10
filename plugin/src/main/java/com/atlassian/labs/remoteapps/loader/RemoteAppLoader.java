@@ -7,13 +7,13 @@ import com.atlassian.labs.remoteapps.ModuleGeneratorManager;
 import com.atlassian.labs.remoteapps.event.RemoteAppStartFailedEvent;
 import com.atlassian.labs.remoteapps.event.RemoteAppStartedEvent;
 import com.atlassian.labs.remoteapps.event.RemoteAppStoppedEvent;
-import com.atlassian.labs.remoteapps.event.RemoteAppUninstalledEvent;
 import com.atlassian.labs.remoteapps.modules.DefaultRemoteAppCreationContext;
 import com.atlassian.labs.remoteapps.modules.applinks.ApplicationTypeModule;
 import com.atlassian.labs.remoteapps.modules.external.*;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
+import com.atlassian.plugin.event.events.PluginUninstalledEvent;
 import com.atlassian.plugin.osgi.util.OsgiHeaderUtil;
 import org.dom4j.Document;
 import org.dom4j.Element;
@@ -65,17 +65,13 @@ public class RemoteAppLoader implements DisposableBean
     }
 
     @EventListener
-    public void onAppUninstall(RemoteAppUninstalledEvent event)
+    public void onPluginUninstall(PluginUninstalledEvent event)
     {
-        Iterable<RemoteModule> modules = remoteModulesByApp.get(event.getRemoteAppKey());
-        if (modules != null)
+        for (RemoteModuleGenerator generator : moduleGeneratorManager.getRemoteModuleGenerators())
         {
-            for (RemoteModule module : modules)
+            if (generator instanceof UninstallableRemoteModuleGenerator)
             {
-                if (module instanceof UninstallableRemoteModule)
-                {
-                    ((UninstallableRemoteModule)module).uninstall();
-                }
+                ((UninstallableRemoteModuleGenerator)generator).uninstall(event.getPlugin().getKey());
             }
         }
     }

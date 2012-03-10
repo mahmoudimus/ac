@@ -85,6 +85,11 @@ public class OAuthLinkManager
             serviceProviderConsumerStore.remove(key);
         }
     }
+    
+    public boolean isAppAssociated(String appKey)
+    {
+        return serviceProviderConsumerStore.get(appKey) != null;
+    }
 
     public void associateProviderWithLink(ApplicationLink link, String key, ServiceProvider serviceProvider)
     {

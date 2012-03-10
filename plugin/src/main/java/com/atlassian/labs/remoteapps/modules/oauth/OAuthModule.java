@@ -5,7 +5,6 @@ import com.atlassian.applinks.api.ApplicationLinkService;
 import com.atlassian.applinks.spi.application.NonAppLinksApplicationType;
 import com.atlassian.labs.remoteapps.OAuthLinkManager;
 import com.atlassian.labs.remoteapps.modules.external.StartableRemoteModule;
-import com.atlassian.labs.remoteapps.modules.external.UninstallableRemoteModule;
 import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.ServiceProvider;
 import com.atlassian.plugin.ModuleDescriptor;
@@ -17,7 +16,7 @@ import static java.util.Collections.emptySet;
 /**
  * Establishes a bi-directional oauth link
  */
-public class OAuthModule implements StartableRemoteModule, UninstallableRemoteModule
+public class OAuthModule implements StartableRemoteModule
 {
     private final OAuthLinkManager oAuthLinkManager;
     private final ApplicationLinkService applicationLinkService;
@@ -50,11 +49,5 @@ public class OAuthModule implements StartableRemoteModule, UninstallableRemoteMo
 
         oAuthLinkManager.associateProviderWithLink(link, consumer.getKey(),
                                                    serviceProvider);
-    }
-
-    @Override
-    public void uninstall()
-    {
-        oAuthLinkManager.unassociateConsumer(consumer);
     }
 }

@@ -3,6 +3,8 @@ package com.atlassian.labs.remoteapps;
 import com.atlassian.labs.remoteapps.installer.InstallationFailedException;
 import com.atlassian.labs.remoteapps.installer.RemoteAppInstaller;
 import com.atlassian.labs.remoteapps.util.BundleUtil;
+import com.atlassian.plugin.PluginAccessor;
+import com.atlassian.plugin.PluginController;
 import com.atlassian.sal.api.user.UserManager;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -11,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.ws.rs.core.Response;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -27,16 +28,22 @@ public class DefaultRemoteAppsService implements RemoteAppsService
     private final UserManager userManager;
     private final BundleContext bundleContext;
     private final PermissionManager permissionManager;
+    private final PluginController pluginController;
+    private final PluginAccessor pluginAccessor;
     private static final Logger log = LoggerFactory.getLogger(DefaultRemoteAppsService.class);
 
     @Autowired
     public DefaultRemoteAppsService(RemoteAppInstaller remoteAppInstaller, UserManager userManager,
-                                    BundleContext bundleContext, PermissionManager permissionManager)
+            BundleContext bundleContext, PermissionManager permissionManager,
+            PluginController pluginController,
+            PluginAccessor pluginAccessor)
     {
         this.remoteAppInstaller = remoteAppInstaller;
         this.userManager = userManager;
         this.bundleContext = bundleContext;
         this.permissionManager = permissionManager;
+        this.pluginController = pluginController;
+        this.pluginAccessor = pluginAccessor;
     }
 
     @Override
@@ -60,7 +67,7 @@ public class DefaultRemoteAppsService implements RemoteAppsService
                new RemoteAppInstaller.KeyValidator()
                {
                    @Override
-                   public void validate(String appKey) throws PermissionDeniedException
+                   public void validatePermissions(String appKey) throws PermissionDeniedException
                    {
                        if (doesAppExist(appKey))
                        {
@@ -91,14 +98,14 @@ public class DefaultRemoteAppsService implements RemoteAppsService
         }
 
     }
-
+    
     @Override
     public void uninstall(String username, String appKey) throws PermissionDeniedException
     {
         validateCanInstall(username);
         validateAppExists(appKey);
         validateCanAuthor(username, appKey);
-        remoteAppInstaller.uninstall(appKey);
+        pluginController.uninstall(pluginAccessor.getPlugin(appKey));
         log.info("Remote app '{}' uninstalled by '{}' successfully", appKey, username);
     }
 

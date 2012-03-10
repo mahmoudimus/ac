@@ -38,6 +38,11 @@ public class ApplicationTypeClassLoader extends ClassLoader
     {
         super(ApplicationTypeModuleGenerator.class.getClassLoader());
     }
+    
+    public boolean hasApplicationType(String key)
+    {
+        return classes.containsKey(appKeyToClassName(key));
+    }
 
     public Class<? extends RemoteAppApplicationType> getApplicationType(String key)
     {

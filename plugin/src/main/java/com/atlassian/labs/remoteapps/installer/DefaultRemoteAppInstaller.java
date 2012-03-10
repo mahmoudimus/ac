@@ -4,11 +4,11 @@ import com.atlassian.event.api.EventListener;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.labs.remoteapps.DescriptorValidator;
 import com.atlassian.labs.remoteapps.ModuleGeneratorManager;
+import com.atlassian.labs.remoteapps.OAuthLinkManager;
 import com.atlassian.labs.remoteapps.PermissionDeniedException;
 import com.atlassian.labs.remoteapps.event.RemoteAppInstalledEvent;
 import com.atlassian.labs.remoteapps.event.RemoteAppStartFailedEvent;
 import com.atlassian.labs.remoteapps.event.RemoteAppStartedEvent;
-import com.atlassian.labs.remoteapps.event.RemoteAppUninstalledEvent;
 import com.atlassian.labs.remoteapps.loader.external.DescriptorGenerator;
 import com.atlassian.labs.remoteapps.modules.external.RemoteModuleGenerator;
 import com.atlassian.labs.remoteapps.modules.page.jira.JiraProfileTabModuleGenerator;
@@ -53,6 +53,7 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
     private final EventPublisher eventPublisher;
     private final DescriptorValidator descriptorValidator;
     private final PluginAccessor pluginAccessor;
+    private final OAuthLinkManager oAuthLinkManager;
 
     private static final Logger log = LoggerFactory.getLogger(
             DefaultRemoteAppInstaller.class);
@@ -65,7 +66,8 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
             ModuleGeneratorManager moduleGeneratorManager,
             EventPublisher eventPublisher,
             DescriptorValidator descriptorValidator,
-            PluginAccessor pluginAccessor)
+            PluginAccessor pluginAccessor,
+            OAuthLinkManager oAuthLinkManager)
     {
         this.consumerService = consumerService;
         this.requestFactory = requestFactory;
@@ -75,6 +77,7 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
         this.eventPublisher = eventPublisher;
         this.descriptorValidator = descriptorValidator;
         this.pluginAccessor = pluginAccessor;
+        this.oAuthLinkManager = oAuthLinkManager;
     }
 
     @Override
@@ -158,17 +161,33 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
                             */
                             final Element root = document.getRootElement();
                             final String pluginKey = root.attributeValue("key");
-                            keyValidator.validate(pluginKey);
+                            keyValidator.validatePermissions(pluginKey);
+                            Plugin plugin = pluginAccessor.getPlugin(pluginKey);
 
                             /*!
-                           With the app key validated, the previous app with that key, if any,
-                           are uninstalled.
+                           With the app key validated for the user, the previous app with that key,
+                           if any, is uninstalled.
                             */
-                            if (pluginAccessor.getPlugin(pluginKey) != null)
-                            {
-                                uninstall(pluginKey);
-                            }
 
+                            if (plugin != null)
+                            {
+                                pluginController.uninstall(plugin);
+                            }
+                            else
+                            {
+                                /*!
+                                 However, if there is no previous app, then the app key is checked
+                                 to ensure it doesn't already exist as a OAuth client key.  This
+                                 prevents a malicious app that uses a key from an existing oauth
+                                 link from getting that link removed when the app is uninstalled.
+                                */
+                                if (oAuthLinkManager.isAppAssociated(pluginKey))
+                                {
+                                    throw new PermissionDeniedException("App key '" + pluginKey
+                                            + "' is already associated with an OAuth link");
+                                }
+                            }
+                            
                             /*!
                            The registration XML is then processed through second-level
                            validations to ensure the values
@@ -297,15 +316,6 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
             throw new InstallationFailedException(ex);
         }
         /*!-helper methods */
-    }
-
-
-    @Override
-    public void uninstall(String appKey) throws PermissionDeniedException
-    {
-        Plugin plugin = pluginAccessor.getPlugin(appKey);
-        eventPublisher.publish(new RemoteAppUninstalledEvent(appKey));
-        pluginController.uninstall(plugin);
     }
 
     private JarPluginArtifact createJarPluginArtifact(final String pluginKey,

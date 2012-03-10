@@ -27,7 +27,7 @@ import static java.util.Collections.emptyMap;
  * Sets up a 2LO connection to allow incoming requests from the remote app
  */
 @Component
-public class OauthModuleGenerator implements RemoteModuleGenerator
+public class OauthModuleGenerator implements UninstallableRemoteModuleGenerator
 {
     private final ApplicationLinkService applicationLinkService;
 
@@ -125,5 +125,15 @@ public class OauthModuleGenerator implements RemoteModuleGenerator
             throw new PluginParseException("Invalid public key", e);
         }
         return publicKey;
+    }
+
+    @Override
+    public void uninstall(String pluginKey)
+    {
+        oAuthLinkManager.unassociateConsumer(
+                Consumer.
+                        key(pluginKey).
+                        name("Doesn't Matter").
+                        signatureMethod(Consumer.SignatureMethod.HMAC_SHA1).build());
     }
 }
