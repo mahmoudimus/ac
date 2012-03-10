@@ -64,50 +64,90 @@ public class RemoteAppLoader implements DisposableBean
         this.eventPublisher.register(this);
     }
 
-    @EventListener
-    public void onPluginUninstall(PluginUninstalledEvent event)
-    {
-        for (RemoteModuleGenerator generator : moduleGeneratorManager.getRemoteModuleGenerators())
-        {
-            if (generator instanceof UninstallableRemoteModuleGenerator)
-            {
-                ((UninstallableRemoteModuleGenerator)generator).uninstall(event.getPlugin().getKey());
-            }
-        }
-    }
+    /*!
+    The Remote Apps loading process contains the steps the Remote Apps framework goes through when
+    loading, or enabling a Remote App.  This process happens every time the underlying Remote App
+    plugin is enabled, which could be:
 
+    1. After the Remote App is installed
+    2. When the Atlassian application is started
+    3. After the Atlassian administrator clicks the "Enable" button in the plugin manager UI
+
+    The loading process operates on the underlying plugin bundle that each Remote Apps is converted
+    as part of the installation.  This can be triggered via:
+
+    1. The deprecated `remote-app` plugin module - The deprecated remote-app plugin module can kick
+    the loading process, however, it isn't recommended as any failures during start up will not
+    result in the plugin being marked as disabled, and therefore, errors won't be clearly visible
+    to the administrator.  This module type is only left in to support legacy Remote Apps.
+    2. A `META-INF/spring/remoteapps-loader.xml` file.  This file is made part of the installed plugin
+    in order to consume a service from the Remote Apps plugin and call init() on it.  The init()
+    method, in turn, starts this process.
+     */
     public void load(Bundle bundle, Document appDescriptor) throws Exception
     {
         final Plugin plugin = pluginAccessor.getPlugin(OsgiHeaderUtil.getPluginKey(bundle));
         try
         {
-            // waits for modules to be loaded and anything they need to wait for
+            /*!
+            ### Step 1 - Validation
+
+            The first step in the loading process is validation.  Validation is necessary here
+            because a Remote App could have been installed as a normal Atlassian plugin or OSGi
+            bundle, and in that case, we need to ensure its configuration is correct.
+
+            As part of validation, the loading process will wait until all modules necessary for
+            this Remote App to load are present.  This includes the required remote modules defined
+            locally or via OSGi services as well as any waiting that each remote module needs to
+            do before it can successfully process this Remote App.
+
+            If any modules aren't present, the loading process will wait 20 seconds for them, but
+            if still not available, an exception will be thrown halting the process.
+             */
             moduleGeneratorManager.waitForModules(appDescriptor.getRootElement());
-            
+
+            /*!
+            Once the modules are all present, the `atlassian-remote-app.xml` XML descriptor from the
+            bundle will validated.  This validation involves processing the descriptor against the
+            generated XML Schema for this Atlassian application instance.
+             */
             descriptorValidator.validate("atlassian-remote-app.xml", appDescriptor);
 
+            /*!
+            ### Step 2 - Remote Module Registration
+
+            With the descriptor validated, the next step is to process the descriptor to generate
+            the remote modules.  Each remote module has the opportunity to provide one or more
+            Atlassian plugin ModuleDescriptor instances that will be exposed as OSGi services,
+            thereby attaching the plugin modules to the Remote App plugin instance.
+
+            For example, a generate-page module will generate and register the following Atlassian
+            plugin module instances:
+
+            1. `servlet` - This plugin servlet provides an addressable that is decorated as a normal
+            page and embeds an iframe
+            2. `web-item` - The web item inserts a link to the general page in the Atlassian
+            application UI
+
+            The first module to be processed will always be the root element, treated as input for
+            the Atlassian Application Links module.  This module will generate the application link
+            that formally associates the Remote App to the Atlassian application.
+            */
+
             final RemoteAppCreationContext firstContext = new DefaultRemoteAppCreationContext(plugin, aggregateModuleDescriptorFactory, bundle, null);
-            ApplicationTypeModule module = (ApplicationTypeModule) moduleGeneratorManager.getApplicationTypeModuleGenerator().generate(firstContext, appDescriptor.getRootElement());
-            final List<RemoteModule> remoteModules = newArrayList();
-            remoteModules.add(module);
 
-            final RemoteAppCreationContext childContext = new DefaultRemoteAppCreationContext(plugin, aggregateModuleDescriptorFactory, bundle, module.getApplicationType());
-
-            moduleGeneratorManager.processDescriptor(appDescriptor.getRootElement(),
-                    new ModuleGeneratorManager.ModuleHandler()
-                    {
-                        @Override
-                        public void handle(Element element, RemoteModuleGenerator generator)
-                        {
-                            log.info(
-                                    "Registering module '" + generator.getType() + "' for key" +
-                                            " '" + element.attributeValue(
-                                            "key") + "'");
-                            remoteModules.add(generator.generate(childContext, element));
-                        }
-                    });
-            remoteModulesByApp.put(plugin.getKey(), remoteModules);
+            final List<RemoteModule> remoteModules = generateRemoteModules(bundle, appDescriptor,
+                    plugin, firstContext);
             registerDescriptors(bundle, plugin, remoteModules);
+
+            /*!
+            ### Step 3 - Startable registration
+
+            Not all remote module code can execute while the plugin is still be enabled, so modules
+            that implement StartableRemoteModule can register to be called once both the plugin is
+            enabled and the Atlassian app has been fully started.  For example, the oauth module
+            uses this callback to associate the Remote App as an OAuth consumer and provider.
+             */
             startableForPlugins.register(plugin.getKey(), new Runnable()
             {
 
@@ -128,6 +168,11 @@ public class RemoteAppLoader implements DisposableBean
                             });
                         }
                     }
+                    /*!
+                    Once all the startable remote modules have executed and both the plugin and
+                    the Atlassian application have fully started, the RemoteAppStartedEvent will be
+                    fired.  This event will be published as the webhook `remote\_app\_started`.
+                     */
                     eventPublisher.publish(new RemoteAppStartedEvent(plugin.getKey()));
                     log.info("Remote app '{}' started successfully", plugin.getKey());
                 }
@@ -140,7 +185,62 @@ public class RemoteAppLoader implements DisposableBean
             throw e;
         }
     }
-    
+
+    /*!
+    ## Uninstallation
+
+    Whenever a Remote App's plugin has been explicitly uninstalled by an Atlassian administrator,
+    the PluginUninstalledEvent is fired.  Remote Apps listens to this event to try to clean up
+    any state for installed Remote Apps.
+
+    However, since this event fires _after_ the plugin and its
+    OSGi bundle has been uninstalled, we can't accurately determine if the uninstalled plugin was
+    a Remote App or not.  Therefore, each possible remote module generator is given an opportunity
+    to execute uninstallation code for the plugin key with the assumption it may not be a Remote App
+    in the first place.
+
+    An example of uninstallation code is the oauth module.  On uninstallation, it removes the OAuth
+    consumer and provider registration for the Remote App.
+     */
+    @EventListener
+    public void onPluginUninstall(PluginUninstalledEvent event)
+    {
+        for (RemoteModuleGenerator generator : moduleGeneratorManager.getRemoteModuleGenerators())
+        {
+            if (generator instanceof UninstallableRemoteModuleGenerator)
+            {
+                ((UninstallableRemoteModuleGenerator)generator).uninstall(event.getPlugin().getKey());
+            }
+        }
+    }
+    /*!-helper methods*/
+
+    private List<RemoteModule> generateRemoteModules(Bundle bundle, Document appDescriptor,
+            Plugin plugin, RemoteAppCreationContext firstContext)
+    {
+        final List<RemoteModule> remoteModules = newArrayList();
+        ApplicationTypeModule module = (ApplicationTypeModule) moduleGeneratorManager.getApplicationTypeModuleGenerator().generate(firstContext, appDescriptor.getRootElement());
+
+        remoteModules.add(module);
+
+        final RemoteAppCreationContext childContext = new DefaultRemoteAppCreationContext(plugin, aggregateModuleDescriptorFactory, bundle, module.getApplicationType());
+
+        moduleGeneratorManager.processDescriptor(appDescriptor.getRootElement(),
+                new ModuleGeneratorManager.ModuleHandler()
+                {
+                    @Override
+                    public void handle(Element element, RemoteModuleGenerator generator)
+                    {
+                        log.info("Registering module '" + generator.getType() + "' for key" +
+                                " '" + element.attributeValue(
+                                "key") + "'");
+                        remoteModules.add(generator.generate(childContext, element));
+                    }
+                });
+        remoteModulesByApp.put(plugin.getKey(), remoteModules);
+        return remoteModules;
+    }
+
     private void registerDescriptors(Bundle bundle, Plugin plugin, Iterable<RemoteModule> modules)
     {
         BundleContext targetBundleContext = bundle.getBundleContext();
