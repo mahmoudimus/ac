@@ -6,7 +6,7 @@ import com.atlassian.labs.remoteapps.product.ProductAccessor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.webresource.UrlMode;
-import com.atlassian.plugin.webresource.WebResourceUrlProvider;
+import com.atlassian.plugin.webresource.WebResourceManager;
 import com.atlassian.sal.api.ApplicationProperties;
 import org.dom4j.*;
 import org.dom4j.io.DocumentSource;
@@ -40,17 +40,17 @@ public class DescriptorValidator
     private final ApplicationProperties applicationProperties;
     private final Plugin plugin;
     private final ProductAccessor productAccessor;
-    private final WebResourceUrlProvider webResourceUrlProvider;
+    private final WebResourceManager webResourceManager;
 
     @Autowired
     public DescriptorValidator(ModuleGeneratorManager moduleGeneratorManager,
                                ApplicationProperties applicationProperties,
                                PluginRetrievalService pluginRetrievalService, ProductAccessor productAccessor,
-                               WebResourceUrlProvider webResourceUrlProvider
+                               WebResourceManager webResourceManager
     )
     {
         this.productAccessor = productAccessor;
-        this.webResourceUrlProvider = webResourceUrlProvider;
+        this.webResourceManager = webResourceManager;
         this.plugin = pluginRetrievalService.getPlugin();
         this.moduleGeneratorManager = moduleGeneratorManager;
         this.applicationProperties = applicationProperties;
@@ -141,7 +141,7 @@ public class DescriptorValidator
         // Add XSL stylesheet
         Map arguments = new HashMap();
         arguments.put( "type", "text/xsl" );
-        arguments.put( "href", webResourceUrlProvider.getStaticPluginResourceUrl("com.atlassian.labs.remoteapps-plugin:schema-xsl",
+        arguments.put( "href", webResourceManager.getStaticPluginResource("com.atlassian.labs.remoteapps-plugin:schema-xsl",
                 "xs3p.xsl", UrlMode.ABSOLUTE) );
         DocumentFactory factory = new DocumentFactory();
         ProcessingInstruction pi
