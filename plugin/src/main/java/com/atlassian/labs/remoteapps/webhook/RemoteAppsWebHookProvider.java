@@ -1,9 +1,7 @@
 package com.atlassian.labs.remoteapps.webhook;
 
 import com.atlassian.applinks.api.ApplicationLink;
-import com.atlassian.labs.remoteapps.event.RemoteAppEvent;
-import com.atlassian.labs.remoteapps.event.RemoteAppInstalledEvent;
-import com.atlassian.labs.remoteapps.event.RemoteAppStartedEvent;
+import com.atlassian.labs.remoteapps.event.*;
 import com.atlassian.labs.remoteapps.modules.applinks.RemoteAppApplicationType;
 import com.atlassian.labs.remoteapps.webhook.external.*;
 import com.atlassian.sal.api.ApplicationProperties;
@@ -44,6 +42,12 @@ public class RemoteAppsWebHookProvider implements WebHookProvider
                 .matchedBy(matcher)
                 .serializedWith(factory);
         publish.webhook("remote_app_started").whenFired(RemoteAppStartedEvent.class)
+                .matchedBy(matcher)
+                .serializedWith(factory);
+        publish.webhook("remote_app_stopped").whenFired(RemoteAppStoppedEvent.class)
+                .matchedBy(matcher)
+                .serializedWith(factory);
+        publish.webhook("remote_app_start_failed").whenFired(RemoteAppStartFailedEvent.class)
                 .matchedBy(matcher)
                 .serializedWith(factory);
     }
