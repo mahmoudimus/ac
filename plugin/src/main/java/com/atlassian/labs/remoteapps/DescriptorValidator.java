@@ -5,6 +5,8 @@ import com.atlassian.labs.remoteapps.modules.external.RemoteModuleGenerator;
 import com.atlassian.labs.remoteapps.product.ProductAccessor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
+import com.atlassian.plugin.webresource.UrlMode;
+import com.atlassian.plugin.webresource.WebResourceUrlProvider;
 import com.atlassian.sal.api.ApplicationProperties;
 import org.dom4j.*;
 import org.dom4j.io.DocumentSource;
@@ -38,14 +40,17 @@ public class DescriptorValidator
     private final ApplicationProperties applicationProperties;
     private final Plugin plugin;
     private final ProductAccessor productAccessor;
+    private final WebResourceUrlProvider webResourceUrlProvider;
 
     @Autowired
     public DescriptorValidator(ModuleGeneratorManager moduleGeneratorManager,
                                ApplicationProperties applicationProperties,
-                               PluginRetrievalService pluginRetrievalService, ProductAccessor productAccessor
+                               PluginRetrievalService pluginRetrievalService, ProductAccessor productAccessor,
+                               WebResourceUrlProvider webResourceUrlProvider
     )
     {
         this.productAccessor = productAccessor;
+        this.webResourceUrlProvider = webResourceUrlProvider;
         this.plugin = pluginRetrievalService.getPlugin();
         this.moduleGeneratorManager = moduleGeneratorManager;
         this.applicationProperties = applicationProperties;
@@ -132,6 +137,17 @@ public class DescriptorValidator
     {
         Set<String> includedDocIds = newHashSet();
         Element root = parseDocument(schemaUrl).getRootElement();
+
+        // Add XSL stylesheet
+        Map arguments = new HashMap();
+        arguments.put( "type", "text/xsl" );
+        arguments.put( "href", webResourceUrlProvider.getStaticPluginResourceUrl("com.atlassian.labs.remoteapps-plugin:schema-xsl",
+                "xs3p.xsl", UrlMode.ABSOLUTE) );
+        DocumentFactory factory = new DocumentFactory();
+        ProcessingInstruction pi
+                = factory.createProcessingInstruction( "xml-stylesheet", arguments );
+        root.getDocument().content().add(0,pi);
+
         final String ns = getSchemaNamespace();
         if (usesNamespace)
         {

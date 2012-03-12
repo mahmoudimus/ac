@@ -43,6 +43,10 @@
         </transformation>
     </web-resource>
 
+    <web-resource key="schema-xsl">
+        <resource type="download" content-type="application/xml" name="xs3p.xsl" location="/xsd/xs3p.xsl"/>
+    </web-resource>
+
     <web-resource-transformer key="baseUrlTransformer" class="com.atlassian.labs.remoteapps.integration.smoketest.BaseUrlTransformer"/>
 
     <component key="httpContentRetriever" class="com.atlassian.labs.remoteapps.util.http.CachingHttpContentRetriever"
@@ -75,6 +79,7 @@
     <component-import key="i18nResolver" interface="com.atlassian.sal.api.message.I18nResolver" />
     <component-import key="pluginSettingsFactory" interface="com.atlassian.sal.api.pluginsettings.PluginSettingsFactory" />
     <component-import key="typeAccessor" interface="com.atlassian.applinks.spi.util.TypeAccessor" />
+    <component-import key="webResourceUrlProvider" interface="com.atlassian.plugin.webresource.WebResourceUrlProvider" />
 
     <!-- speakeasy integration -->
     <commonjs key="speakeasy-commonjs" location="/js/speakeasy" />
