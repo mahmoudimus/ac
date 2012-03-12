@@ -167,5 +167,4 @@
         <BUILD_NUMBER>99-SNAPSHOT</BUILD_NUMBER>
         <API_VERSION>0.4</API_VERSION>
     </properties>
-
 </project>
