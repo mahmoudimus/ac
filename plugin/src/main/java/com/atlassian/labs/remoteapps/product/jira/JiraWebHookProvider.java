@@ -1,8 +1,10 @@
 package com.atlassian.labs.remoteapps.product.jira;
 
+import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.jira.event.issue.IssueEvent;
 import com.atlassian.jira.event.type.EventType;
 import com.atlassian.labs.remoteapps.product.jira.webhook.JiraEventSerializerFactory;
+import com.atlassian.labs.remoteapps.webhook.external.EventMatcher;
 import com.atlassian.labs.remoteapps.webhook.external.WebHookProvider;
 import com.atlassian.labs.remoteapps.webhook.external.WebHookRegistrar;
 import com.google.common.base.Predicate;
@@ -41,7 +43,7 @@ public class JiraWebHookProvider implements WebHookProvider
         }
     }
     
-    private static final class EventTypeMatcher implements Predicate<IssueEvent>
+    private static final class EventTypeMatcher implements EventMatcher<IssueEvent>
     {
         private final Long eventType;
 
@@ -51,9 +53,9 @@ public class JiraWebHookProvider implements WebHookProvider
         }
 
         @Override
-        public boolean apply(IssueEvent input)
+        public boolean matches(IssueEvent event, ApplicationLink appLink)
         {
-            return eventType.equals(input.getEventTypeId());
+            return eventType.equals(event.getEventTypeId());
         }
     }
     

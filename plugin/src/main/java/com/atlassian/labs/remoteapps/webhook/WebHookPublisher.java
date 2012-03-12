@@ -5,10 +5,11 @@ import com.atlassian.applinks.api.ApplicationLinkService;
 import com.atlassian.applinks.api.ApplicationType;
 import com.atlassian.applinks.spi.application.NonAppLinksApplicationType;
 import com.atlassian.event.api.EventPublisher;
-import com.atlassian.labs.remoteapps.util.http.CachingHttpContentRetriever;
 import com.atlassian.labs.remoteapps.event.RemoteAppEvent;
 import com.atlassian.labs.remoteapps.util.http.HttpContentRetriever;
 import com.atlassian.labs.remoteapps.webhook.event.WebHookPublishQueueFullEvent;
+import com.atlassian.labs.remoteapps.webhook.external.EventMatcher;
+import com.atlassian.labs.remoteapps.webhook.external.EventSerializer;
 import com.google.common.base.Supplier;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
@@ -61,7 +62,7 @@ public class WebHookPublisher implements DisposableBean
         registrationsByEvent.remove(eventIdentifier, new Registration(applicationType, url));
     }
 
-    public void publish(String eventIdentifier, EventSerializer eventSerializer)
+    public void publish(String eventIdentifier, EventMatcher<Object> eventMatcher, EventSerializer eventSerializer)
     {
         String body = null;
         for (Registration registration : registrationsByEvent.get(eventIdentifier))
@@ -71,16 +72,23 @@ public class WebHookPublisher implements DisposableBean
                 ApplicationLink link = applicationLinkService.getPrimaryApplicationLink(registration.getApplicationType().getClass());
                 if (link != null)
                 {
-                    body = body != null ? body : eventSerializer.getJson();
-                    PublishTask task = new PublishTask(httpContentRetriever, registration, link, body);
-                    try
+                    if (eventMatcher.matches(eventSerializer.getEvent(), link))
                     {
-                        publisher.execute(task);
+                        body = body != null ? body : eventSerializer.getJson();
+                        PublishTask task = new PublishTask(httpContentRetriever, registration, link, body);
+                        try
+                        {
+                            publisher.execute(task);
+                        }
+                        catch (RejectedExecutionException ex)
+                        {
+                            log.warn("Web hook queue full, rejecting '{}'", task);
+                            eventPublisher.publish(new WebHookPublishQueueFullEvent(eventIdentifier, link));
+                        }
                     }
-                    catch (RejectedExecutionException ex)
+                    else
                     {
-                        log.warn("Web hook queue full, rejecting '{}'", task);
-                        eventPublisher.publish(new WebHookPublishQueueFullEvent(eventIdentifier, link));
+                        log.debug("Matcher {} didn't match link {}", eventMatcher, link);
                     }
                 }
                 else

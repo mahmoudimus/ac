@@ -1,6 +1,6 @@
 package com.atlassian.labs.remoteapps.webhook;
 
-import org.apache.poi.hssf.record.formula.functions.T;
+import com.atlassian.labs.remoteapps.webhook.external.EventSerializer;
 import org.json.JSONException;
 import org.json.JSONObject;
 

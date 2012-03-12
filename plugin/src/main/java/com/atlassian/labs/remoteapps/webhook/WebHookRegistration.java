@@ -1,8 +1,8 @@
 package com.atlassian.labs.remoteapps.webhook;
 
+import com.atlassian.labs.remoteapps.webhook.external.EventMatcher;
+import com.atlassian.labs.remoteapps.webhook.external.EventSerializer;
 import com.atlassian.labs.remoteapps.webhook.external.EventSerializerFactory;
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 
 /**
  * A registration of a web hook
@@ -12,7 +12,7 @@ public class WebHookRegistration
     private final String id;
     private Class<?> eventClass;
     private EventSerializerFactory eventSerializerFactory;
-    private Predicate eventMatcher = Predicates.alwaysTrue();
+    private EventMatcher eventMatcher = EventMatcher.ALWAYS_TRUE;
 
     public WebHookRegistration(String id)
     {
@@ -44,13 +44,13 @@ public class WebHookRegistration
         return eventClass;
     }
 
-    public void setEventMatcher(Predicate<?> eventMatcher)
+    public void setEventMatcher(EventMatcher<?> eventMatcher)
     {
         this.eventMatcher = eventMatcher;
     }
 
-    public boolean matches(Object event)
+    public EventMatcher getEventMatcher()
     {
-        return eventMatcher.apply(event);
+        return eventMatcher;
     }
 }

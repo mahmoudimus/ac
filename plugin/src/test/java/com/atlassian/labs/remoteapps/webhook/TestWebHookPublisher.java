@@ -8,6 +8,7 @@ import com.atlassian.event.api.EventPublisher;
 import com.atlassian.labs.remoteapps.modules.applinks.RemoteAppApplicationType;
 import com.atlassian.labs.remoteapps.util.http.HttpContentRetriever;
 import com.atlassian.labs.remoteapps.webhook.event.WebHookPublishQueueFullEvent;
+import com.atlassian.labs.remoteapps.webhook.external.EventMatcher;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -66,15 +67,27 @@ public class TestWebHookPublisher
     public void testPublishSuccess()
     {
         publisher.register(type, "event.id", "/event");
-        publisher.publish("event.id",  new MapEventSerializer("event_object",
+        publisher.publish("event.id",  EventMatcher.ALWAYS_TRUE, new MapEventSerializer("event_object",
                                                               Collections.<String, Object>singletonMap("field", "value")));
+
+    }
+
+    @Test
+    public void testPublishFailureDueToMatching()
+    {
+        publisher.register(type, "event.id", "/event");
+        publisher.publish("event.id", new FalseEventMatcher(), new MapEventSerializer("event_object",
+                Collections.<String, Object>singletonMap("field", "value")));
+        verify(httpContentRetriever, never()).postIgnoreResponse(Matchers.<ApplicationLink>any(),
+                anyString(),
+                anyString());
 
     }
 
     @Test
     public void testPublishToNone()
     {
-        publisher.publish("event.id",  new MapEventSerializer("event_object",
+        publisher.publish("event.id", EventMatcher.ALWAYS_TRUE, new MapEventSerializer("event_object",
                                                               Collections.<String, Object>singletonMap("field", "value")));
 
         verify(httpContentRetriever, never()).postIgnoreResponse(Matchers.<ApplicationLink>any(),
@@ -86,7 +99,7 @@ public class TestWebHookPublisher
     public void testPublishToNoneWithRegistrations()
     {
         publisher.register(type, "event.other.id", "/event");
-        publisher.publish("event.id",  new MapEventSerializer("event_object",
+        publisher.publish("event.id", EventMatcher.ALWAYS_TRUE,  new MapEventSerializer("event_object",
                                                               Collections.<String, Object>singletonMap("field", "value")));
 
         verify(httpContentRetriever, never()).postIgnoreResponse(Matchers.<ApplicationLink>any(),
@@ -102,7 +115,7 @@ public class TestWebHookPublisher
 
         for (int x=0; x<100 + 4; x++)
         {
-            publisher.publish("event.id",  new MapEventSerializer("event_object",
+            publisher.publish("event.id", EventMatcher.ALWAYS_TRUE, new MapEventSerializer("event_object",
                                                                   Collections.<String, Object>singletonMap("field", "value")));
         }
 
@@ -117,4 +130,12 @@ public class TestWebHookPublisher
         }));
     }
 
+    private static class FalseEventMatcher implements EventMatcher<Object>
+    {
+        @Override
+        public boolean matches(Object event, ApplicationLink appLink)
+        {
+            return false;
+        }
+    }
 }

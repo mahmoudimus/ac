@@ -3,7 +3,7 @@ package com.atlassian.labs.remoteapps.product.confluence.webhook;
 import com.atlassian.confluence.event.events.ConfluenceEvent;
 import com.atlassian.confluence.setup.settings.SettingsManager;
 import com.atlassian.labs.remoteapps.product.EventMapper;
-import com.atlassian.labs.remoteapps.webhook.EventSerializer;
+import com.atlassian.labs.remoteapps.webhook.external.EventSerializer;
 import com.atlassian.labs.remoteapps.webhook.MapEventSerializer;
 import com.atlassian.labs.remoteapps.webhook.external.EventSerializerFactory;
 import com.atlassian.sal.api.user.UserManager;

@@ -1,6 +1,6 @@
-package com.atlassian.labs.remoteapps.webhook;
+package com.atlassian.labs.remoteapps.webhook.external;
 
-import org.apache.poi.hssf.record.formula.functions.T;
+import com.atlassian.labs.remoteapps.webhook.EventSerializationException;
 
 /**
  *
