@@ -5,6 +5,7 @@ import com.atlassian.labs.remoteapps.modules.external.RemoteModuleGenerator;
 import com.atlassian.labs.remoteapps.product.ProductAccessor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
+import com.atlassian.plugin.webresource.WebResourceUrlProvider;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.google.common.collect.Lists;
 import org.junit.Before;
@@ -34,6 +35,10 @@ public class TestDescriptorValidator
 
     @Mock
     Plugin plugin;
+
+    @Mock
+    WebResourceUrlProvider webResourceUrlProvider;
+
     @Before
     public void setUp()
     {
@@ -50,7 +55,7 @@ public class TestDescriptorValidator
         when(moduleGeneratorManager.getAllValidatableGenerators()).thenReturn(
                 Lists.<RemoteModuleGenerator>newArrayList());
         DescriptorValidator validator = new DescriptorValidator(moduleGeneratorManager, applicationProperties,
-                pluginRetrievalService, productAccessor);
+                pluginRetrievalService, productAccessor, webResourceUrlProvider);
         String doc = validator.getSchema();
         assertTrue(doc.contains("RootType"));
         assertTrue(doc.contains("ChildType"));
@@ -77,7 +82,7 @@ public class TestDescriptorValidator
         when(moduleGeneratorManager.getAllValidatableGenerators()).thenReturn(
                 Lists.<RemoteModuleGenerator>newArrayList(moduleGenerator));
         DescriptorValidator validator = new DescriptorValidator(moduleGeneratorManager, applicationProperties,
-                pluginRetrievalService, productAccessor);
+                pluginRetrievalService, productAccessor, webResourceUrlProvider);
         String doc = validator.getSchema();
         assertSnippets(doc, "ModuleChildType", "name=\"ModuleType", "name=\"FirstChildType", "RootType", "name=\"module1\"");
         
