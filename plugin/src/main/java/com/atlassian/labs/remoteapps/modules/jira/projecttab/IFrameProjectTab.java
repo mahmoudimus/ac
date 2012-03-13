@@ -42,7 +42,8 @@ public class IFrameProjectTab implements ProjectTabPanel
         try
         {
             Map<String,String[]> extraParams = newHashMap();
-            extraParams.put("project_key", new String[]{browseContext.getContextKey()});
+            extraParams.put("xtx_project_key", new String[]{browseContext.getContextKey()});
+            extraParams.put("xtx_project_id", new String[]{String.valueOf(browseContext.getProject().getId())});
             writer.write(iFrameRenderer.render(iFrameContext, "", extraParams,
                     browseContext.getUser().getName()));
         }

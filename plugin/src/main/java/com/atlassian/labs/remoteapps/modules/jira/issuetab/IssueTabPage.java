@@ -58,7 +58,7 @@ public class IssueTabPage extends AbstractIssueTabPanel2
             try
             {
                 Map<String,String[]> extraParams = newHashMap();
-                extraParams.put("issue_key", new String[]{request.issue().getKey()});
+                extraParams.put("ctx_issue_key", new String[]{request.issue().getKey()});
                 writer.write(iFrameRenderer.render(iFrameContext, "", extraParams,
                         request.remoteUser().getName()));
             }
