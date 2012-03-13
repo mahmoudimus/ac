@@ -1,20 +1,18 @@
-package com.atlassian.labs.remoteapps.modules.panel.jira;
+package com.atlassian.labs.remoteapps.modules.jira.projecttab;
 
+import com.atlassian.jira.ComponentManager;
+import com.atlassian.jira.plugin.projectpanel.ProjectTabPanelModuleDescriptor;
+import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.labs.remoteapps.modules.ApplicationLinkOperationsFactory;
 import com.atlassian.labs.remoteapps.modules.IFrameParams;
 import com.atlassian.labs.remoteapps.modules.IFrameRenderer;
 import com.atlassian.labs.remoteapps.modules.external.*;
 import com.atlassian.labs.remoteapps.modules.page.IFrameContext;
-import com.atlassian.labs.remoteapps.modules.page.jira.IFrameViewProfilePanel;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
-import com.atlassian.plugin.hostcontainer.HostContainer;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
-import com.atlassian.plugin.web.WebInterfaceManager;
-import com.atlassian.plugin.web.descriptors.DefaultWebPanelModuleDescriptor;
-import com.atlassian.plugin.web.model.WebPanel;
 import com.google.common.collect.ImmutableSet;
 import org.dom4j.Element;
 
@@ -27,31 +25,25 @@ import static java.util.Collections.emptyMap;
 /**
  *
  */
-public class ViewIssuePanelModuleGenerator implements RemoteModuleGenerator
+public class ProjectTabModuleGenerator implements RemoteModuleGenerator
 {
     private final IFrameRenderer iFrameRenderer;
-    private final WebInterfaceManager webInterfaceManager;
-    private final HostContainer hostContainer;
     private final ApplicationLinkOperationsFactory applicationLinkOperationsFactory;
     private final Plugin plugin;
 
-    public ViewIssuePanelModuleGenerator(final IFrameRenderer iFrameRenderer,
-                                         final WebInterfaceManager webInterfaceManager,
-                                         final ApplicationLinkOperationsFactory applicationLinkOperationsFactory,
-                                         final HostContainer hostContainer,
-                                         PluginRetrievalService pluginRetrievalService)
+    public ProjectTabModuleGenerator(final IFrameRenderer iFrameRenderer,
+            final ApplicationLinkOperationsFactory applicationLinkOperationsFactory,
+            PluginRetrievalService pluginRetrievalService)
     {
         this.iFrameRenderer = iFrameRenderer;
-        this.webInterfaceManager = webInterfaceManager;
         this.applicationLinkOperationsFactory = applicationLinkOperationsFactory;
-        this.hostContainer = hostContainer;
         this.plugin = pluginRetrievalService.getPlugin();
     }
 
     @Override
     public String getType()
     {
-        return "issue-panel-page";
+        return "project-tab";
     }
 
     @Override
@@ -67,18 +59,18 @@ public class ViewIssuePanelModuleGenerator implements RemoteModuleGenerator
     @Override
     public RemoteModule generate(final RemoteAppCreationContext ctx, final Element element)
     {
-        final String moduleKey = "issue-tab-page-" + getRequiredAttribute(element, "key");
+        final String moduleKey = "project-tab-" + getRequiredAttribute(element, "key");
         final String url = getRequiredAttribute(element, "url");
         final String panelName = getRequiredAttribute(element, "name");
 
         Element desc = element.createCopy();
         desc.addAttribute("key", moduleKey);
-        desc.addAttribute("i18n-key", panelName);
-        desc.addAttribute("class", IFrameViewProfilePanel.class.getName());
-        desc.addAttribute("location", "atl.jira.view.issue.right.context");
-        desc.addAttribute("class", IFrameViewIssuePanel.class.getName());
+        desc.addElement("label").setText(panelName);
+        desc.addAttribute("class", IFrameProjectTab.class.getName());
 
-        ModuleDescriptor<WebPanel> moduleDescriptor = createWebPanelModuleDescriptor(ctx, desc, moduleKey, url, new IFrameParams(element));
+        ProjectTabPanelModuleDescriptor moduleDescriptor = createDescriptor(ctx,
+                desc, moduleKey, url,
+                new IFrameParams(element));
 
         final Set<ModuleDescriptor> descriptors = ImmutableSet.<ModuleDescriptor>of(moduleDescriptor);
         return new RemoteModule()
@@ -91,29 +83,32 @@ public class ViewIssuePanelModuleGenerator implements RemoteModuleGenerator
         };
     }
 
-    private ModuleDescriptor<WebPanel> createWebPanelModuleDescriptor(final RemoteAppCreationContext ctx,
-                                                                      final Element desc,
-                                                                      final String moduleKey,
-                                                                      final String url,
-                                                                      final IFrameParams iFrameParams)
+    private ProjectTabPanelModuleDescriptor createDescriptor(
+            final RemoteAppCreationContext ctx,
+            final Element desc,
+            final String moduleKey,
+            final String url,
+            final IFrameParams iFrameParams)
     {
         try
         {
-            ModuleDescriptor<WebPanel> moduleDescriptor = new DefaultWebPanelModuleDescriptor(hostContainer, new ModuleFactory()
+            JiraAuthenticationContext jiraAuthenticationContext = ComponentManager.getInstance().getJiraAuthenticationContext();
+            ProjectTabPanelModuleDescriptor descriptor = new FixedProjectTabPanelModuleDescriptor(
+                    jiraAuthenticationContext, new ModuleFactory()
             {
                 @Override
                 public <T> T createModule(String name, ModuleDescriptor<T> moduleDescriptor) throws PluginParseException
                 {
                     ApplicationLinkOperationsFactory.LinkOperations linkOps = applicationLinkOperationsFactory.create(ctx.getApplicationType());
 
-                    return (T) new IFrameViewIssuePanel(
-                            iFrameRenderer,
-                            new IFrameContext(linkOps , url, moduleKey, iFrameParams));
+                    return (T) new IFrameProjectTab(
+                            new IFrameContext(linkOps , url, moduleKey, iFrameParams),
+                            iFrameRenderer);
                 }
-            }, webInterfaceManager);
+            });
 
-            moduleDescriptor.init(ctx.getPlugin(), desc);
-            return moduleDescriptor;
+            descriptor.init(ctx.getPlugin(), desc);
+            return descriptor;
         }
         catch (Exception ex)
         {
@@ -140,12 +135,12 @@ public class ViewIssuePanelModuleGenerator implements RemoteModuleGenerator
     @Override
     public String getName()
     {
-        return "Issue Tab Page";
+        return "Project Tab";
     }
 
     @Override
     public String getDescription()
     {
-        return "A remote page decorated as a web panel on the view issue page";
+        return "A remote page decorated as its own JIRA project tab";
     }
 }

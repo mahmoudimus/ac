@@ -1,4 +1,4 @@
-package com.atlassian.labs.remoteapps.modules.jira;
+package com.atlassian.labs.remoteapps.modules.jira.projecttab;
 
 import com.atlassian.jira.plugin.projectpanel.ProjectTabPanel;
 import com.atlassian.jira.plugin.projectpanel.ProjectTabPanelModuleDescriptorImpl;

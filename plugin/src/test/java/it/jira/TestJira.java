@@ -8,6 +8,7 @@ import com.atlassian.labs.remoteapps.test.RemoteAppEmbeddedTestPage;
 import com.atlassian.labs.remoteapps.test.jira.JiraOps;
 import com.atlassian.labs.remoteapps.test.jira.JiraRemoteAppProjectTab;
 import com.atlassian.labs.remoteapps.test.jira.JiraViewIssuePage;
+import com.atlassian.labs.remoteapps.test.jira.JiraViewIssuePageWithRemoteAppIssueTab;
 import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.pageobjects.TestedProductFactory;
 import com.atlassian.pageobjects.page.LoginPage;
@@ -30,7 +31,7 @@ import static junit.framework.Assert.assertNotNull;
 
 public class TestJira
 {
-    private static final String EMBEDDED_ISSUE_TAB_PAGE_ID = "issue-tab-page-remoteAppIssueTabPage";
+    private static final String EMBEDDED_ISSUE_PANEL_ID = "issue-tab-page-remoteAppIssuePanel";
     private static TestedProduct<WebDriverTester> product = TestedProductFactory.create(JiraTestedProduct.class);
     private static JiraOps jiraOps = new JiraOps(product.getProductInstance());
 
@@ -64,7 +65,8 @@ public class TestJira
 	public void testViewIssuePageWithEmbeddedPanel() throws InterruptedException, RemoteException
     {
         RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Test issue for panel");
-        JiraViewIssuePage viewIssuePage = product.visit(JiraViewIssuePage.class, issue.getKey(), EMBEDDED_ISSUE_TAB_PAGE_ID);
+        JiraViewIssuePage viewIssuePage = product.visit(JiraViewIssuePage.class, issue.getKey(),
+                EMBEDDED_ISSUE_PANEL_ID);
         assertEquals("Success", viewIssuePage.getMessage());
 	}
 
@@ -75,6 +77,14 @@ public class TestJira
                               .openTab(JiraRemoteAppProjectTab.class)
                               .getEmbeddedPage();
 
+        assertEquals("Success", page.getMessage());
+    }
+
+    @Test
+    public void testViewIssueTab() throws InterruptedException, RemoteException
+    {
+        RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Test issue for tab");
+        JiraViewIssuePageWithRemoteAppIssueTab page = product.visit(JiraViewIssuePageWithRemoteAppIssueTab.class, issue.getKey());
         assertEquals("Success", page.getMessage());
     }
 

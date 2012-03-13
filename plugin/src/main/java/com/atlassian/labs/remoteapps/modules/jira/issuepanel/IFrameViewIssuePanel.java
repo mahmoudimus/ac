@@ -1,4 +1,4 @@
-package com.atlassian.labs.remoteapps.modules.panel.jira;
+package com.atlassian.labs.remoteapps.modules.jira.issuepanel;
 
 import java.io.IOException;
 import java.io.StringWriter;

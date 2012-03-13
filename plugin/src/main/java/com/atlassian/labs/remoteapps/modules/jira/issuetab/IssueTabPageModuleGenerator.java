@@ -1,7 +1,7 @@
-package com.atlassian.labs.remoteapps.modules.jira;
+package com.atlassian.labs.remoteapps.modules.jira.issuetab;
 
 import com.atlassian.jira.ComponentManager;
-import com.atlassian.jira.plugin.projectpanel.ProjectTabPanelModuleDescriptor;
+import com.atlassian.jira.plugin.issuetabpanel.IssueTabPanelModuleDescriptor;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.labs.remoteapps.modules.ApplicationLinkOperationsFactory;
 import com.atlassian.labs.remoteapps.modules.IFrameParams;
@@ -25,13 +25,13 @@ import static java.util.Collections.emptyMap;
 /**
  *
  */
-public class ProjectTabModuleGenerator implements RemoteModuleGenerator
+public class IssueTabPageModuleGenerator implements RemoteModuleGenerator
 {
     private final IFrameRenderer iFrameRenderer;
     private final ApplicationLinkOperationsFactory applicationLinkOperationsFactory;
     private final Plugin plugin;
 
-    public ProjectTabModuleGenerator(final IFrameRenderer iFrameRenderer,
+    public IssueTabPageModuleGenerator(final IFrameRenderer iFrameRenderer,
             final ApplicationLinkOperationsFactory applicationLinkOperationsFactory,
             PluginRetrievalService pluginRetrievalService)
     {
@@ -43,7 +43,7 @@ public class ProjectTabModuleGenerator implements RemoteModuleGenerator
     @Override
     public String getType()
     {
-        return "project-tab";
+        return "issue-tab-page";
     }
 
     @Override
@@ -59,16 +59,16 @@ public class ProjectTabModuleGenerator implements RemoteModuleGenerator
     @Override
     public RemoteModule generate(final RemoteAppCreationContext ctx, final Element element)
     {
-        final String moduleKey = "project-tab-" + getRequiredAttribute(element, "key");
+        final String moduleKey = "issue-tab-page-" + getRequiredAttribute(element, "key");
         final String url = getRequiredAttribute(element, "url");
         final String panelName = getRequiredAttribute(element, "name");
 
         Element desc = element.createCopy();
         desc.addAttribute("key", moduleKey);
         desc.addElement("label").setText(panelName);
-        desc.addAttribute("class", IFrameProjectTab.class.getName());
+        desc.addAttribute("class", IssueTabPage.class.getName());
 
-        ProjectTabPanelModuleDescriptor moduleDescriptor = createDescriptor(ctx,
+        IssueTabPanelModuleDescriptor moduleDescriptor = createDescriptor(ctx,
                 desc, moduleKey, url,
                 new IFrameParams(element));
 
@@ -83,7 +83,7 @@ public class ProjectTabModuleGenerator implements RemoteModuleGenerator
         };
     }
 
-    private ProjectTabPanelModuleDescriptor createDescriptor(
+    private IssueTabPanelModuleDescriptor createDescriptor(
             final RemoteAppCreationContext ctx,
             final Element desc,
             final String moduleKey,
@@ -93,7 +93,7 @@ public class ProjectTabModuleGenerator implements RemoteModuleGenerator
         try
         {
             JiraAuthenticationContext jiraAuthenticationContext = ComponentManager.getInstance().getJiraAuthenticationContext();
-            ProjectTabPanelModuleDescriptor descriptor = new FixedProjectTabPanelModuleDescriptor(
+            IssueTabPanelModuleDescriptor descriptor = new FixedIssueTabPanelModuleDescriptor(
                     jiraAuthenticationContext, new ModuleFactory()
             {
                 @Override
@@ -101,7 +101,7 @@ public class ProjectTabModuleGenerator implements RemoteModuleGenerator
                 {
                     ApplicationLinkOperationsFactory.LinkOperations linkOps = applicationLinkOperationsFactory.create(ctx.getApplicationType());
 
-                    return (T) new IFrameProjectTab(
+                    return (T) new IssueTabPage(
                             new IFrameContext(linkOps , url, moduleKey, iFrameParams),
                             iFrameRenderer);
                 }
@@ -135,12 +135,13 @@ public class ProjectTabModuleGenerator implements RemoteModuleGenerator
     @Override
     public String getName()
     {
-        return "Project Tab";
+        return "Issue Tab Page";
     }
 
     @Override
     public String getDescription()
     {
-        return "A remote page decorated as its own JIRA project tab";
+        return "A remote page decorated as its own JIRA issue tab but not included in All tab" +
+                " as it has no individual actions";
     }
 }

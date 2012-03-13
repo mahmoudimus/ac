@@ -1,4 +1,4 @@
-package com.atlassian.labs.remoteapps.modules.jira;
+package com.atlassian.labs.remoteapps.modules.jira.projecttab;
 
 import com.atlassian.jira.plugin.projectpanel.ProjectTabPanel;
 import com.atlassian.jira.plugin.projectpanel.ProjectTabPanelModuleDescriptor;
@@ -43,7 +43,8 @@ public class IFrameProjectTab implements ProjectTabPanel
         {
             Map<String,String[]> extraParams = newHashMap();
             extraParams.put("project_key", new String[]{browseContext.getContextKey()});
-            writer.write(iFrameRenderer.render(iFrameContext, "", extraParams, browseContext.getUser().getName()));
+            writer.write(iFrameRenderer.render(iFrameContext, "", extraParams,
+                    browseContext.getUser().getName()));
         }
         catch (PermissionDeniedException ex)
         {

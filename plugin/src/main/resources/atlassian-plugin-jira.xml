@@ -11,8 +11,9 @@
 
     <!-- remote module generators -->
 
-    <component key="jira-issue-tab-page" class="com.atlassian.labs.remoteapps.modules.panel.jira.ViewIssuePanelModuleGenerator" />
-    <component key="jira-project-tab-page" class="com.atlassian.labs.remoteapps.modules.jira.ProjectTabModuleGenerator" />
+    <component key="jira-issue-panel-page" class="com.atlassian.labs.remoteapps.modules.jira.issuepanel.ViewIssuePanelModuleGenerator" />
+    <component key="jira-issue-tab-page" class="com.atlassian.labs.remoteapps.modules.jira.issuetab.IssueTabPageModuleGenerator" />
+    <component key="jira-project-tab-page" class="com.atlassian.labs.remoteapps.modules.jira.projecttab.ProjectTabModuleGenerator" />
     <component key="jira-profile-page" class="com.atlassian.labs.remoteapps.modules.page.jira.JiraProfileTabModuleGenerator" />
 
     <!-- api scopes -->
