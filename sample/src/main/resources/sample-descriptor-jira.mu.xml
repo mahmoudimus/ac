@@ -21,6 +21,8 @@
     <profile-page key="remoteAppProfile" name="Remote App {{appKey}} Profile" url="/myadmin" />
     <issue-panel-page key="remoteAppIssueTabPage" name="Remote App {{appKey}} Issue Page" url="/myadmin" />
 
+    <project-tab key="remoteAppProjectTab" name="{{appKey}}" url="/myadmin" />
+
     <web-hook event="remote_app_started" url="/webhook/remote_app_started" />
 
     <web-hook event="issue_created" url="/webhook/issue_created" />

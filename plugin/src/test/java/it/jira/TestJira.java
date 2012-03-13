@@ -2,8 +2,11 @@ package it.jira;
 
 import com.atlassian.jira.pageobjects.JiraTestedProduct;
 import com.atlassian.jira.pageobjects.pages.DashboardPage;
+import com.atlassian.jira.pageobjects.pages.project.BrowseProjectPage;
 import com.atlassian.labs.remoteapps.test.HtmlDumpRule;
+import com.atlassian.labs.remoteapps.test.RemoteAppEmbeddedTestPage;
 import com.atlassian.labs.remoteapps.test.jira.JiraOps;
+import com.atlassian.labs.remoteapps.test.jira.JiraRemoteAppProjectTab;
 import com.atlassian.labs.remoteapps.test.jira.JiraViewIssuePage;
 import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.pageobjects.TestedProductFactory;
@@ -58,13 +61,22 @@ public class TestJira
         jiraOps.deleteProject(project.getKey());
     }
     @Test
-	public void testViewIssuePageWithEmbeddedPanel() throws InterruptedException, RemoteException,
-                                                            RemoteAuthenticationException
+	public void testViewIssuePageWithEmbeddedPanel() throws InterruptedException, RemoteException
     {
         RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Test issue for panel");
         JiraViewIssuePage viewIssuePage = product.visit(JiraViewIssuePage.class, issue.getKey(), EMBEDDED_ISSUE_TAB_PAGE_ID);
         assertEquals("Success", viewIssuePage.getMessage());
 	}
+
+    @Test
+    public void testProjectTab() throws InterruptedException, RemoteException
+    {
+         RemoteAppEmbeddedTestPage page = product.visit(BrowseProjectPage.class, project.getKey())
+                              .openTab(JiraRemoteAppProjectTab.class)
+                              .getEmbeddedPage();
+
+        assertEquals("Success", page.getMessage());
+    }
 
     @Test
     public void testIssueCreatedWebHookFired() throws Exception
