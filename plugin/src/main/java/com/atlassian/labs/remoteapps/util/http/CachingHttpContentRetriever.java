@@ -40,6 +40,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
+import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
 
 /**
@@ -48,7 +49,7 @@ import static java.util.Collections.singletonList;
 public class CachingHttpContentRetriever implements DisposableBean, HttpContentRetriever
 {
     private final FlushableHttpCacheStorage httpCacheStorage;
-    private final CachingHttpClient httpClient;
+    CachingHttpClient httpClient;
     private final OAuthLinkManager oAuthLinkManager;
     private final UserManager userManager;
     private final Logger log = LoggerFactory.getLogger(CachingHttpContentRetriever.class);
@@ -71,7 +72,7 @@ public class CachingHttpContentRetriever implements DisposableBean, HttpContentR
         {
             @Override
             protected void finalize() throws Throwable
-            {   
+            {
                 // prevent the ThreadSafeClientConnManager from logging - this causes exceptions due to
                 // the ClassLoader probably having been removed when the plugin shuts down.  Added a
                 // PluginEventListener to make sure the shutdown method is called while the plugin classloader
@@ -123,21 +124,16 @@ public class CachingHttpContentRetriever implements DisposableBean, HttpContentR
     }
     
     @Override
-    public String get(ApplicationLink link, String remoteUsername, String url, Map<String, String> parameters) throws
+    public String get(ApplicationLink link, String remoteUsername, String originalUrl, Map<String, String> parameters) throws
                                                                                                               ContentRetrievalException
     {
-        List<NameValuePair> qparams = new ArrayList<NameValuePair>();
-        for (String key : parameters.keySet())
-        {
-            qparams.add(new BasicNameValuePair(key, parameters.get(key)));
-        }
-        qparams.add(new BasicNameValuePair("user_id", remoteUsername));
-        HttpGet httpget = new HttpGet(url + "?" + URLEncodedUtils.format(qparams, "UTF-8"));
+        String url = getUrlWithUserId(originalUrl, remoteUsername, parameters);
+        HttpGet httpget = new HttpGet(url);
         HttpContext localContext = new BasicHttpContext();
         HttpResponse response = null;
         try
         {
-            oAuthLinkManager.sign(httpget, link, url, remoteUsername,
+            oAuthLinkManager.sign(httpget, link, originalUrl, remoteUsername,
                     Maps.transformValues(parameters, new Function<String, List<String>>()
                     {
                         @Override
@@ -166,6 +162,22 @@ public class CachingHttpContentRetriever implements DisposableBean, HttpContentR
         }
     }
 
+    private String getUrlWithUserId(String url, String remoteUsername)
+    {
+        return getUrlWithUserId(url, remoteUsername, Collections.<String,String>emptyMap());
+    }
+    private String getUrlWithUserId(String url, String remoteUsername,
+            Map<String, String> parameters)
+    {
+        List<NameValuePair> qparams = new ArrayList<NameValuePair>();
+        for (String key : parameters.keySet())
+        {
+            qparams.add(new BasicNameValuePair(key, parameters.get(key)));
+        }
+        qparams.add(new BasicNameValuePair("user_id", remoteUsername));
+        return url + "?" + URLEncodedUtils.format(qparams, "UTF-8");
+    }
+
     @Override
     public void destroy() throws Exception
     {
@@ -175,14 +187,15 @@ public class CachingHttpContentRetriever implements DisposableBean, HttpContentR
     @Override
     public void postIgnoreResponse(ApplicationLink link, String url, String jsonBody)
     {
-        HttpPost httpPost = new HttpPost(url);
+        String user = userManager.getRemoteUsername();
+        HttpPost httpPost = new HttpPost(getUrlWithUserId(url, user));
         HttpResponse response = null;
         try
         {
-            oAuthLinkManager.sign(httpPost, link, url, userManager.getRemoteUsername(), Collections.<String, List<String>>emptyMap());
+            oAuthLinkManager.sign(httpPost, link, url, user, Collections.<String, List<String>>emptyMap());
             httpPost.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
             httpPost.setEntity(new StringEntity(jsonBody));
-            log.info("Posting information to '{}' as user '{}'", url, userManager.getRemoteUsername());
+            log.info("Posting information to '{}' as user '{}'", url, user);
             response = httpClient.execute(httpPost);
             if (response.getStatusLine().getStatusCode() != 200)
             {
@@ -192,7 +205,8 @@ public class CachingHttpContentRetriever implements DisposableBean, HttpContentR
         }
         catch (IOException e)
         {
-            log.warn("Unable to post information to '{}' as user '{}' due to: {}", new Object[]{url, userManager.getRemoteUsername(), e.getMessage()});
+            log.warn("Unable to post information to '{}' as user '{}' due to: {}", new Object
+                    []{url, user, e.getMessage()});
             throw new ContentRetrievalException(e);
         }
     }

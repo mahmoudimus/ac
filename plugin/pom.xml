@@ -502,7 +502,7 @@
                             </excludes>
                             <systemProperties>
                                 <testedProductClass>
-                                    com.atlassian.confluence.pageobjects.ConfluenceTestedProduct
+                                    com.atlassian.labs.remoteapps.test.confluence.FixedConfluenceTestedProduct
                                 </testedProductClass>
                             </systemProperties>
                             <excludes>
