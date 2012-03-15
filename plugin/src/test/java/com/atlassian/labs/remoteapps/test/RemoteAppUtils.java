@@ -21,7 +21,7 @@ public class RemoteAppUtils
 
         while (expiry > System.currentTimeMillis())
         {
-            JSONArray events = new JSONArray(getJson("http://localhost:" + (productInstance.getHttpPort() + 1) + "/webhook/"));
+            JSONArray events = new JSONArray(getJson(productInstance.getBaseUrl() + "/plugins/servlet/app1/proxy/webHook/"));
             if (events.length() > 0)
             {
                 for (int i = events.length() -1; i >= 0; i--)
@@ -40,6 +40,6 @@ public class RemoteAppUtils
 
     public static void clearMacroCaches(ProductInstance productInstance, String appKey) throws IOException
     {
-        emptyGet("http://localhost:" + (productInstance.getHttpPort() + 1) + "/macro-reset");
+        emptyGet(productInstance.getBaseUrl() + "/plugins/servlet/"+appKey+"/proxy/macroReset");
     }
 }

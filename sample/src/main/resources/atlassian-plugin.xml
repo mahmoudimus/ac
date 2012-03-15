@@ -1,0 +1,9 @@
+<atlassian-plugin key="app1" name="${project.name}" plugins-version="2">
+    <plugin-info>
+        <version>${project.version}</version>
+    </plugin-info>
+
+    <junit key="all" package="junit.all" />
+    <junit key="confluence" package="junit.confluence" application="confluence"/>
+    <junit key="jira" package="junit.jira" application="jira"/>
+</atlassian-plugin>

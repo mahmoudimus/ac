@@ -1,6 +1,7 @@
 package com.atlassian.labs.remoteapps.modules;
 
 import com.atlassian.labs.remoteapps.modules.page.IFrameContext;
+import com.atlassian.plugin.util.PluginUtils;
 import com.atlassian.plugin.webresource.WebResourceManager;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.templaterenderer.TemplateRenderer;
@@ -53,9 +54,10 @@ public class IFrameRenderer
             host = host + ":" + hostUri.getPort();
         }
         String iframeUrl = iframeContext.getIframePath() + (extraPath != null ? extraPath : "");
-
+        
         Map<String,String[]> allParams = newHashMap(queryParams);
-        allParams.put("xdm_e", new String[]{host});
+        allParams.put("" +
+                "xdm_e", new String[]{host});
         allParams.put("xdm_c", new String[]{"channel-" + iframeContext.getNamespace()});
         allParams.put("xdm_p", new String[]{"1"});
         String signedUrl = iframeContext.getLinkOps().signGetUrl(remoteUser, iframeUrl, allParams);
@@ -71,6 +73,11 @@ public class IFrameRenderer
         ctx.put("iframeSrcHtml", signedUrl);
         ctx.put("remoteapp", iframeContext.getLinkOps().get());
         ctx.put("namespace", iframeContext.getNamespace());
+
+        // even if same origin, force postMessage as same origin will have xdm_e with the full
+        // url, which we don't know as we only populate host and port from the base url
+        String xdmProtocol = URI.create(host).getHost().equalsIgnoreCase(URI.create(signedUrl).getHost()) ? "\"1\"" : "undefined";
+        ctx.put("xdmProtocolHtml", xdmProtocol);
 
         StringWriter output = new StringWriter();
         templateRenderer.render("velocity/iframe-body.vm", ctx, output);

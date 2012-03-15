@@ -1,10 +1,9 @@
 package com.atlassian.labs.remoteapps.rest;
 
 import com.atlassian.labs.remoteapps.DescriptorValidator;
-import com.atlassian.labs.remoteapps.PermissionDeniedException;
-import com.atlassian.labs.remoteapps.RemoteAppsService;
-import com.atlassian.labs.remoteapps.installer.InstallationFailedException;
-import com.atlassian.labs.remoteapps.installer.RemoteAppInstaller;
+import com.atlassian.labs.remoteapps.api.InstallationFailedException;
+import com.atlassian.labs.remoteapps.api.PermissionDeniedException;
+import com.atlassian.labs.remoteapps.api.RemoteAppsService;
 import com.atlassian.labs.remoteapps.settings.SettingsManager;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import com.atlassian.sal.api.user.UserManager;
@@ -24,8 +23,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;

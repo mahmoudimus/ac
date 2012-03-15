@@ -23,9 +23,10 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>api</module>
         <module>apputils</module>
+        <module>servlet-kit</module>
         <module>sample</module>
-        <module>sample-plugin</module>
         <module>plugin</module>
         <module>smoke-tests</module>
     </modules>
@@ -136,6 +137,18 @@
                 <groupId>com.atlassian.selenium</groupId>
                 <artifactId>atlassian-webdriver-core</artifactId>
                 <version>${atlassian.selenium.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>servlet-api</artifactId>
+                <version>2.5</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>commons-logging</groupId>
+                <artifactId>commons-logging</artifactId>
+                <version>1.1.1</version>
+                <scope>provided</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>

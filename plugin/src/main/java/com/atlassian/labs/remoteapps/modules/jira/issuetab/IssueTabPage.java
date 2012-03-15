@@ -1,8 +1,7 @@
 package com.atlassian.labs.remoteapps.modules.jira.issuetab;
 
-import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.plugin.issuetabpanel.*;
-import com.atlassian.labs.remoteapps.PermissionDeniedException;
+import com.atlassian.labs.remoteapps.api.PermissionDeniedException;
 import com.atlassian.labs.remoteapps.modules.IFrameRenderer;
 import com.atlassian.labs.remoteapps.modules.page.IFrameContext;
 import org.slf4j.Logger;

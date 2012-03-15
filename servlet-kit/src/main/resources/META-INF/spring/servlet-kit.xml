@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans:beans xmlns:beans="http://www.springframework.org/schema/beans"
+             xmlns:osgi="http://www.springframework.org/schema/osgi"
+             xmlns:context="http://www.springframework.org/schema/context"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd
+http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context-2.5.xsd"
+             default-autowire="autodetect">
+
+    <beans:bean id="oauthContext" class="com.atlassian.labs.remoteapps.apputils.OAuthContext"
+            autowire="constructor"/>
+
+    <context:component-scan base-package="servlets"/>
+    <context:component-scan base-package="services"/>
+
+    <beans:bean id="proxyServletLoader" class="com.atlassian.labs.remoteapps.kit.servlet.ProxyServletLoader" autowire="constructor" />
+    <beans:bean id="httpServer" class="com.atlassian.labs.remoteapps.kit.servlet.HttpServer" autowire="constructor" />
+    <beans:bean id="registration"
+                class="com.atlassian.labs.remoteapps.kit.servlet.ServletKitBootstrap" autowire="constructor"/>
+
+    <osgi:reference id="appProps" interface="com.atlassian.sal.api.ApplicationProperties" />
+    <osgi:reference id="consumerService" interface="com.atlassian.oauth.consumer.ConsumerService" />
+
+    <osgi:reference id="servletModuleManager" interface="com.atlassian.plugin.servlet.ServletModuleManager" />
+    <osgi:reference id="pluginRetrieval" interface="com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService" />
+</beans:beans>

@@ -37,6 +37,7 @@
                 //ID of the element to attach the inline frame to
                 container: "embedded-$namespace",
                 channel: "channel-$namespace",
+                protocol : $xdmProtocolHtml,
                 props: {height : initHeight, width : initWidth}
             }, {
               local : {

@@ -1,6 +1,8 @@
 package com.atlassian.labs.remoteapps;
 
-import com.atlassian.labs.remoteapps.installer.InstallationFailedException;
+import com.atlassian.labs.remoteapps.api.InstallationFailedException;
+import com.atlassian.labs.remoteapps.api.PermissionDeniedException;
+import com.atlassian.labs.remoteapps.api.RemoteAppsService;
 import com.atlassian.labs.remoteapps.installer.RemoteAppInstaller;
 import com.atlassian.labs.remoteapps.util.BundleUtil;
 import com.atlassian.plugin.PluginAccessor;
@@ -10,18 +12,16 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 
 import static com.atlassian.labs.remoteapps.util.RemoteAppManifestReader.getInstallerUser;
+import static com.atlassian.labs.remoteapps.util.RemoteAppManifestReader.isRemoteApp;
 
 /**
  * Main remote apps functions
  */
-@Component
 public class DefaultRemoteAppsService implements RemoteAppsService
 {
     private final RemoteAppInstaller remoteAppInstaller;
@@ -32,7 +32,6 @@ public class DefaultRemoteAppsService implements RemoteAppsService
     private final PluginAccessor pluginAccessor;
     private static final Logger log = LoggerFactory.getLogger(DefaultRemoteAppsService.class);
 
-    @Autowired
     public DefaultRemoteAppsService(RemoteAppInstaller remoteAppInstaller, UserManager userManager,
             BundleContext bundleContext, PermissionManager permissionManager,
             PluginController pluginController,
@@ -98,7 +97,7 @@ public class DefaultRemoteAppsService implements RemoteAppsService
         }
 
     }
-    
+
     @Override
     public void uninstall(String username, String appKey) throws PermissionDeniedException
     {
@@ -122,7 +121,7 @@ public class DefaultRemoteAppsService implements RemoteAppsService
     private boolean doesAppExist(String appKey)
     {
         Bundle bundle = BundleUtil.findBundleForPlugin(bundleContext, appKey);
-        return bundle != null && getInstallerUser(bundle) != null;
+        return bundle != null && isRemoteApp(bundle);
     }
 
     private void validateAppExists(String appKey)

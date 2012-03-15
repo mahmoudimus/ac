@@ -1,0 +1,31 @@
+<remote-app key="app1" name="Remote App - app1" version="1" icon-url="https://github.com/favicon.ico"
+            display-url="--to be replaced--">
+    <vendor name="Atlassian" url="http://atlassian.com" />
+    <description>
+        This really great app
+    </description>
+
+    <permissions>
+        <permission scope="resttest" />
+    </permissions>
+
+    <oauth>
+        <public-key>
+            -- to be replaced --
+        </public-key>
+    </oauth>
+    <entity-type key="project" name="Project" pluralized-name="Projects" icon-url="https://github.com/favicon.ico"/>
+
+    <admin-page key="remoteAppAdmin" name="Remote App app1 Admin" url="/myAdmin" />
+    <general-page key="remoteAppGeneral" name="Remote App app1 General" url="/myAdmin" height="600" width="700"/>
+    <profile-page key="remoteAppProfile" name="Remote App app1 Profile" url="/myAdmin" />
+    <issue-panel-page key="remoteAppIssuePanelPage" name="Remote App app1 Issue Page" url="/myAdmin" />
+    <issue-tab-page key="remoteAppIssueTabPage" name="app1" url="/myAdmin" />
+
+    <project-tab key="remoteAppProjectTab" name="app1" url="/myAdmin" />
+
+    <web-hook event="remote_app_started" url="/webHook/remote_app_started" />
+
+    <web-hook event="issue_created" url="/webHook/issue_created" />
+
+</remote-app>

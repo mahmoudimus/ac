@@ -1,23 +1,22 @@
 package com.atlassian.labs.remoteapps.modules.oauth;
 
+import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.oauth.util.Check;
-import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.auth.AuthenticationController;
 import com.atlassian.sal.api.auth.AuthenticationListener;
 import com.atlassian.sal.api.auth.Authenticator;
 import com.google.common.collect.ImmutableSet;
 import net.oauth.OAuth;
-import net.oauth.OAuthMessage;
 import net.oauth.server.HttpRequestMessage;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletResponseWrapper;
 import java.io.IOException;
-import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
+import static com.google.common.collect.Maps.newHashMap;
 import static net.oauth.OAuth.*;
 
 public class OAuth2LOFilter implements Filter
@@ -32,18 +31,17 @@ public class OAuth2LOFilter implements Filter
     private final Authenticator authenticator;
     private final AuthenticationListener authenticationListener;
     private final AuthenticationController authenticationController;
-
-    private final ApplicationProperties applicationProperties;
+    private final String ourConsumerKey;
 
     public OAuth2LOFilter(Authenticator authenticator,
             AuthenticationListener authenticationListener,
             AuthenticationController authenticationController,
-            ApplicationProperties applicationProperties)
+            ConsumerService consumerService)
     {
         this.authenticator = Check.notNull(authenticator, "authenticator");
         this.authenticationListener = Check.notNull(authenticationListener, "authenticationListener");
         this.authenticationController = Check.notNull(authenticationController, "authenticationController");
-        this.applicationProperties = Check.notNull(applicationProperties, "applicationProperties");
+        this.ourConsumerKey = consumerService.getConsumer().getKey();
     }
     
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException
@@ -121,18 +119,20 @@ public class OAuth2LOFilter implements Filter
         
         boolean isRequestTokenRequest = request.getRequestURL().toString().endsWith(
                 "/plugins/servlet/oauth/request-token");
-        final Set<String> params = parameterNames(request);
-        return  params.containsAll(OAUTH_DATA_REQUEST_PARAMS) &&
-                !params.contains(OAuth.OAUTH_TOKEN) &&
-                !isRequestTokenRequest;
+        final Map<String,String> params = parameterNames(request);
+        final Set<String> names = params.keySet();
+        return  names.containsAll(OAUTH_DATA_REQUEST_PARAMS) &&
+                !names.contains(OAuth.OAUTH_TOKEN) &&
+                !isRequestTokenRequest &&
+                !ourConsumerKey.equals(params.get(OAuth.OAUTH_CONSUMER_KEY));
     }
 
-    private Set<String> parameterNames(HttpServletRequest request)
+    private Map<String,String> parameterNames(HttpServletRequest request)
     {
-        Set<String> parameterNames = new HashSet<String>();
+        Map<String,String> parameterNames = newHashMap();
         for (OAuth.Parameter parameter : HttpRequestMessage.getParameters(request))
         {
-            parameterNames.add(parameter.getKey());
+            parameterNames.put(parameter.getKey(), parameter.getValue());
         }
         return parameterNames;
     }

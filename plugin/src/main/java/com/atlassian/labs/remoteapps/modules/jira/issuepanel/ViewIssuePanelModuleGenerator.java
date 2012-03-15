@@ -67,7 +67,7 @@ public class ViewIssuePanelModuleGenerator implements RemoteModuleGenerator
     @Override
     public RemoteModule generate(final RemoteAppCreationContext ctx, final Element element)
     {
-        final String moduleKey = "issue-tab-page-" + getRequiredAttribute(element, "key");
+        final String moduleKey = "issue-panel-page-" + getRequiredAttribute(element, "key");
         final String url = getRequiredAttribute(element, "url");
         final String panelName = getRequiredAttribute(element, "name");
 

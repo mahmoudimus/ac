@@ -11,10 +11,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Sets.newHashSet;
 
 /**
@@ -38,7 +40,7 @@ public class WaitableServiceTracker<K, T>
     {
         this.extractor = extractor;
         this.customizer = customizer;
-        this.services = new ConcurrentHashMap<K, T>();
+        this.services = newHashMap();
 
         this.serviceTracker = new ServiceTracker(bundleContext, serviceClass.getName(), new ServiceTrackerCustomizer()
             
@@ -65,8 +67,18 @@ public class WaitableServiceTracker<K, T>
             @Override
             public void removedService(ServiceReference reference, Object service)
             {
-                services.remove((T) service);
-                customizer.removed((T) service);
+                synchronized(waitLock)
+                {
+                    for (Iterator<T> i = services.values().iterator(); i.hasNext(); )
+                    {
+                        if (service == i.next())
+                        {
+                            i.remove();
+                        }
+                    }
+                    customizer.removed((T) service);
+                    waitLock.notifyAll();
+                }
             }
         });
         this.serviceTracker.open();
@@ -138,12 +150,18 @@ public class WaitableServiceTracker<K, T>
     
     public T get(K key)
     {
-        return services.get(key);
+        synchronized (waitLock)
+        {
+            return services.get(key);
+        }
     }
     
     public Iterable<T> getAll()
     {
-        return services.values();
+        synchronized (waitLock)
+        {
+            return services.values();
+        }
     }
 
     Class getServiceClass()
@@ -159,6 +177,7 @@ public class WaitableServiceTracker<K, T>
             {
                 addIfKeyNotNull(extractor, customizer, service);
             }
+            waitLock.notifyAll();
         }
     }
 }

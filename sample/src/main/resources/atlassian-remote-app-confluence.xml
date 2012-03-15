@@ -1,0 +1,111 @@
+<remote-app key="app1" name="Remote App - app1" version="1" icon-url="https://github.com/favicon.ico">
+    <vendor name="Atlassian" url="http://atlassian.com" />
+    <description>
+        This really great app
+    </description>
+
+    <permissions>
+        <permission scope="resttest" />
+        <permission scope="read_content" />
+    </permissions>
+
+    <oauth>
+        <public-key>
+            -- to be replaced at runtime --
+        </public-key>
+    </oauth>
+    <entity-type key="project" name="Project" pluralized-name="Projects" icon-url="https://github.com/favicon.ico"/>
+
+    <admin-page key="remoteAppAdmin" name="Remote App app1 Admin" url="/myAdmin" />
+    <general-page key="remoteAppGeneral" name="Remote App app1 General" url="/myAdmin" height="600" width="700">
+        <context-param name="page_id" />
+    </general-page>
+    <profile-page key="remoteAppProfile" name="Remote App app1 Profile" url="/myAdmin" />
+
+    <macro key="app1-macro" url="/myMacro" output-type="block" body-type="rich-text">
+        <description>Example macro</description>
+        <category name="development" />
+        <parameters>
+            <parameter name="footy" title="Favorite Footy" type="enum">
+                <value name="American Football"/>
+                <value name="Soccer"/>
+                <value name="Rugby Union"/>
+                <value name="Rugby League"/>
+            </parameter>
+        </parameters>
+    </macro>
+
+    <macro key="app1-slow" url="/mySlowMacro" output-type="block" body-type="none">
+        <description>Slow macro that takes too long to render (for testing)</description>
+    </macro>
+
+    <macro key="app1-counter" url="/myCounterMacro" output-type="block" body-type="none">
+        <description>Counter macro that increments a number (for testing)</description>
+    </macro>
+
+    <macro key="app1-image" url="/myImageMacro" output-type="block" body-type="none">
+        <description>Slow macro that takes too long to render (for testing)</description>
+        <image-placeholder url="/sandcastles.jpg" />
+    </macro>
+
+    <page-macro key="app1-page" url="/myAdmin" output-type="block" body-type="none">
+        <description>Page macro that displays info (for testing)</description>
+    </page-macro>
+
+    <web-hook event="remote_app_started" url="/webHook/remote_app_started" />
+
+    <web-hook event="blog_created" url="/webHook/blog_created" />
+    <web-hook event="blog_removed" url="/webHook/blog_removed" />
+    <web-hook event="blog_trashed" url="/webHook/blog_trashed" />
+    <web-hook event="blog_restored" url="/webHook/blog_restored" />
+    <web-hook event="blog_updated" url="/webHook/blog_updated" />
+    <web-hook event="blog_viewed" url="/webHook/blog_viewed" />
+
+    <web-hook event="page_created" url="/webHook/page_created" />
+    <web-hook event="page_updated" url="/webHook/page_updated" />
+    <web-hook event="page_removed" url="/webHook/page_removed" />
+    <web-hook event="page_trashed" url="/webHook/page_trashed" />
+    <web-hook event="page_restored" url="/webHook/page_restored" />
+    <web-hook event="page_moved" url="/webHook/page_moved" />
+    <web-hook event="page_children_reordered" url="/webHook/page_children_reordered" />
+    <web-hook event="page_viewed" url="/webHook/page_viewed" />
+
+    <web-hook event="comment_created" url="/webHook/comment_created" />
+    <web-hook event="comment_updated" url="/webHook/comment_updated" />
+    <web-hook event="comment_removed" url="/webHook/comment_removed" />
+
+    <web-hook event="attachment_created" url="/webHook/attachment_created" />
+    <web-hook event="attachment_updated" url="/webHook/attachment_updated" />
+    <web-hook event="attachment_removed" url="/webHook/attachment_removed" />
+    <web-hook event="attachment_viewed" url="/webHook/attachment_viewed" />
+
+    <web-hook event="space_created" url="/webHook/space_created" />
+    <web-hook event="space_updated" url="/webHook/space_updated" />
+    <web-hook event="space_logo_updated" url="/webHook/space_logo_updated" />
+    <web-hook event="space_removed" url="/webHook/space_removed" />
+    <web-hook event="space_permissions_updated" url="/webHook/space_permissions_updated" />
+
+    <web-hook event="status_created" url="/webHook/status_created" />
+    <web-hook event="status_removed" url="/webHook/status_removed" />
+    <web-hook event="status_cleared" url="/webHook/status_cleared" />
+
+    <web-hook event="user_followed" url="/webHook/user_followed" />
+
+    <web-hook event="label_created" url="/webHook/label_created" />
+    <web-hook event="label_added" url="/webHook/label_added" />
+    <web-hook event="label_removed" url="/webHook/label_removed" />
+    <web-hook event="label_deleted" url="/webHook/label_deleted" />
+
+    <web-hook event="search_performed" url="/webHook/search_performed" />
+
+    <web-hook event="user_created" url="/webHook/user_created" />
+    <web-hook event="user_deactivated" url="/webHook/user_deactivated" />
+    <web-hook event="user_reactivated" url="/webHook/user_reactivated" />
+    <web-hook event="user_removed" url="/webHook/user_removed" />
+    <web-hook event="group_created" url="/webHook/group_created" />
+    <web-hook event="group_removed" url="/webHook/group_removed" />
+
+    <web-hook event="login" url="/webHook/login" />
+    <web-hook event="logout" url="/webHook/logout" />
+    <web-hook event="login_failed" url="/webHook/login_failed" />
+</remote-app>

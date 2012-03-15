@@ -3,7 +3,7 @@ package com.atlassian.labs.remoteapps.modules.jira.projecttab;
 import com.atlassian.jira.plugin.projectpanel.ProjectTabPanel;
 import com.atlassian.jira.plugin.projectpanel.ProjectTabPanelModuleDescriptor;
 import com.atlassian.jira.project.browse.BrowseContext;
-import com.atlassian.labs.remoteapps.PermissionDeniedException;
+import com.atlassian.labs.remoteapps.api.PermissionDeniedException;
 import com.atlassian.labs.remoteapps.modules.IFrameRenderer;
 import com.atlassian.labs.remoteapps.modules.page.IFrameContext;
 import org.slf4j.Logger;

@@ -5,7 +5,7 @@ import java.io.StringWriter;
 import java.util.Map;
 
 import com.atlassian.crowd.embedded.api.User;
-import com.atlassian.labs.remoteapps.PermissionDeniedException;
+import com.atlassian.labs.remoteapps.api.PermissionDeniedException;
 import com.atlassian.labs.remoteapps.modules.IFrameRenderer;
 import com.atlassian.labs.remoteapps.modules.page.IFrameContext;
 import com.atlassian.plugin.web.model.WebPanel;

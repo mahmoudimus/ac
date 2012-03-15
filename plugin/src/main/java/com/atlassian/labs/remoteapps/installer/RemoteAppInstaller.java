@@ -1,6 +1,6 @@
 package com.atlassian.labs.remoteapps.installer;
 
-import com.atlassian.labs.remoteapps.PermissionDeniedException;
+import com.atlassian.labs.remoteapps.api.PermissionDeniedException;
 
 /**
  * Installs a remote app
@@ -17,5 +17,6 @@ public interface RemoteAppInstaller
      * @param registrationUrl The registration URL to retrieve the Remote App info
      * @param registrationSecret The secret token to send to the registration URL.  Can be null.
      */
-    String install(String username, String registrationUrl, String registrationSecret, KeyValidator keyValidator) throws PermissionDeniedException;
+    String install(String username, String registrationUrl, String registrationSecret, KeyValidator keyValidator) throws
+                                                                                                                  PermissionDeniedException;
 }

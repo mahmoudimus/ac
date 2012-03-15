@@ -2,19 +2,15 @@ package com.atlassian.labs.remoteapps.modules.page.jira;
 
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.labs.jira4compat.api.CompatViewProfilePanel;
-import com.atlassian.labs.remoteapps.PermissionDeniedException;
-import com.atlassian.labs.remoteapps.modules.ApplicationLinkOperationsFactory;
+import com.atlassian.labs.remoteapps.api.PermissionDeniedException;
 import com.atlassian.labs.remoteapps.modules.IFrameRenderer;
 import com.atlassian.labs.remoteapps.modules.page.IFrameContext;
 import com.atlassian.plugin.ModuleDescriptor;
-import com.atlassian.plugin.webresource.WebResourceManager;
-import com.atlassian.templaterenderer.TemplateRenderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.Map;
 
 import static com.google.common.collect.Maps.newHashMap;
 

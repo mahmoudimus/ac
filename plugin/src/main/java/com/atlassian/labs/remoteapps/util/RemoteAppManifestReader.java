@@ -17,4 +17,10 @@ public class RemoteAppManifestReader
         }
         return null;
     }
+
+    public static boolean isRemoteApp(Bundle bundle)
+    {
+        return bundle.getHeaders().get("Remote-App") != null ||
+                bundle.getEntry("atlassian-remote-app.xml") != null;
+    }
 }

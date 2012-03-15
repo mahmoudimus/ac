@@ -1,6 +1,6 @@
 package com.atlassian.labs.remoteapps;
 
-import com.atlassian.labs.remoteapps.installer.InstallationFailedException;
+import com.atlassian.labs.remoteapps.api.InstallationFailedException;
 import com.atlassian.labs.remoteapps.modules.external.RemoteModuleGenerator;
 import com.atlassian.labs.remoteapps.product.ProductAccessor;
 import com.atlassian.plugin.Plugin;
