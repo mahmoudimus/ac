@@ -9,7 +9,7 @@
 
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>remoteapp-api</artifactId>
+    <artifactId>remoteapps-api</artifactId>
     <name>Atlassian Remote Apps - Public API</name>
     <description>
         The public API for remote apps
@@ -23,26 +23,5 @@
             <scope>provided</scope>
         </dependency>
    </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <version>2.5</version>
-                <executions>
-                    <execution>
-                        <id>install-for-smoke-tests</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>deploy</goal>
-                        </goals>
-                        <configuration>
-                            <altDeploymentRepository>smoke-tests::default::file://${basedir}/../smoke-tests/repository</altDeploymentRepository>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
 
 </project>

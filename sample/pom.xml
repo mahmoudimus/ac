@@ -19,14 +19,14 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>remoteapp-servlet-kit</artifactId>
+            <artifactId>remoteapps-servlet-kit</artifactId>
             <version>${project.version}</version>
         </dependency>
 
 
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>remoteapp-api</artifactId>
+            <artifactId>remoteapps-api</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>

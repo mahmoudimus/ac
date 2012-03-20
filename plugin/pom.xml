@@ -18,7 +18,7 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>remoteapp-api</artifactId>
+            <artifactId>remoteapps-api</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -627,22 +627,6 @@
                             <goal>test-jar</goal>
                         </goals>
                         <phase>package</phase>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <version>2.5</version>
-                <executions>
-                    <execution>
-                        <id>install-for-smoke-tests</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>deploy</goal>
-                        </goals>
-                        <configuration>
-                            <altDeploymentRepository>smoke-tests::default::file://${basedir}/../smoke-tests/repository</altDeploymentRepository>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
