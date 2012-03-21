@@ -85,9 +85,9 @@ public class TestRemoteApp
         assertEquals("Rest Test", documentation.element("name").getTextTrim());
         assertEquals("A test resource", documentation.element("description").getTextTrim());
         List<Element> resources = documentation.element("resources").elements("resource");
-        assertEquals("/rest/remoteapptest/latest/", resources.get(0).attributeValue("path"));
+        assertEquals("/rest/remoteapptest/latest/user", resources.get(0).attributeValue("path"));
         assertEquals("GET", resources.get(0).attributeValue("httpMethod"));
-        assertEquals("/rest/remoteapptest/1/", resources.get(1).attributeValue("path"));
+        assertEquals("/rest/remoteapptest/1/user", resources.get(1).attributeValue("path"));
         assertEquals("GET", resources.get(1).attributeValue("httpMethod"));
     }
 

@@ -18,15 +18,25 @@ public class RestCallTest
     @Test
     public void testCall() throws Exception
     {
-        String result = sendSignedGet(oAuthContext, oAuthContext.getHostBaseUrl(clientKey) + "/rest/remoteapptest/latest/", "betty");
+        String result = sendSignedGet(oAuthContext, oAuthContext.getHostBaseUrl(clientKey) + "/rest/remoteapptest/latest/user", "betty");
         assertEquals("betty", result);
     }
 
     @Test
-    public void testUnauthorizedCall() throws Exception
+    public void testUnauthorizedCallForUnknownScope() throws Exception
     {
         int status = sendFailedSignedGet(oAuthContext,
-                oAuthContext.getHostBaseUrl(clientKey) + "/rest/remoteappforbidden/latest/", "betty");
+                oAuthContext.getHostBaseUrl(clientKey) + "/rest/remoteapptest/latest/unscoped", "betty");
         assertEquals(403, status);
     }
+
+    @Test
+    public void testUnauthorizedCallForUnrequestedScope() throws Exception
+    {
+        int status = sendFailedSignedGet(oAuthContext,
+                oAuthContext.getHostBaseUrl(clientKey) + "/rest/remoteapptest/latest/unauthorisedscope", "betty");
+        assertEquals(403, status);
+
+    }
+
 }

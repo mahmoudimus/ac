@@ -9,7 +9,9 @@ import com.atlassian.labs.remoteapps.util.tracker.WaitableServiceTracker;
 import com.atlassian.labs.remoteapps.util.tracker.WaitableServiceTrackerFactory;
 import com.atlassian.sal.api.user.UserManager;
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -103,10 +105,19 @@ public class PermissionManager
             return false;
         }
 
-        List<String> appScopeKeys = (List<String>) link.getProperty(API_SCOPES_LINK_KEY);
+        final List<String> appScopeKeys = (List<String>) link.getProperty(API_SCOPES_LINK_KEY);
         if (appScopeKeys != null)
         {
-            for (ApiScope scope : apiScopeTracker.getAll())
+            Iterable<ApiScope> applicableScopes = Iterables.filter(apiScopeTracker.getAll(), new Predicate<ApiScope>()
+            {
+                @Override
+                public boolean apply(ApiScope apiScope)
+                {
+                    return appScopeKeys.contains(apiScope.getKey());
+                }
+            });
+
+            for (ApiScope scope : applicableScopes)
             {
                 if (scope.allow(req, user))
                 {

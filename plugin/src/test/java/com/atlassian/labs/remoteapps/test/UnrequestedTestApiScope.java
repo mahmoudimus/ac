@@ -8,19 +8,16 @@ import javax.servlet.http.HttpServletRequest;
 
 import static java.util.Arrays.asList;
 
-/**
- *
- */
-public class RestTestApiScope implements ApiScope
+public class UnrequestedTestApiScope implements ApiScope
 {
     private final RestApiScopeHelper validator = new RestApiScopeHelper(asList(
-        new RestApiScopeHelper.RestScope("remoteapptest", asList("latest", "1"), "/user", asList("GET"))
+            new RestApiScopeHelper.RestScope("remoteapptest", asList("latest", "1"), "/unauthorisedscope", asList("GET"))
     ));
 
     @Override
     public String getKey()
     {
-        return "resttest";
+        return "unrequested_scope";
     }
 
     @Override
@@ -38,12 +35,12 @@ public class RestTestApiScope implements ApiScope
     @Override
     public String getName()
     {
-        return "Rest Test";
+        return "Unrequested API Scope";
     }
 
     @Override
     public String getDescription()
     {
-        return "A test resource";
+        return "An API Scope that never gets used";
     }
 }
