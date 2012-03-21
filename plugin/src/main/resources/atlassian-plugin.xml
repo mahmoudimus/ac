@@ -83,6 +83,10 @@
     <component-import key="pluginSettingsFactory" interface="com.atlassian.sal.api.pluginsettings.PluginSettingsFactory" />
     <component-import key="typeAccessor" interface="com.atlassian.applinks.spi.util.TypeAccessor" />
 
+    <!-- Cross-product API Scopes -->
+    <component key="applinks-read_app_links" class="com.atlassian.labs.remoteapps.product.ReadAppLinksScope"/>
+    <component key="applinks-modify_app_link" class="com.atlassian.labs.remoteapps.product.ModifyAppLinkScope" />
+
     <!-- speakeasy integration -->
     <commonjs key="speakeasy-commonjs" location="/js/speakeasy" />
 
