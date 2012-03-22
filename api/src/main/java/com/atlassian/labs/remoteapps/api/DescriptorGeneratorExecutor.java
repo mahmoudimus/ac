@@ -29,7 +29,7 @@ public class DescriptorGeneratorExecutor
         Document source;
         try
         {
-            source = new SAXReader().read(xmlUrl);
+            source = XmlUtils.createSecureSaxReader().read(xmlUrl);
         }
         catch (DocumentException e)
         {

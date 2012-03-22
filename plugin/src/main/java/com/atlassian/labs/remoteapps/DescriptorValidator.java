@@ -1,6 +1,7 @@
 package com.atlassian.labs.remoteapps;
 
 import com.atlassian.labs.remoteapps.api.InstallationFailedException;
+import com.atlassian.labs.remoteapps.api.XmlUtils;
 import com.atlassian.labs.remoteapps.modules.external.RemoteModuleGenerator;
 import com.atlassian.labs.remoteapps.product.ProductAccessor;
 import com.atlassian.plugin.Plugin;
@@ -58,33 +59,20 @@ public class DescriptorValidator
 
     public Document parseAndValidate(String url, String descriptorXml)
     {
-        SAXReader reader = new SAXReader(true);
+        SAXReader reader = XmlUtils.createSecureSaxReader();
         try
         {
-            reader.setFeature("http://apache.org/xml/features/validation/schema", true);
-            reader.setProperty("http://java.sun.com/xml/jaxp/properties/schemaLanguage",
-                    "http://www.w3.org/2001/XMLSchema");
-            boolean useNamespace = descriptorXml.contains(getSchemaNamespace());
-            final InputSource schemaSource = new InputSource(new StringReader(
-                    buildSchema(getSchemaUrl(), useNamespace)));
-            schemaSource.setSystemId(getSchemaUrl().toString());
-            reader.setProperty("http://java.sun.com/xml/jaxp/properties/schemaSource", schemaSource);
-
             InputSource source = new InputSource(new StringReader(descriptorXml));
             source.setSystemId(url);
             source.setEncoding("UTF-8");
             Document document = reader.read(source);
-
             document.accept(new NamespaceCleaner());
+            validate(url, document);
             return document;
         }
         catch (DocumentException e)
         {
             throw new InstallationFailedException("Unable to parse the descriptor: " + e.getMessage(), e);
-        }
-        catch (SAXException e)
-        {
-            throw new RuntimeException(e);
         }
     }
 

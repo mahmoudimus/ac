@@ -7,6 +7,8 @@ import org.dom4j.DocumentException;
 import org.dom4j.io.SAXReader;
 import org.springframework.stereotype.Component;
 
+import static com.atlassian.labs.remoteapps.api.XmlUtils.createSecureSaxReader;
+
 /**
  * Switch descriptors for different apps
  */
@@ -18,7 +20,7 @@ public class ProductSwitchingDescriptorFactory implements RemoteAppDescriptorFac
     {
         try
         {
-            return new SAXReader().read(getClass().getResource(
+            return createSecureSaxReader().read(getClass().getResource(
                     "/atlassian-remote-app-" + System.getProperty("product", "refapp") + ".xml"));
         }
         catch (DocumentException e)

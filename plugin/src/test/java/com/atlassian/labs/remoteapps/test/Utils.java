@@ -13,6 +13,8 @@ import java.net.MalformedURLException;
 import java.net.ServerSocket;
 import java.net.URL;
 
+import static com.atlassian.labs.remoteapps.api.XmlUtils.createSecureSaxReader;
+
 /**
  *
  */
@@ -35,7 +37,7 @@ public class Utils
     public static Document getXml(String url) throws IOException, DocumentException
     {
         InputStream inputStream = new URL(url).openStream();
-        return new SAXReader().read(inputStream);
+        return createSecureSaxReader().read(inputStream);
     }
 
     public static void emptyGet(String url) throws IOException

@@ -20,6 +20,8 @@ import java.io.StringWriter;
 import java.net.URI;
 import java.net.URL;
 
+import static com.atlassian.labs.remoteapps.api.XmlUtils.createSecureSaxReader;
+
 /**
  *
  */
@@ -85,7 +87,7 @@ public class Dom4jUtils
         Document source;
         try
         {
-            source = new SAXReader().read(xmlUrl);
+            source = createSecureSaxReader().read(xmlUrl);
         }
         catch (DocumentException e)
         {
@@ -124,17 +126,9 @@ public class Dom4jUtils
     }
     public static Document readDocument(InputStream in)
     {
-        SAXReader build = new SAXReader();
+        SAXReader build = createSecureSaxReader();
         try
         {
-            build.setEntityResolver(new EntityResolver()
-            {
-                @Override
-                public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException
-                {
-                    return null;
-                }
-            });
             return build.read(in);
         }
         catch (DocumentException e)

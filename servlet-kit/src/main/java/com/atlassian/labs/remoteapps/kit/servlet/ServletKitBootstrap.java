@@ -22,6 +22,8 @@ import org.springframework.context.ApplicationContext;
 
 import java.util.Collection;
 
+import static com.atlassian.labs.remoteapps.api.XmlUtils.createSecureSaxReader;
+
 /**
  *
  */
@@ -119,8 +121,9 @@ public class ServletKitBootstrap implements DisposableBean
 
         try
         {
-            return new SAXReader().read(bundleContext.getBundle().getEntry("atlassian-remote-app" +
-                        ".xml"));
+            return createSecureSaxReader().read(
+                    bundleContext.getBundle().getEntry("atlassian-remote-app" +
+                            ".xml"));
         }
         catch (DocumentException e)
         {

@@ -9,6 +9,8 @@ import org.dom4j.io.SAXReader;
 
 import java.io.StringReader;
 
+import static com.atlassian.labs.remoteapps.api.XmlUtils.createSecureSaxReader;
+
 /**
  *
  */
@@ -25,7 +27,7 @@ public class OAuthUtils
             HttpGet get = new HttpGet(baseurl + "/plugins/servlet/oauth/consumer-info");
             ResponseHandler<String> responseHandler = new BasicResponseHandler();
             String responseBody = httpclient.execute(get, responseHandler);
-            Document doc = new SAXReader().read(new StringReader(responseBody));
+            Document doc = createSecureSaxReader().read(new StringReader(responseBody));
             consumerKey = doc.getRootElement().element("key").getTextTrim();
         }
         catch (Exception e)
