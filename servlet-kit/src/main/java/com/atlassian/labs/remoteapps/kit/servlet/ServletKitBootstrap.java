@@ -1,6 +1,7 @@
 package com.atlassian.labs.remoteapps.kit.servlet;
 
 import com.atlassian.labs.remoteapps.api.DescriptorGenerator;
+import com.atlassian.labs.remoteapps.apputils.Environment;
 import com.atlassian.labs.remoteapps.apputils.OAuthContext;
 import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.consumer.ConsumerService;
@@ -10,6 +11,7 @@ import com.atlassian.sal.api.ApplicationProperties;
 import net.oauth.signature.RSA_SHA1;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
+import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.osgi.framework.BundleContext;
 import org.osgi.util.tracker.ServiceTracker;
@@ -66,9 +68,14 @@ public class ServletKitBootstrap implements DisposableBean
                             applicationProperties.getBaseUrl());
 
             Document appDescriptor = loadDescriptor();
+            Environment.setEnv("OAUTH_LOCAL_KEY", appDescriptor.getRootElement().attributeValue("key"));
             appDescriptor.getRootElement().addAttribute("display-url", httpServer.getAppBaseUrl().toString());
-            appDescriptor.getRootElement().element("oauth").element("public-key").setText(
-                    oAuthContext.getLocal().getProperty(RSA_SHA1.PUBLIC_KEY).toString());
+            Element oauth = appDescriptor.getRootElement().element("oauth");
+            if (oauth != null)
+            {
+                oauth.element("public-key").setText(
+                        oAuthContext.getLocal().getProperty(RSA_SHA1.PUBLIC_KEY).toString());
+            }
             loadGenerator().init(appDescriptor);
         }
         catch (Exception ex)
