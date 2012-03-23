@@ -59,6 +59,7 @@
     <component key="macroContentManager" class="com.atlassian.labs.remoteapps.modules.confluence.MacroContentManager"/>
     <component key="confluenceWebHookProvider" class="com.atlassian.labs.remoteapps.product.confluence.webhook.ConfluenceWebHookProvider" />
     <component key="confluenceEventSerializerFactory" class="com.atlassian.labs.remoteapps.product.confluence.webhook.ConfluenceEventSerializerFactory" />
+    <component key="confluenceWebSudoElevator" class="com.atlassian.labs.remoteapps.product.confluence.ConfluenceWebSudoElevator" />
 
     <component-import key="bandanaManager" interface="com.atlassian.bandana.BandanaManager" />
     <component-import key="spaceManager" interface="com.atlassian.confluence.spaces.SpaceManager" />
@@ -68,6 +69,8 @@
                       interface="com.atlassian.confluence.status.service.SystemInformationService"/>
     <component-import key="xmlService" interface="com.atlassian.confluence.xhtml.api.XhtmlContent"/>
     <component-import key="i18nBean" interface="com.atlassian.confluence.util.i18n.I18NBeanFactory"/>
+
+    <component-import key="webSudoManager" interface="com.atlassian.confluence.security.websudo.WebSudoManager" />
 
     <!-- activity streams -->
     <!--component-import key="confluenceUserProfileAccessor" interface="com.atlassian.streams.spi.UserProfileAccessor"/>

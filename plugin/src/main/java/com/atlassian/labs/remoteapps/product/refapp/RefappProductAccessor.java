@@ -1,6 +1,7 @@
 package com.atlassian.labs.remoteapps.product.refapp;
 
 import com.atlassian.labs.remoteapps.product.ProductAccessor;
+import com.atlassian.labs.remoteapps.product.WebSudoElevator;
 import com.atlassian.plugin.web.WebInterfaceManager;
 import com.atlassian.plugin.web.descriptors.DefaultWebItemModuleDescriptor;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;

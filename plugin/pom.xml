@@ -99,6 +99,12 @@
             <version>${confluence.version}</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.atlassian.refapp</groupId>
+            <artifactId>atlassian-refapp-auth-plugin</artifactId>
+            <version>${refapp.version}</version>
+            <scope>provided</scope>
+        </dependency>
 
         <dependency>
             <groupId>commons-codec</groupId>
@@ -383,9 +389,12 @@
                         <Import-Package>
                             com.atlassian.confluence.plugin.descriptor.web.descriptors;resolution:=optional,
                             com.atlassian.confluence.plugin.webresource;resolution:=optional,
+                            com.atlassian.confluence.security.websudo;resolution:=optional,
                             com.atlassian.jira.plugin.webfragment.descriptors;resolution:=optional,
                             com.atlassian.jira.security;resolution:=optional,
+                            com.atlassian.jira.security.websudo;resolution:=optional,
                             com.atlassian.jira;resolution:=optional,
+                            com.atlassian.refapp.auth.external;resolution:=optional,
                             com.atlassian.sal.api.*;version="(2.4,3.0]",
                             org.apache.commons.lang.*;version="2.4",
                             com.atlassian.oauth*;version="(1.2,2.0]",

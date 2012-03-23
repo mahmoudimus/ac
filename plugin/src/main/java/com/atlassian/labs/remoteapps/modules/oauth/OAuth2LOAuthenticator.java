@@ -1,7 +1,6 @@
 package com.atlassian.labs.remoteapps.modules.oauth;
 
 import com.atlassian.labs.remoteapps.OAuthLinkManager;
-import com.atlassian.labs.remoteapps.PermissionManager;
 import com.atlassian.labs.remoteapps.util.DefaultMessage;
 import com.atlassian.oauth.util.Check;
 import com.atlassian.sal.api.ApplicationProperties;
@@ -45,8 +44,8 @@ public class OAuth2LOAuthenticator implements Authenticator
 
     @Autowired
     public OAuth2LOAuthenticator(AuthenticationController authenticationController,
-            ApplicationProperties applicationProperties,
-            OAuthLinkManager oAuthLinkManager, UserManager userManager)
+                                 ApplicationProperties applicationProperties,
+                                 OAuthLinkManager oAuthLinkManager, UserManager userManager)
     {
         this.oAuthLinkManager = oAuthLinkManager;
         this.userManager = userManager;

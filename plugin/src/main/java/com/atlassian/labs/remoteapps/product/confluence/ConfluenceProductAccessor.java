@@ -2,6 +2,7 @@ package com.atlassian.labs.remoteapps.product.confluence;
 
 import com.atlassian.confluence.plugin.descriptor.web.descriptors.ConfluenceWebItemModuleDescriptor;
 import com.atlassian.labs.remoteapps.product.ProductAccessor;
+import com.atlassian.labs.remoteapps.product.WebSudoElevator;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 
 import java.util.Map;

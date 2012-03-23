@@ -1,5 +1,7 @@
 package com.atlassian.labs.remoteapps.modules.oauth;
 
+import com.atlassian.labs.remoteapps.product.ProductAccessor;
+import com.atlassian.labs.remoteapps.product.WebSudoElevator;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.oauth.util.Check;
 import com.atlassian.sal.api.auth.AuthenticationController;
@@ -31,13 +33,15 @@ public class OAuth2LOFilter implements Filter
     private final Authenticator authenticator;
     private final AuthenticationListener authenticationListener;
     private final AuthenticationController authenticationController;
+    private final WebSudoElevator webSudoElevator;
     private final String ourConsumerKey;
 
     public OAuth2LOFilter(Authenticator authenticator,
-            AuthenticationListener authenticationListener,
-            AuthenticationController authenticationController,
-            ConsumerService consumerService)
+                          AuthenticationListener authenticationListener,
+                          AuthenticationController authenticationController,
+                          ConsumerService consumerService, WebSudoElevator webSudoElevator)
     {
+        this.webSudoElevator = Check.notNull(webSudoElevator, "webSudoElevator");
         this.authenticator = Check.notNull(authenticator, "authenticator");
         this.authenticationListener = Check.notNull(authenticationListener, "authenticationListener");
         this.authenticationController = Check.notNull(authenticationController, "authenticationController");
@@ -102,6 +106,7 @@ public class OAuth2LOFilter implements Filter
         if (result.getPrincipal() != NonUserAdminPrincipal.INSTANCE)
         {
             authenticationListener.authenticationSuccess(result, request, response);
+            webSudoElevator.startWebSudoSession(request, response);
         }
 
         //markAsOAuthRequest(request);
