@@ -162,7 +162,6 @@
     <properties>
         <xvfb.enable>true</xvfb.enable>
         <atlassian.selenium.version>2.1.0-m10</atlassian.selenium.version>
-
         <refapp.version>2.15.0</refapp.version>
         <jira.version>5.0</jira.version>
         <jira.rpc.version>5.0.5</jira.rpc.version>
