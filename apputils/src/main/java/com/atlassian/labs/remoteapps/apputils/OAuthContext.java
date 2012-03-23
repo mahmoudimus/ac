@@ -21,12 +21,8 @@ import static com.atlassian.labs.remoteapps.apputils.Environment.setEnv;
  */
 public class OAuthContext
 {
-    private final OAuthConsumer local;
-
-    public OAuthContext()
-    {
-        this.local = loadLocalConsumer();
-    }
+    // lazily loaded
+    private volatile OAuthConsumer local;
 
     private OAuthConsumer loadLocalConsumer()
     {
@@ -71,6 +67,10 @@ public class OAuthContext
 
     public OAuthConsumer getLocal()
     {
+        if (local == null)
+        {
+            local = loadLocalConsumer();
+        }
         return local;
     }
 
@@ -162,6 +162,7 @@ public class OAuthContext
     public String getAuthorizationHeaderValue(String uri, String method, final String username)
             throws IllegalArgumentException
     {
+        final OAuthConsumer local = getLocal();
         try
         {
             final String timestamp = System.currentTimeMillis() / 1000 + "";
@@ -169,7 +170,8 @@ public class OAuthContext
             Map<String,String> params = new HashMap<String,String>() {{
                 put(OAuth.OAUTH_SIGNATURE_METHOD, OAuth.RSA_SHA1);
                 put(OAuth.OAUTH_VERSION, "1.0");
-                put(OAuth.OAUTH_CONSUMER_KEY, local.consumerKey);
+                put(OAuth.OAUTH_CONSUMER_KEY,
+                        local.consumerKey);
                 put(OAuth.OAUTH_NONCE, nonce);
                 put(OAuth.OAUTH_TIMESTAMP, timestamp);
                 if (username != null)
