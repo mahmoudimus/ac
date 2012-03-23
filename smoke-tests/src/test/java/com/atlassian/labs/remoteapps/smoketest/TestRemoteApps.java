@@ -55,7 +55,7 @@ public class TestRemoteApps
         assertNotNull(adminPassword);
         assertNotNull(displayUrl);
 
-        installer.install(displayUrl + "/atlassian-remote-app.xml");
+        installer.install(displayUrl + "/atlassian-remote-app.xml", "");
 
     }
     

@@ -38,6 +38,7 @@ import java.util.Map;
 
 import static com.atlassian.labs.remoteapps.test.HttpUtils.renderHtml;
 import static com.atlassian.labs.remoteapps.test.Utils.pickFreePort;
+import static com.atlassian.labs.remoteapps.util.EncodingUtils.encodeBase64;
 import static com.google.common.collect.Maps.newHashMap;
 import static java.util.Collections.singletonList;
 
@@ -95,29 +96,12 @@ public class RemoteAppRunner
 
     public RemoteAppRunner start() throws Exception
     {
-        server = new Server(port);
-        HandlerList list = new HandlerList();
-        server.setHandler(list);
-        ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
-        context.setContextPath("/");
-
-        context.addServlet(new ServletHolder(new DescriptorServlet()), "/register");
-
-        for (final Map.Entry<String,String> entry : routes.entrySet())
-        {
-            context.addServlet(new ServletHolder(new MustacheServlet(entry.getValue())), entry.getKey());
-        }
-
-        list.addHandler(context);
-        server.start();
-
-        register();
-        return this;
+        return start("");
     }
 
-    private void register() throws IOException
+    private void register(String secret) throws IOException
     {
-        installer.install("http://localhost:" + port + "/register");
+        installer.install("http://localhost:" + port + "/register", secret);
     }
 
     private void unregister() throws IOException
@@ -129,6 +113,28 @@ public class RemoteAppRunner
     {
         server.stop();
         unregister();
+    }
+
+    public RemoteAppRunner start(String secret) throws Exception
+    {
+        server = new Server(port);
+        HandlerList list = new HandlerList();
+        server.setHandler(list);
+        ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
+        context.setContextPath("/");
+
+        context.addServlet(new ServletHolder(new DescriptorServlet(secret)), "/register");
+
+        for (final Map.Entry<String,String> entry : routes.entrySet())
+        {
+            context.addServlet(new ServletHolder(new MustacheServlet(entry.getValue())), entry.getKey());
+        }
+
+        list.addHandler(context);
+        server.start();
+
+        register(secret);
+        return this;
     }
 
 
@@ -154,11 +160,26 @@ public class RemoteAppRunner
 
     private class DescriptorServlet extends HttpServlet
     {
+        private final String secret;
+
+        public DescriptorServlet(String secret)
+        {
+            this.secret = secret;
+        }
+
         @Override
         protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
         {
-            new XMLWriter(response.getWriter()).write(doc);
-            response.getWriter().close();
+            String regAuth = request.getHeader("Authorization");
+            if (("RemoteAppsRegistration secret=" + encodeBase64(secret)).equals(regAuth))
+            {
+                new XMLWriter(response.getWriter()).write(doc);
+                response.getWriter().close();
+            }
+            else
+            {
+                response.sendError(500, "Invalid authorization: " + regAuth);
+            }
         }
     }
 }

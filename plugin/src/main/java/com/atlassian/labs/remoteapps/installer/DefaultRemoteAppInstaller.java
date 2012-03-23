@@ -22,6 +22,7 @@ import com.atlassian.plugin.*;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.net.*;
 import com.google.common.collect.ImmutableMap;
+import org.apache.commons.codec.binary.Base64;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -33,11 +34,13 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.net.URI;
+import java.nio.charset.Charset;
 import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import static com.atlassian.labs.remoteapps.util.Dom4jUtils.getRequiredAttribute;
+import static com.atlassian.labs.remoteapps.util.EncodingUtils.encodeBase64;
 import static com.atlassian.labs.remoteapps.util.ServletUtils.encodeGetUrl;
 
 /**
@@ -100,7 +103,6 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
           excluding the final slash.</li>
           <li><strong>description</strong> - The description of the host application for display
           purposes</li>
-          <li><strong>registrationSecret</strong> - The registration secret provided in the registration form, if any.  This is used to secure app registrations on the app side and is not stored or used again.</li>
         </ul>
          */
         Consumer consumer = consumerService.getConsumer();
@@ -110,12 +112,25 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
                         "publicKey",
                         RSAKeys.toPemEncoding(consumer.getPublicKey()),
                         "baseUrl", applicationProperties.getBaseUrl(),
-                        "description", consumer.getDescription(),
-                        "registrationSecret", registrationSecret != null ? registrationSecret : "")));
+                        "description", consumer.getDescription())));
 
         log.info("Retrieving descriptor XML from '{}' by user '{}'", registrationUrl, username);
         Request request = requestFactory.createRequest(Request.MethodType.GET,
                 registrationUri.toString());
+
+        /*!
+        The registration secret is passed via the Authorization header using a custom scheme called
+        'RemoteAppsRegistration'.  A custom scheme is used instead of another query parameter to
+        ensure the secret can't be captured by server access logs.  The format of the Authorization
+        header will look like this:
+        <pre>
+            RemoteAppsRegistration secret=BASE64\_ENCODED\_SECRET
+        </pre>
+
+        If a secret hasn't been supplied, the value will be blank.
+         */
+        String secretHeader = "RemoteAppsRegistration secret=" + encodeBase64(registrationSecret);
+        request.addHeader("Authorization", secretHeader);
         try
         {
             return (String) request.executeAndReturn(
@@ -132,7 +147,8 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
                             if (response.getStatusCode() != 200)
                             {
                                 throw new InstallationFailedException(
-                                        "Missing registration url: " + response.getStatusCode());
+                                        "Error in registration (" + response.getStatusCode() + ") - "
+                                        + response.getStatusText());
                             }
 
                             /*!
