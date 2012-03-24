@@ -56,6 +56,7 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
     private final DescriptorValidator descriptorValidator;
     private final PluginAccessor pluginAccessor;
     private final OAuthLinkManager oAuthLinkManager;
+    private final FormatConverter formatConverter;
 
     private static final Logger log = LoggerFactory.getLogger(
             DefaultRemoteAppInstaller.class);
@@ -69,7 +70,7 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
             EventPublisher eventPublisher,
             DescriptorValidator descriptorValidator,
             PluginAccessor pluginAccessor,
-            OAuthLinkManager oAuthLinkManager)
+            OAuthLinkManager oAuthLinkManager, FormatConverter formatConverter)
     {
         this.consumerService = consumerService;
         this.requestFactory = requestFactory;
@@ -80,6 +81,7 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
         this.descriptorValidator = descriptorValidator;
         this.pluginAccessor = pluginAccessor;
         this.oAuthLinkManager = oAuthLinkManager;
+        this.formatConverter = formatConverter;
     }
 
     @Override
@@ -89,8 +91,7 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
     {
         /*!#start
         The installation process begins by constructing a GET to the Remote App to retrieve its
-        registration
-        XML file.  As part of that GET, the following query parameters will be passed along:
+        registration file.  As part of that GET, the following query parameters will be passed along:
         <ul>
           <li><strong>key</strong> - The OAuth consumer key of the host application</li>
           <li><strong>publicKey</strong> - The OAuth public key of the host application,
@@ -112,7 +113,7 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
                         "baseUrl", applicationProperties.getBaseUrl(),
                         "description", consumer.getDescription())));
 
-        log.info("Retrieving descriptor XML from '{}' by user '{}'", registrationUrl, username);
+        log.info("Retrieving descriptor from '{}' by user '{}'", registrationUrl, username);
         Request request = requestFactory.createRequest(Request.MethodType.GET,
                 registrationUri.toString());
 
@@ -138,7 +139,7 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
                         public String handle(Response response) throws ResponseException
                         {
                             /*!
-                           If the request for the descriptor XML doesn't return with an HTTP 200
+                           If the request for the descriptor doesn't return with an HTTP 200
                            status code, an exception is thrown, resulting
                             in a error message to the user
                             */
@@ -150,20 +151,31 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
                             }
 
                             /*!
-                           The successfully returned XML descriptor is validated against the XML
-                           schema.  If the incoming
-                             document uses the XML schema namespaces, great, but if not,
-                             the namespace is applied to the
-                             document and the validation is then ran.  The XML schema can be
+                           The successfully returned descriptor is validated against the XML
+                           schema.  While the descriptor is usually in an XML format, there is
+                           *experimental* support for YAML and JSON if either the Content-Type
+                           header is 'text/yaml' or 'application/json', respectively, or the
+                           extension is '.yaml' or '.json'.
+
+                           If the incoming document is in XML format and contains the XML
+                           schema namespaces, great, but if not, the namespace is applied to the
+                           document.
+                           */
+                            String descriptorText = response.getResponseBodyAsString();
+                            String contentType = response.getHeader("Content-Type");
+                            Document document = formatConverter.toDocument(
+                                    registrationUrl, contentType, descriptorText);
+
+                           /*!
+                           Regardless of the original format, the descriptor will be converted to
+                           XML then validated.  The XML schema can be
                              found at:
                              <pre>
                                https://HOST/rest/remoteapps/latest/installer/schema/remote-app
                              </pre>
                              Error pages are shown if the validation fails.
                             */
-                            String descriptorXml = response.getResponseBodyAsString();
-                            final Document document = descriptorValidator.parseAndValidate(
-                                    registrationUrl, descriptorXml);
+                            descriptorValidator.validate(registrationUrl, document);
 
                             /*!
                            The app key, as defined in the registration XML document,

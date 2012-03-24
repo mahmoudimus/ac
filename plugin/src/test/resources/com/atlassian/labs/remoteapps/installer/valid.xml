@@ -1,0 +1,25 @@
+<remote-app key="app1" name="Remote App - app1" version="1" icon-url="https://github.com/favicon.ico"
+            display-url="http://example.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:noNamespaceSchemaLocation="https://remoteapps.jira.com/rest/remoteapps/latest/installer/schema/remote-app">
+    <description>
+        This really great app
+    </description>
+    <vendor name="Atlassian" url="http://atlassian.com" />
+
+    <permissions>
+        <permission scope="browse_projects" />
+        <permission scope="read_app_links" />
+    </permissions>
+
+    <oauth>
+        <public-key>
+            key
+        </public-key>
+    </oauth>
+
+    <general-page key="first" name="First" url="/first" />
+    <general-page key="second" name="Second" url="/second">
+        <description>The second url</description>
+        <context-param name="project_id" />
+    </general-page>
+</remote-app>

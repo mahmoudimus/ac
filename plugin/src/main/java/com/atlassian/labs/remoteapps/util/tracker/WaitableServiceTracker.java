@@ -156,6 +156,14 @@ public class WaitableServiceTracker<K, T>
         }
     }
     
+    public Set<K> getKeys()
+    {
+        synchronized (waitLock)
+        {
+            return services.keySet();
+        }
+    }
+    
     public Iterable<T> getAll()
     {
         synchronized (waitLock)

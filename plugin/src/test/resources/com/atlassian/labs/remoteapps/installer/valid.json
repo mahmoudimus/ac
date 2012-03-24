@@ -1,0 +1,49 @@
+{
+  "key": "app1",
+  "name": "Remote App - app1",
+  "version": 1,
+  "icon-url": "https://github.com/favicon.ico",
+  "display-url": "http://example.com",
+  "description": "This really great app",
+  "vendor": {
+    "name": "Atlassian",
+    "url": "http://atlassian.com"
+  },
+  "permissions": [
+    {
+      "permission": {
+        "scope": "browse_projects"
+      }
+    },
+    {
+      "permission": {
+        "scope": "read_app_links"
+      }
+    }
+  ],
+  "oauth": {
+    "public-key": "key"
+  },
+  "modules": [
+    {
+      "general-page": {
+        "key": "first",
+        "name": "First",
+        "url": "/first"
+      }
+    },
+    {
+      "general-page": {
+        "key": "second",
+        "name": "Second",
+        "url": "/second",
+        "description": "The second url",
+        "context-param": [
+          {
+            "name": "project_id"
+          }
+        ]
+      }
+    }
+  ]
+}

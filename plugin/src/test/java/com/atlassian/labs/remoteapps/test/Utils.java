@@ -25,6 +25,11 @@ public class Utils
         return IOUtils.toString(Utils.class.getClassLoader().getResourceAsStream(path));
     }
 
+    public static String loadResourceAsString(Class caller, String path) throws IOException
+    {
+        return IOUtils.toString(caller.getResourceAsStream(path));
+    }
+
     public static String getJson(String url) throws IOException
     {
         InputStream in = new URL(url).openStream();

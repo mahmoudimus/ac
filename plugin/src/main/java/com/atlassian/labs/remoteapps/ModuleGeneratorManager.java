@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.Set;
 
 import static com.google.common.collect.Iterables.concat;
+import static com.google.common.collect.Iterables.transform;
 import static com.google.common.collect.Sets.newHashSet;
 import static java.util.Collections.singleton;
 
@@ -82,6 +83,11 @@ public class ModuleGeneratorManager
     public Iterable<RemoteModuleGenerator> getRemoteModuleGenerators()
     {
         return concat(moduleTracker.getAll(), singleton(applicationTypeModuleGenerator));
+    }
+    
+    public Set<String> getModuleGeneratorKeys()
+    {
+        return moduleTracker.getKeys();
     }
 
     public ApplicationTypeModuleGenerator getApplicationTypeModuleGenerator()
