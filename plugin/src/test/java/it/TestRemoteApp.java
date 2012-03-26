@@ -1,12 +1,12 @@
 package it;
 
 import com.atlassian.labs.remoteapps.test.*;
-import com.atlassian.labs.remoteapps.test.confluence.ConfluenceGeneralPage;
 import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.pageobjects.page.AdminHomePage;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
 import com.atlassian.webdriver.pageobjects.WebDriverTester;
+import org.apache.http.client.HttpResponseException;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
@@ -97,7 +97,8 @@ public class TestRemoteApp
         product.visit(LoginPage.class).login("betty", "betty", HomePage.class);
         RemoteAppRunner appFirst = new RemoteAppRunner(product.getProductInstance().getBaseUrl(), "installed")
                 .addGeneralPage("page", "Page", "/page", "hello-world-page.mu")
-                .start("secret");
+                .secret("secret")
+                .start();
         product.visit(HomePage.class);
         assertTrue(product.getPageBinder().bind(GeneralPage.class, "page", "Page")
                 .clickRemoteAppLink()
@@ -126,5 +127,24 @@ public class TestRemoteApp
                 .clickRemoteAppLink()
                 .getLoadTime() > 0);
         appSecond.stop();
+    }
+
+    @Test(expected = HttpResponseException.class)
+    public void testUnknownModuleAndFail() throws Exception
+    {
+        new RemoteAppRunner(product.getProductInstance().getBaseUrl(), "appFirst")
+                .description("foo")
+                .addUnknownModule("some-key")
+                .start();
+    }
+
+    @Test
+    public void testUnknownModuleAndPass() throws Exception
+    {
+        new RemoteAppRunner(product.getProductInstance().getBaseUrl(), "appFirst")
+                .addUnknownModule("some-key")
+                .description("foo")
+                .stripUnknownModules()
+                .start();
     }
 }

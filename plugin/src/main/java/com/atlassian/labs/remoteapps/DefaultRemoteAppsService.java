@@ -46,7 +46,8 @@ public class DefaultRemoteAppsService implements RemoteAppsService
     }
 
     @Override
-    public String install(final String username, String registrationUrl, String registrationSecret) throws
+    public String install(final String username, String registrationUrl, String registrationSecret,
+            boolean stripUnknownModules) throws
                                                                                             PermissionDeniedException,
                                                                                             InstallationFailedException
     {
@@ -63,7 +64,7 @@ public class DefaultRemoteAppsService implements RemoteAppsService
         try
         {
             String appKey = remoteAppInstaller.install(username, registrationUrl, registrationSecret,
-               new RemoteAppInstaller.KeyValidator()
+                    stripUnknownModules, new RemoteAppInstaller.KeyValidator()
                {
                    @Override
                    public void validatePermissions(String appKey) throws PermissionDeniedException

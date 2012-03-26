@@ -58,6 +58,8 @@ public class RemoteAppRunner
     private final String baseUrl;
     private final RemoteAppInstallerClient installer;
     private final String appKey;
+    private String secret;
+    private boolean stripUnknownModules;
 
     public RemoteAppRunner(String baseUrl, String appKey)
     {
@@ -94,14 +96,34 @@ public class RemoteAppRunner
         return this;
     }
 
-    public RemoteAppRunner start() throws Exception
+    public RemoteAppRunner addUnknownModule(String key)
     {
-        return start("");
+        doc.getRootElement().addElement("unknown")
+                .addAttribute("key", key);
+        return this;
     }
 
-    private void register(String secret) throws IOException
+    public RemoteAppRunner description(String foo)
     {
-        installer.install("http://localhost:" + port + "/register", secret);
+        doc.getRootElement().addElement("description").setText(foo);
+        return this;
+    }
+
+    public RemoteAppRunner secret(String secret)
+    {
+        this.secret = secret;
+        return this;
+    }
+
+    public RemoteAppRunner stripUnknownModules()
+    {
+        this.stripUnknownModules = true;
+        return this;
+    }
+
+    private void register(String secret, boolean stripUnknownModules) throws IOException
+    {
+        installer.install("http://localhost:" + port + "/register", secret, stripUnknownModules);
     }
 
     private void unregister() throws IOException
@@ -115,7 +137,7 @@ public class RemoteAppRunner
         unregister();
     }
 
-    public RemoteAppRunner start(String secret) throws Exception
+    public RemoteAppRunner start() throws Exception
     {
         server = new Server(port);
         HandlerList list = new HandlerList();
@@ -133,7 +155,7 @@ public class RemoteAppRunner
         list.addHandler(context);
         server.start();
 
-        register(secret);
+        register(secret, stripUnknownModules);
         return this;
     }
 

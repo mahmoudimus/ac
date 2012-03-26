@@ -88,14 +88,16 @@ public class InstallerResource
     }
 
     @POST
-    public Response install(@FormParam("url") String registrationUrl, @FormParam("token")
-                            String registrationToken)
+    public Response install(@FormParam("url") String registrationUrl, 
+            @FormParam("token") String registrationToken,
+            @FormParam("stripUnknownModules") String stripUnknownModules)
     {
         String token = registrationToken != null ? registrationToken : "";
 
         try
         {
-            remoteAppsService.install(userManager.getRemoteUsername(), registrationUrl, token);
+            remoteAppsService.install(userManager.getRemoteUsername(), registrationUrl, token,
+                    Boolean.parseBoolean(stripUnknownModules));
         }
         catch (PermissionDeniedException ex)
         {

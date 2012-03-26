@@ -33,7 +33,9 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.net.URI;
+import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -86,7 +88,7 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
 
     @Override
     public String install(final String username, final String registrationUrl,
-            String registrationSecret, final KeyValidator keyValidator) throws
+            String registrationSecret, final boolean stripUnknownModules, final KeyValidator keyValidator) throws
                                                                         PermissionDeniedException
     {
         /*!#start
@@ -165,6 +167,18 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
                             String contentType = response.getHeader("Content-Type");
                             Document document = formatConverter.toDocument(
                                     registrationUrl, contentType, descriptorText);
+                            
+                           /*!
+                           If the 'stripUnknownModules' flag is set to true, all unknown modules
+                           will be removed from the document.  The default is false in order to give
+                           early feedback of any problems, but there could be valid cases where
+                           this should be set to 'true', such as a Remote App supporting multiple
+                           applications.
+                            */
+                            if (stripUnknownModules)
+                            {
+                                detachUnknownModuleElements(document);
+                            }
 
                            /*!
                            Regardless of the original format, the descriptor will be converted to
@@ -343,6 +357,20 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
             throw new InstallationFailedException(ex);
         }
         /*!-helper methods */
+    }
+
+    private void detachUnknownModuleElements(Document document)
+    {
+        Set<String> validModuleTypes = moduleGeneratorManager
+                .getModuleGeneratorKeys();
+        for (Element child : (List<Element>)document.getRootElement().elements())
+        {
+            if (!validModuleTypes.contains(child.getName()))
+            {
+                log.debug("Stripping unknown module '{}'", child.getName());
+                child.detach();
+            }
+        }
     }
 
     private JarPluginArtifact createJarPluginArtifact(final String pluginKey,
