@@ -54,6 +54,7 @@ public class IFrameRenderer
             host = host + ":" + hostUri.getPort();
         }
         String iframeUrl = iframeContext.getIframePath() + (extraPath != null ? extraPath : "");
+        iframeUrl = escapeQuotes(iframeUrl);
         
         Map<String,String[]> allParams = newHashMap(queryParams);
         allParams.put("" +
@@ -82,5 +83,10 @@ public class IFrameRenderer
         StringWriter output = new StringWriter();
         templateRenderer.render("velocity/iframe-body.vm", ctx, output);
         return output.toString();
+    }
+
+    private String escapeQuotes(String iframeUrl)
+    {
+        return iframeUrl.replace("\"", "&quot;");
     }
 }
