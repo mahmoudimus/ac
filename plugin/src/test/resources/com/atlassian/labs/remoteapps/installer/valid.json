@@ -9,41 +9,35 @@
     "name": "Atlassian",
     "url": "http://atlassian.com"
   },
-  "permissions": [
-    {
-      "permission": {
+  "permissions": {
+    "permission": [
+      {
         "scope": "browse_projects"
-      }
-    },
-    {
-      "permission": {
+      },
+      {
         "scope": "read_app_links"
       }
-    }
-  ],
+    ]
+  },
   "oauth": {
     "public-key": "key"
   },
-  "modules": [
+  "general-page": [
     {
-      "general-page": {
-        "key": "first",
-        "name": "First",
-        "url": "/first"
-      }
+      "key": "first",
+      "name": "First",
+      "url": "/first"
     },
     {
-      "general-page": {
-        "key": "second",
-        "name": "Second",
-        "url": "/second",
-        "description": "The second url",
-        "context-param": [
-          {
-            "name": "project_id"
-          }
-        ]
-      }
+      "key": "second",
+      "name": "Second",
+      "url": "/second",
+      "description": "The second url",
+      "context-param": [
+        {
+          "name": "project_id"
+        }
+      ]
     }
   ]
 }

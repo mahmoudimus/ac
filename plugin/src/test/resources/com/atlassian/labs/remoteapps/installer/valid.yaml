@@ -9,24 +9,20 @@ vendor:
   url: http://atlassian.com
 
 permissions:
-  - permission:
-      scope: browse_projects
-  - permission:
-      scope: read_app_links
+  permission:
+    - scope: browse_projects
+    - scope: read_app_links
 
 oauth:
   public-key: key
 
-modules:
-  - general-page:
-      key: first
-      name: First
-      url: /first
-
-  - general-page:
-      key: second
-      name: Second
-      description: The second url
-      url: /second
-      context-param:
-        - name: project_id
+general-page:
+  - key: first
+    name: First
+    url: /first
+  - key: second
+    name: Second
+    description: The second url
+    url: /second
+    context-param:
+      - name: project_id

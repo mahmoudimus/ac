@@ -74,15 +74,7 @@ public class FormatConverter
         Map<String,Object> data = yaml.loadAs(descriptorXml, Map.class);
         for (Map.Entry<String,Object> entry : data.entrySet())
         {
-            if (entry.getKey().equals("modules"))
-            {
-                for (Map<String,Object> module : (Collection<Map<String,Object>>)entry.getValue())
-                {
-                    String key = getObjectSingleKey(module);
-                    processObject(key, module.get(key), root);
-                }
-            }
-            else if (moduleKeys.contains(entry.getKey()) || entry.getKey().equals("description"))
+            if (moduleKeys.contains(entry.getKey()) || entry.getKey().equals("description"))
             {
                 processObject(entry.getKey(), entry.getValue(), root);
             }
@@ -98,11 +90,6 @@ public class FormatConverter
         return doc;
     }
 
-    private String getObjectSingleKey(Map<String, Object> module)
-    {
-        return module.size() == 1 ? module.keySet().iterator().next() : null;
-    }
-
     private void processObject(String name, Object object, Element parent)
     {
         if (object instanceof Map)
@@ -115,20 +102,10 @@ public class FormatConverter
         }
         else if (object instanceof List)
         {
-            if (name.equals("permissions"))
+
+            for (Object entry : (List)object)
             {
-                Element perms = parent.addElement("permissions");
-                for (Map entry : (List<Map>)object)
-                {
-                    processObject("permission", entry.values().iterator().next(), perms);
-                }
-            }
-            else
-            {
-                for (Object entry : (List)object)
-                {
-                    processObject(name, entry, parent);
-                }
+                processObject(name, entry, parent);
             }
         }
         else if (name.equals("description") || name.equals("public-key"))
