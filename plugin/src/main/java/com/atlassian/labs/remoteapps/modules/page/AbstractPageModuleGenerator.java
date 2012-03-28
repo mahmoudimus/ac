@@ -80,7 +80,7 @@ public abstract class AbstractPageModuleGenerator implements RemoteModuleGenerat
 
         final Set<ModuleDescriptor> descriptors = ImmutableSet.<ModuleDescriptor>of(
                 createServletDescriptor(ctx, e, key, url, localUrl),
-                webItemCreator.createWebItemDescriptor(ctx, e, key, localUrl, getCondition()));
+                webItemCreator.createWebItemDescriptor(ctx, e, key, localUrl, getCondition(), getWebItemStyleClass()));
         return new RemoteModule()
         {
             @Override
@@ -131,6 +131,11 @@ public abstract class AbstractPageModuleGenerator implements RemoteModuleGenerat
     }
 
     protected String getTemplateSuffix()
+    {
+        return "";
+    }
+
+    protected String getWebItemStyleClass()
     {
         return "";
     }

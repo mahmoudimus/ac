@@ -26,6 +26,11 @@ public class IFrameParams
             params.put(key, val);
         }
     }
+    
+    public void setParam(String key, String value)
+    {
+        params.put(key, value);
+    }
 
     public Map<String, Object> getAsMap()
     {

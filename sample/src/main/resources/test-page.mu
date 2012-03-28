@@ -16,7 +16,6 @@
         </div>
         <script type="text/javascript">
             RA.init();
-            RA.resize(600,400);
             RA.getUser(function(result) {
                 var fullNameSpan = $("<span/>").attr("id", "fullName").html(result.fullName);
                 $("#user").append(fullNameSpan);

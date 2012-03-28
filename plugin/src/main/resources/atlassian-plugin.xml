@@ -24,15 +24,23 @@
         <url-pattern>/*</url-pattern>
     </servlet-filter>
 
+    <web-resource key="iframe-host">
+        <resource type="download" name="easyXDM.js" location="/js/iframe/easyXDM.js" />
+        <context>atl.admin</context>
+        <context>atl.general</context>
+    </web-resource>
+
     <web-resource key="xdm">
         <context>remoteapps-iframe</context>
         <dependency>com.atlassian.auiplugin:ajs</dependency>
-        <resource type="download" name="easyXDM.js" location="/js/iframe/easyXDM.js" />
+        <dependency>${project.groupId}.${project.artifactId}:iframe-host</dependency>
     </web-resource>
 
-    <web-resource key="iframe">
-        <resource type="download" name="easyXDM.js" location="/js/iframe/easyXDM.js" />
-        <resource type="download" name="main.js" location="/js/iframe/main.js" />
+    <web-resource key="dialog-page">
+        <resource type="download" name="dialog-binder.js" location="/js/dialog/binder.js" />
+        <context>atl.general</context>
+        <context>atl.admin</context>
+        <dependency>com.atlassian.auiplugin:ajs</dependency>
     </web-resource>
 
     <web-resource key="smoke-test">

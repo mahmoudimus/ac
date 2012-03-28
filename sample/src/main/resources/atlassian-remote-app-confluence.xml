@@ -21,6 +21,8 @@
     <general-page key="remoteAppGeneral" name="Remote App app1 General" url="/myAdmin" height="600" width="700">
         <context-param name="page_id" />
     </general-page>
+    <dialog-page key="remoteAppDialog" name="Remote App app1 Dialog" url="/myAdmin" />
+
     <profile-page key="remoteAppProfile" name="Remote App app1 Profile" url="/myAdmin" />
 
     <macro key="app1-macro" url="/myMacro" output-type="block" body-type="rich-text">

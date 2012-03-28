@@ -7,6 +7,8 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.impl.AbstractDelegatingPlugin;
 import com.atlassian.plugin.web.Condition;
+import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
+import org.apache.commons.lang.StringUtils;
 import org.dom4j.Element;
 
 import java.util.Map;
@@ -26,12 +28,12 @@ public class WebItemCreator
         this.productAccessor = productAccessor;
     }
 
-    public ModuleDescriptor createWebItemDescriptor(RemoteAppCreationContext ctx,
-                                                     Element e,
-                                                     String key,
-                                                     String localUrl,
-                                                     Condition condition
-    )
+    public WebItemModuleDescriptor createWebItemDescriptor(RemoteAppCreationContext ctx,
+                                                           Element e,
+                                                           String key,
+                                                           String localUrl,
+                                                           Condition condition, 
+                                                           String additionalStyleClass)
     {
         notNull(condition);
         Element config = e.createCopy();
@@ -65,12 +67,16 @@ public class WebItemCreator
         config.addElement("link").
                 addAttribute("linkId", webItemKey).
                 setText(url.toString());
-
+        if (!StringUtils.isBlank(additionalStyleClass))
+        {
+            config.addElement("styleClass").
+                    setText(additionalStyleClass);
+        }
         config.addElement("condition")
                 .addAttribute("class", DynamicMarkerCondition.class.getName());
 
         ConditionLoadingPlugin plugin = new ConditionLoadingPlugin(ctx.getPlugin(), condition);
-        ModuleDescriptor descriptor = productAccessor.createWebItemModuleDescriptor();
+        WebItemModuleDescriptor descriptor = productAccessor.createWebItemModuleDescriptor();
         descriptor.init(plugin, config);
         return descriptor;
     }

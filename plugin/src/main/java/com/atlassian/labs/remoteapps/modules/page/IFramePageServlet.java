@@ -57,6 +57,15 @@ public class IFramePageServlet extends HttpServlet
             }
 
             Map<String, Object> ctx = newHashMap(iframeContext.getIFrameParams().getAsMap());
+            if (!ctx.containsKey("width") && req.getParameter("width") != null)
+            {
+                iframeContext.getIFrameParams().setParam("width", req.getParameter("width"));
+            }
+            if (!ctx.containsKey("height") && req.getParameter("height") != null)
+            {
+                iframeContext.getIFrameParams().setParam("height", req.getParameter("height"));
+            }
+
             ctx.put("title", pageInfo.getTitle());
             ctx.put("iframeHtml",
                     iFrameRenderer.render(iframeContext, req.getPathInfo(), req.getParameterMap(),
