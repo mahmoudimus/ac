@@ -324,6 +324,14 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- This dependency is only required as a workaround until AMPS-630 is fixed -->
+        <dependency>
+            <groupId>com.atlassian.plugins.rest</groupId>
+            <artifactId>atlassian-rest-doclet</artifactId>
+            <version>2.5.0</version>
+            <scope>provided</scope>
+        </dependency>
+
     </dependencies>
 
     <dependencyManagement>
@@ -343,9 +351,45 @@
         </dependencies>
     </dependencyManagement>
 
+    <profiles>
+        <profile>
+            <id>docco</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>ru.circumflex</groupId>
+                        <artifactId>maven-cx-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>docco</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>docco</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
     <build>
         <pluginManagement>
             <plugins>
+                <plugin>
+                    <groupId>ru.circumflex</groupId>
+                    <artifactId>maven-cx-plugin</artifactId>
+                    <version>3.0-20120213.165004-3</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>log4j</groupId>
+                            <artifactId>log4j</artifactId>
+                            <version>1.2.15</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+
                 <plugin>
                     <groupId>org.twdata.maven</groupId>
                     <artifactId>maven-cli-plugin</artifactId>
@@ -361,30 +405,9 @@
         </pluginManagement>
         <plugins>
             <plugin>
-                <groupId>ru.circumflex</groupId>
-                <artifactId>maven-cx-plugin</artifactId>
-                <version>3.0-20120213.165004-3</version>
-                <executions>
-                    <execution>
-                        <id>docco</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>docco</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>log4j</groupId>
-                        <artifactId>log4j</artifactId>
-                        <version>1.2.15</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
-            <plugin>
                 <groupId>com.atlassian.maven.plugins</groupId>
                 <artifactId>maven-amps-plugin</artifactId>
-                <version>3.8</version>
+                <version>3.9</version>
                 <extensions>true</extensions>
                 <configuration>
                     <skipManifestValidation>true</skipManifestValidation>
