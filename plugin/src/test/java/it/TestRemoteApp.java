@@ -1,6 +1,7 @@
 package it;
 
 import com.atlassian.labs.remoteapps.test.*;
+import com.atlassian.labs.remoteapps.test.RemoteAppDialog;
 import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.pageobjects.page.AdminHomePage;
 import com.atlassian.pageobjects.page.HomePage;
@@ -58,9 +59,14 @@ public class TestRemoteApp
                 "Remote App app1 Dialog");
         assertTrue(page.isRemoteAppLinkPresent());
         RemoteAppTestPage remoteAppTest = page.clickRemoteAppLink();
-        assertEquals("Success", remoteAppTest.getMessage());
-        assertEquals(OAuthUtils.getConsumerKey(), remoteAppTest.getConsumerKey());
         assertEquals("Betty Admin", remoteAppTest.getFullName());
+
+        // Exercise the dialog's submit button.
+        RemoteAppDialog dialog = product.getPageBinder().bind(RemoteAppDialog.class, remoteAppTest);
+        assertFalse(dialog.wasSubmitted());
+        assertEquals(false, dialog.submit());
+         assertTrue(dialog.wasSubmitted());
+        assertEquals(true, dialog.submit());
     }
 
     @Test

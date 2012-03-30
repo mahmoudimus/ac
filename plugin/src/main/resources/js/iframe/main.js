@@ -13,7 +13,6 @@ var RA = (function () {
             },
             local:{
                 onSubmit: function() {
-                    console.log("Calling dialog submit handler.");
                     return dialogHandler();
                 }
             }

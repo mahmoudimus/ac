@@ -96,7 +96,7 @@ public class RemoteAppEmbeddedTestPage
         return result;
     }
 
-    private String getValue(final String key)
+    String getValue(final String key)
     {
         return runInFrame(new Callable<String>()
         {

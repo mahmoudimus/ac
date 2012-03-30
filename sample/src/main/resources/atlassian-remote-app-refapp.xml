@@ -19,7 +19,7 @@
 
     <admin-page key="remoteAppAdmin" name="Remote App app1 Admin" url="/myAdmin" />
     <general-page key="remoteAppGeneral" name="Remote App app1 General" url="/myAdmin" height="600" width="700"/>
-    <dialog-page key="remoteAppDialog" name="Remote App app1 Dialog" url="/myAdmin" />
+    <dialog-page key="remoteAppDialog" name="Remote App app1 Dialog" url="/myDialog" />
     <profile-page key="remoteAppProfile" name="Remote App app1 Profile" url="/myAdmin" />
 
     <web-hook event="remote_app_started" url="/webHook/remote_app_started" />
