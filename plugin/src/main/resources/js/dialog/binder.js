@@ -19,44 +19,51 @@ AJS.toInit(function($) {
 
     function openOnePanelDialog(webItem$, options) {
         var defDialogOptions = {
-            width : $(window).width() * .50,
-            height : $(window).height() * .50,
-            header : webItem$.text(),
-            content : "",
-            submit : function(dialog, callback) {
+            width:$(window).width() * .50,
+            height:$(window).height() * .50,
+            header:webItem$.text(),
+            content:"",
+            submit:function (dialog, callback) {
                 callback.success();
             },
-            cancel : function(dialog, callback) {
+            cancel:function (dialog, callback) {
                 callback.success();
             },
-            submitLabel : 'Submit',
-            submitClass : 'ra-dialog-submit',
-            cancelClass : 'ra-dialog-cancel'
+            submitLabel:'Submit',
+            submitClass:'ra-dialog-submit',
+            cancelClass:'ra-dialog-cancel'
         };
 
         var dialogOptions = $.extend({}, defDialogOptions, options);
         var dialog = new AJS.Dialog(dialogOptions);
         dialog.addHeader(dialogOptions.header);
         dialog.addPanel("Main", dialogOptions.content, "ra-panel-body");
-        dialog.addButton(dialogOptions.submitLabel, function(dialog) {
+        dialog.addButton(dialogOptions.submitLabel, function (dialog) {
             var btns = disableButtons([dialogOptions.submitClass, dialogOptions.cancelClass]);
             dialogOptions.submit(dialog, {
-                success : function() {
-                    dialog.remove();
+                success:function () {
+                    RemoteAppsRpc.onSubmit(function (result) {
+                        if (result) {
+                            dialog.remove();
+                        }
+                        else {
+                            btns.enable();
+                        }
+                    });
                 },
-                failure : function() {
+                failure:function () {
                     btns.enable();
                 }
             });
         }, dialogOptions.submitClass);
 
-        dialog.addButton("Cancel", function(dialog) {
+        dialog.addButton("Cancel", function (dialog) {
             var btns = disableButtons([dialogOptions.submitClass, dialogOptions.cancelClass]);
             dialogOptions.cancel(dialog, {
-                success : function() {
+                success:function () {
                     dialog.remove();
                 },
-                failure : function() {
+                failure:function () {
                     btns.enable();
                 }
             });

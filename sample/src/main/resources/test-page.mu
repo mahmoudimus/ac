@@ -14,11 +14,21 @@
         <div>
             Current user: <span id="user"></span>
         </div>
+        <div>
+            Current location: <span id="location"></span>
+        </div>
+
         <script type="text/javascript">
             RA.init();
             RA.getUser(function(result) {
-                var fullNameSpan = $("<span/>").attr("id", "fullName").html(result.fullName);
-                $("#user").append(fullNameSpan);
+                $("#user").text(result.fullName);
+            });
+            RA.getLocation(function(result) {
+                $("#location").text(result);
+            });
+            RA.Dialog.onSubmit(function() {
+                console.log("calling submit handler!");
+                return true;
             });
         </script>
     </body>

@@ -40,6 +40,9 @@
                 protocol : $xdmProtocolHtml,
                 props: {height : initHeight, width : initWidth}
             }, {
+              remote: {
+                  onSubmit: {}
+              },
               local : {
                 init : function() {
                   container.addClass('iframe-init');
@@ -49,10 +52,7 @@
                   resize(height, width);
                 },
                 getLocation : function(fn) {
-                  return window.location;
-                },
-                getPath : function(fn) {
-                  return "" + window.location.hostname + window.location.pathname;
+                  return window.location.href;
                 },
                 getUser : function(fn) {
                   // JIRA 5.0
@@ -88,6 +88,7 @@
                 }
               }
             });
+            window.RemoteAppsRpc = rpc;
         })(jQuery);
     </script>
 </div>

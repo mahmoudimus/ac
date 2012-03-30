@@ -47,15 +47,19 @@ public class TestRemoteApp
         RemoteAppTestPage remoteAppTest = page.clickRemoteAppLink();
         assertEquals("Success", remoteAppTest.getMessage());
         assertEquals(OAuthUtils.getConsumerKey(), remoteAppTest.getConsumerKey());
+        assertEquals("Betty Admin", remoteAppTest.getFullName());
 	}
 
     @Test
-    public void testGetFullnameFromGeneralPage()
+    public void testLoadGeneralDialog()
     {
         product.visit(LoginPage.class).login("betty", "betty", HomePage.class);
-        RemoteAppAwarePage page = product.getPageBinder().bind(GeneralPage.class, "remoteAppGeneral",
-                                                               "Remote App app1 General");
+        RemoteAppAwarePage page = product.getPageBinder().bind(GeneralPage.class, "remoteAppDialog",
+                "Remote App app1 Dialog");
+        assertTrue(page.isRemoteAppLinkPresent());
         RemoteAppTestPage remoteAppTest = page.clickRemoteAppLink();
+        assertEquals("Success", remoteAppTest.getMessage());
+        assertEquals(OAuthUtils.getConsumerKey(), remoteAppTest.getConsumerKey());
         assertEquals("Betty Admin", remoteAppTest.getFullName());
     }
 

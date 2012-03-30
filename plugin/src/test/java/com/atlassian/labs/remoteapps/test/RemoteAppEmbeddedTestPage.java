@@ -3,12 +3,15 @@ package com.atlassian.labs.remoteapps.test;
 import com.atlassian.pageobjects.binder.Init;
 import com.atlassian.pageobjects.binder.WaitUntil;
 import com.atlassian.webdriver.AtlassianWebDriver;
+import com.google.common.base.Function;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.net.URI;
 import java.util.Map;
@@ -51,12 +54,19 @@ public class RemoteAppEmbeddedTestPage
             @Override
             public Void call() throws Exception
             {
-                driver.waitUntilElementIsLocated(By.id("fullName"));
+                driver.waitUntil(new Function<WebDriver, Boolean>() {
+
+                    @Override
+                    public Boolean apply(WebDriver webDriver) {
+                        WebElement user = webDriver.findElement(By.id("user"));
+                        return user.getText() != null;
+                    }
+                });
                 return null;
             }
         });
 
-        return getValue("fullName");
+        return getValue("user");
     }
 
     public String getMessage()
