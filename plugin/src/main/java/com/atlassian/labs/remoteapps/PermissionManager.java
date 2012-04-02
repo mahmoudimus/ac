@@ -4,6 +4,7 @@ import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.applinks.api.ApplicationLinkService;
 import com.atlassian.applinks.api.ApplicationType;
 import com.atlassian.labs.remoteapps.modules.permissions.scope.ApiScope;
+import com.atlassian.labs.remoteapps.settings.SettingsManager;
 import com.atlassian.labs.remoteapps.util.ServletUtils;
 import com.atlassian.labs.remoteapps.util.tracker.WaitableServiceTracker;
 import com.atlassian.labs.remoteapps.util.tracker.WaitableServiceTrackerFactory;
@@ -33,6 +34,7 @@ public class PermissionManager
     private final ApplicationLinkService applicationLinkService;
     private final OAuthLinkManager linkManager;
     private final UserManager userManager;
+    private final SettingsManager settingsManager;
     private final WaitableServiceTracker<String,ApiScope> apiScopeTracker;
 
     private final Set<String> NON_USER_ADMIN_PATHS = ImmutableSet.of(
@@ -42,13 +44,15 @@ public class PermissionManager
 
     @Autowired
     public PermissionManager(ApplicationLinkService applicationLinkService,
-                             OAuthLinkManager linkManager,
-                             UserManager userManager,
-                             WaitableServiceTrackerFactory waitableServiceTrackerFactory)
+            OAuthLinkManager linkManager,
+            UserManager userManager,
+            WaitableServiceTrackerFactory waitableServiceTrackerFactory,
+            SettingsManager settingsManager)
     {
         this.applicationLinkService = applicationLinkService;
         this.linkManager = linkManager;
         this.userManager = userManager;
+        this.settingsManager = settingsManager;
         this.apiScopeTracker = waitableServiceTrackerFactory.create(ApiScope.class,
                 new Function<ApiScope, String>()
                 {
@@ -130,19 +134,24 @@ public class PermissionManager
 
     public boolean canInstallRemoteApps(String username)
     {
-        // todo: make configurable
         return username != null &&
 
                 // for OnDemand dogfooding
-                (userManager.isUserInGroup(username, "developers") ||
-
-                 // for internal Atlassian dogfooding
-                 userManager.isUserInGroup(username, "atlassian-staff") ||
-
-                 // for smoke tests
-                 userManager.isUserInGroup(username, "test-users") ||
+                ((settingsManager.isAllowDogfooding() && inDogfoodingGroup(username)) ||
 
                  // the default
-                 userManager.isAdmin(username));
+                 userManager.isSystemAdmin(username));
+    }
+
+    private boolean inDogfoodingGroup(String username)
+    {
+        // for OnDemand dogfooding
+        return userManager.isUserInGroup(username, "developers") ||
+
+                // for internal Atlassian dogfooding
+                userManager.isUserInGroup(username, "atlassian-staff") ||
+
+                // for smoke tests
+                userManager.isUserInGroup(username, "test-users");
     }
 }

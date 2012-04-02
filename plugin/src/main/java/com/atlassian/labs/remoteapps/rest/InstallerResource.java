@@ -53,7 +53,7 @@ public class InstallerResource
     @Path("/allow-dogfooding")
     public Response allowDogfooding()
     {
-        if (!userManager.isAdmin(userManager.getRemoteUsername()))
+        if (!userManager.isSystemAdmin(userManager.getRemoteUsername()))
         {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
@@ -65,7 +65,7 @@ public class InstallerResource
     @Path("/allow-dogfooding")
     public Response disallowDogfooding()
     {
-        if (!userManager.isAdmin(userManager.getRemoteUsername()))
+        if (!userManager.isSystemAdmin(userManager.getRemoteUsername()))
         {
             return Response.status(Response.Status.FORBIDDEN).build();
         }

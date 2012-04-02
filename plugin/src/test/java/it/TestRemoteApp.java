@@ -104,7 +104,7 @@ public class TestRemoteApp
     @Test
     public void testInstalledAppWithSecret() throws Exception
     {
-        product.visit(LoginPage.class).login("betty", "betty", HomePage.class);
+        product.visit(LoginPage.class).login("admin", "admin", HomePage.class);
         RemoteAppRunner appFirst = new RemoteAppRunner(product.getProductInstance().getBaseUrl(), "installed")
                 .addGeneralPage("page", "Page", "/page", "hello-world-page.mu")
                 .secret("secret")
@@ -119,7 +119,7 @@ public class TestRemoteApp
     @Test
     public void testChangedKey() throws Exception
     {
-        product.visit(LoginPage.class).login("betty", "betty", HomePage.class);
+        product.visit(LoginPage.class).login("admin", "admin", HomePage.class);
         RemoteAppRunner appFirst = new RemoteAppRunner(product.getProductInstance().getBaseUrl(), "appFirst")
                 .addGeneralPage("changedPage", "Changed Page", "/page", "hello-world-page.mu")
                 .start();

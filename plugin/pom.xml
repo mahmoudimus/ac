@@ -27,25 +27,14 @@
         </dependency>
         <dependency>
             <groupId>asm</groupId>
-            <artifactId>asm</artifactId>
-            <version>3.3.1</version>
-        </dependency>
-        <dependency>
-            <groupId>asm</groupId>
             <artifactId>asm-util</artifactId>
             <version>3.3.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.json</groupId>
-            <artifactId>json</artifactId>
-            <version>20090211</version>
         </dependency>
         <dependency>
             <groupId>net.oauth.core</groupId>
             <artifactId>oauth-provider</artifactId>
             <version>20090531</version>
         </dependency>
-
         <dependency>
             <groupId>com.atlassian.labs</groupId>
             <artifactId>jira4-compat</artifactId>
@@ -60,13 +49,14 @@
 
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>4.1.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient-cache</artifactId>
             <version>4.1.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20090211</version>
         </dependency>
 
         <dependency>
@@ -348,6 +338,12 @@
                 <version>1.5.8</version>
                 <scope>provided</scope>
             </dependency>
+            <dependency>
+                <groupId>net.oauth.core</groupId>
+                <artifactId>oauth</artifactId>
+                <version>20090531</version>
+                <scope>provided</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -425,6 +421,7 @@
                             com.atlassian.sal.api.*;version="(2.4,3.0]",
                             org.apache.commons.lang.*;version="2.4",
                             com.atlassian.oauth*;version="(1.2,2.0]",
+                            net.oauth*,
                             com.atlassian.jira.config;resolution:=optional,
                             *;resolution:=optional
                         </Import-Package>

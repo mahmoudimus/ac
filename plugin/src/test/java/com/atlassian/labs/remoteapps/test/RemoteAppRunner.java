@@ -73,7 +73,7 @@ public class RemoteAppRunner
                     .addAttribute("version", "1")
                     .addAttribute("display-url", "http://localhost:" + port)
                 .getDocument();
-        installer = new RemoteAppInstallerClient(baseUrl, "betty", "betty");
+        installer = new RemoteAppInstallerClient(baseUrl, "admin", "admin");
     }
 
     public RemoteAppRunner addAdminPage(String key, String name, String path, String resource)

@@ -112,10 +112,10 @@ public class DefaultRemoteAppsService implements RemoteAppsService
     private void validateCanAuthor(String username, String appKey)
     {
         if (!(username.equals(getInstallerUser(BundleUtil.findBundleForPlugin(bundleContext, appKey))) ||
-            userManager.isAdmin(username)))
+            userManager.isSystemAdmin(username)))
         {
             throw new PermissionDeniedException("Unauthorized uninstallation from '" + username + "'. " +
-                "Must be the author or an administrator.");
+                "Must be the author or a system administrator.");
         }
     }
 

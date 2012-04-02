@@ -43,17 +43,17 @@ public class TestPermissionsModuleGenerator
             .addElement("permission").getParent();
 
     @Test
-    public void testAllowNonAdminsForDogfood()
+    public void testAllowNonSysAdminsForDogfood()
     {
-        when(userManager.isAdmin("foo")).thenReturn(false);
+        when(userManager.isSystemAdmin("foo")).thenReturn(false);
         when(settingsManager.isAllowDogfooding()).thenReturn(true);
         new PermissionsModuleGenerator(permissionManager, productAccessor, userManager, settingsManager, apiScopeSchema).validate(NON_EMPTY_PERMISSIONS, "", "foo");
     }
 
     @Test
-    public void testAllowAdminsForNonDogfood()
+    public void testAllowSysAdminsForNonDogfood()
     {
-        when(userManager.isAdmin("foo")).thenReturn(true);
+        when(userManager.isSystemAdmin("foo")).thenReturn(true);
         when(settingsManager.isAllowDogfooding()).thenReturn(false);
         new PermissionsModuleGenerator(permissionManager, productAccessor, userManager, settingsManager, apiScopeSchema).validate(NON_EMPTY_PERMISSIONS, "", "foo");
     }

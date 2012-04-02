@@ -117,9 +117,9 @@ public class PermissionsModuleGenerator implements WaitableRemoteModuleGenerator
     @Override
     public void validate(Element element, String registrationUrl, String username) throws PluginParseException
     {
-        if (!settingsManager.isAllowDogfooding() && !element.elements().isEmpty() && !userManager.isAdmin(username))
+        if (!settingsManager.isAllowDogfooding() && !element.elements().isEmpty() && !userManager.isSystemAdmin(username))
         {
-            throw new PluginParseException("Cannot install remote app that contains permissions if not either a dogfood server or an administrator");
+            throw new PluginParseException("Cannot install remote app that contains permissions if not either a dogfood server or a system administrator");
         }
     }
 
