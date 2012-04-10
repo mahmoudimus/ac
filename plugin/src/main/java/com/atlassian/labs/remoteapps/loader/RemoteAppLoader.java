@@ -13,6 +13,9 @@ import com.atlassian.labs.remoteapps.modules.external.*;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
+import com.atlassian.plugin.event.PluginEventListener;
+import com.atlassian.plugin.event.PluginEventManager;
+import com.atlassian.plugin.event.events.PluginDisabledEvent;
 import com.atlassian.plugin.event.events.PluginUninstalledEvent;
 import com.atlassian.plugin.osgi.util.OsgiHeaderUtil;
 import org.dom4j.Document;
@@ -29,6 +32,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static com.atlassian.labs.remoteapps.util.BundleUtil.findBundleForPlugin;
+import static com.atlassian.labs.remoteapps.util.RemoteAppManifestReader.isRemoteApp;
 import static com.google.common.collect.Lists.newArrayList;
 
 /**
@@ -42,7 +47,9 @@ public class RemoteAppLoader implements DisposableBean
     private final PluginAccessor pluginAccessor;
     private final StartableForPlugins startableForPlugins;
     private final EventPublisher eventPublisher;
+    private final BundleContext bundleContext;
     private final AggregateModuleDescriptorFactory aggregateModuleDescriptorFactory;
+    private final PluginEventManager pluginEventManager;
 
     private final Map<String,Iterable<RemoteModule>> remoteModulesByApp;
     private static final Logger log = LoggerFactory.getLogger(
@@ -52,16 +59,20 @@ public class RemoteAppLoader implements DisposableBean
     public RemoteAppLoader(DescriptorValidator descriptorValidator,
             ModuleGeneratorManager moduleGeneratorManager, PluginAccessor pluginAccessor,
             StartableForPlugins startableForPlugins, EventPublisher eventPublisher,
-            AggregateModuleDescriptorFactory aggregateModuleDescriptorFactory)
+            BundleContext bundleContext,
+            AggregateModuleDescriptorFactory aggregateModuleDescriptorFactory,
+            PluginEventManager pluginEventManager)
     {
         this.descriptorValidator = descriptorValidator;
         this.moduleGeneratorManager = moduleGeneratorManager;
         this.pluginAccessor = pluginAccessor;
         this.startableForPlugins = startableForPlugins;
         this.eventPublisher = eventPublisher;
+        this.bundleContext = bundleContext;
         this.aggregateModuleDescriptorFactory = aggregateModuleDescriptorFactory;
+        this.pluginEventManager = pluginEventManager;
         this.remoteModulesByApp = new ConcurrentHashMap<String,Iterable<RemoteModule>>();
-        this.eventPublisher.register(this);
+        this.pluginEventManager.register(this);
     }
 
     /*!
@@ -189,27 +200,26 @@ public class RemoteAppLoader implements DisposableBean
     /*!
     ## Uninstallation
 
-    Whenever a Remote App's plugin has been explicitly uninstalled by an Atlassian administrator,
-    the PluginUninstalledEvent is fired.  Remote Apps listens to this event to try to clean up
-    any state for installed Remote Apps.
-
-    However, since this event fires _after_ the plugin and its
-    OSGi bundle has been uninstalled, we can't accurately determine if the uninstalled plugin was
-    a Remote App or not.  Therefore, each possible remote module generator is given an opportunity
-    to execute uninstallation code for the plugin key with the assumption it may not be a Remote App
-    in the first place.
+    Whenever a Remote App's plugin has been explicitly disabled by an Atlassian administrator,
+    the PluginDisabledEvent is fired.  Remote Apps listens to this event to try to clean up
+    any state for installed Remote Apps, as it treats a disabled Remote App as an uninstalled one.
 
     An example of uninstallation code is the oauth module.  On uninstallation, it removes the OAuth
     consumer and provider registration for the Remote App.
      */
-    @EventListener
-    public void onPluginUninstall(PluginUninstalledEvent event)
+    @PluginEventListener
+    public void onPluginDisabled(PluginDisabledEvent event)
     {
-        for (RemoteModuleGenerator generator : moduleGeneratorManager.getRemoteModuleGenerators())
+        String pluginKey = event.getPlugin().getKey();
+        Bundle bundle = findBundleForPlugin(bundleContext, pluginKey);
+        if (bundle != null && isRemoteApp(bundle))
         {
-            if (generator instanceof UninstallableRemoteModuleGenerator)
+            for (RemoteModuleGenerator generator : moduleGeneratorManager.getRemoteModuleGenerators())
             {
-                ((UninstallableRemoteModuleGenerator)generator).uninstall(event.getPlugin().getKey());
+                if (generator instanceof UninstallableRemoteModuleGenerator)
+                {
+                    ((UninstallableRemoteModuleGenerator)generator).uninstall(pluginKey);
+                }
             }
         }
     }
@@ -282,6 +292,6 @@ public class RemoteAppLoader implements DisposableBean
     @Override
     public void destroy() throws Exception
     {
-        eventPublisher.unregister(this);
+        pluginEventManager.unregister(this);
     }
 }

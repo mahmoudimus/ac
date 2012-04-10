@@ -29,8 +29,7 @@ import static java.util.Collections.emptyMap;
  * Generates application-type modules
  */
 @Component
-public class ApplicationTypeModuleGenerator implements WaitableRemoteModuleGenerator,
-        UninstallableRemoteModuleGenerator
+public class ApplicationTypeModuleGenerator implements WaitableRemoteModuleGenerator
 {
     private final MutatingApplicationLinkService mutatingApplicationLinkService;
     private final ApplicationTypeClassLoader applicationTypeClassLoader;
@@ -225,20 +224,6 @@ public class ApplicationTypeModuleGenerator implements WaitableRemoteModuleGener
             }
         }
     }
-
-    @Override
-    public void uninstall(String pluginKey)
-    {
-        if (applicationTypeClassLoader.hasApplicationType(pluginKey))
-        {
-            Class<? extends ApplicationType> applicationTypeClass = applicationTypeClassLoader.getApplicationType(pluginKey);
-            for (ApplicationLink link : mutatingApplicationLinkService.getApplicationLinks(applicationTypeClass))
-            {
-                mutatingApplicationLinkService.deleteApplicationLink(link);
-            }
-        }
-    }
-
 
     private static class DelegatePlugin extends AbstractDelegatingPlugin implements ContainerManagedPlugin
     {
