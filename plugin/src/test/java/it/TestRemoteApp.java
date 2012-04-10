@@ -151,10 +151,12 @@ public class TestRemoteApp
     @Test
     public void testUnknownModuleAndPass() throws Exception
     {
-        new RemoteAppRunner(product.getProductInstance().getBaseUrl(), "appFirst")
+        new RemoteAppRunner(product.getProductInstance().getBaseUrl(),
+                "appFirst")
                 .addUnknownModule("some-key")
                 .description("foo")
                 .stripUnknownModules()
-                .start();
+                .start()
+                .stop();
     }
 }

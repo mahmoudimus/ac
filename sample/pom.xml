@@ -106,6 +106,7 @@
                         <!-- todo: this is only temporary until I can figure out why the module factory
                         isn't being passed down to the JIRA view profile panel descriptor -->
                         <Import-Package>com.atlassian.labs.remoteapps.modules.page.jira;resolution:=optional,*;resolution:=optional</Import-Package>
+                        <Remote-App>true</Remote-App>
                     </instructions>
                 </configuration>
             </plugin>
