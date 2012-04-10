@@ -27,9 +27,8 @@ public class UserStatusEventMapper extends ConfluenceEventMapper
         AbstractStatusContentEvent event = (AbstractStatusContentEvent) e;
 
         ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();
-
-        builder.put("status", event.getUserStatus().getBodyAsString());
-
+        builder.putAll(super.toMap(event));
+        builder.put("status", userStatusToMap(event.getUserStatus()));
         return builder.build();
     }
 }

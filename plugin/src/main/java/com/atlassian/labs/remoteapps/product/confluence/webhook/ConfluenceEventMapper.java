@@ -8,6 +8,7 @@ import com.atlassian.confluence.pages.Comment;
 import com.atlassian.confluence.setup.settings.SettingsManager;
 import com.atlassian.confluence.spaces.Space;
 import com.atlassian.confluence.spaces.Spaced;
+import com.atlassian.confluence.userstatus.UserStatus;
 import com.atlassian.labs.remoteapps.product.EventMapper;
 import com.atlassian.sal.api.user.UserManager;
 import com.google.common.collect.ImmutableMap;
@@ -50,6 +51,19 @@ public class ConfluenceEventMapper implements EventMapper<ConfluenceEvent>
                 "self", getFullUrl(label.getUrlPath())
                 // TODO: Consider adding additional label data, including the label's namespace, owner and view URL
         );
+    }
+
+    protected  Map<String, Object> userStatusToMap(UserStatus status)
+    {
+        ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();
+        builder.put("id", status.getId());
+        builder.put("content", status.getTitle());
+        builder.put("self", getFullUrl(status.getUrlPath()));
+        builder.put("creatorName", status.getCreatorName());
+        builder.put("creationDate", status.getCreationDate().getTime());
+        builder.put("isCurrent", status.getContentStatus().equals("current"));
+
+        return builder.build();
     }
 
     protected Map<String, Object> contentEntityObjectToMap(ContentEntityObject ceo, boolean idOnly)
