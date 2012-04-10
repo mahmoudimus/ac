@@ -3,6 +3,7 @@ package com.atlassian.labs.remoteapps.product.confluence.webhook;
 import com.atlassian.confluence.core.ContentEntityObject;
 import com.atlassian.confluence.event.events.ConfluenceEvent;
 import com.atlassian.confluence.labels.Label;
+import com.atlassian.confluence.labels.Labelable;
 import com.atlassian.confluence.pages.Attachment;
 import com.atlassian.confluence.pages.Comment;
 import com.atlassian.confluence.setup.settings.SettingsManager;
@@ -11,7 +12,9 @@ import com.atlassian.confluence.spaces.Spaced;
 import com.atlassian.confluence.userstatus.UserStatus;
 import com.atlassian.labs.remoteapps.product.EventMapper;
 import com.atlassian.sal.api.user.UserManager;
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.Map;
@@ -42,11 +45,42 @@ public class ConfluenceEventMapper implements EventMapper<ConfluenceEvent>
         return true; // can handle any kind of ConfluenceEvent, but not in any particularly meaningful way :-)
     }
 
+    protected Map<String, Object> labelableToMap(Labelable labelable)
+    {
+        ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();
+
+        builder.put("labels", Lists.transform(labelable.getLabels(), new Function<Label, Map<String, Object>>() {
+            @Override
+            public Map<String, Object> apply(Label label) {
+                return labelToMap(label, true);
+            }
+        }));
+
+        if (labelable instanceof ContentEntityObject)
+        {
+            builder.putAll(contentEntityObjectToMap((ContentEntityObject)labelable));
+        }
+        else if (labelable instanceof Attachment)
+        {
+            builder.putAll(attachmentToMap((Attachment)labelable));
+        }
+
+        return builder.build();
+    }
+
     protected Map<String, Object> labelToMap(Label label)
     {
+        return labelToMap(label, false);
+    }
+
+    protected Map<String, Object> labelToMap(Label label, boolean nameOnly)
+    {
+        if (nameOnly)
+            return ImmutableMap.<String, Object>of("name", label.getName());
+
         return ImmutableMap.<String, Object>of(
                 "name", label.getName(),
-                "owner", label.getOwner(),
+                "owner", StringUtils.isBlank(label.getOwner()) ? "" : label.getOwner(),
                 "title", label.getDisplayTitle(),
                 "self", getFullUrl(label.getUrlPath())
                 // TODO: Consider adding additional label data, including the label's namespace, owner and view URL
@@ -59,7 +93,7 @@ public class ConfluenceEventMapper implements EventMapper<ConfluenceEvent>
         builder.put("id", status.getId());
         builder.put("content", status.getTitle());
         builder.put("self", getFullUrl(status.getUrlPath()));
-        builder.put("creatorName", status.getCreatorName());
+        builder.put("creatorName", status.getCreatorName()); // Don't need to check for null here; UserStatus objects cannot be created by anonymous users.
         builder.put("creationDate", status.getCreationDate().getTime());
         builder.put("isCurrent", status.getContentStatus().equals("current"));
 
