@@ -67,11 +67,13 @@ public class FormatConverter
 
     private Document loadAsYaml(String descriptorXml)
     {
-        Yaml yaml = new Yaml();
+        Yaml yaml = new Yaml(new SafeConstructor());
         Document doc = DocumentHelper.createDocument();
         Element root = doc.addElement("remote-app");
         Set<String> moduleKeys = moduleGeneratorManager.getModuleGeneratorKeys();
-        Map<String,Object> data = yaml.loadAs(descriptorXml, Map.class);
+        
+        // can't use yaml.loadAs since it doesn't seem to work with SafeConstructor
+        Map<String,Object> data = (Map<String, Object>) yaml.load(descriptorXml);
         for (Map.Entry<String,Object> entry : data.entrySet())
         {
             if (moduleKeys.contains(entry.getKey()) || entry.getKey().equals("description"))
