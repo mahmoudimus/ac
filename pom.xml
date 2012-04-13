@@ -204,7 +204,7 @@
         <xvfb.enable>true</xvfb.enable>
         <atlassian.selenium.version>2.1.0-m10</atlassian.selenium.version>
         <refapp.version>2.16.0-m1</refapp.version>
-        <jira.version>5.0</jira.version>
+        <jira.version>5.0.2</jira.version>
         <jira.rpc.version>5.0.5</jira.rpc.version>
         <jira.data.version>5.0</jira.data.version>
         <confluence.version>4.2-m7</confluence.version>
