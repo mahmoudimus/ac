@@ -2,6 +2,7 @@ package com.atlassian.labs.remoteapps.modules.jira.issuepanel;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.io.Writer;
 import java.util.Map;
 
 import com.atlassian.crowd.embedded.api.User;
@@ -35,6 +36,20 @@ public class IFrameViewIssuePanel implements WebPanel
         StringWriter writer = new StringWriter();
         try
         {
+            writeHtml(writer, context);
+        }
+        catch (IOException e)
+        {
+            throw new RuntimeException(e);
+        }
+        return writer.toString();
+    }
+
+    @Override
+    public void writeHtml(Writer writer, Map<String, Object> context) throws IOException
+    {
+        try
+        {
             writer.write(iFrameRenderer.render(iFrameContext, ((User)context.get("user")).getName()  ) );
         }
         catch (PermissionDeniedException ex)
@@ -47,7 +62,6 @@ public class IFrameViewIssuePanel implements WebPanel
             writer.write("Unable to render panel: " + e.getMessage());
             log.error("Error rendering panel", e);
         }
-        return writer.toString();
     }
 
 }

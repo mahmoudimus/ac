@@ -185,6 +185,12 @@
                 <version>1.1.1</version>
                 <scope>provided</scope>
             </dependency>
+            <dependency>
+                <groupId>com.atlassian.plugins</groupId>
+                <artifactId>atlassian-plugins-osgi</artifactId>
+                <version>${plugins.version}</version>
+                <scope>provided</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -206,7 +212,7 @@
         <applinks.version>3.5.1</applinks.version>
         <speakeasy.version>1.3.16</speakeasy.version>
         <sal.version>2.7.0</sal.version>
-        <plugins.version>2.8.0</plugins.version>
+        <plugins.version>2.13.0-m2</plugins.version>
         <rest.version>2.3.0</rest.version>
         <templaterenderer.version>1.3.0</templaterenderer.version>
         <oauth.version>1.3.0</oauth.version>

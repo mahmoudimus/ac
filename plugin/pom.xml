@@ -432,6 +432,7 @@
                             com.atlassian.jira;resolution:=optional,
                             com.atlassian.refapp.auth.external;resolution:=optional,
                             com.atlassian.sal.api.*;version="(2.4,3.0]",
+                            com.atlassian.plugin.*;version="2.8",
                             org.apache.commons.lang.*;version="2.4",
                             com.atlassian.oauth*;version="(1.2,2.0]",
                             net.oauth*,
@@ -574,6 +575,36 @@
                         </testGroup>
                     </testGroups>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <version>2.3.5</version>
+                <executions>
+                    <execution>
+                        <id>generate-test-manifest</id>
+                        <goals>
+                            <goal>manifest</goal>
+                        </goals>
+                        <phase>generate-test-resources</phase>
+                        <configuration>
+                            <instructions>
+                                <Bundle-SymbolicName>plugin-tests</Bundle-SymbolicName>
+                                <Import-Package>
+                                    com.atlassian.labs.remoteapps*,
+                                    com.atlassian.plugin.*;version="2.8",
+                                    *;resolution:=optional
+                                </Import-Package>
+                                <Export-Package></Export-Package>
+                            </instructions>
+                            <manifestLocation>${project.build.testOutputDirectory}/META-INF</manifestLocation>
+                            <classifier>tests</classifier>
+                            <supportedProjectTypes>
+                                <supportedProjectType>atlassian-plugin</supportedProjectType>
+                            </supportedProjectTypes>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>net.alchim31.maven</groupId>
