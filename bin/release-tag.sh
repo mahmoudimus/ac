@@ -8,4 +8,4 @@ echo "Tagging $VERSION"
 git tag remoteapps-plugin-$VERSION
 
 echo "Pushing tag"
-#git push origin master
+git push origin master
