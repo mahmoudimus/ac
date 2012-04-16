@@ -10,3 +10,5 @@ target
 wiki
 smoke-tests/repository
 tags
+release.properties
+pom.release.xml
