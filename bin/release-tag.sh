@@ -2,7 +2,7 @@
 
 echo "Reading release.properties"
 
-source release.properties
+source ./release.properties
 
 echo "Tagging $VERSION"
 git tag remoteapps-plugin-$VERSION
