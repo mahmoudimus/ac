@@ -103,6 +103,7 @@
                             <version>${project.version}</version>
                             <updateReleaseInfo>true</updateReleaseInfo>
                             <uniqueVersion>false</uniqueVersion>
+                            <url>${deployRepoUrl}</url>
                         </configuration>
                     </execution>
                 </executions>
@@ -216,6 +217,7 @@
         <rest.version>2.3.0</rest.version>
         <templaterenderer.version>1.3.0</templaterenderer.version>
         <oauth.version>1.3.0</oauth.version>
+        <deployRepoUrl>https://maven.atlassian.com/public</deployRepoUrl>
         <VERSION_NUMBER>${API_VERSION}.${BUILD_NUMBER}</VERSION_NUMBER>
         <BUILD_NUMBER>99-SNAPSHOT</BUILD_NUMBER>
         <API_VERSION>0.4</API_VERSION>
