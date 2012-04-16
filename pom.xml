@@ -195,9 +195,9 @@
     </dependencyManagement>
 
     <scm>
-        <connection>scm:git:git://bitbucket.org/mrdon/remoteapps-plugin.git</connection>
-        <developerConnection>scm:git:git://bitbucket.org/mrdon/remoteapps-plugin.git</developerConnection>
-        <url>scm:git:git://bitbucket.org/mrdon/remoteapps-plugin.git</url>
+        <connection>scm:git:git@bitbucket.org:mrdon/remoteapps-plugin.git</connection>
+        <developerConnection>scm:git:git@bitbucket.org:mrdon/remoteapps-plugin.git</developerConnection>
+        <url>scm:git:git@bitbucket.org:mrdon/remoteapps-plugin.git</url>
     </scm>
 
     <properties>
