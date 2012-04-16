@@ -1,6 +1,6 @@
 #!/bin/sh
 
-echo "Reading release.properties"
+echo "Reading release.properties from `pwd`"
 source release.properties
 
 echo "Checking out $GIT_SHA1..."
