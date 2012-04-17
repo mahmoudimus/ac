@@ -9,6 +9,6 @@ die () {
 
 bin/store-release-info.sh $@
 bin/release-prepare.sh 
-mvn -f pom.release.xml clean install -DskipTests
+mvn -f pom.release.xml -Prelease clean deploy -DskipTests
 bin/release-tag.sh
 
