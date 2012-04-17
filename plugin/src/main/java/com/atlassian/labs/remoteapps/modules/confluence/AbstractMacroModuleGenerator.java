@@ -15,6 +15,7 @@ import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.module.ModuleFactory;
+import com.atlassian.sal.api.component.ComponentLocator;
 import com.google.common.collect.ImmutableSet;
 import org.dom4j.Element;
 
@@ -38,6 +39,7 @@ public abstract class AbstractMacroModuleGenerator implements RemoteModuleGenera
     protected final MacroContentManager macroContentManager;
     protected final I18NBeanFactory i18NBeanFactory;
     protected final PluginAccessor pluginAccessor;
+    protected final MacroMetadataParser macroMetadataParser;
 
     public AbstractMacroModuleGenerator(
             MacroContentManager macroContentManager, XhtmlContent xhtmlContent,
@@ -51,6 +53,7 @@ public abstract class AbstractMacroModuleGenerator implements RemoteModuleGenera
         this.applicationLinkOperationsFactory = applicationLinkOperationsFactory;
         this.systemInformationService = systemInformationService;
         this.pluginAccessor = pluginAccessor;
+        this.macroMetadataParser = ComponentLocator.getComponent(MacroMetadataParser.class);
     }
 
     @Override
@@ -155,7 +158,7 @@ public abstract class AbstractMacroModuleGenerator implements RemoteModuleGenera
                 }
             }
         };
-        return new XhtmlMacroModuleDescriptor(factory, new MacroMetadataParser(systemInformationService, i18NBeanFactory));
+        return new XhtmlMacroModuleDescriptor(factory, macroMetadataParser);
     }
 
     protected abstract RemoteMacro createMacro(RemoteMacroInfo remoteMacroInfo,
