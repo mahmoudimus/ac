@@ -381,6 +381,33 @@
                 </plugins>
             </build>
         </profile>
+        <profile>
+            <!--
+            this works around the problem where confluence trunk (4.3)
+            needs a newer page objects.  This is a temporary fix until JIRA can be updated.
+            -->
+            <id>confluence-trunk</id>
+            <dependencies>
+                <dependency>
+                    <groupId>com.atlassian.selenium</groupId>
+                    <artifactId>atlassian-pageobjects-api</artifactId>
+                    <version>2.1.0-m12</version>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>com.atlassian.selenium</groupId>
+                    <artifactId>atlassian-pageobjects-elements</artifactId>
+                    <version>2.1.0-m12</version>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>com.atlassian.selenium</groupId>
+                    <artifactId>atlassian-webdriver-core</artifactId>
+                    <version>2.1.0-m12</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+        </profile>
     </profiles>
 
     <build>
