@@ -116,7 +116,7 @@ public class OAuth2LOAuthenticator implements Authenticator
             If either of these cases fail, a 401 is returned.
              */
             user = userManager.resolve(userId);
-            if (!authenticationController.canLogin(user, request))
+            if (user == null || !authenticationController.canLogin(user, request))
             {
                 log.warn("Access denied to user '{}' because that user cannot login", userId);
                 sendError(response, HttpServletResponse.SC_UNAUTHORIZED, message);
