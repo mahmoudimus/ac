@@ -1,21 +1,6 @@
 package com.atlassian.labs.remoteapps.test;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.HttpResponseException;
-import org.apache.http.client.ResponseHandler;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.client.utils.URLEncodedUtils;
-import org.apache.http.impl.client.BasicResponseHandler;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.SingleClientConnManager;
-import org.apache.http.message.BasicNameValuePair;
+import org.bouncycastle.openssl.PEMWriter;
 import org.dom4j.Document;
 import org.dom4j.DocumentFactory;
 import org.dom4j.io.XMLWriter;
@@ -23,37 +8,30 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.io.StringWriter;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
+import static com.atlassian.labs.remoteapps.apputils.Environment.setEnv;
 import static com.atlassian.labs.remoteapps.test.HttpUtils.renderHtml;
 import static com.atlassian.labs.remoteapps.test.Utils.pickFreePort;
 import static com.atlassian.labs.remoteapps.util.EncodingUtils.encodeBase64;
 import static com.google.common.collect.Maps.newHashMap;
-import static java.util.Collections.singletonList;
 
-/**
- * Created by IntelliJ IDEA.
- * User: mrdon
- * Date: 11/01/12
- * Time: 9:57 PM
- * To change this template use File | Settings | File Templates.
- */
 public class RemoteAppRunner
 {
     private Server server;
     private final Document doc;
-    private final Map<String,String> routes = newHashMap();
+    private final Map<String,HttpServlet> routes = newHashMap();
     private final int port;
     private final String baseUrl;
     private final RemoteAppInstallerClient installer;
@@ -82,7 +60,7 @@ public class RemoteAppRunner
                 .addAttribute("url", path)
                 .addAttribute("name", name)
                 .addAttribute("key", key);
-        routes.put(path, resource);
+        routes.put(path, new MustacheServlet(resource));
         return this;
     }
 
@@ -92,7 +70,42 @@ public class RemoteAppRunner
                 .addAttribute("url", path)
                 .addAttribute("name", name)
                 .addAttribute("key", key);
-        routes.put(path, resource);
+        routes.put(path, new MustacheServlet(resource));
+        return this;
+    }
+
+    public RemoteAppRunner addOAuth() throws NoSuchAlgorithmException, IOException
+    {
+        KeyPairGenerator gen = KeyPairGenerator.getInstance("RSA");
+        KeyPair oauthKeyPair = gen.generateKeyPair();
+        StringWriter publicKeyWriter = new StringWriter();
+        PEMWriter pubWriter = new PEMWriter(publicKeyWriter);
+        pubWriter.writeObject(oauthKeyPair.getPublic());
+        pubWriter.close();
+
+        doc.getRootElement().addElement("oauth")
+                .addElement("public-key")
+                    .addText(publicKeyWriter.toString());
+
+        StringWriter privateKeyWriter = new StringWriter();
+        PEMWriter privWriter = new PEMWriter(privateKeyWriter);
+        privWriter.writeObject(oauthKeyPair.getPrivate());
+        privWriter.close();
+
+        setEnv("OAUTH_LOCAL_PUBLIC_KEY", publicKeyWriter.toString());
+        setEnv("OAUTH_LOCAL_PRIVATE_KEY", privateKeyWriter.toString());
+        setEnv("OAUTH_LOCAL_KEY", doc.getRootElement().attributeValue("key"));
+
+        return this;
+    }
+
+    public RemoteAppRunner addGeneralPage(String key, String name, String path, HttpServlet servlet)
+    {
+        doc.getRootElement().addElement("general-page")
+                .addAttribute("url", path)
+                .addAttribute("name", name)
+                .addAttribute("key", key);
+        routes.put(path, servlet);
         return this;
     }
 
@@ -147,9 +160,9 @@ public class RemoteAppRunner
 
         context.addServlet(new ServletHolder(new DescriptorServlet(secret)), "/register");
 
-        for (final Map.Entry<String,String> entry : routes.entrySet())
+        for (final Map.Entry<String,HttpServlet> entry : routes.entrySet())
         {
-            context.addServlet(new ServletHolder(new MustacheServlet(entry.getValue())), entry.getKey());
+            context.addServlet(new ServletHolder(entry.getValue()), entry.getKey());
         }
 
         list.addHandler(context);

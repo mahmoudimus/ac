@@ -6,6 +6,7 @@ import com.atlassian.applinks.api.ApplicationType;
 import com.atlassian.applinks.api.TypeNotInstalledException;
 import com.atlassian.applinks.spi.application.ApplicationIdUtil;
 import com.atlassian.applinks.spi.link.MutatingApplicationLinkService;
+import com.atlassian.labs.remoteapps.PermissionManager;
 import com.atlassian.labs.remoteapps.modules.external.ClosableRemoteModule;
 import com.atlassian.labs.remoteapps.modules.external.StartableRemoteModule;
 import com.atlassian.plugin.ModuleDescriptor;
@@ -13,6 +14,7 @@ import com.google.common.collect.ImmutableSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collections;
 import java.util.Set;
 
 /**
@@ -23,15 +25,17 @@ public class ApplicationTypeModule implements ClosableRemoteModule, StartableRem
 
     private static final Logger log = LoggerFactory.getLogger(ApplicationTypeModule.class);
     private final RemoteAppApplicationType applicationType;
+    private final PermissionManager permissionManager;
     private final Set<ModuleDescriptor> descriptors;
     private final MutatingApplicationLinkService applicationLinkService;
 
     public ApplicationTypeModule(RemoteAppApplicationType applicationType,
-                                 ModuleDescriptor<ApplicationType> applicationTypeDescriptor,
-                                 MutatingApplicationLinkService mutatingApplicationLinkService
-    )
+            ModuleDescriptor<ApplicationType> applicationTypeDescriptor,
+            MutatingApplicationLinkService mutatingApplicationLinkService,
+            PermissionManager permissionManager)
     {
         this.applicationType = applicationType;
+        this.permissionManager = permissionManager;
         this.descriptors = ImmutableSet.<ModuleDescriptor>of(applicationTypeDescriptor);
         this.applicationLinkService = mutatingApplicationLinkService;
     }
@@ -80,6 +84,9 @@ public class ApplicationTypeModule implements ClosableRemoteModule, StartableRem
             }
         }
         link.putProperty("IS_ACTIVITY_ITEM_PROVIDER", Boolean.FALSE.toString());
+
+        // ensure no permissions by default
+        permissionManager.setApiPermissions(applicationType, Collections.<String>emptyList());
     }
 
     @Override

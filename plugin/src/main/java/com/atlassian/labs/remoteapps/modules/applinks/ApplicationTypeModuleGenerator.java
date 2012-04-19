@@ -5,6 +5,7 @@ import com.atlassian.applinks.api.ApplicationType;
 import com.atlassian.applinks.spi.application.TypeId;
 import com.atlassian.applinks.spi.link.ApplicationLinkDetails;
 import com.atlassian.applinks.spi.link.MutatingApplicationLinkService;
+import com.atlassian.labs.remoteapps.PermissionManager;
 import com.atlassian.labs.remoteapps.loader.AggregateModuleDescriptorFactory;
 import com.atlassian.labs.remoteapps.modules.external.*;
 import com.atlassian.plugin.ModuleDescriptor;
@@ -34,16 +35,19 @@ public class ApplicationTypeModuleGenerator implements WaitableRemoteModuleGener
     private final MutatingApplicationLinkService mutatingApplicationLinkService;
     private final ApplicationTypeClassLoader applicationTypeClassLoader;
     private final AggregateModuleDescriptorFactory aggregateModuleDescriptorFactory;
+    private final PermissionManager permissionManager;
 
     @Autowired
     public ApplicationTypeModuleGenerator(
             MutatingApplicationLinkService mutatingApplicationLinkService,
             ApplicationTypeClassLoader applicationTypeClassLoader,
-            AggregateModuleDescriptorFactory aggregateModuleDescriptorFactory)
+            AggregateModuleDescriptorFactory aggregateModuleDescriptorFactory,
+            PermissionManager permissionManager)
     {
         this.mutatingApplicationLinkService = mutatingApplicationLinkService;
         this.applicationTypeClassLoader = applicationTypeClassLoader;
         this.aggregateModuleDescriptorFactory = aggregateModuleDescriptorFactory;
+        this.permissionManager = permissionManager;
     }
 
     @Override
@@ -88,7 +92,7 @@ public class ApplicationTypeModuleGenerator implements WaitableRemoteModuleGener
         RemoteAppApplicationType applicationType = createApplicationType(applicationTypeClassLoader, element);
         return new ApplicationTypeModule(applicationType,
                 createApplicationTypeDescriptor(applicationTypeClassLoader, ctx, applicationType, element),
-                mutatingApplicationLinkService);
+                mutatingApplicationLinkService, permissionManager);
 
     }
 

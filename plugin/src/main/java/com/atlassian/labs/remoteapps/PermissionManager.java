@@ -68,14 +68,7 @@ public class PermissionManager
     public void setApiPermissions(ApplicationType type, List<String> scopes)
     {
         ApplicationLink link = applicationLinkService.getPrimaryApplicationLink(type.getClass());
-        if (scopes.isEmpty())
-        {
-            link.removeProperty(API_SCOPES_LINK_KEY);
-        }
-        else
-        {
-            link.putProperty(API_SCOPES_LINK_KEY, scopes);
-        }
+        link.putProperty(API_SCOPES_LINK_KEY, scopes);
     }
 
     public Iterable<ApiScope> getApiScopes()
