@@ -9,6 +9,8 @@ import org.openqa.selenium.WebElement;
 
 import javax.inject.Inject;
 
+import static com.atlassian.labs.remoteapps.installer.DefaultRemoteAppInstaller.calculatePluginName;
+
 public class PluginManagerPage implements Page
 {
     @Inject
@@ -33,7 +35,7 @@ public class PluginManagerPage implements Page
     {
         for (WebElement element : driver.findElements(By.className("upm-plugin-name")))
         {
-            if (element.getText().trim().equals(pluginKeyAndName))
+            if (element.getText().trim().equals(calculatePluginName(pluginKeyAndName)))
             {
                 element.click();
                 By byConfigure = By.linkText("Configure");

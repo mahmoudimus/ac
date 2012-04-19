@@ -432,7 +432,7 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
         final Element plugin = DocumentHelper.createElement("atlassian-plugin");
         plugin.addAttribute("plugins-version", "2");
         plugin.addAttribute("key", getRequiredAttribute(oldRoot, "key"));
-        plugin.addAttribute("name", getRequiredAttribute(oldRoot, "name"));
+        plugin.addAttribute("name", calculatePluginName(getRequiredAttribute(oldRoot, "name")));
         Element info = plugin.addElement("plugin-info");
         info.addElement("version").setText(
                 getRequiredAttribute(oldRoot, "version"));
@@ -471,6 +471,12 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
         appDoc.setRootElement(plugin);
 
         return appDoc;
+    }
+
+    // fixme: this is temporary until UPM supports clear designation of remote apps
+    public static String calculatePluginName(String name)
+    {
+        return name + " (Remote App)";
     }
 
     public static class StartedListener
