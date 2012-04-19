@@ -95,13 +95,18 @@ public class ServletKitBootstrap implements DisposableBean
             ServiceTracker tracker = new ServiceTracker(bundleContext, 
                     DescriptorGenerator.class.getName(), null);
             tracker.open();
+            String notFoundMessage = "Remote app default descriptor generator not found";
             try
             {
                 generator = (DescriptorGenerator) tracker.waitForService(20 * 1000);
+                if (generator == null)
+                {
+                    throw new IllegalStateException(notFoundMessage);
+                }
             }
             catch (InterruptedException e)
             {
-                throw new IllegalStateException("Remote app default descriptor generator not found");
+                throw new IllegalStateException(notFoundMessage);
             }
             finally
             {

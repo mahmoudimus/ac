@@ -8,6 +8,7 @@ import com.atlassian.labs.remoteapps.settings.SettingsManager;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.sal.api.user.UserManager;
+import org.apache.commons.lang.StringUtils;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -120,6 +121,15 @@ public class PermissionsModuleGenerator implements WaitableRemoteModuleGenerator
         if (!settingsManager.isAllowDogfooding() && !element.elements().isEmpty() && !userManager.isSystemAdmin(username))
         {
             throw new PluginParseException("Cannot install remote app that contains permissions if not either a dogfood server or a system administrator");
+        }
+
+        String scopes = StringUtils.join(extractApiScopeKeys(element),",");
+        // this number comes from the limitation in sal property settings that cannot store more
+        // 255 characters in the setting's value
+        if (scopes.length() > 220)
+        {
+            throw new PluginParseException("Cannot install remote app that contains too many " +
+                    "permissions.");
         }
     }
 

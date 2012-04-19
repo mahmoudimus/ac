@@ -9,6 +9,8 @@ import com.atlassian.labs.remoteapps.test.RemoteAppRunner;
 import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.webdriver.pageobjects.WebDriverTester;
 import com.google.common.collect.ImmutableMap;
+import org.apache.commons.lang.StringUtils;
+import org.apache.http.client.HttpResponseException;
 import org.junit.After;
 import org.junit.Rule;
 import org.junit.Test;

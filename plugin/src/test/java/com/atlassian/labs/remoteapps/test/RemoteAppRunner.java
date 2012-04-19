@@ -3,6 +3,7 @@ package com.atlassian.labs.remoteapps.test;
 import org.bouncycastle.openssl.PEMWriter;
 import org.dom4j.Document;
 import org.dom4j.DocumentFactory;
+import org.dom4j.Element;
 import org.dom4j.io.XMLWriter;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.HandlerList;
@@ -116,6 +117,18 @@ public class RemoteAppRunner
                 .addAttribute("name", name)
                 .addAttribute("key", key);
         routes.put(path, servlet);
+        return this;
+    }
+
+    public RemoteAppRunner addPermission(String apiScopeKey)
+    {
+        Element permissions = doc.getRootElement().element("permissions");
+        if (permissions == null)
+        {
+            permissions = doc.getRootElement().addElement("permissions");
+        }
+        permissions.addElement("permission")
+                .addAttribute("scope", apiScopeKey);
         return this;
     }
 

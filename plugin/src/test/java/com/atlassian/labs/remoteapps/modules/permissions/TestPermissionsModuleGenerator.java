@@ -6,6 +6,7 @@ import com.atlassian.labs.remoteapps.product.ProductAccessor;
 import com.atlassian.labs.remoteapps.settings.SettingsManager;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.sal.api.user.UserManager;
+import org.apache.commons.lang.StringUtils;
 import org.dom4j.DocumentFactory;
 import org.dom4j.Element;
 import org.junit.Test;
@@ -40,7 +41,7 @@ public class TestPermissionsModuleGenerator
     ApiScopeSchema apiScopeSchema;
 
     private static final Element NON_EMPTY_PERMISSIONS = new DocumentFactory().createElement("permissions")
-            .addElement("permission").getParent();
+            .addElement("permission").addAttribute("scope", "foo").getParent();
 
     @Test
     public void testAllowNonSysAdminsForDogfood()
@@ -64,6 +65,15 @@ public class TestPermissionsModuleGenerator
         when(userManager.isAdmin("foo")).thenReturn(false);
         when(settingsManager.isAllowDogfooding()).thenReturn(false);
         new PermissionsModuleGenerator(permissionManager, productAccessor, userManager, settingsManager, apiScopeSchema).validate(NON_EMPTY_PERMISSIONS, "", "foo");
+    }
+
+    @Test(expected = PluginParseException.class)
+    public void testTooManyPermissions()
+    {
+        Element e = new DocumentFactory().createElement("permissions")
+                .addElement("permission").addAttribute("scope",
+                        StringUtils.rightPad("a", 220, "b")).getParent();
+        new PermissionsModuleGenerator(permissionManager, productAccessor, userManager, settingsManager, apiScopeSchema).validate(e, "", "foo");
     }
 
 }
