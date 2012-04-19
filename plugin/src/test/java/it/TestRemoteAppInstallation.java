@@ -1,90 +1,23 @@
 package it;
 
-import com.atlassian.labs.remoteapps.test.*;
-import com.atlassian.labs.remoteapps.test.RemoteAppDialog;
-import com.atlassian.pageobjects.TestedProduct;
-import com.atlassian.pageobjects.page.AdminHomePage;
+import com.atlassian.labs.remoteapps.test.GeneralPage;
+import com.atlassian.labs.remoteapps.test.RemoteAppRunner;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
-import com.atlassian.webdriver.pageobjects.WebDriverTester;
 import org.apache.http.client.HttpResponseException;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.junit.After;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.MethodRule;
 
 import java.io.IOException;
 import java.util.List;
 
 import static com.atlassian.labs.remoteapps.test.Utils.getXml;
-import static com.atlassian.labs.remoteapps.test.RemoteAppUtils.waitForEvent;
 import static org.junit.Assert.*;
 
-public class TestRemoteApp
+public class TestRemoteAppInstallation extends AbstractRemoteAppTest
 {
-    private static TestedProduct<WebDriverTester> product = OwnerOfTestedProduct.INSTANCE;
-
-    @Rule
-    public MethodRule rule = new HtmlDumpRule(product.getTester().getDriver());
-
-    @After
-    public void logout()
-    {
-        product.getTester().getDriver().manage().deleteAllCookies();
-    }
-
-    @Test
-	public void testMyGeneralLoaded()
-	{
-        product.visit(LoginPage.class).login("betty", "betty", HomePage.class);
-        RemoteAppAwarePage page = product.getPageBinder().bind(GeneralPage.class, "remoteAppGeneral",
-                                                               "Remote App app1 General");
-        assertTrue(page.isRemoteAppLinkPresent());
-        RemoteAppTestPage remoteAppTest = page.clickRemoteAppLink();
-        assertEquals("Success", remoteAppTest.getMessage());
-        assertEquals(OAuthUtils.getConsumerKey(), remoteAppTest.getConsumerKey());
-        assertEquals("Betty Admin", remoteAppTest.getFullName());
-	}
-
-    @Test
-    public void testLoadGeneralDialog()
-    {
-        product.visit(LoginPage.class).login("betty", "betty", HomePage.class);
-        RemoteAppAwarePage page = product.getPageBinder().bind(GeneralPage.class, "remoteAppDialog",
-                "Remote App app1 Dialog");
-        assertTrue(page.isRemoteAppLinkPresent());
-        RemoteAppTestPage remoteAppTest = page.clickRemoteAppLink();
-        assertEquals("Betty Admin", remoteAppTest.getFullName());
-
-        // Exercise the dialog's submit button.
-        RemoteAppDialog dialog = product.getPageBinder().bind(RemoteAppDialog.class, remoteAppTest);
-        assertFalse(dialog.wasSubmitted());
-        assertEquals(false, dialog.submit());
-         assertTrue(dialog.wasSubmitted());
-        assertEquals(true, dialog.submit());
-    }
-
-    @Test
-    public void testNoAdminPageForNonAdmin()
-    {
-        product.visit(LoginPage.class).login("barney", "barney", AdminHomePage.class);
-        AccessDeniedIFramePage page = product.getPageBinder().bind(AccessDeniedIFramePage.class,
-                "app1", "remoteAppAdmin");
-        assertFalse(page.isIframeAvailable());
-    }
-
-    @Test
-	public void testAppStartedWebHookFired() throws IOException, JSONException, InterruptedException
-    {
-        JSONObject event = waitForEvent(product.getProductInstance(), "remote_app_started");
-        assertEquals("app1", event.getString("key"));
-	}
-
     @Test
     public void testSchemaContainsCustomScope() throws IOException, DocumentException
     {

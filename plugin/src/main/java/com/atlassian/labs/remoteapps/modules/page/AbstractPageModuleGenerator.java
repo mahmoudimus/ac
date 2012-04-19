@@ -76,7 +76,8 @@ public abstract class AbstractPageModuleGenerator implements RemoteModuleGenerat
         String key = getRequiredAttribute(e, "key");
         final String url = getRequiredAttribute(e, "url");
 
-        String localUrl = "/remoteapps/" + ctx.getApplicationType().getId().get() + "/" + key;
+        String appKey = ctx.getApplicationType().getId().get();
+        String localUrl = createLocalUrl(appKey, key);
 
         final Set<ModuleDescriptor> descriptors = ImmutableSet.<ModuleDescriptor>of(
                 createServletDescriptor(ctx, e, key, url, localUrl),
@@ -89,6 +90,11 @@ public abstract class AbstractPageModuleGenerator implements RemoteModuleGenerat
                 return descriptors;
             }
         };
+    }
+
+    public static String createLocalUrl(String appKey, String pageKey)
+    {
+        return "/remoteapps/" + appKey + "/" + pageKey;
     }
 
     private ServletModuleDescriptor createServletDescriptor(final RemoteAppCreationContext ctx,

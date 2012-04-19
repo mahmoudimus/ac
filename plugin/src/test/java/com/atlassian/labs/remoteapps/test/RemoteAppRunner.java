@@ -64,6 +64,16 @@ public class RemoteAppRunner
         return this;
     }
 
+    public RemoteAppRunner addConfigurePage(String key, String name, String path, String resource)
+    {
+        doc.getRootElement().addElement("configure-page")
+                .addAttribute("url", path)
+                .addAttribute("name", name)
+                .addAttribute("key", key);
+        routes.put(path, new MustacheServlet(resource));
+        return this;
+    }
+
     public RemoteAppRunner addGeneralPage(String key, String name, String path, String resource)
     {
         doc.getRootElement().addElement("general-page")

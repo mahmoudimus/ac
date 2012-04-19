@@ -22,18 +22,8 @@ import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 
-public class TestAppPermissions
+public class TestAppPermissions extends AbstractRemoteAppTest
 {
-    private static TestedProduct<WebDriverTester> product = OwnerOfTestedProduct.INSTANCE;
-
-    @Rule
-    public MethodRule rule = new HtmlDumpRule(product.getTester().getDriver());
-
-    @After
-    public void logout()
-    {
-        product.getTester().getDriver().manage().deleteAllCookies();
-    }
 
     @Test
     public void testNoPermissions() throws Exception

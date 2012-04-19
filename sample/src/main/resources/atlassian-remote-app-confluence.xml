@@ -18,6 +18,7 @@
     <entity-type key="project" name="Project" pluralized-name="Projects" icon-url="https://github.com/favicon.ico"/>
 
     <admin-page key="remoteAppAdmin" name="Remote App app1 Admin" url="/myAdmin" />
+    <configure-page key="remoteAppConfig" name="Remote App app1 Configure" url="/myAdmin" />
     <general-page key="remoteAppGeneral" name="Remote App app1 General" url="/myAdmin" height="600" width="700">
         <context-param name="page_id" />
     </general-page>

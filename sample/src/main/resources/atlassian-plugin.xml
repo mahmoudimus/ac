@@ -1,6 +1,7 @@
 <atlassian-plugin key="app1" name="${project.name}" plugins-version="2">
     <plugin-info>
         <version>${project.version}</version>
+        <param name="configure.url">/plugins/servlet/remoteapps/app1/remoteAppConfig</param>
     </plugin-info>
 
     <junit key="all" package="junit.all" />
