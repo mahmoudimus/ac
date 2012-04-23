@@ -32,7 +32,10 @@ public class IssueEventMapper extends JiraEventMapper
         ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();
         builder.put("key", issue.getKey());
         builder.put("summary", issue.getSummary());
-        builder.put("reporterName", issue.getReporterUser().getName());
+        if (issue.getReporterUser() != null)
+        {
+            builder.put("reporterName", issue.getReporterUser().getName());
+        }
         builder.put("status", issue.getStatusObject().getName());
         // TODO: Consider adding additional data about the issue
 
