@@ -17,6 +17,7 @@ import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.sal.api.component.ComponentLocator;
 import com.google.common.collect.ImmutableSet;
+import org.apache.commons.lang.StringUtils;
 import org.dom4j.Element;
 
 import java.util.ArrayList;
@@ -69,6 +70,12 @@ public abstract class AbstractMacroModuleGenerator implements RemoteModuleGenera
                 if (title != null)
                 {
                     i18n.put(pluginKey + "." + key + ".param." + parameter.attributeValue("name") + ".label", title);
+                }
+
+                String description = parameter.elementText("description");
+                if (!StringUtils.isBlank(description))
+                {
+                    i18n.put(pluginKey + "." + key + ".param." + parameter.attributeValue("name") + ".desc", description);
                 }
             }
         }
