@@ -1,6 +1,5 @@
 package com.atlassian.labs.remoteapps.modules.oauth;
 
-import com.atlassian.labs.remoteapps.product.ProductAccessor;
 import com.atlassian.labs.remoteapps.product.WebSudoElevator;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.oauth.util.Check;
@@ -10,6 +9,7 @@ import com.atlassian.sal.api.auth.Authenticator;
 import com.google.common.collect.ImmutableSet;
 import net.oauth.OAuth;
 import net.oauth.server.HttpRequestMessage;
+import org.springframework.osgi.service.importer.ServiceProxyDestroyedException;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -53,9 +53,17 @@ public class OAuth2LOFilter implements Filter
         final HttpServletRequest request = (HttpServletRequest) req;
         final HttpServletResponse response = (HttpServletResponse) res;
 
-        if (!mayProceed(request, response))
+        try
         {
-            return;
+            if (!mayProceed(request, response))
+            {
+                return;
+            }
+        }
+        catch (ServiceProxyDestroyedException ex)
+        {
+            // ignore this exception as it only happens if the plugin has been shutdown while
+            // the request has been in this filter
         }
         try
         {
@@ -79,7 +87,7 @@ public class OAuth2LOFilter implements Filter
             authenticationListener.authenticationNotAttempted(request, response);
             return true;
         }
-        
+
         // are the oauth parameters present?
         if (!isOAuth2LOAccessAttempt(request))
         {
