@@ -4,7 +4,8 @@ https://remoteapps.jira.com/wiki/display/ARA
 
 When getting started developing the Atlassian Remote Apps plugin, these commands will come in handy.
 You may need to run a 'mvn install' from the project directory first before running these 
-commands in the '/plugin' directory.
+commands in the '/plugin' directory.  Make sure to use Maven 2.1.0, the version that ships with
+and is supported by the Atlassian Plugin SDK.
 
 * Start the plugin in the desired product:
   Refapp: mvn amps:debug
