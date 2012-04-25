@@ -67,6 +67,7 @@ public class IFramePageServlet extends HttpServlet
             }
 
             ctx.put("title", pageInfo.getTitle());
+            ctx.put("contextPath", req.getContextPath());
             ctx.put("iframeHtml",
                     iFrameRenderer.render(iframeContext, req.getPathInfo(), req.getParameterMap(),
                             remoteUser));
