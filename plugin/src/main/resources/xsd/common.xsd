@@ -36,6 +36,10 @@
         </xs:restriction>
     </xs:simpleType>
 
+    <xs:simpleType name="AbsoluteOrRelativeUrlType">
+        <xs:union memberTypes="RelativeUrlType HttpUrlType" />
+    </xs:simpleType>
+
     <xs:simpleType name="DescriptionType">
         <xs:restriction base="xs:string"/>
     </xs:simpleType>

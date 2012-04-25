@@ -1,4 +1,4 @@
-<remote-app key="app1" name="Remote App - app1" version="1" icon-url="https://github.com/favicon.ico"
+<remote-app key="app1" name="Remote App - app1" version="1" icon-url="/sandcastles.jpg"
             display-url="-- to be replaced --">
     <vendor name="Atlassian" url="http://atlassian.com" />
     <description>
@@ -19,7 +19,7 @@
 
     <admin-page key="remoteAppAdmin" name="Remote App app1 Admin" url="/myAdmin" />
     <configure-page key="remoteAppConfig" name="Remote App app1 Configure" url="/myAdmin" />
-    <general-page key="remoteAppGeneral" name="Remote App app1 General" url="/myAdmin" height="600" width="700"/>
+    <general-page key="remoteAppGeneral" name="Remote App app1 General" url="/myAdmin"  icon-url="/sandcastles.jpg" height="600" width="700"/>
     <dialog-page key="remoteAppDialog" name="Remote App app1 Dialog" url="/myDialog" />
     <profile-page key="remoteAppProfile" name="Remote App app1 Profile" url="/myAdmin" />
 

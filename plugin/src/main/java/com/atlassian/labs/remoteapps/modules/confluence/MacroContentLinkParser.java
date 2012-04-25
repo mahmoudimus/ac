@@ -1,8 +1,7 @@
 package com.atlassian.labs.remoteapps.modules.confluence;
 
-import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.confluence.setup.settings.SettingsManager;
-import com.atlassian.confluence.util.GeneralUtil;
+import com.atlassian.labs.remoteapps.modules.applinks.RemoteAppApplicationType;
 import com.atlassian.streams.api.common.uri.Uri;
 import com.atlassian.streams.api.common.uri.UriBuilder;
 import org.apache.commons.lang.StringEscapeUtils;
@@ -11,6 +10,9 @@ import org.apache.commons.lang.StringUtils;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static com.atlassian.labs.remoteapps.modules.util.redirect.RedirectServlet
+        .getOAuthRedirectUrl;
 
 /**
  *
@@ -26,9 +28,10 @@ public class MacroContentLinkParser
         this.confluenceSettingsManager = confluenceSettingsManager;
     }
 
-    public String parse(ApplicationLink link, String content, Map<String, String> macroParameters)
+    public String parse(RemoteAppApplicationType type, String content, Map<String, String> macroParameters)
     {
-        final Pattern urlSigningPattern = Pattern.compile(String.format(URL_SIGNING_PATTERN, link.getDisplayUrl().getAuthority()));
+        final Pattern urlSigningPattern = Pattern.compile(String.format(URL_SIGNING_PATTERN,
+                type.getDefaultDetails().getDisplayUrl().getAuthority()));
 
         Matcher matcher = urlSigningPattern.matcher(content);
         StringBuffer sb = new StringBuffer();
@@ -43,7 +46,9 @@ public class MacroContentLinkParser
             UriBuilder b = new UriBuilder(target);
             b.addQueryParameters(macroParameters);
 
-            String urlToEmbed = String.format("%s/plugins/servlet/oauthRedirect?app_link_id=%s&app_url=%s", confluenceSettingsManager.getGlobalSettings().getBaseUrl(), GeneralUtil.urlEncode(link.getId().get()), GeneralUtil.urlEncode(b.toUri().toString()));
+            String urlToEmbed = getOAuthRedirectUrl(
+                    confluenceSettingsManager.getGlobalSettings().getBaseUrl(),
+                    type.getId().get(), b.toUri().toJavaUri());
 
             String replacement = String.format(" %s=\"%s\"", attributeName, urlToEmbed);
             matcher.appendReplacement(sb, replacement);

@@ -2,7 +2,6 @@ package com.atlassian.labs.remoteapps.modules;
 
 import com.atlassian.labs.remoteapps.modules.external.RemoteAppCreationContext;
 import com.atlassian.labs.remoteapps.product.ProductAccessor;
-import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.impl.AbstractDelegatingPlugin;
@@ -11,9 +10,13 @@ import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import org.apache.commons.lang.StringUtils;
 import org.dom4j.Element;
 
+import java.net.URI;
 import java.util.Map;
 
+import static com.atlassian.labs.remoteapps.modules.util.redirect.RedirectServlet
+        .getPermanentRedirectUrl;
 import static com.atlassian.labs.remoteapps.util.Dom4jUtils.getOptionalAttribute;
+import static com.atlassian.labs.remoteapps.util.Dom4jUtils.getOptionalUriAttribute;
 import static com.atlassian.labs.remoteapps.util.Dom4jUtils.getRequiredAttribute;
 import static org.apache.commons.lang.Validate.notNull;
 
@@ -71,6 +74,17 @@ public class WebItemCreator
         {
             config.addElement("styleClass").
                     setText(additionalStyleClass);
+        }
+        URI iconUri = getOptionalUriAttribute(e, "icon-url");
+        if (iconUri != null)
+        {
+            // todo: would be nice to detect the size or at least allow it to be configured
+            config.addElement("icon")
+                    .addAttribute("width", "16")
+                    .addAttribute("height", "16")
+                    .addElement("link")
+                        .addText(getPermanentRedirectUrl(
+                                ctx.getApplicationType().getId().get(), iconUri));
         }
         config.addElement("condition")
                 .addAttribute("class", DynamicMarkerCondition.class.getName());

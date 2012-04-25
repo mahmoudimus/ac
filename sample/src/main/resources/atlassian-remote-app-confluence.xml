@@ -1,4 +1,4 @@
-<remote-app key="app1" name="Remote App - app1" version="1" icon-url="https://github.com/favicon.ico">
+<remote-app key="app1" name="Remote App - app1" version="1" icon-url="/sandcastles.jpg">
     <vendor name="Atlassian" url="http://atlassian.com" />
     <description>
         This really great app
@@ -19,14 +19,14 @@
 
     <admin-page key="remoteAppAdmin" name="Remote App app1 Admin" url="/myAdmin" />
     <configure-page key="remoteAppConfig" name="Remote App app1 Configure" url="/myAdmin" />
-    <general-page key="remoteAppGeneral" name="Remote App app1 General" url="/myAdmin" height="600" width="700">
+    <general-page key="remoteAppGeneral" name="Remote App app1 General" url="/myAdmin" height="600" width="700"  icon-url="/sandcastles.jpg">
         <context-param name="page_id" />
     </general-page>
     <dialog-page key="remoteAppDialog" name="Remote App app1 Dialog" url="/myDialog" />
 
     <profile-page key="remoteAppProfile" name="Remote App app1 Profile" url="/myAdmin" />
 
-    <macro key="app1-macro" url="/myMacro" output-type="block" body-type="rich-text">
+    <macro key="app1-macro" url="/myMacro" icon-url="/sandcastles.jpg" output-type="block" body-type="rich-text">
         <description>Example macro</description>
         <category name="development" />
         <parameters>

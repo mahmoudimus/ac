@@ -5,6 +5,7 @@ import com.atlassian.applinks.api.ApplicationLinkService;
 import com.atlassian.applinks.api.ApplicationType;
 import com.atlassian.labs.remoteapps.*;
 import com.atlassian.labs.remoteapps.api.PermissionDeniedException;
+import com.atlassian.labs.remoteapps.util.function.MapFunctions;
 import com.atlassian.labs.remoteapps.util.http.CachingHttpContentRetriever;
 import com.atlassian.labs.remoteapps.util.http.HttpContentHandler;
 import com.google.common.base.Function;
@@ -29,14 +30,6 @@ import static java.util.Collections.singletonList;
 public class ApplicationLinkOperationsFactory
 {
 
-    public static final Function<Object,String> MAP_TO_PARAMS = new Function<Object, String>()
-    {
-        @Override
-        public String apply(Object from)
-        {
-            return from != null ? from.toString() : null;
-        }
-    };
     private final ApplicationLinkService applicationLinkService;
     private final OAuthLinkManager oAuthLinkManager;
     private final CachingHttpContentRetriever httpContentRetriever;
@@ -45,6 +38,7 @@ public class ApplicationLinkOperationsFactory
     {
         ApplicationLink get();
         String signGetUrl(String user, String targetPath, Map<String, String[]> params);
+        String createGetUrl(String targetPath, Map<String, String[]> params);
         String executeGet(String user, String path, Map<String, String> params) throws ContentRetrievalException;
         void executeGetAsync(String user, String path, Map<String, String> params, HttpContentHandler handler);
     }
@@ -80,6 +74,12 @@ public class ApplicationLinkOperationsFactory
             }
 
             @Override
+            public String createGetUrl(String targetPath, Map<String, String[]> params)
+            {
+                return executeCreateGetUrl(get(), targetPath, params);
+            }
+
+            @Override
             public String executeGet(String username, String path, Map<String, String> params) throws ContentRetrievalException
             {
                 return executeGetForType(get(), username, path, params);
@@ -94,11 +94,18 @@ public class ApplicationLinkOperationsFactory
         };
     }
 
+    private String executeCreateGetUrl(ApplicationLink applicationLink, String targetPath,
+            Map<String, String[]> params)
+    {
+        String targetUrl = getTargetUrl(applicationLink, targetPath);
+        return encodeGetUrl(targetUrl, transformValues(params, MapFunctions.STRING_ARRAY_TO_STRING));
+    }
+
     private String executeGetForType(ApplicationLink applicationLink, String username, String path, Map<String, String> params) throws ContentRetrievalException
     {
         String targetUrl = getTargetUrl(applicationLink, path);
         return httpContentRetriever.get(applicationLink, username, targetUrl, Maps.transformValues(params,
-                                                                                                   MAP_TO_PARAMS));
+                                                                                                   MapFunctions.OBJECT_TO_STRING));
     }
 
     private void executeAsyncGetForType(ApplicationLink applicationLink, String username, String path, Map<String, String> params,
@@ -106,7 +113,7 @@ public class ApplicationLinkOperationsFactory
     {
         String targetUrl = getTargetUrl(applicationLink, path);
         httpContentRetriever.getAsync(applicationLink, username, targetUrl,
-                                      Maps.transformValues(params, MAP_TO_PARAMS), httpContentHandler);
+                                      Maps.transformValues(params, MapFunctions.OBJECT_TO_STRING), httpContentHandler);
     }
 
     private String signGetUrlForType(ApplicationLink applicationLink,

@@ -15,9 +15,16 @@
         </xs:attribute>
         <xs:attribute name="name" type="NameType" use="required"/>
         <xs:attribute name="version" type="VersionType" use="required"/>
-        <xs:attribute name="icon-url" type="HttpUrlType"/>
-        <xs:attribute name="display-url" type="HttpUrlType" use="required"/>
-        
+        <xs:attribute name="icon-url" type="AbsoluteOrRelativeUrlType">
+            <xs:annotation>
+                <xs:documentation>
+                    The relative url to the icon for this app.  Absolute urls are allowed currently
+                    but deprecated.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="display-url" type="HttpUrlType" use="required" />
+
         <!-- deprecated -->
         <xs:attribute name="access-level" type="xs:string" use="optional" />
     </xs:complexType>

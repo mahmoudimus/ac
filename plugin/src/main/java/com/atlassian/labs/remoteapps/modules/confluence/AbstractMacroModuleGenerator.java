@@ -20,12 +20,16 @@ import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang.StringUtils;
 import org.dom4j.Element;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import static com.atlassian.labs.remoteapps.modules.util.redirect.RedirectServlet.getPermanentRedirectUrl;
+
 import static com.atlassian.labs.remoteapps.util.Dom4jUtils.getOptionalAttribute;
+import static com.atlassian.labs.remoteapps.util.Dom4jUtils.getOptionalUriAttribute;
 import static com.atlassian.labs.remoteapps.util.Dom4jUtils.getRequiredAttribute;
 import static com.google.common.collect.Maps.newHashMap;
 
@@ -93,6 +97,13 @@ public abstract class AbstractMacroModuleGenerator implements RemoteModuleGenera
         if (config.element("parameters") == null)
         {
             config.addElement("parameters");
+        }
+
+        URI icon = getOptionalUriAttribute(config, "icon-url");
+        if (icon != null)
+        {
+            config.addAttribute("icon", getPermanentRedirectUrl(
+                    ctx.getApplicationType().getId().get(), icon));
         }
 
         ModuleDescriptor descriptor = createXhtmlMacroModuleDescriptor(ctx, entity);

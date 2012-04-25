@@ -36,7 +36,7 @@ public class ApplicationLinkAccessor
         return link;
     }
 
-    public ApplicationLink getApplicationLink(String appkey)
+    public ApplicationLink getApplicationLink(String appkey) throws IllegalArgumentException
     {
         Class appTypeClass = applicationTypeClassLoader.getApplicationType(appkey);
         notNull(appTypeClass);

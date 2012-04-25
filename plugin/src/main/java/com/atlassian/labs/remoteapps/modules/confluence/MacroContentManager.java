@@ -16,6 +16,7 @@ import com.atlassian.event.api.EventListener;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.labs.remoteapps.ApplicationLinkAccessor;
 import com.atlassian.labs.remoteapps.ContentRetrievalException;
+import com.atlassian.labs.remoteapps.modules.applinks.RemoteAppApplicationType;
 import com.atlassian.labs.remoteapps.util.http.CachingHttpContentRetriever;
 import com.atlassian.labs.remoteapps.util.http.HttpContentHandler;
 import com.atlassian.renderer.RenderContextOutputType;
@@ -107,7 +108,8 @@ public class MacroContentManager implements DisposableBean
             String value = macroInstance.getLinkOperations().executeGet(entity.getLastModifierName(), macroInstance.getPath(), macroInstance.getUrlParameters());
 
 
-            value = macroContentLinkParser.parse(macroInstance.getLinkOperations().get(), value,
+            value = macroContentLinkParser.parse(
+                    (RemoteAppApplicationType) macroInstance.getLinkOperations().get().getType(), value,
                     macroInstance.getUrlParameters());
 
             /*!

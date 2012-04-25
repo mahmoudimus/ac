@@ -8,6 +8,7 @@ import com.atlassian.applinks.spi.link.MutatingApplicationLinkService;
 import com.atlassian.labs.remoteapps.PermissionManager;
 import com.atlassian.labs.remoteapps.loader.AggregateModuleDescriptorFactory;
 import com.atlassian.labs.remoteapps.modules.external.*;
+import com.atlassian.labs.remoteapps.modules.util.redirect.RedirectServlet;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
@@ -16,6 +17,8 @@ import com.atlassian.plugin.module.ContainerAccessor;
 import com.atlassian.plugin.module.ContainerManagedPlugin;
 import com.atlassian.plugin.module.ModuleFactory;
 import org.dom4j.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -36,6 +39,7 @@ public class ApplicationTypeModuleGenerator implements WaitableRemoteModuleGener
     private final ApplicationTypeClassLoader applicationTypeClassLoader;
     private final AggregateModuleDescriptorFactory aggregateModuleDescriptorFactory;
     private final PermissionManager permissionManager;
+    private static final Logger log = LoggerFactory.getLogger(ApplicationTypeModuleGenerator.class);
 
     @Autowired
     public ApplicationTypeModuleGenerator(
@@ -108,7 +112,7 @@ public class ApplicationTypeModuleGenerator implements WaitableRemoteModuleGener
             String key = getRequiredAttribute(element, "key");
             Class<? extends RemoteAppApplicationType> applicationTypeClass = applicationTypeClassLoader.getApplicationType(
                     key);
-            URI icon = getOptionalUriAttribute(element, "icon-url");
+            URI icon = getIconUri(key, element);
             String label = getRequiredAttribute(element, "name");
             TypeId appId = new TypeId(key);
             URI displayUrl = getRequiredUriAttribute(element, "display-url");
@@ -137,6 +141,25 @@ public class ApplicationTypeModuleGenerator implements WaitableRemoteModuleGener
         catch (IllegalAccessException e)
         {
             throw new PluginParseException(e);
+        }
+    }
+
+    private URI getIconUri(String appKey, Element element)
+    {
+        URI icon = getOptionalUriAttribute(element, "icon-url");
+        if (icon == null)
+        {
+            return null;
+        }
+
+        if (icon.isAbsolute())
+        {
+            log.warn("Remote app {} used an absolute url for the main icon.", appKey);
+            return icon;
+        }
+        else
+        {
+            return URI.create(RedirectServlet.getPermanentRedirectUrl(appKey, icon));
         }
     }
 
