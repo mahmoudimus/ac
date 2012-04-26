@@ -25,6 +25,8 @@ import com.google.common.collect.ImmutableMap;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +35,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.net.URI;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -60,6 +63,7 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
     private final PluginAccessor pluginAccessor;
     private final OAuthLinkManager oAuthLinkManager;
     private final FormatConverter formatConverter;
+    private final BundleContext bundleContext;
 
     private static final Logger log = LoggerFactory.getLogger(
             DefaultRemoteAppInstaller.class);
@@ -73,7 +77,8 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
             EventPublisher eventPublisher,
             DescriptorValidator descriptorValidator,
             PluginAccessor pluginAccessor,
-            OAuthLinkManager oAuthLinkManager, FormatConverter formatConverter)
+            OAuthLinkManager oAuthLinkManager, FormatConverter formatConverter,
+            BundleContext bundleContext)
     {
         this.consumerService = consumerService;
         this.requestFactory = requestFactory;
@@ -85,6 +90,7 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
         this.pluginAccessor = pluginAccessor;
         this.oAuthLinkManager = oAuthLinkManager;
         this.formatConverter = formatConverter;
+        this.bundleContext = bundleContext;
     }
 
     @Override
@@ -105,16 +111,21 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
           excluding the final slash.</li>
           <li><strong>description</strong> - The description of the host application for display
           purposes</li>
+          <li><strong>serverVersion</strong> - The version of the server requesting the registration</li>
+          <li><strong>remoteappsVersion</strong> - The version of the Remote Apps framework</li>
         </ul>
          */
-        Consumer consumer = consumerService.getConsumer();
+        final Consumer consumer = consumerService.getConsumer();
         final URI registrationUri = URI.create(
-                encodeGetUrl(registrationUrl, ImmutableMap.of(
-                        "key", consumer.getKey(),
-                        "publicKey",
-                        RSAKeys.toPemEncoding(consumer.getPublicKey()),
-                        "baseUrl", applicationProperties.getBaseUrl(),
-                        "description", consumer.getDescription())));
+                encodeGetUrl(registrationUrl, new HashMap<String,String>() {{
+                    put("key", consumer.getKey());
+                    put("publicKey", RSAKeys.toPemEncoding(consumer.getPublicKey()));
+                    put("serverVersion", applicationProperties.getBuildNumber());
+                    put("remoteappsVersion", (String) bundleContext.getBundle()
+                        .getHeaders().get(Constants.BUNDLE_VERSION));
+                    put("baseUrl", applicationProperties.getBaseUrl());
+                    put("description", consumer.getDescription());
+                }}));
 
         log.info("Retrieving descriptor from '{}' by user '{}'", registrationUrl, username);
         Request request = requestFactory.createRequest(Request.MethodType.GET,
