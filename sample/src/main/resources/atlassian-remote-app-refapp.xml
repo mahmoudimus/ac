@@ -24,4 +24,5 @@
     <profile-page key="remoteAppProfile" name="Remote App app1 Profile" url="/myAdmin" />
 
     <web-hook event="remote_app_started" url="/webHook/remote_app_started" />
+    <web-hook event="server_upgraded" url="/webHook/server_upgraded" />
 </remote-app>

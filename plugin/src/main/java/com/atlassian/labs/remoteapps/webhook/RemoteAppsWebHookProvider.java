@@ -4,6 +4,7 @@ import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.labs.remoteapps.event.*;
 import com.atlassian.labs.remoteapps.modules.applinks.RemoteAppApplicationType;
 import com.atlassian.labs.remoteapps.webhook.external.*;
+import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.google.common.collect.ImmutableMap;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,12 +17,15 @@ import org.springframework.stereotype.Component;
 public class RemoteAppsWebHookProvider implements WebHookProvider
 {
     private final ApplicationProperties applicationProperties;
+    private final ConsumerService consumerService;
     private static final EventMatcher<RemoteAppEvent> matcher = new SameAppMatcher();
 
     @Autowired
-    public RemoteAppsWebHookProvider(ApplicationProperties applicationProperties)
+    public RemoteAppsWebHookProvider(ApplicationProperties applicationProperties,
+            ConsumerService consumerService)
     {
         this.applicationProperties = applicationProperties;
+        this.consumerService = consumerService;
     }
 
     @Override
@@ -34,7 +38,9 @@ public class RemoteAppsWebHookProvider implements WebHookProvider
             {
                 return new MapEventSerializer(event, ImmutableMap.<String, Object>of(
                                 "key", event.getRemoteAppKey(),
-                                "baseurl", applicationProperties.getBaseUrl()));
+                                "serverKey", consumerService.getConsumer().getKey(),
+                                "baseurl", applicationProperties.getBaseUrl(),
+                                "baseUrl", applicationProperties.getBaseUrl()));
             }
         };
 

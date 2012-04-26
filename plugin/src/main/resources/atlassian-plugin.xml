@@ -79,6 +79,9 @@
     <component key="startableForPlugins" class="com.atlassian.labs.remoteapps.loader.StartableForPlugins" public="true"
                interface="com.atlassian.sal.api.lifecycle.LifecycleAware" />
 
+    <component key="productEventPublisher" class="com.atlassian.labs.remoteapps.event.product.ProductEventPublisher"
+               public="true" interface="com.atlassian.sal.api.lifecycle.LifecycleAware" />
+
     <component key="descriptorGenerator" class="com.atlassian.labs.remoteapps.loader.DescriptorGeneratorServiceFactory" interface="com.atlassian.labs.remoteapps.api.DescriptorGenerator" public="true" />
 
     <component key="remotappsService" class="com.atlassian.labs.remoteapps.DefaultRemoteAppsService"
