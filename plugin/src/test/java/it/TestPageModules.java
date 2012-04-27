@@ -15,9 +15,11 @@ public class TestPageModules extends AbstractRemoteAppTest
 	{
         product.visit(LoginPage.class).login("betty", "betty", HomePage.class);
         RemoteAppAwarePage page = product.getPageBinder().bind(GeneralPage.class, "remoteAppGeneral",
-                                                               "Remote App app1 General");
+                                                               "Remote App app1 General Link");
         assertTrue(page.isRemoteAppLinkPresent());
         RemoteAppTestPage remoteAppTest = page.clickRemoteAppLink();
+        assertTrue(remoteAppTest.getTitle().contains("Remote App app1 General"));
+        assertFalse(remoteAppTest.getTitle().contains("Remote App app1 General Link"));
         assertEquals("Success", remoteAppTest.getMessage());
         assertEquals(OAuthUtils.getConsumerKey(), remoteAppTest.getConsumerKey());
         assertEquals("Betty Admin", remoteAppTest.getFullName());

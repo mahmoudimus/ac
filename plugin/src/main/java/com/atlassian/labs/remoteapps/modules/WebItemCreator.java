@@ -65,7 +65,7 @@ public class WebItemCreator
             url.append("=");
             url.append(entry.getValue());
         }
-        String name = getRequiredAttribute(e, "name");
+        String name = getOptionalAttribute(e, "link-name", getRequiredAttribute(e, "name"));
         config.addElement("label").setText(name);
         config.addElement("link").
                 addAttribute("linkId", webItemKey).
