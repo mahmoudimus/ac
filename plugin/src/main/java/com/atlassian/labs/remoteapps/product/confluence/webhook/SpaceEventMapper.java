@@ -28,7 +28,8 @@ public class SpaceEventMapper extends ConfluenceEventMapper
 
         ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();
         builder.putAll(super.toMap(event));
-        builder.put("space", spaceToMap(event.getSpace()));
+        if (event.getSpace() != null)
+            builder.put("space", spaceToMap(event.getSpace()));
 
         return builder.build();
     }
