@@ -480,6 +480,7 @@
                         </Import-Package>
                         <DynamicImport-Package>com.atlassian.labs.speakeasy.*</DynamicImport-Package>
                         <Export-Package>
+                            com.atlassian.labs.remoteapps.modules.confluence,
                             com.atlassian.labs.remoteapps.modules.permissions.scope,
                             com.atlassian.labs.remoteapps.modules.page.jira,
                             com.atlassian.labs.remoteapps.descriptor.external,

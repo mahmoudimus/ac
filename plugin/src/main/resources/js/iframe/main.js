@@ -12,8 +12,12 @@ var RA = (function () {
                 clearMessage:{}
             },
             local:{
-                onSubmit: function() {
-                    return dialogHandler();
+                dialogMessage: function(message) {
+                    if (dialogHandlers[message] != null)
+                    {
+                        return dialogHandlers[message]();
+                    }
+                    return true; // by default, allow the operation to proceed.
                 }
             }
         });
@@ -43,12 +47,12 @@ var RA = (function () {
         rpc.clearMessage(id);
     };
 
-    var dialogHandler = function () {
-    };
+    var dialogHandlers = {};
 
     RA.Dialog = {
-        onSubmit:function (callback) {
-            dialogHandler = callback;
+        onDialogMessage: function(messageName, callback)
+        {
+            dialogHandlers[messageName] = callback;
         }
     };
 

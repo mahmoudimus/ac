@@ -43,7 +43,7 @@ public class RemoteAppDialog
     public boolean submit()
     {
         submitButton.click();
-        return !driver.elementIsVisible(By.className("ra-panel-body"));
+        return !driver.elementIsVisible(By.className("ra-dialog-content"));
     }
 
     public void cancel()

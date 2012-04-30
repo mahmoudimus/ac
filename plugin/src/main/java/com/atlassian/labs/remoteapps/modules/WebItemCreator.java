@@ -46,30 +46,36 @@ public class WebItemCreator
                 getOptionalAttribute(e, "section", webItemContext.getPreferredSectionKey()));
         config.addAttribute("weight", getOptionalAttribute(e, "weight", webItemContext.getPreferredWeight()));
 
-        if (localUrl.contains("$"))
-        {
-            throw new PluginParseException("Invalid url '" + localUrl + "', cannot contain velocity expressions");
-        }
-
-        StringBuilder url = new StringBuilder();
-        url.append("/plugins/servlet");
-        url.append(localUrl);
-        if (!localUrl.contains("?"))
-        {
-            url.append("?");
-        }
-
-        for (Map.Entry<String,String> entry : webItemContext.getContextParams().entrySet())
-        {
-            url.append(entry.getKey());
-            url.append("=");
-            url.append(entry.getValue());
-        }
-        String name = getOptionalAttribute(e, "link-name", getRequiredAttribute(e, "name"));
+        String name = getOptionalAttribute(e, "link-name", getRequiredAttribute(e, "name"));;
         config.addElement("label").setText(name);
-        config.addElement("link").
-                addAttribute("linkId", webItemKey).
-                setText(url.toString());
+        Element linkElement = config.addElement("link").
+                addAttribute("linkId", webItemKey);
+
+        if (!StringUtils.isBlank(localUrl))
+        {
+            if (localUrl.contains("$"))
+            {
+                throw new PluginParseException("Invalid url '" + localUrl + "', cannot contain velocity expressions");
+            }
+
+            StringBuilder url = new StringBuilder();
+            url.append("/plugins/servlet");
+            url.append(localUrl);
+            if (!localUrl.contains("?"))
+            {
+                url.append("?");
+            }
+
+            for (Map.Entry<String,String> entry : webItemContext.getContextParams().entrySet())
+            {
+                url.append(entry.getKey());
+                url.append("=");
+                url.append(entry.getValue());
+            }
+
+            linkElement.setText(url.toString());
+        }
+
         if (!StringUtils.isBlank(additionalStyleClass))
         {
             config.addElement("styleClass").

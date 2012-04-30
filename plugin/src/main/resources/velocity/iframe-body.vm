@@ -41,7 +41,7 @@
                 props: {height : initHeight, width : initWidth}
             }, {
               remote: {
-                  onSubmit: {}
+                  dialogMessage: {}
               },
               local : {
                 init : function() {

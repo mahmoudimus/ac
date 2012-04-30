@@ -11,7 +11,9 @@ import com.atlassian.oauth.ServiceProvider;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.oauth.serviceprovider.ServiceProviderConsumerStore;
 import com.atlassian.sal.api.user.UserManager;
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import net.oauth.*;
 import net.oauth.signature.RSA_SHA1;
 import org.apache.http.HttpHeaders;
@@ -194,7 +196,15 @@ public class OAuthLinkManager
         }
         else
         {
-            return newArrayList(Collections.<String,String>emptyMap().entrySet());
+            return newArrayList(Maps.transformValues(originalParams, new Function<List<String>, String>()
+            {
+                @Override
+                public String apply(List<String> strings)
+                {
+                    // TODO: Doesn't handle multiple values with the same param name
+                    return strings.get(0);
+                }
+            }).entrySet());
         }
     }
 

@@ -52,11 +52,17 @@
         <dependency>${project.groupId}.${project.artifactId}:iframe-host</dependency>
     </web-resource>
 
+    <web-resource key="dialog">
+        <resource type="download" name="dialog.js" location="js/dialog/dialog.js" />
+        <dependency>com.atlassian.auiplugin:ajs</dependency>
+    </web-resource>
+
     <web-resource key="dialog-page">
         <resource type="download" name="dialog-binder.js" location="/js/dialog/binder.js" />
         <context>atl.general</context>
         <context>atl.admin</context>
         <dependency>com.atlassian.auiplugin:ajs</dependency>
+        <dependency>${project.groupId}.${project.artifactId}:dialog</dependency>
     </web-resource>
 
     <web-resource key="smoke-test">

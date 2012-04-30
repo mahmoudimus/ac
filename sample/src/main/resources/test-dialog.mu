@@ -16,7 +16,7 @@
             RA.getUser(function(result) {
                 $("#user").text(result.fullName);
             });
-            RA.Dialog.onSubmit(function() {
+            RA.Dialog.onDialogMessage("submit", function() {
                 if ($("#submitted").text() == "false") {
                    $("#submitted").text("true");
                    return false;

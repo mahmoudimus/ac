@@ -3,6 +3,7 @@ package com.atlassian.labs.remoteapps.util;
 import com.atlassian.labs.remoteapps.modules.external.SchemaDocumented;
 import com.atlassian.plugin.PluginParseException;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
@@ -58,6 +59,13 @@ public class Dom4jUtils
             throw new PluginParseException("Element '" + name + "' is required on '" + e.getName() + "'");
         }
         return child.getTextTrim();
+    }
+
+    public static void copyOptionalAttribute(Element from, Element to, String name)
+    {
+        String value = getOptionalAttribute(from, name, null);
+        if (value != null)
+            to.addAttribute(name, value);
     }
 
     public static URI getRequiredUriAttribute(Element e, String name)
