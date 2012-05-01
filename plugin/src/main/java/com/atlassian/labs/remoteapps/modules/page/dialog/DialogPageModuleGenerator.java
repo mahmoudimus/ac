@@ -8,7 +8,6 @@ import com.atlassian.labs.remoteapps.product.ProductAccessor;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.servlet.ServletModuleManager;
 import com.atlassian.sal.api.user.UserManager;
-import com.atlassian.templaterenderer.TemplateRenderer;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -24,14 +23,13 @@ public class DialogPageModuleGenerator extends AbstractPageModuleGenerator
 {
     @Autowired
     public DialogPageModuleGenerator(ServletModuleManager servletModuleManager,
-                                     TemplateRenderer templateRenderer,
                                      ApplicationLinkOperationsFactory applicationLinkSignerFactory,
                                      IFrameRenderer iFrameRenderer,
                                      UserManager userManager,
                                      ProductAccessor productAccessor,
                                      PluginRetrievalService pluginRetrievalService)
     {
-        super(servletModuleManager, templateRenderer, applicationLinkSignerFactory, iFrameRenderer,
+        super(servletModuleManager, applicationLinkSignerFactory, iFrameRenderer,
                 new DefaultWebItemContext(
                         productAccessor.getPreferredGeneralSectionKey(),
                         productAccessor.getPreferredGeneralWeight(),

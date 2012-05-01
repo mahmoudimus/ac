@@ -8,7 +8,6 @@ import com.atlassian.labs.remoteapps.product.ProductAccessor;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.servlet.ServletModuleManager;
 import com.atlassian.sal.api.user.UserManager;
-import com.atlassian.templaterenderer.TemplateRenderer;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -22,12 +21,12 @@ public class ConfigurePageModuleGenerator extends AdminPageModuleGenerator
 {
     @Autowired
     public ConfigurePageModuleGenerator(ServletModuleManager servletModuleManager,
-            TemplateRenderer templateRenderer, ProductAccessor productAccessor,
+            ProductAccessor productAccessor,
             ApplicationLinkOperationsFactory applicationLinkSignerFactory,
             IFrameRenderer iFrameRenderer, PluginRetrievalService pluginRetrievalService,
             UserManager userManager)
     {
-        super(servletModuleManager, templateRenderer, productAccessor, applicationLinkSignerFactory,
+        super(servletModuleManager, productAccessor, applicationLinkSignerFactory,
                 iFrameRenderer, pluginRetrievalService, userManager);
     }
 

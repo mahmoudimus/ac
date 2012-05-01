@@ -2,6 +2,7 @@ package com.atlassian.labs.remoteapps.installer;
 
 import com.atlassian.event.api.EventListener;
 import com.atlassian.event.api.EventPublisher;
+import com.atlassian.jira.plugin.searchrequestview.SearchRequestView;
 import com.atlassian.labs.remoteapps.DescriptorValidator;
 import com.atlassian.labs.remoteapps.ModuleGeneratorManager;
 import com.atlassian.labs.remoteapps.OAuthLinkManager;
@@ -472,7 +473,7 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
                 .setText(
                         JiraProfileTabModuleGenerator.class.getPackage().getName() +
                                 ";resolution:=optional," +
-                                DescriptorGenerator.class.getPackage().getName());
+                                "com.atlassian.jira.plugin.searchrequestview;resolution:=optional," +                                     DescriptorGenerator.class.getPackage().getName());
         instructions.addElement("Remote-App").
                 setText("installer;user=\"" + username + "\";date=\""
                         + System.currentTimeMillis() + "\"" +

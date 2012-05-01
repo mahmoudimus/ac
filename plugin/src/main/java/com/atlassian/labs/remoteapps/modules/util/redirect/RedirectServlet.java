@@ -4,6 +4,7 @@ import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.labs.remoteapps.ApplicationLinkAccessor;
 import com.atlassian.labs.remoteapps.modules.ApplicationLinkOperationsFactory;
 import com.atlassian.labs.remoteapps.util.uri.Uri;
+import com.atlassian.labs.remoteapps.util.uri.UriBuilder;
 import com.atlassian.sal.api.user.UserManager;
 import com.google.common.base.Function;
 import com.google.common.collect.Maps;
@@ -18,10 +19,10 @@ import javax.ws.rs.core.HttpHeaders;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URI;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static com.atlassian.labs.remoteapps.util.EncodingUtils.urlEncode;
 import static com.google.common.collect.Maps.newHashMap;
 
 /**
@@ -58,9 +59,10 @@ public class RedirectServlet extends HttpServlet
      */
     public static String getPermanentRedirectUrl(String appKey, URI path)
     {
-        return String.format("/plugins/servlet/redirect/permanent?%s=%s&%s=%s",
-                RedirectServlet.APP_KEY_PARAM, urlEncode(appKey),
-                RedirectServlet.APP_URL_PARAM, urlEncode(path.toString()));
+        return new UriBuilder(Uri.parse("/plugins/servlet/redirect/permanent"))
+                .addQueryParameter(RedirectServlet.APP_KEY_PARAM, appKey)
+                .addQueryParameter(RedirectServlet.APP_URL_PARAM, path.toString())
+                .toString();
     }
 
     /**
@@ -68,10 +70,23 @@ public class RedirectServlet extends HttpServlet
      */
     public static String getOAuthRedirectUrl(String baseUrl, String appKey, URI path)
     {
-        return String.format("%s/plugins/servlet/redirect/oauth?%s=%s&%s=%s",
-                baseUrl,
-                RedirectServlet.APP_KEY_PARAM, urlEncode(appKey),
-                RedirectServlet.APP_URL_PARAM, urlEncode(path.toString()));
+       return getOAuthRedirectUrl(baseUrl, appKey, path, Collections.<String, String>emptyMap());
+    }
+    /**
+     * @return an absolute url that includes oauth signing information as query parameters
+     */
+    public static String getOAuthRedirectUrl(String baseUrl, String appKey, URI path, Map<String,String> params)
+    {
+        UriBuilder builder = new UriBuilder(Uri.parse(baseUrl + "/plugins/servlet/redirect/oauth"))
+                .addQueryParameter(RedirectServlet.APP_KEY_PARAM, appKey)
+                .addQueryParameter(RedirectServlet.APP_URL_PARAM, path.toString());
+
+        for (Map.Entry<String,String> entry : params.entrySet())
+        {
+            builder.addQueryParameter(entry.getKey(), entry.getValue());
+        }
+
+        return builder.toString();
     }
     /**
      * Expected URL query parameters:

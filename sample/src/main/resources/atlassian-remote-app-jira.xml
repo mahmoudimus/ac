@@ -28,6 +28,8 @@
     <issue-panel-page key="remoteAppIssuePanelPage" name="Remote App app1 Issue Page" url="/myAdmin" />
     <issue-tab-page key="remoteAppIssueTabPage" name="app1" url="/myAdmin" />
 
+    <search-request-view key="remoteAppSearchRequestView" name="Raw Keys" url="/search/keys"/>
+
     <project-tab key="remoteAppProjectTab" name="app1" url="/myAdmin" />
 
     <web-hook event="remote_app_started" url="/webHook/remote_app_started" />

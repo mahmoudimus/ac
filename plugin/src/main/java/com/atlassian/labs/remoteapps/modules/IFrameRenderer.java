@@ -1,16 +1,19 @@
 package com.atlassian.labs.remoteapps.modules;
 
+import com.atlassian.labs.remoteapps.api.PermissionDeniedException;
 import com.atlassian.labs.remoteapps.modules.page.IFrameContext;
-import com.atlassian.plugin.util.PluginUtils;
+import com.atlassian.labs.remoteapps.modules.page.PageInfo;
 import com.atlassian.plugin.webresource.WebResourceManager;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.templaterenderer.TemplateRenderer;
+import com.google.common.collect.ImmutableMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.ws.rs.core.UriBuilder;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.io.Writer;
 import java.net.URI;
 import java.util.Collections;
 import java.util.Map;
@@ -26,6 +29,7 @@ public class IFrameRenderer
     private final TemplateRenderer templateRenderer;
     private final WebResourceManager webResourceManager;
     private final ApplicationProperties applicationProperties;
+    private final String contextPath;
 
     @Autowired
     public IFrameRenderer(TemplateRenderer templateRenderer,
@@ -36,11 +40,50 @@ public class IFrameRenderer
         this.templateRenderer = templateRenderer;
         this.webResourceManager = webResourceManager;
         this.applicationProperties = applicationProperties;
+        this.contextPath = URI.create(applicationProperties.getBaseUrl()).getPath();
     }
 
     public String render(IFrameContext iframeContext, String remoteUser) throws IOException
     {
         return render(iframeContext, "", Collections.<String, String[]>emptyMap(), remoteUser);
+    }
+
+    public void renderPage(IFrameContext iframeContext, PageInfo pageInfo, String extraPath, Map<String, String[]> queryParams, String remoteUser, Writer writer) throws IOException
+    {
+        try
+        {
+            if (!pageInfo.getCondition().shouldDisplay(Collections.<String, Object>emptyMap()))
+            {
+                throw new PermissionDeniedException();
+            }
+
+            Map<String, Object> ctx = newHashMap(iframeContext.getIFrameParams().getAsMap());
+            if (!ctx.containsKey("width") && queryParams.get("width") != null)
+            {
+                iframeContext.getIFrameParams().setParam("width", queryParams.get("width")[0]);
+            }
+            if (!ctx.containsKey("height") && queryParams.get("height") != null)
+            {
+                iframeContext.getIFrameParams().setParam("height", queryParams.get("height")[0]);
+            }
+
+            ctx.put("title", pageInfo.getTitle());
+            ctx.put("contextPath", contextPath);
+            ctx.put("iframeHtml",
+                    render(iframeContext, extraPath, queryParams,
+                            remoteUser));
+            ctx.put("decorator", pageInfo.getDecorator());
+
+            templateRenderer.render("velocity/iframe-page" + pageInfo.getTemplateSuffix() + ".vm",
+                    ctx, writer);
+        } catch (PermissionDeniedException ex)
+        {
+            templateRenderer.render(
+                    "velocity/iframe-page-accessdenied" + pageInfo.getTemplateSuffix() + ".vm",
+                    ImmutableMap.<String, Object>of(
+                            "title", pageInfo.getTitle(),
+                            "decorator", pageInfo.getDecorator()), writer);
+        }
     }
 
     public String render(IFrameContext iframeContext, String extraPath, Map<String, String[]> queryParams, String remoteUser) throws IOException

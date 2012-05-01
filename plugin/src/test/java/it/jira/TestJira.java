@@ -1,14 +1,12 @@
 package it.jira;
 
 import com.atlassian.jira.pageobjects.JiraTestedProduct;
+import com.atlassian.jira.pageobjects.navigator.AdvancedSearch;
 import com.atlassian.jira.pageobjects.pages.DashboardPage;
 import com.atlassian.jira.pageobjects.pages.project.BrowseProjectPage;
 import com.atlassian.labs.remoteapps.test.HtmlDumpRule;
 import com.atlassian.labs.remoteapps.test.RemoteAppEmbeddedTestPage;
-import com.atlassian.labs.remoteapps.test.jira.JiraOps;
-import com.atlassian.labs.remoteapps.test.jira.JiraRemoteAppProjectTab;
-import com.atlassian.labs.remoteapps.test.jira.JiraViewIssuePage;
-import com.atlassian.labs.remoteapps.test.jira.JiraViewIssuePageWithRemoteAppIssueTab;
+import com.atlassian.labs.remoteapps.test.jira.*;
 import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.pageobjects.TestedProductFactory;
 import com.atlassian.pageobjects.page.LoginPage;
@@ -86,6 +84,19 @@ public class TestJira
         RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Test issue for tab");
         JiraViewIssuePageWithRemoteAppIssueTab page = product.visit(JiraViewIssuePageWithRemoteAppIssueTab.class, issue.getKey());
         assertEquals("Success", page.getMessage());
+    }
+
+    @Test
+    public void testSearchRequestViewPage() throws Exception
+    {
+        RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Test issue for tab");
+        product.visit(AdvancedSearch.class)
+                .enterQuery("project = " + project.getKey())
+                .submit();
+
+        PlainTextView plainTextView = product.getPageBinder().bind(ViewChangingSearchResult.class)
+                .openView("Raw Keys", PlainTextView.class);
+        assertEquals(issue.getKey(), plainTextView.getContent());
     }
 
     @Test

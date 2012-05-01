@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation="page.xsd"/>
+
+    <xs:complexType name="SearchRequestViewType">
+        <xs:sequence>
+            <xs:element name="description" type="DescriptionType" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+        <xs:attribute name="key" type="KeyType" use="required" />
+        <xs:attribute name="name" type="NameType" use="required" />
+        <xs:attribute name="url" type="RelativeUrlType" use="required" />
+        <xs:attribute name="weight" type="xs:positiveInteger" />
+    </xs:complexType>
+</xs:schema>

@@ -7,7 +7,6 @@ import com.atlassian.labs.remoteapps.product.ProductAccessor;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.servlet.ServletModuleManager;
 import com.atlassian.sal.api.user.UserManager;
-import com.atlassian.templaterenderer.TemplateRenderer;
 import org.dom4j.Element;
 
 import java.util.Map;
@@ -20,7 +19,6 @@ import static java.util.Collections.emptyMap;
 public class ProfilePageModuleGenerator extends AbstractPageModuleGenerator
 {
     public ProfilePageModuleGenerator(ServletModuleManager servletModuleManager,
-                                    TemplateRenderer templateRenderer,
                                     ProductAccessor productAccessor,
                                     ApplicationLinkOperationsFactory applicationLinkSignerFactory,
                                     IFrameRenderer iFrameRenderer,
@@ -28,7 +26,7 @@ public class ProfilePageModuleGenerator extends AbstractPageModuleGenerator
             UserManager userManager
     )
     {
-        super(servletModuleManager, templateRenderer, applicationLinkSignerFactory, iFrameRenderer,
+        super(servletModuleManager, applicationLinkSignerFactory, iFrameRenderer,
               new DefaultWebItemContext(
                       productAccessor.getPreferredProfileSectionKey(),
                       productAccessor.getPreferredProfileWeight(),

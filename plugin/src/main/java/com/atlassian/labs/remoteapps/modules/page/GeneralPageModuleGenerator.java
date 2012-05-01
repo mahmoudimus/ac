@@ -7,7 +7,6 @@ import com.atlassian.labs.remoteapps.product.ProductAccessor;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.servlet.ServletModuleManager;
 import com.atlassian.sal.api.user.UserManager;
-import com.atlassian.templaterenderer.TemplateRenderer;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -24,7 +23,6 @@ public class GeneralPageModuleGenerator extends AbstractPageModuleGenerator
 {
     @Autowired
     public GeneralPageModuleGenerator(ServletModuleManager servletModuleManager,
-                                    TemplateRenderer templateRenderer,
                                     ProductAccessor productAccessor,
                                     ApplicationLinkOperationsFactory applicationLinkSignerFactory,
                                     IFrameRenderer iFrameRenderer,
@@ -32,7 +30,7 @@ public class GeneralPageModuleGenerator extends AbstractPageModuleGenerator
                                     PluginRetrievalService pluginRetrievalService
     )
     {
-        super(servletModuleManager, templateRenderer, applicationLinkSignerFactory, iFrameRenderer,
+        super(servletModuleManager, applicationLinkSignerFactory, iFrameRenderer,
               new DefaultWebItemContext(
                       productAccessor.getPreferredGeneralSectionKey(),
                       productAccessor.getPreferredGeneralWeight(),

@@ -9,7 +9,6 @@ import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.servlet.ServletModuleManager;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.sal.api.user.UserManager;
-import com.atlassian.templaterenderer.TemplateRenderer;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -28,7 +27,6 @@ public class AdminPageModuleGenerator extends AbstractPageModuleGenerator
 
     @Autowired
     public AdminPageModuleGenerator(ServletModuleManager servletModuleManager,
-                                    TemplateRenderer templateRenderer,
                                     ProductAccessor productAccessor,
                                     ApplicationLinkOperationsFactory applicationLinkSignerFactory,
                                     IFrameRenderer iFrameRenderer,
@@ -36,7 +34,7 @@ public class AdminPageModuleGenerator extends AbstractPageModuleGenerator
                                     UserManager userManager
     )
     {
-        super(servletModuleManager, templateRenderer, applicationLinkSignerFactory, iFrameRenderer,
+        super(servletModuleManager, applicationLinkSignerFactory, iFrameRenderer,
               new DefaultWebItemContext(
                       productAccessor.getPreferredAdminSectionKey(),
                       productAccessor.getPreferredAdminWeight(),

@@ -13,7 +13,6 @@ import com.atlassian.plugin.servlet.descriptors.ServletModuleDescriptor;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.web.conditions.AlwaysDisplayCondition;
 import com.atlassian.sal.api.user.UserManager;
-import com.atlassian.templaterenderer.TemplateRenderer;
 import com.google.common.collect.ImmutableSet;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +28,6 @@ public abstract class AbstractPageModuleGenerator implements RemoteModuleGenerat
 {
     private final ProductAccessor productAccessor;
     private final ServletModuleManager servletModuleManager;
-    private final TemplateRenderer templateRenderer;
     private final UserManager userManager;
     private final ApplicationLinkOperationsFactory applicationLinkSignerFactory;
     private final WebItemCreator webItemCreator;
@@ -38,7 +36,6 @@ public abstract class AbstractPageModuleGenerator implements RemoteModuleGenerat
 
     @Autowired
     public AbstractPageModuleGenerator(ServletModuleManager servletModuleManager,
-            TemplateRenderer templateRenderer,
             ApplicationLinkOperationsFactory applicationLinkSignerFactory,
             IFrameRenderer iFrameRenderer,
             WebItemContext webItemContext,
@@ -46,7 +43,6 @@ public abstract class AbstractPageModuleGenerator implements RemoteModuleGenerat
             PluginRetrievalService pluginRetrievalService)
     {
         this.servletModuleManager = servletModuleManager;
-        this.templateRenderer = templateRenderer;
         this.applicationLinkSignerFactory = applicationLinkSignerFactory;
         this.iFrameRenderer = iFrameRenderer;
         this.userManager = userManager;
@@ -122,7 +118,7 @@ public abstract class AbstractPageModuleGenerator implements RemoteModuleGenerat
                 
                 return (T) new IFramePageServlet(
                         pageInfo,
-                        templateRenderer, iFrameRenderer,
+                        iFrameRenderer,
                         new IFrameContext(applicationLinkSignerFactory.create(ctx.getApplicationType()), path, moduleKey, params), userManager
                         );
             }

@@ -16,6 +16,7 @@
     <component key="jira-issue-tab-page" class="com.atlassian.labs.remoteapps.modules.jira.issuetab.IssueTabPageModuleGenerator" />
     <component key="jira-project-tab-page" class="com.atlassian.labs.remoteapps.modules.jira.projecttab.ProjectTabModuleGenerator" />
     <component key="jira-profile-page" class="com.atlassian.labs.remoteapps.modules.page.jira.JiraProfileTabModuleGenerator" />
+    <component key="jira-search-request-view-page" class="com.atlassian.labs.remoteapps.modules.jira.searchrequestview.SearchRequestViewModuleGenerator" />
 
     <!-- api scopes -->
     <component key="jira-read_users_and_groups"
@@ -45,6 +46,8 @@
     </rest>
 
     <component-import key="jiraInternalWebSudoManager" interface="com.atlassian.jira.security.websudo.InternalWebSudoManager" />
+    <component-import key="SearchRequestViewBodyWriterUtil" interface="com.atlassian.jira.issue.views.util.SearchRequestViewBodyWriterUtil" />
+    <component-import key="searchRequestURLHandler" interface="com.atlassian.jira.plugin.searchrequestview.SearchRequestURLHandler" />
 
     <!-- activity streams>
     <component-import key="jiraUserProfileAccessor" interface="com.atlassian.streams.spi.UserProfileAccessor"/>

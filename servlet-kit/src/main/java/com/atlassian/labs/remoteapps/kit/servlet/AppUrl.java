@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
  * Override the path the servlet will listen on
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
+@Target(ElementType.TYPE)
 public @interface AppUrl
 {
     String value();
