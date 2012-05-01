@@ -236,8 +236,8 @@ public class ApplicationTypeModuleGenerator implements WaitableRemoteModuleGener
     @Override
     public void validate(Element root, String registrationUrl, String username)
     {
-        String displayUrl = root.attributeValue("display-url");
-        if (displayUrl == null || !registrationUrl.startsWith(displayUrl))
+        URI displayUrl = getOptionalUriAttribute(root, "display-url");
+        if (displayUrl == null || !registrationUrl.startsWith(displayUrl.toString()))
         {
             throw new PluginParseException("display-url '" + displayUrl + "' must match registration URL");
         }

@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Set;
 
 import static com.atlassian.labs.remoteapps.util.Dom4jUtils.getRequiredAttribute;
+import static com.atlassian.labs.remoteapps.util.Dom4jUtils.getRequiredUriAttribute;
 
 /**
  * Abstract module type for canvas pages, generating a web item and servlet with iframe
@@ -64,13 +65,14 @@ public abstract class AbstractPageModuleGenerator implements RemoteModuleGenerat
     @Override
     public void validate(Element element, String registrationUrl, String username) throws PluginParseException
     {
+        getRequiredUriAttribute(element, "url");
     }
 
     @Override
     public RemoteModule generate(RemoteAppCreationContext ctx, Element e)
     {
         String key = getRequiredAttribute(e, "key");
-        final String url = getRequiredAttribute(e, "url");
+        final String url = getRequiredUriAttribute(e, "url").toString();
 
         String appKey = ctx.getApplicationType().getId().get();
         String localUrl = createLocalUrl(appKey, key);

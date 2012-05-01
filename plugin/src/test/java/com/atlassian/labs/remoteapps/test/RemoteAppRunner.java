@@ -120,6 +120,17 @@ public class RemoteAppRunner
         return this;
     }
 
+    public RemoteAppRunner addSearchRequestView(String key, String name, String path,
+            String resource)
+    {
+        doc.getRootElement().addElement("search-request-view")
+                .addAttribute("url", path)
+                .addAttribute("name", name)
+                .addAttribute("key", key);
+        routes.put(path, new MustacheServlet(resource));
+        return this;
+    }
+
     public RemoteAppRunner addPermission(String apiScopeKey)
     {
         Element permissions = doc.getRootElement().element("permissions");

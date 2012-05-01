@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static com.atlassian.labs.remoteapps.util.Dom4jUtils.getRequiredAttribute;
+import static com.atlassian.labs.remoteapps.util.Dom4jUtils.getRequiredUriAttribute;
 import static com.google.common.collect.Maps.newHashMap;
 import static java.util.Collections.emptyMap;
 
@@ -92,7 +93,7 @@ public class JiraProfileTabModuleGenerator implements WaitableRemoteModuleGenera
     public RemoteModule generate(RemoteAppCreationContext ctx, Element e)
     {
         String key = getRequiredAttribute(e, "key");
-        final String url = getRequiredAttribute(e, "url");
+        final String url = getRequiredUriAttribute(e, "url").toString();
 
         final Set<ModuleDescriptor> descriptors = ImmutableSet.<ModuleDescriptor>of(
                 createProfilePanelDescriptor(ctx, e, key, url));
@@ -109,6 +110,7 @@ public class JiraProfileTabModuleGenerator implements WaitableRemoteModuleGenera
     @Override
     public void validate(Element element, String registrationUrl, String username) throws PluginParseException
     {
+        getRequiredUriAttribute(element, "url");
     }
 
     @Override

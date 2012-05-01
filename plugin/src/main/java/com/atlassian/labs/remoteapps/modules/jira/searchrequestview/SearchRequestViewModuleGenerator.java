@@ -25,6 +25,7 @@ import java.util.Set;
 
 import static com.atlassian.labs.remoteapps.util.Dom4jUtils.getOptionalAttribute;
 import static com.atlassian.labs.remoteapps.util.Dom4jUtils.getRequiredAttribute;
+import static com.atlassian.labs.remoteapps.util.Dom4jUtils.getRequiredUriAttribute;
 import static java.util.Collections.emptyMap;
 
 /**
@@ -74,7 +75,7 @@ public class SearchRequestViewModuleGenerator implements RemoteModuleGenerator
     public RemoteModule generate(final RemoteAppCreationContext ctx, final Element element)
     {
         final String moduleKey = "search-request-view-" + getRequiredAttribute(element, "key");
-        final String url = getRequiredAttribute(element, "url");
+        final String url = getRequiredUriAttribute(element, "url").toString();
 
         Element desc = element.createCopy();
         desc.addAttribute("key", moduleKey);
@@ -140,6 +141,7 @@ public class SearchRequestViewModuleGenerator implements RemoteModuleGenerator
     public void validate(Element element, String registrationUrl, String username) throws
             PluginParseException
     {
+        getRequiredUriAttribute(element, "url");
     }
 
     @Override

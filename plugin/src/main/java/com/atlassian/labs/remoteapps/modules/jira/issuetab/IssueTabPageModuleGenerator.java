@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static com.atlassian.labs.remoteapps.util.Dom4jUtils.getRequiredAttribute;
+import static com.atlassian.labs.remoteapps.util.Dom4jUtils.getRequiredUriAttribute;
 import static java.util.Collections.emptyMap;
 
 /**
@@ -60,7 +61,7 @@ public class IssueTabPageModuleGenerator implements RemoteModuleGenerator
     public RemoteModule generate(final RemoteAppCreationContext ctx, final Element element)
     {
         final String moduleKey = "issue-tab-page-" + getRequiredAttribute(element, "key");
-        final String url = getRequiredAttribute(element, "url");
+        final String url = getRequiredUriAttribute(element, "url").toString();
         final String panelName = getRequiredAttribute(element, "name");
 
         Element desc = element.createCopy();
@@ -119,6 +120,7 @@ public class IssueTabPageModuleGenerator implements RemoteModuleGenerator
     @Override
     public void validate(Element element, String registrationUrl, String username) throws PluginParseException
     {
+        getRequiredUriAttribute(element, "url");
     }
 
     @Override

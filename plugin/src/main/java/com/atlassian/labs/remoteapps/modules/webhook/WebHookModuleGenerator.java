@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 import java.util.Set;
 
+import static com.atlassian.labs.remoteapps.util.Dom4jUtils.getRequiredUriAttribute;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.emptySet;
 
@@ -68,7 +69,7 @@ public class WebHookModuleGenerator implements WaitableRemoteModuleGenerator
     public RemoteModule generate(final RemoteAppCreationContext ctx, Element element)
     {
         final String eventIdentifier = getWebHookId(element);
-        final String url = element.attributeValue("url");
+        final String url = getRequiredUriAttribute(element, "url").toString();
         webHookPublisher.register(ctx.getApplicationType(), eventIdentifier, url);
         return new ClosableRemoteModule()
         {
@@ -94,6 +95,7 @@ public class WebHookModuleGenerator implements WaitableRemoteModuleGenerator
     @Override
     public void validate(Element element, String registrationUrl, String username) throws PluginParseException
     {
+        getRequiredUriAttribute(element, "url");
     }
 
     @Override

@@ -4,8 +4,7 @@ import com.atlassian.jira.pageobjects.JiraTestedProduct;
 import com.atlassian.jira.pageobjects.navigator.AdvancedSearch;
 import com.atlassian.jira.pageobjects.pages.DashboardPage;
 import com.atlassian.jira.pageobjects.pages.project.BrowseProjectPage;
-import com.atlassian.labs.remoteapps.test.HtmlDumpRule;
-import com.atlassian.labs.remoteapps.test.RemoteAppEmbeddedTestPage;
+import com.atlassian.labs.remoteapps.test.*;
 import com.atlassian.labs.remoteapps.test.jira.*;
 import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.pageobjects.TestedProductFactory;
@@ -14,6 +13,7 @@ import com.atlassian.webdriver.pageobjects.WebDriverTester;
 import hudson.plugins.jira.soap.RemoteAuthenticationException;
 import hudson.plugins.jira.soap.RemoteIssue;
 import hudson.plugins.jira.soap.RemoteProject;
+import org.apache.http.client.HttpResponseException;
 import org.json.JSONObject;
 import org.junit.After;
 import org.junit.Before;
@@ -26,6 +26,7 @@ import java.rmi.RemoteException;
 import static com.atlassian.labs.remoteapps.test.RemoteAppUtils.waitForEvent;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class TestJira
 {
@@ -59,6 +60,7 @@ public class TestJira
     {
         jiraOps.deleteProject(project.getKey());
     }
+
     @Test
 	public void testViewIssuePageWithEmbeddedPanel() throws InterruptedException, RemoteException
     {
@@ -97,6 +99,15 @@ public class TestJira
         PlainTextView plainTextView = product.getPageBinder().bind(ViewChangingSearchResult.class)
                 .openView("Raw Keys", PlainTextView.class);
         assertEquals(issue.getKey(), plainTextView.getContent());
+    }
+
+    @Test(expected = HttpResponseException.class)
+    public void testSearchRequestViewPageWithQuoteInUrl() throws Exception
+    {
+        new RemoteAppRunner(product.getProductInstance().getBaseUrl(),
+                "quoteUrl")
+                .addSearchRequestView("page", "Hello", "/page\"", "hello-world-page.mu")
+                .start();
     }
 
     @Test

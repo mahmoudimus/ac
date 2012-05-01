@@ -28,9 +28,8 @@ import java.util.Set;
 
 import static com.atlassian.labs.remoteapps.modules.util.redirect.RedirectServlet.getPermanentRedirectUrl;
 
-import static com.atlassian.labs.remoteapps.util.Dom4jUtils.getOptionalAttribute;
-import static com.atlassian.labs.remoteapps.util.Dom4jUtils.getOptionalUriAttribute;
-import static com.atlassian.labs.remoteapps.util.Dom4jUtils.getRequiredAttribute;
+
+import static com.atlassian.labs.remoteapps.util.Dom4jUtils.*;
 import static com.google.common.collect.Maps.newHashMap;
 
 /**
@@ -135,6 +134,7 @@ public abstract class AbstractMacroModuleGenerator implements RemoteModuleGenera
                 throw new PluginParseException("Macro key '" + key + "' already used by app '" + descriptor.getPluginKey() + "'");
             }
         }
+        getRequiredUriAttribute(element, "url");
     }
 
     @Override
@@ -146,7 +146,7 @@ public abstract class AbstractMacroModuleGenerator implements RemoteModuleGenera
     {
         final Macro.BodyType bodyType = parseBodyType(originalEntity);
         final Macro.OutputType outputType = parseOutputType(originalEntity);
-        final String url = getRequiredAttribute(originalEntity, "url");
+        final URI url = getRequiredUriAttribute(originalEntity, "url");
 
         final ImagePlaceholderConfig placeholder = parseImagePlaceholder(originalEntity);
 
@@ -158,7 +158,7 @@ public abstract class AbstractMacroModuleGenerator implements RemoteModuleGenera
                 ApplicationLinkOperationsFactory.LinkOperations linkOperations = applicationLinkOperationsFactory.create(
                         ctx.getApplicationType());
                 RemoteMacroInfo macroInfo = new RemoteMacroInfo(originalEntity, linkOperations, bodyType,
-                        outputType, url);
+                        outputType, url.getPath());
                 RemoteMacro macro = createMacro(macroInfo, ctx);
                 if (placeholder != null && Macro.BodyType.NONE.equals(bodyType))
                 {
@@ -218,7 +218,7 @@ public abstract class AbstractMacroModuleGenerator implements RemoteModuleGenera
         {
             return null;
         }
-        String url = placeholder.attributeValue("url");
+        String url = getRequiredUriAttribute(entity, "url").toString();
         String width = placeholder.attributeValue("width");
         String height = placeholder.attributeValue("height");
         String applyChrome = placeholder.attributeValue("apply-chrome");
