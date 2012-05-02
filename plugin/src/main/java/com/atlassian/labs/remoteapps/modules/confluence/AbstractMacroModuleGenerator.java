@@ -105,9 +105,9 @@ public abstract class AbstractMacroModuleGenerator implements RemoteModuleGenera
                 }
             }
         }
-        if (element.attribute("label") != null)
+        if (element.attribute("title") != null)
         {
-            i18n.put(pluginKey + "." + name + ".label", element.attributeValue("label"));
+            i18n.put(pluginKey + "." + name + ".label", element.attributeValue("title"));
         }
 
         return i18n;
@@ -151,7 +151,7 @@ public abstract class AbstractMacroModuleGenerator implements RemoteModuleGenera
         boolean isFeaturedMacro = Boolean.valueOf(getOptionalAttribute(config, "featured", false));
         if (isFeaturedMacro)
         {
-            descriptors.add(createFeaturedMacroDescriptor(ctx, key, name, getOptionalAttribute(config, "label", name)));
+            descriptors.add(createFeaturedMacroDescriptor(ctx, key, name, getOptionalAttribute(config, "title", name)));
         }
 
         boolean hasCustomEditor = config.element("macro-editor") != null;
@@ -194,7 +194,7 @@ public abstract class AbstractMacroModuleGenerator implements RemoteModuleGenera
 
         // Generate a new web-resource module descriptor with the necessary JavaScript to configure the custom macro editor
         // in the Confluence editor.
-        ModuleDescriptor jsDescriptor = createWebResourceModuleDescriptor(ctx, macroEditor, remoteModuleKey, macroName, getOptionalAttribute(config, "label", macroName), localUrl);
+        ModuleDescriptor jsDescriptor = createWebResourceModuleDescriptor(ctx, macroEditor, remoteModuleKey, macroName, getOptionalAttribute(config, "title", macroName), localUrl);
 
         return Lists.newArrayList(jsDescriptor, iFrameServlet);
     }
