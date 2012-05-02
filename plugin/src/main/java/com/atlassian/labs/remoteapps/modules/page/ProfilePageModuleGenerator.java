@@ -67,6 +67,6 @@ public class ProfilePageModuleGenerator extends AbstractPageModuleGenerator
     @Override
     protected String getTemplateSuffix()
     {
-        return "-profile";
+        return "";
     }
 }

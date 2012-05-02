@@ -1,7 +1,14 @@
 <html>
 <head>
     <title>$!title</title>
-
+    <!-- Confluence breadcrumbs, TODO: invent a better way of doing this -->
+    <content tag="breadcrumbs">
+      <ol id="breadcrumbs">
+        <li class="first" ><span><a href="$contextPath/dashboard.action">Dashboard</a></span></li>
+        <li><span>$!title</span></li>
+      </ol>
+    </content>
+    <meta name="tab" content="$!title"/>
     <meta name="decorator" content="$decorator"></meta>
 
 
