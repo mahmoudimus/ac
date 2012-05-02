@@ -44,7 +44,7 @@ public class MacroEditorInjectorTransformer implements WebResourceTransformer
     public DownloadableResource transform(final Element configElement, final ResourceLocation location, String filePath, final DownloadableResource nextResource)
     {
         final String macroName = getMacroNameFromResourceLocation(location);
-        final String macroTitle = getOptionalAttribute(configElement, "label", macroName);
+        final String macroTitle = getOptionalAttribute(configElement, "name", macroName);
         final String width = getOptionalAttribute(configElement, "width", "");
         final String height = getOptionalAttribute(configElement, "height", "");
         final String url = getRequiredAttribute(configElement, "url");

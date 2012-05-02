@@ -28,12 +28,12 @@
 
     <profile-page key="remoteAppProfile" name="Remote App app1 Profile" url="/myAdmin" />
 
-    <macro key="app1-macro" title="Remote App app1 Macro" url="/myMacro" icon-url="/sandcastles.jpg" output-type="block" body-type="rich-text">
+    <macro key="app1-macro" name="Remote App app1 Macro" url="/myMacro" icon-url="/sandcastles.jpg" output-type="block" body-type="rich-text">
         <description>Example macro</description>
         <category name="development" />
-        <macro-editor width="900" height="900" url="/myMacroEditor" />
+        <macro-editor width="600" height="600" url="/myMacroEditor" />
         <parameters>
-            <parameter name="footy" label="Favorite Footy" type="enum" required="true">
+            <parameter name="footy" title="Favorite Footy" type="enum" required="true">
                 <value name="American Football"/>
                 <value name="Soccer"/>
                 <value name="Rugby Union"/>

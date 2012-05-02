@@ -87,27 +87,29 @@ public abstract class AbstractMacroModuleGenerator implements RemoteModuleGenera
     public Map<String, String> getI18nMessages(String pluginKey, Element element)
     {
         Map<String,String> i18n = newHashMap();
-        String name = element.attributeValue("name");
+        String macroKey = getRequiredAttribute(element, "key");
+        String macroName = getOptionalAttribute(element, "name", null);
         if (element.element("parameters") != null)
         {
             for (Element parameter : new ArrayList<Element>(element.element("parameters").elements("parameter")))
             {
-                String title = parameter.attributeValue("label");
-                if (title != null)
+                String paramTitle = getRequiredAttribute(parameter, "title");
+                String paramName = getRequiredAttribute(parameter, "name");
+                if (paramTitle != null)
                 {
-                    i18n.put(pluginKey + "." + name + ".param." + parameter.attributeValue("name") + ".label", title);
+                    i18n.put(pluginKey + "." + macroKey + ".param." + paramName + ".label", paramTitle);
                 }
 
                 String description = parameter.elementText("description");
                 if (!StringUtils.isBlank(description))
                 {
-                    i18n.put(pluginKey + "." + name + ".param." + parameter.attributeValue("name") + ".desc", description);
+                    i18n.put(pluginKey + "." + macroKey + ".param." + paramName + ".desc", description);
                 }
             }
         }
-        if (element.attribute("title") != null)
+        if (macroName != null)
         {
-            i18n.put(pluginKey + "." + name + ".label", element.attributeValue("title"));
+            i18n.put(pluginKey + "." + macroKey + ".label", macroName);
         }
 
         return i18n;
@@ -121,12 +123,11 @@ public abstract class AbstractMacroModuleGenerator implements RemoteModuleGenera
         // Use the 'key' attribute as the name if no name is specified. The name will be used to uniquely identify the
         // macro within the editor.
         String key = getRequiredAttribute(entity, "key");
-        String name = getOptionalAttribute(entity, "name", "");
-        if (StringUtils.isBlank(name))
-        {
-            config.addAttribute("name", key);
-            name = key;
-        }
+
+        // we treat the key as the macro name, with name being the label
+        config.addAttribute("name", key);
+
+        String name = getOptionalAttribute(entity, "name", getOptionalAttribute(entity, "title", key));
 
         config.addAttribute("class", StorageFormatMacro.class.getName());
         if (config.element("parameters") == null)
@@ -137,7 +138,8 @@ public abstract class AbstractMacroModuleGenerator implements RemoteModuleGenera
         URI icon = getOptionalUriAttribute(config, "icon-url");
         if (icon != null)
         {
-            config.addAttribute("icon", getPermanentRedirectUrl(
+            String baseUrl = systemInformationService.getConfluenceInfo().getBaseUrl();
+            config.addAttribute("icon", baseUrl + getPermanentRedirectUrl(
                     ctx.getApplicationType().getId().get(), icon));
         }
 
@@ -151,7 +153,7 @@ public abstract class AbstractMacroModuleGenerator implements RemoteModuleGenera
         boolean isFeaturedMacro = Boolean.valueOf(getOptionalAttribute(config, "featured", false));
         if (isFeaturedMacro)
         {
-            descriptors.add(createFeaturedMacroDescriptor(ctx, key, name, getOptionalAttribute(config, "title", name)));
+            descriptors.add(createFeaturedMacroDescriptor(ctx, key, name));
         }
 
         boolean hasCustomEditor = config.element("macro-editor") != null;
@@ -171,7 +173,7 @@ public abstract class AbstractMacroModuleGenerator implements RemoteModuleGenera
         };
     }
 
-    private Collection<ModuleDescriptor> createMacroEditorDescriptors(final RemoteAppCreationContext ctx, Element config, String remoteModuleKey, String macroName)
+    private Collection<ModuleDescriptor> createMacroEditorDescriptors(final RemoteAppCreationContext ctx, Element config, String macroKey, String macroName)
     {
         Element macroEditor = config.element("macro-editor");
         String originalUrl = macroEditor.attributeValue("url");
@@ -183,32 +185,32 @@ public abstract class AbstractMacroModuleGenerator implements RemoteModuleGenera
         }
         catch (Uri.UriException e)
         {
-            String msg = String.format("Custom editor URL %s for macro %s is invalid.", originalUrl, macroName);
+            String msg = String.format("Custom editor URL %s for macro %s is invalid.", originalUrl, macroKey);
             throw new PluginParseException(msg, e);
         }
 
         // Generate a servlet module descriptor that can redirect requests from the Confluence front-end to the Remote App,
         // performing the necessary authentication.
-        String localUrl = "/remoteapps/" + ctx.getApplicationType().getId().get() + "/" + macroName + "-editor";
-        final  ServletModuleDescriptor iFrameServlet = createMacroEditorServletDescriptor(ctx, macroEditor, remoteModuleKey, originalUrl, localUrl);
+        String localUrl = "/remoteapps/" + ctx.getApplicationType().getId().get() + "/" + macroKey + "-editor";
+        final  ServletModuleDescriptor iFrameServlet = createMacroEditorServletDescriptor(ctx, macroEditor, macroKey, originalUrl, localUrl);
 
         // Generate a new web-resource module descriptor with the necessary JavaScript to configure the custom macro editor
         // in the Confluence editor.
-        ModuleDescriptor jsDescriptor = createWebResourceModuleDescriptor(ctx, macroEditor, remoteModuleKey, macroName, getOptionalAttribute(config, "title", macroName), localUrl);
+        ModuleDescriptor jsDescriptor = createWebResourceModuleDescriptor(ctx, macroEditor, macroKey,  macroName, localUrl);
 
         return Lists.newArrayList(jsDescriptor, iFrameServlet);
     }
 
-    private ModuleDescriptor createFeaturedMacroDescriptor(final RemoteAppCreationContext ctx, String remoteModuleKey, String macroName, String macroLabel)
+    private ModuleDescriptor createFeaturedMacroDescriptor(final RemoteAppCreationContext ctx, String macroKey, String macroName)
     {
         // Create XML config fragment for this web-item
         Element webItem = DocumentHelper.createDocument().addElement("web-item")
-                .addAttribute("name", "Insert " + macroLabel); // TODO: Remove hard-coded English
+                .addAttribute("name", "Insert " + macroName); // TODO: Remove hard-coded English
 
         webItem.addElement("link")
-               .addAttribute("linkId", macroName);
+               .addAttribute("linkId", macroKey);
 
-        return webItemCreator.createWebItemDescriptor(ctx, webItem, "editor-featured-macro-" + remoteModuleKey, "", new AlwaysDisplayCondition(), "");
+        return webItemCreator.createWebItemDescriptor(ctx, webItem, "editor-featured-macro-" + macroKey, "", new AlwaysDisplayCondition(), "");
     }
 
     private ServletModuleDescriptor createMacroEditorServletDescriptor(final RemoteAppCreationContext ctx,
@@ -249,7 +251,7 @@ public abstract class AbstractMacroModuleGenerator implements RemoteModuleGenera
     {
         Element root = element.getParent();
 
-        String key = getOptionalAttribute(element, "name", getRequiredAttribute(element, "key"));
+        String key = getRequiredAttribute(element, "key");
         String appKey = root.attributeValue("key");
 
         for (XhtmlMacroModuleDescriptor descriptor : pluginAccessor.getEnabledModuleDescriptorsByClass(XhtmlMacroModuleDescriptor.class))
@@ -268,16 +270,16 @@ public abstract class AbstractMacroModuleGenerator implements RemoteModuleGenera
         // no-op
     }
 
-    private ModuleDescriptor createWebResourceModuleDescriptor(RemoteAppCreationContext ctx, Element macroEditorConfig, String remoteModuleKey, String macroName, String macroLabel, String customEditorLocalUrl)
+    private ModuleDescriptor createWebResourceModuleDescriptor(RemoteAppCreationContext ctx, Element macroEditorConfig, String macroKey, String macroName, String customEditorLocalUrl)
     {
         Element webResource = DocumentHelper.createDocument()
                                 .addElement("web-resource")
-                                .addAttribute("key", remoteModuleKey + "-macro-editor-resources");
+                                .addAttribute("key", macroKey + "-macro-editor-resources");
 
         webResource.addElement("resource")
                         .addAttribute("type", "download")
-                        .addAttribute("name", macroName + ".js")
-                        .addAttribute("location", macroName + ".js");
+                        .addAttribute("name", macroKey + ".js")
+                        .addAttribute("location", macroKey + ".js");
 
         webResource.addElement("dependency")
                         .setText("confluence.web.resources:ajs");
@@ -291,7 +293,7 @@ public abstract class AbstractMacroModuleGenerator implements RemoteModuleGenera
         Element transformer = transformation.addElement("transformer")
                                                 .addAttribute("key", "macroEditorTransformer")
                                                 .addAttribute("url", "/plugins/servlet" + customEditorLocalUrl)
-                                                .addAttribute("label", macroLabel);
+                                                .addAttribute("name", macroName);
         copyOptionalAttribute(macroEditorConfig, transformer, "width");
         copyOptionalAttribute(macroEditorConfig, transformer, "height");
 
@@ -335,7 +337,7 @@ public abstract class AbstractMacroModuleGenerator implements RemoteModuleGenera
                 }
             }
         };
-        return new XhtmlMacroModuleDescriptor(factory, macroMetadataParser);
+        return new FixedXhtmlMacroModuleDescriptor(factory, macroMetadataParser);
     }
 
     protected abstract RemoteMacro createMacro(RemoteMacroInfo remoteMacroInfo,
@@ -378,9 +380,9 @@ public abstract class AbstractMacroModuleGenerator implements RemoteModuleGenera
             return null;
         }
         String url = getRequiredUriAttribute(placeholder, "url").toString();
-        String width = placeholder.attributeValue("width");
-        String height = placeholder.attributeValue("height");
-        String applyChrome = placeholder.attributeValue("apply-chrome");
+        String width = getOptionalAttribute(placeholder, "width", null);
+        String height = getOptionalAttribute(placeholder, "height", null);
+        String applyChrome = getOptionalAttribute(placeholder, "apply-chrome", null);
 
         return new ImagePlaceholderConfig(url,
                 width == null ? null : Integer.parseInt(width),

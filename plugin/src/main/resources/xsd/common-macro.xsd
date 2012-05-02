@@ -59,8 +59,8 @@
             <xs:element name="alias" type="MacroParameterAliasType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="value" type="MacroParameterEnumValueType" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
-        <xs:attribute name="name" type="xs:string" use="required"/>
-        <xs:attribute name="label" type="xs:string"/>
+        <xs:attribute name="name" type="KeyType" use="required"/>
+        <xs:attribute name="title" type="NameType" use="optional"/>
         <xs:attribute name="type" type="MacroParameterTypeType" use="required"/>
         <xs:attribute name="required" type="xs:boolean" default="false"/>
         <xs:attribute name="multiple" type="xs:boolean" default="false"/>
@@ -111,8 +111,12 @@
         </xs:sequence>
         <xs:attribute name="featured" type="xs:boolean" />
         <xs:attribute name="key" type="KeyType" use="required"/>
-        <xs:attribute name="name" type="xs:string"/>
-        <xs:attribute name="title" type="xs:string" />
+        <xs:attribute name="name" type="NameType"/>
+        <xs:attribute name="title" type="NameType">
+            <xs:annotation>
+                <xs:documentation>Deprecated, use name instead</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="url" type="RelativeUrlType" use="required"/>
         <xs:attribute name="icon-url" type="RelativeUrlType">
             <xs:annotation>
