@@ -43,13 +43,6 @@
         <package>com.atlassian.labs.remoteapps.product.confluence.rest</package>
     </rest>
 
-    <servlet key="remoteAppsImagePlaceholderServlet"
-             name="Remote Apps Image Placeholder Servlet"
-             class="com.atlassian.labs.remoteapps.product.confluence.RemoteAppsImagePlaceholderServlet">
-        <description>Requests the image placeholder for the remote app</description>
-        <url-pattern>/remoteImage</url-pattern>
-    </servlet>
-
     <component key="macroContentLinkParser" class="com.atlassian.labs.remoteapps.modules.confluence.MacroContentLinkParser" />
     <component key="macroContentManager" class="com.atlassian.labs.remoteapps.modules.confluence.MacroContentManager"/>
     <component key="confluenceWebHookProvider" class="com.atlassian.labs.remoteapps.product.confluence.webhook.ConfluenceWebHookProvider" />

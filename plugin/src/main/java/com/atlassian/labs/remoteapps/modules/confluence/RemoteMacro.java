@@ -10,4 +10,6 @@ import java.net.URI;
 public interface RemoteMacro extends Macro
 {
     URI getBaseUrl();
+
+    RemoteMacroInfo getRemoteMacroInfo();
 }

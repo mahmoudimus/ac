@@ -379,7 +379,7 @@ public abstract class AbstractMacroModuleGenerator implements RemoteModuleGenera
         {
             return null;
         }
-        String url = getRequiredUriAttribute(placeholder, "url").toString();
+        URI url = getRequiredUriAttribute(placeholder, "url");
         String width = getOptionalAttribute(placeholder, "width", null);
         String height = getOptionalAttribute(placeholder, "height", null);
         String applyChrome = getOptionalAttribute(placeholder, "apply-chrome", null);
@@ -392,12 +392,12 @@ public abstract class AbstractMacroModuleGenerator implements RemoteModuleGenera
 
     private static class ImagePlaceholderConfig
     {
-        String imageUrl;
+        URI imageUrl;
         Integer width;
         Integer height;
         boolean applyChrome;
 
-        private ImagePlaceholderConfig(String imageUrl, Integer width, Integer height, boolean applyChrome)
+        private ImagePlaceholderConfig(URI imageUrl, Integer width, Integer height, boolean applyChrome)
         {
             this.imageUrl = imageUrl;
             this.width = width;

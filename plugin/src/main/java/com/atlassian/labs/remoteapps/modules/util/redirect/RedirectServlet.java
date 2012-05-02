@@ -72,6 +72,14 @@ public class RedirectServlet extends HttpServlet
     {
        return getOAuthRedirectUrl(baseUrl, appKey, path, Collections.<String, String>emptyMap());
     }
+
+    /**
+     * @return an absolute url that includes oauth signing information as query parameters
+     */
+    public static String getRelativeOAuthRedirectUrl(String appKey, URI path, Map<String,String> params)
+    {
+        return getOAuthRedirectUrl("", appKey, path, params);
+    }
     /**
      * @return an absolute url that includes oauth signing information as query parameters
      */

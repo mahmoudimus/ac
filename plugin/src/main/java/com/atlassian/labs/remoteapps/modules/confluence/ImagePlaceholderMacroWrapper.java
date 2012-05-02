@@ -6,8 +6,8 @@ import com.atlassian.confluence.macro.EditorImagePlaceholder;
 import com.atlassian.confluence.macro.ImagePlaceholder;
 import com.atlassian.confluence.macro.MacroExecutionException;
 import com.atlassian.confluence.pages.thumbnail.Dimensions;
+import com.atlassian.labs.remoteapps.modules.util.redirect.RedirectServlet;
 
-import javax.ws.rs.core.UriBuilder;
 import java.net.URI;
 import java.util.Map;
 
@@ -17,17 +17,16 @@ import java.util.Map;
 public class ImagePlaceholderMacroWrapper implements EditorImagePlaceholder, RemoteMacro
 {
     private final RemoteMacro delegate;
-    public static final String REMOTE_IMAGE_SERVLET = "plugins/servlet/remoteImage";
 
     private final String pluginKey;
     private final String macroKey;
-    private final String imageUrl;
+    private final URI imageUrl;
     private final Dimensions dimensions;
     private final boolean applyChrome;
 
     public ImagePlaceholderMacroWrapper(RemoteMacro delegate, boolean applyChrome,
             Dimensions dimensions,
-            String imageUrl, String macroKey, String pluginKey)
+            URI imageUrl, String macroKey, String pluginKey)
     {
         this.delegate = delegate;
         this.applyChrome = applyChrome;
@@ -37,26 +36,18 @@ public class ImagePlaceholderMacroWrapper implements EditorImagePlaceholder, Rem
         this.pluginKey = pluginKey;
     }
 
-    public String getImageUrl()
-    {
-        return imageUrl;
-    }
-
     @Override
-    public ImagePlaceholder getImagePlaceholder(Map<String, String> parameters, ConversionContext context)
+    public ImagePlaceholder getImagePlaceholder(Map<String, String> parameters, final ConversionContext context)
     {
-        UriBuilder builder = UriBuilder.fromPath(REMOTE_IMAGE_SERVLET);
-        builder.queryParam("pluginKey", pluginKey);
-        builder.queryParam("macroKey", macroKey);
-        for (Map.Entry<String, String> entry : parameters.entrySet())
-        {
-            builder.queryParam(entry.getKey(), entry.getValue());
-        }
-        builder.queryParam("spaceKey", context.getSpaceKey());
-        builder.queryParam("pageId", context.getEntity().getId());
-        URI servletUri = builder.build();
+        MacroInstance macroInstance = new MacroInstance(context,
+                delegate.getRemoteMacroInfo().getUrl(),
+                "",
+                parameters,
+                delegate.getRemoteMacroInfo().getApplicationLinkOperations());
 
-        return new DefaultImagePlaceholder(servletUri.toString(), dimensions, applyChrome);
+        String uri = RedirectServlet.getRelativeOAuthRedirectUrl(pluginKey, imageUrl, macroInstance.getUrlParameters());
+
+        return new DefaultImagePlaceholder(uri, dimensions, applyChrome);
     }
 
     @Override
@@ -82,5 +73,11 @@ public class ImagePlaceholderMacroWrapper implements EditorImagePlaceholder, Rem
     public URI getBaseUrl()
     {
         return delegate.getBaseUrl();
+    }
+
+    @Override
+    public RemoteMacroInfo getRemoteMacroInfo()
+    {
+        return delegate.getRemoteMacroInfo();
     }
 }

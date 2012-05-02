@@ -16,6 +16,12 @@ public abstract class AbstractRemoteMacro implements RemoteMacro
     }
 
     @Override
+    public RemoteMacroInfo getRemoteMacroInfo()
+    {
+        return remoteMacroInfo;
+    }
+
+    @Override
     public BodyType getBodyType()
     {
         return remoteMacroInfo.getBodyType();
