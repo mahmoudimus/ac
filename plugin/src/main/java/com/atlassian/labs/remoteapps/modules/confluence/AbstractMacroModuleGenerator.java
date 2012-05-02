@@ -377,7 +377,7 @@ public abstract class AbstractMacroModuleGenerator implements RemoteModuleGenera
         {
             return null;
         }
-        String url = getRequiredUriAttribute(entity, "url").toString();
+        String url = getRequiredUriAttribute(placeholder, "url").toString();
         String width = placeholder.attributeValue("width");
         String height = placeholder.attributeValue("height");
         String applyChrome = placeholder.attributeValue("apply-chrome");
