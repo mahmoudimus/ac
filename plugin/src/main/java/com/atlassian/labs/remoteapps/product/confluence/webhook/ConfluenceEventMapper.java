@@ -111,8 +111,8 @@ public class ConfluenceEventMapper implements EventMapper<ConfluenceEvent>
 
             builder.put("creatorName", StringUtils.isBlank(ceo.getCreatorName()) ? "" : ceo.getCreatorName());
             builder.put("lastModifierName", StringUtils.isBlank(ceo.getLastModifierName()) ? "" : ceo.getLastModifierName());
-            builder.put("creationDate", ceo.getCreationDate().getTime());
-            builder.put("modificationDate", ceo.getLastModificationDate().getTime());
+            builder.put("creationDate", ceo.getCreationDate() != null ? ceo.getCreationDate().getTime() : "");
+            builder.put("modificationDate", ceo.getLastModificationDate() != null ? ceo.getLastModificationDate().getTime() : "");
             builder.put("version", ceo.getVersion());
             builder.put("self", getFullUrl(ceo.getUrlPath()));
             if (ceo instanceof Spaced)
