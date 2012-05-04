@@ -65,7 +65,12 @@ var RemoteApps = RemoteApps || {};
              * these out of the options object.
              */
             submitClass: "ra-dialog-submit",
-            cancelClass: "ra-dialog-cancel"
+            cancelClass: "ra-dialog-cancel",
+            keypressListener: function (e) {
+                if (e.keyCode === 27) {
+                    dialog.remove();
+                }
+            }
         };
         var mergedOptions = $.extend({}, defaultOptions, options);
 
