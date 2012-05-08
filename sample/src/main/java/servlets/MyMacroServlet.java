@@ -1,5 +1,6 @@
 package servlets;
 
+import com.atlassian.labs.remoteapps.apputils.OAuthContext;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.ServletException;
@@ -17,9 +18,17 @@ import static services.HttpUtils.renderHtml;
 @Component
 public class MyMacroServlet extends HttpServlet
 {
+    private final OAuthContext oauthContext;
+
+    public MyMacroServlet(OAuthContext oauthContext)
+    {
+        this.oauthContext = oauthContext;
+    }
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
     {
+        oauthContext.validateRequest(req);
         final String pageId = req.getParameter("pageId");
         final String favoriteFooty = req.getParameter("footy");
         final String body = req.getParameter("body");
