@@ -16,7 +16,7 @@
                 if (jQuery('#aui-message-bar').length != 0) {
                     return;
                 }
-                var parentElement = jQuery("#details-module")
+                var parentElement = jQuery("#details-module");
                 if (parentElement.length == 0) {
                 	// TODO - adding #aui-message-bar only works for the view-issue page for now.
                     return;

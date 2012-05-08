@@ -21,6 +21,12 @@ public class EncodingUtils
         }
     }
 
+    public static String escapeQuotes(String value)
+    {
+        return value.replace("\"", "&quot;")
+                .replace("'", "&#39;");
+    }
+
     /**
      * A utility method to encode HTTP form parameter/values.
      * To encode entire URLs, use completeUrlEncode() instead.

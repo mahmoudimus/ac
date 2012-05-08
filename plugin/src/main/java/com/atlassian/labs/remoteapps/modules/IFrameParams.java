@@ -4,6 +4,7 @@ import org.dom4j.Element;
 
 import java.util.Map;
 
+import static com.atlassian.labs.remoteapps.util.EncodingUtils.escapeQuotes;
 import static com.google.common.collect.Maps.newHashMap;
 
 /**
@@ -23,13 +24,13 @@ public class IFrameParams
         String val = e.attributeValue(key);
         if (val != null)
         {
-            params.put(key, val);
+            params.put(key, escapeQuotes(val));
         }
     }
     
     public void setParam(String key, String value)
     {
-        params.put(key, value);
+        params.put(key, escapeQuotes(value));
     }
 
     public Map<String, Object> getAsMap()

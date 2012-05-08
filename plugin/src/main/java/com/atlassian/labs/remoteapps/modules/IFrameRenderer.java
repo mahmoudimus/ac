@@ -18,6 +18,7 @@ import java.net.URI;
 import java.util.Collections;
 import java.util.Map;
 
+import static com.atlassian.labs.remoteapps.util.EncodingUtils.escapeQuotes;
 import static com.google.common.collect.Maps.newHashMap;
 
 /**
@@ -97,8 +98,7 @@ public class IFrameRenderer
             host = host + ":" + hostUri.getPort();
         }
         String iframeUrl = iframeContext.getIframePath() + (extraPath != null ? extraPath : "");
-        iframeUrl = escapeQuotes(iframeUrl);
-        
+
         Map<String,String[]> allParams = newHashMap(queryParams);
         allParams.put("" +
                 "xdm_e", new String[]{host});
@@ -114,7 +114,7 @@ public class IFrameRenderer
 
 
         Map<String,Object> ctx = newHashMap(iframeContext.getIFrameParams().getAsMap());
-        ctx.put("iframeSrcHtml", signedUrl);
+        ctx.put("iframeSrcHtml", escapeQuotes(signedUrl));
         ctx.put("remoteapp", iframeContext.getLinkOps().get());
         ctx.put("namespace", iframeContext.getNamespace());
 
@@ -126,10 +126,5 @@ public class IFrameRenderer
         StringWriter output = new StringWriter();
         templateRenderer.render("velocity/iframe-body.vm", ctx, output);
         return output.toString();
-    }
-
-    private String escapeQuotes(String iframeUrl)
-    {
-        return iframeUrl.replace("\"", "&quot;");
     }
 }
