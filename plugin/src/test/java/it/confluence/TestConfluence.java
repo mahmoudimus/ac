@@ -60,7 +60,7 @@ public class TestConfluence
     @Test
     public void testAnonymousMacro() throws XmlRpcFault, IOException
     {
-        Map pageData = confluenceOps.setPage(product.getProductInstance(), "ds", "test", loadResourceAsString(
+        Map pageData = confluenceOps.setAnonymousPage(product.getProductInstance(), "ds", "test", loadResourceAsString(
                 "confluence/test-page.xhtml"));
         ConfluenceMacroPage page = product.visit(ConfluenceMacroPage.class, pageData.get("title"));
         assertEquals(pageData.get("id"), page.getPageIdFromMacro());

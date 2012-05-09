@@ -98,7 +98,12 @@ public class OAuthContext
 
     public String validateRequest(HttpServletRequest req) throws ServletException
     {
-        String url = getLocalBaseUrl() + URI.create(req.getRequestURI()).getPath();
+        URI originalUri = URI.create(req.getRequestURI());
+        String url = getLocalBaseUrl() + originalUri.getPath();
+        if (originalUri.getFragment() != null)
+        {
+            url += "#" + originalUri.getFragment();
+        }
         OAuthMessage message = OAuthServlet.getMessage(req, url);
         return validateAndExtractKey(message);
     }

@@ -28,6 +28,18 @@ public class ConfluenceOps
         return page;
     }
 
+    public Map setAnonymousPage(ProductInstance product, String spaceKey, String titlePrefix, String content) throws MalformedURLException, XmlRpcFault
+    {
+        long id = System.currentTimeMillis();
+        XmlRpcClient client = getClientWithoutAuthorization(product);
+        XmlRpcStruct struct = new XmlRpcStruct();
+        struct.put("title", titlePrefix + "_" + id);
+        struct.put("space", spaceKey);
+        struct.put("content", content);
+        XmlRpcStruct page = (XmlRpcStruct) client.invoke( "confluence2.storePage", new Object[] { "", struct } );
+        return page;
+    }
+
     public int search(ProductInstance product, String query) throws MalformedURLException, XmlRpcFault
     {
         final int maxResults = 10;
@@ -39,10 +51,16 @@ public class ConfluenceOps
 
     private XmlRpcClient getClient(ProductInstance product) throws MalformedURLException
     {
-        final String url = product.getBaseUrl() + "/rpc/xmlrpc";
-        XmlRpcClient client = new XmlRpcClient(url, false);
+        XmlRpcClient client = getClientWithoutAuthorization(product);
         client.setRequestProperty("Authorization", getAuthHeader());
         return client;
+    }
+
+    private XmlRpcClient getClientWithoutAuthorization(ProductInstance product) throws
+            MalformedURLException
+    {
+        final String url = product.getBaseUrl() + "/rpc/xmlrpc";
+        return new XmlRpcClient(url, false);
     }
 
     private String getAuthHeader()

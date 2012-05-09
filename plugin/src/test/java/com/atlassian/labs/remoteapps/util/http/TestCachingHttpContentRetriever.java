@@ -76,7 +76,7 @@ public class TestCachingHttpContentRetriever
         ArgumentCaptor<HttpPost> argument = ArgumentCaptor.forClass(HttpPost.class);
         retriever.postIgnoreResponse(link, "http://localhost/foo", "{\"boo\":\"bar\"}");
         verify(httpClient).execute(argument.capture());
-        assertEquals("http://localhost/foo?user_id=", argument.getValue().getURI().toString());
+        assertEquals("http://localhost/foo", argument.getValue().getURI().toString());
     }
 
 }

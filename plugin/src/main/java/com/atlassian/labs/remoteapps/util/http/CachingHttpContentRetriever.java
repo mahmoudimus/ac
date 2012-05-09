@@ -42,6 +42,7 @@ import java.util.regex.Pattern;
 
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
+import static org.apache.commons.lang.StringUtils.isEmpty;
 
 /**
  * This is a public component
@@ -174,8 +175,16 @@ public class CachingHttpContentRetriever implements DisposableBean, HttpContentR
         {
             qparams.add(new BasicNameValuePair(key, parameters.get(key)));
         }
-        qparams.add(new BasicNameValuePair("user_id", remoteUsername));
-        return url + "?" + URLEncodedUtils.format(qparams, "UTF-8");
+        if (remoteUsername != null)
+        {
+            qparams.add(new BasicNameValuePair("user_id", remoteUsername));
+        }
+        String queryString = URLEncodedUtils.format(qparams, "UTF-8");
+        if (!isEmpty(queryString))
+        {
+            url += "?" + queryString;
+        }
+        return url;
     }
 
     @Override
