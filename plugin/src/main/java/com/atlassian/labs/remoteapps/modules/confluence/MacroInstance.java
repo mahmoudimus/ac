@@ -99,6 +99,7 @@ public class MacroInstance
             String pageId = conversionContext.getEntity().getIdAsString();
             String pageTitle = conversionContext.getEntity().getTitle();
             params.put("ctx_page_id", pageId);
+            params.put("ctx_page_type", conversionContext.getEntity().getType());
             params.put("ctx_page_title", pageTitle);
 
             /*!
