@@ -4,6 +4,7 @@ import com.atlassian.confluence.plugin.descriptor.web.descriptors.ConfluenceWebI
 import com.atlassian.labs.remoteapps.product.ProductAccessor;
 import com.atlassian.labs.remoteapps.product.WebSudoElevator;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
+import com.google.common.collect.ImmutableMap;
 
 import java.util.Map;
 
@@ -66,6 +67,8 @@ public class ConfluenceProductAccessor implements ProductAccessor
     @Override
     public Map<String, String> getLinkContextParams()
     {
-        return singletonMap("page_id", "$!helper.page.id");
+        return ImmutableMap.of(
+                "page_id", "$!helper.page.id",
+                "page_type", "$!helper.page.type");
     }
 }

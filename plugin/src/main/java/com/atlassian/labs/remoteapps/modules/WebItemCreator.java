@@ -71,9 +71,10 @@ public class WebItemCreator
                 url.append(entry.getKey());
                 url.append("=");
                 url.append(entry.getValue());
+                url.append("&");
             }
 
-            linkElement.setText(url.toString());
+            linkElement.setText(url.substring(0, url.length() - 1));
         }
 
         if (!StringUtils.isBlank(additionalStyleClass))

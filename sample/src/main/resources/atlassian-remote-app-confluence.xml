@@ -23,6 +23,7 @@
                   link-name="Remote App app1 General Link" url="/myAdmin"
                   icon-url="/sandcastles.jpg" height="600" width="700">
         <context-param name="page_id" />
+        <context-param name="page_type" />
     </general-page>
     <dialog-page key="remoteAppDialog" name="Remote App app1 Dialog" url="/myDialog" />
 
