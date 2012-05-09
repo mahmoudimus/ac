@@ -15,7 +15,9 @@ public class ModifyContentScope extends ConfluenceScope
                 "removePage",
                 "movePage",
                 "movePageToTopLevel",
-                "storeBlogEntry"
+                "storeBlogEntry",
+                "addComment",
+                "removeComment"
         ));
     }
 
