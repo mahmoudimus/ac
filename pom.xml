@@ -219,7 +219,7 @@
         <oauth.version>1.3.0</oauth.version>
         <deployRepoUrl>https://maven.atlassian.com/public</deployRepoUrl>
         <VERSION_NUMBER>${API_VERSION}.${BUILD_NUMBER}</VERSION_NUMBER>
-        <BUILD_NUMBER>99-SNAPSHOT</BUILD_NUMBER>
+        <BUILD_NUMBER>9999-SNAPSHOT</BUILD_NUMBER>
         <API_VERSION>0.4</API_VERSION>
     </properties>
 </project>
