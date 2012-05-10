@@ -36,6 +36,11 @@ public class ConfluenceMacroPage implements Page
         return driver.findElement(By.className("rp-page-id")).getText();
     }
 
+    public String getPageIdFromMacroInComment()
+    {
+        return driver.findElement(By.className("rp-comment")).findElement(By.className("rp-page-id")).getText();
+    }
+
     public String getBodyNoteFromMacro()
     {
         return driver.findElement(By.className("rp-body")).findElement(By.className("panelMacro")).getText();

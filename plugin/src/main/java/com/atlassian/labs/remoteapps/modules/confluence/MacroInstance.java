@@ -100,12 +100,15 @@ public class MacroInstance
             String pageTitle = conversionContext.getEntity().getTitle();
             params.put("ctx_page_id", pageId);
             params.put("ctx_page_type", conversionContext.getEntity().getType());
-            params.put("ctx_page_title", pageTitle);
+            if (pageTitle != null)
+            {
+                params.put("ctx_page_title", pageTitle);
+            }
 
             /*!
             #### Deprecated
 
-            The following parameters are included, but are depecated and will be removed before 1.0:
+            The following parameters are included, but are deprecated and will be removed before 1.0:
 
             * `page_id`
             * `pageId`
@@ -113,7 +116,10 @@ public class MacroInstance
              */
             params.put("page_id", pageId);
             params.put("pageId", pageId);
-            params.put("pageTitle", pageTitle);
+            if (pageTitle != null)
+            {
+                params.put("pageTitle", pageTitle);
+            }
         }
 
         /*!

@@ -46,7 +46,7 @@ public class TestConfluence
 	public void testMacro() throws XmlRpcFault, IOException
     {
         Map pageData = confluenceOps.setPage(product.getProductInstance(), "ds", "test", loadResourceAsString(
-                "confluence/test-page.xhtml"));
+                "confluence/test-page-macros.xhtml"));
         product.visit(LoginPage.class).login("betty", "betty", HomePage.class);
         ConfluenceMacroPage page = product.visit(ConfluenceMacroPage.class, pageData.get("title"));
 
@@ -57,6 +57,18 @@ public class TestConfluence
         assertTrue(page.getSlowMacroBody().startsWith("ERROR"));
 	}
 
+    @Test
+    public void testMacroInComment() throws XmlRpcFault, IOException
+    {
+        Map pageData = confluenceOps.setPage(product.getProductInstance(), "ds", "test", loadResourceAsString(
+                "confluence/test-page.xhtml"));
+        Map commentData = confluenceOps.addComment(product.getProductInstance(), (String) pageData.get("id"),
+                loadResourceAsString("confluence/test-comment.xhtml"));
+
+        ConfluenceMacroPage page = product.visit(ConfluenceMacroPage.class, pageData.get("title"));
+
+        assertEquals(commentData.get("id"), page.getPageIdFromMacroInComment());
+    }
     @Test
     public void testAnonymousMacro() throws XmlRpcFault, IOException
     {

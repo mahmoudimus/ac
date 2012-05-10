@@ -28,6 +28,16 @@ public class ConfluenceOps
         return page;
     }
 
+    public Map addComment(ProductInstance product, String pageId, String content) throws MalformedURLException, XmlRpcFault
+    {
+        XmlRpcClient client = getClient(product);
+        XmlRpcStruct struct = new XmlRpcStruct();
+        struct.put("pageId", pageId);
+        struct.put("content", content);
+        XmlRpcStruct page = (XmlRpcStruct) client.invoke( "confluence2.addComment", new Object[] { "", struct } );
+        return page;
+    }
+
     public Map setAnonymousPage(ProductInstance product, String spaceKey, String titlePrefix, String content) throws MalformedURLException, XmlRpcFault
     {
         long id = System.currentTimeMillis();

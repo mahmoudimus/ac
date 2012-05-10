@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.URI;
 import java.util.HashMap;
 
 import static services.HttpUtils.renderHtml;
@@ -37,6 +38,7 @@ public class MyMacroServlet extends HttpServlet
                 put("pageId", pageId);
                 put("favoriteFooty", favoriteFooty);
                 put("body", body);
+                put("server", URI.create(oauthContext.getLocalBaseUrl()).getAuthority());
         }});
     }
 }
