@@ -30,7 +30,6 @@ public class IFrameRenderer
     private final TemplateRenderer templateRenderer;
     private final WebResourceManager webResourceManager;
     private final ApplicationProperties applicationProperties;
-    private final String contextPath;
 
     @Autowired
     public IFrameRenderer(TemplateRenderer templateRenderer,
@@ -41,7 +40,6 @@ public class IFrameRenderer
         this.templateRenderer = templateRenderer;
         this.webResourceManager = webResourceManager;
         this.applicationProperties = applicationProperties;
-        this.contextPath = URI.create(applicationProperties.getBaseUrl()).getPath();
     }
 
     public String render(IFrameContext iframeContext, String remoteUser) throws IOException
@@ -69,7 +67,7 @@ public class IFrameRenderer
             }
 
             ctx.put("title", pageInfo.getTitle());
-            ctx.put("contextPath", contextPath);
+            ctx.put("contextPath", getContextPath());
             ctx.put("iframeHtml",
                     render(iframeContext, extraPath, queryParams,
                             remoteUser));
@@ -85,6 +83,12 @@ public class IFrameRenderer
                             "title", pageInfo.getTitle(),
                             "decorator", pageInfo.getDecorator()), writer);
         }
+    }
+
+    private String getContextPath()
+    {
+        String baseUrl = applicationProperties.getBaseUrl();
+        return baseUrl != null ? URI.create(baseUrl).getPath() : "";
     }
 
     public String render(IFrameContext iframeContext, String extraPath, Map<String, String[]> queryParams, String remoteUser) throws IOException
