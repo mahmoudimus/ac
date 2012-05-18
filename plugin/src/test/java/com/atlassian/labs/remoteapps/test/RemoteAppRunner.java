@@ -1,5 +1,6 @@
 package com.atlassian.labs.remoteapps.test;
 
+import it.TestWebHooks;
 import org.bouncycastle.openssl.PEMWriter;
 import org.dom4j.Document;
 import org.dom4j.DocumentFactory;
@@ -116,6 +117,15 @@ public class RemoteAppRunner
                 .addAttribute("url", path)
                 .addAttribute("name", name)
                 .addAttribute("key", key);
+        routes.put(path, servlet);
+        return this;
+    }
+
+    public RemoteAppRunner addWebhook(String hookId, String path, HttpServlet servlet)
+    {
+        doc.getRootElement().addElement("web-hook")
+                .addAttribute("event", hookId)
+                .addAttribute("url", path);
         routes.put(path, servlet);
         return this;
     }
