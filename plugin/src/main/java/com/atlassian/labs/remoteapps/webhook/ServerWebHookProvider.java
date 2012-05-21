@@ -34,6 +34,7 @@ public class ServerWebHookProvider implements WebHookProvider
     @Override
     public void provide(WebHookRegistrar registrar)
     {
+        final String baseUrl = applicationProperties.getBaseUrl();
         EventSerializerFactory upgradeFactory = new EventSerializerFactory<UpgradedEvent>()
         {
             @Override
@@ -41,7 +42,7 @@ public class ServerWebHookProvider implements WebHookProvider
             {
                 return new MapEventSerializer(event, new HashMap<String,Object>() {{
                         put("key", consumerService.getConsumer().getKey());
-                        put("baseUrl", applicationProperties.getBaseUrl());
+                        put("baseUrl", (baseUrl != null ? baseUrl : ""));
                         put("oldVersion", event.getOldVersion());
                         put("newVersion", event.getNewVersion());
                 }});

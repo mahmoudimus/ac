@@ -31,6 +31,7 @@ public class RemoteAppsWebHookProvider implements WebHookProvider
     @Override
     public void provide(WebHookRegistrar publish)
     {
+        final String baseUrl = applicationProperties.getBaseUrl();
         EventSerializerFactory factory = new EventSerializerFactory<RemoteAppEvent>()
         {
             @Override
@@ -39,8 +40,8 @@ public class RemoteAppsWebHookProvider implements WebHookProvider
                 return new MapEventSerializer(event, ImmutableMap.<String, Object>of(
                                 "key", event.getRemoteAppKey(),
                                 "serverKey", consumerService.getConsumer().getKey(),
-                                "baseurl", applicationProperties.getBaseUrl(),
-                                "baseUrl", applicationProperties.getBaseUrl()));
+                                "baseurl", (baseUrl != null ? baseUrl : ""),
+                                "baseUrl", (baseUrl != null ? baseUrl : "")));
             }
         };
 
