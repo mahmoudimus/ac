@@ -11,6 +11,8 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.SetMultimap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -26,6 +28,8 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class WebHookRegistrationManager implements DisposableBean
 {
+    private static final Logger log = LoggerFactory.getLogger(WebHookRegistrationManager.class);
+
     private final Map<String,WebHookRegistration> registrationsByKey;
     private final SetMultimap<Class<?>,WebHookRegistration> registrationsByEvent;
     private final Map<WebHookProvider, Set<WebHookRegistration>> registrationsByProvider;
@@ -90,13 +94,21 @@ public class WebHookRegistrationManager implements DisposableBean
     @EventListener
     public void onEvent(Object event)
     {
-        Iterable<WebHookRegistration> registrations = registrationsByEvent.get(event.getClass());
-        if (registrations != null)
+        try
         {
-            for (WebHookRegistration reg : registrations)
+            Iterable<WebHookRegistration> registrations = registrationsByEvent.get(event.getClass());
+            if (registrations != null)
             {
-                webHookPublisher.publish(reg.getId(), reg.getEventMatcher(), reg.getEventSerializer(event));
+                for (WebHookRegistration reg : registrations)
+                {
+                    webHookPublisher.publish(reg.getId(), reg.getEventMatcher(), reg.getEventSerializer(event));
+                }
             }
+        }
+        catch (Exception e)
+        {
+            // Trap exceptions to prevent them bubbling up outside this event listener
+            log.warn(String.format("Failed to publish web-hooks for event %s", event.getClass().getName()), e);
         }
     }
     
