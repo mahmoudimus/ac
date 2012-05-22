@@ -156,7 +156,8 @@ public class ConfluenceEventMapper implements EventMapper<ConfluenceEvent>
 
         builder.put("key", space.getKey());
         builder.put("title", space.getDisplayTitle());
-        builder.put("description", space.getDescription().getBodyAsString());
+        if (space.getDescription() != null)
+            builder.put("description", space.getDescription().getBodyAsString());
         builder.put("isPersonalSpace", space.isPersonal());
         builder.put("self", getFullUrl(space.getUrlPath()));
         builder.put("homePage", contentEntityObjectToMap(space.getHomePage(), true));
