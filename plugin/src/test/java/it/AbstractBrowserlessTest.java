@@ -16,28 +16,36 @@ import org.junit.rules.MethodRule;
  */
 public class AbstractBrowserlessTest
 {
-    protected static final String baseUrl;
+    protected final String baseUrl;
 
-    static
+    public AbstractBrowserlessTest()
+    {
+        this((Class<? extends TestedProduct>) findClass(System.getProperty("testedProductClass",
+                RefappTestedProduct.class.getName())));
+    }
+
+    private static Class findClass(String name)
+    {
+        try
+        {
+            return Class.forName(name);
+        }
+        catch (ClassNotFoundException e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public AbstractBrowserlessTest(Class<? extends TestedProduct> testedProductClass)
     {
         if (System.getProperty("baseurl") == null)
         {
-            try
-            {
-                Class cls = Class.forName(System.getProperty("testedProductClass",
-                        RefappTestedProduct.class.getName()));
-                Defaults defs = (Defaults) cls.getAnnotation(Defaults.class);
-                baseUrl = "http://localhost:" + defs.httpPort() + defs.contextPath();
-            }
-            catch (ClassNotFoundException e)
-            {
-                throw new RuntimeException(e);
-            }
+            Defaults defs = testedProductClass.getAnnotation(Defaults.class);
+            baseUrl = "http://localhost:" + defs.httpPort() + defs.contextPath();
         }
         else
         {
             baseUrl = OwnerOfTestedProduct.INSTANCE.getProductInstance().getBaseUrl();
         }
-
     }
 }

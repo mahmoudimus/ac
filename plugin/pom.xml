@@ -320,6 +320,13 @@
         </dependency>
 
         <dependency>
+            <groupId>cc.plural</groupId>
+            <artifactId>jsonij</artifactId>
+            <version>0.2.11</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-servlet</artifactId>
             <version>7.1.6.v20100715</version>
