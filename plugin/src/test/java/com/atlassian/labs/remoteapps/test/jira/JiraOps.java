@@ -5,6 +5,7 @@ import hudson.plugins.jira.soap.*;
 import org.apache.commons.lang.RandomStringUtils;
 
 import java.net.URL;
+import java.rmi.*;
 import java.util.Locale;
 
 public class JiraOps
@@ -65,5 +66,12 @@ public class JiraOps
                 {
                         new RemoteFieldValue("summary", new String[]{summary})
                 });
+    }
+
+    public void addComment(String issueKey, String body) throws java.rmi.RemoteException
+    {
+        RemoteComment comment = new RemoteComment();
+        comment.setBody(body);
+       soap.addComment(token, issueKey, comment);
     }
 }

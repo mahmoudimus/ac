@@ -4,6 +4,7 @@ import com.atlassian.jira.event.JiraEvent;
 import com.atlassian.jira.event.issue.IssueEvent;
 import com.atlassian.jira.event.type.EventType;
 import com.atlassian.jira.issue.Issue;
+import com.atlassian.jira.issue.comments.Comment;
 import com.google.common.collect.ImmutableMap;
 import org.ofbiz.core.entity.GenericEntityException;
 import org.ofbiz.core.entity.GenericValue;
@@ -35,6 +36,23 @@ public class IssueEventMapper extends JiraEventMapper
         {
             builder.put("updatedFields", changeGroupToMap(issueEvent.getChangeLog()));
         }
+        if (EventType.ISSUE_COMMENTED_ID.equals(issueEvent.getEventTypeId()) ||
+                EventType.ISSUE_COMMENT_EDITED_ID.equals(issueEvent.getEventTypeId()))
+        {
+            builder.put("comment", commentToMap(issueEvent.getComment()));
+        }
+        return builder.build();
+    }
+
+    private Map<String, Object> commentToMap(Comment comment)
+    {
+        ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();
+        builder.put("id", comment.getId());
+        builder.put("body", comment.getBody());
+        builder.put("author", comment.getAuthor());
+
+        // TODO: Consider adding additional data about the issue
+
         return builder.build();
     }
 

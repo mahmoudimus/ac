@@ -74,4 +74,22 @@ public class TestJiraWebHooks extends AbstractBrowserlessTest
             }
         });
     }
+
+    @Test
+    public void testIssueCommentedWebHookFired() throws Exception
+    {
+        runInRunner(baseUrl, "issue_commented", new WebHookTester()
+        {
+            @Override
+            public void test(WebHookWaiter waiter) throws Exception
+            {
+                String issueKey = jiraOps.createIssue(project.getKey(), "Test issue").getKey();
+                jiraOps.addComment(issueKey, "My comment");
+                WebHookBody body = waiter.waitForHook();
+                assertEquals(issueKey, body.find("issue/key"));
+                assertEquals("My comment", body.find("comment/body"));
+                assertEquals("admin", body.find("comment/author"));
+            }
+        });
+    }
 }
