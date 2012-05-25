@@ -43,7 +43,8 @@ public class IFrameViewProfilePanel implements CompatViewProfilePanel
         StringWriter writer = new StringWriter();
         try
         {
-            writer.write(iFrameRenderer.render(iFrameContext, user.getName()));
+            String remoteUser = user != null ? user.getName() : null;
+            writer.write(iFrameRenderer.render(iFrameContext, remoteUser));
         }
         catch (PermissionDeniedException ex)
         {

@@ -1,5 +1,6 @@
 package com.atlassian.labs.remoteapps.modules.jira.issuetab;
 
+import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.plugin.issuetabpanel.*;
 import com.atlassian.labs.remoteapps.api.PermissionDeniedException;
 import com.atlassian.labs.remoteapps.modules.IFrameRenderer;
@@ -58,8 +59,9 @@ public class IssueTabPage extends AbstractIssueTabPanel2
             {
                 Map<String,String[]> extraParams = newHashMap();
                 extraParams.put("ctx_issue_key", new String[]{request.issue().getKey()});
+                String remoteUser = request.isAnonymous() ? null : request.remoteUser().getName();
                 writer.write(iFrameRenderer.render(iFrameContext, "", extraParams,
-                        request.remoteUser().getName()));
+                        remoteUser));
             }
             catch (PermissionDeniedException ex)
             {

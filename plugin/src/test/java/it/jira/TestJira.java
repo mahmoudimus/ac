@@ -23,8 +23,10 @@ import org.junit.Test;
 import org.junit.rules.MethodRule;
 
 import java.rmi.RemoteException;
+import java.util.concurrent.Callable;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
 
 public class TestJira
 {
@@ -49,10 +51,14 @@ public class TestJira
     public void setUp() throws RemoteException, RemoteAuthenticationException
     {
         project = jiraOps.createProject();
-        product.visit(LoginPage.class).login(ADMIN, ADMIN, DashboardPage.class);
-        
+
     }
-    
+
+    private void loginAsAdmin()
+    {
+        product.visit(LoginPage.class).login(ADMIN, ADMIN, DashboardPage.class);
+    }
+
     @After
     public void tearDown() throws RemoteException
     {
@@ -60,43 +66,81 @@ public class TestJira
     }
 
     @Test
-	public void testViewIssuePageWithEmbeddedPanel() throws InterruptedException, RemoteException
+	public void testViewIssuePageWithEmbeddedPanel() throws Exception
     {
-        RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Test issue for panel");
-        JiraViewIssuePage viewIssuePage = product.visit(JiraViewIssuePage.class, issue.getKey(),
-                EMBEDDED_ISSUE_PANEL_ID);
-        assertEquals("Success", viewIssuePage.getMessage());
+        testLoggedInAndAnonymous(new Callable()
+        {
+            @Override
+            public Object call() throws Exception
+            {
+                RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Test issue for panel");
+                JiraViewIssuePage viewIssuePage = product.visit(JiraViewIssuePage.class,
+                        issue.getKey(),
+                        EMBEDDED_ISSUE_PANEL_ID);
+                assertEquals("Success", viewIssuePage.getMessage());
+                return null;
+            }
+        });
+
 	}
 
     @Test
-    public void testProjectTab() throws InterruptedException, RemoteException
+    public void testProjectTab() throws Exception
     {
-         RemoteAppEmbeddedTestPage page = product.visit(BrowseProjectPage.class, project.getKey())
-                              .openTab(JiraRemoteAppProjectTab.class)
-                              .getEmbeddedPage();
+        testLoggedInAndAnonymous(new Callable()
+        {
+            @Override
+            public Object call() throws Exception
+            {
+                RemoteAppEmbeddedTestPage page = product.visit(BrowseProjectPage.class,
+                        project.getKey())
+                        .openTab(JiraRemoteAppProjectTab.class)
+                        .getEmbeddedPage();
 
-        assertEquals("Success", page.getMessage());
+                assertEquals("Success", page.getMessage());
+                return null;
+            }
+        });
+
     }
 
     @Test
-    public void testViewIssueTab() throws InterruptedException, RemoteException
+    public void testViewIssueTab() throws Exception
     {
-        RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Test issue for tab");
-        JiraViewIssuePageWithRemoteAppIssueTab page = product.visit(JiraViewIssuePageWithRemoteAppIssueTab.class, issue.getKey());
-        assertEquals("Success", page.getMessage());
+        testLoggedInAndAnonymous(new Callable()
+        {
+            @Override
+            public Object call() throws Exception
+            {
+                RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Test issue for tab");
+                JiraViewIssuePageWithRemoteAppIssueTab page = product.visit(
+                        JiraViewIssuePageWithRemoteAppIssueTab.class, issue.getKey());
+                assertEquals("Success", page.getMessage());
+                return null;
+            }
+        });
     }
 
     @Test
     public void testSearchRequestViewPage() throws Exception
     {
-        RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Test issue for tab");
-        product.visit(AdvancedSearch.class)
-                .enterQuery("project = " + project.getKey())
-                .submit();
+        testLoggedInAndAnonymous(new Callable()
+        {
+            @Override
+            public Object call() throws Exception
+            {
+                RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Test issue for tab");
+                product.visit(AdvancedSearch.class)
+                        .enterQuery("project = " + project.getKey())
+                        .submit();
 
-        PlainTextView plainTextView = product.getPageBinder().bind(ViewChangingSearchResult.class)
-                .openView("Raw Keys", PlainTextView.class);
-        assertEquals(issue.getKey(), plainTextView.getContent());
+                PlainTextView plainTextView = product.getPageBinder().bind(
+                        ViewChangingSearchResult.class)
+                        .openView("Raw Keys", PlainTextView.class);
+                assertTrue(plainTextView.getContent().contains(issue.getKey()));
+                return null;
+            }
+        });
     }
 
     @Test(expected = HttpResponseException.class)
@@ -106,5 +150,13 @@ public class TestJira
                 "quoteUrl")
                 .addSearchRequestView("page", "Hello", "/page\"", "hello-world-page.mu")
                 .start();
+    }
+
+    private void testLoggedInAndAnonymous(Callable runnable) throws Exception
+    {
+        loginAsAdmin();
+        runnable.call();
+        logout();
+        runnable.call();
     }
 }

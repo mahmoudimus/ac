@@ -37,11 +37,14 @@ public class SearchPerformedEventMapper extends ConfluenceEventMapper
         }
 
         // Note: don't call the base implementation because we want to populate the 'user' parameter differently.
-        return ImmutableMap.<String, Object>of(
-                "timestamp", event.getTimestamp(),
-                "query", queryText,
-                "user", event.getUser().getName(),
-                "results", event.getNumberOfResults()
-        );
+        ImmutableMap.Builder<String,Object> builder = ImmutableMap.builder();
+        builder.put("timestamp", event.getTimestamp());
+        builder.put("query", queryText);
+        builder.put("results", event.getNumberOfResults());
+        if (event.getUser() != null)
+        {
+            builder.put("user", event.getUser().getName());
+        }
+        return builder.build();
     }
 }

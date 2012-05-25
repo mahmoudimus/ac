@@ -50,7 +50,9 @@ public class IFrameViewIssuePanel implements WebPanel
     {
         try
         {
-            writer.write(iFrameRenderer.render(iFrameContext, ((User)context.get("user")).getName()  ) );
+            User user = (User) context.get("user");
+            String remoteUser = user != null ? user.getName() : null;
+            writer.write(iFrameRenderer.render(iFrameContext, remoteUser) );
         }
         catch (PermissionDeniedException ex)
         {
