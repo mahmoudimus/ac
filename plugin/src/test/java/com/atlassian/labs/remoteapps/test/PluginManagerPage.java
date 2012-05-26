@@ -9,7 +9,7 @@ import org.openqa.selenium.WebElement;
 
 import javax.inject.Inject;
 
-import static com.atlassian.labs.remoteapps.installer.DefaultRemoteAppInstaller.calculatePluginName;
+import static com.atlassian.labs.remoteapps.installer.InstallerHelper.calculatePluginName;
 
 public class PluginManagerPage implements Page
 {

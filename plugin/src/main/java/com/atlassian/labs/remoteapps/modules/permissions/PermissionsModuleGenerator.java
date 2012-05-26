@@ -13,6 +13,7 @@ import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -116,7 +117,7 @@ public class PermissionsModuleGenerator implements WaitableRemoteModuleGenerator
     }
 
     @Override
-    public void validate(Element element, String registrationUrl, String username) throws PluginParseException
+    public void validate(Element element, URI registrationUrl, String username) throws PluginParseException
     {
         if (!settingsManager.isAllowDogfooding() && !element.elements().isEmpty() && !userManager.isSystemAdmin(username))
         {

@@ -17,6 +17,7 @@ import com.google.common.collect.ImmutableSet;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.net.URI;
 import java.util.Set;
 
 import static com.atlassian.labs.remoteapps.util.Dom4jUtils.getRequiredAttribute;
@@ -63,7 +64,7 @@ public abstract class AbstractPageModuleGenerator implements RemoteModuleGenerat
     }
 
     @Override
-    public void validate(Element element, String registrationUrl, String username) throws PluginParseException
+    public void validate(Element element, URI registrationUrl, String username) throws PluginParseException
     {
         getRequiredUriAttribute(element, "url");
     }

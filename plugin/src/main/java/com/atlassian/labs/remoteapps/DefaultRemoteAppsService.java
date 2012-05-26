@@ -4,6 +4,7 @@ import com.atlassian.labs.remoteapps.api.InstallationFailedException;
 import com.atlassian.labs.remoteapps.api.PermissionDeniedException;
 import com.atlassian.labs.remoteapps.api.RemoteAppsService;
 import com.atlassian.labs.remoteapps.installer.RemoteAppInstaller;
+import com.atlassian.labs.remoteapps.installer.SchemeDelegatingRemoteAppInstaller;
 import com.atlassian.labs.remoteapps.util.BundleUtil;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.PluginController;
@@ -24,7 +25,7 @@ import static com.atlassian.labs.remoteapps.util.RemoteAppManifestReader.isRemot
  */
 public class DefaultRemoteAppsService implements RemoteAppsService
 {
-    private final RemoteAppInstaller remoteAppInstaller;
+    private final SchemeDelegatingRemoteAppInstaller remoteAppInstaller;
     private final UserManager userManager;
     private final BundleContext bundleContext;
     private final PermissionManager permissionManager;
@@ -32,7 +33,7 @@ public class DefaultRemoteAppsService implements RemoteAppsService
     private final PluginAccessor pluginAccessor;
     private static final Logger log = LoggerFactory.getLogger(DefaultRemoteAppsService.class);
 
-    public DefaultRemoteAppsService(RemoteAppInstaller remoteAppInstaller, UserManager userManager,
+    public DefaultRemoteAppsService(SchemeDelegatingRemoteAppInstaller remoteAppInstaller, UserManager userManager,
             BundleContext bundleContext, PermissionManager permissionManager,
             PluginController pluginController,
             PluginAccessor pluginAccessor)
@@ -53,9 +54,10 @@ public class DefaultRemoteAppsService implements RemoteAppsService
     {
         validateCanInstall(username);
 
+        URI parsedRegistrationUri;
         try
         {
-            new URI(registrationUrl);
+            parsedRegistrationUri = new URI(registrationUrl);
         }
         catch (URISyntaxException e)
         {
@@ -63,7 +65,7 @@ public class DefaultRemoteAppsService implements RemoteAppsService
         }
         try
         {
-            String appKey = remoteAppInstaller.install(username, registrationUrl, registrationSecret,
+            String appKey = remoteAppInstaller.install(username, parsedRegistrationUri, registrationSecret,
                     stripUnknownModules, new RemoteAppInstaller.KeyValidator()
                {
                    @Override

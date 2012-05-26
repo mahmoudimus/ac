@@ -3,6 +3,7 @@ package com.atlassian.labs.remoteapps.modules.external;
 import com.atlassian.plugin.PluginParseException;
 import org.dom4j.Element;
 
+import java.net.URI;
 import java.util.Map;
 
 /**
@@ -23,7 +24,7 @@ public interface RemoteModuleGenerator extends SchemaDocumented
 
     RemoteModule generate(RemoteAppCreationContext ctx, Element element);
 
-    void validate(Element element, String registrationUrl, String username) throws PluginParseException;
+    void validate(Element element, URI registrationUrl, String username) throws PluginParseException;
 
     void generatePluginDescriptor(Element descriptorElement, Element pluginDescriptorRoot);
 }

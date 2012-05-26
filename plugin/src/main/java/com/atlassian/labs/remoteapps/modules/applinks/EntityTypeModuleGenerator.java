@@ -103,7 +103,7 @@ public class EntityTypeModuleGenerator implements WaitableRemoteModuleGenerator
     }
 
     @Override
-    public void validate(Element element, String registrationUrl, String username) throws PluginParseException
+    public void validate(Element element, URI registrationUrl, String username) throws PluginParseException
     {
     }
 

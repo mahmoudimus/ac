@@ -18,6 +18,16 @@ public class RemoteAppManifestReader
         return null;
     }
 
+    public static String getRegistrationUrl(Bundle bundle)
+    {
+        String header = (String) bundle.getHeaders().get("Remote-App");
+        if (header != null)
+        {
+            return OsgiHeaderUtil.parseHeader(header).get("installer").get("registration-url");
+        }
+        return null;
+    }
+
     public static boolean isRemoteApp(Bundle bundle)
     {
         return bundle.getHeaders().get("Remote-App") != null ||

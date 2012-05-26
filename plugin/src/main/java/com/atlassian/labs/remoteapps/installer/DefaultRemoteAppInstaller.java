@@ -1,8 +1,6 @@
 package com.atlassian.labs.remoteapps.installer;
 
-import com.atlassian.event.api.EventListener;
 import com.atlassian.event.api.EventPublisher;
-import com.atlassian.jira.plugin.searchrequestview.SearchRequestView;
 import com.atlassian.labs.remoteapps.DescriptorValidator;
 import com.atlassian.labs.remoteapps.ModuleGeneratorManager;
 import com.atlassian.labs.remoteapps.OAuthLinkManager;
@@ -10,8 +8,6 @@ import com.atlassian.labs.remoteapps.api.DescriptorGenerator;
 import com.atlassian.labs.remoteapps.api.InstallationFailedException;
 import com.atlassian.labs.remoteapps.api.PermissionDeniedException;
 import com.atlassian.labs.remoteapps.event.RemoteAppInstalledEvent;
-import com.atlassian.labs.remoteapps.event.RemoteAppStartFailedEvent;
-import com.atlassian.labs.remoteapps.event.RemoteAppStartedEvent;
 import com.atlassian.labs.remoteapps.modules.external.RemoteModuleGenerator;
 import com.atlassian.labs.remoteapps.modules.page.jira.JiraProfileTabModuleGenerator;
 import com.atlassian.labs.remoteapps.util.zip.ZipBuilder;
@@ -22,7 +18,6 @@ import com.atlassian.oauth.util.RSAKeys;
 import com.atlassian.plugin.*;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.net.*;
-import com.google.common.collect.ImmutableMap;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -53,19 +48,17 @@ import static com.atlassian.labs.remoteapps.util.ServletUtils.encodeGetUrl;
 @Component
 public class DefaultRemoteAppInstaller implements RemoteAppInstaller
 {
-    public static final int INSTALLATION_TIMEOUT = 10;
     private final ConsumerService consumerService;
     private final RequestFactory requestFactory;
     private final PluginController pluginController;
     private final ApplicationProperties applicationProperties;
-    private final ModuleGeneratorManager moduleGeneratorManager;
-    private final EventPublisher eventPublisher;
     private final DescriptorValidator descriptorValidator;
     private final PluginAccessor pluginAccessor;
     private final OAuthLinkManager oAuthLinkManager;
     private final FormatConverter formatConverter;
-    private final BundleContext bundleContext;
+    private final InstallerHelper installerHelper;
 
+    private final BundleContext bundleContext;
     private static final Logger log = LoggerFactory.getLogger(
             DefaultRemoteAppInstaller.class);
 
@@ -74,28 +67,25 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
             RequestFactory requestFactory,
             PluginController pluginController,
             ApplicationProperties applicationProperties,
-            ModuleGeneratorManager moduleGeneratorManager,
-            EventPublisher eventPublisher,
             DescriptorValidator descriptorValidator,
             PluginAccessor pluginAccessor,
             OAuthLinkManager oAuthLinkManager, FormatConverter formatConverter,
-            BundleContext bundleContext)
+            InstallerHelper installerHelper, BundleContext bundleContext)
     {
         this.consumerService = consumerService;
         this.requestFactory = requestFactory;
         this.pluginController = pluginController;
         this.applicationProperties = applicationProperties;
-        this.moduleGeneratorManager = moduleGeneratorManager;
-        this.eventPublisher = eventPublisher;
         this.descriptorValidator = descriptorValidator;
         this.pluginAccessor = pluginAccessor;
         this.oAuthLinkManager = oAuthLinkManager;
         this.formatConverter = formatConverter;
+        this.installerHelper = installerHelper;
         this.bundleContext = bundleContext;
     }
 
     @Override
-    public String install(final String username, final String registrationUrl,
+    public String install(final String username, final URI registrationUrl,
             String registrationSecret, final boolean stripUnknownModules, final KeyValidator keyValidator) throws
                                                                         PermissionDeniedException
     {
@@ -117,8 +107,8 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
         </ul>
          */
         final Consumer consumer = consumerService.getConsumer();
-        final URI registrationUri = URI.create(
-                encodeGetUrl(registrationUrl, new HashMap<String,String>() {{
+        final URI registrationUriWithParams = URI.create(
+                encodeGetUrl(registrationUrl.toString(), new HashMap<String,String>() {{
                     put("key", consumer.getKey());
                     put("publicKey", RSAKeys.toPemEncoding(consumer.getPublicKey()));
                     put("serverVersion", applicationProperties.getBuildNumber());
@@ -130,7 +120,7 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
 
         log.info("Retrieving descriptor from '{}' by user '{}'", registrationUrl, username);
         Request request = requestFactory.createRequest(Request.MethodType.GET,
-                registrationUri.toString());
+                registrationUriWithParams.toString());
 
         /*!
         The registration secret is passed via the Authorization header using a custom scheme called
@@ -179,7 +169,7 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
                             String descriptorText = response.getResponseBodyAsString();
                             String contentType = response.getHeader("Content-Type");
                             Document document = formatConverter.toDocument(
-                                    registrationUrl, contentType, descriptorText);
+                                    registrationUrl.toString(), contentType, descriptorText);
                             
                            /*!
                            If the 'stripUnknownModules' flag is set to true, all unknown modules
@@ -190,7 +180,7 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
                             */
                             if (stripUnknownModules)
                             {
-                                detachUnknownModuleElements(document);
+                                installerHelper.detachUnknownModuleElements(document);
                             }
 
                            /*!
@@ -253,25 +243,9 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
                              an administrator</li>
                            </ul>
                             */
-                            final Properties i18nMessages = new Properties();
-                            try
-                            {
-                                moduleGeneratorManager.getApplicationTypeModuleGenerator()
-                                        .validate(root, registrationUrl, username);
-
-                                ValidateModuleHandler moduleValidator = new ValidateModuleHandler(
-                                        registrationUrl,
-                                        username,
-                                        i18nMessages,
-                                        pluginKey);
-                                moduleGeneratorManager.processDescriptor(root, moduleValidator);
-                            }
-                            catch (PluginParseException ex)
-                            {
-                                throw new InstallationFailedException(
-                                        "Validation of the descriptor failed: " + ex.getMessage(),
-                                        ex);
-                            }
+                            final Properties i18nMessages = installerHelper
+                                    .validateAndGenerateMessages(root, pluginKey, registrationUrl,
+                                            username);
 
                             /*!
                             Finally, the descriptor XML is transformed into an Atlassian OSGi
@@ -279,7 +253,7 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
                              contents of the plugin descriptor are derived from the remote app
                              descriptor.
                             */
-                            Document pluginXml = generatePluginDescriptor(username,
+                            Document pluginXml = installerHelper.generatePluginDescriptor(username,
                                     registrationUrl, document);
 
 
@@ -298,55 +272,15 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
                             4. i18n.properties - An internationalization properties file containing
                                keys extracted out of the app descriptor XML.
                              */
-                            JarPluginArtifact jar = createJarPluginArtifact(pluginKey,
-                                    registrationUri.getHost(), pluginXml, document, i18nMessages);
+                            JarPluginArtifact jar = installerHelper.createJarPluginArtifact(
+                                    pluginKey,
+                                    registrationUrl.getHost(), pluginXml, document, i18nMessages);
 
                             /*!
                             The registration process should only return once the Remote App has
                             successfully installed and started.
                             */
-                            final CountDownLatch latch = new CountDownLatch(1);
-                            StartedListener startListener = new StartedListener(pluginKey, latch);
-                            eventPublisher.register(startListener);
-
-
-                            try
-                            {
-                                pluginController.installPlugins(jar);
-
-
-                                if (!latch.await(INSTALLATION_TIMEOUT, TimeUnit.SECONDS))
-                                {
-                                    Exception cause = startListener.getFailedCause();
-                                    if (cause != null)
-                                    {
-                                        log.info("Remote app '{}' was not started successfully and is "
-                                                + "disabled due to: {}", pluginKey,
-                                                cause);
-                                        throw new InstallationFailedException("Error starting app: "
-                                                + cause.getMessage(),
-                                                cause);
-                                    }
-                                    else
-                                    {
-                                        log.info("Remote app '{}' was not started successfully in "
-                                                + "the expected {} seconds.", pluginKey, INSTALLATION_TIMEOUT);
-                                        throw new InstallationFailedException("Timeout starting app");
-                                    }
-                                }
-                            }
-                            catch (InterruptedException e)
-                            {
-                                // ignore
-                            }
-                            finally
-                            {
-                                eventPublisher.unregister(startListener);
-                            }
-
-                            log.info("Registered app '{}' by '{}'", pluginKey, username);
-
-                            eventPublisher.publish(new RemoteAppInstalledEvent(pluginKey));
+                            installerHelper.installRemoteAppPlugin(username, pluginKey, jar);
 
                             return pluginKey;
                         }
@@ -379,177 +313,5 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
             throw new InstallationFailedException(ex);
         }
         /*!-helper methods */
-    }
-
-    private void detachUnknownModuleElements(Document document)
-    {
-        Set<String> validModuleTypes = moduleGeneratorManager
-                .getModuleGeneratorKeys();
-        for (Element child : (List<Element>)document.getRootElement().elements())
-        {
-            if (!validModuleTypes.contains(child.getName()))
-            {
-                log.debug("Stripping unknown module '{}'", child.getName());
-                child.detach();
-            }
-        }
-    }
-
-    private JarPluginArtifact createJarPluginArtifact(final String pluginKey,
-            String host, final Document pluginXml, final Document appXml, final Properties props)
-    {
-        return new JarPluginArtifact(
-                ZipBuilder.buildZip("install-" + host, new ZipHandler()
-                {
-                    @Override
-                    public void build(ZipBuilder builder) throws IOException
-                    {
-                        attachResources(pluginKey, props, pluginXml, builder);
-                        builder.addFile("atlassian-plugin.xml", pluginXml);
-                        builder.addFile("META-INF/spring/remoteapps-loader.xml", getClass().getResourceAsStream("remoteapps-loader.xml"));
-                        builder.addFile("atlassian-remote-app.xml", appXml);
-                    }
-                }));
-    }
-
-    private static void attachResources(String pluginKey, Properties props,
-            Document pluginXml, ZipBuilder builder
-    ) throws IOException
-    {
-        final StringWriter writer = new StringWriter();
-        try
-        {
-            props.store(writer, "");
-        }
-        catch (IOException e)
-        {
-            // shouldn't happen
-            throw new RuntimeException(e);
-        }
-
-        pluginXml.getRootElement().addElement("resource")
-                .addAttribute("type", "i18n")
-                .addAttribute("name", "i18n")
-                .addAttribute("location", pluginKey.hashCode() + ".i18n");
-
-        builder.addFile(pluginKey.hashCode() + "/i18n.properties",
-                writer.toString());
-    }
-
-    private Document generatePluginDescriptor(String username,
-            String registrationUrl, Document doc)
-    {
-        Element oldRoot = doc.getRootElement();
-
-        final Element plugin = DocumentHelper.createElement("atlassian-plugin");
-        plugin.addAttribute("plugins-version", "2");
-        plugin.addAttribute("key", getRequiredAttribute(oldRoot, "key"));
-        plugin.addAttribute("name", calculatePluginName(getRequiredAttribute(oldRoot, "name")));
-        Element info = plugin.addElement("plugin-info");
-        info.addElement("version").setText(
-                getRequiredAttribute(oldRoot, "version"));
-
-        moduleGeneratorManager.processDescriptor(oldRoot,
-                new ModuleGeneratorManager.ModuleHandler()
-                {
-                    @Override
-                    public void handle(
-                            Element element,
-                            RemoteModuleGenerator generator)
-                    {
-                        generator.generatePluginDescriptor(
-                                element,
-                                plugin);
-                    }
-                });
-
-        if (oldRoot.element("vendor") != null)
-        {
-            info.add(oldRoot.element("vendor").detach());
-        }
-        Element instructions = info.addElement("bundle-instructions");
-        instructions
-                .addElement("Import-Package")
-                .setText(
-                        JiraProfileTabModuleGenerator.class.getPackage().getName() +
-                                ";resolution:=optional," +
-                                "com.atlassian.jira.plugin.searchrequestview;resolution:=optional," +                                     DescriptorGenerator.class.getPackage().getName());
-        instructions.addElement("Remote-App").
-                setText("installer;user=\"" + username + "\";date=\""
-                        + System.currentTimeMillis() + "\"" +
-                        ";registration-url=\"" + registrationUrl + "\"");
-
-        Document appDoc = DocumentHelper.createDocument();
-        appDoc.setRootElement(plugin);
-
-        return appDoc;
-    }
-
-    // fixme: this is temporary until UPM supports clear designation of remote apps
-    public static String calculatePluginName(String name)
-    {
-        return name + " (Remote App)";
-    }
-
-    public static class StartedListener
-    {
-        private final String pluginKey;
-        private final CountDownLatch latch;
-
-        private volatile Exception cause;
-
-        public StartedListener(String pluginKey, CountDownLatch latch)
-        {
-            this.pluginKey = pluginKey;
-            this.latch = latch;
-        }
-
-        @EventListener
-        public void onAppStart(RemoteAppStartedEvent event)
-        {
-            if (event.getRemoteAppKey().equals(pluginKey))
-            {
-                latch.countDown();
-            }
-        }
-
-        @EventListener
-        public void onAppStartFailed(RemoteAppStartFailedEvent event)
-        {
-            if (event.getRemoteAppKey().equals(pluginKey))
-            {
-                cause = event.getCause();
-                latch.countDown();
-            }
-        }
-        public Exception getFailedCause()
-        {
-            return cause;
-        }
-    }
-
-    private class ValidateModuleHandler implements ModuleGeneratorManager.ModuleHandler
-    {
-        private final String registrationUrl;
-        private final String username;
-        private final Properties props;
-        private final String pluginKey;
-
-        public ValidateModuleHandler(String registrationUrl, String username,
-                Properties props,
-                String pluginKey)
-        {
-            this.registrationUrl = registrationUrl;
-            this.username = username;
-            this.props = props;
-            this.pluginKey = pluginKey;
-        }
-
-        @Override
-        public void handle(Element element, RemoteModuleGenerator generator)
-        {
-            generator.validate(element, registrationUrl, username);
-            props.putAll(generator.getI18nMessages(pluginKey, element));
-        }
     }
 }

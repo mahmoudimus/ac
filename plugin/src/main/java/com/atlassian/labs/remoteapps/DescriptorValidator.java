@@ -25,6 +25,7 @@ import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 import java.io.IOException;
 import java.io.StringReader;
+import java.net.URI;
 import java.net.URL;
 import java.util.*;
 
@@ -57,13 +58,13 @@ public class DescriptorValidator
         this.applicationProperties = applicationProperties;
     }
 
-    public Document parseAndValidate(String url, String descriptorXml)
+    public Document parseAndValidate(URI url, String descriptorXml)
     {
         SAXReader reader = XmlUtils.createSecureSaxReader();
         try
         {
             InputSource source = new InputSource(new StringReader(descriptorXml));
-            source.setSystemId(url);
+            source.setSystemId(url.toString());
             source.setEncoding("UTF-8");
             Document document = reader.read(source);
             document.accept(new NamespaceCleaner());
@@ -76,7 +77,7 @@ public class DescriptorValidator
         }
     }
 
-    public void validate(String url, Document document)
+    public void validate(URI url, Document document)
     {
         SchemaFactory schemaFactory = SchemaFactory
                 .newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
@@ -97,7 +98,7 @@ public class DescriptorValidator
         try
         {
             DocumentSource source = new DocumentSource(document);
-            source.setSystemId(url);
+            source.setSystemId(url.toString());
             validator.validate(source);
         }
         catch (SAXException e)

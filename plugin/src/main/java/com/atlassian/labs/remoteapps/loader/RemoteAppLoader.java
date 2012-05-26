@@ -28,6 +28,7 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -122,7 +123,7 @@ public class RemoteAppLoader implements DisposableBean
             bundle will validated.  This validation involves processing the descriptor against the
             generated XML Schema for this Atlassian application instance.
              */
-            descriptorValidator.validate("atlassian-remote-app.xml", appDescriptor);
+            descriptorValidator.validate(URI.create("atlassian-remote-app.xml"), appDescriptor);
 
             /*!
             ### Step 2 - Remote Module Registration

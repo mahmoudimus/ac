@@ -138,7 +138,7 @@ public class SearchRequestViewModuleGenerator implements RemoteModuleGenerator
     }
 
     @Override
-    public void validate(Element element, String registrationUrl, String username) throws
+    public void validate(Element element, URI registrationUrl, String username) throws
             PluginParseException
     {
         getRequiredUriAttribute(element, "url");

@@ -253,7 +253,7 @@ public abstract class AbstractMacroModuleGenerator implements RemoteModuleGenera
     }
 
     @Override
-    public void validate(Element element, String registrationUrl, String username) throws
+    public void validate(Element element, URI registrationUrl, String username) throws
                                                                                    PluginParseException
     {
         Element root = element.getParent();
