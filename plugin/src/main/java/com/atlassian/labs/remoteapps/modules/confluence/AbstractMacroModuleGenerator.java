@@ -15,7 +15,6 @@ import com.atlassian.labs.remoteapps.modules.page.IFrameContext;
 import com.atlassian.labs.remoteapps.modules.page.IFramePageServlet;
 import com.atlassian.labs.remoteapps.modules.page.PageInfo;
 import com.atlassian.labs.remoteapps.product.confluence.ConfluenceProductAccessor;
-import com.atlassian.labs.remoteapps.util.Dom4jUtils;
 import com.atlassian.labs.remoteapps.util.uri.Uri;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.PluginAccessor;
@@ -28,11 +27,9 @@ import com.atlassian.plugin.web.conditions.AlwaysDisplayCondition;
 import com.atlassian.plugin.webresource.WebResourceModuleDescriptor;
 import com.atlassian.sal.api.component.ComponentLocator;
 import com.atlassian.sal.api.user.UserManager;
-import com.atlassian.templaterenderer.TemplateRenderer;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang.StringUtils;
-import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 
@@ -153,7 +150,11 @@ public abstract class AbstractMacroModuleGenerator implements RemoteModuleGenera
         boolean isFeaturedMacro = Boolean.valueOf(getOptionalAttribute(config, "featured", false));
         if (isFeaturedMacro)
         {
-            descriptors.add(createFeaturedMacroDescriptor(ctx, key, name));
+            descriptors.add(createFeaturedMacroDescriptor(ctx, key, entity));
+            if (icon != null)
+            {
+                descriptors.add(createFeaturedIconWebResource(ctx, key, icon));
+            }
         }
 
         boolean hasCustomEditor = config.element("macro-editor") != null;
@@ -196,21 +197,27 @@ public abstract class AbstractMacroModuleGenerator implements RemoteModuleGenera
 
         // Generate a new web-resource module descriptor with the necessary JavaScript to configure the custom macro editor
         // in the Confluence editor.
-        ModuleDescriptor jsDescriptor = createWebResourceModuleDescriptor(ctx, macroEditor, macroKey,  macroName, localUrl);
+        ModuleDescriptor jsDescriptor = createCustomEditorWebResource(ctx, macroEditor, macroKey,
+                macroName, localUrl);
 
         return Lists.newArrayList(jsDescriptor, iFrameServlet);
     }
 
-    private ModuleDescriptor createFeaturedMacroDescriptor(final RemoteAppCreationContext ctx, String macroKey, String macroName)
+    private ModuleDescriptor createFeaturedMacroDescriptor(final RemoteAppCreationContext ctx, String macroKey, Element macroConfig)
     {
-        // Create XML config fragment for this web-item
+        String name = macroConfig.attributeValue("name");
         Element webItem = DocumentHelper.createDocument().addElement("web-item")
-                .addAttribute("name", "Insert " + macroName); // TODO: Remove hard-coded English
+                .addAttribute("name", name)
+                .addAttribute("key", "editor-featured-macro-" + macroKey)
+                .addAttribute("section", "system.editor.featured.macros.default")
+                .addElement("label")
+                    .addText(name).getParent()
+                .addElement("link")
+                    .addAttribute("linkId", macroKey).getParent();
 
-        webItem.addElement("link")
-               .addAttribute("linkId", macroKey);
+        webItemCreator.convertIcon(ctx, macroConfig, webItem);
 
-        return webItemCreator.createWebItemDescriptor(ctx, webItem, "editor-featured-macro-" + macroKey, "", new AlwaysDisplayCondition(), "");
+        return webItemCreator.createWebItemDescriptor(ctx, new AlwaysDisplayCondition(), webItem);
     }
 
     private ServletModuleDescriptor createMacroEditorServletDescriptor(final RemoteAppCreationContext ctx,
@@ -270,7 +277,9 @@ public abstract class AbstractMacroModuleGenerator implements RemoteModuleGenera
         // no-op
     }
 
-    private ModuleDescriptor createWebResourceModuleDescriptor(RemoteAppCreationContext ctx, Element macroEditorConfig, String macroKey, String macroName, String customEditorLocalUrl)
+    private ModuleDescriptor createCustomEditorWebResource(RemoteAppCreationContext ctx,
+            Element macroEditorConfig, String macroKey, String macroName,
+            String customEditorLocalUrl)
     {
         Element webResource = DocumentHelper.createDocument()
                                 .addElement("web-resource")
@@ -278,8 +287,8 @@ public abstract class AbstractMacroModuleGenerator implements RemoteModuleGenera
 
         webResource.addElement("resource")
                         .addAttribute("type", "download")
-                        .addAttribute("name", macroKey + ".js")
-                        .addAttribute("location", macroKey + ".js");
+                        .addAttribute("name", "macro-override.js")
+                        .addAttribute("location", "js/confluence/macro/macro-override.js");
 
         webResource.addElement("dependency")
                         .setText("confluence.web.resources:ajs");
@@ -290,12 +299,62 @@ public abstract class AbstractMacroModuleGenerator implements RemoteModuleGenera
         Element transformation = webResource.addElement("transformation")
                                                 .addAttribute("extension", "js");
 
-        Element transformer = transformation.addElement("transformer")
-                                                .addAttribute("key", "macroEditorTransformer")
-                                                .addAttribute("url", "/plugins/servlet" + customEditorLocalUrl)
-                                                .addAttribute("name", macroName);
-        copyOptionalAttribute(macroEditorConfig, transformer, "width");
-        copyOptionalAttribute(macroEditorConfig, transformer, "height");
+        transformation
+                .addElement("transformer")
+                    .addAttribute("key", "macroVariableTransformer")
+                    .addElement("var")
+                        .addAttribute("name", "MACRONAME")
+                        .addAttribute("value", macroKey).getParent()
+                    .addElement("var")
+                        .addAttribute("name", "URL")
+                        .addAttribute("value", "/plugins/servlet" + customEditorLocalUrl).getParent()
+                    .addElement("var")
+                        .addAttribute("name", "WIDTH")
+                        .addAttribute("value", getOptionalAttribute(macroEditorConfig, "width", "")).getParent()
+                    .addElement("var")
+                        .addAttribute("name", "HEIGHT")
+                        .addAttribute("value", getOptionalAttribute(macroEditorConfig, "height", "")).getParent()
+                    .addElement("var")
+                        .addAttribute("name", "EDIT_TITLE")
+                        .addAttribute("value", macroName)
+                        .addAttribute("i18n-key", "macro.browser.edit.macro.title").getParent()
+                    .addElement("var")
+                        .addAttribute("name", "INSERT_TITLE")
+                        .addAttribute("value", macroName)
+                        .addAttribute("i18n-key", "macro.browser.insert.macro.title").getParent();
+
+        ModuleDescriptor jsDescriptor = new WebResourceModuleDescriptor(hostContainer);
+        jsDescriptor.init(ctx.getPlugin(), webResource);
+
+        return jsDescriptor;
+    }
+
+    private ModuleDescriptor createFeaturedIconWebResource(RemoteAppCreationContext ctx,
+            String macroKey, URI iconUrl)
+    {
+        Element webResource = DocumentHelper.createDocument()
+                .addElement("web-resource")
+                .addAttribute("key", macroKey + "-featured-macro-resources");
+
+        webResource.addElement("resource")
+                .addAttribute("type", "download")
+                .addAttribute("name", macroKey + "-icon.css")
+                .addAttribute("location", "css/confluence/macro/featured-macro-icon.css");
+
+        webResource.addElement("context")
+                .setText("editor");
+
+        Element transformation = webResource.addElement("transformation")
+                .addAttribute("extension", "css");
+
+        transformation.addElement("transformer")
+                .addAttribute("key", "macroVariableTransformer")
+                .addElement("var")
+                    .addAttribute("name", "KEY")
+                    .addAttribute("value", macroKey).getParent()
+                .addElement("var")
+                    .addAttribute("name", "ICON_URL")
+                    .addAttribute("value", ctx.getApplicationType().getDefaultDetails().getDisplayUrl() + iconUrl.toString()).getParent();
 
         ModuleDescriptor jsDescriptor = new WebResourceModuleDescriptor(hostContainer);
         jsDescriptor.init(ctx.getPlugin(), webResource);

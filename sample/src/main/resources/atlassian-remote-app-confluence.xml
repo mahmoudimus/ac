@@ -29,7 +29,7 @@
 
     <profile-page key="remoteAppProfile" name="Remote App app1 Profile" url="/myAdmin" />
 
-    <macro key="app1-macro" name="Remote App app1 Macro" url="/myMacro" icon-url="/sandcastles.jpg" output-type="block" body-type="rich-text">
+    <macro key="app1-macro" name="Remote App app1 Macro" url="/myMacro" icon-url="/sandcastles.jpg" output-type="block" body-type="rich-text" featured="true">
         <description>Example macro</description>
         <category name="development" />
         <macro-editor width="600" height="600" url="/myMacroEditor" />

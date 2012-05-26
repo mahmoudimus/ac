@@ -8,7 +8,7 @@ import org.junit.Test;
 import java.io.IOException;
 
 import static com.atlassian.labs.remoteapps.test.Utils.loadResourceAsString;
-import static com.atlassian.labs.remoteapps.util.Dom4jUtils.printDocument;
+import static com.atlassian.labs.remoteapps.util.Dom4jUtils.printNode;
 import static com.google.common.collect.Sets.newHashSet;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -33,7 +33,7 @@ public class TestFormatConverter
                 getClass(), "valid.yaml"));
         Document docFromXml = formatConverter.toDocument("urn:foo", "text/xml",
                 loadResourceAsString(getClass(), "valid.xml"));
-        assertEquals(printDocument(docFromXml), printDocument(docFromYaml));
+        assertEquals(printNode(docFromXml), printNode(docFromYaml));
     }
 
     @Test
@@ -43,6 +43,6 @@ public class TestFormatConverter
                 getClass(), "valid.json"));
         Document docFromXml = formatConverter.toDocument("urn:foo", "text/xml",
                 loadResourceAsString(getClass(), "valid.xml"));
-        assertEquals(printDocument(docFromXml), printDocument(docFromYaml));
+        assertEquals(printNode(docFromXml), printNode(docFromYaml));
     }
 }

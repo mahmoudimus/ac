@@ -165,7 +165,7 @@ public class DescriptorValidator
             addSchemaDocumentation(module, generator);
         }
 
-        return printDocument(root.getDocument());
+        return printNode(root.getDocument());
     }
 
     private void processIncludes(Document doc, Set<String> includedDocIds)

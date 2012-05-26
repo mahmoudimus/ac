@@ -15,12 +15,11 @@ import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
 
 import java.io.StringReader;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static com.atlassian.labs.remoteapps.util.Dom4jUtils.printDocument;
+import static com.atlassian.labs.remoteapps.util.Dom4jUtils.printNode;
 
 @Component
 public class FormatConverter
@@ -87,7 +86,7 @@ public class FormatConverter
         }
         if (log.isDebugEnabled())
         {
-            log.debug("Transformed YAML to\n" + printDocument(doc));
+            log.debug("Transformed YAML to\n" + printNode(doc));
         }
         return doc;
     }

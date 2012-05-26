@@ -3,10 +3,7 @@ package it.confluence;
 import com.atlassian.labs.remoteapps.test.HtmlDumpRule;
 import com.atlassian.labs.remoteapps.test.OAuthUtils;
 import com.atlassian.labs.remoteapps.test.OwnerOfTestedProduct;
-import com.atlassian.labs.remoteapps.test.confluence.ConfluenceCounterMacroPage;
-import com.atlassian.labs.remoteapps.test.confluence.ConfluenceMacroPage;
-import com.atlassian.labs.remoteapps.test.confluence.ConfluenceOps;
-import com.atlassian.labs.remoteapps.test.confluence.ConfluencePageMacroPage;
+import com.atlassian.labs.remoteapps.test.confluence.*;
 import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
@@ -27,8 +24,15 @@ import static org.junit.Assert.assertTrue;
 
 public class TestConfluence
 {
-    private static TestedProduct<WebDriverTester> product = OwnerOfTestedProduct.INSTANCE;
-    private static ConfluenceOps confluenceOps = new ConfluenceOps(product.getProductInstance().getBaseUrl());
+
+    private static final TestedProduct<WebDriverTester> product;
+    private static final ConfluenceOps confluenceOps;
+    static
+    {
+        System.setProperty("testedProductClass", FixedConfluenceTestedProduct.class.getName());
+        product = OwnerOfTestedProduct.INSTANCE;
+        confluenceOps = new ConfluenceOps(product.getProductInstance().getBaseUrl());
+    }
 
     @Rule
     public MethodRule rule = new HtmlDumpRule(product.getTester().getDriver());

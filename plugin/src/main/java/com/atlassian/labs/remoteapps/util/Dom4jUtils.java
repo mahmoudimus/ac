@@ -3,10 +3,10 @@ package com.atlassian.labs.remoteapps.util;
 import com.atlassian.labs.remoteapps.modules.external.SchemaDocumented;
 import com.atlassian.plugin.PluginParseException;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
+import org.dom4j.Node;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
@@ -102,7 +102,7 @@ public class Dom4jUtils
         return source;
     }
 
-    public static String printDocument(Document document)
+    public static String printNode(Node document)
     {
         StringWriter writer = new StringWriter();
         XMLWriter xmlWriter = new XMLWriter(writer, OutputFormat.createPrettyPrint());
@@ -112,7 +112,7 @@ public class Dom4jUtils
         }
         catch (IOException e)
         {
-            throw new IllegalArgumentException("Unable to write document", e);
+            throw new IllegalArgumentException("Unable to write node", e);
         }
         return writer.toString();
     }

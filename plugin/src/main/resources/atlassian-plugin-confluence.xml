@@ -34,7 +34,7 @@
         <label>Remote Apps</label>
     </web-section>
 
-    <web-resource-transformer key="macroEditorTransformer" class="com.atlassian.labs.remoteapps.modules.confluence.MacroEditorInjectorTransformer"/>
+    <web-resource-transformer key="macroVariableTransformer" class="com.atlassian.labs.remoteapps.modules.confluence.MacroVariableInjectorTransformer"/>
 
     <rest key="rest-confluence" path="/remoteapps" version="1">
         <dispatcher>REQUEST</dispatcher>

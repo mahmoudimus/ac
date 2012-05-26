@@ -112,6 +112,7 @@
                         </Import-Package>
                         <Remote-App>true</Remote-App>
                     </instructions>
+                    <skipManifestValidation>true</skipManifestValidation>
                 </configuration>
             </plugin>
         </plugins>

@@ -1,0 +1,4 @@
+#insert-menu .macro-%%KEY%% .icon {
+    background-image: url(%%ICON_URL%%);
+    background-size:16px 16px;
+}
