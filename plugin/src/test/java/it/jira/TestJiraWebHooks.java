@@ -5,6 +5,7 @@ import com.atlassian.labs.remoteapps.test.jira.JiraOps;
 import com.atlassian.labs.remoteapps.test.webhook.WebHookBody;
 import com.atlassian.labs.remoteapps.test.webhook.WebHookTester;
 import com.atlassian.labs.remoteapps.test.webhook.WebHookWaiter;
+import com.google.common.collect.ImmutableMap;
 import hudson.plugins.jira.soap.RemoteProject;
 import it.AbstractBrowserlessTest;
 import org.junit.After;
@@ -66,7 +67,9 @@ public class TestJiraWebHooks extends AbstractBrowserlessTest
             public void test(WebHookWaiter waiter) throws Exception
             {
                 String issueKey = jiraOps.createIssue(project.getKey(), "Test issue").getKey();
-                jiraOps.updateIssueSummary(issueKey, "New Summary");
+                jiraOps.updateIssue(issueKey, ImmutableMap.of(
+                        "summary", "New Summary",
+                        "description", "foo"));
                 WebHookBody body = waiter.waitForHook();
                 assertEquals(issueKey, body.find("issue/key"));
                 assertEquals("Test issue", body.find("updatedFields/summary/oldValue"));

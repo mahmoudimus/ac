@@ -6,7 +6,11 @@ import org.apache.commons.lang.RandomStringUtils;
 
 import java.net.URL;
 import java.rmi.*;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+
+import static com.google.common.collect.Lists.newArrayList;
 
 public class JiraOps
 {
@@ -59,13 +63,15 @@ public class JiraOps
         return soap.createIssue(token, issue);
     }
 
-    public RemoteIssue updateIssueSummary(String issueKey, String summary) throws
+    public RemoteIssue updateIssue(String issueKey, Map<String,String> fields) throws
             java.rmi.RemoteException
     {
-        return soap.updateIssue(token, issueKey, new RemoteFieldValue[]
-                {
-                        new RemoteFieldValue("summary", new String[]{summary})
-                });
+        List<RemoteFieldValue> values = newArrayList();
+        for (Map.Entry<String,String> entry : fields.entrySet())
+        {
+            values.add(new RemoteFieldValue(entry.getKey(), new String[]{entry.getValue()}));
+        }
+        return soap.updateIssue(token, issueKey, values.toArray(new RemoteFieldValue[values.size()]));
     }
 
     public void addComment(String issueKey, String body) throws java.rmi.RemoteException

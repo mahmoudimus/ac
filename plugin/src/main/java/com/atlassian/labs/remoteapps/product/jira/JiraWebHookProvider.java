@@ -25,7 +25,9 @@ public class JiraWebHookProvider implements WebHookProvider
     private Map<Long, String> buildIdentifierByEventTypeMap()
     {
         ImmutableMap.Builder<Long, String> builder = ImmutableMap.builder();
+        // may not ever be fired, seems to be treated as an update internally
         builder.put(EventType.ISSUE_ASSIGNED_ID, "issue_assigned");
+
         builder.put(EventType.ISSUE_CLOSED_ID, "issue_closed");
         builder.put(EventType.ISSUE_CREATED_ID, "issue_created");
         builder.put(EventType.ISSUE_REOPENED_ID, "issue_reopened");

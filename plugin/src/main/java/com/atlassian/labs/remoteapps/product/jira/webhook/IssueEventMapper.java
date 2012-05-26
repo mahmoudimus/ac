@@ -39,8 +39,7 @@ public class IssueEventMapper extends JiraEventMapper
         {
             builder.put("updatedFields", changeGroupToMap(issueEvent.getChangeLog()));
         }
-        if (EventType.ISSUE_COMMENTED_ID.equals(issueEvent.getEventTypeId()) ||
-                EventType.ISSUE_COMMENT_EDITED_ID.equals(issueEvent.getEventTypeId()))
+        if (issueEvent.getComment() != null)
         {
             builder.put("comment", commentToMap(issueEvent.getComment()));
         }
@@ -67,8 +66,8 @@ public class IssueEventMapper extends JiraEventMapper
             for (GenericValue changeItem : changeLog.getRelated("ChildChangeItem"))
             {
                 builder.put(changeItem.get("field").toString(), ImmutableMap.of(
-                        "oldValue", changeItem.get("oldstring"),
-                        "newValue", changeItem.get("newstring")
+                        "oldValue", getValueOrBlank(changeItem, "oldstring"),
+                        "newValue", getValueOrBlank(changeItem, "newstring")
                         ));
             }
         }
@@ -77,6 +76,12 @@ public class IssueEventMapper extends JiraEventMapper
             log.warn("Error serializing updated event: "+e, e);
         }
         return builder.build();
+    }
+
+    private String getValueOrBlank(GenericValue gv, String name)
+    {
+        Object value = gv.get(name);
+        return value != null ? value.toString() : "";
     }
 
     private static Map<String, Object> issueToMap(Issue issue)
