@@ -25,11 +25,10 @@ var RemoteApps = RemoteApps || {};
      * which the request to the Remote App to be signed with outgoing OAuth credentials.
      *
      * @param contentUrl The URL (relative to the Atlassian app root) that will retrieve the content to display,
-     *                   eg. "/confluence/plugins/servlet/remoteapps/app-key/macro".
+     *                   eg. "/plugins/servlet/remoteapps/app-key/macro".
      * @param options Options to configure the behaviour and appearance of the dialog.
      */
-    function makeDialog(contentUrl, options)
-    {
+    function makeDialog(contentUrl, options) {
         var window$ = $(window);
         var defaultOptions = {
             /**
