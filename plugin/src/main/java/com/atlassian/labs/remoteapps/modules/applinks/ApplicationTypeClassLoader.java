@@ -26,12 +26,17 @@ public class ApplicationTypeClassLoader extends ClassLoader
 
     private String appKeyToClassName(String key)
     {
-        return "generatedApplicationType/" + key + "/_type";
+        return "generatedApplicationType/" + makeClassNameSafe(key) + "/_type";
     }
 
-    private String typeIdToManifestProducerClassName(String typeId)
+    private String typeIdToManifestProducerClassName(String key)
     {
-        return "generatedManifestProducer/" + typeId + "/_manifest";
+        return "generatedManifestProducer/" + makeClassNameSafe(key) + "/_manifest";
+    }
+
+    private String makeClassNameSafe(String value)
+    {
+        return value.replace('.', '_');
     }
 
     public ApplicationTypeClassLoader()
@@ -56,7 +61,7 @@ public class ApplicationTypeClassLoader extends ClassLoader
         }
     }
 
-    public Class<? extends RemoteManifestProducer> getManifestProducer(NonAppLinksApplicationType applicationType)
+    public Class<? extends RemoteManifestProducer> getManifestProducer(RemoteAppApplicationType applicationType)
     {
         return generateManifestProducer(applicationType.getId().get(), applicationType.getI18nKey());
     }
