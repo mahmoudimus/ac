@@ -28,7 +28,9 @@ public class PluginManagerPage implements Page
     @WaitUntil
     public void waitForLoading()
     {
-        driver.waitUntilElementIsNotVisible(By.cssSelector("#upm-user-plugins.loading"));
+        driver.waitUntilElementIsLocated(By.id("upm-current-plugins"));
+        WebElement userPlugins = driver.findElement(By.id("upm-current-plugins"));
+        driver.waitUntilElementIsNotLocatedAt(By.className("loading"), userPlugins);
     }
 
     public <P extends Object> P configurePlugin(String pluginKeyAndName, String pageKey, Class<P> nextPage)
