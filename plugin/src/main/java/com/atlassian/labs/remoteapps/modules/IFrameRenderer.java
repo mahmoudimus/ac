@@ -3,7 +3,13 @@ package com.atlassian.labs.remoteapps.modules;
 import com.atlassian.labs.remoteapps.api.PermissionDeniedException;
 import com.atlassian.labs.remoteapps.modules.page.IFrameContext;
 import com.atlassian.labs.remoteapps.modules.page.PageInfo;
+import com.atlassian.plugin.ModuleDescriptor;
+import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.elements.ResourceDescriptor;
+import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
+import com.atlassian.plugin.webresource.UrlMode;
 import com.atlassian.plugin.webresource.WebResourceManager;
+import com.atlassian.plugin.webresource.WebResourceUrlProvider;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.google.common.collect.ImmutableMap;
@@ -15,10 +21,13 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import static com.atlassian.labs.remoteapps.util.EncodingUtils.escapeQuotes;
+import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
 
 /**
@@ -30,16 +39,21 @@ public class IFrameRenderer
     private final TemplateRenderer templateRenderer;
     private final WebResourceManager webResourceManager;
     private final ApplicationProperties applicationProperties;
+    private final WebResourceUrlProvider webResourceUrlProvider;
+    private final Plugin plugin;
 
     @Autowired
     public IFrameRenderer(TemplateRenderer templateRenderer,
                           WebResourceManager webResourceManager,
-                          ApplicationProperties applicationProperties
-    )
+                          ApplicationProperties applicationProperties,
+                          WebResourceUrlProvider webResourceUrlProvider,
+                          PluginRetrievalService pluginRetrievalService)
     {
         this.templateRenderer = templateRenderer;
         this.webResourceManager = webResourceManager;
         this.applicationProperties = applicationProperties;
+        this.webResourceUrlProvider = webResourceUrlProvider;
+        this.plugin = pluginRetrievalService.getPlugin();
     }
 
     public String render(IFrameContext iframeContext, String remoteUser) throws IOException
@@ -121,6 +135,7 @@ public class IFrameRenderer
         ctx.put("iframeSrcHtml", escapeQuotes(signedUrl));
         ctx.put("remoteapp", iframeContext.getLinkOps().get());
         ctx.put("namespace", iframeContext.getNamespace());
+        ctx.put("scriptUrls", getJavaScriptUrls());
 
         // even if same origin, force postMessage as same origin will have xdm_e with the full
         // url, which we don't know as we only populate host and port from the base url
@@ -130,5 +145,17 @@ public class IFrameRenderer
         StringWriter output = new StringWriter();
         templateRenderer.render("velocity/iframe-body.vm", ctx, output);
         return output.toString();
+    }
+
+    public List<String> getJavaScriptUrls()
+    {
+        List<String> scripts = newArrayList();
+        ModuleDescriptor<?> moduleDescriptor = plugin.getModuleDescriptor("iframe-host");
+        for (ResourceDescriptor descriptor : moduleDescriptor.getResourceDescriptors())
+        {
+            String src = webResourceUrlProvider.getStaticPluginResourceUrl(moduleDescriptor, descriptor.getName(), UrlMode.AUTO);
+            scripts.add(src);
+        }
+        return scripts;
     }
 }

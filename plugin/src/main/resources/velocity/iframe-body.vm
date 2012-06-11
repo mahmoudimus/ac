@@ -1,94 +1,13 @@
 <div>
     <div id="embedded-$namespace"></div>
-    <hr />
+    <hr/>
     <div id="ra-stats-$namespace" style="color: gray; font-size: smaller">
         Loaded from <span id="ra-key-$namespace"><a href="${remoteapp.displayUrl}">$remoteapp.name</a></span>  in
         <span id="ra-time-$namespace">...</span> ms
     </div>
-    <script type="text/javascript" language="javascript">
-        (function($) {
-            var container = $('#embedded-$namespace');
-            var initHeight = '#if($height)$height#else 10em #end';
-            var initWidth = '#if($width)$width#else 100%#end';
-            var iframeSrc = '$iframeSrcHtml';
-
-            function initMessageBar() {
-                if (jQuery('#aui-message-bar').length != 0) {
-                    return;
-                }
-                var parentElement = jQuery("#details-module");
-                if (parentElement.length == 0) {
-                	// TODO - adding #aui-message-bar only works for the view-issue page for now.
-                    return;
-                }
-                var messageBar = jQuery(document.createElement('div')).attr("id", "aui-message-bar");
-                messageBar.prependTo(parentElement);
-            }
-
-            function resize(height, width){
-                var iframe = $('iframe', container);
-                iframe.css('height', height + "px");
-                iframe.css('width', width + (/%/.test(width)? "" : "px"));
-            }
-            var now = new Date().getTime();
-            var rpc = new easyXDM.Rpc(/** The configuration */{
-                remote: iframeSrc,
-
-                //ID of the element to attach the inline frame to
-                container: "embedded-$namespace",
-                channel: "channel-$namespace",
-                protocol : $xdmProtocolHtml,
-                props: {height : initHeight, width : initWidth}
-            }, {
-              remote: {
-                  dialogMessage: {}
-              },
-              local : {
-                init : function() {
-                  container.addClass('iframe-init');
-                  $('#ra-time-$namespace').text(new Date().getTime() - now);
-                },
-                resize : function(height, width) {
-                  resize(height, width);
-                },
-                getLocation : function(fn) {
-                  return window.location.href;
-                },
-                getUser : function(fn) {
-                  // JIRA 5.0
-                  var fullName = jQuery('meta[name=ajs-remote-user-fullname]').attr("content");
-                  if (!fullName) {
-                    // JIRA 4.4
-                    fullName = jQuery('a#header-details-user-fullname').text();
-                  }
-                  if (!fullName) {
-                    // Confluence 4.1
-                  	fullName = jQuery(".user.ajs-menu-title").text();
-                  }
-                  if (!fullName) {
-                    // Refapp 2.15.0
-                  	fullName = jQuery('a#user').text();
-                  }
-                  var user = { fullName : fullName };
-                  console.log("returning: " + user);
-                  return user;
-                },
-                showMessage : function(id, title, body) {
-                  initMessageBar();
-                  jQuery('.aui-message#' + id).remove();
-                  AJS.messages.info({
-                    title: title,
-                    body: '<p>' + jQuery('<div />').text(body).html() + '<p>',
-                    id: id,
-                    closeable: false
-                  });
-                },
-                clearMessage : function(id) {
-                  jQuery('.aui-message#' + id).remove();
-                }
-              }
-            });
-            window.RemoteAppsRpc = rpc;
-        })(jQuery);
-    </script>
+    ## @todo figure out how to optimize the scripts generated here
+    #foreach ($scriptUrl in $scriptUrls)
+        <script src="$scriptUrl"></script>
+    #end
+    <script>RemoteApps.create({ns: '$namespace', src: '$iframeSrcHtml', height: '$!height', width: '$!width', protocol: $!xdmProtocolHtml});</script>
 </div>

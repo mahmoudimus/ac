@@ -92,6 +92,23 @@ public class TestConfluence
     }
 
     @Test
+    public void testPageMacroMultipleImplementations() throws XmlRpcFault, IOException
+    {
+        Map pageData = confluenceOps.setPage("ds", "test", loadResourceAsString(
+                "confluence/test-page-macro-multiple.xhtml"));
+        product.visit(LoginPage.class).login("betty", "betty", HomePage.class);
+
+        ConfluencePageMacroPage iframe1 = product.visit(ConfluencePageMacroPage.class, pageData.get("title"), "app1-page-0");
+        assertEquals("Success", iframe1.getMessage());
+        assertEquals(OAuthUtils.getConsumerKey(), iframe1.getConsumerKey());
+
+        ConfluencePageMacroPage iframe2 = product.visit(ConfluencePageMacroPage.class, pageData.get("title"), "app1-page-1");
+
+        assertEquals("Success", iframe2.getMessage());
+        assertEquals(OAuthUtils.getConsumerKey(), iframe2.getConsumerKey());
+    }
+
+    @Test
 	public void testContextParam() throws XmlRpcFault, IOException
     {
         Map pageData = confluenceOps.setPage("ds", "test", loadResourceAsString(

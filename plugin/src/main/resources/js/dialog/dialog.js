@@ -1,6 +1,8 @@
-var RemoteApps = RemoteApps || {};
+(function(global, $) {
 
-(function($) {
+    global.RemoteApps = global.RemoteApps || {};
+
+    var idSeq = 0;
 
     function disableButtons(ids) {
         var btns = [];
@@ -28,8 +30,9 @@ var RemoteApps = RemoteApps || {};
      *                   eg. "/plugins/servlet/remoteapps/app-key/macro".
      * @param options Options to configure the behaviour and appearance of the dialog.
      */
-    function makeDialog(contentUrl, options) {
-        var window$ = $(window);
+    RemoteApps.makeDialog = function (contentUrl, options) {
+        var global$ = $(global);
+        var placeholderContainer$;
         var defaultOptions = {
             /**
              * These options really _should_ be provided by the caller, or else the dialog is pretty pointless.
@@ -37,22 +40,21 @@ var RemoteApps = RemoteApps || {};
             // Dialog header
             header: "Remote Apps Dialog Title",
             // Callback to execute when the submit button is clicked.
-            submitHandler:function (dialog, result) {
+            submitHandler: function (dialog, result) {
                 // No-op
             },
             // Callback to execute when the cancel button is clicked.
-            cancelHandler:function (dialog, result) {
+            cancelHandler: function (dialog, result) {
                 // No-op
             },
 
             /**
              * These options may be overridden by the caller, but the defaults are OK.
-             *
              */
             headerClass: "ra-dialog-header",
             // Default width and height of the dialog
-            width: window$.width() * .5,
-            height: window$.height() * .5,
+            width: global$.width() * .5,
+            height: global$.height() * .5,
             // Close the dialog if it loses focus
             closeOnOutsideClick: true,
             // Display text for the dialog buttons
@@ -71,18 +73,19 @@ var RemoteApps = RemoteApps || {};
                 }
             }
         };
-        var mergedOptions = $.extend({}, defaultOptions, options);
+
+        var dialogId = options.id || "ra-dialog-" + (idSeq += 1);
+        var mergedOptions = $.extend({id: dialogId}, defaultOptions, options);
 
         var dialog = new AJS.Dialog(mergedOptions);
         dialog.addHeader(mergedOptions.header, mergedOptions.headerClass);
-        dialog.addButton(mergedOptions.submitText, function(dialog, page) {
+        dialog.addButton(mergedOptions.submitText, function(dialog) {
             // Disable all the buttons
             var btns = disableButtons([mergedOptions.submitClass, mergedOptions.cancelClass]);
-
-            RemoteAppsRpc.dialogMessage("submit", function(result) {
+            placeholderContainer$.trigger("ra.dialog.submit", function(result) {
                 if (result.result || result) {
                     dialog.remove();
-                    window.RemoteAppsRpc.destroy();
+                    placeholderContainer$.trigger("ra.iframe.destroy");
                     mergedOptions.submitHandler(dialog, result);
                 }
                 else {
@@ -93,52 +96,43 @@ var RemoteApps = RemoteApps || {};
         dialog.addCancel(mergedOptions.cancelText, function(dialog, page) {
             // Disable Buttons
             var btns = disableButtons([mergedOptions.submitClass, mergedOptions.cancelClass]);
-
-            RemoteAppsRpc.dialogMessage("cancel", function(result) {
-               if (result.result || result) {
-                   dialog.remove();
-                   window.RemoteAppsRpc.destroy();
-                   mergedOptions.cancelHandler(dialog, result);
-               }
-               else {
-                   btns.enable();
-               }
+            placeholderContainer$.trigger("ra.dialog.cancel", function(result) {
+                if (result.result || result) {
+                    dialog.remove();
+                    placeholderContainer$.trigger("ra.iframe.destroy");
+                    mergedOptions.cancelHandler(dialog, result);
+                }
+                else {
+                    btns.enable();
+                }
             });
         });
         var placeHolderContent = "<div class='ra-servlet-placeholder'>Loading...</div>";
         dialog.addPanel("Main", placeHolderContent, "ra-dialog-content");
 
         return {
+            id: dialogId,
             show: function() {
                 dialog.show();
 
-                var panelBody = $(".ra-dialog-content");
-                if (contentUrl.indexOf("?") > 0)
-                {
-                    contentUrl += "&";
-                }
-                else
-                {
-                    contentUrl += "?";
-                }
+                var panelBody = $("#" + dialogId + " .ra-dialog-content");
+                contentUrl += contentUrl.indexOf("?") > 0 ? "&" : "?";
                 contentUrl += "width=" + panelBody.width() + "&height=" + panelBody.height();
 
                 $.ajax(contentUrl, {
                     dataType: "html",
                     success: function(data) {
-                        $(".ra-servlet-placeholder").html(data);
+                        placeholderContainer$ = $("#" + dialogId + " .ra-servlet-placeholder");
+                        placeholderContainer$.html(data);
                     },
                     error: function(jqXHR, textStatus, errorThrown) {
                         // TODO: Make this error message a bit nicer and more informative.
-                        $(".ra-servlet-placeholder").html("<p>The content could no be retrieved.</p>");
+                        $("#" + dialogId + " .ra-servlet-placeholder").html("<p>The content could not be retrieved.</p>");
                         AJS.log(textStatus + " " + errorThrown);
                     }
                 });
             }
-        }
-    }
+        };
+    };
 
-    RemoteApps.makeDialog = makeDialog; // TODO: Improve this.
-
-})(AJS.$);
-
+})(this, AJS.$);

@@ -1,6 +1,7 @@
-var RA = (function () {
-    var RA = RA || {};
+(function (global) {
+    var RA = global.RA = {};
     var rpc;
+
     RA.init = function (options) {
         rpc = new easyXDM.Rpc({}, {
             remote:{
@@ -9,7 +10,8 @@ var RA = (function () {
                 getLocation:{},
                 getUser:{},
                 showMessage:{},
-                clearMessage:{}
+                clearMessage:{},
+                request:{}
             },
             local:{
                 dialogMessage: function(message) {
@@ -17,7 +19,7 @@ var RA = (function () {
                     {
                         return dialogHandlers[message]();
                     }
-                    return true; // by default, allow the operation to proceed.
+                    return true;  // by default, allow the operation to proceed.
                 }
             }
         });
@@ -50,11 +52,9 @@ var RA = (function () {
     var dialogHandlers = {};
 
     RA.Dialog = {
-        onDialogMessage: function(messageName, callback)
-        {
+        onDialogMessage: function(messageName, callback) {
             dialogHandlers[messageName] = callback;
         }
     };
 
-    return RA;
-})();
+})(this);

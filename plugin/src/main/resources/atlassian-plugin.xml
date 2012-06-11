@@ -48,14 +48,12 @@
 
     <web-resource key="iframe-host">
         <resource type="download" name="easyXDM.js" location="/js/iframe/easyXDM.js" />
-        <context>atl.admin</context>
-        <context>atl.general</context>
+        <resource type="download" name="body.js" location="/js/iframe/container/body.js" />
     </web-resource>
 
-    <web-resource key="xdm">
+    <web-resource key="iframe-requirements">
         <context>remoteapps-iframe</context>
         <dependency>com.atlassian.auiplugin:ajs</dependency>
-        <dependency>${project.groupId}.${project.artifactId}:iframe-host</dependency>
     </web-resource>
 
     <web-resource key="dialog">
@@ -121,6 +119,7 @@
     <component-import key="i18nResolver" interface="com.atlassian.sal.api.message.I18nResolver" />
     <component-import key="pluginSettingsFactory" interface="com.atlassian.sal.api.pluginsettings.PluginSettingsFactory" />
     <component-import key="typeAccessor" interface="com.atlassian.applinks.spi.util.TypeAccessor" />
+    <component-import key="webResourceUrlProvider" interface="com.atlassian.plugin.webresource.WebResourceUrlProvider" />
 
     <!-- Cross-product API Scopes -->
     <component key="applinks-read_app_links" class="com.atlassian.labs.remoteapps.product.ReadAppLinksScope"/>

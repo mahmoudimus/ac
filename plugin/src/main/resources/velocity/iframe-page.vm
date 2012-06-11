@@ -10,11 +10,11 @@
     </content>
     <meta name="tab" content="$!title"/>
     <meta name="decorator" content="$decorator"></meta>
-
-
 </head>
 
 <body>
-    $iframeHtml
+    <div class="ra-servlet-placeholder">
+        $iframeHtml
+    </div>
 </body>
 </html>
