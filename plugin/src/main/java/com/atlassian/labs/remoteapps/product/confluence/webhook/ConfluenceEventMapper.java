@@ -6,6 +6,7 @@ import com.atlassian.confluence.labels.Label;
 import com.atlassian.confluence.labels.Labelable;
 import com.atlassian.confluence.pages.Attachment;
 import com.atlassian.confluence.pages.Comment;
+import com.atlassian.confluence.pages.Page;
 import com.atlassian.confluence.setup.settings.SettingsManager;
 import com.atlassian.confluence.spaces.Space;
 import com.atlassian.confluence.spaces.Spaced;
@@ -160,7 +161,10 @@ public class ConfluenceEventMapper implements EventMapper<ConfluenceEvent>
             builder.put("description", space.getDescription().getBodyAsString());
         builder.put("isPersonalSpace", space.isPersonal());
         builder.put("self", getFullUrl(space.getUrlPath()));
-        builder.put("homePage", contentEntityObjectToMap(space.getHomePage(), true));
+        Page homePage = space.getHomePage();
+        if (homePage != null)
+            builder.put("homePage", contentEntityObjectToMap(homePage, true));
+
         builder.put("creatorName", StringUtils.isBlank(space.getCreatorName()) ? "" : space.getCreatorName());
         builder.put("creationDate", space.getCreationDate().getTime());
         builder.put("lastModifierName", StringUtils.isBlank(space.getLastModifierName()) ? "" : space.getLastModifierName());
