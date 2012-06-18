@@ -49,24 +49,12 @@ public class RemoteAppEmbeddedTestPage
 
     public String getFullName()
     {
-        runInFrame(new Callable<Void>()
-        {
-            @Override
-            public Void call() throws Exception
-            {
-                driver.waitUntil(new Function<WebDriver, Boolean>() {
+        return waitForValue("user");
+    }
 
-                    @Override
-                    public Boolean apply(WebDriver webDriver) {
-                        WebElement user = webDriver.findElement(By.id("user"));
-                        return user.getText() != null;
-                    }
-                });
-                return null;
-            }
-        });
-
-        return getValue("user");
+    public String getUserId()
+    {
+        return waitForValue("userId");
     }
 
     public String getMessage()
@@ -77,6 +65,31 @@ public class RemoteAppEmbeddedTestPage
     public String getConsumerKey()
     {
         return getValue("consumerKey");
+    }
+
+    public String getRestStatus()
+    {
+        return waitForValue("rest-status");
+    }
+
+    public String getRestStatusText()
+    {
+        return waitForValue("rest-status-text");
+    }
+
+    public String getRestContentType()
+    {
+        return waitForValue("rest-content-type");
+    }
+
+    public String getRestResponseText()
+    {
+        return waitForValue("rest-response-text");
+    }
+
+    public String getRestData()
+    {
+        return waitForValue("rest-data");
     }
 
     public long getLoadTime()
@@ -107,6 +120,28 @@ public class RemoteAppEmbeddedTestPage
                 return driver.findElement(By.id(key)).getText();
             }
         });
+    }
+
+    String waitForValue(final String key)
+    {
+        runInFrame(new Callable<Void>()
+        {
+            @Override
+            public Void call() throws Exception
+            {
+                driver.waitUntil(new Function<WebDriver, Boolean>() {
+
+                    @Override
+                    public Boolean apply(WebDriver webDriver) {
+                        WebElement element = webDriver.findElement(By.id(key));
+                        return element.getText() != null;
+                    }
+                });
+                return null;
+            }
+        });
+
+        return getValue(key);
     }
 
     private <T> T runInFrame(Callable<T> runnable)

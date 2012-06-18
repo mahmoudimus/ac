@@ -9,5 +9,5 @@
     #foreach ($scriptUrl in $scriptUrls)
         <script src="$scriptUrl"></script>
     #end
-    <script>RemoteApps.create({ns: '$namespace', src: '$iframeSrcHtml', height: '$!height', width: '$!width', protocol: $!xdmProtocolHtml});</script>
+    <script>RemoteApps.create({ns: '$namespace', src: '$iframeSrcHtml', height: '$!height', width: '$!width', protocol: $!xdmProtocolHtml, contextPath: '$contextPath', appKey: '$remoteapp.type.id', userId: '$userId'});</script>
 </div>

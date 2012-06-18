@@ -130,12 +130,13 @@ public class IFrameRenderer
                     .replaceQueryParam("xdm_c")
                     .replaceQueryParam("xdm_p").build().toString();
 
-
         Map<String,Object> ctx = newHashMap(iframeContext.getIFrameParams().getAsMap());
         ctx.put("iframeSrcHtml", escapeQuotes(signedUrl));
         ctx.put("remoteapp", iframeContext.getLinkOps().get());
         ctx.put("namespace", iframeContext.getNamespace());
         ctx.put("scriptUrls", getJavaScriptUrls());
+        ctx.put("contextPath", getContextPath());
+        ctx.put("userId", remoteUser == null ? "" : remoteUser);
 
         // even if same origin, force postMessage as same origin will have xdm_e with the full
         // url, which we don't know as we only populate host and port from the base url

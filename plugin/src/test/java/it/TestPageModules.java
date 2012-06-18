@@ -23,7 +23,17 @@ public class TestPageModules extends AbstractRemoteAppTest
         assertEquals("Success", remoteAppTest.getMessage());
         assertEquals(OAuthUtils.getConsumerKey(), remoteAppTest.getConsumerKey());
         assertEquals("Betty Admin", remoteAppTest.getFullName());
-	}
+        assertEquals("betty", remoteAppTest.getUserId());
+
+        // basic tests of the RA.request API
+        assertEquals("200", remoteAppTest.getRestStatus());
+        String statusText = remoteAppTest.getRestStatusText();
+        assertTrue("OK".equals(statusText) || "success".equals(statusText)); // differs by jquery version
+        String contentType = remoteAppTest.getRestContentType();
+        assertTrue(contentType != null && contentType.startsWith("text/plain")); // startsWith accounts for possible encoding
+        assertEquals("betty", remoteAppTest.getRestData());
+        assertEquals("betty", remoteAppTest.getRestResponseText());
+    }
 
     @Test
     public void testLoadGeneralDialog()

@@ -1,37 +1,26 @@
 package com.atlassian.labs.remoteapps.modules.permissions;
 
 import com.atlassian.labs.remoteapps.PermissionManager;
-import com.atlassian.labs.remoteapps.modules.permissions.scope.ApiScope;
 import com.atlassian.sal.api.user.UserManager;
-import com.google.common.collect.ImmutableSet;
 import net.oauth.OAuth;
-import org.apache.commons.lang.StringUtils;
-import org.netbeans.lib.cvsclient.commandLine.command.log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.HttpMethod;
 import java.io.IOException;
-import java.net.URI;
-import java.util.Set;
 
 /**
  * A filter to restrict incoming requests unless they have been authorized via api scopes.  Only handles 2LO-authenticated
- * requests by looking for the client key as a request attribute.
+ * requests by looking for the client key as a request attribute or a header.
  */
 public class ApiScopingFilter implements Filter
 {
     private final PermissionManager permissionManager;
     private final UserManager userManager;
     private static final Logger log = LoggerFactory.getLogger(ApiScopingFilter.class);
+    private static final String HEADER_RA_APP_KEY = "ra-app-key";
 
     public ApiScopingFilter(PermissionManager permissionManager, UserManager userManager)
     {
@@ -75,7 +64,14 @@ public class ApiScopingFilter implements Filter
 
     private String extractClientKey(HttpServletRequest req)
     {
-        return (String) req.getAttribute(OAuth.OAUTH_CONSUMER_KEY);
+        // first try the oauth request attribute
+        String key = (String) req.getAttribute(OAuth.OAUTH_CONSUMER_KEY);
+        if (key == null)
+        {
+            // if not present, look for it as a header, which may be sent via host-side xhr calls
+            key = req.getHeader(HEADER_RA_APP_KEY);
+        }
+        return key;
     }
 
     @Override
