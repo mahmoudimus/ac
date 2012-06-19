@@ -6,23 +6,18 @@
 
     RA.create = RA.create || function (options) {
         var ns = options.ns,
-            src = options.src,
-            contextPath = options.contextPath,
             containerId = "embedded-" + ns,
             channelId = "channel-" + ns,
             container$ = $("#" + containerId),
             initHeight = options.height || "10em",
             initWidth = options.width || "100%",
-            protocol = options.protocol,
-            appKey = options.appKey,
-            userId = options.userId,
             now = new Date().getTime();
 
         var rpc = new easyXDM.Rpc({
-            remote: src,
+            remote: options.src,
             container: containerId,
             channel: channelId,
-            protocol: protocol,
+            protocol: options.protocol,
             props: {height: initHeight, width: initWidth}
         }, {
             remote: {
@@ -31,7 +26,7 @@
             local: {
                 init: function () {
                     container$.addClass("iframe-init");
-                    $("#ra-time-" + options.ns).text(new Date().getTime() - now);
+                    $("#ra-time-" + ns).text(new Date().getTime() - now);
                 },
                 resize: function (width, height) {
                     $("iframe", container$).css({height: height, width: width});
@@ -47,7 +42,7 @@
                         // JIRA 4.4, Confluence 4.1, Refapp 2.15.0
                         fullName = $("a#header-details-user-fullname, .user.ajs-menu-title, a#user").text();
                     }
-                    return {fullName: fullName, id: userId};
+                    return {fullName: fullName, id: options.userId};
                 },
                 showMessage: function (id, title, body) {
                     // init message bar if necessary
@@ -66,10 +61,9 @@
                 clearMessage: function (id) {
                     $(".aui-message#" + id).remove();
                 },
-                request: function (options, success, error) {
+                request: function (args, success, error) {
                     // add the context path to the request url
-                    var url = contextPath + options.url,
-                        headers = {};
+                    var url = options.contextPath + args.url;
                     // reduce the xhr object to the just bits we can/want to expose over the bridge
                     function toJSON(xhr) {
                         var json = {headers: {}};
@@ -81,17 +75,19 @@
                     }
                     function done(data, textStatus, xhr) { success([data, textStatus, toJSON(xhr)]); }
                     function fail(xhr, textStatus, errorThrown) { error([toJSON(xhr), textStatus, errorThrown]); }
-                    // send the app key header to force scope checks
-                    headers["RA-App-Key"] = appKey;
+                    // execute the request with our restricted set of inputs
                     $.ajax({
-                        // only pass through supported options
                         url: url,
-                        type: options.type || "GET",
-                        accepts: options.accepts,
-                        data: options.data,
+                        type: args.type || "GET",
+                        data: args.data,
                         dataType: "text", // prevent jquery from parsing the response body
-                        contentType: options.contentType,
-                        headers: headers
+                        contentType: args.contentType,
+                        headers: {
+                            // undo the effect on the accept header of having set dataType to "text"
+                            "Accept": "*/*",
+                            // send the app key header to force scope checks
+                            "RA-App-Key": options.appKey
+                        }
                     }).then(done, fail);
                 }
             }

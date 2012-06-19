@@ -57,7 +57,7 @@
         };
         // get all headers as a formatted string
         xhr.getAllResponseHeaders = function () {
-            var str = "", k;
+            var str = "";
             each(headers, function (k, v) {
                 // prepend crlf if not the first line
                 str += (str ? "\r\n" : "") + k + ": " + v;
@@ -132,7 +132,6 @@
         // @param options   an options object containing one or more of the following properties:
         //                  - url           the url to request from the host application, relative to the host's context path; required
         //                  - type          the HTTP method name; defaults to 'GET'
-        //                  - accepts       a custom accept header string value; optional
         //                  - data          the string entity body of the request; required if type is 'POST' or 'PUT'
         //                  - contentType   the content-type string value of the entity body, above; required when data is supplied
         request: function (url, options) {
