@@ -3,6 +3,7 @@ package com.atlassian.labs.remoteapps;
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.applinks.api.ApplicationLinkService;
 import com.atlassian.applinks.api.ApplicationType;
+import com.atlassian.labs.remoteapps.modules.applinks.RemoteAppApplicationType;
 import com.atlassian.labs.remoteapps.modules.permissions.scope.ApiScope;
 import com.atlassian.labs.remoteapps.settings.SettingsManager;
 import com.atlassian.labs.remoteapps.util.ServletUtils;
@@ -96,7 +97,7 @@ public class PermissionManager
             }
         }
 
-        ApplicationLink link = linkManager.getLinkForOAuthClientKey(clientKey);
+        ApplicationLink link = getLinkForClientKey(clientKey);
         if (link == null)
         {
             return false;
@@ -123,6 +124,28 @@ public class PermissionManager
             }
         }
         return false;
+    }
+
+    public ApplicationLink getLinkForClientKey(String clientKey)
+    {
+        ApplicationLink link = linkManager.getLinkForOAuthClientKey(clientKey);
+        if (link == null)
+        {
+            // fallback to checking all app links
+            for (ApplicationLink aLink : applicationLinkService.getApplicationLinks())
+            {
+                ApplicationType type = aLink.getType();
+                if (type instanceof RemoteAppApplicationType)
+                {
+                    RemoteAppApplicationType raType = (RemoteAppApplicationType) type;
+                    if (clientKey.equals(raType.getId().get()))
+                    {
+                        link = aLink;
+                    }
+                }
+            }
+        }
+        return link;
     }
 
     public boolean canInstallRemoteApps(String username)
