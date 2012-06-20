@@ -60,9 +60,9 @@ public class ViewIssuePanelModuleGenerator implements RemoteModuleGenerator
     public Schema getSchema()
     {
         return new StaticSchema(plugin,
-            "page.xsd",
-            "/xsd/page.xsd",
-            "PageType",
+            "panel.xsd",
+            "/xsd/panel.xsd",
+            "PanelType",
             "unbounded");
     }
 

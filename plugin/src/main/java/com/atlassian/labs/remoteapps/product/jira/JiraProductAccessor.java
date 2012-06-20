@@ -6,6 +6,7 @@ import com.atlassian.labs.remoteapps.product.ProductAccessor;
 import com.atlassian.labs.remoteapps.product.WebSudoElevator;
 import com.atlassian.plugin.web.WebInterfaceManager;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
+import com.google.common.collect.ImmutableMap;
 
 import java.util.Map;
 
@@ -75,6 +76,8 @@ public class JiraProductAccessor implements ProductAccessor
     @Override
     public Map<String, String> getLinkContextParams()
     {
-        return singletonMap("project_id", "$!helper.project.id");
+        return ImmutableMap.of(
+                "project_id", "$!helper.project.id",
+                "issue_id", "$!issue.id");
     }
 }
