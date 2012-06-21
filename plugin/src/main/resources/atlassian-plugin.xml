@@ -9,6 +9,12 @@
             location="after-encoding">
         <url-pattern>/rest/remoteapps/*</url-pattern>
     </servlet-filter>
+
+    <servlet-filter key="requestIdSetter" class="com.atlassian.labs.remoteapps.util.http.bigpipe.RequestIdSettingFilter"
+                    location="after-encoding">
+        <url-pattern>/*</url-pattern>
+    </servlet-filter>
+
     <servlet-filter key="iframe-resources" class="com.atlassian.labs.remoteapps.iframe.StaticResourcesFilter"
             location="after-encoding">
         <url-pattern>/remoteapps/*</url-pattern>
@@ -59,6 +65,10 @@
     <web-resource key="dialog">
         <resource type="download" name="dialog.js" location="js/dialog/dialog.js" />
         <dependency>com.atlassian.auiplugin:ajs</dependency>
+    </web-resource>
+
+    <web-resource key="images">
+        <resource type="download" name="images/" location="images/" />
     </web-resource>
 
     <web-resource key="dialog-page">

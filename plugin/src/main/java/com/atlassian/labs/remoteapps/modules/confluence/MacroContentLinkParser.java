@@ -6,10 +6,10 @@ import com.atlassian.streams.api.common.uri.Uri;
 import com.atlassian.streams.api.common.uri.UriBuilder;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static com.atlassian.labs.remoteapps.modules.util.redirect.RedirectServlet
         .getOAuthRedirectUrl;
@@ -19,42 +19,75 @@ import static com.atlassian.labs.remoteapps.modules.util.redirect.RedirectServle
  */
 public class MacroContentLinkParser
 {
-    private static final String URL_SIGNING_PATTERN = "\\s+(href|src)=['\"]sign://%s(.*?)['\"]";
-
     private final SettingsManager confluenceSettingsManager;
+    private static final Logger log = LoggerFactory.getLogger(MacroContentLinkParser.class);
 
     public MacroContentLinkParser(SettingsManager confluenceSettingsManager)
     {
         this.confluenceSettingsManager = confluenceSettingsManager;
     }
 
+    // this used to be implemented via a regex, but turned out to be very slow for large content
     public String parse(RemoteAppApplicationType type, String content, Map<String, String> macroParameters)
     {
-        final Pattern urlSigningPattern = Pattern.compile(String.format(URL_SIGNING_PATTERN,
-                type.getDefaultDetails().getDisplayUrl().getAuthority()));
-
-        Matcher matcher = urlSigningPattern.matcher(content);
-        StringBuffer sb = new StringBuffer();
-        while (matcher.find())
+        StringBuilder processedContent = new StringBuilder();
+        int lastPos = 0;
+        int pos = content.indexOf("sign://");
+        while (pos > -1)
         {
-            String attributeName = matcher.group(1);
-            String rawRelativeUrl = StringEscapeUtils.unescapeHtml(matcher.group(2));
-            if (StringUtils.isBlank(rawRelativeUrl))
-                rawRelativeUrl = "/";
+            processedContent.append(content.substring(lastPos, pos));
+            lastPos = pos;
 
-            Uri target = Uri.parse(rawRelativeUrl);
-            UriBuilder b = new UriBuilder(target);
-            b.addQueryParameters(macroParameters);
+            String signToken = "sign://" + type.getDefaultDetails().getDisplayUrl().getAuthority();
+            char prevChar = content.charAt(pos - 1);
+            if (prevChar == '\'' || prevChar == '\"')
+            {
+                String attr = content.substring(pos - 6, pos - 1);
+                if (" src=".equals(attr) || "href=".equals(attr))
+                {
+                    StringBuilder url = new StringBuilder();
+                    for (int urlPos = pos + signToken.length(); urlPos < content.length(); urlPos++)
+                    {
+                        char urlChar = content.charAt(urlPos);
+                        if (urlChar == '\'' || urlChar == '\"')
+                        {
+                            // found url
+                            String rawRelativeUrl = StringEscapeUtils.unescapeHtml(url.toString());
+                            if (StringUtils.isBlank(rawRelativeUrl))
+                            {
+                                rawRelativeUrl = "/";
+                            }
 
-            String urlToEmbed = getOAuthRedirectUrl(
-                    confluenceSettingsManager.getGlobalSettings().getBaseUrl(),
-                    type.getId().get(), b.toUri().toJavaUri());
+                            Uri target;
+                            try
+                            {
+                                target = Uri.parse(rawRelativeUrl);
+                                UriBuilder b = new UriBuilder(target);
+                                b.addQueryParameters(macroParameters);
 
-            String replacement = String.format(" %s=\"%s\"", attributeName, urlToEmbed);
-            matcher.appendReplacement(sb, replacement);
+                                String urlToEmbed = getOAuthRedirectUrl(
+                                        confluenceSettingsManager.getGlobalSettings().getBaseUrl(),
+                                        type.getId().get(), b.toUri().toJavaUri());
+                                processedContent.append(urlToEmbed);
+                            }
+                            catch (IllegalArgumentException ex)
+                            {
+                                log.debug("Invalid relative URL: " + rawRelativeUrl, ex);
+                                processedContent.append(url.toString());
+                            }
+                            lastPos = urlPos;
+                            break;
+                        }
+                        else
+                        {
+                            url.append(urlChar);
+                        }
+                    }
+                }
+            }
+            pos = content.indexOf(signToken, lastPos + 1);
         }
-        matcher.appendTail(sb);
-
-        return sb.toString();
+        processedContent.append(content.substring(lastPos));
+        return processedContent.toString();
     }
 }

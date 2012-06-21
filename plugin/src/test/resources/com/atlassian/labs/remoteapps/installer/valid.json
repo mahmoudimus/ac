@@ -38,6 +38,36 @@
           "name": "project_id"
         }
       ]
+    },
+    {
+      "key": "third",
+      "name": "Third",
+      "url": "/third",
+      "context-parameters": {
+        "context-parameter": [
+          {
+            "name": "project_id"
+          }
+        ]
+      }
+    }
+  ],
+  "macro": [
+    {
+      "key": "macro",
+      "url": "/macro",
+      "context-parameters": {
+        "context-parameter": [
+          {
+            "name": "page_id",
+            "type": "query"
+          },
+          {
+            "name": "user_id",
+            "type": "header"
+          }
+        ]
+      }
     }
   ]
 }

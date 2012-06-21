@@ -4,8 +4,10 @@ import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.labs.remoteapps.ContentRetrievalException;
 import com.atlassian.labs.remoteapps.util.http.HttpContentHandler;
 import com.atlassian.labs.remoteapps.util.http.HttpContentRetriever;
+import com.atlassian.util.concurrent.SettableFuture;
 
 import java.util.Map;
+import java.util.concurrent.Future;
 import java.util.regex.Pattern;
 
 public class SleepingHttpContentRetriever implements HttpContentRetriever
@@ -18,20 +20,21 @@ public class SleepingHttpContentRetriever implements HttpContentRetriever
             Thread.sleep(100000);
         } catch (InterruptedException e)
         {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            // ignore
         }
     }
 
     @Override
-    public void getAsync(ApplicationLink link, String remoteUsername, String url, Map<String, String> parameters,
-                         HttpContentHandler handler)
+    public Future<String> getAsync(ApplicationLink link, String remoteUsername, String url,
+            Map<String, String> parameters, Map<String, String> headers, HttpContentHandler handler)
     {
         try
         {
             Thread.sleep(100000);
+            return new SettableFuture<String>();
         } catch (InterruptedException e)
         {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            throw new ContentRetrievalException(e);
         }
     }
 
@@ -44,7 +47,7 @@ public class SleepingHttpContentRetriever implements HttpContentRetriever
             Thread.sleep(100000);
         } catch (InterruptedException e)
         {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            // ignore
         }
         return null;
     }
@@ -57,7 +60,7 @@ public class SleepingHttpContentRetriever implements HttpContentRetriever
             Thread.sleep(100000);
         } catch (InterruptedException e)
         {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            // ignore
         }
     }
 }

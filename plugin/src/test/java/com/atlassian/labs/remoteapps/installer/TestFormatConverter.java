@@ -23,7 +23,7 @@ public class TestFormatConverter
     {
         ModuleGeneratorManager moduleGeneratorManager = mock(ModuleGeneratorManager.class);
         when(moduleGeneratorManager.getModuleGeneratorKeys()).thenReturn(newHashSet(
-                "descriptor", "oauth", "permissions", "vendor", "general-page"));
+                "descriptor", "oauth", "permissions", "vendor", "general-page", "macro"));
         formatConverter = new FormatConverter(moduleGeneratorManager);
     }
     @Test

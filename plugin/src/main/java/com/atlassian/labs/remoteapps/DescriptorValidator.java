@@ -206,7 +206,7 @@ public class DescriptorValidator
 
     private void insertAvailableLinkContextParams(Document includeDoc, Map<String, String> linkContextParams)
     {
-        Element restriction = (Element) includeDoc.selectSingleNode("/xs:schema/xs:simpleType[@name='LinkContextParamNameType']/xs:restriction");
+        Element restriction = (Element) includeDoc.selectSingleNode("/xs:schema/xs:simpleType[@name='LinkContextParameterNameType']/xs:restriction");
         if (restriction != null)
         {
             for (Map.Entry<String, String> entry : linkContextParams.entrySet())

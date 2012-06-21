@@ -41,6 +41,7 @@ public class PageMacro extends AbstractRemoteMacro
                     remoteMacroInfo.getUrl(),
                     storageFormatBody,
                     parameters,
+                    remoteMacroInfo.getRequestContextParameterFactory(),
                     remoteMacroInfo.getApplicationLinkOperations());
              return iFrameRenderer.render(
                      new IFrameContext(iframeContext, "-" + counter),

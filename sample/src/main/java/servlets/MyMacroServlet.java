@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URI;
 import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 
 import static services.HttpUtils.renderHtml;
 
@@ -30,9 +31,11 @@ public class MyMacroServlet extends HttpServlet
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
     {
         oauthContext.validateRequest(req);
-        final String pageId = req.getParameter("pageId");
+        final String pageId = req.getParameter("ctx_page_id");
         final String favoriteFooty = req.getParameter("footy");
         final String body = req.getParameter("body");
+        resp.setDateHeader("Expires", System.currentTimeMillis() + TimeUnit.DAYS.toMillis(10));
+        resp.setHeader("Cache-Control", "public");
 
         renderHtml(resp, "macro.mu", new HashMap<String,Object>() {{
                 put("pageId", pageId);

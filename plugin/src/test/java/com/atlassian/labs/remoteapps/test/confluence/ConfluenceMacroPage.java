@@ -1,8 +1,8 @@
 package com.atlassian.labs.remoteapps.test.confluence;
 
-import com.atlassian.labs.remoteapps.test.RemoteAppTestPage;
 import com.atlassian.pageobjects.Page;
 import com.atlassian.pageobjects.PageBinder;
+import com.atlassian.pageobjects.binder.WaitUntil;
 import com.atlassian.webdriver.AtlassianWebDriver;
 import org.openqa.selenium.By;
 
@@ -25,41 +25,21 @@ public class ConfluenceMacroPage implements Page
         this.title = title;
     }
 
+    @WaitUntil
+    public void waitForBigPipe()
+    {
+        driver.waitUntilElementIsNotLocated(By.className("bp-loading"));
+    }
+
     @Override
     public String getUrl()
     {
         return "/display/ds/" + title;
     }
 
-    public String getPageIdFromMacro()
+    public String getMacroError(String macroKey)
     {
-        return driver.findElement(By.className("rp-page-id")).getText();
+        return driver.findElement(By.className(macroKey + "-macro")).getText();
     }
 
-    public String getPageIdFromMacroInComment()
-    {
-        return driver.findElement(By.className("rp-comment")).findElement(By.className("rp-page-id")).getText();
-    }
-
-    public String getBodyNoteFromMacro()
-    {
-        return driver.findElement(By.className("rp-body")).findElement(By.className("panelMacro")).getText();
-    }
-
-    public String getSlowMacroBody()
-    {
-        return driver.findElement(By.className("slow-macro")).getText();
-    }
-
-    public String getImageMacroAlt()
-    {
-        return driver.findElement(By.className("image-macro")).findElement(By.tagName("img")).getAttribute("alt");
-    }
-
-    public RemoteAppTestPage visitGeneralLink()
-    {
-        driver.findElement(By.id("browse-menu-link")).click();
-        driver.findElement(By.id("webitem-remoteAppGeneral")).click();
-        return pageBinder.bind(RemoteAppTestPage.class, "remoteAppGeneral");
-    }
 }

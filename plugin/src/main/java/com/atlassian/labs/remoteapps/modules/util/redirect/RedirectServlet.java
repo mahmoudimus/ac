@@ -149,6 +149,7 @@ public class RedirectServlet extends HttpServlet
 
         ApplicationLinkOperationsFactory.LinkOperations linkOps = appLinkOperationsFactory.create(appLink.getType());
         Map<String,String[]> params = newHashMap(parameterMap);
+        params.put("user_id", new String[]{userManager.getRemoteUsername()});
         params.putAll(Maps.transformValues(targetUrl.getQueryParameters(),
                 new Function<List<String>, String[]>()
                 {
@@ -158,7 +159,7 @@ public class RedirectServlet extends HttpServlet
                         return strings.toArray(new String[strings.size()]);
                     }
                 }));
-        return linkOps.signGetUrl(userManager.getRemoteUsername(), targetUrl.getPath(), params);
+        return linkOps.signGetUrl(targetUrl.getPath(), params);
     }
 
     private void sendResponse(HttpServletResponse response, int statusCode, String statusMessage) throws IOException

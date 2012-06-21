@@ -3,6 +3,7 @@ package it.confluence;
 import com.atlassian.labs.remoteapps.test.HtmlDumpRule;
 import com.atlassian.labs.remoteapps.test.OAuthUtils;
 import com.atlassian.labs.remoteapps.test.OwnerOfTestedProduct;
+import com.atlassian.labs.remoteapps.test.RemoteAppRunner;
 import com.atlassian.labs.remoteapps.test.confluence.*;
 import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.pageobjects.page.HomePage;
@@ -14,7 +15,12 @@ import org.junit.Test;
 import org.junit.rules.MethodRule;
 import redstone.xmlrpc.XmlRpcFault;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Map;
 
 import static com.atlassian.labs.remoteapps.test.RemoteAppUtils.clearMacroCaches;
@@ -49,13 +55,13 @@ public class TestConfluence
         Map pageData = confluenceOps.setPage("ds", "test", loadResourceAsString(
                 "confluence/test-page-macros.xhtml"));
         product.visit(LoginPage.class).login("betty", "betty", HomePage.class);
-        ConfluenceMacroPage page = product.visit(ConfluenceMacroPage.class, pageData.get("title"));
+        ConfluenceMacroTestSuitePage page = product.visit(ConfluenceMacroTestSuitePage.class, pageData.get("title"));
 
         assertEquals(pageData.get("id"), page.getPageIdFromMacro());
         assertEquals("some note", page.getBodyNoteFromMacro());
         assertEquals("sandcastles", page.getImageMacroAlt());
 
-        assertTrue(page.getSlowMacroBody().startsWith("ERROR"));
+        assertTrue(page.getSlowMacroBody().startsWith("Error:"));
 	}
 
     @Test
@@ -66,7 +72,7 @@ public class TestConfluence
         Map commentData = confluenceOps.addComment((String) pageData.get("id"),
                 loadResourceAsString("confluence/test-comment.xhtml"));
 
-        ConfluenceMacroPage page = product.visit(ConfluenceMacroPage.class, pageData.get("title"));
+        ConfluenceMacroTestSuitePage page = product.visit(ConfluenceMacroTestSuitePage.class, pageData.get("title"));
 
         assertEquals(commentData.get("id"), page.getPageIdFromMacroInComment());
     }
@@ -75,7 +81,7 @@ public class TestConfluence
     {
         Map pageData = confluenceOps.setAnonymousPage("ds", "test", loadResourceAsString(
                 "confluence/test-page.xhtml"));
-        ConfluenceMacroPage page = product.visit(ConfluenceMacroPage.class, pageData.get("title"));
+        ConfluenceMacroTestSuitePage page = product.visit(ConfluenceMacroTestSuitePage.class, pageData.get("title"));
         assertEquals(pageData.get("id"), page.getPageIdFromMacro());
     }
 
@@ -109,19 +115,6 @@ public class TestConfluence
     }
 
     @Test
-	public void testContextParam() throws XmlRpcFault, IOException
-    {
-        Map pageData = confluenceOps.setPage("ds", "test", loadResourceAsString(
-                "confluence/test-page.xhtml"));
-        product.visit(LoginPage.class).login("betty", "betty", HomePage.class);
-        Map<String,String> params = product.visit(ConfluenceMacroPage.class, pageData.get("title"))
-                                          .visitGeneralLink()
-                                          .getIframeQueryParams();
-
-        assertEquals(pageData.get("id"), params.get("page_id"));
-	}
-
-    @Test
 	public void testMacroCacheFlushes() throws XmlRpcFault, IOException
     {
         Map pageData = confluenceOps.setPage("ds", "test", loadResourceAsString(
@@ -138,4 +131,52 @@ public class TestConfluence
         page = product.visit(ConfluenceCounterMacroPage.class, pageData.get("title"));
         assertEquals("2", page.getCounterMacroBody());
 	}
+
+    @Test
+    public void testMacroWithTrickleContent() throws Exception, IOException
+    {
+        Map pageData = confluenceOps.setPage("ds", "test",
+                "<div class=\"trickle-macro\">\n" +
+                "   <ac:macro ac:name=\"trickle\" />\n" +
+                "</div>");
+
+        RemoteAppRunner runner = new RemoteAppRunner(product.getProductInstance().getBaseUrl(), "trickle")
+                .addMacro("trickle", "/trickle", new MyTrickleMacroServlet())
+                .start();
+
+        ConfluenceMacroPage page = product.visit(ConfluenceMacroPage.class, pageData.get("title"));
+
+        System.out.println("error: " + page.getMacroError("trickle"));
+        assertTrue(page.getMacroError("trickle").startsWith("Error:"));
+        runner.stop();
+    }
+
+    public static class MyTrickleMacroServlet extends HttpServlet
+    {
+        @Override
+        protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
+        {
+
+            PrintWriter out = resp.getWriter();
+            resp.setContentType("text/html");
+            out.write("<div>");
+            try
+            {
+                for (int x=0; x < 200; x++)
+                {
+                    System.out.println("===== writing " + x);
+                    out.write("<p>" + x + "</p>");
+                    out.flush();
+                    Thread.sleep(1000);
+                }
+            }
+            catch (InterruptedException e)
+            {
+                // do nothing
+            }
+            out.write("</div>");
+            out.close();
+        }
+    }
+
 }

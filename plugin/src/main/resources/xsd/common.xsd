@@ -51,12 +51,19 @@
         </xs:restriction>
     </xs:simpleType>
 
-    <xs:simpleType name="LinkContextParamNameType">
+    <xs:simpleType name="LinkContextParameterNameType">
         <xs:restriction base="xs:string">
         </xs:restriction>
     </xs:simpleType>
 
-    <xs:complexType name="LinkContextParamType">
-        <xs:attribute name="name" type="LinkContextParamNameType" use="required" />
+    <xs:complexType name="LinkContextParameterType">
+        <xs:attribute name="name" type="LinkContextParameterNameType" use="required" />
     </xs:complexType>
+
+    <xs:complexType name="LinkContextParametersType">
+        <xs:sequence>
+            <xs:element name="context-parameter" type="LinkContextParameterType" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
+
 </xs:schema>

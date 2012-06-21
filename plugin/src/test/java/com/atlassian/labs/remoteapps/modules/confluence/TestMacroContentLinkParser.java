@@ -121,7 +121,7 @@ public class TestMacroContentLinkParser
         String testText = "Redeem Your Potato Points!";
         String rawContent = makeSignableLink(testRelativeUrl, testText, QuoteStyle.SINGLE_QUOTES);
 
-        runTest(rawContent, null, testRelativeUrl, testText);
+        runTest(rawContent, null, testRelativeUrl, testText, QuoteStyle.SINGLE_QUOTES);
     }
 
     /**
@@ -265,11 +265,17 @@ public class TestMacroContentLinkParser
 
     private void runTest(String rawContent, @Nullable Map<String, String> macroParameters, String expectedRemoteAppRelativeUrl, String expectedAnchorText) throws Exception
     {
+        runTest(rawContent, macroParameters, expectedRemoteAppRelativeUrl, expectedAnchorText,
+                QuoteStyle.DOUBLE_QUOTES);
+    }
+
+    private void runTest(String rawContent, @Nullable Map<String, String> macroParameters, String expectedRemoteAppRelativeUrl, String expectedAnchorText, QuoteStyle quoteStyle) throws Exception
+    {
         if (macroParameters == null)
             macroParameters = Maps.newHashMap();
 
         String actualContent = parser.parse(applicationType, rawContent, macroParameters);
-        String expectedContent = makeAnchor(makeRedirectUrl(appTypeId, expectedRemoteAppRelativeUrl, macroParameters), expectedAnchorText);
+        String expectedContent = makeAnchor(makeRedirectUrl(appTypeId, expectedRemoteAppRelativeUrl, macroParameters), expectedAnchorText, quoteStyle);
 
         assertEquals(expectedContent, actualContent);
     }

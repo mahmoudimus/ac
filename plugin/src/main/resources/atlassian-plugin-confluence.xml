@@ -65,4 +65,12 @@
     <activity-streams-provider key="apps-provider" name="Remote Apps Provider"
                                class="com.atlassian.labs.remoteapps.integration.streams.RemoteAppsActivityProvider">
     </activity-streams-provider-->
+
+    <!-- big pipe stuff -->
+    <web-panel key="requestIdMetaTag" class="com.atlassian.labs.remoteapps.util.http.bigpipe.RequestIdWebPanel" location="atl.header"/>
+
+    <web-resource key="big-pipe">
+        <resource type="download" name="big-pipe.js" location="js/confluence/macro/big-pipe.js" />
+        <dependency>com.atlassian.auiplugin:ajs</dependency>
+    </web-resource>
 </application>

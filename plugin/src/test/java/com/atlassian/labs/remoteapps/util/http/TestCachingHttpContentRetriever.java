@@ -10,7 +10,8 @@ import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.impl.client.cache.CachingHttpClient;
+import org.apache.http.concurrent.FutureCallback;
+import org.apache.http.impl.client.cache.CachingHttpAsyncClient;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -18,6 +19,7 @@ import org.mockito.Matchers;
 import org.mockito.Mock;
 
 import java.io.IOException;
+import java.util.concurrent.Future;
 
 import static junit.framework.Assert.assertEquals;
 import static org.mockito.Mockito.*;
@@ -26,7 +28,7 @@ import static org.mockito.MockitoAnnotations.initMocks;
 public class TestCachingHttpContentRetriever
 {
     @Mock
-    CachingHttpClient httpClient;
+    CachingHttpAsyncClient httpClient;
     
     @Mock
     OAuthLinkManager oAuthLinkManager;
@@ -48,14 +50,16 @@ public class TestCachingHttpContentRetriever
 
         when(plugin.getPluginInformation()).thenReturn(new PluginInformation());
         when(pluginRetrievalService.getPlugin()).thenReturn(plugin);
+        RequestTimeoutKiller killer = new RequestTimeoutKiller();
         this.retriever = new CachingHttpContentRetriever(oAuthLinkManager,
-                userManager, pluginRetrievalService);
+                userManager, pluginRetrievalService, killer);
         this.retriever.httpClient = httpClient;
         HttpResponse response = mock(HttpResponse.class);
         StatusLine status = mock(StatusLine.class);
         when(status.getStatusCode()).thenReturn(200);
         when(response.getStatusLine()).thenReturn(status);
-        when(httpClient.execute(Matchers.<HttpUriRequest>any())).thenReturn(response);
+        Future future = mock(Future.class);
+        when(httpClient.execute(Matchers.<HttpUriRequest>any(), Matchers.<FutureCallback>any())).thenReturn(future);
     }
     
     @Test
@@ -65,8 +69,8 @@ public class TestCachingHttpContentRetriever
         when(userManager.getRemoteUsername()).thenReturn("bob");
         ArgumentCaptor<HttpPost> argument = ArgumentCaptor.forClass(HttpPost.class);
         retriever.postIgnoreResponse(link, "http://localhost/foo", "{\"boo\":\"bar\"}");
-        verify(httpClient).execute(argument.capture());
-        assertEquals("http://localhost/foo?user_id=bob", argument.getValue().getURI().toString());
+        verify(httpClient).execute(argument.capture(), ArgumentCaptor.forClass(FutureCallback.class).capture());
+        assertEquals("http://localhost/foo", argument.getValue().getURI().toString());
     }
     @Test
     public void testPostIgnoreResponseNoUser() throws IOException
@@ -75,7 +79,7 @@ public class TestCachingHttpContentRetriever
         when(userManager.getRemoteUsername()).thenReturn(null);
         ArgumentCaptor<HttpPost> argument = ArgumentCaptor.forClass(HttpPost.class);
         retriever.postIgnoreResponse(link, "http://localhost/foo", "{\"boo\":\"bar\"}");
-        verify(httpClient).execute(argument.capture());
+        verify(httpClient).execute(argument.capture(), ArgumentCaptor.forClass(FutureCallback.class).capture());
         assertEquals("http://localhost/foo", argument.getValue().getURI().toString());
     }
 

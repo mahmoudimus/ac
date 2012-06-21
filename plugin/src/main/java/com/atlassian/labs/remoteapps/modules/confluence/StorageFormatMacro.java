@@ -4,13 +4,14 @@ import com.atlassian.confluence.content.render.xhtml.ConversionContext;
 import com.atlassian.confluence.content.render.xhtml.macro.annotation.Format;
 import com.atlassian.confluence.content.render.xhtml.macro.annotation.RequiresFormat;
 import com.atlassian.confluence.macro.MacroExecutionException;
-import com.atlassian.confluence.xhtml.api.XhtmlContent;
-import com.atlassian.labs.remoteapps.ContentRetrievalException;
 import com.atlassian.labs.remoteapps.modules.ApplicationLinkOperationsFactory;
+import com.atlassian.plugin.webresource.WebResourceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
+
+import static org.apache.commons.lang.StringEscapeUtils.escapeHtml;
 
 /*!
 The `macro` module retrieves storage-format XML from the remote app and renders it.  This allows
@@ -25,16 +26,16 @@ the remote app to generate macro content that is:
 /*!-constructor and fields */
 public class StorageFormatMacro extends AbstractRemoteMacro
 {
-    private final XhtmlContent xhtmlUtils;
     private final String remoteUrl;
     private final MacroContentManager macroContentManager;
+    private final WebResourceManager webResourceManager;
     private final Logger log = LoggerFactory.getLogger(StorageFormatMacro.class);
 
-    public StorageFormatMacro(RemoteMacroInfo remoteMacroInfo, XhtmlContent xhtmlUtils,
-            MacroContentManager macroContentManager)
+    public StorageFormatMacro(RemoteMacroInfo remoteMacroInfo,
+            MacroContentManager macroContentManager, WebResourceManager webResourceManager)
     {
         super(remoteMacroInfo);
-        this.xhtmlUtils = xhtmlUtils;
+        this.webResourceManager = webResourceManager;
         this.remoteUrl = remoteMacroInfo.getUrl();
         this.macroContentManager = macroContentManager;
     }
@@ -47,7 +48,6 @@ public class StorageFormatMacro extends AbstractRemoteMacro
     @RequiresFormat(Format.Storage)
     public String execute(Map<String, String> parameters, String storageFormatBody, ConversionContext conversionContext) throws MacroExecutionException
     {
-        String storageFormatContent;
         ApplicationLinkOperationsFactory.LinkOperations linkOps = remoteMacroInfo.getApplicationLinkOperations();
         /*!
         Next, the remote apps is called and its returned storage-format XML is rendered.  If the
@@ -57,31 +57,21 @@ public class StorageFormatMacro extends AbstractRemoteMacro
          */
         try
         {
-            storageFormatContent = macroContentManager.getStaticContent(new MacroInstance(conversionContext, remoteUrl, storageFormatBody, parameters, linkOps));
+            webResourceManager.requireResource("com.atlassian.labs.remoteapps-plugin:big-pipe");
+            return macroContentManager.getStaticContent(
+                    new MacroInstance(conversionContext, remoteUrl, storageFormatBody, parameters,
+                            remoteMacroInfo.getRequestContextParameterFactory(), linkOps
+                            ));
         }
-        catch (ContentRetrievalException ex)
+        catch (Exception ex)
         {
-            String message = "ERROR: Unable to retrieve macro content from Remote App '" + linkOps.get().getName() + "': " + ex.getMessage();
-            log.error(message + " on page '{}' for url '{}'", conversionContext.getEntity().getTitle(), remoteUrl);
+            String message = "Error: Unable to retrieve macro content from Remote App '" + linkOps.get().getName() + "': " + ex.getMessage();
+            log.error(message + " on page '{}' for url '{}'", escapeHtml(
+                    conversionContext.getEntity().getTitle()), remoteUrl);
             if (log.isDebugEnabled())
             {
                 log.debug("Unable to retrieve content", ex);
             }
-            return message;
-        }
-
-        /*!
-        Finally, the returned storage-format XML is rendered into HTML.  Again, if there are any
-        errors, a message is displayed as the macro content.
-         */
-        try
-        {
-            return xhtmlUtils.convertStorageToView(storageFormatContent, conversionContext);
-        }
-        catch (Exception e)
-        {
-            String message = "ERROR: Unable to convert macro content from Remote App '" + linkOps.get().getName() + "': " + e.getMessage();
-            log.error(message + " on page {}", conversionContext.getEntity().getTitle());
             return message;
         }
     }

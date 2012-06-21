@@ -7,9 +7,12 @@ import com.atlassian.applinks.spi.application.NonAppLinksApplicationType;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.labs.remoteapps.event.RemoteAppEvent;
 import com.atlassian.labs.remoteapps.util.http.HttpContentRetriever;
+import com.atlassian.labs.remoteapps.util.uri.Uri;
+import com.atlassian.labs.remoteapps.util.uri.UriBuilder;
 import com.atlassian.labs.remoteapps.webhook.event.WebHookPublishQueueFullEvent;
 import com.atlassian.labs.remoteapps.webhook.external.EventMatcher;
 import com.atlassian.labs.remoteapps.webhook.external.EventSerializer;
+import com.atlassian.sal.api.user.UserManager;
 import com.google.common.base.Supplier;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
@@ -21,6 +24,7 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.net.URI;
 import java.util.Collection;
 import java.util.concurrent.*;
 
@@ -35,17 +39,20 @@ public class WebHookPublisher implements DisposableBean
     private final HttpContentRetriever httpContentRetriever;
     private final ApplicationLinkService applicationLinkService;
     private final EventPublisher eventPublisher;
+    private final UserManager userManager;
     private static final Logger log = LoggerFactory.getLogger(WebHookPublisher.class);
 
     private final Multimap<String, Registration> registrationsByEvent = newMultimap();
 
     @Autowired
-    public WebHookPublisher(HttpContentRetriever httpContentRetriever, ApplicationLinkService applicationLinkService,
-                            EventPublisher eventPublisher)
+    public WebHookPublisher(HttpContentRetriever httpContentRetriever,
+            ApplicationLinkService applicationLinkService,
+            EventPublisher eventPublisher, UserManager userManager)
     {
         this.httpContentRetriever = httpContentRetriever;
         this.applicationLinkService = applicationLinkService;
         this.eventPublisher = eventPublisher;
+        this.userManager = userManager;
 
         publisher = new ThreadPoolExecutor(3, 3,
                                       0L, TimeUnit.MILLISECONDS,
@@ -75,7 +82,9 @@ public class WebHookPublisher implements DisposableBean
                     if (eventMatcher.matches(eventSerializer.getEvent(), link))
                     {
                         body = body != null ? body : eventSerializer.getJson();
-                        PublishTask task = new PublishTask(httpContentRetriever, registration, link, body);
+                        String username = userManager.getRemoteUsername();
+                        PublishTask task = new PublishTask(httpContentRetriever, registration,
+                                link, username != null ? username : "", body);
                         try
                         {
                             publisher.execute(task);
@@ -123,21 +132,26 @@ public class WebHookPublisher implements DisposableBean
         private final HttpContentRetriever httpContentRetriever;
         private final Registration registration;
         private final ApplicationLink applicationLink;
+        private final String userName;
         private final String body;
 
-        public PublishTask(HttpContentRetriever httpContentRetriever, Registration registration, ApplicationLink applicationLink,
+        public PublishTask(HttpContentRetriever httpContentRetriever,
+                Registration registration, ApplicationLink applicationLink, String userName,
                            String body)
         {
             this.httpContentRetriever = httpContentRetriever;
             this.registration = registration;
             this.applicationLink = applicationLink;
+            this.userName = userName;
             this.body = body;
         }
 
         @Override
         public void run()
         {
-            String url = registration.getUrl(applicationLink);
+            String url = new UriBuilder(Uri.parse(registration.getUrl(applicationLink)))
+                    .addQueryParameter("user_id", userName).toString();
+
             log.debug("Posting to web hook at " + url + "\n" + body);
             httpContentRetriever.postIgnoreResponse(applicationLink, url, body);
         }

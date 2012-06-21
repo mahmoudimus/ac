@@ -6,7 +6,6 @@ import com.atlassian.confluence.plugin.descriptor.MacroMetadataParser;
 import com.atlassian.confluence.plugin.descriptor.XhtmlMacroModuleDescriptor;
 import com.atlassian.confluence.status.service.SystemInformationService;
 import com.atlassian.confluence.util.i18n.I18NBeanFactory;
-import com.atlassian.confluence.xhtml.api.XhtmlContent;
 import com.atlassian.labs.remoteapps.modules.*;
 import com.atlassian.labs.remoteapps.modules.external.RemoteAppCreationContext;
 import com.atlassian.labs.remoteapps.modules.external.RemoteModule;
@@ -15,6 +14,8 @@ import com.atlassian.labs.remoteapps.modules.page.IFrameContext;
 import com.atlassian.labs.remoteapps.modules.page.IFramePageServlet;
 import com.atlassian.labs.remoteapps.modules.page.PageInfo;
 import com.atlassian.labs.remoteapps.product.confluence.ConfluenceProductAccessor;
+import com.atlassian.labs.remoteapps.util.contextparameter.ContextParameterParser;
+import com.atlassian.labs.remoteapps.util.contextparameter.RequestContextParameterFactory;
 import com.atlassian.labs.remoteapps.util.uri.Uri;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.PluginAccessor;
@@ -46,7 +47,6 @@ import static com.google.common.collect.Maps.newHashMap;
 public abstract class AbstractMacroModuleGenerator implements RemoteModuleGenerator
 {
     protected final SystemInformationService systemInformationService;
-    protected final XhtmlContent xhtmlContent;
     protected final ApplicationLinkOperationsFactory applicationLinkOperationsFactory;
     protected final MacroContentManager macroContentManager;
     protected final I18NBeanFactory i18NBeanFactory;
@@ -55,23 +55,25 @@ public abstract class AbstractMacroModuleGenerator implements RemoteModuleGenera
     protected final HostContainer hostContainer;
     private final ServletModuleManager servletModuleManager;
     private final WebItemCreator webItemCreator;
+    private final ContextParameterParser contextParameterParser;
     protected final IFrameRenderer iFrameRenderer;
     protected final UserManager userManager;
 
     public AbstractMacroModuleGenerator(
-            MacroContentManager macroContentManager, XhtmlContent xhtmlContent,
+            MacroContentManager macroContentManager,
             I18NBeanFactory i18NBeanFactory,
             ApplicationLinkOperationsFactory applicationLinkOperationsFactory,
             SystemInformationService systemInformationService, PluginAccessor pluginAccessor,
             HostContainer hostContainer, ServletModuleManager servletModuleManager,
-            IFrameRenderer iFrameRenderer, UserManager userManager)
+            ContextParameterParser contextParameterParser, IFrameRenderer iFrameRenderer,
+            UserManager userManager)
     {
         this.macroContentManager = macroContentManager;
-        this.xhtmlContent = xhtmlContent;
         this.i18NBeanFactory = i18NBeanFactory;
         this.applicationLinkOperationsFactory = applicationLinkOperationsFactory;
         this.systemInformationService = systemInformationService;
         this.pluginAccessor = pluginAccessor;
+        this.contextParameterParser = contextParameterParser;
         this.webItemCreator = new WebItemCreator(new InsertMacroWebItemContext(), new ConfluenceProductAccessor());
         this.macroMetadataParser = ComponentLocator.getComponent(MacroMetadataParser.class);
         this.hostContainer = hostContainer;
@@ -354,7 +356,8 @@ public abstract class AbstractMacroModuleGenerator implements RemoteModuleGenera
                     .addAttribute("value", macroKey).getParent()
                 .addElement("var")
                     .addAttribute("name", "ICON_URL")
-                    .addAttribute("value", ctx.getApplicationType().getDefaultDetails().getDisplayUrl() + iconUrl.toString()).getParent();
+                    .addAttribute("value",
+                            ctx.getApplicationType().getDefaultDetails().getDisplayUrl() + iconUrl.toString()).getParent();
 
         ModuleDescriptor jsDescriptor = new WebResourceModuleDescriptor(hostContainer);
         jsDescriptor.init(ctx.getPlugin(), webResource);
@@ -367,6 +370,8 @@ public abstract class AbstractMacroModuleGenerator implements RemoteModuleGenera
         final Macro.BodyType bodyType = parseBodyType(originalEntity);
         final Macro.OutputType outputType = parseOutputType(originalEntity);
         final URI url = getRequiredUriAttribute(originalEntity, "url");
+        final RequestContextParameterFactory requestContextParameterFactory =
+                contextParameterParser.parseContextParameters(originalEntity);
 
         final ImagePlaceholderConfig placeholder = parseImagePlaceholder(originalEntity);
 
@@ -378,7 +383,7 @@ public abstract class AbstractMacroModuleGenerator implements RemoteModuleGenera
                 ApplicationLinkOperationsFactory.LinkOperations linkOperations = applicationLinkOperationsFactory.create(
                         ctx.getApplicationType());
                 RemoteMacroInfo macroInfo = new RemoteMacroInfo(originalEntity, linkOperations, bodyType,
-                        outputType, url.getPath());
+                        outputType, requestContextParameterFactory, url.getPath());
                 RemoteMacro macro = createMacro(macroInfo, ctx);
                 if (placeholder != null && Macro.BodyType.NONE.equals(bodyType))
                 {

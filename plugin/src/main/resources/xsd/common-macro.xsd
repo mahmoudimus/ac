@@ -9,6 +9,30 @@
         </xs:restriction>
     </xs:simpleType>
 
+    <xs:simpleType name="MacroContextParameterNameType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="output_type">
+                <xs:annotation>
+                    <xs:documentation>
+                        <![CDATA[
+                        Possible values include:<ul>
+                        <li>'preview'</li>
+                        <li>'display'</li>
+                        <li>'word' (Microsoft Word export)</li>
+                        <li>'pdf' (PDF export)</li>
+                        <li>'html_export'</li>
+                        </ul>
+                        <]]>
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="page_id" />
+            <xs:enumeration value="page_type" />
+            <xs:enumeration value="page_title" />
+            <xs:enumeration value="user_id" />
+        </xs:restriction>
+    </xs:simpleType>
+
     <xs:simpleType name="MacroBodyTypeType">
         <xs:restriction base="xs:string">
             <xs:enumeration value="rich-text">
@@ -100,7 +124,7 @@
         <xs:attribute name="height" type="PixelType"/>
     </xs:complexType>
 
-    <xs:complexType name="MacroType">
+    <xs:complexType name="AbstractMacroType" abstract="true">
         <xs:sequence>
             <xs:element name="description" type="DescriptionType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="alias" type="KeyType" minOccurs="0" maxOccurs="unbounded"/>

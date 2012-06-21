@@ -56,7 +56,7 @@ public class FlushableHttpCacheStorage implements HttpCacheStorage
      *            Url that is the cache key
      * @return HttpCacheEntry if one exists, or null for cache miss
      */
-    public synchronized HttpCacheEntry getEntry(String url) throws IOException {
+    public synchronized HttpCacheEntry getEntry(String url) {
         return entries.get(url);
     }
 

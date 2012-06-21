@@ -43,6 +43,24 @@
         </parameters>
     </macro>
 
+    <macro key="app1-nocache" name="Remote App app1 No Cache Macro" url="/myMacro" icon-url="/sandcastles.jpg" output-type="block" body-type="rich-text">
+        <description>Example macro</description>
+        <category name="development" />
+        <macro-editor width="600" height="600" url="/myMacroEditor" />
+        <parameters>
+            <parameter name="footy" title="Favorite Footy" type="enum" required="true">
+                <value name="American Football"/>
+                <value name="Soccer"/>
+                <value name="Rugby Union"/>
+                <value name="Rugby League"/>
+            </parameter>
+        </parameters>
+        <context-parameters>
+            <context-parameter name="page_id" type="query" />
+            <context-parameter name="user_id" type="header" />
+        </context-parameters>
+    </macro>
+
     <macro key="app1-slow" url="/mySlowMacro" output-type="block" body-type="none">
         <description>Slow macro that takes too long to render (for testing)</description>
     </macro>

@@ -20,7 +20,9 @@ import java.io.StringWriter;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.atlassian.labs.remoteapps.apputils.Environment.setEnv;
@@ -117,6 +119,31 @@ public class RemoteAppRunner
                 .addAttribute("url", path)
                 .addAttribute("name", name)
                 .addAttribute("key", key);
+        routes.put(path, servlet);
+        return this;
+    }
+
+    public RemoteAppRunner addMacro(String macroKey, String path, HttpServlet servlet)
+    {
+        return addMacro(macroKey, path, servlet, Collections.<List<String>>emptyList());
+    }
+
+    public RemoteAppRunner addMacro(String macroKey, String path, HttpServlet servlet,
+            List<List<String>> contextParameters)
+    {
+        Element macro = doc.getRootElement().addElement("macro")
+                .addAttribute("key", macroKey)
+                .addAttribute("url", path);
+        if (!contextParameters.isEmpty())
+        {
+            Element params = macro.addElement("context-parameters");
+            for (List<String> param : contextParameters)
+            {
+                params.addElement("context-parameter")
+                        .addAttribute("name", param.get(0))
+                        .addAttribute("type", param.get(1));
+            }
+        }
         routes.put(path, servlet);
         return this;
     }

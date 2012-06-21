@@ -18,6 +18,7 @@ import javax.ws.rs.HttpMethod;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Future;
 
 import static com.atlassian.labs.remoteapps.util.ServletUtils.encodeGetUrl;
 import static com.google.common.collect.Maps.newHashMap;
@@ -37,10 +38,10 @@ public class ApplicationLinkOperationsFactory
     public static interface LinkOperations
     {
         ApplicationLink get();
-        String signGetUrl(String user, String targetPath, Map<String, String[]> params);
+        String signGetUrl(String targetPath, Map<String, String[]> params);
         String createGetUrl(String targetPath, Map<String, String[]> params);
-        String executeGet(String user, String path, Map<String, String> params) throws ContentRetrievalException;
-        void executeGetAsync(String user, String path, Map<String, String> params, HttpContentHandler handler);
+        Future<String> executeAsyncGet(String user, String path, Map<String, String> params,
+                Map<String, String> headers, HttpContentHandler handler) throws ContentRetrievalException;
     }
 
     @Autowired
@@ -68,9 +69,9 @@ public class ApplicationLinkOperationsFactory
             }
 
             @Override
-            public String signGetUrl(String user, String targetPath, Map<String, String[]> params)
+            public String signGetUrl(String targetPath, Map<String, String[]> params)
             {
-                return signGetUrlForType(get(), user, targetPath, params);
+                return signGetUrlForType(get(), targetPath, params);
             }
 
             @Override
@@ -80,16 +81,11 @@ public class ApplicationLinkOperationsFactory
             }
 
             @Override
-            public String executeGet(String username, String path, Map<String, String> params) throws ContentRetrievalException
+            public Future<String> executeAsyncGet(String username, String path, Map<String, String> params,
+                    Map<String, String> headers, HttpContentHandler handler)
+                    throws ContentRetrievalException
             {
-                return executeGetForType(get(), username, path, params);
-            }
-
-            @Override
-            public void executeGetAsync(String username, String path, Map<String, String> params,
-                                        HttpContentHandler handler)
-            {
-                executeAsyncGetForType(get(), username, path, params, handler);
+                return executeAsyncGetForType(get(), username, path, params, headers, handler);
             }
         };
     }
@@ -101,23 +97,16 @@ public class ApplicationLinkOperationsFactory
         return encodeGetUrl(targetUrl, transformValues(params, MapFunctions.STRING_ARRAY_TO_STRING));
     }
 
-    private String executeGetForType(ApplicationLink applicationLink, String username, String path, Map<String, String> params) throws ContentRetrievalException
+    private Future<String> executeAsyncGetForType(ApplicationLink applicationLink, String username, String path,
+            Map<String, String> params, Map<String, String> headers, HttpContentHandler httpContentHandler)
     {
         String targetUrl = getTargetUrl(applicationLink, path);
-        return httpContentRetriever.get(applicationLink, username, targetUrl, Maps.transformValues(params,
-                                                                                                   MapFunctions.OBJECT_TO_STRING));
-    }
-
-    private void executeAsyncGetForType(ApplicationLink applicationLink, String username, String path, Map<String, String> params,
-                                        HttpContentHandler httpContentHandler)
-    {
-        String targetUrl = getTargetUrl(applicationLink, path);
-        httpContentRetriever.getAsync(applicationLink, username, targetUrl,
-                                      Maps.transformValues(params, MapFunctions.OBJECT_TO_STRING), httpContentHandler);
+        return httpContentRetriever.getAsync(applicationLink, username, targetUrl,
+                                      Maps.transformValues(params, MapFunctions.OBJECT_TO_STRING),
+                                      headers, httpContentHandler);
     }
 
     private String signGetUrlForType(ApplicationLink applicationLink,
-                                     String user,
                                      String targetPath,
                                      Map<String, String[]> params
     ) throws PermissionDeniedException

@@ -3,6 +3,8 @@ package com.atlassian.labs.remoteapps.modules.confluence;
 import com.atlassian.confluence.content.render.xhtml.ConversionContext;
 import com.atlassian.confluence.core.ContentEntityObject;
 import com.atlassian.labs.remoteapps.modules.ApplicationLinkOperationsFactory;
+import com.atlassian.labs.remoteapps.util.contextparameter.RequestContextParameterFactory;
+import com.atlassian.labs.remoteapps.util.contextparameter.RequestContextParameters;
 import com.atlassian.renderer.v2.macro.Macro;
 
 import java.util.Map;
@@ -19,16 +21,22 @@ public class MacroInstance
 {
     final ConversionContext conversionContext;
     final String path;
+    private final RequestContextParameters requestContextParameters;
     final ApplicationLinkOperationsFactory.LinkOperations linkOperations;
     final String body;
     final Map<String,String> parameters;
+    final Map<String, String> allContextParameters;
 
-    public MacroInstance(ConversionContext conversionContext, String path, String body, Map<String, String> parameters, ApplicationLinkOperationsFactory.LinkOperations linkOperations)
+    public MacroInstance(ConversionContext conversionContext, String path, String body,
+            Map<String, String> parameters, RequestContextParameterFactory requestContextParameterFactory,
+            ApplicationLinkOperationsFactory.LinkOperations linkOperations)
     {
         this.conversionContext = conversionContext;
         this.path = path;
         this.body = body;
         this.parameters = parameters;
+        this.allContextParameters = getAllContextParameters();
+        this.requestContextParameters = requestContextParameterFactory.create(getAllContextParameters());
         this.linkOperations = linkOperations;
     }
 
@@ -47,16 +55,6 @@ public class MacroInstance
         return path;
     }
 
-    public String getBody()
-    {
-        return body;
-    }
-
-    public Map<String, String> getParameters()
-    {
-        return parameters;
-    }
-
     public ApplicationLinkOperationsFactory.LinkOperations getLinkOperations()
     {
         return linkOperations;
@@ -73,53 +71,22 @@ public class MacroInstance
     */
     public Map<String, String> getUrlParameters()
     {
-        Map<String,String> params = newHashMap();
+        Map<String,String> params = newHashMap(requestContextParameters.getQueryParameters());
 
         /*!
-        ### Context Parmeters
+        #### Deprecated
 
-        Query parameters that provide information about the context in which the macro is being
-        rendered are prefixed with `ctx_`.
+        The following parameters are included, but are deprecated and will be removed before 1.0:
 
-        * `ctx_output_type` - The output type for the rendering that is executing the macro.  Possible
-            values include:<ul>
-            <li>`preview`</li>
-            <li>`display`</li>
-            <li>`word` (Microsoft Word export)</li>
-            <li>`pdf` (PDF export)</li>
-            <li>`html_export`</li>
-            </ul>
-        * `ctx_page_id` - The page or blog post id of the containing entity
-        * `ctx_page_title` - The page or blog post title as a convenience.  Any further information
-            on the entity must be looked up via a separate RPC call/REST resource retrieval.
-        */
-        params.put("ctx_output_type", conversionContext.getOutputType());
-        if (conversionContext.getEntity() != null)
+        * `page_id`
+        * `pageId`
+        * `pageTitle`
+         */
+        if (requestContextParameters.isLegacyMode())
         {
-            String pageId = conversionContext.getEntity().getIdAsString();
-            String pageTitle = conversionContext.getEntity().getTitle();
-            params.put("ctx_page_id", pageId);
-            params.put("ctx_page_type", conversionContext.getEntity().getType());
-            if (pageTitle != null)
-            {
-                params.put("ctx_page_title", pageTitle);
-            }
-
-            /*!
-            #### Deprecated
-
-            The following parameters are included, but are deprecated and will be removed before 1.0:
-
-            * `page_id`
-            * `pageId`
-            * `pageTitle`
-             */
-            params.put("page_id", pageId);
-            params.put("pageId", pageId);
-            if (pageTitle != null)
-            {
-                params.put("pageTitle", pageTitle);
-            }
+            params.put("page_id", allContextParameters.get("page_id"));
+            params.put("pageId", allContextParameters.get("page_id"));
+            params.put("pageTitle", allContextParameters.get("page_title"));
         }
 
         /*!
@@ -137,8 +104,32 @@ public class MacroInstance
         Finally, any configured macro parameters and their values are sent as query parameters who's
         name exactly matches the configured parameter name.
          */
-        params.putAll(getParameters());
+        params.putAll(parameters);
         params.remove(Macro.RAW_PARAMS_KEY);
+        return params;
+    }
+
+    private Map<String,String> getAllContextParameters()
+    {
+        Map<String,String> params = newHashMap();
+
+        params.put("output_type", conversionContext.getOutputType());
+
+        if (conversionContext.getEntity() != null)
+        {
+            String pageId = conversionContext.getEntity().getIdAsString();
+            String pageTitle = conversionContext.getEntity().getTitle();
+            pageTitle = pageTitle != null ? pageTitle : "";
+            params.put("page_id", pageId);
+            params.put("page_type", conversionContext.getEntity().getType());
+            params.put("page_title", pageTitle);
+        }
+        else
+        {
+            params.put("page_id", "");
+            params.put("page_title", "");
+            params.put("page_type", "");
+        }
         return params;
     }
 
@@ -164,12 +155,19 @@ public class MacroInstance
      */
     public String getHashKey()
     {
+        String entityId = conversionContext.getEntity() != null ? conversionContext.getEntity().getIdAsString() :
+                "";
         StringBuilder sb = new StringBuilder();
         sb.append(linkOperations.get().getId().get()).append("|");
         sb.append(parameters.toString()).append("|");
         sb.append(body).append("|");
         sb.append(path).append("|");
-        sb.append(conversionContext.getEntity().getIdAsString());
+        sb.append(entityId);
         return String.valueOf(sb.toString().hashCode());
+    }
+
+    public Map<String, String> getHeaders()
+    {
+        return requestContextParameters.getHeaders();
     }
 }

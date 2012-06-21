@@ -9,6 +9,7 @@ import com.atlassian.labs.remoteapps.modules.applinks.RemoteAppApplicationType;
 import com.atlassian.labs.remoteapps.util.http.HttpContentRetriever;
 import com.atlassian.labs.remoteapps.webhook.event.WebHookPublishQueueFullEvent;
 import com.atlassian.labs.remoteapps.webhook.external.EventMatcher;
+import com.atlassian.sal.api.user.UserManager;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,7 +45,8 @@ public class TestWebHookPublisher
     public void setUp()
     {
         initMocks(this);
-        publisher = new WebHookPublisher(httpContentRetriever, applicationLinkService, eventPublisher);
+        publisher = new WebHookPublisher(httpContentRetriever, applicationLinkService, eventPublisher,
+                mock(UserManager.class));
         details = ApplicationLinkDetails.builder()
                 .displayUrl(URI.create("http://example.com/foo"))
                                     .name("Foo")
@@ -110,7 +112,8 @@ public class TestWebHookPublisher
     @Test
     public void testPublishCallSuccessfulEvenIfSaturated()
     {
-        publisher = new WebHookPublisher(new SleepingHttpContentRetriever(), applicationLinkService, eventPublisher);
+        publisher = new WebHookPublisher(new SleepingHttpContentRetriever(), applicationLinkService, eventPublisher,
+                mock(UserManager.class));
         publisher.register(type, "event.id", "/event");
 
         for (int x=0; x<100 + 4; x++)

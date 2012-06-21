@@ -52,21 +52,18 @@ public class OAuthLinkManager
     private final AuthenticationConfigurationManager authenticationConfigurationManager;
     private final ApplicationLinkService applicationLinkService;
     private final ConsumerService consumerService;
-    private final UserManager userManager;
     private final OAuthValidator oauthValidator;
 
     @Autowired
     public OAuthLinkManager(ServiceProviderConsumerStore serviceProviderConsumerStore,
                             AuthenticationConfigurationManager authenticationConfigurationManager,
                             ApplicationLinkService applicationLinkService,
-                            ConsumerService consumerService,
-                            UserManager userManager)
+                            ConsumerService consumerService)
     {
         this.serviceProviderConsumerStore = serviceProviderConsumerStore;
         this.authenticationConfigurationManager = authenticationConfigurationManager;
         this.applicationLinkService = applicationLinkService;
         this.consumerService = consumerService;
-        this.userManager = userManager;
         this.oauthValidator = new SimpleOAuthValidator();
     }
 
@@ -164,9 +161,9 @@ public class OAuthLinkManager
         }
     }
 
-    public void sign(HttpRequestBase httpMessage, ApplicationLink link, String url, String userName, Map<String, List<String>> originalParams)
+    public void sign(HttpRequestBase httpMessage, ApplicationLink link, String url, Map<String, List<String>> originalParams)
     {
-        OAuthMessage message = sign(link, httpMessage.getMethod(), url, userName, originalParams);
+        OAuthMessage message = sign(link, httpMessage.getMethod(), url, originalParams);
         if (message != null)
         {
             try
@@ -182,7 +179,7 @@ public class OAuthLinkManager
 
     public List<Map.Entry<String, String>> signAsParameters(ApplicationLink link, String method, String url, Map<String, List<String>> originalParams)
     {
-        OAuthMessage message = sign(link, method, url, userManager.getRemoteUsername(), originalParams);
+        OAuthMessage message = sign(link, method, url, originalParams);
         if (message != null)
         {
             try
@@ -208,15 +205,11 @@ public class OAuthLinkManager
         }
     }
 
-    private OAuthMessage sign(ApplicationLink link, String method, String url, String userName, Map<String, List<String>> originalParams)
+    private OAuthMessage sign(ApplicationLink link, String method, String url, Map<String, List<String>> originalParams)
     {
         Map<String,List<String>> params = newHashMap(originalParams);
         Consumer self = consumerService.getConsumer();
         params.put(OAuth.OAUTH_CONSUMER_KEY, singletonList(self.getKey()));
-        if (userName != null)
-        {
-            params.put("user_id", singletonList(userName));
-        }
         if (log.isDebugEnabled())
         {
             dumpParamsToSign(params);
