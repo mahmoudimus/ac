@@ -47,6 +47,10 @@ public class RequestContextParameters
     public Map<String, String> getQueryParameters()
     {
         Map<String,String> params = newHashMap();
+        if (legacyMode)
+        {
+            params.put("user_id", allContextParameters.get("user_id"));
+        }
 
         for (Map.Entry<String,String> entry : allContextParameters.entrySet())
         {
