@@ -22,6 +22,7 @@ import org.apache.http.conn.ConnectionReleaseTrigger;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.cache.CacheConfig;
 import org.apache.http.impl.client.cache.CachingHttpAsyncClient;
+import org.apache.http.impl.conn.ProxySelectorRoutePlanner;
 import org.apache.http.impl.nio.client.DefaultHttpAsyncClient;
 import org.apache.http.impl.nio.conn.AsyncSchemeRegistryFactory;
 import org.apache.http.impl.nio.conn.PoolingClientAsyncConnectionManager;
@@ -42,6 +43,7 @@ import org.springframework.beans.factory.DisposableBean;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.ProxySelector;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -77,7 +79,7 @@ public class CachingHttpContentRetriever implements DisposableBean, HttpContentR
         cacheConfig.setSharedCache(false);
         cacheConfig.setMaxObjectSize(8192L);
 
-        HttpAsyncClient client;
+        DefaultHttpAsyncClient client;
         try
         {
             IOReactorConfig ioReactorConfig = new IOReactorConfig();
@@ -128,6 +130,11 @@ public class CachingHttpContentRetriever implements DisposableBean, HttpContentR
         HttpConnectionParams.setSoTimeout(params, 7 * 1000);
         HttpConnectionParams.setSocketBufferSize(params, 8 * 1024);
         HttpConnectionParams.setTcpNoDelay(params, true);
+
+        ProxySelectorAsyncRoutePlanner routePlanner = new ProxySelectorAsyncRoutePlanner(
+                client.getConnectionManager().getSchemeRegistry(),
+                ProxySelector.getDefault());
+        client.setRoutePlanner(routePlanner);
 
 
         httpCacheStorage = new FlushableHttpCacheStorage(cacheConfig);
@@ -319,6 +326,10 @@ public class CachingHttpContentRetriever implements DisposableBean, HttpContentR
                 requestKiller.completedRequest(httpPost);
                 log.warn("Unable to post information to '{}' as user '{}' due to: {}", new Object
                         []{url, user, e.getMessage()});
+                if (log.isDebugEnabled())
+                {
+                    log.debug("Exception", e);
+                }
             }
 
             @Override
