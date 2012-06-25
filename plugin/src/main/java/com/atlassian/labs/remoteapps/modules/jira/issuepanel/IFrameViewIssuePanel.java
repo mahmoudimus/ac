@@ -6,6 +6,8 @@ import java.io.Writer;
 import java.util.Map;
 
 import com.atlassian.crowd.embedded.api.User;
+import com.atlassian.jira.issue.Issue;
+import com.atlassian.jira.project.Project;
 import com.atlassian.labs.remoteapps.api.PermissionDeniedException;
 import com.atlassian.labs.remoteapps.modules.IFrameRenderer;
 import com.atlassian.labs.remoteapps.modules.page.IFrameContext;
@@ -13,6 +15,8 @@ import com.atlassian.plugin.web.model.WebPanel;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static com.google.common.collect.Maps.newHashMap;
 
 /**
  *
@@ -52,7 +56,11 @@ public class IFrameViewIssuePanel implements WebPanel
         {
             User user = (User) context.get("user");
             String remoteUser = user != null ? user.getName() : null;
-            writer.write(iFrameRenderer.render(iFrameContext, remoteUser) );
+            Map<String,String[]> params = newHashMap();
+            params.put("issue_id", new String[]{context.containsKey("issue") ? ((Issue)context.get("issue")).getKey() : ""});
+            params.put("project_id", new String[]{context.containsKey("project") ? ((Project)context.get("project")).getKey() : ""});
+
+            writer.write(iFrameRenderer.render(iFrameContext, "", params, remoteUser));
         }
         catch (PermissionDeniedException ex)
         {
