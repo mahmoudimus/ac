@@ -1,8 +1,6 @@
 package com.atlassian.labs.remoteapps;
 
-import com.atlassian.applinks.api.ApplicationLink;
-import com.atlassian.applinks.api.ApplicationLinkService;
-import com.atlassian.applinks.api.ApplicationType;
+import com.atlassian.applinks.api.*;
 import com.atlassian.labs.remoteapps.modules.applinks.RemoteAppApplicationType;
 import com.atlassian.labs.remoteapps.modules.permissions.scope.ApiScope;
 import com.atlassian.labs.remoteapps.settings.SettingsManager;
@@ -32,7 +30,7 @@ public class PermissionManager
 {
     private static final Logger log = LoggerFactory.getLogger(PermissionManager.class);
     public static final String API_SCOPES_LINK_KEY = "api-scopes";
-    private final ApplicationLinkService applicationLinkService;
+    private final ApplicationLinkAccessor applicationLinkAccessor;
     private final OAuthLinkManager linkManager;
     private final UserManager userManager;
     private final SettingsManager settingsManager;
@@ -44,13 +42,13 @@ public class PermissionManager
     );
 
     @Autowired
-    public PermissionManager(ApplicationLinkService applicationLinkService,
+    public PermissionManager(ApplicationLinkAccessor applicationLinkAccessor,
             OAuthLinkManager linkManager,
             UserManager userManager,
             WaitableServiceTrackerFactory waitableServiceTrackerFactory,
             SettingsManager settingsManager)
     {
-        this.applicationLinkService = applicationLinkService;
+        this.applicationLinkAccessor = applicationLinkAccessor;
         this.linkManager = linkManager;
         this.userManager = userManager;
         this.settingsManager = settingsManager;
@@ -65,10 +63,9 @@ public class PermissionManager
                 });
     }
 
-
     public void setApiPermissions(ApplicationType type, List<String> scopes)
     {
-        ApplicationLink link = applicationLinkService.getPrimaryApplicationLink(type.getClass());
+        ApplicationLink link = applicationLinkAccessor.getApplicationLink(type);
         link.putProperty(API_SCOPES_LINK_KEY, scopes);
     }
 
@@ -132,7 +129,7 @@ public class PermissionManager
         if (link == null)
         {
             // fallback to checking all app links
-            for (ApplicationLink aLink : applicationLinkService.getApplicationLinks())
+            for (ApplicationLink aLink : applicationLinkAccessor.getApplicationLinks())
             {
                 ApplicationType type = aLink.getType();
                 if (type instanceof RemoteAppApplicationType)

@@ -1,10 +1,10 @@
 package com.atlassian.labs.remoteapps.webhook;
 
 import com.atlassian.applinks.api.ApplicationLink;
-import com.atlassian.applinks.api.ApplicationLinkService;
 import com.atlassian.applinks.api.ApplicationType;
 import com.atlassian.applinks.spi.application.NonAppLinksApplicationType;
 import com.atlassian.event.api.EventPublisher;
+import com.atlassian.labs.remoteapps.ApplicationLinkAccessor;
 import com.atlassian.labs.remoteapps.event.RemoteAppEvent;
 import com.atlassian.labs.remoteapps.util.http.HttpContentRetriever;
 import com.atlassian.labs.remoteapps.util.uri.Uri;
@@ -24,9 +24,11 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.net.URI;
 import java.util.Collection;
-import java.util.concurrent.*;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Publishes events to registered remote apps
@@ -37,7 +39,7 @@ public class WebHookPublisher implements DisposableBean
     public static final int PUBLISH_QUEUE_SIZE = 100;
     private final ThreadPoolExecutor publisher;
     private final HttpContentRetriever httpContentRetriever;
-    private final ApplicationLinkService applicationLinkService;
+    private final ApplicationLinkAccessor applicationLinkAccessor;
     private final EventPublisher eventPublisher;
     private final UserManager userManager;
     private static final Logger log = LoggerFactory.getLogger(WebHookPublisher.class);
@@ -46,11 +48,11 @@ public class WebHookPublisher implements DisposableBean
 
     @Autowired
     public WebHookPublisher(HttpContentRetriever httpContentRetriever,
-            ApplicationLinkService applicationLinkService,
+            ApplicationLinkAccessor applicationLinkAccessor,
             EventPublisher eventPublisher, UserManager userManager)
     {
         this.httpContentRetriever = httpContentRetriever;
-        this.applicationLinkService = applicationLinkService;
+        this.applicationLinkAccessor = applicationLinkAccessor;
         this.eventPublisher = eventPublisher;
         this.userManager = userManager;
 
@@ -76,7 +78,7 @@ public class WebHookPublisher implements DisposableBean
         {
             if (registration.applies(eventSerializer.getEvent()))
             {
-                ApplicationLink link = applicationLinkService.getPrimaryApplicationLink(registration.getApplicationType().getClass());
+                ApplicationLink link = applicationLinkAccessor.getApplicationLink(registration.getApplicationType());
                 if (link != null)
                 {
                     if (eventMatcher.matches(eventSerializer.getEvent(), link))

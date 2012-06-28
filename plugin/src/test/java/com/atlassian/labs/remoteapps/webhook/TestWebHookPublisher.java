@@ -1,10 +1,10 @@
 package com.atlassian.labs.remoteapps.webhook;
 
 import com.atlassian.applinks.api.ApplicationLink;
-import com.atlassian.applinks.api.ApplicationLinkService;
 import com.atlassian.applinks.spi.application.TypeId;
 import com.atlassian.applinks.spi.link.ApplicationLinkDetails;
 import com.atlassian.event.api.EventPublisher;
+import com.atlassian.labs.remoteapps.ApplicationLinkAccessor;
 import com.atlassian.labs.remoteapps.modules.applinks.RemoteAppApplicationType;
 import com.atlassian.labs.remoteapps.util.http.HttpContentRetriever;
 import com.atlassian.labs.remoteapps.webhook.event.WebHookPublishQueueFullEvent;
@@ -29,7 +29,7 @@ public class TestWebHookPublisher
     HttpContentRetriever httpContentRetriever;
 
     @Mock
-    ApplicationLinkService applicationLinkService;
+    ApplicationLinkAccessor applicationLinkAccessor;
 
     @Mock
     EventPublisher eventPublisher;
@@ -45,7 +45,7 @@ public class TestWebHookPublisher
     public void setUp()
     {
         initMocks(this);
-        publisher = new WebHookPublisher(httpContentRetriever, applicationLinkService, eventPublisher,
+        publisher = new WebHookPublisher(httpContentRetriever, applicationLinkAccessor, eventPublisher,
                 mock(UserManager.class));
         details = ApplicationLinkDetails.builder()
                 .displayUrl(URI.create("http://example.com/foo"))
@@ -56,7 +56,7 @@ public class TestWebHookPublisher
         type = new RemoteAppApplicationType(new TypeId("foo"), "test", null, details);
 
         when(link.getRpcUrl()).thenReturn(details.getRpcUrl());
-        when(applicationLinkService.getPrimaryApplicationLink(type.getClass())).thenReturn(link);
+        when(applicationLinkAccessor.getApplicationLink(type)).thenReturn(link);
     }
 
     @After
@@ -112,7 +112,7 @@ public class TestWebHookPublisher
     @Test
     public void testPublishCallSuccessfulEvenIfSaturated()
     {
-        publisher = new WebHookPublisher(new SleepingHttpContentRetriever(), applicationLinkService, eventPublisher,
+        publisher = new WebHookPublisher(new SleepingHttpContentRetriever(), applicationLinkAccessor, eventPublisher,
                 mock(UserManager.class));
         publisher.register(type, "event.id", "/event");
 

@@ -5,9 +5,13 @@ import com.atlassian.applinks.api.ApplicationType;
 import com.atlassian.applinks.spi.application.TypeId;
 import com.atlassian.applinks.spi.link.ApplicationLinkDetails;
 import com.atlassian.applinks.spi.link.MutatingApplicationLinkService;
+import com.atlassian.labs.remoteapps.ApplicationLinkAccessor;
 import com.atlassian.labs.remoteapps.PermissionManager;
 import com.atlassian.labs.remoteapps.loader.AggregateModuleDescriptorFactory;
-import com.atlassian.labs.remoteapps.modules.external.*;
+import com.atlassian.labs.remoteapps.modules.external.RemoteAppCreationContext;
+import com.atlassian.labs.remoteapps.modules.external.RemoteModule;
+import com.atlassian.labs.remoteapps.modules.external.Schema;
+import com.atlassian.labs.remoteapps.modules.external.WaitableRemoteModuleGenerator;
 import com.atlassian.labs.remoteapps.modules.util.redirect.RedirectServlet;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
@@ -36,6 +40,7 @@ import static java.util.Collections.emptyMap;
 public class ApplicationTypeModuleGenerator implements WaitableRemoteModuleGenerator
 {
     private final MutatingApplicationLinkService mutatingApplicationLinkService;
+    private final ApplicationLinkAccessor applicationLinkAccessor;
     private final ApplicationTypeClassLoader applicationTypeClassLoader;
     private final AggregateModuleDescriptorFactory aggregateModuleDescriptorFactory;
     private final PermissionManager permissionManager;
@@ -44,11 +49,13 @@ public class ApplicationTypeModuleGenerator implements WaitableRemoteModuleGener
     @Autowired
     public ApplicationTypeModuleGenerator(
             MutatingApplicationLinkService mutatingApplicationLinkService,
+            ApplicationLinkAccessor applicationLinkAccessor,
             ApplicationTypeClassLoader applicationTypeClassLoader,
             AggregateModuleDescriptorFactory aggregateModuleDescriptorFactory,
             PermissionManager permissionManager)
     {
         this.mutatingApplicationLinkService = mutatingApplicationLinkService;
+        this.applicationLinkAccessor = applicationLinkAccessor;
         this.applicationTypeClassLoader = applicationTypeClassLoader;
         this.aggregateModuleDescriptorFactory = aggregateModuleDescriptorFactory;
         this.permissionManager = permissionManager;
@@ -96,7 +103,7 @@ public class ApplicationTypeModuleGenerator implements WaitableRemoteModuleGener
         RemoteAppApplicationType applicationType = createApplicationType(applicationTypeClassLoader, element);
         return new ApplicationTypeModule(applicationType,
                 createApplicationTypeDescriptor(applicationTypeClassLoader, ctx, applicationType, element),
-                mutatingApplicationLinkService, permissionManager);
+                mutatingApplicationLinkService, applicationLinkAccessor, permissionManager);
 
     }
 

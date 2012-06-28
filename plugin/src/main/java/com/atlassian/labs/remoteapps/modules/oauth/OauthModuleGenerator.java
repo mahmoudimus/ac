@@ -1,6 +1,6 @@
 package com.atlassian.labs.remoteapps.modules.oauth;
 
-import com.atlassian.applinks.api.ApplicationLinkService;
+import com.atlassian.labs.remoteapps.ApplicationLinkAccessor;
 import com.atlassian.labs.remoteapps.OAuthLinkManager;
 import com.atlassian.labs.remoteapps.modules.external.*;
 import com.atlassian.oauth.Consumer;
@@ -29,16 +29,15 @@ import static java.util.Collections.emptyMap;
 @Component
 public class OauthModuleGenerator implements UninstallableRemoteModuleGenerator
 {
-    private final ApplicationLinkService applicationLinkService;
-
     private final OAuthLinkManager oAuthLinkManager;
+    private final ApplicationLinkAccessor applicationLinkAccessor;
     private final Plugin plugin;
 
     @Autowired
-    public OauthModuleGenerator(ApplicationLinkService applicationLinkService, OAuthLinkManager oAuthLinkManager,
-            PluginRetrievalService pluginRetrievalService)
+    public OauthModuleGenerator(ApplicationLinkAccessor applicationLinkAccessor,
+                                OAuthLinkManager oAuthLinkManager, PluginRetrievalService pluginRetrievalService)
     {
-        this.applicationLinkService = applicationLinkService;
+        this.applicationLinkAccessor = applicationLinkAccessor;
         this.oAuthLinkManager = oAuthLinkManager;
         this.plugin = pluginRetrievalService.getPlugin();
     }
@@ -91,7 +90,7 @@ public class OauthModuleGenerator implements UninstallableRemoteModuleGenerator
         final URI accessTokenUrl = URI.create(baseUrl + getOptionalAttribute(e, "access-token-url", "/access-token"));
         final URI authorizeUrl = URI.create(baseUrl + getOptionalAttribute(e, "authorize-url", "/authorize"));
 
-        return new OAuthModule(oAuthLinkManager, applicationLinkService,
+        return new OAuthModule(oAuthLinkManager, applicationLinkAccessor,
                                Consumer.key(key).name(name).publicKey(publicKey).description(description).callback(
                 callback).build(), new ServiceProvider(requestTokenUrl, accessTokenUrl, authorizeUrl), ctx.getApplicationType());
     }

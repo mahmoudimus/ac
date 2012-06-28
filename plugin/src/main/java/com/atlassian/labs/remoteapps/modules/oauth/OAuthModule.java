@@ -1,8 +1,8 @@
 package com.atlassian.labs.remoteapps.modules.oauth;
 
 import com.atlassian.applinks.api.ApplicationLink;
-import com.atlassian.applinks.api.ApplicationLinkService;
 import com.atlassian.applinks.spi.application.NonAppLinksApplicationType;
+import com.atlassian.labs.remoteapps.ApplicationLinkAccessor;
 import com.atlassian.labs.remoteapps.OAuthLinkManager;
 import com.atlassian.labs.remoteapps.modules.external.StartableRemoteModule;
 import com.atlassian.oauth.Consumer;
@@ -19,16 +19,16 @@ import static java.util.Collections.emptySet;
 public class OAuthModule implements StartableRemoteModule
 {
     private final OAuthLinkManager oAuthLinkManager;
-    private final ApplicationLinkService applicationLinkService;
+    private final ApplicationLinkAccessor applicationLinkAccessor;
     private final Consumer consumer;
     private final ServiceProvider serviceProvider;
     private final NonAppLinksApplicationType applicationType;
 
-    public OAuthModule(OAuthLinkManager oAuthLinkManager, ApplicationLinkService applicationLinkService,
+    public OAuthModule(OAuthLinkManager oAuthLinkManager, ApplicationLinkAccessor applicationLinkAccessor,
                        Consumer consumer, ServiceProvider serviceProvider, NonAppLinksApplicationType applicationType)
     {
         this.oAuthLinkManager = oAuthLinkManager;
-        this.applicationLinkService = applicationLinkService;
+        this.applicationLinkAccessor = applicationLinkAccessor;
         this.consumer = consumer;
         this.serviceProvider = serviceProvider;
         this.applicationType = applicationType;
@@ -43,7 +43,7 @@ public class OAuthModule implements StartableRemoteModule
     @Override
     public void start()
     {
-        ApplicationLink link = applicationLinkService.getPrimaryApplicationLink(applicationType.getClass());
+        ApplicationLink link = applicationLinkAccessor.getApplicationLink(applicationType);
 
         oAuthLinkManager.associateConsumerWithLink(link, consumer);
 

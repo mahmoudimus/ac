@@ -1,10 +1,10 @@
 package com.atlassian.labs.remoteapps;
 
-import com.atlassian.applinks.api.ApplicationLink;
-import com.atlassian.applinks.api.ApplicationLinkService;
-import com.atlassian.applinks.api.ApplicationType;
+import com.atlassian.applinks.api.*;
+import com.atlassian.applinks.spi.application.ApplicationIdUtil;
 import com.atlassian.applinks.spi.util.TypeAccessor;
 import com.atlassian.labs.remoteapps.modules.applinks.ApplicationTypeClassLoader;
+import com.atlassian.labs.remoteapps.modules.applinks.RemoteAppApplicationType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -32,7 +32,20 @@ public class ApplicationLinkAccessor
     public ApplicationLink getApplicationLink(ApplicationType applicationType)
     {
         ApplicationLink link = applicationLinkService.getPrimaryApplicationLink(applicationType.getClass());
-        notNull(link);
+        if (link == null && applicationType instanceof RemoteAppApplicationType)
+        {
+            RemoteAppApplicationType raType = (RemoteAppApplicationType) applicationType;
+            ApplicationId id = ApplicationIdUtil.generate(raType.getDefaultDetails().getRpcUrl());
+            try
+            {
+                link = applicationLinkService.getApplicationLink(id);
+            }
+            catch (TypeNotInstalledException e)
+            {
+                throw new RuntimeException("Type should always be installed", e);
+            }
+        }
+//        notNull(link);
         return link;
     }
 
@@ -43,5 +56,10 @@ public class ApplicationLinkAccessor
         ApplicationType type = typeAccessor.getApplicationType(appTypeClass);
         notNull(type);
         return getApplicationLink(type);
+    }
+
+    Iterable<ApplicationLink> getApplicationLinks()
+    {
+        return applicationLinkService.getApplicationLinks();
     }
 }

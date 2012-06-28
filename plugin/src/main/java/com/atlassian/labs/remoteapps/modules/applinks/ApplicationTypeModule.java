@@ -3,9 +3,9 @@ package com.atlassian.labs.remoteapps.modules.applinks;
 import com.atlassian.applinks.api.ApplicationId;
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.applinks.api.ApplicationType;
-import com.atlassian.applinks.api.TypeNotInstalledException;
 import com.atlassian.applinks.spi.application.ApplicationIdUtil;
 import com.atlassian.applinks.spi.link.MutatingApplicationLinkService;
+import com.atlassian.labs.remoteapps.ApplicationLinkAccessor;
 import com.atlassian.labs.remoteapps.PermissionManager;
 import com.atlassian.labs.remoteapps.modules.external.ClosableRemoteModule;
 import com.atlassian.labs.remoteapps.modules.external.StartableRemoteModule;
@@ -28,16 +28,19 @@ public class ApplicationTypeModule implements ClosableRemoteModule, StartableRem
     private final PermissionManager permissionManager;
     private final Set<ModuleDescriptor> descriptors;
     private final MutatingApplicationLinkService applicationLinkService;
+    private final ApplicationLinkAccessor applicationLinkAccessor;
 
     public ApplicationTypeModule(RemoteAppApplicationType applicationType,
             ModuleDescriptor<ApplicationType> applicationTypeDescriptor,
             MutatingApplicationLinkService mutatingApplicationLinkService,
+            ApplicationLinkAccessor applicationLinkAccessor,
             PermissionManager permissionManager)
     {
         this.applicationType = applicationType;
         this.permissionManager = permissionManager;
         this.descriptors = ImmutableSet.<ModuleDescriptor>of(applicationTypeDescriptor);
         this.applicationLinkService = mutatingApplicationLinkService;
+        this.applicationLinkAccessor = applicationLinkAccessor;
     }
 
 
@@ -50,25 +53,12 @@ public class ApplicationTypeModule implements ClosableRemoteModule, StartableRem
     @Override
     public void start()
     {
-        ApplicationLink link = applicationLinkService.getPrimaryApplicationLink(applicationType.getClass());
-        final ApplicationId expectedApplicationId = ApplicationIdUtil.generate(applicationType.getDefaultDetails()
-                                                                                          .getRpcUrl());
+        ApplicationLink link = applicationLinkAccessor.getApplicationLink(applicationType);
+        final ApplicationId expectedApplicationId = ApplicationIdUtil.generate(applicationType.getDefaultDetails().getRpcUrl());
         if (link == null)
         {
             log.info("Creating an application link for the remote app type " + applicationType.getId());
-
-            try
-            {
-                link = applicationLinkService.getApplicationLink(expectedApplicationId);
-                if (link == null)
-                {
-                    link = applicationLinkService.addApplicationLink(expectedApplicationId, applicationType, applicationType.getDefaultDetails());
-                }
-            }
-            catch (TypeNotInstalledException e)
-            {
-                throw new RuntimeException("Type should always be installed", e);
-            }
+            link = applicationLinkService.addApplicationLink(expectedApplicationId, applicationType, applicationType.getDefaultDetails());
         }
         else
         {

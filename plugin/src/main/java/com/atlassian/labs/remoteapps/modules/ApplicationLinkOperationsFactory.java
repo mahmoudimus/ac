@@ -1,7 +1,6 @@
 package com.atlassian.labs.remoteapps.modules;
 
 import com.atlassian.applinks.api.ApplicationLink;
-import com.atlassian.applinks.api.ApplicationLinkService;
 import com.atlassian.applinks.api.ApplicationType;
 import com.atlassian.labs.remoteapps.*;
 import com.atlassian.labs.remoteapps.api.PermissionDeniedException;
@@ -31,7 +30,7 @@ import static java.util.Collections.singletonList;
 public class ApplicationLinkOperationsFactory
 {
 
-    private final ApplicationLinkService applicationLinkService;
+    private final ApplicationLinkAccessor applicationLinkAccessor;
     private final OAuthLinkManager oAuthLinkManager;
     private final CachingHttpContentRetriever httpContentRetriever;
 
@@ -45,10 +44,10 @@ public class ApplicationLinkOperationsFactory
     }
 
     @Autowired
-    public ApplicationLinkOperationsFactory(ApplicationLinkService applicationLinkService, OAuthLinkManager oAuthLinkManager,
+    public ApplicationLinkOperationsFactory(ApplicationLinkAccessor applicationLinkAccessor, OAuthLinkManager oAuthLinkManager,
                                             CachingHttpContentRetriever httpContentRetriever)
     {
-        this.applicationLinkService = applicationLinkService;
+        this.applicationLinkAccessor = applicationLinkAccessor;
         this.oAuthLinkManager = oAuthLinkManager;
         this.httpContentRetriever = httpContentRetriever;
     }
@@ -63,7 +62,7 @@ public class ApplicationLinkOperationsFactory
             {
                 if (link == null)
                 {
-                    link = applicationLinkService.getPrimaryApplicationLink(applicationType.getClass());
+                    link = applicationLinkAccessor.getApplicationLink(applicationType);
                 }
                 return link;
             }
