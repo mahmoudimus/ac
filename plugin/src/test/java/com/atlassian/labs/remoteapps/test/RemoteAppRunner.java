@@ -1,7 +1,8 @@
 package com.atlassian.labs.remoteapps.test;
 
-import it.TestWebHooks;
-import org.bouncycastle.openssl.PEMWriter;
+import com.atlassian.labs.remoteapps.apputils.Environment;
+import com.atlassian.labs.remoteapps.apputils.OAuthContext;
+import net.oauth.signature.RSA_SHA1;
 import org.dom4j.Document;
 import org.dom4j.DocumentFactory;
 import org.dom4j.Element;
@@ -16,20 +17,17 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.StringWriter;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.atlassian.labs.remoteapps.apputils.Environment.setEnv;
 import static com.atlassian.labs.remoteapps.test.HttpUtils.renderHtml;
 import static com.atlassian.labs.remoteapps.test.Utils.pickFreePort;
 import static com.atlassian.labs.remoteapps.util.EncodingUtils.encodeBase64;
 import static com.google.common.collect.Maps.newHashMap;
+import static org.mockito.Mockito.mock;
 
 public class RemoteAppRunner
 {
@@ -88,27 +86,11 @@ public class RemoteAppRunner
         return this;
     }
 
-    public RemoteAppRunner addOAuth() throws NoSuchAlgorithmException, IOException
+    public RemoteAppRunner addOAuth(OAuthContext oAuthContext) throws NoSuchAlgorithmException, IOException
     {
-        KeyPairGenerator gen = KeyPairGenerator.getInstance("RSA");
-        KeyPair oauthKeyPair = gen.generateKeyPair();
-        StringWriter publicKeyWriter = new StringWriter();
-        PEMWriter pubWriter = new PEMWriter(publicKeyWriter);
-        pubWriter.writeObject(oauthKeyPair.getPublic());
-        pubWriter.close();
-
         doc.getRootElement().addElement("oauth")
                 .addElement("public-key")
-                    .addText(publicKeyWriter.toString());
-
-        StringWriter privateKeyWriter = new StringWriter();
-        PEMWriter privWriter = new PEMWriter(privateKeyWriter);
-        privWriter.writeObject(oauthKeyPair.getPrivate());
-        privWriter.close();
-
-        setEnv("OAUTH_LOCAL_PUBLIC_KEY", publicKeyWriter.toString());
-        setEnv("OAUTH_LOCAL_PRIVATE_KEY", privateKeyWriter.toString());
-        setEnv("OAUTH_LOCAL_KEY", doc.getRootElement().attributeValue("key"));
+                    .addText(oAuthContext.getLocal().getProperty(RSA_SHA1.PUBLIC_KEY).toString());
 
         return this;
     }
@@ -242,7 +224,6 @@ public class RemoteAppRunner
         register(secret, stripUnknownModules);
         return this;
     }
-
 
     private class MustacheServlet extends HttpServlet
     {

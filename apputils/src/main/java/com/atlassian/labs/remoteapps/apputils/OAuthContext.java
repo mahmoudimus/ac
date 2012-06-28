@@ -13,9 +13,6 @@ import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.atlassian.labs.remoteapps.apputils.Environment.getEnv;
-import static com.atlassian.labs.remoteapps.apputils.Environment.setEnv;
-
 /**
  * Helps with oauth operations
  */
@@ -24,23 +21,30 @@ public class OAuthContext
     // lazily loaded
     private volatile OAuthConsumer local;
 
+    private final Environment env;
+
+    public OAuthContext(Environment env)
+    {
+        this.env = env;
+    }
+
     private OAuthConsumer loadLocalConsumer()
     {
         OAuthServiceProvider serviceProvider = new OAuthServiceProvider(null, null, null);
-        OAuthConsumer localConsumer = new OAuthConsumer(null, getEnv("OAUTH_LOCAL_KEY"), null, serviceProvider);
-        String privateKey = getEnv("OAUTH_LOCAL_PRIVATE_KEY");
+        OAuthConsumer localConsumer = new OAuthConsumer(null, env.getEnv("OAUTH_LOCAL_KEY"), null, serviceProvider);
+        String privateKey = env.getEnv("OAUTH_LOCAL_PRIVATE_KEY");
         System.out.println("Loaded private key:\n" + privateKey);
         localConsumer.setProperty(RSA_SHA1.PRIVATE_KEY, privateKey);
-        String publicKey = getEnv("OAUTH_LOCAL_PUBLIC_KEY");
+        String publicKey = env.getEnv("OAUTH_LOCAL_PUBLIC_KEY");
         System.out.println("Loaded public key:\n" + publicKey);
         localConsumer.setProperty(RSA_SHA1.PUBLIC_KEY, publicKey);
         return localConsumer;
     }
 
-    public void setHost(String key, String publicKey, String baseUrl)
+    public void addHost(String key, String publicKey, String baseUrl)
     {
-        setEnv("OAUTH_HOST_PUBLIC_KEY." + key, publicKey);
-        setEnv("HOST_BASE_URL." + key, baseUrl);
+        env.setEnv("OAUTH_HOST_PUBLIC_KEY." + key, publicKey);
+        env.setEnv("HOST_BASE_URL." + key, baseUrl);
     }
 
     public OAuthConsumer getHostConsumer(String key)
@@ -51,18 +55,23 @@ public class OAuthContext
                                 baseUrl + "/plugins/servlet/oauth/authorize",
                                 baseUrl + "/plugins/servlet/oauth/access-token");
         OAuthConsumer host = new OAuthConsumer(null, key, null, serviceProvider);
-        host.setProperty(RSA_SHA1.PUBLIC_KEY, getEnv("OAUTH_HOST_PUBLIC_KEY." + key));
+        host.setProperty(RSA_SHA1.PUBLIC_KEY, env.getEnv("OAUTH_HOST_PUBLIC_KEY." + key));
         return host;
     }
 
     public String getHostBaseUrl(String key)
     {
-        return getEnv("HOST_BASE_URL." + key);
+        return env.getEnv("HOST_BASE_URL." + key);
     }
 
     public String getLocalBaseUrl()
     {
-        return getEnv("BASE_URL");
+        return env.getEnv("BASE_URL");
+    }
+
+    public void setLocalBaseUrlIfNull(String baseUrl)
+    {
+        env.setEnvIfNull("BASE_URL", baseUrl);
     }
 
     public OAuthConsumer getLocal()
@@ -76,10 +85,22 @@ public class OAuthContext
 
     public String validate2LOFromParameters(HttpServletRequest req) throws ServletException
     {
-        String url = getLocalBaseUrl() + URI.create(req.getRequestURI()).getPath();
+        String url = getFullUrl(req);
         OAuthMessage message = new OAuthMessage(req.getMethod(), url,
                 convertToSingleValues(req.getParameterMap()).entrySet());
         return validateAndExtractKey(message);
+    }
+
+    private String getFullUrl(HttpServletRequest req)
+    {
+        String contextPath = URI.create(getLocalBaseUrl()).getPath();
+        String url = req.getRequestURI();
+        if (url.startsWith(contextPath))
+        {
+            url = url.substring(contextPath.length());
+        }
+        url = getLocalBaseUrl() + url;
+        return url;
     }
 
     private Map<String,String> convertToSingleValues(Map<String,String[]> params)
@@ -98,11 +119,11 @@ public class OAuthContext
 
     public String validateRequest(HttpServletRequest req) throws ServletException
     {
-        URI originalUri = URI.create(req.getRequestURI());
-        String url = getLocalBaseUrl() + originalUri.getPath();
-        if (originalUri.getFragment() != null)
+        URI requestUri = URI.create(req.getRequestURI());
+        String url =getFullUrl(req);
+        if (requestUri.getFragment() != null)
         {
-            url += "#" + originalUri.getFragment();
+            url += "#" + requestUri.getFragment();
         }
         OAuthMessage message = OAuthServlet.getMessage(req, url);
         return validateAndExtractKey(message);
@@ -207,4 +228,8 @@ public class OAuthContext
         }
     }
 
+    public void setLocalOauthKey(String key)
+    {
+        env.setEnvIfNull("OAUTH_LOCAL_KEY", key);
+    }
 }

@@ -1,36 +1,36 @@
-package com.atlassian.labs.remoteapps.installer;
+package com.atlassian.labs.remoteapps.api;
 
-import com.atlassian.labs.remoteapps.ModuleGeneratorManager;
-import com.atlassian.labs.remoteapps.api.InstallationFailedException;
-import com.atlassian.labs.remoteapps.api.XmlUtils;
 import org.dom4j.*;
+import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
+import org.dom4j.io.XMLWriter;
 import org.dom4j.tree.DefaultElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.xml.sax.InputSource;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
 
+import java.io.IOException;
 import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static com.atlassian.labs.remoteapps.util.Dom4jUtils.printNode;
-
-@Component
 public class FormatConverter
 {
-    private final ModuleGeneratorManager moduleGeneratorManager;
+    private final ModuleKeyProvider moduleKeyProvider;
     private static final Logger log = LoggerFactory.getLogger(FormatConverter.class);
 
-    @Autowired
-    public FormatConverter(ModuleGeneratorManager moduleGeneratorManager)
+    public static interface ModuleKeyProvider
     {
-        this.moduleGeneratorManager = moduleGeneratorManager;
+        Set<String> getModuleKeys();
+    }
+
+    public FormatConverter(ModuleKeyProvider moduleKeyProvider)
+    {
+        this.moduleKeyProvider = moduleKeyProvider;
     }
 
     public Document toDocument(String id, String contentType, String text)
@@ -69,7 +69,7 @@ public class FormatConverter
         Yaml yaml = new Yaml(new SafeConstructor());
         Document doc = DocumentHelper.createDocument();
         Element root = doc.addElement("remote-app");
-        Set<String> moduleKeys = moduleGeneratorManager.getModuleGeneratorKeys();
+        Set<String> moduleKeys = moduleKeyProvider.getModuleKeys();
 
         // can't use yaml.loadAs since it doesn't seem to work with SafeConstructor
         Map<String,Object> data = (Map<String, Object>) yaml.load(descriptorXml);
@@ -117,6 +117,21 @@ public class FormatConverter
         {
             parent.addAttribute(name, object.toString());
         }
+    }
+
+    private static String printNode(Node document)
+    {
+        StringWriter writer = new StringWriter();
+        XMLWriter xmlWriter = new XMLWriter(writer, OutputFormat.createPrettyPrint());
+        try
+        {
+            xmlWriter.write(document);
+        }
+        catch (IOException e)
+        {
+            throw new IllegalArgumentException("Unable to write node", e);
+        }
+        return writer.toString();
     }
 
     private static class NamespaceCleaner extends VisitorSupport

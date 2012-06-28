@@ -27,11 +27,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.yaml</groupId>
-            <artifactId>snakeyaml</artifactId>
-            <version>1.10</version>
-        </dependency>
-        <dependency>
             <groupId>asm</groupId>
             <artifactId>asm-util</artifactId>
             <version>3.3.1</version>
@@ -45,6 +40,12 @@
             <groupId>net.oauth.core</groupId>
             <artifactId>oauth</artifactId>
             <version>20090531</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>1.4</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -500,6 +501,8 @@
                             com.atlassian.labs.remoteapps.modules.external,
                             com.atlassian.labs.remoteapps.event,
                             com.atlassian.labs.remoteapps.api,
+                            com.atlassian.labs.remoteapps.api.universalbinary,
+                            com.atlassian.labs.remoteapps.api.universalbinary.impl,
                             com.atlassian.labs.remoteapps.webhook.external
                         </Export-Package>
                     </instructions>

@@ -1,6 +1,6 @@
 package servlets;
 
-import com.atlassian.labs.remoteapps.apputils.Environment;
+import com.atlassian.labs.remoteapps.apputils.spring.EnvironmentImpl;
 import com.atlassian.labs.remoteapps.apputils.OAuthContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -25,21 +25,19 @@ public class MacroResetServlet extends HttpServlet
     public MacroResetServlet(OAuthContext oAuthContext)
     {
         this.oAuthContext = oAuthContext;
-    }
+    }   
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
     {
-        for (String clientKey : Environment.getAllClients())
-        {
-            URL url = new URL(oAuthContext.getHostBaseUrl(clientKey) + "/rest/remoteapps/latest/macro/app/app1");
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("DELETE");
-            oAuthContext.sign(url.toString(), "DELETE", null, conn);
-            int code = conn.getResponseCode();
-            System.out.println("Reset from " + clientKey + " returned: " + code);
-            resp.setStatus(code);
-            conn.disconnect();
-        }
+        String baseUrl = req.getParameter("baseurl");
+        URL url = new URL(baseUrl + "/rest/remoteapps/latest/macro/app/app1");
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("DELETE");
+        oAuthContext.sign(url.toString(), "DELETE", null, conn);
+        int code = conn.getResponseCode();
+        System.out.println("Reset from " + baseUrl + " returned: " + code);
+        resp.setStatus(code);
+        conn.disconnect();
     }
 }

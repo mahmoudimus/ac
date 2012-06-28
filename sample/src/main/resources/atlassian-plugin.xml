@@ -7,4 +7,6 @@
     <junit key="all" package="junit.all" />
     <junit key="confluence" package="junit.confluence" application="confluence"/>
     <junit key="jira" package="junit.jira" application="jira"/>
+
+    <component key="oauthContextAccessor" class="junit.OAuthContextAccessor" />
 </atlassian-plugin>

@@ -1,29 +1,22 @@
 package it;
 
 import com.atlassian.labs.remoteapps.test.*;
-import com.atlassian.labs.remoteapps.test.webhook.WebHookBody;
-import com.atlassian.labs.remoteapps.test.webhook.WebHookTester;
-import com.atlassian.labs.remoteapps.test.webhook.WebHookWaiter;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
-import com.google.common.collect.ImmutableMap;
-import com.samskivert.mustache.Mustache;
 import org.apache.commons.io.FileUtils;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
 import java.util.Collections;
 
-import static com.atlassian.labs.remoteapps.test.webhook.WebHookTestServlet.runInRunner;
-import static java.util.Collections.singletonMap;
 import static org.apache.commons.io.FileUtils.cleanDirectory;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class TestFileInstall extends AbstractRemoteAppTest
 {
     @Test
+    @Ignore
 	public void testGeneralPage() throws Exception
     {
         String baseUrl = product.getProductInstance().getBaseUrl();

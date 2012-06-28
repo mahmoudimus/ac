@@ -32,6 +32,7 @@ public class ConfluenceCounterMacroPage implements Page
 
     public String getCounterMacroBody()
     {
+        driver.waitUntilElementIsNotLocated(By.className("bp-loading"));
         return driver.findElement(By.className("rp-counter")).getText();
     }
 

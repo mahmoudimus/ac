@@ -20,10 +20,16 @@
         <url-pattern>/remoteapps/*</url-pattern>
     </servlet-filter>
 
-    <servlet-filter key="localdev-resources" class="com.atlassian.labs.remoteapps.installer.FileRemoteAppFilter"
+    <servlet-filter key="universal-binary-dispatching" class="bean:ubDispatchFilter"
                     location="after-encoding">
         <url-pattern>/app/*</url-pattern>
     </servlet-filter>
+
+
+    <!--todo: reenable this: servlet-filter key="localdev-resources" class="com.atlassian.labs.remoteapps.installer.FileRemoteAppFilter"
+                    location="after-encoding">
+        <url-pattern>/app/*</url-pattern>
+    </servlet-filter-->
 
 
     <servlet-filter key="api-scoping" class="com.atlassian.labs.remoteapps.modules.permissions.ApiScopingFilter"

@@ -1,8 +1,7 @@
 package junit.all;
 
-import com.atlassian.labs.remoteapps.apputils.Environment;
 import com.atlassian.labs.remoteapps.apputils.OAuthContext;
-import net.oauth.OAuthServiceProvider;
+import junit.OAuthContextAccessor;
 import org.junit.Test;
 
 import java.net.HttpURLConnection;
@@ -15,15 +14,13 @@ import static org.junit.Assert.assertEquals;
  */
 public class OAuthTest
 {
-    private final OAuthContext oAuthContext = new OAuthContext();
-    private final String clientKey = Environment.getAllClients().iterator().next();
+    private final OAuthContext oAuthContext = OAuthContextAccessor.getOAuthContext();
+    private final String baseUrl = System.getProperty("baseurl");
 
     @Test
     public void testAuthorizeRequestWorks() throws Exception
     {
-        OAuthServiceProvider provider = oAuthContext.getHostConsumer(clientKey)
-                .serviceProvider;
-        URL url = new URL(provider.requestTokenURL);
+        URL url = new URL(baseUrl + "/plugins/servlet/oauth/request-token");
         HttpURLConnection yc = (HttpURLConnection) url.openConnection();
         yc.setDoOutput(true);
         yc.setDoInput(true);

@@ -49,7 +49,6 @@ public class StartableForPlugins implements LifecycleAware, DisposableBean
         {
             runRunnablesForPlugin(key);
         }
-        runnables.clear();
     }
 
     private void runRunnablesForPlugin(String key)
@@ -60,6 +59,7 @@ public class StartableForPlugins implements LifecycleAware, DisposableBean
             {
                 runnable.run();
             }
+            runnables.removeAll(key);
         }
     }
 

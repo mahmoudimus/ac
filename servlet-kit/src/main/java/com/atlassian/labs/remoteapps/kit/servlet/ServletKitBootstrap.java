@@ -12,108 +12,113 @@ import net.oauth.signature.RSA_SHA1;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
-import org.dom4j.io.SAXReader;
 import org.osgi.framework.BundleContext;
-import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.DisposableBean;
 import org.springframework.context.ApplicationContext;
 
+import javax.servlet.Servlet;
+import javax.servlet.http.HttpServlet;
 import java.util.Collection;
+import java.util.Locale;
 
 import static com.atlassian.labs.remoteapps.api.XmlUtils.createSecureSaxReader;
 
 /**
  *
  */
-public class ServletKitBootstrap implements DisposableBean
+public class ServletKitBootstrap
 {
-    private static final Logger log = LoggerFactory.getLogger(ServletKitBootstrap.class);
-
-    private final HttpServer httpServer;
+    private final ApplicationContext applicationContext;
     private final BundleContext bundleContext;
     private final OAuthContext oAuthContext;
-    private final ApplicationContext applicationContext;
-    private final ConsumerService consumerService;
-    private final ApplicationProperties applicationProperties;
+    private static final Logger log = LoggerFactory.getLogger(ServletKitBootstrap.class);
 
-    public ServletKitBootstrap(
-            HttpServer httpServer, BundleContext bundleContext, OAuthContext oAuthContext,
-            ApplicationContext applicationContext, ConsumerService consumerService,
-            ApplicationProperties applicationProperties, ApplicationProperties properties) throws Exception
+    public ServletKitBootstrap(ApplicationContext applicationContext,
+            BundleContext bundleContext,
+            OAuthContext oAuthContext,
+            Environment environment,
+            DescriptorGenerator descriptorGenerator) throws Exception
     {
-        this.httpServer = httpServer;
+        this.applicationContext = applicationContext;
         this.bundleContext = bundleContext;
         this.oAuthContext = oAuthContext;
-        this.applicationContext = applicationContext;
-        this.consumerService = consumerService;
-        this.applicationProperties = applicationProperties;
-        register();
+
+        String displayUrl = descriptorGenerator.getLocalMountBaseUrl();
+        oAuthContext.setLocalBaseUrlIfNull(displayUrl);
+
+        for (HttpServlet servlet : (Collection<HttpServlet>)applicationContext.getBeansOfType(Servlet.class).values())
+        {
+            String path;
+            AppUrl appUrl = servlet.getClass().getAnnotation(AppUrl.class);
+            if (appUrl != null)
+            {
+                path = appUrl.value();
+            }
+            else
+            {
+                String className = servlet.getClass().getSimpleName();
+                path = "/" + String.valueOf(className.charAt(0)).toLowerCase(Locale.US) +
+                        (className.endsWith("Servlet") ? className.substring(1, className.length() - "Servlet".length()) : className.substring(1, className.length()));
+            }
+            log.info("Found servlet '" + path + "' class '" + servlet.getClass());
+            descriptorGenerator.mountServlet(servlet, path, path + "/*");
+        }
+        descriptorGenerator.mountStaticResources("/public");
+
+        Document appDescriptor = loadDescriptor();
+        Element root = appDescriptor.getRootElement();
+        oAuthContext.setLocalOauthKey(root.attributeValue("key"));
+
+        updateDisplayUrl(root);
+        updateOauthPublicKey(oAuthContext, root);
+
+        if (isLocal())
+        {
+            registerOAuthHostInfo();
+        }
+        // todo: handle exceptions better
+        descriptorGenerator.mountServlet(new RegistrationServlet(appDescriptor, environment,
+                oAuthContext), "/register");
+        descriptorGenerator.init(appDescriptor);
     }
 
-    @Override
-    public void destroy() throws Exception
+    private void updateOauthPublicKey(OAuthContext oAuthContext, Element root)
     {
-        httpServer.stop();
-    }
-
-    private void register() throws Exception
-    {
-        httpServer.start();
-        try
+        Element oauth = root.element("oauth");
+        if (oauth != null)
         {
-            // todo: make this work for outside the atlassian app
-            Consumer consumer = consumerService.getConsumer();
-            oAuthContext.setHost(consumer.getKey(),
-                    RSAKeys.toPemEncoding(consumer.getPublicKey()),
-                            applicationProperties.getBaseUrl());
-
-            Document appDescriptor = loadDescriptor();
-            Environment.setEnv("OAUTH_LOCAL_KEY", appDescriptor.getRootElement().attributeValue("key"));
-            appDescriptor.getRootElement().addAttribute("display-url", httpServer.getAppBaseUrl().toString());
-            Element oauth = appDescriptor.getRootElement().element("oauth");
-            if (oauth != null)
+            Element publicKeyElement = oauth.element("public-key");
+            if (publicKeyElement == null)
             {
-                oauth.element("public-key").setText(
-                        oAuthContext.getLocal().getProperty(RSA_SHA1.PUBLIC_KEY).toString());
+                publicKeyElement = oauth.addElement("public-key");
             }
-            loadGenerator().init(appDescriptor);
-        }
-        catch (Exception ex)
-        {
-            destroy();
-            throw ex;
+            publicKeyElement.setText(
+                    oAuthContext.getLocal().getProperty(RSA_SHA1.PUBLIC_KEY).toString());
         }
     }
 
-    private DescriptorGenerator loadGenerator()
+    private void updateDisplayUrl(Element root)
     {
-        DescriptorGenerator generator = loadOptionalBean(DescriptorGenerator.class);
-        if (generator == null)
-        {
-            ServiceTracker tracker = new ServiceTracker(bundleContext, 
-                    DescriptorGenerator.class.getName(), null);
-            tracker.open();
-            String notFoundMessage = "Remote app default descriptor generator not found";
-            try
-            {
-                generator = (DescriptorGenerator) tracker.waitForService(20 * 1000);
-                if (generator == null)
-                {
-                    throw new IllegalStateException(notFoundMessage);
-                }
-            }
-            catch (InterruptedException e)
-            {
-                throw new IllegalStateException(notFoundMessage);
-            }
-            finally
-            {
-                tracker.close();
-            }
-        }
-        return generator;
+        root.addAttribute("display-url", oAuthContext.getLocalBaseUrl());
+    }
+
+    private boolean isLocal()
+    {
+        return bundleContext.getServiceReference("com.atlassian.oauth.consumer.ConsumerService") != null;
+    }
+
+    private void registerOAuthHostInfo()
+    {
+        ConsumerService consumerService = (ConsumerService) bundleContext.getService(
+                bundleContext.getServiceReference(ConsumerService.class.getName()));
+        ApplicationProperties applicationProperties = (ApplicationProperties) bundleContext.getService(
+                bundleContext.getServiceReference(ApplicationProperties.class.getName()));
+
+        Consumer consumer = consumerService.getConsumer();
+        oAuthContext.addHost(consumer.getKey(),
+                RSAKeys.toPemEncoding(consumer.getPublicKey()),
+                applicationProperties.getBaseUrl());
     }
 
     private Document loadDescriptor()
@@ -135,7 +140,7 @@ public class ServletKitBootstrap implements DisposableBean
             throw new PluginParseException("Unable to read and parse app descriptor", e);
         }
     }
-    
+
     <T> T loadOptionalBean(Class<T> typeClass)
     {
         Collection<T> factories = (Collection<T>) applicationContext.getBeansOfType(typeClass).values();

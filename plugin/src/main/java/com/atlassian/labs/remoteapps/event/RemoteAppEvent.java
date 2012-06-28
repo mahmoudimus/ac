@@ -5,15 +5,15 @@ package com.atlassian.labs.remoteapps.event;
  */
 public class RemoteAppEvent
 {
-    protected final String pluginKey;
+    protected final String remoteAppKey;
 
-    public RemoteAppEvent(String pluginKey)
+    public RemoteAppEvent(String remoteAppKey)
     {
-        this.pluginKey = pluginKey;
+        this.remoteAppKey = remoteAppKey;
     }
 
     public String getRemoteAppKey()
     {
-        return pluginKey;
+        return remoteAppKey;
     }
 }
