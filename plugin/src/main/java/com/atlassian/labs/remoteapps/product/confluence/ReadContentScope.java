@@ -1,5 +1,7 @@
 package com.atlassian.labs.remoteapps.product.confluence;
 
+import com.atlassian.labs.remoteapps.modules.permissions.scope.RestApiScopeHelper;
+
 import static java.util.Arrays.asList;
 
 /**
@@ -9,7 +11,8 @@ public class ReadContentScope extends ConfluenceScope
 {
     public ReadContentScope()
     {
-        super(asList(
+        super(
+            asList(
                 "getSpaces",
                 "getSpace",
                 "getPages",
@@ -46,7 +49,11 @@ public class ReadContentScope extends ConfluenceScope
                 "getLabelContentByName",
                 "getLabelContentByObject",
                 "getSpacesContainingContentWithLabel"
-        ));
+            ),
+            asList(
+                new RestApiScopeHelper.RestScope("prototype", asList("1", "latest"), "/search", asList("get"))
+            )
+        );
     }
 
     @Override
