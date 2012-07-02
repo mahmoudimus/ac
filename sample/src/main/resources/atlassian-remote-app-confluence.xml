@@ -7,6 +7,8 @@
     <permissions>
         <permission scope="resttest" />
         <permission scope="read_content" />
+        <permission scope="read_users_and_groups" />
+        <permission scope="read_server_information" />
         <permission scope="read_app_links" />
     </permissions>
 

@@ -1,5 +1,7 @@
 package com.atlassian.labs.remoteapps.product.confluence;
 
+import com.atlassian.labs.remoteapps.modules.permissions.scope.RestApiScopeHelper;
+
 import static java.util.Arrays.asList;
 
 /**
@@ -11,7 +13,11 @@ public class ReadServerInformationScope extends ConfluenceScope
     {
         super(asList(
                 "getServerInfo"
-        ));
+        ),
+        asList(
+                new RestApiScopeHelper.RestScope("prototype", asList("1", "latest"), "/buildInfo", asList("get"))
+            )
+        );
     }
 
     @Override

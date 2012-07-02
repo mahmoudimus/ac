@@ -51,7 +51,11 @@ public class ReadContentScope extends ConfluenceScope
                 "getSpacesContainingContentWithLabel"
             ),
             asList(
-                new RestApiScopeHelper.RestScope("prototype", asList("1", "latest"), "/search", asList("get"))
+                new RestApiScopeHelper.RestScope("prototype", asList("1", "latest"), "/search", asList("get")),
+                new RestApiScopeHelper.RestScope("prototype", asList("1", "latest"), "/content", asList("get")),
+                new RestApiScopeHelper.RestScope("prototype", asList("1", "latest"), "/attachment", asList("get")),
+                new RestApiScopeHelper.RestScope("prototype", asList("1", "latest"), "/breadcrumb", asList("get")),
+                new RestApiScopeHelper.RestScope("prototype", asList("1", "latest"), "/space", asList("get"))
             )
         );
     }

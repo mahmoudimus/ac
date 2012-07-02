@@ -1,5 +1,7 @@
 package com.atlassian.labs.remoteapps.product.confluence;
 
+import com.atlassian.labs.remoteapps.modules.permissions.scope.RestApiScopeHelper;
+
 import static java.util.Arrays.asList;
 
 /**
@@ -17,7 +19,11 @@ public class ConfluenceReadUsersAndGroupsScope extends ConfluenceScope
                 "hasGroup",
                 "getActiveUsers",
                 "getUserInformation"
-        ));
+        ),
+        asList(
+                new RestApiScopeHelper.RestScope("prototype", asList("1", "latest"), "/user", asList("get"))
+            )
+        );
     }
 
     @Override
