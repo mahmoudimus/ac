@@ -72,8 +72,9 @@ public class TestJiraWebHooks extends AbstractBrowserlessTest
                         "description", "foo"));
                 WebHookBody body = waiter.waitForHook();
                 assertEquals(issueKey, body.find("issue/key"));
-                assertEquals("Test issue", body.find("updatedFields/summary/oldValue"));
-                assertEquals("New Summary", body.find("updatedFields/summary/newValue"));
+                assertEquals("summary", body.find("updatedFields[0]/name"));
+                assertEquals("Test issue", body.find("updatedFields[0]/oldValue"));
+                assertEquals("New Summary", body.find("updatedFields[0]/newValue"));
             }
         });
     }

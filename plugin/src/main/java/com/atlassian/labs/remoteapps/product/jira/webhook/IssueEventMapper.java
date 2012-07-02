@@ -11,7 +11,11 @@ import org.ofbiz.core.entity.GenericValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.Map;
+
+import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Maps.newHashMap;
 
 public class IssueEventMapper extends JiraEventMapper
 {
@@ -37,7 +41,7 @@ public class IssueEventMapper extends JiraEventMapper
 
         if (EventType.ISSUE_UPDATED_ID.equals(issueEvent.getEventTypeId()))
         {
-            builder.put("updatedFields", changeGroupToMap(issueEvent.getChangeLog()));
+            builder.put("updatedFields", changeGroupToList(issueEvent.getChangeLog()));
         }
         if (issueEvent.getComment() != null)
         {
@@ -58,24 +62,24 @@ public class IssueEventMapper extends JiraEventMapper
         return builder.build();
     }
 
-    private Map<String, Object> changeGroupToMap(GenericValue changeLog)
+    private List<Map<String, Object>> changeGroupToList(GenericValue changeLog)
     {
-        ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();
+        List<Map<String, Object>> fields = newArrayList();
         try
         {
             for (GenericValue changeItem : changeLog.getRelated("ChildChangeItem"))
             {
-                builder.put(changeItem.get("field").toString(), ImmutableMap.of(
+                fields.add(ImmutableMap.<String, Object>of(
+                        "name", changeItem.get("field").toString(),
                         "oldValue", getValueOrBlank(changeItem, "oldstring"),
-                        "newValue", getValueOrBlank(changeItem, "newstring")
-                        ));
+                        "newValue", getValueOrBlank(changeItem, "newstring")));
             }
         }
         catch (GenericEntityException e)
         {
             log.warn("Error serializing updated event: "+e, e);
         }
-        return builder.build();
+        return fields;
     }
 
     private String getValueOrBlank(GenericValue gv, String name)
