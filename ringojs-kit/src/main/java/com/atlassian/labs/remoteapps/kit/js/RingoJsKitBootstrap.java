@@ -1,70 +1,54 @@
-package com.atlassian.labs.remoteapps.kit.servlet;
+package com.atlassian.labs.remoteapps.kit.js;
 
 import com.atlassian.labs.remoteapps.api.DescriptorGenerator;
 import com.atlassian.labs.remoteapps.api.RemoteAppDescriptorAccessor;
 import com.atlassian.labs.remoteapps.apputils.Environment;
 import com.atlassian.labs.remoteapps.apputils.OAuthContext;
 import com.atlassian.labs.remoteapps.apputils.kit.RegistrationServlet;
+import com.atlassian.labs.remoteapps.kit.js.ringojs.RingoEngine;
 import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.oauth.util.RSAKeys;
+import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.sal.api.ApplicationProperties;
 import net.oauth.signature.RSA_SHA1;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.osgi.framework.BundleContext;
+import org.ringojs.jsgi.JsgiServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
-
-import javax.servlet.Servlet;
-import javax.servlet.http.HttpServlet;
-import java.util.Collection;
-import java.util.Locale;
 
 /**
  *
  */
-public class ServletKitBootstrap
+public class RingoJsKitBootstrap
 {
-    private final ApplicationContext applicationContext;
     private final BundleContext bundleContext;
     private final OAuthContext oAuthContext;
-    private static final Logger log = LoggerFactory.getLogger(ServletKitBootstrap.class);
+    private static final Logger log = LoggerFactory.getLogger(RingoJsKitBootstrap.class);
 
-    public ServletKitBootstrap(ApplicationContext applicationContext,
+    public RingoJsKitBootstrap(
             BundleContext bundleContext,
             OAuthContext oAuthContext,
             Environment environment,
+            PluginRetrievalService pluginRetrievalService,
             DescriptorGenerator descriptorGenerator) throws Exception
     {
-        this.applicationContext = applicationContext;
         this.bundleContext = bundleContext;
         this.oAuthContext = oAuthContext;
 
+        log.info("Starting app '" + bundleContext.getBundle().getSymbolicName() + "'");
         String displayUrl = descriptorGenerator.getLocalMountBaseUrl();
         oAuthContext.setLocalBaseUrlIfNull(displayUrl);
 
-        for (HttpServlet servlet : (Collection<HttpServlet>)applicationContext.getBeansOfType(Servlet.class).values())
-        {
-            String path;
-            AppUrl appUrl = servlet.getClass().getAnnotation(AppUrl.class);
-            if (appUrl != null)
-            {
-                path = appUrl.value();
-            }
-            else
-            {
-                String className = servlet.getClass().getSimpleName();
-                path = "/" + String.valueOf(className.charAt(0)).toLowerCase(Locale.US) +
-                        (className.endsWith("Servlet") ? className.substring(1, className.length() - "Servlet".length()) : className.substring(1, className.length()));
-            }
-            log.info("Found servlet '" + path + "' class '" + servlet.getClass());
-            descriptorGenerator.mountServlet(servlet, path, path + "/*");
-        }
+        RingoEngine ringoEngine = new RingoEngine(pluginRetrievalService.getPlugin(), bundleContext);
+        JsgiServlet servlet = new JsgiServlet(ringoEngine.getEngine());
+
+        descriptorGenerator.mountServlet(servlet, "/*");
         descriptorGenerator.mountStaticResources("/public");
 
-        Document appDescriptor = loadDescriptor();
+        Document appDescriptor = new RemoteAppDescriptorAccessor(bundleContext.getBundle()).getDescriptor();
         Element root = appDescriptor.getRootElement();
         oAuthContext.setLocalOauthKey(root.attributeValue("key"));
 
@@ -119,24 +103,4 @@ public class ServletKitBootstrap
                 applicationProperties.getBaseUrl());
     }
 
-    private Document loadDescriptor()
-    {
-        RemoteAppDescriptorFactory factory = loadOptionalBean(RemoteAppDescriptorFactory.class);
-        if (factory != null)
-        {
-            return factory.create();
-        }
-
-        return new RemoteAppDescriptorAccessor(bundleContext.getBundle()).getDescriptor();
-    }
-
-    <T> T loadOptionalBean(Class<T> typeClass)
-    {
-        Collection<T> factories = (Collection<T>) applicationContext.getBeansOfType(typeClass).values();
-        if (!factories.isEmpty())
-        {
-            return factories.iterator().next();
-        }
-        return null;
-    }
 }

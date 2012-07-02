@@ -14,26 +14,10 @@ import java.util.Set;
 public class FormatConverterFactoryBean implements FactoryBean
 {
 
-    private final ApplicationContext applicationContext;
-
-    @Autowired
-    public FormatConverterFactoryBean(ApplicationContext applicationContext)
-    {
-        this.applicationContext = applicationContext;
-    }
-
     @Override
     public Object getObject() throws Exception
     {
-        final ModuleGeneratorManager moduleGeneratorManager = (ModuleGeneratorManager) applicationContext.getBeansOfType(ModuleGeneratorManager.class).values().iterator().next();
-        return new FormatConverter(new FormatConverter.ModuleKeyProvider()
-        {
-            @Override
-            public Set<String> getModuleKeys()
-            {
-                return moduleGeneratorManager.getModuleGeneratorKeys();
-            }
-        });
+        return new FormatConverter();
     }
 
     @Override

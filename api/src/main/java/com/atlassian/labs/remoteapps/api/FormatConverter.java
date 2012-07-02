@@ -1,5 +1,6 @@
 package com.atlassian.labs.remoteapps.api;
 
+import com.google.common.collect.ImmutableSet;
 import org.dom4j.*;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
@@ -20,18 +21,10 @@ import java.util.Set;
 
 public class FormatConverter
 {
-    private final ModuleKeyProvider moduleKeyProvider;
+    private final Set<String> appProperties = ImmutableSet.of(
+            "key", "name", "version", "display-url", "icon-url");
+
     private static final Logger log = LoggerFactory.getLogger(FormatConverter.class);
-
-    public static interface ModuleKeyProvider
-    {
-        Set<String> getModuleKeys();
-    }
-
-    public FormatConverter(ModuleKeyProvider moduleKeyProvider)
-    {
-        this.moduleKeyProvider = moduleKeyProvider;
-    }
 
     public Document toDocument(String id, String contentType, String text)
     {
@@ -69,19 +62,18 @@ public class FormatConverter
         Yaml yaml = new Yaml(new SafeConstructor());
         Document doc = DocumentHelper.createDocument();
         Element root = doc.addElement("remote-app");
-        Set<String> moduleKeys = moduleKeyProvider.getModuleKeys();
 
         // can't use yaml.loadAs since it doesn't seem to work with SafeConstructor
         Map<String,Object> data = (Map<String, Object>) yaml.load(descriptorXml);
         for (Map.Entry<String,Object> entry : data.entrySet())
         {
-            if (moduleKeys.contains(entry.getKey()) || entry.getKey().equals("description"))
+            if (appProperties.contains(entry.getKey()))
             {
-                processObject(entry.getKey(), entry.getValue(), root);
+                root.addAttribute(entry.getKey(), entry.getValue().toString());
             }
             else
             {
-                root.addAttribute(entry.getKey(), entry.getValue().toString());
+                processObject(entry.getKey(), entry.getValue(), root);
             }
         }
         if (log.isDebugEnabled())
