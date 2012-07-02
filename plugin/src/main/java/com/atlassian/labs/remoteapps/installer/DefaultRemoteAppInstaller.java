@@ -1,26 +1,27 @@
 package com.atlassian.labs.remoteapps.installer;
 
-import com.atlassian.event.api.EventPublisher;
 import com.atlassian.labs.remoteapps.DescriptorValidator;
-import com.atlassian.labs.remoteapps.ModuleGeneratorManager;
 import com.atlassian.labs.remoteapps.OAuthLinkManager;
-import com.atlassian.labs.remoteapps.api.DescriptorGenerator;
 import com.atlassian.labs.remoteapps.api.FormatConverter;
 import com.atlassian.labs.remoteapps.api.InstallationFailedException;
 import com.atlassian.labs.remoteapps.api.PermissionDeniedException;
-import com.atlassian.labs.remoteapps.event.RemoteAppInstalledEvent;
-import com.atlassian.labs.remoteapps.modules.external.RemoteModuleGenerator;
-import com.atlassian.labs.remoteapps.modules.page.jira.JiraProfileTabModuleGenerator;
-import com.atlassian.labs.remoteapps.util.zip.ZipBuilder;
-import com.atlassian.labs.remoteapps.util.zip.ZipHandler;
+import com.atlassian.labs.remoteapps.util.uri.Uri;
+import com.atlassian.labs.remoteapps.util.uri.UriBuilder;
 import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.oauth.util.RSAKeys;
-import com.atlassian.plugin.*;
+import com.atlassian.plugin.JarPluginArtifact;
+import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.PluginAccessor;
+import com.atlassian.plugin.PluginController;
 import com.atlassian.sal.api.ApplicationProperties;
-import com.atlassian.sal.api.net.*;
+import com.atlassian.sal.api.net.Request;
+import com.atlassian.sal.api.net.RequestFactory;
+import com.atlassian.sal.api.net.Response;
+import com.atlassian.sal.api.net.ResponseException;
+import com.atlassian.sal.api.net.ReturningResponseHandler;
+import com.google.common.collect.ImmutableMap;
 import org.dom4j.Document;
-import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -29,19 +30,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
-import java.io.StringWriter;
 import java.net.URI;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Properties;
-import java.util.Set;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
-import static com.atlassian.labs.remoteapps.util.Dom4jUtils.getRequiredAttribute;
 import static com.atlassian.labs.remoteapps.util.EncodingUtils.encodeBase64;
-import static com.atlassian.labs.remoteapps.util.ServletUtils.encodeGetUrl;
 
 /**
  * Handles the remote app installation dance
@@ -109,15 +101,14 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
          */
         final Consumer consumer = consumerService.getConsumer();
         final URI registrationUriWithParams = URI.create(
-                encodeGetUrl(registrationUrl.toString(), new HashMap<String,String>() {{
-                    put("key", consumer.getKey());
-                    put("publicKey", RSAKeys.toPemEncoding(consumer.getPublicKey()));
-                    put("serverVersion", applicationProperties.getBuildNumber());
-                    put("remoteappsVersion", (String) bundleContext.getBundle()
-                        .getHeaders().get(Constants.BUNDLE_VERSION));
-                    put("baseUrl", applicationProperties.getBaseUrl());
-                    put("description", consumer.getDescription());
-                }}));
+                new UriBuilder(Uri.fromJavaUri(registrationUrl)).addQueryParameters(ImmutableMap.<String, String>builder()
+                        .put("key", consumer.getKey())
+                        .put("publicKey", RSAKeys.toPemEncoding(consumer.getPublicKey()))
+                        .put("serverVersion", applicationProperties.getBuildNumber())
+                        .put("remoteappsVersion", (String) bundleContext.getBundle().getHeaders().get(Constants.BUNDLE_VERSION))
+                        .put("baseUrl", applicationProperties.getBaseUrl())
+                        .put("description", consumer.getDescription())
+                        .build()).toString());
 
         log.info("Retrieving descriptor from '{}' by user '{}'", registrationUrl, username);
         Request request = requestFactory.createRequest(Request.MethodType.GET,

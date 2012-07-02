@@ -2,11 +2,15 @@ package com.atlassian.labs.remoteapps.modules;
 
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.applinks.api.ApplicationType;
-import com.atlassian.labs.remoteapps.*;
+import com.atlassian.labs.remoteapps.ApplicationLinkAccessor;
+import com.atlassian.labs.remoteapps.ContentRetrievalException;
+import com.atlassian.labs.remoteapps.OAuthLinkManager;
 import com.atlassian.labs.remoteapps.api.PermissionDeniedException;
 import com.atlassian.labs.remoteapps.util.function.MapFunctions;
 import com.atlassian.labs.remoteapps.util.http.CachingHttpContentRetriever;
 import com.atlassian.labs.remoteapps.util.http.HttpContentHandler;
+import com.atlassian.labs.remoteapps.util.uri.Uri;
+import com.atlassian.labs.remoteapps.util.uri.UriBuilder;
 import com.google.common.base.Function;
 import com.google.common.collect.Maps;
 import net.oauth.OAuth;
@@ -19,13 +23,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
 
-import static com.atlassian.labs.remoteapps.util.ServletUtils.encodeGetUrl;
 import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Maps.transformValues;
 import static java.util.Collections.singletonList;
 
-/**
- */
 @Component
 public class ApplicationLinkOperationsFactory
 {
@@ -56,7 +57,7 @@ public class ApplicationLinkOperationsFactory
     {
         return new LinkOperations()
         {
-            ApplicationLink link; 
+            ApplicationLink link;
             @Override
             public synchronized ApplicationLink get()
             {
@@ -89,11 +90,10 @@ public class ApplicationLinkOperationsFactory
         };
     }
 
-    private String executeCreateGetUrl(ApplicationLink applicationLink, String targetPath,
-            Map<String, String[]> params)
+    private String executeCreateGetUrl(ApplicationLink applicationLink, String targetPath, Map<String, String[]> params)
     {
-        String targetUrl = getTargetUrl(applicationLink, targetPath);
-        return encodeGetUrl(targetUrl, transformValues(params, MapFunctions.STRING_ARRAY_TO_STRING));
+        final String targetUrl = getTargetUrl(applicationLink, targetPath);
+        return new UriBuilder(Uri.parse(targetUrl)).addQueryParameters(transformValues(params, MapFunctions.STRING_ARRAY_TO_STRING)).toString();
     }
 
     private Future<String> executeAsyncGetForType(ApplicationLink applicationLink, String username, String path,
@@ -105,15 +105,18 @@ public class ApplicationLinkOperationsFactory
                                       headers, httpContentHandler);
     }
 
-    private String signGetUrlForType(ApplicationLink applicationLink,
-                                     String targetPath,
-                                     Map<String, String[]> params
-    ) throws PermissionDeniedException
+    private String signGetUrlForType(ApplicationLink applicationLink, String targetPath, Map<String, String[]> params) throws PermissionDeniedException
     {
-        String targetUrl = getTargetUrl(applicationLink, targetPath);
-        List<Map.Entry<String, String>> message = signRequest(applicationLink, targetUrl, params, HttpMethod.GET);
+        final String targetUrl = getTargetUrl(applicationLink, targetPath);
+        final UriBuilder uriBuilder = new UriBuilder(Uri.parse(targetUrl));
 
-        return encodeGetUrl(targetUrl, message);
+        // adding all the parameters of the signed request
+        for (Map.Entry<String, String> param : signRequest(applicationLink, targetUrl, params, HttpMethod.GET))
+        {
+            final String value = param.getValue() == null ? "" : param.getValue();
+            uriBuilder.addQueryParameter(param.getKey(), value);
+        }
+        return uriBuilder.toString();
     }
 
     private String getTargetUrl(ApplicationLink applicationLink, String targetPath)
