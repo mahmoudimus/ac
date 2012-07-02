@@ -1,4 +1,4 @@
-package com.atlassian.labs.remoteapps.kit.servlet;
+package com.atlassian.labs.remoteapps.apputils.kit;
 
 import com.atlassian.labs.remoteapps.apputils.Environment;
 import com.atlassian.labs.remoteapps.apputils.OAuthContext;
@@ -27,8 +27,7 @@ public class RegistrationServlet extends HttpServlet
     private final OAuthContext oAuthContext;
     private static final Logger log = LoggerFactory.getLogger(RegistrationServlet.class);
 
-    public RegistrationServlet(Document descriptor, Environment environment,
-            OAuthContext oAuthContext)
+    public RegistrationServlet(Document descriptor, Environment environment, OAuthContext oAuthContext)
     {
         this.oAuthContext = oAuthContext;
         this.secret = environment.getOptionalEnv("REGISTRATION_SECRET", "");

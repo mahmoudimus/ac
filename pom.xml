@@ -26,6 +26,7 @@
         <module>api</module>
         <module>apputils</module>
         <module>servlet-kit</module>
+        <module>ringojs-kit</module>
         <module>sample</module>
         <module>plugin</module>
         <module>smoke-tests</module>

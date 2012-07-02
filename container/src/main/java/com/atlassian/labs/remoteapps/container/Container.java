@@ -5,12 +5,12 @@ import com.atlassian.labs.remoteapps.container.services.DescriptorGeneratorServi
 import com.atlassian.labs.remoteapps.container.services.sal
         .RemoteAppsApplicationPropertiesServiceFactory;
 import com.atlassian.labs.remoteapps.container.services.sal.RemoteAppsPluginSettingsFactory;
+import com.atlassian.labs.remoteapps.container.util.ZipWriter;
 import com.atlassian.plugin.DefaultModuleDescriptorFactory;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.PluginController;
 import com.atlassian.plugin.event.PluginEventManager;
 import com.atlassian.plugin.event.impl.DefaultPluginEventManager;
-import com.atlassian.plugin.factories.PluginFactory;
 import com.atlassian.plugin.hostcontainer.DefaultHostContainer;
 import com.atlassian.plugin.loaders.*;
 import com.atlassian.plugin.loaders.classloading.Scanner;
@@ -36,6 +36,7 @@ import com.google.common.collect.ImmutableSet;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -68,6 +69,11 @@ public class Container
         packageIncludes.add("com.google.common.*");
         packageIncludes.add("net.oauth*");
         packageIncludes.add("org.json");
+        packageIncludes.add("org.mozilla.javascript*");
+        packageIncludes.add("org.yaml*");
+        packageIncludes.add("org.eclipse.jetty.*");
+        packageIncludes.add("org.ringojs.*");
+        packageIncludes.add("org.jruby*");
         packageIncludes.add("com.atlassian.sal*");
 
         scannerConfig.setPackageIncludes(packageIncludes);
@@ -116,7 +122,16 @@ public class Container
                 {
                     throw new FileNotFoundException("App '" + app + "' not found");
                 }
-                files.add(appFile);
+                if (appFile.isDirectory())
+                {
+                    System.setProperty("plugin.resource.directories", appFile.getAbsolutePath());
+                    File appAsZip = zipAppDirectory(appFile);
+                    files.add(appAsZip);
+                }
+                else
+                {
+                    files.add(appFile);
+                }
             }
             scanner = new FileListScanner(files);
         }
@@ -140,6 +155,18 @@ public class Container
         hostComponents.put(ModuleFactory.class, new PrefixDelegatingModuleFactory(
                 ImmutableSet.of(new ClassPrefixModuleFactory(hostContainer),
                         new BeanPrefixModuleFactory())));
+    }
+
+    private File zipAppDirectory(File appFile)
+    {
+        try
+        {
+            return ZipWriter.zipAppIntoPluginJar(appFile);
+        }
+        catch (IOException e)
+        {
+            throw new IllegalArgumentException("Unable to zip up app: " + appFile.getPath(), e);
+        }
     }
 
     public void start()
