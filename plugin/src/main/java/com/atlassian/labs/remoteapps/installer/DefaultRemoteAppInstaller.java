@@ -299,8 +299,7 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
         }
         catch (Exception e)
         {
-            log.warn("Unable to install remote app from '{}' by user '{}'", registrationUrl,
-                    username);
+            log.warn("Unable to install remote app from '{}' by user '{}'", registrationUrl, username);
             Throwable ex = e.getCause() != null ? e.getCause() : e;
             throw new InstallationFailedException(ex);
         }

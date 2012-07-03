@@ -3,6 +3,8 @@ package com.atlassian.labs.remoteapps.modules;
 import com.atlassian.labs.remoteapps.api.PermissionDeniedException;
 import com.atlassian.labs.remoteapps.modules.page.IFrameContext;
 import com.atlassian.labs.remoteapps.modules.page.PageInfo;
+import com.atlassian.labs.remoteapps.util.uri.Uri;
+import com.atlassian.labs.remoteapps.util.uri.UriBuilder;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.elements.ResourceDescriptor;
@@ -16,23 +18,18 @@ import com.google.common.collect.ImmutableMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.ws.rs.core.UriBuilder;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static com.atlassian.labs.remoteapps.util.EncodingUtils.escapeQuotes;
-import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Maps.newHashMap;
+import static com.atlassian.labs.remoteapps.util.EncodingUtils.*;
+import static com.google.common.collect.Lists.*;
+import static com.google.common.collect.Maps.*;
 
-/**
- *
- */
 @Component
 public class IFrameRenderer
 {
@@ -119,17 +116,17 @@ public class IFrameRenderer
 
         Map<String,String[]> allParams = newHashMap(queryParams);
         allParams.put("user_id", new String[]{remoteUser});
-        allParams.put("" +
-                "xdm_e", new String[]{host});
+        allParams.put("xdm_e", new String[]{host});
         allParams.put("xdm_c", new String[]{"channel-" + iframeContext.getNamespace()});
         allParams.put("xdm_p", new String[]{"1"});
         String signedUrl = iframeContext.getLinkOps().signGetUrl(iframeUrl, allParams);
 
         // clear xdm params as they are added by easyxdm later
-        signedUrl = UriBuilder.fromUri(signedUrl)
-                    .replaceQueryParam("xdm_e")
-                    .replaceQueryParam("xdm_c")
-                    .replaceQueryParam("xdm_p").build().toString();
+        signedUrl = new UriBuilder(Uri.parse(signedUrl))
+                .removeQueryParameter("xdm_e")
+                .removeQueryParameter("xdm_c")
+                .removeQueryParameter("xdm_p")
+                .toString();
 
         Map<String,Object> ctx = newHashMap(iframeContext.getIFrameParams().getAsMap());
         ctx.put("iframeSrcHtml", escapeQuotes(signedUrl));

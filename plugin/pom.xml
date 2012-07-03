@@ -604,13 +604,8 @@
                             <productIds>
                                 <productId>confluence</productId>
                             </productIds>
-                            <excludes>
-                                <exclude>it/jira/*.java</exclude>
-                            </excludes>
                             <systemProperties>
-                                <testedProductClass>
-                                    com.atlassian.labs.remoteapps.test.confluence.FixedConfluenceTestedProduct
-                                </testedProductClass>
+                                <testedProductClass>com.atlassian.labs.remoteapps.test.confluence.FixedConfluenceTestedProduct</testedProductClass>
                             </systemProperties>
                             <excludes>
                                 <exclude>it/jira/*.java</exclude>
@@ -622,8 +617,7 @@
                                 <productId>jira</productId>
                             </productIds>
                             <systemProperties>
-                                <testedProductClass>com.atlassian.jira.pageobjects.JiraTestedProduct
-                                </testedProductClass>
+                                <testedProductClass>com.atlassian.jira.pageobjects.JiraTestedProduct</testedProductClass>
                             </systemProperties>
                             <excludes>
                                 <exclude>it/confluence/*.java</exclude>

@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -85,9 +86,8 @@ public class OAuthContext
 
     public String validate2LOFromParameters(HttpServletRequest req) throws ServletException
     {
-        String url = getFullUrl(req);
-        OAuthMessage message = new OAuthMessage(req.getMethod(), url,
-                convertToSingleValues(req.getParameterMap()).entrySet());
+        final String url = getFullUrl(req);
+        final OAuthMessage message = new OAuthMessage(req.getMethod(), url, convertToSingleValues(url, getRequestParameters(req)).entrySet());
         return validateAndExtractKey(message);
     }
 
@@ -103,14 +103,20 @@ public class OAuthContext
         return url;
     }
 
-    private Map<String,String> convertToSingleValues(Map<String,String[]> params)
+    @SuppressWarnings("unchecked")
+    private Map<String, String[]> getRequestParameters(HttpServletRequest req)
+    {
+        return req.getParameterMap();
+    }
+
+    private Map<String,String> convertToSingleValues(String url, Map<String, String[]> params)
     {
         Map<String,String> result = new HashMap<String,String>();
         for (Map.Entry<String,String[]> param : params.entrySet())
         {
             if (param.getValue().length > 1)
             {
-                throw new IllegalArgumentException("Must not have multiples of query parameters");
+                throw new IllegalArgumentException(String.format("Must not have multiples of query parameters.\nFound issue for URL %s, and parameter %s, with values %s", url, param.getKey(), Arrays.toString(param.getValue())));
             }
             result.put(param.getKey(), param.getValue()[0]);
         }
