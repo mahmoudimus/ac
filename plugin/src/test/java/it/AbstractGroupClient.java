@@ -1,27 +1,17 @@
 package it;
 
-import java.io.File;
-import java.net.URI;
-import java.util.Map;
-
-import javax.ws.rs.core.UriBuilder;
-
-import com.atlassian.functest.rest.TestResult;
 import com.atlassian.functest.rest.TestResults;
-
 import com.atlassian.labs.remoteapps.test.OwnerOfTestedProduct;
-import com.atlassian.pageobjects.TestedProduct;
 import com.sun.jersey.api.client.Client;
-
 import com.sun.jersey.api.client.WebResource;
 import org.junit.Test;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
+import javax.ws.rs.core.UriBuilder;
+import java.io.File;
+import java.net.URI;
 
-/**
- *
- */
+import static junit.framework.Assert.*;
+
 public abstract class AbstractGroupClient
 {
     private final String group;
@@ -53,6 +43,7 @@ public abstract class AbstractGroupClient
                             .path("junit")
                             .path("runTests")
                             .build();
+
         final WebResource client = Client.create().resource(uri).queryParam("outdir", targetDir.getAbsolutePath());
         if (group != null)
         {
@@ -64,7 +55,5 @@ public abstract class AbstractGroupClient
         System.out.println("Results: " + results.output);
 
         assertEquals(0, results.result); // make sure that the number of failing tests is 0
-
-
     }
 }
