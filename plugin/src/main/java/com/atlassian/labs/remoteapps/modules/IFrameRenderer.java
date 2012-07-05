@@ -1,5 +1,6 @@
 package com.atlassian.labs.remoteapps.modules;
 
+import com.atlassian.core.filters.ServletContextThreadLocal;
 import com.atlassian.labs.remoteapps.api.PermissionDeniedException;
 import com.atlassian.labs.remoteapps.modules.page.IFrameContext;
 import com.atlassian.labs.remoteapps.modules.page.PageInfo;
@@ -15,9 +16,11 @@ import com.atlassian.plugin.webresource.WebResourceUrlProvider;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.google.common.collect.ImmutableMap;
+import org.apache.commons.lang.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -79,14 +82,12 @@ public class IFrameRenderer
 
             ctx.put("title", pageInfo.getTitle());
             ctx.put("contextPath", getContextPath());
-            ctx.put("iframeHtml",
-                    render(iframeContext, extraPath, queryParams,
-                            remoteUser));
+            ctx.put("iframeHtml", render(iframeContext, extraPath, queryParams, remoteUser));
             ctx.put("decorator", pageInfo.getDecorator());
 
-            templateRenderer.render("velocity/iframe-page" + pageInfo.getTemplateSuffix() + ".vm",
-                    ctx, writer);
-        } catch (PermissionDeniedException ex)
+            templateRenderer.render("velocity/iframe-page" + pageInfo.getTemplateSuffix() + ".vm", ctx, writer);
+        }
+        catch (PermissionDeniedException ex)
         {
             templateRenderer.render(
                     "velocity/iframe-page-accessdenied" + pageInfo.getTemplateSuffix() + ".vm",
@@ -96,23 +97,12 @@ public class IFrameRenderer
         }
     }
 
-    private String getContextPath()
-    {
-        String baseUrl = applicationProperties.getBaseUrl();
-        return baseUrl != null ? URI.create(baseUrl).getPath() : "";
-    }
-
     public String render(IFrameContext iframeContext, String extraPath, Map<String, String[]> queryParams, String remoteUser) throws IOException
     {
         webResourceManager.requireResourcesForContext("remoteapps-iframe");
 
-        URI hostUri = URI.create(applicationProperties.getBaseUrl());
-        String host = hostUri.getScheme() + "://" + hostUri.getHost();
-        if (hostUri.getPort() > 0)
-        {
-            host = host + ":" + hostUri.getPort();
-        }
-        String iframeUrl = iframeContext.getIframePath() + (extraPath != null ? extraPath : "");
+        final String host = getHostUrl();
+        final String iframeUrl = iframeContext.getIframePath() + ObjectUtils.toString(extraPath);
 
         Map<String,String[]> allParams = newHashMap(queryParams);
         allParams.put("user_id", new String[]{remoteUser});
@@ -144,6 +134,54 @@ public class IFrameRenderer
         StringWriter output = new StringWriter();
         templateRenderer.render("velocity/iframe-body.vm", ctx, output);
         return output.toString();
+    }
+
+    /**
+     * Gets the host URL first from the request if accessible as this matches with more certainty what easyXDM will use.
+     * Falls back onto using the application set base URL.
+     *
+     * @return the host URL, composed of the scheme, host and port.
+     */
+    private String getHostUrl()
+    {
+        final HttpServletRequest request = ServletContextThreadLocal.getRequest();
+        if (request != null)
+        {
+            return getHostUrl(request.getRequestURL().toString());
+        }
+        else
+        {
+            return getHostUrl(applicationProperties.getBaseUrl());
+        }
+    }
+
+    private String getHostUrl(String url)
+    {
+        final URI hostUri = URI.create(url);
+        return getHostUrl(hostUri.getScheme(), hostUri.getHost(), hostUri.getPort());
+    }
+
+    private String getHostUrl(String scheme, String host, int port)
+    {
+        final StringBuilder url = new StringBuilder().append(scheme).append("://").append(host);
+        if (port > 0)
+        {
+            url.append(":").append(port);
+        }
+        return url.toString();
+    }
+
+    private String getContextPath()
+    {
+        final HttpServletRequest request = ServletContextThreadLocal.getRequest();
+        if (request != null)
+        {
+            return request.getContextPath();
+        }
+        else
+        {
+            return URI.create(applicationProperties.getBaseUrl()).getPath();
+        }
     }
 
     public List<String> getJavaScriptUrls()
