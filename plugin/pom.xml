@@ -407,33 +407,6 @@
                 </plugins>
             </build>
         </profile>
-        <profile>
-            <!--
-            this works around the problem where confluence trunk (4.3)
-            needs a newer page objects.  This is a temporary fix until JIRA can be updated.
-            -->
-            <id>confluence-trunk</id>
-            <dependencies>
-                <dependency>
-                    <groupId>com.atlassian.selenium</groupId>
-                    <artifactId>atlassian-pageobjects-api</artifactId>
-                    <version>2.1.0-m12</version>
-                    <scope>test</scope>
-                </dependency>
-                <dependency>
-                    <groupId>com.atlassian.selenium</groupId>
-                    <artifactId>atlassian-pageobjects-elements</artifactId>
-                    <version>2.1.0-m12</version>
-                    <scope>test</scope>
-                </dependency>
-                <dependency>
-                    <groupId>com.atlassian.selenium</groupId>
-                    <artifactId>atlassian-webdriver-core</artifactId>
-                    <version>2.1.0-m12</version>
-                    <scope>test</scope>
-                </dependency>
-            </dependencies>
-        </profile>
     </profiles>
 
     <build>
@@ -509,8 +482,7 @@
                     <systemPropertyVariables>
                         <xvfb.enable>${xvfb.enable}</xvfb.enable>
                         <atlassian.mail.senddisabled>false</atlassian.mail.senddisabled>
-                        <sun.net.http.allowRestrictedHeaders>true
-                        </sun.net.http.allowRestrictedHeaders>
+                        <sun.net.http.allowRestrictedHeaders>true</sun.net.http.allowRestrictedHeaders>
                         <!--atlassian.dev.mode>false</atlassian.dev.mode-->
                     </systemPropertyVariables>
                     <!-- uncomment when it is safe to upgrade amps:  https://studio.atlassian.com/browse/AMPS-663 -->
@@ -538,8 +510,7 @@
                         <product>
                             <id>refapp</id>
                             <version>${refapp.version}</version>
-                            <log4jProperties>src/test/resources/log4j-refapp.properties
-                            </log4jProperties>
+                            <log4jProperties>src/test/resources/log4j-refapp.properties</log4jProperties>
                             <libArtifacts>
                                 <!-- necessary for Speakeasy mail handling -->
                                 <libArtifact>
@@ -553,7 +524,6 @@
                                     <version>1.4.1</version>
                                 </libArtifact>
                             </libArtifacts>
-
                         </product>
                         <product>
                             <id>jira</id>
@@ -572,9 +542,7 @@
                             <version>${confluence.version}</version>
                             <log4jProperties>src/test/resources/log4j-confluence.properties
                             </log4jProperties>
-                            <productDataPath>
-                                ${basedir}/src/test/resources/confluence-generated-test-resources.zip
-                            </productDataPath>
+                            <productDataPath>${basedir}/src/test/resources/confluence-generated-test-resources.zip</productDataPath>
                             <systemPropertyVariables>
                                 <product>confluence</product>
                             </systemPropertyVariables>
