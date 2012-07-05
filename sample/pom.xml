@@ -12,7 +12,7 @@
     <name>Atlassian Remote Apps - Sample</name>
     <packaging>atlassian-plugin</packaging>
     <description>
-        A sample remote app to demonstrate basic usage of the available extension points.
+        A sample remote app to demonstrate basic usage of the available extension points
     </description>
 
     <dependencies>
