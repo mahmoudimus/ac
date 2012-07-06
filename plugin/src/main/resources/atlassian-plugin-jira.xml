@@ -39,6 +39,8 @@
 
     <component key="jiraWebSudoElevator" class="com.atlassian.labs.remoteapps.product.jira.JiraWebSudoElevator" />
 
+    <component key="jira-host" class="com.atlassian.labs.remoteapps.modules.ServletContextThreadLocalIFrameHost" />
+
     <rest key="rest-jira" path="/remoteapps" version="1">
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>INCLUDE</dispatcher>

@@ -49,6 +49,8 @@
     <component key="confluenceEventSerializerFactory" class="com.atlassian.labs.remoteapps.product.confluence.webhook.ConfluenceEventSerializerFactory" />
     <component key="confluenceWebSudoElevator" class="com.atlassian.labs.remoteapps.product.confluence.ConfluenceWebSudoElevator" />
 
+    <component key="jira-host" class="com.atlassian.labs.remoteapps.modules.ServletContextThreadLocalIFrameHost" />
+
     <component-import key="bandanaManager" interface="com.atlassian.bandana.BandanaManager" />
     <component-import key="spaceManager" interface="com.atlassian.confluence.spaces.SpaceManager" />
     <component-import key="pageManager" interface="com.atlassian.confluence.pages.PageManager" />
