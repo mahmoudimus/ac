@@ -44,9 +44,8 @@ public class RingoJsKitBootstrap
 
         RingoEngine ringoEngine = new RingoEngine(pluginRetrievalService.getPlugin(), bundleContext);
         JsgiServlet servlet = new JsgiServlet(ringoEngine.getEngine());
+        descriptorGenerator.mountServlet(servlet, "/app/*");
 
-        descriptorGenerator.mountServlet(servlet, "/*");
-        descriptorGenerator.mountStaticResources("/public");
 
         Document appDescriptor = new RemoteAppDescriptorAccessor(bundleContext.getBundle()).getDescriptor();
         Element root = appDescriptor.getRootElement();
@@ -59,9 +58,12 @@ public class RingoJsKitBootstrap
         {
             registerOAuthHostInfo();
         }
+        descriptorGenerator.mountStaticResources("/public");
+
         // todo: handle exceptions better
         descriptorGenerator.mountServlet(new RegistrationServlet(appDescriptor, environment,
-                oAuthContext), "/register");
+                oAuthContext), "/");
+
         descriptorGenerator.init(appDescriptor);
     }
 

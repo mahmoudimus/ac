@@ -77,7 +77,7 @@ public class ServletKitBootstrap
         }
         // todo: handle exceptions better
         descriptorGenerator.mountServlet(new RegistrationServlet(appDescriptor, environment,
-                oAuthContext), "/register");
+                oAuthContext), "/");
         descriptorGenerator.init(appDescriptor);
     }
 

@@ -33,14 +33,16 @@ import com.atlassian.plugin.osgi.module.BeanPrefixModuleFactory;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.google.common.collect.ImmutableSet;
+import org.apache.commons.codec.EncoderException;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.IOUtils;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import javax.net.SocketFactory;
+import javax.xml.bind.DatatypeConverter;
+import java.io.*;
+import java.net.*;
+import java.nio.charset.Charset;
+import java.util.*;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
@@ -53,9 +55,15 @@ public class Container
 {
 
     private final DefaultPluginManager pluginManager;
+    private final HttpServer httpServer;
+    public static final Set<URI> AUTOREGISTER_HOSTS = ImmutableSet.of(
+            URI.create("http://localhost:1990/confluence"),
+            URI.create("http://localhost:2990/jira"),
+            URI.create("http://localhost:5990/refapp"));
 
     public Container(HttpServer server, String[] apps) throws FileNotFoundException
     {
+        this.httpServer = server;
 
         // todo: this should use the plugin api, but it doesn't allow setting of plugin loaders right now
         final DefaultPackageScannerConfiguration scannerConfig = new DefaultPackageScannerConfiguration(determineVersion());
@@ -172,6 +180,76 @@ public class Container
     public void start()
     {
         pluginManager.init();
+        tryToAutoRegister(httpServer.getContextNames());
+    }
+
+    private void tryToAutoRegister(Set<String> appKeys)
+    {
+        for (URI host : AUTOREGISTER_HOSTS)
+        {
+            Socket socket = null;
+            try
+            {
+                System.out.println("Trying to register at " + host);
+                socket = new Socket(host.getHost(), host.getPort());
+                for (String appKey : appKeys)
+                {
+                    registerApp(host, appKey);
+                    System.out.println("Registered '" + appKey + "' at " + host);
+                }
+            }
+            catch (UnknownHostException e)
+            {
+                throw new RuntimeException("Not possible", e);
+            }
+            catch (IOException e)
+            {
+                // ignore, and try another
+            }
+            finally
+            {
+                try
+                {
+                    if (socket != null)
+                    {
+                        socket.close();
+                    }
+                }
+                catch (IOException e)
+                {
+                    // ignore
+                }
+            }
+        }
+    }
+
+    private void registerApp(URI host, String appKey) throws IOException
+    {
+        URL url = new URL(host.toString() + "/rest/remoteapps/latest/installer");
+        OutputStream out = null;
+        try{
+            HttpURLConnection uc = (HttpURLConnection) url.openConnection();
+            uc.setDoOutput(true);
+            uc.setDoInput(true);
+            String authorizationString = "Basic " + DatatypeConverter.printBase64Binary(
+                    "admin:admin".getBytes(Charset.defaultCharset()));
+            uc.setRequestProperty ("Authorization", authorizationString);
+            uc.setRequestMethod("POST");
+            uc.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+            out = uc.getOutputStream();
+            out.write(
+                    ("url=" + URLEncoder.encode(httpServer.getLocalMountBaseUrl(appKey), "UTF-8") +
+                            "&token=").getBytes(Charset.defaultCharset()));
+            out.close();
+            int response = uc.getResponseCode();
+            System.out.println("Registration response '" + response + "': " + IOUtils.toString(uc.getInputStream()));
+            uc.getInputStream().close();
+            // todo: handle errors
+        }
+        finally
+        {
+            IOUtils.closeQuietly(out);
+        }
     }
 
     public void stop()

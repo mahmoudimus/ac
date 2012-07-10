@@ -61,7 +61,7 @@ public class RingoEngine
 
             if (log.isDebugEnabled())
             {
-                ringoConfig.setDebug(true);
+                //ringoConfig.setDebug(true);
             }
             engine = new RhinoEngine(ringoConfig, new HashMap<String, Object>()
             {{
