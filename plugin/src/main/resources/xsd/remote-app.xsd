@@ -23,7 +23,15 @@
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="display-url" type="HttpUrlType" use="required" />
+        <xs:attribute name="display-url" type="HttpUrlType" use="optional">
+            <xs:annotation>
+                <xs:documentation>
+                    The public url with which this app can be accessed.  While required when retrieved,
+                    it may be omitted during the development of a universal binary, as the
+                    container will handle the creation and injection of the display url.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
 
         <!-- deprecated -->
         <xs:attribute name="access-level" type="xs:string" use="optional" />
