@@ -100,6 +100,7 @@
             <xs:enumeration value="attachment"/>
             <xs:enumeration value="username"/>
             <xs:enumeration value="confluence"/>
+            <xs:enumeration value="int"/>
         </xs:restriction>
     </xs:simpleType>
 
