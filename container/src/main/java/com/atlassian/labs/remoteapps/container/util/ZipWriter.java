@@ -36,24 +36,27 @@ public class ZipWriter
             zos = new ZipOutputStream(new FileOutputStream(zipFile));
             zip(dir, dir, zos, excludes);
 
-            Document doc = remoteAppDescriptorAccessor.getDescriptor();
-            String appKey = doc.getRootElement().attributeValue("key");
-            String appVersion = doc.getRootElement().attributeValue("version");
-            ZipEntry entry = new ZipEntry("META-INF/MANIFEST.MF");
-            zos.putNextEntry(entry);
-            IOUtils.write("Manifest-Version: 1.0\n" +
-                    "Bundle-Version: " + appVersion + "\n" +
-                    "Bundle-SymbolicName: " + appKey + "\n" +
-                    "Atlassian-Plugin-Key: " + appKey + "\n" +
-                    "Spring-Context: *;timeout:=60\n" +
-                    "DynamicImport-Package: *\n" +
-                    "Import-Package: org.springframework.beans.factory, com.atlassian.plugin.osgi.bridge.external," +
+            if (!(new File(dir, "META-INF/MANIFEST.MF").exists()))
+            {
+                Document doc = remoteAppDescriptorAccessor.getDescriptor();
+                String appKey = doc.getRootElement().attributeValue("key");
+                String appVersion = doc.getRootElement().attributeValue("version");
+                ZipEntry entry = new ZipEntry("META-INF/MANIFEST.MF");
+                zos.putNextEntry(entry);
+                IOUtils.write("Manifest-Version: 1.0\n" +
+                        "Bundle-Version: " + appVersion + "\n" +
+                        "Bundle-SymbolicName: " + appKey + "\n" +
+                        "Atlassian-Plugin-Key: " + appKey + "\n" +
+                        "Spring-Context: *;timeout:=60\n" +
+                        "DynamicImport-Package: *\n" +
+                        "Import-Package: org.springframework.beans.factory, com.atlassian.plugin.osgi.bridge.external," +
                         "org.jruby.ext.posix\n" +
-                    "Bundle-ManifestVersion: 2\n", zos);
+                        "Bundle-ManifestVersion: 2\n", zos);
 
-            addJarContents("ringojs.jar", zos);
-            addJarContents("remoteapps-apputils.jar", zos);
-            addJarContents("remoteapps-ringojs-kit.jar", zos);
+                addJarContents("ringojs.jar", zos);
+                addJarContents("remoteapps-apputils.jar", zos);
+                addJarContents("remoteapps-ringojs-kit.jar", zos);
+            }
         }
         finally
         {
