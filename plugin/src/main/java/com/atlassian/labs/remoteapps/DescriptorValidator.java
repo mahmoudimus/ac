@@ -119,7 +119,7 @@ public class DescriptorValidator
 
     public String getSchema()
     {
-        return buildSchema(getSchemaUrl(), false);
+        return buildSchema(getSchemaUrl(), true);
     }
 
     private String buildSchema(URL schemaUrl, boolean usesNamespace)
