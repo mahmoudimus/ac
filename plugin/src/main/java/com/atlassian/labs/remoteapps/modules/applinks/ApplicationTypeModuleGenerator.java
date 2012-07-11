@@ -246,7 +246,7 @@ public class ApplicationTypeModuleGenerator implements WaitableRemoteModuleGener
         URI displayUrl = getOptionalUriAttribute(root, "display-url");
         if (displayUrl == null || !registrationUrl.toString().startsWith(displayUrl.toString()))
         {
-            throw new PluginParseException("display-url '" + displayUrl + "' must match registration URL");
+            throw new PluginParseException("display-url '" + displayUrl + "' must exist and match registration URL");
         }
 
         for (ApplicationLink link : mutatingApplicationLinkService.getApplicationLinks())
