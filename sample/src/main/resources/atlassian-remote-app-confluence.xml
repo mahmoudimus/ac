@@ -31,7 +31,7 @@
 
     <profile-page key="remoteAppProfile" name="Remote App app1 Profile" url="/myAdmin" />
 
-    <macro key="app1-macro" name="Remote App app1 Macro" url="/myMacro" icon-url="/sandcastles.jpg" output-type="block" body-type="rich-text" featured="true">
+    <macro key="app1-macro" name="app1-macro" title="Remote App app1 Macro" url="/myMacro" icon-url="/sandcastles.jpg" output-type="block" body-type="rich-text" featured="true">
         <description>Example macro</description>
         <category name="development" />
         <macro-editor width="600" height="600" url="/myMacroEditor" />
@@ -45,7 +45,7 @@
         </parameters>
     </macro>
 
-    <macro key="app1-nocache" name="Remote App app1 No Cache Macro" url="/myMacro" icon-url="/sandcastles.jpg" output-type="block" body-type="rich-text">
+    <macro key="app1-nocache" name="app1-nocache" title="Remote App app1 No Cache Macro" url="/myMacro" icon-url="/sandcastles.jpg" output-type="block" body-type="rich-text">
         <description>Example macro</description>
         <category name="development" />
         <macro-editor width="600" height="600" url="/myMacroEditor" />
@@ -63,7 +63,7 @@
         </context-parameters>
     </macro>
 
-    <macro key="app1-slow" url="/mySlowMacro" output-type="block" body-type="none">
+    <macro key="app1-slow" title="Remote App 1 Slow" url="/mySlowMacro" output-type="block" body-type="none">
         <description>Slow macro that takes too long to render (for testing)</description>
     </macro>
 

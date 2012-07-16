@@ -87,7 +87,6 @@ public abstract class AbstractMacroModuleGenerator implements RemoteModuleGenera
     {
         Map<String,String> i18n = newHashMap();
         String macroKey = getRequiredAttribute(element, "key");
-        String macroName = getOptionalAttribute(element, "name", null);
         if (element.element("parameters") != null)
         {
             for (Element parameter : new ArrayList<Element>(element.element("parameters").elements("parameter")))
@@ -106,9 +105,12 @@ public abstract class AbstractMacroModuleGenerator implements RemoteModuleGenera
                 }
             }
         }
-        if (macroName != null)
+        String macroName = getOptionalAttribute(element, "title", getOptionalAttribute(element, "name", macroKey));
+        i18n.put(pluginKey + "." + macroKey + ".label", macroName);
+
+        if (element.element("description") != null)
         {
-            i18n.put(pluginKey + "." + macroKey + ".label", macroName);
+            i18n.put(pluginKey + "." + macroKey + ".desc", element.element("description").getTextTrim());
         }
 
         return i18n;
@@ -123,10 +125,13 @@ public abstract class AbstractMacroModuleGenerator implements RemoteModuleGenera
         // macro within the editor.
         String key = getRequiredAttribute(entity, "key");
 
+        String name = getOptionalAttribute(entity, "title", getOptionalAttribute(entity, "name", key));
+
         // we treat the key as the macro name, with name being the label
         config.addAttribute("name", key);
 
-        String name = getOptionalAttribute(entity, "name", getOptionalAttribute(entity, "title", key));
+        config.addAttribute("i18n-name-key", ctx.getPlugin().getKey() + "." + key + ".label");
+
 
         config.addAttribute("class", StorageFormatMacro.class.getName());
         if (config.element("parameters") == null)

@@ -180,7 +180,8 @@ public class InstallerHelper
                 .setText(
                         JiraProfileTabModuleGenerator.class.getPackage().getName() +
                                 ";resolution:=optional," +
-                                "com.atlassian.jira.plugin.searchrequestview;resolution:=optional," +                                     DescriptorGenerator.class.getPackage().getName());
+                                "com.atlassian.jira.plugin.searchrequestview;resolution:=optional," +
+                                DescriptorGenerator.class.getPackage().getName());
         instructions.addElement("Remote-App").
                 setText("installer;user=\"" + username + "\";date=\""
                         + System.currentTimeMillis() + "\"" +
