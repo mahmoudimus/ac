@@ -143,6 +143,13 @@
             <scope>compile</scope>
         </dependency>
 
+        <!-- bundled plugins, must be scoped 'provided' -->
+        <dependency>
+            <groupId>com.atlassian.activeobjects</groupId>
+            <artifactId>activeobjects-plugin</artifactId>
+            <version>${ao.version}</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -158,6 +165,25 @@
                         <configuration>
                             <includeArtifactIds>remoteapps-apputils,remoteapps-ringojs-kit,ringojs</includeArtifactIds>
                             <stripVersion>true</stripVersion>
+                            <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>bundled-plugins</id>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <phase>prepare-package</phase>
+                        <configuration>
+                            <finalName>bundled-plugins</finalName>
+                            <descriptors>
+                                <descriptor>src/main/assembly/bundled-plugins.xml</descriptor>
+                            </descriptors>
                             <outputDirectory>${project.build.outputDirectory}</outputDirectory>
                         </configuration>
                     </execution>
@@ -193,5 +219,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>
