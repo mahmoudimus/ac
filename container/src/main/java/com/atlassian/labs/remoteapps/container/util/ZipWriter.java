@@ -1,18 +1,22 @@
 package com.atlassian.labs.remoteapps.container.util;
 
+import aQute.lib.osgi.Analyzer;
 import com.atlassian.labs.remoteapps.api.RemoteAppDescriptorAccessor;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.dom4j.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.util.List;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Sets.newHashSet;
 
 
@@ -41,12 +45,15 @@ public class ZipWriter
                 String appVersion = doc.getRootElement().attributeValue("version");
                 ZipEntry entry = new ZipEntry("META-INF/MANIFEST.MF");
                 zos.putNextEntry(entry);
+
+                String bundledLibs = generateBundledLibsEntry(dir);
                 IOUtils.write("Manifest-Version: 1.0\n" +
                         "Bundle-Version: " + appVersion + "\n" +
                         "Bundle-SymbolicName: " + appKey + "\n" +
                         "Atlassian-Plugin-Key: " + appKey + "\n" +
                         "Spring-Context: *;timeout:=60\n" +
                         "DynamicImport-Package: *\n" +
+                        bundledLibs +
                         "Import-Package: org.springframework.beans.factory, com.atlassian.plugin.osgi.bridge.external," +
                         "org.jruby.ext.posix\n" +
                         "Bundle-ManifestVersion: 2\n", zos);
@@ -65,6 +72,23 @@ public class ZipWriter
             return null;
         }
         return zipFile;
+    }
+
+    private static String generateBundledLibsEntry(File baseDir)
+    {
+        StringBuilder entry = new StringBuilder();
+        File libDir = new File(baseDir, "lib");
+        if (libDir.exists())
+        {
+            List<String> entries = newArrayList();
+            entries.add(".");
+            for (File child : libDir.listFiles())
+            {
+                entries.add("lib/" + child.getName());
+            }
+            entry.append(Analyzer.BUNDLE_CLASSPATH).append(": ").append(StringUtils.join(entries, ',') + "\n");
+        }
+        return entry.toString();
     }
 
     private static void addJarContents(String jar, ZipOutputStream zos)
