@@ -3,6 +3,8 @@ package com.atlassian.labs.remoteapps.apputils;
 import net.oauth.*;
 import net.oauth.server.OAuthServlet;
 import net.oauth.signature.RSA_SHA1;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -19,6 +21,7 @@ import java.util.Map;
  */
 public class OAuthContext
 {
+    private static final Logger log = LoggerFactory.getLogger(OAuthContext.class);
     // lazily loaded
     private volatile OAuthConsumer local;
 
@@ -34,10 +37,10 @@ public class OAuthContext
         OAuthServiceProvider serviceProvider = new OAuthServiceProvider(null, null, null);
         OAuthConsumer localConsumer = new OAuthConsumer(null, env.getEnv("OAUTH_LOCAL_KEY"), null, serviceProvider);
         String privateKey = env.getEnv("OAUTH_LOCAL_PRIVATE_KEY");
-        System.out.println("Loaded private key:\n" + privateKey);
+        log.debug("Loaded private key:\n" + privateKey);
         localConsumer.setProperty(RSA_SHA1.PRIVATE_KEY, privateKey);
         String publicKey = env.getEnv("OAUTH_LOCAL_PUBLIC_KEY");
-        System.out.println("Loaded public key:\n" + publicKey);
+        log.debug("Loaded public key:\n" + publicKey);
         localConsumer.setProperty(RSA_SHA1.PUBLIC_KEY, publicKey);
         return localConsumer;
     }
@@ -183,7 +186,7 @@ public class OAuthContext
         {
             throw new RuntimeException(e);
         }
-        System.out.println(sb.toString());
+        log.debug(sb.toString());
     }
 
     public void sign(String uri, String method, String username, HttpURLConnection yc)

@@ -12,6 +12,7 @@ import org.osgi.framework.Bundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.Filter;
 import javax.servlet.http.HttpServlet;
 
 /**
@@ -62,14 +63,20 @@ public class DescriptorGeneratorLoader implements DescriptorGenerator
     }
 
     @Override
+    public void mountFilter(Filter filter, String... urlPatterns)
+    {
+        httpResourceFilter.mountFilter(appKey, filter, urlPatterns);
+    }
+
+    @Override
     public void mountServlet(HttpServlet httpServlet, String... urlPatterns)
     {
         httpResourceFilter.mountServlet(appKey, httpServlet, urlPatterns);
     }
 
     @Override
-    public void mountStaticResources(String resourcePrefix)
+    public void mountStaticResources(String resourcePrefix, String urlPattern)
     {
-        httpResourceFilter.mountResources(appKey, resourcePrefix);
+        httpResourceFilter.mountResources(appKey, resourcePrefix, urlPattern);
     }
 }

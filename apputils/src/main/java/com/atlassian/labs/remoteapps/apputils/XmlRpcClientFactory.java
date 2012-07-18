@@ -16,8 +16,10 @@ public class XmlRpcClientFactory
         this.oauthContext = oauthContext;
     }
 
-    public XmlRpcClient create(String baseUrl, String userId) throws MalformedURLException
+    public XmlRpcClient create(String appKey, String userId) throws MalformedURLException
     {
+        // todo: fix this but in doing so, make sure it works in the same app that needs to pass base url
+        String baseUrl = appKey.startsWith("http") ? appKey : oauthContext.getHostBaseUrl(appKey);
         final String url = baseUrl + "/rpc/xmlrpc";
         XmlRpcClient client = new XmlRpcClient(url + "?user_id=" + userId, false);
         client.setRequestProperty("Authorization", oauthContext.getAuthorizationHeaderValue(

@@ -15,7 +15,6 @@ public class OAuthContextAccessor
         this.oAuthContext = oAuthContext;
     }
 
-
     public static OAuthContext getOAuthContext()
     {
         return oAuthContext;

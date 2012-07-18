@@ -4,18 +4,22 @@ package com.atlassian.labs.remoteapps.container;
 import com.atlassian.plugin.Plugin;
 import com.google.common.base.Function;
 import com.google.common.collect.MapMaker;
+import org.eclipse.jetty.server.DispatcherType;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.DefaultServlet;
+import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
+import javax.servlet.Filter;
 import javax.servlet.http.HttpServlet;
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.util.EnumSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -95,12 +99,23 @@ public class HttpServer
         }
     }
 
-    public void mountStaticResources(Plugin plugin, String resourceBasePath)
+    public void mountFilter(Plugin plugin, Filter filter, String[] urlPatterns)
+    {
+        ServletContextHandler context = contexts.get(plugin.getKey());
+        for (String path : urlPatterns)
+        {
+            context.addFilter(new FilterHolder(filter), path, EnumSet.allOf(DispatcherType.class));
+        }
+        setResourceBase(context, plugin);
+        restartContext(context);
+    }
+
+    public void mountStaticResources(Plugin plugin, String resourceBasePath, String urlPattern)
     {
         ServletContextHandler ctx = contexts.get(plugin.getKey());
         setResourceBase(ctx, plugin);
         ctx.setInitParameter("org.eclipse.jetty.servlet.Default.relativeResourceBase", resourceBasePath);
-        ctx.addServlet(new ServletHolder(new DefaultServlet()), "/");
+        ctx.addServlet(new ServletHolder(new DefaultServlet()), urlPattern);
         restartContext(ctx);
 
     }

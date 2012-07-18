@@ -1,5 +1,7 @@
 package com.atlassian.labs.remoteapps.apputils;
 
+import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.samskivert.mustache.Mustache;
 
 import javax.servlet.http.HttpServletResponse;
@@ -15,7 +17,15 @@ import java.util.Map;
  */
 public class HttpUtils
 {
-    public static void renderHtml(HttpServletResponse resp, String template, Map<String, Object> context) throws IOException
+    private final Plugin plugin;
+    private final OAuthContext oAuthContext;
+
+    public HttpUtils(PluginRetrievalService pluginRetrievalService, OAuthContext oAuthContext)
+    {
+        this.oAuthContext = oAuthContext;
+        this.plugin = pluginRetrievalService.getPlugin();
+    }
+    public void renderHtml(HttpServletResponse resp, String template, Map<String, Object> context) throws IOException
     {
         resp.setContentType("text/html");
         byte[] bytes = render(template, context).getBytes(Charset.forName("UTF-8"));
@@ -24,13 +34,13 @@ public class HttpUtils
         resp.getOutputStream().close();
     }
 
-    public static String render(String template, Map<String,Object> context)
+    public String render(String template, Map<String,Object> context)
     {
         StringWriter writer = new StringWriter();
         InputStream resourceAsStream = null;
         try
         {
-            resourceAsStream = HttpUtils.class.getClassLoader().getResourceAsStream(template);
+            resourceAsStream = plugin.getResourceAsStream(template);
             Mustache.compiler().compile(
                 new InputStreamReader(resourceAsStream)).execute(context,
                 writer);
@@ -39,7 +49,10 @@ public class HttpUtils
         {
             try
             {
-                resourceAsStream.close();
+                if (resourceAsStream != null)
+                {
+                    resourceAsStream.close();
+                }
             }
             catch (IOException e)
             {
@@ -49,7 +62,7 @@ public class HttpUtils
         return writer.toString();
     }
 
-    public static String sendSignedGet(OAuthContext oAuthContext, String uri, String user)
+    public String sendSignedGet(String uri, String user)
     {
         try
         {
@@ -80,7 +93,7 @@ public class HttpUtils
         }
     }
 
-    public static int sendFailedSignedGet(OAuthContext oAuthContext, String uri, String user)
+    public int sendFailedSignedGet(String uri, String user)
     {
         HttpURLConnection yc = null;
         try

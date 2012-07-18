@@ -8,8 +8,7 @@ import org.dom4j.io.XMLWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
+import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
@@ -20,14 +19,14 @@ import java.io.UnsupportedEncodingException;
  * Registers calling applications only if the secret matches.  Uses a mutable environment
  * to store values.
  */
-public class RegistrationServlet extends HttpServlet
+public class RegistrationFilter implements Filter
 {
     private final byte[] descriptor;
     private final String secret;
     private final OAuthContext oAuthContext;
-    private static final Logger log = LoggerFactory.getLogger(RegistrationServlet.class);
+    private static final Logger log = LoggerFactory.getLogger(RegistrationFilter.class);
 
-    public RegistrationServlet(Document descriptor, Environment environment, OAuthContext oAuthContext)
+    public RegistrationFilter(Document descriptor, Environment environment, OAuthContext oAuthContext)
     {
         this.oAuthContext = oAuthContext;
         this.secret = environment.getOptionalEnv("REGISTRATION_SECRET", "");
@@ -55,9 +54,16 @@ public class RegistrationServlet extends HttpServlet
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException,
-            IOException
+    public void init(FilterConfig filterConfig) throws ServletException
     {
+    }
+
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain
+    ) throws IOException, ServletException
+    {
+        HttpServletRequest req = (HttpServletRequest) request;
+        HttpServletResponse resp = (HttpServletResponse) response;
         String authHeader = req.getHeader("Authorization");
         if (authHeader != null)
         {
@@ -67,8 +73,7 @@ public class RegistrationServlet extends HttpServlet
                 String publicKey = req.getParameter("publicKey");
                 String baseUrl = req.getParameter("baseUrl");
 
-                log.info("Registering host - key: '{}' publicKey: '{}' baseUrl: '{}'",
-                        new Object[]{oauthKey, publicKey, baseUrl});
+                log.info("Registering host - key: '{}' baseUrl: '{}'", oauthKey, baseUrl);
                 oAuthContext.addHost(oauthKey, publicKey, baseUrl);
             }
             else
@@ -84,5 +89,10 @@ public class RegistrationServlet extends HttpServlet
         resp.setContentLength(descriptor.length);
         resp.getOutputStream().write(descriptor);
         resp.getOutputStream().close();
+    }
+
+    @Override
+    public void destroy()
+    {
     }
 }

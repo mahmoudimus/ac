@@ -4,7 +4,7 @@ import com.atlassian.labs.remoteapps.api.DescriptorGenerator;
 import com.atlassian.labs.remoteapps.api.RemoteAppDescriptorAccessor;
 import com.atlassian.labs.remoteapps.apputils.Environment;
 import com.atlassian.labs.remoteapps.apputils.OAuthContext;
-import com.atlassian.labs.remoteapps.apputils.kit.RegistrationServlet;
+import com.atlassian.labs.remoteapps.apputils.kit.RegistrationFilter;
 import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.oauth.util.RSAKeys;
@@ -62,7 +62,7 @@ public class ServletKitBootstrap
             log.info("Found servlet '" + path + "' class '" + servlet.getClass());
             descriptorGenerator.mountServlet(servlet, path, path + "/*");
         }
-        descriptorGenerator.mountStaticResources("/public");
+        descriptorGenerator.mountStaticResources("/public", "/*");
 
         Document appDescriptor = loadDescriptor();
         Element root = appDescriptor.getRootElement();
@@ -76,7 +76,7 @@ public class ServletKitBootstrap
             registerOAuthHostInfo();
         }
         // todo: handle exceptions better
-        descriptorGenerator.mountServlet(new RegistrationServlet(appDescriptor, environment,
+        descriptorGenerator.mountFilter(new RegistrationFilter(appDescriptor, environment,
                 oAuthContext), "/");
         descriptorGenerator.init(appDescriptor);
     }

@@ -5,6 +5,8 @@ import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.event.PluginEventListener;
 import com.atlassian.plugin.event.PluginEventManager;
 import com.atlassian.plugin.event.events.PluginDisabledEvent;
+import com.atlassian.plugin.servlet.filter.FilterDispatcherCondition;
+import com.atlassian.plugin.servlet.filter.IteratingFilterChain;
 import com.atlassian.plugin.servlet.util.DefaultPathMapper;
 import com.atlassian.plugin.servlet.util.PathMapper;
 import com.atlassian.sal.api.ApplicationProperties;
@@ -25,8 +27,12 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.SecureRandom;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+
+import static com.google.common.collect.Lists.newArrayList;
 
 /**
  *
@@ -34,15 +40,15 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component("ubDispatchFilter")
 public class UBDispatchFilter implements DisposableBean, Filter
 {
-    private final PathMapper pathMapper;
-    private final PathMapper staticResourceMapper;
-    private final Map<String, ServletEntry> servlets;
+    private final PathMapper servletPathMapper;
+    private final PathMapper filterPathMapper;
+    private final Map<String, DispatcherEntry<HttpServlet>> servlets;
+    private final Map<String, DispatcherEntry<Filter>> filters;
     private static final SecureRandom random = SecureRandomFactory.newInstance();
     private final PluginAccessor pluginAccessor;
     private static final Logger log = LoggerFactory.getLogger(UBDispatchFilter.class);
 
     private volatile Map<String, ServletContext> servletContextsByApp;
-    private volatile Map<String, ServletEntry> staticResourceServletsByApp;
     private final PluginEventManager pluginEventManager;
     private final ApplicationProperties applicationProperties;
 
@@ -54,9 +60,9 @@ public class UBDispatchFilter implements DisposableBean, Filter
         this.pluginEventManager = pluginEventManager;
         this.applicationProperties = applicationProperties;
         this.servlets = CopyOnWriteMap.newHashMap();
-        this.staticResourceServletsByApp = CopyOnWriteMap.newHashMap();
-        this.pathMapper = new DefaultPathMapper();
-        this.staticResourceMapper = new DefaultPathMapper();
+        this.filters = CopyOnWriteMap.newHashMap();
+        this.servletPathMapper = new DefaultPathMapper();
+        this.filterPathMapper = new DefaultPathMapper();
         pluginEventManager.register(this);
     }
 
@@ -74,43 +80,70 @@ public class UBDispatchFilter implements DisposableBean, Filter
     {
         final Plugin plugin = pluginAccessor.getPlugin(appKey);
         ClassLoader cl = plugin.getClassLoader();
-        ServletEntry servletEntry = new ServletEntry();
+        DispatcherEntry servletEntry = new DispatcherEntry();
         servletEntry.appKey = appKey;
 
-        servletEntry.servlet = new DelegatingUBServlet(httpServlet, cl);
+        servletEntry.dispatcher = new DelegatingUBServlet(httpServlet, cl);
         servletEntry.paths = urlPatterns;
         servlets.put(servletEntry.key, servletEntry);
 
         for (String urlPattern : urlPatterns)
         {
-            pathMapper.put(servletEntry.key, getLocalMountBasePath(appKey) + urlPattern);
+            servletPathMapper.put(servletEntry.key, getLocalMountBasePath(appKey) + urlPattern);
         }
     }
 
-    public void mountResources(String appKey, String resourcePrefix)
+    public void mountFilter(String appKey, Filter filter, String[] urlPatterns)
     {
         final Plugin plugin = pluginAccessor.getPlugin(appKey);
         ClassLoader cl = plugin.getClassLoader();
-        ServletEntry entry = new ServletEntry();
-        entry.servlet = new DelegatingUBServlet(
+        DispatcherEntry<Filter> entry = new DispatcherEntry<Filter>();
+        entry.appKey = appKey;
+
+        entry.dispatcher = new DelegatingUBFilter(filter, cl);
+        entry.paths = urlPatterns;
+        filters.put(entry.key, entry);
+
+        for (String urlPattern : urlPatterns)
+        {
+            filterPathMapper.put(entry.key, getLocalMountBasePath(appKey) + urlPattern);
+        }
+    }
+
+    public void mountResources(String appKey, String resourcePrefix, String urlPattern)
+    {
+        final Plugin plugin = pluginAccessor.getPlugin(appKey);
+        ClassLoader cl = plugin.getClassLoader();
+        DispatcherEntry<HttpServlet> entry = new DispatcherEntry<HttpServlet>();
+        entry.dispatcher = new DelegatingUBServlet(
                 new StaticResourceServlet(plugin, resourcePrefix),
                 cl);
         entry.appKey = appKey;
-        staticResourceMapper.put(appKey, getLocalMountBasePath(appKey) + "/*");
-        staticResourceServletsByApp.put(appKey, entry);
+        servletPathMapper.put(appKey, getLocalMountBasePath(appKey) + urlPattern);
+        servlets.put(appKey, entry);
     }
 
     @PluginEventListener
     public void unregister(PluginDisabledEvent event)
     {
         String appKey = event.getPlugin().getKey();
-        for (ServletEntry entry : servlets.values())
+        for (DispatcherEntry<HttpServlet> entry : servlets.values())
         {
             if (appKey.equals(entry.appKey))
             {
                 servlets.remove(entry.key);
-                pathMapper.put(entry.key, null);
-                entry.servlet.destroy();
+                servletPathMapper.put(entry.key, null);
+                entry.dispatcher.destroy();
+            }
+        }
+
+        for (DispatcherEntry<Filter> entry : filters.values())
+        {
+            if (appKey.equals(entry.appKey))
+            {
+                filters.remove(entry.key);
+                filterPathMapper.put(entry.key, null);
+                entry.dispatcher.destroy();
             }
         }
     }
@@ -140,52 +173,75 @@ public class UBDispatchFilter implements DisposableBean, Filter
     {
         HttpServletRequest req = (HttpServletRequest) request;
         final String uri = getUri(req);
-        final String servletKey = pathMapper.get(uri);
+        final String servletKey = servletPathMapper.get(uri);
 
-        if (servletKey == null)
+        List<Filter> filterList = newArrayList();
+        for (String filterKey : filterPathMapper.getAll(uri))
         {
-            String appKey = staticResourceMapper.get(uri);
-            if (appKey == null)
+            filterList.add(getFilter(filterKey));
+        }
+        filterList.add(new Filter()
+        {
+            public void init(FilterConfig filterConfig) throws ServletException{}
+            public void destroy(){}
+
+            @Override
+            public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain
+            ) throws IOException, ServletException
             {
-                ((HttpServletResponse)response).sendError(404);
-            }
-            else
-            {
-                ServletEntry entry = staticResourceServletsByApp.get(appKey);
-                if (!entry.initialized)
+                if (servletKey != null)
                 {
-                    ServletConfig servletConfig = new UBServletConfig(servletKey, Collections.<String, String>emptyMap(),
-                            servletContextsByApp.get(entry.appKey));
-                    entry.servlet.init(servletConfig);
-                    entry.initialized = true;
+                    final HttpServlet servlet = getServlet(servletKey);
+                    servlet.service(request, response);
                 }
-                entry.servlet.service(request, response);
+                else
+                {
+                    chain.doFilter(request, response);
+                }
             }
-        }
-        else
+        });
+        IteratingFilterChain localFilterChain = new IteratingFilterChain(filterList.iterator(), chain);
+        localFilterChain.doFilter(request, response);
+
+
+    }
+
+    private Filter getFilter(String filterKey) throws ServletException
+    {
+        DispatcherEntry<Filter> entry = filters.get(filterKey);
+        if (entry == null)
         {
-            final HttpServlet servlet = getServlet(servletKey);
-            servlet.service(request, response);
+            // stale path mapper entry
+            filterPathMapper.put(filterKey, null);
+            return null;
         }
+        if (!entry.initialized)
+        {
+            FilterConfig filterConfig = new UBFilterConfig(filterKey, Collections.<String, String>emptyMap(),
+                    servletContextsByApp.get(entry.appKey));
+            entry.dispatcher.init(filterConfig);
+            entry.initialized = true;
+        }
+        return entry.dispatcher;
     }
 
     private HttpServlet getServlet(String servletKey) throws ServletException
     {
-        ServletEntry entry = servlets.get(servletKey);
+        DispatcherEntry<HttpServlet> entry = servlets.get(servletKey);
         if (entry == null)
         {
             // stale path mapper entry
-            pathMapper.put(servletKey, null);
+            servletPathMapper.put(servletKey, null);
             return null;
         }
         if (!entry.initialized)
         {
             ServletConfig servletConfig = new UBServletConfig(servletKey, Collections.<String, String>emptyMap(),
                     servletContextsByApp.get(entry.appKey));
-            entry.servlet.init(servletConfig);
+            entry.dispatcher.init(servletConfig);
             entry.initialized = true;
         }
-        return entry.servlet;
+        return entry.dispatcher;
     }
 
     @Override
@@ -259,11 +315,11 @@ public class UBDispatchFilter implements DisposableBean, Filter
         return requestUri.substring(startIndex, endIndex);
     }
 
-    private static class ServletEntry
+    private static class DispatcherEntry<M>
     {
         public final String key = String.valueOf(random.nextLong());
         public String appKey;
-        public HttpServlet servlet;
+        public M dispatcher;
         public String[] paths;
         public volatile boolean initialized = false;
     }

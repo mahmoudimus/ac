@@ -2,8 +2,7 @@ package com.atlassian.labs.remoteapps.container;
 
 import com.atlassian.labs.remoteapps.api.DescriptorGenerator;
 import com.atlassian.labs.remoteapps.container.services.DescriptorGeneratorServiceFactory;
-import com.atlassian.labs.remoteapps.container.services.sal
-        .RemoteAppsApplicationPropertiesServiceFactory;
+import com.atlassian.labs.remoteapps.container.services.sal.RemoteAppsApplicationPropertiesServiceFactory;
 import com.atlassian.labs.remoteapps.container.services.sal.RemoteAppsPluginSettingsFactory;
 import com.atlassian.labs.remoteapps.container.util.ZipWriter;
 import com.atlassian.plugin.DefaultModuleDescriptorFactory;
@@ -12,7 +11,10 @@ import com.atlassian.plugin.PluginController;
 import com.atlassian.plugin.event.PluginEventManager;
 import com.atlassian.plugin.event.impl.DefaultPluginEventManager;
 import com.atlassian.plugin.hostcontainer.DefaultHostContainer;
-import com.atlassian.plugin.loaders.*;
+import com.atlassian.plugin.loaders.DirectoryScanner;
+import com.atlassian.plugin.loaders.FileListScanner;
+import com.atlassian.plugin.loaders.PluginLoader;
+import com.atlassian.plugin.loaders.ScanningPluginLoader;
 import com.atlassian.plugin.loaders.classloading.Scanner;
 import com.atlassian.plugin.manager.DefaultPluginManager;
 import com.atlassian.plugin.manager.store.MemoryPluginPersistentStateStore;
@@ -33,13 +35,15 @@ import com.atlassian.plugin.osgi.module.BeanPrefixModuleFactory;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.google.common.collect.ImmutableSet;
-import org.apache.commons.codec.EncoderException;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import javax.net.SocketFactory;
 import javax.xml.bind.DatatypeConverter;
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.net.*;
 import java.nio.charset.Charset;
 import java.util.*;
@@ -53,7 +57,7 @@ import static java.util.Arrays.asList;
  */
 public class Container
 {
-
+    private static final Logger log = LoggerFactory.getLogger(Container.class);
     private final DefaultPluginManager pluginManager;
     private final HttpServer httpServer;
     public static final Set<URI> AUTOREGISTER_HOSTS = ImmutableSet.of(
@@ -80,9 +84,20 @@ public class Container
         packageIncludes.add("org.mozilla.javascript*");
         packageIncludes.add("org.yaml*");
         packageIncludes.add("org.eclipse.jetty.*");
-        packageIncludes.add("org.ringojs.*");
         packageIncludes.add("org.jruby*");
         packageIncludes.add("com.atlassian.sal*");
+        packageIncludes.add("com.samskivert.*");
+
+        packageIncludes.remove("org.jfree.*");
+        packageIncludes.remove("org.joda.*");
+        packageIncludes.remove("org.w3c.*");
+        packageIncludes.remove("org.xml.*");
+        packageIncludes.remove("org.ofbiz.*");
+        packageIncludes.remove("webwork.*");
+        packageIncludes.remove("org.quartz");
+        packageIncludes.remove("org.quartz.*");
+        packageIncludes.remove("com.opensymphony.*");
+        packageIncludes.remove("org.tuckey.web.filters.urlrewrite.*");
 
         scannerConfig.setPackageIncludes(packageIncludes);
         scannerConfig.setPackageVersions(new HashMap<String,String>() {{
@@ -190,12 +205,12 @@ public class Container
             Socket socket = null;
             try
             {
-                System.out.println("Trying to register at " + host);
+                log.debug("Trying to register at " + host);
                 socket = new Socket(host.getHost(), host.getPort());
                 for (String appKey : appKeys)
                 {
                     registerApp(host, appKey);
-                    System.out.println("Registered '" + appKey + "' at " + host);
+                    log.info("Registered '" + appKey + "' at " + host);
                 }
             }
             catch (UnknownHostException e)
@@ -242,7 +257,7 @@ public class Container
                             "&token=").getBytes(Charset.defaultCharset()));
             out.close();
             int response = uc.getResponseCode();
-            System.out.println("Registration response '" + response + "': " + IOUtils.toString(uc.getInputStream()));
+            log.debug("Registration response '" + response + "': " + IOUtils.toString(uc.getInputStream()));
             uc.getInputStream().close();
             // todo: handle errors
         }

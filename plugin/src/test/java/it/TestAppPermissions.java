@@ -4,6 +4,8 @@ import com.atlassian.labs.remoteapps.apputils.HttpUtils;
 import com.atlassian.labs.remoteapps.apputils.OAuthContext;
 import com.atlassian.labs.remoteapps.test.MessagePage;
 import com.atlassian.labs.remoteapps.test.RemoteAppRunner;
+import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.google.common.collect.ImmutableMap;
 import org.junit.Test;
 
@@ -15,6 +17,8 @@ import java.io.IOException;
 
 import static com.atlassian.labs.remoteapps.test.Utils.createOAuthContext;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class TestAppPermissions extends AbstractRemoteAppTest
 {
@@ -39,12 +43,16 @@ public class TestAppPermissions extends AbstractRemoteAppTest
     private static class CallServlet extends HttpServlet
     {
         private final String baseUrl;
-        private final OAuthContext oAuthContext;
+        private final HttpUtils httpUtils;
 
         public CallServlet(String baseUrl, OAuthContext oAuthContext)
         {
             this.baseUrl = baseUrl;
-            this.oAuthContext = oAuthContext;
+            Plugin plugin = mock(Plugin.class);
+            when(plugin.getResourceAsStream("message-page.mu")).thenReturn(getClass().getResourceAsStream("/message-page.mu"));
+            PluginRetrievalService pluginRetrievalService = mock(PluginRetrievalService.class);
+            when(pluginRetrievalService.getPlugin()).thenReturn(plugin);
+            this.httpUtils = new HttpUtils(pluginRetrievalService, oAuthContext);
         }
 
         @Override
@@ -52,11 +60,9 @@ public class TestAppPermissions extends AbstractRemoteAppTest
                 ServletException,
                 IOException
         {
-            int statusCode = HttpUtils.sendFailedSignedGet(oAuthContext, baseUrl + "/rest/remoteapptest/latest/user", "betty");
-            HttpUtils.renderHtml(resp, "message-page.mu", ImmutableMap.<String, Object>of(
-                    "baseurl", baseUrl,
-                    "message", String.valueOf(statusCode)
-            ));
+            int statusCode = httpUtils.sendFailedSignedGet(baseUrl + "/rest/remoteapptest/latest/user", "betty");
+            httpUtils.renderHtml(resp, "message-page.mu",
+                    ImmutableMap.<String, Object>of("baseurl", baseUrl, "message", String.valueOf(statusCode)));
         }
     }
 }

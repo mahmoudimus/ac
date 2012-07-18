@@ -12,6 +12,9 @@ http://www.springframework.org/schema/context
     <beans:bean id="oauthContext" class="com.atlassian.labs.remoteapps.apputils.OAuthContext"
             autowire="constructor"/>
 
+    <beans:bean id="httpUtils" class="com.atlassian.labs.remoteapps.apputils.HttpUtils"
+                autowire="constructor"/>
+
     <context:component-scan base-package="servlets"/>
     <context:component-scan base-package="services"/>
 

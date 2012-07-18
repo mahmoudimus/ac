@@ -7,6 +7,7 @@ import org.dom4j.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.Filter;
 import javax.servlet.http.HttpServlet;
 
 import static java.util.Arrays.asList;
@@ -39,14 +40,20 @@ public class DescriptorGeneratorLoader implements DescriptorGenerator
     }
 
     @Override
+    public void mountFilter(Filter filter, String... urlPatterns)
+    {
+        httpServer.mountFilter(plugin, filter, urlPatterns);
+    }
+
+    @Override
     public void mountServlet(HttpServlet httpServlet, String... urlPatterns)
     {
         httpServer.mountServlet(plugin, httpServlet, asList(urlPatterns));
     }
 
     @Override
-    public void mountStaticResources(String resourcePrefix)
+    public void mountStaticResources(String resourcePrefix, String urlPattern)
     {
-        httpServer.mountStaticResources(plugin, resourcePrefix);
+        httpServer.mountStaticResources(plugin, resourcePrefix, urlPattern);
     }
 }

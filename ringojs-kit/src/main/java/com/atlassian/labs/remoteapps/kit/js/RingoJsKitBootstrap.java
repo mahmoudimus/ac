@@ -4,7 +4,7 @@ import com.atlassian.labs.remoteapps.api.DescriptorGenerator;
 import com.atlassian.labs.remoteapps.api.RemoteAppDescriptorAccessor;
 import com.atlassian.labs.remoteapps.apputils.Environment;
 import com.atlassian.labs.remoteapps.apputils.OAuthContext;
-import com.atlassian.labs.remoteapps.apputils.kit.RegistrationServlet;
+import com.atlassian.labs.remoteapps.apputils.kit.RegistrationFilter;
 import com.atlassian.labs.remoteapps.kit.js.ringojs.RingoEngine;
 import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.consumer.ConsumerService;
@@ -44,8 +44,6 @@ public class RingoJsKitBootstrap
 
         RingoEngine ringoEngine = new RingoEngine(pluginRetrievalService.getPlugin(), bundleContext);
         JsgiServlet servlet = new JsgiServlet(ringoEngine.getEngine());
-        descriptorGenerator.mountServlet(servlet, "/app/*");
-
 
         Document appDescriptor = new RemoteAppDescriptorAccessor(bundleContext.getBundle()).getDescriptor();
         Element root = appDescriptor.getRootElement();
@@ -58,10 +56,14 @@ public class RingoJsKitBootstrap
         {
             registerOAuthHostInfo();
         }
-        descriptorGenerator.mountStaticResources("/public");
+
+        // this is different than servlet kit because of how we mount a single handler on /
+        descriptorGenerator.mountStaticResources("/", "/public/*");
+
+        descriptorGenerator.mountServlet(servlet, "/");
 
         // todo: handle exceptions better
-        descriptorGenerator.mountServlet(new RegistrationServlet(appDescriptor, environment,
+        descriptorGenerator.mountFilter(new RegistrationFilter(appDescriptor, environment,
                 oAuthContext), "/");
 
         descriptorGenerator.init(appDescriptor);

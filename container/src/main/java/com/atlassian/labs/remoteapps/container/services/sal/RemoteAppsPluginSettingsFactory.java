@@ -50,7 +50,7 @@ public class RemoteAppsPluginSettingsFactory implements PluginSettingsFactory
         if (file != null)
         {
             // File is a new file
-            log.info("Using " + file.getAbsolutePath() + " as plugin settings store");
+            log.debug("Using " + file.getAbsolutePath() + " as plugin settings store");
         }
         this.file = file;
     }

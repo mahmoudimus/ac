@@ -9,7 +9,6 @@ public class Main
 {
     public static void main(String[] apps) throws Exception
     {
-        BasicConfigurator.configure();
         HttpServer server = new HttpServer();
         server.start();
         Container container = new Container(server, apps);
