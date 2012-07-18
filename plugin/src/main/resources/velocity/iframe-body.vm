@@ -1,6 +1,6 @@
 <div>
     <div id="embedded-$namespace"></div>
-    <hr/>
+    <hr style="border: none; border-top: 1px solid #ddd"/>
     <div id="ra-stats-$namespace" style="color: gray; font-size: smaller">
         Loaded from <span id="ra-key-$namespace"><a href="${remoteapp.displayUrl}">$remoteapp.name</a></span>  in
         <span id="ra-time-$namespace">...</span> ms
