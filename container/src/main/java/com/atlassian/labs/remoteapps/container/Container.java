@@ -1,6 +1,8 @@
 package com.atlassian.labs.remoteapps.container;
 
 import com.atlassian.labs.remoteapps.api.DescriptorGenerator;
+import com.atlassian.labs.remoteapps.api.PolygotRemoteAppDescriptorAccessor;
+import com.atlassian.labs.remoteapps.api.RemoteAppDescriptorAccessor;
 import com.atlassian.labs.remoteapps.container.services.DescriptorGeneratorServiceFactory;
 import com.atlassian.labs.remoteapps.container.services.sal.RemoteAppsApplicationPropertiesServiceFactory;
 import com.atlassian.labs.remoteapps.container.services.sal.RemoteAppsPluginSettingsFactory;
@@ -35,21 +37,19 @@ import com.atlassian.plugin.osgi.module.BeanPrefixModuleFactory;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.google.common.collect.ImmutableSet;
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.xml.bind.DatatypeConverter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.*;
-import java.nio.charset.Charset;
 import java.util.*;
 
+import static com.atlassian.labs.remoteapps.container.util.AppRegister.registerApp;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
+import static com.google.common.collect.Sets.newHashSet;
 import static java.util.Arrays.asList;
 
 /**
@@ -64,6 +64,8 @@ public class Container
             URI.create("http://localhost:1990/confluence"),
             URI.create("http://localhost:2990/jira"),
             URI.create("http://localhost:5990/refapp"));
+    private RemoteAppDescriptorAccessor descriptorAccessor;
+    private AppReloader appReloader;
 
     public Container(HttpServer server, String[] apps) throws FileNotFoundException
     {
@@ -130,6 +132,7 @@ public class Container
                         pluginEventManager);
 
         Scanner scanner = null;
+
         if (apps.length == 0)
         {
             File appDir = mkdir("apps");
@@ -148,7 +151,8 @@ public class Container
                 if (appFile.isDirectory())
                 {
                     System.setProperty("plugin.resource.directories", appFile.getAbsolutePath());
-                    File appAsZip = zipAppDirectory(appFile);
+                    descriptorAccessor = new PolygotRemoteAppDescriptorAccessor(appFile);
+                    File appAsZip = zipAppDirectory(descriptorAccessor, appFile);
                     files.add(appAsZip);
                 }
                 else
@@ -180,11 +184,11 @@ public class Container
                         new BeanPrefixModuleFactory())));
     }
 
-    private File zipAppDirectory(File appFile)
+    private File zipAppDirectory(RemoteAppDescriptorAccessor descriptorAccessor, File appFile)
     {
         try
         {
-            return ZipWriter.zipAppIntoPluginJar(appFile);
+            return ZipWriter.zipAppIntoPluginJar(descriptorAccessor, appFile);
         }
         catch (IOException e)
         {
@@ -192,26 +196,38 @@ public class Container
         }
     }
 
-    public void start()
+    public void start() throws IOException
     {
         pluginManager.init();
-        tryToAutoRegister(httpServer.getContextNames());
+        Set<URI> foundHosts = findHostProducts();
+        if (descriptorAccessor != null)
+        {
+            String appKey = descriptorAccessor.getDescriptor().getRootElement().attributeValue("key");
+            appReloader = new AppReloader(descriptorAccessor, httpServer.getLocalMountBaseUrl(appKey), foundHosts);
+        }
+        else
+        {
+            for (URI host : foundHosts)
+            {
+                for (String appKey : httpServer.getContextNames())
+                {
+                    registerApp(host, appKey, httpServer.getLocalMountBaseUrl(appKey));
+                }
+            }
+        }
     }
 
-    private void tryToAutoRegister(Set<String> appKeys)
+    private Set<URI> findHostProducts()
     {
+        Set<URI> found = newHashSet();
         for (URI host : AUTOREGISTER_HOSTS)
         {
             Socket socket = null;
             try
             {
-                log.debug("Trying to register at " + host);
+                log.debug("Scanning for host at " + host);
                 socket = new Socket(host.getHost(), host.getPort());
-                for (String appKey : appKeys)
-                {
-                    registerApp(host, appKey);
-                    log.info("Registered '" + appKey + "' at " + host);
-                }
+                found.add(host);
             }
             catch (UnknownHostException e)
             {
@@ -236,40 +252,16 @@ public class Container
                 }
             }
         }
-    }
-
-    private void registerApp(URI host, String appKey) throws IOException
-    {
-        URL url = new URL(host.toString() + "/rest/remoteapps/latest/installer");
-        OutputStream out = null;
-        try{
-            HttpURLConnection uc = (HttpURLConnection) url.openConnection();
-            uc.setDoOutput(true);
-            uc.setDoInput(true);
-            String authorizationString = "Basic " + DatatypeConverter.printBase64Binary(
-                    "admin:admin".getBytes(Charset.defaultCharset()));
-            uc.setRequestProperty ("Authorization", authorizationString);
-            uc.setRequestMethod("POST");
-            uc.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-            out = uc.getOutputStream();
-            out.write(
-                    ("url=" + URLEncoder.encode(httpServer.getLocalMountBaseUrl(appKey), "UTF-8") +
-                            "&token=").getBytes(Charset.defaultCharset()));
-            out.close();
-            int response = uc.getResponseCode();
-            log.debug("Registration response '" + response + "': " + IOUtils.toString(uc.getInputStream()));
-            uc.getInputStream().close();
-            // todo: handle errors
-        }
-        finally
-        {
-            IOUtils.closeQuietly(out);
-        }
+        return found;
     }
 
     public void stop()
     {
         pluginManager.shutdown();
+        if (appReloader != null)
+        {
+            appReloader.shutdown();
+        }
     }
 
     private File mkdir(String path)

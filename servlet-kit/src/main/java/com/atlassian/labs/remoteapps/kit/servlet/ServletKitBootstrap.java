@@ -1,6 +1,8 @@
 package com.atlassian.labs.remoteapps.kit.servlet;
 
 import com.atlassian.labs.remoteapps.api.DescriptorGenerator;
+import com.atlassian.labs.remoteapps.api.TransformingRemoteAppDescriptorAccessor;
+import com.atlassian.labs.remoteapps.api.PolygotRemoteAppDescriptorAccessor;
 import com.atlassian.labs.remoteapps.api.RemoteAppDescriptorAccessor;
 import com.atlassian.labs.remoteapps.apputils.Environment;
 import com.atlassian.labs.remoteapps.apputils.OAuthContext;
@@ -64,21 +66,40 @@ public class ServletKitBootstrap
         }
         descriptorGenerator.mountStaticResources("/public", "/*");
 
-        Document appDescriptor = loadDescriptor();
-        Element root = appDescriptor.getRootElement();
-        oAuthContext.setLocalOauthKey(root.attributeValue("key"));
-
-        updateDisplayUrl(root);
-        updateOauthPublicKey(oAuthContext, root);
+        RemoteAppDescriptorAccessor descriptorAccessor = getDescriptorAccessor(oAuthContext);
 
         if (isLocal())
         {
             registerOAuthHostInfo();
         }
         // todo: handle exceptions better
-        descriptorGenerator.mountFilter(new RegistrationFilter(appDescriptor, environment,
+        descriptorGenerator.mountFilter(new RegistrationFilter(descriptorAccessor, environment,
                 oAuthContext), "/");
-        descriptorGenerator.init(appDescriptor);
+        descriptorGenerator.init(descriptorAccessor.getDescriptor());
+    }
+
+    private RemoteAppDescriptorAccessor getDescriptorAccessor(final OAuthContext oAuthContext)
+    {
+        RemoteAppDescriptorAccessor descriptorAccessor = loadOptionalBean(RemoteAppDescriptorAccessor.class);
+        if (descriptorAccessor == null)
+        {
+            descriptorAccessor = new PolygotRemoteAppDescriptorAccessor(bundleContext.getBundle());
+        }
+
+        return new TransformingRemoteAppDescriptorAccessor(descriptorAccessor)
+        {
+            @Override
+            protected Document transform(Document document)
+            {
+                Element root = document.getRootElement();
+                oAuthContext.setLocalOauthKey(root.attributeValue("key"));
+
+                updateDisplayUrl(root);
+                updateOauthPublicKey(oAuthContext, root);
+                return document;
+            }
+        };
+
     }
 
     private void updateOauthPublicKey(OAuthContext oAuthContext, Element root)
@@ -117,17 +138,6 @@ public class ServletKitBootstrap
         oAuthContext.addHost(consumer.getKey(),
                 RSAKeys.toPemEncoding(consumer.getPublicKey()),
                 applicationProperties.getBaseUrl());
-    }
-
-    private Document loadDescriptor()
-    {
-        RemoteAppDescriptorFactory factory = loadOptionalBean(RemoteAppDescriptorFactory.class);
-        if (factory != null)
-        {
-            return factory.create();
-        }
-
-        return new RemoteAppDescriptorAccessor(bundleContext.getBundle()).getDescriptor();
     }
 
     <T> T loadOptionalBean(Class<T> typeClass)

@@ -77,6 +77,15 @@ then
     exit 1
 fi
 
+function buildIfNeeded {
+    if [ ! -d "$P3_HOME/container/target" ]; then
+        curDir=`pwd`
+        cd "$P3_HOME"
+        mvn --projects container --also-make -DskipTests install
+        cd "$curDir"
+    fi
+}
+
 case "$1" in
 
 run-confluence)  echo "Starting Confluence. . ."
@@ -90,6 +99,18 @@ debug-confluence)  echo "Starting Confluence in debug mode. . ."
 run-jira)  echo "Starting JIRA. . ."
     shift
     atlas-run-standalone --plugins com.atlassian.labs:remoteapps-plugin:0.4.9999-SNAPSHOT --product jira $@
+    ;;
+debug-jira)  echo "Starting JIRA in debug mode. . ."
+    shift
+    mvn amps:debug-standalone -Dplugins=com.atlassian.labs:remoteapps-plugin:0.4.9999-snapshot -Dproduct=jira $@
+    ;;
+run-refapp)  echo "Starting RefApp. . ."
+    shift
+    atlas-run-standalone --plugins com.atlassian.labs:remoteapps-plugin:0.4.9999-SNAPSHOT --product refapp $@
+    ;;
+debug-refapp)  echo "Starting RefApp in debug mode. . ."
+    shift
+    mvn amps:debug-standalone -Dplugins=com.atlassian.labs:remoteapps-plugin:0.4.9999-snapshot -Dproduct=refapp $@
     ;;
 create)  echo  "Creating a new app. . ."
     shift
@@ -119,14 +140,20 @@ create)  echo  "Creating a new app. . ."
     echo " "
     ;;
 start)  echo  "Starting the container. . ."
+    buildIfNeeded
     shift
     appKey=$1
     java -jar "$P3_HOME/container/target/remoteapps-container-0.4.9999-SNAPSHOT.jar" $appKey
     ;;
 debug)  echo  "Starting app in debug mode. . ."
+    buildIfNeeded
     shift
     appKey=$1
     java -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005 -jar "$P3_HOME/container/target/remoteapps-container-0.4.9999-SNAPSHOT.jar" $appKey
+    ;;
+rebuild) echo "Rebuilding Remote Apps. . ."
+    rm -rf `find "$P3_HOME" -name "target"`
+    buildIfNeeded
     ;;
 *) echo "Unknown command: $1"
    ;;

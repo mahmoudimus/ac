@@ -1,6 +1,8 @@
 package com.atlassian.labs.remoteapps.kit.js;
 
 import com.atlassian.labs.remoteapps.api.DescriptorGenerator;
+import com.atlassian.labs.remoteapps.api.TransformingRemoteAppDescriptorAccessor;
+import com.atlassian.labs.remoteapps.api.PolygotRemoteAppDescriptorAccessor;
 import com.atlassian.labs.remoteapps.api.RemoteAppDescriptorAccessor;
 import com.atlassian.labs.remoteapps.apputils.Environment;
 import com.atlassian.labs.remoteapps.apputils.OAuthContext;
@@ -18,6 +20,8 @@ import org.osgi.framework.BundleContext;
 import org.ringojs.jsgi.JsgiServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
 
 /**
  *
@@ -45,13 +49,7 @@ public class RingoJsKitBootstrap
         RingoEngine ringoEngine = new RingoEngine(pluginRetrievalService.getPlugin(), bundleContext);
         JsgiServlet servlet = new JsgiServlet(ringoEngine.getEngine());
 
-        Document appDescriptor = new RemoteAppDescriptorAccessor(bundleContext.getBundle()).getDescriptor();
-        Element root = appDescriptor.getRootElement();
-        oAuthContext.setLocalOauthKey(root.attributeValue("key"));
-
-        updateDisplayUrl(root);
-        updateOauthPublicKey(oAuthContext, root);
-
+        RemoteAppDescriptorAccessor descriptorAccessor = getDescriptorAccessor();
         if (isLocal())
         {
             registerOAuthHostInfo();
@@ -63,10 +61,31 @@ public class RingoJsKitBootstrap
         descriptorGenerator.mountServlet(servlet, "/");
 
         // todo: handle exceptions better
-        descriptorGenerator.mountFilter(new RegistrationFilter(appDescriptor, environment,
+        descriptorGenerator.mountFilter(new RegistrationFilter(descriptorAccessor, environment,
                 oAuthContext), "/");
 
-        descriptorGenerator.init(appDescriptor);
+        descriptorGenerator.init(descriptorAccessor.getDescriptor());
+    }
+
+    private RemoteAppDescriptorAccessor getDescriptorAccessor()
+    {
+        File baseDir = new File(System.getProperty("plugin.resource.directories"));
+        RemoteAppDescriptorAccessor descriptorAccessor = new PolygotRemoteAppDescriptorAccessor(
+                baseDir);
+
+        return new TransformingRemoteAppDescriptorAccessor(descriptorAccessor)
+        {
+            @Override
+            protected Document transform(Document document)
+            {
+                Element root = document.getRootElement();
+                oAuthContext.setLocalOauthKey(root.attributeValue("key"));
+
+                updateDisplayUrl(root);
+                updateOauthPublicKey(oAuthContext, root);
+                return document;
+            }
+        };
     }
 
     private void updateOauthPublicKey(OAuthContext oAuthContext, Element root)

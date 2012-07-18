@@ -24,10 +24,8 @@ public class ZipWriter
     private static final String REMOTEAPPS_KEY_SEPARATOR = "----remoteapps-";
     private static final Logger log = LoggerFactory.getLogger(ZipWriter.class);
 
-    public static File zipAppIntoPluginJar(File dir, String... pathsToExclude) throws IOException
+    public static File zipAppIntoPluginJar(RemoteAppDescriptorAccessor descriptorAccessor, File dir, String... pathsToExclude) throws IOException
     {
-        RemoteAppDescriptorAccessor remoteAppDescriptorAccessor = new RemoteAppDescriptorAccessor(dir);
-
         File zipFile = createExtractableTempFile(dir.getName(), ".jar");
         Set<String> excludes = newHashSet(pathsToExclude);
         ZipOutputStream zos = null;
@@ -38,7 +36,7 @@ public class ZipWriter
 
             if (!(new File(dir, "META-INF/MANIFEST.MF").exists()))
             {
-                Document doc = remoteAppDescriptorAccessor.getDescriptor();
+                Document doc = descriptorAccessor.getDescriptor();
                 String appKey = doc.getRootElement().attributeValue("key");
                 String appVersion = doc.getRootElement().attributeValue("version");
                 ZipEntry entry = new ZipEntry("META-INF/MANIFEST.MF");

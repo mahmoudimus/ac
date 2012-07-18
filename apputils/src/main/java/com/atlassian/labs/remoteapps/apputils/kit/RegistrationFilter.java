@@ -1,8 +1,8 @@
 package com.atlassian.labs.remoteapps.apputils.kit;
 
+import com.atlassian.labs.remoteapps.api.RemoteAppDescriptorAccessor;
 import com.atlassian.labs.remoteapps.apputils.Environment;
 import com.atlassian.labs.remoteapps.apputils.OAuthContext;
-import org.dom4j.Document;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 import org.slf4j.Logger;
@@ -21,16 +21,20 @@ import java.io.UnsupportedEncodingException;
  */
 public class RegistrationFilter implements Filter
 {
-    private final byte[] descriptor;
     private final String secret;
+    private final RemoteAppDescriptorAccessor descriptorAccessor;
     private final OAuthContext oAuthContext;
     private static final Logger log = LoggerFactory.getLogger(RegistrationFilter.class);
 
-    public RegistrationFilter(Document descriptor, Environment environment, OAuthContext oAuthContext)
+    public RegistrationFilter(RemoteAppDescriptorAccessor descriptor, Environment environment, OAuthContext oAuthContext)
     {
+        this.descriptorAccessor = descriptor;
         this.oAuthContext = oAuthContext;
         this.secret = environment.getOptionalEnv("REGISTRATION_SECRET", "");
+    }
 
+    private byte[] readDescriptorToBytes()
+    {
         ByteArrayOutputStream writer = new ByteArrayOutputStream();
         XMLWriter xmlWriter = null;
         try
@@ -44,13 +48,13 @@ public class RegistrationFilter implements Filter
         }
         try
         {
-            xmlWriter.write(descriptor);
+            xmlWriter.write(descriptorAccessor.getDescriptor());
         }
         catch (IOException e)
         {
             throw new IllegalArgumentException("Unable to write node", e);
         }
-        this.descriptor = writer.toByteArray();
+        return writer.toByteArray();
     }
 
     @Override
@@ -86,6 +90,7 @@ public class RegistrationFilter implements Filter
         }
 
         resp.setContentType("text/xml");
+        byte[] descriptor = readDescriptorToBytes();
         resp.setContentLength(descriptor.length);
         resp.getOutputStream().write(descriptor);
         resp.getOutputStream().close();

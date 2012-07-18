@@ -17,6 +17,13 @@
 
     <dependencies>
         <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>remoteapps-api</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
             <groupId>net.oauth.core</groupId>
             <artifactId>oauth</artifactId>
             <version>20090617</version>
