@@ -105,6 +105,8 @@
                         isn't being passed down to the JIRA view profile panel descriptor -->
                         <Import-Package>
                             com.atlassian.labs.remoteapps.api,
+                            com.atlassian.labs.remoteapps.api.services,
+                            com.atlassian.labs.remoteapps.api.services.impl,
                             com.atlassian.plugin.osgi.bridge.external,
                             com.atlassian.labs.remoteapps.modules.page.jira;resolution:=optional,
                             com.atlassian.jira.plugin.searchrequestview;resolution:=optional,

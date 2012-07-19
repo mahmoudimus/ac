@@ -1,12 +1,12 @@
 package com.atlassian.labs.remoteapps.kit.js.ringojs;
 
 import com.atlassian.labs.remoteapps.kit.js.ringojs.js.AppContext;
+import com.atlassian.labs.remoteapps.kit.js.ringojs.repository.FileRepository;
 import com.atlassian.plugin.Plugin;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.ringojs.engine.RhinoEngine;
 import org.ringojs.engine.RingoConfiguration;
-import org.ringojs.repository.FileRepository;
 import org.ringojs.repository.Repository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,6 +58,8 @@ public class RingoEngine
             RingoConfiguration ringoConfig = new RingoConfiguration(ringoHome, null, null);
             ringoConfig.addModuleRepository(ringoHome);
             ringoConfig.addModuleRepository(home);
+
+            // todo: add wrap factory to wrap things like futures when we get a promises library
 
             if (log.isDebugEnabled())
             {

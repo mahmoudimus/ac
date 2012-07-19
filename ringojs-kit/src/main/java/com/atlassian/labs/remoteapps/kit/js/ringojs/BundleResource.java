@@ -1,10 +1,14 @@
 package com.atlassian.labs.remoteapps.kit.js.ringojs;
 
+import com.atlassian.labs.remoteapps.kit.js.ringojs.repository.CoffeeScriptCompiler;
+import org.apache.commons.io.IOUtils;
 import org.osgi.framework.Bundle;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.charset.Charset;
 
 /**
  *
@@ -13,6 +17,8 @@ public class BundleResource extends AbstractResource
 {
     private int exists = -1;
     private final Bundle bundle;
+    private static final CoffeeScriptCompiler compiler = new CoffeeScriptCompiler("1.3.3", true);
+
 
     protected BundleResource(Bundle bundle, BundleRepository repository, String name) {
         this.bundle = bundle;
@@ -42,7 +48,26 @@ public class BundleResource extends AbstractResource
         URL url = getUrl();
         if (url != null)
         {
-            return stripShebang(url.openStream());
+            if (url.getPath().endsWith(".coffee"))
+            {
+                InputStream in = null;
+                try
+                {
+                    in = url.openStream();
+                    String source = IOUtils.toString(in);
+                    return new ByteArrayInputStream(
+                            compiler.compile(source).getBytes(Charset.defaultCharset())
+                    );
+                }
+                finally
+                {
+                    IOUtils.closeQuietly(in);
+                }
+            }
+            else
+            {
+                return stripShebang(url.openStream());
+            }
         }
         else
         {
@@ -52,6 +77,10 @@ public class BundleResource extends AbstractResource
 
     public URL getUrl() {
         URL url =  bundle.getResource(path);
+        if (url == null)
+        {
+            url = bundle.getResource(repository.getPath() + baseName + ".coffee");
+        }
         return url;
     }
 

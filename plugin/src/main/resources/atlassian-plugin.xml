@@ -157,6 +157,11 @@
 
     <!-- legacy -->
     <module-type key="remote-app" class="com.atlassian.labs.remoteapps.descriptor.external.RemoteAppModuleDescriptor" />
+
+    <!-- universal binary services -->
+    <component key="pluginSettingsAsyncFactory" interface="com.atlassian.labs.remoteapps.api.services.PluginSettingsAsyncFactory"
+               class="com.atlassian.labs.remoteapps.services.PluginSettingsAsyncFactoryBean" public="true" />
+
     <!-- product-specific modules included via xslt build process -->
 
 </atlassian-plugin>

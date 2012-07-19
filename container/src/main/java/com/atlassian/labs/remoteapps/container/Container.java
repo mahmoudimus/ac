@@ -3,6 +3,8 @@ package com.atlassian.labs.remoteapps.container;
 import com.atlassian.labs.remoteapps.api.DescriptorGenerator;
 import com.atlassian.labs.remoteapps.api.PolygotRemoteAppDescriptorAccessor;
 import com.atlassian.labs.remoteapps.api.RemoteAppDescriptorAccessor;
+import com.atlassian.labs.remoteapps.api.services.PluginSettingsAsyncFactory;
+import com.atlassian.labs.remoteapps.api.services.impl.DefaultPluginSettingsAsyncFactory;
 import com.atlassian.labs.remoteapps.container.services.DescriptorGeneratorServiceFactory;
 import com.atlassian.labs.remoteapps.container.services.sal.RemoteAppsApplicationPropertiesServiceFactory;
 import com.atlassian.labs.remoteapps.container.services.sal.RemoteAppsPluginSettingsFactory;
@@ -173,12 +175,15 @@ public class Container
         );
 
         hostComponents.put(ApplicationProperties.class, new RemoteAppsApplicationPropertiesServiceFactory(server));
-        hostComponents.put(PluginSettingsFactory.class, new RemoteAppsPluginSettingsFactory());
+
+        RemoteAppsPluginSettingsFactory pluginSettingsFactory = new RemoteAppsPluginSettingsFactory();
+        hostComponents.put(PluginSettingsFactory.class, pluginSettingsFactory);
 
         hostComponents.put(DescriptorGenerator.class, new DescriptorGeneratorServiceFactory(pluginManager, server));
         hostComponents.put(PluginAccessor.class, pluginManager);
         hostComponents.put(PluginController.class, pluginManager);
         hostComponents.put(PluginEventManager.class, pluginEventManager);
+        hostComponents.put(PluginSettingsAsyncFactory.class, new DefaultPluginSettingsAsyncFactory(pluginSettingsFactory));
         hostComponents.put(ModuleFactory.class, new PrefixDelegatingModuleFactory(
                 ImmutableSet.of(new ClassPrefixModuleFactory(hostContainer),
                         new BeanPrefixModuleFactory())));
