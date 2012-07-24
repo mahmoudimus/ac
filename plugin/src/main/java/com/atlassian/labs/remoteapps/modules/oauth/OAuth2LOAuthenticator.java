@@ -10,6 +10,7 @@ import com.atlassian.sal.api.user.UserManager;
 import net.oauth.OAuth;
 import net.oauth.OAuthException;
 import net.oauth.OAuthMessage;
+import net.oauth.OAuthProblemException;
 import net.oauth.server.OAuthServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,8 +45,8 @@ public class OAuth2LOAuthenticator implements Authenticator
 
     @Autowired
     public OAuth2LOAuthenticator(AuthenticationController authenticationController,
-                                 ApplicationProperties applicationProperties,
-                                 OAuthLinkManager oAuthLinkManager, UserManager userManager)
+            ApplicationProperties applicationProperties,
+            OAuthLinkManager oAuthLinkManager, UserManager userManager)
     {
         this.oAuthLinkManager = oAuthLinkManager;
         this.userManager = userManager;
@@ -76,7 +77,8 @@ public class OAuth2LOAuthenticator implements Authenticator
          <li>The signature is valid</li>
         </ul>
         <p>
-        Additionally, the consumer key, also known as the client key, matches an installed and enabled
+        Additionally, the consumer key, also known as the client key,
+        matches an installed and enabled
           Remote App.
          */
         String consumerKey;
@@ -92,14 +94,33 @@ public class OAuth2LOAuthenticator implements Authenticator
         catch (IOException e)
         {
             log.warn("Exception authenticating request", e);
+            sendError(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message);
             return new Result.Failure(new DefaultMessage("OAuth exception:" + e.getMessage()));
-        } catch (URISyntaxException e)
+        }
+        catch (URISyntaxException e)
         {
             log.warn("Exception authenticating request", e);
+            sendError(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message);
             return new Result.Failure(new DefaultMessage("OAuth exception:" + e.getMessage()));
-        } catch (OAuthException e)
+        }
+        catch (OAuthProblemException ope)
+        {
+            logOAuthProblem(message, ope, log);
+            try
+            {
+                OAuthServlet.handleException(response, ope, applicationProperties.getBaseUrl());
+            }
+            catch (Exception e)
+            {
+                // there was an IOE or ServletException, nothing more we can really do
+                log.error("Failure reporting OAuth error to client", e);
+            }
+            return new Result.Failure(new DefaultMessage(ope.getMessage()));
+        }
+        catch (OAuthException e)
         {
             log.warn("Exception authenticating request", e);
+            sendError(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message);
             return new Result.Failure(new DefaultMessage("OAuth exception:" + e.getMessage()));
         }
 
@@ -125,7 +146,8 @@ public class OAuth2LOAuthenticator implements Authenticator
         }
         /*!
         There are a few APIs provided by the application which can be accessed without specifying
-        a valid user.  These are generally provided by the Remote Apps plugin itself.  Examples include:
+        a valid user.  These are generally provided by the Remote Apps plugin itself.  Examples
+        include:
         <ul>
          <li>Deleting an instance of a cached macro's content</li>
          <li>Deleting all cached macro content for an app</li>
@@ -137,9 +159,11 @@ public class OAuth2LOAuthenticator implements Authenticator
         }
 
         /*!
-        If the request passed all the above checks, the app and user are marked to have successfully authenticated.
+        If the request passed all the above checks, the app and user are marked to have
+        successfully authenticated.
         <p>
-        This process only authenticates the user to the host application.  From here, the request needs
+        This process only authenticates the user to the host application.  From here,
+        the request needs
         to be authorized to ensure it has access to the appropriate API scope.
          */
         request.setAttribute(OAuth.OAUTH_CONSUMER_KEY, consumerKey);
@@ -162,10 +186,40 @@ public class OAuth2LOAuthenticator implements Authenticator
                     uriPathBeforeForwarding,
                     newUri.getQuery(),
                     newUri.getFragment()).toString();
-        } catch (URISyntaxException e)
+        }
+        catch (URISyntaxException e)
         {
             log.warn("forwarded request had invalid original URI path: " + uriPathBeforeForwarding);
             return null;
+        }
+    }
+
+    public static void logOAuthProblem(final OAuthMessage message,
+            final OAuthProblemException ope,
+            final Logger logger)
+    {
+        if (OAuth.Problems.TIMESTAMP_REFUSED.equals(ope.getProblem()))
+        {
+            logger.warn("Rejecting OAuth request for url \"{}\" due to invalid timestamp ({}). " +
+                    "This is most likely due to our system clock not being " +
+                    "synchronized with the consumer's clock.",
+                    new Object[] { message.URL, ope.getParameters() });
+        }
+        else if (logger.isDebugEnabled())
+        {
+            // include the full stacktrace
+            logger.warn(
+                    "Problem encountered authenticating OAuth client request for url \"" +
+                            message.URL + "\", error was \"" + ope.getProblem() +
+                            "\", with parameters \"" + ope.getParameters() + "\"", ope);
+        }
+        else
+        {
+            // omit the stacktrace
+            logger.warn(
+                    "Problem encountered authenticating OAuth client for url \"{}\", error was \"{}\", with parameters \"{}\"",
+                    new Object[] { message.URL, ope.getProblem(), ope.getParameters() }
+            );
         }
     }
 
@@ -176,7 +230,8 @@ public class OAuth2LOAuthenticator implements Authenticator
         {
             response.addHeader("WWW-Authenticate",
                     message.getAuthorizationHeader(applicationProperties.getBaseUrl()));
-        } catch (IOException e)
+        }
+        catch (IOException e)
         {
             log.error("Failure reporting OAuth error to client", e);
         }
