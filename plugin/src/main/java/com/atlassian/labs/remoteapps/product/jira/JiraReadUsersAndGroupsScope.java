@@ -18,7 +18,8 @@ public class JiraReadUsersAndGroupsScope extends JiraScope
                 ),
                 asList(
                         new RestApiScopeHelper.RestScope("api", asList("latest", "2", "2.0.alpha1"), "/user", asList("get")),
-                        new RestApiScopeHelper.RestScope("api", asList("latest", "2", "2.0.alpha1"), "/group", asList("get"))
+                        new RestApiScopeHelper.RestScope("api", asList("latest", "2", "2.0.alpha1"), "/group", asList("get")),
+                        new RestApiScopeHelper.RestScope("api", asList("latest", "2", "2.0.alpha1"), "/mypermissions", asList("get"))
                 ));
     }
 
