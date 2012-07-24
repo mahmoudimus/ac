@@ -13,7 +13,7 @@
         container$ = $("#" + containerId),
         initHeight = options.height || "0",
         initWidth = options.width || "100%",
-        start = Date.now();
+        start = new Date().getTime();
 
     var rpc = new easyXDM.Rpc({
       remote: options.src,
@@ -28,7 +28,7 @@
       local: {
         init: function () {
           container$.addClass("iframe-init");
-          $("#ra-time-" + ns).text(Date.now() - start);
+          $("#ra-time-" + ns).text(new Date().getTime() - start);
         },
         resize: debounce(function (width, height) {
           // debounce resizes to avoid excessive page reflow
