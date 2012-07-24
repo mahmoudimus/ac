@@ -12,7 +12,13 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="context-parameters" type="LinkContextParametersType" minOccurs="0" maxOccurs="1" />
+            <xs:element name="context-parameters" type="LinkContextParametersType" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>
+                        Deprecated. You get all the parameters on every link anyway.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
         </xs:sequence>
         <xs:attribute name="key" type="KeyType" use="required" />
         <xs:attribute name="name" type="NameType" use="required" />
