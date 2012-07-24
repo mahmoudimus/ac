@@ -72,26 +72,6 @@
   }
   onload(function () { isLoaded = true; });
 
-//  // simple dom ready
-//  function onReady(fn) {
-//    if ((/in/).test(doc.readyState)) {
-//      setTimeout(function () { onReady(fn); }, 9);
-//    }
-//    else {
-//      fn();
-//    }
-//  }
-//  var readyHandlers = [];
-//  var isReady;
-//  onReady(function () {
-//    var i;
-//    isReady = true;
-//    for (i = 0; i < readyHandlers.length; i += 1) {
-//      readyHandlers[i]();
-//    }
-//    readyHandlers = null; // release to gc
-//  });
-
   // basic dom util
   function $(sel) {
     var els = [];
@@ -103,15 +83,6 @@
       else if (sel.nodeType === 1) {
         els.push(sel);
       }
-// rest of dom ready support
-//      else if (typeof sel === "function") {
-//        if (isReady) {
-//          sel();
-//        }
-//        else {
-//          readyHandlers.push(sel);
-//        }
-//      }
     }
     extend(els, {
       each: function (it) { each(this, it); },
@@ -120,7 +91,12 @@
           var el = doc.createElement(spec.tag);
           each(spec, function (k, v) {
             if (k === "$text") {
-              el.appendChild(doc.createTextNode(v));
+              if(el.styleSheet) { // style tags in ie
+                el.styleSheet.cssText = v;
+              }
+              else {
+                el.appendChild(doc.createTextNode(v));
+              }
             }
             else if (k !== "tag") {
               el[k] = v;
@@ -289,8 +265,15 @@
     // @param width   the desired width
     // @param height  the desired height
     resize: function (width, height) {
-      var w = width == null ? "100%" : width;
-      var h = height == null ? $("body")[0].scrollHeight : height;
+      var w = width == null ? "100%" : width,
+          max = Math.max,
+          body = $("body")[0],
+          docEl = doc.documentElement,
+          scroll = "scrollHeight",
+          offset = "offsetHeight",
+          client = "clientHeight",
+          dh = max(max(body[scroll], docEl[scroll]), max(body[offset], docEl[offset]), max(body[client], docEl[client])),
+          h = height == null ? dh : height;
       rpc.resize(w, h);
     },
 

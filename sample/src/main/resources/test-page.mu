@@ -1,5 +1,7 @@
+<!doctype html>
 <html>
     <head>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
         <script src="{{baseUrl}}/remoteapps/all.js"></script>
         <script>RA.init();</script>
     </head>

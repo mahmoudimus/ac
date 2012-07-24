@@ -124,11 +124,6 @@ public class IFrameRenderer
         ctx.put("contextPath", iframeHost.getContextPath());
         ctx.put("userId", remoteUser == null ? "" : remoteUser);
 
-        // even if same origin, force postMessage as same origin will have xdm_e with the full
-        // url, which we don't know as we only populate host and port from the base url
-        String xdmProtocol = URI.create(hostUrl).getHost().equalsIgnoreCase(URI.create(signedUrl).getHost()) ? "\"1\"" : "undefined";
-        ctx.put("xdmProtocolHtml", xdmProtocol);
-
         StringWriter output = new StringWriter();
         templateRenderer.render("velocity/iframe-body.vm", ctx, output);
         return output.toString();

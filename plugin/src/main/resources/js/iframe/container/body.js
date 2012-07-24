@@ -1,7 +1,8 @@
 (function (global, $) {
 
   var cssProperties = ["color", "fontFamily", "fontSize", "fontSizeAdjust", "fontStretch", "fontStyle", "fontVariant", "fontWeight"],
-      bodyProperties = cssProperties.concat(["lineHeight"]),
+      // don't send line-height for ie, as at least ie8 reports bad values
+      bodyProperties = cssProperties.concat((/*@cc_on!@*/false) ? [] : ["lineHeight"]),
       xhrProperties = ["status", "statusText", "responseText"],
       xhrHeaders = ["Content-Type"],
       RA = global.RemoteApps;
@@ -19,7 +20,7 @@
       remote: options.src,
       container: containerId,
       channel: channelId,
-      protocol: options.protocol,
+      protocol: "1", // force postMessage
       props: {height: initHeight, width: initWidth}
     }, {
       remote: {
@@ -49,28 +50,17 @@
         },
         getStylesheet: function (success) {
           var body = {};
-          function dasherize(name) {
-            return name.replace(/[A-Z]/g, function ($0) { return "-" + $0.toLowerCase(); });
-          }
           function capture(dest, el$, props) {
             $.each(props, function (i, k) {
               var v = el$.css(k);
               if (v != null && v !== '') {
-                k = dasherize(k);
+                k = k.replace(/[A-Z]/g, function ($0) { return "-" + $0.toLowerCase(); });
                 dest[k] = v;
               }
             });
           }
           capture(body, container$, bodyProperties);
           success([{selector: "body", properties: body}]);
-        },
-        // @deprecated
-        getCssProperties: function () {
-          var props = {};
-          $.each(bodyProperties, function (i, v) {
-            props[v] = container$.css(v);
-          });
-          return props;
         },
         showMessage: function (id, title, body) {
           // init message bar if necessary
