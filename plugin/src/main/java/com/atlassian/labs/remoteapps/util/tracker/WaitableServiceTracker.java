@@ -1,8 +1,9 @@
 package com.atlassian.labs.remoteapps.util.tracker;
 
-import com.atlassian.plugin.PluginParseException;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.util.concurrent.AbstractFuture;
+import com.google.common.util.concurrent.ListenableFuture;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
@@ -14,7 +15,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Sets.newHashSet;
@@ -29,9 +30,9 @@ public class WaitableServiceTracker<K, T>
     private final Map<K, T> services;
     private final ServiceTracker serviceTracker;
     private static final Logger log = LoggerFactory.getLogger(WaitableServiceTracker.class);
-    private static final Object waitLock = new Object();
     private final Class serviceClass;
     private final Function<T, K> extractor;
+    private final Set<ServiceFuture<K,T>> futures = new CopyOnWriteArraySet<ServiceFuture<K, T>>();
     private final WaitableServiceTrackerCustomizer<T> customizer;
 
     public WaitableServiceTracker(final BundleContext bundleContext, Class<T> serviceClass,
@@ -49,11 +50,8 @@ public class WaitableServiceTracker<K, T>
             public Object addingService(ServiceReference reference)
             {
                 T service = (T) bundleContext.getService(reference);
-                synchronized(waitLock)
-                {
-                    addIfKeyNotNull(extractor, customizer, service);
-                    waitLock.notifyAll();
-                }
+                addIfKeyNotNull(extractor, customizer, service);
+                updateFutures();
                 return service;
             }
 
@@ -67,22 +65,31 @@ public class WaitableServiceTracker<K, T>
             @Override
             public void removedService(ServiceReference reference, Object service)
             {
-                synchronized(waitLock)
+                for (Iterator<T> i = services.values().iterator(); i.hasNext(); )
                 {
-                    for (Iterator<T> i = services.values().iterator(); i.hasNext(); )
+                    if (service == i.next())
                     {
-                        if (service == i.next())
-                        {
-                            i.remove();
-                        }
+                        i.remove();
                     }
-                    customizer.removed((T) service);
-                    waitLock.notifyAll();
                 }
+                customizer.removed((T) service);
+                updateFutures();
             }
         });
         this.serviceTracker.open();
         this.serviceClass = serviceClass;
+    }
+
+    private void updateFutures()
+    {
+        // todo: should this be in its own thread/executor?
+        for (ServiceFuture<K,T> future : futures)
+        {
+            if (future.servicesUpdated(services))
+            {
+                futures.remove(future);
+            }
+        }
     }
 
     private void addIfKeyNotNull(Function<T, K> extractor,
@@ -95,9 +102,9 @@ public class WaitableServiceTracker<K, T>
         }
     }
 
-    public void waitForKeys(final Collection<K> keys)
+    public ListenableFuture<Map<K, T>> waitForKeys(final Collection<K> keys)
     {
-        waitFor(new Predicate<Map<K, T>>()
+        return waitFor(new Predicate<Map<K, T>>()
         {
             @Override
             public boolean apply(Map<K, T> services)
@@ -120,27 +127,14 @@ public class WaitableServiceTracker<K, T>
         
     }
     
-    public void waitFor(Predicate<Map<K, T>> predicate)
+    public ListenableFuture<Map<K,T>> waitFor(Predicate<Map<K, T>> predicate)
     {
-        try
+        ServiceFuture<K,T> future = new ServiceFuture<K, T>(predicate);
+        if (!future.servicesUpdated(services))
         {
-            long timeout = System.currentTimeMillis() + 20 * 1000;
-            synchronized(waitLock)
-            {
-                while (!predicate.apply(services))
-                {
-                    waitLock.wait(20 * 1000);
-                    if (System.currentTimeMillis() > timeout)
-                    {
-                        throw new InterruptedException();
-                    }
-                }
-            }
+            futures.add(future);
         }
-        catch (InterruptedException e)
-        {
-            throw new PluginParseException("Unable to locate all services: " + predicate.toString());
-        }
+        return future;
     }
 
     void close()
@@ -150,26 +144,17 @@ public class WaitableServiceTracker<K, T>
     
     public T get(K key)
     {
-        synchronized (waitLock)
-        {
-            return services.get(key);
-        }
+        return services.get(key);
     }
     
     public Set<K> getKeys()
     {
-        synchronized (waitLock)
-        {
-            return services.keySet();
-        }
+        return services.keySet();
     }
     
     public Iterable<T> getAll()
     {
-        synchronized (waitLock)
-        {
-            return services.values();
-        }
+        return services.values();
     }
 
     Class getServiceClass()
@@ -179,13 +164,29 @@ public class WaitableServiceTracker<K, T>
 
     void loadLocalServices(Collection<T> localServices)
     {
-        synchronized(waitLock)
+        for (T service : localServices)
         {
-            for (T service : localServices)
+            addIfKeyNotNull(extractor, customizer, service);
+        }
+    }
+
+    private static class ServiceFuture<K, T> extends AbstractFuture<Map<K,T>>
+    {
+        private Predicate<Map<K, T>> condition;
+
+        private ServiceFuture(Predicate<Map<K, T>> condition)
+        {
+            this.condition = condition;
+        }
+
+        public boolean servicesUpdated(Map<K, T> services)
+        {
+            if (condition.apply(services))
             {
-                addIfKeyNotNull(extractor, customizer, service);
+                set(services);
+                return true;
             }
-            waitLock.notifyAll();
+            return false;
         }
     }
 }

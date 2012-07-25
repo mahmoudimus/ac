@@ -5,13 +5,19 @@ import com.atlassian.labs.remoteapps.modules.external.RemoteModuleGenerator;
 import com.atlassian.labs.remoteapps.modules.external.WaitableRemoteModuleGenerator;
 import com.atlassian.labs.remoteapps.util.tracker.WaitableServiceTracker;
 import com.atlassian.labs.remoteapps.util.tracker.WaitableServiceTrackerFactory;
+import com.atlassian.plugin.PluginParseException;
 import com.google.common.base.Function;
 import org.dom4j.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.transform;
@@ -26,6 +32,7 @@ public class ModuleGeneratorManager
 {
     private final WaitableServiceTracker<String,RemoteModuleGenerator> moduleTracker;
     private final ApplicationTypeModuleGenerator applicationTypeModuleGenerator;
+    private static final Logger log = LoggerFactory.getLogger(ModuleGeneratorManager.class);
 
     @Autowired
     public ModuleGeneratorManager(ApplicationTypeModuleGenerator applicationTypeModuleGenerator,
@@ -61,7 +68,23 @@ public class ModuleGeneratorManager
             keys.add(e.getName());
         }
 
-        moduleTracker.waitForKeys(keys);
+        try
+        {
+            moduleTracker.waitForKeys(keys).get(20, TimeUnit.SECONDS);
+        }
+        catch (InterruptedException e)
+        {
+            // ignore
+        }
+        catch (ExecutionException e)
+        {
+            log.error("Unable to wait for keys", e.getCause());
+            throw new RuntimeException(e);
+        }
+        catch (TimeoutException e)
+        {
+            throw new PluginParseException("Unable to find all required keys: " + keys);
+        }
         processDescriptor(root, new ModuleHandler()
         {
             @Override
