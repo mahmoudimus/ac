@@ -23,9 +23,16 @@ http://www.springframework.org/schema/context
     <osgi:reference id="descriptorGenerator" interface="com.atlassian.labs.remoteapps.api.DescriptorGenerator" timeout="20000" />
     <osgi:reference id="pluginSettingsFactory" interface="com.atlassian.sal.api.pluginsettings.PluginSettingsFactory" />
 
-    <beans:bean id="ao" class="com.atlassian.labs.remoteapps.apputils.spring.ComponentFactoryBean" lazy-init="true">
+    <beans:bean id="ao" class="com.atlassian.labs.remoteapps.apputils.spring.ComponentFactoryBean" lazy-init="true" depends-on="aoConfig">
         <beans:constructor-arg index="0" ref="bundleContext"/>
         <beans:constructor-arg index="1" value="com.atlassian.activeobjects.external.ActiveObjects"/>
+    </beans:bean>
+
+    <beans:bean id="aoConfig" class="com.atlassian.labs.remoteapps.apputils.ao.ActiveObjectsConfigurationFactoryBean" lazy-init="true">
+        <beans:constructor-arg index="0" ref="bundleContext" />
+        <beans:constructor-arg index="1">
+            <osgi:reference interface="com.atlassian.activeobjects.config.ActiveObjectsConfigurationFactory" />
+        </beans:constructor-arg>
     </beans:bean>
 
     <beans:bean id="environment" class="com.atlassian.labs.remoteapps.apputils.spring.EnvironmentFactoryBean" autowire="constructor" />
