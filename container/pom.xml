@@ -31,6 +31,16 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.fugue</groupId>
+            <artifactId>fugue</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
             <groupId>com.atlassian.plugins</groupId>
             <artifactId>atlassian-plugins-main</artifactId>
             <version>${plugins.version}</version>

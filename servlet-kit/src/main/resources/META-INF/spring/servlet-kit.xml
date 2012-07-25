@@ -9,8 +9,9 @@ http://www.springframework.org/schema/context
            http://www.springframework.org/schema/context/spring-context-2.5.xsd"
              default-autowire="autodetect">
 
-    <beans:bean id="oauthContext" class="com.atlassian.labs.remoteapps.apputils.OAuthContext"
-            autowire="constructor"/>
+    <beans:bean id="bundleContext" class="com.atlassian.labs.remoteapps.apputils.spring.BundleContextFactoryBean" />
+
+    <beans:bean id="oauthContext" class="com.atlassian.labs.remoteapps.apputils.OAuthContext" autowire="constructor"/>
 
     <beans:bean id="httpUtils" class="com.atlassian.labs.remoteapps.apputils.HttpUtils"
                 autowire="constructor"/>
@@ -21,6 +22,11 @@ http://www.springframework.org/schema/context
     <osgi:reference id="pluginRetrieval" interface="com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService" />
     <osgi:reference id="descriptorGenerator" interface="com.atlassian.labs.remoteapps.api.DescriptorGenerator" timeout="20000" />
     <osgi:reference id="pluginSettingsFactory" interface="com.atlassian.sal.api.pluginsettings.PluginSettingsFactory" />
+
+    <beans:bean id="ao" class="com.atlassian.labs.remoteapps.apputils.spring.ComponentFactoryBean" lazy-init="true">
+        <beans:constructor-arg index="0" ref="bundleContext"/>
+        <beans:constructor-arg index="1" value="com.atlassian.activeobjects.external.ActiveObjects"/>
+    </beans:bean>
 
     <beans:bean id="environment" class="com.atlassian.labs.remoteapps.apputils.spring.EnvironmentFactoryBean" autowire="constructor" />
 
