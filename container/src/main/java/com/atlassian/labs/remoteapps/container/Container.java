@@ -1,10 +1,14 @@
 package com.atlassian.labs.remoteapps.container;
 
+import com.atlassian.activeobjects.spi.DataSourceProvider;
+import com.atlassian.event.api.EventPublisher;
 import com.atlassian.labs.remoteapps.api.DescriptorGenerator;
 import com.atlassian.labs.remoteapps.api.PolygotRemoteAppDescriptorAccessor;
 import com.atlassian.labs.remoteapps.api.RemoteAppDescriptorAccessor;
 import com.atlassian.labs.remoteapps.api.services.PluginSettingsAsyncFactory;
 import com.atlassian.labs.remoteapps.api.services.impl.DefaultPluginSettingsAsyncFactory;
+import com.atlassian.labs.remoteapps.container.ao.RemoteAppsDataSourceProvider;
+import com.atlassian.labs.remoteapps.container.services.event.RemoteAppsEventPublisher;
 import com.atlassian.labs.remoteapps.container.services.DescriptorGeneratorServiceFactory;
 import com.atlassian.labs.remoteapps.container.services.sal.RemoteAppsApplicationPropertiesServiceFactory;
 import com.atlassian.labs.remoteapps.container.services.sal.RemoteAppsPluginSettingsFactory;
@@ -15,6 +19,7 @@ import com.atlassian.plugin.PluginController;
 import com.atlassian.plugin.event.PluginEventManager;
 import com.atlassian.plugin.event.impl.DefaultPluginEventManager;
 import com.atlassian.plugin.hostcontainer.DefaultHostContainer;
+import com.atlassian.plugin.loaders.BundledPluginLoader;
 import com.atlassian.plugin.loaders.DirectoryScanner;
 import com.atlassian.plugin.loaders.FileListScanner;
 import com.atlassian.plugin.loaders.PluginLoader;
@@ -60,12 +65,15 @@ import static java.util.Arrays.asList;
 public class Container
 {
     private static final Logger log = LoggerFactory.getLogger(Container.class);
-    private final DefaultPluginManager pluginManager;
-    private final HttpServer httpServer;
+
     public static final Set<URI> AUTOREGISTER_HOSTS = ImmutableSet.of(
             URI.create("http://localhost:1990/confluence"),
             URI.create("http://localhost:2990/jira"),
             URI.create("http://localhost:5990/refapp"));
+
+    private final DefaultPluginManager pluginManager;
+    private final HttpServer httpServer;
+
     private RemoteAppDescriptorAccessor descriptorAccessor;
     private AppReloader appReloader;
 
@@ -133,8 +141,7 @@ public class Container
                         osgiContainerManager,
                         pluginEventManager);
 
-        Scanner scanner = null;
-
+        final Scanner scanner;
         if (apps.length == 0)
         {
             File appDir = mkdir("apps");
@@ -164,15 +171,20 @@ public class Container
             }
             scanner = new FileListScanner(files);
         }
-        PluginLoader appPluginLoader = new ScanningPluginLoader(scanner, asList(osgiPluginDeployer, bundleFactory), pluginEventManager);
+
+        final PluginLoader bundledPluginLoader = new BundledPluginLoader(this.getClass().getResource("/bundled-plugins.zip"), new File(".cache/bundled") ,asList(osgiPluginDeployer, bundleFactory), pluginEventManager);
+        final PluginLoader appPluginLoader = new ScanningPluginLoader(scanner, asList(osgiPluginDeployer, bundleFactory), pluginEventManager);
 
         final DefaultHostContainer hostContainer = new DefaultHostContainer();
         pluginManager = new DefaultPluginManager(
                 new MemoryPluginPersistentStateStore(),
-                asList(appPluginLoader),
+                asList(bundledPluginLoader, appPluginLoader),
                 new DefaultModuleDescriptorFactory(hostContainer),
                 pluginEventManager
         );
+
+        hostComponents.put(DataSourceProvider.class, new RemoteAppsDataSourceProvider());
+        hostComponents.put(EventPublisher.class, new RemoteAppsEventPublisher());
 
         hostComponents.put(ApplicationProperties.class, new RemoteAppsApplicationPropertiesServiceFactory(server));
 
@@ -184,9 +196,7 @@ public class Container
         hostComponents.put(PluginController.class, pluginManager);
         hostComponents.put(PluginEventManager.class, pluginEventManager);
         hostComponents.put(PluginSettingsAsyncFactory.class, new DefaultPluginSettingsAsyncFactory(pluginSettingsFactory));
-        hostComponents.put(ModuleFactory.class, new PrefixDelegatingModuleFactory(
-                ImmutableSet.of(new ClassPrefixModuleFactory(hostContainer),
-                        new BeanPrefixModuleFactory())));
+        hostComponents.put(ModuleFactory.class, new PrefixDelegatingModuleFactory(ImmutableSet.of(new ClassPrefixModuleFactory(hostContainer), new BeanPrefixModuleFactory())));
     }
 
     private File zipAppDirectory(RemoteAppDescriptorAccessor descriptorAccessor, File appFile)

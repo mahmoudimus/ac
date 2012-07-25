@@ -220,6 +220,7 @@
         <ao.version>0.19.12-remoteapps-1</ao.version>
         <templaterenderer.version>1.3.0</templaterenderer.version>
         <oauth.version>1.3.0</oauth.version>
+        <slf4j.version>1.6.4</slf4j.version>
         <deployRepoUrl>https://maven.atlassian.com/public</deployRepoUrl>
         <VERSION_NUMBER>${API_VERSION}.${BUILD_NUMBER}</VERSION_NUMBER>
         <BUILD_NUMBER>9999-SNAPSHOT</BUILD_NUMBER>
