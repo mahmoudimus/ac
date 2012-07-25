@@ -16,6 +16,9 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import static com.google.common.collect.Sets.newHashSet;
 import static java.util.Arrays.asList;
@@ -52,35 +55,50 @@ public class AggregateModuleDescriptorFactory implements ModuleDescriptorFactory
     }
     public void waitForRequiredDescriptors(final Collection<String> requiredKeys)
     {
-        tracker.waitFor(new Predicate<Map<ModuleDescriptorFactory,ModuleDescriptorFactory>>()
+        try
         {
-            @Override
-            public boolean apply(Map<ModuleDescriptorFactory,ModuleDescriptorFactory> factories)
+            tracker.waitFor(new Predicate<Map<ModuleDescriptorFactory,ModuleDescriptorFactory>>()
             {
-                Set<String> keys = newHashSet(requiredKeys);
-                for (Iterator<String> i = keys.iterator(); i.hasNext(); )
+                @Override
+                public boolean apply(Map<ModuleDescriptorFactory,ModuleDescriptorFactory> factories)
                 {
-                    String key = i.next();
-                    for (ModuleDescriptorFactory factory : factories.keySet())
+                    Set<String> keys = newHashSet(requiredKeys);
+                    for (Iterator<String> i = keys.iterator(); i.hasNext(); )
                     {
-                        if (factory.hasModuleDescriptor(key))
+                        String key = i.next();
+                        for (ModuleDescriptorFactory factory : factories.keySet())
                         {
-                            i.remove();
-                            break;
+                            if (factory.hasModuleDescriptor(key))
+                            {
+                                i.remove();
+                                break;
+                            }
                         }
                     }
+                    log.info("Waiting on dynamic module types: " + keys);
+
+                    return keys.isEmpty();
                 }
-                log.info("Waiting on dynamic module types: " + keys);
 
-                return keys.isEmpty();
-            }
-
-            @Override
-            public String toString()
-            {
-                return "Waiting for module descriptors: " + requiredKeys;
-            }
-        });
+                @Override
+                public String toString()
+                {
+                    return "Waiting for module descriptors: " + requiredKeys;
+                }
+            }).get(30, TimeUnit.SECONDS);
+        }
+        catch (InterruptedException e)
+        {
+            // ignore
+        }
+        catch (ExecutionException e)
+        {
+            throw new RuntimeException("Unable to find dynamic modules", e);
+        }
+        catch (TimeoutException e)
+        {
+            throw new PluginParseException("Unable to find all module descriptors within 30 seconds: " + requiredKeys);
+        }
     }
 
     private ModuleDescriptorFactory getTrackedModuleDescriptorFactory(String key)

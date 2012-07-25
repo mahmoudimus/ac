@@ -7,6 +7,7 @@ import com.atlassian.labs.remoteapps.util.tracker.WaitableServiceTrackerCustomiz
 import com.atlassian.labs.remoteapps.util.tracker.WaitableServiceTrackerFactory;
 import com.atlassian.labs.remoteapps.webhook.external.WebHookProvider;
 import com.atlassian.labs.remoteapps.webhook.impl.WebHookRegistrarImpl;
+import com.atlassian.plugin.PluginParseException;
 import com.google.common.base.Predicate;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimaps;
@@ -21,6 +22,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Manages web hook registrations and handles event dispatching
@@ -125,13 +129,28 @@ public class WebHookRegistrationManager implements DisposableBean
 
     public void waitForId(final String webHookId)
     {
-        waitableServiceTracker.waitFor(new Predicate<Map<WebHookProvider, WebHookProvider>>()
+        try
         {
-            @Override
-            public boolean apply(Map<WebHookProvider, WebHookProvider> input)
+            waitableServiceTracker.waitFor(new Predicate<Map<WebHookProvider, WebHookProvider>>()
             {
-                return registrationsByKey.containsKey(webHookId);
-            }
-        });
+                @Override
+                public boolean apply(Map<WebHookProvider, WebHookProvider> input)
+                {
+                    return registrationsByKey.containsKey(webHookId);
+                }
+            }).get(20, TimeUnit.SECONDS);
+        }
+        catch (InterruptedException e)
+        {
+            // ignore
+        }
+        catch (ExecutionException e)
+        {
+            throw new RuntimeException("Error waiting for webhook id", e);
+        }
+        catch (TimeoutException e)
+        {
+            throw new PluginParseException("Timeout waiting for web hook id: " + webHookId);
+        }
     }
 }

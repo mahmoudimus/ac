@@ -7,6 +7,7 @@ import com.atlassian.labs.remoteapps.settings.SettingsManager;
 import com.atlassian.labs.remoteapps.util.ServletUtils;
 import com.atlassian.labs.remoteapps.util.tracker.WaitableServiceTracker;
 import com.atlassian.labs.remoteapps.util.tracker.WaitableServiceTrackerFactory;
+import com.atlassian.plugin.PluginParseException;
 import com.atlassian.sal.api.user.UserManager;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -21,6 +22,9 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Handles permissions for remote app operations
@@ -76,7 +80,22 @@ public class PermissionManager
     
     public void waitForApiScopes(Collection<String> scopeKeys)
     {
-        apiScopeTracker.waitForKeys(scopeKeys);
+        try
+        {
+            apiScopeTracker.waitForKeys(scopeKeys).get(20, TimeUnit.SECONDS);
+        }
+        catch (InterruptedException e)
+        {
+            // ignore
+        }
+        catch (ExecutionException e)
+        {
+            throw new RuntimeException("Unable to wait for scopes", e);
+        }
+        catch (TimeoutException e)
+        {
+            throw new PluginParseException("Unable to find all api scopes: " + scopeKeys);
+        }
     }
 
     public boolean isRequestInApiScope(HttpServletRequest req, String clientKey, String user)
