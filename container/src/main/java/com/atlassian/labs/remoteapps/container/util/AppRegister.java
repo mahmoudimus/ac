@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.DatatypeConverter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
@@ -24,7 +25,8 @@ public class AppRegister
     {
         URL url = new URL(host.toString() + "/rest/remoteapps/latest/installer");
         OutputStream out = null;
-        try{
+        try
+        {
             HttpURLConnection uc = (HttpURLConnection) url.openConnection();
             uc.setDoOutput(true);
             uc.setDoInput(true);
@@ -38,12 +40,19 @@ public class AppRegister
                     ("url=" + URLEncoder.encode(localMountBaseUrl, "UTF-8") +
                             "&token=").getBytes(Charset.defaultCharset()));
             out.close();
-            int response = uc.getResponseCode();
-            log.debug("Registration response '" + response + "': " + IOUtils.toString(
-                    uc.getInputStream()));
-            uc.getInputStream().close();
-            log.info("Registered '" + appKey + "' at " + host);
-            // todo: handle errors
+            int status = uc.getResponseCode();
+            InputStream is;
+            if (status >= 400)
+            {
+                is = uc.getErrorStream();
+                log.error("Registration of '" + appKey + "' at '" + host + "' failed:\n" + IOUtils.toString(is));
+            }
+            else
+            {
+                is = uc.getInputStream();
+                log.info("Registered '" + appKey + "' at '" + host + "'");
+            }
+            is.close();
         }
         finally
         {
