@@ -29,6 +29,7 @@ import org.springframework.stereotype.Component;
 
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
+import java.util.Collection;
 import java.util.Map;
 
 import static com.atlassian.labs.remoteapps.util.Dom4jUtils.*;
@@ -274,7 +275,38 @@ public class ApplicationTypeModuleGenerator implements WaitableRemoteModuleGener
         @Override
         public ContainerAccessor getContainerAccessor()
         {
-            return ((ContainerManagedPlugin) getDelegate()).getContainerAccessor();
+            if (getDelegate() instanceof ContainerManagedPlugin)
+            {
+                return ((ContainerManagedPlugin)getDelegate()).getContainerAccessor();
+            }
+            else
+            {
+                return new ContainerAccessor()
+                {
+                    @Override
+                    public <T> T createBean(Class<T> clazz)
+                    {
+                        try
+                        {
+                            return clazz.newInstance();
+                        }
+                        catch (InstantiationException e)
+                        {
+                            throw new PluginParseException(e);
+                        }
+                        catch (IllegalAccessException e)
+                        {
+                            throw new PluginParseException(e);
+                        }
+                    }
+
+                    @Override
+                    public <T> Collection<T> getBeansOfType(Class<T> interfaceClass)
+                    {
+                        throw new UnsupportedOperationException();
+                    }
+                };
+            }
         }
     }
 }

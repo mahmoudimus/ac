@@ -162,6 +162,9 @@
     <component key="pluginSettingsAsyncFactory" interface="com.atlassian.labs.remoteapps.api.services.PluginSettingsAsyncFactory"
                class="com.atlassian.labs.remoteapps.services.PluginSettingsAsyncFactoryBean" public="true" />
 
+    <!-- remote extension points -->
+    <module-type key="dynamic-application-link" class="com.atlassian.labs.remoteapps.integration.applinks.DynamicApplicationTypeModuleDescriptor" />
+
     <!-- product-specific modules included via xslt build process -->
 
 </atlassian-plugin>
