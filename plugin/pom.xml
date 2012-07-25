@@ -357,13 +357,13 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
-            <version>1.5.8</version>
+            <version>${slf4j.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>jcl-over-slf4j</artifactId>
-            <version>1.5.8</version>
+            <version>${slf4j.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -380,7 +380,7 @@
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
-                <version>1.5.8</version>
+                <version>${slf4j.version}</version>
                 <scope>provided</scope>
             </dependency>
         </dependencies>
@@ -452,17 +452,18 @@
                             com.atlassian.confluence.plugin.descriptor.web.descriptors;resolution:=optional,
                             com.atlassian.confluence.plugin.webresource;resolution:=optional,
                             com.atlassian.confluence.security.websudo;resolution:=optional,
+                            com.atlassian.jira;resolution:=optional,
+                            com.atlassian.jira.config;resolution:=optional,
                             com.atlassian.jira.plugin.webfragment.descriptors;resolution:=optional,
                             com.atlassian.jira.security;resolution:=optional,
                             com.atlassian.jira.security.websudo;resolution:=optional,
-                            com.atlassian.jira;resolution:=optional,
+                            com.atlassian.oauth*;version="(1.2,2.0]",
+                            com.atlassian.plugin.*;version="2.8",
                             com.atlassian.refapp.auth.external;resolution:=optional,
                             com.atlassian.sal.api.*;version="(2.4,3.0]",
-                            com.atlassian.plugin.*;version="2.8",
-                            org.apache.commons.lang.*;version="2.4",
-                            com.atlassian.oauth*;version="(1.2,2.0]",
                             net.oauth*,
-                            com.atlassian.jira.config;resolution:=optional,
+                            org.apache.commons.lang.*;version="2.4",
+                            org.slf4j*;version="1.5",
                             *;resolution:=optional
                         </Import-Package>
                         <DynamicImport-Package>com.atlassian.labs.speakeasy.*</DynamicImport-Package>
@@ -480,6 +481,7 @@
                             com.atlassian.labs.remoteapps.api.universalbinary.impl,
                             com.atlassian.labs.remoteapps.webhook.external
                         </Export-Package>
+                        <Spring-Context>*;timeout:=60</Spring-Context>
                     </instructions>
                     <systemPropertyVariables>
                         <xvfb.enable>${xvfb.enable}</xvfb.enable>
