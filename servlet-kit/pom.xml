@@ -28,6 +28,10 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.atlassian.fugue</groupId>
+            <artifactId>fugue</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.atlassian.labs</groupId>
             <artifactId>remoteapps-api</artifactId>
             <version>${project.version}</version>

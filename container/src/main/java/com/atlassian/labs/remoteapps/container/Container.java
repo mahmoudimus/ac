@@ -1,7 +1,6 @@
 package com.atlassian.labs.remoteapps.container;
 
 import com.atlassian.activeobjects.spi.DataSourceProvider;
-import com.atlassian.activeobjects.spi.TransactionSynchronisationManager;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.labs.remoteapps.api.DescriptorGenerator;
 import com.atlassian.labs.remoteapps.api.PolygotRemoteAppDescriptorAccessor;
@@ -9,7 +8,6 @@ import com.atlassian.labs.remoteapps.api.RemoteAppDescriptorAccessor;
 import com.atlassian.labs.remoteapps.api.services.PluginSettingsAsyncFactory;
 import com.atlassian.labs.remoteapps.api.services.impl.DefaultPluginSettingsAsyncFactory;
 import com.atlassian.labs.remoteapps.container.ao.RemoteAppsDataSourceProvider;
-import com.atlassian.labs.remoteapps.container.ao.RemoteAppsTransactionSynchronisationManager;
 import com.atlassian.labs.remoteapps.container.services.event.RemoteAppsEventPublisher;
 import com.atlassian.labs.remoteapps.container.services.DescriptorGeneratorServiceFactory;
 import com.atlassian.labs.remoteapps.container.services.sal.RemoteAppsApplicationPropertiesServiceFactory;
@@ -188,7 +186,6 @@ public class Container
         );
 
         hostComponents.put(DataSourceProvider.class, new RemoteAppsDataSourceProvider());
-        hostComponents.put(TransactionSynchronisationManager.class, new RemoteAppsTransactionSynchronisationManager());
         hostComponents.put(TransactionTemplate.class, new NoOpTransactionTemplate());
 
         hostComponents.put(EventPublisher.class, new RemoteAppsEventPublisher());
