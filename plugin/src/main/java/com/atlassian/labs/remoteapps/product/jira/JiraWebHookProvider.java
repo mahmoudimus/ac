@@ -68,7 +68,7 @@ public class JiraWebHookProvider implements WebHookProvider
         }
 
         @Override
-        public boolean matches(IssueEvent event, ApplicationLink appLink)
+        public boolean matches(IssueEvent event, String pluginKey)
         {
             return eventType.equals(event.getEventTypeId());
         }

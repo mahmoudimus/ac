@@ -10,7 +10,6 @@ import com.atlassian.event.api.EventListener;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.labs.remoteapps.ApplicationLinkAccessor;
 import com.atlassian.labs.remoteapps.ContentRetrievalException;
-import com.atlassian.labs.remoteapps.modules.applinks.RemoteAppApplicationType;
 import com.atlassian.labs.remoteapps.util.http.CachingHttpContentRetriever;
 import com.atlassian.labs.remoteapps.util.http.bigpipe.BigPipe;
 import com.atlassian.labs.remoteapps.util.http.bigpipe.BigPipeHttpContentHandler;
@@ -81,7 +80,7 @@ public class MacroContentManager implements DisposableBean
             public String process(String value)
             {
                 value = macroContentLinkParser.parse(
-                        (RemoteAppApplicationType) macroInstance.getLinkOperations().get().getType(), value,
+                        macroInstance.getRemoteAppAccessor(), value,
                         macroInstance.getUrlParameters());
 
                 /*!
@@ -98,7 +97,7 @@ public class MacroContentManager implements DisposableBean
                 }
                 catch (Exception e)
                 {
-                    log.warn("Unable to convert storage format for app {} with error {}", ((RemoteAppApplicationType) macroInstance.getLinkOperations().get().getType()).getId().get(), e.getMessage());
+                    log.warn("Unable to convert storage format for app {} with error {}", macroInstance.getRemoteAppAccessor().getKey(), e.getMessage());
                     if (log.isDebugEnabled())
                     {
                         log.debug("Error converting storage format", e);
@@ -109,7 +108,7 @@ public class MacroContentManager implements DisposableBean
         });
 
         String lastModifierName = entity != null ? entity.getLastModifierName() : "";
-        Future<String> response = macroInstance.getLinkOperations().executeAsyncGet(lastModifierName,
+        Future<String> response = macroInstance.getRemoteAppAccessor().executeAsyncGet(lastModifierName,
                 macroInstance.getPath(), macroInstance.getUrlParameters(),
                 macroInstance.getHeaders(), httpContentHandler);
 

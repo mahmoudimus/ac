@@ -1,9 +1,9 @@
 package com.atlassian.labs.remoteapps.loader;
 
-import com.atlassian.event.api.EventListener;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.labs.remoteapps.DescriptorValidator;
 import com.atlassian.labs.remoteapps.ModuleGeneratorManager;
+import com.atlassian.labs.remoteapps.RemoteAppAccessorFactory;
 import com.atlassian.labs.remoteapps.event.RemoteAppStartFailedEvent;
 import com.atlassian.labs.remoteapps.event.RemoteAppStartedEvent;
 import com.atlassian.labs.remoteapps.event.RemoteAppStoppedEvent;
@@ -16,7 +16,6 @@ import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.event.PluginEventListener;
 import com.atlassian.plugin.event.PluginEventManager;
 import com.atlassian.plugin.event.events.PluginDisabledEvent;
-import com.atlassian.plugin.event.events.PluginUninstalledEvent;
 import com.atlassian.plugin.osgi.util.OsgiHeaderUtil;
 import org.dom4j.Document;
 import org.dom4j.Element;
@@ -51,6 +50,7 @@ public class RemoteAppLoader implements DisposableBean
     private final BundleContext bundleContext;
     private final AggregateModuleDescriptorFactory aggregateModuleDescriptorFactory;
     private final PluginEventManager pluginEventManager;
+    private final RemoteAppAccessorFactory remoteAppAccessorFactory;
 
     private final Map<String,Iterable<RemoteModule>> remoteModulesByApp;
     private static final Logger log = LoggerFactory.getLogger(
@@ -62,7 +62,8 @@ public class RemoteAppLoader implements DisposableBean
             StartableForPlugins startableForPlugins, EventPublisher eventPublisher,
             BundleContext bundleContext,
             AggregateModuleDescriptorFactory aggregateModuleDescriptorFactory,
-            PluginEventManager pluginEventManager)
+            PluginEventManager pluginEventManager,
+            RemoteAppAccessorFactory remoteAppAccessorFactory)
     {
         this.descriptorValidator = descriptorValidator;
         this.moduleGeneratorManager = moduleGeneratorManager;
@@ -72,6 +73,7 @@ public class RemoteAppLoader implements DisposableBean
         this.bundleContext = bundleContext;
         this.aggregateModuleDescriptorFactory = aggregateModuleDescriptorFactory;
         this.pluginEventManager = pluginEventManager;
+        this.remoteAppAccessorFactory = remoteAppAccessorFactory;
         this.remoteModulesByApp = new ConcurrentHashMap<String,Iterable<RemoteModule>>();
         this.pluginEventManager.register(this);
     }
@@ -146,7 +148,9 @@ public class RemoteAppLoader implements DisposableBean
             that formally associates the Remote App to the Atlassian application.
             */
 
-            final RemoteAppCreationContext firstContext = new DefaultRemoteAppCreationContext(plugin, aggregateModuleDescriptorFactory, bundle, null);
+            final RemoteAppCreationContext firstContext = new DefaultRemoteAppCreationContext(plugin,
+                    aggregateModuleDescriptorFactory, bundle,
+                    remoteAppAccessorFactory.create(plugin.getKey()));
 
             final List<RemoteModule> remoteModules = generateRemoteModules(bundle, appDescriptor,
                     plugin, firstContext);
@@ -234,7 +238,8 @@ public class RemoteAppLoader implements DisposableBean
 
         remoteModules.add(module);
 
-        final RemoteAppCreationContext childContext = new DefaultRemoteAppCreationContext(plugin, aggregateModuleDescriptorFactory, bundle, module.getApplicationType());
+        final RemoteAppCreationContext childContext = new DefaultRemoteAppCreationContext(plugin,
+                aggregateModuleDescriptorFactory, bundle, remoteAppAccessorFactory.create(plugin.getKey(), module.getApplicationType()));
 
         moduleGeneratorManager.processDescriptor(appDescriptor.getRootElement(),
                 new ModuleGeneratorManager.ModuleHandler()

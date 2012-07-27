@@ -31,6 +31,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.google.common.collect.Lists.newArrayList;
 
@@ -52,6 +54,8 @@ public class UBDispatchFilter implements DisposableBean, Filter
     private final PluginEventManager pluginEventManager;
     private final ApplicationProperties applicationProperties;
 
+    private final Pattern APP_KEY_FINDER = Pattern.compile("/app/([^/]*)/.*");
+
     @Autowired
     public UBDispatchFilter(PluginAccessor pluginAccessor,
             PluginEventManager pluginEventManager, ApplicationProperties applicationProperties)
@@ -71,7 +75,7 @@ public class UBDispatchFilter implements DisposableBean, Filter
         return applicationProperties.getBaseUrl() + getLocalMountBasePath(appKey);
     }
 
-    public String getLocalMountBasePath(String appKey)
+    public static String getLocalMountBasePath(String appKey)
     {
         return "/app/" + appKey;
     }
@@ -107,6 +111,10 @@ public class UBDispatchFilter implements DisposableBean, Filter
         for (String urlPattern : urlPatterns)
         {
             filterPathMapper.put(entry.key, getLocalMountBasePath(appKey) + urlPattern);
+            if (urlPattern.equals("/"))
+            {
+                filterPathMapper.put(entry.key, getLocalMountBasePath(appKey));
+            }
         }
     }
 
@@ -173,7 +181,16 @@ public class UBDispatchFilter implements DisposableBean, Filter
     {
         HttpServletRequest req = (HttpServletRequest) request;
         final String uri = getUri(req);
-        final String servletKey = servletPathMapper.get(uri);
+        String key = servletPathMapper.get(uri);
+        if (key == null)
+        {
+            Matcher m = APP_KEY_FINDER.matcher(uri);
+            if (m.matches())
+            {
+                key = m.group(1);
+            }
+        }
+        final String servletKey = key;
 
         List<Filter> filterList = newArrayList();
         for (String filterKey : filterPathMapper.getAll(uri))
@@ -232,7 +249,7 @@ public class UBDispatchFilter implements DisposableBean, Filter
         {
             // stale path mapper entry
             servletPathMapper.put(servletKey, null);
-            return null;
+            throw new IllegalStateException("Bad servlet: " + servletKey);
         }
         if (!entry.initialized)
         {

@@ -1,8 +1,10 @@
 package com.atlassian.labs.remoteapps.modules.applinks;
 
+import com.atlassian.applinks.api.ApplicationType;
 import com.atlassian.applinks.api.EntityType;
 import com.atlassian.applinks.spi.application.NonAppLinksApplicationType;
 import com.atlassian.applinks.spi.application.TypeId;
+import com.atlassian.labs.remoteapps.ApplicationLinkAccessor;
 import com.atlassian.labs.remoteapps.loader.AggregateModuleDescriptorFactory;
 import com.atlassian.labs.remoteapps.modules.external.Schema;
 import com.atlassian.labs.remoteapps.modules.external.*;
@@ -35,12 +37,15 @@ import static org.objectweb.asm.Opcodes.*;
 public class EntityTypeModuleGenerator implements WaitableRemoteModuleGenerator
 {
     private final Plugin plugin;
+    private final ApplicationLinkAccessor applicationLinkAccessor;
     private final AggregateModuleDescriptorFactory aggregateModuleDescriptorFactory;
 
     @Autowired
     public EntityTypeModuleGenerator(PluginRetrievalService pluginRetrievalService,
+            ApplicationLinkAccessor applicationLinkAccessor,
             AggregateModuleDescriptorFactory aggregateModuleDescriptorFactory)
     {
+        this.applicationLinkAccessor = applicationLinkAccessor;
         this.aggregateModuleDescriptorFactory = aggregateModuleDescriptorFactory;
         this.plugin = pluginRetrievalService.getPlugin();
     }
@@ -90,14 +95,22 @@ public class EntityTypeModuleGenerator implements WaitableRemoteModuleGenerator
     public RemoteModule generate(RemoteAppCreationContext ctx, Element entity)
     {
         AppTypesClassLoader appTypesClassLoader = new AppTypesClassLoader();
-        RemoteAppEntityType entityType = createEntityType(appTypesClassLoader, ctx.getApplicationType(), entity);
+        String pluginKey = ctx.getPlugin().getKey();
+        Class<? extends RemoteAppApplicationType> applicationTypeClass = applicationLinkAccessor.getApplicationTypeClass(
+                pluginKey);
+        RemoteAppEntityType entityType = createEntityType(appTypesClassLoader, pluginKey, applicationTypeClass, entity);
         final Set<ModuleDescriptor> descriptors = ImmutableSet.<ModuleDescriptor>of(createEntityTypeDescriptor(ctx, entityType, entity));
-        return new RemoteModule()
+        return new StartableRemoteModule()
         {
             @Override
             public Set<ModuleDescriptor> getModuleDescriptors()
             {
                 return descriptors;
+            }
+
+            @Override
+            public void start()
+            {
             }
         };
     }
@@ -112,18 +125,19 @@ public class EntityTypeModuleGenerator implements WaitableRemoteModuleGenerator
     {
     }
 
-    private RemoteAppEntityType createEntityType(AppTypesClassLoader appTypesClassLoader, NonAppLinksApplicationType type, Element element)
+    private RemoteAppEntityType createEntityType(AppTypesClassLoader appTypesClassLoader, String appKey,
+            Class<? extends RemoteAppApplicationType> applicationTypeClass, Element element)
     {
         try
         {
             String key = getRequiredAttribute(element, "key");
-            Class<? extends RemoteAppEntityType> entityTypeClass = appTypesClassLoader.generateEntityType(type.getId().get(), key);
+            Class<? extends RemoteAppEntityType> entityTypeClass = appTypesClassLoader.generateEntityType(appKey, key);
             URI icon = getOptionalUriAttribute(element, "icon-url");
             String label = getRequiredAttribute(element, "name");
-            TypeId entityId = new TypeId(type.getId().get() + "." + key);
+            TypeId entityId = new TypeId(appKey + "." + key);
             String pluralizedI18nKey = getRequiredAttribute(element, "pluralized-name");
             return entityTypeClass.getConstructor(TypeId.class, Class.class, String.class, String.class, URI.class)
-                                .newInstance(entityId, type.getClass(), label, pluralizedI18nKey, icon);
+                                .newInstance(entityId, applicationTypeClass, label, pluralizedI18nKey, icon);
         }
         catch (NoSuchMethodException e)
         {

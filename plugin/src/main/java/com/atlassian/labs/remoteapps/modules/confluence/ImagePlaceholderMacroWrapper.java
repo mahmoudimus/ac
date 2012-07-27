@@ -44,7 +44,7 @@ public class ImagePlaceholderMacroWrapper implements EditorImagePlaceholder, Rem
                 "",
                 parameters,
                 delegate.getRemoteMacroInfo().getRequestContextParameterFactory(),
-                delegate.getRemoteMacroInfo().getApplicationLinkOperations());
+                delegate.getRemoteMacroInfo().getRemoteAppAccessor());
 
         String uri = RedirectServlet.getRelativeOAuthRedirectUrl(pluginKey, imageUrl, macroInstance.getUrlParameters());
 

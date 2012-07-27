@@ -107,7 +107,7 @@ public class IFrameRenderer
         allParams.put("xdm_e", new String[]{hostUrl});
         allParams.put("xdm_c", new String[]{"channel-" + iframeContext.getNamespace()});
         allParams.put("xdm_p", new String[]{"1"});
-        String signedUrl = iframeContext.getLinkOps().signGetUrl(iframeUrl, allParams);
+        String signedUrl = iframeContext.getRemoteAppAccessor().signGetUrl(iframeUrl, allParams);
 
         // clear xdm params as they are added by easyxdm later
         signedUrl = new UriBuilder(Uri.parse(signedUrl))
@@ -118,7 +118,7 @@ public class IFrameRenderer
 
         Map<String,Object> ctx = newHashMap(iframeContext.getIFrameParams().getAsMap());
         ctx.put("iframeSrcHtml", escapeQuotes(signedUrl));
-        ctx.put("remoteapp", iframeContext.getLinkOps().get());
+        ctx.put("remoteapp", iframeContext.getRemoteAppAccessor());
         ctx.put("namespace", iframeContext.getNamespace());
         ctx.put("scriptUrls", getJavaScriptUrls());
         ctx.put("contextPath", iframeHost.getContextPath());

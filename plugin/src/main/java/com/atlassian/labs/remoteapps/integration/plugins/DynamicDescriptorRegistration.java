@@ -142,7 +142,7 @@ public class DynamicDescriptorRegistration
             {
                 try
                 {
-                    Class<? extends ModuleDescriptor<M>> descriptorClass = result.get(key).getModuleDescriptorClass(key);
+                    Class<D> descriptorClass = (Class<D>) result.get(key).getModuleDescriptorClass(key);
                     D descriptor = null;
                     try
                     {

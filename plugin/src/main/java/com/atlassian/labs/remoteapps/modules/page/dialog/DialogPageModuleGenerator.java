@@ -1,6 +1,6 @@
 package com.atlassian.labs.remoteapps.modules.page.dialog;
 
-import com.atlassian.labs.remoteapps.modules.ApplicationLinkOperationsFactory;
+import com.atlassian.labs.remoteapps.RemoteAppAccessorFactory;
 import com.atlassian.labs.remoteapps.modules.DefaultWebItemContext;
 import com.atlassian.labs.remoteapps.modules.IFrameRenderer;
 import com.atlassian.labs.remoteapps.modules.page.AbstractPageModuleGenerator;
@@ -23,13 +23,12 @@ public class DialogPageModuleGenerator extends AbstractPageModuleGenerator
 {
     @Autowired
     public DialogPageModuleGenerator(ServletModuleManager servletModuleManager,
-                                     ApplicationLinkOperationsFactory applicationLinkSignerFactory,
                                      IFrameRenderer iFrameRenderer,
                                      UserManager userManager,
                                      ProductAccessor productAccessor,
                                      PluginRetrievalService pluginRetrievalService)
     {
-        super(servletModuleManager, applicationLinkSignerFactory, iFrameRenderer,
+        super(servletModuleManager, iFrameRenderer,
                 new DefaultWebItemContext(
                         productAccessor.getPreferredGeneralSectionKey(),
                         productAccessor.getPreferredGeneralWeight(),

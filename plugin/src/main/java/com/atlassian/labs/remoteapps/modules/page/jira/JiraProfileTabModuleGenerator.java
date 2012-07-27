@@ -3,7 +3,7 @@ package com.atlassian.labs.remoteapps.modules.page.jira;
 import com.atlassian.labs.jira4compat.CompatViewProfilePanelModuleDescriptor;
 import com.atlassian.labs.jira4compat.spi.CompatViewProfilePanelFactory;
 import com.atlassian.labs.remoteapps.loader.AggregateModuleDescriptorFactory;
-import com.atlassian.labs.remoteapps.modules.ApplicationLinkOperationsFactory;
+import com.atlassian.labs.remoteapps.RemoteAppAccessorFactory;
 import com.atlassian.labs.remoteapps.modules.IFrameParams;
 import com.atlassian.labs.remoteapps.modules.IFrameRenderer;
 import com.atlassian.labs.remoteapps.modules.external.*;
@@ -30,7 +30,6 @@ import static java.util.Collections.emptyMap;
  */
 public class JiraProfileTabModuleGenerator implements WaitableRemoteModuleGenerator
 {
-    private final ApplicationLinkOperationsFactory applicationLinkOperationsFactory;
     private final CompatViewProfilePanelFactory compatViewProfilePanelFactory;
     private final AggregateModuleDescriptorFactory moduleDescriptorFactory;
     private final IFrameRenderer iFrameRenderer;
@@ -39,12 +38,10 @@ public class JiraProfileTabModuleGenerator implements WaitableRemoteModuleGenera
 
     public JiraProfileTabModuleGenerator(
             CompatViewProfilePanelFactory compatViewProfilePanelFactory,
-            ApplicationLinkOperationsFactory applicationLinkOperationsFactory,
             IFrameRenderer iFrameRenderer,
             AggregateModuleDescriptorFactory moduleDescriptorFactory,
             PluginRetrievalService pluginRetrievalService)
     {
-        this.applicationLinkOperationsFactory = applicationLinkOperationsFactory;
         this.compatViewProfilePanelFactory = compatViewProfilePanelFactory;
         this.iFrameRenderer = iFrameRenderer;
         this.moduleDescriptorFactory = moduleDescriptorFactory;
@@ -137,10 +134,9 @@ public class JiraProfileTabModuleGenerator implements WaitableRemoteModuleGenera
             @Override
             public <T> T createModule(String name, ModuleDescriptor<T> moduleDescriptor) throws PluginParseException
             {
-                ApplicationLinkOperationsFactory.LinkOperations linkOps = applicationLinkOperationsFactory.create(ctx.getApplicationType());
                 return (T) new IFrameViewProfilePanel(
                         iFrameRenderer,
-                        new IFrameContext(linkOps, path, moduleKey, new IFrameParams(e)));
+                        new IFrameContext(ctx.getRemoteAppAccessor(), path, moduleKey, new IFrameParams(e)));
             }
         }, ctx.getBundle().getBundleContext(), compatViewProfilePanelFactory);
         descriptor.init(ctx.getPlugin(), config);

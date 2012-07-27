@@ -71,7 +71,7 @@ public class WebHookModuleGenerator implements WaitableRemoteModuleGenerator
     {
         final String eventIdentifier = getWebHookId(element);
         final String url = getRequiredUriAttribute(element, "url").toString();
-        webHookPublisher.register(ctx.getApplicationType(), eventIdentifier, url);
+        webHookPublisher.register(ctx.getRemoteAppAccessor(), eventIdentifier, url);
         return new ClosableRemoteModule()
         {
             @Override
@@ -83,7 +83,7 @@ public class WebHookModuleGenerator implements WaitableRemoteModuleGenerator
             @Override
             public void close()
             {
-                webHookPublisher.unregister(ctx.getApplicationType(), eventIdentifier, url);
+                webHookPublisher.unregister(ctx.getRemoteAppAccessor(), eventIdentifier, url);
             }
         };
     }

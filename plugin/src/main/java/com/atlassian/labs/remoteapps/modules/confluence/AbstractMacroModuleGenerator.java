@@ -6,6 +6,7 @@ import com.atlassian.confluence.plugin.descriptor.MacroMetadataParser;
 import com.atlassian.confluence.plugin.descriptor.XhtmlMacroModuleDescriptor;
 import com.atlassian.confluence.status.service.SystemInformationService;
 import com.atlassian.confluence.util.i18n.I18NBeanFactory;
+import com.atlassian.labs.remoteapps.RemoteAppAccessorFactory;
 import com.atlassian.labs.remoteapps.modules.*;
 import com.atlassian.labs.remoteapps.modules.external.RemoteAppCreationContext;
 import com.atlassian.labs.remoteapps.modules.external.RemoteModule;
@@ -47,7 +48,6 @@ import static com.google.common.collect.Maps.newHashMap;
 public abstract class AbstractMacroModuleGenerator implements RemoteModuleGenerator
 {
     protected final SystemInformationService systemInformationService;
-    protected final ApplicationLinkOperationsFactory applicationLinkOperationsFactory;
     protected final MacroContentManager macroContentManager;
     protected final I18NBeanFactory i18NBeanFactory;
     protected final PluginAccessor pluginAccessor;
@@ -62,7 +62,6 @@ public abstract class AbstractMacroModuleGenerator implements RemoteModuleGenera
     public AbstractMacroModuleGenerator(
             MacroContentManager macroContentManager,
             I18NBeanFactory i18NBeanFactory,
-            ApplicationLinkOperationsFactory applicationLinkOperationsFactory,
             SystemInformationService systemInformationService, PluginAccessor pluginAccessor,
             HostContainer hostContainer, ServletModuleManager servletModuleManager,
             ContextParameterParser contextParameterParser, IFrameRenderer iFrameRenderer,
@@ -70,7 +69,6 @@ public abstract class AbstractMacroModuleGenerator implements RemoteModuleGenera
     {
         this.macroContentManager = macroContentManager;
         this.i18NBeanFactory = i18NBeanFactory;
-        this.applicationLinkOperationsFactory = applicationLinkOperationsFactory;
         this.systemInformationService = systemInformationService;
         this.pluginAccessor = pluginAccessor;
         this.contextParameterParser = contextParameterParser;
@@ -144,7 +142,7 @@ public abstract class AbstractMacroModuleGenerator implements RemoteModuleGenera
         {
             String baseUrl = systemInformationService.getConfluenceInfo().getBaseUrl();
             config.addAttribute("icon", baseUrl + getPermanentRedirectUrl(
-                    ctx.getApplicationType().getId().get(), icon));
+                    ctx.getPlugin().getKey(), icon));
         }
 
         // Generate the required plugin module descriptors for this macro
@@ -199,7 +197,7 @@ public abstract class AbstractMacroModuleGenerator implements RemoteModuleGenera
 
         // Generate a servlet module descriptor that can redirect requests from the Confluence front-end to the Remote App,
         // performing the necessary authentication.
-        String localUrl = "/remoteapps/" + ctx.getApplicationType().getId().get() + "/" + macroKey + "-editor";
+        String localUrl = "/remoteapps/" + ctx.getPlugin().getKey() + "/" + macroKey + "-editor";
         final  ServletModuleDescriptor iFrameServlet = createMacroEditorServletDescriptor(ctx, macroEditor, macroKey, originalUrl, localUrl);
 
         // Generate a new web-resource module descriptor with the necessary JavaScript to configure the custom macro editor
@@ -251,7 +249,7 @@ public abstract class AbstractMacroModuleGenerator implements RemoteModuleGenera
                 return (T) new IFramePageServlet(
                         pageInfo,
                         iFrameRenderer,
-                        new IFrameContext(applicationLinkOperationsFactory.create(ctx.getApplicationType()), path, moduleKey, params), userManager
+                        new IFrameContext(ctx.getRemoteAppAccessor(), path, moduleKey, params), userManager
                 );
             }
         }, servletModuleManager);
@@ -362,7 +360,7 @@ public abstract class AbstractMacroModuleGenerator implements RemoteModuleGenera
                 .addElement("var")
                     .addAttribute("name", "ICON_URL")
                     .addAttribute("value",
-                            ctx.getApplicationType().getDefaultDetails().getDisplayUrl() + iconUrl.toString()).getParent();
+                            ctx.getRemoteAppAccessor().getDisplayUrl() + iconUrl.toString()).getParent();
 
         ModuleDescriptor jsDescriptor = new WebResourceModuleDescriptor(hostContainer);
         jsDescriptor.init(ctx.getPlugin(), webResource);
@@ -385,9 +383,7 @@ public abstract class AbstractMacroModuleGenerator implements RemoteModuleGenera
             @Override
             public <T> T createModule(String name, ModuleDescriptor<T> moduleDescriptor) throws PluginParseException
             {
-                ApplicationLinkOperationsFactory.LinkOperations linkOperations = applicationLinkOperationsFactory.create(
-                        ctx.getApplicationType());
-                RemoteMacroInfo macroInfo = new RemoteMacroInfo(originalEntity, linkOperations, bodyType,
+                RemoteMacroInfo macroInfo = new RemoteMacroInfo(originalEntity, ctx.getRemoteAppAccessor(), bodyType,
                         outputType, requestContextParameterFactory, url.getPath());
                 RemoteMacro macro = createMacro(macroInfo, ctx);
                 if (placeholder != null && Macro.BodyType.NONE.equals(bodyType))

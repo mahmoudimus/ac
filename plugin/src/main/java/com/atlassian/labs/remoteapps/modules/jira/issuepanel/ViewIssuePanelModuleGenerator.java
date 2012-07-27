@@ -1,6 +1,6 @@
 package com.atlassian.labs.remoteapps.modules.jira.issuepanel;
 
-import com.atlassian.labs.remoteapps.modules.ApplicationLinkOperationsFactory;
+import com.atlassian.labs.remoteapps.RemoteAppAccessorFactory;
 import com.atlassian.labs.remoteapps.modules.IFrameParams;
 import com.atlassian.labs.remoteapps.modules.IFrameRenderer;
 import com.atlassian.labs.remoteapps.modules.external.*;
@@ -34,18 +34,18 @@ public class ViewIssuePanelModuleGenerator implements RemoteModuleGenerator
     private final IFrameRenderer iFrameRenderer;
     private final WebInterfaceManager webInterfaceManager;
     private final HostContainer hostContainer;
-    private final ApplicationLinkOperationsFactory applicationLinkOperationsFactory;
+    private final RemoteAppAccessorFactory remoteAppAccessorFactory;
     private final Plugin plugin;
 
     public ViewIssuePanelModuleGenerator(final IFrameRenderer iFrameRenderer,
                                          final WebInterfaceManager webInterfaceManager,
-                                         final ApplicationLinkOperationsFactory applicationLinkOperationsFactory,
+                                         final RemoteAppAccessorFactory remoteAppAccessorFactory,
                                          final HostContainer hostContainer,
                                          PluginRetrievalService pluginRetrievalService)
     {
         this.iFrameRenderer = iFrameRenderer;
         this.webInterfaceManager = webInterfaceManager;
-        this.applicationLinkOperationsFactory = applicationLinkOperationsFactory;
+        this.remoteAppAccessorFactory = remoteAppAccessorFactory;
         this.hostContainer = hostContainer;
         this.plugin = pluginRetrievalService.getPlugin();
     }
@@ -106,11 +106,10 @@ public class ViewIssuePanelModuleGenerator implements RemoteModuleGenerator
                 @Override
                 public <T> T createModule(String name, ModuleDescriptor<T> moduleDescriptor) throws PluginParseException
                 {
-                    ApplicationLinkOperationsFactory.LinkOperations linkOps = applicationLinkOperationsFactory.create(ctx.getApplicationType());
 
                     return (T) new IFrameViewIssuePanel(
                             iFrameRenderer,
-                            new IFrameContext(linkOps , url, moduleKey, iFrameParams));
+                            new IFrameContext(ctx.getRemoteAppAccessor() , url, moduleKey, iFrameParams));
                 }
             }, webInterfaceManager);
 

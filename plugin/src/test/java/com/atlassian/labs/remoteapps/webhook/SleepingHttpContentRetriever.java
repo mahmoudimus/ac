@@ -2,6 +2,7 @@ package com.atlassian.labs.remoteapps.webhook;
 
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.labs.remoteapps.ContentRetrievalException;
+import com.atlassian.labs.remoteapps.util.http.AuthorizationGenerator;
 import com.atlassian.labs.remoteapps.util.http.HttpContentHandler;
 import com.atlassian.labs.remoteapps.util.http.HttpContentRetriever;
 import com.atlassian.util.concurrent.SettableFuture;
@@ -25,7 +26,7 @@ public class SleepingHttpContentRetriever implements HttpContentRetriever
     }
 
     @Override
-    public Future<String> getAsync(ApplicationLink link, String remoteUsername, String url,
+    public Future<String> getAsync(AuthorizationGenerator authorizationGenerator, String remoteUsername, String url,
             Map<String, String> parameters, Map<String, String> headers, HttpContentHandler handler)
     {
         try
@@ -39,7 +40,7 @@ public class SleepingHttpContentRetriever implements HttpContentRetriever
     }
 
     @Override
-    public String get(ApplicationLink link, String remoteUsername, String url, Map<String, String> parameters) throws
+    public String get(AuthorizationGenerator authorizationGenerator, String remoteUsername, String url, Map<String, String> parameters) throws
                                                                                                                ContentRetrievalException
     {
         try
@@ -53,7 +54,7 @@ public class SleepingHttpContentRetriever implements HttpContentRetriever
     }
 
     @Override
-    public void postIgnoreResponse(ApplicationLink link, String url, String jsonBody)
+    public void postIgnoreResponse(AuthorizationGenerator authorizationGenerator, String url, String jsonBody)
     {
         try
         {

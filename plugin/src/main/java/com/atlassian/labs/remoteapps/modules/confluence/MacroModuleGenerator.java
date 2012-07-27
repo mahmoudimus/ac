@@ -2,7 +2,7 @@ package com.atlassian.labs.remoteapps.modules.confluence;
 
 import com.atlassian.confluence.status.service.SystemInformationService;
 import com.atlassian.confluence.util.i18n.I18NBeanFactory;
-import com.atlassian.labs.remoteapps.modules.ApplicationLinkOperationsFactory;
+import com.atlassian.labs.remoteapps.RemoteAppAccessorFactory;
 import com.atlassian.labs.remoteapps.modules.IFrameRenderer;
 import com.atlassian.labs.remoteapps.modules.external.RemoteAppCreationContext;
 import com.atlassian.labs.remoteapps.modules.external.Schema;
@@ -24,7 +24,6 @@ public class MacroModuleGenerator extends AbstractMacroModuleGenerator
     private final Plugin plugin;
     private final WebResourceManager webResourceManager;
     public MacroModuleGenerator(SystemInformationService systemInformationService,
-            ApplicationLinkOperationsFactory applicationLinkOperationsFactory,
             MacroContentManager macroContentManager, I18NBeanFactory i18NBeanFactory,
             PluginAccessor pluginAccessor,
             PluginRetrievalService pluginRetrievalService, HostContainer hostContainer,
@@ -33,7 +32,7 @@ public class MacroModuleGenerator extends AbstractMacroModuleGenerator
             WebResourceManager webResourceManager,
             ContextParameterParser contextParameterParser)
     {
-        super(macroContentManager, i18NBeanFactory, applicationLinkOperationsFactory,
+        super(macroContentManager, i18NBeanFactory,
                 systemInformationService, pluginAccessor, hostContainer, servletModuleManager,
                 contextParameterParser, iFrameRenderer, userManager);
 

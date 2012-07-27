@@ -8,12 +8,12 @@ import com.atlassian.applinks.api.ApplicationLink;
 public class WebHookPublishQueueFullEvent
 {
     private final String eventIdentifier;
-    private final ApplicationLink applicationLink;
+    private final String appKey;
 
-    public WebHookPublishQueueFullEvent(String eventIdentifier, ApplicationLink applicationLink)
+    public WebHookPublishQueueFullEvent(String eventIdentifier, String appKey)
     {
         this.eventIdentifier = eventIdentifier;
-        this.applicationLink = applicationLink;
+        this.appKey = appKey;
     }
 
     public String getEventIdentifier()
@@ -21,8 +21,8 @@ public class WebHookPublishQueueFullEvent
         return eventIdentifier;
     }
 
-    public ApplicationLink getApplicationLink()
+    public String getAppKey()
     {
-        return applicationLink;
+        return appKey;
     }
 }

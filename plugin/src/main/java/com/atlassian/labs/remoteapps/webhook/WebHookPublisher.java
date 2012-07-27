@@ -1,10 +1,7 @@
 package com.atlassian.labs.remoteapps.webhook;
 
-import com.atlassian.applinks.api.ApplicationLink;
-import com.atlassian.applinks.api.ApplicationType;
-import com.atlassian.applinks.spi.application.NonAppLinksApplicationType;
 import com.atlassian.event.api.EventPublisher;
-import com.atlassian.labs.remoteapps.ApplicationLinkAccessor;
+import com.atlassian.labs.remoteapps.RemoteAppAccessor;
 import com.atlassian.labs.remoteapps.event.RemoteAppEvent;
 import com.atlassian.labs.remoteapps.util.http.HttpContentRetriever;
 import com.atlassian.labs.remoteapps.util.uri.Uri;
@@ -39,7 +36,6 @@ public class WebHookPublisher implements DisposableBean
     public static final int PUBLISH_QUEUE_SIZE = 100;
     private final ThreadPoolExecutor publisher;
     private final HttpContentRetriever httpContentRetriever;
-    private final ApplicationLinkAccessor applicationLinkAccessor;
     private final EventPublisher eventPublisher;
     private final UserManager userManager;
     private static final Logger log = LoggerFactory.getLogger(WebHookPublisher.class);
@@ -48,11 +44,9 @@ public class WebHookPublisher implements DisposableBean
 
     @Autowired
     public WebHookPublisher(HttpContentRetriever httpContentRetriever,
-            ApplicationLinkAccessor applicationLinkAccessor,
             EventPublisher eventPublisher, UserManager userManager)
     {
         this.httpContentRetriever = httpContentRetriever;
-        this.applicationLinkAccessor = applicationLinkAccessor;
         this.eventPublisher = eventPublisher;
         this.userManager = userManager;
 
@@ -61,14 +55,14 @@ public class WebHookPublisher implements DisposableBean
                                       new LinkedBlockingQueue<Runnable>(PUBLISH_QUEUE_SIZE));
     }
 
-    public void register(NonAppLinksApplicationType applicationType, String eventIdentifier, String path)
+    public void register(RemoteAppAccessor remoteAppAccessor, String eventIdentifier, String path)
     {
-        registrationsByEvent.put(eventIdentifier, new Registration(applicationType, path));
+        registrationsByEvent.put(eventIdentifier, new Registration(remoteAppAccessor, path));
     }
 
-    public void unregister(NonAppLinksApplicationType applicationType, String eventIdentifier, String url)
+    public void unregister(RemoteAppAccessor remoteAppAccessor, String eventIdentifier, String url)
     {
-        registrationsByEvent.remove(eventIdentifier, new Registration(applicationType, url));
+        registrationsByEvent.remove(eventIdentifier, new Registration(remoteAppAccessor, url));
     }
 
     public void publish(String eventIdentifier, EventMatcher<Object> eventMatcher, EventSerializer eventSerializer)
@@ -78,33 +72,27 @@ public class WebHookPublisher implements DisposableBean
         {
             if (registration.applies(eventSerializer.getEvent()))
             {
-                ApplicationLink link = applicationLinkAccessor.getApplicationLink(registration.getApplicationType());
-                if (link != null)
+
+                if (eventMatcher.matches(eventSerializer.getEvent(), registration.getPluginKey()))
                 {
-                    if (eventMatcher.matches(eventSerializer.getEvent(), link))
+                    body = body != null ? body : eventSerializer.getJson();
+                    String username = userManager.getRemoteUsername();
+                    PublishTask task = new PublishTask(httpContentRetriever, registration,
+                            registration.remoteAppAccessor, username != null ? username : "", body);
+                    try
                     {
-                        body = body != null ? body : eventSerializer.getJson();
-                        String username = userManager.getRemoteUsername();
-                        PublishTask task = new PublishTask(httpContentRetriever, registration,
-                                link, username != null ? username : "", body);
-                        try
-                        {
-                            publisher.execute(task);
-                        }
-                        catch (RejectedExecutionException ex)
-                        {
-                            log.warn("Web hook queue full, rejecting '{}'", task);
-                            eventPublisher.publish(new WebHookPublishQueueFullEvent(eventIdentifier, link));
-                        }
+                        publisher.execute(task);
                     }
-                    else
+                    catch (RejectedExecutionException ex)
                     {
-                        log.debug("Matcher {} didn't match link {}", eventMatcher, link);
+                        log.warn("Web hook queue full, rejecting '{}'", task);
+                        eventPublisher.publish(new WebHookPublishQueueFullEvent(eventIdentifier,
+                                registration.remoteAppAccessor.getKey()));
                     }
                 }
                 else
                 {
-                    log.warn("Primary link for '" + registration.getApplicationType().getI18nKey() + "' not found when dispatching " + eventIdentifier);
+                    log.debug("Matcher {} didn't match plugin key {}", eventMatcher, registration.getPluginKey());
                 }
             }
         }
@@ -133,17 +121,17 @@ public class WebHookPublisher implements DisposableBean
     {
         private final HttpContentRetriever httpContentRetriever;
         private final Registration registration;
-        private final ApplicationLink applicationLink;
+        private final RemoteAppAccessor remoteAppAccessor;
         private final String userName;
         private final String body;
 
         public PublishTask(HttpContentRetriever httpContentRetriever,
-                Registration registration, ApplicationLink applicationLink, String userName,
+                Registration registration, RemoteAppAccessor remoteAppAccessor, String userName,
                            String body)
         {
             this.httpContentRetriever = httpContentRetriever;
             this.registration = registration;
-            this.applicationLink = applicationLink;
+            this.remoteAppAccessor = remoteAppAccessor;
             this.userName = userName;
             this.body = body;
         }
@@ -151,11 +139,11 @@ public class WebHookPublisher implements DisposableBean
         @Override
         public void run()
         {
-            String url = new UriBuilder(Uri.parse(registration.getUrl(applicationLink)))
+            String url = new UriBuilder(Uri.parse(registration.getUrl()))
                     .addQueryParameter("user_id", userName).toString();
 
             log.debug("Posting to web hook at " + url + "\n" + body);
-            httpContentRetriever.postIgnoreResponse(applicationLink, url, body);
+            httpContentRetriever.postIgnoreResponse(remoteAppAccessor.getAuthorizationGenerator(), url, body);
         }
 
         @Override
@@ -163,7 +151,7 @@ public class WebHookPublisher implements DisposableBean
         {
             return "PublishTask{" +
                     "registration=" + registration +
-                    ", applicationLink=" + applicationLink +
+                    ", appKey=" + remoteAppAccessor.getKey() +
                     ", body='" + body + '\'' +
                     '}';
         }
@@ -171,23 +159,25 @@ public class WebHookPublisher implements DisposableBean
 
     private static class Registration
     {
-        private final NonAppLinksApplicationType applicationType;
+        private final String pluginKey;
+        private final RemoteAppAccessor remoteAppAccessor;
         private final String path;
 
-        public Registration(NonAppLinksApplicationType applicationType, String path)
+        public Registration(RemoteAppAccessor remoteAppAccessor, String path)
         {
-            this.applicationType = applicationType;
+            this.pluginKey = remoteAppAccessor.getKey();
+            this.remoteAppAccessor = remoteAppAccessor;
             this.path = path;
         }
 
-        public ApplicationType getApplicationType()
+        public String getPluginKey()
         {
-            return applicationType;
+            return pluginKey;
         }
 
-        public String getUrl(ApplicationLink link)
+        public String getUrl()
         {
-            return link.getRpcUrl() + path;
+            return remoteAppAccessor.getDisplayUrl() + path;
         }
 
         @Override
@@ -204,7 +194,7 @@ public class WebHookPublisher implements DisposableBean
 
             Registration that = (Registration) o;
 
-            if (!applicationType.equals(that.applicationType))
+            if (!pluginKey.equals(that.pluginKey))
             {
                 return false;
             }
@@ -219,7 +209,7 @@ public class WebHookPublisher implements DisposableBean
         @Override
         public int hashCode()
         {
-            int result = applicationType.hashCode();
+            int result = pluginKey.hashCode();
             result = 31 * result + path.hashCode();
             return result;
         }
@@ -227,14 +217,14 @@ public class WebHookPublisher implements DisposableBean
         public boolean applies(Object event)
         {
             return !(event instanceof RemoteAppEvent) ||
-                ((RemoteAppEvent)event).getRemoteAppKey().equals(applicationType.getId().get());
+                ((RemoteAppEvent)event).getRemoteAppKey().equals(pluginKey);
         }
 
         @Override
         public String toString()
         {
             return "Registration{" +
-                    "applicationType=" + applicationType +
+                    "pluginKey=" + pluginKey +
                     ", path='" + path + '\'' +
                     '}';
         }

@@ -4,7 +4,8 @@ import com.atlassian.confluence.content.render.xhtml.ConversionContext;
 import com.atlassian.confluence.content.render.xhtml.macro.annotation.Format;
 import com.atlassian.confluence.content.render.xhtml.macro.annotation.RequiresFormat;
 import com.atlassian.confluence.macro.MacroExecutionException;
-import com.atlassian.labs.remoteapps.modules.ApplicationLinkOperationsFactory;
+import com.atlassian.labs.remoteapps.RemoteAppAccessor;
+import com.atlassian.labs.remoteapps.RemoteAppAccessorFactory;
 import com.atlassian.plugin.webresource.WebResourceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,7 +49,7 @@ public class StorageFormatMacro extends AbstractRemoteMacro
     @RequiresFormat(Format.Storage)
     public String execute(Map<String, String> parameters, String storageFormatBody, ConversionContext conversionContext) throws MacroExecutionException
     {
-        ApplicationLinkOperationsFactory.LinkOperations linkOps = remoteMacroInfo.getApplicationLinkOperations();
+        RemoteAppAccessor remoteAppAccessor = remoteMacroInfo.getRemoteAppAccessor();
         /*!
         Next, the remote apps is called and its returned storage-format XML is rendered.  If the
         content was unable to be retrieved for any reason, an error message is displayed to the user
@@ -60,12 +61,12 @@ public class StorageFormatMacro extends AbstractRemoteMacro
             webResourceManager.requireResource("com.atlassian.labs.remoteapps-plugin:big-pipe");
             return macroContentManager.getStaticContent(
                     new MacroInstance(conversionContext, remoteUrl, storageFormatBody, parameters,
-                            remoteMacroInfo.getRequestContextParameterFactory(), linkOps
-                            ));
+                            remoteMacroInfo.getRequestContextParameterFactory(),
+                            remoteAppAccessor));
         }
         catch (Exception ex)
         {
-            String message = "Error: Unable to retrieve macro content from Remote App '" + linkOps.get().getName() + "': " + ex.getMessage();
+            String message = "Error: Unable to retrieve macro content from Remote App '" + remoteAppAccessor.getName() + "': " + ex.getMessage();
             log.error(message + " on page '{}' for url '{}'", escapeHtml(
                     conversionContext.getEntity().getTitle()), remoteUrl);
             if (log.isDebugEnabled())

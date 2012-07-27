@@ -2,12 +2,14 @@ package com.atlassian.labs.remoteapps.modules.util.redirect;
 
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.labs.remoteapps.ApplicationLinkAccessor;
-import com.atlassian.labs.remoteapps.modules.ApplicationLinkOperationsFactory;
+import com.atlassian.labs.remoteapps.RemoteAppAccessor;
+import com.atlassian.labs.remoteapps.RemoteAppAccessorFactory;
 import com.atlassian.labs.remoteapps.util.uri.Uri;
 import com.atlassian.labs.remoteapps.util.uri.UriBuilder;
 import com.atlassian.sal.api.user.UserManager;
 import com.google.common.base.Function;
 import com.google.common.collect.Maps;
+import com.opensymphony.workflow.util.ejb.remote.RemoteEJBCondition;
 import org.apache.commons.lang.Validate;
 import org.apache.http.HttpStatus;
 
@@ -41,17 +43,14 @@ public class RedirectServlet extends HttpServlet
     private static final String APP_KEY_PARAM = "app_key";
     private static final String APP_URL_PARAM = "app_url";
 
-    private final ApplicationLinkOperationsFactory appLinkOperationsFactory;
+    private final RemoteAppAccessorFactory remoteAppAccessorFactory;
     private final UserManager userManager;
-    private final ApplicationLinkAccessor applicationLinkAccessor;
 
     public RedirectServlet(UserManager userManager,
-            ApplicationLinkOperationsFactory appLinkOperationsFactory,
-            ApplicationLinkAccessor applicationLinkAccessor)
+            RemoteAppAccessorFactory remoteAppAccessorFactory)
     {
         this.userManager = userManager;
-        this.appLinkOperationsFactory = appLinkOperationsFactory;
-        this.applicationLinkAccessor = applicationLinkAccessor;
+        this.remoteAppAccessorFactory = remoteAppAccessorFactory;
     }
 
     /**
@@ -114,40 +113,28 @@ public class RedirectServlet extends HttpServlet
         final String appUrl = req.getParameter(APP_URL_PARAM);
         Validate.notEmpty(appUrl, String.format("%s parameter is required", APP_URL_PARAM));
 
-        ApplicationLink applicationLink;
-        try
-        {
-            applicationLink = applicationLinkAccessor.getApplicationLink(appkey);
-        }
-        catch (IllegalArgumentException ex)
-        {
-            sendResponse(resp, HttpServletResponse.SC_NOT_FOUND, String.format("Remote App %s does not exist", appkey));
-            return;
-        }
+        RemoteAppAccessor remoteAppAccessor = remoteAppAccessorFactory.create(appkey);
 
-        String fullAppUrl = redirectType.isSign() ? getFullSignedUrl(applicationLink, appUrl, req.getParameterMap()) :
-                getFullUrl(applicationLink, appUrl, req.getParameterMap());
+        String fullAppUrl = redirectType.isSign() ? getFullSignedUrl(remoteAppAccessor, appUrl, req.getParameterMap()) :
+                getFullUrl(remoteAppAccessor, appUrl, req.getParameterMap());
 
         resp.setStatus(redirectType.getStatusCode());
         resp.addHeader(HttpHeaders.LOCATION, fullAppUrl);
         resp.getOutputStream().close();
     }
 
-    private String getFullUrl(ApplicationLink appLink, String appRelativeUrl, Map<String,String[]> params)
+    private String getFullUrl(RemoteAppAccessor remoteAppAccessor, String appRelativeUrl, Map<String,String[]> params)
     {
         Uri targetUrl = Uri.parse(appRelativeUrl);
-        ApplicationLinkOperationsFactory.LinkOperations linkOps = appLinkOperationsFactory.create(
-                appLink.getType());
-        return linkOps.createGetUrl(targetUrl.getPath(), params);
+        return remoteAppAccessor.createGetUrl(targetUrl.getPath(), params);
     }
 
-    private String getFullSignedUrl(ApplicationLink appLink, String appRelativeUrl,
+    private String getFullSignedUrl(RemoteAppAccessor remoteAppAccessor, String appRelativeUrl,
             Map<String,String[]> parameterMap)
     {
         // Build & Sign the URL
         Uri targetUrl = Uri.parse(appRelativeUrl);
 
-        ApplicationLinkOperationsFactory.LinkOperations linkOps = appLinkOperationsFactory.create(appLink.getType());
         Map<String,String[]> params = newHashMap(parameterMap);
         params.put("user_id", new String[]{userManager.getRemoteUsername()});
         params.putAll(Maps.transformValues(targetUrl.getQueryParameters(),
@@ -159,7 +146,7 @@ public class RedirectServlet extends HttpServlet
                         return strings.toArray(new String[strings.size()]);
                     }
                 }));
-        return linkOps.signGetUrl(targetUrl.getPath(), params);
+        return remoteAppAccessor.signGetUrl(targetUrl.getPath(), params);
     }
 
     private void sendResponse(HttpServletResponse response, int statusCode, String statusMessage) throws IOException

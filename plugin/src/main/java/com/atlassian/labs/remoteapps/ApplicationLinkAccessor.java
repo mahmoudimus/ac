@@ -49,6 +49,22 @@ public class ApplicationLinkAccessor
         return link;
     }
 
+    public RemoteAppApplicationType getApplicationTypeIfFound(String appkey)
+    {
+        Class<? extends RemoteAppApplicationType> appTypeClass = applicationTypeClassLoader.getApplicationType(appkey);
+        if (appTypeClass != null)
+        {
+            RemoteAppApplicationType type = typeAccessor.getApplicationType(appTypeClass);
+            if (type != null)
+            {
+                return type;
+            }
+        }
+
+        // not found
+        return null;
+    }
+
     public ApplicationLink getApplicationLink(String appkey) throws IllegalArgumentException
     {
         Class appTypeClass = applicationTypeClassLoader.getApplicationType(appkey);
@@ -56,6 +72,22 @@ public class ApplicationLinkAccessor
         ApplicationType type = typeAccessor.getApplicationType(appTypeClass);
         notNull(type);
         return getApplicationLink(type);
+    }
+
+    public RemoteAppApplicationType getApplicationType(String appkey) throws IllegalArgumentException
+    {
+        Class<? extends RemoteAppApplicationType> appTypeClass = applicationTypeClassLoader.getApplicationType(appkey);
+        notNull(appTypeClass);
+        RemoteAppApplicationType type = typeAccessor.getApplicationType(appTypeClass);
+        notNull(type);
+        return type;
+    }
+
+    public Class<? extends RemoteAppApplicationType> getApplicationTypeClass(String appkey) throws IllegalArgumentException
+    {
+        Class<? extends RemoteAppApplicationType> appTypeClass = applicationTypeClassLoader.getApplicationType(appkey);
+        notNull(appTypeClass);
+        return appTypeClass;
     }
 
     Iterable<ApplicationLink> getApplicationLinks()

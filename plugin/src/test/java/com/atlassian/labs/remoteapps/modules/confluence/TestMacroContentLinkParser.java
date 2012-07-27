@@ -1,10 +1,8 @@
 package com.atlassian.labs.remoteapps.modules.confluence;
 
-import com.atlassian.applinks.spi.application.TypeId;
-import com.atlassian.applinks.spi.link.ApplicationLinkDetails;
 import com.atlassian.confluence.setup.settings.Settings;
 import com.atlassian.confluence.setup.settings.SettingsManager;
-import com.atlassian.labs.remoteapps.modules.applinks.RemoteAppApplicationType;
+import com.atlassian.labs.remoteapps.RemoteAppAccessor;
 import com.google.common.collect.Maps;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,7 +18,6 @@ import java.net.URLEncoder;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class TestMacroContentLinkParser
@@ -29,7 +26,7 @@ public class TestMacroContentLinkParser
     private static URI APP_BASE_URL;
 
     @Mock
-    private RemoteAppApplicationType applicationType;
+    private RemoteAppAccessor remoteAppAccessor;
     @Mock
     private Settings confluenceSettings;
     @Mock
@@ -79,10 +76,8 @@ public class TestMacroContentLinkParser
         when(confluenceSettings.getBaseUrl()).thenReturn(CONFLUENCE_BASE_URL.toString());
 
         appTypeId = "foo";
-        ApplicationLinkDetails details = mock(ApplicationLinkDetails.class);
-        when(details.getDisplayUrl()).thenReturn(APP_BASE_URL);
-        when(applicationType.getDefaultDetails()).thenReturn(details);
-        when(applicationType.getId()).thenReturn(new TypeId(appTypeId));
+        when(remoteAppAccessor.getKey()).thenReturn(appTypeId);
+        when(remoteAppAccessor.getDisplayUrl()).thenReturn(APP_BASE_URL);
     }
 
     /**
@@ -257,7 +252,7 @@ public class TestMacroContentLinkParser
         if (macroParameters == null)
             macroParameters = Maps.newHashMap();
 
-        String actualContent = parser.parse(applicationType, rawContent, macroParameters);
+        String actualContent = parser.parse(remoteAppAccessor, rawContent, macroParameters);
         String expectedContent = makeImage(makeRedirectUrl(appTypeId, expectedRemoteAppRelativeImageSource, macroParameters));
 
         assertEquals(expectedContent, actualContent);
@@ -274,7 +269,7 @@ public class TestMacroContentLinkParser
         if (macroParameters == null)
             macroParameters = Maps.newHashMap();
 
-        String actualContent = parser.parse(applicationType, rawContent, macroParameters);
+        String actualContent = parser.parse(remoteAppAccessor, rawContent, macroParameters);
         String expectedContent = makeAnchor(makeRedirectUrl(appTypeId, expectedRemoteAppRelativeUrl, macroParameters), expectedAnchorText, quoteStyle);
 
         assertEquals(expectedContent, actualContent);
@@ -285,7 +280,7 @@ public class TestMacroContentLinkParser
         if (macroParameters == null)
             macroParameters = Maps.newHashMap();
 
-        String actualContent = parser.parse(applicationType, rawContent, macroParameters);
+        String actualContent = parser.parse(remoteAppAccessor, rawContent, macroParameters);
 
         assertEquals(rawContent, actualContent); // actualContent should not be modified from the original.
     }

@@ -1,5 +1,6 @@
 package com.atlassian.labs.remoteapps.modules.permissions;
 
+import com.atlassian.labs.remoteapps.ApplicationLinkAccessor;
 import com.atlassian.labs.remoteapps.PermissionManager;
 import com.atlassian.labs.remoteapps.modules.external.*;
 import com.atlassian.labs.remoteapps.modules.permissions.scope.ApiScopeSchema;
@@ -36,16 +37,19 @@ public class PermissionsModuleGenerator implements WaitableRemoteModuleGenerator
     private final UserManager userManager;
     private final SettingsManager settingsManager;
     private final ApiScopeSchema apiScopeSchema;
+    private final ApplicationLinkAccessor applicationLinkAccessor;
 
     @Autowired
     public PermissionsModuleGenerator(PermissionManager permissionManager,
             ProductAccessor productAccessor, UserManager userManager,
-            SettingsManager settingsManager, ApiScopeSchema apiScopeSchema)
+            SettingsManager settingsManager, ApiScopeSchema apiScopeSchema,
+            ApplicationLinkAccessor applicationLinkAccessor)
     {
         this.permissionManager = permissionManager;
         this.userManager = userManager;
         this.settingsManager = settingsManager;
         this.apiScopeSchema = apiScopeSchema;
+        this.applicationLinkAccessor = applicationLinkAccessor;
         this.applicationKey = productAccessor.getKey();
     }
 
@@ -95,7 +99,7 @@ public class PermissionsModuleGenerator implements WaitableRemoteModuleGenerator
             public void start()
             {
                 List<String> apiScopes = extractApiScopeKeys(element);
-                permissionManager.setApiPermissions(ctx.getApplicationType(), apiScopes);
+                permissionManager.setApiPermissions(applicationLinkAccessor.getApplicationType(ctx.getPlugin().getKey()), apiScopes);
             }
         };
     }

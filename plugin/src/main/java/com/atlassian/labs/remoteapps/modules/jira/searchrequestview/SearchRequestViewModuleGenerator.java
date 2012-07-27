@@ -7,7 +7,7 @@ import com.atlassian.jira.plugin.searchrequestview.SearchRequestView;
 import com.atlassian.jira.plugin.searchrequestview.SearchRequestViewModuleDescriptor;
 import com.atlassian.jira.plugin.searchrequestview.SearchRequestViewModuleDescriptorImpl;
 import com.atlassian.jira.security.JiraAuthenticationContext;
-import com.atlassian.labs.remoteapps.modules.ApplicationLinkOperationsFactory;
+import com.atlassian.labs.remoteapps.RemoteAppAccessorFactory;
 import com.atlassian.labs.remoteapps.modules.external.*;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
@@ -33,7 +33,7 @@ import static java.util.Collections.emptyMap;
  */
 public class SearchRequestViewModuleGenerator implements RemoteModuleGenerator
 {
-    private final ApplicationLinkOperationsFactory applicationLinkOperationsFactory;
+    private final RemoteAppAccessorFactory remoteAppAccessorFactory;
     private final ApplicationProperties applicationProperties;
     private final SearchRequestViewBodyWriterUtil searchRequestViewBodyWriterUtil;
     private final SearchRequestURLHandler searchRequestURLHandler;
@@ -41,13 +41,13 @@ public class SearchRequestViewModuleGenerator implements RemoteModuleGenerator
     private final TemplateRenderer templateRenderer;
 
     public SearchRequestViewModuleGenerator(
-            final ApplicationLinkOperationsFactory applicationLinkOperationsFactory,
+            final RemoteAppAccessorFactory remoteAppAccessorFactory,
             PluginRetrievalService pluginRetrievalService,
             ApplicationProperties applicationProperties,
             SearchRequestViewBodyWriterUtil searchRequestViewBodyWriterUtil,
             SearchRequestURLHandler searchRequestURLHandler, TemplateRenderer templateRenderer)
     {
-        this.applicationLinkOperationsFactory = applicationLinkOperationsFactory;
+        this.remoteAppAccessorFactory = remoteAppAccessorFactory;
         this.applicationProperties = applicationProperties;
         this.searchRequestViewBodyWriterUtil = searchRequestViewBodyWriterUtil;
         this.searchRequestURLHandler = searchRequestURLHandler;
@@ -115,14 +115,11 @@ public class SearchRequestViewModuleGenerator implements RemoteModuleGenerator
                 public <T> T createModule(String name, ModuleDescriptor<T> moduleDescriptor) throws
                         PluginParseException
                 {
-                    ApplicationLinkOperationsFactory.LinkOperations linkOps =
-                            applicationLinkOperationsFactory.create(
-                            ctx.getApplicationType());
 
                     return (T) new RemoteSearchRequestView(applicationProperties,
                             searchRequestViewBodyWriterUtil,
                             templateRenderer,
-                            ctx.getApplicationType().getId().get(),
+                            ctx.getPlugin().getKey(),
                             URI.create(url),
                                     title);
                 }

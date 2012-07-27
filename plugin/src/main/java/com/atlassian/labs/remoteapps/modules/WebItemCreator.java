@@ -114,7 +114,7 @@ public class WebItemCreator
                     .addAttribute("height", "16")
                     .addElement("link")
                         .addText(getPermanentRedirectUrl(
-                                ctx.getApplicationType().getId().get(), iconUri));
+                                ctx.getPlugin().getKey(), iconUri));
         }
     }
 

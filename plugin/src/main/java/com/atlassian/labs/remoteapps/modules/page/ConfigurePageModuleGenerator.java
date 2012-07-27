@@ -1,6 +1,6 @@
 package com.atlassian.labs.remoteapps.modules.page;
 
-import com.atlassian.labs.remoteapps.modules.ApplicationLinkOperationsFactory;
+import com.atlassian.labs.remoteapps.RemoteAppAccessorFactory;
 import com.atlassian.labs.remoteapps.modules.IFrameRenderer;
 import com.atlassian.labs.remoteapps.modules.external.Schema;
 import com.atlassian.labs.remoteapps.modules.external.StaticSchema;
@@ -22,11 +22,10 @@ public class ConfigurePageModuleGenerator extends AdminPageModuleGenerator
     @Autowired
     public ConfigurePageModuleGenerator(ServletModuleManager servletModuleManager,
             ProductAccessor productAccessor,
-            ApplicationLinkOperationsFactory applicationLinkSignerFactory,
             IFrameRenderer iFrameRenderer, PluginRetrievalService pluginRetrievalService,
             UserManager userManager)
     {
-        super(servletModuleManager, productAccessor, applicationLinkSignerFactory,
+        super(servletModuleManager, productAccessor,
                 iFrameRenderer, pluginRetrievalService, userManager);
     }
 

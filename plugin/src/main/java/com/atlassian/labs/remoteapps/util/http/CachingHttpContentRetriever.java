@@ -6,6 +6,7 @@ import com.atlassian.labs.remoteapps.OAuthLinkManager;
 import com.atlassian.labs.remoteapps.RetrievalTimeoutException;
 import com.atlassian.labs.remoteapps.util.uri.Uri;
 import com.atlassian.labs.remoteapps.util.uri.UriBuilder;
+import com.atlassian.oauth.ServiceProvider;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.util.concurrent.ThreadFactories;
@@ -63,15 +64,13 @@ public class CachingHttpContentRetriever implements DisposableBean, HttpContentR
 {
     private final FlushableHttpCacheStorage httpCacheStorage;
     CachingHttpAsyncClient httpClient;
-    private final OAuthLinkManager oAuthLinkManager;
     private final UserManager userManager;
     private final Logger log = LoggerFactory.getLogger(CachingHttpContentRetriever.class);
     private final RequestTimeoutKiller requestKiller;
 
-    public CachingHttpContentRetriever(OAuthLinkManager oAuthLinkManager, UserManager userManager,
+    public CachingHttpContentRetriever(UserManager userManager,
             PluginRetrievalService pluginRetrievalService, RequestTimeoutKiller requestKiller)
     {
-        this.oAuthLinkManager = oAuthLinkManager;
         this.userManager = userManager;
         this.requestKiller = requestKiller;
         CacheConfig cacheConfig = new CacheConfig();
@@ -149,23 +148,23 @@ public class CachingHttpContentRetriever implements DisposableBean, HttpContentR
     }
 
     @Override
-    public Future<String> getAsync(final ApplicationLink link, final String remoteUsername,
+    public Future<String> getAsync(final AuthorizationGenerator authorizationGenerator, final String remoteUsername,
             final String originalUrl,
             final Map<String, String> parameters, final Map<String, String> headers,
             final HttpContentHandler handler)
     {
-        return makeCall(link, remoteUsername, originalUrl, parameters, headers, handler);
+        return makeCall(authorizationGenerator, remoteUsername, originalUrl, parameters, headers, handler);
     }
 
     @Override
-    public String get(ApplicationLink link, String remoteUsername, String originalUrl, Map<String, String> parameters) throws
+    public String get(final AuthorizationGenerator authorizationGenerator, String remoteUsername, String originalUrl, Map<String, String> parameters) throws
                                                                                                               ContentRetrievalException
     {
         final AtomicReference<String> successResult = new AtomicReference<String>();
         final AtomicReference<ContentRetrievalException> exceptionRef = new AtomicReference<ContentRetrievalException>();
         try
         {
-            makeCall(link, remoteUsername, originalUrl, parameters,
+            makeCall(authorizationGenerator, remoteUsername, originalUrl, parameters,
                     Collections.<String,String>emptyMap(), new HttpContentHandler()
             {
                 @Override
@@ -200,7 +199,7 @@ public class CachingHttpContentRetriever implements DisposableBean, HttpContentR
         }
     }
 
-    private Future<String> makeCall(ApplicationLink link, final String remoteUsername,
+    private Future<String> makeCall(final AuthorizationGenerator authorizationGenerator, final String remoteUsername,
             final String url,
             Map<String, String> parameters, Map<String, String> headers,
             final HttpContentHandler handler)
@@ -213,18 +212,18 @@ public class CachingHttpContentRetriever implements DisposableBean, HttpContentR
         }
 
         HttpContext localContext = new BasicHttpContext();
-        oAuthLinkManager.sign(httpget, link, url,
-                Maps.transformValues(parameters, new Function<String, List<String>>()
+        httpget.addHeader(HttpHeaders.AUTHORIZATION, authorizationGenerator.generate(
+                httpget.getMethod(), url, Maps.transformValues(parameters, new Function<String, List<String>>()
                 {
                     @Override
                     public List<String> apply(String from)
                     {
                         return singletonList(from);
                     }
-                }));
+                })));
 
 
-        log.info("Retrieving content from remote app '{}' on URL '{}' for user '{}'", new Object[]{link.getId().get(), url, remoteUsername});
+        log.info("Retrieving content from '{}' for user '{}'", new Object[]{url, remoteUsername});
         FutureCallback<HttpResponse> futureCallback = new FutureCallback<HttpResponse>()
         {
             @Override
@@ -288,11 +287,13 @@ public class CachingHttpContentRetriever implements DisposableBean, HttpContentR
     }
 
     @Override
-    public void postIgnoreResponse(ApplicationLink link, final String url, String jsonBody)
+    public void postIgnoreResponse(final AuthorizationGenerator authorizationGenerator, final String url, String jsonBody)
     {
         final String user = userManager.getRemoteUsername();
         final HttpPost httpPost = new HttpPost(url);
-        oAuthLinkManager.sign(httpPost, link, url, Collections.<String, List<String>>emptyMap());
+        httpPost.addHeader(HttpHeaders.AUTHORIZATION, authorizationGenerator.generate(
+                httpPost.getMethod(), url, Collections.<String, List<String>>emptyMap()));
+
         httpPost.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
         try
         {

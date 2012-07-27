@@ -2,7 +2,8 @@ package com.atlassian.labs.remoteapps.modules.confluence;
 
 import com.atlassian.confluence.content.render.xhtml.ConversionContext;
 import com.atlassian.confluence.core.ContentEntityObject;
-import com.atlassian.labs.remoteapps.modules.ApplicationLinkOperationsFactory;
+import com.atlassian.labs.remoteapps.RemoteAppAccessor;
+import com.atlassian.labs.remoteapps.RemoteAppAccessorFactory;
 import com.atlassian.labs.remoteapps.util.contextparameter.RequestContextParameterFactory;
 import com.atlassian.labs.remoteapps.util.contextparameter.RequestContextParameters;
 import com.atlassian.renderer.v2.macro.Macro;
@@ -22,22 +23,23 @@ public class MacroInstance
     final ConversionContext conversionContext;
     final String path;
     private final RequestContextParameters requestContextParameters;
-    final ApplicationLinkOperationsFactory.LinkOperations linkOperations;
+    final RemoteAppAccessor remoteAppAccessor;
     final String body;
     final Map<String,String> parameters;
     final Map<String, String> allContextParameters;
 
     public MacroInstance(ConversionContext conversionContext, String path, String body,
-            Map<String, String> parameters, RequestContextParameterFactory requestContextParameterFactory,
-            ApplicationLinkOperationsFactory.LinkOperations linkOperations)
+            Map<String, String> parameters,
+            RequestContextParameterFactory requestContextParameterFactory,
+            RemoteAppAccessor remoteAppAccessor)
     {
         this.conversionContext = conversionContext;
         this.path = path;
         this.body = body;
         this.parameters = parameters;
+        this.remoteAppAccessor = remoteAppAccessor;
         this.allContextParameters = getAllContextParameters();
         this.requestContextParameters = requestContextParameterFactory.create(getAllContextParameters());
-        this.linkOperations = linkOperations;
     }
 
     public ConversionContext getConversionContext()
@@ -55,9 +57,9 @@ public class MacroInstance
         return path;
     }
 
-    public ApplicationLinkOperationsFactory.LinkOperations getLinkOperations()
+    public RemoteAppAccessor getRemoteAppAccessor()
     {
-        return linkOperations;
+        return remoteAppAccessor;
     }
 
     /*!#url-parameters
@@ -158,7 +160,7 @@ public class MacroInstance
         String entityId = conversionContext.getEntity() != null ? conversionContext.getEntity().getIdAsString() :
                 "";
         StringBuilder sb = new StringBuilder();
-        sb.append(linkOperations.get().getId().get()).append("|");
+        sb.append(remoteAppAccessor.getKey()).append("|");
         sb.append(parameters.toString()).append("|");
         sb.append(body).append("|");
         sb.append(path).append("|");

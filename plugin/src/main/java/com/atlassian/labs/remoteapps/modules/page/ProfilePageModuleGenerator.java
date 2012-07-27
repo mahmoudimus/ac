@@ -1,6 +1,6 @@
 package com.atlassian.labs.remoteapps.modules.page;
 
-import com.atlassian.labs.remoteapps.modules.ApplicationLinkOperationsFactory;
+import com.atlassian.labs.remoteapps.RemoteAppAccessorFactory;
 import com.atlassian.labs.remoteapps.modules.DefaultWebItemContext;
 import com.atlassian.labs.remoteapps.modules.IFrameRenderer;
 import com.atlassian.labs.remoteapps.product.ProductAccessor;
@@ -20,13 +20,12 @@ public class ProfilePageModuleGenerator extends AbstractPageModuleGenerator
 {
     public ProfilePageModuleGenerator(ServletModuleManager servletModuleManager,
                                     ProductAccessor productAccessor,
-                                    ApplicationLinkOperationsFactory applicationLinkSignerFactory,
                                     IFrameRenderer iFrameRenderer,
             PluginRetrievalService pluginRetrievalService,
             UserManager userManager
     )
     {
-        super(servletModuleManager, applicationLinkSignerFactory, iFrameRenderer,
+        super(servletModuleManager, iFrameRenderer,
               new DefaultWebItemContext(
                       productAccessor.getPreferredProfileSectionKey(),
                       productAccessor.getPreferredProfileWeight(),

@@ -2,7 +2,7 @@ package com.atlassian.labs.remoteapps.modules.confluence;
 
 import com.atlassian.confluence.status.service.SystemInformationService;
 import com.atlassian.confluence.util.i18n.I18NBeanFactory;
-import com.atlassian.labs.remoteapps.modules.ApplicationLinkOperationsFactory;
+import com.atlassian.labs.remoteapps.RemoteAppAccessorFactory;
 import com.atlassian.labs.remoteapps.modules.IFrameParams;
 import com.atlassian.labs.remoteapps.modules.IFrameRenderer;
 import com.atlassian.labs.remoteapps.modules.external.RemoteAppCreationContext;
@@ -25,14 +25,13 @@ public class PageMacroModuleGenerator extends AbstractMacroModuleGenerator
     private final Plugin plugin;
 
     public PageMacroModuleGenerator(SystemInformationService systemInformationService,
-            ApplicationLinkOperationsFactory applicationLinkOperationsFactory,
             MacroContentManager macroContentManager, I18NBeanFactory i18NBeanFactory,
             PluginAccessor pluginAccessor, UserManager userManager, IFrameRenderer iFrameRenderer,
             PluginRetrievalService pluginRetrievalService, HostContainer hostContainer,
             ServletModuleManager servletModuleManager,
             ContextParameterParser contextParameterParser)
     {
-        super(macroContentManager, i18NBeanFactory, applicationLinkOperationsFactory,
+        super(macroContentManager, i18NBeanFactory,
                 systemInformationService, pluginAccessor, hostContainer, servletModuleManager,
                 contextParameterParser, iFrameRenderer, userManager);
         this.plugin = pluginRetrievalService.getPlugin();
@@ -71,7 +70,7 @@ public class PageMacroModuleGenerator extends AbstractMacroModuleGenerator
         String moduleKey = remoteMacroInfo.getElement().attributeValue("key");
         IFrameParams params = new IFrameParams(remoteMacroInfo.getElement());
         IFrameContext iFrameContext = new IFrameContext(
-                remoteMacroInfo.getApplicationLinkOperations(),
+                remoteMacroInfo.getRemoteAppAccessor(),
                 remoteMacroInfo.getUrl(),
                 moduleKey,
                 params

@@ -3,7 +3,7 @@ package com.atlassian.labs.remoteapps.modules.jira.projecttab;
 import com.atlassian.jira.ComponentManager;
 import com.atlassian.jira.plugin.projectpanel.ProjectTabPanelModuleDescriptor;
 import com.atlassian.jira.security.JiraAuthenticationContext;
-import com.atlassian.labs.remoteapps.modules.ApplicationLinkOperationsFactory;
+import com.atlassian.labs.remoteapps.RemoteAppAccessorFactory;
 import com.atlassian.labs.remoteapps.modules.IFrameParams;
 import com.atlassian.labs.remoteapps.modules.IFrameRenderer;
 import com.atlassian.labs.remoteapps.modules.external.*;
@@ -30,15 +30,15 @@ import static java.util.Collections.emptyMap;
 public class ProjectTabModuleGenerator implements RemoteModuleGenerator
 {
     private final IFrameRenderer iFrameRenderer;
-    private final ApplicationLinkOperationsFactory applicationLinkOperationsFactory;
+    private final RemoteAppAccessorFactory remoteAppAccessorFactory;
     private final Plugin plugin;
 
     public ProjectTabModuleGenerator(final IFrameRenderer iFrameRenderer,
-            final ApplicationLinkOperationsFactory applicationLinkOperationsFactory,
+            final RemoteAppAccessorFactory remoteAppAccessorFactory,
             PluginRetrievalService pluginRetrievalService)
     {
         this.iFrameRenderer = iFrameRenderer;
-        this.applicationLinkOperationsFactory = applicationLinkOperationsFactory;
+        this.remoteAppAccessorFactory = remoteAppAccessorFactory;
         this.plugin = pluginRetrievalService.getPlugin();
     }
 
@@ -101,10 +101,9 @@ public class ProjectTabModuleGenerator implements RemoteModuleGenerator
                 @Override
                 public <T> T createModule(String name, ModuleDescriptor<T> moduleDescriptor) throws PluginParseException
                 {
-                    ApplicationLinkOperationsFactory.LinkOperations linkOps = applicationLinkOperationsFactory.create(ctx.getApplicationType());
 
                     return (T) new IFrameProjectTab(
-                            new IFrameContext(linkOps , url, moduleKey, iFrameParams),
+                            new IFrameContext(ctx.getRemoteAppAccessor() , url, moduleKey, iFrameParams),
                             iFrameRenderer);
                 }
             });

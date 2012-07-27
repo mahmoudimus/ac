@@ -1,7 +1,8 @@
 package com.atlassian.labs.remoteapps.modules.confluence;
 
 import com.atlassian.confluence.macro.Macro;
-import com.atlassian.labs.remoteapps.modules.ApplicationLinkOperationsFactory;
+import com.atlassian.labs.remoteapps.RemoteAppAccessor;
+import com.atlassian.labs.remoteapps.RemoteAppAccessorFactory;
 import com.atlassian.labs.remoteapps.util.contextparameter.RequestContextParameterFactory;
 import org.dom4j.Element;
 
@@ -11,19 +12,19 @@ import org.dom4j.Element;
 public class RemoteMacroInfo
 {
     private final Element element;
-    private final ApplicationLinkOperationsFactory.LinkOperations linkOperations;
+    private final RemoteAppAccessor remoteAppAccessor;
     private final Macro.BodyType bodyType;
     private final Macro.OutputType outputType;
     private final RequestContextParameterFactory requestContextParameterFactory;
     private final String url;
 
     public RemoteMacroInfo(
-            Element element, ApplicationLinkOperationsFactory.LinkOperations linkOperations,
+            Element element, RemoteAppAccessor remoteAppAccessor,
             Macro.BodyType bodyType,
             Macro.OutputType outputType, RequestContextParameterFactory requestContextParameterFactory, String url)
     {
         this.element = element;
-        this.linkOperations = linkOperations;
+        this.remoteAppAccessor = remoteAppAccessor;
         this.bodyType = bodyType;
         this.outputType = outputType;
         this.requestContextParameterFactory = requestContextParameterFactory;
@@ -45,9 +46,9 @@ public class RemoteMacroInfo
         return url;
     }
 
-    public ApplicationLinkOperationsFactory.LinkOperations getApplicationLinkOperations()
+    public RemoteAppAccessor getRemoteAppAccessor()
     {
-        return linkOperations;
+        return remoteAppAccessor;
     }
 
     public Element getElement()

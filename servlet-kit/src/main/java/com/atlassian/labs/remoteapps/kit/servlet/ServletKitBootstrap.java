@@ -64,7 +64,7 @@ public class ServletKitBootstrap
             log.info("Found servlet '" + path + "' class '" + servlet.getClass());
             descriptorGenerator.mountServlet(servlet, path, path + "/*");
         }
-        descriptorGenerator.mountStaticResources("/public", "/*");
+        descriptorGenerator.mountStaticResources("/public", "/");
 
         RemoteAppDescriptorAccessor descriptorAccessor = getDescriptorAccessor(oAuthContext);
 

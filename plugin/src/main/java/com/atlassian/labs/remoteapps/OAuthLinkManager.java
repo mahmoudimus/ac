@@ -34,6 +34,7 @@ import java.util.Map;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
 import static java.util.Collections.singletonList;
+import static org.apache.commons.lang.Validate.notNull;
 
 /**
  * Manages oauth link operations
@@ -161,25 +162,22 @@ public class OAuthLinkManager
         }
     }
 
-    public void sign(HttpRequestBase httpMessage, ApplicationLink link, String url, Map<String, List<String>> originalParams)
+    public String generateAuthorizationHeader(String method, ServiceProvider serviceProvider, String url, Map<String, List<String>> originalParams)
     {
-        OAuthMessage message = sign(link, httpMessage.getMethod(), url, originalParams);
-        if (message != null)
+        OAuthMessage message = sign(serviceProvider, method, url, originalParams);
+        try
         {
-            try
-            {
-                httpMessage.addHeader(HttpHeaders.AUTHORIZATION, message.getAuthorizationHeader(null));
-            }
-            catch (IOException e)
-            {
-                throw new RuntimeException(e);
-            }
+            return message.getAuthorizationHeader(null);
+        }
+        catch (IOException e)
+        {
+            throw new RuntimeException(e);
         }
     }
 
-    public List<Map.Entry<String, String>> signAsParameters(ApplicationLink link, String method, String url, Map<String, List<String>> originalParams)
+    public List<Map.Entry<String, String>> signAsParameters(ServiceProvider serviceProvider, String method, String url, Map<String, List<String>> originalParams)
     {
-        OAuthMessage message = sign(link, method, url, originalParams);
+        OAuthMessage message = sign(serviceProvider, method, url, originalParams);
         if (message != null)
         {
             try
@@ -205,8 +203,9 @@ public class OAuthLinkManager
         }
     }
 
-    private OAuthMessage sign(ApplicationLink link, String method, String url, Map<String, List<String>> originalParams)
+    private OAuthMessage sign(ServiceProvider serviceProvider, String method, String url, Map<String, List<String>> originalParams)
     {
+        notNull(serviceProvider);
         Map<String,List<String>> params = newHashMap(originalParams);
         Consumer self = consumerService.getConsumer();
         params.put(OAuth.OAUTH_CONSUMER_KEY, singletonList(self.getKey()));
@@ -214,18 +213,10 @@ public class OAuthLinkManager
         {
             dumpParamsToSign(params);
         }
-        ServiceProvider serviceProvider = getServiceProvider(link);
-        if (serviceProvider != null)
-        {
-            Request oAuthRequest = new Request(Request.HttpMethod.valueOf(method),
-                    URI.create(url), convertParameters(params));
-            final Request signedRequest = consumerService.sign(oAuthRequest, serviceProvider);
-            return OAuthHelper.asOAuthMessage(signedRequest);
-        }
-        else
-        {
-            return null;
-        }
+        Request oAuthRequest = new Request(Request.HttpMethod.valueOf(method),
+                URI.create(url), convertParameters(params));
+        final Request signedRequest = consumerService.sign(oAuthRequest, serviceProvider);
+        return OAuthHelper.asOAuthMessage(signedRequest);
     }
 
     private void dumpParamsToSign(Map<String, List<String>> params)

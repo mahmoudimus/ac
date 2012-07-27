@@ -36,6 +36,6 @@ public abstract class AbstractRemoteMacro implements RemoteMacro
     @Override
     public URI getBaseUrl()
     {
-        return remoteMacroInfo.getApplicationLinkOperations().get().getRpcUrl();
+        return remoteMacroInfo.getRemoteAppAccessor().getDisplayUrl();
     }
 }

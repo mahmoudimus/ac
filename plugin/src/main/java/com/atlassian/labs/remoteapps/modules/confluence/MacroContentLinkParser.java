@@ -1,7 +1,7 @@
 package com.atlassian.labs.remoteapps.modules.confluence;
 
 import com.atlassian.confluence.setup.settings.SettingsManager;
-import com.atlassian.labs.remoteapps.modules.applinks.RemoteAppApplicationType;
+import com.atlassian.labs.remoteapps.RemoteAppAccessor;
 import com.atlassian.streams.api.common.uri.Uri;
 import com.atlassian.streams.api.common.uri.UriBuilder;
 import org.apache.commons.lang.StringEscapeUtils;
@@ -28,7 +28,7 @@ public class MacroContentLinkParser
     }
 
     // this used to be implemented via a regex, but turned out to be very slow for large content
-    public String parse(RemoteAppApplicationType type, String content, Map<String, String> macroParameters)
+    public String parse(RemoteAppAccessor remoteAppAccessor, String content, Map<String, String> macroParameters)
     {
         StringBuilder processedContent = new StringBuilder();
         int lastPos = 0;
@@ -38,7 +38,7 @@ public class MacroContentLinkParser
             processedContent.append(content.substring(lastPos, pos));
             lastPos = pos;
 
-            String signToken = "sign://" + type.getDefaultDetails().getDisplayUrl().getAuthority();
+            String signToken = "sign://" + remoteAppAccessor.getDisplayUrl().getAuthority();
             char prevChar = content.charAt(pos - 1);
             if (prevChar == '\'' || prevChar == '\"')
             {
@@ -67,7 +67,7 @@ public class MacroContentLinkParser
 
                                 String urlToEmbed = getOAuthRedirectUrl(
                                         confluenceSettingsManager.getGlobalSettings().getBaseUrl(),
-                                        type.getId().get(), b.toUri().toJavaUri());
+                                        remoteAppAccessor.getKey(), b.toUri().toJavaUri());
                                 processedContent.append(urlToEmbed);
                             }
                             catch (IllegalArgumentException ex)

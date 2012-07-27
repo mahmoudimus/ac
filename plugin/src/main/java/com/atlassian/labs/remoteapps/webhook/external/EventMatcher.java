@@ -9,11 +9,11 @@ public interface EventMatcher<T>
 {
     EventMatcher<Object> ALWAYS_TRUE = new EventMatcher<Object>() {
         @Override
-        public boolean matches(Object event, ApplicationLink appLink)
+        public boolean matches(Object event, String pluginKey)
         {
             return true;
         }
     };
 
-    boolean matches(T event, ApplicationLink appLink);
+    boolean matches(T event, String pluginKey);
 }

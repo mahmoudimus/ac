@@ -2,6 +2,7 @@ package com.atlassian.labs.remoteapps.util.http;
 
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.labs.remoteapps.OAuthLinkManager;
+import com.atlassian.labs.remoteapps.RemoteAppAccessor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginInformation;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
@@ -31,9 +32,6 @@ public class TestCachingHttpContentRetriever
     CachingHttpAsyncClient httpClient;
     
     @Mock
-    OAuthLinkManager oAuthLinkManager;
-    
-    @Mock
     UserManager userManager;
     
     @Mock
@@ -41,6 +39,10 @@ public class TestCachingHttpContentRetriever
     
     @Mock
     Plugin plugin;
+
+    @Mock
+    AuthorizationGenerator authorizationGenerator;
+
     private CachingHttpContentRetriever retriever;
 
     @Before
@@ -51,8 +53,7 @@ public class TestCachingHttpContentRetriever
         when(plugin.getPluginInformation()).thenReturn(new PluginInformation());
         when(pluginRetrievalService.getPlugin()).thenReturn(plugin);
         RequestTimeoutKiller killer = new RequestTimeoutKiller();
-        this.retriever = new CachingHttpContentRetriever(oAuthLinkManager,
-                userManager, pluginRetrievalService, killer);
+        this.retriever = new CachingHttpContentRetriever(userManager, pluginRetrievalService, killer);
         this.retriever.httpClient = httpClient;
         HttpResponse response = mock(HttpResponse.class);
         StatusLine status = mock(StatusLine.class);
@@ -65,20 +66,18 @@ public class TestCachingHttpContentRetriever
     @Test
     public void testPostIgnoreResponse() throws IOException
     {
-        ApplicationLink link = mock(ApplicationLink.class);
         when(userManager.getRemoteUsername()).thenReturn("bob");
         ArgumentCaptor<HttpPost> argument = ArgumentCaptor.forClass(HttpPost.class);
-        retriever.postIgnoreResponse(link, "http://localhost/foo", "{\"boo\":\"bar\"}");
+        retriever.postIgnoreResponse(authorizationGenerator, "http://localhost/foo", "{\"boo\":\"bar\"}");
         verify(httpClient).execute(argument.capture(), ArgumentCaptor.forClass(FutureCallback.class).capture());
         assertEquals("http://localhost/foo", argument.getValue().getURI().toString());
     }
     @Test
     public void testPostIgnoreResponseNoUser() throws IOException
     {
-        ApplicationLink link = mock(ApplicationLink.class);
         when(userManager.getRemoteUsername()).thenReturn(null);
         ArgumentCaptor<HttpPost> argument = ArgumentCaptor.forClass(HttpPost.class);
-        retriever.postIgnoreResponse(link, "http://localhost/foo", "{\"boo\":\"bar\"}");
+        retriever.postIgnoreResponse(authorizationGenerator, "http://localhost/foo", "{\"boo\":\"bar\"}");
         verify(httpClient).execute(argument.capture(), ArgumentCaptor.forClass(FutureCallback.class).capture());
         assertEquals("http://localhost/foo", argument.getValue().getURI().toString());
     }

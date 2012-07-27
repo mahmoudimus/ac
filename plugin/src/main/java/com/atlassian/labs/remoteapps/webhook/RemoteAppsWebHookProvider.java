@@ -1,8 +1,6 @@
 package com.atlassian.labs.remoteapps.webhook;
 
-import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.labs.remoteapps.event.*;
-import com.atlassian.labs.remoteapps.modules.applinks.RemoteAppApplicationType;
 import com.atlassian.labs.remoteapps.webhook.external.*;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.sal.api.ApplicationProperties;
@@ -62,10 +60,9 @@ public class RemoteAppsWebHookProvider implements WebHookProvider
     private static class SameAppMatcher implements EventMatcher<RemoteAppEvent>
     {
         @Override
-        public boolean matches(RemoteAppEvent event, ApplicationLink appLink)
+        public boolean matches(RemoteAppEvent event, String pluginKey)
         {
-            return event.getRemoteAppKey().equals(
-                    ((RemoteAppApplicationType)appLink.getType()).getId().get());
+            return event.getRemoteAppKey().equals(pluginKey);
         }
     }
 }

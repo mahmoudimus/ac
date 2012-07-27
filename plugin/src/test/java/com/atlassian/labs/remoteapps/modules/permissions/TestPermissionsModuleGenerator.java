@@ -1,5 +1,6 @@
 package com.atlassian.labs.remoteapps.modules.permissions;
 
+import com.atlassian.labs.remoteapps.ApplicationLinkAccessor;
 import com.atlassian.labs.remoteapps.PermissionManager;
 import com.atlassian.labs.remoteapps.modules.permissions.scope.ApiScopeSchema;
 import com.atlassian.labs.remoteapps.product.ProductAccessor;
@@ -40,6 +41,9 @@ public class TestPermissionsModuleGenerator
     @Mock
     ApiScopeSchema apiScopeSchema;
 
+    @Mock
+    ApplicationLinkAccessor applicationLinkAccessor;
+
     private static final Element NON_EMPTY_PERMISSIONS = new DocumentFactory().createElement("permissions")
             .addElement("permission").addAttribute("scope", "foo").getParent();
 
@@ -48,7 +52,8 @@ public class TestPermissionsModuleGenerator
     {
         when(userManager.isSystemAdmin("foo")).thenReturn(false);
         when(settingsManager.isAllowDogfooding()).thenReturn(true);
-        new PermissionsModuleGenerator(permissionManager, productAccessor, userManager, settingsManager, apiScopeSchema).validate(NON_EMPTY_PERMISSIONS, null, "foo");
+        new PermissionsModuleGenerator(permissionManager, productAccessor, userManager, settingsManager, apiScopeSchema,
+                applicationLinkAccessor).validate(NON_EMPTY_PERMISSIONS, null, "foo");
     }
 
     @Test
@@ -56,7 +61,8 @@ public class TestPermissionsModuleGenerator
     {
         when(userManager.isSystemAdmin("foo")).thenReturn(true);
         when(settingsManager.isAllowDogfooding()).thenReturn(false);
-        new PermissionsModuleGenerator(permissionManager, productAccessor, userManager, settingsManager, apiScopeSchema).validate(NON_EMPTY_PERMISSIONS, null, "foo");
+        new PermissionsModuleGenerator(permissionManager, productAccessor, userManager, settingsManager, apiScopeSchema,
+                applicationLinkAccessor).validate(NON_EMPTY_PERMISSIONS, null, "foo");
     }
 
     @Test(expected = PluginParseException.class)
@@ -64,7 +70,8 @@ public class TestPermissionsModuleGenerator
     {
         when(userManager.isAdmin("foo")).thenReturn(false);
         when(settingsManager.isAllowDogfooding()).thenReturn(false);
-        new PermissionsModuleGenerator(permissionManager, productAccessor, userManager, settingsManager, apiScopeSchema).validate(NON_EMPTY_PERMISSIONS, null, "foo");
+        new PermissionsModuleGenerator(permissionManager, productAccessor, userManager, settingsManager, apiScopeSchema,
+                applicationLinkAccessor).validate(NON_EMPTY_PERMISSIONS, null, "foo");
     }
 
     @Test(expected = PluginParseException.class)
@@ -73,7 +80,8 @@ public class TestPermissionsModuleGenerator
         Element e = new DocumentFactory().createElement("permissions")
                 .addElement("permission").addAttribute("scope",
                         StringUtils.rightPad("a", 220, "b")).getParent();
-        new PermissionsModuleGenerator(permissionManager, productAccessor, userManager, settingsManager, apiScopeSchema).validate(e, null, "foo");
+        new PermissionsModuleGenerator(permissionManager, productAccessor, userManager, settingsManager, apiScopeSchema,
+                applicationLinkAccessor).validate(e, null, "foo");
     }
 
 }

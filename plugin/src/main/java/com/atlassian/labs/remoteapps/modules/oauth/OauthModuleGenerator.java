@@ -79,11 +79,11 @@ public class OauthModuleGenerator implements UninstallableRemoteModuleGenerator
     @Override
     public RemoteModule generate(final RemoteAppCreationContext ctx, Element e)
     {
-        final String key = getOptionalAttribute(e, "key", ctx.getApplicationType().getId().get());
+        final String key = getOptionalAttribute(e, "key", ctx.getPlugin().getKey());
         final PluginInformation pluginInfo = ctx.getPlugin().getPluginInformation();
-        final String name = ctx.getApplicationType().getI18nKey();
+        final String name = ctx.getPlugin().getName();
         final String description = pluginInfo.getDescription();
-        URI baseUrl = ctx.getApplicationType().getDefaultDetails().getDisplayUrl();
+        URI baseUrl = ctx.getRemoteAppAccessor().getDisplayUrl();
         final URI callback = URI.create(baseUrl + getOptionalAttribute(e, "callback", "/callback"));
         final PublicKey publicKey = getPublicKey(getRequiredElementText(e, "public-key"));
         final URI requestTokenUrl = URI.create(baseUrl + getOptionalAttribute(e, "request-token-url", "/request-token"));
@@ -91,8 +91,9 @@ public class OauthModuleGenerator implements UninstallableRemoteModuleGenerator
         final URI authorizeUrl = URI.create(baseUrl + getOptionalAttribute(e, "authorize-url", "/authorize"));
 
         return new OAuthModule(oAuthLinkManager, applicationLinkAccessor,
-                               Consumer.key(key).name(name).publicKey(publicKey).description(description).callback(
-                callback).build(), new ServiceProvider(requestTokenUrl, accessTokenUrl, authorizeUrl), ctx.getApplicationType());
+                               Consumer.key(key).name(name != null ? name : key).publicKey(publicKey).description(description).callback(
+                                       callback).build(), new ServiceProvider(requestTokenUrl, accessTokenUrl, authorizeUrl),
+                key);
     }
 
     @Override

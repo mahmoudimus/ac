@@ -1,5 +1,6 @@
 package com.atlassian.labs.remoteapps.modules.page;
 
+import com.atlassian.labs.remoteapps.RemoteAppAccessorFactory;
 import com.atlassian.labs.remoteapps.modules.*;
 import com.atlassian.labs.remoteapps.modules.external.*;
 import com.atlassian.labs.remoteapps.product.ProductAccessor;
@@ -31,21 +32,18 @@ public abstract class AbstractPageModuleGenerator implements RemoteModuleGenerat
     private final ProductAccessor productAccessor;
     private final ServletModuleManager servletModuleManager;
     private final UserManager userManager;
-    private final ApplicationLinkOperationsFactory applicationLinkSignerFactory;
     private final WebItemCreator webItemCreator;
     private final IFrameRenderer iFrameRenderer;
     private final Plugin plugin;
 
     @Autowired
     public AbstractPageModuleGenerator(ServletModuleManager servletModuleManager,
-            ApplicationLinkOperationsFactory applicationLinkSignerFactory,
             IFrameRenderer iFrameRenderer,
             WebItemContext webItemContext,
             UserManager userManager, ProductAccessor productAccessor,
             PluginRetrievalService pluginRetrievalService)
     {
         this.servletModuleManager = servletModuleManager;
-        this.applicationLinkSignerFactory = applicationLinkSignerFactory;
         this.iFrameRenderer = iFrameRenderer;
         this.userManager = userManager;
         this.productAccessor = productAccessor;
@@ -75,7 +73,7 @@ public abstract class AbstractPageModuleGenerator implements RemoteModuleGenerat
         String key = getRequiredAttribute(e, "key");
         final String url = getRequiredUriAttribute(e, "url").toString();
 
-        String appKey = ctx.getApplicationType().getId().get();
+        String appKey = ctx.getPlugin().getKey();
         String localUrl = createLocalUrl(appKey, key);
 
         final Set<ModuleDescriptor> descriptors = ImmutableSet.<ModuleDescriptor>of(
@@ -122,7 +120,7 @@ public abstract class AbstractPageModuleGenerator implements RemoteModuleGenerat
                 return (T) new IFramePageServlet(
                         pageInfo,
                         iFrameRenderer,
-                        new IFrameContext(applicationLinkSignerFactory.create(ctx.getApplicationType()), path, moduleKey, params), userManager
+                        new IFrameContext(ctx.getRemoteAppAccessor(), path, moduleKey, params), userManager
                         );
             }
         }, servletModuleManager);
