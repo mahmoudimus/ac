@@ -1,4 +1,4 @@
-package com.atlassian.labs.remoteapps.apputils;
+package com.atlassian.labs.remoteapps.container.internal;
 
 /**
  * Abstraction on top of environment variables and some sort of simple

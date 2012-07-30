@@ -1,8 +1,8 @@
 package junit.confluence;
 
-import com.atlassian.labs.remoteapps.apputils.OAuthContext;
+import com.atlassian.labs.remoteapps.api.services.SignedRequestHandler;
 import com.atlassian.labs.remoteapps.apputils.XmlRpcClientFactory;
-import junit.OAuthContextAccessor;
+import junit.SignedRequestHandlerAccessor;
 import org.junit.Test;
 import redstone.xmlrpc.XmlRpcClient;
 import redstone.xmlrpc.XmlRpcStruct;
@@ -18,8 +18,8 @@ public class ReadContentScopeTest
 
     public ReadContentScopeTest()
     {
-        OAuthContext oAuthContext = OAuthContextAccessor.getOAuthContext();
-        xmlRpcClientFactory = new XmlRpcClientFactory(oAuthContext);
+        SignedRequestHandler signedRequestHandler = SignedRequestHandlerAccessor.getSignedRequestHandler();
+        xmlRpcClientFactory = new XmlRpcClientFactory(signedRequestHandler);
     }
 
     @Test

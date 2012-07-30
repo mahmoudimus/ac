@@ -1,5 +1,4 @@
-<remote-app key="app1" name="Remote App - app1" version="1" icon-url="/sandcastles.jpg"
-            display-url="-- to be replaced --">
+<remote-app key="app1" name="Remote App - app1" version="1" icon-url="/sandcastles.jpg">
     <vendor name="Atlassian" url="http://atlassian.com" />
     <description>
         This really great app
@@ -10,11 +9,6 @@
         <permission scope="read_app_links" />
     </permissions>
 
-    <oauth>
-        <public-key>
-            -- to be replaced --
-        </public-key>
-    </oauth>
     <entity-type key="project" name="Project" pluralized-name="Projects" icon-url="https://github.com/favicon.ico"/>
 
     <admin-page key="remoteAppAdmin" name="Remote App app1 Admin" url="/myAdmin" />

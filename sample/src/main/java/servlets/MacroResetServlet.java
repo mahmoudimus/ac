@@ -1,7 +1,6 @@
 package servlets;
 
-import com.atlassian.labs.remoteapps.apputils.spring.EnvironmentImpl;
-import com.atlassian.labs.remoteapps.apputils.OAuthContext;
+import com.atlassian.labs.remoteapps.api.services.SignedRequestHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -19,12 +18,12 @@ import java.net.URL;
 @Component
 public class MacroResetServlet extends HttpServlet
 {
-    private final OAuthContext oAuthContext;
+    private final SignedRequestHandler signedRequestHandler;
 
     @Autowired
-    public MacroResetServlet(OAuthContext oAuthContext)
+    public MacroResetServlet(SignedRequestHandler signedRequestHandler)
     {
-        this.oAuthContext = oAuthContext;
+        this.signedRequestHandler = signedRequestHandler;
     }   
 
     @Override
@@ -34,7 +33,7 @@ public class MacroResetServlet extends HttpServlet
         URL url = new URL(baseUrl + "/rest/remoteapps/latest/macro/app/app1");
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("DELETE");
-        oAuthContext.sign(url.toString(), "DELETE", null, conn);
+        signedRequestHandler.sign(url.toString(), "DELETE", null, conn);
         int code = conn.getResponseCode();
         System.out.println("Reset from " + baseUrl + " returned: " + code);
         resp.setStatus(code);

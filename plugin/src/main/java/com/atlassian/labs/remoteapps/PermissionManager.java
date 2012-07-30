@@ -2,11 +2,15 @@ package com.atlassian.labs.remoteapps;
 
 import com.atlassian.applinks.api.*;
 import com.atlassian.labs.remoteapps.modules.applinks.RemoteAppApplicationType;
+import com.atlassian.labs.remoteapps.modules.permissions.Permissions;
 import com.atlassian.labs.remoteapps.modules.permissions.scope.ApiScope;
 import com.atlassian.labs.remoteapps.settings.SettingsManager;
 import com.atlassian.labs.remoteapps.util.ServletUtils;
 import com.atlassian.labs.remoteapps.util.tracker.WaitableServiceTracker;
 import com.atlassian.labs.remoteapps.util.tracker.WaitableServiceTrackerFactory;
+import com.atlassian.plugin.ModuleDescriptor;
+import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.sal.api.user.UserManager;
 import com.google.common.base.Function;
@@ -19,12 +23,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+
+import static java.util.Arrays.asList;
 
 /**
  * Handles permissions for remote app operations
@@ -33,11 +37,9 @@ import java.util.concurrent.TimeoutException;
 public class PermissionManager
 {
     private static final Logger log = LoggerFactory.getLogger(PermissionManager.class);
-    public static final String API_SCOPES_LINK_KEY = "api-scopes";
-    private final ApplicationLinkAccessor applicationLinkAccessor;
-    private final OAuthLinkManager linkManager;
     private final UserManager userManager;
     private final SettingsManager settingsManager;
+    private final PluginAccessor pluginAccessor;
     private final WaitableServiceTracker<String,ApiScope> apiScopeTracker;
 
     private final Set<String> NON_USER_ADMIN_PATHS = ImmutableSet.of(
@@ -46,16 +48,14 @@ public class PermissionManager
     );
 
     @Autowired
-    public PermissionManager(ApplicationLinkAccessor applicationLinkAccessor,
-            OAuthLinkManager linkManager,
+    public PermissionManager(
             UserManager userManager,
             WaitableServiceTrackerFactory waitableServiceTrackerFactory,
-            SettingsManager settingsManager)
+            SettingsManager settingsManager, PluginAccessor pluginAccessor)
     {
-        this.applicationLinkAccessor = applicationLinkAccessor;
-        this.linkManager = linkManager;
         this.userManager = userManager;
         this.settingsManager = settingsManager;
+        this.pluginAccessor = pluginAccessor;
         this.apiScopeTracker = waitableServiceTrackerFactory.create(ApiScope.class,
                 new Function<ApiScope, String>()
                 {
@@ -65,12 +65,6 @@ public class PermissionManager
                         return from.getKey();
                     }
                 });
-    }
-
-    public void setApiPermissions(ApplicationType type, List<String> scopes)
-    {
-        ApplicationLink link = applicationLinkAccessor.getApplicationLink(type);
-        link.putProperty(API_SCOPES_LINK_KEY, scopes);
     }
 
     public Iterable<ApiScope> getApiScopes()
@@ -113,13 +107,7 @@ public class PermissionManager
             }
         }
 
-        ApplicationLink link = getLinkForClientKey(clientKey);
-        if (link == null)
-        {
-            return false;
-        }
-
-        final List<String> appScopeKeys = (List<String>) link.getProperty(API_SCOPES_LINK_KEY);
+        final Set<String> appScopeKeys = getScopesForPlugin(clientKey);
         if (appScopeKeys != null)
         {
             Iterable<ApiScope> applicableScopes = Iterables.filter(apiScopeTracker.getAll(), new Predicate<ApiScope>()
@@ -142,26 +130,12 @@ public class PermissionManager
         return false;
     }
 
-    public ApplicationLink getLinkForClientKey(String clientKey)
+    private Set<String> getScopesForPlugin(String clientKey)
     {
-        ApplicationLink link = linkManager.getLinkForOAuthClientKey(clientKey);
-        if (link == null)
-        {
-            // fallback to checking all app links
-            for (ApplicationLink aLink : applicationLinkAccessor.getApplicationLinks())
-            {
-                ApplicationType type = aLink.getType();
-                if (type instanceof RemoteAppApplicationType)
-                {
-                    RemoteAppApplicationType raType = (RemoteAppApplicationType) type;
-                    if (clientKey.equals(raType.getId().get()))
-                    {
-                        link = aLink;
-                    }
-                }
-            }
-        }
-        return link;
+        Plugin plugin = pluginAccessor.getPlugin(clientKey);
+        ModuleDescriptor<?> descriptor = plugin.getModuleDescriptor(
+                "permissions");
+        return descriptor != null ? ((Permissions)descriptor.getModule()).getPermissions() : Collections.<String>emptySet();
     }
 
     public boolean canInstallRemoteApps(String username)

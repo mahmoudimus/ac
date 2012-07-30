@@ -6,6 +6,7 @@ import com.atlassian.labs.remoteapps.modules.external.*;
 import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.ServiceProvider;
 import com.atlassian.oauth.util.RSAKeys;
+import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginInformation;
 import com.atlassian.plugin.PluginParseException;
@@ -18,27 +19,24 @@ import java.net.URI;
 import java.security.GeneralSecurityException;
 import java.security.PublicKey;
 import java.util.Map;
+import java.util.Set;
 
 import static com.atlassian.labs.remoteapps.util.Dom4jUtils.getOptionalAttribute;
 import static com.atlassian.labs.remoteapps.util.Dom4jUtils.getRequiredElementText;
 import static java.util.Collections.emptyMap;
+import static java.util.Collections.emptySet;
 
 /**
  * Sets up a 2LO connection to allow incoming requests from the remote app
  */
 @Component
-public class OauthModuleGenerator implements UninstallableRemoteModuleGenerator
+public class OauthModuleGenerator implements RemoteModuleGenerator
 {
-    private final OAuthLinkManager oAuthLinkManager;
-    private final ApplicationLinkAccessor applicationLinkAccessor;
     private final Plugin plugin;
 
     @Autowired
-    public OauthModuleGenerator(ApplicationLinkAccessor applicationLinkAccessor,
-                                OAuthLinkManager oAuthLinkManager, PluginRetrievalService pluginRetrievalService)
+    public OauthModuleGenerator(PluginRetrievalService pluginRetrievalService)
     {
-        this.applicationLinkAccessor = applicationLinkAccessor;
-        this.oAuthLinkManager = oAuthLinkManager;
         this.plugin = pluginRetrievalService.getPlugin();
     }
 
@@ -79,21 +77,14 @@ public class OauthModuleGenerator implements UninstallableRemoteModuleGenerator
     @Override
     public RemoteModule generate(final RemoteAppCreationContext ctx, Element e)
     {
-        final String key = getOptionalAttribute(e, "key", ctx.getPlugin().getKey());
-        final PluginInformation pluginInfo = ctx.getPlugin().getPluginInformation();
-        final String name = ctx.getPlugin().getName();
-        final String description = pluginInfo.getDescription();
-        URI baseUrl = ctx.getRemoteAppAccessor().getDisplayUrl();
-        final URI callback = URI.create(baseUrl + getOptionalAttribute(e, "callback", "/callback"));
-        final PublicKey publicKey = getPublicKey(getRequiredElementText(e, "public-key"));
-        final URI requestTokenUrl = URI.create(baseUrl + getOptionalAttribute(e, "request-token-url", "/request-token"));
-        final URI accessTokenUrl = URI.create(baseUrl + getOptionalAttribute(e, "access-token-url", "/access-token"));
-        final URI authorizeUrl = URI.create(baseUrl + getOptionalAttribute(e, "authorize-url", "/authorize"));
-
-        return new OAuthModule(oAuthLinkManager, applicationLinkAccessor,
-                               Consumer.key(key).name(name != null ? name : key).publicKey(publicKey).description(description).callback(
-                                       callback).build(), new ServiceProvider(requestTokenUrl, accessTokenUrl, authorizeUrl),
-                key);
+        return new RemoteModule()
+        {
+            @Override
+            public Set<ModuleDescriptor> getModuleDescriptors()
+            {
+                return emptySet();
+            }
+        };
     }
 
     @Override
@@ -106,34 +97,4 @@ public class OauthModuleGenerator implements UninstallableRemoteModuleGenerator
     {
     }
 
-    protected final PublicKey getPublicKey(String publicKeyText)
-    {
-        PublicKey publicKey;
-        try
-        {
-            if (publicKeyText.startsWith("-----BEGIN CERTIFICATE-----"))
-            {
-                publicKey = RSAKeys.fromEncodedCertificateToPublicKey(publicKeyText);
-            }
-            else
-            {
-                publicKey = RSAKeys.fromPemEncodingToPublicKey(publicKeyText);
-            }
-        }
-        catch (GeneralSecurityException e)
-        {
-            throw new PluginParseException("Invalid public key", e);
-        }
-        return publicKey;
-    }
-
-    @Override
-    public void uninstall(String pluginKey)
-    {
-        oAuthLinkManager.unassociateConsumer(
-                Consumer.
-                        key(pluginKey).
-                        name("Doesn't Matter").
-                        signatureMethod(Consumer.SignatureMethod.HMAC_SHA1).build());
-    }
 }

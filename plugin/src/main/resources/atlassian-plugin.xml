@@ -5,11 +5,6 @@
         <vendor name="${project.organization.name}" url="${project.organization.url}" />
     </plugin-info>
 
-    <servlet-filter key="fixAuthenticateHeader" class="com.atlassian.labs.remoteapps.installer.FixAuthenticateHeaderFilter"
-            location="after-encoding">
-        <url-pattern>/rest/remoteapps/*</url-pattern>
-    </servlet-filter>
-
     <servlet-filter key="requestIdSetter" class="com.atlassian.labs.remoteapps.util.http.bigpipe.RequestIdSettingFilter"
                     location="after-encoding">
         <url-pattern>/*</url-pattern>
@@ -162,8 +157,12 @@
     <component key="pluginSettingsAsyncFactory" interface="com.atlassian.labs.remoteapps.api.services.PluginSettingsAsyncFactory"
                class="com.atlassian.labs.remoteapps.services.PluginSettingsAsyncFactoryBean" public="true" />
 
+    <component key="localSignedRequestHandler" interface="com.atlassian.labs.remoteapps.api.services.SignedRequestHandler" class="com.atlassian.labs.remoteapps.services.LocalSignedRequestHandlerServiceFactory" public="true" />
+
     <!-- remote extension points -->
-    <module-type key="dynamic-application-link" class="com.atlassian.labs.remoteapps.integration.applinks.DynamicApplicationTypeModuleDescriptor" />
+    <module-type key="dynamic-application-link" class="com.atlassian.labs.remoteapps.integration.applinks.DynamicApplicationLinkModuleDescriptor" />
+
+    <module-type key="permissions" class="com.atlassian.labs.remoteapps.modules.permissions.PermissionsModuleDescriptor" />
 
     <!-- product-specific modules included via xslt build process -->
 

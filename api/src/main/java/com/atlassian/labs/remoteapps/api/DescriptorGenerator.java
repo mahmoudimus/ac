@@ -13,7 +13,7 @@ public interface DescriptorGenerator
 {
     String getLocalMountBaseUrl();
 
-    void init(Document descriptor) throws Exception;
+    void init(RemoteAppDescriptorAccessor descriptorAccessor) throws Exception;
 
     /**
      * Filters are only processed right before a servlet and cannot be inserted anywhere in the chain.  They'll be

@@ -1,6 +1,5 @@
-package com.atlassian.labs.remoteapps.apputils.spring;
+package com.atlassian.labs.remoteapps.container.internal;
 
-import com.atlassian.labs.remoteapps.apputils.Environment;
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 

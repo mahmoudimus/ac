@@ -73,25 +73,4 @@ public class ApplicationLinkAccessor
         notNull(type);
         return getApplicationLink(type);
     }
-
-    public RemoteAppApplicationType getApplicationType(String appkey) throws IllegalArgumentException
-    {
-        Class<? extends RemoteAppApplicationType> appTypeClass = applicationTypeClassLoader.getApplicationType(appkey);
-        notNull(appTypeClass);
-        RemoteAppApplicationType type = typeAccessor.getApplicationType(appTypeClass);
-        notNull(type);
-        return type;
-    }
-
-    public Class<? extends RemoteAppApplicationType> getApplicationTypeClass(String appkey) throws IllegalArgumentException
-    {
-        Class<? extends RemoteAppApplicationType> appTypeClass = applicationTypeClassLoader.getApplicationType(appkey);
-        notNull(appTypeClass);
-        return appTypeClass;
-    }
-
-    Iterable<ApplicationLink> getApplicationLinks()
-    {
-        return applicationLinkService.getApplicationLinks();
-    }
 }

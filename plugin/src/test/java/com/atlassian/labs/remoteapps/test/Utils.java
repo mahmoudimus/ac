@@ -1,7 +1,8 @@
 package com.atlassian.labs.remoteapps.test;
 
-import com.atlassian.labs.remoteapps.apputils.Environment;
-import com.atlassian.labs.remoteapps.apputils.OAuthContext;
+import com.atlassian.labs.remoteapps.api.services.SignedRequestHandler;
+import com.atlassian.labs.remoteapps.container.internal.Environment;
+import com.atlassian.labs.remoteapps.container.services.ContainerOAuthSignedRequestHandler;
 import org.apache.commons.io.IOUtils;
 import org.bouncycastle.openssl.PEMWriter;
 import org.dom4j.Document;
@@ -50,7 +51,7 @@ public class Utils
         return createSecureSaxReader().read(inputStream);
     }
 
-    public static OAuthContext createOAuthContext(String appKey) throws NoSuchAlgorithmException,
+    public static RunnerSignedRequestHandler createSignedRequestHandler(String appKey) throws NoSuchAlgorithmException,
             IOException
     {
         Environment env = mock(Environment.class);
@@ -69,7 +70,7 @@ public class Utils
         when(env.getEnv("OAUTH_LOCAL_PUBLIC_KEY")).thenReturn(publicKeyWriter.toString());
         when(env.getEnv("OAUTH_LOCAL_PRIVATE_KEY")).thenReturn(privateKeyWriter.toString());
         when(env.getEnv("OAUTH_LOCAL_KEY")).thenReturn(appKey);
-        return new OAuthContext(env);
+        return new RunnerSignedRequestHandler(appKey, env);
     }
 
     public static void emptyGet(String url) throws IOException

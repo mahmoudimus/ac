@@ -6,10 +6,12 @@ import com.atlassian.labs.remoteapps.api.DescriptorGenerator;
 import com.atlassian.labs.remoteapps.api.PolygotRemoteAppDescriptorAccessor;
 import com.atlassian.labs.remoteapps.api.RemoteAppDescriptorAccessor;
 import com.atlassian.labs.remoteapps.api.services.PluginSettingsAsyncFactory;
+import com.atlassian.labs.remoteapps.api.services.SignedRequestHandler;
 import com.atlassian.labs.remoteapps.api.services.impl.DefaultPluginSettingsAsyncFactory;
 import com.atlassian.labs.remoteapps.container.ao.RemoteAppsDataSourceProvider;
 import com.atlassian.labs.remoteapps.container.services.event.RemoteAppsEventPublisher;
 import com.atlassian.labs.remoteapps.container.services.DescriptorGeneratorServiceFactory;
+import com.atlassian.labs.remoteapps.container.services.OAuthSignedRequestHandlerServiceFactory;
 import com.atlassian.labs.remoteapps.container.services.sal.RemoteAppsApplicationPropertiesServiceFactory;
 import com.atlassian.labs.remoteapps.container.services.sal.RemoteAppsPluginSettingsFactory;
 import com.atlassian.labs.remoteapps.container.util.ZipWriter;
@@ -195,7 +197,14 @@ public class Container
         RemoteAppsPluginSettingsFactory pluginSettingsFactory = new RemoteAppsPluginSettingsFactory();
         hostComponents.put(PluginSettingsFactory.class, pluginSettingsFactory);
 
-        hostComponents.put(DescriptorGenerator.class, new DescriptorGeneratorServiceFactory(pluginManager, server));
+        EnvironmentImplFactory environmentImplFactory = new EnvironmentImplFactory(pluginSettingsFactory);
+        OAuthSignedRequestHandlerServiceFactory oAuthSignedRequestHandlerServiceFactory = new OAuthSignedRequestHandlerServiceFactory(environmentImplFactory, httpServer);
+        DescriptorGeneratorServiceFactory descriptorGeneratorServiceFactory = new DescriptorGeneratorServiceFactory(
+                pluginManager, httpServer, oAuthSignedRequestHandlerServiceFactory, environmentImplFactory);
+
+        hostComponents.put(Environment.class, environmentImplFactory);
+        hostComponents.put(SignedRequestHandler.class, oAuthSignedRequestHandlerServiceFactory);
+        hostComponents.put(DescriptorGenerator.class, descriptorGeneratorServiceFactory);
         hostComponents.put(PluginAccessor.class, pluginManager);
         hostComponents.put(PluginController.class, pluginManager);
         hostComponents.put(PluginEventManager.class, pluginEventManager);

@@ -1,9 +1,9 @@
 package it;
 
 import com.atlassian.labs.remoteapps.apputils.HttpUtils;
-import com.atlassian.labs.remoteapps.apputils.OAuthContext;
 import com.atlassian.labs.remoteapps.test.MessagePage;
 import com.atlassian.labs.remoteapps.test.RemoteAppRunner;
+import com.atlassian.labs.remoteapps.test.RunnerSignedRequestHandler;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.google.common.collect.ImmutableMap;
@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static com.atlassian.labs.remoteapps.test.Utils.createOAuthContext;
+import static com.atlassian.labs.remoteapps.test.Utils.createSignedRequestHandler;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -26,12 +26,12 @@ public class TestAppPermissions extends AbstractRemoteAppTest
     @Test
     public void testNoPermissions() throws Exception
     {
-        OAuthContext oAuthContext = createOAuthContext("noPermissions");
+        RunnerSignedRequestHandler signedRequestHandler = createSignedRequestHandler("noPermissions");
         RemoteAppRunner runner = new RemoteAppRunner(product.getProductInstance().getBaseUrl(),
                 "noPermissions")
-                .addGeneralPage("page", "Page", "/page", new CallServlet(product.getProductInstance().getBaseUrl(), oAuthContext))
+                .addGeneralPage("page", "Page", "/page", new CallServlet(product.getProductInstance().getBaseUrl(), signedRequestHandler))
                 .description("foo")
-                .addOAuth(oAuthContext)
+                .addOAuth(signedRequestHandler)
                 .start();
 
         String status = product.visit(MessagePage.class, "noPermissions", "page")
@@ -45,14 +45,14 @@ public class TestAppPermissions extends AbstractRemoteAppTest
         private final String baseUrl;
         private final HttpUtils httpUtils;
 
-        public CallServlet(String baseUrl, OAuthContext oAuthContext)
+        public CallServlet(String baseUrl, RunnerSignedRequestHandler signedRequestHandler)
         {
             this.baseUrl = baseUrl;
             Plugin plugin = mock(Plugin.class);
             when(plugin.getResourceAsStream("message-page.mu")).thenReturn(getClass().getResourceAsStream("/message-page.mu"));
             PluginRetrievalService pluginRetrievalService = mock(PluginRetrievalService.class);
             when(pluginRetrievalService.getPlugin()).thenReturn(plugin);
-            this.httpUtils = new HttpUtils(pluginRetrievalService, oAuthContext);
+            this.httpUtils = new HttpUtils(pluginRetrievalService, signedRequestHandler);
         }
 
         @Override

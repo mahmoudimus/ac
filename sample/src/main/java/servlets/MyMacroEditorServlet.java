@@ -1,6 +1,6 @@
 package servlets;
 
-import com.atlassian.labs.remoteapps.apputils.OAuthContext;
+import com.atlassian.labs.remoteapps.api.services.SignedRequestHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -20,20 +20,20 @@ import static services.HttpUtils.renderHtml;
 @Component
 public class MyMacroEditorServlet extends HttpServlet
 {
-    private final OAuthContext oAuthContext;
+    private final SignedRequestHandler signedRequestHandler;
 
     @Autowired
-    public MyMacroEditorServlet(OAuthContext oAuthContext)
+    public MyMacroEditorServlet(SignedRequestHandler signedRequestHandler)
     {
-        this.oAuthContext = oAuthContext;
+        this.signedRequestHandler = signedRequestHandler;
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
     {
-        String consumerKey = oAuthContext.validate2LOFromParameters(req);
+        String consumerKey = signedRequestHandler.validateRequest(req);
         final Map<String, Object> context = new HashMap<String,Object>();
-        context.put("baseUrl", oAuthContext.getHostBaseUrl(consumerKey));
+        context.put("baseUrl", signedRequestHandler.getHostBaseUrl(consumerKey));
         renderHtml(resp, "macro-editor.mu", context);
     }
 }

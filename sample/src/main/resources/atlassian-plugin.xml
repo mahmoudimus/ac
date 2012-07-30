@@ -8,5 +8,10 @@
     <junit key="confluence" package="junit.confluence" application="confluence"/>
     <junit key="jira" package="junit.jira" application="jira"/>
 
-    <component key="oauthContextAccessor" class="junit.OAuthContextAccessor" />
+    <component key="signedRequestHandlerAccessor" class="junit.SignedRequestHandlerAccessor" />
+
+    <!-- converted modules -->
+    <!--dynamic-application-link key="app1" name="Remote App - app1" version="1" icon-url="/sandcastles.jpg">
+        <entity-type key="project" name="Project" pluralized-name="Projects" icon-url="https://github.com/favicon.ico"/>
+    </dynamic-application-link-->
 </atlassian-plugin>

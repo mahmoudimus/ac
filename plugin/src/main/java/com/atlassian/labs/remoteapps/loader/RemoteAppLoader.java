@@ -8,7 +8,6 @@ import com.atlassian.labs.remoteapps.event.RemoteAppStartFailedEvent;
 import com.atlassian.labs.remoteapps.event.RemoteAppStartedEvent;
 import com.atlassian.labs.remoteapps.event.RemoteAppStoppedEvent;
 import com.atlassian.labs.remoteapps.modules.DefaultRemoteAppCreationContext;
-import com.atlassian.labs.remoteapps.modules.applinks.ApplicationTypeModule;
 import com.atlassian.labs.remoteapps.modules.external.*;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
@@ -33,6 +32,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.atlassian.labs.remoteapps.util.BundleUtil.findBundleForPlugin;
+import static com.atlassian.labs.remoteapps.util.Dom4jUtils.getOptionalUriAttribute;
 import static com.atlassian.labs.remoteapps.util.RemoteAppManifestReader.isRemoteApp;
 import static com.google.common.collect.Lists.newArrayList;
 
@@ -150,7 +150,8 @@ public class RemoteAppLoader implements DisposableBean
 
             final RemoteAppCreationContext firstContext = new DefaultRemoteAppCreationContext(plugin,
                     aggregateModuleDescriptorFactory, bundle,
-                    remoteAppAccessorFactory.create(plugin.getKey()));
+                    remoteAppAccessorFactory.create(plugin.getKey(),
+                            getOptionalUriAttribute(appDescriptor.getRootElement(), "display-url")));
 
             final List<RemoteModule> remoteModules = generateRemoteModules(bundle, appDescriptor,
                     plugin, firstContext);
@@ -234,12 +235,13 @@ public class RemoteAppLoader implements DisposableBean
             Plugin plugin, RemoteAppCreationContext firstContext)
     {
         final List<RemoteModule> remoteModules = newArrayList();
-        ApplicationTypeModule module = (ApplicationTypeModule) moduleGeneratorManager.getApplicationTypeModuleGenerator().generate(firstContext, appDescriptor.getRootElement());
+        RemoteModule module = moduleGeneratorManager.getApplicationTypeModuleGenerator().generate(firstContext, appDescriptor.getRootElement());
 
         remoteModules.add(module);
 
         final RemoteAppCreationContext childContext = new DefaultRemoteAppCreationContext(plugin,
-                aggregateModuleDescriptorFactory, bundle, remoteAppAccessorFactory.create(plugin.getKey(), module.getApplicationType()));
+                aggregateModuleDescriptorFactory, bundle, remoteAppAccessorFactory.create(plugin.getKey(), getOptionalUriAttribute(
+                appDescriptor.getRootElement(), "display-url")));
 
         moduleGeneratorManager.processDescriptor(appDescriptor.getRootElement(),
                 new ModuleGeneratorManager.ModuleHandler()

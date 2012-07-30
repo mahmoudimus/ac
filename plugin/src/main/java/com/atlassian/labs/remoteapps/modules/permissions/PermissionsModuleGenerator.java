@@ -37,19 +37,16 @@ public class PermissionsModuleGenerator implements WaitableRemoteModuleGenerator
     private final UserManager userManager;
     private final SettingsManager settingsManager;
     private final ApiScopeSchema apiScopeSchema;
-    private final ApplicationLinkAccessor applicationLinkAccessor;
 
     @Autowired
     public PermissionsModuleGenerator(PermissionManager permissionManager,
             ProductAccessor productAccessor, UserManager userManager,
-            SettingsManager settingsManager, ApiScopeSchema apiScopeSchema,
-            ApplicationLinkAccessor applicationLinkAccessor)
+            SettingsManager settingsManager, ApiScopeSchema apiScopeSchema)
     {
         this.permissionManager = permissionManager;
         this.userManager = userManager;
         this.settingsManager = settingsManager;
         this.apiScopeSchema = apiScopeSchema;
-        this.applicationLinkAccessor = applicationLinkAccessor;
         this.applicationKey = productAccessor.getKey();
     }
 
@@ -87,19 +84,12 @@ public class PermissionsModuleGenerator implements WaitableRemoteModuleGenerator
     @Override
     public RemoteModule generate(final RemoteAppCreationContext ctx, final Element element)
     {
-        return new StartableRemoteModule()
+        return new RemoteModule()
         {
             @Override
             public Set<ModuleDescriptor> getModuleDescriptors()
             {
                 return emptySet();
-            }
-
-            @Override
-            public void start()
-            {
-                List<String> apiScopes = extractApiScopeKeys(element);
-                permissionManager.setApiPermissions(applicationLinkAccessor.getApplicationType(ctx.getPlugin().getKey()), apiScopes);
             }
         };
     }
@@ -141,6 +131,9 @@ public class PermissionsModuleGenerator implements WaitableRemoteModuleGenerator
     @Override
     public void generatePluginDescriptor(Element descriptorElement, Element pluginDescriptorRoot)
     {
+        descriptorElement.addElement("permissions")
+                .addAttribute("key", "permissions")
+                .elements().addAll(descriptorElement.createCopy().elements());
     }
 
     @Override

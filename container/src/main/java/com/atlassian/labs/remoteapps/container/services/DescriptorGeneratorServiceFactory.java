@@ -1,6 +1,7 @@
 package com.atlassian.labs.remoteapps.container.services;
 
 import com.atlassian.labs.remoteapps.container.HttpServer;
+import com.atlassian.labs.remoteapps.container.internal.EnvironmentImplFactory;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.osgi.util.OsgiHeaderUtil;
@@ -17,13 +18,19 @@ public class DescriptorGeneratorServiceFactory implements ServiceFactory
 {
     private final PluginAccessor pluginAccessor;
     private final HttpServer httpServer;
+    private final OAuthSignedRequestHandlerServiceFactory oAuthSignedRequestHandlerServiceFactory;
+    private final EnvironmentImplFactory environmentImplServiceFactory;
     private static final Logger log = LoggerFactory.getLogger(
             DescriptorGeneratorServiceFactory.class);
 
-    public DescriptorGeneratorServiceFactory(PluginAccessor pluginAccessor, HttpServer httpServer)
+    public DescriptorGeneratorServiceFactory(PluginAccessor pluginAccessor, HttpServer httpServer,
+            OAuthSignedRequestHandlerServiceFactory oAuthSignedRequestHandlerServiceFactory,
+            EnvironmentImplFactory environmentImplServiceFactory)
     {
         this.pluginAccessor = pluginAccessor;
         this.httpServer = httpServer;
+        this.environmentImplServiceFactory = environmentImplServiceFactory;
+        this.oAuthSignedRequestHandlerServiceFactory = oAuthSignedRequestHandlerServiceFactory;
     }
 
     @Override
@@ -31,7 +38,9 @@ public class DescriptorGeneratorServiceFactory implements ServiceFactory
     {
         String appKey = OsgiHeaderUtil.getPluginKey(bundle);
         Plugin plugin = pluginAccessor.getPlugin(appKey);
-        return new DescriptorGeneratorLoader(plugin, httpServer);
+        return new DescriptorGeneratorLoader(plugin, httpServer,
+                oAuthSignedRequestHandlerServiceFactory.getService(appKey),
+                environmentImplServiceFactory.getService(appKey));
     }
 
 

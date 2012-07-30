@@ -2,12 +2,16 @@ package com.atlassian.labs.remoteapps.loader;
 
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.labs.remoteapps.api.DescriptorGenerator;
+import com.atlassian.labs.remoteapps.api.RemoteAppDescriptorAccessor;
+import com.atlassian.labs.remoteapps.api.TransformingRemoteAppDescriptorAccessor;
 import com.atlassian.labs.remoteapps.event.RemoteAppStartFailedEvent;
 import com.atlassian.labs.remoteapps.loader.universalbinary.UBDispatchFilter;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.osgi.util.OsgiHeaderUtil;
+import net.oauth.signature.RSA_SHA1;
 import org.dom4j.Document;
+import org.dom4j.Element;
 import org.osgi.framework.Bundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,11 +51,16 @@ public class DescriptorGeneratorLoader implements DescriptorGenerator
     }
 
     @Override
-    public void init(Document document) throws Exception
+    public void init(RemoteAppDescriptorAccessor descriptorAccessor) throws Exception
     {
+        Document descriptor = descriptorAccessor.getDescriptor();
+        if (descriptor.getRootElement().attribute("display-url") == null)
+        {
+            descriptor.getRootElement().addAttribute("display-url", getLocalMountBaseUrl());
+        }
         try
         {
-            remoteAppLoader.load(bundle, document);
+            remoteAppLoader.load(bundle, descriptor);
         }
         catch (final Exception e)
         {

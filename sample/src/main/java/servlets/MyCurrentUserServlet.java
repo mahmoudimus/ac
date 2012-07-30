@@ -1,6 +1,6 @@
 package servlets;
 
-import com.atlassian.labs.remoteapps.apputils.OAuthContext;
+import com.atlassian.labs.remoteapps.api.services.SignedRequestHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -16,18 +16,18 @@ import java.io.IOException;
 @Component
 public class MyCurrentUserServlet extends HttpServlet
 {
-    private final OAuthContext oAuthContext;
+    private final SignedRequestHandler signedRequestHandler;
 
     @Autowired
-    public MyCurrentUserServlet(OAuthContext oAuthContext)
+    public MyCurrentUserServlet(SignedRequestHandler signedRequestHandler)
     {
-        this.oAuthContext = oAuthContext;
+        this.signedRequestHandler = signedRequestHandler;
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
     {
-        String consumerKey = oAuthContext.validate2LOFromParameters(req);
+        String consumerKey = signedRequestHandler.validateRequest(req);
 
         resp.setContentType("text/plain");
         resp.getWriter().write("this is the incoming url: " + req.getRequestURI());

@@ -249,7 +249,7 @@ public class UBDispatchFilter implements DisposableBean, Filter
         {
             // stale path mapper entry
             servletPathMapper.put(servletKey, null);
-            throw new IllegalStateException("Bad servlet: " + servletKey);
+            throw new IllegalStateException("Servlet not found but expected: " + servletKey);
         }
         if (!entry.initialized)
         {

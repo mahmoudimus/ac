@@ -1,7 +1,7 @@
 package it;
 
-import com.atlassian.labs.remoteapps.apputils.OAuthContext;
 import com.atlassian.labs.remoteapps.test.RemoteAppRunner;
+import com.atlassian.labs.remoteapps.test.RunnerSignedRequestHandler;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpStatus;
 import org.junit.BeforeClass;
@@ -16,7 +16,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 
-import static com.atlassian.labs.remoteapps.test.Utils.createOAuthContext;
+import static com.atlassian.labs.remoteapps.test.Utils.createSignedRequestHandler;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -54,11 +54,11 @@ public class TestRedirects extends AbstractBrowserlessTest
     public void testOAuthRedirect() throws Exception, InterruptedException,
             NoSuchAlgorithmException
     {
-        OAuthContext oAuthContext = createOAuthContext("oauthRedirect");
+        RunnerSignedRequestHandler signedRequestHandler = createSignedRequestHandler("oauthRedirect");
         RemoteAppRunner runner = new RemoteAppRunner(baseUrl,
                 "oauthRedirect")
                 .addGeneralPage("page", "Page", "/page", new MessageServlet())
-                .addOAuth(oAuthContext)
+                .addOAuth(signedRequestHandler)
                 .start();
 
         URL url = new URL(baseUrl + "/plugins/servlet/redirect/oauth?app_key=oauthRedirect&app_url=/page&message=bar");

@@ -44,11 +44,6 @@ public class ApplicationTypeClassLoader extends ClassLoader
         super(ApplicationTypeModuleGenerator.class.getClassLoader());
     }
     
-    public boolean hasApplicationType(String key)
-    {
-        return classes.containsKey(appKeyToClassName(key));
-    }
-
     public Class<? extends RemoteAppApplicationType> getApplicationType(String key)
     {
         try
@@ -151,5 +146,30 @@ public class ApplicationTypeClassLoader extends ClassLoader
                 b.length);
         classes.put(genClassName, clazz);
         return clazz;
+    }
+
+    public Class<? extends RemoteAppEntityType> generateEntityType(String appKey, String entityKey)
+    {
+        String genClassName = "generatedApplicationType/" + appKey + "/" + entityKey;
+        ClassWriter cw = new ClassWriter(0);
+        MethodVisitor mv;
+        cw.visit(V1_6, ACC_PUBLIC + ACC_SUPER, genClassName, null, "com/atlassian/labs/remoteapps/modules/applinks/RemoteAppEntityType", null);
+
+        mv = cw.visitMethod(ACC_PUBLIC, "<init>", "(Lcom/atlassian/applinks/spi/application/TypeId;Ljava/lang/Class;Ljava/lang/String;Ljava/lang/String;Ljava/net/URI;)V", "(Lcom/atlassian/applinks/spi/application/TypeId;Ljava/lang/Class<+Lcom/atlassian/labs/remoteapps/modules/applinks/RemoteAppApplicationType;>;Ljava/lang/String;Ljava/lang/String;Ljava/net/URI;)V", null);
+        mv.visitCode();
+        mv.visitVarInsn(ALOAD, 0);
+        mv.visitVarInsn(ALOAD, 1);
+        mv.visitVarInsn(ALOAD, 2);
+        mv.visitVarInsn(ALOAD, 3);
+        mv.visitVarInsn(ALOAD, 4);
+        mv.visitVarInsn(ALOAD, 5);
+        mv.visitMethodInsn(INVOKESPECIAL, "com/atlassian/labs/remoteapps/modules/applinks/RemoteAppEntityType", "<init>", "(Lcom/atlassian/applinks/spi/application/TypeId;Ljava/lang/Class;Ljava/lang/String;Ljava/lang/String;Ljava/net/URI;)V");
+        mv.visitInsn(RETURN);
+        mv.visitMaxs(6, 6);
+        mv.visitEnd();
+
+        cw.visitEnd();
+        byte[] b = cw.toByteArray();
+        return (Class<? extends RemoteAppEntityType>) defineClass(genClassName.replace("/", "."), b, 0, b.length);
     }
 }

@@ -7,7 +7,6 @@
                                  http://www.springframework.org/schema/beans
                                  http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <!-- The service does nothing.  This is only a hook to get Speakeasy to generate the right descriptors before the Spring context comes up. -->
     <reference id="conventionDescriptorGenerator" interface="com.atlassian.labs.remoteapps.api.DescriptorGenerator" />
 
     <beans:bean name="__generator_init" class="com.atlassian.labs.remoteapps.api.DescriptorGeneratorExecutor" autowire="constructor"/>

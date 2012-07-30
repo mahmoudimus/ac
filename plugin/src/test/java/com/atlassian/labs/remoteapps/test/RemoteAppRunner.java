@@ -1,7 +1,5 @@
 package com.atlassian.labs.remoteapps.test;
 
-import com.atlassian.labs.remoteapps.apputils.Environment;
-import com.atlassian.labs.remoteapps.apputils.OAuthContext;
 import net.oauth.signature.RSA_SHA1;
 import org.dom4j.Document;
 import org.dom4j.DocumentFactory;
@@ -86,11 +84,11 @@ public class RemoteAppRunner
         return this;
     }
 
-    public RemoteAppRunner addOAuth(OAuthContext oAuthContext) throws NoSuchAlgorithmException, IOException
+    public RemoteAppRunner addOAuth(RunnerSignedRequestHandler signedRequestHandler) throws NoSuchAlgorithmException, IOException
     {
         doc.getRootElement().addElement("oauth")
                 .addElement("public-key")
-                    .addText(oAuthContext.getLocal().getProperty(RSA_SHA1.PUBLIC_KEY).toString());
+                    .addText(signedRequestHandler.getLocal().getProperty(RSA_SHA1.PUBLIC_KEY).toString());
 
         return this;
     }

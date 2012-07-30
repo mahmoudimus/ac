@@ -1,8 +1,8 @@
-package com.atlassian.labs.remoteapps.apputils.kit;
+package com.atlassian.labs.remoteapps.container.internal.kit;
 
 import com.atlassian.labs.remoteapps.api.RemoteAppDescriptorAccessor;
-import com.atlassian.labs.remoteapps.apputils.Environment;
-import com.atlassian.labs.remoteapps.apputils.OAuthContext;
+import com.atlassian.labs.remoteapps.container.internal.Environment;
+import com.atlassian.labs.remoteapps.container.services.ContainerOAuthSignedRequestHandler;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 import org.slf4j.Logger;
@@ -23,13 +23,13 @@ public class RegistrationFilter implements Filter
 {
     private final String secret;
     private final RemoteAppDescriptorAccessor descriptorAccessor;
-    private final OAuthContext oAuthContext;
+    private final ContainerOAuthSignedRequestHandler requestHandler;
     private static final Logger log = LoggerFactory.getLogger(RegistrationFilter.class);
 
-    public RegistrationFilter(RemoteAppDescriptorAccessor descriptor, Environment environment, OAuthContext oAuthContext)
+    public RegistrationFilter(RemoteAppDescriptorAccessor descriptor, Environment environment, ContainerOAuthSignedRequestHandler requestHandler)
     {
         this.descriptorAccessor = descriptor;
-        this.oAuthContext = oAuthContext;
+        this.requestHandler = requestHandler;
         this.secret = environment.getOptionalEnv("REGISTRATION_SECRET", "");
     }
 
@@ -78,7 +78,7 @@ public class RegistrationFilter implements Filter
                 String baseUrl = req.getParameter("baseUrl");
 
                 log.info("Registering host - key: '{}' baseUrl: '{}'", oauthKey, baseUrl);
-                oAuthContext.addHost(oauthKey, publicKey, baseUrl);
+                requestHandler.addHost(oauthKey, publicKey, baseUrl);
             }
             else
             {

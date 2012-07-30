@@ -76,6 +76,20 @@
     </dependencies>
 
     <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.twdata.maven</groupId>
+                    <artifactId>maven-cli-plugin</artifactId>
+                    <version>1.0.4</version>
+                    <configuration>
+                        <commands>
+                            <pi>resources com.atlassian.maven.plugins:maven-amps-plugin:filter-plugin-descriptor compile com.atlassian.maven.plugins:maven-amps-plugin:copy-bundled-dependencies org.codehaus.mojo:xml-maven-plugin:transform com.atlassian.maven.plugins:maven-amps-plugin:generate-manifest com.atlassian.maven.plugins:maven-amps-plugin:jar com.atlassian.maven.plugins:maven-amps-plugin:install</pi>
+                        </commands>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
@@ -108,6 +122,7 @@
                             com.atlassian.labs.remoteapps.api.services,
                             com.atlassian.labs.remoteapps.api.services.impl,
                             com.atlassian.plugin.osgi.bridge.external,
+                            com.atlassian.sal.api.pluginsettings,
                             com.atlassian.labs.remoteapps.modules.page.jira;resolution:=optional,
                             com.atlassian.jira.plugin.searchrequestview;resolution:=optional,
                             *;resolution:=optional,
@@ -116,6 +131,37 @@
                         <Remote-App>true</Remote-App>
                     </instructions>
                     <skipManifestValidation>true</skipManifestValidation>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>xml-maven-plugin</artifactId>
+                <version>1.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>transform</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                    </execution>
+                </executions>
+                <configuration>
+                    <transformationSets>
+                        <transformationSet>
+                            <dir>${project.build.outputDirectory}</dir>
+                            <includes>
+                                <include>atlassian-plugin.xml</include>
+                            </includes>
+                            <stylesheet>${basedir}/../plugin/src/main/build/plugin-merge.xsl</stylesheet>
+                            <outputDir>${project.build.outputDirectory}</outputDir>
+                            <parameters>
+                                <parameter>
+                                    <name>baseDir</name>
+                                    <value>${project.build.outputDirectory}</value>
+                                </parameter>
+                            </parameters>
+                        </transformationSet>
+                    </transformationSets>
                 </configuration>
             </plugin>
         </plugins>

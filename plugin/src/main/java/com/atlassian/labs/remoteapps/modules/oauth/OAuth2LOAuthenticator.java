@@ -36,7 +36,7 @@ public class OAuth2LOAuthenticator implements Authenticator
      */
     private static final String FORWARD_REQUEST_URI = "javax.servlet.forward.request_uri";
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final static Logger log = LoggerFactory.getLogger(OAuth2LOAuthenticator.class);
 
     private final OAuthLinkManager oAuthLinkManager;
     private final AuthenticationController authenticationController;
@@ -172,7 +172,7 @@ public class OAuth2LOAuthenticator implements Authenticator
         /*!-helper methods*/
     }
 
-    private String getLogicalUri(HttpServletRequest request)
+    public static String getLogicalUri(HttpServletRequest request)
     {
         String uriPathBeforeForwarding = (String) request.getAttribute(FORWARD_REQUEST_URI);
         if (uriPathBeforeForwarding == null)

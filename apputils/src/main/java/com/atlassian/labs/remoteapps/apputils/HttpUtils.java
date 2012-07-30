@@ -1,5 +1,6 @@
 package com.atlassian.labs.remoteapps.apputils;
 
+import com.atlassian.labs.remoteapps.api.services.SignedRequestHandler;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.samskivert.mustache.Mustache;
@@ -18,11 +19,11 @@ import java.util.Map;
 public class HttpUtils
 {
     private final Plugin plugin;
-    private final OAuthContext oAuthContext;
+    private final SignedRequestHandler signedRequestHandler;
 
-    public HttpUtils(PluginRetrievalService pluginRetrievalService, OAuthContext oAuthContext)
+    public HttpUtils(PluginRetrievalService pluginRetrievalService, SignedRequestHandler signedRequestHandler)
     {
-        this.oAuthContext = oAuthContext;
+        this.signedRequestHandler = signedRequestHandler;
         this.plugin = pluginRetrievalService.getPlugin();
     }
     public void renderHtml(HttpServletResponse resp, String template, Map<String, Object> context) throws IOException
@@ -68,7 +69,7 @@ public class HttpUtils
         {
             URL url = new URL(uri + "?user_id=" + user);
             HttpURLConnection yc = (HttpURLConnection) url.openConnection();
-            oAuthContext.sign(uri, "GET", user, yc);
+            signedRequestHandler.sign(uri, "GET", user, yc);
             BufferedReader in = new BufferedReader(
                                     new InputStreamReader(
                                     yc.getInputStream()));
@@ -100,7 +101,7 @@ public class HttpUtils
         {
             URL url = new URL(uri + "?user_id=" + user);
             yc = (HttpURLConnection) url.openConnection();
-            oAuthContext.sign(uri, "GET", user, yc);
+            signedRequestHandler.sign(uri, "GET", user, yc);
             BufferedReader in = new BufferedReader(
                                     new InputStreamReader(
                                     yc.getInputStream()));

@@ -1,6 +1,6 @@
 package servlets;
 
-import com.atlassian.labs.remoteapps.apputils.OAuthContext;
+import com.atlassian.labs.remoteapps.api.services.SignedRequestHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -17,12 +17,12 @@ import java.io.PrintWriter;
 @Component
 public class MyImageMacroServlet extends HttpServlet
 {
-    private final OAuthContext oAuthContext;
+    private final SignedRequestHandler signedRequestHandler;
 
     @Autowired
-    public MyImageMacroServlet(OAuthContext oAuthContext)
+    public MyImageMacroServlet(SignedRequestHandler signedRequestHandler)
     {
-        this.oAuthContext = oAuthContext;
+        this.signedRequestHandler = signedRequestHandler;
     }
 
     @Override
@@ -30,7 +30,7 @@ public class MyImageMacroServlet extends HttpServlet
     {
         resp.setContentType("text/html");
         PrintWriter writer = resp.getWriter();
-        writer.print("<img src=\"" + oAuthContext.getLocalBaseUrl() + "/sandcastles.jpg\" alt=\"sandcastles\"/>");
+        writer.print("<img src=\"" + signedRequestHandler.getLocalBaseUrl() + "/sandcastles.jpg\" alt=\"sandcastles\"/>");
         writer.close(); 
     }
 }

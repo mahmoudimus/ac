@@ -118,7 +118,15 @@ public class OAuthLinkManager
         Consumer consumer = serviceProviderConsumerStore.get(consumerKey);
         if (consumer == null)
         {
-            throw new OAuthProblemException("Unknown consumer: " + consumerKey);
+            Consumer self = consumerService.getConsumer();
+            if (self.getKey().equals(consumerKey))
+            {
+                consumer = self;
+            }
+            else
+            {
+                throw new OAuthProblemException("Unknown consumer: " + consumerKey);
+            }
         }
         final OAuthConsumer oauthConsumer = new OAuthConsumer(null,
                 consumer.getKey(),

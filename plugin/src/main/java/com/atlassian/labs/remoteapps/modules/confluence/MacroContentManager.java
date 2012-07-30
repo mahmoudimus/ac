@@ -1,6 +1,5 @@
 package com.atlassian.labs.remoteapps.modules.confluence;
 
-import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.confluence.content.render.xhtml.XhtmlCleaner;
 import com.atlassian.confluence.core.ContentEntityObject;
 import com.atlassian.confluence.event.events.content.page.PageEvent;
@@ -8,8 +7,8 @@ import com.atlassian.confluence.event.events.content.page.PageViewEvent;
 import com.atlassian.confluence.xhtml.api.XhtmlContent;
 import com.atlassian.event.api.EventListener;
 import com.atlassian.event.api.EventPublisher;
-import com.atlassian.labs.remoteapps.ApplicationLinkAccessor;
 import com.atlassian.labs.remoteapps.ContentRetrievalException;
+import com.atlassian.labs.remoteapps.RemoteAppAccessorFactory;
 import com.atlassian.labs.remoteapps.util.http.CachingHttpContentRetriever;
 import com.atlassian.labs.remoteapps.util.http.bigpipe.BigPipe;
 import com.atlassian.labs.remoteapps.util.http.bigpipe.BigPipeHttpContentHandler;
@@ -21,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 
+import java.net.URI;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.regex.Pattern;
@@ -32,22 +32,22 @@ public class MacroContentManager implements DisposableBean
     private final XhtmlCleaner xhtmlCleaner;
     private final MacroContentLinkParser macroContentLinkParser;
     private final CachingHttpContentRetriever cachingHttpContentRetriever;
-    private final ApplicationLinkAccessor applicationLinkAccessor;
     private final BigPipe bigPipe;
     private final XhtmlContent xhtmlUtils;
+    private final RemoteAppAccessorFactory remoteAppAccessorFactory;
 
     private static final Logger log = LoggerFactory.getLogger(MacroContentManager.class);
 
     public MacroContentManager(EventPublisher eventPublisher,
             CachingHttpContentRetriever cachingHttpContentRetriever,
-            ApplicationLinkAccessor applicationLinkAccessor,
-            MacroContentLinkParser macroContentLinkParser, BigPipe bigPipe, XhtmlContent xhtmlUtils)
+            MacroContentLinkParser macroContentLinkParser, BigPipe bigPipe, XhtmlContent xhtmlUtils,
+            RemoteAppAccessorFactory remoteAppAccessorFactory)
     {
         this.eventPublisher = eventPublisher;
         this.cachingHttpContentRetriever = cachingHttpContentRetriever;
-        this.applicationLinkAccessor = applicationLinkAccessor;
         this.bigPipe = bigPipe;
         this.xhtmlUtils = xhtmlUtils;
+        this.remoteAppAccessorFactory = remoteAppAccessorFactory;
         this.eventPublisher.register(this);
         // HACK: Use ComponentLocator until fix for CONFDEV-7103 is available.
         this.xhtmlCleaner = ComponentLocator.getComponent(XhtmlCleaner.class);
@@ -172,16 +172,16 @@ public class MacroContentManager implements DisposableBean
      */
     public void clearContentByPluginKey(String pluginKey)
     {
-        ApplicationLink link = applicationLinkAccessor.getApplicationLink(pluginKey);
+        URI displayUrl = remoteAppAccessorFactory.create(pluginKey).getDisplayUrl();
         cachingHttpContentRetriever.flushCacheByUrlPattern(
-                Pattern.compile("^" + link.getDisplayUrl() + "/.*"));
+                Pattern.compile("^" + displayUrl + "/.*"));
     }
 
     public void clearContentByInstance(String pluginKey, String instanceKey)
     {
-        ApplicationLink link = applicationLinkAccessor.getApplicationLink(pluginKey);
+        URI displayUrl = remoteAppAccessorFactory.create(pluginKey).getDisplayUrl();
         cachingHttpContentRetriever.flushCacheByUrlPattern(
-                Pattern.compile("^" + link.getDisplayUrl() + "/.*key=" + instanceKey + ".*"));
+                Pattern.compile("^" + displayUrl + "/.*key=" + instanceKey + ".*"));
     }
 
     @Override

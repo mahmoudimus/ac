@@ -87,6 +87,14 @@
         </dependency>
 
         <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>remoteapps-container</artifactId>
+            <version>${project.version}</version>
+            <type>jar</type>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.jvnet.hudson</groupId>
             <artifactId>jira-api</artifactId>
             <version>1.0</version>
@@ -152,6 +160,12 @@
         <dependency>
             <groupId>com.atlassian.oauth</groupId>
             <artifactId>atlassian-oauth-service-provider-spi</artifactId>
+            <version>${oauth.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.oauth</groupId>
+            <artifactId>atlassian-oauth-bridge</artifactId>
             <version>${oauth.version}</version>
             <scope>provided</scope>
         </dependency>
@@ -431,7 +445,16 @@
                     <version>1.0.4</version>
                     <configuration>
                         <commands>
-                            <pi>resources com.atlassian.maven.plugins:maven-amps-plugin:filter-plugin-descriptor compile com.atlassian.maven.plugins:maven-amps-plugin:copy-bundled-dependencies net.alchim31.maven:yuicompressor-maven-plugin:compress org.codehaus.mojo:xml-maven-plugin:transform com.atlassian.maven.plugins:maven-amps-plugin:generate-manifest com.atlassian.maven.plugins:maven-amps-plugin:jar com.atlassian.maven.plugins:maven-amps-plugin:install</pi>
+                            <pi>resources
+                                com.atlassian.maven.plugins:maven-amps-plugin:filter-plugin-descriptor
+                                compile
+                                com.atlassian.maven.plugins:maven-amps-plugin:copy-bundled-dependencies
+                                net.alchim31.maven:yuicompressor-maven-plugin:compress
+                                org.codehaus.mojo:xml-maven-plugin:transform
+                                com.atlassian.maven.plugins:maven-amps-plugin:generate-manifest
+                                com.atlassian.maven.plugins:maven-amps-plugin:jar
+                                com.atlassian.maven.plugins:maven-amps-plugin:install
+                            </pi>
                             <docco>ru.circumflex:maven-cx-plugin:docco#docco</docco>
                         </commands>
                     </configuration>
@@ -466,7 +489,8 @@
                             org.slf4j*;version="1.5",
                             *;resolution:=optional
                         </Import-Package>
-                        <DynamicImport-Package>com.atlassian.labs.speakeasy.*</DynamicImport-Package>
+                        <DynamicImport-Package>com.atlassian.labs.speakeasy.*
+                        </DynamicImport-Package>
                         <Export-Package>
                             com.atlassian.labs.remoteapps.modules.confluence,
                             com.atlassian.labs.remoteapps.modules.permissions.scope,
@@ -486,7 +510,8 @@
                     <systemPropertyVariables>
                         <xvfb.enable>${xvfb.enable}</xvfb.enable>
                         <atlassian.mail.senddisabled>false</atlassian.mail.senddisabled>
-                        <sun.net.http.allowRestrictedHeaders>true</sun.net.http.allowRestrictedHeaders>
+                        <sun.net.http.allowRestrictedHeaders>true
+                        </sun.net.http.allowRestrictedHeaders>
                         <!--atlassian.dev.mode>false</atlassian.dev.mode-->
                     </systemPropertyVariables>
                     <!-- uncomment when it is safe to upgrade amps:  https://studio.atlassian.com/browse/AMPS-663 -->
@@ -514,7 +539,8 @@
                         <product>
                             <id>refapp</id>
                             <version>${refapp.version}</version>
-                            <log4jProperties>src/test/resources/log4j-refapp.properties</log4jProperties>
+                            <log4jProperties>src/test/resources/log4j-refapp.properties
+                            </log4jProperties>
                             <libArtifacts>
                                 <!-- necessary for Speakeasy mail handling -->
                                 <libArtifact>
@@ -577,7 +603,9 @@
                             <version>${confluence.version}</version>
                             <log4jProperties>src/test/resources/log4j-confluence.properties
                             </log4jProperties>
-                            <productDataPath>${basedir}/src/test/resources/confluence-generated-test-resources.zip</productDataPath>
+                            <productDataPath>
+                                ${basedir}/src/test/resources/confluence-generated-test-resources.zip
+                            </productDataPath>
                             <systemPropertyVariables>
                                 <product>confluence</product>
                             </systemPropertyVariables>
@@ -620,7 +648,9 @@
                                 <productId>confluence</productId>
                             </productIds>
                             <systemProperties>
-                                <testedProductClass>com.atlassian.labs.remoteapps.test.confluence.FixedConfluenceTestedProduct</testedProductClass>
+                                <testedProductClass>
+                                    com.atlassian.labs.remoteapps.test.confluence.FixedConfluenceTestedProduct
+                                </testedProductClass>
                             </systemProperties>
                             <excludes>
                                 <exclude>it/jira/*.java</exclude>
@@ -632,7 +662,9 @@
                                 <productId>jira</productId>
                             </productIds>
                             <systemProperties>
-                                <testedProductClass>com.atlassian.jira.pageobjects.JiraTestedProduct</testedProductClass>
+                                <testedProductClass>
+                                    com.atlassian.jira.pageobjects.JiraTestedProduct
+                                </testedProductClass>
                             </systemProperties>
                             <excludes>
                                 <exclude>it/confluence/*.java</exclude>
@@ -662,7 +694,8 @@
                                 </Import-Package>
                                 <Export-Package></Export-Package>
                             </instructions>
-                            <manifestLocation>${project.build.testOutputDirectory}/META-INF</manifestLocation>
+                            <manifestLocation>${project.build.testOutputDirectory}/META-INF
+                            </manifestLocation>
                             <classifier>tests</classifier>
                             <supportedProjectTypes>
                                 <supportedProjectType>atlassian-plugin</supportedProjectType>
@@ -772,7 +805,8 @@
         <product>refapp</product>
         <confluence.plugins.version>2.10.1</confluence.plugins.version>
         <docco.pageTemplate>${basedir}/src/main/build/page.html.ftl</docco.pageTemplate>
-        <docco.indexTemplate>${basedir}/src/main/build/atlassian-remote-app.xml.ftl</docco.indexTemplate>
+        <docco.indexTemplate>${basedir}/src/main/build/atlassian-remote-app.xml.ftl
+        </docco.indexTemplate>
         <docco.indexFile>atlassian-remote-app.xml</docco.indexFile>
     </properties>
 

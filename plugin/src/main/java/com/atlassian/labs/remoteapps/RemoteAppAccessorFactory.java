@@ -59,30 +59,22 @@ public class RemoteAppAccessorFactory
 
     public RemoteAppAccessor create(String pluginKey)
     {
-        return create(pluginKey, applicationLinkAccessor.getApplicationTypeIfFound(pluginKey));
+
+        RemoteAppApplicationType appType = applicationLinkAccessor
+                .getApplicationTypeIfFound(
+                        pluginKey);
+
+        return create(pluginKey, appType != null ? appType.getDefaultDetails().getDisplayUrl() : URI.create(ubDispatchFilter.getLocalMountBaseUrl(pluginKey)));
     }
 
-    public RemoteAppAccessor create(String pluginKey, RemoteAppApplicationType applicationType)
+    public RemoteAppAccessor create(String pluginKey, URI displayUrl)
     {
         Plugin plugin = pluginAccessor.getPlugin(pluginKey);
         URI dummyUri = URI.create("http://localhost");
         ServiceProvider dummyProvider = new ServiceProvider(dummyUri, dummyUri, dummyUri);
 
-        if (applicationType != null)
-        {
-            URI displayUrl = applicationType.getDefaultDetails().getDisplayUrl();
-            // don't need to get the actual provider as it doesn't really matter
-            return new OAuthSigningRemoteAppAccessor(pluginKey, plugin.getName(), displayUrl, dummyProvider);
-        }
-        else
-        {
-            return new OAuthSigningRemoteAppAccessor(
-                    pluginKey,
-                    plugin.getName(),
-                    URI.create(ubDispatchFilter.getLocalMountBaseUrl(pluginKey)),
-                    dummyProvider
-            );
-        }
+        // don't need to get the actual provider as it doesn't really matter
+        return new OAuthSigningRemoteAppAccessor(pluginKey, plugin.getName(), displayUrl, dummyProvider);
     }
 
     private class OAuthSigningRemoteAppAccessor implements RemoteAppAccessor

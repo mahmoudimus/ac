@@ -3,6 +3,7 @@ package com.atlassian.labs.remoteapps.api;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.io.SAXReader;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
 import java.net.URL;
@@ -16,26 +17,42 @@ public class DescriptorGeneratorExecutor
     public DescriptorGeneratorExecutor(DescriptorGenerator descriptorGenerator,
             BundleContext bundleContext) throws Exception
     {
-        URL descriptorUrl = bundleContext.getBundle().getEntry("atlassian-remote-app.xml");
-        if (descriptorUrl == null)
-        {
-            throw new IllegalStateException("Cannot find remote app descriptor");
-        }
-        descriptorGenerator.init(parseDocument(descriptorUrl));
+        descriptorGenerator.init(new DocumentRemoteAppDescriptorAccessor(bundleContext.getBundle()));
     }
 
-    public static Document parseDocument(URL xmlUrl)
+    public static class DocumentRemoteAppDescriptorAccessor implements RemoteAppDescriptorAccessor
     {
         Document source;
-        try
+        URL sourceUrl;
+        public DocumentRemoteAppDescriptorAccessor(Bundle bundle)
         {
-            source = XmlUtils.createSecureSaxReader().read(xmlUrl);
-        }
-        catch (DocumentException e)
-        {
-            throw new IllegalArgumentException("Unable to parse descriptor at " + xmlUrl.toString(), e);
+            try
+            {
+                sourceUrl = bundle.getEntry("atlassian-remote-app.xml");
+                source = XmlUtils.createSecureSaxReader().read(sourceUrl);
+            }
+            catch (DocumentException e)
+            {
+                throw new IllegalArgumentException("Unable to parse generated descriptor", e);
+            }
         }
 
-        return source;
+        @Override
+        public Document getDescriptor()
+        {
+            return source;
+        }
+
+        @Override
+        public String getKey()
+        {
+            return source.getRootElement().attributeValue("key");
+        }
+
+        @Override
+        public URL getDescriptorUrl()
+        {
+            return sourceUrl;
+        }
     }
 }

@@ -23,5 +23,4 @@ public class TestWebHooks extends AbstractBrowserlessTest
             }
         });
 	}
-
 }

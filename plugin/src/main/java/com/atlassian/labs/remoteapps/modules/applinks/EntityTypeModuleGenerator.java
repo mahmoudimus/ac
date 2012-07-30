@@ -28,25 +28,20 @@ import java.util.Set;
 
 import static com.atlassian.labs.remoteapps.util.Dom4jUtils.*;
 import static java.util.Collections.emptyMap;
+import static java.util.Collections.emptySet;
 import static org.objectweb.asm.Opcodes.*;
 
 /**
  * Creates applink entity types
  */
 @Component
-public class EntityTypeModuleGenerator implements WaitableRemoteModuleGenerator
+public class EntityTypeModuleGenerator implements RemoteModuleGenerator
 {
     private final Plugin plugin;
-    private final ApplicationLinkAccessor applicationLinkAccessor;
-    private final AggregateModuleDescriptorFactory aggregateModuleDescriptorFactory;
 
     @Autowired
-    public EntityTypeModuleGenerator(PluginRetrievalService pluginRetrievalService,
-            ApplicationLinkAccessor applicationLinkAccessor,
-            AggregateModuleDescriptorFactory aggregateModuleDescriptorFactory)
+    public EntityTypeModuleGenerator(PluginRetrievalService pluginRetrievalService)
     {
-        this.applicationLinkAccessor = applicationLinkAccessor;
-        this.aggregateModuleDescriptorFactory = aggregateModuleDescriptorFactory;
         this.plugin = pluginRetrievalService.getPlugin();
     }
 
@@ -80,12 +75,6 @@ public class EntityTypeModuleGenerator implements WaitableRemoteModuleGenerator
     }
 
     @Override
-    public void waitToLoad(Element element)
-    {
-        aggregateModuleDescriptorFactory.waitForRequiredDescriptors("applinks-entity-type");
-    }
-
-    @Override
     public Map<String, String> getI18nMessages(String pluginKey, Element element)
     {
         return emptyMap();
@@ -94,23 +83,12 @@ public class EntityTypeModuleGenerator implements WaitableRemoteModuleGenerator
     @Override
     public RemoteModule generate(RemoteAppCreationContext ctx, Element entity)
     {
-        AppTypesClassLoader appTypesClassLoader = new AppTypesClassLoader();
-        String pluginKey = ctx.getPlugin().getKey();
-        Class<? extends RemoteAppApplicationType> applicationTypeClass = applicationLinkAccessor.getApplicationTypeClass(
-                pluginKey);
-        RemoteAppEntityType entityType = createEntityType(appTypesClassLoader, pluginKey, applicationTypeClass, entity);
-        final Set<ModuleDescriptor> descriptors = ImmutableSet.<ModuleDescriptor>of(createEntityTypeDescriptor(ctx, entityType, entity));
-        return new StartableRemoteModule()
+        return new RemoteModule()
         {
             @Override
             public Set<ModuleDescriptor> getModuleDescriptors()
             {
-                return descriptors;
-            }
-
-            @Override
-            public void start()
-            {
+                return emptySet();
             }
         };
     }
@@ -123,110 +101,5 @@ public class EntityTypeModuleGenerator implements WaitableRemoteModuleGenerator
     @Override
     public void generatePluginDescriptor(Element descriptorElement, Element pluginDescriptorRoot)
     {
-    }
-
-    private RemoteAppEntityType createEntityType(AppTypesClassLoader appTypesClassLoader, String appKey,
-            Class<? extends RemoteAppApplicationType> applicationTypeClass, Element element)
-    {
-        try
-        {
-            String key = getRequiredAttribute(element, "key");
-            Class<? extends RemoteAppEntityType> entityTypeClass = appTypesClassLoader.generateEntityType(appKey, key);
-            URI icon = getOptionalUriAttribute(element, "icon-url");
-            String label = getRequiredAttribute(element, "name");
-            TypeId entityId = new TypeId(appKey + "." + key);
-            String pluralizedI18nKey = getRequiredAttribute(element, "pluralized-name");
-            return entityTypeClass.getConstructor(TypeId.class, Class.class, String.class, String.class, URI.class)
-                                .newInstance(entityId, applicationTypeClass, label, pluralizedI18nKey, icon);
-        }
-        catch (NoSuchMethodException e)
-        {
-            throw new PluginParseException(e);
-        }
-        catch (InvocationTargetException e)
-        {
-            throw new PluginParseException(e);
-        }
-        catch (InstantiationException e)
-        {
-            throw new PluginParseException(e);
-        }
-        catch (IllegalAccessException e)
-        {
-            throw new PluginParseException(e);
-        }
-    }
-
-
-    private ModuleDescriptor<EntityType> createEntityTypeDescriptor(RemoteAppCreationContext ctx, final RemoteAppEntityType entityType, Element element)
-    {
-        Element desc = element.createCopy();
-        String key = getRequiredAttribute(element, "key");
-        desc.addAttribute("key", "entityType-" + key);
-        desc.addAttribute("class", entityType.getClass().getName());
-
-        Class<? extends ModuleDescriptor> descClass = ctx.getModuleDescriptorFactory().getModuleDescriptorClass("applinks-entity-type");
-        try
-        {
-            ModuleDescriptor descriptor = descClass.getConstructor(ModuleFactory.class).newInstance(new ModuleFactory()
-            {
-                @Override
-                public <T> T createModule(String s, ModuleDescriptor<T> tModuleDescriptor) throws PluginParseException
-                {
-                    return (T) entityType;
-                }
-            });
-            descriptor.init(ctx.getPlugin(), desc);
-            return descriptor;
-        }
-        catch (InstantiationException e)
-        {
-            throw new PluginParseException(e);
-        }
-        catch (IllegalAccessException e)
-        {
-            throw new PluginParseException(e);
-        }
-        catch (InvocationTargetException e)
-        {
-            throw new PluginParseException(e);
-        }
-        catch (NoSuchMethodException e)
-        {
-            throw new PluginParseException(e);
-        }
-    }
-
-    private static class AppTypesClassLoader extends ClassLoader
-    {
-        public AppTypesClassLoader()
-        {
-            super(EntityTypeModuleGenerator.class.getClassLoader());
-        }
-
-        public Class<? extends RemoteAppEntityType> generateEntityType(String appKey, String entityKey)
-        {
-            String genClassName = "generatedApplicationType/" + appKey + "/" + entityKey;
-            ClassWriter cw = new ClassWriter(0);
-            MethodVisitor mv;
-            cw.visit(V1_6, ACC_PUBLIC + ACC_SUPER, genClassName, null, "com/atlassian/labs/remoteapps/modules/applinks/RemoteAppEntityType", null);
-
-            mv = cw.visitMethod(ACC_PUBLIC, "<init>", "(Lcom/atlassian/applinks/spi/application/TypeId;Ljava/lang/Class;Ljava/lang/String;Ljava/lang/String;Ljava/net/URI;)V", "(Lcom/atlassian/applinks/spi/application/TypeId;Ljava/lang/Class<+Lcom/atlassian/labs/remoteapps/modules/applinks/RemoteAppApplicationType;>;Ljava/lang/String;Ljava/lang/String;Ljava/net/URI;)V", null);
-            mv.visitCode();
-            mv.visitVarInsn(ALOAD, 0);
-            mv.visitVarInsn(ALOAD, 1);
-            mv.visitVarInsn(ALOAD, 2);
-            mv.visitVarInsn(ALOAD, 3);
-            mv.visitVarInsn(ALOAD, 4);
-            mv.visitVarInsn(ALOAD, 5);
-            mv.visitMethodInsn(INVOKESPECIAL, "com/atlassian/labs/remoteapps/modules/applinks/RemoteAppEntityType", "<init>", "(Lcom/atlassian/applinks/spi/application/TypeId;Ljava/lang/Class;Ljava/lang/String;Ljava/lang/String;Ljava/net/URI;)V");
-            mv.visitInsn(RETURN);
-            mv.visitMaxs(6, 6);
-            mv.visitEnd();
-
-            cw.visitEnd();
-            byte[] b = cw.toByteArray();
-            return (Class<? extends RemoteAppEntityType>) defineClass(genClassName.replace("/", "."), b, 0, b.length);
-        }
     }
 }

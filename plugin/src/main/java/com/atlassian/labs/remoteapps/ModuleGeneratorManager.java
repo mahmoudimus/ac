@@ -52,6 +52,8 @@ public class ModuleGeneratorManager
 
     public void processDescriptor(Element root, ModuleHandler handler)
     {
+        handler.handle(root, applicationTypeModuleGenerator);
+
         for (Element e : ((Collection<Element>)root.elements()))
         {
             String key = e.getName();

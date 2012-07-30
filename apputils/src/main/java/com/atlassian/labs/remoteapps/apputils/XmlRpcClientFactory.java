@@ -1,5 +1,6 @@
 package com.atlassian.labs.remoteapps.apputils;
 
+import com.atlassian.labs.remoteapps.api.services.SignedRequestHandler;
 import redstone.xmlrpc.XmlRpcClient;
 
 import java.net.MalformedURLException;
@@ -9,20 +10,20 @@ import java.net.MalformedURLException;
  */
 public class XmlRpcClientFactory
 {
-    private final OAuthContext oauthContext;
+    private final SignedRequestHandler signedRequestHandler;
 
-    public XmlRpcClientFactory(OAuthContext oauthContext)
+    public XmlRpcClientFactory(SignedRequestHandler signedRequestHandler)
     {
-        this.oauthContext = oauthContext;
+        this.signedRequestHandler = signedRequestHandler;
     }
 
     public XmlRpcClient create(String appKey, String userId) throws MalformedURLException
     {
         // todo: fix this but in doing so, make sure it works in the same app that needs to pass base url
-        String baseUrl = appKey.startsWith("http") ? appKey : oauthContext.getHostBaseUrl(appKey);
+        String baseUrl = appKey.startsWith("http") ? appKey : signedRequestHandler.getHostBaseUrl(appKey);
         final String url = baseUrl + "/rpc/xmlrpc";
         XmlRpcClient client = new XmlRpcClient(url + "?user_id=" + userId, false);
-        client.setRequestProperty("Authorization", oauthContext.getAuthorizationHeaderValue(
+        client.setRequestProperty("Authorization", signedRequestHandler.getAuthorizationHeaderValue(
                 url, "POST", userId));
         return client;
     }

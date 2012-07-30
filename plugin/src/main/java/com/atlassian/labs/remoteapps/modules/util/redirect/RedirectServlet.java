@@ -1,7 +1,5 @@
 package com.atlassian.labs.remoteapps.modules.util.redirect;
 
-import com.atlassian.applinks.api.ApplicationLink;
-import com.atlassian.labs.remoteapps.ApplicationLinkAccessor;
 import com.atlassian.labs.remoteapps.RemoteAppAccessor;
 import com.atlassian.labs.remoteapps.RemoteAppAccessorFactory;
 import com.atlassian.labs.remoteapps.util.uri.Uri;
@@ -9,7 +7,6 @@ import com.atlassian.labs.remoteapps.util.uri.UriBuilder;
 import com.atlassian.sal.api.user.UserManager;
 import com.google.common.base.Function;
 import com.google.common.collect.Maps;
-import com.opensymphony.workflow.util.ejb.remote.RemoteEJBCondition;
 import org.apache.commons.lang.Validate;
 import org.apache.http.HttpStatus;
 

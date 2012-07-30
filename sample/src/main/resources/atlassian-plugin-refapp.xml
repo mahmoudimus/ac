@@ -1,0 +1,6 @@
+<application key="refapp">
+    <permissions key="permissions">
+        <permission scope="resttest" />
+        <permission scope="read_app_links" />
+    </permissions>
+</application>
