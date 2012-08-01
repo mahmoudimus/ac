@@ -9,6 +9,8 @@ import com.atlassian.labs.remoteapps.api.services.PluginSettingsAsyncFactory;
 import com.atlassian.labs.remoteapps.api.services.SignedRequestHandler;
 import com.atlassian.labs.remoteapps.api.services.impl.DefaultPluginSettingsAsyncFactory;
 import com.atlassian.labs.remoteapps.container.ao.RemoteAppsDataSourceProvider;
+import com.atlassian.labs.remoteapps.container.internal.Environment;
+import com.atlassian.labs.remoteapps.container.internal.EnvironmentImplFactory;
 import com.atlassian.labs.remoteapps.container.services.event.RemoteAppsEventPublisher;
 import com.atlassian.labs.remoteapps.container.services.DescriptorGeneratorServiceFactory;
 import com.atlassian.labs.remoteapps.container.services.OAuthSignedRequestHandlerServiceFactory;

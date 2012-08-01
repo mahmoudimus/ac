@@ -9,6 +9,9 @@ http://www.springframework.org/schema/context
            http://www.springframework.org/schema/context/spring-context-2.5.xsd"
              default-autowire="autodetect">
 
+    <beans:bean id="bundleContext" class="com.atlassian.labs.remoteapps.apputils.spring.BundleContextFactoryBean" />
+    <beans:bean id="applicationContext" class="com.atlassian.labs.remoteapps.apputils.spring.ApplicationContextFactoryBean" />
+
     <beans:bean id="httpUtils" class="com.atlassian.labs.remoteapps.apputils.HttpUtils"
                 autowire="constructor"/>
 
