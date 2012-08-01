@@ -25,21 +25,35 @@
             Current location: <span id="location"></span>
         </div>
 
-        <h3>REST Response</h3>
+        <h3>HostHttpClient Response</h3>
         <div>
-            Status: <span id="rest-status"></span>
+            Status: <span id="server-http-status">{{httpGetStatus}}</span>
         </div>
         <div>
-            Status text: <span id="rest-status-text"></span>
+            Status text: <span id="server-http-status-text">{{httpGetStatusText}}</span>
         </div>
         <div>
-            Content-Type: <span id="rest-content-type"></span>
+            Content-Type: <span id="server-http-content-type">{{httpGetContentType}}</span>
         </div>
         <div>
-            Response text: <span id="rest-response-text"></span>
+            Entity: <span id="server-http-entity">{{httpGetEntity}}</span>
+        </div>
+
+        <h3>RA.request() Response</h3>
+        <div>
+            Status: <span id="client-http-status"></span>
         </div>
         <div>
-            Data: <span id="rest-data"></span>
+            Status text: <span id="client-http-status-text"></span>
+        </div>
+        <div>
+            Content-Type: <span id="client-http-content-type"></span>
+        </div>
+        <div>
+            Response text: <span id="client-http-response-text"></span>
+        </div>
+        <div>
+            Data: <span id="client-http-data"></span>
         </div>
 
         <h3>Links</h3>
@@ -49,13 +63,12 @@
         <a href="remoteAppGeneral/foo">App Foo</a><br>
 
         <h3>Images (Resize Test)</h3>
-        <img src="sandcastles.jpg">
+        <img src="public/sandcastles.jpg">
 
-        <script src="jquery-1.7.min.js" type="text/javascript"></script>
+        <script src="public/jquery-1.7.min.js" type="text/javascript"></script>
         <script type="text/javascript">
           (function () {
             // general api testing
-
             RA.getUser(function(user) {
               $("#user").text(user.fullName);
               $("#userId").text(user.id);
@@ -66,17 +79,15 @@
             });
 
             // basic request api testing
-
             function bindXhr(xhr) {
-              $("#rest-status").text(xhr.status);
-              $("#rest-status-text").text(xhr.statusText);
-              $("#rest-content-type").text(xhr.getResponseHeader("content-type"));
-              $("#rest-response-text").text(xhr.responseText);
+              $("#client-http-status").text(xhr.status);
+              $("#client-http-status-text").text(xhr.statusText);
+              $("#client-http-content-type").text(xhr.getResponseHeader("content-type"));
+              $("#client-http-response-text").text(xhr.responseText);
             }
-
             RA.request("/rest/remoteapptest/1/user", {
               success: function (data, statusText, xhr) {
-                $("#rest-data").text(data);
+                $("#client-http-data").text(data);
                 bindXhr(xhr);
               },
               error: function (xhr, statusText, errorThrown) {

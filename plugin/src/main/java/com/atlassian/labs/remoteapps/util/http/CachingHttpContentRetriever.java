@@ -1,12 +1,10 @@
 package com.atlassian.labs.remoteapps.util.http;
 
-import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.labs.remoteapps.ContentRetrievalException;
-import com.atlassian.labs.remoteapps.OAuthLinkManager;
 import com.atlassian.labs.remoteapps.RetrievalTimeoutException;
+import com.atlassian.labs.remoteapps.api.services.http.impl.RequestKiller;
 import com.atlassian.labs.remoteapps.util.uri.Uri;
 import com.atlassian.labs.remoteapps.util.uri.UriBuilder;
-import com.atlassian.oauth.ServiceProvider;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.util.concurrent.ThreadFactories;
@@ -23,13 +21,11 @@ import org.apache.http.conn.ConnectionReleaseTrigger;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.cache.CacheConfig;
 import org.apache.http.impl.client.cache.CachingHttpAsyncClient;
-import org.apache.http.impl.conn.ProxySelectorRoutePlanner;
 import org.apache.http.impl.nio.client.DefaultHttpAsyncClient;
 import org.apache.http.impl.nio.conn.AsyncSchemeRegistryFactory;
 import org.apache.http.impl.nio.conn.PoolingClientAsyncConnectionManager;
 import org.apache.http.impl.nio.reactor.DefaultConnectingIOReactor;
 import org.apache.http.impl.nio.reactor.IOReactorConfig;
-import org.apache.http.nio.client.HttpAsyncClient;
 import org.apache.http.nio.reactor.IOReactorException;
 import org.apache.http.nio.reactor.IOReactorExceptionHandler;
 import org.apache.http.params.HttpConnectionParams;
@@ -66,10 +62,10 @@ public class CachingHttpContentRetriever implements DisposableBean, HttpContentR
     CachingHttpAsyncClient httpClient;
     private final UserManager userManager;
     private final Logger log = LoggerFactory.getLogger(CachingHttpContentRetriever.class);
-    private final RequestTimeoutKiller requestKiller;
+    private final RequestKiller requestKiller;
 
     public CachingHttpContentRetriever(UserManager userManager,
-            PluginRetrievalService pluginRetrievalService, RequestTimeoutKiller requestKiller)
+            PluginRetrievalService pluginRetrievalService, RequestKiller requestKiller)
     {
         this.userManager = userManager;
         this.requestKiller = requestKiller;

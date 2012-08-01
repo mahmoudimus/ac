@@ -3,11 +3,12 @@ package com.atlassian.labs.remoteapps.container.services;
 import com.atlassian.labs.remoteapps.api.DescriptorGenerator;
 import com.atlassian.labs.remoteapps.api.RemoteAppDescriptorAccessor;
 import com.atlassian.labs.remoteapps.api.TransformingRemoteAppDescriptorAccessor;
+import com.atlassian.labs.remoteapps.api.services.RequestContext;
+import com.atlassian.labs.remoteapps.api.services.impl.AuthenticationFilter;
 import com.atlassian.labs.remoteapps.container.HttpServer;
 import com.atlassian.labs.remoteapps.container.internal.Environment;
 import com.atlassian.labs.remoteapps.container.internal.kit.RegistrationFilter;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import net.oauth.signature.RSA_SHA1;
 import org.dom4j.Document;
 import org.dom4j.Element;
@@ -29,14 +30,17 @@ public class DescriptorGeneratorLoader implements DescriptorGenerator
     private final Plugin plugin;
     private final ContainerOAuthSignedRequestHandler oAuthSignedRequestHandler;
     private final Environment environment;
+    private final RequestContext requestContext;
 
     public DescriptorGeneratorLoader(Plugin plugin, HttpServer httpServer,
-            ContainerOAuthSignedRequestHandler oAuthSignedRequestHandler, Environment environment)
+                                     ContainerOAuthSignedRequestHandler oAuthSignedRequestHandler, Environment environment,
+                                     RequestContext requestContext)
     {
         this.httpServer = httpServer;
         this.plugin = plugin;
         this.oAuthSignedRequestHandler = oAuthSignedRequestHandler;
         this.environment = environment;
+        this.requestContext = requestContext;
     }
 
     @Override
@@ -71,6 +75,7 @@ public class DescriptorGeneratorLoader implements DescriptorGenerator
         };
 
         mountFilter(new RegistrationFilter(transformedDescriptorAccessor, environment, oAuthSignedRequestHandler), "/");
+        mountFilter(new AuthenticationFilter(oAuthSignedRequestHandler, requestContext), "/*");
     }
 
     @Override

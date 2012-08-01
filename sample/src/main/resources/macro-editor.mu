@@ -1,7 +1,7 @@
 <html>
     <head>
         <script src="{{baseUrl}}/remoteapps/all.js" type="text/javascript"></script>
-        <script src="jquery-1.7.min.js" type="text/javascript"></script>
+        <script src="public/jquery-1.7.min.js" type="text/javascript"></script>
     </head>
     <body>
         <select id="footy">

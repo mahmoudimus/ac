@@ -31,8 +31,7 @@ public class RingoJsKitBootstrap
 
         RemoteAppDescriptorAccessor descriptorAccessor = getDescriptorAccessor();
 
-        // this is different than servlet kit because of how we mount a single handler on /
-        descriptorGenerator.mountStaticResources("/", "/public/*");
+        descriptorGenerator.mountStaticResources("", "/public/*");
 
         descriptorGenerator.mountServlet(servlet, "/");
 

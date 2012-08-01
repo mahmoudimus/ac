@@ -1,9 +1,8 @@
-package com.atlassian.labs.remoteapps.util.http;
+package com.atlassian.labs.remoteapps.api.services.http.impl;
 
 import org.apache.http.client.methods.AbortableHttpRequest;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.stereotype.Component;
 
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -17,18 +16,16 @@ import static com.google.common.collect.Sets.newHashSet;
  * this thread kills requests that may be trickling content down in such a way that doesn't trip
  * the socket timeout.
  */
-@Component
-public class RequestTimeoutKiller implements DisposableBean, Runnable, InitializingBean
+public class RequestKiller implements DisposableBean, Runnable, InitializingBean
 {
-    private final Set<RequestEntry> activeRequests = new CopyOnWriteArraySet
-            <RequestEntry>();
+    private final Set<RequestEntry> activeRequests = new CopyOnWriteArraySet<RequestEntry>();
     private final Thread killerThread;
 
-    public RequestTimeoutKiller()
+    public RequestKiller()
     {
         killerThread = new Thread(this, "http-request-killer");
-
     }
+
     public void registerRequest(AbortableHttpRequest request, int secondsToLive)
     {
         RequestEntry entry = new RequestEntry(request, secondsToLive);

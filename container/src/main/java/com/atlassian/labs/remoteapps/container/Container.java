@@ -6,12 +6,21 @@ import com.atlassian.labs.remoteapps.api.DescriptorGenerator;
 import com.atlassian.labs.remoteapps.api.PolygotRemoteAppDescriptorAccessor;
 import com.atlassian.labs.remoteapps.api.RemoteAppDescriptorAccessor;
 import com.atlassian.labs.remoteapps.api.services.PluginSettingsAsyncFactory;
+import com.atlassian.labs.remoteapps.api.services.RequestContext;
+import com.atlassian.labs.remoteapps.api.services.RequestContextServiceFactory;
 import com.atlassian.labs.remoteapps.api.services.SignedRequestHandler;
+import com.atlassian.labs.remoteapps.api.services.http.AsyncHttpClient;
+import com.atlassian.labs.remoteapps.api.services.http.HostHttpClient;
+import com.atlassian.labs.remoteapps.api.services.http.SyncHostHttpClient;
+import com.atlassian.labs.remoteapps.api.services.http.SyncHostHttpClientServiceFactory;
+import com.atlassian.labs.remoteapps.api.services.http.impl.DefaultAsyncHttpClient;
+import com.atlassian.labs.remoteapps.api.services.http.impl.RequestKiller;
 import com.atlassian.labs.remoteapps.api.services.impl.DefaultPluginSettingsAsyncFactory;
+import com.atlassian.labs.remoteapps.api.services.impl.DefaultRequestContext;
 import com.atlassian.labs.remoteapps.container.ao.RemoteAppsDataSourceProviderServiceFactory;
-import com.atlassian.labs.remoteapps.container.internal.Environment;
 import com.atlassian.labs.remoteapps.container.internal.EnvironmentFactory;
 import com.atlassian.labs.remoteapps.container.internal.properties.ResourcePropertiesLoader;
+import com.atlassian.labs.remoteapps.container.services.ContainerHostHttpClientServiceFactory;
 import com.atlassian.labs.remoteapps.container.services.DescriptorGeneratorServiceFactory;
 import com.atlassian.labs.remoteapps.container.services.OAuthSignedRequestHandlerServiceFactory;
 import com.atlassian.labs.remoteapps.container.services.event.RemoteAppsEventPublisher;
@@ -24,11 +33,7 @@ import com.atlassian.plugin.PluginController;
 import com.atlassian.plugin.event.PluginEventManager;
 import com.atlassian.plugin.event.impl.DefaultPluginEventManager;
 import com.atlassian.plugin.hostcontainer.DefaultHostContainer;
-import com.atlassian.plugin.loaders.BundledPluginLoader;
-import com.atlassian.plugin.loaders.DirectoryScanner;
-import com.atlassian.plugin.loaders.FileListScanner;
-import com.atlassian.plugin.loaders.PluginLoader;
-import com.atlassian.plugin.loaders.ScanningPluginLoader;
+import com.atlassian.plugin.loaders.*;
 import com.atlassian.plugin.loaders.classloading.Scanner;
 import com.atlassian.plugin.manager.DefaultPluginManager;
 import com.atlassian.plugin.manager.store.MemoryPluginPersistentStateStore;
@@ -67,10 +72,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static com.atlassian.labs.remoteapps.container.util.AppRegister.*;
-import static com.google.common.collect.Lists.*;
-import static com.google.common.collect.Maps.*;
-import static com.google.common.collect.Sets.*;
+import static com.atlassian.labs.remoteapps.container.util.AppRegister.registerApp;
+import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Maps.newHashMap;
+import static com.google.common.collect.Sets.newHashSet;
 import static java.util.Arrays.asList;
 
 public final class Container
@@ -215,7 +220,17 @@ public final class Container
 
         final EnvironmentFactory environmentFactory = new EnvironmentFactory(pluginSettingsFactory);
         final OAuthSignedRequestHandlerServiceFactory oAuthSignedRequestHandlerServiceFactory = new OAuthSignedRequestHandlerServiceFactory(environmentFactory, httpServer);
-        final DescriptorGeneratorServiceFactory descriptorGeneratorServiceFactory = new DescriptorGeneratorServiceFactory(pluginManager, httpServer, oAuthSignedRequestHandlerServiceFactory, environmentFactory);
+        final RequestContext requestContext = new DefaultRequestContext();
+        final DescriptorGeneratorServiceFactory descriptorGeneratorServiceFactory = new DescriptorGeneratorServiceFactory(pluginManager, httpServer, oAuthSignedRequestHandlerServiceFactory, environmentFactory, requestContext);
+        final RequestKiller requestKiller = new RequestKiller();
+        final AsyncHttpClient asyncHttpClient = new DefaultAsyncHttpClient(requestKiller);
+        final RequestContextServiceFactory requestContextServiceFactory
+            = new RequestContextServiceFactory();
+        final ContainerHostHttpClientServiceFactory containerHostHttpClientServiceFactory
+            = new ContainerHostHttpClientServiceFactory(asyncHttpClient, requestContextServiceFactory,
+            oAuthSignedRequestHandlerServiceFactory);
+        final SyncHostHttpClientServiceFactory syncHostHttpClientServiceFactory
+            = new SyncHostHttpClientServiceFactory(containerHostHttpClientServiceFactory);
 
         hostComponents.put(SignedRequestHandler.class, oAuthSignedRequestHandlerServiceFactory);
         hostComponents.put(DescriptorGenerator.class, descriptorGeneratorServiceFactory);
@@ -224,6 +239,10 @@ public final class Container
         hostComponents.put(PluginEventManager.class, pluginEventManager);
         hostComponents.put(PluginSettingsAsyncFactory.class, new DefaultPluginSettingsAsyncFactory(pluginSettingsFactory));
         hostComponents.put(ModuleFactory.class, new PrefixDelegatingModuleFactory(ImmutableSet.of(new ClassPrefixModuleFactory(hostContainer), new BeanPrefixModuleFactory())));
+        hostComponents.put(RequestContext.class, requestContext);
+        hostComponents.put(AsyncHttpClient.class, asyncHttpClient);
+        hostComponents.put(HostHttpClient.class, containerHostHttpClientServiceFactory);
+        hostComponents.put(SyncHostHttpClient.class, syncHostHttpClientServiceFactory);
 
         hostComponents.put(DataSourceProvider.class, new RemoteAppsDataSourceProviderServiceFactory(environmentFactory));
         hostComponents.put(TransactionTemplate.class, new NoOpTransactionTemplate());

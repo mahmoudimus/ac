@@ -157,7 +157,23 @@
     <component key="pluginSettingsAsyncFactory" interface="com.atlassian.labs.remoteapps.api.services.PluginSettingsAsyncFactory"
                class="com.atlassian.labs.remoteapps.services.PluginSettingsAsyncFactoryBean" public="true" />
 
-    <component key="localSignedRequestHandler" interface="com.atlassian.labs.remoteapps.api.services.SignedRequestHandler" class="com.atlassian.labs.remoteapps.services.LocalSignedRequestHandlerServiceFactory" public="true" />
+    <component key="localSignedRequestHandler" interface="com.atlassian.labs.remoteapps.api.services.SignedRequestHandler"
+               class="com.atlassian.labs.remoteapps.services.LocalSignedRequestHandlerServiceFactory" public="true" />
+
+    <component key="requestContext" interface="com.atlassian.labs.remoteapps.api.services.RequestContext"
+               class="com.atlassian.labs.remoteapps.api.services.RequestContextServiceFactory" public="true" />
+
+    <component key="requestKiller"
+               class="com.atlassian.labs.remoteapps.api.services.http.impl.RequestKiller" />
+
+    <component key="asyncHttpClient" interface="com.atlassian.labs.remoteapps.api.services.http.AsyncHttpClient"
+               class="com.atlassian.labs.remoteapps.api.services.http.impl.DefaultAsyncHttpClient" public="true" />
+
+    <component key="localHostHttpClient" interface="com.atlassian.labs.remoteapps.api.services.http.HostHttpClient"
+               class="com.atlassian.labs.remoteapps.services.LocalHostHttpClientServiceFactory" public="true" />
+
+     <component key="syncHostHttpClient" interface="com.atlassian.labs.remoteapps.api.services.http.SyncHostHttpClient"
+               class="com.atlassian.labs.remoteapps.api.services.http.SyncHostHttpClientServiceFactory" public="true" />
 
     <module-type key="described-module-type" class="com.atlassian.labs.remoteapps.integration.plugins.DescribedModuleTypeModuleDescriptor" />
 

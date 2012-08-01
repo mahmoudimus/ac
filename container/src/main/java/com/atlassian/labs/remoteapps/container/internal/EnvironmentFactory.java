@@ -1,6 +1,5 @@
 package com.atlassian.labs.remoteapps.container.internal;
 
-import com.atlassian.labs.remoteapps.container.internal.properties.BundleResourceLoader;
 import com.atlassian.labs.remoteapps.container.internal.properties.EnvironmentPropertiesLoader;
 import com.atlassian.labs.remoteapps.container.internal.properties.ResourcePropertiesLoader;
 import com.atlassian.labs.remoteapps.container.internal.resources.ClassLoaderResourceLoader;
@@ -12,8 +11,6 @@ import com.google.common.collect.ImmutableList;
 import org.osgi.framework.Bundle;
 
 import java.util.concurrent.ExecutionException;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Abstraction for constructing environment properties.  The order goes:

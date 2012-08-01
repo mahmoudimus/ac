@@ -1,5 +1,6 @@
 package com.atlassian.labs.remoteapps.container.services;
 
+import com.atlassian.labs.remoteapps.api.services.RequestContext;
 import com.atlassian.labs.remoteapps.container.HttpServer;
 import com.atlassian.labs.remoteapps.container.internal.EnvironmentFactory;
 import com.atlassian.plugin.Plugin;
@@ -19,15 +20,18 @@ public class DescriptorGeneratorServiceFactory implements ServiceFactory
     private final HttpServer httpServer;
     private final OAuthSignedRequestHandlerServiceFactory oAuthSignedRequestHandlerServiceFactory;
     private final EnvironmentFactory environmentServiceFactory;
+    private RequestContext requestContext;
 
     public DescriptorGeneratorServiceFactory(PluginAccessor pluginAccessor, HttpServer httpServer,
             OAuthSignedRequestHandlerServiceFactory oAuthSignedRequestHandlerServiceFactory,
-            EnvironmentFactory environmentServiceFactory)
+            EnvironmentFactory environmentServiceFactory,
+            RequestContext requestContext)
     {
         this.pluginAccessor = pluginAccessor;
         this.httpServer = httpServer;
         this.environmentServiceFactory = environmentServiceFactory;
         this.oAuthSignedRequestHandlerServiceFactory = oAuthSignedRequestHandlerServiceFactory;
+        this.requestContext = requestContext;
     }
 
     @Override
@@ -36,9 +40,9 @@ public class DescriptorGeneratorServiceFactory implements ServiceFactory
         final Plugin plugin = pluginAccessor.getPlugin(getPluginKey(bundle));
         return new DescriptorGeneratorLoader(plugin, httpServer,
                 oAuthSignedRequestHandlerServiceFactory.getService(bundle),
-                environmentServiceFactory.getService(bundle));
+                environmentServiceFactory.getService(bundle),
+                requestContext);
     }
-
 
     @Override
     public void ungetService(Bundle bundle, ServiceRegistration registration, Object service)

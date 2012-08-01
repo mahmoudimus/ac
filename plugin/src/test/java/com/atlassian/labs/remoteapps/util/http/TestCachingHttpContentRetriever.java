@@ -1,8 +1,6 @@
 package com.atlassian.labs.remoteapps.util.http;
 
-import com.atlassian.applinks.api.ApplicationLink;
-import com.atlassian.labs.remoteapps.OAuthLinkManager;
-import com.atlassian.labs.remoteapps.RemoteAppAccessor;
+import com.atlassian.labs.remoteapps.api.services.http.impl.RequestKiller;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginInformation;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
@@ -52,7 +50,7 @@ public class TestCachingHttpContentRetriever
 
         when(plugin.getPluginInformation()).thenReturn(new PluginInformation());
         when(pluginRetrievalService.getPlugin()).thenReturn(plugin);
-        RequestTimeoutKiller killer = new RequestTimeoutKiller();
+        RequestKiller killer = new RequestKiller();
         this.retriever = new CachingHttpContentRetriever(userManager, pluginRetrievalService, killer);
         this.retriever.httpClient = httpClient;
         HttpResponse response = mock(HttpResponse.class);

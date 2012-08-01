@@ -35,9 +35,9 @@ public class ServiceWrappers
         /**
          * contructor accepts the real subject
          */
-        public AsyncWrapper(T real)
+        public AsyncWrapper(T syncDelegate)
         {
-            this.delegate = real;
+            this.delegate = syncDelegate;
         }
 
         /**
@@ -66,14 +66,14 @@ public class ServiceWrappers
 
     private static class SyncWrapper<T> implements InvocationHandler
     {
-        private final T delegate;
+        private final T asyncDelegate;
 
         /**
          * contructor accepts the real subject
          */
-        public SyncWrapper(T real)
+        public SyncWrapper(T asyncDelegate)
         {
-            this.delegate = real;
+            this.asyncDelegate = asyncDelegate;
         }
 
         /**
@@ -85,9 +85,9 @@ public class ServiceWrappers
         {
             try
             {
-                Class<T> syncClass = (Class<T>) delegate.getClass();
-                Method syncMethod = syncClass.getMethod(method.getName(), method.getParameterTypes());
-                ListenableFuture result = (ListenableFuture) syncMethod.invoke(delegate, arguments);
+                Class<T> asyncClass = (Class<T>) asyncDelegate.getClass();
+                Method syncMethod = asyncClass.getMethod(method.getName(), method.getParameterTypes());
+                ListenableFuture result = (ListenableFuture) syncMethod.invoke(asyncDelegate, arguments);
                 return result.get();
             }
             catch (java.lang.reflect.InvocationTargetException e)

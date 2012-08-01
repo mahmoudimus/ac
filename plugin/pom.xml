@@ -483,6 +483,8 @@
                             com.atlassian.labs.remoteapps.api,
                             com.atlassian.labs.remoteapps.api.services,
                             com.atlassian.labs.remoteapps.api.services.impl,
+                            com.atlassian.labs.remoteapps.api.services.http,
+                            com.atlassian.labs.remoteapps.api.services.http.impl,
                             com.atlassian.labs.remoteapps.api.universalbinary,
                             com.atlassian.labs.remoteapps.api.universalbinary.impl,
                             com.atlassian.labs.remoteapps.webhook.external

@@ -23,6 +23,7 @@ import java.util.Map;
 public abstract class AbstractOauthSignedRequestHandler
 {
     private final Logger log = LoggerFactory.getLogger(getClass());
+
     public String validateRequest(HttpServletRequest req) throws ServletException
     {
         URI requestUri = URI.create(req.getRequestURI());
