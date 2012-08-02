@@ -1,70 +1,56 @@
 package com.atlassian.labs.remoteapps.apputils.spring;
 
 import com.atlassian.labs.remoteapps.apputils.Environment;
+import com.atlassian.labs.remoteapps.apputils.spring.properties.EnvironmentPropertiesLoader;
+import com.atlassian.labs.remoteapps.apputils.spring.properties.ResourcePropertiesLoader;
+import com.atlassian.labs.remoteapps.apputils.spring.resources.ClassLoaderResourceLoader;
+import com.atlassian.labs.remoteapps.apputils.spring.resources.ResourceLoader;
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
+import com.google.common.collect.ImmutableMap;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashSet;
-import java.util.Properties;
-import java.util.Set;
+import java.util.Map;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Abstraction for retrieving environment properties.  The order goes:
  * <ol>
- *     <li>System properties</li>
- *     <li>env.properties (loaded from the classpath)</li>
- *     <li>{@link com.atlassian.sal.api.pluginsettings.PluginSettings} from SAL</li>
+ * <li>System properties</li>
+ * <li>env.properties (loaded from the classpath)</li>
+ * <li>{@link com.atlassian.sal.api.pluginsettings.PluginSettings} from SAL</li>
  * </ol>
  *
  * Any updates to the properties will save to plugin settings.  These keys will be prefixed
  * by "APP_KEY." to avoid collisions.
  */
-public class EnvironmentImpl implements Environment
+public final class EnvironmentImpl implements Environment
 {
-
-    private final Properties ENV;
     private final String appKey;
     private final PluginSettingsFactory pluginSettingsFactory;
+    private final ResourceLoader resourceLoader;
+    private final Map<String, String> env;
 
     public EnvironmentImpl(String appKey, PluginSettingsFactory pluginSettingsFactory)
     {
-        this.appKey = appKey;
-        this.pluginSettingsFactory = pluginSettingsFactory;
-        ENV = new Properties();
-        try
-        {
-            ENV.load(EnvironmentImpl.class.getResourceAsStream("/env-defaults.properties"));
-            InputStream env = EnvironmentImpl.class.getResourceAsStream("/env.properties");
-            if (env != null)
-            {
-                ENV.load(env);
-            }
-            ENV.putAll(System.getenv());
-
-        }
-        catch (IOException e)
-        {
-            throw new RuntimeException("Couldn't load env properties");
-        }
+        this(appKey, pluginSettingsFactory, new ClassLoaderResourceLoader(EnvironmentImpl.class));
     }
 
-    /**
-     * @return All clients defined in environment variables or env.properties.  Plugin settings
-     * will be skipped.
-     */
-    public Iterable<String> getAllClients()
+    public EnvironmentImpl(String appKey, PluginSettingsFactory pluginSettingsFactory, ResourceLoader resourceLoader)
     {
-        Set<String> keys = new HashSet<String>();
-        for (String key : ENV.stringPropertyNames())
-        {
-            if (key.startsWith("HOST_BASE_URL."))
-            {
-                keys.add(key.substring("HOST_BASE_URL.".length()));
-            }
-        }
-        return keys;
+        this.appKey = checkNotNull(appKey);
+        this.pluginSettingsFactory = checkNotNull(pluginSettingsFactory);
+        this.resourceLoader = checkNotNull(resourceLoader);
+        this.env = loadEnv();
+    }
+
+    private ImmutableMap<String, String> loadEnv()
+    {
+        final ImmutableMap.Builder<String, String> envBuilder = ImmutableMap.builder();
+        envBuilder.putAll(new ResourcePropertiesLoader("/env-defaults.properties", resourceLoader).load());
+        envBuilder.putAll(new ResourcePropertiesLoader("/env.properties", resourceLoader).load());
+        envBuilder.putAll(new EnvironmentPropertiesLoader().load());
+        return envBuilder.build();
     }
 
     @Override
@@ -84,7 +70,7 @@ public class EnvironmentImpl implements Environment
     @Override
     public String getOptionalEnv(String name, String def)
     {
-        String val = ENV.getProperty(name);
+        String val = env.get(name);
         if (val == null)
         {
             PluginSettings settings = pluginSettingsFactory.createGlobalSettings();
