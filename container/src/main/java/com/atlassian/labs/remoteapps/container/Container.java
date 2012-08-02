@@ -7,7 +7,7 @@ import com.atlassian.labs.remoteapps.api.PolygotRemoteAppDescriptorAccessor;
 import com.atlassian.labs.remoteapps.api.RemoteAppDescriptorAccessor;
 import com.atlassian.labs.remoteapps.api.services.PluginSettingsAsyncFactory;
 import com.atlassian.labs.remoteapps.api.services.impl.DefaultPluginSettingsAsyncFactory;
-import com.atlassian.labs.remoteapps.container.ao.RemoteAppsDataSourceProvider;
+import com.atlassian.labs.remoteapps.container.ao.RemoteAppsDataSourceProviderServiceFactory;
 import com.atlassian.labs.remoteapps.container.services.event.RemoteAppsEventPublisher;
 import com.atlassian.labs.remoteapps.container.services.DescriptorGeneratorServiceFactory;
 import com.atlassian.labs.remoteapps.container.services.sal.RemoteAppsApplicationPropertiesServiceFactory;
@@ -185,15 +185,11 @@ public class Container
                 pluginEventManager
         );
 
-        hostComponents.put(DataSourceProvider.class, new RemoteAppsDataSourceProvider());
-        hostComponents.put(TransactionTemplate.class, new NoOpTransactionTemplate());
-
-        hostComponents.put(EventPublisher.class, new RemoteAppsEventPublisher());
-
+        final RemoteAppsPluginSettingsFactory pluginSettingsFactory = new RemoteAppsPluginSettingsFactory();
+        hostComponents.put(PluginSettingsFactory.class, pluginSettingsFactory);
         hostComponents.put(ApplicationProperties.class, new RemoteAppsApplicationPropertiesServiceFactory(server));
 
-        RemoteAppsPluginSettingsFactory pluginSettingsFactory = new RemoteAppsPluginSettingsFactory();
-        hostComponents.put(PluginSettingsFactory.class, pluginSettingsFactory);
+        hostComponents.put(EventPublisher.class, new RemoteAppsEventPublisher());
 
         hostComponents.put(DescriptorGenerator.class, new DescriptorGeneratorServiceFactory(pluginManager, server));
         hostComponents.put(PluginAccessor.class, pluginManager);
@@ -201,6 +197,9 @@ public class Container
         hostComponents.put(PluginEventManager.class, pluginEventManager);
         hostComponents.put(PluginSettingsAsyncFactory.class, new DefaultPluginSettingsAsyncFactory(pluginSettingsFactory));
         hostComponents.put(ModuleFactory.class, new PrefixDelegatingModuleFactory(ImmutableSet.of(new ClassPrefixModuleFactory(hostContainer), new BeanPrefixModuleFactory())));
+
+        hostComponents.put(DataSourceProvider.class, new RemoteAppsDataSourceProviderServiceFactory());
+        hostComponents.put(TransactionTemplate.class, new NoOpTransactionTemplate());
     }
 
     private File zipAppDirectory(RemoteAppDescriptorAccessor descriptorAccessor, File appFile)

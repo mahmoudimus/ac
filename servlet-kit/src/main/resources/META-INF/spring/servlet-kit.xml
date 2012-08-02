@@ -14,8 +14,7 @@ http://www.springframework.org/schema/context
 
     <beans:bean id="oauthContext" class="com.atlassian.labs.remoteapps.apputils.OAuthContext" autowire="constructor"/>
 
-    <beans:bean id="httpUtils" class="com.atlassian.labs.remoteapps.apputils.HttpUtils"
-                autowire="constructor"/>
+    <beans:bean id="httpUtils" class="com.atlassian.labs.remoteapps.apputils.HttpUtils" autowire="constructor"/>
 
     <context:component-scan base-package="servlets"/>
     <context:component-scan base-package="services"/>
@@ -38,6 +37,12 @@ http://www.springframework.org/schema/context
     </beans:bean>
 
     <beans:bean id="environment" class="com.atlassian.labs.remoteapps.apputils.spring.EnvironmentFactoryBean" autowire="constructor" />
+
+    <osgi:service interface="com.atlassian.labs.remoteapps.api.DatabaseUrlProvider">
+        <beans:bean class="com.atlassian.labs.remoteapps.apputils.RemoteAppsDatabaseUrlProvider">
+            <beans:constructor-arg ref="environment" />
+        </beans:bean>
+    </osgi:service>
 
     <beans:bean id="httpResourceProvider" class="com.atlassian.labs.remoteapps.kit.servlet.ServletKitBootstrap" autowire="constructor"/>
 
