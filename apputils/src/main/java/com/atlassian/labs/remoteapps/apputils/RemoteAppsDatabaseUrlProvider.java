@@ -19,6 +19,6 @@ public final class RemoteAppsDatabaseUrlProvider implements DatabaseUrlProvider
     @Override
     public String getUrl()
     {
-        return env.getOptionalEnv(DATABASE_URL_KEY, DEFAULT_DATABASE_URL);
+        return new HerokuUrlTransformer().transform(env.getOptionalEnv(DATABASE_URL_KEY, DEFAULT_DATABASE_URL));
     }
 }
