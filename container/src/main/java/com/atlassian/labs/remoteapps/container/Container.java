@@ -7,6 +7,7 @@ import com.atlassian.labs.remoteapps.api.PolygotRemoteAppDescriptorAccessor;
 import com.atlassian.labs.remoteapps.api.RemoteAppDescriptorAccessor;
 import com.atlassian.labs.remoteapps.api.services.PluginSettingsAsyncFactory;
 import com.atlassian.labs.remoteapps.api.services.impl.DefaultPluginSettingsAsyncFactory;
+import com.atlassian.labs.remoteapps.apputils.spring.properties.ResourcePropertiesLoader;
 import com.atlassian.labs.remoteapps.container.ao.RemoteAppsDataSourceProviderServiceFactory;
 import com.atlassian.labs.remoteapps.container.services.event.RemoteAppsEventPublisher;
 import com.atlassian.labs.remoteapps.container.services.DescriptorGeneratorServiceFactory;
@@ -45,7 +46,10 @@ import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.atlassian.sal.api.transaction.TransactionTemplate;
 import com.atlassian.sal.core.transaction.NoOpTransactionTemplate;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,10 +65,7 @@ import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Sets.newHashSet;
 import static java.util.Arrays.asList;
 
-/**
- *
- */
-public class Container
+public final class Container
 {
     private static final Logger log = LoggerFactory.getLogger(Container.class);
 
@@ -86,45 +87,57 @@ public class Container
         // todo: this should use the plugin api, but it doesn't allow setting of plugin loaders right now
         final DefaultPackageScannerConfiguration scannerConfig = new DefaultPackageScannerConfiguration(determineVersion());
 
-        final List<String> packageIncludes = new ArrayList<String>(scannerConfig.getPackageIncludes());
-        packageIncludes.add("org.bouncycastle*");
-        packageIncludes.add("org.dom4j*");
-        packageIncludes.add("org.apache.log4j*");
-        packageIncludes.add("org.slf4j*");
-        packageIncludes.add("javax.servlet*");
-        packageIncludes.add("com.google.common.*");
-        packageIncludes.add("net.oauth*");
-        packageIncludes.add("org.json");
-        packageIncludes.add("org.mozilla.javascript*");
-        packageIncludes.add("org.yaml*");
-        packageIncludes.add("org.eclipse.jetty.*");
-        packageIncludes.add("org.jruby*");
-        packageIncludes.add("com.atlassian.sal*");
-        packageIncludes.add("com.samskivert.*");
+        final List<String> scannedPackageIncludes = scannerConfig.getPackageIncludes();
+        Iterables.removeAll(scannedPackageIncludes, ImmutableList.builder()
+                .add("com.opensymphony.*")
+                .add("org.jfree.*")
+                .add("org.joda.*")
+                .add("org.ofbiz.*")
+                .add("org.quartz")
+                .add("org.quartz.*")
+                .add("org.tuckey.web.filters.urlrewrite.*")
+                .add("org.xml.*")
+                .add("org.w3c.*")
+                .add("webwork.*")
+                .build());
 
-        packageIncludes.remove("org.jfree.*");
-        packageIncludes.remove("org.joda.*");
-        packageIncludes.remove("org.w3c.*");
-        packageIncludes.remove("org.xml.*");
-        packageIncludes.remove("org.ofbiz.*");
-        packageIncludes.remove("webwork.*");
-        packageIncludes.remove("org.quartz");
-        packageIncludes.remove("org.quartz.*");
-        packageIncludes.remove("com.opensymphony.*");
-        packageIncludes.remove("org.tuckey.web.filters.urlrewrite.*");
+        scannerConfig.setPackageIncludes(ImmutableList.<String>builder()
+                .addAll(scannedPackageIncludes)
+                .add("com.atlassian.activeobjects.spi*")
+                .add("com.atlassian.event.api*")
+                .add("com.atlassian.plugin*")
+                .add("com.atlassian.sal*")
+                .add("com.atlassian.security.random*")
+                .add("com.google.common.*")
+                .add("com.samskivert.*")
+                .add("javax.servlet*")
+                .add("net.oauth*")
+                .add("org.apache.commons.codec*")
+                .add("org.apache.log4j*")
+                .add("org.bouncycastle*")
+                .add("org.dom4j*")
+                .add("org.eclipse.jetty.*")
+                .add("org.jruby*")
+                .add("org.json")
+                .add("org.mozilla.javascript*")
+                .add("org.slf4j*")
+                .add("org.yaml*")
+                .build());
 
-        scannerConfig.setPackageIncludes(packageIncludes);
-        scannerConfig.setPackageVersions(new HashMap<String,String>() {{
-            put("javax.servlet", "2.5");
-            put("javax.servlet.http", "2.5");
-            put("org.slf4j.*", "1.6.4");
-            put("org.slf4j", "1.6.4");
-            put("org.apache.commons.lang", "2.4");
-            put("org.apache.commons.lang.*", "2.4");
-            put("org.apache.commons.collections", "3.2");
-            put("org.apache.commons.collections.*", "3.2");
-            put("com.google.common.*", getGoogleGuavaVersion());
-        }});
+        scannerConfig.setPackageVersions(ImmutableMap.<String, String>builder()
+                .put("com.atlassian.activeobjects.spi*", getVersionFromMavenMetadata("com.atlassian.activeobjects", "activeobjects-spi", "0.19.7-remoteapps-1"))
+                .put("com.atlassian.event.api*", getVersionFromMavenMetadata("com.atlassian.event", "atlassian-event", "2.2.0-m1"))
+                .put("com.atlassian.plugin*", getVersionFromMavenMetadata("com.atlassian.plugins", "atlassian-plugins-core", "2.13.0-m2"))
+                .put("com.atlassian.sal.api*", getVersionFromMavenMetadata("com.atlassian.sal", "sal-api", "2.7.0"))
+                .put("com.atlassian.security.random*", getVersionFromMavenMetadata("com.atlassian.security", "atlassian-secure-random", "1.0"))
+                .put("com.google.common.*", getVersionFromMavenMetadata("com.google.guava", "guava", "1"))
+                .put("javax.servlet", "2.5")
+                .put("javax.servlet.http", "2.5")
+                .put("org.apache.commons.codec*", "1.3")
+                .put("org.apache.commons.collections*", "3.2")
+                .put("org.apache.commons.lang*", getVersionFromMavenMetadata("commons-lang", "commons-lang", "2.4"))
+                .put("org.slf4j*", getVersionFromMavenMetadata("org.slf4j", "slf4j-api", "1.6.4"))
+                .build());
 
         OsgiPersistentCache osgiCache = new DefaultOsgiPersistentCache(mkdir(".cache/osgi"));
         Map<Class<?>, Object> hostComponents = newHashMap();
@@ -200,6 +213,26 @@ public class Container
 
         hostComponents.put(DataSourceProvider.class, new RemoteAppsDataSourceProviderServiceFactory());
         hostComponents.put(TransactionTemplate.class, new NoOpTransactionTemplate());
+    }
+
+    private String getVersionFromMavenMetadata(String groupId, String artifactId, String defaultValue)
+    {
+        final String resource = new StringBuilder()
+                .append("META-INF/maven/")
+                .append(groupId)
+                .append("/")
+                .append(artifactId)
+                .append("/pom.properties")
+                .toString();
+
+        final String version = new ResourcePropertiesLoader(resource).load().get("version");
+        if (version == null)
+        {
+            log.warn("Could not read version from maven metadata for {}:{} will use default {}", new Object[]{groupId, artifactId, defaultValue});
+            return defaultValue;
+        }
+        log.debug("Version found from maven metadata for {}:{} is {}", new Object[]{groupId, artifactId, version});
+        return version;
     }
 
     private File zipAppDirectory(RemoteAppDescriptorAccessor descriptorAccessor, File appFile)
