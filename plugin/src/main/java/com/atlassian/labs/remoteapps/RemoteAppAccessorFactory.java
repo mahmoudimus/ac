@@ -1,10 +1,5 @@
 package com.atlassian.labs.remoteapps;
 
-import com.atlassian.applinks.api.ApplicationLink;
-import com.atlassian.applinks.api.ApplicationType;
-import com.atlassian.labs.remoteapps.ApplicationLinkAccessor;
-import com.atlassian.labs.remoteapps.ContentRetrievalException;
-import com.atlassian.labs.remoteapps.OAuthLinkManager;
 import com.atlassian.labs.remoteapps.api.PermissionDeniedException;
 import com.atlassian.labs.remoteapps.loader.universalbinary.UBDispatchFilter;
 import com.atlassian.labs.remoteapps.modules.applinks.RemoteAppApplicationType;
@@ -122,7 +117,8 @@ public class RemoteAppAccessorFactory
                 Map<String, String> headers, HttpContentHandler handler)
                 throws ContentRetrievalException
         {
-            return executeAsyncGetForType(new OAuthAuthorizationGenerator(serviceProvider), username, path, params, headers, handler);
+            return executeAsyncGetForType(new OAuthAuthorizationGenerator(serviceProvider),
+                    getTargetUrl(displayUrl, path), username, params, headers, handler);
         }
 
         @Override

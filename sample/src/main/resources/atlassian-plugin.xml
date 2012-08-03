@@ -2,6 +2,10 @@
     <plugin-info>
         <version>${project.version}</version>
         <param name="configure.url">/plugins/servlet/remoteapps/app1/remoteAppConfig</param>
+        <permissions>
+            <permission>resttest</permission>
+            <permission>read_app_links</permission>
+        </permissions>
     </plugin-info>
 
     <junit key="all" package="junit.all" />

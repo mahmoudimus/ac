@@ -1,7 +1,9 @@
 package com.atlassian.labs.remoteapps.modules.oauth;
 
 import com.atlassian.labs.remoteapps.OAuthLinkManager;
+import com.atlassian.labs.remoteapps.modules.permissions.ApiScopingFilter;
 import com.atlassian.labs.remoteapps.util.DefaultMessage;
+import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.oauth.util.Check;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.auth.AuthenticationController;
@@ -42,17 +44,20 @@ public class OAuth2LOAuthenticator implements Authenticator
     private final AuthenticationController authenticationController;
     private final ApplicationProperties applicationProperties;
     private final UserManager userManager;
+    private final String ourConsumerKey;
 
     @Autowired
     public OAuth2LOAuthenticator(AuthenticationController authenticationController,
             ApplicationProperties applicationProperties,
-            OAuthLinkManager oAuthLinkManager, UserManager userManager)
+            OAuthLinkManager oAuthLinkManager, UserManager userManager,
+            ConsumerService consumerService)
     {
         this.oAuthLinkManager = oAuthLinkManager;
         this.userManager = userManager;
         this.authenticationController = Check.notNull(authenticationController,
                 "authenticationController");
         this.applicationProperties = Check.notNull(applicationProperties, "applicationProperties");
+        this.ourConsumerKey = consumerService.getConsumer().getKey();
     }
 
     public Result authenticate(HttpServletRequest request, HttpServletResponse response)
@@ -86,6 +91,10 @@ public class OAuth2LOAuthenticator implements Authenticator
         {
             consumerKey = message.getConsumerKey();
             oAuthLinkManager.validateOAuth2LORequest(message);
+            if (ourConsumerKey.equals(consumerKey))
+            {
+                consumerKey = extractPluginKey(request.getHeader("Authorization"));
+            }
         }
         /*!
         If any of these criteria fail, the authorization process is treated as a failure
@@ -166,10 +175,15 @@ public class OAuth2LOAuthenticator implements Authenticator
         the request needs
         to be authorized to ensure it has access to the appropriate API scope.
          */
-        request.setAttribute(OAuth.OAUTH_CONSUMER_KEY, consumerKey);
+        request.setAttribute(ApiScopingFilter.PLUGIN_KEY, consumerKey);
         log.info("Authenticated app '{}' as user '{}' successfully", consumerKey, user.getName());
         return new Result.Success(user);
         /*!-helper methods*/
+    }
+
+    static String extractPluginKey(String authorization)
+    {
+        return authorization.replaceAll(".* realm=\"([^\"]*)\".*", "$1");
     }
 
     public static String getLogicalUri(HttpServletRequest request)

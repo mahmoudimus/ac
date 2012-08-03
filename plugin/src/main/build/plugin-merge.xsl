@@ -8,7 +8,7 @@
         <xsl:comment><xsl:value-of select="@key"/> modules</xsl:comment>
 <xsl:text>
 </xsl:text>
-        <xsl:for-each select="node()">
+        <xsl:for-each select="node()[name(.)!='permissions']">
             <xsl:copy>
                 <xsl:attribute name="application"><xsl:value-of select="../@key" /></xsl:attribute>
                 <xsl:apply-templates select="@*|node()"/>
@@ -16,6 +16,22 @@
         </xsl:for-each>
 <xsl:text>
 </xsl:text>
+    </xsl:template>
+
+    <xsl:template match="plugin-info/permissions">
+        <xsl:copy>
+            <xsl:apply-templates select="permission"/>
+            <xsl:apply-templates select="document(concat('file:///',$baseDir,'/atlassian-plugin-refapp.xml'))/application/permissions/permission"/>
+            <xsl:apply-templates select="document(concat('file:///',$baseDir,'/atlassian-plugin-confluence.xml'))/application/permissions/permission"/>
+            <xsl:apply-templates select="document(concat('file:///',$baseDir,'/atlassian-plugin-jira.xml'))/application/permissions/permission"/>
+        </xsl:copy>
+    </xsl:template>
+
+    <xsl:template match="application/permissions/permission">
+        <xsl:copy>
+            <xsl:attribute name="application"><xsl:value-of select="../../@key" /></xsl:attribute>
+            <xsl:apply-templates select="@*|node()"/>
+        </xsl:copy>
     </xsl:template>
 
     <xsl:template match="atlassian-plugin">

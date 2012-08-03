@@ -16,7 +16,7 @@
     </servlet-filter>
 
     <servlet-filter key="universal-binary-dispatching" class="bean:ubDispatchFilter"
-                    location="after-encoding">
+                    location="after-encoding" weight="1000">
         <url-pattern>/app/*</url-pattern>
     </servlet-filter>
 
@@ -33,7 +33,7 @@
     </servlet-filter>
 
     <servlet-filter key="oauth-2lo-authentication" class="com.atlassian.labs.remoteapps.modules.oauth.OAuth2LOFilter"
-            location="after-encoding">
+            location="after-encoding" weight="2000">
         <url-pattern>/*</url-pattern>
     </servlet-filter>
 
@@ -161,8 +161,6 @@
 
     <!-- remote extension points -->
     <module-type key="dynamic-application-link" class="com.atlassian.labs.remoteapps.integration.applinks.DynamicApplicationLinkModuleDescriptor" />
-
-    <module-type key="permissions" class="com.atlassian.labs.remoteapps.modules.permissions.PermissionsModuleDescriptor" />
 
     <!-- product-specific modules included via xslt build process -->
 

@@ -12,11 +12,6 @@
         <permission scope="read_app_links" />
     </permissions>
 
-    <oauth>
-        <public-key>
-            -- to be replaced at runtime --
-        </public-key>
-    </oauth>
     <entity-type key="project" name="Project" pluralized-name="Projects" icon-url="https://github.com/favicon.ico"/>
 
     <admin-page key="remoteAppAdmin" name="Remote App app1 Admin" url="/myAdmin" />

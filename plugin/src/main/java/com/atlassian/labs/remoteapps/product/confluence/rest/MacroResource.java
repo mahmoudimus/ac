@@ -1,8 +1,8 @@
 package com.atlassian.labs.remoteapps.product.confluence.rest;
 
 import com.atlassian.labs.remoteapps.modules.confluence.MacroContentManager;
+import com.atlassian.labs.remoteapps.modules.permissions.ApiScopingFilter;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
-import net.oauth.OAuth;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
@@ -29,7 +29,7 @@ public class MacroResource
     @DELETE
     public Response clearMacrosFromPluginKey(@Context HttpServletRequest request, @PathParam("appKey") String appKey)
     {
-        String consumerKey = (String) request.getAttribute(OAuth.OAUTH_CONSUMER_KEY);
+        String consumerKey = (String) request.getAttribute(ApiScopingFilter.PLUGIN_KEY);
         if (consumerKey == null || !consumerKey.equals(appKey))
         {
             return Response.status(Response.Status.FORBIDDEN).build();
@@ -43,7 +43,7 @@ public class MacroResource
     @DELETE
     public Response clearMacro(@Context HttpServletRequest request, @PathParam("appKey") String appKey, @PathParam("key") String macroInstanceKey)
     {
-        String consumerKey = (String) request.getAttribute(OAuth.OAUTH_CONSUMER_KEY);
+        String consumerKey = (String) request.getAttribute(ApiScopingFilter.PLUGIN_KEY);
         if (consumerKey == null || !consumerKey.equals(appKey))
         {
             return Response.status(Response.Status.FORBIDDEN).build();

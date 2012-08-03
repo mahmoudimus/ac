@@ -20,7 +20,7 @@ public class ApiScopingFilter implements Filter
     private final PermissionManager permissionManager;
     private final UserManager userManager;
     private static final Logger log = LoggerFactory.getLogger(ApiScopingFilter.class);
-    private static final String HEADER_RA_APP_KEY = "ra-app-key";
+    public static final String PLUGIN_KEY = "Plugin-Key";
 
     public ApiScopingFilter(PermissionManager permissionManager, UserManager userManager)
     {
@@ -64,14 +64,7 @@ public class ApiScopingFilter implements Filter
 
     private String extractClientKey(HttpServletRequest req)
     {
-        // first try the oauth request attribute
-        String key = (String) req.getAttribute(OAuth.OAUTH_CONSUMER_KEY);
-        if (key == null)
-        {
-            // if not present, look for it as a header, which may be sent via host-side xhr calls
-            key = req.getHeader(HEADER_RA_APP_KEY);
-        }
-        return key;
+        return (String) req.getAttribute(PLUGIN_KEY);
     }
 
     @Override

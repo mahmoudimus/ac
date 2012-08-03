@@ -1,7 +1,5 @@
 <application key="jira">
-    <permissions key="permissions">
-        <permission scope="resttest" />
-        <permission scope="read_users_and_groups" />
-        <permission scope="read_app_links" />
+    <permissions>
+        <permission>read_users_and_groups</permission>
     </permissions>
 </application>

@@ -38,7 +38,7 @@ public class WaitableServiceTrackerFactory implements DisposableBean, Applicatio
     public <K, T> WaitableServiceTracker<K,T> create(Class<T> serviceClass, 
             Function<T,K> keyExtractor, WaitableServiceTrackerCustomizer<T> customizer)
     {
-        WaitableServiceTracker<K,T> tracker = new WaitableServiceTracker<K,T>(bundleContext, 
+        WaitableServiceTracker<K,T> tracker = new WaitableServiceTracker<K,T>(bundleContext,
                 serviceClass, keyExtractor, customizer);
         serviceTrackers.add(tracker);
         return tracker;

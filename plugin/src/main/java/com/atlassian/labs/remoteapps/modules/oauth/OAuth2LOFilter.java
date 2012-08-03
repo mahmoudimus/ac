@@ -1,7 +1,6 @@
 package com.atlassian.labs.remoteapps.modules.oauth;
 
 import com.atlassian.labs.remoteapps.product.WebSudoElevator;
-import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.oauth.util.Check;
 import com.atlassian.sal.api.auth.AuthenticationController;
 import com.atlassian.sal.api.auth.AuthenticationListener;
@@ -34,18 +33,16 @@ public class OAuth2LOFilter implements Filter
     private final AuthenticationListener authenticationListener;
     private final AuthenticationController authenticationController;
     private final WebSudoElevator webSudoElevator;
-    private final String ourConsumerKey;
 
     public OAuth2LOFilter(Authenticator authenticator,
                           AuthenticationListener authenticationListener,
                           AuthenticationController authenticationController,
-                          ConsumerService consumerService, WebSudoElevator webSudoElevator)
+                          WebSudoElevator webSudoElevator)
     {
         this.webSudoElevator = Check.notNull(webSudoElevator, "webSudoElevator");
         this.authenticator = Check.notNull(authenticator, "authenticator");
         this.authenticationListener = Check.notNull(authenticationListener, "authenticationListener");
         this.authenticationController = Check.notNull(authenticationController, "authenticationController");
-        this.ourConsumerKey = consumerService.getConsumer().getKey();
     }
     
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException
@@ -136,8 +133,7 @@ public class OAuth2LOFilter implements Filter
         final Set<String> names = params.keySet();
         return  names.containsAll(OAUTH_DATA_REQUEST_PARAMS) &&
                 !names.contains(OAuth.OAUTH_TOKEN) &&
-                !isRequestTokenRequest &&
-                !ourConsumerKey.equals(params.get(OAuth.OAUTH_CONSUMER_KEY));
+                !isRequestTokenRequest;
     }
 
     private Map<String,String> parameterNames(HttpServletRequest request)

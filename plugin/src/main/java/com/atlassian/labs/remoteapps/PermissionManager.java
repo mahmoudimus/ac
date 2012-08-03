@@ -1,14 +1,11 @@
 package com.atlassian.labs.remoteapps;
 
-import com.atlassian.applinks.api.*;
-import com.atlassian.labs.remoteapps.modules.applinks.RemoteAppApplicationType;
-import com.atlassian.labs.remoteapps.modules.permissions.Permissions;
+import com.atlassian.labs.remoteapps.modules.permissions.PermissionsReader;
 import com.atlassian.labs.remoteapps.modules.permissions.scope.ApiScope;
 import com.atlassian.labs.remoteapps.settings.SettingsManager;
 import com.atlassian.labs.remoteapps.util.ServletUtils;
 import com.atlassian.labs.remoteapps.util.tracker.WaitableServiceTracker;
 import com.atlassian.labs.remoteapps.util.tracker.WaitableServiceTrackerFactory;
-import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.PluginParseException;
@@ -23,12 +20,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-
-import static java.util.Arrays.asList;
 
 /**
  * Handles permissions for remote app operations
@@ -40,6 +37,7 @@ public class PermissionManager
     private final UserManager userManager;
     private final SettingsManager settingsManager;
     private final PluginAccessor pluginAccessor;
+    private final PermissionsReader permissionsReader;
     private final WaitableServiceTracker<String,ApiScope> apiScopeTracker;
 
     private final Set<String> NON_USER_ADMIN_PATHS = ImmutableSet.of(
@@ -51,11 +49,13 @@ public class PermissionManager
     public PermissionManager(
             UserManager userManager,
             WaitableServiceTrackerFactory waitableServiceTrackerFactory,
-            SettingsManager settingsManager, PluginAccessor pluginAccessor)
+            SettingsManager settingsManager, PluginAccessor pluginAccessor,
+            PermissionsReader permissionsReader)
     {
         this.userManager = userManager;
         this.settingsManager = settingsManager;
         this.pluginAccessor = pluginAccessor;
+        this.permissionsReader = permissionsReader;
         this.apiScopeTracker = waitableServiceTrackerFactory.create(ApiScope.class,
                 new Function<ApiScope, String>()
                 {
@@ -133,9 +133,8 @@ public class PermissionManager
     private Set<String> getScopesForPlugin(String clientKey)
     {
         Plugin plugin = pluginAccessor.getPlugin(clientKey);
-        ModuleDescriptor<?> descriptor = plugin.getModuleDescriptor(
-                "permissions");
-        return descriptor != null ? ((Permissions)descriptor.getModule()).getPermissions() : Collections.<String>emptySet();
+        return plugin != null ? permissionsReader.getPermissionsForPlugin(plugin).getPermissions()
+                : Collections.<String>emptySet();
     }
 
     public boolean canInstallRemoteApps(String username)
