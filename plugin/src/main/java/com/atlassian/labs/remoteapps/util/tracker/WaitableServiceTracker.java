@@ -168,6 +168,7 @@ public class WaitableServiceTracker<K, T>
         {
             addIfKeyNotNull(extractor, customizer, service);
         }
+        updateFutures();
     }
 
     private static class ServiceFuture<K, T> extends AbstractFuture<Map<K,T>>
