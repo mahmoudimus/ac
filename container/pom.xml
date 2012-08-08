@@ -210,7 +210,7 @@
                             <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
-                            <includeArtifactIds>remoteapps-apputils,remoteapps-ringojs-kit,ringojs</includeArtifactIds>
+                            <includeArtifactIds>remoteapps-kit-common,remoteapps-ringojs-kit,ringojs</includeArtifactIds>
                             <stripVersion>true</stripVersion>
                             <outputDirectory>${project.build.outputDirectory}</outputDirectory>
                         </configuration>
@@ -254,7 +254,7 @@
                             </transformers>
                             <artifactSet>
                                 <excludes>
-                                    <exclude>${project.groupId}:remoteapps-apputils</exclude>
+                                    <exclude>${project.groupId}:remoteapps-kit-common</exclude>
                                     <exclude>${project.groupId}:remoteapps-ringojs-kit</exclude>
                                     <exclude>org.twdata.org.ringojs:ringojs</exclude>
                                 </excludes>

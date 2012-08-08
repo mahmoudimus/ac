@@ -2,6 +2,8 @@ package com.atlassian.labs.remoteapps.modules.confluence;
 
 import com.atlassian.confluence.content.render.xhtml.ConversionContext;
 import com.atlassian.confluence.macro.MacroExecutionException;
+import com.atlassian.labs.remoteapps.RemoteAppAccessor;
+import com.atlassian.labs.remoteapps.RemoteAppAccessorFactory;
 import com.atlassian.labs.remoteapps.modules.IFrameRenderer;
 import com.atlassian.labs.remoteapps.modules.page.IFrameContext;
 import com.atlassian.sal.api.user.UserManager;
@@ -19,14 +21,17 @@ public class PageMacro extends AbstractRemoteMacro
     private final UserManager userManager;
     private final IFrameContext iframeContext;
     private final IFrameRenderer iFrameRenderer;
+    private final RemoteAppAccessorFactory remoteAppAccessorFactory;
 
     public PageMacro(RemoteMacroInfo remoteMacroInfo, UserManager userManager,
-            IFrameRenderer iFrameRenderer, IFrameContext iframeContext)
+            IFrameRenderer iFrameRenderer, IFrameContext iframeContext,
+            RemoteAppAccessorFactory remoteAppAccessorFactory)
     {
-        super(remoteMacroInfo);
+        super(remoteAppAccessorFactory, remoteMacroInfo);
         this.userManager = userManager;
         this.iframeContext = iframeContext;
         this.iFrameRenderer = iFrameRenderer;
+        this.remoteAppAccessorFactory = remoteAppAccessorFactory;
     }
 
     @Override
@@ -42,7 +47,7 @@ public class PageMacro extends AbstractRemoteMacro
                     storageFormatBody,
                     parameters,
                     remoteMacroInfo.getRequestContextParameterFactory(),
-                    remoteMacroInfo.getRemoteAppAccessor());
+                    remoteAppAccessorFactory.get(remoteMacroInfo.getPluginKey()));
              return iFrameRenderer.render(
                      new IFrameContext(iframeContext, "-" + counter),
                      "",
@@ -67,15 +72,20 @@ public class PageMacro extends AbstractRemoteMacro
 
     private Map<String, String[]> convertParams(Map<String, String> parameters)
     {
-        return Maps.transformValues(parameters, new Function<String,String[]>()
+        return Maps.transformValues(parameters, new Function<String, String[]>()
         {
 
             @Override
             public String[] apply(String from)
             {
-                return new String[] {from};
+                return new String[]{from};
             }
         });
     }
 
+    @Override
+    public RemoteAppAccessor getRemoteAppAccessor(String pluginKey)
+    {
+        return remoteAppAccessorFactory.get(pluginKey);
+    }
 }

@@ -1,14 +1,7 @@
 package com.atlassian.labs.remoteapps.modules.oauth;
 
-import com.atlassian.labs.remoteapps.ApplicationLinkAccessor;
-import com.atlassian.labs.remoteapps.OAuthLinkManager;
 import com.atlassian.labs.remoteapps.modules.external.*;
-import com.atlassian.oauth.Consumer;
-import com.atlassian.oauth.ServiceProvider;
-import com.atlassian.oauth.util.RSAKeys;
-import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.PluginInformation;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import org.dom4j.Element;
@@ -16,18 +9,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
-import java.security.GeneralSecurityException;
-import java.security.PublicKey;
 import java.util.Map;
-import java.util.Set;
 
-import static com.atlassian.labs.remoteapps.util.Dom4jUtils.getOptionalAttribute;
-import static com.atlassian.labs.remoteapps.util.Dom4jUtils.getRequiredElementText;
 import static java.util.Collections.emptyMap;
-import static java.util.Collections.emptySet;
 
 /**
  * Sets up a 2LO connection to allow incoming requests from the remote app
+ *
+ * This no longer does anything as it is handled by {@link com.atlassian.labs.remoteapps.modules.applinks.ApplicationTypeModuleGenerator}
  */
 @Component
 public class OauthModuleGenerator implements RemoteModuleGenerator
@@ -61,11 +50,12 @@ public class OauthModuleGenerator implements RemoteModuleGenerator
     @Override
     public Schema getSchema()
     {
-        return new StaticSchema(plugin,
-                "oauth.xsd",
-                "/xsd/oauth.xsd",
-                "OauthType",
-                "1");
+        return DocumentBasedSchema.builder("oauth")
+                .setPlugin(plugin)
+                .setTitle(getName())
+                .setDescription(getDescription())
+                .setMaxOccurs("1")
+                .build();
     }
 
     @Override
@@ -77,14 +67,7 @@ public class OauthModuleGenerator implements RemoteModuleGenerator
     @Override
     public RemoteModule generate(final RemoteAppCreationContext ctx, Element e)
     {
-        return new RemoteModule()
-        {
-            @Override
-            public Set<ModuleDescriptor> getModuleDescriptors()
-            {
-                return emptySet();
-            }
-        };
+        return RemoteModule.NO_OP;
     }
 
     @Override

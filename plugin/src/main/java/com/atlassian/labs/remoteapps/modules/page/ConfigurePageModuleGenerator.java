@@ -1,13 +1,8 @@
 package com.atlassian.labs.remoteapps.modules.page;
 
-import com.atlassian.labs.remoteapps.RemoteAppAccessorFactory;
-import com.atlassian.labs.remoteapps.modules.IFrameRenderer;
+import com.atlassian.labs.remoteapps.modules.external.DocumentBasedSchema;
 import com.atlassian.labs.remoteapps.modules.external.Schema;
-import com.atlassian.labs.remoteapps.modules.external.StaticSchema;
-import com.atlassian.labs.remoteapps.product.ProductAccessor;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
-import com.atlassian.plugin.servlet.ServletModuleManager;
-import com.atlassian.sal.api.user.UserManager;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -20,13 +15,9 @@ import org.springframework.stereotype.Component;
 public class ConfigurePageModuleGenerator extends AdminPageModuleGenerator
 {
     @Autowired
-    public ConfigurePageModuleGenerator(ServletModuleManager servletModuleManager,
-            ProductAccessor productAccessor,
-            IFrameRenderer iFrameRenderer, PluginRetrievalService pluginRetrievalService,
-            UserManager userManager)
+    public ConfigurePageModuleGenerator(PluginRetrievalService pluginRetrievalService)
     {
-        super(servletModuleManager, productAccessor,
-                iFrameRenderer, pluginRetrievalService, userManager);
+        super(pluginRetrievalService);
     }
 
     @Override
@@ -44,11 +35,12 @@ public class ConfigurePageModuleGenerator extends AdminPageModuleGenerator
     @Override
     public Schema getSchema()
     {
-        return new StaticSchema(getPlugin(),
-                "page.xsd",
-                "/xsd/page.xsd",
-                "PageType",
-                "1");
+        return DocumentBasedSchema.builder("page")
+                .setPlugin(getPlugin())
+                .setTitle(getName())
+                .setDescription(getDescription())
+                .setMaxOccurs("1")
+                .build();
     }
 
     @Override
@@ -61,10 +53,12 @@ public class ConfigurePageModuleGenerator extends AdminPageModuleGenerator
     @Override
     public void generatePluginDescriptor(Element descriptorElement, Element pluginDescriptorRoot)
     {
+        super.generatePluginDescriptor(descriptorElement, pluginDescriptorRoot);
         String appKey = pluginDescriptorRoot.attributeValue("key");
         String pageKey = descriptorElement.attributeValue("key");
         pluginDescriptorRoot.element("plugin-info").addElement("param")
                 .addAttribute("name", "configure.url")
-                .addText("/plugins/servlet" + createLocalUrl(appKey, pageKey));
+                .addText("/plugins/servlet" + RemotePageDescriptorCreator.createLocalUrl(appKey,
+                        pageKey));
     }
 }

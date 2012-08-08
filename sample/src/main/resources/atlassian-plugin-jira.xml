@@ -2,4 +2,15 @@
     <permissions>
         <permission>read_users_and_groups</permission>
     </permissions>
+
+    <webhook key="wh-remote_app_started" event="remote_app_started" url="/webHook/remote_app_started" />
+
+    <webhook key="wh-issue_created" event="issue_created" url="/webHook/issue_created" />
+
+    <issue-panel-page key="remoteAppIssuePanelPage" name="Remote App app1 Issue Page" url="/myAdmin" />
+    <issue-tab-page key="remoteAppIssueTabPage" name="app1" url="/myAdmin" />
+
+    <remote-search-request-view key="remoteAppSearchRequestView" name="Raw Keys" url="/search/keys"/>
+
+    <project-tab-page key="remoteAppProjectTab" name="app1" url="/myAdmin" />
 </application>

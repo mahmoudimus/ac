@@ -59,14 +59,7 @@ public class ApplicationTypeModuleGenerator implements RemoteModuleGenerator
     @Override
     public RemoteModule generate(RemoteAppCreationContext ctx, Element element)
     {
-        return new RemoteModule()
-        {
-            @Override
-            public Set<ModuleDescriptor> getModuleDescriptors()
-            {
-                return emptySet();
-            }
-        };
+        return RemoteModule.NO_OP;
     }
 
     @Override

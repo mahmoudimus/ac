@@ -1,12 +1,6 @@
 package com.atlassian.labs.remoteapps.modules.page;
 
-import com.atlassian.labs.remoteapps.RemoteAppAccessorFactory;
-import com.atlassian.labs.remoteapps.modules.DefaultWebItemContext;
-import com.atlassian.labs.remoteapps.modules.IFrameRenderer;
-import com.atlassian.labs.remoteapps.product.ProductAccessor;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
-import com.atlassian.plugin.servlet.ServletModuleManager;
-import com.atlassian.sal.api.user.UserManager;
 import org.dom4j.Element;
 
 import java.util.Map;
@@ -18,19 +12,9 @@ import static java.util.Collections.emptyMap;
  */
 public class ProfilePageModuleGenerator extends AbstractPageModuleGenerator
 {
-    public ProfilePageModuleGenerator(ServletModuleManager servletModuleManager,
-                                    ProductAccessor productAccessor,
-                                    IFrameRenderer iFrameRenderer,
-            PluginRetrievalService pluginRetrievalService,
-            UserManager userManager
-    )
+    public ProfilePageModuleGenerator(PluginRetrievalService pluginRetrievalService)
     {
-        super(servletModuleManager, iFrameRenderer,
-              new DefaultWebItemContext(
-                      productAccessor.getPreferredProfileSectionKey(),
-                      productAccessor.getPreferredProfileWeight(),
-                      productAccessor.getLinkContextParams()
-              ), userManager, productAccessor, pluginRetrievalService);
+        super(pluginRetrievalService);
     }
 
     @Override
@@ -57,15 +41,4 @@ public class ProfilePageModuleGenerator extends AbstractPageModuleGenerator
         return emptyMap();
     }
 
-    @Override
-    protected String getDecorator()
-    {
-        return "atl.userprofile";
-    }
-
-    @Override
-    protected String getTemplateSuffix()
-    {
-        return "";
-    }
 }

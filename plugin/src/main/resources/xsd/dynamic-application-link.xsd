@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+
+    <xs:include schemaLocation="common.xsd" />
+    <xs:include schemaLocation="oauth.xsd"/>
+    <xs:include schemaLocation="entity-type.xsd"/>
+
+    <xs:complexType name="DynamicApplicationLinkType">
+        <xs:choice minOccurs="1" maxOccurs="unbounded">
+            <xs:element name="oauth" type="OauthType" maxOccurs="1" />
+            <xs:element name="entity-type" type="EntityTypeType" />
+        </xs:choice>
+        <xs:attribute name="key" type="KeyType" use="required" />
+        <xs:attribute name="icon-url" type="AbsoluteOrRelativeUrlType">
+            <xs:annotation>
+                <xs:documentation>
+                    The relative url to the icon for this app.  Absolute urls are allowed currently
+                    but deprecated.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="display-url" type="HttpUrlType" use="optional">
+            <xs:annotation>
+                <xs:documentation>
+                    The public url with which this app can be accessed.  While required when retrieved,
+                    it may be omitted during the development of a universal binary, as the
+                    container will handle the creation and injection of the display url.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+
+    </xs:complexType>
+</xs:schema>

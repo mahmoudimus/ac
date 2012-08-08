@@ -1,12 +1,6 @@
 package com.atlassian.labs.remoteapps.modules.page;
 
-import com.atlassian.labs.remoteapps.RemoteAppAccessorFactory;
-import com.atlassian.labs.remoteapps.modules.DefaultWebItemContext;
-import com.atlassian.labs.remoteapps.modules.IFrameRenderer;
-import com.atlassian.labs.remoteapps.product.ProductAccessor;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
-import com.atlassian.plugin.servlet.ServletModuleManager;
-import com.atlassian.sal.api.user.UserManager;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -22,19 +16,10 @@ import static java.util.Collections.emptyMap;
 public class GeneralPageModuleGenerator extends AbstractPageModuleGenerator
 {
     @Autowired
-    public GeneralPageModuleGenerator(ServletModuleManager servletModuleManager,
-                                    ProductAccessor productAccessor,
-                                    IFrameRenderer iFrameRenderer,
-                                    UserManager userManager,
-                                    PluginRetrievalService pluginRetrievalService
+    public GeneralPageModuleGenerator(PluginRetrievalService pluginRetrievalService
     )
     {
-        super(servletModuleManager, iFrameRenderer,
-              new DefaultWebItemContext(
-                      productAccessor.getPreferredGeneralSectionKey(),
-                      productAccessor.getPreferredGeneralWeight(),
-                      productAccessor.getLinkContextParams()
-              ), userManager, productAccessor, pluginRetrievalService);
+        super(pluginRetrievalService);
     }
 
     @Override
@@ -59,11 +44,5 @@ public class GeneralPageModuleGenerator extends AbstractPageModuleGenerator
     public Map<String, String> getI18nMessages(String pluginKey, Element element)
     {
         return emptyMap();
-    }
-
-    @Override
-    protected String getDecorator()
-    {
-        return "atl.general";
     }
 }

@@ -1,30 +1,14 @@
 package com.atlassian.labs.remoteapps.modules.jira.searchrequestview;
 
-import com.atlassian.jira.ComponentManager;
-import com.atlassian.jira.issue.views.util.SearchRequestViewBodyWriterUtil;
-import com.atlassian.jira.plugin.searchrequestview.SearchRequestURLHandler;
-import com.atlassian.jira.plugin.searchrequestview.SearchRequestView;
-import com.atlassian.jira.plugin.searchrequestview.SearchRequestViewModuleDescriptor;
-import com.atlassian.jira.plugin.searchrequestview.SearchRequestViewModuleDescriptorImpl;
-import com.atlassian.jira.security.JiraAuthenticationContext;
-import com.atlassian.labs.remoteapps.RemoteAppAccessorFactory;
 import com.atlassian.labs.remoteapps.modules.external.*;
-import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
-import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
-import com.atlassian.sal.api.ApplicationProperties;
-import com.atlassian.templaterenderer.TemplateRenderer;
-import com.google.common.collect.ImmutableSet;
 import org.dom4j.Element;
 
 import java.net.URI;
 import java.util.Map;
-import java.util.Set;
 
-import static com.atlassian.labs.remoteapps.util.Dom4jUtils.getOptionalAttribute;
-import static com.atlassian.labs.remoteapps.util.Dom4jUtils.getRequiredAttribute;
 import static com.atlassian.labs.remoteapps.util.Dom4jUtils.getRequiredUriAttribute;
 import static java.util.Collections.emptyMap;
 
@@ -33,25 +17,10 @@ import static java.util.Collections.emptyMap;
  */
 public class SearchRequestViewModuleGenerator implements RemoteModuleGenerator
 {
-    private final RemoteAppAccessorFactory remoteAppAccessorFactory;
-    private final ApplicationProperties applicationProperties;
-    private final SearchRequestViewBodyWriterUtil searchRequestViewBodyWriterUtil;
-    private final SearchRequestURLHandler searchRequestURLHandler;
     private final Plugin plugin;
-    private final TemplateRenderer templateRenderer;
 
-    public SearchRequestViewModuleGenerator(
-            final RemoteAppAccessorFactory remoteAppAccessorFactory,
-            PluginRetrievalService pluginRetrievalService,
-            ApplicationProperties applicationProperties,
-            SearchRequestViewBodyWriterUtil searchRequestViewBodyWriterUtil,
-            SearchRequestURLHandler searchRequestURLHandler, TemplateRenderer templateRenderer)
+    public SearchRequestViewModuleGenerator(PluginRetrievalService pluginRetrievalService)
     {
-        this.remoteAppAccessorFactory = remoteAppAccessorFactory;
-        this.applicationProperties = applicationProperties;
-        this.searchRequestViewBodyWriterUtil = searchRequestViewBodyWriterUtil;
-        this.searchRequestURLHandler = searchRequestURLHandler;
-        this.templateRenderer = templateRenderer;
         this.plugin = pluginRetrievalService.getPlugin();
     }
 
@@ -64,74 +33,17 @@ public class SearchRequestViewModuleGenerator implements RemoteModuleGenerator
     @Override
     public Schema getSchema()
     {
-        return new StaticSchema(plugin,
-                "search-request-view.xsd",
-                "/xsd/search-request-view.xsd",
-                "SearchRequestViewType",
-                "unbounded");
+        return DocumentBasedSchema.builder("remote-search-request-view")
+                .setPlugin(plugin)
+                .setTitle(getName())
+                .setDescription(getDescription())
+                .build();
     }
 
     @Override
     public RemoteModule generate(final RemoteAppCreationContext ctx, final Element element)
     {
-        final String moduleKey = "search-request-view-" + getRequiredAttribute(element, "key");
-        final String url = getRequiredUriAttribute(element, "url").toString();
-
-        Element desc = element.createCopy();
-        desc.addAttribute("key", moduleKey);
-        desc.addAttribute("class", SearchRequestView.class.getName());
-        desc.addAttribute("order", getOptionalAttribute(element, "weight", 1000));
-        desc.addAttribute("contentType", "text/html");
-        desc.addAttribute("fileExtension", "html");
-
-        SearchRequestViewModuleDescriptor moduleDescriptor = createDescriptor(ctx,
-                desc, url);
-
-        final Set<ModuleDescriptor> descriptors = ImmutableSet.<ModuleDescriptor>of(
-                moduleDescriptor);
-        return new RemoteModule()
-        {
-            @Override
-            public Set<ModuleDescriptor> getModuleDescriptors()
-            {
-                return descriptors;
-            }
-        };
-    }
-
-    private SearchRequestViewModuleDescriptor createDescriptor(
-            final RemoteAppCreationContext ctx,
-            final Element element,
-            final String url)
-    {
-        final String title = getRequiredAttribute(element, "name");
-        try
-        {
-            JiraAuthenticationContext jiraAuthenticationContext = ComponentManager.getInstance().getJiraAuthenticationContext();
-            SearchRequestViewModuleDescriptor descriptor = new SearchRequestViewModuleDescriptorImpl(
-                    jiraAuthenticationContext, searchRequestURLHandler, new ModuleFactory()
-            {
-                @Override
-                public <T> T createModule(String name, ModuleDescriptor<T> moduleDescriptor) throws
-                        PluginParseException
-                {
-
-                    return (T) new RemoteSearchRequestView(applicationProperties,
-                            searchRequestViewBodyWriterUtil,
-                            templateRenderer,
-                            ctx.getPlugin().getKey(),
-                            URI.create(url),
-                                    title);
-                }
-            });
-
-            descriptor.init(ctx.getPlugin(), element);
-            return descriptor;
-        }
-        catch (Exception ex)
-        {
-            throw new PluginParseException(ex);
-        }
+        return RemoteModule.NO_OP;
     }
 
     @Override
@@ -144,6 +56,8 @@ public class SearchRequestViewModuleGenerator implements RemoteModuleGenerator
     @Override
     public void generatePluginDescriptor(Element descriptorElement, Element pluginDescriptorRoot)
     {
+        Element copy = descriptorElement.createCopy("remote-search-request-view");
+        pluginDescriptorRoot.add(copy);
     }
 
     @Override

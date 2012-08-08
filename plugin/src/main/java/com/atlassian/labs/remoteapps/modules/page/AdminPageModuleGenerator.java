@@ -23,23 +23,12 @@ import static java.util.Collections.emptyMap;
 @Component
 public class AdminPageModuleGenerator extends AbstractPageModuleGenerator
 {
-    private final UserManager userManager;
 
     @Autowired
-    public AdminPageModuleGenerator(ServletModuleManager servletModuleManager,
-                                    ProductAccessor productAccessor,
-                                    IFrameRenderer iFrameRenderer,
-            PluginRetrievalService pluginRetrievalService,
-                                    UserManager userManager
+    public AdminPageModuleGenerator(PluginRetrievalService pluginRetrievalService
     )
     {
-        super(servletModuleManager, iFrameRenderer,
-              new DefaultWebItemContext(
-                      productAccessor.getPreferredAdminSectionKey(),
-                      productAccessor.getPreferredAdminWeight(),
-                      productAccessor.getLinkContextParams()
-              ), userManager, productAccessor, pluginRetrievalService);
-        this.userManager = userManager;
+        super(pluginRetrievalService);
     }
 
     @Override
@@ -64,29 +53,5 @@ public class AdminPageModuleGenerator extends AbstractPageModuleGenerator
     public Map<String, String> getI18nMessages(String pluginKey, Element element)
     {
         return emptyMap();
-    }
-
-    @Override
-    protected Condition getCondition()
-    {
-        return new Condition()
-        {
-            @Override
-            public void init(Map<String, String> params) throws PluginParseException
-            {
-            }
-
-            @Override
-            public boolean shouldDisplay(Map<String, Object> context)
-            {
-                return userManager.isAdmin(userManager.getRemoteUsername());
-            }
-        };
-    }
-
-    @Override
-    protected String getDecorator()
-    {
-        return "atl.admin";
     }
 }

@@ -1,50 +1,26 @@
 package com.atlassian.labs.remoteapps.modules.page.jira;
 
-import com.atlassian.labs.jira4compat.CompatViewProfilePanelModuleDescriptor;
-import com.atlassian.labs.jira4compat.spi.CompatViewProfilePanelFactory;
-import com.atlassian.labs.remoteapps.loader.AggregateModuleDescriptorFactory;
-import com.atlassian.labs.remoteapps.RemoteAppAccessorFactory;
-import com.atlassian.labs.remoteapps.modules.IFrameParams;
-import com.atlassian.labs.remoteapps.modules.IFrameRenderer;
 import com.atlassian.labs.remoteapps.modules.external.*;
-import com.atlassian.labs.remoteapps.modules.page.IFrameContext;
-import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
-import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
-import com.google.common.collect.ImmutableSet;
 import org.dom4j.Element;
 
 import java.net.URI;
 import java.util.Map;
-import java.util.Set;
 
-import static com.atlassian.labs.remoteapps.util.Dom4jUtils.getRequiredAttribute;
 import static com.atlassian.labs.remoteapps.util.Dom4jUtils.getRequiredUriAttribute;
-import static com.google.common.collect.Maps.newHashMap;
 import static java.util.Collections.emptyMap;
 
 /**
  *
  */
-public class JiraProfileTabModuleGenerator implements WaitableRemoteModuleGenerator
+public class JiraProfileTabModuleGenerator implements RemoteModuleGenerator
 {
-    private final CompatViewProfilePanelFactory compatViewProfilePanelFactory;
-    private final AggregateModuleDescriptorFactory moduleDescriptorFactory;
-    private final IFrameRenderer iFrameRenderer;
     private final Plugin plugin;
-    private Map<String, Object> iframeParams = newHashMap();
 
-    public JiraProfileTabModuleGenerator(
-            CompatViewProfilePanelFactory compatViewProfilePanelFactory,
-            IFrameRenderer iFrameRenderer,
-            AggregateModuleDescriptorFactory moduleDescriptorFactory,
-            PluginRetrievalService pluginRetrievalService)
+    public JiraProfileTabModuleGenerator(PluginRetrievalService pluginRetrievalService)
     {
-        this.compatViewProfilePanelFactory = compatViewProfilePanelFactory;
-        this.iFrameRenderer = iFrameRenderer;
-        this.moduleDescriptorFactory = moduleDescriptorFactory;
         this.plugin = pluginRetrievalService.getPlugin();
     }
 
@@ -69,16 +45,11 @@ public class JiraProfileTabModuleGenerator implements WaitableRemoteModuleGenera
     @Override
     public Schema getSchema()
     {
-        return new StaticSchema(plugin,
-                "page.xsd",
-                "/xsd/page.xsd",
-                "PageType");
-    }
-
-    @Override
-    public void waitToLoad(Element element)
-    {
-        moduleDescriptorFactory.waitForRequiredDescriptors("compat-view-profile-panel");
+        return DocumentBasedSchema.builder("page")
+                .setPlugin(plugin)
+                .setTitle(getName())
+                .setDescription(getDescription())
+                .build();
     }
 
     @Override
@@ -90,19 +61,7 @@ public class JiraProfileTabModuleGenerator implements WaitableRemoteModuleGenera
     @Override
     public RemoteModule generate(RemoteAppCreationContext ctx, Element e)
     {
-        String key = getRequiredAttribute(e, "key");
-        final String url = getRequiredUriAttribute(e, "url").toString();
-
-        final Set<ModuleDescriptor> descriptors = ImmutableSet.<ModuleDescriptor>of(
-                createProfilePanelDescriptor(ctx, e, key, url));
-        return new RemoteModule()
-        {
-            @Override
-            public Set<ModuleDescriptor> getModuleDescriptors()
-            {
-                return descriptors;
-            }
-        };
+        return RemoteModule.NO_OP;
     }
 
     @Override
@@ -114,32 +73,7 @@ public class JiraProfileTabModuleGenerator implements WaitableRemoteModuleGenera
     @Override
     public void generatePluginDescriptor(Element descriptorElement, Element pluginDescriptorRoot)
     {
-    }
-
-    private CompatViewProfilePanelModuleDescriptor createProfilePanelDescriptor(final RemoteAppCreationContext ctx,
-                                                            final Element e,
-                                                            String key,
-                                                            final String path
-    )
-    {
-        final String panelName = getRequiredAttribute(e, "name");
-        Element config = e.createCopy();
-        final String moduleKey = "profile-" + key;
-        config.addAttribute("key", moduleKey);
-        config.addAttribute("i18n-key", panelName);
-        config.addAttribute("class", IFrameViewProfilePanel.class.getName());
-
-        final CompatViewProfilePanelModuleDescriptor descriptor = new CompatViewProfilePanelModuleDescriptor(new ModuleFactory()
-        {
-            @Override
-            public <T> T createModule(String name, ModuleDescriptor<T> moduleDescriptor) throws PluginParseException
-            {
-                return (T) new IFrameViewProfilePanel(
-                        iFrameRenderer,
-                        new IFrameContext(ctx.getRemoteAppAccessor(), path, moduleKey, new IFrameParams(e)));
-            }
-        }, ctx.getBundle().getBundleContext(), compatViewProfilePanelFactory);
-        descriptor.init(ctx.getPlugin(), config);
-        return descriptor;
+        Element copy = descriptorElement.createCopy();
+        pluginDescriptorRoot.add(copy);
     }
 }

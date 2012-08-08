@@ -12,12 +12,12 @@ public class JiraRemoteAppProjectTab extends AbstractProjectTab
     PageBinder pageBinder;
     public JiraRemoteAppProjectTab(String projectKey)
     {
-        super("project-tab-remoteAppProjectTab-panel", projectKey);
+        super("project-tab-jira-remoteAppProjectTab-panel", projectKey);
     }
 
     public RemoteAppEmbeddedTestPage getEmbeddedPage()
     {
-        return pageBinder.bind(RemoteAppEmbeddedTestPage.class, "project-tab-remoteAppProjectTab");
+        return pageBinder.bind(RemoteAppEmbeddedTestPage.class, "project-tab-jira-remoteAppProjectTab");
     }
 
 

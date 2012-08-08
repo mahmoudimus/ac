@@ -110,7 +110,7 @@ public class RedirectServlet extends HttpServlet
         final String appUrl = req.getParameter(APP_URL_PARAM);
         Validate.notEmpty(appUrl, String.format("%s parameter is required", APP_URL_PARAM));
 
-        RemoteAppAccessor remoteAppAccessor = remoteAppAccessorFactory.create(appkey);
+        RemoteAppAccessor remoteAppAccessor = remoteAppAccessorFactory.get(appkey);
 
         String fullAppUrl = redirectType.isSign() ? getFullSignedUrl(remoteAppAccessor, appUrl, req.getParameterMap()) :
                 getFullUrl(remoteAppAccessor, appUrl, req.getParameterMap());

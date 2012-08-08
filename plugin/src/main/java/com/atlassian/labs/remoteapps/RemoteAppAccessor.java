@@ -1,6 +1,5 @@
 package com.atlassian.labs.remoteapps;
 
-import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.labs.remoteapps.util.http.AuthorizationGenerator;
 import com.atlassian.labs.remoteapps.util.http.HttpContentHandler;
 
@@ -9,8 +8,7 @@ import java.util.Map;
 import java.util.concurrent.Future;
 
 /**
- * Created with IntelliJ IDEA. User: mrdon Date: 7/26/12 Time: 2:50 PM To change this template use
- * File | Settings | File Templates.
+ * Abstracts interactions with the remote app
  */
 public interface RemoteAppAccessor
 {

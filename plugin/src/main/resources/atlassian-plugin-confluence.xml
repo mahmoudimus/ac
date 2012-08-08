@@ -6,29 +6,29 @@
                       interface="com.atlassian.confluence.setup.settings.SettingsManager"/>
     
     <!-- api scopes -->
-    <component key="confluence-read_content" class="com.atlassian.labs.remoteapps.product.confluence.ReadContentScope" />
-    <component key="confluence-modify_attachments" class="com.atlassian.labs.remoteapps.product.confluence.ModifyAttachmentsScope" />
-    <component key="confluence-read_users_and_groups"
+    <component key="read_content" class="com.atlassian.labs.remoteapps.product.confluence.ReadContentScope" />
+    <component key="modify_attachments" class="com.atlassian.labs.remoteapps.product.confluence.ModifyAttachmentsScope" />
+    <component key="read_users_and_groups"
                class="com.atlassian.labs.remoteapps.product.confluence.ConfluenceReadUsersAndGroupsScope" />
-    <component key="confluence-modify_spaces"
+    <component key="modify_spaces"
                class="com.atlassian.labs.remoteapps.product.confluence.ModifySpacesScope" />
-    <component key="confluence-read_server_information"
+    <component key="read_server_information"
                class="com.atlassian.labs.remoteapps.product.confluence.ReadServerInformationScope"/>
-    <component key="confluence-modify_users"
+    <component key="modify_users"
                class="com.atlassian.labs.remoteapps.product.confluence.ModifyUsersScope"/>
-    <component key="confluence-manage_watchers"
+    <component key="manage_watchers"
                class="com.atlassian.labs.remoteapps.product.confluence.ManageWatchersScope"/>
-    <component key="confluence-label_content"
+    <component key="label_content"
                class="com.atlassian.labs.remoteapps.product.confluence.LabelContentScope"/>
-    <component key="confluence-render_content"
+    <component key="render_content"
                class="com.atlassian.labs.remoteapps.product.confluence.RenderContentScope"/>
-    <component key="confluence-modify_content"
+    <component key="modify_content"
                class="com.atlassian.labs.remoteapps.product.confluence.ModifyContentScope"/>
 
     <!-- module types -->
     <component key="macro" class="com.atlassian.labs.remoteapps.modules.confluence.MacroModuleGenerator"/>
     <component key="page-macro" class="com.atlassian.labs.remoteapps.modules.confluence.PageMacroModuleGenerator"/>
-    <component key="confluence-profile-page" class="com.atlassian.labs.remoteapps.modules.page.ProfilePageModuleGenerator" />
+    <component key="profile-page-generator" class="com.atlassian.labs.remoteapps.modules.page.ProfilePageModuleGenerator" />
 
     <web-section key="admin.pages" name="Remote Apps" location="system.admin" weight="100">
         <label>Remote Apps</label>
@@ -36,20 +36,21 @@
 
     <web-resource-transformer key="macroVariableTransformer" class="com.atlassian.labs.remoteapps.modules.confluence.MacroVariableInjectorTransformer"/>
 
-    <rest key="rest-confluence" path="/remoteapps" version="1">
+    <rest key="rest" path="/remoteapps" version="1">
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>INCLUDE</dispatcher>
         <package>com.atlassian.labs.remoteapps.rest</package>
         <package>com.atlassian.labs.remoteapps.product.confluence.rest</package>
     </rest>
 
+    <component key="macroModuleDescriptorCreator" class="com.atlassian.labs.remoteapps.modules.confluence.MacroModuleDescriptorCreator" />
     <component key="macroContentLinkParser" class="com.atlassian.labs.remoteapps.modules.confluence.MacroContentLinkParser" />
     <component key="macroContentManager" class="com.atlassian.labs.remoteapps.modules.confluence.MacroContentManager"/>
-    <component key="confluenceWebHookProvider" class="com.atlassian.labs.remoteapps.product.confluence.webhook.ConfluenceWebHookProvider" />
-    <component key="confluenceEventSerializerFactory" class="com.atlassian.labs.remoteapps.product.confluence.webhook.ConfluenceEventSerializerFactory" />
-    <component key="confluenceWebSudoElevator" class="com.atlassian.labs.remoteapps.product.confluence.ConfluenceWebSudoElevator" />
+    <component key="WebHookProvider" class="com.atlassian.labs.remoteapps.product.confluence.webhook.ConfluenceWebHookProvider" />
+    <component key="EventSerializerFactory" class="com.atlassian.labs.remoteapps.product.confluence.webhook.ConfluenceEventSerializerFactory" />
+    <component key="WebSudoElevator" class="com.atlassian.labs.remoteapps.product.confluence.ConfluenceWebSudoElevator" />
 
-    <component key="jira-host" class="com.atlassian.labs.remoteapps.modules.ServletContextThreadLocalIFrameHost" />
+    <component key="host" class="com.atlassian.labs.remoteapps.modules.ServletContextThreadLocalIFrameHost" />
 
     <component-import key="bandanaManager" interface="com.atlassian.bandana.BandanaManager" />
     <component-import key="spaceManager" interface="com.atlassian.confluence.spaces.SpaceManager" />
@@ -75,4 +76,17 @@
         <resource type="download" name="big-pipe.js" location="js/confluence/macro/big-pipe.js" />
         <dependency>com.atlassian.auiplugin:ajs</dependency>
     </web-resource>
+
+    <!-- dynamic modules -->
+    <described-module-type key="profile-page" name="User Profile Page" class="com.atlassian.labs.remoteapps.modules.page.ProfilePageModuleDescriptor">
+        <description>A user profile page decorated as normal page in the user profile area</description>
+    </described-module-type>
+
+    <described-module-type key="remote-macro" name="Remote Macro" class="com.atlassian.labs.remoteapps.modules.confluence.RemoteMacroModuleDescriptor">
+        <description>A Confluence macro that returns XHTML in the Confluence storage format</description>
+    </described-module-type>
+
+    <described-module-type key="macro-page" class="com.atlassian.labs.remoteapps.modules.confluence.MacroPageModuleDescriptor">
+        <description>A Confluence macro that loads the remote page as an IFrame</description>
+    </described-module-type>
 </application>

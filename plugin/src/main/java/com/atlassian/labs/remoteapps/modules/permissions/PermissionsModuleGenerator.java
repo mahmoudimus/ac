@@ -1,29 +1,30 @@
 package com.atlassian.labs.remoteapps.modules.permissions;
 
-import com.atlassian.labs.remoteapps.ApplicationLinkAccessor;
 import com.atlassian.labs.remoteapps.PermissionManager;
+import com.atlassian.labs.remoteapps.integration.plugins.SchemaTransformer;
 import com.atlassian.labs.remoteapps.modules.external.*;
-import com.atlassian.labs.remoteapps.modules.permissions.scope.ApiScopeSchema;
+import com.atlassian.labs.remoteapps.modules.permissions.scope.ApiResourceInfo;
+import com.atlassian.labs.remoteapps.modules.permissions.scope.ApiScope;
 import com.atlassian.labs.remoteapps.product.ProductAccessor;
 import com.atlassian.labs.remoteapps.settings.SettingsManager;
-import com.atlassian.plugin.ModuleDescriptor;
+import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
+import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.sal.api.user.UserManager;
 import org.apache.commons.lang.StringUtils;
+import org.dom4j.Document;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import static com.atlassian.labs.remoteapps.util.Dom4jUtils.getOptionalAttribute;
-import static com.atlassian.labs.remoteapps.util.Dom4jUtils.getRequiredAttribute;
+import static com.atlassian.labs.remoteapps.util.Dom4jUtils.*;
 import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Collections.emptyMap;
-import static java.util.Collections.emptySet;
 
 /**
  * Allows a remote app to declare multiple permissions, usually api scopes
@@ -33,21 +34,21 @@ public class PermissionsModuleGenerator implements WaitableRemoteModuleGenerator
 {
     private final PermissionManager permissionManager;
     private final String applicationKey;
+    private final Plugin plugin;
 
     private final UserManager userManager;
     private final SettingsManager settingsManager;
-    private final ApiScopeSchema apiScopeSchema;
 
     @Autowired
     public PermissionsModuleGenerator(PermissionManager permissionManager,
             ProductAccessor productAccessor, UserManager userManager,
-            SettingsManager settingsManager, ApiScopeSchema apiScopeSchema)
+            SettingsManager settingsManager, PluginRetrievalService pluginRetrievalService)
     {
         this.permissionManager = permissionManager;
         this.userManager = userManager;
         this.settingsManager = settingsManager;
-        this.apiScopeSchema = apiScopeSchema;
         this.applicationKey = productAccessor.getKey();
+        this.plugin = pluginRetrievalService.getPlugin();
     }
 
 
@@ -72,7 +73,38 @@ public class PermissionsModuleGenerator implements WaitableRemoteModuleGenerator
     @Override
     public Schema getSchema()
     {
-        return apiScopeSchema;
+        return DocumentBasedSchema.builder("permissions")
+                .setPlugin(plugin)
+                .setTitle(getName())
+                .setDescription(getDescription())
+                .setTransformer(new SchemaTransformer()
+                {
+                    @Override
+                    public Document transform(@Nullable Document input)
+                    {
+                        Element parent = (Element) input.selectSingleNode("/xs:schema/xs:simpleType/xs:restriction");
+
+                        for (ApiScope apiScope : permissionManager.getApiScopes())
+                        {
+                            Element enumeration = parent.addElement("xs:enumeration").addAttribute("value", apiScope.getKey());
+                            Element doc = addSchemaDocumentation(enumeration, apiScope);
+                            Element resources = doc.addElement("resources");
+                            for (ApiResourceInfo resource : apiScope.getApiResourceInfos())
+                            {
+
+                                Element res = resources.addElement("resource").
+                                        addAttribute("path", resource.getPath()).
+                                        addAttribute("httpMethod", resource.getHttpMethod());
+                                if (resource.getRpcMethod() != null)
+                                {
+                                    res.addAttribute("rpcMethod", resource.getRpcMethod());
+                                }
+                            }
+                        }
+                        return input;
+                    }
+                })
+                .build();
     }
 
     @Override
@@ -84,14 +116,7 @@ public class PermissionsModuleGenerator implements WaitableRemoteModuleGenerator
     @Override
     public RemoteModule generate(final RemoteAppCreationContext ctx, final Element element)
     {
-        return new RemoteModule()
-        {
-            @Override
-            public Set<ModuleDescriptor> getModuleDescriptors()
-            {
-                return emptySet();
-            }
-        };
+        return RemoteModule.NO_OP;
     }
 
     private List<String> extractApiScopeKeys(Element element)
@@ -104,7 +129,6 @@ public class PermissionsModuleGenerator implements WaitableRemoteModuleGenerator
             {
                 String scopeKey = getRequiredAttribute(e, "scope");
                 apiScopes.add(scopeKey);
-
             }
         }
         return apiScopes;
@@ -131,9 +155,11 @@ public class PermissionsModuleGenerator implements WaitableRemoteModuleGenerator
     @Override
     public void generatePluginDescriptor(Element descriptorElement, Element pluginDescriptorRoot)
     {
-        descriptorElement.addElement("permissions")
-                .addAttribute("key", "permissions")
-                .elements().addAll(descriptorElement.createCopy().elements());
+        Element perms = pluginDescriptorRoot.element("plugin-info").addElement("permissions");
+        for (String scope : extractApiScopeKeys(descriptorElement))
+        {
+            perms.addElement("permission").addText(scope);
+        }
     }
 
     @Override

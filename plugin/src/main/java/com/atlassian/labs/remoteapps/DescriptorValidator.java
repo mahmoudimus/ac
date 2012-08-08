@@ -30,6 +30,7 @@ import java.net.URL;
 import java.util.*;
 
 import static com.atlassian.labs.remoteapps.util.Dom4jUtils.*;
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Sets.newHashSet;
 
 /**
@@ -153,6 +154,7 @@ public class DescriptorValidator
             {
                 includedDocIds.add(id);
                 Document doc = generator.getSchema().getDocument();
+                checkNotNull(doc, "Document from generator " + generator.getType() + " is null");
                 processIncludes(doc, includedDocIds);
                 for (Element child : (List<Element>)doc.getRootElement().elements())
                 {

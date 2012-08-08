@@ -2,6 +2,7 @@ package com.atlassian.labs.remoteapps.webhook;
 
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.labs.remoteapps.RemoteAppAccessor;
+import com.atlassian.labs.remoteapps.RemoteAppAccessorFactory;
 import com.atlassian.labs.remoteapps.event.RemoteAppEvent;
 import com.atlassian.labs.remoteapps.util.http.HttpContentRetriever;
 import com.atlassian.labs.remoteapps.util.uri.Uri;
@@ -38,31 +39,34 @@ public class WebHookPublisher implements DisposableBean
     private final HttpContentRetriever httpContentRetriever;
     private final EventPublisher eventPublisher;
     private final UserManager userManager;
+    private final RemoteAppAccessorFactory remoteAppAccessorFactory;
     private static final Logger log = LoggerFactory.getLogger(WebHookPublisher.class);
 
     private final Multimap<String, Registration> registrationsByEvent = newMultimap();
 
     @Autowired
     public WebHookPublisher(HttpContentRetriever httpContentRetriever,
-            EventPublisher eventPublisher, UserManager userManager)
+            EventPublisher eventPublisher, UserManager userManager,
+            RemoteAppAccessorFactory remoteAppAccessorFactory)
     {
         this.httpContentRetriever = httpContentRetriever;
         this.eventPublisher = eventPublisher;
         this.userManager = userManager;
+        this.remoteAppAccessorFactory = remoteAppAccessorFactory;
 
         publisher = new ThreadPoolExecutor(3, 3,
                                       0L, TimeUnit.MILLISECONDS,
                                       new LinkedBlockingQueue<Runnable>(PUBLISH_QUEUE_SIZE));
     }
 
-    public void register(RemoteAppAccessor remoteAppAccessor, String eventIdentifier, String path)
+    public void register(String pluginKey, String eventIdentifier, String path)
     {
-        registrationsByEvent.put(eventIdentifier, new Registration(remoteAppAccessor, path));
+        registrationsByEvent.put(eventIdentifier, new Registration(pluginKey, path));
     }
 
-    public void unregister(RemoteAppAccessor remoteAppAccessor, String eventIdentifier, String url)
+    public void unregister(String pluginKey, String eventIdentifier, String url)
     {
-        registrationsByEvent.remove(eventIdentifier, new Registration(remoteAppAccessor, url));
+        registrationsByEvent.remove(eventIdentifier, new Registration(pluginKey, url));
     }
 
     public void publish(String eventIdentifier, EventMatcher<Object> eventMatcher, EventSerializer eventSerializer)
@@ -75,10 +79,12 @@ public class WebHookPublisher implements DisposableBean
 
                 if (eventMatcher.matches(eventSerializer.getEvent(), registration.getPluginKey()))
                 {
+                    RemoteAppAccessor remoteAppAccessor = remoteAppAccessorFactory.get(
+                            registration.getPluginKey());
                     body = body != null ? body : eventSerializer.getJson();
                     String username = userManager.getRemoteUsername();
                     PublishTask task = new PublishTask(httpContentRetriever, registration,
-                            registration.remoteAppAccessor, username != null ? username : "", body);
+                            remoteAppAccessor, username != null ? username : "", body);
                     try
                     {
                         publisher.execute(task);
@@ -87,7 +93,7 @@ public class WebHookPublisher implements DisposableBean
                     {
                         log.warn("Web hook queue full, rejecting '{}'", task);
                         eventPublisher.publish(new WebHookPublishQueueFullEvent(eventIdentifier,
-                                registration.remoteAppAccessor.getKey()));
+                                remoteAppAccessor.getKey()));
                     }
                 }
                 else
@@ -139,7 +145,7 @@ public class WebHookPublisher implements DisposableBean
         @Override
         public void run()
         {
-            String url = new UriBuilder(Uri.parse(registration.getUrl()))
+            String url = new UriBuilder(Uri.parse(registration.getUrl(remoteAppAccessor)))
                     .addQueryParameter("user_id", userName).toString();
 
             log.debug("Posting to web hook at " + url + "\n" + body);
@@ -160,13 +166,11 @@ public class WebHookPublisher implements DisposableBean
     private static class Registration
     {
         private final String pluginKey;
-        private final RemoteAppAccessor remoteAppAccessor;
         private final String path;
 
-        public Registration(RemoteAppAccessor remoteAppAccessor, String path)
+        public Registration(String pluginKey, String path)
         {
-            this.pluginKey = remoteAppAccessor.getKey();
-            this.remoteAppAccessor = remoteAppAccessor;
+            this.pluginKey = pluginKey;
             this.path = path;
         }
 
@@ -175,7 +179,7 @@ public class WebHookPublisher implements DisposableBean
             return pluginKey;
         }
 
-        public String getUrl()
+        public String getUrl(RemoteAppAccessor remoteAppAccessor)
         {
             return remoteAppAccessor.getDisplayUrl() + path;
         }

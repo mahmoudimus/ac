@@ -12,42 +12,43 @@
 
     <!-- remote module generators -->
 
-    <component key="jira-issue-panel-page" class="com.atlassian.labs.remoteapps.modules.jira.issuepanel.ViewIssuePanelModuleGenerator" />
-    <component key="jira-issue-tab-page" class="com.atlassian.labs.remoteapps.modules.jira.issuetab.IssueTabPageModuleGenerator" />
-    <component key="jira-project-tab-page" class="com.atlassian.labs.remoteapps.modules.jira.projecttab.ProjectTabModuleGenerator" />
-    <component key="jira-profile-page" class="com.atlassian.labs.remoteapps.modules.page.jira.JiraProfileTabModuleGenerator" />
-    <component key="jira-search-request-view-page" class="com.atlassian.labs.remoteapps.modules.jira.searchrequestview.SearchRequestViewModuleGenerator" />
+    <component key="issue-panel-page-generator" class="com.atlassian.labs.remoteapps.modules.jira.issuepanel.ViewIssuePanelModuleGenerator" />
+    <component key="issue-tab-page-generator" class="com.atlassian.labs.remoteapps.modules.jira.issuetab.IssueTabPageModuleGenerator" />
+    <component key="project-tab-page-generator" class="com.atlassian.labs.remoteapps.modules.jira.projecttab.ProjectTabModuleGenerator" />
+    <component key="profile-page-generator" class="com.atlassian.labs.remoteapps.modules.page.jira.JiraProfileTabModuleGenerator" />
+    <component key="search-request-view-page-generator" class="com.atlassian.labs.remoteapps.modules.jira.searchrequestview.SearchRequestViewModuleGenerator" />
 
     <!-- api scopes -->
-    <component key="jira-read_users_and_groups"
+    <component key="read_users_and_groups"
                class="com.atlassian.labs.remoteapps.product.jira.JiraReadUsersAndGroupsScope"
                />
-    <component key="jira-browse_projects"
+    <component key="browse_projects"
                class="com.atlassian.labs.remoteapps.product.jira.BrowseProjectsScope"
                name="Browse Projects"
                 />
-    <component key="jira-create_issues"
+    <component key="create_issues"
                class="com.atlassian.labs.remoteapps.product.jira.JiraCreateIssuesScope" />
-    <component key="jira-edit_issues"
+    <component key="edit_issues"
                class="com.atlassian.labs.remoteapps.product.jira.JiraEditIssuesScope" />
-    <component key="jira-resolve_issues"
+    <component key="resolve_issues"
                class="com.atlassian.labs.remoteapps.product.jira.JiraResolveIssuesScope" />
 
-    <component key="jiraWebHookProvider" class="com.atlassian.labs.remoteapps.product.jira.JiraWebHookProvider" />
+    <component key="WebHookProvider" class="com.atlassian.labs.remoteapps.product.jira.JiraWebHookProvider" />
 
-    <component key="jiraEventSerializerFactory" class="com.atlassian.labs.remoteapps.product.jira.webhook.JiraEventSerializerFactory" />
+    <component key="EventSerializerFactory" class="com.atlassian.labs.remoteapps.product.jira.webhook.JiraEventSerializerFactory" />
 
-    <component key="jiraWebSudoElevator" class="com.atlassian.labs.remoteapps.product.jira.JiraWebSudoElevator" />
+    <component key="WebSudoElevator" class="com.atlassian.labs.remoteapps.product.jira.JiraWebSudoElevator" />
 
-    <component key="jira-host" class="com.atlassian.labs.remoteapps.modules.ServletContextThreadLocalIFrameHost" />
+    <component key="host" class="com.atlassian.labs.remoteapps.modules.ServletContextThreadLocalIFrameHost" />
 
-    <rest key="rest-jira" path="/remoteapps" version="1">
+    <rest key="rest" path="/remoteapps" version="1">
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>INCLUDE</dispatcher>
         <package>com.atlassian.labs.remoteapps.rest</package>
     </rest>
 
-    <component-import key="jiraInternalWebSudoManager" interface="com.atlassian.jira.security.websudo.InternalWebSudoManager" />
+    <component-import key="jiraAuthenticationContext" interface="com.atlassian.jira.security.JiraAuthenticationContext" />
+    <component-import key="InternalWebSudoManager" interface="com.atlassian.jira.security.websudo.InternalWebSudoManager" />
     <component-import key="SearchRequestViewBodyWriterUtil" interface="com.atlassian.jira.issue.views.util.SearchRequestViewBodyWriterUtil" />
     <component-import key="searchRequestURLHandler" interface="com.atlassian.jira.plugin.searchrequestview.SearchRequestURLHandler" />
 
@@ -56,6 +57,36 @@
     <activity-streams-provider key="apps-provider" name="Remote Apps Provider"
                                class="com.atlassian.labs.remoteapps.integration.streams.RemoteAppsActivityProvider">
     </activity-streams-provider-->
+
+    <!-- plugin points -->
+    <described-module-type key="profile-page" name="User Profile Page" class="com.atlassian.labs.remoteapps.modules.page.jira.JiraProfileTabModuleDescriptor">
+        <description>A user profile page decorated as a user profile tab</description>
+    </described-module-type>
+
+    <described-module-type key="remote-search-request-view" class="com.atlassian.labs.remoteapps.modules.jira.searchrequestview.RemoteSearchRequestViewModuleDescriptor">
+        <description>
+            A search request view that redirects to the url with found issue keys as the
+            'issues' query parameter
+        </description>
+    </described-module-type>
+
+    <described-module-type key="project-tab-page" class="com.atlassian.labs.remoteapps.modules.jira.projecttab.ProjectTabPageModuleDescriptor">
+        <description>
+            A remote page decorated as its own JIRA project tab
+        </description>
+    </described-module-type>
+
+    <described-module-type key="issue-tab-page" class="com.atlassian.labs.remoteapps.modules.jira.issuetab.IssueTabPageModuleDescriptor">
+        <description>
+            A remote page decorated as its own JIRA issue tab but not included in All tab as it has no individual actions
+        </description>
+    </described-module-type>
+
+    <described-module-type key="issue-panel-page" class="com.atlassian.labs.remoteapps.modules.jira.issuepanel.IssuePanelPageModuleDescriptor">
+        <description>
+            A remote page decorated as a web panel on the view issue page
+        </description>
+    </described-module-type>
 
 </application>
 

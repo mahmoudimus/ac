@@ -39,11 +39,12 @@ public class VendorModuleGenerator implements RemoteModuleGenerator
     @Override
     public Schema getSchema()
     {
-        return new StaticSchema(plugin,
-                "vendor.xsd",
-                "/xsd/vendor.xsd",
-                "VendorType",
-                "1");
+        return DocumentBasedSchema.builder("vendor")
+                .setPlugin(plugin)
+                .setTitle(getName())
+                .setDescription(getDescription())
+                .setMaxOccurs("1")
+                .build();
     }
 
     @Override

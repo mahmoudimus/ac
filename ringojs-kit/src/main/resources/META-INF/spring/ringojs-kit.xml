@@ -9,7 +9,7 @@ http://www.springframework.org/schema/context
            http://www.springframework.org/schema/context/spring-context-2.5.xsd"
              default-autowire="autodetect">
 
-    <beans:bean id="httpUtils" class="com.atlassian.labs.remoteapps.apputils.HttpUtils"
+    <beans:bean id="httpUtils" class="com.atlassian.labs.remoteapps.kit.common.HttpUtils"
                     autowire="constructor"/>
 
     <osgi:reference id="pluginRetrieval" interface="com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService" />

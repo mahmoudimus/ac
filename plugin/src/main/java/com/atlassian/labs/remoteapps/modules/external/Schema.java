@@ -1,7 +1,6 @@
 package com.atlassian.labs.remoteapps.modules.external;
 
 import org.dom4j.Document;
-import org.xml.sax.InputSource;
 
 /**
  *
@@ -9,6 +8,10 @@ import org.xml.sax.InputSource;
 public interface Schema
 {
     String getId();
+
+    String getTitle();
+
+    String getDescription();
 
     String getComplexType();
 

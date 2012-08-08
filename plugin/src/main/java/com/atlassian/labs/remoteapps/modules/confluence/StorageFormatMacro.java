@@ -29,13 +29,17 @@ public class StorageFormatMacro extends AbstractRemoteMacro
 {
     private final String remoteUrl;
     private final MacroContentManager macroContentManager;
+    private final RemoteAppAccessorFactory remoteAppAccessorFactory;
     private final WebResourceManager webResourceManager;
     private final Logger log = LoggerFactory.getLogger(StorageFormatMacro.class);
 
     public StorageFormatMacro(RemoteMacroInfo remoteMacroInfo,
-            MacroContentManager macroContentManager, WebResourceManager webResourceManager)
+            MacroContentManager macroContentManager,
+            RemoteAppAccessorFactory remoteAppAccessorFactory,
+            WebResourceManager webResourceManager)
     {
-        super(remoteMacroInfo);
+        super(remoteAppAccessorFactory, remoteMacroInfo);
+        this.remoteAppAccessorFactory = remoteAppAccessorFactory;
         this.webResourceManager = webResourceManager;
         this.remoteUrl = remoteMacroInfo.getUrl();
         this.macroContentManager = macroContentManager;
@@ -49,7 +53,8 @@ public class StorageFormatMacro extends AbstractRemoteMacro
     @RequiresFormat(Format.Storage)
     public String execute(Map<String, String> parameters, String storageFormatBody, ConversionContext conversionContext) throws MacroExecutionException
     {
-        RemoteAppAccessor remoteAppAccessor = remoteMacroInfo.getRemoteAppAccessor();
+        RemoteAppAccessor remoteAppAccessor = remoteAppAccessorFactory.get(
+                remoteMacroInfo.getPluginKey());
         /*!
         Next, the remote apps is called and its returned storage-format XML is rendered.  If the
         content was unable to be retrieved for any reason, an error message is displayed to the user
@@ -58,7 +63,7 @@ public class StorageFormatMacro extends AbstractRemoteMacro
          */
         try
         {
-            webResourceManager.requireResource("com.atlassian.labs.remoteapps-plugin:big-pipe");
+            webResourceManager.requireResource("com.atlassian.labs.remoteapps-plugin:confluence-big-pipe");
             return macroContentManager.getStaticContent(
                     new MacroInstance(conversionContext, remoteUrl, storageFormatBody, parameters,
                             remoteMacroInfo.getRequestContextParameterFactory(),
@@ -75,5 +80,11 @@ public class StorageFormatMacro extends AbstractRemoteMacro
             }
             return message;
         }
+    }
+
+    @Override
+    public RemoteAppAccessor getRemoteAppAccessor(String pluginKey)
+    {
+        return remoteAppAccessorFactory.get(pluginKey);
     }
 }

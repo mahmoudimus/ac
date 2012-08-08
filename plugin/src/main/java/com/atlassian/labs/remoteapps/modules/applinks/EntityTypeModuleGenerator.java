@@ -1,35 +1,18 @@
 package com.atlassian.labs.remoteapps.modules.applinks;
 
-import com.atlassian.applinks.api.ApplicationType;
-import com.atlassian.applinks.api.EntityType;
-import com.atlassian.applinks.spi.application.NonAppLinksApplicationType;
-import com.atlassian.applinks.spi.application.TypeId;
-import com.atlassian.labs.remoteapps.ApplicationLinkAccessor;
-import com.atlassian.labs.remoteapps.loader.AggregateModuleDescriptorFactory;
 import com.atlassian.labs.remoteapps.modules.external.Schema;
 import com.atlassian.labs.remoteapps.modules.external.*;
-import com.atlassian.labs.remoteapps.modules.external.StaticSchema;
-import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
-import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
-import com.google.common.collect.ImmutableSet;
 import org.dom4j.Element;
-import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.MethodVisitor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.Map;
-import java.util.Set;
 
-import static com.atlassian.labs.remoteapps.util.Dom4jUtils.*;
 import static java.util.Collections.emptyMap;
-import static java.util.Collections.emptySet;
-import static org.objectweb.asm.Opcodes.*;
 
 /**
  * Creates applink entity types
@@ -68,10 +51,11 @@ public class EntityTypeModuleGenerator implements RemoteModuleGenerator
     @Override
     public Schema getSchema()
     {
-        return new StaticSchema(plugin,
-                "entity.xsd",
-                "/xsd/entity.xsd",
-                "EntityTypeType");
+        return DocumentBasedSchema.builder("entity-type")
+                .setPlugin(plugin)
+                .setTitle(getName())
+                .setDescription(getDescription())
+                .build();
     }
 
     @Override
@@ -83,14 +67,7 @@ public class EntityTypeModuleGenerator implements RemoteModuleGenerator
     @Override
     public RemoteModule generate(RemoteAppCreationContext ctx, Element entity)
     {
-        return new RemoteModule()
-        {
-            @Override
-            public Set<ModuleDescriptor> getModuleDescriptors()
-            {
-                return emptySet();
-            }
-        };
+        return RemoteModule.NO_OP;
     }
 
     @Override

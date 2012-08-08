@@ -3,15 +3,11 @@ package com.atlassian.labs.remoteapps.product.jira;
 import com.atlassian.jira.ComponentManager;
 import com.atlassian.jira.plugin.webfragment.descriptors.JiraWebItemModuleDescriptor;
 import com.atlassian.labs.remoteapps.product.ProductAccessor;
-import com.atlassian.labs.remoteapps.product.WebSudoElevator;
 import com.atlassian.plugin.web.WebInterfaceManager;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.google.common.collect.ImmutableMap;
 
 import java.util.Map;
-
-import static java.util.Collections.emptyMap;
-import static java.util.Collections.singletonMap;
 
 /**
  *
@@ -58,7 +54,7 @@ public class JiraProductAccessor implements ProductAccessor
     @Override
     public String getPreferredGeneralSectionKey()
     {
-        return "general_dropdown_linkId/remoteapps.general";
+        return "general_dropdown_linkId/jira-remoteapps.general";
     }
 
     @Override

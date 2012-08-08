@@ -1,6 +1,6 @@
 package com.atlassian.labs.remoteapps.test;
 
-import com.atlassian.labs.remoteapps.modules.page.AbstractPageModuleGenerator;
+import com.atlassian.labs.remoteapps.modules.page.RemotePageDescriptorCreator;
 import com.atlassian.pageobjects.Page;
 
 public class MessagePage extends RemoteAppEmbeddedTestPage implements Page
@@ -18,6 +18,6 @@ public class MessagePage extends RemoteAppEmbeddedTestPage implements Page
     @Override
     public String getUrl()
     {
-        return "/plugins/servlet" + AbstractPageModuleGenerator.createLocalUrl(appKey, pageKey);
+        return "/plugins/servlet" + RemotePageDescriptorCreator.createLocalUrl(appKey, pageKey);
     }
 }

@@ -6,6 +6,7 @@ import com.atlassian.confluence.macro.EditorImagePlaceholder;
 import com.atlassian.confluence.macro.ImagePlaceholder;
 import com.atlassian.confluence.macro.MacroExecutionException;
 import com.atlassian.confluence.pages.thumbnail.Dimensions;
+import com.atlassian.labs.remoteapps.RemoteAppAccessor;
 import com.atlassian.labs.remoteapps.modules.util.redirect.RedirectServlet;
 
 import java.net.URI;
@@ -19,6 +20,8 @@ public class ImagePlaceholderMacroWrapper implements EditorImagePlaceholder, Rem
     private final RemoteMacro delegate;
 
     private final String pluginKey;
+
+    // fixme: remove?
     private final String macroKey;
     private final URI imageUrl;
     private final Dimensions dimensions;
@@ -44,7 +47,7 @@ public class ImagePlaceholderMacroWrapper implements EditorImagePlaceholder, Rem
                 "",
                 parameters,
                 delegate.getRemoteMacroInfo().getRequestContextParameterFactory(),
-                delegate.getRemoteMacroInfo().getRemoteAppAccessor());
+                delegate.getRemoteAppAccessor(delegate.getRemoteMacroInfo().getPluginKey()));
 
         String uri = RedirectServlet.getRelativeOAuthRedirectUrl(pluginKey, imageUrl, macroInstance.getUrlParameters());
 
@@ -80,5 +83,11 @@ public class ImagePlaceholderMacroWrapper implements EditorImagePlaceholder, Rem
     public RemoteMacroInfo getRemoteMacroInfo()
     {
         return delegate.getRemoteMacroInfo();
+    }
+
+    @Override
+    public RemoteAppAccessor getRemoteAppAccessor(String pluginKey)
+    {
+        return delegate.getRemoteAppAccessor(pluginKey);
     }
 }

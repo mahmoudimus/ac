@@ -1,9 +1,7 @@
 package com.atlassian.labs.remoteapps.integration.speakeasy;
 
 import com.atlassian.event.api.EventListener;
-import com.atlassian.labs.remoteapps.event.RemoteAppEvent;
 import com.atlassian.labs.remoteapps.event.RemoteAppStartFailedEvent;
-import com.atlassian.labs.remoteapps.event.RemoteAppStartedEvent;
 import com.atlassian.labs.remoteapps.event.RemoteAppStoppedEvent;
 import com.atlassian.labs.remoteapps.util.BundleUtil;
 import com.atlassian.labs.speakeasy.descriptor.external.ConditionGenerator;
@@ -13,12 +11,16 @@ import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
+import com.atlassian.plugin.event.events.PluginEnabledEvent;
 import com.atlassian.plugin.module.LegacyModuleFactory;
 import org.dom4j.DocumentFactory;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
 import java.util.Collections;
+
+import static com.atlassian.labs.remoteapps.util.RemoteAppManifestReader.isRemoteApp;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Marks apps as Speakeasy apps so they show up as global extensions in the UI
@@ -40,31 +42,37 @@ public class SpeakeasyEventListener
     @EventListener
     public void onAppStartFailed(RemoteAppStartFailedEvent event)
     {
-        makeAppVisibleInSpeakeasy(event);
+        Plugin plugin = pluginAccessor.getPlugin(event.getRemoteAppKey());
+        checkNotNull("plugin can't be found for remote app " + event.getRemoteAppKey());
+        Bundle bundle = BundleUtil.findBundleForPlugin(bundleContext, plugin.getKey());
+
+        makeAppVisibleInSpeakeasy(bundle, plugin);
     }
 
     @EventListener
-    public void onAppStarted(RemoteAppStartedEvent event)
+    public void onAppStarted(PluginEnabledEvent event)
     {
-        makeAppVisibleInSpeakeasy(event);
+        Bundle bundle = BundleUtil.findBundleForPlugin(bundleContext, event.getPlugin().getKey());
+        if (bundle != null && isRemoteApp(bundle))
+        {
+            makeAppVisibleInSpeakeasy(bundle, event.getPlugin());
+        }
 
     }
 
-    private void makeAppVisibleInSpeakeasy(RemoteAppEvent event)
+    private void makeAppVisibleInSpeakeasy(Bundle bundle, Plugin plugin)
     {
         // ensure the app is visible by speakeasy
-        String remoteAppKey = event.getRemoteAppKey();
-        Bundle appBundle = BundleUtil.findBundleForPlugin(bundleContext, remoteAppKey);
-        appBundle.getBundleContext().registerService(
+        bundle.getBundleContext().registerService(
                 ModuleDescriptor.class.getName(),
-                new SpeakeasyMarkerModuleDescriptor(pluginAccessor.getPlugin(remoteAppKey)),
+                new SpeakeasyMarkerModuleDescriptor(plugin),
                 null);
 
         // It ensures any remote apps installed after
         // Speakeasy 1.3.15 will show up as globally-enabled extensions correctly.
-        if (!speakeasyBackendService.isGlobalExtension(remoteAppKey))
+        if (!speakeasyBackendService.isGlobalExtension(plugin.getKey()))
         {
-            speakeasyBackendService.addGlobalExtension(remoteAppKey);
+            speakeasyBackendService.addGlobalExtension(plugin.getKey());
         }
     }
 

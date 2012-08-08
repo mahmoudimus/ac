@@ -1,11 +1,10 @@
 package com.atlassian.labs.remoteapps.modules.permissions;
 
-import com.atlassian.labs.remoteapps.ApplicationLinkAccessor;
 import com.atlassian.labs.remoteapps.PermissionManager;
-import com.atlassian.labs.remoteapps.modules.permissions.scope.ApiScopeSchema;
 import com.atlassian.labs.remoteapps.product.ProductAccessor;
 import com.atlassian.labs.remoteapps.settings.SettingsManager;
 import com.atlassian.plugin.PluginParseException;
+import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.sal.api.user.UserManager;
 import org.apache.commons.lang.StringUtils;
 import org.dom4j.DocumentFactory;
@@ -39,7 +38,7 @@ public class TestPermissionsModuleGenerator
     SettingsManager settingsManager;
     
     @Mock
-    ApiScopeSchema apiScopeSchema;
+    PluginRetrievalService pluginRetrievalService;
 
     private static final Element NON_EMPTY_PERMISSIONS = new DocumentFactory().createElement("permissions")
             .addElement("permission").addAttribute("scope", "foo").getParent();
@@ -49,7 +48,7 @@ public class TestPermissionsModuleGenerator
     {
         when(userManager.isSystemAdmin("foo")).thenReturn(false);
         when(settingsManager.isAllowDogfooding()).thenReturn(true);
-        new PermissionsModuleGenerator(permissionManager, productAccessor, userManager, settingsManager, apiScopeSchema).validate(NON_EMPTY_PERMISSIONS, null, "foo");
+        new PermissionsModuleGenerator(permissionManager, productAccessor, userManager, settingsManager, pluginRetrievalService).validate(NON_EMPTY_PERMISSIONS, null, "foo");
     }
 
     @Test
@@ -57,7 +56,7 @@ public class TestPermissionsModuleGenerator
     {
         when(userManager.isSystemAdmin("foo")).thenReturn(true);
         when(settingsManager.isAllowDogfooding()).thenReturn(false);
-        new PermissionsModuleGenerator(permissionManager, productAccessor, userManager, settingsManager, apiScopeSchema).validate(NON_EMPTY_PERMISSIONS, null, "foo");
+        new PermissionsModuleGenerator(permissionManager, productAccessor, userManager, settingsManager, pluginRetrievalService).validate(NON_EMPTY_PERMISSIONS, null, "foo");
     }
 
     @Test(expected = PluginParseException.class)
@@ -65,7 +64,7 @@ public class TestPermissionsModuleGenerator
     {
         when(userManager.isAdmin("foo")).thenReturn(false);
         when(settingsManager.isAllowDogfooding()).thenReturn(false);
-        new PermissionsModuleGenerator(permissionManager, productAccessor, userManager, settingsManager, apiScopeSchema).validate(NON_EMPTY_PERMISSIONS, null, "foo");
+        new PermissionsModuleGenerator(permissionManager, productAccessor, userManager, settingsManager, pluginRetrievalService).validate(NON_EMPTY_PERMISSIONS, null, "foo");
     }
 
     @Test(expected = PluginParseException.class)
@@ -74,7 +73,7 @@ public class TestPermissionsModuleGenerator
         Element e = new DocumentFactory().createElement("permissions")
                 .addElement("permission").addAttribute("scope",
                         StringUtils.rightPad("a", 220, "b")).getParent();
-        new PermissionsModuleGenerator(permissionManager, productAccessor, userManager, settingsManager, apiScopeSchema).validate(e, null, "foo");
+        new PermissionsModuleGenerator(permissionManager, productAccessor, userManager, settingsManager, pluginRetrievalService).validate(e, null, "foo");
     }
 
 }

@@ -59,7 +59,7 @@ public class ZipWriter
                         "Bundle-ManifestVersion: 2\n", zos);
 
                 addJarContents("ringojs.jar", zos);
-                addJarContents("remoteapps-apputils.jar", zos);
+                addJarContents("remoteapps-kit-common.jar", zos);
                 addJarContents("remoteapps-ringojs-kit.jar", zos);
             }
         }
@@ -118,7 +118,7 @@ public class ZipWriter
         }
         catch (IOException e)
         {
-            throw new RuntimeException("Unable to add apputils to jar", e);
+            throw new RuntimeException("Unable to add kit-common to jar", e);
         }
         finally
         {

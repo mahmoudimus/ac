@@ -1,5 +1,9 @@
 package com.atlassian.labs.remoteapps;
 
+import com.atlassian.applinks.api.event.ApplicationLinkAddedEvent;
+import com.atlassian.applinks.api.event.ApplicationLinkDeletedEvent;
+import com.atlassian.event.api.EventListener;
+import com.atlassian.event.api.EventPublisher;
 import com.atlassian.labs.remoteapps.api.PermissionDeniedException;
 import com.atlassian.labs.remoteapps.loader.universalbinary.UBDispatchFilter;
 import com.atlassian.labs.remoteapps.modules.applinks.RemoteAppApplicationType;
@@ -12,9 +16,11 @@ import com.atlassian.labs.remoteapps.util.uri.UriBuilder;
 import com.atlassian.oauth.ServiceProvider;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
+import com.atlassian.util.concurrent.CopyOnWriteMap;
 import com.google.common.base.Function;
 import com.google.common.collect.Maps;
 import net.oauth.OAuth;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -30,7 +36,7 @@ import static com.google.common.collect.Maps.transformValues;
 import static java.util.Collections.singletonList;
 
 @Component
-public class RemoteAppAccessorFactory
+public class RemoteAppAccessorFactory implements DisposableBean
 {
 
     private final ApplicationLinkAccessor applicationLinkAccessor;
@@ -38,30 +44,90 @@ public class RemoteAppAccessorFactory
     private final CachingHttpContentRetriever httpContentRetriever;
     private final PluginAccessor pluginAccessor;
     private final UBDispatchFilter ubDispatchFilter;
+    private final EventPublisher eventPublisher;
+
+    private final Map<String,RemoteAppAccessor> accessors;
 
     @Autowired
     public RemoteAppAccessorFactory(ApplicationLinkAccessor applicationLinkAccessor,
             OAuthLinkManager oAuthLinkManager,
             CachingHttpContentRetriever httpContentRetriever, PluginAccessor pluginAccessor,
-            UBDispatchFilter ubDispatchFilter)
+            UBDispatchFilter ubDispatchFilter, EventPublisher eventPublisher)
     {
         this.applicationLinkAccessor = applicationLinkAccessor;
         this.oAuthLinkManager = oAuthLinkManager;
         this.httpContentRetriever = httpContentRetriever;
         this.pluginAccessor = pluginAccessor;
         this.ubDispatchFilter = ubDispatchFilter;
+        this.eventPublisher = eventPublisher;
+        this.eventPublisher.register(this);
+
+        this.accessors = CopyOnWriteMap.newHashMap();
     }
 
-    public RemoteAppAccessor create(String pluginKey)
+    /**
+     * Clear accessor if a new application link is discovered
+     * @param event
+     */
+    @EventListener
+    public void onApplicationLinkCreated(ApplicationLinkAddedEvent event)
     {
-
-        RemoteAppApplicationType appType = applicationLinkAccessor
-                .getApplicationTypeIfFound(
-                        pluginKey);
-
-        return create(pluginKey, appType != null ? appType.getDefaultDetails().getDisplayUrl() : URI.create(ubDispatchFilter.getLocalMountBaseUrl(pluginKey)));
+        if (event.getApplicationType() instanceof RemoteAppApplicationType)
+        {
+            accessors.remove(((RemoteAppApplicationType)event.getApplicationType()).getId().get());
+        }
     }
 
+    /**
+     * Clear accessor if a application link is deleted
+     * @param event
+     */
+    @EventListener
+    public void onApplicationLinkRemoved(ApplicationLinkDeletedEvent event)
+    {
+        if (event.getApplicationType() instanceof RemoteAppApplicationType)
+        {
+            accessors.remove(((RemoteAppApplicationType)event.getApplicationType()).getId().get());
+        }
+    }
+
+    /**
+     * Supplies an accessor for remote app operations.  Instances are only meant to be used for the
+     * current operation and should not be cached across operations.
+     *
+     * @param pluginKey The plugin key
+     * @return An accessor for either local or remote plugin operations
+     */
+    public RemoteAppAccessor get(String pluginKey)
+    {
+        // this will potentially create multiple instances if called quickly, but we don't really
+        // care as they shouldn't be cached
+        if (accessors.containsKey(pluginKey))
+        {
+            return accessors.get(pluginKey);
+        }
+        else
+        {
+            RemoteAppApplicationType appType = applicationLinkAccessor
+                    .getApplicationTypeIfFound(
+                            pluginKey);
+
+            return create(pluginKey, appType != null ? appType.getDefaultDetails().getDisplayUrl() : URI.create(ubDispatchFilter.getLocalMountBaseUrl(pluginKey)));
+        }
+
+    }
+
+    /**
+     * Supplies an accessor for remote app operations but always creates a new one.  Instances are
+     * still only meant to be used for the current operation and should not be cached across
+     * operations.
+     *
+     * This method is useful for when the display url is known but the application link has not yet
+     * been created
+     * @param pluginKey The plugin key
+     * @param displayUrl The display url
+     * @return An accessor for a remote plugin
+     */
     public RemoteAppAccessor create(String pluginKey, URI displayUrl)
     {
         Plugin plugin = pluginAccessor.getPlugin(pluginKey);
@@ -69,7 +135,17 @@ public class RemoteAppAccessorFactory
         ServiceProvider dummyProvider = new ServiceProvider(dummyUri, dummyUri, dummyUri);
 
         // don't need to get the actual provider as it doesn't really matter
-        return new OAuthSigningRemoteAppAccessor(pluginKey, plugin.getName(), displayUrl, dummyProvider);
+        OAuthSigningRemoteAppAccessor oAuthSigningRemoteAppAccessor = new
+                OAuthSigningRemoteAppAccessor(
+                pluginKey, plugin.getName(), displayUrl, dummyProvider);
+        accessors.put(pluginKey, oAuthSigningRemoteAppAccessor);
+        return oAuthSigningRemoteAppAccessor;
+    }
+
+    @Override
+    public void destroy() throws Exception
+    {
+        eventPublisher.unregister(this);
     }
 
     private class OAuthSigningRemoteAppAccessor implements RemoteAppAccessor

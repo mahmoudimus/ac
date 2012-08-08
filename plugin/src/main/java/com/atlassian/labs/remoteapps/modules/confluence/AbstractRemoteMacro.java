@@ -1,5 +1,7 @@
 package com.atlassian.labs.remoteapps.modules.confluence;
 
+import com.atlassian.labs.remoteapps.RemoteAppAccessorFactory;
+
 import java.net.URI;
 
 /**
@@ -7,11 +9,13 @@ import java.net.URI;
  */
 public abstract class AbstractRemoteMacro implements RemoteMacro
 {
-
+    protected final RemoteAppAccessorFactory remoteAppAccessorFactory;
     protected final RemoteMacroInfo remoteMacroInfo;
 
-    public AbstractRemoteMacro(RemoteMacroInfo remoteMacroInfo)
+    public AbstractRemoteMacro(RemoteAppAccessorFactory remoteAppAccessorFactory,
+            RemoteMacroInfo remoteMacroInfo)
     {
+        this.remoteAppAccessorFactory = remoteAppAccessorFactory;
         this.remoteMacroInfo = remoteMacroInfo;
     }
 
@@ -36,6 +40,6 @@ public abstract class AbstractRemoteMacro implements RemoteMacro
     @Override
     public URI getBaseUrl()
     {
-        return remoteMacroInfo.getRemoteAppAccessor().getDisplayUrl();
+        return remoteAppAccessorFactory.get(remoteMacroInfo.getPluginKey()).getDisplayUrl();
     }
 }

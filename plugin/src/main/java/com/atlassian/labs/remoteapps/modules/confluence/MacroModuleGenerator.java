@@ -1,20 +1,11 @@
 package com.atlassian.labs.remoteapps.modules.confluence;
 
-import com.atlassian.confluence.status.service.SystemInformationService;
-import com.atlassian.confluence.util.i18n.I18NBeanFactory;
-import com.atlassian.labs.remoteapps.RemoteAppAccessorFactory;
-import com.atlassian.labs.remoteapps.modules.IFrameRenderer;
-import com.atlassian.labs.remoteapps.modules.external.RemoteAppCreationContext;
+import com.atlassian.labs.remoteapps.modules.external.DocumentBasedSchema;
 import com.atlassian.labs.remoteapps.modules.external.Schema;
-import com.atlassian.labs.remoteapps.modules.external.StaticSchema;
-import com.atlassian.labs.remoteapps.util.contextparameter.ContextParameterParser;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
-import com.atlassian.plugin.hostcontainer.HostContainer;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
-import com.atlassian.plugin.servlet.ServletModuleManager;
-import com.atlassian.plugin.webresource.WebResourceManager;
-import com.atlassian.sal.api.user.UserManager;
+import org.dom4j.Element;
 
 /**
  *
@@ -22,22 +13,9 @@ import com.atlassian.sal.api.user.UserManager;
 public class MacroModuleGenerator extends AbstractMacroModuleGenerator
 {
     private final Plugin plugin;
-    private final WebResourceManager webResourceManager;
-    public MacroModuleGenerator(SystemInformationService systemInformationService,
-            MacroContentManager macroContentManager, I18NBeanFactory i18NBeanFactory,
-            PluginAccessor pluginAccessor,
-            PluginRetrievalService pluginRetrievalService, HostContainer hostContainer,
-            ServletModuleManager servletModuleManager,
-            IFrameRenderer iFrameRenderer, UserManager userManager,
-            WebResourceManager webResourceManager,
-            ContextParameterParser contextParameterParser)
+    public MacroModuleGenerator(PluginAccessor pluginAccessor, PluginRetrievalService pluginRetrievalService)
     {
-        super(macroContentManager, i18NBeanFactory,
-                systemInformationService, pluginAccessor, hostContainer, servletModuleManager,
-                contextParameterParser, iFrameRenderer, userManager);
-
-
-        this.webResourceManager = webResourceManager;
+        super(pluginAccessor);
         this.plugin = pluginRetrievalService.getPlugin();
     }
 
@@ -62,17 +40,18 @@ public class MacroModuleGenerator extends AbstractMacroModuleGenerator
     @Override
     public Schema getSchema()
     {
-        return new StaticSchema(plugin,
-                "macro.xsd",
-                "/xsd/macro.xsd",
-                "MacroType");
+        return DocumentBasedSchema.builder("macro")
+                .setPlugin(plugin)
+                .setTitle(getName())
+                .setDescription(getDescription())
+                .build();
     }
 
     @Override
-    protected RemoteMacro createMacro(RemoteMacroInfo remoteMacroInfo, RemoteAppCreationContext ctx)
+    public void generatePluginDescriptor(Element descriptorElement, Element pluginDescriptorRoot)
     {
-        return new StorageFormatMacro(remoteMacroInfo, macroContentManager,
-                webResourceManager);
+        Element copy = descriptorElement.createCopy("remote-macro");
+        pluginDescriptorRoot.add(copy);
     }
 
 }

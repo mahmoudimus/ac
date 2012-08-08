@@ -38,11 +38,12 @@ public class DescriptorModuleGenerator implements RemoteModuleGenerator
     @Override
     public Schema getSchema()
     {
-        return new StaticSchema(plugin,
-                "description.xsd",
-                "/xsd/description.xsd",
-                "DescriptionType",
-                "1");
+        return DocumentBasedSchema.builder("description")
+                .setPlugin(plugin)
+                .setTitle(getName())
+                .setDescription(getDescription())
+                .setMaxOccurs("1")
+                .build();
     }
 
     @Override

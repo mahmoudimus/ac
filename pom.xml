@@ -24,7 +24,7 @@
 
     <modules>
         <module>api</module>
-        <module>apputils</module>
+        <module>kit-common</module>
         <module>servlet-kit</module>
         <module>ringojs-kit</module>
         <module>sample</module>

@@ -1,5 +1,7 @@
 package com.atlassian.labs.remoteapps.modules;
 
+import com.atlassian.labs.remoteapps.RemoteAppAccessor;
+import com.atlassian.labs.remoteapps.RemoteAppAccessorFactory;
 import com.atlassian.labs.remoteapps.api.PermissionDeniedException;
 import com.atlassian.labs.remoteapps.modules.page.IFrameContext;
 import com.atlassian.labs.remoteapps.modules.page.PageInfo;
@@ -21,7 +23,6 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.net.URI;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -37,16 +38,19 @@ public class IFrameRenderer
     private final TemplateRenderer templateRenderer;
     private final WebResourceManager webResourceManager;
     private final WebResourceUrlProvider webResourceUrlProvider;
+    private final RemoteAppAccessorFactory remoteAppAccessorFactory;
     private final IFrameHost iframeHost;
     private final Plugin plugin;
 
     @Autowired
     public IFrameRenderer(TemplateRenderer templateRenderer,
-                          WebResourceManager webResourceManager,
-                          IFrameHost iframeHost,
-                          WebResourceUrlProvider webResourceUrlProvider,
-                          PluginRetrievalService pluginRetrievalService)
+            WebResourceManager webResourceManager,
+            IFrameHost iframeHost,
+            WebResourceUrlProvider webResourceUrlProvider,
+            PluginRetrievalService pluginRetrievalService,
+            RemoteAppAccessorFactory remoteAppAccessorFactory)
     {
+        this.remoteAppAccessorFactory = remoteAppAccessorFactory;
         this.templateRenderer = checkNotNull(templateRenderer);
         this.webResourceManager = checkNotNull(webResourceManager);
         this.iframeHost = checkNotNull(iframeHost);
@@ -98,6 +102,8 @@ public class IFrameRenderer
     public String render(IFrameContext iframeContext, String extraPath, Map<String, String[]> queryParams, String remoteUser) throws IOException
     {
         webResourceManager.requireResourcesForContext("remoteapps-iframe");
+        RemoteAppAccessor remoteAppAccessor = remoteAppAccessorFactory.get(
+                iframeContext.getPluginKey());
 
         final String hostUrl = iframeHost.getUrl();
         final String iframeUrl = iframeContext.getIframePath() + ObjectUtils.toString(extraPath);
@@ -107,7 +113,7 @@ public class IFrameRenderer
         allParams.put("xdm_e", new String[]{hostUrl});
         allParams.put("xdm_c", new String[]{"channel-" + iframeContext.getNamespace()});
         allParams.put("xdm_p", new String[]{"1"});
-        String signedUrl = iframeContext.getRemoteAppAccessor().signGetUrl(iframeUrl, allParams);
+        String signedUrl = remoteAppAccessor.signGetUrl(iframeUrl, allParams);
 
         // clear xdm params as they are added by easyxdm later
         signedUrl = new UriBuilder(Uri.parse(signedUrl))
@@ -118,7 +124,7 @@ public class IFrameRenderer
 
         Map<String,Object> ctx = newHashMap(iframeContext.getIFrameParams().getAsMap());
         ctx.put("iframeSrcHtml", escapeQuotes(signedUrl));
-        ctx.put("remoteapp", iframeContext.getRemoteAppAccessor());
+        ctx.put("remoteapp", remoteAppAccessor);
         ctx.put("namespace", iframeContext.getNamespace());
         ctx.put("scriptUrls", getJavaScriptUrls());
         ctx.put("contextPath", iframeHost.getContextPath());

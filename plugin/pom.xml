@@ -22,7 +22,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>remoteapps-apputils</artifactId>
+            <artifactId>remoteapps-kit-common</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
@@ -47,17 +47,6 @@
             <artifactId>commons-io</artifactId>
             <version>1.4</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.atlassian.labs</groupId>
-            <artifactId>jira4-compat</artifactId>
-            <version>0.6.1</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.atlassian.crowd</groupId>
-                    <artifactId>embedded-crowd-api</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>
@@ -516,6 +505,7 @@
                             com.atlassian.labs.remoteapps.descriptor.external,
                             com.atlassian.labs.remoteapps.modules.external,
                             com.atlassian.labs.remoteapps.event,
+                            com.atlassian.labs.remoteapps.spi.modules,
                             com.atlassian.labs.remoteapps.api,
                             com.atlassian.labs.remoteapps.api.services,
                             com.atlassian.labs.remoteapps.api.services.impl,

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+    <xs:include schemaLocation="page-macro.xsd" />
+
+    <xs:complexType name="MacroPageType">
+        <xs:complexContent>
+            <xs:restriction base="MacroPageType" />
+        </xs:complexContent>
+    </xs:complexType>
+</xs:schema>

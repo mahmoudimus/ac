@@ -9,10 +9,10 @@ http://www.springframework.org/schema/context
            http://www.springframework.org/schema/context/spring-context-2.5.xsd"
              default-autowire="autodetect">
 
-    <beans:bean id="bundleContext" class="com.atlassian.labs.remoteapps.apputils.spring.BundleContextFactoryBean" />
-    <beans:bean id="applicationContext" class="com.atlassian.labs.remoteapps.apputils.spring.ApplicationContextFactoryBean" />
+    <beans:bean id="bundleContext" class="com.atlassian.labs.remoteapps.kit.common.spring.BundleContextFactoryBean" />
+    <beans:bean id="applicationContext" class="com.atlassian.labs.remoteapps.kit.common.spring.ApplicationContextFactoryBean" />
 
-    <beans:bean id="httpUtils" class="com.atlassian.labs.remoteapps.apputils.HttpUtils"
+    <beans:bean id="httpUtils" class="com.atlassian.labs.remoteapps.kit.common.HttpUtils"
                 autowire="constructor"/>
 
     <context:component-scan base-package="servlets"/>
@@ -22,12 +22,12 @@ http://www.springframework.org/schema/context
     <osgi:reference id="descriptorGenerator" interface="com.atlassian.labs.remoteapps.api.DescriptorGenerator" timeout="20000" />
     <osgi:reference id="pluginSettingsFactory" interface="com.atlassian.sal.api.pluginsettings.PluginSettingsFactory" />
 
-    <beans:bean id="ao" class="com.atlassian.labs.remoteapps.apputils.spring.ComponentFactoryBean" lazy-init="true" depends-on="aoConfig">
+    <beans:bean id="ao" class="com.atlassian.labs.remoteapps.kit.common.spring.ComponentFactoryBean" lazy-init="true" depends-on="aoConfig">
         <beans:constructor-arg index="0" ref="bundleContext"/>
         <beans:constructor-arg index="1" value="com.atlassian.activeobjects.external.ActiveObjects"/>
     </beans:bean>
 
-    <beans:bean id="aoConfig" class="com.atlassian.labs.remoteapps.apputils.ao.ActiveObjectsConfigurationFactoryBean" lazy-init="true">
+    <beans:bean id="aoConfig" class="com.atlassian.labs.remoteapps.kit.common.ao.ActiveObjectsConfigurationFactoryBean" lazy-init="true">
         <beans:constructor-arg index="0" ref="applicationContext" />
         <beans:constructor-arg index="1" ref="bundleContext" />
         <beans:constructor-arg index="2">

@@ -35,7 +35,7 @@
         </dependency>
         <dependency>
             <groupId>com.atlassian.labs</groupId>
-            <artifactId>remoteapps-apputils</artifactId>
+            <artifactId>remoteapps-kit-common</artifactId>
             <version>${project.version}</version>
             <!-- weird exclusion, so that plugins can simply include the kit, no other details needed! -->
             <exclusions>

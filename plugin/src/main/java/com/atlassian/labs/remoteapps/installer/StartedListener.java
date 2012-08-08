@@ -2,7 +2,8 @@ package com.atlassian.labs.remoteapps.installer;
 
 import com.atlassian.event.api.EventListener;
 import com.atlassian.labs.remoteapps.event.RemoteAppStartFailedEvent;
-import com.atlassian.labs.remoteapps.event.RemoteAppStartedEvent;
+import com.atlassian.plugin.event.PluginEventListener;
+import com.atlassian.plugin.event.events.PluginEnabledEvent;
 
 import java.util.concurrent.CountDownLatch;
 
@@ -22,10 +23,10 @@ public class StartedListener
         this.latch = latch;
     }
 
-    @EventListener
-    public void onAppStart(RemoteAppStartedEvent event)
+    @PluginEventListener
+    public void onAppStart(PluginEnabledEvent event)
     {
-        if (event.getRemoteAppKey().equals(pluginKey))
+        if (event.getPlugin().getKey().equals(pluginKey))
         {
             latch.countDown();
         }

@@ -1,6 +1,7 @@
 package com.atlassian.labs.remoteapps.modules.confluence;
 
 import com.atlassian.confluence.macro.Macro;
+import com.atlassian.labs.remoteapps.RemoteAppAccessor;
 
 import java.net.URI;
 
@@ -12,4 +13,6 @@ public interface RemoteMacro extends Macro
     URI getBaseUrl();
 
     RemoteMacroInfo getRemoteMacroInfo();
+
+    RemoteAppAccessor getRemoteAppAccessor(String pluginKey);
 }

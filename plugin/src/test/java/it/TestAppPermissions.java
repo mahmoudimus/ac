@@ -1,6 +1,6 @@
 package it;
 
-import com.atlassian.labs.remoteapps.apputils.HttpUtils;
+import com.atlassian.labs.remoteapps.kit.common.HttpUtils;
 import com.atlassian.labs.remoteapps.test.MessagePage;
 import com.atlassian.labs.remoteapps.test.RemoteAppRunner;
 import com.atlassian.labs.remoteapps.test.RunnerSignedRequestHandler;

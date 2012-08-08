@@ -62,30 +62,31 @@ public class InstallerHelper
             pluginController.installPlugins(jar);
 
 
-            if (!latch.await(INSTALLATION_TIMEOUT, TimeUnit.SECONDS))
-            {
-                Exception cause = startListener.getFailedCause();
-                if (cause != null)
-                {
-                    log.info("Remote app '{}' was not started successfully and is "
-                            + "disabled due to: {}", pluginKey,
-                            cause);
-                    throw new InstallationFailedException("Error starting app: "
-                            + cause.getMessage(),
-                            cause);
-                }
-                else
-                {
-                    log.info("Remote app '{}' was not started successfully in "
-                            + "the expected {} seconds.", pluginKey, INSTALLATION_TIMEOUT);
-                    throw new InstallationFailedException("Timeout starting app");
-                }
-            }
+            // todo: find another way to wait for descriptors (necessary?)
+//            if (!latch.await(INSTALLATION_TIMEOUT, TimeUnit.SECONDS))
+//            {
+//                Exception cause = startListener.getFailedCause();
+//                if (cause != null)
+//                {
+//                    log.info("Remote app '{}' was not started successfully and is "
+//                            + "disabled due to: {}", pluginKey,
+//                            cause);
+//                    throw new InstallationFailedException("Error starting app: "
+//                            + cause.getMessage(),
+//                            cause);
+//                }
+//                else
+//                {
+//                    log.info("Remote app '{}' was not started successfully in "
+//                            + "the expected {} seconds.", pluginKey, INSTALLATION_TIMEOUT);
+//                    throw new InstallationFailedException("Timeout starting app");
+//                }
+//            }
         }
-        catch (InterruptedException e)
-        {
-            // ignore
-        }
+//        catch (InterruptedException e)
+//        {
+//            // ignore
+//        }
         finally
         {
             eventPublisher.unregister(startListener);

@@ -2,6 +2,7 @@ package com.atlassian.labs.remoteapps.webhook;
 
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.labs.remoteapps.RemoteAppAccessor;
+import com.atlassian.labs.remoteapps.RemoteAppAccessorFactory;
 import com.atlassian.labs.remoteapps.util.http.AuthorizationGenerator;
 import com.atlassian.labs.remoteapps.util.http.HttpContentRetriever;
 import com.atlassian.labs.remoteapps.webhook.event.WebHookPublishQueueFullEvent;
@@ -14,6 +15,7 @@ import org.mockito.ArgumentMatcher;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 
+import java.net.URI;
 import java.util.Collections;
 
 import static org.mockito.Mockito.*;
@@ -27,17 +29,23 @@ public class TestWebHookPublisher
     @Mock
     EventPublisher eventPublisher;
 
+    @Mock
+    RemoteAppAccessorFactory remoteAppAccessorFactory;
+
+    @Mock
+    RemoteAppAccessor remoteAppAccessor;
+
     WebHookPublisher publisher;
-    private RemoteAppAccessor remoteAppAccessor;
 
     @Before
     public void setUp()
     {
         initMocks(this);
         publisher = new WebHookPublisher(httpContentRetriever, eventPublisher,
-                mock(UserManager.class));
-        remoteAppAccessor = mock(RemoteAppAccessor.class);
+                mock(UserManager.class), remoteAppAccessorFactory);
+        when(remoteAppAccessor.getDisplayUrl()).thenReturn(URI.create("http://localhost"));
         when(remoteAppAccessor.getKey()).thenReturn("foo");
+        when(remoteAppAccessorFactory.get("foo")).thenReturn(remoteAppAccessor);
     }
 
     @After
@@ -49,7 +57,7 @@ public class TestWebHookPublisher
     @Test
     public void testPublishSuccess()
     {
-        publisher.register(remoteAppAccessor, "event.id", "/event");
+        publisher.register("foo", "event.id", "/event");
         publisher.publish("event.id",  EventMatcher.ALWAYS_TRUE, new MapEventSerializer("event_object",
                                                               Collections.<String, Object>singletonMap("field", "value")));
 
@@ -58,7 +66,7 @@ public class TestWebHookPublisher
     @Test
     public void testPublishFailureDueToMatching()
     {
-        publisher.register(remoteAppAccessor, "event.id", "/event");
+        publisher.register("foo", "event.id", "/event");
         publisher.publish("event.id", new FalseEventMatcher(), new MapEventSerializer("event_object",
                 Collections.<String, Object>singletonMap("field", "value")));
         verify(httpContentRetriever, never()).postIgnoreResponse(Matchers.<AuthorizationGenerator>any(),
@@ -81,7 +89,7 @@ public class TestWebHookPublisher
     @Test
     public void testPublishToNoneWithRegistrations()
     {
-        publisher.register(remoteAppAccessor, "event.other.id", "/event");
+        publisher.register("foo", "event.other.id", "/event");
         publisher.publish("event.id", EventMatcher.ALWAYS_TRUE,  new MapEventSerializer("event_object",
                                                               Collections.<String, Object>singletonMap("field", "value")));
 
@@ -94,8 +102,8 @@ public class TestWebHookPublisher
     public void testPublishCallSuccessfulEvenIfSaturated()
     {
         publisher = new WebHookPublisher(new SleepingHttpContentRetriever(), eventPublisher,
-                mock(UserManager.class));
-        publisher.register(remoteAppAccessor, "event.id", "/event");
+                mock(UserManager.class), remoteAppAccessorFactory);
+        publisher.register("foo", "event.id", "/event");
 
         for (int x=0; x<100 + 4; x++)
         {
@@ -109,7 +117,7 @@ public class TestWebHookPublisher
             public boolean matches(Object argument)
             {
                 WebHookPublishQueueFullEvent event = (WebHookPublishQueueFullEvent) argument;
-                return event.getAppKey().equals(remoteAppAccessor.getKey()) &&
+                return event.getAppKey().equals("foo") &&
                         "event.id".equals(event.getEventIdentifier());
             }
         }));

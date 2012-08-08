@@ -53,6 +53,8 @@ public class DescriptorGeneratorLoader implements DescriptorGenerator
     @Override
     public void init(RemoteAppDescriptorAccessor descriptorAccessor) throws Exception
     {
+        /*
+        // fixme: who broadcasts failures?  How is that tracked?
         Document descriptor = descriptorAccessor.getDescriptor();
         if (descriptor.getRootElement().attribute("display-url") == null)
         {
@@ -69,6 +71,7 @@ public class DescriptorGeneratorLoader implements DescriptorGenerator
             log.info("Remote app '{}' failed to start: {}", plugin.getKey(), e.getMessage());
             throw e;
         }
+        */
     }
 
     @Override
