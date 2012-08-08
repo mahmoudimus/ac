@@ -39,7 +39,7 @@ public final class EnvironmentFactory
                                 pluginSettingsFactory,
                                 ImmutableList.of(
                                         new ResourcePropertiesLoader("/env-defaults.properties", new ClassLoaderResourceLoader(this.getClass())),
-                                        new ResourcePropertiesLoader("/env.properties", new BundleResourceLoader(key.bundle)),
+                                        new ResourcePropertiesLoader("/env.properties", new ClassLoaderResourceLoader(this.getClass())),
                                         new EnvironmentPropertiesLoader())
                         );
                     }
