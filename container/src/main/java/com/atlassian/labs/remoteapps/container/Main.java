@@ -14,30 +14,48 @@ import static com.google.common.collect.Lists.newArrayList;
 public class Main
 {
     private static final Logger log = LoggerFactory.getLogger(Main.class);
-    public static void main(String[] apps) throws Exception
+
+    private final HttpServer server;
+    private final Container container;
+
+    public Main(String[] apps)
+        throws Exception
     {
-        HttpServer server = new HttpServer();
+        server = new HttpServer();
         server.start();
-        Container container = new Container(server, apps);
+        container = new Container(server, apps);
         container.start();
+        List<String> lines = newArrayList();
+        lines.add("Remote App container started on port " + server.getAppPort());
+        lines.add("");
+        lines.add("Available remote apps:");
+        for (String appKey : server.getContextNames())
+        {
+            lines.add("\t" + server.getLocalMountBaseUrl(appKey));
+        }
+        log.info(StringUtils.join(lines, "\n"));
+    }
+
+    public void join()
+    {
         try
         {
-            List<String> lines = newArrayList();
-            lines.add("Remote App container started on port " + server.getAppPort());
-            lines.add("");
-            lines.add("Available remote apps:");
-            for (String appKey : server.getContextNames())
-            {
-                lines.add("\t" + server.getLocalMountBaseUrl(appKey));
-            }
-            log.info(StringUtils.join(lines, "\n"));
             server.join();
         }
         catch (InterruptedException e)
         {
             container.stop();
-            // ignore
         }
     }
 
+    public void stop()
+    {
+        server.stop();
+        container.stop();
+    }
+
+    public static void main(String[] apps) throws Exception
+    {
+        new Main(apps).join();
+    }
 }

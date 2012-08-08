@@ -335,7 +335,7 @@
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>
-            <version>7.1.6.v20100715</version>
+            <version>7.4.2.v20110526</version>
             <scope>test</scope>
         </dependency>
 
@@ -356,7 +356,7 @@
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-servlet</artifactId>
-            <version>7.1.6.v20100715</version>
+            <version>7.4.2.v20110526</version>
             <scope>test</scope>
         </dependency>
 
