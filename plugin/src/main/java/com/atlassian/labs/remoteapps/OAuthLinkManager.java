@@ -72,7 +72,7 @@ public class OAuthLinkManager
     {
         unassociateConsumer(consumer);
 
-        // fixme: this logic was copied from ual
+        // this logic was copied from ual
         serviceProviderConsumerStore.put(consumer);
         link.putProperty("oauth.incoming.consumerkey", consumer.getKey());
     }

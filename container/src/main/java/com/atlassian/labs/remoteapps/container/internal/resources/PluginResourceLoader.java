@@ -1,6 +1,7 @@
 package com.atlassian.labs.remoteapps.container.internal.resources;
 
 import com.atlassian.fugue.Option;
+import com.atlassian.plugin.Plugin;
 import com.google.common.base.Function;
 import org.osgi.framework.Bundle;
 
@@ -12,21 +13,22 @@ import static com.atlassian.fugue.Option.*;
 import static com.google.common.base.Preconditions.*;
 
 /**
- * Loads resources from a given {@link Bundle OSGi bundle}
+ * Loads resources from a given plugin.  This is used instead of the bundle to allow
+ * for dynamic reloading
  */
-public final class BundleResourceLoader implements ResourceLoader
+public final class PluginResourceLoader implements ResourceLoader
 {
-    private final Bundle bundle;
+    private final Plugin plugin;
 
-    public BundleResourceLoader(Bundle bundle)
+    public PluginResourceLoader(Plugin plugin)
     {
-        this.bundle = checkNotNull(bundle);
+        this.plugin = checkNotNull(plugin);
     }
 
     @Override
     public Option<InputStream> load(String resource)
     {
-        return option(bundle.getEntry(resource)).map(new Function<URL, InputStream>()
+        return option(plugin.getResource(resource)).map(new Function<URL, InputStream>()
         {
             @Override
             public InputStream apply(URL input)

@@ -218,7 +218,8 @@ public final class Container
 
         hostComponents.put(EventPublisher.class, new RemoteAppsEventPublisher());
 
-        final EnvironmentFactory environmentFactory = new EnvironmentFactory(pluginSettingsFactory);
+        final EnvironmentFactory environmentFactory = new EnvironmentFactory(pluginSettingsFactory,
+                pluginManager);
         final OAuthSignedRequestHandlerServiceFactory oAuthSignedRequestHandlerServiceFactory = new OAuthSignedRequestHandlerServiceFactory(environmentFactory, httpServer);
         final RequestContext requestContext = new DefaultRequestContext();
         final DescriptorGeneratorServiceFactory descriptorGeneratorServiceFactory = new DescriptorGeneratorServiceFactory(pluginManager, httpServer, oAuthSignedRequestHandlerServiceFactory, environmentFactory, requestContext);
