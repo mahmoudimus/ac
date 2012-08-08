@@ -110,6 +110,7 @@
                     </execution>
                 </executions>
             </plugin>
+
             <plugin>
                 <artifactId>maven-scm-plugin</artifactId>
                 <configuration>
@@ -126,7 +127,7 @@
                         <phase>package</phase>
                         <configuration>
                             <target>
-                                <taskdef resource="net/sf/antcontrib/antcontrib.properties" />
+                                <taskdef resource="net/sf/antcontrib/antcontrib.properties"/>
 
                                 <if>
                                     <available file="${project.build.directory}/${project.build.finalName}.jar"/>
@@ -156,6 +157,11 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
             <dependency>
                 <groupId>com.atlassian.browsers</groupId>
                 <artifactId>atlassian-browsers-auto</artifactId>
@@ -205,9 +211,64 @@
                 <version>${plugins.version}</version>
                 <scope>provided</scope>
             </dependency>
+            <!-- test dependencies -->
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>4.10</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-log4j12</artifactId>
+                <version>${slf4j.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>jcl-over-slf4j</artifactId>
+                <version>${slf4j.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>log4j</groupId>
+                <artifactId>log4j</artifactId>
+                <version>1.2.16</version>
+                <scope>test</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+
+        <!-- test dependencies -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>1.9.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+        </dependency>
+    </dependencies>
     <scm>
         <connection>scm:git:git@bitbucket.org:mrdon/remoteapps-plugin.git</connection>
         <developerConnection>scm:git:git@bitbucket.org:mrdon/remoteapps-plugin.git</developerConnection>
@@ -216,7 +277,8 @@
 
     <properties>
         <xvfb.enable>true</xvfb.enable>
-        <atlassian.selenium.version>2.1.0-m12</atlassian.selenium.version><!-- Confluence 4.2.8 uses this version, JIRA 5.0.7 uses version 2.1.0-m14 -->
+        <atlassian.selenium.version>2.1.0-m12</atlassian.selenium.version>
+        <!-- Confluence 4.2.8 uses this version, JIRA 5.0.7 uses version 2.1.0-m14 -->
         <refapp.version>2.16.0-m2</refapp.version>
         <jira.version>5.0.7</jira.version>
         <jira.rpc.version>5.0.5</jira.rpc.version>
@@ -228,7 +290,7 @@
         <sal.version>2.7.0</sal.version>
         <plugins.version>2.13.0-m2</plugins.version>
         <rest.version>2.3.0</rest.version>
-        <ao.version>0.19.7-remoteapps-1</ao.version>
+        <ao.version>0.19.12-remoteapps-2</ao.version>
         <templaterenderer.version>1.3.0</templaterenderer.version>
         <oauth.version>1.3.0</oauth.version>
         <slf4j.version>1.6.4</slf4j.version>

@@ -1,69 +1,45 @@
 package com.atlassian.labs.remoteapps.container.internal;
 
+import com.atlassian.labs.remoteapps.container.internal.properties.EnvironmentPropertiesLoader;
+import com.atlassian.labs.remoteapps.container.internal.properties.PropertiesLoader;
+import com.atlassian.labs.remoteapps.container.internal.properties.ResourcePropertiesLoader;
+import com.atlassian.labs.remoteapps.container.internal.resources.ClassLoaderResourceLoader;
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashSet;
-import java.util.Properties;
-import java.util.Set;
+import java.util.Map;
+
+import static com.google.common.base.Preconditions.*;
 
 /**
- * Abstraction for retrieving environment properties.  The order goes:
- * <ol>
- *     <li>System properties</li>
- *     <li>env.properties (loaded from the classpath)</li>
- *     <li>{@link com.atlassian.sal.api.pluginsettings.PluginSettings} from SAL</li>
- * </ol>
+ * Abstraction for retrieving environment properties.  The order is decided by the properties loaders passed to the constructor.
  *
  * Any updates to the properties will save to plugin settings.  These keys will be prefixed
  * by "APP_KEY." to avoid collisions.
  */
-public class EnvironmentImpl implements Environment
+public final class EnvironmentImpl implements Environment
 {
-
-    private final Properties ENV;
     private final String appKey;
     private final PluginSettingsFactory pluginSettingsFactory;
+    private final Map<String, String> env;
 
-    public EnvironmentImpl(String appKey, PluginSettingsFactory pluginSettingsFactory)
+    public EnvironmentImpl(String appKey, PluginSettingsFactory pluginSettingsFactory, Iterable<PropertiesLoader> propertiesLoaders)
     {
-        this.appKey = appKey;
-        this.pluginSettingsFactory = pluginSettingsFactory;
-        ENV = new Properties();
-        try
-        {
-            ENV.load(EnvironmentImpl.class.getResourceAsStream("/env-defaults.properties"));
-            InputStream env = EnvironmentImpl.class.getResourceAsStream("/env.properties");
-            if (env != null)
-            {
-                ENV.load(env);
-            }
-            ENV.putAll(System.getenv());
-
-        }
-        catch (IOException e)
-        {
-            throw new RuntimeException("Couldn't load env properties");
-        }
+        this.appKey = checkNotNull(appKey);
+        this.pluginSettingsFactory = checkNotNull(pluginSettingsFactory);
+        this.env = loadEnv(propertiesLoaders);
     }
 
-    /**
-     * @return All clients defined in environment variables or env.properties.  Plugin settings
-     * will be skipped.
-     */
-    public Iterable<String> getAllClients()
+    private ImmutableMap<String, String> loadEnv(Iterable<PropertiesLoader> propertiesLoaders)
     {
-        Set<String> keys = new HashSet<String>();
-        for (String key : ENV.stringPropertyNames())
+        final ImmutableMap.Builder<String, String> envBuilder = ImmutableMap.builder();
+        for (PropertiesLoader properties : propertiesLoaders)
         {
-            if (key.startsWith("HOST_BASE_URL."))
-            {
-                keys.add(key.substring("HOST_BASE_URL.".length()));
-            }
+            envBuilder.putAll(properties.load());
         }
-        return keys;
+        return envBuilder.build();
     }
 
     @Override
@@ -83,7 +59,7 @@ public class EnvironmentImpl implements Environment
     @Override
     public String getOptionalEnv(String name, String def)
     {
-        String val = ENV.getProperty(name);
+        String val = env.get(name);
         if (val == null)
         {
             PluginSettings settings = pluginSettingsFactory.createGlobalSettings();

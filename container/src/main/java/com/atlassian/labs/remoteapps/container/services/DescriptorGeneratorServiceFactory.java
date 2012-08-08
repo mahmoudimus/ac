@@ -1,15 +1,14 @@
 package com.atlassian.labs.remoteapps.container.services;
 
 import com.atlassian.labs.remoteapps.container.HttpServer;
-import com.atlassian.labs.remoteapps.container.internal.EnvironmentImplFactory;
+import com.atlassian.labs.remoteapps.container.internal.EnvironmentFactory;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
-import com.atlassian.plugin.osgi.util.OsgiHeaderUtil;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.ServiceFactory;
 import org.osgi.framework.ServiceRegistration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import static com.atlassian.plugin.osgi.util.OsgiHeaderUtil.*;
 
 /**
  * Creates the descriptor generator for the bundle
@@ -19,28 +18,25 @@ public class DescriptorGeneratorServiceFactory implements ServiceFactory
     private final PluginAccessor pluginAccessor;
     private final HttpServer httpServer;
     private final OAuthSignedRequestHandlerServiceFactory oAuthSignedRequestHandlerServiceFactory;
-    private final EnvironmentImplFactory environmentImplServiceFactory;
-    private static final Logger log = LoggerFactory.getLogger(
-            DescriptorGeneratorServiceFactory.class);
+    private final EnvironmentFactory environmentServiceFactory;
 
     public DescriptorGeneratorServiceFactory(PluginAccessor pluginAccessor, HttpServer httpServer,
             OAuthSignedRequestHandlerServiceFactory oAuthSignedRequestHandlerServiceFactory,
-            EnvironmentImplFactory environmentImplServiceFactory)
+            EnvironmentFactory environmentServiceFactory)
     {
         this.pluginAccessor = pluginAccessor;
         this.httpServer = httpServer;
-        this.environmentImplServiceFactory = environmentImplServiceFactory;
+        this.environmentServiceFactory = environmentServiceFactory;
         this.oAuthSignedRequestHandlerServiceFactory = oAuthSignedRequestHandlerServiceFactory;
     }
 
     @Override
     public Object getService(Bundle bundle, ServiceRegistration registration)
     {
-        String appKey = OsgiHeaderUtil.getPluginKey(bundle);
-        Plugin plugin = pluginAccessor.getPlugin(appKey);
+        final Plugin plugin = pluginAccessor.getPlugin(getPluginKey(bundle));
         return new DescriptorGeneratorLoader(plugin, httpServer,
-                oAuthSignedRequestHandlerServiceFactory.getService(appKey),
-                environmentImplServiceFactory.getService(appKey));
+                oAuthSignedRequestHandlerServiceFactory.getService(bundle),
+                environmentServiceFactory.getService(bundle));
     }
 
 

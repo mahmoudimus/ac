@@ -143,7 +143,6 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.6.4</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -268,12 +267,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.8</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>com.atlassian.functest</groupId>
             <artifactId>functest-plugin</artifactId>
             <version>0.3</version>
@@ -375,19 +368,6 @@
             <scope>provided</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>${slf4j.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>jcl-over-slf4j</artifactId>
-            <version>${slf4j.version}</version>
-            <scope>test</scope>
-        </dependency>
-
     </dependencies>
 
     <dependencyManagement>
@@ -396,12 +376,6 @@
                 <groupId>commons-logging</groupId>
                 <artifactId>commons-logging</artifactId>
                 <version>1.1.1</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-                <version>${slf4j.version}</version>
                 <scope>provided</scope>
             </dependency>
         </dependencies>
@@ -562,18 +536,6 @@
                                     <version>1.4.1</version>
                                 </libArtifact>
                             </libArtifacts>
-                            <bundledArtifacts>
-                                <bundledArtifact>
-                                    <groupId>com.atlassian.activeobjects</groupId>
-                                    <artifactId>activeobjects-plugin</artifactId>
-                                    <version>${ao.version}</version>
-                                </bundledArtifact>
-                                <bundledArtifact>
-                                    <groupId>com.atlassian.activeobjects</groupId>
-                                    <artifactId>activeobjects-refapp-spi</artifactId>
-                                    <version>${ao.version}</version>
-                                </bundledArtifact>
-                            </bundledArtifacts>
                         </product>
                         <product>
                             <id>jira</id>
@@ -586,25 +548,6 @@
                             <systemPropertyVariables>
                                 <product>jira</product>
                             </systemPropertyVariables>
-                            <libArtifacts>
-                                <libArtifact>
-                                    <groupId>com.atlassian.activeobjects</groupId>
-                                    <artifactId>activeobjects-spi</artifactId>
-                                    <version>${ao.version}</version>
-                                </libArtifact>
-                            </libArtifacts>
-                            <bundledArtifacts>
-                                <bundledArtifact>
-                                    <groupId>com.atlassian.activeobjects</groupId>
-                                    <artifactId>activeobjects-plugin</artifactId>
-                                    <version>${ao.version}</version>
-                                </bundledArtifact>
-                                <bundledArtifact>
-                                    <groupId>com.atlassian.activeobjects</groupId>
-                                    <artifactId>activeobjects-jira-spi</artifactId>
-                                    <version>${ao.version}</version>
-                                </bundledArtifact>
-                            </bundledArtifacts>
                         </product>
                         <product>
                             <id>confluence</id>
@@ -625,18 +568,6 @@
                                     <version>${confluence.plugins.version}</version>
                                 </libArtifact>
                             </libArtifacts>
-                            <bundledArtifacts>
-                                <bundledArtifact>
-                                    <groupId>com.atlassian.activeobjects</groupId>
-                                    <artifactId>activeobjects-plugin</artifactId>
-                                    <version>${ao.version}</version>
-                                </bundledArtifact>
-                                <bundledArtifact>
-                                    <groupId>com.atlassian.activeobjects</groupId>
-                                    <artifactId>activeobjects-confluence-spi</artifactId>
-                                    <version>${ao.version}</version>
-                                </bundledArtifact>
-                            </bundledArtifacts>
                         </product>
                     </products>
                     <testGroups>

@@ -1,9 +1,9 @@
 package com.atlassian.labs.remoteapps.container.services;
 
 import com.atlassian.labs.remoteapps.container.HttpServer;
+import com.atlassian.labs.remoteapps.container.internal.BundleKey;
 import com.atlassian.labs.remoteapps.container.internal.Environment;
-import com.atlassian.labs.remoteapps.container.internal.EnvironmentImplFactory;
-import com.atlassian.plugin.osgi.util.OsgiHeaderUtil;
+import com.atlassian.labs.remoteapps.container.internal.EnvironmentFactory;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -13,26 +13,22 @@ import org.osgi.framework.ServiceRegistration;
 
 import java.util.concurrent.ExecutionException;
 
-/**
- * Created with IntelliJ IDEA. User: mrdon Date: 7/27/12 Time: 2:20 PM To change this template use
- * File | Settings | File Templates.
- */
-public class OAuthSignedRequestHandlerServiceFactory implements ServiceFactory
+public final class OAuthSignedRequestHandlerServiceFactory implements ServiceFactory
 {
-    private final Cache<String, ContainerOAuthSignedRequestHandler> instances;
+    private final Cache<BundleKey, ContainerOAuthSignedRequestHandler> instances;
 
     public OAuthSignedRequestHandlerServiceFactory(
-            final EnvironmentImplFactory environmentImplServiceFactory, final HttpServer httpServer)
+            final EnvironmentFactory environmentServiceFactory, final HttpServer httpServer)
     {
-        this.instances = CacheBuilder.newBuilder().weakValues().build(new CacheLoader<String, ContainerOAuthSignedRequestHandler>()
+        this.instances = CacheBuilder.newBuilder().weakValues().build(new CacheLoader<BundleKey, ContainerOAuthSignedRequestHandler>()
         {
             @Override
-            public ContainerOAuthSignedRequestHandler load(String key) throws Exception
+            public ContainerOAuthSignedRequestHandler load(BundleKey key) throws Exception
             {
-                Environment env = environmentImplServiceFactory.getService(key);
-                final ContainerOAuthSignedRequestHandler requestHandler = new ContainerOAuthSignedRequestHandler(key, env);
-                requestHandler.setLocalOauthKey(key);
-                requestHandler.setLocalBaseUrlIfNull(httpServer.getLocalMountBaseUrl(key));
+                Environment env = environmentServiceFactory.getService(key.bundle);
+                final ContainerOAuthSignedRequestHandler requestHandler = new ContainerOAuthSignedRequestHandler(key.pluginKey, env);
+                requestHandler.setLocalOauthKey(key.pluginKey);
+                requestHandler.setLocalBaseUrlIfNull(httpServer.getLocalMountBaseUrl(key.pluginKey));
                 return requestHandler;
             }
         });
@@ -41,15 +37,14 @@ public class OAuthSignedRequestHandlerServiceFactory implements ServiceFactory
     @Override
     public Object getService(Bundle bundle, ServiceRegistration registration)
     {
-        String appKey = OsgiHeaderUtil.getPluginKey(bundle);
-        return getService(appKey);
+        return getService(bundle);
     }
 
-    ContainerOAuthSignedRequestHandler getService(String appKey)
+    ContainerOAuthSignedRequestHandler getService(Bundle bundle)
     {
         try
         {
-            return instances.get(appKey);
+            return instances.get(new BundleKey(bundle));
         }
         catch (ExecutionException e)
         {
