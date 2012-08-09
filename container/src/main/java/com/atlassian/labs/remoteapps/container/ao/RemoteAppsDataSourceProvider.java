@@ -2,9 +2,6 @@ package com.atlassian.labs.remoteapps.container.ao;
 
 import com.atlassian.activeobjects.spi.DataSourceProvider;
 import com.atlassian.activeobjects.spi.DatabaseType;
-import com.atlassian.labs.remoteapps.api.DatabaseUrlProvider;
-import com.atlassian.labs.remoteapps.container.internal.Environment;
-import com.atlassian.labs.remoteapps.container.internal.EnvironmentFactory;
 import com.google.common.base.Supplier;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 import com.mchange.v2.c3p0.DataSources;
@@ -16,7 +13,6 @@ import java.beans.PropertyVetoException;
 import java.sql.Driver;
 import java.sql.SQLException;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Suppliers.memoize;
 
 final class RemoteAppsDataSourceProvider implements DataSourceProvider
@@ -30,26 +26,31 @@ final class RemoteAppsDataSourceProvider implements DataSourceProvider
 
     private final Supplier<DataSource> dataSource;
 
-    RemoteAppsDataSourceProvider(final Environment environment)
+    RemoteAppsDataSourceProvider()
     {
-        this.dataSource = memoize(getC3p0DataSource(environment));
+        this.dataSource = memoize(getC3p0DataSource());
     }
 
-    private Supplier<DataSource> getC3p0DataSource(final Environment environment)
+    private Supplier<DataSource> getC3p0DataSource()
     {
         return new Supplier<DataSource>()
         {
             @Override
             public DataSource get()
             {
-                return getC3p0DataSource(getUrl(environment));
+                return getC3p0DataSource(getUrl());
             }
         };
     }
 
-    private String getUrl(Environment env)
+    private String getUrl()
     {
-        return new HerokuUrlTransformer().transform(env.getOptionalEnv(DATABASE_URL_KEY, DEFAULT_DATABASE_URL));
+        return new HerokuUrlTransformer().transform(getDatabaseUrl());
+    }
+
+    private String getDatabaseUrl()
+    {
+        return System.getProperty(DATABASE_URL_KEY, DEFAULT_DATABASE_URL);
     }
 
     private DataSource getC3p0DataSource(String url)
