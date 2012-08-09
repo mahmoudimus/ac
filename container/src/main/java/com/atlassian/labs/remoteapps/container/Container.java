@@ -179,6 +179,14 @@ public final class Container
             for (String app : apps)
             {
                 File appFile = new File(app);
+                try
+                {
+                    appFile = appFile.getCanonicalFile();
+                }
+                catch (IOException e)
+                {
+                    throw new RuntimeException("Unable to determine canonical path", e);
+                }
                 if (!appFile.exists())
                 {
                     throw new FileNotFoundException("App '" + app + "' not found");

@@ -4,7 +4,6 @@ import com.atlassian.event.api.EventPublisher;
 import com.atlassian.labs.remoteapps.ModuleGeneratorManager;
 import com.atlassian.labs.remoteapps.api.HttpResourceMounter;
 import com.atlassian.labs.remoteapps.api.InstallationFailedException;
-import com.atlassian.labs.remoteapps.event.RemoteAppInstalledEvent;
 import com.atlassian.labs.remoteapps.modules.external.RemoteModuleGenerator;
 import com.atlassian.labs.remoteapps.modules.page.jira.JiraProfileTabModuleGenerator;
 import com.atlassian.labs.remoteapps.util.zip.ZipBuilder;
@@ -26,24 +25,21 @@ import java.net.URI;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
-import java.util.concurrent.CountDownLatch;
 
 import static com.atlassian.labs.remoteapps.util.Dom4jUtils.getRequiredAttribute;
 
 @Component
 public class InstallerHelper
 {
-    private final EventPublisher eventPublisher;
     private final PluginController pluginController;
     private final ModuleGeneratorManager moduleGeneratorManager;
 
     private static final Logger log = LoggerFactory.getLogger(InstallerHelper.class);
 
     @Autowired
-    public InstallerHelper(EventPublisher eventPublisher, PluginController pluginController,
+    public InstallerHelper(PluginController pluginController,
             ModuleGeneratorManager moduleGeneratorManager)
     {
-        this.eventPublisher = eventPublisher;
         this.pluginController = pluginController;
         this.moduleGeneratorManager = moduleGeneratorManager;
     }
@@ -53,8 +49,6 @@ public class InstallerHelper
         pluginController.installPlugins(jar);
 
         log.info("Registered app '{}' by '{}'", pluginKey, username);
-
-        eventPublisher.publish(new RemoteAppInstalledEvent(pluginKey));
     }
 
     public JarPluginArtifact createJarPluginArtifact(final String pluginKey,

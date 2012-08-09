@@ -4,7 +4,6 @@ import com.atlassian.labs.remoteapps.modules.IFrameParams;
 
 public class IFrameContext
 {
-    // fixme: verify all these properties are still needed
     private final String iframePath;
 
     private final String namespace;

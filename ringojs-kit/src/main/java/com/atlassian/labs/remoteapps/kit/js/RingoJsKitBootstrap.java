@@ -34,11 +34,4 @@ public class RingoJsKitBootstrap
         JsgiServlet servlet = new JsgiServlet(ringoEngine.getEngine());
         httpResourceMounter.mountServlet(servlet, "/");
     }
-
-    private DescriptorAccessor getDescriptorAccessor()
-    {
-        File baseDir = new File(System.getProperty("plugin.resource.directories"));
-        return new PolygotDescriptorAccessor(
-                baseDir);
-    }
 }

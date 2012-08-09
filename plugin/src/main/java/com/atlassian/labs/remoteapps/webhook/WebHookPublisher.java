@@ -3,7 +3,6 @@ package com.atlassian.labs.remoteapps.webhook;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.labs.remoteapps.RemoteAppAccessor;
 import com.atlassian.labs.remoteapps.RemoteAppAccessorFactory;
-import com.atlassian.labs.remoteapps.event.RemoteAppEvent;
 import com.atlassian.labs.remoteapps.util.http.HttpContentRetriever;
 import com.atlassian.labs.remoteapps.util.uri.Uri;
 import com.atlassian.labs.remoteapps.util.uri.UriBuilder;
@@ -74,32 +73,28 @@ public class WebHookPublisher implements DisposableBean
         String body = null;
         for (Registration registration : registrationsByEvent.get(eventIdentifier))
         {
-            if (registration.applies(eventSerializer.getEvent()))
+            if (eventMatcher.matches(eventSerializer.getEvent(), registration.getPluginKey()))
             {
-
-                if (eventMatcher.matches(eventSerializer.getEvent(), registration.getPluginKey()))
+                RemoteAppAccessor remoteAppAccessor = remoteAppAccessorFactory.get(
+                        registration.getPluginKey());
+                body = body != null ? body : eventSerializer.getJson();
+                String username = userManager.getRemoteUsername();
+                PublishTask task = new PublishTask(httpContentRetriever, registration,
+                        remoteAppAccessor, username != null ? username : "", body);
+                try
                 {
-                    RemoteAppAccessor remoteAppAccessor = remoteAppAccessorFactory.get(
-                            registration.getPluginKey());
-                    body = body != null ? body : eventSerializer.getJson();
-                    String username = userManager.getRemoteUsername();
-                    PublishTask task = new PublishTask(httpContentRetriever, registration,
-                            remoteAppAccessor, username != null ? username : "", body);
-                    try
-                    {
-                        publisher.execute(task);
-                    }
-                    catch (RejectedExecutionException ex)
-                    {
-                        log.warn("Web hook queue full, rejecting '{}'", task);
-                        eventPublisher.publish(new WebHookPublishQueueFullEvent(eventIdentifier,
-                                remoteAppAccessor.getKey()));
-                    }
+                    publisher.execute(task);
                 }
-                else
+                catch (RejectedExecutionException ex)
                 {
-                    log.debug("Matcher {} didn't match plugin key {}", eventMatcher, registration.getPluginKey());
+                    log.warn("Web hook queue full, rejecting '{}'", task);
+                    eventPublisher.publish(new WebHookPublishQueueFullEvent(eventIdentifier,
+                            remoteAppAccessor.getKey()));
                 }
+            }
+            else
+            {
+                log.debug("Matcher {} didn't match plugin key {}", eventMatcher, registration.getPluginKey());
             }
         }
     }
@@ -216,12 +211,6 @@ public class WebHookPublisher implements DisposableBean
             int result = pluginKey.hashCode();
             result = 31 * result + path.hashCode();
             return result;
-        }
-
-        public boolean applies(Object event)
-        {
-            return !(event instanceof RemoteAppEvent) ||
-                ((RemoteAppEvent)event).getRemoteAppKey().equals(pluginKey);
         }
 
         @Override

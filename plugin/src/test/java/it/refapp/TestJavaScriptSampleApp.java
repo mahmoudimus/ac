@@ -8,9 +8,13 @@ import com.atlassian.labs.remoteapps.test.RemoteAppTestPage;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
 import it.AbstractRemoteAppTest;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.slf4j.LoggerFactory;
+import org.twdata.pkgscanner.ExportPackageListBuilder;
 
 import java.io.File;
 import java.net.URL;
@@ -26,9 +30,10 @@ public class TestJavaScriptSampleApp extends AbstractRemoteAppTest
     public static void before()
         throws Exception
     {
+        Logger.getLogger(ExportPackageListBuilder.class).setLevel(Level.ERROR);
         URL url = TestJavaScriptSampleApp.class.getClassLoader().getResource(TestJavaScriptSampleApp.class.getName().replace('.', '/') + ".class");
         File file = new File(url.toURI());
-        File srcDir = new File(file.getParentFile().getParentFile().getParentFile().getParentFile(), "src");
+        File srcDir = new File(file.getParentFile().getParentFile().getParentFile().getParentFile().getParentFile(), "src");
         File sampleDir = new File(srcDir, "js-sample-app");
         server = new Main(new String[] {sampleDir.getAbsolutePath()});
     }

@@ -9,7 +9,6 @@ import org.dom4j.Element;
  */
 public class RemoteMacroInfo
 {
-    // fixme: verify these are still required
     private final Element element;
     private final String pluginKey;
     private final Macro.BodyType bodyType;
