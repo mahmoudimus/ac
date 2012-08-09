@@ -595,6 +595,7 @@
                             </systemProperties>
                             <excludes>
                                 <exclude>it/jira/*.java</exclude>
+                                <exclude>it/refapp/*.java</exclude>
                             </excludes>
                         </testGroup>
                         <testGroup>
@@ -609,6 +610,7 @@
                             </systemProperties>
                             <excludes>
                                 <exclude>it/confluence/*.java</exclude>
+                                <exclude>it/refapp/*.java</exclude>
                             </excludes>
                         </testGroup>
                     </testGroups>

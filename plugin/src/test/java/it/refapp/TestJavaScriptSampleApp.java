@@ -1,4 +1,4 @@
-package it;
+package it.refapp;
 
 import com.atlassian.labs.remoteapps.container.Main;
 import com.atlassian.labs.remoteapps.test.GeneralPage;
@@ -7,6 +7,7 @@ import com.atlassian.labs.remoteapps.test.RemoteAppAwarePage;
 import com.atlassian.labs.remoteapps.test.RemoteAppTestPage;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
+import it.AbstractRemoteAppTest;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
