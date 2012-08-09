@@ -150,9 +150,6 @@
         <condition class="com.atlassian.labs.remoteapps.integration.speakeasy.CanInstallRemoteAppsCondition" />
     </web-item>
 
-    <!-- legacy -->
-    <module-type key="remote-app" class="com.atlassian.labs.remoteapps.descriptor.external.RemoteAppModuleDescriptor" />
-
     <!-- universal binary services -->
     <component key="pluginSettingsAsyncFactory" interface="com.atlassian.labs.remoteapps.api.services.PluginSettingsAsyncFactory"
                class="com.atlassian.labs.remoteapps.services.PluginSettingsAsyncFactoryBean" public="true" />
