@@ -1,17 +1,14 @@
 package com.atlassian.labs.remoteapps.container.internal;
 
-import com.atlassian.labs.remoteapps.container.internal.properties.EnvironmentPropertiesLoader;
 import com.atlassian.labs.remoteapps.container.internal.properties.PropertiesLoader;
-import com.atlassian.labs.remoteapps.container.internal.properties.ResourcePropertiesLoader;
-import com.atlassian.labs.remoteapps.container.internal.resources.ClassLoaderResourceLoader;
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 import java.util.Map;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Maps.*;
 
 /**
  * Abstraction for retrieving environment properties.  The order is decided by the properties loaders passed to the constructor.
@@ -34,12 +31,12 @@ public final class EnvironmentImpl implements Environment
 
     private ImmutableMap<String, String> loadEnv(Iterable<PropertiesLoader> propertiesLoaders)
     {
-        final ImmutableMap.Builder<String, String> envBuilder = ImmutableMap.builder();
+        final Map<String, String> envBuilder = newHashMap();
         for (PropertiesLoader properties : propertiesLoaders)
         {
             envBuilder.putAll(properties.load());
         }
-        return envBuilder.build();
+        return ImmutableMap.copyOf(envBuilder);
     }
 
     @Override
