@@ -1,34 +1,36 @@
 package com.atlassian.labs.remoteapps.api.services;
 
-import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.concurrent.Future;
+
+import static com.google.common.base.Preconditions.*;
 
 /**
  * Wraps a service and converts it to its sync or async version via dynamic proxies
  */
-public class ServiceWrappers
+public final class ServiceWrappers
 {
+    private ServiceWrappers()
+    {
+    }
+
+    @SuppressWarnings("unchecked")
     public static <SYNC, ASYNC> ASYNC wrapAsAsync(SYNC delegate, Class<ASYNC> targetClass)
     {
-        return (ASYNC) Proxy.newProxyInstance(
-                targetClass.getClassLoader(),
-                new Class[]{targetClass},
-                new AsyncWrapper<SYNC>(delegate));
+        return (ASYNC) Proxy.newProxyInstance(targetClass.getClassLoader(), new Class[]{targetClass}, new AsyncWrapper<SYNC>(delegate));
     }
 
+    @SuppressWarnings("unchecked")
     public static <ASYNC, SYNC> SYNC wrapAsSync(ASYNC delegate, Class<SYNC> targetClass)
     {
-        return (SYNC) Proxy.newProxyInstance(
-                targetClass.getClassLoader(),
-                new Class[]{targetClass},
-                new SyncWrapper<ASYNC>(delegate));
+        return (SYNC) Proxy.newProxyInstance(targetClass.getClassLoader(), new Class[]{targetClass}, new SyncWrapper<ASYNC>(delegate));
     }
 
-    private static class AsyncWrapper<T> implements InvocationHandler
+    private static final class AsyncWrapper<T> implements InvocationHandler
     {
         private final T delegate;
 
@@ -37,22 +39,20 @@ public class ServiceWrappers
          */
         public AsyncWrapper(T syncDelegate)
         {
-            this.delegate = syncDelegate;
+            this.delegate = checkNotNull(syncDelegate);
         }
 
         /**
          * a generic, reflection-based secure invocation
          */
-        public Object invoke(Object target,
-                java.lang.reflect.Method method, Object[] arguments)
-                throws Throwable
+        public Object invoke(Object target, java.lang.reflect.Method method, Object[] arguments) throws Throwable
         {
             try
             {
-                Class<T> syncClass = (Class<T>) delegate.getClass();
-                Method syncMethod = syncClass.getMethod(method.getName(), method.getParameterTypes());
-                Object result = syncMethod.invoke(delegate, arguments);
-                SettableFuture future = SettableFuture.create();
+                final Method syncMethod = delegate.getClass().getMethod(method.getName(), method.getParameterTypes());
+                final Object result = syncMethod.invoke(delegate, arguments);
+
+                final SettableFuture future = SettableFuture.create();
                 future.set(result);
                 return future;
             }
@@ -64,7 +64,7 @@ public class ServiceWrappers
         }
     }
 
-    private static class SyncWrapper<T> implements InvocationHandler
+    private static final class SyncWrapper<T> implements InvocationHandler
     {
         private final T asyncDelegate;
 
@@ -73,22 +73,28 @@ public class ServiceWrappers
          */
         public SyncWrapper(T asyncDelegate)
         {
-            this.asyncDelegate = asyncDelegate;
+            this.asyncDelegate = checkNotNull(asyncDelegate);
         }
 
         /**
          * a generic, reflection-based secure invocation
          */
-        public Object invoke(Object target,
-                java.lang.reflect.Method method, Object[] arguments)
-                throws Throwable
+        public Object invoke(Object target, java.lang.reflect.Method method, Object[] arguments) throws Throwable
         {
             try
             {
-                Class<T> asyncClass = (Class<T>) asyncDelegate.getClass();
-                Method syncMethod = asyncClass.getMethod(method.getName(), method.getParameterTypes());
-                ListenableFuture result = (ListenableFuture) syncMethod.invoke(asyncDelegate, arguments);
-                return result.get();
+                final Class asyncClass = asyncDelegate.getClass();
+                final Method syncMethod = asyncClass.getMethod(method.getName(), method.getParameterTypes());
+
+                final Object result = syncMethod.invoke(asyncDelegate, arguments);
+                if (Future.class.isAssignableFrom(result.getClass())) // most cases
+                {
+                    return ((Future) result).get();
+                }
+                else // toString, equals, etc.
+                {
+                    return result;
+                }
             }
             catch (java.lang.reflect.InvocationTargetException e)
             {

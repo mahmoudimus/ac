@@ -10,7 +10,7 @@
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>remoteapps-kit-common</artifactId>
-    <name>Atlassian Remote Apps - Utils</name>
+    <name>Atlassian Remote Apps - Kit Common</name>
     <description>
         A set of utility classes for remote apps implemented in Java.
     </description>
