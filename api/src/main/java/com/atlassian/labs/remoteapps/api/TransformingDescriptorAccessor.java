@@ -7,11 +7,11 @@ import java.net.URL;
 /**
  * Descriptor accessor with a static document
  */
-public abstract class TransformingRemoteAppDescriptorAccessor implements RemoteAppDescriptorAccessor
+public abstract class TransformingDescriptorAccessor implements DescriptorAccessor
 {
-    private final RemoteAppDescriptorAccessor delegate;
+    private final DescriptorAccessor delegate;
 
-    public TransformingRemoteAppDescriptorAccessor(RemoteAppDescriptorAccessor delegate)
+    public TransformingDescriptorAccessor(DescriptorAccessor delegate)
     {
         this.delegate = delegate;
     }

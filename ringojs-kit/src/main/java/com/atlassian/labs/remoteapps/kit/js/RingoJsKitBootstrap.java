@@ -1,8 +1,8 @@
 package com.atlassian.labs.remoteapps.kit.js;
 
-import com.atlassian.labs.remoteapps.api.DescriptorGenerator;
-import com.atlassian.labs.remoteapps.api.PolygotRemoteAppDescriptorAccessor;
-import com.atlassian.labs.remoteapps.api.RemoteAppDescriptorAccessor;
+import com.atlassian.labs.remoteapps.api.DescriptorAccessor;
+import com.atlassian.labs.remoteapps.api.HttpResourceMounter;
+import com.atlassian.labs.remoteapps.api.PolygotDescriptorAccessor;
 import com.atlassian.labs.remoteapps.kit.js.ringojs.RingoEngine;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import org.osgi.framework.BundleContext;
@@ -22,26 +22,23 @@ public class RingoJsKitBootstrap
     public RingoJsKitBootstrap(
             BundleContext bundleContext,
             PluginRetrievalService pluginRetrievalService,
-            DescriptorGenerator descriptorGenerator) throws Exception
+            HttpResourceMounter httpResourceMounter
+    ) throws Exception
     {
         log.info("Starting app '" + bundleContext.getBundle().getSymbolicName() + "'");
 
         RingoEngine ringoEngine = new RingoEngine(pluginRetrievalService.getPlugin(), bundleContext);
+
+        httpResourceMounter.mountStaticResources("", "/public/*");
+
         JsgiServlet servlet = new JsgiServlet(ringoEngine.getEngine());
-
-        RemoteAppDescriptorAccessor descriptorAccessor = getDescriptorAccessor();
-
-        descriptorGenerator.mountStaticResources("", "/public/*");
-
-        descriptorGenerator.mountServlet(servlet, "/");
-
-        descriptorGenerator.init(descriptorAccessor);
+        httpResourceMounter.mountServlet(servlet, "/");
     }
 
-    private RemoteAppDescriptorAccessor getDescriptorAccessor()
+    private DescriptorAccessor getDescriptorAccessor()
     {
         File baseDir = new File(System.getProperty("plugin.resource.directories"));
-        return new PolygotRemoteAppDescriptorAccessor(
+        return new PolygotDescriptorAccessor(
                 baseDir);
     }
 }

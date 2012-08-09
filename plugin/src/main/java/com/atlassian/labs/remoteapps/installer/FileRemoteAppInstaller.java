@@ -1,42 +1,22 @@
 package com.atlassian.labs.remoteapps.installer;
 
-import com.atlassian.event.api.EventPublisher;
 import com.atlassian.labs.remoteapps.DescriptorValidator;
-import com.atlassian.labs.remoteapps.ModuleGeneratorManager;
 import com.atlassian.labs.remoteapps.OAuthLinkManager;
-import com.atlassian.labs.remoteapps.api.DescriptorGenerator;
 import com.atlassian.labs.remoteapps.api.FormatConverter;
-import com.atlassian.labs.remoteapps.api.InstallationFailedException;
 import com.atlassian.labs.remoteapps.api.PermissionDeniedException;
-import com.atlassian.labs.remoteapps.event.RemoteAppInstalledEvent;
-import com.atlassian.labs.remoteapps.modules.external.RemoteModuleGenerator;
-import com.atlassian.labs.remoteapps.modules.page.jira.JiraProfileTabModuleGenerator;
-import com.atlassian.labs.remoteapps.util.zip.ZipBuilder;
-import com.atlassian.labs.remoteapps.util.zip.ZipHandler;
 import com.atlassian.plugin.*;
 import com.atlassian.plugin.util.PluginUtils;
 import com.atlassian.sal.api.ApplicationProperties;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.dom4j.Document;
-import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
-import org.osgi.framework.BundleContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.net.URI;
 import java.util.Properties;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-
-import static com.atlassian.labs.remoteapps.util.Dom4jUtils.getOptionalUriAttribute;
-import static com.atlassian.labs.remoteapps.util.Dom4jUtils.getRequiredAttribute;
 
 /**
  * Installs remote apps from a local file descriptor.  Only allowed in dev mode.

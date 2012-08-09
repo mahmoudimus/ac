@@ -30,7 +30,7 @@ public class MyImageMacroServlet extends HttpServlet
     {
         resp.setContentType("text/html");
         PrintWriter writer = resp.getWriter();
-        writer.print("<img src=\"" + signedRequestHandler.getLocalBaseUrl() + "/sandcastles.jpg\" alt=\"sandcastles\"/>");
+        writer.print("<img src=\"" + signedRequestHandler.getLocalBaseUrl() + "/public/sandcastles.jpg\" alt=\"sandcastles\"/>");
         writer.close(); 
     }
 }

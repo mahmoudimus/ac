@@ -2,9 +2,9 @@ package com.atlassian.labs.remoteapps.container;
 
 import com.atlassian.activeobjects.spi.DataSourceProvider;
 import com.atlassian.event.api.EventPublisher;
-import com.atlassian.labs.remoteapps.api.DescriptorGenerator;
-import com.atlassian.labs.remoteapps.api.PolygotRemoteAppDescriptorAccessor;
-import com.atlassian.labs.remoteapps.api.RemoteAppDescriptorAccessor;
+import com.atlassian.labs.remoteapps.api.DescriptorAccessor;
+import com.atlassian.labs.remoteapps.api.HttpResourceMounter;
+import com.atlassian.labs.remoteapps.api.PolygotDescriptorAccessor;
 import com.atlassian.labs.remoteapps.api.services.PluginSettingsAsyncFactory;
 import com.atlassian.labs.remoteapps.api.services.RequestContext;
 import com.atlassian.labs.remoteapps.api.services.RequestContextServiceFactory;
@@ -21,7 +21,7 @@ import com.atlassian.labs.remoteapps.container.ao.RemoteAppsDataSourceProviderSe
 import com.atlassian.labs.remoteapps.container.internal.EnvironmentFactory;
 import com.atlassian.labs.remoteapps.container.internal.properties.ResourcePropertiesLoader;
 import com.atlassian.labs.remoteapps.container.services.ContainerHostHttpClientServiceFactory;
-import com.atlassian.labs.remoteapps.container.services.DescriptorGeneratorServiceFactory;
+import com.atlassian.labs.remoteapps.container.services.ContainerHttpResourceMounterServiceFactory;
 import com.atlassian.labs.remoteapps.container.services.OAuthSignedRequestHandlerServiceFactory;
 import com.atlassian.labs.remoteapps.container.services.event.RemoteAppsEventPublisher;
 import com.atlassian.labs.remoteapps.container.services.sal.RemoteAppsApplicationPropertiesServiceFactory;
@@ -82,15 +82,13 @@ public final class Container
 {
     private static final Logger log = LoggerFactory.getLogger(Container.class);
 
-    public static final Set<URI> AUTOREGISTER_HOSTS = ImmutableSet.of(
-            URI.create("http://localhost:1990/confluence"),
-            URI.create("http://localhost:2990/jira"),
-            URI.create("http://localhost:5990/refapp"));
+    public static final Set<URI> AUTOREGISTER_HOSTS = ImmutableSet.of(URI.create("http://localhost:1990/confluence"),
+            URI.create("http://localhost:2990/jira"), URI.create("http://localhost:5990/refapp"));
 
     private final DefaultPluginManager pluginManager;
     private final HttpServer httpServer;
 
-    private RemoteAppDescriptorAccessor descriptorAccessor;
+    private DescriptorAccessor descriptorAccessor;
     private AppReloader appReloader;
 
     public Container(HttpServer server, String[] apps) throws FileNotFoundException
@@ -188,7 +186,7 @@ public final class Container
                 if (appFile.isDirectory())
                 {
                     System.setProperty("plugin.resource.directories", appFile.getAbsolutePath());
-                    descriptorAccessor = new PolygotRemoteAppDescriptorAccessor(appFile);
+                    descriptorAccessor = new PolygotDescriptorAccessor(appFile);
                     File appAsZip = zipAppDirectory(descriptorAccessor, appFile);
                     files.add(appAsZip);
                 }
@@ -222,7 +220,7 @@ public final class Container
                 pluginManager);
         final OAuthSignedRequestHandlerServiceFactory oAuthSignedRequestHandlerServiceFactory = new OAuthSignedRequestHandlerServiceFactory(environmentFactory, httpServer);
         final RequestContext requestContext = new DefaultRequestContext();
-        final DescriptorGeneratorServiceFactory descriptorGeneratorServiceFactory = new DescriptorGeneratorServiceFactory(pluginManager, httpServer, oAuthSignedRequestHandlerServiceFactory, environmentFactory, requestContext);
+        final ContainerHttpResourceMounterServiceFactory containerHttpResourceMounterServiceFactory = new ContainerHttpResourceMounterServiceFactory(pluginManager, httpServer, oAuthSignedRequestHandlerServiceFactory, environmentFactory, requestContext);
         final RequestKiller requestKiller = new RequestKiller();
         final AsyncHttpClient asyncHttpClient = new DefaultAsyncHttpClient(requestKiller);
         final RequestContextServiceFactory requestContextServiceFactory
@@ -234,7 +232,7 @@ public final class Container
             = new SyncHostHttpClientServiceFactory(containerHostHttpClientServiceFactory);
 
         hostComponents.put(SignedRequestHandler.class, oAuthSignedRequestHandlerServiceFactory);
-        hostComponents.put(DescriptorGenerator.class, descriptorGeneratorServiceFactory);
+        hostComponents.put(HttpResourceMounter.class, containerHttpResourceMounterServiceFactory);
         hostComponents.put(PluginAccessor.class, pluginManager);
         hostComponents.put(PluginController.class, pluginManager);
         hostComponents.put(PluginEventManager.class, pluginEventManager);
@@ -269,7 +267,7 @@ public final class Container
         return version;
     }
 
-    private File zipAppDirectory(RemoteAppDescriptorAccessor descriptorAccessor, File appFile)
+    private File zipAppDirectory(DescriptorAccessor descriptorAccessor, File appFile)
     {
         try
         {

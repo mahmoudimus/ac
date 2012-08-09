@@ -1,6 +1,6 @@
 package com.atlassian.labs.remoteapps.container;
 
-import com.atlassian.labs.remoteapps.api.RemoteAppDescriptorAccessor;
+import com.atlassian.labs.remoteapps.api.DescriptorAccessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,14 +19,14 @@ import static com.atlassian.labs.remoteapps.container.util.AppRegister.registerA
  */
 public class AppReloader
 {
-    private final RemoteAppDescriptorAccessor descriptorAccessor;
+    private final DescriptorAccessor descriptorAccessor;
     private final String localMountBaseUrl;
     private final Set<URI> foundHosts;
     private final Timer timer;
     private static final Logger log = LoggerFactory.getLogger(AppReloader.class);
 
 
-    public AppReloader(RemoteAppDescriptorAccessor descriptorAccessor, String localMountBaseUrl,
+    public AppReloader(DescriptorAccessor descriptorAccessor, String localMountBaseUrl,
             Set<URI> foundHosts)
     {
         this.descriptorAccessor = descriptorAccessor;

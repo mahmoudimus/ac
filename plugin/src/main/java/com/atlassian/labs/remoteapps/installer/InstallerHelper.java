@@ -2,7 +2,7 @@ package com.atlassian.labs.remoteapps.installer;
 
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.labs.remoteapps.ModuleGeneratorManager;
-import com.atlassian.labs.remoteapps.api.DescriptorGenerator;
+import com.atlassian.labs.remoteapps.api.HttpResourceMounter;
 import com.atlassian.labs.remoteapps.api.InstallationFailedException;
 import com.atlassian.labs.remoteapps.event.RemoteAppInstalledEvent;
 import com.atlassian.labs.remoteapps.modules.external.RemoteModuleGenerator;
@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 import static com.atlassian.labs.remoteapps.util.Dom4jUtils.getRequiredAttribute;
 
@@ -108,7 +107,6 @@ public class InstallerHelper
                     {
                         attachResources(pluginKey, props, pluginXml, builder);
                         builder.addFile("atlassian-plugin.xml", pluginXml);
-                        builder.addFile("META-INF/spring/remoteapps-loader.xml", getClass().getResourceAsStream("remoteapps-loader.xml"));
                         builder.addFile("atlassian-remote-app.xml", appXml);
                     }
                 }));
@@ -182,7 +180,7 @@ public class InstallerHelper
                         JiraProfileTabModuleGenerator.class.getPackage().getName() +
                                 ";resolution:=optional," +
                                 "com.atlassian.jira.plugin.searchrequestview;resolution:=optional," +
-                                DescriptorGenerator.class.getPackage().getName());
+                                HttpResourceMounter.class.getPackage().getName());
         instructions.addElement("Remote-App").
                 setText("installer;user=\"" + username + "\";date=\""
                         + System.currentTimeMillis() + "\"" +

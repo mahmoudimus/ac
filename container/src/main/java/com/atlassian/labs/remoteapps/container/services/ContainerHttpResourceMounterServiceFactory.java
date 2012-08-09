@@ -14,7 +14,7 @@ import static com.atlassian.plugin.osgi.util.OsgiHeaderUtil.*;
 /**
  * Creates the descriptor generator for the bundle
  */
-public class DescriptorGeneratorServiceFactory implements ServiceFactory
+public class ContainerHttpResourceMounterServiceFactory implements ServiceFactory
 {
     private final PluginAccessor pluginAccessor;
     private final HttpServer httpServer;
@@ -22,10 +22,12 @@ public class DescriptorGeneratorServiceFactory implements ServiceFactory
     private final EnvironmentFactory environmentServiceFactory;
     private RequestContext requestContext;
 
-    public DescriptorGeneratorServiceFactory(PluginAccessor pluginAccessor, HttpServer httpServer,
-            OAuthSignedRequestHandlerServiceFactory oAuthSignedRequestHandlerServiceFactory,
-            EnvironmentFactory environmentServiceFactory,
-            RequestContext requestContext)
+    public ContainerHttpResourceMounterServiceFactory(PluginAccessor pluginAccessor,
+                                                      HttpServer httpServer,
+                                                      OAuthSignedRequestHandlerServiceFactory oAuthSignedRequestHandlerServiceFactory,
+                                                      EnvironmentFactory environmentServiceFactory,
+                                                      RequestContext requestContext
+    )
     {
         this.pluginAccessor = pluginAccessor;
         this.httpServer = httpServer;
@@ -38,7 +40,7 @@ public class DescriptorGeneratorServiceFactory implements ServiceFactory
     public Object getService(Bundle bundle, ServiceRegistration registration)
     {
         final Plugin plugin = pluginAccessor.getPlugin(getPluginKey(bundle));
-        return new DescriptorGeneratorLoader(plugin, httpServer,
+        return new ContainerHttpResourceMounter(bundle, plugin, httpServer,
                 oAuthSignedRequestHandlerServiceFactory.getService(bundle),
                 environmentServiceFactory.getService(bundle),
                 requestContext);

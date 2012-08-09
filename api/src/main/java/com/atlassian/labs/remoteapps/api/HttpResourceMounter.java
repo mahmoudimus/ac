@@ -1,19 +1,14 @@
 package com.atlassian.labs.remoteapps.api;
 
-import org.dom4j.Document;
-
 import javax.servlet.Filter;
 import javax.servlet.http.HttpServlet;
 
 /**
- * Kicks off the loading of the remote app, ideally before the Spring context
- * is finished loading.
+ * Allows a universal binary to mount HTTP resources for local or remote consumption
  */
-public interface DescriptorGenerator
+public interface HttpResourceMounter
 {
     String getLocalMountBaseUrl();
-
-    void init(RemoteAppDescriptorAccessor descriptorAccessor) throws Exception;
 
     /**
      * Filters are only processed right before a servlet and cannot be inserted anywhere in the chain.  They'll be

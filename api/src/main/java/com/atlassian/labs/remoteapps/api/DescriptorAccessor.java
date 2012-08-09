@@ -7,7 +7,7 @@ import java.net.URL;
 /**
  * Accesses the descriptor
  */
-public interface RemoteAppDescriptorAccessor
+public interface DescriptorAccessor
 {
     Document getDescriptor();
 

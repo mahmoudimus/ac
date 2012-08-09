@@ -1,6 +1,6 @@
 package com.atlassian.labs.remoteapps.container.internal.kit;
 
-import com.atlassian.labs.remoteapps.api.RemoteAppDescriptorAccessor;
+import com.atlassian.labs.remoteapps.api.DescriptorAccessor;
 import com.atlassian.labs.remoteapps.container.internal.Environment;
 import com.atlassian.labs.remoteapps.container.services.ContainerOAuthSignedRequestHandler;
 import org.dom4j.io.OutputFormat;
@@ -22,11 +22,11 @@ import java.io.UnsupportedEncodingException;
 public class RegistrationFilter implements Filter
 {
     private final String secret;
-    private final RemoteAppDescriptorAccessor descriptorAccessor;
+    private final DescriptorAccessor descriptorAccessor;
     private final ContainerOAuthSignedRequestHandler requestHandler;
     private static final Logger log = LoggerFactory.getLogger(RegistrationFilter.class);
 
-    public RegistrationFilter(RemoteAppDescriptorAccessor descriptor, Environment environment, ContainerOAuthSignedRequestHandler requestHandler)
+    public RegistrationFilter(DescriptorAccessor descriptor, Environment environment, ContainerOAuthSignedRequestHandler requestHandler)
     {
         this.descriptorAccessor = descriptor;
         this.requestHandler = requestHandler;

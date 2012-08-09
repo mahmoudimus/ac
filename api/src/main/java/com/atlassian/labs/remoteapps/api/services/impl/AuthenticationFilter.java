@@ -2,6 +2,7 @@ package com.atlassian.labs.remoteapps.api.services.impl;
 
 import com.atlassian.labs.remoteapps.api.services.RequestContext;
 import com.atlassian.labs.remoteapps.api.services.SignedRequestHandler;
+import net.oauth.OAuth;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -39,7 +40,8 @@ public class AuthenticationFilter implements Filter
             URI uri = URI.create(req.getRequestURI());
 
             // @todo not as robust a check as it maybe could be
-            if (!uri.getPath().contains("/public/"))
+            if (!uri.getPath().contains("/public/") && (req.getHeader("Authorization") != null || req.getParameter(
+                    OAuth.OAUTH_SIGNATURE) != null))
             {
                 // validate the request and obtain the client key
                 String clientKey = signedRequestHandler.validateRequest(req);

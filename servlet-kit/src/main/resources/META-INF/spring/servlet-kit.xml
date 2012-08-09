@@ -17,7 +17,7 @@ http://www.springframework.org/schema/context
     <context:component-scan base-package="services"/>
 
     <osgi:reference id="pluginRetrieval" interface="com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService" />
-    <osgi:reference id="descriptorGenerator" interface="com.atlassian.labs.remoteapps.api.DescriptorGenerator" timeout="20000" />
+    <osgi:reference id="descriptorGenerator" interface="com.atlassian.labs.remoteapps.api.HttpResourceMounter" timeout="20000" />
     <osgi:reference id="asyncHttpClient" interface="com.atlassian.labs.remoteapps.api.services.http.AsyncHttpClient" timeout="20000" />
     <osgi:reference id="hostHttpClient" interface="com.atlassian.labs.remoteapps.api.services.http.HostHttpClient" timeout="20000" />
     <osgi:reference id="syncHostHttpClient" interface="com.atlassian.labs.remoteapps.api.services.http.SyncHostHttpClient" timeout="20000" />

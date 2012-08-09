@@ -18,7 +18,7 @@ import static com.atlassian.labs.remoteapps.api.XmlUtils.createSecureSaxReader;
 /**
  * Descriptor accessor that supports json, xml, and yaml descriptors
  */
-public class PolygotRemoteAppDescriptorAccessor implements RemoteAppDescriptorAccessor
+public class PolygotDescriptorAccessor implements DescriptorAccessor
 {
     private static final Iterable<DescriptorType> DESCRIPTOR_TYPES = ImmutableSet.of(
             new DescriptorType("atlassian-remote-app.yaml", "application/yaml", true),
@@ -38,7 +38,7 @@ public class PolygotRemoteAppDescriptorAccessor implements RemoteAppDescriptorAc
     private final UrlProvider urlProvider;
     private final DescriptorType descriptorType;
 
-    public PolygotRemoteAppDescriptorAccessor(final Bundle bundle)
+    public PolygotDescriptorAccessor(final Bundle bundle)
     {
         urlProvider = new UrlProvider()
         {
@@ -51,7 +51,7 @@ public class PolygotRemoteAppDescriptorAccessor implements RemoteAppDescriptorAc
         descriptorType = determineDescriptorType(urlProvider);
     }
 
-    public PolygotRemoteAppDescriptorAccessor(final File baseDir)
+    public PolygotDescriptorAccessor(final File baseDir)
     {
         this.urlProvider = new UrlProvider()
         {
