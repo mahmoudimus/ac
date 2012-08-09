@@ -243,7 +243,7 @@ public final class Container
         hostComponents.put(HostHttpClient.class, containerHostHttpClientServiceFactory);
         hostComponents.put(SyncHostHttpClient.class, syncHostHttpClientServiceFactory);
 
-        hostComponents.put(DataSourceProvider.class, new RemoteAppsDataSourceProviderServiceFactory(environmentFactory));
+        hostComponents.put(DataSourceProvider.class, new RemoteAppsDataSourceProviderServiceFactory());
         hostComponents.put(TransactionTemplate.class, new NoOpTransactionTemplate());
     }
 
@@ -355,11 +355,6 @@ public final class Container
             file.mkdirs();
         }
         return file;
-    }
-
-    private String getGoogleGuavaVersion()
-    {
-        return "1";
     }
 
     private String determineVersion()
