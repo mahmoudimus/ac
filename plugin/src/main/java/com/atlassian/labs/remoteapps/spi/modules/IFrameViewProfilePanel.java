@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 
 /**
- *
+ * View profile panel that loads its contents from an iframe
  */
 public class IFrameViewProfilePanel implements ViewProfilePanel
 {

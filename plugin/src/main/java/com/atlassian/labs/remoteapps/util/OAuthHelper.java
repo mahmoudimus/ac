@@ -1,14 +1,10 @@
 package com.atlassian.labs.remoteapps.util;
 
-import com.atlassian.oauth.Request;
 import com.atlassian.oauth.util.Check;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import net.oauth.OAuth;
 import net.oauth.OAuthMessage;
-
-import java.util.List;
-import java.util.Map;
 
 import static com.google.common.collect.Iterables.transform;
 
@@ -45,27 +41,6 @@ public class OAuthHelper
         Check.notNull(requestParameters, "requestParameters");
         return transform(requestParameters, toOAuthParameters);
     }
-
-    /**
-     * Converts the list of {@code OAuth.Parameter}s to {@code Request.Parameter}s.
-     *
-     * @param oauthParameters {@code OAuth.Parameter}s to be converted to {@code Request.Parameter}s
-     * @return {@code Request.Parameter}s converted from the {@code OAuth.Parameter}s
-     */
-    public static Iterable<com.atlassian.oauth.Request.Parameter> fromOAuthParameters(final List<? extends Map.Entry<String, String>> oauthParameters)
-    {
-        Check.notNull(oauthParameters, "oauthParameters");
-        return transform(oauthParameters, toRequestParameters);
-    }
-
-    private static final Function<Map.Entry<String, String>, Request.Parameter> toRequestParameters = new Function<Map.Entry<String, String>, com.atlassian.oauth.Request.Parameter>()
-    {
-        public com.atlassian.oauth.Request.Parameter apply(final Map.Entry<String, String> p)
-        {
-            Check.notNull(p, "parameter");
-            return new com.atlassian.oauth.Request.Parameter(p.getKey(), p.getValue());
-        }
-    };
 
     private static final Function<com.atlassian.oauth.Request.Parameter, OAuth.Parameter> toOAuthParameters = new Function<com.atlassian.oauth.Request.Parameter, OAuth.Parameter>()
     {

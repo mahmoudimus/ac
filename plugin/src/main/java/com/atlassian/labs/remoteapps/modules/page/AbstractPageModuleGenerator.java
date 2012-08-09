@@ -41,12 +41,6 @@ public abstract class AbstractPageModuleGenerator implements RemoteModuleGenerat
     }
 
     @Override
-    public RemoteModule generate(RemoteAppCreationContext ctx, Element e)
-    {
-        return RemoteModule.NO_OP;
-    }
-
-    @Override
     public void generatePluginDescriptor(Element descriptorElement, Element pluginDescriptorRoot)
     {
         Element copy = descriptorElement.createCopy();

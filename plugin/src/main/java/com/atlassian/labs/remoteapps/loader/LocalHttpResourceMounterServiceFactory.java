@@ -13,23 +13,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Loads the remote app when its service is requested.  The service itself does nothing.
+ * Provides an http resource mounter specific to a plugin
  */
 public class LocalHttpResourceMounterServiceFactory implements ServiceFactory
 {
-    private final RemoteAppLoader remoteAppLoader;
     private final UBDispatchFilter httpResourceFilter;
     private final LocalSignedRequestHandlerServiceFactory signedRequestHandlerServiceFactory;
     private final RequestContextServiceFactory requestContextServiceFactory;
     private static final Logger log = LoggerFactory.getLogger(LocalHttpResourceMounterServiceFactory.class);
 
-    public LocalHttpResourceMounterServiceFactory(RemoteAppLoader remoteAppLoader,
-                                                  UBDispatchFilter httpResourceFilter,
+    public LocalHttpResourceMounterServiceFactory(UBDispatchFilter httpResourceFilter,
                                                   LocalSignedRequestHandlerServiceFactory signedRequestHandlerServiceFactory,
                                                   RequestContextServiceFactory requestContextServiceFactory
     )
     {
-        this.remoteAppLoader = remoteAppLoader;
         this.httpResourceFilter = httpResourceFilter;
         this.signedRequestHandlerServiceFactory = signedRequestHandlerServiceFactory;
         this.requestContextServiceFactory = requestContextServiceFactory;
@@ -47,6 +44,5 @@ public class LocalHttpResourceMounterServiceFactory implements ServiceFactory
     @Override
     public void ungetService(Bundle bundle, ServiceRegistration registration, Object service)
     {
-        remoteAppLoader.unload(bundle);
     }
 }

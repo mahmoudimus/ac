@@ -33,7 +33,6 @@ import static com.atlassian.labs.remoteapps.util.Dom4jUtils.getRequiredAttribute
 @Component
 public class InstallerHelper
 {
-    private static final int INSTALLATION_TIMEOUT = 10;
     private final EventPublisher eventPublisher;
     private final PluginController pluginController;
     private final ModuleGeneratorManager moduleGeneratorManager;
@@ -51,45 +50,7 @@ public class InstallerHelper
 
     public void installRemoteAppPlugin(String username, String pluginKey, JarPluginArtifact jar)
     {
-        final CountDownLatch latch = new CountDownLatch(1);
-        StartedListener startListener = new StartedListener(pluginKey, latch);
-        eventPublisher.register(startListener);
-
-
-        try
-        {
-            pluginController.installPlugins(jar);
-
-
-            // todo: find another way to wait for descriptors (necessary?)
-//            if (!latch.await(INSTALLATION_TIMEOUT, TimeUnit.SECONDS))
-//            {
-//                Exception cause = startListener.getFailedCause();
-//                if (cause != null)
-//                {
-//                    log.info("Remote app '{}' was not started successfully and is "
-//                            + "disabled due to: {}", pluginKey,
-//                            cause);
-//                    throw new InstallationFailedException("Error starting app: "
-//                            + cause.getMessage(),
-//                            cause);
-//                }
-//                else
-//                {
-//                    log.info("Remote app '{}' was not started successfully in "
-//                            + "the expected {} seconds.", pluginKey, INSTALLATION_TIMEOUT);
-//                    throw new InstallationFailedException("Timeout starting app");
-//                }
-//            }
-        }
-//        catch (InterruptedException e)
-//        {
-//            // ignore
-//        }
-        finally
-        {
-            eventPublisher.unregister(startListener);
-        }
+        pluginController.installPlugins(jar);
 
         log.info("Registered app '{}' by '{}'", pluginKey, username);
 

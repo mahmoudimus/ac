@@ -8,8 +8,7 @@ import java.util.Set;
 import static java.util.Collections.unmodifiableSet;
 
 /**
- * Created with IntelliJ IDEA. User: mrdon Date: 7/27/12 Time: 8:34 AM To change this template use
- * File | Settings | File Templates.
+ * A set of permissions
  */
 public class Permissions
 {
@@ -17,7 +16,6 @@ public class Permissions
 
     public Permissions(Set<String> permissions)
     {
-        //To change body of created methods use File | Settings | File Templates.
         this.permissions = unmodifiableSet(permissions);
     }
 

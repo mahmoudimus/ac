@@ -3,8 +3,6 @@ package com.atlassian.labs.remoteapps.util.function;
 import com.google.common.base.Function;
 
 /**
- * Created with IntelliJ IDEA. User: mrdon Date: 20/04/12 Time: 1:24 PM To change this template use
- * File | Settings | File Templates.
  */
 public class MapFunctions
 {

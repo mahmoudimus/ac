@@ -21,7 +21,7 @@ import static java.util.Collections.emptyMap;
  * Registers webhooks
  */
 @Component
-public class WebHookModuleGenerator implements WaitableRemoteModuleGenerator
+public class WebHookModuleGenerator implements RemoteModuleGenerator
 {
     private final WebHookRegistrationManager webHookRegistrationManager;
     private final Plugin plugin;
@@ -83,12 +83,6 @@ public class WebHookModuleGenerator implements WaitableRemoteModuleGenerator
         return emptyMap();
     }
 
-    @Override
-    public RemoteModule generate(final RemoteAppCreationContext ctx, Element element)
-    {
-        return RemoteModule.NO_OP;
-    }
-
     private String getWebHookId(Element element)
     {
         return element.attributeValue("event");
@@ -106,11 +100,5 @@ public class WebHookModuleGenerator implements WaitableRemoteModuleGenerator
         Element copy = descriptorElement.createCopy("webhook");
         copy.addAttribute("key", "wh-" + copy.attributeValue("event"));
         pluginDescriptorRoot.add(copy);
-    }
-
-    @Override
-    public void waitToLoad(Element element)
-    {
-        webHookRegistrationManager.waitForId(getWebHookId(element));
     }
 }

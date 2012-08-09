@@ -4,8 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created with IntelliJ IDEA. User: mrdon Date: 7/26/12 Time: 3:08 PM To change this template use
- * File | Settings | File Templates.
+ * Generates an authorization http header value
  */
 public interface AuthorizationGenerator
 {

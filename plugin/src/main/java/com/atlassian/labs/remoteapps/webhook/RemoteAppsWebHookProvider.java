@@ -49,12 +49,6 @@ public class RemoteAppsWebHookProvider implements WebHookProvider
         publish.webhook("remote_app_started").whenFired(RemoteAppStartedEvent.class)
                 .matchedBy(matcher)
                 .serializedWith(factory);
-        publish.webhook("remote_app_stopped").whenFired(RemoteAppStoppedEvent.class)
-                .matchedBy(matcher)
-                .serializedWith(factory);
-        publish.webhook("remote_app_start_failed").whenFired(RemoteAppStartFailedEvent.class)
-                .matchedBy(matcher)
-                .serializedWith(factory);
     }
     
     private static class SameAppMatcher implements EventMatcher<RemoteAppEvent>

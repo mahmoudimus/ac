@@ -7,12 +7,8 @@ import java.net.URI;
 import java.util.Map;
 
 /**
- * A remote module generator.  To provide a new remote module generator, an instance must be
- * exposed as a public OSGi service.  It is done this way instead of a dynamic module type as
- * all implementations are needed at creation time.  For example, if there is a remote app installed
- * and the remote app plugin has been upgraded, the remote app wouldn't be able to start as the
- * dynamic module impls aren't available yet as the remote app plugin isn't "enabled".  OSGi services,
- * on the other hand, are available before the plugin is considered enabled.
+ * A remote module generator.  This is used to convert one part of a remote app descriptor into plugin XML to be
+ * stored in a generated local plugin.
  */
 public interface RemoteModuleGenerator extends SchemaDocumented
 {
@@ -21,8 +17,6 @@ public interface RemoteModuleGenerator extends SchemaDocumented
     Schema getSchema();
 
     Map<String,String> getI18nMessages(String pluginKey, Element element);
-
-    RemoteModule generate(RemoteAppCreationContext ctx, Element element);
 
     void validate(Element element, URI registrationUrl, String username) throws PluginParseException;
 

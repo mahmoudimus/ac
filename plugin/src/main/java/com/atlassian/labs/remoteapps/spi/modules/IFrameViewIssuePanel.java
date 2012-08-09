@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 import static com.google.common.collect.Maps.newHashMap;
 
 /**
- *
+ * View issue panel that loads its contents from an iframe
  */
 public class IFrameViewIssuePanel implements WebPanel
 {

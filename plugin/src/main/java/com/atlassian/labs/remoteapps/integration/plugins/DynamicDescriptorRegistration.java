@@ -1,8 +1,5 @@
 package com.atlassian.labs.remoteapps.integration.plugins;
 
-import com.atlassian.labs.remoteapps.modules.applinks.ApplicationTypeModuleGenerator;
-import com.atlassian.labs.remoteapps.modules.external.RemoteModule;
-import com.atlassian.labs.remoteapps.modules.external.RemoteModuleGenerator;
 import com.atlassian.labs.remoteapps.util.BundleUtil;
 import com.atlassian.labs.remoteapps.util.tracker.WaitableServiceTracker;
 import com.atlassian.labs.remoteapps.util.tracker.WaitableServiceTrackerFactory;
@@ -11,16 +8,10 @@ import com.atlassian.plugin.ModuleDescriptorFactory;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.module.ModuleFactory;
-import com.atlassian.plugin.osgi.external.ListableModuleDescriptorFactory;
-import com.atlassian.plugin.osgi.external.SingleModuleDescriptorFactory;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
-import com.google.common.collect.Lists;
-import com.google.common.util.concurrent.AbstractFuture;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.ListenableFuture;
-import org.netbeans.lib.cvsclient.commandLine.command.log;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
@@ -38,8 +29,7 @@ import static com.google.common.collect.Sets.newHashSet;
 import static java.util.Arrays.asList;
 
 /**
- * Created with IntelliJ IDEA. User: mrdon Date: 7/24/12 Time: 5:26 PM To change this template use
- * File | Settings | File Templates.
+ * Helper component that registers dynamic module descriptors
  */
 @Component
 public class DynamicDescriptorRegistration

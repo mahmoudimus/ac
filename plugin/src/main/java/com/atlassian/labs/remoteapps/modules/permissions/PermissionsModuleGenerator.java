@@ -30,7 +30,7 @@ import static java.util.Collections.emptyMap;
  * Allows a remote app to declare multiple permissions, usually api scopes
  */
 @Component
-public class PermissionsModuleGenerator implements WaitableRemoteModuleGenerator
+public class PermissionsModuleGenerator implements RemoteModuleGenerator
 {
     private final PermissionManager permissionManager;
     private final String applicationKey;
@@ -113,12 +113,6 @@ public class PermissionsModuleGenerator implements WaitableRemoteModuleGenerator
         return emptyMap();
     }
 
-    @Override
-    public RemoteModule generate(final RemoteAppCreationContext ctx, final Element element)
-    {
-        return RemoteModule.NO_OP;
-    }
-
     private List<String> extractApiScopeKeys(Element element)
     {
         List<String> apiScopes = newArrayList();
@@ -160,11 +154,5 @@ public class PermissionsModuleGenerator implements WaitableRemoteModuleGenerator
         {
             perms.addElement("permission").addText(scope);
         }
-    }
-
-    @Override
-    public void waitToLoad(Element moduleElement)
-    {
-        permissionManager.waitForApiScopes(extractApiScopeKeys(moduleElement));
     }
 }

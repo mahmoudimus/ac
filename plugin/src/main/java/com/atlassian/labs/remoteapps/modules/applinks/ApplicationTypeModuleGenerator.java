@@ -57,12 +57,6 @@ public class ApplicationTypeModuleGenerator implements RemoteModuleGenerator
     }
 
     @Override
-    public RemoteModule generate(RemoteAppCreationContext ctx, Element element)
-    {
-        return RemoteModule.NO_OP;
-    }
-
-    @Override
     public void generatePluginDescriptor(Element descriptorElement, Element pluginDescriptorRoot)
     {
         Element e = descriptorElement.createCopy("dynamic-application-link");

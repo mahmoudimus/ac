@@ -353,7 +353,6 @@ public class MacroModuleDescriptorCreator
                                 placeholder.applyChrome,
                                 placeholder.getDimensions(),
                                 placeholder.imageUrl,
-                                originalEntity.attributeValue("key"),
                                 plugin.getKey());
                     }
                     else

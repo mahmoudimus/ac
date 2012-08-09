@@ -20,12 +20,12 @@ import static java.util.Collections.emptySet;
  *
  */
 @Component
-public class DescriptorModuleGenerator implements RemoteModuleGenerator
+public class DescriptionModuleGenerator implements RemoteModuleGenerator
 {
     private final Plugin plugin;
 
     @Autowired
-    public DescriptorModuleGenerator(PluginRetrievalService pluginRetrievalService)
+    public DescriptionModuleGenerator(PluginRetrievalService pluginRetrievalService)
     {
         this.plugin = pluginRetrievalService.getPlugin();
     }
@@ -62,19 +62,6 @@ public class DescriptorModuleGenerator implements RemoteModuleGenerator
     public Map<String, String> getI18nMessages(String pluginKey, Element element)
     {
         return emptyMap();
-    }
-
-    @Override
-    public RemoteModule generate(RemoteAppCreationContext ctx, Element element)
-    {
-        return new RemoteModule()
-        {
-            @Override
-            public Set<ModuleDescriptor> getModuleDescriptors()
-            {
-                return emptySet();
-            }
-        };
     }
 
     @Override

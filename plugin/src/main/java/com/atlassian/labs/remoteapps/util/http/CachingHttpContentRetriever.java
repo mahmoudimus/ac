@@ -54,7 +54,7 @@ import java.util.regex.Pattern;
 import static java.util.Collections.singletonList;
 
 /**
- * This is a public component
+ * Retrieves http content asynchronously and caches its contents in memory according to the returned headers
  */
 public class CachingHttpContentRetriever implements DisposableBean, HttpContentRetriever
 {

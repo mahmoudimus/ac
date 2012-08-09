@@ -61,13 +61,6 @@ public class Dom4jUtils
         return child.getTextTrim();
     }
 
-    public static void copyOptionalAttribute(Element from, Element to, String name)
-    {
-        String value = getOptionalAttribute(from, name, null);
-        if (value != null)
-            to.addAttribute(name, value);
-    }
-
     public static URI getRequiredUriAttribute(Element e, String name)
     {
         String value = getRequiredAttribute(e, name);

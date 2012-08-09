@@ -49,12 +49,6 @@ public class IssueTabPageModuleGenerator implements RemoteModuleGenerator
     }
 
     @Override
-    public RemoteModule generate(final RemoteAppCreationContext ctx, final Element element)
-    {
-        return RemoteModule.NO_OP;
-    }
-
-    @Override
     public void validate(Element element, URI registrationUrl, String username) throws PluginParseException
     {
         getRequiredUriAttribute(element, "url");

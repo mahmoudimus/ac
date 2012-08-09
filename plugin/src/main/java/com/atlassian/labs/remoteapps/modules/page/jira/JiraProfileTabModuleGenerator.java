@@ -59,12 +59,6 @@ public class JiraProfileTabModuleGenerator implements RemoteModuleGenerator
     }
 
     @Override
-    public RemoteModule generate(RemoteAppCreationContext ctx, Element e)
-    {
-        return RemoteModule.NO_OP;
-    }
-
-    @Override
     public void validate(Element element, URI registrationUrl, String username) throws PluginParseException
     {
         getRequiredUriAttribute(element, "url");

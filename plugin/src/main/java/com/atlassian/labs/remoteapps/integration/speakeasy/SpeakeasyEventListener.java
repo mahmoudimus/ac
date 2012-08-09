@@ -1,15 +1,12 @@
 package com.atlassian.labs.remoteapps.integration.speakeasy;
 
 import com.atlassian.event.api.EventListener;
-import com.atlassian.labs.remoteapps.event.RemoteAppStartFailedEvent;
-import com.atlassian.labs.remoteapps.event.RemoteAppStoppedEvent;
 import com.atlassian.labs.remoteapps.util.BundleUtil;
 import com.atlassian.labs.speakeasy.descriptor.external.ConditionGenerator;
 import com.atlassian.labs.speakeasy.descriptor.external.DescriptorGenerator;
 import com.atlassian.labs.speakeasy.external.SpeakeasyBackendService;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
 import com.atlassian.plugin.event.events.PluginEnabledEvent;
 import com.atlassian.plugin.module.LegacyModuleFactory;
@@ -20,7 +17,6 @@ import org.osgi.framework.BundleContext;
 import java.util.Collections;
 
 import static com.atlassian.labs.remoteapps.util.RemoteAppManifestReader.isRemoteApp;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Marks apps as Speakeasy apps so they show up as global extensions in the UI
@@ -29,24 +25,11 @@ public class SpeakeasyEventListener
 {
     private final SpeakeasyBackendService speakeasyBackendService;
     private final BundleContext bundleContext;
-    private final PluginAccessor pluginAccessor;
 
-    public SpeakeasyEventListener(BundleContext bundleContext,
-            PluginAccessor pluginAccessor, SpeakeasyBackendService speakeasyBackendService)
+    public SpeakeasyEventListener(BundleContext bundleContext, SpeakeasyBackendService speakeasyBackendService)
     {
         this.bundleContext = bundleContext;
-        this.pluginAccessor = pluginAccessor;
         this.speakeasyBackendService = speakeasyBackendService;
-    }
-
-    @EventListener
-    public void onAppStartFailed(RemoteAppStartFailedEvent event)
-    {
-        Plugin plugin = pluginAccessor.getPlugin(event.getRemoteAppKey());
-        checkNotNull("plugin can't be found for remote app " + event.getRemoteAppKey());
-        Bundle bundle = BundleUtil.findBundleForPlugin(bundleContext, plugin.getKey());
-
-        makeAppVisibleInSpeakeasy(bundle, plugin);
     }
 
     @EventListener
@@ -74,11 +57,6 @@ public class SpeakeasyEventListener
         {
             speakeasyBackendService.addGlobalExtension(plugin.getKey());
         }
-    }
-
-    @EventListener
-    public void onAppStopped(RemoteAppStoppedEvent event)
-    {
     }
 
     public static class SpeakeasyMarkerModuleDescriptor extends AbstractModuleDescriptor implements

@@ -36,7 +36,6 @@ public class SpeakeasyLoader implements DisposableBean
                                 .getService(reference);
                         eventListener = new SpeakeasyEventListener(
                                 bundleContext,
-                                pluginAccessor,
                                 service);
                         eventPublisher.register(eventListener);
                         return service;

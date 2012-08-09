@@ -33,7 +33,6 @@ import java.util.concurrent.TimeoutException;
 @Component
 public class PermissionManager
 {
-    private static final Logger log = LoggerFactory.getLogger(PermissionManager.class);
     private final UserManager userManager;
     private final SettingsManager settingsManager;
     private final PluginAccessor pluginAccessor;
@@ -72,26 +71,6 @@ public class PermissionManager
         return apiScopeTracker.getAll();
     }
     
-    public void waitForApiScopes(Collection<String> scopeKeys)
-    {
-        try
-        {
-            apiScopeTracker.waitForKeys(scopeKeys).get(20, TimeUnit.SECONDS);
-        }
-        catch (InterruptedException e)
-        {
-            // ignore
-        }
-        catch (ExecutionException e)
-        {
-            throw new RuntimeException("Unable to wait for scopes", e);
-        }
-        catch (TimeoutException e)
-        {
-            throw new PluginParseException("Unable to find all api scopes: " + scopeKeys);
-        }
-    }
-
     public boolean isRequestInApiScope(HttpServletRequest req, String clientKey, String user)
     {
         // check for non-user admin request

@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
  */
 public class BundleUtil
 {
-    private static final Logger log = LoggerFactory.getLogger(BundleUtil.class);
     public static Bundle findBundleForPlugin(BundleContext bundleContext, String pluginKey)
     {
         for (Bundle bundle : bundleContext.getBundles())

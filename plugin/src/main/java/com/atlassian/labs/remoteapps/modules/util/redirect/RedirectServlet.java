@@ -146,26 +146,6 @@ public class RedirectServlet extends HttpServlet
         return remoteAppAccessor.signGetUrl(targetUrl.getPath(), params);
     }
 
-    private void sendResponse(HttpServletResponse response, int statusCode, String statusMessage) throws IOException
-    {
-        response.setStatus(statusCode);
-        response.setContentType("text/plain");
-
-        PrintWriter writer = null;
-        try
-        {
-            writer = response.getWriter();
-            writer.write(statusMessage);
-        }
-        finally
-        {
-            if (writer != null)
-            {
-                writer.close();
-            }
-        }
-    }
-
     private static enum RedirectType
     {
         OAUTH_TEMPORARY("oauth", true, HttpStatus.SC_MOVED_TEMPORARILY),

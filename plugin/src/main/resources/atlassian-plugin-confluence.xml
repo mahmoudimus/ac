@@ -63,12 +63,6 @@
 
     <component-import key="webSudoManager" interface="com.atlassian.confluence.security.websudo.WebSudoManager" />
 
-    <!-- activity streams -->
-    <!--component-import key="confluenceUserProfileAccessor" interface="com.atlassian.streams.spi.UserProfileAccessor"/>
-    <activity-streams-provider key="apps-provider" name="Remote Apps Provider"
-                               class="com.atlassian.labs.remoteapps.integration.streams.RemoteAppsActivityProvider">
-    </activity-streams-provider-->
-
     <!-- big pipe stuff -->
     <web-panel key="requestIdMetaTag" class="com.atlassian.labs.remoteapps.util.http.bigpipe.RequestIdWebPanel" location="atl.header"/>
 

@@ -52,12 +52,6 @@
     <component-import key="SearchRequestViewBodyWriterUtil" interface="com.atlassian.jira.issue.views.util.SearchRequestViewBodyWriterUtil" />
     <component-import key="searchRequestURLHandler" interface="com.atlassian.jira.plugin.searchrequestview.SearchRequestURLHandler" />
 
-    <!-- activity streams>
-    <component-import key="jiraUserProfileAccessor" interface="com.atlassian.streams.spi.UserProfileAccessor"/>
-    <activity-streams-provider key="apps-provider" name="Remote Apps Provider"
-                               class="com.atlassian.labs.remoteapps.integration.streams.RemoteAppsActivityProvider">
-    </activity-streams-provider-->
-
     <!-- plugin points -->
     <described-module-type key="profile-page" name="User Profile Page" class="com.atlassian.labs.remoteapps.modules.page.jira.JiraProfileTabModuleDescriptor">
         <description>A user profile page decorated as a user profile tab</description>

@@ -22,8 +22,6 @@ import java.util.List;
 import static java.util.Collections.singletonList;
 
 /**
- * Created by IntelliJ IDEA. User: mrdon Date: 17/02/12 Time: 9:47 PM To change this template use
- * File | Settings | File Templates.
  */
 public class RemoteAppInstallerClient
 {

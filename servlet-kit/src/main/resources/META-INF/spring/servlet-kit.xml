@@ -11,8 +11,6 @@ http://www.springframework.org/schema/context
 
     <beans:bean id="bundleContext" class="com.atlassian.labs.remoteapps.kit.common.spring.BundleContextFactoryBean" />
 
-    <beans:bean id="httpUtils" class="com.atlassian.labs.remoteapps.kit.common.HttpUtils" autowire="constructor"/>
-
     <context:component-scan base-package="servlets"/>
     <context:component-scan base-package="services"/>
 

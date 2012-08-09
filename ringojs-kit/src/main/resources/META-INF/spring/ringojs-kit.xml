@@ -9,9 +9,6 @@ http://www.springframework.org/schema/context
            http://www.springframework.org/schema/context/spring-context-2.5.xsd"
              default-autowire="autodetect">
 
-    <beans:bean id="httpUtils" class="com.atlassian.labs.remoteapps.kit.common.HttpUtils"
-                    autowire="constructor"/>
-
     <osgi:reference id="pluginRetrieval" interface="com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService" />
     <osgi:reference id="descriptorGenerator" interface="com.atlassian.labs.remoteapps.api.HttpResourceMounter" timeout="20000" />
     <osgi:reference id="asyncHttpClient" interface="com.atlassian.labs.remoteapps.api.services.http.AsyncHttpClient" timeout="20000" />

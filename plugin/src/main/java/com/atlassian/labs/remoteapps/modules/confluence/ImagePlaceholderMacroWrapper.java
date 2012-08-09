@@ -21,21 +21,18 @@ public class ImagePlaceholderMacroWrapper implements EditorImagePlaceholder, Rem
 
     private final String pluginKey;
 
-    // fixme: remove?
-    private final String macroKey;
     private final URI imageUrl;
     private final Dimensions dimensions;
     private final boolean applyChrome;
 
     public ImagePlaceholderMacroWrapper(RemoteMacro delegate, boolean applyChrome,
             Dimensions dimensions,
-            URI imageUrl, String macroKey, String pluginKey)
+            URI imageUrl, String pluginKey)
     {
         this.delegate = delegate;
         this.applyChrome = applyChrome;
         this.dimensions = dimensions;
         this.imageUrl = imageUrl;
-        this.macroKey = macroKey;
         this.pluginKey = pluginKey;
     }
 

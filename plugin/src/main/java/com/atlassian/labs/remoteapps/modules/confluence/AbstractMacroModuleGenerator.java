@@ -1,8 +1,6 @@
 package com.atlassian.labs.remoteapps.modules.confluence;
 
 import com.atlassian.confluence.plugin.descriptor.XhtmlMacroModuleDescriptor;
-import com.atlassian.labs.remoteapps.modules.external.RemoteAppCreationContext;
-import com.atlassian.labs.remoteapps.modules.external.RemoteModule;
 import com.atlassian.labs.remoteapps.modules.external.RemoteModuleGenerator;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.PluginParseException;
@@ -60,12 +58,6 @@ public abstract class AbstractMacroModuleGenerator implements RemoteModuleGenera
         }
 
         return i18n;
-    }
-
-    @Override
-    public RemoteModule generate(final RemoteAppCreationContext ctx, Element entity)
-    {
-        return RemoteModule.NO_OP;
     }
 
     @Override

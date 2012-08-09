@@ -13,14 +13,11 @@ import java.net.URI;
 public class SchemeDelegatingRemoteAppInstaller implements RemoteAppInstaller
 {
     private final DefaultRemoteAppInstaller httpInstaller;
-    private final FileRemoteAppInstaller fileInstaller;
 
     @Autowired
-    public SchemeDelegatingRemoteAppInstaller(DefaultRemoteAppInstaller httpInstaller,
-            FileRemoteAppInstaller fileInstaller)
+    public SchemeDelegatingRemoteAppInstaller(DefaultRemoteAppInstaller httpInstaller)
     {
         this.httpInstaller = httpInstaller;
-        this.fileInstaller = fileInstaller;
     }
 
     @Override
@@ -28,15 +25,7 @@ public class SchemeDelegatingRemoteAppInstaller implements RemoteAppInstaller
             boolean stripUnknownModules, KeyValidator keyValidator) throws
             PermissionDeniedException
     {
-        if ("file".equals(registrationUrl.getScheme()))
-        {
-            return fileInstaller.install(username, registrationUrl, registrationSecret,
-                    stripUnknownModules, keyValidator);
-        }
-        else
-        {
-            return httpInstaller.install(username, registrationUrl, registrationSecret,
-                    stripUnknownModules, keyValidator);
-        }
+        return httpInstaller.install(username, registrationUrl, registrationSecret,
+                stripUnknownModules, keyValidator);
     }
 }

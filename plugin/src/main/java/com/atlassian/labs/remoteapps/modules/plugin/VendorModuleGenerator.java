@@ -66,19 +66,6 @@ public class VendorModuleGenerator implements RemoteModuleGenerator
     }
 
     @Override
-    public RemoteModule generate(RemoteAppCreationContext ctx, Element element)
-    {
-        return new RemoteModule()
-        {
-            @Override
-            public Set<ModuleDescriptor> getModuleDescriptors()
-            {
-                return emptySet();
-            }
-        };
-    }
-
-    @Override
     public void validate(Element element, URI registrationUrl, String username) throws PluginParseException
     {
     }

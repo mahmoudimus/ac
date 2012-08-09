@@ -15,8 +15,7 @@ import org.osgi.framework.ServiceRegistration;
 import java.util.concurrent.ExecutionException;
 
 /**
- * Created with IntelliJ IDEA. User: mrdon Date: 7/27/12 Time: 3:14 PM To change this template use
- * File | Settings | File Templates.
+ * Creates and caches an instance per plugin
  */
 public class LocalSignedRequestHandlerServiceFactory implements ServiceFactory
 {
