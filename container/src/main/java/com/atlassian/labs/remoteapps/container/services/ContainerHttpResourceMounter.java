@@ -30,7 +30,7 @@ import static java.util.Arrays.asList;
 /**
  * Kicks off the descriptor generator and sends failure events
  */
-public class ContainerHttpResourceMounter implements HttpResourceMounter
+public final class ContainerHttpResourceMounter implements HttpResourceMounter
 {
     private final HttpServer httpServer;
     private static final Logger log = LoggerFactory.getLogger(ContainerHttpResourceMounter.class);
@@ -71,6 +71,8 @@ public class ContainerHttpResourceMounter implements HttpResourceMounter
         };
 
         mountFilter(new RegistrationFilter(transformedDescriptorAccessor, environment, oAuthSignedRequestHandler), "/");
+        mountServlet(new EmptyHttpServlet(), "/"); // this is so that the descriptor's filter gets picked up.
+
         mountFilter(new AuthenticationFilter(oAuthSignedRequestHandler, requestContext), "/*");
     }
 
@@ -180,4 +182,6 @@ public class ContainerHttpResourceMounter implements HttpResourceMounter
 
 
     }
+
+    private static final class EmptyHttpServlet extends HttpServlet {}
 }
