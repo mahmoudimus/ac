@@ -2,6 +2,7 @@
 
 <beans:beans xmlns:beans="http://www.springframework.org/schema/beans"
              xmlns:osgi="http://www.springframework.org/schema/osgi"
+             xmlns:remote-apps="http://atlassian.com/schema/spring/remote-apps"
              xmlns:context="http://www.springframework.org/schema/context"
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
 http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd
@@ -9,25 +10,23 @@ http://www.springframework.org/schema/context
            http://www.springframework.org/schema/context/spring-context-2.5.xsd"
              default-autowire="autodetect">
 
-    <beans:bean id="bundleContext" class="com.atlassian.labs.remoteapps.kit.common.spring.BundleContextFactoryBean" />
+    <context:component-scan base-package="servlets" use-default-filters="false" name-generator="com.atlassian.labs.remoteapps.kit.common.spring.NamedAnnotationBeanNameGenerator">
+        <context:include-filter type="annotation" expression="javax.inject.Singleton" />
+        <context:include-filter type="annotation" expression="javax.inject.Named" />
+    </context:component-scan>
+    <context:component-scan base-package="services" use-default-filters="false" name-generator="com.atlassian.labs.remoteapps.kit.common.spring.NamedAnnotationBeanNameGenerator">
+            <context:include-filter type="annotation" expression="javax.inject.Singleton" />
+            <context:include-filter type="annotation" expression="javax.inject.Named" />
+        </context:component-scan>
 
-    <context:component-scan base-package="servlets"/>
-    <context:component-scan base-package="services"/>
-
-    <osgi:reference id="pluginRetrieval" interface="com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService" />
-    <osgi:reference id="descriptorGenerator" interface="com.atlassian.labs.remoteapps.api.HttpResourceMounter" timeout="20000" />
-    <osgi:reference id="asyncHttpClient" interface="com.atlassian.labs.remoteapps.api.services.http.AsyncHttpClient" timeout="20000" />
-    <osgi:reference id="hostHttpClient" interface="com.atlassian.labs.remoteapps.api.services.http.HostHttpClient" timeout="20000" />
-    <osgi:reference id="syncHostHttpClient" interface="com.atlassian.labs.remoteapps.api.services.http.SyncHostHttpClient" timeout="20000" />
-    <osgi:reference id="pluginSettingsFactory" interface="com.atlassian.sal.api.pluginsettings.PluginSettingsFactory" />
-    <osgi:reference id="signedRequestHandler" interface="com.atlassian.labs.remoteapps.api.services.SignedRequestHandler" />
-    <osgi:reference id="requestContext" interface="com.atlassian.labs.remoteapps.api.services.RequestContext" />
-
-    <beans:bean id="ao" class="com.atlassian.labs.remoteapps.kit.common.spring.ComponentFactoryBean" lazy-init="true">
-        <beans:constructor-arg index="0" ref="bundleContext"/>
-        <beans:constructor-arg index="1" value="com.atlassian.activeobjects.external.ActiveObjects"/>
+    <beans:bean id="inject-post-processor" class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor">
+        <beans:property name="autowiredAnnotationType" value="javax.inject.Inject" />
     </beans:bean>
 
-    <beans:bean id="httpResourceProvider" class="com.atlassian.labs.remoteapps.kit.servlet.ServletKitBootstrap" autowire="constructor"/>
+    <context:component-scan base-package="com.atlassian.labs.remoteapps.kit.servlet" use-default-filters="false" name-generator="com.atlassian.labs.remoteapps.kit.common.spring.NamedAnnotationBeanNameGenerator">
+        <context:include-filter type="annotation" expression="javax.inject.Singleton" />
+        <context:include-filter type="annotation" expression="javax.inject.Named" />
+    </context:component-scan>
 
+    <remote-apps:service-reference-scan />
 </beans:beans>

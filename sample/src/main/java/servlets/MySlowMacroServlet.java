@@ -1,7 +1,6 @@
 package servlets;
 
-import org.springframework.stereotype.Component;
-
+import javax.inject.Singleton;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -11,7 +10,7 @@ import java.io.IOException;
 /**
  *
  */
-@Component
+@Singleton
 public class MySlowMacroServlet extends HttpServlet
 {
     @Override

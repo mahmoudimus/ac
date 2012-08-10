@@ -133,6 +133,7 @@ public final class Container
                 .add("org.mozilla.javascript*")
                 .add("org.slf4j*")
                 .add("org.yaml*")
+                .add("javax.inject")
                 .build());
 
         scannerConfig.setPackageVersions(ImmutableMap.<String, String>builder()
@@ -144,6 +145,7 @@ public final class Container
                 .put("com.google.common.*", getVersionFromMavenMetadata("com.google.guava", "guava", "1"))
                 .put("javax.servlet", "2.5")
                 .put("javax.servlet.http", "2.5")
+                .put("javax.inject", "1")
                 .put("org.apache.commons.codec*", "1.3")
                 .put("org.apache.commons.collections*", "3.2")
                 .put("org.apache.commons.lang*", getVersionFromMavenMetadata("commons-lang", "commons-lang", "2.4"))

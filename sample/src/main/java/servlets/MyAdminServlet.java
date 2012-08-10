@@ -1,11 +1,12 @@
 package servlets;
 
+import com.atlassian.labs.remoteapps.api.annotation.ServiceReference;
 import com.atlassian.labs.remoteapps.api.services.SignedRequestHandler;
 import com.atlassian.labs.remoteapps.api.services.http.Response;
 import com.atlassian.labs.remoteapps.api.services.http.SyncHostHttpClient;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -16,14 +17,15 @@ import java.util.Map;
 
 import static services.HttpUtils.renderHtml;
 
-@Component
+@Singleton
 public class MyAdminServlet extends HttpServlet
 {
     private final SignedRequestHandler signedRequestHandler;
     private SyncHostHttpClient hostHttpClient;
 
-    @Autowired
-    public MyAdminServlet(SignedRequestHandler signedRequestHandler, SyncHostHttpClient hostHttpClient)
+    @Inject
+    public MyAdminServlet(@ServiceReference SignedRequestHandler signedRequestHandler,
+                          @ServiceReference SyncHostHttpClient hostHttpClient)
     {
         this.signedRequestHandler = signedRequestHandler;
         this.hostHttpClient = hostHttpClient;

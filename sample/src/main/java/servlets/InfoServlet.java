@@ -1,7 +1,6 @@
 package servlets;
 
-import org.springframework.stereotype.Component;
-
+import javax.inject.Singleton;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -14,7 +13,7 @@ import static services.HttpUtils.renderHtml;
 /**
  *
  */
-@Component
+@Singleton
 public class InfoServlet extends HttpServlet
 {
 

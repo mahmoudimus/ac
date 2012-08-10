@@ -460,6 +460,7 @@
                             com.atlassian.refapp.auth.external;resolution:=optional,
                             com.atlassian.sal.api.*;version="(2.4,3.0]",
                             net.oauth*,
+                            javax.inject,
                             org.apache.commons.lang.*;version="2.4",
                             org.slf4j*;version="1.5",
                             *;resolution:=optional
@@ -467,6 +468,7 @@
                         <DynamicImport-Package>com.atlassian.labs.speakeasy.*
                         </DynamicImport-Package>
                         <Export-Package>
+                            javax.inject;version="1",
                             com.atlassian.labs.remoteapps.modules.confluence,
                             com.atlassian.labs.remoteapps.modules.permissions.scope,
                             com.atlassian.labs.remoteapps.modules.page.jira,
@@ -475,6 +477,7 @@
                             com.atlassian.labs.remoteapps.event,
                             com.atlassian.labs.remoteapps.spi.modules,
                             com.atlassian.labs.remoteapps.api,
+                            com.atlassian.labs.remoteapps.api.annotation,
                             com.atlassian.labs.remoteapps.api.services,
                             com.atlassian.labs.remoteapps.api.services.impl,
                             com.atlassian.labs.remoteapps.api.services.http,

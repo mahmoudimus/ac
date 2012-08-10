@@ -1,10 +1,13 @@
 package com.atlassian.labs.remoteapps.kit.servlet;
 
 import com.atlassian.labs.remoteapps.api.HttpResourceMounter;
+import com.atlassian.labs.remoteapps.api.annotation.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.servlet.Servlet;
 import javax.servlet.http.HttpServlet;
 import java.util.Collection;
@@ -13,12 +16,13 @@ import java.util.Locale;
 /**
  *
  */
+@Singleton
 public class ServletKitBootstrap
 {
     private static final Logger log = LoggerFactory.getLogger(ServletKitBootstrap.class);
 
-    public ServletKitBootstrap(ApplicationContext applicationContext,
-            HttpResourceMounter httpResourceMounter
+    @Inject
+    public ServletKitBootstrap(ApplicationContext applicationContext, @ServiceReference HttpResourceMounter httpResourceMounter
     ) throws Exception
     {
         for (HttpServlet servlet : (Collection<HttpServlet>)applicationContext.getBeansOfType(Servlet.class).values())

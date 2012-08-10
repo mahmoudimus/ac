@@ -1,9 +1,10 @@
 package servlets;
 
+import com.atlassian.labs.remoteapps.api.annotation.ServiceReference;
 import com.atlassian.labs.remoteapps.api.services.SignedRequestHandler;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -14,13 +15,13 @@ import java.util.Map;
 
 import static services.HttpUtils.renderHtml;
 
-@Component
+@Singleton
 public class MyDialogServlet extends HttpServlet
 {
     private final SignedRequestHandler signedRequestHandler;
 
-    @Autowired
-    public MyDialogServlet(SignedRequestHandler signedRequestHandler)
+    @Inject
+    public MyDialogServlet(@ServiceReference SignedRequestHandler signedRequestHandler)
     {
         this.signedRequestHandler = signedRequestHandler;
     }

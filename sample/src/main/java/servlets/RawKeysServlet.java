@@ -1,8 +1,8 @@
 package servlets;
 
 import com.atlassian.labs.remoteapps.kit.servlet.AppUrl;
-import org.springframework.stereotype.Component;
 
+import javax.inject.Singleton;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-@Component
+@Singleton
 @AppUrl("/search/keys")
 public class RawKeysServlet extends HttpServlet
 {
