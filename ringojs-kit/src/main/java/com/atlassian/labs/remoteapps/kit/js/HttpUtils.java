@@ -1,5 +1,7 @@
 package com.atlassian.labs.remoteapps.kit.js;
 
+import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.samskivert.mustache.Mustache;
 
 import java.io.IOException;
@@ -13,13 +15,20 @@ import java.util.Map;
  */
 public class HttpUtils
 {
-    public static String render(String template, Map<String,Object> context)
+    private final Plugin plugin;
+
+    public HttpUtils(PluginRetrievalService pluginRetrievalService)
+    {
+        plugin = pluginRetrievalService.getPlugin();
+    }
+
+    public String render(String template, Map<String,Object> context)
     {
         StringWriter writer = new StringWriter();
         InputStream resourceAsStream = null;
         try
         {
-            resourceAsStream = HttpUtils.class.getClassLoader().getResourceAsStream(template);
+            resourceAsStream = plugin.getResourceAsStream(template);
             Mustache.compiler().compile(
                 new InputStreamReader(resourceAsStream)).execute(context,
                 writer);

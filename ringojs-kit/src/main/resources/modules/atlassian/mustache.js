@@ -1,3 +1,5 @@
+var utils = appContext.getBean("httpUtils");
+
 exports.render = function(templatePath, vars) {
-  return Packages.com.atlassian.labs.remoteapps.kit.js.HttpUtils.render(templatePath, vars);
+  return utils.render(templatePath, vars);
 };

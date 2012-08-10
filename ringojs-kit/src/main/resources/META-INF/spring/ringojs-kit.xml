@@ -19,5 +19,6 @@ http://www.springframework.org/schema/context
     <osgi:reference id="requestContext" interface="com.atlassian.labs.remoteapps.api.services.RequestContext" />
 
     <beans:bean id="httpResourceProvider" class="com.atlassian.labs.remoteapps.kit.js.RingoJsKitBootstrap" autowire="constructor"/>
+    <beans:bean id="httpUtils" class="com.atlassian.labs.remoteapps.kit.js.HttpUtils" autowire="constructor"/>
 
 </beans:beans>
