@@ -59,12 +59,12 @@ public class ApplicationTypeModuleGenerator implements RemoteModuleGenerator
     @Override
     public void generatePluginDescriptor(Element descriptorElement, Element pluginDescriptorRoot)
     {
-        Element e = descriptorElement.createCopy("dynamic-application-link");
+        Element e = descriptorElement.createCopy("remote-plugin-container");
         e.addAttribute("key", descriptorElement.attributeValue("key") + "-applink");
         for (Element child : newArrayList((List<Element>) e.elements()))
         {
             String name = child.getName();
-            if (!name.equals("oauth") && !name.equals("entity-type"))
+            if (!name.equals("oauth"))
             {
                 e.remove(child);
             }

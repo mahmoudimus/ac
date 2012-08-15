@@ -11,6 +11,10 @@ public class RemoteAppManifestReader
     public static String getInstallerUser(Bundle bundle)
     {
         String header = (String) bundle.getHeaders().get("Remote-App");
+        if (header == null)
+        {
+            header = (String) bundle.getHeaders().get("Remote-Plugin");
+        }
         if (header != null)
         {
             return OsgiHeaderUtil.parseHeader(header).get("installer").get("user");
@@ -21,6 +25,10 @@ public class RemoteAppManifestReader
     public static String getRegistrationUrl(Bundle bundle)
     {
         String header = (String) bundle.getHeaders().get("Remote-App");
+        if (header == null)
+        {
+            header = (String) bundle.getHeaders().get("Remote-Plugin");
+        }
         if (header != null)
         {
             return OsgiHeaderUtil.parseHeader(header).get("installer").get("registration-url");
@@ -30,7 +38,7 @@ public class RemoteAppManifestReader
 
     public static boolean isRemoteApp(Bundle bundle)
     {
-        return (bundle.getHeaders() != null && bundle.getHeaders().get("Remote-App") != null) ||
+        return (bundle.getHeaders() != null && (bundle.getHeaders().get("Remote-App") != null || bundle.getHeaders().get("Remote-Plugin") != null)) ||
                 bundle.getEntry("atlassian-remote-app.xml") != null;
     }
 }

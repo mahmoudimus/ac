@@ -477,6 +477,7 @@
                             com.atlassian.labs.remoteapps.event,
                             com.atlassian.labs.remoteapps.spi.modules,
                             com.atlassian.labs.remoteapps.api,
+                            com.atlassian.labs.remoteapps.api.applinks,
                             com.atlassian.labs.remoteapps.api.annotation,
                             com.atlassian.labs.remoteapps.api.services,
                             com.atlassian.labs.remoteapps.api.services.impl,

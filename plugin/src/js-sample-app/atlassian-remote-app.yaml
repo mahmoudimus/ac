@@ -2,6 +2,7 @@ key: js-sample-app
 name: js-sample-app app
 description: js-sample-app description
 version: 1
+display-url: http://localhost:8000/js-sample-app
 
 permissions:
   permission:

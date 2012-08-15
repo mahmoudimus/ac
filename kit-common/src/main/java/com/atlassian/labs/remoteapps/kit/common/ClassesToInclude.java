@@ -8,6 +8,8 @@ import com.atlassian.labs.remoteapps.spi.modules.ModuleMarker;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 
+import javax.inject.Named;
+
 /**
  * This class exists solely to force the plugin installation process to add package imports on
  * the packages of these classes when it scans the bytecode of the plugin contents.
@@ -22,5 +24,6 @@ public class ClassesToInclude
             PluginSettingsFactory.class,
             SearchRequestView.class,
             SignedRequestHandler.class,
+            Named.class
     };
 }

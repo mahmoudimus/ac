@@ -12,12 +12,19 @@
     <junit key="confluence" package="junit.confluence" application="confluence"/>
     <junit key="jira" package="junit.jira" application="jira"/>
 
-    <component key="signedRequestHandlerAccessor" class="junit.SignedRequestHandlerAccessor" />
-
     <!-- converted modules -->
-    <dynamic-application-link key="app1" icon-url="/public/sandcastles.jpg" application="remoteapp">
-        <entity-type key="project" name="Project" pluralized-name="Projects" icon-url="https://github.com/favicon.ico"/>
-    </dynamic-application-link>
+    <remote-plugin-container key="app1" display-url="http://localhost:8000/app1">
+        <oauth>
+            <public-key>
+                -----BEGIN PUBLIC KEY-----\n\
+                MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCdZ4NjFq7phYw2FAvg2r3bS0Vw\n\
+                kX07mBsYP5iPH0tsy9Boo4PfQTXxPrd6NFP6Gm0QXsgERgFgDt/344WhxMqt4rJi\n\
+                udINI51n0bXNz9ct5ZnUJSnwC4GzNkDmvjpJ/Ewdmq5Ye3BfaThZnlsXA+csT3IU\n\
+                /strFeKjydl1lyXNswIDAQAB\n\
+                -----END PUBLIC KEY-----
+            </public-key>
+        </oauth>
+    </remote-plugin-container>
 
     <admin-page key="remoteAppAdmin" name="Remote App app1 Admin" url="/myAdmin" />
     <configure-page key="remoteAppConfig" name="Remote App app1 Configure" url="/myAdmin" />
@@ -26,6 +33,5 @@
                   icon-url="/public/sandcastles.jpg" height="600" width="700"/>
     <dialog-page key="remoteAppDialog" name="Remote App app1 Dialog" url="/myDialog" />
     <profile-page key="remoteAppProfile" name="Remote App app1 Profile" url="/myAdmin" />
-
 
 </atlassian-plugin>

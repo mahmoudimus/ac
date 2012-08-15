@@ -27,7 +27,6 @@ public class PolygotDescriptorAccessor implements DescriptorAccessor
             new DescriptorType("atlassian-remote-app.js", "application/json", true),
             new DescriptorType("atlassian-remote-app.xml", "text/xml", true),
 
-            // fixme: this probably won't work fully yet
             new DescriptorType("atlassian-plugin.xml", "text/xml", false)
     );
     static interface UrlProvider

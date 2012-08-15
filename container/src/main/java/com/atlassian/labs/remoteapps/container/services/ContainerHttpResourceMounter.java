@@ -3,7 +3,6 @@ package com.atlassian.labs.remoteapps.container.services;
 import com.atlassian.labs.remoteapps.api.DescriptorAccessor;
 import com.atlassian.labs.remoteapps.api.HttpResourceMounter;
 import com.atlassian.labs.remoteapps.api.PolygotDescriptorAccessor;
-import com.atlassian.labs.remoteapps.api.TransformingDescriptorAccessor;
 import com.atlassian.labs.remoteapps.api.services.RequestContext;
 import com.atlassian.labs.remoteapps.api.services.impl.AuthenticationFilter;
 import com.atlassian.labs.remoteapps.container.HttpServer;
@@ -11,7 +10,6 @@ import com.atlassian.labs.remoteapps.container.internal.Environment;
 import com.atlassian.labs.remoteapps.container.internal.kit.RegistrationFilter;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.module.ContainerManagedPlugin;
-import net.oauth.signature.RSA_SHA1;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.osgi.framework.Bundle;
@@ -20,11 +18,11 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.Filter;
 import javax.servlet.http.HttpServlet;
-
 import java.io.File;
 import java.net.URL;
 import java.util.Collection;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static java.util.Arrays.asList;
 
 /**
@@ -48,32 +46,50 @@ public final class ContainerHttpResourceMounter implements HttpResourceMounter
         this.httpServer = httpServer;
         this.plugin = plugin;
 
-        DescriptorAccessor transformedDescriptorAccessor = new TransformingDescriptorAccessor(new LazyDescriptorAccessor(plugin, bundle))
-        {
-            @Override
-            protected Document transform(Document document)
-            {
-                Element root = document.getRootElement();
-                Element oauth = root.element("oauth");
-                if (oauth != null)
-                {
-                    Element publicKeyElement = oauth.element("public-key");
-                    if (publicKeyElement == null)
-                    {
-                        publicKeyElement = oauth.addElement("public-key");
-                    }
-                    publicKeyElement.setText(
-                            oAuthSignedRequestHandler.getLocal().getProperty(RSA_SHA1.PUBLIC_KEY).toString());
-                }
-                root.addAttribute("display-url", getLocalMountBaseUrl());
-                return document;
-            }
-        };
+        DescriptorAccessor descriptorAccessor = new LazyDescriptorAccessor(plugin, bundle);
+        environment.setEnv("BASE_URL", checkNotNull(getBaseUrl(descriptorAccessor.getDescriptor())));
+        environment.setEnv("OAUTH_LOCAL_PUBLIC_KEY", checkNotNull(getOAuthPublicKey(descriptorAccessor.getDescriptor())));
 
-        mountFilter(new RegistrationFilter(transformedDescriptorAccessor, environment, oAuthSignedRequestHandler), "/");
+        mountFilter(new RegistrationFilter(descriptorAccessor, environment, oAuthSignedRequestHandler), "/");
         mountServlet(new EmptyHttpServlet(), "/"); // this is so that the descriptor's filter gets picked up.
 
         mountFilter(new AuthenticationFilter(oAuthSignedRequestHandler, requestContext), "/*");
+    }
+
+    private String getOAuthPublicKey(Document descriptor)
+    {
+        Element root = descriptor.getRootElement();
+        if (root.attribute("plugins-version") != null)
+        {
+            return element(element(element(root, "remote-plugin-container"), "oauth"), "public-key").getTextTrim();
+        }
+        else
+        {
+            return element(element(root, "oauth"), "public-key").getTextTrim();
+        }
+    }
+
+    private String getBaseUrl(Document descriptor)
+    {
+        Element root = descriptor.getRootElement();
+        if (root.attribute("plugins-version") != null)
+        {
+            return element(root, "remote-plugin-container").attributeValue("display-url");
+        }
+        else
+        {
+            return root.attributeValue("display-url");
+        }
+    }
+
+    private Element element(Element parent, String name)
+    {
+        Element child = parent.element(name);
+        if (child == null)
+        {
+            throw new IllegalStateException("Required element '" + name + "' to be present on '" + parent.getName() + " element");
+        }
+        return child;
     }
 
     @Override
@@ -144,30 +160,18 @@ public final class ContainerHttpResourceMounter implements HttpResourceMounter
         DescriptorAccessor loadLocalDescriptorAccessor()
         {
             DescriptorAccessor descriptorAccessor = null;
-            if (plugin instanceof ContainerManagedPlugin)
+            final String localDirectories = System.getProperty("plugin.resource.directories");
+            if (localDirectories != null)
             {
-                Collection<DescriptorAccessor> factories =((ContainerManagedPlugin) plugin).getContainerAccessor().getBeansOfType(DescriptorAccessor.class);
-                if (!factories.isEmpty())
+                String[] dirs = localDirectories.split(",");
+                switch (dirs.length)
                 {
-                    descriptorAccessor = factories.iterator().next();
-                }
-            }
-
-            if (descriptorAccessor == null)
-            {
-                final String localDirectories = System.getProperty("plugin.resource.directories");
-                if (localDirectories != null)
-                {
-                    String[] dirs = localDirectories.split(",");
-                    switch (dirs.length)
-                    {
-                        case 1 : descriptorAccessor = new PolygotDescriptorAccessor(new File(dirs[0]));
-                            break;
-                        case 0 : log.warn("System property plugin.resource.directories set but no value found");
-                            break;
-                        default: log.warn("More than one value in the system property plugin.resource.directories, so don't know which one to use");
-                            break;
-                    }
+                    case 1 : descriptorAccessor = new PolygotDescriptorAccessor(new File(dirs[0]));
+                        break;
+                    case 0 : log.warn("System property plugin.resource.directories set but no value found");
+                        break;
+                    default: log.warn("More than one value in the system property plugin.resource.directories, so don't know which one to use");
+                        break;
                 }
             }
 

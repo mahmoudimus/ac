@@ -3,10 +3,14 @@ package com.atlassian.labs.remoteapps.installer;
 import com.atlassian.labs.remoteapps.DescriptorValidator;
 import com.atlassian.labs.remoteapps.OAuthLinkManager;
 import com.atlassian.labs.remoteapps.api.FormatConverter;
+import com.atlassian.labs.remoteapps.api.HttpResourceMounter;
 import com.atlassian.labs.remoteapps.api.InstallationFailedException;
 import com.atlassian.labs.remoteapps.api.PermissionDeniedException;
+import com.atlassian.labs.remoteapps.modules.page.jira.JiraProfileTabModuleGenerator;
 import com.atlassian.labs.remoteapps.util.uri.Uri;
 import com.atlassian.labs.remoteapps.util.uri.UriBuilder;
+import com.atlassian.labs.remoteapps.util.zip.ZipBuilder;
+import com.atlassian.labs.remoteapps.util.zip.ZipHandler;
 import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.oauth.util.RSAKeys;
@@ -15,11 +19,7 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.PluginController;
 import com.atlassian.sal.api.ApplicationProperties;
-import com.atlassian.sal.api.net.Request;
-import com.atlassian.sal.api.net.RequestFactory;
-import com.atlassian.sal.api.net.Response;
-import com.atlassian.sal.api.net.ResponseException;
-import com.atlassian.sal.api.net.ReturningResponseHandler;
+import com.atlassian.sal.api.net.*;
 import com.google.common.collect.ImmutableMap;
 import org.dom4j.Document;
 import org.dom4j.Element;
@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.Properties;
 
@@ -162,117 +163,24 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
                             String contentType = response.getHeader("Content-Type");
                             Document document = formatConverter.toDocument(
                                     registrationUrl.toString(), contentType, descriptorText);
-                            
-                           /*!
-                           If the 'stripUnknownModules' flag is set to true, all unknown modules
-                           will be removed from the document.  The default is false in order to give
-                           early feedback of any problems, but there could be valid cases where
-                           this should be set to 'true', such as a Remote App supporting multiple
-                           applications.
-                            */
-                            if (stripUnknownModules)
+                            String pluginKey = document.getRootElement().attributeValue("key");
+
+                            JarPluginArtifact pluginArtifact;
+                            if (document.getRootElement().attribute("plugins-version") != null)
                             {
-                                installerHelper.detachUnknownModuleElements(document);
-                            }
-
-                           /*!
-                           Regardless of the original format, the descriptor will be converted to
-                           XML then validated.  The XML schema can be
-                             found at:
-                             <pre>
-                               https://HOST/rest/remoteapps/latest/installer/schema/remote-app
-                             </pre>
-                             Error pages are shown if the validation fails.
-                            */
-                            descriptorValidator.validate(registrationUrl, document);
-
-                            /*!
-                           The app key, as defined in the registration XML document,
-                           must be valid for the installation user.
-                           This means, the app key must either not be used by an existing app,
-                           or if it is, the installation
-                           user must have the appropriate permissions to upgrade or modify that
-                           app.  If either of these
-                           criteria fail, the user is shown an error message.
-                            */
-                            final Element root = document.getRootElement();
-                            final String pluginKey = root.attributeValue("key");
-                            keyValidator.validatePermissions(pluginKey);
-                            Plugin plugin = pluginAccessor.getPlugin(pluginKey);
-
-                            /*!
-                           With the app key validated for the user, the previous app with that key,
-                           if any, is uninstalled.
-                            */
-
-                            if (plugin != null)
-                            {
-                                pluginController.uninstall(plugin);
+                                pluginArtifact = convertPluginDescriptorIntoJar(pluginKey, document, username, registrationUrl);
                             }
                             else
                             {
-                                /*!
-                                 However, if there is no previous app, then the app key is checked
-                                 to ensure it doesn't already exist as a OAuth client key.  This
-                                 prevents a malicious app that uses a key from an existing oauth
-                                 link from getting that link removed when the app is uninstalled.
-                                */
-                                if (oAuthLinkManager.isAppAssociated(pluginKey))
-                                {
-                                    throw new PermissionDeniedException("App key '" + pluginKey
-                                            + "' is already associated with an OAuth link");
-                                }
+                                pluginArtifact = convertDescriptorIntoPluginArtifact(document, pluginKey,
+                                        stripUnknownModules, registrationUrl, keyValidator, username);
                             }
-                            
-                            /*!
-                           The registration XML is then processed through second-level
-                           validations to ensure the values
-                           are valid for this host application.  Among these include,
-                           <ul>
-                             <li>The display-url property is checked to ensure it shares the same
-                              stem as the registration URL </li>
-                             <li>If any permissions are specified, the installation user must be
-                             an administrator</li>
-                           </ul>
-                            */
-                            final Properties i18nMessages = installerHelper
-                                    .validateAndGenerateMessages(root, pluginKey, registrationUrl,
-                                            username);
-
-                            /*!
-                            Finally, the descriptor XML is transformed into an Atlassian OSGi
-                            plugin descriptor file that contains general metadata about the app. The
-                             contents of the plugin descriptor are derived from the remote app
-                             descriptor.
-                            */
-                            Document pluginXml = installerHelper.generatePluginDescriptor(username,
-                                    registrationUrl, document);
-
-
-                            /*!
-                            To create the final jar that will be installed into the plugin system,
-                            several generated files are combined into one plugin artifact.
-                            This artifact will contain:
-                            1. atlassian-remote-app.xml - The remote app descriptor
-                            2. atlassian-plugin.xml - Metadata about the app used to display the app
-                               in the plugin system.  The contents of this file are derived from the
-                               app descriptor.
-                            3. META-INF/spring/remoteapps-loader.xml - A Spring XML configuration file
-                               that references the loader service from the remote apps plugin, used
-                               to kick off the descriptor generation step before the app-plugin is
-                               finished loading.
-                            4. i18n.properties - An internationalization properties file containing
-                               keys extracted out of the app descriptor XML.
-                             */
-                            JarPluginArtifact jar = installerHelper.createJarPluginArtifact(
-                                    pluginKey,
-                                    registrationUrl.getHost(), pluginXml, document, i18nMessages);
 
                             /*!
                             The registration process should only return once the Remote App has
                             successfully installed and started.
                             */
-                            installerHelper.installRemoteAppPlugin(username, pluginKey, jar);
+                            installerHelper.installRemoteAppPlugin(username, pluginKey, pluginArtifact);
 
                             return pluginKey;
                         }
@@ -304,5 +212,143 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
             throw new InstallationFailedException(ex);
         }
         /*!-helper methods */
+    }
+
+    private JarPluginArtifact convertPluginDescriptorIntoJar(final String pluginKey, final Document document, String username, URI registrationUrl)
+    {
+        // todo: should filter out unsafe modules checking permissions, and support jars (otherwise, i18n is broken)
+        Element info = document.getRootElement().element("plugin-info");
+        Element instructions = info.addElement("bundle-instructions");
+                instructions
+                        .addElement("Import-Package")
+                        .setText(JiraProfileTabModuleGenerator.class.getPackage().getName() +
+                                ";resolution:=optional," +
+                                "com.atlassian.jira.plugin.searchrequestview;resolution:=optional," +
+                                HttpResourceMounter.class.getPackage().getName());
+                instructions.addElement("Remote-Plugin").
+                        setText("installer;user=\"" + username + "\";date=\"" + System.currentTimeMillis() + "\"" +
+                                ";registration-url=\"" + registrationUrl + "\"");
+
+        return new JarPluginArtifact(
+            ZipBuilder.buildZip("install-" + pluginKey, new ZipHandler()
+            {
+                @Override
+                public void build(ZipBuilder builder) throws IOException
+                {
+                    builder.addFile("atlassian-plugin.xml", document);
+                }
+            }));
+    }
+
+    private JarPluginArtifact convertDescriptorIntoPluginArtifact(Document document,
+                                                                  String pluginKey,
+                                                                  boolean stripUnknownModules,
+                                                                  URI registrationUrl,
+                                                                  KeyValidator keyValidator,
+                                                                  String username
+    )
+    {
+        /*!
+If the 'stripUnknownModules' flag is set to true, all unknown modules
+will be removed from the document.  The default is false in order to give
+early feedback of any problems, but there could be valid cases where
+this should be set to 'true', such as a Remote App supporting multiple
+applications.
+*/
+        if (stripUnknownModules)
+        {
+            installerHelper.detachUnknownModuleElements(document);
+        }
+
+        /*!
+Regardless of the original format, the descriptor will be converted to
+XML then validated.  The XML schema can be
+found at:
+<pre>
+https://HOST/rest/remoteapps/latest/installer/schema/remote-app
+</pre>
+Error pages are shown if the validation fails.
+*/
+        descriptorValidator.validate(registrationUrl, document);
+
+        /*!
+The app key, as defined in the registration XML document,
+must be valid for the installation user.
+This means, the app key must either not be used by an existing app,
+or if it is, the installation
+user must have the appropriate permissions to upgrade or modify that
+app.  If either of these
+criteria fail, the user is shown an error message.
+*/
+        final Element root = document.getRootElement();
+        keyValidator.validatePermissions(pluginKey);
+        Plugin plugin = pluginAccessor.getPlugin(pluginKey);
+
+        /*!
+With the app key validated for the user, the previous app with that key,
+if any, is uninstalled.
+*/
+
+        if (plugin != null)
+        {
+            pluginController.uninstall(plugin);
+        }
+        else
+        {
+            /*!
+             However, if there is no previous app, then the app key is checked
+             to ensure it doesn't already exist as a OAuth client key.  This
+             prevents a malicious app that uses a key from an existing oauth
+             link from getting that link removed when the app is uninstalled.
+            */
+            if (oAuthLinkManager.isAppAssociated(pluginKey))
+            {
+                throw new PermissionDeniedException("App key '" + pluginKey
+                        + "' is already associated with an OAuth link");
+            }
+        }
+
+        /*!
+The registration XML is then processed through second-level
+validations to ensure the values
+are valid for this host application.  Among these include,
+<ul>
+<li>The display-url property is checked to ensure it shares the same
+stem as the registration URL </li>
+<li>If any permissions are specified, the installation user must be
+an administrator</li>
+</ul>
+*/
+        final Properties i18nMessages = installerHelper
+                .validateAndGenerateMessages(root, pluginKey, registrationUrl, username);
+
+        /*!
+Finally, the descriptor XML is transformed into an Atlassian OSGi
+plugin descriptor file that contains general metadata about the app. The
+contents of the plugin descriptor are derived from the remote app
+descriptor.
+*/
+        Document pluginXml = installerHelper.generatePluginDescriptor(username,
+                registrationUrl, document);
+
+
+        /*!
+To create the final jar that will be installed into the plugin system,
+several generated files are combined into one plugin artifact.
+This artifact will contain:
+1. atlassian-remote-app.xml - The remote app descriptor
+2. atlassian-plugin.xml - Metadata about the app used to display the app
+in the plugin system.  The contents of this file are derived from the
+app descriptor.
+3. META-INF/spring/remoteapps-loader.xml - A Spring XML configuration file
+that references the loader service from the remote apps plugin, used
+to kick off the descriptor generation step before the app-plugin is
+finished loading.
+4. i18n.properties - An internationalization properties file containing
+keys extracted out of the app descriptor XML.
+*/
+        return installerHelper.createJarPluginArtifact(
+                pluginKey,
+                registrationUrl.getHost(), pluginXml, document, i18nMessages);
     }
 }

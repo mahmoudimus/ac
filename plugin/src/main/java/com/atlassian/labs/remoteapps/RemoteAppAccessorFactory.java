@@ -1,12 +1,14 @@
 package com.atlassian.labs.remoteapps;
 
+import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.applinks.api.event.ApplicationLinkAddedEvent;
 import com.atlassian.applinks.api.event.ApplicationLinkDeletedEvent;
 import com.atlassian.event.api.EventListener;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.labs.remoteapps.api.PermissionDeniedException;
+import com.atlassian.labs.remoteapps.api.applinks.RemotePluginContainerApplicationType;
 import com.atlassian.labs.remoteapps.loader.universalbinary.UBDispatchFilter;
-import com.atlassian.labs.remoteapps.modules.applinks.RemoteAppApplicationType;
+import com.atlassian.labs.remoteapps.modules.applinks.RemotePluginContainerModuleDescriptor;
 import com.atlassian.labs.remoteapps.util.function.MapFunctions;
 import com.atlassian.labs.remoteapps.util.http.AuthorizationGenerator;
 import com.atlassian.labs.remoteapps.util.http.CachingHttpContentRetriever;
@@ -50,9 +52,12 @@ public class RemoteAppAccessorFactory implements DisposableBean
 
     @Autowired
     public RemoteAppAccessorFactory(ApplicationLinkAccessor applicationLinkAccessor,
-            OAuthLinkManager oAuthLinkManager,
-            CachingHttpContentRetriever httpContentRetriever, PluginAccessor pluginAccessor,
-            UBDispatchFilter ubDispatchFilter, EventPublisher eventPublisher)
+                                    OAuthLinkManager oAuthLinkManager,
+                                    CachingHttpContentRetriever httpContentRetriever,
+                                    PluginAccessor pluginAccessor,
+                                    UBDispatchFilter ubDispatchFilter,
+                                    EventPublisher eventPublisher
+    )
     {
         this.applicationLinkAccessor = applicationLinkAccessor;
         this.oAuthLinkManager = oAuthLinkManager;
@@ -72,9 +77,9 @@ public class RemoteAppAccessorFactory implements DisposableBean
     @EventListener
     public void onApplicationLinkCreated(ApplicationLinkAddedEvent event)
     {
-        if (event.getApplicationType() instanceof RemoteAppApplicationType)
+        if (event.getApplicationType() instanceof RemotePluginContainerApplicationType)
         {
-            accessors.remove(((RemoteAppApplicationType)event.getApplicationType()).getId().get());
+            accessors.remove((String) event.getApplicationLink().getProperty(RemotePluginContainerModuleDescriptor.PLUGIN_KEY_PROPERTY));
         }
     }
 
@@ -85,9 +90,9 @@ public class RemoteAppAccessorFactory implements DisposableBean
     @EventListener
     public void onApplicationLinkRemoved(ApplicationLinkDeletedEvent event)
     {
-        if (event.getApplicationType() instanceof RemoteAppApplicationType)
+        if (event.getApplicationType() instanceof RemotePluginContainerApplicationType)
         {
-            accessors.remove(((RemoteAppApplicationType)event.getApplicationType()).getId().get());
+            accessors.remove((String) event.getApplicationLink().getProperty(RemotePluginContainerModuleDescriptor.PLUGIN_KEY_PROPERTY));
         }
     }
 
@@ -108,11 +113,10 @@ public class RemoteAppAccessorFactory implements DisposableBean
         }
         else
         {
-            RemoteAppApplicationType appType = applicationLinkAccessor
-                    .getApplicationTypeIfFound(
-                            pluginKey);
+            ApplicationLink link = applicationLinkAccessor.getApplicationLink(pluginKey);
 
-            return create(pluginKey, appType != null ? appType.getDefaultDetails().getDisplayUrl() : URI.create(ubDispatchFilter.getLocalMountBaseUrl(pluginKey)));
+            return create(pluginKey,
+                    link != null ? link.getDisplayUrl() : URI.create(ubDispatchFilter.getLocalMountBaseUrl(pluginKey)));
         }
 
     }
