@@ -1,7 +1,6 @@
 package com.atlassian.labs.remoteapps.modules.plugin;
 
 import com.atlassian.labs.remoteapps.modules.external.*;
-import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
@@ -11,10 +10,8 @@ import org.springframework.stereotype.Component;
 
 import java.net.URI;
 import java.util.Map;
-import java.util.Set;
 
 import static java.util.Collections.emptyMap;
-import static java.util.Collections.emptySet;
 
 /**
  *
@@ -41,7 +38,7 @@ public class VendorModuleGenerator implements RemoteModuleGenerator
     {
         return DocumentBasedSchema.builder("vendor")
                 .setPlugin(plugin)
-                .setTitle(getName())
+                .setName(getName())
                 .setDescription(getDescription())
                 .setMaxOccurs("1")
                 .build();

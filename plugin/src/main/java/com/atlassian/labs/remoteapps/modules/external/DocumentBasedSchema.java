@@ -16,23 +16,25 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class DocumentBasedSchema implements Schema
 {
-    private final String title;
+    private final String name;
     private final String description;
     private final String path;
-    private final String id;
+    private final String elementName;
+    private final String fileName;
     private final String complexType;
     private final String maxOccurs;
     private final Plugin plugin;
     private final SchemaTransformer schemaTransformer;
 
-    private DocumentBasedSchema(String title, String description, String path, String id,
+    private DocumentBasedSchema(String elementName, String name, String description, String path, String fileName,
             String complexType, String maxOccurs, Plugin plugin,
             SchemaTransformer schemaTransformer)
     {
-        this.title = title;
+        this.name = name;
+        this.elementName = elementName;
         this.description = description;
         this.path = path;
-        this.id = id;
+        this.fileName = fileName;
         this.complexType = complexType;
         this.maxOccurs = maxOccurs;
         this.plugin = plugin;
@@ -40,9 +42,9 @@ public class DocumentBasedSchema implements Schema
     }
 
     @Override
-    public String getTitle()
+    public String getName()
     {
-        return title;
+        return name;
     }
 
     @Override
@@ -52,9 +54,15 @@ public class DocumentBasedSchema implements Schema
     }
 
     @Override
-    public String getId()
+    public String getFileName()
     {
-        return id;
+        return fileName;
+    }
+
+    @Override
+    public String getElementName()
+    {
+        return elementName;
     }
 
     @Override
@@ -93,10 +101,11 @@ public class DocumentBasedSchema implements Schema
 
     public static class DynamicSchemaBuilder
     {
-        private String title;
+        private String name;
         private String description;
         private String path;
-        private String id;
+        private String fileName;
+        private String elementName;
         private String complexType;
         private String maxOccurs = "unbounded";
         private Plugin plugin;
@@ -106,18 +115,19 @@ public class DocumentBasedSchema implements Schema
         {
         }
 
-        public DynamicSchemaBuilder(String id)
+        public DynamicSchemaBuilder(String elementName)
         {
-            this.id = id + ".xsd";
-            this.path = "/xsd/" + this.id;
-            this.complexType = dashesToCamelCase(id) + "Type";
-            this.title = dashesToTitle(id);
-            this.description = "A " + title + " module";
+            this.elementName = elementName;
+            this.fileName = elementName + ".xsd";
+            this.path = "/xsd/" + this.fileName;
+            this.complexType = dashesToCamelCase(elementName) + "Type";
+            this.name = dashesToTitle(elementName);
+            this.description = "A " + name + " module";
         }
 
-        public DynamicSchemaBuilder setTitle(String title)
+        public DynamicSchemaBuilder setName(String name)
         {
-            this.title = title;
+            this.name = name;
             return this;
         }
 
@@ -133,9 +143,15 @@ public class DocumentBasedSchema implements Schema
             return this;
         }
 
-        public DynamicSchemaBuilder setId(String id)
+        public DynamicSchemaBuilder setFileName(String fileName)
         {
-            this.id = id;
+            this.fileName = fileName;
+            return this;
+        }
+
+        public DynamicSchemaBuilder setElementName(String elementName)
+        {
+            this.elementName = elementName;
             return this;
         }
 
@@ -165,12 +181,13 @@ public class DocumentBasedSchema implements Schema
 
         public DocumentBasedSchema build()
         {
-            checkNotNull(id);
-            checkNotNull(title);
+            checkNotNull(elementName);
+            checkNotNull(fileName);
+            checkNotNull(name);
             checkNotNull(description);
             checkNotNull(complexType);
             checkNotNull(plugin);
-            return new DocumentBasedSchema(title, description, path, id, complexType, maxOccurs, plugin,
+            return new DocumentBasedSchema(elementName, name, description, path, fileName, complexType, maxOccurs, plugin,
                     schemaTransformer);
         }
     }

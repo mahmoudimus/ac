@@ -12,4 +12,6 @@ public interface DescribedModuleDescriptorFactory extends ListableModuleDescript
     Iterable<String> getModuleDescriptorKeys();
 
     Schema getSchema(String type);
+
+
 }

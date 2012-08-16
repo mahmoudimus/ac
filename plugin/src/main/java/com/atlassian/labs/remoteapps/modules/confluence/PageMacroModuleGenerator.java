@@ -44,7 +44,7 @@ public class PageMacroModuleGenerator extends AbstractMacroModuleGenerator
     {
         return DocumentBasedSchema.builder("page-macro")
                 .setPlugin(plugin)
-                .setTitle(getName())
+                .setName(getName())
                 .setDescription(getDescription())
                 .build();
     }

@@ -19,16 +19,10 @@ import static java.util.Collections.emptyMap;
  */
 public class IssueTabPageModuleGenerator implements RemoteModuleGenerator
 {
-    private final IFrameRenderer iFrameRenderer;
-    private final RemoteAppAccessorFactory remoteAppAccessorFactory;
     private final Plugin plugin;
 
-    public IssueTabPageModuleGenerator(final IFrameRenderer iFrameRenderer,
-            final RemoteAppAccessorFactory remoteAppAccessorFactory,
-            PluginRetrievalService pluginRetrievalService)
+    public IssueTabPageModuleGenerator(PluginRetrievalService pluginRetrievalService)
     {
-        this.iFrameRenderer = iFrameRenderer;
-        this.remoteAppAccessorFactory = remoteAppAccessorFactory;
         this.plugin = pluginRetrievalService.getPlugin();
     }
 
@@ -41,9 +35,9 @@ public class IssueTabPageModuleGenerator implements RemoteModuleGenerator
     @Override
     public Schema getSchema()
     {
-        return DocumentBasedSchema.builder("page")
+        return DocumentBasedSchema.builder("issue-tab-page")
                 .setPlugin(plugin)
-                .setTitle(getName())
+                .setName(getName())
                 .setDescription(getDescription())
                 .build();
     }

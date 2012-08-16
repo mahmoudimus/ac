@@ -53,7 +53,7 @@ public class EntityTypeModuleGenerator implements RemoteModuleGenerator
     {
         return DocumentBasedSchema.builder("entity-type")
                 .setPlugin(plugin)
-                .setTitle(getName())
+                .setName(getName())
                 .setDescription(getDescription())
                 .build();
     }

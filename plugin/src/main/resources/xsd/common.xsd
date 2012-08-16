@@ -3,14 +3,14 @@
 
     <xs:simpleType name="KeyType">
         <xs:restriction base="xs:string">
-            <xs:pattern value="[-0-9a-zA-Z_.]{2,30}"/>
+            <xs:pattern value="[-0-9a-zA-Z_.]{2,50}"/>
         </xs:restriction>
     </xs:simpleType>
 
     <xs:simpleType name="NameType">
         <xs:restriction base="xs:string">
             <xs:minLength value="3"/>
-            <xs:maxLength value="30"/>
+            <xs:maxLength value="50"/>
         </xs:restriction>
     </xs:simpleType>
 

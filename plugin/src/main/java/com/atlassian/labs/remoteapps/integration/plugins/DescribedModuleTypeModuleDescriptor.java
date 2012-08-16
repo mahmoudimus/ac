@@ -69,7 +69,7 @@ public class DescribedModuleTypeModuleDescriptor extends AbstractModuleDescripto
                 : buildSingleton(
                 DocumentBasedSchema.builder(type)
                         .setPlugin(getPlugin())
-                        .setTitle(getName() != null ? getName() : getKey())
+                        .setName(getName() != null ? getName() : getKey())
                         .setDescription(getDescription() != null ? getDescription() : "")
                         .setTransformer(schemaTransformer)
                         .setMaxOccurs(maxOccurs)

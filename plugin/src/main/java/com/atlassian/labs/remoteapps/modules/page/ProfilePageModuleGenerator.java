@@ -1,5 +1,7 @@
 package com.atlassian.labs.remoteapps.modules.page;
 
+import com.atlassian.labs.remoteapps.modules.external.DocumentBasedSchema;
+import com.atlassian.labs.remoteapps.modules.external.Schema;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import org.dom4j.Element;
 
@@ -33,6 +35,16 @@ public class ProfilePageModuleGenerator extends AbstractPageModuleGenerator
     public String getName()
     {
         return "User Profile Page";
+    }
+
+    @Override
+    public Schema getSchema()
+    {
+        return DocumentBasedSchema.builder("profile-page")
+                .setPlugin(getPlugin())
+                .setName(getName())
+                .setDescription(getDescription())
+                .build();
     }
 
     @Override

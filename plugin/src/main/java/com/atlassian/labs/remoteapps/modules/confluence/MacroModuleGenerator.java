@@ -42,7 +42,7 @@ public class MacroModuleGenerator extends AbstractMacroModuleGenerator
     {
         return DocumentBasedSchema.builder("macro")
                 .setPlugin(plugin)
-                .setTitle(getName())
+                .setName(getName())
                 .setDescription(getDescription())
                 .build();
     }

@@ -27,9 +27,9 @@ public abstract class AbstractPageModuleGenerator implements RemoteModuleGenerat
     @Override
     public Schema getSchema()
     {
-        return DocumentBasedSchema.builder("page")
+        return DocumentBasedSchema.builder(getType())
             .setPlugin(getPlugin())
-            .setTitle(getName())
+            .setName(getName())
             .setDescription(getDescription())
             .build();
     }

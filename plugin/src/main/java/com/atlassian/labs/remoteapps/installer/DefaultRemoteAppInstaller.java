@@ -1,12 +1,10 @@
 package com.atlassian.labs.remoteapps.installer;
 
-import com.atlassian.labs.remoteapps.DescriptorValidator;
+import com.atlassian.labs.remoteapps.descriptor.DescriptorValidator;
 import com.atlassian.labs.remoteapps.OAuthLinkManager;
 import com.atlassian.labs.remoteapps.api.FormatConverter;
-import com.atlassian.labs.remoteapps.api.HttpResourceMounter;
 import com.atlassian.labs.remoteapps.api.InstallationFailedException;
 import com.atlassian.labs.remoteapps.api.PermissionDeniedException;
-import com.atlassian.labs.remoteapps.modules.page.jira.JiraProfileTabModuleGenerator;
 import com.atlassian.labs.remoteapps.util.uri.Uri;
 import com.atlassian.labs.remoteapps.util.uri.UriBuilder;
 import com.atlassian.labs.remoteapps.util.zip.ZipBuilder;
@@ -21,6 +19,7 @@ import com.atlassian.plugin.PluginController;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.net.*;
 import com.google.common.collect.ImmutableMap;
+import org.apache.commons.io.IOUtils;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.osgi.framework.BundleContext;
@@ -30,9 +29,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.Properties;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import static com.atlassian.labs.remoteapps.util.EncodingUtils.encodeBase64;
 
@@ -42,6 +48,8 @@ import static com.atlassian.labs.remoteapps.util.EncodingUtils.encodeBase64;
 @Component
 public class DefaultRemoteAppInstaller implements RemoteAppInstaller
 {
+    public static final String CLASSES_TO_INCLUDE_CLASS_PATH =
+            "com/atlassian/labs/remoteapps/kit/common/ClassesToInclude.class";
     private final ConsumerService consumerService;
     private final RequestFactory requestFactory;
     private final PluginController pluginController;
@@ -51,6 +59,7 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
     private final OAuthLinkManager oAuthLinkManager;
     private final FormatConverter formatConverter;
     private final InstallerHelper installerHelper;
+    private final byte[] classesToIncludeClass;
 
     private final BundleContext bundleContext;
     private static final Logger log = LoggerFactory.getLogger(
@@ -76,6 +85,35 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
         this.formatConverter = formatConverter;
         this.installerHelper = installerHelper;
         this.bundleContext = bundleContext;
+        this.classesToIncludeClass = extractClassesToIncludeClass();
+    }
+
+    private byte[] extractClassesToIncludeClass()
+    {
+        InputStream in = null;
+        try
+        {
+            in = getClass().getResourceAsStream("/remoteapps-kit-common.jar");
+            ZipInputStream zin = new ZipInputStream(in);
+            ZipEntry entry;
+            while ((entry = zin.getNextEntry()) != null)
+            {
+                if (CLASSES_TO_INCLUDE_CLASS_PATH.equals(entry.getName()))
+                {
+                    return IOUtils.toByteArray(zin);
+                }
+            }
+            throw new IllegalStateException("Couldn't find com.atlassian.labs.remoteapps.kit.common.ClassesToInclude");
+        }
+        catch (IOException e)
+        {
+            throw new IllegalStateException("Couldn't read from remoteapps-kit-common.jar", e);
+        }
+        finally
+        {
+            IOUtils.closeQuietly(in);
+        }
+
     }
 
     @Override
@@ -214,20 +252,17 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
         /*!-helper methods */
     }
 
-    private JarPluginArtifact convertPluginDescriptorIntoJar(final String pluginKey, final Document document, String username, URI registrationUrl)
+    JarPluginArtifact convertPluginDescriptorIntoJar(final String pluginKey, final Document document, String username, URI registrationUrl)
     {
         // todo: should filter out unsafe modules checking permissions, and support jars (otherwise, i18n is broken)
-        Element info = document.getRootElement().element("plugin-info");
-        Element instructions = info.addElement("bundle-instructions");
-                instructions
-                        .addElement("Import-Package")
-                        .setText(JiraProfileTabModuleGenerator.class.getPackage().getName() +
-                                ";resolution:=optional," +
-                                "com.atlassian.jira.plugin.searchrequestview;resolution:=optional," +
-                                HttpResourceMounter.class.getPackage().getName());
-                instructions.addElement("Remote-Plugin").
-                        setText("installer;user=\"" + username + "\";date=\"" + System.currentTimeMillis() + "\"" +
-                                ";registration-url=\"" + registrationUrl + "\"");
+        final Manifest mf = new Manifest();
+
+        mf.getMainAttributes().putValue(Attributes.Name.MANIFEST_VERSION.toString(), "1");
+        mf.getMainAttributes().putValue("Remote-Plugin",
+                "installer;user=\"" + username + "\";date=\"" + System.currentTimeMillis() + "\"" +
+                        ";registration-url=\"" + registrationUrl + "\"");
+
+        descriptorValidator.validate(registrationUrl, document);
 
         return new JarPluginArtifact(
             ZipBuilder.buildZip("install-" + pluginKey, new ZipHandler()
@@ -236,6 +271,11 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
                 public void build(ZipBuilder builder) throws IOException
                 {
                     builder.addFile("atlassian-plugin.xml", document);
+                    ByteArrayOutputStream bout = new ByteArrayOutputStream();
+                    mf.write(bout);
+                    builder.addFile("META-INF/MANIFEST.MF", new ByteArrayInputStream(bout.toByteArray()));
+                    builder.addFile(CLASSES_TO_INCLUDE_CLASS_PATH, new ByteArrayInputStream(
+                            classesToIncludeClass));
                 }
             }));
     }

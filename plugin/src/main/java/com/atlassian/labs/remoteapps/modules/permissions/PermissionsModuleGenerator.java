@@ -75,7 +75,7 @@ public class PermissionsModuleGenerator implements RemoteModuleGenerator
     {
         return DocumentBasedSchema.builder("permissions")
                 .setPlugin(plugin)
-                .setTitle(getName())
+                .setName(getName())
                 .setDescription(getDescription())
                 .setTransformer(new SchemaTransformer()
                 {

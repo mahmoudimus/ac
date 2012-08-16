@@ -5,11 +5,13 @@ import org.dom4j.Document;
 /**
  *
  */
-public interface Schema
+public interface Schema extends SchemaDocumented
 {
-    String getId();
+    String getFileName();
 
-    String getTitle();
+    String getElementName();
+
+    String getName();
 
     String getDescription();
 

@@ -1,6 +1,6 @@
 package com.atlassian.labs.remoteapps.rest;
 
-import com.atlassian.labs.remoteapps.DescriptorValidator;
+import com.atlassian.labs.remoteapps.descriptor.DescriptorValidator;
 import com.atlassian.labs.remoteapps.api.InstallationFailedException;
 import com.atlassian.labs.remoteapps.api.PermissionDeniedException;
 import com.atlassian.labs.remoteapps.api.RemoteAppsService;
@@ -115,9 +115,18 @@ public class InstallerResource
     @Path("/schema/remote-app")
     @Produces("text/xml")
     @AnonymousAllowed
-    public Response getSchema()
+    public Response getRemoteAppSchema()
     {
-        return Response.ok().entity(descriptorValidator.getSchema()).build();
+        return Response.ok().entity(descriptorValidator.getRemoteAppSchema()).build();
+    }
+
+    @GET
+    @Path("/schema/atlassian-plugin")
+    @Produces("text/xml")
+    @AnonymousAllowed
+    public Response getPluginSchema()
+    {
+        return Response.ok().entity(descriptorValidator.getPluginSchema()).build();
     }
 
     @POST

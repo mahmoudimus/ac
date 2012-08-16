@@ -52,7 +52,7 @@ public class OauthModuleGenerator implements RemoteModuleGenerator
     {
         return DocumentBasedSchema.builder("oauth")
                 .setPlugin(plugin)
-                .setTitle(getName())
+                .setName(getName())
                 .setDescription(getDescription())
                 .setMaxOccurs("1")
                 .build();

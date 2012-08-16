@@ -33,9 +33,9 @@ public class ViewIssuePanelModuleGenerator implements RemoteModuleGenerator
     @Override
     public Schema getSchema()
     {
-        return DocumentBasedSchema.builder("panel")
+        return DocumentBasedSchema.builder("issue-panel-page")
                 .setPlugin(plugin)
-                .setTitle(getName())
+                .setName(getName())
                 .setDescription(getDescription())
                 .build();
     }

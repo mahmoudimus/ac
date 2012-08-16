@@ -35,9 +35,9 @@ public class ConfigurePageModuleGenerator extends AdminPageModuleGenerator
     @Override
     public Schema getSchema()
     {
-        return DocumentBasedSchema.builder("page")
+        return DocumentBasedSchema.builder("configure-page")
                 .setPlugin(getPlugin())
-                .setTitle(getName())
+                .setName(getName())
                 .setDescription(getDescription())
                 .setMaxOccurs("1")
                 .build();

@@ -33,9 +33,10 @@ public class ProjectTabModuleGenerator implements RemoteModuleGenerator
     @Override
     public Schema getSchema()
     {
-        return DocumentBasedSchema.builder("page")
+        return DocumentBasedSchema.builder("project-tab-page")
                 .setPlugin(plugin)
-                .setTitle(getName())
+                .setName(getName())
+                .setElementName("project-tab")
                 .setDescription(getDescription())
                 .build();
     }

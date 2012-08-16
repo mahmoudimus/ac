@@ -57,7 +57,8 @@ public class WebHookModuleGenerator implements RemoteModuleGenerator
     {
         return DocumentBasedSchema.builder("webhook")
                 .setPlugin(plugin)
-                .setTitle(getName())
+                .setName(getName())
+                .setElementName("web-hook")
                 .setDescription(getDescription())
                 .setTransformer(new SchemaTransformer()
                 {

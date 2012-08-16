@@ -1,13 +1,12 @@
-package com.atlassian.labs.remoteapps;
+package com.atlassian.labs.remoteapps.descriptor;
 
 import com.atlassian.labs.remoteapps.api.InstallationFailedException;
-import com.atlassian.labs.remoteapps.modules.external.RemoteModuleGenerator;
+import com.atlassian.labs.remoteapps.modules.external.Schema;
 import com.atlassian.labs.remoteapps.product.ProductAccessor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.webresource.UrlMode;
 import com.atlassian.plugin.webresource.WebResourceManager;
-import com.atlassian.sal.api.ApplicationProperties;
 import org.dom4j.Document;
 import org.dom4j.DocumentFactory;
 import org.dom4j.Element;
@@ -16,16 +15,15 @@ import org.dom4j.io.DocumentSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 import javax.xml.XMLConstants;
 import javax.xml.transform.stream.StreamSource;
-import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URI;
-import java.net.URL;
 import java.util.*;
 
 import static com.atlassian.labs.remoteapps.util.Dom4jUtils.*;
@@ -33,41 +31,55 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Sets.newHashSet;
 
 /**
- *
+ * Builds a schema and validates descriptors with it.  Supports remote app and plugin descriptors.
  */
 @Component
 public class DescriptorValidator
 {
-    private final ModuleGeneratorManager moduleGeneratorManager;
-    private final ApplicationProperties applicationProperties;
     private final Plugin plugin;
     private final ProductAccessor productAccessor;
     private final WebResourceManager webResourceManager;
+    private final DescriptorValidatorProvider remoteAppDescriptorValidatorProvider;
+    private final DescriptorValidatorProvider pluginDescriptorValidatorProvider;
 
     @Autowired
-    public DescriptorValidator(ModuleGeneratorManager moduleGeneratorManager,
-                               ApplicationProperties applicationProperties,
-                               PluginRetrievalService pluginRetrievalService,
+    public DescriptorValidator(PluginRetrievalService pluginRetrievalService,
                                ProductAccessor productAccessor,
-                               WebResourceManager webResourceManager
+                               WebResourceManager webResourceManager,
+                               RemoteAppDescriptorValidatorProvider remoteAppDescriptorValidatorProvider,
+                               PluginDescriptorValidatorProvider pluginDescriptorValidatorProvider
     )
     {
         this.productAccessor = productAccessor;
         this.webResourceManager = webResourceManager;
         this.plugin = pluginRetrievalService.getPlugin();
-        this.moduleGeneratorManager = moduleGeneratorManager;
-        this.applicationProperties = applicationProperties;
+        this.remoteAppDescriptorValidatorProvider = remoteAppDescriptorValidatorProvider;
+        this.pluginDescriptorValidatorProvider = pluginDescriptorValidatorProvider;
     }
 
     public void validate(URI url, Document document)
     {
         SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-        boolean useNamespace = document.getRootElement().getNamespaceURI().equals(getSchemaNamespace());
-        StreamSource schemaSource = new StreamSource(new StringReader(buildSchema(getSchemaUrl(), useNamespace)));
-        Schema schema;
+
+        DescriptorValidatorProvider descriptorValidatorProvider = remoteAppDescriptorValidatorProvider;
+        if (document.getRootElement().attribute("plugins-version") != null)
+        {
+            descriptorValidatorProvider = pluginDescriptorValidatorProvider;
+        }
+
+        boolean useNamespace = document.getRootElement().getNamespaceURI().equals(
+                descriptorValidatorProvider.getSchemaNamespace());
+        StreamSource schemaSource = new StreamSource(new StringReader(buildSchema(
+                descriptorValidatorProvider, useNamespace)));
+        javax.xml.validation.Schema schema;
         try
         {
+
             schema = schemaFactory.newSchema(schemaSource);
+        }
+        catch (SAXParseException e)
+        {
+            throw new RuntimeException("Couldn't parse built schema" + " on line " + e.getLineNumber() + " for file " + e.getPublicId(), e);
         }
         catch (SAXException e)
         {
@@ -91,21 +103,28 @@ public class DescriptorValidator
         }
     }
 
-    private URL getSchemaUrl()
+    public String getRemoteAppSchema()
     {
-        return plugin.getResource("/xsd/remote-app.xsd");
+        return buildSchema(remoteAppDescriptorValidatorProvider, true);
     }
 
-
-    public String getSchema()
+    public String getPluginSchema()
     {
-        return buildSchema(getSchemaUrl(), true);
+        try
+        {
+            return buildSchema(pluginDescriptorValidatorProvider, true);
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+            return null;
+        }
     }
 
-    private String buildSchema(URL schemaUrl, boolean usesNamespace)
+    private String buildSchema(DescriptorValidatorProvider descriptorValidatorProvider, boolean usesNamespace)
     {
         Set<String> includedDocIds = newHashSet();
-        Element root = parseDocument(schemaUrl).getRootElement();
+        Element root = parseDocument(descriptorValidatorProvider.getSchemaUrl()).getRootElement();
 
         // Add XSL stylesheet
         Map arguments = new HashMap();
@@ -117,7 +136,7 @@ public class DescriptorValidator
         ProcessingInstruction pi = factory.createProcessingInstruction("xml-stylesheet", arguments);
         root.getDocument().content().add(0, pi);
 
-        final String ns = getSchemaNamespace();
+        final String ns = descriptorValidatorProvider.getSchemaNamespace();
         if (usesNamespace)
         {
             root.addAttribute("targetNamespace", ns);
@@ -126,15 +145,15 @@ public class DescriptorValidator
 
         processIncludes(root.getDocument(), includedDocIds);
         Element modulesChoice = (Element) root.selectSingleNode(
-                "/xs:schema/xs:complexType[@name='RemoteAppType']/xs:choice");
-        for (final RemoteModuleGenerator generator : this.moduleGeneratorManager.getAllValidatableGenerators())
+                "/xs:schema/xs:complexType[@name='" + descriptorValidatorProvider.getRootElementName() + "']//xs:choice");
+        for (final Schema schema : descriptorValidatorProvider.getModuleSchemas())
         {
-            final String id = generator.getSchema().getId();
+            final String id = schema.getFileName();
             if (!includedDocIds.contains(id))
             {
                 includedDocIds.add(id);
-                Document doc = generator.getSchema().getDocument();
-                checkNotNull(doc, "Document from generator " + generator.getType() + " is null");
+                Document doc = schema.getDocument();
+                checkNotNull(doc, "Document from generator " + schema.getFileName() + " is null");
                 processIncludes(doc, includedDocIds);
                 for (Element child : (List<Element>) doc.getRootElement().elements())
                 {
@@ -142,10 +161,11 @@ public class DescriptorValidator
                 }
             }
             Element module = modulesChoice.addElement("xs:element")
-                                          .addAttribute("name", generator.getType())
-                                          .addAttribute("type", generator.getSchema().getComplexType())
-                                          .addAttribute("maxOccurs", generator.getSchema().getMaxOccurs());
-            addSchemaDocumentation(module, generator);
+                                          .addAttribute("name", schema.getElementName())
+                                          .addAttribute("type",
+                                                  schema.getComplexType())
+                                          .addAttribute("maxOccurs", schema.getMaxOccurs());
+            addSchemaDocumentation(module, schema);
         }
 
         return printNode(root.getDocument());
@@ -198,10 +218,5 @@ public class DescriptorValidator
                 restriction.addElement("xs:enumeration").addAttribute("value", name);
             }
         }
-    }
-
-    private String getSchemaNamespace()
-    {
-        return applicationProperties.getBaseUrl() + "/rest/remoteapps/1/installer/schema/remote-app";
     }
 }

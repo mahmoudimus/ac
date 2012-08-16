@@ -5,20 +5,11 @@
     <xs:include schemaLocation="oauth.xsd"/>
     <xs:include schemaLocation="entity-type.xsd"/>
 
-    <xs:complexType name="DynamicApplicationLinkType">
+    <xs:complexType name="RemotePluginContainerType">
         <xs:choice minOccurs="1" maxOccurs="unbounded">
             <xs:element name="oauth" type="OauthType" maxOccurs="1" />
-            <xs:element name="entity-type" type="EntityTypeType" />
         </xs:choice>
         <xs:attribute name="key" type="KeyType" use="required" />
-        <xs:attribute name="icon-url" type="AbsoluteOrRelativeUrlType">
-            <xs:annotation>
-                <xs:documentation>
-                    The relative url to the icon for this app.  Absolute urls are allowed currently
-                    but deprecated.
-                </xs:documentation>
-            </xs:annotation>
-        </xs:attribute>
         <xs:attribute name="display-url" type="HttpUrlType" use="optional">
             <xs:annotation>
                 <xs:documentation>
@@ -28,6 +19,5 @@
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
-
     </xs:complexType>
 </xs:schema>

@@ -47,7 +47,7 @@ public class JiraProfileTabModuleGenerator implements RemoteModuleGenerator
     {
         return DocumentBasedSchema.builder("page")
                 .setPlugin(plugin)
-                .setTitle(getName())
+                .setName(getName())
                 .setDescription(getDescription())
                 .build();
     }
