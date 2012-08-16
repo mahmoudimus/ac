@@ -1,5 +1,6 @@
 package com.atlassian.labs.remoteapps.api.services.http.impl;
 
+import com.atlassian.event.api.EventPublisher;
 import com.atlassian.labs.remoteapps.api.services.http.AsyncHttpClient;
 import com.atlassian.util.concurrent.ThreadFactories;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -34,15 +35,17 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-public class DefaultAsyncHttpClient implements AsyncHttpClient, DisposableBean
+public class DefaultAsyncHttpClient extends AbstractAsyncHttpClient implements AsyncHttpClient, DisposableBean
 {
     HttpAsyncClient httpClient;
     private final Logger log = LoggerFactory.getLogger(DefaultAsyncHttpClient.class);
     private final RequestKiller requestKiller;
+    private EventPublisher eventPublisher;
 
-    public DefaultAsyncHttpClient(/*PluginRetrievalService pluginRetrievalService, */RequestKiller requestKiller)
+    public DefaultAsyncHttpClient(RequestKiller requestKiller, EventPublisher eventPublisher)
     {
         this.requestKiller = requestKiller;
+        this.eventPublisher = eventPublisher;
 
         DefaultHttpAsyncClient client;
         try
@@ -89,7 +92,8 @@ public class DefaultAsyncHttpClient implements AsyncHttpClient, DisposableBean
         }
 
         HttpParams params = client.getParams();
-        HttpProtocolParams.setUserAgent(params, "Atlassian-RemoteApps/" + /*pluginRetrievalService.getPlugin().getPluginInformation().getVersion()*/ "(@todo plugin version)");
+        // @todo add plugin version to UA string
+        HttpProtocolParams.setUserAgent(params, "Atlassian-RemoteApps");
 
         HttpConnectionParams.setConnectionTimeout(params, 3 * 1000);
         HttpConnectionParams.setSoTimeout(params, 7 * 1000);
@@ -106,38 +110,9 @@ public class DefaultAsyncHttpClient implements AsyncHttpClient, DisposableBean
     }
 
     @Override
-    public ListenableFuture<HttpResponse> get(String uri, Map<String, String> headers)
+    public ListenableFuture<HttpResponse> request(Method method, final String uri, Map<String, String> headers, InputStream entity, final Map<String, String> properties)
     {
-        return request(HttpMethod.GET, uri, headers, null);
-    }
-
-    @Override
-    public ListenableFuture<HttpResponse> post(String uri, Map<String, String> headers, InputStream entity)
-    {
-        return request(HttpMethod.POST, uri, headers, entity);
-    }
-
-    @Override
-    public ListenableFuture<HttpResponse> put(String uri, Map<String, String> headers, InputStream entity)
-    {
-        return request(HttpMethod.PUT, uri, headers, entity);
-    }
-
-    @Override
-    public ListenableFuture<HttpResponse> delete(String uri, Map<String, String> headers)
-    {
-        return request(HttpMethod.DELETE, uri, headers, null);
-    }
-
-    @Override
-    public ListenableFuture<HttpResponse> request(String method, String uri, Map<String, String> headers, InputStream entity)
-    {
-        return request(HttpMethod.valueOf(method), uri, headers, entity);
-    }
-
-    @Override
-    public ListenableFuture<HttpResponse> request(HttpMethod method, String uri, Map<String, String> headers, InputStream entity)
-    {
+        final long start = System.currentTimeMillis();
         final HttpRequestBase op;
         switch (method)
         {
@@ -172,6 +147,16 @@ public class DefaultAsyncHttpClient implements AsyncHttpClient, DisposableBean
             public void completed(HttpResponse response)
             {
                 requestKiller.completedRequest(op);
+                long elapsed = System.currentTimeMillis() - start;
+                int statusCode = response.getStatusLine().getStatusCode();
+                if (statusCode >= 200 && statusCode < 300)
+                {
+                    eventPublisher.publish(new HttpRequestCompletedEvent(uri, statusCode, elapsed, properties));
+                }
+                else
+                {
+                    eventPublisher.publish(new HttpRequestFailedEvent(uri, statusCode, elapsed, properties));
+                }
                 future.set(response);
             }
 
@@ -179,6 +164,8 @@ public class DefaultAsyncHttpClient implements AsyncHttpClient, DisposableBean
             public void failed(Exception ex)
             {
                 requestKiller.completedRequest(op);
+                long elapsed = System.currentTimeMillis() - start;
+                eventPublisher.publish(new HttpRequestFailedEvent(uri, ex.toString(), elapsed, properties));
                 future.setException(ex);
             }
 
@@ -186,7 +173,10 @@ public class DefaultAsyncHttpClient implements AsyncHttpClient, DisposableBean
             public void cancelled()
             {
                 requestKiller.completedRequest(op);
-                future.setException(new TimeoutException());
+                TimeoutException ex = new TimeoutException();
+                long elapsed = System.currentTimeMillis() - start;
+                eventPublisher.publish(new HttpRequestCancelledEvent(uri, ex.toString(), elapsed, properties));
+                future.setException(ex);
             }
         };
         requestKiller.registerRequest(new NotifyingAbortableHttpRequest(op, futureCallback), 10);

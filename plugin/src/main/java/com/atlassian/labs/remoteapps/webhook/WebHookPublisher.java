@@ -3,7 +3,7 @@ package com.atlassian.labs.remoteapps.webhook;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.labs.remoteapps.RemoteAppAccessor;
 import com.atlassian.labs.remoteapps.RemoteAppAccessorFactory;
-import com.atlassian.labs.remoteapps.util.http.HttpContentRetriever;
+import com.atlassian.labs.remoteapps.api.services.http.AsyncHttpClient;
 import com.atlassian.labs.remoteapps.util.uri.Uri;
 import com.atlassian.labs.remoteapps.util.uri.UriBuilder;
 import com.atlassian.labs.remoteapps.webhook.event.WebHookPublishQueueFullEvent;
@@ -15,6 +15,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.Sets;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
@@ -22,10 +23,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.*;
 
 /**
  * Publishes events to registered remote apps
@@ -35,7 +36,7 @@ public class WebHookPublisher implements DisposableBean
 {
     public static final int PUBLISH_QUEUE_SIZE = 100;
     private final ThreadPoolExecutor publisher;
-    private final HttpContentRetriever httpContentRetriever;
+    private AsyncHttpClient asyncHttpClient;
     private final EventPublisher eventPublisher;
     private final UserManager userManager;
     private final RemoteAppAccessorFactory remoteAppAccessorFactory;
@@ -44,11 +45,11 @@ public class WebHookPublisher implements DisposableBean
     private final Multimap<String, Registration> registrationsByEvent = newMultimap();
 
     @Autowired
-    public WebHookPublisher(HttpContentRetriever httpContentRetriever,
+    public WebHookPublisher(AsyncHttpClient asyncHttpClient,
             EventPublisher eventPublisher, UserManager userManager,
             RemoteAppAccessorFactory remoteAppAccessorFactory)
     {
-        this.httpContentRetriever = httpContentRetriever;
+        this.asyncHttpClient = asyncHttpClient;
         this.eventPublisher = eventPublisher;
         this.userManager = userManager;
         this.remoteAppAccessorFactory = remoteAppAccessorFactory;
@@ -79,7 +80,7 @@ public class WebHookPublisher implements DisposableBean
                         registration.getPluginKey());
                 body = body != null ? body : eventSerializer.getJson();
                 String username = userManager.getRemoteUsername();
-                PublishTask task = new PublishTask(httpContentRetriever, registration,
+                PublishTask task = new PublishTask(asyncHttpClient, registration,
                         remoteAppAccessor, username != null ? username : "", body);
                 try
                 {
@@ -120,17 +121,16 @@ public class WebHookPublisher implements DisposableBean
 
     private static class PublishTask implements Runnable
     {
-        private final HttpContentRetriever httpContentRetriever;
         private final Registration registration;
         private final RemoteAppAccessor remoteAppAccessor;
         private final String userName;
         private final String body;
+        private AsyncHttpClient asyncHttpClient;
 
-        public PublishTask(HttpContentRetriever httpContentRetriever,
-                Registration registration, RemoteAppAccessor remoteAppAccessor, String userName,
-                           String body)
+        public PublishTask(AsyncHttpClient asyncHttpClient, Registration registration,
+                           RemoteAppAccessor remoteAppAccessor, String userName, String body)
         {
-            this.httpContentRetriever = httpContentRetriever;
+            this.asyncHttpClient = asyncHttpClient;
             this.registration = registration;
             this.remoteAppAccessor = remoteAppAccessor;
             this.userName = userName;
@@ -140,11 +140,19 @@ public class WebHookPublisher implements DisposableBean
         @Override
         public void run()
         {
-            String url = new UriBuilder(Uri.parse(registration.getUrl(remoteAppAccessor)))
+            final String url = new UriBuilder(Uri.parse(registration.getUrl(remoteAppAccessor)))
                     .addQueryParameter("user_id", userName).toString();
-
             log.debug("Posting to web hook at " + url + "\n" + body);
-            httpContentRetriever.postIgnoreResponse(remoteAppAccessor.getAuthorizationGenerator(), url, body);
+            Map<String, String> headers = Maps.newHashMap();
+            String authorization = remoteAppAccessor.getAuthorizationGenerator().generate(
+                "POST", url, Collections.<String, List<String>>emptyMap());
+            headers.put("Authorization", authorization);
+            headers.put("Content-Type", "application/json");
+            Map<String, String> properties = Maps.newHashMap();
+            properties.put("purpose", "web-hook-notification");
+            properties.put("pluginKey", registration.getPluginKey());
+            // our job is just to send this, not worry about whether it failed or not
+            asyncHttpClient.post(url, headers, IOUtils.toInputStream(body), properties);
         }
 
         @Override
@@ -222,6 +230,5 @@ public class WebHookPublisher implements DisposableBean
                     '}';
         }
     }
-
 
 }

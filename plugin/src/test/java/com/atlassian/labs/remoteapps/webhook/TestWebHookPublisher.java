@@ -3,8 +3,8 @@ package com.atlassian.labs.remoteapps.webhook;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.labs.remoteapps.RemoteAppAccessor;
 import com.atlassian.labs.remoteapps.RemoteAppAccessorFactory;
+import com.atlassian.labs.remoteapps.api.services.http.AsyncHttpClient;
 import com.atlassian.labs.remoteapps.util.http.AuthorizationGenerator;
-import com.atlassian.labs.remoteapps.util.http.HttpContentRetriever;
 import com.atlassian.labs.remoteapps.webhook.event.WebHookPublishQueueFullEvent;
 import com.atlassian.labs.remoteapps.webhook.external.EventMatcher;
 import com.atlassian.sal.api.user.UserManager;
@@ -12,9 +12,10 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
-import org.mockito.Matchers;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 
+import java.io.InputStream;
 import java.net.URI;
 import java.util.Collections;
 
@@ -24,7 +25,7 @@ import static org.mockito.MockitoAnnotations.initMocks;
 public class TestWebHookPublisher
 {
     @Mock
-    HttpContentRetriever httpContentRetriever;
+    AsyncHttpClient httpClient;
 
     @Mock
     EventPublisher eventPublisher;
@@ -35,16 +36,21 @@ public class TestWebHookPublisher
     @Mock
     RemoteAppAccessor remoteAppAccessor;
 
+    @Mock
+    AuthorizationGenerator authorizationGenerator;
+
     WebHookPublisher publisher;
 
     @Before
     public void setUp()
     {
         initMocks(this);
-        publisher = new WebHookPublisher(httpContentRetriever, eventPublisher,
+        publisher = new WebHookPublisher(httpClient, eventPublisher,
                 mock(UserManager.class), remoteAppAccessorFactory);
+        when(authorizationGenerator.generate(anyString(), anyString(), anyMap())).thenReturn("test authorization");
         when(remoteAppAccessor.getDisplayUrl()).thenReturn(URI.create("http://localhost"));
         when(remoteAppAccessor.getKey()).thenReturn("foo");
+        when(remoteAppAccessor.getAuthorizationGenerator()).thenReturn(authorizationGenerator);
         when(remoteAppAccessorFactory.get("foo")).thenReturn(remoteAppAccessor);
     }
 
@@ -69,9 +75,9 @@ public class TestWebHookPublisher
         publisher.register("foo", "event.id", "/event");
         publisher.publish("event.id", new FalseEventMatcher(), new MapEventSerializer("event_object",
                 Collections.<String, Object>singletonMap("field", "value")));
-        verify(httpContentRetriever, never()).postIgnoreResponse(Matchers.<AuthorizationGenerator>any(),
-                anyString(),
-                anyString());
+
+        InputStream inputStream = Mockito.mock(InputStream.class);
+        verify(httpClient, never()).post(anyString(), anyMap(), eq(inputStream), anyMap());
 
     }
 
@@ -81,9 +87,8 @@ public class TestWebHookPublisher
         publisher.publish("event.id", EventMatcher.ALWAYS_TRUE, new MapEventSerializer("event_object",
                                                               Collections.<String, Object>singletonMap("field", "value")));
 
-        verify(httpContentRetriever, never()).postIgnoreResponse(Matchers.<AuthorizationGenerator>any(),
-                                                                 anyString(),
-                                                                 anyString());
+        InputStream inputStream = Mockito.mock(InputStream.class);
+        verify(httpClient, never()).post(anyString(), anyMap(), eq(inputStream), anyMap());
     }
 
     @Test
@@ -93,15 +98,14 @@ public class TestWebHookPublisher
         publisher.publish("event.id", EventMatcher.ALWAYS_TRUE,  new MapEventSerializer("event_object",
                                                               Collections.<String, Object>singletonMap("field", "value")));
 
-        verify(httpContentRetriever, never()).postIgnoreResponse(Matchers.<AuthorizationGenerator>any(),
-                                                                 anyString(),
-                                                                 anyString());
+        InputStream inputStream = Mockito.mock(InputStream.class);
+        verify(httpClient, never()).post(anyString(), anyMap(), eq(inputStream), anyMap());
     }
 
     @Test
     public void testPublishCallSuccessfulEvenIfSaturated()
     {
-        publisher = new WebHookPublisher(new SleepingHttpContentRetriever(), eventPublisher,
+        publisher = new WebHookPublisher(new SleepingAsyncHttpClient(), eventPublisher,
                 mock(UserManager.class), remoteAppAccessorFactory);
         publisher.register("foo", "event.id", "/event");
 

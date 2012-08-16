@@ -1,11 +1,19 @@
 package com.atlassian.labs.remoteapps.api.services.impl;
 
 import com.atlassian.labs.remoteapps.api.services.RequestContext;
+import com.atlassian.labs.remoteapps.api.services.SignedRequestHandler;
 
 public class DefaultRequestContext implements RequestContext
 {
     private static final ThreadLocal<String> clientKeyHolder = new ThreadLocal<String>();
     private static final ThreadLocal<String> userIdHolder = new ThreadLocal<String>();
+
+    private SignedRequestHandler signedRequestHandler;
+
+    public DefaultRequestContext(SignedRequestHandler signedRequestHandler)
+    {
+        this.signedRequestHandler = signedRequestHandler;
+    }
 
     @Override
     public String getClientKey()
@@ -13,7 +21,6 @@ public class DefaultRequestContext implements RequestContext
         return clientKeyHolder.get();
     }
 
-    @Override
     public void setClientKey(String clientKey)
     {
         clientKeyHolder.set(clientKey);
@@ -25,10 +32,15 @@ public class DefaultRequestContext implements RequestContext
         return userIdHolder.get();
     }
 
-    @Override
     public void setUserId(String userId)
     {
         userIdHolder.set(userId);
+    }
+
+    @Override
+    public String getHostBaseUrl()
+    {
+        return signedRequestHandler.getHostBaseUrl(getClientKey());
     }
 
     @Override

@@ -1,14 +1,15 @@
 (function (global, $) {
 
   var cssProperties = ["color", "fontFamily", "fontSize", "fontSizeAdjust", "fontStretch", "fontStyle", "fontVariant", "fontWeight"],
-      // don't send line-height for ie, as at least ie8 reports bad values
-      bodyProperties = cssProperties.concat((/*@cc_on!@*/false) ? [] : ["lineHeight"]),
       xhrProperties = ["status", "statusText", "responseText"],
       xhrHeaders = ["Content-Type"],
-      RA = global.RemoteApps;
+      RA = global.RemoteApps,
+      events = (AJS.EventQueue = AJS.EventQueue || []);
 
   RA.create = RA.create || function (options) {
+
     var ns = options.ns,
+        home$ = $("#ra-" + ns),
         containerId = "embedded-" + ns,
         channelId = "channel-" + ns,
         container$ = $("#" + containerId),
@@ -16,7 +17,21 @@
         initWidth = options.width || "100%",
         start = new Date().getTime();
 
+    function track(name, props) {
+      props = $.extend(props || {}, {moduleKey: ns});
+      events.push({name: name, properties: props});
+    }
+
+    var timeout = setTimeout(function () {
+      container$.find("iframe").hide();
+      home$.find(".ra-timeout").show();
+    }, 10000);
+
     var rpc = new easyXDM.Rpc({
+      onReady: function () {
+        var elapsed = new Date().getTime() - start;
+        track("plugin.iframerendered", {elapsed: elapsed});
+      },
       remote: options.src,
       container: containerId,
       channel: channelId,
@@ -28,8 +43,16 @@
       },
       local: {
         init: function () {
+          if (timeout) {
+            clearTimeout(timeout);
+          }
           container$.addClass("iframe-init");
-          $("#ra-time-" + ns).text(new Date().getTime() - start);
+          container$.find("iframe").show(); // in case it was hidden by an earlier timeout
+          home$.find(".ra-timeout").hide(); // in case it was shown by an earlier timeout
+          var elapsed = new Date().getTime() - start;
+          home$.find(".ra-elapsed").text(elapsed);
+          home$.find(".ra-message").show();
+          track("plugin.iframeinited", {elapsed: elapsed});
         },
         resize: debounce(function (width, height) {
           // debounce resizes to avoid excessive page reflow
@@ -59,7 +82,7 @@
               }
             });
           }
-          capture(body, container$, bodyProperties);
+          capture(body, container$, cssProperties);
           success([{selector: "body", properties: body}]);
         },
         showMessage: function (id, title, body) {

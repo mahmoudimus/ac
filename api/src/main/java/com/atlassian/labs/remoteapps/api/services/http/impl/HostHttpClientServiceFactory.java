@@ -1,28 +1,28 @@
-package com.atlassian.labs.remoteapps.container.services;
+package com.atlassian.labs.remoteapps.api.services.http.impl;
 
 import com.atlassian.labs.remoteapps.api.services.RequestContext;
 import com.atlassian.labs.remoteapps.api.services.SignedRequestHandler;
 import com.atlassian.labs.remoteapps.api.services.http.AsyncHttpClient;
 import com.atlassian.labs.remoteapps.api.services.http.HostHttpClient;
-import com.atlassian.labs.remoteapps.api.services.http.HostHttpClientServiceFactory;
-import com.atlassian.labs.remoteapps.api.services.RequestContextServiceFactory;
-import com.atlassian.labs.remoteapps.api.services.http.impl.DefaultHostHttpClient;
+import com.atlassian.labs.remoteapps.api.services.impl.RequestContextServiceFactory;
+import com.atlassian.labs.remoteapps.api.services.impl.SignedRequestHandlerServiceFactory;
+import com.atlassian.labs.remoteapps.api.services.impl.TypedServiceFactory;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.ServiceRegistration;
 
-public class ContainerHostHttpClientServiceFactory implements HostHttpClientServiceFactory
+public class HostHttpClientServiceFactory implements TypedServiceFactory<HostHttpClient>
 {
     private final AsyncHttpClient asyncHttpClient;
     private RequestContextServiceFactory requestContextServiceFactory;
-    private final OAuthSignedRequestHandlerServiceFactory oAuthSignedRequestHandlerServiceFactory;
+    private final SignedRequestHandlerServiceFactory signedRequestHandlerServiceFactory;
 
-    public ContainerHostHttpClientServiceFactory(AsyncHttpClient asyncHttpClient,
-         RequestContextServiceFactory requestContextServiceFactory,
-         OAuthSignedRequestHandlerServiceFactory oAuthSignedRequestHandlerServiceFactory)
+    public HostHttpClientServiceFactory(AsyncHttpClient asyncHttpClient,
+                                        RequestContextServiceFactory requestContextServiceFactory,
+                                        SignedRequestHandlerServiceFactory signedRequestHandlerServiceFactory)
     {
         this.asyncHttpClient = asyncHttpClient;
         this.requestContextServiceFactory = requestContextServiceFactory;
-        this.oAuthSignedRequestHandlerServiceFactory = oAuthSignedRequestHandlerServiceFactory;
+        this.signedRequestHandlerServiceFactory = signedRequestHandlerServiceFactory;
     }
 
     @Override
@@ -34,7 +34,7 @@ public class ContainerHostHttpClientServiceFactory implements HostHttpClientServ
     public HostHttpClient getService(Bundle bundle)
     {
         RequestContext requestContext = requestContextServiceFactory.getService(bundle);
-        SignedRequestHandler signedRequestHandler = oAuthSignedRequestHandlerServiceFactory.getService(bundle);
+        SignedRequestHandler signedRequestHandler = signedRequestHandlerServiceFactory.getService(bundle);
         return new DefaultHostHttpClient(asyncHttpClient, requestContext, signedRequestHandler);
     }
 

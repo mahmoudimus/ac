@@ -1,6 +1,6 @@
 package com.atlassian.labs.remoteapps.container.services;
 
-import com.atlassian.labs.remoteapps.api.services.RequestContext;
+import com.atlassian.labs.remoteapps.api.services.impl.RequestContextServiceFactory;
 import com.atlassian.labs.remoteapps.container.HttpServer;
 import com.atlassian.labs.remoteapps.container.internal.EnvironmentFactory;
 import com.atlassian.plugin.Plugin;
@@ -9,7 +9,7 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.ServiceFactory;
 import org.osgi.framework.ServiceRegistration;
 
-import static com.atlassian.plugin.osgi.util.OsgiHeaderUtil.*;
+import static com.atlassian.plugin.osgi.util.OsgiHeaderUtil.getPluginKey;
 
 /**
  * Creates the descriptor generator for the bundle
@@ -19,21 +19,21 @@ public class ContainerHttpResourceMounterServiceFactory implements ServiceFactor
     private final PluginAccessor pluginAccessor;
     private final HttpServer httpServer;
     private final OAuthSignedRequestHandlerServiceFactory oAuthSignedRequestHandlerServiceFactory;
+    private RequestContextServiceFactory requestContextServiceFactory;
     private final EnvironmentFactory environmentServiceFactory;
-    private RequestContext requestContext;
 
     public ContainerHttpResourceMounterServiceFactory(PluginAccessor pluginAccessor,
                                                       HttpServer httpServer,
                                                       OAuthSignedRequestHandlerServiceFactory oAuthSignedRequestHandlerServiceFactory,
                                                       EnvironmentFactory environmentServiceFactory,
-                                                      RequestContext requestContext
+                                                      RequestContextServiceFactory requestContextServiceFactory
     )
     {
         this.pluginAccessor = pluginAccessor;
         this.httpServer = httpServer;
         this.environmentServiceFactory = environmentServiceFactory;
         this.oAuthSignedRequestHandlerServiceFactory = oAuthSignedRequestHandlerServiceFactory;
-        this.requestContext = requestContext;
+        this.requestContextServiceFactory = requestContextServiceFactory;
     }
 
     @Override
@@ -43,7 +43,7 @@ public class ContainerHttpResourceMounterServiceFactory implements ServiceFactor
         return new ContainerHttpResourceMounter(bundle, plugin, httpServer,
                 oAuthSignedRequestHandlerServiceFactory.getService(bundle),
                 environmentServiceFactory.getService(bundle),
-                requestContext);
+                requestContextServiceFactory.getService(bundle));
     }
 
     @Override

@@ -1,15 +1,15 @@
 package com.atlassian.labs.remoteapps.services;
 
+import com.atlassian.labs.remoteapps.api.services.SignedRequestHandler;
+import com.atlassian.labs.remoteapps.api.services.impl.SignedRequestHandlerServiceFactory;
 import com.atlassian.labs.remoteapps.loader.universalbinary.UBDispatchFilter;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.plugin.osgi.util.OsgiHeaderUtil;
 import com.atlassian.sal.api.ApplicationProperties;
-import com.atlassian.security.auth.trustedapps.TrustedApplicationsManager;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import org.osgi.framework.Bundle;
-import org.osgi.framework.ServiceFactory;
 import org.osgi.framework.ServiceRegistration;
 
 import java.util.concurrent.ExecutionException;
@@ -17,7 +17,7 @@ import java.util.concurrent.ExecutionException;
 /**
  * Creates and caches an instance per plugin
  */
-public class LocalSignedRequestHandlerServiceFactory implements ServiceFactory
+public class LocalSignedRequestHandlerServiceFactory implements SignedRequestHandlerServiceFactory
 {
     private final Cache<String, LocalSignedRequestHandler> instances;
 
@@ -40,12 +40,12 @@ public class LocalSignedRequestHandlerServiceFactory implements ServiceFactory
     @Override
     public Object getService(Bundle bundle, ServiceRegistration registration)
     {
-        String appKey = OsgiHeaderUtil.getPluginKey(bundle);
-        return getService(appKey);
+        return getService(bundle);
     }
 
-    public LocalSignedRequestHandler getService(String appKey)
+    public SignedRequestHandler getService(Bundle bundle)
     {
+        String appKey = OsgiHeaderUtil.getPluginKey(bundle);
         try
         {
             return instances.get(appKey);

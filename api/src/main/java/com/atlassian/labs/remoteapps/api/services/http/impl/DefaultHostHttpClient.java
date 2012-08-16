@@ -6,6 +6,7 @@ import com.atlassian.labs.remoteapps.api.services.http.AsyncHttpClient;
 import com.atlassian.labs.remoteapps.api.services.http.HostHttpClient;
 import com.atlassian.labs.remoteapps.api.services.http.Request;
 import com.atlassian.labs.remoteapps.api.services.http.Response;
+import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -225,9 +226,14 @@ public class DefaultHostHttpClient implements HostHttpClient
             log.debug(buf.toString());
         }
 
+        // capture request properties for analytics
+        Map<String, String> properties = Maps.newHashMap();
+        properties.put("purpose", "host-request");
+        properties.put("clientKey", clientKey);
+
         // execute the request via the async request service
         ListenableFuture<HttpResponse> fromFuture
-            = asyncHttpClient.request(method, uriStr, headers, request.getEntityStream());
+            = asyncHttpClient.request(method, uriStr, headers, request.getEntityStream(), properties);
 
         // translate the low-level response future to that of this higher-level api
         final SettableFuture<Response> toFuture = SettableFuture.create();

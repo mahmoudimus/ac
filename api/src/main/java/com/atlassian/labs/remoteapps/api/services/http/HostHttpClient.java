@@ -3,6 +3,11 @@ package com.atlassian.labs.remoteapps.api.services.http;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.ListenableFuture;
 
+/**
+ * Used to make requests back to the host application.  Implementations handle
+ * oauth signing and user propagation.  URIs should be relative to the host app url,
+ * including the context path (e.g. relative to something like http://localhost:2990/jira).
+ */
 public interface HostHttpClient
 {
     ListenableFuture<Response> get(String uri);

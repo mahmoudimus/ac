@@ -7,20 +7,20 @@ import com.atlassian.labs.remoteapps.api.HttpResourceMounter;
 import com.atlassian.labs.remoteapps.api.PolygotDescriptorAccessor;
 import com.atlassian.labs.remoteapps.api.services.PluginSettingsAsyncFactory;
 import com.atlassian.labs.remoteapps.api.services.RequestContext;
-import com.atlassian.labs.remoteapps.api.services.RequestContextServiceFactory;
 import com.atlassian.labs.remoteapps.api.services.SignedRequestHandler;
 import com.atlassian.labs.remoteapps.api.services.http.AsyncHttpClient;
 import com.atlassian.labs.remoteapps.api.services.http.HostHttpClient;
 import com.atlassian.labs.remoteapps.api.services.http.SyncHostHttpClient;
-import com.atlassian.labs.remoteapps.api.services.http.SyncHostHttpClientServiceFactory;
 import com.atlassian.labs.remoteapps.api.services.http.impl.DefaultAsyncHttpClient;
+import com.atlassian.labs.remoteapps.api.services.http.impl.HostHttpClientServiceFactory;
 import com.atlassian.labs.remoteapps.api.services.http.impl.RequestKiller;
+import com.atlassian.labs.remoteapps.api.services.http.impl.SyncHostHttpClientServiceFactory;
 import com.atlassian.labs.remoteapps.api.services.impl.DefaultPluginSettingsAsyncFactory;
-import com.atlassian.labs.remoteapps.api.services.impl.DefaultRequestContext;
+import com.atlassian.labs.remoteapps.api.services.impl.RequestContextServiceFactory;
 import com.atlassian.labs.remoteapps.container.ao.RemoteAppsDataSourceProviderServiceFactory;
 import com.atlassian.labs.remoteapps.container.internal.EnvironmentFactory;
 import com.atlassian.labs.remoteapps.container.internal.properties.ResourcePropertiesLoader;
-import com.atlassian.labs.remoteapps.container.services.ContainerHostHttpClientServiceFactory;
+import com.atlassian.labs.remoteapps.container.services.ContainerEventPublisher;
 import com.atlassian.labs.remoteapps.container.services.ContainerHttpResourceMounterServiceFactory;
 import com.atlassian.labs.remoteapps.container.services.OAuthSignedRequestHandlerServiceFactory;
 import com.atlassian.labs.remoteapps.container.services.event.RemoteAppsEventPublisher;
@@ -228,18 +228,21 @@ public final class Container
 
         final EnvironmentFactory environmentFactory = new EnvironmentFactory(pluginSettingsFactory,
                 pluginManager);
-        final OAuthSignedRequestHandlerServiceFactory oAuthSignedRequestHandlerServiceFactory = new OAuthSignedRequestHandlerServiceFactory(environmentFactory, httpServer);
-        final RequestContext requestContext = new DefaultRequestContext();
-        final ContainerHttpResourceMounterServiceFactory containerHttpResourceMounterServiceFactory = new ContainerHttpResourceMounterServiceFactory(pluginManager, httpServer, oAuthSignedRequestHandlerServiceFactory, environmentFactory, requestContext);
-        final RequestKiller requestKiller = new RequestKiller();
-        final AsyncHttpClient asyncHttpClient = new DefaultAsyncHttpClient(requestKiller);
+        final OAuthSignedRequestHandlerServiceFactory oAuthSignedRequestHandlerServiceFactory
+            = new OAuthSignedRequestHandlerServiceFactory(environmentFactory, httpServer);
         final RequestContextServiceFactory requestContextServiceFactory
-            = new RequestContextServiceFactory();
-        final ContainerHostHttpClientServiceFactory containerHostHttpClientServiceFactory
-            = new ContainerHostHttpClientServiceFactory(asyncHttpClient, requestContextServiceFactory,
+            = new RequestContextServiceFactory(oAuthSignedRequestHandlerServiceFactory);
+        final ContainerHttpResourceMounterServiceFactory containerHttpResourceMounterServiceFactory
+            = new ContainerHttpResourceMounterServiceFactory(pluginManager, httpServer,
+            oAuthSignedRequestHandlerServiceFactory, environmentFactory, requestContextServiceFactory);
+        final RequestKiller requestKiller = new RequestKiller();
+        final ContainerEventPublisher containerEventPublisher = new ContainerEventPublisher();
+        final AsyncHttpClient asyncHttpClient = new DefaultAsyncHttpClient(requestKiller, containerEventPublisher);
+        final HostHttpClientServiceFactory hostHttpClientServiceFactory
+            = new HostHttpClientServiceFactory(asyncHttpClient, requestContextServiceFactory,
             oAuthSignedRequestHandlerServiceFactory);
         final SyncHostHttpClientServiceFactory syncHostHttpClientServiceFactory
-            = new SyncHostHttpClientServiceFactory(containerHostHttpClientServiceFactory);
+            = new SyncHostHttpClientServiceFactory(hostHttpClientServiceFactory);
 
         hostComponents.put(SignedRequestHandler.class, oAuthSignedRequestHandlerServiceFactory);
         hostComponents.put(HttpResourceMounter.class, containerHttpResourceMounterServiceFactory);
@@ -248,9 +251,9 @@ public final class Container
         hostComponents.put(PluginEventManager.class, pluginEventManager);
         hostComponents.put(PluginSettingsAsyncFactory.class, new DefaultPluginSettingsAsyncFactory(pluginSettingsFactory));
         hostComponents.put(ModuleFactory.class, new PrefixDelegatingModuleFactory(ImmutableSet.of(new ClassPrefixModuleFactory(hostContainer), new BeanPrefixModuleFactory())));
-        hostComponents.put(RequestContext.class, requestContext);
+        hostComponents.put(RequestContext.class, requestContextServiceFactory);
         hostComponents.put(AsyncHttpClient.class, asyncHttpClient);
-        hostComponents.put(HostHttpClient.class, containerHostHttpClientServiceFactory);
+        hostComponents.put(HostHttpClient.class, hostHttpClientServiceFactory);
         hostComponents.put(SyncHostHttpClient.class, syncHostHttpClientServiceFactory);
 
         hostComponents.put(DataSourceProvider.class, new RemoteAppsDataSourceProviderServiceFactory());

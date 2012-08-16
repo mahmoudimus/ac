@@ -16,12 +16,12 @@ import java.util.Map;
 public class AuthenticationFilter implements Filter
 {
     private SignedRequestHandler signedRequestHandler;
-    private RequestContext requestContext;
+    private DefaultRequestContext requestContext;
 
     public AuthenticationFilter(SignedRequestHandler signedRequestHandler, RequestContext requestContext)
     {
         this.signedRequestHandler = signedRequestHandler;
-        this.requestContext = requestContext;
+        this.requestContext = (DefaultRequestContext) requestContext;
     }
 
     @Override

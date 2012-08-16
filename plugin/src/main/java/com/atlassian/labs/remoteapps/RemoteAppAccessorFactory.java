@@ -198,7 +198,7 @@ public class RemoteAppAccessorFactory implements DisposableBean
                 throws ContentRetrievalException
         {
             return executeAsyncGetForType(new OAuthAuthorizationGenerator(serviceProvider),
-                    getTargetUrl(displayUrl, path), username, params, headers, handler);
+                    getTargetUrl(displayUrl, path), username, params, headers, handler, key);
         }
 
         @Override
@@ -220,11 +220,11 @@ public class RemoteAppAccessorFactory implements DisposableBean
     }
 
     private Future<String> executeAsyncGetForType(AuthorizationGenerator authorizationGenerator, String targetUrl, String username,
-            Map<String, String> params, Map<String, String> headers, HttpContentHandler httpContentHandler)
+            Map<String, String> params, Map<String, String> headers, HttpContentHandler httpContentHandler, String pluginKey)
     {
         return httpContentRetriever.getAsync(authorizationGenerator, username, targetUrl,
-                Maps.transformValues(params, MapFunctions.OBJECT_TO_STRING),
-                headers, httpContentHandler);
+            Maps.transformValues(params, MapFunctions.OBJECT_TO_STRING),
+            headers, httpContentHandler, pluginKey);
     }
 
     private String signGetUrlForType(ServiceProvider serviceProvider, String targetUrl, Map<String, String[]> params) throws PermissionDeniedException

@@ -96,7 +96,7 @@
     <component key="productEventPublisher" class="com.atlassian.labs.remoteapps.event.product.ProductEventPublisher"
                public="true" interface="com.atlassian.sal.api.lifecycle.LifecycleAware" />
 
-    <component key="descriptorGenerator" class="com.atlassian.labs.remoteapps.loader.LocalHttpResourceMounterServiceFactory" interface="com.atlassian.labs.remoteapps.api.HttpResourceMounter" public="true" />
+    <component key="httpResourceMounter" class="com.atlassian.labs.remoteapps.loader.LocalHttpResourceMounterServiceFactory" interface="com.atlassian.labs.remoteapps.api.HttpResourceMounter" public="true" />
 
     <component key="remotappsService" class="com.atlassian.labs.remoteapps.DefaultRemoteAppsService"
                interface="com.atlassian.labs.remoteapps.api.RemoteAppsService" public="true" />
@@ -151,7 +151,7 @@
                class="com.atlassian.labs.remoteapps.services.LocalSignedRequestHandlerServiceFactory" public="true" />
 
     <component key="requestContext" interface="com.atlassian.labs.remoteapps.api.services.RequestContext"
-               class="com.atlassian.labs.remoteapps.api.services.RequestContextServiceFactory" public="true" />
+               class="com.atlassian.labs.remoteapps.api.services.impl.RequestContextServiceFactory" public="true" />
 
     <component key="requestKiller"
                class="com.atlassian.labs.remoteapps.api.services.http.impl.RequestKiller" />
@@ -159,11 +159,11 @@
     <component key="asyncHttpClient" interface="com.atlassian.labs.remoteapps.api.services.http.AsyncHttpClient"
                class="com.atlassian.labs.remoteapps.api.services.http.impl.DefaultAsyncHttpClient" public="true" />
 
-    <component key="localHostHttpClient" interface="com.atlassian.labs.remoteapps.api.services.http.HostHttpClient"
-               class="com.atlassian.labs.remoteapps.services.LocalHostHttpClientServiceFactory" public="true" />
+    <component key="hostHttpClient" interface="com.atlassian.labs.remoteapps.api.services.http.HostHttpClient"
+               class="com.atlassian.labs.remoteapps.api.services.http.impl.HostHttpClientServiceFactory" public="true" />
 
-     <component key="syncHostHttpClient" interface="com.atlassian.labs.remoteapps.api.services.http.SyncHostHttpClient"
-               class="com.atlassian.labs.remoteapps.api.services.http.SyncHostHttpClientServiceFactory" public="true" />
+    <component key="syncHostHttpClient" interface="com.atlassian.labs.remoteapps.api.services.http.SyncHostHttpClient"
+               class="com.atlassian.labs.remoteapps.api.services.http.impl.SyncHostHttpClientServiceFactory" public="true" />
 
     <applinks-application-type name="Remote Plugin Container" key="remote-plugin-container-type"
                                    class="com.atlassian.labs.remoteapps.modules.applinks.RemotePluginContainerApplicationTypeImpl"

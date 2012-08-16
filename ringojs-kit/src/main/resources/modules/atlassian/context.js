@@ -1,5 +1,4 @@
 var requestContext = appContext.getBean("requestContext");
-var signedRequestHandler = appContext.getBean("signedRequestHandler");
 
 module.exports = {
   clientKey: function () {
@@ -9,6 +8,6 @@ module.exports = {
     return requestContext.getUserId();
   },
   hostBaseUrl: function () {
-    return signedRequestHandler.getHostBaseUrl(this.clientKey());
+    return requestContext.getHostBaseUrl();
   }
 };

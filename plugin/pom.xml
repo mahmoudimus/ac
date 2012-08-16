@@ -27,6 +27,11 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>com.atlassian.analytics</groupId>
+            <artifactId>analytics-api</artifactId>
+            <version>2.12</version>
+        </dependency>
+        <dependency>
             <groupId>asm</groupId>
             <artifactId>asm-util</artifactId>
             <version>3.3.1</version>

@@ -1,12 +1,15 @@
 package com.atlassian.labs.remoteapps.util.http;
 
+import com.atlassian.event.api.EventPublisher;
 import com.atlassian.labs.remoteapps.ContentRetrievalException;
 import com.atlassian.labs.remoteapps.RetrievalTimeoutException;
+import com.atlassian.labs.remoteapps.api.services.http.impl.HttpRequestCancelledEvent;
+import com.atlassian.labs.remoteapps.api.services.http.impl.HttpRequestCompletedEvent;
+import com.atlassian.labs.remoteapps.api.services.http.impl.HttpRequestFailedEvent;
 import com.atlassian.labs.remoteapps.api.services.http.impl.RequestKiller;
 import com.atlassian.labs.remoteapps.util.uri.Uri;
 import com.atlassian.labs.remoteapps.util.uri.UriBuilder;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
-import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.util.concurrent.ThreadFactories;
 import com.google.common.base.Function;
 import com.google.common.collect.Maps;
@@ -14,11 +17,9 @@ import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.AbortableHttpRequest;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
 import org.apache.http.concurrent.FutureCallback;
 import org.apache.http.conn.ClientConnectionRequest;
 import org.apache.http.conn.ConnectionReleaseTrigger;
-import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.cache.CacheConfig;
 import org.apache.http.impl.client.cache.CachingHttpAsyncClient;
 import org.apache.http.impl.nio.client.DefaultHttpAsyncClient;
@@ -39,16 +40,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.ProxySelector;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
 
 import static java.util.Collections.singletonList;
@@ -60,15 +58,15 @@ public class CachingHttpContentRetriever implements DisposableBean, HttpContentR
 {
     private final FlushableHttpCacheStorage httpCacheStorage;
     CachingHttpAsyncClient httpClient;
-    private final UserManager userManager;
     private final Logger log = LoggerFactory.getLogger(CachingHttpContentRetriever.class);
     private final RequestKiller requestKiller;
+    private EventPublisher eventPublisher;
 
-    public CachingHttpContentRetriever(UserManager userManager,
-            PluginRetrievalService pluginRetrievalService, RequestKiller requestKiller)
+    public CachingHttpContentRetriever(PluginRetrievalService pluginRetrievalService,
+                                       RequestKiller requestKiller, EventPublisher eventPublisher)
     {
-        this.userManager = userManager;
         this.requestKiller = requestKiller;
+        this.eventPublisher = eventPublisher;
         CacheConfig cacheConfig = new CacheConfig();
         cacheConfig.setMaxCacheEntries(1000);
         cacheConfig.setSharedCache(false);
@@ -145,62 +143,12 @@ public class CachingHttpContentRetriever implements DisposableBean, HttpContentR
 
     @Override
     public Future<String> getAsync(final AuthorizationGenerator authorizationGenerator, final String remoteUsername,
-            final String originalUrl,
-            final Map<String, String> parameters, final Map<String, String> headers,
-            final HttpContentHandler handler)
-    {
-        return makeCall(authorizationGenerator, remoteUsername, originalUrl, parameters, headers, handler);
-    }
-
-    @Override
-    public String get(final AuthorizationGenerator authorizationGenerator, String remoteUsername, String originalUrl, Map<String, String> parameters) throws
-                                                                                                              ContentRetrievalException
-    {
-        final AtomicReference<String> successResult = new AtomicReference<String>();
-        final AtomicReference<ContentRetrievalException> exceptionRef = new AtomicReference<ContentRetrievalException>();
-        try
-        {
-            makeCall(authorizationGenerator, remoteUsername, originalUrl, parameters,
-                    Collections.<String,String>emptyMap(), new HttpContentHandler()
-            {
-                @Override
-                public void onSuccess(String content)
-                {
-                    successResult.set(content);
-                }
-
-                @Override
-                public void onError(ContentRetrievalException ex)
-                {
-                    exceptionRef.set(ex);
-                }
-            }).get();
-        }
-        catch (InterruptedException e)
-        {
-            // ignore
-        }
-        catch (ExecutionException e)
-        {
-            throw new ContentRetrievalException(e.getCause());
-        }
-
-        if (successResult.get() != null)
-        {
-            return successResult.get();
-        }
-        else
-        {
-            throw exceptionRef.get();
-        }
-    }
-
-    private Future<String> makeCall(final AuthorizationGenerator authorizationGenerator, final String remoteUsername,
             final String url,
-            Map<String, String> parameters, Map<String, String> headers,
-            final HttpContentHandler handler)
+            final Map<String, String> parameters, final Map<String, String> headers,
+            final HttpContentHandler handler, String moduleKey)
     {
-        String urlWithParams = new UriBuilder(Uri.parse(url)).addQueryParameters(parameters).toString();
+        final long start = System.currentTimeMillis();
+        final String urlWithParams = new UriBuilder(Uri.parse(url)).addQueryParameters(parameters).toString();
         final HttpGet httpget = new HttpGet(urlWithParams);
         for (Map.Entry<String,String> entry : headers.entrySet())
         {
@@ -209,15 +157,18 @@ public class CachingHttpContentRetriever implements DisposableBean, HttpContentR
 
         HttpContext localContext = new BasicHttpContext();
         httpget.addHeader(HttpHeaders.AUTHORIZATION, authorizationGenerator.generate(
-                httpget.getMethod(), url, Maps.transformValues(parameters, new Function<String, List<String>>()
-                {
-                    @Override
-                    public List<String> apply(String from)
-                    {
-                        return singletonList(from);
-                    }
-                })));
+            httpget.getMethod(), url, Maps.transformValues(parameters, new Function<String, List<String>>()
+        {
+            @Override
+            public List<String> apply(String from)
+            {
+                return singletonList(from);
+            }
+        })));
 
+        final Map<String, String> properties = Maps.newHashMap();
+        properties.put("purpose", "content-retrieval");
+        properties.put("moduleKey", moduleKey);
 
         log.info("Retrieving content from '{}' for user '{}'", new Object[]{url, remoteUsername});
         FutureCallback<HttpResponse> futureCallback = new FutureCallback<HttpResponse>()
@@ -225,50 +176,59 @@ public class CachingHttpContentRetriever implements DisposableBean, HttpContentR
             @Override
             public void completed(HttpResponse result)
             {
+                long elapsed = System.currentTimeMillis() - start;
                 requestKiller.completedRequest(httpget);
-                if (result.getStatusLine().getStatusCode() == 200)
+                int statusCode = result.getStatusLine().getStatusCode();
+                if (statusCode == 200)
                 {
                     try
                     {
                         String content = EntityUtils.toString(result.getEntity());
+                        eventPublisher.publish(new HttpRequestCompletedEvent(urlWithParams, statusCode, elapsed, properties));
                         handler.onSuccess(content);
                     }
                     catch (IOException e)
                     {
+                        eventPublisher.publish(new HttpRequestFailedEvent(urlWithParams, statusCode, elapsed, properties));
                         log.warn("Unable to retrieve information from '{}' as user '{}' due to: {}",
-                                new Object[]{url, remoteUsername, e.getMessage()});
+                            new Object[]{url, remoteUsername, e.getMessage()});
                         handler.onError(new ContentRetrievalException(
-                                result.getStatusLine().getReasonPhrase()));
+                            result.getStatusLine().getReasonPhrase()));
                     }
                 }
                 else
                 {
+                    eventPublisher.publish(new HttpRequestFailedEvent(urlWithParams, statusCode, elapsed, properties));
                     log.warn(
-                            "Unable to retrieve information from '{}' as user '{}' due to status " +
-                                    "{}",
-                            new Object[]{url, remoteUsername,
-                                    result.getStatusLine().getStatusCode()});
+                        "Unable to retrieve information from '{}' as user '{}' due to status " +
+                            "{}",
+                        new Object[]{url, remoteUsername,
+                            result.getStatusLine().getStatusCode()});
                     handler.onError(new ContentRetrievalException(
-                            result.getStatusLine().getReasonPhrase()));
+                        result.getStatusLine().getReasonPhrase()));
                 }
             }
 
             @Override
             public void failed(Exception ex)
             {
+                long elapsed = System.currentTimeMillis() - start;
                 requestKiller.completedRequest(httpget);
+                eventPublisher.publish(new HttpRequestFailedEvent(urlWithParams, 0, elapsed, properties));
                 log.warn("Unable to retrieve information from '{}' as user '{}' due to: {}",
-                        new Object[]{url, remoteUsername, ex.getMessage()});
+                    new Object[]{url, remoteUsername, ex.getMessage()});
                 handler.onError(new ContentRetrievalException(ex));
             }
 
             @Override
             public void cancelled()
             {
+                long elapsed = System.currentTimeMillis() - start;
                 requestKiller.completedRequest(httpget);
                 log.debug("Request {} cancelled", url);
-                handler.onError(
-                        new RetrievalTimeoutException("Timeout waiting for " + url));
+                RetrievalTimeoutException ex = new RetrievalTimeoutException("Timeout waiting for " + url);
+                handler.onError(ex);
+                eventPublisher.publish(new HttpRequestCancelledEvent(urlWithParams, ex.toString(), elapsed, properties));
             }
         };
         requestKiller.registerRequest(new NotifyingAbortableHttpRequest(httpget, futureCallback), 10);
@@ -282,69 +242,12 @@ public class CachingHttpContentRetriever implements DisposableBean, HttpContentR
         httpClient.getConnectionManager().shutdown();
     }
 
-    @Override
-    public void postIgnoreResponse(final AuthorizationGenerator authorizationGenerator, final String url, String jsonBody)
-    {
-        final String user = userManager.getRemoteUsername();
-        final HttpPost httpPost = new HttpPost(url);
-        httpPost.addHeader(HttpHeaders.AUTHORIZATION, authorizationGenerator.generate(
-                httpPost.getMethod(), url, Collections.<String, List<String>>emptyMap()));
-
-        httpPost.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
-        try
-        {
-            httpPost.setEntity(new StringEntity(jsonBody));
-        }
-        catch (UnsupportedEncodingException e)
-        {
-            throw new RuntimeException(e);
-        }
-        log.info("Posting information to '{}' as user '{}'", url, user);
-        requestKiller.registerRequest(httpPost, 30);
-        httpClient.execute(httpPost, new FutureCallback<HttpResponse>()
-        {
-            @Override
-            public void completed(HttpResponse httpResponse)
-            {
-                requestKiller.completedRequest(httpPost);
-                if (httpResponse.getStatusLine().getStatusCode() != 200)
-                {
-                    log.error("Unable to post to " + url + " due to " + httpResponse.getStatusLine().toString());
-                }
-                else
-                {
-                    log.debug("Posting information to '{}' as user '{}' successful", url, user);
-                }
-            }
-
-            @Override
-            public void failed(Exception e)
-            {
-                requestKiller.completedRequest(httpPost);
-                log.warn("Unable to post information to '{}' as user '{}' due to: {}", new Object
-                        []{url, user, e.getMessage()});
-                if (log.isDebugEnabled())
-                {
-                    log.debug("Exception", e);
-                }
-            }
-
-            @Override
-            public void cancelled()
-            {
-                requestKiller.completedRequest(httpPost);
-                log.debug("Posting information to '{}' as user '{}' cancelled", url, user);
-            }
-        });
-    }
-
     /**
      * This is a huge hack because the httpclient async lib doesn't seem to support aborting
      * requests
      */
     private class NotifyingAbortableHttpRequest implements AbortableHttpRequest
     {
-
         private final AbortableHttpRequest delegate;
         private final FutureCallback<HttpResponse> callback;
         private NotifyingAbortableHttpRequest(AbortableHttpRequest delegate,
@@ -431,4 +334,5 @@ public class CachingHttpContentRetriever implements DisposableBean, HttpContentR
             }
         }
     }
+
 }

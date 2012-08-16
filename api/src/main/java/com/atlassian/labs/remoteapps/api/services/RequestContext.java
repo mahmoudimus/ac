@@ -6,9 +6,7 @@ public interface RequestContext
 
     String getUserId();
 
-    void setClientKey(String clientKey);
-
-    void setUserId(String userId);
+    String getHostBaseUrl();
 
     public void clear();
 }

@@ -1,5 +1,6 @@
 package com.atlassian.labs.remoteapps.container.services;
 
+import com.atlassian.labs.remoteapps.api.services.impl.SignedRequestHandlerServiceFactory;
 import com.atlassian.labs.remoteapps.container.HttpServer;
 import com.atlassian.labs.remoteapps.container.internal.BundleKey;
 import com.atlassian.labs.remoteapps.container.internal.Environment;
@@ -8,12 +9,11 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import org.osgi.framework.Bundle;
-import org.osgi.framework.ServiceFactory;
 import org.osgi.framework.ServiceRegistration;
 
 import java.util.concurrent.ExecutionException;
 
-public final class OAuthSignedRequestHandlerServiceFactory implements ServiceFactory
+public final class OAuthSignedRequestHandlerServiceFactory implements SignedRequestHandlerServiceFactory
 {
     private final Cache<BundleKey, ContainerOAuthSignedRequestHandler> instances;
 
@@ -40,7 +40,7 @@ public final class OAuthSignedRequestHandlerServiceFactory implements ServiceFac
         return getService(bundle);
     }
 
-    ContainerOAuthSignedRequestHandler getService(Bundle bundle)
+    public ContainerOAuthSignedRequestHandler getService(Bundle bundle)
     {
         try
         {

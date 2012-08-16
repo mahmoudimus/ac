@@ -1,17 +1,19 @@
-package com.atlassian.labs.remoteapps.api.services.http;
+package com.atlassian.labs.remoteapps.api.services.http.impl;
 
 import com.atlassian.labs.remoteapps.api.services.ServiceWrappers;
+import com.atlassian.labs.remoteapps.api.services.http.HostHttpClient;
+import com.atlassian.labs.remoteapps.api.services.http.SyncHostHttpClient;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.ServiceFactory;
 import org.osgi.framework.ServiceRegistration;
 
 public class SyncHostHttpClientServiceFactory implements ServiceFactory
 {
-    private HostHttpClientServiceFactory asyncFactory;
+    private HostHttpClientServiceFactory hostHttpClientServiceFactory;
 
-    public SyncHostHttpClientServiceFactory(HostHttpClientServiceFactory asyncFactory)
+    public SyncHostHttpClientServiceFactory(HostHttpClientServiceFactory hostHttpClientServiceFactory)
     {
-        this.asyncFactory = asyncFactory;
+        this.hostHttpClientServiceFactory = hostHttpClientServiceFactory;
     }
 
     @Override
@@ -22,7 +24,7 @@ public class SyncHostHttpClientServiceFactory implements ServiceFactory
 
     public SyncHostHttpClient getService(Bundle bundle)
     {
-        HostHttpClient asyncDelegate = asyncFactory.getService(bundle);
+        HostHttpClient asyncDelegate = hostHttpClientServiceFactory.getService(bundle);
         return ServiceWrappers.wrapAsSync(asyncDelegate, SyncHostHttpClient.class);
     }
 

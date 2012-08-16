@@ -1,9 +1,11 @@
-<div>
+<div id="ra-$namespace">
     <div id="embedded-$namespace"></div>
-    <hr style="border: none; border-top: 1px solid #ddd"/>
-    <div id="ra-stats-$namespace" style="color: gray; font-size: smaller">
-        Loaded from <span id="ra-key-$namespace"><a href="${remoteapp.displayUrl}">$remoteapp.name</a></span>  in
-        <span id="ra-time-$namespace">...</span> ms
+    <div id="ra-stats" style="color: gray; font-size: smaller">
+        <hr style="border: none; border-top: 1px solid #ddd"/>
+        <div class="ra-timeout" style="display: none">$remoteapp.name is not responding.</div>
+        <div class="ra-message" style="display: none">
+            Loaded from <a href="${remoteapp.displayUrl}">$remoteapp.name</a> in <span class="ra-elapsed"></span> ms.
+        </div>
     </div>
     ## @todo figure out how to optimize the scripts generated here
     #foreach ($scriptUrl in $scriptUrls)

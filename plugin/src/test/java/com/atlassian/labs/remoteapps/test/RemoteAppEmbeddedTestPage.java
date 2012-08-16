@@ -114,7 +114,7 @@ public class RemoteAppEmbeddedTestPage
 
     public long getLoadTime()
     {
-        return Long.parseLong(driver.findElement(By.id("ra-time-" + key)).getText());
+        return Long.parseLong(driver.findElement(By.cssSelector("#ra-" + key + " .ra-elapsed")).getText());
     }
 
     public Map<String,String> getIframeQueryParams()

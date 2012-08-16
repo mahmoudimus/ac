@@ -1,6 +1,7 @@
 package com.atlassian.labs.remoteapps.container.internal.kit;
 
 import com.atlassian.labs.remoteapps.api.DescriptorAccessor;
+import com.atlassian.labs.remoteapps.api.services.SignedRequestHandler;
 import com.atlassian.labs.remoteapps.container.internal.Environment;
 import com.atlassian.labs.remoteapps.container.services.ContainerOAuthSignedRequestHandler;
 import org.dom4j.io.OutputFormat;
@@ -26,17 +27,17 @@ public class RegistrationFilter implements Filter
     private final ContainerOAuthSignedRequestHandler requestHandler;
     private static final Logger log = LoggerFactory.getLogger(RegistrationFilter.class);
 
-    public RegistrationFilter(DescriptorAccessor descriptor, Environment environment, ContainerOAuthSignedRequestHandler requestHandler)
+    public RegistrationFilter(DescriptorAccessor descriptor, Environment environment, SignedRequestHandler requestHandler)
     {
         this.descriptorAccessor = descriptor;
-        this.requestHandler = requestHandler;
+        this.requestHandler = (ContainerOAuthSignedRequestHandler) requestHandler;
         this.secret = environment.getOptionalEnv("REGISTRATION_SECRET", "");
     }
 
     private byte[] readDescriptorToBytes()
     {
         ByteArrayOutputStream writer = new ByteArrayOutputStream();
-        XMLWriter xmlWriter = null;
+        XMLWriter xmlWriter;
         try
         {
             xmlWriter = new XMLWriter(writer, OutputFormat.createPrettyPrint());
