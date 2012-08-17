@@ -137,7 +137,7 @@ public final class Container
                 .build());
 
         scannerConfig.setPackageVersions(ImmutableMap.<String, String>builder()
-                .put("com.atlassian.activeobjects.spi*", getVersionFromMavenMetadata("com.atlassian.activeobjects", "activeobjects-spi", "0.19.7-remoteapps-1"))
+                .put("com.atlassian.activeobjects.spi", getVersionFromMavenMetadata("com.atlassian.activeobjects", "activeobjects-spi", "0.19.4"))
                 .put("com.atlassian.event.api*", getVersionFromMavenMetadata("com.atlassian.event", "atlassian-event", "2.2.0-m1"))
                 .put("com.atlassian.plugin*", getVersionFromMavenMetadata("com.atlassian.plugins", "atlassian-plugins-core", "2.13.0-m2"))
                 .put("com.atlassian.sal.api*", getVersionFromMavenMetadata("com.atlassian.sal", "sal-api", "2.7.0"))
@@ -150,6 +150,12 @@ public final class Container
                 .put("org.apache.commons.collections*", "3.2")
                 .put("org.apache.commons.lang*", getVersionFromMavenMetadata("commons-lang", "commons-lang", "2.4"))
                 .put("org.slf4j*", getVersionFromMavenMetadata("org.slf4j", "slf4j-api", "1.6.4"))
+                .build());
+
+        scannerConfig.setPackageExcludes(ImmutableList.<String>builder()
+                .addAll(scannerConfig.getPackageExcludes())
+                .add("com.atlassian.activeobjects*")
+                .add("com.atlassian.dbexporter*")
                 .build());
 
         OsgiPersistentCache osgiCache = new DefaultOsgiPersistentCache(mkdir(".cache/osgi"));

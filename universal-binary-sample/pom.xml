@@ -9,4 +9,131 @@
     </parent>
 
     <artifactId>remoteapps-universal-binary-sample</artifactId>
+    <packaging>atlassian-plugin</packaging>
+
+    <name>Atlassian Remote Apps - Universal Binary Sample</name>
+    <description>A sample Universal Binary apps that uses Java as its main language</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>remoteapps-api</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.activeobjects</groupId>
+            <artifactId>activeobjects-plugin</artifactId>
+            <version>${ao.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>remoteapps-servlet-kit</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>2.4</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- test -->
+        <dependency>
+            <groupId>com.atlassian.labs</groupId>
+            <artifactId>remoteapps-test</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- to install in the webapp -->
+        <dependency>
+            <groupId>com.atlassian.labs</groupId>
+            <artifactId>remoteapps-plugin</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>${project.artifactId}</finalName>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <groupId>com.atlassian.maven.plugins</groupId>
+                <artifactId>maven-amps-plugin</artifactId>
+                <configuration>
+                    <jvmArgs>-Xmx512m -XX:MaxPermSize=192m</jvmArgs>
+                    <extractDependencies>true</extractDependencies>
+                    <skipManifestValidation>true</skipManifestValidation>
+                    <enableDevToolbox>false</enableDevToolbox>
+                    <enableFastdev>false</enableFastdev>
+
+                    <!-- don't install the plugin by default, we use the UniversalBinariesContainerJUnitRunner -->
+                    <installPlugin>false</installPlugin>
+
+                    <systemPropertyVariables>
+                        <xvfb.enable>${xvfb.enable}</xvfb.enable>
+                        <atlassian.mail.senddisabled>false</atlassian.mail.senddisabled>
+                        <sun.net.http.allowRestrictedHeaders>true</sun.net.http.allowRestrictedHeaders>
+                    </systemPropertyVariables>
+
+                    <functionalTestPattern>it/**/Test*.java</functionalTestPattern>
+
+                    <products>
+                        <product>
+                            <id>refapp</id>
+                            <version>${refapp.version}</version>
+                            <log4jProperties>src/test/resources/log4j-refapp.properties</log4jProperties>
+                            <pluginArtifacts>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.labs</groupId>
+                                    <artifactId>remoteapps-plugin</artifactId>
+                                    <version>${project.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.activeobjects</groupId>
+                                    <artifactId>activeobjects-plugin</artifactId>
+                                    <version>${ao.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.activeobjects</groupId>
+                                    <artifactId>activeobjects-refapp-spi</artifactId>
+                                    <version>${ao.version}</version>
+                                </pluginArtifact>
+                            </pluginArtifacts>
+                        </product>
+                    </products>
+                    <testGroups>
+                        <testGroup>
+                            <id>refapp</id>
+                            <productIds>
+                                <productId>refapp</productId>
+                            </productIds>
+                        </testGroup>
+                        <testGroup>
+                            <id>refapp+container</id>
+                            <productIds>
+                                <productId>refapp</productId>
+                            </productIds>
+                            <systemProperties>
+                                <pluginMode>container</pluginMode>
+                            </systemProperties>
+                        </testGroup>
+                    </testGroups>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

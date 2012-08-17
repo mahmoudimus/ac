@@ -1,5 +1,7 @@
 package com.atlassian.labs.remoteapps.junit;
 
+import java.util.Locale;
+
 public enum Mode
 {
     CONTAINER,
@@ -10,7 +12,7 @@ public enum Mode
     {
         if (annotation.mode().equals(PROPERTY))
         {
-            return valueOf(System.getProperty("pluginMode", Mode.INSTALL.name()));
+            return valueOf(System.getProperty("pluginMode", Mode.INSTALL.name()).toUpperCase(Locale.ENGLISH));
         }
         else
         {
