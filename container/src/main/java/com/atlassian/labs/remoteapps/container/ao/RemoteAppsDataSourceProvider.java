@@ -13,7 +13,7 @@ import java.beans.PropertyVetoException;
 import java.sql.Driver;
 import java.sql.SQLException;
 
-import static com.google.common.base.Suppliers.memoize;
+import static com.google.common.base.Suppliers.*;
 
 final class RemoteAppsDataSourceProvider implements DataSourceProvider
 {
@@ -24,10 +24,12 @@ final class RemoteAppsDataSourceProvider implements DataSourceProvider
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
+    private final Supplier<DatabaseInfo> dbInfo;
     private final Supplier<DataSource> dataSource;
 
     RemoteAppsDataSourceProvider()
     {
+        this.dbInfo = memoize(getDatabaseInfo());
         this.dataSource = memoize(getC3p0DataSource());
     }
 
@@ -38,7 +40,7 @@ final class RemoteAppsDataSourceProvider implements DataSourceProvider
             @Override
             public DataSource get()
             {
-                return getC3p0DataSource(getUrl());
+                return getC3p0DataSource(dbInfo.get());
             }
         };
     }
@@ -53,15 +55,15 @@ final class RemoteAppsDataSourceProvider implements DataSourceProvider
         return System.getProperty(DATABASE_URL_KEY, DEFAULT_DATABASE_URL);
     }
 
-    private DataSource getC3p0DataSource(String url)
+    private DataSource getC3p0DataSource(DatabaseInfo info)
     {
         try
         {
-            log.debug("Connecting to database at '{}'", url);
+            log.debug("Connecting to database at '{}'", info);
 
             final ComboPooledDataSource cpds = new ComboPooledDataSource();
-            cpds.setDriverClass(POSTGRES_DRIVER.getName()); //loads the jdbc driver, apparently
-            cpds.setJdbcUrl(url);
+            cpds.setDriverClass(info.driver); //loads the jdbc driver, apparently
+            cpds.setJdbcUrl(info.url);
             return cpds;
         }
         catch (PropertyVetoException e)
@@ -91,12 +93,67 @@ final class RemoteAppsDataSourceProvider implements DataSourceProvider
     @Override
     public DatabaseType getDatabaseType()
     {
-        return DatabaseType.POSTGRESQL;
+        return dbInfo.get().type;
     }
 
     @Override
     public String getSchema()
     {
         return null;
+    }
+
+    private Supplier<DatabaseInfo> getDatabaseInfo()
+    {
+        return new Supplier<DatabaseInfo>()
+        {
+            @Override
+            public DatabaseInfo get()
+            {
+                return getDatabaseInfo(getUrl());
+            }
+        };
+    }
+
+    private DatabaseInfo getDatabaseInfo(String url)
+    {
+        if (url.startsWith("jdbc:postgresql"))
+        {
+            return new DatabaseInfo(url, POSTGRES_DRIVER.getName(), DatabaseType.POSTGRESQL);
+        }
+        else if (url.startsWith("jdbc:hsql"))
+        {
+            return new DatabaseInfo(url, "org.hsqldb.jdbc.JDBCDriver", DatabaseType.HSQL);
+        }
+        else
+        {
+            throw new IllegalStateException("Database URL was neither for HSQL nor for Postgres!: " + url);
+        }
+    }
+
+    private static class DatabaseInfo
+    {
+        final String url;
+        final String driver;
+        final DatabaseType type;
+
+        private DatabaseInfo(String url, String driver, DatabaseType type)
+        {
+            this.url = url;
+            this.driver = driver;
+            this.type = type;
+        }
+
+        private String load(String driver)
+        {
+            try
+            {
+                Class.forName(driver);
+            }
+            catch (ClassNotFoundException e)
+            {
+                throw new IllegalStateException("Could not load driver '" + driver + "'", e);
+            }
+            return driver;
+        }
     }
 }

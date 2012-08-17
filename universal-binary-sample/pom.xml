@@ -59,6 +59,51 @@
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.atlassian.labs</groupId>
+            <artifactId>remoteapps-plugin</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.atlassian.refapp</groupId>
+            <artifactId>atlassian-refapp-pageobjects</artifactId>
+            <version>${refapp.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.confluence</groupId>
+            <artifactId>atlassian-confluence-pageobjects</artifactId>
+            <version>${confluence.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.jira</groupId>
+            <artifactId>atlassian-jira-pageobjects</artifactId>
+            <version>${jira.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.selenium</groupId>
+            <artifactId>atlassian-webdriver-core</artifactId>
+            <version>${atlassian.selenium.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.6</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <version>1.8.0.10</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
     <build>
         <resources>
@@ -114,12 +159,14 @@
                         </product>
                     </products>
                     <testGroups>
+                        <!--
                         <testGroup>
                             <id>refapp</id>
                             <productIds>
                                 <productId>refapp</productId>
                             </productIds>
                         </testGroup>
+                        -->
                         <testGroup>
                             <id>refapp+container</id>
                             <productIds>
@@ -127,6 +174,7 @@
                             </productIds>
                             <systemProperties>
                                 <pluginMode>container</pluginMode>
+                                <DATABASE_URL>jdbc:hsqldb:mem:ra</DATABASE_URL>
                             </systemProperties>
                         </testGroup>
                     </testGroups>

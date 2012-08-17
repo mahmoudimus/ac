@@ -16,5 +16,5 @@
         </oauth>
     </remote-plugin-container>
 
-    <general-page key="ao" name="Active Objects Testing Page" link-name="Active Objects Testing" url="/ao" height="600" width="700" />
+    <general-page key="ao" name="Active Objects Testing Page" link-name="Active Objects Testing" url="/activeObjects" height="600" width="700" />
 </atlassian-plugin>
