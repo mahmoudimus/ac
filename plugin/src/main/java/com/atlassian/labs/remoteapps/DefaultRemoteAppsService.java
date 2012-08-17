@@ -6,6 +6,8 @@ import com.atlassian.labs.remoteapps.api.RemoteAppsService;
 import com.atlassian.labs.remoteapps.installer.RemoteAppInstaller;
 import com.atlassian.labs.remoteapps.installer.SchemeDelegatingRemoteAppInstaller;
 import com.atlassian.labs.remoteapps.util.BundleUtil;
+import com.atlassian.labs.remoteapps.util.RemoteAppManifestReader;
+import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.PluginController;
 import com.atlassian.sal.api.user.UserManager;
@@ -13,12 +15,15 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.osgi.io.internal.OsgiUtils;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Set;
 
 import static com.atlassian.labs.remoteapps.util.RemoteAppManifestReader.getInstallerUser;
 import static com.atlassian.labs.remoteapps.util.RemoteAppManifestReader.isRemoteApp;
+import static com.google.common.collect.Sets.newHashSet;
 
 /**
  * Main remote apps functions
@@ -109,6 +114,35 @@ public class DefaultRemoteAppsService implements RemoteAppsService
         validateCanAuthor(username, appKey);
         pluginController.uninstall(pluginAccessor.getPlugin(appKey));
         log.info("Remote app '{}' uninstalled by '{}' successfully", appKey, username);
+    }
+
+    @Override
+    public Set<String> reinstallRemotePlugins(String remoteUsername)
+    {
+        if (!userManager.isSystemAdmin(remoteUsername))
+        {
+            throw new PermissionDeniedException("Only system administrators are allowed to reinstall "
+                + "all remote plugins");
+        }
+
+        Set<String> reinstalledKeys = newHashSet();
+        for (Plugin plugin : pluginAccessor.getPlugins())
+        {
+            try
+            {
+                Bundle bundle = BundleUtil.findBundleForPlugin(bundleContext, plugin.getKey());
+                if (bundle != null && isRemoteApp(bundle))
+                {
+                    String registrationUri = RemoteAppManifestReader.getRegistrationUrl(bundle);
+                    reinstalledKeys.add(install(remoteUsername, registrationUri, "", false));
+                }
+            }
+            catch (Exception ex)
+            {
+                log.warn("Unable to reinstall remote plugin " + plugin.getKey(), ex);
+            }
+        }
+        return reinstalledKeys;
     }
 
     private void validateCanAuthor(String username, String appKey)

@@ -26,6 +26,7 @@ import java.io.StringWriter;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
+import java.util.Set;
 
 /**
  *
@@ -109,6 +110,28 @@ public class InstallerResource
             return Response.status(Response.Status.BAD_REQUEST).entity(ex.getMessage()).build();
         }
         return Response.ok().build();
+    }
+
+    @POST
+    @Path("/reinstall")
+    @Produces("text/plain")
+    public Response reinstall()
+    {
+        Set<String> keys = null;
+        try
+        {
+            keys = remoteAppsService.reinstallRemotePlugins(userManager.getRemoteUsername());
+        }
+        catch (PermissionDeniedException ex)
+        {
+            return Response.status(Response.Status.FORBIDDEN).entity(ex.getMessage()).build();
+        }
+        catch (InstallationFailedException ex)
+        {
+            log.debug(ex.getMessage(), ex);
+            return Response.status(Response.Status.BAD_REQUEST).entity(ex.getMessage()).build();
+        }
+        return Response.ok().entity(keys.toString()).build();
     }
 
     @GET

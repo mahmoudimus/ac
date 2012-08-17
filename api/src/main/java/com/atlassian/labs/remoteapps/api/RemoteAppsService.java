@@ -2,6 +2,8 @@ package com.atlassian.labs.remoteapps.api;
 
 import org.dom4j.Document;
 
+import java.util.Set;
+
 /**
  * Main remote apps functions
  */
@@ -20,4 +22,6 @@ public interface RemoteAppsService
             PermissionDeniedException, InstallationFailedException;
 
     void uninstall(String username, String appKey) throws PermissionDeniedException;
+
+    Set<String> reinstallRemotePlugins(String remoteUsername);
 }

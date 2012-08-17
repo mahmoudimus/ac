@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Maps.transformValues;
 import static java.util.Collections.singletonList;
@@ -135,6 +136,7 @@ public class RemoteAppAccessorFactory implements DisposableBean
     public RemoteAppAccessor create(String pluginKey, URI displayUrl)
     {
         Plugin plugin = pluginAccessor.getPlugin(pluginKey);
+        checkNotNull(plugin, "Plugin not found: {}", pluginKey);
         URI dummyUri = URI.create("http://localhost");
         ServiceProvider dummyProvider = new ServiceProvider(dummyUri, dummyUri, dummyUri);
 

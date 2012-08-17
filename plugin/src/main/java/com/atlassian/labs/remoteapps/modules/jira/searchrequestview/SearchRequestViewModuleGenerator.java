@@ -36,6 +36,7 @@ public class SearchRequestViewModuleGenerator implements RemoteModuleGenerator
         return DocumentBasedSchema.builder("remote-search-request-view")
                 .setPlugin(plugin)
                 .setName(getName())
+                .setElementName(getType())
                 .setDescription(getDescription())
                 .build();
     }

@@ -3,7 +3,7 @@
 
     <xs:include schemaLocation="panel.xsd" />
 
-    <xs:complexType name="ViewIssuePanelPageType">
+    <xs:complexType name="IssuePanelPageType">
         <xs:complexContent>
             <xs:restriction base="PanelType" />
         </xs:complexContent>
