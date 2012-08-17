@@ -82,9 +82,14 @@
 
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>remoteapps-test</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>remoteapps-container</artifactId>
             <version>${project.version}</version>
-            <type>jar</type>
             <scope>test</scope>
         </dependency>
 
