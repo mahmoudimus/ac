@@ -171,11 +171,15 @@
             <manifest-producer class="com.atlassian.labs.remoteapps.modules.applinks.RemotePluginContainerManifestProducer"/>
     </applinks-application-type>
 
-    <module-type key="remote-plugin-container" class="com.atlassian.labs.remoteapps.modules.applinks.RemotePluginContainerModuleDescriptor" />
-
     <module-type key="described-module-type" class="com.atlassian.labs.remoteapps.integration.plugins.DescribedModuleTypeModuleDescriptor" />
 
     <!-- remote extension points -->
+
+    <described-module-type key="remote-plugin-container" name="Remote Plugin Container"
+                               class="com.atlassian.labs.remoteapps.modules.applinks.RemotePluginContainerModuleDescriptor">
+            <description>The server that is hosting this plugin</description>
+    </described-module-type>
+
     <described-module-type key="webhook" name="Web Hook" class="com.atlassian.labs.remoteapps.modules.webhook.WebHookModuleDescriptor"
                            schema-transformer-class="com.atlassian.labs.remoteapps.modules.webhook.WebHookSchemaFactory">
         <description>Registration for a web hook callback from an internal event</description>

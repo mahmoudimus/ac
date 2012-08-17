@@ -88,4 +88,6 @@
             </xs:annotation>
         </xs:attribute>
     </xs:complexType>
+
+    <xs:element name="atlassian-plugin" type="AtlassianPluginType" />
 </xs:schema>

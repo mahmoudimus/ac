@@ -3,7 +3,6 @@
 
     <xs:include schemaLocation="common.xsd" />
     <xs:include schemaLocation="oauth.xsd"/>
-    <xs:include schemaLocation="entity-type.xsd"/>
 
     <xs:complexType name="RemotePluginContainerType">
         <xs:choice minOccurs="1" maxOccurs="unbounded">
