@@ -255,14 +255,15 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
     JarPluginArtifact convertPluginDescriptorIntoJar(final String pluginKey, final Document document, String username, URI registrationUrl)
     {
         // todo: should filter out unsafe modules checking permissions, and support jars (otherwise, i18n is broken)
-        final Manifest mf = new Manifest();
-
-        mf.getMainAttributes().putValue(Attributes.Name.MANIFEST_VERSION.toString(), "1");
-        mf.getMainAttributes().putValue("Remote-Plugin",
-                "installer;user=\"" + username + "\";date=\"" + System.currentTimeMillis() + "\"" +
-                        ";registration-url=\"" + registrationUrl + "\"");
 
         descriptorValidator.validate(registrationUrl, document);
+
+        // fixme: plugin osgi manifest generator should respect existing entries, but it currently just blows everything away,
+        // so we have to store the values in the plugin descriptor instead
+        document.getRootElement().element("plugin-info").addElement("bundle-instructions")
+                .addElement("Remote-Plugin").addText("installer;user=\"" + username + "\";date=\"" + System.currentTimeMillis() + "\"" +
+                        ";registration-url=\"" + registrationUrl + "\"");
+
 
         return new JarPluginArtifact(
             ZipBuilder.buildZip("install-" + pluginKey, new ZipHandler()
@@ -271,9 +272,6 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
                 public void build(ZipBuilder builder) throws IOException
                 {
                     builder.addFile("atlassian-plugin.xml", document);
-                    ByteArrayOutputStream bout = new ByteArrayOutputStream();
-                    mf.write(bout);
-                    builder.addFile("META-INF/MANIFEST.MF", new ByteArrayInputStream(bout.toByteArray()));
                     builder.addFile(CLASSES_TO_INCLUDE_CLASS_PATH, new ByteArrayInputStream(
                             classesToIncludeClass));
                 }

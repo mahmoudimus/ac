@@ -228,7 +228,9 @@ public final class Container
         final RemoteAppsPluginSettingsFactory pluginSettingsFactory = new RemoteAppsPluginSettingsFactory();
 
         hostComponents.put(PluginSettingsFactory.class, pluginSettingsFactory);
-        hostComponents.put(ApplicationProperties.class, new RemoteAppsApplicationPropertiesServiceFactory(server));
+        final RemoteAppsApplicationPropertiesServiceFactory applicationPropertiesServiceFactory = new RemoteAppsApplicationPropertiesServiceFactory(
+                server);
+        hostComponents.put(ApplicationProperties.class, applicationPropertiesServiceFactory);
 
         hostComponents.put(EventPublisher.class, new RemoteAppsEventPublisher());
 
@@ -262,7 +264,8 @@ public final class Container
         hostComponents.put(HostHttpClient.class, hostHttpClientServiceFactory);
         hostComponents.put(SyncHostHttpClient.class, syncHostHttpClientServiceFactory);
 
-        hostComponents.put(DataSourceProvider.class, new RemoteAppsDataSourceProviderServiceFactory());
+        hostComponents.put(DataSourceProvider.class, new RemoteAppsDataSourceProviderServiceFactory(
+                applicationPropertiesServiceFactory));
         hostComponents.put(TransactionTemplate.class, new NoOpTransactionTemplate());
     }
 

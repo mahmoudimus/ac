@@ -179,6 +179,12 @@
         </dependency>
 
         <dependency>
+        	<groupId>org.hsqldb</groupId>
+        	<artifactId>hsqldb</artifactId>
+        	<version>2.2.8</version>
+        </dependency>
+
+        <dependency>
             <!-- we use this one as it has the proper directory entries to ensure it gets picked
                  up during package scanning -->
             <groupId>org.json</groupId>

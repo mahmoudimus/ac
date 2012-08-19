@@ -2,6 +2,7 @@ package com.atlassian.labs.remoteapps.container.ao;
 
 import com.atlassian.activeobjects.spi.DataSourceProvider;
 import com.atlassian.activeobjects.spi.DatabaseType;
+import com.atlassian.sal.api.ApplicationProperties;
 import com.google.common.base.Supplier;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 import com.mchange.v2.c3p0.DataSources;
@@ -10,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
 import java.beans.PropertyVetoException;
+import java.io.File;
 import java.sql.Driver;
 import java.sql.SQLException;
 
@@ -18,7 +20,6 @@ import static com.google.common.base.Suppliers.*;
 final class RemoteAppsDataSourceProvider implements DataSourceProvider
 {
     private static final String DATABASE_URL_KEY = "DATABASE_URL";
-    private static final String DEFAULT_DATABASE_URL = "jdbc:postgresql://localhost/ra?user=ra_user&password=ra_pwd";
 
     private static final Class<? extends Driver> POSTGRES_DRIVER = org.postgresql.Driver.class;
 
@@ -26,11 +27,16 @@ final class RemoteAppsDataSourceProvider implements DataSourceProvider
 
     private final Supplier<DatabaseInfo> dbInfo;
     private final Supplier<DataSource> dataSource;
+    private final String databaseUrl;
 
-    RemoteAppsDataSourceProvider()
+    RemoteAppsDataSourceProvider(ApplicationProperties applicationProperties)
     {
         this.dbInfo = memoize(getDatabaseInfo());
         this.dataSource = memoize(getC3p0DataSource());
+
+        File dataDir = new File(applicationProperties.getHomeDirectory(), "data");
+        dataDir.mkdir();
+        this.databaseUrl = System.getProperty(DATABASE_URL_KEY, "jdbc:hsqldb:file:" + dataDir.getAbsolutePath() + "/db");
     }
 
     private Supplier<DataSource> getC3p0DataSource()
@@ -52,7 +58,7 @@ final class RemoteAppsDataSourceProvider implements DataSourceProvider
 
     private String getDatabaseUrl()
     {
-        return System.getProperty(DATABASE_URL_KEY, DEFAULT_DATABASE_URL);
+        return this.databaseUrl;
     }
 
     private DataSource getC3p0DataSource(DatabaseInfo info)

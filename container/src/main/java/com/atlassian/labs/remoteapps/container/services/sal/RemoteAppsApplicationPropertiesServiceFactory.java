@@ -2,6 +2,7 @@ package com.atlassian.labs.remoteapps.container.services.sal;
 
 import com.atlassian.labs.remoteapps.container.HttpServer;
 import com.atlassian.plugin.osgi.util.OsgiHeaderUtil;
+import com.atlassian.sal.api.ApplicationProperties;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.ServiceFactory;
 import org.osgi.framework.ServiceRegistration;
@@ -22,7 +23,12 @@ public class RemoteAppsApplicationPropertiesServiceFactory implements ServiceFac
     public Object getService(Bundle bundle, ServiceRegistration registration)
     {
         String appKey = OsgiHeaderUtil.getPluginKey(bundle);
-        return new RemoteAppsApplicationProperties(httpServer.getLocalMountBaseUrl(appKey));
+        return getService(appKey);
+    }
+
+    public ApplicationProperties getService(String pluginKey)
+    {
+        return new RemoteAppsApplicationProperties(httpServer.getLocalMountBaseUrl(pluginKey));
     }
 
     @Override

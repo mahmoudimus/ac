@@ -97,13 +97,6 @@
             <version>2.6</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>hsqldb</groupId>
-            <artifactId>hsqldb</artifactId>
-            <version>1.8.0.10</version>
-            <scope>test</scope>
-        </dependency>
-
     </dependencies>
     <build>
         <resources>
@@ -174,7 +167,6 @@
                             </productIds>
                             <systemProperties>
                                 <pluginMode>container</pluginMode>
-                                <DATABASE_URL>jdbc:hsqldb:mem:ra</DATABASE_URL>
                             </systemProperties>
                         </testGroup>
                     </testGroups>
