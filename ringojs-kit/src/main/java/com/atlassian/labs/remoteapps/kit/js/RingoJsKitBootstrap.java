@@ -1,16 +1,12 @@
 package com.atlassian.labs.remoteapps.kit.js;
 
-import com.atlassian.labs.remoteapps.api.DescriptorAccessor;
-import com.atlassian.labs.remoteapps.api.HttpResourceMounter;
-import com.atlassian.labs.remoteapps.api.PolygotDescriptorAccessor;
+import com.atlassian.labs.remoteapps.api.service.HttpResourceMounter;
 import com.atlassian.labs.remoteapps.kit.js.ringojs.RingoEngine;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import org.osgi.framework.BundleContext;
 import org.ringojs.jsgi.JsgiServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.File;
 
 /**
  *

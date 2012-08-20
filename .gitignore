@@ -13,7 +13,7 @@ tags
 release.properties
 pom.release.xml
 
-
+dependency-reduced-pom.xml
 .cache
 data
 apps

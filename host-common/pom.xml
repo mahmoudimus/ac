@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <parent>
+        <groupId>com.atlassian.labs</groupId>
+        <artifactId>remoteapps-parent</artifactId>
+        <version>${VERSION_NUMBER}</version>
+    </parent>
+
+
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>remoteapps-host-common</artifactId>
+    <name>Atlassian Remote Apps - Host Common</name>
+    <description>
+        Common classes meant for environments that host version 3 plugins
+    </description>
+
+    <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>remoteapps-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+ 
+        <dependency>
+            <groupId>com.atlassian.analytics</groupId>
+            <artifactId>analytics-api</artifactId>
+            <version>2.12</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.inject</groupId>
+            <artifactId>javax.inject</artifactId>
+            <version>1</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>2.5</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.oauth.core</groupId>
+            <artifactId>oauth</artifactId>
+            <version>20090617</version>
+        </dependency>
+        <dependency>
+            <groupId>net.oauth.core</groupId>
+            <artifactId>oauth-provider</artifactId>
+            <version>20090531</version>
+        </dependency>
+        <dependency>
+            <groupId>net.oauth.core</groupId>
+            <artifactId>oauth-consumer</artifactId>
+            <version>20090617</version>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.plugins</groupId>
+            <artifactId>atlassian-plugins-osgi</artifactId>
+            <version>${plugins.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.plugins</groupId>
+            <artifactId>atlassian-plugins-servlet</artifactId>
+            <version>${plugins.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.applinks</groupId>
+            <artifactId>applinks-spi</artifactId>
+            <version>${applinks.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.applinks</groupId>
+            <artifactId>applinks-api</artifactId>
+            <version>${applinks.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.sal</groupId>
+            <artifactId>sal-api</artifactId>
+            <version>${sal.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpasyncclient</artifactId>
+            <version>4.0-beta1</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>1.4</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>1.10</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>2.5.6</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.osgi</groupId>
+            <artifactId>spring-osgi-core</artifactId>
+            <version>1.2.1</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+</project>

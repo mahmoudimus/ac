@@ -1,6 +1,7 @@
 package it;
 
-import com.atlassian.labs.remoteapps.api.services.SignedRequestHandler;
+import com.atlassian.labs.remoteapps.api.service.SignedRequestHandler;
+import com.atlassian.labs.remoteapps.spi.Permissions;
 import com.atlassian.labs.remoteapps.test.HttpUtils;
 import com.atlassian.labs.remoteapps.test.MessagePage;
 import com.atlassian.labs.remoteapps.test.RemoteAppRunner;
@@ -35,9 +36,11 @@ public class TestAppPermissions extends AbstractRemoteAppTest
         RunnerSignedRequestHandler signedRequestHandler = createSignedRequestHandler("noPermissions");
         RemoteAppRunner runner = new RemoteAppRunner(product.getProductInstance().getBaseUrl(),
                 "noPermissions")
-                .addGeneralPage("page", "Page", "/page", new CallServlet(product.getProductInstance().getBaseUrl(), signedRequestHandler))
+                .addGeneralPage("page", "Page", "/page",
+                        new CallServlet(product.getProductInstance().getBaseUrl(), signedRequestHandler))
                 .description("foo")
                 .addOAuth(signedRequestHandler)
+                .addPermission(Permissions.CREATE_OAUTH_LINK)
                 .start();
 
         String status = product.visit(MessagePage.class, "noPermissions", "page")

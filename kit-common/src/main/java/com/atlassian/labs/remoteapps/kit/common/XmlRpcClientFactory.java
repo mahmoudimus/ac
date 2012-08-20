@@ -1,6 +1,6 @@
 package com.atlassian.labs.remoteapps.kit.common;
 
-import com.atlassian.labs.remoteapps.api.services.SignedRequestHandler;
+import com.atlassian.labs.remoteapps.api.service.SignedRequestHandler;
 import redstone.xmlrpc.XmlRpcClient;
 
 import java.net.MalformedURLException;

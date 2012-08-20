@@ -5,11 +5,10 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.dom4j.Document;
-import org.dom4j.io.SAXReader;
 
 import java.io.StringReader;
 
-import static com.atlassian.labs.remoteapps.api.XmlUtils.createSecureSaxReader;
+import static com.atlassian.labs.remoteapps.spi.util.XmlUtils.createSecureSaxReader;
 
 /**
  *

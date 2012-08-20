@@ -22,6 +22,11 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>remoteapps-host-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>remoteapps-kit-common</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
@@ -59,12 +64,6 @@
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpasyncclient</artifactId>
             <version>4.0-beta1</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.json</groupId>
-            <artifactId>json</artifactId>
-            <version>20090211</version>
         </dependency>
 
         <dependency>
@@ -472,23 +471,8 @@
                         </DynamicImport-Package>
                         <Export-Package>
                             javax.inject;version="1",
-                            com.atlassian.labs.remoteapps.modules.confluence,
-                            com.atlassian.labs.remoteapps.modules.permissions.scope,
-                            com.atlassian.labs.remoteapps.modules.page.jira,
-                            com.atlassian.labs.remoteapps.descriptor.external,
-                            com.atlassian.labs.remoteapps.modules.external,
-                            com.atlassian.labs.remoteapps.event,
-                            com.atlassian.labs.remoteapps.spi.modules,
-                            com.atlassian.labs.remoteapps.api,
-                            com.atlassian.labs.remoteapps.api.applinks,
-                            com.atlassian.labs.remoteapps.api.annotation,
-                            com.atlassian.labs.remoteapps.api.services,
-                            com.atlassian.labs.remoteapps.api.services.impl,
-                            com.atlassian.labs.remoteapps.api.services.http,
-                            com.atlassian.labs.remoteapps.api.services.http.impl,
-                            com.atlassian.labs.remoteapps.api.universalbinary,
-                            com.atlassian.labs.remoteapps.api.universalbinary.impl,
-                            com.atlassian.labs.remoteapps.webhook.external
+                            com.atlassian.labs.remoteapps.spi*,
+                            com.atlassian.labs.remoteapps.api*
                         </Export-Package>
                         <Spring-Context>*;timeout:=60</Spring-Context>
                     </instructions>

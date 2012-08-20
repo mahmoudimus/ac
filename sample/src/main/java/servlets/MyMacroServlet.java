@@ -1,7 +1,7 @@
 package servlets;
 
 import com.atlassian.labs.remoteapps.api.annotation.ServiceReference;
-import com.atlassian.labs.remoteapps.api.services.SignedRequestHandler;
+import com.atlassian.labs.remoteapps.api.service.SignedRequestHandler;
 
 import javax.inject.Singleton;
 import javax.servlet.ServletException;

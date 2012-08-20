@@ -3,7 +3,7 @@ package servlets;
 import ao.model.SampleEntity;
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.labs.remoteapps.api.annotation.ServiceReference;
-import com.atlassian.labs.remoteapps.api.services.SignedRequestHandler;
+import com.atlassian.labs.remoteapps.api.service.SignedRequestHandler;
 
 import javax.inject.Singleton;
 import javax.servlet.ServletException;

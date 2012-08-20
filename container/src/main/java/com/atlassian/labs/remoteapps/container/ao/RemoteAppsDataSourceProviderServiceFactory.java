@@ -1,8 +1,7 @@
 package com.atlassian.labs.remoteapps.container.ao;
 
-import com.atlassian.labs.remoteapps.container.services.sal.RemoteAppsApplicationPropertiesServiceFactory;
+import com.atlassian.labs.remoteapps.container.service.sal.RemoteAppsApplicationPropertiesServiceFactory;
 import com.atlassian.plugin.osgi.util.OsgiHeaderUtil;
-import com.atlassian.sal.api.ApplicationProperties;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.ServiceFactory;
 import org.osgi.framework.ServiceRegistration;

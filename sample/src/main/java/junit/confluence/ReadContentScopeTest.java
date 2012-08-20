@@ -1,6 +1,6 @@
 package junit.confluence;
 
-import com.atlassian.labs.remoteapps.api.services.SignedRequestHandler;
+import com.atlassian.labs.remoteapps.api.service.SignedRequestHandler;
 import com.atlassian.labs.remoteapps.kit.common.XmlRpcClientFactory;
 import services.SignedRequestHandlerAccessor;
 import org.junit.Test;

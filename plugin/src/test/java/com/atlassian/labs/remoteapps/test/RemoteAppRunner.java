@@ -23,7 +23,7 @@ import java.util.Map;
 
 import static com.atlassian.labs.remoteapps.test.HttpUtils.renderHtml;
 import static com.atlassian.labs.remoteapps.test.Utils.pickFreePort;
-import static com.atlassian.labs.remoteapps.util.EncodingUtils.encodeBase64;
+import static com.atlassian.labs.remoteapps.plugin.util.EncodingUtils.encodeBase64;
 import static com.google.common.collect.Maps.newHashMap;
 import static org.mockito.Mockito.mock;
 

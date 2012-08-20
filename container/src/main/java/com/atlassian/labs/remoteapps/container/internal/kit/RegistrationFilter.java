@@ -1,9 +1,9 @@
 package com.atlassian.labs.remoteapps.container.internal.kit;
 
-import com.atlassian.labs.remoteapps.api.DescriptorAccessor;
-import com.atlassian.labs.remoteapps.api.services.SignedRequestHandler;
+import com.atlassian.labs.remoteapps.host.common.descriptor.DescriptorAccessor;
+import com.atlassian.labs.remoteapps.api.service.SignedRequestHandler;
 import com.atlassian.labs.remoteapps.container.internal.Environment;
-import com.atlassian.labs.remoteapps.container.services.ContainerOAuthSignedRequestHandler;
+import com.atlassian.labs.remoteapps.container.service.ContainerOAuthSignedRequestHandler;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 import org.slf4j.Logger;

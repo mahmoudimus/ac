@@ -1,8 +1,6 @@
 package com.atlassian.labs.remoteapps.test;
 
-import com.atlassian.labs.remoteapps.api.services.SignedRequestHandler;
 import com.atlassian.labs.remoteapps.container.internal.Environment;
-import com.atlassian.labs.remoteapps.container.services.ContainerOAuthSignedRequestHandler;
 import org.apache.commons.io.IOUtils;
 import org.bouncycastle.openssl.PEMWriter;
 import org.dom4j.Document;
@@ -17,7 +15,7 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 
-import static com.atlassian.labs.remoteapps.api.XmlUtils.createSecureSaxReader;
+import static com.atlassian.labs.remoteapps.spi.util.XmlUtils.createSecureSaxReader;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 

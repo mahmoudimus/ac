@@ -1,7 +1,7 @@
 package services;
 
 
-import com.atlassian.labs.remoteapps.api.services.SignedRequestHandler;
+import com.atlassian.labs.remoteapps.api.service.SignedRequestHandler;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;

@@ -44,6 +44,11 @@
         <xs:restriction base="xs:string"/>
     </xs:simpleType>
 
+    <xs:simpleType name="PermissionValueType">
+        <xs:restriction base="xs:string">
+        </xs:restriction>
+    </xs:simpleType>
+
     <xs:simpleType name="PixelType">
         <xs:restriction base="xs:integer">
             <xs:minInclusive value="0" />

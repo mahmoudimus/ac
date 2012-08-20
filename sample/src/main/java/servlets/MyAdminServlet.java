@@ -1,9 +1,9 @@
 package servlets;
 
 import com.atlassian.labs.remoteapps.api.annotation.ServiceReference;
-import com.atlassian.labs.remoteapps.api.services.SignedRequestHandler;
-import com.atlassian.labs.remoteapps.api.services.http.Response;
-import com.atlassian.labs.remoteapps.api.services.http.SyncHostHttpClient;
+import com.atlassian.labs.remoteapps.api.service.SignedRequestHandler;
+import com.atlassian.labs.remoteapps.api.service.http.Response;
+import com.atlassian.labs.remoteapps.api.service.http.SyncHostHttpClient;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;

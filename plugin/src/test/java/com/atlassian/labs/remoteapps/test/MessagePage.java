@@ -1,6 +1,6 @@
 package com.atlassian.labs.remoteapps.test;
 
-import com.atlassian.labs.remoteapps.modules.page.RemotePageDescriptorCreator;
+import com.atlassian.labs.remoteapps.plugin.module.page.RemotePageDescriptorCreator;
 import com.atlassian.pageobjects.Page;
 
 public class MessagePage extends RemoteAppEmbeddedTestPage implements Page

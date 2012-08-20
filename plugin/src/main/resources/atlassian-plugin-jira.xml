@@ -1,10 +1,10 @@
 <application key="jira">
-    <component key="jiraProductAccessor" class="com.atlassian.labs.remoteapps.product.jira.JiraProductAccessor"/>
+    <component key="jiraProductAccessor" class="com.atlassian.labs.remoteapps.plugin.product.jira.JiraProductAccessor"/>
 
     <web-item key="general-dropdown-item" section="system.top.navigation.bar" weight="100">
         <label>Remote Apps</label>
         <link linkId="general_dropdown_linkId"/>
-        <condition class="com.atlassian.labs.remoteapps.modules.jira.HasGeneralPagesCondition" />
+        <condition class="com.atlassian.labs.remoteapps.plugin.module.jira.HasGeneralPagesCondition" />
     </web-item>
 
     <web-section key="remoteapps.general" location="general_dropdown_linkId">
@@ -12,39 +12,39 @@
 
     <!-- remote module generators -->
 
-    <component key="issue-panel-page-generator" class="com.atlassian.labs.remoteapps.modules.jira.issuepanel.ViewIssuePanelModuleGenerator" />
-    <component key="issue-tab-page-generator" class="com.atlassian.labs.remoteapps.modules.jira.issuetab.IssueTabPageModuleGenerator" />
-    <component key="project-tab-page-generator" class="com.atlassian.labs.remoteapps.modules.jira.projecttab.ProjectTabModuleGenerator" />
-    <component key="profile-page-generator" class="com.atlassian.labs.remoteapps.modules.page.jira.JiraProfileTabModuleGenerator" />
-    <component key="search-request-view-page-generator" class="com.atlassian.labs.remoteapps.modules.jira.searchrequestview.SearchRequestViewModuleGenerator" />
+    <component key="issue-panel-page-generator" class="com.atlassian.labs.remoteapps.plugin.module.jira.issuepanel.ViewIssuePanelModuleGenerator" />
+    <component key="issue-tab-page-generator" class="com.atlassian.labs.remoteapps.plugin.module.jira.issuetab.IssueTabPageModuleGenerator" />
+    <component key="project-tab-page-generator" class="com.atlassian.labs.remoteapps.plugin.module.jira.projecttab.ProjectTabModuleGenerator" />
+    <component key="profile-page-generator" class="com.atlassian.labs.remoteapps.plugin.module.page.jira.JiraProfileTabModuleGenerator" />
+    <component key="search-request-view-page-generator" class="com.atlassian.labs.remoteapps.plugin.module.jira.searchrequestview.SearchRequestViewModuleGenerator" />
 
     <!-- api scopes -->
     <component key="read_users_and_groups"
-               class="com.atlassian.labs.remoteapps.product.jira.JiraReadUsersAndGroupsScope"
+               class="com.atlassian.labs.remoteapps.plugin.product.jira.JiraReadUsersAndGroupsScope"
                />
     <component key="browse_projects"
-               class="com.atlassian.labs.remoteapps.product.jira.BrowseProjectsScope"
+               class="com.atlassian.labs.remoteapps.plugin.product.jira.BrowseProjectsScope"
                name="Browse Projects"
                 />
     <component key="create_issues"
-               class="com.atlassian.labs.remoteapps.product.jira.JiraCreateIssuesScope" />
+               class="com.atlassian.labs.remoteapps.plugin.product.jira.JiraCreateIssuesScope" />
     <component key="edit_issues"
-               class="com.atlassian.labs.remoteapps.product.jira.JiraEditIssuesScope" />
+               class="com.atlassian.labs.remoteapps.plugin.product.jira.JiraEditIssuesScope" />
     <component key="resolve_issues"
-               class="com.atlassian.labs.remoteapps.product.jira.JiraResolveIssuesScope" />
+               class="com.atlassian.labs.remoteapps.plugin.product.jira.JiraResolveIssuesScope" />
 
-    <component key="WebHookProvider" class="com.atlassian.labs.remoteapps.product.jira.JiraWebHookProvider" />
+    <component key="WebHookProvider" class="com.atlassian.labs.remoteapps.plugin.product.jira.JiraWebHookProvider" />
 
-    <component key="EventSerializerFactory" class="com.atlassian.labs.remoteapps.product.jira.webhook.JiraEventSerializerFactory" />
+    <component key="EventSerializerFactory" class="com.atlassian.labs.remoteapps.plugin.product.jira.webhook.JiraEventSerializerFactory" />
 
-    <component key="WebSudoElevator" class="com.atlassian.labs.remoteapps.product.jira.JiraWebSudoElevator" />
+    <component key="WebSudoElevator" class="com.atlassian.labs.remoteapps.plugin.product.jira.JiraWebSudoElevator" />
 
-    <component key="host" class="com.atlassian.labs.remoteapps.modules.ServletContextThreadLocalIFrameHost" />
+    <component key="host" class="com.atlassian.labs.remoteapps.plugin.module.ServletContextThreadLocalIFrameHost" />
 
     <rest key="rest" path="/remoteapps" version="1">
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>INCLUDE</dispatcher>
-        <package>com.atlassian.labs.remoteapps.rest</package>
+        <package>com.atlassian.labs.remoteapps.plugin.rest</package>
     </rest>
 
     <component-import key="jiraAuthenticationContext" interface="com.atlassian.jira.security.JiraAuthenticationContext" />
@@ -53,30 +53,30 @@
     <component-import key="searchRequestURLHandler" interface="com.atlassian.jira.plugin.searchrequestview.SearchRequestURLHandler" />
 
     <!-- plugin points -->
-    <described-module-type key="profile-page" name="User Profile Page" class="com.atlassian.labs.remoteapps.modules.page.jira.JiraProfileTabModuleDescriptor">
+    <described-module-type key="profile-page" name="User Profile Page" class="com.atlassian.labs.remoteapps.plugin.module.page.jira.JiraProfileTabModuleDescriptor">
         <description>A user profile page decorated as a user profile tab</description>
     </described-module-type>
 
-    <described-module-type key="remote-search-request-view" class="com.atlassian.labs.remoteapps.modules.jira.searchrequestview.RemoteSearchRequestViewModuleDescriptor">
+    <described-module-type key="remote-search-request-view" class="com.atlassian.labs.remoteapps.plugin.module.jira.searchrequestview.RemoteSearchRequestViewModuleDescriptor">
         <description>
             A search request view that redirects to the url with found issue keys as the
             'issues' query parameter
         </description>
     </described-module-type>
 
-    <described-module-type key="project-tab-page" class="com.atlassian.labs.remoteapps.modules.jira.projecttab.ProjectTabPageModuleDescriptor">
+    <described-module-type key="project-tab-page" class="com.atlassian.labs.remoteapps.plugin.module.jira.projecttab.ProjectTabPageModuleDescriptor">
         <description>
             A remote page decorated as its own JIRA project tab
         </description>
     </described-module-type>
 
-    <described-module-type key="issue-tab-page" class="com.atlassian.labs.remoteapps.modules.jira.issuetab.IssueTabPageModuleDescriptor">
+    <described-module-type key="issue-tab-page" class="com.atlassian.labs.remoteapps.plugin.module.jira.issuetab.IssueTabPageModuleDescriptor">
         <description>
             A remote page decorated as its own JIRA issue tab but not included in All tab as it has no individual actions
         </description>
     </described-module-type>
 
-    <described-module-type key="issue-panel-page" class="com.atlassian.labs.remoteapps.modules.jira.issuepanel.IssuePanelPageModuleDescriptor">
+    <described-module-type key="issue-panel-page" class="com.atlassian.labs.remoteapps.plugin.module.jira.issuepanel.IssuePanelPageModuleDescriptor">
         <description>
             A remote page decorated as a web panel on the view issue page
         </description>

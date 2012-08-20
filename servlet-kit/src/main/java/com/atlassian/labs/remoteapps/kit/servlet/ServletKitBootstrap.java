@@ -1,6 +1,6 @@
 package com.atlassian.labs.remoteapps.kit.servlet;
 
-import com.atlassian.labs.remoteapps.api.HttpResourceMounter;
+import com.atlassian.labs.remoteapps.api.service.HttpResourceMounter;
 import com.atlassian.labs.remoteapps.api.annotation.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

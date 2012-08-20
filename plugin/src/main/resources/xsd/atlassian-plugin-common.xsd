@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" id="sdf"
+           xmlns:xhtml="http://www.w3.org/1999/xhtml">
+
+    <xs:include schemaLocation="common.xsd"/>
+
+    <xs:simpleType name="ApplicationType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="confluence"/>
+            <xs:enumeration value="jira"/>
+            <xs:enumeration value="fecru"/>
+            <xs:enumeration value="stash"/>
+            <xs:enumeration value="bamboo"/>
+            <xs:enumeration value="refapp"/>
+            <xs:enumeration value="container"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="EnabledDisabledStateType">
+        <xs:annotation>
+            <xs:documentation>
+                If true, disables the entire plugin by default.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="disabled"/>
+            <xs:enumeration value="enabled"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="ClassType">
+        <xs:annotation>
+            <xs:documentation>
+                The class which implements this plugin module. The
+                class you need to provide depends on the module
+                type.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+
+    <xs:complexType name="AbstractPluginModuleType" abstract="true">
+        <xs:attribute name="key" use="required" type="KeyType">
+            <xs:annotation>
+                <xs:documentation>
+                    The identifier of the plugin module. This key must
+                    be unique within the plugin where it is defined.
+                    Sometimes, in other contexts, you may need to
+                    uniquely identify a module. Do this with the
+                    complete module key. A module with key fred in a
+                    plugin with key com.example.modules will have a
+                    complete key of com.example.modules:fred. I.e. the
+                    identifier of the component.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="i18n-name-key" type="NameType">
+            <xs:annotation>
+                <xs:documentation>
+                    The localisation key for the human-readable name of
+                    the plugin module.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+
+        <xs:attribute name="name" type="NameType">
+            <xs:annotation>
+                <xs:documentation>
+                    The human-readable name of the plugin module. I.e.
+                    the human-readable name of the component.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="application" type="ApplicationType">
+            <xs:annotation>
+                <xs:documentation>
+                    Specifies the plugin framework product that this
+                    module is intended for. Valid values differ between
+                    implementations, but in Atlassian products, a value
+                    of "jira", "confluence", etc. will cause the module
+                    to only be loaded in that product.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="state" type="EnabledDisabledStateType">
+            <xs:annotation>
+                <xs:documentation>
+                    Set to "disabled" if this module should be disabled
+                    by default.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+</xs:schema>

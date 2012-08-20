@@ -24,6 +24,7 @@
 
     <modules>
         <module>api</module>
+        <module>host-common</module>
         <module>kit-common</module>
         <module>servlet-kit</module>
         <module>ringojs-kit</module>

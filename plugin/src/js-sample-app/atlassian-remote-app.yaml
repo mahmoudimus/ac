@@ -7,6 +7,7 @@ display-url: http://localhost:8000/js-sample-app
 permissions:
   permission:
     - scope: resttest
+    - scope: create_oauth_link
 
 general-page:
   - key: general

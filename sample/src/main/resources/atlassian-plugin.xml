@@ -5,6 +5,7 @@
         <permissions>
             <permission>resttest</permission>
             <permission>read_app_links</permission>
+            <permission installation-mode="remote">create_oauth_link</permission>
         </permissions>
     </plugin-info>
 

@@ -10,9 +10,9 @@
     <component-import key="userManager" interface="com.atlassian.sal.api.user.UserManager" />
 
     <component key="resttest" class="com.atlassian.labs.remoteapps.test.RestTestApiScope"
-            interface="com.atlassian.labs.remoteapps.modules.permissions.scope.ApiScope" public="true"/>
+            interface="com.atlassian.labs.remoteapps.spi.permission.scope.ApiScope" public="true"/>
 
     <component key="unrequested_scope" class="com.atlassian.labs.remoteapps.test.UnrequestedTestApiScope"
-               interface="com.atlassian.labs.remoteapps.modules.permissions.scope.ApiScope" public="true"/>
+               interface="com.atlassian.labs.remoteapps.spi.permission.scope.ApiScope" public="true"/>
 
 </atlassian-plugin>

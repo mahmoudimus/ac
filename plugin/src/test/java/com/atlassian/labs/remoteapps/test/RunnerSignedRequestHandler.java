@@ -1,7 +1,7 @@
 package com.atlassian.labs.remoteapps.test;
 
 import com.atlassian.labs.remoteapps.container.internal.Environment;
-import com.atlassian.labs.remoteapps.container.services.ContainerOAuthSignedRequestHandler;
+import com.atlassian.labs.remoteapps.container.service.ContainerOAuthSignedRequestHandler;
 
 /**
  * Created with IntelliJ IDEA. User: mrdon Date: 7/29/12 Time: 11:38 PM To change this template use

@@ -1,6 +1,6 @@
 package junit.all;
 
-import com.atlassian.labs.remoteapps.api.services.SignedRequestHandler;
+import com.atlassian.labs.remoteapps.api.service.SignedRequestHandler;
 import services.SignedRequestHandlerAccessor;
 import org.json.JSONArray;
 import org.json.JSONObject;

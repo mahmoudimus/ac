@@ -1,4 +1,4 @@
-importPackage(com.atlassian.labs.remoteapps.api.services.http);
+importPackage(com.atlassian.labs.remoteapps.api.service.http);
 importPackage(com.google.common.util.concurrent);
 importPackage(java.io);
 

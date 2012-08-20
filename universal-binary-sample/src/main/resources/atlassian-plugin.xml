@@ -1,6 +1,9 @@
 <atlassian-plugin key="sample-ub-java" name="${project.name}" plugins-version="2">
     <plugin-info>
         <version>${project.version}</version>
+        <permissions>
+            <permission installation-mode="remote">create_oauth_link</permission>
+        </permissions>
     </plugin-info>
 
     <remote-plugin-container key="${project.artifactId}" display-url="http://localhost:8000/sample-ub-java">

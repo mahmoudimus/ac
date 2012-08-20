@@ -1,5 +1,6 @@
 package it;
 
+import com.atlassian.labs.remoteapps.spi.Permissions;
 import com.atlassian.labs.remoteapps.test.RemoteAppRunner;
 import com.atlassian.labs.remoteapps.test.RunnerSignedRequestHandler;
 import org.apache.commons.io.IOUtils;
@@ -59,6 +60,7 @@ public class TestRedirects extends AbstractBrowserlessTest
                 "oauthRedirect")
                 .addGeneralPage("page", "Page", "/page", new MessageServlet())
                 .addOAuth(signedRequestHandler)
+                .addPermission(Permissions.CREATE_OAUTH_LINK)
                 .start();
 
         URL url = new URL(baseUrl + "/plugins/servlet/redirect/oauth?app_key=oauthRedirect&app_url=/page&message=bar");
