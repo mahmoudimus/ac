@@ -5,9 +5,12 @@ import com.atlassian.labs.remoteapps.container.HttpServer;
 import com.atlassian.labs.remoteapps.container.internal.EnvironmentFactory;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
+import com.atlassian.plugin.util.ContextClassLoaderSwitchingUtil;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.ServiceFactory;
 import org.osgi.framework.ServiceRegistration;
+
+import java.util.concurrent.Callable;
 
 import static com.atlassian.plugin.osgi.util.OsgiHeaderUtil.getPluginKey;
 
@@ -37,13 +40,29 @@ public class ContainerHttpResourceMounterServiceFactory implements ServiceFactor
     }
 
     @Override
-    public Object getService(Bundle bundle, ServiceRegistration registration)
+    public Object getService(final Bundle bundle, ServiceRegistration registration)
     {
         final Plugin plugin = pluginAccessor.getPlugin(getPluginKey(bundle));
-        return new ContainerHttpResourceMounter(bundle, plugin, httpServer,
-                oAuthSignedRequestHandlerServiceFactory.getService(bundle),
-                environmentServiceFactory.getService(bundle),
-                requestContextServiceFactory.getService(bundle));
+        try
+        {
+            // Swap the ccl to allow xml libraries to find their properties files.   Prevents "'UTF-8' encoding not
+            // supported" errors
+            return ContextClassLoaderSwitchingUtil.runInContext(getClass().getClassLoader(), new Callable<Object>()
+            {
+                @Override
+                public Object call() throws Exception
+                {
+                    return new ContainerHttpResourceMounter(bundle, plugin, httpServer,
+                                    oAuthSignedRequestHandlerServiceFactory.getService(bundle),
+                                    environmentServiceFactory.getService(bundle),
+                                    requestContextServiceFactory.getService(bundle));
+                }
+            });
+        }
+        catch (Exception e)
+        {
+            throw new RuntimeException("Shouldn't be thrown", e);
+        }
     }
 
     @Override
