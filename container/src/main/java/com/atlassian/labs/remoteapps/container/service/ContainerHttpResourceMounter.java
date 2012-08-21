@@ -46,7 +46,11 @@ public final class ContainerHttpResourceMounter implements HttpResourceMounter
 
         DescriptorAccessor descriptorAccessor = new LazyDescriptorAccessor(plugin, bundle);
         environment.setEnv("BASE_URL", checkNotNull(getBaseUrl(descriptorAccessor.getDescriptor())));
-        environment.setEnv("OAUTH_LOCAL_PUBLIC_KEY", checkNotNull(getOAuthPublicKey(descriptorAccessor.getDescriptor())));
+        String oauthPublicKey = getOAuthPublicKey(descriptorAccessor.getDescriptor());
+        if (oauthPublicKey != null)
+        {
+            environment.setEnv("OAUTH_LOCAL_PUBLIC_KEY", oauthPublicKey);
+        }
 
         mountFilter(new RegistrationFilter(descriptorAccessor, environment, oAuthSignedRequestHandler), "/");
         mountServlet(new EmptyHttpServlet(), "/"); // this is so that the descriptor's filter gets picked up.
@@ -56,15 +60,17 @@ public final class ContainerHttpResourceMounter implements HttpResourceMounter
 
     private String getOAuthPublicKey(Document descriptor)
     {
+        String value;
         Element root = descriptor.getRootElement();
         if (root.attribute("plugins-version") != null)
         {
-            return element(element(element(root, "remote-plugin-container"), "oauth"), "public-key").getTextTrim();
+            value = text(element(element(root, "remote-plugin-container"), "oauth", false), "public-key", false);
         }
         else
         {
-            return element(element(root, "oauth"), "public-key").getTextTrim();
+            value = text(element(root, "oauth", false), "public-key", false);
         }
+        return value;
     }
 
     private String getBaseUrl(Document descriptor)
@@ -80,12 +86,24 @@ public final class ContainerHttpResourceMounter implements HttpResourceMounter
         }
     }
 
+    private String text(Element parent, String name, boolean required)
+    {
+        Element target = element(parent, name, required);
+        return target != null ? target.getTextTrim() : null;
+    }
+
     private Element element(Element parent, String name)
     {
-        Element child = parent.element(name);
-        if (child == null)
+        return element(parent, name, true);
+    }
+
+    private Element element(Element parent, String name, boolean required)
+    {
+        Element child = parent != null ? parent.element(name) : null;
+        if (required && child == null)
         {
-            throw new IllegalStateException("Required element '" + name + "' to be present on '" + parent.getName() + " element");
+            String pname = parent != null ? parent.getName() : null;
+            throw new IllegalStateException("Required element '" + name + "' to be present on '" + pname + "' element");
         }
         return child;
     }
