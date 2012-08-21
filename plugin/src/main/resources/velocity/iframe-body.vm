@@ -2,7 +2,7 @@
     <div id="embedded-$namespace"></div>
     <div id="ra-stats" style="color: gray; font-size: smaller">
         <hr style="border: none; border-top: 1px solid #ddd"/>
-        <div class="ra-timeout" style="display: none">$remoteapp.name is not responding.</div>
+        <div class="ra-timeout" style="display: none">$remoteapp.name is not available.</div>
         <div class="ra-message" style="display: none">
             Loaded from <a href="${remoteapp.displayUrl}">$remoteapp.name</a> in <span class="ra-elapsed"></span> ms.
         </div>
