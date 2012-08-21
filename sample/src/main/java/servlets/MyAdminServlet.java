@@ -2,8 +2,8 @@ package servlets;
 
 import com.atlassian.labs.remoteapps.api.annotation.ServiceReference;
 import com.atlassian.labs.remoteapps.api.service.SignedRequestHandler;
+import com.atlassian.labs.remoteapps.api.service.http.HostHttpClient;
 import com.atlassian.labs.remoteapps.api.service.http.Response;
-import com.atlassian.labs.remoteapps.api.service.http.SyncHostHttpClient;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -21,11 +21,11 @@ import static services.HttpUtils.renderHtml;
 public class MyAdminServlet extends HttpServlet
 {
     private final SignedRequestHandler signedRequestHandler;
-    private SyncHostHttpClient hostHttpClient;
+    private HostHttpClient hostHttpClient;
 
     @Inject
     public MyAdminServlet(@ServiceReference SignedRequestHandler signedRequestHandler,
-                          @ServiceReference SyncHostHttpClient hostHttpClient)
+                          @ServiceReference HostHttpClient hostHttpClient)
     {
         this.signedRequestHandler = signedRequestHandler;
         this.hostHttpClient = hostHttpClient;
@@ -46,7 +46,7 @@ public class MyAdminServlet extends HttpServlet
     private void execHostHttpRequests(Map<String, Object> context)
         throws ServletException, IOException
     {
-        Response response = hostHttpClient.get("/rest/remoteapptest/1/user");
+        Response response = hostHttpClient.get("/rest/remoteapptest/1/user").claim();
         context.put("httpGetStatus", response.getStatusCode());
         context.put("httpGetStatusText", response.getStatusText());
         context.put("httpGetContentType", response.getContentType());

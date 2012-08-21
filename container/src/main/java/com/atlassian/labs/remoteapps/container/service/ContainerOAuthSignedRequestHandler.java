@@ -87,10 +87,11 @@ public class ContainerOAuthSignedRequestHandler extends AbstractOauthSignedReque
         return localConsumer;
     }
 
-    public void addHost(String key, String publicKey, String baseUrl)
+    public void addHost(String key, String publicKey, String baseUrl, String productType)
     {
         env.setEnv("OAUTH_HOST_PUBLIC_KEY." + key, publicKey);
         env.setEnv("HOST_BASE_URL." + key, baseUrl);
+        env.setEnv("HOST_PRODUCT_TYPE." + key, productType);
     }
 
     @Override
@@ -103,6 +104,11 @@ public class ContainerOAuthSignedRequestHandler extends AbstractOauthSignedReque
     public String getHostBaseUrl(String key)
     {
         return env.getEnv("HOST_BASE_URL." + key);
+    }
+
+    public String getHostProductType(String key)
+    {
+        return env.getEnv("HOST_PRODUCT_TYPE." + key);
     }
 
     @Override

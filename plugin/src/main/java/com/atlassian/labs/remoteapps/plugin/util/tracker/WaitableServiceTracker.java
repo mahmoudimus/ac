@@ -1,9 +1,10 @@
 package com.atlassian.labs.remoteapps.plugin.util.tracker;
 
+import com.atlassian.labs.remoteapps.api.Promise;
+import com.atlassian.labs.remoteapps.spi.WrappingPromise;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.util.concurrent.AbstractFuture;
-import com.google.common.util.concurrent.ListenableFuture;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
@@ -101,14 +102,14 @@ public class WaitableServiceTracker<K, T>
         }
     }
 
-    public ListenableFuture<Map<K,T>> waitFor(Predicate<Map<K, T>> predicate)
+    public Promise<Map<K,T>> waitFor(Predicate<Map<K, T>> predicate)
     {
         ServiceFuture<K,T> future = new ServiceFuture<K, T>(predicate);
         if (!future.servicesUpdated(services))
         {
             futures.add(future);
         }
-        return future;
+        return new WrappingPromise<Map<K, T>>(future);
     }
 
     void close()

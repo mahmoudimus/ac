@@ -2,20 +2,18 @@ package com.atlassian.labs.remoteapps.container;
 
 import com.atlassian.activeobjects.spi.DataSourceProvider;
 import com.atlassian.event.api.EventPublisher;
+import com.atlassian.labs.remoteapps.api.service.http.HostXmlRpcClient;
+import com.atlassian.labs.remoteapps.api.service.http.HttpClient;
+import com.atlassian.labs.remoteapps.host.common.service.http.HostXmlRpcClientServiceFactory;
 import com.atlassian.labs.remoteapps.host.common.descriptor.PolygotDescriptorAccessor;
 import com.atlassian.labs.remoteapps.host.common.descriptor.DescriptorAccessor;
 import com.atlassian.labs.remoteapps.api.service.HttpResourceMounter;
-import com.atlassian.labs.remoteapps.api.service.PluginSettingsAsyncFactory;
 import com.atlassian.labs.remoteapps.api.service.RequestContext;
 import com.atlassian.labs.remoteapps.api.service.SignedRequestHandler;
-import com.atlassian.labs.remoteapps.api.service.http.AsyncHttpClient;
 import com.atlassian.labs.remoteapps.api.service.http.HostHttpClient;
-import com.atlassian.labs.remoteapps.api.service.http.SyncHostHttpClient;
-import com.atlassian.labs.remoteapps.host.common.service.http.DefaultAsyncHttpClient;
+import com.atlassian.labs.remoteapps.host.common.service.http.DefaultHttpClient;
 import com.atlassian.labs.remoteapps.host.common.service.http.HostHttpClientServiceFactory;
 import com.atlassian.labs.remoteapps.host.common.service.http.RequestKiller;
-import com.atlassian.labs.remoteapps.host.common.service.http.SyncHostHttpClientServiceFactory;
-import com.atlassian.labs.remoteapps.host.common.service.DefaultPluginSettingsAsyncFactory;
 import com.atlassian.labs.remoteapps.host.common.service.RequestContextServiceFactory;
 import com.atlassian.labs.remoteapps.container.ao.RemoteAppsDataSourceProviderServiceFactory;
 import com.atlassian.labs.remoteapps.container.internal.EnvironmentFactory;
@@ -118,6 +116,7 @@ public final class Container
                 .add("com.atlassian.event.api*")
                 .add("com.atlassian.plugin*")
                 .add("com.atlassian.sal*")
+                .add("com.atlassian.xmlrpc*")
                 .add("com.atlassian.security.random*")
                 .add("com.google.common.*")
                 .add("com.samskivert.*")
@@ -134,6 +133,7 @@ public final class Container
                 .add("org.slf4j*")
                 .add("org.yaml*")
                 .add("javax.inject")
+                .add("redstone.xmlrpc")
                 .build());
 
         scannerConfig.setPackageVersions(ImmutableMap.<String, String>builder()
@@ -245,24 +245,21 @@ public final class Container
             oAuthSignedRequestHandlerServiceFactory, environmentFactory, requestContextServiceFactory);
         final RequestKiller requestKiller = new RequestKiller();
         final ContainerEventPublisher containerEventPublisher = new ContainerEventPublisher();
-        final AsyncHttpClient asyncHttpClient = new DefaultAsyncHttpClient(requestKiller, containerEventPublisher);
+        final HttpClient httpClient = new DefaultHttpClient(requestKiller, containerEventPublisher);
         final HostHttpClientServiceFactory hostHttpClientServiceFactory
-            = new HostHttpClientServiceFactory(asyncHttpClient, requestContextServiceFactory,
+            = new HostHttpClientServiceFactory(httpClient, requestContextServiceFactory,
             oAuthSignedRequestHandlerServiceFactory);
-        final SyncHostHttpClientServiceFactory syncHostHttpClientServiceFactory
-            = new SyncHostHttpClientServiceFactory(hostHttpClientServiceFactory);
 
         hostComponents.put(SignedRequestHandler.class, oAuthSignedRequestHandlerServiceFactory);
         hostComponents.put(HttpResourceMounter.class, containerHttpResourceMounterServiceFactory);
         hostComponents.put(PluginAccessor.class, pluginManager);
         hostComponents.put(PluginController.class, pluginManager);
         hostComponents.put(PluginEventManager.class, pluginEventManager);
-        hostComponents.put(PluginSettingsAsyncFactory.class, new DefaultPluginSettingsAsyncFactory(pluginSettingsFactory));
         hostComponents.put(ModuleFactory.class, new PrefixDelegatingModuleFactory(ImmutableSet.of(new ClassPrefixModuleFactory(hostContainer), new BeanPrefixModuleFactory())));
         hostComponents.put(RequestContext.class, requestContextServiceFactory);
-        hostComponents.put(AsyncHttpClient.class, asyncHttpClient);
+        hostComponents.put(HttpClient.class, httpClient);
         hostComponents.put(HostHttpClient.class, hostHttpClientServiceFactory);
-        hostComponents.put(SyncHostHttpClient.class, syncHostHttpClientServiceFactory);
+        hostComponents.put(HostXmlRpcClient.class, new HostXmlRpcClientServiceFactory(hostHttpClientServiceFactory));
 
         hostComponents.put(DataSourceProvider.class, new RemoteAppsDataSourceProviderServiceFactory(
                 applicationPropertiesServiceFactory));

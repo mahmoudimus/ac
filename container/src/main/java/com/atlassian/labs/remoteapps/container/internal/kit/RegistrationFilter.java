@@ -77,9 +77,10 @@ public class RegistrationFilter implements Filter
             {
                 String publicKey = req.getParameter("publicKey");
                 String baseUrl = req.getParameter("baseUrl");
+                String productType = req.getParameter("productType");
 
                 log.info("Registering host - key: '{}' baseUrl: '{}'", oauthKey, baseUrl);
-                requestHandler.addHost(oauthKey, publicKey, baseUrl);
+                requestHandler.addHost(oauthKey, publicKey, baseUrl, productType);
             }
             else
             {

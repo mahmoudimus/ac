@@ -1,7 +1,6 @@
 package com.atlassian.labs.remoteapps.api.service.http;
 
-import com.google.common.util.concurrent.FutureCallback;
-import com.google.common.util.concurrent.ListenableFuture;
+import com.atlassian.labs.remoteapps.api.Promise;
 
 /**
  * Used to make requests back to the host application.  Implementations handle
@@ -10,39 +9,22 @@ import com.google.common.util.concurrent.ListenableFuture;
  */
 public interface HostHttpClient
 {
-    ListenableFuture<Response> get(String uri);
+    Promise<Response> get(String uri);
 
-    ListenableFuture<Response> get(String uri, FutureCallback<Response> callback);
+    Promise<Response> get(Request request);
 
-    ListenableFuture<Response> get(Request request);
+    Promise<Response> post(String uri, String contentType, String entity);
 
-    ListenableFuture<Response> get(Request request, FutureCallback<Response> callback);
+    Promise<Response> post(Request request);
 
-    ListenableFuture<Response> post(String uri, String contentType, String entity);
+    Promise<Response> put(String uri, String contentType, String entity);
 
-    ListenableFuture<Response> post(String uri, String contentType, String entity, FutureCallback<Response> callback);
+    Promise<Response> put(Request request);
 
-    ListenableFuture<Response> post(Request request);
+    Promise<Response> delete(String uri);
 
-    ListenableFuture<Response> post(Request request, FutureCallback<Response> callback);
+    Promise<Response> delete(Request request);
 
-    ListenableFuture<Response> put(String uri, String contentType, String entity);
+    Promise<Response> request(Request request);
 
-    ListenableFuture<Response> put(String uri, String contentType, String entity, FutureCallback<Response> callback);
-
-    ListenableFuture<Response> put(Request request);
-
-    ListenableFuture<Response> put(Request request, FutureCallback<Response> callback);
-
-    ListenableFuture<Response> delete(String uri);
-
-    ListenableFuture<Response> delete(String uri, FutureCallback<Response> callback);
-
-    ListenableFuture<Response> delete(Request request);
-
-    ListenableFuture<Response> delete(Request request, FutureCallback<Response> callback);
-
-    ListenableFuture<Response> request(Request request);
-
-    ListenableFuture<Response> request(Request request, FutureCallback<Response> callback);
 }

@@ -4,6 +4,7 @@ import com.atlassian.core.util.FileUtils;
 import com.atlassian.labs.remoteapps.plugin.descriptor.DescriptorValidator;
 import com.atlassian.labs.remoteapps.plugin.OAuthLinkManager;
 import com.atlassian.labs.remoteapps.host.common.util.FormatConverter;
+import com.atlassian.labs.remoteapps.plugin.product.ProductAccessor;
 import com.atlassian.labs.remoteapps.spi.InstallationFailedException;
 import com.atlassian.labs.remoteapps.spi.PermissionDeniedException;
 import com.atlassian.labs.remoteapps.plugin.util.uri.Uri;
@@ -48,23 +49,25 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
     private final DescriptorValidator descriptorValidator;
     private final PluginAccessor pluginAccessor;
     private final OAuthLinkManager oAuthLinkManager;
+    private final ProductAccessor productAccessor;
 
 
     private final BundleContext bundleContext;
     private static final Logger log = LoggerFactory.getLogger(DefaultRemoteAppInstaller.class);
 
     @Autowired
-    public DefaultRemoteAppInstaller(RemoteAppDescriptorPluginArtifactFactory remoteAppDescriptorPluginArtifactFactory,
-                                     RemotePluginArtifactFactory remotePluginArtifactFactory,
-                                     ConsumerService consumerService,
-                                     RequestFactory requestFactory,
-                                     ApplicationProperties applicationProperties,
-                                     FormatConverter formatConverter,
-                                     PluginController pluginController,
-                                     DescriptorValidator descriptorValidator,
-                                     PluginAccessor pluginAccessor,
-                                     OAuthLinkManager oAuthLinkManager,
-                                     BundleContext bundleContext
+    public DefaultRemoteAppInstaller(
+            RemoteAppDescriptorPluginArtifactFactory remoteAppDescriptorPluginArtifactFactory,
+            RemotePluginArtifactFactory remotePluginArtifactFactory,
+            ConsumerService consumerService,
+            RequestFactory requestFactory,
+            ApplicationProperties applicationProperties,
+            FormatConverter formatConverter,
+            PluginController pluginController,
+            DescriptorValidator descriptorValidator,
+            PluginAccessor pluginAccessor,
+            OAuthLinkManager oAuthLinkManager,
+            ProductAccessor productAccessor, BundleContext bundleContext
     )
     {
         this.remoteAppDescriptorPluginArtifactFactory = remoteAppDescriptorPluginArtifactFactory;
@@ -77,6 +80,7 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
         this.descriptorValidator = descriptorValidator;
         this.pluginAccessor = pluginAccessor;
         this.oAuthLinkManager = oAuthLinkManager;
+        this.productAccessor = productAccessor;
         this.bundleContext = bundleContext;
     }
 
@@ -116,6 +120,7 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
                                                                                     .getHeaders()
                                                                                     .get(Constants.BUNDLE_VERSION))
                                     .put("baseUrl", applicationProperties.getBaseUrl())
+                                    .put("productType", productAccessor.getKey())
                                     .put("description", consumer.getDescription())
                                     .build()).toString());
 

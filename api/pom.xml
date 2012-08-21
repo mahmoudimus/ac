@@ -28,6 +28,11 @@
             <version>20090211</version>
         </dependency>
         <dependency>
+            <groupId>org.kohsuke.redstone</groupId>
+            <artifactId>redstone</artifactId>
+            <version>${redstone.version}</version>
+        </dependency>
+        <dependency>
             <groupId>javax.inject</groupId>
             <artifactId>javax.inject</artifactId>
             <version>1</version>

@@ -44,8 +44,8 @@ var api = module.exports = {
         }
       });
       // execute the request
-      client.request(request, new FutureCallback({
-        onSuccess: function (response) {
+      client.request(request).done({
+        handle: function (response) {
           // build a js response object from the java response
           var json = {};
           responseProps.forEach(function (k) {
@@ -60,12 +60,12 @@ var api = module.exports = {
           }
           // @todo entity marshalling
           deferred.resolve(json);
-        },
-        onFailure: function (ex) {
+        }}).fail({
+        handle: function (ex) {
           // propagate the exception
           deferred.reject(ex, exstr(ex));
         }
-      }));
+      });
     }
     catch (ex) {
       // preflight exception

@@ -144,9 +144,6 @@
     </web-item>
 
     <!-- universal binary services -->
-    <component key="pluginSettingsAsyncFactory" interface="com.atlassian.labs.remoteapps.api.service.PluginSettingsAsyncFactory"
-               class="com.atlassian.labs.remoteapps.plugin.service.PluginSettingsAsyncFactoryBean" public="true" />
-
     <component key="localSignedRequestHandler" interface="com.atlassian.labs.remoteapps.api.service.SignedRequestHandler"
                class="com.atlassian.labs.remoteapps.plugin.service.LocalSignedRequestHandlerServiceFactory" public="true" />
 
@@ -156,14 +153,14 @@
     <component key="requestKiller"
                class="com.atlassian.labs.remoteapps.host.common.service.http.RequestKiller" />
 
-    <component key="asyncHttpClient" interface="com.atlassian.labs.remoteapps.api.service.http.AsyncHttpClient"
-               class="com.atlassian.labs.remoteapps.host.common.service.http.DefaultAsyncHttpClient" public="true" />
+    <component key="asyncHttpClient" interface="com.atlassian.labs.remoteapps.api.service.http.HttpClient"
+               class="com.atlassian.labs.remoteapps.host.common.service.http.DefaultHttpClient" public="true" />
 
     <component key="hostHttpClient" interface="com.atlassian.labs.remoteapps.api.service.http.HostHttpClient"
                class="com.atlassian.labs.remoteapps.host.common.service.http.HostHttpClientServiceFactory" public="true" />
 
-    <component key="syncHostHttpClient" interface="com.atlassian.labs.remoteapps.api.service.http.SyncHostHttpClient"
-               class="com.atlassian.labs.remoteapps.host.common.service.http.SyncHostHttpClientServiceFactory" public="true" />
+    <component key="hostXmlRpcClient" interface="com.atlassian.labs.remoteapps.api.service.http.HostXmlRpcClient"
+               class="com.atlassian.labs.remoteapps.host.common.service.http.HostXmlRpcClientServiceFactory" public="true" />
 
     <applinks-application-type name="Remote Plugin Container" key="remote-plugin-container-type"
                                    class="com.atlassian.labs.remoteapps.plugin.module.applinks.RemotePluginContainerApplicationTypeImpl"

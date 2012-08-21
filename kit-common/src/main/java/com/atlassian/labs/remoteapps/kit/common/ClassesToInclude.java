@@ -3,7 +3,7 @@ package com.atlassian.labs.remoteapps.kit.common;
 import com.atlassian.jira.plugin.searchrequestview.SearchRequestView;
 import com.atlassian.labs.remoteapps.api.service.HttpResourceMounter;
 import com.atlassian.labs.remoteapps.api.service.SignedRequestHandler;
-import com.atlassian.labs.remoteapps.api.service.http.AsyncHttpClient;
+import com.atlassian.labs.remoteapps.api.service.http.HttpClient;
 import com.atlassian.labs.remoteapps.spi.module.ModuleMarker;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
@@ -17,7 +17,7 @@ import javax.inject.Named;
 public class ClassesToInclude
 {
     private static final Class[] CLASSES_TO_FORCE_PACKAGE_IMPORTS = new Class[]{
-            AsyncHttpClient.class,
+            HttpClient.class,
             HttpResourceMounter.class,
             ModuleMarker.class,
             PluginRetrievalService.class,

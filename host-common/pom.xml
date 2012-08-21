@@ -22,6 +22,12 @@
             <artifactId>remoteapps-api</artifactId>
             <version>${project.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.atlassian.xmlrpc</groupId>
+            <artifactId>atlassian-xmlrpc-binder</artifactId>
+            <version>${atlassian.xmlrpc.version}</version>
+        </dependency>
  
         <dependency>
             <groupId>com.atlassian.analytics</groupId>

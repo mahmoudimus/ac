@@ -1,9 +1,9 @@
 package com.atlassian.labs.remoteapps.plugin.webhook;
 
 import com.atlassian.event.api.EventPublisher;
+import com.atlassian.labs.remoteapps.api.service.http.HttpClient;
 import com.atlassian.labs.remoteapps.plugin.RemoteAppAccessor;
 import com.atlassian.labs.remoteapps.plugin.RemoteAppAccessorFactory;
-import com.atlassian.labs.remoteapps.api.service.http.AsyncHttpClient;
 import com.atlassian.labs.remoteapps.plugin.util.http.AuthorizationGenerator;
 import com.atlassian.labs.remoteapps.plugin.webhook.event.WebHookPublishQueueFullEvent;
 import com.atlassian.labs.remoteapps.spi.webhook.EventMatcher;
@@ -24,7 +24,7 @@ import static org.mockito.MockitoAnnotations.initMocks;
 public class TestWebHookPublisher
 {
     @Mock
-    AsyncHttpClient httpClient;
+    HttpClient httpClient;
 
     @Mock
     EventPublisher eventPublisher;
@@ -104,7 +104,7 @@ public class TestWebHookPublisher
     @Test
     public void testPublishCallSuccessfulEvenIfSaturated()
     {
-        publisher = new WebHookPublisher(new SleepingAsyncHttpClient(), eventPublisher,
+        publisher = new WebHookPublisher(new SleepingHttpClient(), eventPublisher,
                 mock(UserManager.class), remoteAppAccessorFactory);
         publisher.register("foo", "event.id", "/event");
 

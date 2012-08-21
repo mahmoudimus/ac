@@ -268,7 +268,6 @@
             <groupId>org.kohsuke.redstone</groupId>
             <artifactId>redstone</artifactId>
             <version>1.1.1</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.atlassian.functest</groupId>
@@ -471,6 +470,8 @@
                         </DynamicImport-Package>
                         <Export-Package>
                             javax.inject;version="1",
+                            redstone.xmlrpc;version="${redstone.version}",
+                            com.atlassian.xmlrpc;version="${atlassian.xmlrpc.version}",
                             com.atlassian.labs.remoteapps.spi*,
                             com.atlassian.labs.remoteapps.api*
                         </Export-Package>

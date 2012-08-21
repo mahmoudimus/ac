@@ -1,5 +1,6 @@
 package com.atlassian.labs.remoteapps.plugin.integration.plugins;
 
+import com.atlassian.labs.remoteapps.api.PromiseCallback;
 import com.atlassian.labs.remoteapps.plugin.util.BundleUtil;
 import com.atlassian.labs.remoteapps.plugin.util.tracker.WaitableServiceTracker;
 import com.atlassian.labs.remoteapps.plugin.util.tracker.WaitableServiceTrackerFactory;
@@ -11,7 +12,6 @@ import com.atlassian.plugin.module.ModuleFactory;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.util.concurrent.FutureCallback;
-import com.google.common.util.concurrent.Futures;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
@@ -58,7 +58,7 @@ public class DynamicDescriptorRegistration
     public void onKeys(
             final FutureCallback<Map<String, ModuleDescriptorFactory>> callback, final String... requiredKeys)
     {
-        Futures.addCallback(moduleTracker.waitFor(
+        moduleTracker.waitFor(
                 new Predicate<Map<ModuleDescriptorFactory, ModuleDescriptorFactory>>()
                 {
                     @Override
@@ -88,36 +88,37 @@ public class DynamicDescriptorRegistration
                     {
                         return "Waiting for module descriptors: " + requiredKeys;
                     }
-                }),
-                new FutureCallback<Map<ModuleDescriptorFactory, ModuleDescriptorFactory>>()
-                {
-                    @Override
-                    public void onSuccess(Map<ModuleDescriptorFactory, ModuleDescriptorFactory> result)
+                }).done(new PromiseCallback<Map<ModuleDescriptorFactory, ModuleDescriptorFactory>>()
                     {
-                        callback.onSuccess(factoriesToMap(result.keySet()));
-                    }
-
-                    @Override
-                    public void onFailure(Throwable t)
-                    {
-                        callback.onFailure(t);
-                    }
-
-                    Map<String,ModuleDescriptorFactory> factoriesToMap(Iterable<ModuleDescriptorFactory> factories)
-                    {
-                        Map<String, ModuleDescriptorFactory> result = newHashMap();
-                        for (String key : requiredKeys)
+                        Map<String,ModuleDescriptorFactory> factoriesToMap(Iterable<ModuleDescriptorFactory> factories)
                         {
-                            for (ModuleDescriptorFactory factory : factories)
+                            Map<String, ModuleDescriptorFactory> result = newHashMap();
+                            for (String key : requiredKeys)
                             {
-                                if (factory.hasModuleDescriptor(key))
+                                for (ModuleDescriptorFactory factory : factories)
                                 {
-                                    result.put(key, factory);
-                                    break;
+                                    if (factory.hasModuleDescriptor(key))
+                                    {
+                                        result.put(key, factory);
+                                        break;
+                                    }
                                 }
                             }
+                            return result;
                         }
-                        return result;
+
+                        @Override
+                        public void handle(Map<ModuleDescriptorFactory, ModuleDescriptorFactory> value)
+                        {
+                            callback.onSuccess(factoriesToMap(value.keySet()));
+                        }
+                    })
+                .fail(new PromiseCallback<Throwable>()
+                {
+                    @Override
+                    public void handle(Throwable value)
+                    {
+                        callback.onFailure(value);
                     }
                 });
     }

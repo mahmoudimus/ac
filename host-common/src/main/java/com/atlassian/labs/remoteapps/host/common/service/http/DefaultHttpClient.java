@@ -1,9 +1,10 @@
 package com.atlassian.labs.remoteapps.host.common.service.http;
 
 import com.atlassian.event.api.EventPublisher;
-import com.atlassian.labs.remoteapps.api.service.http.AsyncHttpClient;
+import com.atlassian.labs.remoteapps.api.Promise;
+import com.atlassian.labs.remoteapps.api.service.http.HttpClient;
+import com.atlassian.labs.remoteapps.spi.WrappingPromise;
 import com.atlassian.util.concurrent.ThreadFactories;
-import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.*;
@@ -35,14 +36,14 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-public class DefaultAsyncHttpClient extends AbstractAsyncHttpClient implements AsyncHttpClient, DisposableBean
+public class DefaultHttpClient extends AbstractHttpClient implements HttpClient, DisposableBean
 {
     HttpAsyncClient httpClient;
-    private final Logger log = LoggerFactory.getLogger(DefaultAsyncHttpClient.class);
+    private final Logger log = LoggerFactory.getLogger(DefaultHttpClient.class);
     private final RequestKiller requestKiller;
     private EventPublisher eventPublisher;
 
-    public DefaultAsyncHttpClient(RequestKiller requestKiller, EventPublisher eventPublisher)
+    public DefaultHttpClient(RequestKiller requestKiller, EventPublisher eventPublisher)
     {
         this.requestKiller = requestKiller;
         this.eventPublisher = eventPublisher;
@@ -110,7 +111,7 @@ public class DefaultAsyncHttpClient extends AbstractAsyncHttpClient implements A
     }
 
     @Override
-    public ListenableFuture<HttpResponse> request(Method method, final String uri, Map<String, String> headers, InputStream entity, final Map<String, String> properties)
+    public Promise<HttpResponse> request(Method method, final String uri, Map<String, String> headers, InputStream entity, final Map<String, String> properties)
     {
         final long start = System.currentTimeMillis();
         final HttpRequestBase op;
@@ -181,7 +182,7 @@ public class DefaultAsyncHttpClient extends AbstractAsyncHttpClient implements A
         };
         requestKiller.registerRequest(new NotifyingAbortableHttpRequest(op, futureCallback), 10);
         httpClient.execute(op, localContext, futureCallback);
-        return future;
+        return new WrappingPromise<HttpResponse>(future);
     }
 
     @Override

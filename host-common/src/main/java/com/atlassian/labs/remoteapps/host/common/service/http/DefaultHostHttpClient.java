@@ -1,15 +1,16 @@
 package com.atlassian.labs.remoteapps.host.common.service.http;
 
+import com.atlassian.labs.remoteapps.api.Promise;
 import com.atlassian.labs.remoteapps.api.service.RequestContext;
 import com.atlassian.labs.remoteapps.api.service.SignedRequestHandler;
-import com.atlassian.labs.remoteapps.api.service.http.AsyncHttpClient;
+import com.atlassian.labs.remoteapps.api.service.http.HttpClient;
 import com.atlassian.labs.remoteapps.api.service.http.HostHttpClient;
 import com.atlassian.labs.remoteapps.api.service.http.Request;
 import com.atlassian.labs.remoteapps.api.service.http.Response;
+import com.atlassian.labs.remoteapps.spi.WrappingPromise;
 import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -25,130 +26,74 @@ import java.util.Map;
 
 public class DefaultHostHttpClient implements HostHttpClient
 {
-    private AsyncHttpClient asyncHttpClient;
+    private HttpClient httpClient;
     private RequestContext requestContext;
     private SignedRequestHandler signedRequestHandler;
-    private final Logger log = LoggerFactory.getLogger(DefaultAsyncHttpClient.class);
+    private final Logger log = LoggerFactory.getLogger(DefaultHttpClient.class);
 
-    public DefaultHostHttpClient(AsyncHttpClient asyncHttpClient,
+    public DefaultHostHttpClient(HttpClient httpClient,
                                  RequestContext requestContext,
                                  SignedRequestHandler signedRequestHandler)
     {
-        this.asyncHttpClient = asyncHttpClient;
+        this.httpClient = httpClient;
         this.requestContext = requestContext;
         this.signedRequestHandler = signedRequestHandler;
     }
 
     @Override
-    public ListenableFuture<Response> get(String uri)
+    public Promise<Response> get(String uri)
     {
         return get(new Request(uri));
     }
 
     @Override
-    public ListenableFuture<Response> get(String uri, FutureCallback<Response> callback)
-    {
-        return get(new Request(uri), callback);
-    }
-
-    @Override
-    public ListenableFuture<Response> get(Request request)
+    public Promise<Response> get(Request request)
     {
         request.setMethod(Request.Method.GET);
         return request(request);
     }
 
     @Override
-    public ListenableFuture<Response> get(Request request, FutureCallback<Response> callback)
-    {
-        ListenableFuture<Response> future = get(request);
-        Futures.addCallback(future, callback);
-        return future;
-    }
-
-    @Override
-    public ListenableFuture<Response> post(String uri, String contentType, String entity)
+    public Promise<Response> post(String uri, String contentType, String entity)
     {
         return post(new Request(uri, contentType, entity));
     }
 
     @Override
-    public ListenableFuture<Response> post(String uri, String contentType, String entity, FutureCallback<Response> callback)
-    {
-        return post(new Request(uri, contentType, entity), callback);
-    }
-
-    @Override
-    public ListenableFuture<Response> post(Request request)
+    public Promise<Response> post(Request request)
     {
         request.setMethod(Request.Method.POST);
         return request(request);
     }
 
     @Override
-    public ListenableFuture<Response> post(Request request, FutureCallback<Response> callback)
-    {
-        ListenableFuture<Response> future = post(request);
-        Futures.addCallback(future, callback);
-        return future;
-    }
-
-    @Override
-    public ListenableFuture<Response> put(String uri, String contentType, String entity)
+    public Promise<Response> put(String uri, String contentType, String entity)
     {
         return put(new Request(uri, contentType, entity));
     }
 
     @Override
-    public ListenableFuture<Response> put(String uri, String contentType, String entity, FutureCallback<Response> callback)
-    {
-        return put(new Request(uri, contentType, entity), callback);
-    }
-
-    @Override
-    public ListenableFuture<Response> put(Request request)
+    public Promise<Response> put(Request request)
     {
         request.setMethod(Request.Method.PUT);
         return request(request);
     }
 
     @Override
-    public ListenableFuture<Response> put(Request request, FutureCallback<Response> callback)
-    {
-        ListenableFuture<Response> future = put(request);
-        Futures.addCallback(future, callback);
-        return future;
-    }
-
-    @Override
-    public ListenableFuture<Response> delete(String uri)
+    public Promise<Response> delete(String uri)
     {
         return delete(new Request(uri));
     }
 
     @Override
-    public ListenableFuture<Response> delete(String uri, FutureCallback<Response> callback)
-    {
-        return delete(new Request(uri), callback);
-    }
-
-    @Override
-    public ListenableFuture<Response> delete(Request request)
+    public Promise<Response> delete(Request request)
     {
         request.setMethod(Request.Method.DELETE);
         return request(request);
     }
 
     @Override
-    public ListenableFuture<Response> delete(Request request, FutureCallback<Response> callback)
-    {
-        ListenableFuture<Response> future = delete(request);
-        Futures.addCallback(future, callback);
-        return future;
-    }
-
-    @Override
-    public ListenableFuture<Response> request(Request request)
+    public Promise<Response> request(Request request)
     {
         // validate the high-level request state
         request.validate();
@@ -232,8 +177,8 @@ public class DefaultHostHttpClient implements HostHttpClient
         properties.put("clientKey", clientKey);
 
         // execute the request via the async request service
-        ListenableFuture<HttpResponse> fromFuture
-            = asyncHttpClient.request(method, uriStr, headers, request.getEntityStream(), properties);
+        Promise<HttpResponse> fromFuture
+            = httpClient.request(method, uriStr, headers, request.getEntityStream(), properties);
 
         // translate the low-level response future to that of this higher-level api
         final SettableFuture<Response> toFuture = SettableFuture.create();
@@ -258,15 +203,7 @@ public class DefaultHostHttpClient implements HostHttpClient
                 toFuture.setException(t);
             }
         });
-        return toFuture;
-    }
-
-    @Override
-    public ListenableFuture<Response> request(Request request, FutureCallback<Response> callback)
-    {
-        ListenableFuture<Response> future = request(request);
-        Futures.addCallback(future, callback);
-        return future;
+        return new WrappingPromise<Response>(toFuture);
     }
 
     private Response translate(HttpResponse httpResponse)

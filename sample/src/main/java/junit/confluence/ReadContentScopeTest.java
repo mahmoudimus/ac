@@ -1,10 +1,8 @@
 package junit.confluence;
 
-import com.atlassian.labs.remoteapps.api.service.SignedRequestHandler;
-import com.atlassian.labs.remoteapps.kit.common.XmlRpcClientFactory;
-import services.SignedRequestHandlerAccessor;
+import com.atlassian.labs.remoteapps.api.service.http.HostXmlRpcClient;
+import services.HostXmlRpcClientAccessor;
 import org.junit.Test;
-import redstone.xmlrpc.XmlRpcClient;
 import redstone.xmlrpc.XmlRpcStruct;
 
 import static org.junit.Assert.assertEquals;
@@ -14,12 +12,11 @@ import static org.junit.Assert.assertEquals;
  */
 public class ReadContentScopeTest
 {
-    private final XmlRpcClientFactory xmlRpcClientFactory;
+    private final HostXmlRpcClient client;
 
     public ReadContentScopeTest()
     {
-        SignedRequestHandler signedRequestHandler = SignedRequestHandlerAccessor.getSignedRequestHandler();
-        xmlRpcClientFactory = new XmlRpcClientFactory(signedRequestHandler);
+        client = HostXmlRpcClientAccessor.getHostXmlRpcClient();
     }
 
     @Test
@@ -27,8 +24,7 @@ public class ReadContentScopeTest
     {
         try
         {
-            XmlRpcClient client = xmlRpcClientFactory.create(System.getProperty("baseurl"), "betty");
-            XmlRpcStruct space = (XmlRpcStruct) client.invoke( "confluence2.getSpace", new Object[] { "", "DS" } );
+            XmlRpcStruct space = client.invoke("confluence2.getSpace", XmlRpcStruct.class, "", "DS").claim();
             assertEquals("ds", space.getString("key"));
             assertEquals("Demonstration Space", space.getString("name"));
         }
