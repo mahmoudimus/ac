@@ -1,7 +1,7 @@
 package junit.all;
 
 import com.atlassian.labs.remoteapps.api.service.SignedRequestHandler;
-import services.SignedRequestHandlerAccessor;
+import services.ServiceAccessor;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Test;
@@ -11,7 +11,7 @@ import static services.HttpUtils.sendSignedGet;
 
 public class ReadAppLinksScopeTest
 {
-    private final SignedRequestHandler signedRequestHandler = SignedRequestHandlerAccessor.getSignedRequestHandler();
+    private final SignedRequestHandler signedRequestHandler = ServiceAccessor.getSignedRequestHandler();
     private final String baseUrl = System.getProperty("baseurl");
 
     @Test

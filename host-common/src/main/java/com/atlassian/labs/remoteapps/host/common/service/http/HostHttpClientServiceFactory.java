@@ -4,6 +4,7 @@ import com.atlassian.labs.remoteapps.api.service.RequestContext;
 import com.atlassian.labs.remoteapps.api.service.SignedRequestHandler;
 import com.atlassian.labs.remoteapps.api.service.http.HttpClient;
 import com.atlassian.labs.remoteapps.api.service.http.HostHttpClient;
+import com.atlassian.labs.remoteapps.host.common.service.DefaultRequestContext;
 import com.atlassian.labs.remoteapps.host.common.service.RequestContextServiceFactory;
 import com.atlassian.labs.remoteapps.host.common.service.SignedRequestHandlerServiceFactory;
 import com.atlassian.labs.remoteapps.host.common.service.TypedServiceFactory;
@@ -33,7 +34,7 @@ public class HostHttpClientServiceFactory implements TypedServiceFactory<HostHtt
 
     public HostHttpClient getService(Bundle bundle)
     {
-        RequestContext requestContext = requestContextServiceFactory.getService(bundle);
+        DefaultRequestContext requestContext = requestContextServiceFactory.getService(bundle);
         SignedRequestHandler signedRequestHandler = signedRequestHandlerServiceFactory.getService(bundle);
         return new DefaultHostHttpClient(httpClient, requestContext, signedRequestHandler);
     }

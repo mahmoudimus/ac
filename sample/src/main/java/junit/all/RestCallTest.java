@@ -1,7 +1,7 @@
 package junit.all;
 
 import com.atlassian.labs.remoteapps.api.service.SignedRequestHandler;
-import services.SignedRequestHandlerAccessor;
+import services.ServiceAccessor;
 import org.junit.Test;
 
 import static services.HttpUtils.sendFailedSignedGet;
@@ -13,7 +13,7 @@ import static org.junit.Assert.assertEquals;
  */
 public class RestCallTest
 {
-    private final SignedRequestHandler signedRequestHandler = SignedRequestHandlerAccessor.getSignedRequestHandler();
+    private final SignedRequestHandler signedRequestHandler = ServiceAccessor.getSignedRequestHandler();
     private final String baseUrl = System.getProperty("baseurl");
 
     @Test

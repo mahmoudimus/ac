@@ -174,9 +174,13 @@ public class DefaultHostXmlRpcClient implements HostXmlRpcClient
                             else
                             {
                                 Object parsedValue = parser.getParsedValue();
-                                if (parsedValue != null && parsedValue.getClass().isAssignableFrom(castResultTo))
+                                if (parsedValue != null && castResultTo.isAssignableFrom(parsedValue.getClass()))
                                 {
                                     future.set(castResultTo.cast(parsedValue));
+                                }
+                                else
+                                {
+                                    future.setException(new XmlRpcException("Unexpected return type: " + parsedValue));
                                 }
                             }
                         }

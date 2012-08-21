@@ -1,37 +1,35 @@
 package junit.confluence;
 
-import com.atlassian.labs.remoteapps.api.service.http.HostXmlRpcClient;
-import services.HostXmlRpcClientAccessor;
 import org.junit.Test;
 import redstone.xmlrpc.XmlRpcStruct;
 
+import java.util.concurrent.Callable;
+
+import static junit.ClientKeyRetriever.getClientKey;
 import static org.junit.Assert.assertEquals;
+import static services.ServiceAccessor.getHostHttpClient;
+import static services.ServiceAccessor.getHostXmlRpcClient;
 
 /**
  *
  */
 public class ReadContentScopeTest
 {
-    private final HostXmlRpcClient client;
-
-    public ReadContentScopeTest()
-    {
-        client = HostXmlRpcClientAccessor.getHostXmlRpcClient();
-    }
-
     @Test
     public void testCall() throws Exception
     {
-        try
+        getHostHttpClient().callAs(getClientKey(), "betty", new Callable<Void>()
         {
-            XmlRpcStruct space = client.invoke("confluence2.getSpace", XmlRpcStruct.class, "", "DS").claim();
-            assertEquals("ds", space.getString("key"));
-            assertEquals("Demonstration Space", space.getString("name"));
-        }
-        catch (Exception ex)
-        {
-            ex.printStackTrace();
-            throw ex;
-        }
+            @Override
+            public Void call() throws Exception
+            {
+                XmlRpcStruct space = getHostXmlRpcClient().invoke("confluence2.getSpace",
+                        XmlRpcStruct.class, "",
+                        "DS").claim();
+                assertEquals("ds", space.getString("key"));
+                assertEquals("Demonstration Space", space.getString("name"));
+                return null;
+            }
+        });
     }
 }

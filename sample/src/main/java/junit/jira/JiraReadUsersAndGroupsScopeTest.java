@@ -4,7 +4,7 @@ import com.atlassian.jira.rpc.soap.client.JiraSoapService;
 import com.atlassian.jira.rpc.soap.client.JiraSoapServiceServiceLocator;
 import com.atlassian.jira.rpc.soap.client.RemoteUser;
 import com.atlassian.labs.remoteapps.api.service.SignedRequestHandler;
-import services.SignedRequestHandlerAccessor;
+import services.ServiceAccessor;
 import org.apache.axis.client.Stub;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.json.JSONArray;
@@ -27,7 +27,7 @@ import static org.junit.Assert.assertEquals;
  */
 public class JiraReadUsersAndGroupsScopeTest
 {
-    private final SignedRequestHandler signedRequestHandler = SignedRequestHandlerAccessor.getSignedRequestHandler();
+    private final SignedRequestHandler signedRequestHandler = ServiceAccessor.getSignedRequestHandler();
     private final String hostBaseUrl = System.getProperty("baseurl");
 
     @Test

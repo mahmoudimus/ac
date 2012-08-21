@@ -2,6 +2,8 @@ package com.atlassian.labs.remoteapps.api.service.http;
 
 import com.atlassian.labs.remoteapps.api.Promise;
 
+import java.util.concurrent.Callable;
+
 /**
  * Used to make requests back to the host application.  Implementations handle
  * oauth signing and user propagation.  URIs should be relative to the host app url,
@@ -27,4 +29,5 @@ public interface HostHttpClient
 
     Promise<Response> request(Request request);
 
+    <T> T callAs(String clientKey, String userId, Callable<T> callable);
 }

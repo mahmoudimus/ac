@@ -7,6 +7,7 @@ import com.atlassian.labs.remoteapps.api.service.http.HttpClient;
 import com.atlassian.labs.remoteapps.api.service.http.HostHttpClient;
 import com.atlassian.labs.remoteapps.api.service.http.Request;
 import com.atlassian.labs.remoteapps.api.service.http.Response;
+import com.atlassian.labs.remoteapps.host.common.service.DefaultRequestContext;
 import com.atlassian.labs.remoteapps.spi.WrappingPromise;
 import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.FutureCallback;
@@ -23,16 +24,17 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 public class DefaultHostHttpClient implements HostHttpClient
 {
     private HttpClient httpClient;
-    private RequestContext requestContext;
+    private DefaultRequestContext requestContext;
     private SignedRequestHandler signedRequestHandler;
     private final Logger log = LoggerFactory.getLogger(DefaultHttpClient.class);
 
     public DefaultHostHttpClient(HttpClient httpClient,
-                                 RequestContext requestContext,
+                                 DefaultRequestContext requestContext,
                                  SignedRequestHandler signedRequestHandler)
     {
         this.httpClient = httpClient;
@@ -90,6 +92,35 @@ public class DefaultHostHttpClient implements HostHttpClient
     {
         request.setMethod(Request.Method.DELETE);
         return request(request);
+    }
+
+    @Override
+    public <T> T callAs(String clientKey, String userId, Callable<T> callable)
+    {
+        String oldClientKey = requestContext.getClientKey();
+        String oldUserId = requestContext.getUserId();
+        try
+        {
+            requestContext.setClientKey(clientKey);
+            requestContext.setUserId(userId);
+            return callable.call();
+        }
+        catch (Exception e)
+        {
+            if (e instanceof RuntimeException)
+            {
+                throw (RuntimeException) e;
+            }
+            else
+            {
+                throw new RuntimeException(e);
+            }
+        }
+        finally
+        {
+            requestContext.setClientKey(oldClientKey);
+            requestContext.setUserId(oldUserId);
+        }
     }
 
     @Override

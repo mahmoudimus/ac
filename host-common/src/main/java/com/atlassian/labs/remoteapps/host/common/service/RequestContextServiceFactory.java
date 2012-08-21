@@ -19,7 +19,7 @@ public class RequestContextServiceFactory implements TypedServiceFactory<Request
         return getService(bundle);
     }
 
-    public RequestContext getService(Bundle bundle)
+    public DefaultRequestContext getService(Bundle bundle)
     {
         return new DefaultRequestContext(signedRequestHandlerServiceFactory.getService(bundle));
     }

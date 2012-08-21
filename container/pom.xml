@@ -179,12 +179,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.kohsuke.redstone</groupId>
-            <artifactId>redstone</artifactId>
-            <version>1.1.1</version>
-        </dependency>
-
-        <dependency>
         	<groupId>org.hsqldb</groupId>
         	<artifactId>hsqldb</artifactId>
         	<version>2.2.8</version>

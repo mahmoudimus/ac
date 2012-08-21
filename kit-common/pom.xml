@@ -100,7 +100,7 @@
             <groupId>org.kohsuke.redstone</groupId>
             <artifactId>redstone</artifactId>
             <version>1.1.1</version>
-            <optional>true</optional>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
