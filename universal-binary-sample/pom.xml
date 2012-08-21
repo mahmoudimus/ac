@@ -58,6 +58,7 @@
             <artifactId>remoteapps-plugin</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
+            <type>atlassian-plugin</type>
         </dependency>
         <dependency>
             <groupId>com.atlassian.labs</groupId>
