@@ -67,34 +67,54 @@ public class RemoteAppEmbeddedTestPage
         return getValue("consumerKey");
     }
 
-    public String getRestStatus()
+    public String getClientHttpStatus()
     {
-        return waitForValue("rest-status");
+        return waitForValue("client-http-status");
     }
 
-    public String getRestStatusText()
+    public String getClientHttpStatusText()
     {
-        return waitForValue("rest-status-text");
+        return waitForValue("client-http-status-text");
     }
 
-    public String getRestContentType()
+    public String getClientHttpContentType()
     {
-        return waitForValue("rest-content-type");
+        return waitForValue("client-http-content-type");
     }
 
-    public String getRestResponseText()
+    public String getClientHttpResponseText()
     {
-        return waitForValue("rest-response-text");
+        return waitForValue("client-http-response-text");
     }
 
-    public String getRestData()
+    public String getClientHttpData()
     {
-        return waitForValue("rest-data");
+        return waitForValue("client-http-data");
+    }
+
+    public String getServerHttpStatus()
+    {
+        return getValue("server-http-status");
+    }
+
+    public String getServerHttpStatusText()
+    {
+        return getValue("server-http-status-text");
+    }
+
+    public String getServerHttpContentType()
+    {
+        return getValue("server-http-content-type");
+    }
+
+    public String getServerHttpEntity()
+    {
+        return getValue("server-http-entity");
     }
 
     public long getLoadTime()
     {
-        return Long.parseLong(driver.findElement(By.id("ra-time-" + key)).getText());
+        return Long.parseLong(driver.findElement(By.cssSelector("#ra-" + key + " .ra-elapsed")).getText());
     }
 
     public Map<String,String> getIframeQueryParams()

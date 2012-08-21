@@ -3,8 +3,8 @@ package junit.jira;
 import com.atlassian.jira.rpc.soap.client.JiraSoapService;
 import com.atlassian.jira.rpc.soap.client.JiraSoapServiceServiceLocator;
 import com.atlassian.jira.rpc.soap.client.RemoteUser;
-import com.atlassian.labs.remoteapps.apputils.OAuthContext;
-import junit.OAuthContextAccessor;
+import com.atlassian.labs.remoteapps.api.service.SignedRequestHandler;
+import services.SignedRequestHandlerAccessor;
 import org.apache.axis.client.Stub;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.json.JSONArray;
@@ -27,7 +27,7 @@ import static org.junit.Assert.assertEquals;
  */
 public class JiraReadUsersAndGroupsScopeTest
 {
-    private final OAuthContext oAuthContext = OAuthContextAccessor.getOAuthContext();
+    private final SignedRequestHandler signedRequestHandler = SignedRequestHandlerAccessor.getSignedRequestHandler();
     private final String hostBaseUrl = System.getProperty("baseurl");
 
     @Test
@@ -37,7 +37,7 @@ public class JiraReadUsersAndGroupsScopeTest
         String url = hostBaseUrl + "/rpc/soap/jirasoapservice-v2";
         JiraSoapService service = locator.getJirasoapserviceV2(new URL(url + "?user_id=betty"));
 
-        String authorization = oAuthContext.getAuthorizationHeaderValue(url, "POST", "betty");
+        String authorization = signedRequestHandler.getAuthorizationHeaderValue(url, "POST", "betty");
         ((Stub)service)._setProperty(HTTPConstants.REQUEST_HEADERS, new Hashtable(singletonMap(HTTPConstants.HEADER_AUTHORIZATION, authorization)));
 
         RemoteUser user = service.getUser("", "betty");
@@ -53,7 +53,7 @@ public class JiraReadUsersAndGroupsScopeTest
         conn.setDoInput(true);
         conn.setRequestMethod("POST");
         conn.setRequestProperty("Content-Type", "application/json");
-        oAuthContext.sign(url, "POST", "betty", conn);
+        signedRequestHandler.sign(url, "POST", "betty", conn);
         PrintWriter out = new PrintWriter(new OutputStreamWriter(conn.getOutputStream()));
         String body = new JSONObject()
                 .put("jsonrpc", "2.0")
@@ -82,7 +82,7 @@ public class JiraReadUsersAndGroupsScopeTest
         conn.setDoInput(true);
         conn.setRequestMethod("POST");
         conn.setRequestProperty("Content-Type", "application/json");
-        oAuthContext.sign(url, "POST", "betty", conn);
+        signedRequestHandler.sign(url, "POST", "betty", conn);
         PrintWriter out = new PrintWriter(new OutputStreamWriter(conn.getOutputStream()));
         String body = new JSONArray()
                                 .put("")

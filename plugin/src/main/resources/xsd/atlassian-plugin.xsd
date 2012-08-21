@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" id="sdf"
+           xmlns:xhtml="http://www.w3.org/1999/xhtml">
+    <xs:annotation>
+        <xs:appinfo>
+            <xhtml:title>Atlassian Plugin Descriptor Schema</xhtml:title>
+        </xs:appinfo>
+    </xs:annotation>
+    <xs:include schemaLocation="atlassian-plugin-common.xsd"/>
+    <xs:include schemaLocation="vendor.xsd"/>
+
+    <xs:complexType name="ParamType">
+        <xs:annotation>
+            <xs:documentation>Supply parameter values if required by your plugin.</xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="name"
+                      type="NameType">
+        </xs:attribute>
+    </xs:complexType>
+
+    <xs:simpleType name="InstallationModeType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="local" />
+            <xs:enumeration value="remote" />
+            <xs:enumeration value="container" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="PermissionType">
+        <xs:annotation>
+            <xs:documentation>Requested permission or api scope</xs:documentation>
+        </xs:annotation>
+        <xs:simpleContent>
+            <xs:extension base="PermissionValueType">
+                <xs:attribute name="application" type="ApplicationType" use="optional" />
+                <xs:attribute name="installation-mode" type="InstallationModeType" use="optional" />
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:complexType name="PermissionsType">
+        <xs:annotation>
+            <xs:documentation>Collection of permissions</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="permission" type="PermissionType" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="PluginInfoType">
+        <xs:annotation>
+            <xs:documentation>This element contains plugin information displayed by the application for administrators,
+                plugin parameters and OSGi bundle instructions.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="description"
+                        type="DescriptionType" maxOccurs="1" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>A human-readable description of your plugin.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="version"
+                        type="xs:string" maxOccurs="1" minOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>The version of your plugin. This number is displayed in the application's plugin
+                        manager.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="vendor" maxOccurs="1"
+                        minOccurs="0" type="VendorType">
+                <xs:annotation>
+                    <xs:documentation>Supply information about the developer of the plugin.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="permissions" maxOccurs="1"
+                        minOccurs="0" type="PermissionsType">
+                <xs:annotation>
+                    <xs:documentation>Permissions requested by this plugin</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="param" type="ParamType"
+                        maxOccurs="unbounded" minOccurs="0">
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="AtlassianPluginType">
+        <xs:annotation>
+            <xs:documentation>This is the root element for your plugin descriptor.</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="plugin-info" maxOccurs="1"
+                        minOccurs="1" type="PluginInfoType"/>
+
+            <!-- Described modules inserted here -->
+            <xs:choice minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="key" use="required" type="KeyType">
+            <xs:annotation>
+                <xs:documentation>Each plugin has a plugin key which must be unique to the plugin. We suggest using the
+                    Java convention of reversing your domain name in order to ensure your key is unique.
+                    The plugin key must be defined in lower case in the plugin descriptor.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="name" use="required" type="NameType">
+            <xs:annotation>
+                <xs:documentation>This is a human-readable name, used for display in menus within the application.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="state" type="EnabledDisabledStateType"/>
+        <xs:attribute name="plugins-version" type="xs:positiveInteger">
+            <xs:annotation>
+                <xs:documentation>To create an OSGi plugin, use plugins-version="2".</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+
+    <xs:element name="atlassian-plugin" type="AtlassianPluginType"/>
+</xs:schema>

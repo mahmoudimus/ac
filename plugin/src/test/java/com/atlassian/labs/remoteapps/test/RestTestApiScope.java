@@ -1,8 +1,8 @@
 package com.atlassian.labs.remoteapps.test;
 
-import com.atlassian.labs.remoteapps.modules.permissions.scope.ApiResourceInfo;
-import com.atlassian.labs.remoteapps.modules.permissions.scope.ApiScope;
-import com.atlassian.labs.remoteapps.modules.permissions.scope.RestApiScopeHelper;
+import com.atlassian.labs.remoteapps.spi.permission.scope.ApiResourceInfo;
+import com.atlassian.labs.remoteapps.spi.permission.scope.ApiScope;
+import com.atlassian.labs.remoteapps.spi.permission.scope.RestApiScopeHelper;
 
 import javax.servlet.http.HttpServletRequest;
 

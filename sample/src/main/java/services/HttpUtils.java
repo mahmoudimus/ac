@@ -1,6 +1,6 @@
 package services;
 
-import com.atlassian.labs.remoteapps.apputils.OAuthContext;
+import com.atlassian.labs.remoteapps.api.service.SignedRequestHandler;
 import com.samskivert.mustache.Mustache;
 
 import javax.servlet.http.HttpServletResponse;
@@ -50,13 +50,13 @@ public class HttpUtils
         return writer.toString();
     }
 
-    public static String sendSignedGet(OAuthContext oAuthContext, String uri, String user)
+    public static String sendSignedGet(SignedRequestHandler signedRequestHandler, String uri, String user)
     {
         try
         {
             URL url = new URL(uri + "?user_id=" + user);
             HttpURLConnection yc = (HttpURLConnection) url.openConnection();
-            oAuthContext.sign(uri, "GET", user, yc);
+            signedRequestHandler.sign(uri, "GET", user, yc);
             BufferedReader in = new BufferedReader(
                                     new InputStreamReader(
                                     yc.getInputStream()));
@@ -81,14 +81,14 @@ public class HttpUtils
         }
     }
 
-    public static int sendFailedSignedGet(OAuthContext oAuthContext, String uri, String user)
+    public static int sendFailedSignedGet(SignedRequestHandler signedRequestHandler, String uri, String user)
     {
         HttpURLConnection yc = null;
         try
         {
             URL url = new URL(uri + "?user_id=" + user);
             yc = (HttpURLConnection) url.openConnection();
-            oAuthContext.sign(uri, "GET", user, yc);
+            signedRequestHandler.sign(uri, "GET", user, yc);
             BufferedReader in = new BufferedReader(
                                     new InputStreamReader(
                                     yc.getInputStream()));

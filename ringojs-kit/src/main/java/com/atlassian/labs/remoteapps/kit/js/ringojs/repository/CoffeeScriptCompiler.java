@@ -1,20 +1,19 @@
 package com.atlassian.labs.remoteapps.kit.js.ringojs.repository;
 
-import com.google.common.base.Charsets;
-import com.google.common.io.InputSupplier;
-import com.google.common.io.Resources;
-import org.mozilla.javascript.*;
+import org.mozilla.javascript.Context;
+import org.mozilla.javascript.JavaScriptException;
+import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.commonjs.module.Require;
 import org.mozilla.javascript.commonjs.module.provider.StrongCachingModuleScriptProvider;
 import org.mozilla.javascript.commonjs.module.provider.UrlModuleSourceProvider;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collections;
-import java.util.concurrent.*;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Copyright 2011 Mark Derricutt.
@@ -89,7 +88,7 @@ public class CoffeeScriptCompiler
         }
     }
     private String doCompile(final String coffeeScriptSource) {
-        Context context = Context.enter();
+        Context context = createContext();
         try
         {
             Scriptable compileScope = context.newObject(coffeeScript);
@@ -118,7 +117,7 @@ public class CoffeeScriptCompiler
 
     private Context createContext() {
         Context context = Context.enter();
-        context.setOptimizationLevel(9); // Without this, Rhino hits a 64K bytecode limit and fails
+        context.setOptimizationLevel(-1); // Without this, Rhino hits a 64K bytecode limit and fails
         return context;
     }
 

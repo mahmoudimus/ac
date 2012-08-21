@@ -114,7 +114,7 @@
    <!-- ******** Global Parameters ******** -->
 
    <!-- Title of XHTML document. -->
-   <xsl:param name="title"></xsl:param>
+   <xsl:param name="title"><xsl:value-of select="/xsd:schema/xsd:annotation/xsd:appinfo/html:title" /> Documentation</xsl:param>
 
    <!-- If 'true', sorts the top-level schema components by type,
         then name. Otherwise, displays the components by the order that

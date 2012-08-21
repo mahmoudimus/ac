@@ -1,9 +1,12 @@
 package servlets;
 
-import com.atlassian.labs.remoteapps.apputils.OAuthContext;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import com.atlassian.labs.remoteapps.api.annotation.ServiceReference;
+import com.atlassian.labs.remoteapps.api.service.SignedRequestHandler;
+import com.atlassian.labs.remoteapps.api.service.http.Response;
+import com.atlassian.labs.remoteapps.api.service.http.SyncHostHttpClient;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -14,29 +17,40 @@ import java.util.Map;
 
 import static services.HttpUtils.renderHtml;
 
-
-/**
- *
- */
-@Component
+@Singleton
 public class MyAdminServlet extends HttpServlet
 {
-    private final OAuthContext oAuthContext;
+    private final SignedRequestHandler signedRequestHandler;
+    private SyncHostHttpClient hostHttpClient;
 
-    @Autowired
-    public MyAdminServlet(OAuthContext oAuthContext)
+    @Inject
+    public MyAdminServlet(@ServiceReference SignedRequestHandler signedRequestHandler,
+                          @ServiceReference SyncHostHttpClient hostHttpClient)
     {
-        this.oAuthContext = oAuthContext;
+        this.signedRequestHandler = signedRequestHandler;
+        this.hostHttpClient = hostHttpClient;
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+        throws ServletException, IOException
     {
-        String consumerKey = oAuthContext.validate2LOFromParameters(req);
-        final Map<String, Object> context = new HashMap<String,Object>();
+        String consumerKey = signedRequestHandler.validateRequest(req);
+        final Map<String, Object> context = new HashMap<String, Object>();
         context.put("consumerKey", consumerKey);
-        context.put("baseUrl", oAuthContext.getHostBaseUrl(consumerKey));
+        context.put("baseUrl", signedRequestHandler.getHostBaseUrl(consumerKey));
+        execHostHttpRequests(context);
         renderHtml(resp, "test-page.mu", context);
+    }
+
+    private void execHostHttpRequests(Map<String, Object> context)
+        throws ServletException, IOException
+    {
+        Response response = hostHttpClient.get("/rest/remoteapptest/1/user");
+        context.put("httpGetStatus", response.getStatusCode());
+        context.put("httpGetStatusText", response.getStatusText());
+        context.put("httpGetContentType", response.getContentType());
+        context.put("httpGetEntity", response.getEntity());
     }
 
 }

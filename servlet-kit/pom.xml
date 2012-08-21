@@ -28,6 +28,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>com.atlassian.fugue</groupId>
             <artifactId>fugue</artifactId>
         </dependency>
@@ -39,7 +44,7 @@
         </dependency>
         <dependency>
             <groupId>com.atlassian.labs</groupId>
-            <artifactId>remoteapps-apputils</artifactId>
+            <artifactId>remoteapps-kit-common</artifactId>
             <version>${project.version}</version>
             <!-- weird exclusion, so that plugins can simply include the kit, no other details needed! -->
             <exclusions>
@@ -75,6 +80,12 @@
             <groupId>org.springframework</groupId>
             <artifactId>org.springframework.context</artifactId>
             <version>2.5.6</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.osgi</groupId>
+            <artifactId>spring-osgi-annotation</artifactId>
+            <version>1.2.1</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

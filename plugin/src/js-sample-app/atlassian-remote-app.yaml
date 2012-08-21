@@ -1,0 +1,27 @@
+key: js-sample-app
+name: js-sample-app app
+description: js-sample-app description
+version: 1
+display-url: http://localhost:8000/js-sample-app
+
+permissions:
+  permission:
+    - scope: resttest
+    - scope: create_oauth_link
+
+general-page:
+  - key: general
+    name: Container Sample General
+    url: /general
+
+oauth:
+  public-key: |
+    -----BEGIN PUBLIC KEY-----
+    MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAsbRNjpZFNh+on9JaAh/B
+    JtmP7ee3rJC9mUnoqZU65Lce6VCDN+bp76U+Wxy/m14oS7MVmqiXOMkvHNZUlsa9
+    qGWmCJkooGVTN45w580ORo5MuHwJ/jPbgyGg5MFWyScTB3BGivfgVPPPwi72vROp
+    ut0VrwvNdpJRPurWMFsEf/9pxpIDyXiDPhU9EiyyOaK73S6bzI58z+rYikoen70H
+    wjrCVb6Udj6NoKqRWf5xGBbAn08wSVgR5IGxjvQRkTO4qj4XpDh8Q+vyiYomUc40
+    lgY/IwqnWCQCPjs5oBojfb8H+XXbEaeJ3ED7vuVGtsv8hLtnspVVyBxI3Ds0LJnY
+    xwIDAQAB
+    -----END PUBLIC KEY-----

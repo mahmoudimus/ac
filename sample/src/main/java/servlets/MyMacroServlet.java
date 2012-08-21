@@ -1,8 +1,9 @@
 package servlets;
 
-import com.atlassian.labs.remoteapps.apputils.OAuthContext;
-import org.springframework.stereotype.Component;
+import com.atlassian.labs.remoteapps.api.annotation.ServiceReference;
+import com.atlassian.labs.remoteapps.api.service.SignedRequestHandler;
 
+import javax.inject.Singleton;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -17,20 +18,20 @@ import static services.HttpUtils.renderHtml;
 /**
  *
  */
-@Component
+@Singleton
 public class MyMacroServlet extends HttpServlet
 {
-    private final OAuthContext oauthContext;
+    private final SignedRequestHandler signedRequestHandler;
 
-    public MyMacroServlet(OAuthContext oauthContext)
+    public MyMacroServlet(@ServiceReference SignedRequestHandler signedRequestHandler)
     {
-        this.oauthContext = oauthContext;
+        this.signedRequestHandler = signedRequestHandler;
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
     {
-        oauthContext.validateRequest(req);
+        signedRequestHandler.validateRequest(req);
         final String pageId = req.getParameter("ctx_page_id");
         final String favoriteFooty = req.getParameter("footy");
         final String body = req.getParameter("body");
@@ -41,7 +42,7 @@ public class MyMacroServlet extends HttpServlet
                 put("pageId", pageId);
                 put("favoriteFooty", favoriteFooty);
                 put("body", body);
-                put("server", URI.create(oauthContext.getLocalBaseUrl()).getAuthority());
+                put("server", URI.create(signedRequestHandler.getLocalBaseUrl()).getAuthority());
         }});
     }
 }

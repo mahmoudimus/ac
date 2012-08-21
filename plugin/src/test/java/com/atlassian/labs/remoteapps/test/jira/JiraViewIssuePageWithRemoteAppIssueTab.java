@@ -9,14 +9,14 @@ public class JiraViewIssuePageWithRemoteAppIssueTab extends RemoteAppEmbeddedTes
 
     public JiraViewIssuePageWithRemoteAppIssueTab(String issueKey)
     {
-        super("issue-tab-page-remoteAppIssueTabPage");
+        super("issue-tab-page-jira-remoteAppIssueTabPage");
         this.issueKey = issueKey;
     }
 
     @Override
     public String getUrl()
     {
-        return "/browse/" + issueKey + "?page=app1:issue-tab-page-remoteAppIssueTabPage";
+        return "/browse/" + issueKey + "?page=app1:issue-tab-page-jira-remoteAppIssueTabPage";
     }
 
 

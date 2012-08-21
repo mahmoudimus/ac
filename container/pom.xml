@@ -26,6 +26,12 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>remoteapps-host-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>remoteapps-ringojs-kit</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
@@ -145,11 +151,6 @@
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
             <scope>compile</scope>
         </dependency>
@@ -161,6 +162,7 @@
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
+            <version>1.2.16</version>
             <scope>compile</scope>
         </dependency>
 
@@ -183,6 +185,12 @@
         </dependency>
 
         <dependency>
+        	<groupId>org.hsqldb</groupId>
+        	<artifactId>hsqldb</artifactId>
+        	<version>2.2.8</version>
+        </dependency>
+
+        <dependency>
             <!-- we use this one as it has the proper directory entries to ensure it gets picked
                  up during package scanning -->
             <groupId>org.json</groupId>
@@ -198,6 +206,13 @@
             <version>${ao.version}</version>
             <scope>provided</scope>
         </dependency>
+
+        <!-- spring -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>2.5.6</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -211,7 +226,7 @@
                             <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
-                            <includeArtifactIds>remoteapps-ringojs-kit,ringojs</includeArtifactIds>
+                            <includeArtifactIds>remoteapps-kit-common,remoteapps-ringojs-kit,ringojs</includeArtifactIds>
                             <stripVersion>true</stripVersion>
                             <outputDirectory>${project.build.outputDirectory}</outputDirectory>
                         </configuration>
@@ -255,6 +270,7 @@
                             </transformers>
                             <artifactSet>
                                 <excludes>
+                                    <exclude>${project.groupId}:remoteapps-kit-common</exclude>
                                     <exclude>${project.groupId}:remoteapps-ringojs-kit</exclude>
                                     <exclude>org.twdata.org.ringojs:ringojs</exclude>
                                 </excludes>

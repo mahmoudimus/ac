@@ -1,0 +1,7 @@
+<application key="refapp">
+    <permissions>
+    </permissions>
+
+    <webhook key="wh-remote_app_started" event="remote_app_started" url="/webHook/remote_app_started" />
+    <webhook key="wh-server_upgraded" event="server_upgraded" url="/webHook/server_upgraded" />
+</application>

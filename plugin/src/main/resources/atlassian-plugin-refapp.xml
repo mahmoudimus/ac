@@ -1,16 +1,20 @@
 <application key="refapp">
     <component-import key="webSudoSessionManager" interface="com.atlassian.refapp.auth.external.WebSudoSessionManager"/>
 
-    <component key="refappProductAccessor" class="com.atlassian.labs.remoteapps.product.refapp.RefappProductAccessor" />
-    <component key="refappWebSudoElevator" class="com.atlassian.labs.remoteapps.product.refapp.RefappWebSudoElevator" />
+    <component key="ProductAccessor" class="com.atlassian.labs.remoteapps.plugin.product.refapp.RefappProductAccessor" />
+    <component key="WebSudoElevator" class="com.atlassian.labs.remoteapps.plugin.product.refapp.RefappWebSudoElevator" />
 
-    <component key="refapp-profile-page" class="com.atlassian.labs.remoteapps.modules.page.ProfilePageModuleGenerator" />
+    <component key="profile-page-generator" class="com.atlassian.labs.remoteapps.plugin.module.page.ProfilePageModuleGenerator" />
 
-    <component key="refapp-host" class="com.atlassian.labs.remoteapps.modules.ApplicationPropertiesIFrameHost" />
+    <component key="host" class="com.atlassian.labs.remoteapps.plugin.module.ApplicationPropertiesIFrameHost" />
 
-    <rest key="rest-refapp" path="/remoteapps" version="1">
+    <rest key="rest" path="/remoteapps" version="1">
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>INCLUDE</dispatcher>
-        <package>com.atlassian.labs.remoteapps.rest</package>
+        <package>com.atlassian.labs.remoteapps.plugin.rest</package>
     </rest>
+
+    <described-module-type key="profile-page" name="User Profile Page" class="com.atlassian.labs.remoteapps.plugin.module.page.ProfilePageModuleDescriptor">
+        <description>A user profile page decorated as normal page in the user profile area</description>
+    </described-module-type>
 </application>

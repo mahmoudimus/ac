@@ -22,14 +22,19 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>remoteapps-apputils</artifactId>
+            <artifactId>remoteapps-host-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>remoteapps-kit-common</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>asm</groupId>
-            <artifactId>asm-util</artifactId>
-            <version>3.3.1</version>
+            <groupId>com.atlassian.analytics</groupId>
+            <artifactId>analytics-api</artifactId>
+            <version>2.12</version>
         </dependency>
         <dependency>
             <groupId>net.oauth.core</groupId>
@@ -48,17 +53,6 @@
             <version>1.4</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>com.atlassian.labs</groupId>
-            <artifactId>jira4-compat</artifactId>
-            <version>0.6.1</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.atlassian.crowd</groupId>
-                    <artifactId>embedded-crowd-api</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
 
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
@@ -73,17 +67,24 @@
         </dependency>
 
         <dependency>
-            <groupId>org.json</groupId>
-            <artifactId>json</artifactId>
-            <version>20090211</version>
-        </dependency>
-
-        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>remoteapps-sample</artifactId>
             <version>${project.version}</version>
             <type>atlassian-plugin</type>
             <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>remoteapps-test</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>remoteapps-container</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -132,9 +133,26 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>com.atlassian.plugins</groupId>
+            <artifactId>atlassian-plugins-webresource</artifactId>
+            <version>${plugins.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>com.atlassian.sal</groupId>
             <artifactId>sal-api</artifactId>
             <version>${sal.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>10.0.1</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -152,6 +170,12 @@
         <dependency>
             <groupId>com.atlassian.oauth</groupId>
             <artifactId>atlassian-oauth-service-provider-spi</artifactId>
+            <version>${oauth.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.oauth</groupId>
+            <artifactId>atlassian-oauth-bridge</artifactId>
             <version>${oauth.version}</version>
             <scope>provided</scope>
         </dependency>
@@ -283,12 +307,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.atlassian.selenium</groupId>
-            <artifactId>atlassian-webdriver-jira</artifactId>
-            <version>2.0</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>com.atlassian.jira</groupId>
             <artifactId>atlassian-jira-pageobjects</artifactId>
             <version>${jira.version}</version>
@@ -315,7 +333,7 @@
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>
-            <version>7.1.6.v20100715</version>
+            <version>7.4.2.v20110526</version>
             <scope>test</scope>
         </dependency>
 
@@ -336,7 +354,7 @@
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-servlet</artifactId>
-            <version>7.1.6.v20100715</version>
+            <version>7.4.2.v20110526</version>
             <scope>test</scope>
         </dependency>
 
@@ -356,12 +374,6 @@
                 <groupId>commons-logging</groupId>
                 <artifactId>commons-logging</artifactId>
                 <version>1.1.1</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-                <version>${slf4j.version}</version>
                 <scope>provided</scope>
             </dependency>
         </dependencies>
@@ -412,7 +424,16 @@
                     <version>1.0.4</version>
                     <configuration>
                         <commands>
-                            <pi>resources com.atlassian.maven.plugins:maven-amps-plugin:filter-plugin-descriptor compile com.atlassian.maven.plugins:maven-amps-plugin:copy-bundled-dependencies net.alchim31.maven:yuicompressor-maven-plugin:compress org.codehaus.mojo:xml-maven-plugin:transform com.atlassian.maven.plugins:maven-amps-plugin:generate-manifest com.atlassian.maven.plugins:maven-amps-plugin:jar com.atlassian.maven.plugins:maven-amps-plugin:install</pi>
+                            <pi>resources
+                                com.atlassian.maven.plugins:maven-amps-plugin:filter-plugin-descriptor
+                                compile
+                                com.atlassian.maven.plugins:maven-amps-plugin:copy-bundled-dependencies
+                                net.alchim31.maven:yuicompressor-maven-plugin:compress
+                                org.codehaus.mojo:xml-maven-plugin:transform
+                                com.atlassian.maven.plugins:maven-amps-plugin:generate-manifest
+                                com.atlassian.maven.plugins:maven-amps-plugin:jar
+                                com.atlassian.maven.plugins:maven-amps-plugin:install
+                            </pi>
                             <docco>ru.circumflex:maven-cx-plugin:docco#docco</docco>
                         </commands>
                     </configuration>
@@ -423,8 +444,6 @@
             <plugin>
                 <groupId>com.atlassian.maven.plugins</groupId>
                 <artifactId>maven-amps-plugin</artifactId>
-                <version>3.9</version>
-                <extensions>true</extensions>
                 <configuration>
                     <skipManifestValidation>true</skipManifestValidation>
                     <jvmArgs>-Xmx512m -XX:MaxPermSize=192m</jvmArgs>
@@ -443,31 +462,25 @@
                             com.atlassian.refapp.auth.external;resolution:=optional,
                             com.atlassian.sal.api.*;version="(2.4,3.0]",
                             net.oauth*,
+                            javax.inject,
                             org.apache.commons.lang.*;version="2.4",
                             org.slf4j*;version="1.5",
                             *;resolution:=optional
                         </Import-Package>
-                        <DynamicImport-Package>com.atlassian.labs.speakeasy.*</DynamicImport-Package>
+                        <DynamicImport-Package>com.atlassian.labs.speakeasy.*
+                        </DynamicImport-Package>
                         <Export-Package>
-                            com.atlassian.labs.remoteapps.modules.confluence,
-                            com.atlassian.labs.remoteapps.modules.permissions.scope,
-                            com.atlassian.labs.remoteapps.modules.page.jira,
-                            com.atlassian.labs.remoteapps.descriptor.external,
-                            com.atlassian.labs.remoteapps.modules.external,
-                            com.atlassian.labs.remoteapps.event,
-                            com.atlassian.labs.remoteapps.api,
-                            com.atlassian.labs.remoteapps.api.services,
-                            com.atlassian.labs.remoteapps.api.services.impl,
-                            com.atlassian.labs.remoteapps.api.universalbinary,
-                            com.atlassian.labs.remoteapps.api.universalbinary.impl,
-                            com.atlassian.labs.remoteapps.webhook.external
+                            javax.inject;version="1",
+                            com.atlassian.labs.remoteapps.spi*,
+                            com.atlassian.labs.remoteapps.api*
                         </Export-Package>
                         <Spring-Context>*;timeout:=60</Spring-Context>
                     </instructions>
                     <systemPropertyVariables>
                         <xvfb.enable>${xvfb.enable}</xvfb.enable>
                         <atlassian.mail.senddisabled>false</atlassian.mail.senddisabled>
-                        <sun.net.http.allowRestrictedHeaders>true</sun.net.http.allowRestrictedHeaders>
+                        <sun.net.http.allowRestrictedHeaders>true
+                        </sun.net.http.allowRestrictedHeaders>
                         <!--atlassian.dev.mode>false</atlassian.dev.mode-->
                     </systemPropertyVariables>
                     <!-- uncomment when it is safe to upgrade amps:  https://studio.atlassian.com/browse/AMPS-663 -->
@@ -495,7 +508,8 @@
                         <product>
                             <id>refapp</id>
                             <version>${refapp.version}</version>
-                            <log4jProperties>src/test/resources/log4j-refapp.properties</log4jProperties>
+                            <log4jProperties>src/test/resources/log4j-refapp.properties
+                            </log4jProperties>
                             <libArtifacts>
                                 <!-- necessary for Speakeasy mail handling -->
                                 <libArtifact>
@@ -527,7 +541,9 @@
                             <version>${confluence.version}</version>
                             <log4jProperties>src/test/resources/log4j-confluence.properties
                             </log4jProperties>
-                            <productDataPath>${basedir}/src/test/resources/confluence-generated-test-resources.zip</productDataPath>
+                            <productDataPath>
+                                ${basedir}/src/test/resources/confluence-generated-test-resources.zip
+                            </productDataPath>
                             <systemPropertyVariables>
                                 <product>confluence</product>
                             </systemPropertyVariables>
@@ -558,10 +574,13 @@
                                 <productId>confluence</productId>
                             </productIds>
                             <systemProperties>
-                                <testedProductClass>com.atlassian.labs.remoteapps.test.confluence.FixedConfluenceTestedProduct</testedProductClass>
+                                <testedProductClass>
+                                    com.atlassian.labs.remoteapps.test.confluence.FixedConfluenceTestedProduct
+                                </testedProductClass>
                             </systemProperties>
                             <excludes>
                                 <exclude>it/jira/*.java</exclude>
+                                <exclude>it/refapp/*.java</exclude>
                             </excludes>
                         </testGroup>
                         <testGroup>
@@ -570,10 +589,13 @@
                                 <productId>jira</productId>
                             </productIds>
                             <systemProperties>
-                                <testedProductClass>com.atlassian.jira.pageobjects.JiraTestedProduct</testedProductClass>
+                                <testedProductClass>
+                                    com.atlassian.jira.pageobjects.JiraTestedProduct
+                                </testedProductClass>
                             </systemProperties>
                             <excludes>
                                 <exclude>it/confluence/*.java</exclude>
+                                <exclude>it/refapp/*.java</exclude>
                             </excludes>
                         </testGroup>
                     </testGroups>
@@ -600,7 +622,8 @@
                                 </Import-Package>
                                 <Export-Package></Export-Package>
                             </instructions>
-                            <manifestLocation>${project.build.testOutputDirectory}/META-INF</manifestLocation>
+                            <manifestLocation>${project.build.testOutputDirectory}/META-INF
+                            </manifestLocation>
                             <classifier>tests</classifier>
                             <supportedProjectTypes>
                                 <supportedProjectType>atlassian-plugin</supportedProjectType>
@@ -669,17 +692,6 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.4.3</version>
-                <configuration>
-                    <excludes>
-                        <exclude>**/*$*</exclude>
-                        <exclude>it/**</exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>2.2</version>
                 <executions>
@@ -688,6 +700,22 @@
                             <goal>test-jar</goal>
                         </goals>
                         <phase>package</phase>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <includeArtifactIds>remoteapps-kit-common</includeArtifactIds>
+                            <stripVersion>true</stripVersion>
+                            <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -710,7 +738,8 @@
         <product>refapp</product>
         <confluence.plugins.version>2.10.1</confluence.plugins.version>
         <docco.pageTemplate>${basedir}/src/main/build/page.html.ftl</docco.pageTemplate>
-        <docco.indexTemplate>${basedir}/src/main/build/atlassian-remote-app.xml.ftl</docco.indexTemplate>
+        <docco.indexTemplate>${basedir}/src/main/build/atlassian-remote-app.xml.ftl
+        </docco.indexTemplate>
         <docco.indexFile>atlassian-remote-app.xml</docco.indexFile>
     </properties>
 

@@ -35,7 +35,7 @@
         </dependency>
         <dependency>
             <groupId>com.atlassian.labs</groupId>
-            <artifactId>remoteapps-apputils</artifactId>
+            <artifactId>remoteapps-kit-common</artifactId>
             <version>${project.version}</version>
             <!-- weird exclusion, so that plugins can simply include the kit, no other details needed! -->
             <exclusions>
@@ -70,6 +70,13 @@
             <groupId>com.atlassian.oauth</groupId>
             <artifactId>atlassian-oauth-consumer-spi</artifactId>
             <version>${oauth.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.samskivert</groupId>
+            <artifactId>jmustache</artifactId>
+            <version>1.3</version>
             <scope>provided</scope>
         </dependency>
 

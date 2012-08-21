@@ -3,13 +3,8 @@
 
     <xs:include schemaLocation="common.xsd" />
 
-    <xs:simpleType name="ScopeType">
-        <xs:restriction base="xs:string">
-        </xs:restriction>
-    </xs:simpleType>
-
     <xs:complexType name="PermissionType">
-        <xs:attribute name="scope" type="ScopeType" use="required" />
+        <xs:attribute name="scope" type="PermissionValueType" use="required" />
     </xs:complexType>
 
     <xs:complexType name="PermissionsType">

@@ -1,7 +1,7 @@
 package com.atlassian.labs.remoteapps.container.util;
 
 import aQute.lib.osgi.Analyzer;
-import com.atlassian.labs.remoteapps.api.RemoteAppDescriptorAccessor;
+import com.atlassian.labs.remoteapps.host.common.descriptor.DescriptorAccessor;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.dom4j.Document;
@@ -28,7 +28,7 @@ public class ZipWriter
     private static final String REMOTEAPPS_KEY_SEPARATOR = "----remoteapps-";
     private static final Logger log = LoggerFactory.getLogger(ZipWriter.class);
 
-    public static File zipAppIntoPluginJar(RemoteAppDescriptorAccessor descriptorAccessor, File dir, String... pathsToExclude) throws IOException
+    public static File zipAppIntoPluginJar(DescriptorAccessor descriptorAccessor, File dir, String... pathsToExclude) throws IOException
     {
         File zipFile = createExtractableTempFile(dir.getName(), ".jar");
         Set<String> excludes = newHashSet(pathsToExclude);
@@ -59,7 +59,7 @@ public class ZipWriter
                         "Bundle-ManifestVersion: 2\n", zos);
 
                 addJarContents("ringojs.jar", zos);
-                addJarContents("remoteapps-apputils.jar", zos);
+                addJarContents("remoteapps-kit-common.jar", zos);
                 addJarContents("remoteapps-ringojs-kit.jar", zos);
             }
         }
@@ -118,7 +118,7 @@ public class ZipWriter
         }
         catch (IOException e)
         {
-            throw new RuntimeException("Unable to add apputils to jar", e);
+            throw new RuntimeException("Unable to add kit-common to jar", e);
         }
         finally
         {

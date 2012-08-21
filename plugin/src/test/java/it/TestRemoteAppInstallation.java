@@ -80,16 +80,4 @@ public class TestRemoteAppInstallation extends AbstractRemoteAppTest
                 .addUnknownModule("some-key")
                 .start();
     }
-
-    @Test
-    public void testUnknownModuleAndPass() throws Exception
-    {
-        new RemoteAppRunner(product.getProductInstance().getBaseUrl(),
-                "appFirst")
-                .addUnknownModule("some-key")
-                .description("foo")
-                .stripUnknownModules()
-                .start()
-                .stop();
-    }
 }

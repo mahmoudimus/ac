@@ -1,9 +1,10 @@
 package servlets;
 
-import com.atlassian.labs.remoteapps.apputils.OAuthContext;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import com.atlassian.labs.remoteapps.api.annotation.ServiceReference;
+import com.atlassian.labs.remoteapps.api.service.SignedRequestHandler;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -14,15 +15,15 @@ import java.io.PrintWriter;
 /**
  *
  */
-@Component
+@Singleton
 public class MyImageMacroServlet extends HttpServlet
 {
-    private final OAuthContext oAuthContext;
+    private final SignedRequestHandler signedRequestHandler;
 
-    @Autowired
-    public MyImageMacroServlet(OAuthContext oAuthContext)
+    @Inject
+    public MyImageMacroServlet(@ServiceReference SignedRequestHandler signedRequestHandler)
     {
-        this.oAuthContext = oAuthContext;
+        this.signedRequestHandler = signedRequestHandler;
     }
 
     @Override
@@ -30,7 +31,7 @@ public class MyImageMacroServlet extends HttpServlet
     {
         resp.setContentType("text/html");
         PrintWriter writer = resp.getWriter();
-        writer.print("<img src=\"" + oAuthContext.getLocalBaseUrl() + "/sandcastles.jpg\" alt=\"sandcastles\"/>");
+        writer.print("<img src=\"" + signedRequestHandler.getLocalBaseUrl() + "/public/sandcastles.jpg\" alt=\"sandcastles\"/>");
         writer.close(); 
     }
 }

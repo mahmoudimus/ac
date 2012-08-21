@@ -3,8 +3,8 @@ package servlets;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.springframework.stereotype.Component;
 
+import javax.inject.Singleton;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -17,7 +17,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 /**
  * Receives and stores web hooks
  */
-@Component
+@Singleton
 public class WebHookServlet extends HttpServlet
 {
     private final List<Publication> publications = new CopyOnWriteArrayList<Publication>();

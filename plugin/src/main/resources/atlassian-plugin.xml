@@ -5,52 +5,40 @@
         <vendor name="${project.organization.name}" url="${project.organization.url}" />
     </plugin-info>
 
-    <servlet-filter key="fixAuthenticateHeader" class="com.atlassian.labs.remoteapps.installer.FixAuthenticateHeaderFilter"
-            location="after-encoding">
-        <url-pattern>/rest/remoteapps/*</url-pattern>
-    </servlet-filter>
-
-    <servlet-filter key="requestIdSetter" class="com.atlassian.labs.remoteapps.util.http.bigpipe.RequestIdSettingFilter"
+    <servlet-filter key="requestIdSetter" class="com.atlassian.labs.remoteapps.plugin.util.http.bigpipe.RequestIdSettingFilter"
                     location="after-encoding">
         <url-pattern>/*</url-pattern>
     </servlet-filter>
 
-    <servlet-filter key="iframe-resources" class="com.atlassian.labs.remoteapps.iframe.StaticResourcesFilter"
+    <servlet-filter key="iframe-resources" class="com.atlassian.labs.remoteapps.plugin.iframe.StaticResourcesFilter"
             location="after-encoding">
         <url-pattern>/remoteapps/*</url-pattern>
     </servlet-filter>
 
     <servlet-filter key="universal-binary-dispatching" class="bean:ubDispatchFilter"
-                    location="after-encoding">
+                    location="after-encoding" weight="1000">
         <url-pattern>/app/*</url-pattern>
     </servlet-filter>
 
-
-    <!--todo: reenable this: servlet-filter key="localdev-resources" class="com.atlassian.labs.remoteapps.installer.FileRemoteAppFilter"
-                    location="after-encoding">
-        <url-pattern>/app/*</url-pattern>
-    </servlet-filter-->
-
-
-    <servlet-filter key="api-scoping" class="com.atlassian.labs.remoteapps.modules.permissions.ApiScopingFilter"
+    <servlet-filter key="api-scoping" class="com.atlassian.labs.remoteapps.plugin.module.permission.ApiScopingFilter"
             location="before-decoration">
         <url-pattern>/*</url-pattern>
     </servlet-filter>
 
-    <servlet-filter key="oauth-2lo-authentication" class="com.atlassian.labs.remoteapps.modules.oauth.OAuth2LOFilter"
-            location="after-encoding">
+    <servlet-filter key="oauth-2lo-authentication" class="com.atlassian.labs.remoteapps.plugin.module.oauth.OAuth2LOFilter"
+            location="after-encoding" weight="2000">
         <url-pattern>/*</url-pattern>
     </servlet-filter>
 
     <servlet key="remoteApps2LORedirectingServlet"
              name="Remote Apps 2-Legged OAuth Signing and Redirecting Servlet"
-             class="com.atlassian.labs.remoteapps.modules.util.redirect.RedirectServlet">
+             class="com.atlassian.labs.remoteapps.plugin.module.util.redirect.RedirectServlet">
         <description>Redirects to Remote Apps, using 2-legged OAuth to sign the outgoing request.  Request parameters are included in the redirect.</description>
         <url-pattern>/redirect/oauth</url-pattern>
     </servlet>
     <servlet key="remoteAppsPermanentRedirectingServlet"
              name="Remote Apps Permanent Redirecting Servlet"
-             class="com.atlassian.labs.remoteapps.modules.util.redirect.RedirectServlet">
+             class="com.atlassian.labs.remoteapps.plugin.module.util.redirect.RedirectServlet">
         <description>
             Redirects to a Pemote App resource, usually an image, with a permanent redirect, but
             doesn't sign the request.  Request parameters are included in the redirect.
@@ -77,7 +65,7 @@
         <resource type="download" name="images/" location="images/" />
     </web-resource>
 
-    <web-resource key="dialog-page">
+    <web-resource key="dialog-page-resource">
         <resource type="download" name="dialog-binder.js" location="/js/dialog/binder.js" />
         <context>atl.general</context>
         <context>atl.admin</context>
@@ -97,21 +85,21 @@
         <resource type="download" content-type="application/xml" name="xs3p.xsl" location="/xsd/xs3p.xsl"/>
     </web-resource>
 
-    <web-resource-transformer key="baseUrlTransformer" class="com.atlassian.labs.remoteapps.integration.smoketest.BaseUrlTransformer"/>
+    <web-resource-transformer key="baseUrlTransformer" class="com.atlassian.labs.remoteapps.plugin.integration.smoketest.BaseUrlTransformer"/>
 
-    <component key="httpContentRetriever" class="com.atlassian.labs.remoteapps.util.http.CachingHttpContentRetriever"
-               public="true" interface="com.atlassian.labs.remoteapps.util.http.HttpContentRetriever" />
+    <component key="httpContentRetriever" class="com.atlassian.labs.remoteapps.plugin.util.http.CachingHttpContentRetriever"
+               public="true" interface="com.atlassian.labs.remoteapps.plugin.util.http.HttpContentRetriever" />
 
-    <component key="startableForPlugins" class="com.atlassian.labs.remoteapps.loader.StartableForPlugins" public="true"
+    <component key="startableForPlugins" class="com.atlassian.labs.remoteapps.plugin.loader.StartableForPlugins" public="true"
                interface="com.atlassian.sal.api.lifecycle.LifecycleAware" />
 
-    <component key="productEventPublisher" class="com.atlassian.labs.remoteapps.event.product.ProductEventPublisher"
+    <component key="productEventPublisher" class="com.atlassian.labs.remoteapps.spi.event.product.ProductEventPublisher"
                public="true" interface="com.atlassian.sal.api.lifecycle.LifecycleAware" />
 
-    <component key="descriptorGenerator" class="com.atlassian.labs.remoteapps.loader.DescriptorGeneratorServiceFactory" interface="com.atlassian.labs.remoteapps.api.DescriptorGenerator" public="true" />
+    <component key="httpResourceMounter" class="com.atlassian.labs.remoteapps.plugin.loader.LocalHttpResourceMounterServiceFactory" interface="com.atlassian.labs.remoteapps.api.service.HttpResourceMounter" public="true" />
 
-    <component key="remotappsService" class="com.atlassian.labs.remoteapps.DefaultRemoteAppsService"
-               interface="com.atlassian.labs.remoteapps.api.RemoteAppsService" public="true" />
+    <component key="remotappsService" class="com.atlassian.labs.remoteapps.plugin.DefaultRemoteAppsService"
+               interface="com.atlassian.labs.remoteapps.spi.RemoteAppsService" public="true" />
 
     <component-import key="templateRenderer" interface="com.atlassian.templaterenderer.TemplateRenderer"/>
     <component-import key="servletModuleManager" interface="com.atlassian.plugin.servlet.ServletModuleManager" />
@@ -138,8 +126,8 @@
     <component-import key="webResourceUrlProvider" interface="com.atlassian.plugin.webresource.WebResourceUrlProvider" />
 
     <!-- Cross-product API Scopes -->
-    <component key="applinks-read_app_links" class="com.atlassian.labs.remoteapps.product.ReadAppLinksScope"/>
-    <component key="applinks-modify_app_link" class="com.atlassian.labs.remoteapps.product.ModifyAppLinkScope" />
+    <component key="applinks-read_app_links" class="com.atlassian.labs.remoteapps.plugin.product.ReadAppLinksScope"/>
+    <component key="applinks-modify_app_link" class="com.atlassian.labs.remoteapps.plugin.product.ModifyAppLinkScope" />
 
     <!-- speakeasy integration -->
     <commonjs key="speakeasy-commonjs" location="/js/speakeasy" />
@@ -151,16 +139,87 @@
 
     <web-item key="speakeasy-install" section="speakeasy.user-profile/actions" weight="100">
         <label>Install Remote App</label>
-        <link linkId="rp-install" />
-        <condition class="com.atlassian.labs.remoteapps.integration.speakeasy.CanInstallRemoteAppsCondition" />
+        <link linkId="rp-insapptall" />
+        <condition class="com.atlassian.labs.remoteapps.plugin.integration.speakeasy.CanInstallRemoteAppsCondition" />
     </web-item>
 
-    <!-- legacy -->
-    <module-type key="remote-app" class="com.atlassian.labs.remoteapps.descriptor.external.RemoteAppModuleDescriptor" />
-
     <!-- universal binary services -->
-    <component key="pluginSettingsAsyncFactory" interface="com.atlassian.labs.remoteapps.api.services.PluginSettingsAsyncFactory"
-               class="com.atlassian.labs.remoteapps.services.PluginSettingsAsyncFactoryBean" public="true" />
+    <component key="pluginSettingsAsyncFactory" interface="com.atlassian.labs.remoteapps.api.service.PluginSettingsAsyncFactory"
+               class="com.atlassian.labs.remoteapps.plugin.service.PluginSettingsAsyncFactoryBean" public="true" />
+
+    <component key="localSignedRequestHandler" interface="com.atlassian.labs.remoteapps.api.service.SignedRequestHandler"
+               class="com.atlassian.labs.remoteapps.plugin.service.LocalSignedRequestHandlerServiceFactory" public="true" />
+
+    <component key="requestContext" interface="com.atlassian.labs.remoteapps.api.service.RequestContext"
+               class="com.atlassian.labs.remoteapps.host.common.service.RequestContextServiceFactory" public="true" />
+
+    <component key="requestKiller"
+               class="com.atlassian.labs.remoteapps.host.common.service.http.RequestKiller" />
+
+    <component key="asyncHttpClient" interface="com.atlassian.labs.remoteapps.api.service.http.AsyncHttpClient"
+               class="com.atlassian.labs.remoteapps.host.common.service.http.DefaultAsyncHttpClient" public="true" />
+
+    <component key="hostHttpClient" interface="com.atlassian.labs.remoteapps.api.service.http.HostHttpClient"
+               class="com.atlassian.labs.remoteapps.host.common.service.http.HostHttpClientServiceFactory" public="true" />
+
+    <component key="syncHostHttpClient" interface="com.atlassian.labs.remoteapps.api.service.http.SyncHostHttpClient"
+               class="com.atlassian.labs.remoteapps.host.common.service.http.SyncHostHttpClientServiceFactory" public="true" />
+
+    <applinks-application-type name="Remote Plugin Container" key="remote-plugin-container-type"
+                                   class="com.atlassian.labs.remoteapps.plugin.module.applinks.RemotePluginContainerApplicationTypeImpl"
+                                   interface="com.atlassian.labs.remoteapps.spi.applinks.RemotePluginContainerApplicationType">
+            <manifest-producer class="com.atlassian.labs.remoteapps.plugin.module.applinks.RemotePluginContainerManifestProducer"/>
+    </applinks-application-type>
+
+    <module-type key="described-module-type" class="com.atlassian.labs.remoteapps.plugin.integration.plugins.DescribedModuleTypeModuleDescriptor" />
+
+    <!-- remote extension points -->
+
+    <described-module-type key="remote-plugin-container" name="Remote Plugin Container"
+                               class="com.atlassian.labs.remoteapps.plugin.module.applinks.RemotePluginContainerModuleDescriptor">
+        <description>The server that is hosting this plugin</description>
+        <optional-permissions>
+            <permission>create_oauth_link</permission>
+        </optional-permissions>
+    </described-module-type>
+
+    <described-module-type key="webhook" name="Web Hook" class="com.atlassian.labs.remoteapps.plugin.module.webhook.WebHookModuleDescriptor"
+                           schema-transformer-class="com.atlassian.labs.remoteapps.plugin.module.webhook.WebHookSchemaFactory">
+        <description>Registration for a web hook callback from an internal event</description>
+    </described-module-type>
+
+    <described-module-type key="general-page" class="com.atlassian.labs.remoteapps.plugin.module.page.GeneralPageModuleDescriptor">
+        <description>A non-admin general page decorated by the application, with a link in a globally-accessible place</description>
+    </described-module-type>
+
+    <described-module-type key="admin-page" name="Administration Page" class="com.atlassian.labs.remoteapps.plugin.module.page.AdminPageModuleDescriptor">
+        <description>An admin page decorated in the admin section, with a link in the admin menu</description>
+    </described-module-type>
+
+    <described-module-type key="configure-page" class="com.atlassian.labs.remoteapps.plugin.module.page.ConfigurePageModuleDescriptor" max-occurs="1">
+        <description>The configuration page for the app, decorated in the admin section, with a link in the admin menu and a configure link in the Plugin Manager</description>
+    </described-module-type>
+
+    <described-module-type key="dialog-page" class="com.atlassian.labs.remoteapps.plugin.module.page.dialog.DialogPageModuleDescriptor">
+        <description>Loads a remote URL (iframe-wrapped) in an AUI Dialog</description>
+    </described-module-type>
+
+    <described-module-type key="plugin-permission" name="Plugin Permission"
+                                   class="com.atlassian.labs.remoteapps.spi.permission.PermissionModuleDescriptor">
+        <description>A permission that needs to be requested by a plugin in order to execute certain functionality</description>
+        <required-permissions>
+            <permission>execute_java</permission>
+        </required-permissions>
+    </described-module-type>
+
+    <plugin-permission key="create_oauth_link" name="Create OAuth Link">
+        <description>Ability to create an incoming OAuth link that will allow trusted access</description>
+    </plugin-permission>
+
+    <plugin-permission key="execute_java" name="Execute Java">
+        <description>Ability to execute arbitrary Java code on the Atlassian server</description>
+        <!-- todo: add scanning -->
+    </plugin-permission>
 
     <!-- product-specific modules included via xslt build process -->
 

@@ -17,6 +17,12 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>remoteapps-servlet-kit</artifactId>
             <version>${project.version}</version>
@@ -55,12 +61,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>org.springframework.context</artifactId>
-            <version>2.5.6</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>com.atlassian.plugins</groupId>
             <artifactId>atlassian-plugins-osgi</artifactId>
             <version>${plugins.version}</version>
@@ -75,6 +75,20 @@
     </dependencies>
 
     <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.twdata.maven</groupId>
+                    <artifactId>maven-cli-plugin</artifactId>
+                    <version>1.0.4</version>
+                    <configuration>
+                        <commands>
+                            <pi>resources com.atlassian.maven.plugins:maven-amps-plugin:filter-plugin-descriptor compile com.atlassian.maven.plugins:maven-amps-plugin:copy-bundled-dependencies org.codehaus.mojo:xml-maven-plugin:transform com.atlassian.maven.plugins:maven-amps-plugin:generate-manifest com.atlassian.maven.plugins:maven-amps-plugin:jar com.atlassian.maven.plugins:maven-amps-plugin:install</pi>
+                        </commands>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
@@ -95,26 +109,40 @@
             <plugin>
                 <groupId>com.atlassian.maven.plugins</groupId>
                 <artifactId>maven-amps-plugin</artifactId>
-                <version>3.6.2</version>
-                <extensions>true</extensions>
                 <configuration>
                     <extractDependencies>true</extractDependencies>
-                    <instructions>
-                        <!-- todo: this is only temporary until I can figure out why the module factory
-                        isn't being passed down to the JIRA view profile panel descriptor -->
-                        <Import-Package>
-                            com.atlassian.labs.remoteapps.api,
-                            com.atlassian.labs.remoteapps.api.services,
-                            com.atlassian.labs.remoteapps.api.services.impl,
-                            com.atlassian.plugin.osgi.bridge.external,
-                            com.atlassian.labs.remoteapps.modules.page.jira;resolution:=optional,
-                            com.atlassian.jira.plugin.searchrequestview;resolution:=optional,
-                            *;resolution:=optional,
-                            org.slf4j;version="1.5"
-                        </Import-Package>
-                        <Remote-App>true</Remote-App>
-                    </instructions>
                     <skipManifestValidation>true</skipManifestValidation>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>xml-maven-plugin</artifactId>
+                <version>1.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>transform</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                    </execution>
+                </executions>
+                <configuration>
+                    <transformationSets>
+                        <transformationSet>
+                            <dir>${project.build.outputDirectory}</dir>
+                            <includes>
+                                <include>atlassian-plugin.xml</include>
+                            </includes>
+                            <stylesheet>${basedir}/../plugin/src/main/build/plugin-merge.xsl</stylesheet>
+                            <outputDir>${project.build.outputDirectory}</outputDir>
+                            <parameters>
+                                <parameter>
+                                    <name>baseDir</name>
+                                    <value>${project.build.outputDirectory}</value>
+                                </parameter>
+                            </parameters>
+                        </transformationSet>
+                    </transformationSets>
                 </configuration>
             </plugin>
         </plugins>

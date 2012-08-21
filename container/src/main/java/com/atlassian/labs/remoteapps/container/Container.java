@@ -2,17 +2,30 @@ package com.atlassian.labs.remoteapps.container;
 
 import com.atlassian.activeobjects.spi.DataSourceProvider;
 import com.atlassian.event.api.EventPublisher;
-import com.atlassian.labs.remoteapps.api.DescriptorGenerator;
-import com.atlassian.labs.remoteapps.api.PolygotRemoteAppDescriptorAccessor;
-import com.atlassian.labs.remoteapps.api.RemoteAppDescriptorAccessor;
-import com.atlassian.labs.remoteapps.api.services.PluginSettingsAsyncFactory;
-import com.atlassian.labs.remoteapps.api.services.impl.DefaultPluginSettingsAsyncFactory;
-import com.atlassian.labs.remoteapps.apputils.spring.properties.ResourcePropertiesLoader;
+import com.atlassian.labs.remoteapps.host.common.descriptor.PolygotDescriptorAccessor;
+import com.atlassian.labs.remoteapps.host.common.descriptor.DescriptorAccessor;
+import com.atlassian.labs.remoteapps.api.service.HttpResourceMounter;
+import com.atlassian.labs.remoteapps.api.service.PluginSettingsAsyncFactory;
+import com.atlassian.labs.remoteapps.api.service.RequestContext;
+import com.atlassian.labs.remoteapps.api.service.SignedRequestHandler;
+import com.atlassian.labs.remoteapps.api.service.http.AsyncHttpClient;
+import com.atlassian.labs.remoteapps.api.service.http.HostHttpClient;
+import com.atlassian.labs.remoteapps.api.service.http.SyncHostHttpClient;
+import com.atlassian.labs.remoteapps.host.common.service.http.DefaultAsyncHttpClient;
+import com.atlassian.labs.remoteapps.host.common.service.http.HostHttpClientServiceFactory;
+import com.atlassian.labs.remoteapps.host.common.service.http.RequestKiller;
+import com.atlassian.labs.remoteapps.host.common.service.http.SyncHostHttpClientServiceFactory;
+import com.atlassian.labs.remoteapps.host.common.service.DefaultPluginSettingsAsyncFactory;
+import com.atlassian.labs.remoteapps.host.common.service.RequestContextServiceFactory;
 import com.atlassian.labs.remoteapps.container.ao.RemoteAppsDataSourceProviderServiceFactory;
-import com.atlassian.labs.remoteapps.container.services.event.RemoteAppsEventPublisher;
-import com.atlassian.labs.remoteapps.container.services.DescriptorGeneratorServiceFactory;
-import com.atlassian.labs.remoteapps.container.services.sal.RemoteAppsApplicationPropertiesServiceFactory;
-import com.atlassian.labs.remoteapps.container.services.sal.RemoteAppsPluginSettingsFactory;
+import com.atlassian.labs.remoteapps.container.internal.EnvironmentFactory;
+import com.atlassian.labs.remoteapps.container.internal.properties.ResourcePropertiesLoader;
+import com.atlassian.labs.remoteapps.container.service.ContainerEventPublisher;
+import com.atlassian.labs.remoteapps.container.service.ContainerHttpResourceMounterServiceFactory;
+import com.atlassian.labs.remoteapps.container.service.OAuthSignedRequestHandlerServiceFactory;
+import com.atlassian.labs.remoteapps.container.service.event.RemoteAppsEventPublisher;
+import com.atlassian.labs.remoteapps.container.service.sal.RemoteAppsApplicationPropertiesServiceFactory;
+import com.atlassian.labs.remoteapps.container.service.sal.RemoteAppsPluginSettingsFactory;
 import com.atlassian.labs.remoteapps.container.util.ZipWriter;
 import com.atlassian.plugin.DefaultModuleDescriptorFactory;
 import com.atlassian.plugin.PluginAccessor;
@@ -20,11 +33,7 @@ import com.atlassian.plugin.PluginController;
 import com.atlassian.plugin.event.PluginEventManager;
 import com.atlassian.plugin.event.impl.DefaultPluginEventManager;
 import com.atlassian.plugin.hostcontainer.DefaultHostContainer;
-import com.atlassian.plugin.loaders.BundledPluginLoader;
-import com.atlassian.plugin.loaders.DirectoryScanner;
-import com.atlassian.plugin.loaders.FileListScanner;
-import com.atlassian.plugin.loaders.PluginLoader;
-import com.atlassian.plugin.loaders.ScanningPluginLoader;
+import com.atlassian.plugin.loaders.*;
 import com.atlassian.plugin.loaders.classloading.Scanner;
 import com.atlassian.plugin.manager.DefaultPluginManager;
 import com.atlassian.plugin.manager.store.MemoryPluginPersistentStateStore;
@@ -56,8 +65,12 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.*;
-import java.util.*;
+import java.net.Socket;
+import java.net.URI;
+import java.net.UnknownHostException;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static com.atlassian.labs.remoteapps.container.util.AppRegister.registerApp;
 import static com.google.common.collect.Lists.newArrayList;
@@ -69,15 +82,13 @@ public final class Container
 {
     private static final Logger log = LoggerFactory.getLogger(Container.class);
 
-    public static final Set<URI> AUTOREGISTER_HOSTS = ImmutableSet.of(
-            URI.create("http://localhost:1990/confluence"),
-            URI.create("http://localhost:2990/jira"),
-            URI.create("http://localhost:5990/refapp"));
+    public static final Set<URI> AUTOREGISTER_HOSTS = ImmutableSet.of(URI.create("http://localhost:1990/confluence"),
+            URI.create("http://localhost:2990/jira"), URI.create("http://localhost:5990/refapp"));
 
     private final DefaultPluginManager pluginManager;
     private final HttpServer httpServer;
 
-    private RemoteAppDescriptorAccessor descriptorAccessor;
+    private DescriptorAccessor descriptorAccessor;
     private AppReloader appReloader;
 
     public Container(HttpServer server, String[] apps) throws FileNotFoundException
@@ -122,10 +133,11 @@ public final class Container
                 .add("org.mozilla.javascript*")
                 .add("org.slf4j*")
                 .add("org.yaml*")
+                .add("javax.inject")
                 .build());
 
         scannerConfig.setPackageVersions(ImmutableMap.<String, String>builder()
-                .put("com.atlassian.activeobjects.spi*", getVersionFromMavenMetadata("com.atlassian.activeobjects", "activeobjects-spi", "0.19.7-remoteapps-1"))
+                .put("com.atlassian.activeobjects.spi", getVersionFromMavenMetadata("com.atlassian.activeobjects", "activeobjects-spi", "0.19.4"))
                 .put("com.atlassian.event.api*", getVersionFromMavenMetadata("com.atlassian.event", "atlassian-event", "2.2.0-m1"))
                 .put("com.atlassian.plugin*", getVersionFromMavenMetadata("com.atlassian.plugins", "atlassian-plugins-core", "2.13.0-m2"))
                 .put("com.atlassian.sal.api*", getVersionFromMavenMetadata("com.atlassian.sal", "sal-api", "2.7.0"))
@@ -133,28 +145,35 @@ public final class Container
                 .put("com.google.common.*", getVersionFromMavenMetadata("com.google.guava", "guava", "1"))
                 .put("javax.servlet", "2.5")
                 .put("javax.servlet.http", "2.5")
+                .put("javax.inject", "1")
                 .put("org.apache.commons.codec*", "1.3")
                 .put("org.apache.commons.collections*", "3.2")
                 .put("org.apache.commons.lang*", getVersionFromMavenMetadata("commons-lang", "commons-lang", "2.4"))
                 .put("org.slf4j*", getVersionFromMavenMetadata("org.slf4j", "slf4j-api", "1.6.4"))
                 .build());
 
+        scannerConfig.setPackageExcludes(ImmutableList.<String>builder()
+                .addAll(scannerConfig.getPackageExcludes())
+                .add("com.atlassian.activeobjects*")
+                .add("com.atlassian.dbexporter*")
+                .build());
+
         OsgiPersistentCache osgiCache = new DefaultOsgiPersistentCache(mkdir(".cache/osgi"));
         Map<Class<?>, Object> hostComponents = newHashMap();
         PluginEventManager pluginEventManager = new DefaultPluginEventManager();
         OsgiContainerManager osgiContainerManager = new FelixOsgiContainerManager(
-                                osgiCache,
-                                scannerConfig,
-                                new ContainerHostComponentProvider(hostComponents),
-                                pluginEventManager);
+                osgiCache,
+                scannerConfig,
+                new ContainerHostComponentProvider(hostComponents),
+                pluginEventManager);
 
         OsgiBundleFactory bundleFactory = new OsgiBundleFactory(osgiContainerManager, pluginEventManager);
         OsgiPluginFactory osgiPluginDeployer = new OsgiPluginFactory(
-                        PluginAccessor.Descriptor.FILENAME,
-                        ImmutableSet.of("remoteapp"),
-                        osgiCache,
-                        osgiContainerManager,
-                        pluginEventManager);
+                PluginAccessor.Descriptor.FILENAME,
+                ImmutableSet.of("remoteapp"),
+                osgiCache,
+                osgiContainerManager,
+                pluginEventManager);
 
         final Scanner scanner;
         if (apps.length == 0)
@@ -168,6 +187,14 @@ public final class Container
             for (String app : apps)
             {
                 File appFile = new File(app);
+                try
+                {
+                    appFile = appFile.getCanonicalFile();
+                }
+                catch (IOException e)
+                {
+                    throw new RuntimeException("Unable to determine canonical path", e);
+                }
                 if (!appFile.exists())
                 {
                     throw new FileNotFoundException("App '" + app + "' not found");
@@ -175,7 +202,7 @@ public final class Container
                 if (appFile.isDirectory())
                 {
                     System.setProperty("plugin.resource.directories", appFile.getAbsolutePath());
-                    descriptorAccessor = new PolygotRemoteAppDescriptorAccessor(appFile);
+                    descriptorAccessor = new PolygotDescriptorAccessor(appFile);
                     File appAsZip = zipAppDirectory(descriptorAccessor, appFile);
                     files.add(appAsZip);
                 }
@@ -187,7 +214,7 @@ public final class Container
             scanner = new FileListScanner(files);
         }
 
-        final PluginLoader bundledPluginLoader = new BundledPluginLoader(this.getClass().getResource("/bundled-plugins.zip"), new File(".cache/bundled") ,asList(osgiPluginDeployer, bundleFactory), pluginEventManager);
+        final PluginLoader bundledPluginLoader = new BundledPluginLoader(this.getClass().getResource("/bundled-plugins.zip"), new File(".cache/bundled"), asList(osgiPluginDeployer, bundleFactory), pluginEventManager);
         final PluginLoader appPluginLoader = new ScanningPluginLoader(scanner, asList(osgiPluginDeployer, bundleFactory), pluginEventManager);
 
         final DefaultHostContainer hostContainer = new DefaultHostContainer();
@@ -199,25 +226,52 @@ public final class Container
         );
 
         final RemoteAppsPluginSettingsFactory pluginSettingsFactory = new RemoteAppsPluginSettingsFactory();
+
         hostComponents.put(PluginSettingsFactory.class, pluginSettingsFactory);
-        hostComponents.put(ApplicationProperties.class, new RemoteAppsApplicationPropertiesServiceFactory(server));
+        final RemoteAppsApplicationPropertiesServiceFactory applicationPropertiesServiceFactory = new RemoteAppsApplicationPropertiesServiceFactory(
+                server);
+        hostComponents.put(ApplicationProperties.class, applicationPropertiesServiceFactory);
 
         hostComponents.put(EventPublisher.class, new RemoteAppsEventPublisher());
 
-        hostComponents.put(DescriptorGenerator.class, new DescriptorGeneratorServiceFactory(pluginManager, server));
+        final EnvironmentFactory environmentFactory = new EnvironmentFactory(pluginSettingsFactory,
+                pluginManager);
+        final OAuthSignedRequestHandlerServiceFactory oAuthSignedRequestHandlerServiceFactory
+            = new OAuthSignedRequestHandlerServiceFactory(environmentFactory, httpServer);
+        final RequestContextServiceFactory requestContextServiceFactory
+            = new RequestContextServiceFactory(oAuthSignedRequestHandlerServiceFactory);
+        final ContainerHttpResourceMounterServiceFactory containerHttpResourceMounterServiceFactory
+            = new ContainerHttpResourceMounterServiceFactory(pluginManager, httpServer,
+            oAuthSignedRequestHandlerServiceFactory, environmentFactory, requestContextServiceFactory);
+        final RequestKiller requestKiller = new RequestKiller();
+        final ContainerEventPublisher containerEventPublisher = new ContainerEventPublisher();
+        final AsyncHttpClient asyncHttpClient = new DefaultAsyncHttpClient(requestKiller, containerEventPublisher);
+        final HostHttpClientServiceFactory hostHttpClientServiceFactory
+            = new HostHttpClientServiceFactory(asyncHttpClient, requestContextServiceFactory,
+            oAuthSignedRequestHandlerServiceFactory);
+        final SyncHostHttpClientServiceFactory syncHostHttpClientServiceFactory
+            = new SyncHostHttpClientServiceFactory(hostHttpClientServiceFactory);
+
+        hostComponents.put(SignedRequestHandler.class, oAuthSignedRequestHandlerServiceFactory);
+        hostComponents.put(HttpResourceMounter.class, containerHttpResourceMounterServiceFactory);
         hostComponents.put(PluginAccessor.class, pluginManager);
         hostComponents.put(PluginController.class, pluginManager);
         hostComponents.put(PluginEventManager.class, pluginEventManager);
         hostComponents.put(PluginSettingsAsyncFactory.class, new DefaultPluginSettingsAsyncFactory(pluginSettingsFactory));
         hostComponents.put(ModuleFactory.class, new PrefixDelegatingModuleFactory(ImmutableSet.of(new ClassPrefixModuleFactory(hostContainer), new BeanPrefixModuleFactory())));
+        hostComponents.put(RequestContext.class, requestContextServiceFactory);
+        hostComponents.put(AsyncHttpClient.class, asyncHttpClient);
+        hostComponents.put(HostHttpClient.class, hostHttpClientServiceFactory);
+        hostComponents.put(SyncHostHttpClient.class, syncHostHttpClientServiceFactory);
 
-        hostComponents.put(DataSourceProvider.class, new RemoteAppsDataSourceProviderServiceFactory());
+        hostComponents.put(DataSourceProvider.class, new RemoteAppsDataSourceProviderServiceFactory(
+                applicationPropertiesServiceFactory));
         hostComponents.put(TransactionTemplate.class, new NoOpTransactionTemplate());
     }
 
     private String getVersionFromMavenMetadata(String groupId, String artifactId, String defaultValue)
     {
-        final String resource = new StringBuilder()
+        final String resource = new StringBuilder(128)
                 .append("META-INF/maven/")
                 .append(groupId)
                 .append("/")
@@ -235,7 +289,7 @@ public final class Container
         return version;
     }
 
-    private File zipAppDirectory(RemoteAppDescriptorAccessor descriptorAccessor, File appFile)
+    private File zipAppDirectory(DescriptorAccessor descriptorAccessor, File appFile)
     {
         try
         {
@@ -323,11 +377,6 @@ public final class Container
             file.mkdirs();
         }
         return file;
-    }
-
-    private String getGoogleGuavaVersion()
-    {
-        return "1";
     }
 
     private String determineVersion()

@@ -1,9 +1,10 @@
 package servlets;
 
-import com.atlassian.labs.remoteapps.apputils.OAuthContext;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import com.atlassian.labs.remoteapps.api.annotation.ServiceReference;
+import com.atlassian.labs.remoteapps.api.service.SignedRequestHandler;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -17,23 +18,23 @@ import static services.HttpUtils.renderHtml;
 /**
  *
  */
-@Component
+@Singleton
 public class MyMacroEditorServlet extends HttpServlet
 {
-    private final OAuthContext oAuthContext;
+    private final SignedRequestHandler signedRequestHandler;
 
-    @Autowired
-    public MyMacroEditorServlet(OAuthContext oAuthContext)
+    @Inject
+    public MyMacroEditorServlet(@ServiceReference SignedRequestHandler signedRequestHandler)
     {
-        this.oAuthContext = oAuthContext;
+        this.signedRequestHandler = signedRequestHandler;
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
     {
-        String consumerKey = oAuthContext.validate2LOFromParameters(req);
+        String consumerKey = signedRequestHandler.validateRequest(req);
         final Map<String, Object> context = new HashMap<String,Object>();
-        context.put("baseUrl", oAuthContext.getHostBaseUrl(consumerKey));
+        context.put("baseUrl", signedRequestHandler.getHostBaseUrl(consumerKey));
         renderHtml(resp, "macro-editor.mu", context);
     }
 }

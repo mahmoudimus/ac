@@ -25,14 +25,22 @@ public class TestPageModules extends AbstractRemoteAppTest
         assertEquals("Betty Admin", remoteAppTest.getFullName());
         assertEquals("betty", remoteAppTest.getUserId());
 
-        // basic tests of the RA.request API
-        assertEquals("200", remoteAppTest.getRestStatus());
-        String statusText = remoteAppTest.getRestStatusText();
+        // basic tests of the HostHttpClient API
+        assertEquals("200", remoteAppTest.getServerHttpStatus());
+        String statusText = remoteAppTest.getServerHttpStatusText();
         assertTrue("OK".equals(statusText) || "success".equals(statusText)); // differs by jquery version
-        String contentType = remoteAppTest.getRestContentType();
+        String contentType = remoteAppTest.getServerHttpContentType();
         assertTrue(contentType != null && contentType.startsWith("text/plain")); // startsWith accounts for possible encoding
-        assertEquals("betty", remoteAppTest.getRestData());
-        assertEquals("betty", remoteAppTest.getRestResponseText());
+        assertEquals("betty", remoteAppTest.getServerHttpEntity());
+
+        // basic tests of the RA.request API
+        assertEquals("200", remoteAppTest.getClientHttpStatus());
+        statusText = remoteAppTest.getClientHttpStatusText();
+        assertTrue("OK".equals(statusText) || "success".equals(statusText)); // differs by jquery version
+        contentType = remoteAppTest.getClientHttpContentType();
+        assertTrue(contentType != null && contentType.startsWith("text/plain")); // startsWith accounts for possible encoding
+        assertEquals("betty", remoteAppTest.getClientHttpData());
+        assertEquals("betty", remoteAppTest.getClientHttpResponseText());
     }
 
     @Test

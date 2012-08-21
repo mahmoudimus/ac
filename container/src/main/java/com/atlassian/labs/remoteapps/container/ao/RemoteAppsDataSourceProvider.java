@@ -2,69 +2,74 @@ package com.atlassian.labs.remoteapps.container.ao;
 
 import com.atlassian.activeobjects.spi.DataSourceProvider;
 import com.atlassian.activeobjects.spi.DatabaseType;
-import com.atlassian.labs.remoteapps.api.DatabaseUrlProvider;
+import com.atlassian.sal.api.ApplicationProperties;
 import com.google.common.base.Supplier;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 import com.mchange.v2.c3p0.DataSources;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
 import java.beans.PropertyVetoException;
+import java.io.File;
 import java.sql.Driver;
 import java.sql.SQLException;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Suppliers.memoize;
+import static com.google.common.base.Suppliers.*;
 
 final class RemoteAppsDataSourceProvider implements DataSourceProvider
 {
+    private static final String DATABASE_URL_KEY = "DATABASE_URL";
+
     private static final Class<? extends Driver> POSTGRES_DRIVER = org.postgresql.Driver.class;
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
-    private final Supplier<ServiceReference> dbUrl;
+    private final Supplier<DatabaseInfo> dbInfo;
     private final Supplier<DataSource> dataSource;
-    private final BundleContext bundleContext;
+    private final String databaseUrl;
 
-    RemoteAppsDataSourceProvider(final BundleContext bundleContext)
+    RemoteAppsDataSourceProvider(ApplicationProperties applicationProperties)
     {
-        this.bundleContext = checkNotNull(bundleContext);
-        this.dbUrl = memoize(new Supplier<ServiceReference>()
-        {
-            @Override
-            public ServiceReference get()
-            {
-                return bundleContext.getServiceReference(DatabaseUrlProvider.class.getName());
-            }
-        });
-        this.dataSource = memoize(getC3p0DataSource(dbUrl));
+        this.dbInfo = memoize(getDatabaseInfo());
+        this.dataSource = memoize(getC3p0DataSource());
+
+        File dataDir = new File(applicationProperties.getHomeDirectory(), "data");
+        dataDir.mkdir();
+        this.databaseUrl = System.getProperty(DATABASE_URL_KEY, "jdbc:hsqldb:file:" + dataDir.getAbsolutePath() + "/db");
     }
 
-    private Supplier<DataSource> getC3p0DataSource(final Supplier<ServiceReference> url)
+    private Supplier<DataSource> getC3p0DataSource()
     {
         return new Supplier<DataSource>()
         {
             @Override
             public DataSource get()
             {
-                final DatabaseUrlProvider service = (DatabaseUrlProvider) bundleContext.getService(url.get());
-                return getC3p0DataSource(service.getUrl());
+                return getC3p0DataSource(dbInfo.get());
             }
         };
     }
 
-    private DataSource getC3p0DataSource(String url)
+    private String getUrl()
+    {
+        return new HerokuUrlTransformer().transform(getDatabaseUrl());
+    }
+
+    private String getDatabaseUrl()
+    {
+        return this.databaseUrl;
+    }
+
+    private DataSource getC3p0DataSource(DatabaseInfo info)
     {
         try
         {
-            log.debug("Connecting to database at '{}'", url);
+            log.debug("Connecting to database at '{}'", info);
 
             final ComboPooledDataSource cpds = new ComboPooledDataSource();
-            cpds.setDriverClass(POSTGRES_DRIVER.getName()); //loads the jdbc driver, apparently
-            cpds.setJdbcUrl(url);
+            cpds.setDriverClass(info.driver); //loads the jdbc driver, apparently
+            cpds.setJdbcUrl(info.url);
             return cpds;
         }
         catch (PropertyVetoException e)
@@ -89,18 +94,72 @@ final class RemoteAppsDataSourceProvider implements DataSourceProvider
         {
             log.warn("An error happened 'destroying' the c3p0 data source", e);
         }
-        bundleContext.ungetService(dbUrl.get());
     }
 
     @Override
     public DatabaseType getDatabaseType()
     {
-        return DatabaseType.POSTGRESQL;
+        return dbInfo.get().type;
     }
 
     @Override
     public String getSchema()
     {
         return null;
+    }
+
+    private Supplier<DatabaseInfo> getDatabaseInfo()
+    {
+        return new Supplier<DatabaseInfo>()
+        {
+            @Override
+            public DatabaseInfo get()
+            {
+                return getDatabaseInfo(getUrl());
+            }
+        };
+    }
+
+    private DatabaseInfo getDatabaseInfo(String url)
+    {
+        if (url.startsWith("jdbc:postgresql"))
+        {
+            return new DatabaseInfo(url, POSTGRES_DRIVER.getName(), DatabaseType.POSTGRESQL);
+        }
+        else if (url.startsWith("jdbc:hsql"))
+        {
+            return new DatabaseInfo(url, "org.hsqldb.jdbc.JDBCDriver", DatabaseType.HSQL);
+        }
+        else
+        {
+            throw new IllegalStateException("Database URL was neither for HSQL nor for Postgres!: " + url);
+        }
+    }
+
+    private static class DatabaseInfo
+    {
+        final String url;
+        final String driver;
+        final DatabaseType type;
+
+        private DatabaseInfo(String url, String driver, DatabaseType type)
+        {
+            this.url = url;
+            this.driver = driver;
+            this.type = type;
+        }
+
+        private String load(String driver)
+        {
+            try
+            {
+                Class.forName(driver);
+            }
+            catch (ClassNotFoundException e)
+            {
+                throw new IllegalStateException("Could not load driver '" + driver + "'", e);
+            }
+            return driver;
+        }
     }
 }

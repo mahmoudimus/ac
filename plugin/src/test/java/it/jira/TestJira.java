@@ -30,7 +30,7 @@ import static junit.framework.Assert.assertTrue;
 
 public class TestJira
 {
-    private static final String EMBEDDED_ISSUE_PANEL_ID = "issue-panel-page-remoteAppIssuePanelPage";
+    private static final String EMBEDDED_ISSUE_PANEL_ID = "issue-panel-jira-remoteAppIssuePanelPage";
     private static TestedProduct<WebDriverTester> product = TestedProductFactory.create(JiraTestedProduct.class);
     private static JiraOps jiraOps = new JiraOps(product.getProductInstance());
 

@@ -1,0 +1,23 @@
+<atlassian-plugin key="sample-ub-java" name="${project.name}" plugins-version="2">
+    <plugin-info>
+        <version>${project.version}</version>
+        <permissions>
+            <permission installation-mode="remote">create_oauth_link</permission>
+        </permissions>
+    </plugin-info>
+
+    <remote-plugin-container key="${project.artifactId}" display-url="http://localhost:8000/sample-ub-java">
+        <oauth>
+            <public-key>
+                -----BEGIN PUBLIC KEY-----
+                MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCdZ4NjFq7phYw2FAvg2r3bS0Vw
+                kX07mBsYP5iPH0tsy9Boo4PfQTXxPrd6NFP6Gm0QXsgERgFgDt/344WhxMqt4rJi
+                udINI51n0bXNz9ct5ZnUJSnwC4GzNkDmvjpJ/Ewdmq5Ye3BfaThZnlsXA+csT3IU
+                /strFeKjydl1lyXNswIDAQAB
+                -----END PUBLIC KEY-----
+            </public-key>
+        </oauth>
+    </remote-plugin-container>
+
+    <general-page key="ao" name="Active Objects Testing Page" link-name="Active Objects Testing" url="/activeObjects" height="600" width="700" />
+</atlassian-plugin>
