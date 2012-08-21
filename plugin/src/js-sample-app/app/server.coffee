@@ -1,7 +1,7 @@
 {all} = require "atlassian/deferred"
 http = require "atlassian/httpclient"
 context = require "atlassian/context"
-mustache = require "atlassian/mustache"
+mustache = require "atlassian/renderer"
 
 exports.app = (req) ->
 
