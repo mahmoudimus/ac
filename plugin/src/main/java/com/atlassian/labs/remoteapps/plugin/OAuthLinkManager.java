@@ -217,7 +217,7 @@ public class OAuthLinkManager
     private void dumpParamsToSign(Map<String, List<String>> params)
     {
         StringBuilder sb = new StringBuilder();
-        sb.append("Sigining outgoing with: \n");
+        sb.append("Signing outgoing with: \n");
         for (Map.Entry<String, List<String>> entry : params.entrySet())
         {
             sb.append("\t").append(entry.getKey()).append(": ").append(entry.getValue().toString()).append("\n");

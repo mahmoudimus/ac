@@ -1,9 +1,11 @@
 package com.atlassian.labs.remoteapps.api.service.http;
 
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Maps.newHashMap;
 
 public class Request extends Message
 {
@@ -11,9 +13,12 @@ public class Request extends Message
 
     private Method method;
     private String uri;
+    private Map<String, String> attributes;
+    private boolean isFrozen;
 
     public Request()
     {
+        attributes = newHashMap();
         setAccept("*/*");
     }
 
@@ -25,9 +30,7 @@ public class Request extends Message
     public Request(String uri, String contentType, String entity)
     {
         this();
-        this.uri = uri;
-        setContentType(contentType);
-        setEntity(entity);
+        setUri(uri).setContentType(contentType).setEntity(entity);
     }
 
     public Method getMethod()
@@ -37,14 +40,14 @@ public class Request extends Message
 
     public Request setMethod(Method method)
     {
+        checkMutable();
         this.method = method;
         return this;
     }
 
     public Request setMethod(String method)
     {
-        this.method = Method.valueOf(method);
-        return this;
+        return setMethod(Method.valueOf(method));
     }
 
     public String getUri()
@@ -54,6 +57,7 @@ public class Request extends Message
 
     public Request setUri(String uri)
     {
+        checkMutable();
         this.uri = uri;
         return this;
     }
@@ -65,7 +69,32 @@ public class Request extends Message
 
     public Request setAccept(String mediaType)
     {
+        checkMutable();
         setHeader("Accept", mediaType);
+        return this;
+    }
+
+    public Request setAttribute(String name, String value)
+    {
+        checkMutable();
+        attributes.put(name, value);
+        return this;
+    }
+
+    public String getAttribute(String name)
+    {
+        return attributes.get(name);
+    }
+
+    public Map<String, String> getAttributes()
+    {
+        return Collections.unmodifiableMap(attributes);
+    }
+
+    public Request setEntity(FormBuilder formBuilder)
+    {
+        setContentType(FormBuilder.CONTENT_TYPE);
+        setEntity(formBuilder.toEntity());
         return this;
     }
 
@@ -74,10 +103,6 @@ public class Request extends Message
         super.validate();
 
         checkNotNull(uri);
-        if (uri.matches("^[\\w]+:.*"))
-        {
-            throw new IllegalStateException("Absolute request URLs are not supported");
-        }
 
         checkNotNull(method);
         if (method == Method.POST || method == Method.PUT)
@@ -91,9 +116,20 @@ public class Request extends Message
         return this;
     }
 
+    public void freeze()
+    {
+        isFrozen = true;
+    }
+
+    public boolean isFrozen()
+    {
+        return isFrozen;
+    }
+
     @Override
     public Request setContentType(String contentType)
     {
+        checkMutable();
         super.setContentType(contentType);
         return this;
     }
@@ -101,6 +137,7 @@ public class Request extends Message
     @Override
     public Request setContentCharset(String contentCharset)
     {
+        checkMutable();
         super.setContentCharset(contentCharset);
         return this;
     }
@@ -108,6 +145,7 @@ public class Request extends Message
     @Override
     public Request setHeaders(Map<String, String> headers)
     {
+        checkMutable();
         super.setHeaders(headers);
         return this;
     }
@@ -115,6 +153,7 @@ public class Request extends Message
     @Override
     public Request setHeader(String name, String value)
     {
+        checkMutable();
         super.setHeader(name, value);
         return this;
     }
@@ -122,6 +161,7 @@ public class Request extends Message
     @Override
     public Request setEntity(String entity)
     {
+        checkMutable();
         super.setEntity(entity);
         return this;
     }
@@ -129,6 +169,7 @@ public class Request extends Message
     @Override
     public Request setEntityStream(InputStream entityStream, String encoding)
     {
+        checkMutable();
         super.setEntityStream(entityStream, encoding);
         return this;
     }
@@ -136,7 +177,26 @@ public class Request extends Message
     @Override
     public Request setEntityStream(InputStream entityStream)
     {
+        checkMutable();
         super.setEntityStream(entityStream);
         return this;
+    }
+
+    @Override
+    public String dump()
+    {
+        StringBuilder buf = new StringBuilder();
+        String lf = System.getProperty("line.separator");
+        buf.append(method).append(" ").append(getUri()).append(" HTTP/1.1").append(lf);
+        buf.append(super.dump());
+        return buf.toString();
+    }
+
+    private void checkMutable()
+    {
+        if (isFrozen)
+        {
+            throw new IllegalStateException("Request cannot be changed once frozen");
+        }
     }
 }

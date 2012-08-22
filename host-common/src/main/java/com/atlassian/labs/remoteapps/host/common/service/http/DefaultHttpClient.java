@@ -1,12 +1,18 @@
 package com.atlassian.labs.remoteapps.host.common.service.http;
 
 import com.atlassian.event.api.EventPublisher;
-import com.atlassian.labs.remoteapps.api.Promise;
 import com.atlassian.labs.remoteapps.api.service.http.HttpClient;
-import com.atlassian.labs.remoteapps.spi.WrappingPromise;
+import com.atlassian.labs.remoteapps.api.service.http.Request;
+import com.atlassian.labs.remoteapps.api.service.http.Request.Method;
+import com.atlassian.labs.remoteapps.api.service.http.Response;
+import com.atlassian.labs.remoteapps.api.service.http.ResponsePromise;
+import com.atlassian.labs.remoteapps.spi.http.WrappingResponsePromise;
 import com.atlassian.util.concurrent.ThreadFactories;
 import com.google.common.util.concurrent.SettableFuture;
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
 import org.apache.http.client.methods.*;
 import org.apache.http.concurrent.FutureCallback;
 import org.apache.http.conn.ClientConnectionRequest;
@@ -38,7 +44,7 @@ import java.util.concurrent.TimeoutException;
 
 public class DefaultHttpClient extends AbstractHttpClient implements HttpClient, DisposableBean
 {
-    HttpAsyncClient httpClient;
+    private final HttpAsyncClient httpClient;
     private final Logger log = LoggerFactory.getLogger(DefaultHttpClient.class);
     private final RequestKiller requestKiller;
     private EventPublisher eventPublisher;
@@ -111,10 +117,24 @@ public class DefaultHttpClient extends AbstractHttpClient implements HttpClient,
     }
 
     @Override
-    public Promise<HttpResponse> request(Method method, final String uri, Map<String, String> headers, InputStream entity, final Map<String, String> properties)
+    public ResponsePromise request(final Request request)
     {
+        // validate the request state
+        request.validate();
+
+        // trace the request if debugging is enabled; may be expensive
+        if (log.isDebugEnabled())
+        {
+            log.debug(request.dump());
+        }
+
+        // freeze the request state to prevent further mutability as we go to execute the request
+        request.freeze();
+
         final long start = System.currentTimeMillis();
         final HttpRequestBase op;
+        final String uri = request.getUri();
+        Method method = request.getMethod();
         switch (method)
         {
             case GET:       op = new HttpGet(uri);       break;
@@ -123,10 +143,11 @@ public class DefaultHttpClient extends AbstractHttpClient implements HttpClient,
             case DELETE:    op = new HttpDelete(uri);    break;
             default: throw new UnsupportedOperationException(method.toString());
         }
-        if (entity != null)
+        if (request.hasEntity())
         {
             if (op instanceof HttpEntityEnclosingRequestBase)
             {
+                InputStream entity = request.getEntityStream();
                 ((HttpEntityEnclosingRequestBase) op).setEntity(new InputStreamEntity(entity, -1));
             }
             else
@@ -135,30 +156,45 @@ public class DefaultHttpClient extends AbstractHttpClient implements HttpClient,
             }
         }
 
-        for (Map.Entry<String,String> entry : headers.entrySet())
+        for (Map.Entry<String, String> entry : request.getHeaders().entrySet())
         {
             op.setHeader(entry.getKey(), entry.getValue());
         }
 
         HttpContext localContext = new BasicHttpContext();
-        final SettableFuture<HttpResponse> future = SettableFuture.create();
+        final SettableFuture<Response> future = SettableFuture.create();
         FutureCallback<HttpResponse> futureCallback = new FutureCallback<HttpResponse>()
         {
             @Override
-            public void completed(HttpResponse response)
+            public void completed(HttpResponse httpResponse)
             {
                 requestKiller.completedRequest(op);
                 long elapsed = System.currentTimeMillis() - start;
-                int statusCode = response.getStatusLine().getStatusCode();
+                int statusCode = httpResponse.getStatusLine().getStatusCode();
                 if (statusCode >= 200 && statusCode < 300)
                 {
-                    eventPublisher.publish(new HttpRequestCompletedEvent(uri, statusCode, elapsed, properties));
+                    eventPublisher.publish(new HttpRequestCompletedEvent(uri, statusCode, elapsed, request.getAttributes()));
                 }
                 else
                 {
-                    eventPublisher.publish(new HttpRequestFailedEvent(uri, statusCode, elapsed, properties));
+                    eventPublisher.publish(new HttpRequestFailedEvent(uri, statusCode, elapsed, request.getAttributes()));
                 }
-                future.set(response);
+                try
+                {
+                    Response response = translate(httpResponse);
+
+                    // trace the response if debugging is enabled; may be expensive
+                    if (log.isDebugEnabled())
+                    {
+                        log.debug(response.dump());
+                    }
+
+                    future.set(response);
+                }
+                catch (IOException ex)
+                {
+                    this.failed(ex);
+                }
             }
 
             @Override
@@ -166,7 +202,7 @@ public class DefaultHttpClient extends AbstractHttpClient implements HttpClient,
             {
                 requestKiller.completedRequest(op);
                 long elapsed = System.currentTimeMillis() - start;
-                eventPublisher.publish(new HttpRequestFailedEvent(uri, ex.toString(), elapsed, properties));
+                eventPublisher.publish(new HttpRequestFailedEvent(uri, ex.toString(), elapsed, request.getAttributes()));
                 future.setException(ex);
             }
 
@@ -176,19 +212,40 @@ public class DefaultHttpClient extends AbstractHttpClient implements HttpClient,
                 requestKiller.completedRequest(op);
                 TimeoutException ex = new TimeoutException();
                 long elapsed = System.currentTimeMillis() - start;
-                eventPublisher.publish(new HttpRequestCancelledEvent(uri, ex.toString(), elapsed, properties));
+                eventPublisher.publish(new HttpRequestCancelledEvent(uri, ex.toString(), elapsed, request.getAttributes()));
                 future.setException(ex);
             }
         };
+
         requestKiller.registerRequest(new NotifyingAbortableHttpRequest(op, futureCallback), 10);
         httpClient.execute(op, localContext, futureCallback);
-        return new WrappingPromise<HttpResponse>(future);
+        return new WrappingResponsePromise(future);
     }
 
     @Override
     public void destroy() throws Exception
     {
         httpClient.getConnectionManager().shutdown();
+    }
+
+    private Response translate(HttpResponse httpResponse)
+        throws IOException
+    {
+        StatusLine status = httpResponse.getStatusLine();
+        Response response = new Response();
+        response.setStatusCode(status.getStatusCode());
+        response.setStatusText(status.getReasonPhrase());
+        Header[] httpHeaders = httpResponse.getAllHeaders();
+        for (Header httpHeader : httpHeaders)
+        {
+            response.setHeader(httpHeader.getName(), httpHeader.getValue());
+        }
+        HttpEntity entity = httpResponse.getEntity();
+        if (entity != null)
+        {
+            response.setEntityStream(entity.getContent());
+        }
+        return response;
     }
 
     /**

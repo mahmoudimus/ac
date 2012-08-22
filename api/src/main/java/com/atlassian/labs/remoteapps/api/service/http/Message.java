@@ -4,7 +4,10 @@ import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.nio.charset.Charset;
+import java.util.Collections;
 import java.util.Map;
 
 import static com.google.common.collect.Maps.newHashMap;
@@ -15,7 +18,7 @@ public abstract class Message
     private String contentCharset;
     private InputStream entityStream;
     private boolean hasRead;
-    private Map<String,String> headers;
+    private Map<String, String> headers;
 
     public Message()
     {
@@ -46,7 +49,7 @@ public abstract class Message
 
     public InputStream getEntityStream()
     {
-        preRead();
+        checkRead();
         return entityStream;
     }
 
@@ -57,10 +60,10 @@ public abstract class Message
         return this;
     }
 
-    public Message setEntityStream(InputStream entityStream, String encoding)
+    public Message setEntityStream(InputStream entityStream, String charset)
     {
         setEntityStream(entityStream);
-        setContentCharset(encoding);
+        setContentCharset(charset);
         return this;
     }
 
@@ -76,8 +79,8 @@ public abstract class Message
         {
             try
             {
-                String encoding = "UTF-8";
-                setEntityStream(IOUtils.toInputStream(entity, encoding), encoding);
+                String charset = "UTF-8";
+                setEntityStream(IOUtils.toInputStream(entity, charset), charset);
             }
             catch (Exception e)
             {
@@ -92,17 +95,17 @@ public abstract class Message
         return entityStream != null;
     }
 
-    public Map<String,String> getHeaders()
+    public Map<String, String> getHeaders()
     {
         Map<String,String> headers = newHashMap(this.headers);
         if (contentType != null)
         {
-            headers.put("Content-Type", getHeader("Content-Type"));
+            headers.put("Content-Type", buildContentType());
         }
-        return headers;
+        return Collections.unmodifiableMap(headers);
     }
 
-    public Message setHeaders(Map<String,String> headers)
+    public Message setHeaders(Map<String, String> headers)
     {
         headers.clear();
         for (Map.Entry<String,String> entry : headers.entrySet())
@@ -117,11 +120,7 @@ public abstract class Message
         String value;
         if (name.equalsIgnoreCase("Content-Type"))
         {
-            value = contentType != null ? contentType : "text/plain";
-            if (contentCharset != null)
-            {
-                value += "; charset=" + contentCharset;
-            }
+            value = buildContentType();
         }
         else
         {
@@ -134,23 +133,7 @@ public abstract class Message
     {
         if (name.equalsIgnoreCase("Content-Type"))
         {
-            String[] parts = value.split(";");
-            if (parts.length >= 1)
-            {
-                contentType = parts[0].trim();
-            }
-            if (parts.length >= 2)
-            {
-                String encoding = parts[1].trim();
-                if (parts[1].startsWith("charset="))
-                {
-                    contentCharset = Charset.forName(encoding.substring(8)).name();
-                }
-            }
-            else
-            {
-                contentCharset = null;
-            }
+            parseContentType(value);
         }
         else
         {
@@ -168,12 +151,74 @@ public abstract class Message
         return this;
     }
 
-    private void preRead()
+    public String dump()
+    {
+        StringBuilder buf = new StringBuilder();
+        String lf = System.getProperty("line.separator");
+        for (Map.Entry<String, String> header : getHeaders().entrySet())
+        {
+            buf.append(header.getKey()).append(": ").append(header.getValue()).append(lf);
+        }
+        if (hasEntity())
+        {
+            buf.append(lf);
+            try
+            {
+                String entity = getEntity();
+                buf.append(entity).append(lf);
+                // hack to get around hasRead guard for streaming entities, which might cause perf issues
+                setEntity(entity);
+            }
+            catch (IOException e)
+            {
+                StringWriter writer = new StringWriter();
+                e.printStackTrace(new PrintWriter(writer));
+                buf.append("ERROR: failed to read request entity").append(lf).append(writer.toString());
+            }
+        }
+        return buf.toString();
+    }
+
+    private void checkRead()
     {
         if (hasRead)
         {
-            throw new IllegalStateException("Entity may only be accessed once.");
+            throw new IllegalStateException("Entity may only be accessed once");
         }
         hasRead = true;
+    }
+
+    private String buildContentType()
+    {
+        String value = contentType != null ? contentType : "text/plain";
+        if (contentCharset != null)
+        {
+            value += "; charset=" + contentCharset;
+        }
+        return value;
+    }
+
+    private void parseContentType(String value)
+    {
+        if (value != null)
+        {
+            String[] parts = value.split(";");
+            if (parts.length >= 1)
+            {
+                contentType = parts[0].trim();
+            }
+            if (parts.length >= 2)
+            {
+                String charset = parts[1].trim();
+                if (parts[1].startsWith("charset="))
+                {
+                    contentCharset = Charset.forName(charset.substring(8)).name();
+                }
+            }
+        }
+        else
+        {
+            contentType = null;
+        }
     }
 }

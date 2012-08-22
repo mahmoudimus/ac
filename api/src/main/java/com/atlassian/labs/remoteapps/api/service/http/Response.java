@@ -78,4 +78,14 @@ public class Response extends Message
         super.setEntityStream(entityStream);
         return this;
     }
+
+    @Override
+    public String dump()
+    {
+        StringBuilder buf = new StringBuilder();
+        String lf = System.getProperty("line.separator");
+        buf.append("HTTP/1.1 ").append(statusCode).append(" ").append(statusText).append(lf);
+        buf.append(super.dump());
+        return buf.toString();
+    }
 }

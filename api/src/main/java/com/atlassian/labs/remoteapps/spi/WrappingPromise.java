@@ -2,6 +2,7 @@ package com.atlassian.labs.remoteapps.spi;
 
 import com.atlassian.labs.remoteapps.api.Promise;
 import com.atlassian.labs.remoteapps.api.PromiseCallback;
+import com.google.common.util.concurrent.ForwardingListenableFuture;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -11,13 +12,11 @@ import java.util.concurrent.*;
 /**
  * Wraps a ListenableFuture to be a promise
  */
-public class WrappingPromise<V> implements Promise<V>
+public class WrappingPromise<V> extends ForwardingListenableFuture.SimpleForwardingListenableFuture<V> implements Promise<V>
 {
-    private final ListenableFuture<V> delegate;
-
     public WrappingPromise(ListenableFuture<V> delegate)
     {
-        this.delegate = delegate;
+        super(delegate);
     }
 
     @Override
@@ -59,6 +58,7 @@ public class WrappingPromise<V> implements Promise<V>
             @Override
             public void onFailure(Throwable t)
             {
+                // no-op
             }
         });
         return this;
@@ -72,6 +72,7 @@ public class WrappingPromise<V> implements Promise<V>
             @Override
             public void onSuccess(V result)
             {
+                // no-op
             }
 
             @Override
@@ -84,39 +85,9 @@ public class WrappingPromise<V> implements Promise<V>
     }
 
     @Override
-    public void addListener(Runnable listener, Executor executor)
+    public Promise<V> then(FutureCallback<V> callback)
     {
-        delegate.addListener(listener, executor);
-    }
-
-    @Override
-    public boolean cancel(boolean mayInterruptIfRunning)
-    {
-        return delegate.cancel(mayInterruptIfRunning);
-    }
-
-    @Override
-    public boolean isCancelled()
-    {
-        return delegate.isCancelled();
-    }
-
-    @Override
-    public boolean isDone()
-    {
-        return delegate.isDone();
-    }
-
-    @Override
-    public V get() throws InterruptedException, ExecutionException
-    {
-        return delegate.get();
-    }
-
-    @Override
-    public V get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException,
-            TimeoutException
-    {
-        return delegate.get(timeout, unit);
+        Futures.addCallback(this, callback);
+        return this;
     }
 }

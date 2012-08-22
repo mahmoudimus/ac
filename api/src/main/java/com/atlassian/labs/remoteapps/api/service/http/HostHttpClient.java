@@ -1,7 +1,5 @@
 package com.atlassian.labs.remoteapps.api.service.http;
 
-import com.atlassian.labs.remoteapps.api.Promise;
-
 import java.util.concurrent.Callable;
 
 /**
@@ -9,25 +7,7 @@ import java.util.concurrent.Callable;
  * oauth signing and user propagation.  URIs should be relative to the host app url,
  * including the context path (e.g. relative to something like http://localhost:2990/jira).
  */
-public interface HostHttpClient
+public interface HostHttpClient extends HttpClient
 {
-    Promise<Response> get(String uri);
-
-    Promise<Response> get(Request request);
-
-    Promise<Response> post(String uri, String contentType, String entity);
-
-    Promise<Response> post(Request request);
-
-    Promise<Response> put(String uri, String contentType, String entity);
-
-    Promise<Response> put(Request request);
-
-    Promise<Response> delete(String uri);
-
-    Promise<Response> delete(Request request);
-
-    Promise<Response> request(Request request);
-
     <T> T callAs(String clientKey, String userId, Callable<T> callable);
 }

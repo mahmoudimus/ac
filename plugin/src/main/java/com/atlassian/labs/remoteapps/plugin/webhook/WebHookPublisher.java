@@ -2,6 +2,7 @@ package com.atlassian.labs.remoteapps.plugin.webhook;
 
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.labs.remoteapps.api.service.http.HttpClient;
+import com.atlassian.labs.remoteapps.api.service.http.Request;
 import com.atlassian.labs.remoteapps.plugin.RemoteAppAccessor;
 import com.atlassian.labs.remoteapps.plugin.RemoteAppAccessorFactory;
 import com.atlassian.labs.remoteapps.plugin.util.uri.Uri;
@@ -141,18 +142,16 @@ public class WebHookPublisher implements DisposableBean
         public void run()
         {
             final String url = new UriBuilder(Uri.parse(registration.getUrl(remoteAppAccessor)))
-                    .addQueryParameter("user_id", userName).toString();
+                .addQueryParameter("user_id", userName).toString();
             log.debug("Posting to web hook at " + url + "\n" + body);
-            Map<String, String> headers = Maps.newHashMap();
             String authorization = remoteAppAccessor.getAuthorizationGenerator().generate(
                 "POST", url, Collections.<String, List<String>>emptyMap());
-            headers.put("Authorization", authorization);
-            headers.put("Content-Type", "application/json");
-            Map<String, String> properties = Maps.newHashMap();
-            properties.put("purpose", "web-hook-notification");
-            properties.put("pluginKey", registration.getPluginKey());
             // our job is just to send this, not worry about whether it failed or not
-            httpClient.post(url, headers, IOUtils.toInputStream(body), properties);
+            Request request = new Request(url, "application/json", body)
+                .setHeader("Authorization", authorization)
+                .setAttribute("purpose", "web-hook-notification")
+                .setAttribute("pluginKey", registration.getPluginKey());
+            httpClient.post(request);
         }
 
         @Override

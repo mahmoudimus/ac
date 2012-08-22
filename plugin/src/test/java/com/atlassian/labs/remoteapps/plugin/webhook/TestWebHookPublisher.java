@@ -2,6 +2,7 @@ package com.atlassian.labs.remoteapps.plugin.webhook;
 
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.labs.remoteapps.api.service.http.HttpClient;
+import com.atlassian.labs.remoteapps.api.service.http.Request;
 import com.atlassian.labs.remoteapps.plugin.RemoteAppAccessor;
 import com.atlassian.labs.remoteapps.plugin.RemoteAppAccessorFactory;
 import com.atlassian.labs.remoteapps.plugin.util.http.AuthorizationGenerator;
@@ -14,7 +15,6 @@ import org.junit.Test;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
 
-import java.io.InputStream;
 import java.net.URI;
 import java.util.Collections;
 
@@ -75,9 +75,8 @@ public class TestWebHookPublisher
         publisher.publish("event.id", new FalseEventMatcher(), new MapEventSerializer("event_object",
                 Collections.<String, Object>singletonMap("field", "value")));
 
-        InputStream inputStream = mock(InputStream.class);
-        verify(httpClient, never()).post(anyString(), anyMap(), eq(inputStream), anyMap());
-
+        Request request = mock(Request.class);
+        verify(httpClient, never()).post(eq(request));
     }
 
     @Test
@@ -86,8 +85,8 @@ public class TestWebHookPublisher
         publisher.publish("event.id", EventMatcher.ALWAYS_TRUE, new MapEventSerializer("event_object",
                                                               Collections.<String, Object>singletonMap("field", "value")));
 
-        InputStream inputStream = mock(InputStream.class);
-        verify(httpClient, never()).post(anyString(), anyMap(), eq(inputStream), anyMap());
+        Request request = mock(Request.class);
+        verify(httpClient, never()).post(eq(request));
     }
 
     @Test
@@ -97,8 +96,8 @@ public class TestWebHookPublisher
         publisher.publish("event.id", EventMatcher.ALWAYS_TRUE,  new MapEventSerializer("event_object",
                                                               Collections.<String, Object>singletonMap("field", "value")));
 
-        InputStream inputStream = mock(InputStream.class);
-        verify(httpClient, never()).post(anyString(), anyMap(), eq(inputStream), anyMap());
+        Request request = mock(Request.class);
+        verify(httpClient, never()).post(eq(request));
     }
 
     @Test

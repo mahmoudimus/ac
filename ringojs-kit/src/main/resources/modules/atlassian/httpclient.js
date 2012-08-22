@@ -44,8 +44,8 @@ var api = module.exports = {
         }
       });
       // execute the request
-      client.request(request).done({
-        handle: function (response) {
+      client.request(request).then({
+        onSuccess: function (response) {
           // build a js response object from the java response
           var json = {};
           responseProps.forEach(function (k) {
@@ -60,8 +60,8 @@ var api = module.exports = {
           }
           // @todo entity marshalling
           deferred.resolve(json);
-        }}).fail({
-        handle: function (ex) {
+        },
+        onFailure: function (ex) {
           // propagate the exception
           deferred.reject(ex, exstr(ex));
         }

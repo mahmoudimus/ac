@@ -1,23 +1,21 @@
 package com.atlassian.labs.remoteapps.plugin.webhook;
 
-import com.atlassian.labs.remoteapps.api.Promise;
+import com.atlassian.labs.remoteapps.api.service.http.Request;
+import com.atlassian.labs.remoteapps.api.service.http.Response;
+import com.atlassian.labs.remoteapps.api.service.http.ResponsePromise;
 import com.atlassian.labs.remoteapps.host.common.service.http.AbstractHttpClient;
-import com.atlassian.labs.remoteapps.spi.WrappingPromise;
+import com.atlassian.labs.remoteapps.spi.http.WrappingResponsePromise;
 import com.google.common.util.concurrent.SettableFuture;
-import org.apache.http.HttpResponse;
-
-import java.io.InputStream;
-import java.util.Map;
 
 public class SleepingHttpClient extends AbstractHttpClient
 {
     @Override
-    public Promise<HttpResponse> request(Method method, String uri, Map<String, String> headers, InputStream entity, Map<String, String> properties)
+    public ResponsePromise request(final Request request)
     {
         try
         {
             Thread.sleep(100000);
-            return new WrappingPromise<HttpResponse>(SettableFuture.<HttpResponse>create());
+            return new WrappingResponsePromise(SettableFuture.<Response>create());
         }
         catch (InterruptedException e)
         {

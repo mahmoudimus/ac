@@ -1,18 +1,17 @@
 package com.atlassian.labs.remoteapps.host.common.service.http;
 
 import com.atlassian.labs.remoteapps.api.Promise;
+import com.atlassian.labs.remoteapps.api.PromiseCallback;
 import com.atlassian.labs.remoteapps.api.service.http.*;
-import com.atlassian.labs.remoteapps.api.service.http.XmlRpcException;
-import com.atlassian.labs.remoteapps.api.service.http.XmlRpcFault;
 import com.atlassian.labs.remoteapps.spi.WrappingPromise;
 import com.atlassian.xmlrpc.BindingException;
 import com.atlassian.xmlrpc.ServiceObject;
 import com.atlassian.xmlrpc.XmlRpcClientProvider;
 import com.atlassian.xmlrpc.XmlRpcInvocationHandler;
-import com.google.common.util.concurrent.FutureCallback;
-import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.SettableFuture;
-import redstone.xmlrpc.*;
+import redstone.xmlrpc.XmlRpcMessages;
+import redstone.xmlrpc.XmlRpcSerializer;
+import redstone.xmlrpc.XmlRpcStruct;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -108,7 +107,6 @@ public class DefaultHostXmlRpcClient implements HostXmlRpcClient
      *
      * @param methodName The name of the method to call.
      */
-
     private void beginCall(Writer writer, String methodName) throws XmlRpcException
     {
         try
@@ -129,15 +127,13 @@ public class DefaultHostXmlRpcClient implements HostXmlRpcClient
         }
     }
 
-
     /**
-     * Finalizaes the XML buffer to be sent to the server, and creates a HTTP buffer for the call.
+     * Finalizes the XML buffer to be sent to the server, and creates a HTTP buffer for the call.
      * Both buffers are combined into an XML-RPC message that is sent over a socket to the server.
      *
      * @return The parsed return value of the call.
      * @throws XmlRpcException when some IO problem occur.
      */
-
     private <T> Promise<T> endCall(Writer writer, final FaultHandlingXmlRpcParser parser,
             final Class<T> castResultTo)
     {
@@ -147,50 +143,64 @@ public class DefaultHostXmlRpcClient implements HostXmlRpcClient
             writer.write("</params>");
             writer.write("</methodCall>");
 
-            Futures.addCallback(hostHttpClient.post(serverXmlRpcPath, "text/xml; charset=" +
-                    XmlRpcMessages.getString("XmlRpcClient.Encoding"), writer.toString()),
-                    new FutureCallback<Response>()
+            hostHttpClient
+                .post(new Request(serverXmlRpcPath)
+                    .setContentType("text/xml")
+                    .setContentCharset(XmlRpcMessages.getString("XmlRpcClient.Encoding"))
+                    .setEntity(writer.toString()))
+                .ok(new PromiseCallback<Response>()
+                {
+                    @Override
+                    public void handle(Response response)
                     {
-                        @Override
-                        public void onSuccess(Response result)
+                        try
                         {
-                            try
-                            {
-                                parser.parse(new BufferedInputStream(result.getEntityStream()));
-                            }
-                            catch (Exception e)
-                            {
-                                future.setException(new XmlRpcException(
-                                        XmlRpcMessages.getString("XmlRpcClient.ParseError"), e));
-                            }
+                            parser.parse(new BufferedInputStream(response.getEntityStream()));
+                        }
+                        catch (Exception e)
+                        {
+                            future.setException(new XmlRpcException(
+                                XmlRpcMessages.getString("XmlRpcClient.ParseError"), e));
+                        }
 
-                            if (parser.isFaultResponse())
+                        if (parser.isFaultResponse())
+                        {
+                            XmlRpcStruct fault = (XmlRpcStruct) parser.getParsedValue();
+                            future.setException(new XmlRpcFault(fault.getInteger("faultCode"),
+                                    fault.getString("faultString")));
+                        }
+                        else
+                        {
+                            Object parsedValue = parser.getParsedValue();
+                            if (parsedValue != null && castResultTo.isAssignableFrom(parsedValue.getClass()))
                             {
-                                XmlRpcStruct fault = (XmlRpcStruct) parser.getParsedValue();
-
-                                future.setException(new XmlRpcFault(fault.getInteger("faultCode"),
-                                        fault.getString("faultString")));
+                                future.set(castResultTo.cast(parsedValue));
                             }
                             else
                             {
-                                Object parsedValue = parser.getParsedValue();
-                                if (parsedValue != null && castResultTo.isAssignableFrom(parsedValue.getClass()))
-                                {
-                                    future.set(castResultTo.cast(parsedValue));
-                                }
-                                else
-                                {
-                                    future.setException(new XmlRpcException("Unexpected return type: " + parsedValue));
-                                }
+                                future.setException(new XmlRpcException("Unexpected return type: " + parsedValue));
                             }
                         }
-
-                        @Override
-                        public void onFailure(Throwable t)
-                        {
-                            future.setException(t);
-                        }
-                    });
+                    }
+                })
+                .others(new PromiseCallback<Response>()
+                {
+                    @Override
+                    public void handle(Response response)
+                    {
+                        // since xmlrpc should always return 200 OK responses unless an error has occurred,
+                        // treat all other response codes as errors
+                        future.setException(new UnexpectedResponseException(response));
+                    }
+                })
+                .fail(new PromiseCallback<Throwable>()
+                {
+                    @Override
+                    public void handle(Throwable t)
+                    {
+                        future.setException(t);
+                    }
+                });
         }
         catch (IOException ioe)
         {
