@@ -44,6 +44,7 @@
         <dependency>
             <groupId>com.atlassian.fugue</groupId>
             <artifactId>fugue</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.atlassian.plugins</groupId>

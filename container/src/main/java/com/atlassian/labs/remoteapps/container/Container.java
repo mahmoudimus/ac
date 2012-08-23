@@ -118,6 +118,7 @@ public final class Container
                 .add("com.atlassian.sal*")
                 .add("com.atlassian.xmlrpc*")
                 .add("com.atlassian.security.random*")
+                .add("com.atlassian.fugue*")
                 .add("com.google.common.*")
                 .add("com.samskivert.*")
                 .add("javax.servlet*")

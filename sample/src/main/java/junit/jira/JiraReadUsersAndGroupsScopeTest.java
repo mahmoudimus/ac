@@ -4,6 +4,7 @@ import com.atlassian.jira.rpc.soap.client.JiraSoapService;
 import com.atlassian.jira.rpc.soap.client.JiraSoapServiceServiceLocator;
 import com.atlassian.jira.rpc.soap.client.RemoteUser;
 import com.atlassian.labs.remoteapps.api.service.SignedRequestHandler;
+import org.apache.commons.io.IOUtils;
 import services.ServiceAccessor;
 import org.apache.axis.client.Stub;
 import org.apache.axis.transport.http.HTTPConstants;
@@ -92,7 +93,7 @@ public class JiraReadUsersAndGroupsScopeTest
         out.write(body);
         out.close();
 
-        JSONObject result = new JSONObject(new JSONTokener(new InputStreamReader(conn.getInputStream())));
+        JSONObject result = new JSONObject(new JSONTokener(IOUtils.toString(conn.getInputStream())));
         System.out.println("response: " + result.toString(2));
         assertEquals("betty", result.getString("name"));
     }

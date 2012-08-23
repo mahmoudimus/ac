@@ -20,31 +20,41 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>remoteapps-api</artifactId>
             <version>${project.version}</version>
-            <scope>compile</scope>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.atlassian.fugue</groupId>
             <artifactId>fugue</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>net.oauth.core</groupId>
             <artifactId>oauth</artifactId>
             <version>20090617</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>net.oauth.core</groupId>
             <artifactId>oauth-provider</artifactId>
             <version>20090531</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.6.4</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>net.oauth.core</groupId>
             <artifactId>oauth-consumer</artifactId>
             <version>20090617</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.json</groupId>
-            <artifactId>json</artifactId>
-            <version>20080701</version>
+            <artifactId>org.json</artifactId>
+            <version>chargebee-1.0</version>
         </dependency>
         <dependency>
             <groupId>com.atlassian.plugins</groupId>
@@ -107,6 +117,7 @@
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
             <version>2.4</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>
