@@ -1,15 +1,38 @@
-package com.atlassian.labs.remoteapps.api.service.http;
+package com.atlassian.labs.remoteapps.host.common.service.http;
+
+import com.atlassian.labs.remoteapps.api.service.http.Message;
+import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.nio.charset.Charset;
+import java.util.Collections;
 import java.util.Map;
+
+import static com.google.common.collect.Maps.newHashMap;
 
 /**
  * An abstract base class for HTTP messages (i.e. Request and Response) with support for
  * header and entity management.
  */
-public interface Message
+public abstract class DefaultMessage implements Message
 {
+    private String contentType;
+    private String contentCharset;
+    private InputStream entityStream;
+    private boolean hasRead;
+    private Map<String, String> headers;
+
+    /**
+     * Constructs a new, empty DefaultMessage instance.
+     */
+    public DefaultMessage()
+    {
+        headers = newHashMap();
+    }
+
     /**
      * Returns the IANA media type, minus charset information, for the current entity, if any.
      * To access charset information, use <code>getContentCharset()</code>.  To get the full
@@ -17,7 +40,10 @@ public interface Message
      *
      * @return An IANA media type, or null
      */
-    String getContentType();
+    public String getContentType()
+    {
+        return contentType;
+    }
 
     /**
      * Sets the IANA media type, for the current entity, if any.  If the <code>contentType</code> argument
@@ -30,14 +56,21 @@ public interface Message
      * @param contentType An IANA media type with optional charset information
      * @return This object, for builder-style chaining
      */
-    Message setContentType(String contentType);
+    public Message setContentType(String contentType)
+    {
+        parseContentType(contentType);
+        return this;
+    }
 
     /**
      * Returns the currently set content charset value, if any.
      *
      * @return The current content charset
      */
-    String getContentCharset();
+    public String getContentCharset()
+    {
+        return contentCharset;
+    }
 
     /**
      * Sets the charset for this object's entity, if any.  This value is ignored during headeer access
@@ -46,7 +79,11 @@ public interface Message
      * @param contentCharset The entity's charset value, or null
      * @return This object, for builder-style chaining
      */
-    Message setContentCharset(String contentCharset);
+    public Message setContentCharset(String contentCharset)
+    {
+        this.contentCharset = Charset.forName(contentCharset).name();
+        return this;
+    }
 
     /**
      * Returns the current entity as an input stream, or null if not set.  Use <code>hasEntity()</code>
@@ -56,7 +93,11 @@ public interface Message
      * @throws IllegalStateException If the non-null entity has already been accessed once, through
      *         any accessor for this object
      */
-    InputStream getEntityStream() throws IllegalStateException;
+    public InputStream getEntityStream() throws IllegalStateException
+    {
+        checkRead();
+        return entityStream;
+    }
 
     /**
      * Sets this object's entity as an input stream.  Invocations of this method reset this object's
@@ -71,7 +112,12 @@ public interface Message
      * @param entityStream An entity input stream ready to be read
      * @return This object, for builder-style chaining
      */
-    Message setEntityStream(InputStream entityStream);
+    public Message setEntityStream(InputStream entityStream)
+    {
+        this.entityStream = entityStream;
+        hasRead = false;
+        return this;
+    }
 
     /**
      * Sets this object's entity as an input stream, encoded with the specified charset.  Invocations of
@@ -83,7 +129,12 @@ public interface Message
      * @param charset The charset in which the entity stream is encoded
      * @return This object, for builder-style chaining
      */
-    Message setEntityStream(InputStream entityStream, String charset);
+    public Message setEntityStream(InputStream entityStream, String charset)
+    {
+        setEntityStream(entityStream);
+        setContentCharset(charset);
+        return this;
+    }
 
     /**
      * Returns the current entity in <code>String</code> form, if available, converting the underlying
@@ -93,7 +144,17 @@ public interface Message
      * @return The entity string, or null if no entity has been set
      * @throws IOException If the conversion of the underlying entity stream to a string fails
      */
-    String getEntity() throws IOException, IllegalStateException;
+    public String getEntity() throws IOException, IllegalStateException
+    {
+        String entity = null;
+        if (hasEntity())
+        {
+            String charset = getContentCharset();
+            charset = charset != null ? charset : "ISO-8859-1";
+            entity = IOUtils.toString(getEntityStream(), charset);
+        }
+        return entity;
+    }
 
     /**
      * Sets this object's entity stream from a string.  Using this method of setting the entity
@@ -102,7 +163,22 @@ public interface Message
      * @param entity An entity string
      * @return This object, for builder-style chaining
      */
-    Message setEntity(String entity);
+    public Message setEntity(String entity)
+    {
+        if (entity != null)
+        {
+            try
+            {
+                String charset = "UTF-8";
+                setEntityStream(IOUtils.toInputStream(entity, charset), charset);
+            }
+            catch (Exception e)
+            {
+                throw new RuntimeException(e);
+            }
+        }
+        return this;
+    }
 
     /**
      * Returns whether or not an entity has been set on this object.  Use this instead of calling
@@ -111,7 +187,10 @@ public interface Message
      *
      * @return This object, for builder-style chaining
      */
-    boolean hasEntity();
+    public boolean hasEntity()
+    {
+        return entityStream != null;
+    }
 
     /**
      * Returns whether or not the current entity property, if any, has been read from this object.
@@ -120,7 +199,10 @@ public interface Message
      *
      * @return True if the entity has already been read
      */
-    boolean hasReadEntity();
+    public boolean hasReadEntity()
+    {
+        return hasRead;
+    }
 
     /**
      * Returns a map of all headers that have been set on this object.  If the content type property
@@ -129,7 +211,15 @@ public interface Message
      *
      * @return The headers map
      */
-    Map<String, String> getHeaders();
+    public Map<String, String> getHeaders()
+    {
+        Map<String,String> headers = newHashMap(this.headers);
+        if (contentType != null)
+        {
+            headers.put("Content-Type", buildContentType());
+        }
+        return Collections.unmodifiableMap(headers);
+    }
 
     /**
      * Copies the specified map of HTTP headers into this object.  It will also parse any included
@@ -139,7 +229,15 @@ public interface Message
      * @param headers A map of HTTP headers
      * @return This object, for builder-style chaining
      */
-    Message setHeaders(Map<String, String> headers);
+    public Message setHeaders(Map<String, String> headers)
+    {
+        headers.clear();
+        for (Map.Entry<String,String> entry : headers.entrySet())
+        {
+            setHeader(entry.getKey(), entry.getValue());
+        }
+        return this;
+    }
 
     /**
      * Returns the specified header by name.  If "Content-Type" is requested, the value will be
@@ -149,7 +247,19 @@ public interface Message
      * @param name The name of the header to fetch
      * @return The value of the named header, or null if not set
      */
-    String getHeader(String name);
+    public String getHeader(String name)
+    {
+        String value;
+        if (name.equalsIgnoreCase("Content-Type"))
+        {
+            value = buildContentType();
+        }
+        else
+        {
+            value = headers.get(name);
+        }
+        return value;
+    }
 
     /**
      * Sets an HTTP header on this object.  If the header's name is "Content-Type", the value
@@ -160,7 +270,34 @@ public interface Message
      * @param value The value of the header to be set
      * @return This object, for builder-style chaining
      */
-    Message setHeader(String name, String value);
+    public Message setHeader(String name, String value)
+    {
+        if (name.equalsIgnoreCase("Content-Type"))
+        {
+            parseContentType(value);
+        }
+        else
+        {
+            headers.put(name, value);
+        }
+        return this;
+    }
+
+    /**
+     * Validates the state of this object, as follows:
+     *
+     *  - verifies that if an entity is present, that a content type has also been set
+     *
+     * @return This object, for builder-style chaining
+     */
+    public Message validate()
+    {
+        if (hasEntity() && contentType == null)
+        {
+            throw new IllegalStateException("Property contentType must be set when entity is present");
+        }
+        return this;
+    }
 
     /**
      * Dumps a string representation of this object, including the entity.  Note that this is a potentially
@@ -171,5 +308,77 @@ public interface Message
      *
      * @return An HTTP-formatted string representation of this object, including the value of its entity
      */
-    String dump();
+    public String dump()
+    {
+        StringBuilder buf = new StringBuilder();
+        String lf = System.getProperty("line.separator");
+        for (Map.Entry<String, String> header : getHeaders().entrySet())
+        {
+            buf.append(header.getKey()).append(": ").append(header.getValue()).append(lf);
+        }
+        if (hasEntity())
+        {
+            buf.append(lf);
+            try
+            {
+                String entity = getEntity();
+                buf.append(entity).append(lf);
+                // hack to get around hasRead guard for streaming entities, which might cause perf issues
+                setEntity(entity);
+            }
+            catch (IOException e)
+            {
+                StringWriter writer = new StringWriter();
+                e.printStackTrace(new PrintWriter(writer));
+                buf.append("ERROR: failed to read entity").append(lf).append(writer.toString());
+            }
+        }
+        return buf.toString();
+    }
+
+    private void checkRead() throws IllegalStateException
+    {
+        if (entityStream != null)
+        {
+            if (hasRead)
+            {
+                throw new IllegalStateException("Entity may only be accessed once");
+            }
+            hasRead = true;
+        }
+    }
+
+    private String buildContentType()
+    {
+        String value = contentType != null ? contentType : "text/plain";
+        if (contentCharset != null)
+        {
+            value += "; charset=" + contentCharset;
+        }
+        return value;
+    }
+
+    private void parseContentType(String value)
+    {
+        if (value != null)
+        {
+            String[] parts = value.split(";");
+            if (parts.length >= 1)
+            {
+                contentType = parts[0].trim();
+            }
+            if (parts.length >= 2)
+            {
+                String charset = parts[1].trim();
+                if (parts[1].startsWith("charset="))
+                {
+                    setContentCharset(charset.substring(8));
+                }
+            }
+        }
+        else
+        {
+            contentType = null;
+        }
+    }
 }

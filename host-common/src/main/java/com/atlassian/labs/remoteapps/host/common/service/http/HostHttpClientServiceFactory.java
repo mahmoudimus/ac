@@ -1,8 +1,6 @@
 package com.atlassian.labs.remoteapps.host.common.service.http;
 
-import com.atlassian.labs.remoteapps.api.service.RequestContext;
 import com.atlassian.labs.remoteapps.api.service.SignedRequestHandler;
-import com.atlassian.labs.remoteapps.api.service.http.HttpClient;
 import com.atlassian.labs.remoteapps.api.service.http.HostHttpClient;
 import com.atlassian.labs.remoteapps.host.common.service.DefaultRequestContext;
 import com.atlassian.labs.remoteapps.host.common.service.RequestContextServiceFactory;
@@ -13,11 +11,11 @@ import org.osgi.framework.ServiceRegistration;
 
 public class HostHttpClientServiceFactory implements TypedServiceFactory<HostHttpClient>
 {
-    private final HttpClient httpClient;
+    private final DefaultHttpClient httpClient;
     private RequestContextServiceFactory requestContextServiceFactory;
     private final SignedRequestHandlerServiceFactory signedRequestHandlerServiceFactory;
 
-    public HostHttpClientServiceFactory(HttpClient httpClient,
+    public HostHttpClientServiceFactory(DefaultHttpClient httpClient,
                                         RequestContextServiceFactory requestContextServiceFactory,
                                         SignedRequestHandlerServiceFactory signedRequestHandlerServiceFactory)
     {

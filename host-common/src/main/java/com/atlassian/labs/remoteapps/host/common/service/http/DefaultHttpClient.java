@@ -2,8 +2,6 @@ package com.atlassian.labs.remoteapps.host.common.service.http;
 
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.labs.remoteapps.api.service.http.HttpClient;
-import com.atlassian.labs.remoteapps.api.service.http.Request;
-import com.atlassian.labs.remoteapps.api.service.http.Request.Method;
 import com.atlassian.labs.remoteapps.api.service.http.Response;
 import com.atlassian.labs.remoteapps.api.service.http.ResponsePromise;
 import com.atlassian.labs.remoteapps.spi.http.WrappingResponsePromise;
@@ -116,8 +114,7 @@ public class DefaultHttpClient extends AbstractHttpClient implements HttpClient,
         httpClient.start();
     }
 
-    @Override
-    public ResponsePromise request(final Request request)
+    protected ResponsePromise execute(final DefaultRequest request)
     {
         // validate the request state
         request.validate();
@@ -134,13 +131,16 @@ public class DefaultHttpClient extends AbstractHttpClient implements HttpClient,
         final long start = System.currentTimeMillis();
         final HttpRequestBase op;
         final String uri = request.getUri();
-        Method method = request.getMethod();
+        DefaultRequest.Method method = request.getMethod();
         switch (method)
         {
             case GET:       op = new HttpGet(uri);       break;
             case POST:      op = new HttpPost(uri);      break;
             case PUT:       op = new HttpPut(uri);       break;
             case DELETE:    op = new HttpDelete(uri);    break;
+            case OPTIONS:   op = new HttpOptions(uri);   break;
+            case HEAD:      op = new HttpHead(uri);      break;
+            case TRACE:     op = new HttpTrace(uri) ;    break;
             default: throw new UnsupportedOperationException(method.toString());
         }
         if (request.hasEntity())
@@ -232,7 +232,7 @@ public class DefaultHttpClient extends AbstractHttpClient implements HttpClient,
         throws IOException
     {
         StatusLine status = httpResponse.getStatusLine();
-        Response response = new Response();
+        Response response = new DefaultResponse();
         response.setStatusCode(status.getStatusCode());
         response.setStatusText(status.getReasonPhrase());
         Header[] httpHeaders = httpResponse.getAllHeaders();

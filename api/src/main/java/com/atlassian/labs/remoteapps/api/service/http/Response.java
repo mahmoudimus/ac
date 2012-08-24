@@ -3,89 +3,67 @@ package com.atlassian.labs.remoteapps.api.service.http;
 import java.io.InputStream;
 import java.util.Map;
 
-public class Response extends Message
+/**
+ *
+ */
+public interface Response extends Message
 {
-    private int statusCode;
-    private String statusText;
+    /**
+     *
+     *
+     * @return
+     */
+    int getStatusCode();
 
-    public int getStatusCode()
-    {
-        return statusCode;
-    }
+    /**
+     *
+     *
+     * @param statusCode
+     * @return
+     */
+    Message setStatusCode(int statusCode);
 
-    public Message setStatusCode(int statusCode)
-    {
-        this.statusCode = statusCode;
-        return this;
-    }
+    /**
+     *
+     *
+     * @return
+     */
+    String getStatusText();
 
-    public String getStatusText()
-    {
-        return statusText;
-    }
+    /**
+     *
+     *
+     * @param statusText
+     * @return
+     */
+    Message setStatusText(String statusText);
 
-    public Message setStatusText(String statusText)
-    {
-        this.statusText = statusText;
-        return this;
-    }
+    /**
+     *
+     *
+     * @return
+     */
+    @Override
+    String dump();
 
     @Override
-    public Response setContentType(String contentType)
-    {
-        super.setContentType(contentType);
-        return this;
-    }
+    Response setContentType(String contentType);
 
     @Override
-    public Response setContentCharset(String contentCharset)
-    {
-        super.setContentCharset(contentCharset);
-        return this;
-    }
+    Response setContentCharset(String contentCharset);
 
     @Override
-    public Response setHeaders(Map<String, String> headers)
-    {
-        super.setHeaders(headers);
-        return this;
-    }
+    Response setHeaders(Map<String, String> headers);
 
     @Override
-    public Response setHeader(String name, String value)
-    {
-        super.setHeader(name, value);
-        return this;
-    }
+    Response setHeader(String name, String value);
 
     @Override
-    public Response setEntity(String entity)
-    {
-        super.setEntity(entity);
-        return this;
-    }
+    Response setEntity(String entity);
 
     @Override
-    public Response setEntityStream(InputStream entityStream, String encoding)
-    {
-        super.setEntityStream(entityStream, encoding);
-        return this;
-    }
+    Response setEntityStream(InputStream entityStream, String encoding);
 
     @Override
-    public Response setEntityStream(InputStream entityStream)
-    {
-        super.setEntityStream(entityStream);
-        return this;
-    }
-
-    @Override
-    public String dump()
-    {
-        StringBuilder buf = new StringBuilder();
-        String lf = System.getProperty("line.separator");
-        buf.append("HTTP/1.1 ").append(statusCode).append(" ").append(statusText).append(lf);
-        buf.append(super.dump());
-        return buf.toString();
-    }
+    Response setEntityStream(InputStream entityStream);
 }

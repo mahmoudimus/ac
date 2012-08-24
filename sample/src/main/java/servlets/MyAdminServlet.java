@@ -21,14 +21,14 @@ import static services.HttpUtils.renderHtml;
 public class MyAdminServlet extends HttpServlet
 {
     private final SignedRequestHandler signedRequestHandler;
-    private HostHttpClient hostHttpClient;
+    private HostHttpClient httpClient;
 
     @Inject
     public MyAdminServlet(@ServiceReference SignedRequestHandler signedRequestHandler,
-                          @ServiceReference HostHttpClient hostHttpClient)
+                          @ServiceReference HostHttpClient httpClient)
     {
         this.signedRequestHandler = signedRequestHandler;
-        this.hostHttpClient = hostHttpClient;
+        this.httpClient = httpClient;
     }
 
     @Override
@@ -46,7 +46,7 @@ public class MyAdminServlet extends HttpServlet
     private void execHostHttpRequests(Map<String, Object> context)
         throws ServletException, IOException
     {
-        Response response = hostHttpClient.get("/rest/remoteapptest/1/user").claim();
+        Response response = httpClient.newRequest("/rest/remoteapptest/1/user").get().claim();
         context.put("httpGetStatus", response.getStatusCode());
         context.put("httpGetStatusText", response.getStatusText());
         context.put("httpGetContentType", response.getContentType());

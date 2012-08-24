@@ -27,140 +27,124 @@ public class WrappingResponsePromise extends WrappingPromise<Response> implement
     }
 
     @Override
+    public ResponsePromise on(int statusCode, PromiseCallback<Response> callback)
+    {
+        done(new StatusSelector(statusCode, callback));
+        return this;
+    }
+
+    private ResponsePromise onRange(int lower, int upper, PromiseCallback<Response> callback)
+    {
+        done(new StatusRangeSelector(new Range(lower, upper), callback));
+        return this;
+    }
+
+    @Override
     public ResponsePromise informational(PromiseCallback<Response> callback)
     {
-        done(new StatusRangeSieve(new Range(0, 200), callback));
-        return this;
+        return onRange(100, 200, callback);
     }
 
     @Override
     public ResponsePromise successful(PromiseCallback<Response> callback)
     {
-        done(new StatusRangeSieve(new Range(200, 300), callback));
-        return this;
+        return onRange(200, 300, callback);
     }
 
     @Override
     public ResponsePromise ok(PromiseCallback<Response> callback)
     {
-        done(new StatusSieve(200, callback));
-        return this;
+        return on(200, callback);
     }
 
     @Override
     public ResponsePromise created(PromiseCallback<Response> callback)
     {
-        done(new StatusSieve(201, callback));
-        return this;
+        return on(201, callback);
     }
 
     @Override
     public ResponsePromise noContent(PromiseCallback<Response> callback)
     {
-        done(new StatusSieve(204, callback));
-        return this;
+        return on(204, callback);
     }
 
     @Override
     public ResponsePromise redirection(PromiseCallback<Response> callback)
     {
-        done(new StatusRangeSieve(new Range(300, 400), callback));
-        return this;
+        return onRange(300, 400, callback);
     }
 
     @Override
     public ResponsePromise seeOther(PromiseCallback<Response> callback)
     {
-        done(new StatusSieve(303, callback));
-        return this;
+        return on(303, callback);
     }
 
     @Override
     public ResponsePromise notModified(PromiseCallback<Response> callback)
     {
-        done(new StatusSieve(304, callback));
-        return this;
+        return on(304, callback);
     }
 
     @Override
     public ResponsePromise clientError(PromiseCallback<Response> callback)
     {
-        done(new StatusRangeSieve(new Range(400, 500), callback));
-        return this;
+        return onRange(400, 500, callback);
     }
 
     @Override
     public ResponsePromise badRequest(PromiseCallback<Response> callback)
     {
-        done(new StatusSieve(400, callback));
-        return this;
+        return on(400, callback);
     }
 
     @Override
     public ResponsePromise unauthorized(PromiseCallback<Response> callback)
     {
-        done(new StatusSieve(401, callback));
-        return this;
+        return on(401, callback);
     }
 
     @Override
     public ResponsePromise forbidden(PromiseCallback<Response> callback)
     {
-        done(new StatusSieve(403, callback));
-        return this;
+        return on(403, callback);
     }
 
     @Override
     public ResponsePromise conflict(PromiseCallback<Response> callback)
     {
-        done(new StatusSieve(409, callback));
-        return this;
+        return on(409, callback);
     }
 
     @Override
     public ResponsePromise serverError(PromiseCallback<Response> callback)
     {
-        done(new StatusRangeSieve(new Range(500, 600), callback));
-        return this;
+        return onRange(500, 600, callback);
     }
 
     @Override
     public ResponsePromise internalServerError(PromiseCallback<Response> callback)
     {
-        done(new StatusSieve(500, callback));
-        return this;
+        return on(500, callback);
     }
 
     @Override
     public ResponsePromise serviceUnavailable(PromiseCallback<Response> callback)
     {
-        done(new StatusSieve(503, callback));
-        return this;
+        return on(503, callback);
     }
 
     @Override
     public ResponsePromise error(PromiseCallback<Response> callback)
     {
-        done(new StatusRangeSieve(new Range(400, 600), callback));
-        return this;
+        return clientError(callback).serverError(callback);
     }
 
     @Override
     public ResponsePromise notSuccessful(final PromiseCallback<Response> callback)
     {
-        done(new PromiseCallback<Response>()
-        {
-            @Override
-            public void handle(Response response)
-            {
-                int status = response.getStatusCode();
-                if (status < 200 || status >= 300)
-                {
-                    callback.handle(response);
-                }
-            }
-        });
-        return this;
+        return informational(callback).redirection(callback).error(callback);
     }
 
     @Override
@@ -172,16 +156,16 @@ public class WrappingResponsePromise extends WrappingPromise<Response> implement
             public void handle(Response response)
             {
                 int status = response.getStatusCode();
-                boolean inRange = false;
+                boolean inRanges = false;
                 for (Range range : ranges)
                 {
                     if (range.contains(status))
                     {
-                        inRange = true;
+                        inRanges = true;
                         break;
                     }
                 }
-                if (!inRange && !statuses.contains(status))
+                if (!inRanges && !statuses.contains(status))
                 {
                     callback.handle(response);
                 }
@@ -211,12 +195,12 @@ public class WrappingResponsePromise extends WrappingPromise<Response> implement
         return this;
     }
 
-    private class StatusSieve implements PromiseCallback<Response>
+    private class StatusSelector implements PromiseCallback<Response>
     {
         private final int statusCode;
         private final PromiseCallback<Response> callback;
 
-        private StatusSieve(int statusCode, PromiseCallback<Response> callback)
+        private StatusSelector(int statusCode, PromiseCallback<Response> callback)
         {
             statuses.add(statusCode);
             this.statusCode = statusCode;
@@ -233,12 +217,12 @@ public class WrappingResponsePromise extends WrappingPromise<Response> implement
         }
     }
 
-    private class StatusRangeSieve implements PromiseCallback<Response>
+    private class StatusRangeSelector implements PromiseCallback<Response>
     {
         private final Range range;
         private final PromiseCallback<Response> callback;
 
-        private StatusRangeSieve(Range range, PromiseCallback<Response> callback)
+        private StatusRangeSelector(Range range, PromiseCallback<Response> callback)
         {
             this.range = range;
             ranges.add(range);

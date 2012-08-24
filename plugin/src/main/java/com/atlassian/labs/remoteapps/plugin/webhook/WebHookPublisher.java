@@ -2,7 +2,6 @@ package com.atlassian.labs.remoteapps.plugin.webhook;
 
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.labs.remoteapps.api.service.http.HttpClient;
-import com.atlassian.labs.remoteapps.api.service.http.Request;
 import com.atlassian.labs.remoteapps.plugin.RemoteAppAccessor;
 import com.atlassian.labs.remoteapps.plugin.RemoteAppAccessorFactory;
 import com.atlassian.labs.remoteapps.plugin.util.uri.Uri;
@@ -16,7 +15,6 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.Sets;
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
@@ -26,7 +24,6 @@ import org.springframework.stereotype.Component;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.*;
 
 /**
@@ -147,11 +144,13 @@ public class WebHookPublisher implements DisposableBean
             String authorization = remoteAppAccessor.getAuthorizationGenerator().generate(
                 "POST", url, Collections.<String, List<String>>emptyMap());
             // our job is just to send this, not worry about whether it failed or not
-            Request request = new Request(url, "application/json", body)
+            httpClient
+                .newRequest(url, "application/json", body)
                 .setHeader("Authorization", authorization)
+                // attributes capture optional properties sent to analytics
                 .setAttribute("purpose", "web-hook-notification")
-                .setAttribute("pluginKey", registration.getPluginKey());
-            httpClient.post(request);
+                .setAttribute("pluginKey", registration.getPluginKey())
+                .post();
         }
 
         @Override

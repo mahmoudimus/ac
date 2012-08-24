@@ -156,7 +156,7 @@
     <component key="asyncHttpClient" interface="com.atlassian.labs.remoteapps.api.service.http.HttpClient"
                class="com.atlassian.labs.remoteapps.host.common.service.http.DefaultHttpClient" public="true" />
 
-    <component key="hostHttpClient" interface="com.atlassian.labs.remoteapps.api.service.http.HostHttpClient"
+    <component key="httpClient" interface="com.atlassian.labs.remoteapps.api.service.http.HostHttpClient"
                class="com.atlassian.labs.remoteapps.host.common.service.http.HostHttpClientServiceFactory" public="true" />
 
     <component key="hostXmlRpcClient" interface="com.atlassian.labs.remoteapps.api.service.http.HostXmlRpcClient"

@@ -9,5 +9,16 @@ import java.util.concurrent.Callable;
  */
 public interface HostHttpClient extends HttpClient
 {
+    /**
+     * Runs the provided callable code in a
+     * {@link com.atlassian.labs.remoteapps.api.service.RequestContext} with the specified
+     * clientKey and userId.
+     *
+     * @param clientKey The clientKey to call as
+     * @param userId The user id to call as
+     * @param callable The executable code to call
+     * @param <T> The return type of the callable code
+     * @return The value returned from the callable code
+     */
     <T> T callAs(String clientKey, String userId, Callable<T> callable);
 }

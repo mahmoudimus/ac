@@ -30,12 +30,12 @@ public class DefaultHostXmlRpcClient implements HostXmlRpcClient
 
     private final XmlRpcSerializer serializer = new XmlRpcSerializer();
 
-    private final HostHttpClient hostHttpClient;
+    private final HostHttpClient httpClient;
 
 
-    public DefaultHostXmlRpcClient(HostHttpClient hostHttpClient)
+    public DefaultHostXmlRpcClient(HostHttpClient httpClient)
     {
-        this.hostHttpClient = hostHttpClient;
+        this.httpClient = httpClient;
     }
 
     @Override
@@ -143,11 +143,12 @@ public class DefaultHostXmlRpcClient implements HostXmlRpcClient
             writer.write("</params>");
             writer.write("</methodCall>");
 
-            hostHttpClient
-                .post(new Request(serverXmlRpcPath)
-                    .setContentType("text/xml")
-                    .setContentCharset(XmlRpcMessages.getString("XmlRpcClient.Encoding"))
-                    .setEntity(writer.toString()))
+            httpClient
+                .newRequest(serverXmlRpcPath)
+                .setContentType("text/xml")
+                .setContentCharset(XmlRpcMessages.getString("XmlRpcClient.Encoding"))
+                .setEntity(writer.toString())
+                .post()
                 .ok(new PromiseCallback<Response>()
                 {
                     @Override
@@ -167,7 +168,7 @@ public class DefaultHostXmlRpcClient implements HostXmlRpcClient
                         {
                             XmlRpcStruct fault = (XmlRpcStruct) parser.getParsedValue();
                             future.setException(new XmlRpcFault(fault.getInteger("faultCode"),
-                                    fault.getString("faultString")));
+                                fault.getString("faultString")));
                         }
                         else
                         {
@@ -175,8 +176,7 @@ public class DefaultHostXmlRpcClient implements HostXmlRpcClient
                             if (parsedValue != null && castResultTo.isAssignableFrom(parsedValue.getClass()))
                             {
                                 future.set(castResultTo.cast(parsedValue));
-                            }
-                            else
+                            } else
                             {
                                 future.setException(new XmlRpcException("Unexpected return type: " + parsedValue));
                             }

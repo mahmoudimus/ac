@@ -1,202 +1,189 @@
 package com.atlassian.labs.remoteapps.api.service.http;
 
 import java.io.InputStream;
-import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.collect.Maps.newHashMap;
-
-public class Request extends Message
+/**
+ * An interface for building HTTP requests.
+ */
+public interface Request extends Message
 {
-    public enum Method { GET, POST, PUT, DELETE }
+    /**
+     *
+     *
+     * @return
+     */
+    String getUri();
 
-    private Method method;
-    private String uri;
-    private Map<String, String> attributes;
-    private boolean isFrozen;
+    /**
+     *
+     *
+     * @param uri
+     * @return
+     */
+    Request setUri(String uri);
 
-    public Request()
-    {
-        attributes = newHashMap();
-        setAccept("*/*");
-    }
+    /**
+     *
+     *
+     * @return
+     */
+    String getAccept();
 
-    public Request(String uri)
-    {
-        this(uri, null, null);
-    }
+    /**
+     *
+     *
+     * @param mediaType
+     * @return
+     */
+    Request setAccept(String mediaType);
 
-    public Request(String uri, String contentType, String entity)
-    {
-        this();
-        setUri(uri).setContentType(contentType).setEntity(entity);
-    }
+    /**
+     *
+     *
+     * @param name
+     * @param value
+     * @return
+     */
+    Request setAttribute(String name, String value);
 
-    public Method getMethod()
-    {
-        return method;
-    }
+    /**
+     *
+     *
+     * @param name
+     * @return
+     */
+    String getAttribute(String name);
 
-    public Request setMethod(Method method)
-    {
-        checkMutable();
-        this.method = method;
-        return this;
-    }
+    /**
+     *
+     *
+     * @return
+     */
+    Map<String, String> getAttributes();
 
-    public Request setMethod(String method)
-    {
-        return setMethod(Method.valueOf(method));
-    }
+    /**
+     *
+     *
+     * @param formBuilder
+     * @return
+     */
+    Request setEntity(FormBuilder formBuilder);
 
-    public String getUri()
-    {
-        return uri;
-    }
+    /**
+     *
+     *
+     * @param formBuilder
+     * @return
+     */
+    Request setFormEntity(FormBuilder formBuilder);
 
-    public Request setUri(String uri)
-    {
-        checkMutable();
-        this.uri = uri;
-        return this;
-    }
+    /**
+     *
+     *
+     * @param params
+     * @return
+     */
+    Request setFormEntity(Map<String, String> params);
 
-    public String getAccept()
-    {
-        return getHeader("Accept");
-    }
+    /**
+     *
+     *
+     * @param params
+     * @return
+     */
+    Request setMultiValuedFormEntity(Map<String, List<String>> params);
 
-    public Request setAccept(String mediaType)
-    {
-        checkMutable();
-        setHeader("Accept", mediaType);
-        return this;
-    }
+    /**
+     *
+     *
+     * @return
+     */
+    ChainingFormBuilder buildFormEntity();
 
-    public Request setAttribute(String name, String value)
-    {
-        checkMutable();
-        attributes.put(name, value);
-        return this;
-    }
+    /**
+     *
+     *
+     * @return
+     */
+    boolean isFrozen();
 
-    public String getAttribute(String name)
-    {
-        return attributes.get(name);
-    }
-
-    public Map<String, String> getAttributes()
-    {
-        return Collections.unmodifiableMap(attributes);
-    }
-
-    public Request setEntity(FormBuilder formBuilder)
-    {
-        setContentType(FormBuilder.CONTENT_TYPE);
-        setEntity(formBuilder.toEntity());
-        return this;
-    }
-
-    public Request validate()
-    {
-        super.validate();
-
-        checkNotNull(uri);
-
-        checkNotNull(method);
-        if (method == Method.POST || method == Method.PUT)
-        {
-            if (!hasEntity())
-            {
-                throw new IllegalStateException("Request method " + method + " requires an entity stream");
-            }
-        }
-
-        return this;
-    }
-
-    public void freeze()
-    {
-        isFrozen = true;
-    }
-
-    public boolean isFrozen()
-    {
-        return isFrozen;
-    }
+    /**
+     *
+     *
+     * @return
+     */
+    @Override
+    String dump();
 
     @Override
-    public Request setContentType(String contentType)
-    {
-        checkMutable();
-        super.setContentType(contentType);
-        return this;
-    }
+    Request setContentType(String contentType);
 
     @Override
-    public Request setContentCharset(String contentCharset)
-    {
-        checkMutable();
-        super.setContentCharset(contentCharset);
-        return this;
-    }
+    Request setContentCharset(String contentCharset);
 
     @Override
-    public Request setHeaders(Map<String, String> headers)
-    {
-        checkMutable();
-        super.setHeaders(headers);
-        return this;
-    }
+    Request setHeaders(Map<String, String> headers);
 
     @Override
-    public Request setHeader(String name, String value)
-    {
-        checkMutable();
-        super.setHeader(name, value);
-        return this;
-    }
+    Request setHeader(String name, String value);
 
     @Override
-    public Request setEntity(String entity)
-    {
-        checkMutable();
-        super.setEntity(entity);
-        return this;
-    }
+    Request setEntity(String entity);
 
     @Override
-    public Request setEntityStream(InputStream entityStream, String encoding)
-    {
-        checkMutable();
-        super.setEntityStream(entityStream, encoding);
-        return this;
-    }
+    Request setEntityStream(InputStream entityStream, String encoding);
 
     @Override
-    public Request setEntityStream(InputStream entityStream)
-    {
-        checkMutable();
-        super.setEntityStream(entityStream);
-        return this;
-    }
+    Request setEntityStream(InputStream entityStream);
 
-    @Override
-    public String dump()
-    {
-        StringBuilder buf = new StringBuilder();
-        String lf = System.getProperty("line.separator");
-        buf.append(method).append(" ").append(getUri()).append(" HTTP/1.1").append(lf);
-        buf.append(super.dump());
-        return buf.toString();
-    }
+    /**
+     * (mention no entity)
+     *
+     * @return A promise object that can be used to receive the response and handle exceptions
+     */
+    ResponsePromise get();
 
-    private void checkMutable()
-    {
-        if (isFrozen)
-        {
-            throw new IllegalStateException("Request cannot be changed once frozen");
-        }
-    }
+    /**
+     * (mention entity)
+     *
+     * @return A promise object that can be used to receive the response and handle exceptions
+     */
+    ResponsePromise post();
+
+    /**
+     * (mention entity)
+     *
+     * @return A promise object that can be used to receive the response and handle exceptions
+     */
+    ResponsePromise put();
+
+    /**
+     * (mention no entity)
+     *
+     * @return A promise object that can be used to receive the response and handle exceptions
+     */
+    ResponsePromise delete();
+
+    /**
+     * (mention optional entity)
+     *
+     * @return A promise object that can be used to receive the response and handle exceptions
+     */
+    ResponsePromise options();
+
+    /**
+     * (mention no entity)
+     *
+     * @return A promise object that can be used to receive the response and handle exceptions
+     */
+    ResponsePromise head();
+
+    /**
+     * (mention entity)
+     *
+     * @return A promise object that can be used to receive the response and handle exceptions
+     */
+    ResponsePromise trace();
 }

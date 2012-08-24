@@ -2,8 +2,6 @@ package com.atlassian.labs.remoteapps.host.common.service.http;
 
 import com.atlassian.labs.remoteapps.api.service.SignedRequestHandler;
 import com.atlassian.labs.remoteapps.api.service.http.HostHttpClient;
-import com.atlassian.labs.remoteapps.api.service.http.HttpClient;
-import com.atlassian.labs.remoteapps.api.service.http.Request;
 import com.atlassian.labs.remoteapps.api.service.http.ResponsePromise;
 import com.atlassian.labs.remoteapps.host.common.service.DefaultRequestContext;
 
@@ -13,11 +11,11 @@ import java.util.concurrent.Callable;
 
 public class DefaultHostHttpClient extends AbstractHttpClient implements HostHttpClient
 {
-    private HttpClient httpClient;
+    private DefaultHttpClient httpClient;
     private DefaultRequestContext requestContext;
     private SignedRequestHandler signedRequestHandler;
 
-    public DefaultHostHttpClient(HttpClient httpClient,
+    public DefaultHostHttpClient(DefaultHttpClient httpClient,
                                  DefaultRequestContext requestContext,
                                  SignedRequestHandler signedRequestHandler)
     {
@@ -27,7 +25,7 @@ public class DefaultHostHttpClient extends AbstractHttpClient implements HostHtt
     }
 
     @Override
-    public ResponsePromise request(Request request)
+    protected ResponsePromise execute(DefaultRequest request)
     {
         // make sure this is a request for a relative url
         if (request.getUri().matches("^[\\w]+:.*"))
@@ -78,7 +76,7 @@ public class DefaultHostHttpClient extends AbstractHttpClient implements HostHtt
             .setAttribute("clientKey", clientKey);
 
         // execute the request via the http client service
-        return httpClient.request(request);
+        return httpClient.execute(request);
     }
 
     @Override

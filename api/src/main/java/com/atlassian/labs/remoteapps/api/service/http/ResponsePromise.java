@@ -9,6 +9,21 @@ import com.google.common.util.concurrent.FutureCallback;
  */
 public interface ResponsePromise extends Promise<Response>
 {
+    // Custom Selectors
+
+    /**
+     * Register a callback to respond to HTTP responses with a specific status code.
+     * Use this as a fallback if the status code you're interested in does not have
+     * a more explicit registration method for it.
+     *
+     * @param statusCode The code to select on
+     * @param callback The callback
+     * @return This ResponsePromise instance for chaining
+     */
+    ResponsePromise on(int statusCode, PromiseCallback<Response> callback);
+
+    // Informational (1xx) Selectors
+
     /**
      * Register a callback to respond to 'informational' (1xx) HTTP responses.
      *
@@ -16,6 +31,8 @@ public interface ResponsePromise extends Promise<Response>
      * @return This ResponsePromise instance for chaining
      */
     ResponsePromise informational(PromiseCallback<Response> callback);
+
+    // Successful (2xx) Selectors
 
     /**
      * Register a callback to respond to 'successful' (2xx) HTTP responses.
@@ -49,6 +66,8 @@ public interface ResponsePromise extends Promise<Response>
      */
     ResponsePromise noContent(PromiseCallback<Response> callback);
 
+    // Redirection (3xx) Selectors
+
     /**
      * Register a callback to respond to 'redirection' (3xx) HTTP responses.
      *
@@ -72,6 +91,8 @@ public interface ResponsePromise extends Promise<Response>
      * @return This ResponsePromise instance for chaining
      */
     ResponsePromise notModified(PromiseCallback<Response> callback);
+
+    // Client Error (4xx) Selectors
 
     /**
      * Register a callback to respond to 'client error' (4xx) HTTP responses.
@@ -113,6 +134,8 @@ public interface ResponsePromise extends Promise<Response>
      */
     ResponsePromise conflict(PromiseCallback<Response> callback);
 
+    // Server Error (5xx) Selectors
+
     /**
      * Register a callback to respond to 'server error' (5xx) HTTP responses.
      *
@@ -136,6 +159,8 @@ public interface ResponsePromise extends Promise<Response>
      * @return This ResponsePromise instance for chaining
      */
     ResponsePromise serviceUnavailable(PromiseCallback<Response> callback);
+
+    // Aggregate Selectors
 
     /**
      * Register a callback to respond to all error (4xx and 5xx) HTTP responses.
@@ -170,6 +195,8 @@ public interface ResponsePromise extends Promise<Response>
     @Override
     ResponsePromise done(PromiseCallback<Response> callback);
 
+    // Exception Selectors
+
     /**
      * Register a callback to respond to exceptions thrown while executing the HTTP request.
      *
@@ -178,6 +205,8 @@ public interface ResponsePromise extends Promise<Response>
      */
     @Override
     ResponsePromise fail(PromiseCallback<Throwable> callback);
+
+    // Universal Selectors
 
     /**
      * Register a future callback to respond to all completed HTTP responses and exceptions thrown

@@ -29,7 +29,8 @@ var api = module.exports = {
     var deferred = Deferred();
     try {
       // build the java request object from incoming args
-      var request = new Request();
+      var request = client.newRequest();
+      var method = options.method;
       Object.keys(options).forEach(function (k) {
         var headers;
         if (k === "headers") {
@@ -38,13 +39,14 @@ var api = module.exports = {
             request.setHeader(name, headers[name]);
           });
         }
-        else {
+        else if (k !== "method") {
           // @todo entity marshalling
           request[k] = options[k];
         }
       });
+
       // execute the request
-      client.request(request).then({
+      request[method.toLowerCase()]().then({
         onSuccess: function (response) {
           // build a js response object from the java response
           var json = {};

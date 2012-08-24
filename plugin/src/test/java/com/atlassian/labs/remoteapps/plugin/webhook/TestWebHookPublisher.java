@@ -1,8 +1,7 @@
 package com.atlassian.labs.remoteapps.plugin.webhook;
 
 import com.atlassian.event.api.EventPublisher;
-import com.atlassian.labs.remoteapps.api.service.http.HttpClient;
-import com.atlassian.labs.remoteapps.api.service.http.Request;
+import com.atlassian.labs.remoteapps.host.common.service.http.DefaultHttpClient;
 import com.atlassian.labs.remoteapps.plugin.RemoteAppAccessor;
 import com.atlassian.labs.remoteapps.plugin.RemoteAppAccessorFactory;
 import com.atlassian.labs.remoteapps.plugin.util.http.AuthorizationGenerator;
@@ -24,7 +23,7 @@ import static org.mockito.MockitoAnnotations.initMocks;
 public class TestWebHookPublisher
 {
     @Mock
-    HttpClient httpClient;
+    DefaultHttpClient httpClient;
 
     @Mock
     EventPublisher eventPublisher;
@@ -75,8 +74,7 @@ public class TestWebHookPublisher
         publisher.publish("event.id", new FalseEventMatcher(), new MapEventSerializer("event_object",
                 Collections.<String, Object>singletonMap("field", "value")));
 
-        Request request = mock(Request.class);
-        verify(httpClient, never()).post(eq(request));
+        verify(httpClient, never()).newRequest(anyString(), anyString(), anyString());
     }
 
     @Test
@@ -85,8 +83,7 @@ public class TestWebHookPublisher
         publisher.publish("event.id", EventMatcher.ALWAYS_TRUE, new MapEventSerializer("event_object",
                                                               Collections.<String, Object>singletonMap("field", "value")));
 
-        Request request = mock(Request.class);
-        verify(httpClient, never()).post(eq(request));
+        verify(httpClient, never()).newRequest(anyString(), anyString(), anyString());
     }
 
     @Test
@@ -96,8 +93,7 @@ public class TestWebHookPublisher
         publisher.publish("event.id", EventMatcher.ALWAYS_TRUE,  new MapEventSerializer("event_object",
                                                               Collections.<String, Object>singletonMap("field", "value")));
 
-        Request request = mock(Request.class);
-        verify(httpClient, never()).post(eq(request));
+        verify(httpClient, never()).newRequest(anyString(), anyString(), anyString());
     }
 
     @Test

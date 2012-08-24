@@ -246,7 +246,7 @@ public final class Container
             oAuthSignedRequestHandlerServiceFactory, environmentFactory, requestContextServiceFactory);
         final RequestKiller requestKiller = new RequestKiller();
         final ContainerEventPublisher containerEventPublisher = new ContainerEventPublisher();
-        final HttpClient httpClient = new DefaultHttpClient(requestKiller, containerEventPublisher);
+        final DefaultHttpClient httpClient = new DefaultHttpClient(requestKiller, containerEventPublisher);
         final HostHttpClientServiceFactory hostHttpClientServiceFactory
             = new HostHttpClientServiceFactory(httpClient, requestContextServiceFactory,
             oAuthSignedRequestHandlerServiceFactory);
@@ -269,13 +269,7 @@ public final class Container
 
     private String getVersionFromMavenMetadata(String groupId, String artifactId, String defaultValue)
     {
-        final String resource = new StringBuilder(128)
-                .append("META-INF/maven/")
-                .append(groupId)
-                .append("/")
-                .append(artifactId)
-                .append("/pom.properties")
-                .toString();
+        final String resource = "META-INF/maven/" + groupId + "/" + artifactId + "/pom.properties";
 
         final String version = new ResourcePropertiesLoader(resource).load().get("version");
         if (version == null)
