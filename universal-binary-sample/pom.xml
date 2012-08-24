@@ -150,6 +150,18 @@
                                     <version>${ao.version}</version>
                                 </pluginArtifact>
                             </pluginArtifacts>
+                            <libArtifacts>
+                                <libArtifact>
+                                    <groupId>javax.mail</groupId>
+                                    <artifactId>mail</artifactId>
+                                    <version>1.4.1</version>
+                                </libArtifact>
+                                <libArtifact>
+                                    <groupId>com.atlassian.mail</groupId>
+                                    <artifactId>atlassian-mail</artifactId>
+                                    <version>2.4.1</version>
+                                </libArtifact>
+                            </libArtifacts>
                         </product>
                     </products>
                     <testGroups>

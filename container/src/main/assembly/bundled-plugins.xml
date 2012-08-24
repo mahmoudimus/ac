@@ -11,6 +11,8 @@
             <scope>provided</scope>
             <includes>
                 <include>com.atlassian.activeobjects:activeobjects-plugin</include>
+                <include>com.atlassian.templaterenderer:atlassian-template-renderer-api</include>
+                <include>com.atlassian.templaterenderer:atlassian-template-renderer-velocity16-plugin</include>
             </includes>
             <outputDirectory></outputDirectory>
         </dependencySet>

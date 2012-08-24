@@ -26,6 +26,12 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>com.atlassian.mail</groupId>
+            <artifactId>atlassian-mail</artifactId>
+            <version>2.4.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>remoteapps-kit-common</artifactId>
             <version>${project.version}</version>
@@ -522,6 +528,11 @@
                                     <groupId>javax.mail</groupId>
                                     <artifactId>mail</artifactId>
                                     <version>1.4.1</version>
+                                </libArtifact>
+                                <libArtifact>
+                                    <groupId>com.atlassian.mail</groupId>
+                                    <artifactId>atlassian-mail</artifactId>
+                                    <version>2.4.1</version>
                                 </libArtifact>
                             </libArtifacts>
                         </product>

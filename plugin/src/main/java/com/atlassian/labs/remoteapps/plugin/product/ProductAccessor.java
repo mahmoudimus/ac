@@ -1,5 +1,6 @@
 package com.atlassian.labs.remoteapps.plugin.product;
 
+import com.atlassian.mail.Email;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 
 import java.util.Map;
@@ -26,4 +27,7 @@ public interface ProductAccessor
     String getPreferredProfileSectionKey();
 
     Map<String,String> getLinkContextParams();
+
+
+    void sendEmail(String user, Email email, String bodyAsHtml, String bodyAsText);
 }

@@ -1,9 +1,12 @@
 package com.atlassian.labs.remoteapps.plugin.product.refapp;
 
 import com.atlassian.labs.remoteapps.plugin.product.ProductAccessor;
+import com.atlassian.mail.Email;
 import com.atlassian.plugin.web.WebInterfaceManager;
 import com.atlassian.plugin.web.descriptors.DefaultWebItemModuleDescriptor;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
@@ -15,6 +18,7 @@ import static java.util.Collections.emptyMap;
 public class RefappProductAccessor implements ProductAccessor
 {
     private final WebInterfaceManager webInterfaceManager;
+    private static final Logger log = LoggerFactory.getLogger(RefappProductAccessor.class);
 
     public RefappProductAccessor(WebInterfaceManager webInterfaceManager)
     {
@@ -73,5 +77,11 @@ public class RefappProductAccessor implements ProductAccessor
     public Map<String, String> getLinkContextParams()
     {
         return emptyMap();
+    }
+
+    @Override
+    public void sendEmail(String userName, Email email, String bodyAsHtml, String bodyAsText)
+    {
+        log.info("Would have sent email to " + userName + ": \n" + email);
     }
 }

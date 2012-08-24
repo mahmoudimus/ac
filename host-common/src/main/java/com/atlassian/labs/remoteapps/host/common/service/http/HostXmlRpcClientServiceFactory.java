@@ -1,26 +1,14 @@
 package com.atlassian.labs.remoteapps.host.common.service.http;
 
-import org.osgi.framework.Bundle;
-import org.osgi.framework.ServiceFactory;
-import org.osgi.framework.ServiceRegistration;
-
-public class HostXmlRpcClientServiceFactory implements ServiceFactory
+/**
+ * Created with IntelliJ IDEA. User: mrdon Date: 8/27/12 Time: 9:54 AM To change this template use
+ * File | Settings | File Templates.
+ */
+public class HostXmlRpcClientServiceFactory extends HostHttpClientConsumerServiceFactory
 {
-    private final HostHttpClientServiceFactory hostHttpClientServiceFactory;
-
-    public HostXmlRpcClientServiceFactory(HostHttpClientServiceFactory hostHttpClientServiceFactory)
+    public HostXmlRpcClientServiceFactory(
+            HostHttpClientServiceFactory hostHttpClientServiceFactory)
     {
-        this.hostHttpClientServiceFactory = hostHttpClientServiceFactory;
-    }
-
-    @Override
-    public Object getService(Bundle bundle, ServiceRegistration registration)
-    {
-        return new DefaultHostXmlRpcClient(hostHttpClientServiceFactory.getService(bundle));
-    }
-
-    @Override
-    public void ungetService(Bundle bundle, ServiceRegistration registration, Object service)
-    {
+        super(hostHttpClientServiceFactory, DefaultHostXmlRpcClient.class);
     }
 }

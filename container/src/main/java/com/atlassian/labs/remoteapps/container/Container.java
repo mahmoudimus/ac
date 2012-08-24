@@ -2,18 +2,19 @@ package com.atlassian.labs.remoteapps.container;
 
 import com.atlassian.activeobjects.spi.DataSourceProvider;
 import com.atlassian.event.api.EventPublisher;
+import com.atlassian.labs.remoteapps.api.service.EmailSender;
 import com.atlassian.labs.remoteapps.api.service.http.HostXmlRpcClient;
 import com.atlassian.labs.remoteapps.api.service.http.HttpClient;
-import com.atlassian.labs.remoteapps.host.common.service.http.HostXmlRpcClientServiceFactory;
+import com.atlassian.labs.remoteapps.container.service.ContainerEmailSender;
+import com.atlassian.labs.remoteapps.container.service.plugins.NoOpWebResourceManager;
+import com.atlassian.labs.remoteapps.container.service.sal.*;
 import com.atlassian.labs.remoteapps.host.common.descriptor.PolygotDescriptorAccessor;
 import com.atlassian.labs.remoteapps.host.common.descriptor.DescriptorAccessor;
 import com.atlassian.labs.remoteapps.api.service.HttpResourceMounter;
 import com.atlassian.labs.remoteapps.api.service.RequestContext;
 import com.atlassian.labs.remoteapps.api.service.SignedRequestHandler;
 import com.atlassian.labs.remoteapps.api.service.http.HostHttpClient;
-import com.atlassian.labs.remoteapps.host.common.service.http.DefaultHttpClient;
-import com.atlassian.labs.remoteapps.host.common.service.http.HostHttpClientServiceFactory;
-import com.atlassian.labs.remoteapps.host.common.service.http.RequestKiller;
+import com.atlassian.labs.remoteapps.host.common.service.http.*;
 import com.atlassian.labs.remoteapps.host.common.service.RequestContextServiceFactory;
 import com.atlassian.labs.remoteapps.container.ao.RemoteAppsDataSourceProviderServiceFactory;
 import com.atlassian.labs.remoteapps.container.internal.EnvironmentFactory;
@@ -22,8 +23,6 @@ import com.atlassian.labs.remoteapps.container.service.ContainerEventPublisher;
 import com.atlassian.labs.remoteapps.container.service.ContainerHttpResourceMounterServiceFactory;
 import com.atlassian.labs.remoteapps.container.service.OAuthSignedRequestHandlerServiceFactory;
 import com.atlassian.labs.remoteapps.container.service.event.RemoteAppsEventPublisher;
-import com.atlassian.labs.remoteapps.container.service.sal.RemoteAppsApplicationPropertiesServiceFactory;
-import com.atlassian.labs.remoteapps.container.service.sal.RemoteAppsPluginSettingsFactory;
 import com.atlassian.labs.remoteapps.container.util.ZipWriter;
 import com.atlassian.plugin.DefaultModuleDescriptorFactory;
 import com.atlassian.plugin.PluginAccessor;
@@ -49,7 +48,10 @@ import com.atlassian.plugin.osgi.hostcomponents.ComponentRegistrar;
 import com.atlassian.plugin.osgi.hostcomponents.ContextClassLoaderStrategy;
 import com.atlassian.plugin.osgi.hostcomponents.HostComponentProvider;
 import com.atlassian.plugin.osgi.module.BeanPrefixModuleFactory;
+import com.atlassian.plugin.webresource.WebResourceManager;
 import com.atlassian.sal.api.ApplicationProperties;
+import com.atlassian.sal.api.message.I18nResolver;
+import com.atlassian.sal.api.message.LocaleResolver;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.atlassian.sal.api.transaction.TransactionTemplate;
 import com.atlassian.sal.core.transaction.NoOpTransactionTemplate;
@@ -57,6 +59,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import com.sun.corba.se.spi.resolver.LocalResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -119,6 +122,7 @@ public final class Container
                 .add("com.atlassian.xmlrpc*")
                 .add("com.atlassian.security.random*")
                 .add("com.atlassian.fugue*")
+                .add("com.atlassian.mail*")
                 .add("com.google.common.*")
                 .add("com.samskivert.*")
                 .add("javax.servlet*")
@@ -132,6 +136,7 @@ public final class Container
                 .add("org.json")
                 .add("org.mozilla.javascript*")
                 .add("org.slf4j*")
+                .add("org.apache.log4j")
                 .add("org.yaml*")
                 .add("javax.inject")
                 .add("redstone.xmlrpc")
@@ -151,6 +156,8 @@ public final class Container
                 .put("org.apache.commons.collections*", "3.2")
                 .put("org.apache.commons.lang*", getVersionFromMavenMetadata("commons-lang", "commons-lang", "2.4"))
                 .put("org.slf4j*", getVersionFromMavenMetadata("org.slf4j", "slf4j-api", "1.6.4"))
+                .put("org.apache.log4j", getVersionFromMavenMetadata("log4j", "log4j", "1.2.16"))
+                .put("org.dom4j*", getVersionFromMavenMetadata("dom4j", "dom4j", "1.4"))
                 .build());
 
         scannerConfig.setPackageExcludes(ImmutableList.<String>builder()
@@ -260,7 +267,12 @@ public final class Container
         hostComponents.put(RequestContext.class, requestContextServiceFactory);
         hostComponents.put(HttpClient.class, httpClient);
         hostComponents.put(HostHttpClient.class, hostHttpClientServiceFactory);
-        hostComponents.put(HostXmlRpcClient.class, new HostXmlRpcClientServiceFactory(hostHttpClientServiceFactory));
+        hostComponents.put(HostXmlRpcClient.class, new HostHttpClientConsumerServiceFactory(hostHttpClientServiceFactory, DefaultHostXmlRpcClient.class));
+        hostComponents.put(EmailSender.class, new HostHttpClientConsumerServiceFactory(hostHttpClientServiceFactory,
+                ContainerEmailSender.class));
+        hostComponents.put(LocaleResolver.class, new ContainerLocaleResolver());
+        hostComponents.put(I18nResolver.class, new ContainerI18nResolver(pluginManager, pluginEventManager, new ResourceBundleResolverImpl()));
+        hostComponents.put(WebResourceManager.class, new NoOpWebResourceManager());
 
         hostComponents.put(DataSourceProvider.class, new RemoteAppsDataSourceProviderServiceFactory(
                 applicationPropertiesServiceFactory));

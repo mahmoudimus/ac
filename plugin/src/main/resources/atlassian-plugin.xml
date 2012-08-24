@@ -162,6 +162,9 @@
     <component key="hostXmlRpcClient" interface="com.atlassian.labs.remoteapps.api.service.http.HostXmlRpcClient"
                class="com.atlassian.labs.remoteapps.host.common.service.http.HostXmlRpcClientServiceFactory" public="true" />
 
+    <component key="localEmailSender" interface="com.atlassian.labs.remoteapps.api.service.EmailSender"
+               class="com.atlassian.labs.remoteapps.plugin.service.LocalEmailSender" public="true" />
+
     <applinks-application-type name="Remote Plugin Container" key="remote-plugin-container-type"
                                    class="com.atlassian.labs.remoteapps.plugin.module.applinks.RemotePluginContainerApplicationTypeImpl"
                                    interface="com.atlassian.labs.remoteapps.spi.applinks.RemotePluginContainerApplicationType">

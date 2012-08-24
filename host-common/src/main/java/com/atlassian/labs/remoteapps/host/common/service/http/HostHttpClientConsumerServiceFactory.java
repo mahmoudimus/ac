@@ -1,0 +1,54 @@
+package com.atlassian.labs.remoteapps.host.common.service.http;
+
+import com.atlassian.labs.remoteapps.api.service.http.HostHttpClient;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.ServiceFactory;
+import org.osgi.framework.ServiceRegistration;
+
+import java.lang.reflect.InvocationTargetException;
+
+/**
+ * Generic service factory for classes that only need {@link HostHttpClient}
+ */
+public class HostHttpClientConsumerServiceFactory implements ServiceFactory
+{
+    private final HostHttpClientServiceFactory hostHttpClientServiceFactory;
+    private final Class<?> serviceClass;
+
+    public HostHttpClientConsumerServiceFactory(
+            HostHttpClientServiceFactory hostHttpClientServiceFactory, Class<?> serviceClass)
+    {
+        this.hostHttpClientServiceFactory = hostHttpClientServiceFactory;
+        this.serviceClass = serviceClass;
+    }
+
+    @Override
+    public Object getService(Bundle bundle, ServiceRegistration registration)
+    {
+        try
+        {
+            return serviceClass.getConstructor(HostHttpClient.class).newInstance(hostHttpClientServiceFactory.getService(bundle));
+        }
+        catch (InstantiationException e)
+        {
+            throw new IllegalStateException(e);
+        }
+        catch (IllegalAccessException e)
+        {
+            throw new IllegalStateException(e);
+        }
+        catch (InvocationTargetException e)
+        {
+            throw new IllegalStateException(e);
+        }
+        catch (NoSuchMethodException e)
+        {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    @Override
+    public void ungetService(Bundle bundle, ServiceRegistration registration, Object service)
+    {
+    }
+}

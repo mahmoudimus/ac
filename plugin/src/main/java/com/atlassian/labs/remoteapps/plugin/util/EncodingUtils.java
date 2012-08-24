@@ -24,4 +24,5 @@ public class EncodingUtils
         return value.replace("\"", "&quot;")
                 .replace("'", "&#39;");
     }
+
 }
