@@ -8,7 +8,6 @@ package com.atlassian.labs.remoteapps.api.service.http;
  *
  * @author Greger Olsson
  */
-
 public class XmlRpcFault extends XmlRpcException
 {
     /**
@@ -24,7 +23,6 @@ public class XmlRpcFault extends XmlRpcException
         this.errorCode = errorCode;
     }
 
-
     /**
      * Returns the error code reported by the remote XML-RPC service.
      *
@@ -35,7 +33,6 @@ public class XmlRpcFault extends XmlRpcException
     {
         return errorCode;
     }
-
 
     /**
      * The exception error code. See XML-RPC specification.

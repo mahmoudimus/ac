@@ -1,9 +1,6 @@
 package com.atlassian.labs.remoteapps.host.common.service.http;
 
-import com.atlassian.labs.remoteapps.api.service.http.ChainingFormBuilder;
-import com.atlassian.labs.remoteapps.api.service.http.FormBuilder;
-import com.atlassian.labs.remoteapps.api.service.http.Request;
-import com.atlassian.labs.remoteapps.api.service.http.ResponsePromise;
+import com.atlassian.labs.remoteapps.api.service.http.*;
 
 import java.io.InputStream;
 import java.util.Collections;
@@ -21,7 +18,6 @@ public class DefaultRequest extends DefaultMessage implements Request
     private Method method;
     private String uri;
     private Map<String, String> attributes;
-    private boolean isFrozen;
 
     public DefaultRequest(AbstractHttpClient httpClient)
     {
@@ -123,10 +119,10 @@ public class DefaultRequest extends DefaultMessage implements Request
     }
 
     @Override
-    public Request setAccept(String mediaType)
+    public Request setAccept(String accept)
     {
         checkMutable();
-        setHeader("Accept", mediaType);
+        setHeader("Accept", accept);
         return this;
     }
 
@@ -153,14 +149,6 @@ public class DefaultRequest extends DefaultMessage implements Request
     @Override
     public Request setEntity(FormBuilder formBuilder)
     {
-        setContentType(FormBuilder.CONTENT_TYPE);
-        setEntity(formBuilder.toEntity());
-        return this;
-    }
-
-    @Override
-    public Request setFormEntity(FormBuilder formBuilder)
-    {
         return setContentType(FormBuilder.CONTENT_TYPE).setEntity(formBuilder.toEntity());
     }
 
@@ -174,8 +162,7 @@ public class DefaultRequest extends DefaultMessage implements Request
             String value = entry.getValue();
             builder.addParam(name, value);
         }
-        builder.commit();
-        return this;
+        return builder.commit();
     }
 
     @Override
@@ -188,8 +175,7 @@ public class DefaultRequest extends DefaultMessage implements Request
             List<String> values = entry.getValue();
             builder.setParam(name, values);
         }
-        builder.commit();
-        return this;
+        return builder.commit();
     }
 
     @Override
@@ -198,16 +184,6 @@ public class DefaultRequest extends DefaultMessage implements Request
         return new DefaultChainingFormBuilder(this);
     }
 
-    /**
-     * Validates the state of this object, as follows:
-     *
-     *  - if an entity is present, that a content type has also been set (super)
-     *  - the uri is not null
-     *  - if the method is GET, DELETE, or HEAD, that no entity body is specified
-     *  - if the method is POST, PUT, or TRACE, that an entity body is required
-     *
-     * @return This object, for builder-style chaining
-     */
     public Request validate()
     {
         super.validate();
@@ -237,21 +213,9 @@ public class DefaultRequest extends DefaultMessage implements Request
         return this;
     }
 
-    public void freeze()
-    {
-        isFrozen = true;
-    }
-
-    @Override
-    public boolean isFrozen()
-    {
-        return isFrozen;
-    }
-
     @Override
     public Request setContentType(String contentType)
     {
-        checkMutable();
         super.setContentType(contentType);
         return this;
     }
@@ -259,7 +223,6 @@ public class DefaultRequest extends DefaultMessage implements Request
     @Override
     public Request setContentCharset(String contentCharset)
     {
-        checkMutable();
         super.setContentCharset(contentCharset);
         return this;
     }
@@ -267,7 +230,6 @@ public class DefaultRequest extends DefaultMessage implements Request
     @Override
     public Request setHeaders(Map<String, String> headers)
     {
-        checkMutable();
         super.setHeaders(headers);
         return this;
     }
@@ -275,7 +237,6 @@ public class DefaultRequest extends DefaultMessage implements Request
     @Override
     public Request setHeader(String name, String value)
     {
-        checkMutable();
         super.setHeader(name, value);
         return this;
     }
@@ -283,7 +244,6 @@ public class DefaultRequest extends DefaultMessage implements Request
     @Override
     public Request setEntity(String entity)
     {
-        checkMutable();
         super.setEntity(entity);
         return this;
     }
@@ -291,7 +251,6 @@ public class DefaultRequest extends DefaultMessage implements Request
     @Override
     public Request setEntityStream(InputStream entityStream, String encoding)
     {
-        checkMutable();
         super.setEntityStream(entityStream, encoding);
         return this;
     }
@@ -299,7 +258,6 @@ public class DefaultRequest extends DefaultMessage implements Request
     @Override
     public Request setEntityStream(InputStream entityStream)
     {
-        checkMutable();
         super.setEntityStream(entityStream);
         return this;
     }
@@ -314,11 +272,10 @@ public class DefaultRequest extends DefaultMessage implements Request
         return buf.toString();
     }
 
-    private void checkMutable()
+    @Override
+    protected Request freeze()
     {
-        if (isFrozen)
-        {
-            throw new IllegalStateException("Request cannot be changed once frozen");
-        }
+        super.freeze();
+        return this;
     }
 }

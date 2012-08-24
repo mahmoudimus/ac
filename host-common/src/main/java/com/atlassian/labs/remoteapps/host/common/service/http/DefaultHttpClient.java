@@ -181,7 +181,7 @@ public class DefaultHttpClient extends AbstractHttpClient implements HttpClient,
                 }
                 try
                 {
-                    Response response = translate(httpResponse);
+                    DefaultResponse response = translate(httpResponse);
 
                     // trace the response if debugging is enabled; may be expensive
                     if (log.isDebugEnabled())
@@ -189,6 +189,7 @@ public class DefaultHttpClient extends AbstractHttpClient implements HttpClient,
                         log.debug(response.dump());
                     }
 
+                    response.freeze();
                     future.set(response);
                 }
                 catch (IOException ex)
@@ -228,11 +229,11 @@ public class DefaultHttpClient extends AbstractHttpClient implements HttpClient,
         httpClient.getConnectionManager().shutdown();
     }
 
-    private Response translate(HttpResponse httpResponse)
+    private DefaultResponse translate(HttpResponse httpResponse)
         throws IOException
     {
         StatusLine status = httpResponse.getStatusLine();
-        Response response = new DefaultResponse();
+        DefaultResponse response = new DefaultResponse();
         response.setStatusCode(status.getStatusCode());
         response.setStatusText(status.getReasonPhrase());
         Header[] httpHeaders = httpResponse.getAllHeaders();

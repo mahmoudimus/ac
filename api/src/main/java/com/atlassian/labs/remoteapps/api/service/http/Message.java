@@ -163,10 +163,17 @@ public interface Message
     Message setHeader(String name, String value);
 
     /**
+     * Returns whether or not this object has been made immutable.
+     *
+     * @return True if the object is immutable
+     */
+    boolean isFrozen();
+
+    /**
      * Dumps a string representation of this object, including the entity.  Note that this is a potentially
      * expensive process, as it will consume the entity stream if it exists.  The enitity will still be accessible
      * after this function is run (and hasReadEntity() will still return false), but the result will still
-     * be that the entity will have been loaded into memory, which may have non-tivial perofrmance impacts
+     * be that the entity will have been loaded into memory, which may have non-tivial performance impacts
      * in certain situations, so the use of this function is encouraged only as a debugging tool.
      *
      * @return An HTTP-formatted string representation of this object, including the value of its entity

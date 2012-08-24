@@ -5,115 +5,159 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * An interface for building HTTP requests.
+ * An interface for building and executing HTTP requests.
  */
 public interface Request extends Message
 {
     /**
+     * Returns this request's URI, if set.
      *
-     *
-     * @return
+     * @return The URI or null if not yet set
      */
     String getUri();
 
     /**
+     * Sets this request's URI.  Must not be null by the time the request is executed.
      *
-     *
-     * @param uri
-     * @return
+     * @param uri The URI
+     * @return This object, for builder-style chaining
      */
     Request setUri(String uri);
 
     /**
+     * Returns this request's Accept header, if set.
      *
-     *
-     * @return
+     * @return The accept header value
      */
     String getAccept();
 
     /**
+     * Sets the Accept header for the request.
      *
-     *
-     * @param mediaType
-     * @return
+     * @param accept An accept header expression containing media types, ranges, and/or quality factors
+     * @return This object, for builder-style chaining
      */
-    Request setAccept(String mediaType);
+    Request setAccept(String accept);
 
     /**
+     * Sets an attribute on the request.  Attributes are request metadata that are forwarded to the
+     * analytics plugin when enabled.
      *
-     *
-     * @param name
-     * @param value
-     * @return
+     * @param name The attribute name
+     * @param value The attribute value
+     * @return This object, for builder-style chaining
      */
     Request setAttribute(String name, String value);
 
     /**
+     * Gets an attribute from the request.  Attributes are request metadata that are forwarded to the
+     * analytics plugin when enabled.
      *
-     *
-     * @param name
-     * @return
+     * @param name The attribute name
+     * @return The attribute value, or null if not set
      */
     String getAttribute(String name);
 
     /**
+     * Gets all attributes for this request.  Attributes are request metadata that are forwarded to the
+     * analytics plugin when enabled.
      *
-     *
-     * @return
+     * @return All attributes
      */
     Map<String, String> getAttributes();
 
     /**
+     * Sets the entity from a form builder.  This method has the side effect of also setting
+     * the request's content type to 'application/x-www-form-urlencoded'.
      *
-     *
-     * @param formBuilder
-     * @return
+     * @param formBuilder The builder containing form parameters
+     * @return This object, for builder-style chaining
      */
     Request setEntity(FormBuilder formBuilder);
 
     /**
+     * Sets the entity from a parameter map.  This method has the side effect of also setting
+     * the request's content type to 'application/x-www-form-urlencoded'.
      *
-     *
-     * @param formBuilder
-     * @return
-     */
-    Request setFormEntity(FormBuilder formBuilder);
-
-    /**
-     *
-     *
-     * @param params
-     * @return
+     * @param params The parameter map
+     * @return This object, for builder-style chaining
      */
     Request setFormEntity(Map<String, String> params);
 
     /**
+     * Sets the entity from a multi-valued parameter map.  This method has the side effect of
+     * also setting the request's content type to 'application/x-www-form-urlencoded'.
      *
-     *
-     * @param params
-     * @return
+     * @param params The multi-valued parameter map
+     * @return This object, for builder-style chaining
      */
     Request setMultiValuedFormEntity(Map<String, List<String>> params);
 
     /**
+     * Creates a new {@link ChainingFormBuilder} instance.  Use the <code>commit()</code> method
+     * of the builder to commit the entity to the request and returning the chaining context
+     * to the request object.
      *
-     *
-     * @return
+     * @return A new form builder object, for builder-style chaining
      */
     ChainingFormBuilder buildFormEntity();
 
     /**
+     * Executes this request through the {@link HttpClient} service as a <code>GET</code> operation.
+     * The request SHOULD NOT contain an entity for the <code>GET</code> operation.
      *
-     *
-     * @return
+     * @return A promise object that can be used to receive the response and handle exceptions
      */
-    boolean isFrozen();
+    ResponsePromise get();
 
     /**
+     * Executes this request through the {@link HttpClient} service as a <code>POST</code> operation.
+     * The request SHOULD contain an entity for the <code>POST</code> operation.
      *
-     *
-     * @return
+     * @return A promise object that can be used to receive the response and handle exceptions
      */
+    ResponsePromise post();
+
+    /**
+     * Executes this request through the {@link HttpClient} service as a <code>PUT</code> operation.
+     * The request SHOULD contain an entity for the <code>PUT</code> operation.
+     *
+     * @return A promise object that can be used to receive the response and handle exceptions
+     */
+    ResponsePromise put();
+
+    /**
+     * Executes this request through the {@link HttpClient} service as a <code>DELETE</code> operation.
+     * The request SHOULD NOT contain an entity for the <code>DELETE</code> operation.
+     *
+     * @return A promise object that can be used to receive the response and handle exceptions
+     */
+    ResponsePromise delete();
+
+    /**
+     * Executes this request through the {@link HttpClient} service as a <code>OPTIONS</code> operation.
+     * The request MAY contain an entity for the <code>OPTIONS</code> operation.
+     *
+     * @return A promise object that can be used to receive the response and handle exceptions
+     */
+    ResponsePromise options();
+
+    /**
+     * Executes this request through the {@link HttpClient} service as a <code>HEAD</code> operation.
+     * The request SHOULD NOT contain an entity for the <code>HEAD</code> operation.
+     *
+     * @return A promise object that can be used to receive the response and handle exceptions
+     */
+    ResponsePromise head();
+
+    /**
+     * Executes this request through the {@link HttpClient} service as a <code>TRACE</code> operation.
+     * The request SHOULD contain an entity for the <code>TRACE</code> operation.
+     *
+     * @return A promise object that can be used to receive the response and handle exceptions
+     */
+    ResponsePromise trace();
+
     @Override
     String dump();
 
@@ -137,53 +181,4 @@ public interface Request extends Message
 
     @Override
     Request setEntityStream(InputStream entityStream);
-
-    /**
-     * (mention no entity)
-     *
-     * @return A promise object that can be used to receive the response and handle exceptions
-     */
-    ResponsePromise get();
-
-    /**
-     * (mention entity)
-     *
-     * @return A promise object that can be used to receive the response and handle exceptions
-     */
-    ResponsePromise post();
-
-    /**
-     * (mention entity)
-     *
-     * @return A promise object that can be used to receive the response and handle exceptions
-     */
-    ResponsePromise put();
-
-    /**
-     * (mention no entity)
-     *
-     * @return A promise object that can be used to receive the response and handle exceptions
-     */
-    ResponsePromise delete();
-
-    /**
-     * (mention optional entity)
-     *
-     * @return A promise object that can be used to receive the response and handle exceptions
-     */
-    ResponsePromise options();
-
-    /**
-     * (mention no entity)
-     *
-     * @return A promise object that can be used to receive the response and handle exceptions
-     */
-    ResponsePromise head();
-
-    /**
-     * (mention entity)
-     *
-     * @return A promise object that can be used to receive the response and handle exceptions
-     */
-    ResponsePromise trace();
 }

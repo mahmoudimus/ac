@@ -52,6 +52,6 @@ public class DefaultChainingFormBuilder implements ChainingFormBuilder
     @Override
     public Request commit()
     {
-        return request.setFormEntity(this);
+        return request.setEntity(this);
     }
 }
