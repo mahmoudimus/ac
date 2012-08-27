@@ -149,7 +149,7 @@ public class DefaultRemoteAppsService implements RemoteAppsService
         if (!(username.equals(getInstallerUser(BundleUtil.findBundleForPlugin(bundleContext, appKey))) ||
             userManager.isSystemAdmin(username)))
         {
-            throw new PermissionDeniedException("Unauthorized uninstallation from '" + username + "'. " +
+            throw new PermissionDeniedException(appKey, "Unauthorized uninstallation from '" + username + "'. " +
                 "Must be the author or a system administrator.");
         }
     }
@@ -164,7 +164,7 @@ public class DefaultRemoteAppsService implements RemoteAppsService
     {
         if (!doesAppExist(appKey))
         {
-            throw new PermissionDeniedException("Remote app '" + appKey + "' doesn't exist");
+            throw new PermissionDeniedException(appKey, "Remote app '" + appKey + "' doesn't exist");
         }
     }
 

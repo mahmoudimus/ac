@@ -69,7 +69,7 @@ public class IFrameRenderer
         {
             if (!pageInfo.getCondition().shouldDisplay(Collections.<String, Object>emptyMap()))
             {
-                throw new PermissionDeniedException();
+                throw new PermissionDeniedException(iframeContext.getPluginKey(), "Cannot render iframe for this page");
             }
 
             Map<String, Object> ctx = newHashMap(iframeContext.getIFrameParams().getAsMap());

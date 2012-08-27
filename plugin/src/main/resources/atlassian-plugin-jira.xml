@@ -52,6 +52,7 @@
     <component-import key="InternalWebSudoManager" interface="com.atlassian.jira.security.websudo.InternalWebSudoManager" />
     <component-import key="SearchRequestViewBodyWriterUtil" interface="com.atlassian.jira.issue.views.util.SearchRequestViewBodyWriterUtil" />
     <component-import key="searchRequestURLHandler" interface="com.atlassian.jira.plugin.searchrequestview.SearchRequestURLHandler" />
+    <component-import key="mailQueue" interface="com.atlassian.mail.queue.MailQueue" />
 
     <!-- plugin points -->
     <described-module-type key="profile-page" name="User Profile Page" class="com.atlassian.labs.remoteapps.plugin.module.page.jira.JiraProfileTabModuleDescriptor">

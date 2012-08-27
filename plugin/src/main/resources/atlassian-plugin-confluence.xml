@@ -62,6 +62,7 @@
     <component-import key="i18nBean" interface="com.atlassian.confluence.util.i18n.I18NBeanFactory"/>
 
     <component-import key="webSudoManager" interface="com.atlassian.confluence.security.websudo.WebSudoManager" />
+    <component-import key="taskManager" interface="com.atlassian.core.task.MultiQueueTaskManager" />
 
     <!-- big pipe stuff -->
     <web-panel key="requestIdMetaTag" class="com.atlassian.labs.remoteapps.plugin.util.http.bigpipe.RequestIdWebPanel" location="atl.header"/>

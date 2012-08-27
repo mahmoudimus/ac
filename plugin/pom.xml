@@ -120,6 +120,23 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-email</artifactId>
+            <version>1.2</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+            <version>1.4.5</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.activation</groupId>
+            <artifactId>activation</artifactId>
+            <version>1.1.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>com.atlassian.refapp</groupId>
             <artifactId>atlassian-refapp-auth-plugin</artifactId>
             <version>${refapp.version}</version>
@@ -350,6 +367,13 @@
         </dependency>
 
         <dependency>
+            <groupId>com.atlassian.user</groupId>
+            <artifactId>atlassian-user</artifactId>
+            <version>2.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
             <groupId>cc.plural</groupId>
             <artifactId>jsonij</artifactId>
             <version>0.2.11</version>
@@ -466,6 +490,7 @@
                             com.atlassian.plugin.*;version="2.8",
                             com.atlassian.refapp.auth.external;resolution:=optional,
                             com.atlassian.sal.api.*;version="(2.4,3.0]",
+                            com.sun.mail.handlers;resolution:=optional,
                             net.oauth*,
                             javax.inject,
                             org.apache.commons.lang.*;version="2.4",

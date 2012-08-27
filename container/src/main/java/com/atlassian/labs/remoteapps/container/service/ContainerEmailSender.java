@@ -34,4 +34,10 @@ public class ContainerEmailSender implements EmailSender
         String body = pojoToJson(remoteEmail);
         hostHttpClient.newRequest("/rest/remoteapps/latest/email", "application/json", body).post();
     }
+
+    @Override
+    public void flush()
+    {
+        hostHttpClient.newRequest("/rest/remoteapps/latest/email/flush").get();
+    }
 }

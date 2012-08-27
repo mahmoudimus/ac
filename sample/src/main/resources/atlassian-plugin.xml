@@ -5,6 +5,7 @@
         <permissions>
             <permission>resttest</permission>
             <permission>read_app_links</permission>
+            <permission>send_email</permission>
             <permission installation-mode="remote">create_oauth_link</permission>
         </permissions>
     </plugin-info>
@@ -12,7 +13,6 @@
     <junit key="all" package="junit.all" />
     <junit key="confluence" package="junit.confluence" application="confluence"/>
     <junit key="jira" package="junit.jira" application="jira"/>
-    <component-import key="hostXmlRpcClient" interface="com.atlassian.labs.remoteapps.api.service.http.HostXmlRpcClient" />
 
     <!-- converted modules -->
     <remote-plugin-container key="app1" display-url="http://localhost:8000/app1">

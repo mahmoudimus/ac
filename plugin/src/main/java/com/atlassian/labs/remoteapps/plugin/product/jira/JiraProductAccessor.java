@@ -2,6 +2,7 @@ package com.atlassian.labs.remoteapps.plugin.product.jira;
 
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.ComponentManager;
+import com.atlassian.jira.ManagerFactory;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.plugin.webfragment.descriptors.JiraWebItemModuleDescriptor;
 import com.atlassian.jira.user.preferences.JiraUserPreferences;
@@ -9,6 +10,7 @@ import com.atlassian.jira.user.preferences.PreferenceKeys;
 import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.labs.remoteapps.plugin.product.ProductAccessor;
 import com.atlassian.mail.Email;
+import com.atlassian.mail.queue.MailQueue;
 import com.atlassian.mail.queue.SingleMailQueueItem;
 import com.atlassian.plugin.web.WebInterfaceManager;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
@@ -23,11 +25,14 @@ public class JiraProductAccessor implements ProductAccessor
 {
     private final WebInterfaceManager webInterfaceManager;
     private final UserManager userManager;
+    private final MailQueue mailQueue;
 
-    public JiraProductAccessor(WebInterfaceManager webInterfaceManager, UserManager userManager)
+    public JiraProductAccessor(WebInterfaceManager webInterfaceManager, UserManager userManager,
+            MailQueue mailQueue)
     {
         this.webInterfaceManager = webInterfaceManager;
         this.userManager = userManager;
+        this.mailQueue = mailQueue;
     }
 
     @Override
@@ -90,10 +95,6 @@ public class JiraProductAccessor implements ProductAccessor
     public void sendEmail(String userName, Email email, String bodyAsHtml, String bodyAsText)
     {
         User user = userManager.getUser(userName);
-        if (user == null)
-        {
-            throw new IllegalArgumentException("Missing username: " + userName);
-        }
 
         JiraUserPreferences userPrefs = new JiraUserPreferences(user);
         String prefFormat = userPrefs.getString(PreferenceKeys.USER_NOTIFICATIONS_MIMETYPE);
@@ -109,6 +110,12 @@ public class JiraProductAccessor implements ProductAccessor
             email.setMimeType("text/plain");
             email.setBody(bodyAsText);
         }
-        ComponentAccessor.getMailQueue().addItem(new SingleMailQueueItem(email));
+        mailQueue.addItem(new SingleMailQueueItem(email));
+    }
+
+    @Override
+    public void flushEmail()
+    {
+        mailQueue.sendBuffer();
     }
 }

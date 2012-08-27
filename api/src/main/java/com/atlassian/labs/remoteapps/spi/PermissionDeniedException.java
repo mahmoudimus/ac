@@ -1,26 +1,39 @@
 package com.atlassian.labs.remoteapps.spi;
 
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
 /**
  *
  */
+@XmlRootElement
 public class PermissionDeniedException extends RuntimeException
 {
-    public PermissionDeniedException()
-    {
-    }
+    private final String pluginKey;
 
     public PermissionDeniedException(String message)
     {
         super(message);
+        this.pluginKey = null;
     }
 
-    public PermissionDeniedException(String message, Throwable cause)
+    public PermissionDeniedException(String pluginKey, String message)
     {
-        super(message, cause);
+        super(message);
+        this.pluginKey = pluginKey;
     }
 
-    public PermissionDeniedException(Throwable cause)
+    @XmlAttribute
+    public String getPluginKey()
     {
-        super(cause);
+        return pluginKey;
+    }
+
+    @Override
+    @XmlElement
+    public String getMessage()
+    {
+        return super.getMessage();
     }
 }

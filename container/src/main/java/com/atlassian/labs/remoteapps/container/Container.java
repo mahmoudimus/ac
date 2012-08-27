@@ -127,6 +127,7 @@ public final class Container
                 .add("com.samskivert.*")
                 .add("javax.servlet*")
                 .add("net.oauth*")
+                .add("com.sun.mail.handlers")
                 .add("org.apache.commons.codec*")
                 .add("org.apache.log4j*")
                 .add("org.bouncycastle*")

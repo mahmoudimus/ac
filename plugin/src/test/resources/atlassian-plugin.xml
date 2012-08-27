@@ -15,4 +15,6 @@
     <component key="unrequested_scope" class="com.atlassian.labs.remoteapps.test.UnrequestedTestApiScope"
                interface="com.atlassian.labs.remoteapps.spi.permission.scope.ApiScope" public="true"/>
 
+    <component-import application="refapp" key="atlassianUserManager" interface="com.atlassian.user.UserManager" />
+    <component application="refapp" key="fixEmail" class="com.atlassian.labs.remoteapps.test.refapp.RefappFixEmailAddresses" />
 </atlassian-plugin>

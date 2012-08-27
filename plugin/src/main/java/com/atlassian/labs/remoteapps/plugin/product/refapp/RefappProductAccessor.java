@@ -2,12 +2,19 @@ package com.atlassian.labs.remoteapps.plugin.product.refapp;
 
 import com.atlassian.labs.remoteapps.plugin.product.ProductAccessor;
 import com.atlassian.mail.Email;
+import com.atlassian.plugin.util.ContextClassLoaderSwitchingUtil;
 import com.atlassian.plugin.web.WebInterfaceManager;
 import com.atlassian.plugin.web.descriptors.DefaultWebItemModuleDescriptor;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
+import org.apache.commons.mail.EmailException;
+import org.apache.commons.mail.HtmlEmail;
+import org.apache.commons.mail.SimpleEmail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.mail.MessagingException;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.Map;
 
 import static java.util.Collections.emptyMap;
@@ -80,8 +87,88 @@ public class RefappProductAccessor implements ProductAccessor
     }
 
     @Override
-    public void sendEmail(String userName, Email email, String bodyAsHtml, String bodyAsText)
+    public void sendEmail(String userName, Email originalEmail, String bodyAsHtml, String bodyAsText)
     {
-        log.info("Would have sent email to " + userName + ": \n" + email);
+        org.apache.commons.mail.Email email = new SimpleEmail();
+
+        try
+        {
+            if ("betty".equals(userName))
+            {
+                email = new HtmlEmail();
+                ((HtmlEmail)email).setHtmlMsg(bodyAsHtml);
+                ((HtmlEmail)email).setTextMsg(bodyAsText);
+            }
+            else
+            {
+                email.setMsg(bodyAsText);
+            }
+
+            email.setHostName("localhost");
+            email.setSmtpPort(2525);
+            email.setFrom(originalEmail.getFrom(), originalEmail.getFromName());
+            email.setSubject("[test] " + originalEmail.getSubject());
+            email.addTo(originalEmail.getTo());
+            final org.apache.commons.mail.Email finalEmail = email;
+            ContextClassLoaderSwitchingUtil.runInContext(Email.class.getClassLoader(), new Runnable()
+
+            {
+                @Override
+                public void run()
+                {
+                    try
+                    {
+                        finalEmail.send();
+                    }
+                    catch (EmailException e)
+                    {
+                        throw new RuntimeException(e);
+                    }
+                }
+            });
+
+        }
+        catch (RuntimeException e)
+        {
+            if (e.getCause() instanceof EmailException)
+            {
+                handleError(email, (EmailException) e.getCause());
+            }
+            else
+            {
+                throw e;
+            }
+        }
+        catch (EmailException e)
+        {
+            handleError(email, e);
+        }
+    }
+
+    private void handleError(org.apache.commons.mail.Email email, EmailException e)
+    {
+        log.error("Unable to send email", e);
+        if (log.isDebugEnabled())
+        {
+            ByteArrayOutputStream bout = new ByteArrayOutputStream();
+            try
+            {
+                email.getMimeMessage().writeTo(bout);
+                log.debug("Sent email:\n" + new String(bout.toByteArray()));
+            }
+            catch (MessagingException ex)
+            {
+                throw new RuntimeException(ex);
+            }
+            catch (IOException e1)
+            {
+                throw new RuntimeException(e1);
+            }
+        }
+    }
+
+    @Override
+    public void flushEmail()
+    {
     }
 }

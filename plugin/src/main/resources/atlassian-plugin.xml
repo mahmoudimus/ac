@@ -163,7 +163,7 @@
                class="com.atlassian.labs.remoteapps.host.common.service.http.HostXmlRpcClientServiceFactory" public="true" />
 
     <component key="localEmailSender" interface="com.atlassian.labs.remoteapps.api.service.EmailSender"
-               class="com.atlassian.labs.remoteapps.plugin.service.LocalEmailSender" public="true" />
+               class="com.atlassian.labs.remoteapps.plugin.service.LocalEmailSenderServiceFactory" public="true" />
 
     <applinks-application-type name="Remote Plugin Container" key="remote-plugin-container-type"
                                    class="com.atlassian.labs.remoteapps.plugin.module.applinks.RemotePluginContainerApplicationTypeImpl"

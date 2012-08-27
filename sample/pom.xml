@@ -36,6 +36,13 @@
         </dependency>
 
         <dependency>
+            <groupId>com.atlassian.mail</groupId>
+            <artifactId>atlassian-mail</artifactId>
+            <version>2.4.1</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
             <groupId>com.atlassian.plugins</groupId>
             <artifactId>atlassian-plugins-core</artifactId>
             <version>${plugins.version}</version>
@@ -59,6 +66,12 @@
           <groupId>com.atlassian.jira.plugins</groupId>
           <artifactId>jira-soapclient</artifactId>
           <version>4.1-1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dumbster</groupId>
+            <artifactId>dumbster</artifactId>
+            <version>1.6</version>
         </dependency>
 
         <dependency>

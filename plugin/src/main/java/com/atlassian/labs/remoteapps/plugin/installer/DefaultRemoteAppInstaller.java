@@ -267,7 +267,7 @@ public class DefaultRemoteAppInstaller implements RemoteAppInstaller
             */
             if (oAuthLinkManager.isAppAssociated(pluginKey))
             {
-                throw new PermissionDeniedException(
+                throw new PermissionDeniedException(pluginKey,
                         "App key '" + pluginKey + "' is already associated with an OAuth link");
             }
         }

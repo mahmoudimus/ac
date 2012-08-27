@@ -61,7 +61,7 @@ public class ApiScopingFilter implements Filter
 
     }
 
-    private String extractClientKey(HttpServletRequest req)
+    public static String extractClientKey(HttpServletRequest req)
     {
         return (String) req.getAttribute(PLUGIN_KEY);
     }

@@ -142,7 +142,7 @@ public class PermissionManager
     {
         if (!getPermissionsForPlugin(pluginKey).contains(permissionKey))
         {
-            throw new PermissionDeniedException("Required permission '" + permissionKey + "' must be requested " +
+            throw new PermissionDeniedException(pluginKey, "Required permission '" + permissionKey + "' must be requested " +
                 "for this plugin '" + pluginKey + "'");
         }
     }

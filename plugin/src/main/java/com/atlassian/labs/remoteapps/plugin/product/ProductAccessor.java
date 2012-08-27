@@ -30,4 +30,6 @@ public interface ProductAccessor
 
 
     void sendEmail(String user, Email email, String bodyAsHtml, String bodyAsText);
+
+    void flushEmail();
 }

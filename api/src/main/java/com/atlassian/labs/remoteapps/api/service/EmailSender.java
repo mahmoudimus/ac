@@ -9,4 +9,5 @@ public interface EmailSender
 {
     void send(String userName, Email email);
     void send(String userName, Email email, String bodyAsHtml, String bodyAsText);
+    void flush();
 }
