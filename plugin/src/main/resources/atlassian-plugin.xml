@@ -61,6 +61,11 @@
         <dependency>com.atlassian.auiplugin:ajs</dependency>
     </web-resource>
 
+    <web-resource key="remote-condition">
+        <resource type="download" name="remote-condition.js" location="js/condition/remote-condition.js" />
+        <dependency>${project.groupId}.${project.artifactId}:big-pipe</dependency>
+    </web-resource>
+
     <web-resource key="images">
         <resource type="download" name="images/" location="images/" />
     </web-resource>
@@ -86,6 +91,14 @@
     </web-resource>
 
     <web-resource-transformer key="baseUrlTransformer" class="com.atlassian.labs.remoteapps.plugin.integration.smoketest.BaseUrlTransformer"/>
+
+    <!-- big pipe stuff -->
+    <web-panel key="requestIdMetaTag" class="com.atlassian.labs.remoteapps.plugin.util.http.bigpipe.RequestIdWebPanel" location="atl.header"/>
+
+    <web-resource key="big-pipe">
+        <resource type="download" name="big-pipe.js" location="js/bigpipe/big-pipe.js" />
+        <dependency>com.atlassian.auiplugin:ajs</dependency>
+    </web-resource>
 
     <component key="httpContentRetriever" class="com.atlassian.labs.remoteapps.plugin.util.http.CachingHttpContentRetriever"
                public="true" interface="com.atlassian.labs.remoteapps.plugin.util.http.HttpContentRetriever" />
@@ -139,7 +152,7 @@
 
     <web-item key="speakeasy-install" section="speakeasy.user-profile/actions" weight="100">
         <label>Install Remote App</label>
-        <link linkId="rp-insapptall" />
+        <link linkId="rp-install" />
         <condition class="com.atlassian.labs.remoteapps.plugin.integration.speakeasy.CanInstallRemoteAppsCondition" />
     </web-item>
 

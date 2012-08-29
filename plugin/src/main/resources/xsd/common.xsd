@@ -71,4 +71,20 @@
         </xs:sequence>
     </xs:complexType>
 
+    <xs:simpleType name="ConditionNameType">
+        <xs:restriction base="xs:string">
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="ConditionType">
+        <xs:attribute name="name" type="ConditionNameType" use="optional" />
+        <xs:attribute name="url" type="RelativeUrlType" use="optional" />
+    </xs:complexType>
+
+    <xs:complexType name="ConditionsType">
+        <xs:sequence>
+            <xs:element name="condition" type="ConditionType" minOccurs="1" maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
+
 </xs:schema>

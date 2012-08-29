@@ -1,6 +1,5 @@
 package servlets;
 
-import com.atlassian.labs.remoteapps.api.annotation.ServiceReference;
 import com.atlassian.labs.remoteapps.api.service.RequestContext;
 
 import javax.inject.Inject;
@@ -12,25 +11,25 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- *
  */
 @Singleton
-public class MyCurrentUserServlet extends HttpServlet
+public class OnlyBettyConditionServlet extends HttpServlet
 {
     private final RequestContext requestContext;
 
     @Inject
-    public MyCurrentUserServlet(@ServiceReference RequestContext requestContext)
+    public OnlyBettyConditionServlet(RequestContext requestContext)
     {
         this.requestContext = requestContext;
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException,
+            IOException
     {
-        resp.setContentType("text/plain");
-        resp.getWriter().write("this is the incoming url: " + req.getRequestURI());
-        resp.getWriter().write("The consumer key is : " + requestContext.getClientKey());
+        String value = "betty".equals(requestContext.getUserId()) ? "true" : "false";
+        resp.setContentType("application/json");
+        resp.getWriter().write("{\"shouldDisplay\" : " + value + "}");
         resp.getWriter().close();
     }
 }

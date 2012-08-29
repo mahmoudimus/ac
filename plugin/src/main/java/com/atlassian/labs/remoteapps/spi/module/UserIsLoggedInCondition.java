@@ -1,4 +1,4 @@
-package com.atlassian.labs.remoteapps.plugin.module.page;
+package com.atlassian.labs.remoteapps.spi.module;
 
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.web.Condition;
@@ -9,15 +9,15 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 
 /**
- * Displays if the user is an admin as determined by SAL's isAdmin()
+ * Displays if the user is logged in
  */
 @Component
-public class UserIsAdminCondition implements Condition
+public class UserIsLoggedInCondition implements Condition
 {
     private final UserManager userManager;
 
     @Autowired
-    public UserIsAdminCondition(UserManager userManager)
+    public UserIsLoggedInCondition(UserManager userManager)
     {
         this.userManager = userManager;
     }
@@ -30,6 +30,6 @@ public class UserIsAdminCondition implements Condition
     @Override
     public boolean shouldDisplay(Map<String, Object> context)
     {
-        return userManager.isAdmin(userManager.getRemoteUsername());
+        return userManager.getRemoteUsername() != null;
     }
 }

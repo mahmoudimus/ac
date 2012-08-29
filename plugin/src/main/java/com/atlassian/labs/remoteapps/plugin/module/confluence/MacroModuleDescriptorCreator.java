@@ -94,7 +94,6 @@ public class MacroModuleDescriptorCreator
         public Builder()
         {
             this.webItemCreatorBuilder = webItemCreator.newBuilder();
-            webItemCreatorBuilder.setCondition(new AlwaysDisplayCondition());
         }
         public Builder setMacroFactory(MacroFactory macroFactory)
         {

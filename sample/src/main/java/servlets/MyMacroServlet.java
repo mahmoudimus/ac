@@ -31,7 +31,6 @@ public class MyMacroServlet extends HttpServlet
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
     {
-        signedRequestHandler.validateRequest(req);
         final String pageId = req.getParameter("ctx_page_id");
         final String favoriteFooty = req.getParameter("footy");
         final String body = req.getParameter("body");

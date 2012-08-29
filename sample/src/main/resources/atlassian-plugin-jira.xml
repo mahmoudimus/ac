@@ -8,9 +8,27 @@
     <webhook key="wh-issue_created" event="issue_created" url="/webHook/issue_created" />
 
     <issue-panel-page key="remoteAppIssuePanelPage" name="Remote App app1 Issue Page" url="/myAdmin" />
+    <issue-panel-page key="onlyBettyIssuePanelPage" name="Only Betty Panel" url="/myAdmin">
+        <conditions>
+            <condition url="/onlyBettyCondition" />
+        </conditions>
+    </issue-panel-page>
+
     <issue-tab-page key="remoteAppIssueTabPage" name="app1" url="/myAdmin" />
+
+    <issue-tab-page key="onlyBettyIssueTabPage" name="Only Betty" url="/myAdmin">
+        <conditions>
+            <condition url="/onlyBettyCondition" />
+        </conditions>
+    </issue-tab-page>
 
     <remote-search-request-view key="remoteAppSearchRequestView" name="Raw Keys" url="/search/keys"/>
 
     <project-tab-page key="remoteAppProjectTab" name="app1" url="/myAdmin" />
+
+    <project-tab-page key="onlyBettyProjectTabPage" name="Only Betty" url="/myAdmin">
+        <conditions>
+            <condition url="/onlyBettyCondition" />
+        </conditions>
+    </project-tab-page>
 </application>

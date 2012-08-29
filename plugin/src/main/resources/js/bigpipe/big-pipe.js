@@ -2,16 +2,31 @@
 This code makes a xhr request back to the server before dom ready looking for big pipe content to
 replace.
  */
-(function ($) {
-  var contextPath = AJS.Meta.get("context-path");
+(function ($, global) {
+  var RemoteApps = global.RemoteApps = global.RemoteApps || {};
+  var contextPath = AJS.contextPath() || AJS.Meta.get("context-path");
   var requestId = $('meta[name="ra-request-id"]').attr("content");
 
   function insertContent(content) {
     var contentId = content.id;
     var html = content.html;
     var contentDiv$ = $('#' + contentId);
-    contentDiv$.html(html);
-    contentDiv$.removeClass("bp-loading");
+    if (contentDiv$.length == 0) {
+      if (content.html) {
+        $("body").append(content.html);
+      }
+    } else {
+      contentDiv$.html(html);
+      contentDiv$.removeClass("bp-loading");
+    }
+  }
+
+  function insertContents(contents){
+    if (contents.length > 0) {
+      $.each(contents, function () {
+        insertContent(this);
+      });
+    }
   }
 
   function replaceLoadingWithMessage() {
@@ -27,15 +42,17 @@ replace.
   }
 
   function poll() {
+    if (!requestId) {
+      AJS.log("Missing request id.  atl.header web panels not supported?");
+      return;
+    }
     $.ajax({ url:contextPath + "/rest/remoteapps/latest/bigpipe/request/" + requestId,
       success:function (data) {
         if (data.length != 0) {
           $(document).ready(function() {
-            $.each(data, function () {
-              insertContent(this);
-            });
+            insertContents(data);
+            poll();
           });
-          poll();
         } else {
           replaceLoadingWithError("missing", "Missing content");
         }
@@ -46,4 +63,8 @@ replace.
   }
   poll();
   setTimeout(replaceLoadingWithMessage, 1000);
-})(AJS.$);
+
+  RemoteApps.BigPipe = {
+    insertContents : insertContents
+  }
+})(AJS.$, this);

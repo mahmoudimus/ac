@@ -2,8 +2,6 @@ package com.atlassian.labs.remoteapps.plugin.product.jira;
 
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.ComponentManager;
-import com.atlassian.jira.ManagerFactory;
-import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.plugin.webfragment.descriptors.JiraWebItemModuleDescriptor;
 import com.atlassian.jira.user.preferences.JiraUserPreferences;
 import com.atlassian.jira.user.preferences.PreferenceKeys;
@@ -12,11 +10,14 @@ import com.atlassian.labs.remoteapps.plugin.product.ProductAccessor;
 import com.atlassian.mail.Email;
 import com.atlassian.mail.queue.MailQueue;
 import com.atlassian.mail.queue.SingleMailQueueItem;
+import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.web.WebInterfaceManager;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.google.common.collect.ImmutableMap;
 
 import java.util.Map;
+
+import static com.google.common.collect.Maps.newHashMap;
 
 /**
  *
@@ -117,5 +118,34 @@ public class JiraProductAccessor implements ProductAccessor
     public void flushEmail()
     {
         mailQueue.sendBuffer();
+    }
+
+    @Override
+    public Map<String, Class<? extends Condition>> getConditions()
+    {
+        Map<String,Class<? extends Condition>> conditions = newHashMap();
+        conditions.put("has_selected_project", com.atlassian.jira.plugin.webfragment.conditions.HasSelectedProjectCondition.class);
+        conditions.put("sub_tasks_enabled", com.atlassian.jira.plugin.webfragment.conditions.SubTasksEnabledCondition.class);
+        conditions.put("linking_enabled", com.atlassian.jira.plugin.webfragment.conditions.LinkingEnabledCondition.class);
+        conditions.put("smtp_mail_server_configured", com.atlassian.jira.plugin.webfragment.conditions.SmtpMailServerConfiguredCondition.class);
+        conditions.put("external_user_management_disabled", com.atlassian.jira.plugin.webfragment.conditions.ExternalUserManagementDisabledCondition.class);
+        conditions.put("time_tracking_enabled", com.atlassian.jira.plugin.webfragment.conditions.TimeTrackingEnabledCondition.class);
+        conditions.put("user_has_issue_history", com.atlassian.jira.plugin.webfragment.conditions.UserHasIssueHistoryCondition.class);
+        conditions.put("user_is_project_admin", com.atlassian.jira.plugin.webfragment.conditions.UserIsProjectAdminCondition.class);
+        conditions.put("is_field_hidden", com.atlassian.jira.plugin.webfragment.conditions.IsFieldHiddenCondition.class);
+        conditions.put("browse_users_permission", com.atlassian.jira.plugin.webfragment.conditions.BrowseUsersPermissionCondition.class);
+        conditions.put("voting_enabled", com.atlassian.jira.plugin.webfragment.conditions.VotingEnabledCondition.class);
+        conditions.put("user_is_the_logged_in_user", com.atlassian.jira.plugin.webfragment.conditions.UserIsTheLoggedInUserCondition.class);
+        conditions.put("has_last_search_request", com.atlassian.jira.plugin.webfragment.conditions.HasLastSearchRequestCondition.class);
+        conditions.put("not_version_context", com.atlassian.jira.plugin.webfragment.conditions.NotVersionContextCondition.class);
+        conditions.put("user_is_sysadmin", com.atlassian.jira.plugin.webfragment.conditions.UserIsSysAdminCondition.class);
+        conditions.put("has_link_types_available", com.atlassian.jira.plugin.webfragment.conditions.HasLinkTypesAvailableCondition.class);
+        conditions.put("can_create_shared_objects", com.atlassian.jira.plugin.webfragment.conditions.CanCreateSharedObjectsCondition.class);
+        conditions.put("user_is_logged_in", com.atlassian.jira.plugin.webfragment.conditions.UserLoggedInCondition.class);
+        conditions.put("watching_enabled", com.atlassian.jira.plugin.webfragment.conditions.WatchingEnabledCondition.class);
+        conditions.put("is_keyboard_shortcuts_enabled", com.atlassian.jira.plugin.webfragment.conditions.IsKeyboardShortcutsEnabledCondition.class);
+        conditions.put("user_is_admin", com.atlassian.jira.plugin.webfragment.conditions.UserIsAdminCondition.class);
+        conditions.put("is_admin_mode", com.atlassian.jira.plugin.webfragment.conditions.IsAdminModeCondition.class);
+        return conditions;
     }
 }

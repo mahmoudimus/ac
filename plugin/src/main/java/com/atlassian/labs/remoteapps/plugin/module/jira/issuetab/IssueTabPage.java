@@ -1,9 +1,11 @@
 package com.atlassian.labs.remoteapps.plugin.module.jira.issuetab;
 
 import com.atlassian.jira.plugin.issuetabpanel.*;
+import com.atlassian.labs.remoteapps.plugin.module.ContainingRemoteCondition;
 import com.atlassian.labs.remoteapps.spi.PermissionDeniedException;
 import com.atlassian.labs.remoteapps.plugin.module.IFrameRenderer;
 import com.atlassian.labs.remoteapps.plugin.module.page.IFrameContext;
+import com.atlassian.plugin.web.Condition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,6 +15,7 @@ import java.util.Date;
 import java.util.Map;
 
 import static com.google.common.collect.Maps.newHashMap;
+import static java.util.Collections.singletonMap;
 
 /**
  * An issue tab that displays an iframe but isn't included in the all tab
@@ -21,18 +24,24 @@ public class IssueTabPage extends AbstractIssueTabPanel2
 {
     private static final Logger log = LoggerFactory.getLogger(IssueTabPage.class);
     private final IFrameRenderer iFrameRenderer;
+    private final Condition condition;
     private final IFrameContext iFrameContext;
 
-    public IssueTabPage(IFrameContext iFrameContext, IFrameRenderer iFrameRenderer)
+    public IssueTabPage(IFrameContext iFrameContext, IFrameRenderer iFrameRenderer,
+            Condition condition)
     {
         this.iFrameContext = iFrameContext;
         this.iFrameRenderer = iFrameRenderer;
+        this.condition = condition;
     }
 
     @Override
     public ShowPanelReply showPanel(ShowPanelRequest request)
     {
-        return ShowPanelReply.create(true);
+        Map<String,Object> context = newHashMap();
+        context.put("helper", singletonMap("project", request.issue().getProjectObject()));
+        context.put("issue", request.issue());
+        return ShowPanelReply.create(condition != null ? condition.shouldDisplay(context) : true);
     }
 
     @Override
@@ -59,8 +68,13 @@ public class IssueTabPage extends AbstractIssueTabPanel2
                 Map<String,String[]> extraParams = newHashMap();
                 extraParams.put("ctx_issue_key", new String[]{request.issue().getKey()});
                 String remoteUser = request.isAnonymous() ? null : request.remoteUser().getName();
-                writer.write(iFrameRenderer.render(iFrameContext, "", extraParams,
-                        remoteUser));
+                String iframe = iFrameRenderer.render(iFrameContext, "", extraParams,
+                        remoteUser);
+                if (condition != null && condition instanceof ContainingRemoteCondition)
+                {
+                    iframe = "<div class=\"hidden\">" + iframe + "</div>";
+                }
+                writer.write(iframe);
             }
             catch (PermissionDeniedException ex)
             {

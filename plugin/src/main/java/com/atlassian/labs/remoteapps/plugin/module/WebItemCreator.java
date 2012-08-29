@@ -1,10 +1,11 @@
 package com.atlassian.labs.remoteapps.plugin.module;
 
 import com.atlassian.labs.remoteapps.plugin.product.ProductAccessor;
+import com.atlassian.labs.remoteapps.spi.module.DynamicMarkerCondition;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
-import com.atlassian.plugin.impl.AbstractDelegatingPlugin;
 import com.atlassian.plugin.web.Condition;
+import com.atlassian.plugin.web.conditions.AlwaysDisplayCondition;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import org.apache.commons.lang.StringUtils;
 import org.dom4j.Element;
@@ -19,6 +20,7 @@ import java.util.Map;
 import static com.atlassian.labs.remoteapps.plugin.module.util.redirect.RedirectServlet
         .getPermanentRedirectUrl;
 import static com.atlassian.labs.remoteapps.spi.util.Dom4jUtils.*;
+import static org.apache.commons.lang.StringEscapeUtils.escapeHtml;
 import static org.apache.commons.lang.Validate.notNull;
 
 /**
@@ -30,12 +32,14 @@ import static org.apache.commons.lang.Validate.notNull;
 public class WebItemCreator
 {
     private final ProductAccessor productAccessor;
+    private final ConditionProcessor conditionProcessor;
     private static final Logger log = LoggerFactory.getLogger(WebItemCreator.class);
 
     @Autowired
-    public WebItemCreator(ProductAccessor productAccessor)
+    public WebItemCreator(ProductAccessor productAccessor, ConditionProcessor conditionProcessor)
     {
         this.productAccessor = productAccessor;
+        this.conditionProcessor = conditionProcessor;
     }
 
     public Builder newBuilder()
@@ -45,7 +49,7 @@ public class WebItemCreator
 
     public class Builder
     {
-        private Condition condition;
+        private Class<? extends Condition> condition = AlwaysDisplayCondition.class;
         private String additionalStyleClass = "";
         private Map<String,String> contextParams;
         private int preferredWeight;
@@ -57,13 +61,15 @@ public class WebItemCreator
             notNull(key);
             notNull(configurationElement);
             Element config = configurationElement.createCopy();
+            config.elements("conditions").clear();
             final String webItemKey = "webitem-" + key;
             config.addAttribute("key", webItemKey);
             config.addAttribute("section",
                     getOptionalAttribute(configurationElement, "section", preferredSectionKey));
             config.addAttribute("weight", getOptionalAttribute(configurationElement, "weight", preferredWeight));
 
-            String name = getOptionalAttribute(configurationElement, "link-name", getRequiredAttribute(configurationElement, "name"));
+            String name = getOptionalAttribute(configurationElement, "link-name", escapeHtml(
+                    getRequiredAttribute(configurationElement, "name")));
             config.addElement("label").setText(name);
             Element linkElement = config.addElement("link").
                     addAttribute("linkId", webItemKey);
@@ -102,20 +108,42 @@ public class WebItemCreator
             convertIcon(plugin, configurationElement, config);
             config.addElement("condition")
                     .addAttribute("class", DynamicMarkerCondition.class.getName());
+            if (condition != null)
+            {
+                config.addElement("condition").addAttribute("class", condition.getName());
+            }
+
+
+            Condition condition = conditionProcessor.process(configurationElement, config, plugin.getKey());
+            if (condition instanceof ContainingRemoteCondition)
+            {
+                Element styleClass = config.element("styleClass");
+                if (styleClass == null)
+                {
+                    styleClass = config.addElement("styleClass");
+                }
+                else
+                {
+                    styleClass.addText(" ");
+                }
+                styleClass.addText("remote-condition hidden " + conditionProcessor.createUniqueUrlHash(
+                        plugin.getKey(), ((ContainingRemoteCondition) condition).getConditionUrl()));
+            }
 
             if (log.isDebugEnabled())
             {
                 log.debug("Created web item: " + printNode(config));
             }
-            return createWebItemDescriptor(plugin, condition, config);
+            return createWebItemDescriptor(conditionProcessor.getLoadablePlugin(plugin), config);
         }
 
+
+
         private WebItemModuleDescriptor createWebItemDescriptor(
-                Plugin plugin, Condition condition, Element config)
+                Plugin plugin, Element config)
         {
-            ConditionLoadingPlugin conditionLoadingPlugin = new ConditionLoadingPlugin(plugin, condition);
             WebItemModuleDescriptor descriptor = productAccessor.createWebItemModuleDescriptor();
-            descriptor.init(conditionLoadingPlugin, config);
+            descriptor.init(plugin, config);
             return descriptor;
         }
 
@@ -134,7 +162,7 @@ public class WebItemCreator
             }
         }
 
-        public Builder setCondition(Condition condition)
+        public Builder setCondition(Class<? extends Condition> condition)
         {
             this.condition = condition;
             return this;
@@ -165,51 +193,4 @@ public class WebItemCreator
         }
     }
 
-    private static class ConditionLoadingPlugin extends AbstractDelegatingPlugin
-    {
-        private final Condition condition;
-        public ConditionLoadingPlugin(Plugin delegate, Condition condition)
-        {
-            super(delegate);
-            this.condition = condition;
-        }
-
-        @Override
-        public <T> Class<T> loadClass(String clazz, Class<?> callingClass) throws ClassNotFoundException
-        {
-            try
-            {
-                return super.loadClass(clazz, callingClass);
-            }
-            catch (ClassNotFoundException ex)
-            {
-                return (Class<T>) getClass().getClassLoader().loadClass(clazz);
-            }
-        }
-
-        @Override
-        public <T> T autowire(Class<T> clazz) throws UnsupportedOperationException
-        {
-            if (clazz == DynamicMarkerCondition.class)
-            {
-                return (T) condition;
-            }
-
-            return super.autowire(clazz);
-        }
-
-        @Override
-        public <T> T autowire(Class<T> clazz,
-                AutowireStrategy autowireStrategy) throws
-                UnsupportedOperationException
-        {
-            if (clazz == DynamicMarkerCondition.class)
-            {
-                return (T) condition;
-            }
-
-            return super.autowire(clazz,
-                    autowireStrategy);
-        }
-    }
 }

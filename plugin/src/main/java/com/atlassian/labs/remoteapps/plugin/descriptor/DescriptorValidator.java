@@ -9,6 +9,7 @@ import com.atlassian.labs.remoteapps.spi.schema.Schema;
 import com.atlassian.labs.remoteapps.plugin.product.ProductAccessor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
+import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.webresource.UrlMode;
 import com.atlassian.plugin.webresource.WebResourceManager;
 import org.dom4j.Document;
@@ -221,6 +222,7 @@ public class DescriptorValidator
                 if (schemaLocation.equals("common.xsd"))
                 {
                     insertAvailableLinkContextParams(includeDoc, productAccessor.getLinkContextParams());
+                    insertAvailableWebConditions(includeDoc, productAccessor.getConditions());
                 }
                 List<Element> includeChildren = (List<Element>) includeDoc.getRootElement().elements();
                 Collections.reverse(includeChildren);
@@ -249,6 +251,19 @@ public class DescriptorValidator
             for (Map.Entry<String, String> entry : linkContextParams.entrySet())
             {
                 String name = entry.getKey();
+                restriction.addElement("xs:enumeration").addAttribute("value", name);
+            }
+        }
+    }
+
+    private void insertAvailableWebConditions(Document includeDoc, Map<String, Class<? extends Condition>> webConditions)
+    {
+        Element restriction = (Element) includeDoc.selectSingleNode(
+                "/xs:schema/xs:simpleType[@name='ConditionNameType']/xs:restriction");
+        if (restriction != null)
+        {
+            for (String name : webConditions.keySet())
+            {
                 restriction.addElement("xs:enumeration").addAttribute("value", name);
             }
         }

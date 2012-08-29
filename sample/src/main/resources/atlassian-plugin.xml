@@ -36,4 +36,11 @@
     <dialog-page key="remoteAppDialog" name="Remote App app1 Dialog" url="/myDialog" />
     <profile-page key="remoteAppProfile" name="Remote App app1 Profile" url="/myAdmin" />
 
+    <general-page key="onlyBetty" name="Only Betty" url="/myAdmin">
+        <conditions>
+            <condition name="user_is_logged_in" />
+            <condition url="/onlyBettyCondition" />
+        </conditions>
+    </general-page>
+
 </atlassian-plugin>

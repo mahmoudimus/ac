@@ -26,11 +26,14 @@ public class IFrameViewIssuePanel implements WebPanel
     private static final Logger log = LoggerFactory.getLogger(IFrameViewIssuePanel.class);
     private final IFrameRenderer iFrameRenderer;
     private final IFrameContext iFrameContext;
+    private final boolean hiddenByDefault;
 
-    public IFrameViewIssuePanel(final IFrameRenderer iFrameRenderer, IFrameContext iFrameContext)
+    public IFrameViewIssuePanel(final IFrameRenderer iFrameRenderer, IFrameContext iFrameContext,
+            boolean hiddenByDefault)
     {
         this.iFrameRenderer = iFrameRenderer;
         this.iFrameContext = iFrameContext;
+        this.hiddenByDefault = hiddenByDefault;
     }
 
     @Override
@@ -60,7 +63,13 @@ public class IFrameViewIssuePanel implements WebPanel
             params.put("issue_id", new String[]{context.containsKey("issue") ? ((Issue)context.get("issue")).getKey() : ""});
             params.put("project_id", new String[]{context.containsKey("project") ? ((Project)context.get("project")).getKey() : ""});
 
-            writer.write(iFrameRenderer.render(iFrameContext, "", params, remoteUser));
+
+            String iframe = iFrameRenderer.render(iFrameContext, "", params, remoteUser);
+            if (hiddenByDefault)
+            {
+                iframe = "<script>AJS.$('#" + iFrameContext.getNamespace() + "').addClass('hidden');</script>" + iframe;
+            }
+            writer.write(iframe);
         }
         catch (PermissionDeniedException ex)
         {
