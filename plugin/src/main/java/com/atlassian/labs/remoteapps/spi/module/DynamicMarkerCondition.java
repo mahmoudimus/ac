@@ -1,4 +1,4 @@
-package com.atlassian.labs.remoteapps.plugin.module;
+package com.atlassian.labs.remoteapps.spi.module;
 
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.web.Condition;
@@ -18,12 +18,12 @@ public class DynamicMarkerCondition implements Condition
     @Override
     public void init(Map<String, String> params) throws PluginParseException
     {
-        throw new UnsupportedOperationException("Only a marker");
+        // no op
     }
 
     @Override
     public boolean shouldDisplay(Map<String, Object> context)
     {
-        throw new UnsupportedOperationException("Only a marker");
+        return true;
     }
 }

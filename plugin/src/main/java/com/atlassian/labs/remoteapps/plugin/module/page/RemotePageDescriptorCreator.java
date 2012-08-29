@@ -73,7 +73,7 @@ public class RemotePageDescriptorCreator
             this.webItemCreatorBuilder.setPreferredWeight(productAccessor.getPreferredGeneralWeight());
             this.webItemCreatorBuilder.setPreferredSectionKey(productAccessor.getPreferredGeneralSectionKey());
             this.webItemCreatorBuilder.setContextParams(productAccessor.getLinkContextParams());
-            this.webItemCreatorBuilder.setCondition(condition);
+            this.webItemCreatorBuilder.setCondition(condition.getClass());
         }
         public Iterable<ModuleDescriptor> build(Plugin plugin, Element descriptor)
         {
@@ -140,7 +140,7 @@ public class RemotePageDescriptorCreator
         public Builder setCondition(Condition condition)
         {
             this.condition = condition;
-            webItemCreatorBuilder.setCondition(condition);
+            webItemCreatorBuilder.setCondition(condition.getClass());
             return this;
         }
 

@@ -13,6 +13,7 @@
                 </xs:annotation>
             </xs:element>
             <xs:element name="context-parameters" type="LinkContextParametersType" minOccurs="0" maxOccurs="1" />
+            <xs:element name="conditions" type="ConditionsType" minOccurs="0" maxOccurs="1" />
         </xs:sequence>
         <xs:attribute name="key" type="KeyType" use="required" />
         <xs:attribute name="name" type="NameType" use="required" />

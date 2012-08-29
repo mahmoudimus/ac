@@ -1,7 +1,7 @@
 package servlets;
 
 import com.atlassian.labs.remoteapps.api.annotation.ServiceReference;
-import com.atlassian.labs.remoteapps.api.service.SignedRequestHandler;
+import com.atlassian.labs.remoteapps.api.service.RequestContext;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -21,20 +21,19 @@ import static services.HttpUtils.renderHtml;
 @Singleton
 public class MyMacroEditorServlet extends HttpServlet
 {
-    private final SignedRequestHandler signedRequestHandler;
+    private final RequestContext requestContext;
 
     @Inject
-    public MyMacroEditorServlet(@ServiceReference SignedRequestHandler signedRequestHandler)
+    public MyMacroEditorServlet(@ServiceReference RequestContext requestContext)
     {
-        this.signedRequestHandler = signedRequestHandler;
+        this.requestContext = requestContext;
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
     {
-        String consumerKey = signedRequestHandler.validateRequest(req);
         final Map<String, Object> context = new HashMap<String,Object>();
-        context.put("baseUrl", signedRequestHandler.getHostBaseUrl(consumerKey));
+        context.put("baseUrl", requestContext.getHostBaseUrl());
         renderHtml(resp, "macro-editor.mu", context);
     }
 }

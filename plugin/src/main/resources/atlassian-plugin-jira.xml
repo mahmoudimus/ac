@@ -47,6 +47,11 @@
         <package>com.atlassian.labs.remoteapps.plugin.rest</package>
     </rest>
 
+    <!-- Handles loading big pipe resources because web items in jira
+        can't contribute web resources due to how JIRA renders
+     -->
+    <jira-footer key="bigPipeFooter" class="com.atlassian.labs.remoteapps.plugin.product.jira.JiraBigPipeFooter" />
+
     <component-import key="jiraAuthenticationContext" interface="com.atlassian.jira.security.JiraAuthenticationContext" />
     <component-import key="jiraUserManager" interface="com.atlassian.jira.user.util.UserManager" />
     <component-import key="InternalWebSudoManager" interface="com.atlassian.jira.security.websudo.InternalWebSudoManager" />

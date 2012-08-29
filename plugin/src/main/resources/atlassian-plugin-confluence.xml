@@ -64,14 +64,6 @@
     <component-import key="webSudoManager" interface="com.atlassian.confluence.security.websudo.WebSudoManager" />
     <component-import key="taskManager" interface="com.atlassian.core.task.MultiQueueTaskManager" />
 
-    <!-- big pipe stuff -->
-    <web-panel key="requestIdMetaTag" class="com.atlassian.labs.remoteapps.plugin.util.http.bigpipe.RequestIdWebPanel" location="atl.header"/>
-
-    <web-resource key="big-pipe">
-        <resource type="download" name="big-pipe.js" location="js/confluence/macro/big-pipe.js" />
-        <dependency>com.atlassian.auiplugin:ajs</dependency>
-    </web-resource>
-
     <!-- dynamic modules -->
     <described-module-type key="profile-page" name="User Profile Page" class="com.atlassian.labs.remoteapps.plugin.module.page.ProfilePageModuleDescriptor">
         <description>A user profile page decorated as normal page in the user profile area</description>

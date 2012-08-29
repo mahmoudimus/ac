@@ -4,6 +4,7 @@ import com.atlassian.labs.remoteapps.test.*;
 import com.atlassian.pageobjects.page.AdminHomePage;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -68,6 +69,26 @@ public class TestPageModules extends AbstractRemoteAppTest
         AccessDeniedIFramePage page = product.getPageBinder().bind(AccessDeniedIFramePage.class,
                 "app1", "remoteAppAdmin");
         assertFalse(page.isIframeAvailable());
+    }
+
+    @Test
+    @Ignore("Need to wait for menu to open w/o waiting for page link name")
+    public void testRemoteConditionFails()
+    {
+        product.visit(LoginPage.class).login("barney", "barney", HomePage.class);
+        GeneralPage page = product.getPageBinder().bind(GeneralPage.class, "onlyBetty",
+                "Only Betty");
+        assertFalse(page.isRemoteAppLinkPresent());
+    }
+
+    @Test
+    public void testRemoteConditionSucceeds()
+    {
+        product.visit(LoginPage.class).login("betty", "betty", HomePage.class);
+        GeneralPage page = product.getPageBinder().bind(GeneralPage.class, "onlyBetty",
+                "Only Betty");
+        RemoteAppTestPage remoteAppTest = page.clickRemoteAppLink();
+        assertTrue(remoteAppTest.getTitle().contains("Only Betty"));
     }
 
     @Test

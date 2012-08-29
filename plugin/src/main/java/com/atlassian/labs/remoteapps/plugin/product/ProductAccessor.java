@@ -1,6 +1,7 @@
 package com.atlassian.labs.remoteapps.plugin.product;
 
 import com.atlassian.mail.Email;
+import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 
 import java.util.Map;
@@ -28,8 +29,9 @@ public interface ProductAccessor
 
     Map<String,String> getLinkContextParams();
 
-
     void sendEmail(String user, Email email, String bodyAsHtml, String bodyAsText);
 
     void flushEmail();
+
+    Map<String,Class<? extends Condition>> getConditions();
 }

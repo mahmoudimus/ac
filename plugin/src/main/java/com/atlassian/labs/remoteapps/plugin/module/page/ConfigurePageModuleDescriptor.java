@@ -1,6 +1,7 @@
 package com.atlassian.labs.remoteapps.plugin.module.page;
 
 import com.atlassian.labs.remoteapps.plugin.integration.plugins.DynamicDescriptorRegistration;
+import com.atlassian.labs.remoteapps.spi.module.UserIsAdminCondition;
 import com.atlassian.labs.remoteapps.plugin.module.DefaultWebItemContext;
 import com.atlassian.labs.remoteapps.plugin.product.ProductAccessor;
 import com.atlassian.plugin.Plugin;

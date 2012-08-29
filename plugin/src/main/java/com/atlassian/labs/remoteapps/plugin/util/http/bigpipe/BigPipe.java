@@ -3,6 +3,9 @@ package com.atlassian.labs.remoteapps.plugin.util.http.bigpipe;
 import com.atlassian.labs.remoteapps.plugin.ContentRetrievalException;
 import com.atlassian.security.random.SecureRandomFactory;
 import com.atlassian.util.concurrent.CopyOnWriteMap;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -45,12 +48,46 @@ public class BigPipe
         return handler;
     }
 
-    public Iterable<BigPipeHttpContentHandler> consumeCompletedHandlers(String requestId)
+    public Iterable<BigPipeHttpContentHandler> waitForCompletedHandlers(String requestId)
     {
         RequestContentSet request = requestContentSets.get(requestId);
         if (request != null)
         {
             return request.waitForFinishedContent();
+        }
+        else
+        {
+            return Collections.emptyList();
+        }
+    }
+
+    public JSONArray converContentHandlersToJson(Iterable<BigPipeHttpContentHandler> handlers)
+    {
+        JSONArray result = new JSONArray();
+        for (BigPipeHttpContentHandler handler : handlers)
+        {
+            String html = handler.getFinalContent();
+            JSONObject content = new JSONObject();
+            try
+            {
+                content.put("id", handler.getContentId());
+                content.put("html", html);
+            }
+            catch (JSONException e)
+            {
+                throw new IllegalArgumentException("Unable to serialize content", e);
+            }
+            result.put(content);
+        }
+        return result;
+    }
+
+    public Iterable<BigPipeHttpContentHandler> consumeCompletedHandlers(String requestId)
+    {
+        RequestContentSet request = requestContentSets.get(requestId);
+        if (request != null)
+        {
+            return request.consumeFinishedContent();
         }
         else
         {
@@ -159,6 +196,37 @@ public class BigPipe
             handlers.remove(contentId);
         }
 
+        public Iterable<BigPipeHttpContentHandler> consumeFinishedContent()
+        {
+            List<BigPipeHttpContentHandler> result = newArrayList();
+            synchronized(lock)
+            {
+                if (handlers.isEmpty())
+                {
+                    return Collections.emptyList();
+                }
+                removeAllFinishedHandlers(result);
+                if (!hasMoreContent())
+                {
+                    // we've expired
+                    log.info("All content has been consumed for request id {}", requestId);
+                    removeRequestContentSet();
+                }
+            }
+            return result;
+        }
+
+        private void removeRequestContentSet()
+        {
+            handlers.clear();
+            requestContentSets.remove(requestId);
+        }
+
+        private boolean hasMoreContent()
+        {
+            return !handlers.isEmpty();
+        }
+
         /**
          * Waits for content to be finished and removes it from the set of outstanding content if
          * done.  It will only wait until the timeout for the page has been reached.
@@ -195,8 +263,8 @@ public class BigPipe
             {
                 // we've expired
                 log.info("Timeout waiting for {} jobs for request id {}", handlers.size(), requestId);
-                handlers.clear();
-                requestContentSets.remove(requestId);
+
+                removeRequestContentSet();
             }
 
             return result;

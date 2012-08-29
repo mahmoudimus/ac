@@ -63,7 +63,7 @@ public class StorageFormatMacro extends AbstractRemoteMacro
          */
         try
         {
-            webResourceManager.requireResource("com.atlassian.labs.remoteapps-plugin:confluence-big-pipe");
+            webResourceManager.requireResource("com.atlassian.labs.remoteapps-plugin:big-pipe");
             return macroContentManager.getStaticContent(
                     new MacroInstance(conversionContext, remoteUrl, storageFormatBody, parameters,
                             remoteMacroInfo.getRequestContextParameterFactory(),

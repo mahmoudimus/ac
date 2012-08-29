@@ -1,7 +1,7 @@
 package servlets;
 
 import com.atlassian.labs.remoteapps.api.annotation.ServiceReference;
-import com.atlassian.labs.remoteapps.api.service.SignedRequestHandler;
+import com.atlassian.labs.remoteapps.api.service.RequestContext;
 import com.atlassian.labs.remoteapps.api.service.http.HostHttpClient;
 import com.atlassian.labs.remoteapps.api.service.http.Response;
 
@@ -20,14 +20,15 @@ import static services.HttpUtils.renderHtml;
 @Singleton
 public class MyAdminServlet extends HttpServlet
 {
-    private final SignedRequestHandler signedRequestHandler;
-    private HostHttpClient httpClient;
+    private final RequestContext requestContext;
+    private final HostHttpClient httpClient;
 
     @Inject
-    public MyAdminServlet(@ServiceReference SignedRequestHandler signedRequestHandler,
-                          @ServiceReference HostHttpClient httpClient)
+    public MyAdminServlet(
+            @ServiceReference RequestContext requestContext,
+            @ServiceReference HostHttpClient httpClient)
     {
-        this.signedRequestHandler = signedRequestHandler;
+        this.requestContext = requestContext;
         this.httpClient = httpClient;
     }
 
@@ -35,10 +36,9 @@ public class MyAdminServlet extends HttpServlet
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
         throws ServletException, IOException
     {
-        String consumerKey = signedRequestHandler.validateRequest(req);
         final Map<String, Object> context = new HashMap<String, Object>();
-        context.put("consumerKey", consumerKey);
-        context.put("baseUrl", signedRequestHandler.getHostBaseUrl(consumerKey));
+        context.put("consumerKey", requestContext.getClientKey());
+        context.put("baseUrl", requestContext.getHostBaseUrl());
         execHostHttpRequests(context);
         renderHtml(resp, "test-page.mu", context);
     }

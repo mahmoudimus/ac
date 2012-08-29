@@ -1,8 +1,12 @@
 package com.atlassian.labs.remoteapps.plugin.product.refapp;
 
+import com.atlassian.labs.remoteapps.spi.module.UserIsAdminCondition;
+import com.atlassian.labs.remoteapps.spi.module.UserIsLoggedInCondition;
+import com.atlassian.labs.remoteapps.spi.module.UserIsSysAdminCondition;
 import com.atlassian.labs.remoteapps.plugin.product.ProductAccessor;
 import com.atlassian.mail.Email;
 import com.atlassian.plugin.util.ContextClassLoaderSwitchingUtil;
+import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.web.WebInterfaceManager;
 import com.atlassian.plugin.web.descriptors.DefaultWebItemModuleDescriptor;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
@@ -17,6 +21,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Map;
 
+import static com.google.common.collect.Maps.newHashMap;
 import static java.util.Collections.emptyMap;
 
 /**
@@ -170,5 +175,15 @@ public class RefappProductAccessor implements ProductAccessor
     @Override
     public void flushEmail()
     {
+    }
+
+    @Override
+    public Map<String, Class<? extends Condition>> getConditions()
+    {
+        Map<String,Class<? extends Condition>> conditions = newHashMap();
+        conditions.put("user_is_sysadmin", UserIsSysAdminCondition.class);
+        conditions.put("user_is_logged_in", UserIsLoggedInCondition.class);
+        conditions.put("user_is_admin", UserIsAdminCondition.class);
+        return conditions;
     }
 }

@@ -6,6 +6,7 @@ import com.atlassian.jira.project.browse.BrowseContext;
 import com.atlassian.labs.remoteapps.spi.PermissionDeniedException;
 import com.atlassian.labs.remoteapps.plugin.module.IFrameRenderer;
 import com.atlassian.labs.remoteapps.plugin.module.page.IFrameContext;
+import com.atlassian.plugin.web.Condition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,6 +15,7 @@ import java.io.StringWriter;
 import java.util.Map;
 
 import static com.google.common.collect.Maps.newHashMap;
+import static java.util.Collections.singletonMap;
 
 /**
  * A tab that displays an iframe
@@ -21,13 +23,16 @@ import static com.google.common.collect.Maps.newHashMap;
 public class IFrameProjectTab implements ProjectTabPanel
 {
     private final IFrameRenderer iFrameRenderer;
+    private final Condition condition;
     private final IFrameContext iFrameContext;
     private static final Logger log = LoggerFactory.getLogger(IFrameProjectTab.class);
 
-    public IFrameProjectTab(IFrameContext iFrameContext, IFrameRenderer iFrameRenderer)
+    public IFrameProjectTab(IFrameContext iFrameContext, IFrameRenderer iFrameRenderer,
+            Condition condition)
     {
         this.iFrameContext = iFrameContext;
         this.iFrameRenderer = iFrameRenderer;
+        this.condition = condition;
     }
 
     @Override
@@ -66,6 +71,8 @@ public class IFrameProjectTab implements ProjectTabPanel
     @Override
     public boolean showPanel(BrowseContext browseContext)
     {
-        return true;
+        Map<String,Object> context = newHashMap();
+        context.put("helper", singletonMap("project", browseContext.getProject()));
+        return condition == null || condition.shouldDisplay(context);
     }
 }
