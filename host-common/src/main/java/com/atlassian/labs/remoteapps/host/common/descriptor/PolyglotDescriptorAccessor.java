@@ -19,7 +19,7 @@ import static com.atlassian.labs.remoteapps.spi.util.XmlUtils.createSecureSaxRea
 /**
  * Descriptor accessor that supports json, xml, and yaml descriptors
  */
-public class PolygotDescriptorAccessor implements DescriptorAccessor
+public final class PolyglotDescriptorAccessor implements DescriptorAccessor
 {
     private static final Iterable<DescriptorType> DESCRIPTOR_TYPES = ImmutableSet.of(
             new DescriptorType("atlassian-remote-app.yaml", "application/yaml", true),
@@ -27,9 +27,9 @@ public class PolygotDescriptorAccessor implements DescriptorAccessor
             new DescriptorType("atlassian-remote-app.json", "application/json", true),
             new DescriptorType("atlassian-remote-app.js", "application/json", true),
             new DescriptorType("atlassian-remote-app.xml", "text/xml", true),
-
             new DescriptorType("atlassian-plugin.xml", "text/xml", false)
     );
+
     static interface UrlProvider
     {
         URL getResource(String path);
@@ -38,7 +38,7 @@ public class PolygotDescriptorAccessor implements DescriptorAccessor
     private final UrlProvider urlProvider;
     private final DescriptorType descriptorType;
 
-    public PolygotDescriptorAccessor(final Bundle bundle)
+    public PolyglotDescriptorAccessor(final Bundle bundle)
     {
         urlProvider = new UrlProvider()
         {
@@ -51,7 +51,7 @@ public class PolygotDescriptorAccessor implements DescriptorAccessor
         descriptorType = determineDescriptorType(urlProvider);
     }
 
-    public PolygotDescriptorAccessor(final File baseDir)
+    public PolyglotDescriptorAccessor(final File baseDir)
     {
         this.urlProvider = new UrlProvider()
         {

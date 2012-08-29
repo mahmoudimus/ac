@@ -8,7 +8,7 @@ import com.atlassian.labs.remoteapps.api.service.http.HttpClient;
 import com.atlassian.labs.remoteapps.container.service.ContainerEmailSender;
 import com.atlassian.labs.remoteapps.container.service.plugins.NoOpWebResourceManager;
 import com.atlassian.labs.remoteapps.container.service.sal.*;
-import com.atlassian.labs.remoteapps.host.common.descriptor.PolygotDescriptorAccessor;
+import com.atlassian.labs.remoteapps.host.common.descriptor.PolyglotDescriptorAccessor;
 import com.atlassian.labs.remoteapps.host.common.descriptor.DescriptorAccessor;
 import com.atlassian.labs.remoteapps.api.service.HttpResourceMounter;
 import com.atlassian.labs.remoteapps.api.service.RequestContext;
@@ -59,7 +59,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
-import com.sun.corba.se.spi.resolver.LocalResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,8 +82,10 @@ public final class Container
 {
     private static final Logger log = LoggerFactory.getLogger(Container.class);
 
-    public static final Set<URI> AUTOREGISTER_HOSTS = ImmutableSet.of(URI.create("http://localhost:1990/confluence"),
-            URI.create("http://localhost:2990/jira"), URI.create("http://localhost:5990/refapp"));
+    public static final Set<URI> AUTOREGISTER_HOSTS = ImmutableSet.of(
+            URI.create("http://localhost:1990/confluence"),
+            URI.create("http://localhost:2990/jira"),
+            URI.create("http://localhost:5990/refapp"));
 
     private final DefaultPluginManager pluginManager;
     private final HttpServer httpServer;
@@ -211,7 +212,7 @@ public final class Container
                 if (appFile.isDirectory())
                 {
                     System.setProperty("plugin.resource.directories", appFile.getAbsolutePath());
-                    descriptorAccessor = new PolygotDescriptorAccessor(appFile);
+                    descriptorAccessor = new PolyglotDescriptorAccessor(appFile);
                     File appAsZip = zipAppDirectory(descriptorAccessor, appFile);
                     files.add(appAsZip);
                 }
@@ -237,27 +238,19 @@ public final class Container
         final RemoteAppsPluginSettingsFactory pluginSettingsFactory = new RemoteAppsPluginSettingsFactory();
 
         hostComponents.put(PluginSettingsFactory.class, pluginSettingsFactory);
-        final RemoteAppsApplicationPropertiesServiceFactory applicationPropertiesServiceFactory = new RemoteAppsApplicationPropertiesServiceFactory(
-                server);
+        final RemoteAppsApplicationPropertiesServiceFactory applicationPropertiesServiceFactory = new RemoteAppsApplicationPropertiesServiceFactory(server);
         hostComponents.put(ApplicationProperties.class, applicationPropertiesServiceFactory);
 
         hostComponents.put(EventPublisher.class, new RemoteAppsEventPublisher());
 
-        final EnvironmentFactory environmentFactory = new EnvironmentFactory(pluginSettingsFactory,
-                pluginManager);
-        final OAuthSignedRequestHandlerServiceFactory oAuthSignedRequestHandlerServiceFactory
-            = new OAuthSignedRequestHandlerServiceFactory(environmentFactory, httpServer);
-        final RequestContextServiceFactory requestContextServiceFactory
-            = new RequestContextServiceFactory(oAuthSignedRequestHandlerServiceFactory);
-        final ContainerHttpResourceMounterServiceFactory containerHttpResourceMounterServiceFactory
-            = new ContainerHttpResourceMounterServiceFactory(pluginManager, httpServer,
-            oAuthSignedRequestHandlerServiceFactory, environmentFactory, requestContextServiceFactory);
+        final EnvironmentFactory environmentFactory = new EnvironmentFactory(pluginSettingsFactory, pluginManager);
+        final OAuthSignedRequestHandlerServiceFactory oAuthSignedRequestHandlerServiceFactory = new OAuthSignedRequestHandlerServiceFactory(environmentFactory, httpServer);
+        final RequestContextServiceFactory requestContextServiceFactory = new RequestContextServiceFactory(oAuthSignedRequestHandlerServiceFactory);
+        final ContainerHttpResourceMounterServiceFactory containerHttpResourceMounterServiceFactory = new ContainerHttpResourceMounterServiceFactory(pluginManager, httpServer, oAuthSignedRequestHandlerServiceFactory, environmentFactory, requestContextServiceFactory);
         final RequestKiller requestKiller = new RequestKiller();
         final ContainerEventPublisher containerEventPublisher = new ContainerEventPublisher();
         final DefaultHttpClient httpClient = new DefaultHttpClient(requestKiller, containerEventPublisher);
-        final HostHttpClientServiceFactory hostHttpClientServiceFactory
-            = new HostHttpClientServiceFactory(httpClient, requestContextServiceFactory,
-            oAuthSignedRequestHandlerServiceFactory);
+        final HostHttpClientServiceFactory hostHttpClientServiceFactory = new HostHttpClientServiceFactory(httpClient, requestContextServiceFactory, oAuthSignedRequestHandlerServiceFactory);
 
         hostComponents.put(SignedRequestHandler.class, oAuthSignedRequestHandlerServiceFactory);
         hostComponents.put(HttpResourceMounter.class, containerHttpResourceMounterServiceFactory);
@@ -269,14 +262,12 @@ public final class Container
         hostComponents.put(HttpClient.class, httpClient);
         hostComponents.put(HostHttpClient.class, hostHttpClientServiceFactory);
         hostComponents.put(HostXmlRpcClient.class, new HostHttpClientConsumerServiceFactory(hostHttpClientServiceFactory, DefaultHostXmlRpcClient.class));
-        hostComponents.put(EmailSender.class, new HostHttpClientConsumerServiceFactory(hostHttpClientServiceFactory,
-                ContainerEmailSender.class));
+        hostComponents.put(EmailSender.class, new HostHttpClientConsumerServiceFactory(hostHttpClientServiceFactory, ContainerEmailSender.class));
         hostComponents.put(LocaleResolver.class, new ContainerLocaleResolver());
         hostComponents.put(I18nResolver.class, new ContainerI18nResolver(pluginManager, pluginEventManager, new ResourceBundleResolverImpl()));
         hostComponents.put(WebResourceManager.class, new NoOpWebResourceManager());
 
-        hostComponents.put(DataSourceProvider.class, new RemoteAppsDataSourceProviderServiceFactory(
-                applicationPropertiesServiceFactory));
+        hostComponents.put(DataSourceProvider.class, new RemoteAppsDataSourceProviderServiceFactory(applicationPropertiesServiceFactory));
         hostComponents.put(TransactionTemplate.class, new NoOpTransactionTemplate());
     }
 
@@ -312,7 +303,7 @@ public final class Container
         Set<URI> foundHosts = findHostProducts();
         if (descriptorAccessor != null)
         {
-            String appKey = descriptorAccessor.getDescriptor().getRootElement().attributeValue("key");
+            final String appKey = descriptorAccessor.getKey();
             appReloader = new AppReloader(descriptorAccessor, httpServer.getLocalMountBaseUrl(appKey), foundHosts);
         }
         else

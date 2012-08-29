@@ -32,6 +32,9 @@ public final class UniversalBinariesContainerJUnitRunner extends BlockJUnit4Clas
         this.testClass = checkNotNull(testClass);
         this.apps = checkApps(toAbsolutePaths(testClass.getAnnotation(UniversalBinaries.class).value()));
         this.pluginInstaller = newInstaller();
+
+        // set dev mode for the UB container.
+        System.setProperty("atlassian.ub.container.dev.mode", Boolean.toString(Boolean.TRUE));
     }
 
     private static String[] checkApps(String[] apps)

@@ -1,6 +1,7 @@
 package com.atlassian.labs.remoteapps.container;
 
 
+import com.atlassian.labs.remoteapps.host.common.descriptor.LocalMountBaseUrlResolver;
 import com.atlassian.plugin.Plugin;
 import com.google.common.base.Function;
 import com.google.common.collect.MapMaker;
@@ -23,12 +24,9 @@ import java.util.EnumSet;
 import java.util.Map;
 import java.util.Set;
 
-import static java.lang.Integer.parseInt;
+import static java.lang.Integer.*;
 
-/**
- *
- */
-public class HttpServer
+public final class HttpServer implements LocalMountBaseUrlResolver
 {
     private final Server server;
     private final Map<String,ServletContextHandler> contexts;
@@ -139,6 +137,7 @@ public class HttpServer
         server.start();
     }
 
+    @Override
     public String getLocalMountBaseUrl(String appKey)
     {
         return "http://localhost:" + appPort + "/" + appKey;
