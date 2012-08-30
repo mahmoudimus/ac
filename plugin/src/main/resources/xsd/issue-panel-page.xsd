@@ -5,7 +5,7 @@
 
     <xs:complexType name="IssuePanelPageType">
         <xs:complexContent>
-            <xs:restriction base="PanelType" />
+            <xs:extension base="PanelType" />
         </xs:complexContent>
     </xs:complexType>
 </xs:schema>

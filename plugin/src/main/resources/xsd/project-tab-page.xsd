@@ -5,7 +5,7 @@
 
     <xs:complexType name="ProjectTabPageType">
         <xs:complexContent>
-            <xs:restriction base="PageType" />
+            <xs:extension base="PageType" />
         </xs:complexContent>
     </xs:complexType>
 </xs:schema>

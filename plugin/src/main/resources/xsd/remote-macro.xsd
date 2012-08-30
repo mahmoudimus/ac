@@ -5,7 +5,7 @@
 
     <xs:complexType name="RemoteMacroType">
         <xs:complexContent>
-            <xs:restriction base="MacroType" />
+            <xs:extension base="MacroType" />
         </xs:complexContent>
     </xs:complexType>
 </xs:schema>

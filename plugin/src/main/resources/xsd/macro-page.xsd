@@ -5,7 +5,7 @@
 
     <xs:complexType name="MacroPageType">
         <xs:complexContent>
-            <xs:restriction base="PageMacroType" />
+            <xs:extension base="PageMacroType" />
         </xs:complexContent>
     </xs:complexType>
 </xs:schema>
