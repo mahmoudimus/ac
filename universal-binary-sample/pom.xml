@@ -32,7 +32,12 @@
             <version>${ao.version}</version>
             <scope>provided</scope>
         </dependency>
-
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>remoteapps-ringojs-kit</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>remoteapps-servlet-kit</artifactId>
