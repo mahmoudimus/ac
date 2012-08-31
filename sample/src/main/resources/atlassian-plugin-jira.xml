@@ -6,6 +6,8 @@
     <webhook key="wh-remote_app_started" event="remote_app_started" url="/webHook/remote_app_started" />
 
     <webhook key="wh-issue_created" event="issue_created" url="/webHook/issue_created" />
+    <webhook key="wh-issue_updated" event="issue_updated" url="/webHook/issue_updated" />
+    <webhook key="wh-issue_commented" event="issue_commented" url="/webHook/issue_commented" />
 
     <issue-panel-page key="remoteAppIssuePanelPage" name="Remote App app1 Issue Page" url="/myAdmin" />
     <issue-panel-page key="onlyBettyIssuePanelPage" name="Only Betty Panel" url="/myAdmin">

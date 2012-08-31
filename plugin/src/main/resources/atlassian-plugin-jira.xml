@@ -40,6 +40,7 @@
     <component key="WebSudoElevator" class="com.atlassian.labs.remoteapps.plugin.product.jira.JiraWebSudoElevator" />
 
     <component key="host" class="com.atlassian.labs.remoteapps.plugin.module.ServletContextThreadLocalIFrameHost" />
+    <component key="restAccessor" class="com.atlassian.labs.remoteapps.plugin.product.jira.JiraRestBeanMarshaler" />
 
     <rest key="rest" path="/remoteapps" version="1">
         <dispatcher>REQUEST</dispatcher>
@@ -58,6 +59,8 @@
     <component-import key="SearchRequestViewBodyWriterUtil" interface="com.atlassian.jira.issue.views.util.SearchRequestViewBodyWriterUtil" />
     <component-import key="searchRequestURLHandler" interface="com.atlassian.jira.plugin.searchrequestview.SearchRequestURLHandler" />
     <component-import key="mailQueue" interface="com.atlassian.mail.queue.MailQueue" />
+    <component-import key="projectRoleManager" interface="com.atlassian.jira.security.roles.ProjectRoleManager" />
+    <component-import key="jiraBaseUrls" interface="com.atlassian.jira.issue.fields.rest.json.beans.JiraBaseUrls" />
 
     <!-- plugin points -->
     <described-module-type key="profile-page" name="User Profile Page" class="com.atlassian.labs.remoteapps.plugin.module.page.jira.JiraProfileTabModuleDescriptor">

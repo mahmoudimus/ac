@@ -3,9 +3,10 @@ package com.atlassian.labs.remoteapps.plugin.product.jira.webhook;
 import com.atlassian.jira.event.JiraEvent;
 import com.atlassian.jira.event.issue.IssueEvent;
 import com.atlassian.jira.event.type.EventType;
-import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.issue.comments.Comment;
+import com.atlassian.labs.remoteapps.plugin.product.jira.JiraRestBeanMarshaler;
 import com.google.common.collect.ImmutableMap;
+import org.json.JSONException;
 import org.ofbiz.core.entity.GenericEntityException;
 import org.ofbiz.core.entity.GenericValue;
 import org.slf4j.Logger;
@@ -19,6 +20,13 @@ import static com.google.common.collect.Lists.newArrayList;
 public class IssueEventMapper extends JiraEventMapper
 {
     private static final Logger log = LoggerFactory.getLogger(IssueEventMapper.class);
+    private final JiraRestBeanMarshaler jiraRestBeanMarshaler;
+
+    public IssueEventMapper(JiraRestBeanMarshaler jiraRestBeanMarshaler)
+    {
+        this.jiraRestBeanMarshaler = jiraRestBeanMarshaler;
+    }
+
     @Override
     public boolean handles(JiraEvent event)
     {
@@ -26,7 +34,7 @@ public class IssueEventMapper extends JiraEventMapper
     }
 
     @Override
-    public Map<String, Object> toMap(JiraEvent event)
+    public Map<String, Object> toMap(JiraEvent event) throws JSONException
     {
         IssueEvent issueEvent = (IssueEvent) event;
 
@@ -36,7 +44,7 @@ public class IssueEventMapper extends JiraEventMapper
         {
             builder.put("user", issueEvent.getUser().getName());
         }
-        builder.put("issue", issueToMap(issueEvent.getIssue()));
+        builder.put("issue", jiraRestBeanMarshaler.getRemoteIssue(issueEvent.getIssue()));
 
         if (EventType.ISSUE_UPDATED_ID.equals(issueEvent.getEventTypeId()))
         {
@@ -44,20 +52,8 @@ public class IssueEventMapper extends JiraEventMapper
         }
         if (issueEvent.getComment() != null)
         {
-            builder.put("comment", commentToMap(issueEvent.getComment()));
+            builder.put("comment", jiraRestBeanMarshaler.getRemoteComment(issueEvent.getComment()));
         }
-        return builder.build();
-    }
-
-    private Map<String, Object> commentToMap(Comment comment)
-    {
-        ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();
-        builder.put("id", comment.getId());
-        builder.put("body", comment.getBody());
-        builder.put("author", comment.getAuthor());
-
-        // TODO: Consider adding additional data about the issue
-
         return builder.build();
     }
 
@@ -85,21 +81,5 @@ public class IssueEventMapper extends JiraEventMapper
     {
         Object value = gv.get(name);
         return value != null ? value.toString() : "";
-    }
-
-    private static Map<String, Object> issueToMap(Issue issue)
-    {
-        ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();
-        builder.put("key", issue.getKey());
-        builder.put("summary", issue.getSummary());
-        if (issue.getReporterUser() != null)
-        {
-            builder.put("reporterName", issue.getReporterUser().getName());
-        }
-        builder.put("status", issue.getStatusObject().getName());
-
-        // TODO: Consider adding additional data about the issue
-
-        return builder.build();
     }
 }

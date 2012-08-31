@@ -2,13 +2,15 @@ package it;
 
 import com.atlassian.functest.rest.TestResults;
 import com.atlassian.labs.remoteapps.test.OwnerOfTestedProduct;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.WebResource;
 import org.junit.Test;
 
 import javax.ws.rs.core.UriBuilder;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
 import java.io.File;
-import java.net.URI;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 
 import static junit.framework.Assert.*;
 
@@ -31,10 +33,10 @@ public abstract class AbstractGroupClient
     }
 
     @Test
-    public void run()
+    public void run() throws IOException, JAXBException
     {
         File targetDir = new File("target");
-        URI uri = UriBuilder.fromUri("http://localhost/")
+        UriBuilder builder = UriBuilder.fromUri("http://localhost/")
                             .port(port)
                             .path(contextPath)
                             .path("rest")
@@ -42,14 +44,14 @@ public abstract class AbstractGroupClient
                             .path("latest")
                             .path("junit")
                             .path("runTests")
-                            .build();
-
-        final WebResource client = Client.create().resource(uri).queryParam("outdir", targetDir.getAbsolutePath());
+                            .queryParam("outdir", targetDir.getAbsolutePath());
         if (group != null)
         {
-            client.queryParam("groups", group);
+            builder.queryParam("groups", group);
         }
-        TestResults results = client.get(TestResults.class);
+
+        InputStream in = new URL(builder.build().toString()).openStream();
+        TestResults results = (TestResults) JAXBContext.newInstance(TestResults.class).createUnmarshaller().unmarshal(in);
         assertNotNull(results);
 
         System.out.println("Results: " + results.output);

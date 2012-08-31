@@ -9,6 +9,7 @@ import com.atlassian.labs.remoteapps.spi.webhook.EventSerializerFactory;
 import com.atlassian.sal.api.user.UserManager;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,7 +51,14 @@ public class ConfluenceEventSerializerFactory implements EventSerializerFactory<
         for (EventMapper<ConfluenceEvent> mapper : mappers)
         {
             if (mapper.handles(event))
-                return new MapEventSerializer(event, mapper.toMap(event));
+                try
+                {
+                    return new MapEventSerializer(event, mapper.toMap(event));
+                }
+                catch (JSONException e)
+                {
+                    throw new RuntimeException(e);
+                }
         }
 
         // This should never really happen; the mappers list has a default mapper within it that handles every type of ConfluenceEvent.

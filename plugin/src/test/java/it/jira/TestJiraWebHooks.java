@@ -53,7 +53,7 @@ public class TestJiraWebHooks extends AbstractBrowserlessTest
                 String issueKey = jiraOps.createIssue(project.getKey(), "Test issue").getKey();
                 WebHookBody body = waiter.waitForHook();
                 assertEquals(issueKey, body.find("issue/key"));
-                assertEquals(ADMIN, body.find("issue/reporterName"));
+                assertEquals(ADMIN, body.find("issue/fields/reporter/name"));
             }
         });
     }
@@ -92,7 +92,7 @@ public class TestJiraWebHooks extends AbstractBrowserlessTest
                 WebHookBody body = waiter.waitForHook();
                 assertEquals(issueKey, body.find("issue/key"));
                 assertEquals("My comment", body.find("comment/body"));
-                assertEquals("admin", body.find("comment/author"));
+                assertEquals("admin", body.find("comment/author/name"));
             }
         });
     }
