@@ -4,14 +4,23 @@ import com.atlassian.event.api.EventPublisher;
 import com.atlassian.labs.remoteapps.api.service.http.HttpClient;
 import com.atlassian.labs.remoteapps.api.service.http.Response;
 import com.atlassian.labs.remoteapps.api.service.http.ResponsePromise;
-import com.atlassian.labs.remoteapps.spi.http.WrappingResponsePromise;
+import com.atlassian.labs.remoteapps.spi.http.ResponsePromises;
 import com.atlassian.util.concurrent.ThreadFactories;
 import com.google.common.util.concurrent.SettableFuture;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
-import org.apache.http.client.methods.*;
+import org.apache.http.client.methods.AbortableHttpRequest;
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpHead;
+import org.apache.http.client.methods.HttpOptions;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.client.methods.HttpTrace;
 import org.apache.http.concurrent.FutureCallback;
 import org.apache.http.conn.ClientConnectionRequest;
 import org.apache.http.conn.ConnectionReleaseTrigger;
@@ -220,7 +229,7 @@ public class DefaultHttpClient extends AbstractHttpClient implements HttpClient,
 
         requestKiller.registerRequest(new NotifyingAbortableHttpRequest(op, futureCallback), 10);
         httpClient.execute(op, localContext, futureCallback);
-        return new WrappingResponsePromise(future);
+        return ResponsePromises.ofFuture(future);
     }
 
     @Override

@@ -34,7 +34,7 @@ public interface Promise<V> extends ListenableFuture<V>
     Promise<V> fail(PromiseCallback<Throwable> callback);
 
     /**
-     * Registers a FutureCallback to handle both don (success) and fail (exception) cases.
+     * Registers a FutureCallback to handle both done (success) and fail (exception) cases.
      * May not be executed in the same thread as the caller.
      *
      * @param callback The future callback

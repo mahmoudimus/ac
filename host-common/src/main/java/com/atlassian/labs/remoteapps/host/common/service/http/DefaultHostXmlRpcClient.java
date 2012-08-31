@@ -2,8 +2,13 @@ package com.atlassian.labs.remoteapps.host.common.service.http;
 
 import com.atlassian.labs.remoteapps.api.Promise;
 import com.atlassian.labs.remoteapps.api.PromiseCallback;
-import com.atlassian.labs.remoteapps.api.service.http.*;
-import com.atlassian.labs.remoteapps.spi.WrappingPromise;
+import com.atlassian.labs.remoteapps.spi.Promises;
+import com.atlassian.labs.remoteapps.api.service.http.HostHttpClient;
+import com.atlassian.labs.remoteapps.api.service.http.HostXmlRpcClient;
+import com.atlassian.labs.remoteapps.api.service.http.Response;
+import com.atlassian.labs.remoteapps.api.service.http.UnexpectedResponseException;
+import com.atlassian.labs.remoteapps.api.service.http.XmlRpcException;
+import com.atlassian.labs.remoteapps.api.service.http.XmlRpcFault;
 import com.atlassian.xmlrpc.BindingException;
 import com.atlassian.xmlrpc.ServiceObject;
 import com.atlassian.xmlrpc.XmlRpcClientProvider;
@@ -206,6 +211,6 @@ public class DefaultHostXmlRpcClient implements HostXmlRpcClient
         {
             throw new RuntimeException("Should never happen", ioe);
         }
-        return new WrappingPromise<T>(future);
+        return Promises.ofFuture(future);
     }
 }

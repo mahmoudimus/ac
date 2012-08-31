@@ -1,6 +1,7 @@
-package com.atlassian.labs.remoteapps.api;
+package com.atlassian.labs.remoteapps.spi;
 
-import com.atlassian.labs.remoteapps.spi.WrappingPromise;
+import com.atlassian.labs.remoteapps.api.Promise;
+import com.atlassian.labs.remoteapps.api.PromiseCallback;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.SettableFuture;
 
@@ -9,18 +10,15 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-/**
- * Created with IntelliJ IDEA. User: mrdon Date: 8/23/12 Time: 5:35 PM To change this template use
- * File | Settings | File Templates.
- */
-public final class StaticPromise<V> implements Promise<V>
+final class StaticPromise<V> implements Promise<V>
 {
     private final Promise<V> delegate;
+
     public StaticPromise(V value)
     {
         SettableFuture<V> future = SettableFuture.create();
         future.set(value);
-        delegate = new WrappingPromise<V>(future);
+        delegate = Promises.ofFuture(future);
     }
 
     @Override

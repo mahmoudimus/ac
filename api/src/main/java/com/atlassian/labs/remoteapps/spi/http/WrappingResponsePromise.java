@@ -1,29 +1,31 @@
 package com.atlassian.labs.remoteapps.spi.http;
 
+import com.atlassian.labs.remoteapps.api.Promise;
 import com.atlassian.labs.remoteapps.api.PromiseCallback;
+import com.atlassian.labs.remoteapps.spi.Promises;
 import com.atlassian.labs.remoteapps.api.service.http.Response;
 import com.atlassian.labs.remoteapps.api.service.http.ResponsePromise;
-import com.atlassian.labs.remoteapps.spi.WrappingPromise;
+import com.google.common.util.concurrent.ForwardingListenableFuture;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import java.util.Set;
 
-import static com.google.common.collect.Sets.newHashSet;
+import static com.google.common.collect.Sets.*;
 
 /**
  * Extends WrappingPromise with the ResponsePromise interface
  */
-public class WrappingResponsePromise extends WrappingPromise<Response> implements ResponsePromise
+final class WrappingResponsePromise extends ForwardingListenableFuture.SimpleForwardingListenableFuture<Response> implements ResponsePromise
 {
     private final Set<Integer> statuses;
     private final Set<Range> ranges;
 
     public WrappingResponsePromise(ListenableFuture<Response> delegate)
     {
-        super(delegate);
-        statuses = newHashSet();
-        ranges = newHashSet();
+        super(Promises.ofFuture(delegate));
+        this.statuses = newHashSet();
+        this.ranges = newHashSet();
     }
 
     @Override
@@ -175,24 +177,35 @@ public class WrappingResponsePromise extends WrappingPromise<Response> implement
     }
 
     @Override
+    public Response claim()
+    {
+        return delegatePromise().claim();
+    }
+
+    @Override
     public ResponsePromise done(PromiseCallback<Response> callback)
     {
-        super.done(callback);
+        delegatePromise().done(callback);
         return this;
     }
 
     @Override
     public ResponsePromise fail(PromiseCallback<Throwable> callback)
     {
-        super.fail(callback);
+        delegatePromise().fail(callback);
         return this;
     }
 
     @Override
     public ResponsePromise then(FutureCallback<Response> callback)
     {
-        super.then(callback);
+        delegatePromise().then(callback);
         return this;
+    }
+
+    private Promise<Response> delegatePromise()
+    {
+        return ((Promise<Response>) delegate());
     }
 
     private class StatusSelector implements PromiseCallback<Response>
@@ -258,11 +271,17 @@ public class WrappingResponsePromise extends WrappingPromise<Response> implement
         @Override
         public boolean equals(Object o)
         {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o)
+            {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass())
+            {
+                return false;
+            }
             Range range = (Range) o;
             return lowerBoundInclusive == range.lowerBoundInclusive
-                && upperBoundExclusive == range.upperBoundExclusive;
+                    && upperBoundExclusive == range.upperBoundExclusive;
         }
 
         @Override
