@@ -166,7 +166,7 @@ public class DefaultRequest extends DefaultMessage implements Request
             case HEAD:
                 if (hasEntity())
                 {
-                    throw new IllegalStateException("Request method " + method + " doesn not support an entity");
+                    throw new IllegalStateException("Request method " + method + " does not support an entity");
                 }
                 break;
             case POST:
