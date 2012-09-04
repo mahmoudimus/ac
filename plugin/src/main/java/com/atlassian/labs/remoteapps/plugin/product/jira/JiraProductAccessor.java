@@ -2,6 +2,7 @@ package com.atlassian.labs.remoteapps.plugin.product.jira;
 
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.ComponentManager;
+import com.atlassian.jira.plugin.webfragment.conditions.CanConvertToIssueCondition;
 import com.atlassian.jira.plugin.webfragment.descriptors.JiraWebItemModuleDescriptor;
 import com.atlassian.jira.user.preferences.JiraUserPreferences;
 import com.atlassian.jira.user.preferences.PreferenceKeys;
@@ -146,6 +147,22 @@ public class JiraProductAccessor implements ProductAccessor
         conditions.put("is_keyboard_shortcuts_enabled", com.atlassian.jira.plugin.webfragment.conditions.IsKeyboardShortcutsEnabledCondition.class);
         conditions.put("user_is_admin", com.atlassian.jira.plugin.webfragment.conditions.UserIsAdminCondition.class);
         conditions.put("is_admin_mode", com.atlassian.jira.plugin.webfragment.conditions.IsAdminModeCondition.class);
+
+        // issue conditions
+        conditions.put("can_convert_to_issue", CanConvertToIssueCondition.class);
+        conditions.put("is_issue_reported_by_current_user", com.atlassian.jira.plugin.webfragment.conditions.IsIssueReportedByCurrentUserCondition.class);
+        conditions.put("is_sub_task", com.atlassian.jira.plugin.webfragment.conditions.IsSubTaskCondition.class);
+        conditions.put("can_manage_attachments", com.atlassian.jira.plugin.webfragment.conditions.CanManageAttachmentsCondition.class);
+        conditions.put("is_issue_editable", com.atlassian.jira.plugin.webfragment.conditions.IsIssueEditableCondition.class);
+        conditions.put("is_issue_unresolved", com.atlassian.jira.plugin.webfragment.conditions.IsIssueUnresolvedCondition.class);
+        conditions.put("can_attach_file_to_issue", com.atlassian.jira.plugin.webfragment.conditions.CanAttachFileToIssueCondition.class);
+        conditions.put("has_voted_for_issue", com.atlassian.jira.plugin.webfragment.conditions.HasVotedForIssueCondition.class);
+        conditions.put("can_attach_screenshot_to_issue", com.atlassian.jira.plugin.webfragment.conditions.CanAttachScreenshotToIssueCondition.class);
+        conditions.put("is_issue_assigned_to_current_user", com.atlassian.jira.plugin.webfragment.conditions.IsIssueAssignedToCurrentUserCondition.class);
+        conditions.put("is_watching_issue", com.atlassian.jira.plugin.webfragment.conditions.IsWatchingIssueCondition.class);
+        conditions.put("has_sub_tasks_available", com.atlassian.jira.plugin.webfragment.conditions.HasSubTasksAvailableCondition.class);
+        conditions.put("can_convert_to_sub_task", com.atlassian.jira.plugin.webfragment.conditions.CanConvertToSubTaskCondition.class);
+
         return conditions;
     }
 }
