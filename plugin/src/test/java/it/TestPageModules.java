@@ -29,17 +29,17 @@ public class TestPageModules extends AbstractRemoteAppTest
         // basic tests of the HostHttpClient API
         assertEquals("200", remoteAppTest.getServerHttpStatus());
         String statusText = remoteAppTest.getServerHttpStatusText();
-        assertTrue("OK".equals(statusText) || "success".equals(statusText)); // differs by jquery version
+        assertTrue("OK".equals(statusText));
         String contentType = remoteAppTest.getServerHttpContentType();
-        assertTrue(contentType != null && contentType.startsWith("text/plain")); // startsWith accounts for possible encoding
+        assertTrue(contentType != null && contentType.startsWith("text/plain"));
         assertEquals("betty", remoteAppTest.getServerHttpEntity());
 
         // basic tests of the RA.request API
         assertEquals("200", remoteAppTest.getClientHttpStatus());
         statusText = remoteAppTest.getClientHttpStatusText();
-        assertTrue("OK".equals(statusText) || "success".equals(statusText)); // differs by jquery version
+        assertTrue("OK".equals(statusText) || "success".equals(statusText));
         contentType = remoteAppTest.getClientHttpContentType();
-        assertTrue(contentType != null && contentType.startsWith("text/plain")); // startsWith accounts for possible encoding
+        assertTrue(contentType != null && contentType.startsWith("text/plain"));
         assertEquals("betty", remoteAppTest.getClientHttpData());
         assertEquals("betty", remoteAppTest.getClientHttpResponseText());
     }

@@ -57,9 +57,9 @@ public class RemotePageDescriptorCreator
         return new Builder();
     }
 
-    public static URI createLocalUrl(String pluginKey, String pageKey)
+    public static URI createLocalUrl(String pluginKey, String pageUrl)
     {
-        return URI.create("/remoteapps/" + pluginKey + "/" + pageKey);
+        return URI.create("/remoteapps/" + pluginKey + (pageUrl.startsWith("/") ? "" : "/") + pageUrl);
     }
 
     public class Builder
