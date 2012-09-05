@@ -104,7 +104,7 @@ public class IssuePanelPageModuleDescriptor extends AbstractModuleDescriptor<Voi
 
                     return (T) new IFrameViewIssuePanel(
                             iFrameRenderer,
-                            new IFrameContext(getPluginKey(), url.toString(), moduleKey, iFrameParams), condition instanceof ContainingRemoteCondition);
+                            new IFrameContext(getPluginKey(), url, moduleKey, iFrameParams), condition instanceof ContainingRemoteCondition);
                 }
             }, webInterfaceManager);
 

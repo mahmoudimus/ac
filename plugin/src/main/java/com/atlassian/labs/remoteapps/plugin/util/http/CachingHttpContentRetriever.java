@@ -41,6 +41,7 @@ import org.springframework.beans.factory.DisposableBean;
 
 import java.io.IOException;
 import java.net.ProxySelector;
+import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -143,12 +144,12 @@ public class CachingHttpContentRetriever implements DisposableBean, HttpContentR
 
     @Override
     public Future<String> getAsync(final AuthorizationGenerator authorizationGenerator, final String remoteUsername,
-            final String url,
+            final URI url,
             final Map<String, String> parameters, final Map<String, String> headers,
             final HttpContentHandler handler, String moduleKey)
     {
         final long start = System.currentTimeMillis();
-        final String urlWithParams = new UriBuilder(Uri.parse(url)).addQueryParameters(parameters).toString();
+        final String urlWithParams = new UriBuilder(Uri.fromJavaUri(url)).addQueryParameters(parameters).toString();
         final HttpGet httpget = new HttpGet(urlWithParams);
         for (Map.Entry<String,String> entry : headers.entrySet())
         {

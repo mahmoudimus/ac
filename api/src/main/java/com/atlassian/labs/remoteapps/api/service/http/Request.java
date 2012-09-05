@@ -1,6 +1,7 @@
 package com.atlassian.labs.remoteapps.api.service.http;
 
 import java.io.InputStream;
+import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
@@ -14,7 +15,7 @@ public interface Request extends Message
      *
      * @return The URI or null if not yet set
      */
-    String getUri();
+    URI getUri();
 
     /**
      * Sets this request's URI.  Must not be null by the time the request is executed.
@@ -22,7 +23,7 @@ public interface Request extends Message
      * @param uri The URI
      * @return This object, for builder-style chaining
      */
-    Request setUri(String uri);
+    Request setUri(URI uri);
 
     /**
      * Returns this request's Accept header, if set.

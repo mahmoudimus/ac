@@ -44,12 +44,12 @@ public class LocalSignedRequestHandler extends AbstractOauthSignedRequestHandler
     }
 
     @Override
-    public String getAuthorizationHeaderValue(String uri, String method,
+    public String getAuthorizationHeaderValue(URI uri, String method,
             String username) throws IllegalArgumentException
     {
         Set<Request.Parameter> params = username != null ? ImmutableSet.of(new Request.Parameter("user_id", username))
                             : Collections.<Request.Parameter>emptySet();
-        Request request = new Request(Request.HttpMethod.valueOf(method), URI.create(uri), params);
+        Request request = new Request(Request.HttpMethod.valueOf(method), uri, params);
         URI dummyUri = URI.create("http://localhost");
         OAuthMessage message = OAuthHelper.asOAuthMessage(consumerService.sign(request,
                 new ServiceProvider(dummyUri, dummyUri, dummyUri)));

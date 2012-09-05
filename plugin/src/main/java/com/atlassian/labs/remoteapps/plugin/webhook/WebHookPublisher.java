@@ -21,6 +21,7 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.net.URI;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -57,12 +58,12 @@ public class WebHookPublisher implements DisposableBean
                                       new LinkedBlockingQueue<Runnable>(PUBLISH_QUEUE_SIZE));
     }
 
-    public void register(String pluginKey, String eventIdentifier, String path)
+    public void register(String pluginKey, String eventIdentifier, URI path)
     {
         registrationsByEvent.put(eventIdentifier, new Registration(pluginKey, path));
     }
 
-    public void unregister(String pluginKey, String eventIdentifier, String url)
+    public void unregister(String pluginKey, String eventIdentifier, URI url)
     {
         registrationsByEvent.remove(eventIdentifier, new Registration(pluginKey, url));
     }
@@ -138,8 +139,8 @@ public class WebHookPublisher implements DisposableBean
         @Override
         public void run()
         {
-            final String url = new UriBuilder(Uri.parse(registration.getUrl(remoteAppAccessor)))
-                .addQueryParameter("user_id", userName).toString();
+            final URI url = new UriBuilder(Uri.parse(registration.getUrl(remoteAppAccessor)))
+                .addQueryParameter("user_id", userName).toUri().toJavaUri();
             log.debug("Posting to web hook at " + url + "\n" + body);
             String authorization = remoteAppAccessor.getAuthorizationGenerator().generate(
                 "POST", url, Collections.<String, List<String>>emptyMap());
@@ -167,9 +168,9 @@ public class WebHookPublisher implements DisposableBean
     private static class Registration
     {
         private final String pluginKey;
-        private final String path;
+        private final URI path;
 
-        public Registration(String pluginKey, String path)
+        public Registration(String pluginKey, URI path)
         {
             this.pluginKey = pluginKey;
             this.path = path;
@@ -182,7 +183,7 @@ public class WebHookPublisher implements DisposableBean
 
         public String getUrl(RemoteAppAccessor remoteAppAccessor)
         {
-            return remoteAppAccessor.getDisplayUrl() + path;
+            return remoteAppAccessor.getDisplayUrl() + path.toString();
         }
 
         @Override

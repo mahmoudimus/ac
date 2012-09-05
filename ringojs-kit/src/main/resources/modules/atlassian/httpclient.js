@@ -39,6 +39,9 @@ var api = module.exports = {
             request.setHeader(name, headers[name]);
           });
         }
+        else if (k === "uri") {
+          request[k] = java.net.URI.create(options[k]);
+        }
         else if (k !== "method") {
           // @todo entity marshalling
           request[k] = options[k];

@@ -183,19 +183,19 @@ public class RemoteAppAccessorFactory implements DisposableBean
         }
 
         @Override
-        public String signGetUrl(String targetPath, Map<String, String[]> params)
+        public String signGetUrl(URI targetPath, Map<String, String[]> params)
         {
             return signGetUrlForType(serviceProvider, getTargetUrl(displayUrl, targetPath), params);
         }
 
         @Override
-        public String createGetUrl(String targetPath, Map<String, String[]> params)
+        public String createGetUrl(URI targetPath, Map<String, String[]> params)
         {
             return executeCreateGetUrl(getTargetUrl(displayUrl, targetPath), params);
         }
 
         @Override
-        public Future<String> executeAsyncGet(String username, String path, Map<String, String> params,
+        public Future<String> executeAsyncGet(String username, URI path, Map<String, String> params,
                 Map<String, String> headers, HttpContentHandler handler)
                 throws ContentRetrievalException
         {
@@ -216,12 +216,12 @@ public class RemoteAppAccessorFactory implements DisposableBean
         }
     }
 
-    private String executeCreateGetUrl(String targetUrl, Map<String, String[]> params)
+    private String executeCreateGetUrl(URI targetUrl, Map<String, String[]> params)
     {
-        return new UriBuilder(Uri.parse(targetUrl)).addQueryParameters(transformValues(params, MapFunctions.STRING_ARRAY_TO_STRING)).toString();
+        return new UriBuilder(Uri.fromJavaUri(targetUrl)).addQueryParameters(transformValues(params, MapFunctions.STRING_ARRAY_TO_STRING)).toString();
     }
 
-    private Future<String> executeAsyncGetForType(AuthorizationGenerator authorizationGenerator, String targetUrl, String username,
+    private Future<String> executeAsyncGetForType(AuthorizationGenerator authorizationGenerator, URI targetUrl, String username,
             Map<String, String> params, Map<String, String> headers, HttpContentHandler httpContentHandler, String pluginKey)
     {
         return httpContentRetriever.getAsync(authorizationGenerator, username, targetUrl,
@@ -229,9 +229,9 @@ public class RemoteAppAccessorFactory implements DisposableBean
             headers, httpContentHandler, pluginKey);
     }
 
-    private String signGetUrlForType(ServiceProvider serviceProvider, String targetUrl, Map<String, String[]> params) throws PermissionDeniedException
+    private String signGetUrlForType(ServiceProvider serviceProvider, URI targetUrl, Map<String, String[]> params) throws PermissionDeniedException
     {
-        final UriBuilder uriBuilder = new UriBuilder(Uri.parse(targetUrl));
+        final UriBuilder uriBuilder = new UriBuilder(Uri.fromJavaUri(targetUrl));
 
         // adding all the parameters of the signed request
         for (Map.Entry<String, String> param : signRequest(serviceProvider, targetUrl, params, HttpMethod.GET))
@@ -242,13 +242,13 @@ public class RemoteAppAccessorFactory implements DisposableBean
         return uriBuilder.toString();
     }
 
-    private String getTargetUrl(URI displayUrl, String targetPath)
+    private URI getTargetUrl(URI displayUrl, URI targetPath)
     {
-        return displayUrl + targetPath;
+        return URI.create(displayUrl.toString() + targetPath.getPath());
     }
 
     private List<Map.Entry<String, String>> signRequest(ServiceProvider serviceProvider,
-                                                        String url,
+                                                        URI url,
                                                         Map<String, String[]> queryParams,
                                                         String method
     )
@@ -285,7 +285,7 @@ public class RemoteAppAccessorFactory implements DisposableBean
         }
 
         @Override
-        public String generate(String method, String url, Map<String, List<String>> parameters)
+        public String generate(String method, URI url, Map<String, List<String>> parameters)
         {
             return oAuthLinkManager.generateAuthorizationHeader(method, serviceProvider, url,
                     parameters);

@@ -29,7 +29,7 @@ public class TestOAuth extends AbstractBrowserlessTest
         yc.setDoOutput(true);
         yc.setDoInput(true);
         yc.setRequestMethod("POST");
-        requestHandler.sign(url.toString(), "POST", null, yc);
+        requestHandler.sign(url.toURI(), "POST", null, yc);
         yc.getOutputStream().close();
         assertEquals(200, yc.getResponseCode());
 

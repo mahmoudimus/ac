@@ -17,6 +17,8 @@ import com.atlassian.util.concurrent.NotNull;
 import com.google.common.collect.ImmutableSet;
 import org.dom4j.Element;
 
+import java.net.URI;
+
 import static com.atlassian.labs.remoteapps.spi.util.Dom4jUtils.getRequiredAttribute;
 import static com.atlassian.labs.remoteapps.spi.util.Dom4jUtils.getRequiredUriAttribute;
 
@@ -29,7 +31,7 @@ public class JiraProfileTabModuleDescriptor extends AbstractModuleDescriptor<Voi
     private final JiraAuthenticationContext jiraAuthenticationContext;
     private final IFrameRenderer iFrameRenderer;
     private Element descriptor;
-    private String url;
+    private URI url;
 
     public JiraProfileTabModuleDescriptor(
             DynamicDescriptorRegistration dynamicDescriptorRegistration,
@@ -51,7 +53,7 @@ public class JiraProfileTabModuleDescriptor extends AbstractModuleDescriptor<Voi
     {
         super.init(plugin, element);
         this.descriptor = element;
-        this.url = getRequiredUriAttribute(element, "url").toString();
+        this.url = getRequiredUriAttribute(element, "url");
     }
 
     @Override
@@ -66,7 +68,7 @@ public class JiraProfileTabModuleDescriptor extends AbstractModuleDescriptor<Voi
     private ViewProfilePanelModuleDescriptor createProfilePanelDescriptor(
             final Element e,
             String key,
-            final String path
+            final URI path
     )
     {
         final String panelName = getRequiredAttribute(e, "name");

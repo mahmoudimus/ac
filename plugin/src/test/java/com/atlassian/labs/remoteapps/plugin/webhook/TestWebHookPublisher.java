@@ -45,7 +45,7 @@ public class TestWebHookPublisher
         initMocks(this);
         publisher = new WebHookPublisher(httpClient, eventPublisher,
                 mock(UserManager.class), remoteAppAccessorFactory);
-        when(authorizationGenerator.generate(anyString(), anyString(), anyMap())).thenReturn("test authorization");
+        when(authorizationGenerator.generate(anyString(), any(URI.class), anyMap())).thenReturn("test authorization");
         when(remoteAppAccessor.getDisplayUrl()).thenReturn(URI.create("http://localhost"));
         when(remoteAppAccessor.getKey()).thenReturn("foo");
         when(remoteAppAccessor.getAuthorizationGenerator()).thenReturn(authorizationGenerator);
@@ -61,7 +61,7 @@ public class TestWebHookPublisher
     @Test
     public void testPublishSuccess()
     {
-        publisher.register("foo", "event.id", "/event");
+        publisher.register("foo", "event.id", URI.create("/event"));
         publisher.publish("event.id",  EventMatcher.ALWAYS_TRUE, new MapEventSerializer("event_object",
                                                               Collections.<String, Object>singletonMap("field", "value")));
 
@@ -70,11 +70,11 @@ public class TestWebHookPublisher
     @Test
     public void testPublishFailureDueToMatching()
     {
-        publisher.register("foo", "event.id", "/event");
+        publisher.register("foo", "event.id", URI.create("/event"));
         publisher.publish("event.id", new FalseEventMatcher(), new MapEventSerializer("event_object",
                 Collections.<String, Object>singletonMap("field", "value")));
 
-        verify(httpClient, never()).newRequest(anyString(), anyString(), anyString());
+        verify(httpClient, never()).newRequest(any(URI.class), anyString(), anyString());
     }
 
     @Test
@@ -83,17 +83,17 @@ public class TestWebHookPublisher
         publisher.publish("event.id", EventMatcher.ALWAYS_TRUE, new MapEventSerializer("event_object",
                                                               Collections.<String, Object>singletonMap("field", "value")));
 
-        verify(httpClient, never()).newRequest(anyString(), anyString(), anyString());
+        verify(httpClient, never()).newRequest(any(URI.class), anyString(), anyString());
     }
 
     @Test
     public void testPublishToNoneWithRegistrations()
     {
-        publisher.register("foo", "event.other.id", "/event");
+        publisher.register("foo", "event.other.id", URI.create("/event"));
         publisher.publish("event.id", EventMatcher.ALWAYS_TRUE,  new MapEventSerializer("event_object",
                                                               Collections.<String, Object>singletonMap("field", "value")));
 
-        verify(httpClient, never()).newRequest(anyString(), anyString(), anyString());
+        verify(httpClient, never()).newRequest(any(URI.class), anyString(), anyString());
     }
 
     @Test
@@ -101,7 +101,7 @@ public class TestWebHookPublisher
     {
         publisher = new WebHookPublisher(new SleepingHttpClient(), eventPublisher,
                 mock(UserManager.class), remoteAppAccessorFactory);
-        publisher.register("foo", "event.id", "/event");
+        publisher.register("foo", "event.id", URI.create("/event"));
 
         for (int x=0; x<100 + 4; x++)
         {

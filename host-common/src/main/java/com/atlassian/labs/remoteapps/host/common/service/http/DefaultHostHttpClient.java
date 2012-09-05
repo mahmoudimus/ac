@@ -6,6 +6,7 @@ import com.atlassian.labs.remoteapps.api.service.http.ResponsePromise;
 import com.atlassian.labs.remoteapps.host.common.service.DefaultRequestContext;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.net.URLEncoder;
 import java.util.concurrent.Callable;
 
@@ -28,7 +29,7 @@ public class DefaultHostHttpClient extends AbstractHttpClient implements HostHtt
     protected ResponsePromise execute(DefaultRequest request)
     {
         // make sure this is a request for a relative url
-        if (request.getUri().matches("^[\\w]+:.*"))
+        if (request.getUri().toString().matches("^[\\w]+:.*"))
         {
             throw new IllegalStateException("Absolute request URIs are not supported for host requests");
         }
@@ -65,10 +66,10 @@ public class DefaultHostHttpClient extends AbstractHttpClient implements HostHtt
             }
         }
 
-        request.setUri(uriBuf.toString());
+        request.setUri(URI.create(uriBuf.toString()));
 
         String method = request.getMethod().toString();
-        String authHeader = signedRequestHandler.getAuthorizationHeaderValue(origUriStr, method, userId);
+        String authHeader = signedRequestHandler.getAuthorizationHeaderValue(URI.create(origUriStr), method, userId);
         request
             .setHeader("Authorization", authHeader)
             // capture request properties for analytics

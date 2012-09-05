@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,7 +47,7 @@ public class MyAdminServlet extends HttpServlet
     private void execHostHttpRequests(Map<String, Object> context)
         throws ServletException, IOException
     {
-        Response response = httpClient.newRequest("/rest/remoteapptest/1/user").get().claim();
+        Response response = httpClient.newRequest(URI.create("/rest/remoteapptest/1/user")).get().claim();
         context.put("httpGetStatus", response.getStatusCode());
         context.put("httpGetStatusText", response.getStatusText());
         context.put("httpGetContentType", response.getContentType());

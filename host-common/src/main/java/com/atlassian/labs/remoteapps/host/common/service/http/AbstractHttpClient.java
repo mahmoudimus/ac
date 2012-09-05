@@ -4,6 +4,8 @@ import com.atlassian.labs.remoteapps.api.service.http.HttpClient;
 import com.atlassian.labs.remoteapps.api.service.http.Request;
 import com.atlassian.labs.remoteapps.api.service.http.ResponsePromise;
 
+import java.net.URI;
+
 public abstract class AbstractHttpClient implements HttpClient
 {
     @Override
@@ -13,13 +15,13 @@ public abstract class AbstractHttpClient implements HttpClient
     }
 
     @Override
-    public Request newRequest(String uri)
+    public Request newRequest(URI uri)
     {
         return new DefaultRequest(this, uri);
     }
 
     @Override
-    public Request newRequest(String uri, String contentType, String entity)
+    public Request newRequest(URI uri, String contentType, String entity)
     {
         return new DefaultRequest(this, uri, contentType, entity);
     }

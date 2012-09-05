@@ -5,6 +5,8 @@ import com.atlassian.labs.remoteapps.api.service.http.HostHttpClient;
 import com.atlassian.labs.remoteapps.host.common.rest.RemoteEmail;
 import com.atlassian.mail.Email;
 
+import java.net.URI;
+
 import static com.atlassian.labs.remoteapps.container.util.JaxbJsonConverter.pojoToJson;
 
 /**
@@ -32,12 +34,12 @@ public class ContainerEmailSender implements EmailSender
         remoteEmail.setBodyAsHtml(bodyAsHtml);
         remoteEmail.setBodyAsText(bodyAsText);
         String body = pojoToJson(remoteEmail);
-        hostHttpClient.newRequest("/rest/remoteapps/latest/email", "application/json", body).post();
+        hostHttpClient.newRequest(URI.create("/rest/remoteapps/latest/email"), "application/json", body).post();
     }
 
     @Override
     public void flush()
     {
-        hostHttpClient.newRequest("/rest/remoteapps/latest/email/flush").get();
+        hostHttpClient.newRequest(URI.create("/rest/remoteapps/latest/email/flush")).get();
     }
 }

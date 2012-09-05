@@ -7,6 +7,7 @@ import com.atlassian.labs.remoteapps.plugin.util.contextparameter.RequestContext
 import com.atlassian.labs.remoteapps.plugin.util.contextparameter.RequestContextParameters;
 import com.atlassian.renderer.v2.macro.Macro;
 
+import java.net.URI;
 import java.util.Map;
 
 import static com.google.common.collect.Maps.newHashMap;
@@ -20,14 +21,14 @@ import static com.google.common.collect.Maps.newHashMap;
 public class MacroInstance
 {
     final ConversionContext conversionContext;
-    final String path;
+    final URI path;
     private final RequestContextParameters requestContextParameters;
     final RemoteAppAccessor remoteAppAccessor;
     final String body;
     final Map<String,String> parameters;
     final Map<String, String> allContextParameters;
 
-    public MacroInstance(ConversionContext conversionContext, String path, String body,
+    public MacroInstance(ConversionContext conversionContext, URI path, String body,
             Map<String, String> parameters,
             RequestContextParameterFactory requestContextParameterFactory,
             RemoteAppAccessor remoteAppAccessor)
@@ -51,7 +52,7 @@ public class MacroInstance
         return conversionContext.getEntity();
     }
 
-    public String getPath()
+    public URI getPath()
     {
         return path;
     }

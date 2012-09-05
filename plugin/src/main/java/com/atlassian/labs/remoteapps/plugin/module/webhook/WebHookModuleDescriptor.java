@@ -13,6 +13,8 @@ import com.atlassian.util.concurrent.NotNull;
 import com.google.common.collect.ImmutableMap;
 import org.dom4j.Element;
 
+import java.net.URI;
+
 import static com.atlassian.labs.remoteapps.spi.util.Dom4jUtils.getOptionalAttribute;
 import static com.atlassian.labs.remoteapps.spi.util.Dom4jUtils.getRequiredUriAttribute;
 
@@ -22,7 +24,7 @@ import static com.atlassian.labs.remoteapps.spi.util.Dom4jUtils.getRequiredUriAt
 public class WebHookModuleDescriptor extends AbstractModuleDescriptor<Void>
 {
     private String eventIdentifier;
-    private String url;
+    private URI url;
     private final WebHookPublisher webHookPublisher;
     private final StartableForPlugins startableForPlugins;
     private final ApplicationProperties applicationProperties;
@@ -51,7 +53,7 @@ public class WebHookModuleDescriptor extends AbstractModuleDescriptor<Void>
     {
         super.init(plugin, element);
         eventIdentifier = getOptionalAttribute(element, "event", getKey());
-        url = getRequiredUriAttribute(element, "url").toString();
+        url = getRequiredUriAttribute(element, "url");
 
 
     }

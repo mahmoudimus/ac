@@ -10,6 +10,7 @@ import com.atlassian.plugin.webresource.WebResourceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.URI;
 import java.util.Map;
 
 import static org.apache.commons.lang.StringEscapeUtils.escapeHtml;
@@ -27,7 +28,7 @@ the remote app to generate macro content that is:
 /*!-constructor and fields */
 public class StorageFormatMacro extends AbstractRemoteMacro
 {
-    private final String remoteUrl;
+    private final URI remoteUrl;
     private final MacroContentManager macroContentManager;
     private final RemoteAppAccessorFactory remoteAppAccessorFactory;
     private final WebResourceManager webResourceManager;

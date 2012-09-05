@@ -96,7 +96,7 @@ public class ProjectTabPageModuleDescriptor extends AbstractModuleDescriptor<Voi
                 {
 
                     return (T) new IFrameProjectTab(
-                            new IFrameContext(getPluginKey() , url.toString(), key, iFrameParams),
+                            new IFrameContext(getPluginKey() , url, key, iFrameParams),
                             iFrameRenderer, condition);
                 }
             });

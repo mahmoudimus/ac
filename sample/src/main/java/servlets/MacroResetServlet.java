@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 /**
@@ -34,7 +35,14 @@ public class MacroResetServlet extends HttpServlet
         URL url = new URL(baseUrl + "/rest/remoteapps/latest/macro/app/app1");
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("DELETE");
-        signedRequestHandler.sign(url.toString(), "DELETE", null, conn);
+        try
+        {
+            signedRequestHandler.sign(url.toURI(), "DELETE", null, conn);
+        }
+        catch (URISyntaxException e)
+        {
+            throw new RuntimeException(e);
+        }
         int code = conn.getResponseCode();
         System.out.println("Reset from " + baseUrl + " returned: " + code);
         resp.setStatus(code);

@@ -55,7 +55,7 @@ public class WebItemCreator
         private int preferredWeight;
         private String preferredSectionKey;
 
-        public WebItemModuleDescriptor build(Plugin plugin, String key, String localUrl, Element configurationElement)
+        public WebItemModuleDescriptor build(Plugin plugin, String key, URI localUrl, Element configurationElement)
         {
             notNull(condition);
             notNull(key);
@@ -74,9 +74,9 @@ public class WebItemCreator
             Element linkElement = config.addElement("link").
                     addAttribute("linkId", webItemKey);
 
-            if (!StringUtils.isBlank(localUrl))
+            if (localUrl != null)
             {
-                if (localUrl.contains("$"))
+                if (localUrl.toString().contains("$"))
                 {
                     throw new PluginParseException("Invalid url '" + localUrl + "', cannot contain velocity expressions");
                 }
@@ -84,7 +84,7 @@ public class WebItemCreator
                 StringBuilder url = new StringBuilder();
                 url.append("/plugins/servlet");
                 url.append(localUrl);
-                if (!localUrl.contains("?"))
+                if (localUrl.getQuery() == null)
                 {
                     url.append("?");
                 }

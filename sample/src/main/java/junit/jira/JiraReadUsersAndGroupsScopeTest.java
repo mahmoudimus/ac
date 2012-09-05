@@ -17,6 +17,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.util.Hashtable;
 
@@ -35,7 +36,7 @@ public class JiraReadUsersAndGroupsScopeTest
     public void testCall() throws Exception
     {
         JiraSoapServiceServiceLocator locator = new JiraSoapServiceServiceLocator();
-        String url = hostBaseUrl + "/rpc/soap/jirasoapservice-v2";
+        URI url = URI.create(hostBaseUrl + "/rpc/soap/jirasoapservice-v2");
         JiraSoapService service = locator.getJirasoapserviceV2(new URL(url + "?user_id=betty"));
 
         String authorization = signedRequestHandler.getAuthorizationHeaderValue(url, "POST", "betty");
@@ -48,7 +49,7 @@ public class JiraReadUsersAndGroupsScopeTest
     @Test
     public void testJsonCall() throws Exception
     {
-        String url = hostBaseUrl + "/rpc/json-rpc/jirasoapservice-v2";
+        URI url = URI.create(hostBaseUrl + "/rpc/json-rpc/jirasoapservice-v2");
         HttpURLConnection conn = (HttpURLConnection) new URL(url + "?user_id=betty").openConnection();
         conn.setDoOutput(true);
         conn.setDoInput(true);
@@ -77,7 +78,7 @@ public class JiraReadUsersAndGroupsScopeTest
     @Test
     public void testJsonLightCall() throws Exception
     {
-        String url = hostBaseUrl + "/rpc/json-rpc/jirasoapservice-v2/getUser";
+        URI url = URI.create(hostBaseUrl + "/rpc/json-rpc/jirasoapservice-v2/getUser");
         HttpURLConnection conn = (HttpURLConnection) new URL(url + "?user_id=betty").openConnection();
         conn.setDoOutput(true);
         conn.setDoInput(true);

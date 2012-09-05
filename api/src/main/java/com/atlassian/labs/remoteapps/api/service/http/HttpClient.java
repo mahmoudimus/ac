@@ -1,5 +1,7 @@
 package com.atlassian.labs.remoteapps.api.service.http;
 
+import java.net.URI;
+
 /**
  * A service providing asynchronous HTTP request creation and execution.
  *
@@ -24,7 +26,7 @@ public interface HttpClient
      * @param uri The endpoint URI for this request
      * @return The new request object
      */
-    Request newRequest(String uri);
+    Request newRequest(URI uri);
 
     /**
      * Constructs a new Request with the specified URI, contentType, and entity.  Sets the
@@ -37,5 +39,5 @@ public interface HttpClient
      * @param entity A string entity to send as this request's message body
      * @return The new request object
      */
-    Request newRequest(String uri, String contentType, String entity);
+    Request newRequest(URI uri, String contentType, String entity);
 }

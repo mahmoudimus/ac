@@ -16,6 +16,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.URI;
 import java.util.Collections;
 import java.util.Map;
 
@@ -30,7 +31,7 @@ import static java.util.Collections.emptyList;
 public class RemoteCondition implements Condition
 {
 
-    private String url;
+    private URI url;
     private String pluginKey;
     private String toHideSelector;
     private Iterable<String> contextParams;
@@ -59,7 +60,7 @@ public class RemoteCondition implements Condition
     @Override
     public void init(Map<String, String> params) throws PluginParseException
     {
-        url = params.get("url");
+        url = URI.create(params.get("url"));
         pluginKey = params.get("pluginKey");
         toHideSelector = params.get("toHideSelector");
         contextParams = emptyList();

@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.Map;
@@ -50,7 +51,7 @@ public class HttpUtils
         return writer.toString();
     }
 
-    public static String sendSignedGet(SignedRequestHandler signedRequestHandler, String uri, String user)
+    public static String sendSignedGet(SignedRequestHandler signedRequestHandler, URI uri, String user)
     {
         try
         {
@@ -81,7 +82,7 @@ public class HttpUtils
         }
     }
 
-    public static int sendFailedSignedGet(SignedRequestHandler signedRequestHandler, String uri, String user)
+    public static int sendFailedSignedGet(SignedRequestHandler signedRequestHandler, URI uri, String user)
     {
         HttpURLConnection yc = null;
         try

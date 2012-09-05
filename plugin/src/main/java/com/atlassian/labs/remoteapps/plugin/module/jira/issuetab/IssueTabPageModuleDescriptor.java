@@ -100,7 +100,7 @@ public class IssueTabPageModuleDescriptor extends AbstractModuleDescriptor<Void>
                 {
 
                     return (T) new IssueTabPage(
-                            new IFrameContext(getPluginKey() , url.toString(), moduleKey, iFrameParams),
+                            new IFrameContext(getPluginKey() , url, moduleKey, iFrameParams),
                             iFrameRenderer, condition);
                 }
             });

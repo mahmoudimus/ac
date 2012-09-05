@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,7 +33,7 @@ public class ContainerOAuthSignedRequestHandler extends AbstractOauthSignedReque
     }
 
     @Override
-    public String getAuthorizationHeaderValue(String uri, String method, final String username)
+    public String getAuthorizationHeaderValue(URI uri, String method, final String username)
             throws IllegalArgumentException
     {
         final OAuthConsumer local = getLocal();
@@ -52,7 +53,7 @@ public class ContainerOAuthSignedRequestHandler extends AbstractOauthSignedReque
                     put("user_id", username);
                 }
             }};
-            OAuthMessage oauthMessage = new OAuthMessage(method, uri, params.entrySet());
+            OAuthMessage oauthMessage = new OAuthMessage(method, uri.toString(), params.entrySet());
             oauthMessage.sign(new OAuthAccessor(local));
             return oauthMessage.getAuthorizationHeader(null);
         }

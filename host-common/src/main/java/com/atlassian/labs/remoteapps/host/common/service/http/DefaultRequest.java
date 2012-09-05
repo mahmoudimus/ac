@@ -3,6 +3,7 @@ package com.atlassian.labs.remoteapps.host.common.service.http;
 import com.atlassian.labs.remoteapps.api.service.http.*;
 
 import java.io.InputStream;
+import java.net.URI;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +17,7 @@ public class DefaultRequest extends DefaultMessage implements Request
 
     private AbstractHttpClient httpClient;
     private Method method;
-    private String uri;
+    private URI uri;
     private Map<String, String> attributes;
 
     public DefaultRequest(AbstractHttpClient httpClient)
@@ -26,12 +27,12 @@ public class DefaultRequest extends DefaultMessage implements Request
         setAccept("*/*");
     }
 
-    public DefaultRequest(AbstractHttpClient httpClient, String uri)
+    public DefaultRequest(AbstractHttpClient httpClient, URI uri)
     {
         this(httpClient, uri, null, null);
     }
 
-    public DefaultRequest(AbstractHttpClient httpClient, String uri, String contentType, String entity)
+    public DefaultRequest(AbstractHttpClient httpClient, URI uri, String contentType, String entity)
     {
         this(httpClient);
         setUri(uri).setContentType(contentType).setEntity(entity);
@@ -99,13 +100,13 @@ public class DefaultRequest extends DefaultMessage implements Request
     }
 
     @Override
-    public String getUri()
+    public URI getUri()
     {
         return uri;
     }
 
     @Override
-    public Request setUri(String uri)
+    public Request setUri(URI uri)
     {
         checkMutable();
         this.uri = uri;

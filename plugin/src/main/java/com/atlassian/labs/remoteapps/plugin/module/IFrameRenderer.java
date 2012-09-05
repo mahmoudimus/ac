@@ -23,6 +23,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.net.URI;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -105,12 +106,12 @@ public class IFrameRenderer
         RemoteAppAccessor remoteAppAccessor = remoteAppAccessorFactory.get(
                 iframeContext.getPluginKey());
 
-        final String hostUrl = iframeHost.getUrl();
-        final String iframeUrl = iframeContext.getIframePath() + ObjectUtils.toString(extraPath);
+        final URI hostUrl = iframeHost.getUrl();
+        final URI iframeUrl = URI.create(iframeContext.getIframePath().getPath() + ObjectUtils.toString(extraPath));
 
         Map<String,String[]> allParams = newHashMap(queryParams);
         allParams.put("user_id", new String[]{remoteUser});
-        allParams.put("xdm_e", new String[]{hostUrl});
+        allParams.put("xdm_e", new String[]{hostUrl.toString()});
         allParams.put("xdm_c", new String[]{"channel-" + iframeContext.getNamespace()});
         allParams.put("xdm_p", new String[]{"1"});
         String signedUrl = remoteAppAccessor.signGetUrl(iframeUrl, allParams);

@@ -20,6 +20,8 @@ import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.net.URI;
+
 import static com.atlassian.labs.remoteapps.spi.util.Dom4jUtils.getRequiredAttribute;
 import static com.atlassian.labs.remoteapps.spi.util.Dom4jUtils.getRequiredUriAttribute;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -55,9 +57,9 @@ public class RemotePageDescriptorCreator
         return new Builder();
     }
 
-    public static String createLocalUrl(String pluginKey, String pageKey)
+    public static URI createLocalUrl(String pluginKey, String pageKey)
     {
-        return "/remoteapps/" + pluginKey + "/" + pageKey;
+        return URI.create("/remoteapps/" + pluginKey + "/" + pageKey);
     }
 
     public class Builder
@@ -79,9 +81,9 @@ public class RemotePageDescriptorCreator
         {
             checkNotNull(decorator);
             String key = getRequiredAttribute(descriptor, "key");
-            final String url = getRequiredUriAttribute(descriptor, "url").toString();
+            final URI url = getRequiredUriAttribute(descriptor, "url");
 
-            String localUrl = createLocalUrl(plugin.getKey(), key);
+            URI localUrl = createLocalUrl(plugin.getKey(), key);
             WebItemModuleDescriptor webItemModuleDescriptor = webItemCreatorBuilder.build(plugin, key, localUrl, descriptor);
 
             return ImmutableSet.<ModuleDescriptor>of(
@@ -93,8 +95,8 @@ public class RemotePageDescriptorCreator
                 final Plugin plugin,
                 Element e,
                 String key,
-                final String path,
-                String localUrl
+                final URI path,
+                URI localUrl
         )
         {
             final String pageName = getRequiredAttribute(e, "name");

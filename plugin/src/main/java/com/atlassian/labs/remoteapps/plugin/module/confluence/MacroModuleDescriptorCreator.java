@@ -163,22 +163,11 @@ public class MacroModuleDescriptorCreator
         private Collection<ModuleDescriptor> createMacroEditorDescriptors(final Plugin plugin, Element config, String macroKey, String macroName)
         {
             Element macroEditor = config.element("macro-editor");
-            String originalUrl = macroEditor.attributeValue("url");
-            try
-            {
-                // Parse into a URI object to validate.
-                // NOTE: We could improve this by doing better validation at the XML schema level. This is easier, though :)
-                Uri.parse(originalUrl);
-            }
-            catch (Uri.UriException e)
-            {
-                String msg = String.format("Custom editor URL %s for macro %s is invalid.", originalUrl, macroKey);
-                throw new PluginParseException(msg, e);
-            }
+            URI originalUrl = getRequiredUriAttribute(macroEditor, "url");
 
             // Generate a servlet module descriptor that can redirect requests from the Confluence front-end to the Remote App,
             // performing the necessary authentication.
-            String localUrl = "/remoteapps/" + plugin.getKey() + "/" + macroKey + "-editor";
+            URI localUrl = URI.create("/remoteapps/" + plugin.getKey() + "/" + macroKey + "-editor");
             final ServletModuleDescriptor iFrameServlet = createMacroEditorServletDescriptor(plugin, macroEditor, macroKey, originalUrl, localUrl);
 
             // Generate a new web-resource module descriptor with the necessary JavaScript to configure the custom macro editor
@@ -206,14 +195,14 @@ public class MacroModuleDescriptorCreator
                 webItem.addAttribute("icon-url", macroConfig.attributeValue("icon-url"));
             }
 
-            return webItemCreatorBuilder.build(plugin, macroKey, "", webItem);
+            return webItemCreatorBuilder.build(plugin, macroKey, null, webItem);
         }
 
         private ServletModuleDescriptor createMacroEditorServletDescriptor(final Plugin plugin,
                 Element e,
                 final String key,
-                final String path,
-                String localUrl)
+                final URI path,
+                URI localUrl)
         {
             final String moduleKey = "servlet-" + key;
             Element config = e.createCopy()
@@ -243,7 +232,7 @@ public class MacroModuleDescriptorCreator
 
         private ModuleDescriptor createCustomEditorWebResource(Plugin plugin,
                 Element macroEditorConfig, String macroKey, String macroName,
-                String customEditorLocalUrl)
+                URI customEditorLocalUrl)
         {
             Element webResource = DocumentHelper.createDocument()
                     .addElement("web-resource")
@@ -343,7 +332,7 @@ public class MacroModuleDescriptorCreator
                 public <T> T createModule(String name, ModuleDescriptor<T> moduleDescriptor) throws PluginParseException
                 {
                     RemoteMacroInfo macroInfo = new RemoteMacroInfo(originalEntity, plugin.getKey(), bodyType,
-                            outputType, requestContextParameterFactory, url.getPath());
+                            outputType, requestContextParameterFactory, url);
                     RemoteMacro macro = macroFactory.create(macroInfo);
                     if (placeholder != null && Macro.BodyType.NONE.equals(bodyType))
                     {

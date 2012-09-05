@@ -5,6 +5,8 @@ import com.atlassian.sal.api.ApplicationProperties;
 
 import javax.servlet.http.HttpServletRequest;
 
+import java.net.URI;
+
 import static com.google.common.base.Preconditions.*;
 
 public final class ServletContextThreadLocalIFrameHost extends AbstractIFrameHost
@@ -33,12 +35,12 @@ public final class ServletContextThreadLocalIFrameHost extends AbstractIFrameHos
     }
 
     @Override
-    String extractUrl()
+    public URI getUrl()
     {
         final HttpServletRequest request = ServletContextThreadLocal.getRequest();
         if (request != null)
         {
-            return request.getRequestURL().toString();
+            return createEasyXdmHost(URI.create(request.getRequestURL().toString()));
         }
         return fallback.getUrl();
     }

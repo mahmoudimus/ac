@@ -1,5 +1,6 @@
 package com.atlassian.labs.remoteapps.plugin.util.http;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
@@ -8,5 +9,5 @@ import java.util.Map;
  */
 public interface AuthorizationGenerator
 {
-    String generate(String method, String url, Map<String,List<String>> parameters);
+    String generate(String method, URI url, Map<String,List<String>> parameters);
 }

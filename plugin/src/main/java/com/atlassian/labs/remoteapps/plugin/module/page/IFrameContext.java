@@ -2,16 +2,18 @@ package com.atlassian.labs.remoteapps.plugin.module.page;
 
 import com.atlassian.labs.remoteapps.plugin.module.IFrameParams;
 
+import java.net.URI;
+
 public class IFrameContext
 {
-    private final String iframePath;
+    private final URI iframePath;
 
     private final String namespace;
     private final IFrameParams iframeParams;
     private final String pluginKey;
 
     public IFrameContext(String pluginKey,
-                         String iframePath,
+                         URI iframePath,
                          String namespace,
                          IFrameParams iframeParams
     )
@@ -30,7 +32,7 @@ public class IFrameContext
              iframeContext.getIFrameParams());
     }
 
-    public String getIframePath()
+    public URI getIframePath()
     {
         return iframePath;
     }

@@ -22,8 +22,8 @@ public final class ApplicationPropertiesIFrameHost extends AbstractIFrameHost
     }
 
     @Override
-    String extractUrl()
+    public URI getUrl()
     {
-        return applicationProperties.getBaseUrl();
+        return createEasyXdmHost(URI.create(applicationProperties.getBaseUrl()));
     }
 }

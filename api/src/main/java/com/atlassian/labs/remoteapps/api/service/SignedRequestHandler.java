@@ -3,6 +3,7 @@ package com.atlassian.labs.remoteapps.api.service;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import java.net.HttpURLConnection;
+import java.net.URI;
 
 /**
  * Signs and validates requests.  Also provides access to base urls.
@@ -15,8 +16,8 @@ public interface SignedRequestHandler
 
     String validateRequest(HttpServletRequest req) throws ServletException;
 
-    void sign(String uri, String method, String username, HttpURLConnection yc);
+    void sign(URI uri, String method, String username, HttpURLConnection yc);
 
-    String getAuthorizationHeaderValue(String uri, String method, String username)
+    String getAuthorizationHeaderValue(URI uri, String method, String username)
             throws IllegalArgumentException;
 }

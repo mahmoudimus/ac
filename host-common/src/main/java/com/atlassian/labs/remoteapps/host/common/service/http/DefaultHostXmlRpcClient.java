@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.reflect.Proxy;
+import java.net.URI;
 import java.util.Vector;
 import java.util.concurrent.ExecutionException;
 
@@ -31,7 +32,7 @@ import java.util.concurrent.ExecutionException;
  */
 public class DefaultHostXmlRpcClient implements HostXmlRpcClient
 {
-    private final static String serverXmlRpcPath = "/rpc/xmlrpc";
+    private final static URI serverXmlRpcPath = URI.create("/rpc/xmlrpc");
 
     private final XmlRpcSerializer serializer = new XmlRpcSerializer();
 

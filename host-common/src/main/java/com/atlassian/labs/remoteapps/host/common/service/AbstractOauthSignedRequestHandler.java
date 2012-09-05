@@ -139,13 +139,13 @@ public abstract class AbstractOauthSignedRequestHandler
         log.debug(sb.toString());
     }
 
-    public void sign(String uri, String method, String username, HttpURLConnection yc)
+    public void sign(URI uri, String method, String username, HttpURLConnection yc)
     {
         String authorization = getAuthorizationHeaderValue(uri, method, username);
         yc.setRequestProperty("Authorization", authorization);
     }
 
-    protected abstract String getAuthorizationHeaderValue(String uri, String method, String username);
+    protected abstract String getAuthorizationHeaderValue(URI uri, String method, String username);
 
     protected abstract String getLocalBaseUrl();
 

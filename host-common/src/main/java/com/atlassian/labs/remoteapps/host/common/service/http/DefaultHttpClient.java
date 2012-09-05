@@ -139,7 +139,7 @@ public class DefaultHttpClient extends AbstractHttpClient implements HttpClient,
 
         final long start = System.currentTimeMillis();
         final HttpRequestBase op;
-        final String uri = request.getUri();
+        final String uri = request.getUri().toString();
         DefaultRequest.Method method = request.getMethod();
         switch (method)
         {

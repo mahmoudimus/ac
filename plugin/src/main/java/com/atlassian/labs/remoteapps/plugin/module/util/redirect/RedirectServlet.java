@@ -122,7 +122,7 @@ public class RedirectServlet extends HttpServlet
     private String getFullUrl(RemoteAppAccessor remoteAppAccessor, String appRelativeUrl, Map<String,String[]> params)
     {
         Uri targetUrl = Uri.parse(appRelativeUrl);
-        return remoteAppAccessor.createGetUrl(targetUrl.getPath(), params);
+        return remoteAppAccessor.createGetUrl(targetUrl.toJavaUri(), params);
     }
 
     private String getFullSignedUrl(RemoteAppAccessor remoteAppAccessor, String appRelativeUrl,
@@ -142,7 +142,7 @@ public class RedirectServlet extends HttpServlet
                         return strings.toArray(new String[strings.size()]);
                     }
                 }));
-        return remoteAppAccessor.signGetUrl(targetUrl.getPath(), params);
+        return remoteAppAccessor.signGetUrl(targetUrl.toJavaUri(), params);
     }
 
     private static enum RedirectType

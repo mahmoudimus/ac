@@ -147,10 +147,11 @@ public class OAuthLinkManager
 
     public String generateAuthorizationHeader(String method,
                                               ServiceProvider serviceProvider,
-                                              String url,
+                                              URI url,
                                               Map<String, List<String>> originalParams
     )
     {
+        notNull(url);
         OAuthMessage message = sign(serviceProvider, method, url, originalParams);
         try
         {
@@ -164,7 +165,7 @@ public class OAuthLinkManager
 
     public List<Map.Entry<String, String>> signAsParameters(ServiceProvider serviceProvider,
                                                             String method,
-                                                            String url,
+                                                            URI url,
                                                             Map<String, List<String>> originalParams
     )
     {
@@ -196,11 +197,12 @@ public class OAuthLinkManager
 
     private OAuthMessage sign(ServiceProvider serviceProvider,
                               String method,
-                              String url,
+                              URI url,
                               Map<String, List<String>> originalParams
     )
     {
         notNull(serviceProvider);
+        notNull(url);
         Map<String, List<String>> params = newHashMap(originalParams);
         Consumer self = consumerService.getConsumer();
         params.put(OAuth.OAUTH_CONSUMER_KEY, singletonList(self.getKey()));
@@ -208,7 +210,7 @@ public class OAuthLinkManager
         {
             dumpParamsToSign(params);
         }
-        Request oAuthRequest = new Request(Request.HttpMethod.valueOf(method), URI.create(url),
+        Request oAuthRequest = new Request(Request.HttpMethod.valueOf(method), url,
                 convertParameters(params));
         final Request signedRequest = consumerService.sign(oAuthRequest, serviceProvider);
         return OAuthHelper.asOAuthMessage(signedRequest);
