@@ -1,6 +1,7 @@
 package com.atlassian.labs.remoteapps.host.common.service.http;
 
 import com.atlassian.labs.remoteapps.api.service.http.HostHttpClient;
+import com.atlassian.labs.remoteapps.host.common.service.TypedServiceFactory;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.ServiceFactory;
 import org.osgi.framework.ServiceRegistration;
@@ -10,13 +11,13 @@ import java.lang.reflect.InvocationTargetException;
 /**
  * Generic service factory for classes that only need {@link HostHttpClient}
  */
-public class HostHttpClientConsumerServiceFactory implements ServiceFactory
+public class HostHttpClientConsumerServiceFactory<T> implements TypedServiceFactory<T>
 {
     private final HostHttpClientServiceFactory hostHttpClientServiceFactory;
-    private final Class<?> serviceClass;
+    private final Class<? extends T> serviceClass;
 
     public HostHttpClientConsumerServiceFactory(
-            HostHttpClientServiceFactory hostHttpClientServiceFactory, Class<?> serviceClass)
+            HostHttpClientServiceFactory hostHttpClientServiceFactory, Class<? extends T> serviceClass)
     {
         this.hostHttpClientServiceFactory = hostHttpClientServiceFactory;
         this.serviceClass = serviceClass;
@@ -25,9 +26,14 @@ public class HostHttpClientConsumerServiceFactory implements ServiceFactory
     @Override
     public Object getService(Bundle bundle, ServiceRegistration registration)
     {
+        return getService(bundle);
+    }
+
+    public T getService(Bundle bundle)
+    {
         try
         {
-            return serviceClass.getConstructor(HostHttpClient.class).newInstance(hostHttpClientServiceFactory.getService(bundle));
+            return (T) serviceClass.getConstructor(HostHttpClient.class).newInstance(hostHttpClientServiceFactory.getService(bundle));
         }
         catch (InstantiationException e)
         {

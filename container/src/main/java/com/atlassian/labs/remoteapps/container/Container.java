@@ -2,6 +2,8 @@ package com.atlassian.labs.remoteapps.container;
 
 import com.atlassian.activeobjects.spi.DataSourceProvider;
 import com.atlassian.event.api.EventPublisher;
+import com.atlassian.jira.rest.client.p3.*;
+import com.atlassian.jira.rest.client.p3.internal.*;
 import com.atlassian.labs.remoteapps.api.service.EmailSender;
 import com.atlassian.labs.remoteapps.api.service.http.HostXmlRpcClient;
 import com.atlassian.labs.remoteapps.api.service.http.HttpClient;
@@ -24,6 +26,7 @@ import com.atlassian.labs.remoteapps.container.service.ContainerHttpResourceMoun
 import com.atlassian.labs.remoteapps.container.service.OAuthSignedRequestHandlerServiceFactory;
 import com.atlassian.labs.remoteapps.container.service.event.RemoteAppsEventPublisher;
 import com.atlassian.labs.remoteapps.container.util.ZipWriter;
+import com.atlassian.labs.remoteapps.host.common.service.jira.*;
 import com.atlassian.plugin.DefaultModuleDescriptorFactory;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.PluginController;
@@ -117,6 +120,8 @@ public final class Container
         scannerConfig.setPackageIncludes(ImmutableList.<String>builder()
                 .addAll(scannedPackageIncludes)
                 .add("com.atlassian.activeobjects.spi*")
+                .add("com.atlassian.jira.rest.client.p3")
+                .add("com.atlassian.jira.rest.client.domain")
                 .add("com.atlassian.event.api*")
                 .add("com.atlassian.plugin*")
                 .add("com.atlassian.sal*")
@@ -261,14 +266,25 @@ public final class Container
         hostComponents.put(RequestContext.class, requestContextServiceFactory);
         hostComponents.put(HttpClient.class, httpClient);
         hostComponents.put(HostHttpClient.class, hostHttpClientServiceFactory);
-        hostComponents.put(HostXmlRpcClient.class, new HostHttpClientConsumerServiceFactory(hostHttpClientServiceFactory, DefaultHostXmlRpcClient.class));
-        hostComponents.put(EmailSender.class, new HostHttpClientConsumerServiceFactory(hostHttpClientServiceFactory, ContainerEmailSender.class));
+        hostComponents.put(HostXmlRpcClient.class, new HostHttpClientConsumerServiceFactory<HostXmlRpcClient>(hostHttpClientServiceFactory, DefaultHostXmlRpcClient.class));
+        hostComponents.put(EmailSender.class, new HostHttpClientConsumerServiceFactory<EmailSender>(hostHttpClientServiceFactory, ContainerEmailSender.class));
         hostComponents.put(LocaleResolver.class, new ContainerLocaleResolver());
         hostComponents.put(I18nResolver.class, new ContainerI18nResolver(pluginManager, pluginEventManager, new ResourceBundleResolverImpl()));
         hostComponents.put(WebResourceManager.class, new NoOpWebResourceManager());
 
         hostComponents.put(DataSourceProvider.class, new RemoteAppsDataSourceProviderServiceFactory(applicationPropertiesServiceFactory));
         hostComponents.put(TransactionTemplate.class, new NoOpTransactionTemplate());
+
+        // jira services
+        hostComponents.put(JiraComponentClient.class, new JiraComponentClientServiceFactory(hostHttpClientServiceFactory));
+        hostComponents.put(JiraProjectClient.class, new JiraProjectClientServiceFactory(hostHttpClientServiceFactory));
+        hostComponents.put(JiraVersionClient.class, new JiraVersionClientServiceFactory(hostHttpClientServiceFactory));
+
+        JiraMetadataClientServiceFactory metadataFactory = new JiraMetadataClientServiceFactory(hostHttpClientServiceFactory);
+        hostComponents.put(JiraMetadataClient.class, metadataFactory);
+        hostComponents.put(JiraIssueClient.class, new JiraIssueClientServiceFactory(hostHttpClientServiceFactory, requestContextServiceFactory, metadataFactory));
+        hostComponents.put(JiraSearchClient.class, new JiraSearchClientServiceFactory(hostHttpClientServiceFactory));
+        hostComponents.put(JiraUserClient.class, new JiraUserClientServiceFactory(hostHttpClientServiceFactory));
     }
 
     private String getVersionFromMavenMetadata(String groupId, String artifactId, String defaultValue)

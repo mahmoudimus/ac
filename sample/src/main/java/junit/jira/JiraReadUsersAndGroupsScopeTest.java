@@ -1,5 +1,7 @@
 package junit.jira;
 
+import com.atlassian.jira.rest.client.domain.User;
+import com.atlassian.jira.rest.client.p3.JiraUserClient;
 import com.atlassian.jira.rpc.soap.client.JiraSoapService;
 import com.atlassian.jira.rpc.soap.client.JiraSoapServiceServiceLocator;
 import com.atlassian.jira.rpc.soap.client.RemoteUser;
@@ -20,9 +22,13 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 import java.util.Hashtable;
+import java.util.concurrent.Callable;
 
 import static java.util.Collections.singletonMap;
+import static junit.ClientKeyRetriever.getClientKey;
 import static org.junit.Assert.assertEquals;
+import static services.ServiceAccessor.getHostHttpClient;
+import static services.ServiceAccessor.getService;
 
 /**
  *
@@ -97,5 +103,19 @@ public class JiraReadUsersAndGroupsScopeTest
         JSONObject result = new JSONObject(new JSONTokener(IOUtils.toString(conn.getInputStream())));
         System.out.println("response: " + result.toString(2));
         assertEquals("betty", result.getString("name"));
+    }
+
+    @Test
+    public void testCallWithClient() throws Exception
+    {
+        User user = getHostHttpClient().callAs(getClientKey(), "betty", new Callable<User>()
+        {
+            @Override
+            public User call() throws Exception
+            {
+                return getService(JiraUserClient.class).getUser("betty").claim();
+            }
+        });
+        assertEquals("betty", user.getName());
     }
 }

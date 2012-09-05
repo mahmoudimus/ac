@@ -6,6 +6,7 @@ import com.atlassian.labs.remoteapps.api.service.EmailSender;
 import com.atlassian.labs.remoteapps.api.service.SignedRequestHandler;
 import com.atlassian.labs.remoteapps.api.service.http.HostHttpClient;
 import com.atlassian.labs.remoteapps.api.service.http.HostXmlRpcClient;
+import org.osgi.framework.BundleContext;
 import servlets.SendEmailServlet;
 
 import javax.inject.Inject;
@@ -19,6 +20,7 @@ public class ServiceAccessor
     private static HostHttpClient hostHttpClient;
     private static SendEmailServlet sendEmailServlet;
     private static EmailSender emailSender;
+    private static BundleContext bundleContext;
 
     @Inject
     public ServiceAccessor(
@@ -26,8 +28,10 @@ public class ServiceAccessor
             @ServiceReference HostXmlRpcClient hostXmlRpcClient,
             @ServiceReference HostHttpClient hostHttpClient,
             SendEmailServlet sendEmailServlet,
-            @ServiceReference EmailSender emailSender)
+            @ServiceReference EmailSender emailSender,
+            BundleContext bundleContext)
     {
+        ServiceAccessor.bundleContext = bundleContext;
         ServiceAccessor.signedRequestHandler = signedRequestHandler;
         ServiceAccessor.hostXmlRpcClient = hostXmlRpcClient;
         ServiceAccessor.hostHttpClient = hostHttpClient;
@@ -58,5 +62,10 @@ public class ServiceAccessor
     public static EmailSender getEmailSender()
     {
         return emailSender;
+    }
+
+    public static <T> T getService(Class<T> serviceClass)
+    {
+        return (T) bundleContext.getService(bundleContext.getServiceReference(serviceClass.getName()));
     }
 }
