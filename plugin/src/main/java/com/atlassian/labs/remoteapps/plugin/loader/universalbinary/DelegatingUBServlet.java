@@ -22,12 +22,14 @@ import java.util.Enumeration;
 public class DelegatingUBServlet extends HttpServlet
 {
     private final HttpServlet servlet;
+    private String mountPath;
     private final ClassLoader classLoader;
 
-    public DelegatingUBServlet(HttpServlet servlet, ClassLoader classLoader)
+    public DelegatingUBServlet(HttpServlet servlet, ClassLoader classLoader, String mountPath)
     {
         this.classLoader = classLoader;
         this.servlet = servlet;
+        this.mountPath = mountPath;
     }
 
     @Override
@@ -36,7 +38,9 @@ public class DelegatingUBServlet extends HttpServlet
         ClassLoaderStack.push(classLoader);
         try
         {
-            servlet.service(new UBHttpRequestWrapper(req, ((UBServletContextWrapper)servlet.getServletContext()).getContextPath()), res);
+            String contextPath = ((UBServletContextWrapper)servlet.getServletContext()).getContextPath();
+            UBHttpRequestWrapper wrapper = new UBHttpRequestWrapper(req, contextPath, mountPath);
+            servlet.service(wrapper, res);
         }
         finally
         {

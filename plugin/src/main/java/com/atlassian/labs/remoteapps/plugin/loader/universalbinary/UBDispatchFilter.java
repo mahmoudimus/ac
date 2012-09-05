@@ -84,7 +84,7 @@ public class UBDispatchFilter implements DisposableBean, Filter
         DispatcherEntry servletEntry = new DispatcherEntry();
         servletEntry.appKey = appKey;
 
-        servletEntry.dispatcher = new DelegatingUBServlet(httpServlet, cl);
+        servletEntry.dispatcher = new DelegatingUBServlet(httpServlet, cl, urlPatterns[0]);
         servletEntry.paths = urlPatterns;
         servlets.put(servletEntry.key, servletEntry);
 
@@ -122,7 +122,9 @@ public class UBDispatchFilter implements DisposableBean, Filter
         DispatcherEntry<HttpServlet> entry = new DispatcherEntry<HttpServlet>();
         entry.dispatcher = new DelegatingUBServlet(
                 new StaticResourceServlet(plugin, resourcePrefix),
-                cl);
+                cl,
+                resourcePrefix
+            );
         entry.appKey = appKey;
         servletPathMapper.put(appKey, getLocalMountBasePath(appKey) + urlPattern);
         servlets.put(appKey, entry);
@@ -216,8 +218,6 @@ public class UBDispatchFilter implements DisposableBean, Filter
         });
         IteratingFilterChain localFilterChain = new IteratingFilterChain(filterList.iterator(), chain);
         localFilterChain.doFilter(request, response);
-
-
     }
 
     private Filter getFilter(String filterKey) throws ServletException

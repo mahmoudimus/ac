@@ -1,16 +1,17 @@
 (function (global) {
   var doc = global.document,
-    RA = global.RA = {},
-    rpc,
-    dialogHandlers = {},
-    isInited;
+      appDoc = doc,
+      RA = global.RA = {},
+      rpc,
+      dialogHandlers = {},
+      isInited;
 
   // universal iterator utility
   function each(o, it) {
     var l, k;
     if (o) {
       l = o.length;
-      if (l > 0) {
+      if (l != null) {
         k = 0;
         while (k < l) {
           if (it.call(o[k], k, o[k]) === false) break;
@@ -27,7 +28,7 @@
     }
   }
 
-  // simple mixin util; if last arg is a fn, only
+  // simple mixin util
   function extend(dest) {
     var args = arguments,
         end = args.length,
@@ -60,24 +61,13 @@
     }
   }
 
-  // simple onload
-  var isLoaded;
-  function onload(fn) {
-    if (isLoaded) {
-      fn();
-    }
-    else {
-      bind(global, "load", fn);
-    }
-  }
-  onload(function () { isLoaded = true; });
-
   // basic dom util
-  function $(sel) {
+  function $(sel, context) {
+    context = context || appDoc;
     var els = [];
     if (sel) {
       if (typeof sel === "string") {
-        var results = doc.querySelectorAll(sel);
+        var results = context.querySelectorAll(sel);
         each(results, function (i, v) { els.push(v); });
       }
       else if (sel.nodeType === 1) {
@@ -88,14 +78,14 @@
       each: function (it) { each(this, it); },
       append: function (spec) {
         this.each(function (i, to) {
-          var el = doc.createElement(spec.tag);
+          var el = context.createElement(spec.tag);
           each(spec, function (k, v) {
             if (k === "$text") {
               if(el.styleSheet) { // style tags in ie
                 el.styleSheet.cssText = v;
               }
               else {
-                el.appendChild(doc.createTextNode(v));
+                el.appendChild(context.createTextNode(v));
               }
             }
             else if (k !== "tag") {
@@ -107,6 +97,23 @@
       }
     });
     return els;
+  }
+
+  // a simplified version of underscore's debounce
+  function debounce(fn, wait) {
+    var timeout;
+    return function() {
+      var ctx = this,
+        args = [].slice.call(arguments);
+      function later() {
+        timeout = null;
+        fn.apply(ctx, args);
+      }
+      if (timeout) {
+        clearTimeout(timeout);
+      }
+      timeout = setTimeout(later, wait || 50);
+    };
   }
 
   // internal maker that converts bridged xhr data into an xhr-like object
@@ -144,89 +151,93 @@
     });
   }
 
-  // attempts to make the RA doc conform to the host app, accepting the following options to RA.init:
-  //
-  // @options
-  //   @value base    set to false to disable base tag injection
-  //   @value css     set to false to disable css property injection
-  //   @value xcss    blacklist regex of css property names to omit during css injection
-  //   @value resize  set to false to disable automatic invocation of RA.resize
-  function makeSeamless(options) {
-    injectBase(options);
-    injectCss(options, resize);
-  }
-
   function injectBase(options) {
     if (options.base !== false) {
       // set the url base
-      rpc.getLocation(function (loc) {
+      RA.getLocation(function (loc) {
         $("head").append({tag: "base", href: loc, target: "_parent"});
       });
     }
   }
 
-  function injectCss(options, next) {
-    if (options.css !== false) {
-      rpc.getStylesheet(function (rules) {
-        var stylesheet = makeStylesheet(rules, options.xcss);
-        $("head").append({tag: "style", type: "text/css", $text: stylesheet});
-        next(options);
-      });
-    }
-    else {
-      next(options);
-    }
+  function size(width, height) {
+    var w = width == null ? "100%" : width,
+      max = Math.max,
+      body = appDoc.body,
+      del = appDoc.documentElement,
+      scroll = "scrollHeight",
+      offset = "offsetHeight",
+      client = "clientHeight",
+      dh = max(del[client], body[scroll], del[scroll], body[offset], del[offset]),
+      h = height == null ? dh : height;
+    return {w: w, h: h};
   }
 
-  function makeStylesheet(rules, xcss) {
-    var filter, defaults = {
-      "background-color": "transparent",
-      "margin": "0",
-      "padding": "0"
-    };
-    if (xcss) {
-      filter = function (k, v) {
-        return v != null && !xcss.test(k);
-      }
+  function initNormal(options) {
+    if (options.document) {
+      appDoc = options.document;
     }
-    var text = "";
-    each(rules, function (i, rule) {
-      text += rule.selector + " {";
-      var props = rule.properties;
-      props = extend({}, defaults, props, filter);
-      each(props, function (k, v) {
-        text += k + ":" + v + ";";
-      });
-      text += "}\n";
-    });
-    return text;
-  }
-
-  function resize(options) {
+    var config = {};
+    // init stubs for private bridge functions
+    var stubs = {/* private repc stubs here */};
+    // add stubs for each public api
+    each(api, function (method) { stubs[method] = {}; });
+    rpc = new easyXDM.Rpc(config, {remote: stubs, local: internal});
+    rpc.init();
+    // integrate the iframe with the host document
+    if (options.base !== false) {
+      // inject an appropriate base tag
+      injectBase(options);
+    }
     if (options.resize !== false) {
-      // set the initial iframe size on window load
-      onload(function () { RA.resize(); });
+      // resize the parent iframe for the size of this document on load
+      bind(options.window || global, "load", function () { RA.resize(); });
     }
+  }
+
+  function initBridge() {
+    var sup = RA.resize;
+    // on resize, resize frame in this doc then prop to parent
+    RA.resize = debounce(function (w, h) {
+      $("iframe", doc).each(function (i, iframe) {
+        var dim = size(w, h);
+        w = dim.w;
+        h = dim.h;
+        iframe.width = typeof w === "number" ? w + "px" : w;
+        iframe.height = typeof h === "number" ? h + "px" : h;
+      });
+      sup.call(RA, w, h);
+    }, 50);
+  }
+
+  function initBridged(options) {
+    RA = global.RA = parent.RA;
+    options = extend({}, options, {
+      window: global,
+      document: doc,
+      base: false
+    });
+    RA.init(options);
   }
 
   var api = {
 
     // inits the remote app on iframe content load
     init: function (options) {
-      if (!isInited) {
-        isInited = true;
-        options = options || {};
-        // create the rpc bridge
-        var config = {};
-        // init stubs for private methods
-        var stubs = {getStylesheet: {}};
-        // add stubs for each public api
-        each(api, function (method) { stubs[method] = {}; });
-        // create and init the rpc bridge
-        rpc = new easyXDM.Rpc(config, {remote: stubs, local: internal});
-        rpc.init();
-        // integrate the iframe with its parent document
-        makeSeamless(options);
+      options = options || {};
+      var isBridged;
+      try { isBridged = !!parent.RA; } catch (ignore) { }
+      if (isBridged) {
+        initBridged(options);
+      }
+      else if (!isInited) {
+        if (options === "bridge") {
+          initBridge();
+        }
+        else {
+          initNormal(options);
+          isInited = true;
+        }
       }
     },
 
@@ -265,16 +276,8 @@
     // @param width   the desired width
     // @param height  the desired height
     resize: function (width, height) {
-      var w = width == null ? "100%" : width,
-          max = Math.max,
-          body = $("body")[0],
-          docEl = doc.documentElement,
-          scroll = "scrollHeight",
-          offset = "offsetHeight",
-          client = "clientHeight",
-          dh = max(max(body[scroll], docEl[scroll]), max(body[offset], docEl[offset]), max(body[client], docEl[client])),
-          h = height == null ? dh : height;
-      rpc.resize(w, h);
+      var dim = size(width, height);
+      rpc.resize(dim.w, dim.h);
     },
 
     // execute an XMLHttpRequest in the context of the host application

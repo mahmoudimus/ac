@@ -25,9 +25,18 @@ module.exports = function () {
       };
       methods.forEach(function (method) {
         app[method] = function (pattern, handler) {
+          var params = [];
+          pattern = pattern
+            .replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&")
+            .replace(/\/\\\*$/g, "(/.*|$)")
+            .replace(/\/:([\w\d\-_]+)/g, function ($0, $1) {
+              params.push($1);
+              return "/([^/]+)";
+            });
+          pattern = new RegExp("^" + pattern + "$");
           routes[method].push({
-            // @todo regexp escaping, capturing group and glob conversions
-            pattern: new RegExp("^" + pattern + "$"),
+            pattern: pattern,
+            params: params,
             handler: handler
           });
         };
@@ -36,31 +45,38 @@ module.exports = function () {
     }()),
 
     router: function (req) {
-      var handler;
-      var path = req.scriptName.slice(req.scriptName.indexOf("/", 1));
-      // @todo build defaultView from underscore-joined, non-param path elements
-      var pathMatches = /^\/([\w\d\-_]+)/.exec(path);
-      var defaultView = pathMatches ? pathMatches[1] : null;
-      var res = Response(defaultView);
+      var pathSplit = req.scriptName.indexOf("/", 1);
+      var path = req.pathInfo = req.scriptName.slice(pathSplit);
 
+      // fix-up/amend request
+      req.scriptName = req.scriptName.slice(0, pathSplit);
+      contextKeys.forEach(function (k) {
+        req[k] = context[k]();
+      });
+
+      var handler;
+      req.params = {};
       routes[req.method.toLowerCase()].every(function (route) {
-        // @todo extract capturing groups as req path params
-        if (route.pattern.test(path)) {
+        var matches = route.pattern.exec(path);
+        if (matches) {
           handler = route.handler;
+          route.params.forEach(function (name, i) {
+            var value = matches[i + 1];
+            if (!req[name]) req[name] = value;
+            req.params[name] = value;
+          });
           return false;
         }
         return true;
       });
+
+      var res = Response();
 
       if (!handler) {
         handler = function () {
           res.sendNotFound();
         }
       }
-
-      contextKeys.forEach(function (k) {
-        req[k] = context[k]();
-      });
 
       handler(req, res);
       return res._toJsgiResponse();

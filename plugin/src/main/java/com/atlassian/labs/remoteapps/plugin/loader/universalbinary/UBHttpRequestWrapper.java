@@ -11,34 +11,33 @@ import javax.servlet.http.HttpServletRequestWrapper;
  */
 public class UBHttpRequestWrapper extends HttpServletRequestWrapper
 {
-    private final String basePath;
-    private HttpServletRequest delegate;
+    private final String contextPath;
+    private String servletPath;
 
-    public UBHttpRequestWrapper(HttpServletRequest request, String servletContextPath)
+    public UBHttpRequestWrapper(HttpServletRequest request, String contextPath, String servletPath)
     {
         super(request);
-        this.delegate = request;
-        this.basePath = servletContextPath;
-    }
-
-    public String getServletPath()
-    {
-        String servletPath = super.getServletPath();
-        if (basePath != null)
-        {
-            servletPath += basePath;
-        }
-        return servletPath;
+        this.contextPath = contextPath;
+        this.servletPath = servletPath;
     }
 
     @Override
     public String getContextPath()
     {
-        return basePath;
+        return contextPath;
     }
 
+    @Override
+    public String getServletPath()
+    {
+        return servletPath;
+    }
+
+    @Override
     public String getPathInfo()
     {
-        return delegate.getRequestURI().substring((delegate.getContextPath() + basePath).length());
+        String uri = getRequestURI();
+        int start = uri.indexOf(getContextPath());
+        return getRequestURI().substring(start + contextPath.length() + servletPath.length());
     }
 }

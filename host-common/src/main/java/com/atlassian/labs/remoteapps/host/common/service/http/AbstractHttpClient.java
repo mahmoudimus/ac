@@ -26,5 +26,17 @@ public abstract class AbstractHttpClient implements HttpClient
         return new DefaultRequest(this, uri, contentType, entity);
     }
 
+    @Override
+    public Request newRequest(String uri)
+    {
+        return newRequest(URI.create(uri));
+    }
+
+    @Override
+    public Request newRequest(String uri, String contentType, String entity)
+    {
+        return newRequest(URI.create(uri), contentType, entity);
+    }
+
     protected abstract ResponsePromise execute(DefaultRequest request);
 }

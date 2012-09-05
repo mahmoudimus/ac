@@ -2,7 +2,7 @@ var {Deferred} = require("atlassian/deferred");
 var renderer = require("atlassian/renderer");
 var fs = require("fs");
 
-module.exports = function (defaultView) {
+module.exports = function () {
 
   var deferred = Deferred();
 
@@ -58,17 +58,9 @@ module.exports = function (defaultView) {
       this.end(body);
     },
 
-    // response.render(locals)
     // response.render(view, locals)
-    // response.render(locals, headers, statusCode)
     // response.render(view, locals, headers, statusCode)
     render: function (view, locals, headers, statusCode) {
-      if (typeof view !== "string") {
-        statusCode = headers;
-        headers = locals;
-        locals = view;
-        view = defaultView;
-      }
       try {
         var body = renderer.render("app/views/" + view, locals);
         this.send(body, headers, statusCode);

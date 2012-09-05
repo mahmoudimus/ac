@@ -1,0 +1,122 @@
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+nav,
+section {
+  display: block;
+}
+audio,
+canvas,
+video {
+  display: inline-block;
+  *display: inline;
+  *zoom: 1;
+}
+.clear {
+  clear: both;
+}
+.hidden,
+.assistive,
+legend.assistive span {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+}
+html,
+body,
+p,
+div,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+img,
+pre,
+form,
+fieldset {
+  margin: 0;
+  padding: 0;
+}
+ul,
+ol,
+dl {
+  margin: 0;
+}
+body {
+  font-family: Arial,FreeSans,Helvetica,sans-serif;
+  font-size: 13px;
+  line-height: 1.3077;
+}
+p,
+ul,
+ol,
+dl,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p:first-child,
+ul:first-child,
+ol:first-child,
+dl:first-child,
+h1:first-child,
+h2:first-child,
+h3:first-child,
+h4:first-child,
+h5:first-child,
+h6:first-child {
+  margin-top: 0;
+}
+h1 {
+  font-size: 25px;
+  line-height: 1.16;
+}
+h2 {
+  font-size: 23px;
+  line-height: 1.174;
+}
+h3 {
+  font-size: 19px;
+  line-height: 1.2106;
+}
+h4 {
+  font-size: 17px;
+  line-height: 1.2353;
+}
+h5 {
+  font-size: 15px;
+  line-height: 1.2667;
+}
+h6 {
+  font-size: 13px;
+  line-height: 1.3077;
+}
+a:link, a:visited {
+  color: #326ca6;
+  cursor: pointer;
+  text-decoration: none;
+}
+a:hover, a:active {
+  color:#326ca6;
+  text-decoration: underline;
+}
+table, caption {
+  font-size: inherit;
+  font-style: inherit;
+  font-variant: inherit;
+  font-weight: inherit;
+}

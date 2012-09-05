@@ -31,7 +31,7 @@ import java.util.regex.Pattern;
 public class StaticResourcesFilter implements Filter
 {
     // todo: support languages
-    private static final Pattern RESOURCE_PATTERN = Pattern.compile("/[a-zA-Z0-9]+\\.(?:js|css)");
+    private static final Pattern RESOURCE_PATTERN = Pattern.compile("/[a-zA-Z0-9\\-_]+\\.(?:js|css)");
     private static final Logger log = LoggerFactory.getLogger(StaticResourcesFilter.class);
     private static Map<String,CacheEntry> resCache = new MapMaker().makeComputingMap(new Function<String, CacheEntry>() {
 

@@ -48,7 +48,7 @@
 
     <web-resource key="iframe-host">
         <resource type="download" name="easyXDM.js" location="/js/iframe/easyXDM.js" />
-        <resource type="download" name="body.js" location="/js/iframe/container/body.js" />
+        <resource type="download" name="ra-host.js" location="/js/iframe/host/ra-host.js" />
     </web-resource>
 
     <web-resource key="iframe-requirements">
