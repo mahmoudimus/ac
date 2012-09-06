@@ -76,4 +76,13 @@
     <described-module-type key="macro-page" class="com.atlassian.labs.remoteapps.plugin.module.confluence.MacroPageModuleDescriptor">
         <description>A Confluence macro that loads the remote page as an IFrame</description>
     </described-module-type>
+
+    <!-- product services -->
+    <component key="confluencePageClient" interface="com.atlassian.labs.remoteapps.api.service.confluence.ConfluencePageClient"
+               class="com.atlassian.labs.remoteapps.host.common.service.confluence.ConfluencePageClientServiceFactory"
+               public="true" />
+
+    <component key="confluenceSpaceClient" interface="com.atlassian.labs.remoteapps.api.service.confluence.ConfluenceSpaceClient"
+                   class="com.atlassian.labs.remoteapps.host.common.service.confluence.ConfluenceSpaceClientServiceFactory"
+                   public="true" />
 </application>

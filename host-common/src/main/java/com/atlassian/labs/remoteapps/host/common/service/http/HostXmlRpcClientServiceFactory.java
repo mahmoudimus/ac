@@ -1,10 +1,10 @@
 package com.atlassian.labs.remoteapps.host.common.service.http;
 
+import com.atlassian.labs.remoteapps.api.service.http.HostXmlRpcClient;
+
 /**
- * Created with IntelliJ IDEA. User: mrdon Date: 8/27/12 Time: 9:54 AM To change this template use
- * File | Settings | File Templates.
  */
-public class HostXmlRpcClientServiceFactory extends HostHttpClientConsumerServiceFactory
+public class HostXmlRpcClientServiceFactory extends HostHttpClientConsumerServiceFactory<HostXmlRpcClient>
 {
     public HostXmlRpcClientServiceFactory(
             HostHttpClientServiceFactory hostHttpClientServiceFactory)

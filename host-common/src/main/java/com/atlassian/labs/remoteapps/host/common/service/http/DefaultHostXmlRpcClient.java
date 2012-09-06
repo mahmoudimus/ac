@@ -26,6 +26,8 @@ import java.lang.reflect.Proxy;
 import java.net.URI;
 import java.util.Vector;
 
+import static java.lang.System.arraycopy;
+
 /**
  * Helps make authenticated xmlrpc calls
  */
@@ -60,7 +62,10 @@ public class DefaultHostXmlRpcClient implements HostXmlRpcClient
         {
             public Object execute(String serviceName, String methodName, Vector arguments) throws BindingException
             {
-                return invoke(serviceName + "." + methodName, Object.class, arguments.toArray());
+                Object[] argsWithToken = new Object[arguments.size() + 1];
+                argsWithToken[0] = "";
+                arraycopy(arguments.toArray(), 0, argsWithToken, 1, arguments.size());
+                return invoke(serviceName + "." + methodName, Object.class, argsWithToken);
             }
         });
 

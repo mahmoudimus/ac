@@ -27,7 +27,8 @@ public interface HostXmlRpcClient
      * Binds a class to create a nice typed interface to XML-RPC objects.
      *
      * See <a href="https://labs.atlassian.com/wiki/display/XMLRPC/Home">Atlassian XML-RPC</a>.
-     * @param serviceClass An interface with specially annotated methods and objects
+     * @param serviceClass An interface with specially annotated methods and objects.  An empty string will always be inserted
+     *                   as the first argument to handle the token argument in Atlassian remote APIs
      * @param <T> The service interface
      * @return An implementation of the service interface that will make the calls in the background
      */
