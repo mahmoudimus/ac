@@ -32,4 +32,21 @@ public class ReadContentScopeTest
             }
         });
     }
+
+    @Test
+    public void testCallWithBinder() throws Exception
+    {
+        getHostHttpClient().callAs(getClientKey(), "betty", new Callable<Void>()
+            {
+                @Override
+                public Void call() throws Exception
+                {
+                    SpaceService service = getHostXmlRpcClient().bind(SpaceService.class);
+                    Space space = service.getSpace("", "DS").claim();
+                    assertEquals("ds", space.getKey());
+                    assertEquals("Demonstration Space", space.getName());
+                    return null;
+                }
+            });
+    }
 }

@@ -9,10 +9,10 @@ import com.atlassian.labs.remoteapps.api.service.http.Response;
 import com.atlassian.labs.remoteapps.api.service.http.UnexpectedResponseException;
 import com.atlassian.labs.remoteapps.api.service.http.XmlRpcException;
 import com.atlassian.labs.remoteapps.api.service.http.XmlRpcFault;
+import com.atlassian.plugin.util.ChainingClassLoader;
 import com.atlassian.xmlrpc.BindingException;
 import com.atlassian.xmlrpc.ServiceObject;
 import com.atlassian.xmlrpc.XmlRpcClientProvider;
-import com.atlassian.xmlrpc.XmlRpcInvocationHandler;
 import com.google.common.util.concurrent.SettableFuture;
 import redstone.xmlrpc.XmlRpcMessages;
 import redstone.xmlrpc.XmlRpcSerializer;
@@ -25,7 +25,6 @@ import java.io.Writer;
 import java.lang.reflect.Proxy;
 import java.net.URI;
 import java.util.Vector;
-import java.util.concurrent.ExecutionException;
 
 /**
  * Helps make authenticated xmlrpc calls
@@ -57,26 +56,15 @@ public class DefaultHostXmlRpcClient implements HostXmlRpcClient
             throw new IllegalArgumentException("Could not find ServiceObject annotation on " + bindClass.getName());
         }
 
-        XmlRpcInvocationHandler handler = new XmlRpcInvocationHandler(new XmlRpcClientProvider()
+        PromiseAwareXmlRpcInvocationHandler handler = new PromiseAwareXmlRpcInvocationHandler(new XmlRpcClientProvider()
         {
             public Object execute(String serviceName, String methodName, Vector arguments) throws BindingException
             {
-                try
-                {
-                    return invoke(serviceName + "." + methodName, Object.class, arguments.toArray()).get();
-                }
-                catch (InterruptedException e)
-                {
-                    throw new BindingException(e);
-                }
-                catch (ExecutionException e)
-                {
-                    throw new BindingException(e.getCause());
-                }
+                return invoke(serviceName + "." + methodName, Object.class, arguments.toArray());
             }
         });
 
-        return (T) Proxy.newProxyInstance(getClass().getClassLoader(), new Class[]{bindClass},
+        return (T) Proxy.newProxyInstance(new ChainingClassLoader(getClass().getClassLoader(), bindClass.getClassLoader()), new Class[]{bindClass},
                 handler);
     }
 
