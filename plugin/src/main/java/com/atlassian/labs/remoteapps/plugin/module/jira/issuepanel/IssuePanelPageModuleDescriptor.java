@@ -24,9 +24,7 @@ import org.slf4j.LoggerFactory;
 
 import java.net.URI;
 
-import static com.atlassian.labs.remoteapps.spi.util.Dom4jUtils.getRequiredAttribute;
-import static com.atlassian.labs.remoteapps.spi.util.Dom4jUtils.getRequiredUriAttribute;
-import static com.atlassian.labs.remoteapps.spi.util.Dom4jUtils.printNode;
+import static com.atlassian.labs.remoteapps.spi.util.Dom4jUtils.*;
 
 /**
  * A view issue panel page that loads is contents from an iframe
@@ -39,6 +37,8 @@ public class IssuePanelPageModuleDescriptor extends AbstractModuleDescriptor<Voi
     private final WebInterfaceManager webInterfaceManager;
     private final ConditionProcessor conditionProcessor;
     private Element descriptor;
+    private String weight;
+    private String location = "atl.jira.view.issue.right.context";
     private URI url;
 
     private final static Logger log = LoggerFactory.getLogger(IssuePanelPageModuleDescriptor.class);
@@ -66,6 +66,8 @@ public class IssuePanelPageModuleDescriptor extends AbstractModuleDescriptor<Voi
     {
         super.init(plugin, element);
         this.descriptor = element;
+        this.location = getOptionalAttribute(element, "location", location);
+        this.weight = getOptionalAttribute(element, "weight", null);
         this.url = getRequiredUriAttribute(element, "url");
     }
 
@@ -79,7 +81,12 @@ public class IssuePanelPageModuleDescriptor extends AbstractModuleDescriptor<Voi
         Element desc = descriptor.createCopy();
         desc.addAttribute("key", moduleKey);
         desc.addAttribute("i18n-key", panelName);
-        desc.addAttribute("location", "atl.jira.view.issue.right.context");
+        desc.addAttribute("location", location);
+        if (weight != null)
+        {
+            desc.addAttribute("weight", weight);
+        }
+        desc.addElement("label").addAttribute("key", panelName);
         desc.addAttribute("class", IFrameViewIssuePanel.class.getName());
         Condition condition = conditionProcessor.process(descriptor, desc, getPluginKey(), "#" + moduleKey);
         log.debug("generated web panel: " + printNode(desc));

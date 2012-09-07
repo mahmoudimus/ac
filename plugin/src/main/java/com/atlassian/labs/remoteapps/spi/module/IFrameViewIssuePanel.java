@@ -60,8 +60,8 @@ public class IFrameViewIssuePanel implements WebPanel
             User user = (User) context.get("user");
             String remoteUser = user != null ? user.getName() : null;
             Map<String,String[]> params = newHashMap();
-            params.put("issue_id", new String[]{context.containsKey("issue") ? ((Issue)context.get("issue")).getKey() : ""});
-            params.put("project_id", new String[]{context.containsKey("project") ? ((Project)context.get("project")).getKey() : ""});
+            params.put("issue_id", new String[]{context.containsKey("issue") ? String.valueOf(((Issue)context.get("issue")).getId()) : ""});
+            params.put("project_id", new String[]{context.containsKey("project") ? String.valueOf(((Project)context.get("project")).getId()) : ""});
 
 
             String iframe = iFrameRenderer.render(iFrameContext, "", params, remoteUser);
