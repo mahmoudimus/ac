@@ -10,7 +10,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-public final class StaticPromise<V> implements Promise<V>
+final class StaticPromise<V> implements Promise<V>
 {
     private final Promise<V> delegate;
 

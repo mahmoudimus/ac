@@ -72,7 +72,7 @@ public class IssueTabPage extends AbstractIssueTabPanel2
                         remoteUser);
                 if (condition != null && condition instanceof ContainingRemoteCondition)
                 {
-                    iframe = "<div class=\"hidden\">" + iframe + "</div>";
+                    iframe = "<div>" + iframe + "</div>";
                 }
                 writer.write(iframe);
             }

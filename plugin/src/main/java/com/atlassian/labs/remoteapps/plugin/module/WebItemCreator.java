@@ -70,7 +70,7 @@ public class WebItemCreator
 
             String name = getOptionalAttribute(configurationElement, "link-name", escapeHtml(
                     getRequiredAttribute(configurationElement, "name")));
-            config.addElement("label").setText(name);
+            config.addElement("label").addAttribute("key", name);
             Element linkElement = config.addElement("link").
                     addAttribute("linkId", webItemKey);
 

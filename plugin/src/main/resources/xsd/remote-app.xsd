@@ -38,9 +38,6 @@
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
-
-        <!-- deprecated -->
-        <xs:attribute name="access-level" type="xs:string" use="optional" />
     </xs:complexType>
 
     <xs:element name="remote-app" type="RemoteAppType" />
