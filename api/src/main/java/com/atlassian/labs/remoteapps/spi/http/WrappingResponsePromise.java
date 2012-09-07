@@ -114,6 +114,12 @@ final class WrappingResponsePromise extends ForwardingListenableFuture.SimpleFor
     }
 
     @Override
+    public ResponsePromise notFound(PromiseCallback<Response> callback)
+    {
+        return on(404, callback);
+    }
+
+    @Override
     public ResponsePromise conflict(PromiseCallback<Response> callback)
     {
         return on(409, callback);

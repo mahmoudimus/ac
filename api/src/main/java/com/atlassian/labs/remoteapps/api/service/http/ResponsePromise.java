@@ -127,6 +127,14 @@ public interface ResponsePromise extends Promise<Response>
     ResponsePromise forbidden(PromiseCallback<Response> callback);
 
     /**
+     * Register a callback to respond to 'not found' (404) HTTP responses.
+     *
+     * @param callback The callback
+     * @return This ResponsePromise instance for chaining
+     */
+    ResponsePromise notFound(PromiseCallback<Response> callback);
+
+    /**
      * Register a callback to respond to 'conflict' (409) HTTP responses.
      *
      * @param callback The callback
