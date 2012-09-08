@@ -55,6 +55,7 @@ public final class ActiveObjectsServlet extends HttpServlet
                         "<html>\n" +
                         "    <head>\n" +
                         "        <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge,chrome=1\">\n" +
+                        "        <link rel=\"stylesheet\" type=\"text/css\" href=\"%1$s/remoteapps/all.css\">" +
                         "        <script src=\"%1$s/remoteapps/all.js\"></script>\n" +
                         "        <script>RA.init();</script>\n" +
                         "        <title>%2$s</title>\n" +

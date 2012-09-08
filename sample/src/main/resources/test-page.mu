@@ -2,6 +2,7 @@
 <html>
     <head>
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <link rel="stylesheet" type="text/css" href="{{baseurl}}/remoteapps/all.css">
         <script src="{{baseUrl}}/remoteapps/all.js"></script>
         <script>RA.init();</script>
     </head>
