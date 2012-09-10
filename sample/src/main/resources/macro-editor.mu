@@ -1,6 +1,6 @@
 <html>
     <head>
-        <link rel="stylesheet" type="text/css" href="{{baseurl}}/remoteapps/all.css">
+        <link rel="stylesheet" type="text/css" href="{{baseUrl}}/remoteapps/all.css">
         <script src="{{baseUrl}}/remoteapps/all.js" type="text/javascript"></script>
         <script src="public/jquery-1.7.min.js" type="text/javascript"></script>
     </head>
