@@ -24,8 +24,7 @@ import com.atlassian.labs.remoteapps.spi.Promises;
 import com.atlassian.xmlrpc.*;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.SettableFuture;
-import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.beanutils.*;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.*;
@@ -249,7 +248,7 @@ public final class PromiseAwareXmlRpcInvocationHandler implements InvocationHand
         return beanInstance;
     }
 
-    private void mapToBean(Object bean, Map map)
+    void mapToBean(Object bean, Map map)
             throws IllegalAccessException, InvocationTargetException
     {
         BeanUtils.populate(bean, removeNullValues(mapArraysToLists(remapPropertyNames(bean, map))));

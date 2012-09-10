@@ -3,10 +3,8 @@ package com.atlassian.labs.remoteapps.container;
 import com.atlassian.activeobjects.spi.DataSourceProvider;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.jira.rest.client.p3.*;
-import com.atlassian.jira.rest.client.p3.internal.*;
 import com.atlassian.labs.remoteapps.api.service.EmailSender;
-import com.atlassian.labs.remoteapps.api.service.confluence.ConfluencePageClient;
-import com.atlassian.labs.remoteapps.api.service.confluence.ConfluenceSpaceClient;
+import com.atlassian.labs.remoteapps.api.service.confluence.*;
 import com.atlassian.labs.remoteapps.api.service.http.HostXmlRpcClient;
 import com.atlassian.labs.remoteapps.api.service.http.HttpClient;
 import com.atlassian.labs.remoteapps.container.service.ContainerEmailSender;
@@ -18,8 +16,9 @@ import com.atlassian.labs.remoteapps.api.service.HttpResourceMounter;
 import com.atlassian.labs.remoteapps.api.service.RequestContext;
 import com.atlassian.labs.remoteapps.api.service.SignedRequestHandler;
 import com.atlassian.labs.remoteapps.api.service.http.HostHttpClient;
-import com.atlassian.labs.remoteapps.host.common.service.confluence.ConfluencePageClientServiceFactory;
-import com.atlassian.labs.remoteapps.host.common.service.confluence.ConfluenceSpaceClientServiceFactory;
+import com.atlassian.labs.remoteapps.host.common.service.confluence.*;
+
+
 import com.atlassian.labs.remoteapps.host.common.service.http.*;
 import com.atlassian.labs.remoteapps.host.common.service.RequestContextServiceFactory;
 import com.atlassian.labs.remoteapps.container.ao.RemoteAppsDataSourceProviderServiceFactory;
@@ -293,6 +292,12 @@ public final class Container
         // confluence services
         hostComponents.put(ConfluenceSpaceClient.class, new ConfluenceSpaceClientServiceFactory(hostXmlRpcClientHostServiceFactory));
         hostComponents.put(ConfluencePageClient.class, new ConfluencePageClientServiceFactory(hostXmlRpcClientHostServiceFactory));
+        hostComponents.put(ConfluenceAdminClient.class, new ConfluenceAdminClientServiceFactory(hostXmlRpcClientHostServiceFactory));
+        hostComponents.put(ConfluenceBlogClient.class, new ConfluenceBlogClientServiceFactory(hostXmlRpcClientHostServiceFactory));
+        hostComponents.put(ConfluenceLabelClient.class, new ConfluenceLabelClientServiceFactory(hostXmlRpcClientHostServiceFactory));
+        hostComponents.put(ConfluenceNotificationClient.class, new ConfluenceNotificationClientServiceFactory(hostXmlRpcClientHostServiceFactory));
+        hostComponents.put(ConfluenceUserClient.class, new ConfluenceUserClientServiceFactory(hostXmlRpcClientHostServiceFactory));
+        hostComponents.put(ConfluenceAttachmentClient.class, new ConfluenceAttachmentClientServiceFactory(hostXmlRpcClientHostServiceFactory));
     }
 
     private String getVersionFromMavenMetadata(String groupId, String artifactId, String defaultValue)

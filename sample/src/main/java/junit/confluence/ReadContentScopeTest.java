@@ -1,7 +1,8 @@
 package junit.confluence;
 
 import com.atlassian.labs.remoteapps.api.service.confluence.ConfluenceSpaceClient;
-import com.atlassian.labs.remoteapps.api.service.confluence.Space;
+import com.atlassian.labs.remoteapps.api.service.confluence.domain.Space;
+import com.atlassian.labs.remoteapps.api.service.confluence.domain.SpaceSummary;
 import org.junit.Test;
 import redstone.xmlrpc.XmlRpcStruct;
 

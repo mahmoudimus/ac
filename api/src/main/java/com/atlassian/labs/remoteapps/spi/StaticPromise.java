@@ -14,6 +14,12 @@ final class StaticPromise<V> implements Promise<V>
 {
     private final Promise<V> delegate;
 
+    public StaticPromise(Throwable throwable)
+    {
+        SettableFuture<V> future = SettableFuture.create();
+        future.setException(throwable);
+        delegate = Promises.ofFuture(future);
+    }
     public StaticPromise(V value)
     {
         SettableFuture<V> future = SettableFuture.create();

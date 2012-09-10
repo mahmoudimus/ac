@@ -14,6 +14,11 @@ public final class Promises
         return new StaticPromise<V>(instance);
     }
 
+    public static <V> Promise<V> ofThrowable(Throwable instance, Class<V> resultType)
+    {
+        return new StaticPromise<V>(instance);
+    }
+
     public static <V> Promise<V> ofFuture(ListenableFuture<V> future)
     {
         return new WrappingPromise<V>(future);

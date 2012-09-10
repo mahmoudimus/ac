@@ -2,11 +2,16 @@ package com.atlassian.labs.remoteapps.plugin.product.confluence;
 
 import com.atlassian.labs.remoteapps.spi.permission.scope.*;
 import com.google.common.base.Function;
+import com.google.common.base.Supplier;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
 
 import static com.google.common.collect.Iterables.concat;
 

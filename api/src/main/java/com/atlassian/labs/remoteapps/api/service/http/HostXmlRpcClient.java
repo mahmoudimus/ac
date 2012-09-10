@@ -16,12 +16,8 @@ public interface HostXmlRpcClient
      *  @param arguments The arguments to encode in the call.
      *
      *  @return The object returned from the terminating XML-RPC end point.
-     *
-     *  @throws XmlRpcException One or more of the supplied arguments are unserializable. That is,
-     *                          the built-in serializer connot parse it or find a custom serializer
-     *                          that can. There may also be problems with the socket communication.
      */
-    <T> Promise<T> invoke(String method, Class<T> resultType, Object... arguments) throws XmlRpcException;
+    <T> Promise<T> invoke(String method, Class<T> resultType, Object... arguments);
 
     /**
      * Binds a class to create a nice typed interface to XML-RPC objects.

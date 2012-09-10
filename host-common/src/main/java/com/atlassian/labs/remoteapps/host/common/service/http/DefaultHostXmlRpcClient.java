@@ -90,8 +90,8 @@ public class DefaultHostXmlRpcClient implements HostXmlRpcClient
             }
             catch (IOException ioe)
             {
-                throw new XmlRpcException(
-                        XmlRpcMessages.getString("XmlRpcClient.NetworkError"), ioe);
+                return Promises.ofThrowable(new XmlRpcException(
+                        XmlRpcMessages.getString("XmlRpcClient.NetworkError"), ioe), resultType);
             }
         }
 
