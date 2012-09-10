@@ -6,7 +6,7 @@
 <head>
   <meta http-equiv="content-type" content="text/html;charset=utf-8">
   <title>${title}</title>
-  <link rel="stylesheet" type="text/css" href="{{baseurl}}/remoteapps/all.css">
+  <link rel="stylesheet" type="text/css" href="{{baseUrl}}/remoteapps/all.css">
   <link href="http://circumflex.ru/css/docco.css"
         rel="stylesheet"
         type="text/css"
