@@ -200,21 +200,8 @@ public class ApplicationTypeModuleGenerator implements WaitableRemoteModuleGener
                             return (T) applicationType;
                         }
                     });
-            descriptor.init(new DelegatePlugin(ctx.getPlugin())
-            {
-                @Override
-                public <T> Class<T> loadClass(String clazz, Class<?> callingClass) throws ClassNotFoundException
-                {
-                    if (clazz.startsWith("generatedManifestProducer"))
-                    {
-                        return (Class<T>) manifestProducerClass;
-                    }
-                    else
-                    {
-                        return super.loadClass(clazz, callingClass);
-                    }
-                }
-            }, desc);
+            Plugin delegatePlugin = getDelegatePlugin(ctx, manifestProducerClass);
+            descriptor.init(delegatePlugin, desc);
             return descriptor;
         }
         catch (InstantiationException e)
@@ -233,6 +220,51 @@ public class ApplicationTypeModuleGenerator implements WaitableRemoteModuleGener
         {
             throw new PluginParseException(e);
         }
+    }
+
+    private Plugin getDelegatePlugin(final RemoteAppCreationContext ctx,
+            final Class<? extends RemoteManifestProducer> manifestProducerClass)
+    {
+        Plugin delegatePlugin = null;
+        if (ctx.getPlugin() instanceof ContainerManagedPlugin)
+        {
+            delegatePlugin = new DelegatePlugin(ctx.getPlugin())
+            {
+                @Override
+                public <T> Class<T> loadClass(String clazz, Class<?> callingClass) throws
+                        ClassNotFoundException
+                {
+                    if (clazz.startsWith("generatedManifestProducer"))
+                    {
+                        return (Class<T>) manifestProducerClass;
+                    }
+                    else
+                    {
+                        return super.loadClass(clazz, callingClass);
+                    }
+                }
+            };
+        }
+        else
+        {
+            delegatePlugin = new AbstractDelegatingPlugin(ctx.getPlugin())
+            {
+                @Override
+                public <T> Class<T> loadClass(String clazz, Class<?> callingClass) throws
+                        ClassNotFoundException
+                {
+                    if (clazz.startsWith("generatedManifestProducer"))
+                    {
+                        return (Class<T>) manifestProducerClass;
+                    }
+                    else
+                    {
+                        return super.loadClass(clazz, callingClass);
+                    }
+                }
+            };
+        }
+        return delegatePlugin;
     }
 
     public static String getGeneratedApplicationTypeModuleKey(String key)
