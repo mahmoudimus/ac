@@ -228,7 +228,7 @@ public class ApplicationTypeModuleGenerator implements WaitableRemoteModuleGener
         Plugin delegatePlugin = null;
         if (ctx.getPlugin() instanceof ContainerManagedPlugin)
         {
-            delegatePlugin = new DelegatePlugin(ctx.getPlugin())
+            delegatePlugin = new DelegatePlugin((ContainerManagedPlugin)ctx.getPlugin())
             {
                 @Override
                 public <T> Class<T> loadClass(String clazz, Class<?> callingClass) throws
@@ -294,7 +294,7 @@ public class ApplicationTypeModuleGenerator implements WaitableRemoteModuleGener
     private static class DelegatePlugin extends AbstractDelegatingPlugin implements ContainerManagedPlugin
     {
 
-        public DelegatePlugin(Plugin delegate)
+        public DelegatePlugin(ContainerManagedPlugin delegate)
         {
             super(delegate);
         }
