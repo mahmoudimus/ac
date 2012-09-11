@@ -42,17 +42,4 @@ public class BrowseProjectsScope extends JiraScope
     {
         return "browse_projects";
     }
-
-    @Override
-    public String getName()
-    {
-        return "Browse Projects";
-    }
-
-    @Override
-    public String getDescription()
-    {
-        return "Permission to browse projects, search issues, and view individual issues (except " +
-                "issues that have been restricted via Issue Security)";
-    }
 }

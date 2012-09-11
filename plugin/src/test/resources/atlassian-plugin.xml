@@ -9,11 +9,15 @@
 
     <component-import key="userManager" interface="com.atlassian.sal.api.user.UserManager" />
 
-    <component key="resttest" class="com.atlassian.labs.remoteapps.test.RestTestApiScope"
-            interface="com.atlassian.labs.remoteapps.spi.permission.scope.ApiScope" public="true"/>
+    <plugin-permission key="resttest" name="Rest Test"
+            class="com.atlassian.labs.remoteapps.test.RestTestApiScope">
+        <description>A test resource</description>
+    </plugin-permission>\
 
-    <component key="unrequested_scope" class="com.atlassian.labs.remoteapps.test.UnrequestedTestApiScope"
-               interface="com.atlassian.labs.remoteapps.spi.permission.scope.ApiScope" public="true"/>
+    <plugin-permission key="unrequested_scope" name="Unrequested API Scope"
+            class="com.atlassian.labs.remoteapps.test.UnrequestedTestApiScope">
+        <description>An API Scope that never gets used</description>
+    </plugin-permission>
 
     <component-import application="refapp" key="atlassianUserManager" interface="com.atlassian.user.UserManager" />
     <component application="refapp" key="fixEmail" class="com.atlassian.labs.remoteapps.test.refapp.RefappFixEmailAddresses" />

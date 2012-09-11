@@ -19,19 +19,41 @@
     <component key="search-request-view-page-generator" class="com.atlassian.labs.remoteapps.plugin.module.jira.searchrequestview.SearchRequestViewModuleGenerator" />
 
     <!-- api scopes -->
-    <component key="read_users_and_groups"
-               class="com.atlassian.labs.remoteapps.plugin.product.jira.JiraReadUsersAndGroupsScope"
-               />
-    <component key="browse_projects"
-               class="com.atlassian.labs.remoteapps.plugin.product.jira.BrowseProjectsScope"
-               name="Browse Projects"
-                />
-    <component key="create_issues"
-               class="com.atlassian.labs.remoteapps.plugin.product.jira.JiraCreateIssuesScope" />
-    <component key="edit_issues"
-               class="com.atlassian.labs.remoteapps.plugin.product.jira.JiraEditIssuesScope" />
-    <component key="resolve_issues"
-               class="com.atlassian.labs.remoteapps.plugin.product.jira.JiraResolveIssuesScope" />
+    <plugin-permission key="read_users_and_groups" name="Read Users and Groups"
+        class="com.atlassian.labs.remoteapps.plugin.product.jira.JiraReadUsersAndGroupsScope">
+        <description>View users and groups</description>
+    </plugin-permission>
+    <plugin-permission key="browse_projects" name="Browse Projects"
+        class="com.atlassian.labs.remoteapps.plugin.product.jira.BrowseProjectsScope">
+        <description>
+            Permission to browse projects, search issues, and view individual issues (except issues that have been
+            restricted via Issue Security)
+        </description>
+    </plugin-permission>
+    <plugin-permission key="create_issues" name="Create Issues"
+        class="com.atlassian.labs.remoteapps.plugin.product.jira.JiraCreateIssuesScope">
+        <description>
+            Permission to create issues in the project. (Note that the Create Attachments
+            permission is required in order to create attachments.) Includes the ability to
+            create sub-tasks (if sub-tasks are enabled).
+        </description>
+    </plugin-permission>
+    <plugin-permission key="edit_issues" name="Edit Issues"
+        class="com.atlassian.labs.remoteapps.plugin.product.jira.JiraEditIssuesScope">
+        <description>
+            Permission to edit issues (excluding the  'Due Date' field - see the Schedule
+            Issues permission). Includes the ability to convert issues to sub-tasks and vice
+            versa (if sub-tasks are enabled). Note that the Delete Issue permission is
+            required in order to delete issues.
+        </description>
+    </plugin-permission>
+    <plugin-permission key="resolve_issues" name="Resolve Issues"
+        class="com.atlassian.labs.remoteapps.plugin.product.jira.JiraResolveIssuesScope">
+        <description>
+            Permission to resolve and reopen issues. This also includes the ability to set
+            the 'Fix For version' field for issues. Also see the Close Issues permission.
+        </description>
+    </plugin-permission>
 
     <component key="WebHookProvider" class="com.atlassian.labs.remoteapps.plugin.product.jira.JiraWebHookProvider" />
 

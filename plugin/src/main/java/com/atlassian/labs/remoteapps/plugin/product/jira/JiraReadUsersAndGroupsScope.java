@@ -28,16 +28,4 @@ public class JiraReadUsersAndGroupsScope extends JiraScope
     {
         return "read_users_and_groups";
     }
-
-    @Override
-    public String getName()
-    {
-        return "Read Users and Groups";
-    }
-
-    @Override
-    public String getDescription()
-    {
-        return "View users and groups";
-    }
 }

@@ -10,12 +10,15 @@ import static com.google.common.collect.Iterables.concat;
 /**
  *
  */
-abstract class JiraScope implements ApiScope
+abstract class JiraScope implements ApiScope, MutablePermission
 {
     private final RpcEncodedSoapApiScopeHelper soapScopeHelper;
     private final JsonRpcApiScopeHelper jsonrpcScopeHelper;
     private final Iterable<ApiResourceInfo> apiResourceInfo;
     private RestApiScopeHelper restApiScopeHelper;
+
+    private String name;
+    private String description;
 
     protected JiraScope(Collection<String> methods, Collection<RestApiScopeHelper.RestScope> resources)
     {
@@ -37,5 +40,29 @@ abstract class JiraScope implements ApiScope
     public Iterable<ApiResourceInfo> getApiResourceInfos()
     {
         return apiResourceInfo;
+    }
+
+    @Override
+    public String getName()
+    {
+        return name;
+    }
+
+    @Override
+    public void setName(String name)
+    {
+        this.name = name;
+    }
+
+    @Override
+    public String getDescription()
+    {
+        return description;
+    }
+
+    @Override
+    public void setDescription(String description)
+    {
+        this.description = description;
     }
 }

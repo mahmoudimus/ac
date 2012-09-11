@@ -34,19 +34,4 @@ public class JiraEditIssuesScope extends JiraScope
     {
         return "edit_issues";
     }
-
-    @Override
-    public String getName()
-    {
-        return "Edit Issues";
-    }
-
-    @Override
-    public String getDescription()
-    {
-        return "Permission to edit issues (excluding the  'Due Date' field - see the Schedule " +
-                "Issues permission). Includes the ability to convert issues to sub-tasks and vice " +
-                "versa (if sub-tasks are enabled). Note that the Delete Issue permission is " +
-                "required in order to delete issues.";
-    }
 }

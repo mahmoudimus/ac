@@ -1,14 +1,12 @@
 package com.atlassian.labs.remoteapps.plugin;
 
 import com.atlassian.labs.remoteapps.plugin.module.permission.PermissionsReader;
+import com.atlassian.labs.remoteapps.plugin.settings.SettingsManager;
 import com.atlassian.labs.remoteapps.spi.PermissionDeniedException;
 import com.atlassian.labs.remoteapps.spi.permission.Permission;
 import com.atlassian.labs.remoteapps.spi.permission.PermissionModuleDescriptor;
 import com.atlassian.labs.remoteapps.spi.permission.scope.ApiScope;
-import com.atlassian.labs.remoteapps.plugin.settings.SettingsManager;
 import com.atlassian.labs.remoteapps.spi.util.ServletUtils;
-import com.atlassian.labs.remoteapps.plugin.util.tracker.WaitableServiceTracker;
-import com.atlassian.labs.remoteapps.plugin.util.tracker.WaitableServiceTrackerFactory;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.event.PluginEventManager;
@@ -17,13 +15,16 @@ import com.atlassian.sal.api.user.UserManager;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 import java.util.Set;
+
+import static com.google.common.collect.Iterables.filter;
+import static com.google.common.collect.Iterables.transform;
 
 /**
  * Handles permissions for remote app operations
@@ -35,7 +36,6 @@ public class PermissionManager
     private final SettingsManager settingsManager;
     private final PluginAccessor pluginAccessor;
     private final PermissionsReader permissionsReader;
-    private final WaitableServiceTracker<String,ApiScope> apiScopeTracker;
     private final DefaultPluginModuleTracker<Permission, PermissionModuleDescriptor> permissionTracker;
 
     private final Set<String> NON_USER_ADMIN_PATHS = ImmutableSet.of(
@@ -46,7 +46,6 @@ public class PermissionManager
     @Autowired
     public PermissionManager(
             UserManager userManager,
-            WaitableServiceTrackerFactory waitableServiceTrackerFactory,
             SettingsManager settingsManager, PluginAccessor pluginAccessor,
             PluginEventManager pluginEventManager,
             PermissionsReader permissionsReader)
@@ -57,20 +56,11 @@ public class PermissionManager
         this.permissionsReader = permissionsReader;
         this.permissionTracker = new DefaultPluginModuleTracker<Permission, PermissionModuleDescriptor>(
                 pluginAccessor, pluginEventManager, PermissionModuleDescriptor.class);
-        this.apiScopeTracker = waitableServiceTrackerFactory.create(ApiScope.class,
-                new Function<ApiScope, String>()
-                {
-                    @Override
-                    public String apply(ApiScope from)
-                    {
-                        return from.getKey();
-                    }
-                });
     }
 
     public Iterable<Permission> getPermissions()
     {
-        return Iterables.concat(permissionTracker.getModules(), apiScopeTracker.getAll());
+        return permissionTracker.getModules();
     }
     
     public boolean isRequestInApiScope(HttpServletRequest req, String clientKey, String user)
@@ -89,12 +79,19 @@ public class PermissionManager
         }
 
         final Set<String> permissions = getPermissionsForPlugin(clientKey);
-        Iterable<ApiScope> applicableScopes = Iterables.filter(apiScopeTracker.getAll(), new Predicate<ApiScope>()
+        Iterable<ApiScope> applicableScopes = transform(filter(permissionTracker.getModules(), new Predicate<Permission>()
         {
             @Override
-            public boolean apply(ApiScope apiScope)
+            public boolean apply(@Nullable Permission input)
             {
-                return permissions.contains(apiScope.getKey());
+                return input instanceof ApiScope && permissions.contains(input.getKey());
+            }
+        }), new Function<Permission, ApiScope>()
+        {
+            @Override
+            public ApiScope apply(@Nullable Permission input)
+            {
+                return (ApiScope)input;
             }
         });
 

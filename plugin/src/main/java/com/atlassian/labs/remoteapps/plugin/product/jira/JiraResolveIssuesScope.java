@@ -42,17 +42,4 @@ public class JiraResolveIssuesScope extends JiraScope
     {
         return "resolve_issues";
     }
-
-    @Override
-    public String getName()
-    {
-        return "Resolve Issues";
-    }
-
-    @Override
-    public String getDescription()
-    {
-        return "Permission to resolve and reopen issues. This also includes the ability to set " +
-                "the 'Fix For version' field for issues. Also see the Close Issues permission.";
-    }
 }

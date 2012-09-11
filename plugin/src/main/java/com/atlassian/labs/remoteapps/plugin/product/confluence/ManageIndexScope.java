@@ -5,10 +5,10 @@ import com.atlassian.labs.remoteapps.api.service.confluence.ConfluencePermission
 /**
  * API Scope for Confluence that grants Remote Apps the ability to add, edit and remove pages and blogs.
  */
-public class ModifyContentScope extends ConfluenceScope
+public class ManageIndexScope extends ConfluenceScope
 {
-    protected ModifyContentScope()
+    protected ManageIndexScope()
     {
-        super(ConfluencePermission.MODIFY_CONTENT);
+        super(ConfluencePermission.MANAGE_INDEX);
     }
 }

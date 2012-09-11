@@ -1,8 +1,7 @@
 package com.atlassian.labs.remoteapps.api.service.confluence;
 
 /**
- * Created with IntelliJ IDEA. User: mrdon Date: 9/10/12 Time: 5:51 PM To change this template use
- * File | Settings | File Templates.
+ * Permissions for Confluence.  Should all be declared as plugin-permission modules in atlassian-plugin-confluence.xml
  */
 public final class ConfluencePermission
 {
@@ -20,5 +19,5 @@ public final class ConfluencePermission
     public static final String LABEL_CONTENT = "label_content";
     public static final String RENDER_CONTENT = "render_content";
     public static final String MODIFY_CONTENT = "modify_content";
-    public static final String MODIFY_ANONYMOUS_PERMISSIONS = "modify_anonymous_permissions";
+    public static final String MANAGE_ANONYMOUS_PERMISSIONS = "manage_anonymous_permissions";
 }

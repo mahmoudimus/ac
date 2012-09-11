@@ -6,24 +6,63 @@
                       interface="com.atlassian.confluence.setup.settings.SettingsManager"/>
     
     <!-- api scopes -->
-    <component key="read_content" class="com.atlassian.labs.remoteapps.plugin.product.confluence.ReadContentScope" />
-    <component key="modify_attachments" class="com.atlassian.labs.remoteapps.plugin.product.confluence.ModifyAttachmentsScope" />
-    <component key="read_users_and_groups"
-               class="com.atlassian.labs.remoteapps.plugin.product.confluence.ConfluenceReadUsersAndGroupsScope" />
-    <component key="modify_spaces"
-               class="com.atlassian.labs.remoteapps.plugin.product.confluence.ModifySpacesScope" />
-    <component key="read_server_information"
-               class="com.atlassian.labs.remoteapps.plugin.product.confluence.ReadServerInformationScope"/>
-    <component key="modify_users"
-               class="com.atlassian.labs.remoteapps.plugin.product.confluence.ModifyUsersScope"/>
-    <component key="manage_watchers"
-               class="com.atlassian.labs.remoteapps.plugin.product.confluence.ManageWatchersScope"/>
-    <component key="label_content"
-               class="com.atlassian.labs.remoteapps.plugin.product.confluence.LabelContentScope"/>
-    <component key="render_content"
-               class="com.atlassian.labs.remoteapps.plugin.product.confluence.RenderContentScope"/>
-    <component key="modify_content"
-               class="com.atlassian.labs.remoteapps.plugin.product.confluence.ModifyContentScope"/>
+    <plugin-permission key="read_content" name="Read Content"
+                       class="com.atlassian.labs.remoteapps.plugin.product.confluence.ReadContentScope">
+        <description>Read spaces, blogs, and pages and associated metadata</description>
+    </plugin-permission>
+
+    <plugin-permission key="modify_attachments" name="Modify Attachments"
+            class="com.atlassian.labs.remoteapps.plugin.product.confluence.ModifyAttachmentsScope">
+        <description>Add, remove, or move attachments for pages or blog posts</description>
+    </plugin-permission>
+
+    <plugin-permission key="read_users_and_groups" name="Read Users and Groups"
+            class="com.atlassian.labs.remoteapps.plugin.product.confluence.ConfluenceReadUsersAndGroupsScope">
+        <description>View users, users info, and groups</description>
+    </plugin-permission>
+
+    <plugin-permission key="modify_spaces" name="Modify Spaces"
+            class="com.atlassian.labs.remoteapps.plugin.product.confluence.ModifySpacesScope">
+        <description>Add, edit and remove spaces</description>
+    </plugin-permission>
+    <plugin-permission key="read_server_information" name="Read Server Information"
+            class="com.atlassian.labs.remoteapps.plugin.product.confluence.ReadServerInformationScope">
+        <description>View Confluence version number, base URL and build information</description>
+    </plugin-permission>
+
+    <plugin-permission key="modify_users" name="Modify Users"
+            class="com.atlassian.labs.remoteapps.plugin.product.confluence.ModifyUsersScope">
+        <description>Change existing users' information, including profile pictures.  Cannot change passwords.</description>
+    </plugin-permission>
+
+    <plugin-permission key="manage_watchers" name="Manage Watchers"
+            class="com.atlassian.labs.remoteapps.plugin.product.confluence.ManageWatchersScope">
+        <description>View space, page and blog post watchers. Add new watchers.</description>
+    </plugin-permission>
+
+    <plugin-permission key="label_content" name="Label Content"
+            class="com.atlassian.labs.remoteapps.plugin.product.confluence.LabelContentScope">
+        <description>Add and remove labels from spaces, pages and blog posts</description>
+    </plugin-permission>
+
+    <plugin-permission key="render_content" name="Render Content"
+            class="com.atlassian.labs.remoteapps.plugin.product.confluence.RenderContentScope">
+        <description>Convert content into viewable HTML</description>
+    </plugin-permission>
+
+    <plugin-permission key="modify_content" name="Modify Content">
+        <description>Add, edit and remove pages and blog posts</description>
+    </plugin-permission>
+
+    <plugin-permission key="manage_index" name="Manage Content Index"
+            class="com.atlassian.labs.remoteapps.plugin.product.confluence.ManageIndexScope">
+        <description>Add, edit and remove pages and blog posts</description>
+    </plugin-permission>
+
+    <plugin-permission key="modify_anonymous_permissions" name="Modify Anonymous Permissions"
+                       class="com.atlassian.labs.remoteapps.plugin.product.confluence.ManageAnonymousPermissionsScope">
+        <description>Manage anonymous permissions for the Confluence instance</description>
+   </plugin-permission>
 
     <!-- module types -->
     <component key="macro" class="com.atlassian.labs.remoteapps.plugin.module.confluence.MacroModuleGenerator"/>

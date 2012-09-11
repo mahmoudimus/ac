@@ -41,10 +41,13 @@ public interface ConfluencePageClient
 
     @RequirePermission(ConfluencePermission.READ_CONTENT)
     Promise<Iterable<PageSummary>> getDecendents(long pageId);
+
     @RequirePermission(ConfluencePermission.READ_CONTENT)
     Promise<Iterable<PageSummary>> getTopLevelPages(String spaceKey);
+
     @RequirePermission(ConfluencePermission.READ_CONTENT)
     Promise<Iterable<PageSummary>> getAncestors(long pageId);
+
     @RequirePermission(ConfluencePermission.READ_CONTENT)
     Promise<Iterable<PageSummary>> getChildren(long pageId);
 
@@ -65,6 +68,7 @@ public interface ConfluencePageClient
 
     @RequirePermission(ConfluencePermission.READ_CONTENT)
     Promise<Iterable<SearchResult>> search(String query, SearchOptions options, int maxResults);
+
     @RequirePermission(ConfluencePermission.READ_CONTENT)
     Promise<Iterable<SearchResult>> search(String query, int maxResults);
 

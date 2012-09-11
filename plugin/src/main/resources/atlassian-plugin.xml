@@ -137,10 +137,18 @@
     <component-import key="pluginSettingsFactory" interface="com.atlassian.sal.api.pluginsettings.PluginSettingsFactory" />
     <component-import key="typeAccessor" interface="com.atlassian.applinks.spi.util.TypeAccessor" />
     <component-import key="webResourceUrlProvider" interface="com.atlassian.plugin.webresource.WebResourceUrlProvider" />
+    <component-import key="moduleFactory" interface="com.atlassian.plugin.module.ModuleFactory" />
 
     <!-- Cross-product API Scopes -->
-    <component key="applinks-read_app_links" class="com.atlassian.labs.remoteapps.plugin.product.ReadAppLinksScope"/>
-    <component key="applinks-modify_app_link" class="com.atlassian.labs.remoteapps.plugin.product.ModifyAppLinkScope" />
+    <plugin-permission key="read_app_links" name="Read Application Links"
+        class="com.atlassian.labs.remoteapps.plugin.product.ReadAppLinksScope">
+        <description>Allows a Remote App to retrieve the host application's configured application links and entity links.</description>
+    </plugin-permission>
+
+    <plugin-permission key="modify_app_link" name="Modify Owned App Link"
+        class="com.atlassian.labs.remoteapps.plugin.product.ModifyAppLinkScope">
+        <description>Allows a Remote App to modify the details of its own configured Application Link.</description>
+    </plugin-permission>
 
     <!-- speakeasy integration -->
     <commonjs key="speakeasy-commonjs" location="/js/speakeasy" />

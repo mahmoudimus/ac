@@ -37,18 +37,4 @@ public class JiraCreateIssuesScope extends JiraScope
     {
         return "create_issues";
     }
-
-    @Override
-    public String getName()
-    {
-        return "Create Issues";
-    }
-
-    @Override
-    public String getDescription()
-    {
-        return "Permission to create issues in the project. (Note that the Create Attachments " +
-                "permission is required in order to create attachments.) Includes the ability to " +
-                "create sub-tasks (if sub-tasks are enabled).";
-    }
 }

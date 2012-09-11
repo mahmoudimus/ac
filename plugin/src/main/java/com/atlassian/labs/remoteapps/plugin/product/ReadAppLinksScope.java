@@ -1,7 +1,6 @@
 package com.atlassian.labs.remoteapps.plugin.product;
 
 import com.atlassian.labs.remoteapps.spi.permission.scope.ApiResourceInfo;
-import com.atlassian.labs.remoteapps.spi.permission.scope.ApiScope;
 import com.atlassian.labs.remoteapps.spi.permission.scope.RestApiScopeHelper;
 
 import javax.servlet.http.HttpServletRequest;
@@ -11,7 +10,7 @@ import static java.util.Arrays.asList;
 /**
  * Cross-product API Scope for retrieving the host application's configured Application Links.
  */
-public class ReadAppLinksScope implements ApiScope
+public class ReadAppLinksScope extends AbstractMutableApiScope
 {
     private final RestApiScopeHelper scopeHelper;
 
@@ -32,18 +31,6 @@ public class ReadAppLinksScope implements ApiScope
     public String getKey()
     {
         return "read_app_links";
-    }
-
-    @Override
-    public String getName()
-    {
-        return "Read Application Links";
-    }
-
-    @Override
-    public String getDescription()
-    {
-        return "Allows a Remote App to retrieve the host application's configured application links and entity links.";
     }
 
     @Override

@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import static java.util.Arrays.asList;
 
-public class ModifyAppLinkScope implements ApiScope
+public class ModifyAppLinkScope extends AbstractMutableApiScope
 {
     private final RestApiScopeHelper scopeHelper;
 
@@ -27,18 +27,6 @@ public class ModifyAppLinkScope implements ApiScope
     }
 
     @Override
-    public String getName()
-    {
-        return "Modify Owned App Link";
-    }
-
-    @Override
-    public String getDescription()
-    {
-        return "Allows a Remote App to modify the details of its own configured Application Link.";
-    }
-
-    @Override
     public boolean allow(HttpServletRequest request, String user)
     {
         return scopeHelper.allow(request, user);
@@ -49,8 +37,4 @@ public class ModifyAppLinkScope implements ApiScope
     {
         return scopeHelper.getApiResourceInfos();
     }
-
-
-
-
 }

@@ -1,6 +1,6 @@
 package com.atlassian.labs.remoteapps.plugin.product.confluence;
 
-import static java.util.Arrays.asList;
+import com.atlassian.labs.remoteapps.api.service.confluence.ConfluencePermission;
 
 /**
  * API Scope for Confluence that grants Remote Apps the ability to vuew and modify notification subscriptions ('watches')
@@ -12,33 +12,6 @@ public class ManageWatchersScope extends ConfluenceScope
 {
     protected ManageWatchersScope()
     {
-        super(asList(
-                "watchPage",
-                "watchSpace",
-                "watchPageForUser",
-                "isWatchingPage",
-                "isWatchingSpace",
-                "getWatchersForPage",
-                "getWatchersForSpace",
-                "isWatchingSpaceForType"
-        ));
-    }
-
-    @Override
-    public String getKey()
-    {
-        return "manage_watchers";
-    }
-
-    @Override
-    public String getName()
-    {
-        return "Manage Watchers";
-    }
-
-    @Override
-    public String getDescription()
-    {
-        return "View space, page and blog post watchers. Add new watchers.";
+        super(ConfluencePermission.MANAGE_WATCHERS);
     }
 }

@@ -1,26 +1,15 @@
-package com.atlassian.labs.remoteapps.spi.permission;
+package com.atlassian.labs.remoteapps.plugin.product;
 
+import com.atlassian.labs.remoteapps.spi.permission.scope.ApiScope;
 import com.atlassian.labs.remoteapps.spi.permission.scope.MutablePermission;
 
 /**
  *
  */
-public final class DefaultPermission implements MutablePermission
+abstract class AbstractMutableApiScope implements ApiScope, MutablePermission
 {
-    private final String key;
     private String name;
     private String description;
-
-    public DefaultPermission(String key)
-    {
-        this.key = key;
-    }
-
-    @Override
-    public String getKey()
-    {
-        return key;
-    }
 
     @Override
     public void setName(String name)

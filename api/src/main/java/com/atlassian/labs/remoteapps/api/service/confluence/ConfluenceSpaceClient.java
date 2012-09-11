@@ -48,16 +48,16 @@ public interface ConfluenceSpaceClient
     Promise<Void> removeGlobalPermission(GlobalPermission permission, String remoteEntityName);
     Promise<Boolean> addGlobalPermissions(Iterable<GlobalPermission> permissions, String remoteEntityName);
 
-    @RequirePermission(ConfluencePermission.MODIFY_ANONYMOUS_PERMISSIONS)
+    @RequirePermission(ConfluencePermission.MANAGE_ANONYMOUS_PERMISSIONS)
     Promise<Void> addAnonymousUsePermission();
 
-    @RequirePermission(ConfluencePermission.MODIFY_ANONYMOUS_PERMISSIONS)
+    @RequirePermission(ConfluencePermission.MANAGE_ANONYMOUS_PERMISSIONS)
     Promise<Void> removeAnonymousUsePermission();
 
-    @RequirePermission(ConfluencePermission.MODIFY_ANONYMOUS_PERMISSIONS)
+    @RequirePermission(ConfluencePermission.MANAGE_ANONYMOUS_PERMISSIONS)
     Promise<Boolean> addAnonymousViewUserProfilePermission();
 
-    @RequirePermission(ConfluencePermission.MODIFY_ANONYMOUS_PERMISSIONS)
+    @RequirePermission(ConfluencePermission.MANAGE_ANONYMOUS_PERMISSIONS)
     Promise<Void> removeAnonymousViewUserProfilePermission();
 
     @RequirePermission(ConfluencePermission.MODIFY_SPACES)
