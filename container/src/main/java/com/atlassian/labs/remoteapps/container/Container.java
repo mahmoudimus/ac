@@ -10,6 +10,8 @@ import com.atlassian.labs.remoteapps.api.service.http.HttpClient;
 import com.atlassian.labs.remoteapps.container.service.ContainerEmailSender;
 import com.atlassian.labs.remoteapps.container.service.plugins.NoOpWebResourceManager;
 import com.atlassian.labs.remoteapps.container.service.sal.*;
+import com.atlassian.labs.remoteapps.host.common.HostProperties;
+import com.atlassian.labs.remoteapps.host.common.descriptor.DescriptorPermissionsReader;
 import com.atlassian.labs.remoteapps.host.common.descriptor.PolyglotDescriptorAccessor;
 import com.atlassian.labs.remoteapps.host.common.descriptor.DescriptorAccessor;
 import com.atlassian.labs.remoteapps.api.service.HttpResourceMounter;
@@ -30,6 +32,8 @@ import com.atlassian.labs.remoteapps.container.service.OAuthSignedRequestHandler
 import com.atlassian.labs.remoteapps.container.service.event.RemoteAppsEventPublisher;
 import com.atlassian.labs.remoteapps.container.util.ZipWriter;
 import com.atlassian.labs.remoteapps.host.common.service.jira.*;
+import com.atlassian.labs.remoteapps.host.common.util.BundleLocator;
+import com.atlassian.labs.remoteapps.host.common.util.BundleUtil;
 import com.atlassian.plugin.DefaultModuleDescriptorFactory;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.PluginController;
@@ -65,6 +69,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import org.osgi.framework.Bundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -102,6 +107,8 @@ public final class Container
     public Container(HttpServer server, String[] apps) throws FileNotFoundException
     {
         this.httpServer = server;
+
+        HostProperties hostProperties = new ContainerHostProperties();
 
         // todo: this should use the plugin api, but it doesn't allow setting of plugin loaders right now
         final DefaultPackageScannerConfiguration scannerConfig = new DefaultPackageScannerConfiguration(determineVersion());
@@ -179,7 +186,7 @@ public final class Container
         OsgiPersistentCache osgiCache = new DefaultOsgiPersistentCache(mkdir(".cache/osgi"));
         Map<Class<?>, Object> hostComponents = newHashMap();
         PluginEventManager pluginEventManager = new DefaultPluginEventManager();
-        OsgiContainerManager osgiContainerManager = new FelixOsgiContainerManager(
+        final OsgiContainerManager osgiContainerManager = new FelixOsgiContainerManager(
                 osgiCache,
                 scannerConfig,
                 new ContainerHostComponentProvider(hostComponents),
@@ -289,15 +296,44 @@ public final class Container
         hostComponents.put(JiraSearchClient.class, new JiraSearchClientServiceFactory(hostHttpClientServiceFactory));
         hostComponents.put(JiraUserClient.class, new JiraUserClientServiceFactory(hostHttpClientServiceFactory));
 
+        DescriptorPermissionsReader permissionsReader = createPermissionsReaderForProduct(osgiContainerManager, "confluence");
+
         // confluence services
-        hostComponents.put(ConfluenceSpaceClient.class, new ConfluenceSpaceClientServiceFactory(hostXmlRpcClientHostServiceFactory));
-        hostComponents.put(ConfluencePageClient.class, new ConfluencePageClientServiceFactory(hostXmlRpcClientHostServiceFactory));
-        hostComponents.put(ConfluenceAdminClient.class, new ConfluenceAdminClientServiceFactory(hostXmlRpcClientHostServiceFactory));
-        hostComponents.put(ConfluenceBlogClient.class, new ConfluenceBlogClientServiceFactory(hostXmlRpcClientHostServiceFactory));
-        hostComponents.put(ConfluenceLabelClient.class, new ConfluenceLabelClientServiceFactory(hostXmlRpcClientHostServiceFactory));
-        hostComponents.put(ConfluenceNotificationClient.class, new ConfluenceNotificationClientServiceFactory(hostXmlRpcClientHostServiceFactory));
-        hostComponents.put(ConfluenceUserClient.class, new ConfluenceUserClientServiceFactory(hostXmlRpcClientHostServiceFactory));
-        hostComponents.put(ConfluenceAttachmentClient.class, new ConfluenceAttachmentClientServiceFactory(hostXmlRpcClientHostServiceFactory));
+        hostComponents.put(ConfluenceSpaceClient.class, new ConfluenceSpaceClientServiceFactory(hostXmlRpcClientHostServiceFactory,
+                permissionsReader, pluginManager));
+        hostComponents.put(ConfluencePageClient.class, new ConfluencePageClientServiceFactory(hostXmlRpcClientHostServiceFactory,
+                        permissionsReader, pluginManager));
+        hostComponents.put(ConfluenceAdminClient.class, new ConfluenceAdminClientServiceFactory(hostXmlRpcClientHostServiceFactory,
+                        permissionsReader, pluginManager));
+        hostComponents.put(ConfluenceBlogClient.class, new ConfluenceBlogClientServiceFactory(hostXmlRpcClientHostServiceFactory,
+                        permissionsReader, pluginManager));
+        hostComponents.put(ConfluenceLabelClient.class, new ConfluenceLabelClientServiceFactory(hostXmlRpcClientHostServiceFactory,
+                        permissionsReader, pluginManager));
+        hostComponents.put(ConfluenceNotificationClient.class, new ConfluenceNotificationClientServiceFactory(hostXmlRpcClientHostServiceFactory,
+                        permissionsReader, pluginManager));
+        hostComponents.put(ConfluenceUserClient.class, new ConfluenceUserClientServiceFactory(hostXmlRpcClientHostServiceFactory,
+                        permissionsReader, pluginManager));
+        hostComponents.put(ConfluenceAttachmentClient.class, new ConfluenceAttachmentClientServiceFactory(hostXmlRpcClientHostServiceFactory,
+                        permissionsReader, pluginManager));
+    }
+
+    private DescriptorPermissionsReader createPermissionsReaderForProduct(final OsgiContainerManager osgiContainerManager, final String productKey)
+    {
+        return new DescriptorPermissionsReader(new HostProperties()
+        {
+            @Override
+            public String getKey()
+            {
+                return productKey;
+            }
+        }, new BundleLocator()
+        {
+            @Override
+            public Bundle getBundle(String pluginKey)
+            {
+                return BundleUtil.findBundleForPlugin(osgiContainerManager.getBundles()[0].getBundleContext(), pluginKey);
+            }
+        });
     }
 
     private String getVersionFromMavenMetadata(String groupId, String artifactId, String defaultValue)

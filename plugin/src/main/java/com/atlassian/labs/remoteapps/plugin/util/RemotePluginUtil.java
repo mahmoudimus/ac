@@ -1,5 +1,6 @@
 package com.atlassian.labs.remoteapps.plugin.util;
 
+import com.atlassian.labs.remoteapps.host.common.util.RemoteAppManifestReader;
 import org.osgi.framework.Bundle;
 
 /**

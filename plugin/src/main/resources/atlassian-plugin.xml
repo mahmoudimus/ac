@@ -114,6 +114,9 @@
     <component key="remotappsService" class="com.atlassian.labs.remoteapps.plugin.DefaultRemoteAppsService"
                interface="com.atlassian.labs.remoteapps.spi.RemoteAppsService" public="true" />
 
+    <component key="bundleLocator" class="com.atlassian.labs.remoteapps.host.common.util.BundleContextBundleLoader" />
+    <component key="permissionsReader" class="com.atlassian.labs.remoteapps.host.common.descriptor.DescriptorPermissionsReader" />
+
     <component-import key="templateRenderer" interface="com.atlassian.templaterenderer.TemplateRenderer"/>
     <component-import key="servletModuleManager" interface="com.atlassian.plugin.servlet.ServletModuleManager" />
     <component-import key="webInterfaceManager" interface="com.atlassian.plugin.web.WebInterfaceManager" />

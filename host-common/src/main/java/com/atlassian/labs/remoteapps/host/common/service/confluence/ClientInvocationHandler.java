@@ -21,8 +21,10 @@ package com.atlassian.labs.remoteapps.host.common.service.confluence;
 
 import com.atlassian.labs.remoteapps.api.Promise;
 import com.atlassian.labs.remoteapps.api.service.http.HostXmlRpcClient;
+import com.atlassian.labs.remoteapps.spi.PermissionDeniedException;
 import com.atlassian.labs.remoteapps.spi.Promises;
 import com.atlassian.labs.remoteapps.spi.util.RemoteName;
+import com.atlassian.labs.remoteapps.spi.util.RequirePermission;
 import com.atlassian.plugin.util.ChainingClassLoader;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
@@ -57,11 +59,15 @@ public final class ClientInvocationHandler implements InvocationHandler
     private static final Logger log = LoggerFactory.getLogger(ClientInvocationHandler.class);
     private final String serviceName;
     private HostXmlRpcClient clientProvider;
+    private final Set<String> permissions;
+    private final String pluginKey;
 
-    public ClientInvocationHandler(String serviceName, HostXmlRpcClient clientProvider)
+    public ClientInvocationHandler(String serviceName, HostXmlRpcClient clientProvider, Set<String> permissions, String pluginKey)
     {
         this.serviceName = serviceName;
         this.clientProvider = clientProvider;
+        this.permissions = permissions;
+        this.pluginKey = pluginKey;
     }
 
     /**
@@ -279,6 +285,7 @@ public final class ClientInvocationHandler implements InvocationHandler
 
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable
     {
+        validatePermissions(method);
         final String methodName = method.getName();
         try
         {
@@ -300,6 +307,17 @@ public final class ClientInvocationHandler implements InvocationHandler
         {
             throw new RuntimeException("Could not execute RPC method " + methodName, e);
         }
+    }
+
+    private void validatePermissions(Method method)
+    {
+        RequirePermission permission = method.getAnnotation(RequirePermission.class);
+        if (permission != null && !permissions.contains(permission.value()))
+        {
+            throw new PermissionDeniedException(pluginKey, "Not able to call method '" + method.getName() + "' due to not having "
+                        + "asked for permission '" + permission.value() + "'");
+        }
+
     }
 
     private Object mapBean(Map map, Class beanType)

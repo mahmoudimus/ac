@@ -1,7 +1,6 @@
 package com.atlassian.labs.remoteapps.plugin.installer;
 
-import com.atlassian.labs.remoteapps.plugin.PermissionManager;
-import com.atlassian.labs.remoteapps.plugin.module.permission.PermissionsReader;
+import com.atlassian.labs.remoteapps.host.common.descriptor.DescriptorPermissionsReader;
 import com.atlassian.plugin.PluginArtifact;
 import com.atlassian.plugin.osgi.util.OsgiHeaderUtil;
 import org.dom4j.Document;
@@ -26,7 +25,7 @@ public class TestRemotePluginArtifactFactory
     @Test
     public void testConvertPluginDescriptorIntoJar() throws IOException
     {
-        RemotePluginArtifactFactory factory = new RemotePluginArtifactFactory(mock(PermissionsReader.class));
+        RemotePluginArtifactFactory factory = new RemotePluginArtifactFactory(mock(DescriptorPermissionsReader.class));
         Document descriptor = DocumentFactory.getInstance()
                                              .createDocument()
                                              .addElement("atlassian-plugin")

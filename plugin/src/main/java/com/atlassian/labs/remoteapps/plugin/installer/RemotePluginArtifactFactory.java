@@ -1,7 +1,7 @@
 package com.atlassian.labs.remoteapps.plugin.installer;
 
 import com.atlassian.labs.remoteapps.api.InstallationMode;
-import com.atlassian.labs.remoteapps.plugin.module.permission.PermissionsReader;
+import com.atlassian.labs.remoteapps.spi.permission.PermissionsReader;
 import com.atlassian.labs.remoteapps.plugin.util.zip.ZipBuilder;
 import com.atlassian.labs.remoteapps.plugin.util.zip.ZipHandler;
 import com.atlassian.plugin.JarPluginArtifact;

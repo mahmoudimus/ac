@@ -1,7 +1,7 @@
 package com.atlassian.labs.remoteapps.plugin.integration.plugins;
 
 import com.atlassian.labs.remoteapps.api.PromiseCallback;
-import com.atlassian.labs.remoteapps.plugin.util.BundleUtil;
+import com.atlassian.labs.remoteapps.host.common.util.BundleUtil;
 import com.atlassian.labs.remoteapps.plugin.util.tracker.WaitableServiceTracker;
 import com.atlassian.labs.remoteapps.plugin.util.tracker.WaitableServiceTrackerFactory;
 import com.atlassian.plugin.ModuleDescriptor;

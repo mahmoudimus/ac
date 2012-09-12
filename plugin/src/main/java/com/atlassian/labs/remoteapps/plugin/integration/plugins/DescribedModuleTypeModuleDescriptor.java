@@ -5,7 +5,7 @@ import com.atlassian.labs.remoteapps.spi.schema.DocumentBasedSchema;
 import com.atlassian.labs.remoteapps.spi.schema.Schema;
 import com.atlassian.labs.remoteapps.spi.schema.SchemaFactory;
 import com.atlassian.labs.remoteapps.spi.schema.SchemaTransformer;
-import com.atlassian.labs.remoteapps.plugin.util.BundleUtil;
+import com.atlassian.labs.remoteapps.host.common.util.BundleUtil;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.ModuleDescriptorFactory;
 import com.atlassian.plugin.Plugin;

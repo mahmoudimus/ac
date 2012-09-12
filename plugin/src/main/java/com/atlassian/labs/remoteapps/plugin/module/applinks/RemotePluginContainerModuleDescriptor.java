@@ -11,7 +11,7 @@ import com.atlassian.labs.remoteapps.plugin.OAuthLinkManager;
 import com.atlassian.labs.remoteapps.plugin.PermissionManager;
 import com.atlassian.labs.remoteapps.spi.Permissions;
 import com.atlassian.labs.remoteapps.spi.applinks.RemotePluginContainerApplicationType;
-import com.atlassian.labs.remoteapps.plugin.util.BundleUtil;
+import com.atlassian.labs.remoteapps.host.common.util.BundleUtil;
 import com.atlassian.labs.remoteapps.plugin.util.RemotePluginUtil;
 import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.ServiceProvider;

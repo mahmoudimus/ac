@@ -1,7 +1,7 @@
 package com.atlassian.labs.remoteapps.plugin.integration.speakeasy;
 
 import com.atlassian.event.api.EventListener;
-import com.atlassian.labs.remoteapps.plugin.util.BundleUtil;
+import com.atlassian.labs.remoteapps.host.common.util.BundleUtil;
 import com.atlassian.labs.speakeasy.descriptor.external.ConditionGenerator;
 import com.atlassian.labs.speakeasy.descriptor.external.DescriptorGenerator;
 import com.atlassian.labs.speakeasy.external.SpeakeasyBackendService;
@@ -16,7 +16,7 @@ import org.osgi.framework.BundleContext;
 
 import java.util.Collections;
 
-import static com.atlassian.labs.remoteapps.plugin.util.RemoteAppManifestReader.isRemoteApp;
+import static com.atlassian.labs.remoteapps.host.common.util.RemoteAppManifestReader.isRemoteApp;
 
 /**
  * Marks apps as Speakeasy apps so they show up as global extensions in the UI

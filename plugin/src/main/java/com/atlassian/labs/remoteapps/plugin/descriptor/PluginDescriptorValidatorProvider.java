@@ -2,7 +2,7 @@ package com.atlassian.labs.remoteapps.plugin.descriptor;
 
 import com.atlassian.labs.remoteapps.api.InstallationMode;
 import com.atlassian.labs.remoteapps.plugin.PermissionManager;
-import com.atlassian.labs.remoteapps.plugin.module.permission.PermissionsReader;
+import com.atlassian.labs.remoteapps.spi.permission.PermissionsReader;
 import com.atlassian.labs.remoteapps.spi.InstallationFailedException;
 import com.atlassian.labs.remoteapps.spi.descriptor.DescribedModuleDescriptorFactory;
 import com.atlassian.labs.remoteapps.spi.schema.Schema;
@@ -17,7 +17,6 @@ import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Nullable;
 import java.net.URL;
 import java.util.Collection;
 import java.util.List;

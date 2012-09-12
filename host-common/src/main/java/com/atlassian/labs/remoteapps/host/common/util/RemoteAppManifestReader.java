@@ -1,4 +1,4 @@
-package com.atlassian.labs.remoteapps.plugin.util;
+package com.atlassian.labs.remoteapps.host.common.util;
 
 import com.atlassian.plugin.osgi.util.OsgiHeaderUtil;
 import org.osgi.framework.Bundle;

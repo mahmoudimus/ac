@@ -1,6 +1,6 @@
 package com.atlassian.labs.remoteapps.plugin;
 
-import com.atlassian.labs.remoteapps.plugin.module.permission.PermissionsReader;
+import com.atlassian.labs.remoteapps.spi.permission.PermissionsReader;
 import com.atlassian.labs.remoteapps.plugin.settings.SettingsManager;
 import com.atlassian.labs.remoteapps.spi.PermissionDeniedException;
 import com.atlassian.labs.remoteapps.spi.permission.Permission;

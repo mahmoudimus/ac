@@ -5,8 +5,8 @@ import com.atlassian.labs.remoteapps.spi.PermissionDeniedException;
 import com.atlassian.labs.remoteapps.spi.RemoteAppsService;
 import com.atlassian.labs.remoteapps.plugin.installer.RemoteAppInstaller;
 import com.atlassian.labs.remoteapps.plugin.installer.SchemeDelegatingRemoteAppInstaller;
-import com.atlassian.labs.remoteapps.plugin.util.BundleUtil;
-import com.atlassian.labs.remoteapps.plugin.util.RemoteAppManifestReader;
+import com.atlassian.labs.remoteapps.host.common.util.BundleUtil;
+import com.atlassian.labs.remoteapps.host.common.util.RemoteAppManifestReader;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.PluginController;
@@ -20,8 +20,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Set;
 
-import static com.atlassian.labs.remoteapps.plugin.util.RemoteAppManifestReader.getInstallerUser;
-import static com.atlassian.labs.remoteapps.plugin.util.RemoteAppManifestReader.isRemoteApp;
+import static com.atlassian.labs.remoteapps.host.common.util.RemoteAppManifestReader.getInstallerUser;
+import static com.atlassian.labs.remoteapps.host.common.util.RemoteAppManifestReader.isRemoteApp;
 import static com.google.common.collect.Sets.newHashSet;
 
 /**

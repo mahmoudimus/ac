@@ -2,9 +2,11 @@ package com.atlassian.labs.remoteapps.host.common.service.confluence;
 
 import com.atlassian.labs.remoteapps.api.service.confluence.ConfluenceLabelClient;
 import com.atlassian.labs.remoteapps.api.service.confluence.ConfluencePageClient;
+import com.atlassian.labs.remoteapps.api.service.confluence.ConfluencePermission;
 import com.atlassian.labs.remoteapps.api.service.confluence.ConfluenceSpaceClient;
 import com.atlassian.labs.remoteapps.api.service.confluence.domain.*;
 import com.atlassian.labs.remoteapps.api.service.http.HostXmlRpcClient;
+import com.atlassian.labs.remoteapps.spi.PermissionDeniedException;
 import com.atlassian.labs.remoteapps.spi.Promises;
 import com.atlassian.plugin.util.ChainingClassLoader;
 import com.google.common.collect.ImmutableMap;
@@ -20,6 +22,7 @@ import java.util.*;
 import static com.atlassian.labs.remoteapps.api.service.confluence.domain.ConfluenceDomain
         .newContentPermission;
 import static com.atlassian.labs.remoteapps.api.service.confluence.domain.ConfluenceDomain.newLabel;
+import static com.google.common.collect.Sets.newHashSet;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static junit.framework.Assert.assertEquals;
@@ -37,6 +40,12 @@ public class TestClientInvocationHandler
     private ConfluenceLabelClient confluenceLabelClient;
     private ConfluenceSpaceClient confluenceSpaceClient;
 
+    private static final Set<String> permissions = newHashSet(
+            ConfluencePermission.READ_CONTENT,
+            ConfluencePermission.MODIFY_SPACES,
+            ConfluencePermission.MODIFY_CONTENT,
+            ConfluencePermission.LABEL_CONTENT);
+
     @Before
     public void setUp()
     {
@@ -44,15 +53,15 @@ public class TestClientInvocationHandler
         confluencePageClient = (ConfluencePageClient) Proxy.newProxyInstance(
                 new ChainingClassLoader(getClass().getClassLoader()),
                 new Class[]{ConfluencePageClient.class},
-                new ClientInvocationHandler("confluence2", client));
+                new ClientInvocationHandler("confluence2", client, permissions, "foo"));
         confluenceLabelClient = (ConfluenceLabelClient) Proxy.newProxyInstance(
                 new ChainingClassLoader(getClass().getClassLoader()),
                 new Class[]{ConfluenceLabelClient.class},
-                new ClientInvocationHandler("confluence2", client));
+                new ClientInvocationHandler("confluence2", client, permissions, "foo"));
         confluenceSpaceClient = (ConfluenceSpaceClient) Proxy.newProxyInstance(
                 new ChainingClassLoader(getClass().getClassLoader()),
                 new Class[]{ConfluenceSpaceClient.class},
-                new ClientInvocationHandler("confluence2", client));
+                new ClientInvocationHandler("confluence2", client, permissions, "foo"));
     }
 
     @Test
@@ -91,12 +100,17 @@ public class TestClientInvocationHandler
     @Test
     public void testEnumInRequest()
     {
-        when(client.invoke("confluence2.removeGlobalPermission", Object.class, "", "USECONFLUENCE", "entityName")).thenReturn(
+        when(client.invoke("confluence2.removePermissionFromSpace", Object.class, "", "COMMENT", "entityName", "DS")).thenReturn(
                 Promises.<Object>ofInstance(null));
 
-        confluenceSpaceClient.removeGlobalPermission(GlobalPermission.USE_CONFLUENCE_PERMISSION,
-                "entityName");
-        verify(client, atLeastOnce()).invoke("confluence2.removeGlobalPermission", Object.class, "", "USECONFLUENCE", "entityName");
+        confluenceSpaceClient.removePermissionFromSpace(SpacePermission.COMMENT_PERMISSION, "entityName", "DS");
+        verify(client, atLeastOnce()).invoke("confluence2.removePermissionFromSpace", Object.class, "", "COMMENT", "entityName", "DS");
+    }
+
+    @Test(expected = PermissionDeniedException.class)
+    public void testPermissionViolation()
+    {
+        confluenceSpaceClient.removeAnonymousUsePermission();
     }
 
     @Test
