@@ -20,15 +20,17 @@ package com.atlassian.labs.remoteapps.host.common.service.http;
  */
 
 import com.atlassian.labs.remoteapps.api.Promise;
-import com.atlassian.labs.remoteapps.spi.Promises;
 import com.atlassian.xmlrpc.*;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.SettableFuture;
-import org.apache.commons.beanutils.*;
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.beanutils.PropertyUtils;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.*;
 import java.util.*;
+
+import static com.atlassian.labs.remoteapps.api.Promises.toPromise;
 
 /**
  * {@link java.lang.reflect.InvocationHandler} for the XML-RPC service object proxy
@@ -163,7 +165,7 @@ public final class PromiseAwareXmlRpcInvocationHandler implements InvocationHand
                     settableFuture.setException(t);
                 }
             });
-            returnValue = Promises.ofFuture(settableFuture);
+            returnValue = toPromise(settableFuture);
         }
         return returnValue;
     }
@@ -248,7 +250,7 @@ public final class PromiseAwareXmlRpcInvocationHandler implements InvocationHand
         return beanInstance;
     }
 
-    void mapToBean(Object bean, Map map)
+    private void mapToBean(Object bean, Map map)
             throws IllegalAccessException, InvocationTargetException
     {
         BeanUtils.populate(bean, removeNullValues(mapArraysToLists(remapPropertyNames(bean, map))));

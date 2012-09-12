@@ -1,217 +1,41 @@
 package com.atlassian.labs.remoteapps.spi.http;
 
-import com.atlassian.labs.remoteapps.api.Promise;
 import com.atlassian.labs.remoteapps.api.PromiseCallback;
-import com.atlassian.labs.remoteapps.spi.Promises;
 import com.atlassian.labs.remoteapps.api.service.http.Response;
 import com.atlassian.labs.remoteapps.api.service.http.ResponsePromise;
-import com.google.common.util.concurrent.ForwardingListenableFuture;
-import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.ListenableFuture;
 
+import java.util.HashSet;
 import java.util.Set;
 
-import static com.google.common.collect.Sets.*;
+import static com.atlassian.labs.remoteapps.api.Promises.toPromise;
 
 /**
- * Extends WrappingPromise with the ResponsePromise interface
+ * Extends WrappingBaseResponsePromise with the ResponsePromise interface
  */
-final class WrappingResponsePromise extends ForwardingListenableFuture.SimpleForwardingListenableFuture<Response> implements ResponsePromise
+public final class WrappingResponsePromise extends WrappingBaseResponsePromise<Response> implements ResponsePromise
 {
-    private final Set<Integer> statuses;
-    private final Set<Range> ranges;
-
     public WrappingResponsePromise(ListenableFuture<Response> delegate)
     {
-        super(Promises.ofFuture(delegate));
-        this.statuses = newHashSet();
-        this.ranges = newHashSet();
+        super(toPromise(delegate));
     }
 
     @Override
-    public ResponsePromise on(int statusCode, PromiseCallback<Response> callback)
+    protected PromiseCallback<Response> newStatusSelector(int statusCode, PromiseCallback<Response> callback)
     {
-        done(new StatusSelector(statusCode, callback));
-        return this;
-    }
-
-    private ResponsePromise onRange(int lower, int upper, PromiseCallback<Response> callback)
-    {
-        done(new StatusRangeSelector(new Range(lower, upper), callback));
-        return this;
+        return new StatusSelector(statusCode, callback);
     }
 
     @Override
-    public ResponsePromise informational(PromiseCallback<Response> callback)
+    protected PromiseCallback<Response> newStatusSetSelector(StatusSet statusSet, PromiseCallback<Response> callback)
     {
-        return onRange(100, 200, callback);
+        return new StatusSetSelector(statusSet, callback);
     }
 
     @Override
-    public ResponsePromise successful(PromiseCallback<Response> callback)
+    protected PromiseCallback<Response> newOthersSelector(Set<Integer> statuses, Set<StatusSet> statusSets, PromiseCallback<Response> callback)
     {
-        return onRange(200, 300, callback);
-    }
-
-    @Override
-    public ResponsePromise ok(PromiseCallback<Response> callback)
-    {
-        return on(200, callback);
-    }
-
-    @Override
-    public ResponsePromise created(PromiseCallback<Response> callback)
-    {
-        return on(201, callback);
-    }
-
-    @Override
-    public ResponsePromise noContent(PromiseCallback<Response> callback)
-    {
-        return on(204, callback);
-    }
-
-    @Override
-    public ResponsePromise redirection(PromiseCallback<Response> callback)
-    {
-        return onRange(300, 400, callback);
-    }
-
-    @Override
-    public ResponsePromise seeOther(PromiseCallback<Response> callback)
-    {
-        return on(303, callback);
-    }
-
-    @Override
-    public ResponsePromise notModified(PromiseCallback<Response> callback)
-    {
-        return on(304, callback);
-    }
-
-    @Override
-    public ResponsePromise clientError(PromiseCallback<Response> callback)
-    {
-        return onRange(400, 500, callback);
-    }
-
-    @Override
-    public ResponsePromise badRequest(PromiseCallback<Response> callback)
-    {
-        return on(400, callback);
-    }
-
-    @Override
-    public ResponsePromise unauthorized(PromiseCallback<Response> callback)
-    {
-        return on(401, callback);
-    }
-
-    @Override
-    public ResponsePromise forbidden(PromiseCallback<Response> callback)
-    {
-        return on(403, callback);
-    }
-
-    @Override
-    public ResponsePromise notFound(PromiseCallback<Response> callback)
-    {
-        return on(404, callback);
-    }
-
-    @Override
-    public ResponsePromise conflict(PromiseCallback<Response> callback)
-    {
-        return on(409, callback);
-    }
-
-    @Override
-    public ResponsePromise serverError(PromiseCallback<Response> callback)
-    {
-        return onRange(500, 600, callback);
-    }
-
-    @Override
-    public ResponsePromise internalServerError(PromiseCallback<Response> callback)
-    {
-        return on(500, callback);
-    }
-
-    @Override
-    public ResponsePromise serviceUnavailable(PromiseCallback<Response> callback)
-    {
-        return on(503, callback);
-    }
-
-    @Override
-    public ResponsePromise error(PromiseCallback<Response> callback)
-    {
-        return clientError(callback).serverError(callback);
-    }
-
-    @Override
-    public ResponsePromise notSuccessful(final PromiseCallback<Response> callback)
-    {
-        return informational(callback).redirection(callback).error(callback);
-    }
-
-    @Override
-    public ResponsePromise others(final PromiseCallback<Response> callback)
-    {
-        done(new PromiseCallback<Response>()
-        {
-            @Override
-            public void handle(Response response)
-            {
-                int status = response.getStatusCode();
-                boolean inRanges = false;
-                for (Range range : ranges)
-                {
-                    if (range.contains(status))
-                    {
-                        inRanges = true;
-                        break;
-                    }
-                }
-                if (!inRanges && !statuses.contains(status))
-                {
-                    callback.handle(response);
-                }
-            }
-        });
-        return this;
-    }
-
-    @Override
-    public Response claim()
-    {
-        return delegatePromise().claim();
-    }
-
-    @Override
-    public ResponsePromise done(PromiseCallback<Response> callback)
-    {
-        delegatePromise().done(callback);
-        return this;
-    }
-
-    @Override
-    public ResponsePromise fail(PromiseCallback<Throwable> callback)
-    {
-        delegatePromise().fail(callback);
-        return this;
-    }
-
-    @Override
-    public ResponsePromise then(FutureCallback<Response> callback)
-    {
-        delegatePromise().then(callback);
-        return this;
-    }
-
-    private Promise<Response> delegatePromise()
-    {
-        return ((Promise<Response>) delegate());
+        return new OthersSelector(statuses, statusSets, callback);
     }
 
     private class StatusSelector implements PromiseCallback<Response>
@@ -221,7 +45,6 @@ final class WrappingResponsePromise extends ForwardingListenableFuture.SimpleFor
 
         private StatusSelector(int statusCode, PromiseCallback<Response> callback)
         {
-            statuses.add(statusCode);
             this.statusCode = statusCode;
             this.callback = callback;
         }
@@ -236,66 +59,57 @@ final class WrappingResponsePromise extends ForwardingListenableFuture.SimpleFor
         }
     }
 
-    private class StatusRangeSelector implements PromiseCallback<Response>
+    private class StatusSetSelector implements PromiseCallback<Response>
     {
-        private final Range range;
+        private StatusSet statusSets;
         private final PromiseCallback<Response> callback;
 
-        private StatusRangeSelector(Range range, PromiseCallback<Response> callback)
+        private StatusSetSelector(StatusSet statusSets, PromiseCallback<Response> callback)
         {
-            this.range = range;
-            ranges.add(range);
+            this.statusSets = statusSets;
             this.callback = callback;
         }
 
         @Override
         public void handle(Response response)
         {
-            if (range.contains(response.getStatusCode()))
+            if (statusSets.contains(response.getStatusCode()))
             {
                 callback.handle(response);
             }
         }
     }
 
-    private static class Range
+    private class OthersSelector implements PromiseCallback<Response>
     {
-        private final int lowerBoundInclusive;
-        private final int upperBoundExclusive;
+        private final PromiseCallback<Response> callback;
+        private final Set<Integer> statuses;
+        private final Set<StatusSet> statusSets;
 
-        private Range(int lowerBoundInclusive, int upperBoundExclusive)
+        private OthersSelector(Set<Integer> statuses, Set<StatusSet> statusSets, PromiseCallback<Response> callback)
         {
-            this.lowerBoundInclusive = lowerBoundInclusive;
-            this.upperBoundExclusive = upperBoundExclusive;
-        }
-
-        public boolean contains(int value)
-        {
-            return value >= lowerBoundInclusive && value < upperBoundExclusive;
+            this.statuses = new HashSet<Integer>(statuses);
+            this.statusSets = new HashSet<StatusSet>(statusSets);
+            this.callback = callback;
         }
 
         @Override
-        public boolean equals(Object o)
+        public void handle(Response response)
         {
-            if (this == o)
+            int status = response.getStatusCode();
+            boolean inStatusSets = false;
+            for (StatusSet statusSet : statusSets)
             {
-                return true;
+                if (statusSet.contains(status))
+                {
+                    inStatusSets = true;
+                    break;
+                }
             }
-            if (o == null || getClass() != o.getClass())
+            if (!inStatusSets && !statuses.contains(status))
             {
-                return false;
+                callback.handle(response);
             }
-            Range range = (Range) o;
-            return lowerBoundInclusive == range.lowerBoundInclusive
-                    && upperBoundExclusive == range.upperBoundExclusive;
-        }
-
-        @Override
-        public int hashCode()
-        {
-            int result = lowerBoundInclusive;
-            result = 31 * result + upperBoundExclusive;
-            return result;
         }
     }
 }

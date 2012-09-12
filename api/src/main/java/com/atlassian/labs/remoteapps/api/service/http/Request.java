@@ -2,7 +2,6 @@ package com.atlassian.labs.remoteapps.api.service.http;
 
 import java.io.InputStream;
 import java.net.URI;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -68,40 +67,12 @@ public interface Request extends Message
     Map<String, String> getAttributes();
 
     /**
-     * Sets the entity from a form builder.  This method has the side effect of also setting
-     * the request's content type to 'application/x-www-form-urlencoded'.
+     * Sets the entity and any associated headers from an entity builder.
      *
-     * @param formBuilder The builder containing form parameters
+     * @param entityBuilder An entity builder
      * @return This object, for builder-style chaining
      */
-    Request setEntity(FormBuilder formBuilder);
-
-    /**
-     * Sets the entity from a parameter map.  This method has the side effect of also setting
-     * the request's content type to 'application/x-www-form-urlencoded'.
-     *
-     * @param params The parameter map
-     * @return This object, for builder-style chaining
-     */
-    Request setFormEntity(Map<String, String> params);
-
-    /**
-     * Sets the entity from a multi-valued parameter map.  This method has the side effect of
-     * also setting the request's content type to 'application/x-www-form-urlencoded'.
-     *
-     * @param params The multi-valued parameter map
-     * @return This object, for builder-style chaining
-     */
-    Request setMultiValuedFormEntity(Map<String, List<String>> params);
-
-    /**
-     * Creates a new {@link ChainingFormBuilder} instance.  Use the <code>commit()</code> method
-     * of the builder to commit the entity to the request and returning the chaining context
-     * to the request object.
-     *
-     * @return A new form builder object, for builder-style chaining
-     */
-    ChainingFormBuilder buildFormEntity();
+    Request setEntity(EntityBuilder entityBuilder);
 
     /**
      * Executes this request through the {@link HttpClient} service as a <code>GET</code> operation.

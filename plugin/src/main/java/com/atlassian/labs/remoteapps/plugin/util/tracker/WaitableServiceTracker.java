@@ -1,7 +1,6 @@
 package com.atlassian.labs.remoteapps.plugin.util.tracker;
 
 import com.atlassian.labs.remoteapps.api.Promise;
-import com.atlassian.labs.remoteapps.spi.Promises;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.util.concurrent.AbstractFuture;
@@ -18,6 +17,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
+import static com.atlassian.labs.remoteapps.api.Promises.toPromise;
 import static com.google.common.collect.Maps.*;
 
 /**
@@ -109,7 +109,7 @@ public class WaitableServiceTracker<K, T>
         {
             futures.add(future);
         }
-        return Promises.ofFuture(future);
+        return toPromise(future);
     }
 
     void close()

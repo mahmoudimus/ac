@@ -12,7 +12,7 @@ import java.util.concurrent.*;
 /**
  * Wraps a ListenableFuture to be a promise
  */
-final class WrappingPromise<V> extends ForwardingListenableFuture.SimpleForwardingListenableFuture<V> implements Promise<V>
+public final class WrappingPromise<V> extends ForwardingListenableFuture.SimpleForwardingListenableFuture<V> implements Promise<V>
 {
     public WrappingPromise(ListenableFuture<V> delegate)
     {

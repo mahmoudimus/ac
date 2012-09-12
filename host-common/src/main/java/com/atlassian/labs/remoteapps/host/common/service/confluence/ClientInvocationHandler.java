@@ -20,14 +20,13 @@ package com.atlassian.labs.remoteapps.host.common.service.confluence;
  */
 
 import com.atlassian.labs.remoteapps.api.Promise;
+import com.atlassian.labs.remoteapps.api.Promises;
 import com.atlassian.labs.remoteapps.api.service.http.HostXmlRpcClient;
 import com.atlassian.labs.remoteapps.spi.PermissionDeniedException;
-import com.atlassian.labs.remoteapps.spi.Promises;
 import com.atlassian.labs.remoteapps.spi.util.RemoteName;
 import com.atlassian.labs.remoteapps.spi.util.RequirePermission;
 import com.atlassian.plugin.util.ChainingClassLoader;
 import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.SettableFuture;
@@ -225,7 +224,7 @@ public final class ClientInvocationHandler implements InvocationHandler
                     settableFuture.setException(t);
                 }
             });
-            returnValue = Promises.ofFuture(settableFuture);
+            returnValue = Promises.toPromise(settableFuture);
         }
         else if (Collection.class.isAssignableFrom(returnValue.getClass()))
         {

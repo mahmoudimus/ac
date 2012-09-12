@@ -10,7 +10,9 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-final class StaticPromise<V> implements Promise<V>
+import static com.atlassian.labs.remoteapps.api.Promises.toPromise;
+
+public final class StaticPromise<V> implements Promise<V>
 {
     private final Promise<V> delegate;
 
@@ -18,13 +20,13 @@ final class StaticPromise<V> implements Promise<V>
     {
         SettableFuture<V> future = SettableFuture.create();
         future.setException(throwable);
-        delegate = Promises.ofFuture(future);
+        delegate = toPromise(future);
     }
     public StaticPromise(V value)
     {
         SettableFuture<V> future = SettableFuture.create();
         future.set(value);
-        delegate = Promises.ofFuture(future);
+        delegate = toPromise(future);
     }
 
     @Override

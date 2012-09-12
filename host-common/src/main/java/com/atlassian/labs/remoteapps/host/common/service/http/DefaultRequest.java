@@ -148,41 +148,9 @@ public class DefaultRequest extends DefaultMessage implements Request
     }
 
     @Override
-    public Request setEntity(FormBuilder formBuilder)
+    public Request setEntity(EntityBuilder entityBuilder)
     {
-        return setContentType(FormBuilder.CONTENT_TYPE).setEntity(formBuilder.toEntity());
-    }
-
-    @Override
-    public Request setFormEntity(Map<String, String> params)
-    {
-        ChainingFormBuilder builder = buildFormEntity();
-        for (Map.Entry<String, String> entry : params.entrySet())
-        {
-            String name = entry.getKey();
-            String value = entry.getValue();
-            builder.addParam(name, value);
-        }
-        return builder.commit();
-    }
-
-    @Override
-    public Request setMultiValuedFormEntity(Map<String, List<String>> params)
-    {
-        ChainingFormBuilder builder = buildFormEntity();
-        for (Map.Entry<String, List<String>> entry : params.entrySet())
-        {
-            String name = entry.getKey();
-            List<String> values = entry.getValue();
-            builder.setParam(name, values);
-        }
-        return builder.commit();
-    }
-
-    @Override
-    public ChainingFormBuilder buildFormEntity()
-    {
-        return new DefaultChainingFormBuilder(this);
+        return setHeaders(entityBuilder.getHeaders()).setEntityStream(entityBuilder.build());
     }
 
     public Request validate()

@@ -6,13 +6,8 @@ import java.util.List;
  * Builds url-encoded form entities for use as HTTP request message bodies.
  * URL encoding of parameter names and values is handled by FormBuilder implementations.
  */
-public interface FormBuilder
+public interface FormBuilder extends EntityBuilder
 {
-    /**
-     * The content-type for url-encoded form entities.
-     */
-    public static final String CONTENT_TYPE = "application/x-www-form-urlencoded";
-
     /**
      * Adds a valueless parameter.
      *
@@ -38,18 +33,4 @@ public interface FormBuilder
      * @return This object, for builder-style chaining
      */
     public FormBuilder setParam(String name, List<String> values);
-
-    /**
-     * Builds a URL-encoded form entity string from this object's current parameters.
-     *
-     * @return The URL-encoded form entity string
-     */
-    public String toEntity();
-
-    /**
-     * Alias for <code>toEntity()</code>.
-     *
-     * @return The URL-encoded form entity string
-     */
-    public String toString();
 }

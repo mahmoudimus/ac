@@ -4,7 +4,6 @@ import com.atlassian.event.api.EventPublisher;
 import com.atlassian.labs.remoteapps.api.service.http.HttpClient;
 import com.atlassian.labs.remoteapps.api.service.http.Response;
 import com.atlassian.labs.remoteapps.api.service.http.ResponsePromise;
-import com.atlassian.labs.remoteapps.spi.http.ResponsePromises;
 import com.atlassian.util.concurrent.ThreadFactories;
 import com.google.common.util.concurrent.SettableFuture;
 import org.apache.http.Header;
@@ -48,6 +47,8 @@ import java.net.ProxySelector;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+
+import static com.atlassian.labs.remoteapps.api.service.http.ResponsePromises.toResponsePromise;
 
 public class DefaultHttpClient extends AbstractHttpClient implements HttpClient, DisposableBean
 {
@@ -236,7 +237,7 @@ public class DefaultHttpClient extends AbstractHttpClient implements HttpClient,
 
         requestKiller.registerRequest(new NotifyingAbortableHttpRequest(op, futureCallback), 10);
         httpClient.execute(op, localContext, futureCallback);
-        return ResponsePromises.ofFuture(future);
+        return toResponsePromise(future);
     }
 
     @Override

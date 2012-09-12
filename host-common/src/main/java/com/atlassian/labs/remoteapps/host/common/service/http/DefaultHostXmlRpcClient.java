@@ -2,7 +2,6 @@ package com.atlassian.labs.remoteapps.host.common.service.http;
 
 import com.atlassian.labs.remoteapps.api.Promise;
 import com.atlassian.labs.remoteapps.api.PromiseCallback;
-import com.atlassian.labs.remoteapps.spi.Promises;
 import com.atlassian.labs.remoteapps.api.service.http.HostHttpClient;
 import com.atlassian.labs.remoteapps.api.service.http.HostXmlRpcClient;
 import com.atlassian.labs.remoteapps.api.service.http.Response;
@@ -26,6 +25,7 @@ import java.lang.reflect.Proxy;
 import java.net.URI;
 import java.util.Vector;
 
+import static com.atlassian.labs.remoteapps.api.Promises.toPromise;
 import static java.lang.System.arraycopy;
 
 /**
@@ -90,8 +90,8 @@ public class DefaultHostXmlRpcClient implements HostXmlRpcClient
             }
             catch (IOException ioe)
             {
-                return Promises.ofThrowable(new XmlRpcException(
-                        XmlRpcMessages.getString("XmlRpcClient.NetworkError"), ioe), resultType);
+                throw new XmlRpcException(
+                        XmlRpcMessages.getString("XmlRpcClient.NetworkError"), ioe);
             }
         }
 
@@ -205,6 +205,6 @@ public class DefaultHostXmlRpcClient implements HostXmlRpcClient
         {
             throw new RuntimeException("Should never happen", ioe);
         }
-        return Promises.ofFuture(future);
+        return toPromise(future);
     }
 }
