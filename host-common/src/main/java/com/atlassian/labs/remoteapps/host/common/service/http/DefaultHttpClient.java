@@ -42,7 +42,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.ProxySelector;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -164,7 +166,20 @@ public class DefaultHttpClient extends AbstractHttpClient implements HttpClient,
                 }
                 else
                 {
-                    ((HttpEntityEnclosingRequestBase) op).setEntity(new InputStreamEntity(request.getEntityStream(), -1));
+                    int length = -1;
+                    InputStream entityStream = request.getEntityStream();
+                    if (entityStream instanceof ByteArrayInputStream)
+                    {
+                        try
+                        {
+                            length = entityStream.available();
+                        }
+                        catch (IOException e)
+                        {
+                            throw new RuntimeException("Will never happen", e);
+                        }
+                    }
+                    ((HttpEntityEnclosingRequestBase) op).setEntity(new InputStreamEntity(entityStream, length));
                 }
             }
             else

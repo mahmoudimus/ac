@@ -143,7 +143,7 @@ public abstract class DefaultMessage implements Message
     public Message setHeaders(Map<String, String> headers)
     {
         checkMutable();
-        headers.clear();
+        this.headers.clear();
         for (Map.Entry<String,String> entry : headers.entrySet())
         {
             setHeader(entry.getKey(), entry.getValue());
