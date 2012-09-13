@@ -7,6 +7,7 @@ import com.atlassian.jira.rpc.soap.client.JiraSoapServiceServiceLocator;
 import com.atlassian.jira.rpc.soap.client.RemoteUser;
 import com.atlassian.labs.remoteapps.api.service.SignedRequestHandler;
 import org.apache.commons.io.IOUtils;
+import org.junit.Ignore;
 import services.ServiceAccessor;
 import org.apache.axis.client.Stub;
 import org.apache.axis.transport.http.HTTPConstants;
@@ -106,6 +107,7 @@ public class JiraReadUsersAndGroupsScopeTest
     }
 
     @Test
+    @Ignore
     public void testCallWithClient() throws Exception
     {
         User user = getHostHttpClient().callAs(getClientKey(), "betty", new Callable<User>()
