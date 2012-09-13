@@ -110,6 +110,16 @@ public final class DescriptorUtils
     private static String text(Element parent, String name, boolean required)
     {
         Element target = element(parent, name, required);
-        return target != null ? target.getTextTrim() : null;
+        return target != null ? removeSpacesOnEnds(target.getText()) : null;
+    }
+
+    private static String removeSpacesOnEnds(String text)
+    {
+        StringBuilder sb = new StringBuilder();
+        for (String line : text.split("\n|\r\n|\r"))
+        {
+            sb.append(line.trim()).append("\n");
+        }
+        return sb.toString();
     }
 }

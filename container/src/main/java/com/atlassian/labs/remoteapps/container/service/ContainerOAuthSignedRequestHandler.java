@@ -132,8 +132,6 @@ public class ContainerOAuthSignedRequestHandler extends AbstractOauthSignedReque
         return local;
     }
 
-
-
     public void setLocalOauthKey(String key)
     {
         env.setEnvIfNull("OAUTH_LOCAL_KEY", key);
