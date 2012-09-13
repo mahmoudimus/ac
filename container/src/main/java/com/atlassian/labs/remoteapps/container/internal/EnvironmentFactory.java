@@ -42,6 +42,7 @@ public final class EnvironmentFactory
                                 ImmutableList.of(
                                         new ResourcePropertiesLoader("/env-defaults.properties", new ClassLoaderResourceLoader(this.getClass())),
                                         new ResourcePropertiesLoader("/env.properties", new PluginResourceLoader(plugin)),
+                                        new ResourcePropertiesLoader("/env.local.properties", new PluginResourceLoader(plugin)),
                                         new EnvironmentPropertiesLoader())
                         );
                     }
