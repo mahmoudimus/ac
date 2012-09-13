@@ -39,10 +39,4 @@ public class GeneralPageModuleGenerator extends AbstractPageModuleGenerator
     {
         return "A non-admin general page decorated by the application, with a link in a globally-accessible place";
     }
-
-    @Override
-    public Map<String, String> getI18nMessages(String pluginKey, Element element)
-    {
-        return emptyMap();
-    }
 }

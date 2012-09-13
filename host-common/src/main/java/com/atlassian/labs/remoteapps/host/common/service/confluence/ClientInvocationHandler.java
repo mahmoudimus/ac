@@ -96,7 +96,14 @@ public final class ClientInvocationHandler implements InvocationHandler
 
     private Object toRemote(Object arg, Type expectedType)
     {
-        final Class immediateType = expectedType instanceof Class ? (Class)expectedType : (Class) ((ParameterizedType)expectedType).getRawType();
+        final Class immediateType = expectedType instanceof Class ? (Class)expectedType :
+                expectedType instanceof ParameterizedType ? (Class) ((ParameterizedType)expectedType).getRawType() :
+                expectedType instanceof GenericArrayType ? Array.class : null;
+        if (immediateType == null)
+        {
+            throw new IllegalArgumentException("Unexpected type");
+        }
+
         final Type genericType = getGenericType(expectedType);
         if (arg == null)
         {
@@ -106,7 +113,7 @@ public final class ClientInvocationHandler implements InvocationHandler
                 arg instanceof Date ||
                 arg instanceof String ||
                 arg instanceof Boolean ||
-                arg instanceof byte[])
+                arg.getClass().isArray())
         {
             return arg;
         }
@@ -279,6 +286,10 @@ public final class ClientInvocationHandler implements InvocationHandler
             {
                 return typeParam.getActualTypeArguments()[0];
             }
+        }
+        else if (type instanceof GenericArrayType)
+        {
+            return ((GenericArrayType)type).getGenericComponentType();
         }
         return null;
     }

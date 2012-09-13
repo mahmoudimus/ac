@@ -46,11 +46,4 @@ public class ProfilePageModuleGenerator extends AbstractPageModuleGenerator
                 .setDescription(getDescription())
                 .build();
     }
-
-    @Override
-    public Map<String, String> getI18nMessages(String pluginKey, Element element)
-    {
-        return emptyMap();
-    }
-
 }

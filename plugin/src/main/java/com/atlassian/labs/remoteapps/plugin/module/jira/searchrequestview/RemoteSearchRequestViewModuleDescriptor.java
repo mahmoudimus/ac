@@ -6,6 +6,7 @@ import com.atlassian.jira.plugin.searchrequestview.SearchRequestView;
 import com.atlassian.jira.plugin.searchrequestview.SearchRequestViewModuleDescriptor;
 import com.atlassian.jira.plugin.searchrequestview.SearchRequestViewModuleDescriptorImpl;
 import com.atlassian.jira.security.JiraAuthenticationContext;
+import com.atlassian.labs.remoteapps.plugin.integration.plugins.DescriptorToRegister;
 import com.atlassian.labs.remoteapps.plugin.integration.plugins.DynamicDescriptorRegistration;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
@@ -79,7 +80,7 @@ public class RemoteSearchRequestViewModuleDescriptor extends AbstractModuleDescr
         desc.addAttribute("fileExtension", "html");
 
         SearchRequestViewModuleDescriptor moduleDescriptor = createDescriptor(desc);
-        dynamicDescriptorRegistration.registerDescriptors(getPlugin(), moduleDescriptor);
+        dynamicDescriptorRegistration.registerDescriptors(getPlugin(), new DescriptorToRegister(moduleDescriptor));
     }
 
     private SearchRequestViewModuleDescriptor createDescriptor(Element element)

@@ -18,8 +18,6 @@ public interface RemoteModuleGenerator extends SchemaDocumented
 
     Schema getSchema();
 
-    Map<String,String> getI18nMessages(String pluginKey, Element element);
-
     void validate(Element element, URI registrationUrl, String username) throws PluginParseException;
 
     void generatePluginDescriptor(Element descriptorElement, Element pluginDescriptorRoot);

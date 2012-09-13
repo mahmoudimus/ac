@@ -28,12 +28,6 @@ public class DialogPageModuleGenerator extends AbstractPageModuleGenerator
     }
 
     @Override
-    public Map<String, String> getI18nMessages(String pluginKey, Element element)
-    {
-        return Collections.emptyMap();
-    }
-
-    @Override
     public String getName()
     {
         return "Dialog Page";

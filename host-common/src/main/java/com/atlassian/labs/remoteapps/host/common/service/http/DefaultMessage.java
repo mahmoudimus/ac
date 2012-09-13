@@ -3,10 +3,7 @@ package com.atlassian.labs.remoteapps.host.common.service.http;
 import com.atlassian.labs.remoteapps.api.service.http.Message;
 import org.apache.commons.io.IOUtils;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.Map;
@@ -22,6 +19,7 @@ public abstract class DefaultMessage implements Message
     private String contentType;
     private String contentCharset;
     private InputStream entityStream;
+    private byte[] entityBytes;
     private boolean hasRead;
     private Map<String, String> headers;
     private boolean isFrozen;
@@ -84,19 +82,32 @@ public abstract class DefaultMessage implements Message
         {
             String charset = getContentCharset();
             charset = charset != null ? charset : "ISO-8859-1";
-            entity = IOUtils.toString(getEntityStream(), charset);
+            if (entityStream != null)
+            {
+                entity = IOUtils.toString(getEntityStream(), charset);
+            }
+            else
+            {
+                entity = new String(entityBytes);
+            }
         }
         return entity;
     }
 
+    byte[] getEntityBytes()
+    {
+        return entityBytes;
+    }
+
     public Message setEntity(String entity)
     {
+        checkMutable();
         if (entity != null)
         {
             try
             {
                 final String charset = "UTF-8";
-                setEntityStream(IOUtils.toInputStream(entity, charset), charset);
+                entityBytes = entity.getBytes(Charset.forName(charset));
             }
             catch (Exception e)
             {
@@ -104,14 +115,14 @@ public abstract class DefaultMessage implements Message
             }
         }
         else {
-            setEntityStream(null, null);
+            entityBytes = null;
         }
         return this;
     }
 
     public boolean hasEntity()
     {
-        return entityStream != null;
+        return entityStream != null || entityBytes != null;
     }
 
     public boolean hasReadEntity()
@@ -193,7 +204,8 @@ public abstract class DefaultMessage implements Message
                 String entity = getEntity();
                 buf.append(entity).append(lf);
                 // hack to get around hasRead guard for streaming entities, which might cause perf issues
-                setEntity(entity);
+                // fixme: this will break binary responses
+                setEntityStream(new ByteArrayInputStream(entity.getBytes()));
             }
             catch (IOException e)
             {

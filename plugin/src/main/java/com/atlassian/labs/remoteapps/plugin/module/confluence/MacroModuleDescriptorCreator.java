@@ -4,8 +4,10 @@ import com.atlassian.confluence.macro.Macro;
 import com.atlassian.confluence.pages.thumbnail.Dimensions;
 import com.atlassian.confluence.plugin.descriptor.MacroMetadataParser;
 import com.atlassian.confluence.status.service.SystemInformationService;
+import com.atlassian.labs.remoteapps.plugin.PermissionManager;
 import com.atlassian.labs.remoteapps.plugin.RemoteAppAccessor;
 import com.atlassian.labs.remoteapps.plugin.RemoteAppAccessorFactory;
+import com.atlassian.labs.remoteapps.plugin.integration.plugins.DescriptorToRegister;
 import com.atlassian.labs.remoteapps.plugin.module.IFrameParams;
 import com.atlassian.labs.remoteapps.plugin.module.IFrameRenderer;
 import com.atlassian.labs.remoteapps.plugin.module.WebItemCreator;
@@ -14,7 +16,7 @@ import com.atlassian.labs.remoteapps.plugin.module.page.IFramePageServlet;
 import com.atlassian.labs.remoteapps.plugin.module.page.PageInfo;
 import com.atlassian.labs.remoteapps.plugin.util.contextparameter.ContextParameterParser;
 import com.atlassian.labs.remoteapps.plugin.util.contextparameter.RequestContextParameterFactory;
-import com.atlassian.labs.remoteapps.plugin.util.uri.Uri;
+import com.atlassian.labs.remoteapps.spi.Permissions;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
@@ -28,17 +30,16 @@ import com.atlassian.sal.api.component.ComponentLocator;
 import com.atlassian.sal.api.user.UserManager;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
+import org.apache.commons.lang.StringUtils;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 
 import java.net.URI;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 
 import static com.atlassian.labs.remoteapps.plugin.module.util.redirect.RedirectServlet
         .getPermanentRedirectUrl;
+import static com.atlassian.labs.remoteapps.plugin.util.EncodingUtils.escapeAll;
 import static com.atlassian.labs.remoteapps.spi.util.Dom4jUtils.*;
 
 /**
@@ -61,12 +62,18 @@ public class MacroModuleDescriptorCreator
     private final ContextParameterParser contextParameterParser;
     private final IFrameRenderer iFrameRenderer;
     private final UserManager userManager;
+    private final PermissionManager permissionManager;
 
     public MacroModuleDescriptorCreator(SystemInformationService systemInformationService,
-            RemoteAppAccessorFactory remoteAppAccessorFactory, HostContainer hostContainer,
-            ServletModuleManager servletModuleManager, WebItemCreator webItemCreator,
-            ContextParameterParser contextParameterParser, IFrameRenderer iFrameRenderer,
-            UserManager userManager)
+                                        RemoteAppAccessorFactory remoteAppAccessorFactory,
+                                        HostContainer hostContainer,
+                                        ServletModuleManager servletModuleManager,
+                                        WebItemCreator webItemCreator,
+                                        ContextParameterParser contextParameterParser,
+                                        IFrameRenderer iFrameRenderer,
+                                        UserManager userManager,
+                                        PermissionManager permissionManager
+    )
     {
         this.systemInformationService = systemInformationService;
         this.remoteAppAccessorFactory = remoteAppAccessorFactory;
@@ -76,6 +83,7 @@ public class MacroModuleDescriptorCreator
         this.contextParameterParser = contextParameterParser;
         this.iFrameRenderer = iFrameRenderer;
         this.userManager = userManager;
+        this.permissionManager = permissionManager;
 
         // todo: fix this in confluence
         this.macroMetadataParser = ComponentLocator.getComponent(MacroMetadataParser.class);
@@ -101,7 +109,7 @@ public class MacroModuleDescriptorCreator
             return this;
         }
 
-        public Iterable<ModuleDescriptor> build(Plugin plugin, Element entity)
+        public Iterable<DescriptorToRegister> build(Plugin plugin, Element entity)
         {
             Element config = entity.createCopy();
 
@@ -135,11 +143,11 @@ public class MacroModuleDescriptorCreator
             }
 
             // Generate the required plugin module descriptors for this macro
-            Set<ModuleDescriptor> descriptors = new HashSet<ModuleDescriptor>();
+            Set<DescriptorToRegister> descriptors = new HashSet<DescriptorToRegister>();
 
             ModuleDescriptor descriptor = createXhtmlMacroModuleDescriptor(plugin, entity);
             descriptor.init(plugin, config);
-            descriptors.add(descriptor);
+            descriptors.add(new DescriptorToRegister(descriptor, getI18nMessages(plugin.getKey(), entity)));
 
             boolean isFeaturedMacro = Boolean.valueOf(getOptionalAttribute(config, "featured", false));
             if (isFeaturedMacro)
@@ -160,7 +168,47 @@ public class MacroModuleDescriptorCreator
             return ImmutableSet.copyOf(descriptors);
         }
 
-        private Collection<ModuleDescriptor> createMacroEditorDescriptors(final Plugin plugin, Element config, String macroKey, String macroName)
+        private Properties getI18nMessages(String pluginKey, Element element)
+        {
+            Properties i18n = new Properties();
+            String macroKey = getRequiredAttribute(element, "key");
+            if (element.element("parameters") != null)
+            {
+                for (Element parameter : new ArrayList<Element>(element.element("parameters").elements("parameter")))
+                {
+                    String paramTitle = getRequiredAttribute(parameter, "title");
+                    String paramName = getRequiredAttribute(parameter, "name");
+                    if (paramTitle != null)
+                    {
+                        i18n.put(pluginKey + "." + macroKey + ".param." + paramName + ".label", paramTitle);
+                    }
+
+                    String description = parameter.elementText("description");
+                    if (!StringUtils.isBlank(description))
+                    {
+                        i18n.put(pluginKey + "." + macroKey + ".param." + paramName + ".desc", description);
+                    }
+                }
+            }
+            String macroName = getOptionalAttribute(element, "title", getOptionalAttribute(element, "name", macroKey));
+            i18n.put(pluginKey + "." + macroKey + ".label", macroName);
+
+            if (element.element("description") != null)
+            {
+                i18n.put(pluginKey + "." + macroKey + ".desc", element.element("description").getTextTrim());
+            }
+
+            if (!permissionManager.hasPermission(pluginKey, Permissions.GENERATE_ANY_HTML))
+            {
+                for (String propName : i18n.stringPropertyNames())
+                {
+                    i18n.put(propName, escapeAll(i18n.getProperty(propName)));
+                }
+            }
+            return i18n;
+        }
+
+        private Collection<DescriptorToRegister> createMacroEditorDescriptors(final Plugin plugin, Element config, String macroKey, String macroName)
         {
             Element macroEditor = config.element("macro-editor");
             URI originalUrl = getRequiredUriAttribute(macroEditor, "url");
@@ -175,10 +223,10 @@ public class MacroModuleDescriptorCreator
             ModuleDescriptor jsDescriptor = createCustomEditorWebResource(plugin, macroEditor, macroKey,
                     macroName, localUrl);
 
-            return Lists.newArrayList(jsDescriptor, iFrameServlet);
+            return Lists.newArrayList(new DescriptorToRegister(jsDescriptor), new DescriptorToRegister(iFrameServlet));
         }
 
-        private ModuleDescriptor createFeaturedMacroDescriptor(final Plugin plugin, String macroKey, Element macroConfig)
+        private DescriptorToRegister createFeaturedMacroDescriptor(final Plugin plugin, String macroKey, Element macroConfig)
         {
             String name = macroConfig.attributeValue("name");
             Element webItem = DocumentHelper.createDocument().addElement("web-item")
@@ -195,7 +243,7 @@ public class MacroModuleDescriptorCreator
                 webItem.addAttribute("icon-url", macroConfig.attributeValue("icon-url"));
             }
 
-            return webItemCreatorBuilder.build(plugin, macroKey, null, webItem);
+            return new DescriptorToRegister(webItemCreatorBuilder.build(plugin, macroKey, null, webItem));
         }
 
         private ServletModuleDescriptor createMacroEditorServletDescriptor(final Plugin plugin,
@@ -282,7 +330,7 @@ public class MacroModuleDescriptorCreator
             return jsDescriptor;
         }
 
-        private ModuleDescriptor createFeaturedIconWebResource(Plugin plugin, RemoteAppAccessor remoteAppAccessor,
+        private DescriptorToRegister createFeaturedIconWebResource(Plugin plugin, RemoteAppAccessor remoteAppAccessor,
                 String macroKey, URI iconUrl)
         {
             Element webResource = DocumentHelper.createDocument()
@@ -313,7 +361,7 @@ public class MacroModuleDescriptorCreator
             ModuleDescriptor jsDescriptor = new WebResourceModuleDescriptor(hostContainer);
             jsDescriptor.init(plugin, webResource);
 
-            return jsDescriptor;
+            return new DescriptorToRegister(jsDescriptor);
         }
 
         private ModuleDescriptor createXhtmlMacroModuleDescriptor(final Plugin plugin, final Element originalEntity)

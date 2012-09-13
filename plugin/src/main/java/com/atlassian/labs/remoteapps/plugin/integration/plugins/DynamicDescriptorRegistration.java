@@ -16,6 +16,7 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -36,14 +37,17 @@ public class DynamicDescriptorRegistration
 {
     private final WaitableServiceTracker<ModuleDescriptorFactory,ModuleDescriptorFactory> moduleTracker;
     private final BundleContext bundleContext;
+    private final I18nPropertiesPluginManager i18nPropertiesPluginManager;
     private static final Logger log = LoggerFactory.getLogger(DynamicDescriptorRegistration.class);
 
     @Autowired
-    public DynamicDescriptorRegistration(
-            WaitableServiceTrackerFactory waitableServiceTrackerFactory,
-            BundleContext bundleContext)
+    public DynamicDescriptorRegistration(WaitableServiceTrackerFactory waitableServiceTrackerFactory,
+                                         BundleContext bundleContext,
+                                         I18nPropertiesPluginManager i18nPropertiesPluginManager
+    )
     {
         this.bundleContext = bundleContext;
+        this.i18nPropertiesPluginManager = i18nPropertiesPluginManager;
         this.moduleTracker = waitableServiceTrackerFactory.create(ModuleDescriptorFactory.class,
                 new Function<ModuleDescriptorFactory,ModuleDescriptorFactory>() {
 
@@ -186,17 +190,18 @@ public class DynamicDescriptorRegistration
         }, key);
     }
 
-    public void registerDescriptors(Plugin plugin, ModuleDescriptor... descriptors)
+    public void registerDescriptors(Plugin plugin, DescriptorToRegister... descriptors)
     {
         registerDescriptors(plugin, asList(descriptors));
     }
 
-    public void registerDescriptors(Plugin plugin, Iterable<ModuleDescriptor> descriptors)
+    public void registerDescriptors(Plugin plugin, Iterable<DescriptorToRegister> descriptors)
     {
         Bundle bundle = BundleUtil.findBundleForPlugin(bundleContext, plugin.getKey());
         BundleContext targetBundleContext = bundle.getBundleContext();
-        for (ModuleDescriptor descriptor : descriptors)
+        for (DescriptorToRegister reg : descriptors)
         {
+            ModuleDescriptor descriptor = reg.getDescriptor();
             if (plugin.getModuleDescriptor(descriptor.getKey()) != null)
             {
                 log.error("Duplicate key '" + descriptor.getKey() + "' detected, skipping");
@@ -207,7 +212,11 @@ public class DynamicDescriptorRegistration
                 targetBundleContext.registerService(ModuleDescriptor.class.getName(),
                         descriptor, null);
             }
+
+            if (reg.getI18nProperties() != null)
+            {
+                i18nPropertiesPluginManager.add(plugin.getKey(), reg.getI18nProperties());
+            }
         }
     }
-
 }

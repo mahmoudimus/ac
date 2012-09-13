@@ -1,5 +1,6 @@
 package com.atlassian.labs.remoteapps.plugin.util;
 
+import com.atlassian.renderer.v2.components.HtmlEscaper;
 import org.apache.commons.codec.binary.Base64;
 
 import java.nio.charset.Charset;
@@ -25,4 +26,8 @@ public class EncodingUtils
                 .replace("'", "&#39;");
     }
 
+    public static String escapeAll(String value)
+    {
+        return HtmlEscaper.escapeAll(value, true);
+    }
 }

@@ -9,6 +9,7 @@ import org.dom4j.Element;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Map;
 
 import static com.atlassian.labs.remoteapps.spi.util.Dom4jUtils.*;
@@ -24,40 +25,6 @@ public abstract class AbstractMacroModuleGenerator implements RemoteModuleGenera
     public AbstractMacroModuleGenerator(PluginAccessor pluginAccessor)
     {
         this.pluginAccessor = pluginAccessor;
-    }
-
-    @Override
-    public Map<String, String> getI18nMessages(String pluginKey, Element element)
-    {
-        Map<String,String> i18n = newHashMap();
-        String macroKey = getRequiredAttribute(element, "key");
-        if (element.element("parameters") != null)
-        {
-            for (Element parameter : new ArrayList<Element>(element.element("parameters").elements("parameter")))
-            {
-                String paramTitle = getRequiredAttribute(parameter, "title");
-                String paramName = getRequiredAttribute(parameter, "name");
-                if (paramTitle != null)
-                {
-                    i18n.put(pluginKey + "." + macroKey + ".param." + paramName + ".label", paramTitle);
-                }
-
-                String description = parameter.elementText("description");
-                if (!StringUtils.isBlank(description))
-                {
-                    i18n.put(pluginKey + "." + macroKey + ".param." + paramName + ".desc", description);
-                }
-            }
-        }
-        String macroName = getOptionalAttribute(element, "title", getOptionalAttribute(element, "name", macroKey));
-        i18n.put(pluginKey + "." + macroKey + ".label", macroName);
-
-        if (element.element("description") != null)
-        {
-            i18n.put(pluginKey + "." + macroKey + ".desc", element.element("description").getTextTrim());
-        }
-
-        return i18n;
     }
 
     @Override

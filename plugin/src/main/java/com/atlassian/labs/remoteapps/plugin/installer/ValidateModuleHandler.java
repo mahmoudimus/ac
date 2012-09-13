@@ -14,23 +14,16 @@ class ValidateModuleHandler implements ModuleGeneratorManager.ModuleHandler
 {
     private final URI registrationUrl;
     private final String username;
-    private final Properties props;
-    private final String pluginKey;
 
-    public ValidateModuleHandler(URI registrationUrl, String username,
-            Properties props,
-            String pluginKey)
+    public ValidateModuleHandler(URI registrationUrl, String username)
     {
         this.registrationUrl = registrationUrl;
         this.username = username;
-        this.props = props;
-        this.pluginKey = pluginKey;
     }
 
     @Override
     public void handle(Element element, RemoteModuleGenerator generator)
     {
         generator.validate(element, registrationUrl, username);
-        props.putAll(generator.getI18nMessages(pluginKey, element));
     }
 }

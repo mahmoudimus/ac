@@ -24,6 +24,7 @@ import org.apache.http.client.methods.HttpTrace;
 import org.apache.http.concurrent.FutureCallback;
 import org.apache.http.conn.ClientConnectionRequest;
 import org.apache.http.conn.ConnectionReleaseTrigger;
+import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.impl.nio.client.DefaultHttpAsyncClient;
 import org.apache.http.impl.nio.conn.AsyncSchemeRegistryFactory;
@@ -43,7 +44,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.ProxySelector;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -131,7 +131,7 @@ public class DefaultHttpClient extends AbstractHttpClient implements HttpClient,
         // trace the request if debugging is enabled; may be expensive
         if (log.isDebugEnabled())
         {
-            log.debug(request.dump());
+            //log.debug(request.dump());
         }
 
         // freeze the request state to prevent further mutability as we go to execute the request
@@ -156,8 +156,15 @@ public class DefaultHttpClient extends AbstractHttpClient implements HttpClient,
         {
             if (op instanceof HttpEntityEnclosingRequestBase)
             {
-                InputStream entity = request.getEntityStream();
-                ((HttpEntityEnclosingRequestBase) op).setEntity(new InputStreamEntity(entity, -1));
+                byte[] entity = request.getEntityBytes();
+                if (entity != null)
+                {
+                    ((HttpEntityEnclosingRequestBase) op).setEntity(new ByteArrayEntity(entity));
+                }
+                else
+                {
+                    ((HttpEntityEnclosingRequestBase) op).setEntity(new InputStreamEntity(request.getEntityStream(), -1));
+                }
             }
             else
             {
@@ -195,7 +202,7 @@ public class DefaultHttpClient extends AbstractHttpClient implements HttpClient,
                     // trace the response if debugging is enabled; may be expensive
                     if (log.isDebugEnabled())
                     {
-                        log.debug(response.dump());
+                        //log.debug(response.dump());
                     }
 
                     response.freeze();

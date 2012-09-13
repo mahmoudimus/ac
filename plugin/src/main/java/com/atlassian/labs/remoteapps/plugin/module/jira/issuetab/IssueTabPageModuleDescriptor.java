@@ -2,6 +2,7 @@ package com.atlassian.labs.remoteapps.plugin.module.jira.issuetab;
 
 import com.atlassian.jira.plugin.issuetabpanel.IssueTabPanelModuleDescriptor;
 import com.atlassian.jira.security.JiraAuthenticationContext;
+import com.atlassian.labs.remoteapps.plugin.integration.plugins.DescriptorToRegister;
 import com.atlassian.labs.remoteapps.plugin.integration.plugins.DynamicDescriptorRegistration;
 import com.atlassian.labs.remoteapps.plugin.module.ConditionProcessor;
 import com.atlassian.labs.remoteapps.plugin.module.ContainingRemoteCondition;
@@ -82,7 +83,7 @@ public class IssueTabPageModuleDescriptor extends AbstractModuleDescriptor<Void>
         IssueTabPanelModuleDescriptor moduleDescriptor = createDescriptor(moduleKey, desc,
                 new IFrameParams(descriptor), condition);
 
-        dynamicDescriptorRegistration.registerDescriptors(getPlugin(), moduleDescriptor);
+        dynamicDescriptorRegistration.registerDescriptors(getPlugin(), new DescriptorToRegister(moduleDescriptor));
     }
 
     private IssueTabPanelModuleDescriptor createDescriptor(

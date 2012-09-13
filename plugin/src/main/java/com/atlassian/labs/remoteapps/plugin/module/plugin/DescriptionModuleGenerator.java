@@ -58,12 +58,6 @@ public class DescriptionModuleGenerator implements RemoteModuleGenerator
     }
 
     @Override
-    public Map<String, String> getI18nMessages(String pluginKey, Element element)
-    {
-        return emptyMap();
-    }
-
-    @Override
     public void validate(Element element, URI registrationUrl, String username) throws PluginParseException
     {
     }

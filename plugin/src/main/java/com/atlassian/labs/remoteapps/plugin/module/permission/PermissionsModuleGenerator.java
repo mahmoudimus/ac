@@ -75,12 +75,6 @@ public class PermissionsModuleGenerator implements RemoteModuleGenerator
                 .build();
     }
 
-    @Override
-    public Map<String, String> getI18nMessages(String pluginKey, Element element)
-    {
-        return emptyMap();
-    }
-
     private List<String> extractApiScopeKeys(Element element)
     {
         List<String> apiScopes = newArrayList();

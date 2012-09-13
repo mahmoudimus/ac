@@ -49,12 +49,6 @@ public class ApplicationTypeModuleGenerator implements RemoteModuleGenerator
     }
 
     @Override
-    public Map<String, String> getI18nMessages(String pluginKey, Element element)
-    {
-        return emptyMap();
-    }
-
-    @Override
     public void generatePluginDescriptor(Element descriptorElement, Element pluginDescriptorRoot)
     {
         Element e = descriptorElement.createCopy("remote-plugin-container");

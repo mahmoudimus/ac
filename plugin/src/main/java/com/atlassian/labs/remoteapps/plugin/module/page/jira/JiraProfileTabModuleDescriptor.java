@@ -3,6 +3,7 @@ package com.atlassian.labs.remoteapps.plugin.module.page.jira;
 import com.atlassian.jira.plugin.profile.ViewProfilePanelModuleDescriptor;
 import com.atlassian.jira.plugin.profile.ViewProfilePanelModuleDescriptorImpl;
 import com.atlassian.jira.security.JiraAuthenticationContext;
+import com.atlassian.labs.remoteapps.plugin.integration.plugins.DescriptorToRegister;
 import com.atlassian.labs.remoteapps.plugin.integration.plugins.DynamicDescriptorRegistration;
 import com.atlassian.labs.remoteapps.plugin.module.IFrameParams;
 import com.atlassian.labs.remoteapps.plugin.module.IFrameRenderer;
@@ -61,7 +62,7 @@ public class JiraProfileTabModuleDescriptor extends AbstractModuleDescriptor<Voi
     {
         super.enabled();
 
-        dynamicDescriptorRegistration.registerDescriptors(getPlugin(), ImmutableSet.<ModuleDescriptor>of(
+        dynamicDescriptorRegistration.registerDescriptors(getPlugin(), new DescriptorToRegister(
                 createProfilePanelDescriptor(descriptor, getKey(), url)));
     }
 

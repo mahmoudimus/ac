@@ -1,5 +1,6 @@
 package com.atlassian.labs.remoteapps.plugin.module.page;
 
+import com.atlassian.labs.remoteapps.plugin.integration.plugins.DescriptorToRegister;
 import com.atlassian.labs.remoteapps.plugin.module.IFrameParams;
 import com.atlassian.labs.remoteapps.plugin.module.IFrameRenderer;
 import com.atlassian.labs.remoteapps.plugin.module.WebItemContext;
@@ -13,7 +14,6 @@ import com.atlassian.plugin.servlet.ServletModuleManager;
 import com.atlassian.plugin.servlet.descriptors.ServletModuleDescriptor;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.web.conditions.AlwaysDisplayCondition;
-import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.atlassian.sal.api.user.UserManager;
 import com.google.common.collect.ImmutableSet;
 import org.dom4j.Element;
@@ -77,21 +77,21 @@ public class RemotePageDescriptorCreator
             this.webItemCreatorBuilder.setContextParams(productAccessor.getLinkContextParams());
             this.webItemCreatorBuilder.setCondition(condition.getClass());
         }
-        public Iterable<ModuleDescriptor> build(Plugin plugin, Element descriptor)
+        public Iterable<DescriptorToRegister> build(Plugin plugin, Element descriptor)
         {
             checkNotNull(decorator);
             String key = getRequiredAttribute(descriptor, "key");
             final URI url = getRequiredUriAttribute(descriptor, "url");
 
             URI localUrl = createLocalUrl(plugin.getKey(), key);
-            WebItemModuleDescriptor webItemModuleDescriptor = webItemCreatorBuilder.build(plugin, key, localUrl, descriptor);
+            DescriptorToRegister webItemModuleDescriptor = new DescriptorToRegister(webItemCreatorBuilder.build(plugin, key, localUrl, descriptor));
 
-            return ImmutableSet.<ModuleDescriptor>of(
+            return ImmutableSet.of(
                     createServletDescriptor(plugin, descriptor, key, url, localUrl),
                     webItemModuleDescriptor);
         }
 
-        private ServletModuleDescriptor createServletDescriptor(
+        private DescriptorToRegister createServletDescriptor(
                 final Plugin plugin,
                 Element e,
                 String key,
@@ -124,7 +124,7 @@ public class RemotePageDescriptorCreator
                 }
             }, servletModuleManager);
             descriptor.init(plugin, config);
-            return descriptor;
+            return new DescriptorToRegister(descriptor);
         }
 
         public Builder setDecorator(String decorator)

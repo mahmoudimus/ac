@@ -40,10 +40,4 @@ public class AdminPageModuleGenerator extends AbstractPageModuleGenerator
     {
         return "An admin page decorated in the admin section, with a link in the admin menu";
     }
-
-    @Override
-    public Map<String, String> getI18nMessages(String pluginKey, Element element)
-    {
-        return emptyMap();
-    }
 }

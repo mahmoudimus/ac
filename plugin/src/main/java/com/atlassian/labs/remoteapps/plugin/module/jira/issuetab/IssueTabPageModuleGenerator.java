@@ -56,12 +56,6 @@ public class IssueTabPageModuleGenerator implements RemoteModuleGenerator
     }
 
     @Override
-    public Map<String, String> getI18nMessages(String pluginKey, Element element)
-    {
-        return emptyMap();
-    }
-
-    @Override
     public String getName()
     {
         return "Issue Tab Page";

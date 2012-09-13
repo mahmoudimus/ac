@@ -1,5 +1,6 @@
 package com.atlassian.labs.remoteapps.plugin.module.jira.issuepanel;
 
+import com.atlassian.labs.remoteapps.plugin.integration.plugins.DescriptorToRegister;
 import com.atlassian.labs.remoteapps.plugin.integration.plugins.DynamicDescriptorRegistration;
 import com.atlassian.labs.remoteapps.plugin.module.ConditionProcessor;
 import com.atlassian.labs.remoteapps.plugin.module.ContainingRemoteCondition;
@@ -93,7 +94,7 @@ public class IssuePanelPageModuleDescriptor extends AbstractModuleDescriptor<Voi
 
         ModuleDescriptor<WebPanel> moduleDescriptor = createWebPanelModuleDescriptor(moduleKey, desc, condition, new IFrameParams(descriptor));
 
-        dynamicDescriptorRegistration.registerDescriptors(getPlugin(), moduleDescriptor);
+        dynamicDescriptorRegistration.registerDescriptors(getPlugin(), new DescriptorToRegister(moduleDescriptor));
     }
     private ModuleDescriptor<WebPanel> createWebPanelModuleDescriptor(
             final String moduleKey,

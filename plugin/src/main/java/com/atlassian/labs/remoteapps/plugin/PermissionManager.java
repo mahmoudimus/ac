@@ -143,4 +143,9 @@ public class PermissionManager
                 "for this plugin '" + pluginKey + "'");
         }
     }
+
+    public boolean hasPermission(String pluginKey, String permissionKey) throws PermissionDeniedException
+    {
+        return getPermissionsForPlugin(pluginKey).contains(permissionKey);
+    }
 }
