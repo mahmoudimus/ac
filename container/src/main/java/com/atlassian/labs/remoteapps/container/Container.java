@@ -142,6 +142,7 @@ public final class Container
                 .add("com.google.common.*")
                 .add("com.samskivert.*")
                 .add("javax.servlet*")
+                .add("javax.ws.rs*")
                 .add("net.oauth*")
                 .add("com.sun.mail.handlers")
                 .add("org.apache.commons.codec*")
