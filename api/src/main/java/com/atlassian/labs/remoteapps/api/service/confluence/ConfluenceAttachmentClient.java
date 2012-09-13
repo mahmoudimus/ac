@@ -15,10 +15,10 @@ public interface ConfluenceAttachmentClient
     Promise<Attachment> addAttachment(long contentId, MutableAttachment attachment, byte[] data);
 
     @RequirePermission(ConfluencePermission.READ_CONTENT)
-    Promise<Attachment> getAttachment(long contentId, String fileName, int version);
+    Promise<Attachment> getAttachment(long contentId, String fileName, String version);
 
     @RequirePermission(ConfluencePermission.READ_CONTENT)
-    Promise<InputStream> getAttachmentData(long contentId, String fileName, int version);
+    Promise<InputStream> getAttachmentData(long contentId, String fileName, String version);
 
     @RequirePermission(ConfluencePermission.MODIFY_ATTACHMENTS)
     Promise<Boolean> removeAttachment(long contentId, String fileName);
