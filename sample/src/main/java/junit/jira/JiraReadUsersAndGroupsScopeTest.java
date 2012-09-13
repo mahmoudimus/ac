@@ -107,7 +107,6 @@ public class JiraReadUsersAndGroupsScopeTest
     }
 
     @Test
-    @Ignore
     public void testCallWithClient() throws Exception
     {
         User user = getHostHttpClient().callAs(getClientKey(), "betty", new Callable<User>()
