@@ -32,8 +32,10 @@ public class BrowseProjectsScope extends JiraScope
                         "getSecurityLevel"
                 ),
                 asList(
-                        new RestApiScopeHelper.RestScope("api", asList("latest", "2", "2.0.alpha1"), "/project", asList("get"))
-                )
+                        new RestApiScopeHelper.RestScope("api", asList("latest", "2", "2.0.alpha1"), "/project", asList("get")),
+                        new RestApiScopeHelper.RestScope("api", asList("latest", "2", "2.0.alpha1"), "/issue", asList("get")),
+                        new RestApiScopeHelper.RestScope("api", asList("latest", "2", "2.0.alpha1"), "/search", asList("get"))
+        )
         );
     }
 
