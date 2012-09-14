@@ -12,6 +12,7 @@ import org.w3c.dom.Element;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 
 /**
  * Finds any instances of @ServiceReference in constructor parameters and creates an osgi service reference bean
@@ -38,31 +39,40 @@ public class ServiceReferenceScanBeanDefinitionParser implements BeanDefinitionP
 
             for (Constructor constructor : clazz.getConstructors())
             {
+                scanAnnotations(constructor.getParameterTypes(), constructor.getParameterAnnotations(), registry, parserContext,  element);
+            }
 
-                Annotation[][] parameterAnnotations = constructor.getParameterAnnotations();
-                for (int x=0; x<parameterAnnotations.length; x++)
+            for (Method method : clazz.getMethods())
+            {
+                if (method.getName().startsWith("set") && method.getParameterTypes().length == 1)
                 {
-                    for (Annotation paramAnn : parameterAnnotations[x])
-                    {
-                        if (paramAnn instanceof ServiceReference)
-                        {
-                            ServiceReference serviceRefAnn = (ServiceReference)paramAnn;
-                            final Class paramClass = constructor.getParameterTypes()[x];
-                            String name = "".equals(serviceRefAnn.value()) ? paramClass.getSimpleName()
-                                    : serviceRefAnn.value();
-
-                            if (!registry.containsBeanDefinition(name))
-                            {
-                                registry.registerBeanDefinition(name, generateServiceReferenceBeanDefinition(parserContext, paramClass, element));
-                            }
-                        }
-                    }
-
+                    scanAnnotations(method.getParameterTypes(), method.getParameterAnnotations(), registry, parserContext,  element);
                 }
             }
         }
+
 		return null;
 	}
+
+    private void scanAnnotations(Class[] types, Annotation[][] annotations, BeanDefinitionRegistry registry, ParserContext context, Element element)
+    {
+        for (int x=0; x<annotations.length; x++)
+        {
+            for (Annotation paramAnn : annotations[x])
+            {
+                if (paramAnn instanceof ServiceReference)
+                {
+                    ServiceReference serviceRefAnn = (ServiceReference)paramAnn;
+                    final Class paramClass = types[x];
+                    String name = "".equals(serviceRefAnn.value()) ? paramClass.getSimpleName() : serviceRefAnn.value();
+                    if (!registry.containsBeanDefinition(name))
+                    {
+                        registry.registerBeanDefinition(name, generateServiceReferenceBeanDefinition(context, paramClass, element));
+                    }
+                }
+            }
+        }
+    }
 
     private BeanDefinition generateServiceReferenceBeanDefinition(ParserContext parserContext, Class paramClass, Element element)
     {
