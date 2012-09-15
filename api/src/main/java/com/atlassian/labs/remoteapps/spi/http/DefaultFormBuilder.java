@@ -11,11 +11,11 @@ import java.util.List;
 import java.util.Map;
 
 import static com.google.common.collect.Lists.newLinkedList;
-import static com.google.common.collect.Maps.newHashMap;
+import static com.google.common.collect.Maps.newLinkedHashMap;
 
 public class DefaultFormBuilder implements FormBuilder
 {
-    private Map<String, List<String>> parameters = newHashMap();
+    private Map<String, List<String>> parameters = newLinkedHashMap();
 
     public FormBuilder addParam(String name)
     {

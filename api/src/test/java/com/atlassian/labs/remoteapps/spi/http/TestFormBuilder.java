@@ -1,0 +1,93 @@
+package com.atlassian.labs.remoteapps.spi.http;
+
+import com.atlassian.labs.remoteapps.api.service.http.FormBuilder;
+import org.apache.commons.io.IOUtils;
+import org.junit.Test;
+
+import java.io.IOException;
+
+import static junit.framework.Assert.assertEquals;
+
+public class TestFormBuilder
+{
+    @Test
+    public void testOneEmptyParam()
+    {
+        FormBuilder form = new DefaultFormBuilder();
+        form.addParam("foo");
+        assertEquals("foo", toString(form));
+    }
+
+    @Test
+    public void testTwoLikeEmptyParams()
+    {
+        FormBuilder form = new DefaultFormBuilder();
+        form.addParam("foo");
+        form.addParam("foo");
+        assertEquals("foo&foo", toString(form));
+    }
+
+    @Test
+    public void testTwoEmptyParams()
+    {
+        FormBuilder form = new DefaultFormBuilder();
+        form.addParam("foo");
+        form.addParam("bar");
+        assertEquals("foo&bar", toString(form));
+    }
+
+    @Test
+    public void testOneParam()
+    {
+        FormBuilder form = new DefaultFormBuilder();
+        form.addParam("foo", "bar");
+        assertEquals("foo=bar", toString(form));
+    }
+
+    @Test
+    public void testTwoLikeParams()
+    {
+        FormBuilder form = new DefaultFormBuilder();
+        form.addParam("one", "a");
+        form.addParam("one", "b");
+        assertEquals("one=a&one=b", toString(form));
+    }
+
+    @Test
+    public void testTwoParams()
+    {
+        FormBuilder form = new DefaultFormBuilder();
+        form.addParam("one", "1");
+        form.addParam("two", "2");
+        assertEquals("one=1&two=2", toString(form));
+    }
+
+    @Test
+    public void testUrlEncoding()
+    {
+        FormBuilder form = new DefaultFormBuilder();
+        form.addParam("one param", "one value");
+        form.addParam("two/param", "two/value");
+        form.addParam("three∫param", "three∫value");
+        assertEquals("one+param=one+value&two%2Fparam=two%2Fvalue&three%E2%88%ABparam=three%E2%88%ABvalue", toString(form));
+    }
+
+    @Test
+    public void testHeaders()
+    {
+        FormBuilder form = new DefaultFormBuilder();
+        assertEquals("application/x-www-form-urlencoded", form.getHeaders().get("Content-Type"));
+    }
+
+    private static String toString(FormBuilder form)
+    {
+        try
+        {
+            return IOUtils.toString(form.build());
+        }
+        catch (IOException e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
+}
