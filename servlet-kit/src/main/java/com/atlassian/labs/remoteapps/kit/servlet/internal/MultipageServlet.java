@@ -1,13 +1,11 @@
-package com.atlassian.labs.remoteapps.kit.servlet;
+package com.atlassian.labs.remoteapps.kit.servlet.internal;
 
-import com.atlassian.labs.remoteapps.api.service.RequestContext;
 import com.atlassian.plugin.util.PluginUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.swing.plaf.basic.BasicInternalFrameTitlePane;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -15,13 +13,11 @@ public class MultipageServlet extends HttpServlet
 {
     private String internalUrl;
     private String hostBaseUrl;
-    private final RequestContext requestContext;
 
-    public MultipageServlet(String internalUrl, String hostBaseUrl, RequestContext requestContext)
+    public MultipageServlet(String internalUrl, String hostBaseUrl)
     {
         this.internalUrl = internalUrl;
         this.hostBaseUrl = hostBaseUrl;
-        this.requestContext = requestContext;
     }
 
     @Override
@@ -41,16 +37,9 @@ public class MultipageServlet extends HttpServlet
         out.print("<script>RA.init('bridge');</script>");
         out.print("</head>");
         out.print("<body>");
-        out.print("<iframe src='" + getSignedInternalUrl() + "'></iframe>");
+        out.print("<iframe src='" + internalUrl + "'></iframe>");
         out.print("</body>");
         out.print("</html>");
         out.flush();
-    }
-
-    private String getSignedInternalUrl()
-    {
-        String clientKey = requestContext.getClientKey();
-        // @todo request signing with client key
-        return internalUrl;
     }
 }

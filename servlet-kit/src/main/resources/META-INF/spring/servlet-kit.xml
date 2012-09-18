@@ -23,6 +23,10 @@ http://www.springframework.org/schema/context
         <beans:property name="autowiredAnnotationType" value="javax.inject.Inject" />
     </beans:bean>
 
+    <beans:bean id="service-references" class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor">
+        <beans:property name="autowiredAnnotationType" value="com.atlassian.labs.remoteapps.api.annotation.ServiceReference" />
+    </beans:bean>
+
     <context:component-scan base-package="com.atlassian.labs.remoteapps.kit.servlet" use-default-filters="false" name-generator="com.atlassian.labs.remoteapps.kit.common.spring.NamedAnnotationBeanNameGenerator">
         <context:include-filter type="annotation" expression="javax.inject.Singleton" />
         <context:include-filter type="annotation" expression="javax.inject.Named" />

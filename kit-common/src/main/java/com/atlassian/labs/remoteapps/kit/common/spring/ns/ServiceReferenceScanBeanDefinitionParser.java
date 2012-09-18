@@ -1,6 +1,7 @@
 package com.atlassian.labs.remoteapps.kit.common.spring.ns;
 
 import com.atlassian.labs.remoteapps.api.annotation.ServiceReference;
+import org.apache.commons.lang.ClassUtils;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
@@ -12,7 +13,12 @@ import org.w3c.dom.Element;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.List;
+
+import static com.google.common.collect.Iterables.concat;
+import static com.google.common.collect.Lists.newArrayList;
 
 /**
  * Finds any instances of @ServiceReference in constructor parameters and creates an osgi service reference bean
@@ -49,6 +55,14 @@ public class ServiceReferenceScanBeanDefinitionParser implements BeanDefinitionP
                     scanAnnotations(method.getParameterTypes(), method.getParameterAnnotations(), registry, parserContext,  element);
                 }
             }
+
+            for (Class c : concat(newArrayList(clazz), (List<Class>) ClassUtils.getAllSuperclasses(clazz)))
+            {
+                for (Field field : c.getDeclaredFields())
+                {
+                    scanAnnotations(field.getType(), field.getDeclaredAnnotations(), registry, parserContext, element);
+                }
+            }
         }
 
 		return null;
@@ -58,17 +72,21 @@ public class ServiceReferenceScanBeanDefinitionParser implements BeanDefinitionP
     {
         for (int x=0; x<annotations.length; x++)
         {
-            for (Annotation paramAnn : annotations[x])
+            scanAnnotations(types[x], annotations[x], registry, context, element);
+        }
+    }
+
+    private void scanAnnotations(Class clazz, Annotation[] annotations, BeanDefinitionRegistry registry, ParserContext context, Element element)
+    {
+        for (Annotation paramAnn : annotations)
+        {
+            if (paramAnn instanceof ServiceReference)
             {
-                if (paramAnn instanceof ServiceReference)
+                ServiceReference serviceRefAnn = (ServiceReference)paramAnn;
+                String name = "".equals(serviceRefAnn.value()) ? clazz.getSimpleName() : serviceRefAnn.value();
+                if (!registry.containsBeanDefinition(name))
                 {
-                    ServiceReference serviceRefAnn = (ServiceReference)paramAnn;
-                    final Class paramClass = types[x];
-                    String name = "".equals(serviceRefAnn.value()) ? paramClass.getSimpleName() : serviceRefAnn.value();
-                    if (!registry.containsBeanDefinition(name))
-                    {
-                        registry.registerBeanDefinition(name, generateServiceReferenceBeanDefinition(context, paramClass, element));
-                    }
+                    registry.registerBeanDefinition(name, generateServiceReferenceBeanDefinition(context, clazz, element));
                 }
             }
         }

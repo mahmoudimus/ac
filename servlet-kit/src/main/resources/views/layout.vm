@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  #if ($pageTitle)
+    <title>$pageTitle</title>
+  #end
+  <meta name="viewport" content="width=device-width">
+  <link rel="stylesheet" href="$hostStylesheetUrl">
+  #if ($appStylesheetPaths)
+    #foreach ($url in $appStylesheetPaths)
+      <link rel="stylesheet" href="$url">
+    #end
+  #end
+  <script src="$hostScriptUrl"></script>
+  <script>RA.init();</script>
+</head>
+<body>
+  $bodyHtml
+  #if ($appScriptPaths)
+    #foreach ($url in $appScriptPaths)
+    <script src="$url"></script>
+    #end
+  #end
+</body>
+</html>
