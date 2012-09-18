@@ -15,6 +15,7 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -37,7 +38,7 @@ import static com.atlassian.labs.remoteapps.spi.util.Strings.removeSuffix;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
 
-public abstract class AbstractPageServlet extends HttpServlet
+public abstract class AbstractPageServlet extends HttpServlet implements InitializingBean
 {
     @ServiceReference
     protected RequestContext requestContext;
@@ -50,14 +51,15 @@ public abstract class AbstractPageServlet extends HttpServlet
     @ServiceReference
     protected PluginRetrievalService pluginRetrievalService;
 
-    private final String resourceBaseName;
+    private String resourceBaseName;
     private List<String> appStylesheetUrls;
     private List<String> appScriptUrls;
 
     private final boolean devMode = Boolean.getBoolean(PluginUtils.ATLASSIAN_DEV_MODE);
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    protected AbstractPageServlet()
+    @Override
+    public void afterPropertiesSet() throws Exception
     {
         resourceBaseName = dasherize(removeSuffix(getClass().getSimpleName(), "Servlet"));
         if (!devMode)
