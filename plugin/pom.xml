@@ -694,14 +694,14 @@
                             <gzip>true</gzip>
                             <excludeResources>true</excludeResources>
                             <sourceDirectory>${project.build.outputDirectory}/css/iframe</sourceDirectory>
-                            <outputDirectory>${project.build.outputDirectory}/css/iframe/min</outputDirectory>
+                            <outputDirectory>${project.build.outputDirectory}/css/iframe-min</outputDirectory>
                             <aggregations>
                                 <aggregation>
                                     <removeIncluded>false</removeIncluded>
                                     <insertNewLine>true</insertNewLine>
                                     <output>${project.build.outputDirectory}/all.css</output>
                                     <includes>
-                                        <include>css/iframe/min/*.css</include>
+                                        <include>css/iframe-min/*.css</include>
                                     </includes>
                                 </aggregation>
                             </aggregations>
@@ -738,14 +738,14 @@
                             <jswarn>false</jswarn>
                             <excludeResources>true</excludeResources>
                             <sourceDirectory>${project.build.outputDirectory}/js/iframe</sourceDirectory>
-                            <outputDirectory>${project.build.outputDirectory}/js/iframe/min</outputDirectory>
+                            <outputDirectory>${project.build.outputDirectory}/js/iframe-min</outputDirectory>
                             <aggregations>
                                 <aggregation>
                                     <removeIncluded>false</removeIncluded>
                                     <insertNewLine>true</insertNewLine>
                                     <output>${project.build.outputDirectory}/all.js</output>
                                     <includes>
-                                        <include>js/iframe/min/*.js</include>
+                                        <include>js/iframe-min/*.js</include>
                                     </includes>
                                 </aggregation>
                             </aggregations>
