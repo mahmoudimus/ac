@@ -10,41 +10,13 @@ var contextKeys = ["clientKey", "userId", "hostBaseUrl"];
 //       - expressjs-like path param format and parsing
 //       - query string parsing
 
-module.exports = function () {
+module.exports = {
 
-  var routes = {};
-  methods.forEach(function (method) { routes[method] = []; });
+  createApp: function (appDir) {
+    var routes = {};
+    methods.forEach(function (method) { routes[method] = []; });
 
-  return {
-
-    app: (function () {
-      var app = {
-        all: function (route, handler) {
-          methods.forEach(function (method) { app[method](route, handler); });
-        }
-      };
-      methods.forEach(function (method) {
-        app[method] = function (pattern, handler) {
-          var params = [];
-          pattern = pattern
-            .replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&")
-            .replace(/\/\\\*$/g, "(/.*|$)")
-            .replace(/\/:([\w\d\-_]+)/g, function ($0, $1) {
-              params.push($1);
-              return "/([^/]+)";
-            });
-          pattern = new RegExp("^" + pattern + "$");
-          routes[method].push({
-            pattern: pattern,
-            params: params,
-            handler: handler
-          });
-        };
-      });
-      return app;
-    }()),
-
-    router: function (req) {
+    function app(req) {
       var pathSplit = req.scriptName.indexOf("/", 1);
       var path = req.pathInfo = req.scriptName.slice(pathSplit);
 
@@ -70,7 +42,7 @@ module.exports = function () {
         return true;
       });
 
-      var res = Response();
+      var res = Response(appDir);
 
       if (!handler) {
         handler = function () {
@@ -82,6 +54,30 @@ module.exports = function () {
       return res._toJsgiResponse();
     }
 
-  };
+    app.all = function (route, handler) {
+      methods.forEach(function (method) { app[method](route, handler); });
+    };
+
+    methods.forEach(function (method) {
+      app[method] = function (pattern, handler) {
+        var params = [];
+        pattern = pattern
+          .replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&")
+          .replace(/\/\\\*$/g, "(/.*|$)")
+          .replace(/\/:([\w\d\-_]+)/g, function ($0, $1) {
+            params.push($1);
+            return "/([^/]+)";
+          });
+        pattern = new RegExp("^" + pattern + "$");
+        routes[method].push({
+          pattern: pattern,
+          params: params,
+          handler: handler
+        });
+      };
+    });
+
+    return app;
+  }
 
 };

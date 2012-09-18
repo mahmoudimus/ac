@@ -1,8 +1,9 @@
 var {Deferred} = require("atlassian/deferred");
 var renderer = require("atlassian/renderer");
+var context = require("atlassian/context");
 var fs = require("fs");
 
-module.exports = function () {
+module.exports = function (appDir) {
 
   var deferred = Deferred();
 
@@ -11,6 +12,9 @@ module.exports = function () {
     headers: {"Content-Type": "text/html"},
     body: []
   };
+
+  appDir = appDir || "./";
+  if (appDir.charAt(appDir.length - 1) !== "/") appDir += "/";
 
   return {
 
@@ -61,8 +65,23 @@ module.exports = function () {
     // response.render(view, locals)
     // response.render(view, locals, headers, statusCode)
     render: function (view, locals, headers, statusCode) {
+      var hostBaseUrl = context.hostBaseUrl();
+      var allLocals = {
+        hostBaseUrl: hostBaseUrl,
+        hostStylesheetUrl: hostBaseUrl + "/remoteapps/all.css",
+        hostScriptUrl: hostBaseUrl + "/remoteapps/all.js",
+        clientKey: context.clientKey(),
+        userId: context.userId()
+        // @todo also add the following, using new modules as needed:
+        //    - hostContextPath: URI.create(hostBaseUrl).getPath()
+        //    - i18n: i18nResolver
+        //    - locale: locale
+      };
+      Object.keys(locals).forEach(function (k) {
+        allLocals[k] = locals[k];
+      });
       try {
-        var body = renderer.render("app/views/" + view, locals);
+        var body = renderer.render(appDir + "views/" + view, allLocals);
         this.send(body, headers, statusCode);
       }
       catch (ex) {
