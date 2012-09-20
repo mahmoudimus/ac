@@ -15,7 +15,6 @@ public final class DisplayUrlTransformingDescriptorAccessor extends DelegatingDe
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final DescriptorAccessor delegate;
-    private final Supplier<Document> descriptor;
     private final LocalMountBaseUrlResolver baseUrlResolver;
     private final RuntimeContext runtimeContext;
 
@@ -28,14 +27,6 @@ public final class DisplayUrlTransformingDescriptorAccessor extends DelegatingDe
     {
         this.delegate = checkNotNull(delegate);
         this.baseUrlResolver = checkNotNull(baseUrlResolver);
-        this.descriptor = memoize(new Supplier<Document>()
-        {
-            @Override
-            public Document get()
-            {
-                return transform(delegate.getDescriptor());
-            }
-        });
         this.runtimeContext = checkNotNull(runtimeContext);
     }
 
@@ -80,7 +71,7 @@ public final class DisplayUrlTransformingDescriptorAccessor extends DelegatingDe
     @Override
     public Document getDescriptor()
     {
-        return descriptor.get();
+        return transform(delegate.getDescriptor());
     }
 
     @Override
