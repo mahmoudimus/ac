@@ -175,7 +175,36 @@
                         <version>20020829</version>
                     </dependency>
                 </dependencies>
+            </plugin>
 
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>1.1.1</version>
+                <executions>
+                    <execution>
+                        <id>enforce-banned-dependencies</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <bannedDependencies>
+                                    <excludes>
+                                        <!-- use org.springframework:spring-context instead -->
+                                        <exclude>org.springframework:org.springframework.context</exclude>
+                                    </excludes>
+                                </bannedDependencies>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.4</version><!-- !versions 2.5 and 2.5.1 broke tree filtering -->
             </plugin>
         </plugins>
     </build>
@@ -269,6 +298,22 @@
             </dependency>
             <!-- third party services -->
             <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context</artifactId>
+                <version>2.5.6</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.osgi</groupId>
+                <artifactId>spring-osgi-core</artifactId>
+                <version>1.2.1</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>org.springframework.context</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
                 <groupId>com.atlassian.plugins</groupId>
                 <artifactId>atlassian-plugins-osgi-bridge</artifactId>
                 <version>${plugins.version}</version>
@@ -292,12 +337,6 @@
                 <version>${atr.version}</version>
                 <scope>provided</scope>
             </dependency>
-            <!--<dependency>-->
-                <!--<groupId>joda-time</groupId>-->
-                <!--<artifactId>joda-time</artifactId>-->
-                <!--<version>2.0</version>-->
-                <!--<scope>provided</scope>-->
-            <!--</dependency>-->
             <dependency>
                 <groupId>com.atlassian.jira</groupId>
                 <artifactId>jira-rest-java-client-p3</artifactId>
