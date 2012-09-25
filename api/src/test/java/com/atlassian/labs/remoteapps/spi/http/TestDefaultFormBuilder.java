@@ -1,5 +1,6 @@
 package com.atlassian.labs.remoteapps.spi.http;
 
+import com.atlassian.labs.remoteapps.api.service.http.EntityBuilder;
 import com.atlassian.labs.remoteapps.api.service.http.FormBuilder;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
@@ -8,7 +9,7 @@ import java.io.IOException;
 
 import static junit.framework.Assert.assertEquals;
 
-public class TestFormBuilder
+public class TestDefaultFormBuilder
 {
     @Test
     public void testOneEmptyParam()
@@ -69,21 +70,23 @@ public class TestFormBuilder
         form.addParam("one param", "one value");
         form.addParam("two/param", "two/value");
         form.addParam("three∫param", "three∫value");
-        assertEquals("one+param=one+value&two%2Fparam=two%2Fvalue&three%E2%88%ABparam=three%E2%88%ABvalue", toString(form));
+        form.addParam("four&param", "four&value");
+        assertEquals("one+param=one+value&two%2Fparam=two%2Fvalue&three%E2%88%ABparam=three%E2%88%ABvalue&four%26param=four%26value", toString(form));
     }
 
     @Test
     public void testHeaders()
     {
         FormBuilder form = new DefaultFormBuilder();
-        assertEquals("application/x-www-form-urlencoded", form.getHeaders().get("Content-Type"));
+        EntityBuilder.Entity entity = form.build();
+        assertEquals("application/x-www-form-urlencoded; charset=UTF-8", entity.getHeaders().get("Content-Type"));
     }
 
     private static String toString(FormBuilder form)
     {
         try
         {
-            return IOUtils.toString(form.build());
+            return IOUtils.toString(form.build().getInputStream());
         }
         catch (IOException e)
         {

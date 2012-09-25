@@ -6,6 +6,7 @@ import com.atlassian.labs.remoteapps.api.service.http.Response;
 import com.atlassian.labs.remoteapps.api.service.http.ResponsePromise;
 import com.atlassian.util.concurrent.ThreadFactories;
 import com.google.common.util.concurrent.SettableFuture;
+import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -159,28 +160,7 @@ public class DefaultHttpClient extends AbstractHttpClient implements HttpClient,
         {
             if (op instanceof HttpEntityEnclosingRequestBase)
             {
-                byte[] entity = request.getEntityBytes();
-                if (entity != null)
-                {
-                    ((HttpEntityEnclosingRequestBase) op).setEntity(new ByteArrayEntity(entity));
-                }
-                else
-                {
-                    int length = -1;
-                    InputStream entityStream = request.getEntityStream();
-                    if (entityStream instanceof ByteArrayInputStream)
-                    {
-                        try
-                        {
-                            length = entityStream.available();
-                        }
-                        catch (IOException e)
-                        {
-                            throw new RuntimeException("Will never happen", e);
-                        }
-                    }
-                    ((HttpEntityEnclosingRequestBase) op).setEntity(new InputStreamEntity(entityStream, length));
-                }
+                ((HttpEntityEnclosingRequestBase) op).setEntity(request.getHttpEntity());
             }
             else
             {

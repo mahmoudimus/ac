@@ -1,6 +1,7 @@
 package com.atlassian.labs.remoteapps.host.common.service.http;
 
 import com.atlassian.labs.remoteapps.api.service.http.*;
+import org.apache.http.util.EntityUtils;
 
 import java.io.InputStream;
 import java.net.URI;
@@ -150,7 +151,8 @@ public class DefaultRequest extends DefaultMessage implements Request
     @Override
     public Request setEntity(EntityBuilder entityBuilder)
     {
-        return setHeaders(entityBuilder.getHeaders()).setEntityStream(entityBuilder.build());
+        EntityBuilder.Entity entity = entityBuilder.build();
+        return setHeaders(entity.getHeaders()).setEntityStream(entity.getInputStream());
     }
 
     public Request validate()
@@ -229,16 +231,6 @@ public class DefaultRequest extends DefaultMessage implements Request
     {
         super.setEntityStream(entityStream);
         return this;
-    }
-
-    @Override
-    public String dump()
-    {
-        StringBuilder buf = new StringBuilder();
-        String lf = System.getProperty("line.separator");
-        buf.append(method).append(" ").append(getUri()).append(" HTTP/1.1").append(lf);
-        buf.append(super.dump());
-        return buf.toString();
     }
 
     @Override

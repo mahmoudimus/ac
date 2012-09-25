@@ -210,16 +210,6 @@ public class DefaultResponse extends DefaultMessage implements Response
     }
 
     @Override
-    public String dump()
-    {
-        StringBuilder buf = new StringBuilder();
-        String lf = System.getProperty("line.separator");
-        buf.append("HTTP/1.1 ").append(statusCode).append(" ").append(statusText).append(lf);
-        buf.append(super.dump());
-        return buf.toString();
-    }
-
-    @Override
     protected Response freeze()
     {
         super.freeze();

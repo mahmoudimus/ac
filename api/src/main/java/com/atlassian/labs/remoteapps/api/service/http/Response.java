@@ -175,9 +175,6 @@ public interface Response extends Message
     boolean isNotSuccessful();
 
     @Override
-    String dump();
-
-    @Override
     Response setContentType(String contentType);
 
     @Override

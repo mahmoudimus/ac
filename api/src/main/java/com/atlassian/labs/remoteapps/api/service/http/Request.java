@@ -131,9 +131,6 @@ public interface Request extends Message
     ResponsePromise trace();
 
     @Override
-    String dump();
-
-    @Override
     Request setContentType(String contentType);
 
     @Override

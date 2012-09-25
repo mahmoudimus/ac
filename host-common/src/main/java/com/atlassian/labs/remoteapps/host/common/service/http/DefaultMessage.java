@@ -2,8 +2,13 @@ package com.atlassian.labs.remoteapps.host.common.service.http;
 
 import com.atlassian.labs.remoteapps.api.service.http.Message;
 import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.entity.ByteArrayEntity;
+import org.apache.http.entity.InputStreamEntity;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.Map;
@@ -19,7 +24,6 @@ public abstract class DefaultMessage implements Message
     private String contentType;
     private String contentCharset;
     private InputStream entityStream;
-    private byte[] entityBytes;
     private boolean hasRead;
     private Map<String, String> headers;
     private boolean isFrozen;
@@ -82,21 +86,9 @@ public abstract class DefaultMessage implements Message
         {
             String charset = getContentCharset();
             charset = charset != null ? charset : "ISO-8859-1";
-            if (entityStream != null)
-            {
-                entity = IOUtils.toString(getEntityStream(), charset);
-            }
-            else
-            {
-                entity = new String(entityBytes);
-            }
+            entity = IOUtils.toString(getEntityStream(), charset);
         }
         return entity;
-    }
-
-    byte[] getEntityBytes()
-    {
-        return entityBytes;
     }
 
     public Message setEntity(String entity)
@@ -104,25 +96,53 @@ public abstract class DefaultMessage implements Message
         checkMutable();
         if (entity != null)
         {
-            try
-            {
-                final String charset = "UTF-8";
-                entityBytes = entity.getBytes(Charset.forName(charset));
-            }
-            catch (Exception e)
-            {
-                throw new RuntimeException(e);
-            }
+            final String charset = "UTF-8";
+            byte[] bytes = entity.getBytes(Charset.forName(charset));
+            setEntityStream(new EntityByteArrayInputStream(bytes), charset);
         }
-        else {
-            entityBytes = null;
+        else
+        {
+            setEntityStream(null, null);
         }
         return this;
     }
 
     public boolean hasEntity()
     {
-        return entityStream != null || entityBytes != null;
+        return entityStream != null;
+    }
+
+    HttpEntity getHttpEntity()
+    {
+        HttpEntity entity = null;
+        if (hasEntity())
+        {
+            if (entityStream instanceof ByteArrayInputStream)
+            {
+                byte[] bytes;
+                if (entityStream instanceof EntityByteArrayInputStream)
+                {
+                    bytes = ((EntityByteArrayInputStream) entityStream).getBytes();
+                }
+                else
+                {
+                    try
+                    {
+                        bytes = IOUtils.toByteArray(entityStream);
+                    }
+                    catch (IOException e)
+                    {
+                        throw new RuntimeException(e);
+                    }
+                }
+                entity = new ByteArrayEntity(bytes);
+            }
+            else
+            {
+                entity = new InputStreamEntity(entityStream, -1);
+            }
+        }
+        return entity;
     }
 
     public boolean hasReadEntity()
@@ -186,35 +206,6 @@ public abstract class DefaultMessage implements Message
             throw new IllegalStateException("Property contentType must be set when entity is present");
         }
         return this;
-    }
-
-    public String dump()
-    {
-        StringBuilder buf = new StringBuilder();
-        String lf = System.getProperty("line.separator");
-        for (Map.Entry<String, String> header : getHeaders().entrySet())
-        {
-            buf.append(header.getKey()).append(": ").append(header.getValue()).append(lf);
-        }
-        if (hasEntity())
-        {
-            buf.append(lf);
-            try
-            {
-                String entity = getEntity();
-                buf.append(entity).append(lf);
-                // hack to get around hasRead guard for streaming entities, which might cause perf issues
-                // fixme: this will break binary responses
-                setEntityStream(new ByteArrayInputStream(entity.getBytes()));
-            }
-            catch (IOException e)
-            {
-                StringWriter writer = new StringWriter();
-                e.printStackTrace(new PrintWriter(writer));
-                buf.append("ERROR: failed to read entity").append(lf).append(writer.toString());
-            }
-        }
-        return buf.toString();
     }
 
     private void checkRead() throws IllegalStateException

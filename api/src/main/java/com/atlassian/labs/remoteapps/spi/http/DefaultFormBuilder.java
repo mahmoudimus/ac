@@ -1,17 +1,22 @@
 package com.atlassian.labs.remoteapps.spi.http;
 
 import com.atlassian.labs.remoteapps.api.service.http.FormBuilder;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.Charset;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import static com.google.common.collect.Lists.newLinkedList;
+import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Maps.newLinkedHashMap;
+import static java.util.Collections.unmodifiableMap;
 
 public class DefaultFormBuilder implements FormBuilder
 {
@@ -40,29 +45,7 @@ public class DefaultFormBuilder implements FormBuilder
         return this;
     }
 
-    @Override
-    public Map<String, String> getHeaders()
-    {
-        Map<String, String> headers = Maps.newHashMap();
-        headers.put("Content-Type", "application/x-www-form-urlencoded");
-        return headers;
-    }
-
-    @Override
-    public InputStream build()
-    {
-        try
-        {
-            return new ByteArrayInputStream(toString().getBytes("UTF-8"));
-        }
-        catch (UnsupportedEncodingException e)
-        {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public String toString()
+    public Entity build()
     {
         StringBuilder buf = new StringBuilder();
         boolean first = true;
@@ -88,7 +71,29 @@ public class DefaultFormBuilder implements FormBuilder
                 }
             }
         }
-        return buf.toString();
+
+        final byte[] bytes = buf.toString().getBytes(Charset.forName("UTF-8"));
+
+        return new Entity()
+        {
+            @Override
+            public Map<String, String> getHeaders()
+            {
+                return ImmutableMap.of("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+            }
+
+            @Override
+            public InputStream getInputStream()
+            {
+                return new ByteArrayInputStream(bytes);
+            }
+
+            @Override
+            public String toString()
+            {
+                return new String(bytes, Charset.forName("UTF-8"));
+            }
+        };
     }
 
     private String encode(String str)
