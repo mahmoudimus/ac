@@ -132,12 +132,6 @@ public class DefaultHttpClient extends AbstractHttpClient implements HttpClient,
         // validate the request state
         request.validate();
 
-        // trace the request if debugging is enabled; may be expensive
-        if (log.isDebugEnabled())
-        {
-            //log.debug(request.dump());
-        }
-
         // freeze the request state to prevent further mutability as we go to execute the request
         request.freeze();
 
@@ -194,13 +188,6 @@ public class DefaultHttpClient extends AbstractHttpClient implements HttpClient,
                 try
                 {
                     DefaultResponse response = translate(httpResponse);
-
-                    // trace the response if debugging is enabled; may be expensive
-                    if (log.isDebugEnabled())
-                    {
-                        //log.debug(response.dump());
-                    }
-
                     response.freeze();
                     future.set(response);
                 }
