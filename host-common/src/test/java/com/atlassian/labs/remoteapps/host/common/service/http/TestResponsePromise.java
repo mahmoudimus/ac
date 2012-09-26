@@ -3,12 +3,15 @@ package com.atlassian.labs.remoteapps.host.common.service.http;
 import com.atlassian.labs.remoteapps.api.PromiseCallback;
 import com.atlassian.labs.remoteapps.api.service.http.Request;
 import com.atlassian.labs.remoteapps.api.service.http.Response;
+import com.atlassian.labs.remoteapps.api.service.http.ResponsePromise;
 import com.atlassian.labs.remoteapps.api.service.http.UnexpectedResponseException;
 import com.google.common.util.concurrent.SettableFuture;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import java.lang.reflect.Method;
 
 import static com.atlassian.labs.remoteapps.api.service.http.ResponsePromises.toResponsePromise;
 import static junit.framework.Assert.assertEquals;
@@ -17,6 +20,72 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class TestResponsePromise
 {
+    @Test
+    public void testStatusCodeCallbacks()
+    {
+        testCallback(200, "ok", true);
+        testCallback(201, "created", true);
+        testCallback(204, "noContent", true);
+        testCallback(250, "successful", true); // range
+        testCallback(150, "successful", false); // range
+        testCallback(303, "seeOther", true);
+        testCallback(304, "notModified", true);
+        testCallback(350, "redirection", true); // range
+        testCallback(400, "badRequest", true);
+        testCallback(401, "unauthorized", true);
+        testCallback(403, "forbidden", true);
+        testCallback(404, "notFound", true);
+        testCallback(409, "conflict", true);
+        testCallback(450, "clientError", true); // range
+        testCallback(350, "clientError", false); // range
+        testCallback(500, "internalServerError", true);
+        testCallback(503, "serviceUnavailable", true);
+        testCallback(550, "serverError", true); // range
+        testCallback(450, "serverError", false); // range
+        testCallback(450, "error", true); // range
+        testCallback(550, "error", true); // range
+        testCallback(350, "error", false); // range
+        testCallback(150, "notSuccessful", true); // range
+        testCallback(350, "notSuccessful", true); // range
+        testCallback(450, "notSuccessful", true); // range
+        testCallback(550, "notSuccessful", true); // range
+        testCallback(250, "notSuccessful", false); // range
+    }
+
+    private void testCallback(int code, String name, boolean testCalled)
+    {
+        try
+        {
+            PromiseCallback<Response> expected = mockSuccessCallback();
+            ArgumentCaptor<Response> expectedCaptor = ArgumentCaptor.forClass(Response.class);
+
+            ResponsePromise promise = newRequest(code).get();
+            Method method = promise.getClass().getMethod(name, PromiseCallback.class);
+            method.invoke(promise, expected);
+
+            if (testCalled)
+            {
+                verify(expected).handle(expectedCaptor.capture());
+                assertEquals(code, expectedCaptor.getValue().getStatusCode());
+            }
+            else
+            {
+                verify(expected, never()).handle((Response) anyObject());
+            }
+        }
+        catch (Exception e)
+        {
+            if (e instanceof RuntimeException)
+            {
+                throw (RuntimeException) e;
+            }
+            else
+            {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
     @Test
     public void testOthersAll()
     {
