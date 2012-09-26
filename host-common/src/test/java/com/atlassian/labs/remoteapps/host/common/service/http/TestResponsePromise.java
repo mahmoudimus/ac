@@ -20,9 +20,9 @@ public class TestResponsePromise
     @Test
     public void testOthersAll()
     {
-        PromiseCallback<Response> expected = mock(PromiseCallback.class);
+        PromiseCallback<Response> expected = mockSuccessCallback();
         ArgumentCaptor<Response> expectedCaptor = ArgumentCaptor.forClass(Response.class);
-        PromiseCallback<Throwable> unexpectedFail = mock(PromiseCallback.class);
+        PromiseCallback<Throwable> unexpectedFail = mockErrorCallback();
 
         newRequest(200).get()
             .done(expected)
@@ -37,10 +37,10 @@ public class TestResponsePromise
     @Test
     public void testOthersUnexpected()
     {
-        PromiseCallback<Response> expected = mock(PromiseCallback.class);
+        PromiseCallback<Response> expected = mockSuccessCallback();
         ArgumentCaptor<Response> expectedCaptor = ArgumentCaptor.forClass(Response.class);
-        PromiseCallback<Response> unexpected = mock(PromiseCallback.class);
-        PromiseCallback<Throwable> unexpectedFail = mock(PromiseCallback.class);
+        PromiseCallback<Response> unexpected = mockSuccessCallback();
+        PromiseCallback<Throwable> unexpectedFail = mockErrorCallback();
 
         newRequest(200).get()
             .done(expected)
