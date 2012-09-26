@@ -1,8 +1,10 @@
 package com.atlassian.labs.remoteapps.spi.http;
 
 import com.atlassian.labs.remoteapps.api.PromiseCallback;
-import com.atlassian.labs.remoteapps.api.service.http.ResponsesPromise;
+import com.atlassian.labs.remoteapps.api.service.http.BaseResponsePromise;
 import com.atlassian.labs.remoteapps.api.service.http.Response;
+import com.atlassian.labs.remoteapps.api.service.http.ResponsesPromise;
+import com.atlassian.labs.remoteapps.api.service.http.UnexpectedResponsesException;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import java.util.HashSet;
@@ -19,6 +21,21 @@ public final class WrappingResponsesPromise extends WrappingBaseResponsePromise<
     public WrappingResponsesPromise(ListenableFuture<List<Response>> delegate)
     {
         super(toPromise(delegate));
+    }
+
+    @Override
+    public BaseResponsePromise<List<Response>> otherwise(final PromiseCallback<Throwable> callback)
+    {
+        others(new PromiseCallback<List<Response>>()
+        {
+            @Override
+            public void handle(List<Response> responses)
+            {
+                callback.handle(new UnexpectedResponsesException(responses));
+            }
+        });
+        fail(callback);
+        return this;
     }
 
     @Override
@@ -39,7 +56,7 @@ public final class WrappingResponsesPromise extends WrappingBaseResponsePromise<
         return new OthersSelector(statuses, statusSets, callback);
     }
 
-    private class StatusSelector implements PromiseCallback<List<Response>>
+    private static class StatusSelector implements PromiseCallback<List<Response>>
     {
         private final int statusCode;
         private final PromiseCallback<List<Response>> callback;
@@ -69,7 +86,7 @@ public final class WrappingResponsesPromise extends WrappingBaseResponsePromise<
         }
     }
 
-    private class StatusSetSelector implements PromiseCallback<List<Response>>
+    private static class StatusSetSelector implements PromiseCallback<List<Response>>
     {
         private StatusSet statusSet;
         private final PromiseCallback<List<Response>> callback;
@@ -99,7 +116,7 @@ public final class WrappingResponsesPromise extends WrappingBaseResponsePromise<
         }
     }
 
-    private class OthersSelector implements PromiseCallback<List<Response>>
+    private static class OthersSelector implements PromiseCallback<List<Response>>
     {
         private final PromiseCallback<List<Response>> callback;
         private final Set<Integer> statuses;

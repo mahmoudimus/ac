@@ -2,21 +2,17 @@ package com.atlassian.labs.remoteapps.spi.http;
 
 import com.atlassian.labs.remoteapps.api.service.http.FormBuilder;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import static com.google.common.collect.Lists.newLinkedList;
-import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Maps.newLinkedHashMap;
-import static java.util.Collections.unmodifiableMap;
 
 public class DefaultFormBuilder implements FormBuilder
 {

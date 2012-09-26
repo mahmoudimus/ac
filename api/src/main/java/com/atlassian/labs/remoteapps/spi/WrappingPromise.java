@@ -7,7 +7,7 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Wraps a ListenableFuture to be a promise

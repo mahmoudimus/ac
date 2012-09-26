@@ -5,6 +5,7 @@ import com.atlassian.labs.remoteapps.spi.WrappingPromise;
 import com.google.common.base.Function;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.SettableFuture;
 
 import java.util.List;
 
@@ -83,5 +84,25 @@ public final class Promises
     public static <I, O> Promise<O> transform(Promise<I> promise, Function<? super I, ? extends O> function)
     {
         return toPromise(Futures.transform(promise, function));
+    }
+
+    /**
+     * Creates a new <code>PromiseCallback</code> that forwards a promise's fail events to
+     * the specified future delegate's <code>setException</code> method -- that is, the new
+     * callback rejects the delegate future if invoked.
+     *
+     * @param delegate The future to be rejected on a fail event
+     * @return The fail callback
+     */
+    public static PromiseCallback<Throwable> reject(final SettableFuture<?> delegate)
+    {
+        return new PromiseCallback<Throwable>()
+        {
+            @Override
+            public void handle(Throwable t)
+            {
+                delegate.setException(t);
+            }
+        };
     }
 }

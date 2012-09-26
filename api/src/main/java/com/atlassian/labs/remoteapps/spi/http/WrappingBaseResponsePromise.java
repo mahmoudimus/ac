@@ -8,9 +8,11 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
 import static com.atlassian.labs.remoteapps.api.Promises.toPromise;
+import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Sets.newHashSet;
 
 public abstract class WrappingBaseResponsePromise<V> extends ForwardingListenableFuture.SimpleForwardingListenableFuture<V> implements BaseResponsePromise<V>

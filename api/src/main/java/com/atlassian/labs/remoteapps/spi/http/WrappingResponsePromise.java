@@ -1,8 +1,10 @@
 package com.atlassian.labs.remoteapps.spi.http;
 
 import com.atlassian.labs.remoteapps.api.PromiseCallback;
+import com.atlassian.labs.remoteapps.api.service.http.BaseResponsePromise;
 import com.atlassian.labs.remoteapps.api.service.http.Response;
 import com.atlassian.labs.remoteapps.api.service.http.ResponsePromise;
+import com.atlassian.labs.remoteapps.api.service.http.UnexpectedResponseException;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import java.util.HashSet;
@@ -18,6 +20,21 @@ public final class WrappingResponsePromise extends WrappingBaseResponsePromise<R
     public WrappingResponsePromise(ListenableFuture<Response> delegate)
     {
         super(toPromise(delegate));
+    }
+
+    @Override
+    public BaseResponsePromise<Response> otherwise(final PromiseCallback<Throwable> callback)
+    {
+        others(new PromiseCallback<Response>()
+        {
+            @Override
+            public void handle(Response response)
+            {
+                callback.handle(new UnexpectedResponseException(response));
+            }
+        });
+        fail(callback);
+        return this;
     }
 
     @Override
@@ -38,7 +55,7 @@ public final class WrappingResponsePromise extends WrappingBaseResponsePromise<R
         return new OthersSelector(statuses, statusSets, callback);
     }
 
-    private class StatusSelector implements PromiseCallback<Response>
+    private static class StatusSelector implements PromiseCallback<Response>
     {
         private final int statusCode;
         private final PromiseCallback<Response> callback;
@@ -59,28 +76,28 @@ public final class WrappingResponsePromise extends WrappingBaseResponsePromise<R
         }
     }
 
-    private class StatusSetSelector implements PromiseCallback<Response>
+    private static class StatusSetSelector implements PromiseCallback<Response>
     {
-        private StatusSet statusSets;
+        private StatusSet statusSet;
         private final PromiseCallback<Response> callback;
 
-        private StatusSetSelector(StatusSet statusSets, PromiseCallback<Response> callback)
+        private StatusSetSelector(StatusSet statusSet, PromiseCallback<Response> callback)
         {
-            this.statusSets = statusSets;
+            this.statusSet = statusSet;
             this.callback = callback;
         }
 
         @Override
         public void handle(Response response)
         {
-            if (statusSets.contains(response.getStatusCode()))
+            if (statusSet.contains(response.getStatusCode()))
             {
                 callback.handle(response);
             }
         }
     }
 
-    private class OthersSelector implements PromiseCallback<Response>
+    private static class OthersSelector implements PromiseCallback<Response>
     {
         private final PromiseCallback<Response> callback;
         private final Set<Integer> statuses;

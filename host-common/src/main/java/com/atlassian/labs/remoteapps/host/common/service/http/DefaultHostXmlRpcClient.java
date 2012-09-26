@@ -25,6 +25,7 @@ import java.lang.reflect.Proxy;
 import java.net.URI;
 import java.util.Vector;
 
+import static com.atlassian.labs.remoteapps.api.Promises.reject;
 import static com.atlassian.labs.remoteapps.api.Promises.toPromise;
 import static java.lang.System.arraycopy;
 
@@ -182,24 +183,9 @@ public class DefaultHostXmlRpcClient implements HostXmlRpcClient
                         }
                     }
                 })
-                .others(new PromiseCallback<Response>()
-                {
-                    @Override
-                    public void handle(Response response)
-                    {
-                        // since xmlrpc should always return 200 OK responses unless an error has occurred,
-                        // treat all other response codes as errors
-                        future.setException(new UnexpectedResponseException(response));
-                    }
-                })
-                .fail(new PromiseCallback<Throwable>()
-                {
-                    @Override
-                    public void handle(Throwable t)
-                    {
-                        future.setException(t);
-                    }
-                });
+                // since xmlrpc should always return 200 OK responses unless an error has occurred,
+                // treat all other response codes as errors
+                .otherwise(reject(future));
         }
         catch (IOException ioe)
         {
