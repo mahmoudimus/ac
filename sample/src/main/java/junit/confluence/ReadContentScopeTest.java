@@ -1,18 +1,19 @@
 package junit.confluence;
 
 import com.atlassian.labs.remoteapps.api.service.confluence.ConfluenceSpaceClient;
+import com.atlassian.labs.remoteapps.api.service.confluence.domain.ExportType;
 import com.atlassian.labs.remoteapps.api.service.confluence.domain.Space;
-import com.atlassian.labs.remoteapps.api.service.confluence.domain.SpaceSummary;
 import org.junit.Test;
 import redstone.xmlrpc.XmlRpcStruct;
 
+import java.io.InputStream;
 import java.util.concurrent.Callable;
+import java.util.zip.ZipInputStream;
 
 import static junit.ClientKeyRetriever.getClientKey;
 import static org.junit.Assert.assertEquals;
-import static services.ServiceAccessor.getHostHttpClient;
-import static services.ServiceAccessor.getHostXmlRpcClient;
-import static services.ServiceAccessor.getService;
+import static org.junit.Assert.assertNotNull;
+import static services.ServiceAccessor.*;
 
 /**
  *
@@ -31,6 +32,22 @@ public class ReadContentScopeTest
                         XmlRpcStruct.class, "", "DS").claim();
                 assertEquals("ds", space.getString("key"));
                 assertEquals("Demonstration Space", space.getString("name"));
+                return null;
+            }
+        });
+    }
+
+    @Test
+    public void testSpaceExport() throws Exception
+    {
+        getHostHttpClient().callAs(getClientKey(), "betty", new Callable<Void>()
+        {
+            @Override
+            public Void call() throws Exception
+            {
+                InputStream in = getService(ConfluenceSpaceClient.class).exportSpace("DS", ExportType.XML).claim();
+                ZipInputStream zin = new ZipInputStream(in);
+                assertNotNull(zin.getNextEntry());
                 return null;
             }
         });

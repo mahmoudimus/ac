@@ -300,22 +300,22 @@ public final class Container
         DescriptorPermissionsReader permissionsReader = createPermissionsReaderForProduct(osgiContainerManager, "confluence");
 
         // confluence services
-        hostComponents.put(ConfluenceSpaceClient.class, new ConfluenceSpaceClientServiceFactory(hostXmlRpcClientHostServiceFactory,
-                permissionsReader, pluginManager));
-        hostComponents.put(ConfluencePageClient.class, new ConfluencePageClientServiceFactory(hostXmlRpcClientHostServiceFactory,
-                        permissionsReader, pluginManager));
-        hostComponents.put(ConfluenceAdminClient.class, new ConfluenceAdminClientServiceFactory(hostXmlRpcClientHostServiceFactory,
-                        permissionsReader, pluginManager));
-        hostComponents.put(ConfluenceBlogClient.class, new ConfluenceBlogClientServiceFactory(hostXmlRpcClientHostServiceFactory,
-                        permissionsReader, pluginManager));
-        hostComponents.put(ConfluenceLabelClient.class, new ConfluenceLabelClientServiceFactory(hostXmlRpcClientHostServiceFactory,
-                        permissionsReader, pluginManager));
-        hostComponents.put(ConfluenceNotificationClient.class, new ConfluenceNotificationClientServiceFactory(hostXmlRpcClientHostServiceFactory,
-                        permissionsReader, pluginManager));
-        hostComponents.put(ConfluenceUserClient.class, new ConfluenceUserClientServiceFactory(hostXmlRpcClientHostServiceFactory,
-                        permissionsReader, pluginManager));
-        hostComponents.put(ConfluenceAttachmentClient.class, new ConfluenceAttachmentClientServiceFactory(hostXmlRpcClientHostServiceFactory,
-                        permissionsReader, pluginManager));
+        hostComponents.put(ConfluenceSpaceClient.class, new ConfluenceSpaceClientServiceFactory(hostHttpClientServiceFactory, hostXmlRpcClientHostServiceFactory,
+                permissionsReader, pluginManager, requestContextServiceFactory));
+        hostComponents.put(ConfluencePageClient.class, new ConfluencePageClientServiceFactory(hostHttpClientServiceFactory, hostXmlRpcClientHostServiceFactory,
+                        permissionsReader, pluginManager, requestContextServiceFactory));
+        hostComponents.put(ConfluenceAdminClient.class, new ConfluenceAdminClientServiceFactory(hostHttpClientServiceFactory, hostXmlRpcClientHostServiceFactory,
+                        permissionsReader, pluginManager, requestContextServiceFactory));
+        hostComponents.put(ConfluenceBlogClient.class, new ConfluenceBlogClientServiceFactory(hostHttpClientServiceFactory, hostXmlRpcClientHostServiceFactory,
+                        permissionsReader, pluginManager, requestContextServiceFactory));
+        hostComponents.put(ConfluenceLabelClient.class, new ConfluenceLabelClientServiceFactory(hostHttpClientServiceFactory, hostXmlRpcClientHostServiceFactory,
+                        permissionsReader, pluginManager, requestContextServiceFactory));
+        hostComponents.put(ConfluenceNotificationClient.class, new ConfluenceNotificationClientServiceFactory(hostHttpClientServiceFactory, hostXmlRpcClientHostServiceFactory,
+                        permissionsReader, pluginManager, requestContextServiceFactory));
+        hostComponents.put(ConfluenceUserClient.class, new ConfluenceUserClientServiceFactory(hostHttpClientServiceFactory, hostXmlRpcClientHostServiceFactory,
+                        permissionsReader, pluginManager, requestContextServiceFactory));
+        hostComponents.put(ConfluenceAttachmentClient.class, new ConfluenceAttachmentClientServiceFactory(hostHttpClientServiceFactory, hostXmlRpcClientHostServiceFactory,
+                        permissionsReader, pluginManager, requestContextServiceFactory));
     }
 
     private DescriptorPermissionsReader createPermissionsReaderForProduct(final OsgiContainerManager osgiContainerManager, final String productKey)

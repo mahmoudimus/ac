@@ -99,8 +99,8 @@ public class DefaultHttpClient extends AbstractHttpClient implements HttpClient,
         // @todo add plugin version to UA string
         HttpProtocolParams.setUserAgent(params, "Atlassian-RemoteApps");
 
-        HttpConnectionParams.setConnectionTimeout(params, 3 * 1000);
-        HttpConnectionParams.setSoTimeout(params, 7 * 1000);
+        HttpConnectionParams.setConnectionTimeout(params, 10 * 1000);
+        HttpConnectionParams.setSoTimeout(params, 20 * 1000);
         HttpConnectionParams.setSocketBufferSize(params, 8 * 1024);
         HttpConnectionParams.setTcpNoDelay(params, true);
 
@@ -154,7 +154,7 @@ public class DefaultHttpClient extends AbstractHttpClient implements HttpClient,
         }
 
         HttpContext localContext = new BasicHttpContext();
-        final SettableFuture<Response> future = SettableFuture.create();
+        final SettableFutureHandler<Response> future = request.getSettableFutureHandler();
         FutureCallback<HttpResponse> futureCallback = new FutureCallback<HttpResponse>()
         {
             @Override
@@ -203,9 +203,9 @@ public class DefaultHttpClient extends AbstractHttpClient implements HttpClient,
             }
         };
 
-        requestKiller.registerRequest(new NotifyingAbortableHttpRequest(op, futureCallback), 10);
+        requestKiller.registerRequest(new NotifyingAbortableHttpRequest(op, futureCallback), 30);
         httpClient.execute(op, localContext, futureCallback);
-        return toResponsePromise(future);
+        return toResponsePromise(future.getFuture());
     }
 
     @Override

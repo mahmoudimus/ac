@@ -1,12 +1,10 @@
 package com.atlassian.labs.remoteapps.host.common.service.http;
 
 import com.atlassian.labs.remoteapps.api.service.http.*;
-import org.apache.http.util.EntityUtils;
 
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -14,17 +12,21 @@ import static com.google.common.collect.Maps.newHashMap;
 
 public class DefaultRequest extends DefaultMessage implements Request
 {
-    public enum Method { GET, POST, PUT, DELETE, OPTIONS, HEAD, TRACE }
+
+
+    public enum Method { GET, POST, PUT, DELETE, OPTIONS, HEAD, TRACE;}
 
     private AbstractHttpClient httpClient;
     private Method method;
+
     private URI uri;
     private Map<String, String> attributes;
-
+    private SettableFutureHandler<Response> settableFutureHandler;
     public DefaultRequest(AbstractHttpClient httpClient)
     {
         this.httpClient = httpClient;
         attributes = newHashMap();
+        settableFutureHandler = new DefaultSettableFutureHandler<Response>();
         setAccept("*/*");
     }
 
@@ -37,6 +39,16 @@ public class DefaultRequest extends DefaultMessage implements Request
     {
         this(httpClient);
         setUri(uri).setContentType(contentType).setEntity(entity);
+    }
+
+    public void setSettableFutureHandler(SettableFutureHandler<Response> futureHandler)
+    {
+        this.settableFutureHandler = futureHandler;
+    }
+
+    public SettableFutureHandler<Response> getSettableFutureHandler()
+    {
+        return settableFutureHandler;
     }
 
     @Override

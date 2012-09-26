@@ -1,12 +1,14 @@
 package com.atlassian.labs.remoteapps.host.common.service.confluence;
 
+import com.atlassian.labs.remoteapps.api.PromiseCallback;
 import com.atlassian.labs.remoteapps.api.Promises;
+import com.atlassian.labs.remoteapps.api.service.RequestContext;
 import com.atlassian.labs.remoteapps.api.service.confluence.ConfluenceLabelClient;
 import com.atlassian.labs.remoteapps.api.service.confluence.ConfluencePageClient;
 import com.atlassian.labs.remoteapps.api.service.confluence.ConfluencePermission;
 import com.atlassian.labs.remoteapps.api.service.confluence.ConfluenceSpaceClient;
 import com.atlassian.labs.remoteapps.api.service.confluence.domain.*;
-import com.atlassian.labs.remoteapps.api.service.http.HostXmlRpcClient;
+import com.atlassian.labs.remoteapps.api.service.http.*;
 import com.atlassian.labs.remoteapps.spi.PermissionDeniedException;
 import com.atlassian.plugin.util.ChainingClassLoader;
 import com.google.common.collect.ImmutableMap;
@@ -14,7 +16,11 @@ import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.lang.reflect.Proxy;
 import java.net.URI;
 import java.util.*;
@@ -22,6 +28,8 @@ import java.util.*;
 import static com.atlassian.labs.remoteapps.api.service.confluence.domain.ConfluenceDomain
         .newContentPermission;
 import static com.atlassian.labs.remoteapps.api.service.confluence.domain.ConfluenceDomain.newLabel;
+import static com.atlassian.labs.remoteapps.host.common.service.confluence
+        .ClientInvocationHandler.getEnumRemoteName;
 import static com.google.common.collect.Sets.newHashSet;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
@@ -37,6 +45,8 @@ public class TestClientInvocationHandler
 
     private ConfluencePageClient confluencePageClient;
     private HostXmlRpcClient client;
+    private HostHttpClient httpClient;
+    private RequestContext requestContext;
     private ConfluenceLabelClient confluenceLabelClient;
     private ConfluenceSpaceClient confluenceSpaceClient;
 
@@ -50,18 +60,23 @@ public class TestClientInvocationHandler
     public void setUp()
     {
         client = mock(HostXmlRpcClient.class);
+        httpClient = mock(HostHttpClient.class);
+        requestContext = mock(RequestContext.class);
         confluencePageClient = (ConfluencePageClient) Proxy.newProxyInstance(
                 new ChainingClassLoader(getClass().getClassLoader()),
                 new Class[]{ConfluencePageClient.class},
-                new ClientInvocationHandler("confluence2", client, permissions, "foo"));
+                new ClientInvocationHandler("confluence2", client, permissions, "foo", httpClient,
+                        requestContext));
         confluenceLabelClient = (ConfluenceLabelClient) Proxy.newProxyInstance(
                 new ChainingClassLoader(getClass().getClassLoader()),
                 new Class[]{ConfluenceLabelClient.class},
-                new ClientInvocationHandler("confluence2", client, permissions, "foo"));
+                new ClientInvocationHandler("confluence2", client, permissions, "foo", httpClient,
+                        requestContext));
         confluenceSpaceClient = (ConfluenceSpaceClient) Proxy.newProxyInstance(
                 new ChainingClassLoader(getClass().getClassLoader()),
                 new Class[]{ConfluenceSpaceClient.class},
-                new ClientInvocationHandler("confluence2", client, permissions, "foo"));
+                new ClientInvocationHandler("confluence2", client, permissions, "foo", httpClient,
+                        requestContext));
     }
 
     @Test
@@ -160,6 +175,39 @@ public class TestClientInvocationHandler
         assertEquals(contentPermission.getUserName(), "bob");
         assertEquals(contentPermission.getGroupName(), null);
         assertEquals(contentPermission.getType(), ContentPermissionType.VIEW);
+    }
+
+    @Test
+    public void testInputStreamInResponse() throws IOException, NoSuchFieldException
+    {
+        when(requestContext.getHostBaseUrl()).thenReturn("http://localhost");
+        when(client.invoke("confluence2.exportSpace", Object.class, "",
+                "DS", getEnumRemoteName(ExportType.HTML))).thenReturn(
+                Promises.<Object>toResolvedPromise("http://localhost/export"));
+        Request request = mock(Request.class);
+        when(httpClient.newRequest("/export"))
+                .thenReturn(request);
+        final Response response = mock(Response.class);
+
+        ByteArrayInputStream bin = new ByteArrayInputStream(new byte[0]);
+        when(response.getEntityStream()).thenReturn(bin);
+        final ResponsePromise responsePromise = mock(ResponsePromise.class);
+        when(request.get()).thenReturn(responsePromise);
+        when(responsePromise.others(any(PromiseCallback.class))).thenReturn(responsePromise);
+        when(responsePromise.fail(any(PromiseCallback.class))).thenReturn(responsePromise);
+        when(responsePromise.ok(any(PromiseCallback.class))).then(new Answer<Object>()
+        {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable
+            {
+                PromiseCallback<Response> callback = (PromiseCallback<Response>) invocation
+                        .getArguments()[0];
+                callback.handle(response);
+                return responsePromise;
+            }
+        });
+
+        assertEquals(bin, confluenceSpaceClient.exportSpace("DS", ExportType.HTML).claim());
     }
 
     @Test

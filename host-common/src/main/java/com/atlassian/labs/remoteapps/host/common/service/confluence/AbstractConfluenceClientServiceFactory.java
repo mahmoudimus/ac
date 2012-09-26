@@ -1,6 +1,8 @@
 package com.atlassian.labs.remoteapps.host.common.service.confluence;
 
+import com.atlassian.labs.remoteapps.host.common.service.RequestContextServiceFactory;
 import com.atlassian.labs.remoteapps.host.common.service.TypedServiceFactory;
+import com.atlassian.labs.remoteapps.host.common.service.http.HostHttpClientServiceFactory;
 import com.atlassian.labs.remoteapps.host.common.service.http.HostXmlRpcClientServiceFactory;
 import com.atlassian.labs.remoteapps.spi.permission.PermissionsReader;
 import com.atlassian.plugin.Plugin;
@@ -13,7 +15,6 @@ import org.osgi.framework.ServiceRegistration;
 
 import java.lang.reflect.Proxy;
 import java.util.Set;
-import java.util.zip.CheckedInputStream;
 
 /**
  * Creates confluence clients via proxies
@@ -21,21 +22,26 @@ import java.util.zip.CheckedInputStream;
 public abstract class AbstractConfluenceClientServiceFactory<T> implements ServiceFactory, TypedServiceFactory<T>
 {
     private final Class<T> clientClass;
+    private final HostHttpClientServiceFactory httpClientServiceFactory;
     private final HostXmlRpcClientServiceFactory hostXmlRpcClientServiceFactory;
     private final PermissionsReader permissionsReader;
     private final PluginAccessor pluginAccessor;
+    private final RequestContextServiceFactory requestContextServiceFactory;
 
 
     public AbstractConfluenceClientServiceFactory(Class<T> clientClass,
-                                                  HostXmlRpcClientServiceFactory hostXmlRpcClientServiceFactory,
-                                                  PermissionsReader permissionsReader,
-                                                  PluginAccessor pluginAccessor
-    )
+            HostHttpClientServiceFactory httpClientServiceFactory,
+            HostXmlRpcClientServiceFactory hostXmlRpcClientServiceFactory,
+            PermissionsReader permissionsReader,
+            PluginAccessor pluginAccessor,
+            RequestContextServiceFactory requestContextServiceFactory)
     {
         this.clientClass = clientClass;
+        this.httpClientServiceFactory = httpClientServiceFactory;
         this.hostXmlRpcClientServiceFactory = hostXmlRpcClientServiceFactory;
         this.permissionsReader = permissionsReader;
         this.pluginAccessor = pluginAccessor;
+        this.requestContextServiceFactory = requestContextServiceFactory;
     }
 
     @Override
@@ -61,6 +67,9 @@ public abstract class AbstractConfluenceClientServiceFactory<T> implements Servi
         return (T) Proxy.newProxyInstance(
                 new ChainingClassLoader(getClass().getClassLoader(), clientClass.getClassLoader()),
                 new Class[]{clientClass},
-                new ClientInvocationHandler("confluence2", hostXmlRpcClientServiceFactory.getService(bundle), permissions, plugin.getKey()));
+                new ClientInvocationHandler("confluence2", hostXmlRpcClientServiceFactory.getService(bundle), permissions, plugin.getKey(),
+
+
+                        httpClientServiceFactory.getService(bundle), requestContextServiceFactory.getService(bundle)));
     }
 }

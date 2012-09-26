@@ -20,8 +20,10 @@ package com.atlassian.labs.remoteapps.host.common.service.confluence;
  */
 
 import com.atlassian.labs.remoteapps.api.Promise;
+import com.atlassian.labs.remoteapps.api.PromiseCallback;
 import com.atlassian.labs.remoteapps.api.Promises;
-import com.atlassian.labs.remoteapps.api.service.http.HostXmlRpcClient;
+import com.atlassian.labs.remoteapps.api.service.RequestContext;
+import com.atlassian.labs.remoteapps.api.service.http.*;
 import com.atlassian.labs.remoteapps.spi.PermissionDeniedException;
 import com.atlassian.labs.remoteapps.spi.util.RemoteName;
 import com.atlassian.labs.remoteapps.spi.util.RequirePermission;
@@ -29,6 +31,8 @@ import com.atlassian.plugin.util.ChainingClassLoader;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.slf4j.Logger;
@@ -36,6 +40,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import java.beans.PropertyDescriptor;
+import java.io.InputStream;
 import java.lang.reflect.*;
 import java.net.URI;
 import java.util.*;
@@ -60,13 +65,19 @@ public final class ClientInvocationHandler implements InvocationHandler
     private HostXmlRpcClient clientProvider;
     private final Set<String> permissions;
     private final String pluginKey;
+    private final HostHttpClient httpClient;
+    private final RequestContext requestContext;
 
-    public ClientInvocationHandler(String serviceName, HostXmlRpcClient clientProvider, Set<String> permissions, String pluginKey)
+    public ClientInvocationHandler(String serviceName, HostXmlRpcClient clientProvider,
+            Set<String> permissions, String pluginKey, HostHttpClient httpClient,
+            RequestContext requestContext)
     {
         this.serviceName = serviceName;
         this.clientProvider = clientProvider;
         this.permissions = permissions;
         this.pluginKey = pluginKey;
+        this.httpClient = httpClient;
+        this.requestContext = requestContext;
     }
 
     /**
@@ -135,9 +146,7 @@ public final class ClientInvocationHandler implements InvocationHandler
         {
             try
             {
-                RemoteName remoteName = arg.getClass().getField(((Enum)arg).name()).getAnnotation(RemoteName
-                        .class);
-                return remoteName != null ? remoteName.value() : ((Enum) arg).name();
+                return getEnumRemoteName((Enum)arg);
             }
             catch (NoSuchFieldException e)
             {
@@ -148,6 +157,13 @@ public final class ClientInvocationHandler implements InvocationHandler
         {
             return String.valueOf(arg);
         }
+    }
+
+    static Object getEnumRemoteName(Enum arg) throws NoSuchFieldException
+    {
+        RemoteName remoteName = arg.getClass().getField(arg.name()).getAnnotation(RemoteName
+                .class);
+        return remoteName != null ? remoteName.value() : arg.name();
     }
 
     private Map toRemoteMap(Object arg, Class expectedType)
@@ -200,31 +216,77 @@ public final class ClientInvocationHandler implements InvocationHandler
         }
         else if (Promise.class.isAssignableFrom(immediateType))
         {
-            final SettableFuture settableFuture = SettableFuture.create();
-
-            Promise<Object> actualPromise = (Promise<Object>) returnValue;
-            actualPromise.then(new FutureCallback<Object>()
+            // handle automatic translation of a returned url to an inputstream
+            if (genericType instanceof Class && InputStream.class.isAssignableFrom((Class)genericType))
             {
-                @Override
-                public void onSuccess(Object result)
+                final SettableFuture<InputStream> settableFuture = SettableFuture.create();
+                Futures.addCallback((ListenableFuture<String>) returnValue, new FutureCallback<String>()
                 {
-                    try
+                    @Override
+                    public void onSuccess(String result)
                     {
-                        settableFuture.set(fromRemote(result, genericType));
+                        httpClient.newRequest(
+                                convertAbsoluteUrlToRelative(result))
+                                .get().ok(new PromiseCallback<Response>()
+                        {
+                            @Override
+                            public void handle(Response value)
+                            {
+                                settableFuture.set(value.getEntityStream());
+                            }
+                        }).others(new PromiseCallback<Response>()
+                        {
+                            @Override
+                            public void handle(Response value)
+                            {
+                                settableFuture.setException(new UnexpectedResponseException(value));
+                            }
+                        }).fail(new PromiseCallback<Throwable>()
+                        {
+                            @Override
+                            public void handle(Throwable value)
+                            {
+                                settableFuture.setException(value);
+                            }
+                        });
                     }
-                    catch (Exception e)
-                    {
-                        settableFuture.setException(e);
-                    }
-                }
 
-                @Override
-                public void onFailure(Throwable t)
+                    @Override
+                    public void onFailure(Throwable t)
+                    {
+                        settableFuture.setException(t);
+                    }
+                });
+                returnValue = Promises.toPromise(settableFuture);
+            }
+            else
+            {
+                final SettableFuture settableFuture = SettableFuture.create();
+
+                Promise<Object> actualPromise = (Promise<Object>) returnValue;
+                actualPromise.then(new FutureCallback<Object>()
                 {
-                    settableFuture.setException(t);
-                }
-            });
-            returnValue = Promises.toPromise(settableFuture);
+                    @Override
+                    public void onSuccess(Object result)
+                    {
+                        try
+                        {
+                            settableFuture.set(fromRemote(result, genericType));
+                        }
+                        catch (Exception e)
+                        {
+                            settableFuture.setException(e);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Throwable t)
+                    {
+                        settableFuture.setException(t);
+                    }
+                });
+                returnValue = Promises.toPromise(settableFuture);
+            }
         }
         else if (Collection.class.isAssignableFrom(returnValue.getClass()))
         {
@@ -274,6 +336,20 @@ public final class ClientInvocationHandler implements InvocationHandler
             }
         }
         return returnValue;
+    }
+
+    private String convertAbsoluteUrlToRelative(String absoluteUrl)
+    {
+        String hostBaseUrl = requestContext.getHostBaseUrl();
+        if (absoluteUrl.startsWith(hostBaseUrl))
+        {
+            return absoluteUrl.substring(hostBaseUrl.length());
+        }
+        else
+        {
+            throw new IllegalArgumentException("Absolute URL '" + absoluteUrl + "' doesn't match " +
+                "current host base url '" + hostBaseUrl + "'");
+        }
     }
 
     private Type getGenericType(Type type)

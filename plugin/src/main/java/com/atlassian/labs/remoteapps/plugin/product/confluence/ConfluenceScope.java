@@ -20,7 +20,6 @@ import java.util.Collections;
 import java.util.Map;
 
 import static com.google.common.collect.Iterables.concat;
-import static com.google.common.collect.Iterables.unmodifiableIterable;
 
 /**
  *
@@ -36,6 +35,7 @@ abstract class ConfluenceScope implements ApiScope, MutablePermission
 
     private static final Map<String,Collection<String>> serviceClassMethodsByPermission;
     private final String permissionName;
+    private final DownloadScopeHelper downloadScopeHelper;
 
     private String name;
     private String description;
@@ -73,6 +73,10 @@ abstract class ConfluenceScope implements ApiScope, MutablePermission
 
     protected ConfluenceScope(String permissionName, Collection<RestApiScopeHelper.RestScope> resources)
     {
+        this(permissionName, resources, new DownloadScopeHelper());
+    }
+    protected ConfluenceScope(String permissionName, Collection<RestApiScopeHelper.RestScope> resources, DownloadScopeHelper downloadScopeHelper)
+    {
         this.permissionName = permissionName;
         Collection<String> methods = serviceClassMethodsByPermission.get(permissionName);
         Check.notNull(methods);
@@ -82,7 +86,8 @@ abstract class ConfluenceScope implements ApiScope, MutablePermission
         v1XmlRpcApiScopeHelper = new XmlRpcApiScopeHelper("/rpc/xmlrpc", Collections2.transform(methods, xmlRpcTransform("confluence1")));
         v2XmlRpcApiScopeHelper = new XmlRpcApiScopeHelper("/rpc/xmlrpc", Collections2.transform(methods, xmlRpcTransform("confluence2")));
         restApiScopeHelper = new RestApiScopeHelper(resources);
-        this.apiResourceInfo = concat(v1JsonRpcScopeHelper.getApiResourceInfos(), v2JsonRpcScopeHelper.getApiResourceInfos(), v1XmlRpcApiScopeHelper.getApiResourceInfos(), v2XmlRpcApiScopeHelper.getApiResourceInfos());
+        this.downloadScopeHelper = downloadScopeHelper;
+        this.apiResourceInfo = concat(v1JsonRpcScopeHelper.getApiResourceInfos(), v2JsonRpcScopeHelper.getApiResourceInfos(), v1XmlRpcApiScopeHelper.getApiResourceInfos(), v2XmlRpcApiScopeHelper.getApiResourceInfos(), downloadScopeHelper.getApiResourceInfos());
     }
 
     @Override
@@ -94,7 +99,7 @@ abstract class ConfluenceScope implements ApiScope, MutablePermission
     @Override
     public boolean allow(HttpServletRequest request, String user)
     {
-        return v1XmlRpcApiScopeHelper.allow(request, user) || v2XmlRpcApiScopeHelper.allow(request, user) || v1JsonRpcScopeHelper.allow(request, user) || v2JsonRpcScopeHelper.allow(request, user) || restApiScopeHelper.allow(request, user);
+        return v1XmlRpcApiScopeHelper.allow(request, user) || v2XmlRpcApiScopeHelper.allow(request, user) || v1JsonRpcScopeHelper.allow(request, user) || v2JsonRpcScopeHelper.allow(request, user) || restApiScopeHelper.allow(request, user) || downloadScopeHelper.allow(request, user);
     }
 
     @Override

@@ -2,9 +2,12 @@ package com.atlassian.labs.remoteapps.host.common.service.http;
 
 import com.atlassian.labs.remoteapps.api.service.SignedRequestHandler;
 import com.atlassian.labs.remoteapps.api.service.http.HostHttpClient;
+import com.atlassian.labs.remoteapps.api.service.http.Response;
 import com.atlassian.labs.remoteapps.api.service.http.ResponsePromise;
 import com.atlassian.labs.remoteapps.host.common.service.DefaultRequestContext;
+import com.google.common.util.concurrent.SettableFuture;
 
+import javax.annotation.Nullable;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
@@ -76,6 +79,8 @@ public class DefaultHostHttpClient extends AbstractHttpClient implements HostHtt
             .setAttribute("purpose", "host-request")
             .setAttribute("clientKey", clientKey);
 
+        request.setSettableFutureHandler(new ResponseSettableFutureHandler(requestContext));
+
         // execute the request via the http client service
         return httpClient.execute(request);
     }
@@ -106,6 +111,54 @@ public class DefaultHostHttpClient extends AbstractHttpClient implements HostHtt
         {
             requestContext.setClientKey(oldClientKey);
             requestContext.setUserId(oldUserId);
+        }
+    }
+
+    private static class ResponseSettableFutureHandler implements SettableFutureHandler<Response>
+    {
+        private final SettableFuture<Response> future = SettableFuture.create();
+        private final DefaultRequestContext.RequestCallable<Response, Boolean> setCallable;
+        private final DefaultRequestContext.RequestCallable<Throwable, Boolean> setExceptionCallable;
+
+        private ResponseSettableFutureHandler(DefaultRequestContext requestContext)
+        {
+            setCallable = requestContext.createCallableForCurrentRequest(
+                    new DefaultRequestContext.RequestCallable<Response, Boolean>()
+                    {
+                        @Override
+                        public Boolean call(Response contextParameter)
+                        {
+                            return future.set(contextParameter);
+                        }
+                    });
+
+            setExceptionCallable = requestContext.createCallableForCurrentRequest(
+                    new DefaultRequestContext.RequestCallable<Throwable, Boolean>()
+                    {
+                        @Override
+                        public Boolean call(Throwable contextParameter)
+                        {
+                            return future.setException(contextParameter);
+                        }
+                    });
+        }
+
+        @Override
+        public boolean set(@Nullable Response value)
+        {
+            return setCallable.call(value);
+        }
+
+        @Override
+        public boolean setException(Throwable throwable)
+        {
+            return setExceptionCallable.call(throwable);
+        }
+
+        @Override
+        public SettableFuture<Response> getFuture()
+        {
+            return future;
         }
     }
 }

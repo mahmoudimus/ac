@@ -5,10 +5,10 @@ import com.atlassian.labs.remoteapps.api.service.SignedRequestHandler;
 
 public class DefaultRequestContext implements RequestContext
 {
-    private static final ThreadLocal<String> clientKeyHolder = new ThreadLocal<String>();
-    private static final ThreadLocal<String> userIdHolder = new ThreadLocal<String>();
+    private static final ThreadLocal<RequestData> requestContextHolder = new ThreadLocal<RequestData>();
+    private static final RequestData EMPTY_DATA = new RequestData(null, null);
 
-    private SignedRequestHandler signedRequestHandler;
+    private final SignedRequestHandler signedRequestHandler;
 
     public DefaultRequestContext(SignedRequestHandler signedRequestHandler)
     {
@@ -18,23 +18,66 @@ public class DefaultRequestContext implements RequestContext
     @Override
     public String getClientKey()
     {
-        return clientKeyHolder.get();
+        return getRequestData().getClientKey();
     }
 
     public void setClientKey(String clientKey)
     {
-        clientKeyHolder.set(clientKey);
+        setRequestData(new RequestData(clientKey, getRequestData().getUserId()));
+    }
+
+    private RequestData getRequestData()
+    {
+        RequestData data = requestContextHolder.get();
+        return data != null ? data : EMPTY_DATA;
+    }
+
+    private void setRequestData(RequestData data)
+    {
+        if (data == EMPTY_DATA)
+        {
+            clear();
+        }
+        else
+        {
+            requestContextHolder.set(data);
+        }
     }
 
     @Override
     public String getUserId()
     {
-        return userIdHolder.get();
+        return getRequestData().getUserId();
     }
 
     public void setUserId(String userId)
     {
-        userIdHolder.set(userId);
+        RequestData data = getRequestData();
+        setRequestData(new RequestData(data.getClientKey(), userId));
+    }
+
+
+
+    public <P, R> RequestCallable<P, R> createCallableForCurrentRequest(final RequestCallable<P, R> callable)
+    {
+        final RequestData old = getRequestData();
+        return new RequestCallable<P, R>()
+        {
+            @Override
+            public R call(P contextParameter)
+            {
+                RequestData current = getRequestData();
+                try
+                {
+                    setRequestData(old);
+                    return callable.call(contextParameter);
+                }
+                finally
+                {
+                    setRequestData(current);
+                }
+            }
+        };
     }
 
     @Override
@@ -46,7 +89,34 @@ public class DefaultRequestContext implements RequestContext
     @Override
     public void clear()
     {
-        clientKeyHolder.remove();
-        userIdHolder.remove();
+        requestContextHolder.remove();
     }
+
+    public static interface RequestCallable<P,R>
+    {
+        R call(P contextParameter);
+    }
+
+    private static class RequestData
+    {
+        private final String clientKey;
+        private final String userId;
+
+        private RequestData(String clientKey, String userId)
+        {
+            this.clientKey = clientKey;
+            this.userId = userId;
+        }
+
+        public String getClientKey()
+        {
+            return clientKey;
+        }
+
+        public String getUserId()
+        {
+            return userId;
+        }
+    }
+
 }
