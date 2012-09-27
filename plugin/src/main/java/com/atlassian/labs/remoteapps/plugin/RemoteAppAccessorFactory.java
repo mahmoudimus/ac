@@ -80,7 +80,9 @@ public class RemoteAppAccessorFactory implements DisposableBean
     {
         if (event.getApplicationType() instanceof RemotePluginContainerApplicationType)
         {
-            accessors.remove((String) event.getApplicationLink().getProperty(RemotePluginContainerModuleDescriptor.PLUGIN_KEY_PROPERTY));
+            // we clear the whole cache because the plugin key isn't set as a property yet and there
+            // is no event for that action
+            accessors.clear();
         }
     }
 
