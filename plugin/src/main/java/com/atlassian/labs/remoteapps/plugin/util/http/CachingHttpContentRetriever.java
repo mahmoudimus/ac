@@ -192,7 +192,8 @@ public class CachingHttpContentRetriever implements DisposableBean, HttpContentR
                     {
                         eventPublisher.publish(new HttpRequestFailedEvent(urlWithParams, statusCode, elapsed, properties));
                         log.warn("Unable to retrieve information from '{}' as user '{}' due to: {}",
-                            new Object[]{url, remoteUsername, e.getMessage()});
+                            new Object[]{url, remoteUsername, e.toString()});
+                        log.debug("Error retrieving remote information", e);
                         handler.onError(new ContentRetrievalException(
                             result.getStatusLine().getReasonPhrase()));
                     }
