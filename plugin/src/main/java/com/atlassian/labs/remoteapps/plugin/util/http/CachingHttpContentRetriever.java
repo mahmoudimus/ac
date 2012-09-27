@@ -232,7 +232,7 @@ public class CachingHttpContentRetriever implements DisposableBean, HttpContentR
                 eventPublisher.publish(new HttpRequestCancelledEvent(urlWithParams, ex.toString(), elapsed, properties));
             }
         };
-        requestKiller.registerRequest(new NotifyingAbortableHttpRequest(httpget, futureCallback), 10);
+        requestKiller.registerRequest(httpget, 10);
         final Future<HttpResponse> futureResponse = httpClient.execute(httpget, localContext, futureCallback);
         return new ResponseToStringFuture(futureResponse);
     }
@@ -243,45 +243,6 @@ public class CachingHttpContentRetriever implements DisposableBean, HttpContentR
         httpClient.getConnectionManager().shutdown();
     }
 
-    /**
-     * This is a huge hack because the httpclient async lib doesn't seem to support aborting
-     * requests
-     */
-    private class NotifyingAbortableHttpRequest implements AbortableHttpRequest
-    {
-        private final AbortableHttpRequest delegate;
-        private final FutureCallback<HttpResponse> callback;
-        private NotifyingAbortableHttpRequest(AbortableHttpRequest delegate,
-                FutureCallback<HttpResponse> callback)
-        {
-            this.delegate = delegate;
-            this.callback = callback;
-        }
-
-        @Override
-        public void setConnectionRequest(ClientConnectionRequest connRequest) throws IOException
-        {
-            delegate.setConnectionRequest(connRequest);
-        }
-
-        @Override
-        public void setReleaseTrigger(ConnectionReleaseTrigger releaseTrigger) throws IOException
-        {
-            delegate.setReleaseTrigger(releaseTrigger);
-        }
-
-        @Override
-        public void abort()
-        {
-            delegate.abort();
-            // workaround as this doesn't seem to be getting called during an abort.  In fact,
-            // the request doesn't seem to be killed at all.  Note, this means the remote server
-            // is perodically sending back data enough to evade the socket timeout and has
-            // instead triggered the request killer.
-            callback.cancelled();
-        }
-
-    }
     private static class ResponseToStringFuture implements Future<String>
     {
         private final Future<HttpResponse> futureResponse;
