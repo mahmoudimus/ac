@@ -27,6 +27,8 @@ import java.util.zip.ZipOutputStream;
 
 import static com.atlassian.labs.remoteapps.host.common.util.BundleUtil.findBundleForPlugin;
 import static com.google.common.collect.Maps.newHashMap;
+import static com.google.common.collect.Maps.newTreeMap;
+import static com.google.common.collect.Sets.newTreeSet;
 import static java.lang.Math.abs;
 
 /**
@@ -223,22 +225,28 @@ public class I18nPropertiesPluginManager implements DisposableBean
             }
         }
 
+        Set<String> bundleNames = newTreeSet();
         Bundle[] bundles = bundleContext.getBundles();
         for (Bundle bundle : bundles)
         {
+            bundleNames.add(bundle.getSymbolicName());
             if (bundle.getSymbolicName().equals(I18N_SYMBOLIC_NAME))
             {
                 i18nBundle = bundle;
                 return;
             }
         }
-        throw new IllegalStateException("The i18n bundle is not found");
+
+        throw new IllegalStateException("The i18n bundle is not found in all possible: " + bundleNames);
     }
 
     @Override
     public void destroy() throws Exception
     {
-        i18nBundle.uninstall();
+        if (i18nBundle != null)
+        {
+            i18nBundle.uninstall();
+        }
     }
 
     private static interface BundleManipulator
