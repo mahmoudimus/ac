@@ -39,7 +39,7 @@ public class IssueEventMapper extends JiraEventMapper
         }
         builder.put("issue", issueToMap(issueEvent.getIssue()));
 
-        if (EventType.ISSUE_UPDATED_ID.equals(issueEvent.getEventTypeId()))
+        if (EventType.ISSUE_UPDATED_ID.equals(issueEvent.getEventTypeId()) && issueEvent.getChangeLog() != null)
         {
             builder.put("updatedFields", changeGroupToList(issueEvent.getChangeLog()));
         }
