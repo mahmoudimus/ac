@@ -16,11 +16,13 @@ import com.atlassian.labs.remoteapps.plugin.util.http.bigpipe.ContentProcessor;
 import com.atlassian.labs.remoteapps.plugin.util.http.bigpipe.RequestIdAccessor;
 import com.atlassian.renderer.RenderContextOutputType;
 import com.atlassian.sal.api.component.ComponentLocator;
+import com.atlassian.sal.api.user.UserManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 
 import java.net.URI;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.regex.Pattern;
@@ -33,6 +35,7 @@ public class MacroContentManager implements DisposableBean
     private final MacroContentLinkParser macroContentLinkParser;
     private final CachingHttpContentRetriever cachingHttpContentRetriever;
     private final BigPipe bigPipe;
+    private final UserManager userManager;
     private final XhtmlContent xhtmlUtils;
     private final RemoteAppAccessorFactory remoteAppAccessorFactory;
 
@@ -40,12 +43,14 @@ public class MacroContentManager implements DisposableBean
 
     public MacroContentManager(EventPublisher eventPublisher,
             CachingHttpContentRetriever cachingHttpContentRetriever,
-            MacroContentLinkParser macroContentLinkParser, BigPipe bigPipe, XhtmlContent xhtmlUtils,
+            MacroContentLinkParser macroContentLinkParser, BigPipe bigPipe, UserManager userManager,
+            XhtmlContent xhtmlUtils,
             RemoteAppAccessorFactory remoteAppAccessorFactory)
     {
         this.eventPublisher = eventPublisher;
         this.cachingHttpContentRetriever = cachingHttpContentRetriever;
         this.bigPipe = bigPipe;
+        this.userManager = userManager;
         this.xhtmlUtils = xhtmlUtils;
         this.remoteAppAccessorFactory = remoteAppAccessorFactory;
         this.eventPublisher.register(this);
@@ -72,7 +77,10 @@ public class MacroContentManager implements DisposableBean
             macroInstance.getConversionContext().setProperty(BIG_PIPE_REQUEST_ID, requestId);
         }
 
+        final String author = entity != null ? entity.getLastModifierName() : userManager.getRemoteUsername();
+
         String contentId = macroInstance.getHashKey();
+        final Map<String,String> urlParameters = macroInstance.getUrlParameters(author);
         BigPipeHttpContentHandler httpContentHandler = bigPipe.createContentHandler(requestId, contentId, new ContentProcessor()
         {
             @Override
@@ -80,7 +88,7 @@ public class MacroContentManager implements DisposableBean
             {
                 value = macroContentLinkParser.parse(
                         macroInstance.getRemoteAppAccessor(), value,
-                        macroInstance.getUrlParameters());
+                        urlParameters);
 
                 /*!
                The storage-format XML returned from the Remote App is then scrubbed to ensure any
@@ -106,10 +114,10 @@ public class MacroContentManager implements DisposableBean
             }
         });
 
-        String lastModifierName = entity != null ? entity.getLastModifierName() : "";
-        Future<String> response = macroInstance.getRemoteAppAccessor().executeAsyncGet(lastModifierName,
-                macroInstance.getPath(), macroInstance.getUrlParameters(),
-                macroInstance.getHeaders(), httpContentHandler);
+
+        Future<String> response = macroInstance.getRemoteAppAccessor().executeAsyncGet(author,
+                macroInstance.getPath(), urlParameters,
+                macroInstance.getHeaders(author), httpContentHandler);
 
         // only render display via big pipe, block for everyone else
         if (RenderContextOutputType.DISPLAY.equals(macroInstance.getConversionContext().getOutputType()))

@@ -85,7 +85,7 @@ public class TestConfluenceMacroParams
         product.visit(ConfluenceMacroPage.class, pageData.get("title"));
         assertEquals(pageData.get("id"), macroServlet.getQueryParams().get("page_id"));
         assertFalse(macroServlet.getQueryParams().containsKey("user_id"));
-        assertEquals("betty", macroServlet.getHeaderParams().get("user_id"));
+        assertEquals("admin", macroServlet.getHeaderParams().get("user_id"));
         assertFalse(macroServlet.getHeaderParams().containsKey("page_id"));
         runner.stop();
     }

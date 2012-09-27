@@ -389,7 +389,7 @@ public class MacroModuleDescriptorCreator
                                 placeholder.applyChrome,
                                 placeholder.getDimensions(),
                                 placeholder.imageUrl,
-                                plugin.getKey());
+                                plugin.getKey(), userManager);
                     }
                     else
                     {

@@ -10,7 +10,7 @@ replace.
   function insertContent(content) {
     var contentId = content.id;
     var html = content.html;
-    var contentDiv$ = $('#' + contentId);
+    var contentDiv$ = $('.bp-' + contentId);
     if (contentDiv$.length == 0) {
       if (content.html) {
         $("body").append(content.html);

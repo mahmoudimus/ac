@@ -131,7 +131,7 @@ public class BigPipe
             }
             else
             {
-                return "<span id=\"" + contentId + "\" class=\"bp-loading\"></span>";
+                return "<span class=\"bp-" + contentId + " bp-loading\"></span>";
             }
         }
 

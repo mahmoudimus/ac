@@ -8,6 +8,7 @@ import com.atlassian.confluence.macro.MacroExecutionException;
 import com.atlassian.confluence.pages.thumbnail.Dimensions;
 import com.atlassian.labs.remoteapps.plugin.RemoteAppAccessor;
 import com.atlassian.labs.remoteapps.plugin.module.util.redirect.RedirectServlet;
+import com.atlassian.sal.api.user.UserManager;
 
 import java.net.URI;
 import java.util.Map;
@@ -24,16 +25,18 @@ public class ImagePlaceholderMacroWrapper implements EditorImagePlaceholder, Rem
     private final URI imageUrl;
     private final Dimensions dimensions;
     private final boolean applyChrome;
+    private final UserManager userManager;
 
     public ImagePlaceholderMacroWrapper(RemoteMacro delegate, boolean applyChrome,
             Dimensions dimensions,
-            URI imageUrl, String pluginKey)
+            URI imageUrl, String pluginKey, UserManager userManager)
     {
         this.delegate = delegate;
         this.applyChrome = applyChrome;
         this.dimensions = dimensions;
         this.imageUrl = imageUrl;
         this.pluginKey = pluginKey;
+        this.userManager = userManager;
     }
 
     @Override
@@ -46,7 +49,7 @@ public class ImagePlaceholderMacroWrapper implements EditorImagePlaceholder, Rem
                 delegate.getRemoteMacroInfo().getRequestContextParameterFactory(),
                 delegate.getRemoteAppAccessor(delegate.getRemoteMacroInfo().getPluginKey()));
 
-        String uri = RedirectServlet.getRelativeOAuthRedirectUrl(pluginKey, imageUrl, macroInstance.getUrlParameters());
+        String uri = RedirectServlet.getRelativeOAuthRedirectUrl(pluginKey, imageUrl, macroInstance.getUrlParameters(userManager.getRemoteUsername()));
 
         return new DefaultImagePlaceholder(uri, dimensions, applyChrome);
     }

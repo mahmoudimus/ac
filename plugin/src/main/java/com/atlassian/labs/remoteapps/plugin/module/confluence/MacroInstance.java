@@ -22,11 +22,11 @@ public class MacroInstance
 {
     final ConversionContext conversionContext;
     final URI path;
-    private final RequestContextParameters requestContextParameters;
     final RemoteAppAccessor remoteAppAccessor;
     final String body;
     final Map<String,String> parameters;
     final Map<String, String> allContextParameters;
+    final RequestContextParameterFactory requestContextParameterFactory;
 
     public MacroInstance(ConversionContext conversionContext, URI path, String body,
             Map<String, String> parameters,
@@ -39,7 +39,7 @@ public class MacroInstance
         this.parameters = parameters;
         this.remoteAppAccessor = remoteAppAccessor;
         this.allContextParameters = getAllContextParameters();
-        this.requestContextParameters = requestContextParameterFactory.create(getAllContextParameters());
+        this.requestContextParameterFactory = requestContextParameterFactory;
     }
 
     public ConversionContext getConversionContext()
@@ -71,8 +71,9 @@ public class MacroInstance
     to pass along macro instance information as well as give the context in which the macro was
     rendered.
     */
-    public Map<String, String> getUrlParameters()
+    public Map<String, String> getUrlParameters(String userId)
     {
+        RequestContextParameters requestContextParameters = createRequestContextParameters(userId);
         Map<String,String> params = newHashMap(requestContextParameters.getQueryParameters());
 
         /*!
@@ -168,8 +169,13 @@ public class MacroInstance
         return String.valueOf(sb.toString().hashCode());
     }
 
-    public Map<String, String> getHeaders()
+    public Map<String, String> getHeaders(String userId)
     {
-        return requestContextParameters.getHeaders();
+        return createRequestContextParameters(userId).getHeaders();
+    }
+
+    private RequestContextParameters createRequestContextParameters(String userId)
+    {
+        return requestContextParameterFactory.create(userId, getAllContextParameters());
     }
 }

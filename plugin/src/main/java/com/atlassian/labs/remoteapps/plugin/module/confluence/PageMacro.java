@@ -51,7 +51,7 @@ public class PageMacro extends AbstractRemoteMacro
              return iFrameRenderer.render(
                      new IFrameContext(iframeContext, "-" + counter),
                      "",
-                     convertParams(macroInstance.getUrlParameters()),
+                     convertParams(macroInstance.getUrlParameters(userManager.getRemoteUsername())),
                      remoteUser);
 
         } catch (IOException e)

@@ -1,8 +1,6 @@
 package com.atlassian.labs.remoteapps.plugin.util.contextparameter;
 
-import com.atlassian.sal.api.user.UserManager;
 import org.dom4j.Element;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -17,14 +15,6 @@ import static com.google.common.collect.Sets.newHashSet;
 @Component
 public class ContextParameterParser
 {
-    private final UserManager userManager;
-
-    @Autowired
-    public ContextParameterParser(UserManager userManager)
-    {
-        this.userManager = userManager;
-    }
-
     public RequestContextParameterFactory parseContextParameters(Element entity)
     {
         if (entity.element("context-parameters") != null)
@@ -42,8 +32,8 @@ public class ContextParameterParser
                     queryParams.add(e.attributeValue("name"));
                 }
             }
-            return new RequestContextParameterFactory(userManager, queryParams, headerParams);
+            return new RequestContextParameterFactory(queryParams, headerParams);
         }
-        return new RequestContextParameterFactory(userManager);
+        return new RequestContextParameterFactory();
     }
 }

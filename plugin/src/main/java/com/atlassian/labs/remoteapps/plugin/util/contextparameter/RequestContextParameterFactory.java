@@ -14,22 +14,19 @@ import static com.google.common.collect.Maps.newHashMap;
  */
 public class RequestContextParameterFactory
 {
-    private final UserManager userManager;
     private final Set<String> queryParameters;
     private final Set<String> headerParameters;
     private final boolean legacyMode;
 
-    public RequestContextParameterFactory(UserManager userManager, Set<String> queryParameters, Set<String> headerParameters)
+    public RequestContextParameterFactory(Set<String> queryParameters, Set<String> headerParameters)
     {
-        this.userManager = userManager;
         this.queryParameters = queryParameters;
         this.headerParameters = headerParameters;
         this.legacyMode = false;
     }
 
-    public RequestContextParameterFactory(UserManager userManager)
+    public RequestContextParameterFactory()
     {
-        this.userManager = userManager;
         this.legacyMode = true;
         this.queryParameters = Collections.emptySet();
         this.headerParameters = Collections.emptySet();
@@ -40,11 +37,10 @@ public class RequestContextParameterFactory
      * the passed entity-related context parameters are combined with global context parameters such
      * as user_id
      */
-    public RequestContextParameters create(Map<String, String> entityContextParameters)
+    public RequestContextParameters create(String userId, Map<String, String> entityContextParameters)
     {
         Map<String, String> allContextParameters = newHashMap();
-        String remoteUsername = userManager.getRemoteUsername();
-        allContextParameters.put("user_id", remoteUsername != null ? remoteUsername : "");
+        allContextParameters.put("user_id", userId != null ? userId : "");
         allContextParameters.putAll(entityContextParameters);
 
         return new RequestContextParameters(allContextParameters, queryParameters, headerParameters,
