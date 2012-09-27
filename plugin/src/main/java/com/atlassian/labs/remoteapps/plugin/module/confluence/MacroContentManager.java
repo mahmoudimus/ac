@@ -64,8 +64,6 @@ public class MacroContentManager implements DisposableBean
     {
         ContentEntityObject entity = macroInstance.getEntity();
 
-
-
         String requestId = macroInstance.getConversionContext().getPropertyAsString(
                 BIG_PIPE_REQUEST_ID);
         if (requestId == null)
@@ -74,7 +72,8 @@ public class MacroContentManager implements DisposableBean
             macroInstance.getConversionContext().setProperty(BIG_PIPE_REQUEST_ID, requestId);
         }
 
-        BigPipeHttpContentHandler httpContentHandler = bigPipe.createContentHandler(requestId, new ContentProcessor()
+        String contentId = macroInstance.getHashKey();
+        BigPipeHttpContentHandler httpContentHandler = bigPipe.createContentHandler(requestId, contentId, new ContentProcessor()
         {
             @Override
             public String process(String value)

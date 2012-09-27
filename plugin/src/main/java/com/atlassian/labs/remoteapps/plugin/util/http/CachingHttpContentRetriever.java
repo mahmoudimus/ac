@@ -1,12 +1,11 @@
 package com.atlassian.labs.remoteapps.plugin.util.http;
 
 import com.atlassian.event.api.EventPublisher;
-import com.atlassian.labs.remoteapps.plugin.ContentRetrievalException;
-import com.atlassian.labs.remoteapps.plugin.RetrievalTimeoutException;
-import com.atlassian.labs.remoteapps.host.common.service.http.HttpRequestCancelledEvent;
 import com.atlassian.labs.remoteapps.host.common.service.http.HttpRequestCompletedEvent;
 import com.atlassian.labs.remoteapps.host.common.service.http.HttpRequestFailedEvent;
 import com.atlassian.labs.remoteapps.host.common.service.http.RequestKiller;
+import com.atlassian.labs.remoteapps.plugin.ContentRetrievalException;
+import com.atlassian.labs.remoteapps.plugin.RetrievalTimeoutException;
 import com.atlassian.labs.remoteapps.plugin.util.uri.Uri;
 import com.atlassian.labs.remoteapps.plugin.util.uri.UriBuilder;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
@@ -15,11 +14,8 @@ import com.google.common.base.Function;
 import com.google.common.collect.Maps;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.AbortableHttpRequest;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.concurrent.FutureCallback;
-import org.apache.http.conn.ClientConnectionRequest;
-import org.apache.http.conn.ConnectionReleaseTrigger;
 import org.apache.http.impl.client.cache.CacheConfig;
 import org.apache.http.impl.client.cache.CachingHttpAsyncClient;
 import org.apache.http.impl.nio.client.DefaultHttpAsyncClient;
@@ -41,6 +37,7 @@ import org.springframework.beans.factory.DisposableBean;
 
 import java.io.IOException;
 import java.net.ProxySelector;
+import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
@@ -146,7 +143,7 @@ public class CachingHttpContentRetriever implements DisposableBean, HttpContentR
     public Future<String> getAsync(final AuthorizationGenerator authorizationGenerator, final String remoteUsername,
             final URI url,
             final Map<String, String> parameters, final Map<String, String> headers,
-            final HttpContentHandler handler, String moduleKey)
+            final HttpContentHandler handler, final String pluginKey)
     {
         final long start = System.currentTimeMillis();
         final String urlWithParams = new UriBuilder(Uri.fromJavaUri(url)).addQueryParameters(parameters).toString();
@@ -169,7 +166,7 @@ public class CachingHttpContentRetriever implements DisposableBean, HttpContentR
 
         final Map<String, String> properties = Maps.newHashMap();
         properties.put("purpose", "content-retrieval");
-        properties.put("moduleKey", moduleKey);
+        properties.put("moduleKey", pluginKey);
 
         log.info("Retrieving content from '{}' for user '{}'", new Object[]{url, remoteUsername});
         FutureCallback<HttpResponse> futureCallback = new FutureCallback<HttpResponse>()
@@ -211,15 +208,32 @@ public class CachingHttpContentRetriever implements DisposableBean, HttpContentR
                 }
             }
 
+            private void handleTimeout(long elapsed)
+            {
+                String error = "Timeout retrieving data from plugin '" + pluginKey + "'";
+                eventPublisher.publish(
+                        new HttpRequestFailedEvent(urlWithParams, error, elapsed, properties));
+                log.warn("Timeout retrieving information from '{}' as user '{}'",
+                        new Object[]{url, remoteUsername});
+                handler.onError(new RetrievalTimeoutException(error));
+            }
+
             @Override
             public void failed(Exception ex)
             {
                 long elapsed = System.currentTimeMillis() - start;
                 requestKiller.completedRequest(httpget);
-                eventPublisher.publish(new HttpRequestFailedEvent(urlWithParams, 0, elapsed, properties));
-                log.warn("Unable to retrieve information from '{}' as user '{}' due to: {}",
-                    new Object[]{url, remoteUsername, ex.getMessage()});
-                handler.onError(new ContentRetrievalException(ex));
+                if (ex instanceof SocketTimeoutException)
+                {
+                    handleTimeout(elapsed);
+                }
+                else
+                {
+                    eventPublisher.publish(new HttpRequestFailedEvent(urlWithParams, 0, elapsed, properties));
+                    log.warn("Unable to retrieve information from '{}' as user '{}' due to: {}",
+                            new Object[]{url, remoteUsername, ex.getMessage()});
+                    handler.onError(new ContentRetrievalException(ex));
+                }
             }
 
             @Override
@@ -228,9 +242,7 @@ public class CachingHttpContentRetriever implements DisposableBean, HttpContentR
                 long elapsed = System.currentTimeMillis() - start;
                 requestKiller.completedRequest(httpget);
                 log.debug("Request {} cancelled", url);
-                RetrievalTimeoutException ex = new RetrievalTimeoutException("Timeout waiting for " + url);
-                handler.onError(ex);
-                eventPublisher.publish(new HttpRequestCancelledEvent(urlWithParams, ex.toString(), elapsed, properties));
+                handleTimeout(elapsed);
             }
         };
         requestKiller.registerRequest(httpget, 10);

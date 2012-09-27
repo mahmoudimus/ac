@@ -198,7 +198,7 @@ public class DefaultHttpClient extends AbstractHttpClient implements HttpClient,
                 requestKiller.completedRequest(op);
                 TimeoutException ex = new TimeoutException();
                 long elapsed = System.currentTimeMillis() - start;
-                eventPublisher.publish(new HttpRequestCancelledEvent(uri, ex.toString(), elapsed, request.getAttributes()));
+                eventPublisher.publish(new HttpRequestFailedEvent(uri, ex.toString(), elapsed, request.getAttributes()));
                 future.setException(ex);
             }
         };

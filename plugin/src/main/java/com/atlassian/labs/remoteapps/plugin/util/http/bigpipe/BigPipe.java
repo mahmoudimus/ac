@@ -34,7 +34,10 @@ public class BigPipe
     {
         // give each content its own unique id for replacing later
         String contentId = String.valueOf(secureRandom.nextLong());
-
+        return createContentHandler(requestId, contentId, contentProcessor);
+    }
+    public BigPipeHttpContentHandler createContentHandler(String requestId, String contentId, ContentProcessor contentProcessor)
+    {
         RequestContentSet request = requestContentSets.get(requestId);
         if (request == null)
         {
@@ -44,8 +47,7 @@ public class BigPipe
 
         InternalHandler handler = new InternalHandler(requestId, contentId,
                 request, contentProcessor);
-        request.addHandler(handler);
-        return handler;
+        return request.addHandler(handler);
     }
 
     public Iterable<BigPipeHttpContentHandler> waitForCompletedHandlers(String requestId)
@@ -143,7 +145,7 @@ public class BigPipe
         @Override
         public void onError(ContentRetrievalException ex)
         {
-            this.content = "<div class=\"bp-error\">Error: " + ex.getMessage() + "</div>";
+            this.content = "<span class=\"bp-error\">Error: " + ex.getMessage() + "</span>";
             request.notifyConsumers();
         }
 
@@ -186,9 +188,22 @@ public class BigPipe
             this.expiry = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(20);
         }
 
-        public void addHandler(InternalHandler handler)
+        /**
+         * Ensures only one handler per contentid
+         * @return The handler to actually use
+         */
+        public InternalHandler addHandler(InternalHandler handler)
         {
-            handlers.put(handler.contentId, handler);
+            if (!handlers.containsKey(handler.contentId))
+            {
+                handlers.put(handler.contentId, handler);
+                return handler;
+            }
+            else
+            {
+                log.debug("Content id '{}' already assigned for request '{}'", handler.contentId, requestId);
+                return handlers.get(handler.contentId);
+            }
         }
 
         public void removeContent(String contentId)
