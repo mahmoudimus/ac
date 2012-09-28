@@ -259,6 +259,18 @@
                 <scope>provided</scope>
             </dependency>
             <dependency>
+                <groupId>com.atlassian.event</groupId>
+                <artifactId>atlassian-event</artifactId>
+                <version>2.2.0</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.analytics</groupId>
+                <artifactId>analytics-api</artifactId>
+                <version>2.12</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
                 <groupId>com.atlassian.util.concurrent</groupId>
                 <artifactId>atlassian-util-concurrent</artifactId>
                 <version>0.0.12</version>

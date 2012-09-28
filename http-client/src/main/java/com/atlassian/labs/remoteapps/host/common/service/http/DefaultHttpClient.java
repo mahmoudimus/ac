@@ -4,6 +4,7 @@ import com.atlassian.event.api.EventPublisher;
 import com.atlassian.labs.remoteapps.api.service.http.HttpClient;
 import com.atlassian.labs.remoteapps.api.service.http.Response;
 import com.atlassian.labs.remoteapps.api.service.http.ResponsePromise;
+import com.atlassian.labs.remoteapps.api.service.http.ResponsePromises;
 import com.atlassian.util.concurrent.ThreadFactories;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -204,7 +205,7 @@ public class DefaultHttpClient extends AbstractHttpClient implements HttpClient,
 
         requestKiller.registerRequest(new NotifyingAbortableHttpRequest(op, futureCallback), 30);
         httpClient.execute(op, localContext, futureCallback);
-        return toResponsePromise(future.getFuture());
+        return ResponsePromises.toResponsePromise(future.getFuture());
     }
 
     @Override

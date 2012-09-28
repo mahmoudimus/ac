@@ -16,7 +16,7 @@ import static com.google.common.collect.Sets.newHashSet;
  * this thread kills requests that may be trickling content down in such a way that doesn't trip
  * the socket timeout.
  */
-public class RequestKiller implements DisposableBean, Runnable, InitializingBean
+public final class RequestKiller implements DisposableBean, Runnable, InitializingBean
 {
     private final Set<RequestEntry> activeRequests = new CopyOnWriteArraySet<RequestEntry>();
     private final Thread killerThread;

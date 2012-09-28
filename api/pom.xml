@@ -27,9 +27,12 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>com.atlassian.event</groupId>
+            <artifactId>atlassian-event</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.atlassian.analytics</groupId>
             <artifactId>analytics-api</artifactId>
-            <version>2.12</version>
         </dependency>
         <dependency>
             <groupId>com.atlassian.mail</groupId>
@@ -155,5 +158,4 @@
             <scope>compile</scope>
         </dependency>
     </dependencies>
-
 </project>

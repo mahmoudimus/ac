@@ -31,7 +31,6 @@
         <dependency>
             <groupId>com.atlassian.analytics</groupId>
             <artifactId>analytics-api</artifactId>
-            <version>2.12</version>
         </dependency>
 
         <dependency>
@@ -97,20 +96,6 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpasyncclient</artifactId>
-        </dependency>
-        <!-- These can be removed once the exclusion in the parent pom
-             under httpasyncclient is removed -->
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpcore</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpcore-nio</artifactId>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>

@@ -76,7 +76,6 @@
         <dependency>
             <groupId>com.atlassian.analytics</groupId>
             <artifactId>analytics-api</artifactId>
-            <version>2.12</version>
         </dependency>
         <dependency>
             <groupId>net.oauth.core</groupId>

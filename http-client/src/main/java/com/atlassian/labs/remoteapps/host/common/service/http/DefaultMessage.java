@@ -1,7 +1,9 @@
 package com.atlassian.labs.remoteapps.host.common.service.http;
 
 import com.atlassian.labs.remoteapps.api.service.http.Message;
-import org.apache.commons.io.IOUtils;
+import com.google.common.io.ByteStreams;
+import com.google.common.io.CharStreams;
+import com.google.common.io.InputSupplier;
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.InputStreamEntity;
@@ -13,7 +15,7 @@ import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.Map;
 
-import static com.google.common.collect.Maps.newHashMap;
+import static com.google.common.collect.Maps.*;
 
 /**
  * An abstract base class for HTTP messages (i.e. Request and Response) with support for
@@ -84,9 +86,17 @@ public abstract class DefaultMessage implements Message
         String entity = null;
         if (hasEntity())
         {
-            String charset = getContentCharset();
-            charset = charset != null ? charset : "ISO-8859-1";
-            entity = IOUtils.toString(getEntityStream(), charset);
+            final String charsetAsString = getContentCharset();
+            // TODO: ISO-8859-1 by default really?
+            final Charset charset = charsetAsString != null ? Charset.forName(charsetAsString) : Charset.forName("ISO-8859-1");
+            entity = CharStreams.toString(CharStreams.newReaderSupplier(new InputSupplier<InputStream>()
+            {
+                @Override
+                public InputStream getInput() throws IOException
+                {
+                    return getEntityStream();
+                }
+            }, charset));
         }
         return entity;
     }
@@ -128,7 +138,7 @@ public abstract class DefaultMessage implements Message
                 {
                     try
                     {
-                        bytes = IOUtils.toByteArray(entityStream);
+                        bytes = ByteStreams.toByteArray(entityStream);
                     }
                     catch (IOException e)
                     {
