@@ -59,6 +59,11 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
+            <groupId>com.atlassian.event</groupId>
+            <artifactId>atlassian-event</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
             <groupId>com.atlassian.plugins</groupId>
             <artifactId>atlassian-plugins-main</artifactId>
             <version>${plugins.version}</version>
