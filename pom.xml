@@ -31,7 +31,7 @@
         <module>kit-common</module>
         <module>servlet-kit</module>
         <module>ringojs-kit</module>
-        <module>sample</module>
+        <module>test-plugin</module>
         <module>plugin</module>
         <module>smoke-tests</module>
         <module>container</module>

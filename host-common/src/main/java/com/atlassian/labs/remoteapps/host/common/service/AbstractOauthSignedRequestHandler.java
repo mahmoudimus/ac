@@ -122,7 +122,7 @@ public abstract class AbstractOauthSignedRequestHandler
 
     private void printMessage(OAuthMessage message)
     {
-        StringBuilder sb = new StringBuilder("Validating incoming OAuth request for sample remoteapp:\n");
+        StringBuilder sb = new StringBuilder("Validating incoming OAuth request for remoteapp:\n");
         sb.append("\turl: ").append(message.URL.toString()).append("\n");
         sb.append("\tmethod: ").append(message.method.toString()).append("\n");
         try

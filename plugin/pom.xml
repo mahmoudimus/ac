@@ -117,7 +117,7 @@
 
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>remoteapps-sample</artifactId>
+            <artifactId>remoteapps-test-plugin</artifactId>
             <version>${project.version}</version>
             <type>atlassian-plugin</type>
             <scope>provided</scope>
@@ -556,7 +556,7 @@
                     <pluginArtifacts>
                         <pluginArtifact>
                             <groupId>${project.groupId}</groupId>
-                            <artifactId>remoteapps-sample</artifactId>
+                            <artifactId>remoteapps-test-plugin</artifactId>
                             <version>${project.version}</version>
                         </pluginArtifact>
                         <pluginArtifact>

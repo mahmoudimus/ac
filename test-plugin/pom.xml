@@ -8,11 +8,11 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>remoteapps-sample</artifactId>
-    <name>Atlassian Remote Apps - Sample</name>
+    <artifactId>remoteapps-test-plugin</artifactId>
+    <name>Atlassian Remote Apps - Test Plugin</name>
     <packaging>atlassian-plugin</packaging>
     <description>
-        A sample remote app to demonstrate basic usage of the available extension points
+        A test plugin to test basic usage of the available extension points
     </description>
 
     <dependencies>
