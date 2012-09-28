@@ -26,6 +26,7 @@
         <module>concurrent</module>
         <module>api</module>
         <module>http-client</module>
+        <module>jira-rest-client</module>
         <module>host-common</module>
         <module>kit-common</module>
         <module>servlet-kit</module>
@@ -376,10 +377,9 @@
             </dependency>
             <dependency>
                 <groupId>com.atlassian.jira</groupId>
-                <artifactId>jira-rest-java-client-p3</artifactId>
+                <artifactId>jira-rest-java-client</artifactId>
                 <version>${jira.client.version}</version>
-                <scope>provided</scope>
-                <exclusions>
+                <!--exclusions>
                     <exclusion>
                         <groupId>com.sun.jersey</groupId>
                         <artifactId>jersey-client</artifactId>
@@ -404,7 +404,7 @@
                         <groupId>com.sun.jersey.contribs.jersey-oauth</groupId>
                         <artifactId>oauth-signature</artifactId>
                     </exclusion>
-                </exclusions>
+                </exclusions-->
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -454,7 +454,7 @@
         <jira.version>5.1.2</jira.version>
         <jira.rpc.version>5.0.5</jira.rpc.version>
         <jira.data.version>${jira.version}</jira.data.version>
-        <jira.client.version>0.6-m6-db4</jira.client.version>
+        <jira.client.version>0.6-m9</jira.client.version>
         <confluence.version>4.2.13</confluence.version>
         <confluence.data.version>${confluence.version}</confluence.data.version>
         <applinks.version>3.5.1</applinks.version>

@@ -18,8 +18,13 @@
 
     <dependencies>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>com.atlassian.labs</groupId>
             <artifactId>remoteapps-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.labs</groupId>
+            <artifactId>remoteapps-jira-rest-client</artifactId>
             <version>${project.version}</version>
         </dependency>
 

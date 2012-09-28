@@ -93,6 +93,13 @@
             <artifactId>junit</artifactId>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>com.atlassian.labs</groupId>
+            <artifactId>remoteapps-jira-rest-client</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>

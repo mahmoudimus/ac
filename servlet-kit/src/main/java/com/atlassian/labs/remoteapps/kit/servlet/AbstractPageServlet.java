@@ -11,8 +11,6 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -27,16 +25,14 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.annotation.Annotation;
 import java.net.URI;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import static com.atlassian.labs.remoteapps.spi.util.Strings.dasherize;
-import static com.atlassian.labs.remoteapps.spi.util.Strings.removeSuffix;
-import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Maps.newHashMap;
+import static com.atlassian.labs.remoteapps.spi.util.Strings.*;
+import static com.google.common.collect.Lists.*;
+import static com.google.common.collect.Maps.*;
 
 public abstract class AbstractPageServlet extends HttpServlet implements InitializingBean
 {
@@ -99,9 +95,9 @@ public abstract class AbstractPageServlet extends HttpServlet implements Initial
     {
         StringWriter body = new StringWriter();
         renderView(view, body, ImmutableMap.<String, Object>builder()
-            .putAll(getBaseContext(req))
-            .putAll(context)
-            .build());
+                .putAll(getBaseContext(req))
+                .putAll(context)
+                .build());
         sendWithLayout(layout, body.toString(), req, res, context);
     }
 
@@ -130,10 +126,10 @@ public abstract class AbstractPageServlet extends HttpServlet implements Initial
         if (layout != null)
         {
             renderView(layout, res.getWriter(), ImmutableMap.<String, Object>builder()
-                .putAll(getBaseContext(req))
-                .putAll(context)
-                .put("bodyHtml", bodyHtml)
-                .build());
+                    .putAll(getBaseContext(req))
+                    .putAll(context)
+                    .put("bodyHtml", bodyHtml)
+                    .build());
         }
         else
         {
@@ -146,17 +142,17 @@ public abstract class AbstractPageServlet extends HttpServlet implements Initial
         String hostBaseUrl = requestContext.getHostBaseUrl();
         Locale locale = localeResolver.getLocale(req);
         return ImmutableMap.<String, Object>builder()
-            .put("hostContextPath", URI.create(hostBaseUrl).getPath())
-            .put("hostBaseUrl", hostBaseUrl)
-            .put("hostStylesheetUrl", hostBaseUrl + "/remoteapps/all.css")
-            .put("hostScriptUrl", hostBaseUrl + "/remoteapps/all.js")
-            .put("appStylesheetPaths", devMode ? getAppStylesheetPaths() : appStylesheetUrls)
-            .put("appScriptPaths", devMode ? getAppScriptPaths() : appScriptUrls)
-            .put("userId", requestContext.getUserId())
-            .put("clientKey", requestContext.getClientKey())
-            .put("i18n", i18nResolver)
-            .put("locale", locale)
-            .build();
+                .put("hostContextPath", URI.create(hostBaseUrl).getPath())
+                .put("hostBaseUrl", hostBaseUrl)
+                .put("hostStylesheetUrl", hostBaseUrl + "/remoteapps/all.css")
+                .put("hostScriptUrl", hostBaseUrl + "/remoteapps/all.js")
+                .put("appStylesheetPaths", devMode ? getAppStylesheetPaths() : appStylesheetUrls)
+                .put("appScriptPaths", devMode ? getAppScriptPaths() : appScriptUrls)
+                .put("userId", requestContext.getUserId())
+                .put("clientKey", requestContext.getClientKey())
+                .put("i18n", i18nResolver)
+                .put("locale", locale)
+                .build();
     }
 
     protected boolean hasResource(String path)
@@ -231,7 +227,7 @@ public abstract class AbstractPageServlet extends HttpServlet implements Initial
                 else
                 {
                     throw new IllegalStateException("Unexpected resource annotation type: "
-                        + annotation.annotationType().getSimpleName());
+                            + annotation.annotationType().getSimpleName());
                 }
 
                 if (values != null)
@@ -299,7 +295,13 @@ public abstract class AbstractPageServlet extends HttpServlet implements Initial
 
     private String getResourcePath(String... parts)
     {
-        if (parts.length == 1) return parts[0];
-        else return Joiner.on('/').join(Arrays.copyOfRange(parts, 0, parts.length - 1)) + '.' + parts[parts.length - 1];
+        if (parts.length == 1)
+        {
+            return parts[0];
+        }
+        else
+        {
+            return Joiner.on('/').join(Arrays.copyOfRange(parts, 0, parts.length - 1)) + '.' + parts[parts.length - 1];
+        }
     }
 }
