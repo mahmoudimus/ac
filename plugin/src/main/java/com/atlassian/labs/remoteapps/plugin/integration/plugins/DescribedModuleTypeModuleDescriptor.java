@@ -11,6 +11,7 @@ import com.atlassian.plugin.ModuleDescriptorFactory;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
+import com.atlassian.plugin.descriptors.CannotDisable;
 import com.atlassian.plugin.hostcontainer.HostContainer;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.osgi.external.ListableModuleDescriptorFactory;
@@ -31,6 +32,7 @@ import static java.util.Collections.emptyList;
  * Descriptor that allows described module descriptor factories to be configured in XML.  Main value
  * is the ability to reuse the name and description of the module descriptor configuration.
  */
+@CannotDisable
 public class DescribedModuleTypeModuleDescriptor extends AbstractModuleDescriptor<DescribedModuleDescriptorFactory>
 {
     private static final String[] PUBLIC_INTERFACES = new String[] {

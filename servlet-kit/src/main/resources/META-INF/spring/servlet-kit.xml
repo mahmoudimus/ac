@@ -10,27 +10,10 @@ http://www.springframework.org/schema/context
            http://www.springframework.org/schema/context/spring-context-2.5.xsd"
              default-autowire="autodetect">
 
-    <context:component-scan base-package="servlets" use-default-filters="false" name-generator="com.atlassian.labs.remoteapps.kit.common.spring.NamedAnnotationBeanNameGenerator">
-        <context:include-filter type="annotation" expression="javax.inject.Singleton" />
-        <context:include-filter type="annotation" expression="javax.inject.Named" />
-    </context:component-scan>
-    <context:component-scan base-package="services" use-default-filters="false" name-generator="com.atlassian.labs.remoteapps.kit.common.spring.NamedAnnotationBeanNameGenerator">
-            <context:include-filter type="annotation" expression="javax.inject.Singleton" />
-            <context:include-filter type="annotation" expression="javax.inject.Named" />
-        </context:component-scan>
+    <remote-apps:bean-scan>
+        <remote-apps:base-package>servlets</remote-apps:base-package>
+        <remote-apps:base-package>services</remote-apps:base-package>
+        <remote-apps:base-package>com.atlassian.labs.remoteapps.kit.servlet</remote-apps:base-package>
+    </remote-apps:bean-scan>
 
-    <beans:bean id="inject-post-processor" class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor">
-        <beans:property name="autowiredAnnotationType" value="javax.inject.Inject" />
-    </beans:bean>
-
-    <beans:bean id="service-references" class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor">
-        <beans:property name="autowiredAnnotationType" value="com.atlassian.labs.remoteapps.api.annotation.ServiceReference" />
-    </beans:bean>
-
-    <context:component-scan base-package="com.atlassian.labs.remoteapps.kit.servlet" use-default-filters="false" name-generator="com.atlassian.labs.remoteapps.kit.common.spring.NamedAnnotationBeanNameGenerator">
-        <context:include-filter type="annotation" expression="javax.inject.Singleton" />
-        <context:include-filter type="annotation" expression="javax.inject.Named" />
-    </context:component-scan>
-
-    <remote-apps:service-reference-scan />
 </beans:beans>

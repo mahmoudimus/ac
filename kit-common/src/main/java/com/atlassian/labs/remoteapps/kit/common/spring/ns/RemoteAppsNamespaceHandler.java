@@ -8,6 +8,6 @@ import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 public class RemoteAppsNamespaceHandler extends NamespaceHandlerSupport {
 
     public void init() {
-        registerBeanDefinitionParser("service-reference-scan", new ServiceReferenceScanBeanDefinitionParser());
+        registerBeanDefinitionParser("bean-scan", new BeanScanBeanDefinitionParser());
     }
 }

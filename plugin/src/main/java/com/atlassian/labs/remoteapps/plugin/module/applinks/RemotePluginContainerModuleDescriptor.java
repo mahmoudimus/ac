@@ -20,6 +20,7 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginInformation;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
+import com.atlassian.plugin.descriptors.CannotDisable;
 import com.atlassian.util.concurrent.NotNull;
 import org.dom4j.Element;
 import org.osgi.framework.BundleContext;
@@ -35,6 +36,7 @@ import static com.atlassian.labs.remoteapps.spi.util.Dom4jUtils.*;
 /**
  * Dynamically creates an application link for a plugin host
  */
+@CannotDisable
 public class RemotePluginContainerModuleDescriptor extends AbstractModuleDescriptor<Void>
 {
     public static final String PLUGIN_KEY_PROPERTY = "plugin-key";
