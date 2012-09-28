@@ -5,6 +5,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * A promise that presents a nicer interface to {@link java.util.concurrent.Future}
+ * // TODO move into the com.atlassian.labs.remoteapps.concurrent package when extracted out of the Remote Apps Plugin project
  */
 public interface Promise<V> extends ListenableFuture<V>
 {

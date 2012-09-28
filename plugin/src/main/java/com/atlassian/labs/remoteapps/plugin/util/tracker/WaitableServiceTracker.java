@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
-import static com.atlassian.labs.remoteapps.api.Promises.toPromise;
+import static com.atlassian.labs.remoteapps.api.Promises.*;
 import static com.google.common.collect.Maps.*;
 
 /**

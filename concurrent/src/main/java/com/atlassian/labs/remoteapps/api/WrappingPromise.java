@@ -1,7 +1,5 @@
-package com.atlassian.labs.remoteapps.spi;
+package com.atlassian.labs.remoteapps.api;
 
-import com.atlassian.labs.remoteapps.api.Promise;
-import com.atlassian.labs.remoteapps.api.PromiseCallback;
 import com.google.common.util.concurrent.ForwardingListenableFuture;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
@@ -12,7 +10,7 @@ import java.util.concurrent.ExecutionException;
 /**
  * Wraps a ListenableFuture to be a promise
  */
-public final class WrappingPromise<V> extends ForwardingListenableFuture.SimpleForwardingListenableFuture<V> implements Promise<V>
+final class WrappingPromise<V> extends ForwardingListenableFuture.SimpleForwardingListenableFuture<V> implements Promise<V>
 {
     public WrappingPromise(ListenableFuture<V> delegate)
     {

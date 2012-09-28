@@ -1,9 +1,9 @@
 package com.atlassian.labs.remoteapps.api.service.confluence;
 
-import com.atlassian.labs.remoteapps.api.Promise;
 import com.atlassian.labs.remoteapps.api.service.confluence.domain.BlogEntry;
 import com.atlassian.labs.remoteapps.api.service.confluence.domain.BlogEntrySummary;
 import com.atlassian.labs.remoteapps.api.service.confluence.domain.MutableBlogEntry;
+import com.atlassian.labs.remoteapps.api.Promise;
 import com.atlassian.labs.remoteapps.spi.util.RequirePermission;
 
 /**

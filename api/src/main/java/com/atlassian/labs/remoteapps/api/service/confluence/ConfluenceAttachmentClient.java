@@ -1,8 +1,8 @@
 package com.atlassian.labs.remoteapps.api.service.confluence;
 
-import com.atlassian.labs.remoteapps.api.Promise;
 import com.atlassian.labs.remoteapps.api.service.confluence.domain.Attachment;
 import com.atlassian.labs.remoteapps.api.service.confluence.domain.MutableAttachment;
+import com.atlassian.labs.remoteapps.api.Promise;
 import com.atlassian.labs.remoteapps.spi.util.RequirePermission;
 
 import java.io.InputStream;

@@ -3,7 +3,6 @@ package com.atlassian.labs.remoteapps.api.service.http;
 import com.atlassian.labs.remoteapps.api.Promise;
 import com.atlassian.labs.remoteapps.api.PromiseCallback;
 import com.google.common.util.concurrent.FutureCallback;
-import com.google.common.util.concurrent.SettableFuture;
 
 /**
  * Adds rich response-code callback registration to the base Promise interface.

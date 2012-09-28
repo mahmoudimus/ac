@@ -1,7 +1,5 @@
 package com.atlassian.labs.remoteapps.api;
 
-import com.atlassian.labs.remoteapps.spi.StaticPromise;
-import com.atlassian.labs.remoteapps.spi.WrappingPromise;
 import com.google.common.base.Function;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -9,7 +7,7 @@ import com.google.common.util.concurrent.SettableFuture;
 
 import java.util.List;
 
-import static java.util.Arrays.asList;
+import static java.util.Arrays.*;
 
 /**
  * Helper methods for working with promises

@@ -1,7 +1,5 @@
 package com.atlassian.labs.remoteapps.api.service.http;
 
-import com.atlassian.labs.remoteapps.spi.http.WrappingResponsePromise;
-import com.atlassian.labs.remoteapps.spi.http.WrappingResponsesPromise;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 

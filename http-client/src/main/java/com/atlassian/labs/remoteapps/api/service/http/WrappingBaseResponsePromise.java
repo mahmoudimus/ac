@@ -1,21 +1,18 @@
-package com.atlassian.labs.remoteapps.spi.http;
+package com.atlassian.labs.remoteapps.api.service.http;
 
 import com.atlassian.labs.remoteapps.api.Promise;
 import com.atlassian.labs.remoteapps.api.PromiseCallback;
-import com.atlassian.labs.remoteapps.api.service.http.BaseResponsePromise;
 import com.google.common.util.concurrent.ForwardingListenableFuture;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Set;
 
-import static com.atlassian.labs.remoteapps.api.Promises.toPromise;
-import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Sets.newHashSet;
+import static com.atlassian.labs.remoteapps.api.Promises.*;
+import static com.google.common.collect.Sets.*;
 
-public abstract class WrappingBaseResponsePromise<V> extends ForwardingListenableFuture.SimpleForwardingListenableFuture<V> implements BaseResponsePromise<V>
+abstract class WrappingBaseResponsePromise<V> extends ForwardingListenableFuture.SimpleForwardingListenableFuture<V> implements BaseResponsePromise<V>
 {
     private final Set<Integer> statuses;
     private final Set<StatusSet> statusSets;
@@ -241,7 +238,7 @@ public abstract class WrappingBaseResponsePromise<V> extends ForwardingListenabl
             }
             Range range = (Range) o;
             return lowerBoundInclusive == range.lowerBoundInclusive
-                && upperBoundExclusive == range.upperBoundExclusive;
+                    && upperBoundExclusive == range.upperBoundExclusive;
         }
 
         @Override

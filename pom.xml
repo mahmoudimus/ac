@@ -23,7 +23,9 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>concurrent</module>
         <module>api</module>
+        <module>http-client</module>
         <module>host-common</module>
         <module>kit-common</module>
         <module>servlet-kit</module>

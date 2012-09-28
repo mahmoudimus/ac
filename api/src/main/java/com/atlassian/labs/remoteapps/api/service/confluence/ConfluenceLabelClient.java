@@ -1,10 +1,10 @@
 package com.atlassian.labs.remoteapps.api.service.confluence;
 
-import com.atlassian.labs.remoteapps.api.Promise;
 import com.atlassian.labs.remoteapps.api.service.confluence.domain.Label;
 import com.atlassian.labs.remoteapps.api.service.confluence.domain.MutableLabel;
 import com.atlassian.labs.remoteapps.api.service.confluence.domain.SearchResult;
 import com.atlassian.labs.remoteapps.api.service.confluence.domain.Space;
+import com.atlassian.labs.remoteapps.api.Promise;
 import com.atlassian.labs.remoteapps.spi.util.RequirePermission;
 
 /**

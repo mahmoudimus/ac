@@ -1,7 +1,12 @@
 package com.atlassian.labs.remoteapps.api.service.confluence;
 
+import com.atlassian.labs.remoteapps.api.service.confluence.domain.ExportType;
+import com.atlassian.labs.remoteapps.api.service.confluence.domain.GlobalPermission;
+import com.atlassian.labs.remoteapps.api.service.confluence.domain.MutableSpace;
+import com.atlassian.labs.remoteapps.api.service.confluence.domain.Space;
+import com.atlassian.labs.remoteapps.api.service.confluence.domain.SpacePermission;
+import com.atlassian.labs.remoteapps.api.service.confluence.domain.SpaceSummary;
 import com.atlassian.labs.remoteapps.api.Promise;
-import com.atlassian.labs.remoteapps.api.service.confluence.domain.*;
 import com.atlassian.labs.remoteapps.spi.util.RequirePermission;
 
 import java.io.InputStream;

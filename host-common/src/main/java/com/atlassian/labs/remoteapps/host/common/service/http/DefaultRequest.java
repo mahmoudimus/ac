@@ -1,6 +1,9 @@
 package com.atlassian.labs.remoteapps.host.common.service.http;
 
-import com.atlassian.labs.remoteapps.api.service.http.*;
+import com.atlassian.labs.remoteapps.api.service.http.EntityBuilder;
+import com.atlassian.labs.remoteapps.api.service.http.Request;
+import com.atlassian.labs.remoteapps.api.service.http.Response;
+import com.atlassian.labs.remoteapps.api.service.http.ResponsePromise;
 
 import java.io.InputStream;
 import java.net.URI;

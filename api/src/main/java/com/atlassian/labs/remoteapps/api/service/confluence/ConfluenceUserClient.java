@@ -1,10 +1,10 @@
 package com.atlassian.labs.remoteapps.api.service.confluence;
 
-import com.atlassian.labs.remoteapps.api.Promise;
 import com.atlassian.labs.remoteapps.api.service.confluence.domain.MutableUser;
 import com.atlassian.labs.remoteapps.api.service.confluence.domain.MutableUserInformation;
 import com.atlassian.labs.remoteapps.api.service.confluence.domain.User;
 import com.atlassian.labs.remoteapps.api.service.confluence.domain.UserInformation;
+import com.atlassian.labs.remoteapps.api.Promise;
 import com.atlassian.labs.remoteapps.spi.util.RequirePermission;
 
 /**

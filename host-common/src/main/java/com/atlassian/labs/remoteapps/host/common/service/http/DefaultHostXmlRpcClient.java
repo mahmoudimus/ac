@@ -1,13 +1,12 @@
 package com.atlassian.labs.remoteapps.host.common.service.http;
 
-import com.atlassian.labs.remoteapps.api.Promise;
-import com.atlassian.labs.remoteapps.api.PromiseCallback;
 import com.atlassian.labs.remoteapps.api.service.http.HostHttpClient;
 import com.atlassian.labs.remoteapps.api.service.http.HostXmlRpcClient;
 import com.atlassian.labs.remoteapps.api.service.http.Response;
-import com.atlassian.labs.remoteapps.api.service.http.UnexpectedResponseException;
 import com.atlassian.labs.remoteapps.api.service.http.XmlRpcException;
 import com.atlassian.labs.remoteapps.api.service.http.XmlRpcFault;
+import com.atlassian.labs.remoteapps.api.Promise;
+import com.atlassian.labs.remoteapps.api.PromiseCallback;
 import com.atlassian.plugin.util.ChainingClassLoader;
 import com.atlassian.xmlrpc.BindingException;
 import com.atlassian.xmlrpc.ServiceObject;
@@ -25,9 +24,8 @@ import java.lang.reflect.Proxy;
 import java.net.URI;
 import java.util.Vector;
 
-import static com.atlassian.labs.remoteapps.api.Promises.reject;
-import static com.atlassian.labs.remoteapps.api.Promises.toPromise;
-import static java.lang.System.arraycopy;
+import static com.atlassian.labs.remoteapps.api.Promises.*;
+import static java.lang.System.*;
 
 /**
  * Helps make authenticated xmlrpc calls

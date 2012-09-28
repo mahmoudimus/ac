@@ -24,6 +24,8 @@ import com.atlassian.labs.remoteapps.api.PromiseCallback;
 import com.atlassian.labs.remoteapps.api.Promises;
 import com.atlassian.labs.remoteapps.api.service.RequestContext;
 import com.atlassian.labs.remoteapps.api.service.http.*;
+import com.atlassian.labs.remoteapps.api.service.http.Response;
+import com.atlassian.labs.remoteapps.api.service.http.UnexpectedResponseException;
 import com.atlassian.labs.remoteapps.spi.PermissionDeniedException;
 import com.atlassian.labs.remoteapps.spi.util.RemoteName;
 import com.atlassian.labs.remoteapps.spi.util.RequirePermission;

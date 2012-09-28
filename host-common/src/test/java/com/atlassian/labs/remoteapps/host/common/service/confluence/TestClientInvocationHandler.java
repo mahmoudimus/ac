@@ -1,14 +1,27 @@
 package com.atlassian.labs.remoteapps.host.common.service.confluence;
 
-import com.atlassian.labs.remoteapps.api.PromiseCallback;
-import com.atlassian.labs.remoteapps.api.Promises;
 import com.atlassian.labs.remoteapps.api.service.RequestContext;
 import com.atlassian.labs.remoteapps.api.service.confluence.ConfluenceLabelClient;
 import com.atlassian.labs.remoteapps.api.service.confluence.ConfluencePageClient;
 import com.atlassian.labs.remoteapps.api.service.confluence.ConfluencePermission;
 import com.atlassian.labs.remoteapps.api.service.confluence.ConfluenceSpaceClient;
-import com.atlassian.labs.remoteapps.api.service.confluence.domain.*;
-import com.atlassian.labs.remoteapps.api.service.http.*;
+import com.atlassian.labs.remoteapps.api.service.confluence.domain.ContentPermission;
+import com.atlassian.labs.remoteapps.api.service.confluence.domain.ContentPermissionSet;
+import com.atlassian.labs.remoteapps.api.service.confluence.domain.ContentPermissionType;
+import com.atlassian.labs.remoteapps.api.service.confluence.domain.ContentStatus;
+import com.atlassian.labs.remoteapps.api.service.confluence.domain.ExportType;
+import com.atlassian.labs.remoteapps.api.service.confluence.domain.MutableContentPermission;
+import com.atlassian.labs.remoteapps.api.service.confluence.domain.MutableLabel;
+import com.atlassian.labs.remoteapps.api.service.confluence.domain.Page;
+import com.atlassian.labs.remoteapps.api.service.confluence.domain.PageSummary;
+import com.atlassian.labs.remoteapps.api.service.confluence.domain.SpacePermission;
+import com.atlassian.labs.remoteapps.api.service.http.HostHttpClient;
+import com.atlassian.labs.remoteapps.api.service.http.HostXmlRpcClient;
+import com.atlassian.labs.remoteapps.api.PromiseCallback;
+import com.atlassian.labs.remoteapps.api.Promises;
+import com.atlassian.labs.remoteapps.api.service.http.Request;
+import com.atlassian.labs.remoteapps.api.service.http.Response;
+import com.atlassian.labs.remoteapps.api.service.http.ResponsePromise;
 import com.atlassian.labs.remoteapps.spi.PermissionDeniedException;
 import com.atlassian.plugin.util.ChainingClassLoader;
 import com.google.common.collect.ImmutableMap;
@@ -23,26 +36,29 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.lang.reflect.Proxy;
 import java.net.URI;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 
-import static com.atlassian.labs.remoteapps.api.service.confluence.domain.ConfluenceDomain
-        .newContentPermission;
-import static com.atlassian.labs.remoteapps.api.service.confluence.domain.ConfluenceDomain.newLabel;
-import static com.atlassian.labs.remoteapps.host.common.service.confluence
-        .ClientInvocationHandler.getEnumRemoteName;
-import static com.google.common.collect.Sets.newHashSet;
-import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
+import static com.atlassian.labs.remoteapps.api.service.confluence.domain.ConfluenceDomain.*;
+import static com.atlassian.labs.remoteapps.host.common.service.confluence.ClientInvocationHandler.*;
+import static com.google.common.collect.Sets.*;
+import static java.util.Arrays.*;
+import static java.util.Collections.*;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static org.junit.Assert.assertFalse;
 import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.eq;
 
 /**
  */
 public class TestClientInvocationHandler
 {
-
     private ConfluencePageClient confluencePageClient;
     private HostXmlRpcClient client;
     private HostHttpClient httpClient;

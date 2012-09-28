@@ -5,7 +5,6 @@ import com.atlassian.labs.remoteapps.api.service.http.HttpClient;
 import com.atlassian.labs.remoteapps.api.service.http.Response;
 import com.atlassian.labs.remoteapps.api.service.http.ResponsePromise;
 import com.atlassian.util.concurrent.ThreadFactories;
-import com.google.common.util.concurrent.SettableFuture;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;

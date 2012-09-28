@@ -1,7 +1,5 @@
-package com.atlassian.labs.remoteapps.spi;
+package com.atlassian.labs.remoteapps.api;
 
-import com.atlassian.labs.remoteapps.api.Promise;
-import com.atlassian.labs.remoteapps.api.PromiseCallback;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.SettableFuture;
 
@@ -10,9 +8,9 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import static com.atlassian.labs.remoteapps.api.Promises.toPromise;
+import static com.atlassian.labs.remoteapps.api.Promises.*;
 
-public final class StaticPromise<V> implements Promise<V>
+final class StaticPromise<V> implements Promise<V>
 {
     private final Promise<V> delegate;
 

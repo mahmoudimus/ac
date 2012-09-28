@@ -1,7 +1,22 @@
 package com.atlassian.labs.remoteapps.api.service.confluence;
 
+import com.atlassian.labs.remoteapps.api.service.confluence.domain.Attachment;
+import com.atlassian.labs.remoteapps.api.service.confluence.domain.Comment;
+import com.atlassian.labs.remoteapps.api.service.confluence.domain.ContentPermissionSet;
+import com.atlassian.labs.remoteapps.api.service.confluence.domain.ContentPermissionType;
+import com.atlassian.labs.remoteapps.api.service.confluence.domain.ContentSummaries;
+import com.atlassian.labs.remoteapps.api.service.confluence.domain.MovePagePosition;
+import com.atlassian.labs.remoteapps.api.service.confluence.domain.MutableComment;
+import com.atlassian.labs.remoteapps.api.service.confluence.domain.MutableContentPermission;
+import com.atlassian.labs.remoteapps.api.service.confluence.domain.MutablePage;
+import com.atlassian.labs.remoteapps.api.service.confluence.domain.Page;
+import com.atlassian.labs.remoteapps.api.service.confluence.domain.PageHistorySummary;
+import com.atlassian.labs.remoteapps.api.service.confluence.domain.PageSummary;
+import com.atlassian.labs.remoteapps.api.service.confluence.domain.PageUpdateOptions;
+import com.atlassian.labs.remoteapps.api.service.confluence.domain.RenderOptions;
+import com.atlassian.labs.remoteapps.api.service.confluence.domain.SearchOptions;
+import com.atlassian.labs.remoteapps.api.service.confluence.domain.SearchResult;
 import com.atlassian.labs.remoteapps.api.Promise;
-import com.atlassian.labs.remoteapps.api.service.confluence.domain.*;
 import com.atlassian.labs.remoteapps.spi.util.RequirePermission;
 
 /**

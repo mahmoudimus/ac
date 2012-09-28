@@ -1,10 +1,6 @@
-package com.atlassian.labs.remoteapps.host.common.service.http;
+package com.atlassian.labs.remoteapps.api.service.http;
 
 import com.atlassian.labs.remoteapps.api.PromiseCallback;
-import com.atlassian.labs.remoteapps.api.service.http.Request;
-import com.atlassian.labs.remoteapps.api.service.http.Response;
-import com.atlassian.labs.remoteapps.api.service.http.ResponsePromise;
-import com.atlassian.labs.remoteapps.api.service.http.UnexpectedResponseException;
 import com.google.common.util.concurrent.SettableFuture;
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -1,22 +1,18 @@
-package com.atlassian.labs.remoteapps.spi.http;
+package com.atlassian.labs.remoteapps.api.service.http;
 
 import com.atlassian.labs.remoteapps.api.PromiseCallback;
-import com.atlassian.labs.remoteapps.api.service.http.BaseResponsePromise;
-import com.atlassian.labs.remoteapps.api.service.http.Response;
-import com.atlassian.labs.remoteapps.api.service.http.ResponsesPromise;
-import com.atlassian.labs.remoteapps.api.service.http.UnexpectedResponsesException;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static com.atlassian.labs.remoteapps.api.Promises.toPromise;
+import static com.atlassian.labs.remoteapps.api.Promises.*;
 
 /**
  * Extends WrappingBaseResponsePromise with the ResponsesPromise interface
  */
-public final class WrappingResponsesPromise extends WrappingBaseResponsePromise<List<Response>> implements ResponsesPromise
+final class WrappingResponsesPromise extends WrappingBaseResponsePromise<List<Response>> implements ResponsesPromise
 {
     public WrappingResponsesPromise(ListenableFuture<List<Response>> delegate)
     {

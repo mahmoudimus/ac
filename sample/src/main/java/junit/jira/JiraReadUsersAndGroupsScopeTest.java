@@ -6,15 +6,14 @@ import com.atlassian.jira.rpc.soap.client.JiraSoapService;
 import com.atlassian.jira.rpc.soap.client.JiraSoapServiceServiceLocator;
 import com.atlassian.jira.rpc.soap.client.RemoteUser;
 import com.atlassian.labs.remoteapps.api.service.SignedRequestHandler;
-import org.apache.commons.io.IOUtils;
-import org.junit.Ignore;
-import services.ServiceAccessor;
 import org.apache.axis.client.Stub;
 import org.apache.axis.transport.http.HTTPConstants;
+import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.junit.Test;
+import services.ServiceAccessor;
 
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -25,11 +24,10 @@ import java.net.URL;
 import java.util.Hashtable;
 import java.util.concurrent.Callable;
 
-import static java.util.Collections.singletonMap;
-import static junit.ClientKeyRetriever.getClientKey;
-import static org.junit.Assert.assertEquals;
-import static services.ServiceAccessor.getHostHttpClient;
-import static services.ServiceAccessor.getService;
+import static java.util.Collections.*;
+import static junit.ClientKeyRetriever.*;
+import static org.junit.Assert.*;
+import static services.ServiceAccessor.*;
 
 /**
  *

@@ -20,15 +20,28 @@ package com.atlassian.labs.remoteapps.host.common.service.http;
  */
 
 import com.atlassian.labs.remoteapps.api.Promise;
-import com.atlassian.xmlrpc.*;
+import com.atlassian.xmlrpc.ServiceBean;
+import com.atlassian.xmlrpc.ServiceBeanField;
+import com.atlassian.xmlrpc.ServiceMethod;
+import com.atlassian.xmlrpc.ServiceObject;
+import com.atlassian.xmlrpc.XmlRpcClientProvider;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.SettableFuture;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 
 import java.beans.PropertyDescriptor;
-import java.lang.reflect.*;
-import java.util.*;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Vector;
 
 import static com.atlassian.labs.remoteapps.api.Promises.toPromise;
 
