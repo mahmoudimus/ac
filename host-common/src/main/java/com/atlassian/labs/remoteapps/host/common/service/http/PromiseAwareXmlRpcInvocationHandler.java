@@ -19,6 +19,7 @@ package com.atlassian.labs.remoteapps.host.common.service.http;
  * under the License.
  */
 
+import com.atlassian.labs.remoteapps.api.Deferred;
 import com.atlassian.labs.remoteapps.api.Promise;
 import com.atlassian.xmlrpc.ServiceBean;
 import com.atlassian.xmlrpc.ServiceBeanField;
@@ -26,7 +27,6 @@ import com.atlassian.xmlrpc.ServiceMethod;
 import com.atlassian.xmlrpc.ServiceObject;
 import com.atlassian.xmlrpc.XmlRpcClientProvider;
 import com.google.common.util.concurrent.FutureCallback;
-import com.google.common.util.concurrent.SettableFuture;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 
@@ -154,7 +154,7 @@ public final class PromiseAwareXmlRpcInvocationHandler implements InvocationHand
         }
         else if (Promise.class.isAssignableFrom(returnValue.getClass()))
         {
-            final SettableFuture settableFuture = SettableFuture.create();
+            final Deferred<Object> deferred = Deferred.create();
 
             Promise<Object> actualPromise = (Promise<Object>) returnValue;
             actualPromise.then(new FutureCallback<Object>()
@@ -164,21 +164,21 @@ public final class PromiseAwareXmlRpcInvocationHandler implements InvocationHand
                 {
                     try
                     {
-                        settableFuture.set(convertReturnValue(method, result));
+                        deferred.resolve(convertReturnValue(method, result));
                     }
                     catch (Exception e)
                     {
-                        settableFuture.setException(e);
+                        deferred.reject(e);
                     }
                 }
 
                 @Override
                 public void onFailure(Throwable t)
                 {
-                    settableFuture.setException(t);
+                    deferred.reject(t);
                 }
             });
-            returnValue = toPromise(settableFuture);
+            returnValue = deferred.promise();
         }
         return returnValue;
     }

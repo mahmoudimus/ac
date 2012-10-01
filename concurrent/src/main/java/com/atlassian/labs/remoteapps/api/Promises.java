@@ -7,7 +7,7 @@ import com.google.common.util.concurrent.SettableFuture;
 
 import java.util.List;
 
-import static java.util.Arrays.*;
+import static java.util.Arrays.asList;
 
 /**
  * Helper methods for working with promises
@@ -41,24 +41,24 @@ public final class Promises
     /**
      * Creates a new, resolved promise for the specified concrete value.
      *
-     * @param instance The value for which a promise should be created
+     * @param value The value for which a promise should be created
      * @return The new promise
      */
-    public static <V> Promise<V> toResolvedPromise(V instance)
+    public static <V> Promise<V> toResolvedPromise(V value)
     {
-        return new StaticPromise<V>(instance);
+        return Deferred.<V>create().resolve(value).promise();
     }
 
     /**
      * Creates a new, rejected promise from the given Throwable and result type.
      *
-     * @param instance The throwable
+     * @param t The throwable
      * @param resultType The result type
      * @return The new promise
      */
-    public static <V> Promise<V> toRejectedPromise(Throwable instance, Class<V> resultType)
+    public static <V> Promise<V> toRejectedPromise(Throwable t, Class<V> resultType)
     {
-        return new StaticPromise<V>(instance);
+        return Deferred.<V>create().reject(t).promise();
     }
 
     /**
@@ -86,20 +86,20 @@ public final class Promises
 
     /**
      * Creates a new <code>PromiseCallback</code> that forwards a promise's fail events to
-     * the specified future delegate's <code>setException</code> method -- that is, the new
-     * callback rejects the delegate future if invoked.
+     * the specified deferred delegate's <code>reject</code> method -- that is, the new
+     * callback rejects the delegate deferred if invoked.
      *
-     * @param delegate The future to be rejected on a fail event
+     * @param delegate The deferred to be rejected on a fail event
      * @return The fail callback
      */
-    public static PromiseCallback<Throwable> reject(final SettableFuture<?> delegate)
+    public static PromiseCallback<Throwable> reject(final Deferred<?> delegate)
     {
         return new PromiseCallback<Throwable>()
         {
             @Override
             public void handle(Throwable t)
             {
-                delegate.setException(t);
+                delegate.reject(t);
             }
         };
     }

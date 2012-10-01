@@ -1,6 +1,7 @@
 package com.atlassian.jira.rest.client.p3.internal;
 
-import com.atlassian.jira.rest.client.*;
+import com.atlassian.jira.rest.client.GetCreateIssueMetadataOptions;
+import com.atlassian.jira.rest.client.RestClientException;
 import com.atlassian.jira.rest.client.domain.*;
 import com.atlassian.jira.rest.client.domain.input.*;
 import com.atlassian.jira.rest.client.internal.ServerVersionConstants;
