@@ -6,12 +6,12 @@ import com.atlassian.jira.rest.client.internal.json.JsonObjectParser;
 import com.atlassian.jira.rest.client.internal.json.JsonParseUtil;
 import com.atlassian.jira.rest.client.internal.json.JsonParser;
 import com.atlassian.jira.rest.client.internal.json.gen.JsonGenerator;
+import com.atlassian.labs.remoteapps.api.Deferred;
 import com.atlassian.labs.remoteapps.api.Promise;
 import com.atlassian.labs.remoteapps.api.PromiseCallback;
 import com.atlassian.labs.remoteapps.api.service.http.HostHttpClient;
 import com.atlassian.labs.remoteapps.api.service.http.Response;
 import com.atlassian.labs.remoteapps.api.service.http.ResponsePromise;
-import com.google.common.util.concurrent.SettableFuture;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -22,11 +22,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.Callable;
 
-import static com.atlassian.labs.remoteapps.api.Promises.toPromise;
+import static com.atlassian.labs.remoteapps.api.Promises.reject;
 
 public abstract class AbstractP3RestClient
 {
-    protected static <T> PromiseCallback<Response> newErrorCallback(final SettableFuture<T> delegate)
+    protected static <T> PromiseCallback<Response> newErrorCallback(final Deferred<T> delegate)
     {
         return new PromiseCallback<Response>()
         {
@@ -37,15 +37,15 @@ public abstract class AbstractP3RestClient
                 {
                     final String body = value.getEntity();
                     final Collection<String> errorMessages = extractErrors(body);
-                    delegate.setException(new RestClientException(errorMessages));
+                    delegate.reject(new RestClientException(errorMessages));
                 }
                 catch (JSONException e)
                 {
-                    delegate.setException(new RestClientException(e));
+                    delegate.reject(new RestClientException(e));
                 }
                 catch (IOException e)
                 {
-                    delegate.setException(new RestClientException(e));
+                    delegate.reject(new RestClientException(e));
                 }
             }
         };
@@ -67,7 +67,7 @@ public abstract class AbstractP3RestClient
 
     protected <T> Promise<T> callAndParse(ResponsePromise responsePromise, final ResponseHandler<T> responseHandler)
     {
-        final SettableFuture<T> future = SettableFuture.create();
+        final Deferred<T> deferred = Deferred.create();
         PromiseCallback<Response> successCallback = new PromiseCallback<Response>()
         {
             @Override
@@ -76,15 +76,15 @@ public abstract class AbstractP3RestClient
                 try
                 {
                     T result = responseHandler.handle(value);
-                    future.set(result);
+                    deferred.resolve(result);
                 }
                 catch (IOException e)
                 {
-                    future.setException(new RestClientException(e));
+                    deferred.reject(new RestClientException(e));
                 }
                 catch (JSONException e)
                 {
-                    future.setException(new RestClientException(e));
+                    deferred.reject(new RestClientException(e));
                 }
             }
         };
@@ -93,7 +93,7 @@ public abstract class AbstractP3RestClient
             @Override
             public void handle(Response value)
             {
-                future.set(null);
+                deferred.resolve(null);
             }
         };
 
@@ -101,8 +101,9 @@ public abstract class AbstractP3RestClient
                 .ok(successCallback)
                 .on(404, notFoundCallback)
                 .created(successCallback)
-                .others(newErrorCallback(future));
-        return toPromise(future);
+                .others(newErrorCallback(deferred))
+                .fail(reject(deferred));
+        return deferred.promise();
     }
 
 	protected <T> Promise<T> callAndParse(ResponsePromise responsePromise, final JsonParser<?, T> parser) {
@@ -120,17 +121,18 @@ public abstract class AbstractP3RestClient
 	}
 
 	protected Promise<Void> call(ResponsePromise responsePromise) {
-        final SettableFuture<Void> future = SettableFuture.create();
+        final Deferred<Void> deferred = Deferred.create();
         responsePromise.noContent(new PromiseCallback<Response>()
         {
             @Override
             public void handle(Response value)
             {
-                future.set(null);
+                deferred.resolve(null);
             }
         })
-                .others(newErrorCallback(future));
-        return toPromise(future);
+        .others(newErrorCallback(deferred))
+        .fail(reject(deferred));
+        return deferred.promise();
 	}
 
 	static Collection<String> extractErrors(String body) throws JSONException {

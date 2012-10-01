@@ -19,6 +19,7 @@ package com.atlassian.labs.remoteapps.host.common.service.confluence;
  * under the License.
  */
 
+import com.atlassian.labs.remoteapps.api.Deferred;
 import com.atlassian.labs.remoteapps.api.Promise;
 import com.atlassian.labs.remoteapps.api.PromiseCallback;
 import com.atlassian.labs.remoteapps.api.Promises;
@@ -35,7 +36,6 @@ import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
-import com.google.common.util.concurrent.SettableFuture;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -221,7 +221,7 @@ public final class ClientInvocationHandler implements InvocationHandler
             // handle automatic translation of a returned url to an inputstream
             if (genericType instanceof Class && InputStream.class.isAssignableFrom((Class)genericType))
             {
-                final SettableFuture<InputStream> settableFuture = SettableFuture.create();
+                final Deferred<InputStream> deferred = Deferred.create();
                 Futures.addCallback((ListenableFuture<String>) returnValue, new FutureCallback<String>()
                 {
                     @Override
@@ -234,21 +234,21 @@ public final class ClientInvocationHandler implements InvocationHandler
                             @Override
                             public void handle(Response value)
                             {
-                                settableFuture.set(value.getEntityStream());
+                                deferred.resolve(value.getEntityStream());
                             }
                         }).others(new PromiseCallback<Response>()
                         {
                             @Override
                             public void handle(Response value)
                             {
-                                settableFuture.setException(new UnexpectedResponseException(value));
+                                deferred.reject(new UnexpectedResponseException(value));
                             }
                         }).fail(new PromiseCallback<Throwable>()
                         {
                             @Override
                             public void handle(Throwable value)
                             {
-                                settableFuture.setException(value);
+                                deferred.reject(value);
                             }
                         });
                     }
@@ -256,14 +256,14 @@ public final class ClientInvocationHandler implements InvocationHandler
                     @Override
                     public void onFailure(Throwable t)
                     {
-                        settableFuture.setException(t);
+                        deferred.reject(t);
                     }
                 });
-                returnValue = Promises.toPromise(settableFuture);
+                returnValue = deferred.promise();
             }
             else
             {
-                final SettableFuture settableFuture = SettableFuture.create();
+                final Deferred<Object> deferred = Deferred.create();
 
                 Promise<Object> actualPromise = (Promise<Object>) returnValue;
                 actualPromise.then(new FutureCallback<Object>()
@@ -273,21 +273,21 @@ public final class ClientInvocationHandler implements InvocationHandler
                     {
                         try
                         {
-                            settableFuture.set(fromRemote(result, genericType));
+                            deferred.resolve(fromRemote(result, genericType));
                         }
                         catch (Exception e)
                         {
-                            settableFuture.setException(e);
+                            deferred.reject(e);
                         }
                     }
 
                     @Override
                     public void onFailure(Throwable t)
                     {
-                        settableFuture.setException(t);
+                        deferred.reject(t);
                     }
                 });
-                returnValue = Promises.toPromise(settableFuture);
+                returnValue = deferred.promise();
             }
         }
         else if (Collection.class.isAssignableFrom(returnValue.getClass()))

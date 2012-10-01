@@ -1,5 +1,6 @@
 package com.atlassian.labs.remoteapps.host.common.service.http;
 
+import com.atlassian.labs.remoteapps.api.Deferred;
 import com.atlassian.labs.remoteapps.api.service.http.HostHttpClient;
 import com.atlassian.labs.remoteapps.api.service.http.HostXmlRpcClient;
 import com.atlassian.labs.remoteapps.api.service.http.Response;
@@ -135,7 +136,7 @@ public class DefaultHostXmlRpcClient implements HostXmlRpcClient
     private <T> Promise<T> endCall(Writer writer, final FaultHandlingXmlRpcParser parser,
             final Class<T> castResultTo)
     {
-        final SettableFuture<T> future = SettableFuture.create();
+        final Deferred<T> deferred = Deferred.create();
         try
         {
             writer.write("</params>");
@@ -158,14 +159,14 @@ public class DefaultHostXmlRpcClient implements HostXmlRpcClient
                         }
                         catch (Exception e)
                         {
-                            future.setException(new XmlRpcException(
+                            deferred.reject(new XmlRpcException(
                                 XmlRpcMessages.getString("XmlRpcClient.ParseError"), e));
                         }
 
                         if (parser.isFaultResponse())
                         {
                             XmlRpcStruct fault = (XmlRpcStruct) parser.getParsedValue();
-                            future.setException(new XmlRpcFault(fault.getInteger("faultCode"),
+                            deferred.reject(new XmlRpcFault(fault.getInteger("faultCode"),
                                 fault.getString("faultString")));
                         }
                         else
@@ -173,22 +174,22 @@ public class DefaultHostXmlRpcClient implements HostXmlRpcClient
                             Object parsedValue = parser.getParsedValue();
                             if (parsedValue != null && castResultTo.isAssignableFrom(parsedValue.getClass()))
                             {
-                                future.set(castResultTo.cast(parsedValue));
+                                deferred.resolve(castResultTo.cast(parsedValue));
                             } else
                             {
-                                future.setException(new XmlRpcException("Unexpected return type: " + parsedValue));
+                                deferred.reject(new XmlRpcException("Unexpected return type: " + parsedValue));
                             }
                         }
                     }
                 })
                 // since xmlrpc should always return 200 OK responses unless an error has occurred,
                 // treat all other response codes as errors
-                .otherwise(reject(future));
+                .otherwise(reject(deferred));
         }
         catch (IOException ioe)
         {
             throw new RuntimeException("Should never happen", ioe);
         }
-        return toPromise(future);
+        return deferred.promise();
     }
 }
