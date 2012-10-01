@@ -12,7 +12,7 @@ import org.junit.runner.RunWith;
 import static org.junit.Assert.*;
 
 @RunWith(UniversalBinariesContainerJUnitRunner.class)
-@UniversalBinaries("${moduleDir}/target/remoteapps-universal-binary-sample.jar")
+@UniversalBinaries("${moduleDir}/target/remoteapps-universal-binary-test-plugin.jar")
 public final class TestActiveObjects extends AbstractRemoteAppTest
 {
     @Test

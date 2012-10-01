@@ -36,7 +36,7 @@
         <module>smoke-tests</module>
         <module>container</module>
         <module>test</module>
-        <module>universal-binary-sample</module>
+        <module>universal-binary-test-plugin</module>
     </modules>
 
     <build>

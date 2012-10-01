@@ -8,7 +8,7 @@
         <version>${VERSION_NUMBER}</version>
     </parent>
 
-    <artifactId>remoteapps-universal-binary-sample</artifactId>
+    <artifactId>remoteapps-universal-binary-test-plugin</artifactId>
     <packaging>atlassian-plugin</packaging>
 
     <name>Atlassian Remote Apps - Universal Binary Sample</name>
