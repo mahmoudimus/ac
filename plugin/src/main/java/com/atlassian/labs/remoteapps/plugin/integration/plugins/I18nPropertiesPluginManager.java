@@ -245,7 +245,7 @@ public class I18nPropertiesPluginManager implements DisposableBean
     {
         if (i18nBundle != null)
         {
-            i18nBundle.uninstall();
+            pluginController.uninstall(pluginAccessor.getPlugin(I18N_SYMBOLIC_NAME));
         }
     }
 
