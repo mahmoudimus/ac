@@ -269,7 +269,7 @@ public class CachingHttpContentRetriever implements DisposableBean, HttpContentR
         httpClient.getConnectionManager().shutdown();
     }
 
-    private static class ResponseToStringFuture implements Future<String>
+    static class ResponseToStringFuture implements Future<String>
     {
         private final Future<HttpResponse> futureResponse;
 
@@ -310,11 +310,11 @@ public class CachingHttpContentRetriever implements DisposableBean, HttpContentR
             return responseToString(futureResponse.get(timeout, unit));
         }
 
-        String responseToString(HttpResponse response)
+        static String responseToString(HttpResponse response)
         {
             try
             {
-                return EntityUtils.toString(response.getEntity());
+                return LimitedEntityUtils.toString(response.getEntity());
             }
             catch (IOException e)
             {
