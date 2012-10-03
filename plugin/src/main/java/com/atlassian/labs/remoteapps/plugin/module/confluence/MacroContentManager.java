@@ -129,6 +129,7 @@ public class MacroContentManager implements DisposableBean
             try
             {
                 response.get();
+                httpContentHandler.markCompleted();
                 return httpContentHandler.getFinalContent();
             }
             catch (InterruptedException e)
