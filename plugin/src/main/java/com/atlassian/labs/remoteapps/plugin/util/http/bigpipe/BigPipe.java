@@ -122,11 +122,7 @@ public class BigPipe
         {
             if (content != null)
             {
-                RequestContentSet request = requestContentSets.get(requestId);
-                if (request != null)
-                {
-                    request.removeContent(contentId);
-                }
+                markCompleted();
                 return contentProcessor.process(content);
             }
             else
@@ -147,6 +143,16 @@ public class BigPipe
         {
             this.content = "<span class=\"bp-error\">Error: " + ex.getMessage() + "</span>";
             request.notifyConsumers();
+        }
+
+        @Override
+        public void markCompleted()
+        {
+            RequestContentSet request = requestContentSets.get(requestId);
+            if (request != null)
+            {
+                request.removeContent(contentId);
+            }
         }
 
         public String getFinalContent()

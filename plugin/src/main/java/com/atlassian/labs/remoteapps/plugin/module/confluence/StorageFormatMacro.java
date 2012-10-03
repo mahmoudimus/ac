@@ -10,6 +10,7 @@ import com.atlassian.plugin.webresource.WebResourceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.util.Map;
 
@@ -72,7 +73,12 @@ public class StorageFormatMacro extends AbstractRemoteMacro
         }
         catch (Exception ex)
         {
-            String message = "Error: Unable to retrieve macro content from Remote App '" + remoteAppAccessor.getName() + "': " + ex.getMessage();
+            String exMessage = ex.getMessage();
+            if (ex.getCause() != null && ex.getCause() instanceof SocketTimeoutException)
+            {
+                exMessage = "Timeout waiting for reply";
+            }
+            String message = "Error: Unable to retrieve macro content from Remote App '" + remoteAppAccessor.getName() + "': " + exMessage;
             log.error(message + " on page '{}' for url '{}'", escapeHtml(
                     conversionContext.getEntity().getTitle()), remoteUrl);
             if (log.isDebugEnabled())

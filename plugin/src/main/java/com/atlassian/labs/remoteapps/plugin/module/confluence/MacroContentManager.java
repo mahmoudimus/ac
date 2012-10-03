@@ -133,10 +133,12 @@ public class MacroContentManager implements DisposableBean
             }
             catch (InterruptedException e)
             {
+                httpContentHandler.markCompleted();
                 throw new ContentRetrievalException(e);
             }
             catch (ExecutionException e)
             {
+                httpContentHandler.markCompleted();
                 throw new ContentRetrievalException(e.getCause());
             }
         }

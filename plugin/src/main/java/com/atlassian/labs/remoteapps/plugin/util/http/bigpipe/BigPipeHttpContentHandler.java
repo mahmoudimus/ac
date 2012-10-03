@@ -26,4 +26,9 @@ public interface BigPipeHttpContentHandler extends HttpContentHandler
      * @return The unique id of the content
      */
     String getContentId();
+
+    /**
+     * Mark the content as complete, usually in the case of an error detected and handled in a different way
+     */
+    void markCompleted();
 }
