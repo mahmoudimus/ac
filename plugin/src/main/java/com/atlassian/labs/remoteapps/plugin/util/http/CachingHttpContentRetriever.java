@@ -110,7 +110,8 @@ public class CachingHttpContentRetriever implements DisposableBean, HttpContentR
                 }
             };
 
-            // allow a high-ish number of outgoing connections as it should be fine given our nio backend
+            // allow a high-ish number of outgoing connections as it should be fine given our nio backend, otherwise
+            // a few slow requests could cause all subsequent requests to timeout
             connmgr.setDefaultMaxPerRoute(100);
             client = new DefaultHttpAsyncClient(connmgr);
         }
