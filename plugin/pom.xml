@@ -488,16 +488,7 @@
                     <version>1.0.4</version>
                     <configuration>
                         <commands>
-                            <pi>resources
-                                com.atlassian.maven.plugins:maven-amps-plugin:filter-plugin-descriptor
-                                compile
-                                com.atlassian.maven.plugins:maven-amps-plugin:copy-bundled-dependencies
-                                net.alchim31.maven:yuicompressor-maven-plugin:compress
-                                org.codehaus.mojo:xml-maven-plugin:transform
-                                com.atlassian.maven.plugins:maven-amps-plugin:generate-manifest
-                                com.atlassian.maven.plugins:maven-amps-plugin:jar
-                                com.atlassian.maven.plugins:maven-amps-plugin:install
-                            </pi>
+                            <pi>resources com.atlassian.maven.plugins:maven-amps-plugin:filter-plugin-descriptor compile com.atlassian.maven.plugins:maven-amps-plugin:copy-bundled-dependencies net.alchim31.maven:yuicompressor-maven-plugin:compress org.codehaus.mojo:xml-maven-plugin:transform com.atlassian.maven.plugins:maven-amps-plugin:generate-manifest com.atlassian.maven.plugins:maven-amps-plugin:jar com.atlassian.maven.plugins:maven-amps-plugin:install</pi>
                             <docco>ru.circumflex:maven-cx-plugin:docco#docco</docco>
                         </commands>
                     </configuration>
