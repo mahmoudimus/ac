@@ -2,10 +2,8 @@ package com.atlassian.labs.remoteapps.plugin.loader.universalbinary;
 
 import com.atlassian.plugin.Plugin;
 
-import javax.servlet.RequestDispatcher;
-import javax.servlet.Servlet;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
+import javax.servlet.*;
+import javax.servlet.descriptor.JspConfigDescriptor;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -72,6 +70,150 @@ public class UBServletContextWrapper implements ServletContext
         attributes.remove(name);
     }
 
+    @Override
+    public String getServletContextName()
+    {
+        return context.getServletContextName();
+    }
+
+    @Override
+    public ServletRegistration.Dynamic addServlet(String s, String s1)
+    {
+        throw new UnsupportedOperationException("Not implemented");
+    }
+
+    @Override
+    public ServletRegistration.Dynamic addServlet(String s, Servlet servlet)
+    {
+        throw new UnsupportedOperationException("Not implemented");
+    }
+
+    @Override
+    public ServletRegistration.Dynamic addServlet(String s, Class<? extends Servlet> aClass)
+    {
+        throw new UnsupportedOperationException("Not implemented");
+    }
+
+    @Override
+    public <T extends Servlet> T createServlet(Class<T> tClass) throws ServletException
+    {
+        throw new UnsupportedOperationException("Not implemented");
+    }
+
+    @Override
+    public ServletRegistration getServletRegistration(String s)
+    {
+        throw new UnsupportedOperationException("Not implemented");
+    }
+
+    @Override
+    public Map<String, ? extends ServletRegistration> getServletRegistrations()
+    {
+        throw new UnsupportedOperationException("Not implemented");
+    }
+
+    @Override
+    public FilterRegistration.Dynamic addFilter(String s, String s1)
+    {
+        throw new UnsupportedOperationException("Not implemented");
+    }
+
+    @Override
+    public FilterRegistration.Dynamic addFilter(String s, Filter filter)
+    {
+        throw new UnsupportedOperationException("Not implemented");
+    }
+
+    @Override
+    public FilterRegistration.Dynamic addFilter(String s, Class<? extends Filter> aClass)
+    {
+        throw new UnsupportedOperationException("Not implemented");
+    }
+
+    @Override
+    public <T extends Filter> T createFilter(Class<T> tClass) throws ServletException
+    {
+        throw new UnsupportedOperationException("Not implemented");
+    }
+
+    @Override
+    public FilterRegistration getFilterRegistration(String s)
+    {
+        throw new UnsupportedOperationException("Not implemented");
+    }
+
+    @Override
+    public Map<String, ? extends FilterRegistration> getFilterRegistrations()
+    {
+        throw new UnsupportedOperationException("Not implemented");
+    }
+
+    @Override
+    public SessionCookieConfig getSessionCookieConfig()
+    {
+        throw new UnsupportedOperationException("Not implemented");
+    }
+
+    @Override
+    public void setSessionTrackingModes(Set<SessionTrackingMode> sessionTrackingModes)
+    {
+        throw new UnsupportedOperationException("Not implemented");
+    }
+
+    @Override
+    public Set<SessionTrackingMode> getDefaultSessionTrackingModes()
+    {
+        return context.getDefaultSessionTrackingModes();
+    }
+
+    @Override
+    public Set<SessionTrackingMode> getEffectiveSessionTrackingModes()
+    {
+        return context.getEffectiveSessionTrackingModes();
+    }
+
+    @Override
+    public void addListener(String s)
+    {
+        throw new UnsupportedOperationException("Not implemented");
+    }
+
+    @Override
+    public <T extends EventListener> void addListener(T t)
+    {
+        throw new UnsupportedOperationException("Not implemented");
+    }
+
+    @Override
+    public void addListener(Class<? extends EventListener> aClass)
+    {
+        throw new UnsupportedOperationException("Not implemented");
+    }
+
+    @Override
+    public <T extends EventListener> T createListener(Class<T> tClass) throws ServletException
+    {
+        throw new UnsupportedOperationException("Not implemented");
+    }
+
+    @Override
+    public JspConfigDescriptor getJspConfigDescriptor()
+    {
+        return context.getJspConfigDescriptor();
+    }
+
+    @Override
+    public ClassLoader getClassLoader()
+    {
+        return context.getClassLoader();
+    }
+
+    @Override
+    public void declareRoles(String... strings)
+    {
+        throw new UnsupportedOperationException("Not implemented");
+    }
+
     /**
      * <p>Sets an attribute in the local attribute map, leaving the wrapped
      * context untouched.</p>
@@ -103,6 +245,12 @@ public class UBServletContextWrapper implements ServletContext
         return Collections.enumeration(initParams.keySet());
     }
 
+    @Override
+    public boolean setInitParameter(String s, String s1)
+    {
+        throw new UnsupportedOperationException("Not implemented");
+    }
+
     /**
      * @return the resource from the plugin classloader if it exists, otherwise the 
      *         resource is looked up from the wrapped context and returned
@@ -131,26 +279,39 @@ public class UBServletContextWrapper implements ServletContext
         return null;
     }
 
-    //---- All methods below simply delegate to the wrapped servlet context ----
-
-    public String getContextPath() {
-
-        return contextPath;
-    }
-
+    @Override
     public int getMajorVersion()
     {
         return context.getMajorVersion();
     }
 
-    public String getMimeType(String file)
-    {
-        return context.getMimeType(file);
-    }
-
+    @Override
     public int getMinorVersion()
     {
         return context.getMinorVersion();
+    }
+
+    @Override
+    public int getEffectiveMajorVersion()
+    {
+        return context.getEffectiveMajorVersion();
+    }
+
+    @Override
+    public int getEffectiveMinorVersion()
+    {
+        return context.getEffectiveMinorVersion();
+    }
+
+    @Override
+    public String getMimeType(String s)
+    {
+        return context.getMimeType(s);
+    }
+
+    public String getContextPath() {
+
+        return contextPath;
     }
 
     public RequestDispatcher getNamedDispatcher(String name)
@@ -163,6 +324,12 @@ public class UBServletContextWrapper implements ServletContext
         throw new UnsupportedOperationException("Not implemented");
     }
 
+    @Override
+    public String getServerInfo()
+    {
+        return context.getServerInfo();
+    }
+
     public RequestDispatcher getRequestDispatcher(String path)
     {
         throw new UnsupportedOperationException("Not implemented");
@@ -173,19 +340,9 @@ public class UBServletContextWrapper implements ServletContext
         throw new UnsupportedOperationException("Not implemented");
     }
 
-    public String getServerInfo()
-    {
-        return context.getServerInfo();
-    }
-
     public Servlet getServlet(String name) throws ServletException
     {
         return null;
-    }
-
-    public String getServletContextName()
-    {
-        return context.getServletContextName();
     }
 
     public Enumeration getServletNames()
@@ -193,24 +350,31 @@ public class UBServletContextWrapper implements ServletContext
         throw new UnsupportedOperationException("Not implemented");
     }
 
+    @Override
+    public void log(String s)
+    {
+        context.log(s);
+    }
+
+    @Override
+    public void log(Exception e, String s)
+    {
+        context.log(e, s);
+    }
+
+    @Override
+    public void log(String s, Throwable throwable)
+    {
+        context.log(s, throwable);
+    }
+
     public Enumeration getServlets()
     {
         throw new UnsupportedOperationException("Not implemented");
     }
 
-    public void log(Exception exception, String msg)
-    {
-        context.log(exception, msg);
-    }
+    //---- All methods below simply delegate to the wrapped servlet context ----
 
-    public void log(String message, Throwable throwable)
-    {
-        context.log(message, throwable);
-    }
 
-    public void log(String msg)
-    {
-        context.log(msg);
-    }
 
 }

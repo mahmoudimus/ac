@@ -12,7 +12,7 @@
     <plugin-permission key="resttest" name="Rest Test"
             class="com.atlassian.labs.remoteapps.test.RestTestApiScope">
         <description>A test resource</description>
-    </plugin-permission>\
+    </plugin-permission>
 
     <plugin-permission key="unrequested_scope" name="Unrequested API Scope"
             class="com.atlassian.labs.remoteapps.test.UnrequestedTestApiScope">

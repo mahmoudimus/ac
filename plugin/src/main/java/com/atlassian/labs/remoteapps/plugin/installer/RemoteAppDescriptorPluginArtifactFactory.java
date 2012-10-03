@@ -7,7 +7,9 @@ import com.atlassian.labs.remoteapps.plugin.module.page.jira.JiraProfileTabModul
 import com.atlassian.labs.remoteapps.plugin.util.zip.ZipBuilder;
 import com.atlassian.labs.remoteapps.plugin.util.zip.ZipHandler;
 import com.atlassian.labs.remoteapps.spi.InstallationFailedException;
-import com.atlassian.plugin.*;
+import com.atlassian.plugin.JarPluginArtifact;
+import com.atlassian.plugin.PluginArtifact;
+import com.atlassian.plugin.PluginParseException;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -15,12 +17,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import sun.tools.jar.resources.jar;
 
 import java.io.IOException;
-import java.io.StringWriter;
 import java.net.URI;
-import java.util.Properties;
 
 import static com.atlassian.labs.remoteapps.spi.util.Dom4jUtils.getRequiredAttribute;
 

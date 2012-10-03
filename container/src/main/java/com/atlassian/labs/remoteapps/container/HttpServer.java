@@ -5,7 +5,7 @@ import com.atlassian.labs.remoteapps.host.common.descriptor.LocalMountBaseUrlRes
 import com.atlassian.plugin.Plugin;
 import com.google.common.base.Function;
 import com.google.common.collect.MapMaker;
-import org.eclipse.jetty.server.DispatcherType;
+import org.eclipse.jetty.nosql.memcached.MemcachedSessionIdManager;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.DefaultServlet;
@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
+import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
 import javax.servlet.http.HttpServlet;
 import java.io.IOException;
@@ -43,6 +44,8 @@ public final class HttpServer implements LocalMountBaseUrlResolver
 
         server = new Server(appPort);
 
+        useMemcacheForSessionsIfDetected();
+
         handlers = new MutableHandlerList();
         server.setHandler(handlers);
 
@@ -63,6 +66,32 @@ public final class HttpServer implements LocalMountBaseUrlResolver
                 return context;
             }
         });
+    }
+
+    private void useMemcacheForSessionsIfDetected()
+    {
+        if (System.getenv("MEMCACHE_SERVERS") != null)
+        {
+            String memcacheServer = System.getenv("MEMCACHE_SERVERS");
+            log.info("Memcache detected, using server " + memcacheServer);
+
+            String memcacheUsername = System.getenv("MEMCACHE_USERNAME");
+            String memcachePassword = System.getenv("MEMCACHE_PASSWORD");
+            // todo: handle usernames and passwords...does spymemcached support them?
+
+            MemcachedSessionIdManager memcachedSessionIdManager = null;
+            try
+            {
+                memcachedSessionIdManager = new MemcachedSessionIdManager(server, memcacheServer);
+            }
+            catch (IOException e)
+            {
+                throw new RuntimeException("Memcached detected but cannot initialize", e);
+            }
+            memcachedSessionIdManager.setKeyPrefix("session:");
+            server.setSessionIdManager(memcachedSessionIdManager);
+            server.setAttribute("memcachedSessionIdManager", memcachedSessionIdManager);
+        }
     }
 
     public void mountServlet(Plugin plugin, HttpServlet servlet, Iterable<String> paths)
