@@ -39,6 +39,9 @@
 
     <remote-macro key="app1-slow" name="app1-slow" title="Remote App 1 Slow" url="/mySlowMacro" output-type="block" body-type="none">
         <description>Slow macro that takes too long to render (for testing)</description>
+        <parameters>
+            <parameter name="sleep" title="Sleep" type="int" required="false" />
+        </parameters>
     </remote-macro>
 
     <remote-macro key="app1-counter" name="app1-counter" url="/myCounterMacro" output-type="block" body-type="none">

@@ -97,7 +97,8 @@ public class CachingHttpContentRetriever implements DisposableBean, HttpContentR
                     return false;
                 }
             });
-            client = new DefaultHttpAsyncClient(new PoolingClientAsyncConnectionManager(reactor, AsyncSchemeRegistryFactory.createDefault(), 3, TimeUnit.SECONDS)
+            final PoolingClientAsyncConnectionManager connmgr = new PoolingClientAsyncConnectionManager(reactor,
+                    AsyncSchemeRegistryFactory.createDefault(), 3, TimeUnit.SECONDS)
             {
                 @Override
                 protected void finalize() throws Throwable
@@ -107,7 +108,11 @@ public class CachingHttpContentRetriever implements DisposableBean, HttpContentR
                     // PluginEventListener to make sure the shutdown method is called while the plugin classloader
                     // is still active.
                 }
-            });
+            };
+
+            // allow a high-ish number of outgoing connections as it should be fine given our nio backend
+            connmgr.setDefaultMaxPerRoute(100);
+            client = new DefaultHttpAsyncClient(connmgr);
         }
         catch (IOReactorException e)
         {
@@ -227,11 +232,18 @@ public class CachingHttpContentRetriever implements DisposableBean, HttpContentR
                 {
                     handleTimeout(elapsed);
                 }
+                else if (ex instanceof TimeoutException)
+                {
+                    eventPublisher.publish(new HttpRequestFailedEvent(urlWithParams, 0, elapsed, properties));
+                    log.warn("Unable to retrieve information from '{}' as user '{}' due to the max connections already " +
+                         "in use", url, remoteUsername);
+                    handler.onError(new ContentRetrievalException("Max outgoing connections already in use"));
+                }
                 else
                 {
                     eventPublisher.publish(new HttpRequestFailedEvent(urlWithParams, 0, elapsed, properties));
                     log.warn("Unable to retrieve information from '{}' as user '{}' due to: {}",
-                            new Object[]{url, remoteUsername, ex.getMessage()});
+                            new Object[]{url, remoteUsername, ex.toString()});
                     handler.onError(new ContentRetrievalException(ex));
                 }
             }

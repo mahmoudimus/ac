@@ -16,9 +16,10 @@ public class MySlowMacroServlet extends HttpServlet
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
     {
+        int sleepSeconds = req.getParameter("sleep") != null ? Integer.parseInt(req.getParameter("sleep")) : 12;
         try
         {
-            Thread.sleep(12 * 1000);
+            Thread.sleep(sleepSeconds * 1000);
         }
         catch (InterruptedException e)
         {
