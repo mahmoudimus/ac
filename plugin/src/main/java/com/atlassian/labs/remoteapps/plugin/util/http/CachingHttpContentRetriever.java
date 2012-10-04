@@ -12,8 +12,10 @@ import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.util.concurrent.ThreadFactories;
 import com.google.common.base.Function;
 import com.google.common.collect.Maps;
+import org.apache.http.Header;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.cache.HeaderConstants;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.concurrent.FutureCallback;
 import org.apache.http.impl.client.cache.CacheConfig;
@@ -185,6 +187,19 @@ public class CachingHttpContentRetriever implements DisposableBean, HttpContentR
                 int statusCode = result.getStatusLine().getStatusCode();
                 if (statusCode == 200)
                 {
+                    if (log.isDebugEnabled())
+                    {
+                        StringBuilder sb = new StringBuilder();
+                        sb.append("Response protocol: " + result.getProtocolVersion());
+                        sb.append("Response headers: ");
+                        for (Header header : result.getAllHeaders())
+                        {
+                            sb.append("\n\t").append(header.getName()).append(": ").append(header.getValue());
+                        }
+                        sb.append("Has uri: " + urlWithParams.contains("?"));
+                        sb.append("Has expires: " + (result.getFirstHeader(HeaderConstants.EXPIRES) != null));
+                        log.debug("Request for " + urlWithParams + ":\n");
+                    }
                     try
                     {
                         String content = EntityUtils.toString(result.getEntity());

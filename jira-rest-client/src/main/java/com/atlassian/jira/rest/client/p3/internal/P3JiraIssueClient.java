@@ -21,7 +21,6 @@ import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
-import com.sun.jersey.multipart.MultiPart;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -299,13 +298,13 @@ public class P3JiraIssueClient extends AbstractP3RestClient implements JiraIssue
 	public Promise<Void> addComment(final URI commentsUri, final Comment comment) {
         return call(client.newRequest(commentsUri).setEntity(toEntity(new CommentJsonGenerator(getVersionInfo()), comment)).post());
 	}
-
-	private void postFileMultiPart(MultiPart multiPartInput, URI attachmentsUri) {
+//
+//	private void postFileMultiPart(MultiPart multiPartInput, URI attachmentsUri) {
 //		final WebResource attachmentsResource = client.resource(attachmentsUri);
 //		final WebResource.Builder builder = attachmentsResource.type(MultiPartMediaTypes.createFormData());
 //		builder.header("X-Atlassian-Token", "nocheck"); // this is required by server side REST API
 //		builder.post(multiPartInput);
-	}
+//	}
 
 
 	@Override

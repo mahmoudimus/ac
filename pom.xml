@@ -35,6 +35,7 @@
         <module>plugin</module>
         <module>smoke-tests</module>
         <module>container</module>
+        <module>container-build</module>
         <module>test</module>
         <module>universal-binary-test-plugin</module>
         <module>webhook-plugin</module>
@@ -62,6 +63,7 @@
                         <exclude>**/*$*</exclude>
                         <exclude>it/**</exclude>
                     </excludes>
+                    <argLine>-Xmx1024m</argLine>
                 </configuration>
             </plugin>
             <plugin>
@@ -224,6 +226,11 @@
                 <version>${slf4j.version}</version>
             </dependency>
             <dependency>
+                <groupId>commons-collections</groupId>
+                <artifactId>commons-collections</artifactId>
+                <version>${commons.collections.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>com.atlassian.browsers</groupId>
                 <artifactId>atlassian-browsers-auto</artifactId>
                 <version>2.1.1</version>
@@ -264,7 +271,7 @@
             <dependency>
                 <groupId>com.atlassian.event</groupId>
                 <artifactId>atlassian-event</artifactId>
-                <version>2.2.0</version>
+                <version>${event.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -397,6 +404,11 @@
                 <scope>provided</scope>
             </dependency>
             <dependency>
+                <groupId>dom4j</groupId>
+                <artifactId>dom4j</artifactId>
+                <version>${dom4j.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>com.atlassian.templaterenderer</groupId>
                 <artifactId>atlassian-template-renderer-api</artifactId>
                 <version>${atr.version}</version>
@@ -487,14 +499,21 @@
         <applinks.version>3.5.1</applinks.version>
         <speakeasy.version>1.3.16</speakeasy.version>
         <sal.version>2.7.0</sal.version>
-        <plugins.version>2.13.0-m2</plugins.version>
+        <plugins.version>2.14.0-m3</plugins.version>
         <rest.version>2.3.0</rest.version>
         <ao.version>0.19.14</ao.version>
         <oauth.version>1.3.0</oauth.version>
         <slf4j.version>1.6.4</slf4j.version>
+        <log4j.version>1.2.16</log4j.version>
         <atr.version>1.4.0</atr.version>
         <redstone.version>1.1.1</redstone.version>
         <guava.version>10.0.1</guava.version>
+        <event.version>2.2.0</event.version>
+        <atlassian.security.version>1.0</atlassian.security.version>
+        <commons.collections.version>3.2.1</commons.collections.version>
+        <commons.lang.version>2.6</commons.lang.version>
+        <commons.codec.version>1.3</commons.codec.version>
+        <dom4j.version>1.4</dom4j.version>
         <atlassian.xmlrpc.version>0.11</atlassian.xmlrpc.version>
         <deployRepoUrl>https://maven.atlassian.com/public</deployRepoUrl>
         <VERSION_NUMBER>${API_VERSION}.${BUILD_NUMBER}</VERSION_NUMBER>

@@ -147,79 +147,8 @@ public final class Container
         HostProperties hostProperties = new ContainerHostProperties();
 
         // todo: this should use the plugin api, but it doesn't allow setting of plugin loaders right now
-        final DefaultPackageScannerConfiguration scannerConfig = new DefaultPackageScannerConfiguration(determineVersion());
-
-        final List<String> scannedPackageIncludes = scannerConfig.getPackageIncludes();
-        Iterables.removeAll(scannedPackageIncludes, ImmutableList.builder()
-                .add("com.opensymphony.*")
-                .add("org.jfree.*")
-                .add("org.joda.*")
-                .add("org.ofbiz.*")
-                .add("org.quartz")
-                .add("org.quartz.*")
-                .add("org.tuckey.web.filters.urlrewrite.*")
-                .add("org.xml.*")
-                .add("org.w3c.*")
-                .add("webwork.*")
-                .build());
-
-        scannerConfig.setPackageIncludes(ImmutableList.<String>builder()
-                .addAll(scannedPackageIncludes)
-                .add("com.atlassian.activeobjects.spi*")
-                .add("com.atlassian.jira.rest.client.p3")
-                .add("com.atlassian.jira.rest.client.domain")
-                .add("com.atlassian.event.api*")
-                .add("com.atlassian.plugin*")
-                .add("com.atlassian.sal*")
-                .add("com.atlassian.xmlrpc*")
-                .add("com.atlassian.security.random*")
-                .add("com.atlassian.fugue*")
-                .add("com.atlassian.mail*")
-                .add("com.google.common.*")
-                .add("com.samskivert.*")
-                .add("javax.servlet*")
-                .add("javax.ws.rs*")
-                .add("net.oauth*")
-                .add("com.sun.mail.handlers")
-                .add("org.apache.commons.codec*")
-                .add("org.apache.log4j*")
-                .add("org.bouncycastle*")
-                .add("org.dom4j*")
-                .add("org.eclipse.jetty.*")
-                .add("org.jruby*")
-                .add("org.json")
-                .add("org.mozilla.javascript*")
-                .add("org.slf4j*")
-                .add("org.apache.log4j")
-                .add("org.yaml*")
-                .add("javax.inject")
-                .add("redstone.xmlrpc")
-                .build());
-
-        scannerConfig.setPackageVersions(ImmutableMap.<String, String>builder()
-                .put("com.atlassian.activeobjects.spi", getVersionFromMavenMetadata("com.atlassian.activeobjects", "activeobjects-spi", "0.19.4"))
-                .put("com.atlassian.event.api*", getVersionFromMavenMetadata("com.atlassian.event", "atlassian-event", "2.2.0-m1"))
-                .put("com.atlassian.plugin*", getVersionFromMavenMetadata("com.atlassian.plugins", "atlassian-plugins-core", "2.13.0-m2"))
-                .put("com.atlassian.sal.api*", getVersionFromMavenMetadata("com.atlassian.sal", "sal-api", "2.7.0"))
-                .put("com.atlassian.security.random*", getVersionFromMavenMetadata("com.atlassian.security", "atlassian-secure-random", "1.0"))
-                .put("com.google.common.*", getVersionFromMavenMetadata("com.google.guava", "guava", "1"))
-                .put("javax.servlet", "2.5")
-                .put("javax.servlet.http", "2.5")
-                .put("javax.inject", "1")
-                .put("org.apache.commons.codec*", "1.3")
-                .put("org.apache.commons.collections*", "3.2")
-                .put("org.apache.commons.lang*", getVersionFromMavenMetadata("commons-lang", "commons-lang", "2.4"))
-                .put("org.slf4j*", getVersionFromMavenMetadata("org.slf4j", "slf4j-api", "1.6.4"))
-                .put("org.apache.log4j", getVersionFromMavenMetadata("log4j", "log4j", "1.2.16"))
-                .put("org.dom4j*", getVersionFromMavenMetadata("dom4j", "dom4j", "1.4"))
-                .build());
-
-        scannerConfig.setPackageExcludes(ImmutableList.<String>builder()
-                .addAll(scannerConfig.getPackageExcludes())
-                .add("com.atlassian.activeobjects*")
-                .add("com.atlassian.dbexporter*")
-                .build());
-
+        final DefaultPackageScannerConfiguration scannerConfig = new DefaultPackageScannerConfiguration(
+                ContainerApplication.INSTANCE.getVersion());
         OsgiPersistentCache osgiCache = new DefaultOsgiPersistentCache(mkdir(".cache/osgi"));
         Map<Class<?>, Object> hostComponents = newHashMap();
         PluginEventManager pluginEventManager = new DefaultPluginEventManager();
@@ -232,7 +161,7 @@ public final class Container
         OsgiBundleFactory bundleFactory = new OsgiBundleFactory(osgiContainerManager, pluginEventManager);
         OsgiPluginFactory osgiPluginDeployer = new OsgiPluginFactory(
                 PluginAccessor.Descriptor.FILENAME,
-                ImmutableSet.of("remoteapp"),
+                ImmutableSet.of(ContainerApplication.INSTANCE),
                 osgiCache,
                 osgiContainerManager,
                 pluginEventManager);
@@ -373,20 +302,6 @@ public final class Container
         });
     }
 
-    private String getVersionFromMavenMetadata(String groupId, String artifactId, String defaultValue)
-    {
-        final String resource = "META-INF/maven/" + groupId + "/" + artifactId + "/pom.properties";
-
-        final String version = new ResourcePropertiesLoader(resource).load().get("version");
-        if (version == null)
-        {
-            log.warn("Could not read version from maven metadata for {}:{} will use default {}", new Object[]{groupId, artifactId, defaultValue});
-            return defaultValue;
-        }
-        log.debug("Version found from maven metadata for {}:{} is {}", new Object[]{groupId, artifactId, version});
-        return version;
-    }
-
     private File zipAppDirectory(DescriptorAccessor descriptorAccessor, File appFile)
     {
         try
@@ -476,11 +391,6 @@ public final class Container
             file.mkdirs();
         }
         return file;
-    }
-
-    private String determineVersion()
-    {
-        return "1";
     }
 
     private static class ContainerHostComponentProvider implements HostComponentProvider

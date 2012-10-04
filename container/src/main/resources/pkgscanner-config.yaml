@@ -1,0 +1,69 @@
+package_includes:
+  exclude:
+    - "com.springframework*"
+    - "org.apache.commons.logging*"
+    - "com.atlassian.plugin.osgi.bridge.*"
+    - "com.atlassian.sal.core*"
+    - "com.atlassian.core*"
+    - "org.apache.maven*"
+
+  include:
+    - "com.atlassian.*"
+    - "com.google.common.*"
+    - "javax.*"
+    - "org.apache.*"
+    - "org.bouncycastle*"
+    - "org.dom4j*"
+    - "org.jdom*"
+    - "org.slf4j*"
+    - "com.atlassian.activeobjects.spi*"
+    - "com.atlassian.jira.rest.client.p3"
+    - "com.atlassian.jira.rest.client.domain"
+    - "com.atlassian.event.api*"
+    - "com.atlassian.plugin*"
+    - "com.atlassian.sal*"
+    - "com.atlassian.xmlrpc*"
+    - "com.atlassian.security.random*"
+    - "com.atlassian.fugue*"
+    - "com.atlassian.mail*"
+    - "com.google.common.*"
+    - "com.samskivert.*"
+    - "javax.servlet*"
+    - "javax.ws.rs*"
+    - "net.oauth*"
+    - "com.sun.mail.handlers"
+    - "org.apache.commons.codec*"
+    - "org.apache.log4j*"
+    - "org.bouncycastle*"
+    - "org.dom4j*"
+    - "org.eclipse.jetty.*"
+    - "org.jruby*"
+    - "org.json"
+    - "org.mozilla.javascript*"
+    - "org.slf4j*"
+    - "org.apache.log4j"
+    - "org.yaml*"
+    - "javax.inject"
+    - "redstone.xmlrpc"
+package_versions:
+  - {package: "com.atlassian.activeobjects.spi", version: "${ao.version}"}
+  - {package: "com.atlassian.event.api*", version: "${event.version}"}
+  - {package: "com.atlassian.plugin*", version: "${plugins.version}"}
+  - {package: "com.atlassian.sal.api*", version: "${sal.version}"}
+  - {package: "com.atlassian.security.random*", version: "${atlassian.security.version}"}
+
+  # Even though Guava is newer, this is for backwards compatibility for those expecting collections
+  - {package: "com.google.common.*", version: "1"}
+
+  # This should be 3.0, but Spring will die as its package imports don't allow it
+  - {package: "javax.servlet", version: "2.5"}
+  - {package: "javax.servlet.http", version: "2.5"}
+
+  - {package: "javax.inject", version: "1"}
+  - {package: "org.apache.commons.codec*", version: "${commons.codec.version}"}
+  - {package: "org.apache.commons.collections", version: "${commons.collections.version}"}
+  - {package: "org.apache.commons.collections*", version: "${commons.collections.version}"}
+  - {package: "org.apache.commons.lang*", version: "${commons.lang.version}"}
+  - {package: "org.slf4j*", version: "${slf4j.version}"}
+  - {package: "org.apache.log4j", version: "${log4j.version}"}
+  - {package: "org.dom4j*", version: "${dom4j.version}"}
