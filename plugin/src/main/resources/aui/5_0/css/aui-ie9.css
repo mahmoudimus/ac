@@ -1,0 +1,22 @@
+/*! AUI Flat Pack - version 5.0-m13 - generated 2012-10-02 21:18:14 -0400 */
+
+
+/* dropdown-shim */
+.dropdown-shim {
+    border: none;
+    display: none;
+    position: absolute;
+    z-index: 2000;
+}
+
+/* This file is served to all versions of IE up to IE9, no hacks as all versions need the one thing it contains :) */
+.inline-dialog-shim {
+    border: none;
+    display: block;
+    height: 0;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 0;
+    z-index: -2;
+}
