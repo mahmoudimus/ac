@@ -68,7 +68,7 @@ public class CachingHttpContentRetriever implements DisposableBean, HttpContentR
         CacheConfig cacheConfig = new CacheConfig();
         cacheConfig.setMaxCacheEntries(1000);
         cacheConfig.setSharedCache(false);
-        cacheConfig.setMaxObjectSize(8192L);
+        cacheConfig.setMaxObjectSize(100 * 1024L);
 
         DefaultHttpAsyncClient client;
         try
@@ -260,6 +260,15 @@ public class CachingHttpContentRetriever implements DisposableBean, HttpContentR
         };
         requestKiller.registerRequest(httpget, 10);
         final Future<HttpResponse> futureResponse = httpClient.execute(httpget, localContext, futureCallback);
+
+        if (futureResponse.isDone())
+        {
+            log.debug("Request {} retrieved from the cache", url);
+        }
+        else
+        {
+            log.debug("Request {} isn't in the cache, retrieving...", url);
+        }
         return new ResponseToStringFuture(futureResponse);
     }
 
