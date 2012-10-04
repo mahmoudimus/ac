@@ -22,7 +22,6 @@ public class Main
         throws Exception
     {
         server = new HttpServer();
-        server.start();
         container = new Container(server, apps);
         container.start();
         List<String> lines = newArrayList();

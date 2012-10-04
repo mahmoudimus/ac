@@ -399,9 +399,10 @@ public final class Container
         }
     }
 
-    public void start() throws IOException
+    public void start() throws Exception
     {
         pluginManager.init();
+        httpServer.start();
         Set<URI> foundHosts = findHostProducts();
         if (descriptorAccessor != null)
         {
