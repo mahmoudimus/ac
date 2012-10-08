@@ -1,0 +1,6 @@
+<link rel="stylesheet" href="$hostStylesheetUrl">
+#if ($appStylesheetUrls)
+  #foreach ($url in $appStylesheetUrls)
+  <link rel="stylesheet" href="$url">
+  #end
+#end

@@ -7,21 +7,12 @@
     <title>$pageTitle</title>
   #end
   <meta name="viewport" content="width=device-width">
-  <link rel="stylesheet" href="$hostStylesheetUrl">
-  #if ($appStylesheetPaths)
-    #foreach ($url in $appStylesheetPaths)
-      <link rel="stylesheet" href="$url">
-    #end
-  #end
+  #parse ($headTemplate)
   <script src="$hostScriptUrl"></script>
   <script>RA.init();</script>
 </head>
 <body>
   $bodyHtml
-  #if ($appScriptPaths)
-    #foreach ($url in $appScriptPaths)
-    <script src="$url"></script>
-    #end
-  #end
+  #parse ($tailTemplate)
 </body>
 </html>

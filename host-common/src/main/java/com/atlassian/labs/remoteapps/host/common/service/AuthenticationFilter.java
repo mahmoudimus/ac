@@ -42,6 +42,7 @@ public class AuthenticationFilter implements Filter
         try
         {
             HttpServletRequest req = (HttpServletRequest) request;
+            requestContext.setRequest(req);
             URI uri = URI.create(req.getRequestURI());
 
             AuthenticationInfo info;

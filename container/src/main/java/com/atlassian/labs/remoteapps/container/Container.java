@@ -9,10 +9,7 @@ import com.atlassian.jira.rest.client.p3.JiraProjectClient;
 import com.atlassian.jira.rest.client.p3.JiraSearchClient;
 import com.atlassian.jira.rest.client.p3.JiraUserClient;
 import com.atlassian.jira.rest.client.p3.JiraVersionClient;
-import com.atlassian.labs.remoteapps.api.service.EmailSender;
-import com.atlassian.labs.remoteapps.api.service.HttpResourceMounter;
-import com.atlassian.labs.remoteapps.api.service.RequestContext;
-import com.atlassian.labs.remoteapps.api.service.SignedRequestHandler;
+import com.atlassian.labs.remoteapps.api.service.*;
 import com.atlassian.labs.remoteapps.api.service.confluence.ConfluenceAdminClient;
 import com.atlassian.labs.remoteapps.api.service.confluence.ConfluenceAttachmentClient;
 import com.atlassian.labs.remoteapps.api.service.confluence.ConfluenceBlogClient;
@@ -42,6 +39,7 @@ import com.atlassian.labs.remoteapps.host.common.HostProperties;
 import com.atlassian.labs.remoteapps.host.common.descriptor.DescriptorAccessor;
 import com.atlassian.labs.remoteapps.host.common.descriptor.DescriptorPermissionsReader;
 import com.atlassian.labs.remoteapps.host.common.descriptor.PolyglotDescriptorAccessor;
+import com.atlassian.labs.remoteapps.host.common.service.RenderContextServiceFactory;
 import com.atlassian.labs.remoteapps.host.common.service.RequestContextServiceFactory;
 import com.atlassian.labs.remoteapps.host.common.service.confluence.ConfluenceAdminClientServiceFactory;
 import com.atlassian.labs.remoteapps.host.common.service.confluence.ConfluenceAttachmentClientServiceFactory;
@@ -232,6 +230,10 @@ public final class Container
         final ContainerEventPublisher containerEventPublisher = new ContainerEventPublisher();
         final DefaultHttpClient httpClient = new DefaultHttpClient(requestKiller, containerEventPublisher);
         final HostHttpClientServiceFactory hostHttpClientServiceFactory = new HostHttpClientServiceFactory(httpClient, requestContextServiceFactory, oAuthSignedRequestHandlerServiceFactory);
+        final HostXmlRpcClientServiceFactory hostXmlRpcClientHostServiceFactory = new HostXmlRpcClientServiceFactory(hostHttpClientServiceFactory);
+        final ContainerLocaleResolver localeResolver = new ContainerLocaleResolver();
+        final ContainerI18nResolver i18nResolver = new ContainerI18nResolver(pluginManager, pluginEventManager, new ResourceBundleResolverImpl());
+        final RenderContextServiceFactory renderContextServiceFactory = new RenderContextServiceFactory(requestContextServiceFactory, localeResolver, i18nResolver);
 
         hostComponents.put(SignedRequestHandler.class, oAuthSignedRequestHandlerServiceFactory);
         hostComponents.put(HttpResourceMounter.class, containerHttpResourceMounterServiceFactory);
@@ -242,12 +244,12 @@ public final class Container
         hostComponents.put(RequestContext.class, requestContextServiceFactory);
         hostComponents.put(HttpClient.class, httpClient);
         hostComponents.put(HostHttpClient.class, hostHttpClientServiceFactory);
-        final HostXmlRpcClientServiceFactory hostXmlRpcClientHostServiceFactory = new HostXmlRpcClientServiceFactory(hostHttpClientServiceFactory);
         hostComponents.put(HostXmlRpcClient.class, hostXmlRpcClientHostServiceFactory);
         hostComponents.put(EmailSender.class, new HostHttpClientConsumerServiceFactory<EmailSender>(hostHttpClientServiceFactory, ContainerEmailSender.class));
-        hostComponents.put(LocaleResolver.class, new ContainerLocaleResolver());
-        hostComponents.put(I18nResolver.class, new ContainerI18nResolver(pluginManager, pluginEventManager, new ResourceBundleResolverImpl()));
+        hostComponents.put(LocaleResolver.class, localeResolver);
+        hostComponents.put(I18nResolver.class, i18nResolver);
         hostComponents.put(WebResourceManager.class, new NoOpWebResourceManager());
+        hostComponents.put(RenderContext.class, renderContextServiceFactory);
 
         hostComponents.put(DataSourceProvider.class, new RemoteAppsDataSourceProviderServiceFactory(applicationPropertiesServiceFactory));
         hostComponents.put(TransactionTemplate.class, new NoOpTransactionTemplate());

@@ -1,11 +1,9 @@
 package com.atlassian.labs.remoteapps.kit.servlet;
 
 import com.atlassian.labs.remoteapps.api.annotation.ServiceReference;
-import com.atlassian.labs.remoteapps.api.service.RequestContext;
+import com.atlassian.labs.remoteapps.api.service.RenderContext;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.util.PluginUtils;
-import com.atlassian.sal.api.message.I18nResolver;
-import com.atlassian.sal.api.message.LocaleResolver;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
@@ -24,45 +22,53 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.annotation.Annotation;
-import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
-import static com.atlassian.labs.remoteapps.spi.util.Strings.*;
-import static com.google.common.collect.Lists.*;
-import static com.google.common.collect.Maps.*;
+import static com.atlassian.labs.remoteapps.spi.util.Strings.dasherize;
+import static com.atlassian.labs.remoteapps.spi.util.Strings.removeSuffix;
+import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Maps.newHashMap;
 
 public abstract class AbstractPageServlet extends HttpServlet implements InitializingBean
 {
     @ServiceReference
-    protected RequestContext requestContext;
-    @ServiceReference
     protected TemplateRenderer templateRenderer;
     @ServiceReference
-    protected I18nResolver i18nResolver;
-    @ServiceReference
-    protected LocaleResolver localeResolver;
+    protected RenderContext renderContext;
     @ServiceReference
     protected PluginRetrievalService pluginRetrievalService;
 
     private String resourceBaseName;
+    private Aui.Version auiVersion;
     private List<String> appStylesheetUrls;
     private List<String> appScriptUrls;
 
     private final boolean devMode = Boolean.getBoolean(PluginUtils.ATLASSIAN_DEV_MODE);
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private String headTemplate;
+    private String tailTemplate;
 
     @Override
     public void afterPropertiesSet() throws Exception
     {
         resourceBaseName = dasherize(removeSuffix(getClass().getSimpleName(), "Servlet"));
+
+        Aui aui = getClass().getAnnotation(Aui.class);
+        auiVersion = aui != null ? aui.value() : null;
+        if (aui != null && auiVersion == null)
+        {
+            throw new IllegalStateException("Aui annotation must declare a version value");
+        }
+
         if (!devMode)
         {
             // build and cache resolved resources in production mode
-            appStylesheetUrls = getAppStylesheetPaths();
-            appScriptUrls = getAppScriptPaths();
+            appStylesheetUrls = getAppStylesheetUrls();
+            appScriptUrls = getAppScriptUrls();
+            headTemplate = getTemplate("head");
+            tailTemplate = getTemplate("tail");
         }
     }
 
@@ -95,7 +101,7 @@ public abstract class AbstractPageServlet extends HttpServlet implements Initial
     {
         StringWriter body = new StringWriter();
         renderView(view, body, ImmutableMap.<String, Object>builder()
-                .putAll(getBaseContext(req))
+                .putAll(getBaseContext())
                 .putAll(context)
                 .build());
         sendWithLayout(layout, body.toString(), req, res, context);
@@ -126,7 +132,7 @@ public abstract class AbstractPageServlet extends HttpServlet implements Initial
         if (layout != null)
         {
             renderView(layout, res.getWriter(), ImmutableMap.<String, Object>builder()
-                    .putAll(getBaseContext(req))
+                    .putAll(getBaseContext())
                     .putAll(context)
                     .put("bodyHtml", bodyHtml)
                     .build());
@@ -137,22 +143,39 @@ public abstract class AbstractPageServlet extends HttpServlet implements Initial
         }
     }
 
-    protected Map<String, Object> getBaseContext(HttpServletRequest req)
+    protected Map<String, Object> getBaseContext()
     {
-        String hostBaseUrl = requestContext.getHostBaseUrl();
-        Locale locale = localeResolver.getLocale(req);
-        return ImmutableMap.<String, Object>builder()
-                .put("hostContextPath", URI.create(hostBaseUrl).getPath())
-                .put("hostBaseUrl", hostBaseUrl)
-                .put("hostStylesheetUrl", hostBaseUrl + "/remoteapps/all.css")
-                .put("hostScriptUrl", hostBaseUrl + "/remoteapps/all.js")
-                .put("appStylesheetPaths", devMode ? getAppStylesheetPaths() : appStylesheetUrls)
-                .put("appScriptPaths", devMode ? getAppScriptPaths() : appScriptUrls)
-                .put("userId", requestContext.getUserId())
-                .put("clientKey", requestContext.getClientKey())
-                .put("i18n", i18nResolver)
-                .put("locale", locale)
-                .build();
+        ImmutableMap.Builder<String, Object> builder = ImmutableMap.<String, Object>builder()
+            .putAll(renderContext.toContextMap())
+            .put("appStylesheetUrls", devMode ? getAppStylesheetUrls() : appStylesheetUrls)
+            .put("appScriptUrls", devMode ? getAppScriptUrls() : appScriptUrls)
+            .put("headTemplate", devMode ? getTemplate("head") : headTemplate)
+            .put("tailTemplate", devMode ? getTemplate("tail") : tailTemplate);
+        if (auiVersion != null) builder.put("auiVersion", auiVersion);
+        return builder.build();
+    }
+
+    private String getTemplate(String type)
+    {
+        String prefix = "layout-" + type + "-";
+        String tmpl = null;
+        if (auiVersion != null)
+        {
+            tmpl = getViewPath(prefix + "aui-" + auiVersion);
+            if (!hasResource(tmpl))
+            {
+                tmpl = getViewPath(prefix + "aui");
+                if (!hasResource(tmpl))
+                {
+                    tmpl = null;
+                }
+            }
+        }
+        if (tmpl == null)
+        {
+            tmpl = getViewPath(prefix + "default");
+        }
+        return tmpl;
     }
 
     protected boolean hasResource(String path)
@@ -165,21 +188,15 @@ public abstract class AbstractPageServlet extends HttpServlet implements Initial
         return devMode;
     }
 
-    protected List<String> getAppStylesheetPaths()
+    protected List<String> getAppStylesheetUrls()
     {
         return getAppResourcePaths(AppStylesheets.class, "stylesheet", "css");
     }
 
-    protected List<String> getAppScriptPaths()
+    protected List<String> getAppScriptUrls()
     {
         return getAppResourcePaths(AppScripts.class, "script", "js");
     }
-
-// @todo joda-time not currently available in container
-//    protected DateTimeFormatter getDateTimeFormatter(String pattern, HttpServletRequest req)
-//    {
-//        return DateTimeFormat.forPattern(pattern).withLocale(localeResolver.getLocale(req));
-//    }
 
     private String getViewPath(String view)
     {

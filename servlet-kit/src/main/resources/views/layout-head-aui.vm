@@ -1,0 +1,9 @@
+<link rel="stylesheet" href="$hostBaseResourceUrl/aui/$auiVersion/css/aui.css">
+<link rel="stylesheet" href="$hostBaseResourceUrl/aui/$auiVersion/css/aui-experimental.css">
+#if ($appStylesheetUrls)
+  #foreach ($url in $appStylesheetUrls)
+  <link rel="stylesheet" href="$url">
+  #end
+#end
+<!--[if IE]><link rel="stylesheet" href="$hostBaseResourceUrl/aui/$auiVersion/css/aui-ie.css"><![endif]-->
+<!--[if IE 9]><link rel="stylesheet" href="$hostBaseResourceUrl/aui/$auiVersion/css/aui-ie9.css"><![endif]-->

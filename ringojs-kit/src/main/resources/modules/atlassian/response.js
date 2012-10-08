@@ -66,6 +66,7 @@ module.exports = function (appDir) {
     // response.render(view, locals, headers, statusCode)
     render: function (view, locals, headers, statusCode) {
       var hostBaseUrl = context.hostBaseUrl();
+      // @todo make use of RenderContext service
       var allLocals = {
         hostBaseUrl: hostBaseUrl,
         hostStylesheetUrl: hostBaseUrl + "/remoteapps/all.css",

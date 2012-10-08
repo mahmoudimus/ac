@@ -3,10 +3,12 @@ package com.atlassian.labs.remoteapps.host.common.service;
 import com.atlassian.labs.remoteapps.api.service.RequestContext;
 import com.atlassian.labs.remoteapps.api.service.SignedRequestHandler;
 
+import javax.servlet.http.HttpServletRequest;
+
 public class DefaultRequestContext implements RequestContext
 {
     private static final ThreadLocal<RequestData> requestContextHolder = new ThreadLocal<RequestData>();
-    private static final RequestData EMPTY_DATA = new RequestData(null, null);
+    private static final RequestData EMPTY_DATA = new RequestData(null, null, null);
 
     private final SignedRequestHandler signedRequestHandler;
 
@@ -23,7 +25,8 @@ public class DefaultRequestContext implements RequestContext
 
     public void setClientKey(String clientKey)
     {
-        setRequestData(new RequestData(clientKey, getRequestData().getUserId()));
+        RequestData data = getRequestData();
+        setRequestData(new RequestData(data.getRequest(), clientKey, data.getUserId()));
     }
 
     private RequestData getRequestData()
@@ -53,10 +56,8 @@ public class DefaultRequestContext implements RequestContext
     public void setUserId(String userId)
     {
         RequestData data = getRequestData();
-        setRequestData(new RequestData(data.getClientKey(), userId));
+        setRequestData(new RequestData(data.getRequest(), data.getClientKey(), userId));
     }
-
-
 
     public <P, R> RequestCallable<P, R> createCallableForCurrentRequest(final RequestCallable<P, R> callable)
     {
@@ -86,7 +87,17 @@ public class DefaultRequestContext implements RequestContext
         return signedRequestHandler.getHostBaseUrl(getClientKey());
     }
 
-    @Override
+    public HttpServletRequest getRequest()
+    {
+        return requestContextHolder.get().getRequest();
+    }
+
+    public void setRequest(HttpServletRequest request)
+    {
+        RequestData data = getRequestData();
+        setRequestData(new RequestData(request, data.getClientKey(), data.getUserId()));
+    }
+
     public void clear()
     {
         requestContextHolder.remove();
@@ -101,11 +112,18 @@ public class DefaultRequestContext implements RequestContext
     {
         private final String clientKey;
         private final String userId;
+        private final HttpServletRequest request;
 
-        private RequestData(String clientKey, String userId)
+        private RequestData(HttpServletRequest request, String clientKey, String userId)
         {
+            this.request = request;
             this.clientKey = clientKey;
             this.userId = userId;
+        }
+
+        public HttpServletRequest getRequest()
+        {
+            return request;
         }
 
         public String getClientKey()

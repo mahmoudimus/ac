@@ -7,6 +7,4 @@ public interface RequestContext
     String getUserId();
 
     String getHostBaseUrl();
-
-    public void clear();
 }

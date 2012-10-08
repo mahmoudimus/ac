@@ -741,7 +741,7 @@
                             <goal>compress</goal>
                         </goals>
                         <configuration>
-                            <gzip>true</gzip>
+                            <gzip>false</gzip>
                             <excludeResources>true</excludeResources>
                             <sourceDirectory>${project.build.outputDirectory}/css/iframe</sourceDirectory>
                             <outputDirectory>${project.build.outputDirectory}/css/iframe-min</outputDirectory>
@@ -763,7 +763,7 @@
                             <goal>compress</goal>
                         </goals>
                         <configuration>
-                            <gzip>true</gzip>
+                            <gzip>false</gzip>
                             <nocompress>true</nocompress>
                             <excludeResources>true</excludeResources>
                             <aggregations>
@@ -784,7 +784,7 @@
                             <goal>compress</goal>
                         </goals>
                         <configuration>
-                            <gzip>true</gzip>
+                            <gzip>false</gzip>
                             <jswarn>false</jswarn>
                             <excludeResources>true</excludeResources>
                             <sourceDirectory>${project.build.outputDirectory}/js/iframe</sourceDirectory>
@@ -807,7 +807,7 @@
                             <goal>compress</goal>
                         </goals>
                         <configuration>
-                            <gzip>true</gzip>
+                            <gzip>false</gzip>
                             <nocompress>true</nocompress>
                             <jswarn>false</jswarn>
                             <excludeResources>true</excludeResources>

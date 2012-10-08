@@ -1,0 +1,8 @@
+<script src="$hostBaseResourceUrl/aui/$auiVersion/js/aui-dependencies.js"></script>
+<script src="$hostBaseResourceUrl/aui/$auiVersion/js/aui.js"></script>
+<script src="$hostBaseResourceUrl/aui/$auiVersion/js/aui-experimental.js"></script>
+#if ($appScriptUrls)
+  #foreach ($url in $appScriptUrls)
+  <script src="$url"></script>
+  #end
+#end
