@@ -2,6 +2,7 @@ package com.atlassian.labs.remoteapps.host.common.service;
 
 import com.atlassian.labs.remoteapps.api.service.RequestContext;
 import com.atlassian.labs.remoteapps.api.service.SignedRequestHandler;
+import com.atlassian.plugin.util.PluginUtils;
 import net.oauth.OAuth;
 
 import javax.servlet.*;
@@ -16,13 +17,16 @@ import java.util.Map;
  */
 public class AuthenticationFilter implements Filter
 {
-    private SignedRequestHandler signedRequestHandler;
-    private DefaultRequestContext requestContext;
+    private final SignedRequestHandler signedRequestHandler;
+    private final DefaultRequestContext requestContext;
+    private final boolean canSpoofAuth;
 
     public AuthenticationFilter(SignedRequestHandler signedRequestHandler, RequestContext requestContext)
     {
         this.signedRequestHandler = signedRequestHandler;
         this.requestContext = (DefaultRequestContext) requestContext;
+        this.canSpoofAuth = Boolean.getBoolean(PluginUtils.ATLASSIAN_DEV_MODE) ||
+                Boolean.getBoolean("auth.spoof");
     }
 
     @Override
@@ -47,6 +51,15 @@ public class AuthenticationFilter implements Filter
                     OAuth.OAUTH_SIGNATURE) != null))
             {
                 info = authenticateOauth(req);
+
+                // persist to the session
+                storeAuthenticationInSession(req.getSession(true), info);
+            }
+            else if (canSpoofAuth && req.getHeader("X-CONSUMER-KEY") != null)
+            {
+                info = new AuthenticationInfo();
+                info.clientKey = req.getHeader("X-CONSUMER-KEY");
+                info.userId = req.getHeader("X-USER-ID");
 
                 // persist to the session
                 storeAuthenticationInSession(req.getSession(true), info);
