@@ -37,6 +37,9 @@
         <module>container</module>
         <module>test</module>
         <module>universal-binary-test-plugin</module>
+        <module>webhook-plugin</module>
+        <module>uri</module>
+        <module>osgi</module>
     </modules>
 
     <build>
@@ -249,7 +252,7 @@
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>10.0.1</version>
+                <version>${guava.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -321,6 +324,18 @@
                 <artifactId>httpcore-nio</artifactId>
                 <version>4.2.2</version>
             </dependency>
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>servlet-api</artifactId>
+                <version>2.5</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.json</groupId>
+                <artifactId>org.json</artifactId>
+                <version>chargebee-1.0</version>
+            </dependency>
+
             <!-- test dependencies -->
             <dependency>
                 <groupId>junit</groupId>
@@ -350,7 +365,7 @@
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-context</artifactId>
-                <version>2.5.6</version>
+                <version>${spring.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework.osgi</groupId>
@@ -479,10 +494,12 @@
         <slf4j.version>1.6.4</slf4j.version>
         <atr.version>1.4.0</atr.version>
         <redstone.version>1.1.1</redstone.version>
+        <guava.version>10.0.1</guava.version>
         <atlassian.xmlrpc.version>0.11</atlassian.xmlrpc.version>
         <deployRepoUrl>https://maven.atlassian.com/public</deployRepoUrl>
         <VERSION_NUMBER>${API_VERSION}.${BUILD_NUMBER}</VERSION_NUMBER>
         <BUILD_NUMBER>9999-SNAPSHOT</BUILD_NUMBER>
         <API_VERSION>0.5</API_VERSION>
+        <spring.version>2.5.6</spring.version>
     </properties>
 </project>

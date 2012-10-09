@@ -2,11 +2,10 @@ package com.atlassian.labs.remoteapps.plugin.webhook;
 
 import com.atlassian.event.api.EventListener;
 import com.atlassian.event.api.EventPublisher;
-import com.atlassian.labs.remoteapps.plugin.util.tracker.WaitableServiceTracker;
 import com.atlassian.labs.remoteapps.plugin.util.tracker.WaitableServiceTrackerCustomizer;
 import com.atlassian.labs.remoteapps.plugin.util.tracker.WaitableServiceTrackerFactory;
-import com.atlassian.labs.remoteapps.spi.webhook.WebHookProvider;
 import com.atlassian.labs.remoteapps.plugin.webhook.impl.WebHookRegistrarImpl;
+import com.atlassian.labs.remoteapps.spi.webhook.WebHookProvider;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.SetMultimap;
@@ -14,40 +13,37 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static com.google.common.base.Preconditions.*;
+
 /**
  * Manages web hook registrations and handles event dispatching
  */
-@Component
-public class WebHookRegistrationManager implements DisposableBean
+public final class WebHookRegistrationManager implements DisposableBean, WebHookIdsAccessor
 {
     private static final Logger log = LoggerFactory.getLogger(WebHookRegistrationManager.class);
 
     private final Map<String,WebHookRegistration> registrationsByKey;
     private final SetMultimap<Class<?>,WebHookRegistration> registrationsByEvent;
     private final Map<WebHookProvider, Set<WebHookRegistration>> registrationsByProvider;
-    private final WaitableServiceTracker<WebHookProvider,WebHookProvider> waitableServiceTracker;
     private final WebHookPublisher webHookPublisher;
     private final EventPublisher eventPublisher;
 
     @Autowired
-    public WebHookRegistrationManager(WaitableServiceTrackerFactory factory,
-            WebHookPublisher webHookPublisher, EventPublisher eventPublisher)
+    public WebHookRegistrationManager(WaitableServiceTrackerFactory factory, WebHookPublisher webHookPublisher, EventPublisher eventPublisher)
     {
-        this.webHookPublisher = webHookPublisher;
-        this.eventPublisher = eventPublisher;
-        this.registrationsByEvent = Multimaps.synchronizedSetMultimap(
-                HashMultimap.<Class<?>, WebHookRegistration>create());
+        this.webHookPublisher = checkNotNull(webHookPublisher);
+        this.eventPublisher = checkNotNull(eventPublisher);
+        this.registrationsByEvent = Multimaps.synchronizedSetMultimap(HashMultimap.<Class<?>, WebHookRegistration>create());
         this.registrationsByKey = new ConcurrentHashMap<String, WebHookRegistration>();
-        this.registrationsByProvider = new ConcurrentHashMap<WebHookProvider,
-                Set<WebHookRegistration>>();
-        this.waitableServiceTracker = factory.create(WebHookProvider.class, new WaitableServiceTrackerCustomizer<WebHookProvider>()
+        this.registrationsByProvider = new ConcurrentHashMap<WebHookProvider,Set<WebHookRegistration>>();
+
+        factory.create(WebHookProvider.class, new WaitableServiceTrackerCustomizer<WebHookProvider>()
         {
             @Override
             public WebHookProvider adding(WebHookProvider service)

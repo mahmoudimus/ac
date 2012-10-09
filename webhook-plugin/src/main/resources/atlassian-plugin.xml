@@ -1,0 +1,29 @@
+<atlassian-plugin key="${project.groupId}.${project.artifactId}" name="${project.name}" plugins-version="2">
+    <plugin-info>
+        <description>${project.description}</description>
+        <version>${project.version}</version>
+        <vendor name="${project.organization.name}" url="${project.organization.url}" />
+    </plugin-info>
+
+    <component key="webhookRegistrationManager"
+               interface="com.atlassian.labs.remoteapps.plugin.webhook.WebHookIdsAccessor"
+               class="com.atlassian.labs.remoteapps.plugin.webhook.WebHookRegistrationManager"
+               public="true" />
+
+    <component key="webhookPublisher"
+               interface="com.atlassian.labs.remoteapps.plugin.webhook.WebHookPublisher"
+               class="com.atlassian.labs.remoteapps.plugin.webhook.WebHookPublisherImpl"
+               public="true" />
+
+    <component key="waitableServiceTrackerFactory" class="com.atlassian.labs.remoteapps.plugin.util.tracker.WaitableServiceTrackerFactory" />
+
+    <component key="requestKiller"
+               class="com.atlassian.labs.remoteapps.host.common.service.http.RequestKiller" />
+
+    <component key="httpClient" interface="com.atlassian.labs.remoteapps.api.service.http.HttpClient"
+               class="com.atlassian.labs.remoteapps.host.common.service.http.DefaultHttpClient" />
+
+    <component-import key="eventPublisher" interface="com.atlassian.event.api.EventPublisher" />
+    <!--<component-import key="httpClient" interface="com.atlassian.labs.remoteapps.api.service.http.HttpClient" />-->
+    <component-import key="userManager" interface="com.atlassian.sal.api.user.UserManager" />
+</atlassian-plugin>

@@ -6,9 +6,9 @@ import com.atlassian.labs.remoteapps.spi.webhook.WebHookRegistrar;
 
 import java.util.Set;
 
-import static com.google.common.collect.Sets.newHashSet;
+import static com.google.common.collect.Sets.*;
 
-public class WebHookRegistrarImpl implements WebHookRegistrar
+public final class WebHookRegistrarImpl implements WebHookRegistrar
 {
     private final Set<WebHookRegistration> registrations = newHashSet();
     

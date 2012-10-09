@@ -19,7 +19,6 @@ import java.util.concurrent.CopyOnWriteArraySet;
 @Component
 public class WaitableServiceTrackerFactory implements DisposableBean, ApplicationListener
 {
-
     private final BundleContext bundleContext;
     private final Set<WaitableServiceTracker<?,?>> serviceTrackers;
 

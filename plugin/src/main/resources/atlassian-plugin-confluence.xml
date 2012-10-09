@@ -85,7 +85,9 @@
     <component key="macroModuleDescriptorCreator" class="com.atlassian.labs.remoteapps.plugin.module.confluence.MacroModuleDescriptorCreator" />
     <component key="macroContentLinkParser" class="com.atlassian.labs.remoteapps.plugin.module.confluence.MacroContentLinkParser" />
     <component key="macroContentManager" class="com.atlassian.labs.remoteapps.plugin.module.confluence.MacroContentManager"/>
-    <component key="WebHookProvider" class="com.atlassian.labs.remoteapps.plugin.product.confluence.webhook.ConfluenceWebHookProvider" />
+    <component key="confluenceWebHookProvider"
+               interface="com.atlassian.labs.remoteapps.spi.webhook.WebHookProvider" public="true"
+               class="com.atlassian.labs.remoteapps.plugin.product.confluence.webhook.ConfluenceWebHookProvider" />
     <component key="EventSerializerFactory" class="com.atlassian.labs.remoteapps.plugin.product.confluence.webhook.ConfluenceEventSerializerFactory" />
     <component key="WebSudoElevator" class="com.atlassian.labs.remoteapps.plugin.product.confluence.ConfluenceWebSudoElevator" />
 

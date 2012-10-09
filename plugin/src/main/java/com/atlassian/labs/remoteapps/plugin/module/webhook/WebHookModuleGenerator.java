@@ -1,39 +1,38 @@
 package com.atlassian.labs.remoteapps.plugin.module.webhook;
 
 import com.atlassian.labs.remoteapps.plugin.module.RemoteModuleGenerator;
+import com.atlassian.labs.remoteapps.plugin.webhook.WebHookIdsAccessor;
 import com.atlassian.labs.remoteapps.spi.schema.DocumentBasedSchema;
 import com.atlassian.labs.remoteapps.spi.schema.Schema;
-import com.atlassian.labs.remoteapps.spi.schema.SchemaTransformer;
-import com.atlassian.labs.remoteapps.plugin.webhook.WebHookRegistrationManager;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
-import org.dom4j.Document;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
-import java.util.Map;
 
-import static com.atlassian.labs.remoteapps.spi.util.Dom4jUtils.getRequiredUriAttribute;
-import static java.util.Collections.emptyMap;
+import static com.atlassian.labs.remoteapps.spi.util.Dom4jUtils.*;
+import static com.google.common.base.Preconditions.*;
 
 /**
- * Registers webhooks
+ * <p>Generates the <code>webhook</code> module for local plugin descriptor from the <code>web-hook</code> descriptor
+ * used in remote apps descriptors.
+ * <p>Also defines the schema for validating such <code>web-hook</code> module of the remote app descriptor. It will
+ * dynamically list all web hook events available on the app.
  */
 @Component
-public class WebHookModuleGenerator implements RemoteModuleGenerator
+public final class WebHookModuleGenerator implements RemoteModuleGenerator
 {
-    private final WebHookRegistrationManager webHookRegistrationManager;
+    private final WebHookIdsAccessor webHookIdsAccessor;
     private final Plugin plugin;
 
     @Autowired
-    public WebHookModuleGenerator(WebHookRegistrationManager webHookRegistrationManager,
-            PluginRetrievalService pluginRetrievalService)
+    public WebHookModuleGenerator(WebHookIdsAccessor webHookIdsAccessor, PluginRetrievalService pluginRetrievalService)
     {
-        this.webHookRegistrationManager = webHookRegistrationManager;
-        this.plugin = pluginRetrievalService.getPlugin();
+        this.webHookIdsAccessor = checkNotNull(webHookIdsAccessor);
+        this.plugin = checkNotNull(pluginRetrievalService).getPlugin();
     }
 
     @Override
@@ -62,27 +61,8 @@ public class WebHookModuleGenerator implements RemoteModuleGenerator
                 .setName(getName())
                 .setElementName("web-hook")
                 .setDescription(getDescription())
-                .setTransformer(new SchemaTransformer()
-                {
-                    @Override
-                    public Document transform(Document from)
-                    {
-                        Element parent = (Element) from.selectSingleNode(
-                                "/xs:schema/xs:simpleType/xs:restriction");
-
-                        for (String id : webHookRegistrationManager.getIds())
-                        {
-                            parent.addElement("xs:enumeration").addAttribute("value", id);
-                        }
-                        return from;
-                    }
-                })
+                .setTransformer(new WebHookSchemaFactory(webHookIdsAccessor))
                 .build();
-    }
-
-    private String getWebHookId(Element element)
-    {
-        return element.attributeValue("event");
     }
 
     @Override
@@ -94,8 +74,25 @@ public class WebHookModuleGenerator implements RemoteModuleGenerator
     @Override
     public void generatePluginDescriptor(Element descriptorElement, Element pluginDescriptorRoot)
     {
-        Element copy = descriptorElement.createCopy("webhook");
-        copy.addAttribute("key", "wh-" + copy.attributeValue("event"));
+        final Element copy = descriptorElement.createCopy("webhook")
+                .addAttribute("key", "wh-" + getWebHookId(descriptorElement))
+                .addAttribute("url", getWebHookUrl(descriptorElement, pluginDescriptorRoot));
+
         pluginDescriptorRoot.add(copy);
+    }
+
+    private String getWebHookId(Element element)
+    {
+        return element.attributeValue("event");
+    }
+
+    private String getWebHookUrl(Element descriptorElement, Element pluginDescriptorRoot)
+    {
+        return getDisplayUrl(pluginDescriptorRoot) + descriptorElement.attributeValue("url");
+    }
+
+    private String getDisplayUrl(Element root)
+    {
+        return root.element("remote-plugin-container").attributeValue("display-url");
     }
 }

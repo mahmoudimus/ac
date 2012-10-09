@@ -55,7 +55,9 @@
         </description>
     </plugin-permission>
 
-    <component key="WebHookProvider" class="com.atlassian.labs.remoteapps.plugin.product.jira.JiraWebHookProvider" />
+    <component key="jiraWebHookProvider"
+               interface="com.atlassian.labs.remoteapps.spi.webhook.WebHookProvider" public="true"
+               class="com.atlassian.labs.remoteapps.plugin.product.jira.JiraWebHookProvider" />
 
     <component key="EventSerializerFactory" class="com.atlassian.labs.remoteapps.plugin.product.jira.webhook.JiraEventSerializerFactory" />
 

@@ -100,6 +100,10 @@
         <dependency>com.atlassian.auiplugin:ajs</dependency>
     </web-resource>
 
+    <component key="webHookProvider"
+               interface="com.atlassian.labs.remoteapps.spi.webhook.WebHookProvider" public="true"
+               class="com.atlassian.labs.remoteapps.plugin.webhooks.PluginAppWebHookProvider" />
+
     <component key="httpContentRetriever" class="com.atlassian.labs.remoteapps.plugin.util.http.CachingHttpContentRetriever"
                public="true" interface="com.atlassian.labs.remoteapps.plugin.util.http.HttpContentRetriever" />
 
@@ -113,6 +117,10 @@
 
     <component key="remotappsService" class="com.atlassian.labs.remoteapps.plugin.DefaultRemoteAppsService"
                interface="com.atlassian.labs.remoteapps.spi.RemoteAppsService" public="true" />
+
+    <component key="serverWebHookProvider"
+               interface="com.atlassian.labs.remoteapps.spi.webhook.WebHookProvider" public="true"
+               class="com.atlassian.labs.remoteapps.plugin.webhooks.ServerWebHookProvider" />
 
     <component key="bundleLocator" class="com.atlassian.labs.remoteapps.host.common.util.BundleContextBundleLoader" />
     <component key="permissionsReader" class="com.atlassian.labs.remoteapps.host.common.descriptor.DescriptorPermissionsReader" />
@@ -141,6 +149,8 @@
     <component-import key="typeAccessor" interface="com.atlassian.applinks.spi.util.TypeAccessor" />
     <component-import key="webResourceUrlProvider" interface="com.atlassian.plugin.webresource.WebResourceUrlProvider" />
     <component-import key="moduleFactory" interface="com.atlassian.plugin.module.ModuleFactory" />
+    <component-import key="webhookPublisher" interface="com.atlassian.labs.remoteapps.plugin.webhook.WebHookPublisher" />
+    <component-import key="webhookIdsAccessor" interface="com.atlassian.labs.remoteapps.plugin.webhook.WebHookIdsAccessor" />
 
     <!-- Cross-product API Scopes -->
     <plugin-permission key="read_app_links" name="Read Application Links"
@@ -178,7 +188,7 @@
                class="com.atlassian.labs.remoteapps.host.common.service.http.RequestKiller" />
 
     <component key="asyncHttpClient" interface="com.atlassian.labs.remoteapps.api.service.http.HttpClient"
-               class="com.atlassian.labs.remoteapps.host.common.service.http.DefaultHttpClient" public="true" />
+               class="com.atlassian.labs.remoteapps.host.common.service.http.DefaultHttpClient" />
 
     <component key="httpClient" interface="com.atlassian.labs.remoteapps.api.service.http.HostHttpClient"
                class="com.atlassian.labs.remoteapps.host.common.service.http.HostHttpClientServiceFactory" public="true" />

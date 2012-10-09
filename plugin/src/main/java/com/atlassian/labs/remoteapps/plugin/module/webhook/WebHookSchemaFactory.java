@@ -1,30 +1,29 @@
 package com.atlassian.labs.remoteapps.plugin.module.webhook;
 
+import com.atlassian.labs.remoteapps.plugin.webhook.WebHookIdsAccessor;
 import com.atlassian.labs.remoteapps.spi.schema.SchemaTransformer;
-import com.atlassian.labs.remoteapps.plugin.webhook.WebHookRegistrationManager;
 import org.dom4j.Document;
 import org.dom4j.Element;
+
+import static com.google.common.base.Preconditions.*;
 
 /**
  * Registers a web hook module descriptor factory
  */
-public class WebHookSchemaFactory implements SchemaTransformer
+public final class WebHookSchemaFactory implements SchemaTransformer
 {
-    private final WebHookRegistrationManager webHookRegistrationManager;
+    private final WebHookIdsAccessor webHookIdsAccessor;
 
-    public WebHookSchemaFactory(WebHookRegistrationManager webHookRegistrationManager)
+    public WebHookSchemaFactory(WebHookIdsAccessor webHookIdsAccessor)
     {
-        this.webHookRegistrationManager = webHookRegistrationManager;
-
+        this.webHookIdsAccessor = checkNotNull(webHookIdsAccessor);
     }
 
     @Override
     public Document transform(Document document)
     {
-        Element parent = (Element) document.selectSingleNode(
-                "/xs:schema/xs:simpleType/xs:restriction");
-
-        for (String id : webHookRegistrationManager.getIds())
+        final Element parent = (Element) document.selectSingleNode("/xs:schema/xs:simpleType/xs:restriction");
+        for (String id : webHookIdsAccessor.getIds())
         {
             parent.addElement("xs:enumeration").addAttribute("value", id);
         }

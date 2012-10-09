@@ -26,6 +26,16 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>remoteapps-util-uri</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>remoteapps-util-osgi</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.atlassian.event</groupId>
             <artifactId>atlassian-event</artifactId>
         </dependency>
@@ -121,11 +131,19 @@
 
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>remoteapps-webhook-plugin</artifactId>
+            <version>${project.version}</version>
+            <type>atlassian-plugin</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>remoteapps-test-plugin</artifactId>
             <version>${project.version}</version>
             <type>atlassian-plugin</type>
             <scope>provided</scope>
         </dependency>
+
 
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -512,6 +530,8 @@
                             com.atlassian.jira.plugin.webfragment.descriptors;resolution:=optional,
                             com.atlassian.jira.security;resolution:=optional,
                             com.atlassian.jira.security.websudo;resolution:=optional,
+                            com.atlassian.labs.remoteapps.spi.webhook*;version="${project.version}",
+                            com.atlassian.labs.remoteapps.plugin.webhook;version="${project.version}",
                             com.atlassian.oauth*;version="(1.2,2.0]",
                             com.atlassian.plugin.*;version="2.8",
                             com.atlassian.refapp.auth.external;resolution:=optional,
@@ -525,8 +545,7 @@
                             org.slf4j*;version="1.5",
                             *;resolution:=optional
                         </Import-Package>
-                        <DynamicImport-Package>com.atlassian.labs.speakeasy.*
-                        </DynamicImport-Package>
+                        <DynamicImport-Package>com.atlassian.labs.speakeasy.*</DynamicImport-Package>
                         <Export-Package>
                             javax.inject;version="1",
                             redstone.xmlrpc;version="${redstone.version}",
@@ -553,6 +572,11 @@
                     <pluginArtifacts>
                         <pluginArtifact>
                             <groupId>${project.groupId}</groupId>
+                            <artifactId>remoteapps-webhook-plugin</artifactId>
+                            <version>${project.version}</version>
+                        </pluginArtifact>
+                        <pluginArtifact>
+                            <groupId>${project.groupId}</groupId>
                             <artifactId>remoteapps-test-plugin</artifactId>
                             <version>${project.version}</version>
                         </pluginArtifact>
@@ -571,8 +595,7 @@
                         <product>
                             <id>refapp</id>
                             <version>${refapp.version}</version>
-                            <log4jProperties>src/test/resources/log4j-refapp.properties
-                            </log4jProperties>
+                            <log4jProperties>src/test/resources/log4j-refapp.properties</log4jProperties>
                             <libArtifacts>
                                 <!-- necessary for Speakeasy mail handling -->
                                 <libArtifact>
@@ -595,11 +618,8 @@
                         <product>
                             <id>jira</id>
                             <version>${jira.version}</version>
-                            <log4jProperties>src/test/resources/log4j-jira.properties
-                            </log4jProperties>
-                            <productDataPath>
-                                ${basedir}/src/test/resources/jira-generated-test-resources.zip
-                            </productDataPath>
+                            <log4jProperties>src/test/resources/log4j-jira.properties</log4jProperties>
+                            <productDataPath>${basedir}/src/test/resources/jira-generated-test-resources.zip</productDataPath>
                             <systemPropertyVariables>
                                 <product>jira</product>
                             </systemPropertyVariables>
@@ -685,6 +705,7 @@
                                 <Bundle-SymbolicName>plugin-tests</Bundle-SymbolicName>
                                 <Import-Package>
                                     com.atlassian.labs.remoteapps.spi.permission.scope,
+                                    !com.atlassian.labs.remoteapps.plugin.webhook*,
                                     com.atlassian.labs.remoteapps*,
                                     javax.servlet;version="0.0.0",
                                     javax.servlet.http;version="0.0.0",
@@ -693,8 +714,7 @@
                                 </Import-Package>
                                 <Export-Package></Export-Package>
                             </instructions>
-                            <manifestLocation>${project.build.testOutputDirectory}/META-INF
-                            </manifestLocation>
+                            <manifestLocation>${project.build.testOutputDirectory}/META-INF</manifestLocation>
                             <classifier>tests</classifier>
                             <supportedProjectTypes>
                                 <supportedProjectType>atlassian-plugin</supportedProjectType>

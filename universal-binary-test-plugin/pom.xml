@@ -79,6 +79,13 @@
         </dependency>
         <dependency>
             <groupId>com.atlassian.labs</groupId>
+            <artifactId>remoteapps-webhook-plugin</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+            <type>atlassian-plugin</type>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.labs</groupId>
             <artifactId>remoteapps-plugin</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
@@ -151,6 +158,11 @@
                             <version>${refapp.version}</version>
                             <log4jProperties>src/test/resources/log4j-refapp.properties</log4jProperties>
                             <pluginArtifacts>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.labs</groupId>
+                                    <artifactId>remoteapps-webhook-plugin</artifactId>
+                                    <version>${project.version}</version>
+                                </pluginArtifact>
                                 <pluginArtifact>
                                     <groupId>com.atlassian.labs</groupId>
                                     <artifactId>remoteapps-plugin</artifactId>
