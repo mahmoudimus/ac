@@ -1,6 +1,6 @@
 package com.atlassian.labs.remoteapps.api.service.cache;
 
-import com.atlassian.labs.remoteapps.api.Promise;
+import com.atlassian.util.concurrent.Promise;
 
 import java.util.concurrent.TimeUnit;
 

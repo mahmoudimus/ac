@@ -20,7 +20,7 @@ package com.atlassian.labs.remoteapps.host.common.service.http;
  */
 
 import com.atlassian.labs.remoteapps.api.Deferred;
-import com.atlassian.labs.remoteapps.api.Promise;
+import com.atlassian.util.concurrent.Promise;
 import com.atlassian.xmlrpc.ServiceBean;
 import com.atlassian.xmlrpc.ServiceBeanField;
 import com.atlassian.xmlrpc.ServiceMethod;
@@ -42,8 +42,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
-
-import static com.atlassian.labs.remoteapps.api.Promises.toPromise;
 
 /**
  * {@link java.lang.reflect.InvocationHandler} for the XML-RPC service object proxy
@@ -157,7 +155,7 @@ public final class PromiseAwareXmlRpcInvocationHandler implements InvocationHand
             final Deferred<Object> deferred = Deferred.create();
 
             Promise<Object> actualPromise = (Promise<Object>) returnValue;
-            actualPromise.then(new FutureCallback<Object>()
+            actualPromise.on(new FutureCallback<Object>()
             {
                 @Override
                 public void onSuccess(Object result)

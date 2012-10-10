@@ -20,9 +20,6 @@ package com.atlassian.labs.remoteapps.host.common.service.confluence;
  */
 
 import com.atlassian.labs.remoteapps.api.Deferred;
-import com.atlassian.labs.remoteapps.api.Promise;
-import com.atlassian.labs.remoteapps.api.PromiseCallback;
-import com.atlassian.labs.remoteapps.api.Promises;
 import com.atlassian.labs.remoteapps.api.service.RequestContext;
 import com.atlassian.labs.remoteapps.api.service.http.*;
 import com.atlassian.labs.remoteapps.api.service.http.Response;
@@ -31,6 +28,8 @@ import com.atlassian.labs.remoteapps.spi.PermissionDeniedException;
 import com.atlassian.labs.remoteapps.spi.util.RemoteName;
 import com.atlassian.labs.remoteapps.spi.util.RequirePermission;
 import com.atlassian.plugin.util.ChainingClassLoader;
+import com.atlassian.util.concurrent.Effect;
+import com.atlassian.util.concurrent.Promise;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.FutureCallback;
@@ -229,24 +228,24 @@ public final class ClientInvocationHandler implements InvocationHandler
                     {
                         httpClient.newRequest(
                                 convertAbsoluteUrlToRelative(result))
-                                .get().ok(new PromiseCallback<Response>()
+                                .get().ok(new Effect<Response>()
                         {
                             @Override
-                            public void handle(Response value)
+                            public void apply(Response value)
                             {
                                 deferred.resolve(value.getEntityStream());
                             }
-                        }).others(new PromiseCallback<Response>()
+                        }).others(new Effect<Response>()
                         {
                             @Override
-                            public void handle(Response value)
+                            public void apply(Response value)
                             {
                                 deferred.reject(new UnexpectedResponseException(value));
                             }
-                        }).fail(new PromiseCallback<Throwable>()
+                        }).onFailure(new Effect<Throwable>()
                         {
                             @Override
-                            public void handle(Throwable value)
+                            public void apply(Throwable value)
                             {
                                 deferred.reject(value);
                             }
@@ -266,7 +265,7 @@ public final class ClientInvocationHandler implements InvocationHandler
                 final Deferred<Object> deferred = Deferred.create();
 
                 Promise<Object> actualPromise = (Promise<Object>) returnValue;
-                actualPromise.then(new FutureCallback<Object>()
+                actualPromise.on(new FutureCallback<Object>()
                 {
                     @Override
                     public void onSuccess(Object result)

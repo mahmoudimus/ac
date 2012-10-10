@@ -1,18 +1,18 @@
 package com.atlassian.labs.remoteapps.host.common.service.http;
 
 import com.atlassian.labs.remoteapps.api.Deferred;
+import com.atlassian.labs.remoteapps.api.Deferreds;
 import com.atlassian.labs.remoteapps.api.service.http.HostHttpClient;
 import com.atlassian.labs.remoteapps.api.service.http.HostXmlRpcClient;
 import com.atlassian.labs.remoteapps.api.service.http.Response;
 import com.atlassian.labs.remoteapps.api.service.http.XmlRpcException;
 import com.atlassian.labs.remoteapps.api.service.http.XmlRpcFault;
-import com.atlassian.labs.remoteapps.api.Promise;
-import com.atlassian.labs.remoteapps.api.PromiseCallback;
 import com.atlassian.plugin.util.ChainingClassLoader;
+import com.atlassian.util.concurrent.Effect;
+import com.atlassian.util.concurrent.Promise;
 import com.atlassian.xmlrpc.BindingException;
 import com.atlassian.xmlrpc.ServiceObject;
 import com.atlassian.xmlrpc.XmlRpcClientProvider;
-import com.google.common.util.concurrent.SettableFuture;
 import redstone.xmlrpc.XmlRpcMessages;
 import redstone.xmlrpc.XmlRpcSerializer;
 import redstone.xmlrpc.XmlRpcStruct;
@@ -25,7 +25,6 @@ import java.lang.reflect.Proxy;
 import java.net.URI;
 import java.util.Vector;
 
-import static com.atlassian.labs.remoteapps.api.Promises.*;
 import static java.lang.System.*;
 
 /**
@@ -148,10 +147,10 @@ public class DefaultHostXmlRpcClient implements HostXmlRpcClient
                 .setContentCharset(XmlRpcMessages.getString("XmlRpcClient.Encoding"))
                 .setEntity(writer.toString())
                 .post()
-                .ok(new PromiseCallback<Response>()
+                .ok(new Effect<Response>()
                 {
                     @Override
-                    public void handle(Response response)
+                    public void apply(Response response)
                     {
                         try
                         {
@@ -184,7 +183,7 @@ public class DefaultHostXmlRpcClient implements HostXmlRpcClient
                 })
                 // since xmlrpc should always return 200 OK responses unless an error has occurred,
                 // treat all other response codes as errors
-                .otherwise(reject(deferred));
+                .otherwise(Deferreds.reject(deferred));
         }
         catch (IOException ioe)
         {

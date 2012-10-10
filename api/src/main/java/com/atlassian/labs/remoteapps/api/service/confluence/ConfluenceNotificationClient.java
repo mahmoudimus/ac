@@ -2,8 +2,8 @@ package com.atlassian.labs.remoteapps.api.service.confluence;
 
 import com.atlassian.labs.remoteapps.api.service.confluence.domain.ContentType;
 import com.atlassian.labs.remoteapps.api.service.confluence.domain.User;
-import com.atlassian.labs.remoteapps.api.Promise;
 import com.atlassian.labs.remoteapps.spi.util.RequirePermission;
+import com.atlassian.util.concurrent.Promise;
 
 /**
  */

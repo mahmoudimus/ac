@@ -49,7 +49,7 @@ var api = module.exports = {
       });
 
       // execute the request
-      request[method.toLowerCase()]().then({
+      request[method.toLowerCase()]().on({
         onSuccess: function (response) {
           // build a js response object from the java response
           var json = {};

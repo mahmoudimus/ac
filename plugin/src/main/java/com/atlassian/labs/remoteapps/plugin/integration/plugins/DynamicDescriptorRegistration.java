@@ -1,6 +1,5 @@
 package com.atlassian.labs.remoteapps.plugin.integration.plugins;
 
-import com.atlassian.labs.remoteapps.api.PromiseCallback;
 import com.atlassian.labs.remoteapps.host.common.util.BundleUtil;
 import com.atlassian.labs.remoteapps.plugin.util.tracker.WaitableServiceTracker;
 import com.atlassian.labs.remoteapps.plugin.util.tracker.WaitableServiceTrackerFactory;
@@ -9,6 +8,7 @@ import com.atlassian.plugin.ModuleDescriptorFactory;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.module.ModuleFactory;
+import com.atlassian.util.concurrent.Effect;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.util.concurrent.FutureCallback;
@@ -16,7 +16,6 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -25,9 +24,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import static com.google.common.collect.Maps.newHashMap;
-import static com.google.common.collect.Sets.newHashSet;
-import static java.util.Arrays.asList;
+import static com.google.common.collect.Maps.*;
+import static com.google.common.collect.Sets.*;
+import static java.util.Arrays.*;
 
 /**
  * Helper component that registers dynamic module descriptors
@@ -92,7 +91,7 @@ public class DynamicDescriptorRegistration
                     {
                         return "Waiting for module descriptors: " + requiredKeys;
                     }
-                }).done(new PromiseCallback<Map<ModuleDescriptorFactory, ModuleDescriptorFactory>>()
+                }).onSuccess(new Effect<Map<ModuleDescriptorFactory, ModuleDescriptorFactory>>()
                     {
                         Map<String,ModuleDescriptorFactory> factoriesToMap(Iterable<ModuleDescriptorFactory> factories)
                         {
@@ -112,15 +111,15 @@ public class DynamicDescriptorRegistration
                         }
 
                         @Override
-                        public void handle(Map<ModuleDescriptorFactory, ModuleDescriptorFactory> value)
+                        public void apply(Map<ModuleDescriptorFactory, ModuleDescriptorFactory> value)
                         {
                             callback.onSuccess(factoriesToMap(value.keySet()));
                         }
                     })
-                .fail(new PromiseCallback<Throwable>()
+                .onFailure(new Effect<Throwable>()
                 {
                     @Override
-                    public void handle(Throwable value)
+                    public void apply(Throwable value)
                     {
                         callback.onFailure(value);
                     }

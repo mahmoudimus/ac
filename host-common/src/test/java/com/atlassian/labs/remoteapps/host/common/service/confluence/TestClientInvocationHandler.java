@@ -1,5 +1,6 @@
 package com.atlassian.labs.remoteapps.host.common.service.confluence;
 
+import com.atlassian.labs.remoteapps.api.Deferreds;
 import com.atlassian.labs.remoteapps.api.service.RequestContext;
 import com.atlassian.labs.remoteapps.api.service.confluence.ConfluenceLabelClient;
 import com.atlassian.labs.remoteapps.api.service.confluence.ConfluencePageClient;
@@ -17,13 +18,12 @@ import com.atlassian.labs.remoteapps.api.service.confluence.domain.PageSummary;
 import com.atlassian.labs.remoteapps.api.service.confluence.domain.SpacePermission;
 import com.atlassian.labs.remoteapps.api.service.http.HostHttpClient;
 import com.atlassian.labs.remoteapps.api.service.http.HostXmlRpcClient;
-import com.atlassian.labs.remoteapps.api.PromiseCallback;
-import com.atlassian.labs.remoteapps.api.Promises;
 import com.atlassian.labs.remoteapps.api.service.http.Request;
 import com.atlassian.labs.remoteapps.api.service.http.Response;
 import com.atlassian.labs.remoteapps.api.service.http.ResponsePromise;
 import com.atlassian.labs.remoteapps.spi.PermissionDeniedException;
 import com.atlassian.plugin.util.ChainingClassLoader;
+import com.atlassian.util.concurrent.Effect;
 import com.google.common.collect.ImmutableMap;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
@@ -105,7 +105,7 @@ public class TestClientInvocationHandler
                 .put("url", "http://example.com/foo")
                 .build();
         when(client.invoke("confluence2.getPageSummary", Object.class, "", "100")).thenReturn(
-                Promises.<Object>toResolvedPromise(data));
+                Deferreds.<Object>resolved(data));
 
         PageSummary page = confluencePageClient.getPageSummary(100L).claim();
         assertEquals(100L, page.getId());
@@ -120,7 +120,7 @@ public class TestClientInvocationHandler
         Map data = ImmutableMap.builder()
                 .put("id", "100")
                 .build();
-        when(client.invoke("confluence2.addLabelByObject", Object.class, "", data, "200")).thenReturn(Promises.<Object>toResolvedPromise(data));
+        when(client.invoke("confluence2.addLabelByObject", Object.class, "", data, "200")).thenReturn(Deferreds.<Object>resolved(data));
 
         MutableLabel label = newLabel();
         label.setId(100);
@@ -132,7 +132,7 @@ public class TestClientInvocationHandler
     public void testEnumInRequest()
     {
         when(client.invoke("confluence2.removePermissionFromSpace", Object.class, "", "COMMENT", "entityName", "DS")).thenReturn(
-                Promises.<Object>toResolvedPromise(null));
+                Deferreds.<Object>resolved(null));
 
         confluenceSpaceClient.removePermissionFromSpace(SpacePermission.COMMENT_PERMISSION, "entityName", "DS");
         verify(client, atLeastOnce()).invoke("confluence2.removePermissionFromSpace", Object.class, "", "COMMENT", "entityName", "DS");
@@ -155,7 +155,7 @@ public class TestClientInvocationHandler
         when(client.invoke(eq("confluence2.setContentPermissions"), eq(Object.class), eq(""),
                 eq("100"), eq("View"),
                 argThat(new CollectionsMatcher(permissions)))).thenReturn(
-                Promises.<Object>toResolvedPromise(null));
+                Deferreds.<Object>resolved(null));
 
         MutableContentPermission permission = newContentPermission();
         permission.setUserName("bob");
@@ -179,7 +179,7 @@ public class TestClientInvocationHandler
                 .build();
         when(client.invoke(eq("confluence2.getContentPermissionSet"), eq(Object.class), eq(""),
                 eq("100"), eq("View"))).thenReturn(
-                Promises.<Object>toResolvedPromise(contentPermissionSet));
+                Deferreds.<Object>resolved(contentPermissionSet));
 
         MutableContentPermission permission = newContentPermission();
         permission.setUserName("bob");
@@ -199,7 +199,7 @@ public class TestClientInvocationHandler
         when(requestContext.getHostBaseUrl()).thenReturn("http://localhost");
         when(client.invoke("confluence2.exportSpace", Object.class, "",
                 "DS", getEnumRemoteName(ExportType.HTML))).thenReturn(
-                Promises.<Object>toResolvedPromise("http://localhost/export"));
+                Deferreds.<Object>resolved("http://localhost/export"));
         Request request = mock(Request.class);
         when(httpClient.newRequest("/export"))
                 .thenReturn(request);
@@ -209,16 +209,16 @@ public class TestClientInvocationHandler
         when(response.getEntityStream()).thenReturn(bin);
         final ResponsePromise responsePromise = mock(ResponsePromise.class);
         when(request.get()).thenReturn(responsePromise);
-        when(responsePromise.others(any(PromiseCallback.class))).thenReturn(responsePromise);
-        when(responsePromise.fail(any(PromiseCallback.class))).thenReturn(responsePromise);
-        when(responsePromise.ok(any(PromiseCallback.class))).then(new Answer<Object>()
+        when(responsePromise.others(any(Effect.class))).thenReturn(responsePromise);
+        when(responsePromise.onFailure(any(Effect.class))).thenReturn(responsePromise);
+        when(responsePromise.ok(any(Effect.class))).then(new Answer<Object>()
         {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable
             {
-                PromiseCallback<Response> callback = (PromiseCallback<Response>) invocation
+                Effect<Response> callback = (Effect<Response>) invocation
                         .getArguments()[0];
-                callback.handle(response);
+                callback.apply(response);
                 return responsePromise;
             }
         });
@@ -234,7 +234,7 @@ public class TestClientInvocationHandler
                 .build();
         when(client.invoke(eq("confluence2.getContentPermissionSet"), eq(Object.class), eq(""),
                 eq("100"), eq("View"))).thenReturn(
-                Promises.<Object>toResolvedPromise(contentPermissionSet));
+                Deferreds.<Object>resolved(contentPermissionSet));
 
         MutableContentPermission permission = newContentPermission();
         permission.setUserName("bob");
@@ -256,7 +256,7 @@ public class TestClientInvocationHandler
                 .put("contentStatus", "current")
                 .build();
         when(client.invoke("confluence2.getPage", Object.class, "", "100")).thenReturn(
-                Promises.<Object>toResolvedPromise(data));
+                Deferreds.<Object>resolved(data));
 
         Page page = confluencePageClient.getPage(100L).claim();
         assertEquals(100L, page.getId());
@@ -276,7 +276,7 @@ public class TestClientInvocationHandler
                 .put("url", "http://example.com/foo")
                 .build();
         when(client.invoke("confluence2.getPages", Object.class, "", "DS")).thenReturn(
-                Promises.<Object>toResolvedPromise(singletonList(data)));
+                Deferreds.<Object>resolved(singletonList(data)));
 
         Iterable<PageSummary> pageIterable = confluencePageClient.getPages("DS").claim();
         assertNotNull(pageIterable);

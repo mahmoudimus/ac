@@ -1,6 +1,6 @@
 package com.atlassian.labs.remoteapps.api.service.http;
 
-import com.atlassian.labs.remoteapps.api.Promise;
+import com.atlassian.util.concurrent.Promise;
 
 /**
  * Makes xml-rpc calls to the host using the {@link HostHttpClient}

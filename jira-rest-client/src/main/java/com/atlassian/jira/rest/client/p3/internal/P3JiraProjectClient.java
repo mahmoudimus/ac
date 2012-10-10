@@ -5,8 +5,8 @@ import com.atlassian.jira.rest.client.domain.Project;
 import com.atlassian.jira.rest.client.internal.json.BasicProjectsJsonParser;
 import com.atlassian.jira.rest.client.internal.json.ProjectJsonParser;
 import com.atlassian.jira.rest.client.p3.JiraProjectClient;
-import com.atlassian.labs.remoteapps.api.Promise;
 import com.atlassian.labs.remoteapps.api.service.http.HostHttpClient;
+import com.atlassian.util.concurrent.Promise;
 
 import javax.ws.rs.core.UriBuilder;
 import java.net.URI;

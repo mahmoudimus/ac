@@ -36,14 +36,14 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.atlassian.event</groupId>
-            <artifactId>atlassian-event</artifactId>
-        </dependency>
-        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>remoteapps-ringojs-kit</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.event</groupId>
+            <artifactId>atlassian-event</artifactId>
         </dependency>
         <dependency>
             <groupId>com.atlassian.jira</groupId>
@@ -542,6 +542,7 @@
                             com.atlassian.plugin.*;version="2.8",
                             com.atlassian.refapp.auth.external;resolution:=optional,
                             com.atlassian.sal.api.*;version="(2.4,3.0]",
+                            com.atlassian.util.concurrent*;version="${atlassian-util-concurrent.version}",
                             com.sun.mail.handlers;resolution:=optional,
                             net.oauth*,
                             javax.servlet;version="0.0.0",
@@ -559,7 +560,8 @@
                             com.atlassian.jira.rest.client.p3;version="${jira.client.version}",
                             com.atlassian.jira.rest.client.domain;version="${jira.client.version}",
                             com.atlassian.labs.remoteapps.spi*,
-                            com.atlassian.labs.remoteapps.api*
+                            com.atlassian.labs.remoteapps.api*,
+                            com.atlassian.util.concurrent*;version="${atlassian-util-concurrent.version}"
                         </Export-Package>
                         <Spring-Context>*;timeout:=60</Spring-Context>
                     </instructions>

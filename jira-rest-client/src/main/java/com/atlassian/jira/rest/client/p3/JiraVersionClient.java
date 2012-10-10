@@ -4,7 +4,7 @@ import com.atlassian.jira.rest.client.domain.Version;
 import com.atlassian.jira.rest.client.domain.VersionRelatedIssuesCount;
 import com.atlassian.jira.rest.client.domain.input.VersionInput;
 import com.atlassian.jira.rest.client.domain.input.VersionPosition;
-import com.atlassian.labs.remoteapps.api.Promise;
+import com.atlassian.util.concurrent.Promise;
 
 import javax.annotation.Nullable;
 import java.net.URI;

@@ -12,11 +12,11 @@ import com.atlassian.jira.rest.client.internal.json.gen.LinkIssuesInputGenerator
 import com.atlassian.jira.rest.client.internal.json.gen.WorklogInputJsonGenerator;
 import com.atlassian.jira.rest.client.p3.JiraIssueClient;
 import com.atlassian.jira.rest.client.p3.JiraMetadataClient;
-import com.atlassian.labs.remoteapps.api.Promise;
 import com.atlassian.labs.remoteapps.api.service.RequestContext;
 import com.atlassian.labs.remoteapps.api.service.http.HostHttpClient;
 import com.atlassian.labs.remoteapps.api.service.http.Request;
 import com.atlassian.labs.remoteapps.api.service.http.Response;
+import com.atlassian.util.concurrent.Promise;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;

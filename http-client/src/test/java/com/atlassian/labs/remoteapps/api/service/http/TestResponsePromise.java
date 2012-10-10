@@ -1,6 +1,6 @@
 package com.atlassian.labs.remoteapps.api.service.http;
 
-import com.atlassian.labs.remoteapps.api.PromiseCallback;
+import com.atlassian.util.concurrent.Effect;
 import com.google.common.util.concurrent.SettableFuture;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -52,21 +52,21 @@ public class TestResponsePromise
     {
         try
         {
-            PromiseCallback<Response> expected = mockSuccessCallback();
+            Effect<Response> expected = mockSuccessCallback();
             ArgumentCaptor<Response> expectedCaptor = ArgumentCaptor.forClass(Response.class);
 
             ResponsePromise promise = newRequest(code).get();
-            Method method = promise.getClass().getMethod(name, PromiseCallback.class);
+            Method method = promise.getClass().getMethod(name, Effect.class);
             method.invoke(promise, expected);
 
             if (testCalled)
             {
-                verify(expected).handle(expectedCaptor.capture());
+                verify(expected).apply(expectedCaptor.capture());
                 assertEquals(code, expectedCaptor.getValue().getStatusCode());
             }
             else
             {
-                verify(expected, never()).handle((Response) anyObject());
+                verify(expected, never()).apply((Response) anyObject());
             }
         }
         catch (Exception e)
@@ -85,100 +85,100 @@ public class TestResponsePromise
     @Test
     public void testOthersAll()
     {
-        PromiseCallback<Response> expected = mockSuccessCallback();
+        Effect<Response> expected = mockSuccessCallback();
         ArgumentCaptor<Response> expectedCaptor = ArgumentCaptor.forClass(Response.class);
-        PromiseCallback<Throwable> unexpectedFail = mockErrorCallback();
+        Effect<Throwable> unexpectedFail = mockErrorCallback();
 
         newRequest(200).get()
-            .done(expected)
+            .onSuccess(expected)
             .others(expected)
-            .fail(unexpectedFail);
+            .onFailure(unexpectedFail);
 
-        verify(expected, times(2)).handle(expectedCaptor.capture());
+        verify(expected, times(2)).apply(expectedCaptor.capture());
         assertEquals(200, expectedCaptor.getValue().getStatusCode());
-        verify(unexpectedFail, never()).handle((Throwable) anyObject());
+        verify(unexpectedFail, never()).apply((Throwable) anyObject());
     }
 
     @Test
     public void testOthersUnexpected()
     {
-        PromiseCallback<Response> expected = mockSuccessCallback();
+        Effect<Response> expected = mockSuccessCallback();
         ArgumentCaptor<Response> expectedCaptor = ArgumentCaptor.forClass(Response.class);
-        PromiseCallback<Response> unexpected = mockSuccessCallback();
-        PromiseCallback<Throwable> unexpectedFail = mockErrorCallback();
+        Effect<Response> unexpected = mockSuccessCallback();
+        Effect<Throwable> unexpectedFail = mockErrorCallback();
 
         newRequest(200).get()
-            .done(expected)
+            .onSuccess(expected)
             .ok(expected)
             .others(unexpected)
-            .fail(unexpectedFail);
+            .onFailure(unexpectedFail);
 
-        verify(expected, times(2)).handle(expectedCaptor.capture());
+        verify(expected, times(2)).apply(expectedCaptor.capture());
         assertEquals(200, expectedCaptor.getValue().getStatusCode());
-        verify(unexpected, never()).handle((Response) anyObject());
-        verify(unexpectedFail, never()).handle((Throwable) anyObject());
+        verify(unexpected, never()).apply((Response) anyObject());
+        verify(unexpectedFail, never()).apply((Throwable) anyObject());
     }
 
     @Test
     public void testOthersExpected()
     {
-        PromiseCallback<Response> expected = mockSuccessCallback();
+        Effect<Response> expected = mockSuccessCallback();
         ArgumentCaptor<Response> expectedCaptor = ArgumentCaptor.forClass(Response.class);
-        PromiseCallback<Response> unexpected = mockSuccessCallback();
-        PromiseCallback<Throwable> unexpectedFail = mockErrorCallback();
+        Effect<Response> unexpected = mockSuccessCallback();
+        Effect<Throwable> unexpectedFail = mockErrorCallback();
 
         newRequest(201).get()
-            .done(expected)
+            .onSuccess(expected)
             .ok(unexpected)
             .others(expected)
-            .fail(unexpectedFail);
+            .onFailure(unexpectedFail);
 
-        verify(expected, times(2)).handle(expectedCaptor.capture());
+        verify(expected, times(2)).apply(expectedCaptor.capture());
         assertEquals(201, expectedCaptor.getValue().getStatusCode());
-        verify(unexpected, never()).handle((Response) anyObject());
-        verify(unexpectedFail, never()).handle((Throwable) anyObject());
+        verify(unexpected, never()).apply((Response) anyObject());
+        verify(unexpectedFail, never()).apply((Throwable) anyObject());
     }
 
     @Test
     public void testOtherwiseExpected()
     {
-        PromiseCallback<Response> expected = mockSuccessCallback();
+        Effect<Response> expected = mockSuccessCallback();
         ArgumentCaptor<Response> expectedCaptor = ArgumentCaptor.forClass(Response.class);
-        PromiseCallback<Response> unexpected = mockSuccessCallback();
-        PromiseCallback<Throwable> expectedFail = mockErrorCallback();
+        Effect<Response> unexpected = mockSuccessCallback();
+        Effect<Throwable> expectedFail = mockErrorCallback();
         ArgumentCaptor<Throwable> expectedFailCaptor = ArgumentCaptor.forClass(Throwable.class);
-        PromiseCallback<Throwable> unexpectedFail = mockErrorCallback();
+        Effect<Throwable> unexpectedFail = mockErrorCallback();
 
         newRequest(201).get()
-            .done(expected)
+            .onSuccess(expected)
             .ok(unexpected)
             .otherwise(expectedFail)
-            .fail(unexpectedFail);
+            .onFailure(unexpectedFail);
 
-        verify(expected).handle(expectedCaptor.capture());
+        verify(expected).apply(expectedCaptor.capture());
         assertEquals(201, expectedCaptor.getValue().getStatusCode());
-        verify(unexpected, never()).handle((Response) anyObject());
-        verify(expectedFail).handle(expectedFailCaptor.capture());
+        verify(unexpected, never()).apply((Response) anyObject());
+        verify(expectedFail).apply(expectedFailCaptor.capture());
         assertEquals(UnexpectedResponseException.class, expectedFailCaptor.getValue().getClass());
         assertEquals(201, ((UnexpectedResponseException) expectedFailCaptor.getValue()).getResponse().getStatusCode());
-        verify(unexpectedFail, never()).handle((Throwable) anyObject());
+        verify(unexpectedFail, never()).apply((Throwable) anyObject());
     }
 
     @Test
     public void testOtherwiseFailExpected()
     {
-        PromiseCallback<Response> unexpected = mockSuccessCallback();
-        PromiseCallback<Throwable> expectedFail = mockErrorCallback();
+        Effect<Response> unexpected = mockSuccessCallback();
+        Effect<Throwable> expectedFail = mockErrorCallback();
         ArgumentCaptor<Throwable> expectedFailCaptor = ArgumentCaptor.forClass(Throwable.class);
 
         newFailRequest().get()
-            .done(unexpected)
+            .onSuccess(unexpected)
             .ok(unexpected)
             .otherwise(expectedFail)
-            .fail(expectedFail);
+            .onFailure(expectedFail);
 
-        verify(unexpected, never()).handle((Response) anyObject());
-        verify(expectedFail, times(2)).handle(expectedFailCaptor.capture());
+        verify(unexpected, never()).apply((Response) anyObject());
+        verify(expectedFail, times(2)).apply(expectedFailCaptor.capture());
         assertEquals(RuntimeException.class, expectedFailCaptor.getValue().getClass());
         assertEquals("expected", expectedFailCaptor.getValue().getMessage());
     }
@@ -186,21 +186,21 @@ public class TestResponsePromise
     @Test
     public void testOtherwiseUnexpected()
     {
-        PromiseCallback<Response> expected = mockSuccessCallback();
+        Effect<Response> expected = mockSuccessCallback();
         ArgumentCaptor<Response> expectedCaptor = ArgumentCaptor.forClass(Response.class);
-        PromiseCallback<Response> unexpected = mockSuccessCallback();
-        PromiseCallback<Throwable> unexpectedFail = mockErrorCallback();
+        Effect<Response> unexpected = mockSuccessCallback();
+        Effect<Throwable> unexpectedFail = mockErrorCallback();
 
         newRequest(200).get()
-            .done(expected)
+            .onSuccess(expected)
             .ok(expected)
             .otherwise(unexpectedFail)
-            .fail(unexpectedFail);
+            .onFailure(unexpectedFail);
 
-        verify(expected, times(2)).handle(expectedCaptor.capture());
+        verify(expected, times(2)).apply(expectedCaptor.capture());
         assertEquals(200, expectedCaptor.getValue().getStatusCode());
-        verify(unexpected, never()).handle((Response) anyObject());
-        verify(unexpectedFail, never()).handle((Throwable) anyObject());
+        verify(unexpected, never()).apply((Response) anyObject());
+        verify(unexpectedFail, never()).apply((Throwable) anyObject());
     }
 
     private Request newRequest(int code)
@@ -223,13 +223,13 @@ public class TestResponsePromise
         return request;
     }
 
-    private PromiseCallback<Response> mockSuccessCallback()
+    private Effect<Response> mockSuccessCallback()
     {
-        return mock(PromiseCallback.class);
+        return mock(Effect.class);
     }
 
-    private PromiseCallback<Throwable> mockErrorCallback()
+    private Effect<Throwable> mockErrorCallback()
     {
-        return mock(PromiseCallback.class);
+        return mock(Effect.class);
     }
 }

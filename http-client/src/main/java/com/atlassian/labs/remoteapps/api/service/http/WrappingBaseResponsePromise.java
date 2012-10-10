@@ -1,15 +1,17 @@
 package com.atlassian.labs.remoteapps.api.service.http;
 
-import com.atlassian.labs.remoteapps.api.Promise;
-import com.atlassian.labs.remoteapps.api.PromiseCallback;
+import com.atlassian.util.concurrent.Effect;
+import com.atlassian.util.concurrent.Promise;
+import com.atlassian.util.concurrent.Promises;
+import com.google.common.base.Function;
 import com.google.common.util.concurrent.ForwardingListenableFuture;
 import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import java.util.Arrays;
 import java.util.Set;
 
-import static com.atlassian.labs.remoteapps.api.Promises.*;
 import static com.google.common.collect.Sets.*;
 
 abstract class WrappingBaseResponsePromise<V> extends ForwardingListenableFuture.SimpleForwardingListenableFuture<V> implements BaseResponsePromise<V>
@@ -19,123 +21,123 @@ abstract class WrappingBaseResponsePromise<V> extends ForwardingListenableFuture
 
     public WrappingBaseResponsePromise(ListenableFuture<V> delegate)
     {
-        super(toPromise(delegate));
+        super(Promises.forListenableFuture(delegate));
         this.statuses = newHashSet();
         this.statusSets = newHashSet();
     }
 
     @Override
-    public BaseResponsePromise<V> on(int statusCode, PromiseCallback<V> callback)
+    public final BaseResponsePromise<V> on(int statusCode, Effect<V> callback)
     {
         statuses.add(statusCode);
-        done(newStatusSelector(statusCode, callback));
+        onSuccess(newStatusSelector(statusCode, callback));
         return this;
     }
 
     @Override
-    public BaseResponsePromise<V> informational(PromiseCallback<V> callback)
+    public final BaseResponsePromise<V> informational(Effect<V> callback)
     {
         return onRange(100, 200, callback);
     }
 
     @Override
-    public BaseResponsePromise<V> successful(PromiseCallback<V> callback)
+    public final BaseResponsePromise<V> successful(Effect<V> callback)
     {
         return onRange(200, 300, callback);
     }
 
     @Override
-    public BaseResponsePromise<V> ok(PromiseCallback<V> callback)
+    public final BaseResponsePromise<V> ok(Effect<V> callback)
     {
         return on(200, callback);
     }
 
     @Override
-    public BaseResponsePromise<V> created(PromiseCallback<V> callback)
+    public final BaseResponsePromise<V> created(Effect<V> callback)
     {
         return on(201, callback);
     }
 
     @Override
-    public BaseResponsePromise<V> noContent(PromiseCallback<V> callback)
+    public final BaseResponsePromise<V> noContent(Effect<V> callback)
     {
         return on(204, callback);
     }
 
     @Override
-    public BaseResponsePromise<V> redirection(PromiseCallback<V> callback)
+    public final BaseResponsePromise<V> redirection(Effect<V> callback)
     {
         return onRange(300, 400, callback);
     }
 
     @Override
-    public BaseResponsePromise<V> seeOther(PromiseCallback<V> callback)
+    public final BaseResponsePromise<V> seeOther(Effect<V> callback)
     {
         return on(303, callback);
     }
 
     @Override
-    public BaseResponsePromise<V> notModified(PromiseCallback<V> callback)
+    public final BaseResponsePromise<V> notModified(Effect<V> callback)
     {
         return on(304, callback);
     }
 
     @Override
-    public BaseResponsePromise<V> clientError(PromiseCallback<V> callback)
+    public final BaseResponsePromise<V> clientError(Effect<V> callback)
     {
         return onRange(400, 500, callback);
     }
 
     @Override
-    public BaseResponsePromise<V> badRequest(PromiseCallback<V> callback)
+    public final BaseResponsePromise<V> badRequest(Effect<V> callback)
     {
         return on(400, callback);
     }
 
     @Override
-    public BaseResponsePromise<V> unauthorized(PromiseCallback<V> callback)
+    public final BaseResponsePromise<V> unauthorized(Effect<V> callback)
     {
         return on(401, callback);
     }
 
     @Override
-    public BaseResponsePromise<V> forbidden(PromiseCallback<V> callback)
+    public final BaseResponsePromise<V> forbidden(Effect<V> callback)
     {
         return on(403, callback);
     }
 
     @Override
-    public BaseResponsePromise<V> notFound(PromiseCallback<V> callback)
+    public final BaseResponsePromise<V> notFound(Effect<V> callback)
     {
         return on(404, callback);
     }
 
     @Override
-    public BaseResponsePromise<V> conflict(PromiseCallback<V> callback)
+    public final BaseResponsePromise<V> conflict(Effect<V> callback)
     {
         return on(409, callback);
     }
 
     @Override
-    public BaseResponsePromise<V> serverError(PromiseCallback<V> callback)
+    public final BaseResponsePromise<V> serverError(Effect<V> callback)
     {
         return onRange(500, 600, callback);
     }
 
     @Override
-    public BaseResponsePromise<V> internalServerError(PromiseCallback<V> callback)
+    public final BaseResponsePromise<V> internalServerError(Effect<V> callback)
     {
         return on(500, callback);
     }
 
     @Override
-    public BaseResponsePromise<V> serviceUnavailable(PromiseCallback<V> callback)
+    public final BaseResponsePromise<V> serviceUnavailable(Effect<V> callback)
     {
         return on(503, callback);
     }
 
     @Override
-    public BaseResponsePromise<V> error(PromiseCallback<V> callback)
+    public final BaseResponsePromise<V> error(Effect<V> callback)
     {
         clientError(callback);
         serverError(callback);
@@ -143,64 +145,76 @@ abstract class WrappingBaseResponsePromise<V> extends ForwardingListenableFuture
     }
 
     @Override
-    public BaseResponsePromise<V> notSuccessful(PromiseCallback<V> callback)
+    public final BaseResponsePromise<V> notSuccessful(Effect<V> callback)
     {
         MultiRange multi = new MultiRange(new Range(100, 200), new Range(300, 600));
         statusSets.add(multi);
-        done(newStatusSetSelector(multi, callback));
+        onSuccess(newStatusSetSelector(multi, callback));
         return this;
     }
 
     @Override
-    public BaseResponsePromise<V> others(PromiseCallback<V> callback)
+    public final BaseResponsePromise<V> others(Effect<V> callback)
     {
-        done(newOthersSelector(statuses, statusSets, callback));
+        onSuccess(newOthersSelector(statuses, statusSets, callback));
         return this;
     }
 
     @Override
-    public V claim()
+    public final V claim()
     {
         return delegatePromise().claim();
     }
 
     @Override
-    public BaseResponsePromise<V> done(PromiseCallback<V> callback)
+    public final BaseResponsePromise<V> onSuccess(Effect<V> callback)
     {
-        delegatePromise().done(callback);
+        delegatePromise().onSuccess(callback);
         return this;
     }
 
     @Override
-    public BaseResponsePromise<V> fail(PromiseCallback<Throwable> callback)
+    public final BaseResponsePromise<V> onFailure(Effect<Throwable> callback)
     {
-        delegatePromise().fail(callback);
+        delegatePromise().onFailure(callback);
         return this;
     }
 
     @Override
-    public BaseResponsePromise<V> then(FutureCallback<V> callback)
+    public final BaseResponsePromise<V> on(FutureCallback<V> callback)
     {
-        delegatePromise().then(callback);
+        delegatePromise().on(callback);
         return this;
     }
 
-    protected Promise<V> delegatePromise()
+    @Override
+    public final <T> Promise<T> map(Function<? super V, ? extends T> function)
+    {
+        return Promises.forListenableFuture(Futures.transform(delegate(), function));
+    }
+
+    @Override
+    public final <T> Promise<T> flatMap(Function<? super V, Promise<T>> function)
+    {
+        return Promises.forListenableFuture(Futures.chain(delegate(), function));
+    }
+
+    protected final Promise<V> delegatePromise()
     {
         return (Promise<V>) delegate();
     }
 
-    protected abstract PromiseCallback<V> newStatusSelector(int statusCode, PromiseCallback<V> callback);
+    protected abstract Effect<V> newStatusSelector(int statusCode, Effect<V> callback);
 
-    protected abstract PromiseCallback<V> newStatusSetSelector(StatusSet statusSet, PromiseCallback<V> callback);
+    protected abstract Effect<V> newStatusSetSelector(StatusSet statusSet, Effect<V> callback);
 
-    protected abstract PromiseCallback<V> newOthersSelector(Set<Integer> statuses, Set<StatusSet> statusSets, PromiseCallback<V> callback);
+    protected abstract Effect<V> newOthersSelector(Set<Integer> statuses, Set<StatusSet> statusSets, Effect<V> callback);
 
-    private BaseResponsePromise<V> onRange(int lower, int upper, PromiseCallback<V> callback)
+    private BaseResponsePromise<V> onRange(int lower, int upper, Effect<V> callback)
     {
         Range range = new Range(lower, upper);
         statusSets.add(range);
-        done(newStatusSetSelector(range, callback));
+        onSuccess(newStatusSetSelector(range, callback));
         return this;
     }
 

@@ -283,7 +283,7 @@
             <dependency>
                 <groupId>com.atlassian.util.concurrent</groupId>
                 <artifactId>atlassian-util-concurrent</artifactId>
-                <version>0.0.12</version>
+                <version>${atlassian-util-concurrent.version}</version>
             </dependency>
             <dependency>
                 <groupId>commons-logging</groupId>
@@ -520,5 +520,6 @@
         <BUILD_NUMBER>9999-SNAPSHOT</BUILD_NUMBER>
         <API_VERSION>0.5</API_VERSION>
         <spring.version>2.5.6</spring.version>
+        <atlassian-util-concurrent.version>2.4-m1</atlassian-util-concurrent.version>
     </properties>
 </project>

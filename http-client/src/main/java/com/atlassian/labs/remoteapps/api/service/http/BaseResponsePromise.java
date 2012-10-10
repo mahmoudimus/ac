@@ -1,7 +1,7 @@
 package com.atlassian.labs.remoteapps.api.service.http;
 
-import com.atlassian.labs.remoteapps.api.Promise;
-import com.atlassian.labs.remoteapps.api.PromiseCallback;
+import com.atlassian.util.concurrent.Effect;
+import com.atlassian.util.concurrent.Promise;
 import com.google.common.util.concurrent.FutureCallback;
 
 /**
@@ -20,7 +20,7 @@ public interface BaseResponsePromise<V> extends Promise<V>
      * @param callback The callback
      * @return This instance for chaining
      */
-    BaseResponsePromise<V> on(int statusCode, PromiseCallback<V> callback);
+    BaseResponsePromise<V> on(int statusCode, Effect<V> callback);
 
     // Informational (1xx) Selectors
 
@@ -30,7 +30,7 @@ public interface BaseResponsePromise<V> extends Promise<V>
      * @param callback The callback
      * @return This instance for chaining
      */
-    BaseResponsePromise<V> informational(PromiseCallback<V> callback);
+    BaseResponsePromise<V> informational(Effect<V> callback);
 
     // Successful (2xx) Selectors
 
@@ -40,7 +40,7 @@ public interface BaseResponsePromise<V> extends Promise<V>
      * @param callback The callback
      * @return This instance for chaining
      */
-    BaseResponsePromise<V> successful(PromiseCallback<V> callback);
+    BaseResponsePromise<V> successful(Effect<V> callback);
 
     /**
      * Register a callback to respond to 'ok' (200) HTTP responses.
@@ -48,7 +48,7 @@ public interface BaseResponsePromise<V> extends Promise<V>
      * @param callback The callback
      * @return This instance for chaining
      */
-    BaseResponsePromise<V> ok(PromiseCallback<V> callback);
+    BaseResponsePromise<V> ok(Effect<V> callback);
 
     /**
      * Register a callback to respond to 'created' (201) HTTP responses.
@@ -56,7 +56,7 @@ public interface BaseResponsePromise<V> extends Promise<V>
      * @param callback The callback
      * @return This instance for chaining
      */
-    BaseResponsePromise<V> created(PromiseCallback<V> callback);
+    BaseResponsePromise<V> created(Effect<V> callback);
 
     /**
      * Register a callback to respond to 'no content' (204) HTTP responses.
@@ -64,7 +64,7 @@ public interface BaseResponsePromise<V> extends Promise<V>
      * @param callback The callback
      * @return This instance for chaining
      */
-    BaseResponsePromise<V> noContent(PromiseCallback<V> callback);
+    BaseResponsePromise<V> noContent(Effect<V> callback);
 
     // Redirection (3xx) Selectors
 
@@ -74,7 +74,7 @@ public interface BaseResponsePromise<V> extends Promise<V>
      * @param callback The callback
      * @return This instance for chaining
      */
-    BaseResponsePromise<V> redirection(PromiseCallback<V> callback);
+    BaseResponsePromise<V> redirection(Effect<V> callback);
 
     /**
      * Register a callback to respond to 'see other' (303) HTTP responses.
@@ -82,7 +82,7 @@ public interface BaseResponsePromise<V> extends Promise<V>
      * @param callback The callback
      * @return This instance for chaining
      */
-    BaseResponsePromise<V> seeOther(PromiseCallback<V> callback);
+    BaseResponsePromise<V> seeOther(Effect<V> callback);
 
     /**
      * Register a callback to respond to 'not modified' (304) HTTP responses.
@@ -90,7 +90,7 @@ public interface BaseResponsePromise<V> extends Promise<V>
      * @param callback The callback
      * @return This instance for chaining
      */
-    BaseResponsePromise<V> notModified(PromiseCallback<V> callback);
+    BaseResponsePromise<V> notModified(Effect<V> callback);
 
     // Client Error (4xx) Selectors
 
@@ -100,7 +100,7 @@ public interface BaseResponsePromise<V> extends Promise<V>
      * @param callback The callback
      * @return This instance for chaining
      */
-    BaseResponsePromise<V> clientError(PromiseCallback<V> callback);
+    BaseResponsePromise<V> clientError(Effect<V> callback);
 
     /**
      * Register a callback to respond to 'bad request' (400) HTTP responses.
@@ -108,7 +108,7 @@ public interface BaseResponsePromise<V> extends Promise<V>
      * @param callback The callback
      * @return This instance for chaining
      */
-    BaseResponsePromise<V> badRequest(PromiseCallback<V> callback);
+    BaseResponsePromise<V> badRequest(Effect<V> callback);
 
     /**
      * Register a callback to respond to 'unauthorized' (401) HTTP responses.
@@ -116,7 +116,7 @@ public interface BaseResponsePromise<V> extends Promise<V>
      * @param callback The callback
      * @return This instance for chaining
      */
-    BaseResponsePromise<V> unauthorized(PromiseCallback<V> callback);
+    BaseResponsePromise<V> unauthorized(Effect<V> callback);
 
     /**
      * Register a callback to respond to 'forbidden' (403) HTTP responses.
@@ -124,7 +124,7 @@ public interface BaseResponsePromise<V> extends Promise<V>
      * @param callback The callback
      * @return This instance for chaining
      */
-    BaseResponsePromise<V> forbidden(PromiseCallback<V> callback);
+    BaseResponsePromise<V> forbidden(Effect<V> callback);
 
     /**
      * Register a callback to respond to 'not found' (404) HTTP responses.
@@ -132,7 +132,7 @@ public interface BaseResponsePromise<V> extends Promise<V>
      * @param callback The callback
      * @return This instance for chaining
      */
-    BaseResponsePromise<V> notFound(PromiseCallback<V> callback);
+    BaseResponsePromise<V> notFound(Effect<V> callback);
 
     /**
      * Register a callback to respond to 'conflict' (409) HTTP responses.
@@ -140,7 +140,7 @@ public interface BaseResponsePromise<V> extends Promise<V>
      * @param callback The callback
      * @return This instance for chaining
      */
-    BaseResponsePromise<V> conflict(PromiseCallback<V> callback);
+    BaseResponsePromise<V> conflict(Effect<V> callback);
 
     // Server Error (5xx) Selectors
 
@@ -150,7 +150,7 @@ public interface BaseResponsePromise<V> extends Promise<V>
      * @param callback The callback
      * @return This instance for chaining
      */
-    BaseResponsePromise<V> serverError(PromiseCallback<V> callback);
+    BaseResponsePromise<V> serverError(Effect<V> callback);
 
     /**
      * Register a callback to respond to 'internal server error' (500) HTTP responses.
@@ -158,7 +158,7 @@ public interface BaseResponsePromise<V> extends Promise<V>
      * @param callback The callback
      * @return This instance for chaining
      */
-    BaseResponsePromise<V> internalServerError(PromiseCallback<V> callback);
+    BaseResponsePromise<V> internalServerError(Effect<V> callback);
 
     /**
      * Register a callback to respond to 'service unavailable' (503) HTTP responses.
@@ -166,7 +166,7 @@ public interface BaseResponsePromise<V> extends Promise<V>
      * @param callback The callback
      * @return This instance for chaining
      */
-    BaseResponsePromise<V> serviceUnavailable(PromiseCallback<V> callback);
+    BaseResponsePromise<V> serviceUnavailable(Effect<V> callback);
 
     // Aggregate Selectors
 
@@ -176,7 +176,7 @@ public interface BaseResponsePromise<V> extends Promise<V>
      * @param callback The callback
      * @return This instance for chaining
      */
-    BaseResponsePromise<V> error(PromiseCallback<V> callback);
+    BaseResponsePromise<V> error(Effect<V> callback);
 
     /**
      * Register a callback to respond to all non-'successful' (1xx, 3xx, 4xx, 5xx) HTTP responses.
@@ -184,7 +184,7 @@ public interface BaseResponsePromise<V> extends Promise<V>
      * @param callback The callback
      * @return This instance for chaining
      */
-    BaseResponsePromise<V> notSuccessful(PromiseCallback<V> callback);
+    BaseResponsePromise<V> notSuccessful(Effect<V> callback);
 
     /**
      * Register a callback to respond to all other HTTP responses (i.e. those not explcitly registered for).
@@ -192,7 +192,7 @@ public interface BaseResponsePromise<V> extends Promise<V>
      * @param callback The callback
      * @return This instance for chaining
      */
-    BaseResponsePromise<V> others(PromiseCallback<V> callback);
+    BaseResponsePromise<V> others(Effect<V> callback);
 
     /**
      * Registers the specified callback as a handler for both of the following events:
@@ -204,7 +204,7 @@ public interface BaseResponsePromise<V> extends Promise<V>
      * @param callback The callback
      * @return This instance for chaining
      */
-    BaseResponsePromise<V> otherwise(PromiseCallback<Throwable> callback);
+    BaseResponsePromise<V> otherwise(Effect<Throwable> callback);
 
     /**
      * Register a callback to respond to all completed (1xx, 2xx, 3xx, 4xx, and 5xx) HTTP responses.
@@ -213,7 +213,7 @@ public interface BaseResponsePromise<V> extends Promise<V>
      * @return This instance for chaining
      */
     @Override
-    BaseResponsePromise<V> done(PromiseCallback<V> callback);
+    BaseResponsePromise<V> onSuccess(Effect<V> callback);
 
     // Exception Selectors
 
@@ -224,7 +224,7 @@ public interface BaseResponsePromise<V> extends Promise<V>
      * @return This instance for chaining
      */
     @Override
-    BaseResponsePromise<V> fail(PromiseCallback<Throwable> callback);
+    BaseResponsePromise<V> onFailure(Effect<Throwable> callback);
 
     // Universal Selectors
 
@@ -236,5 +236,5 @@ public interface BaseResponsePromise<V> extends Promise<V>
      * @return This instance for chaining
      */
     @Override
-    BaseResponsePromise<V> then(FutureCallback<V> callback);
+    BaseResponsePromise<V> on(FutureCallback<V> callback);
 }

@@ -1,7 +1,7 @@
 package com.atlassian.jira.rest.client.p3;
 
 import com.atlassian.jira.rest.client.domain.User;
-import com.atlassian.labs.remoteapps.api.Promise;
+import com.atlassian.util.concurrent.Promise;
 
 import java.net.URI;
 

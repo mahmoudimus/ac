@@ -1,9 +1,19 @@
 package com.atlassian.jira.rest.client.p3;
 
 import com.atlassian.jira.rest.client.GetCreateIssueMetadataOptions;
-import com.atlassian.jira.rest.client.domain.*;
-import com.atlassian.jira.rest.client.domain.input.*;
-import com.atlassian.labs.remoteapps.api.Promise;
+import com.atlassian.jira.rest.client.domain.BasicIssue;
+import com.atlassian.jira.rest.client.domain.CimProject;
+import com.atlassian.jira.rest.client.domain.Comment;
+import com.atlassian.jira.rest.client.domain.Issue;
+import com.atlassian.jira.rest.client.domain.Transition;
+import com.atlassian.jira.rest.client.domain.Votes;
+import com.atlassian.jira.rest.client.domain.Watchers;
+import com.atlassian.jira.rest.client.domain.input.AttachmentInput;
+import com.atlassian.jira.rest.client.domain.input.IssueInput;
+import com.atlassian.jira.rest.client.domain.input.LinkIssuesInput;
+import com.atlassian.jira.rest.client.domain.input.TransitionInput;
+import com.atlassian.jira.rest.client.domain.input.WorklogInput;
+import com.atlassian.util.concurrent.Promise;
 import com.google.common.annotations.Beta;
 
 import javax.annotation.Nullable;

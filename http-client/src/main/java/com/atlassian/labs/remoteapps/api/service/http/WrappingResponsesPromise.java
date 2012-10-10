@@ -1,13 +1,12 @@
 package com.atlassian.labs.remoteapps.api.service.http;
 
-import com.atlassian.labs.remoteapps.api.PromiseCallback;
+import com.atlassian.util.concurrent.Effect;
+import com.atlassian.util.concurrent.Promises;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import static com.atlassian.labs.remoteapps.api.Promises.*;
 
 /**
  * Extends WrappingBaseResponsePromise with the ResponsesPromise interface
@@ -16,55 +15,55 @@ final class WrappingResponsesPromise extends WrappingBaseResponsePromise<List<Re
 {
     public WrappingResponsesPromise(ListenableFuture<List<Response>> delegate)
     {
-        super(toPromise(delegate));
+        super(Promises.forListenableFuture(delegate));
     }
 
     @Override
-    public BaseResponsePromise<List<Response>> otherwise(final PromiseCallback<Throwable> callback)
+    public BaseResponsePromise<List<Response>> otherwise(final Effect<Throwable> callback)
     {
-        others(new PromiseCallback<List<Response>>()
+        others(new Effect<List<Response>>()
         {
             @Override
-            public void handle(List<Response> responses)
+            public void apply(List<Response> responses)
             {
-                callback.handle(new UnexpectedResponsesException(responses));
+                callback.apply(new UnexpectedResponsesException(responses));
             }
         });
-        fail(callback);
+        onFailure(callback);
         return this;
     }
 
     @Override
-    protected PromiseCallback<List<Response>> newStatusSelector(int statusCode, PromiseCallback<List<Response>> callback)
+    protected Effect<List<Response>> newStatusSelector(int statusCode, Effect<List<Response>> callback)
     {
         return new StatusSelector(statusCode, callback);
     }
 
     @Override
-    protected PromiseCallback<List<Response>> newStatusSetSelector(StatusSet statusSet, PromiseCallback<List<Response>> callback)
+    protected Effect<List<Response>> newStatusSetSelector(StatusSet statusSet, Effect<List<Response>> callback)
     {
         return new StatusSetSelector(statusSet, callback);
     }
 
     @Override
-    protected PromiseCallback<List<Response>> newOthersSelector(Set<Integer> statuses, Set<StatusSet> statusSets, PromiseCallback<List<Response>> callback)
+    protected Effect<List<Response>> newOthersSelector(Set<Integer> statuses, Set<StatusSet> statusSets, Effect<List<Response>> callback)
     {
         return new OthersSelector(statuses, statusSets, callback);
     }
 
-    private static class StatusSelector implements PromiseCallback<List<Response>>
+    private static class StatusSelector implements Effect<List<Response>>
     {
         private final int statusCode;
-        private final PromiseCallback<List<Response>> callback;
+        private final Effect<List<Response>> callback;
 
-        private StatusSelector(int statusCode, PromiseCallback<List<Response>> callback)
+        private StatusSelector(int statusCode, Effect<List<Response>> callback)
         {
             this.statusCode = statusCode;
             this.callback = callback;
         }
 
         @Override
-        public void handle(List<Response> responses)
+        public void apply(List<Response> responses)
         {
             boolean allMatch = true;
             for (Response response : responses)
@@ -77,24 +76,24 @@ final class WrappingResponsesPromise extends WrappingBaseResponsePromise<List<Re
             }
             if (allMatch)
             {
-                callback.handle(responses);
+                callback.apply(responses);
             }
         }
     }
 
-    private static class StatusSetSelector implements PromiseCallback<List<Response>>
+    private static class StatusSetSelector implements Effect<List<Response>>
     {
         private StatusSet statusSet;
-        private final PromiseCallback<List<Response>> callback;
+        private final Effect<List<Response>> callback;
 
-        private StatusSetSelector(StatusSet statusSet, PromiseCallback<List<Response>> callback)
+        private StatusSetSelector(StatusSet statusSet, Effect<List<Response>> callback)
         {
             this.statusSet = statusSet;
             this.callback = callback;
         }
 
         @Override
-        public void handle(List<Response> responses)
+        public void apply(List<Response> responses)
         {
             boolean allMatch = true;
             for (Response response : responses)
@@ -107,18 +106,18 @@ final class WrappingResponsesPromise extends WrappingBaseResponsePromise<List<Re
             }
             if (allMatch)
             {
-                callback.handle(responses);
+                callback.apply(responses);
             }
         }
     }
 
-    private static class OthersSelector implements PromiseCallback<List<Response>>
+    private static class OthersSelector implements Effect<List<Response>>
     {
-        private final PromiseCallback<List<Response>> callback;
+        private final Effect<List<Response>> callback;
         private final Set<Integer> statuses;
         private final Set<StatusSet> statusSets;
 
-        private OthersSelector(Set<Integer> statuses, Set<StatusSet> statusSets, PromiseCallback<List<Response>> callback)
+        private OthersSelector(Set<Integer> statuses, Set<StatusSet> statusSets, Effect<List<Response>> callback)
         {
             this.statuses = new HashSet<Integer>(statuses);
             this.statusSets = new HashSet<StatusSet>(statusSets);
@@ -126,7 +125,7 @@ final class WrappingResponsesPromise extends WrappingBaseResponsePromise<List<Re
         }
 
         @Override
-        public void handle(List<Response> responses)
+        public void apply(List<Response> responses)
         {
             boolean noneMatch = true;
             for (StatusSet statusSet : statusSets)
@@ -149,7 +148,7 @@ final class WrappingResponsesPromise extends WrappingBaseResponsePromise<List<Re
                 }
                 if (noneMatch)
                 {
-                    callback.handle(responses);
+                    callback.apply(responses);
                 }
             }
         }

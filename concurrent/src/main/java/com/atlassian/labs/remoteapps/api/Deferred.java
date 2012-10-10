@@ -1,5 +1,9 @@
 package com.atlassian.labs.remoteapps.api;
 
+import com.atlassian.util.concurrent.Effect;
+import com.atlassian.util.concurrent.Promise;
+import com.atlassian.util.concurrent.Promises;
+import com.google.common.base.Function;
 import com.google.common.util.concurrent.AbstractFuture;
 import com.google.common.util.concurrent.FutureCallback;
 
@@ -19,7 +23,7 @@ import com.google.common.util.concurrent.FutureCallback;
  *         // perform an async operation to get mydata, typically with a lower-level async api
  *         rawDataClient.get(id)
  *             // handle success case
- *             .done(new PromiseCallback<Map<String, Object>>() {
+ *             .done(new Effect<Map<String, Object>>() {
  *                 public void handle(Map<String, Object> value) {
  *                     // convert the result into the target type and resolve the deferred
  *                     deferred.resolve(myDataFromRawData(value));
@@ -52,7 +56,7 @@ public final class Deferred<V> extends AbstractFuture<V> implements Promise<V>
      */
     private Deferred()
     {
-        promise = new WrappingPromise<V>(this);
+        promise = Promises.forListenableFuture(this);
     }
 
     /**
@@ -106,23 +110,35 @@ public final class Deferred<V> extends AbstractFuture<V> implements Promise<V>
     }
 
     @Override
-    public Deferred<V> done(final PromiseCallback<V> callback)
+    public Deferred<V> onSuccess(final Effect<V> callback)
     {
-        promise.done(callback);
+        promise.onSuccess(callback);
         return this;
     }
 
     @Override
-    public Deferred<V> fail(final PromiseCallback<Throwable> callback)
+    public Deferred<V> onFailure(final Effect<Throwable> callback)
     {
-        promise.fail(callback);
+        promise.onFailure(callback);
         return this;
     }
 
     @Override
-    public Deferred<V> then(FutureCallback<V> callback)
+    public Deferred<V> on(FutureCallback<V> callback)
     {
-        promise.then(callback);
+        promise.on(callback);
         return this;
+    }
+
+    @Override
+    public <T> Promise<T> map(Function<? super V, ? extends T> function)
+    {
+        return promise.map(function);
+    }
+
+    @Override
+    public <T> Promise<T> flatMap(Function<? super V, Promise<T>> function)
+    {
+        return promise.flatMap(function);
     }
 }

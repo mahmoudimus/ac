@@ -82,6 +82,7 @@
                         <Import-Package>
                             com.atlassian.labs.remoteapps.api.service.http*;version="${project.version}",
                             com.atlassian.sal.api*;version="${sal.version}",
+                            com.atlassian.util.concurrent*;version="${atlassian-util-concurrent.version}",
                             com.google.common*;version="${guava.version}",
                             javax.net.ssl,
                             org.apache.commons.logging,
@@ -91,7 +92,8 @@
                         </Import-Package>
                         <Export-Package>
                             com.atlassian.labs.remoteapps.spi.webhook*;version="${project.version}",
-                            com.atlassian.labs.remoteapps.plugin.webhook;version="${project.version}"
+                            com.atlassian.labs.remoteapps.plugin.webhook;version="${project.version}",
+                            com.atlassian.util.concurrent*;version="${atlassian-util-concurrent.version}"
                         </Export-Package>
                         <Spring-Context>*;timeout:=60</Spring-Context>
                     </instructions>

@@ -7,11 +7,12 @@ import com.atlassian.jira.rest.client.internal.json.JsonParseUtil;
 import com.atlassian.jira.rest.client.internal.json.JsonParser;
 import com.atlassian.jira.rest.client.internal.json.gen.JsonGenerator;
 import com.atlassian.labs.remoteapps.api.Deferred;
-import com.atlassian.labs.remoteapps.api.Promise;
-import com.atlassian.labs.remoteapps.api.PromiseCallback;
+import com.atlassian.labs.remoteapps.api.Deferreds;
 import com.atlassian.labs.remoteapps.api.service.http.HostHttpClient;
 import com.atlassian.labs.remoteapps.api.service.http.Response;
 import com.atlassian.labs.remoteapps.api.service.http.ResponsePromise;
+import com.atlassian.util.concurrent.Effect;
+import com.atlassian.util.concurrent.Promise;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -22,16 +23,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.Callable;
 
-import static com.atlassian.labs.remoteapps.api.Promises.reject;
-
 public abstract class AbstractP3RestClient
 {
-    protected static <T> PromiseCallback<Response> newErrorCallback(final Deferred<T> delegate)
+    protected static <T> Effect<Response> newErrorCallback(final Deferred<T> delegate)
     {
-        return new PromiseCallback<Response>()
+        return new Effect<Response>()
         {
             @Override
-            public void handle(Response value)
+            public void apply(Response value)
             {
                 try
                 {
@@ -68,10 +67,10 @@ public abstract class AbstractP3RestClient
     protected <T> Promise<T> callAndParse(ResponsePromise responsePromise, final ResponseHandler<T> responseHandler)
     {
         final Deferred<T> deferred = Deferred.create();
-        PromiseCallback<Response> successCallback = new PromiseCallback<Response>()
+        Effect<Response> successCallback = new Effect<Response>()
         {
             @Override
-            public void handle(Response value)
+            public void apply(Response value)
             {
                 try
                 {
@@ -88,10 +87,10 @@ public abstract class AbstractP3RestClient
                 }
             }
         };
-        PromiseCallback<Response> notFoundCallback = new PromiseCallback<Response>()
+        Effect<Response> notFoundCallback = new Effect<Response>()
         {
             @Override
-            public void handle(Response value)
+            public void apply(Response value)
             {
                 deferred.resolve(null);
             }
@@ -102,7 +101,7 @@ public abstract class AbstractP3RestClient
                 .on(404, notFoundCallback)
                 .created(successCallback)
                 .others(newErrorCallback(deferred))
-                .fail(reject(deferred));
+                .onFailure(Deferreds.reject(deferred));
         return deferred.promise();
     }
 
@@ -122,16 +121,16 @@ public abstract class AbstractP3RestClient
 
 	protected Promise<Void> call(ResponsePromise responsePromise) {
         final Deferred<Void> deferred = Deferred.create();
-        responsePromise.noContent(new PromiseCallback<Response>()
+        responsePromise.noContent(new Effect<Response>()
         {
             @Override
-            public void handle(Response value)
+            public void apply(Response value)
             {
                 deferred.resolve(null);
             }
         })
         .others(newErrorCallback(deferred))
-        .fail(reject(deferred));
+        .onFailure(Deferreds.reject(deferred));
         return deferred.promise();
 	}
 

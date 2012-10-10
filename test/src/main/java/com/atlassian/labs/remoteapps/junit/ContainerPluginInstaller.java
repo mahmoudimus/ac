@@ -72,8 +72,7 @@ final class ContainerPluginInstaller implements PluginInstaller
             URLClassLoader classLoader = new URLClassLoader(new URL[] {getClass().getResource("/remoteapps-container-standalone.jar")});
 
             final Class<?> mainClass = classLoader.loadClass(Main.class.getName());
-            final Object container = mainClass.getConstructors()[0].newInstance(
-                    new Object[]{key.apps});
+            final Object container = mainClass.getConstructors()[0].newInstance(new Object[]{key.apps});
             LOGGER.info("Started container with apps: {}", Arrays.toString(key.apps));
 
             Runtime.getRuntime().addShutdownHook(new Thread()

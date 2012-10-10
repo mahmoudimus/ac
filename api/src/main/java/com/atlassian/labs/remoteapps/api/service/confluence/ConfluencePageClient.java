@@ -16,8 +16,8 @@ import com.atlassian.labs.remoteapps.api.service.confluence.domain.PageUpdateOpt
 import com.atlassian.labs.remoteapps.api.service.confluence.domain.RenderOptions;
 import com.atlassian.labs.remoteapps.api.service.confluence.domain.SearchOptions;
 import com.atlassian.labs.remoteapps.api.service.confluence.domain.SearchResult;
-import com.atlassian.labs.remoteapps.api.Promise;
 import com.atlassian.labs.remoteapps.spi.util.RequirePermission;
+import com.atlassian.util.concurrent.Promise;
 
 /**
  *

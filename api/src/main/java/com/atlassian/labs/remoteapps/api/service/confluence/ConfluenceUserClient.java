@@ -4,8 +4,8 @@ import com.atlassian.labs.remoteapps.api.service.confluence.domain.MutableUser;
 import com.atlassian.labs.remoteapps.api.service.confluence.domain.MutableUserInformation;
 import com.atlassian.labs.remoteapps.api.service.confluence.domain.User;
 import com.atlassian.labs.remoteapps.api.service.confluence.domain.UserInformation;
-import com.atlassian.labs.remoteapps.api.Promise;
 import com.atlassian.labs.remoteapps.spi.util.RequirePermission;
+import com.atlassian.util.concurrent.Promise;
 
 /**
  */
