@@ -151,6 +151,7 @@
     <component-import key="webResourceManager" interface="com.atlassian.plugin.webresource.WebResourceManager" />
     <component-import key="eventPublisher" interface="com.atlassian.event.api.EventPublisher" />
     <component-import key="i18nResolver" interface="com.atlassian.sal.api.message.I18nResolver" />
+    <component-import key="localeResolver" interface="com.atlassian.sal.api.message.LocaleResolver" />
     <component-import key="pluginSettingsFactory" interface="com.atlassian.sal.api.pluginsettings.PluginSettingsFactory" />
     <component-import key="typeAccessor" interface="com.atlassian.applinks.spi.util.TypeAccessor" />
     <component-import key="webResourceUrlProvider" interface="com.atlassian.plugin.webresource.WebResourceUrlProvider" />
@@ -189,6 +190,9 @@
 
     <component key="requestContext" interface="com.atlassian.labs.remoteapps.api.service.RequestContext"
                class="com.atlassian.labs.remoteapps.host.common.service.RequestContextServiceFactory" public="true" />
+
+    <component key="renderContext" interface="com.atlassian.labs.remoteapps.api.service.RenderContext"
+               class="com.atlassian.labs.remoteapps.host.common.service.RenderContextServiceFactory" public="true" />
 
     <component key="requestKiller"
                class="com.atlassian.labs.remoteapps.host.common.service.http.RequestKiller" />
