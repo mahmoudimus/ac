@@ -18,7 +18,7 @@
     <component key="pluginUriResolver"
                class="com.atlassian.labs.remoteapps.plugin.webhook.impl.PluginUriResolverImpl" />
 
-    <component key="waitableServiceTrackerFactory" class="com.atlassian.labs.remoteapps.plugin.util.tracker.WaitableServiceTrackerFactory" />
+    <component key="waitableServiceTrackerFactory" class="com.atlassian.osgi.tracker.WaitableServiceTrackerFactory" />
 
     <component key="requestKiller"
                class="com.atlassian.labs.remoteapps.host.common.service.http.RequestKiller" />

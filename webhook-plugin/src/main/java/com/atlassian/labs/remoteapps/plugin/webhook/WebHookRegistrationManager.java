@@ -2,10 +2,10 @@ package com.atlassian.labs.remoteapps.plugin.webhook;
 
 import com.atlassian.event.api.EventListener;
 import com.atlassian.event.api.EventPublisher;
-import com.atlassian.labs.remoteapps.plugin.util.tracker.WaitableServiceTrackerCustomizer;
-import com.atlassian.labs.remoteapps.plugin.util.tracker.WaitableServiceTrackerFactory;
 import com.atlassian.labs.remoteapps.plugin.webhook.impl.WebHookRegistrarImpl;
 import com.atlassian.labs.remoteapps.spi.webhook.WebHookProvider;
+import com.atlassian.osgi.tracker.WaitableServiceTrackerCustomizer;
+import com.atlassian.osgi.tracker.WaitableServiceTrackerFactory;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.SetMultimap;

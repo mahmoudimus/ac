@@ -48,9 +48,8 @@
             <artifactId>atlassian-uri</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.atlassian.labs</groupId>
-            <artifactId>remoteapps-util-osgi</artifactId>
-            <version>${project.version}</version>
+            <groupId>com.atlassian.osgi</groupId>
+            <artifactId>atlassian-osgi</artifactId>
         </dependency>
         <dependency>
             <groupId>com.atlassian.plugins</groupId>
