@@ -65,19 +65,7 @@ module.exports = function (appDir) {
     // response.render(view, locals)
     // response.render(view, locals, headers, statusCode)
     render: function (view, locals, headers, statusCode) {
-      var hostBaseUrl = context.hostBaseUrl();
-      // @todo make use of RenderContext service
-      var allLocals = {
-        hostBaseUrl: hostBaseUrl,
-        hostStylesheetUrl: hostBaseUrl + "/remoteapps/all.css",
-        hostScriptUrl: hostBaseUrl + "/remoteapps/all.js",
-        clientKey: context.clientKey(),
-        userId: context.userId()
-        // @todo also add the following, using new modules as needed:
-        //    - hostContextPath: URI.create(hostBaseUrl).getPath()
-        //    - i18n: i18nResolver
-        //    - locale: locale
-      };
+      var allLocals = context.snapshot();
       Object.keys(locals).forEach(function (k) {
         allLocals[k] = locals[k];
       });
