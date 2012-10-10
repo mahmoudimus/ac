@@ -1,8 +1,8 @@
 package com.atlassian.labs.remoteapps.plugin.integration.plugins;
 
 import com.atlassian.labs.remoteapps.host.common.util.BundleUtil;
-import com.atlassian.labs.remoteapps.plugin.util.tracker.WaitableServiceTracker;
-import com.atlassian.labs.remoteapps.plugin.util.tracker.WaitableServiceTrackerFactory;
+import com.atlassian.osgi.tracker.WaitableServiceTracker;
+import com.atlassian.osgi.tracker.WaitableServiceTrackerFactory;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.ModuleDescriptorFactory;
 import com.atlassian.plugin.Plugin;

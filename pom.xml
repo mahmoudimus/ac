@@ -39,7 +39,6 @@
         <module>test</module>
         <module>universal-binary-test-plugin</module>
         <module>webhook-plugin</module>
-        <module>osgi</module>
     </modules>
 
     <build>
@@ -271,6 +270,17 @@
                 <groupId>com.atlassian.uri</groupId>
                 <artifactId>atlassian-uri</artifactId>
                 <version>0.1</version>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.osgi</groupId>
+                <artifactId>atlassian-osgi</artifactId>
+                <version>0.1</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.osgi</groupId>
+                        <artifactId>org.osgi</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>com.atlassian.event</groupId>

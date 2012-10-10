@@ -1,9 +1,9 @@
 package com.atlassian.labs.remoteapps.plugin;
 
-import com.atlassian.labs.remoteapps.plugin.module.applinks.ApplicationTypeModuleGenerator;
 import com.atlassian.labs.remoteapps.plugin.module.RemoteModuleGenerator;
-import com.atlassian.labs.remoteapps.plugin.util.tracker.WaitableServiceTracker;
-import com.atlassian.labs.remoteapps.plugin.util.tracker.WaitableServiceTrackerFactory;
+import com.atlassian.labs.remoteapps.plugin.module.applinks.ApplicationTypeModuleGenerator;
+import com.atlassian.osgi.tracker.WaitableServiceTracker;
+import com.atlassian.osgi.tracker.WaitableServiceTrackerFactory;
 import com.google.common.base.Function;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;

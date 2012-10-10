@@ -104,6 +104,8 @@
                interface="com.atlassian.labs.remoteapps.spi.webhook.PluginUriResolver" public="true"
                class="com.atlassian.labs.remoteapps.plugin.module.webhook.RemoteAppsPluginUriResolver" />
 
+    <component key="waitableServiceTrackerFactory" class="com.atlassian.osgi.tracker.WaitableServiceTrackerFactory" />
+
     <component key="webHookProvider"
                interface="com.atlassian.labs.remoteapps.spi.webhook.WebHookProvider" public="true"
                class="com.atlassian.labs.remoteapps.plugin.webhooks.PluginAppWebHookProvider" />
