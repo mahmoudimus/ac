@@ -190,12 +190,12 @@ public abstract class AbstractPageServlet extends HttpServlet implements Initial
 
     protected List<String> getAppStylesheetUrls()
     {
-        return getAppResourcePaths(AppStylesheets.class, "stylesheet", "css");
+        return getAppResourceUrls(AppStylesheets.class, "stylesheet", "css");
     }
 
     protected List<String> getAppScriptUrls()
     {
-        return getAppResourcePaths(AppScripts.class, "script", "js");
+        return getAppResourceUrls(AppScripts.class, "script", "js");
     }
 
     private String getViewPath(String view)
@@ -220,9 +220,9 @@ public abstract class AbstractPageServlet extends HttpServlet implements Initial
     }
 
     // scans AppStylesheets and AppScripts annotations to build a list of resource paths
-    private List<String> getAppResourcePaths(Class<? extends Annotation> type, String typeName, String typeExt)
+    private List<String> getAppResourceUrls(Class<? extends Annotation> type, String typeName, String typeExt)
     {
-        ImmutableList.Builder<String> paths = ImmutableList.builder();
+        ImmutableList.Builder<String> urls = ImmutableList.builder();
         Annotation[] annotations = getClass().getAnnotations();
         boolean noMatches = true;
 
@@ -256,57 +256,61 @@ public abstract class AbstractPageServlet extends HttpServlet implements Initial
                             value = value.trim();
                             if (value.length() > 0)
                             {
-                                resolveResourcePath(value, typeName, typeExt, paths, true);
+                                resolveResourcePath(value, typeName, typeExt, urls, true);
                             }
                         }
                     }
                 }
                 else
                 {
-                    resolveResourcePath(resourceBaseName, typeName, typeExt, paths, true);
+                    resolveResourcePath(resourceBaseName, typeName, typeExt, urls, true);
                 }
             }
         }
         if (noMatches)
         {
-            resolveResourcePath(resourceBaseName, typeName, typeExt, paths, false);
+            resolveResourcePath(resourceBaseName, typeName, typeExt, urls, false);
         }
-        return paths.build();
+        return urls.build();
     }
 
     // scans resources/public for the desired resource base name, trying public/<ext> and then public/
     // while preferring minified versions (identified by either -min or .min sub-extensions) in prod mode;
     // minifcation and aggregation concerns are left to the app itself
-    private void resolveResourcePath(String name, String type, String ext, ImmutableList.Builder<String> paths, boolean warn)
+    private void resolveResourcePath(String name, String type, String ext, ImmutableList.Builder<String> urls, boolean warn)
     {
-        String path = null;
-        List<String> candidates = newArrayList();
-        if (!devMode)
+        String url = null;
+        if (name.startsWith("//") || name.startsWith("http:") || name.startsWith("https:"))
         {
-            candidates.add(getResourcePath(ext, name + ".min", ext));
-            candidates.add(getResourcePath(ext, name + "-min", ext));
-            candidates.add(getResourcePath(name + ".min", ext));
-            candidates.add(getResourcePath(name + "-min", ext));
+            url = name;
+            urls.add(url);
+            logger.debug("Added " + type + " resource with absolute url '" + url + "'");
         }
-        candidates.add(getResourcePath(ext, name, ext));
-        candidates.add(getResourcePath(name, ext));
-        for (String candidate : candidates)
+        else
         {
-            String publicPath = "public/" + candidate;
-            if (hasResource(publicPath))
+            ImmutableList.Builder<String> builder = ImmutableList.builder();
+            if (!devMode) builder.addAll(minifiedCandidates(name, ext)); // prefer min in prod mode
+            builder.add(getResourcePath(name, ext));
+            if (devMode) builder.addAll(minifiedCandidates(name, ext)); // prefer normal in dev mode, but fallback to min
+            List<String> candidates = builder.build();
+            for (String candidate : candidates)
             {
-                path = publicPath;
-                break;
+                String publicPath = "public/" + candidate;
+                if (hasResource(publicPath))
+                {
+                    url = publicPath;
+                    break;
+                }
             }
-        }
-        if (path != null)
-        {
-            paths.add(path);
-            logger.debug("Found " + type + " resource for name '" + name + "' at path public/" + path);
-        }
-        else if (warn)
-        {
-            logger.warn("No " + type + " found for resource " + name + " (tried " + Joiner.on(", ").join(candidates) + ")");
+            if (url != null)
+            {
+                urls.add(url);
+                logger.debug("Found " + type + " resource for name '" + name + "' at path 'public/" + url + "'");
+            }
+            else if (warn)
+            {
+                logger.warn("No " + type + " resource found for name " + name + " (tried " + Joiner.on(", ").join(candidates) + ")");
+            }
         }
     }
 
@@ -320,5 +324,13 @@ public abstract class AbstractPageServlet extends HttpServlet implements Initial
         {
             return Joiner.on('/').join(Arrays.copyOfRange(parts, 0, parts.length - 1)) + '.' + parts[parts.length - 1];
         }
+    }
+
+    private List<String> minifiedCandidates(String name, String ext)
+    {
+        return ImmutableList.of(
+            getResourcePath(name + ".min", ext),
+            getResourcePath(name + "-min", ext)
+        );
     }
 }

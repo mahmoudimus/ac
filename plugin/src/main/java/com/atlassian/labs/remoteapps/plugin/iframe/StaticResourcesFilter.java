@@ -115,6 +115,12 @@ public class StaticResourcesFilter implements Filter
             return;
         }
 
+        res.setContentType(entry.getContentType());
+        res.setHeader("ETag", entry.getEtag());
+        res.setHeader("Vary", "Accept-Encoding");
+        setCacheControl(res, entry.getTTLSeconds());
+        res.setHeader("Connection", "keep-alive");
+
         String previousToken = req.getHeader("If-None-Match");
         if (previousToken != null && previousToken.equals(entry.getEtag()))
         {
@@ -130,12 +136,6 @@ public class StaticResourcesFilter implements Filter
             sos.flush();
             sos.close();
         }
-
-        res.setContentType(entry.getContentType());
-        res.setHeader("ETag", entry.getEtag());
-        res.setHeader("Vary", "Accept-Encoding");
-        setCacheControl(res, entry.getTTLSeconds());
-        res.setHeader("Connection", "keep-alive");
 
         if (devMode)
         {

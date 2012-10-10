@@ -1,5 +1,3 @@
-#if ($appScriptUrls)
-  #foreach ($url in $appScriptUrls)
-  <script src="$url"></script>
-  #end
+#foreach ($url in $appScriptUrls)
+<script src="$url"></script>
 #end
