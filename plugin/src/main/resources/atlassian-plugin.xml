@@ -100,6 +100,10 @@
         <dependency>com.atlassian.auiplugin:ajs</dependency>
     </web-resource>
 
+    <component key="pluginUriResolver"
+               interface="com.atlassian.labs.remoteapps.spi.webhook.PluginUriResolver" public="true"
+               class="com.atlassian.labs.remoteapps.plugin.module.webhook.RemoteAppsPluginUriResolver" />
+
     <component key="webHookProvider"
                interface="com.atlassian.labs.remoteapps.spi.webhook.WebHookProvider" public="true"
                class="com.atlassian.labs.remoteapps.plugin.webhooks.PluginAppWebHookProvider" />

@@ -2,13 +2,16 @@ package com.atlassian.labs.remoteapps.plugin.webhook;
 
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.labs.remoteapps.host.common.service.http.DefaultHttpClient;
+import com.atlassian.labs.remoteapps.plugin.util.uri.Uri;
 import com.atlassian.labs.remoteapps.plugin.webhook.event.WebHookPublishQueueFullEvent;
 import com.atlassian.labs.remoteapps.spi.webhook.EventMatcher;
+import com.atlassian.labs.remoteapps.spi.webhook.PluginUriResolver;
 import com.atlassian.sal.api.user.UserManager;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 
 import java.net.URI;
@@ -25,13 +28,18 @@ public final class TestWebHookPublisher
     @Mock
     private EventPublisher eventPublisher;
 
+    @Mock
+    private PluginUriResolver pluginUriResolver;
+
     private WebHookPublisherImpl publisher;
 
     @Before
     public void setUp()
     {
         initMocks(this);
-        publisher = new WebHookPublisherImpl(httpClient, eventPublisher, mock(UserManager.class));
+        when(pluginUriResolver.getUri(anyString(), Matchers.<URI>any())).thenReturn(Uri.parse("http://example.com/webhook").toJavaUri());
+
+        publisher = new WebHookPublisherImpl(httpClient, eventPublisher, mock(UserManager.class), pluginUriResolver);
     }
 
     @After
@@ -80,7 +88,7 @@ public final class TestWebHookPublisher
     @Test
     public void testPublishCallSuccessfulEvenIfSaturated()
     {
-        publisher = new WebHookPublisherImpl(new SleepingHttpClient(), eventPublisher, mock(UserManager.class)/*, remoteAppAccessorFactory*/);
+        publisher = new WebHookPublisherImpl(new SleepingHttpClient(), eventPublisher, mock(UserManager.class), pluginUriResolver);
         publisher.register("foo", "event.id", URI.create("/event"));
 
         for (int x = 0; x < 100 + 4; x++)

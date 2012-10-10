@@ -75,8 +75,8 @@ public final class WebHookModuleGenerator implements RemoteModuleGenerator
     public void generatePluginDescriptor(Element descriptorElement, Element pluginDescriptorRoot)
     {
         final Element copy = descriptorElement.createCopy("webhook")
-                .addAttribute("key", "wh-" + getWebHookId(descriptorElement))
-                .addAttribute("url", getWebHookUrl(descriptorElement, pluginDescriptorRoot));
+                .addAttribute("key", "wh-" + getWebHookId(descriptorElement));
+//                .addAttribute("url", getWebHookUrl(descriptorElement, pluginDescriptorRoot));
 
         pluginDescriptorRoot.add(copy);
     }

@@ -41,7 +41,6 @@ import static java.util.Collections.singletonList;
 @Component
 public class RemoteAppAccessorFactory implements DisposableBean
 {
-
     private final ApplicationLinkAccessor applicationLinkAccessor;
     private final OAuthLinkManager oAuthLinkManager;
     private final CachingHttpContentRetriever httpContentRetriever;
@@ -117,7 +116,6 @@ public class RemoteAppAccessorFactory implements DisposableBean
         else
         {
             ApplicationLink link = applicationLinkAccessor.getApplicationLink(pluginKey);
-
             return create(pluginKey,
                     link != null ? link.getDisplayUrl() : URI.create(ubDispatchFilter.getLocalMountBaseUrl(pluginKey)));
         }
