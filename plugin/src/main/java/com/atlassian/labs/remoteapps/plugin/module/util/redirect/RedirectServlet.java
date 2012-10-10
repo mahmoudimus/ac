@@ -2,9 +2,9 @@ package com.atlassian.labs.remoteapps.plugin.module.util.redirect;
 
 import com.atlassian.labs.remoteapps.plugin.RemoteAppAccessor;
 import com.atlassian.labs.remoteapps.plugin.RemoteAppAccessorFactory;
-import com.atlassian.labs.remoteapps.plugin.util.uri.Uri;
-import com.atlassian.labs.remoteapps.plugin.util.uri.UriBuilder;
 import com.atlassian.sal.api.user.UserManager;
+import com.atlassian.uri.Uri;
+import com.atlassian.uri.UriBuilder;
 import com.google.common.base.Function;
 import com.google.common.collect.Maps;
 import org.apache.commons.lang.Validate;

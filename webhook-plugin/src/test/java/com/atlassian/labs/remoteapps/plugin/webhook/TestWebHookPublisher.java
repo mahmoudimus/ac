@@ -2,11 +2,11 @@ package com.atlassian.labs.remoteapps.plugin.webhook;
 
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.labs.remoteapps.host.common.service.http.DefaultHttpClient;
-import com.atlassian.labs.remoteapps.plugin.util.uri.Uri;
 import com.atlassian.labs.remoteapps.plugin.webhook.event.WebHookPublishQueueFullEvent;
 import com.atlassian.labs.remoteapps.spi.webhook.EventMatcher;
 import com.atlassian.labs.remoteapps.spi.webhook.PluginUriResolver;
 import com.atlassian.sal.api.user.UserManager;
+import com.atlassian.uri.Uri;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

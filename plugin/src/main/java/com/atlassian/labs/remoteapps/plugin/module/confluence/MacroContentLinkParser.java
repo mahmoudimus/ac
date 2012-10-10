@@ -2,8 +2,8 @@ package com.atlassian.labs.remoteapps.plugin.module.confluence;
 
 import com.atlassian.confluence.setup.settings.SettingsManager;
 import com.atlassian.labs.remoteapps.plugin.RemoteAppAccessor;
-import com.atlassian.streams.api.common.uri.Uri;
-import com.atlassian.streams.api.common.uri.UriBuilder;
+import com.atlassian.uri.Uri;
+import com.atlassian.uri.UriBuilder;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -11,8 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
-import static com.atlassian.labs.remoteapps.plugin.module.util.redirect.RedirectServlet
-        .getOAuthRedirectUrl;
+import static com.atlassian.labs.remoteapps.plugin.module.util.redirect.RedirectServlet.*;
 
 /**
  *

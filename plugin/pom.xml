@@ -26,9 +26,8 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>remoteapps-util-uri</artifactId>
-            <version>${project.version}</version>
+            <groupId>com.atlassian.uri</groupId>
+            <artifactId>atlassian-uri</artifactId>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>

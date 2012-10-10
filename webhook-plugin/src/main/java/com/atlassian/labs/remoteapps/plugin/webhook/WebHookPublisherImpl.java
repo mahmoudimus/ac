@@ -2,13 +2,13 @@ package com.atlassian.labs.remoteapps.plugin.webhook;
 
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.labs.remoteapps.api.service.http.HttpClient;
-import com.atlassian.labs.remoteapps.plugin.util.uri.Uri;
-import com.atlassian.labs.remoteapps.plugin.util.uri.UriBuilder;
 import com.atlassian.labs.remoteapps.plugin.webhook.event.WebHookPublishQueueFullEvent;
 import com.atlassian.labs.remoteapps.spi.webhook.EventMatcher;
 import com.atlassian.labs.remoteapps.spi.webhook.EventSerializer;
 import com.atlassian.labs.remoteapps.spi.webhook.PluginUriResolver;
 import com.atlassian.sal.api.user.UserManager;
+import com.atlassian.uri.Uri;
+import com.atlassian.uri.UriBuilder;
 import com.google.common.base.Supplier;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;

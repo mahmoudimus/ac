@@ -6,9 +6,9 @@ import com.atlassian.labs.remoteapps.host.common.service.http.HttpRequestFailedE
 import com.atlassian.labs.remoteapps.host.common.service.http.RequestKiller;
 import com.atlassian.labs.remoteapps.plugin.ContentRetrievalException;
 import com.atlassian.labs.remoteapps.plugin.RetrievalTimeoutException;
-import com.atlassian.labs.remoteapps.plugin.util.uri.Uri;
-import com.atlassian.labs.remoteapps.plugin.util.uri.UriBuilder;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
+import com.atlassian.uri.Uri;
+import com.atlassian.uri.UriBuilder;
 import com.atlassian.util.concurrent.ThreadFactories;
 import com.google.common.base.Function;
 import com.google.common.collect.Maps;
