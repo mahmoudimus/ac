@@ -131,6 +131,7 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>remotable-plugins-webhook-plugin</artifactId>
             <version>${project.version}</version>
+            <type>atlassian-plugin</type>
             <scope>provided</scope>
         </dependency>
         <dependency>

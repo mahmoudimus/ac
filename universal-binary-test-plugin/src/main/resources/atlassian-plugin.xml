@@ -1,4 +1,4 @@
-<atlassian-plugin key="sample-ub-java" name="${project.name}" plugins-version="2">
+<atlassian-plugin key="sample-ub-java" name="Sample UB Plugin" plugins-version="2">
     <plugin-info>
         <version>${project.version}</version>
         <permissions>
