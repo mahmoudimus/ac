@@ -28,7 +28,7 @@ final class WrappingResponsePromise extends WrappingBaseResponsePromise<Response
                 callback.apply(new UnexpectedResponseException(response));
             }
         });
-        onFailure(callback);
+        fail(callback);
         return this;
     }
 

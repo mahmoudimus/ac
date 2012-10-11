@@ -19,7 +19,7 @@ package com.atlassian.plugin.remotable.host.common.service.http;
  * under the License.
  */
 
-import com.atlassian.plugin.remotable.api.Deferred;
+import com.atlassian.util.concurrent.Deferred;
 import com.atlassian.util.concurrent.Promise;
 import com.atlassian.xmlrpc.ServiceBean;
 import com.atlassian.xmlrpc.ServiceBeanField;

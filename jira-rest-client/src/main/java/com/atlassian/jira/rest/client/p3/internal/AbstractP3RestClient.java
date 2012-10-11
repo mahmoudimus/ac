@@ -6,11 +6,10 @@ import com.atlassian.jira.rest.client.internal.json.JsonObjectParser;
 import com.atlassian.jira.rest.client.internal.json.JsonParseUtil;
 import com.atlassian.jira.rest.client.internal.json.JsonParser;
 import com.atlassian.jira.rest.client.internal.json.gen.JsonGenerator;
-import com.atlassian.plugin.remotable.api.Deferred;
-import com.atlassian.plugin.remotable.api.Deferreds;
 import com.atlassian.plugin.remotable.api.service.http.HostHttpClient;
 import com.atlassian.plugin.remotable.api.service.http.Response;
 import com.atlassian.plugin.remotable.api.service.http.ResponsePromise;
+import com.atlassian.util.concurrent.Deferred;
 import com.atlassian.util.concurrent.Effect;
 import com.atlassian.util.concurrent.Promise;
 import org.codehaus.jettison.json.JSONArray;
@@ -22,6 +21,8 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.Callable;
+
+import static com.atlassian.util.concurrent.Promises.*;
 
 public abstract class AbstractP3RestClient
 {
@@ -101,7 +102,7 @@ public abstract class AbstractP3RestClient
                 .on(404, notFoundCallback)
                 .created(successCallback)
                 .others(newErrorCallback(deferred))
-                .onFailure(Deferreds.reject(deferred));
+                .fail(reject(deferred));
         return deferred.promise();
     }
 
@@ -130,7 +131,7 @@ public abstract class AbstractP3RestClient
             }
         })
         .others(newErrorCallback(deferred))
-        .onFailure(Deferreds.reject(deferred));
+        .fail(reject(deferred));
         return deferred.promise();
 	}
 

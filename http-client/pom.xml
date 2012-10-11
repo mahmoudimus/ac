@@ -15,9 +15,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.atlassian.plugins</groupId>
-            <artifactId>remotable-plugins-util-concurrent</artifactId>
-            <version>${project.version}</version>
+            <groupId>com.atlassian.util.concurrent</groupId>
+            <artifactId>atlassian-util-concurrent</artifactId>
         </dependency>
         <dependency>
             <groupId>com.atlassian.event</groupId>

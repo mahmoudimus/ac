@@ -91,7 +91,7 @@ public class DynamicDescriptorRegistration
                     {
                         return "Waiting for module descriptors: " + requiredKeys;
                     }
-                }).onSuccess(new Effect<Map<ModuleDescriptorFactory, ModuleDescriptorFactory>>()
+                }).done(new Effect<Map<ModuleDescriptorFactory, ModuleDescriptorFactory>>()
                     {
                         Map<String,ModuleDescriptorFactory> factoriesToMap(Iterable<ModuleDescriptorFactory> factories)
                         {
@@ -116,7 +116,7 @@ public class DynamicDescriptorRegistration
                             callback.onSuccess(factoriesToMap(value.keySet()));
                         }
                     })
-                .onFailure(new Effect<Throwable>()
+                .fail(new Effect<Throwable>()
                 {
                     @Override
                     public void apply(Throwable value)

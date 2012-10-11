@@ -19,7 +19,6 @@ package com.atlassian.plugin.remotable.host.common.service.confluence;
  * under the License.
  */
 
-import com.atlassian.plugin.remotable.api.Deferred;
 import com.atlassian.plugin.remotable.api.service.RequestContext;
 import com.atlassian.plugin.remotable.api.service.http.*;
 import com.atlassian.plugin.remotable.api.service.http.Response;
@@ -28,6 +27,7 @@ import com.atlassian.plugin.remotable.spi.PermissionDeniedException;
 import com.atlassian.plugin.remotable.spi.util.RemoteName;
 import com.atlassian.plugin.remotable.spi.util.RequirePermission;
 import com.atlassian.plugin.util.ChainingClassLoader;
+import com.atlassian.util.concurrent.Deferred;
 import com.atlassian.util.concurrent.Effect;
 import com.atlassian.util.concurrent.Promise;
 import com.google.common.base.Function;
@@ -242,7 +242,7 @@ public final class ClientInvocationHandler implements InvocationHandler
                             {
                                 deferred.reject(new UnexpectedResponseException(value));
                             }
-                        }).onFailure(new Effect<Throwable>()
+                        }).fail(new Effect<Throwable>()
                         {
                             @Override
                             public void apply(Throwable value)

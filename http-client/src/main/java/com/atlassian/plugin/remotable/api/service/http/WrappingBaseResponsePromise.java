@@ -30,7 +30,7 @@ abstract class WrappingBaseResponsePromise<V> extends ForwardingListenableFuture
     public final BaseResponsePromise<V> on(int statusCode, Effect<V> callback)
     {
         statuses.add(statusCode);
-        onSuccess(newStatusSelector(statusCode, callback));
+        done(newStatusSelector(statusCode, callback));
         return this;
     }
 
@@ -149,14 +149,14 @@ abstract class WrappingBaseResponsePromise<V> extends ForwardingListenableFuture
     {
         MultiRange multi = new MultiRange(new Range(100, 200), new Range(300, 600));
         statusSets.add(multi);
-        onSuccess(newStatusSetSelector(multi, callback));
+        done(newStatusSetSelector(multi, callback));
         return this;
     }
 
     @Override
     public final BaseResponsePromise<V> others(Effect<V> callback)
     {
-        onSuccess(newOthersSelector(statuses, statusSets, callback));
+        done(newOthersSelector(statuses, statusSets, callback));
         return this;
     }
 
@@ -167,16 +167,16 @@ abstract class WrappingBaseResponsePromise<V> extends ForwardingListenableFuture
     }
 
     @Override
-    public final BaseResponsePromise<V> onSuccess(Effect<V> callback)
+    public final BaseResponsePromise<V> done(Effect<V> callback)
     {
-        delegatePromise().onSuccess(callback);
+        delegatePromise().done(callback);
         return this;
     }
 
     @Override
-    public final BaseResponsePromise<V> onFailure(Effect<Throwable> callback)
+    public final BaseResponsePromise<V> fail(Effect<Throwable> callback)
     {
-        delegatePromise().onFailure(callback);
+        delegatePromise().fail(callback);
         return this;
     }
 
@@ -214,7 +214,7 @@ abstract class WrappingBaseResponsePromise<V> extends ForwardingListenableFuture
     {
         Range range = new Range(lower, upper);
         statusSets.add(range);
-        onSuccess(newStatusSetSelector(range, callback));
+        done(newStatusSetSelector(range, callback));
         return this;
     }
 

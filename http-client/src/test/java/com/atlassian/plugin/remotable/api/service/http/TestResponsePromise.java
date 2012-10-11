@@ -90,9 +90,9 @@ public class TestResponsePromise
         Effect<Throwable> unexpectedFail = mockErrorCallback();
 
         newRequest(200).get()
-            .onSuccess(expected)
+            .done(expected)
             .others(expected)
-            .onFailure(unexpectedFail);
+            .fail(unexpectedFail);
 
         verify(expected, times(2)).apply(expectedCaptor.capture());
         assertEquals(200, expectedCaptor.getValue().getStatusCode());
@@ -108,10 +108,10 @@ public class TestResponsePromise
         Effect<Throwable> unexpectedFail = mockErrorCallback();
 
         newRequest(200).get()
-            .onSuccess(expected)
+            .done(expected)
             .ok(expected)
             .others(unexpected)
-            .onFailure(unexpectedFail);
+            .fail(unexpectedFail);
 
         verify(expected, times(2)).apply(expectedCaptor.capture());
         assertEquals(200, expectedCaptor.getValue().getStatusCode());
@@ -128,10 +128,10 @@ public class TestResponsePromise
         Effect<Throwable> unexpectedFail = mockErrorCallback();
 
         newRequest(201).get()
-            .onSuccess(expected)
+            .done(expected)
             .ok(unexpected)
             .others(expected)
-            .onFailure(unexpectedFail);
+            .fail(unexpectedFail);
 
         verify(expected, times(2)).apply(expectedCaptor.capture());
         assertEquals(201, expectedCaptor.getValue().getStatusCode());
@@ -150,10 +150,10 @@ public class TestResponsePromise
         Effect<Throwable> unexpectedFail = mockErrorCallback();
 
         newRequest(201).get()
-            .onSuccess(expected)
+            .done(expected)
             .ok(unexpected)
             .otherwise(expectedFail)
-            .onFailure(unexpectedFail);
+            .fail(unexpectedFail);
 
         verify(expected).apply(expectedCaptor.capture());
         assertEquals(201, expectedCaptor.getValue().getStatusCode());
@@ -172,10 +172,10 @@ public class TestResponsePromise
         ArgumentCaptor<Throwable> expectedFailCaptor = ArgumentCaptor.forClass(Throwable.class);
 
         newFailRequest().get()
-            .onSuccess(unexpected)
+            .done(unexpected)
             .ok(unexpected)
             .otherwise(expectedFail)
-            .onFailure(expectedFail);
+            .fail(expectedFail);
 
         verify(unexpected, never()).apply((Response) anyObject());
         verify(expectedFail, times(2)).apply(expectedFailCaptor.capture());
@@ -192,10 +192,10 @@ public class TestResponsePromise
         Effect<Throwable> unexpectedFail = mockErrorCallback();
 
         newRequest(200).get()
-            .onSuccess(expected)
+            .done(expected)
             .ok(expected)
             .otherwise(unexpectedFail)
-            .onFailure(unexpectedFail);
+            .fail(unexpectedFail);
 
         verify(expected, times(2)).apply(expectedCaptor.capture());
         assertEquals(200, expectedCaptor.getValue().getStatusCode());

@@ -213,7 +213,7 @@ public interface BaseResponsePromise<V> extends Promise<V>
      * @return This instance for chaining
      */
     @Override
-    BaseResponsePromise<V> onSuccess(Effect<V> callback);
+    BaseResponsePromise<V> done(Effect<V> callback);
 
     // Exception Selectors
 
@@ -224,7 +224,7 @@ public interface BaseResponsePromise<V> extends Promise<V>
      * @return This instance for chaining
      */
     @Override
-    BaseResponsePromise<V> onFailure(Effect<Throwable> callback);
+    BaseResponsePromise<V> fail(Effect<Throwable> callback);
 
     // Universal Selectors
 

@@ -29,7 +29,7 @@ final class WrappingResponsesPromise extends WrappingBaseResponsePromise<List<Re
                 callback.apply(new UnexpectedResponsesException(responses));
             }
         });
-        onFailure(callback);
+        fail(callback);
         return this;
     }
 
