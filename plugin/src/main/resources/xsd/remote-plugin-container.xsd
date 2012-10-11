@@ -2,10 +2,19 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
 
     <xs:include schemaLocation="common.xsd" />
-    <xs:include schemaLocation="oauth.xsd"/>
+
+    <xs:complexType name="OauthType">
+        <xs:sequence>
+            <xs:element name="public-key" type="xs:string" maxOccurs="1" minOccurs="0" />
+        </xs:sequence>
+        <xs:attribute name="callback" type="RelativeUrlType" />
+        <xs:attribute name="request-token-url" type="RelativeUrlType" />
+        <xs:attribute name="access-token-url" type="RelativeUrlType" />
+        <xs:attribute name="authorize-url" type="RelativeUrlType" />
+    </xs:complexType>
 
     <xs:complexType name="RemotePluginContainerType">
-        <xs:choice minOccurs="1" maxOccurs="unbounded">
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
             <xs:element name="oauth" type="OauthType" maxOccurs="1" />
         </xs:choice>
         <xs:attribute name="key" type="KeyType" use="required" />

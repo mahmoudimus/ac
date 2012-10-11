@@ -1,6 +1,6 @@
 package it;
 
-import com.atlassian.labs.remoteapps.test.*;
+import com.atlassian.plugin.remotable.test.*;
 import com.atlassian.pageobjects.page.AdminHomePage;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
@@ -9,53 +9,53 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class TestPageModules extends AbstractRemoteAppTest
+public class TestPageModules extends AbstractRemotablePluginTest
 {
     @Test
 	public void testMyGeneralLoaded()
 	{
         product.visit(LoginPage.class).login("betty", "betty", HomePage.class);
-        RemoteAppAwarePage page = product.getPageBinder().bind(GeneralPage.class, "remoteAppGeneral",
-                                                               "Remote App app1 General Link");
-        assertTrue(page.isRemoteAppLinkPresent());
-        RemoteAppTestPage remoteAppTest = page.clickRemoteAppLink();
-        assertTrue(remoteAppTest.getTitle().contains("Remote App app1 General"));
-        assertFalse(remoteAppTest.getTitle().contains("Remote App app1 General Link"));
-        assertEquals("Success", remoteAppTest.getMessage());
-        assertEquals(OAuthUtils.getConsumerKey(), remoteAppTest.getConsumerKey());
-        assertEquals("Betty Admin", remoteAppTest.getFullName());
-        assertEquals("betty", remoteAppTest.getUserId());
+        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "remotePluginGeneral",
+                                                               "Remotable Plugin app1 General Link");
+        assertTrue(page.isRemotePluginLinkPresent());
+        RemotePluginTestPage remotePluginTest = page.clickRemotePluginLink();
+        assertTrue(remotePluginTest.getTitle().contains("Remotable Plugin app1 General"));
+        assertFalse(remotePluginTest.getTitle().contains("Remotable Plugin app1 General Link"));
+        assertEquals("Success", remotePluginTest.getMessage());
+        assertEquals(OAuthUtils.getConsumerKey(), remotePluginTest.getConsumerKey());
+        assertEquals("Betty Admin", remotePluginTest.getFullName());
+        assertEquals("betty", remotePluginTest.getUserId());
 
         // basic tests of the HostHttpClient API
-        assertEquals("200", remoteAppTest.getServerHttpStatus());
-        String statusText = remoteAppTest.getServerHttpStatusText();
+        assertEquals("200", remotePluginTest.getServerHttpStatus());
+        String statusText = remotePluginTest.getServerHttpStatusText();
         assertTrue("OK".equals(statusText));
-        String contentType = remoteAppTest.getServerHttpContentType();
+        String contentType = remotePluginTest.getServerHttpContentType();
         assertTrue(contentType != null && contentType.startsWith("text/plain"));
-        assertEquals("betty", remoteAppTest.getServerHttpEntity());
+        assertEquals("betty", remotePluginTest.getServerHttpEntity());
 
         // basic tests of the RA.request API
-        assertEquals("200", remoteAppTest.getClientHttpStatus());
-        statusText = remoteAppTest.getClientHttpStatusText();
+        assertEquals("200", remotePluginTest.getClientHttpStatus());
+        statusText = remotePluginTest.getClientHttpStatusText();
         assertTrue("OK".equals(statusText) || "success".equals(statusText));
-        contentType = remoteAppTest.getClientHttpContentType();
+        contentType = remotePluginTest.getClientHttpContentType();
         assertTrue(contentType != null && contentType.startsWith("text/plain"));
-        assertEquals("betty", remoteAppTest.getClientHttpData());
-        assertEquals("betty", remoteAppTest.getClientHttpResponseText());
+        assertEquals("betty", remotePluginTest.getClientHttpData());
+        assertEquals("betty", remotePluginTest.getClientHttpResponseText());
     }
 
     @Test
     public void testLoadGeneralDialog()
     {
         product.visit(LoginPage.class).login("betty", "betty", HomePage.class);
-        RemoteAppAwarePage page = product.getPageBinder().bind(GeneralPage.class, "remoteAppDialog",
-                "Remote App app1 Dialog");
-        assertTrue(page.isRemoteAppLinkPresent());
-        RemoteAppTestPage remoteAppTest = page.clickRemoteAppLink();
-        assertEquals("Betty Admin", remoteAppTest.getFullName());
+        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "remotePluginDialog",
+                "Remotable Plugin app1 Dialog");
+        assertTrue(page.isRemotePluginLinkPresent());
+        RemotePluginTestPage remotePluginTest = page.clickRemotePluginLink();
+        assertEquals("Betty Admin", remotePluginTest.getFullName());
 
         // Exercise the dialog's submit button.
-        RemoteAppDialog dialog = product.getPageBinder().bind(RemoteAppDialog.class, remoteAppTest);
+        RemotePluginDialog dialog = product.getPageBinder().bind(RemotePluginDialog.class, remotePluginTest);
         assertFalse(dialog.wasSubmitted());
         assertEquals(false, dialog.submit());
         assertTrue(dialog.wasSubmitted());
@@ -67,7 +67,7 @@ public class TestPageModules extends AbstractRemoteAppTest
     {
         product.visit(LoginPage.class).login("barney", "barney", AdminHomePage.class);
         AccessDeniedIFramePage page = product.getPageBinder().bind(AccessDeniedIFramePage.class,
-                "app1", "remoteAppAdmin");
+                "app1", "remotePluginAdmin");
         assertFalse(page.isIframeAvailable());
     }
 
@@ -78,7 +78,7 @@ public class TestPageModules extends AbstractRemoteAppTest
         product.visit(LoginPage.class).login("barney", "barney", HomePage.class);
         GeneralPage page = product.getPageBinder().bind(GeneralPage.class, "onlyBetty",
                 "Only Betty");
-        assertFalse(page.isRemoteAppLinkPresent());
+        assertFalse(page.isRemotePluginLinkPresent());
     }
 
     @Test
@@ -87,21 +87,21 @@ public class TestPageModules extends AbstractRemoteAppTest
         product.visit(LoginPage.class).login("betty", "betty", HomePage.class);
         GeneralPage page = product.getPageBinder().bind(GeneralPage.class, "onlyBetty",
                 "Only Betty");
-        RemoteAppTestPage remoteAppTest = page.clickRemoteAppLink();
-        assertTrue(remoteAppTest.getTitle().contains("Only Betty"));
+        RemotePluginTestPage remotePluginTest = page.clickRemotePluginLink();
+        assertTrue(remotePluginTest.getTitle().contains("Only Betty"));
     }
 
     @Test
     public void testConfigurePage() throws Exception
     {
-        RemoteAppRunner runner = new RemoteAppRunner(product.getProductInstance().getBaseUrl(),
+        RemotePluginRunner runner = new RemotePluginRunner(product.getProductInstance().getBaseUrl(),
                 "configurePage")
                 .addConfigurePage("page", "Page", "/page", "hello-world-page.mu")
                 .start();
 
         long loadTime = product.visit(LoginPage.class).login("betty", "betty",
                 PluginManagerPage.class)
-            .configurePlugin("configurePage", "page", RemoteAppTestPage.class)
+            .configurePlugin("configurePage", "page", RemotePluginTestPage.class)
             .getLoadTime();
 
         assertTrue(loadTime > 0);

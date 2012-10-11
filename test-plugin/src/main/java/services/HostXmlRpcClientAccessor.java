@@ -1,7 +1,7 @@
 package services;
 
 
-import com.atlassian.labs.remoteapps.api.service.http.HostXmlRpcClient;
+import com.atlassian.plugin.remotable.api.service.http.HostXmlRpcClient;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;

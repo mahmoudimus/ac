@@ -5,7 +5,7 @@ import com.atlassian.jira.rest.client.p3.JiraUserClient;
 import com.atlassian.jira.rpc.soap.client.JiraSoapService;
 import com.atlassian.jira.rpc.soap.client.JiraSoapServiceServiceLocator;
 import com.atlassian.jira.rpc.soap.client.RemoteUser;
-import com.atlassian.labs.remoteapps.api.service.SignedRequestHandler;
+import com.atlassian.plugin.remotable.api.service.SignedRequestHandler;
 import org.apache.axis.client.Stub;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.commons.io.IOUtils;

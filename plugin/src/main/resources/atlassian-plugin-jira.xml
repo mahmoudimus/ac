@@ -1,37 +1,29 @@
 <application key="jira">
-    <component key="jiraProductAccessor" class="com.atlassian.labs.remoteapps.plugin.product.jira.JiraProductAccessor"/>
+    <component key="jiraProductAccessor" class="com.atlassian.plugin.remotable.plugin.product.jira.JiraProductAccessor"/>
 
     <web-item key="general-dropdown-item" section="system.top.navigation.bar" weight="100">
-        <label>Remote Apps</label>
+        <label>Remote Plugins</label>
         <link linkId="general_dropdown_linkId"/>
-        <condition class="com.atlassian.labs.remoteapps.plugin.module.jira.HasGeneralPagesCondition" />
+        <condition class="com.atlassian.plugin.remotable.plugin.module.jira.HasGeneralPagesCondition" />
     </web-item>
 
-    <web-section key="remoteapps.general" location="general_dropdown_linkId">
+    <web-section key="remotable.plugins.general" location="general_dropdown_linkId">
     </web-section>
-
-    <!-- remote module generators -->
-
-    <component key="issue-panel-page-generator" class="com.atlassian.labs.remoteapps.plugin.module.jira.issuepanel.ViewIssuePanelModuleGenerator" />
-    <component key="issue-tab-page-generator" class="com.atlassian.labs.remoteapps.plugin.module.jira.issuetab.IssueTabPageModuleGenerator" />
-    <component key="project-tab-page-generator" class="com.atlassian.labs.remoteapps.plugin.module.jira.projecttab.ProjectTabModuleGenerator" />
-    <component key="profile-page-generator" class="com.atlassian.labs.remoteapps.plugin.module.page.jira.JiraProfileTabModuleGenerator" />
-    <component key="search-request-view-page-generator" class="com.atlassian.labs.remoteapps.plugin.module.jira.searchrequestview.SearchRequestViewModuleGenerator" />
 
     <!-- api scopes -->
     <plugin-permission key="read_users_and_groups" name="Read Users and Groups"
-        class="com.atlassian.labs.remoteapps.plugin.product.jira.JiraReadUsersAndGroupsScope">
+        class="com.atlassian.plugin.remotable.plugin.product.jira.JiraReadUsersAndGroupsScope">
         <description>View users and groups</description>
     </plugin-permission>
     <plugin-permission key="browse_projects" name="Browse Projects"
-        class="com.atlassian.labs.remoteapps.plugin.product.jira.BrowseProjectsScope">
+        class="com.atlassian.plugin.remotable.plugin.product.jira.BrowseProjectsScope">
         <description>
             Permission to browse projects, search issues, and view individual issues (except issues that have been
             restricted via Issue Security)
         </description>
     </plugin-permission>
     <plugin-permission key="create_issues" name="Create Issues"
-        class="com.atlassian.labs.remoteapps.plugin.product.jira.JiraCreateIssuesScope">
+        class="com.atlassian.plugin.remotable.plugin.product.jira.JiraCreateIssuesScope">
         <description>
             Permission to create issues in the project. (Note that the Create Attachments
             permission is required in order to create attachments.) Includes the ability to
@@ -39,7 +31,7 @@
         </description>
     </plugin-permission>
     <plugin-permission key="edit_issues" name="Edit Issues"
-        class="com.atlassian.labs.remoteapps.plugin.product.jira.JiraEditIssuesScope">
+        class="com.atlassian.plugin.remotable.plugin.product.jira.JiraEditIssuesScope">
         <description>
             Permission to edit issues (excluding the  'Due Date' field - see the Schedule
             Issues permission). Includes the ability to convert issues to sub-tasks and vice
@@ -48,7 +40,7 @@
         </description>
     </plugin-permission>
     <plugin-permission key="resolve_issues" name="Resolve Issues"
-        class="com.atlassian.labs.remoteapps.plugin.product.jira.JiraResolveIssuesScope">
+        class="com.atlassian.plugin.remotable.plugin.product.jira.JiraResolveIssuesScope">
         <description>
             Permission to resolve and reopen issues. This also includes the ability to set
             the 'Fix For version' field for issues. Also see the Close Issues permission.
@@ -56,26 +48,26 @@
     </plugin-permission>
 
     <component key="jiraWebHookProvider"
-               interface="com.atlassian.labs.remoteapps.spi.webhook.WebHookProvider" public="true"
-               class="com.atlassian.labs.remoteapps.plugin.product.jira.JiraWebHookProvider" />
+               interface="com.atlassian.plugin.remotable.spi.webhook.WebHookProvider" public="true"
+               class="com.atlassian.plugin.remotable.plugin.product.jira.JiraWebHookProvider" />
 
-    <component key="EventSerializerFactory" class="com.atlassian.labs.remoteapps.plugin.product.jira.webhook.JiraEventSerializerFactory" />
+    <component key="EventSerializerFactory" class="com.atlassian.plugin.remotable.plugin.product.jira.webhook.JiraEventSerializerFactory" />
 
-    <component key="WebSudoElevator" class="com.atlassian.labs.remoteapps.plugin.product.jira.JiraWebSudoElevator" />
+    <component key="WebSudoElevator" class="com.atlassian.plugin.remotable.plugin.product.jira.JiraWebSudoElevator" />
 
-    <component key="host" class="com.atlassian.labs.remoteapps.plugin.module.ServletContextThreadLocalIFrameHost" />
-    <component key="restAccessor" class="com.atlassian.labs.remoteapps.plugin.product.jira.JiraRestBeanMarshaler" />
+    <component key="host" class="com.atlassian.plugin.remotable.plugin.module.ServletContextThreadLocalIFrameHost" />
+    <component key="restAccessor" class="com.atlassian.plugin.remotable.plugin.product.jira.JiraRestBeanMarshaler" />
 
-    <rest key="rest" path="/remoteapps" version="1">
+    <rest key="rest" path="/remotable-plugins" version="1">
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>INCLUDE</dispatcher>
-        <package>com.atlassian.labs.remoteapps.plugin.rest</package>
+        <package>com.atlassian.plugin.remotable.plugin.rest</package>
     </rest>
 
     <!-- Handles loading big pipe resources because web items in jira
         can't contribute web resources due to how JIRA renders
      -->
-    <jira-footer key="bigPipeFooter" class="com.atlassian.labs.remoteapps.plugin.product.jira.JiraBigPipeFooter" />
+    <jira-footer key="bigPipeFooter" class="com.atlassian.plugin.remotable.plugin.product.jira.JiraBigPipeFooter" />
 
     <component-import key="jiraAuthenticationContext" interface="com.atlassian.jira.security.JiraAuthenticationContext" />
     <component-import key="jiraUserManager" interface="com.atlassian.jira.user.util.UserManager" />
@@ -87,30 +79,30 @@
     <component-import key="jiraBaseUrls" interface="com.atlassian.jira.issue.fields.rest.json.beans.JiraBaseUrls" />
 
     <!-- plugin points -->
-    <described-module-type key="profile-page" name="User Profile Page" class="com.atlassian.labs.remoteapps.plugin.module.page.jira.JiraProfileTabModuleDescriptor">
+    <described-module-type key="profile-page" name="User Profile Page" class="com.atlassian.plugin.remotable.plugin.module.page.jira.JiraProfileTabModuleDescriptor">
         <description>A user profile page decorated as a user profile tab</description>
     </described-module-type>
 
-    <described-module-type key="remote-search-request-view" class="com.atlassian.labs.remoteapps.plugin.module.jira.searchrequestview.RemoteSearchRequestViewModuleDescriptor">
+    <described-module-type key="remote-search-request-view" class="com.atlassian.plugin.remotable.plugin.module.jira.searchrequestview.RemoteSearchRequestViewModuleDescriptor">
         <description>
             A search request view that redirects to the url with found issue keys as the
             'issues' query parameter
         </description>
     </described-module-type>
 
-    <described-module-type key="project-tab-page" class="com.atlassian.labs.remoteapps.plugin.module.jira.projecttab.ProjectTabPageModuleDescriptor">
+    <described-module-type key="project-tab-page" class="com.atlassian.plugin.remotable.plugin.module.jira.projecttab.ProjectTabPageModuleDescriptor">
         <description>
             A remote page decorated as its own JIRA project tab
         </description>
     </described-module-type>
 
-    <described-module-type key="issue-tab-page" class="com.atlassian.labs.remoteapps.plugin.module.jira.issuetab.IssueTabPageModuleDescriptor">
+    <described-module-type key="issue-tab-page" class="com.atlassian.plugin.remotable.plugin.module.jira.issuetab.IssueTabPageModuleDescriptor">
         <description>
             A remote page decorated as its own JIRA issue tab but not included in All tab as it has no individual actions
         </description>
     </described-module-type>
 
-    <described-module-type key="issue-panel-page" class="com.atlassian.labs.remoteapps.plugin.module.jira.issuepanel.IssuePanelPageModuleDescriptor">
+    <described-module-type key="issue-panel-page" class="com.atlassian.plugin.remotable.plugin.module.jira.issuepanel.IssuePanelPageModuleDescriptor">
         <description>
             A remote page decorated as a web panel on the view issue page
         </description>
@@ -118,25 +110,25 @@
 
     <!-- JIRA services -->
     <component key="jiraComponentClient" interface="com.atlassian.jira.rest.client.p3.JiraComponentClient"
-               class="com.atlassian.labs.remoteapps.host.common.service.jira.JiraComponentClientServiceFactory"
+               class="com.atlassian.plugin.remotable.host.common.service.jira.JiraComponentClientServiceFactory"
                public="true"/>
     <component key="jiraProjectClient" interface="com.atlassian.jira.rest.client.p3.JiraProjectClient"
-               class="com.atlassian.labs.remoteapps.host.common.service.jira.JiraProjectClientServiceFactory"
+               class="com.atlassian.plugin.remotable.host.common.service.jira.JiraProjectClientServiceFactory"
                public="true"/>
     <component key="jiraVersionClient" interface="com.atlassian.jira.rest.client.p3.JiraVersionClient"
-               class="com.atlassian.labs.remoteapps.host.common.service.jira.JiraVersionClientServiceFactory"
+               class="com.atlassian.plugin.remotable.host.common.service.jira.JiraVersionClientServiceFactory"
                public="true"/>
     <component key="jiraUserClient" interface="com.atlassian.jira.rest.client.p3.JiraUserClient"
-               class="com.atlassian.labs.remoteapps.host.common.service.jira.JiraUserClientServiceFactory"
+               class="com.atlassian.plugin.remotable.host.common.service.jira.JiraUserClientServiceFactory"
                public="true"/>
     <component key="jiraMetadataClient" interface="com.atlassian.jira.rest.client.p3.JiraMetadataClient"
-               class="com.atlassian.labs.remoteapps.host.common.service.jira.JiraMetadataClientServiceFactory"
+               class="com.atlassian.plugin.remotable.host.common.service.jira.JiraMetadataClientServiceFactory"
                public="true"/>
     <component key="jiraSearchClient" interface="com.atlassian.jira.rest.client.p3.JiraSearchClient"
-               class="com.atlassian.labs.remoteapps.host.common.service.jira.JiraSearchClientServiceFactory"
+               class="com.atlassian.plugin.remotable.host.common.service.jira.JiraSearchClientServiceFactory"
                public="true"/>
     <component key="jiraIssueClient" interface="com.atlassian.jira.rest.client.p3.JiraIssueClient"
-               class="com.atlassian.labs.remoteapps.host.common.service.jira.JiraIssueClientServiceFactory"
+               class="com.atlassian.plugin.remotable.host.common.service.jira.JiraIssueClientServiceFactory"
                public="true"/>
 </application>
 

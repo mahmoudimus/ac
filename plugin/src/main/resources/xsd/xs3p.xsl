@@ -187,7 +187,7 @@
    <xsl:variable name="ATTR_INDENT">0.5</xsl:variable>
 
    <!-- Title to use if none provided -->
-   <xsl:variable name="DEFAULT_TITLE">Atlassian Remote Apps Schema Documentation</xsl:variable>
+   <xsl:variable name="DEFAULT_TITLE">Atlassian Remotable Plugins Schema Documentation</xsl:variable>
 
    <!-- Prefixes used for anchor names -->
       <!-- Type definitions -->

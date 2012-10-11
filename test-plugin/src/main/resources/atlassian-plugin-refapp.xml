@@ -2,6 +2,6 @@
     <permissions>
     </permissions>
 
-    <webhook key="wh-remote_app_started" event="remote_app_started" url="/webHook/remote_app_started" />
+    <webhook key="wh-plugin_enabled" event="plugin_enabled" url="/webHook/plugin_enabled" />
     <webhook key="wh-server_upgraded" event="server_upgraded" url="/webHook/server_upgraded" />
 </application>

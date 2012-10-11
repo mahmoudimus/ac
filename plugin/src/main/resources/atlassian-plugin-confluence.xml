@@ -1,52 +1,52 @@
 <application key="confluence">
     <component key="confluenceProductAccessor"
-               class="com.atlassian.labs.remoteapps.plugin.product.confluence.ConfluenceProductAccessor"/>
+               class="com.atlassian.plugin.remotable.plugin.product.confluence.ConfluenceProductAccessor"/>
 
     <component-import key="confluenceSettingsManager"
                       interface="com.atlassian.confluence.setup.settings.SettingsManager"/>
     
     <!-- api scopes -->
     <plugin-permission key="read_content" name="Read Content"
-                       class="com.atlassian.labs.remoteapps.plugin.product.confluence.ReadContentScope">
+                       class="com.atlassian.plugin.remotable.plugin.product.confluence.ReadContentScope">
         <description>Read spaces, blogs, and pages and associated metadata</description>
     </plugin-permission>
 
     <plugin-permission key="modify_attachments" name="Modify Attachments"
-            class="com.atlassian.labs.remoteapps.plugin.product.confluence.ModifyAttachmentsScope">
+            class="com.atlassian.plugin.remotable.plugin.product.confluence.ModifyAttachmentsScope">
         <description>Add, remove, or move attachments for pages or blog posts</description>
     </plugin-permission>
 
     <plugin-permission key="read_users_and_groups" name="Read Users and Groups"
-            class="com.atlassian.labs.remoteapps.plugin.product.confluence.ConfluenceReadUsersAndGroupsScope">
+            class="com.atlassian.plugin.remotable.plugin.product.confluence.ConfluenceReadUsersAndGroupsScope">
         <description>View users, users info, and groups</description>
     </plugin-permission>
 
     <plugin-permission key="modify_spaces" name="Modify Spaces"
-            class="com.atlassian.labs.remoteapps.plugin.product.confluence.ModifySpacesScope">
+            class="com.atlassian.plugin.remotable.plugin.product.confluence.ModifySpacesScope">
         <description>Add, edit and remove spaces</description>
     </plugin-permission>
     <plugin-permission key="read_server_information" name="Read Server Information"
-            class="com.atlassian.labs.remoteapps.plugin.product.confluence.ReadServerInformationScope">
+            class="com.atlassian.plugin.remotable.plugin.product.confluence.ReadServerInformationScope">
         <description>View Confluence version number, base URL and build information</description>
     </plugin-permission>
 
     <plugin-permission key="modify_users" name="Modify Users"
-            class="com.atlassian.labs.remoteapps.plugin.product.confluence.ModifyUsersScope">
+            class="com.atlassian.plugin.remotable.plugin.product.confluence.ModifyUsersScope">
         <description>Change existing users' information, including profile pictures.  Cannot change passwords.</description>
     </plugin-permission>
 
     <plugin-permission key="manage_watchers" name="Manage Watchers"
-            class="com.atlassian.labs.remoteapps.plugin.product.confluence.ManageWatchersScope">
+            class="com.atlassian.plugin.remotable.plugin.product.confluence.ManageWatchersScope">
         <description>View space, page and blog post watchers. Add new watchers.</description>
     </plugin-permission>
 
     <plugin-permission key="label_content" name="Label Content"
-            class="com.atlassian.labs.remoteapps.plugin.product.confluence.LabelContentScope">
+            class="com.atlassian.plugin.remotable.plugin.product.confluence.LabelContentScope">
         <description>Add and remove labels from spaces, pages and blog posts</description>
     </plugin-permission>
 
     <plugin-permission key="render_content" name="Render Content"
-            class="com.atlassian.labs.remoteapps.plugin.product.confluence.RenderContentScope">
+            class="com.atlassian.plugin.remotable.plugin.product.confluence.RenderContentScope">
         <description>Convert content into viewable HTML</description>
     </plugin-permission>
 
@@ -55,43 +55,38 @@
     </plugin-permission>
 
     <plugin-permission key="manage_index" name="Manage Content Index"
-            class="com.atlassian.labs.remoteapps.plugin.product.confluence.ManageIndexScope">
+            class="com.atlassian.plugin.remotable.plugin.product.confluence.ManageIndexScope">
         <description>Add, edit and remove pages and blog posts</description>
     </plugin-permission>
 
     <plugin-permission key="modify_anonymous_permissions" name="Modify Anonymous Permissions"
-                       class="com.atlassian.labs.remoteapps.plugin.product.confluence.ManageAnonymousPermissionsScope">
+                       class="com.atlassian.plugin.remotable.plugin.product.confluence.ManageAnonymousPermissionsScope">
         <description>Manage anonymous permissions for the Confluence instance</description>
    </plugin-permission>
 
-    <!-- module types -->
-    <component key="macro" class="com.atlassian.labs.remoteapps.plugin.module.confluence.MacroModuleGenerator"/>
-    <component key="page-macro" class="com.atlassian.labs.remoteapps.plugin.module.confluence.PageMacroModuleGenerator"/>
-    <component key="profile-page-generator" class="com.atlassian.labs.remoteapps.plugin.module.page.ProfilePageModuleGenerator" />
-
-    <web-section key="admin.pages" name="Remote Apps" location="system.admin" weight="100">
-        <label>Remote Apps</label>
+    <web-section key="admin.pages" name="Remotable Plugins" location="system.admin" weight="100">
+        <label>Remote Plugins</label>
     </web-section>
 
-    <web-resource-transformer key="macroVariableTransformer" class="com.atlassian.labs.remoteapps.plugin.module.confluence.MacroVariableInjectorTransformer"/>
+    <web-resource-transformer key="macroVariableTransformer" class="com.atlassian.plugin.remotable.plugin.module.confluence.MacroVariableInjectorTransformer"/>
 
-    <rest key="rest" path="/remoteapps" version="1">
+    <rest key="rest" path="/remotable-plugins" version="1">
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>INCLUDE</dispatcher>
-        <package>com.atlassian.labs.remoteapps.plugin.rest</package>
-        <package>com.atlassian.labs.remoteapps.plugin.product.confluence.rest</package>
+        <package>com.atlassian.plugin.remotable.plugin.rest</package>
+        <package>com.atlassian.plugin.remotable.plugin.product.confluence.rest</package>
     </rest>
 
-    <component key="macroModuleDescriptorCreator" class="com.atlassian.labs.remoteapps.plugin.module.confluence.MacroModuleDescriptorCreator" />
-    <component key="macroContentLinkParser" class="com.atlassian.labs.remoteapps.plugin.module.confluence.MacroContentLinkParser" />
-    <component key="macroContentManager" class="com.atlassian.labs.remoteapps.plugin.module.confluence.MacroContentManager"/>
+    <component key="macroModuleDescriptorCreator" class="com.atlassian.plugin.remotable.plugin.module.confluence.MacroModuleDescriptorCreator" />
+    <component key="macroContentLinkParser" class="com.atlassian.plugin.remotable.plugin.module.confluence.MacroContentLinkParser" />
+    <component key="macroContentManager" class="com.atlassian.plugin.remotable.plugin.module.confluence.MacroContentManager"/>
     <component key="confluenceWebHookProvider"
-               interface="com.atlassian.labs.remoteapps.spi.webhook.WebHookProvider" public="true"
-               class="com.atlassian.labs.remoteapps.plugin.product.confluence.webhook.ConfluenceWebHookProvider" />
-    <component key="EventSerializerFactory" class="com.atlassian.labs.remoteapps.plugin.product.confluence.webhook.ConfluenceEventSerializerFactory" />
-    <component key="WebSudoElevator" class="com.atlassian.labs.remoteapps.plugin.product.confluence.ConfluenceWebSudoElevator" />
+               interface="com.atlassian.plugin.remotable.spi.webhook.WebHookProvider" public="true"
+               class="com.atlassian.plugin.remotable.plugin.product.confluence.webhook.ConfluenceWebHookProvider" />
+    <component key="EventSerializerFactory" class="com.atlassian.plugin.remotable.plugin.product.confluence.webhook.ConfluenceEventSerializerFactory" />
+    <component key="WebSudoElevator" class="com.atlassian.plugin.remotable.plugin.product.confluence.ConfluenceWebSudoElevator" />
 
-    <component key="host" class="com.atlassian.labs.remoteapps.plugin.module.ServletContextThreadLocalIFrameHost" />
+    <component key="host" class="com.atlassian.plugin.remotable.plugin.module.ServletContextThreadLocalIFrameHost" />
 
     <component-import key="bandanaManager" interface="com.atlassian.bandana.BandanaManager" />
     <component-import key="spaceManager" interface="com.atlassian.confluence.spaces.SpaceManager" />
@@ -106,42 +101,42 @@
     <component-import key="taskManager" interface="com.atlassian.core.task.MultiQueueTaskManager" />
 
     <!-- dynamic modules -->
-    <described-module-type key="profile-page" name="User Profile Page" class="com.atlassian.labs.remoteapps.plugin.module.page.ProfilePageModuleDescriptor">
+    <described-module-type key="profile-page" name="User Profile Page" class="com.atlassian.plugin.remotable.plugin.module.page.ProfilePageModuleDescriptor">
         <description>A user profile page decorated as normal page in the user profile area</description>
     </described-module-type>
 
-    <described-module-type key="remote-macro" name="Remote Macro" class="com.atlassian.labs.remoteapps.plugin.module.confluence.RemoteMacroModuleDescriptor">
+    <described-module-type key="remote-macro" name="Remote Macro" class="com.atlassian.plugin.remotable.plugin.module.confluence.RemoteMacroModuleDescriptor">
         <description>A Confluence macro that returns XHTML in the Confluence storage format</description>
     </described-module-type>
 
-    <described-module-type key="macro-page" class="com.atlassian.labs.remoteapps.plugin.module.confluence.MacroPageModuleDescriptor">
+    <described-module-type key="macro-page" class="com.atlassian.plugin.remotable.plugin.module.confluence.MacroPageModuleDescriptor">
         <description>A Confluence macro that loads the remote page as an IFrame</description>
     </described-module-type>
 
     <!-- product services -->
-    <component key="confluencePageClient" interface="com.atlassian.labs.remoteapps.api.service.confluence.ConfluencePageClient"
-               class="com.atlassian.labs.remoteapps.host.common.service.confluence.ConfluencePageClientServiceFactory"
+    <component key="confluencePageClient" interface="com.atlassian.plugin.remotable.api.service.confluence.ConfluencePageClient"
+               class="com.atlassian.plugin.remotable.host.common.service.confluence.ConfluencePageClientServiceFactory"
                public="true" />
 
-    <component key="confluenceSpaceClient" interface="com.atlassian.labs.remoteapps.api.service.confluence.ConfluenceSpaceClient"
-                   class="com.atlassian.labs.remoteapps.host.common.service.confluence.ConfluenceSpaceClientServiceFactory"
+    <component key="confluenceSpaceClient" interface="com.atlassian.plugin.remotable.api.service.confluence.ConfluenceSpaceClient"
+                   class="com.atlassian.plugin.remotable.host.common.service.confluence.ConfluenceSpaceClientServiceFactory"
                    public="true" />
-    <component key="confluenceAttachmentClient" interface="com.atlassian.labs.remoteapps.api.service.confluence.ConfluenceAttachmentClient"
-               class="com.atlassian.labs.remoteapps.host.common.service.confluence.ConfluenceAttachmentClientServiceFactory"
+    <component key="confluenceAttachmentClient" interface="com.atlassian.plugin.remotable.api.service.confluence.ConfluenceAttachmentClient"
+               class="com.atlassian.plugin.remotable.host.common.service.confluence.ConfluenceAttachmentClientServiceFactory"
                public="true" />
-    <component key="confluenceAdminClient" interface="com.atlassian.labs.remoteapps.api.service.confluence.ConfluenceAdminClient"
-               class="com.atlassian.labs.remoteapps.host.common.service.confluence.ConfluenceAdminClientServiceFactory"
+    <component key="confluenceAdminClient" interface="com.atlassian.plugin.remotable.api.service.confluence.ConfluenceAdminClient"
+               class="com.atlassian.plugin.remotable.host.common.service.confluence.ConfluenceAdminClientServiceFactory"
                public="true" />
-    <component key="confluenceLabelClient" interface="com.atlassian.labs.remoteapps.api.service.confluence.ConfluenceLabelClient"
-               class="com.atlassian.labs.remoteapps.host.common.service.confluence.ConfluenceLabelClientServiceFactory"
+    <component key="confluenceLabelClient" interface="com.atlassian.plugin.remotable.api.service.confluence.ConfluenceLabelClient"
+               class="com.atlassian.plugin.remotable.host.common.service.confluence.ConfluenceLabelClientServiceFactory"
                public="true" />
-    <component key="confluenceBlogClient" interface="com.atlassian.labs.remoteapps.api.service.confluence.ConfluenceBlogClient"
-               class="com.atlassian.labs.remoteapps.host.common.service.confluence.ConfluenceBlogClientServiceFactory"
+    <component key="confluenceBlogClient" interface="com.atlassian.plugin.remotable.api.service.confluence.ConfluenceBlogClient"
+               class="com.atlassian.plugin.remotable.host.common.service.confluence.ConfluenceBlogClientServiceFactory"
                public="true" />
-    <component key="confluenceUserClient" interface="com.atlassian.labs.remoteapps.api.service.confluence.ConfluenceUserClient"
-               class="com.atlassian.labs.remoteapps.host.common.service.confluence.ConfluenceUserClientServiceFactory"
+    <component key="confluenceUserClient" interface="com.atlassian.plugin.remotable.api.service.confluence.ConfluenceUserClient"
+               class="com.atlassian.plugin.remotable.host.common.service.confluence.ConfluenceUserClientServiceFactory"
                public="true" />
-    <component key="confluenceNotificationClient" interface="com.atlassian.labs.remoteapps.api.service.confluence.ConfluenceNotificationClient"
-               class="com.atlassian.labs.remoteapps.host.common.service.confluence.ConfluenceNotificationClientServiceFactory"
+    <component key="confluenceNotificationClient" interface="com.atlassian.plugin.remotable.api.service.confluence.ConfluenceNotificationClient"
+               class="com.atlassian.plugin.remotable.host.common.service.confluence.ConfluenceNotificationClientServiceFactory"
                public="true" />
 </application>

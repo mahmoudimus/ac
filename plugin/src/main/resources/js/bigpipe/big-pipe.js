@@ -3,7 +3,7 @@ This code makes a xhr request back to the server before dom ready looking for bi
 replace.
  */
 (function ($, global) {
-  var RemoteApps = global.RemoteApps = global.RemoteApps || {};
+  var RemotablePlugins = global.RemotablePlugins = global.RemotablePlugins || {};
   var contextPath = AJS.contextPath() || AJS.Meta.get("context-path");
   var requestId = $('meta[name="ra-request-id"]').attr("content");
 
@@ -46,7 +46,7 @@ replace.
       AJS.log("Missing request id.  atl.header web panels not supported?");
       return;
     }
-    $.ajax({ url:contextPath + "/rest/remoteapps/latest/bigpipe/request/" + requestId,
+    $.ajax({ url:contextPath + "/rest/remotable-plugins/latest/bigpipe/request/" + requestId,
       success:function (data) {
         if (data.length != 0) {
           $(document).ready(function() {
@@ -64,7 +64,7 @@ replace.
   poll();
   setTimeout(replaceLoadingWithMessage, 1000);
 
-  RemoteApps.BigPipe = {
+  RemotablePlugins.BigPipe = {
     insertContents : insertContents
   }
 })(AJS.$, this);

@@ -1,6 +1,6 @@
 package servlets;
 
-import com.atlassian.labs.remoteapps.api.service.EmailSender;
+import com.atlassian.plugin.remotable.api.service.EmailSender;
 import com.atlassian.mail.Email;
 
 import javax.inject.Inject;

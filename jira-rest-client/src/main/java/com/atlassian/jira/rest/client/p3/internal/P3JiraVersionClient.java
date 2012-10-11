@@ -11,7 +11,7 @@ import com.atlassian.jira.rest.client.internal.json.gen.JsonGenerator;
 import com.atlassian.jira.rest.client.internal.json.gen.VersionInputJsonGenerator;
 import com.atlassian.jira.rest.client.internal.json.gen.VersionPositionInputGenerator;
 import com.atlassian.jira.rest.client.p3.JiraVersionClient;
-import com.atlassian.labs.remoteapps.api.service.http.HostHttpClient;
+import com.atlassian.plugin.remotable.api.service.http.HostHttpClient;
 import com.atlassian.util.concurrent.Promise;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;

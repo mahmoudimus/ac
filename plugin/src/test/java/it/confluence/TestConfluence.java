@@ -1,10 +1,10 @@
 package it.confluence;
 
-import com.atlassian.labs.remoteapps.test.HtmlDumpRule;
-import com.atlassian.labs.remoteapps.test.OAuthUtils;
-import com.atlassian.labs.remoteapps.test.OwnerOfTestedProduct;
-import com.atlassian.labs.remoteapps.test.RemoteAppRunner;
-import com.atlassian.labs.remoteapps.test.confluence.*;
+import com.atlassian.plugin.remotable.test.HtmlDumpRule;
+import com.atlassian.plugin.remotable.test.OAuthUtils;
+import com.atlassian.plugin.remotable.test.OwnerOfTestedProduct;
+import com.atlassian.plugin.remotable.test.RemotePluginRunner;
+import com.atlassian.plugin.remotable.test.confluence.*;
 import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
@@ -23,8 +23,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Map;
 
-import static com.atlassian.labs.remoteapps.test.RemoteAppUtils.clearMacroCaches;
-import static com.atlassian.labs.remoteapps.test.Utils.loadResourceAsString;
+import static com.atlassian.plugin.remotable.test.RemotePluginUtils.clearMacroCaches;
+import static com.atlassian.plugin.remotable.test.Utils.loadResourceAsString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -140,7 +140,7 @@ public class TestConfluence
                 "   <ac:macro ac:name=\"trickle\" />\n" +
                 "</div>");
 
-        RemoteAppRunner runner = new RemoteAppRunner(product.getProductInstance().getBaseUrl(), "trickle")
+        RemotePluginRunner runner = new RemotePluginRunner(product.getProductInstance().getBaseUrl(), "trickle")
                 .addMacro("trickle", "/trickle", new MyTrickleMacroServlet())
                 .start();
 

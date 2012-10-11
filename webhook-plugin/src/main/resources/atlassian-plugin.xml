@@ -6,28 +6,28 @@
     </plugin-info>
 
     <component key="webhookRegistrationManager"
-               interface="com.atlassian.labs.remoteapps.plugin.webhook.WebHookIdsAccessor"
-               class="com.atlassian.labs.remoteapps.plugin.webhook.WebHookRegistrationManager"
+               interface="com.atlassian.plugin.remotable.plugin.webhook.WebHookIdsAccessor"
+               class="com.atlassian.plugin.remotable.plugin.webhook.WebHookRegistrationManager"
                public="true" />
 
     <component key="webhookPublisher"
-               interface="com.atlassian.labs.remoteapps.plugin.webhook.WebHookPublisher"
-               class="com.atlassian.labs.remoteapps.plugin.webhook.WebHookPublisherImpl"
+               interface="com.atlassian.plugin.remotable.plugin.webhook.WebHookPublisher"
+               class="com.atlassian.plugin.remotable.plugin.webhook.WebHookPublisherImpl"
                public="true" />
 
     <component key="pluginUriResolver"
-               class="com.atlassian.labs.remoteapps.plugin.webhook.impl.PluginUriResolverImpl" />
+               class="com.atlassian.plugin.remotable.plugin.webhook.impl.PluginUriResolverImpl" />
 
     <component key="waitableServiceTrackerFactory" class="com.atlassian.osgi.tracker.WaitableServiceTrackerFactory" />
 
     <component key="requestKiller"
-               class="com.atlassian.labs.remoteapps.host.common.service.http.RequestKiller" />
+               class="com.atlassian.plugin.remotable.host.common.service.http.RequestKiller" />
 
-    <component key="httpClient" interface="com.atlassian.labs.remoteapps.api.service.http.HttpClient"
-               class="com.atlassian.labs.remoteapps.host.common.service.http.DefaultHttpClient" />
+    <component key="httpClient" interface="com.atlassian.plugin.remotable.api.service.http.HttpClient"
+               class="com.atlassian.plugin.remotable.host.common.service.http.DefaultHttpClient" />
 
     <component-import key="eventPublisher" interface="com.atlassian.event.api.EventPublisher" />
-    <!--<component-import key="httpClient" interface="com.atlassian.labs.remoteapps.api.service.http.HttpClient" />-->
+    <!--<component-import key="httpClient" interface="com.atlassian.plugin.remotable.api.service.http.HttpClient" />-->
     <component-import key="applicationProperties" interface="com.atlassian.sal.api.ApplicationProperties" />
     <component-import key="userManager" interface="com.atlassian.sal.api.user.UserManager" />
 </atlassian-plugin>

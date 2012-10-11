@@ -5,7 +5,7 @@
         <permission>read_server_information</permission>
     </permissions>
 
-    <remote-macro key="app1-macro" name="app1-macro" title="Remote App app1 Macro" url="/myMacro" icon-url="/public/sandcastles.jpg" output-type="block" body-type="rich-text" featured="true">
+    <remote-macro key="app1-macro" name="app1-macro" title="Remotable Plugin app1 Macro" url="/myMacro" icon-url="/public/sandcastles.jpg" output-type="block" body-type="rich-text" featured="true">
         <description>Example macro</description>
         <category name="development" />
         <macro-editor width="600" height="600" url="/myMacroEditor" />
@@ -19,7 +19,7 @@
         </parameters>
     </remote-macro>
 
-    <remote-macro key="app1-nocache" name="app1-nocache" title="Remote App app1 No Cache Macro" url="/myMacro" icon-url="/public/sandcastles.jpg" output-type="block" body-type="rich-text">
+    <remote-macro key="app1-nocache" name="app1-nocache" title="Remotable Plugin app1 No Cache Macro" url="/myMacro" icon-url="/public/sandcastles.jpg" output-type="block" body-type="rich-text">
         <description>Example macro</description>
         <category name="development" />
         <macro-editor width="600" height="600" url="/myMacroEditor" />
@@ -37,7 +37,7 @@
         </context-parameters>
     </remote-macro>
 
-    <remote-macro key="app1-slow" name="app1-slow" title="Remote App 1 Slow" url="/mySlowMacro" output-type="block" body-type="none">
+    <remote-macro key="app1-slow" name="app1-slow" title="Remotable Plugin 1 Slow" url="/mySlowMacro" output-type="block" body-type="none">
         <description>Slow macro that takes too long to render (for testing)</description>
         <parameters>
             <parameter name="sleep" title="Sleep" type="int" required="false" />
@@ -57,8 +57,7 @@
         <description>Page macro that displays info (for testing)</description>
     </macro-page>
 
-    <webhook key="wh-remote_app_started" event="remote_app_started" url="/webHook/remote_app_started" />
-
+    <webhook key="wh-plugin_enabled" event="plugin_enabled" url="/webHook/plugin_enabled" />
     <webhook key="wh-blog_created" event="blog_created" url="/webHook/blog_created" />
     <webhook key="wh-blog_removed" event="blog_removed" url="/webHook/blog_removed" />
     <webhook key="wh-blog_trashed" event="blog_trashed" url="/webHook/blog_trashed" />

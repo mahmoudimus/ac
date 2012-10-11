@@ -1,24 +1,24 @@
-<atlassian-plugin key="test" name="Remoteapp test plugin" plugins-version="2">
+<atlassian-plugin key="test" name="Remotable test plugin" plugins-version="2">
     <plugin-info>
         <version>1</version>
     </plugin-info>
 
-    <rest key="rest" path="/remoteapptest" version="1">
-        <package>com.atlassian.labs.remoteapps.test.rest</package>
+    <rest key="rest" path="/remoteplugintest" version="1">
+        <package>com.atlassian.plugin.remotable.test.rest</package>
     </rest>
 
     <component-import key="userManager" interface="com.atlassian.sal.api.user.UserManager" />
 
     <plugin-permission key="resttest" name="Rest Test"
-            class="com.atlassian.labs.remoteapps.test.RestTestApiScope">
+            class="com.atlassian.plugin.remotable.test.RestTestApiScope">
         <description>A test resource</description>
     </plugin-permission>
 
     <plugin-permission key="unrequested_scope" name="Unrequested API Scope"
-            class="com.atlassian.labs.remoteapps.test.UnrequestedTestApiScope">
+            class="com.atlassian.plugin.remotable.test.UnrequestedTestApiScope">
         <description>An API Scope that never gets used</description>
     </plugin-permission>
 
     <component-import application="refapp" key="atlassianUserManager" interface="com.atlassian.user.UserManager" />
-    <component application="refapp" key="fixEmail" class="com.atlassian.labs.remoteapps.test.refapp.RefappFixEmailAddresses" />
+    <component application="refapp" key="fixEmail" class="com.atlassian.plugin.remotable.test.refapp.RefappFixEmailAddresses" />
 </atlassian-plugin>

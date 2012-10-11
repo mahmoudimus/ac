@@ -6,7 +6,7 @@ import org.dom4j.Document;
 import java.io.InputStream;
 import java.net.URL;
 
-import static com.atlassian.labs.remoteapps.spi.util.XmlUtils.createSecureSaxReader;
+import static com.atlassian.plugin.remotable.spi.util.XmlUtils.createSecureSaxReader;
 
 public class ClientKeyRetriever
 {

@@ -1,0 +1,12 @@
+<atlassian-plugin key="app" name="Remotable Plugin Test App" plugins-version="2">
+    <plugin-info>
+        <description>This really great app</description>
+        <vendor name="Atlassian" url="http://atlassian.com"/>
+        <version>1</version>
+    </plugin-info>
+
+    <remote-plugin-container key="container" display-url="http://localhost:8000/app"/>
+
+    <general-page key="first" name="First" url="/"/>
+</atlassian-plugin>
+

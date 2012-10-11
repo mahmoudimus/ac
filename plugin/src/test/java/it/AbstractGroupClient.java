@@ -1,7 +1,7 @@
 package it;
 
 import com.atlassian.functest.rest.TestResults;
-import com.atlassian.labs.remoteapps.test.OwnerOfTestedProduct;
+import com.atlassian.plugin.remotable.test.OwnerOfTestedProduct;
 import org.junit.Test;
 
 import javax.ws.rs.core.UriBuilder;

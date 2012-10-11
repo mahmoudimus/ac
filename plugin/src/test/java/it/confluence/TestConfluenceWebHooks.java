@@ -1,16 +1,16 @@
 package it.confluence;
 
-import com.atlassian.labs.remoteapps.test.confluence.ConfluenceOps;
-import com.atlassian.labs.remoteapps.test.confluence.FixedConfluenceTestedProduct;
-import com.atlassian.labs.remoteapps.test.webhook.WebHookBody;
-import com.atlassian.labs.remoteapps.test.webhook.WebHookTester;
-import com.atlassian.labs.remoteapps.test.webhook.WebHookWaiter;
+import com.atlassian.plugin.remotable.test.confluence.ConfluenceOps;
+import com.atlassian.plugin.remotable.test.confluence.FixedConfluenceTestedProduct;
+import com.atlassian.plugin.remotable.test.webhook.WebHookBody;
+import com.atlassian.plugin.remotable.test.webhook.WebHookTester;
+import com.atlassian.plugin.remotable.test.webhook.WebHookWaiter;
 import it.AbstractBrowserlessTest;
 import org.junit.Test;
 
 import java.util.Map;
 
-import static com.atlassian.labs.remoteapps.test.webhook.WebHookTestServlet.runInRunner;
+import static com.atlassian.plugin.remotable.test.webhook.WebHookTestServlet.runInRunner;
 import static org.junit.Assert.assertEquals;
 
 public class TestConfluenceWebHooks extends AbstractBrowserlessTest

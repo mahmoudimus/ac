@@ -2,7 +2,7 @@
 
 <beans:beans xmlns:beans="http://www.springframework.org/schema/beans"
              xmlns:osgi="http://www.springframework.org/schema/osgi"
-             xmlns:remote-apps="http://atlassian.com/schema/spring/remote-apps"
+             xmlns:remotable-plugins="http://atlassian.com/schema/spring/remotable-plugins"
              xmlns:context="http://www.springframework.org/schema/context"
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
 http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd
@@ -10,10 +10,10 @@ http://www.springframework.org/schema/context
            http://www.springframework.org/schema/context/spring-context-2.5.xsd"
              default-autowire="autodetect">
 
-    <remote-apps:bean-scan>
-        <remote-apps:base-package>servlets</remote-apps:base-package>
-        <remote-apps:base-package>services</remote-apps:base-package>
-        <remote-apps:base-package>com.atlassian.labs.remoteapps.kit.servlet</remote-apps:base-package>
-    </remote-apps:bean-scan>
+    <remotable-plugins:bean-scan>
+        <remotable-plugins:base-package>servlets</remotable-plugins:base-package>
+        <remotable-plugins:base-package>services</remotable-plugins:base-package>
+        <remotable-plugins:base-package>com.atlassian.plugin.remotable.kit.servlet</remotable-plugins:base-package>
+    </remotable-plugins:bean-scan>
 
 </beans:beans>

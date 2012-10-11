@@ -2,14 +2,14 @@
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
-        <groupId>com.atlassian.labs</groupId>
-        <artifactId>remoteapps-parent</artifactId>
+        <groupId>com.atlassian.plugins</groupId>
+        <artifactId>remotable-plugins-parent</artifactId>
         <version>${VERSION_NUMBER}</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>remoteapps-test-plugin</artifactId>
-    <name>Atlassian Remote Apps - Test Plugin</name>
+    <artifactId>remotable-plugins-test-plugin</artifactId>
+    <name>Atlassian Remotable Plugins - Test Plugin</name>
     <packaging>atlassian-plugin</packaging>
     <description>
         A test plugin to test basic usage of the available extension points
@@ -24,13 +24,13 @@
 
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>remoteapps-servlet-kit</artifactId>
+            <artifactId>remotable-plugins-servlet-kit</artifactId>
             <version>${project.version}</version>
         </dependency>
 
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>remoteapps-api</artifactId>
+            <artifactId>remotable-plugins-api</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
@@ -94,8 +94,8 @@
         </dependency>
 
         <dependency>
-            <groupId>com.atlassian.labs</groupId>
-            <artifactId>remoteapps-jira-rest-client</artifactId>
+            <groupId>com.atlassian.plugins</groupId>
+            <artifactId>remotable-plugins-jira-rest-client</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>

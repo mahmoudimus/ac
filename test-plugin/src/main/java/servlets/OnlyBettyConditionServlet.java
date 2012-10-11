@@ -1,6 +1,6 @@
 package servlets;
 
-import com.atlassian.labs.remoteapps.api.service.RequestContext;
+import com.atlassian.plugin.remotable.api.service.RequestContext;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;

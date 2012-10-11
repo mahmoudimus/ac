@@ -1,11 +1,11 @@
 package it;
 
-import com.atlassian.labs.remoteapps.api.service.SignedRequestHandler;
-import com.atlassian.labs.remoteapps.spi.Permissions;
-import com.atlassian.labs.remoteapps.test.HttpUtils;
-import com.atlassian.labs.remoteapps.test.MessagePage;
-import com.atlassian.labs.remoteapps.test.RemoteAppRunner;
-import com.atlassian.labs.remoteapps.test.RunnerSignedRequestHandler;
+import com.atlassian.plugin.remotable.api.service.SignedRequestHandler;
+import com.atlassian.plugin.remotable.spi.Permissions;
+import com.atlassian.plugin.remotable.test.HttpUtils;
+import com.atlassian.plugin.remotable.test.MessagePage;
+import com.atlassian.plugin.remotable.test.RemotePluginRunner;
+import com.atlassian.plugin.remotable.test.RunnerSignedRequestHandler;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.google.common.collect.ImmutableMap;
@@ -23,19 +23,19 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 
-import static com.atlassian.labs.remoteapps.test.Utils.createSignedRequestHandler;
+import static com.atlassian.plugin.remotable.test.Utils.createSignedRequestHandler;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class TestAppPermissions extends AbstractRemoteAppTest
+public class TestAppPermissions extends AbstractRemotablePluginTest
 {
 
     @Test
     public void testNoPermissions() throws Exception
     {
         RunnerSignedRequestHandler signedRequestHandler = createSignedRequestHandler("noPermissions");
-        RemoteAppRunner runner = new RemoteAppRunner(product.getProductInstance().getBaseUrl(),
+        RemotePluginRunner runner = new RemotePluginRunner(product.getProductInstance().getBaseUrl(),
                 "noPermissions")
                 .addGeneralPage("page", "Page", "/page",
                         new CallServlet(product.getProductInstance().getBaseUrl(), signedRequestHandler))
@@ -72,7 +72,7 @@ public class TestAppPermissions extends AbstractRemoteAppTest
                 ServletException,
                 IOException
         {
-            int statusCode = sendFailedSignedGet(signedRequestHandler, baseUrl + "/rest/remoteapptest/latest/user", "betty");
+            int statusCode = sendFailedSignedGet(signedRequestHandler, baseUrl + "/rest/remoteplugintest/latest/user", "betty");
             httpUtils.renderHtml(resp, "message-page.mu",
                     ImmutableMap.<String, Object>of("baseurl", baseUrl, "message", String.valueOf(statusCode)));
         }

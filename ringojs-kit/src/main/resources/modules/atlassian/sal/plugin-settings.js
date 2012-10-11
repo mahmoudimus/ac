@@ -1,4 +1,4 @@
-var factory = appContext.getService("com.atlassian.labs.remoteapps.api.service.PluginSettingsAsyncFactory");
+var factory = appContext.getService("com.atlassian.plugin.remotable.api.service.PluginSettingsAsyncFactory");
 
 function getStore(args) {
   if (args.length == 2) {

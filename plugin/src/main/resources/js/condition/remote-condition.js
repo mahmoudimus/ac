@@ -3,10 +3,10 @@
   by the module types directly
  */
 (function ($, global) {
-  var RemoteApps = global.RemoteApps = global.RemoteApps || {};
+  var RemotablePlugins = global.RemotablePlugins = global.RemotablePlugins || {};
   function hide() {
-    if (!RemoteApps.remoteConditionsHidden) {
-      RemoteApps.remoteConditionsHidden = true;
+    if (!RemotablePlugins.remoteConditionsHidden) {
+      RemotablePlugins.remoteConditionsHidden = true;
       function hide($items) {
         $items.each(function (index, element) {
           var element$ = $(element);
@@ -17,7 +17,7 @@
         });
       }
 
-      // Connect any Remote App hosted Web Items to a dialog that loads the appropriate IFrame Servlet.
+      // Connect any Remotable Plugin hosted Web Items to a dialog that loads the appropriate IFrame Servlet.
       hide($(".remote-condition"));
 
       // Look for jira issue tabs
@@ -30,7 +30,7 @@
   AJS.toInit(function () {
     hide();
   });
-  RemoteApps.RemoteConditions = {
+  RemotablePlugins.RemoteConditions = {
     hide : hide
   };
 }(AJS.$, this));

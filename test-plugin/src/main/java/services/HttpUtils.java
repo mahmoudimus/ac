@@ -1,6 +1,6 @@
 package services;
 
-import com.atlassian.labs.remoteapps.api.service.SignedRequestHandler;
+import com.atlassian.plugin.remotable.api.service.SignedRequestHandler;
 import com.samskivert.mustache.Mustache;
 
 import javax.servlet.http.HttpServletResponse;

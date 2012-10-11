@@ -3,7 +3,7 @@ package com.atlassian.jira.rest.client.p3.internal;
 import com.atlassian.jira.rest.client.domain.*;
 import com.atlassian.jira.rest.client.internal.json.*;
 import com.atlassian.jira.rest.client.p3.JiraMetadataClient;
-import com.atlassian.labs.remoteapps.api.service.http.HostHttpClient;
+import com.atlassian.plugin.remotable.api.service.http.HostHttpClient;
 import com.atlassian.util.concurrent.Promise;
 
 import javax.ws.rs.core.UriBuilder;

@@ -4,24 +4,24 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.atlassian.labs</groupId>
-        <artifactId>remoteapps-parent</artifactId>
+        <groupId>com.atlassian.plugins</groupId>
+        <artifactId>remotable-plugins-parent</artifactId>
         <version>${VERSION_NUMBER}</version>
     </parent>
 
-    <artifactId>remoteapps-test</artifactId>
-    <name>Atlassian Remote Apps - Test</name>
+    <artifactId>remotable-plugins-test</artifactId>
+    <name>Atlassian Remotable Plugins - Test</name>
 
     <dependencies>
         <dependency>
-            <groupId>com.atlassian.labs</groupId>
-            <artifactId>remoteapps-ringojs-kit</artifactId>
+            <groupId>com.atlassian.plugins</groupId>
+            <artifactId>remotable-plugins-ringojs-kit</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.atlassian.labs</groupId>
-            <artifactId>remoteapps-container</artifactId>
+            <groupId>com.atlassian.plugins</groupId>
+            <artifactId>remotable-plugins-container</artifactId>
             <version>${project.version}</version>
             <classifier>standalone</classifier>
         </dependency>
@@ -44,7 +44,7 @@
                             <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
-                            <includeArtifactIds>remoteapps-container</includeArtifactIds>
+                            <includeArtifactIds>remotable-plugins-container</includeArtifactIds>
                             <outputDirectory>${project.build.outputDirectory}</outputDirectory>
                             <stripVersion>true</stripVersion>
                         </configuration>

@@ -4,19 +4,19 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.atlassian.labs</groupId>
-        <artifactId>remoteapps-parent</artifactId>
+        <groupId>com.atlassian.plugins</groupId>
+        <artifactId>remotable-plugins-parent</artifactId>
         <version>${VERSION_NUMBER}</version>
     </parent>
 
-    <artifactId>remoteapps-http-client</artifactId>
-    <name>Atlassian Remote Apps - Http Client</name>
-    <description>The HTTP Client for Remote Apps</description>
+    <artifactId>remotable-plugins-http-client</artifactId>
+    <name>Atlassian Remotable Plugins - Http Client</name>
+    <description>The HTTP Client for Remotable Plugins</description>
 
     <dependencies>
         <dependency>
-            <groupId>com.atlassian.labs</groupId>
-            <artifactId>remoteapps-util-concurrent</artifactId>
+            <groupId>com.atlassian.plugins</groupId>
+            <artifactId>remotable-plugins-util-concurrent</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

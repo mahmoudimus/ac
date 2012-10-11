@@ -2,8 +2,8 @@ package servlets;
 
 import ao.model.SampleEntity;
 import com.atlassian.activeobjects.external.ActiveObjects;
-import com.atlassian.labs.remoteapps.api.annotation.ServiceReference;
-import com.atlassian.labs.remoteapps.api.service.SignedRequestHandler;
+import com.atlassian.plugin.remotable.api.annotation.ServiceReference;
+import com.atlassian.plugin.remotable.api.service.SignedRequestHandler;
 
 import javax.inject.Singleton;
 import javax.servlet.ServletException;
@@ -55,8 +55,8 @@ public final class ActiveObjectsServlet extends HttpServlet
                         "<html>\n" +
                         "    <head>\n" +
                         "        <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge,chrome=1\">\n" +
-                        "        <link rel=\"stylesheet\" type=\"text/css\" href=\"%1$s/remoteapps/all.css\">" +
-                        "        <script src=\"%1$s/remoteapps/all.js\"></script>\n" +
+                        "        <link rel=\"stylesheet\" type=\"text/css\" href=\"%1$s/remotable-plugins/all.css\">" +
+                        "        <script src=\"%1$s/remotable-plugins/all.js\"></script>\n" +
                         "        <script>RA.init();</script>\n" +
                         "        <title>%2$s</title>\n" +
                         "    </head>\n" +

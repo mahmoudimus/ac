@@ -5,7 +5,7 @@ echo "Reading release.properties"
 source ./release.properties
 
 echo "Tagging $VERSION"
-git tag remoteapps-plugin-$VERSION
+git tag remotable-plugins-$VERSION
 
 echo "Pushing tag"
-git push origin remoteapps-plugin-$VERSION
+git push origin remotable-plugins-$VERSION

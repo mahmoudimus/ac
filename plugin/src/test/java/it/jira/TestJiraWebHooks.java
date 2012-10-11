@@ -1,10 +1,10 @@
 package it.jira;
 
 import com.atlassian.jira.pageobjects.JiraTestedProduct;
-import com.atlassian.labs.remoteapps.test.jira.JiraOps;
-import com.atlassian.labs.remoteapps.test.webhook.WebHookBody;
-import com.atlassian.labs.remoteapps.test.webhook.WebHookTester;
-import com.atlassian.labs.remoteapps.test.webhook.WebHookWaiter;
+import com.atlassian.plugin.remotable.test.jira.JiraOps;
+import com.atlassian.plugin.remotable.test.webhook.WebHookBody;
+import com.atlassian.plugin.remotable.test.webhook.WebHookTester;
+import com.atlassian.plugin.remotable.test.webhook.WebHookWaiter;
 import com.google.common.collect.ImmutableMap;
 import hudson.plugins.jira.soap.RemoteProject;
 import it.AbstractBrowserlessTest;
@@ -14,7 +14,7 @@ import org.junit.Test;
 
 import java.rmi.RemoteException;
 
-import static com.atlassian.labs.remoteapps.test.webhook.WebHookTestServlet.runInRunner;
+import static com.atlassian.plugin.remotable.test.webhook.WebHookTestServlet.runInRunner;
 import static junit.framework.Assert.assertEquals;
 
 public class TestJiraWebHooks extends AbstractBrowserlessTest

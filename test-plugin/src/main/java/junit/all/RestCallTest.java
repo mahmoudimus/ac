@@ -1,6 +1,6 @@
 package junit.all;
 
-import com.atlassian.labs.remoteapps.api.service.SignedRequestHandler;
+import com.atlassian.plugin.remotable.api.service.SignedRequestHandler;
 import services.ServiceAccessor;
 import org.junit.Test;
 
@@ -22,7 +22,7 @@ public class RestCallTest
     public void testCall() throws Exception
     {
         String result = sendSignedGet(signedRequestHandler,
-                URI.create(baseUrl + "/rest/remoteapptest/latest/user"), "betty");
+                URI.create(baseUrl + "/rest/remoteplugintest/latest/user"), "betty");
         assertEquals("betty", result);
     }
 
@@ -30,7 +30,7 @@ public class RestCallTest
     public void testForbiddenCallForUnknownScope() throws Exception
     {
         int status = sendFailedSignedGet(signedRequestHandler,
-                URI.create(baseUrl + "/rest/remoteapptest/latest/unscoped"), "betty");
+                URI.create(baseUrl + "/rest/remoteplugintest/latest/unscoped"), "betty");
         assertEquals(403, status);
     }
 
@@ -38,7 +38,7 @@ public class RestCallTest
     public void testUnauthorizedCallForUnknownUser() throws Exception
     {
         int status = sendFailedSignedGet(signedRequestHandler,
-                URI.create(baseUrl + "/rest/remoteapptest/latest/unscoped"), "darkstranger");
+                URI.create(baseUrl + "/rest/remoteplugintest/latest/unscoped"), "darkstranger");
         assertEquals(401, status);
     }
 
@@ -46,7 +46,7 @@ public class RestCallTest
     public void testForbiddenCallForUnrequestedScope() throws Exception
     {
         int status = sendFailedSignedGet(signedRequestHandler,
-                URI.create(baseUrl + "/rest/remoteapptest/latest/unauthorisedscope"), "betty");
+                URI.create(baseUrl + "/rest/remoteplugintest/latest/unauthorisedscope"), "betty");
         assertEquals(403, status);
 
     }

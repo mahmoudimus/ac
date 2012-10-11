@@ -1,6 +1,6 @@
 package it;
 
-import com.atlassian.labs.remoteapps.test.*;
+import com.atlassian.plugin.remotable.test.*;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
 import org.apache.commons.io.FileUtils;
@@ -13,7 +13,7 @@ import java.util.Collections;
 import static org.apache.commons.io.FileUtils.cleanDirectory;
 import static org.junit.Assert.assertTrue;
 
-public class TestFileInstall extends AbstractRemoteAppTest
+public class TestFileInstall extends AbstractRemotablePluginTest
 {
     @Test
     @Ignore
@@ -38,16 +38,16 @@ public class TestFileInstall extends AbstractRemoteAppTest
                         Collections.<String, Object>singletonMap(
                         "baseurl", baseUrl)));
 
-        RemoteAppInstallerClient client = new RemoteAppInstallerClient(
+        RemotePluginInstallerClient client = new RemotePluginInstallerClient(
                 baseUrl, "admin", "admin");
         client.install(descriptorFile.toURI().toString(), "", false);
 
         product.visit(LoginPage.class).login("betty", "betty", HomePage.class);
-        RemoteAppAwarePage page = product.getPageBinder().bind(GeneralPage.class, "first",
+        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "first",
                     "First (file)");
-        assertTrue(page.isRemoteAppLinkPresent());
-        RemoteAppTestPage remoteAppTest = page.clickRemoteAppLink();
-        assertTrue(remoteAppTest.getLoadTime() > 0);
+        assertTrue(page.isRemotePluginLinkPresent());
+        RemotePluginTestPage remotePluginTest = page.clickRemotePluginLink();
+        assertTrue(remotePluginTest.getLoadTime() > 0);
         client.uninstall("file-app");
 	}
 }

@@ -222,7 +222,7 @@
 
   var api = {
 
-    // inits the remote app on iframe content load
+    // inits the remote plugin on iframe content load
     init: function (options) {
       options = options || {};
       var isBridged;
@@ -321,7 +321,7 @@
       rpc.request(options, done, fail);
     },
 
-    // dialog-related sub-api for use when the remote app is running as the content of a host dialog
+    // dialog-related sub-api for use when the remote plugin is running as the content of a host dialog
     Dialog: {
 
       // register callbacks responding to messages from the host dialog, such as "submit" or "cancel"

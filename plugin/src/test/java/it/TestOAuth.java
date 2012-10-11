@@ -1,14 +1,14 @@
 package it;
 
-import com.atlassian.labs.remoteapps.spi.Permissions;
-import com.atlassian.labs.remoteapps.test.RemoteAppRunner;
-import com.atlassian.labs.remoteapps.test.RunnerSignedRequestHandler;
+import com.atlassian.plugin.remotable.spi.Permissions;
+import com.atlassian.plugin.remotable.test.RemotePluginRunner;
+import com.atlassian.plugin.remotable.test.RunnerSignedRequestHandler;
 import org.junit.Test;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import static com.atlassian.labs.remoteapps.test.Utils.createSignedRequestHandler;
+import static com.atlassian.plugin.remotable.test.Utils.createSignedRequestHandler;
 import static org.junit.Assert.assertEquals;
 
 public class TestOAuth extends AbstractBrowserlessTest
@@ -18,7 +18,7 @@ public class TestOAuth extends AbstractBrowserlessTest
     {
         RunnerSignedRequestHandler requestHandler = createSignedRequestHandler(
                 "authorizeRequestWorks");
-        RemoteAppRunner runner = new RemoteAppRunner(baseUrl,
+        RemotePluginRunner runner = new RemotePluginRunner(baseUrl,
                 "authorizeRequestWorks")
                 .addOAuth(requestHandler)
                 .addPermission(Permissions.CREATE_OAUTH_LINK)

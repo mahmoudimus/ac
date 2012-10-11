@@ -9,8 +9,8 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.atlassian.labs</groupId>
-    <artifactId>remoteapps-parent</artifactId>
+    <groupId>com.atlassian.plugins</groupId>
+    <artifactId>remotable-plugins-parent</artifactId>
     <version>${VERSION_NUMBER}</version>
 
     <organization>
@@ -18,8 +18,8 @@
         <url>http://atlassian.com/</url>
     </organization>
 
-    <name>Atlassian Remote Apps - Parent POM</name>
-    <description>This is the parent for the Atlassian Remote Apps project</description>
+    <name>Atlassian Remotable Plugins - Parent POM</name>
+    <description>This is the parent for the Atlassian Remotable Plugins project</description>
     <packaging>pom</packaging>
 
     <modules>
@@ -146,7 +146,7 @@
             <plugin>
                 <artifactId>maven-scm-plugin</artifactId>
                 <configuration>
-                    <tag>remoteapps-${VERSION_NUMBER}</tag>
+                    <tag>remotable-plugins-${VERSION_NUMBER}</tag>
                 </configuration>
             </plugin>
 
@@ -493,9 +493,9 @@
         </dependency>
     </dependencies>
     <scm>
-        <connection>scm:git:git@bitbucket.org:mrdon/remoteapps-plugin.git</connection>
-        <developerConnection>scm:git:git@bitbucket.org:mrdon/remoteapps-plugin.git</developerConnection>
-        <url>scm:git:git@bitbucket.org:mrdon/remoteapps-plugin.git</url>
+        <connection>scm:git:git@bitbucket.org:atlassian/remotable-plugins.git</connection>
+        <developerConnection>scm:git:git@bitbucket.org:atlassian/remotable-plugins.git</developerConnection>
+        <url>scm:git:git@bitbucket.org:atlassian/remotable-plugins.git</url>
     </scm>
 
     <properties>

@@ -4,7 +4,7 @@ import com.atlassian.jira.rest.client.RestClientException;
 import com.atlassian.jira.rest.client.domain.SearchResult;
 import com.atlassian.jira.rest.client.internal.json.SearchResultJsonParser;
 import com.atlassian.jira.rest.client.p3.JiraSearchClient;
-import com.atlassian.labs.remoteapps.api.service.http.HostHttpClient;
+import com.atlassian.plugin.remotable.api.service.http.HostHttpClient;
 import com.atlassian.util.concurrent.Promise;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;

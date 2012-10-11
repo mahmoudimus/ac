@@ -3,15 +3,15 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.atlassian.labs</groupId>
-        <artifactId>remoteapps-parent</artifactId>
+        <groupId>com.atlassian.plugins</groupId>
+        <artifactId>remotable-plugins-parent</artifactId>
         <version>${VERSION_NUMBER}</version>
     </parent>
 
-    <artifactId>remoteapps-universal-binary-test-plugin</artifactId>
+    <artifactId>remotable-plugins-universal-binary-test-plugin</artifactId>
     <packaging>atlassian-plugin</packaging>
 
-    <name>Atlassian Remote Apps - Universal Binary Sample</name>
+    <name>Atlassian Remotable Plugins - Universal Binary Sample</name>
     <description>A sample Universal Binary apps that uses Java as its main language</description>
 
     <dependencies>
@@ -22,7 +22,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>remoteapps-api</artifactId>
+            <artifactId>remotable-plugins-api</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
@@ -34,13 +34,13 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>remoteapps-ringojs-kit</artifactId>
+            <artifactId>remotable-plugins-ringojs-kit</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>remoteapps-servlet-kit</artifactId>
+            <artifactId>remotable-plugins-servlet-kit</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -50,43 +50,43 @@
 
         <!-- test -->
         <dependency>
-            <groupId>com.atlassian.labs</groupId>
-            <artifactId>remoteapps-test</artifactId>
+            <groupId>com.atlassian.plugins</groupId>
+            <artifactId>remotable-plugins-test</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
-                    <groupId>com.atlassian.labs</groupId>
-                    <artifactId>remoteapps-container</artifactId>
+                    <groupId>com.atlassian.plugins</groupId>
+                    <artifactId>remotable-plugins-container</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
 
         <dependency>
-            <groupId>com.atlassian.labs</groupId>
-            <artifactId>remoteapps-container</artifactId>
+            <groupId>com.atlassian.plugins</groupId>
+            <artifactId>remotable-plugins-container</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
             <classifier>standalone</classifier>
         </dependency>
         <!-- to install in the webapp -->
         <dependency>
-            <groupId>com.atlassian.labs</groupId>
-            <artifactId>remoteapps-plugin</artifactId>
+            <groupId>com.atlassian.plugins</groupId>
+            <artifactId>remotable-plugins-plugin</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
             <type>atlassian-plugin</type>
         </dependency>
         <dependency>
-            <groupId>com.atlassian.labs</groupId>
-            <artifactId>remoteapps-webhook-plugin</artifactId>
+            <groupId>com.atlassian.plugins</groupId>
+            <artifactId>remotable-plugins-webhook-plugin</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
             <type>atlassian-plugin</type>
         </dependency>
         <dependency>
-            <groupId>com.atlassian.labs</groupId>
-            <artifactId>remoteapps-plugin</artifactId>
+            <groupId>com.atlassian.plugins</groupId>
+            <artifactId>remotable-plugins-plugin</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
@@ -159,13 +159,13 @@
                             <log4jProperties>src/test/resources/log4j-refapp.properties</log4jProperties>
                             <pluginArtifacts>
                                 <pluginArtifact>
-                                    <groupId>com.atlassian.labs</groupId>
-                                    <artifactId>remoteapps-webhook-plugin</artifactId>
+                                    <groupId>com.atlassian.plugins</groupId>
+                                    <artifactId>remotable-plugins-webhook-plugin</artifactId>
                                     <version>${project.version}</version>
                                 </pluginArtifact>
                                 <pluginArtifact>
-                                    <groupId>com.atlassian.labs</groupId>
-                                    <artifactId>remoteapps-plugin</artifactId>
+                                    <groupId>com.atlassian.plugins</groupId>
+                                    <artifactId>remotable-plugins-plugin</artifactId>
                                     <version>${project.version}</version>
                                 </pluginArtifact>
                                 <pluginArtifact>

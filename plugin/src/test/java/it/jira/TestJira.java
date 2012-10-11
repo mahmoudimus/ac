@@ -4,10 +4,10 @@ import com.atlassian.jira.pageobjects.JiraTestedProduct;
 import com.atlassian.jira.pageobjects.navigator.AdvancedSearch;
 import com.atlassian.jira.pageobjects.pages.DashboardPage;
 import com.atlassian.jira.pageobjects.pages.project.BrowseProjectPage;
-import com.atlassian.labs.remoteapps.test.HtmlDumpRule;
-import com.atlassian.labs.remoteapps.test.RemoteAppEmbeddedTestPage;
-import com.atlassian.labs.remoteapps.test.RemoteAppRunner;
-import com.atlassian.labs.remoteapps.test.jira.*;
+import com.atlassian.plugin.remotable.test.HtmlDumpRule;
+import com.atlassian.plugin.remotable.test.RemotePluginEmbeddedTestPage;
+import com.atlassian.plugin.remotable.test.RemotePluginRunner;
+import com.atlassian.plugin.remotable.test.jira.*;
 import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.pageobjects.TestedProductFactory;
 import com.atlassian.pageobjects.page.LoginPage;
@@ -30,7 +30,7 @@ import static junit.framework.Assert.assertTrue;
 
 public class TestJira
 {
-    private static final String EMBEDDED_ISSUE_PANEL_ID = "issue-panel-jira-remoteAppIssuePanelPage";
+    private static final String EMBEDDED_ISSUE_PANEL_ID = "issue-panel-jira-remotePluginIssuePanelPage";
     private static TestedProduct<WebDriverTester> product = TestedProductFactory.create(JiraTestedProduct.class);
     private static JiraOps jiraOps = new JiraOps(product.getProductInstance());
 
@@ -92,9 +92,9 @@ public class TestJira
             @Override
             public Object call() throws Exception
             {
-                RemoteAppEmbeddedTestPage page = product.visit(BrowseProjectPage.class,
+                RemotePluginEmbeddedTestPage page = product.visit(BrowseProjectPage.class,
                         project.getKey())
-                        .openTab(JiraRemoteAppProjectTab.class)
+                        .openTab(JiraRemotablePluginProjectTab.class)
                         .getEmbeddedPage();
 
                 assertEquals("Success", page.getMessage());
@@ -113,8 +113,8 @@ public class TestJira
             public Object call() throws Exception
             {
                 RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Test issue for tab");
-                JiraViewIssuePageWithRemoteAppIssueTab page = product.visit(
-                        JiraViewIssuePageWithRemoteAppIssueTab.class, issue.getKey());
+                JiraViewIssuePageWithRemotePluginIssueTab page = product.visit(
+                        JiraViewIssuePageWithRemotePluginIssueTab.class, issue.getKey());
                 assertEquals("Success", page.getMessage());
                 return null;
             }
@@ -141,15 +141,6 @@ public class TestJira
                 return null;
             }
         });
-    }
-
-    @Test(expected = HttpResponseException.class)
-    public void testSearchRequestViewPageWithQuoteInUrl() throws Exception
-    {
-        new RemoteAppRunner(product.getProductInstance().getBaseUrl(),
-                "quoteUrl")
-                .addSearchRequestView("page", "Hello", "/page\"", "hello-world-page.mu")
-                .start();
     }
 
     private void testLoggedInAndAnonymous(Callable runnable) throws Exception

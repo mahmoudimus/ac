@@ -1,7 +1,7 @@
 package servlets;
 
-import com.atlassian.labs.remoteapps.api.annotation.ServiceReference;
-import com.atlassian.labs.remoteapps.api.service.SignedRequestHandler;
+import com.atlassian.plugin.remotable.api.annotation.ServiceReference;
+import com.atlassian.plugin.remotable.api.service.SignedRequestHandler;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -32,7 +32,7 @@ public class MacroResetServlet extends HttpServlet
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
     {
         String baseUrl = req.getParameter("baseurl");
-        URL url = new URL(baseUrl + "/rest/remoteapps/latest/macro/app/app1");
+        URL url = new URL(baseUrl + "/rest/remotable-plugins/latest/macro/app/app1");
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("DELETE");
         try

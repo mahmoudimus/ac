@@ -1,11 +1,26 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
-    <xs:include schemaLocation="page-macro.xsd" />
+    <xs:complexType name="MacroPageContextParametersType">
+        <xs:sequence>
+            <xs:element name="context-parameter" type="MacroPageContextParameterType" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="MacroPageContextParameterType">
+        <xs:attribute name="name" type="MacroContextParameterNameType" use="required" />
+    </xs:complexType>
 
     <xs:complexType name="MacroPageType">
         <xs:complexContent>
-            <xs:extension base="PageMacroType" />
+            <xs:extension base="AbstractMacroType">
+                <xs:sequence>
+                    <xs:element name="context-parameters" type="MacroPageContextParametersType" minOccurs="0"
+                                maxOccurs="1" />
+                </xs:sequence>
+                <xs:attribute name="width" type="PixelType"/>
+                <xs:attribute name="height" type="PixelType"/>
+            </xs:extension>
         </xs:complexContent>
     </xs:complexType>
 </xs:schema>

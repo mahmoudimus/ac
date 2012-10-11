@@ -1,15 +1,15 @@
 package it.refapp;
 
-import com.atlassian.labs.remoteapps.junit.Mode;
-import com.atlassian.labs.remoteapps.junit.UniversalBinaries;
-import com.atlassian.labs.remoteapps.junit.UniversalBinariesContainerJUnitRunner;
-import com.atlassian.labs.remoteapps.test.GeneralPage;
-import com.atlassian.labs.remoteapps.test.OAuthUtils;
-import com.atlassian.labs.remoteapps.test.RemoteAppAwarePage;
-import com.atlassian.labs.remoteapps.test.RemoteAppTestPage;
+import com.atlassian.plugin.remotable.junit.Mode;
+import com.atlassian.plugin.remotable.junit.UniversalBinaries;
+import com.atlassian.plugin.remotable.junit.UniversalBinariesContainerJUnitRunner;
+import com.atlassian.plugin.remotable.test.GeneralPage;
+import com.atlassian.plugin.remotable.test.OAuthUtils;
+import com.atlassian.plugin.remotable.test.RemotePluginAwarePage;
+import com.atlassian.plugin.remotable.test.RemotePluginTestPage;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
-import it.AbstractRemoteAppTest;
+import it.AbstractRemotablePluginTest;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.junit.BeforeClass;
@@ -21,7 +21,7 @@ import static org.junit.Assert.*;
 
 @RunWith(UniversalBinariesContainerJUnitRunner.class)
 @UniversalBinaries(value = "${moduleDir}/src/js-sample-app", mode = Mode.CONTAINER)
-public final class TestJavaScriptSampleApp extends AbstractRemoteAppTest
+public final class TestJavaScriptSampleApp extends AbstractRemotablePluginTest
 {
     @BeforeClass
     public static void before()
@@ -33,30 +33,30 @@ public final class TestJavaScriptSampleApp extends AbstractRemoteAppTest
     public void testContainerSampleGeneralPage()
     {
         product.visit(LoginPage.class).login("betty", "betty", HomePage.class);
-        RemoteAppAwarePage page = product.getPageBinder().bind(GeneralPage.class, "general", "Container Sample General");
-        assertTrue(page.isRemoteAppLinkPresent());
-        RemoteAppTestPage remoteAppTest = page.clickRemoteAppLink();
-        assertTrue(remoteAppTest.getTitle().contains("Container Sample General"));
-        assertEquals("Success", remoteAppTest.getMessage());
-        assertEquals(OAuthUtils.getConsumerKey(), remoteAppTest.getConsumerKey());
-        assertEquals("Betty Admin", remoteAppTest.getFullName());
-        assertEquals("betty", remoteAppTest.getUserId());
+        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "general", "Container Sample General");
+        assertTrue(page.isRemotePluginLinkPresent());
+        RemotePluginTestPage remotePluginTest = page.clickRemotePluginLink();
+        assertTrue(remotePluginTest.getTitle().contains("Container Sample General"));
+        assertEquals("Success", remotePluginTest.getMessage());
+        assertEquals(OAuthUtils.getConsumerKey(), remotePluginTest.getConsumerKey());
+        assertEquals("Betty Admin", remotePluginTest.getFullName());
+        assertEquals("betty", remotePluginTest.getUserId());
 
         // basic tests of the HostHttpClient API
-        assertEquals("200", remoteAppTest.getServerHttpStatus());
-        String statusText = remoteAppTest.getServerHttpStatusText();
+        assertEquals("200", remotePluginTest.getServerHttpStatus());
+        String statusText = remotePluginTest.getServerHttpStatusText();
         assertTrue("OK".equals(statusText));
-        String contentType = remoteAppTest.getServerHttpContentType();
+        String contentType = remotePluginTest.getServerHttpContentType();
         assertTrue(contentType != null && contentType.startsWith("text/plain")); // startsWith accounts for possible charset
-        assertEquals("betty", remoteAppTest.getServerHttpEntity());
+        assertEquals("betty", remotePluginTest.getServerHttpEntity());
 
         // basic tests of the RA.request API
-        assertEquals("200", remoteAppTest.getClientHttpStatus());
-        statusText = remoteAppTest.getClientHttpStatusText();
+        assertEquals("200", remotePluginTest.getClientHttpStatus());
+        statusText = remotePluginTest.getClientHttpStatusText();
         assertTrue("OK".equals(statusText) || "success".equals(statusText)); // differs by jquery version
-        contentType = remoteAppTest.getClientHttpContentType();
+        contentType = remotePluginTest.getClientHttpContentType();
         assertTrue(contentType != null && contentType.startsWith("text/plain")); // startsWith accounts for possible charset
-        assertEquals("betty", remoteAppTest.getClientHttpData());
-        assertEquals("betty", remoteAppTest.getClientHttpResponseText());
+        assertEquals("betty", remotePluginTest.getClientHttpData());
+        assertEquals("betty", remotePluginTest.getClientHttpResponseText());
     }
 }

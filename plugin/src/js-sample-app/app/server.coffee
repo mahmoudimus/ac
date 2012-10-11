@@ -8,7 +8,7 @@ exports.app = (req) ->
   error = null
 
   # make a test httpclient request
-  http.get("/rest/remoteapptest/1/user")
+  http.get("/rest/remoteplugintest/1/user")
     .done((res) -> response = res)
     .fail((ex, exstr) -> error = exstr)
     .wait()

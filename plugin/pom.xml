@@ -4,25 +4,25 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
-        <groupId>com.atlassian.labs</groupId>
-        <artifactId>remoteapps-parent</artifactId>
+        <groupId>com.atlassian.plugins</groupId>
+        <artifactId>remotable-plugins-parent</artifactId>
         <version>${VERSION_NUMBER}</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>remoteapps-plugin</artifactId>
-    <name>Atlassian Remote Apps - Plugin</name>
+    <artifactId>remotable-plugins-plugin</artifactId>
+    <name>Atlassian Remotable Plugins - Plugin</name>
     <packaging>atlassian-plugin</packaging>
 
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>remoteapps-api</artifactId>
+            <artifactId>remotable-plugins-api</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>remoteapps-host-common</artifactId>
+            <artifactId>remotable-plugins-host-common</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -35,7 +35,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>remoteapps-ringojs-kit</artifactId>
+            <artifactId>remotable-plugins-ringojs-kit</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
@@ -81,7 +81,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>remoteapps-kit-common</artifactId>
+            <artifactId>remotable-plugins-kit-common</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
@@ -129,14 +129,13 @@
 
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>remoteapps-webhook-plugin</artifactId>
+            <artifactId>remotable-plugins-webhook-plugin</artifactId>
             <version>${project.version}</version>
-            <type>atlassian-plugin</type>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>remoteapps-test-plugin</artifactId>
+            <artifactId>remotable-plugins-test-plugin</artifactId>
             <version>${project.version}</version>
             <type>atlassian-plugin</type>
             <scope>provided</scope>
@@ -145,13 +144,13 @@
 
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>remoteapps-test</artifactId>
+            <artifactId>remotable-plugins-test</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>remoteapps-container</artifactId>
+            <artifactId>remotable-plugins-container</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
@@ -465,29 +464,6 @@
         </dependencies>
     </dependencyManagement>
 
-    <profiles>
-        <profile>
-            <id>docco</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>ru.circumflex</groupId>
-                        <artifactId>maven-cx-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>docco</id>
-                                <phase>generate-resources</phase>
-                                <goals>
-                                    <goal>docco</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
-
     <build>
         <pluginManagement>
             <plugins>
@@ -511,7 +487,6 @@
                     <configuration>
                         <commands>
                             <pi>resources com.atlassian.maven.plugins:maven-amps-plugin:filter-plugin-descriptor compile com.atlassian.maven.plugins:maven-amps-plugin:copy-bundled-dependencies net.alchim31.maven:yuicompressor-maven-plugin:compress org.codehaus.mojo:xml-maven-plugin:transform com.atlassian.maven.plugins:maven-amps-plugin:generate-manifest com.atlassian.maven.plugins:maven-amps-plugin:jar com.atlassian.maven.plugins:maven-amps-plugin:install</pi>
-                            <docco>ru.circumflex:maven-cx-plugin:docco#docco</docco>
                         </commands>
                     </configuration>
                 </plugin>
@@ -534,9 +509,10 @@
                             com.atlassian.jira.plugin.webfragment.descriptors;resolution:=optional,
                             com.atlassian.jira.security;resolution:=optional,
                             com.atlassian.jira.security.websudo;resolution:=optional,
-                            com.atlassian.labs.remoteapps.spi.webhook*;version="${project.version}",
-                            com.atlassian.labs.remoteapps.plugin.webhook;version="${project.version}",
+                            com.atlassian.plugin.remotable.spi.webhook*;version="${project.version}",
+                            com.atlassian.plugin.remotable.plugin.webhook;version="${project.version}",
                             com.atlassian.oauth*;version="(1.2,2.0]",
+                            com.atlassian.plugin.remotable*;version="${project.version}",
                             com.atlassian.plugin.*;version="2.8",
                             com.atlassian.refapp.auth.external;resolution:=optional,
                             com.atlassian.sal.api.*;version="(2.4,3.0]",
@@ -557,8 +533,8 @@
                             com.atlassian.xmlrpc;version="${atlassian.xmlrpc.version}",
                             com.atlassian.jira.rest.client.p3;version="${jira.client.version}",
                             com.atlassian.jira.rest.client.domain;version="${jira.client.version}",
-                            com.atlassian.labs.remoteapps.spi*,
-                            com.atlassian.labs.remoteapps.api*,
+                            com.atlassian.plugin.remotable.spi*,
+                            com.atlassian.plugin.remotable.api*,
                             com.atlassian.util.concurrent*;version="${atlassian-util-concurrent.version}"
                         </Export-Package>
                         <Spring-Context>*;timeout:=60</Spring-Context>
@@ -578,12 +554,12 @@
                     <pluginArtifacts>
                         <pluginArtifact>
                             <groupId>${project.groupId}</groupId>
-                            <artifactId>remoteapps-webhook-plugin</artifactId>
+                            <artifactId>remotable-plugins-webhook-plugin</artifactId>
                             <version>${project.version}</version>
                         </pluginArtifact>
                         <pluginArtifact>
                             <groupId>${project.groupId}</groupId>
-                            <artifactId>remoteapps-test-plugin</artifactId>
+                            <artifactId>remotable-plugins-test-plugin</artifactId>
                             <version>${project.version}</version>
                         </pluginArtifact>
                         <pluginArtifact>
@@ -669,7 +645,7 @@
                             </productIds>
                             <systemProperties>
                                 <testedProductClass>
-                                    com.atlassian.labs.remoteapps.test.confluence.FixedConfluenceTestedProduct
+                                    com.atlassian.plugin.remotable.test.confluence.FixedConfluenceTestedProduct
                                 </testedProductClass>
                             </systemProperties>
                             <excludes>
@@ -710,9 +686,9 @@
                             <instructions>
                                 <Bundle-SymbolicName>plugin-tests</Bundle-SymbolicName>
                                 <Import-Package>
-                                    com.atlassian.labs.remoteapps.spi.permission.scope,
-                                    !com.atlassian.labs.remoteapps.plugin.webhook*,
-                                    com.atlassian.labs.remoteapps*,
+                                    com.atlassian.plugin.remotable.spi.permission.scope,
+                                    !com.atlassian.plugin.remotable.plugin.webhook*,
+                                    com.atlassian.plugin.remotable*,
                                     javax.servlet;version="0.0.0",
                                     javax.servlet.http;version="0.0.0",
                                     com.atlassian.plugin.*;version="2.8",
@@ -877,7 +853,7 @@
                             <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
-                            <includeArtifactIds>remoteapps-kit-common</includeArtifactIds>
+                            <includeArtifactIds>remotable-plugins-kit-common</includeArtifactIds>
                             <stripVersion>true</stripVersion>
                             <outputDirectory>${project.build.outputDirectory}</outputDirectory>
                         </configuration>
@@ -902,10 +878,6 @@
     <properties>
         <product>refapp</product>
         <confluence.plugins.version>2.10.1</confluence.plugins.version>
-        <docco.pageTemplate>${basedir}/src/main/build/page.html.ftl</docco.pageTemplate>
-        <docco.indexTemplate>${basedir}/src/main/build/atlassian-remote-app.xml.ftl
-        </docco.indexTemplate>
-        <docco.indexFile>atlassian-remote-app.xml</docco.indexFile>
     </properties>
 
 </project>

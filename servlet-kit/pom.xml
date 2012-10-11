@@ -2,15 +2,15 @@
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
-        <groupId>com.atlassian.labs</groupId>
-        <artifactId>remoteapps-parent</artifactId>
+        <groupId>com.atlassian.plugins</groupId>
+        <artifactId>remotable-plugins-parent</artifactId>
         <version>${VERSION_NUMBER}</version>
     </parent>
 
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>remoteapps-servlet-kit</artifactId>
-    <name>Atlassian Remote Apps - Servlet Kit</name>
+    <artifactId>remotable-plugins-servlet-kit</artifactId>
+    <name>Atlassian Remotable Plugins - Servlet Kit</name>
     <description>
         A plugin kit that enables simple servlet-based apps
     </description>
@@ -38,20 +38,20 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.atlassian.labs</groupId>
-            <artifactId>remoteapps-api</artifactId>
+            <groupId>com.atlassian.plugins</groupId>
+            <artifactId>remotable-plugins-api</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.atlassian.labs</groupId>
-            <artifactId>remoteapps-kit-common</artifactId>
+            <groupId>com.atlassian.plugins</groupId>
+            <artifactId>remotable-plugins-kit-common</artifactId>
             <version>${project.version}</version>
             <!-- weird exclusion, so that plugins can simply include the kit, no other details needed! -->
             <exclusions>
                 <exclusion>
-                    <groupId>com.atlassian.labs</groupId>
-                    <artifactId>remoteapps-api</artifactId>
+                    <groupId>com.atlassian.plugins</groupId>
+                    <artifactId>remotable-plugins-api</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>

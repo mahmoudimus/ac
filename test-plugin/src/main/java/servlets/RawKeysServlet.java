@@ -1,6 +1,6 @@
 package servlets;
 
-import com.atlassian.labs.remoteapps.kit.servlet.AppUrl;
+import com.atlassian.plugin.remotable.kit.servlet.AppUrl;
 
 import javax.inject.Singleton;
 import javax.servlet.ServletException;

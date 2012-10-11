@@ -4,17 +4,17 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
-        <groupId>com.atlassian.labs</groupId>
-        <artifactId>remoteapps-parent</artifactId>
+        <groupId>com.atlassian.plugins</groupId>
+        <artifactId>remotable-plugins-parent</artifactId>
         <version>${VERSION_NUMBER}</version>
     </parent>
 
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>remoteapps-container</artifactId>
-    <name>Atlassian Remote Apps - Standalone Container</name>
+    <artifactId>remotable-plugins-container</artifactId>
+    <name>Atlassian Remotable Plugins - Standalone Container</name>
     <description>
-        An executable container to host Remote Apps outside the product.
+        An executable container to host Remotable Plugins outside the product.
     </description>
 
     <dependencyManagement>
@@ -31,19 +31,19 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>remoteapps-api</artifactId>
+            <artifactId>remotable-plugins-api</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>remoteapps-host-common</artifactId>
+            <artifactId>remotable-plugins-host-common</artifactId>
             <version>${project.version}</version>
         </dependency>
 
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>remoteapps-ringojs-kit</artifactId>
+            <artifactId>remotable-plugins-ringojs-kit</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
@@ -267,7 +267,7 @@
 
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>remoteapps-container-build</artifactId>
+            <artifactId>remotable-plugins-container-build</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
@@ -301,7 +301,7 @@
                             <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
-                            <includeArtifactIds>remoteapps-kit-common,remoteapps-ringojs-kit,ringojs</includeArtifactIds>
+                            <includeArtifactIds>remotable-plugins-kit-common,remotable-plugins-ringojs-kit,ringojs</includeArtifactIds>
                             <stripVersion>true</stripVersion>
                             <outputDirectory>${project.build.outputDirectory}</outputDirectory>
                         </configuration>
@@ -334,7 +334,7 @@
                 <dependencies>
                     <dependency>
                         <groupId>${project.groupId}</groupId>
-                        <artifactId>remoteapps-container-build</artifactId>
+                        <artifactId>remotable-plugins-container-build</artifactId>
                         <version>${project.version}</version>
                     </dependency>
                 </dependencies>
@@ -350,13 +350,13 @@
                             <shadedArtifactAttached>true</shadedArtifactAttached>
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>com.atlassian.labs.remoteapps.container.Main</mainClass>
+                                    <mainClass>com.atlassian.plugin.remotable.container.Main</mainClass>
                                 </transformer>
                             </transformers>
                             <artifactSet>
                                 <excludes>
-                                    <exclude>${project.groupId}:remoteapps-kit-common</exclude>
-                                    <exclude>${project.groupId}:remoteapps-ringojs-kit</exclude>
+                                    <exclude>${project.groupId}:remotable-plugins-kit-common</exclude>
+                                    <exclude>${project.groupId}:remotable-plugins-ringojs-kit</exclude>
                                     <exclude>org.twdata.org.ringojs:ringojs</exclude>
                                 </excludes>
                             </artifactSet>

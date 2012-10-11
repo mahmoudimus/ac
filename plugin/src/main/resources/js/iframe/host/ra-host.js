@@ -1,8 +1,10 @@
 (function (global, $) {
 
+  global.RemotablePlugins = global.RemotablePlugins || {};
+
   var xhrProperties = ["status", "statusText", "responseText"],
       xhrHeaders = ["Content-Type"],
-      RA = global.RemoteApps,
+      RA = global.RemotablePlugins,
       events = (AJS.EventQueue = AJS.EventQueue || []);
 
   RA.create = RA.create || function (options) {

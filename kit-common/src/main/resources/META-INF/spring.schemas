@@ -1,1 +1,1 @@
-http\://atlassian.com/schema/spring/remote-apps/remoteapps.xsd=com/atlassian/labs/remoteapps/kit/common/ns/remoteapps.xsd
+http\://atlassian.com/schema/spring/remotable-plugins/remotable-plugins.xsd=com/atlassian/plugins/remotable/kit/common/ns/remotable-plugins.xsd

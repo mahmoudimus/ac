@@ -2,29 +2,29 @@
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
-        <groupId>com.atlassian.labs</groupId>
-        <artifactId>remoteapps-parent</artifactId>
+        <groupId>com.atlassian.plugins</groupId>
+        <artifactId>remotable-plugins-parent</artifactId>
         <version>${VERSION_NUMBER}</version>
     </parent>
 
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>remoteapps-kit-common</artifactId>
-    <name>Atlassian Remote Apps - Kit Common</name>
+    <artifactId>remotable-plugins-kit-common</artifactId>
+    <name>Atlassian Remotable Plugins - Kit Common</name>
     <description>
-        A set of utility classes for remote apps implemented in Java.
+        A set of utility classes for remotable plugins implemented in Java.
     </description>
 
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>remoteapps-api</artifactId>
+            <artifactId>remotable-plugins-api</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>remoteapps-http-client</artifactId>
+            <artifactId>remotable-plugins-http-client</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>

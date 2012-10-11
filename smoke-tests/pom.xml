@@ -4,15 +4,15 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
-        <groupId>com.atlassian.labs</groupId>
-        <artifactId>remoteapps-parent</artifactId>
+        <groupId>com.atlassian.plugins</groupId>
+        <artifactId>remotable-plugins-parent</artifactId>
         <version>${VERSION_NUMBER}</version>
     </parent>
 
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>remoteapps-smoke-tests</artifactId>
-    <name>Atlassian Remote Apps - Smoke Tests</name>
+    <artifactId>remotable-plugins-smoke-tests</artifactId>
+    <name>Atlassian Remotable Plugins - Smoke Tests</name>
     <description>
         A jar of junit smoke tests to run on production and
         dogfooding servers
@@ -41,7 +41,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>remoteapps-plugin</artifactId>
+            <artifactId>remotable-plugins-plugin</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
         </dependency>
@@ -97,10 +97,10 @@
                         <configuration>
                             <skipTests>false</skipTests>
                             <systemPropertyVariables>
-                                <remoteapps.adminUsername>${remoteapps.adminUsername}</remoteapps.adminUsername>
-                                <remoteapps.adminPassword>${remoteapps.adminPassword}</remoteapps.adminPassword>
-                                <remoteapps.targetBaseUrl>${remoteapps.targetBaseUrl}</remoteapps.targetBaseUrl>
-                                <baseurl.jira>${remoteapps.targetBaseUrl}</baseurl.jira>
+                                <remotable.plugins.adminUsername>${remotable.plugins.adminUsername}</remotable.plugins.adminUsername>
+                                <remotable.plugins.adminPassword>${remotable.plugins.adminPassword}</remotable.plugins.adminPassword>
+                                <remotable.plugins.targetBaseUrl>${remotable.plugins.targetBaseUrl}</remotable.plugins.targetBaseUrl>
+                                <baseurl.jira>${remotable.plugins.targetBaseUrl}</baseurl.jira>
                                 <http.jira.port>443</http.jira.port>
                                 <context.jira.path>/</context.jira.path>
                                 <testedProductClass>com.atlassian.jira.pageobjects.JiraTestedProduct</testedProductClass>
@@ -121,10 +121,10 @@
                         <configuration>
                             <skipTests>false</skipTests>
                             <systemPropertyVariables>
-                                <remoteapps.adminUsername>${remoteapps.adminUsername}</remoteapps.adminUsername>
-                                <remoteapps.adminPassword>${remoteapps.adminPassword}</remoteapps.adminPassword>
-                                <remoteapps.targetBaseUrl>${remoteapps.targetBaseUrl}</remoteapps.targetBaseUrl>
-                                <baseurl.confluence>${remoteapps.targetBaseUrl}</baseurl.confluence>
+                                <remotable.plugins.adminUsername>${remotable.plugins.adminUsername}</remotable.plugins.adminUsername>
+                                <remotable.plugins.adminPassword>${remotable.plugins.adminPassword}</remotable.plugins.adminPassword>
+                                <remotable.plugins.targetBaseUrl>${remotable.plugins.targetBaseUrl}</remotable.plugins.targetBaseUrl>
+                                <baseurl.confluence>${remotable.plugins.targetBaseUrl}</baseurl.confluence>
                                 <http.confluence.port>443</http.confluence.port>
                                 <context.confluence.path>/wiki</context.confluence.path>
                                 <testedProductClass>com.atlassian.confluence.pageobjects.ConfluenceTestedProduct</testedProductClass>
@@ -138,8 +138,8 @@
     </profiles>
 
     <properties>
-        <remoteapps.adminUsername/>
-        <remoteapps.adminPassword/>
-        <remoteapps.targetBaseUrl/>
+        <remotable.plugins.adminUsername/>
+        <remotable.plugins.adminPassword/>
+        <remotable.plugins.targetBaseUrl/>
     </properties>
 </project>

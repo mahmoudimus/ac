@@ -1,1 +1,1 @@
-http\://atlassian.com/schema/spring/remote-apps=com.atlassian.labs.remoteapps.kit.common.spring.ns.RemoteAppsNamespaceHandler
+http\://atlassian.com/schema/spring/remotable-plugins=com.atlassian.plugin.remotable.kit.common.spring.ns.RemotablePluginsNamespaceHandler

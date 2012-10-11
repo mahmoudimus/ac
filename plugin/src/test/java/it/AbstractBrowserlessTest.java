@@ -1,14 +1,9 @@
 package it;
 
-import com.atlassian.labs.remoteapps.test.HtmlDumpRule;
-import com.atlassian.labs.remoteapps.test.OwnerOfTestedProduct;
+import com.atlassian.plugin.remotable.test.OwnerOfTestedProduct;
 import com.atlassian.pageobjects.Defaults;
 import com.atlassian.pageobjects.TestedProduct;
-import com.atlassian.webdriver.pageobjects.WebDriverTester;
 import com.atlassian.webdriver.refapp.RefappTestedProduct;
-import org.junit.After;
-import org.junit.Rule;
-import org.junit.rules.MethodRule;
 
 /**
  * Created with IntelliJ IDEA. User: mrdon Date: 25/04/12 Time: 3:54 PM To change this template use

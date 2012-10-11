@@ -1,12 +1,12 @@
 package it.confluence;
 
-import com.atlassian.labs.remoteapps.test.HtmlDumpRule;
-import com.atlassian.labs.remoteapps.test.OwnerOfTestedProduct;
-import com.atlassian.labs.remoteapps.test.RemoteAppRunner;
-import com.atlassian.labs.remoteapps.test.confluence.ConfluenceMacroPage;
-import com.atlassian.labs.remoteapps.test.confluence.ConfluenceMacroTestSuitePage;
-import com.atlassian.labs.remoteapps.test.confluence.ConfluenceOps;
-import com.atlassian.labs.remoteapps.test.confluence.FixedConfluenceTestedProduct;
+import com.atlassian.plugin.remotable.test.HtmlDumpRule;
+import com.atlassian.plugin.remotable.test.OwnerOfTestedProduct;
+import com.atlassian.plugin.remotable.test.RemotePluginRunner;
+import com.atlassian.plugin.remotable.test.confluence.ConfluenceMacroPage;
+import com.atlassian.plugin.remotable.test.confluence.ConfluenceMacroTestSuitePage;
+import com.atlassian.plugin.remotable.test.confluence.ConfluenceOps;
+import com.atlassian.plugin.remotable.test.confluence.FixedConfluenceTestedProduct;
 import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
@@ -26,7 +26,7 @@ import java.io.PrintWriter;
 import java.util.Enumeration;
 import java.util.Map;
 
-import static com.atlassian.labs.remoteapps.test.Utils.loadResourceAsString;
+import static com.atlassian.plugin.remotable.test.Utils.loadResourceAsString;
 import static com.google.common.collect.Maps.newHashMap;
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
@@ -75,7 +75,7 @@ public class TestConfluenceMacroParams
                 "</div>");
 
         MyParamsMacroServlet macroServlet = new MyParamsMacroServlet();
-        RemoteAppRunner runner = new RemoteAppRunner(product.getProductInstance().getBaseUrl(), "header")
+        RemotePluginRunner runner = new RemotePluginRunner(product.getProductInstance().getBaseUrl(), "header")
                 .addMacro("header", "/header", macroServlet, asList(
                     asList("page_id", "query"),
                     asList("user_id", "header")

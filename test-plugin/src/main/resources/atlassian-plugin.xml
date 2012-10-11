@@ -1,7 +1,7 @@
 <atlassian-plugin key="app1" name="${project.name}" plugins-version="2">
     <plugin-info>
         <version>${project.version}</version>
-        <param name="configure.url">/plugins/servlet/remoteapps/app1/remoteAppConfig</param>
+        <param name="configure.url">/plugins/servlet/remotable-plugins/app1/remotePluginConfig</param>
         <permissions>
             <permission>resttest</permission>
             <permission>read_app_links</permission>
@@ -28,15 +28,15 @@
         </oauth>
     </remote-plugin-container>
 
-    <admin-page key="remoteAppAdmin" name="Remote App app1 Admin" url="/myAdmin" />
-    <configure-page key="remoteAppConfig" name="Remote App app1 Configure" url="/myAdmin" />
-    <general-page key="remoteAppGeneral" name="Remote App app1 General"
-                  link-name="Remote App app1 General Link" url="/myAdmin"
+    <admin-page key="remotePluginAdmin" name="Remotable Plugin app1 Admin" url="/myAdmin" />
+    <configure-page key="remotePluginConfig" name="Remotable Plugin app1 Configure" url="/myAdmin" />
+    <general-page key="remotePluginGeneral" name="Remotable Plugin app1 General"
+                  link-name="Remotable Plugin app1 General Link" url="/myAdmin"
                   icon-url="/public/sandcastles.jpg" height="600" width="700"/>
-    <dialog-page key="remoteAppDialog" name="Remote App app1 Dialog" url="/myDialog" />
-    <profile-page key="remoteAppProfile" name="Remote App app1 Profile" url="/myAdmin" />
-    <general-page key="remoteAppMultipage" name="Remote App app1 Multipage"
-                  link-name="Remote App app1 Multipage Link" url="/myMultipage"/>
+    <dialog-page key="remotePluginDialog" name="Remotable Plugin app1 Dialog" url="/myDialog" />
+    <profile-page key="remotePluginProfile" name="Remotable Plugin app1 Profile" url="/myAdmin" />
+    <general-page key="remotePluginMultipage" name="Remotable Plugin app1 Multipage"
+                  link-name="Remotable Plugin app1 Multipage Link" url="/myMultipage"/>
 
     <general-page key="onlyBetty" name="Only Betty" url="/myAdmin">
         <conditions>

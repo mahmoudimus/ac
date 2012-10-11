@@ -4,14 +4,14 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.atlassian.labs</groupId>
-        <artifactId>remoteapps-parent</artifactId>
+        <groupId>com.atlassian.plugins</groupId>
+        <artifactId>remotable-plugins-parent</artifactId>
         <version>${VERSION_NUMBER}</version>
     </parent>
 
-    <artifactId>remoteapps-util-concurrent</artifactId>
-    <name>Atlassian Remote Apps - Concurrent Utils</name>
-    <description>Utils Concurrent Stuff for Remote Apps</description>
+    <artifactId>remotable-plugins-util-concurrent</artifactId>
+    <name>Atlassian Remotable Plugins - Concurrent Utils</name>
+    <description>Utils Concurrent Stuff for Remotable Plugins</description>
 
     <dependencies>
         <dependency>

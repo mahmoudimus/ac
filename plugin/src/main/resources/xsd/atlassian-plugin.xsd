@@ -6,23 +6,28 @@
             <xhtml:title>Atlassian Plugin Descriptor Schema</xhtml:title>
         </xs:appinfo>
     </xs:annotation>
+
+    <xs:include schemaLocation="common.xsd"/>
     <xs:include schemaLocation="atlassian-plugin-common.xsd"/>
-    <xs:include schemaLocation="vendor.xsd"/>
 
     <xs:complexType name="ParamType">
         <xs:annotation>
             <xs:documentation>Supply parameter values if required by your plugin.</xs:documentation>
         </xs:annotation>
-        <xs:attribute name="name"
-                      type="NameType">
-        </xs:attribute>
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="name"
+                              type="NameType">
+                </xs:attribute>
+            </xs:extension>
+        </xs:simpleContent>
     </xs:complexType>
 
     <xs:simpleType name="InstallationModeType">
         <xs:restriction base="xs:string">
-            <xs:enumeration value="local" />
-            <xs:enumeration value="remote" />
-            <xs:enumeration value="container" />
+            <xs:enumeration value="local"/>
+            <xs:enumeration value="remote"/>
+            <xs:enumeration value="container"/>
         </xs:restriction>
     </xs:simpleType>
 
@@ -32,8 +37,8 @@
         </xs:annotation>
         <xs:simpleContent>
             <xs:extension base="PermissionValueType">
-                <xs:attribute name="application" type="ApplicationType" use="optional" />
-                <xs:attribute name="installation-mode" type="InstallationModeType" use="optional" />
+                <xs:attribute name="application" type="ApplicationType" use="optional"/>
+                <xs:attribute name="installation-mode" type="InstallationModeType" use="optional"/>
             </xs:extension>
         </xs:simpleContent>
     </xs:complexType>
@@ -43,8 +48,13 @@
             <xs:documentation>Collection of permissions</xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="permission" type="PermissionType" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="permission" type="PermissionType" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="VendorType">
+        <xs:attribute name="name" type="NameType" use="required"/>
+        <xs:attribute name="url" type="HttpUrlType" use="required"/>
     </xs:complexType>
 
     <xs:complexType name="PluginInfoType">

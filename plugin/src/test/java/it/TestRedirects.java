@@ -1,8 +1,8 @@
 package it;
 
-import com.atlassian.labs.remoteapps.spi.Permissions;
-import com.atlassian.labs.remoteapps.test.RemoteAppRunner;
-import com.atlassian.labs.remoteapps.test.RunnerSignedRequestHandler;
+import com.atlassian.plugin.remotable.spi.Permissions;
+import com.atlassian.plugin.remotable.test.RemotePluginRunner;
+import com.atlassian.plugin.remotable.test.RunnerSignedRequestHandler;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpStatus;
 import org.junit.BeforeClass;
@@ -17,7 +17,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 
-import static com.atlassian.labs.remoteapps.test.Utils.createSignedRequestHandler;
+import static com.atlassian.plugin.remotable.test.Utils.createSignedRequestHandler;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -33,7 +33,7 @@ public class TestRedirects extends AbstractBrowserlessTest
 	public void testPermanentRedirect() throws Exception, InterruptedException,
             NoSuchAlgorithmException
     {
-        RemoteAppRunner runner = new RemoteAppRunner(baseUrl,
+        RemotePluginRunner runner = new RemotePluginRunner(baseUrl,
                 "permanentRedirect")
                 .addGeneralPage("page", "Page", "/page", new MessageServlet())
                 .start();
@@ -56,7 +56,7 @@ public class TestRedirects extends AbstractBrowserlessTest
             NoSuchAlgorithmException
     {
         RunnerSignedRequestHandler signedRequestHandler = createSignedRequestHandler("oauthRedirect");
-        RemoteAppRunner runner = new RemoteAppRunner(baseUrl,
+        RemotePluginRunner runner = new RemotePluginRunner(baseUrl,
                 "oauthRedirect")
                 .addGeneralPage("page", "Page", "/page", new MessageServlet())
                 .addOAuth(signedRequestHandler)

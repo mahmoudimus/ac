@@ -1,6 +1,6 @@
 (function(global, $) {
 
-    global.RemoteApps = global.RemoteApps || {};
+    global.RemotablePlugins = global.RemotablePlugins || {};
 
     var idSeq = 0;
 
@@ -22,15 +22,15 @@
     }
 
     /**
-     * Constructs a new AUI dialog wrapper for a Remote App. The dialog has a single content panel containing a single
-     * iframe. The iframe's content is retrieved from the Remote App via a redirect URl from the host Atlassian app,
-     * which the request to the Remote App to be signed with outgoing OAuth credentials.
+     * Constructs a new AUI dialog wrapper for a Remotable Plugin. The dialog has a single content panel containing a single
+     * iframe. The iframe's content is retrieved from the Remotable Plugin via a redirect URl from the host Atlassian app,
+     * which the request to the Remotable Plugin to be signed with outgoing OAuth credentials.
      *
      * @param contentUrl The URL (relative to the Atlassian app root) that will retrieve the content to display,
-     *                   eg. "/plugins/servlet/remoteapps/app-key/macro".
+     *                   eg. "/plugins/servlet/remotable-plugins/app-key/macro".
      * @param options Options to configure the behaviour and appearance of the dialog.
      */
-    RemoteApps.makeDialog = function (contentUrl, options) {
+    RemotablePlugins.makeDialog = function (contentUrl, options) {
         var global$ = $(global);
         var placeholderContainer$;
         var defaultOptions = {
@@ -38,7 +38,7 @@
              * These options really _should_ be provided by the caller, or else the dialog is pretty pointless.
              */
             // Dialog header
-            header: "Remote Apps Dialog Title",
+            header: "Remotable Plugins Dialog Title",
             // Callback to execute when the submit button is clicked.
             submitHandler: function (dialog, result) {
                 // No-op

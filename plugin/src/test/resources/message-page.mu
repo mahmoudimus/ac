@@ -1,7 +1,7 @@
 <html>
 <head>
-  <link rel="stylesheet" type="text/css" href="{{baseurl}}/remoteapps/all.css">
-  <script src="{{baseurl}}/remoteapps/all.js" type="text/javascript"></script>
+  <link rel="stylesheet" type="text/css" href="{{baseurl}}/remotable-plugins/all.css">
+  <script src="{{baseurl}}/remotable-plugins/all.js" type="text/javascript"></script>
 </head>
 <body>
 <div id="message">{{message}}</div>

@@ -1,11 +1,35 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
-    <xs:include schemaLocation="macro.xsd" />
+    <xs:include schemaLocation="common-macro.xsd"/>
+
+    <xs:complexType name="MacroContextParametersType">
+        <xs:sequence>
+            <xs:element name="context-parameter" type="MacroContextParameterType" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:simpleType name="MacroContextParameterTypeType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="header" />
+            <xs:enumeration value="query" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="MacroContextParameterType">
+        <xs:attribute name="name" type="MacroContextParameterNameType" use="required" />
+        <xs:attribute name="type" type="MacroContextParameterTypeType" use="optional"
+                      default="query" />
+    </xs:complexType>
 
     <xs:complexType name="RemoteMacroType">
         <xs:complexContent>
-            <xs:extension base="MacroType" />
+            <xs:extension base="AbstractMacroType">
+                <xs:sequence>
+                    <xs:element name="context-parameters" type="MacroContextParametersType"
+                            minOccurs="0" maxOccurs="unbounded"/>
+                </xs:sequence>
+            </xs:extension>
         </xs:complexContent>
     </xs:complexType>
 </xs:schema>

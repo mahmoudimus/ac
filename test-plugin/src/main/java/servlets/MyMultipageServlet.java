@@ -1,6 +1,6 @@
 package servlets;
 
-import com.atlassian.labs.remoteapps.kit.servlet.Multipage;
+import com.atlassian.plugin.remotable.kit.servlet.Multipage;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;

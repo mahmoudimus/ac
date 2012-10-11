@@ -1,11 +1,11 @@
 package services;
 
 
-import com.atlassian.labs.remoteapps.api.annotation.ServiceReference;
-import com.atlassian.labs.remoteapps.api.service.EmailSender;
-import com.atlassian.labs.remoteapps.api.service.SignedRequestHandler;
-import com.atlassian.labs.remoteapps.api.service.http.HostHttpClient;
-import com.atlassian.labs.remoteapps.api.service.http.HostXmlRpcClient;
+import com.atlassian.plugin.remotable.api.annotation.ServiceReference;
+import com.atlassian.plugin.remotable.api.service.EmailSender;
+import com.atlassian.plugin.remotable.api.service.SignedRequestHandler;
+import com.atlassian.plugin.remotable.api.service.http.HostHttpClient;
+import com.atlassian.plugin.remotable.api.service.http.HostXmlRpcClient;
 import org.osgi.framework.BundleContext;
 import servlets.SendEmailServlet;
 

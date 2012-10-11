@@ -7,7 +7,7 @@ import com.atlassian.jira.rest.client.internal.json.ComponentJsonParser;
 import com.atlassian.jira.rest.client.internal.json.JsonObjectParser;
 import com.atlassian.jira.rest.client.internal.json.gen.ComponentInputWithProjectKeyJsonGenerator;
 import com.atlassian.jira.rest.client.p3.JiraComponentClient;
-import com.atlassian.labs.remoteapps.api.service.http.HostHttpClient;
+import com.atlassian.plugin.remotable.api.service.http.HostHttpClient;
 import com.atlassian.util.concurrent.Promise;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;

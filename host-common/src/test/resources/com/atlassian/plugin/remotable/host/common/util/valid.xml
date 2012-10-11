@@ -1,0 +1,39 @@
+<atlassian-plugin key="app1" name="Remotable Plugin - app1" plugins-version="3">
+    <plugin-info>
+        <description>
+            This really great app
+        </description>
+        <vendor name="Atlassian" url="http://atlassian.com" />
+        <version>1</version>
+        <permissions>
+                <permission scope="browse_projects" />
+                <permission scope="read_app_links" />
+            </permissions>
+    </plugin-info>
+
+    <remote-plugin-container key="container" display=url="http://example.com">
+        <oauth>
+            <public-key>
+                key
+            </public-key>
+        </oauth>
+    </remote-plugin-container>
+
+    <general-page key="first" name="First" url="/first" />
+    <general-page key="second" name="Second" url="/second">
+        <description>The second url</description>
+        <context-param name="project_id" />
+    </general-page>
+    <general-page key="third" name="Third" url="/third">
+        <context-parameters>
+            <context-parameter name="project_id" />
+        </context-parameters>
+    </general-page>
+
+    <macro key="macro" url="/macro">
+        <context-parameters>
+            <context-parameter name="page_id" type="query" />
+            <context-parameter name="user_id" type="header" />
+        </context-parameters>
+    </macro>
+</atlassian-plugin>
