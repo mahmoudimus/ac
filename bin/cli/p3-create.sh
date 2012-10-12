@@ -71,11 +71,11 @@ writeDescriptor() {
   echo >> $outfile
   echo "    <remote-plugin-container key=\"container\" display-url=\"http://localhost:8000/$APP_KEY\">" >> $outfile
   if [ "$OAUTH" == "1" ]; then
-  echo "      <oauth>" >> $outfile
-  echo "          <public-key>" >> $outfile
+  echo "        <oauth>" >> $outfile
+  echo "            <public-key>" >> $outfile
   echo "$APP_PUBLIC_KEY" >> $outfile
-  echo "          </public-key>" >> $outfile
-  echo "      </oauth>" >> $outfile
+  echo "            </public-key>" >> $outfile
+  echo "        </oauth>" >> $outfile
   fi
   echo "    </remote-plugin-container>" >> $outfile
   echo >> $outfile
