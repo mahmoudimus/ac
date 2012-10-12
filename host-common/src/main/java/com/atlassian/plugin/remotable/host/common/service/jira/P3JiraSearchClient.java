@@ -1,9 +1,9 @@
-package com.atlassian.jira.rest.client.p3.internal;
+package com.atlassian.plugin.remotable.host.common.service.jira;
 
 import com.atlassian.jira.rest.client.RestClientException;
 import com.atlassian.jira.rest.client.domain.SearchResult;
 import com.atlassian.jira.rest.client.internal.json.SearchResultJsonParser;
-import com.atlassian.jira.rest.client.p3.JiraSearchClient;
+import com.atlassian.plugin.remotable.api.service.jira.JiraSearchClient;
 import com.atlassian.plugin.remotable.api.service.http.HostHttpClient;
 import com.atlassian.util.concurrent.Promise;
 import org.codehaus.jettison.json.JSONException;

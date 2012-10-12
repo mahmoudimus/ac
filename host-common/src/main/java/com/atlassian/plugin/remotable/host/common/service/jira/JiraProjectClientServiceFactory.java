@@ -1,7 +1,6 @@
 package com.atlassian.plugin.remotable.host.common.service.jira;
 
-import com.atlassian.jira.rest.client.p3.JiraProjectClient;
-import com.atlassian.jira.rest.client.p3.internal.P3JiraProjectClient;
+import com.atlassian.plugin.remotable.api.service.jira.JiraProjectClient;
 import com.atlassian.plugin.remotable.host.common.service.TypedServiceFactory;
 import com.atlassian.plugin.remotable.host.common.service.http.HostHttpClientServiceFactory;
 import org.osgi.framework.Bundle;

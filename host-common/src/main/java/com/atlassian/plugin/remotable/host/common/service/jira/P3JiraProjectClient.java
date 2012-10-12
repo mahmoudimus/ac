@@ -1,10 +1,10 @@
-package com.atlassian.jira.rest.client.p3.internal;
+package com.atlassian.plugin.remotable.host.common.service.jira;
 
 import com.atlassian.jira.rest.client.domain.BasicProject;
 import com.atlassian.jira.rest.client.domain.Project;
 import com.atlassian.jira.rest.client.internal.json.BasicProjectsJsonParser;
 import com.atlassian.jira.rest.client.internal.json.ProjectJsonParser;
-import com.atlassian.jira.rest.client.p3.JiraProjectClient;
+import com.atlassian.plugin.remotable.api.service.jira.JiraProjectClient;
 import com.atlassian.plugin.remotable.api.service.http.HostHttpClient;
 import com.atlassian.util.concurrent.Promise;
 

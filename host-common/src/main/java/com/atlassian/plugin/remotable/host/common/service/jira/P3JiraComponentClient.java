@@ -1,4 +1,4 @@
-package com.atlassian.jira.rest.client.p3.internal;
+package com.atlassian.plugin.remotable.host.common.service.jira;
 
 import com.atlassian.jira.rest.client.domain.Component;
 import com.atlassian.jira.rest.client.domain.input.ComponentInput;
@@ -6,7 +6,7 @@ import com.atlassian.jira.rest.client.internal.domain.input.ComponentInputWithPr
 import com.atlassian.jira.rest.client.internal.json.ComponentJsonParser;
 import com.atlassian.jira.rest.client.internal.json.JsonObjectParser;
 import com.atlassian.jira.rest.client.internal.json.gen.ComponentInputWithProjectKeyJsonGenerator;
-import com.atlassian.jira.rest.client.p3.JiraComponentClient;
+import com.atlassian.plugin.remotable.api.service.jira.JiraComponentClient;
 import com.atlassian.plugin.remotable.api.service.http.HostHttpClient;
 import com.atlassian.util.concurrent.Promise;
 import org.codehaus.jettison.json.JSONException;

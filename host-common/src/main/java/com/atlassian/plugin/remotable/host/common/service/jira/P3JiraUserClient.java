@@ -1,8 +1,8 @@
-package com.atlassian.jira.rest.client.p3.internal;
+package com.atlassian.plugin.remotable.host.common.service.jira;
 
 import com.atlassian.jira.rest.client.domain.User;
 import com.atlassian.jira.rest.client.internal.json.UserJsonParser;
-import com.atlassian.jira.rest.client.p3.JiraUserClient;
+import com.atlassian.plugin.remotable.api.service.jira.JiraUserClient;
 import com.atlassian.plugin.remotable.api.service.http.HostHttpClient;
 import com.atlassian.util.concurrent.Promise;
 

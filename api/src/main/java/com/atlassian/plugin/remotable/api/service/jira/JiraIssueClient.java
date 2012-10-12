@@ -1,4 +1,4 @@
-package com.atlassian.jira.rest.client.p3;
+package com.atlassian.plugin.remotable.api.service.jira;
 
 import com.atlassian.jira.rest.client.GetCreateIssueMetadataOptions;
 import com.atlassian.jira.rest.client.domain.BasicIssue;
@@ -236,7 +236,7 @@ public interface JiraIssueClient
     Promise<Void> addWorklog(URI worklogUri, WorklogInput worklogInput);
 
 	/**
-	 * Expandos supported by {@link com.atlassian.jira.rest.client.p3.JiraIssueClient#getIssue(String, Iterable)}
+	 * Expandos supported by {@link com.atlassian.plugin.remotable.api.service.jira.JiraIssueClient#getIssue(String, Iterable)}
 	 */
 	public enum Expandos {
 		CHANGELOG, SCHEMA, NAMES, TRANSITIONS

@@ -17,7 +17,7 @@ package_includes:
     - "org.jdom*"
     - "org.slf4j*"
     - "com.atlassian.activeobjects.spi*"
-    - "com.atlassian.jira.rest.client.p3"
+    - "com.atlassian.plugin.remotable.api.service.jira"
     - "com.atlassian.jira.rest.client.domain"
     - "com.atlassian.event.api*"
     - "com.atlassian.plugin*"

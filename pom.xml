@@ -24,7 +24,6 @@
 
     <modules>
         <module>api</module>
-        <module>jira-rest-client</module>
         <module>host-common</module>
         <module>kit-common</module>
         <module>servlet-kit</module>

@@ -546,7 +546,7 @@
                             javax.inject;version="1",
                             redstone.xmlrpc;version="${redstone.version}",
                             com.atlassian.xmlrpc;version="${atlassian.xmlrpc.version}",
-                            com.atlassian.jira.rest.client.p3;version="${jira.client.version}",
+                            com.atlassian.plugin.remotable.api.service.jira;version="${jira.client.version}",
                             com.atlassian.jira.rest.client.domain;version="${jira.client.version}",
                             com.atlassian.httpclient.api*;version="${atlassian-httpclient.version}",
                             com.atlassian.plugin.remotable.spi*,

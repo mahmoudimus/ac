@@ -1,4 +1,4 @@
-package com.atlassian.jira.rest.client.p3;
+package com.atlassian.plugin.remotable.api.service.jira;
 
 import com.atlassian.jira.rest.client.domain.BasicProject;
 import com.atlassian.jira.rest.client.domain.Project;
@@ -22,7 +22,7 @@ public interface JiraProjectClient
 
 	/**
 	 * Retrieves complete information about given project.
-	 * Use this method rather than {@link com.atlassian.jira.rest.client.p3.JiraProjectClient#getProject(String)}
+	 * Use this method rather than {@link com.atlassian.plugin.remotable.api.service.jira.JiraProjectClient#getProject(String)}
 	 * wheever you can, as this method is proof for potential changes of URI scheme used for exposing various
 	 * resources by JIRA REST API.
 	 *

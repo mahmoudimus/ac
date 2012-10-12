@@ -1,4 +1,4 @@
-package com.atlassian.jira.rest.client.p3.internal;
+package com.atlassian.plugin.remotable.host.common.service.jira;
 
 import com.atlassian.httpclient.api.Request;
 import com.atlassian.httpclient.api.Response;
@@ -32,8 +32,8 @@ import com.atlassian.jira.rest.client.internal.json.gen.CommentJsonGenerator;
 import com.atlassian.jira.rest.client.internal.json.gen.IssueInputJsonGenerator;
 import com.atlassian.jira.rest.client.internal.json.gen.LinkIssuesInputGenerator;
 import com.atlassian.jira.rest.client.internal.json.gen.WorklogInputJsonGenerator;
-import com.atlassian.jira.rest.client.p3.JiraIssueClient;
-import com.atlassian.jira.rest.client.p3.JiraMetadataClient;
+import com.atlassian.plugin.remotable.api.service.jira.JiraIssueClient;
+import com.atlassian.plugin.remotable.api.service.jira.JiraMetadataClient;
 import com.atlassian.plugin.remotable.api.service.RequestContext;
 import com.atlassian.plugin.remotable.api.service.http.HostHttpClient;
 import com.atlassian.util.concurrent.Promise;

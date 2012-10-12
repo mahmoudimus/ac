@@ -1,4 +1,4 @@
-package com.atlassian.jira.rest.client.p3.internal;
+package com.atlassian.plugin.remotable.host.common.service.jira;
 
 import com.atlassian.jira.rest.client.domain.Version;
 import com.atlassian.jira.rest.client.domain.VersionRelatedIssuesCount;
@@ -10,7 +10,7 @@ import com.atlassian.jira.rest.client.internal.json.VersionRelatedIssueCountJson
 import com.atlassian.jira.rest.client.internal.json.gen.JsonGenerator;
 import com.atlassian.jira.rest.client.internal.json.gen.VersionInputJsonGenerator;
 import com.atlassian.jira.rest.client.internal.json.gen.VersionPositionInputGenerator;
-import com.atlassian.jira.rest.client.p3.JiraVersionClient;
+import com.atlassian.plugin.remotable.api.service.jira.JiraVersionClient;
 import com.atlassian.plugin.remotable.api.service.http.HostHttpClient;
 import com.atlassian.util.concurrent.Promise;
 import org.codehaus.jettison.json.JSONException;

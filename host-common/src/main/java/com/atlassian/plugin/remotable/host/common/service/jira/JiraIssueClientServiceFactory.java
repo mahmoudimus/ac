@@ -1,7 +1,6 @@
 package com.atlassian.plugin.remotable.host.common.service.jira;
 
-import com.atlassian.jira.rest.client.p3.JiraIssueClient;
-import com.atlassian.jira.rest.client.p3.internal.P3JiraIssueClient;
+import com.atlassian.plugin.remotable.api.service.jira.JiraIssueClient;
 import com.atlassian.plugin.remotable.host.common.service.RequestContextServiceFactory;
 import com.atlassian.plugin.remotable.host.common.service.TypedServiceFactory;
 import com.atlassian.plugin.remotable.host.common.service.http.HostHttpClientServiceFactory;

@@ -1,7 +1,7 @@
 package junit.jira;
 
 import com.atlassian.jira.rest.client.domain.User;
-import com.atlassian.jira.rest.client.p3.JiraUserClient;
+import com.atlassian.plugin.remotable.api.service.jira.JiraUserClient;
 import com.atlassian.jira.rpc.soap.client.JiraSoapService;
 import com.atlassian.jira.rpc.soap.client.JiraSoapServiceServiceLocator;
 import com.atlassian.jira.rpc.soap.client.RemoteUser;

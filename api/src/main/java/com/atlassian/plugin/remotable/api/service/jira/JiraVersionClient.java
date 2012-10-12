@@ -1,4 +1,4 @@
-package com.atlassian.jira.rest.client.p3;
+package com.atlassian.plugin.remotable.api.service.jira;
 
 import com.atlassian.jira.rest.client.domain.Version;
 import com.atlassian.jira.rest.client.domain.VersionRelatedIssuesCount;
