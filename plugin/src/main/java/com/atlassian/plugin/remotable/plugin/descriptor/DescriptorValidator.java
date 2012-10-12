@@ -1,14 +1,14 @@
 package com.atlassian.plugin.remotable.plugin.descriptor;
 
+import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.remotable.plugin.PermissionManager;
+import com.atlassian.plugin.remotable.plugin.product.ProductAccessor;
 import com.atlassian.plugin.remotable.spi.InstallationFailedException;
 import com.atlassian.plugin.remotable.spi.permission.Permission;
 import com.atlassian.plugin.remotable.spi.permission.scope.ApiResourceInfo;
 import com.atlassian.plugin.remotable.spi.permission.scope.ApiScope;
-import com.atlassian.plugin.remotable.spi.schema.Schema;
-import com.atlassian.plugin.remotable.plugin.product.ProductAccessor;
-import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
+import com.atlassian.plugin.schema.spi.Schema;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.webresource.UrlMode;
 import com.atlassian.plugin.webresource.WebResourceManager;
@@ -30,11 +30,16 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.net.URI;
 import java.net.URL;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.*;
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.collect.Sets.newHashSet;
+import static com.google.common.base.Preconditions.*;
+import static com.google.common.collect.Sets.*;
 
 /**
  * Builds a schema and validates descriptors with it.  Supports remote plugin and plugin descriptors.
@@ -71,8 +76,7 @@ public class DescriptorValidator
 
         boolean useNamespace = document.getRootElement().getNamespaceURI().equals(
                 descriptorValidatorProvider.getSchemaNamespace());
-        StreamSource schemaSource = new StreamSource(new StringReader(buildSchema(
-                descriptorValidatorProvider, useNamespace)));
+        StreamSource schemaSource = new StreamSource(new StringReader(buildSchema(descriptorValidatorProvider, useNamespace)));
         javax.xml.validation.Schema schema;
         try
         {

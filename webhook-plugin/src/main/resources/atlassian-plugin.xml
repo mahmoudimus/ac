@@ -21,10 +21,10 @@
     <component key="waitableServiceTrackerFactory" class="com.atlassian.osgi.tracker.WaitableServiceTrackerFactory" />
 
     <component key="requestKiller"
-               class="com.atlassian.plugin.remotable.host.common.service.http.RequestKiller" />
+               class="com.atlassian.httpclient.base.RequestKiller" />
 
     <component key="httpClient" interface="com.atlassian.plugin.remotable.api.service.http.HttpClient"
-               class="com.atlassian.plugin.remotable.host.common.service.http.DefaultHttpClient" />
+               class="com.atlassian.httpclient.apache.httpcomponents.DefaultHttpClient" />
 
     <component-import key="eventPublisher" interface="com.atlassian.event.api.EventPublisher" />
     <!--<component-import key="httpClient" interface="com.atlassian.plugin.remotable.api.service.http.HttpClient" />-->

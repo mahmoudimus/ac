@@ -23,9 +23,8 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>remotable-plugins-http-client</artifactId>
-            <version>${project.version}</version>
+            <groupId>com.atlassian.httpclient</groupId>
+            <artifactId>atlassian-httpclient-api</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>

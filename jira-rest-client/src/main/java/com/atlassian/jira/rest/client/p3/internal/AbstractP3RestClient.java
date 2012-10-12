@@ -1,5 +1,7 @@
 package com.atlassian.jira.rest.client.p3.internal;
 
+import com.atlassian.httpclient.api.Response;
+import com.atlassian.httpclient.api.ResponsePromise;
 import com.atlassian.jira.rest.client.RestClientException;
 import com.atlassian.jira.rest.client.internal.json.JsonArrayParser;
 import com.atlassian.jira.rest.client.internal.json.JsonObjectParser;
@@ -7,8 +9,6 @@ import com.atlassian.jira.rest.client.internal.json.JsonParseUtil;
 import com.atlassian.jira.rest.client.internal.json.JsonParser;
 import com.atlassian.jira.rest.client.internal.json.gen.JsonGenerator;
 import com.atlassian.plugin.remotable.api.service.http.HostHttpClient;
-import com.atlassian.plugin.remotable.api.service.http.Response;
-import com.atlassian.plugin.remotable.api.service.http.ResponsePromise;
 import com.atlassian.util.concurrent.Deferred;
 import com.atlassian.util.concurrent.Effect;
 import com.atlassian.util.concurrent.Promise;

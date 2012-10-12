@@ -38,10 +38,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.atlassian.plugins</groupId>
-            <artifactId>remotable-plugins-http-client</artifactId>
-            <version>${project.version}</version>
-            <!--<scope>provided</scope>-->
+            <groupId>com.atlassian.httpclient</groupId>
+            <artifactId>atlassian-httclient-api</artifactId>
         </dependency>
         <dependency>
             <groupId>com.atlassian.uri</groupId>
@@ -89,8 +87,6 @@
                             org.springframework*;version="${spring.version}",
                         </Import-Package>
                         <Export-Package>
-                            com.atlassian.plugin.remotable.spi.webhook*;version="${project.version}",
-                            com.atlassian.plugin.remotable.plugin.webhook;version="${project.version}",
                             com.atlassian.util.concurrent*;version="${atlassian-util-concurrent.version}"
                         </Export-Package>
                         <Spring-Context>*;timeout:=60</Spring-Context>

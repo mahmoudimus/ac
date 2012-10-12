@@ -1,5 +1,8 @@
 package com.atlassian.plugin.remotable.host.common.service.confluence;
 
+import com.atlassian.httpclient.api.Request;
+import com.atlassian.httpclient.api.Response;
+import com.atlassian.httpclient.api.ResponsePromise;
 import com.atlassian.plugin.remotable.api.service.RequestContext;
 import com.atlassian.plugin.remotable.api.service.confluence.ConfluenceLabelClient;
 import com.atlassian.plugin.remotable.api.service.confluence.ConfluencePageClient;
@@ -17,9 +20,6 @@ import com.atlassian.plugin.remotable.api.service.confluence.domain.PageSummary;
 import com.atlassian.plugin.remotable.api.service.confluence.domain.SpacePermission;
 import com.atlassian.plugin.remotable.api.service.http.HostHttpClient;
 import com.atlassian.plugin.remotable.api.service.http.HostXmlRpcClient;
-import com.atlassian.plugin.remotable.api.service.http.Request;
-import com.atlassian.plugin.remotable.api.service.http.Response;
-import com.atlassian.plugin.remotable.api.service.http.ResponsePromise;
 import com.atlassian.plugin.remotable.spi.PermissionDeniedException;
 import com.atlassian.plugin.util.ChainingClassLoader;
 import com.atlassian.util.concurrent.Effect;

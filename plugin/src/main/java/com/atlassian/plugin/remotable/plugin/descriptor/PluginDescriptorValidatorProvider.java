@@ -1,15 +1,15 @@
 package com.atlassian.plugin.remotable.plugin.descriptor;
 
-import com.atlassian.plugin.remotable.api.InstallationMode;
-import com.atlassian.plugin.remotable.plugin.PermissionManager;
-import com.atlassian.plugin.remotable.spi.permission.PermissionsReader;
-import com.atlassian.plugin.remotable.spi.InstallationFailedException;
-import com.atlassian.plugin.remotable.spi.descriptor.DescribedModuleDescriptorFactory;
-import com.atlassian.plugin.remotable.spi.schema.Schema;
 import com.atlassian.osgi.tracker.WaitableServiceTracker;
 import com.atlassian.osgi.tracker.WaitableServiceTrackerFactory;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
+import com.atlassian.plugin.remotable.api.InstallationMode;
+import com.atlassian.plugin.remotable.plugin.PermissionManager;
+import com.atlassian.plugin.remotable.spi.InstallationFailedException;
+import com.atlassian.plugin.remotable.spi.permission.PermissionsReader;
+import com.atlassian.plugin.schema.descriptor.DescribedModuleDescriptorFactory;
+import com.atlassian.plugin.schema.spi.Schema;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.google.common.base.Function;
 import org.dom4j.Document;
@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Set;
 
 import static com.google.common.collect.Collections2.transform;
-import static com.google.common.collect.Sets.newHashSet;
+import static com.google.common.collect.Sets.*;
 
 /**
  * Provides information to support atlassian-plugin.xml validation

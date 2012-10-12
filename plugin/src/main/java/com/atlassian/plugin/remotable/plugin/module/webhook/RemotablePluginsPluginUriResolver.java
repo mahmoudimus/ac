@@ -1,9 +1,9 @@
 package com.atlassian.plugin.remotable.plugin.module.webhook;
 
 import com.atlassian.plugin.remotable.plugin.RemotablePluginAccessorFactory;
-import com.atlassian.plugin.remotable.spi.webhook.PluginUriResolver;
 import com.atlassian.uri.Uri;
 import com.atlassian.uri.UriBuilder;
+import com.atlassian.webhooks.spi.plugin.PluginUriResolver;
 
 import java.net.URI;
 

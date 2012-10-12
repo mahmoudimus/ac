@@ -19,10 +19,10 @@ package com.atlassian.plugin.remotable.host.common.service.confluence;
  * under the License.
  */
 
+import com.atlassian.httpclient.api.Response;
+import com.atlassian.httpclient.api.UnexpectedResponseException;
 import com.atlassian.plugin.remotable.api.service.RequestContext;
 import com.atlassian.plugin.remotable.api.service.http.*;
-import com.atlassian.plugin.remotable.api.service.http.Response;
-import com.atlassian.plugin.remotable.api.service.http.UnexpectedResponseException;
 import com.atlassian.plugin.remotable.spi.PermissionDeniedException;
 import com.atlassian.plugin.remotable.spi.util.RemoteName;
 import com.atlassian.plugin.remotable.spi.util.RequirePermission;

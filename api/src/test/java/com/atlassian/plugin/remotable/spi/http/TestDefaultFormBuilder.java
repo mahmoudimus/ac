@@ -1,6 +1,6 @@
 package com.atlassian.plugin.remotable.spi.http;
 
-import com.atlassian.plugin.remotable.api.service.http.EntityBuilder;
+import com.atlassian.httpclient.api.EntityBuilder;
 import com.atlassian.plugin.remotable.api.service.http.FormBuilder;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;

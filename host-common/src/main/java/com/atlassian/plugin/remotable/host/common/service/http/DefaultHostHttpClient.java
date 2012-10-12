@@ -1,9 +1,13 @@
 package com.atlassian.plugin.remotable.host.common.service.http;
 
+import com.atlassian.httpclient.apache.httpcomponents.DefaultHttpClient;
+import com.atlassian.httpclient.apache.httpcomponents.DefaultRequest;
+import com.atlassian.httpclient.api.Response;
+import com.atlassian.httpclient.api.ResponsePromise;
+import com.atlassian.httpclient.base.AbstractHttpClient;
+import com.atlassian.httpclient.base.concurrent.SettableFutureHandler;
 import com.atlassian.plugin.remotable.api.service.SignedRequestHandler;
 import com.atlassian.plugin.remotable.api.service.http.HostHttpClient;
-import com.atlassian.plugin.remotable.api.service.http.Response;
-import com.atlassian.plugin.remotable.api.service.http.ResponsePromise;
 import com.atlassian.plugin.remotable.host.common.service.DefaultRequestContext;
 import com.google.common.util.concurrent.SettableFuture;
 
@@ -29,7 +33,7 @@ public class DefaultHostHttpClient extends AbstractHttpClient implements HostHtt
     }
 
     @Override
-    protected ResponsePromise execute(DefaultRequest request)
+    public ResponsePromise execute(DefaultRequest request)
     {
         // make sure this is a request for a relative url
         if (request.getUri().toString().matches("^[\\w]+:.*"))

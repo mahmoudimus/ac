@@ -1,11 +1,11 @@
 package com.atlassian.plugin.remotable.plugin.descriptor;
 
-import com.atlassian.plugin.remotable.plugin.PermissionManager;
-import com.atlassian.plugin.remotable.spi.permission.Permission;
-import com.atlassian.plugin.remotable.spi.schema.Schema;
-import com.atlassian.plugin.remotable.plugin.product.ProductAccessor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
+import com.atlassian.plugin.remotable.plugin.PermissionManager;
+import com.atlassian.plugin.remotable.plugin.product.ProductAccessor;
+import com.atlassian.plugin.remotable.spi.permission.Permission;
+import com.atlassian.plugin.schema.spi.Schema;
 import com.atlassian.plugin.webresource.WebResourceManager;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,13 +13,11 @@ import org.mockito.Mock;
 
 import java.util.Collections;
 
-import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.parseDocument;
-import static java.util.Arrays.asList;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
+import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.*;
+import static java.util.Arrays.*;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
+import static org.mockito.MockitoAnnotations.*;
 
 public class TestDescriptorValidator
 {

@@ -1,7 +1,7 @@
 package com.atlassian.plugin.remotable.spi.permission.scope;
 
 import com.atlassian.plugin.remotable.spi.permission.Permission;
-import com.atlassian.plugin.remotable.spi.schema.SchemaDocumented;
+import com.atlassian.plugin.schema.spi.SchemaDocumented;
 
 import javax.servlet.http.HttpServletRequest;
 

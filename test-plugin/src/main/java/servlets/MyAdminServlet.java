@@ -1,8 +1,8 @@
 package servlets;
 
+import com.atlassian.httpclient.api.Response;
 import com.atlassian.plugin.remotable.api.annotation.ServiceReference;
 import com.atlassian.plugin.remotable.api.service.http.HostHttpClient;
-import com.atlassian.plugin.remotable.api.service.http.Response;
 import com.atlassian.plugin.remotable.kit.servlet.AbstractPageServlet;
 import com.atlassian.plugin.remotable.kit.servlet.AppScripts;
 

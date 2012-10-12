@@ -1,8 +1,8 @@
 package com.atlassian.plugin.remotable.host.common.service.http;
 
+import com.atlassian.httpclient.api.Response;
 import com.atlassian.plugin.remotable.api.service.http.HostHttpClient;
 import com.atlassian.plugin.remotable.api.service.http.HostXmlRpcClient;
-import com.atlassian.plugin.remotable.api.service.http.Response;
 import com.atlassian.plugin.remotable.api.service.http.XmlRpcException;
 import com.atlassian.plugin.remotable.api.service.http.XmlRpcFault;
 import com.atlassian.plugin.util.ChainingClassLoader;

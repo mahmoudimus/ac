@@ -1,5 +1,6 @@
 package com.atlassian.plugin.remotable.host.common.service.http;
 
+import com.atlassian.httpclient.apache.httpcomponents.DefaultHttpClient;
 import com.atlassian.plugin.remotable.api.service.SignedRequestHandler;
 import com.atlassian.plugin.remotable.api.service.http.HostHttpClient;
 import com.atlassian.plugin.remotable.host.common.service.DefaultRequestContext;

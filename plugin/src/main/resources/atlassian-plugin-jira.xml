@@ -1,4 +1,5 @@
 <application key="jira">
+    <component key="hostContainer" class="com.atlassian.plugin.osgi.bridge.external.SpringHostContainer" />
     <component key="jiraProductAccessor" class="com.atlassian.plugin.remotable.plugin.product.jira.JiraProductAccessor"/>
 
     <web-item key="general-dropdown-item" section="system.top.navigation.bar" weight="100">
@@ -48,7 +49,7 @@
     </plugin-permission>
 
     <component key="jiraWebHookProvider"
-               interface="com.atlassian.plugin.remotable.spi.webhook.WebHookProvider" public="true"
+               interface="com.atlassian.webhooks.spi.provider.WebHookProvider" public="true"
                class="com.atlassian.plugin.remotable.plugin.product.jira.JiraWebHookProvider" />
 
     <component key="EventSerializerFactory" class="com.atlassian.plugin.remotable.plugin.product.jira.webhook.JiraEventSerializerFactory" />

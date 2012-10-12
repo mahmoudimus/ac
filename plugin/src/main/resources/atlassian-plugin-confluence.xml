@@ -1,4 +1,5 @@
 <application key="confluence">
+    <component key="hostContainer" class="com.atlassian.plugin.osgi.bridge.external.SpringHostContainer" />
     <component key="confluenceProductAccessor"
                class="com.atlassian.plugin.remotable.plugin.product.confluence.ConfluenceProductAccessor"/>
 
@@ -81,7 +82,7 @@
     <component key="macroContentLinkParser" class="com.atlassian.plugin.remotable.plugin.module.confluence.MacroContentLinkParser" />
     <component key="macroContentManager" class="com.atlassian.plugin.remotable.plugin.module.confluence.MacroContentManager"/>
     <component key="confluenceWebHookProvider"
-               interface="com.atlassian.plugin.remotable.spi.webhook.WebHookProvider" public="true"
+               interface="com.atlassian.webhooks.spi.provider.WebHookProvider" public="true"
                class="com.atlassian.plugin.remotable.plugin.product.confluence.webhook.ConfluenceWebHookProvider" />
     <component key="EventSerializerFactory" class="com.atlassian.plugin.remotable.plugin.product.confluence.webhook.ConfluenceEventSerializerFactory" />
     <component key="WebSudoElevator" class="com.atlassian.plugin.remotable.plugin.product.confluence.ConfluenceWebSudoElevator" />

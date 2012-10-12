@@ -1,15 +1,15 @@
 package com.atlassian.plugin.remotable.plugin.webhooks;
 
-import com.atlassian.plugin.remotable.plugin.webhook.MapEventSerializer;
 import com.atlassian.plugin.remotable.spi.event.product.PluginsUpgradedEvent;
 import com.atlassian.plugin.remotable.spi.event.product.ServerUpgradedEvent;
 import com.atlassian.plugin.remotable.spi.event.product.UpgradedEvent;
-import com.atlassian.plugin.remotable.spi.webhook.EventSerializer;
-import com.atlassian.plugin.remotable.spi.webhook.EventSerializerFactory;
-import com.atlassian.plugin.remotable.spi.webhook.WebHookProvider;
-import com.atlassian.plugin.remotable.spi.webhook.WebHookRegistrar;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.sal.api.ApplicationProperties;
+import com.atlassian.webhooks.spi.provider.EventSerializer;
+import com.atlassian.webhooks.spi.provider.EventSerializerFactory;
+import com.atlassian.webhooks.spi.provider.EventSerializers;
+import com.atlassian.webhooks.spi.provider.WebHookProvider;
+import com.atlassian.webhooks.spi.provider.WebHookRegistrar;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashMap;
@@ -44,12 +44,13 @@ public final class ServerWebHookProvider implements WebHookProvider
             @Override
             public EventSerializer create(final UpgradedEvent event)
             {
-                return new MapEventSerializer(event, new HashMap<String,Object>() {{
+                return EventSerializers.forMap(event, new HashMap<String, Object>()
+                {{
                         put("key", consumerService.getConsumer().getKey());
                         put("baseUrl", (baseUrl != null ? baseUrl : ""));
                         put("oldVersion", event.getOldVersion());
                         put("newVersion", event.getNewVersion());
-                }});
+                    }});
             }
         };
 

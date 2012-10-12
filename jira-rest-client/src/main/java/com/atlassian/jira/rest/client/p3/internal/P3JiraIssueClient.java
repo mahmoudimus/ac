@@ -1,11 +1,33 @@
 package com.atlassian.jira.rest.client.p3.internal;
 
+import com.atlassian.httpclient.api.Request;
+import com.atlassian.httpclient.api.Response;
 import com.atlassian.jira.rest.client.GetCreateIssueMetadataOptions;
 import com.atlassian.jira.rest.client.RestClientException;
-import com.atlassian.jira.rest.client.domain.*;
-import com.atlassian.jira.rest.client.domain.input.*;
+import com.atlassian.jira.rest.client.domain.BasicIssue;
+import com.atlassian.jira.rest.client.domain.CimProject;
+import com.atlassian.jira.rest.client.domain.Comment;
+import com.atlassian.jira.rest.client.domain.Issue;
+import com.atlassian.jira.rest.client.domain.ServerInfo;
+import com.atlassian.jira.rest.client.domain.Transition;
+import com.atlassian.jira.rest.client.domain.Votes;
+import com.atlassian.jira.rest.client.domain.Watchers;
+import com.atlassian.jira.rest.client.domain.input.AttachmentInput;
+import com.atlassian.jira.rest.client.domain.input.FieldInput;
+import com.atlassian.jira.rest.client.domain.input.IssueInput;
+import com.atlassian.jira.rest.client.domain.input.LinkIssuesInput;
+import com.atlassian.jira.rest.client.domain.input.TransitionInput;
+import com.atlassian.jira.rest.client.domain.input.WorklogInput;
 import com.atlassian.jira.rest.client.internal.ServerVersionConstants;
-import com.atlassian.jira.rest.client.internal.json.*;
+import com.atlassian.jira.rest.client.internal.json.BasicIssueJsonParser;
+import com.atlassian.jira.rest.client.internal.json.CreateIssueMetadataJsonParser;
+import com.atlassian.jira.rest.client.internal.json.IssueJsonParser;
+import com.atlassian.jira.rest.client.internal.json.JsonObjectParser;
+import com.atlassian.jira.rest.client.internal.json.JsonParseUtil;
+import com.atlassian.jira.rest.client.internal.json.TransitionJsonParser;
+import com.atlassian.jira.rest.client.internal.json.TransitionJsonParserV5;
+import com.atlassian.jira.rest.client.internal.json.VotesJsonParser;
+import com.atlassian.jira.rest.client.internal.json.WatchersJsonParserBuilder;
 import com.atlassian.jira.rest.client.internal.json.gen.CommentJsonGenerator;
 import com.atlassian.jira.rest.client.internal.json.gen.IssueInputJsonGenerator;
 import com.atlassian.jira.rest.client.internal.json.gen.LinkIssuesInputGenerator;
@@ -14,8 +36,6 @@ import com.atlassian.jira.rest.client.p3.JiraIssueClient;
 import com.atlassian.jira.rest.client.p3.JiraMetadataClient;
 import com.atlassian.plugin.remotable.api.service.RequestContext;
 import com.atlassian.plugin.remotable.api.service.http.HostHttpClient;
-import com.atlassian.plugin.remotable.api.service.http.Request;
-import com.atlassian.plugin.remotable.api.service.http.Response;
 import com.atlassian.util.concurrent.Promise;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
@@ -31,7 +51,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.Iterator;
 
 public class P3JiraIssueClient extends AbstractP3RestClient implements JiraIssueClient
 {

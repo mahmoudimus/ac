@@ -1,12 +1,12 @@
 package com.atlassian.plugin.remotable.plugin.util.http;
 
 import com.atlassian.event.api.EventPublisher;
-import com.atlassian.plugin.remotable.host.common.service.http.HttpRequestCompletedEvent;
-import com.atlassian.plugin.remotable.host.common.service.http.HttpRequestFailedEvent;
-import com.atlassian.plugin.remotable.host.common.service.http.RequestKiller;
+import com.atlassian.httpclient.base.RequestKiller;
+import com.atlassian.httpclient.base.event.HttpRequestCompletedEvent;
+import com.atlassian.httpclient.base.event.HttpRequestFailedEvent;
+import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.remotable.plugin.ContentRetrievalException;
 import com.atlassian.plugin.remotable.plugin.RetrievalTimeoutException;
-import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.uri.Uri;
 import com.atlassian.uri.UriBuilder;
 import com.atlassian.util.concurrent.ThreadFactories;
@@ -49,7 +49,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.regex.Pattern;
 
-import static java.util.Collections.singletonList;
+import static java.util.Collections.*;
 
 /**
  * Retrieves http content asynchronously and caches its contents in memory according to the returned headers

@@ -101,14 +101,10 @@
     </web-resource>
 
     <component key="pluginUriResolver"
-               interface="com.atlassian.plugin.remotable.spi.webhook.PluginUriResolver" public="true"
+               interface="com.atlassian.webhooks.spi.plugin.PluginUriResolver" public="true"
                class="com.atlassian.plugin.remotable.plugin.module.webhook.RemotablePluginsPluginUriResolver" />
 
     <component key="waitableServiceTrackerFactory" class="com.atlassian.osgi.tracker.WaitableServiceTrackerFactory" />
-
-    <component key="webHookProvider"
-               interface="com.atlassian.plugin.remotable.spi.webhook.WebHookProvider" public="true"
-               class="com.atlassian.plugin.remotable.plugin.webhooks.PluginAppWebHookProvider" />
 
     <component key="httpContentRetriever" class="com.atlassian.plugin.remotable.plugin.util.http.CachingHttpContentRetriever"
                public="true" interface="com.atlassian.plugin.remotable.plugin.util.http.HttpContentRetriever" />
@@ -125,7 +121,7 @@
                interface="com.atlassian.plugin.remotable.spi.RemotablePluginInstallationService" public="true" />
 
     <component key="serverWebHookProvider"
-               interface="com.atlassian.plugin.remotable.spi.webhook.WebHookProvider" public="true"
+               interface="com.atlassian.webhooks.spi.provider.WebHookProvider" public="true"
                class="com.atlassian.plugin.remotable.plugin.webhooks.ServerWebHookProvider" />
 
     <component key="bundleLocator" class="com.atlassian.plugin.remotable.host.common.util.BundleContextBundleLoader" />
@@ -156,8 +152,6 @@
     <component-import key="typeAccessor" interface="com.atlassian.applinks.spi.util.TypeAccessor" />
     <component-import key="webResourceUrlProvider" interface="com.atlassian.plugin.webresource.WebResourceUrlProvider" />
     <component-import key="moduleFactory" interface="com.atlassian.plugin.module.ModuleFactory" />
-    <component-import key="webhookPublisher" interface="com.atlassian.plugin.remotable.plugin.webhook.WebHookPublisher" />
-    <component-import key="webhookIdsAccessor" interface="com.atlassian.plugin.remotable.plugin.webhook.WebHookIdsAccessor" />
 
     <!-- Cross-product API Scopes -->
     <plugin-permission key="read_app_links" name="Read Application Links"
@@ -195,10 +189,10 @@
                class="com.atlassian.plugin.remotable.host.common.service.RenderContextServiceFactory" public="true" />
 
     <component key="requestKiller"
-               class="com.atlassian.plugin.remotable.host.common.service.http.RequestKiller" />
+               class="com.atlassian.httpclient.base.RequestKiller" />
 
     <component key="asyncHttpClient" interface="com.atlassian.plugin.remotable.api.service.http.HttpClient"
-               class="com.atlassian.plugin.remotable.host.common.service.http.DefaultHttpClient" />
+               class="com.atlassian.httpclient.apache.httpcomponents.DefaultHttpClient" />
 
     <component key="httpClient" interface="com.atlassian.plugin.remotable.api.service.http.HostHttpClient"
                class="com.atlassian.plugin.remotable.host.common.service.http.HostHttpClientServiceFactory" public="true" />
@@ -215,8 +209,6 @@
             <manifest-producer class="com.atlassian.plugin.remotable.plugin.module.applinks.RemotePluginContainerManifestProducer"/>
     </applinks-application-type>
 
-    <module-type key="described-module-type" class="com.atlassian.plugin.remotable.plugin.integration.plugins.DescribedModuleTypeModuleDescriptor" />
-
     <!-- remote extension points -->
 
     <described-module-type key="remote-plugin-container" name="Remote Plugin Container"
@@ -225,11 +217,6 @@
         <optional-permissions>
             <permission>create_oauth_link</permission>
         </optional-permissions>
-    </described-module-type>
-
-    <described-module-type key="webhook" name="Web Hook" class="com.atlassian.plugin.remotable.plugin.module.webhook.WebHookModuleDescriptor"
-                           schema-transformer-class="com.atlassian.plugin.remotable.plugin.module.webhook.WebHookSchemaFactory">
-        <description>Registration for a web hook callback from an internal event</description>
     </described-module-type>
 
     <described-module-type key="general-page" class="com.atlassian.plugin.remotable.plugin.module.page.GeneralPageModuleDescriptor">

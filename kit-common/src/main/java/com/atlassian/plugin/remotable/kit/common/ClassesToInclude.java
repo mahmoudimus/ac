@@ -1,11 +1,11 @@
 package com.atlassian.plugin.remotable.kit.common;
 
+import com.atlassian.httpclient.api.HttpClient;
 import com.atlassian.jira.plugin.searchrequestview.SearchRequestView;
+import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.remotable.api.service.HttpResourceMounter;
 import com.atlassian.plugin.remotable.api.service.SignedRequestHandler;
-import com.atlassian.plugin.remotable.api.service.http.HttpClient;
 import com.atlassian.plugin.remotable.spi.module.ModuleMarker;
-import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 
 import javax.inject.Named;

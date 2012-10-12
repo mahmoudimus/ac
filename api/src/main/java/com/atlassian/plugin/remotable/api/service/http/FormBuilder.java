@@ -1,5 +1,7 @@
 package com.atlassian.plugin.remotable.api.service.http;
 
+import com.atlassian.httpclient.api.EntityBuilder;
+
 import java.util.List;
 
 /**

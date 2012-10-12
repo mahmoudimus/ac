@@ -1,7 +1,7 @@
 package com.atlassian.plugin.remotable.plugin.descriptor;
 
 import com.atlassian.plugin.remotable.spi.InstallationFailedException;
-import com.atlassian.plugin.remotable.spi.schema.Schema;
+import com.atlassian.plugin.schema.spi.Schema;
 import org.dom4j.Document;
 
 import java.net.URL;

@@ -1,7 +1,7 @@
 package com.atlassian.plugin.remotable.spi.util;
 
-import com.atlassian.plugin.remotable.spi.schema.SchemaDocumented;
 import com.atlassian.plugin.PluginParseException;
+import com.atlassian.plugin.schema.spi.SchemaDocumented;
 import org.apache.commons.io.IOUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;

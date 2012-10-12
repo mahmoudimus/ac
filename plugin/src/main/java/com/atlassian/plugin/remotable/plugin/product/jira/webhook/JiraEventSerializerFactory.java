@@ -3,9 +3,9 @@ package com.atlassian.plugin.remotable.plugin.product.jira.webhook;
 import com.atlassian.jira.event.JiraEvent;
 import com.atlassian.plugin.remotable.plugin.product.EventMapper;
 import com.atlassian.plugin.remotable.plugin.product.jira.JiraRestBeanMarshaler;
-import com.atlassian.plugin.remotable.plugin.webhook.MapEventSerializer;
-import com.atlassian.plugin.remotable.spi.webhook.EventSerializer;
-import com.atlassian.plugin.remotable.spi.webhook.EventSerializerFactory;
+import com.atlassian.webhooks.spi.provider.EventSerializer;
+import com.atlassian.webhooks.spi.provider.EventSerializerFactory;
+import com.atlassian.webhooks.spi.provider.EventSerializers;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import org.slf4j.Logger;
@@ -16,8 +16,8 @@ import java.util.List;
 import static com.google.common.base.Preconditions.*;
 
 /**
- * Maps {@link JiraEvent} instances to {@link EventSerializer} instances so that the event information
- * can be transmitted via the {@link com.atlassian.plugin.remotable.plugin.webhook.WebHookPublisherImpl}.
+ * Maps {@link JiraEvent} instances to {@link com.atlassian.webhooks.spi.provider.EventSerializer} instances so that the event information
+ * can be transmitted via the WebHookPublisher.
  */
 public final class JiraEventSerializerFactory implements EventSerializerFactory<JiraEvent>
 {
@@ -39,12 +39,12 @@ public final class JiraEventSerializerFactory implements EventSerializerFactory<
         {
             if (mapper.handles(event))
             {
-                return new MapEventSerializer(event, mapper.toMap(event));
+                return EventSerializers.forMap(event, mapper.toMap(event));
             }
         }
 
         // This should never really happen; the mappers list has a default mapper within it that handles every type of event.
         log.warn(String.format("Event %s was not recognised by any Event to WebHook mapper.", event.getClass().getName()));
-        return new MapEventSerializer(event, ImmutableMap.<String, Object>builder().build());
+        return EventSerializers.forMap(event, ImmutableMap.<String, Object>builder().build());
     }
 }

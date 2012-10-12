@@ -21,9 +21,8 @@
             <artifactId>atlassian-util-concurrent</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.atlassian.plugins</groupId>
-            <artifactId>remotable-plugins-http-client</artifactId>
-            <version>${project.version}</version>
+            <groupId>com.atlassian.httpclient</groupId>
+            <artifactId>atlassian-httpclient-api</artifactId>
         </dependency>
         <dependency>
             <groupId>com.atlassian.event</groupId>
@@ -78,6 +77,11 @@
             <groupId>net.oauth.core</groupId>
             <artifactId>oauth-consumer</artifactId>
             <version>20090617</version>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.plugins</groupId>
+            <artifactId>atlassian-plugins-schema</artifactId>
+            <version>${plugins.version}</version>
         </dependency>
         <dependency>
             <groupId>com.atlassian.plugins</groupId>

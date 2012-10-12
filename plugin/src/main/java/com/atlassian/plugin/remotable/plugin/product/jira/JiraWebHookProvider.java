@@ -3,9 +3,9 @@ package com.atlassian.plugin.remotable.plugin.product.jira;
 import com.atlassian.jira.event.issue.IssueEvent;
 import com.atlassian.jira.event.type.EventType;
 import com.atlassian.plugin.remotable.plugin.product.jira.webhook.JiraEventSerializerFactory;
-import com.atlassian.plugin.remotable.spi.webhook.EventMatcher;
-import com.atlassian.plugin.remotable.spi.webhook.WebHookProvider;
-import com.atlassian.plugin.remotable.spi.webhook.WebHookRegistrar;
+import com.atlassian.webhooks.spi.provider.EventMatcher;
+import com.atlassian.webhooks.spi.provider.WebHookProvider;
+import com.atlassian.webhooks.spi.provider.WebHookRegistrar;
 import com.google.common.collect.ImmutableMap;
 
 import java.util.Map;
