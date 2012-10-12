@@ -78,22 +78,6 @@ public class MacroInstance
         Map<String,String> params = newHashMap(requestContextParameters.getQueryParameters());
 
         /*!
-        #### Deprecated
-
-        The following parameters are included, but are deprecated and will be removed before 1.0:
-
-        * `page_id`
-        * `pageId`
-        * `pageTitle`
-         */
-        if (requestContextParameters.isLegacyMode())
-        {
-            params.put("page_id", allContextParameters.get("page_id"));
-            params.put("pageId", allContextParameters.get("page_id"));
-            params.put("pageTitle", allContextParameters.get("page_title"));
-        }
-
-        /*!
         ### Macro Instance Parameters
 
         * `body` - The body of the macro, if allowed. Empty string if not present.

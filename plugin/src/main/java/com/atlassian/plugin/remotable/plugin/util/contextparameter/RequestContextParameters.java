@@ -14,15 +14,13 @@ public class RequestContextParameters
     private final Map<String,String> allContextParameters;
     private final Set<String> queryParameters;
     private final Set<String> headerParameters;
-    private final boolean legacyMode;
 
     RequestContextParameters(Map<String, String> allContextParameters,
-            Set<String> queryParameters, Set<String> headerParameters, boolean legacyMode)
+            Set<String> queryParameters, Set<String> headerParameters)
     {
         this.allContextParameters = allContextParameters;
         this.queryParameters = queryParameters;
         this.headerParameters = headerParameters;
-        this.legacyMode = legacyMode;
     }
 
     public Map<String, String> getHeaders()
@@ -47,10 +45,6 @@ public class RequestContextParameters
     public Map<String, String> getQueryParameters()
     {
         Map<String,String> params = newHashMap();
-        if (legacyMode)
-        {
-            params.put("user_id", allContextParameters.get("user_id"));
-        }
 
         for (Map.Entry<String,String> entry : allContextParameters.entrySet())
         {
@@ -66,16 +60,11 @@ public class RequestContextParameters
 
     private boolean shouldIncludeInQueryString(String key)
     {
-        return legacyMode || queryParameters.contains(key);
+        return queryParameters.contains(key);
     }
 
     private boolean shouldIncludeInHeader(String key)
     {
         return headerParameters.contains(key);
-    }
-
-    public boolean isLegacyMode()
-    {
-        return legacyMode;
     }
 }

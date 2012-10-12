@@ -5,13 +5,6 @@
     <xs:complexType name="PageType">
         <xs:sequence>
             <xs:element name="description" type="DescriptionType" minOccurs="0" maxOccurs="1"/>
-            <xs:element name="context-parameters" type="LinkContextParametersType" minOccurs="0" maxOccurs="1">
-                <xs:annotation>
-                    <xs:documentation>
-                        Deprecated. You get all the parameters on every link anyway.
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
             <xs:element name="conditions" type="ConditionsType" minOccurs="0" maxOccurs="1" />
         </xs:sequence>
         <xs:attribute name="key" type="KeyType" use="required" />

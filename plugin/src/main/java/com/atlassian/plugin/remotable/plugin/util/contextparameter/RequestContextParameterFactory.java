@@ -14,20 +14,11 @@ public class RequestContextParameterFactory
 {
     private final Set<String> queryParameters;
     private final Set<String> headerParameters;
-    private final boolean legacyMode;
 
     public RequestContextParameterFactory(Set<String> queryParameters, Set<String> headerParameters)
     {
         this.queryParameters = queryParameters;
         this.headerParameters = headerParameters;
-        this.legacyMode = false;
-    }
-
-    public RequestContextParameterFactory()
-    {
-        this.legacyMode = true;
-        this.queryParameters = Collections.emptySet();
-        this.headerParameters = Collections.emptySet();
     }
 
     /**
@@ -41,8 +32,7 @@ public class RequestContextParameterFactory
         allContextParameters.put("user_id", userId != null ? userId : "");
         allContextParameters.putAll(entityContextParameters);
 
-        return new RequestContextParameters(allContextParameters, queryParameters, headerParameters,
-                legacyMode);
+        return new RequestContextParameters(allContextParameters, queryParameters, headerParameters);
     }
 
 

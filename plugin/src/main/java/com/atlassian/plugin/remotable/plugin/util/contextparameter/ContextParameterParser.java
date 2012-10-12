@@ -17,10 +17,10 @@ public class ContextParameterParser
 {
     public RequestContextParameterFactory parseContextParameters(Element entity)
     {
+        Set<String> queryParams = newHashSet();
+        Set<String> headerParams = newHashSet();
         if (entity.element("context-parameters") != null)
         {
-            Set<String> queryParams = newHashSet();
-            Set<String> headerParams = newHashSet();
             for (Element e : (List<Element>) entity.element("context-parameters").elements())
             {
                 if ("header".equals(getOptionalAttribute(e, "type", "query")))
@@ -32,8 +32,7 @@ public class ContextParameterParser
                     queryParams.add(e.attributeValue("name"));
                 }
             }
-            return new RequestContextParameterFactory(queryParams, headerParams);
         }
-        return new RequestContextParameterFactory();
+        return new RequestContextParameterFactory(queryParams, headerParams);
     }
 }

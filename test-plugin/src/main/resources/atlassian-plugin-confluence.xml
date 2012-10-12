@@ -17,6 +17,9 @@
                 <value name="Rugby League"/>
             </parameter>
         </parameters>
+        <context-parameters>
+            <context-parameter name="page_id" type="query" />
+        </context-parameters>
     </remote-macro>
 
     <remote-macro key="app1-nocache" name="app1-nocache" title="Remotable Plugin app1 No Cache Macro" url="/myMacro" icon-url="/public/sandcastles.jpg" output-type="block" body-type="rich-text">
@@ -33,7 +36,6 @@
         </parameters>
         <context-parameters>
             <context-parameter name="page_id" type="query" />
-            <context-parameter name="user_id" type="header" />
         </context-parameters>
     </remote-macro>
 
