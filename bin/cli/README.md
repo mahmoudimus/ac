@@ -1,15 +1,13 @@
-## Introduction
+# Introduction
 
 This is an experimental installation and command execution system for the p3 plugin development tool.
 
 For general Plugins 3 development, run the following command to install the p3 CLI tool:
 
     :::text
-	  curl https://bitbucket.org/atlassian/remotable-plugins/raw/master/bin/cli/p3.sh | sh
+    curl https://bitbucket.org/atlassian/remotable-plugins/raw/master/bin/cli/p3.sh | sh
 
-If you already have the [Atlassian Plugin SDK](https://developer.atlassian.com/display/DOCS/Atlassian+Plugin+SDK+Documentation),
-and its bin directory is installed on your path, then p3 will use the existing SDK.  Otherwise, it will download and install
-the SDK for its own use in it's home directory (~/.p3).
+If you already have the [Atlassian Plugin SDK](https://developer.atlassian.com/display/DOCS/Atlassian+Plugin+SDK+Documentation), and its bin directory is installed on your path, then p3 will use the existing SDK.  Otherwise, it will download and install the SDK for its own use in it's home directory (~/.p3).
 
 If you're a developer working on the remotable-plugins itself, then you'll also want to export the `RP_HOME` environment
 variable to point to your local git repository directory for the remotable-plugins project.  If you don't have `RP_HOME` set,
@@ -18,9 +16,9 @@ then installation of the p3 scripts will also install its own working version of
 When setting `RP_HOME` to an existing remotable-plugins repository, you can install without network access like so:
 
     :::text
-	  cat remotable-plugins/bin/cli/p3.sh | sh
+    cat remotable-plugins/bin/cli/p3.sh | sh
 
-## Command Examples
+# Command Examples
 
 Run a refapp instance:
 
@@ -72,12 +70,12 @@ Rebuild just the container module, using shorthand:
     :::text
     p3 rb container
 
-Update remotable-plugins from the repository (only if not overriding $RP_HOME):
+Update remotable-plugins from the repository (only if not overriding $RP\_HOME):
 
     :::text
     p3 update
 
-Uninstall remotable-plugins and all of its working files (only if not overriding $RP_HOME):
+Uninstall remotable-plugins and all of its working files (only if not overriding $RP\_HOME):
 
     :::text
     p3 uninstall
