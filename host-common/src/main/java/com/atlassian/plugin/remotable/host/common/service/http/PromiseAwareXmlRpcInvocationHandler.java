@@ -155,7 +155,7 @@ public final class PromiseAwareXmlRpcInvocationHandler implements InvocationHand
             final Deferred<Object> deferred = Deferred.create();
 
             Promise<Object> actualPromise = (Promise<Object>) returnValue;
-            actualPromise.on(new FutureCallback<Object>()
+            actualPromise.then(new FutureCallback<Object>()
             {
                 @Override
                 public void onSuccess(Object result)
