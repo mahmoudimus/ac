@@ -548,7 +548,7 @@
         <API_VERSION>0.5</API_VERSION>
         <spring.version>2.5.6</spring.version>
         <atlassian-util-concurrent.version>2.4-m2</atlassian-util-concurrent.version>
-        <atlassian-httpclient.version>0.2</atlassian-httpclient.version>
-        <webhooks.version>0.2</webhooks.version>
+        <atlassian-httpclient.version>${webhooks.version}</atlassian-httpclient.version>
+        <webhooks.version>0.3</webhooks.version>
     </properties>
 </project>
