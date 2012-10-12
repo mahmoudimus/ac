@@ -1,0 +1,21 @@
+-- commands --
+
+- if using user-installed SDK, check version compatibility
+- make 'p3 start' accept multiple app keys (e.g. solve oauth env var collisions)
+- rethink 'p3 run' vs 'p3 start' -- confusing names; can they be combined more logically into one cmd?
+- 'p3 update' is currently too naive
+- be able to start ringojs in interactive debugging mode with a 'p3 start' option?
+
+-- features --
+
+- support scaffold options for adding extension-point & webhook routes/actions
+- trap ctrl-c for started container and uninstall plugin using curl/upm
+- create option to generate servlet-kit scaffolding instead of js/cs
+- make response.render in ringo-kit structured app support layouts like servlet-kit page servlets
+
+-- questions --
+
+- include scaffold options for including jquery, bootstrap, backbone?
+- include scaffold options for running eco, jade, less, stylus, etc?
+- support client-side coffeescript?
+- how do web-resources or asset pipelines fit in?  or live reload?
