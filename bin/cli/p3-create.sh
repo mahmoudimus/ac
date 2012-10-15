@@ -15,21 +15,30 @@ fi
 
 copyTemplate() {
   local dir=$1
-  local file=$2
-  if [ ! -z $3 ]; then
-    file=$file.$3
+  local fromFile=$2
+  local toFile=$3
+  if [ ! -z $4 ]; then
+    fromFile=$fromFile.$4
+    toFile=$toFile.$4
   fi
-  local infile=$dir/$file
-  OUTFILE=$APP_HOME/$file
+  local infile=$dir/$fromFile
+  OUTFILE=$APP_HOME/$toFile
   cat $infile |\
     awk -v srch='@app_key@' -v repl="$APP_KEY" '{ sub(srch,repl,$0); print }' |\
     awk -v srch='@app_name@' -v repl="$APP_NAME" '{ sub(srch,repl,$0); print }' |\
-    awk -v srch='@app_desc@' -v repl="$APP_DESC" '{ sub(srch,repl,$0); print }' \
+    awk -v srch='@app_desc@' -v repl="$APP_DESC" '{ sub(srch,repl,$0); print }' |\
+    awk -v srch='@plugin_version@' -v repl="$PLUGIN_VERSION" '{ sub(srch,repl,$0); print }' \
     > $OUTFILE
 }
 
 copyFile () {
-  copyTemplate $1 $2 $3
+  copyTemplate $1 $2 $2 $3
+  echo "Created: $OUTFILE"
+  unset OUTFILE
+}
+
+copyFileTo () {
+  copyTemplate $1 $2 $3 $4
   echo "Created: $OUTFILE"
   unset OUTFILE
 }
@@ -54,7 +63,7 @@ createKeys() {
   fi
 }
 
-writeDescriptor() {
+createDescriptor() {
   local outfile=$APP_HOME/$DESCRIPTOR.xml
   echo "<?xml version=\"1.0\" ?>" >> $outfile
   echo "<atlassian-plugin key=\"$APP_KEY\" name=\"$APP_NAME\" plugins-version=\"2\">" >> $outfile
@@ -149,14 +158,14 @@ APP_PERMISSIONS=""
 APP_OAUTH_SECTION=""
 
 APP_HOME=$APP_KEY
+
+if [ -d $APP_HOME ]; then
+  echo "App $APP_KEY already exists." >&2
+  exit 1
+fi
+
 TMPL_BASE_DIR=$P3_BIN/templates
 TMPL_COMMON_DIR=$TMPL_BASE_DIR/common
-
-if [ "$MINIMAL" == "1" ]; then
-  TMPL_DIR=$TMPL_BASE_DIR/minimal
-else
-  TMPL_DIR=$TMPL_BASE_DIR/structured
-fi
 
 PUBLIC_DIR=public
 PUBLIC_JS_DIR=$PUBLIC_DIR/js
@@ -165,51 +174,67 @@ LIB_DIR=lib
 KEY_DIR=oauth
 
 DESCRIPTOR=atlassian-plugin
-SCRIPT_MAIN=main
 SCRIPT_CLIENT=$PUBLIC_JS_DIR/client
-STYLESHEET_CLIENT_MAIN=$PUBLIC_CSS_DIR/styles
+STYLESHEET_STYLES=$PUBLIC_CSS_DIR/styles
 LIB_README=$LIB_DIR/README
-
-if [ -d $APP_HOME ]; then
-  echo "App $APP_KEY already exists." >&2
-  exit 1
-fi
 
 mkdir $APP_HOME
 
-if [ "$COFFEE" == "1" ]; then
-  SCRIPT_EXT=coffee
-else
-  SCRIPT_EXT=js
-fi
-
 createKeys
-writeDescriptor
-copyFile $TMPL_DIR $SCRIPT_MAIN $SCRIPT_EXT
+createDescriptor
 
-if [ "$MINIMAL" == "1" ]; then
-  VIEWS_DIR=views
-  VIEW_GENERAL=$VIEWS_DIR/general
-  mkdir $APP_HOME/$VIEWS_DIR
-  copyFile $TMPL_DIR $VIEW_GENERAL mustache
-else
-  APP_DIR=app
-  SCRIPT_SERVER=$APP_DIR/server
-  SCRIPT_ROUTES=$APP_DIR/routes
-  VIEWS_DIR=$APP_DIR/views
-  VIEW_GENERAL=$VIEWS_DIR/general
-  mkdir $APP_HOME/$APP_DIR
-  mkdir $APP_HOME/$VIEWS_DIR
-  mkdir $APP_HOME/$PUBLIC_DIR
-  mkdir $APP_HOME/$PUBLIC_JS_DIR
-  mkdir $APP_HOME/$PUBLIC_CSS_DIR
-  mkdir $APP_HOME/$LIB_DIR
-  copyFile $TMPL_DIR $SCRIPT_SERVER $SCRIPT_EXT
-  copyFile $TMPL_DIR $SCRIPT_ROUTES $SCRIPT_EXT
-  copyFile $TMPL_DIR $VIEW_GENERAL mustache
-  copyFile $TMPL_COMMON_DIR $SCRIPT_CLIENT js
-  copyFile $TMPL_COMMON_DIR $STYLESHEET_CLIENT_MAIN css
+if [ "$SERVLET_KIT" == "1" ]; then
+  TMPL_DIR=$TMPL_BASE_DIR/servlet-kit
+  RESOURCES_DIR=src/main/resources
+  VIEWS_DIR=$RESOURCES_DIR/views
+  VIEW_GENERAL=$VIEWS_DIR/general-page
+  JAVA_DIR=src/main/java
+  SERVLETS_DIR=$JAVA_DIR/servlets
+  JAVA_SERVLET=$SERVLETS_DIR/GeneralPageServlet
+  mkdir -p $APP_HOME/$RESOURCES_DIR/$PUBLIC_JS_DIR
+  mkdir -p $APP_HOME/$RESOURCES_DIR/$PUBLIC_CSS_DIR
+  mkdir -p $APP_HOME/$LIB_DIR
+  mkdir -p $APP_HOME/$VIEWS_DIR
+  mkdir -p $APP_HOME/$SERVLETS_DIR
+  copyFileTo $TMPL_COMMON_DIR $SCRIPT_CLIENT $RESOURCES_DIR/$SCRIPT_CLIENT js
+  copyFileTo $TMPL_COMMON_DIR $STYLESHEET_STYLES $RESOURCES_DIR/$STYLESHEET_STYLES css
   copyFile $TMPL_COMMON_DIR $LIB_README md
+  copyFile $TMPL_DIR pom xml
+  copyFile $TMPL_DIR $JAVA_SERVLET java
+  copyFile $TMPL_DIR $VIEW_GENERAL vm
+else
+  if [ "$COFFEE" == "1" ]; then
+    SCRIPT_EXT=coffee
+  else
+    SCRIPT_EXT=js
+  fi
+  SCRIPT_MAIN=main
+  copyFile $TMPL_DIR $SCRIPT_MAIN $SCRIPT_EXT
+  if [ "$MINIMAL" == "1" ]; then
+    TMPL_DIR=$TMPL_BASE_DIR/minimal
+    VIEWS_DIR=views
+    VIEW_GENERAL=$VIEWS_DIR/general
+    mkdir -p $APP_HOME/$VIEWS_DIR
+    copyFile $TMPL_DIR $VIEW_GENERAL mustache
+  else
+    TMPL_DIR=$TMPL_BASE_DIR/structured
+    APP_DIR=app
+    SCRIPT_SERVER=$APP_DIR/server
+    SCRIPT_ROUTES=$APP_DIR/routes
+    VIEWS_DIR=$APP_DIR/views
+    VIEW_GENERAL=$VIEWS_DIR/general
+    mkdir -p $APP_HOME/$APP_DIR
+    mkdir -p $APP_HOME/$VIEWS_DIR
+    mkdir -p $APP_HOME/$PUBLIC_JS_DIR
+    mkdir -p $APP_HOME/$PUBLIC_CSS_DIR
+    mkdir -p $APP_HOME/$LIB_DIR
+    copyFile $TMPL_DIR $SCRIPT_SERVER $SCRIPT_EXT
+    copyFile $TMPL_DIR $SCRIPT_ROUTES $SCRIPT_EXT
+    copyFile $TMPL_DIR $VIEW_GENERAL mustache
+    copyFile $TMPL_COMMON_DIR $SCRIPT_CLIENT js
+    copyFile $TMPL_COMMON_DIR $STYLESHEET_STYLES css
+    copyFile $TMPL_COMMON_DIR $LIB_README md
+  fi
 fi
 
 echo "App '$APP_KEY' successfully created."
