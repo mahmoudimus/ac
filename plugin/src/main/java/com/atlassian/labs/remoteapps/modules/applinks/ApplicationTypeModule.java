@@ -73,6 +73,7 @@ public class ApplicationTypeModule implements ClosableRemoteModule, StartableRem
                 log.info("Applink of type {} already exists", applicationType.getId());
             }
         }
+        link.putProperty("system", Boolean.TRUE.toString());
         link.putProperty("IS_ACTIVITY_ITEM_PROVIDER", Boolean.FALSE.toString());
 
         // ensure no permissions by default
