@@ -245,6 +245,26 @@ public class ApplicationTypeModuleGenerator implements WaitableRemoteModuleGener
                 }
             };
         }
+        else if (ctx.getPlugin() instanceof AbstractDelegatingPlugin
+                && ((AbstractDelegatingPlugin) ctx.getPlugin()).getDelegate() instanceof ContainerManagedPlugin)
+        {
+            delegatePlugin = new DelegatePlugin((ContainerManagedPlugin)((AbstractDelegatingPlugin) ctx.getPlugin()).getDelegate())
+            {
+                @Override
+                public <T> Class<T> loadClass(String clazz, Class<?> callingClass) throws
+                        ClassNotFoundException
+                {
+                    if (clazz.startsWith("generatedManifestProducer"))
+                    {
+                        return (Class<T>) manifestProducerClass;
+                    }
+                    else
+                    {
+                        return super.loadClass(clazz, callingClass);
+                    }
+                }
+            };
+        }
         else
         {
             delegatePlugin = new AbstractDelegatingPlugin(ctx.getPlugin())
