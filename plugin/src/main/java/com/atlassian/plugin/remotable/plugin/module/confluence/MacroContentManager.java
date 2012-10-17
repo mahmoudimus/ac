@@ -11,12 +11,12 @@ import com.atlassian.plugin.remotable.plugin.ContentRetrievalException;
 import com.atlassian.plugin.remotable.plugin.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.remotable.plugin.util.http.CachingHttpContentRetriever;
 import com.atlassian.plugin.remotable.plugin.util.http.bigpipe.BigPipe;
-import com.atlassian.plugin.remotable.plugin.util.http.bigpipe.BigPipeHttpContentHandler;
-import com.atlassian.plugin.remotable.plugin.util.http.bigpipe.ContentProcessor;
+import com.atlassian.plugin.remotable.plugin.util.http.bigpipe.BigPipeContentHandler;
 import com.atlassian.plugin.remotable.plugin.util.http.bigpipe.RequestIdAccessor;
 import com.atlassian.renderer.RenderContextOutputType;
 import com.atlassian.sal.api.component.ComponentLocator;
 import com.atlassian.sal.api.user.UserManager;
+import com.google.common.base.Function;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
@@ -82,10 +82,11 @@ public class MacroContentManager implements DisposableBean
 
         String contentId = macroInstance.getHashKey();
         final Map<String,String> urlParameters = macroInstance.getUrlParameters(author);
-        BigPipeHttpContentHandler httpContentHandler = bigPipe.createContentHandler(requestId, contentId, new ContentProcessor()
+        BigPipeContentHandler contentHandler = bigPipe.createContentHandler(requestId, contentId,
+                new Function<String, String>()
         {
             @Override
-            public String process(String value)
+            public String apply(String value)
             {
                 value = macroContentLinkParser.parse(
                         macroInstance.getRemotablePluginAccessor(), value,
@@ -113,34 +114,34 @@ public class MacroContentManager implements DisposableBean
                     throw new ContentRetrievalException("Unable to convert storage format to HTML: " + e.getMessage(), e);
                 }
             }
-        });
+        }, null);
 
 
         Future<String> response = macroInstance.getRemotablePluginAccessor().executeAsyncGet(author,
                 macroInstance.getPath(), urlParameters,
-                macroInstance.getHeaders(author), httpContentHandler);
+                macroInstance.getHeaders(author)).then(contentHandler);
 
         // only render display via big pipe, block for everyone else
         if (RenderContextOutputType.DISPLAY.equals(macroInstance.getConversionContext().getOutputType()))
         {
-            return httpContentHandler.getInitialContent();
+            return contentHandler.getInitialContent();
         }
         else
         {
             try
             {
                 response.get();
-                httpContentHandler.markCompleted();
-                return httpContentHandler.getFinalContent();
+                contentHandler.markCompleted();
+                return contentHandler.getFinalContent();
             }
             catch (InterruptedException e)
             {
-                httpContentHandler.markCompleted();
+                contentHandler.markCompleted();
                 throw new ContentRetrievalException(e);
             }
             catch (ExecutionException e)
             {
-                httpContentHandler.markCompleted();
+                contentHandler.markCompleted();
                 throw new ContentRetrievalException(e.getCause());
             }
         }
@@ -164,9 +165,7 @@ public class MacroContentManager implements DisposableBean
         if (!(pageEvent instanceof PageViewEvent))
         {
             String pageId = pageEvent.getPage().getIdAsString();
-            cachingHttpContentRetriever.flushCacheByUrlPattern(
-                    Pattern.compile(".*pageId=" + pageId + ".*")
-            );
+            cachingHttpContentRetriever.flushCacheByUriPattern(Pattern.compile(".*page_id=" + pageId + ".*"));
         }
     }
 
@@ -184,14 +183,13 @@ public class MacroContentManager implements DisposableBean
     public void clearContentByPluginKey(String pluginKey)
     {
         URI displayUrl = remotablePluginAccessorFactory.get(pluginKey).getDisplayUrl();
-        cachingHttpContentRetriever.flushCacheByUrlPattern(
-                Pattern.compile("^" + displayUrl + "/.*"));
+        cachingHttpContentRetriever.flushCacheByUriPattern(Pattern.compile("^" + displayUrl + "/.*"));
     }
 
     public void clearContentByInstance(String pluginKey, String instanceKey)
     {
         URI displayUrl = remotablePluginAccessorFactory.get(pluginKey).getDisplayUrl();
-        cachingHttpContentRetriever.flushCacheByUrlPattern(
+        cachingHttpContentRetriever.flushCacheByUriPattern(
                 Pattern.compile("^" + displayUrl + "/.*key=" + instanceKey + ".*"));
     }
 

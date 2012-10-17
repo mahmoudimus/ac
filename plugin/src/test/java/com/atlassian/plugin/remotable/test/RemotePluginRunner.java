@@ -37,7 +37,6 @@ public class RemotePluginRunner
     private final RemotePluginInstallerClient installer;
     private final String appKey;
     private String secret;
-    private boolean stripUnknownModules;
 
     public RemotePluginRunner(String baseUrl, String appKey)
     {
@@ -192,15 +191,9 @@ public class RemotePluginRunner
         return this;
     }
 
-    public RemotePluginRunner stripUnknownModules()
+    private void register(String secret) throws IOException
     {
-        this.stripUnknownModules = true;
-        return this;
-    }
-
-    private void register(String secret, boolean stripUnknownModules) throws IOException
-    {
-        installer.install("http://localhost:" + port + "/register", secret, stripUnknownModules);
+        installer.install("http://localhost:" + port + "/register", secret);
     }
 
     private void unregister() throws IOException
@@ -232,7 +225,7 @@ public class RemotePluginRunner
         list.addHandler(context);
         server.start();
 
-        register(secret, stripUnknownModules);
+        register(secret);
         return this;
     }
 

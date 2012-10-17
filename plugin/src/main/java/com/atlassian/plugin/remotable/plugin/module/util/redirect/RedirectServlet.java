@@ -7,8 +7,8 @@ import com.atlassian.uri.Uri;
 import com.atlassian.uri.UriBuilder;
 import com.google.common.base.Function;
 import com.google.common.collect.Maps;
+import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.lang.Validate;
-import org.apache.http.HttpStatus;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;

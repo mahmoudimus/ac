@@ -138,6 +138,7 @@ public class RemotePluginContainerModuleDescriptor extends AbstractModuleDescrip
             }
 
             link.putProperty("IS_ACTIVITY_ITEM_PROVIDER", Boolean.FALSE.toString());
+            link.putProperty("system", Boolean.TRUE.toString());
 
             ServiceProvider serviceProvider = createOAuthServiceProvider(displayUrl, oauthElement);
             oAuthLinkManager.associateProviderWithLink(link, applicationType.getId().get(), serviceProvider);

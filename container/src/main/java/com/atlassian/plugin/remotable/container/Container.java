@@ -2,9 +2,6 @@ package com.atlassian.plugin.remotable.container;
 
 import com.atlassian.activeobjects.spi.DataSourceProvider;
 import com.atlassian.event.api.EventPublisher;
-import com.atlassian.httpclient.apache.httpcomponents.DefaultHttpClient;
-import com.atlassian.httpclient.api.HttpClient;
-import com.atlassian.httpclient.base.RequestKiller;
 import com.atlassian.plugin.remotable.api.service.jira.JiraComponentClient;
 import com.atlassian.plugin.remotable.api.service.jira.JiraIssueClient;
 import com.atlassian.plugin.remotable.api.service.jira.JiraMetadataClient;
@@ -62,11 +59,7 @@ import com.atlassian.plugin.remotable.container.service.ContainerHttpResourceMou
 import com.atlassian.plugin.remotable.container.service.OAuthSignedRequestHandlerServiceFactory;
 import com.atlassian.plugin.remotable.container.service.event.ContainerEventPublisher;
 import com.atlassian.plugin.remotable.container.service.plugins.NoOpWebResourceManager;
-import com.atlassian.plugin.remotable.container.service.sal.ContainerApplicationPropertiesServiceFactory;
-import com.atlassian.plugin.remotable.container.service.sal.ContainerI18nResolver;
-import com.atlassian.plugin.remotable.container.service.sal.ContainerLocaleResolver;
-import com.atlassian.plugin.remotable.container.service.sal.ContainerPluginSettingsFactory;
-import com.atlassian.plugin.remotable.container.service.sal.ResourceBundleResolverImpl;
+import com.atlassian.plugin.remotable.container.service.sal.*;
 import com.atlassian.plugin.remotable.container.util.ZipWriter;
 import com.atlassian.plugin.remotable.host.common.HostProperties;
 import com.atlassian.plugin.remotable.host.common.descriptor.DescriptorAccessor;
@@ -100,6 +93,7 @@ import com.atlassian.sal.api.message.I18nResolver;
 import com.atlassian.sal.api.message.LocaleResolver;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.atlassian.sal.api.transaction.TransactionTemplate;
+import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.core.transaction.NoOpTransactionTemplate;
 import com.google.common.collect.ImmutableSet;
 import org.osgi.framework.Bundle;
@@ -225,10 +219,7 @@ public final class Container
         final OAuthSignedRequestHandlerServiceFactory oAuthSignedRequestHandlerServiceFactory = new OAuthSignedRequestHandlerServiceFactory(environmentFactory, httpServer);
         final RequestContextServiceFactory requestContextServiceFactory = new RequestContextServiceFactory(oAuthSignedRequestHandlerServiceFactory);
         final ContainerHttpResourceMounterServiceFactory containerHttpResourceMounterServiceFactory = new ContainerHttpResourceMounterServiceFactory(pluginManager, httpServer, oAuthSignedRequestHandlerServiceFactory, environmentFactory, requestContextServiceFactory);
-        final RequestKiller requestKiller = new RequestKiller();
-        final com.atlassian.plugin.remotable.container.service.ContainerEventPublisher containerEventPublisher = new com.atlassian.plugin.remotable.container.service.ContainerEventPublisher();
-        final DefaultHttpClient httpClient = new DefaultHttpClient(requestKiller, containerEventPublisher);
-        final HostHttpClientServiceFactory hostHttpClientServiceFactory = new HostHttpClientServiceFactory(httpClient, requestContextServiceFactory, oAuthSignedRequestHandlerServiceFactory);
+        final HostHttpClientServiceFactory hostHttpClientServiceFactory = new HostHttpClientServiceFactory(requestContextServiceFactory, oAuthSignedRequestHandlerServiceFactory);
         final HostXmlRpcClientServiceFactory hostXmlRpcClientHostServiceFactory = new HostXmlRpcClientServiceFactory(hostHttpClientServiceFactory);
         final ContainerLocaleResolver localeResolver = new ContainerLocaleResolver();
         final ContainerI18nResolver i18nResolver = new ContainerI18nResolver(pluginManager, pluginEventManager, new ResourceBundleResolverImpl());
@@ -241,7 +232,6 @@ public final class Container
         hostComponents.put(PluginEventManager.class, pluginEventManager);
         hostComponents.put(ModuleFactory.class, new PrefixDelegatingModuleFactory(ImmutableSet.of(new ClassPrefixModuleFactory(hostContainer), new BeanPrefixModuleFactory())));
         hostComponents.put(RequestContext.class, requestContextServiceFactory);
-        hostComponents.put(HttpClient.class, httpClient);
         hostComponents.put(HostHttpClient.class, hostHttpClientServiceFactory);
         hostComponents.put(HostXmlRpcClient.class, hostXmlRpcClientHostServiceFactory);
         hostComponents.put(EmailSender.class, new HostHttpClientConsumerServiceFactory<EmailSender>(hostHttpClientServiceFactory, ContainerEmailSender.class));
@@ -252,6 +242,7 @@ public final class Container
 
         hostComponents.put(DataSourceProvider.class, new ContainerDataSourceProviderServiceFactory(applicationPropertiesServiceFactory));
         hostComponents.put(TransactionTemplate.class, new NoOpTransactionTemplate());
+        hostComponents.put(UserManager.class, new ContainerUserManagerServiceFactory(requestContextServiceFactory));
 
         // jira services
         hostComponents.put(JiraComponentClient.class, new JiraComponentClientServiceFactory(hostHttpClientServiceFactory));

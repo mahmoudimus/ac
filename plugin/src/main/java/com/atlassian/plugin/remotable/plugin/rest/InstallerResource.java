@@ -41,8 +41,9 @@ public class InstallerResource
     private final SettingsManager settingsManager;
 
     public InstallerResource(UserManager userManager,
-                             DescriptorValidator descriptorValidator,
-                             SettingsManager settingsManager, RemotablePluginInstallationService remotablePluginInstallationService
+            DescriptorValidator descriptorValidator,
+            SettingsManager settingsManager,
+            RemotablePluginInstallationService remotablePluginInstallationService
     )
     {
         this.remotablePluginInstallationService = remotablePluginInstallationService;
@@ -74,7 +75,7 @@ public class InstallerResource
         settingsManager.setAllowDogfooding(false);
         return Response.noContent().build();
     }
-    
+
     @GET
     @Path("/allow-dogfooding")
     public Response doesAllowDogfooding()
@@ -90,16 +91,15 @@ public class InstallerResource
     }
 
     @POST
-    public Response install(@FormParam("url") String registrationUrl, 
-            @FormParam("token") String registrationToken,
-            @FormParam("stripUnknownModules") String stripUnknownModules)
+    public Response install(@FormParam("url") String registrationUrl,
+            @FormParam("token") String registrationToken)
     {
         String token = registrationToken != null ? registrationToken : "";
 
         try
         {
-            remotablePluginInstallationService.install(userManager.getRemoteUsername(), registrationUrl, token,
-                    Boolean.parseBoolean(stripUnknownModules));
+            remotablePluginInstallationService.install(userManager.getRemoteUsername(),
+                    registrationUrl, token);
         }
         catch (PermissionDeniedException ex)
         {
@@ -121,7 +121,8 @@ public class InstallerResource
         Set<String> keys = null;
         try
         {
-            keys = remotablePluginInstallationService.reinstallRemotePlugins(userManager.getRemoteUsername());
+            keys = remotablePluginInstallationService.reinstallRemotePlugins(
+                    userManager.getRemoteUsername());
         }
         catch (PermissionDeniedException ex)
         {

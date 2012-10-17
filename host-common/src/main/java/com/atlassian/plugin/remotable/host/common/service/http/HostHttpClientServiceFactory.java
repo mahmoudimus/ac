@@ -1,6 +1,6 @@
 package com.atlassian.plugin.remotable.host.common.service.http;
 
-import com.atlassian.httpclient.apache.httpcomponents.DefaultHttpClient;
+import com.atlassian.httpclient.api.factory.HttpClientFactory;
 import com.atlassian.plugin.remotable.api.service.SignedRequestHandler;
 import com.atlassian.plugin.remotable.api.service.http.HostHttpClient;
 import com.atlassian.plugin.remotable.host.common.service.DefaultRequestContext;
@@ -12,15 +12,12 @@ import org.osgi.framework.ServiceRegistration;
 
 public class HostHttpClientServiceFactory implements TypedServiceFactory<HostHttpClient>
 {
-    private final DefaultHttpClient httpClient;
     private RequestContextServiceFactory requestContextServiceFactory;
     private final SignedRequestHandlerServiceFactory signedRequestHandlerServiceFactory;
 
-    public HostHttpClientServiceFactory(DefaultHttpClient httpClient,
-                                        RequestContextServiceFactory requestContextServiceFactory,
+    public HostHttpClientServiceFactory(RequestContextServiceFactory requestContextServiceFactory,
                                         SignedRequestHandlerServiceFactory signedRequestHandlerServiceFactory)
     {
-        this.httpClient = httpClient;
         this.requestContextServiceFactory = requestContextServiceFactory;
         this.signedRequestHandlerServiceFactory = signedRequestHandlerServiceFactory;
     }
@@ -35,7 +32,9 @@ public class HostHttpClientServiceFactory implements TypedServiceFactory<HostHtt
     {
         DefaultRequestContext requestContext = requestContextServiceFactory.getService(bundle);
         SignedRequestHandler signedRequestHandler = signedRequestHandlerServiceFactory.getService(bundle);
-        return new DefaultHostHttpClient(httpClient, requestContext, signedRequestHandler);
+        HttpClientFactory httpClientFactory = (HttpClientFactory)
+                bundle.getBundleContext().getService(bundle.getBundleContext().getServiceReference(HttpClientFactory.class.getName()));
+        return new DefaultHostHttpClient(httpClientFactory, requestContext, signedRequestHandler);
     }
 
     @Override

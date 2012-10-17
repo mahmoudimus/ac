@@ -1,8 +1,9 @@
 package com.atlassian.plugin.remotable.plugin.util.http;
 
+import com.atlassian.util.concurrent.Promise;
+
 import java.net.URI;
 import java.util.Map;
-import java.util.concurrent.Future;
 import java.util.regex.Pattern;
 
 /**
@@ -10,9 +11,9 @@ import java.util.regex.Pattern;
  */
 public interface HttpContentRetriever
 {
-    void flushCacheByUrlPattern(Pattern urlPattern);
+    void flushCacheByUriPattern(Pattern urlPattern);
 
-    Future<String> getAsync(AuthorizationGenerator authorizationGenerator, String remoteUsername, URI url,
+    Promise<String> getAsync(AuthorizationGenerator authorizationGenerator, String remoteUsername, URI url,
             Map<String, String> parameters,
-            Map<String, String> headers, HttpContentHandler handler, String moduleKey);
+            Map<String, String> headers, String moduleKey);
 }

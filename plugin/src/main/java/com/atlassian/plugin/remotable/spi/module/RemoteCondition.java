@@ -2,20 +2,21 @@ package com.atlassian.plugin.remotable.spi.module;
 
 import com.atlassian.plugin.remotable.plugin.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.remotable.plugin.product.ProductAccessor;
-import com.atlassian.plugin.remotable.plugin.util.http.HttpContentHandler;
 import com.atlassian.plugin.remotable.plugin.util.http.bigpipe.BigPipe;
-import com.atlassian.plugin.remotable.plugin.util.http.bigpipe.ContentProcessor;
+import com.atlassian.plugin.remotable.plugin.util.http.bigpipe.BigPipeContentHandler;
 import com.atlassian.plugin.remotable.plugin.util.http.bigpipe.RequestIdAccessor;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.webresource.WebResourceManager;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.templaterenderer.TemplateRenderer;
+import com.google.common.base.Function;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
 import java.net.URI;
 import java.util.Collections;
 import java.util.Map;
@@ -77,28 +78,36 @@ public class RemoteCondition implements Condition
     public boolean shouldDisplay(Map<String, Object> context)
     {
         webResourceManager.requireResource("com.atlassian.labs.remoteapps-plugin:remote-condition");
-        HttpContentHandler handler = bigPipe.createContentHandler(RequestIdAccessor.getRequestId(),
-            new ContentProcessor()
-            {
-                @Override
-                public String process(String value)
+        BigPipeContentHandler handler = bigPipe.createContentHandler(RequestIdAccessor.getRequestId(),
+                new Function<String, String>()
                 {
-                    try
+                    @Override
+                    public String apply(@Nullable String value)
                     {
-                        JSONObject obj = new JSONObject(value);
-                        if (obj.getBoolean("shouldDisplay"))
+                        try
                         {
-                            return "<script>AJS.$(\"" + toHideSelector + "\").removeClass('hidden').parent().removeClass('hidden');</script>";
+                            JSONObject obj = new JSONObject(value);
+                            if (obj.getBoolean("shouldDisplay"))
+                            {
+                                return "<script>AJS.$(\"" + toHideSelector + "\").removeClass('hidden').parent().removeClass('hidden');</script>";
+                            }
                         }
+                        catch (JSONException e)
+                        {
+                            log.warn("Invalid JSON returned from remote condition: " + value);
+                        }
+                        return "";
                     }
-                    catch (JSONException e)
+                },
+                new Function<Throwable, String>()
+                {
+                    @Override
+                    public String apply(@Nullable Throwable input)
                     {
-                        // not a valid json value
-                        log.warn("Invalid JSON returned from remote condition: " + value);
+                        return "<script>AJS.log('Unable to retrieve remote condition from plugin '" + pluginKey + "');</script>";
                     }
-                    return "";
                 }
-            });
+            );
 
         Map<String,String> params = newHashMap();
         for (String contextParam : contextParams)
@@ -108,8 +117,7 @@ public class RemoteCondition implements Condition
         String remoteUsername = userManager.getRemoteUsername();
         params.put("user_id", remoteUsername != null ? remoteUsername : "");
         remotablePluginAccessorFactory.get(pluginKey).executeAsyncGet(userManager.getRemoteUsername(),
-                url, params, Collections.<String, String>emptyMap(),
-                handler);
+                url, params, Collections.<String, String>emptyMap()).then(handler);
 
         // always return true as the link will be disabled by default via the 'hidden' class
         return true;

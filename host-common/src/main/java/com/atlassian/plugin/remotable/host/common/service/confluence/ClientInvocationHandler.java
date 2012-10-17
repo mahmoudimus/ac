@@ -20,21 +20,17 @@ package com.atlassian.plugin.remotable.host.common.service.confluence;
  */
 
 import com.atlassian.httpclient.api.Response;
-import com.atlassian.httpclient.api.UnexpectedResponseException;
+import com.atlassian.httpclient.api.ResponsePromiseMapFunction;
 import com.atlassian.plugin.remotable.api.service.RequestContext;
-import com.atlassian.plugin.remotable.api.service.http.*;
+import com.atlassian.plugin.remotable.api.service.http.HostHttpClient;
+import com.atlassian.plugin.remotable.api.service.http.HostXmlRpcClient;
 import com.atlassian.plugin.remotable.spi.PermissionDeniedException;
 import com.atlassian.plugin.remotable.spi.util.RemoteName;
 import com.atlassian.plugin.remotable.spi.util.RequirePermission;
 import com.atlassian.plugin.util.ChainingClassLoader;
-import com.atlassian.util.concurrent.Deferred;
-import com.atlassian.util.concurrent.Effect;
 import com.atlassian.util.concurrent.Promise;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
-import com.google.common.util.concurrent.FutureCallback;
-import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.ListenableFuture;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,14 +38,25 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nullable;
 import java.beans.PropertyDescriptor;
 import java.io.InputStream;
-import java.lang.reflect.*;
+import java.lang.reflect.Array;
+import java.lang.reflect.Field;
+import java.lang.reflect.GenericArrayType;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Proxy;
+import java.lang.reflect.Type;
 import java.net.URI;
-import java.util.*;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
-import static com.google.common.collect.Collections2.transform;
-import static com.google.common.collect.Maps.newHashMap;
-import static java.util.Collections.emptyMap;
-import static java.util.Collections.emptySet;
+import static com.google.common.collect.Collections2.*;
+import static com.google.common.collect.Maps.*;
+import static java.util.Collections.*;
 
 
 /**
@@ -70,8 +77,8 @@ public final class ClientInvocationHandler implements InvocationHandler
     private final RequestContext requestContext;
 
     public ClientInvocationHandler(String serviceName, HostXmlRpcClient clientProvider,
-            Set<String> permissions, String pluginKey, HostHttpClient httpClient,
-            RequestContext requestContext)
+                                   Set<String> permissions, String pluginKey, HostHttpClient httpClient,
+                                   RequestContext requestContext)
     {
         this.serviceName = serviceName;
         this.clientProvider = clientProvider;
@@ -83,7 +90,6 @@ public final class ClientInvocationHandler implements InvocationHandler
 
     /**
      * Converts arguments from an array of objects to a {@link java.util.Vector} and converts any {@link java.util.Collection}'s to an Array
-     *
      *
      * @param args
      * @param expectedTypes
@@ -97,9 +103,9 @@ public final class ClientInvocationHandler implements InvocationHandler
         }
         Object[] argsWithToken = new Object[args.length + 1];
         argsWithToken[0] = "";
-        for (int x=1; x < argsWithToken.length; x++)
+        for (int x = 1; x < argsWithToken.length; x++)
         {
-            Object arg = args[x-1];
+            Object arg = args[x - 1];
             argsWithToken[x] = toRemote(arg, expectedTypes[x - 1]);
         }
         return argsWithToken;
@@ -107,9 +113,9 @@ public final class ClientInvocationHandler implements InvocationHandler
 
     private Object toRemote(Object arg, Type expectedType)
     {
-        final Class immediateType = expectedType instanceof Class ? (Class)expectedType :
-                expectedType instanceof ParameterizedType ? (Class) ((ParameterizedType)expectedType).getRawType() :
-                expectedType instanceof GenericArrayType ? Array.class : null;
+        final Class immediateType = expectedType instanceof Class ? (Class) expectedType :
+                expectedType instanceof ParameterizedType ? (Class) ((ParameterizedType) expectedType).getRawType() :
+                        expectedType instanceof GenericArrayType ? Array.class : null;
         if (immediateType == null)
         {
             throw new IllegalArgumentException("Unexpected type");
@@ -147,7 +153,7 @@ public final class ClientInvocationHandler implements InvocationHandler
         {
             try
             {
-                return getEnumRemoteName((Enum)arg);
+                return getEnumRemoteName((Enum) arg);
             }
             catch (NoSuchFieldException e)
             {
@@ -170,7 +176,7 @@ public final class ClientInvocationHandler implements InvocationHandler
     private Map toRemoteMap(Object arg, Class expectedType)
     {
         Map result = newHashMap();
-        for (Map.Entry<String,Method> prop : getReadableProperties(expectedType).entrySet())
+        for (Map.Entry<String, Method> prop : getReadableProperties(expectedType).entrySet())
         {
             String name = prop.getKey();
             Method method = prop.getValue();
@@ -197,7 +203,7 @@ public final class ClientInvocationHandler implements InvocationHandler
 
     private Object fromRemote(Object returnValue, Type expectedType)
     {
-        final Class immediateType = expectedType instanceof Class ? (Class)expectedType : (Class) ((ParameterizedType)expectedType).getRawType();
+        final Class immediateType = expectedType instanceof Class ? (Class) expectedType : (Class) ((ParameterizedType) expectedType).getRawType();
         final Type genericType = getGenericType(expectedType);
 
         if (returnValue == null)
@@ -218,75 +224,38 @@ public final class ClientInvocationHandler implements InvocationHandler
         else if (Promise.class.isAssignableFrom(immediateType))
         {
             // handle automatic translation of a returned url to an inputstream
-            if (genericType instanceof Class && InputStream.class.isAssignableFrom((Class)genericType))
+            if (genericType instanceof Class && InputStream.class.isAssignableFrom((Class) genericType))
             {
-                final Deferred<InputStream> deferred = Deferred.create();
-                Futures.addCallback((ListenableFuture<String>) returnValue, new FutureCallback<String>()
+                return ((Promise<String>) returnValue).flatMap(new Function<String, Promise<InputStream>>()
                 {
                     @Override
-                    public void onSuccess(String result)
+                    public Promise<InputStream> apply(String result)
                     {
-                        httpClient.newRequest(
-                                convertAbsoluteUrlToRelative(result))
-                                .get().ok(new Effect<Response>()
-                        {
-                            @Override
-                            public void apply(Response value)
-                            {
-                                deferred.resolve(value.getEntityStream());
-                            }
-                        }).others(new Effect<Response>()
-                        {
-                            @Override
-                            public void apply(Response value)
-                            {
-                                deferred.reject(new UnexpectedResponseException(value));
-                            }
-                        }).fail(new Effect<Throwable>()
-                        {
-                            @Override
-                            public void apply(Throwable value)
-                            {
-                                deferred.reject(value);
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void onFailure(Throwable t)
-                    {
-                        deferred.reject(t);
+                        return httpClient.newRequest(convertAbsoluteUrlToRelative(result)).get().map(
+                                ResponsePromiseMapFunction.<InputStream>builder()
+                                        .ok(new Function<Response, InputStream>()
+                                        {
+                                            @Override
+                                            public InputStream apply(Response response)
+                                            {
+                                                return response.getEntityStream();
+                                            }
+                                        })
+                                        .others(ResponsePromiseMapFunction.<InputStream>newUnexpectedResponseFunction())
+                                        .build());
                     }
                 });
-                returnValue = deferred.promise();
             }
             else
             {
-                final Deferred<Object> deferred = Deferred.create();
-
-                Promise<Object> actualPromise = (Promise<Object>) returnValue;
-                actualPromise.then(new FutureCallback<Object>()
+                return ((Promise<Object>) returnValue).map(new Function<Object, Object>()
                 {
                     @Override
-                    public void onSuccess(Object result)
+                    public Object apply(@Nullable Object result)
                     {
-                        try
-                        {
-                            deferred.resolve(fromRemote(result, genericType));
-                        }
-                        catch (Exception e)
-                        {
-                            deferred.reject(e);
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Throwable t)
-                    {
-                        deferred.reject(t);
+                        return fromRemote(result, genericType);
                     }
                 });
-                returnValue = deferred.promise();
             }
         }
         else if (Collection.class.isAssignableFrom(returnValue.getClass()))
@@ -349,7 +318,7 @@ public final class ClientInvocationHandler implements InvocationHandler
         else
         {
             throw new IllegalArgumentException("Absolute URL '" + absoluteUrl + "' doesn't match " +
-                "current host base url '" + hostBaseUrl + "'");
+                    "current host base url '" + hostBaseUrl + "'");
         }
     }
 
@@ -365,7 +334,7 @@ public final class ClientInvocationHandler implements InvocationHandler
         }
         else if (type instanceof GenericArrayType)
         {
-            return ((GenericArrayType)type).getGenericComponentType();
+            return ((GenericArrayType) type).getGenericComponentType();
         }
         return null;
     }
@@ -379,8 +348,7 @@ public final class ClientInvocationHandler implements InvocationHandler
             Object[] arguments = convertArguments(args, method.getGenericParameterTypes());
             //Class returnType = getReturnBeanType(method);
 
-            Object returnValue = clientProvider.invoke(serviceName + "." + methodName,
-                    Object.class, arguments);
+            Object returnValue = clientProvider.invoke(serviceName + "." + methodName, Object.class, arguments);
             returnValue = fromRemote(returnValue, method.getGenericReturnType());
 
             //If the return type is null and method return type is void we shouldn't return any value
@@ -402,9 +370,8 @@ public final class ClientInvocationHandler implements InvocationHandler
         if (permission != null && !permissions.contains(permission.value()))
         {
             throw new PermissionDeniedException(pluginKey, "Not able to call method '" + method.getName() + "' due to not having "
-                        + "asked for permission '" + permission.value() + "'");
+                    + "asked for permission '" + permission.value() + "'");
         }
-
     }
 
     private Object mapBean(Map map, Class beanType)
@@ -439,7 +406,7 @@ public final class ClientInvocationHandler implements InvocationHandler
     private Map remapPropertyNames(Class bean, Map map)
     {
         Map result = new HashMap(map);
-        for (Map.Entry<String,Method> prop : getReadableProperties(bean).entrySet())
+        for (Map.Entry<String, Method> prop : getReadableProperties(bean).entrySet())
         {
             String name = prop.getKey();
             Method method = prop.getValue();
@@ -458,9 +425,9 @@ public final class ClientInvocationHandler implements InvocationHandler
         return result;
     }
 
-    private Map<String,Method> getReadableProperties(Class beanClass)
+    private Map<String, Method> getReadableProperties(Class beanClass)
     {
-        Map<String,Method> props = newHashMap();
+        Map<String, Method> props = newHashMap();
         for (PropertyDescriptor descriptor : PropertyUtils.getPropertyDescriptors(beanClass))
         {
             Method readMethod = descriptor.getReadMethod();
@@ -498,7 +465,6 @@ public final class ClientInvocationHandler implements InvocationHandler
         }
 
         return Character.toLowerCase(capsName.charAt(0)) + capsName.substring(1);
-
     }
 
     private class BeanInvocationHandler implements InvocationHandler

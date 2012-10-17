@@ -2,6 +2,7 @@ package com.atlassian.plugin.remotable.host.common.service;
 
 import com.atlassian.plugin.remotable.api.service.RequestContext;
 import com.atlassian.plugin.remotable.api.service.SignedRequestHandler;
+import com.google.common.base.Function;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -59,19 +60,20 @@ public class DefaultRequestContext implements RequestContext
         setRequestData(new RequestData(data.getRequest(), data.getClientKey(), userId));
     }
 
-    public <P, R> RequestCallable<P, R> createCallableForCurrentRequest(final RequestCallable<P, R> callable)
+    public <P, R> Function<P, R> createFunctionForExecutionWithinCurrentRequest(
+            final Function<P, R> callable)
     {
         final RequestData old = getRequestData();
-        return new RequestCallable<P, R>()
+        return new Function<P, R>()
         {
             @Override
-            public R call(P contextParameter)
+            public R apply(P contextParameter)
             {
                 RequestData current = getRequestData();
                 try
                 {
                     setRequestData(old);
-                    return callable.call(contextParameter);
+                    return callable.apply(contextParameter);
                 }
                 finally
                 {
@@ -101,11 +103,6 @@ public class DefaultRequestContext implements RequestContext
     public void clear()
     {
         requestContextHolder.remove();
-    }
-
-    public static interface RequestCallable<P,R>
-    {
-        R call(P contextParameter);
     }
 
     private static class RequestData

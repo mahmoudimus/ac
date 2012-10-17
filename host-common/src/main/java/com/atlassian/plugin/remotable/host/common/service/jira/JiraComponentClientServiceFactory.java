@@ -12,8 +12,7 @@ public class JiraComponentClientServiceFactory implements TypedServiceFactory<Ji
 {
     private final HostHttpClientServiceFactory hostHttpClientServiceFactory;
 
-    public JiraComponentClientServiceFactory(
-            HostHttpClientServiceFactory hostHttpClientServiceFactory)
+    public JiraComponentClientServiceFactory(HostHttpClientServiceFactory hostHttpClientServiceFactory)
     {
         this.hostHttpClientServiceFactory = hostHttpClientServiceFactory;
     }

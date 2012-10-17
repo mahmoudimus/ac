@@ -22,10 +22,6 @@
             <artifactId>remotable-plugins-api</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.atlassian.httpclient</groupId>
-            <artifactId>atlassian-httpclient-apache-httpcomponents</artifactId>
-        </dependency>
 
         <dependency>
             <groupId>com.atlassian.analytics</groupId>

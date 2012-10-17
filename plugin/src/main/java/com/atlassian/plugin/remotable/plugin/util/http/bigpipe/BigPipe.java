@@ -1,8 +1,8 @@
 package com.atlassian.plugin.remotable.plugin.util.http.bigpipe;
 
-import com.atlassian.plugin.remotable.plugin.ContentRetrievalException;
 import com.atlassian.security.random.SecureRandomFactory;
 import com.atlassian.util.concurrent.CopyOnWriteMap;
+import com.google.common.base.Function;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Sets.newHashSet;
 
@@ -30,14 +31,28 @@ public class BigPipe
 
     private final Map<String,RequestContentSet> requestContentSets = CopyOnWriteMap.newHashMap();
 
-    public BigPipeHttpContentHandler createContentHandler(String requestId, ContentProcessor contentProcessor)
+    public BigPipeContentHandler createContentHandler(String requestId, Function<String,String> successFunction,
+                                                         Function<Throwable, String> failureFunction)
     {
         // give each content its own unique id for replacing later
         String contentId = String.valueOf(secureRandom.nextLong());
-        return createContentHandler(requestId, contentId, contentProcessor);
+        return createContentHandler(requestId, contentId, successFunction, failureFunction);
     }
-    public BigPipeHttpContentHandler createContentHandler(String requestId, String contentId, ContentProcessor contentProcessor)
+    public BigPipeContentHandler createContentHandler(String requestId, String contentId, Function<String,String> successFunction,
+                                                             Function<Throwable, String> failureFunction)
     {
+        if (failureFunction == null)
+        {
+            failureFunction = new Function<Throwable, String>()
+            {
+                @Override
+                public String apply(Throwable input)
+                {
+                    return "<span class=\"bp-error\">Error: " + input.getMessage() + "</span>";
+                }
+            };
+        }
+        checkNotNull(successFunction);
         RequestContentSet request = requestContentSets.get(requestId);
         if (request == null)
         {
@@ -46,11 +61,11 @@ public class BigPipe
         }
 
         InternalHandler handler = new InternalHandler(requestId, contentId,
-                request, contentProcessor);
+                request, successFunction, failureFunction);
         return request.addHandler(handler);
     }
 
-    public Iterable<BigPipeHttpContentHandler> waitForCompletedHandlers(String requestId)
+    public Iterable<BigPipeContentHandler> waitForCompletedHandlers(String requestId)
     {
         RequestContentSet request = requestContentSets.get(requestId);
         if (request != null)
@@ -63,10 +78,10 @@ public class BigPipe
         }
     }
 
-    public JSONArray converContentHandlersToJson(Iterable<BigPipeHttpContentHandler> handlers)
+    public JSONArray converContentHandlersToJson(Iterable<BigPipeContentHandler> handlers)
     {
         JSONArray result = new JSONArray();
-        for (BigPipeHttpContentHandler handler : handlers)
+        for (BigPipeContentHandler handler : handlers)
         {
             String html = handler.getFinalContent();
             JSONObject content = new JSONObject();
@@ -84,7 +99,7 @@ public class BigPipe
         return result;
     }
 
-    public Iterable<BigPipeHttpContentHandler> consumeCompletedHandlers(String requestId)
+    public Iterable<BigPipeContentHandler> consumeCompletedHandlers(String requestId)
     {
         RequestContentSet request = requestContentSets.get(requestId);
         if (request != null)
@@ -100,22 +115,28 @@ public class BigPipe
     /**
      * Manages individual bit of content
      */
-    private class InternalHandler implements BigPipeHttpContentHandler
+    private class InternalHandler implements BigPipeContentHandler
     {
         private volatile String content;
 
         private final String requestId;
         private final String contentId;
         private final RequestContentSet request;
-        private final ContentProcessor contentProcessor;
+        private final Function<String, String> successFunction;
+        private final Function<Throwable, String> failureFunction;
 
-        public InternalHandler(String requestId, String contentId,
-                RequestContentSet request, ContentProcessor contentProcessor)
+        public InternalHandler(String requestId,
+                               String contentId,
+                               RequestContentSet request,
+                               Function<String, String> successFunction,
+                               Function<Throwable, String> failureFunction
+        )
         {
             this.requestId = requestId;
             this.contentId = contentId;
             this.request = request;
-            this.contentProcessor = contentProcessor;
+            this.successFunction = successFunction;
+            this.failureFunction = failureFunction;
         }
 
         public String getInitialContent()
@@ -123,7 +144,7 @@ public class BigPipe
             if (content != null)
             {
                 markCompleted();
-                return contentProcessor.process(content);
+                return successFunction.apply(content);
             }
             else
             {
@@ -139,9 +160,9 @@ public class BigPipe
         }
 
         @Override
-        public void onError(ContentRetrievalException ex)
+        public void onFailure(Throwable ex)
         {
-            this.content = "<span class=\"bp-error\">Error: " + ex.getMessage() + "</span>";
+            this.content = failureFunction.apply(ex);
             request.notifyConsumers();
         }
 
@@ -157,7 +178,7 @@ public class BigPipe
 
         public String getFinalContent()
         {
-            return contentProcessor.process(content);
+            return successFunction.apply(content);
         }
 
         @Override
@@ -217,9 +238,9 @@ public class BigPipe
             handlers.remove(contentId);
         }
 
-        public Iterable<BigPipeHttpContentHandler> consumeFinishedContent()
+        public Iterable<BigPipeContentHandler> consumeFinishedContent()
         {
-            List<BigPipeHttpContentHandler> result = newArrayList();
+            List<BigPipeContentHandler> result = newArrayList();
             synchronized(lock)
             {
                 if (handlers.isEmpty())
@@ -252,9 +273,9 @@ public class BigPipe
          * Waits for content to be finished and removes it from the set of outstanding content if
          * done.  It will only wait until the timeout for the page has been reached.
          */
-        public Iterable<BigPipeHttpContentHandler> waitForFinishedContent()
+        public Iterable<BigPipeContentHandler> waitForFinishedContent()
         {
-            List<BigPipeHttpContentHandler> result = newArrayList();
+            List<BigPipeContentHandler> result = newArrayList();
             synchronized(lock)
             {
                 if (handlers.isEmpty())
@@ -291,7 +312,7 @@ public class BigPipe
             return result;
         }
 
-        private void removeAllFinishedHandlers(List<BigPipeHttpContentHandler> result)
+        private void removeAllFinishedHandlers(List<BigPipeContentHandler> result)
         {
             for (InternalHandler handler : newHashSet(handlers.values()))
             {

@@ -1,20 +1,22 @@
 package com.atlassian.plugin.remotable.plugin.installer;
 
 import com.atlassian.core.util.FileUtils;
-import com.atlassian.plugin.remotable.plugin.descriptor.DescriptorValidator;
-import com.atlassian.plugin.remotable.plugin.OAuthLinkManager;
-import com.atlassian.plugin.remotable.host.common.util.FormatConverter;
-import com.atlassian.plugin.remotable.plugin.product.ProductAccessor;
-import com.atlassian.plugin.remotable.spi.InstallationFailedException;
-import com.atlassian.plugin.remotable.spi.PermissionDeniedException;
+import com.atlassian.httpclient.api.HttpClient;
+import com.atlassian.httpclient.api.Response;
 import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.oauth.util.RSAKeys;
 import com.atlassian.plugin.*;
+import com.atlassian.plugin.remotable.host.common.util.FormatConverter;
+import com.atlassian.plugin.remotable.plugin.OAuthLinkManager;
+import com.atlassian.plugin.remotable.plugin.descriptor.DescriptorValidator;
+import com.atlassian.plugin.remotable.plugin.product.ProductAccessor;
+import com.atlassian.plugin.remotable.spi.InstallationFailedException;
+import com.atlassian.plugin.remotable.spi.PermissionDeniedException;
 import com.atlassian.sal.api.ApplicationProperties;
-import com.atlassian.sal.api.net.*;
 import com.atlassian.uri.Uri;
 import com.atlassian.uri.UriBuilder;
+import com.atlassian.util.concurrent.Promise;
 import com.google.common.collect.ImmutableMap;
 import org.apache.commons.io.IOUtils;
 import org.dom4j.Document;
@@ -41,7 +43,7 @@ public class DefaultRemotePluginInstaller implements RemotePluginInstaller
 {
     private final RemotePluginArtifactFactory remotePluginArtifactFactory;
     private final ConsumerService consumerService;
-    private final RequestFactory requestFactory;
+    private final HttpClient httpClient;
     private final ApplicationProperties applicationProperties;
     private final FormatConverter formatConverter;
     private final PluginController pluginController;
@@ -57,7 +59,7 @@ public class DefaultRemotePluginInstaller implements RemotePluginInstaller
     @Autowired
     public DefaultRemotePluginInstaller(RemotePluginArtifactFactory remotePluginArtifactFactory,
                                         ConsumerService consumerService,
-                                        RequestFactory requestFactory,
+                                        HttpClient httpClient,
                                         ApplicationProperties applicationProperties,
                                         FormatConverter formatConverter,
                                         PluginController pluginController,
@@ -70,7 +72,7 @@ public class DefaultRemotePluginInstaller implements RemotePluginInstaller
     {
         this.remotePluginArtifactFactory = remotePluginArtifactFactory;
         this.consumerService = consumerService;
-        this.requestFactory = requestFactory;
+        this.httpClient = httpClient;
         this.applicationProperties = applicationProperties;
         this.formatConverter = formatConverter;
         this.pluginController = pluginController;
@@ -85,7 +87,6 @@ public class DefaultRemotePluginInstaller implements RemotePluginInstaller
     public String install(final String username,
                           final URI registrationUrl,
                           String registrationSecret,
-                          final boolean stripUnknownModules,
                           final KeyValidator keyValidator
     ) throws PermissionDeniedException
     {
@@ -97,82 +98,67 @@ public class DefaultRemotePluginInstaller implements RemotePluginInstaller
                                     .put("publicKey", RSAKeys.toPemEncoding(consumer.getPublicKey()))
                                     .put("serverVersion", applicationProperties.getBuildNumber())
                                     .put("pluginsVersion", (String) bundleContext.getBundle()
-                                                                                    .getHeaders()
-                                                                                    .get(Constants.BUNDLE_VERSION))
+                                                                                 .getHeaders()
+                                                                                 .get(Constants.BUNDLE_VERSION))
                                     .put("baseUrl", applicationProperties.getBaseUrl())
                                     .put("productType", productAccessor.getKey())
                                     .put("description", consumer.getDescription())
                                     .build()).toString());
 
         log.info("Retrieving descriptor from '{}' by user '{}'", registrationUrl, username);
-        Request request = requestFactory.createRequest(Request.MethodType.GET, registrationUriWithParams.toString());
-
         String secretHeader = "RemotePluginRegistration secret=" + encodeBase64(registrationSecret);
-        request.addHeader("Authorization", secretHeader);
+
         try
         {
-            return (String) request.executeAndReturn(new ReturningResponseHandler<Response, String>()
+            Response response = httpClient.newRequest(registrationUriWithParams)
+                                          .setHeader("Authorization", secretHeader)
+                                          .get()
+                                          .claim();
+            if (response.getStatusCode() != 200)
             {
-                @Override
-                public String handle(Response response) throws ResponseException
+                throw new InstallationFailedException(
+                        "Error in registration (" + response.getStatusCode() + ") - " + response.getStatusText());
+            }
+
+            PluginArtifact pluginArtifact;
+            if (registrationUrl.getPath().endsWith(".jar"))
+            {
+                File pluginFile = getResponseAsTempFile(registrationUrl, response);
+                JarPluginArtifact originalArtifact = new JarPluginArtifact(pluginFile);
+                Document document = readDocument(originalArtifact.getResourceAsStream("atlassian-plugin.xml"));
+                prepareForInstallation(document, registrationUrl, keyValidator);
+
+                pluginArtifact = remotePluginArtifactFactory.create(registrationUrl, originalArtifact,
+                        document, username);
+            }
+            else
+            {
+                Document document = formatConverter.toDocument(registrationUrl.toString(),
+                        response.getHeader("Content-Type"),
+                        response.getEntity());
+                prepareForInstallation(document, registrationUrl, keyValidator);
+
+                if (document.getRootElement().attribute("plugins-version") != null)
                 {
-                    /*!
-                   If the request for the descriptor doesn't return with an HTTP 200
-                   status code, an exception is thrown, resulting
-                    in a error message to the user
-                    */
-                    if (response.getStatusCode() != 200)
-                    {
-                        throw new InstallationFailedException(
-                                "Error in registration (" + response.getStatusCode() + ") - " + response.getStatusText());
-                    }
-
-                    PluginArtifact pluginArtifact;
-                    if (registrationUrl.getPath().endsWith(".jar"))
-                    {
-                        File pluginFile = getResponseAsTempFile(registrationUrl, response);
-                        JarPluginArtifact originalArtifact = new JarPluginArtifact(pluginFile);
-                        Document document = readDocument(originalArtifact.getResourceAsStream("atlassian-plugin.xml"));
-                        prepareForInstallation(document, registrationUrl, keyValidator);
-
-                        pluginArtifact = remotePluginArtifactFactory.create(registrationUrl, originalArtifact,
-                                document, username);
-                    }
-                    else
-                    {
-                        Document document = formatConverter.toDocument(registrationUrl.toString(),
-                                response.getHeader("Content-Type"),
-                                response.getResponseBodyAsString());
-                        prepareForInstallation(document, registrationUrl, keyValidator);
-
-                        if (document.getRootElement().attribute("plugins-version") != null)
-                        {
-                            pluginArtifact = remotePluginArtifactFactory.create(registrationUrl,
-                                    document, username);
-                        }
-                        else
-                        {
-                            throw new InstallationFailedException("Missing plugins-version");
-                        }
-                    }
-
-                    /*!
-                    The registration process should only return once the remote plugin has
-                    successfully installed and started.
-                    */
-                    String pluginKey = pluginController.installPlugins(pluginArtifact).iterator().next();
-
-                    log.info("Registered app '{}' by '{}'", pluginKey, username);
-
-                    return pluginKey;
+                    pluginArtifact = remotePluginArtifactFactory.create(registrationUrl,
+                            document, username);
                 }
-            });
-        }
+                else
+                {
+                    throw new InstallationFailedException("Missing plugins-version");
+                }
+            }
 
-        /*!
-        Any exceptions thrown in the installation process will result in a error message returned
-         to the user
-         */
+            /*!
+            The registration process should only return once the remote plugin has
+            successfully installed and started.
+            */
+            String pluginKey = pluginController.installPlugins(pluginArtifact).iterator().next();
+
+            log.info("Registered app '{}' by '{}'", pluginKey, username);
+
+            return pluginKey;
+        }
         catch (PermissionDeniedException ex)
         {
             throw ex;
@@ -181,19 +167,18 @@ public class DefaultRemotePluginInstaller implements RemotePluginInstaller
         {
             throw ex;
         }
-        catch (ResponseException e)
-        {
-            log.warn("Unable to retrieve registration XML from '{}' for user '{}' due to: {}",
-                    new Object[]{registrationUrl, username, e.getMessage()});
-            throw new InstallationFailedException(e);
-        }
         catch (Exception e)
         {
             log.warn("Unable to install remote plugin from '{}' by user '{}'", registrationUrl, username);
             Throwable ex = e.getCause() != null ? e.getCause() : e;
             throw new InstallationFailedException(ex);
         }
-        /*!-helper methods */
+    }
+
+    @Override
+    public Promise<String> getPluginKey(URI registrationUrl)
+    {
+        return null;
     }
 
     private void prepareForInstallation(Document document, URI registrationUrl, KeyValidator keyValidator
@@ -205,22 +190,12 @@ public class DefaultRemotePluginInstaller implements RemotePluginInstaller
 
     private void removeOldPlugin(String pluginKey)
     {
-        /*!
-                        The app key, as defined in the registration XML document,
-                        must be valid for the installation user.
-                        This means, the app key must either not be used by an existing app,
-                        or if it is, the installation
-                        user must have the appropriate permissions to upgrade or modify that
-                        app.  If either of these
-                        criteria fail, the user is shown an error message.
-                        */
         Plugin plugin = pluginAccessor.getPlugin(pluginKey);
 
         /*!
         With the app key validated for the user, the previous app with that key,
         if any, is uninstalled.
         */
-
         if (plugin != null)
         {
             pluginController.uninstall(plugin);
@@ -256,13 +231,9 @@ public class DefaultRemotePluginInstaller implements RemotePluginInstaller
         try
         {
             File tmp = File.createTempFile("remote-plugin-install-", fileName);
-            in = response.getResponseBodyAsStream();
+            in = response.getEntityStream();
             FileUtils.copyFile(in, tmp);
             return tmp;
-        }
-        catch (ResponseException e)
-        {
-            throw new InstallationFailedException("Unable to read from the response", e);
         }
         catch (IOException e)
         {

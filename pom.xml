@@ -301,11 +301,6 @@
                 <version>${atlassian-httpclient.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.atlassian.httpclient</groupId>
-                <artifactId>atlassian-httpclient-apache-httpcomponents</artifactId>
-                <version>${atlassian-httpclient.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>com.atlassian.webhooks</groupId>
                 <artifactId>atlassian-webhooks-spi</artifactId>
                 <version>${webhooks.version}</version>
@@ -322,40 +317,6 @@
                 <artifactId>atlassian-plugins-osgi</artifactId>
                 <version>${plugins.version}</version>
                 <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>httpasyncclient-cache</artifactId>
-                <version>4.0-beta2</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>httpasyncclient</artifactId>
-                <version>4.0-beta2</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.apache.httpcomponents</groupId>
-                        <artifactId>httpcore</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.apache.httpcomponents</groupId>
-                        <artifactId>httpcore-nio</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <!-- Remove httpcore 4.2.2 and httpcore-nio 4.2.2 from here
-                 once there is a new release of httpasyncclient above 4.0-beta2 that includes them
-             -->
-            <!-- We need httpcore 4.2.2 to fix https://issues.apache.org/jira/browse/HTTPCORE-309 -->
-            <dependency>
-                <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>httpcore</artifactId>
-                <version>4.2.2</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>httpcore-nio</artifactId>
-                <version>4.2.2</version>
             </dependency>
             <dependency>
                 <groupId>javax.servlet</groupId>
@@ -546,8 +507,8 @@
         <BUILD_NUMBER>9999-SNAPSHOT</BUILD_NUMBER>
         <API_VERSION>0.5</API_VERSION>
         <spring.version>2.5.6</spring.version>
-        <atlassian-util-concurrent.version>2.4-m2.1</atlassian-util-concurrent.version>
+        <atlassian-util-concurrent.version>2.4-m4</atlassian-util-concurrent.version>
         <atlassian-httpclient.version>${webhooks.version}</atlassian-httpclient.version>
-        <webhooks.version>0.4</webhooks.version>
+        <webhooks.version>0.7</webhooks.version>
     </properties>
 </project>

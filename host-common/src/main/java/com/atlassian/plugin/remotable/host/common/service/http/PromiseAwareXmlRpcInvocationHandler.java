@@ -19,14 +19,13 @@ package com.atlassian.plugin.remotable.host.common.service.http;
  * under the License.
  */
 
-import com.atlassian.util.concurrent.Deferred;
 import com.atlassian.util.concurrent.Promise;
 import com.atlassian.xmlrpc.ServiceBean;
 import com.atlassian.xmlrpc.ServiceBeanField;
 import com.atlassian.xmlrpc.ServiceMethod;
 import com.atlassian.xmlrpc.ServiceObject;
 import com.atlassian.xmlrpc.XmlRpcClientProvider;
-import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.base.Function;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 
@@ -61,6 +60,7 @@ public final class PromiseAwareXmlRpcInvocationHandler implements InvocationHand
 
     /**
      * Extracts the XML-RPC method name from the {@link java.lang.reflect.Method}
+     *
      * @param method
      * @return methodName
      */
@@ -106,6 +106,7 @@ public final class PromiseAwareXmlRpcInvocationHandler implements InvocationHand
 
     /**
      * Converts the return value of a method to a {@link com.atlassian.xmlrpc.ServiceBean} marked object (if metadata is available)
+     *
      * @param method
      * @param returnValue
      * @return returnValue converted value
@@ -113,8 +114,7 @@ public final class PromiseAwareXmlRpcInvocationHandler implements InvocationHand
      * @throws IllegalAccessException
      * @throws java.lang.reflect.InvocationTargetException
      */
-    protected Object convertReturnValue(final Method method, Object returnValue)
-            throws InstantiationException, IllegalAccessException, InvocationTargetException
+    protected Object convertReturnValue(final Method method, Object returnValue) throws InstantiationException, IllegalAccessException, InvocationTargetException
     {
         if (returnValue == null)
         {
@@ -138,7 +138,7 @@ public final class PromiseAwareXmlRpcInvocationHandler implements InvocationHand
         }
         else if (Collection.class.isAssignableFrom(returnValue.getClass()))
         {
-            collection = (Collection)returnValue;
+            collection = (Collection) returnValue;
             if (beanType != null)
             {
                 collection = mapBeanCollection(collection, beanType);
@@ -152,31 +152,21 @@ public final class PromiseAwareXmlRpcInvocationHandler implements InvocationHand
         }
         else if (Promise.class.isAssignableFrom(returnValue.getClass()))
         {
-            final Deferred<Object> deferred = Deferred.create();
-
-            Promise<Object> actualPromise = (Promise<Object>) returnValue;
-            actualPromise.then(new FutureCallback<Object>()
+            returnValue = ((Promise<Object>) returnValue).map(new Function<Object, Object>()
             {
                 @Override
-                public void onSuccess(Object result)
+                public Object apply(Object result)
                 {
                     try
                     {
-                        deferred.resolve(convertReturnValue(method, result));
+                        return convertReturnValue(method, result);
                     }
                     catch (Exception e)
                     {
-                        deferred.reject(e);
+                        throw new RuntimeException(e);
                     }
                 }
-
-                @Override
-                public void onFailure(Throwable t)
-                {
-                    deferred.reject(t);
-                }
             });
-            returnValue = deferred.promise();
         }
         return returnValue;
     }

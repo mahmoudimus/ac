@@ -1,14 +1,17 @@
 package com.atlassian.plugin.remotable.host.common.service.http;
 
-import com.atlassian.httpclient.apache.httpcomponents.DefaultHttpClient;
-import com.atlassian.httpclient.apache.httpcomponents.DefaultRequest;
+import com.atlassian.httpclient.api.HttpClient;
+import com.atlassian.httpclient.api.Request;
 import com.atlassian.httpclient.api.Response;
-import com.atlassian.httpclient.api.ResponsePromise;
-import com.atlassian.httpclient.base.AbstractHttpClient;
-import com.atlassian.httpclient.base.concurrent.SettableFutureHandler;
+import com.atlassian.httpclient.api.factory.HttpClientFactory;
+import com.atlassian.httpclient.api.factory.HttpClientOptions;
+import com.atlassian.httpclient.api.factory.SettableFutureHandler;
+import com.atlassian.httpclient.api.factory.SettableFutureHandlerFactory;
 import com.atlassian.plugin.remotable.api.service.SignedRequestHandler;
 import com.atlassian.plugin.remotable.api.service.http.HostHttpClient;
 import com.atlassian.plugin.remotable.host.common.service.DefaultRequestContext;
+import com.atlassian.util.concurrent.Effect;
+import com.google.common.base.Function;
 import com.google.common.util.concurrent.SettableFuture;
 
 import javax.annotation.Nullable;
@@ -16,24 +19,42 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.util.concurrent.Callable;
+import java.util.regex.Pattern;
 
-public class DefaultHostHttpClient extends AbstractHttpClient implements HostHttpClient
+public class DefaultHostHttpClient implements HostHttpClient
 {
-    private DefaultHttpClient httpClient;
+    private HttpClient httpClient;
     private DefaultRequestContext requestContext;
     private SignedRequestHandler signedRequestHandler;
 
-    public DefaultHostHttpClient(DefaultHttpClient httpClient,
-                                 DefaultRequestContext requestContext,
+    public DefaultHostHttpClient(HttpClientFactory httpClientFactory,
+                                 final DefaultRequestContext requestContext,
                                  SignedRequestHandler signedRequestHandler)
     {
-        this.httpClient = httpClient;
+        HttpClientOptions options = new HttpClientOptions();
+        options.setThreadPrefix("hostclient");
+        options.setResponseSettableFutureHandlerFactory(new SettableFutureHandlerFactory<Response>()
+        {
+            @Override
+            public SettableFutureHandler<Response> create()
+            {
+                return new ResponseSettableFutureHandler(requestContext);
+            }
+        });
+        options.setRequestPreparer(new Effect<Request>() {
+
+            @Override
+            public void apply(Request request)
+            {
+                prepareRequest(request);
+            }
+        });
+        this.httpClient = httpClientFactory.create(options);
         this.requestContext = requestContext;
         this.signedRequestHandler = signedRequestHandler;
     }
 
-    @Override
-    public ResponsePromise execute(DefaultRequest request)
+    private void prepareRequest(Request request)
     {
         // make sure this is a request for a relative url
         if (request.getUri().toString().matches("^[\\w]+:.*"))
@@ -75,18 +96,49 @@ public class DefaultHostHttpClient extends AbstractHttpClient implements HostHtt
 
         request.setUri(URI.create(uriBuf.toString()));
 
-        String method = request.getMethod().toString();
+        String method = request.getMethod();
         String authHeader = signedRequestHandler.getAuthorizationHeaderValue(URI.create(origUriStr), method, userId);
         request
             .setHeader("Authorization", authHeader)
             // capture request properties for analytics
             .setAttribute("purpose", "host-request")
             .setAttribute("clientKey", clientKey);
+    }
 
-        request.setSettableFutureHandler(new ResponseSettableFutureHandler(requestContext));
+    @Override
+    public Request newRequest()
+    {
+        return httpClient.newRequest();
+    }
 
-        // execute the request via the http client service
-        return httpClient.execute(request);
+    @Override
+    public Request newRequest(URI uri)
+    {
+        return httpClient.newRequest(uri);
+    }
+
+    @Override
+    public Request newRequest(String s)
+    {
+        return httpClient.newRequest(s);
+    }
+
+    @Override
+    public Request newRequest(URI uri, String s, String s1)
+    {
+        return httpClient.newRequest(uri, s, s1);
+    }
+
+    @Override
+    public Request newRequest(String s, String s1, String s2)
+    {
+        return httpClient.newRequest(s, s1, s2);
+    }
+
+    @Override
+    public void flushCacheByUriPattern(Pattern pattern)
+    {
+        httpClient.flushCacheByUriPattern(pattern);
     }
 
     @Override
@@ -121,26 +173,26 @@ public class DefaultHostHttpClient extends AbstractHttpClient implements HostHtt
     private static class ResponseSettableFutureHandler implements SettableFutureHandler<Response>
     {
         private final SettableFuture<Response> future = SettableFuture.create();
-        private final DefaultRequestContext.RequestCallable<Response, Boolean> setCallable;
-        private final DefaultRequestContext.RequestCallable<Throwable, Boolean> setExceptionCallable;
+        private final Function<Response, Boolean> setCallable;
+        private final Function<Throwable, Boolean> setExceptionCallable;
 
         private ResponseSettableFutureHandler(DefaultRequestContext requestContext)
         {
-            setCallable = requestContext.createCallableForCurrentRequest(
-                    new DefaultRequestContext.RequestCallable<Response, Boolean>()
+            setCallable = requestContext.createFunctionForExecutionWithinCurrentRequest(
+                    new Function<Response, Boolean>()
                     {
                         @Override
-                        public Boolean call(Response contextParameter)
+                        public Boolean apply(Response contextParameter)
                         {
                             return future.set(contextParameter);
                         }
                     });
 
-            setExceptionCallable = requestContext.createCallableForCurrentRequest(
-                    new DefaultRequestContext.RequestCallable<Throwable, Boolean>()
+            setExceptionCallable = requestContext.createFunctionForExecutionWithinCurrentRequest(
+                    new Function<Throwable, Boolean>()
                     {
                         @Override
-                        public Boolean call(Throwable contextParameter)
+                        public Boolean apply(Throwable contextParameter)
                         {
                             return future.setException(contextParameter);
                         }
@@ -150,13 +202,13 @@ public class DefaultHostHttpClient extends AbstractHttpClient implements HostHtt
         @Override
         public boolean set(@Nullable Response value)
         {
-            return setCallable.call(value);
+            return setCallable.apply(value);
         }
 
         @Override
         public boolean setException(Throwable throwable)
         {
-            return setExceptionCallable.call(throwable);
+            return setExceptionCallable.apply(throwable);
         }
 
         @Override

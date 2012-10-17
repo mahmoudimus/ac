@@ -152,6 +152,8 @@
     <component-import key="typeAccessor" interface="com.atlassian.applinks.spi.util.TypeAccessor" />
     <component-import key="webResourceUrlProvider" interface="com.atlassian.plugin.webresource.WebResourceUrlProvider" />
     <component-import key="moduleFactory" interface="com.atlassian.plugin.module.ModuleFactory" />
+    <component-import key="httpClientFactory" interface="com.atlassian.httpclient.api.factory.HttpClientFactory" />
+    <component-import key="httpClient" interface="com.atlassian.httpclient.api.HttpClient" />
 
     <!-- Cross-product API Scopes -->
     <plugin-permission key="read_app_links" name="Read Application Links"
@@ -188,13 +190,7 @@
     <component key="renderContext" interface="com.atlassian.plugin.remotable.api.service.RenderContext"
                class="com.atlassian.plugin.remotable.host.common.service.RenderContextServiceFactory" public="true" />
 
-    <component key="requestKiller"
-               class="com.atlassian.httpclient.base.RequestKiller" />
-
-    <component key="asyncHttpClient" interface="com.atlassian.plugin.remotable.api.service.http.HttpClient"
-               class="com.atlassian.httpclient.apache.httpcomponents.DefaultHttpClient" />
-
-    <component key="httpClient" interface="com.atlassian.plugin.remotable.api.service.http.HostHttpClient"
+    <component key="hostHttpClient" interface="com.atlassian.plugin.remotable.api.service.http.HostHttpClient"
                class="com.atlassian.plugin.remotable.host.common.service.http.HostHttpClientServiceFactory" public="true" />
 
     <component key="hostXmlRpcClient" interface="com.atlassian.plugin.remotable.api.service.http.HostXmlRpcClient"

@@ -1,21 +1,23 @@
 package com.atlassian.plugin.remotable.host.common.service.http;
 
 import com.atlassian.httpclient.api.Response;
+import com.atlassian.httpclient.api.ResponsePromiseMapFunction;
 import com.atlassian.plugin.remotable.api.service.http.HostHttpClient;
 import com.atlassian.plugin.remotable.api.service.http.HostXmlRpcClient;
 import com.atlassian.plugin.remotable.api.service.http.XmlRpcException;
 import com.atlassian.plugin.remotable.api.service.http.XmlRpcFault;
 import com.atlassian.plugin.util.ChainingClassLoader;
-import com.atlassian.util.concurrent.Deferred;
-import com.atlassian.util.concurrent.Effect;
 import com.atlassian.util.concurrent.Promise;
 import com.atlassian.xmlrpc.BindingException;
 import com.atlassian.xmlrpc.ServiceObject;
 import com.atlassian.xmlrpc.XmlRpcClientProvider;
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Function;
 import redstone.xmlrpc.XmlRpcMessages;
 import redstone.xmlrpc.XmlRpcSerializer;
 import redstone.xmlrpc.XmlRpcStruct;
 
+import javax.annotation.Nullable;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.StringWriter;
@@ -24,7 +26,6 @@ import java.lang.reflect.Proxy;
 import java.net.URI;
 import java.util.Vector;
 
-import static com.atlassian.util.concurrent.Promises.*;
 import static java.lang.System.*;
 
 /**
@@ -132,64 +133,60 @@ public class DefaultHostXmlRpcClient implements HostXmlRpcClient
      * @return The parsed return value of the call.
      * @throws XmlRpcException when some IO problem occur.
      */
-    private <T> Promise<T> endCall(Writer writer, final FaultHandlingXmlRpcParser parser,
-            final Class<T> castResultTo)
+    @VisibleForTesting
+    <T> Promise<T> endCall(Writer writer, final FaultHandlingXmlRpcParser parser, final Class<T> castResultTo)
     {
-        final Deferred<T> deferred = Deferred.create();
         try
         {
             writer.write("</params>");
             writer.write("</methodCall>");
 
-            httpClient
+            return httpClient
                 .newRequest(serverXmlRpcPath)
                 .setContentType("text/xml")
                 .setContentCharset(XmlRpcMessages.getString("XmlRpcClient.Encoding"))
                 .setEntity(writer.toString())
                 .post()
-                .ok(new Effect<Response>()
-                {
-                    @Override
-                    public void apply(Response response)
-                    {
-                        try
+                .map(ResponsePromiseMapFunction.<T>builder()
+                        .ok(new Function<Response, T>()
                         {
-                            parser.parse(new BufferedInputStream(response.getEntityStream()));
-                        }
-                        catch (Exception e)
-                        {
-                            deferred.reject(new XmlRpcException(
-                                    XmlRpcMessages.getString("XmlRpcClient.ParseError"), e));
-                        }
+                            @Override
+                            public T apply(@Nullable Response response)
+                            {
+                                try
+                                {
+                                    parser.parse(new BufferedInputStream(response.getEntityStream()));
+                                }
+                                catch (Exception e)
+                                {
+                                    throw new XmlRpcException(XmlRpcMessages.getString("XmlRpcClient.ParseError"), e);
+                                }
 
-                        if (parser.isFaultResponse())
-                        {
-                            XmlRpcStruct fault = (XmlRpcStruct) parser.getParsedValue();
-                            deferred.reject(new XmlRpcFault(fault.getInteger("faultCode"),
-                                    fault.getString("faultString")));
-                        }
-                        else
-                        {
-                            Object parsedValue = parser.getParsedValue();
-                            if (parsedValue != null && castResultTo.isAssignableFrom(parsedValue.getClass()))
-                            {
-                                deferred.resolve(castResultTo.cast(parsedValue));
+                                if (parser.isFaultResponse())
+                                {
+                                    XmlRpcStruct fault = (XmlRpcStruct) parser.getParsedValue();
+                                    throw new XmlRpcFault(fault.getInteger("faultCode"), fault.getString("faultString"));
+                                }
+                                else
+                                {
+                                    final Object parsedValue = parser.getParsedValue();
+                                    if (parsedValue != null && castResultTo.isAssignableFrom(parsedValue.getClass()))
+                                    {
+                                        return castResultTo.cast(parsedValue);
+                                    }
+                                    else
+                                    {
+                                        throw new XmlRpcException("Unexpected return type: '" + parsedValue.getClass().getName() + "', expected: '" + castResultTo.getName() + "'");
+                                    }
+                                }
                             }
-                            else
-                            {
-                                deferred.reject(new XmlRpcException("Unexpected return type: " + parsedValue));
-                            }
-                        }
-                    }
-                })
-                // since xmlrpc should always return 200 OK responses unless an error has occurred,
-                // treat all other response codes as errors
-                .otherwise(reject(deferred));
+                        })
+                        .others(ResponsePromiseMapFunction.<T>newUnexpectedResponseFunction())
+                        .build());
         }
         catch (IOException ioe)
         {
             throw new RuntimeException("Should never happen", ioe);
         }
-        return deferred.promise();
     }
 }

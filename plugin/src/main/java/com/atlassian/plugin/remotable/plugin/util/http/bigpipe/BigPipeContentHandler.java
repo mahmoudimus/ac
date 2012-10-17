@@ -1,11 +1,11 @@
 package com.atlassian.plugin.remotable.plugin.util.http.bigpipe;
 
-import com.atlassian.plugin.remotable.plugin.util.http.HttpContentHandler;
+import com.google.common.util.concurrent.FutureCallback;
 
 /**
  * An accessor for content that is being rendered by big pipe
  */
-public interface BigPipeHttpContentHandler extends HttpContentHandler
+public interface BigPipeContentHandler extends FutureCallback<String>
 {
     /**
      * Gets the content to display to the page immediately.  If the content can be retrieved from

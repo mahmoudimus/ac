@@ -55,7 +55,7 @@ public class TestRemotablePlugins
         assertNotNull(adminPassword);
         assertNotNull(displayUrl);
 
-        INSTALLER.install(displayUrl + "/atlassian-plugin", "", false);
+        INSTALLER.install(displayUrl + "/atlassian-plugin", "");
 
     }
     

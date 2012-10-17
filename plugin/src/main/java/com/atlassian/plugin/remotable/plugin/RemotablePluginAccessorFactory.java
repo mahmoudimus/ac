@@ -12,13 +12,13 @@ import com.atlassian.plugin.remotable.plugin.module.applinks.RemotePluginContain
 import com.atlassian.plugin.remotable.plugin.util.function.MapFunctions;
 import com.atlassian.plugin.remotable.plugin.util.http.AuthorizationGenerator;
 import com.atlassian.plugin.remotable.plugin.util.http.CachingHttpContentRetriever;
-import com.atlassian.plugin.remotable.plugin.util.http.HttpContentHandler;
 import com.atlassian.oauth.ServiceProvider;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.uri.Uri;
 import com.atlassian.uri.UriBuilder;
 import com.atlassian.util.concurrent.CopyOnWriteMap;
+import com.atlassian.util.concurrent.Promise;
 import com.google.common.base.Function;
 import com.google.common.collect.Maps;
 import net.oauth.OAuth;
@@ -31,7 +31,6 @@ import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Future;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Maps.newHashMap;
@@ -197,12 +196,12 @@ public class RemotablePluginAccessorFactory implements DisposableBean
         }
 
         @Override
-        public Future<String> executeAsyncGet(String username, URI path, Map<String, String> params,
-                Map<String, String> headers, HttpContentHandler handler)
+        public Promise<String> executeAsyncGet(String username, URI path, Map<String, String> params,
+                Map<String, String> headers)
                 throws ContentRetrievalException
         {
             return executeAsyncGetForType(new OAuthAuthorizationGenerator(serviceProvider),
-                    getTargetUrl(displayUrl, path), username, params, headers, handler, key);
+                    getTargetUrl(displayUrl, path), username, params, headers, key);
         }
 
         @Override
@@ -223,12 +222,12 @@ public class RemotablePluginAccessorFactory implements DisposableBean
         return new UriBuilder(Uri.fromJavaUri(targetUrl)).addQueryParameters(transformValues(params, MapFunctions.STRING_ARRAY_TO_STRING)).toString();
     }
 
-    private Future<String> executeAsyncGetForType(AuthorizationGenerator authorizationGenerator, URI targetUrl, String username,
-            Map<String, String> params, Map<String, String> headers, HttpContentHandler httpContentHandler, String pluginKey)
+    private Promise<String> executeAsyncGetForType(AuthorizationGenerator authorizationGenerator, URI targetUrl, String username,
+            Map<String, String> params, Map<String, String> headers, String pluginKey)
     {
         return httpContentRetriever.getAsync(authorizationGenerator, username, targetUrl,
             Maps.transformValues(params, MapFunctions.OBJECT_TO_STRING),
-            headers, httpContentHandler, pluginKey);
+            headers, pluginKey);
     }
 
     private String signGetUrlForType(ServiceProvider serviceProvider, URI targetUrl, Map<String, String[]> params) throws PermissionDeniedException

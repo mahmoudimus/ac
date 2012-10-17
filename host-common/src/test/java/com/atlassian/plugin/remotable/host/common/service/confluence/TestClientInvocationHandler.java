@@ -2,7 +2,7 @@ package com.atlassian.plugin.remotable.host.common.service.confluence;
 
 import com.atlassian.httpclient.api.Request;
 import com.atlassian.httpclient.api.Response;
-import com.atlassian.httpclient.api.ResponsePromise;
+import com.atlassian.httpclient.api.ResponsePromises;
 import com.atlassian.plugin.remotable.api.service.RequestContext;
 import com.atlassian.plugin.remotable.api.service.confluence.ConfluenceLabelClient;
 import com.atlassian.plugin.remotable.api.service.confluence.ConfluencePageClient;
@@ -22,18 +22,17 @@ import com.atlassian.plugin.remotable.api.service.http.HostHttpClient;
 import com.atlassian.plugin.remotable.api.service.http.HostXmlRpcClient;
 import com.atlassian.plugin.remotable.spi.PermissionDeniedException;
 import com.atlassian.plugin.util.ChainingClassLoader;
-import com.atlassian.util.concurrent.Effect;
+import com.atlassian.util.concurrent.Promise;
 import com.atlassian.util.concurrent.Promises;
 import com.google.common.collect.ImmutableMap;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Proxy;
 import java.net.URI;
 import java.util.Arrays;
@@ -193,32 +192,21 @@ public class TestClientInvocationHandler
     public void testInputStreamInResponse() throws IOException, NoSuchFieldException
     {
         when(requestContext.getHostBaseUrl()).thenReturn("http://localhost");
-        when(client.invoke("confluence2.exportSpace", Object.class, "",
-                "DS", getEnumRemoteName(ExportType.HTML))).thenReturn(Promises.<Object>toResolvedPromise("http://localhost/export"));
+        when(client.invoke("confluence2.exportSpace", Object.class, "", "DS", getEnumRemoteName(ExportType.HTML)))
+                .thenReturn(Promises.<Object>toResolvedPromise("http://localhost/export"));
+
         Request request = mock(Request.class);
-        when(httpClient.newRequest("/export"))
-                .thenReturn(request);
+        when(httpClient.newRequest("/export")).thenReturn(request);
+
         final Response response = mock(Response.class);
 
         ByteArrayInputStream bin = new ByteArrayInputStream(new byte[0]);
+        when(response.getStatusCode()).thenReturn(200);
         when(response.getEntityStream()).thenReturn(bin);
-        final ResponsePromise responsePromise = mock(ResponsePromise.class);
-        when(request.get()).thenReturn(responsePromise);
-        when(responsePromise.others(any(Effect.class))).thenReturn(responsePromise);
-        when(responsePromise.fail(any(Effect.class))).thenReturn(responsePromise);
-        when(responsePromise.ok(any(Effect.class))).then(new Answer<Object>()
-        {
-            @Override
-            public Object answer(InvocationOnMock invocation) throws Throwable
-            {
-                Effect<Response> callback = (Effect<Response>) invocation
-                        .getArguments()[0];
-                callback.apply(response);
-                return responsePromise;
-            }
-        });
+        when(request.get()).thenReturn(ResponsePromises.toResponsePromise(Promises.toResolvedPromise(response)));
 
-        assertEquals(bin, confluenceSpaceClient.exportSpace("DS", ExportType.HTML).claim());
+        Promise<InputStream> ds = confluenceSpaceClient.exportSpace("DS", ExportType.HTML);
+        assertEquals(bin, ds.claim());
     }
 
     @Test
