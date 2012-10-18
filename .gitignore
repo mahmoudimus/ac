@@ -10,6 +10,7 @@ target
 wiki
 smoke-tests/repository
 tags
+*.releaseBackup
 release.properties
 pom.release.xml
 
