@@ -20,7 +20,7 @@ package com.atlassian.plugin.remotable.host.common.service.confluence;
  */
 
 import com.atlassian.httpclient.api.Response;
-import com.atlassian.httpclient.api.ResponsePromiseMapFunction;
+import com.atlassian.httpclient.api.ResponsePromises;
 import com.atlassian.plugin.remotable.api.service.RequestContext;
 import com.atlassian.plugin.remotable.api.service.http.HostHttpClient;
 import com.atlassian.plugin.remotable.api.service.http.HostXmlRpcClient;
@@ -231,18 +231,17 @@ public final class ClientInvocationHandler implements InvocationHandler
                     @Override
                     public Promise<InputStream> apply(String result)
                     {
-                        return httpClient.newRequest(convertAbsoluteUrlToRelative(result)).get().map(
-                                ResponsePromiseMapFunction.<InputStream>builder()
-                                        .ok(new Function<Response, InputStream>()
-                                        {
-                                            @Override
-                                            public InputStream apply(Response response)
-                                            {
-                                                return response.getEntityStream();
-                                            }
-                                        })
-                                        .others(ResponsePromiseMapFunction.<InputStream>newUnexpectedResponseFunction())
-                                        .build());
+                        return httpClient.newRequest(convertAbsoluteUrlToRelative(result)).get().<InputStream>transform()
+                                .ok(new Function<Response, InputStream>()
+                                {
+                                    @Override
+                                    public InputStream apply(Response response)
+                                    {
+                                        return response.getEntityStream();
+                                    }
+                                })
+                                .others(ResponsePromises.<InputStream>newUnexpectedResponseFunction())
+                                .toPromise();
                     }
                 });
             }

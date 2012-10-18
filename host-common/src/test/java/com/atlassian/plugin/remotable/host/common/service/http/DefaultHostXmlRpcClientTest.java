@@ -3,6 +3,7 @@ package com.atlassian.plugin.remotable.host.common.service.http;
 import com.atlassian.httpclient.api.Request;
 import com.atlassian.httpclient.api.Response;
 import com.atlassian.httpclient.api.ResponsePromises;
+import com.atlassian.httpclient.api.ResponseTransformationException;
 import com.atlassian.httpclient.api.UnexpectedResponseException;
 import com.atlassian.plugin.remotable.api.service.http.HostHttpClient;
 import com.atlassian.plugin.remotable.api.service.http.XmlRpcException;
@@ -190,7 +191,7 @@ public final class DefaultHostXmlRpcClientTest
         assertTrue(promise.isDone());
 
         verifyZeroInteractions(doneEffect);
-        verify(failEffect).apply(throwable);
+        verify(failEffect).apply(isA(ResponseTransformationException.class));
     }
 
     private static UnexpectedResponseException isAnUnexpectedResponseException(Response response)

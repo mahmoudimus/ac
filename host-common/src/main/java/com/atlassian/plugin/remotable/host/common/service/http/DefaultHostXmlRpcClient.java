@@ -1,7 +1,7 @@
 package com.atlassian.plugin.remotable.host.common.service.http;
 
 import com.atlassian.httpclient.api.Response;
-import com.atlassian.httpclient.api.ResponsePromiseMapFunction;
+import com.atlassian.httpclient.api.ResponsePromises;
 import com.atlassian.plugin.remotable.api.service.http.HostHttpClient;
 import com.atlassian.plugin.remotable.api.service.http.HostXmlRpcClient;
 import com.atlassian.plugin.remotable.api.service.http.XmlRpcException;
@@ -17,7 +17,6 @@ import redstone.xmlrpc.XmlRpcMessages;
 import redstone.xmlrpc.XmlRpcSerializer;
 import redstone.xmlrpc.XmlRpcStruct;
 
-import javax.annotation.Nullable;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.StringWriter;
@@ -142,47 +141,47 @@ public class DefaultHostXmlRpcClient implements HostXmlRpcClient
             writer.write("</methodCall>");
 
             return httpClient
-                .newRequest(serverXmlRpcPath)
-                .setContentType("text/xml")
-                .setContentCharset(XmlRpcMessages.getString("XmlRpcClient.Encoding"))
-                .setEntity(writer.toString())
-                .post()
-                .map(ResponsePromiseMapFunction.<T>builder()
-                        .ok(new Function<Response, T>()
+                    .newRequest(serverXmlRpcPath)
+                    .setContentType("text/xml")
+                    .setContentCharset(XmlRpcMessages.getString("XmlRpcClient.Encoding"))
+                    .setEntity(writer.toString())
+                    .post()
+                    .<T>transform()
+                    .ok(new Function<Response, T>()
+                    {
+                        @Override
+                        public T apply(Response response)
                         {
-                            @Override
-                            public T apply(@Nullable Response response)
+                            try
                             {
-                                try
-                                {
-                                    parser.parse(new BufferedInputStream(response.getEntityStream()));
-                                }
-                                catch (Exception e)
-                                {
-                                    throw new XmlRpcException(XmlRpcMessages.getString("XmlRpcClient.ParseError"), e);
-                                }
+                                parser.parse(new BufferedInputStream(response.getEntityStream()));
+                            }
+                            catch (Exception e)
+                            {
+                                throw new XmlRpcException(XmlRpcMessages.getString("XmlRpcClient.ParseError"), e);
+                            }
 
-                                if (parser.isFaultResponse())
+                            if (parser.isFaultResponse())
+                            {
+                                XmlRpcStruct fault = (XmlRpcStruct) parser.getParsedValue();
+                                throw new XmlRpcFault(fault.getInteger("faultCode"), fault.getString("faultString"));
+                            }
+                            else
+                            {
+                                final Object parsedValue = parser.getParsedValue();
+                                if (parsedValue != null && castResultTo.isAssignableFrom(parsedValue.getClass()))
                                 {
-                                    XmlRpcStruct fault = (XmlRpcStruct) parser.getParsedValue();
-                                    throw new XmlRpcFault(fault.getInteger("faultCode"), fault.getString("faultString"));
+                                    return castResultTo.cast(parsedValue);
                                 }
                                 else
                                 {
-                                    final Object parsedValue = parser.getParsedValue();
-                                    if (parsedValue != null && castResultTo.isAssignableFrom(parsedValue.getClass()))
-                                    {
-                                        return castResultTo.cast(parsedValue);
-                                    }
-                                    else
-                                    {
-                                        throw new XmlRpcException("Unexpected return type: '" + parsedValue.getClass().getName() + "', expected: '" + castResultTo.getName() + "'");
-                                    }
+                                    throw new XmlRpcException("Unexpected return type: '" + parsedValue.getClass().getName() + "', expected: '" + castResultTo.getName() + "'");
                                 }
                             }
-                        })
-                        .others(ResponsePromiseMapFunction.<T>newUnexpectedResponseFunction())
-                        .build());
+                        }
+                    })
+                    .others(ResponsePromises.<T>newUnexpectedResponseFunction())
+                    .toPromise();
         }
         catch (IOException ioe)
         {

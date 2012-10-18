@@ -3,6 +3,7 @@ package com.atlassian.plugin.remotable.host.common.service.jira;
 import com.atlassian.httpclient.api.Response;
 import com.atlassian.httpclient.api.ResponsePromise;
 import com.atlassian.httpclient.api.ResponsePromises;
+import com.atlassian.httpclient.api.ResponseTransformationException;
 import com.atlassian.jira.rest.client.RestClientException;
 import com.atlassian.plugin.remotable.api.service.http.HostHttpClient;
 import com.atlassian.util.concurrent.Effect;
@@ -115,7 +116,7 @@ public final class AbstractP3RestClientTest
         assertTrue(responsePromise.isDone());
         assertTrue(promise.isDone());
 
-        verify(failEffect).apply(throwable);
+        verify(failEffect).apply(isA(ResponseTransformationException.class));
     }
 
     @Test
@@ -183,9 +184,8 @@ public final class AbstractP3RestClientTest
         assertTrue(responsePromise.isDone());
         assertTrue(promise.isDone());
 
-        verify(failEffect).apply(throwable);
+        verify(failEffect).apply(isA(ResponseTransformationException.class));
     }
-
 
     private void testCallWhenResponseIsOthers(int statusCode)
     {

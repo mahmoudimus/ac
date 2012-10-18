@@ -21,7 +21,7 @@ import java.net.URLEncoder;
 import java.util.concurrent.Callable;
 import java.util.regex.Pattern;
 
-public class DefaultHostHttpClient implements HostHttpClient
+public final class DefaultHostHttpClient implements HostHttpClient
 {
     private HttpClient httpClient;
     private DefaultRequestContext requestContext;
@@ -96,8 +96,8 @@ public class DefaultHostHttpClient implements HostHttpClient
 
         request.setUri(URI.create(uriBuf.toString()));
 
-        String method = request.getMethod();
-        String authHeader = signedRequestHandler.getAuthorizationHeaderValue(URI.create(origUriStr), method, userId);
+        final Request.Method method = request.getMethod();
+        String authHeader = signedRequestHandler.getAuthorizationHeaderValue(URI.create(origUriStr), method.name(), userId);
         request
             .setHeader("Authorization", authHeader)
             // capture request properties for analytics

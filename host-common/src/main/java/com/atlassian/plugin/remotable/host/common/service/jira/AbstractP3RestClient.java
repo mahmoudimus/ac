@@ -2,7 +2,6 @@ package com.atlassian.plugin.remotable.host.common.service.jira;
 
 import com.atlassian.httpclient.api.Response;
 import com.atlassian.httpclient.api.ResponsePromise;
-import com.atlassian.httpclient.api.ResponsePromiseMapFunction;
 import com.atlassian.jira.rest.client.RestClientException;
 import com.atlassian.jira.rest.client.internal.json.JsonArrayParser;
 import com.atlassian.jira.rest.client.internal.json.JsonObjectParser;
@@ -44,12 +43,13 @@ public abstract class AbstractP3RestClient
     protected final <T> Promise<T> callAndParse(ResponsePromise responsePromise, final ResponseHandler<T> responseHandler)
     {
         final Function<Response, ? extends T> transformFunction = toFunction(responseHandler);
-        return responsePromise.map(ResponsePromiseMapFunction.<T>builder()
+
+        return responsePromise.<T>transform()
                 .ok(transformFunction)
                 .created(transformFunction)
                 .notFound(constant((T) null))
                 .others(AbstractP3RestClient.<T>errorFunction())
-                .build());
+                .toPromise();
     }
 
     protected final <T> Promise<T> callAndParse(ResponsePromise responsePromise, final JsonParser<?, T> parser)
@@ -72,10 +72,10 @@ public abstract class AbstractP3RestClient
 
     protected final Promise<Void> call(ResponsePromise responsePromise)
     {
-        return responsePromise.map(ResponsePromiseMapFunction.<Void>builder()
+        return responsePromise.<Void>transform()
                 .noContent(constant((Void) null))
                 .others(AbstractP3RestClient.<Void>errorFunction())
-                .build());
+                .toPromise();
     }
 
     private static <T> Function<Response, ? extends T> toFunction(final ResponseHandler<T> responseHandler)
