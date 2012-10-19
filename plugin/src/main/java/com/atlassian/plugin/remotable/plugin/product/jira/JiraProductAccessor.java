@@ -177,8 +177,7 @@ public class JiraProductAccessor implements ProductAccessor
     {
         if (installationMode == InstallationMode.REMOTE)
         {
-            return Sets.cartesianProduct(
-                    new Set[]{Permissions.DEFAULT_REMOTE_PERMISSIONS, JiraPermissions.ALL_REMOTE_PERMISSIONS});
+            return Sets.union(Permissions.DEFAULT_REMOTE_PERMISSIONS, JiraPermissions.ALL_REMOTE_PERMISSIONS);
         }
 
         return Collections.emptySet();

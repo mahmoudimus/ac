@@ -56,7 +56,7 @@ public class RemotePluginRunner
                         .addAttribute("display-url", "http://localhost:" + port)
                         .getParent()
                 .getDocument();
-        installer = new RemotePluginInstallerClient(baseUrl, "admin", "admin");
+        installer = new RemotePluginInstallerClient(baseUrl, "betty", "betty");
     }
 
     public RemotePluginRunner addAdminPage(String key, String name, String path, String resource)

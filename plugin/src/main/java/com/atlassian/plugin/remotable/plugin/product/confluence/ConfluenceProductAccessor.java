@@ -195,7 +195,7 @@ public class ConfluenceProductAccessor implements ProductAccessor
     {
         if (installationMode == InstallationMode.REMOTE)
         {
-            return Sets.cartesianProduct(new Set[]{Permissions.DEFAULT_REMOTE_PERMISSIONS, ConfluencePermissions.ALL_REMOTE_PERMISSIONS});
+            return Sets.union(Permissions.DEFAULT_REMOTE_PERMISSIONS, ConfluencePermissions.ALL_REMOTE_PERMISSIONS);
         }
         else
         {
