@@ -32,7 +32,6 @@ import java.util.Set;
 
 import static com.atlassian.plugin.remotable.host.common.util.RemotablePluginManifestReader
         .getInstallerUser;
-import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.transform;
 
@@ -189,6 +188,6 @@ public class PermissionManager
 
         Set<String> requestedPermissions = permissionsReader.readPermissionsFromDescriptor(descriptor, installationMode);
 
-        return requestedPermissions.containsAll(productAccessor.getAllowedPermissions(installationMode));
+        return productAccessor.getAllowedPermissions(installationMode).containsAll(requestedPermissions);
     }
 }
