@@ -1,5 +1,6 @@
 package com.atlassian.plugin.remotable.host.common.service.http;
 
+import com.atlassian.httpclient.api.ForwardingHttpClient;
 import com.atlassian.httpclient.api.HttpClient;
 import com.atlassian.httpclient.api.Request;
 import com.atlassian.httpclient.api.Response;
@@ -7,6 +8,7 @@ import com.atlassian.httpclient.api.factory.HttpClientFactory;
 import com.atlassian.httpclient.api.factory.HttpClientOptions;
 import com.atlassian.httpclient.api.factory.SettableFutureHandler;
 import com.atlassian.httpclient.api.factory.SettableFutureHandlerFactory;
+import com.atlassian.plugin.remotable.api.service.RequestContext;
 import com.atlassian.plugin.remotable.api.service.SignedRequestHandler;
 import com.atlassian.plugin.remotable.api.service.http.HostHttpClient;
 import com.atlassian.plugin.remotable.host.common.service.DefaultRequestContext;
@@ -19,17 +21,27 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.util.concurrent.Callable;
-import java.util.regex.Pattern;
 
-public final class DefaultHostHttpClient implements HostHttpClient
+import static com.google.common.base.Preconditions.*;
+
+public final class DefaultHostHttpClient extends ForwardingHttpClient implements HostHttpClient
 {
-    private HttpClient httpClient;
-    private DefaultRequestContext requestContext;
-    private SignedRequestHandler signedRequestHandler;
+    private final HttpClient httpClient;
+    private final DefaultRequestContext requestContext;
 
-    public DefaultHostHttpClient(HttpClientFactory httpClientFactory,
-                                 final DefaultRequestContext requestContext,
-                                 SignedRequestHandler signedRequestHandler)
+    public DefaultHostHttpClient(HttpClientFactory httpClientFactory, DefaultRequestContext requestContext, SignedRequestHandler signedRequestHandler)
+    {
+        this.requestContext = checkNotNull(requestContext);
+        this.httpClient = checkNotNull(httpClientFactory).create(getHttpOptions(requestContext, checkNotNull(signedRequestHandler)));
+    }
+
+    @Override
+    protected HttpClient delegate()
+    {
+        return httpClient;
+    }
+
+    private HttpClientOptions getHttpOptions(final DefaultRequestContext requestContext, SignedRequestHandler signedRequestHandler)
     {
         HttpClientOptions options = new HttpClientOptions();
         options.setThreadPrefix("hostclient");
@@ -41,111 +53,15 @@ public final class DefaultHostHttpClient implements HostHttpClient
                 return new ResponseSettableFutureHandler(requestContext);
             }
         });
-        options.setRequestPreparer(new Effect<Request>() {
-
-            @Override
-            public void apply(Request request)
-            {
-                prepareRequest(request);
-            }
-        });
-        this.httpClient = httpClientFactory.create(options);
-        this.requestContext = requestContext;
-        this.signedRequestHandler = signedRequestHandler;
-    }
-
-    private void prepareRequest(Request request)
-    {
-        // make sure this is a request for a relative url
-        if (request.getUri().toString().matches("^[\\w]+:.*"))
-        {
-            throw new IllegalStateException("Absolute request URIs are not supported for host requests");
-        }
-
-        // get the current oauth client key and die if it's not available
-        String clientKey = requestContext.getClientKey();
-        if (clientKey == null)
-        {
-            throw new IllegalStateException("Unable to execute host http request without client key");
-        }
-
-        // lookup the host base url from the client key
-        String baseUrl = signedRequestHandler.getHostBaseUrl(clientKey);
-
-        // build initial absolute request url from the base and the request uri
-        String origUriStr = baseUrl + request.getUri();
-        StringBuilder uriBuf = new StringBuilder(origUriStr);
-
-        // append the user id to the uri if available
-        String userId = requestContext.getUserId();
-        if (userId != null)
-        {
-            try
-            {
-                uriBuf
-                    .append(uriBuf.indexOf("?") > 0 ? '&' : '?')
-                    .append("user_id")
-                    .append('=')
-                    .append(URLEncoder.encode(userId, "UTF-8"));
-            }
-            catch (UnsupportedEncodingException e)
-            {
-                throw new RuntimeException(e);
-            }
-        }
-
-        request.setUri(URI.create(uriBuf.toString()));
-
-        final Request.Method method = request.getMethod();
-        String authHeader = signedRequestHandler.getAuthorizationHeaderValue(URI.create(origUriStr), method.name(), userId);
-        request
-            .setHeader("Authorization", authHeader)
-            // capture request properties for analytics
-            .setAttribute("purpose", "host-request")
-            .setAttribute("clientKey", clientKey);
-    }
-
-    @Override
-    public Request newRequest()
-    {
-        return httpClient.newRequest();
-    }
-
-    @Override
-    public Request newRequest(URI uri)
-    {
-        return httpClient.newRequest(uri);
-    }
-
-    @Override
-    public Request newRequest(String s)
-    {
-        return httpClient.newRequest(s);
-    }
-
-    @Override
-    public Request newRequest(URI uri, String s, String s1)
-    {
-        return httpClient.newRequest(uri, s, s1);
-    }
-
-    @Override
-    public Request newRequest(String s, String s1, String s2)
-    {
-        return httpClient.newRequest(s, s1, s2);
-    }
-
-    @Override
-    public void flushCacheByUriPattern(Pattern pattern)
-    {
-        httpClient.flushCacheByUriPattern(pattern);
+        options.setRequestPreparer(new HostHttpClientRequestPreparer(requestContext, signedRequestHandler));
+        return options;
     }
 
     @Override
     public <T> T callAs(String clientKey, String userId, Callable<T> callable)
     {
-        String oldClientKey = requestContext.getClientKey();
-        String oldUserId = requestContext.getUserId();
+        final String oldClientKey = requestContext.getClientKey();
+        final String oldUserId = requestContext.getUserId();
         try
         {
             requestContext.setClientKey(clientKey);
@@ -170,7 +86,7 @@ public final class DefaultHostHttpClient implements HostHttpClient
         }
     }
 
-    private static class ResponseSettableFutureHandler implements SettableFutureHandler<Response>
+    private static final class ResponseSettableFutureHandler implements SettableFutureHandler<Response>
     {
         private final SettableFuture<Response> future = SettableFuture.create();
         private final Function<Response, Boolean> setCallable;
@@ -215,6 +131,69 @@ public final class DefaultHostHttpClient implements HostHttpClient
         public SettableFuture<Response> getFuture()
         {
             return future;
+        }
+    }
+
+    private static final class HostHttpClientRequestPreparer implements Effect<Request>
+    {
+        private final RequestContext requestContext;
+        private final SignedRequestHandler signedRequestHandler;
+
+        private HostHttpClientRequestPreparer(RequestContext requestContext, SignedRequestHandler signedRequestHandler)
+        {
+            this.requestContext = checkNotNull(requestContext);
+            this.signedRequestHandler = checkNotNull(signedRequestHandler);
+        }
+
+        @Override
+        public void apply(Request request)
+        {
+            // make sure this is a request for a relative url
+            if (request.getUri().toString().matches("^[\\w]+:.*"))
+            {
+                throw new IllegalStateException("Absolute request URIs are not supported for host requests");
+            }
+
+            // get the current oauth client key and die if it's not available
+            String clientKey = requestContext.getClientKey();
+            if (clientKey == null)
+            {
+                throw new IllegalStateException("Unable to execute host http request without client key");
+            }
+
+            // lookup the host base url from the client key
+            final String baseUrl = signedRequestHandler.getHostBaseUrl(clientKey);
+
+            // build initial absolute request url from the base and the request uri
+            final String origUriStr = baseUrl + request.getUri();
+            final StringBuilder uriBuf = new StringBuilder(origUriStr);
+
+            // append the user id to the uri if available
+            final String userId = requestContext.getUserId();
+            if (userId != null)
+            {
+                try
+                {
+                    uriBuf
+                            .append(uriBuf.indexOf("?") > 0 ? '&' : '?')
+                            .append("user_id")
+                            .append('=')
+                            .append(URLEncoder.encode(userId, "UTF-8"));
+                }
+                catch (UnsupportedEncodingException e)
+                {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            request.setUri(URI.create(uriBuf.toString()));
+
+            final Request.Method method = request.getMethod();
+            final String authHeader = signedRequestHandler.getAuthorizationHeaderValue(URI.create(origUriStr), method.name(), userId);
+            request.setHeader("Authorization", authHeader)
+                    // capture request properties for analytics
+                    .setAttribute("purpose", "host-request")
+                    .setAttribute("clientKey", clientKey);
         }
     }
 }
