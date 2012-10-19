@@ -1,6 +1,6 @@
 package com.atlassian.plugin.remotable.plugin.product.confluence;
 
-import com.atlassian.plugin.remotable.api.service.confluence.ConfluencePermission;
+import com.atlassian.plugin.remotable.api.service.confluence.ConfluencePermissions;
 
 /**
  * API Scope for Confluence that grants Remotable Plugins the ability to access the render utility methods of the Confluence
@@ -10,6 +10,6 @@ public class RenderContentScope extends ConfluenceScope
 {
     public RenderContentScope()
     {
-        super(ConfluencePermission.RENDER_CONTENT);
+        super(ConfluencePermissions.RENDER_CONTENT);
     }
 }

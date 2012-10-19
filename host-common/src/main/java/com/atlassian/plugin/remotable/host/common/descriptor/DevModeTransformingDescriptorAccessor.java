@@ -8,7 +8,7 @@ import static com.atlassian.plugin.remotable.host.common.descriptor.DescriptorUt
 import static com.google.common.base.Preconditions.*;
 import static java.lang.Boolean.*;
 
-public final class DisplayUrlTransformingDescriptorAccessor extends DelegatingDescriptorAccessor
+public final class DevModeTransformingDescriptorAccessor extends DelegatingDescriptorAccessor
 {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -16,12 +16,14 @@ public final class DisplayUrlTransformingDescriptorAccessor extends DelegatingDe
     private final LocalMountBaseUrlResolver baseUrlResolver;
     private final RuntimeContext runtimeContext;
 
-    public DisplayUrlTransformingDescriptorAccessor(final DescriptorAccessor delegate, LocalMountBaseUrlResolver baseUrlResolver)
+    public DevModeTransformingDescriptorAccessor(final DescriptorAccessor delegate,
+            LocalMountBaseUrlResolver baseUrlResolver)
     {
         this(delegate, baseUrlResolver, new SystemRuntimeContext());
     }
 
-    public DisplayUrlTransformingDescriptorAccessor(final DescriptorAccessor delegate, LocalMountBaseUrlResolver baseUrlResolver, RuntimeContext runtimeContext)
+    public DevModeTransformingDescriptorAccessor(final DescriptorAccessor delegate,
+            LocalMountBaseUrlResolver baseUrlResolver, RuntimeContext runtimeContext)
     {
         this.delegate = checkNotNull(delegate);
         this.baseUrlResolver = checkNotNull(baseUrlResolver);
@@ -45,7 +47,10 @@ public final class DisplayUrlTransformingDescriptorAccessor extends DelegatingDe
 
     private Document transformPluginDescriptor(Document descriptor, String displayUrl)
     {
-        return addDisplayUrl(getRemotePluginContainerElement(descriptor.getRootElement()), displayUrl);
+        return addRegistrationWebHook(
+              addDisplayUrl(
+                      getRemotePluginContainerElement(
+                              descriptor.getRootElement()), displayUrl).getRootElement());
     }
 
     @Override

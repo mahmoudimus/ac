@@ -10,15 +10,15 @@ import com.atlassian.util.concurrent.Promise;
  */
 public interface ConfluenceBlogClient
 {
-    @RequirePermission(ConfluencePermission.READ_CONTENT)
+    @RequirePermission(ConfluencePermissions.READ_CONTENT)
     Promise<BlogEntry> getBlogEntryByDateAndTitle(String spaceKey, int year, int month, int dayOfMoth, String postTitle);
 
-    @RequirePermission(ConfluencePermission.READ_CONTENT)
+    @RequirePermission(ConfluencePermissions.READ_CONTENT)
     Promise<BlogEntry> getBlogEntry(long entryId);
 
-    @RequirePermission(ConfluencePermission.READ_CONTENT)
+    @RequirePermission(ConfluencePermissions.READ_CONTENT)
     Promise<BlogEntrySummary> getBlogEntries(String spaceKey);
 
-    @RequirePermission(ConfluencePermission.MODIFY_CONTENT)
+    @RequirePermission(ConfluencePermissions.MODIFY_CONTENT)
     Promise<BlogEntry> storeBlogEntry(MutableBlogEntry blogEntry);
 }

@@ -1,11 +1,13 @@
 package com.atlassian.plugin.remotable.plugin.product;
 
+import com.atlassian.plugin.remotable.api.InstallationMode;
 import com.atlassian.plugin.remotable.host.common.HostProperties;
 import com.atlassian.mail.Email;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Product-specific accessors
@@ -33,4 +35,6 @@ public interface ProductAccessor extends HostProperties
     void flushEmail();
 
     Map<String,Class<? extends Condition>> getConditions();
+
+    Set<String> getAllowedPermissions(InstallationMode installationMode);
 }

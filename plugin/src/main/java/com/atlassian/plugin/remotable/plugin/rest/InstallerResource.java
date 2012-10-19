@@ -91,18 +91,16 @@ public class InstallerResource
     }
 
     @POST
-    public Response install(@FormParam("url") String registrationUrl,
-            @FormParam("token") String registrationToken)
+    public Response install(@FormParam("url") String registrationUrl)
     {
-        String token = registrationToken != null ? registrationToken : "";
-
         try
         {
             remotablePluginInstallationService.install(userManager.getRemoteUsername(),
-                    registrationUrl, token);
+                    registrationUrl);
         }
         catch (PermissionDeniedException ex)
         {
+            log.debug(ex.getMessage(), ex);
             return Response.status(Response.Status.FORBIDDEN).entity(ex.getMessage()).build();
         }
         catch (InstallationFailedException ex)

@@ -12,9 +12,8 @@ public interface RemotablePluginInstallationService
      *
      * @param username            The user
      * @param registrationUrl     The registration URL to retrieve the Remotable Plugin info
-     * @param registrationSecret  The secret token to send to the registration URL.  Can be null.
      */
-    String install(String username, String registrationUrl, String registrationSecret) throws
+    String install(String username, String registrationUrl) throws
             PermissionDeniedException, InstallationFailedException;
 
     void uninstall(String username, String appKey) throws PermissionDeniedException;

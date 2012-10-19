@@ -1,6 +1,6 @@
 package com.atlassian.plugin.remotable.plugin.product.confluence;
 
-import com.atlassian.plugin.remotable.api.service.confluence.ConfluencePermission;
+import com.atlassian.plugin.remotable.api.service.confluence.ConfluencePermissions;
 
 /**
  * API Scope for Confluence that grants Remotable Plugins the ability to vuew and modify notification subscriptions ('watches')
@@ -12,6 +12,6 @@ public class ManageWatchersScope extends ConfluenceScope
 {
     protected ManageWatchersScope()
     {
-        super(ConfluencePermission.MANAGE_WATCHERS);
+        super(ConfluencePermissions.MANAGE_WATCHERS);
     }
 }

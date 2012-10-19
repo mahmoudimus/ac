@@ -120,9 +120,16 @@
     <component key="remotappsService" class="com.atlassian.plugin.remotable.plugin.DefaultRemotablePluginInstallationService"
                interface="com.atlassian.plugin.remotable.spi.RemotablePluginInstallationService" public="true" />
 
+    <component key="remotePluginRequestSigner" class="com.atlassian.plugin.remotable.plugin.webhooks.RemotePluginRequestSigner"
+               interface="com.atlassian.webhooks.spi.plugin.RequestSigner" public="true" />
+
     <component key="serverWebHookProvider"
                interface="com.atlassian.webhooks.spi.provider.WebHookProvider" public="true"
                class="com.atlassian.plugin.remotable.plugin.webhooks.ServerWebHookProvider" />
+
+    <component key="pluginsWebHookProvider"
+                   interface="com.atlassian.webhooks.spi.provider.WebHookProvider" public="true"
+                   class="com.atlassian.plugin.remotable.plugin.webhooks.PluginsWebHookProvider" />
 
     <component key="bundleLocator" class="com.atlassian.plugin.remotable.host.common.util.BundleContextBundleLoader" />
     <component key="permissionsReader" class="com.atlassian.plugin.remotable.host.common.descriptor.DescriptorPermissionsReader" />

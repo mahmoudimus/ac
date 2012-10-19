@@ -1,6 +1,6 @@
 package com.atlassian.plugin.remotable.plugin.product.confluence;
 
-import com.atlassian.plugin.remotable.api.service.confluence.ConfluencePermission;
+import com.atlassian.plugin.remotable.api.service.confluence.ConfluencePermissions;
 import com.atlassian.plugin.remotable.spi.permission.scope.RestApiScopeHelper;
 
 import static java.util.Arrays.asList;
@@ -12,7 +12,7 @@ public class ReadServerInformationScope extends ConfluenceScope
 {
     protected ReadServerInformationScope()
     {
-        super(ConfluencePermission.READ_SERVER_INFORMATION,
+        super(ConfluencePermissions.READ_SERVER_INFORMATION,
         asList(
                 new RestApiScopeHelper.RestScope("prototype", asList("1", "latest"), "/buildInfo", asList("get"))
             )

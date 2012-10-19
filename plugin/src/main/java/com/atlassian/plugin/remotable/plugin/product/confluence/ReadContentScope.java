@@ -1,6 +1,6 @@
 package com.atlassian.plugin.remotable.plugin.product.confluence;
 
-import com.atlassian.plugin.remotable.api.service.confluence.ConfluencePermission;
+import com.atlassian.plugin.remotable.api.service.confluence.ConfluencePermissions;
 import com.atlassian.plugin.remotable.spi.permission.scope.DownloadScopeHelper;
 import com.atlassian.plugin.remotable.spi.permission.scope.RestApiScopeHelper;
 
@@ -13,7 +13,7 @@ public class ReadContentScope extends ConfluenceScope
 {
     public ReadContentScope()
     {
-        super(ConfluencePermission.READ_CONTENT,
+        super(ConfluencePermissions.READ_CONTENT,
             asList(
                 new RestApiScopeHelper.RestScope("prototype", asList("1", "latest"), "/search", asList("get")),
                 new RestApiScopeHelper.RestScope("prototype", asList("1", "latest"), "/content", asList("get")),

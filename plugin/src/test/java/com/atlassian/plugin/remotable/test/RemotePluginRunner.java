@@ -261,16 +261,8 @@ public class RemotePluginRunner
         @Override
         protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
         {
-            String regAuth = request.getHeader("Authorization");
-            if (("RemotePluginRegistration secret=" + encodeBase64(secret)).equals(regAuth))
-            {
-                new XMLWriter(response.getWriter()).write(doc);
-                response.getWriter().close();
-            }
-            else
-            {
-                response.sendError(500, "Invalid authorization: " + regAuth);
-            }
+            new XMLWriter(response.getWriter()).write(doc);
+            response.getWriter().close();
         }
     }
 }

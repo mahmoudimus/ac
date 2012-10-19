@@ -6,7 +6,7 @@ import com.atlassian.httpclient.api.ResponsePromises;
 import com.atlassian.plugin.remotable.api.service.RequestContext;
 import com.atlassian.plugin.remotable.api.service.confluence.ConfluenceLabelClient;
 import com.atlassian.plugin.remotable.api.service.confluence.ConfluencePageClient;
-import com.atlassian.plugin.remotable.api.service.confluence.ConfluencePermission;
+import com.atlassian.plugin.remotable.api.service.confluence.ConfluencePermissions;
 import com.atlassian.plugin.remotable.api.service.confluence.ConfluenceSpaceClient;
 import com.atlassian.plugin.remotable.api.service.confluence.domain.ContentPermission;
 import com.atlassian.plugin.remotable.api.service.confluence.domain.ContentPermissionSet;
@@ -66,10 +66,10 @@ public class TestClientInvocationHandler
     private ConfluenceSpaceClient confluenceSpaceClient;
 
     private static final Set<String> permissions = newHashSet(
-            ConfluencePermission.READ_CONTENT,
-            ConfluencePermission.MODIFY_SPACES,
-            ConfluencePermission.MODIFY_CONTENT,
-            ConfluencePermission.LABEL_CONTENT);
+            ConfluencePermissions.READ_CONTENT,
+            ConfluencePermissions.MODIFY_SPACES,
+            ConfluencePermissions.MODIFY_CONTENT,
+            ConfluencePermissions.LABEL_CONTENT);
 
     @Before
     public void setUp()

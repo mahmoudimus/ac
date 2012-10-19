@@ -1,11 +1,15 @@
 package com.atlassian.plugin.remotable.api.service.confluence;
 
+import com.google.common.collect.ImmutableSet;
+
+import java.util.Set;
+
 /**
  * Permissions for Confluence.  Should all be declared as plugin-permission modules in atlassian-plugin-confluence.xml
  */
-public final class ConfluencePermission
+public final class ConfluencePermissions
 {
-    private ConfluencePermission()
+    private ConfluencePermissions()
     {}
 
     public static final String MANAGE_INDEX = "manage_index";
@@ -20,4 +24,9 @@ public final class ConfluencePermission
     public static final String RENDER_CONTENT = "render_content";
     public static final String MODIFY_CONTENT = "modify_content";
     public static final String MANAGE_ANONYMOUS_PERMISSIONS = "manage_anonymous_permissions";
+
+    public static Set<String> ALL_REMOTE_PERMISSIONS = ImmutableSet.of(
+            MANAGE_INDEX, READ_CONTENT, MODIFY_ATTACHMENTS, READ_USERS_AND_GROUPS, MODIFY_SPACES,
+            READ_SERVER_INFORMATION, MODIFY_USERS, MANAGE_WATCHERS, LABEL_CONTENT, RENDER_CONTENT,
+            MODIFY_CONTENT, MANAGE_ANONYMOUS_PERMISSIONS);
 }

@@ -180,8 +180,7 @@ public class DefaultHostXmlRpcClient implements HostXmlRpcClient
                             }
                         }
                     })
-                    .others(ResponsePromises.<T>newUnexpectedResponseFunction())
-                    .toPromise();
+                    .others(ResponsePromises.<T>newUnexpectedResponseFunction());
         }
         catch (IOException ioe)
         {

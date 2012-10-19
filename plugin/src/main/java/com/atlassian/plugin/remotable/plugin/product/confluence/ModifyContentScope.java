@@ -1,6 +1,6 @@
 package com.atlassian.plugin.remotable.plugin.product.confluence;
 
-import com.atlassian.plugin.remotable.api.service.confluence.ConfluencePermission;
+import com.atlassian.plugin.remotable.api.service.confluence.ConfluencePermissions;
 
 /**
  * API Scope for Confluence that grants Remotable Plugins the ability to add, edit and remove pages and blogs.
@@ -9,6 +9,6 @@ public class ModifyContentScope extends ConfluenceScope
 {
     protected ModifyContentScope()
     {
-        super(ConfluencePermission.MODIFY_CONTENT);
+        super(ConfluencePermissions.MODIFY_CONTENT);
     }
 }

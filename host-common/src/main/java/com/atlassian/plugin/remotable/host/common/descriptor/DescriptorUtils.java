@@ -3,6 +3,8 @@ package com.atlassian.plugin.remotable.host.common.descriptor;
 import org.dom4j.Document;
 import org.dom4j.Element;
 
+import java.util.List;
+
 import static com.google.common.base.Preconditions.*;
 
 public final class DescriptorUtils
@@ -51,6 +53,23 @@ public final class DescriptorUtils
     public static Document addDisplayUrl(Element element, String displayUrl)
     {
         return element.addAttribute("display-url", displayUrl).getDocument();
+    }
+
+    public static Document addRegistrationWebHook(Element root)
+    {
+        for (Element webHook : (List<Element>) root.elements("webhook"))
+        {
+            if ("remote_plugin_installed".equals(webHook.attributeValue("event")))
+            {
+                return root.getDocument();
+            }
+        }
+
+        // not found
+        root.addElement("webhook").addAttribute("event", "remote_plugin_installed")
+                .addAttribute("url", "/")
+                .addAttribute("key", "_registration");
+        return root.getDocument();
     }
 
     private static String getOAuthPublicKey(Element element)

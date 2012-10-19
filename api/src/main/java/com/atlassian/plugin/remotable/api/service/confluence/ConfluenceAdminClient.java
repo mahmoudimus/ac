@@ -10,15 +10,15 @@ import java.io.InputStream;
  */
 public interface ConfluenceAdminClient
 {
-    @RequirePermission(ConfluencePermission.READ_SERVER_INFORMATION)
+    @RequirePermission(ConfluencePermissions.READ_SERVER_INFORMATION)
     Promise<ServerInfo> getServerInfo();
 
-    @RequirePermission(ConfluencePermission.READ_CONTENT)
+    @RequirePermission(ConfluencePermissions.READ_CONTENT)
     Promise<InputStream> exportSite(boolean exportAttachments);
 
-    @RequirePermission(ConfluencePermission.MANAGE_INDEX)
+    @RequirePermission(ConfluencePermissions.MANAGE_INDEX)
     Promise<Boolean> flushIndexQueue();
 
-    @RequirePermission(ConfluencePermission.MANAGE_INDEX)
+    @RequirePermission(ConfluencePermissions.MANAGE_INDEX)
     Promise<Void> clearIndexQueue();
 }

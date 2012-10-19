@@ -2,19 +2,25 @@ package com.atlassian.plugin.remotable.plugin.product.confluence;
 
 import com.atlassian.confluence.plugin.descriptor.web.descriptors.ConfluenceWebItemModuleDescriptor;
 import com.atlassian.core.task.MultiQueueTaskManager;
+import com.atlassian.plugin.remotable.api.InstallationMode;
+import com.atlassian.plugin.remotable.api.service.confluence.ConfluencePermissions;
 import com.atlassian.plugin.remotable.plugin.product.ProductAccessor;
 import com.atlassian.mail.Email;
 import com.atlassian.mail.MailException;
 import com.atlassian.mail.MailFactory;
 import com.atlassian.mail.server.SMTPMailServer;
+import com.atlassian.plugin.remotable.spi.Permissions;
 import com.atlassian.plugin.util.ContextClassLoaderSwitchingUtil;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Sets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 
 import static com.google.common.collect.Maps.newHashMap;
 
@@ -182,5 +188,18 @@ public class ConfluenceProductAccessor implements ProductAccessor
         conditions.put("user_watching_page", com.atlassian.confluence.plugin.descriptor.web.conditions.user.UserWatchingPageCondition.class);
         conditions.put("favourite_space", com.atlassian.confluence.plugin.descriptor.web.conditions.FavouriteSpaceCondition.class);
         return conditions;
+    }
+
+    @Override
+    public Set<String> getAllowedPermissions(InstallationMode installationMode)
+    {
+        if (installationMode == InstallationMode.REMOTE)
+        {
+            return Sets.cartesianProduct(new Set[]{Permissions.DEFAULT_REMOTE_PERMISSIONS, ConfluencePermissions.ALL_REMOTE_PERMISSIONS});
+        }
+        else
+        {
+            return Collections.emptySet();
+        }
     }
 }

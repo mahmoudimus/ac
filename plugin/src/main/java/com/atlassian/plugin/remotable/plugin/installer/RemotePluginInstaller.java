@@ -1,7 +1,7 @@
 package com.atlassian.plugin.remotable.plugin.installer;
 
 import com.atlassian.plugin.remotable.spi.PermissionDeniedException;
-import com.atlassian.util.concurrent.Promise;
+import org.dom4j.Document;
 
 import java.net.URI;
 
@@ -10,21 +10,13 @@ import java.net.URI;
  */
 public interface RemotePluginInstaller
 {
-    public static interface KeyValidator
-    {
-        void validatePermissions(String appKey) throws PermissionDeniedException;
-    }
-
     /**
      * Installs a remote plugin using a registration URL
      *
      * @param username            The user
      * @param registrationUrl     The registration URL to retrieve the Remotable Plugin info
-     * @param registrationSecret  The secret token to send to the registration URL.  Can be null.
+     * @param descriptor          The plugin descriptor
      */
-    String install(String username, URI registrationUrl, String registrationSecret,
-            KeyValidator keyValidator) throws
+    String install(String username, URI registrationUrl, Document descriptor) throws
             PermissionDeniedException;
-
-    Promise<String> getPluginKey(URI registrationUrl);
 }

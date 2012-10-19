@@ -16,7 +16,7 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public final class DisplayUrlTransformingDescriptorAccessorTest
+public final class DevModeTransformingDescriptorAccessorTest
 {
     private static final String DISPLAY_URL = "this-is-a-test-display-url";
     private static final String LOCAL_BASE_URL = "a-local-base-url";
@@ -30,13 +30,13 @@ public final class DisplayUrlTransformingDescriptorAccessorTest
     private LocalMountBaseUrlResolver baseUrlResolver;
 
     @Mock
-    private DisplayUrlTransformingDescriptorAccessor.RuntimeContext runtimeContext;
+    private DevModeTransformingDescriptorAccessor.RuntimeContext runtimeContext;
 
     @Before
     public void setUp()
     {
         when(baseUrlResolver.getLocalMountBaseUrl(anyString())).thenReturn(LOCAL_BASE_URL);
-        descriptorAccessor = new DisplayUrlTransformingDescriptorAccessor(delegate, baseUrlResolver, runtimeContext);
+        descriptorAccessor = new DevModeTransformingDescriptorAccessor(delegate, baseUrlResolver, runtimeContext);
     }
 
     @Test

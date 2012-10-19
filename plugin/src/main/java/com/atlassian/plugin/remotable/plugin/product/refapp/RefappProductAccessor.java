@@ -1,5 +1,7 @@
 package com.atlassian.plugin.remotable.plugin.product.refapp;
 
+import com.atlassian.plugin.remotable.api.InstallationMode;
+import com.atlassian.plugin.remotable.spi.Permissions;
 import com.atlassian.plugin.remotable.spi.module.UserIsAdminCondition;
 import com.atlassian.plugin.remotable.spi.module.UserIsLoggedInCondition;
 import com.atlassian.plugin.remotable.spi.module.UserIsSysAdminCondition;
@@ -10,6 +12,7 @@ import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.web.WebInterfaceManager;
 import com.atlassian.plugin.web.descriptors.DefaultWebItemModuleDescriptor;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
+import com.google.common.collect.Sets;
 import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.HtmlEmail;
 import org.apache.commons.mail.SimpleEmail;
@@ -20,6 +23,7 @@ import javax.mail.MessagingException;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Map;
+import java.util.Set;
 
 import static com.google.common.collect.Maps.newHashMap;
 import static java.util.Collections.emptyMap;
@@ -185,5 +189,11 @@ public class RefappProductAccessor implements ProductAccessor
         conditions.put("user_is_logged_in", UserIsLoggedInCondition.class);
         conditions.put("user_is_admin", UserIsAdminCondition.class);
         return conditions;
+    }
+
+    @Override
+    public Set<String> getAllowedPermissions(InstallationMode installationMode)
+    {
+        return Permissions.DEFAULT_REMOTE_PERMISSIONS;
     }
 }

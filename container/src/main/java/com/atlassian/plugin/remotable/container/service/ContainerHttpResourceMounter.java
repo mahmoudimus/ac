@@ -7,7 +7,7 @@ import com.atlassian.plugin.remotable.container.internal.Environment;
 import com.atlassian.plugin.remotable.container.internal.kit.RegistrationFilter;
 import com.atlassian.plugin.remotable.host.common.descriptor.DelegatingDescriptorAccessor;
 import com.atlassian.plugin.remotable.host.common.descriptor.DescriptorAccessor;
-import com.atlassian.plugin.remotable.host.common.descriptor.DisplayUrlTransformingDescriptorAccessor;
+import com.atlassian.plugin.remotable.host.common.descriptor.DevModeTransformingDescriptorAccessor;
 import com.atlassian.plugin.remotable.host.common.descriptor.PolyglotDescriptorAccessor;
 import com.atlassian.plugin.remotable.host.common.service.AuthenticationFilter;
 import com.atlassian.plugin.Plugin;
@@ -44,7 +44,7 @@ public final class ContainerHttpResourceMounter implements HttpResourceMounter
         this.httpServer = checkNotNull(httpServer);
         this.plugin = checkNotNull(plugin);
 
-        final DescriptorAccessor descriptorAccessor = new DisplayUrlTransformingDescriptorAccessor(new LazyDescriptorAccessor(plugin, bundle), this.httpServer);
+        final DescriptorAccessor descriptorAccessor = new DevModeTransformingDescriptorAccessor(new LazyDescriptorAccessor(plugin, bundle), this.httpServer);
         environment.setEnv("BASE_URL", checkNotNull(getDisplayUrl(descriptorAccessor.getDescriptor())));
         final String oauthPublicKey = getOAuthPublicKey(descriptorAccessor.getDescriptor());
         if (oauthPublicKey != null)

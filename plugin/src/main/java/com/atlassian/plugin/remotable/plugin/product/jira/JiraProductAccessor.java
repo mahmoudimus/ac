@@ -7,16 +7,22 @@ import com.atlassian.jira.plugin.webfragment.descriptors.JiraWebItemModuleDescri
 import com.atlassian.jira.user.preferences.JiraUserPreferences;
 import com.atlassian.jira.user.preferences.PreferenceKeys;
 import com.atlassian.jira.user.util.UserManager;
+import com.atlassian.plugin.remotable.api.InstallationMode;
+import com.atlassian.plugin.remotable.api.service.jira.JiraPermissions;
 import com.atlassian.plugin.remotable.plugin.product.ProductAccessor;
 import com.atlassian.mail.Email;
 import com.atlassian.mail.queue.MailQueue;
 import com.atlassian.mail.queue.SingleMailQueueItem;
+import com.atlassian.plugin.remotable.spi.Permissions;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.web.WebInterfaceManager;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Sets;
 
+import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 
 import static com.google.common.collect.Maps.newHashMap;
 
@@ -164,5 +170,17 @@ public class JiraProductAccessor implements ProductAccessor
         conditions.put("can_convert_to_sub_task", com.atlassian.jira.plugin.webfragment.conditions.CanConvertToSubTaskCondition.class);
 
         return conditions;
+    }
+
+    @Override
+    public Set<String> getAllowedPermissions(InstallationMode installationMode)
+    {
+        if (installationMode == InstallationMode.REMOTE)
+        {
+            return Sets.cartesianProduct(
+                    new Set[]{Permissions.DEFAULT_REMOTE_PERMISSIONS, JiraPermissions.ALL_REMOTE_PERMISSIONS});
+        }
+
+        return Collections.emptySet();
     }
 }

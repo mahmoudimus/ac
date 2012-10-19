@@ -1,6 +1,11 @@
 package com.atlassian.plugin.remotable.plugin;
 
+import com.atlassian.httpclient.api.HttpClient;
+import com.atlassian.httpclient.api.Response;
+import com.atlassian.plugin.remotable.api.InstallationMode;
+import com.atlassian.plugin.remotable.host.common.util.FormatConverter;
 import com.atlassian.plugin.remotable.host.common.util.RemotablePluginManifestReader;
+import com.atlassian.plugin.remotable.plugin.descriptor.DescriptorValidator;
 import com.atlassian.plugin.remotable.plugin.installer.RemotePluginInstaller;
 import com.atlassian.plugin.remotable.spi.InstallationFailedException;
 import com.atlassian.plugin.remotable.spi.PermissionDeniedException;
@@ -10,17 +15,18 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.PluginController;
 import com.atlassian.sal.api.user.UserManager;
+import com.google.common.base.Function;
+import org.dom4j.Document;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Set;
 
-import static com.atlassian.plugin.remotable.host.common.util.RemotablePluginManifestReader
-        .getInstallerUser;
 import static com.atlassian.plugin.remotable.host.common.util.RemotablePluginManifestReader
         .isRemotePlugin;
 import static com.google.common.collect.Sets.newHashSet;
@@ -36,6 +42,9 @@ public class DefaultRemotablePluginInstallationService implements RemotablePlugi
     private final PermissionManager permissionManager;
     private final PluginController pluginController;
     private final PluginAccessor pluginAccessor;
+    private final HttpClient httpClient;
+    private final FormatConverter formatConverter;
+    private final DescriptorValidator descriptorValidator;
     private static final Logger log = LoggerFactory.getLogger(
             DefaultRemotablePluginInstallationService.class);
 
@@ -45,8 +54,9 @@ public class DefaultRemotablePluginInstallationService implements RemotablePlugi
             BundleContext bundleContext,
             PermissionManager permissionManager,
             PluginController pluginController,
-            PluginAccessor pluginAccessor
-    )
+            PluginAccessor pluginAccessor,
+            HttpClient httpClient, FormatConverter formatConverter,
+            DescriptorValidator descriptorValidator)
     {
         this.remotePluginInstaller = remotePluginInstaller;
         this.userManager = userManager;
@@ -54,16 +64,16 @@ public class DefaultRemotablePluginInstallationService implements RemotablePlugi
         this.permissionManager = permissionManager;
         this.pluginController = pluginController;
         this.pluginAccessor = pluginAccessor;
+        this.httpClient = httpClient;
+        this.formatConverter = formatConverter;
+        this.descriptorValidator = descriptorValidator;
     }
 
     @Override
-    public String install(final String username, String registrationUrl,
-            String registrationSecret) throws
+    public String install(final String username, String registrationUrl) throws
             PermissionDeniedException,
             InstallationFailedException
     {
-        validateCanInstall(username);
-
         URI parsedRegistrationUri;
         try
         {
@@ -73,20 +83,18 @@ public class DefaultRemotablePluginInstallationService implements RemotablePlugi
         {
             throw new InstallationFailedException("Invalid URI: '" + registrationUrl + "'");
         }
+
+        Document pluginDescriptor = getPluginDescriptor(registrationUrl);
+
+        validateCanInstallPlugins(username);
+
+        validateCanEditPlugin(username, pluginDescriptor.getRootElement().attributeValue("key"));
+
+        validateInstallPermissions(username, pluginDescriptor);
         try
         {
             String appKey = remotePluginInstaller.install(username, parsedRegistrationUri,
-                    registrationSecret, new RemotePluginInstaller.KeyValidator()
-            {
-                @Override
-                public void validatePermissions(String appKey) throws PermissionDeniedException
-                {
-                    if (doesAppExist(appKey))
-                    {
-                        validateCanAuthor(username, appKey);
-                    }
-                }
-            });
+                    pluginDescriptor);
             log.info("Remote plugin '{}' installed by '{}' successfully", appKey, username);
             return appKey;
         }
@@ -111,20 +119,87 @@ public class DefaultRemotablePluginInstallationService implements RemotablePlugi
 
     }
 
+    private void validateCanInstallPlugins(String username)
+    {
+        if (!permissionManager.canInstallRemotePlugins(username))
+        {
+            throw new PermissionDeniedException("Unauthorized access by '" + username + "'");
+        }
+    }
+
+    private void validateCanEditPlugin(String username, String pluginKey)
+    {
+        if (doesAppExist(pluginKey) && !permissionManager.canModifyRemotePlugin(username, pluginKey))
+        {
+            throw new PermissionDeniedException("Unauthorized modification of plugin '" + pluginKey + "' by '" + username + "'");
+
+        }
+    }
+
+    private void validateInstallPermissions(String username, Document descriptor)
+    {
+        if (!permissionManager.canRequestDeclaredPermissions(username, descriptor, InstallationMode.REMOTE))
+        {
+            throw new PermissionDeniedException("Unauthorized request of permissions by '" + username + "'");
+
+        }
+    }
+
     @Override
     public void uninstall(String username, String appKey) throws PermissionDeniedException
     {
-        validateCanInstall(username);
         validateAppExists(appKey);
-        validateCanAuthor(username, appKey);
+        validateCanInstallPlugins(username);
+        validateCanEditPlugin(username, appKey);
         pluginController.uninstall(pluginAccessor.getPlugin(appKey));
         log.info("Remote plugin '{}' uninstalled by '{}' successfully", appKey, username);
     }
 
     @Override
-    public String getPluginKey(String registrationUrl)
+    public String getPluginKey(final String registrationUrl)
     {
-        return null;
+        return getPluginDescriptor(registrationUrl).getRootElement().attributeValue("key");
+    }
+
+    private Document getPluginDescriptor(final String registrationUrl)
+    {
+        return httpClient.newRequest(registrationUrl)
+                .get()
+                .<Document>transform()
+                .ok(new Function<Response, Document>()
+                {
+                    @Override
+                    public Document apply(Response response)
+                    {
+                        Document document = formatConverter.toDocument(registrationUrl.toString(),
+                                response.getHeader("Content-Type"),
+                                response.getEntity());
+                        descriptorValidator.validate(URI.create(registrationUrl), document);
+                        return document;
+                    }
+                })
+                .others(new Function<Response, Document>()
+                {
+                    @Override
+                    public Document apply(Response response)
+                    {
+                        throw new InstallationFailedException(
+                                "Unable to retrieve the descriptor (" + response
+                                        .getStatusCode() + ") - " + response
+                                        .getStatusText());
+                    }
+                })
+                .fail(new Function<Throwable, Document>()
+                {
+                    @Override
+                    public Document apply(@Nullable Throwable input)
+                    {
+                        log.debug("Error retrieving descriptor", input);
+                        throw new InstallationFailedException("Unable to contact and retrieve " +
+                                "descriptor from " + registrationUrl);
+                    }
+                })
+                .claim();
     }
 
     @Override
@@ -147,7 +222,7 @@ public class DefaultRemotablePluginInstallationService implements RemotablePlugi
                 {
                     String registrationUri = RemotablePluginManifestReader.getRegistrationUrl(
                             bundle);
-                    reinstalledKeys.add(install(remoteUsername, registrationUri, ""));
+                    reinstalledKeys.add(install(remoteUsername, registrationUri));
                 }
             }
             catch (Exception ex)
@@ -156,18 +231,6 @@ public class DefaultRemotablePluginInstallationService implements RemotablePlugi
             }
         }
         return reinstalledKeys;
-    }
-
-    private void validateCanAuthor(String username, String appKey)
-    {
-        if (!(username.equals(
-                getInstallerUser(BundleUtil.findBundleForPlugin(bundleContext, appKey))) ||
-                userManager.isSystemAdmin(username)))
-        {
-            throw new PermissionDeniedException(appKey,
-                    "Unauthorized uninstallation from '" + username + "'. " +
-                            "Must be the author or a system administrator.");
-        }
     }
 
     private boolean doesAppExist(String appKey)
@@ -182,14 +245,6 @@ public class DefaultRemotablePluginInstallationService implements RemotablePlugi
         {
             throw new PermissionDeniedException(appKey,
                     "Remote plugin '" + appKey + "' doesn't exist");
-        }
-    }
-
-    private void validateCanInstall(String username)
-    {
-        if (!permissionManager.canInstallRemotePlugins(username))
-        {
-            throw new PermissionDeniedException("Unauthorized access by '" + username + "'");
         }
     }
 }

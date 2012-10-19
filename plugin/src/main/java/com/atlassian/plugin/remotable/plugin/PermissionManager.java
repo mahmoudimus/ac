@@ -1,5 +1,9 @@
 package com.atlassian.plugin.remotable.plugin;
 
+import com.atlassian.plugin.remotable.api.InstallationMode;
+import com.atlassian.plugin.remotable.host.common.util.BundleUtil;
+import com.atlassian.plugin.remotable.plugin.product.ProductAccessor;
+import com.atlassian.plugin.remotable.spi.Permissions;
 import com.atlassian.plugin.remotable.spi.permission.PermissionsReader;
 import com.atlassian.plugin.remotable.plugin.settings.SettingsManager;
 import com.atlassian.plugin.remotable.spi.PermissionDeniedException;
@@ -15,6 +19,9 @@ import com.atlassian.sal.api.user.UserManager;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
+import org.dom4j.Document;
+import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -23,6 +30,9 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 import java.util.Set;
 
+import static com.atlassian.plugin.remotable.host.common.util.RemotablePluginManifestReader
+        .getInstallerUser;
+import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.transform;
 
@@ -35,7 +45,9 @@ public class PermissionManager
     private final UserManager userManager;
     private final SettingsManager settingsManager;
     private final PluginAccessor pluginAccessor;
+    private final ProductAccessor productAccessor;
     private final PermissionsReader permissionsReader;
+    private final BundleContext bundleContext;
     private final DefaultPluginModuleTracker<Permission, PermissionModuleDescriptor> permissionTracker;
 
     private final Set<String> NON_USER_ADMIN_PATHS = ImmutableSet.of(
@@ -48,12 +60,15 @@ public class PermissionManager
             UserManager userManager,
             SettingsManager settingsManager, PluginAccessor pluginAccessor,
             PluginEventManager pluginEventManager,
-            PermissionsReader permissionsReader)
+            ProductAccessor productAccessor, PermissionsReader permissionsReader,
+            BundleContext bundleContext)
     {
         this.userManager = userManager;
         this.settingsManager = settingsManager;
         this.pluginAccessor = pluginAccessor;
+        this.productAccessor = productAccessor;
         this.permissionsReader = permissionsReader;
+        this.bundleContext = bundleContext;
         this.permissionTracker = new DefaultPluginModuleTracker<Permission, PermissionModuleDescriptor>(
                 pluginAccessor, pluginEventManager, PermissionModuleDescriptor.class);
     }
@@ -120,7 +135,7 @@ public class PermissionManager
                 ((settingsManager.isAllowDogfooding() && inDogfoodingGroup(username)) ||
 
                  // the default
-                 userManager.isSystemAdmin(username));
+                 userManager.isAdmin(username));
     }
 
     private boolean inDogfoodingGroup(String username)
@@ -147,5 +162,33 @@ public class PermissionManager
     public boolean hasPermission(String pluginKey, String permissionKey) throws PermissionDeniedException
     {
         return getPermissionsForPlugin(pluginKey).contains(permissionKey);
+    }
+
+    public boolean canModifyRemotePlugin(String username, String pluginKey)
+    {
+        if (userManager.isAdmin(username))
+        {
+            return true;
+        }
+
+        if (settingsManager.isAllowDogfooding() && inDogfoodingGroup(username) && username.equals(
+                getInstallerUser(BundleUtil.findBundleForPlugin(bundleContext, pluginKey))))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    public boolean canRequestDeclaredPermissions(String username, Document descriptor, InstallationMode installationMode)
+    {
+        if (userManager.isSystemAdmin(username))
+        {
+            return true;
+        }
+
+        Set<String> requestedPermissions = permissionsReader.readPermissionsFromDescriptor(descriptor, installationMode);
+
+        return requestedPermissions.containsAll(productAccessor.getAllowedPermissions(installationMode));
     }
 }

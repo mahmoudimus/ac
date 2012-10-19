@@ -5,6 +5,7 @@ import com.atlassian.httpclient.api.Response;
 import com.atlassian.httpclient.api.factory.HttpClientFactory;
 import com.atlassian.httpclient.api.factory.HttpClientOptions;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
+import com.atlassian.plugin.remotable.plugin.ContentRetrievalException;
 import com.atlassian.uri.Uri;
 import com.atlassian.uri.UriBuilder;
 import com.atlassian.util.concurrent.Promise;
@@ -13,6 +14,7 @@ import com.google.common.collect.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
@@ -88,14 +90,31 @@ public class CachingHttpContentRetriever implements HttpContentRetriever
                 .setHeaders(newHeaders)
                 .setAttributes(properties)
                 .get()
-                .map(new Function<Response, String>()
-                {
-                    @Override
-                    public String apply(Response input)
+                .<String>transform()
+                    .ok(new Function<Response, String>()
                     {
-                        return input.getEntity();
-                    }
-                });
+                        @Override
+                        public String apply(@Nullable Response input)
+                        {
+                            return input.getEntity();
+                        }
+                    })
+                    .forbidden(new Function<Response, String>()
+                    {
+                        @Override
+                        public String apply(@Nullable Response input)
+                        {
+                            return "Not allowed";
+                        }
+                    })
+                    .fail(new Function<Throwable, String>()
+                    {
+                        @Override
+                        public String apply(@Nullable Throwable input)
+                        {
+                            throw new ContentRetrievalException(input);
+                        }
+                    });
 
         if (promise.isDone())
         {

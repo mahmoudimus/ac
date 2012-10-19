@@ -48,8 +48,7 @@ public abstract class AbstractP3RestClient
                 .ok(transformFunction)
                 .created(transformFunction)
                 .notFound(constant((T) null))
-                .others(AbstractP3RestClient.<T>errorFunction())
-                .toPromise();
+                .others(AbstractP3RestClient.<T>errorFunction());
     }
 
     protected final <T> Promise<T> callAndParse(ResponsePromise responsePromise, final JsonParser<?, T> parser)
@@ -74,8 +73,7 @@ public abstract class AbstractP3RestClient
     {
         return responsePromise.<Void>transform()
                 .noContent(constant((Void) null))
-                .others(AbstractP3RestClient.<Void>errorFunction())
-                .toPromise();
+                .others(AbstractP3RestClient.<Void>errorFunction());
     }
 
     private static <T> Function<Response, ? extends T> toFunction(final ResponseHandler<T> responseHandler)

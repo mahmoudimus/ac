@@ -1,5 +1,9 @@
 package com.atlassian.plugin.remotable.spi;
 
+import com.google.common.collect.ImmutableSet;
+
+import java.util.Set;
+
 /**
  *
  */
@@ -25,6 +29,10 @@ public final class Permissions
     public static final String USE_REFLECTION = "use_reflection";
     public static final String CREATE_CLASSLOADERS = "create_classloaders";
     public static final String CREATE_OAUTH_LINK = "create_oauth_link";
+
+    public static final Set<String> DEFAULT_REMOTE_PERMISSIONS = ImmutableSet.of(
+            SEND_EMAIL, MAKE_HTTP_REQUESTS, STORE_DATA, CREATE_OAUTH_LINK
+    );
 
     private Permissions() {}
 
