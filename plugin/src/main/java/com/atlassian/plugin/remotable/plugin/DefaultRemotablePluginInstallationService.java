@@ -88,9 +88,13 @@ public class DefaultRemotablePluginInstallationService implements RemotablePlugi
 
         validateCanInstallPlugins(username);
 
-        validateCanEditPlugin(username, pluginDescriptor.getRootElement().attributeValue("key"));
+        String pluginKey = pluginDescriptor.getRootElement().attributeValue("key");
+        validateCanEditPluginIfExists(username, pluginKey);
 
-        validateInstallPermissions(username, pluginDescriptor);
+        validateDeclaredPermissionsCanBeRequested(username, pluginDescriptor);
+
+        validatePluginKeyIsInstallable(username, pluginKey);
+
         try
         {
             String appKey = remotePluginInstaller.install(username, parsedRegistrationUri,
@@ -119,6 +123,14 @@ public class DefaultRemotablePluginInstallationService implements RemotablePlugi
 
     }
 
+    private void validatePluginKeyIsInstallable(String userName, String pluginKey)
+    {
+        if (!permissionManager.isRemotePluginInstallable(userName, pluginKey))
+        {
+            throw new PermissionDeniedException("Plugin key '" + pluginKey + "' isn't installable remotely");
+        }
+    }
+
     private void validateCanInstallPlugins(String username)
     {
         if (!permissionManager.canInstallRemotePlugins(username))
@@ -127,7 +139,7 @@ public class DefaultRemotablePluginInstallationService implements RemotablePlugi
         }
     }
 
-    private void validateCanEditPlugin(String username, String pluginKey)
+    private void validateCanEditPluginIfExists(String username, String pluginKey)
     {
         if (doesAppExist(pluginKey) && !permissionManager.canModifyRemotePlugin(username, pluginKey))
         {
@@ -136,7 +148,7 @@ public class DefaultRemotablePluginInstallationService implements RemotablePlugi
         }
     }
 
-    private void validateInstallPermissions(String username, Document descriptor)
+    private void validateDeclaredPermissionsCanBeRequested(String username, Document descriptor)
     {
         if (!permissionManager.canRequestDeclaredPermissions(username, descriptor, InstallationMode.REMOTE))
         {
@@ -150,7 +162,7 @@ public class DefaultRemotablePluginInstallationService implements RemotablePlugi
     {
         validateAppExists(appKey);
         validateCanInstallPlugins(username);
-        validateCanEditPlugin(username, appKey);
+        validateCanEditPluginIfExists(username, appKey);
         pluginController.uninstall(pluginAccessor.getPlugin(appKey));
         log.info("Remote plugin '{}' uninstalled by '{}' successfully", appKey, username);
     }

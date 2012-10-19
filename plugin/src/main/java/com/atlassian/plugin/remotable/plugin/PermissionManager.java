@@ -1,5 +1,7 @@
 package com.atlassian.plugin.remotable.plugin;
 
+import com.atlassian.httpclient.api.HttpClient;
+import com.atlassian.httpclient.api.Response;
 import com.atlassian.plugin.remotable.api.InstallationMode;
 import com.atlassian.plugin.remotable.host.common.util.BundleUtil;
 import com.atlassian.plugin.remotable.plugin.product.ProductAccessor;
@@ -21,7 +23,11 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import org.dom4j.Document;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.osgi.framework.BundleContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -47,7 +53,9 @@ public class PermissionManager
     private final ProductAccessor productAccessor;
     private final PermissionsReader permissionsReader;
     private final BundleContext bundleContext;
+    private final HttpClient httpClient;
     private final DefaultPluginModuleTracker<Permission, PermissionModuleDescriptor> permissionTracker;
+    private static final Logger log = LoggerFactory.getLogger(PermissionManager.class);
 
     private final Set<String> NON_USER_ADMIN_PATHS = ImmutableSet.of(
         "/rest/remotable-plugins/latest/macro/",
@@ -60,7 +68,7 @@ public class PermissionManager
             SettingsManager settingsManager, PluginAccessor pluginAccessor,
             PluginEventManager pluginEventManager,
             ProductAccessor productAccessor, PermissionsReader permissionsReader,
-            BundleContext bundleContext)
+            BundleContext bundleContext, HttpClient httpClient)
     {
         this.userManager = userManager;
         this.settingsManager = settingsManager;
@@ -68,6 +76,7 @@ public class PermissionManager
         this.productAccessor = productAccessor;
         this.permissionsReader = permissionsReader;
         this.bundleContext = bundleContext;
+        this.httpClient = httpClient;
         this.permissionTracker = new DefaultPluginModuleTracker<Permission, PermissionModuleDescriptor>(
                 pluginAccessor, pluginEventManager, PermissionModuleDescriptor.class);
     }
@@ -131,7 +140,7 @@ public class PermissionManager
         return username != null &&
 
                 // for OnDemand dogfooding
-                ((settingsManager.isAllowDogfooding() && inDogfoodingGroup(username)) ||
+                (isDogfoodUser(username) ||
 
                  // the default
                  userManager.isAdmin(username));
@@ -170,13 +179,18 @@ public class PermissionManager
             return true;
         }
 
-        if (settingsManager.isAllowDogfooding() && inDogfoodingGroup(username) && username.equals(
+        if (isDogfoodUser(username) && username.equals(
                 getInstallerUser(BundleUtil.findBundleForPlugin(bundleContext, pluginKey))))
         {
             return true;
         }
 
         return false;
+    }
+
+    private boolean isDogfoodUser(String username)
+    {
+        return settingsManager.isAllowDogfooding() && inDogfoodingGroup(username);
     }
 
     public boolean canRequestDeclaredPermissions(String username, Document descriptor, InstallationMode installationMode)
@@ -189,5 +203,44 @@ public class PermissionManager
         Set<String> requestedPermissions = permissionsReader.readPermissionsFromDescriptor(descriptor, installationMode);
 
         return productAccessor.getAllowedPermissions(installationMode).containsAll(requestedPermissions);
+    }
+
+    public boolean isRemotePluginInstallable(String userName, String pluginKey)
+    {
+        if (userManager.isSystemAdmin(userName))
+        {
+            return true;
+        }
+        else return httpClient.newRequest("https://marketplace.atlassian.com/rest/1.0/plugins/" + pluginKey)
+                .get()
+                .<Boolean>transform()
+                    .ok(new Function<Response, Boolean>()
+                    {
+                        @Override
+                        public Boolean apply(Response input)
+                        {
+                            try
+                            {
+                                JSONObject object = new JSONObject(input.getEntity());
+                                JSONObject version = object.getJSONObject("version");
+                                return version != null && "three".equalsIgnoreCase(version.getString("pluginSystemVersion"));
+                            }
+                            catch (JSONException e)
+                            {
+                                log.warn("Unable to parse marketplace response", e);
+                                return false;
+                            }
+                        }
+                    })
+                    .otherwise(new Function<Throwable, Boolean>()
+                    {
+                        @Override
+                        public Boolean apply(@Nullable Throwable input)
+                        {
+                            log.error("Error retrieving response from marketplace", input);
+                            return false;
+                        }
+                    })
+                    .claim();
     }
 }

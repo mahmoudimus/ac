@@ -25,7 +25,7 @@ public class TestRemotePluginArtifactFactory
     @Test
     public void testConvertPluginDescriptorIntoJar() throws IOException
     {
-        RemotePluginArtifactFactory factory = new RemotePluginArtifactFactory(mock(DescriptorPermissionsReader.class));
+        RemotePluginArtifactFactory factory = new RemotePluginArtifactFactory();
         Document descriptor = DocumentFactory.getInstance()
                                              .createDocument()
                                              .addElement("atlassian-plugin")

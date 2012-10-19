@@ -69,7 +69,6 @@ public class DefaultRemotePluginInstaller implements RemotePluginInstaller
     {
         try
         {
-
             PluginArtifact pluginArtifact;
             String pluginKey = document.getRootElement().attributeValue("key");
             removeOldPlugin(pluginKey);
@@ -89,7 +88,7 @@ public class DefaultRemotePluginInstaller implements RemotePluginInstaller
                 .put("clientKey", consumerService.getConsumer().getKey())
                 .put("publicKey", RSAKeys.toPemEncoding(consumerService.getConsumer().getPublicKey()))
                 .put("serverVersion", applicationProperties.getBuildNumber())
-                .put("pluginsVersion", (String) bundleContext.getBundle()
+                .put("pluginsVersion", bundleContext.getBundle()
                     .getHeaders()
                     .get(Constants.BUNDLE_VERSION))
                 .put("baseUrl", applicationProperties.getBaseUrl())

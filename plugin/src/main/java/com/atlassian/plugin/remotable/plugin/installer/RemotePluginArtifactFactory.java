@@ -28,12 +28,9 @@ public class RemotePluginArtifactFactory
     public static final String CLASSES_TO_INCLUDE_CLASS_PATH = "com/atlassian/plugin/remotable/kit/common/ClassesToInclude.class";
 
     private final byte[] classesToIncludeClass;
-    private final PermissionsReader permissionsReader;
 
-    @Autowired
-    public RemotePluginArtifactFactory(PermissionsReader permissionsReader)
+    public RemotePluginArtifactFactory()
     {
-        this.permissionsReader = permissionsReader;
         this.classesToIncludeClass = extractClassesToIncludeClass();
     }
 
@@ -53,26 +50,6 @@ public class RemotePluginArtifactFactory
                 builder.addFile(CLASSES_TO_INCLUDE_CLASS_PATH, new ByteArrayInputStream(classesToIncludeClass));
             }
         }));
-    }
-
-    public PluginArtifact create(URI registrationUrl,
-                                 JarPluginArtifact originalArtifact,
-                                 final Document document,
-                                 String username
-    )
-    {
-        String pluginKey = document.getRootElement().attributeValue("key");
-        changeDescriptorToIncludeRemotePluginHeader(registrationUrl, document, username);
-
-        // todo: support local installations.  Will tackle when integrate with the upm
-        Set<String> declaredPermissions = permissionsReader.readPermissionsFromDescriptor(document, InstallationMode.REMOTE);
-
-        // todo: remove(?) class files and other things not allowed in remote mode
-
-        // todo: scan plugin to ensure they asked for the right permissions
-
-
-        throw new UnsupportedOperationException("This option is not yet available");
     }
 
     private void changeDescriptorToIncludeRemotePluginHeader(URI registrationUrl, Document document, String username)
