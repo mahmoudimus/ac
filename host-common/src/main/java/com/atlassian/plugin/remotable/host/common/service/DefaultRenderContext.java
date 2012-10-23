@@ -20,7 +20,10 @@ public class DefaultRenderContext implements RenderContext
     private final LocaleResolver localeResolver;
     private final I18nResolver i18nResolver;
 
-    public DefaultRenderContext(DefaultRequestContext requestContext, LocaleResolver localeResolver, I18nResolver i18nResolver)
+    public DefaultRenderContext(DefaultRequestContext requestContext,
+                                LocaleResolver localeResolver,
+                                I18nResolver i18nResolver
+    )
     {
         this.requestContext = requestContext;
         this.localeResolver = localeResolver;
@@ -84,17 +87,30 @@ public class DefaultRenderContext implements RenderContext
     @Override
     public Map<String, Object> toContextMap()
     {
-        return ImmutableMap.<String, Object>builder()
-            .put("hostContextPath", getHostContextPath())
-            .put("hostBaseUrl", getHostBaseUrl())
-            .put("hostBaseResourceUrl", getHostBaseResourceUrl())
-            .put("hostStylesheetUrl", getHostStylesheetUrl())
-            .put("hostScriptUrl", getHostScriptUrl())
-            .put("userId", getUserId())
-            .put("clientKey", getClientKey())
-            .put("locale", getLocale())
-            .put("i18n", getI18n())
-            .build();
+        final ImmutableMap.Builder<String, Object> builder = ImmutableMap.<String, Object>builder()
+                                                                         .put("hostContextPath", getHostContextPath())
+                                                                         .put("hostBaseUrl", getHostBaseUrl())
+                                                                         .put("hostBaseResourceUrl",
+                                                                                 getHostBaseResourceUrl())
+                                                                         .put("hostStylesheetUrl",
+                                                                                 getHostStylesheetUrl())
+                                                                         .put("hostScriptUrl", getHostScriptUrl())
+                                                                         .put("locale", getLocale())
+
+                                                                         .put("i18n", getI18n());
+
+        setIfNotNull(builder, "userId", getUserId());
+        setIfNotNull(builder, "clientKey", getClientKey());
+
+        return builder.build();
+    }
+
+    private void setIfNotNull(ImmutableMap.Builder<String, Object> builder, String key, String value)
+    {
+        if (value != null)
+        {
+            builder.put(key, value);
+        }
     }
 
     private String getHostResourceUrl(String name, String ext)
