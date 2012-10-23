@@ -29,6 +29,10 @@ public class MacroContentLinkParser
     // this used to be implemented via a regex, but turned out to be very slow for large content
     public String parse(RemotablePluginAccessor remotablePluginAccessor, String content, Map<String, String> macroParameters)
     {
+        if (content == null)
+        {
+            return content;
+        }
         StringBuilder processedContent = new StringBuilder();
         int lastPos = 0;
         int pos = content.indexOf("sign://");
