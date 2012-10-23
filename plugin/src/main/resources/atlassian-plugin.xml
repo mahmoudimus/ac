@@ -255,6 +255,10 @@
         <!-- todo: add scanning -->
     </plugin-permission>
 
+    <plugin-permission key="send_email" name="Send Email">
+        <description>Ability to send an email from the Atlassian server</description>
+    </plugin-permission>
+
     <!-- product-specific modules included via xslt build process -->
 
 </atlassian-plugin>

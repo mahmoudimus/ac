@@ -17,6 +17,9 @@ import com.atlassian.plugin.PluginController;
 import com.atlassian.sal.api.user.UserManager;
 import com.google.common.base.Function;
 import org.dom4j.Document;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
@@ -84,17 +87,39 @@ public class DefaultRemotablePluginInstallationService implements RemotablePlugi
             throw new InstallationFailedException("Invalid URI: '" + registrationUrl + "'");
         }
 
+        validateCanInstallArbitraryPlugins(username);
+
         Document pluginDescriptor = getPluginDescriptor(registrationUrl);
 
-        validateCanInstallPlugins(username);
 
         String pluginKey = pluginDescriptor.getRootElement().attributeValue("key");
         validateCanEditPluginIfExists(username, pluginKey);
 
         validateDeclaredPermissionsCanBeRequested(username, pluginDescriptor);
 
-        validatePluginKeyIsInstallable(username, pluginKey);
+        return installPlugin(username, parsedRegistrationUri, pluginDescriptor);
 
+    }
+
+    @Override
+    public String installFromMarketplace(final String username, String pluginKey) throws
+            PermissionDeniedException,
+            InstallationFailedException
+    {
+
+        validateCanInstallPluginsFromMarketplace(username);
+
+        String pluginDescriptorUrl = getPluginDescriptorUrl(pluginKey);
+
+        Document pluginDescriptor = getPluginDescriptor(pluginDescriptorUrl);
+
+        return installPlugin(username, URI.create(pluginDescriptorUrl), pluginDescriptor);
+
+    }
+
+    private String installPlugin(String username, URI parsedRegistrationUri,
+            Document pluginDescriptor)
+    {
         try
         {
             String appKey = remotePluginInstaller.install(username, parsedRegistrationUri,
@@ -104,36 +129,35 @@ public class DefaultRemotablePluginInstallationService implements RemotablePlugi
         }
         catch (PermissionDeniedException ex)
         {
-            log.warn("Permission denied for installation of '" + registrationUrl + "'" +
+            log.warn("Permission denied for installation of '" + parsedRegistrationUri + "'" +
                     " by user '" + username + "'", ex);
             throw ex;
         }
         catch (InstallationFailedException ex)
         {
-            log.warn("Installation failed for registration URL '" + registrationUrl + "'" +
+            log.warn("Installation failed for registration URL '" + parsedRegistrationUri + "'" +
                     " and user '" + username + "'", ex);
             throw ex;
         }
         catch (RuntimeException ex)
         {
-            log.warn("Installation failed for registration URL '" + registrationUrl + "'" +
+            log.warn("Installation failed for registration URL '" + parsedRegistrationUri + "'" +
                     " and user '" + username + "'", ex);
             throw new InstallationFailedException(ex);
         }
-
     }
 
-    private void validatePluginKeyIsInstallable(String userName, String pluginKey)
+    private void validateCanInstallArbitraryPlugins(String username)
     {
-        if (!permissionManager.isRemotePluginInstallable(userName, pluginKey))
+        if (!permissionManager.canInstallArbitraryRemotePlugins(username))
         {
-            throw new PermissionDeniedException("Plugin key '" + pluginKey + "' isn't installable remotely");
+            throw new PermissionDeniedException("User '" + username + "' cannot install arbitrary plugins");
         }
     }
 
-    private void validateCanInstallPlugins(String username)
+    private void validateCanInstallPluginsFromMarketplace(String username)
     {
-        if (!permissionManager.canInstallRemotePlugins(username))
+        if (!permissionManager.canInstallRemotePluginsFromMarketplace(username))
         {
             throw new PermissionDeniedException("Unauthorized access by '" + username + "'");
         }
@@ -161,7 +185,7 @@ public class DefaultRemotablePluginInstallationService implements RemotablePlugi
     public void uninstall(String username, String appKey) throws PermissionDeniedException
     {
         validateAppExists(appKey);
-        validateCanInstallPlugins(username);
+        validateCanInstallPluginsFromMarketplace(username);
         validateCanEditPluginIfExists(username, appKey);
         pluginController.uninstall(pluginAccessor.getPlugin(appKey));
         log.info("Remote plugin '{}' uninstalled by '{}' successfully", appKey, username);
@@ -173,7 +197,7 @@ public class DefaultRemotablePluginInstallationService implements RemotablePlugi
         return getPluginDescriptor(registrationUrl).getRootElement().attributeValue("key");
     }
 
-    private Document getPluginDescriptor(final String registrationUrl)
+    Document getPluginDescriptor(final String registrationUrl)
     {
         return httpClient.newRequest(registrationUrl)
                 .get()
@@ -214,6 +238,66 @@ public class DefaultRemotablePluginInstallationService implements RemotablePlugi
                 .claim();
     }
 
+    String getPluginDescriptorUrl(final String pluginKey)
+    {
+        return httpClient.newRequest("https://marketplace.atlassian.com/rest/1.0/plugins/" + pluginKey)
+                .get()
+                .<String>transform()
+                .ok(new Function<Response, String>()
+                {
+                    @Override
+                    public String apply(Response input)
+                    {
+                        try
+                        {
+                            JSONObject object = new JSONObject(input.getEntity());
+                            JSONObject version = object.getJSONObject("version");
+                            if (version != null &&
+                                    isValidPluginSystemVersion(object))
+                            {
+                                return findBinaryUrl(version);
+                            }
+                            log.error("Unable to find valid plugin version for key " + pluginKey);
+                            return null;
+                        }
+                        catch (JSONException e)
+                        {
+                            log.warn("Unable to parse marketplace response", e);
+                            return null;
+                        }
+                    }
+                })
+                .otherwise(new Function<Throwable, String>()
+                {
+                    @Override
+                    public String apply(@Nullable Throwable input)
+                    {
+                        log.error("Error retrieving response from marketplace", input);
+                        return null;
+                    }
+                })
+                .claim();
+    }
+
+    public String findBinaryUrl(JSONObject version) throws JSONException
+    {
+        JSONArray array = version.getJSONArray("links");
+        for (int x=0; x< array.length(); x++)
+        {
+            final JSONObject link = array.getJSONObject(x);
+            if ("binary".equals(link.getString("rel")))
+            {
+                return link.getString("href");
+            }
+        }
+        throw new JSONException("No binary url found for descriptor");
+    }
+
+    private boolean isValidPluginSystemVersion(JSONObject version) throws JSONException
+    {
+        return version != null && "three".equalsIgnoreCase(version.getString("pluginSystemVersion"));
+    }
+
     @Override
     public Set<String> reinstallRemotePlugins(String remoteUsername)
     {
@@ -234,7 +318,7 @@ public class DefaultRemotablePluginInstallationService implements RemotablePlugi
                 {
                     String registrationUri = RemotablePluginManifestReader.getRegistrationUrl(
                             bundle);
-                    reinstalledKeys.add(install(remoteUsername, registrationUri));
+                    reinstalledKeys.add(installFromMarketplace(remoteUsername, registrationUri));
                 }
             }
             catch (Exception ex)

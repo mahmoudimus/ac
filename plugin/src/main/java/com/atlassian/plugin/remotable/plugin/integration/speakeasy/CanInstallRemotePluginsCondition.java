@@ -29,6 +29,7 @@ public class CanInstallRemotePluginsCondition implements Condition
     @Override
     public boolean shouldDisplay(Map<String, Object> context)
     {
-        return permissionManager.canInstallRemotePlugins(userManager.getRemoteUsername());
+        return permissionManager.canInstallArbitraryRemotePlugins(
+                userManager.getRemoteUsername());
     }
 }
