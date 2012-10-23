@@ -103,16 +103,25 @@ public class DefaultRemotePluginInstaller implements RemotePluginInstaller
         }
         catch (PermissionDeniedException ex)
         {
+            log.warn("Unable to install remote plugin from '{}' by user '{}' due to permission " +
+                    "issues: {}", new Object[]{registrationUrl,
+                    username, ex.getMessage()});
+            log.debug("Installation failed due to permission issue", ex);
             throw ex;
         }
         catch (InstallationFailedException ex)
         {
+            log.warn("Unable to install remote plugin from '{}' by user '{}' due to installation " +
+                    "issue: {}", new Object[]{registrationUrl,
+                    username, ex.getMessage()});
+            log.debug("Installation failed due to installation issue", ex);
             throw ex;
         }
         catch (Exception e)
         {
             log.warn("Unable to install remote plugin from '{}' by user '{}'", registrationUrl,
                     username);
+            log.debug("Installation failed due to unknown issue", e);
             Throwable ex = e.getCause() != null ? e.getCause() : e;
             throw new InstallationFailedException(ex);
         }

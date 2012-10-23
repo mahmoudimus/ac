@@ -18,15 +18,9 @@ import static org.junit.Assert.*;
  */
 public class TestRemotablePlugins
 {
-    private static final String targetBaseUrl = System.getProperty("remotable.plugins.targetBaseUrl");
-    private static final String adminUsername = System.getProperty("remotable.plugins.adminUsername");
-    private static final String adminPassword = System.getProperty("remotable.plugins.adminPassword");
+    private static final String adminUsername = System.getProperty("remotable.plugins.adminUsername", "admin");
+    private static final String adminPassword = System.getProperty("remotable.plugins.adminPassword", "admin");
     
-    private static final String displayUrl = System.getProperty("remotable.plugins.displayUrl",
-            targetBaseUrl + "/download/resources/com.atlassian.labs.remoteapps-plugin:smoke-test");
-    private static final RemotePluginInstallerClient INSTALLER = new RemotePluginInstallerClient(targetBaseUrl, adminUsername,
-            adminPassword);
-
     private static TestedProduct<WebDriverTester> product;
     static
     {
@@ -37,6 +31,14 @@ public class TestRemotablePlugins
             product.getPageBinder().override(HomePage.class, OnDemandConfluenceHomePage.class);
         }
     }
+
+    private static final String targetBaseUrl = System.getProperty("remotable.plugins.targetBaseUrl", product.getProductInstance().getBaseUrl());
+
+    private static final String displayUrl = System.getProperty("remotable.plugins.displayUrl",
+            targetBaseUrl + "/download/resources/com.atlassian.labs.remoteapps-plugin:smoke-test");
+    private static final RemotePluginInstallerClient INSTALLER = new RemotePluginInstallerClient(targetBaseUrl, adminUsername,
+            adminPassword);
+
     @Rule
     public MethodRule rule = new HtmlDumpRule(product.getTester().getDriver());
 
@@ -55,7 +57,7 @@ public class TestRemotablePlugins
         assertNotNull(adminPassword);
         assertNotNull(displayUrl);
 
-        INSTALLER.install(displayUrl + "/atlassian-plugin", "");
+        INSTALLER.install(displayUrl + "/atlassian-plugin.xml", "");
 
     }
     

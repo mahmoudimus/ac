@@ -2,6 +2,7 @@ package com.atlassian.plugin.remotable.plugin.module.oauth;
 
 import com.atlassian.plugin.remotable.plugin.product.WebSudoElevator;
 import com.atlassian.oauth.util.Check;
+import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.auth.AuthenticationController;
 import com.atlassian.sal.api.auth.AuthenticationListener;
 import com.atlassian.sal.api.auth.Authenticator;
@@ -14,6 +15,7 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.URI;
 import java.util.Map;
 import java.util.Set;
 
@@ -33,16 +35,19 @@ public class OAuth2LOFilter implements Filter
     private final AuthenticationListener authenticationListener;
     private final AuthenticationController authenticationController;
     private final WebSudoElevator webSudoElevator;
+    private final String contextPath;
 
     public OAuth2LOFilter(Authenticator authenticator,
                           AuthenticationListener authenticationListener,
                           AuthenticationController authenticationController,
-                          WebSudoElevator webSudoElevator)
+                          WebSudoElevator webSudoElevator,
+                          ApplicationProperties applicationProperties)
     {
         this.webSudoElevator = Check.notNull(webSudoElevator, "webSudoElevator");
         this.authenticator = Check.notNull(authenticator, "authenticator");
         this.authenticationListener = Check.notNull(authenticationListener, "authenticationListener");
         this.authenticationController = Check.notNull(authenticationController, "authenticationController");
+        this.contextPath = URI.create(applicationProperties.getBaseUrl()).getPath();
     }
     
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException
@@ -129,11 +134,14 @@ public class OAuth2LOFilter implements Filter
         
         boolean isRequestTokenRequest = request.getRequestURL().toString().endsWith(
                 "/plugins/servlet/oauth/request-token");
+        boolean isDownloadableResourceRequest = URI.create(request.getRequestURL().toString()).getPath().startsWith(
+                contextPath + "/download/resources/");
         final Map<String,String> params = parameterNames(request);
         final Set<String> names = params.keySet();
         return  names.containsAll(OAUTH_DATA_REQUEST_PARAMS) &&
                 !names.contains(OAuth.OAUTH_TOKEN) &&
-                !isRequestTokenRequest;
+                !isRequestTokenRequest &&
+                !isDownloadableResourceRequest;
     }
 
     private Map<String,String> parameterNames(HttpServletRequest request)

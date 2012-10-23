@@ -230,7 +230,8 @@ public class RemotablePluginAccessorFactory implements DisposableBean
             headers, pluginKey);
     }
 
-    private String signGetUrlForType(ServiceProvider serviceProvider, URI targetUrl, Map<String, String[]> params) throws PermissionDeniedException
+    private String signGetUrlForType(ServiceProvider serviceProvider, URI targetUrl,
+            Map<String, String[]> params) throws PermissionDeniedException
     {
         final UriBuilder uriBuilder = new UriBuilder(Uri.fromJavaUri(targetUrl));
 
@@ -249,9 +250,9 @@ public class RemotablePluginAccessorFactory implements DisposableBean
     }
 
     private List<Map.Entry<String, String>> signRequest(ServiceProvider serviceProvider,
-                                                        URI url,
-                                                        Map<String, String[]> queryParams,
-                                                        String method
+            URI url,
+            Map<String, String[]> queryParams,
+            String method
     )
     {
         String timestamp = System.currentTimeMillis() / 1000 + "";
