@@ -2,7 +2,6 @@ package com.atlassian.plugin.remotable.host.common.service.jira;
 
 import com.atlassian.httpclient.api.Response;
 import com.atlassian.httpclient.api.ResponsePromise;
-import com.atlassian.httpclient.api.ResponsePromises;
 import com.atlassian.httpclient.api.ResponseTransformationException;
 import com.atlassian.jira.rest.client.RestClientException;
 import com.atlassian.plugin.remotable.api.service.http.HostHttpClient;
@@ -20,8 +19,11 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
+import static com.atlassian.httpclient.api.ResponsePromises.*;
+import static com.atlassian.util.concurrent.Promises.*;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 
 @RunWith(MockitoJUnitRunner.class)
@@ -51,7 +53,7 @@ public final class AbstractP3RestClientTest
     public void setUp() throws Exception
     {
         responseFuture = SettableFuture.create();
-        responsePromise = ResponsePromises.toResponsePromise(responseFuture);
+        responsePromise = toResponsePromise(forListenableFuture(responseFuture));
         abstractP3RestClient = new AbstractP3RestClient(httpClient)
         {
         };

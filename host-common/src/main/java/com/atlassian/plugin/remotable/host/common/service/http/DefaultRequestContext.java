@@ -1,12 +1,11 @@
-package com.atlassian.plugin.remotable.host.common.service;
+package com.atlassian.plugin.remotable.host.common.service.http;
 
 import com.atlassian.plugin.remotable.api.service.RequestContext;
 import com.atlassian.plugin.remotable.api.service.SignedRequestHandler;
-import com.google.common.base.Function;
 
 import javax.servlet.http.HttpServletRequest;
 
-public class DefaultRequestContext implements RequestContext
+public final class DefaultRequestContext implements RequestContext
 {
     private static final ThreadLocal<RequestData> requestContextHolder = new ThreadLocal<RequestData>();
     private static final RequestData EMPTY_DATA = new RequestData(null, null, null);
@@ -30,13 +29,13 @@ public class DefaultRequestContext implements RequestContext
         setRequestData(new RequestData(data.getRequest(), clientKey, data.getUserId()));
     }
 
-    private RequestData getRequestData()
+    static RequestData getRequestData()
     {
         RequestData data = requestContextHolder.get();
         return data != null ? data : EMPTY_DATA;
     }
 
-    private void setRequestData(RequestData data)
+    static void setRequestData(RequestData data)
     {
         if (data == EMPTY_DATA)
         {
@@ -60,29 +59,6 @@ public class DefaultRequestContext implements RequestContext
         setRequestData(new RequestData(data.getRequest(), data.getClientKey(), userId));
     }
 
-    public <P, R> Function<P, R> createFunctionForExecutionWithinCurrentRequest(
-            final Function<P, R> callable)
-    {
-        final RequestData old = getRequestData();
-        return new Function<P, R>()
-        {
-            @Override
-            public R apply(P contextParameter)
-            {
-                RequestData current = getRequestData();
-                try
-                {
-                    setRequestData(old);
-                    return callable.apply(contextParameter);
-                }
-                finally
-                {
-                    setRequestData(current);
-                }
-            }
-        };
-    }
-
     @Override
     public String getHostBaseUrl()
     {
@@ -100,12 +76,12 @@ public class DefaultRequestContext implements RequestContext
         setRequestData(new RequestData(request, data.getClientKey(), data.getUserId()));
     }
 
-    public void clear()
+    public static void clear()
     {
         requestContextHolder.remove();
     }
 
-    private static class RequestData
+    final static class RequestData
     {
         private final String clientKey;
         private final String userId;

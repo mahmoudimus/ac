@@ -1,16 +1,16 @@
 package com.atlassian.plugin.remotable.host.common.service.http;
 
 import com.atlassian.httpclient.api.factory.HttpClientFactory;
+import com.atlassian.httpclient.spi.ThreadLocalContextManagers;
 import com.atlassian.plugin.remotable.api.service.SignedRequestHandler;
 import com.atlassian.plugin.remotable.api.service.http.HostHttpClient;
-import com.atlassian.plugin.remotable.host.common.service.DefaultRequestContext;
 import com.atlassian.plugin.remotable.host.common.service.RequestContextServiceFactory;
 import com.atlassian.plugin.remotable.host.common.service.SignedRequestHandlerServiceFactory;
 import com.atlassian.plugin.remotable.host.common.service.TypedServiceFactory;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.ServiceRegistration;
 
-public class HostHttpClientServiceFactory implements TypedServiceFactory<HostHttpClient>
+public final class HostHttpClientServiceFactory implements TypedServiceFactory<HostHttpClient>
 {
     private RequestContextServiceFactory requestContextServiceFactory;
     private final SignedRequestHandlerServiceFactory signedRequestHandlerServiceFactory;
@@ -34,7 +34,7 @@ public class HostHttpClientServiceFactory implements TypedServiceFactory<HostHtt
         SignedRequestHandler signedRequestHandler = signedRequestHandlerServiceFactory.getService(bundle);
         HttpClientFactory httpClientFactory = (HttpClientFactory)
                 bundle.getBundleContext().getService(bundle.getBundleContext().getServiceReference(HttpClientFactory.class.getName()));
-        return new DefaultHostHttpClient(httpClientFactory, requestContext, signedRequestHandler);
+        return new DefaultHostHttpClient(httpClientFactory, requestContext, signedRequestHandler, ThreadLocalContextManagers.noop());
     }
 
     @Override

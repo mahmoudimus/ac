@@ -1,6 +1,7 @@
 package com.atlassian.plugin.remotable.host.common.service;
 
 import com.atlassian.plugin.remotable.api.service.RenderContext;
+import com.atlassian.plugin.remotable.host.common.service.http.DefaultRequestContext;
 import com.atlassian.sal.api.message.I18nResolver;
 import com.atlassian.sal.api.message.LocaleResolver;
 import org.osgi.framework.Bundle;

@@ -1,27 +1,25 @@
 package com.atlassian.plugin.remotable.host.common.service.http;
 
+import com.atlassian.fugue.Option;
+import com.atlassian.fugue.Pair;
 import com.atlassian.httpclient.api.ForwardingHttpClient;
 import com.atlassian.httpclient.api.HttpClient;
 import com.atlassian.httpclient.api.Request;
-import com.atlassian.httpclient.api.Response;
 import com.atlassian.httpclient.api.factory.HttpClientFactory;
 import com.atlassian.httpclient.api.factory.HttpClientOptions;
-import com.atlassian.httpclient.api.factory.SettableFutureHandler;
-import com.atlassian.httpclient.api.factory.SettableFutureHandlerFactory;
+import com.atlassian.httpclient.spi.ThreadLocalContextManager;
 import com.atlassian.plugin.remotable.api.service.RequestContext;
 import com.atlassian.plugin.remotable.api.service.SignedRequestHandler;
 import com.atlassian.plugin.remotable.api.service.http.HostHttpClient;
-import com.atlassian.plugin.remotable.host.common.service.DefaultRequestContext;
 import com.atlassian.util.concurrent.Effect;
-import com.google.common.base.Function;
-import com.google.common.util.concurrent.SettableFuture;
 
-import javax.annotation.Nullable;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.util.concurrent.Callable;
 
+import static com.atlassian.fugue.Option.option;
+import static com.atlassian.fugue.Pair.*;
 import static com.google.common.base.Preconditions.*;
 
 public final class DefaultHostHttpClient extends ForwardingHttpClient implements HostHttpClient
@@ -29,10 +27,10 @@ public final class DefaultHostHttpClient extends ForwardingHttpClient implements
     private final HttpClient httpClient;
     private final DefaultRequestContext requestContext;
 
-    public DefaultHostHttpClient(HttpClientFactory httpClientFactory, DefaultRequestContext requestContext, SignedRequestHandler signedRequestHandler)
+    public DefaultHostHttpClient(HttpClientFactory httpClientFactory, DefaultRequestContext requestContext, SignedRequestHandler signedRequestHandler, ThreadLocalContextManager threadLocalContextManager)
     {
         this.requestContext = checkNotNull(requestContext);
-        this.httpClient = checkNotNull(httpClientFactory).create(getHttpOptions(requestContext, checkNotNull(signedRequestHandler)));
+        this.httpClient = checkNotNull(httpClientFactory).create(getHttpOptions(requestContext, checkNotNull(signedRequestHandler)), new DefaultHostHttpClientThreadLocalContextManager(threadLocalContextManager));
     }
 
     @Override
@@ -45,14 +43,6 @@ public final class DefaultHostHttpClient extends ForwardingHttpClient implements
     {
         HttpClientOptions options = new HttpClientOptions();
         options.setThreadPrefix("hostclient");
-        options.setResponseSettableFutureHandlerFactory(new SettableFutureHandlerFactory<Response>()
-        {
-            @Override
-            public SettableFutureHandler<Response> create()
-            {
-                return new ResponseSettableFutureHandler(requestContext);
-            }
-        });
         options.setRequestPreparer(new HostHttpClientRequestPreparer(requestContext, signedRequestHandler));
         return options;
     }
@@ -83,54 +73,6 @@ public final class DefaultHostHttpClient extends ForwardingHttpClient implements
         {
             requestContext.setClientKey(oldClientKey);
             requestContext.setUserId(oldUserId);
-        }
-    }
-
-    private static final class ResponseSettableFutureHandler implements SettableFutureHandler<Response>
-    {
-        private final SettableFuture<Response> future = SettableFuture.create();
-        private final Function<Response, Boolean> setCallable;
-        private final Function<Throwable, Boolean> setExceptionCallable;
-
-        private ResponseSettableFutureHandler(DefaultRequestContext requestContext)
-        {
-            setCallable = requestContext.createFunctionForExecutionWithinCurrentRequest(
-                    new Function<Response, Boolean>()
-                    {
-                        @Override
-                        public Boolean apply(Response contextParameter)
-                        {
-                            return future.set(contextParameter);
-                        }
-                    });
-
-            setExceptionCallable = requestContext.createFunctionForExecutionWithinCurrentRequest(
-                    new Function<Throwable, Boolean>()
-                    {
-                        @Override
-                        public Boolean apply(Throwable contextParameter)
-                        {
-                            return future.setException(contextParameter);
-                        }
-                    });
-        }
-
-        @Override
-        public boolean set(@Nullable Response value)
-        {
-            return setCallable.apply(value);
-        }
-
-        @Override
-        public boolean setException(Throwable throwable)
-        {
-            return setExceptionCallable.apply(throwable);
-        }
-
-        @Override
-        public SettableFuture<Response> getFuture()
-        {
-            return future;
         }
     }
 
@@ -194,6 +136,37 @@ public final class DefaultHostHttpClient extends ForwardingHttpClient implements
                     // capture request properties for analytics
                     .setAttribute("purpose", "host-request")
                     .setAttribute("clientKey", clientKey);
+        }
+    }
+
+    private static final class DefaultHostHttpClientThreadLocalContextManager<C> implements ThreadLocalContextManager<Pair<DefaultRequestContext.RequestData, Option<C>>>
+    {
+        private final ThreadLocalContextManager<C> threadLocalContextManager;
+
+        private DefaultHostHttpClientThreadLocalContextManager(ThreadLocalContextManager<C> threadLocalContextManager)
+        {
+            this.threadLocalContextManager = checkNotNull(threadLocalContextManager);
+        }
+
+        @Override
+        public Pair<DefaultRequestContext.RequestData, Option<C>> getThreadLocalContext()
+        {
+            return pair(DefaultRequestContext.getRequestData(), option(threadLocalContextManager.getThreadLocalContext()));
+        }
+
+        @Override
+        public void setThreadLocalContext(Pair<DefaultRequestContext.RequestData, Option<C>> context)
+        {
+            DefaultRequestContext.setRequestData(context.left());
+            threadLocalContextManager.setThreadLocalContext(context.right().getOrNull());
+        }
+
+        @Override
+        public void resetThreadLocalContext()
+        {
+
+            DefaultRequestContext.clear();
+            threadLocalContextManager.resetThreadLocalContext();
         }
     }
 }

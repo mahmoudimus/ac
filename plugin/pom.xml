@@ -222,6 +222,11 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>com.atlassian.fugue</groupId>
+            <artifactId>fugue</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
             <groupId>com.atlassian.oauth</groupId>
             <artifactId>atlassian-oauth-api</artifactId>
             <version>${oauth.version}</version>
@@ -525,6 +530,7 @@
                             com.atlassian.plugin.remotable.api.service.jira;version="${jira.client.version}",
                             com.atlassian.jira.rest.client.domain;version="${jira.client.version}",
                             com.atlassian.httpclient.api*;version="${atlassian-httpclient.version}",
+                            com.atlassian.httpclient.spi*;version="${atlassian-httpclient.version}",
                             com.atlassian.plugin.remotable.spi*,
                             com.atlassian.plugin.remotable.api*,
                             com.atlassian.plugin.schema.descriptor;version="${plugins.version}",

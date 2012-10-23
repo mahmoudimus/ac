@@ -2,6 +2,7 @@ package com.atlassian.plugin.remotable.host.common.service;
 
 import com.atlassian.plugin.remotable.api.service.RequestContext;
 import com.atlassian.plugin.remotable.api.service.SignedRequestHandler;
+import com.atlassian.plugin.remotable.host.common.service.http.DefaultRequestContext;
 import com.atlassian.plugin.util.PluginUtils;
 import net.oauth.OAuth;
 

@@ -32,8 +32,7 @@ public class CachingHttpContentRetriever implements HttpContentRetriever
     private final Logger log = LoggerFactory.getLogger(CachingHttpContentRetriever.class);
     private final HttpClient httpClient;
 
-    public CachingHttpContentRetriever(PluginRetrievalService pluginRetrievalService,
-            HttpClientFactory httpClientFactory)
+    public CachingHttpContentRetriever(PluginRetrievalService pluginRetrievalService, HttpClientFactory httpClientFactory)
     {
         HttpClientOptions options = new HttpClientOptions();
         options.setIoSelectInterval(100, TimeUnit.MILLISECONDS);

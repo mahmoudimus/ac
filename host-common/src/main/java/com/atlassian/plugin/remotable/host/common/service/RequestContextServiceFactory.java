@@ -1,6 +1,7 @@
 package com.atlassian.plugin.remotable.host.common.service;
 
 import com.atlassian.plugin.remotable.api.service.RequestContext;
+import com.atlassian.plugin.remotable.host.common.service.http.DefaultRequestContext;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.ServiceRegistration;
 

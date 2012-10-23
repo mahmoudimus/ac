@@ -2,7 +2,6 @@ package com.atlassian.plugin.remotable.host.common.service.http;
 
 import com.atlassian.httpclient.api.Request;
 import com.atlassian.httpclient.api.Response;
-import com.atlassian.httpclient.api.ResponsePromises;
 import com.atlassian.httpclient.api.ResponseTransformationException;
 import com.atlassian.httpclient.api.UnexpectedResponseException;
 import com.atlassian.plugin.remotable.api.service.http.HostHttpClient;
@@ -26,9 +25,14 @@ import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.URI;
 
+import static com.atlassian.httpclient.api.ResponsePromises.*;
+import static com.atlassian.util.concurrent.Promises.*;
 import static org.junit.Assert.*;
-import static org.mockito.Matchers.*;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.argThat;
+import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public final class DefaultHostXmlRpcClientTest
@@ -65,7 +69,7 @@ public final class DefaultHostXmlRpcClientTest
         when(request.setEntity(anyString())).thenReturn(request);
 
         responseFuture = SettableFuture.create();
-        when(request.post()).thenReturn(ResponsePromises.toResponsePromise(responseFuture));
+        when(request.post()).thenReturn(toResponsePromise(forListenableFuture(responseFuture)));
     }
 
     @Test
