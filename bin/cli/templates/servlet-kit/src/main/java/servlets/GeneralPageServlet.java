@@ -21,8 +21,8 @@ public class GeneralPageServlet extends AbstractPageServlet
     protected void doGet(HttpServletRequest req, HttpServletResponse res)
         throws ServletException, IOException
     {
-        render(req, res, ImmutableMap.<String, Object>of(
-            "message", req.getParameter("Hello World")
+        render(req, res, ImmutableMap.of(
+            "message", "Hello World"
         ));
     }
 }

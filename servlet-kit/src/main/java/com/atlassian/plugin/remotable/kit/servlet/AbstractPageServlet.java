@@ -87,17 +87,17 @@ public abstract class AbstractPageServlet extends HttpServlet implements Initial
         }
     }
 
-    protected void render(HttpServletRequest req, HttpServletResponse res, Map<String, Object> context) throws IOException
+    protected void render(HttpServletRequest req, HttpServletResponse res, Map<String, ?> context) throws IOException
     {
         render(resourceBaseName, req, res, context);
     }
 
-    protected void render(String view, HttpServletRequest req, HttpServletResponse res, Map<String, Object> context) throws IOException
+    protected void render(String view, HttpServletRequest req, HttpServletResponse res, Map<String, ?> context) throws IOException
     {
         renderWithLayout(resolveLayout(), view, req, res, context);
     }
 
-    protected void renderWithLayout(String layout, String view, HttpServletRequest req, HttpServletResponse res, Map<String, Object> context) throws IOException
+    protected void renderWithLayout(String layout, String view, HttpServletRequest req, HttpServletResponse res, Map<String, ?> context) throws IOException
     {
         StringWriter body = new StringWriter();
         renderView(view, body, ImmutableMap.<String, Object>builder()
@@ -124,7 +124,7 @@ public abstract class AbstractPageServlet extends HttpServlet implements Initial
         sendWithLayout(resolveLayout(), bodyHtml, req, res, Maps.<String, Object>newHashMap());
     }
 
-    protected void sendWithLayout(String layout, String bodyHtml, HttpServletRequest req, HttpServletResponse res, Map<String, Object> context) throws IOException
+    protected void sendWithLayout(String layout, String bodyHtml, HttpServletRequest req, HttpServletResponse res, Map<String, ?> context) throws IOException
     {
         res.setStatus(200);
         res.setContentType("text/html; charset=UTF-8");

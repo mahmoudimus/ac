@@ -120,7 +120,7 @@ if [ "$APP_KIT" == "servlet" ] && [ "$JAR_ONLY" != "1" ]; then
     exit 1
   fi
   cd -
-  # @todo this is weak (assumes desired values are first occurrences in file)
+  # FIXME this is weak (assumes desired values are first occurrences in file)
   JAR_ARTIFACT_ID=`grep -m1 "<artifactId" $POM_XML | cut -f2 -d ">" | cut -f1 -d "<"`
   JAR_VERSION=`grep -m1 "<version" $POM_XML | cut -f2 -d ">" | cut -f1 -d "<"`
   APP_PATH=$APP_PATH/target/${JAR_ARTIFACT_ID}-${JAR_VERSION}.jar

@@ -208,13 +208,12 @@ else
   else
     SCRIPT_EXT=js
   fi
-  SCRIPT_MAIN=main
-  copyFile $TMPL_DIR $SCRIPT_MAIN $SCRIPT_EXT
   if [ "$MINIMAL" == "1" ]; then
     TMPL_DIR=$TMPL_BASE_DIR/minimal
     VIEWS_DIR=views
     VIEW_GENERAL=$VIEWS_DIR/general
     mkdir -p $APP_HOME/$VIEWS_DIR
+    copyFile $TMPL_DIR main $SCRIPT_EXT
     copyFile $TMPL_DIR $VIEW_GENERAL mustache
   else
     TMPL_DIR=$TMPL_BASE_DIR/structured
@@ -228,6 +227,7 @@ else
     mkdir -p $APP_HOME/$PUBLIC_JS_DIR
     mkdir -p $APP_HOME/$PUBLIC_CSS_DIR
     mkdir -p $APP_HOME/$LIB_DIR
+    copyFile $TMPL_DIR main $SCRIPT_EXT
     copyFile $TMPL_DIR $SCRIPT_SERVER $SCRIPT_EXT
     copyFile $TMPL_DIR $SCRIPT_ROUTES $SCRIPT_EXT
     copyFile $TMPL_DIR $VIEW_GENERAL mustache
