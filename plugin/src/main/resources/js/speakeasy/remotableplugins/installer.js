@@ -4,7 +4,7 @@ var addMessage = require('speakeasy/messages').add;
 var host = require('speakeasy/host');
 var contextPath = window.contextPath === undefined ? host.findContextPath() : window.contextPath;
 
-function sendRegistrationToken(url, token, callbacks) {
+function sendRegistrationToken(url, callbacks) {
     $.ajax({
       url: contextPath + "/rest/remotable-plugins/latest/installer",
       type: 'POST',
@@ -12,8 +12,7 @@ function sendRegistrationToken(url, token, callbacks) {
         jqXHR.setRequestHeader("X-Atlassian-Token", "nocheck");
       },
       data: {
-          url : url,
-          token : token
+          url : url
       },
       success: function(data) {
           addMessage('success', {body: "Registration successful <a href='javascript:window.location.reload();'>(refresh)</a> "});
@@ -75,8 +74,7 @@ $(document).ready(function() {
                     }),
                     submit : function(dialog, callbacks) {
                         var url = $('#remotable-plugins-url').val();
-                        var token = $('#remotable-plugins-token').val();
-                        sendRegistrationToken(url, token, callbacks);
+                        sendRegistrationToken(url, callbacks);
                     },
                     submitClass : 'remotable-plugins-submit'
                 });

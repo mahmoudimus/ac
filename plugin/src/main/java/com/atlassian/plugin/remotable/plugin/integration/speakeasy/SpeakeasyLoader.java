@@ -19,11 +19,13 @@ public class SpeakeasyLoader implements DisposableBean
 {
     private final ServiceTracker speakeasyBackendTracker;
     private volatile Object eventListener;
+    private final EventPublisher eventPublisher;
 
     @Autowired
     public SpeakeasyLoader(final EventPublisher eventPublisher, final BundleContext bundleContext,
             final PluginAccessor pluginAccessor)
     {
+        this.eventPublisher = eventPublisher;
         speakeasyBackendTracker = new ServiceTracker(
                 bundleContext,
                 "com.atlassian.labs.speakeasy.external.SpeakeasyBackendService",
@@ -62,5 +64,6 @@ public class SpeakeasyLoader implements DisposableBean
     public void destroy() throws Exception
     {
         speakeasyBackendTracker.close();
+        eventPublisher.unregister(eventListener);
     }
 }

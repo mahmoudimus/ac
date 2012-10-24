@@ -23,14 +23,6 @@
                 for the Remotable Plugin
             </div>
         </div>
-        <div class="field-group">
-            <label for="remotable-plugins-token">Registration Secret (optional)</label>
-            <input type="text" name="remotable-plugins-token" size="40" id="remotable-plugins-token"/>
-
-            <div class="description">The secret password to send to the Remotable Plugin that may be required for
-                registration
-            </div>
-        </div>
     </fieldset>
 </form>
 </div>
