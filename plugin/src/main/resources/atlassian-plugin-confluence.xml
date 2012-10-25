@@ -51,13 +51,14 @@
         <description>Convert content into viewable HTML</description>
     </plugin-permission>
 
-    <plugin-permission key="modify_content" name="Modify Content">
+    <plugin-permission key="modify_content" name="Modify Content"
+            class="com.atlassian.plugin.remotable.plugin.product.confluence.ModifyContentScope">
         <description>Add, edit and remove pages and blog posts</description>
     </plugin-permission>
 
     <plugin-permission key="manage_index" name="Manage Content Index"
             class="com.atlassian.plugin.remotable.plugin.product.confluence.ManageIndexScope">
-        <description>Add, edit and remove pages and blog posts</description>
+        <description>Manage the content index, including triggering a re-index</description>
     </plugin-permission>
 
     <plugin-permission key="modify_anonymous_permissions" name="Modify Anonymous Permissions"
