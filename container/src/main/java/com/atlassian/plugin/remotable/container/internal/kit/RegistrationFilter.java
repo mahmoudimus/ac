@@ -73,8 +73,9 @@ public class RegistrationFilter implements Filter
     {
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse resp = (HttpServletResponse) response;
+        final String method = ((HttpServletRequest) request).getMethod();
 
-        if ("post".equalsIgnoreCase(((HttpServletRequest) request).getMethod()))
+        if ("post".equalsIgnoreCase(method))
         {
             if (Boolean.parseBoolean(environment.getOptionalEnv("ALLOW_REGISTRATION", "true")))
             {
@@ -106,6 +107,10 @@ public class RegistrationFilter implements Filter
         }
         else
         {
+            if ("get".equalsIgnoreCase(method))
+            {
+                resp.setHeader("Access-Control-Allow-Origin", "*");
+            }
             resp.setContentType("text/xml");
             byte[] descriptor = readDescriptorToBytes();
             resp.setContentLength(descriptor.length);
