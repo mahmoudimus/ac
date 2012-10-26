@@ -5,24 +5,10 @@ import java.util.Map;
 /**
  * Event that marks the successful installation of a remote plugin
  */
-public class RemotePluginInstalledEvent
+public final class RemotePluginInstalledEvent extends RemotePluginEvent
 {
-    private final Map<String, Object> data;
-    private final String pluginKey;
-
-    public RemotePluginInstalledEvent(String pluginKey, Map<String, Object> build)
+    public RemotePluginInstalledEvent(String pluginKey, Map<String, Object> data)
     {
-        this.data = build;
-        this.pluginKey = pluginKey;
-    }
-
-    public Map<String, Object> toMap()
-    {
-        return data;
-    }
-
-    public String getPluginKey()
-    {
-        return pluginKey;
+        super(pluginKey, data);
     }
 }

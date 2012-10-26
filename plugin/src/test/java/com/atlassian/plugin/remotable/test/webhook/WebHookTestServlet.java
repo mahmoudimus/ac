@@ -12,20 +12,22 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.concurrent.BlockingDeque;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.TimeUnit;
 
-public class WebHookTestServlet extends HttpServlet implements WebHookBody
+public final class WebHookTestServlet extends HttpServlet
 {
-    private volatile JSON body;
+    private volatile BlockingDeque<WebHookBody> webHooksQueue = new LinkedBlockingDeque<WebHookBody>();
+
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws
-            ServletException,
-            IOException
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
     {
         if (req.getRequestURI().endsWith("/webhook"))
         {
             try
             {
-                body = JSON.parse(IOUtils.toString(req.getReader()));
+                webHooksQueue.push(new JsonWebHookBody(JSON.parse(IOUtils.toString(req.getReader()))));
             }
             catch (ParserException e)
             {
@@ -34,8 +36,7 @@ public class WebHookTestServlet extends HttpServlet implements WebHookBody
         }
     }
 
-    public static void runInRunner(String baseUrl, String webHookId, WebHookTester tester) throws
-            Exception
+    public static void runInRunner(String baseUrl, String webHookId, WebHookTester tester) throws Exception
     {
         final WebHookTestServlet servlet = new WebHookTestServlet();
         RemotePluginRunner runner = new RemotePluginRunner(baseUrl, webHookId)
@@ -47,50 +48,41 @@ public class WebHookTestServlet extends HttpServlet implements WebHookBody
             @Override
             public WebHookBody waitForHook() throws Exception
             {
-                servlet.assertHookFired();
-                return servlet;
+                return servlet.waitForHook();
             }
         });
 
         runner.stop();
     }
 
-    public void assertHookFired() throws InterruptedException
+    public WebHookBody waitForHook() throws InterruptedException
     {
-        long expiry = System.currentTimeMillis() + 5 * 1000;
+        return webHooksQueue.poll(5, TimeUnit.SECONDS);
+    }
 
-        while (expiry > System.currentTimeMillis())
+    private static final class JsonWebHookBody implements WebHookBody
+    {
+        private volatile JSON body;
+
+        private JsonWebHookBody(JSON body)
         {
-            if (hookFired())
+            this.body = body;
+        }
+
+        @Override
+        public String find(String expression) throws Exception
+        {
+            JPath path = JPath.parse(expression);
+            Value value = path.evaluate(body);
+            if (value == null)
             {
-                break;
+                System.out.println("Can't find expression '" + expression + "' in\n" + body.toJSON());
+                return null;
             }
-            Thread.sleep(100);
-        }
-        if (!hookFired())
-        {
-            throw new AssertionError("Event not published");
-        }
-    }
-
-    public boolean hookFired()
-    {
-        return body != null;
-    }
-
-    @Override
-    public String find(String expression) throws Exception
-    {
-        JPath path = JPath.parse(expression);
-        Value value = path.evaluate(body);
-        if (value == null)
-        {
-            System.out.println("Can't find expression '" + expression + "' in\n" + body.toJSON());
-            return null;
-        }
-        else
-        {
-            return value.toString();
+            else
+            {
+                return value.toString();
+            }
         }
     }
 }
