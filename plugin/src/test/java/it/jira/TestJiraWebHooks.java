@@ -16,6 +16,7 @@ import java.rmi.RemoteException;
 
 import static com.atlassian.plugin.remotable.test.webhook.WebHookTestServlet.runInRunner;
 import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class TestJiraWebHooks extends AbstractBrowserlessTest
 {
@@ -51,7 +52,8 @@ public class TestJiraWebHooks extends AbstractBrowserlessTest
             public void test(WebHookWaiter waiter) throws Exception
             {
                 String issueKey = jiraOps.createIssue(project.getKey(), "Test issue").getKey();
-                WebHookBody body = waiter.waitForHook();
+                final WebHookBody body = waiter.waitForHook();
+                assertNotNull(body);
                 assertEquals(issueKey, body.find("issue/key"));
                 assertEquals(ADMIN, body.find("issue/fields/reporter/name"));
             }
@@ -70,7 +72,8 @@ public class TestJiraWebHooks extends AbstractBrowserlessTest
                 jiraOps.updateIssue(issueKey, ImmutableMap.of(
                         "summary", "New Summary",
                         "description", "foo"));
-                WebHookBody body = waiter.waitForHook();
+                final WebHookBody body = waiter.waitForHook();
+                assertNotNull(body);
                 assertEquals(issueKey, body.find("issue/key"));
                 assertEquals("summary", body.find("updatedFields[0]/name"));
                 assertEquals("Test issue", body.find("updatedFields[0]/oldValue"));
@@ -89,7 +92,8 @@ public class TestJiraWebHooks extends AbstractBrowserlessTest
             {
                 String issueKey = jiraOps.createIssue(project.getKey(), "Test issue").getKey();
                 jiraOps.addComment(issueKey, "My comment");
-                WebHookBody body = waiter.waitForHook();
+                final WebHookBody body = waiter.waitForHook();
+                assertNotNull(body);
                 assertEquals(issueKey, body.find("issue/key"));
                 assertEquals("My comment", body.find("comment/body"));
                 assertEquals("admin", body.find("comment/author/name"));
