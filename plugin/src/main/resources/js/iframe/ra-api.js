@@ -338,8 +338,12 @@
 
     // forwards dialog event messages from the host application to locally registered handlers
     dialogMessage: function(message) {
-      // if no handler, default to allowing the operation to proceed
-      return dialogHandlers[message]? dialogHandlers[message]() : true;
+      try {
+        // if no handler, default to allowing the operation to proceed
+        return dialogHandlers[message]? dialogHandlers[message]() : true;
+      } catch (e) {
+        console.error(e);
+      }
     }
 
   };

@@ -265,10 +265,33 @@ public class JiraRestBeanMarshaler implements DisposableBean
         {
             return null;
         }
+
+        @Override
+        public boolean isTracingEnabled()
+        {
+            return false;
+        }
+
+        @Override
+        public void trace(String s)
+        {
+        }
     }
 
     private class MockExtendedUriInfo implements ExtendedUriInfo
     {
+
+        @Override
+        public AbstractResourceMethod getMatchedMethod()
+        {
+            return null;
+        }
+
+        @Override
+        public Throwable getMappedThrowable()
+        {
+            return null;
+        }
 
         @Override
         public List<MatchResult> getMatchedResults()
