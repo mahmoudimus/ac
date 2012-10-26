@@ -21,6 +21,8 @@ import com.atlassian.plugin.PluginInformation;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
 import com.atlassian.plugin.descriptors.CannotDisable;
+import com.atlassian.sal.api.pluginsettings.PluginSettings;
+import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.atlassian.util.concurrent.NotNull;
 import org.dom4j.Element;
 import org.osgi.framework.BundleContext;
@@ -30,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import java.net.URI;
 import java.security.GeneralSecurityException;
 import java.security.PublicKey;
+import java.util.List;
 
 import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.*;
 
@@ -46,6 +49,7 @@ public class RemotePluginContainerModuleDescriptor extends AbstractModuleDescrip
     private final PermissionManager permissionManager;
     private final TypeAccessor typeAccessor;
     private final BundleContext bundleContext;
+    private final PluginSettingsFactory pluginSettingsFactory;
 
     private static final Logger log = LoggerFactory.getLogger(RemotePluginContainerModuleDescriptor.class);
 
@@ -58,7 +62,8 @@ public class RemotePluginContainerModuleDescriptor extends AbstractModuleDescrip
                                                  OAuthLinkManager oAuthLinkManager,
                                                  PermissionManager permissionManager,
                                                  TypeAccessor typeAccessor,
-                                                 BundleContext bundleContext
+                                                 BundleContext bundleContext,
+                                                 PluginSettingsFactory pluginSettingsFactory
     )
     {
         this.applicationLinkService = applicationLinkService;
@@ -66,6 +71,7 @@ public class RemotePluginContainerModuleDescriptor extends AbstractModuleDescrip
         this.permissionManager = permissionManager;
         this.typeAccessor = typeAccessor;
         this.bundleContext = bundleContext;
+        this.pluginSettingsFactory = pluginSettingsFactory;
     }
 
     @Override
@@ -105,6 +111,7 @@ public class RemotePluginContainerModuleDescriptor extends AbstractModuleDescrip
             catch (TypeNotInstalledException ex)
             {
                 log.info("Link found for '{}' but the type cannot be found, treating as not found", getPluginKey());
+                manuallyDeleteApplicationId(expectedApplicationId);
             }
 
             if (link != null)
@@ -153,6 +160,27 @@ public class RemotePluginContainerModuleDescriptor extends AbstractModuleDescrip
             log.info("Plugin '{}' in local mode, so not setting up remote plugin container link", getPluginKey());
         }
         super.enabled();
+    }
+
+    private void manuallyDeleteApplicationId(ApplicationId expectedApplicationId)
+    {
+        PluginSettings pluginSettings = pluginSettingsFactory.createGlobalSettings();
+        List<String> applicationIds = (List<String>) pluginSettings.get("applinks.global.application.ids");
+        if (applicationIds != null)
+        {
+            if (applicationIds.remove(expectedApplicationId.get()))
+            {
+                pluginSettings.put("applinks.global.application.ids", applicationIds);
+            }
+            else
+            {
+                throw new IllegalStateException("Cannot find application id " + expectedApplicationId.get() + " to delete");
+            }
+        }
+        else
+        {
+            throw new IllegalStateException("Cannot find application ids to manually delete " + expectedApplicationId.get());
+        }
     }
 
     @Override
