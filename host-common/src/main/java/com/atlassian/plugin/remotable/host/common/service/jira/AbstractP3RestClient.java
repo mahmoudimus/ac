@@ -1,5 +1,6 @@
 package com.atlassian.plugin.remotable.host.common.service.jira;
 
+import com.atlassian.httpclient.api.EntityBuilder;
 import com.atlassian.httpclient.api.Response;
 import com.atlassian.httpclient.api.ResponsePromise;
 import com.atlassian.jira.rest.client.RestClientException;
@@ -16,11 +17,15 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
 import javax.annotation.Nullable;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
 
 import static com.google.common.base.Preconditions.*;
 
@@ -157,15 +162,36 @@ public abstract class AbstractP3RestClient
         return errorMessages;
     }
 
-    protected final <T> String toEntity(JsonGenerator<T> generator, T bean)
+    protected final <T> EntityBuilder toEntity(final JsonGenerator<T> generator, final T bean)
     {
-        try
+        return new EntityBuilder()
         {
-            return generator.generate(bean).toString();
-        }
-        catch (JSONException e)
-        {
-            throw new RestClientException(e);
-        }
+
+            @Override
+            public Entity build()
+            {
+                return new Entity()
+                {
+                    @Override
+                    public Map<String, String> getHeaders()
+                    {
+                        return Collections.singletonMap("Content-Type", "application/json");
+                    }
+
+                    @Override
+                    public InputStream getInputStream()
+                    {
+                        try
+                        {
+                            return new ByteArrayInputStream(generator.generate(bean).toString().getBytes(Charset.forName("UTF-8")));
+                        }
+                        catch (JSONException e)
+                        {
+                            throw new RestClientException(e);
+                        }
+                    }
+                };
+            }
+        };
     }
 }
