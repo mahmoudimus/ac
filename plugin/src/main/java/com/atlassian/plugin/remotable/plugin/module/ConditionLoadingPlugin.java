@@ -4,6 +4,9 @@ import com.atlassian.plugin.remotable.spi.module.UserIsLoggedInCondition;
 import com.atlassian.plugin.AutowireCapablePlugin;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.impl.AbstractDelegatingPlugin;
+import com.atlassian.plugin.web.Condition;
+
+import java.util.Set;
 
 /**
 * Plugin that can load conditions from the remotable plugins plugin
@@ -11,11 +14,13 @@ import com.atlassian.plugin.impl.AbstractDelegatingPlugin;
 class ConditionLoadingPlugin extends AbstractDelegatingPlugin
 {
     private final AutowireCapablePlugin remotablePlugin;
+    private final Set<Class<?>> productConditions;
 
-    public ConditionLoadingPlugin(AutowireCapablePlugin remotablePlugin, Plugin delegate)
+    public ConditionLoadingPlugin(AutowireCapablePlugin remotablePlugin, Plugin delegate, Set<Class<?>> productConditions)
     {
         super(delegate);
         this.remotablePlugin = remotablePlugin;
+        this.productConditions = productConditions;
     }
 
     @Override
@@ -34,7 +39,8 @@ class ConditionLoadingPlugin extends AbstractDelegatingPlugin
     @Override
     public <T> T autowire(Class<T> clazz) throws UnsupportedOperationException
     {
-        if (clazz.getPackage().equals(UserIsLoggedInCondition.class.getPackage()))
+        if (clazz.getPackage().equals(UserIsLoggedInCondition.class.getPackage()) ||
+                productConditions.contains(clazz))
         {
             return remotablePlugin.autowire(clazz);
         }
@@ -47,7 +53,8 @@ class ConditionLoadingPlugin extends AbstractDelegatingPlugin
             AutowireStrategy autowireStrategy) throws
             UnsupportedOperationException
     {
-        if (clazz.getPackage().equals(UserIsLoggedInCondition.class.getPackage()))
+        if (clazz.getPackage().equals(UserIsLoggedInCondition.class.getPackage())||
+                        productConditions.contains(clazz))
         {
             return remotablePlugin.autowire(clazz, autowireStrategy);
         }

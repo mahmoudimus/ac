@@ -79,6 +79,25 @@
     <component-import key="projectRoleManager" interface="com.atlassian.jira.security.roles.ProjectRoleManager" />
     <component-import key="jiraBaseUrls" interface="com.atlassian.jira.issue.fields.rest.json.beans.JiraBaseUrls" />
 
+    <!-- imports for conditions -->
+    <component-import key="subtaskManager" interface="com.atlassian.jira.config.SubTaskManager" />
+    <component-import key="jiraApplicationProperties" interface="com.atlassian.jira.config.properties.ApplicationProperties" />
+    <component-import key="worklogService" interface="com.atlassian.jira.bc.issue.worklog.WorklogService" />
+    <component-import key="userIssueHistoryManager" interface="com.atlassian.jira.user.UserIssueHistoryManager" />
+    <component-import key="jiraPermissionmanager" interface="com.atlassian.jira.security.PermissionManager" />
+    <component-import key="fieldVisibilityManager" interface="com.atlassian.jira.web.FieldVisibilityManager" />
+    <component-import key="velocityRequestContextFactory" interface="com.atlassian.jira.util.velocity.VelocityRequestContextFactory" />
+    <component-import key="sessionSearchObjectManagerFactory" interface="com.atlassian.jira.web.session.SessionSearchObjectManagerFactory" />
+    <component-import key="issueLinkTypeManager" interface="com.atlassian.jira.issue.link.IssueLinkTypeManager" />
+    <component-import key="userPreferenceManager" interface="com.atlassian.jira.user.preferences.UserPreferencesManager" />
+    <component-import key="subtaskToIssueConversionService" interface="com.atlassian.jira.bc.subtask.conversion.SubTaskToIssueConversionService" />
+    <component-import key="attachmentService" interface="com.atlassian.jira.bc.issue.attachment.AttachmentService" />
+    <component-import key="issueManager" interface="com.atlassian.jira.issue.IssueManager" />
+    <component-import key="voteManager" interface="com.atlassian.jira.issue.vote.VoteManager" />
+    <component-import key="watcherManager" interface="com.atlassian.jira.issue.watchers.WatcherManager" />
+    <component-import key="fieldManager" interface="com.atlassian.jira.issue.fields.FieldManager" />
+    <component-import key="issueToSubtaskConversionService" interface="com.atlassian.jira.bc.subtask.conversion.IssueToSubTaskConversionService" />
+
     <!-- plugin points -->
     <described-module-type key="profile-page" name="User Profile Page" class="com.atlassian.plugin.remotable.plugin.module.page.jira.JiraProfileTabModuleDescriptor">
         <description>A user profile page decorated as a user profile tab</description>

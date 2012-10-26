@@ -10,6 +10,7 @@ import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.web.conditions.ConditionLoadingException;
 import com.atlassian.plugin.web.descriptors.ConditionElementParser;
 import com.google.common.base.Function;
+import com.google.common.collect.Sets;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -19,6 +20,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.google.common.collect.Lists.transform;
+import static com.google.common.collect.Sets.newHashSet;
 import static org.apache.commons.lang.StringUtils.join;
 
 /**
@@ -126,7 +128,7 @@ public class ConditionProcessor
 
     public Plugin getLoadablePlugin(Plugin plugin)
     {
-        return new ConditionLoadingPlugin(remotablePlugin, plugin);
+        return new ConditionLoadingPlugin(remotablePlugin, plugin, Sets.<Class<?>>newHashSet(productAccessor.getConditions().values()));
     }
 
     private List<String> getContextParameters(Element oldConfig)
