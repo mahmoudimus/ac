@@ -36,6 +36,10 @@ public class SpeakeasyLoader implements DisposableBean
                     {
                         SpeakeasyBackendService service = (SpeakeasyBackendService) bundleContext
                                 .getService(reference);
+                        if (eventListener != null)
+                        {
+                            eventPublisher.unregister(eventListener);
+                        }
                         eventListener = new SpeakeasyEventListener(
                                 bundleContext,
                                 service);
