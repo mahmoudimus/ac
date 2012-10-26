@@ -95,46 +95,46 @@ public class RemotePluginContainerModuleDescriptor extends AbstractModuleDescrip
         if (remoteMode)
         {
             final ApplicationId expectedApplicationId = ApplicationIdUtil.generate(displayUrl);
-            ApplicationLink link;
+            ApplicationLink link = null;
             final RemotePluginContainerApplicationType applicationType = typeAccessor.getApplicationType(
                     RemotePluginContainerApplicationType.class);
             try
             {
                 link = applicationLinkService.getApplicationLink(expectedApplicationId);
+            }
+            catch (TypeNotInstalledException ex)
+            {
+                log.info("Link found for '{}' but the type cannot be found, treating as not found", getPluginKey());
+            }
 
-                if (link != null)
+            if (link != null)
+            {
+                if (getPluginKey().equals(link.getProperty(PLUGIN_KEY_PROPERTY)))
                 {
-                    if (getPluginKey().equals(link.getProperty(PLUGIN_KEY_PROPERTY)))
-                    {
-                        log.info("Application link for remote plugin container '{}' already exists", getPluginKey());
-                    }
-                    else
-                    {
-                        throw new PluginParseException("Application link already exists for id '" + expectedApplicationId + "' but it isn't the target " +
-                                " plugin '" + getPluginKey() + "'");
-                    }
+                    log.info("Application link for remote plugin container '{}' already exists", getPluginKey());
                 }
                 else
                 {
-                    // try to find link with old display url
-                    for (ApplicationLink otherLink : applicationLinkService.getApplicationLinks(RemotePluginContainerApplicationType.class))
-                    {
-                        if (getPluginKey().equals(otherLink.getProperty(PLUGIN_KEY_PROPERTY)))
-                        {
-                            log.debug("Old application link for this plugin '{}' found with different display url '{}', removing",
-                                    getPluginKey(), displayUrl);
-                            applicationLinkService.deleteApplicationLink(otherLink);
-                        }
-                    }
-
-                    log.info("Creating an application link for the remote plugin container of key '{}'", getPluginKey());
-                    link = applicationLinkService.addApplicationLink(expectedApplicationId, applicationType, applicationLinkDetails);
-                    link.putProperty(PLUGIN_KEY_PROPERTY, getPluginKey());
+                    throw new PluginParseException("Application link already exists for id '" + expectedApplicationId + "' but it isn't the target " +
+                            " plugin '" + getPluginKey() + "'");
                 }
             }
-            catch (TypeNotInstalledException e)
+            else
             {
-                throw new IllegalStateException("Missing type, should never happen", e);
+                // try to find link with old display url
+                for (ApplicationLink otherLink : applicationLinkService.getApplicationLinks(RemotePluginContainerApplicationType.class))
+                {
+                    if (getPluginKey().equals(otherLink.getProperty(PLUGIN_KEY_PROPERTY)))
+                    {
+                        log.debug("Old application link for this plugin '{}' found with different display url '{}', removing",
+                                getPluginKey(), displayUrl);
+                        applicationLinkService.deleteApplicationLink(otherLink);
+                    }
+                }
+
+                log.info("Creating an application link for the remote plugin container of key '{}'", getPluginKey());
+                link = applicationLinkService.addApplicationLink(expectedApplicationId, applicationType, applicationLinkDetails);
+                link.putProperty(PLUGIN_KEY_PROPERTY, getPluginKey());
             }
 
             link.putProperty("IS_ACTIVITY_ITEM_PROVIDER", Boolean.FALSE.toString());
