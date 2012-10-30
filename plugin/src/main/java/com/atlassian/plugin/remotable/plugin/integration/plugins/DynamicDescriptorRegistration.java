@@ -47,26 +47,16 @@ public class DynamicDescriptorRegistration
     {
         this.bundleContext = bundleContext;
         this.i18nPropertiesPluginManager = i18nPropertiesPluginManager;
-        this.moduleTracker = waitableServiceTrackerFactory.create(ModuleDescriptorFactory.class,
-                new Function<ModuleDescriptorFactory,ModuleDescriptorFactory>() {
-
-                    @Override
-                    public ModuleDescriptorFactory apply(ModuleDescriptorFactory from)
-                    {
-                        return from;
-                    }
-                });
+        this.moduleTracker = waitableServiceTrackerFactory.create(ModuleDescriptorFactory.class);
     }
 
-    public void onKeys(
-            final FutureCallback<Map<String, ModuleDescriptorFactory>> callback, final String... requiredKeys)
+    public void onKeys(final FutureCallback<Map<String, ModuleDescriptorFactory>> callback, final String... requiredKeys)
     {
         moduleTracker.waitFor(
                 new Predicate<Map<ModuleDescriptorFactory, ModuleDescriptorFactory>>()
                 {
                     @Override
-                    public boolean apply(
-                            Map<ModuleDescriptorFactory, ModuleDescriptorFactory> factories)
+                    public boolean apply(Map<ModuleDescriptorFactory, ModuleDescriptorFactory> factories)
                     {
                         Set<String> keys = newHashSet(requiredKeys);
                         for (Iterator<String> i = keys.iterator(); i.hasNext(); )

@@ -270,7 +270,7 @@
             <dependency>
                 <groupId>com.atlassian.osgi</groupId>
                 <artifactId>atlassian-osgi</artifactId>
-                <version>0.1</version>
+                <version>0.2</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.osgi</groupId>
@@ -509,7 +509,7 @@
         <spring.version>2.5.6</spring.version>
         <atlassian-util-concurrent.version>2.4.0-M9</atlassian-util-concurrent.version>
         <atlassian-httpclient.version>${webhooks.version}</atlassian-httpclient.version>
-        <webhooks.version>0.9.5</webhooks.version>
+        <webhooks.version>0.9.6</webhooks.version>
         <webhooks.api.version>0.9</webhooks.api.version>
         <httpclient.api.version>${webhooks.api.version}</httpclient.api.version>
     </properties>
