@@ -28,7 +28,6 @@ import java.util.Map;
 
 import static com.atlassian.plugin.remotable.spi.util.Strings.dasherize;
 import static com.atlassian.plugin.remotable.spi.util.Strings.removeSuffix;
-import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
 
 public abstract class AbstractPageServlet extends HttpServlet implements InitializingBean

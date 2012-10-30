@@ -152,12 +152,10 @@
   }
 
   function injectBase(options) {
-    if (options.base !== false) {
-      // set the url base
-      RA.getLocation(function (loc) {
-        $("head").append({tag: "base", href: loc, target: "_parent"});
-      });
-    }
+    // set the url base
+    RA.getLocation(function (loc) {
+      $("head").append({tag: "base", href: loc, target: "_parent"});
+    });
   }
 
   function size(width, height) {

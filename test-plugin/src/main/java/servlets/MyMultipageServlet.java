@@ -1,24 +1,30 @@
 package servlets;
 
-import com.atlassian.plugin.remotable.kit.servlet.Multipage;
+import com.atlassian.plugin.remotable.kit.servlet.*;
+import com.google.common.collect.ImmutableMap;
 
+import javax.inject.Singleton;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.*;
 import java.io.IOException;
-import java.io.PrintWriter;
 
+@Singleton
 @Multipage
-public class MyMultipageServlet extends HttpServlet
+public class MyMultipageServlet extends AbstractPageServlet
 {
     @Override
-    protected void service(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException
+    protected void doGet(HttpServletRequest req, HttpServletResponse res)
+        throws ServletException, IOException
     {
-        res.setStatus(200);
-        res.setHeader("Content-Type", "text/html; charset=UTF-8");
-        PrintWriter out = res.getWriter();
-        out.print("Hello Multipage!");
-        out.flush();
+        render(req, res, ImmutableMap.of("name", "World"));
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse res)
+        throws ServletException, IOException
+    {
+        String name = req.getParameter("name");
+        name = name != null && !name.trim().isEmpty() ? name.trim() : "World";
+        render(req, res, ImmutableMap.of("name", name));
     }
 }

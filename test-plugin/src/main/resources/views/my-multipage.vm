@@ -1,0 +1,4 @@
+<h3>Hello, $name</h3>
+<form action="" method="post">
+  Name: <input type="text" name="name" value="$name">&nbsp;<input type="submit">
+</form>
