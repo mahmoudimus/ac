@@ -5,14 +5,15 @@ import com.atlassian.jira.plugin.searchrequestview.SearchRequestURLHandler;
 import com.atlassian.jira.plugin.searchrequestview.SearchRequestView;
 import com.atlassian.jira.plugin.searchrequestview.SearchRequestViewModuleDescriptor;
 import com.atlassian.jira.plugin.searchrequestview.SearchRequestViewModuleDescriptorImpl;
+import com.atlassian.jira.plugin.webfragment.descriptors.ConditionDescriptorFactory;
 import com.atlassian.jira.security.JiraAuthenticationContext;
-import com.atlassian.plugin.remotable.plugin.integration.plugins.DescriptorToRegister;
-import com.atlassian.plugin.remotable.plugin.integration.plugins.DynamicDescriptorRegistration;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
 import com.atlassian.plugin.module.ModuleFactory;
+import com.atlassian.plugin.remotable.plugin.integration.plugins.DescriptorToRegister;
+import com.atlassian.plugin.remotable.plugin.integration.plugins.DynamicDescriptorRegistration;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.atlassian.util.concurrent.NotNull;
@@ -33,6 +34,7 @@ public class RemoteSearchRequestViewModuleDescriptor extends AbstractModuleDescr
     private final SearchRequestViewBodyWriterUtil searchRequestViewBodyWriterUtil;
     private final SearchRequestURLHandler searchRequestURLHandler;
     private final TemplateRenderer templateRenderer;
+    private final ConditionDescriptorFactory conditionDescriptorFactory;
     private final JiraAuthenticationContext jiraAuthenticationContext;
     private Element descriptor;
     private URI url;
@@ -42,6 +44,7 @@ public class RemoteSearchRequestViewModuleDescriptor extends AbstractModuleDescr
             ApplicationProperties applicationProperties,
             SearchRequestViewBodyWriterUtil searchRequestViewBodyWriterUtil,
             SearchRequestURLHandler searchRequestURLHandler, TemplateRenderer templateRenderer,
+            ConditionDescriptorFactory conditionDescriptorFactory,
             JiraAuthenticationContext jiraAuthenticationContext)
     {
         this.dynamicDescriptorRegistration = dynamicDescriptorRegistration;
@@ -49,6 +52,7 @@ public class RemoteSearchRequestViewModuleDescriptor extends AbstractModuleDescr
         this.searchRequestViewBodyWriterUtil = searchRequestViewBodyWriterUtil;
         this.searchRequestURLHandler = searchRequestURLHandler;
         this.templateRenderer = templateRenderer;
+        this.conditionDescriptorFactory = conditionDescriptorFactory;
         this.jiraAuthenticationContext = jiraAuthenticationContext;
     }
 
@@ -88,22 +92,23 @@ public class RemoteSearchRequestViewModuleDescriptor extends AbstractModuleDescr
         final String title = getName();
         try
         {
-            SearchRequestViewModuleDescriptor descriptor = new SearchRequestViewModuleDescriptorImpl(
-                    jiraAuthenticationContext, searchRequestURLHandler, new ModuleFactory()
+            ModuleFactory moduleFactory = new ModuleFactory()
             {
                 @Override
                 public <T> T createModule(String name, ModuleDescriptor<T> moduleDescriptor) throws
-                        PluginParseException
+                    PluginParseException
                 {
-
                     return (T) new RemoteSearchRequestView(applicationProperties,
-                            searchRequestViewBodyWriterUtil,
-                            templateRenderer,
-                            getPluginKey(),
-                            url,
-                            title);
+                        searchRequestViewBodyWriterUtil,
+                        templateRenderer,
+                        getPluginKey(),
+                        url,
+                        title);
                 }
-            });
+            };
+
+            SearchRequestViewModuleDescriptor descriptor = new SearchRequestViewModuleDescriptorImpl(
+                    jiraAuthenticationContext, searchRequestURLHandler, moduleFactory, conditionDescriptorFactory);
 
             descriptor.init(getPlugin(), element);
             return descriptor;
