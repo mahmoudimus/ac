@@ -228,11 +228,11 @@ public class DefaultRemotablePluginInstallationService implements RemotablePlugi
                 .fail(new Function<Throwable, Document>()
                 {
                     @Override
-                    public Document apply(@Nullable Throwable input)
+                    public Document apply(Throwable input)
                     {
                         log.debug("Error retrieving descriptor", input);
                         throw new InstallationFailedException("Unable to contact and retrieve " +
-                                "descriptor from " + registrationUrl);
+                                "descriptor from " + registrationUrl + " : " + input);
                     }
                 })
                 .claim();
