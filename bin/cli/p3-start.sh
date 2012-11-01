@@ -123,7 +123,14 @@ if [ "$APP_KIT" == "servlet" ] && [ "$JAR_ONLY" != "1" ]; then
   # FIXME this is weak (assumes desired values are first occurrences in file)
   JAR_ARTIFACT_ID=`grep -m1 "<artifactId" $POM_XML | cut -f2 -d ">" | cut -f1 -d "<"`
   JAR_VERSION=`grep -m1 "<version" $POM_XML | cut -f2 -d ">" | cut -f1 -d "<"`
-  APP_PATH=$APP_PATH/target/${JAR_ARTIFACT_ID}-${JAR_VERSION}.jar
+  if [ -e "$APP_PATH/target/${JAR_ARTIFACT_ID}-${JAR_VERSION}.jar" ]; then
+    APP_PATH=$APP_PATH/target/${JAR_ARTIFACT_ID}-${JAR_VERSION}.jar
+  elif [ -e "$APP_PATH/target/${JAR_ARTIFACT_ID}.jar" ]; then
+    APP_PATH=$APP_PATH/target/${JAR_ARTIFACT_ID}.jar
+  else
+    echo "No suitable application jar found." >&2
+    exit 1
+  fi
 fi
 
 # start
