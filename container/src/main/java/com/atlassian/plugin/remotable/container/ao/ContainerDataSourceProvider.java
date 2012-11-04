@@ -17,7 +17,7 @@ import java.sql.SQLException;
 
 import static com.google.common.base.Suppliers.*;
 
-final class ContainerDataSourceProvider implements DataSourceProvider
+public final class ContainerDataSourceProvider implements DataSourceProvider
 {
     private static final String DATABASE_URL_KEY = "DATABASE_URL";
 
@@ -29,12 +29,12 @@ final class ContainerDataSourceProvider implements DataSourceProvider
     private final Supplier<DataSource> dataSource;
     private final String databaseUrl;
 
-    ContainerDataSourceProvider(ApplicationProperties applicationProperties)
+    public ContainerDataSourceProvider(File homeDirectory)
     {
         this.dbInfo = memoize(getDatabaseInfo());
         this.dataSource = memoize(getC3p0DataSource());
 
-        File dataDir = new File(applicationProperties.getHomeDirectory(), "data");
+        File dataDir = new File(homeDirectory, "data");
         dataDir.mkdir();
         this.databaseUrl = System.getProperty(DATABASE_URL_KEY, "jdbc:hsqldb:file:" + dataDir.getAbsolutePath() + "/db");
     }

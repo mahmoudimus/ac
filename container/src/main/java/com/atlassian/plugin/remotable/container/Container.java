@@ -52,7 +52,7 @@ import com.atlassian.plugin.remotable.api.service.confluence.ConfluenceSpaceClie
 import com.atlassian.plugin.remotable.api.service.confluence.ConfluenceUserClient;
 import com.atlassian.plugin.remotable.api.service.http.HostHttpClient;
 import com.atlassian.plugin.remotable.api.service.http.HostXmlRpcClient;
-import com.atlassian.plugin.remotable.container.ao.ContainerDataSourceProviderServiceFactory;
+import com.atlassian.plugin.remotable.container.ao.ContainerDataSourceProvider;
 import com.atlassian.plugin.remotable.container.internal.EnvironmentFactory;
 import com.atlassian.plugin.remotable.container.service.ContainerEmailSender;
 import com.atlassian.plugin.remotable.container.service.ContainerHttpResourceMounterServiceFactory;
@@ -207,8 +207,11 @@ public final class Container
                 pluginEventManager
         );
 
-        final ContainerPluginSettingsFactory pluginSettingsFactory = new ContainerPluginSettingsFactory();
+        ContainerDataSourceProvider dataSourceProvider = new ContainerDataSourceProvider(
+                new ContainerApplicationProperties(null).getHomeDirectory());
+        hostComponents.put(DataSourceProvider.class, dataSourceProvider);
 
+        final JdbcPluginSettingsFactory pluginSettingsFactory = new JdbcPluginSettingsFactory(dataSourceProvider);
         hostComponents.put(PluginSettingsFactory.class, pluginSettingsFactory);
         final ContainerApplicationPropertiesServiceFactory applicationPropertiesServiceFactory = new ContainerApplicationPropertiesServiceFactory(server);
         hostComponents.put(ApplicationProperties.class, applicationPropertiesServiceFactory);
@@ -240,7 +243,6 @@ public final class Container
         hostComponents.put(WebResourceManager.class, new NoOpWebResourceManager());
         hostComponents.put(RenderContext.class, renderContextServiceFactory);
 
-        hostComponents.put(DataSourceProvider.class, new ContainerDataSourceProviderServiceFactory(applicationPropertiesServiceFactory));
         hostComponents.put(TransactionTemplate.class, new NoOpTransactionTemplate());
         hostComponents.put(UserManager.class, new ContainerUserManagerServiceFactory(requestContextServiceFactory));
 
