@@ -285,12 +285,6 @@
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>com.atlassian.analytics</groupId>
-                <artifactId>analytics-api</artifactId>
-                <version>2.12</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
                 <groupId>com.atlassian.util.concurrent</groupId>
                 <artifactId>atlassian-util-concurrent</artifactId>
                 <version>${atlassian-util-concurrent.version}</version>

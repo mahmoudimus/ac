@@ -8,8 +8,7 @@ public abstract class UpgradedEvent
     protected final String oldVersion;
     protected final String newVersion;
 
-    public UpgradedEvent(
-            String oldVersion, String newVersion)
+    public UpgradedEvent(String oldVersion, String newVersion)
     {
         this.oldVersion = oldVersion;
         this.newVersion = newVersion;
