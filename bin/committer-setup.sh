@@ -5,7 +5,7 @@ curl -f http://linode.twdata.org/commit-msg -o .git/hooks/commit-msg
 chmod a+x .git/hooks/commit-msg
 
 # add remotes beac and branch
-git remote add beac https://bamboo.extranet.atlassian.com/plugins/servlet/p/remotable-plugins
+git remote add beac https://bamboo.extranet.atlassian.com/plugins/servlet/p/remotable-plugins-gatekeeper
 
 git fetch
 
