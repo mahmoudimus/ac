@@ -4,6 +4,7 @@ import com.atlassian.plugin.remotable.plugin.loader.StartableForPlugins;
 import com.atlassian.plugin.*;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.osgi.factory.OsgiPlugin;
+import com.atlassian.util.concurrent.CopyOnWriteMap;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.dom4j.DocumentHelper;
@@ -49,7 +50,7 @@ public class I18nPropertiesPluginManager implements DisposableBean
     private static final Logger log = LoggerFactory.getLogger(I18nPropertiesPluginManager.class);
 
     private final AtomicBoolean started = new AtomicBoolean(false);
-    private final Map<String,String> i18nToRegister = newHashMap();
+    private final Map<String,String> i18nToRegister = CopyOnWriteMap.newHashMap();
 
     @Autowired
     public I18nPropertiesPluginManager(PluginAccessor accessor,
@@ -68,7 +69,6 @@ public class I18nPropertiesPluginManager implements DisposableBean
             {
                 loadBundle();
                 registerI18n(i18nToRegister);
-                i18nToRegister.clear();
                 started.set(true);
             }
         });
@@ -151,13 +151,10 @@ public class I18nPropertiesPluginManager implements DisposableBean
         }
         final String data = writer.toString();
         final String name = String.valueOf(abs(writer.toString().hashCode()));
-        if (!started.get())
+        i18nToRegister.put(name, data);
+        if (started.get())
         {
-            i18nToRegister.put(name, data);
-        }
-        else
-        {
-            registerI18n(Collections.singletonMap(name, data));
+            registerI18n(i18nToRegister);
         }
         return name;
     }
@@ -168,7 +165,7 @@ public class I18nPropertiesPluginManager implements DisposableBean
         {
             public boolean includeEntry(String entryName)
             {
-                return !i18n.keySet().contains(entryName);
+                return !i18n.keySet().contains(entryName.substring(0, entryName.length() - ".properties".length()));
             }
 
             public void finish(Bundle bundle, ZipOutputStream zout) throws IOException
