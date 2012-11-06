@@ -113,7 +113,8 @@ public class CachingHttpContentRetriever implements HttpContentRetriever
                         {
                             throw new ContentRetrievalException(input);
                         }
-                    });
+                    })
+                .toPromise();
 
         if (promise.isDone())
         {

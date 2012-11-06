@@ -240,7 +240,8 @@ public final class ClientInvocationHandler implements InvocationHandler
                                         return response.getEntityStream();
                                     }
                                 })
-                                .others(ResponsePromises.<InputStream>newUnexpectedResponseFunction());
+                                .others(ResponsePromises.<InputStream>newUnexpectedResponseFunction())
+                                .toPromise();
                     }
                 });
             }
