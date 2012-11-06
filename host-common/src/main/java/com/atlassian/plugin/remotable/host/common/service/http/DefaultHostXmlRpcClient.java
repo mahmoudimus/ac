@@ -7,6 +7,7 @@ import com.atlassian.plugin.remotable.api.service.http.HostXmlRpcClient;
 import com.atlassian.plugin.remotable.api.service.http.XmlRpcException;
 import com.atlassian.plugin.remotable.api.service.http.XmlRpcFault;
 import com.atlassian.plugin.util.ChainingClassLoader;
+import com.atlassian.plugin.util.ContextClassLoaderSwitchingUtil;
 import com.atlassian.util.concurrent.Promise;
 import com.atlassian.xmlrpc.BindingException;
 import com.atlassian.xmlrpc.ServiceObject;
@@ -24,6 +25,7 @@ import java.io.Writer;
 import java.lang.reflect.Proxy;
 import java.net.URI;
 import java.util.Vector;
+import java.util.concurrent.Callable;
 
 import static java.lang.System.*;
 
@@ -150,7 +152,31 @@ public class DefaultHostXmlRpcClient implements HostXmlRpcClient
                     .ok(new Function<Response, T>()
                     {
                         @Override
-                        public T apply(Response response)
+                        public T apply(final Response response)
+                        {
+                            return parseResponse(parser, response, castResultTo);
+
+                        }
+
+
+                    })
+                    .others(ResponsePromises.<T>newUnexpectedResponseFunction());
+        }
+        catch (IOException ioe)
+        {
+            throw new RuntimeException("Should never happen", ioe);
+        }
+    }
+
+    private <T> T parseResponse(final FaultHandlingXmlRpcParser parser, final Response response, final Class<T> castResultTo)
+    {
+        try
+        {
+            return ContextClassLoaderSwitchingUtil.runInContext(getClass().getClassLoader(),
+                    new Callable<T>()
+                    {
+                        @Override
+                        public T call()
                         {
                             try
                             {
@@ -158,33 +184,42 @@ public class DefaultHostXmlRpcClient implements HostXmlRpcClient
                             }
                             catch (Exception e)
                             {
-                                throw new XmlRpcException(XmlRpcMessages.getString("XmlRpcClient.ParseError"), e);
+                                throw new XmlRpcException(
+                                        XmlRpcMessages.getString("XmlRpcClient.ParseError"), e);
                             }
 
                             if (parser.isFaultResponse())
                             {
                                 XmlRpcStruct fault = (XmlRpcStruct) parser.getParsedValue();
-                                throw new XmlRpcFault(fault.getInteger("faultCode"), fault.getString("faultString"));
+                                throw new XmlRpcFault(fault.getInteger("faultCode"),
+                                        fault.getString("faultString"));
                             }
                             else
                             {
                                 final Object parsedValue = parser.getParsedValue();
-                                if (parsedValue != null && castResultTo.isAssignableFrom(parsedValue.getClass()))
+                                if (parsedValue != null && castResultTo.isAssignableFrom(
+                                        parsedValue.getClass()))
                                 {
                                     return castResultTo.cast(parsedValue);
                                 }
                                 else
                                 {
-                                    throw new XmlRpcException("Unexpected return type: '" + parsedValue.getClass().getName() + "', expected: '" + castResultTo.getName() + "'");
+                                    throw new XmlRpcException(
+                                            "Unexpected return type: '" + parsedValue.getClass()
+                                                                                     .getName() + "', expected: '" + castResultTo
+                                                    .getName() + "'");
                                 }
                             }
                         }
-                    })
-                    .others(ResponsePromises.<T>newUnexpectedResponseFunction());
+                    });
         }
-        catch (IOException ioe)
+        catch (RuntimeException e)
         {
-            throw new RuntimeException("Should never happen", ioe);
+            throw e;
+        }
+        catch (Exception e)
+        {
+            throw new RuntimeException("Should never happen", e);
         }
     }
 }
