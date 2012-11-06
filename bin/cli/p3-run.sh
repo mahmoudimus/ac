@@ -64,7 +64,7 @@ if [ "$RP_OVERRIDE" == "1" ]; then
 else
   RUN_DIR=$P3_HOME
   CMD[1]=${CMD[1]}-standalone
-  PLUGIN=com.atlassian.labs:remotable-plugins:$PLUGIN_VERSION
+  PLUGIN=com.atlassian.plugins:remotable-plugins-plugin:$PLUGIN_VERSION
   CMD=(${CMD[@]} -Dproduct.version=$VERSION -Dplugins=$PLUGIN $@)
 fi
 
