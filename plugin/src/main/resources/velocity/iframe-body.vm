@@ -1,7 +1,6 @@
 <div id="ra-$namespace">
     <div id="embedded-$namespace"></div>
     <div id="ra-stats" style="color: gray; font-size: smaller">
-        <hr style="border: none; border-top: 1px solid #ddd"/>
         <div class="ra-timeout" style="display: none">Plugin $plugin.name is not available.</div>
         <div class="ra-message" style="display: none">
             Loaded from <a href="${plugin.displayUrl}">$plugin.name</a> in <span class="ra-elapsed"></span> ms.
