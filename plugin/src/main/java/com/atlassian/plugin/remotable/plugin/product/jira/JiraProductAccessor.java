@@ -168,6 +168,7 @@ public class JiraProductAccessor implements ProductAccessor
         conditions.put("is_watching_issue", com.atlassian.jira.plugin.webfragment.conditions.IsWatchingIssueCondition.class);
         conditions.put("has_sub_tasks_available", com.atlassian.jira.plugin.webfragment.conditions.HasSubTasksAvailableCondition.class);
         conditions.put("can_convert_to_sub_task", com.atlassian.jira.plugin.webfragment.conditions.CanConvertToSubTaskCondition.class);
+        conditions.put("has_issue_permission", com.atlassian.jira.plugin.webfragment.conditions.HasIssuePermissionCondition.class);
 
         return conditions;
     }

@@ -10,19 +10,6 @@
     <xs:include schemaLocation="common.xsd"/>
     <xs:include schemaLocation="atlassian-plugin-common.xsd"/>
 
-    <xs:complexType name="ParamType">
-        <xs:annotation>
-            <xs:documentation>Supply parameter values if required by your plugin.</xs:documentation>
-        </xs:annotation>
-        <xs:simpleContent>
-            <xs:extension base="xs:string">
-                <xs:attribute name="name"
-                              type="NameType">
-                </xs:attribute>
-            </xs:extension>
-        </xs:simpleContent>
-    </xs:complexType>
-
     <xs:simpleType name="InstallationModeType">
         <xs:restriction base="xs:string">
             <xs:enumeration value="local"/>

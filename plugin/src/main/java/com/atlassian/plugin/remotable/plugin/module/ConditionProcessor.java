@@ -69,6 +69,14 @@ public class ConditionProcessor
                 if (cName != null)
                 {
                     condElement.addAttribute("class", productAccessor.getConditions().get(cName).getName());
+                    for (Object child : cElement.elements())
+                    {
+                        if (child instanceof Element)
+                        {
+                            Element el = (Element) child;
+                            condElement.add(el.createCopy());
+                        }
+                    }
                 }
                 else
                 {

@@ -77,6 +77,9 @@
     </xs:simpleType>
 
     <xs:complexType name="ConditionType">
+        <xs:sequence>
+            <xs:element name="param" type="ParamType" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
         <xs:attribute name="name" type="ConditionNameType" use="optional" />
         <xs:attribute name="url" type="RelativeUrlType" use="optional" />
     </xs:complexType>
@@ -85,6 +88,19 @@
         <xs:sequence>
             <xs:element name="condition" type="ConditionType" minOccurs="1" maxOccurs="unbounded" />
         </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="ParamType">
+        <xs:annotation>
+            <xs:documentation>Supply parameter values if required by your plugin.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="name"
+                              type="NameType">
+                </xs:attribute>
+            </xs:extension>
+        </xs:simpleContent>
     </xs:complexType>
 
 </xs:schema>
