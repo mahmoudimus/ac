@@ -78,24 +78,28 @@ public final class IssueEventMapper extends JiraEventMapper
     private Object asMap(JSONObject object) throws JSONException
     {
         final ImmutableMap.Builder<String, Object> map = ImmutableMap.builder();
-        for (String name : JSONObject.getNames(object))
+
+        if (object.length() > 0)
         {
-            final Object value = object.get(name);
-            if (value instanceof JSONObject)
+            for (String name : JSONObject.getNames(object))
             {
-            map.put(name, asMap((JSONObject) value));
-            }
-            else if (value instanceof JSONArray)
-            {
-                map.put(name, asList((JSONArray) value));
-            }
-            else if (value instanceof JSONString)
-            {
-                map.put(name, value.toString());
-            }
-            else
-            {
-                map.put(name, value);
+                final Object value = object.get(name);
+                if (value instanceof JSONObject)
+                {
+                    map.put(name, asMap((JSONObject) value));
+                }
+                else if (value instanceof JSONArray)
+                {
+                    map.put(name, asList((JSONArray) value));
+                }
+                else if (value instanceof JSONString)
+                {
+                    map.put(name, value.toString());
+                }
+                else
+                {
+                    map.put(name, value);
+                }
             }
         }
         return map.build();
