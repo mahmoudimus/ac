@@ -115,6 +115,7 @@ public class IFrameRenderer
         allParams.put("xdm_e", new String[]{hostUrl.toString()});
         allParams.put("xdm_c", new String[]{"channel-" + iframeContext.getNamespace()});
         allParams.put("xdm_p", new String[]{"1"});
+        allParams.put("cp", new String[]{iframeHost.getContextPath()});
         String signedUrl = remotablePluginAccessor.signGetUrl(iframeUrl, allParams);
 
         // clear xdm params as they are added by easyxdm later

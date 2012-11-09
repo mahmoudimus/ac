@@ -23,6 +23,7 @@ public class TestPageModules extends AbstractRemotablePluginTest
         assertFalse(remotePluginTest.getTitle().contains("Remotable Plugin app1 General Link"));
         assertEquals("Success", remotePluginTest.getMessage());
         assertEquals(OAuthUtils.getConsumerKey(), remotePluginTest.getConsumerKey());
+        assertTrue(remotePluginTest.getIframeQueryParams().containsKey("cp"));
         assertEquals("Betty Admin", remotePluginTest.getFullName());
         assertEquals("betty", remotePluginTest.getUserId());
 
