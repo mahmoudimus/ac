@@ -437,6 +437,18 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <groupId>com.atlassian.httpclient</groupId>
+                <artifactId>atlassian-httpclient-api</artifactId>
+                <version>${atlassian-httpclient.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.httpclient</groupId>
+                <artifactId>atlassian-httpclient-spi</artifactId>
+                <version>${atlassian-httpclient.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
                 <groupId>commons-logging</groupId>
                 <artifactId>commons-logging</artifactId>
                 <version>1.1.1</version>
@@ -532,8 +544,6 @@
                             com.atlassian.xmlrpc;version="${atlassian.xmlrpc.version}",
                             com.atlassian.plugin.remotable.api.service.jira;version="${jira.client.version}",
                             com.atlassian.jira.rest.client.domain;version="${jira.client.version}",
-                            com.atlassian.httpclient.api*;version="${atlassian-httpclient.version}",
-                            com.atlassian.httpclient.spi*;version="${atlassian-httpclient.version}",
                             com.atlassian.plugin.remotable.spi*,
                             com.atlassian.plugin.remotable.api*,
                             com.atlassian.plugin.schema.descriptor;version="${plugins.version}",
