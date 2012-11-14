@@ -255,7 +255,7 @@ public class DefaultRemotablePluginInstallationService implements RemotablePlugi
                             if (version != null &&
                                     isValidPluginSystemVersion(object))
                             {
-                                return findBinaryUrl(version);
+                                return findDescriptorUrl(version);
                             }
                             log.error("Unable to find valid plugin version for key " + pluginKey);
                             return null;
@@ -279,23 +279,23 @@ public class DefaultRemotablePluginInstallationService implements RemotablePlugi
                 .claim();
     }
 
-    public String findBinaryUrl(JSONObject version) throws JSONException
+    public String findDescriptorUrl(JSONObject version) throws JSONException
     {
         JSONArray array = version.getJSONArray("links");
         for (int x=0; x< array.length(); x++)
         {
             final JSONObject link = array.getJSONObject(x);
-            if ("binary".equals(link.getString("rel")))
+            if ("descriptor".equals(link.getString("rel")))
             {
                 return link.getString("href");
             }
         }
-        throw new JSONException("No binary url found for descriptor");
+        throw new JSONException("No descriptor url found for descriptor");
     }
 
     private boolean isValidPluginSystemVersion(JSONObject version) throws JSONException
     {
-        return version != null && "three".equalsIgnoreCase(version.getString("pluginSystemVersion"));
+        return version != null && "three".equalsIgnoreCase(version.getString("addOnType"));
     }
 
     @Override
