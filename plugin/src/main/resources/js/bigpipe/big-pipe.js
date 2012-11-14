@@ -38,6 +38,7 @@ replace.
   function replaceLoadingWithError(errType, status) {
     $(document).ready(function() {
       $('.bp-loading').html("<div>Error: " + status + "</div>");
+      contentDiv$.removeClass("bp-loading");
     });
   }
 

@@ -212,7 +212,7 @@ public class BigPipe
         public RequestContentSet(String requestId)
         {
             this.requestId = requestId;
-            this.expiry = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(20);
+            this.expiry = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(30);
         }
 
         /**

@@ -42,8 +42,8 @@ public class CachingHttpContentRetriever implements HttpContentRetriever
                 "Atlassian-Remotable-Plugins/" + pluginRetrievalService.getPlugin().getPluginInformation().getVersion());
 
         options.setConnectionTimeout(3, TimeUnit.SECONDS);
-        options.setSocketTimeout(7, TimeUnit.SECONDS);
-        options.setRequestTimeout(10, TimeUnit.SECONDS);
+        options.setSocketTimeout(15, TimeUnit.SECONDS);
+        options.setRequestTimeout(20, TimeUnit.SECONDS);
 
         this.httpClient = httpClientFactory.create(options);
     }

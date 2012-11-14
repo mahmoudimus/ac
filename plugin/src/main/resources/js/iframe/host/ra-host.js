@@ -27,7 +27,7 @@
     var timeout = setTimeout(function () {
       container$.find("iframe").hide();
       home$.find(".ra-timeout").show();
-    }, 10000);
+    }, 20000);
 
     var rpc = new easyXDM.Rpc({
       remote: options.src,

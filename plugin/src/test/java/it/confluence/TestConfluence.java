@@ -162,7 +162,7 @@ public class TestConfluence
             out.write("<div>");
             try
             {
-                for (int x=0; x < 200; x++)
+                for (int x=0; x < 30; x++)
                 {
                     System.out.println("===== writing " + x);
                     out.write("<p>" + x + "</p>");
