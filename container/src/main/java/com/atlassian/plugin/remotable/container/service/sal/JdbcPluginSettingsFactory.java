@@ -3,6 +3,8 @@ package com.atlassian.plugin.remotable.container.service.sal;
 import com.atlassian.activeobjects.spi.DataSourceProvider;
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -18,6 +20,7 @@ import java.util.Locale;
 public class JdbcPluginSettingsFactory implements PluginSettingsFactory
 {
     static final String TABLE_NAME = "plugin_settings";
+    private static final Logger log = LoggerFactory.getLogger(JdbcPluginSettingsFactory.class);
 
     private final DataSource dataSource;
 
@@ -43,6 +46,7 @@ public class JdbcPluginSettingsFactory implements PluginSettingsFactory
 
             if (!rs.next())
             {
+                log.info("Creating " + TABLE_NAME + " table");
                 Statement statement = conn.createStatement();
                 statement.executeUpdate(
                         "CREATE TABLE " + TABLE_NAME + " (" +
@@ -52,6 +56,10 @@ public class JdbcPluginSettingsFactory implements PluginSettingsFactory
                                 "CONSTRAINT pk_" + TABLE_NAME + " PRIMARY KEY(key,namespace)" +
                                 ")"
                 );
+            }
+            else
+            {
+                log.debug("Table " + TABLE_NAME + " already exists");
             }
         }
         catch (SQLException e)
