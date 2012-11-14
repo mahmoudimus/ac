@@ -20,7 +20,6 @@ import static com.google.common.base.Suppliers.*;
 public final class ContainerDataSourceProvider implements DataSourceProvider
 {
     private static final String DATABASE_URL_KEY = "DATABASE_URL";
-
     private static final Class<? extends Driver> POSTGRES_DRIVER = org.postgresql.Driver.class;
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
@@ -36,7 +35,13 @@ public final class ContainerDataSourceProvider implements DataSourceProvider
 
         File dataDir = new File(homeDirectory, "data");
         dataDir.mkdir();
-        this.databaseUrl = System.getProperty(DATABASE_URL_KEY, "jdbc:hsqldb:file:" + dataDir.getAbsolutePath() + "/db");
+        String dbUrl = System.getenv(DATABASE_URL_KEY);
+        if (dbUrl == null)
+        {
+            dbUrl = "jdbc:hsqldb:file:" + dataDir.getAbsolutePath() + "/db";
+        }
+        this.databaseUrl = dbUrl;
+        log.info("Discovered database url: " + databaseUrl);
     }
 
     private Supplier<DataSource> getC3p0DataSource()
