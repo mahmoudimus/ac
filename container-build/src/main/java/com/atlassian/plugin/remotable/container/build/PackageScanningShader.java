@@ -170,10 +170,10 @@ public class PackageScanningShader
         // delete it, otherwise you cannot rename your existing zip to it.
         tempFile.delete();
 
-        boolean renameOk=zipFile.renameTo(tempFile);
-        if (!renameOk)
+        FileUtils.moveFile(zipFile,tempFile);
+        if (!tempFile.exists())
         {
-            throw new RuntimeException("could not rename the file "+zipFile.getAbsolutePath()+" to "+tempFile.getAbsolutePath());
+            throw new RuntimeException("could not move the file "+zipFile.getAbsolutePath()+" to "+tempFile.getAbsolutePath());
         }
         byte[] buf = new byte[1024];
 
