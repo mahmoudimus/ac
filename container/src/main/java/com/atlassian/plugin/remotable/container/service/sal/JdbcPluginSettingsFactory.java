@@ -33,7 +33,6 @@ public class JdbcPluginSettingsFactory implements PluginSettingsFactory
 
     private void createTableIfNotExists(DataSource dataSource)
     {
-
         try
         {
             Connection conn = dataSource.getConnection();
@@ -64,7 +63,8 @@ public class JdbcPluginSettingsFactory implements PluginSettingsFactory
         }
         catch (SQLException e)
         {
-            throw new RuntimeException(e);
+            log.error("Unable to create table " + TABLE_NAME + " due to: " + e.getMessage());
+            log.debug("Error creating table", e);
         }
     }
 
