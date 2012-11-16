@@ -17,14 +17,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
-import java.util.Collections;
 import java.util.Map;
 
 import static com.atlassian.plugin.remotable.plugin.module.util.redirect.RedirectServlet
         .getPermanentRedirectUrl;
 import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.*;
-import static com.google.common.collect.Maps.newHashMap;
-import static java.util.Collections.unmodifiableMap;
 import static org.apache.commons.lang.StringEscapeUtils.escapeHtml;
 import static org.apache.commons.lang.Validate.notNull;
 
@@ -87,18 +84,21 @@ public class WebItemCreator
                 }
 
                 UriBuilder uriBuilder = new UriBuilder(Uri.parse("/plugins/servlet" + localUrl));
-
-                for (Map.Entry<String,String> entry : contextParams.entrySet())
-                {
-                    uriBuilder.addQueryParameter(entry.getKey(), entry.getValue());
-                }
-
                 String width = getOptionalAttribute(configurationElement, "width", null);
                 if (width != null) uriBuilder.addQueryParameter("width", width);
                 String height = getOptionalAttribute(configurationElement, "height", null);
                 if (height != null) uriBuilder.addQueryParameter("height", height);
 
-                linkElement.setText(uriBuilder.toString());
+                String url = uriBuilder.toString();
+                String sep = url.indexOf("?") > 0 ? "&" : "?";
+
+                for (Map.Entry<String,String> entry : contextParams.entrySet())
+                {
+                    url += sep + entry.getKey() + "=" + entry.getValue();
+                    sep = "&";
+                }
+
+                linkElement.setText(url);
             }
 
             if (!StringUtils.isBlank(additionalStyleClass))
