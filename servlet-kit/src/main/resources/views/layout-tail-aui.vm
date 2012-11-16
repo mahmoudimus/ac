@@ -1,6 +1,5 @@
-<script src="$hostBaseResourceUrl/aui/$auiVersion/js/aui-dependencies.js"></script>
-<script src="$hostBaseResourceUrl/aui/$auiVersion/js/aui.js"></script>
-<script src="$hostBaseResourceUrl/aui/$auiVersion/js/aui-experimental.js"></script>
+<script src="$hostBaseResourceUrl/aui/$auiVersion/js/aui-all.js"></script>
+<!--[if lt IE 9]><script src="$hostBaseResourceUrl/aui/$auiVersion/js/aui-ie.js"></script><![endif]-->
 #foreach ($url in $appScriptUrls)
 <script src="$url"></script>
 #end

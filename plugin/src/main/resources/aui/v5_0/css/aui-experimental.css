@@ -1,5 +1,19 @@
-/*! AUI Flat Pack - version 5.0-m13 - generated 2012-10-02 21:18:14 -0400 */
+/*! AUI Flat Pack - version 5.0-m17 - generated 2012-11-14 02:21:29 -0500 */
 
+
+/**
+ * RESET
+ */
+html, body, p, div, h1, h2, h3, h4, h5, h6, img, pre, form, fieldset {
+    margin: 0;
+    padding: 0;
+}
+ul, ol, dl {
+    margin: 0;
+}
+img, fieldset {
+	border: 0;
+}
 
 /**
  * PAGE LAYOUT
@@ -13,6 +27,7 @@
 
 .aui-layout #content {
     -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
     box-sizing: border-box;
     clear: both;
     position: relative;
@@ -74,6 +89,7 @@
 .aui-group {
     display: table;
     -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
     box-sizing: border-box;
     border-spacing: 0;
     table-layout: fixed;
@@ -82,6 +98,7 @@
 
 .aui-group > .aui-item {
     -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
     box-sizing: border-box;
     display: table-cell;
     margin: 0;
@@ -170,12 +187,11 @@
 /**
  * CONTENT PANEL
  */
-.aui-theme-default #content > .aui-panel,
-.aui-theme-default .aui-page-panel {
+.aui-theme-default #content > .aui-panel {
     background: #fff;
     margin: 20px 0 0 0;
     padding: 20px;
-    border-color: #ddd;
+    border-color: #ccc;
     border-style: solid;
     border-width: 1px 0;
 }
@@ -183,7 +199,6 @@
 .aui-theme-default #content > .aui-page-header {
     padding: 20px;
 }
-.aui-theme-default #content > .aui-page-header + .aui-page-panel,
 .aui-theme-default #content > .aui-page-header + .aui-panel {
     margin-top: 0;
 }
@@ -191,9 +206,67 @@
 .aui-theme-default #content > .aui-page-header:first-child {
     margin-top: 0;
 }
-.aui-theme-default .aui-panel + .aui-panel,
-.aui-theme-default .aui-page-panel + .aui-page-panel {
+.aui-theme-default .aui-panel + .aui-panel {
     margin-top: 20px;
+}
+
+/*! AUI Page Panel */
+.aui-page-panel {
+    background: #fff;
+    border: 1px solid #ccc;
+    border-left-width: 0;
+    border-right-width: 0;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    clear: both;
+    display: block;
+    margin: 20px 0 0 0;
+    padding: 0;
+    position: relative;
+    width: 100%;
+}
+.aui-page-panel-inner {
+    border-spacing: 0;
+    display: table;
+    table-layout: fixed;
+    width: 100%;
+}
+.aui-page-panel-nav,
+.aui-page-panel-content,
+.aui-page-panel-item,
+.aui-page-panel-sidebar {
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    display: table-cell;
+    padding: 20px;
+    vertical-align: top;
+}
+.aui-page-panel-nav {
+    border-right: 1px solid #ccc;
+    width: 218px;
+}
+.aui-page-panel-sidebar {
+    width: 35%;
+}
+.aui-page-panel-item {
+    padding: 0;
+}
+.aui-page-panel-nav ~ .aui-page-panel-sidebar {
+    width: 30%;
+}
+/* Page Panel Interops */
+.aui-page-header + .aui-page-panel,
+.aui-navbar + .aui-page-panel {
+    margin-top: 0;
+}
+.aui-navbar + .aui-page-panel {
+    border-top: none;
+}
+.aui-page-panel-nav > .aui-nav-vertical {
+    margin-left: -10px;
+    margin-right: -10px;
 }
 
 /**
@@ -212,7 +285,7 @@
 }
 
 .aui-theme-default #content > .aui-tabs.horizontal-tabs > .tabs-pane {
-    border: 1px solid #ddd;
+    border: 1px solid #ccc;
     border-top: none;
     border-radius: 0 0 3px 3px;
     background: #fff;
@@ -461,6 +534,7 @@ abbr {
 }
 .aui-header .aui-header-logo-textonly .aui-header-logo-device {
     float: left;
+    padding-top: 4px;
 }
 .aui-header .aui-header-logo-textonly .aui-header-logo-device + .aui-header-logo-text {
     padding: 5px 0 5px 10px;
@@ -604,6 +678,10 @@ abbr {
     -webkit-box-shadow: rgba(255, 255, 255, 0.1) 0 1px 0 0 inset, rgba(0, 0, 0, 0.2) 0 1px 1px 0;
     box-shadow: rgba(255, 255, 255, 0.1) 0 1px 0 0 inset, rgba(0, 0, 0, 0.2) 0 1px 1px 0;
     margin: 6px 10px 0 10px;
+}
+
+.aui-header .aui-button.aui-button-primary.aui-style.active{
+    padding-bottom: 4px; /* header doesn't need the button/dropdown integration padding change because it has no border */
 }
 
 .aui-header .aui-button.aui-button-primary.aui-style:focus,
@@ -769,14 +847,6 @@ abbr {
     position: relative;
 }
 
-.aui-nav-horizontal a.active .aui-icon-dropdown,
-.aui-nav-horizontal a:active .aui-icon-dropdown,
-.aui-nav-vertical a.active .aui-icon-dropdown,
-.aui-nav-vertical a:active .aui-icon-dropdown {
-    border-top-color: #fff;
-}
-
-
 
 /* Breadcrumb navigation
 -------------------- */
@@ -791,7 +861,7 @@ abbr {
 
 /* last of type for where it works */
 .aui-nav-breadcrumbs > li.aui-nav-selected a,
-.aui-nav-breadcrumbs > li:last-child a {
+.aui-nav-breadcrumbs > li:last-child:not(:first-child) a {
     color: #333;
 }
 
@@ -813,18 +883,14 @@ abbr {
 .aui-nav-vertical > li > a {
     display: block;
     padding: 7px 10px;
-	  line-height: 1.1428; /* 16px equiv */
+	line-height: 1.14285714285714; /* 16px equiv */
     word-wrap: break-word;
 }
 
 .aui-nav-vertical > li > a:focus,
 .aui-nav-vertical > li > a:hover {
     background: #e6e6e6;
-	  text-decoration: none;
-}
-.aui-nav-vertical > li > a:active {
-    background: #3b73af;
-    color: #fff;
+	text-decoration: none;
 }
 
 .aui-nav-vertical .aui-nav-selected a {
@@ -837,8 +903,8 @@ abbr {
 -------------------- */
 .aui-navbar {
     background: #f5f5f5;
-    border-top: 1px solid #ddd;
-    border-bottom: 1px solid #ddd;
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
     padding: 0 10px;
     margin: 0;
 }
@@ -847,9 +913,12 @@ abbr {
     border-top: 0;
     margin-top: 0;
 }
-.aui-theme-default .aui-page-panel > .aui-navbar {
+.aui-theme-default .aui-page-panel-content > .aui-navbar {
     margin-left: -20px;
     margin-right: -20px;
+}
+.aui-theme-default .aui-page-panel-content > .aui-navbar:first-child {
+    margin-top: -20px;
 }
 
 /* breadcrumbs in navbar */
@@ -871,13 +940,6 @@ abbr {
     text-decoration: none;
 }
 
-.aui-navbar .aui-nav-horizontal a.active,
-.aui-navbar .aui-nav-horizontal a:active,
-.aui-navbar .aui-nav-horizontal .aui-nav-selected a:active {
-    background: #3b73af;
-    color: #fff;
-}
-
 .aui-navbar .aui-nav-horizontal .aui-nav-selected a {
     font-weight: bold;
     color: #333;
@@ -888,7 +950,7 @@ abbr {
 .aui-navbar .aui-nav-horizontal .aui-nav-selected a:after {
     border: 8px solid transparent;
     border-style: outset outset solid outset; /* fixes FF bug */
-    border-bottom-color: #ddd;
+    border-bottom-color: #ccc;
     bottom: 1px;
     content: "";
     height: 0;
@@ -904,41 +966,23 @@ abbr {
     bottom: 0;
 }
 
-/* Navgroup - Vertical Navigation container
+/* Vertical Navigation
 -------------------- */
-
-.aui-page-panel > .aui-group.aui-group-navgroup {
-    margin: -20px;
-}
-
-.aui-page-panel > .aui-group.aui-group-navgroup > .aui-item {
-    padding: 20px;
-}
-.aui-page-panel > .aui-group.aui-group-navgroup > .aui-item.aui-item-navgroup {
-    padding: 10px 10px 20px 10px;
-    width: 200px;
-}
-.aui-page-panel > .aui-group.aui-group-navgroup > .aui-item.aui-item-navgroup:first-child {
-    border-right: 1px solid #ddd;
-}
-.aui-page-panel > .aui-group.aui-group-navgroup > .aui-item.aui-item-navgroup:last-child {
-    border-left: 1px solid #ddd;
-}
 
 .aui-navgroup .aui-nav-heading {
     color: #707070;
     font-size: 12px;
-	  font-weight: bold;
+	font-weight: bold;
     text-transform: uppercase;
-	  line-height: 1.667; /* 20px */
-	  padding: 5px 10px;
+	line-height: 1.667; /* 20px */
+	padding: 5px 10px;
 }
 
 .aui-navgroup .aui-nav-vertical,
 .aui-navgroup .aui-nav-heading {
-    border-top: 1px solid #ddd;
+    border-top: 1px solid #ccc;
     margin-top: 5px;
-	  padding-top: 5px;
+	padding-top: 5px;
 }
 
 .aui-navgroup .aui-nav-heading:first-child,
@@ -963,7 +1007,7 @@ a.aui-button {
     background: -webkit-linear-gradient(top, #fff 0%, #f2f2f2 100%); /* Chrome10+,Safari5.1+ */
     background: linear-gradient(top, #fff 0%, #f2f2f2 100%); /* W3C */
     border: 1px solid #ccc;
-    border-radius: 3px;
+    border-radius: 3.01px;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
     color: #333;
@@ -1031,6 +1075,7 @@ a.aui-button:focus {
     border-color: #486582;
     color: #fff;
     font-weight: bold;
+    -webkit-font-smoothing: antialiased; /* for chrome on mac */
     text-shadow: 0 1px 0 #205081;
 }
 
@@ -1163,7 +1208,7 @@ ARIA usage from http://www.paciellogroup.com/blog/misc/ARIA/togglebutton.html */
 .aui-button[aria-pressed="true"],
 .aui-buttons .aui-button[aria-pressed="true"],
 .aui-buttons .aui-button[aria-pressed="true"].aui-button-primary {
-    background: #ddd;
+    background: #ccc;
     background: -webkit-linear-gradient(top, #ccc 0%, #ddd 13%);
     background: -moz-linear-gradient(top, #ccc 0%, #ddd 13%); /* FF3.6+ */
     background: -o-linear-gradient(top, #ccc 0%, #ddd 13%); /* Opera 11.10+ */
@@ -1172,7 +1217,7 @@ ARIA usage from http://www.paciellogroup.com/blog/misc/ARIA/togglebutton.html */
 }
 
 .aui-buttons .aui-button[aria-pressed="true"]:active {
-    background: #ddd;
+    background: #ccc;
     box-shadow: inset 0px 3px 6px rgba(0,0,0,.2);
 }
 
@@ -1194,7 +1239,7 @@ ARIA usage from http://www.paciellogroup.com/blog/misc/ARIA/togglebutton.html */
     background: -o-linear-gradient(top, #FFF 0%,#f2f2f2 100%); /* Opera 11.10+ */
     background: -ms-linear-gradient(top, #FFF 0%,#f2f2f2 100%); /* IE10+ */
     background: linear-gradient(top, #FFF 0%,#f2f2f2 100%); /* W3C */
-    border-color: #ddd;
+    border-color: #ccc;
     box-shadow: none;
     color: #999;
     cursor: default;
@@ -1258,6 +1303,17 @@ ARIA usage from http://www.paciellogroup.com/blog/misc/ARIA/togglebutton.html */
 
 /* Cross-component integration
 ---------------------------------------------------------------------- */
+
+/* Dropdown2-only button - used to create split button
+---------- */
+.aui-button.aui-dropdown2-trigger.aui-button-split-more,
+.aui-button.aui-dropdown2-trigger.aui-button-split-more.active {
+    text-align: left;
+    text-indent: -9999em;
+    /* don't touch vertical padding or things jump around, jump around, jump up jump up and get down */
+    padding-right: 10px;
+    padding-left: 5px;
+}
 
 /* Dropdown2 integration
 ---------- */
@@ -1324,8 +1380,8 @@ input.aui-button.aui-dropdown2-trigger:after {
 
 /*! AUI Lozenge */
 .aui-lozenge {
-    background: #ddd;
-    border: 1px solid #ddd;
+    background: #ccc;
+    border: 1px solid #ccc;
     border-radius: 3px;
     color: #333;
     display: inline-block;
@@ -1340,7 +1396,7 @@ input.aui-button.aui-dropdown2-trigger:after {
 }
 .aui-lozenge.aui-lozenge-subtle {
     background-color: #fff;
-    border-color: #ddd;
+    border-color: #ccc;
     color: #333;
 }
 .aui-lozenge-success {
@@ -1633,8 +1689,8 @@ input.aui-button.aui-dropdown2-trigger:after {
 }
 /*! AUI Badge */
 .aui-badge {
-    background: #ddd; /* for IE8 - IE9 and other browsers gets the next line */
-    background: rgba(0, 0, 0, .11); /* #ddd on white - rgba so it tints off the background colour */
+    background: #ccc; /* for IE8 - IE9 and other browsers gets the next line */
+    background: rgba(0, 0, 0, 0.2); /* #ccc - derived with black on white - rgba so it tints off the background colour */
     border-radius: 2em; /* needs to be at least 1em + border-top + border-bottom + padding-top + padding-bottom to get perfectly rounded */
     color: #333; /* for IE8 - IE9 and other browsers gets the next line */
     color: rgba(0, 0, 0, .8); /* #333 on white - rgba so it tints off the background colour */
@@ -1654,22 +1710,18 @@ input.aui-button.aui-dropdown2-trigger:after {
 /* Light version for contexts we know about */
 .aui-header a:active > .aui-badge,
 .aui-button-primary > .aui-badge,
-.aui-tabs > .tabs-menu .menu-item a:active .aui-badge,
-.aui-nav-vertical > li > a:active > .aui-badge,
-.aui-navbar .aui-nav-horizontal a.active > .aui-badge,
-.aui-navbar .aui-nav-horizontal a:active > .aui-badge,
 .aui-dropdown2.aui-style-default .active > .aui-badge {
     background: #6B95C2; /* for IE8 - IE9 and other browsers gets the next line */
     background: rgba(255, 255, 255, .25);
     color: #fff;
 }
 .aui-button[disabled] > .aui-badge {
-    background: #ddd; /* for IE8 - IE9 and other browsers gets the next line */
-    background: rgba(0, 0, 0, .11);
+    background: #ccc; /* for IE8 - IE9 and other browsers gets the next line */
+    background: rgba(0, 0, 0, 0.2); /* #ccc - derived with black on white - rgba so it tints off the background colour */
     color: inherit;
 }
 .aui-button-primary[disabled] > .aui-badge {
-    background: #ddd; /* for IE8 - IE9 and other browsers gets the next line */
+    background: #ccc; /* for IE8 - IE9 and other browsers gets the next line */
     background: rgba(255, 255, 255, .25);
 }
 .aui-button > .aui-badge,

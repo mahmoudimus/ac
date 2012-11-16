@@ -1,4 +1,4 @@
-/*! AUI Flat Pack - version 5.0-m13 - generated 2012-10-02 21:18:14 -0400 */
+/*! AUI Flat Pack - version 5.0-m17 - generated 2012-11-14 02:21:29 -0500 */
 
 
 /**
@@ -140,52 +140,21 @@ form.aui .medium-field {
 form.aui .long-field {
     max-width: 488px;
 }
+form.aui .full-width-field {
+    max-width: none;
+}
 /* This file left intentionally blank. We can remove it when the PDL goes live. */
-/*! AUI Inline Dialog */
-.aui-inline-dialog {
-    display: none;
+/* This file is served to all versions of IE up to IE9, no hacks as all versions need the one thing it contains :) */
+.inline-dialog-shim {
+    border: none;
+    display: block;
+    height: 0;
+    left: 0;
     position: absolute;
-    z-index: 100;
+    top: 0;
+    width: 0;
+    z-index: -2;
 }
-
-.aui-inline-dialog .aui-box-shadow {
-    -webkit-box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.13);
-    box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.13);
-}
-
-.aui-inline-dialog .contents {
-    background: #fff;
-    border: 1px solid #ddd;
-    border-radius: 3px;
-    overflow: hidden;
-    padding: 20px;
-    width: 320px;
-}
-.aui-inline-dialog .arrow {
-    position: absolute;
-    height: 16px;
-    top: -7px; /* matches #inline-dialog-shim */
-    width: 16px;
-}
-#inline-dialog-shim {
-    display: none;
-}
-
-/* Inline Dialog + Forms Integration - top labels and full width fields supported */
-/* funny numbers to add up to 20px spacing in various places (border to cap height/baseline) */
-.aui-inline-dialog .contents form.aui h2:first-child {
-    border-bottom: 1px solid #ddd;
-    margin: -7px 0 11px 0;
-    padding: 0 0 12px 0;
-}
-.aui-inline-dialog .contents form.aui .buttons-container {
-    margin-top: 16px;
-    padding: 0;
-}
-.aui-inline-dialog .contents .submit + .cancel {
-    margin-left: 0;
-}
-
 
 /* @pdl.dir this space intentionally left blank. */
 .aui-toolbar .toolbar-group .first .toolbar-trigger,
@@ -236,7 +205,7 @@ form.aui .long-field {
     *padding: 0;
 }
 .aui-toolbar .toolbar-item.contains-button {
-    *border: 1px solid #ddd !important;
+    *border: 1px solid #ccc !important;
     *height: 24px;
     *padding: 0;
 }
