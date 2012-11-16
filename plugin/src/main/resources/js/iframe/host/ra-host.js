@@ -1,22 +1,22 @@
-(function (global, $) {
+(function (global, AJS) {
 
-  global.RemotablePlugins = global.RemotablePlugins || {};
-
-  var xhrProperties = ["status", "statusText", "responseText"],
+  var $ = AJS.$,
+      RA = global.RemotablePlugins = global.RemotablePlugins || {},
+      xhrProperties = ["status", "statusText", "responseText"],
       xhrHeaders = ["Content-Type"],
-      RA = global.RemotablePlugins,
       events = (AJS.EventQueue = AJS.EventQueue || []);
 
   RA.create = RA.create || function (options) {
 
     var ns = options.ns,
-        home$ = $("#ra-" + ns),
-        containerId = "embedded-" + ns,
+        $home = $("#ra-" + ns),
+        contentId = "embedded-" + ns,
         channelId = "channel-" + ns,
-        container$ = $("#" + containerId),
-        initHeight = options.height || "0",
+        $content = $("#" + contentId),
         initWidth = options.width || "100%",
+        initHeight = options.height || "0",
         start = new Date().getTime(),
+        isDialog = !!options.dialog,
         inited;
 
     function track(name, props) {
@@ -25,16 +25,19 @@
     }
 
     var timeout = setTimeout(function () {
-      container$.find("iframe").hide();
-      home$.find(".ra-timeout").show();
+      $home.find(".ra-message").hide();
+      $home.find(".ra-timedout").show();
+      layoutIfNeeded();
+      var elapsed = new Date().getTime() - start;
+      track("plugin.iframetimedout", {elapsed: elapsed});
     }, 20000);
 
     var rpc = new easyXDM.Rpc({
       remote: options.src,
-      container: containerId,
+      container: contentId,
       channel: channelId,
       protocol: "1", // force to postMessage
-      props: {height: initHeight, width: initWidth}
+      props: {width: initWidth, height: initHeight}
     }, {
       remote: {
         dialogMessage: {}
@@ -46,18 +49,21 @@
             if (timeout) {
               clearTimeout(timeout);
             }
-            container$.addClass("iframe-init");
-            container$.find("iframe").show(); // in case it was hidden by an earlier timeout
-            home$.find(".ra-timeout").hide(); // in case it was shown by an earlier timeout
+            $content.addClass("iframe-init");
+            $home.find(".ra-message").hide();
             var elapsed = new Date().getTime() - start;
-            home$.find(".ra-elapsed").text(elapsed);
-            home$.find(".ra-message").show();
+            $home.find(".ra-elapsed").text(elapsed);
+            $home.find(".ra-loaded").show();
+            layoutIfNeeded();
             track("plugin.iframeinited", {elapsed: elapsed});
           }
         },
         resize: debounce(function (width, height) {
           // debounce resizes to avoid excessive page reflow
-          $("iframe", container$).css({height: height, width: width});
+          if (!isDialog) {
+            // dialog content plugins do not honor resize requests, since their content size is fixed
+            $("iframe", $content).css({width: width, height: height});
+          }
         }),
         getLocation: function () {
           return global.location.href;
@@ -65,7 +71,7 @@
         getUser: function () {
           // JIRA 5.0, Confluence 4.3(?)
           var meta = AJS.Meta,
-            fullName = meta ? meta.get("remote-user-fullname") : null;
+              fullName = meta ? meta.get("remote-user-fullname") : null;
           if (!fullName) {
             // JIRA 4.4, Confluence 4.1, Refapp 2.15.0
             fullName = $("a#header-details-user-fullname, .user.ajs-menu-title, a#user").text();
@@ -121,6 +127,23 @@
       }
     });
 
+    function layoutIfNeeded() {
+      var $stats = $(".ra-stats", $home);
+      if (isDialog) {
+        var $placeholder = $content.parents(".ra-servlet-placeholder"),
+            $iframe = $("iframe", $content),
+            panelHeight = $placeholder.parent().height();
+        $iframe.parents(".ra-servlet-placeholder, .ra-container").height(panelHeight);
+        var containerHeight = $iframe.parents(".ra-container").height(),
+            iframeHeight = containerHeight - $stats.outerHeight(true);
+        $iframe.height(iframeHeight);
+        $content.height(iframeHeight);
+      }
+      $stats.show();
+    }
+
+    layoutIfNeeded();
+
     // a simplified version of underscore's debounce
     function debounce(fn, wait) {
       var timeout;
@@ -139,24 +162,19 @@
     }
 
     // connects rpc functions to local event channels
-    function bind() {
-      var placeholder$ = container$.parents(".ra-servlet-placeholder");
-
-      placeholder$.bind("ra.dialog.submit", function (e, callback) {
-        rpc.dialogMessage("submit", callback);
-      });
-
-      placeholder$.bind("ra.dialog.cancel", function (e, callback) {
-        rpc.dialogMessage("cancel", callback);
-      });
-
-      placeholder$.bind("ra.iframe.destroy", function () {
-        rpc.destroy();
-      });
-    }
-
-    bind();
+    (function () {
+      $content.parents(".ra-servlet-placeholder")
+        .bind("ra.dialog.submit", function (e, callback) {
+          rpc.dialogMessage("submit", callback);
+        })
+        .bind("ra.dialog.cancel", function (e, callback) {
+          rpc.dialogMessage("cancel", callback);
+        })
+        .bind("ra.iframe.destroy", function () {
+          rpc.destroy();
+        });
+    })();
 
   }
 
-}(this, AJS.$));
+}(this, AJS));

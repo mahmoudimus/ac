@@ -7,6 +7,8 @@ import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.web.conditions.AlwaysDisplayCondition;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
+import com.atlassian.uri.Uri;
+import com.atlassian.uri.UriBuilder;
 import org.apache.commons.lang.StringUtils;
 import org.dom4j.Element;
 import org.slf4j.Logger;
@@ -15,11 +17,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
+import java.util.Collections;
 import java.util.Map;
 
 import static com.atlassian.plugin.remotable.plugin.module.util.redirect.RedirectServlet
         .getPermanentRedirectUrl;
 import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.*;
+import static com.google.common.collect.Maps.newHashMap;
+import static java.util.Collections.unmodifiableMap;
 import static org.apache.commons.lang.StringEscapeUtils.escapeHtml;
 import static org.apache.commons.lang.Validate.notNull;
 
@@ -81,23 +86,19 @@ public class WebItemCreator
                     throw new PluginParseException("Invalid url '" + localUrl + "', cannot contain velocity expressions");
                 }
 
-                StringBuilder url = new StringBuilder();
-                url.append("/plugins/servlet");
-                url.append(localUrl);
-                if (localUrl.getQuery() == null)
-                {
-                    url.append("?");
-                }
+                UriBuilder uriBuilder = new UriBuilder(Uri.parse("/plugins/servlet" + localUrl));
 
                 for (Map.Entry<String,String> entry : contextParams.entrySet())
                 {
-                    url.append(entry.getKey());
-                    url.append("=");
-                    url.append(entry.getValue());
-                    url.append("&");
+                    uriBuilder.addQueryParameter(entry.getKey(), entry.getValue());
                 }
 
-                linkElement.setText(url.substring(0, url.length() - 1));
+                String width = getOptionalAttribute(configurationElement, "width", null);
+                if (width != null) uriBuilder.addQueryParameter("width", width);
+                String height = getOptionalAttribute(configurationElement, "height", null);
+                if (height != null) uriBuilder.addQueryParameter("height", height);
+
+                linkElement.setText(uriBuilder.toString());
             }
 
             if (!StringUtils.isBlank(additionalStyleClass))
@@ -136,8 +137,6 @@ public class WebItemCreator
             }
             return createWebItemDescriptor(conditionProcessor.getLoadablePlugin(plugin), config);
         }
-
-
 
         private WebItemModuleDescriptor createWebItemDescriptor(
                 Plugin plugin, Element config)

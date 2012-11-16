@@ -1,0 +1,25 @@
+.ra-message {
+  color: gray;
+  font-size: smaller;
+  line-height: 16px;
+}
+
+.ra-dialog-loading {
+  background: url(loading.gif) center center no-repeat;
+}
+
+.ra-loading {
+  background: url(loading.gif) left center no-repeat;
+  padding-left: 34px;
+}
+
+.ra-dialog-content {
+  padding: 0 !important;
+  overflow: hidden !important;
+}
+
+.ra-dialog-content .ra-stats {
+  padding: 5px 10px;
+  background: #f7f7f7;
+  border-top: 1px solid #f0f0f0;
+}

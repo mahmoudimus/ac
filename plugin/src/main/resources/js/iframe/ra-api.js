@@ -158,6 +158,12 @@
     });
   }
 
+  function injectMargin(options) {
+    // set a context-sensitive margin value
+    var margin = options.isDialog ? "10px 10px 0 10px" : "0";
+    $("head").append({tag: "style", $text: "body {margin: " + margin + " !important;}"});
+  }
+
   function size(width, height) {
     var w = width == null ? "100%" : width,
       max = Math.max,
@@ -175,6 +181,7 @@
     if (options.document) {
       appDoc = options.document;
     }
+    options.isDialog = global.location.toString().indexOf("dialog=1") > 0;
     var config = {};
     // init stubs for private bridge functions
     var stubs = {/* private repc stubs here */};
@@ -183,6 +190,10 @@
     rpc = new easyXDM.Rpc(config, {remote: stubs, local: internal});
     rpc.init();
     // integrate the iframe with the host document
+    if (options.margin !== false) {
+      // inject an appropriate margin value
+      injectMargin(options);
+    }
     if (options.base !== false) {
       // inject an appropriate base tag
       injectBase(options);
@@ -339,7 +350,8 @@
       try {
         // if no handler, default to allowing the operation to proceed
         return dialogHandlers[message]? dialogHandlers[message]() : true;
-      } catch (e) {
+      }
+      catch (e) {
         console.error(e);
       }
     }

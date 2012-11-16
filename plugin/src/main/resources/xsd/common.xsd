@@ -50,9 +50,8 @@
     </xs:simpleType>
 
     <xs:simpleType name="PixelType">
-        <xs:restriction base="xs:integer">
-            <xs:minInclusive value="0" />
-            <xs:maxInclusive value="2000" />
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[0-9]{1,4}[%]?" />
         </xs:restriction>
     </xs:simpleType>
 

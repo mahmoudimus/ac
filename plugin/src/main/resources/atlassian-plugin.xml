@@ -46,7 +46,7 @@
         <url-pattern>/redirect/permanent</url-pattern>
     </servlet>
 
-    <web-resource key="iframe-host">
+    <web-resource key="iframe-host-js">
         <resource type="download" name="easyXDM.js" location="/js/iframe/easyXDM.js" />
         <resource type="download" name="ra-host.js" location="/js/iframe/host/ra-host.js" />
     </web-resource>
@@ -59,6 +59,13 @@
     <web-resource key="dialog">
         <resource type="download" name="dialog.js" location="js/dialog/dialog.js" />
         <dependency>com.atlassian.auiplugin:ajs</dependency>
+    </web-resource>
+
+    <web-resource key="iframe-host-css">
+        <resource type="download" name="loading.gif" location="/css/iframe/host/loading.gif" />
+        <resource type="download" name="ra-host.css" location="/css/iframe/host/ra-host.css" />
+        <context>atl.general</context>
+        <context>atl.admin</context>
     </web-resource>
 
     <web-resource key="remote-condition">

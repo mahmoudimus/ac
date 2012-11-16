@@ -1,14 +1,30 @@
-<div id="ra-$namespace">
-    <div id="embedded-$namespace"></div>
-    <div id="ra-stats" style="color: gray; font-size: smaller">
-        <div class="ra-timeout" style="display: none">Plugin $plugin.name is not available.</div>
-        <div class="ra-message" style="display: none">
-            Loaded from <a href="${plugin.displayUrl}">$plugin.name</a> in <span class="ra-elapsed"></span> ms.
-        </div>
+<div class="ra-container" id="ra-$namespace">
+  <div class="ra-content" id="embedded-$namespace"></div>
+  <div class="ra-stats hidden">
+    <div class="ra-loading ra-message hidden">
+      Loading plugin <a href="${plugin.displayUrl}">$plugin.name</a>.
     </div>
-    ## @todo figure out how to optimize the scripts generated here
-    #foreach ($scriptUrl in $scriptUrls)
-        <script src="$scriptUrl"></script>
-    #end
-    <script>RemotablePlugins.create({ns: '$namespace', src: '$iframeSrcHtml', height: '$!height', width: '$!width', contextPath: '$contextPath', appKey: '$plugin.key', userId: '$userId'});</script>
+    <div class="ra-loaded ra-message hidden">
+      Loaded plugin <a href="${plugin.displayUrl}">$plugin.name</a> in <span class="ra-elapsed"></span> ms.
+    </div>
+    <div class="ra-timedout ra-message">
+      Plugin $plugin.name is not available.
+    </div>
+  </div>
+  ## @todo optimize script delivery
+  #foreach ($scriptUrl in $scriptUrls)
+    <script src="$scriptUrl"></script>
+  #end
+  <script>
+    RemotablePlugins.create({
+      ns: "$namespace",
+      src: "$iframeSrcHtml",
+      width: "$!width",
+      height: "$!height",
+      contextPath: "$contextPath",
+      appKey: "$plugin.key",
+      userId: "$userId",
+      dialog: "$!dialog"
+    });
+  </script>
 </div>

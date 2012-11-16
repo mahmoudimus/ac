@@ -75,11 +75,11 @@ public class IFrameRenderer
             }
 
             Map<String, Object> ctx = newHashMap(iframeContext.getIFrameParams().getAsMap());
-            if (!ctx.containsKey("width") && queryParams.get("width") != null)
+            if (queryParams.get("width") != null)
             {
                 iframeContext.getIFrameParams().setParam("width", queryParams.get("width")[0]);
             }
-            if (!ctx.containsKey("height") && queryParams.get("height") != null)
+            if (queryParams.get("height") != null)
             {
                 iframeContext.getIFrameParams().setParam("height", queryParams.get("height")[0]);
             }
@@ -109,6 +109,7 @@ public class IFrameRenderer
 
         final URI hostUrl = iframeHost.getUrl();
         final URI iframeUrl = URI.create(iframeContext.getIframePath().getPath() + ObjectUtils.toString(extraPath));
+        String[] dialog = queryParams.get("dialog");
 
         Map<String,String[]> allParams = newHashMap(queryParams);
         allParams.put("user_id", new String[]{remoteUser});
@@ -116,6 +117,7 @@ public class IFrameRenderer
         allParams.put("xdm_c", new String[]{"channel-" + iframeContext.getNamespace()});
         allParams.put("xdm_p", new String[]{"1"});
         allParams.put("cp", new String[]{iframeHost.getContextPath()});
+        if (dialog != null && dialog.length == 1) allParams.put("dialog", dialog);
         String signedUrl = remotablePluginAccessor.signGetUrl(iframeUrl, allParams);
 
         // clear xdm params as they are added by easyxdm later
@@ -132,6 +134,7 @@ public class IFrameRenderer
         ctx.put("scriptUrls", getJavaScriptUrls());
         ctx.put("contextPath", iframeHost.getContextPath());
         ctx.put("userId", remoteUser == null ? "" : remoteUser);
+        if (dialog != null && dialog.length == 1) ctx.put("dialog", dialog[0]);
 
         StringWriter output = new StringWriter();
         templateRenderer.render("velocity/iframe-body.vm", ctx, output);
@@ -141,11 +144,13 @@ public class IFrameRenderer
     public List<String> getJavaScriptUrls()
     {
         List<String> scripts = newArrayList();
-        ModuleDescriptor<?> moduleDescriptor = plugin.getModuleDescriptor("iframe-host");
+        ModuleDescriptor<?> moduleDescriptor = plugin.getModuleDescriptor("iframe-host-js");
         for (ResourceDescriptor descriptor : moduleDescriptor.getResourceDescriptors())
         {
             String src = webResourceUrlProvider.getStaticPluginResourceUrl(moduleDescriptor, descriptor.getName(), UrlMode.AUTO);
-            scripts.add(src);
+            if (src.endsWith(".js")) {
+                scripts.add(src);
+            }
         }
         return scripts;
     }
