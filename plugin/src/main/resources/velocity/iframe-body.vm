@@ -1,13 +1,13 @@
 <div class="ra-container" id="ra-$namespace">
   <div class="ra-content" id="embedded-$namespace"></div>
   <div class="ra-stats hidden">
-    <div class="ra-loading ra-message hidden">
+    <div class="ra-loading ra-message">
       Loading plugin <a href="${plugin.displayUrl}">$plugin.name</a>.
     </div>
     <div class="ra-loaded ra-message hidden">
       Loaded plugin <a href="${plugin.displayUrl}">$plugin.name</a> in <span class="ra-elapsed"></span> ms.
     </div>
-    <div class="ra-timedout ra-message">
+    <div class="ra-timedout ra-message hidden">
       Plugin $plugin.name is not available.
     </div>
   </div>

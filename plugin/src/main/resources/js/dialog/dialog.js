@@ -128,9 +128,9 @@
     };
   };
 
-  function disableButtons(ids) {
+  function disableButtons(classes) {
     var btns = [];
-    $.each(ids, function() {
+    $.each(classes, function() {
       btns.push($('.' + this));
     });
     $.each(btns, function() {

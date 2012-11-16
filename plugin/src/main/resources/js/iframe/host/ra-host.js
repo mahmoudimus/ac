@@ -25,8 +25,8 @@
     }
 
     var timeout = setTimeout(function () {
-      $home.find(".ra-message").hide();
-      $home.find(".ra-timedout").show();
+      $home.find(".ra-message").addClass("hidden");
+      $home.find(".ra-timedout").removeClass("hidden");
       layoutIfNeeded();
       var elapsed = new Date().getTime() - start;
       track("plugin.iframetimedout", {elapsed: elapsed});
@@ -50,10 +50,10 @@
               clearTimeout(timeout);
             }
             $content.addClass("iframe-init");
-            $home.find(".ra-message").hide();
+            $home.find(".ra-message").addClass("hidden");
             var elapsed = new Date().getTime() - start;
             $home.find(".ra-elapsed").text(elapsed);
-            $home.find(".ra-loaded").show();
+            $home.find(".ra-loaded").removeClass("hidden");
             layoutIfNeeded();
             track("plugin.iframeinited", {elapsed: elapsed});
           }
@@ -139,7 +139,7 @@
         $iframe.height(iframeHeight);
         $content.height(iframeHeight);
       }
-      $stats.show();
+      $stats.removeClass("hidden");
     }
 
     layoutIfNeeded();

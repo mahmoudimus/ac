@@ -112,9 +112,7 @@ public class RemotePluginEmbeddedTestPage
 
     public long getLoadTime()
     {
-        String selector = "#ra-" + key + " .ra-elapsed";
-        driver.waitUntilElementIsLocated(By.cssSelector(selector));
-        return Long.parseLong(driver.findElement(By.cssSelector(selector)).getText());
+        return Long.parseLong(driver.findElement(By.cssSelector("#ra-" + key + " .ra-elapsed")).getText());
     }
 
     public Map<String,String> getIframeQueryParams()
