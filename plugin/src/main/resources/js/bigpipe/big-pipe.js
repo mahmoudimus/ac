@@ -2,7 +2,8 @@
 This code makes a xhr request back to the server before dom ready looking for big pipe content to
 replace.
  */
-(function ($, global) {
+(function (global, AJS) {
+  var $ = AJS.$;
   var RemotablePlugins = global.RemotablePlugins = global.RemotablePlugins || {};
   var contextPath = AJS.contextPath() || AJS.Meta.get("context-path");
   var requestId = $('meta[name="ra-request-id"]').attr("content");
@@ -16,8 +17,7 @@ replace.
         $("body").append(content.html);
       }
     } else {
-      contentDiv$.html(html);
-      contentDiv$.removeClass("bp-loading");
+      contentDiv$.html(html).removeClass("bp-loading");
     }
   }
 
@@ -37,8 +37,7 @@ replace.
 
   function replaceLoadingWithError(errType, status) {
     $(document).ready(function() {
-      $('.bp-loading').html("<div>Error: " + status + "</div>");
-      contentDiv$.removeClass("bp-loading");
+      $('.bp-loading').html("<div>Error: " + status + "</div>").removeClass("bp-loading");
     });
   }
 
@@ -68,4 +67,4 @@ replace.
   RemotablePlugins.BigPipe = {
     insertContents : insertContents
   }
-})(AJS.$, this);
+})(this, AJS);
