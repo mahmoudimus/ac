@@ -1,14 +1,14 @@
 package com.atlassian.plugin.remotable.container;
 
 
-import com.atlassian.plugin.remotable.host.common.descriptor.LocalMountBaseUrlResolver;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.remotable.container.org.eclipse.jetty.servlet.DefaultServlet;
+import com.atlassian.plugin.remotable.host.common.descriptor.LocalMountBaseUrlResolver;
 import com.google.common.base.Function;
 import com.google.common.collect.MapMaker;
 import org.eclipse.jetty.nosql.memcached.MemcachedSessionIdManager;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
