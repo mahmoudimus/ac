@@ -76,16 +76,17 @@ public class DescriptorValidator
 
         boolean useNamespace = document.getRootElement().getNamespaceURI().equals(
                 descriptorValidatorProvider.getSchemaNamespace());
-        StreamSource schemaSource = new StreamSource(new StringReader(buildSchema(descriptorValidatorProvider, useNamespace)));
+        String builtSchema = buildSchema(descriptorValidatorProvider, useNamespace);
+        StreamSource schemaSource = new StreamSource(new StringReader(builtSchema));
         javax.xml.validation.Schema schema;
+
         try
         {
-
             schema = schemaFactory.newSchema(schemaSource);
         }
         catch (SAXParseException e)
         {
-            throw new RuntimeException("Couldn't parse built schema" + " on line " + e.getLineNumber() + " for file " + e.getPublicId(), e);
+            throw new RuntimeException("Couldn't parse built schema (line " + e.getLineNumber() + "):\n" + builtSchema, e);
         }
         catch (SAXException e)
         {
@@ -184,7 +185,6 @@ public class DescriptorValidator
                 Element resources = doc.addElement("resources");
                 for (ApiResourceInfo resource : apiScope.getApiResourceInfos())
                 {
-
                     Element res = resources.addElement("resource").
                             addAttribute("path", resource.getPath()).
                             addAttribute("httpMethod", resource.getHttpMethod());
