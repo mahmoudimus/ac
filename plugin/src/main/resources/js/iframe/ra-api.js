@@ -349,7 +349,7 @@
     dialogMessage: function(message) {
       try {
         // if no handler, default to allowing the operation to proceed
-        return dialogHandlers[message]? dialogHandlers[message]() : true;
+        return dialogHandlers[message] ? dialogHandlers[message]() : true;
       }
       catch (e) {
         console.error(e);

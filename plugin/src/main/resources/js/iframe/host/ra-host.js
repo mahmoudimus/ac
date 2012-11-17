@@ -17,7 +17,7 @@
         initHeight = options.height || "0",
         start = new Date().getTime(),
         isDialog = !!options.dialog,
-        inited;
+        isInited;
 
     function track(name, props) {
       props = $.extend(props || {}, {moduleKey: ns});
@@ -26,11 +26,18 @@
 
     var timeout = setTimeout(function () {
       $home.find(".ra-message").addClass("hidden");
-      $home.find(".ra-timedout").removeClass("hidden");
+      $home.find(".ra-load-timeout").removeClass("hidden");
       layoutIfNeeded();
       var elapsed = new Date().getTime() - start;
       track("plugin.iframetimedout", {elapsed: elapsed});
     }, 20000);
+
+    function preventTimeout() {
+      if (timeout) {
+        clearTimeout(timeout);
+        timeout = null;
+      }
+    }
 
     var rpc = new easyXDM.Rpc({
       remote: options.src,
@@ -44,17 +51,16 @@
       },
       local: {
         init: function () {
-          if (!inited) {
-            inited = true;
-            if (timeout) {
-              clearTimeout(timeout);
-            }
+          if (!isInited) {
+            isInited = true;
+            preventTimeout();
             $content.addClass("iframe-init");
             $home.find(".ra-message").addClass("hidden");
             var elapsed = new Date().getTime() - start;
             $home.find(".ra-elapsed").text(elapsed);
             $home.find(".ra-loaded").removeClass("hidden");
             layoutIfNeeded();
+            $placeholder.trigger("ra.iframe.inited");
             track("plugin.iframeinited", {elapsed: elapsed});
           }
         },
@@ -127,12 +133,13 @@
       }
     });
 
+    var $placeholder = $content.parents(".ra-servlet-placeholder"),
+        $iframe = $("iframe", $content);
+
     function layoutIfNeeded() {
       var $stats = $(".ra-stats", $home);
       if (isDialog) {
-        var $placeholder = $content.parents(".ra-servlet-placeholder"),
-            $iframe = $("iframe", $content),
-            panelHeight = $placeholder.parent().height();
+        var panelHeight = $placeholder.parent().height();
         $iframe.parents(".ra-servlet-placeholder, .ra-container").height(panelHeight);
         var containerHeight = $iframe.parents(".ra-container").height(),
             iframeHeight = containerHeight - $stats.outerHeight(true);
@@ -161,19 +168,28 @@
       };
     }
 
+    // forwards messages only if the remote frame has inited its end of the rpc bridge
+    function invokeDialogMessage(name, callback) {
+      if (isInited) {
+        rpc.dialogMessage(name, callback);
+      }
+      else {
+        callback(true);
+      }
+    }
+
     // connects rpc functions to local event channels
-    (function () {
-      $content.parents(".ra-servlet-placeholder")
-        .bind("ra.dialog.submit", function (e, callback) {
-          rpc.dialogMessage("submit", callback);
-        })
-        .bind("ra.dialog.cancel", function (e, callback) {
-          rpc.dialogMessage("cancel", callback);
-        })
-        .bind("ra.iframe.destroy", function () {
-          rpc.destroy();
-        });
-    })();
+    $placeholder
+      .data("ra.dialog.attached", true)
+      .bind("ra.dialog.submit", function (e, callback) {
+        invokeDialogMessage("submit", callback);
+      })
+      .bind("ra.dialog.cancel", function (e, callback) {
+        invokeDialogMessage("cancel", callback);
+      })
+      .bind("ra.iframe.destroy", function () {
+        rpc.destroy();
+      });
 
   }
 

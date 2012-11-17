@@ -7,8 +7,8 @@
     <div class="ra-loaded ra-message hidden">
       Loaded plugin <a href="${plugin.displayUrl}">$plugin.name</a> in <span class="ra-elapsed"></span> ms.
     </div>
-    <div class="ra-timedout ra-message hidden">
-      Plugin $plugin.name is not available.
+    <div class="ra-load-timeout ra-message hidden">
+      Plugin <a href="${plugin.displayUrl}">$plugin.name</a> is not responding.
     </div>
   </div>
   ## @todo optimize script delivery

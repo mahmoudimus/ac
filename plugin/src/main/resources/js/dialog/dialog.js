@@ -18,23 +18,16 @@
    * @param options Options to configure the behaviour and appearance of the dialog.
    */
   RemotablePlugins.makeDialog = function (contentUrl, options) {
-    var $container, submitClass = "ra-dialog-submit", cancelClass = "ra-dialog-cancel";
+    var $container,
+        submitClass = "ra-dialog-submit";
+
     var defaultOptions = {
       // These options really _should_ be provided by the caller, or else the dialog is pretty pointless
 
       // Dialog header
       header: "Remotable Plugins Dialog Title",
-      // Callback to execute when the submit button is clicked.
-      submitHandler: function (dialog, result) {
-        // no-op
-      },
-      // Callback to execute when the cancel button is clicked.
-      cancelHandler: function (dialog, result) {
-        // no-op
-      },
 
       // These options may be overridden by the caller, but the defaults are OK
-
       headerClass: "ra-dialog-header",
       // Default width and height of the dialog
       width: "50%",
@@ -48,7 +41,7 @@
       // Escape key listener
       keypressListener: function (e) {
         if (e.keyCode === 27) {
-          dialog.remove();
+          close();
         }
       }
     };
@@ -61,33 +54,37 @@
     var dialog = new AJS.Dialog(mergedOptions);
     dialog.addHeader(mergedOptions.header, mergedOptions.headerClass);
     dialog.addButton(mergedOptions.submitText, function(dialog) {
-      // Disable all the buttons
-      var btns = disableButtons([submitClass, cancelClass]);
+      var btns = disableButtons([submitClass], $dialog);
       $container.trigger("ra.dialog.submit", function(result) {
         if (result.result || result) {
-          dialog.remove();
-          $container.trigger("ra.iframe.destroy");
-          mergedOptions.submitHandler(dialog, result);
+          close();
         }
         else {
           btns.enable();
         }
       });
     }, submitClass);
-    dialog.addCancel(mergedOptions.cancelText, function(dialog, page) {
-      // Disable buttons
-      var btns = disableButtons([submitClass, cancelClass]);
-      $container.trigger("ra.dialog.cancel", function(result) {
-        if (result.result || result) {
-          dialog.remove();
-          $container.trigger("ra.iframe.destroy");
-          mergedOptions.cancelHandler(dialog, result);
-        }
-        else {
-          btns.enable();
-        }
-      });
+    dialog.addCancel(mergedOptions.cancelText, function(dialog) {
+      if ($container.data("ra.dialog.attached")) {
+        var btns = disableButtons([submitClass], $dialog);
+        $container.trigger("ra.dialog.cancel", function(result) {
+          if (result.result || result) {
+            close();
+          }
+          else {
+            btns.enable();
+          }
+        });
+      }
+      else {
+        close();
+      }
     });
+
+    function close() {
+      dialog.remove();
+      $container.trigger("ra.iframe.destroy");
+    }
 
     var placeholderContent = "<div class='ra-servlet-placeholder'></div>";
     dialog.addPanel(null, placeholderContent, "ra-dialog-content");
@@ -98,24 +95,36 @@
       id: dialogId,
       show: function() {
         dialog.show();
+
         var $panelBody = $dialog.find(".ra-dialog-content");
         contentUrl += (contentUrl.indexOf("?") > 0 ? "&" : "?") + "dialog=1";
         contentUrl = setDimension(contentUrl, "width", $panelBody.width());
         contentUrl = setDimension(contentUrl, "height", $panelBody.height());
+
         var timeout = setTimeout(function () {
           $container
             .append("<div class='ra-dialog-loading hidden'>&nbsp;</div>")
             .find(".ra-dialog-loading").height($panelBody.height()).fadeIn();
         }, 1000);
 
+        function preventTimeout() {
+          if (timeout) {
+            clearTimeout(timeout);
+            timeout = null;
+          }
+        }
+
+        var btns = disableButtons([submitClass], $dialog);
+        $container.bind("ra.iframe.inited", btns.enable);
+
         $.ajax(contentUrl, {
           dataType: "html",
           success: function(data) {
-            if (timeout) clearTimeout(timeout);
+            preventTimeout();
             $container.html(data);
           },
           error: function(xhr, status, ex) {
-            if (timeout) clearTimeout(timeout);
+            preventTimeout();
             var title = "Unable to load plugin content.  Please try again later.";
             $container.html("<div class='aui-message error' style='margin: 10px'></div>");
             $container.find(".error").append("<p class='title'>" + title + "</p>");
@@ -128,18 +137,19 @@
     };
   };
 
-  function disableButtons(classes) {
+  // @todo fixme; this is silly, since we only have one button and the cancel link won't be affected by this logic
+  function disableButtons(classes, $scope) {
     var btns = [];
     $.each(classes, function() {
-      btns.push($('.' + this));
+      btns.push($scope.find("." + this));
     });
     $.each(btns, function() {
-      this.attr('disabled', 'disabled');
+      this.attr("disabled", true);
     });
     return {
       "enable" : function() {
         $.each(btns, function() {
-          this.removeAttr('disabled');
+          this.removeAttr("disabled");
         })
       }
     };
