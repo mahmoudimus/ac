@@ -3,7 +3,7 @@
       appDoc = doc,
       RA = global.RA = {},
       rpc,
-      dialogHandlers = {},
+      isDialog,
       isInited;
 
   // universal iterator utility
@@ -61,6 +61,13 @@
     }
   }
 
+  function log(type) {
+    if (global.console) {
+      var args = [].slice.apply(arguments, 1, arguments.length);
+      console[type].apply(console, args);
+    }
+  }
+
   // basic dom util
   function $(sel, context) {
     context = context || appDoc;
@@ -102,7 +109,7 @@
   // a simplified version of underscore's debounce
   function debounce(fn, wait) {
     var timeout;
-    return function() {
+    return function () {
       var ctx = this,
         args = [].slice.call(arguments);
       function later() {
@@ -160,7 +167,7 @@
 
   function injectMargin(options) {
     // set a context-sensitive margin value
-    var margin = options.isDialog ? "10px 10px 0 10px" : "0";
+    var margin = isDialog ? "10px 10px 0 10px" : "0";
     $("head").append({tag: "style", $text: "body {margin: " + margin + " !important;}"});
   }
 
@@ -181,10 +188,13 @@
     if (options.document) {
       appDoc = options.document;
     }
-    options.isDialog = global.location.toString().indexOf("dialog=1") > 0;
+    isDialog = global.location.toString().indexOf("dialog=1") > 0;
     var config = {};
     // init stubs for private bridge functions
-    var stubs = {/* private repc stubs here */};
+    var stubs = {
+      setDialogButtonEnabled: {},
+      isDialogButtonEnabled: {}
+    };
     // add stubs for each public api
     each(api, function (method) { stubs[method] = {}; });
     rpc = new easyXDM.Rpc(config, {remote: stubs, local: internal});
@@ -201,6 +211,10 @@
     if (options.resize !== false) {
       // resize the parent iframe for the size of this document on load
       bind(options.window || global, "load", function () { RA.resize(); });
+    }
+    if (isDialog) {
+      // expose the dialog sub-api if appropriate
+      RA.Dialog = makeDialog();
     }
   }
 
@@ -328,16 +342,6 @@
       delete options.error;
       // execute the request
       rpc.request(options, done, fail);
-    },
-
-    // dialog-related sub-api for use when the remote plugin is running as the content of a host dialog
-    Dialog: {
-
-      // register callbacks responding to messages from the host dialog, such as "submit" or "cancel"
-      onDialogMessage: function(messageName, callback) {
-        dialogHandlers[messageName] = callback;
-      }
-
     }
 
   };
@@ -346,17 +350,82 @@
   var internal = {
 
     // forwards dialog event messages from the host application to locally registered handlers
-    dialogMessage: function(message) {
+    dialogMessage: function (name) {
+      var result = true;
       try {
-        // if no handler, default to allowing the operation to proceed
-        return dialogHandlers[message] ? dialogHandlers[message]() : true;
+        if (isDialog) {
+          result = RA.Dialog.getButton(name).trigger();
+          console.log("dialogMessage result", result);
+        }
+        else {
+          log("error", "Received unexpected dialog button event from host:", name);
+        }
       }
       catch (e) {
-        console.error(e);
+        log("error", e);
       }
+      return result;
     }
 
   };
+
+  // dialog-related sub-api for use when the remote plugin is running as the content of a host dialog
+  function makeDialog() {
+    var listeners = {};
+    return {
+
+      // register callbacks responding to messages from the host dialog, such as "submit" or "cancel"
+      //
+      // @deprecated
+      onDialogMessage: function (message, listener) {
+        this.getButton(message).bind(listener);
+      },
+
+      // gets a button proxy for a button in the host's dialog button panel by name
+      getButton: function (name) {
+        return {
+          name: name,
+          enable: function () {
+            rpc.setDialogButtonEnabled(name, true);
+          },
+          disable: function () {
+            rpc.setDialogButtonEnabled(name, false);
+          },
+          toggle: function () {
+            var self = this;
+            self.isEnabled(function (enabled) {
+              self[enabled ? "disable" : "enable"](name);
+            });
+          },
+          isEnabled: function (callback) {
+            rpc.isDialogButtonEnabled(name, callback);
+          },
+          bind: function (listener) {
+            var list = listeners[name];
+            if (!list) {
+              list = listeners[name] = [];
+            }
+            list.push(listener);
+          },
+          trigger: function () {
+            var self = this,
+                cont = true,
+                result = true,
+                list = listeners[name];
+            each(list, function (i, listener) {
+              result = listener.call(self, {
+                button: self,
+                stopPropagation: function () { cont = false; }
+              });
+              return cont;
+            });
+            return !!result;
+          }
+        }
+      }
+
+    };
+  }
 
   // reveal the api on the RA global
   each(api, function (k, v) { RA[k] = v; });

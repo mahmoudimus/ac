@@ -23,3 +23,8 @@
   background: #f7f7f7;
   border-top: 1px solid #f0f0f0;
 }
+
+.ra-link-disabled, .ra-link-disabled:hover, .ra-link-disabled:visited, .ra-link-disabled:focus {
+  color: gray !important;
+  text-decoration: none;
+}

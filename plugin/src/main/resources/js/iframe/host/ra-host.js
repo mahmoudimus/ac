@@ -39,6 +39,14 @@
       }
     }
 
+    function getDialogButtons() {
+      return $nexus.data("ra.dialog.buttons");
+    }
+
+    function getDialogButton(name) {
+      return $nexus.data("ra.dialog.buttons").getButton(name);
+    }
+
     var rpc = new easyXDM.Rpc({
       remote: options.src,
       container: contentId,
@@ -60,7 +68,7 @@
             $home.find(".ra-elapsed").text(elapsed);
             $home.find(".ra-loaded").removeClass("hidden");
             layoutIfNeeded();
-            $placeholder.trigger("ra.iframe.inited");
+            $nexus.trigger("ra.iframe.init");
             track("plugin.iframeinited", {elapsed: elapsed});
           }
         },
@@ -101,6 +109,14 @@
         clearMessage: function (id) {
           $(".aui-message#" + id).remove();
         },
+        setDialogButtonEnabled: function (name, enabled) {
+          var button = getDialogButton(name);
+          if (button) button.setEnabled(enabled);
+        },
+        isDialogButtonEnabled: function (name, callback) {
+          var button = getDialogButton(name);
+          callback(button ? button.isEnabled() : void 0);
+        },
         request: function (args, success, error) {
           // add the context path to the request url
           var url = options.contextPath + args.url;
@@ -133,13 +149,13 @@
       }
     });
 
-    var $placeholder = $content.parents(".ra-servlet-placeholder"),
+    var $nexus = $content.parents(".ra-servlet-placeholder"),
         $iframe = $("iframe", $content);
 
     function layoutIfNeeded() {
       var $stats = $(".ra-stats", $home);
       if (isDialog) {
-        var panelHeight = $placeholder.parent().height();
+        var panelHeight = $nexus.parent().height();
         $iframe.parents(".ra-servlet-placeholder, .ra-container").height(panelHeight);
         var containerHeight = $iframe.parents(".ra-container").height(),
             iframeHeight = containerHeight - $stats.outerHeight(true);
@@ -168,28 +184,28 @@
       };
     }
 
-    // forwards messages only if the remote frame has inited its end of the rpc bridge
-    function invokeDialogMessage(name, callback) {
-      if (isInited) {
-        rpc.dialogMessage(name, callback);
-      }
-      else {
-        callback(true);
-      }
+    // wireup dialog buttons if appropriate
+    var dialogButtons = getDialogButtons();
+    if (dialogButtons) {
+      dialogButtons.each(function (name, button) {
+        button.click(function (e, callback) {
+          if (isInited) {
+            rpc.dialogMessage(name, callback);
+          }
+          else {
+            callback(true);
+          }
+        });
+      });
     }
 
-    // connects rpc functions to local event channels
-    $placeholder
-      .data("ra.dialog.attached", true)
-      .bind("ra.dialog.submit", function (e, callback) {
-        invokeDialogMessage("submit", callback);
-      })
-      .bind("ra.dialog.cancel", function (e, callback) {
-        invokeDialogMessage("cancel", callback);
-      })
-      .bind("ra.iframe.destroy", function () {
-        rpc.destroy();
-      });
+    // clean up when the iframe is removed
+    $nexus.bind("ra.iframe.destroy", function () {
+      // destroy the rpc bridge and remove the iframe
+      rpc.destroy();
+    });
+
+    $nexus.trigger("ra.iframe.create");
 
   }
 

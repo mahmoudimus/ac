@@ -18,8 +18,7 @@
    * @param options Options to configure the behaviour and appearance of the dialog.
    */
   RemotablePlugins.makeDialog = function (contentUrl, options) {
-    var $container,
-        submitClass = "ra-dialog-submit";
+    var $nexus;
 
     var defaultOptions = {
       // These options really _should_ be provided by the caller, or else the dialog is pretty pointless
@@ -41,7 +40,7 @@
       // Escape key listener
       keypressListener: function (e) {
         if (e.keyCode === 27) {
-          close();
+          closeDialog();
         }
       }
     };
@@ -53,43 +52,22 @@
 
     var dialog = new AJS.Dialog(mergedOptions);
     dialog.addHeader(mergedOptions.header, mergedOptions.headerClass);
-    dialog.addButton(mergedOptions.submitText, function(dialog) {
-      var btns = disableButtons([submitClass], $dialog);
-      $container.trigger("ra.dialog.submit", function(result) {
-        if (result.result || result) {
-          close();
-        }
-        else {
-          btns.enable();
-        }
-      });
-    }, submitClass);
-    dialog.addCancel(mergedOptions.cancelText, function(dialog) {
-      if ($container.data("ra.dialog.attached")) {
-        var btns = disableButtons([submitClass], $dialog);
-        $container.trigger("ra.dialog.cancel", function(result) {
-          if (result.result || result) {
-            close();
-          }
-          else {
-            btns.enable();
-          }
-        });
-      }
-      else {
-        close();
-      }
-    });
 
-    function close() {
+    var hasClosed = false;
+    function closeDialog() {
+      if (hasClosed) return;
+      $nexus
+        .trigger("ra.iframe.destroy")
+        .removeData("ra.dialog.buttons")
+        .unbind();
       dialog.remove();
-      $container.trigger("ra.iframe.destroy");
+      hasClosed = true;
     }
 
     var placeholderContent = "<div class='ra-servlet-placeholder'></div>";
     dialog.addPanel(null, placeholderContent, "ra-dialog-content");
     var $dialog = $("#" + dialogId);
-    $container = $dialog.find(".ra-servlet-placeholder");
+    $nexus = $dialog.find(".ra-servlet-placeholder");
 
     return {
       id: dialogId,
@@ -102,10 +80,10 @@
         contentUrl = setDimension(contentUrl, "height", $panelBody.height());
 
         var timeout = setTimeout(function () {
-          $container
+          $nexus
             .append("<div class='ra-dialog-loading hidden'>&nbsp;</div>")
             .find(".ra-dialog-loading").height($panelBody.height()).fadeIn();
-        }, 1000);
+        }, 500);
 
         function preventTimeout() {
           if (timeout) {
@@ -114,22 +92,57 @@
           }
         }
 
-        var btns = disableButtons([submitClass], $dialog);
-        $container.bind("ra.iframe.inited", btns.enable);
+        function enableButtons() {
+          buttons.setEnabled(true);
+        }
+
+        var buttons = makeButtons(dialog, [{
+          name: "submit",
+          displayName: "Submit",
+          type: "Button",
+          actions: {
+            done: closeDialog,
+            fail: enableButtons
+          }
+        }, {
+          name: "cancel",
+          displayName: "Cancel",
+          type: "Link",
+          actions: {
+            done: closeDialog,
+            fail: enableButtons
+          },
+          noDisable: true
+        }]);
+
+        var iframeCreated = false;
+        buttons.getButton("cancel").click(function () {
+          if (!iframeCreated) {
+            // default cancel handler should only run before the iframe is created and takes over
+            closeDialog();
+          }
+        });
+
+        $nexus
+          .data("ra.dialog.buttons", buttons)
+          .bind("ra.iframe.create", function () { iframeCreated = true; })
+          .bind("ra.iframe.init", enableButtons);
+        // @todo should we instead start with all but cancel set to hidden, showing when iframe is inited?
+        buttons.setEnabled(false);
 
         $.ajax(contentUrl, {
           dataType: "html",
           success: function(data) {
             preventTimeout();
-            $container.html(data);
+            $nexus.html(data);
           },
           error: function(xhr, status, ex) {
             preventTimeout();
             var title = "Unable to load plugin content.  Please try again later.";
-            $container.html("<div class='aui-message error' style='margin: 10px'></div>");
-            $container.find(".error").append("<p class='title'>" + title + "</p>");
+            $nexus.html("<div class='aui-message error' style='margin: 10px'></div>");
+            $nexus.find(".error").append("<p class='title'>" + title + "</p>");
             var msg = status + (ex ? ": " + ex.toString() : "");
-            $container.find(".error").append(msg);
+            $nexus.find(".error").append(msg);
             AJS.log(msg);
           }
         });
@@ -137,22 +150,75 @@
     };
   };
 
-  // @todo fixme; this is silly, since we only have one button and the cancel link won't be affected by this logic
-  function disableButtons(classes, $scope) {
-    var btns = [];
-    $.each(classes, function() {
-      btns.push($scope.find("." + this));
+  function makeButtons(dialog, specs) {
+    var buttons = {},
+        controls;
+    $.each(specs, function () {
+      var $dialog = $(dialog.popup.element),
+          spec = this,
+          className = "ra-dialog-" + spec.name,
+          disabledAttr = "disabled",
+          disabledClass = "ra-link-disabled",
+          isEnabled = true;
+      function dispatch(result) {
+        var name = result ? "done" : "fail";
+        spec.actions && spec.actions[name] && spec.actions[name]();
+      }
+      function handler() {
+        // ignore clicks on disabled links
+        if (buttons[spec.name].$el().hasClass(disabledClass)) return;
+        controls.setEnabled(false);
+        $dialog.find("." + className).trigger("ra.dialog.click", dispatch);
+      }
+      dialog["add" + spec.type](spec.displayName, handler, className);
+      buttons[spec.name] = {
+        $el: function () { return $dialog.find("." + className); },
+        isEnabled: function () { return isEnabled; },
+        setEnabled: function (enabled) {
+          if (!spec.noDisable) {
+            var $button = this.$el();
+            if (enabled) {
+              if (spec.type === "Button") {
+                $button.removeAttr(disabledAttr);
+              }
+              else {
+                $button.addClass(disabledClass);
+              }
+            }
+            else {
+              if (spec.type === "Button") {
+                $button.attr(disabledAttr, true);
+              }
+              else {
+                $button.removeClass(disabledClass);
+              }
+            }
+          }
+        },
+        click: function (listener) {
+          if (listener) {
+            this.$el().bind("ra.dialog.click", listener);
+          }
+          else {
+            dispatch(true);
+          }
+        }
+      };
     });
-    $.each(btns, function() {
-      this.attr("disabled", true);
-    });
-    return {
-      "enable" : function() {
-        $.each(btns, function() {
-          this.removeAttr("disabled");
-        })
+    controls = {
+      each: function (it) {
+        $.each(buttons, it);
+      },
+      setEnabled: function (enabled) {
+        this.each(function () {
+          this.setEnabled(enabled);
+        });
+      },
+      getButton: function (name) {
+        return buttons[name];
       }
     };
+    return controls;
   }
 
   function parseDimension(value, viewport) {

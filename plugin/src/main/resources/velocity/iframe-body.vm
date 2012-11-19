@@ -2,13 +2,13 @@
   <div class="ra-content" id="embedded-$namespace"></div>
   <div class="ra-stats hidden">
     <div class="ra-loading ra-message">
-      Loading plugin <a href="${plugin.displayUrl}">$plugin.name</a>.
+      Loading plugin <a href="${plugin.displayUrl}" target="_blank">$plugin.name</a>.
     </div>
     <div class="ra-loaded ra-message hidden">
-      Loaded plugin <a href="${plugin.displayUrl}">$plugin.name</a> in <span class="ra-elapsed"></span> ms.
+      Loaded plugin <a href="${plugin.displayUrl}" target="_blank">$plugin.name</a> in <span class="ra-elapsed"></span> ms.
     </div>
     <div class="ra-load-timeout ra-message hidden">
-      Plugin <a href="${plugin.displayUrl}">$plugin.name</a> is not responding.
+      Plugin <a href="${plugin.displayUrl}" target="_blank">$plugin.name</a> is not responding.
     </div>
   </div>
   ## @todo optimize script delivery
