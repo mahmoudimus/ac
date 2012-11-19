@@ -131,11 +131,8 @@ public class OAuth2LOFilter implements Filter
      */
     private boolean isOAuth2LOAccessAttempt(HttpServletRequest request)
     {
-        
-        boolean isRequestTokenRequest = request.getRequestURL().toString().endsWith(
-                "/plugins/servlet/oauth/request-token");
-        boolean isDownloadableResourceRequest = URI.create(request.getRequestURL().toString()).getPath().startsWith(
-                contextPath + "/download/resources/");
+        final boolean isRequestTokenRequest = request.getRequestURL().toString().endsWith("/plugins/servlet/oauth/request-token");
+        final boolean isDownloadableResourceRequest = request.getRequestURI().startsWith(contextPath + "/download/resources/");
         final Map<String,String> params = parameterNames(request);
         final Set<String> names = params.keySet();
         return  names.containsAll(OAUTH_DATA_REQUEST_PARAMS) &&
