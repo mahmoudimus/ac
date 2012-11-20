@@ -61,13 +61,12 @@
     }
   }
 
-  function log(type) {
-    var args = [].slice.apply(arguments, 1, arguments.length);
+  function handleError(err) {
     if (global.console) {
-      console[type].apply(console, args);
+      console[console.error ? "error" : "log"](err);
     }
     else {
-      alert("Error: " + args.join(" "));
+      throw err;
     }
   }
 
@@ -360,11 +359,11 @@
           result = RA.Dialog.getButton(name).trigger();
         }
         else {
-          log("error", "Received unexpected dialog button event from host:", name);
+          handleError("Received unexpected dialog button event from host:", name);
         }
       }
       catch (e) {
-        log("error", e);
+        handleError(e);
       }
       return result;
     }
