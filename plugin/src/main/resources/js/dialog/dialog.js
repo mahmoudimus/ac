@@ -30,19 +30,7 @@
       headerClass: "ra-dialog-header",
       // Default width and height of the dialog
       width: "50%",
-      height: "50%",
-      // Close the dialog if it loses focus
-      closeOnOutsideClick: true,
-      // Display text for the dialog buttons
-      submitText: "Submit",
-      cancelText: "Cancel",
-
-      // Escape key listener
-      keypressListener: function (e) {
-        if (e.keyCode === 27) {
-          closeDialog();
-        }
-      }
+      height: "50%"
     };
 
     var dialogId = options.id || "ra-dialog-" + (idSeq += 1);
@@ -50,7 +38,7 @@
     mergedOptions.width = parseDimension(mergedOptions.width, $global.width());
     mergedOptions.height = parseDimension(mergedOptions.height, $global.height());
 
-    var dialog = new AJS.Dialog(mergedOptions);
+    var dialog = new AJS.Dialog(mergedOptions.width, mergedOptions.height, mergedOptions.id);
     dialog.addHeader(mergedOptions.header, mergedOptions.headerClass);
 
     var hasClosed = false;
@@ -63,6 +51,9 @@
       dialog.remove();
       hasClosed = true;
     }
+
+    // the dialog automatically closes on ESC. but we also want to do our clean up
+    $(document).keydown(function(e){ if (e.keyCode === 27) { closeDialog(); }});
 
     var placeholderContent = "<div class='ra-servlet-placeholder'></div>";
     dialog.addPanel(null, placeholderContent, "ra-dialog-content");
