@@ -62,9 +62,12 @@
   }
 
   function log(type) {
+    var args = [].slice.apply(arguments, 1, arguments.length);
     if (global.console) {
-      var args = [].slice.apply(arguments, 1, arguments.length);
       console[type].apply(console, args);
+    }
+    else {
+      alert("Error: " + args.join(" "));
     }
   }
 
@@ -355,7 +358,6 @@
       try {
         if (isDialog) {
           result = RA.Dialog.getButton(name).trigger();
-          console.log("dialogMessage result", result);
         }
         else {
           log("error", "Received unexpected dialog button event from host:", name);
