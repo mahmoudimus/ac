@@ -88,7 +88,7 @@
           var el = context.createElement(spec.tag);
           each(spec, function (k, v) {
             if (k === "$text") {
-              if(el.styleSheet) { // style tags in ie
+              if (el.styleSheet) { // style tags in ie
                 el.styleSheet.cssText = v;
               }
               else {
@@ -168,7 +168,7 @@
   function injectMargin(options) {
     // set a context-sensitive margin value
     var margin = isDialog ? "10px 10px 0 10px" : "0";
-    $("head").append({tag: "style", $text: "body {margin: " + margin + " !important;}"});
+    $("head").append({tag: "style", type: "text/css", $text: "body {margin: " + margin + " !important;}"});
   }
 
   function size(width, height) {
