@@ -8,7 +8,7 @@
   background: url(loading.gif) center center no-repeat;
 }
 
-.ra-loading {
+.ra-loading, .ra-load-timeout {
   background: url(loading.gif) left center no-repeat;
   padding-left: 34px;
 }

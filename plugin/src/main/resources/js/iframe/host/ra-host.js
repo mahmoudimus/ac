@@ -19,17 +19,29 @@
         isDialog = !!options.dialog,
         isInited;
 
-    function track(name, props) {
+    function publish(name, props) {
       props = $.extend(props || {}, {moduleKey: ns});
       events.push({name: name, properties: props});
     }
 
+    function showStatus(name) {
+      $home.find(".ra-status").addClass("hidden");
+      $home.find(".ra-" + name).removeClass("hidden");
+    }
+
     var timeout = setTimeout(function () {
-      $home.find(".ra-message").addClass("hidden");
-      $home.find(".ra-load-timeout").removeClass("hidden");
+      timeout = null;
+      showStatus("load-timeout");
+      var $timeout = $home.find(".ra-load-timeout");
+      $timeout.find("a.ra-btn-wait").click(function () {
+        showStatus("loading");
+      });
+      $timeout.find("a.ra-btn-cancel").click(function () {
+        showStatus("load-error");
+        $nexus.trigger(isDialog ? "ra.dialog.close" : "ra.iframe.destroy");
+      });
       layoutIfNeeded();
-      var elapsed = new Date().getTime() - start;
-      track("plugin.iframetimedout", {elapsed: elapsed});
+      publish("plugin.iframetimedout", {elapsed: new Date().getTime() - start});
     }, 20000);
 
     function preventTimeout() {
@@ -63,13 +75,12 @@
             isInited = true;
             preventTimeout();
             $content.addClass("iframe-init");
-            $home.find(".ra-message").addClass("hidden");
             var elapsed = new Date().getTime() - start;
             $home.find(".ra-elapsed").text(elapsed);
-            $home.find(".ra-loaded").removeClass("hidden");
+            showStatus("loaded");
             layoutIfNeeded();
             $nexus.trigger("ra.iframe.init");
-            track("plugin.iframeinited", {elapsed: elapsed});
+            publish("plugin.iframeinited", {elapsed: elapsed});
           }
         },
         resize: debounce(function (width, height) {

@@ -116,6 +116,7 @@
 
         $nexus
           .data("ra.dialog.buttons", buttons)
+          .bind("ra.dialog.close", closeDialog)
           .bind("ra.iframe.create", function () { iframeCreated = true; })
           .bind("ra.iframe.init", enableButtons);
         // @todo should we instead start with all but cancel set to hidden, showing when iframe is inited?

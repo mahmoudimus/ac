@@ -1,14 +1,18 @@
 <div class="ra-container" id="ra-$namespace">
   <div class="ra-content" id="embedded-$namespace"></div>
   <div class="ra-stats hidden">
-    <div class="ra-loading ra-message">
+    <div class="ra-loading ra-status">
       Loading plugin <a href="${plugin.displayUrl}" target="_blank">$plugin.name</a>.
     </div>
-    <div class="ra-loaded ra-message hidden">
+    <div class="ra-loaded ra-status hidden">
       Loaded plugin <a href="${plugin.displayUrl}" target="_blank">$plugin.name</a> in <span class="ra-elapsed"></span> ms.
     </div>
-    <div class="ra-load-timeout ra-message hidden">
+    <div class="ra-load-timeout ra-status hidden">
       Plugin <a href="${plugin.displayUrl}" target="_blank">$plugin.name</a> is not responding.
+      <a href="#" class="ra-btn-wait">Wait</a> or <a href="#" class="ra-btn-cancel">Cancel</a>?
+    </div>
+    <div class="ra-load-error ra-status hidden">
+      Plugin <a href="${plugin.displayUrl}" target="_blank">$plugin.name</a> failed to load.
     </div>
   </div>
   ## @todo optimize script delivery

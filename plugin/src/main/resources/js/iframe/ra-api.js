@@ -170,6 +170,7 @@
   function injectMargin(options) {
     // set a context-sensitive margin value
     var margin = isDialog ? "10px 10px 0 10px" : "0";
+    // @todo stylesheet injection here is rather heavy handed -- switch to setting body style
     $("head").append({tag: "style", type: "text/css", $text: "body {margin: " + margin + " !important;}"});
   }
 
