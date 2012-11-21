@@ -92,8 +92,7 @@
           displayName: "Submit",
           type: "Button",
           actions: {
-            done: closeDialog,
-            fail: enableButtons
+            done: closeDialog
           }
         }, {
           name: "cancel",
@@ -159,7 +158,6 @@
       function handler() {
         // ignore clicks on disabled links
         if (buttons[spec.name].$el().hasClass(disabledClass)) return;
-        controls.setEnabled(false);
         $dialog.find("." + className).trigger("ra.dialog.click", dispatch);
       }
       dialog["add" + spec.type](spec.displayName, handler, className);
