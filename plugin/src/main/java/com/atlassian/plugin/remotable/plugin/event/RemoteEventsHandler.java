@@ -8,6 +8,7 @@ import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.event.PluginEventListener;
 import com.atlassian.plugin.event.PluginEventManager;
+import com.atlassian.plugin.event.events.PluginDisabledEvent;
 import com.atlassian.plugin.event.events.PluginEnabledEvent;
 import com.atlassian.plugin.remotable.plugin.module.applinks.RemotePluginContainerModuleDescriptor;
 import com.atlassian.plugin.remotable.plugin.product.ProductAccessor;
@@ -15,6 +16,7 @@ import com.atlassian.plugin.remotable.spi.event.RemotePluginDisabledEvent;
 import com.atlassian.plugin.remotable.spi.event.RemotePluginEnabledEvent;
 import com.atlassian.plugin.remotable.spi.event.RemotePluginInstalledEvent;
 import com.atlassian.sal.api.ApplicationProperties;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
@@ -27,7 +29,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Strings.nullToEmpty;
 
 @Component
 public final class RemoteEventsHandler implements InitializingBean, DisposableBean
@@ -71,9 +74,9 @@ public final class RemoteEventsHandler implements InitializingBean, DisposableBe
     }
 
     @PluginEventListener
-    public void pluginDisabled(PluginEnabledEvent pluginEnabledEvent)
+    public void pluginDisabled(PluginDisabledEvent pluginDisabledEvent)
     {
-        final Plugin plugin = pluginEnabledEvent.getPlugin();
+        final Plugin plugin = pluginDisabledEvent.getPlugin();
         if (isRemotablePlugin(plugin))
         {
             eventPublisher.publish(new RemotePluginDisabledEvent(plugin.getKey(), newRemotePluginEventData()));
@@ -92,24 +95,26 @@ public final class RemoteEventsHandler implements InitializingBean, DisposableBe
         });
     }
 
-    private Map<String, Object> newRemotePluginEventData()
+    @VisibleForTesting
+    Map<String, Object> newRemotePluginEventData()
     {
         final Consumer consumer = consumerService.getConsumer();
 
         return ImmutableMap.<String, Object>builder()
-                .put("clientKey", consumer.getKey())
-                .put("publicKey", RSAKeys.toPemEncoding(consumer.getPublicKey()))
-                .put("serverVersion", applicationProperties.getBuildNumber())
-                .put("pluginsVersion", getRemotablePluginsPluginVersion())
-                .put("baseUrl", applicationProperties.getBaseUrl())
-                .put("productType", productAccessor.getKey())
-                .put("description", consumer.getDescription())
+                .put("clientKey", nullToEmpty(consumer.getKey()))
+                .put("publicKey", nullToEmpty(RSAKeys.toPemEncoding(consumer.getPublicKey())))
+                .put("serverVersion", nullToEmpty(applicationProperties.getBuildNumber()))
+                .put("pluginsVersion", nullToEmpty(getRemotablePluginsPluginVersion()))
+                .put("baseUrl", nullToEmpty(applicationProperties.getBaseUrl()))
+                .put("productType", nullToEmpty(productAccessor.getKey()))
+                .put("description", nullToEmpty(consumer.getDescription()))
                 .build();
     }
 
-    private Object getRemotablePluginsPluginVersion()
+    private String getRemotablePluginsPluginVersion()
     {
-        return bundleContext.getBundle().getHeaders().get(Constants.BUNDLE_VERSION);
+        Object bundleVersion = bundleContext.getBundle().getHeaders().get(Constants.BUNDLE_VERSION);
+        return bundleVersion == null ? null : bundleVersion.toString();
     }
 
     @Override
