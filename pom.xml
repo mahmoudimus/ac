@@ -19,7 +19,7 @@
     </organization>
 
     <name>Atlassian Remotable Plugins - Parent POM</name>
-    <description>This is the Atlassian Remotable Plugins project</description>
+    <description>This is the Atlassian Remotable Plugins parent project</description>
     <packaging>pom</packaging>
 
     <modules>
