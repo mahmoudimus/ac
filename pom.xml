@@ -296,6 +296,11 @@
             </dependency>
             <dependency>
                 <groupId>com.atlassian.webhooks</groupId>
+                <artifactId>atlassian-webhooks-provider-spi</artifactId>
+                <version>${webhooks.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.webhooks</groupId>
                 <artifactId>atlassian-webhooks-spi</artifactId>
                 <version>${webhooks.version}</version>
             </dependency>
@@ -502,7 +507,7 @@
         <spring.version>2.5.6</spring.version>
         <atlassian-util-concurrent.version>2.4.0-M9</atlassian-util-concurrent.version>
         <atlassian-httpclient.version>${webhooks.version}</atlassian-httpclient.version>
-        <webhooks.version>0.10.3</webhooks.version>
+        <webhooks.version>0.10.4</webhooks.version>
         <webhooks.api.version>0.10</webhooks.api.version>
         <httpclient.api.version>${webhooks.api.version}</httpclient.api.version>
     </properties>
