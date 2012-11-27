@@ -78,7 +78,7 @@ public class MacroContentManager implements DisposableBean
             macroInstance.getConversionContext().setProperty(BIG_PIPE_REQUEST_ID, requestId);
         }
 
-        final String author = entity != null ? entity.getLastModifierName() : userManager.getRemoteUsername();
+        final String author = getUserToRenderMacroAs(entity);
 
         String contentId = macroInstance.getHashKey();
         final Map<String,String> urlParameters = macroInstance.getUrlParameters(author);
@@ -145,6 +145,12 @@ public class MacroContentManager implements DisposableBean
                 throw new ContentRetrievalException(e.getCause());
             }
         }
+    }
+
+    private String getUserToRenderMacroAs(ContentEntityObject entity)
+    {
+        return entity != null && entity.getLastModifierName() != null
+                ? entity.getLastModifierName() : userManager.getRemoteUsername();
     }
 
     /*!
