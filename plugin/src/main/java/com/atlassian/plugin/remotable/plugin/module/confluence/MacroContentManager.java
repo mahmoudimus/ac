@@ -1,5 +1,6 @@
 package com.atlassian.plugin.remotable.plugin.module.confluence;
 
+import com.atlassian.confluence.content.render.xhtml.PolicyConfiguredXhtmlCleaner;
 import com.atlassian.confluence.content.render.xhtml.XhtmlCleaner;
 import com.atlassian.confluence.core.ContentEntityObject;
 import com.atlassian.confluence.event.events.content.page.PageEvent;
@@ -7,25 +8,34 @@ import com.atlassian.confluence.event.events.content.page.PageViewEvent;
 import com.atlassian.confluence.xhtml.api.XhtmlContent;
 import com.atlassian.event.api.EventListener;
 import com.atlassian.event.api.EventPublisher;
-import com.atlassian.plugin.remotable.plugin.ContentRetrievalException;
 import com.atlassian.plugin.remotable.plugin.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.remotable.plugin.util.http.CachingHttpContentRetriever;
+import com.atlassian.plugin.remotable.plugin.util.http.ContentRetrievalErrors;
+import com.atlassian.plugin.remotable.plugin.util.http.ContentRetrievalException;
 import com.atlassian.plugin.remotable.plugin.util.http.bigpipe.BigPipe;
 import com.atlassian.plugin.remotable.plugin.util.http.bigpipe.BigPipeContentHandler;
 import com.atlassian.plugin.remotable.plugin.util.http.bigpipe.RequestIdAccessor;
 import com.atlassian.renderer.RenderContextOutputType;
 import com.atlassian.sal.api.component.ComponentLocator;
 import com.atlassian.sal.api.user.UserManager;
+import com.atlassian.templaterenderer.TemplateRenderer;
+import com.atlassian.util.concurrent.Promise;
 import com.google.common.base.Function;
+import com.google.common.base.Throwables;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.net.URI;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import java.util.regex.Pattern;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 public class MacroContentManager implements DisposableBean
 {
@@ -38,15 +48,19 @@ public class MacroContentManager implements DisposableBean
     private final UserManager userManager;
     private final XhtmlContent xhtmlUtils;
     private final RemotablePluginAccessorFactory remotablePluginAccessorFactory;
+    private final TemplateRenderer templateRenderer;
 
     private static final Logger log = LoggerFactory.getLogger(MacroContentManager.class);
 
-    public MacroContentManager(EventPublisher eventPublisher,
+    public MacroContentManager(
+            EventPublisher eventPublisher,
             CachingHttpContentRetriever cachingHttpContentRetriever,
-            MacroContentLinkParser macroContentLinkParser, BigPipe bigPipe, UserManager userManager,
+            MacroContentLinkParser macroContentLinkParser,
+            BigPipe bigPipe,
+            UserManager userManager,
             XhtmlContent xhtmlUtils,
-            RemotablePluginAccessorFactory remotablePluginAccessorFactory
-    )
+            RemotablePluginAccessorFactory remotablePluginAccessorFactory,
+            TemplateRenderer templateRenderer)
     {
         this.eventPublisher = eventPublisher;
         this.cachingHttpContentRetriever = cachingHttpContentRetriever;
@@ -54,6 +68,7 @@ public class MacroContentManager implements DisposableBean
         this.userManager = userManager;
         this.xhtmlUtils = xhtmlUtils;
         this.remotablePluginAccessorFactory = remotablePluginAccessorFactory;
+        this.templateRenderer = templateRenderer;
         this.eventPublisher.register(this);
         // HACK: Use ComponentLocator until fix for CONFDEV-7103 is available.
         this.xhtmlCleaner = ComponentLocator.getComponent(XhtmlCleaner.class);
@@ -81,68 +96,31 @@ public class MacroContentManager implements DisposableBean
         final String author = getUserToRenderMacroAs(entity);
 
         String contentId = macroInstance.getHashKey();
-        final Map<String,String> urlParameters = macroInstance.getUrlParameters(author);
-        BigPipeContentHandler contentHandler = bigPipe.createContentHandler(requestId, contentId,
-                new Function<String, String>()
-        {
-            @Override
-            public String apply(String value)
-            {
-                value = macroContentLinkParser.parse(
-                        macroInstance.getRemotablePluginAccessor(), value,
-                        urlParameters);
+        final Map<String, String> urlParameters = macroInstance.getUrlParameters(author);
 
-                /*!
-               The storage-format XML returned from the Remotable Plugin is then scrubbed to ensure any
-               JavaScript, CSS, or dangerous HTML elements or attributes aren't present.  This scrubber
-               is the same as used in the Confluence editor.
-                */
-                // todo: do we want to give feedback to the app of what was cleaned?
-                String cleanedXhtml = xhtmlCleaner.cleanQuietly(value, macroInstance.getConversionContext());
+        Promise<String> promise = macroInstance.getRemotablePluginAccessor().executeAsyncGet(author,
+                macroInstance.getPath(), urlParameters, macroInstance.getHeaders(author))
+                .fold(new ContentHandlerFailFunction(templateRenderer),
+                        new HtmlToSafeHtmlFunction(macroInstance, urlParameters, macroContentLinkParser, xhtmlCleaner,
+                                xhtmlUtils));
 
-                try
-                {
-                    return xhtmlUtils.convertStorageToView(cleanedXhtml, macroInstance.getConversionContext());
-                }
-                catch (Exception e)
-                {
-                    log.warn("Unable to convert storage format for app {} with error {}", macroInstance.getRemotablePluginAccessor().getKey(), e.getMessage());
-                    if (log.isDebugEnabled())
-                    {
-                        log.debug("Error converting storage format", e);
-                    }
-                    throw new ContentRetrievalException("Unable to convert storage format to HTML: " + e.getMessage(), e);
-                }
-            }
-        }, null);
-
-
-        Future<String> response = macroInstance.getRemotablePluginAccessor().executeAsyncGet(author,
-                macroInstance.getPath(), urlParameters,
-                macroInstance.getHeaders(author)).then(contentHandler);
+        BigPipeContentHandler contentHandler = bigPipe.createContentHandler(requestId, contentId, promise);
 
         // only render display via big pipe, block for everyone else
         if (RenderContextOutputType.DISPLAY.equals(macroInstance.getConversionContext().getOutputType()))
         {
-            return contentHandler.getInitialContent();
+            return contentHandler.getCurrentContent();
         }
         else
         {
             try
             {
-                response.get();
-                contentHandler.markCompleted();
-                return contentHandler.getFinalContent();
+                return contentHandler.getContent().claim();
             }
-            catch (InterruptedException e)
+            catch (RuntimeException e)
             {
-                contentHandler.markCompleted();
-                throw new ContentRetrievalException(e);
-            }
-            catch (ExecutionException e)
-            {
-                contentHandler.markCompleted();
-                throw new ContentRetrievalException(e.getCause());
+                log.debug("Exception retrieving content", e);
+                throw new ContentRetrievalException(Throwables.getRootCause(e));
             }
         }
     }
@@ -203,5 +181,102 @@ public class MacroContentManager implements DisposableBean
     public void destroy() throws Exception
     {
         eventPublisher.unregister(this);
+    }
+
+    private static final class ContentHandlerFailFunction implements Function<Throwable, String>
+    {
+        private TemplateRenderer templateRenderer;
+
+        private ContentHandlerFailFunction(TemplateRenderer templateRenderer)
+        {
+            this.templateRenderer = checkNotNull(templateRenderer);
+        }
+
+        @Override
+        public String apply(Throwable t)
+        {
+            final ContentRetrievalErrors errors;
+            if (t instanceof ContentRetrievalException)
+            {
+                errors = ((ContentRetrievalException) t).getErrors();
+            }
+            else
+            {
+                errors = new ContentRetrievalErrors(ImmutableList.of("An unknown error occurred."));
+                log.warn("An unknown error occurred rendering the macro", t);
+            }
+
+            return renderErrors(errors);
+        }
+
+        private String renderErrors(ContentRetrievalErrors errors)
+        {
+            try
+            {
+                final Writer writer = new StringWriter();
+                templateRenderer.render(
+                        "/velocity/macro/errors.vm",
+                        ImmutableMap.<String, Object>of("errors", errors),
+                        writer);
+                return writer.toString();
+            }
+            catch (IOException e)
+            {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    private static class HtmlToSafeHtmlFunction implements Function<String, String>
+    {
+        private final MacroInstance macroInstance;
+        private final Map<String, String> urlParameters;
+        private final MacroContentLinkParser macroContentLinkParser;
+        private final XhtmlCleaner xhtmlCleaner;
+        private final XhtmlContent xhtmlUtils;
+
+        public HtmlToSafeHtmlFunction(MacroInstance macroInstance, Map<String, String> urlParameters,
+                MacroContentLinkParser macroContentLinkParser, XhtmlCleaner xhtmlCleaner,
+                XhtmlContent xhtmlUtils)
+        {
+            this.macroInstance = macroInstance;
+            this.urlParameters = urlParameters;
+            this.macroContentLinkParser = macroContentLinkParser;
+            this.xhtmlCleaner = xhtmlCleaner;
+            this.xhtmlUtils = xhtmlUtils;
+        }
+
+        @Override
+        public String apply(String value)
+        {
+            value = macroContentLinkParser.parse(macroInstance.getRemotablePluginAccessor(), value,
+                    urlParameters);
+
+            /*!
+           The storage-format XML returned from the Remotable Plugin is then scrubbed to ensure any
+           JavaScript, CSS, or dangerous HTML elements or attributes aren't present.  This scrubber
+           is the same as used in the Confluence editor.
+            */
+            // todo: do we want to give feedback to the app of what was cleaned?
+            final String cleanedXhtml = xhtmlCleaner.cleanQuietly(value,
+                    macroInstance.getConversionContext());
+
+            try
+            {
+                return xhtmlUtils.convertStorageToView(cleanedXhtml,
+                        macroInstance.getConversionContext());
+            }
+            catch (Exception e)
+            {
+                log.warn("Unable to convert storage format for app {} with error {}",
+                        macroInstance.getRemotablePluginAccessor().getKey(), e.getMessage());
+                if (log.isDebugEnabled())
+                {
+                    log.debug("Error converting storage format", e);
+                }
+                throw new ContentRetrievalException(
+                        "Unable to convert storage format to HTML: " + e.getMessage(), e);
+            }
+        }
     }
 }

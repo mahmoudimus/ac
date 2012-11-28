@@ -5,6 +5,7 @@ import com.atlassian.applinks.api.event.ApplicationLinkAddedEvent;
 import com.atlassian.applinks.api.event.ApplicationLinkDeletedEvent;
 import com.atlassian.event.api.EventListener;
 import com.atlassian.event.api.EventPublisher;
+import com.atlassian.plugin.remotable.plugin.util.http.ContentRetrievalException;
 import com.atlassian.plugin.remotable.spi.PermissionDeniedException;
 import com.atlassian.plugin.remotable.spi.applinks.RemotePluginContainerApplicationType;
 import com.atlassian.plugin.remotable.plugin.loader.universalbinary.UBDispatchFilter;

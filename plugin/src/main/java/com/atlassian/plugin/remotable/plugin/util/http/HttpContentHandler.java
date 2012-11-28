@@ -1,7 +1,5 @@
 package com.atlassian.plugin.remotable.plugin.util.http;
 
-import com.atlassian.plugin.remotable.plugin.ContentRetrievalException;
-
 /**
  * Callback when http content is retrieved
  */

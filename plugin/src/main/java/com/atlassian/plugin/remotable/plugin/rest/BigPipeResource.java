@@ -38,7 +38,7 @@ public class BigPipeResource
     public Response getContent(@PathParam("id") String requestId) throws IOException,
             InterruptedException, JSONException
     {
-        JSONArray result = bigPipe.converContentHandlersToJson(bigPipe.waitForCompletedHandlers(requestId));
+        JSONArray result = bigPipe.convertContentHandlersToJson(bigPipe.waitForCompletedHandlers(requestId));
         CacheControl cacheControl = new CacheControl();
         cacheControl.setNoCache(true);
         return Response.ok(result.toString(2)).cacheControl(cacheControl).build();

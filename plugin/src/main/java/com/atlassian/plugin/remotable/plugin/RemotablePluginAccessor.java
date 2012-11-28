@@ -1,11 +1,11 @@
 package com.atlassian.plugin.remotable.plugin;
 
 import com.atlassian.plugin.remotable.plugin.util.http.AuthorizationGenerator;
+import com.atlassian.plugin.remotable.plugin.util.http.ContentRetrievalException;
 import com.atlassian.util.concurrent.Promise;
 
 import java.net.URI;
 import java.util.Map;
-import java.util.concurrent.Future;
 
 /**
  * Abstracts interactions with the remote plugin

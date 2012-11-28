@@ -5,7 +5,6 @@ import com.atlassian.httpclient.api.Response;
 import com.atlassian.httpclient.api.factory.HttpClientFactory;
 import com.atlassian.httpclient.api.factory.HttpClientOptions;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
-import com.atlassian.plugin.remotable.plugin.ContentRetrievalException;
 import com.atlassian.uri.Uri;
 import com.atlassian.uri.UriBuilder;
 import com.atlassian.util.concurrent.Promise;
@@ -14,7 +13,6 @@ import com.google.common.collect.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nullable;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
@@ -32,14 +30,15 @@ public class CachingHttpContentRetriever implements HttpContentRetriever
     private final Logger log = LoggerFactory.getLogger(CachingHttpContentRetriever.class);
     private final HttpClient httpClient;
 
-    public CachingHttpContentRetriever(PluginRetrievalService pluginRetrievalService, HttpClientFactory httpClientFactory)
+    public CachingHttpContentRetriever(PluginRetrievalService pluginRetrievalService,
+            HttpClientFactory httpClientFactory)
     {
         HttpClientOptions options = new HttpClientOptions();
         options.setIoSelectInterval(100, TimeUnit.MILLISECONDS);
         options.setThreadPrefix("content-ret");
         options.setMaxConnectionsPerHost(100);
-        options.setUserAgent(
-                "Atlassian-Remotable-Plugins/" + pluginRetrievalService.getPlugin().getPluginInformation().getVersion());
+        options.setUserAgent("Atlassian-Remotable-Plugins/"
+                + pluginRetrievalService.getPlugin().getPluginInformation().getVersion());
 
         options.setConnectionTimeout(3, TimeUnit.SECONDS);
         options.setSocketTimeout(15, TimeUnit.SECONDS);
@@ -90,30 +89,59 @@ public class CachingHttpContentRetriever implements HttpContentRetriever
                 .setAttributes(properties)
                 .get()
                 .<String>transform()
-                    .ok(new Function<Response, String>()
+                .ok(new Function<Response, String>()
+                {
+                    @Override
+                    public String apply(Response input)
                     {
-                        @Override
-                        public String apply(@Nullable Response input)
+                        log.debug("Returned ok content from: {}", url);
+                        return input.getEntity();
+                    }
+                })
+                .forbidden(new Function<Response, String>()
+                {
+                    @Override
+                    public String apply(Response input)
+                    {
+                        log.debug("Returned forbidden: {}", url);
+                        throw new ContentRetrievalException("Operation not authorized!");
+                    }
+                })
+                .others(new Function<Response, String>()
+                {
+                    @Override
+                    public String apply(Response input)
+                    {
+                        log.debug("Returned others: {}", url);
+                        if ("application/json".equalsIgnoreCase(input.getContentType()))
                         {
-                            return input.getEntity();
+                            throw new ContentRetrievalException(ContentRetrievalErrors.fromJson(input.getEntity()));
                         }
-                    })
-                    .forbidden(new Function<Response, String>()
-                    {
-                        @Override
-                        public String apply(@Nullable Response input)
+                        else
                         {
-                            return "Not allowed";
+                            log.debug("An unknown error occurred retrieving HTTP content. Status is {}, body content " +
+                                    "is:\n{}\n", input.getStatusCode(), input.getEntity());
+                            throw new ContentRetrievalException("An unknown error occurred!");
                         }
-                    })
-                    .fail(new Function<Throwable, String>()
+                    }
+                })
+                .fail(new Function<Throwable, String>()
+                {
+                    @Override
+                    public String apply(Throwable input)
                     {
-                        @Override
-                        public String apply(@Nullable Throwable input)
+                        if (!(input instanceof ContentRetrievalException))
                         {
+                            log.debug("Return failed: {}", url);
+                            log.debug(input.getMessage(), input);
                             throw new ContentRetrievalException(input);
                         }
-                    })
+                        else
+                        {
+                            throw (ContentRetrievalException) input;
+                        }
+                    }
+                })
                 .toPromise();
 
         if (promise.isDone())

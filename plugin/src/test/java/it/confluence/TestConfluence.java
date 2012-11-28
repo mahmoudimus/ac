@@ -30,9 +30,10 @@ import static org.junit.Assert.assertTrue;
 
 public class TestConfluence
 {
-
     private static final TestedProduct<WebDriverTester> product;
     private static final ConfluenceOps confluenceOps;
+    public static final String ERROR_PREFIX = "There were errors rendering macro:";
+
     static
     {
         System.setProperty("testedProductClass", FixedConfluenceTestedProduct.class.getName());
@@ -61,7 +62,7 @@ public class TestConfluence
         assertEquals("some note", page.getBodyNoteFromMacro());
         assertEquals("sandcastles", page.getImageMacroAlt());
 
-        assertTrue(page.getSlowMacroBody().startsWith("Error:"));
+        assertTrue(page.getSlowMacroBody().startsWith("There were errors rendering macro:"));
 	}
 
     @Test
@@ -117,8 +118,7 @@ public class TestConfluence
     @Test
 	public void testMacroCacheFlushes() throws XmlRpcFault, IOException
     {
-        Map pageData = confluenceOps.setPage("ds", "test", loadResourceAsString(
-                "confluence/counter-page.xhtml"));
+        Map pageData = confluenceOps.setPage("ds", "test", loadResourceAsString("confluence/counter-page.xhtml"));
         product.visit(LoginPage.class).login("betty", "betty", HomePage.class);
         ConfluenceCounterMacroPage page = product.visit(ConfluenceCounterMacroPage.class, pageData.get("title"));
         assertEquals("1", page.getCounterMacroBody());
@@ -147,7 +147,7 @@ public class TestConfluence
         ConfluenceMacroPage page = product.visit(ConfluenceMacroPage.class, pageData.get("title"));
 
         System.out.println("error: " + page.getMacroError("trickle"));
-        assertTrue(page.getMacroError("trickle").startsWith("Error:"));
+        assertTrue(page.getMacroError("trickle").startsWith(ERROR_PREFIX));
         runner.stop();
     }
 
@@ -178,5 +178,4 @@ public class TestConfluence
             out.close();
         }
     }
-
 }

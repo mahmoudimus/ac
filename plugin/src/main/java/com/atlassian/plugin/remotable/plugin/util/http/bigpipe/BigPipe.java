@@ -2,7 +2,10 @@ package com.atlassian.plugin.remotable.plugin.util.http.bigpipe;
 
 import com.atlassian.security.random.SecureRandomFactory;
 import com.atlassian.util.concurrent.CopyOnWriteMap;
+import com.atlassian.util.concurrent.ForwardingPromise;
+import com.atlassian.util.concurrent.Promise;
 import com.google.common.base.Function;
+import com.google.common.util.concurrent.FutureCallback;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -16,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Sets.newHashSet;
 
@@ -29,40 +31,42 @@ public class BigPipe
     private final SecureRandom secureRandom = SecureRandomFactory.newInstance();
     private static final Logger log = LoggerFactory.getLogger(BigPipe.class);
 
-    private final Map<String,RequestContentSet> requestContentSets = CopyOnWriteMap.newHashMap();
+    // fixme: add big pipe cleaner thread to clean expired request sets
+    private final Map<String, RequestContentSet> requestContentSets = CopyOnWriteMap.newHashMap();
 
-    public BigPipeContentHandler createContentHandler(String requestId, Function<String,String> successFunction,
-                                                         Function<Throwable, String> failureFunction)
+    public BigPipeContentHandler createContentHandler(String requestId, Promise<String> responsePromise)
     {
         // give each content its own unique id for replacing later
         String contentId = String.valueOf(secureRandom.nextLong());
-        return createContentHandler(requestId, contentId, successFunction, failureFunction);
+        return createContentHandler(requestId, contentId, responsePromise);
     }
-    public BigPipeContentHandler createContentHandler(String requestId, String contentId, Function<String,String> successFunction,
-                                                             Function<Throwable, String> failureFunction)
+
+    public BigPipeContentHandler createContentHandler(final String requestId, final String contentId,
+            Promise<String> responsePromise)
     {
-        if (failureFunction == null)
+        final Promise<String> errorHandlingPromise = responsePromise.recover(new Function<Throwable, String>()
         {
-            failureFunction = new Function<Throwable, String>()
+            @Override
+            public String apply(Throwable input)
             {
-                @Override
-                public String apply(Throwable input)
-                {
-                    return "<span class=\"bp-error\">Error: " + input.getMessage() + "</span>";
-                }
-            };
-        }
-        checkNotNull(successFunction);
-        RequestContentSet request = requestContentSets.get(requestId);
-        if (request == null)
+                log.debug("Error handling bigpipe request for id '" + requestId + "'", input);
+
+                return "<span class=\"bp-error\">Error: " + input.getMessage() + "</span>";
+            }
+        });
+
+        RequestContentSet requestContentSet = requestContentSets.get(requestId);
+        if (requestContentSet == null)
         {
-            request = new RequestContentSet(requestId);
-            requestContentSets.put(requestId, request);
+            requestContentSet = new RequestContentSet(requestId);
+            requestContentSets.put(requestId, requestContentSet);
         }
 
-        InternalHandler handler = new InternalHandler(requestId, contentId,
-                request, successFunction, failureFunction);
-        return request.addHandler(handler);
+        Promise<String> cleanedUpPromise = new CleanupPromise(errorHandlingPromise, requestContentSet, contentId);
+
+
+        InternalHandler handler = new InternalHandler(contentId, requestContentSet, cleanedUpPromise);
+        return requestContentSet.addHandler(handler);
     }
 
     public Iterable<BigPipeContentHandler> waitForCompletedHandlers(String requestId)
@@ -78,12 +82,12 @@ public class BigPipe
         }
     }
 
-    public JSONArray converContentHandlersToJson(Iterable<BigPipeContentHandler> handlers)
+    public JSONArray convertContentHandlersToJson(Iterable<BigPipeContentHandler> handlers)
     {
         JSONArray result = new JSONArray();
         for (BigPipeContentHandler handler : handlers)
         {
-            String html = handler.getFinalContent();
+            String html = handler.getContent().claim();
             JSONObject content = new JSONObject();
             try
             {
@@ -112,39 +116,74 @@ public class BigPipe
         }
     }
 
+    private static class CleanupPromise extends ForwardingPromise<String>
+    {
+        private final Promise<String> promise;
+        private final RequestContentSet requestContentSet;
+        private final String contentId;
+
+        public CleanupPromise(Promise<String> promise, RequestContentSet requestContentSet, String contentId)
+        {
+            this.promise = promise;
+            this.requestContentSet = requestContentSet;
+            this.contentId = contentId;
+        }
+
+        @Override
+        protected Promise<String> delegate()
+        {
+            return promise;
+        }
+
+        @Override
+        public String claim()
+        {
+            try
+            {
+                return super.claim();
+            }
+            finally
+            {
+                requestContentSet.removeContent(contentId);
+            }
+        }
+    }
+
     /**
      * Manages individual bit of content
      */
     private class InternalHandler implements BigPipeContentHandler
     {
-        private volatile String content;
-
-        private final String requestId;
         private final String contentId;
         private final RequestContentSet request;
-        private final Function<String, String> successFunction;
-        private final Function<Throwable, String> failureFunction;
+        private final Promise<String> responsePromise;
 
-        public InternalHandler(String requestId,
-                               String contentId,
-                               RequestContentSet request,
-                               Function<String, String> successFunction,
-                               Function<Throwable, String> failureFunction
-        )
+        public InternalHandler(String contentId, RequestContentSet requestContentSet, Promise<String> responsePromise)
         {
-            this.requestId = requestId;
             this.contentId = contentId;
-            this.request = request;
-            this.successFunction = successFunction;
-            this.failureFunction = failureFunction;
+            this.request = requestContentSet;
+            this.responsePromise = responsePromise.then(new FutureCallback<String>()
+            {
+                @Override
+                public void onSuccess(String result)
+                {
+                    request.notifyConsumers();
+                }
+
+                @Override
+                public void onFailure(Throwable t)
+                {
+                    request.notifyConsumers();
+                }
+            });
         }
 
-        public String getInitialContent()
+        @Override
+        public String getCurrentContent()
         {
-            if (content != null)
+            if (responsePromise.isDone())
             {
-                markCompleted();
-                return successFunction.apply(content);
+                return responsePromise.claim();
             }
             else
             {
@@ -153,57 +192,33 @@ public class BigPipe
         }
 
         @Override
-        public void onSuccess(String content)
-        {
-            this.content = content;
-            request.notifyConsumers();
-        }
-
-        @Override
-        public void onFailure(Throwable ex)
-        {
-            this.content = failureFunction.apply(ex);
-            request.notifyConsumers();
-        }
-
-        @Override
-        public void markCompleted()
-        {
-            RequestContentSet request = requestContentSets.get(requestId);
-            if (request != null)
-            {
-                request.removeContent(contentId);
-            }
-        }
-
-        public String getFinalContent()
-        {
-            return successFunction.apply(content);
-        }
-
-        @Override
         public String getContentId()
         {
             return contentId;
         }
 
+        @Override
+        public Promise<String> getContent()
+        {
+            return responsePromise;
+        }
+
         public boolean isFinished()
         {
-            return content != null;
+            return responsePromise.isDone();
         }
     }
 
     /**
-     * Manages a set of content for a single page.  Content for the page can be waited upon in a
-     * blocking call to be woken up when new content is available.
+     * Manages a set of content for a single page.  Content for the page can be waited upon in a blocking call to be
+     * woken up when new content is available.
      */
     private class RequestContentSet
     {
-        private final Map<String,InternalHandler> handlers = CopyOnWriteMap.newHashMap();
+        private final Map<String, InternalHandler> handlers = CopyOnWriteMap.newHashMap();
 
         /**
-         * The expiration of the page content in the case where the xhr call to retrieve the
-         * content is never made.
+         * The expiration of the page content in the case where the xhr call to retrieve the content is never made.
          */
         private final long expiry;
         private final String requestId;
@@ -217,6 +232,7 @@ public class BigPipe
 
         /**
          * Ensures only one handler per contentid
+         *
          * @return The handler to actually use
          */
         public InternalHandler addHandler(InternalHandler handler)
@@ -241,7 +257,7 @@ public class BigPipe
         public Iterable<BigPipeContentHandler> consumeFinishedContent()
         {
             List<BigPipeContentHandler> result = newArrayList();
-            synchronized(lock)
+            synchronized (lock)
             {
                 if (handlers.isEmpty())
                 {
@@ -270,13 +286,13 @@ public class BigPipe
         }
 
         /**
-         * Waits for content to be finished and removes it from the set of outstanding content if
-         * done.  It will only wait until the timeout for the page has been reached.
+         * Waits for content to be finished and removes it from the set of outstanding content if done.  It will only
+         * wait until the timeout for the page has been reached.
          */
         public Iterable<BigPipeContentHandler> waitForFinishedContent()
         {
             List<BigPipeContentHandler> result = newArrayList();
-            synchronized(lock)
+            synchronized (lock)
             {
                 if (handlers.isEmpty())
                 {
@@ -337,5 +353,4 @@ public class BigPipe
             }
         }
     }
-
 }

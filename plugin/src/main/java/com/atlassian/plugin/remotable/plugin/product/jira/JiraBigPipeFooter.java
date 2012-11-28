@@ -53,7 +53,7 @@ public class JiraBigPipeFooter implements PluggableFooter
         String json = null;
         try
         {
-            json = bigPipe.converContentHandlersToJson(bigPipe.consumeCompletedHandlers(
+            json = bigPipe.convertContentHandlersToJson(bigPipe.consumeCompletedHandlers(
                     RequestIdAccessor.getRequestId())).toString(2);
         }
         catch (JSONException e)

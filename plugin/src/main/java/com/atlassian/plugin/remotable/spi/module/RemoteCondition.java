@@ -3,13 +3,13 @@ package com.atlassian.plugin.remotable.spi.module;
 import com.atlassian.plugin.remotable.plugin.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.remotable.plugin.product.ProductAccessor;
 import com.atlassian.plugin.remotable.plugin.util.http.bigpipe.BigPipe;
-import com.atlassian.plugin.remotable.plugin.util.http.bigpipe.BigPipeContentHandler;
 import com.atlassian.plugin.remotable.plugin.util.http.bigpipe.RequestIdAccessor;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.webresource.WebResourceManager;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.templaterenderer.TemplateRenderer;
+import com.atlassian.util.concurrent.Promise;
 import com.google.common.base.Function;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -78,36 +78,6 @@ public class RemoteCondition implements Condition
     public boolean shouldDisplay(Map<String, Object> context)
     {
         webResourceManager.requireResource("com.atlassian.labs.remoteapps-plugin:remote-condition");
-        BigPipeContentHandler handler = bigPipe.createContentHandler(RequestIdAccessor.getRequestId(),
-                new Function<String, String>()
-                {
-                    @Override
-                    public String apply(@Nullable String value)
-                    {
-                        try
-                        {
-                            JSONObject obj = new JSONObject(value);
-                            if (obj.getBoolean("shouldDisplay"))
-                            {
-                                return "<script>AJS.$(\"" + toHideSelector + "\").removeClass('hidden').parent().removeClass('hidden');</script>";
-                            }
-                        }
-                        catch (JSONException e)
-                        {
-                            log.warn("Invalid JSON returned from remote condition: " + value);
-                        }
-                        return "";
-                    }
-                },
-                new Function<Throwable, String>()
-                {
-                    @Override
-                    public String apply(@Nullable Throwable input)
-                    {
-                        return "<script>AJS.log('Unable to retrieve remote condition from plugin '" + pluginKey + "');</script>";
-                    }
-                }
-            );
 
         Map<String,String> params = newHashMap();
         for (String contextParam : contextParams)
@@ -116,8 +86,40 @@ public class RemoteCondition implements Condition
         }
         String remoteUsername = userManager.getRemoteUsername();
         params.put("user_id", remoteUsername != null ? remoteUsername : "");
-        remotablePluginAccessorFactory.get(pluginKey).executeAsyncGet(userManager.getRemoteUsername(),
-                url, params, Collections.<String, String>emptyMap()).then(handler);
+        Promise<String> responsePromise = remotablePluginAccessorFactory.get(pluginKey).executeAsyncGet(userManager.getRemoteUsername(),
+                url, params, Collections.<String, String>emptyMap())
+                .fold(
+                        new Function<Throwable, String>()
+                        {
+                            @Override
+                            public String apply(@Nullable Throwable input)
+                            {
+                                return "<script>AJS.log('Unable to retrieve remote condition from plugin '" + pluginKey + "');</script>";
+                            }
+                        },
+                        new Function<String, String>()
+                        {
+                            @Override
+                            public String apply(@Nullable String value)
+                            {
+                                try
+                                {
+                                    JSONObject obj = new JSONObject(value);
+                                    if (obj.getBoolean("shouldDisplay"))
+                                    {
+                                        return "<script>AJS.$(\"" + toHideSelector + "\").removeClass('hidden').parent().removeClass('hidden');</script>";
+                                    }
+                                }
+                                catch (JSONException e)
+                                {
+                                    log.warn("Invalid JSON returned from remote condition: " + value);
+                                }
+                                return "";
+                            }
+                        }
+                );
+
+        bigPipe.createContentHandler(RequestIdAccessor.getRequestId(), responsePromise);
 
         // always return true as the link will be disabled by default via the 'hidden' class
         return true;
