@@ -200,6 +200,7 @@ public class DefaultRemotablePluginInstallationService implements RemotablePlugi
     Document getPluginDescriptor(final String registrationUrl)
     {
         return httpClient.newRequest(registrationUrl)
+                .setHeader("Accept", "application/xml")
                 .get()
                 .<Document>transform()
                 .ok(new Function<Response, Document>()

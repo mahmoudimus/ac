@@ -6,6 +6,9 @@ import com.atlassian.plugin.remotable.container.internal.Environment;
 import com.atlassian.plugin.remotable.container.service.ContainerOAuthSignedRequestHandler;
 import com.atlassian.plugin.remotable.host.common.service.AbstractOauthSignedRequestHandler;
 import org.apache.commons.io.IOUtils;
+import org.dom4j.Document;
+import org.dom4j.Element;
+import org.dom4j.Node;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 import org.json.JSONException;
@@ -20,6 +23,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.util.List;
 
 /**
  * Registers calling applications only if the secret matches.  Uses a mutable environment
@@ -105,18 +109,42 @@ public class RegistrationFilter implements Filter
                 resp.sendError(403, "Registration not allowed");
             }
         }
-        else
+        else if ("get".equalsIgnoreCase(method))
         {
-            if ("get".equalsIgnoreCase(method))
+            if (req.getHeader("Accept").startsWith("application/xml"))
             {
-                resp.setHeader("Access-Control-Allow-Origin", "*");
+                serveXmlDescriptor(resp);
             }
-            resp.setContentType("text/xml");
-            byte[] descriptor = readDescriptorToBytes();
-            resp.setContentLength(descriptor.length);
-            resp.getOutputStream().write(descriptor);
-            resp.getOutputStream().close();
+            else
+            {
+                Document doc = descriptorAccessor.getDescriptor();
+                Element pluginInfo = doc.getRootElement().element("plugin-info");
+                if (pluginInfo != null)
+                {
+                    for (Element param : (List<Element>) pluginInfo.elements("param"))
+                    {
+                        if (param.attributeValue("name").equalsIgnoreCase("documentation.url"))
+                        {
+                            String documentationUrl = param.getTextTrim();
+                            log.error("Redirecting to documentation url '{}'", documentationUrl);
+                            resp.sendRedirect(documentationUrl);
+                            return;
+                        }
+                    }
+                }
+                serveXmlDescriptor(resp);
+            }
         }
+    }
+
+    private void serveXmlDescriptor(HttpServletResponse resp) throws IOException
+    {
+        resp.setHeader("Access-Control-Allow-Origin", "*");
+        resp.setContentType("application/xml");
+        byte[] descriptor = readDescriptorToBytes();
+        resp.setContentLength(descriptor.length);
+        resp.getOutputStream().write(descriptor);
+        resp.getOutputStream().close();
     }
 
     @Override

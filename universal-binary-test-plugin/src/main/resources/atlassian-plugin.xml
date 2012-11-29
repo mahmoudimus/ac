@@ -4,6 +4,7 @@
         <permissions>
             <permission installation-mode="remote">create_oauth_link</permission>
         </permissions>
+        <param name="documentation.url">http://example.com</param>
     </plugin-info>
 
     <remote-plugin-container key="${project.artifactId}" display-url="http://localhost:8000/sample-ub-java">

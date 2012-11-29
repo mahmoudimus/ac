@@ -1,13 +1,14 @@
 <atlassian-plugin key="app1" name="${project.name}" plugins-version="2">
     <plugin-info>
         <version>${project.version}</version>
-        <param name="configure.url">/plugins/servlet/remotable-plugins/app1/remotePluginConfig</param>
         <permissions>
             <permission>resttest</permission>
             <permission>read_app_links</permission>
             <permission>send_email</permission>
             <permission installation-mode="remote">create_oauth_link</permission>
         </permissions>
+        <param name="configure.url">/plugins/servlet/remotable-plugins/app1/remotePluginConfig</param>
+        <param name="documentation.url">https://bitbucket.org/atlassian/remotable-plugins</param>
     </plugin-info>
 
     <junit key="all" package="junit.all" />

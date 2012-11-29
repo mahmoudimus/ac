@@ -229,6 +229,11 @@ public class RemotePluginRunner
         return this;
     }
 
+    public String getPluginDisplayUrl()
+    {
+        return "http://localhost:" + port;
+    }
+
     private class MustacheServlet extends HttpServlet
     {
         private final String path;
