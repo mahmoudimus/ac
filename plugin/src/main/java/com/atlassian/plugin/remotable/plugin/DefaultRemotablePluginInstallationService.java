@@ -208,7 +208,7 @@ public class DefaultRemotablePluginInstallationService implements RemotablePlugi
                     @Override
                     public Document apply(Response response)
                     {
-                        Document document = formatConverter.toDocument(registrationUrl.toString(),
+                        Document document = formatConverter.toDocument(registrationUrl,
                                 response.getHeader("Content-Type"),
                                 response.getEntity());
                         descriptorValidator.validate(URI.create(registrationUrl), document);
@@ -280,23 +280,39 @@ public class DefaultRemotablePluginInstallationService implements RemotablePlugi
                 .claim();
     }
 
-    public String findDescriptorUrl(JSONObject version) throws JSONException
+    private String findUrl(JSONArray links, String rel) throws JSONException
     {
-        JSONArray array = version.getJSONArray("links");
-        for (int x=0; x< array.length(); x++)
+        for (int x=0; x< links.length(); x++)
         {
-            final JSONObject link = array.getJSONObject(x);
-            if ("descriptor".equals(link.getString("rel")))
+            final JSONObject link = links.getJSONObject(x);
+            if (rel.equals(link.getString("rel")))
             {
                 return link.getString("href");
             }
         }
-        throw new JSONException("No descriptor url found for descriptor");
+        return null;
+    }
+
+    public String findDescriptorUrl(JSONObject version) throws JSONException
+    {
+        JSONArray links = version.getJSONArray("links");
+        String url = findUrl(links, "descriptor");
+        // @todo remove "binary" fallback when MPAC implements descriptor hosting?
+        // we really want to use the "descriptor" url but it's NYI on MPAC, so fall back to "binary" if necessary
+        if (url == null) url = findUrl(links, "binary");
+        if (url == null) throw new JSONException("No descriptor url found for descriptor");
+        return url;
     }
 
     private boolean isValidPluginSystemVersion(JSONObject version) throws JSONException
     {
-        return version != null && "three".equalsIgnoreCase(version.getString("addOnType"));
+        if (version != null)
+        {
+            String type = version.getString("addOnType");
+            // @todo is this a bug in mpac?  addOnType in json is "Plugins 3", but query param input requires "three"
+            return "Plugins 3".equalsIgnoreCase(type) || "three".equalsIgnoreCase(type);
+        }
+        return false;
     }
 
     @Override
