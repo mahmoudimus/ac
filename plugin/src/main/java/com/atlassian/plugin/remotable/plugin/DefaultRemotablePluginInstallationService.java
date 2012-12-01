@@ -253,28 +253,24 @@ public class DefaultRemotablePluginInstallationService implements RemotablePlugi
                         {
                             JSONObject object = new JSONObject(input.getEntity());
                             JSONObject version = object.getJSONObject("version");
-                            if (version != null &&
-                                    isValidPluginSystemVersion(version))
+                            if (version == null || !isValidPluginSystemVersion(version))
                             {
-                                return findDescriptorUrl(version);
+                                throw new InstallationFailedException("Unable to find valid plugin version for key " + pluginKey);
                             }
-                            log.error("Unable to find valid plugin version for key " + pluginKey);
-                            return null;
+                            return findDescriptorUrl(version);
                         }
                         catch (JSONException e)
                         {
-                            log.warn("Unable to parse marketplace response", e);
-                            return null;
+                            throw new InstallationFailedException("Unable to parse marketplace response", e);
                         }
                     }
                 })
                 .otherwise(new Function<Throwable, String>()
                 {
                     @Override
-                    public String apply(@Nullable Throwable input)
+                    public String apply(Throwable input)
                     {
-                        log.error("Error retrieving response from marketplace", input);
-                        return null;
+                        throw new InstallationFailedException("Error retrieving response from marketplace", input);
                     }
                 })
                 .claim();
