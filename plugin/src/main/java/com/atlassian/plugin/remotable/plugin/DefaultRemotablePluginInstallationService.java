@@ -261,7 +261,7 @@ public class DefaultRemotablePluginInstallationService implements RemotablePlugi
                         }
                         catch (JSONException e)
                         {
-                            throw new InstallationFailedException("Unable to parse marketplace response", e);
+                            throw new InstallationFailedException("Unable to parse marketplace response for key " + pluginKey, e);
                         }
                     }
                 })
@@ -270,7 +270,7 @@ public class DefaultRemotablePluginInstallationService implements RemotablePlugi
                     @Override
                     public String apply(Throwable input)
                     {
-                        throw new InstallationFailedException("Error retrieving response from marketplace", input);
+                        throw new InstallationFailedException("Error retrieving response from marketplace for key " + pluginKey, input);
                     }
                 })
                 .claim();
