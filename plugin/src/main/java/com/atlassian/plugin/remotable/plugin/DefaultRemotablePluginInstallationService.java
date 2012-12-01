@@ -254,7 +254,7 @@ public class DefaultRemotablePluginInstallationService implements RemotablePlugi
                             JSONObject object = new JSONObject(input.getEntity());
                             JSONObject version = object.getJSONObject("version");
                             if (version != null &&
-                                    isValidPluginSystemVersion(object))
+                                    isValidPluginSystemVersion(version))
                             {
                                 return findDescriptorUrl(version);
                             }
