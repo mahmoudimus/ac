@@ -471,6 +471,7 @@
     </scm>
 
     <properties>
+        <fake.property>1</fake.property>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <xvfb.enable>true</xvfb.enable>
         <atlassian.selenium.version>2.1.0-m12</atlassian.selenium.version>
