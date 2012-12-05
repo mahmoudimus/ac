@@ -16,10 +16,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URI;
-import java.util.Map;
 import java.util.Set;
 
-import static com.google.common.collect.Maps.newHashMap;
 import static net.oauth.OAuth.*;
 
 public class OAuth2LOFilter implements Filter
@@ -35,7 +33,7 @@ public class OAuth2LOFilter implements Filter
     private final AuthenticationListener authenticationListener;
     private final AuthenticationController authenticationController;
     private final WebSudoElevator webSudoElevator;
-    private final String contextPath;
+    private final ApplicationProperties applicationProperties;
 
     public OAuth2LOFilter(Authenticator authenticator,
                           AuthenticationListener authenticationListener,
@@ -47,7 +45,7 @@ public class OAuth2LOFilter implements Filter
         this.authenticator = Check.notNull(authenticator, "authenticator");
         this.authenticationListener = Check.notNull(authenticationListener, "authenticationListener");
         this.authenticationController = Check.notNull(authenticationController, "authenticationController");
-        this.contextPath = URI.create(applicationProperties.getBaseUrl()).getPath();
+        this.applicationProperties = Check.notNull(applicationProperties, "applicationProperties");
     }
     
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException
@@ -131,24 +129,41 @@ public class OAuth2LOFilter implements Filter
      */
     private boolean isOAuth2LOAccessAttempt(HttpServletRequest request)
     {
-        final boolean isRequestTokenRequest = request.getRequestURL().toString().endsWith("/plugins/servlet/oauth/request-token");
-        final boolean isDownloadableResourceRequest = request.getRequestURI().startsWith(contextPath + "/download/resources/");
-        final Map<String,String> params = parameterNames(request);
-        final Set<String> names = params.keySet();
+        final Set<String> names = parameterNames(request);
         return  names.containsAll(OAUTH_DATA_REQUEST_PARAMS) &&
                 !names.contains(OAuth.OAUTH_TOKEN) &&
-                !isRequestTokenRequest &&
-                !isDownloadableResourceRequest;
+                !isTokenRequest(request) &&
+                !isDownloadableResourceRequest(request);
     }
 
-    private Map<String,String> parameterNames(HttpServletRequest request)
+    private boolean isDownloadableResourceRequest(HttpServletRequest request)
     {
-        Map<String,String> parameterNames = newHashMap();
+        return request.getRequestURI().startsWith(getContextPath(request) + "/download/resources/");
+    }
+
+    private boolean isTokenRequest(HttpServletRequest request)
+    {
+        return request.getRequestURL().toString().endsWith("/plugins/servlet/oauth/request-token");
+    }
+
+    private String getContextPath(HttpServletRequest request)
+    {
+        final String baseUrl = applicationProperties.getBaseUrl();
+        if (baseUrl == null)
+        {
+            return request.getContextPath();
+        }
+        return URI.create(baseUrl).getPath();
+    }
+
+    private Set<String> parameterNames(HttpServletRequest request)
+    {
+        final ImmutableSet.Builder<String> names = ImmutableSet.builder();
         for (OAuth.Parameter parameter : HttpRequestMessage.getParameters(request))
         {
-            parameterNames.put(parameter.getKey(), parameter.getValue());
+            names.add(parameter.getKey());
         }
-        return parameterNames;
+        return names.build();
     }
 
     public void init(FilterConfig filterConfig) throws ServletException
