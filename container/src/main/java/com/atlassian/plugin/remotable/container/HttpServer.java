@@ -1,8 +1,7 @@
 package com.atlassian.plugin.remotable.container;
 
-
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.remotable.container.org.eclipse.jetty.servlet.DefaultServlet;
+import org.eclipse.jetty.servlet.DefaultServlet;
 import com.atlassian.plugin.remotable.host.common.descriptor.LocalMountBaseUrlResolver;
 import com.google.common.base.Function;
 import com.google.common.collect.MapMaker;
