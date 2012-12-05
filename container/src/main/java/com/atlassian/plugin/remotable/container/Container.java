@@ -96,6 +96,7 @@ import com.atlassian.sal.api.transaction.TransactionTemplate;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.core.transaction.NoOpTransactionTemplate;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import org.osgi.framework.Bundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -111,6 +112,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static com.atlassian.plugin.remotable.container.util.AppRegister.*;
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Lists.*;
 import static com.google.common.collect.Maps.*;
 import static com.google.common.collect.Sets.*;
@@ -125,22 +127,21 @@ public final class Container
             URI.create("http://localhost:2990/jira"),
             URI.create("http://localhost:5990/refapp"));
 
-    private final DefaultPluginManager pluginManager;
+    private final ContainerConfiguration configuration;
     private final HttpServer httpServer;
+    private final DefaultPluginManager pluginManager;
 
     private DescriptorAccessor descriptorAccessor;
     private AppReloader appReloader;
 
-    public Container(HttpServer server, String[] apps) throws FileNotFoundException
+    public Container(ContainerConfiguration configuration, HttpServer server) throws FileNotFoundException
     {
-        this.httpServer = server;
-
-        HostProperties hostProperties = new ContainerHostProperties();
+        this.configuration = checkNotNull(configuration);
+        this.httpServer = checkNotNull(server);
 
         // todo: this should use the plugin api, but it doesn't allow setting of plugin loaders right now
-        final DefaultPackageScannerConfiguration scannerConfig = new DefaultPackageScannerConfiguration(
-                ContainerApplication.INSTANCE.getVersion());
-        OsgiPersistentCache osgiCache = new DefaultOsgiPersistentCache(mkdir(".cache/osgi"));
+        final DefaultPackageScannerConfiguration scannerConfig = new DefaultPackageScannerConfiguration(ContainerApplication.INSTANCE.getVersion());
+        OsgiPersistentCache osgiCache = new DefaultOsgiPersistentCache(configuration.getCacheDirectory("osgi"));
         Map<Class<?>, Object> hostComponents = newHashMap();
         PluginEventManager pluginEventManager = new DefaultPluginEventManager();
         final OsgiContainerManager osgiContainerManager = new FelixOsgiContainerManager(
@@ -158,15 +159,15 @@ public final class Container
                 pluginEventManager);
 
         final Scanner scanner;
-        if (apps.length == 0)
+        if (Iterables.isEmpty(configuration.getApplicationsPaths()))
         {
-            File appDir = mkdir("apps");
+            File appDir = ContainerUtils.mkdirs("apps");
             scanner = new DirectoryScanner(appDir);
         }
         else
         {
             List<File> files = newArrayList();
-            for (String app : apps)
+            for (String app : configuration.getApplicationsPaths())
             {
                 File appFile = new File(app);
                 try
@@ -196,7 +197,7 @@ public final class Container
             scanner = new FileListScanner(files);
         }
 
-        final PluginLoader bundledPluginLoader = new BundledPluginLoader(this.getClass().getResource("/bundled-plugins.zip"), new File(".cache/bundled"), asList(osgiPluginDeployer, bundleFactory), pluginEventManager);
+        final PluginLoader bundledPluginLoader = new BundledPluginLoader(this.getClass().getResource("/bundled-plugins.zip"), configuration.getCacheDirectory("bundled"), asList(osgiPluginDeployer, bundleFactory), pluginEventManager);
         final PluginLoader appPluginLoader = new ScanningPluginLoader(scanner, asList(osgiPluginDeployer, bundleFactory), pluginEventManager);
 
         final DefaultHostContainer hostContainer = new DefaultHostContainer();
@@ -375,16 +376,6 @@ public final class Container
         {
             appReloader.shutdown();
         }
-    }
-
-    private File mkdir(String path)
-    {
-        File file = new File(path);
-        if (!file.exists())
-        {
-            file.mkdirs();
-        }
-        return file;
     }
 
     private static class ContainerHostComponentProvider implements HostComponentProvider

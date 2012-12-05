@@ -19,7 +19,7 @@ public final class Main
     public Main(String[] apps) throws Exception
     {
         server = new HttpServer();
-        container = new Container(server, apps);
+        container = new Container(new CommandLineContainerConfiguration(apps), server);
         container.start();
 
         List<String> lines = newArrayList();
