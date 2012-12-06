@@ -81,6 +81,7 @@
         </xs:sequence>
         <xs:attribute name="name" type="ConditionNameType" use="optional" />
         <xs:attribute name="url" type="RelativeUrlType" use="optional" />
+        <xs:attribute name="invert" type="xs:boolean" default="false" use="optional" />
     </xs:complexType>
 
     <xs:complexType name="ConditionsType">

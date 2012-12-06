@@ -21,6 +21,7 @@ import java.util.List;
 
 import static com.google.common.collect.Lists.transform;
 import static com.google.common.collect.Sets.newHashSet;
+import static org.apache.commons.lang.StringUtils.escape;
 import static org.apache.commons.lang.StringUtils.join;
 
 /**
@@ -66,6 +67,12 @@ public class ConditionProcessor
                     throw new PluginParseException("Either the name or url must be defined on a condition");
                 }
                 Element condElement = newConfig.addElement("condition");
+
+                if (Boolean.parseBoolean(escape(cElement.attributeValue("invert"))))
+                {
+                    condElement.addAttribute("invert", "true");
+                }
+
                 if (cName != null)
                 {
                     condElement.addAttribute("class", productAccessor.getConditions().get(cName).getName());
