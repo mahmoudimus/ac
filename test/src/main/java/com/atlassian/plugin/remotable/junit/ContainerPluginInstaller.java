@@ -7,12 +7,12 @@ import com.google.common.cache.CacheLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Arrays;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 final class ContainerPluginInstaller implements PluginInstaller
 {
@@ -69,10 +69,17 @@ final class ContainerPluginInstaller implements PluginInstaller
         @Override
         public Object load(final ContainerConfiguration key) throws Exception
         {
-            URLClassLoader classLoader = new URLClassLoader(new URL[] {getClass().getResource("/remotable-plugins-container-standalone.jar")});
+            final ClassLoader classLoader = getContainerClassLoader();
 
-            final Class<?> mainClass = classLoader.loadClass(Main.class.getName());
-            final Object container = mainClass.getConstructors()[0].newInstance(new Object[]{key.apps});
+            // getting all the classes, methods first
+            final Class<?> mainClass = loadMainClass(classLoader);
+            final Method newMainMethod = getMethod(mainClass, "newMain", String[].class);
+            final Method stopMethod = getMethod(mainClass, "stop");
+
+
+            // using null for a static method
+            final Object container = invoke(null, newMainMethod, new Object[]{key.apps});
+
             LOGGER.info("Started container with apps: {}", Arrays.toString(key.apps));
 
             Runtime.getRuntime().addShutdownHook(new Thread()
@@ -80,26 +87,58 @@ final class ContainerPluginInstaller implements PluginInstaller
                 public void run()
                 {
                     LOGGER.info("Stopping container with apps: {}", Arrays.toString(key.apps));
-                    try
-                    {
-                        mainClass.getMethod("stop").invoke(container);
-                    }
-                    catch (IllegalAccessException e)
-                    {
-                        e.printStackTrace();  //To change body of catch statement use File |
-                        // Settings | File Templates.
-                    }
-                    catch (InvocationTargetException e)
-                    {
-                        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                    }
-                    catch (NoSuchMethodException e)
-                    {
-                        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                    }
+                    invoke(container, stopMethod);
                 }
             });
             return container;
+        }
+
+        private Method getMethod(Class<?> aClass, String name, Class<?>... args)
+        {
+            try
+            {
+                return checkNotNull(aClass).getMethod(name, args);
+            }
+            catch (Exception e)
+            {
+                throw new IllegalStateException("Could not find method " + aClass.getName() + "#" + name + "(" + Arrays.toString(args) + ")", e);
+            }
+        }
+
+        private Object invoke(Object object, Method method, Object... args)
+        {
+            try
+            {
+                return method.invoke(object, args);
+            }
+            catch (Exception e)
+            {
+                throw new IllegalStateException("Could not invoke method " + method + " on object " + object, e);
+            }
+        }
+
+        private Class<?> loadMainClass(ClassLoader classLoader)
+        {
+            final String mainClass = Main.class.getName();
+            try
+            {
+                return classLoader.loadClass(mainClass);
+            }
+            catch (Exception e)
+            {
+                throw new IllegalStateException("Could not load main class, " + mainClass);
+            }
+        }
+
+        private URLClassLoader getContainerClassLoader()
+        {
+            final String containerPath = "/remotable-plugins-container-standalone.jar";
+            final URL containerJar = getClass().getResource(containerPath);
+            if (containerJar == null)
+            {
+                throw new IllegalStateException("Could not find container! Looked at classpath:" + containerPath);
+            }
+            return new URLClassLoader(new URL[]{containerJar});
         }
     }
 }

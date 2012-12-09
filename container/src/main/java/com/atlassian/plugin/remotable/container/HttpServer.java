@@ -1,6 +1,8 @@
 package com.atlassian.plugin.remotable.container;
 
+import com.atlassian.fugue.Option;
 import com.atlassian.plugin.Plugin;
+import com.google.common.base.Supplier;
 import org.eclipse.jetty.servlet.DefaultServlet;
 import com.atlassian.plugin.remotable.host.common.descriptor.LocalMountBaseUrlResolver;
 import com.google.common.base.Function;
@@ -28,6 +30,8 @@ import static java.lang.Integer.*;
 
 public final class HttpServer implements LocalMountBaseUrlResolver
 {
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
     private final Server server;
     private final Map<String,ServletContextHandler> contexts;
     private final MutableHandlerList handlers;
@@ -36,10 +40,20 @@ public final class HttpServer implements LocalMountBaseUrlResolver
 
     private final int appPort;
 
-    public HttpServer()
+    public HttpServer(Option<Integer> port)
     {
-        String port = System.getenv("PORT");
-        appPort = pickFreePort(port != null ? parseInt(port) : 8000);
+        final int desiredPort = port.getOrElse(new Supplier<Integer>()
+        {
+            @Override
+            public Integer get()
+            {
+                final String envPort = System.getenv("PORT");
+                return envPort != null ? valueOf(envPort) : 8000;
+            }
+        });
+
+        appPort = pickFreePort(desiredPort);
+        logPort(desiredPort);
 
         server = new Server(appPort);
 
@@ -65,6 +79,21 @@ public final class HttpServer implements LocalMountBaseUrlResolver
                 return context;
             }
         });
+    }
+
+    private void logPort(int desiredPort)
+    {
+        if (logger.isDebugEnabled())
+        {
+            if (desiredPort == appPort)
+            {
+                logger.debug("Configured port for container to be {}", appPort);
+            }
+            else
+            {
+                logger.debug("Configured port for container to be {}, but couldn't bind to it, using {} as alternative port number", desiredPort, appPort);
+            }
+        }
     }
 
     private void useMemcacheForSessionsIfDetected()

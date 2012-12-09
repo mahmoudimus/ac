@@ -16,10 +16,10 @@ public final class Main
     private final HttpServer server;
     private final Container container;
 
-    public Main(String[] apps) throws Exception
+    public Main(ContainerCommandLine commandLine) throws Exception
     {
-        server = new HttpServer();
-        container = new Container(new CommandLineContainerConfiguration(apps), server);
+        server = new HttpServer(commandLine.getPort());
+        container = new Container(new CommandLineContainerConfiguration(commandLine.getApplications()), server);
         container.start();
 
         List<String> lines = newArrayList();
@@ -51,10 +51,32 @@ public final class Main
         container.stop();
     }
 
-    public static void main(String[] apps) throws Exception
+    public static void main(String[] args) throws Exception
     {
+        final Main main = newMain(args);
+        if (main == null)
+        {
+            return;
+        }
+        main.join();
+    }
+
+    public static Main newMain(String[] args) throws Exception
+    {
+        final ContainerCommandLine commandLine = ContainerCommandLine.parse(args);
+
+        // configures the logging, do it as early as possible
+        commandLine.getVerbosity().configure();
+
         checkJavaVersion();
-        new Main(apps).join();
+
+        if (commandLine.isHelp())
+        {
+            ContainerCommandLine.printHelp();
+            return null;
+        }
+
+        return new Main(commandLine);
     }
 
     private static void checkJavaVersion()

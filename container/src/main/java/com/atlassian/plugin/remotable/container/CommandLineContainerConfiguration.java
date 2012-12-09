@@ -16,10 +16,10 @@ public final class CommandLineContainerConfiguration implements ContainerConfigu
     private final Iterable<String> applicationsPaths;
     private final File cacheDirectory;
 
-    public CommandLineContainerConfiguration(String[] args)
+    public CommandLineContainerConfiguration(Iterable<String> applicationsPaths)
     {
-        applicationsPaths = ImmutableList.copyOf(args);
-        cacheDirectory = getDefaultCacheDirectory();
+        this.applicationsPaths = ImmutableList.copyOf(applicationsPaths);
+        this.cacheDirectory = getDefaultCacheDirectory();
     }
 
     @Override
