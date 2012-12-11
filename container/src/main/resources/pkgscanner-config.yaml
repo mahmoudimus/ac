@@ -27,6 +27,8 @@ package_includes:
     - "com.atlassian.fugue*"
     - "com.atlassian.mail*"
     - "com.google.common.*"
+    - "com.google.inject*"
+    - "org.objectweb.asm*"
     - "com.samskivert.*"
     - "javax.servlet*"
     - "javax.ws.rs*"
@@ -52,6 +54,7 @@ package_versions:
   - {package: "com.atlassian.event.api*", version: "${event.version}"}
   - {package: "com.atlassian.plugin*", version: "${plugins.version}"}
   - {package: "com.atlassian.sal.api*", version: "${sal.version}"}
+  - {package: "org.objectweb.asm*", version: "3.3.1"}
   - {package: "com.atlassian.security.random*", version: "${atlassian.security.version}"}
 
   # Even though Guava is newer, this is for backwards compatibility for those expecting collections

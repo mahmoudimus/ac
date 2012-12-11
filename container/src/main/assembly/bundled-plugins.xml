@@ -14,6 +14,8 @@
                 <include>com.atlassian.templaterenderer:atlassian-template-renderer-api</include>
                 <include>com.atlassian.templaterenderer:atlassian-template-renderer-velocity16-plugin</include>
                 <include>com.atlassian.webhooks:atlassian-webhooks-plugin</include>
+                <include>com.atlassian.org.eclipse.sisu:org.eclipse.sisu.inject</include>
+                <include>com.atlassian.plugins:remotable-plugins-sisu-extender</include>
             </includes>
             <outputDirectory></outputDirectory>
         </dependencySet>

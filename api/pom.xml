@@ -21,6 +21,12 @@
             <artifactId>atlassian-util-concurrent</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.google.inject</groupId>
+            <artifactId>guice</artifactId>
+            <version>3.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>com.atlassian.httpclient</groupId>
             <artifactId>atlassian-httpclient-api</artifactId>
         </dependency>

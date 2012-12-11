@@ -25,6 +25,7 @@
     <modules>
         <module>api</module>
         <module>host-common</module>
+        <module>sisu-extender</module>
         <module>kit-common</module>
         <module>servlet-kit</module>
         <module>ringojs-kit</module>
@@ -214,6 +215,17 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>com.atlassian.org.eclipse.sisu</groupId>
+                <artifactId>org.eclipse.sisu.inject</artifactId>
+                <version>${sisu.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>p2.osgi.bundle</groupId>
+                        <artifactId>org.testng</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
@@ -480,12 +492,14 @@
         <jira.version>5.2</jira.version>
         <jira.data.version>${jira.version}</jira.data.version>
         <jira.client.version>0.6-m9</jira.client.version>
+        <sisu.version>0.0.0.atlassian3</sisu.version>
+        <guice.version>3.0</guice.version>
         <confluence.version>4.2.13</confluence.version>
         <confluence.data.version>${confluence.version}</confluence.data.version>
         <applinks.version>3.5.1</applinks.version>
         <speakeasy.version>1.3.19</speakeasy.version>
         <sal.version>2.7.0</sal.version>
-        <plugins.version>2.14.0-m5</plugins.version>
+        <plugins.version>2.14.0-SNAPSHOT</plugins.version>
         <rest.version>2.3.0</rest.version>
         <ao.version>0.19.14</ao.version>
         <oauth.version>1.3.0</oauth.version>

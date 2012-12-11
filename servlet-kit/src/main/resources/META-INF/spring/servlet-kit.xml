@@ -13,7 +13,7 @@ http://www.springframework.org/schema/context
     <remotable-plugins:bean-scan>
         <remotable-plugins:base-package>servlets</remotable-plugins:base-package>
         <remotable-plugins:base-package>services</remotable-plugins:base-package>
-        <remotable-plugins:base-package>com.atlassian.plugin.remotable.kit.servlet</remotable-plugins:base-package>
+        <remotable-plugins:base-package>com.atlassian.plugin.remotable.kit.servlet.internal.spring</remotable-plugins:base-package>
     </remotable-plugins:bean-scan>
 
 </beans:beans>

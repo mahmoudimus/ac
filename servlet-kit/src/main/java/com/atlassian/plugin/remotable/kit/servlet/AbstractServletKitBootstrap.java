@@ -1,20 +1,16 @@
 package com.atlassian.plugin.remotable.kit.servlet;
 
-import com.atlassian.plugin.remotable.api.annotation.ServiceReference;
+import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.remotable.api.service.HttpResourceMounter;
-import com.atlassian.plugin.remotable.api.service.RequestContext;
 import com.atlassian.plugin.remotable.api.service.SignedRequestHandler;
 import com.atlassian.plugin.remotable.kit.servlet.internal.MultipageServlet;
-import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
+import com.atlassian.plugin.remotable.kit.servlet.internal.spring.SpringServletKitBootstrap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import javax.servlet.Servlet;
+import javax.inject.Provider;
 import javax.servlet.http.HttpServlet;
-import java.util.Collection;
+import java.util.Map;
 
 import static com.atlassian.plugin.remotable.spi.util.Strings.decapitalize;
 import static com.atlassian.plugin.remotable.spi.util.Strings.removeSuffix;
@@ -22,24 +18,21 @@ import static com.atlassian.plugin.remotable.spi.util.Strings.removeSuffix;
 /**
  *
  */
-@Singleton
-public class ServletKitBootstrap
+public abstract class AbstractServletKitBootstrap
 {
-    private static final Logger log = LoggerFactory.getLogger(ServletKitBootstrap.class);
+    private static final Logger log = LoggerFactory.getLogger(SpringServletKitBootstrap.class);
 
-    @Inject
-    public ServletKitBootstrap(
-        ApplicationContext applicationContext,
-        @ServiceReference HttpResourceMounter httpResourceMounter,
-        @ServiceReference PluginRetrievalService pluginRetrievalService,
-        @ServiceReference RequestContext requestContext,
-        @ServiceReference SignedRequestHandler signedRequestHandler)
-        throws Exception
+    protected void register(HttpResourceMounter httpResourceMounter,
+                            PluginRetrievalService pluginRetrievalService,
+                            SignedRequestHandler signedRequestHandler,
+                            Map<Class<? extends HttpServlet>, Provider<? extends HttpServlet>> providers
+    )
     {
-        for (HttpServlet servlet : (Collection<HttpServlet>)applicationContext.getBeansOfType(Servlet.class).values())
+        for (Map.Entry<Class<? extends HttpServlet>, Provider<? extends HttpServlet>> entry : providers.entrySet())
         {
+            Class<? extends HttpServlet> servletClass = entry.getKey();   
             String path;
-            AppUrl appUrl = servlet.getClass().getAnnotation(AppUrl.class);
+            AppUrl appUrl = servletClass.getAnnotation(AppUrl.class);
             if (appUrl != null)
             {
                 path = appUrl.value();
@@ -47,12 +40,12 @@ public class ServletKitBootstrap
             }
             else
             {
-                String className = servlet.getClass().getSimpleName();
+                String className = servletClass.getSimpleName();
                 path = "/" + decapitalize(removeSuffix(className, "Servlet"));
             }
-            log.info("Found servlet '" + path + "' class '" + servlet.getClass());
+            log.info("Found servlet '" + path + "' class '" + servletClass);
 
-            Multipage multipage = servlet.getClass().getAnnotation(Multipage.class);
+            Multipage multipage = servletClass.getAnnotation(Multipage.class);
             if (multipage != null)
             {
                 String internalPath = "/internal" + path;
@@ -63,7 +56,7 @@ public class ServletKitBootstrap
                 httpResourceMounter.mountServlet(multipageServlet, path, path + "/*");
                 path = internalPath;
             }
-            httpResourceMounter.mountServlet(servlet, path, path + "/*");
+            httpResourceMounter.mountServlet(LazyHttpServlet.create(entry.getValue()), path, path + "/*");
         }
 
         httpResourceMounter.mountStaticResources("", "/public/*");

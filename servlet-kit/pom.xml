@@ -57,6 +57,18 @@
         </dependency>
 
         <dependency>
+            <groupId>com.atlassian.org.eclipse.sisu</groupId>
+            <artifactId>org.eclipse.sisu.inject</artifactId>
+            <version>${sisu.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.inject</groupId>
+            <artifactId>guice</artifactId>
+            <version>3.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>com.atlassian.oauth</groupId>
             <artifactId>atlassian-oauth-consumer-spi</artifactId>
             <version>${oauth.version}</version>

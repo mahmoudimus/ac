@@ -27,17 +27,15 @@ public class TestRemotablePlugins
         product = OwnerOfTestedProduct.INSTANCE;
         if (product instanceof ConfluenceTestedProduct)
         {
-            product.getPageBinder().override(LoginPage.class, OnDemandConfluenceLoginPage.class);
+//            product.getPageBinder().override(LoginPage.class, OnDemandConfluenceLoginPage.class);
             product.getPageBinder().override(HomePage.class, OnDemandConfluenceHomePage.class);
         }
     }
 
     private static final String targetBaseUrl = System.getProperty("remotable.plugins.targetBaseUrl", product.getProductInstance().getBaseUrl());
 
-    private static final String displayUrl = System.getProperty("remotable.plugins.displayUrl",
-            targetBaseUrl + "/download/resources/com.atlassian.labs.remoteapps-plugin:smoke-test");
-    private static final RemotePluginInstallerClient INSTALLER = new RemotePluginInstallerClient(targetBaseUrl, adminUsername,
-            adminPassword);
+    private static final String displayUrl = System.getProperty("remotable.plugins.displayUrl", targetBaseUrl + "/download/resources/com.atlassian.labs.remoteapps-plugin:smoke-test");
+    private static final RemotePluginInstallerClient INSTALLER = new RemotePluginInstallerClient(targetBaseUrl, adminUsername, adminPassword);
 
     @Rule
     public MethodRule rule = new HtmlDumpRule(product.getTester().getDriver());
@@ -71,8 +69,7 @@ public class TestRemotablePlugins
     public void testGeneralPage()
     {
         product.visit(LoginPage.class).login(adminUsername, adminPassword, HomePage.class);
-        GeneralPage page = product.getPageBinder().bind(GeneralPage.class, "smoke-general-page",
-                "General Page (smoke test)");
+        GeneralPage page = product.getPageBinder().bind(GeneralPage.class, "smoke-general-page", "General Page (smoke test)");
         assertTrue(page.isRemotePluginLinkPresent());
         RemotePluginTestPage remotePluginTest = page.clickRemotePluginLink();
         assertEquals("Hello General Page", remotePluginTest.getMessage());
