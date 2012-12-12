@@ -1,9 +1,9 @@
 package com.atlassian.plugin.remotable.plugin.webhooks;
 
+import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.plugin.remotable.spi.event.product.PluginsUpgradedEvent;
 import com.atlassian.plugin.remotable.spi.event.product.ServerUpgradedEvent;
 import com.atlassian.plugin.remotable.spi.event.product.UpgradedEvent;
-import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.webhooks.spi.provider.EventSerializer;
 import com.atlassian.webhooks.spi.provider.EventSerializerFactory;
@@ -14,7 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashMap;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Strings.nullToEmpty;
 
 /**
  * Registers Web hooks relative to:
@@ -38,7 +39,6 @@ public final class ServerWebHookProvider implements WebHookProvider
     @Override
     public void provide(WebHookRegistrar registrar)
     {
-        final String baseUrl = applicationProperties.getBaseUrl();
         final EventSerializerFactory upgradeFactory = new EventSerializerFactory<UpgradedEvent>()
         {
             @Override
@@ -47,7 +47,7 @@ public final class ServerWebHookProvider implements WebHookProvider
                 return EventSerializers.forMap(event, new HashMap<String, Object>()
                 {{
                         put("key", consumerService.getConsumer().getKey());
-                        put("baseUrl", (baseUrl != null ? baseUrl : ""));
+                        put("baseUrl", nullToEmpty(applicationProperties.getBaseUrl()));
                         put("oldVersion", event.getOldVersion());
                         put("newVersion", event.getNewVersion());
                     }});
