@@ -22,8 +22,7 @@ abstract class JiraScope implements ApiScope, MutablePermission
 
     protected JiraScope(Collection<String> methods, Collection<RestApiScopeHelper.RestScope> resources)
     {
-        soapScopeHelper = new RpcEncodedSoapApiScopeHelper("/rpc/soap/jirasoapservice-v2", "http://soap.rpc.jira.atlassian.com",
-                methods);
+        soapScopeHelper = new RpcEncodedSoapApiScopeHelper("/rpc/soap/jirasoapservice-v2", "http://soap.rpc.jira.atlassian.com", methods);
         jsonrpcScopeHelper = new JsonRpcApiScopeHelper("/rpc/json-rpc/jirasoapservice-v2", methods);
         restApiScopeHelper = new RestApiScopeHelper(resources);
         this.apiResourceInfo = concat(soapScopeHelper.getApiResourceInfos(), jsonrpcScopeHelper.getApiResourceInfos(),

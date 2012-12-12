@@ -1,21 +1,17 @@
 package com.atlassian.plugin.remotable.plugin.installer;
 
-import com.atlassian.plugin.remotable.api.InstallationMode;
-import com.atlassian.plugin.remotable.spi.permission.PermissionsReader;
 import com.atlassian.plugin.remotable.plugin.util.zip.ZipBuilder;
 import com.atlassian.plugin.remotable.plugin.util.zip.ZipHandler;
 import com.atlassian.plugin.JarPluginArtifact;
 import com.atlassian.plugin.PluginArtifact;
 import org.apache.commons.io.IOUtils;
 import org.dom4j.Document;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -34,8 +30,7 @@ public class RemotePluginArtifactFactory
         this.classesToIncludeClass = extractClassesToIncludeClass();
     }
 
-    public PluginArtifact create(URI registrationUrl, final Document document, String username
-    )
+    public PluginArtifact create(URI registrationUrl, final Document document, String username)
     {
         String pluginKey = document.getRootElement().attributeValue("key");
         changeDescriptorToIncludeRemotePluginHeader(registrationUrl, document, username);

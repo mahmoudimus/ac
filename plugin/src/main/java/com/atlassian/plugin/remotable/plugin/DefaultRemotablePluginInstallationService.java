@@ -117,8 +117,7 @@ public class DefaultRemotablePluginInstallationService implements RemotablePlugi
 
     }
 
-    private String installPlugin(String username, URI parsedRegistrationUri,
-            Document pluginDescriptor)
+    private String installPlugin(String username, URI parsedRegistrationUri, Document pluginDescriptor)
     {
         try
         {
@@ -177,7 +176,6 @@ public class DefaultRemotablePluginInstallationService implements RemotablePlugi
         if (!permissionManager.canRequestDeclaredPermissions(username, descriptor, InstallationMode.REMOTE))
         {
             throw new PermissionDeniedException("Unauthorized request of permissions by '" + username + "'");
-
         }
     }
 
