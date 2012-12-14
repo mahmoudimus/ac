@@ -1,16 +1,25 @@
 package com.atlassian.plugin.remotable.junit;
 
 import com.atlassian.plugin.remotable.container.Main;
+import com.google.common.base.Joiner;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
+import com.google.common.io.Files;
+import com.google.common.io.InputSupplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -68,6 +77,56 @@ final class ContainerPluginInstaller implements PluginInstaller
     {
         @Override
         public Object load(final ContainerConfiguration key) throws Exception
+        {
+            File container = File.createTempFile("container", ".jar");
+            Files.copy(new InputSupplier<InputStream>()
+            {
+                @Override
+                public InputStream getInput() throws IOException
+                {
+                    return getContainerPath().openStream();
+                }
+            },
+                    container);
+
+//            final String containerJar = containerPath.getFile();
+//            String substring = containerJar.substring("file:".length());
+//            final String debug = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5006";
+            final String debug = "";
+            final String command = "java -jar " + debug + " " + container.getAbsolutePath() + " -v " + Joiner.on(' ').join(key.apps);
+            System.out.println("Executing command: " + command);
+            final Process exec = Runtime.getRuntime().exec(command);
+
+            final OutputStreamHandler outHandler = new OutputStreamHandler(exec.getInputStream());
+            final OutputStreamHandler errHandler = new OutputStreamHandler(exec.getErrorStream());
+
+            new Thread(outHandler).start();
+            new Thread(errHandler).start();
+
+            Runtime.getRuntime().addShutdownHook(new Thread()
+            {
+                public void run()
+                {
+                    errHandler.stop();
+                    outHandler.stop();
+                    exec.destroy();
+                }
+            });
+
+            try
+            {
+                Thread.sleep(8000);
+            }
+            catch (InterruptedException e)
+            {
+
+            }
+
+            return exec;
+//            return bla(key);
+        }
+
+        private Object bla(final ContainerConfiguration key)
         {
             final ClassLoader classLoader = getContainerClassLoader();
 
@@ -132,13 +191,57 @@ final class ContainerPluginInstaller implements PluginInstaller
 
         private URLClassLoader getContainerClassLoader()
         {
+            final URL containerJar = getContainerPath();
+            return new URLClassLoader(new URL[]{containerJar}, this.getClass().getClassLoader());
+        }
+
+        private URL getContainerPath()
+        {
             final String containerPath = "/remotable-plugins-container-standalone.jar";
             final URL containerJar = getClass().getResource(containerPath);
             if (containerJar == null)
             {
                 throw new IllegalStateException("Could not find container! Looked at classpath:" + containerPath);
             }
-            return new URLClassLoader(new URL[]{containerJar});
+            return containerJar;
+        }
+
+        private static final class OutputStreamHandler implements Runnable
+        {
+            private final AtomicBoolean stopped;
+            private final InputStream stream;
+
+            public OutputStreamHandler(InputStream stream)
+            {
+                this.stream = checkNotNull(stream);
+                this.stopped = new AtomicBoolean(false);
+            }
+
+            @Override
+            public void run()
+            {
+                while (!stopped.get())
+                {
+                    try
+                    {
+                        final BufferedReader dis = new BufferedReader(new InputStreamReader(stream));
+                        String line;
+                        while ((line = dis.readLine()) != null)
+                        {
+                            System.out.println("CONTAINER: " + line);
+                        }
+                    }
+                    catch (IOException e)
+                    {
+                        // ignore
+                    }
+                }
+            }
+
+            public void stop()
+            {
+                stopped.set(true);
+            }
         }
     }
 }

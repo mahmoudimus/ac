@@ -5,9 +5,9 @@ import com.atlassian.jira.plugin.profile.ViewProfilePanelModuleDescriptorImpl;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.remotable.plugin.integration.plugins.DescriptorToRegister;
 import com.atlassian.plugin.remotable.plugin.integration.plugins.DynamicDescriptorRegistration;
-import com.atlassian.plugin.remotable.plugin.module.IFrameParams;
-import com.atlassian.plugin.remotable.plugin.module.IFrameRenderer;
-import com.atlassian.plugin.remotable.plugin.module.page.IFrameContext;
+import com.atlassian.plugin.remotable.plugin.module.IFrameParamsImpl;
+import com.atlassian.plugin.remotable.plugin.module.IFrameRendererImpl;
+import com.atlassian.plugin.remotable.plugin.module.page.IFrameContextImpl;
 import com.atlassian.plugin.remotable.spi.module.IFrameViewProfilePanel;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
@@ -29,13 +29,13 @@ public class JiraProfileTabModuleDescriptor extends AbstractModuleDescriptor<Voi
 {
     private final DynamicDescriptorRegistration dynamicDescriptorRegistration;
     private final JiraAuthenticationContext jiraAuthenticationContext;
-    private final IFrameRenderer iFrameRenderer;
+    private final IFrameRendererImpl iFrameRenderer;
     private Element descriptor;
     private URI url;
 
     public JiraProfileTabModuleDescriptor(
             DynamicDescriptorRegistration dynamicDescriptorRegistration,
-            JiraAuthenticationContext jiraAuthenticationContext, IFrameRenderer iFrameRenderer)
+            JiraAuthenticationContext jiraAuthenticationContext, IFrameRendererImpl iFrameRenderer)
     {
         this.dynamicDescriptorRegistration = dynamicDescriptorRegistration;
         this.jiraAuthenticationContext = jiraAuthenticationContext;
@@ -85,7 +85,7 @@ public class JiraProfileTabModuleDescriptor extends AbstractModuleDescriptor<Voi
             {
                 return (T) new IFrameViewProfilePanel(
                         iFrameRenderer,
-                        new IFrameContext(getPluginKey(), path, moduleKey, new IFrameParams(e)));
+                        new IFrameContextImpl(getPluginKey(), path, moduleKey, new IFrameParamsImpl(e)));
             }
         });
         descriptor.init(getPlugin(), config);

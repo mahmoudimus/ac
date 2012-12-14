@@ -2,14 +2,14 @@ package com.atlassian.plugin.remotable.plugin.product.confluence;
 
 import com.atlassian.confluence.plugin.descriptor.web.descriptors.ConfluenceWebItemModuleDescriptor;
 import com.atlassian.core.task.MultiQueueTaskManager;
-import com.atlassian.plugin.remotable.api.InstallationMode;
-import com.atlassian.plugin.remotable.api.service.confluence.ConfluencePermissions;
-import com.atlassian.plugin.remotable.plugin.product.ProductAccessor;
 import com.atlassian.mail.Email;
 import com.atlassian.mail.MailException;
 import com.atlassian.mail.MailFactory;
 import com.atlassian.mail.server.SMTPMailServer;
+import com.atlassian.plugin.remotable.api.InstallationMode;
+import com.atlassian.plugin.remotable.api.confluence.ConfluencePermissions;
 import com.atlassian.plugin.remotable.spi.Permissions;
+import com.atlassian.plugin.remotable.spi.product.ProductAccessor;
 import com.atlassian.plugin.util.ContextClassLoaderSwitchingUtil;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
@@ -22,19 +22,20 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Maps.newHashMap;
 
 /**
  *
  */
-public class ConfluenceProductAccessor implements ProductAccessor
+public final class ConfluenceProductAccessor implements ProductAccessor
 {
     private static final Logger log = LoggerFactory.getLogger(ConfluenceProductAccessor.class);
     private final MultiQueueTaskManager taskManager;
 
     public ConfluenceProductAccessor(MultiQueueTaskManager taskManager)
     {
-        this.taskManager = taskManager;
+        this.taskManager = checkNotNull(taskManager);
     }
 
     @Override

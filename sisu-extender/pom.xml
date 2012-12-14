@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.atlassian.plugins</groupId>
         <artifactId>remotable-plugins-parent</artifactId>
-        <version>0.5-SNAPSHOT</version>
+        <version>0.6-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -28,7 +28,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>remotable-plugins-api</artifactId>
-            <version>${project.version}</version>
+            <version>${api.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

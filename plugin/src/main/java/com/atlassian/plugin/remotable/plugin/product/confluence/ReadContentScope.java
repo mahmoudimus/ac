@@ -1,6 +1,6 @@
 package com.atlassian.plugin.remotable.plugin.product.confluence;
 
-import com.atlassian.plugin.remotable.api.service.confluence.ConfluencePermissions;
+import com.atlassian.plugin.remotable.api.confluence.ConfluencePermissions;
 import com.atlassian.plugin.remotable.spi.permission.scope.DownloadScopeHelper;
 import com.atlassian.plugin.remotable.spi.permission.scope.RestApiScopeHelper;
 

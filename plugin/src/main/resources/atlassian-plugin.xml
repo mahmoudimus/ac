@@ -119,7 +119,7 @@
     <component key="startableForPlugins" class="com.atlassian.plugin.remotable.plugin.loader.StartableForPlugins" public="true"
                interface="com.atlassian.sal.api.lifecycle.LifecycleAware" />
 
-    <component key="productEventPublisher" class="com.atlassian.plugin.remotable.spi.event.product.ProductEventPublisher"
+    <component key="productEventPublisher" class="com.atlassian.plugin.remotable.plugin.event.ProductEventPublisher"
                public="true" interface="com.atlassian.sal.api.lifecycle.LifecycleAware" />
 
     <component key="httpResourceMounter" class="com.atlassian.plugin.remotable.plugin.loader.LocalHttpResourceMounterServiceFactory" interface="com.atlassian.plugin.remotable.api.service.HttpResourceMounter" public="true" />
@@ -139,7 +139,8 @@
                    class="com.atlassian.plugin.remotable.plugin.webhooks.PluginsWebHookProvider" />
 
     <component key="bundleLocator" class="com.atlassian.plugin.remotable.host.common.util.BundleContextBundleLoader" />
-    <component key="permissionsReader" class="com.atlassian.plugin.remotable.host.common.descriptor.DescriptorPermissionsReader" />
+    <component key="permissionsReader" class="com.atlassian.plugin.remotable.host.common.descriptor.DescriptorPermissionsReader"
+               interface="com.atlassian.plugin.remotable.spi.permission.PermissionsReader" public="true"/>
 
     <component-import key="templateRenderer" interface="com.atlassian.templaterenderer.TemplateRenderer"/>
     <component-import key="servletModuleManager" interface="com.atlassian.plugin.servlet.ServletModuleManager" />
@@ -213,6 +214,9 @@
     <component key="localEmailSender" interface="com.atlassian.plugin.remotable.api.service.EmailSender"
                class="com.atlassian.plugin.remotable.plugin.service.LocalEmailSenderServiceFactory" public="true" />
 
+    <component key="userIsSysAdminCondition" class="com.atlassian.plugin.remotable.spi.module.UserIsSysAdminCondition" />
+    <component key="userIsAdminCondition" class="com.atlassian.plugin.remotable.spi.module.UserIsAdminCondition" />
+
     <applinks-application-type name="Remote Plugin Container" key="remote-plugin-container-type"
                                    class="com.atlassian.plugin.remotable.plugin.module.applinks.RemotePluginContainerApplicationTypeImpl"
                                    interface="com.atlassian.plugin.remotable.spi.applinks.RemotePluginContainerApplicationType">
@@ -246,7 +250,7 @@
     </described-module-type>
 
     <described-module-type key="plugin-permission" name="Plugin Permission"
-                                   class="com.atlassian.plugin.remotable.spi.permission.PermissionModuleDescriptor">
+                                   class="com.atlassian.plugin.remotable.plugin.permission.DefaultPermissionModuleDescriptor">
         <description>A permission that needs to be requested by a plugin in order to execute certain functionality</description>
         <required-permissions>
             <permission>execute_java</permission>

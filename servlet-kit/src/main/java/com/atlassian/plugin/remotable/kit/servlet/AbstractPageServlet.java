@@ -1,8 +1,8 @@
 package com.atlassian.plugin.remotable.kit.servlet;
 
-import com.atlassian.plugin.remotable.api.annotation.ServiceReference;
-import com.atlassian.plugin.remotable.api.service.RenderContext;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
+import com.atlassian.plugin.remotable.api.annotation.ComponentImport;
+import com.atlassian.plugin.remotable.api.service.RenderContext;
 import com.atlassian.plugin.util.PluginUtils;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.google.common.base.Joiner;
@@ -11,7 +11,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -32,16 +31,18 @@ import static com.atlassian.plugin.remotable.spi.util.Strings.dasherize;
 import static com.atlassian.plugin.remotable.spi.util.Strings.removeSuffix;
 import static com.google.common.collect.Maps.newHashMap;
 
-public abstract class AbstractPageServlet extends HttpServlet implements InitializingBean
+public abstract class AbstractPageServlet extends HttpServlet
 {
     @Inject
-    @ServiceReference
+    @ComponentImport
     protected TemplateRenderer templateRenderer;
+
     @Inject
-    @ServiceReference
+    @ComponentImport
     protected RenderContext renderContext;
+
     @Inject
-    @ServiceReference
+    @ComponentImport
     protected PluginRetrievalService pluginRetrievalService;
 
     private String resourceBaseName;
@@ -54,7 +55,6 @@ public abstract class AbstractPageServlet extends HttpServlet implements Initial
     private String headTemplate;
     private String tailTemplate;
 
-    @Override
     @PostConstruct
     public void afterPropertiesSet() throws Exception
     {

@@ -1,6 +1,7 @@
 package com.atlassian.plugin.remotable.plugin.module.page;
 
-import com.atlassian.plugin.remotable.plugin.module.IFrameRenderer;
+import com.atlassian.plugin.remotable.plugin.module.IFrameRendererImpl;
+import com.atlassian.plugin.remotable.spi.module.IFrameContext;
 import com.atlassian.sal.api.user.UserManager;
 
 import javax.servlet.ServletException;
@@ -18,10 +19,10 @@ public class IFramePageServlet extends HttpServlet
     private final UserManager userManager;
     private final PageInfo pageInfo;
     private final IFrameContext iframeContext;
-    private final IFrameRenderer iFrameRenderer;
+    private final IFrameRendererImpl iFrameRenderer;
 
     public IFramePageServlet(PageInfo pageInfo,
-            IFrameRenderer iFrameRenderer,
+            IFrameRendererImpl iFrameRenderer,
             IFrameContext iframeContext,
             UserManager userManager)
     {

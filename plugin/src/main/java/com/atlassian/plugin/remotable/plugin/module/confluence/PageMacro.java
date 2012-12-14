@@ -2,10 +2,11 @@ package com.atlassian.plugin.remotable.plugin.module.confluence;
 
 import com.atlassian.confluence.content.render.xhtml.ConversionContext;
 import com.atlassian.confluence.macro.MacroExecutionException;
-import com.atlassian.plugin.remotable.plugin.RemotablePluginAccessor;
-import com.atlassian.plugin.remotable.plugin.RemotablePluginAccessorFactory;
-import com.atlassian.plugin.remotable.plugin.module.IFrameRenderer;
-import com.atlassian.plugin.remotable.plugin.module.page.IFrameContext;
+import com.atlassian.plugin.remotable.plugin.DefaultRemotablePluginAccessorFactory;
+import com.atlassian.plugin.remotable.plugin.module.IFrameRendererImpl;
+import com.atlassian.plugin.remotable.plugin.module.page.IFrameContextImpl;
+import com.atlassian.plugin.remotable.spi.RemotablePluginAccessor;
+import com.atlassian.plugin.remotable.spi.module.IFrameContext;
 import com.atlassian.sal.api.user.UserManager;
 import com.google.common.base.Function;
 import com.google.common.collect.Maps;
@@ -13,19 +14,16 @@ import com.google.common.collect.Maps;
 import java.io.IOException;
 import java.util.Map;
 
-/**
- *
- */
-public class PageMacro extends AbstractRemoteMacro
+public final class PageMacro extends AbstractRemoteMacro
 {
     private final UserManager userManager;
     private final IFrameContext iframeContext;
-    private final IFrameRenderer iFrameRenderer;
-    private final RemotablePluginAccessorFactory remotablePluginAccessorFactory;
+    private final IFrameRendererImpl iFrameRenderer;
+    private final DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory;
 
     public PageMacro(RemoteMacroInfo remoteMacroInfo, UserManager userManager,
-            IFrameRenderer iFrameRenderer, IFrameContext iframeContext,
-            RemotablePluginAccessorFactory remotablePluginAccessorFactory
+            IFrameRendererImpl iFrameRenderer, IFrameContext iframeContext,
+            DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory
     )
     {
         super(remotablePluginAccessorFactory, remoteMacroInfo);
@@ -50,7 +48,7 @@ public class PageMacro extends AbstractRemoteMacro
                     remoteMacroInfo.getRequestContextParameterFactory(),
                     remotablePluginAccessorFactory.get(remoteMacroInfo.getPluginKey()));
              return iFrameRenderer.render(
-                     new IFrameContext(iframeContext, "-" + counter),
+                     new IFrameContextImpl(iframeContext, "-" + counter),
                      "",
                      convertParams(macroInstance.getUrlParameters(userManager.getRemoteUsername())),
                      remoteUser);

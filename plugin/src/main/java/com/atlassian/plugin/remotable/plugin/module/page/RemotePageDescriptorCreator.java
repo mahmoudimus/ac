@@ -1,15 +1,16 @@
 package com.atlassian.plugin.remotable.plugin.module.page;
 
-import com.atlassian.plugin.remotable.plugin.integration.plugins.DescriptorToRegister;
-import com.atlassian.plugin.remotable.plugin.module.IFrameParams;
-import com.atlassian.plugin.remotable.plugin.module.IFrameRenderer;
-import com.atlassian.plugin.remotable.plugin.module.WebItemContext;
-import com.atlassian.plugin.remotable.plugin.module.WebItemCreator;
-import com.atlassian.plugin.remotable.plugin.product.ProductAccessor;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.module.ModuleFactory;
+import com.atlassian.plugin.remotable.plugin.integration.plugins.DescriptorToRegister;
+import com.atlassian.plugin.remotable.plugin.module.IFrameParamsImpl;
+import com.atlassian.plugin.remotable.plugin.module.IFrameRendererImpl;
+import com.atlassian.plugin.remotable.plugin.module.WebItemContext;
+import com.atlassian.plugin.remotable.plugin.module.WebItemCreator;
+import com.atlassian.plugin.remotable.spi.module.IFrameParams;
+import com.atlassian.plugin.remotable.spi.product.ProductAccessor;
 import com.atlassian.plugin.servlet.ServletModuleManager;
 import com.atlassian.plugin.servlet.descriptors.ServletModuleDescriptor;
 import com.atlassian.plugin.web.Condition;
@@ -31,18 +32,18 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * across threads.
  */
 @Component
-public class RemotePageDescriptorCreator
+public final class RemotePageDescriptorCreator
 {
     private final ServletModuleManager servletModuleManager;
     private final UserManager userManager;
     private final WebItemCreator webItemCreator;
-    private final IFrameRenderer iFrameRenderer;
+    private final IFrameRendererImpl iFrameRenderer;
     private final ProductAccessor productAccessor;
 
     @Autowired
     public RemotePageDescriptorCreator(
             ServletModuleManager servletModuleManager, UserManager userManager,
-            WebItemCreator webItemCreator, IFrameRenderer iFrameRenderer,
+            WebItemCreator webItemCreator, IFrameRendererImpl iFrameRenderer,
             ProductAccessor productAccessor)
     {
         this.servletModuleManager = servletModuleManager;
@@ -107,7 +108,7 @@ public class RemotePageDescriptorCreator
             config.addElement("url-pattern").setText(localUrl + "");
             config.addElement("url-pattern").setText(localUrl + "/*");
 
-            final IFrameParams params = new IFrameParams(e);
+            final IFrameParams params = new IFrameParamsImpl(e);
             final ServletModuleDescriptor descriptor = new ServletModuleDescriptor(new ModuleFactory()
             {
                 @Override
@@ -119,7 +120,7 @@ public class RemotePageDescriptorCreator
                     return (T) new IFramePageServlet(
                             pageInfo,
                             iFrameRenderer,
-                            new IFrameContext(plugin.getKey(), path, moduleKey, params), userManager
+                            new IFrameContextImpl(plugin.getKey(), path, moduleKey, params), userManager
                     );
                 }
             }, servletModuleManager);

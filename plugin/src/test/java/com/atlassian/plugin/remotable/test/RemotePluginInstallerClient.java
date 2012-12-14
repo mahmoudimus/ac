@@ -19,9 +19,7 @@ import java.util.List;
 
 import static java.util.Collections.singletonList;
 
-/**
- */
-public class RemotePluginInstallerClient
+public final class RemotePluginInstallerClient
 {
     private final String baseUrl;
     private final DefaultHttpClient httpclient;

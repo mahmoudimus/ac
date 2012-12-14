@@ -1,8 +1,8 @@
 package junit.confluence;
 
-import com.atlassian.plugin.remotable.api.service.confluence.ConfluenceSpaceClient;
-import com.atlassian.plugin.remotable.api.service.confluence.domain.ExportType;
-import com.atlassian.plugin.remotable.api.service.confluence.domain.Space;
+import com.atlassian.confluence.xmlrpc.client.api.ConfluenceSpaceClient;
+import com.atlassian.confluence.xmlrpc.client.api.domain.ExportType;
+import com.atlassian.confluence.xmlrpc.client.api.domain.Space;
 import org.junit.Test;
 import redstone.xmlrpc.XmlRpcStruct;
 
@@ -28,8 +28,7 @@ public class ReadContentScopeTest
             @Override
             public Void call() throws Exception
             {
-                XmlRpcStruct space = getHostXmlRpcClient().invoke("confluence2.getSpace",
-                        XmlRpcStruct.class, "", "DS").claim();
+                XmlRpcStruct space = getHostXmlRpcClient().invoke("confluence2.getSpace", XmlRpcStruct.class, "", "DS").claim();
                 assertEquals("ds", space.getString("key"));
                 assertEquals("Demonstration Space", space.getString("name"));
                 return null;

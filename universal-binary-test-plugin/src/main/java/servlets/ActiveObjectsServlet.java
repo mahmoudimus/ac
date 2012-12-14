@@ -2,10 +2,11 @@ package servlets;
 
 import ao.model.SampleEntity;
 import com.atlassian.activeobjects.external.ActiveObjects;
-import com.atlassian.plugin.remotable.api.annotation.ServiceReference;
+import com.atlassian.plugin.remotable.api.annotation.ComponentImport;
 import com.atlassian.plugin.remotable.api.service.SignedRequestHandler;
 
-import javax.inject.Singleton;
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -15,13 +16,14 @@ import java.io.IOException;
 import static com.google.common.base.Preconditions.*;
 
 //@AppUrl("/ao")
-@Singleton
+@Named
 public final class ActiveObjectsServlet extends HttpServlet
 {
     private final SignedRequestHandler signedRequestHandler;
     private final ActiveObjects ao;
 
-    public ActiveObjectsServlet(@ServiceReference SignedRequestHandler signedRequestHandler, @ServiceReference ActiveObjects ao)
+    @Inject
+    public ActiveObjectsServlet(@ComponentImport SignedRequestHandler signedRequestHandler, @ComponentImport ActiveObjects ao)
     {
         this.signedRequestHandler = checkNotNull(signedRequestHandler);
         this.ao = checkNotNull(ao);

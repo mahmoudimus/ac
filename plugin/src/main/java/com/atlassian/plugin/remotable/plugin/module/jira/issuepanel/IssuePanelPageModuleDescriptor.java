@@ -4,9 +4,10 @@ import com.atlassian.plugin.remotable.plugin.integration.plugins.DescriptorToReg
 import com.atlassian.plugin.remotable.plugin.integration.plugins.DynamicDescriptorRegistration;
 import com.atlassian.plugin.remotable.plugin.module.ConditionProcessor;
 import com.atlassian.plugin.remotable.plugin.module.ContainingRemoteCondition;
-import com.atlassian.plugin.remotable.plugin.module.IFrameParams;
-import com.atlassian.plugin.remotable.plugin.module.IFrameRenderer;
-import com.atlassian.plugin.remotable.plugin.module.page.IFrameContext;
+import com.atlassian.plugin.remotable.spi.module.IFrameParams;
+import com.atlassian.plugin.remotable.plugin.module.IFrameParamsImpl;
+import com.atlassian.plugin.remotable.plugin.module.IFrameRendererImpl;
+import com.atlassian.plugin.remotable.plugin.module.page.IFrameContextImpl;
 import com.atlassian.plugin.remotable.spi.module.IFrameViewIssuePanel;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
@@ -32,7 +33,7 @@ import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.*;
  */
 public class IssuePanelPageModuleDescriptor extends AbstractModuleDescriptor<Void>
 {
-    private final IFrameRenderer iFrameRenderer;
+    private final IFrameRendererImpl iFrameRenderer;
     private final DynamicDescriptorRegistration dynamicDescriptorRegistration;
     private final HostContainer hostContainer;
     private final WebInterfaceManager webInterfaceManager;
@@ -44,7 +45,7 @@ public class IssuePanelPageModuleDescriptor extends AbstractModuleDescriptor<Voi
 
     private final static Logger log = LoggerFactory.getLogger(IssuePanelPageModuleDescriptor.class);
 
-    public IssuePanelPageModuleDescriptor(IFrameRenderer iFrameRenderer,
+    public IssuePanelPageModuleDescriptor(IFrameRendererImpl iFrameRenderer,
             DynamicDescriptorRegistration dynamicDescriptorRegistration,
             HostContainer hostContainer, WebInterfaceManager webInterfaceManager,
             ConditionProcessor conditionProcessor)
@@ -92,7 +93,7 @@ public class IssuePanelPageModuleDescriptor extends AbstractModuleDescriptor<Voi
         Condition condition = conditionProcessor.process(descriptor, desc, getPluginKey(), "#" + moduleKey);
         log.debug("generated web panel: " + printNode(desc));
 
-        ModuleDescriptor<WebPanel> moduleDescriptor = createWebPanelModuleDescriptor(moduleKey, desc, condition, new IFrameParams(descriptor));
+        ModuleDescriptor<WebPanel> moduleDescriptor = createWebPanelModuleDescriptor(moduleKey, desc, condition, new IFrameParamsImpl(descriptor));
 
         dynamicDescriptorRegistration.registerDescriptors(getPlugin(), new DescriptorToRegister(moduleDescriptor));
     }
@@ -112,7 +113,7 @@ public class IssuePanelPageModuleDescriptor extends AbstractModuleDescriptor<Voi
 
                     return (T) new IFrameViewIssuePanel(
                             iFrameRenderer,
-                            new IFrameContext(getPluginKey(), url, moduleKey, iFrameParams), condition instanceof ContainingRemoteCondition);
+                            new IFrameContextImpl(getPluginKey(), url, moduleKey, iFrameParams), condition instanceof ContainingRemoteCondition);
                 }
             }, webInterfaceManager);
 

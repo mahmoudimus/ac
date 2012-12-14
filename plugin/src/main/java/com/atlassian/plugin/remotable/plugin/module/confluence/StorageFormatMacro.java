@@ -4,8 +4,8 @@ import com.atlassian.confluence.content.render.xhtml.ConversionContext;
 import com.atlassian.confluence.content.render.xhtml.macro.annotation.Format;
 import com.atlassian.confluence.content.render.xhtml.macro.annotation.RequiresFormat;
 import com.atlassian.confluence.macro.MacroExecutionException;
-import com.atlassian.plugin.remotable.plugin.RemotablePluginAccessor;
-import com.atlassian.plugin.remotable.plugin.RemotablePluginAccessorFactory;
+import com.atlassian.plugin.remotable.plugin.DefaultRemotablePluginAccessorFactory;
+import com.atlassian.plugin.remotable.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.webresource.WebResourceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,13 +31,13 @@ public class StorageFormatMacro extends AbstractRemoteMacro
 {
     private final URI remoteUrl;
     private final MacroContentManager macroContentManager;
-    private final RemotablePluginAccessorFactory remotablePluginAccessorFactory;
+    private final DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory;
     private final WebResourceManager webResourceManager;
     private final Logger log = LoggerFactory.getLogger(StorageFormatMacro.class);
 
     public StorageFormatMacro(RemoteMacroInfo remoteMacroInfo,
             MacroContentManager macroContentManager,
-            RemotablePluginAccessorFactory remotablePluginAccessorFactory,
+            DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory,
             WebResourceManager webResourceManager)
     {
         super(remotablePluginAccessorFactory, remoteMacroInfo);
@@ -55,8 +55,7 @@ public class StorageFormatMacro extends AbstractRemoteMacro
     @RequiresFormat(Format.Storage)
     public String execute(Map<String, String> parameters, String storageFormatBody, ConversionContext conversionContext) throws MacroExecutionException
     {
-        RemotablePluginAccessor remotablePluginAccessor = remotablePluginAccessorFactory.get(
-                remoteMacroInfo.getPluginKey());
+        final RemotablePluginAccessor remotablePluginAccessor = remotablePluginAccessorFactory.get(remoteMacroInfo.getPluginKey());
         /*!
         Next, the remotable plugins is called and its returned storage-format XML is rendered.  If the
         content was unable to be retrieved for any reason, an error message is displayed to the user

@@ -1,17 +1,17 @@
 package servlets;
 
-import com.atlassian.plugin.remotable.api.service.EmailSender;
 import com.atlassian.mail.Email;
+import com.atlassian.plugin.remotable.api.service.EmailSender;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
+import javax.inject.Named;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@Singleton
+@Named
 public class SendEmailServlet extends HttpServlet
 {
     private final EmailSender emailSender;

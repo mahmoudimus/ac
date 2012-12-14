@@ -3,7 +3,7 @@ package servlets;
 import com.atlassian.plugin.remotable.api.service.RequestContext;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
+import javax.inject.Named;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -12,7 +12,7 @@ import java.io.IOException;
 
 /**
  */
-@Singleton
+@Named
 public class OnlyBettyConditionServlet extends HttpServlet
 {
     private final RequestContext requestContext;

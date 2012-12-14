@@ -1,7 +1,7 @@
 package junit.jira;
 
-import com.atlassian.jira.rest.client.domain.User;
-import com.atlassian.plugin.remotable.api.service.jira.JiraUserClient;
+import com.atlassian.jira.rest.client.api.UserRestClient;
+import com.atlassian.jira.rest.client.api.domain.User;
 import com.atlassian.jira.rpc.soap.client.JiraSoapService;
 import com.atlassian.jira.rpc.soap.client.JiraSoapServiceServiceLocator;
 import com.atlassian.jira.rpc.soap.client.RemoteUser;
@@ -112,7 +112,7 @@ public class JiraReadUsersAndGroupsScopeTest
             @Override
             public User call() throws Exception
             {
-                return getService(JiraUserClient.class).getUser("betty").claim();
+                return getService(UserRestClient.class).getUser("betty").claim();
             }
         });
         assertEquals("betty", user.getName());

@@ -3,7 +3,6 @@ package com.atlassian.plugin.remotable.plugin.loader.universalbinary;
 import com.atlassian.plugin.Plugin;
 
 import javax.servlet.*;
-import javax.servlet.descriptor.JspConfigDescriptor;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -76,143 +75,143 @@ public class UBServletContextWrapper implements ServletContext
         return context.getServletContextName();
     }
 
-    @Override
-    public ServletRegistration.Dynamic addServlet(String s, String s1)
-    {
-        throw new UnsupportedOperationException("Not implemented");
-    }
+//    @Override
+//    public ServletRegistration.Dynamic addServlet(String s, String s1)
+//    {
+//        throw new UnsupportedOperationException("Not implemented");
+//    }
+//
+//    @Override
+//    public ServletRegistration.Dynamic addServlet(String s, Servlet servlet)
+//    {
+//        throw new UnsupportedOperationException("Not implemented");
+//    }
+//
+//    @Override
+//    public ServletRegistration.Dynamic addServlet(String s, Class<? extends Servlet> aClass)
+//    {
+//        throw new UnsupportedOperationException("Not implemented");
+//    }
+//
+//    @Override
+//    public <T extends Servlet> T createServlet(Class<T> tClass) throws ServletException
+//    {
+//        throw new UnsupportedOperationException("Not implemented");
+//    }
+//
+//    @Override
+//    public ServletRegistration getServletRegistration(String s)
+//    {
+//        throw new UnsupportedOperationException("Not implemented");
+//    }
+//
+//    @Override
+//    public Map<String, ? extends ServletRegistration> getServletRegistrations()
+//    {
+//        throw new UnsupportedOperationException("Not implemented");
+//    }
+//
+//    @Override
+//    public FilterRegistration.Dynamic addFilter(String s, String s1)
+//    {
+//        throw new UnsupportedOperationException("Not implemented");
+//    }
+//
+//    @Override
+//    public FilterRegistration.Dynamic addFilter(String s, Filter filter)
+//    {
+//        throw new UnsupportedOperationException("Not implemented");
+//    }
+//
+//    @Override
+//    public FilterRegistration.Dynamic addFilter(String s, Class<? extends Filter> aClass)
+//    {
+//        throw new UnsupportedOperationException("Not implemented");
+//    }
+//
+//    @Override
+//    public <T extends Filter> T createFilter(Class<T> tClass) throws ServletException
+//    {
+//        throw new UnsupportedOperationException("Not implemented");
+//    }
+//
+//    @Override
+//    public FilterRegistration getFilterRegistration(String s)
+//    {
+//        throw new UnsupportedOperationException("Not implemented");
+//    }
+//
+//    @Override
+//    public Map<String, ? extends FilterRegistration> getFilterRegistrations()
+//    {
+//        throw new UnsupportedOperationException("Not implemented");
+//    }
+//
+//    @Override
+//    public SessionCookieConfig getSessionCookieConfig()
+//    {
+//        throw new UnsupportedOperationException("Not implemented");
+//    }
+//
+//    @Override
+//    public void setSessionTrackingModes(Set<SessionTrackingMode> sessionTrackingModes)
+//    {
+//        throw new UnsupportedOperationException("Not implemented");
+//    }
+//
+//    @Override
+//    public Set<SessionTrackingMode> getDefaultSessionTrackingModes()
+//    {
+//        return context.getDefaultSessionTrackingModes();
+//    }
+//
+//    @Override
+//    public Set<SessionTrackingMode> getEffectiveSessionTrackingModes()
+//    {
+//        return context.getEffectiveSessionTrackingModes();
+//    }
 
-    @Override
-    public ServletRegistration.Dynamic addServlet(String s, Servlet servlet)
-    {
-        throw new UnsupportedOperationException("Not implemented");
-    }
+//    @Override
+//    public void addListener(String s)
+//    {
+//        throw new UnsupportedOperationException("Not implemented");
+//    }
+//
+//    @Override
+//    public <T extends EventListener> void addListener(T t)
+//    {
+//        throw new UnsupportedOperationException("Not implemented");
+//    }
+//
+//    @Override
+//    public void addListener(Class<? extends EventListener> aClass)
+//    {
+//        throw new UnsupportedOperationException("Not implemented");
+//    }
+//
+//    @Override
+//    public <T extends EventListener> T createListener(Class<T> tClass) throws ServletException
+//    {
+//        throw new UnsupportedOperationException("Not implemented");
+//    }
 
-    @Override
-    public ServletRegistration.Dynamic addServlet(String s, Class<? extends Servlet> aClass)
-    {
-        throw new UnsupportedOperationException("Not implemented");
-    }
+//    @Override
+//    public JspConfigDescriptor getJspConfigDescriptor()
+//    {
+//        return context.getJspConfigDescriptor();
+//    }
+//
+//    @Override
+//    public ClassLoader getClassLoader()
+//    {
+//        return context.getClassLoader();
+//    }
 
-    @Override
-    public <T extends Servlet> T createServlet(Class<T> tClass) throws ServletException
-    {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
-    @Override
-    public ServletRegistration getServletRegistration(String s)
-    {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
-    @Override
-    public Map<String, ? extends ServletRegistration> getServletRegistrations()
-    {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
-    @Override
-    public FilterRegistration.Dynamic addFilter(String s, String s1)
-    {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
-    @Override
-    public FilterRegistration.Dynamic addFilter(String s, Filter filter)
-    {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
-    @Override
-    public FilterRegistration.Dynamic addFilter(String s, Class<? extends Filter> aClass)
-    {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
-    @Override
-    public <T extends Filter> T createFilter(Class<T> tClass) throws ServletException
-    {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
-    @Override
-    public FilterRegistration getFilterRegistration(String s)
-    {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
-    @Override
-    public Map<String, ? extends FilterRegistration> getFilterRegistrations()
-    {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
-    @Override
-    public SessionCookieConfig getSessionCookieConfig()
-    {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
-    @Override
-    public void setSessionTrackingModes(Set<SessionTrackingMode> sessionTrackingModes)
-    {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
-    @Override
-    public Set<SessionTrackingMode> getDefaultSessionTrackingModes()
-    {
-        return context.getDefaultSessionTrackingModes();
-    }
-
-    @Override
-    public Set<SessionTrackingMode> getEffectiveSessionTrackingModes()
-    {
-        return context.getEffectiveSessionTrackingModes();
-    }
-
-    @Override
-    public void addListener(String s)
-    {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
-    @Override
-    public <T extends EventListener> void addListener(T t)
-    {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
-    @Override
-    public void addListener(Class<? extends EventListener> aClass)
-    {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
-    @Override
-    public <T extends EventListener> T createListener(Class<T> tClass) throws ServletException
-    {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
-    @Override
-    public JspConfigDescriptor getJspConfigDescriptor()
-    {
-        return context.getJspConfigDescriptor();
-    }
-
-    @Override
-    public ClassLoader getClassLoader()
-    {
-        return context.getClassLoader();
-    }
-
-    @Override
-    public void declareRoles(String... strings)
-    {
-        throw new UnsupportedOperationException("Not implemented");
-    }
+//    @Override
+//    public void declareRoles(String... strings)
+//    {
+//        throw new UnsupportedOperationException("Not implemented");
+//    }
 
     /**
      * <p>Sets an attribute in the local attribute map, leaving the wrapped
@@ -245,11 +244,11 @@ public class UBServletContextWrapper implements ServletContext
         return Collections.enumeration(initParams.keySet());
     }
 
-    @Override
-    public boolean setInitParameter(String s, String s1)
-    {
-        throw new UnsupportedOperationException("Not implemented");
-    }
+//    @Override
+//    public boolean setInitParameter(String s, String s1)
+//    {
+//        throw new UnsupportedOperationException("Not implemented");
+//    }
 
     /**
      * @return the resource from the plugin classloader if it exists, otherwise the 
@@ -291,17 +290,17 @@ public class UBServletContextWrapper implements ServletContext
         return context.getMinorVersion();
     }
 
-    @Override
-    public int getEffectiveMajorVersion()
-    {
-        return context.getEffectiveMajorVersion();
-    }
-
-    @Override
-    public int getEffectiveMinorVersion()
-    {
-        return context.getEffectiveMinorVersion();
-    }
+//    @Override
+//    public int getEffectiveMajorVersion()
+//    {
+//        return context.getEffectiveMajorVersion();
+//    }
+//
+//    @Override
+//    public int getEffectiveMinorVersion()
+//    {
+//        return context.getEffectiveMinorVersion();
+//    }
 
     @Override
     public String getMimeType(String s)

@@ -19,8 +19,7 @@ public class ReadAppLinksScopeTest
     @Test
     public void testGetApplicationLink() throws Exception
     {
-        String result = sendSignedGet(signedRequestHandler,
-                URI.create(baseUrl + "/rest/applinks/latest/applicationlink.json"), "admin");
+        String result = sendSignedGet(signedRequestHandler, URI.create(baseUrl + "/rest/applinks/latest/applicationlink.json"), "admin");
         JSONObject j = new JSONObject(result);
         JSONArray applicationLinks = j.getJSONArray("applicationLinks");
         assertNotNull(applicationLinks);

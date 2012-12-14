@@ -1,11 +1,11 @@
 package com.atlassian.plugin.remotable.plugin.module;
 
-import com.atlassian.plugin.remotable.plugin.product.ProductAccessor;
-import com.atlassian.plugin.remotable.spi.module.RemoteCondition;
 import com.atlassian.plugin.AutowireCapablePlugin;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
+import com.atlassian.plugin.remotable.spi.module.RemoteCondition;
+import com.atlassian.plugin.remotable.spi.product.ProductAccessor;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.web.conditions.ConditionLoadingException;
 import com.atlassian.plugin.web.descriptors.ConditionElementParser;
@@ -20,7 +20,6 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.google.common.collect.Lists.transform;
-import static com.google.common.collect.Sets.newHashSet;
 import static org.apache.commons.lang.StringUtils.escape;
 import static org.apache.commons.lang.StringUtils.join;
 

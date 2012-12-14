@@ -3,11 +3,11 @@ package com.atlassian.plugin.remotable.plugin.descriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.remotable.plugin.PermissionManager;
-import com.atlassian.plugin.remotable.plugin.product.ProductAccessor;
 import com.atlassian.plugin.remotable.spi.InstallationFailedException;
 import com.atlassian.plugin.remotable.spi.permission.Permission;
 import com.atlassian.plugin.remotable.spi.permission.scope.ApiResourceInfo;
 import com.atlassian.plugin.remotable.spi.permission.scope.ApiScope;
+import com.atlassian.plugin.remotable.spi.product.ProductAccessor;
 import com.atlassian.plugin.schema.spi.Schema;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.webresource.UrlMode;
@@ -37,15 +37,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.*;
-import static com.google.common.base.Preconditions.*;
-import static com.google.common.collect.Sets.*;
+import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.addSchemaDocumentation;
+import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.parseDocument;
+import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.printNode;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Sets.newHashSet;
 
 /**
  * Builds a schema and validates descriptors with it.  Supports remote plugin and plugin descriptors.
  */
 @Component
-public class DescriptorValidator
+public final class DescriptorValidator
 {
     private final Plugin plugin;
     private final ProductAccessor productAccessor;

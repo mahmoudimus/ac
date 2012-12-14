@@ -1,6 +1,6 @@
 package com.atlassian.plugin.remotable.plugin.module.confluence;
 
-import com.atlassian.plugin.remotable.plugin.RemotablePluginAccessorFactory;
+import com.atlassian.plugin.remotable.plugin.DefaultRemotablePluginAccessorFactory;
 
 import java.net.URI;
 
@@ -9,10 +9,10 @@ import java.net.URI;
  */
 public abstract class AbstractRemoteMacro implements RemoteMacro
 {
-    protected final RemotablePluginAccessorFactory remotablePluginAccessorFactory;
+    protected final DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory;
     protected final RemoteMacroInfo remoteMacroInfo;
 
-    public AbstractRemoteMacro(RemotablePluginAccessorFactory remotablePluginAccessorFactory,
+    public AbstractRemoteMacro(DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory,
             RemoteMacroInfo remoteMacroInfo)
     {
         this.remotablePluginAccessorFactory = remotablePluginAccessorFactory;

@@ -2,9 +2,9 @@ package com.atlassian.plugin.remotable.plugin.module.confluence;
 
 import com.atlassian.confluence.content.render.xhtml.ConversionContext;
 import com.atlassian.confluence.core.ContentEntityObject;
-import com.atlassian.plugin.remotable.plugin.RemotablePluginAccessor;
 import com.atlassian.plugin.remotable.plugin.util.contextparameter.RequestContextParameterFactory;
 import com.atlassian.plugin.remotable.plugin.util.contextparameter.RequestContextParameters;
+import com.atlassian.plugin.remotable.spi.RemotablePluginAccessor;
 import com.atlassian.renderer.v2.macro.Macro;
 
 import java.net.URI;

@@ -40,7 +40,6 @@ public class DefaultHostXmlRpcClient implements HostXmlRpcClient
 
     private final HostHttpClient httpClient;
 
-
     public DefaultHostXmlRpcClient(HostHttpClient httpClient)
     {
         this.httpClient = httpClient;

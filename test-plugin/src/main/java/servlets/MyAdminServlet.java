@@ -1,25 +1,25 @@
 package servlets;
 
 import com.atlassian.httpclient.api.Response;
-import com.atlassian.plugin.remotable.api.annotation.ServiceReference;
+import com.atlassian.plugin.remotable.api.annotation.ComponentImport;
 import com.atlassian.plugin.remotable.api.service.http.HostHttpClient;
 import com.atlassian.plugin.remotable.kit.servlet.AbstractPageServlet;
 import com.atlassian.plugin.remotable.kit.servlet.AppScripts;
 import com.google.common.collect.ImmutableMap;
 
-import javax.inject.Singleton;
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
-@Singleton
+@Named
 @AppScripts({"jquery-1.7", "my-admin"})
 public class MyAdminServlet extends AbstractPageServlet
 {
-    @ServiceReference
+    @Inject
+    @ComponentImport
     private HostHttpClient httpClient;
 
     @Override

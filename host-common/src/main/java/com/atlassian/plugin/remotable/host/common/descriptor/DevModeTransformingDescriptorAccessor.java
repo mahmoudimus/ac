@@ -32,25 +32,19 @@ public final class DevModeTransformingDescriptorAccessor extends DelegatingDescr
 
     private Document transform(Document descriptor)
     {
-        if (!runtimeContext.isDevMode())
-        {
-            return descriptor;
-        }
-
         final String displayUrl = getDisplayUrl(descriptor);
-        final String devDisplayUrl = baseUrlResolver.getLocalMountBaseUrl(getKey());
+        if (runtimeContext.isDevMode())
+        {
+            final String devDisplayUrl = baseUrlResolver.getLocalMountBaseUrl(getKey());
+            logger.debug("Replacing set display URL '{}' with new dev URL '{}'", displayUrl, devDisplayUrl);
 
-        logger.debug("Replacing set display URL '{}' with new dev URL '{}'", displayUrl, devDisplayUrl);
-
-        return transformPluginDescriptor(descriptor, devDisplayUrl);
-    }
-
-    private Document transformPluginDescriptor(Document descriptor, String displayUrl)
-    {
-        return addRegistrationWebHook(
-              addDisplayUrl(
-                      getRemotePluginContainerElement(
-                              descriptor.getRootElement()), displayUrl).getRootElement());
+            return addRegistrationWebHook(
+                    addDisplayUrl(getRemotePluginContainerElement(descriptor.getRootElement()), devDisplayUrl).getRootElement());
+        }
+        else
+        {
+            return addRegistrationWebHook(descriptor.getRootElement());
+        }
     }
 
     @Override

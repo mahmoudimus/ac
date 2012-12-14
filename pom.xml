@@ -11,7 +11,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.atlassian.plugins</groupId>
     <artifactId>remotable-plugins-parent</artifactId>
-    <version>0.5-SNAPSHOT</version>
+    <version>0.6-SNAPSHOT</version>
 
     <organization>
         <name>Atlassian</name>
@@ -23,7 +23,7 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>api</module>
+        <module>plugin-api</module>
         <module>host-common</module>
         <module>sisu-extender</module>
         <module>kit-common</module>
@@ -345,7 +345,7 @@
             </dependency>
             <dependency>
                 <groupId>com.atlassian.jira</groupId>
-                <artifactId>jira-rest-java-client</artifactId>
+                <artifactId>jira-rest-java-client-api</artifactId>
                 <version>${jira.client.version}</version>
                 <!--exclusions>
                     <exclusion>
@@ -414,8 +414,7 @@
     </scm>
 
     <properties>
-        <API_VERSION>0.5</API_VERSION>
-        <fake.property>3</fake.property><!-- used to trigger builds when necessary -->
+        <api.version>0.6.1</api.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <xvfb.enable>true</xvfb.enable>
         <atlassian.selenium.version>2.1.0-m12</atlassian.selenium.version>
@@ -423,7 +422,8 @@
         <refapp.version>2.18.0-m2</refapp.version>
         <jira.version>5.2</jira.version>
         <jira.data.version>${jira.version}</jira.data.version>
-        <jira.client.version>0.6-m9</jira.client.version>
+        <jira.client.version>2.0.0-m3</jira.client.version>
+        <confluence.client.version>0.9.0</confluence.client.version>
         <sisu.version>0.0.0.atlassian3</sisu.version>
         <guice.version>3.0</guice.version>
         <confluence.version>4.2.13</confluence.version>

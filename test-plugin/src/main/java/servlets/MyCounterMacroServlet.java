@@ -1,6 +1,6 @@
 package servlets;
 
-import javax.inject.Singleton;
+import javax.inject.Named;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -11,7 +11,7 @@ import java.io.PrintWriter;
 /**
  *
  */
-@Singleton
+@Named
 public class MyCounterMacroServlet extends HttpServlet
 {
     private static final long ONE_YEAR_SECONDS = 60L * 60L * 24L * 365L;

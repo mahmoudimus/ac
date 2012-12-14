@@ -17,7 +17,7 @@ final class HerokuUrlTransformer
 
         if (url.startsWith("jdbc:"))
         {
-            logger.debug("URL '{}' is a JDBC url, not transforming.");
+            logger.debug("URL '{}' is a JDBC url, not transforming.", url);
             return url;
         }
 

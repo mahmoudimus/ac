@@ -2,25 +2,27 @@
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.atlassian.plugins</groupId>
         <artifactId>remotable-plugins-parent</artifactId>
-        <version>0.5-SNAPSHOT</version>
+        <version>0.6-SNAPSHOT</version>
     </parent>
 
-
-    <modelVersion>4.0.0</modelVersion>
     <artifactId>remotable-plugins-host-common</artifactId>
     <name>Atlassian Remotable Plugins - Host Common</name>
-    <description>
-        Common classes meant for environments that host version 3 plugins
-    </description>
+    <description>Common classes meant for environments that host version 3 plugins</description>
 
     <dependencies>
         <dependency>
             <groupId>com.atlassian.plugins</groupId>
             <artifactId>remotable-plugins-api</artifactId>
-            <version>${project.version}</version>
+            <version>${api.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.plugins</groupId>
+            <artifactId>remotable-plugins-spi</artifactId>
+            <version>${api.version}</version>
         </dependency>
 
         <dependency>
@@ -52,6 +54,16 @@
             <groupId>net.oauth.core</groupId>
             <artifactId>oauth-consumer</artifactId>
             <version>20090617</version>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.xmlrpc</groupId>
+            <artifactId>atlassian-xmlrpc-binder</artifactId>
+            <version>${atlassian.xmlrpc.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.kohsuke.redstone</groupId>
+            <artifactId>redstone</artifactId>
+            <version>1.1.1</version>
         </dependency>
         <dependency>
             <groupId>com.atlassian.plugins</groupId>

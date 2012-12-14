@@ -1,5 +1,6 @@
 package com.atlassian.plugin.remotable.plugin.util.http;
 
+import com.atlassian.plugin.remotable.spi.http.AuthorizationGenerator;
 import com.atlassian.util.concurrent.Promise;
 
 import java.net.URI;

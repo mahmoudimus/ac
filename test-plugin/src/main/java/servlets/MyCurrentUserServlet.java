@@ -1,10 +1,10 @@
 package servlets;
 
-import com.atlassian.plugin.remotable.api.annotation.ServiceReference;
+import com.atlassian.plugin.remotable.api.annotation.ComponentImport;
 import com.atlassian.plugin.remotable.api.service.RequestContext;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
+import javax.inject.Named;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -14,13 +14,13 @@ import java.io.IOException;
 /**
  *
  */
-@Singleton
+@Named
 public class MyCurrentUserServlet extends HttpServlet
 {
     private final RequestContext requestContext;
 
     @Inject
-    public MyCurrentUserServlet(@ServiceReference RequestContext requestContext)
+    public MyCurrentUserServlet(@ComponentImport RequestContext requestContext)
     {
         this.requestContext = requestContext;
     }

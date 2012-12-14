@@ -26,7 +26,7 @@ import java.net.URI;
 import java.util.List;
 
 /**
- * Registers calling applications only if the secret matches.  Uses a mutable environment
+ * Registers calling applications only if the secret matches. Uses a mutable environment
  * to store values.
  */
 public class RegistrationFilter implements Filter

@@ -4,8 +4,8 @@ import com.atlassian.jira.plugin.projectpanel.ProjectTabPanel;
 import com.atlassian.jira.plugin.projectpanel.ProjectTabPanelModuleDescriptor;
 import com.atlassian.jira.project.browse.BrowseContext;
 import com.atlassian.plugin.remotable.spi.PermissionDeniedException;
-import com.atlassian.plugin.remotable.plugin.module.IFrameRenderer;
-import com.atlassian.plugin.remotable.plugin.module.page.IFrameContext;
+import com.atlassian.plugin.remotable.plugin.module.IFrameRendererImpl;
+import com.atlassian.plugin.remotable.spi.module.IFrameContext;
 import com.atlassian.plugin.web.Condition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,12 +22,12 @@ import static java.util.Collections.singletonMap;
  */
 public class IFrameProjectTab implements ProjectTabPanel
 {
-    private final IFrameRenderer iFrameRenderer;
+    private final IFrameRendererImpl iFrameRenderer;
     private final Condition condition;
     private final IFrameContext iFrameContext;
     private static final Logger log = LoggerFactory.getLogger(IFrameProjectTab.class);
 
-    public IFrameProjectTab(IFrameContext iFrameContext, IFrameRenderer iFrameRenderer,
+    public IFrameProjectTab(IFrameContext iFrameContext, IFrameRendererImpl iFrameRenderer,
             Condition condition)
     {
         this.iFrameContext = iFrameContext;

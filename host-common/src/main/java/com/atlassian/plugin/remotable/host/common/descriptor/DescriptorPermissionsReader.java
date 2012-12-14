@@ -1,9 +1,9 @@
 package com.atlassian.plugin.remotable.host.common.descriptor;
 
 import com.atlassian.plugin.remotable.api.InstallationMode;
-import com.atlassian.plugin.remotable.host.common.HostProperties;
 import com.atlassian.plugin.remotable.host.common.util.BundleLocator;
 import com.atlassian.plugin.remotable.host.common.util.RemotablePluginManifestReader;
+import com.atlassian.plugin.remotable.spi.host.HostProperties;
 import com.atlassian.plugin.remotable.spi.permission.PermissionsReader;
 import com.atlassian.plugin.remotable.spi.util.XmlUtils;
 import com.atlassian.plugin.Plugin;
@@ -29,7 +29,7 @@ import static com.google.common.collect.Sets.newHashSet;
  * Reads permissions from a plugin instance.  Currently it extracts the permissions from the descriptor
  * by loading the document, but soon will read natively from Plugin
  */
-public class DescriptorPermissionsReader implements PermissionsReader
+public final class DescriptorPermissionsReader implements PermissionsReader
 {
     private final Cache<Plugin,Set<String>> permissionsCache;
     private final String productKey;

@@ -1,14 +1,16 @@
 package servlets;
 
-import com.atlassian.plugin.remotable.kit.servlet.*;
+import com.atlassian.plugin.remotable.kit.servlet.AbstractPageServlet;
+import com.atlassian.plugin.remotable.kit.servlet.Multipage;
 import com.google.common.collect.ImmutableMap;
 
-import javax.inject.Singleton;
+import javax.inject.Named;
 import javax.servlet.ServletException;
-import javax.servlet.http.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@Singleton
+@Named
 @Multipage
 public class MyMultipageServlet extends AbstractPageServlet
 {

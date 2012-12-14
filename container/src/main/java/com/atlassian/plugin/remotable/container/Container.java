@@ -3,13 +3,6 @@ package com.atlassian.plugin.remotable.container;
 import com.atlassian.activeobjects.spi.DataSourceProvider;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.plugin.factories.PluginFactory;
-import com.atlassian.plugin.remotable.api.service.jira.JiraComponentClient;
-import com.atlassian.plugin.remotable.api.service.jira.JiraIssueClient;
-import com.atlassian.plugin.remotable.api.service.jira.JiraMetadataClient;
-import com.atlassian.plugin.remotable.api.service.jira.JiraProjectClient;
-import com.atlassian.plugin.remotable.api.service.jira.JiraSearchClient;
-import com.atlassian.plugin.remotable.api.service.jira.JiraUserClient;
-import com.atlassian.plugin.remotable.api.service.jira.JiraVersionClient;
 import com.atlassian.plugin.DefaultModuleDescriptorFactory;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.PluginController;
@@ -43,14 +36,6 @@ import com.atlassian.plugin.remotable.api.service.HttpResourceMounter;
 import com.atlassian.plugin.remotable.api.service.RenderContext;
 import com.atlassian.plugin.remotable.api.service.RequestContext;
 import com.atlassian.plugin.remotable.api.service.SignedRequestHandler;
-import com.atlassian.plugin.remotable.api.service.confluence.ConfluenceAdminClient;
-import com.atlassian.plugin.remotable.api.service.confluence.ConfluenceAttachmentClient;
-import com.atlassian.plugin.remotable.api.service.confluence.ConfluenceBlogClient;
-import com.atlassian.plugin.remotable.api.service.confluence.ConfluenceLabelClient;
-import com.atlassian.plugin.remotable.api.service.confluence.ConfluenceNotificationClient;
-import com.atlassian.plugin.remotable.api.service.confluence.ConfluencePageClient;
-import com.atlassian.plugin.remotable.api.service.confluence.ConfluenceSpaceClient;
-import com.atlassian.plugin.remotable.api.service.confluence.ConfluenceUserClient;
 import com.atlassian.plugin.remotable.api.service.http.HostHttpClient;
 import com.atlassian.plugin.remotable.api.service.http.HostXmlRpcClient;
 import com.atlassian.plugin.remotable.container.ao.ContainerDataSourceProvider;
@@ -60,34 +45,26 @@ import com.atlassian.plugin.remotable.container.service.ContainerHttpResourceMou
 import com.atlassian.plugin.remotable.container.service.OAuthSignedRequestHandlerServiceFactory;
 import com.atlassian.plugin.remotable.container.service.event.ContainerEventPublisher;
 import com.atlassian.plugin.remotable.container.service.plugins.NoOpWebResourceManager;
-import com.atlassian.plugin.remotable.container.service.sal.*;
+import com.atlassian.plugin.remotable.container.service.sal.ContainerApplicationProperties;
+import com.atlassian.plugin.remotable.container.service.sal.ContainerApplicationPropertiesServiceFactory;
+import com.atlassian.plugin.remotable.container.service.sal.ContainerI18nResolver;
+import com.atlassian.plugin.remotable.container.service.sal.ContainerLocaleResolver;
+import com.atlassian.plugin.remotable.container.service.sal.ContainerUserManagerServiceFactory;
+import com.atlassian.plugin.remotable.container.service.sal.JdbcPluginSettingsFactory;
+import com.atlassian.plugin.remotable.container.service.sal.ResourceBundleResolverImpl;
 import com.atlassian.plugin.remotable.container.util.ZipWriter;
-import com.atlassian.plugin.remotable.host.common.HostProperties;
 import com.atlassian.plugin.remotable.host.common.descriptor.DescriptorAccessor;
 import com.atlassian.plugin.remotable.host.common.descriptor.DescriptorPermissionsReader;
 import com.atlassian.plugin.remotable.host.common.descriptor.PolyglotDescriptorAccessor;
 import com.atlassian.plugin.remotable.host.common.service.RenderContextServiceFactory;
 import com.atlassian.plugin.remotable.host.common.service.RequestContextServiceFactory;
-import com.atlassian.plugin.remotable.host.common.service.confluence.ConfluenceAdminClientServiceFactory;
-import com.atlassian.plugin.remotable.host.common.service.confluence.ConfluenceAttachmentClientServiceFactory;
-import com.atlassian.plugin.remotable.host.common.service.confluence.ConfluenceBlogClientServiceFactory;
-import com.atlassian.plugin.remotable.host.common.service.confluence.ConfluenceLabelClientServiceFactory;
-import com.atlassian.plugin.remotable.host.common.service.confluence.ConfluenceNotificationClientServiceFactory;
-import com.atlassian.plugin.remotable.host.common.service.confluence.ConfluencePageClientServiceFactory;
-import com.atlassian.plugin.remotable.host.common.service.confluence.ConfluenceSpaceClientServiceFactory;
-import com.atlassian.plugin.remotable.host.common.service.confluence.ConfluenceUserClientServiceFactory;
 import com.atlassian.plugin.remotable.host.common.service.http.HostHttpClientConsumerServiceFactory;
 import com.atlassian.plugin.remotable.host.common.service.http.HostHttpClientServiceFactory;
 import com.atlassian.plugin.remotable.host.common.service.http.HostXmlRpcClientServiceFactory;
-import com.atlassian.plugin.remotable.host.common.service.jira.JiraComponentClientServiceFactory;
-import com.atlassian.plugin.remotable.host.common.service.jira.JiraIssueClientServiceFactory;
-import com.atlassian.plugin.remotable.host.common.service.jira.JiraMetadataClientServiceFactory;
-import com.atlassian.plugin.remotable.host.common.service.jira.JiraProjectClientServiceFactory;
-import com.atlassian.plugin.remotable.host.common.service.jira.JiraSearchClientServiceFactory;
-import com.atlassian.plugin.remotable.host.common.service.jira.JiraUserClientServiceFactory;
-import com.atlassian.plugin.remotable.host.common.service.jira.JiraVersionClientServiceFactory;
 import com.atlassian.plugin.remotable.host.common.util.BundleLocator;
 import com.atlassian.plugin.remotable.host.common.util.BundleUtil;
+import com.atlassian.plugin.remotable.spi.host.HostProperties;
+import com.atlassian.plugin.remotable.spi.permission.PermissionsReader;
 import com.atlassian.plugin.webresource.WebResourceManager;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.message.I18nResolver;
@@ -113,11 +90,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static com.atlassian.plugin.remotable.container.util.AppRegister.*;
+import static com.atlassian.plugin.remotable.container.util.AppRegister.registerApp;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.collect.Lists.*;
-import static com.google.common.collect.Maps.*;
-import static com.google.common.collect.Sets.*;
+import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Maps.newHashMap;
+import static com.google.common.collect.Sets.newHashSet;
 import static java.util.Arrays.asList;
 
 public final class Container
@@ -199,9 +176,13 @@ public final class Container
             scanner = new FileListScanner(files);
         }
 
-        final List<PluginFactory> pluginFactories = Arrays.<PluginFactory>asList(osgiPluginDeployer, bundleFactory);
-        final PluginLoader bundledPluginLoader = new BundledPluginLoader(this.getClass().getResource("/bundled-plugins.zip"), configuration.getCacheDirectory("bundled"), pluginFactories, pluginEventManager);
-        final PluginLoader appPluginLoader = new ScanningPluginLoader(scanner, pluginFactories, pluginEventManager);
+        final PluginLoader bundledPluginLoader = new BundledPluginLoader(
+                this.getClass().getResource("/bundled-plugins.zip"),
+                configuration.getCacheDirectory("bundled"),
+                Arrays.<PluginFactory>asList(osgiPluginDeployer, bundleFactory),
+                pluginEventManager);
+        final PluginLoader appPluginLoader = new ScanningPluginLoader(scanner,
+                Arrays.<PluginFactory>asList(osgiPluginDeployer, bundleFactory), pluginEventManager);
 
         final DefaultHostContainer hostContainer = new DefaultHostContainer();
         pluginManager = new DefaultPluginManager(
@@ -250,35 +231,7 @@ public final class Container
         hostComponents.put(TransactionTemplate.class, new NoOpTransactionTemplate());
         hostComponents.put(UserManager.class, new ContainerUserManagerServiceFactory(requestContextServiceFactory));
 
-        // jira services
-        hostComponents.put(JiraComponentClient.class, new JiraComponentClientServiceFactory(hostHttpClientServiceFactory));
-        hostComponents.put(JiraProjectClient.class, new JiraProjectClientServiceFactory(hostHttpClientServiceFactory));
-        hostComponents.put(JiraVersionClient.class, new JiraVersionClientServiceFactory(hostHttpClientServiceFactory));
-        JiraMetadataClientServiceFactory metadataFactory = new JiraMetadataClientServiceFactory(hostHttpClientServiceFactory);
-        hostComponents.put(JiraMetadataClient.class, metadataFactory);
-        hostComponents.put(JiraIssueClient.class, new JiraIssueClientServiceFactory(hostHttpClientServiceFactory, requestContextServiceFactory, metadataFactory));
-        hostComponents.put(JiraSearchClient.class, new JiraSearchClientServiceFactory(hostHttpClientServiceFactory));
-        hostComponents.put(JiraUserClient.class, new JiraUserClientServiceFactory(hostHttpClientServiceFactory));
-
-        DescriptorPermissionsReader permissionsReader = createPermissionsReaderForProduct(osgiContainerManager, "confluence");
-
-        // confluence services
-        hostComponents.put(ConfluenceSpaceClient.class, new ConfluenceSpaceClientServiceFactory(hostHttpClientServiceFactory, hostXmlRpcClientHostServiceFactory,
-                permissionsReader, pluginManager, requestContextServiceFactory));
-        hostComponents.put(ConfluencePageClient.class, new ConfluencePageClientServiceFactory(hostHttpClientServiceFactory, hostXmlRpcClientHostServiceFactory,
-                        permissionsReader, pluginManager, requestContextServiceFactory));
-        hostComponents.put(ConfluenceAdminClient.class, new ConfluenceAdminClientServiceFactory(hostHttpClientServiceFactory, hostXmlRpcClientHostServiceFactory,
-                        permissionsReader, pluginManager, requestContextServiceFactory));
-        hostComponents.put(ConfluenceBlogClient.class, new ConfluenceBlogClientServiceFactory(hostHttpClientServiceFactory, hostXmlRpcClientHostServiceFactory,
-                        permissionsReader, pluginManager, requestContextServiceFactory));
-        hostComponents.put(ConfluenceLabelClient.class, new ConfluenceLabelClientServiceFactory(hostHttpClientServiceFactory, hostXmlRpcClientHostServiceFactory,
-                        permissionsReader, pluginManager, requestContextServiceFactory));
-        hostComponents.put(ConfluenceNotificationClient.class, new ConfluenceNotificationClientServiceFactory(hostHttpClientServiceFactory, hostXmlRpcClientHostServiceFactory,
-                        permissionsReader, pluginManager, requestContextServiceFactory));
-        hostComponents.put(ConfluenceUserClient.class, new ConfluenceUserClientServiceFactory(hostHttpClientServiceFactory, hostXmlRpcClientHostServiceFactory,
-                        permissionsReader, pluginManager, requestContextServiceFactory));
-        hostComponents.put(ConfluenceAttachmentClient.class, new ConfluenceAttachmentClientServiceFactory(hostHttpClientServiceFactory, hostXmlRpcClientHostServiceFactory,
-                        permissionsReader, pluginManager, requestContextServiceFactory));
+        hostComponents.put(PermissionsReader.class, createPermissionsReaderForProduct(osgiContainerManager, "container"));
     }
 
     private DescriptorPermissionsReader createPermissionsReaderForProduct(final OsgiContainerManager osgiContainerManager, final String productKey)

@@ -1,16 +1,14 @@
 package com.atlassian.plugin.remotable.plugin.service;
 
-import com.atlassian.plugin.remotable.plugin.PermissionManager;
-import com.atlassian.plugin.remotable.plugin.product.ProductAccessor;
 import com.atlassian.plugin.osgi.util.OsgiHeaderUtil;
+import com.atlassian.plugin.remotable.plugin.PermissionManager;
+import com.atlassian.plugin.remotable.spi.product.ProductAccessor;
 import com.atlassian.sal.api.user.UserManager;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.ServiceFactory;
 import org.osgi.framework.ServiceRegistration;
 
-/**
- */
-public class LocalEmailSenderServiceFactory implements ServiceFactory
+public final class LocalEmailSenderServiceFactory implements ServiceFactory
 {
     private final ProductAccessor productAccessor;
     private final PermissionManager permissionManager;

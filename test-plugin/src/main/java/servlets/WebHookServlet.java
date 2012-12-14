@@ -4,6 +4,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -17,7 +18,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 /**
  * Receives and stores web hooks
  */
-@Singleton
+@Named
 public class WebHookServlet extends HttpServlet
 {
     private final List<Publication> publications = new CopyOnWriteArrayList<Publication>();

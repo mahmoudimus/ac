@@ -6,14 +6,15 @@ import com.atlassian.plugin.remotable.plugin.integration.plugins.DescriptorToReg
 import com.atlassian.plugin.remotable.plugin.integration.plugins.DynamicDescriptorRegistration;
 import com.atlassian.plugin.remotable.plugin.module.ConditionProcessor;
 import com.atlassian.plugin.remotable.plugin.module.ContainingRemoteCondition;
-import com.atlassian.plugin.remotable.plugin.module.IFrameParams;
-import com.atlassian.plugin.remotable.plugin.module.IFrameRenderer;
-import com.atlassian.plugin.remotable.plugin.module.page.IFrameContext;
+import com.atlassian.plugin.remotable.spi.module.IFrameParams;
+import com.atlassian.plugin.remotable.plugin.module.IFrameParamsImpl;
+import com.atlassian.plugin.remotable.plugin.module.IFrameRendererImpl;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
 import com.atlassian.plugin.module.ModuleFactory;
+import com.atlassian.plugin.remotable.plugin.module.page.IFrameContextImpl;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.util.concurrent.NotNull;
 import org.dom4j.Element;
@@ -28,14 +29,14 @@ import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.getRequiredUriA
  */
 public class ProjectTabPageModuleDescriptor extends AbstractModuleDescriptor<Void>
 {
-    private final IFrameRenderer iFrameRenderer;
+    private final IFrameRendererImpl iFrameRenderer;
     private final JiraAuthenticationContext jiraAuthenticationContext;
     private final DynamicDescriptorRegistration dynamicDescriptorRegistration;
     private final ConditionProcessor conditionProcessor;
     private Element descriptor;
     private URI url;
 
-    public ProjectTabPageModuleDescriptor(IFrameRenderer iFrameRenderer,
+    public ProjectTabPageModuleDescriptor(IFrameRendererImpl iFrameRenderer,
             JiraAuthenticationContext jiraAuthenticationContext,
             DynamicDescriptorRegistration dynamicDescriptorRegistration,
             ConditionProcessor conditionProcessor)
@@ -78,7 +79,7 @@ public class ProjectTabPageModuleDescriptor extends AbstractModuleDescriptor<Voi
         desc.addAttribute("class", IFrameProjectTab.class.getName());
 
         ProjectTabPanelModuleDescriptor moduleDescriptor = createDescriptor(moduleKey,
-                desc, new IFrameParams(descriptor), condition);
+                desc, new IFrameParamsImpl(descriptor), condition);
         dynamicDescriptorRegistration.registerDescriptors(getPlugin(), new DescriptorToRegister(moduleDescriptor));
     }
 
@@ -97,7 +98,7 @@ public class ProjectTabPageModuleDescriptor extends AbstractModuleDescriptor<Voi
                 {
 
                     return (T) new IFrameProjectTab(
-                            new IFrameContext(getPluginKey() , url, key, iFrameParams),
+                            new IFrameContextImpl(getPluginKey() , url, key, iFrameParams),
                             iFrameRenderer, condition);
                 }
             });

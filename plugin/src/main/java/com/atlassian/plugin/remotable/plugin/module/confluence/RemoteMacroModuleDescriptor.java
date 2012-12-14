@@ -1,6 +1,6 @@
 package com.atlassian.plugin.remotable.plugin.module.confluence;
 
-import com.atlassian.plugin.remotable.plugin.RemotablePluginAccessorFactory;
+import com.atlassian.plugin.remotable.plugin.DefaultRemotablePluginAccessorFactory;
 import com.atlassian.plugin.remotable.plugin.integration.plugins.DynamicDescriptorRegistration;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
@@ -23,7 +23,7 @@ public class RemoteMacroModuleDescriptor extends AbstractModuleDescriptor<Void>
             DynamicDescriptorRegistration dynamicDescriptorRegistration,
             MacroModuleDescriptorCreator macroModuleDescriptorCreator,
             final MacroContentManager macroContentManager,
-            final RemotablePluginAccessorFactory remotablePluginAccessorFactory,
+            final DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory,
             final WebResourceManager webResourceManager)
     {
         this.dynamicDescriptorRegistration = dynamicDescriptorRegistration;

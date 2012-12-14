@@ -1,7 +1,7 @@
 package com.atlassian.plugin.remotable.plugin.module.confluence;
 
 import com.atlassian.confluence.setup.settings.SettingsManager;
-import com.atlassian.plugin.remotable.plugin.RemotablePluginAccessor;
+import com.atlassian.plugin.remotable.spi.RemotablePluginAccessor;
 import com.atlassian.uri.Uri;
 import com.atlassian.uri.UriBuilder;
 import org.apache.commons.lang.StringEscapeUtils;
@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
-import static com.atlassian.plugin.remotable.plugin.module.util.redirect.RedirectServlet.*;
+import static com.atlassian.plugin.remotable.plugin.module.util.redirect.RedirectServlet.getOAuthRedirectUrl;
 
 /**
  *

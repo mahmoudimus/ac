@@ -36,12 +36,6 @@ public class DefaultRenderContext implements RenderContext
     }
 
     @Override
-    public String getLocalBaseUrl()
-    {
-        return signedRequestHandler.getLocalBaseUrl();
-    }
-
-    @Override
     public String getHostContextPath()
     {
         return URI.create(getHostBaseUrl()).getPath();
@@ -99,7 +93,7 @@ public class DefaultRenderContext implements RenderContext
     public Map<String, Object> toContextMap()
     {
         final ImmutableMap.Builder<String, Object> builder = ImmutableMap.<String, Object>builder()
-            .put("localBaseUrl", getLocalBaseUrl())
+            .put("localBaseUrl", signedRequestHandler.getLocalBaseUrl())
             .put("hostContextPath", getHostContextPath())
             .put("hostBaseUrl", getHostBaseUrl())
             .put("hostBaseResourceUrl", getHostBaseResourceUrl())

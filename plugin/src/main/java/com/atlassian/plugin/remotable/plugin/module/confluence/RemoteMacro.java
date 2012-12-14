@@ -1,7 +1,7 @@
 package com.atlassian.plugin.remotable.plugin.module.confluence;
 
 import com.atlassian.confluence.macro.Macro;
-import com.atlassian.plugin.remotable.plugin.RemotablePluginAccessor;
+import com.atlassian.plugin.remotable.spi.RemotablePluginAccessor;
 
 import java.net.URI;
 

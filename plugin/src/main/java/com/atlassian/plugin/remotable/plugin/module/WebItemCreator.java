@@ -1,9 +1,9 @@
 package com.atlassian.plugin.remotable.plugin.module;
 
-import com.atlassian.plugin.remotable.plugin.product.ProductAccessor;
-import com.atlassian.plugin.remotable.spi.module.DynamicMarkerCondition;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
+import com.atlassian.plugin.remotable.spi.module.DynamicMarkerCondition;
+import com.atlassian.plugin.remotable.spi.product.ProductAccessor;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.web.conditions.AlwaysDisplayCondition;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
@@ -19,9 +19,11 @@ import org.springframework.stereotype.Component;
 import java.net.URI;
 import java.util.Map;
 
-import static com.atlassian.plugin.remotable.plugin.module.util.redirect.RedirectServlet
-        .getPermanentRedirectUrl;
-import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.*;
+import static com.atlassian.plugin.remotable.plugin.module.util.redirect.RedirectServlet.getPermanentRedirectUrl;
+import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.getOptionalAttribute;
+import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.getOptionalUriAttribute;
+import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.getRequiredAttribute;
+import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.printNode;
 import static org.apache.commons.lang.StringEscapeUtils.escapeHtml;
 import static org.apache.commons.lang.Validate.notNull;
 
@@ -31,7 +33,7 @@ import static org.apache.commons.lang.Validate.notNull;
  * into the build() method
  */
 @Component
-public class WebItemCreator
+public final class WebItemCreator
 {
     private final ProductAccessor productAccessor;
     private final ConditionProcessor conditionProcessor;

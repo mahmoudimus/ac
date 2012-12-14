@@ -1,6 +1,13 @@
 package com.atlassian.plugin.remotable.plugin.product.confluence;
 
-import com.atlassian.plugin.remotable.api.service.confluence.*;
+import com.atlassian.confluence.xmlrpc.client.api.ConfluenceAdminClient;
+import com.atlassian.confluence.xmlrpc.client.api.ConfluenceAttachmentClient;
+import com.atlassian.confluence.xmlrpc.client.api.ConfluenceBlogClient;
+import com.atlassian.confluence.xmlrpc.client.api.ConfluenceLabelClient;
+import com.atlassian.confluence.xmlrpc.client.api.ConfluenceNotificationClient;
+import com.atlassian.confluence.xmlrpc.client.api.ConfluencePageClient;
+import com.atlassian.confluence.xmlrpc.client.api.ConfluenceSpaceClient;
+import com.atlassian.confluence.xmlrpc.client.api.ConfluenceUserClient;
 import com.atlassian.plugin.remotable.spi.permission.scope.*;
 import com.atlassian.plugin.remotable.spi.util.RequirePermission;
 import com.atlassian.velocity.htmlsafe.util.Check;

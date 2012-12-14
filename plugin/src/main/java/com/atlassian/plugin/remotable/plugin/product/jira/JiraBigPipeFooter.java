@@ -2,15 +2,15 @@ package com.atlassian.plugin.remotable.plugin.product.jira;
 
 import com.atlassian.jira.plugin.navigation.FooterModuleDescriptor;
 import com.atlassian.jira.plugin.navigation.PluggableFooter;
-import com.atlassian.plugin.remotable.plugin.util.http.bigpipe.BigPipe;
-import com.atlassian.plugin.remotable.plugin.util.http.bigpipe.RequestIdAccessor;
+import com.atlassian.plugin.remotable.spi.http.bigpipe.BigPipe;
 import com.atlassian.plugin.webresource.UrlMode;
 import com.atlassian.plugin.webresource.WebResourceUrlProvider;
-import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Footer that adds some javascript to handle big pipe requests that have completed.
@@ -24,8 +24,8 @@ public class JiraBigPipeFooter implements PluggableFooter
 
     public JiraBigPipeFooter(BigPipe bigPipe, WebResourceUrlProvider webResourceUrlProvider)
     {
-        this.bigPipe = bigPipe;
-        this.webResourceUrlProvider = webResourceUrlProvider;
+        this.bigPipe = checkNotNull(bigPipe);
+        this.webResourceUrlProvider = checkNotNull(webResourceUrlProvider);
     }
 
     @Override
@@ -50,16 +50,8 @@ public class JiraBigPipeFooter implements PluggableFooter
         String bigPipeJs = webResourceUrlProvider.getStaticPluginResourceUrl(
                 "com.atlassian.labs.remoteapps-plugin:big-pipe", "big-pipe.js", UrlMode.AUTO
         );
-        String json = null;
-        try
-        {
-            json = bigPipe.convertContentHandlersToJson(bigPipe.consumeCompletedHandlers(
-                    RequestIdAccessor.getRequestId())).toString(2);
-        }
-        catch (JSONException e)
-        {
-            log.error("Unable to convert json", e);
-        }
+        String json = bigPipe.convertContentHandlersToJson(
+                bigPipe.consumeCompletedHandlers(bigPipe.getRequestIdAccessor().getRequestId()));
         return "<script>" +
                 "(function(global) {" +
                 "var RemotablePlugins = global.RemotablePlugins = global.RemotablePlugins || {};" +

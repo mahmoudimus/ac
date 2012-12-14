@@ -1,6 +1,5 @@
 package com.atlassian.plugin.remotable.plugin.module.confluence;
 
-import com.atlassian.confluence.content.render.xhtml.PolicyConfiguredXhtmlCleaner;
 import com.atlassian.confluence.content.render.xhtml.XhtmlCleaner;
 import com.atlassian.confluence.core.ContentEntityObject;
 import com.atlassian.confluence.event.events.content.page.PageEvent;
@@ -8,13 +7,12 @@ import com.atlassian.confluence.event.events.content.page.PageViewEvent;
 import com.atlassian.confluence.xhtml.api.XhtmlContent;
 import com.atlassian.event.api.EventListener;
 import com.atlassian.event.api.EventPublisher;
-import com.atlassian.plugin.remotable.plugin.RemotablePluginAccessorFactory;
+import com.atlassian.plugin.remotable.plugin.DefaultRemotablePluginAccessorFactory;
 import com.atlassian.plugin.remotable.plugin.util.http.CachingHttpContentRetriever;
 import com.atlassian.plugin.remotable.plugin.util.http.ContentRetrievalErrors;
 import com.atlassian.plugin.remotable.plugin.util.http.ContentRetrievalException;
-import com.atlassian.plugin.remotable.plugin.util.http.bigpipe.BigPipe;
-import com.atlassian.plugin.remotable.plugin.util.http.bigpipe.BigPipeContentHandler;
-import com.atlassian.plugin.remotable.plugin.util.http.bigpipe.RequestIdAccessor;
+import com.atlassian.plugin.remotable.spi.http.bigpipe.BigPipe;
+import com.atlassian.plugin.remotable.spi.http.bigpipe.BigPipeContentHandler;
 import com.atlassian.renderer.RenderContextOutputType;
 import com.atlassian.sal.api.component.ComponentLocator;
 import com.atlassian.sal.api.user.UserManager;
@@ -47,7 +45,7 @@ public class MacroContentManager implements DisposableBean
     private final BigPipe bigPipe;
     private final UserManager userManager;
     private final XhtmlContent xhtmlUtils;
-    private final RemotablePluginAccessorFactory remotablePluginAccessorFactory;
+    private final DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory;
     private final TemplateRenderer templateRenderer;
 
     private static final Logger log = LoggerFactory.getLogger(MacroContentManager.class);
@@ -59,12 +57,12 @@ public class MacroContentManager implements DisposableBean
             BigPipe bigPipe,
             UserManager userManager,
             XhtmlContent xhtmlUtils,
-            RemotablePluginAccessorFactory remotablePluginAccessorFactory,
+            DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory,
             TemplateRenderer templateRenderer)
     {
         this.eventPublisher = eventPublisher;
         this.cachingHttpContentRetriever = cachingHttpContentRetriever;
-        this.bigPipe = bigPipe;
+        this.bigPipe = checkNotNull(bigPipe);
         this.userManager = userManager;
         this.xhtmlUtils = xhtmlUtils;
         this.remotablePluginAccessorFactory = remotablePluginAccessorFactory;
@@ -85,11 +83,10 @@ public class MacroContentManager implements DisposableBean
     {
         ContentEntityObject entity = macroInstance.getEntity();
 
-        String requestId = macroInstance.getConversionContext().getPropertyAsString(
-                BIG_PIPE_REQUEST_ID);
+        String requestId = macroInstance.getConversionContext().getPropertyAsString(BIG_PIPE_REQUEST_ID);
         if (requestId == null)
         {
-            requestId = RequestIdAccessor.getRequestId();
+            requestId = bigPipe.getRequestIdAccessor().getRequestId();
             macroInstance.getConversionContext().setProperty(BIG_PIPE_REQUEST_ID, requestId);
         }
 
@@ -249,8 +246,7 @@ public class MacroContentManager implements DisposableBean
         @Override
         public String apply(String value)
         {
-            value = macroContentLinkParser.parse(macroInstance.getRemotablePluginAccessor(), value,
-                    urlParameters);
+            value = macroContentLinkParser.parse(macroInstance.getRemotablePluginAccessor(), value, urlParameters);
 
             /*!
            The storage-format XML returned from the Remotable Plugin is then scrubbed to ensure any

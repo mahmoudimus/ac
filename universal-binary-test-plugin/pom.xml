@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.atlassian.plugins</groupId>
         <artifactId>remotable-plugins-parent</artifactId>
-        <version>0.5-SNAPSHOT</version>
+        <version>0.6-SNAPSHOT</version>
     </parent>
 
     <artifactId>remotable-plugins-universal-binary-test-plugin</artifactId>
@@ -23,49 +23,28 @@
            <classifier>standalone</classifier>
        </dependency>
         <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>remotable-plugins-plugin-api</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.inject</groupId>
+            <artifactId>javax.inject</artifactId>
+            <version>1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>remotable-plugins-api</artifactId>
-            <version>${project.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.atlassian.activeobjects</groupId>
-            <artifactId>activeobjects-plugin</artifactId>
-            <version>${ao.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>remotable-plugins-ringojs-kit</artifactId>
-            <version>${project.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <!-- because maven 3 sucks and won't depend on the right version -->
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>remotable-plugins-kit-common</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>remotable-plugins-host-common</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>remotable-plugins-servlet-kit</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.jetty.orbit</groupId>
-            <artifactId>javax.servlet</artifactId>
         </dependency>
 
         <!-- test -->
@@ -143,6 +122,16 @@
         </resources>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>**/META-INF/sisu</exclude>
+                        <exclude>**/META-INF/sisu/*</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>com.atlassian.maven.plugins</groupId>
                 <artifactId>maven-amps-plugin</artifactId>
                 <configuration>
@@ -162,6 +151,15 @@
                     </systemPropertyVariables>
 
                     <functionalTestPattern>it/**/Test*.java</functionalTestPattern>
+
+                    <instructions>
+                        <Atlassian-Plugin-Key>sample-ub-java</Atlassian-Plugin-Key>
+                        <Spring-Context>*;timeout:=60</Spring-Context>
+                        <Import-Package>
+                            javax.servlet*;version="2.5",
+                            *;resolution:=optional
+                        </Import-Package>
+                    </instructions>
 
                     <products>
                         <product>
@@ -188,6 +186,26 @@
                                     <groupId>com.atlassian.activeobjects</groupId>
                                     <artifactId>activeobjects-refapp-spi</artifactId>
                                     <version>${ao.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>remotable-plugins-api</artifactId>
+                                    <version>${api.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>remotable-plugins-spi</artifactId>
+                                    <version>${api.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>com.google.inject</groupId>
+                                    <artifactId>guice</artifactId>
+                                    <version>3.0</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>org.apache.servicemix.bundles</groupId>
+                                    <artifactId>org.apache.servicemix.bundles.javax-inject</artifactId>
+                                    <version>1_1</version>
                                 </pluginArtifact>
                             </pluginArtifacts>
                             <libArtifacts>

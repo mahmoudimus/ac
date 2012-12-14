@@ -1,12 +1,12 @@
 package com.atlassian.plugin.remotable.plugin.module.page;
 
-import com.atlassian.plugin.remotable.plugin.integration.plugins.DynamicDescriptorRegistration;
-import com.atlassian.plugin.remotable.spi.module.UserIsAdminCondition;
-import com.atlassian.plugin.remotable.plugin.module.DefaultWebItemContext;
-import com.atlassian.plugin.remotable.plugin.product.ProductAccessor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
+import com.atlassian.plugin.remotable.plugin.integration.plugins.DynamicDescriptorRegistration;
+import com.atlassian.plugin.remotable.plugin.module.DefaultWebItemContext;
+import com.atlassian.plugin.remotable.spi.module.UserIsAdminCondition;
+import com.atlassian.plugin.remotable.spi.product.ProductAccessor;
 import com.atlassian.util.concurrent.NotNull;
 import org.dom4j.Element;
 
@@ -16,7 +16,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Generates an admin configuration page with a servlet containing an iframe
  */
-public class ConfigurePageModuleDescriptor extends AbstractModuleDescriptor<Void>
+public final class ConfigurePageModuleDescriptor extends AbstractModuleDescriptor<Void>
 {
     private final DynamicDescriptorRegistration dynamicDescriptorRegistration;
     private final RemotePageDescriptorCreator.Builder remotePageDescriptorBuilder;

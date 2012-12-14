@@ -16,7 +16,7 @@ import javax.inject.Named;
  */
 public class ClassesToInclude
 {
-    private static final Class[] CLASSES_TO_FORCE_PACKAGE_IMPORTS = new Class[]{
+    private static final Class[] CLASSES_TO_FORCE_PACKAGE_IMPORTS = new Class[] {
             HttpClient.class,
             HttpResourceMounter.class,
             ModuleMarker.class,

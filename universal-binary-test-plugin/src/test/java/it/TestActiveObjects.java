@@ -1,18 +1,18 @@
 package it;
 
+import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.plugin.remotable.junit.UniversalBinaries;
 import com.atlassian.plugin.remotable.junit.UniversalBinariesContainerJUnitRunner;
 import com.atlassian.plugin.remotable.test.GeneralPage;
 import com.atlassian.plugin.remotable.test.RemotePluginAwarePage;
 import com.atlassian.plugin.remotable.test.RemotePluginTestPage;
-import com.atlassian.pageobjects.page.HomePage;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(UniversalBinariesContainerJUnitRunner.class)
-@UniversalBinaries("${moduleDir}/target/remotable-plugins-universal-binary-test-plugin.jar")
+@UniversalBinaries(value = "${moduleDir}/target/remotable-plugins-universal-binary-test-plugin.jar")
 public final class TestActiveObjects extends AbstractRemotablePluginTest
 {
     @Test

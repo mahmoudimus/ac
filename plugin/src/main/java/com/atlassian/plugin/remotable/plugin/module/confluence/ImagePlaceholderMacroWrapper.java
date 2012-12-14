@@ -6,8 +6,8 @@ import com.atlassian.confluence.macro.EditorImagePlaceholder;
 import com.atlassian.confluence.macro.ImagePlaceholder;
 import com.atlassian.confluence.macro.MacroExecutionException;
 import com.atlassian.confluence.pages.thumbnail.Dimensions;
-import com.atlassian.plugin.remotable.plugin.RemotablePluginAccessor;
 import com.atlassian.plugin.remotable.plugin.module.util.redirect.RedirectServlet;
+import com.atlassian.plugin.remotable.spi.RemotablePluginAccessor;
 import com.atlassian.sal.api.user.UserManager;
 
 import java.net.URI;
@@ -16,7 +16,7 @@ import java.util.Map;
 /**
  * Wrapper to give a macro an image placeholder
  */
-public class ImagePlaceholderMacroWrapper implements EditorImagePlaceholder, RemoteMacro
+public final class ImagePlaceholderMacroWrapper implements EditorImagePlaceholder, RemoteMacro
 {
     private final RemoteMacro delegate;
 

@@ -1,10 +1,10 @@
 package servlets;
 
-import com.atlassian.plugin.remotable.api.annotation.ServiceReference;
+import com.atlassian.plugin.remotable.api.annotation.ComponentImport;
 import com.atlassian.plugin.remotable.api.service.SignedRequestHandler;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
+import javax.inject.Named;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -15,13 +15,13 @@ import java.io.PrintWriter;
 /**
  *
  */
-@Singleton
+@Named
 public class MyImageMacroServlet extends HttpServlet
 {
     private final SignedRequestHandler signedRequestHandler;
 
     @Inject
-    public MyImageMacroServlet(@ServiceReference SignedRequestHandler signedRequestHandler)
+    public MyImageMacroServlet(@ComponentImport SignedRequestHandler signedRequestHandler)
     {
         this.signedRequestHandler = signedRequestHandler;
     }

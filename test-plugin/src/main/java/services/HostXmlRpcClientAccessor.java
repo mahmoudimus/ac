@@ -4,9 +4,10 @@ package services;
 import com.atlassian.plugin.remotable.api.service.http.HostXmlRpcClient;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 
-@Singleton
+@Named
 public class HostXmlRpcClientAccessor
 {
     private static HostXmlRpcClient signedRequestHandler;

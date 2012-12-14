@@ -1,7 +1,7 @@
 package com.atlassian.plugin.remotable.plugin.webhooks;
 
 import com.atlassian.httpclient.api.Request;
-import com.atlassian.plugin.remotable.plugin.RemotablePluginAccessorFactory;
+import com.atlassian.plugin.remotable.plugin.DefaultRemotablePluginAccessorFactory;
 import com.atlassian.webhooks.spi.plugin.RequestSigner;
 
 import java.util.Collections;
@@ -12,9 +12,9 @@ import java.util.List;
  */
 public class RemotePluginRequestSigner implements RequestSigner
 {
-    private final RemotablePluginAccessorFactory remotablePluginAccessorFactory;
+    private final DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory;
 
-    public RemotePluginRequestSigner(RemotablePluginAccessorFactory remotablePluginAccessorFactory)
+    public RemotePluginRequestSigner(DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory)
     {
         this.remotablePluginAccessorFactory = remotablePluginAccessorFactory;
     }

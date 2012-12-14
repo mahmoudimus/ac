@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.atlassian.plugins</groupId>
         <artifactId>remotable-plugins-parent</artifactId>
-        <version>0.5-SNAPSHOT</version>
+        <version>0.6-SNAPSHOT</version>
     </parent>
 
 
@@ -31,8 +31,8 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>remotable-plugins-api</artifactId>
-            <version>${project.version}</version>
+            <artifactId>remotable-plugins-spi</artifactId>
+            <version>${api.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -191,6 +191,11 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
             <groupId>com.atlassian.mail</groupId>
             <artifactId>atlassian-mail</artifactId>
             <version>2.4.1</version>
@@ -293,6 +298,21 @@
             <version>${sisu.version}</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.atlassian.jira</groupId>
+            <artifactId>jira-rest-java-client-api</artifactId>
+            <version>${jira.client.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.atlassian.labs</groupId>
+            <artifactId>confluence-xmlrpc-java-client-api</artifactId>
+            <version>${confluence.client.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+
         <dependency>
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>

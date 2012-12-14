@@ -2,7 +2,7 @@ package com.atlassian.plugin.remotable.plugin.module.confluence;
 
 import com.atlassian.confluence.setup.settings.Settings;
 import com.atlassian.confluence.setup.settings.SettingsManager;
-import com.atlassian.plugin.remotable.plugin.RemotablePluginAccessor;
+import com.atlassian.plugin.remotable.spi.RemotablePluginAccessor;
 import com.google.common.collect.Maps;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,7 +20,7 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
-public class TestMacroContentLinkParser
+public final class TestMacroContentLinkParser
 {
     private static URI CONFLUENCE_BASE_URL;
     private static URI APP_BASE_URL;

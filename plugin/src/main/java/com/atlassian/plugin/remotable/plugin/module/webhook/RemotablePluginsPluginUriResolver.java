@@ -1,6 +1,6 @@
 package com.atlassian.plugin.remotable.plugin.module.webhook;
 
-import com.atlassian.plugin.remotable.plugin.RemotablePluginAccessorFactory;
+import com.atlassian.plugin.remotable.plugin.DefaultRemotablePluginAccessorFactory;
 import com.atlassian.uri.Uri;
 import com.atlassian.uri.UriBuilder;
 import com.atlassian.webhooks.spi.plugin.PluginUriResolver;
@@ -11,9 +11,9 @@ import static com.google.common.base.Preconditions.*;
 
 public final class RemotablePluginsPluginUriResolver implements PluginUriResolver
 {
-    private final RemotablePluginAccessorFactory remotablePluginAccessorFactory;
+    private final DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory;
 
-    public RemotablePluginsPluginUriResolver(RemotablePluginAccessorFactory remotablePluginAccessorFactory)
+    public RemotablePluginsPluginUriResolver(DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory)
     {
         this.remotablePluginAccessorFactory = checkNotNull(remotablePluginAccessorFactory);
     }

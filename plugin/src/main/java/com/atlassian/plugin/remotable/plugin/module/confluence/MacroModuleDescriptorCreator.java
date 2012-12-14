@@ -4,24 +4,25 @@ import com.atlassian.confluence.macro.Macro;
 import com.atlassian.confluence.pages.thumbnail.Dimensions;
 import com.atlassian.confluence.plugin.descriptor.MacroMetadataParser;
 import com.atlassian.confluence.status.service.SystemInformationService;
-import com.atlassian.plugin.remotable.plugin.PermissionManager;
-import com.atlassian.plugin.remotable.plugin.RemotablePluginAccessor;
-import com.atlassian.plugin.remotable.plugin.RemotablePluginAccessorFactory;
-import com.atlassian.plugin.remotable.plugin.integration.plugins.DescriptorToRegister;
-import com.atlassian.plugin.remotable.plugin.module.IFrameParams;
-import com.atlassian.plugin.remotable.plugin.module.IFrameRenderer;
-import com.atlassian.plugin.remotable.plugin.module.WebItemCreator;
-import com.atlassian.plugin.remotable.plugin.module.page.IFrameContext;
-import com.atlassian.plugin.remotable.plugin.module.page.IFramePageServlet;
-import com.atlassian.plugin.remotable.plugin.module.page.PageInfo;
-import com.atlassian.plugin.remotable.plugin.util.contextparameter.ContextParameterParser;
-import com.atlassian.plugin.remotable.plugin.util.contextparameter.RequestContextParameterFactory;
-import com.atlassian.plugin.remotable.spi.Permissions;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.hostcontainer.HostContainer;
 import com.atlassian.plugin.module.ModuleFactory;
+import com.atlassian.plugin.remotable.plugin.DefaultRemotablePluginAccessorFactory;
+import com.atlassian.plugin.remotable.plugin.PermissionManager;
+import com.atlassian.plugin.remotable.plugin.integration.plugins.DescriptorToRegister;
+import com.atlassian.plugin.remotable.plugin.module.IFrameParamsImpl;
+import com.atlassian.plugin.remotable.plugin.module.IFrameRendererImpl;
+import com.atlassian.plugin.remotable.plugin.module.WebItemCreator;
+import com.atlassian.plugin.remotable.plugin.module.page.IFrameContextImpl;
+import com.atlassian.plugin.remotable.plugin.module.page.IFramePageServlet;
+import com.atlassian.plugin.remotable.plugin.module.page.PageInfo;
+import com.atlassian.plugin.remotable.plugin.util.contextparameter.ContextParameterParser;
+import com.atlassian.plugin.remotable.plugin.util.contextparameter.RequestContextParameterFactory;
+import com.atlassian.plugin.remotable.spi.Permissions;
+import com.atlassian.plugin.remotable.spi.RemotablePluginAccessor;
+import com.atlassian.plugin.remotable.spi.module.IFrameParams;
 import com.atlassian.plugin.servlet.ServletModuleManager;
 import com.atlassian.plugin.servlet.descriptors.ServletModuleDescriptor;
 import com.atlassian.plugin.web.conditions.AlwaysDisplayCondition;
@@ -35,12 +36,19 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 
 import java.net.URI;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.Properties;
+import java.util.Set;
 
-import static com.atlassian.plugin.remotable.plugin.module.util.redirect.RedirectServlet
-        .getPermanentRedirectUrl;
+import static com.atlassian.plugin.remotable.plugin.module.util.redirect.RedirectServlet.getPermanentRedirectUrl;
 import static com.atlassian.plugin.remotable.plugin.util.EncodingUtils.escapeAll;
-import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.*;
+import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.getOptionalAttribute;
+import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.getOptionalUriAttribute;
+import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.getRequiredAttribute;
+import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.getRequiredUriAttribute;
 
 /**
  * Creates macro module descriptors.  Builder instances are meant to be shared across instances.
@@ -55,22 +63,22 @@ public class MacroModuleDescriptorCreator
     private final SystemInformationService systemInformationService;
 
     private final MacroMetadataParser macroMetadataParser;
-    private final RemotablePluginAccessorFactory remotablePluginAccessorFactory;
+    private final DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory;
     private final HostContainer hostContainer;
     private final ServletModuleManager servletModuleManager;
     private final WebItemCreator webItemCreator;
     private final ContextParameterParser contextParameterParser;
-    private final IFrameRenderer iFrameRenderer;
+    private final IFrameRendererImpl iFrameRenderer;
     private final UserManager userManager;
     private final PermissionManager permissionManager;
 
     public MacroModuleDescriptorCreator(SystemInformationService systemInformationService,
-                                        RemotablePluginAccessorFactory remotablePluginAccessorFactory,
+                                        DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory,
                                         HostContainer hostContainer,
                                         ServletModuleManager servletModuleManager,
                                         WebItemCreator webItemCreator,
                                         ContextParameterParser contextParameterParser,
-                                        IFrameRenderer iFrameRenderer,
+                                        IFrameRendererImpl iFrameRenderer,
                                         UserManager userManager,
                                         PermissionManager permissionManager
     )
@@ -113,7 +121,7 @@ public class MacroModuleDescriptorCreator
         {
             Element config = entity.createCopy();
 
-            RemotablePluginAccessor remotablePluginAccessor = remotablePluginAccessorFactory.get(plugin.getKey());
+            final RemotablePluginAccessor remotablePluginAccessor = remotablePluginAccessorFactory.get(plugin.getKey());
 
             // Use the 'key' attribute as the name if no name is specified. The name will be used to uniquely identify the
             // macro within the editor.
@@ -259,7 +267,7 @@ public class MacroModuleDescriptorCreator
             config.addElement("url-pattern").setText(localUrl + "");
             config.addElement("url-pattern").setText(localUrl + "/*");
 
-            final IFrameParams params = new IFrameParams(e);
+            final IFrameParams params = new IFrameParamsImpl(e);
             final ServletModuleDescriptor descriptor = new ServletModuleDescriptor(new ModuleFactory()
             {
                 @Override
@@ -270,7 +278,7 @@ public class MacroModuleDescriptorCreator
                     return (T) new IFramePageServlet(
                             pageInfo,
                             iFrameRenderer,
-                            new IFrameContext(plugin.getKey(), path, moduleKey, params), userManager
+                            new IFrameContextImpl(plugin.getKey(), path, moduleKey, params), userManager
                     );
                 }
             }, servletModuleManager);

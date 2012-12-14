@@ -2,6 +2,7 @@ package servlets;
 
 import com.atlassian.plugin.remotable.kit.servlet.AppUrl;
 
+import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -10,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-@Singleton
+@Named
 @AppUrl("/search/keys")
 public class RawKeysServlet extends HttpServlet
 {

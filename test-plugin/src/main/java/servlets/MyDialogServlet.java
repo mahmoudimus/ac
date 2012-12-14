@@ -1,10 +1,10 @@
 package servlets;
 
-import com.atlassian.plugin.remotable.api.annotation.ServiceReference;
+import com.atlassian.plugin.remotable.api.annotation.ComponentImport;
 import com.atlassian.plugin.remotable.api.service.RequestContext;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
+import javax.inject.Named;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -15,12 +15,13 @@ import java.util.Map;
 
 import static services.HttpUtils.renderHtml;
 
-@Singleton
+@Named
 public class MyDialogServlet extends HttpServlet
 {
     private final RequestContext requestContext;
+
     @Inject
-    public MyDialogServlet(@ServiceReference RequestContext requestContext)
+    public MyDialogServlet(@ComponentImport RequestContext requestContext)
     {
         this.requestContext = requestContext;
     }

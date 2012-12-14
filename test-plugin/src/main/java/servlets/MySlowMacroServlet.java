@@ -1,6 +1,6 @@
 package servlets;
 
-import javax.inject.Singleton;
+import javax.inject.Named;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -10,7 +10,7 @@ import java.io.IOException;
 /**
  *
  */
-@Singleton
+@Named
 public class MySlowMacroServlet extends HttpServlet
 {
     @Override

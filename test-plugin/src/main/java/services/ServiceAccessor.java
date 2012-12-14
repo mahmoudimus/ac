@@ -1,7 +1,7 @@
 package services;
 
 
-import com.atlassian.plugin.remotable.api.annotation.ServiceReference;
+import com.atlassian.plugin.remotable.api.annotation.ComponentImport;
 import com.atlassian.plugin.remotable.api.service.EmailSender;
 import com.atlassian.plugin.remotable.api.service.SignedRequestHandler;
 import com.atlassian.plugin.remotable.api.service.http.HostHttpClient;
@@ -10,9 +10,9 @@ import org.osgi.framework.BundleContext;
 import servlets.SendEmailServlet;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
+import javax.inject.Named;
 
-@Singleton
+@Named
 public class ServiceAccessor
 {
     private static SignedRequestHandler signedRequestHandler;
@@ -24,11 +24,11 @@ public class ServiceAccessor
 
     @Inject
     public ServiceAccessor(
-            @ServiceReference SignedRequestHandler signedRequestHandler,
-            @ServiceReference HostXmlRpcClient hostXmlRpcClient,
-            @ServiceReference HostHttpClient hostHttpClient,
+            @ComponentImport SignedRequestHandler signedRequestHandler,
+            @ComponentImport HostXmlRpcClient hostXmlRpcClient,
+            @ComponentImport HostHttpClient hostHttpClient,
             SendEmailServlet sendEmailServlet,
-            @ServiceReference EmailSender emailSender,
+            @ComponentImport EmailSender emailSender,
             BundleContext bundleContext)
     {
         ServiceAccessor.bundleContext = bundleContext;

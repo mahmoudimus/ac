@@ -5,6 +5,7 @@ import com.atlassian.httpclient.api.Response;
 import com.atlassian.httpclient.api.factory.HttpClientFactory;
 import com.atlassian.httpclient.api.factory.HttpClientOptions;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
+import com.atlassian.plugin.remotable.spi.http.AuthorizationGenerator;
 import com.atlassian.uri.Uri;
 import com.atlassian.uri.UriBuilder;
 import com.atlassian.util.concurrent.Promise;

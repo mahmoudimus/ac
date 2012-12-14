@@ -4,7 +4,7 @@ import com.atlassian.event.api.EventPublisher;
 import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.plugin.event.PluginEventManager;
-import com.atlassian.plugin.remotable.plugin.product.ProductAccessor;
+import com.atlassian.plugin.remotable.spi.product.ProductAccessor;
 import com.atlassian.sal.api.ApplicationProperties;
 import org.junit.Before;
 import org.junit.Test;

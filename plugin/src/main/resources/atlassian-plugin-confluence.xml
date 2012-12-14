@@ -114,31 +114,4 @@
     <described-module-type key="macro-page" class="com.atlassian.plugin.remotable.plugin.module.confluence.MacroPageModuleDescriptor">
         <description>A Confluence macro that loads the remote page as an IFrame</description>
     </described-module-type>
-
-    <!-- product services -->
-    <component key="confluencePageClient" interface="com.atlassian.plugin.remotable.api.service.confluence.ConfluencePageClient"
-               class="com.atlassian.plugin.remotable.host.common.service.confluence.ConfluencePageClientServiceFactory"
-               public="true" />
-
-    <component key="confluenceSpaceClient" interface="com.atlassian.plugin.remotable.api.service.confluence.ConfluenceSpaceClient"
-                   class="com.atlassian.plugin.remotable.host.common.service.confluence.ConfluenceSpaceClientServiceFactory"
-                   public="true" />
-    <component key="confluenceAttachmentClient" interface="com.atlassian.plugin.remotable.api.service.confluence.ConfluenceAttachmentClient"
-               class="com.atlassian.plugin.remotable.host.common.service.confluence.ConfluenceAttachmentClientServiceFactory"
-               public="true" />
-    <component key="confluenceAdminClient" interface="com.atlassian.plugin.remotable.api.service.confluence.ConfluenceAdminClient"
-               class="com.atlassian.plugin.remotable.host.common.service.confluence.ConfluenceAdminClientServiceFactory"
-               public="true" />
-    <component key="confluenceLabelClient" interface="com.atlassian.plugin.remotable.api.service.confluence.ConfluenceLabelClient"
-               class="com.atlassian.plugin.remotable.host.common.service.confluence.ConfluenceLabelClientServiceFactory"
-               public="true" />
-    <component key="confluenceBlogClient" interface="com.atlassian.plugin.remotable.api.service.confluence.ConfluenceBlogClient"
-               class="com.atlassian.plugin.remotable.host.common.service.confluence.ConfluenceBlogClientServiceFactory"
-               public="true" />
-    <component key="confluenceUserClient" interface="com.atlassian.plugin.remotable.api.service.confluence.ConfluenceUserClient"
-               class="com.atlassian.plugin.remotable.host.common.service.confluence.ConfluenceUserClientServiceFactory"
-               public="true" />
-    <component key="confluenceNotificationClient" interface="com.atlassian.plugin.remotable.api.service.confluence.ConfluenceNotificationClient"
-               class="com.atlassian.plugin.remotable.host.common.service.confluence.ConfluenceNotificationClientServiceFactory"
-               public="true" />
 </application>

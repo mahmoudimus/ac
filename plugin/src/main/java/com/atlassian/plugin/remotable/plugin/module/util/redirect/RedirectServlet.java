@@ -1,7 +1,7 @@
 package com.atlassian.plugin.remotable.plugin.module.util.redirect;
 
-import com.atlassian.plugin.remotable.plugin.RemotablePluginAccessor;
-import com.atlassian.plugin.remotable.plugin.RemotablePluginAccessorFactory;
+import com.atlassian.plugin.remotable.plugin.DefaultRemotablePluginAccessorFactory;
+import com.atlassian.plugin.remotable.spi.RemotablePluginAccessor;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.uri.Uri;
 import com.atlassian.uri.UriBuilder;
@@ -34,16 +34,16 @@ import static com.google.common.collect.Maps.newHashMap;
  *
  * @see {@link com.atlassian.plugin.remotable.plugin.module.confluence.MacroContentLinkParser}
  */
-public class RedirectServlet extends HttpServlet
+public final class RedirectServlet extends HttpServlet
 {
     private static final String APP_KEY_PARAM = "app_key";
     private static final String APP_URL_PARAM = "app_url";
 
-    private final RemotablePluginAccessorFactory remotablePluginAccessorFactory;
+    private final DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory;
     private final UserManager userManager;
 
     public RedirectServlet(UserManager userManager,
-            RemotablePluginAccessorFactory remotablePluginAccessorFactory
+            DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory
     )
     {
         this.userManager = userManager;
@@ -110,7 +110,7 @@ public class RedirectServlet extends HttpServlet
         final String appUrl = req.getParameter(APP_URL_PARAM);
         Validate.notEmpty(appUrl, String.format("%s parameter is required", APP_URL_PARAM));
 
-        RemotablePluginAccessor remotablePluginAccessor = remotablePluginAccessorFactory.get(appkey);
+        final RemotablePluginAccessor remotablePluginAccessor = remotablePluginAccessorFactory.get(appkey);
 
         String fullAppUrl = redirectType.isSign() ? getFullSignedUrl(remotablePluginAccessor, appUrl, req.getParameterMap()) :
                 getFullUrl(remotablePluginAccessor, appUrl, req.getParameterMap());

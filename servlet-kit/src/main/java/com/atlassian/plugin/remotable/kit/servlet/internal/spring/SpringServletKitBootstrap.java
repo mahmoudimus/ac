@@ -1,43 +1,33 @@
 package com.atlassian.plugin.remotable.kit.servlet.internal.spring;
 
-import com.atlassian.plugin.remotable.api.annotation.ServiceReference;
+import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
+import com.atlassian.plugin.remotable.api.annotation.ComponentImport;
 import com.atlassian.plugin.remotable.api.service.HttpResourceMounter;
-import com.atlassian.plugin.remotable.api.service.RequestContext;
 import com.atlassian.plugin.remotable.api.service.SignedRequestHandler;
 import com.atlassian.plugin.remotable.kit.servlet.AbstractServletKitBootstrap;
-import com.atlassian.plugin.remotable.kit.servlet.internal.MultipageServlet;
-import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
-import com.google.common.base.Function;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
-import javax.annotation.Nullable;
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Provider;
-import javax.inject.Singleton;
 import javax.servlet.Servlet;
 import javax.servlet.http.HttpServlet;
 import java.util.Collection;
 import java.util.Map;
 
-import static com.atlassian.plugin.remotable.spi.util.Strings.decapitalize;
-import static com.atlassian.plugin.remotable.spi.util.Strings.removeSuffix;
-import static com.google.common.collect.Collections2.transform;
 import static com.google.common.collect.Maps.newLinkedHashMap;
 
 /**
  *
  */
-@Singleton
+@Named
 public class SpringServletKitBootstrap extends AbstractServletKitBootstrap
 {
-
     @Inject
     public SpringServletKitBootstrap(ApplicationContext applicationContext,
-                                     @ServiceReference HttpResourceMounter httpResourceMounter,
-                                     @ServiceReference PluginRetrievalService pluginRetrievalService,
-                                     @ServiceReference SignedRequestHandler signedRequestHandler
+                                     @ComponentImport HttpResourceMounter httpResourceMounter,
+                                     @ComponentImport PluginRetrievalService pluginRetrievalService,
+                                     @ComponentImport SignedRequestHandler signedRequestHandler
     )
         throws Exception
     {

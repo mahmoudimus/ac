@@ -1,17 +1,15 @@
 package com.atlassian.plugin.remotable.plugin.service;
 
+import com.atlassian.mail.Email;
 import com.atlassian.plugin.remotable.api.service.EmailSender;
 import com.atlassian.plugin.remotable.plugin.PermissionManager;
-import com.atlassian.plugin.remotable.plugin.product.ProductAccessor;
 import com.atlassian.plugin.remotable.spi.PermissionDeniedException;
 import com.atlassian.plugin.remotable.spi.Permissions;
-import com.atlassian.mail.Email;
+import com.atlassian.plugin.remotable.spi.product.ProductAccessor;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 
-/**
- */
-public class LocalEmailSender implements EmailSender
+public final class LocalEmailSender implements EmailSender
 {
     private final String pluginKey;
     private final ProductAccessor productAccessor;

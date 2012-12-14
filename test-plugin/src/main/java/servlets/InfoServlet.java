@@ -1,6 +1,6 @@
 package servlets;
 
-import javax.inject.Singleton;
+import javax.inject.Named;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -13,7 +13,7 @@ import static services.HttpUtils.renderHtml;
 /**
  *
  */
-@Singleton
+@Named
 public class InfoServlet extends HttpServlet
 {
 

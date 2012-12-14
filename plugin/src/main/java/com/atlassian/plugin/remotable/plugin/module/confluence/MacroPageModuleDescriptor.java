@@ -1,13 +1,15 @@
 package com.atlassian.plugin.remotable.plugin.module.confluence;
 
-import com.atlassian.plugin.remotable.plugin.RemotablePluginAccessorFactory;
+import com.atlassian.plugin.remotable.plugin.DefaultRemotablePluginAccessorFactory;
 import com.atlassian.plugin.remotable.plugin.integration.plugins.DynamicDescriptorRegistration;
-import com.atlassian.plugin.remotable.plugin.module.IFrameParams;
-import com.atlassian.plugin.remotable.plugin.module.IFrameRenderer;
-import com.atlassian.plugin.remotable.plugin.module.page.IFrameContext;
+import com.atlassian.plugin.remotable.spi.module.IFrameParams;
+import com.atlassian.plugin.remotable.plugin.module.IFrameParamsImpl;
+import com.atlassian.plugin.remotable.plugin.module.IFrameRendererImpl;
+import com.atlassian.plugin.remotable.spi.module.IFrameContext;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
+import com.atlassian.plugin.remotable.plugin.module.page.IFrameContextImpl;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.util.concurrent.NotNull;
 import org.dom4j.Element;
@@ -25,9 +27,9 @@ public class MacroPageModuleDescriptor extends AbstractModuleDescriptor<Void>
     public MacroPageModuleDescriptor(
             DynamicDescriptorRegistration dynamicDescriptorRegistration,
             MacroModuleDescriptorCreator macroModuleDescriptorCreator,
-            final RemotablePluginAccessorFactory remotablePluginAccessorFactory,
+            final DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory,
             final UserManager userManager,
-            final IFrameRenderer iFrameRenderer)
+            final IFrameRendererImpl iFrameRenderer)
     {
         this.dynamicDescriptorRegistration = dynamicDescriptorRegistration;
         this.macroModuleDescriptorCreatorBuilder = macroModuleDescriptorCreator.newBuilder()
@@ -37,8 +39,8 @@ public class MacroPageModuleDescriptor extends AbstractModuleDescriptor<Void>
                 public RemoteMacro create(RemoteMacroInfo remoteMacroInfo)
                 {
                     String moduleKey = remoteMacroInfo.getElement().attributeValue("key");
-                    IFrameParams params = new IFrameParams(remoteMacroInfo.getElement());
-                    IFrameContext iFrameContext = new IFrameContext(
+                    IFrameParams params = new IFrameParamsImpl(remoteMacroInfo.getElement());
+                    IFrameContext iFrameContext = new IFrameContextImpl(
                             getPluginKey(),
                             remoteMacroInfo.getUrl(),
                             moduleKey,

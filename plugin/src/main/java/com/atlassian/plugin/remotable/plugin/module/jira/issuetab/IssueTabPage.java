@@ -3,8 +3,8 @@ package com.atlassian.plugin.remotable.plugin.module.jira.issuetab;
 import com.atlassian.jira.plugin.issuetabpanel.*;
 import com.atlassian.plugin.remotable.plugin.module.ContainingRemoteCondition;
 import com.atlassian.plugin.remotable.spi.PermissionDeniedException;
-import com.atlassian.plugin.remotable.plugin.module.IFrameRenderer;
-import com.atlassian.plugin.remotable.plugin.module.page.IFrameContext;
+import com.atlassian.plugin.remotable.plugin.module.IFrameRendererImpl;
+import com.atlassian.plugin.remotable.spi.module.IFrameContext;
 import com.atlassian.plugin.web.Condition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,11 +23,11 @@ import static java.util.Collections.singletonMap;
 public class IssueTabPage extends AbstractIssueTabPanel2
 {
     private static final Logger log = LoggerFactory.getLogger(IssueTabPage.class);
-    private final IFrameRenderer iFrameRenderer;
+    private final IFrameRendererImpl iFrameRenderer;
     private final Condition condition;
     private final IFrameContext iFrameContext;
 
-    public IssueTabPage(IFrameContext iFrameContext, IFrameRenderer iFrameRenderer,
+    public IssueTabPage(IFrameContext iFrameContext, IFrameRendererImpl iFrameRenderer,
             Condition condition)
     {
         this.iFrameContext = iFrameContext;

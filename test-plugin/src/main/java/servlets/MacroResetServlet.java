@@ -1,9 +1,10 @@
 package servlets;
 
-import com.atlassian.plugin.remotable.api.annotation.ServiceReference;
+import com.atlassian.plugin.remotable.api.annotation.ComponentImport;
 import com.atlassian.plugin.remotable.api.service.SignedRequestHandler;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -17,13 +18,13 @@ import java.net.URL;
 /**
  *
  */
-@Singleton
+@Named
 public class MacroResetServlet extends HttpServlet
 {
     private final SignedRequestHandler signedRequestHandler;
 
     @Inject
-    public MacroResetServlet(@ServiceReference SignedRequestHandler signedRequestHandler)
+    public MacroResetServlet(@ComponentImport SignedRequestHandler signedRequestHandler)
     {
         this.signedRequestHandler = signedRequestHandler;
     }   
