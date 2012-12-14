@@ -2,6 +2,7 @@ package com.atlassian.plugin.remotable.container;
 
 import com.atlassian.activeobjects.spi.DataSourceProvider;
 import com.atlassian.event.api.EventPublisher;
+import com.atlassian.plugin.factories.PluginFactory;
 import com.atlassian.plugin.remotable.api.service.jira.JiraComponentClient;
 import com.atlassian.plugin.remotable.api.service.jira.JiraIssueClient;
 import com.atlassian.plugin.remotable.api.service.jira.JiraMetadataClient;
@@ -107,6 +108,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.URI;
 import java.net.UnknownHostException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -197,8 +199,9 @@ public final class Container
             scanner = new FileListScanner(files);
         }
 
-        final PluginLoader bundledPluginLoader = new BundledPluginLoader(this.getClass().getResource("/bundled-plugins.zip"), configuration.getCacheDirectory("bundled"), asList(osgiPluginDeployer, bundleFactory), pluginEventManager);
-        final PluginLoader appPluginLoader = new ScanningPluginLoader(scanner, asList(osgiPluginDeployer, bundleFactory), pluginEventManager);
+        final List<PluginFactory> pluginFactories = Arrays.<PluginFactory>asList(osgiPluginDeployer, bundleFactory);
+        final PluginLoader bundledPluginLoader = new BundledPluginLoader(this.getClass().getResource("/bundled-plugins.zip"), configuration.getCacheDirectory("bundled"), pluginFactories, pluginEventManager);
+        final PluginLoader appPluginLoader = new ScanningPluginLoader(scanner, pluginFactories, pluginEventManager);
 
         final DefaultHostContainer hostContainer = new DefaultHostContainer();
         pluginManager = new DefaultPluginManager(
