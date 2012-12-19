@@ -47,6 +47,14 @@
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
+
+        <!-- because maven 3 sucks and won't depend on the right version -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>remotable-plugins-kit-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>org.codehaus.jackson</groupId>
             <artifactId>jackson-jaxrs</artifactId>
@@ -338,28 +346,35 @@
             </resource>
         </resources>
         <plugins>
-            <!--<plugin>-->
-                  <!--<inherited>true</inherited>-->
-                  <!--<groupId>org.apache.maven.plugins</groupId>-->
-                  <!--<artifactId>maven-enforcer-plugin</artifactId>-->
-                  <!--<version>1.2</version>-->
-                    <!--<executions>-->
-                      <!--<execution>-->
-                        <!--<id>enforce-maven-3</id>-->
-                        <!--<goals>-->
-                          <!--<goal>enforce</goal>-->
-                        <!--</goals>-->
-                        <!--<configuration>-->
-                          <!--<rules>-->
-                            <!--<requireMavenVersion>-->
-                              <!--<version>3.0.4</version>-->
-                            <!--</requireMavenVersion>-->
-                          <!--</rules>-->
-                          <!--<fail>true</fail>-->
-                        <!--</configuration>-->
-                      <!--</execution>-->
-                   <!--</executions>-->
-             <!--</plugin>-->
+
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <version>2.0.0</version>
+                <extensions>true</extensions>
+            </plugin>
+            <plugin>
+                  <inherited>true</inherited>
+                  <groupId>org.apache.maven.plugins</groupId>
+                  <artifactId>maven-enforcer-plugin</artifactId>
+                  <version>1.2</version>
+                    <executions>
+                      <execution>
+                        <id>enforce-maven-3</id>
+                        <goals>
+                          <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                          <rules>
+                            <requireMavenVersion>
+                              <version>3.0.4</version>
+                            </requireMavenVersion>
+                          </rules>
+                          <fail>true</fail>
+                        </configuration>
+                      </execution>
+                   </executions>
+             </plugin>
             <plugin>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>

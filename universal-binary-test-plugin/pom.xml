@@ -16,6 +16,13 @@
 
     <dependencies>
         <dependency>
+           <groupId>com.atlassian.plugins</groupId>
+           <artifactId>remotable-plugins-container</artifactId>
+           <version>${project.version}</version>
+           <scope>test</scope>
+           <classifier>standalone</classifier>
+       </dependency>
+        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <scope>provided</scope>
@@ -38,6 +45,19 @@
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
+        <!-- because maven 3 sucks and won't depend on the right version -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>remotable-plugins-kit-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>remotable-plugins-host-common</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>remotable-plugins-servlet-kit</artifactId>
@@ -50,25 +70,18 @@
 
         <!-- test -->
         <dependency>
-            <groupId>com.atlassian.plugins</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>remotable-plugins-test</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.atlassian.plugins</groupId>
-                    <artifactId>remotable-plugins-container</artifactId>
-                </exclusion>
-            </exclusions>
+            <!--<exclusions>-->
+                <!--<exclusion>-->
+                    <!--<groupId>com.atlassian.plugins</groupId>-->
+                    <!--<artifactId>remotable-plugins-container</artifactId>-->
+                <!--</exclusion>-->
+            <!--</exclusions>-->
         </dependency>
 
-        <dependency>
-            <groupId>com.atlassian.plugins</groupId>
-            <artifactId>remotable-plugins-container</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-            <classifier>standalone</classifier>
-        </dependency>
         <!-- to install in the webapp -->
         <dependency>
             <groupId>com.atlassian.plugins</groupId>

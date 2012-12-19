@@ -16,6 +16,10 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.eclipse.jetty.orbit</groupId>
+            <artifactId>javax.servlet</artifactId>
+        </dependency>
+        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>remotable-plugins-api</artifactId>
             <version>${project.version}</version>
@@ -48,6 +52,16 @@
             <groupId>com.atlassian.event</groupId>
             <artifactId>atlassian-event</artifactId>
         </dependency>
+
+        <!-- because maven 3 sucks and won't depend on the right version -->
+        <dependency>
+            <groupId>com.atlassian.plugins</groupId>
+            <artifactId>remotable-plugins-container</artifactId>
+            <version>${project.version}</version>
+            <classifier>standalone</classifier>
+            <scope>test</scope>
+        </dependency>
+
         <dependency>
             <groupId>com.atlassian.jira</groupId>
             <artifactId>jira-rest-java-client</artifactId>
@@ -366,10 +380,6 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.jetty.orbit</groupId>
-            <artifactId>javax.servlet</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.atlassian.oauth</groupId>
             <artifactId>atlassian-oauth-consumer-core</artifactId>
             <version>1.3.2</version>
@@ -519,7 +529,7 @@
                 <artifactId>maven-amps-plugin</artifactId>
                 <configuration>
                     <skipManifestValidation>true</skipManifestValidation>
-                    <jvmArgs>-Xmx512m -XX:MaxPermSize=192m</jvmArgs>
+                    <jvmArgs>-Xmx1024m -XX:MaxPermSize=256m</jvmArgs>
                     <instructions>
                         <Import-Package>
                             com.atlassian.confluence.plugin.descriptor.web.descriptors;resolution:=optional,

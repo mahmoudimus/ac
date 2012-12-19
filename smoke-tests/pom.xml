@@ -45,6 +45,35 @@
             <version>${project.version}</version>
             <type>test-jar</type>
         </dependency>
+
+        <!-- because maven 3 sucks and won't depend on the right version -->
+        <dependency>
+            <groupId>com.atlassian.plugins</groupId>
+            <artifactId>remotable-plugins-container</artifactId>
+            <version>${project.version}</version>
+            <classifier>standalone</classifier>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>remotable-plugins-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>remotable-plugins-kit-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>remotable-plugins-ringojs-kit</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>remotable-plugins-host-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
