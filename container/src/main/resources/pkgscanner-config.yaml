@@ -47,7 +47,7 @@ package_includes:
     - "org.yaml*"
     - "javax.inject"
     - "redstone.xmlrpc"
-    - "org.joda.time"
+    - "org.joda.*"
 
 package_versions:
   - {package: "com.atlassian.activeobjects.spi", version: "${ao.version}"}

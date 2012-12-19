@@ -290,7 +290,7 @@
         <dependency>
             <groupId>com.atlassian.plugins</groupId>
             <artifactId>atlassian-plugins-webfragment</artifactId>
-            <version>${plugins.version}</version>
+            <version>2.14.0-m5</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
