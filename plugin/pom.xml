@@ -532,10 +532,10 @@
                             com.atlassian.jira.security.websudo;resolution:=optional,
                             com.atlassian.oauth*;version="(1.2,2.0]",
                             com.atlassian.plugin.remotable*;version="${project.version}",
-                            com.atlassian.plugin.schema.descriptor;version="${plugins.version}",
-                            com.atlassian.plugin.schema.impl;version="${plugins.version}",
-                            com.atlassian.plugin.schema.spi;version="${plugins.version}",
-                            com.atlassian.plugin.*;version="2.8",
+                            com.atlassian.plugin.schema.descriptor;version="${plugins.api.version}",
+                            com.atlassian.plugin.schema.impl;version="${plugins.api.version}",
+                            com.atlassian.plugin.schema.spi;version="${plugins.api.version}",
+                            com.atlassian.plugin.*;version="${plugins.api.version}",
                             com.atlassian.refapp.auth.external;resolution:=optional,
                             com.atlassian.sal.api.*;version="(2.4,3.0]",
                             com.atlassian.util.concurrent*;version="${atlassian-util-concurrent.version}",
@@ -664,7 +664,6 @@
                                 <exclude>it/jira/*.java</exclude>
                             </excludes>
                         </testGroup>
-                        <!--
                         <testGroup>
                             <id>confluence</id>
                             <productIds>
@@ -695,7 +694,6 @@
                                 <exclude>it/refapp/*.java</exclude>
                             </excludes>
                         </testGroup>
-                        -->
                     </testGroups>
                 </configuration>
             </plugin>
