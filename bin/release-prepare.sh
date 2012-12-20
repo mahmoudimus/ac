@@ -3,6 +3,9 @@
 echo "Reading release.properties from `pwd`"
 source ./release.properties
 
+echo "Creating origin remote"
+git remote add origin ssh://git@bitbucket.org/atlassian/remotable-plugins.git
+
 echo "Updating source"
 git fetch origin
 
