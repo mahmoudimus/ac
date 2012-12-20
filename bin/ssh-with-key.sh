@@ -1,3 +1,3 @@
 #!/bin/sh
 
-exec ssh -vvv -i ssh.key "$@"
+exec ssh -v -i ssh.key "$@"
