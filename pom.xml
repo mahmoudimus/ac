@@ -11,7 +11,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.atlassian.plugins</groupId>
     <artifactId>remotable-plugins-parent</artifactId>
-    <version>${VERSION_NUMBER}</version>
+    <version>0.5-SNAPSHOT</version>
 
     <organization>
         <name>Atlassian</name>
@@ -72,78 +72,9 @@
                 </configuration>
             </plugin>
             <plugin>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>2.4.3</version>
-                <executions>
-                    <execution>
-                        <id>replace-pom-placeholder</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <resources>
-                                <resource>
-                                    <directory>${basedir}</directory>
-                                    <includes>
-                                        <include>pom.xml</include>
-                                    </includes>
-                                    <filtering>true</filtering>
-                                </resource>
-                            </resources>
-                            <outputDirectory>${project.build.directory}/pom-install-deploy-fix</outputDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <artifactId>maven-install-plugin</artifactId>
-                <version>2.3.1</version>
-                <executions>
-                    <execution>
-                        <id>overwrite-pom</id>
-                        <phase>install</phase>
-                        <goals>
-                            <goal>install-file</goal>
-                        </goals>
-                        <configuration>
-                            <packaging>pom</packaging>
-                            <file>target/pom-install-deploy-fix/pom.xml</file>
-                            <pomFile>target/pom-install-deploy-fix/pom.xml</pomFile>
-                            <version>${project.version}</version>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <version>2.5</version>
-                <executions>
-                    <execution>
-                        <id>overwrite-pom</id>
-                        <phase>deploy</phase>
-                        <goals>
-                            <goal>deploy-file</goal>
-                        </goals>
-                        <configuration>
-                            <packaging>pom</packaging>
-                            <file>target/pom-install-deploy-fix/pom.xml</file>
-                            <pomFile>target/pom-install-deploy-fix/pom.xml</pomFile>
-                            <version>${project.version}</version>
-                            <updateReleaseInfo>true</updateReleaseInfo>
-                            <uniqueVersion>false</uniqueVersion>
-                            <url>${deployRepoUrl}</url>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
                 <artifactId>maven-scm-plugin</artifactId>
                 <configuration>
-                    <tag>remotable-plugins-${VERSION_NUMBER}</tag>
+                    <tag>remotable-plugins-${project.version}</tag>
                 </configuration>
             </plugin>
 
