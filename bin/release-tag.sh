@@ -7,6 +7,8 @@ source ./release.properties
 echo "Writing private key"
 echo "$1" > ssh.key
 
+echo "Making ssh-with-key.sh executable"
+chmod 755 ./bin/ssh-with-key.sh
 export GIT_SSH=./bin/ssh-with-key.sh
 
 echo "Pushing branch"
