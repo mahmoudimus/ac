@@ -5,7 +5,9 @@ echo "Reading release.properties"
 source ./release.properties
 
 echo "Writing private key"
-echo "$1" > ssh.key
+echo "$1" > ssh.key.raw
+cat ssh.key.raw | sed "s/\\n/\n/" > ssh.key
+
 chmod 400 ssh.key
 echo "Printing ssh key"
 cat ssh.key
