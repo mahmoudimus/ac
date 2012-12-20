@@ -7,7 +7,7 @@ source ./release.properties
 echo "Writing private key"
 echo "$1" > ssh.key
 
-export GIT_SSH=ssh-with-key.sh
+export GIT_SSH=./bin/ssh-with-key.sh
 
 echo "Pushing branch"
 git push origin remotable-plugins-$VERSION.x
