@@ -9,10 +9,6 @@ echo "$1" > ssh.key
 
 export GIT_SSH=ssh-with-key.sh
 
-#-------- branching
-echo "Branching $VERSION"
-git checkout -b remotable-plugins-$VERSION.x
-
 echo "Pushing branch"
 git push origin remotable-plugins-$VERSION.x
 
