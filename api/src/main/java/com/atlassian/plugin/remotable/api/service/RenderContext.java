@@ -7,6 +7,8 @@ import java.util.Map;
 
 public interface RenderContext
 {
+    String getLocalBaseUrl();
+
     String getHostContextPath();
 
     String getHostBaseUrl();

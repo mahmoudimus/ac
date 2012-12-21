@@ -13,6 +13,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -32,10 +34,13 @@ import static com.google.common.collect.Maps.newHashMap;
 
 public abstract class AbstractPageServlet extends HttpServlet implements InitializingBean
 {
+    @Inject
     @ServiceReference
     protected TemplateRenderer templateRenderer;
+    @Inject
     @ServiceReference
     protected RenderContext renderContext;
+    @Inject
     @ServiceReference
     protected PluginRetrievalService pluginRetrievalService;
 
@@ -50,6 +55,7 @@ public abstract class AbstractPageServlet extends HttpServlet implements Initial
     private String tailTemplate;
 
     @Override
+    @PostConstruct
     public void afterPropertiesSet() throws Exception
     {
         resourceBaseName = dasherize(removeSuffix(getClass().getSimpleName(), "Servlet"));

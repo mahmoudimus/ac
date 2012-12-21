@@ -230,7 +230,7 @@ public final class Container
         final HostXmlRpcClientServiceFactory hostXmlRpcClientHostServiceFactory = new HostXmlRpcClientServiceFactory(hostHttpClientServiceFactory);
         final ContainerLocaleResolver localeResolver = new ContainerLocaleResolver();
         final ContainerI18nResolver i18nResolver = new ContainerI18nResolver(pluginManager, pluginEventManager, new ResourceBundleResolverImpl());
-        final RenderContextServiceFactory renderContextServiceFactory = new RenderContextServiceFactory(requestContextServiceFactory, localeResolver, i18nResolver);
+        final RenderContextServiceFactory renderContextServiceFactory = new RenderContextServiceFactory(requestContextServiceFactory, oAuthSignedRequestHandlerServiceFactory, localeResolver, i18nResolver);
 
         hostComponents.put(SignedRequestHandler.class, oAuthSignedRequestHandlerServiceFactory);
         hostComponents.put(HttpResourceMounter.class, containerHttpResourceMounterServiceFactory);

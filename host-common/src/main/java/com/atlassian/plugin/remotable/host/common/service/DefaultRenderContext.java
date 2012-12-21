@@ -1,6 +1,7 @@
 package com.atlassian.plugin.remotable.host.common.service;
 
 import com.atlassian.plugin.remotable.api.service.RenderContext;
+import com.atlassian.plugin.remotable.api.service.SignedRequestHandler;
 import com.atlassian.plugin.remotable.host.common.service.http.DefaultRequestContext;
 import com.atlassian.plugin.util.PluginUtils;
 import com.atlassian.sal.api.message.I18nResolver;
@@ -18,17 +19,26 @@ public class DefaultRenderContext implements RenderContext
     private final boolean devMode = Boolean.getBoolean(PluginUtils.ATLASSIAN_DEV_MODE);
 
     private DefaultRequestContext requestContext;
+    private SignedRequestHandler signedRequestHandler;
     private final LocaleResolver localeResolver;
     private final I18nResolver i18nResolver;
 
     public DefaultRenderContext(DefaultRequestContext requestContext,
+                                SignedRequestHandler signedRequestHandler,
                                 LocaleResolver localeResolver,
                                 I18nResolver i18nResolver
     )
     {
         this.requestContext = requestContext;
+        this.signedRequestHandler = signedRequestHandler;
         this.localeResolver = localeResolver;
         this.i18nResolver = i18nResolver;
+    }
+
+    @Override
+    public String getLocalBaseUrl()
+    {
+        return signedRequestHandler.getLocalBaseUrl();
     }
 
     @Override
@@ -89,16 +99,14 @@ public class DefaultRenderContext implements RenderContext
     public Map<String, Object> toContextMap()
     {
         final ImmutableMap.Builder<String, Object> builder = ImmutableMap.<String, Object>builder()
-                                                                         .put("hostContextPath", getHostContextPath())
-                                                                         .put("hostBaseUrl", getHostBaseUrl())
-                                                                         .put("hostBaseResourceUrl",
-                                                                                 getHostBaseResourceUrl())
-                                                                         .put("hostStylesheetUrl",
-                                                                                 getHostStylesheetUrl())
-                                                                         .put("hostScriptUrl", getHostScriptUrl())
-                                                                         .put("locale", getLocale())
-
-                                                                         .put("i18n", getI18n());
+            .put("localBaseUrl", getLocalBaseUrl())
+            .put("hostContextPath", getHostContextPath())
+            .put("hostBaseUrl", getHostBaseUrl())
+            .put("hostBaseResourceUrl", getHostBaseResourceUrl())
+            .put("hostStylesheetUrl", getHostStylesheetUrl())
+            .put("hostScriptUrl", getHostScriptUrl())
+            .put("locale", getLocale())
+            .put("i18n", getI18n());
 
         setIfNotNull(builder, "userId", getUserId());
         setIfNotNull(builder, "clientKey", getClientKey());
