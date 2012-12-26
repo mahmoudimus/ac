@@ -867,6 +867,40 @@
                     </testGroups>
                 </configuration>
             </plugin>
+            <!-- necessary for build to deploy-->
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.7</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <configuration>
+                            <target>
+                                <taskdef resource="net/sf/antcontrib/antcontrib.properties"/>
+
+                                <if>
+                                    <available file="${project.build.directory}/${project.build.finalName}.obr"/>
+                                    <then>
+                                        <copy file="${project.build.directory}/${project.build.finalName}.obr"
+                                              tofile="${project.build.directory}/deployable.obr"/>
+                                    </then>
+                                </if>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>ant-contrib</groupId>
+                        <artifactId>ant-contrib</artifactId>
+                        <version>20020829</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
@@ -1074,6 +1108,7 @@
 
     <properties>
         <product>refapp</product>
+        <plugin.version>${project.version}</plugin.version>
         <confluence.plugins.version>2.10.1</confluence.plugins.version>
     </properties>
 

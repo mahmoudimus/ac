@@ -1,7 +1,7 @@
 <atlassian-plugin key="com.atlassian.labs.remoteapps-plugin" name="${project.name}" plugins-version="2">
     <plugin-info>
         <description>${project.description}</description>
-        <version>${project.version}</version>
+        <version>${plugin.version}</version>
         <vendor name="${project.organization.name}" url="${project.organization.url}" />
     </plugin-info>
 
