@@ -442,6 +442,38 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- dependencies for obr -->
+        <dependency>
+            <groupId>com.atlassian.labs</groupId>
+            <artifactId>confluence-xmlrpc-java-client-plugin</artifactId>
+            <version>${confluence.client.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.inject</groupId>
+            <artifactId>guice</artifactId>
+            <version>3.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.servicemix.bundles</groupId>
+            <artifactId>org.apache.servicemix.bundles.javax-inject</artifactId>
+            <version>1_1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.jira</groupId>
+            <artifactId>jira-rest-java-client-plugin</artifactId>
+            <version>${jira.client.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.webhooks</groupId>
+            <artifactId>atlassian-webhooks-plugin</artifactId>
+            <version>${webhooks.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
     </dependencies>
 
     <dependencyManagement>
@@ -820,6 +852,40 @@
                             </libArtifacts>
                         </product>
                     </products>
+                    <pluginDependencies>
+                        <pluginDependency>
+                            <groupId>com.atlassian.webhooks</groupId>
+                            <artifactId>atlassian-webhooks-plugin</artifactId>
+                        </pluginDependency>
+                        <pluginDependency>
+                            <groupId>com.atlassian.labs</groupId>
+                            <artifactId>speakeasy-plugin</artifactId>
+                        </pluginDependency>
+                        <pluginDependency>
+                            <groupId>${project.groupId}</groupId>
+                            <artifactId>remotable-plugins-api</artifactId>
+                        </pluginDependency>
+                        <pluginDependency>
+                            <groupId>${project.groupId}</groupId>
+                            <artifactId>remotable-plugins-spi</artifactId>
+                        </pluginDependency>
+                        <pluginDependency>
+                            <groupId>com.google.inject</groupId>
+                            <artifactId>guice</artifactId>
+                        </pluginDependency>
+                        <pluginDependency>
+                            <groupId>org.apache.servicemix.bundles</groupId>
+                            <artifactId>org.apache.servicemix.bundles.javax-inject</artifactId>
+                        </pluginDependency>
+                        <pluginDependency>
+                            <groupId>com.atlassian.labs</groupId>
+                            <artifactId>confluence-xmlrpc-java-client-plugin</artifactId>
+                        </pluginDependency>
+                        <pluginDependency>
+                            <groupId>com.atlassian.jira</groupId>
+                            <artifactId>jira-rest-java-client-plugin</artifactId>
+                        </pluginDependency>
+                    </pluginDependencies>
                     <testGroups>
                         <testGroup>
                             <id>refapp</id>
