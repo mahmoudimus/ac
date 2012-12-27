@@ -18,6 +18,18 @@
         </xs:restriction>
     </xs:simpleType>
 
+    <xs:simpleType name="ResourceTypeType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="i18n" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="ResourceLocationType">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[a-zA-Z_0-9.]+"/>
+        </xs:restriction>
+    </xs:simpleType>
+
     <xs:complexType name="PermissionType">
         <xs:annotation>
             <xs:documentation>Requested permission or api scope</xs:documentation>
@@ -83,6 +95,17 @@
         </xs:sequence>
     </xs:complexType>
 
+    <xs:complexType name="ResourceType">
+        <xs:annotation>
+            <xs:documentation>
+                Defines i18n resources to be made available to the application
+            </xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="type" type="ResourceTypeType" use="required" />
+        <xs:attribute name="name" type="NameType" use="optional" />
+        <xs:attribute name="location" type="ResourceLocationType" use="required" />
+    </xs:complexType>
+
     <xs:complexType name="AtlassianPluginType">
         <xs:annotation>
             <xs:documentation>This is the root element for your plugin descriptor.</xs:documentation>
@@ -91,7 +114,9 @@
             <xs:element name="plugin-info" maxOccurs="1"
                         minOccurs="1" type="PluginInfoType"/>
             <!-- Described modules inserted here -->
-            <xs:choice minOccurs="1" maxOccurs="unbounded"/>
+            <xs:choice minOccurs="1" maxOccurs="unbounded">
+                <xs:element name="resource" minOccurs="0" maxOccurs="unbounded" type="ResourceType" />
+            </xs:choice>
         </xs:sequence>
         <xs:attribute name="key" use="required" type="KeyType">
             <xs:annotation>

@@ -137,6 +137,7 @@
                 <configuration>
                     <jvmArgs>-Xmx512m -XX:MaxPermSize=192m</jvmArgs>
                     <extractDependencies>true</extractDependencies>
+                    <containerVersion>${project.version}</containerVersion>
                     <skipManifestValidation>true</skipManifestValidation>
                     <enableDevToolbox>false</enableDevToolbox>
                     <enableFastdev>false</enableFastdev>
@@ -243,6 +244,30 @@
                     </testGroups>
                 </configuration>
             </plugin>
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>com.atlassian.plugins</groupId>
+                                    <artifactId>remotable-plugins-container</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>standalone</classifier>
+                                </artifactItem>
+                            </artifactItems>
+                            <stripVersion>true</stripVersion>
+                            <outputDirectory>${build.directory}</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
         </plugins>
     </build>
 </project>

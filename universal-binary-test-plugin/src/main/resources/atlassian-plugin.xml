@@ -21,4 +21,6 @@
     </remote-plugin-container>
 
     <general-page key="ao" name="Active Objects Testing Page" link-name="Active Objects Testing" url="/activeObjects" height="600" width="700" />
+
+    <resource type="i18n" name="i18n" location="i18n.messages" />
 </atlassian-plugin>
