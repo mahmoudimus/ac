@@ -1,10 +1,10 @@
 package com.atlassian.plugin.remotable.plugin.module.confluence;
 
 import com.atlassian.plugin.remotable.plugin.DefaultRemotablePluginAccessorFactory;
-import com.atlassian.plugin.remotable.plugin.integration.plugins.DynamicDescriptorRegistration;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
+import com.atlassian.plugin.remotable.plugin.integration.plugins.DynamicDescriptorRegistration;
 import com.atlassian.plugin.webresource.WebResourceManager;
 import com.atlassian.util.concurrent.NotNull;
 import org.dom4j.Element;
@@ -18,6 +18,7 @@ public class RemoteMacroModuleDescriptor extends AbstractModuleDescriptor<Void>
     private final MacroModuleDescriptorCreator.Builder macroModuleDescriptorCreatorBuilder;
 
     private Element descriptor;
+    private DynamicDescriptorRegistration.Registration registration;
 
     public RemoteMacroModuleDescriptor(
             DynamicDescriptorRegistration dynamicDescriptorRegistration,
@@ -57,7 +58,17 @@ public class RemoteMacroModuleDescriptor extends AbstractModuleDescriptor<Void>
     public void enabled()
     {
         super.enabled();
-        dynamicDescriptorRegistration.registerDescriptors(getPlugin(),
-                macroModuleDescriptorCreatorBuilder.build(getPlugin(),  descriptor));
+        this.registration = dynamicDescriptorRegistration.registerDescriptors(getPlugin(),
+                macroModuleDescriptorCreatorBuilder.build(getPlugin(), descriptor));
+    }
+
+    @Override
+    public void disabled()
+    {
+        super.disabled();
+        if (registration != null)
+        {
+            registration.unregister();
+        }
     }
 }

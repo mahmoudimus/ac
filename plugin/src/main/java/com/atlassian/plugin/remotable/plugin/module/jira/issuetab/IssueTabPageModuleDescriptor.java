@@ -1,11 +1,12 @@
 package com.atlassian.plugin.remotable.plugin.module.jira.issuetab;
 
+import com.atlassian.jira.ComponentManager;
 import com.atlassian.jira.plugin.issuetabpanel.IssueTabPanelModuleDescriptor;
 import com.atlassian.jira.security.JiraAuthenticationContext;
-import com.atlassian.plugin.remotable.plugin.integration.plugins.DescriptorToRegister;
-import com.atlassian.plugin.remotable.plugin.integration.plugins.DynamicDescriptorRegistration;
 import com.atlassian.plugin.remotable.plugin.module.ConditionProcessor;
 import com.atlassian.plugin.remotable.plugin.module.ContainingRemoteCondition;
+import com.atlassian.plugin.remotable.plugin.integration.plugins.DescriptorToRegister;
+import com.atlassian.plugin.remotable.plugin.integration.plugins.DynamicDescriptorRegistration;
 import com.atlassian.plugin.remotable.spi.module.IFrameParams;
 import com.atlassian.plugin.remotable.plugin.module.IFrameParamsImpl;
 import com.atlassian.plugin.remotable.plugin.module.IFrameRendererImpl;
@@ -30,19 +31,17 @@ import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.getRequiredUriA
 public class IssueTabPageModuleDescriptor extends AbstractModuleDescriptor<Void>
 {
     private final IFrameRendererImpl iFrameRenderer;
-    private final JiraAuthenticationContext jiraAuthenticationContext;
     private final DynamicDescriptorRegistration dynamicDescriptorRegistration;
     private final ConditionProcessor conditionProcessor;
     private Element descriptor;
     private URI url;
+    private DynamicDescriptorRegistration.Registration registration;
 
     public IssueTabPageModuleDescriptor(IFrameRendererImpl iFrameRenderer,
-            JiraAuthenticationContext jiraAuthenticationContext,
             DynamicDescriptorRegistration dynamicDescriptorRegistration,
             ConditionProcessor conditionProcessor)
     {
         this.iFrameRenderer = iFrameRenderer;
-        this.jiraAuthenticationContext = jiraAuthenticationContext;
         this.dynamicDescriptorRegistration = dynamicDescriptorRegistration;
         this.conditionProcessor = conditionProcessor;
     }
@@ -84,7 +83,17 @@ public class IssueTabPageModuleDescriptor extends AbstractModuleDescriptor<Void>
         IssueTabPanelModuleDescriptor moduleDescriptor = createDescriptor(moduleKey, desc,
                 new IFrameParamsImpl(descriptor), condition);
 
-        dynamicDescriptorRegistration.registerDescriptors(getPlugin(), new DescriptorToRegister(moduleDescriptor));
+        this.registration = dynamicDescriptorRegistration.registerDescriptors(getPlugin(), new DescriptorToRegister(moduleDescriptor));
+    }
+
+    @Override
+    public void disabled()
+    {
+        super.disabled();
+        if (registration != null)
+        {
+            registration.unregister();
+        }
     }
 
     private IssueTabPanelModuleDescriptor createDescriptor(
@@ -95,7 +104,7 @@ public class IssueTabPageModuleDescriptor extends AbstractModuleDescriptor<Void>
         try
         {
             IssueTabPanelModuleDescriptor descriptor = new FixedIssueTabPanelModuleDescriptor(
-                    jiraAuthenticationContext, new ModuleFactory()
+                    ComponentManager.getComponent(JiraAuthenticationContext.class), new ModuleFactory()
             {
                 @Override
                 public <T> T createModule(String name, ModuleDescriptor<T> moduleDescriptor) throws PluginParseException

@@ -28,14 +28,12 @@ import static com.google.common.collect.Maps.newHashMap;
 
 public final class JiraProductAccessor implements ProductAccessor
 {
-    private final WebInterfaceManager webInterfaceManager;
     private final UserManager userManager;
     private final MailQueue mailQueue;
 
-    public JiraProductAccessor(WebInterfaceManager webInterfaceManager, UserManager userManager,
+    public JiraProductAccessor(UserManager userManager,
             MailQueue mailQueue)
     {
-        this.webInterfaceManager = webInterfaceManager;
         this.userManager = userManager;
         this.mailQueue = mailQueue;
     }
@@ -43,7 +41,7 @@ public final class JiraProductAccessor implements ProductAccessor
     @Override
     public WebItemModuleDescriptor createWebItemModuleDescriptor()
     {
-        return new JiraWebItemModuleDescriptor(ComponentManager.getInstance().getJiraAuthenticationContext(), webInterfaceManager);
+        return new JiraWebItemModuleDescriptor(ComponentManager.getInstance().getJiraAuthenticationContext(), ComponentManager.getComponent(WebInterfaceManager.class));
     }
 
     @Override

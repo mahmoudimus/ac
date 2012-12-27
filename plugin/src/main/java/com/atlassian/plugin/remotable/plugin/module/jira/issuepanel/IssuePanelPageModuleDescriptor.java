@@ -1,9 +1,9 @@
 package com.atlassian.plugin.remotable.plugin.module.jira.issuepanel;
 
-import com.atlassian.plugin.remotable.plugin.integration.plugins.DescriptorToRegister;
-import com.atlassian.plugin.remotable.plugin.integration.plugins.DynamicDescriptorRegistration;
 import com.atlassian.plugin.remotable.plugin.module.ConditionProcessor;
 import com.atlassian.plugin.remotable.plugin.module.ContainingRemoteCondition;
+import com.atlassian.plugin.remotable.plugin.integration.plugins.DescriptorToRegister;
+import com.atlassian.plugin.remotable.plugin.integration.plugins.DynamicDescriptorRegistration;
 import com.atlassian.plugin.remotable.spi.module.IFrameParams;
 import com.atlassian.plugin.remotable.plugin.module.IFrameParamsImpl;
 import com.atlassian.plugin.remotable.plugin.module.IFrameRendererImpl;
@@ -21,11 +21,13 @@ import com.atlassian.plugin.web.descriptors.DefaultWebPanelModuleDescriptor;
 import com.atlassian.plugin.web.model.WebPanel;
 import com.atlassian.util.concurrent.NotNull;
 import org.dom4j.Element;
+import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URI;
 
+import static com.atlassian.plugin.remotable.plugin.util.OsgiServiceUtils.getService;
 import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.*;
 
 /**
@@ -36,7 +38,7 @@ public class IssuePanelPageModuleDescriptor extends AbstractModuleDescriptor<Voi
     private final IFrameRendererImpl iFrameRenderer;
     private final DynamicDescriptorRegistration dynamicDescriptorRegistration;
     private final HostContainer hostContainer;
-    private final WebInterfaceManager webInterfaceManager;
+    private final BundleContext bundleContext;
     private final ConditionProcessor conditionProcessor;
     private Element descriptor;
     private String weight;
@@ -44,16 +46,17 @@ public class IssuePanelPageModuleDescriptor extends AbstractModuleDescriptor<Voi
     private URI url;
 
     private final static Logger log = LoggerFactory.getLogger(IssuePanelPageModuleDescriptor.class);
+    private DynamicDescriptorRegistration.Registration registration;
 
     public IssuePanelPageModuleDescriptor(IFrameRendererImpl iFrameRenderer,
             DynamicDescriptorRegistration dynamicDescriptorRegistration,
-            HostContainer hostContainer, WebInterfaceManager webInterfaceManager,
-            ConditionProcessor conditionProcessor)
+            HostContainer hostContainer,
+            BundleContext bundleContext, ConditionProcessor conditionProcessor)
     {
         this.iFrameRenderer = iFrameRenderer;
         this.dynamicDescriptorRegistration = dynamicDescriptorRegistration;
         this.hostContainer = hostContainer;
-        this.webInterfaceManager = webInterfaceManager;
+        this.bundleContext = bundleContext;
         this.conditionProcessor = conditionProcessor;
     }
 
@@ -95,8 +98,19 @@ public class IssuePanelPageModuleDescriptor extends AbstractModuleDescriptor<Voi
 
         ModuleDescriptor<WebPanel> moduleDescriptor = createWebPanelModuleDescriptor(moduleKey, desc, condition, new IFrameParamsImpl(descriptor));
 
-        dynamicDescriptorRegistration.registerDescriptors(getPlugin(), new DescriptorToRegister(moduleDescriptor));
+        this.registration = dynamicDescriptorRegistration.registerDescriptors(getPlugin(), new DescriptorToRegister(moduleDescriptor));
     }
+
+    @Override
+    public void disabled()
+    {
+        super.disabled();
+        if (registration != null)
+        {
+            registration.unregister();
+        }
+    }
+
     private ModuleDescriptor<WebPanel> createWebPanelModuleDescriptor(
             final String moduleKey,
             final Element desc,
@@ -115,7 +129,7 @@ public class IssuePanelPageModuleDescriptor extends AbstractModuleDescriptor<Voi
                             iFrameRenderer,
                             new IFrameContextImpl(getPluginKey(), url, moduleKey, iFrameParams), condition instanceof ContainingRemoteCondition);
                 }
-            }, webInterfaceManager);
+            }, getService(bundleContext, WebInterfaceManager.class));
 
             moduleDescriptor.init(conditionProcessor.getLoadablePlugin(getPlugin()), desc);
             return moduleDescriptor;

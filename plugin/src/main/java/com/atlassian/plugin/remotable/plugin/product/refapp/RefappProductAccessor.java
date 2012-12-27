@@ -15,6 +15,7 @@ import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.HtmlEmail;
 import org.apache.commons.mail.SimpleEmail;
+import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,23 +25,24 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 
+import static com.atlassian.plugin.remotable.plugin.util.OsgiServiceUtils.getService;
 import static com.google.common.collect.Maps.newHashMap;
 import static java.util.Collections.emptyMap;
 
 public final class RefappProductAccessor implements ProductAccessor
 {
-    private final WebInterfaceManager webInterfaceManager;
     private static final Logger log = LoggerFactory.getLogger(RefappProductAccessor.class);
+    private final BundleContext bundleContext;
 
-    public RefappProductAccessor(WebInterfaceManager webInterfaceManager)
+    public RefappProductAccessor(BundleContext bundleContext)
     {
-        this.webInterfaceManager = webInterfaceManager;
+        this.bundleContext = bundleContext;
     }
 
     @Override
     public WebItemModuleDescriptor createWebItemModuleDescriptor()
     {
-        return new DefaultWebItemModuleDescriptor(webInterfaceManager);
+        return new DefaultWebItemModuleDescriptor(getService(bundleContext, WebInterfaceManager.class));
     }
 
     @Override

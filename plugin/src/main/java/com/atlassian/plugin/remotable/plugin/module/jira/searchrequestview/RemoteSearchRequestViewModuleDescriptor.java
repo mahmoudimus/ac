@@ -21,6 +21,7 @@ import org.dom4j.Element;
 
 import java.net.URI;
 
+import static com.atlassian.jira.ComponentManager.getComponent;
 import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.getOptionalAttribute;
 import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.getRequiredUriAttribute;
 
@@ -32,28 +33,23 @@ public class RemoteSearchRequestViewModuleDescriptor extends AbstractModuleDescr
     private final DynamicDescriptorRegistration dynamicDescriptorRegistration;
     private final ApplicationProperties applicationProperties;
     private final SearchRequestViewBodyWriterUtil searchRequestViewBodyWriterUtil;
-    private final SearchRequestURLHandler searchRequestURLHandler;
     private final TemplateRenderer templateRenderer;
     private final ConditionDescriptorFactory conditionDescriptorFactory;
-    private final JiraAuthenticationContext jiraAuthenticationContext;
     private Element descriptor;
     private URI url;
+    private DynamicDescriptorRegistration.Registration registration;
 
     public RemoteSearchRequestViewModuleDescriptor(
             DynamicDescriptorRegistration dynamicDescriptorRegistration,
             ApplicationProperties applicationProperties,
             SearchRequestViewBodyWriterUtil searchRequestViewBodyWriterUtil,
-            SearchRequestURLHandler searchRequestURLHandler, TemplateRenderer templateRenderer,
-            ConditionDescriptorFactory conditionDescriptorFactory,
-            JiraAuthenticationContext jiraAuthenticationContext)
+            TemplateRenderer templateRenderer, ConditionDescriptorFactory conditionDescriptorFactory)
     {
         this.dynamicDescriptorRegistration = dynamicDescriptorRegistration;
         this.applicationProperties = applicationProperties;
         this.searchRequestViewBodyWriterUtil = searchRequestViewBodyWriterUtil;
-        this.searchRequestURLHandler = searchRequestURLHandler;
         this.templateRenderer = templateRenderer;
         this.conditionDescriptorFactory = conditionDescriptorFactory;
-        this.jiraAuthenticationContext = jiraAuthenticationContext;
     }
 
     @Override
@@ -84,7 +80,17 @@ public class RemoteSearchRequestViewModuleDescriptor extends AbstractModuleDescr
         desc.addAttribute("fileExtension", "html");
 
         SearchRequestViewModuleDescriptor moduleDescriptor = createDescriptor(desc);
-        dynamicDescriptorRegistration.registerDescriptors(getPlugin(), new DescriptorToRegister(moduleDescriptor));
+        this.registration = dynamicDescriptorRegistration.registerDescriptors(getPlugin(), new DescriptorToRegister(moduleDescriptor));
+    }
+
+    @Override
+    public void disabled()
+    {
+        super.disabled();
+        if (registration != null)
+        {
+            registration.unregister();
+        }
     }
 
     private SearchRequestViewModuleDescriptor createDescriptor(Element element)
@@ -108,7 +114,10 @@ public class RemoteSearchRequestViewModuleDescriptor extends AbstractModuleDescr
             };
 
             SearchRequestViewModuleDescriptor descriptor = new SearchRequestViewModuleDescriptorImpl(
-                    jiraAuthenticationContext, searchRequestURLHandler, moduleFactory, conditionDescriptorFactory);
+                    getComponent(JiraAuthenticationContext.class),
+                    getComponent(SearchRequestURLHandler.class),
+                    moduleFactory,
+                    conditionDescriptorFactory);
 
             descriptor.init(getPlugin(), element);
             return descriptor;

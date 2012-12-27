@@ -24,7 +24,6 @@ import java.util.Map;
 import static com.atlassian.plugin.remotable.plugin.module.page.RemotePageDescriptorCreator.createLocalUrl;
 import static com.atlassian.plugin.remotable.test.HttpUtils.renderHtml;
 import static com.atlassian.plugin.remotable.test.Utils.pickFreePort;
-import static com.atlassian.plugin.remotable.plugin.util.EncodingUtils.encodeBase64;
 import static com.google.common.collect.Maps.newHashMap;
 
 public class RemotePluginRunner

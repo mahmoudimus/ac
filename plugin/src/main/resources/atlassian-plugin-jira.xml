@@ -75,7 +75,6 @@
     <component-import key="jiraUserManager" interface="com.atlassian.jira.user.util.UserManager" />
     <component-import key="InternalWebSudoManager" interface="com.atlassian.jira.security.websudo.InternalWebSudoManager" />
     <component-import key="SearchRequestViewBodyWriterUtil" interface="com.atlassian.jira.issue.views.util.SearchRequestViewBodyWriterUtil" />
-    <component-import key="searchRequestURLHandler" interface="com.atlassian.jira.plugin.searchrequestview.SearchRequestURLHandler" />
     <component-import key="mailQueue" interface="com.atlassian.mail.queue.MailQueue" />
     <component-import key="projectRoleManager" interface="com.atlassian.jira.security.roles.ProjectRoleManager" />
     <component-import key="jiraBaseUrls" interface="com.atlassian.jira.issue.fields.rest.json.beans.JiraBaseUrls" />

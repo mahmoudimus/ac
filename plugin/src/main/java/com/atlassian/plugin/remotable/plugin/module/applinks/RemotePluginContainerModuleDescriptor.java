@@ -7,8 +7,10 @@ import com.atlassian.applinks.spi.application.ApplicationIdUtil;
 import com.atlassian.applinks.spi.link.ApplicationLinkDetails;
 import com.atlassian.applinks.spi.link.MutatingApplicationLinkService;
 import com.atlassian.applinks.spi.util.TypeAccessor;
+import com.atlassian.oauth.serviceprovider.ServiceProviderConsumerStore;
 import com.atlassian.plugin.remotable.plugin.OAuthLinkManager;
 import com.atlassian.plugin.remotable.plugin.PermissionManager;
+import com.atlassian.plugin.remotable.plugin.util.OsgiServiceUtils;
 import com.atlassian.plugin.remotable.spi.Permissions;
 import com.atlassian.plugin.remotable.spi.applinks.RemotePluginContainerApplicationType;
 import com.atlassian.plugin.remotable.host.common.util.BundleUtil;
@@ -25,7 +27,9 @@ import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.atlassian.util.concurrent.NotNull;
 import org.dom4j.Element;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,6 +61,7 @@ public class RemotePluginContainerModuleDescriptor extends AbstractModuleDescrip
     private Element oauthElement;
     private ApplicationLinkDetails applicationLinkDetails;
     private boolean remoteMode;
+    private Bundle pluginBundle;
 
     public RemotePluginContainerModuleDescriptor(MutatingApplicationLinkService applicationLinkService,
                                                  OAuthLinkManager oAuthLinkManager,
@@ -98,6 +103,8 @@ public class RemotePluginContainerModuleDescriptor extends AbstractModuleDescrip
     @Override
     public void enabled()
     {
+        this.pluginBundle = BundleUtil.findBundleForPlugin(bundleContext, getPluginKey());
+
         if (remoteMode)
         {
             final ApplicationId expectedApplicationId = ApplicationIdUtil.generate(displayUrl);
@@ -189,6 +196,10 @@ public class RemotePluginContainerModuleDescriptor extends AbstractModuleDescrip
         super.disabled();
         if (remoteMode)
         {
+            // we have to retrive services fresh from plugin bundle as it is possible this is called after the
+            // remotable plugins plugin has been disabled
+            MutatingApplicationLinkService applicationLinkService = getService(MutatingApplicationLinkService.class);
+
             for (ApplicationLink link : applicationLinkService.getApplicationLinks())
             {
                 if (displayUrl.equals(link.getRpcUrl()))
@@ -197,11 +208,14 @@ public class RemotePluginContainerModuleDescriptor extends AbstractModuleDescrip
                     applicationLinkService.deleteApplicationLink(link);
                 }
             }
-            oAuthLinkManager.unassociateConsumer(
-                    Consumer.
-                                    key(getPluginKey()).
-                            name("Doesn't Matter").
-                            signatureMethod(Consumer.SignatureMethod.HMAC_SHA1).build());
+
+            // this repeats logic in {@link OAuthLinkManager#unassociateConsumer()} because, again, all services
+            // need to be retrieved fresh
+            ServiceProviderConsumerStore store = getService(ServiceProviderConsumerStore.class);
+            if (store.get(getPluginKey()) != null)
+            {
+                store.remove(getPluginKey());
+            }
         }
     }
 
@@ -260,6 +274,18 @@ public class RemotePluginContainerModuleDescriptor extends AbstractModuleDescrip
             throw new PluginParseException("Invalid public key", e);
         }
         return publicKey;
+    }
+
+    private <T> T getService(Class<T> interfaceClass)
+    {
+        if (pluginBundle != null)
+        {
+            return OsgiServiceUtils.getService(pluginBundle.getBundleContext(), interfaceClass);
+        }
+        else
+        {
+            throw new IllegalStateException("Cannot retrieve services from unknown plugin bundle: " + getCompleteKey());
+        }
     }
 
     @Override

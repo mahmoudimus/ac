@@ -3,11 +3,11 @@ package com.atlassian.plugin.remotable.plugin.module.page.jira;
 import com.atlassian.jira.plugin.profile.ViewProfilePanelModuleDescriptor;
 import com.atlassian.jira.plugin.profile.ViewProfilePanelModuleDescriptorImpl;
 import com.atlassian.jira.security.JiraAuthenticationContext;
-import com.atlassian.plugin.remotable.plugin.integration.plugins.DescriptorToRegister;
-import com.atlassian.plugin.remotable.plugin.integration.plugins.DynamicDescriptorRegistration;
 import com.atlassian.plugin.remotable.plugin.module.IFrameParamsImpl;
 import com.atlassian.plugin.remotable.plugin.module.IFrameRendererImpl;
 import com.atlassian.plugin.remotable.plugin.module.page.IFrameContextImpl;
+import com.atlassian.plugin.remotable.plugin.integration.plugins.DescriptorToRegister;
+import com.atlassian.plugin.remotable.plugin.integration.plugins.DynamicDescriptorRegistration;
 import com.atlassian.plugin.remotable.spi.module.IFrameViewProfilePanel;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
@@ -32,6 +32,7 @@ public class JiraProfileTabModuleDescriptor extends AbstractModuleDescriptor<Voi
     private final IFrameRendererImpl iFrameRenderer;
     private Element descriptor;
     private URI url;
+    private DynamicDescriptorRegistration.Registration registration;
 
     public JiraProfileTabModuleDescriptor(
             DynamicDescriptorRegistration dynamicDescriptorRegistration,
@@ -61,8 +62,18 @@ public class JiraProfileTabModuleDescriptor extends AbstractModuleDescriptor<Voi
     {
         super.enabled();
 
-        dynamicDescriptorRegistration.registerDescriptors(getPlugin(), new DescriptorToRegister(
+        this.registration = dynamicDescriptorRegistration.registerDescriptors(getPlugin(), new DescriptorToRegister(
                 createProfilePanelDescriptor(descriptor, getKey(), url)));
+    }
+
+    @Override
+    public void disabled()
+    {
+        super.disabled();
+        if (registration != null)
+        {
+            registration.unregister();
+        }
     }
 
     private ViewProfilePanelModuleDescriptor createProfilePanelDescriptor(

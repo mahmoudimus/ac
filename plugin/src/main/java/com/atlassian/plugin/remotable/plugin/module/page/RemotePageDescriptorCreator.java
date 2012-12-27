@@ -4,11 +4,11 @@ import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.module.ModuleFactory;
-import com.atlassian.plugin.remotable.plugin.integration.plugins.DescriptorToRegister;
 import com.atlassian.plugin.remotable.plugin.module.IFrameParamsImpl;
 import com.atlassian.plugin.remotable.plugin.module.IFrameRendererImpl;
 import com.atlassian.plugin.remotable.plugin.module.WebItemContext;
 import com.atlassian.plugin.remotable.plugin.module.WebItemCreator;
+import com.atlassian.plugin.remotable.plugin.integration.plugins.DescriptorToRegister;
 import com.atlassian.plugin.remotable.spi.module.IFrameParams;
 import com.atlassian.plugin.remotable.spi.product.ProductAccessor;
 import com.atlassian.plugin.servlet.ServletModuleManager;
@@ -18,11 +18,13 @@ import com.atlassian.plugin.web.conditions.AlwaysDisplayCondition;
 import com.atlassian.sal.api.user.UserManager;
 import com.google.common.collect.ImmutableSet;
 import org.dom4j.Element;
+import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
 
+import static com.atlassian.plugin.remotable.plugin.util.OsgiServiceUtils.getService;
 import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.getRequiredAttribute;
 import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.getRequiredUriAttribute;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -34,7 +36,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @Component
 public final class RemotePageDescriptorCreator
 {
-    private final ServletModuleManager servletModuleManager;
+    private final BundleContext bundleContext;
     private final UserManager userManager;
     private final WebItemCreator webItemCreator;
     private final IFrameRendererImpl iFrameRenderer;
@@ -42,11 +44,11 @@ public final class RemotePageDescriptorCreator
 
     @Autowired
     public RemotePageDescriptorCreator(
-            ServletModuleManager servletModuleManager, UserManager userManager,
+            BundleContext bundleContext, UserManager userManager,
             WebItemCreator webItemCreator, IFrameRendererImpl iFrameRenderer,
             ProductAccessor productAccessor)
     {
-        this.servletModuleManager = servletModuleManager;
+        this.bundleContext = bundleContext;
         this.userManager = userManager;
         this.webItemCreator = webItemCreator;
         this.iFrameRenderer = iFrameRenderer;
@@ -123,7 +125,7 @@ public final class RemotePageDescriptorCreator
                             new IFrameContextImpl(plugin.getKey(), path, moduleKey, params), userManager
                     );
                 }
-            }, servletModuleManager);
+            }, getService(bundleContext, ServletModuleManager.class));
             descriptor.init(plugin, config);
             return new DescriptorToRegister(descriptor);
         }

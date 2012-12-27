@@ -11,7 +11,6 @@ import com.atlassian.plugin.hostcontainer.HostContainer;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.remotable.plugin.DefaultRemotablePluginAccessorFactory;
 import com.atlassian.plugin.remotable.plugin.PermissionManager;
-import com.atlassian.plugin.remotable.plugin.integration.plugins.DescriptorToRegister;
 import com.atlassian.plugin.remotable.plugin.module.IFrameParamsImpl;
 import com.atlassian.plugin.remotable.plugin.module.IFrameRendererImpl;
 import com.atlassian.plugin.remotable.plugin.module.WebItemCreator;
@@ -22,6 +21,7 @@ import com.atlassian.plugin.remotable.plugin.util.contextparameter.ContextParame
 import com.atlassian.plugin.remotable.plugin.util.contextparameter.RequestContextParameterFactory;
 import com.atlassian.plugin.remotable.spi.Permissions;
 import com.atlassian.plugin.remotable.spi.RemotablePluginAccessor;
+import com.atlassian.plugin.remotable.plugin.integration.plugins.DescriptorToRegister;
 import com.atlassian.plugin.remotable.spi.module.IFrameParams;
 import com.atlassian.plugin.servlet.ServletModuleManager;
 import com.atlassian.plugin.servlet.descriptors.ServletModuleDescriptor;
@@ -34,6 +34,7 @@ import com.google.common.collect.Lists;
 import org.apache.commons.lang.StringUtils;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.osgi.framework.BundleContext;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -45,6 +46,7 @@ import java.util.Set;
 
 import static com.atlassian.plugin.remotable.plugin.module.util.redirect.RedirectServlet.getPermanentRedirectUrl;
 import static com.atlassian.plugin.remotable.plugin.util.EncodingUtils.escapeAll;
+import static com.atlassian.plugin.remotable.plugin.util.OsgiServiceUtils.getService;
 import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.getOptionalAttribute;
 import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.getOptionalUriAttribute;
 import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.getRequiredAttribute;
@@ -65,33 +67,32 @@ public class MacroModuleDescriptorCreator
     private final MacroMetadataParser macroMetadataParser;
     private final DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory;
     private final HostContainer hostContainer;
-    private final ServletModuleManager servletModuleManager;
     private final WebItemCreator webItemCreator;
     private final ContextParameterParser contextParameterParser;
     private final IFrameRendererImpl iFrameRenderer;
     private final UserManager userManager;
     private final PermissionManager permissionManager;
+    private final BundleContext bundleContext;
 
     public MacroModuleDescriptorCreator(SystemInformationService systemInformationService,
-                                        DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory,
-                                        HostContainer hostContainer,
-                                        ServletModuleManager servletModuleManager,
-                                        WebItemCreator webItemCreator,
-                                        ContextParameterParser contextParameterParser,
-                                        IFrameRendererImpl iFrameRenderer,
-                                        UserManager userManager,
-                                        PermissionManager permissionManager
-    )
+            DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory,
+            HostContainer hostContainer,
+            WebItemCreator webItemCreator,
+            ContextParameterParser contextParameterParser,
+            IFrameRendererImpl iFrameRenderer,
+            UserManager userManager,
+            PermissionManager permissionManager,
+            BundleContext bundleContext)
     {
         this.systemInformationService = systemInformationService;
         this.remotablePluginAccessorFactory = remotablePluginAccessorFactory;
         this.hostContainer = hostContainer;
-        this.servletModuleManager = servletModuleManager;
         this.webItemCreator = webItemCreator;
         this.contextParameterParser = contextParameterParser;
         this.iFrameRenderer = iFrameRenderer;
         this.userManager = userManager;
         this.permissionManager = permissionManager;
+        this.bundleContext = bundleContext;
 
         // todo: fix this in confluence
         this.macroMetadataParser = ComponentLocator.getComponent(MacroMetadataParser.class);
@@ -281,7 +282,7 @@ public class MacroModuleDescriptorCreator
                             new IFrameContextImpl(plugin.getKey(), path, moduleKey, params), userManager
                     );
                 }
-            }, servletModuleManager);
+            }, getService(bundleContext, ServletModuleManager.class));
             descriptor.init(plugin, config);
             return descriptor;
         }

@@ -23,6 +23,7 @@ public class MacroPageModuleDescriptor extends AbstractModuleDescriptor<Void>
     private final MacroModuleDescriptorCreator.Builder macroModuleDescriptorCreatorBuilder;
 
     private Element descriptor;
+    private DynamicDescriptorRegistration.Registration registration;
 
     public MacroPageModuleDescriptor(
             DynamicDescriptorRegistration dynamicDescriptorRegistration,
@@ -69,7 +70,17 @@ public class MacroPageModuleDescriptor extends AbstractModuleDescriptor<Void>
     public void enabled()
     {
         super.enabled();
-        dynamicDescriptorRegistration.registerDescriptors(getPlugin(),
-                macroModuleDescriptorCreatorBuilder.build(getPlugin(),  descriptor));
+        this.registration = dynamicDescriptorRegistration.registerDescriptors(getPlugin(),
+                macroModuleDescriptorCreatorBuilder.build(getPlugin(), descriptor));
+    }
+
+    @Override
+    public void disabled()
+    {
+        super.disabled();
+        if (registration != null)
+        {
+            registration.unregister();
+        }
     }
 }
