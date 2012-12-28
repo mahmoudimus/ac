@@ -5,7 +5,7 @@
       Loading plugin <a href="${plugin.displayUrl}" target="_blank">$plugin.name</a>.
     </div>
     <div class="ra-loaded ra-status hidden">
-      Loaded plugin <a href="${plugin.displayUrl}" target="_blank">$plugin.name</a> in <span class="ra-elapsed"></span> ms.
+      Loaded plugin <a href="${plugin.displayUrl}" target="_blank">$plugin.name</a>.
     </div>
     <div class="ra-load-timeout ra-status hidden">
       Plugin <a href="${plugin.displayUrl}" target="_blank">$plugin.name</a> is not responding.

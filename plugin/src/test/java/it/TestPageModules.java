@@ -100,12 +100,10 @@ public class TestPageModules extends AbstractRemotablePluginTest
                 .addConfigurePage("page", "Page", "/page", "hello-world-page.mu")
                 .start();
 
-        long loadTime = product.visit(LoginPage.class).login("betty", "betty",
+        assertTrue(product.visit(LoginPage.class).login("betty", "betty",
                 PluginManagerPage.class)
             .configurePlugin("configurePage", "page", RemotePluginTestPage.class)
-            .getLoadTime();
-
-        assertTrue(loadTime > 0);
+            .isLoaded());
 
         runner.stop();
     }

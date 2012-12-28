@@ -110,9 +110,9 @@ public class RemotePluginEmbeddedTestPage
         return getValue("server-http-entity");
     }
 
-    public long getLoadTime()
+    public boolean isLoaded()
     {
-        return Long.parseLong(driver.findElement(By.cssSelector("#ra-" + key + " .ra-elapsed")).getText());
+        return driver.elementExists(By.cssSelector("#ra-" + key + " .ra-loaded"));
     }
 
     public Map<String,String> getIframeQueryParams()

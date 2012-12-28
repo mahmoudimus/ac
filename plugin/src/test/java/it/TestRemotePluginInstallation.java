@@ -45,7 +45,7 @@ public class TestRemotePluginInstallation extends AbstractRemotablePluginTest
         product.visit(HomePage.class);
         assertTrue(product.getPageBinder().bind(GeneralPage.class, "page", "Page")
                 .clickRemotePluginLink()
-                .getLoadTime() > 0);
+                .isLoaded());
         pluginFirst.stop();
     }
 
@@ -59,7 +59,7 @@ public class TestRemotePluginInstallation extends AbstractRemotablePluginTest
         product.visit(HomePage.class);
         assertTrue(product.getPageBinder().bind(GeneralPage.class, "changedPage", "Changed Page")
                 .clickRemotePluginLink()
-                .getLoadTime() > 0);
+                .isLoaded());
         pluginFirst.stop();
 
         RemotePluginRunner pluginSecond = new RemotePluginRunner(product.getProductInstance().getBaseUrl(), "pluginSecond")
@@ -68,7 +68,7 @@ public class TestRemotePluginInstallation extends AbstractRemotablePluginTest
         product.visit(HomePage.class);
         assertTrue(product.getPageBinder().bind(GeneralPage.class, "changedPage", "Changed Page")
                 .clickRemotePluginLink()
-                .getLoadTime() > 0);
+                .isLoaded());
         pluginSecond.stop();
     }
 

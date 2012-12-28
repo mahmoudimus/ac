@@ -47,7 +47,7 @@ public class TestFileInstall extends AbstractRemotablePluginTest
                     "First (file)");
         assertTrue(page.isRemotePluginLinkPresent());
         RemotePluginTestPage remotePluginTest = page.clickRemotePluginLink();
-        assertTrue(remotePluginTest.getLoadTime() > 0);
+        assertTrue(remotePluginTest.isLoaded());
         client.uninstall("file-app");
 	}
 }
