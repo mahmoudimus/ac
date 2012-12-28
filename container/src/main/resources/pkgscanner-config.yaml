@@ -6,6 +6,8 @@ package_includes:
     - "com.atlassian.sal.core*"
     - "com.atlassian.core*"
     - "org.apache.maven*"
+    - "com.atlassian.plugin.remotable.host*"
+    - "com.atlassian.plugin.remotable.container*"
 
   include:
     - "com.atlassian.*"
@@ -52,7 +54,29 @@ package_includes:
 package_versions:
   - {package: "com.atlassian.activeobjects.spi", version: "${ao.version}"}
   - {package: "com.atlassian.event.api*", version: "${event.version}"}
-  - {package: "com.atlassian.plugin*", version: "${plugins.version}"}
+  - {package: "com.atlassian.plugin.remotable.api*", version: "${api.artifact.version}"}
+  - {package: "com.atlassian.plugin.remotable.spi*", version: "${api.artifact.version}"}
+  - {package: "com.atlassian.plugin", version: "${plugins.version}"}
+  - {package: "com.atlassian.plugin.web*", version: "${plugins.version}"}
+  - {package: "com.atlassian.plugin.util*", version: "${plugins.version}"}
+  - {package: "com.atlassian.plugin.url*", version: "${plugins.version}"}
+  - {package: "com.atlassian.plugin.servlet*", version: "${plugins.version}"}
+  - {package: "com.atlassian.plugin.repositories*", version: "${plugins.version}"}
+  - {package: "com.atlassian.plugin.predicate*", version: "${plugins.version}"}
+  - {package: "com.atlassian.plugin.parsers*", version: "${plugins.version}"}
+  - {package: "com.atlassian.plugin.osgi*", version: "${plugins.version}"}
+  - {package: "com.atlassian.plugin.module*", version: "${plugins.version}"}
+  - {package: "com.atlassian.plugin.metadata*", version: "${plugins.version}"}
+  - {package: "com.atlassian.plugin.manager*", version: "${plugins.version}"}
+  - {package: "com.atlassian.plugin.main*", version: "${plugins.version}"}
+  - {package: "com.atlassian.plugin.loaders*", version: "${plugins.version}"}
+  - {package: "com.atlassian.plugin.impl*", version: "${plugins.version}"}
+  - {package: "com.atlassian.plugin.factories*", version: "${plugins.version}"}
+  - {package: "com.atlassian.plugin.event*", version: "${plugins.version}"}
+  - {package: "com.atlassian.plugin.elements*", version: "${plugins.version}"}
+  - {package: "com.atlassian.plugin.descriptors*", version: "${plugins.version}"}
+  - {package: "com.atlassian.plugin.classloader*", version: "${plugins.version}"}
+  - {package: "com.atlassian.plugin.cache*", version: "${plugins.version}"}
   - {package: "com.atlassian.sal.api*", version: "${sal.version}"}
   - {package: "org.objectweb.asm*", version: "3.3.1"}
   - {package: "com.atlassian.security.random*", version: "${atlassian.security.version}"}
