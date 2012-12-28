@@ -379,7 +379,8 @@
     </scm>
 
     <properties>
-        <api.version>0.6.1</api.version>
+        <api.version>0.6</api.version>
+        <api.artifact.version>${api.version}.1</api.artifact.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <xvfb.enable>true</xvfb.enable>
         <atlassian.selenium.version>2.1.0-m12</atlassian.selenium.version>

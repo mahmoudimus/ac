@@ -17,12 +17,12 @@
         <dependency>
             <groupId>com.atlassian.plugins</groupId>
             <artifactId>remotable-plugins-api</artifactId>
-            <version>${api.version}</version>
+            <version>${api.artifact.version}</version>
         </dependency>
         <dependency>
             <groupId>com.atlassian.plugins</groupId>
             <artifactId>remotable-plugins-spi</artifactId>
-            <version>${api.version}</version>
+            <version>${api.artifact.version}</version>
         </dependency>
 
         <dependency>

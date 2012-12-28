@@ -191,12 +191,12 @@
                                 <pluginArtifact>
                                     <groupId>${project.groupId}</groupId>
                                     <artifactId>remotable-plugins-api</artifactId>
-                                    <version>${api.version}</version>
+                                    <version>${api.artifact.version}</version>
                                 </pluginArtifact>
                                 <pluginArtifact>
                                     <groupId>${project.groupId}</groupId>
                                     <artifactId>remotable-plugins-spi</artifactId>
-                                    <version>${api.version}</version>
+                                    <version>${api.artifact.version}</version>
                                 </pluginArtifact>
                                 <pluginArtifact>
                                     <groupId>com.google.inject</groupId>

@@ -47,7 +47,7 @@
         <dependency>
             <groupId>com.atlassian.plugins</groupId>
             <artifactId>remotable-plugins-spi</artifactId>
-            <version>${api.version}</version>
+            <version>${api.artifact.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

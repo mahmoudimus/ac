@@ -32,7 +32,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>remotable-plugins-spi</artifactId>
-            <version>${api.version}</version>
+            <version>${api.artifact.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
