@@ -21,7 +21,6 @@ public final class TestActiveObjects extends AbstractRemotablePluginTest
         product.visit(HomePage.class);
         final RemotePluginAwarePage homePage = product.getPageBinder().bind(GeneralPage.class, "ao", "Active Objects Testing");
 
-        assertTrue(homePage.isRemotePluginLinkPresent());
         RemotePluginTestPage remotePluginTest = homePage.clickRemotePluginLink();
         assertTrue(remotePluginTest.getTitle().contains("Active Objects Testing Page"));
         assertTrue(remotePluginTest.getMessage().contains("AO Success"));

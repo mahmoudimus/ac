@@ -1,6 +1,7 @@
 package com.atlassian.plugin.remotable.sisu;
 
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.google.inject.AbstractModule;
 import com.google.inject.matcher.Matchers;
@@ -36,6 +37,11 @@ public final class RemotableModule extends AbstractModule
         final BundleContext bundleContext = bundle.getBundleContext();
 
         install(osgiModule(bundleContext));
+
+        bind(ModuleFactory.class).toInstance(
+                (ModuleFactory)
+                        bundleContext.getService(bundleContext.getServiceReference(ModuleFactory.class.getName()))
+        );
 
         bind(Plugin.class).toInstance(
                 ((PluginRetrievalService)

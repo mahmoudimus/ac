@@ -1,1 +1,1 @@
-com.atlassian.plugin.remotable.sisu.ServiceReferenceWiringFactory
+com.atlassian.plugin.remotable.sisu.ComponentImportWiringFactory
