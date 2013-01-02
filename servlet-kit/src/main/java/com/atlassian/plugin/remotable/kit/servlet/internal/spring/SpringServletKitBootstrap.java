@@ -37,7 +37,7 @@ public class SpringServletKitBootstrap extends AbstractServletKitBootstrap
         {
                 providers.put(servlet.getClass(), newProvider(servlet));
         }
-        register(httpResourceMounter, pluginRetrievalService, signedRequestHandler, providers);
+        register(httpResourceMounter, pluginRetrievalService.getPlugin(), signedRequestHandler, providers);
     }
 
     private static <T extends HttpServlet> Provider<T> newProvider(final T servlet)

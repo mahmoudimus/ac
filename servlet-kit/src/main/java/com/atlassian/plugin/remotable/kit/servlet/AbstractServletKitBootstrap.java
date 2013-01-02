@@ -1,6 +1,6 @@
 package com.atlassian.plugin.remotable.kit.servlet;
 
-import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
+import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.remotable.api.service.HttpResourceMounter;
 import com.atlassian.plugin.remotable.api.service.SignedRequestHandler;
 import com.atlassian.plugin.remotable.kit.servlet.internal.MultipageServlet;
@@ -23,7 +23,7 @@ public abstract class AbstractServletKitBootstrap
     private static final Logger log = LoggerFactory.getLogger(SpringServletKitBootstrap.class);
 
     protected void register(HttpResourceMounter httpResourceMounter,
-                            PluginRetrievalService pluginRetrievalService,
+                            Plugin plugin,
                             SignedRequestHandler signedRequestHandler,
                             Map<Class<? extends HttpServlet>, Provider<? extends HttpServlet>> providers
     )
@@ -49,7 +49,7 @@ public abstract class AbstractServletKitBootstrap
             if (multipage != null)
             {
                 String internalPath = "/internal" + path;
-                String pluginKey = pluginRetrievalService.getPlugin().getKey();
+                String pluginKey = plugin.getKey();
                 String hostBaseUrl = signedRequestHandler.getHostBaseUrl(pluginKey);
                 String internalUrl = httpResourceMounter.getLocalMountBaseUrl() + internalPath;
                 MultipageServlet multipageServlet = new MultipageServlet(internalUrl, hostBaseUrl);

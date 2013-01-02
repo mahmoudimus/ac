@@ -11,15 +11,29 @@ import com.atlassian.httpclient.spi.ThreadLocalContextManager;
 import com.atlassian.plugin.remotable.api.service.RequestContext;
 import com.atlassian.plugin.remotable.api.service.SignedRequestHandler;
 import com.atlassian.plugin.remotable.api.service.http.HostHttpClient;
+import com.atlassian.plugin.remotable.host.common.util.ServicePromise;
 import com.atlassian.util.concurrent.Effect;
+import com.atlassian.util.concurrent.Promise;
+import com.atlassian.util.concurrent.Promises;
+import com.google.common.base.Function;
+import org.osgi.framework.BundleContext;
+import org.osgi.util.tracker.ServiceTracker;
 
+import javax.annotation.Nullable;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.net.URI;
 import java.net.URLEncoder;
+import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
 
 import static com.atlassian.fugue.Option.option;
 import static com.atlassian.fugue.Pair.*;
+import static com.atlassian.plugin.remotable.host.common.util.ServicePromise.promiseProxy;
 import static com.google.common.base.Preconditions.*;
 
 public final class DefaultHostHttpClient extends ForwardingHttpClient implements HostHttpClient
@@ -27,10 +41,17 @@ public final class DefaultHostHttpClient extends ForwardingHttpClient implements
     private final HttpClient httpClient;
     private final DefaultRequestContext requestContext;
 
-    public DefaultHostHttpClient(HttpClientFactory httpClientFactory, DefaultRequestContext requestContext, SignedRequestHandler signedRequestHandler, ThreadLocalContextManager threadLocalContextManager)
+    public DefaultHostHttpClient(Promise<HttpClientFactory> httpClientFactoryPromise, final DefaultRequestContext requestContext, final SignedRequestHandler signedRequestHandler, final ThreadLocalContextManager threadLocalContextManager)
     {
         this.requestContext = checkNotNull(requestContext);
-        this.httpClient = checkNotNull(httpClientFactory).create(getHttpOptions(requestContext, checkNotNull(signedRequestHandler)), new DefaultHostHttpClientThreadLocalContextManager(threadLocalContextManager));
+        this.httpClient = promiseProxy(httpClientFactoryPromise.map(new Function<HttpClientFactory, HttpClient>()
+        {
+            @Override
+            public HttpClient apply(HttpClientFactory httpClientFactory)
+            {
+                return httpClientFactory.create(getHttpOptions(requestContext, checkNotNull(signedRequestHandler)), new DefaultHostHttpClientThreadLocalContextManager(threadLocalContextManager));
+            }
+        }), HttpClient.class);
     }
 
     @Override

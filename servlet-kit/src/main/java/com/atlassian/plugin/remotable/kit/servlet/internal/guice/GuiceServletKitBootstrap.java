@@ -1,6 +1,6 @@
 package com.atlassian.plugin.remotable.kit.servlet.internal.guice;
 
-import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
+import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.remotable.api.annotation.ComponentImport;
 import com.atlassian.plugin.remotable.api.service.HttpResourceMounter;
 import com.atlassian.plugin.remotable.api.service.SignedRequestHandler;
@@ -29,7 +29,7 @@ public class GuiceServletKitBootstrap extends AbstractServletKitBootstrap
         public GuiceServletKitBootstrap(
             Injector injector,
             @ComponentImport HttpResourceMounter httpResourceMounter,
-            @ComponentImport PluginRetrievalService pluginRetrievalService,
+            Plugin plugin,
             @ComponentImport SignedRequestHandler signedRequestHandler
         )
             throws Exception
@@ -45,6 +45,6 @@ public class GuiceServletKitBootstrap extends AbstractServletKitBootstrap
                             (Provider<HttpServlet>) entry.getValue().getProvider());
                 }
             }
-            register(httpResourceMounter, pluginRetrievalService, signedRequestHandler, servlets);
+            register(httpResourceMounter, plugin, signedRequestHandler, servlets);
         }
 }
