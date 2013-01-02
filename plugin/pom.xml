@@ -449,6 +449,19 @@
             <version>${confluence.client.version}</version>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.codehaus.jettison</groupId>
+            <artifactId>jettison</artifactId>
+            <version>1.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>1.6</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
@@ -708,6 +721,16 @@
                                     <artifactId>org.apache.servicemix.bundles.javax-inject</artifactId>
                                     <version>1_1</version>
                                 </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>org.codehaus.jettison</groupId>
+                                    <artifactId>jettison</artifactId>
+                                    <version>1.1</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>joda-time</groupId>
+                                    <artifactId>joda-time</artifactId>
+                                    <version>1.6</version>
+                                </pluginArtifact>
                             </pluginArtifacts>
                             <libArtifacts>
                                 <!-- necessary for Speakeasy mail handling -->
@@ -782,6 +805,16 @@
                                     <artifactId>jira-rest-java-client-plugin</artifactId>
                                     <version>${jira.client.version}</version>
                                 </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>org.codehaus.jettison</groupId>
+                                    <artifactId>jettison</artifactId>
+                                    <version>1.1</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>joda-time</groupId>
+                                    <artifactId>joda-time</artifactId>
+                                    <version>1.6</version>
+                                </pluginArtifact>
                             </pluginArtifacts>
                         </product>
                         <product>
@@ -841,6 +874,16 @@
                                     <artifactId>confluence-xmlrpc-java-client-plugin</artifactId>
                                     <version>${confluence.client.version}</version>
                                 </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>org.codehaus.jettison</groupId>
+                                    <artifactId>jettison</artifactId>
+                                    <version>1.1</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>joda-time</groupId>
+                                    <artifactId>joda-time</artifactId>
+                                    <version>1.6</version>
+                                </pluginArtifact>
                             </pluginArtifacts>
                             <libArtifacts>
                                 <!-- override to allow bug fixes for memory leaks when developing.  See PLUG-484 -->
@@ -884,6 +927,14 @@
                         <pluginDependency>
                             <groupId>com.atlassian.jira</groupId>
                             <artifactId>jira-rest-java-client-plugin</artifactId>
+                        </pluginDependency>
+                        <pluginDependency>
+                            <groupId>org.codehaus.jettison</groupId>
+                            <artifactId>jettison</artifactId>
+                        </pluginDependency>
+                        <pluginDependency>
+                            <groupId>joda-time</groupId>
+                            <artifactId>joda-time</artifactId>
                         </pluginDependency>
                     </pluginDependencies>
                     <testGroups>

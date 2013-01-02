@@ -50,6 +50,7 @@ package_includes:
     - "javax.inject"
     - "redstone.xmlrpc"
     - "org.joda.*"
+    - "org.codehaus.jettison*"
 
 package_versions:
   - {package: "com.atlassian.activeobjects.spi", version: "${ao.version}"}

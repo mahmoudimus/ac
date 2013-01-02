@@ -8,6 +8,7 @@ import com.atlassian.plugin.remotable.host.common.service.RequestContextServiceF
 import com.atlassian.plugin.remotable.host.common.service.SignedRequestHandlerServiceFactory;
 import com.atlassian.plugin.remotable.host.common.service.TypedServiceFactory;
 import com.atlassian.plugin.remotable.host.common.util.ServicePromise;
+import com.atlassian.plugin.util.ContextClassLoaderSwitchingUtil;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.ServiceRegistration;
 

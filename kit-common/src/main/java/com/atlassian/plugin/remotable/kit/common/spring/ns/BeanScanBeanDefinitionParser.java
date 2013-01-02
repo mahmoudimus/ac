@@ -1,6 +1,7 @@
 package com.atlassian.plugin.remotable.kit.common.spring.ns;
 
 import com.atlassian.plugin.remotable.api.annotation.ComponentImport;
+import com.atlassian.plugin.remotable.api.annotation.PublicComponent;
 import com.atlassian.plugin.remotable.kit.common.spring.NamedAnnotationBeanNameGenerator;
 import com.google.common.collect.ImmutableList;
 import org.slf4j.Logger;
@@ -52,6 +53,7 @@ public class BeanScanBeanDefinitionParser implements BeanDefinitionParser
 
         scanner.setBeanNameGenerator(new NamedAnnotationBeanNameGenerator());
         scanner.addIncludeFilter(new AnnotationTypeFilter(Named.class));
+        scanner.addIncludeFilter(new AnnotationTypeFilter(PublicComponent.class));
         scanner.setResourceLoader(parserContext.getReaderContext().getResourceLoader());
         scanner.setBeanDefinitionDefaults(parserContext.getDelegate().getBeanDefinitionDefaults());
 
@@ -59,6 +61,7 @@ public class BeanScanBeanDefinitionParser implements BeanDefinitionParser
         log.debug("Found {} components scanning packages {}", scanned, basePackages);
 
         new ComponentImportScanBeanDefinitionParser().parse(element, parserContext);
+        new PublicComponentBeanDefinitionParser().parse(element, parserContext);
 
         return null;
     }
