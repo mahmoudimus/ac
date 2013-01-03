@@ -70,6 +70,11 @@
         </xs:sequence>
     </xs:complexType>
 
+    <xs:simpleType name="LocationType">
+        <xs:restriction base="xs:string">
+        </xs:restriction>
+    </xs:simpleType>
+
     <xs:simpleType name="ConditionNameType">
         <xs:restriction base="xs:string">
         </xs:restriction>

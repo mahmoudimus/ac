@@ -127,6 +127,12 @@
             A remote page decorated as a web panel on the view issue page
         </description>
     </described-module-type>
+
+    <described-module-type key="project-config-panel" class="com.atlassian.plugin.remotable.plugin.module.jira.projectconfig.ProjectConfigWebPanelModuleDescriptor">
+        <description>
+            A remote page decorated as a web panel on the project configuration page.
+        </description>
+    </described-module-type>
 </application>
 
 

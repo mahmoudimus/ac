@@ -13,5 +13,6 @@
         <xs:attribute name="url" type="RelativeUrlType" use="required" />
         <xs:attribute name="height" type="PixelType" />
         <xs:attribute name="width" type="PixelType" />
+        <xs:attribute name="location" type="LocationType" use="optional" />
     </xs:complexType>
 </xs:schema>
