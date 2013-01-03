@@ -11,7 +11,7 @@ import java.util.Set;
 /**
 * Plugin that can load conditions from the remotable plugins plugin
 */
-class ConditionLoadingPlugin extends AbstractDelegatingPlugin
+class ConditionLoadingPlugin extends AbstractDelegatingPlugin implements AutowireCapablePlugin
 {
     private final AutowireCapablePlugin remotablePlugin;
     private final Set<Class<?>> productConditions;
@@ -45,7 +45,7 @@ class ConditionLoadingPlugin extends AbstractDelegatingPlugin
             return remotablePlugin.autowire(clazz);
         }
 
-        return super.autowire(clazz);
+        return ((AutowireCapablePlugin)getDelegate()).autowire(clazz);
     }
 
     @Override
@@ -58,7 +58,19 @@ class ConditionLoadingPlugin extends AbstractDelegatingPlugin
         {
             return remotablePlugin.autowire(clazz, autowireStrategy);
         }
-        return super.autowire(clazz,
+        return ((AutowireCapablePlugin)getDelegate()).autowire(clazz,
                 autowireStrategy);
+    }
+
+    @Override
+    public void autowire(Object instance)
+    {
+        ((AutowireCapablePlugin)getDelegate()).autowire(instance);
+    }
+
+    @Override
+    public void autowire(Object instance, AutowireStrategy autowireStrategy)
+    {
+        ((AutowireCapablePlugin)getDelegate()).autowire(instance, autowireStrategy);
     }
 }
