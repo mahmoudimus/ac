@@ -22,9 +22,8 @@ usage() {
 
 exportVersions() {
   POM_XML=$RP_HOME/pom.xml
-  export PLUGIN_API_VERSION=`grep "<API_VERSION" $POM_XML | cut -f2 -d ">" | cut -f1 -d "<"`
-  export PLUGIN_BUILD_NUMBER=`grep "<BUILD_NUMBER" $POM_XML | cut -f2 -d ">" | cut -f1 -d "<"`
-  export PLUGIN_VERSION=${PLUGIN_API_VERSION}.${PLUGIN_BUILD_NUMBER}
+  export PLUGIN_API_VERSION=`grep "<api.version" $POM_XML | cut -f2 -d ">" | cut -f1 -d "<"`
+  export PLUGIN_VERSION=${PLUGIN_API_VERSION}-SNAPSHOT
   export REFAPP_VERSION=`grep "<refapp.version" $POM_XML | cut -f2 -d ">" | cut -f1 -d "<"`
   export JIRA_VERSION=`grep "<jira.version" $POM_XML | cut -f2 -d ">" | cut -f1 -d "<"`
   export CONFLUENCE_VERSION=`grep "<confluence.version" $POM_XML | cut -f2 -d ">" | cut -f1 -d "<"`
