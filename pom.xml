@@ -386,7 +386,7 @@
         <atlassian.selenium.version>2.1.0-m12</atlassian.selenium.version>
         <!-- Confluence 4.2.8 uses this version, JIRA 5.0.7 uses version 2.1.0-m14 -->
         <refapp.version>2.18.0-m2</refapp.version>
-        <jira.version>5.2</jira.version>
+        <jira.version>6.0-m02</jira.version>
         <jira.data.version>${jira.version}</jira.data.version>
         <jira.client.version>2.0.0-m4</jira.client.version>
         <confluence.client.version>0.9.0</confluence.client.version>
@@ -404,7 +404,7 @@
         <oauth.version>1.3.0</oauth.version>
         <slf4j.version>1.6.4</slf4j.version>
         <log4j.version>1.2.16</log4j.version>
-        <atr.version>2.0.0-m2</atr.version>
+        <atr.version>1.4.2.2</atr.version>
         <redstone.version>1.1.1</redstone.version>
         <guava.version>10.0.1</guava.version>
         <event.version>2.2.0</event.version>
