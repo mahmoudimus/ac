@@ -30,7 +30,6 @@ public class JiraGeneralPage implements GeneralPage
     private final String pageKey;
     private final String linkText;
 
-    @FindBy(id = "general_dropdown_linkId_drop")
     private WebElement remotepluginsGeneralMenuLink;
 
     public JiraGeneralPage(String pageKey, String linkText)
@@ -44,7 +43,10 @@ public class JiraGeneralPage implements GeneralPage
     {
         // we do this because sometimes we try to click the dropdown when it isn't ready, and the
         // default href is '#'
-        driver.executeScript("document.getElementById('general_dropdown_linkId_drop').setAttribute('href', 'javascript:void(0)');");
+        driver.executeScript("(function () { var target = document.getElementById('general_dropdown_linkId_drop'); if (target) target.setAttribute('href', 'javascript:void(0)'); }());");
+        remotepluginsGeneralMenuLink = driver.elementExists(By.id("general_dropdown_linkId_drop")) ?
+                                       driver.findElement(By.id("general_dropdown_linkId_drop")) :
+                                       driver.findElement(By.id("general_dropdown_linkId"));
     }
 
     @Override
