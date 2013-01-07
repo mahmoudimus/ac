@@ -56,6 +56,7 @@ public class RingoEngine
         try
         {
             RingoConfiguration ringoConfig = new RingoConfiguration(ringoHome, null, null);
+            ringoConfig.setWrapFactory(new MyWrapFactory());
             ringoConfig.addModuleRepository(ringoHome);
             ringoConfig.addModuleRepository(home);
 
