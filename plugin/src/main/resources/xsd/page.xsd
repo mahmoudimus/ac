@@ -29,5 +29,6 @@
         <xs:attribute name="width" type="PixelType" />
         <xs:attribute name="section" type="xs:string" />
         <xs:attribute name="weight" type="xs:positiveInteger" />
+		<xs:attribute name="location" type="xs:string" />
     </xs:complexType>
 </xs:schema>

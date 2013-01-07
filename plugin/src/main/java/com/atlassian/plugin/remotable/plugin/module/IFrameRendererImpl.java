@@ -17,6 +17,7 @@ import com.atlassian.templaterenderer.TemplateRenderer;
 import com.atlassian.uri.Uri;
 import com.atlassian.uri.UriBuilder;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import org.apache.commons.lang.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -25,6 +26,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URI;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -86,10 +88,16 @@ public final class IFrameRendererImpl implements IFrameRenderer
                 iframeContext.getIFrameParams().setParam("height", queryParams.get("height")[0]);
             }
 
+			ctx.put("queryParams", contextQueryParameters(queryParams));
             ctx.put("title", pageInfo.getTitle());
             ctx.put("contextPath", iframeHost.getContextPath());
             ctx.put("iframeHtml", render(iframeContext, extraPath, queryParams, remoteUser));
             ctx.put("decorator", pageInfo.getDecorator());
+
+			for (Map.Entry<String, String> metaTag : pageInfo.getMetaTagsContent().entrySet())
+			{
+				ctx.put(metaTag.getKey(), metaTag.getValue());
+			}
 
             templateRenderer.render("velocity/iframe-page" + pageInfo.getTemplateSuffix() + ".vm", ctx, writer);
         }
@@ -103,7 +111,7 @@ public final class IFrameRendererImpl implements IFrameRenderer
         }
     }
 
-    @Override
+	@Override
     public String render(IFrameContext iframeContext, String extraPath, Map<String, String[]> queryParams, String remoteUser) throws IOException
     {
         webResourceManager.requireResourcesForContext("remotable-plugins-iframe");
@@ -157,4 +165,14 @@ public final class IFrameRendererImpl implements IFrameRenderer
         }
         return scripts;
     }
+
+	private Map<String, List<String>> contextQueryParameters(final Map<String, String[]> queryParams)
+	{
+		final Map<String, List<String>> ctxQueryParams = Maps.newHashMap();
+		for (Map.Entry<String, String[]> param : queryParams.entrySet())
+		{
+			ctxQueryParams.put(param.getKey(), Arrays.asList(param.getValue()));
+		}
+		return ctxQueryParams;
+	}
 }

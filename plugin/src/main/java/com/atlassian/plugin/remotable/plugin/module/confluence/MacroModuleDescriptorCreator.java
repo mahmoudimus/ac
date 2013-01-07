@@ -29,6 +29,7 @@ import com.atlassian.plugin.web.conditions.AlwaysDisplayCondition;
 import com.atlassian.plugin.webresource.WebResourceModuleDescriptor;
 import com.atlassian.sal.api.component.ComponentLocator;
 import com.atlassian.sal.api.user.UserManager;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang.StringUtils;
@@ -274,7 +275,7 @@ public class MacroModuleDescriptorCreator
                 @Override
                 public <T> T createModule(String name, ModuleDescriptor<T> moduleDescriptor) throws PluginParseException
                 {
-                    PageInfo pageInfo = new PageInfo("", "-dialog", key, new AlwaysDisplayCondition());
+                    PageInfo pageInfo = new PageInfo("", "-dialog", key, new AlwaysDisplayCondition(), ImmutableMap.<String, String>of());
 
                     return (T) new IFramePageServlet(
                             pageInfo,

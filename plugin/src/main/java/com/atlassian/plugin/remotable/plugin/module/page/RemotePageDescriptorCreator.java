@@ -17,12 +17,14 @@ import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.web.conditions.AlwaysDisplayCondition;
 import com.atlassian.sal.api.user.UserManager;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
 import org.dom4j.Element;
 import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
+import java.util.Map;
 
 import static com.atlassian.plugin.remotable.plugin.util.OsgiServiceUtils.getService;
 import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.getRequiredAttribute;
@@ -71,6 +73,7 @@ public final class RemotePageDescriptorCreator
         private String decorator = "";
         private String templateSuffix = "";
         private Condition condition = new AlwaysDisplayCondition();
+		private Map<String, String> metaTagsContent = Maps.newHashMap();
 
         public Builder()
         {
@@ -117,7 +120,7 @@ public final class RemotePageDescriptorCreator
                 public <T> T createModule(String name, ModuleDescriptor<T> moduleDescriptor) throws
                         PluginParseException
                 {
-                    PageInfo pageInfo = new PageInfo(decorator, templateSuffix, pageName, condition);
+                    PageInfo pageInfo = new PageInfo(decorator, templateSuffix, pageName, condition, metaTagsContent);
 
                     return (T) new IFramePageServlet(
                             pageInfo,
@@ -162,5 +165,11 @@ public final class RemotePageDescriptorCreator
                                  .setPreferredWeight(webItemContext.getPreferredWeight());
             return this;
         }
-    }
+
+		public Builder setMetaTagContent(String name, String content)
+		{
+			metaTagsContent.put(name, content);
+			return this;
+		}
+	}
 }

@@ -9,7 +9,7 @@
       </ol>
     </content>
     <meta name="tab" content="$!title"/>
-    <meta name="decorator" content="$decorator"></meta>
+    <meta name="decorator" content="$decorator"/>
 </head>
 
 <body>

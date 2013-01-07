@@ -139,7 +139,7 @@ public class ProjectConfigWebPanelModuleDescriptor extends AbstractModuleDescrip
     private String getLocation(final Element element)
     {
         final String location = getOptionalAttribute(element, "location", null);
-        if (StringUtils.isEmpty(location) || location.equals("left-panel"))
+        if (StringUtils.isEmpty(location) || location.equals("left"))
         {
             return PROJECT_WEB_PANEL_LOCATION + ".left-panels";
         }

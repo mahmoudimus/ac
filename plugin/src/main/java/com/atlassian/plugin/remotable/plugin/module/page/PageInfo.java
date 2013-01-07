@@ -2,21 +2,25 @@ package com.atlassian.plugin.remotable.plugin.module.page;
 
 import com.atlassian.plugin.web.Condition;
 
+import java.util.Map;
+
 public class PageInfo
 {
     private final String decorator;
     private final String templateSuffix;
     private final String title;
     private final Condition condition;
+	private final Map<String, String> metaTagsContent;
 
-    public PageInfo(String decorator, String templateSuffix, String title,
-            Condition condition)
+	public PageInfo(String decorator, String templateSuffix, String title,
+            Condition condition, Map<String, String> metaTagsContent)
     {
         this.decorator = decorator;
         this.templateSuffix = templateSuffix;
         this.title = title;
         this.condition = condition;
-    }
+		this.metaTagsContent = metaTagsContent;
+	}
 
     public String getDecorator()
     {
@@ -37,4 +41,9 @@ public class PageInfo
     {
         return condition;
     }
+
+	public Map<String, String> getMetaTagsContent()
+	{
+		return metaTagsContent;
+	}
 }

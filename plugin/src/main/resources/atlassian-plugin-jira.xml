@@ -71,6 +71,7 @@
      -->
     <jira-footer key="bigPipeFooter" class="com.atlassian.plugin.remotable.plugin.product.jira.JiraBigPipeFooter" />
 
+	<component-import key="projectService" interface="com.atlassian.jira.bc.project.ProjectService" />
     <component-import key="jiraAuthenticationContext" interface="com.atlassian.jira.security.JiraAuthenticationContext" />
     <component-import key="jiraUserManager" interface="com.atlassian.jira.user.util.UserManager" />
     <component-import key="InternalWebSudoManager" interface="com.atlassian.jira.security.websudo.InternalWebSudoManager" />
@@ -131,6 +132,13 @@
     <described-module-type key="project-config-panel" class="com.atlassian.plugin.remotable.plugin.module.jira.projectconfig.ProjectConfigWebPanelModuleDescriptor">
         <description>
             A remote page decorated as a web panel on the project configuration page.
+        </description>
+    </described-module-type>
+
+
+    <described-module-type key="project-config-tab" class="com.atlassian.plugin.remotable.plugin.module.jira.projectconfig.ProjectConfigTabModuleDescriptor">
+        <description>
+            A remote page decorated as a tab on the project configuration page.
         </description>
     </described-module-type>
 </application>
