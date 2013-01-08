@@ -23,7 +23,7 @@ import static com.google.common.collect.Maps.newHashMap;
 public class RemotePluginEmbeddedTestPage
 {
     @Inject
-    private AtlassianWebDriver driver;
+    protected AtlassianWebDriver driver;
 
     private final String key;
     private WebElement containerDiv;

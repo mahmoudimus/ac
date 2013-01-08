@@ -69,23 +69,25 @@ public class TestJira
     }
 
     @Test
-	public void testViewIssuePageWithEmbeddedPanel() throws Exception
+    public void testViewIssuePageWithEmbeddedPanelAnonymous() throws Exception
     {
-        testLoggedInAndAnonymous(new Callable()
-        {
-            @Override
-            public Object call() throws Exception
-            {
-                RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Test issue for panel");
-                JiraViewIssuePage viewIssuePage = product.visit(JiraViewIssuePage.class,
-                        issue.getKey(),
-                        EMBEDDED_ISSUE_PANEL_ID);
-                assertEquals("Success", viewIssuePage.getMessage());
-                return null;
-            }
-        });
+        RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Test issue for panel");
+        JiraViewIssuePage viewIssuePage = product.visit(JiraViewIssuePage.class, issue.getKey(),
+                EMBEDDED_ISSUE_PANEL_ID);
+        assertEquals("Success", viewIssuePage.getMessage());
+    }
 
-	}
+    @Test
+    public void testViewIssuePageWithEmbeddedPanelLoggedInWithEdit() throws Exception
+    {
+        loginAsAdmin();
+        RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Test issue for panel");
+        JiraViewIssuePage viewIssuePage = product.visit(JiraViewIssuePage.class, issue.getKey(),
+                EMBEDDED_ISSUE_PANEL_ID);
+        assertEquals("Success", viewIssuePage.getMessage());
+        viewIssuePage.addLabelViaInlineEdit("foo");
+        assertEquals("Success", viewIssuePage.getMessage());
+    }
 
     @Test
     public void testProjectTab() throws Exception
@@ -95,10 +97,9 @@ public class TestJira
             @Override
             public Object call() throws Exception
             {
-                RemotePluginEmbeddedTestPage page = product.visit(BrowseProjectPage.class,
-                        project.getKey())
-                        .openTab(JiraRemotablePluginProjectTab.class)
-                        .getEmbeddedPage();
+                RemotePluginEmbeddedTestPage page = product.visit(BrowseProjectPage.class, project.getKey())
+                                                           .openTab(JiraRemotablePluginProjectTab.class)
+                                                           .getEmbeddedPage();
 
                 assertEquals("Success", page.getMessage());
                 return null;
@@ -134,13 +135,11 @@ public class TestJira
             public Object call() throws Exception
             {
                 RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Test issue for tab");
-                product.visit(AdvancedSearch.class)
-                        .enterQuery("project = " + project.getKey())
-                        .submit();
+                product.visit(AdvancedSearch.class).enterQuery("project = " + project.getKey()).submit();
 
-                PlainTextView plainTextView = product.getPageBinder().bind(
-                        ViewChangingSearchResult.class)
-                        .openView("Raw Keys", PlainTextView.class);
+                PlainTextView plainTextView = product.getPageBinder()
+                                                     .bind(ViewChangingSearchResult.class)
+                                                     .openView("Raw Keys", PlainTextView.class);
                 assertTrue(plainTextView.getContent().contains(issue.getKey()));
                 return null;
             }

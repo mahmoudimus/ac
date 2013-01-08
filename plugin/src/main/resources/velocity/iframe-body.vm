@@ -20,15 +20,31 @@
     <script src="$scriptUrl"></script>
   #end
   <script>
-    RemotablePlugins.create({
-      ns: "$namespace",
-      src: "$iframeSrcHtml",
-      width: "$!width",
-      height: "$!height",
-      contextPath: "$contextPath",
-      appKey: "$plugin.key",
-      userId: "$userId",
-      dialog: "$!dialog"
-    });
+    (function(jQuery, JIRA) {
+        function init() {
+            RemotablePlugins.create({
+                ns: "$namespace",
+                src: "$iframeSrcHtml",
+                width: "$!width",
+                height: "$!height",
+                contextPath: "$contextPath",
+                appKey: "$plugin.key",
+                userId: "$userId",
+                dialog: "$!dialog"
+            });
+        }
+        if (JIRA) {
+            jQuery(function() {
+                JIRA.bind(JIRA.Events.NEW_CONTENT_ADDED, function(e, context, reason) {
+                    var jcontext = jQuery(context);
+
+                    if (jQuery('#ra-$namespace', jcontext).length > 0) {
+                        init();
+                    }
+                });
+            });
+        }
+        init();
+    })(jQuery, window.JIRA);
   </script>
 </div>
