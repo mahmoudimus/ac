@@ -68,6 +68,9 @@ public class SpeakeasyLoader implements DisposableBean
     public void destroy() throws Exception
     {
         speakeasyBackendTracker.close();
-        eventPublisher.unregister(eventListener);
+        if (eventListener != null)
+        {
+            eventPublisher.unregister(eventListener);
+        }
     }
 }
