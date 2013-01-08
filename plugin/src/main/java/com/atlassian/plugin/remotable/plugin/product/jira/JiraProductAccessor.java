@@ -91,7 +91,9 @@ public final class JiraProductAccessor implements ProductAccessor
     {
         return ImmutableMap.of(
                 "project_id", "$!helper.project.id",
-                "issue_id", "$!issue.id");
+                "project_key", "$!helper.project.key",
+                "issue_id", "$!issue.id",
+                "issue_key", "$!issue.key");
     }
 
     @Override
