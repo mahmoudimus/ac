@@ -2,13 +2,20 @@ package it.jira;
 
 import com.atlassian.jira.pageobjects.JiraTestedProduct;
 import com.atlassian.jira.pageobjects.navigator.AdvancedSearch;
+import com.atlassian.jira.pageobjects.navigator.BasicSearch;
 import com.atlassian.jira.pageobjects.pages.DashboardPage;
 import com.atlassian.jira.pageobjects.pages.project.BrowseProjectPage;
 import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.pageobjects.TestedProductFactory;
+import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
+import com.atlassian.plugin.remotable.test.GeneralPage;
 import com.atlassian.plugin.remotable.test.HtmlDumpRule;
+import com.atlassian.plugin.remotable.test.RemotePluginAwarePage;
+import com.atlassian.plugin.remotable.test.RemotePluginDialog;
 import com.atlassian.plugin.remotable.test.RemotePluginEmbeddedTestPage;
+import com.atlassian.plugin.remotable.test.RemotePluginTestPage;
+import com.atlassian.plugin.remotable.test.jira.JiraIssueNavigatorPage;
 import com.atlassian.plugin.remotable.test.jira.JiraOps;
 import com.atlassian.plugin.remotable.test.jira.JiraRemotablePluginProjectTab;
 import com.atlassian.plugin.remotable.test.jira.JiraViewIssuePage;
@@ -30,6 +37,9 @@ import java.rmi.RemoteException;
 import java.util.concurrent.Callable;
 
 import static junit.framework.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class TestJira
 {
@@ -87,6 +97,25 @@ public class TestJira
         assertEquals("Success", viewIssuePage.getMessage());
         viewIssuePage.addLabelViaInlineEdit("foo");
         assertEquals("Success", viewIssuePage.getMessage());
+    }
+
+    @Test
+    public void testLoadDialogFromIssueNavigatorActionCog() throws RemoteException
+    {
+        loginAsAdmin();
+        // ensure one issue
+        jiraOps.createIssue(project.getKey(), "Test issue for dialog action cog test");
+        RemotePluginTestPage page = product.getPageBinder().navigateToAndBind(JiraIssueNavigatorPage.class)
+                .getResults()
+                .nextIssue()
+                .openActionsDialog()
+                .queryAndSelect("Test Issue Action", RemotePluginTestPage.class, "jira-issueAction");
+        RemotePluginDialog dialog = product.getPageBinder().bind(RemotePluginDialog.class, page);
+                assertFalse(dialog.wasSubmitted());
+                assertEquals(false, dialog.submit());
+                assertTrue(dialog.wasSubmitted());
+                assertEquals(true, dialog.submit());
+
     }
 
     @Test

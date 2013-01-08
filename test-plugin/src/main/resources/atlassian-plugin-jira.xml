@@ -32,4 +32,6 @@
             <condition url="/onlyBettyCondition" />
         </conditions>
     </project-tab-page>
+
+    <dialog-page key="issueAction" name="Test Issue Action" section="operations-subtasks" url="/myDialog" />
 </application>
