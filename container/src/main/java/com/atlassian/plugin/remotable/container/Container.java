@@ -177,7 +177,7 @@ public final class Container
         }
 
         final PluginLoader bundledPluginLoader = new BundledPluginLoader(
-                this.getClass().getResource("/bundled-plugins.zip"),
+                this.getClass().getResource("/bundled-plugins-container.zip"),
                 configuration.getCacheDirectory("bundled"),
                 Arrays.<PluginFactory>asList(osgiPluginDeployer, bundleFactory),
                 pluginEventManager);
