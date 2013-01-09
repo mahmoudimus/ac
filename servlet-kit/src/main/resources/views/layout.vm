@@ -5,14 +5,20 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <meta name="viewport" content="width=device-width">
   #if ($pageTitle)
-      <title>$pageTitle</title>
+  <title>$pageTitle</title>
   #end
   #parse ($headTemplate)
+  #foreach ($url in $appStylesheetUrls)
+  <link rel="stylesheet" href="$url">
+  #end
   <script src="$hostScriptUrl"></script>
   <script>RA.init();</script>
 </head>
 <body>
   $bodyHtml
   #parse ($tailTemplate)
+  #foreach ($url in $appScriptUrls)
+  <script src="$url"></script>
+  #end
 </body>
 </html>

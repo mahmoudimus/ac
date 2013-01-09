@@ -8,56 +8,45 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
-import java.net.URL;
 import java.util.Map;
 
 /**
- * Used by atlassian/renderer
+ * Used by atlassian/util
  */
-public class HttpUtils
+public class TemplateRenderer
 {
     private enum TemplateExtension
     {
-        mustache, mu
+        mustache, mu;
+
+        public static boolean contains(String value)
+        {
+            for (TemplateExtension ext : TemplateExtension.values())
+            {
+                if (ext.name().equals(value))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 
     private final Plugin plugin;
 
-    public HttpUtils(PluginRetrievalService pluginRetrievalService)
+    public TemplateRenderer(PluginRetrievalService pluginRetrievalService)
     {
         plugin = pluginRetrievalService.getPlugin();
     }
 
-    // @todo this is all pretty much bogus -- replace with Atlassian Template Renderer service
     public String render(String path, Map<String,Object> context)
     {
-        String extension = null;
-        URL resource = null;
+        String realPath = resolvePath(path);
 
-        int exti = path.lastIndexOf('.') + 1;
-        if (exti > 1 && exti < path.length())
+        if (realPath != null)
         {
-            extension = path.substring(exti);
-            resource = plugin.getResource(path);
-        }
-        else
-        {
-            for (TemplateExtension ext : TemplateExtension.values())
-            {
-                extension = ext.name();
-                String tryPath = path + "." + extension;
-                resource = plugin.getResource(tryPath);
-                if (resource != null)
-                {
-                    path = tryPath;
-                    break;
-                }
-            }
-        }
-
-        if (resource != null)
-        {
-            return getRenderer(path, extension).render(path, context);
+            String extension = realPath.substring(realPath.lastIndexOf('.') + 1);
+            return getRenderer(extension).render(realPath, context);
         }
         else
         {
@@ -65,7 +54,46 @@ public class HttpUtils
         }
     }
 
-    private Renderer getRenderer(String path, String extension)
+    public boolean canRender(String path)
+    {
+        return resolvePath(path) != null;
+    }
+
+    private String resolvePath(String path)
+    {
+        if (path == null) return path;
+        String result = null;
+        String extension;
+
+        int exti = path.lastIndexOf('.') + 1;
+        if (exti > 1 && exti < path.length())
+        {
+            extension = path.substring(exti);
+            if (TemplateExtension.contains(extension))
+            {
+                if (plugin.getResource(path) != null)
+                {
+                    result = path;
+                }
+            }
+        }
+        else
+        {
+            for (TemplateExtension ext : TemplateExtension.values())
+            {
+                extension = ext.name();
+                String tryPath = path + "." + extension;
+                if (plugin.getResource(tryPath) != null)
+                {
+                    result = tryPath;
+                    break;
+                }
+            }
+        }
+        return result;
+    }
+
+    private Renderer getRenderer(String extension)
     {
         Renderer renderer;
         if (TemplateExtension.mustache.name().equalsIgnoreCase(extension)
@@ -75,7 +103,7 @@ public class HttpUtils
         }
         else
         {
-            throw new IllegalArgumentException("Unrecognized template file extension for path '" + path + "'");
+            throw new IllegalArgumentException("Unrecognized template file extension '" + extension + "'");
         }
         return renderer;
     }

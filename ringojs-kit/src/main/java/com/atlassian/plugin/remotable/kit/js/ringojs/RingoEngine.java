@@ -60,8 +60,6 @@ public class RingoEngine
             ringoConfig.addModuleRepository(ringoHome);
             ringoConfig.addModuleRepository(home);
 
-            // todo: add wrap factory to wrap things like futures when we get a promises library
-
             if (log.isDebugEnabled())
             {
                 //ringoConfig.setDebug(true);

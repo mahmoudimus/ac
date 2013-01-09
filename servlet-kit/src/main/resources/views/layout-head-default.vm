@@ -1,4 +1,1 @@
 <link rel="stylesheet" href="$hostStylesheetUrl">
-#foreach ($url in $appStylesheetUrls)
-<link rel="stylesheet" href="$url">
-#end

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width">
+  {{#if pageTitle}}
+  <title>{{pageTitle}}</title>
+  {{/if}}
+  {{{head}}}
+  {{#each stylesheetUrls}}
+  <link rel="stylesheet" href="{{this}}">
+  {{/each}}
+  <script src="{{hostScriptUrl}}"></script>
+  <script>RA.init();</script>
+</head>
+<body>
+  {{{body}}}
+  {{{tail}}}
+  {{#each scriptUrls}}
+  <script src="{{this}}"></script>
+  {{/each}}
+</body>
+</html>

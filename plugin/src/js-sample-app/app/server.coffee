@@ -1,22 +1,19 @@
-http = require "atlassian/httpclient"
+http = require "atlassian/http/host-client"
 context = require "atlassian/context"
-mustache = require "atlassian/renderer"
+{renderTemplate} = require "atlassian/util"
 
 exports.app = (req) ->
 
-  response = null
-  error = null
-
   # make a test httpclient request
-  http.get("/rest/remoteplugintest/1/user")
-    .done((res) -> response = res)
-    .fail((ex, exstr) -> error = exstr)
-    .wait()
+  try
+    response = http.newRequest("/rest/remoteplugintest/1/user").get().claim()
+  catch ex
+    error = ex
 
   # render the index view
-  body = mustache.render "app/views/index.mustache",
-    clientKey: context.clientKey()
-    baseUrl: context.hostBaseUrl()
+  body = renderTemplate "app/views/index",
+    clientKey: context.clientKey
+    localBaseUrl: context.hostBaseUrl
     hasHttpGetResponse: !!response
     httpGetStatus: response?.statusCode
     httpGetStatusText: response?.statusText

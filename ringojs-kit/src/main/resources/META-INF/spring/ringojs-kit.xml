@@ -19,6 +19,6 @@ http://www.springframework.org/schema/context
     <osgi:reference id="renderContext" interface="com.atlassian.plugin.remotable.api.service.RenderContext" />
 
     <beans:bean id="httpResourceProvider" class="com.atlassian.plugin.remotable.kit.js.RingoJsKitBootstrap" autowire="constructor"/>
-    <beans:bean id="httpUtils" class="com.atlassian.plugin.remotable.kit.js.HttpUtils" autowire="constructor"/>
+    <beans:bean id="templateRenderer" class="com.atlassian.plugin.remotable.kit.js.TemplateRenderer" autowire="constructor"/>
 
 </beans:beans>
