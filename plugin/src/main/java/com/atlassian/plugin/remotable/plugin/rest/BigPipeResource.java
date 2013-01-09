@@ -1,6 +1,6 @@
 package com.atlassian.plugin.remotable.plugin.rest;
 
-import com.atlassian.plugin.remotable.spi.http.bigpipe.BigPipe;
+import com.atlassian.plugin.remotable.api.service.http.bigpipe.BigPipe;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import org.json.JSONException;
 
@@ -38,7 +38,7 @@ public class BigPipeResource
     @Produces("application/json")
     public Response getContent(@PathParam("id") String requestId) throws IOException, InterruptedException, JSONException
     {
-        String result = bigPipe.convertContentHandlersToJson(bigPipe.waitForCompletedHandlers(requestId));
+        String result = bigPipe.waitForContent(requestId);
         CacheControl cacheControl = new CacheControl();
         cacheControl.setNoCache(true);
         return Response.ok(result).cacheControl(cacheControl).build();

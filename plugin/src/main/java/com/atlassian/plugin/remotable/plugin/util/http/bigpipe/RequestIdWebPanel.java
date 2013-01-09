@@ -1,6 +1,6 @@
 package com.atlassian.plugin.remotable.plugin.util.http.bigpipe;
 
-import com.atlassian.plugin.remotable.spi.http.bigpipe.BigPipe;
+import com.atlassian.plugin.remotable.api.service.http.bigpipe.BigPipe;
 import com.atlassian.plugin.web.model.WebPanel;
 
 import java.io.IOException;

@@ -1,6 +1,6 @@
 package com.atlassian.plugin.remotable.plugin.util.http.bigpipe;
 
-import com.atlassian.plugin.remotable.spi.http.bigpipe.BigPipe;
+import com.atlassian.plugin.remotable.api.service.http.bigpipe.BigPipe;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;

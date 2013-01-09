@@ -2,7 +2,7 @@ package com.atlassian.plugin.remotable.plugin.product.jira;
 
 import com.atlassian.jira.plugin.navigation.FooterModuleDescriptor;
 import com.atlassian.jira.plugin.navigation.PluggableFooter;
-import com.atlassian.plugin.remotable.spi.http.bigpipe.BigPipe;
+import com.atlassian.plugin.remotable.api.service.http.bigpipe.BigPipe;
 import com.atlassian.plugin.webresource.UrlMode;
 import com.atlassian.plugin.webresource.WebResourceUrlProvider;
 import org.slf4j.Logger;
@@ -50,8 +50,7 @@ public class JiraBigPipeFooter implements PluggableFooter
         String bigPipeJs = webResourceUrlProvider.getStaticPluginResourceUrl(
                 "com.atlassian.labs.remoteapps-plugin:big-pipe", "big-pipe.js", UrlMode.AUTO
         );
-        String json = bigPipe.convertContentHandlersToJson(
-                bigPipe.consumeCompletedHandlers(bigPipe.getRequestIdAccessor().getRequestId()));
+        String json = bigPipe.consumeContent(bigPipe.getRequestIdAccessor().getRequestId());
         return "<script>" +
                 "(function(global) {" +
                 "var RemotablePlugins = global.RemotablePlugins = global.RemotablePlugins || {};" +

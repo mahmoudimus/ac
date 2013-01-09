@@ -7,12 +7,11 @@ import com.atlassian.confluence.event.events.content.page.PageViewEvent;
 import com.atlassian.confluence.xhtml.api.XhtmlContent;
 import com.atlassian.event.api.EventListener;
 import com.atlassian.event.api.EventPublisher;
+import com.atlassian.plugin.remotable.api.service.http.bigpipe.BigPipe;
 import com.atlassian.plugin.remotable.plugin.DefaultRemotablePluginAccessorFactory;
 import com.atlassian.plugin.remotable.plugin.util.http.CachingHttpContentRetriever;
 import com.atlassian.plugin.remotable.plugin.util.http.ContentRetrievalErrors;
 import com.atlassian.plugin.remotable.plugin.util.http.ContentRetrievalException;
-import com.atlassian.plugin.remotable.spi.http.bigpipe.BigPipe;
-import com.atlassian.plugin.remotable.spi.http.bigpipe.BigPipeContentHandler;
 import com.atlassian.renderer.RenderContextOutputType;
 import com.atlassian.sal.api.component.ComponentLocator;
 import com.atlassian.sal.api.user.UserManager;
@@ -101,18 +100,25 @@ public class MacroContentManager implements DisposableBean
                         new HtmlToSafeHtmlFunction(macroInstance, urlParameters, macroContentLinkParser, xhtmlCleaner,
                                 xhtmlUtils));
 
-        BigPipeContentHandler contentHandler = bigPipe.createContentHandler(requestId, contentId, promise);
+        bigPipe.registerContentPromise(requestId, contentId, promise);
 
         // only render display via big pipe, block for everyone else
         if (RenderContextOutputType.DISPLAY.equals(macroInstance.getConversionContext().getOutputType()))
         {
-            return contentHandler.getCurrentContent();
+            if (promise.isDone())
+            {
+                return promise.claim();
+            }
+            else
+            {
+                return "<span class=\"bp-" + contentId + " bp-loading\"></span>";
+            }
         }
         else
         {
             try
             {
-                return contentHandler.getContent().claim();
+                return promise.claim();
             }
             catch (RuntimeException e)
             {

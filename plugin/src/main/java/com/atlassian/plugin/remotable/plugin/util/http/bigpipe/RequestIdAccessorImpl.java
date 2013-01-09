@@ -1,6 +1,6 @@
 package com.atlassian.plugin.remotable.plugin.util.http.bigpipe;
 
-import com.atlassian.plugin.remotable.spi.http.bigpipe.RequestIdAccessor;
+import com.atlassian.plugin.remotable.api.service.http.bigpipe.RequestIdAccessor;
 import com.atlassian.security.random.SecureRandomFactory;
 
 import java.security.SecureRandom;
