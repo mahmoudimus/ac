@@ -1,6 +1,5 @@
 Request = require "atlassian/request"
 Response = require "atlassian/response"
-context = require "atlassian/context"
 {merge, mash} = require "vendor/underscore"
 
 methods = ["get", "post", "put", "del"]

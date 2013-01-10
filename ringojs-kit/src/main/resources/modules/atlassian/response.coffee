@@ -24,7 +24,7 @@ module.exports = (appDir, options) ->
     else
       data.status = statusCode
     if headers
-      data.headers[k] = v for own k, v of headers
+      data.headers[k] = v for k, v of headers
 
   # response.write(chunk)
   write: (chunk) ->
@@ -45,7 +45,8 @@ module.exports = (appDir, options) ->
   # response.send(path)
   # response.send(path, headers)
   sendNotFound: (path, headers) ->
-    @renderError ("Not Found#{if path then ': ' + path else ''}"), headers, 404
+    @writeHead 404, headers
+    @end "Not Found#{if path then ': ' + path else ''}"
 
   # response.send(layout, body)
   # response.send(layout, body, headers)
@@ -54,11 +55,11 @@ module.exports = (appDir, options) ->
     try
       resType = if options.aui then 'aui' else 'default'
       # @todo validate that options.aui contains a valid version number
-      resLocals = merge context,
+      resLocals = merge context.toJSON(),
         aui: (if options.aui then "v#{options.aui.replace('.', '_')}" else null)
       locals = merge resLocals,
-        stylesheetUrls: ("#{publicUrl 'css', path}" for path in options.stylesheets)
-        scriptUrls: ("#{publicUrl 'js', path}" for path in options.scripts)
+        stylesheetUrls: ("#{publicUrl 'css', path}" for path in options.stylesheets or [])
+        scriptUrls: ("#{publicUrl 'js', path}" for path in options.scripts or [])
         head: renderView(appDir, "layout-head-#{resType}", resLocals)
         tail: renderView(appDir, "layout-tail-#{resType}", resLocals)
         body: body
@@ -88,7 +89,7 @@ module.exports = (appDir, options) ->
   # response.renderWithLayout(layout, view, locals, headers, statusCode)
   renderWithLayout: (layout, view, locals, headers, statusCode) ->
     try
-      body = renderView appDir, view, merge(context, locals)
+      body = renderView appDir, view, merge(context.toJSON(), locals)
     catch ex
       @renderErrorWithLayout layout, ex, headers, statusCode
     @sendWithLayout layout, body, headers, statusCode

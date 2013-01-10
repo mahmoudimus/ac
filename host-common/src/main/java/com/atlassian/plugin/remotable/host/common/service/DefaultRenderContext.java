@@ -9,6 +9,8 @@ import com.atlassian.sal.api.message.LocaleResolver;
 import com.google.common.collect.ImmutableMap;
 
 import java.net.URI;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
@@ -26,8 +28,7 @@ public class DefaultRenderContext implements RenderContext
     public DefaultRenderContext(DefaultRequestContext requestContext,
                                 SignedRequestHandler signedRequestHandler,
                                 LocaleResolver localeResolver,
-                                I18nResolver i18nResolver
-    )
+                                I18nResolver i18nResolver)
     {
         this.requestContext = requestContext;
         this.signedRequestHandler = signedRequestHandler;
@@ -38,7 +39,8 @@ public class DefaultRenderContext implements RenderContext
     @Override
     public String getHostContextPath()
     {
-        return URI.create(getHostBaseUrl()).getPath();
+        String url = getHostBaseUrl();
+        return url != null ? URI.create(url).getPath() : null;
     }
 
     @Override
@@ -50,7 +52,8 @@ public class DefaultRenderContext implements RenderContext
     @Override
     public String getHostBaseResourceUrl()
     {
-        return requestContext.getHostBaseUrl() + HOST_RESOURCE_PATH;
+        String url = getHostBaseUrl();
+        return url != null ? url + HOST_RESOURCE_PATH : null;
     }
 
     @Override
@@ -92,32 +95,24 @@ public class DefaultRenderContext implements RenderContext
     @Override
     public Map<String, Object> toContextMap()
     {
-        final ImmutableMap.Builder<String, Object> builder = ImmutableMap.<String, Object>builder()
-            .put("localBaseUrl", signedRequestHandler.getLocalBaseUrl())
-            .put("hostContextPath", getHostContextPath())
-            .put("hostBaseUrl", getHostBaseUrl())
-            .put("hostBaseResourceUrl", getHostBaseResourceUrl())
-            .put("hostStylesheetUrl", getHostStylesheetUrl())
-            .put("hostScriptUrl", getHostScriptUrl())
-            .put("locale", getLocale())
-            .put("i18n", getI18n());
-
-        setIfNotNull(builder, "userId", getUserId());
-        setIfNotNull(builder, "clientKey", getClientKey());
-
-        return builder.build();
-    }
-
-    private void setIfNotNull(ImmutableMap.Builder<String, Object> builder, String key, String value)
-    {
-        if (value != null)
-        {
-            builder.put(key, value);
-        }
+        return Collections.unmodifiableMap(new HashMap<String, Object>()
+        {{
+            put("localBaseUrl", signedRequestHandler.getLocalBaseUrl());
+            put("hostContextPath", getHostContextPath());
+            put("hostBaseUrl", getHostBaseUrl());
+            put("hostBaseResourceUrl", getHostBaseResourceUrl());
+            put("hostStylesheetUrl", getHostStylesheetUrl());
+            put("hostScriptUrl", getHostScriptUrl());
+            put("userId", getUserId());
+            put("clientKey", getClientKey());
+            put("locale", getLocale());
+            put("i18n", getI18n());
+        }});
     }
 
     private String getHostResourceUrl(String name, String ext)
     {
-        return getHostBaseResourceUrl() + "/" + name + (devMode ? "-debug" : "") + "." + ext;
+        String url = getHostBaseResourceUrl();
+        return url != null ? url + "/" + name + (devMode ? "-debug" : "") + "." + ext : null;
     }
 }

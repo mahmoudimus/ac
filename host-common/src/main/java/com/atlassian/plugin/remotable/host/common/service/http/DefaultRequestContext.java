@@ -62,7 +62,8 @@ public final class DefaultRequestContext implements RequestContext
     @Override
     public String getHostBaseUrl()
     {
-        return signedRequestHandler.getHostBaseUrl(getClientKey());
+        String clientKey = getClientKey();
+        return clientKey != null ? signedRequestHandler.getHostBaseUrl(clientKey) : null;
     }
 
     public HttpServletRequest getRequest()

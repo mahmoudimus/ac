@@ -214,11 +214,12 @@ else
     VIEW_GENERAL=$VIEWS_DIR/general
     mkdir -p $APP_HOME/$VIEWS_DIR
     copyFile $TMPL_DIR main $SCRIPT_EXT
-    copyFile $TMPL_DIR $VIEW_GENERAL mustache
+    copyFile $TMPL_DIR $VIEW_GENERAL hbs
   else
     TMPL_DIR=$TMPL_BASE_DIR/structured
     APP_DIR=app
     SCRIPT_SERVER=$APP_DIR/server
+    SCRIPT_CONFIG=$APP_DIR/config
     SCRIPT_ROUTES=$APP_DIR/routes
     VIEWS_DIR=$APP_DIR/views
     VIEW_GENERAL=$VIEWS_DIR/general
@@ -229,8 +230,9 @@ else
     mkdir -p $APP_HOME/$LIB_DIR
     copyFile $TMPL_DIR main $SCRIPT_EXT
     copyFile $TMPL_DIR $SCRIPT_SERVER $SCRIPT_EXT
+    copyFile $TMPL_DIR $SCRIPT_CONFIG $SCRIPT_EXT
     copyFile $TMPL_DIR $SCRIPT_ROUTES $SCRIPT_EXT
-    copyFile $TMPL_DIR $VIEW_GENERAL mustache
+    copyFile $TMPL_DIR $VIEW_GENERAL hbs
     copyFile $TMPL_COMMON_DIR $SCRIPT_CLIENT js
     copyFile $TMPL_COMMON_DIR $STYLESHEET_STYLES css
     copyFile $TMPL_COMMON_DIR $LIB_README md

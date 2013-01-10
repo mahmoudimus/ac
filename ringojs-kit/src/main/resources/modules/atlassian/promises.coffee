@@ -1,17 +1,15 @@
 importClass com.atlassian.util.concurrent.Promises
 importClass com.google.common.util.concurrent.SettableFuture
-{delegate} = require "./util"
+{proxy} = require "./util"
 
 exports = module.exports =
-
-  # @todo DEBUG when/all
 
   # creates a new promise from
   when: ->
     args = for arg in arguments
-      if arg._delegate instanceof Promise then arg.delegate
-      else if arg.promise then arg.promise()
-      else if arg.toPromise then arg.toPromise()
+      if arg._delegate instanceof Promise then arg._delegate
+      else if typeof arg.promise is "function" then arg.promise()
+      else if typeof arg.toPromise is "function" then arg.toPromise()
       else arg
     Promises.when args...
 
@@ -21,11 +19,11 @@ exports = module.exports =
   Deferred: ->
     future = SettableFuture.create()
 
-    deferred = delegate future
+    deferred = proxy future
     deferred.resolve = -> future.set arguments...
     deferred.reject = -> future.setException arguments...
 
-    promise = delegate Promises.forFuture(future)
+    promise = proxy Promises.forFuture(future)
     promise.pipe = -> promise.map arguments...
     deferred.promise = -> promise
 

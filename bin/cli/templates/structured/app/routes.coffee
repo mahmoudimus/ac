@@ -2,7 +2,9 @@ module.exports = (app) ->
 
   app.get "/general", (req, res) ->
     res.render "general",
-      headers: ({name: k, value: v} for k, v of req.headers)
+      headers: ({name, value} for name, value of req.headers)
+      pathParams: ({name, value} for name, value of req.params)
+      queryParams: ({name, value} for name, value of req.query)
       method: req.method
       scriptName: req.scriptName
       pathInfo: req.pathInfo

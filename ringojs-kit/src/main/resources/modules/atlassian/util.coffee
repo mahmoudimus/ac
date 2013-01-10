@@ -15,14 +15,24 @@ exports = module.exports =
   plugin: ->
     pluginRetrievalService.getPlugin()
 
-  # creates a delegating wrapper for the parameter object 'o'
-  delegate: do ->
+  # creates a js proxy object for for the given java 'delegate'
+  proxy: do ->
     blacklist = (k for k of new java.lang.Object())
-    (o) ->
-      wrap = (v) ->
-        if typeof v is "function" then (-> v.apply o, arguments) else v
-      merge mash([k, wrap(v)] for k, v of o when k not in blacklist),
-        _delegate: o
+    (delegate) ->
+      proxy = _delegate: delegate
+      for k, v of delegate when k not in blacklist
+        do (k, v) ->
+          if typeof v is "function"
+            forward = -> v.apply delegate, arguments
+            if (match = /^([gs])et([A-Z])/.exec k)
+              GorS = match[1].toUpperCase()
+              p = match[2].toLowerCase() + k.slice(4)
+              proxy["__define#{GorS}etter__"] p, forward
+            else
+              proxy[k] = forward
+          else
+            proxy[k] = v
+      proxy
 
   slurp: (stream, charset="UTF-8") ->
     throw new Error "Invalid input stream '#{stream}'" if not stream

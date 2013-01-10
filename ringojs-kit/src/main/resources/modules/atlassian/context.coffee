@@ -1,5 +1,9 @@
-context = appContext.getBean("renderContext").toContextMap()
+context = appContext.getBean("renderContext")
 
-{mash} = require "vendor/underscore"
+{merge, mash} = require "vendor/underscore"
+{proxy} = require "atlassian/util"
 
-exports = module.exports = mash ([k, context.get(k)] for k in context.keySet().toArray())
+module.exports = do ->
+  merge (proxy context),
+    toJSON: ->
+      mash ([e.key, e.value] for e in context.toContextMap().entrySet().toArray())
