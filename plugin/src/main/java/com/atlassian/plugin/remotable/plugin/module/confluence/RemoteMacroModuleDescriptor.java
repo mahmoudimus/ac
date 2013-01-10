@@ -24,8 +24,7 @@ public class RemoteMacroModuleDescriptor extends AbstractModuleDescriptor<Void>
             DynamicDescriptorRegistration dynamicDescriptorRegistration,
             MacroModuleDescriptorCreator macroModuleDescriptorCreator,
             final MacroContentManager macroContentManager,
-            final DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory,
-            final WebResourceManager webResourceManager)
+            final DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory)
     {
         this.dynamicDescriptorRegistration = dynamicDescriptorRegistration;
         this.macroModuleDescriptorCreatorBuilder = macroModuleDescriptorCreator.newBuilder()
@@ -35,8 +34,7 @@ public class RemoteMacroModuleDescriptor extends AbstractModuleDescriptor<Void>
                 public RemoteMacro create(RemoteMacroInfo remoteMacroInfo)
                 {
                     return new StorageFormatMacro(remoteMacroInfo,
-                            macroContentManager, remotablePluginAccessorFactory,
-                            webResourceManager);
+                            macroContentManager, remotablePluginAccessorFactory);
                 }
             });
     }

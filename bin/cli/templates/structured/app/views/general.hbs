@@ -39,6 +39,14 @@
     <td align="left" colspan="2">(no query params)</td>
   </tr>
   {{/each}}
+  {{#if body}}
+  <tr>
+    <th align="left" colspan="2">body</th>
+  </tr>
+  <tr>
+    <td colspan="2"><pre>{{body}}</pre></td>
+  </tr>
+  {{/if}}
   <tr>
     <th align="left" colspan="2">other properties</th>
   </tr>

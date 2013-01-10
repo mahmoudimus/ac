@@ -34,7 +34,7 @@ public class MultipageServlet extends HttpServlet
         out.print("<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>");
         out.print("<style>html, body, iframe {padding:0;margin:0;background:transparent;border: none;}</style>");
         out.print("<script src='" + hostBaseUrl + "/remotable-plugins/all"  + (isDevMode ? "-debug" : "") + ".js'></script>");
-        out.print("<script>RA.init('bridge');</script>");
+        out.print("<script>AP.init('bridge');</script>");
         out.print("</head>");
         out.print("<body>");
         out.print("<iframe src='" + internalUrl + "'></iframe>");

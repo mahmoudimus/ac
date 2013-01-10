@@ -1,31 +1,18 @@
-/*
-This code makes a xhr request back to the server before dom ready looking for big pipe content to
-replace.
- */
+// This code makes a xhr request back to the server before dom ready looking for big pipe content to replace.
 (function (global, AJS) {
   var $ = AJS.$;
-  var RemotablePlugins = global.RemotablePlugins = global.RemotablePlugins || {};
+  var AP = global.AP = global.AP || {};
   var contextPath = AJS.contextPath() || AJS.Meta.get("context-path");
   var requestId = $('meta[name="ra-request-id"]').attr("content");
 
-  function insertContent(content) {
-    var contentId = content.id;
-    var html = content.html;
-    var contentDiv$ = $('.bp-' + contentId);
+  function insertContent(contentId, html) {
+    var contentDiv$ = $('#' + contentId);
     if (contentDiv$.length == 0) {
-      if (content.html) {
-        $("body").append(content.html);
+      if (html) {
+        $("body").append(html);
       }
     } else {
       contentDiv$.html(html).removeClass("bp-loading");
-    }
-  }
-
-  function insertContents(contents){
-    if (contents.length > 0) {
-      $.each(contents, function () {
-        insertContent(this);
-      });
     }
   }
 
@@ -41,30 +28,43 @@ replace.
     });
   }
 
+  function processContents(contents) {
+    if (contents.items && contents.items.length > 0) {
+      $.each(contents.items, function () {
+        if (this.channelId === "html" && this.content) {
+          insertContent(this.contentId, this.content);
+        }
+      });
+    }
+  }
+
   function poll() {
     if (!requestId) {
       AJS.log("Missing request id.  atl.header web panels not supported?");
       return;
     }
-    $.ajax({ url:contextPath + "/rest/remotable-plugins/latest/bigpipe/request/" + requestId,
-      success:function (data) {
-        if (data.length != 0) {
-          $(document).ready(function() {
-            insertContents(data);
+    $.ajax({
+      url: contextPath + "/bigpipe/request/" + requestId,
+      dataType: "json",
+      timeout: 30000,
+      success: function (response) {
+        if (response.items && response.items.length !== 0) {
+          $(function() {
+            processContents(response);
             poll();
           });
-        } else {
-          replaceLoadingWithError("missing", "Missing content");
         }
       },
-      error:function(xhr, status, err) {
+      error: function(xhr, status, err) {
         replaceLoadingWithError(err, status);
-      }, dataType:"json", timeout:30000 });
+      }
+    });
   }
   poll();
   setTimeout(replaceLoadingWithMessage, 1000);
 
-  RemotablePlugins.BigPipe = {
-    insertContents : insertContents
+  AP.BigPipe = {
+    processContents: processContents
   }
+
 })(this, AJS);

@@ -2,11 +2,11 @@ package com.atlassian.plugin.remotable.host.common.service;
 
 import com.atlassian.plugin.remotable.api.service.RenderContext;
 import com.atlassian.plugin.remotable.api.service.SignedRequestHandler;
+import com.atlassian.plugin.remotable.api.service.http.bigpipe.BigPipe;
 import com.atlassian.plugin.remotable.host.common.service.http.DefaultRequestContext;
 import com.atlassian.plugin.util.PluginUtils;
 import com.atlassian.sal.api.message.I18nResolver;
 import com.atlassian.sal.api.message.LocaleResolver;
-import com.google.common.collect.ImmutableMap;
 
 import java.net.URI;
 import java.util.Collections;
@@ -24,16 +24,25 @@ public class DefaultRenderContext implements RenderContext
     private SignedRequestHandler signedRequestHandler;
     private final LocaleResolver localeResolver;
     private final I18nResolver i18nResolver;
+    private final BigPipe bigPipe;
 
     public DefaultRenderContext(DefaultRequestContext requestContext,
                                 SignedRequestHandler signedRequestHandler,
                                 LocaleResolver localeResolver,
-                                I18nResolver i18nResolver)
+                                I18nResolver i18nResolver,
+                                BigPipe bigPipe)
     {
         this.requestContext = requestContext;
         this.signedRequestHandler = signedRequestHandler;
         this.localeResolver = localeResolver;
         this.i18nResolver = i18nResolver;
+        this.bigPipe = bigPipe;
+    }
+
+    @Override
+    public String getLocalBaseUrl()
+    {
+        return signedRequestHandler.getLocalBaseUrl();
     }
 
     @Override
@@ -81,6 +90,18 @@ public class DefaultRenderContext implements RenderContext
     }
 
     @Override
+    public String getBigPipeRequestId()
+    {
+        return bigPipe.getRequestId();
+    }
+
+    @Override
+    public boolean getBigPipeActivated()
+    {
+        return bigPipe.isActivated();
+    }
+
+    @Override
     public Locale getLocale()
     {
         return localeResolver.getLocale(requestContext.getRequest());
@@ -97,7 +118,7 @@ public class DefaultRenderContext implements RenderContext
     {
         return Collections.unmodifiableMap(new HashMap<String, Object>()
         {{
-            put("localBaseUrl", signedRequestHandler.getLocalBaseUrl());
+            put("localBaseUrl", getLocalBaseUrl());
             put("hostContextPath", getHostContextPath());
             put("hostBaseUrl", getHostBaseUrl());
             put("hostBaseResourceUrl", getHostBaseResourceUrl());
@@ -105,6 +126,8 @@ public class DefaultRenderContext implements RenderContext
             put("hostScriptUrl", getHostScriptUrl());
             put("userId", getUserId());
             put("clientKey", getClientKey());
+            put("bigPipeRequestId", getBigPipeRequestId());
+            put("bigPipeActivated", getBigPipeActivated());
             put("locale", getLocale());
             put("i18n", getI18n());
         }});

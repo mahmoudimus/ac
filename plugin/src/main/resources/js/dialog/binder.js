@@ -10,7 +10,7 @@ AJS.toInit(function ($) {
       while (match = re.exec(href)) {
         options[match[1]] = decodeURIComponent(match[2]);
       }
-      RemotablePlugins.makeDialog(href, options).show();
+      AP.makeDialog(href, options).show();
     };
   }
   // jquery 1.7 or later

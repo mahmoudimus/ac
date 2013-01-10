@@ -3,6 +3,9 @@ package com.atlassian.plugin.remotable.kit.js.ringojs;
 import com.atlassian.plugin.remotable.kit.js.ringojs.js.AppContext;
 import com.atlassian.plugin.remotable.kit.js.ringojs.repository.FileRepository;
 import com.atlassian.plugin.Plugin;
+import com.google.common.base.Function;
+import org.mozilla.javascript.Context;
+import org.mozilla.javascript.NativeJavaMethod;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.ringojs.engine.RhinoEngine;
@@ -13,10 +16,11 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
-
 
 /**
  *
@@ -28,6 +32,24 @@ public class RingoEngine
 
     public RingoEngine(Plugin plugin, final BundleContext bundleContext)
     {
+        try
+        {
+            Field field = NativeJavaMethod.class.getDeclaredField("debug");
+            Field modifiersField = field.getClass().getDeclaredField("modifiers");
+            modifiersField.setAccessible(true);
+            modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+            field.setAccessible(true);
+            field.setBoolean(null, true);
+        }
+        catch (IllegalAccessException e)
+        {
+            e.printStackTrace();
+        }
+        catch (NoSuchFieldException e)
+        {
+            e.printStackTrace();
+        }
+
         Repository home = null;
         final Bundle appBundle = bundleContext.getBundle();
         Repository ringoHome = new BundleRepository(appBundle, "/modules");
@@ -56,7 +78,8 @@ public class RingoEngine
         try
         {
             RingoConfiguration ringoConfig = new RingoConfiguration(ringoHome, null, null);
-            ringoConfig.setWrapFactory(new MyWrapFactory());
+            MyWrapFactory myWrapFactory = new MyWrapFactory();
+            ringoConfig.setWrapFactory(myWrapFactory);
             ringoConfig.addModuleRepository(ringoHome);
             ringoConfig.addModuleRepository(home);
 
@@ -68,6 +91,23 @@ public class RingoEngine
             {{
                 put("appContext", new AppContext(appBundle));
             }});
+
+            myWrapFactory.setExecutor(new ScriptExecutor()
+            {
+                @Override
+                public Object execute(Function<Context, Object> f)
+                {
+                    Context context = engine.getContextFactory().enterContext();
+                    try
+                    {
+                        return f.apply(context);
+                    }
+                    finally
+                    {
+                        Context.exit();
+                    }
+                }
+            });
         }
         catch (Exception x)
         {

@@ -43,6 +43,7 @@ package_includes:
     - "org.eclipse.jetty.*"
     - "org.jruby*"
     - "org.json"
+    - "org.json.simple*"
     - "org.mozilla.javascript*"
     - "org.slf4j*"
     - "org.apache.log4j"

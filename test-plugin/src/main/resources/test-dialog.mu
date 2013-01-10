@@ -13,11 +13,11 @@
         </div>
 
         <script type="text/javascript">
-            RA.init();
-            RA.getUser(function(result) {
+            AP.init();
+            AP.getUser(function(result) {
                 $("#user").text(result.fullName);
             });
-            RA.Dialog.onDialogMessage("submit", function() {
+            AP.Dialog.onDialogMessage("submit", function() {
                 if ($("#submitted").text() == "false") {
                    $("#submitted").text("true");
                    return false;

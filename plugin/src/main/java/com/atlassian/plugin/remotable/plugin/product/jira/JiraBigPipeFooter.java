@@ -50,15 +50,15 @@ public class JiraBigPipeFooter implements PluggableFooter
         String bigPipeJs = webResourceUrlProvider.getStaticPluginResourceUrl(
                 "com.atlassian.labs.remoteapps-plugin:big-pipe", "big-pipe.js", UrlMode.AUTO
         );
-        String json = bigPipe.consumeContent(bigPipe.getRequestIdAccessor().getRequestId());
+        String json = bigPipe.consumeContent();
         return "<script>" +
                 "(function(global) {" +
-                "var RemotablePlugins = global.RemotablePlugins = global.RemotablePlugins || {};" +
-                "if (RemotablePlugins.RemoteConditions) RemotablePlugins.RemoteConditions.hide();" +
+                "var AP = global.AP = global.AP || {};" +
+                "if (AP.RemoteConditions) AP.RemoteConditions.hide();" +
                 "var contents = " + json + ";" +
-                "if (RemotablePlugins.BigPipe) RemotablePlugins.BigPipe.insertContents(contents);" +
+                "if (AP.BigPipe) AP.BigPipe.processContents(contents);" +
                 "else AJS.$.getScript('" + bigPipeJs + "')" +
-                ".done(function(){RemotablePlugins.BigPipe.insertContents(contents);});" +
+                ".done(function(){AP.BigPipe.processContents(contents);});" +
                 "})(this);" +
                 "</script>";
     }

@@ -12,11 +12,19 @@
   <link rel="stylesheet" href="$url">
   #end
   <script src="$hostScriptUrl"></script>
-  <script>RA.init();</script>
+  <script>AP.init();</script>
 </head>
 <body>
   $bodyHtml
   #parse ($tailTemplate)
+  #if ($bigPipeActivated)
+  <script>
+    AP.BigPipe.start({
+      requestId: "$bigPipeRequestId",
+      localBaseUrl: "$localBaseUrl"
+    });
+  </script>
+  #end
   #foreach ($url in $appScriptUrls)
   <script src="$url"></script>
   #end

@@ -5,6 +5,8 @@ import com.atlassian.plugin.remotable.container.HttpServer;
 import com.atlassian.plugin.remotable.container.internal.EnvironmentFactory;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
+import com.atlassian.plugin.remotable.host.common.service.http.bigpipe.BigPipeImpl;
+import com.atlassian.plugin.remotable.host.common.service.http.bigpipe.BigPipeServiceFactory;
 import com.atlassian.plugin.util.ContextClassLoaderSwitchingUtil;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.ServiceFactory;
@@ -24,12 +26,14 @@ public class ContainerHttpResourceMounterServiceFactory implements ServiceFactor
     private final OAuthSignedRequestHandlerServiceFactory oAuthSignedRequestHandlerServiceFactory;
     private RequestContextServiceFactory requestContextServiceFactory;
     private final EnvironmentFactory environmentServiceFactory;
+    private final BigPipeServiceFactory bigPipeServiceFactory;
 
     public ContainerHttpResourceMounterServiceFactory(PluginAccessor pluginAccessor,
                                                       HttpServer httpServer,
                                                       OAuthSignedRequestHandlerServiceFactory oAuthSignedRequestHandlerServiceFactory,
                                                       EnvironmentFactory environmentServiceFactory,
-                                                      RequestContextServiceFactory requestContextServiceFactory
+                                                      RequestContextServiceFactory requestContextServiceFactory,
+                                                      BigPipeServiceFactory bigPipeServiceFactory
     )
     {
         this.pluginAccessor = pluginAccessor;
@@ -37,6 +41,7 @@ public class ContainerHttpResourceMounterServiceFactory implements ServiceFactor
         this.environmentServiceFactory = environmentServiceFactory;
         this.oAuthSignedRequestHandlerServiceFactory = oAuthSignedRequestHandlerServiceFactory;
         this.requestContextServiceFactory = requestContextServiceFactory;
+        this.bigPipeServiceFactory = bigPipeServiceFactory;
     }
 
     @Override
@@ -55,7 +60,8 @@ public class ContainerHttpResourceMounterServiceFactory implements ServiceFactor
                     return new ContainerHttpResourceMounter(bundle, plugin, httpServer,
                                     oAuthSignedRequestHandlerServiceFactory.getService(bundle),
                                     environmentServiceFactory.getService(bundle),
-                                    requestContextServiceFactory.getService(bundle));
+                                    requestContextServiceFactory.getService(bundle),
+                            (BigPipeImpl) bigPipeServiceFactory.getService(bundle));
                 }
             });
         }

@@ -17,6 +17,7 @@ http://www.springframework.org/schema/context
     <osgi:reference id="signedRequestHandler" interface="com.atlassian.plugin.remotable.api.service.SignedRequestHandler" />
     <osgi:reference id="requestContext" interface="com.atlassian.plugin.remotable.api.service.RequestContext" />
     <osgi:reference id="renderContext" interface="com.atlassian.plugin.remotable.api.service.RenderContext" />
+    <osgi:reference id="bigPipe" interface="com.atlassian.plugin.remotable.api.service.http.bigpipe.BigPipe" />
 
     <beans:bean id="httpResourceProvider" class="com.atlassian.plugin.remotable.kit.js.RingoJsKitBootstrap" autowire="constructor"/>
     <beans:bean id="templateRenderer" class="com.atlassian.plugin.remotable.kit.js.TemplateRenderer" autowire="constructor"/>

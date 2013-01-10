@@ -1,12 +1,12 @@
 (function (global, AJS) {
 
   var $ = AJS.$,
-      RA = global.RemotablePlugins = global.RemotablePlugins || {},
+      AP = global.AP = global.AP || {},
       xhrProperties = ["status", "statusText", "responseText"],
       xhrHeaders = ["Content-Type"],
       events = (AJS.EventQueue = AJS.EventQueue || []);
 
-  RA.create = RA.create || function (options) {
+  AP.create = AP.create || function (options) {
 
     var ns = options.ns,
         $home = $("#ra-" + ns),

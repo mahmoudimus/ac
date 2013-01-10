@@ -1,4 +1,4 @@
-package com.atlassian.plugin.remotable.plugin.util.http.bigpipe;
+package com.atlassian.plugin.remotable.host.common.service.http.bigpipe;
 
 import com.atlassian.plugin.remotable.api.service.http.bigpipe.BigPipe;
 import com.atlassian.plugin.web.model.WebPanel;
@@ -41,7 +41,7 @@ public final class RequestIdWebPanel implements WebPanel
     @Override
     public void writeHtml(Writer writer, Map<String, Object> context) throws IOException
     {
-        final String requestId = bigPipe.getRequestIdAccessor().getRequestId();
+        final String requestId = bigPipe.getRequestId();
         writer.write("<meta name=\"ra-request-id\" content=\"" + requestId + "\">");
         writer.close();
     }

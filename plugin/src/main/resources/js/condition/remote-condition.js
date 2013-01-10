@@ -3,10 +3,10 @@
   by the module types directly
  */
 (function ($, global) {
-  var RemotablePlugins = global.RemotablePlugins = global.RemotablePlugins || {};
+  var AP = global.AP = global.AP || {};
   function hide() {
-    if (!RemotablePlugins.remoteConditionsHidden) {
-      RemotablePlugins.remoteConditionsHidden = true;
+    if (!AP.remoteConditionsHidden) {
+      AP.remoteConditionsHidden = true;
       function hide($items) {
         $items.each(function (index, element) {
           var element$ = $(element);
@@ -30,7 +30,7 @@
   AJS.toInit(function () {
     hide();
   });
-  RemotablePlugins.RemoteConditions = {
-    hide : hide
+  AP.RemoteConditions = {
+    hide: hide
   };
 }(AJS.$, this));

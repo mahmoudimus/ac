@@ -11,7 +11,6 @@ import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.json.JSONTokener;
 import org.junit.Test;
 import services.ServiceAccessor;
 
@@ -75,7 +74,7 @@ public class JiraReadUsersAndGroupsScopeTest
         out.write(body);
         out.close();
 
-        JSONObject result = new JSONObject(new JSONTokener(new InputStreamReader(conn.getInputStream())));
+        JSONObject result = new JSONObject(IOUtils.toString(new InputStreamReader(conn.getInputStream())));
         System.out.println("response: " + result.toString(2));
         assertEquals("betty", result.getJSONObject("result").getString("name"));
     }
@@ -99,7 +98,7 @@ public class JiraReadUsersAndGroupsScopeTest
         out.write(body);
         out.close();
 
-        JSONObject result = new JSONObject(new JSONTokener(IOUtils.toString(conn.getInputStream())));
+        JSONObject result = new JSONObject(IOUtils.toString(conn.getInputStream()));
         System.out.println("response: " + result.toString(2));
         assertEquals("betty", result.getString("name"));
     }

@@ -1,3 +1,5 @@
+{slurp} = require "atlassian/util"
+
 module.exports = (app) ->
 
   app.get "/general", (req, res) ->
@@ -12,4 +14,4 @@ module.exports = (app) ->
       host: req.host
       port: req.port
       scheme: req.scheme
-      input: req.input
+      body: JSON.stringify(req.body, null, 2)

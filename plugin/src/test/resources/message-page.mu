@@ -6,7 +6,7 @@
 <body>
 <div id="message">{{message}}</div>
 <script type="text/javascript">
-  RA.init();
+  AP.init();
 </script>
 </body>
 </html>

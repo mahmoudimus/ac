@@ -38,6 +38,7 @@ import com.atlassian.plugin.remotable.api.service.RequestContext;
 import com.atlassian.plugin.remotable.api.service.SignedRequestHandler;
 import com.atlassian.plugin.remotable.api.service.http.HostHttpClient;
 import com.atlassian.plugin.remotable.api.service.http.HostXmlRpcClient;
+import com.atlassian.plugin.remotable.api.service.http.bigpipe.BigPipe;
 import com.atlassian.plugin.remotable.container.ao.ContainerDataSourceProvider;
 import com.atlassian.plugin.remotable.container.internal.EnvironmentFactory;
 import com.atlassian.plugin.remotable.container.service.ContainerEmailSender;
@@ -61,6 +62,8 @@ import com.atlassian.plugin.remotable.host.common.service.RequestContextServiceF
 import com.atlassian.plugin.remotable.host.common.service.http.HostHttpClientConsumerServiceFactory;
 import com.atlassian.plugin.remotable.host.common.service.http.HostHttpClientServiceFactory;
 import com.atlassian.plugin.remotable.host.common.service.http.HostXmlRpcClientServiceFactory;
+import com.atlassian.plugin.remotable.host.common.service.http.bigpipe.BigPipeImpl;
+import com.atlassian.plugin.remotable.host.common.service.http.bigpipe.BigPipeServiceFactory;
 import com.atlassian.plugin.remotable.host.common.util.BundleLocator;
 import com.atlassian.plugin.remotable.host.common.util.BundleUtil;
 import com.atlassian.plugin.remotable.spi.host.HostProperties;
@@ -206,12 +209,14 @@ public final class Container
         final EnvironmentFactory environmentFactory = new EnvironmentFactory(pluginSettingsFactory, pluginManager);
         final OAuthSignedRequestHandlerServiceFactory oAuthSignedRequestHandlerServiceFactory = new OAuthSignedRequestHandlerServiceFactory(environmentFactory, httpServer);
         final RequestContextServiceFactory requestContextServiceFactory = new RequestContextServiceFactory(oAuthSignedRequestHandlerServiceFactory);
-        final ContainerHttpResourceMounterServiceFactory containerHttpResourceMounterServiceFactory = new ContainerHttpResourceMounterServiceFactory(pluginManager, httpServer, oAuthSignedRequestHandlerServiceFactory, environmentFactory, requestContextServiceFactory);
+        final WebResourceManager webReourceManager = new NoOpWebResourceManager();
+        final BigPipeServiceFactory bigPipeServiceFactory = new BigPipeServiceFactory(webReourceManager, requestContextServiceFactory);
+        final ContainerHttpResourceMounterServiceFactory containerHttpResourceMounterServiceFactory = new ContainerHttpResourceMounterServiceFactory(pluginManager, httpServer, oAuthSignedRequestHandlerServiceFactory, environmentFactory, requestContextServiceFactory, bigPipeServiceFactory);
         final HostHttpClientServiceFactory hostHttpClientServiceFactory = new HostHttpClientServiceFactory(requestContextServiceFactory, oAuthSignedRequestHandlerServiceFactory);
         final HostXmlRpcClientServiceFactory hostXmlRpcClientHostServiceFactory = new HostXmlRpcClientServiceFactory(hostHttpClientServiceFactory);
         final ContainerLocaleResolver localeResolver = new ContainerLocaleResolver();
         final ContainerI18nResolver i18nResolver = new ContainerI18nResolver(pluginManager, pluginEventManager, new ResourceBundleResolverImpl());
-        final RenderContextServiceFactory renderContextServiceFactory = new RenderContextServiceFactory(requestContextServiceFactory, oAuthSignedRequestHandlerServiceFactory, localeResolver, i18nResolver);
+        final RenderContextServiceFactory renderContextServiceFactory = new RenderContextServiceFactory(requestContextServiceFactory, oAuthSignedRequestHandlerServiceFactory, localeResolver, i18nResolver, bigPipeServiceFactory);
 
         hostComponents.put(SignedRequestHandler.class, oAuthSignedRequestHandlerServiceFactory);
         hostComponents.put(HttpResourceMounter.class, containerHttpResourceMounterServiceFactory);
@@ -225,8 +230,9 @@ public final class Container
         hostComponents.put(EmailSender.class, new HostHttpClientConsumerServiceFactory<EmailSender>(hostHttpClientServiceFactory, ContainerEmailSender.class));
         hostComponents.put(LocaleResolver.class, localeResolver);
         hostComponents.put(I18nResolver.class, i18nResolver);
-        hostComponents.put(WebResourceManager.class, new NoOpWebResourceManager());
+        hostComponents.put(WebResourceManager.class, webReourceManager);
         hostComponents.put(RenderContext.class, renderContextServiceFactory);
+        hostComponents.put(BigPipe.class, bigPipeServiceFactory);
 
         hostComponents.put(TransactionTemplate.class, new NoOpTransactionTemplate());
         hostComponents.put(UserManager.class, new ContainerUserManagerServiceFactory(requestContextServiceFactory));

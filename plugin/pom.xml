@@ -400,6 +400,12 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>com.googlecode.json-simple</groupId>
+            <artifactId>json-simple</artifactId>
+            <version>1.1.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>
             <version>8.1.7.v20120910</version>
@@ -491,6 +497,12 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>com.atlassian.velocity.htmlsafe</groupId>
+                <artifactId>velocity-htmlsafe</artifactId>
+                <version>1.1.1</version>
+                <scope>provided</scope>
+            </dependency>
             <dependency>
                 <groupId>com.atlassian.httpclient</groupId>
                 <artifactId>atlassian-httpclient-api</artifactId>
@@ -600,6 +612,7 @@
                             org.joda.time*;version="1.6",
                             org.slf4j*;version="1.5",
                             org.xml.sax*,
+                            org.json.simple*,
                             *;resolution:=optional
                         </Import-Package>
                         <DynamicImport-Package>com.atlassian.labs.speakeasy.*</DynamicImport-Package>
@@ -732,6 +745,12 @@
                                     <artifactId>joda-time</artifactId>
                                     <version>1.6</version>
                                 </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>com.googlecode.json-simple</groupId>
+                                    <artifactId>json-simple</artifactId>
+                                    <version>1.1.1</version>
+                                </pluginArtifact>
+
                             </pluginArtifacts>
                             <libArtifacts>
                                 <!-- necessary for Speakeasy mail handling -->
@@ -816,6 +835,12 @@
                                     <artifactId>json-simple</artifactId>
                                     <version>1.1.1</version>
                                 </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>com.googlecode.json-simple</groupId>
+                                    <artifactId>json-simple</artifactId>
+                                    <version>1.1.1</version>
+                                </pluginArtifact>
+
                             </pluginArtifacts>
                         </product>
                         <product>
@@ -885,6 +910,11 @@
                                     <artifactId>joda-time</artifactId>
                                     <version>1.6</version>
                                 </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>com.googlecode.json-simple</groupId>
+                                    <artifactId>json-simple</artifactId>
+                                    <version>1.1.1</version>
+                                </pluginArtifact>
                             </pluginArtifacts>
                             <libArtifacts>
                                 <!-- override to allow bug fixes for memory leaks when developing.  See PLUG-484 -->
@@ -936,6 +966,10 @@
                         <pluginDependency>
                             <groupId>joda-time</groupId>
                             <artifactId>joda-time</artifactId>
+                        </pluginDependency>
+                        <pluginDependency>
+                            <groupId>com.googlecode.json-simple</groupId>
+                            <artifactId>json-simple</artifactId>
                         </pluginDependency>
                     </pluginDependencies>
                     <testGroups>

@@ -1,6 +1,6 @@
 (function(global, AJS, $) {
 
-  global.RemotablePlugins = global.RemotablePlugins || {};
+  var AP = global.AP = global.AP || {};
 
   var enc = encodeURIComponent;
 
@@ -17,7 +17,7 @@
    *           eg. "/plugins/servlet/remotable-plugins/app-key/macro".
    * @param options Options to configure the behaviour and appearance of the dialog.
    */
-  RemotablePlugins.makeDialog = function (contentUrl, options) {
+  AP.makeDialog = function (contentUrl, options) {
     var $nexus;
 
     var defaultOptions = {

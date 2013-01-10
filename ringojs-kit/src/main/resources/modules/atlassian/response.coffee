@@ -10,12 +10,42 @@ module.exports = (appDir, options) ->
   data =
     status: 200
     headers:
-      "Content-Type": "text/html"
+      "content-type": "text/html"
     body: []
 
   appDir = appDir or "./"
   appDir += "/" if appDir.charAt(appDir.length - 1) isnt "/"
 
+  # @todo from expressjs: format, cookie stuff, maybe jsonp
+
+  # sets a header
+  # response.set(name, value)
+  set: (name, value) ->
+    data.headers[name.toLowerCase()] = value
+
+  # gets a header
+  # response.get(name)
+  get: (name) ->
+    return v for k, v of data.headers when k is name?.toLowerCase()
+
+  # sets the Content-Type header, with alias support (html, json, xml)
+  # response.type(type)
+  type: (type) ->
+    @set "content-type", switch type
+      when "html" then "text/html"
+      when "json" then "application/json"
+      when "xml" then "application/xml"
+      else type
+
+  # sends a redirect to the specified location with optional statusCode
+  # response.sendRedirect(location)
+  # response.sendRedirect(location, statusCode)
+  sendRedirect: (location, statusCode=302) ->
+    # @todo accept relative locations
+    @writeHead 302, Location: location
+    @end()
+
+  # writes the head of the response with statusCode and header
   # response.writeHead(statusCode, headers)
   # response.writeHead(headers)
   writeHead: (statusCode, headers) ->
@@ -24,7 +54,7 @@ module.exports = (appDir, options) ->
     else
       data.status = statusCode
     if headers
-      data.headers[k] = v for k, v of headers
+      data.headers[k.toLowerCase()] = v for k, v of headers
 
   # response.write(chunk)
   write: (chunk) ->
@@ -77,7 +107,8 @@ module.exports = (appDir, options) ->
   # response.sendJson(data, headers)
   # response.sendJson(data, headers, statusCode)
   sendJson: (data, headers={}, statusCode=200) ->
-    @writeHead statusCode, merge({"Content-Type": "application/json; charset=UTF-8"}, headers)
+    @type "json"
+    @writeHead statusCode, headers
     @end (if typeof data is "string" then data else JSON.stringify(data or {}))
 
   # response.render(view, locals)
@@ -105,17 +136,16 @@ module.exports = (appDir, options) ->
   # response.renderErrorWithLayout(layout, error, headers, statusCode)
   renderErrorWithLayout: (layout, error, headers, statusCode) ->
     je = error.javaException
-    locals =
-      error:
-        if je and je.cause
-          je.cause.getMessage()
-        else if error.getMessage
-          error.getMessage()
-        else if error.stack
-          "#{error.message}\n#{error.stack}"
-        else
-          error?.toString() or "Unknown cause"
-    @renderWithLayout layout, "error", locals, headers, statusCode
+    error =
+      if je and je.cause
+        je.cause.getMessage()
+      else if error.getMessage
+        error.getMessage()
+      else if error.stack
+        "#{error.message}\n#{error.stack}"
+      else
+        error?.toString() or "Unknown cause"
+    @renderWithLayout layout, "error", {error: error?.trim()}, headers, statusCode
 
   toJSON: ->
     deferred.promise().claim()

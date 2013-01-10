@@ -1,3 +1,5 @@
+var {slurp} = require("atlassian/util");
+
 module.exports = function (app) {
 
   app.get("/general", function (req, res) {
@@ -16,7 +18,7 @@ module.exports = function (app) {
       host: req.host,
       port: req.port,
       scheme: req.scheme,
-      input: req.input
+      body: JSON.stringify(req.body, null, 2)
     });
   });
 

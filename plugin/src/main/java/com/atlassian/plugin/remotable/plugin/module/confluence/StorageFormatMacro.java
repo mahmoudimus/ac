@@ -32,17 +32,14 @@ public class StorageFormatMacro extends AbstractRemoteMacro
     private final URI remoteUrl;
     private final MacroContentManager macroContentManager;
     private final DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory;
-    private final WebResourceManager webResourceManager;
     private final Logger log = LoggerFactory.getLogger(StorageFormatMacro.class);
 
     public StorageFormatMacro(RemoteMacroInfo remoteMacroInfo,
             MacroContentManager macroContentManager,
-            DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory,
-            WebResourceManager webResourceManager)
+            DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory)
     {
         super(remotablePluginAccessorFactory, remoteMacroInfo);
         this.remotablePluginAccessorFactory = remotablePluginAccessorFactory;
-        this.webResourceManager = webResourceManager;
         this.remoteUrl = remoteMacroInfo.getUrl();
         this.macroContentManager = macroContentManager;
     }
@@ -64,7 +61,6 @@ public class StorageFormatMacro extends AbstractRemoteMacro
          */
         try
         {
-            webResourceManager.requireResource("com.atlassian.labs.remoteapps-plugin:big-pipe");
             return macroContentManager.getStaticContent(
                     new MacroInstance(conversionContext, remoteUrl, storageFormatBody, parameters,
                             remoteMacroInfo.getRequestContextParameterFactory(), remotablePluginAccessor));

@@ -1,7 +1,7 @@
 (function (global) {
   var doc = global.document,
       appDoc = doc,
-      RA = global.RA = {},
+      AP = global.AP = global.RA = {}, // consider RA deprecated
       rpc,
       isDialog,
       isInited;
@@ -61,15 +61,6 @@
     }
   }
 
-  function handleError(err) {
-    if (global.console) {
-      console[console.error ? "error" : "log"](err);
-    }
-    else {
-      throw err;
-    }
-  }
-
   // basic dom util
   function $(sel, context) {
     context = context || appDoc;
@@ -84,9 +75,32 @@
       }
     }
     extend(els, {
-      each: function (it) { each(this, it); },
+      each: function (it) {
+        each(this, it);
+        return this;
+      },
+      attr: function (k) {
+        var v;
+        this.each(function (i, el) {
+          v = el[k] || (el.getAttribute && el.getAttribute(k));
+          return !v;
+        });
+        return v;
+      },
+      removeClass: function (className) {
+        return this.each(function (i, el) {
+          if (el.className) {
+            el.className = el.className.replace(new RegExp("(^|\\s)" + className + "(\\s|$)"), " ");
+          }
+        });
+      },
+      html: function (html) {
+        return this.each(function (i, el) {
+          el.innerHTML = html;
+        });
+      },
       append: function (spec) {
-        this.each(function (i, to) {
+        return this.each(function (i, to) {
           var el = context.createElement(spec.tag);
           each(spec, function (k, v) {
             if (k === "$text") {
@@ -108,6 +122,39 @@
     return els;
   }
 
+  function fetch(options) {
+    var xhr =
+      (global.ActiveXObject && new ActiveXObject("Microsoft.XMLHTTP")) ||
+      (global.XMLHttpRequest && new XMLHttpRequest());
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState === 4) {
+        var status = xhr.status;
+        var response = xhr.responseText;
+        var contentType = xhr.getResponseHeader("Content-Type");
+        if (status >= 200 && status <= 300) {
+          if (contentType && contentType.indexOf("application/json") === 0) {
+            try {
+              if (options.success) options.success(JSON.parse(response), xhr.statusText);
+            }
+            catch (ex) {
+              if (options.error) options.error(xhr, "parseerror", ex);
+            }
+          }
+          else {
+            if (options.success) options.success(response, xhr.statusText);
+          }
+        }
+        else {
+          if (options.error) options.error(xhr, xhr.statusText || "error");
+        }
+      }
+    };
+    xhr.open("GET", options.url, true);
+    each(options.headers, function (k, v) { xhr.setRequestHeader(k, v); });
+    xhr.send(null);
+    return xhr;
+  }
+
   // a simplified version of underscore's debounce
   function debounce(fn, wait) {
     var timeout;
@@ -124,6 +171,107 @@
       timeout = setTimeout(later, wait || 50);
     };
   }
+
+  function handleError(err) {
+    if (global.console) {
+      console.error(err);
+    }
+    else {
+      throw err;
+    }
+  }
+
+  AP.BigPipe = function () {
+    var started;
+    var closed;
+    var channels = {};
+    var subscribers = {};
+    var buffers = {};
+    function poll(url) {
+      fetch({
+        url: url,
+        headers: {"Accept": "application/json"},
+        success: function (response) {
+          deliver(response, url);
+        },
+        error: function (xhr, status, ex) {
+          handleError(ex || (xhr && xhr.responseText) || status);
+        }
+      });
+    }
+    function deliver(response, url) {
+      if (response) {
+        var items = response.items;
+        if (items.length > 0) {
+          each(items, function (i, item) {
+            publish(item);
+          });
+          if (response.pending.length > 0) {
+            each(channels, function (channelId, open) {
+              if (open && response.pending.indexOf(channelId) < 0) {
+                close(channelId);
+              }
+            });
+            poll(url);
+          }
+          else {
+            close();
+          }
+        }
+        else if (!closed) {
+          close();
+        }
+      }
+    }
+    function publish(event) {
+      var channelId = event.channelId;
+      channels[channelId] = true;
+      if (subscribers[channelId]) subscribers[channelId](event);
+      else (buffers[channelId] = buffers[channelId] || []).push(event);
+    }
+    function close(channelId) {
+      if (channelId) {
+        publish({channelId: channelId, complete: true});
+        delete subscribers[channelId];
+        channels[channelId] = false;
+      }
+      else if (!closed) {
+        each(subscribers, close);
+        closed = true;
+      }
+    }
+    var self = {
+      start: function (options) {
+        options = options || {};
+        var requestId = options.requestId;
+        var baseUrl = options.localBaseUrl;
+        if (!started && baseUrl && requestId) {
+          poll(baseUrl + "/bigpipe/request/" + requestId);
+          started = true;
+        }
+      },
+      subscribe: function (channelId, subscriber) {
+        if (subscribers[channelId]) {
+          throw new Error("Channel '" + channelId + "' already has a subscriber");
+        }
+        if (subscriber) {
+          subscribers[channelId] = subscriber;
+          each(buffers[channelId], function (i, result) {
+            publish(result);
+          });
+          delete buffers[channelId];
+          if (closed) close(channelId);
+        }
+      }
+    };
+    self.subscribe("html", function (event) {
+      if (!event.complete) {
+        $("#" + event.contentId).removeClass("bp-loading").html(event.content);
+        AP.resize();
+      }
+    });
+    return self;
+  }();
 
   // internal maker that converts bridged xhr data into an xhr-like object
   function Xhr(data) {
@@ -162,7 +310,7 @@
 
   function injectBase(options) {
     // set the url base
-    RA.getLocation(function (loc) {
+    AP.getLocation(function (loc) {
       $("head").append({tag: "base", href: loc, target: "_parent"});
     });
   }
@@ -213,18 +361,18 @@
     }
     if (options.resize !== false) {
       // resize the parent iframe for the size of this document on load
-      bind(options.window || global, "load", function () { RA.resize(); });
+      bind(options.window || global, "load", function () { AP.resize(); });
     }
     if (isDialog) {
       // expose the dialog sub-api if appropriate
-      RA.Dialog = makeDialog();
+      AP.Dialog = makeDialog();
     }
   }
 
   function initBridge() {
-    var sup = RA.resize;
+    var sup = AP.resize;
     // on resize, resize frame in this doc then prop to parent
-    RA.resize = debounce(function (w, h) {
+    AP.resize = debounce(function (w, h) {
       $("iframe", doc).each(function (i, iframe) {
         var dim = size(w, h);
         w = dim.w;
@@ -232,18 +380,18 @@
         iframe.width = typeof w === "number" ? w + "px" : w;
         iframe.height = typeof h === "number" ? h + "px" : h;
       });
-      sup.call(RA, w, h);
+      sup.call(AP, w, h);
     }, 50);
   }
 
   function initBridged(options) {
-    RA = global.RA = parent.RA;
+    AP = global.RA = parent.RA;
     options = extend({}, options, {
       window: global,
       document: doc,
       base: false
     });
-    RA.init(options);
+    AP.init(options);
   }
 
   var api = {
@@ -357,7 +505,7 @@
       var result = true;
       try {
         if (isDialog) {
-          result = RA.Dialog.getButton(name).trigger();
+          result = AP.Dialog.getButton(name).trigger();
         }
         else {
           handleError("Received unexpected dialog button event from host:", name);
@@ -430,6 +578,6 @@
   }
 
   // reveal the api on the RA global
-  each(api, function (k, v) { RA[k] = v; });
+  extend(AP, api);
 
 })(this);

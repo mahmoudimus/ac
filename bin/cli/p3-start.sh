@@ -136,7 +136,7 @@ fi
 # start
 JAR_PATH="$RP_HOME/container/target/remotable-plugins-container-$PLUGIN_VERSION-standalone.jar"
 if [ "$DEBUG" == "1" ]; then
-  DEBUG_ARGS=(-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5004)
+  DEBUG_ARGS=(-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5004)
   RUN_MODE=debug
 else
   RUN_MODE=run

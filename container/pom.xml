@@ -251,8 +251,8 @@
         <dependency>
             <!-- we use this one as it has the proper directory entries to ensure it gets picked
                  up during package scanning -->
-            <groupId>org.json</groupId>
-            <artifactId>org.json</artifactId>
+            <groupId>com.googlecode.json-simple</groupId>
+            <artifactId>json-simple</artifactId>
         </dependency>
 
         <dependency>

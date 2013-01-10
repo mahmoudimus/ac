@@ -13,9 +13,9 @@
         </select>
 
         <script type="text/javascript">
-            RA.init();
+            AP.init();
 
-            RA.Dialog.onDialogMessage("submit", function() {
+            AP.Dialog.onDialogMessage("submit", function() {
                 var footy = $("#footy");
                 return {
                     result: true,

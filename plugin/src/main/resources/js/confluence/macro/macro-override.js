@@ -51,7 +51,7 @@ AJS.bind("init.rte", function () {
         first = false;
       });
 
-      var dialog = RemotablePlugins.makeDialog(url, dialogOptions);
+      var dialog = AP.makeDialog(url, dialogOptions);
       dialog.show();
     }
   };

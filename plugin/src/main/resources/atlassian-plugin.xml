@@ -5,7 +5,7 @@
         <vendor name="${project.organization.name}" url="${project.organization.url}" />
     </plugin-info>
 
-    <servlet-filter key="requestIdSetter" class="com.atlassian.plugin.remotable.plugin.util.http.bigpipe.RequestIdSettingFilter"
+    <servlet-filter key="big-pipe-request-id" class="com.atlassian.plugin.remotable.host.common.service.http.bigpipe.BigPipeRequestIdFilter"
                     location="after-encoding">
         <url-pattern>/*</url-pattern>
     </servlet-filter>
@@ -28,6 +28,11 @@
     <servlet-filter key="oauth-2lo-authentication" class="com.atlassian.plugin.remotable.plugin.module.oauth.OAuth2LOFilter"
             location="after-encoding" weight="2000">
         <url-pattern>/*</url-pattern>
+    </servlet-filter>
+
+    <servlet-filter key="big-pipe-content" class="com.atlassian.plugin.remotable.host.common.service.http.bigpipe.BigPipeContentFilter"
+                    location="before-dispatch">
+        <url-pattern>/bigpipe/request/*</url-pattern>
     </servlet-filter>
 
     <servlet key="remotablePlugins2LORedirectingServlet"
@@ -100,7 +105,7 @@
     <web-resource-transformer key="baseUrlTransformer" class="com.atlassian.plugin.remotable.plugin.integration.smoketest.BaseUrlTransformer"/>
 
     <!-- big pipe stuff -->
-    <web-panel key="requestIdMetaTag" class="com.atlassian.plugin.remotable.plugin.util.http.bigpipe.RequestIdWebPanel" location="atl.header"/>
+    <web-panel key="requestIdMetaTag" class="com.atlassian.plugin.remotable.host.common.service.http.bigpipe.RequestIdWebPanel" location="atl.header"/>
 
     <web-resource key="big-pipe">
         <resource type="download" name="big-pipe.js" location="js/bigpipe/big-pipe.js" />
@@ -141,6 +146,12 @@
     <component key="bundleLocator" class="com.atlassian.plugin.remotable.host.common.util.BundleContextBundleLoader" />
     <component key="permissionsReader" class="com.atlassian.plugin.remotable.host.common.descriptor.DescriptorPermissionsReader"
                interface="com.atlassian.plugin.remotable.spi.permission.PermissionsReader" public="true"/>
+
+    <component key="bigPipe" class="com.atlassian.plugin.remotable.host.common.service.http.bigpipe.BigPipeImpl"
+               interface="com.atlassian.plugin.remotable.api.service.http.bigpipe.BigPipe" />
+
+    <component key="bigPipeService" class="com.atlassian.plugin.remotable.host.common.service.http.bigpipe.BigPipeServiceFactory"
+               interface="com.atlassian.plugin.remotable.api.service.http.bigpipe.BigPipe" public="true" />
 
     <component-import key="templateRenderer" interface="com.atlassian.templaterenderer.TemplateRenderer"/>
     <component-import key="servletModuleManager" interface="com.atlassian.plugin.servlet.ServletModuleManager" />

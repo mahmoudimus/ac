@@ -22,8 +22,12 @@ module.exports =
           handler = route.handler
           req.params = mash route.params, (k, i) -> [k, match[i + 1]]
           break
+
       handler ?= -> res.sendNotFound jsgiReq.scriptName
-      handler req, res
+      try
+        handler req, res
+      catch ex
+        res.renderError ex
       res.toJSON()
 
     app.configure = (opts) ->

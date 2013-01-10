@@ -6,15 +6,18 @@ import org.mozilla.javascript.NativeJavaObject;
 import org.mozilla.javascript.Scriptable;
 
 import java.lang.reflect.Method;
+import java.util.concurrent.Executor;
 
 public class MyNativeJavaObject extends NativeJavaObject
 {
     private final Class<?> staticType;
+    private final ScriptExecutor executor;
 
-    public MyNativeJavaObject(Scriptable scope, Object javaObject, Class<?> staticType)
+    public MyNativeJavaObject(Scriptable scope, Object javaObject, Class<?> staticType, ScriptExecutor executor)
     {
         super(scope, javaObject, staticType);
-        this.staticType = staticType != null ? staticType : javaObject.getClass();
+        this.executor = executor;
+        this.staticType = staticType != null && staticType != Object.class ? staticType : javaObject.getClass();
     }
 
     @Override
@@ -38,7 +41,7 @@ public class MyNativeJavaObject extends NativeJavaObject
                 {
                     if (Function.class.isAssignableFrom(arg))
                     {
-                        return new MyNativeJavaMethod((NativeJavaMethod)result, method);
+                        return new MyNativeJavaMethod((NativeJavaMethod)result, method, executor);
                     }
                 }
             }

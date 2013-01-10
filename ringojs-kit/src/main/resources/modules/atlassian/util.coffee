@@ -1,9 +1,10 @@
 importClass com.atlassian.plugin.util.PluginUtils
 importClass org.apache.commons.io.IOUtils
 pluginRetrievalService = appContext.getService "com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService"
+signedRequestHandler = appContext.getBean "signedRequestHandler"
 
 {normal} = require "fs"
-{merge, mash} = require "vendor/underscore"
+{merge, mash, extend} = require "vendor/underscore"
 
 devMode = java.lang.Boolean.getBoolean PluginUtils.ATLASSIAN_DEV_MODE
 
@@ -16,23 +17,12 @@ exports = module.exports =
     pluginRetrievalService.getPlugin()
 
   # creates a js proxy object for for the given java 'delegate'
-  proxy: do ->
-    blacklist = (k for k of new java.lang.Object())
-    (delegate) ->
-      proxy = _delegate: delegate
-      for k, v of delegate when k not in blacklist
-        do (k, v) ->
-          if typeof v is "function"
-            forward = -> v.apply delegate, arguments
-            if (match = /^([gs])et([A-Z])/.exec k)
-              GorS = match[1].toUpperCase()
-              p = match[2].toLowerCase() + k.slice(4)
-              proxy["__define#{GorS}etter__"] p, forward
-            else
-              proxy[k] = forward
-          else
-            proxy[k] = v
-      proxy
+  proxy: (delegate, mixin) ->
+    proxy = Object.create delegate
+    name = (GorS) -> "__define#{GorS}etter__"
+    etter = (GorS) -> (p, fn) -> new Object()[name(GorS)].call(@, p, fn)
+    Object.defineProperty proxy, name(GorS), {value: etter(GorS)} for GorS in ["G", "S"]
+    extend proxy, mixin
 
   slurp: (stream, charset="UTF-8") ->
     throw new Error "Invalid input stream '#{stream}'" if not stream
@@ -87,3 +77,6 @@ exports = module.exports =
         nativeRenderer.render view, locals
       else
         null
+
+  hostBaseUrlFor: (clientKey) ->
+    signedRequestHandler.getHostBaseUrl clientKey

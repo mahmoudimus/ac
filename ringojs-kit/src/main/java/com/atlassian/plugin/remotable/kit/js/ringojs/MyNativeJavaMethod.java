@@ -2,21 +2,27 @@ package com.atlassian.plugin.remotable.kit.js.ringojs;
 
 import com.google.common.base.Function;
 import org.mozilla.javascript.*;
+import org.mozilla.javascript.Callable;
+import org.ringojs.util.ScriptUtils;
 
+import javax.annotation.Nullable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.concurrent.*;
 
 public class MyNativeJavaMethod implements Scriptable, org.mozilla.javascript.Function
 {
     private final BaseFunction delegate;
     private final Method method;
+    private final ScriptExecutor executor;
 
-    public MyNativeJavaMethod(NativeJavaMethod result, Method method)
+    public MyNativeJavaMethod(NativeJavaMethod result, Method method, ScriptExecutor executor)
     {
         this.delegate = result;
         this.method = method;
+        this.executor = executor;
     }
 
     @Override
@@ -32,21 +38,21 @@ public class MyNativeJavaMethod implements Scriptable, org.mozilla.javascript.Fu
                 final Type[] typeArgs = type.getActualTypeArguments();
                 final Class inType = convertToClass(typeArgs[0]);
                 final Class outType = convertToClass(typeArgs[1]);
-                params[x] = new Function() {
+                params[x] = new Function()
+                {
                     @Override
-                    public Object apply(Object o)
+                    public Object apply(final Object o)
                     {
-                        Context context = Context.enter();
-                        try
+                        return executor.execute(new Function<Context, Object>()
                         {
-                            Object[] objects = {context.getWrapFactory().wrap(context, scope, o, inType)};
-                            Object value = fn.call(context, scope, scope, objects);
-                            return Context.jsToJava(value, outType);
-                        }
-                        finally
-                        {
-                            Context.exit();
-                        }
+                            @Override
+                            public Object apply(final Context context)
+                            {
+                                Object[] objects = {ScriptUtils.javaToJS(o, scope)};
+                                Object value = fn.call(context, scope, scope, objects);
+                                return Context.jsToJava(value, outType);
+                            }
+                        });
                     }
                 };
             }

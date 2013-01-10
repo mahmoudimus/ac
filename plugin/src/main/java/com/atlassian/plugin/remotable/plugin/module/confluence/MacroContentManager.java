@@ -8,6 +8,7 @@ import com.atlassian.confluence.xhtml.api.XhtmlContent;
 import com.atlassian.event.api.EventListener;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.plugin.remotable.api.service.http.bigpipe.BigPipe;
+import com.atlassian.plugin.remotable.api.service.http.bigpipe.HtmlPromise;
 import com.atlassian.plugin.remotable.plugin.DefaultRemotablePluginAccessorFactory;
 import com.atlassian.plugin.remotable.plugin.util.http.CachingHttpContentRetriever;
 import com.atlassian.plugin.remotable.plugin.util.http.ContentRetrievalErrors;
@@ -85,13 +86,12 @@ public class MacroContentManager implements DisposableBean
         String requestId = macroInstance.getConversionContext().getPropertyAsString(BIG_PIPE_REQUEST_ID);
         if (requestId == null)
         {
-            requestId = bigPipe.getRequestIdAccessor().getRequestId();
+            requestId = bigPipe.getRequestId();
             macroInstance.getConversionContext().setProperty(BIG_PIPE_REQUEST_ID, requestId);
         }
 
         final String author = getUserToRenderMacroAs(entity);
 
-        String contentId = macroInstance.getHashKey();
         final Map<String, String> urlParameters = macroInstance.getUrlParameters(author);
 
         Promise<String> promise = macroInstance.getRemotablePluginAccessor().executeAsyncGet(author,
@@ -100,31 +100,24 @@ public class MacroContentManager implements DisposableBean
                         new HtmlToSafeHtmlFunction(macroInstance, urlParameters, macroContentLinkParser, xhtmlCleaner,
                                 xhtmlUtils));
 
-        bigPipe.registerContentPromise(requestId, contentId, promise);
+        HtmlPromise contentPromise = bigPipe.promiseHtmlContent(promise);
 
-        // only render display via big pipe, block for everyone else
-        if (RenderContextOutputType.DISPLAY.equals(macroInstance.getConversionContext().getOutputType()))
+        try
         {
-            if (promise.isDone())
+            // only render display via big pipe, block for everyone else
+            if (RenderContextOutputType.DISPLAY.equals(macroInstance.getConversionContext().getOutputType()))
             {
-                return promise.claim();
+                return contentPromise.getInitialContent();
             }
             else
             {
-                return "<span class=\"bp-" + contentId + " bp-loading\"></span>";
+                return contentPromise.claim();
             }
         }
-        else
+        catch (RuntimeException e)
         {
-            try
-            {
-                return promise.claim();
-            }
-            catch (RuntimeException e)
-            {
-                log.debug("Exception retrieving content", e);
-                throw new ContentRetrievalException(Throwables.getRootCause(e));
-            }
+            log.debug("Exception retrieving content", e);
+            throw new ContentRetrievalException(Throwables.getRootCause(e));
         }
     }
 

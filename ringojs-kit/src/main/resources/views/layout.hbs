@@ -12,11 +12,19 @@
   <link rel="stylesheet" href="{{this}}">
   {{/each}}
   <script src="{{hostScriptUrl}}"></script>
-  <script>RA.init();</script>
+  <script>AP.init();</script>
 </head>
 <body>
   {{{body}}}
   {{{tail}}}
+  {{#if bigPipeActivated}}
+  <script>
+    AP.BigPipe.start({
+      requestId: "{{bigPipeRequestId}}",
+      localBaseUrl: "{{localBaseUrl}}"
+    });
+  </script>
+  {{/if}}
   {{#each scriptUrls}}
   <script src="{{this}}"></script>
   {{/each}}

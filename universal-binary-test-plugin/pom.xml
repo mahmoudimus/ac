@@ -16,12 +16,12 @@
 
     <dependencies>
         <dependency>
-           <groupId>com.atlassian.plugins</groupId>
-           <artifactId>remotable-plugins-container</artifactId>
-           <version>${project.version}</version>
-           <scope>test</scope>
-           <classifier>standalone</classifier>
-       </dependency>
+            <groupId>com.atlassian.plugins</groupId>
+            <artifactId>remotable-plugins-container</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+            <classifier>standalone</classifier>
+        </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>remotable-plugins-plugin-api</artifactId>
@@ -54,10 +54,10 @@
             <version>${project.version}</version>
             <scope>test</scope>
             <!--<exclusions>-->
-                <!--<exclusion>-->
-                    <!--<groupId>com.atlassian.plugins</groupId>-->
-                    <!--<artifactId>remotable-plugins-container</artifactId>-->
-                <!--</exclusion>-->
+            <!--<exclusion>-->
+            <!--<groupId>com.atlassian.plugins</groupId>-->
+            <!--<artifactId>remotable-plugins-container</artifactId>-->
+            <!--</exclusion>-->
             <!--</exclusions>-->
         </dependency>
 
@@ -207,6 +207,21 @@
                                     <groupId>org.apache.servicemix.bundles</groupId>
                                     <artifactId>org.apache.servicemix.bundles.javax-inject</artifactId>
                                     <version>1_1</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>org.codehaus.jettison</groupId>
+                                    <artifactId>jettison</artifactId>
+                                    <version>1.1</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>joda-time</groupId>
+                                    <artifactId>joda-time</artifactId>
+                                    <version>1.6</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>com.googlecode.json-simple</groupId>
+                                    <artifactId>json-simple</artifactId>
+                                    <version>1.1.1</version>
                                 </pluginArtifact>
                             </pluginArtifacts>
                             <libArtifacts>

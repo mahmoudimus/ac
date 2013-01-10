@@ -6,7 +6,7 @@
     <body>
         <p>Hello world</p>
         <script type="text/javascript">
-            RA.init();
+            AP.init();
         </script>
     </body>
 </html>
