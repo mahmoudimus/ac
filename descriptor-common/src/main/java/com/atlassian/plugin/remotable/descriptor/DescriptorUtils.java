@@ -1,11 +1,11 @@
-package com.atlassian.plugin.remotable.host.common.descriptor;
+package com.atlassian.plugin.remotable.descriptor;
+
+import java.util.List;
 
 import org.dom4j.Document;
 import org.dom4j.Element;
 
-import java.util.List;
-
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkState;
 
 public final class DescriptorUtils
 {

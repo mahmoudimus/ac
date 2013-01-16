@@ -1,7 +1,7 @@
 package com.atlassian.plugin.remotable.container.util;
 
 import aQute.lib.osgi.Analyzer;
-import com.atlassian.plugin.remotable.host.common.descriptor.DescriptorAccessor;
+import com.atlassian.plugin.remotable.descriptor.DescriptorAccessor;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.dom4j.Document;

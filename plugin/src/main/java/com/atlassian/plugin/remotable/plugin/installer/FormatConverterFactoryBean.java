@@ -1,6 +1,6 @@
 package com.atlassian.plugin.remotable.plugin.installer;
 
-import com.atlassian.plugin.remotable.host.common.util.FormatConverter;
+import com.atlassian.plugin.remotable.descriptor.util.FormatConverter;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.stereotype.Component;
 

@@ -1,12 +1,12 @@
-package com.atlassian.plugin.remotable.host.common.descriptor;
+package com.atlassian.plugin.remotable.descriptor;
 
 import org.dom4j.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.atlassian.plugin.remotable.host.common.descriptor.DescriptorUtils.*;
-import static com.google.common.base.Preconditions.*;
-import static java.lang.Boolean.*;
+import static com.atlassian.plugin.remotable.descriptor.DescriptorUtils.*;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static java.lang.Boolean.FALSE;
 
 public final class DevModeTransformingDescriptorAccessor extends DelegatingDescriptorAccessor
 {

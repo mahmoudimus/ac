@@ -1,6 +1,6 @@
 package com.atlassian.plugin.remotable.container;
 
-import com.atlassian.plugin.remotable.host.common.descriptor.DescriptorAccessor;
+import com.atlassian.plugin.remotable.descriptor.DescriptorAccessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

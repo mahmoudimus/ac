@@ -1,8 +1,16 @@
-package com.atlassian.plugin.remotable.host.common.util;
+package com.atlassian.plugin.remotable.descriptor.util;
 
-import com.atlassian.plugin.remotable.spi.InstallationFailedException;
-import com.atlassian.plugin.remotable.spi.util.XmlUtils;
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import com.atlassian.plugin.remotable.descriptor.InvalidDescriptorException;
+
 import com.google.common.collect.ImmutableSet;
+
 import org.dom4j.*;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
@@ -13,13 +21,6 @@ import org.slf4j.LoggerFactory;
 import org.xml.sax.InputSource;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
-
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 public final class FormatConverter
 {
@@ -55,7 +56,7 @@ public final class FormatConverter
         }
         catch (DocumentException e)
         {
-            throw new InstallationFailedException("Unable to parse the descriptor: " + e.getMessage(), e);
+            throw new InvalidDescriptorException("Unable to parse the descriptor: " + e.getMessage(), e);
         }
     }
 

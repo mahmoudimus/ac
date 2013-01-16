@@ -1,4 +1,4 @@
-package com.atlassian.plugin.remotable.host.common.descriptor;
+package com.atlassian.plugin.remotable.descriptor;
 
 public interface LocalMountBaseUrlResolver
 {

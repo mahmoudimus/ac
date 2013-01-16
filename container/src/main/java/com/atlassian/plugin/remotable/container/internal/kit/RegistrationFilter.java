@@ -1,6 +1,6 @@
 package com.atlassian.plugin.remotable.container.internal.kit;
 
-import com.atlassian.plugin.remotable.host.common.descriptor.DescriptorAccessor;
+import com.atlassian.plugin.remotable.descriptor.DescriptorAccessor;
 import com.atlassian.plugin.remotable.api.service.SignedRequestHandler;
 import com.atlassian.plugin.remotable.container.internal.Environment;
 import com.atlassian.plugin.remotable.container.service.ContainerOAuthSignedRequestHandler;

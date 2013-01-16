@@ -24,6 +24,7 @@
 
     <modules>
         <module>plugin-api</module>
+        <module>descriptor-common</module>
         <module>host-common</module>
         <module>sisu-extender</module>
         <module>kit-common</module>
@@ -36,6 +37,7 @@
         <module>container-build</module>
         <module>test</module>
         <module>universal-binary-test-plugin</module>
+        
     </modules>
 
     <build>

@@ -4,7 +4,7 @@ import com.atlassian.fugue.Option;
 import com.atlassian.plugin.Plugin;
 import com.google.common.base.Supplier;
 import org.eclipse.jetty.servlet.DefaultServlet;
-import com.atlassian.plugin.remotable.host.common.descriptor.LocalMountBaseUrlResolver;
+import com.atlassian.plugin.remotable.descriptor.LocalMountBaseUrlResolver;
 import com.google.common.base.Function;
 import com.google.common.collect.MapMaker;
 import org.eclipse.jetty.nosql.memcached.MemcachedSessionIdManager;

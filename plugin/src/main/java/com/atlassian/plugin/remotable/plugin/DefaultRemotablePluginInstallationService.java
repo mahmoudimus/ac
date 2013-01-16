@@ -3,7 +3,8 @@ package com.atlassian.plugin.remotable.plugin;
 import com.atlassian.httpclient.api.HttpClient;
 import com.atlassian.httpclient.api.Response;
 import com.atlassian.plugin.remotable.api.InstallationMode;
-import com.atlassian.plugin.remotable.host.common.util.FormatConverter;
+import com.atlassian.plugin.remotable.descriptor.InvalidDescriptorException;
+import com.atlassian.plugin.remotable.descriptor.util.FormatConverter;
 import com.atlassian.plugin.remotable.host.common.util.RemotablePluginManifestReader;
 import com.atlassian.plugin.remotable.plugin.descriptor.DescriptorValidator;
 import com.atlassian.plugin.remotable.plugin.installer.RemotePluginInstaller;
@@ -25,7 +26,6 @@ import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nullable;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Set;
@@ -206,11 +206,18 @@ public class DefaultRemotablePluginInstallationService implements RemotablePlugi
                     @Override
                     public Document apply(Response response)
                     {
-                        Document document = formatConverter.toDocument(registrationUrl,
-                                response.getHeader("Content-Type"),
-                                response.getEntity());
-                        descriptorValidator.validate(URI.create(registrationUrl), document);
-                        return document;
+                        try
+                        {
+                            Document document = formatConverter.toDocument(registrationUrl,
+                                    response.getHeader("Content-Type"),
+                                    response.getEntity());
+                            descriptorValidator.validate(URI.create(registrationUrl), document);
+                            return document;
+                        }
+                        catch (InvalidDescriptorException e) {
+                            throw new InstallationFailedException(e);
+                        }
+                            
                     }
                 })
                 .others(new Function<Response, Document>()

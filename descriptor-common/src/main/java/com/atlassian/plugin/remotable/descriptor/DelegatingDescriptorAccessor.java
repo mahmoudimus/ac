@@ -1,11 +1,12 @@
-package com.atlassian.plugin.remotable.host.common.descriptor;
-
-import com.google.common.base.Supplier;
-import org.dom4j.Document;
+package com.atlassian.plugin.remotable.descriptor;
 
 import java.net.URL;
 
-import static com.google.common.base.Suppliers.*;
+import com.google.common.base.Supplier;
+
+import org.dom4j.Document;
+
+import static com.google.common.base.Suppliers.memoize;
 
 public abstract class DelegatingDescriptorAccessor implements DescriptorAccessor
 {

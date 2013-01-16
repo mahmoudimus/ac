@@ -1,5 +1,6 @@
 package com.atlassian.plugin.remotable.host.common.util;
 
+import com.atlassian.plugin.remotable.descriptor.util.FormatConverter;
 import com.atlassian.plugin.remotable.host.common.Utils;
 import org.apache.commons.io.FileUtils;
 import org.dom4j.Document;

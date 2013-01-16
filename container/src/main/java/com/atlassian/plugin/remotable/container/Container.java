@@ -53,9 +53,9 @@ import com.atlassian.plugin.remotable.container.service.sal.ContainerUserManager
 import com.atlassian.plugin.remotable.container.service.sal.JdbcPluginSettingsFactory;
 import com.atlassian.plugin.remotable.container.service.sal.ResourceBundleResolverImpl;
 import com.atlassian.plugin.remotable.container.util.ZipWriter;
-import com.atlassian.plugin.remotable.host.common.descriptor.DescriptorAccessor;
+import com.atlassian.plugin.remotable.descriptor.DescriptorAccessor;
 import com.atlassian.plugin.remotable.host.common.descriptor.DescriptorPermissionsReader;
-import com.atlassian.plugin.remotable.host.common.descriptor.PolyglotDescriptorAccessor;
+import com.atlassian.plugin.remotable.descriptor.PolyglotDescriptorAccessor;
 import com.atlassian.plugin.remotable.host.common.service.RenderContextServiceFactory;
 import com.atlassian.plugin.remotable.host.common.service.RequestContextServiceFactory;
 import com.atlassian.plugin.remotable.host.common.service.http.HostHttpClientConsumerServiceFactory;

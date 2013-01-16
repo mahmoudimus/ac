@@ -1,12 +1,4 @@
-package com.atlassian.plugin.remotable.host.common.descriptor;
-
-import com.atlassian.plugin.remotable.host.common.util.FormatConverter;
-import com.atlassian.plugin.PluginParseException;
-import com.google.common.collect.ImmutableSet;
-import org.apache.commons.io.IOUtils;
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.osgi.framework.Bundle;
+package com.atlassian.plugin.remotable.descriptor;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,7 +6,15 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import static com.atlassian.plugin.remotable.spi.util.XmlUtils.createSecureSaxReader;
+import com.atlassian.plugin.remotable.descriptor.util.FormatConverter;
+import com.atlassian.plugin.remotable.descriptor.util.XmlUtils;
+
+import com.google.common.collect.ImmutableSet;
+
+import org.apache.commons.io.IOUtils;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.osgi.framework.Bundle;
 
 /**
  * Descriptor accessor that supports json, xml, and yaml descriptors
@@ -126,11 +126,11 @@ public final class PolyglotDescriptorAccessor implements DescriptorAccessor
             {
                 try
                 {
-                    return createSecureSaxReader().read(descriptorUrl);
+                    return XmlUtils.createSecureSaxReader().read(descriptorUrl);
                 }
                 catch (DocumentException e)
                 {
-                    throw new PluginParseException("Unable to read and parse app descriptor", e);
+                    throw new InvalidDescriptorException("Unable to read and parse app descriptor", e);
                 }
             }
         }

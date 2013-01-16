@@ -1,8 +1,8 @@
-package com.atlassian.plugin.remotable.host.common.descriptor;
-
-import org.dom4j.Document;
+package com.atlassian.plugin.remotable.descriptor;
 
 import java.net.URL;
+
+import org.dom4j.Document;
 
 /**
  * Accesses the descriptor

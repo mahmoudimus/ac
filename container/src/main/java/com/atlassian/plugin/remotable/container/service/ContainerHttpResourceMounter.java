@@ -5,10 +5,10 @@ import com.atlassian.plugin.remotable.api.service.RequestContext;
 import com.atlassian.plugin.remotable.container.HttpServer;
 import com.atlassian.plugin.remotable.container.internal.Environment;
 import com.atlassian.plugin.remotable.container.internal.kit.RegistrationFilter;
-import com.atlassian.plugin.remotable.host.common.descriptor.DelegatingDescriptorAccessor;
-import com.atlassian.plugin.remotable.host.common.descriptor.DescriptorAccessor;
-import com.atlassian.plugin.remotable.host.common.descriptor.DevModeTransformingDescriptorAccessor;
-import com.atlassian.plugin.remotable.host.common.descriptor.PolyglotDescriptorAccessor;
+import com.atlassian.plugin.remotable.descriptor.DelegatingDescriptorAccessor;
+import com.atlassian.plugin.remotable.descriptor.DescriptorAccessor;
+import com.atlassian.plugin.remotable.descriptor.DevModeTransformingDescriptorAccessor;
+import com.atlassian.plugin.remotable.descriptor.PolyglotDescriptorAccessor;
 import com.atlassian.plugin.remotable.host.common.service.AuthenticationFilter;
 import com.atlassian.plugin.Plugin;
 import org.osgi.framework.Bundle;
@@ -19,7 +19,7 @@ import javax.servlet.Filter;
 import javax.servlet.http.HttpServlet;
 import java.io.File;
 
-import static com.atlassian.plugin.remotable.host.common.descriptor.DescriptorUtils.*;
+import static com.atlassian.plugin.remotable.descriptor.DescriptorUtils.*;
 import static com.google.common.base.Preconditions.*;
 import static java.util.Arrays.*;
 

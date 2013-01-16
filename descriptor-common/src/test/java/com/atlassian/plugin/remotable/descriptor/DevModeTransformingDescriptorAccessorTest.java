@@ -1,4 +1,4 @@
-package com.atlassian.plugin.remotable.host.common.descriptor;
+package com.atlassian.plugin.remotable.descriptor;
 
 
 import org.dom4j.Document;
@@ -10,7 +10,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import static com.atlassian.plugin.remotable.host.common.descriptor.DescriptorUtils.*;
+import static com.atlassian.plugin.remotable.descriptor.DescriptorUtils.addDisplayUrl;
+import static com.atlassian.plugin.remotable.descriptor.DescriptorUtils.getDisplayUrl;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
