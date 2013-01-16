@@ -421,6 +421,6 @@
         <webhooks.version>0.10.4</webhooks.version>
         <webhooks.api.version>0.10</webhooks.api.version>
         <httpclient.api.version>${webhooks.api.version}</httpclient.api.version>
-        <gatekeeper.property>3</gatekeeper.property>
+        <gatekeeper.property>4</gatekeeper.property>
     </properties>
 </project>
