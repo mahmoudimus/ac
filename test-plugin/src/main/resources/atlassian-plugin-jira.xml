@@ -34,4 +34,13 @@
     </project-tab-page>
 
     <dialog-page key="issueAction" name="Test Issue Action" section="operations-subtasks" url="/myDialog" />
+
+    <project-config-tab key="remotePluginProjectConfigTab"
+                        name="Remotable Project Config"
+                        url="/myAdmin"
+                        weight="10" location="projectgroup3" />
+
+    <project-config-panel key="remoteProjectConfigPanel"
+                          name="Remote Project Config Panel" url="/myAdmin" location="right" />
+
 </application>

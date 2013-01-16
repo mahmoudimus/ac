@@ -390,7 +390,7 @@
         <refapp.version>2.18.0-m2</refapp.version>
         <jira.version>6.0-OD-04</jira.version>
         <jira.data.version>${jira.version}</jira.data.version>
-        <jira.client.version>2.0.0-m4</jira.client.version>
+        <jira.client.version>2.0.0-m5</jira.client.version>
         <confluence.client.version>0.9.0</confluence.client.version>
         <sisu.version>0.0.0.atlassian4</sisu.version>
         <guice.version>3.0</guice.version>
@@ -423,6 +423,6 @@
         <webhooks.version>0.10.4</webhooks.version>
         <webhooks.api.version>0.10</webhooks.api.version>
         <httpclient.api.version>${webhooks.api.version}</httpclient.api.version>
-        <gatekeeper.property>3</gatekeeper.property>
+        <gatekeeper.property>4</gatekeeper.property>
     </properties>
 </project>
