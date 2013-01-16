@@ -597,6 +597,7 @@
                             javax.xml*,
                             org.apache.commons.lang.*;version="2.4",
                             org.dom4j*,
+                            org.joda.time*;version="1.6",
                             org.slf4j*;version="1.5",
                             org.xml.sax*,
                             *;resolution:=optional
@@ -811,9 +812,9 @@
                                     <version>1.1</version>
                                 </pluginArtifact>
                                 <pluginArtifact>
-                                    <groupId>joda-time</groupId>
-                                    <artifactId>joda-time</artifactId>
-                                    <version>1.6</version>
+                                    <groupId>com.googlecode.json-simple</groupId>
+                                    <artifactId>json-simple</artifactId>
+                                    <version>1.1.1</version>
                                 </pluginArtifact>
                             </pluginArtifacts>
                         </product>
