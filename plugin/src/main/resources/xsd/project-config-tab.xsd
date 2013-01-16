@@ -5,7 +5,9 @@
 
     <xs:complexType name="ProjectConfigTabType">
         <xs:complexContent>
-            <xs:extension base="PageType" />
+            <xs:extension base="PageType">
+                <xs:attribute name="location" type="xs:string" />
+            </xs:extension>
         </xs:complexContent>
     </xs:complexType>
 </xs:schema>
