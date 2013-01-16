@@ -26,7 +26,7 @@ public class RemotePluginEmbeddedTestPage
     protected AtlassianWebDriver driver;
 
     private final String key;
-    private WebElement containerDiv;
+    protected WebElement containerDiv;
 
     public RemotePluginEmbeddedTestPage(String pageKey)
     {
