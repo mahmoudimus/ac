@@ -98,6 +98,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Sets.newHashSet;
+import static java.lang.Boolean.FALSE;
 import static java.util.Arrays.asList;
 
 public final class Container
@@ -275,22 +276,27 @@ public final class Container
     {
         pluginManager.init();
         httpServer.start();
-        Set<URI> foundHosts = findHostProducts();
-        if (descriptorAccessor != null)
+
+        if (isDevMode())
         {
-            final String appKey = descriptorAccessor.getKey();
-            appReloader = new AppReloader(descriptorAccessor, httpServer.getLocalMountBaseUrl(appKey), foundHosts);
-        }
-        else
-        {
-            for (URI host : foundHosts)
+            Set<URI> foundHosts = findHostProducts();
+            if (descriptorAccessor != null)
             {
-                for (String appKey : httpServer.getContextNames())
+                final String appKey = descriptorAccessor.getKey();
+                appReloader = new AppReloader(descriptorAccessor, httpServer.getLocalMountBaseUrl(appKey), foundHosts);
+            }
+            else
+            {
+                for (URI host : foundHosts)
                 {
-                    registerApp(host, appKey, httpServer.getLocalMountBaseUrl(appKey));
+                    for (String appKey : httpServer.getContextNames())
+                    {
+                        registerApp(host, appKey, httpServer.getLocalMountBaseUrl(appKey));
+                    }
                 }
             }
         }
+
     }
 
     private Set<URI> findHostProducts()
@@ -338,6 +344,12 @@ public final class Container
         {
             appReloader.shutdown();
         }
+    }
+
+    public static boolean isDevMode()
+    {
+        return Boolean.valueOf(System.getProperty("atlassian.dev.mode", Boolean.toString(FALSE)))
+                || Boolean.valueOf(System.getProperty("atlassian.ub.container.dev.mode", Boolean.toString(FALSE)));
     }
 
     private static class ContainerHostComponentProvider implements HostComponentProvider

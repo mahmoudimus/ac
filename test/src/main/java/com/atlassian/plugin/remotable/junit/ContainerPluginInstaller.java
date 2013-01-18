@@ -93,7 +93,7 @@ final class ContainerPluginInstaller implements PluginInstaller
 //            String substring = containerJar.substring("file:".length());
 //            final String debug = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5006";
             final String debug = "";
-            final String command = "java -jar " + debug + " " + container.getAbsolutePath() + " -v " + Joiner.on(' ').join(key.apps);
+            final String command = "java -Datlassian.ub.container.dev.mode=true -jar " + debug + " " + container.getAbsolutePath() + " -v " + Joiner.on(' ').join(key.apps);
             System.out.println("Executing command: " + command);
             final Process exec = Runtime.getRuntime().exec(command);
 
