@@ -64,7 +64,7 @@ abstract class AbstractMethodTypeListener implements TypeListener
      */
     private <I> void hear( Class<? super I> type, TypeEncounter<I> encounter )
     {
-        if ( type == null || type.getPackage().getName().startsWith( JAVA_PACKAGE ) )
+        if ( type == null || isProxy(type) || type.getPackage().getName().startsWith( JAVA_PACKAGE ))
         {
             return;
         }
@@ -84,6 +84,11 @@ abstract class AbstractMethodTypeListener implements TypeListener
         }
 
         hear( type.getSuperclass(), encounter );
+    }
+
+    private <I> boolean isProxy(Class<? super I> type)
+    {
+        return type.getName().startsWith("$Proxy");
     }
 
     /**
