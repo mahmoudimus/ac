@@ -381,7 +381,7 @@
     </scm>
 
     <properties>
-        <api.version>0.6.6</api.version>
+        <api.version>0.6.7</api.version>
         <api.artifact.version>${api.version}</api.artifact.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <xvfb.enable>true</xvfb.enable>

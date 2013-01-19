@@ -181,6 +181,12 @@
     }
   }
 
+  AP.Meta = {
+    get: function (name) {
+      return $("meta[name='ap-" + name + "']").attr("content");
+    }
+  };
+
   AP.BigPipe = function () {
     var started;
     var closed;

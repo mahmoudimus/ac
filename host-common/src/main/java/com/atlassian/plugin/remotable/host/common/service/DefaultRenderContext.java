@@ -90,6 +90,12 @@ public class DefaultRenderContext implements RenderContext
     }
 
     @Override
+    public String getAuthState()
+    {
+        return AuthenticationInfo.encode(new AuthenticationInfo(getClientKey(), getUserId()));
+    }
+
+    @Override
     public String getBigPipeRequestId()
     {
         return bigPipe.getRequestId();
@@ -126,6 +132,7 @@ public class DefaultRenderContext implements RenderContext
             put("hostScriptUrl", getHostScriptUrl());
             put("userId", getUserId());
             put("clientKey", getClientKey());
+            put("authState", getAuthState());
             put("bigPipeRequestId", getBigPipeRequestId());
             put("bigPipeActivated", getBigPipeActivated());
             put("locale", getLocale());
