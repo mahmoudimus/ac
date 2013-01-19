@@ -135,6 +135,10 @@ fi
 
 # start
 JAR_PATH="$RP_HOME/container/target/remotable-plugins-container-$PLUGIN_VERSION-standalone.jar"
+if [ ! -e "$JAR_PATH" ]; then
+  echo "Failed to find container jar." >&2
+  exit 1
+fi
 if [ "$DEBUG" == "1" ]; then
   DEBUG_ARGS=(-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5004)
   RUN_MODE=debug
