@@ -107,21 +107,25 @@ public class AuthenticationFilter implements Filter
     private AuthenticationInfo retrieveAuthentication(HttpServletRequest req)
     {
         AuthenticationInfo info = null;
-        for (Cookie cookie : req.getCookies())
+        Cookie[] cookies = req.getCookies();
+        if (cookies != null)
         {
-            String name = cookie.getName();
-            if (name != null && name.equals(AUTH_COOKIE_NAME))
+            for (Cookie cookie : cookies)
             {
-                info = AuthenticationInfo.decode(cookie.getValue());
-                break;
+                String name = cookie.getName();
+                if (name != null && name.equals(AUTH_COOKIE_NAME))
+                {
+                    info = AuthenticationInfo.decode(cookie.getValue());
+                    break;
+                }
             }
-        }
-        if (info == null)
-        {
-            String header = req.getHeader(AUTH_COOKIE_NAME);
-            if (header != null)
+            if (info == null)
             {
-                info = AuthenticationInfo.decode(header);
+                String header = req.getHeader(AUTH_COOKIE_NAME);
+                if (header != null)
+                {
+                    info = AuthenticationInfo.decode(header);
+                }
             }
         }
         return info;
