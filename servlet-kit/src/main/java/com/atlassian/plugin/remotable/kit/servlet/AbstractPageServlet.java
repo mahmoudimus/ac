@@ -7,7 +7,6 @@ import com.atlassian.plugin.util.PluginUtils;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,12 +23,14 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static com.atlassian.plugin.remotable.spi.util.Strings.dasherize;
 import static com.atlassian.plugin.remotable.spi.util.Strings.removeSuffix;
 import static com.google.common.collect.Maps.newHashMap;
+import static java.util.Collections.unmodifiableMap;
 
 public abstract class AbstractPageServlet extends HttpServlet
 {
@@ -102,13 +103,14 @@ public abstract class AbstractPageServlet extends HttpServlet
         renderWithLayout(resolveLayout(), view, req, res, context);
     }
 
-    protected void renderWithLayout(String layout, String view, HttpServletRequest req, HttpServletResponse res, Map<String, ?> context) throws IOException
+    protected void renderWithLayout(final String layout, String view, HttpServletRequest req, HttpServletResponse res, final Map<String, ?> context) throws IOException
     {
-        StringWriter body = new StringWriter();
-        renderView(view, body, ImmutableMap.<String, Object>builder()
-                .putAll(getBaseContext())
-                .putAll(context)
-                .build());
+        final StringWriter body = new StringWriter();
+        renderView(view, body, unmodifiableMap(new HashMap<String, Object>()
+        {{
+            putAll(getBaseContext());
+            putAll(context);
+        }}));
         sendWithLayout(layout, body.toString(), req, res, context);
     }
 
@@ -129,18 +131,19 @@ public abstract class AbstractPageServlet extends HttpServlet
         sendWithLayout(resolveLayout(), bodyHtml, req, res, Maps.<String, Object>newHashMap());
     }
 
-    protected void sendWithLayout(String layout, String bodyHtml, HttpServletRequest req, HttpServletResponse res, Map<String, ?> context) throws IOException
+    protected void sendWithLayout(String layout, final String bodyHtml, HttpServletRequest req, HttpServletResponse res, final Map<String, ?> context) throws IOException
     {
         res.setStatus(200);
         res.setContentType("text/html; charset=UTF-8");
 
         if (layout != null)
         {
-            renderView(layout, res.getWriter(), ImmutableMap.<String, Object>builder()
-                    .putAll(getBaseContext())
-                    .putAll(context)
-                    .put("bodyHtml", bodyHtml)
-                    .build());
+            renderView(layout, res.getWriter(), unmodifiableMap(new HashMap<String, Object>()
+            {{
+                putAll(getBaseContext());
+                putAll(context);
+                put("bodyHtml", bodyHtml);
+            }}));
         }
         else
         {
@@ -150,14 +153,14 @@ public abstract class AbstractPageServlet extends HttpServlet
 
     protected Map<String, Object> getBaseContext()
     {
-        ImmutableMap.Builder<String, Object> builder = ImmutableMap.<String, Object>builder()
-            .putAll(renderContext.toContextMap())
-            .put("appStylesheetUrls", devMode ? getAppStylesheetUrls() : appStylesheetUrls)
-            .put("appScriptUrls", devMode ? getAppScriptUrls() : appScriptUrls)
-            .put("headTemplate", devMode ? getTemplate("head") : headTemplate)
-            .put("tailTemplate", devMode ? getTemplate("tail") : tailTemplate);
-        if (auiVersion != null) builder.put("auiVersion", auiVersion);
-        return builder.build();
+        return unmodifiableMap(new HashMap<String, Object>() {{
+            putAll(renderContext.toContextMap());
+            put("appStylesheetUrls", devMode ? getAppStylesheetUrls() : appStylesheetUrls);
+            put("appScriptUrls", devMode ? getAppScriptUrls() : appScriptUrls);
+            put("headTemplate", devMode ? getTemplate("head") : headTemplate);
+            put("tailTemplate", devMode ? getTemplate("tail") : tailTemplate);
+            put("auiVersion", auiVersion);
+        }});
     }
 
     private String getTemplate(String type)
