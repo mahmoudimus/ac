@@ -19,3 +19,5 @@ dependency-reduced-pom.xml
 .cache
 data
 apps
+
+build-number.txt
