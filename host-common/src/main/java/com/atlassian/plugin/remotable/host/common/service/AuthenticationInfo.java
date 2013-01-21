@@ -36,8 +36,9 @@ public class AuthenticationInfo
 
     public static String encode(AuthenticationInfo info)
     {
-        String params = "clientKey=" + encodeValue(info.clientKey)
-                      + (info.userId != null ? "&userId=" + encodeValue(info.userId) : "");
+        String params
+            = "clientKey=" + encodeValue(info.clientKey)
+            + "&userId=" + (info.userId != null ? encodeValue(info.userId) : "");
         return DatatypeConverter.printBase64Binary(params.getBytes(Charset.forName(UTF_8)));
     }
 
@@ -53,20 +54,17 @@ public class AuthenticationInfo
             for (String nv : nvPairs)
             {
                 String[] nvParts = nv.split("=");
-                if (nvParts.length == 2)
+                if (nvParts[0].equals("clientKey"))
                 {
-                    if (nvParts[0].equals("clientKey"))
-                    {
-                        clientKey = decodeValue(nvParts[1]);
-                    }
-                    else if (nvParts[0].equals("userId"))
-                    {
-                        userId = decodeValue(nvParts[1]);
-                    }
-                    else
-                    {
-                        throw new IllegalArgumentException("Unexpected param: " + nv);
-                    }
+                    clientKey = decodeValue(nvParts.length == 2 ? nvParts[1] : "");
+                }
+                else if (nvParts[0].equals("userId"))
+                {
+                    userId = decodeValue(nvParts.length == 2 ? nvParts[1] : "");
+                }
+                else
+                {
+                    throw new IllegalArgumentException("Unexpected param: " + nv);
                 }
             }
             info = new AuthenticationInfo(clientKey, userId);
