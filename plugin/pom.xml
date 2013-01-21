@@ -637,58 +637,6 @@
                     <enableFastdev>false</enableFastdev>
                     <functionalTestPattern>it/**/Test*.java</functionalTestPattern>
                     <compressResources>false</compressResources>
-                    <!--pluginArtifacts>
-                        <pluginArtifact>
-                            <groupId>com.atlassian.webhooks</groupId>
-                            <artifactId>atlassian-webhooks-plugin</artifactId>
-                            <version>${webhooks.version}</version>
-                        </pluginArtifact>
-                        <pluginArtifact>
-                            <groupId>${project.groupId}</groupId>
-                            <artifactId>remotable-plugins-test-plugin</artifactId>
-                            <version>${project.version}</version>
-                        </pluginArtifact>
-                        <pluginArtifact>
-                            <groupId>com.atlassian.functest</groupId>
-                            <artifactId>functest-plugin</artifactId>
-                            <version>0.4.2</version>
-                        </pluginArtifact>
-                        <pluginArtifact>
-                            <groupId>com.atlassian.labs</groupId>
-                            <artifactId>speakeasy-plugin</artifactId>
-                            <version>${speakeasy.version}</version>
-                        </pluginArtifact>
-                        <pluginArtifact>
-                            <groupId>${project.groupId}</groupId>
-                            <artifactId>remotable-plugins-api</artifactId>
-                            <version>${api.version}</version>
-                        </pluginArtifact>
-                        <pluginArtifact>
-                            <groupId>${project.groupId}</groupId>
-                            <artifactId>remotable-plugins-spi</artifactId>
-                            <version>${api.version}</version>
-                        </pluginArtifact>
-                        <pluginArtifact>
-                            <groupId>com.google.inject</groupId>
-                            <artifactId>guice</artifactId>
-                            <version>3.0</version>
-                        </pluginArtifact>
-                        <pluginArtifact>
-                            <groupId>org.apache.servicemix.bundles</groupId>
-                            <artifactId>org.apache.servicemix.bundles.javax-inject</artifactId>
-                            <version>1_1</version>
-                        </pluginArtifact>
-                    </pluginArtifacts>
-                    <pluginDependencies>
-                        <pluginDependency>
-                            <groupId>${project.groupId}</groupId>
-                            <artifactId>remotable-plugins-api</artifactId>
-                        </pluginDependency>
-                        <pluginDependency>
-                            <groupId>${project.groupId}</groupId>
-                            <artifactId>remotable-plugins-spi</artifactId>
-                        </pluginDependency>
-                    </pluginDependencies-->
                     <products>
                         <product>
                             <id>refapp</id>
@@ -769,6 +717,11 @@
                                     <artifactId>atlassian-mail</artifactId>
                                     <version>2.4.1</version>
                                 </libArtifact>
+                                <libArtifact>
+                                    <groupId>com.atlassian.util.concurrent</groupId>
+                                    <artifactId>atlassian-util-concurrent</artifactId>
+                                    <version>${atlassian-util-concurrent.version}</version>
+                                </libArtifact>
                             </libArtifacts>
                         </product>
                         <product>
@@ -840,8 +793,14 @@
                                     <artifactId>json-simple</artifactId>
                                     <version>1.1.1</version>
                                 </pluginArtifact>
-
                             </pluginArtifacts>
+                            <libArtifacts>
+                                <libArtifact>
+                                    <groupId>com.atlassian.util.concurrent</groupId>
+                                    <artifactId>atlassian-util-concurrent</artifactId>
+                                    <version>${atlassian-util-concurrent.version}</version>
+                                </libArtifact>
+                            </libArtifacts>
                         </product>
                         <product>
                             <id>confluence</id>
@@ -922,6 +881,11 @@
                                     <groupId>com.atlassian.plugins</groupId>
                                     <artifactId>atlassian-plugins-webfragment</artifactId>
                                     <version>${confluence.plugins.version}</version>
+                                </libArtifact>
+                                <libArtifact>
+                                    <groupId>com.atlassian.util.concurrent</groupId>
+                                    <artifactId>atlassian-util-concurrent</artifactId>
+                                    <version>${atlassian-util-concurrent.version}</version>
                                 </libArtifact>
                             </libArtifacts>
                         </product>

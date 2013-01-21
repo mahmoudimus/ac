@@ -3,6 +3,7 @@ package com.atlassian.plugin.remotable.plugin.product.jira;
 import com.atlassian.jira.event.issue.IssueEvent;
 import com.atlassian.jira.event.type.EventType;
 import com.atlassian.plugin.remotable.plugin.product.jira.webhook.JiraEventSerializerFactory;
+import com.atlassian.webhooks.spi.provider.ConsumerKey;
 import com.atlassian.webhooks.spi.provider.EventMatcher;
 import com.atlassian.webhooks.spi.provider.WebHookProvider;
 import com.atlassian.webhooks.spi.provider.WebHookRegistrar;
@@ -65,7 +66,7 @@ public class JiraWebHookProvider implements WebHookProvider
         }
 
         @Override
-        public boolean matches(IssueEvent event, String pluginKey)
+        public boolean matches(IssueEvent event, ConsumerKey consumerKey)
         {
             return eventType.equals(event.getEventTypeId());
         }

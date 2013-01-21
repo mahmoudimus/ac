@@ -235,6 +235,11 @@
                                     <artifactId>atlassian-mail</artifactId>
                                     <version>2.4.1</version>
                                 </libArtifact>
+                                <libArtifact>
+                                    <groupId>com.atlassian.util.concurrent</groupId>
+                                    <artifactId>atlassian-util-concurrent</artifactId>
+                                    <version>${atlassian-util-concurrent.version}</version>
+                                </libArtifact>
                             </libArtifacts>
                         </product>
                     </products>

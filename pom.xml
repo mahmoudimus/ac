@@ -418,10 +418,10 @@
         <dom4j.version>1.4</dom4j.version>
         <atlassian.xmlrpc.version>0.11</atlassian.xmlrpc.version>
         <spring.version>2.5.6</spring.version>
-        <atlassian-util-concurrent.version>2.4.0-M9</atlassian-util-concurrent.version>
+        <atlassian-util-concurrent.version>2.4.0</atlassian-util-concurrent.version>
         <atlassian-httpclient.version>${webhooks.version}</atlassian-httpclient.version>
-        <webhooks.version>0.10.4</webhooks.version>
-        <webhooks.api.version>0.10</webhooks.api.version>
+        <webhooks.version>0.13.2</webhooks.version>
+        <webhooks.api.version>0.13</webhooks.api.version>
         <httpclient.api.version>${webhooks.api.version}</httpclient.api.version>
         <gatekeeper.property>4</gatekeeper.property>
     </properties>
