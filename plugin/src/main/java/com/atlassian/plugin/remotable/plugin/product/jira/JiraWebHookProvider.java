@@ -2,6 +2,7 @@ package com.atlassian.plugin.remotable.plugin.product.jira;
 
 import com.atlassian.jira.event.issue.IssueEvent;
 import com.atlassian.jira.event.type.EventType;
+import com.atlassian.plugin.remotable.plugin.module.jira.workflow.RemoteWorkflowPostFunctionEvent;
 import com.atlassian.plugin.remotable.plugin.product.jira.webhook.JiraEventSerializerFactory;
 import com.atlassian.webhooks.spi.provider.ConsumerKey;
 import com.atlassian.webhooks.spi.provider.EventMatcher;
@@ -54,6 +55,10 @@ public class JiraWebHookProvider implements WebHookProvider
                     new EventTypeMatcher(entry.getKey())).serializedWith(eventSerializerFactory);
 
         }
+        publish.webhook(RemoteWorkflowPostFunctionEvent.REMOTE_WORKFLOW_POST_FUNCTION_EVENT_ID)
+                .whenFired(RemoteWorkflowPostFunctionEvent.class)
+                .matchedBy(new RemoteWorkflowPostFunctionEvent.FunctionEventMatcher())
+                .serializedWith(new RemoteWorkflowPostFunctionEvent.FunctionEventSerializerFactory());
     }
     
     private static final class EventTypeMatcher implements EventMatcher<IssueEvent>

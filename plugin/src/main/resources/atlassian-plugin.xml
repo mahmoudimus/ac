@@ -180,6 +180,8 @@
     <component-import key="moduleFactory" interface="com.atlassian.plugin.module.ModuleFactory" />
     <component-import key="httpClientFactory" interface="com.atlassian.httpclient.api.factory.HttpClientFactory" />
     <component-import key="httpClient" interface="com.atlassian.httpclient.api.HttpClient" />
+    <component-import key="moduleDescriptorWebHookRegistry"
+                      interface="com.atlassian.webhooks.spi.provider.ModuleDescriptorWebHookConsumerRegistry" />
 
     <!-- Cross-product API Scopes -->
     <plugin-permission key="read_app_links" name="Read Application Links"

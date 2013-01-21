@@ -43,4 +43,12 @@
     <project-config-panel key="remoteProjectConfigPanel"
                           name="Remote Project Config Panel" url="/myAdmin" location="right" />
 
+    <remote-workflow-post-function key="remoteWorkflowFunction" name="Remote Workflow Function"
+                                   url="/remoteWorkflowFunction/transition_fired">
+        <description>Remote workflow</description>
+        <view url="/myAdmin" />
+        <create url="/myAdmin" />
+        <edit url="/myAdmin" />
+    </remote-workflow-post-function>
+
 </application>
