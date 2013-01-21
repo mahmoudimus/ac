@@ -1,5 +1,6 @@
 package com.atlassian.plugin.remotable.test.confluence;
 
+import com.atlassian.pageobjects.binder.Init;
 import com.atlassian.plugin.remotable.test.RemotePluginTestPage;
 import com.atlassian.plugin.remotable.test.GeneralPage;
 import com.atlassian.pageobjects.PageBinder;
@@ -24,7 +25,6 @@ public class ConfluenceGeneralPage implements GeneralPage
     private final String pageKey;
     private final String linkText;
 
-    @FindBy(id = "browse-menu-link")
     private WebElement browseMenuLink;
 
 
@@ -32,6 +32,20 @@ public class ConfluenceGeneralPage implements GeneralPage
     {
         this.pageKey = pageKey;
         this.linkText = linkText;
+    }
+
+    @Init
+    public void init()
+    {
+        By browseLocator = By.id("browse-menu-link");
+        if (driver.elementExists(browseLocator))
+        {
+            browseMenuLink = driver.findElement(browseLocator);
+        }
+        else
+        {
+            browseMenuLink = driver.findElement(By.id("help-menu-link"));
+        }
     }
 
     @Override
