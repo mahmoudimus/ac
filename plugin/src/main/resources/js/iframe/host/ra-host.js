@@ -101,6 +101,10 @@
             // JIRA 4.4, Confluence 4.1, Refapp 2.15.0
             fullName = $("a#header-details-user-fullname, .user.ajs-menu-title, a#user").text();
           }
+          if (!fullName) {
+            // JIRA 6, Confluence 5
+            fullName = $("a#user-menu-link").attr("title");
+          }
           return {fullName: fullName, id: options.userId};
         },
         showMessage: function (id, title, body) {

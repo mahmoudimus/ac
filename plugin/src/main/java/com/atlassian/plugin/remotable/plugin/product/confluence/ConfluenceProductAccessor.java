@@ -90,8 +90,8 @@ public final class ConfluenceProductAccessor implements ProductAccessor
     public Map<String, String> getLinkContextParams()
     {
         return ImmutableMap.of(
-                "page_id", "$!helper.page.id",
-                "page_type", "$!helper.page.type");
+                "page_id", "$!page.id",
+                "page_type", "$!page.type");
     }
 
     @Override

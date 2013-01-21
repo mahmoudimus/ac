@@ -2,6 +2,7 @@ package com.atlassian.plugin.remotable.test.confluence;
 
 import com.atlassian.plugin.remotable.test.RemotePluginTestPage;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 
 /**
  *
@@ -25,7 +26,11 @@ public class ConfluenceMacroTestSuitePage extends ConfluenceMacroPage
 
     public String getBodyNoteFromMacro()
     {
-        return driver.findElement(By.className("rp-body")).findElement(By.className("panelMacro")).getText();
+
+        WebElement body = driver.findElement(By.className("rp-body"));
+        return (!body.findElements(By.className("panelMacro")).isEmpty() ?
+                body.findElement(By.className("panelMacro")) :
+                body.findElement(By.className("message-content"))).getText();
     }
 
     public String getSlowMacroBody()
@@ -40,7 +45,17 @@ public class ConfluenceMacroTestSuitePage extends ConfluenceMacroPage
 
     public RemotePluginTestPage visitGeneralLink()
     {
-        driver.findElement(By.id("browse-menu-link")).click();
+        By browseLocator = By.id("browse-menu-link");
+        WebElement menuLink;
+        if (driver.elementExists(browseLocator))
+        {
+            menuLink = driver.findElement(browseLocator);
+        }
+        else
+        {
+            menuLink = driver.findElement(By.id("help-menu-link"));
+        }
+        menuLink.click();
         driver.findElement(By.id("webitem-remotePluginGeneral")).click();
         return pageBinder.bind(RemotePluginTestPage.class, "remotePluginGeneral");
     }
