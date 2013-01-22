@@ -5,7 +5,9 @@ import com.atlassian.plugin.remotable.api.service.http.bigpipe.BigPipe;
 import com.atlassian.plugin.remotable.api.service.http.bigpipe.HtmlPromise;
 import com.atlassian.plugin.webresource.WebResourceManager;
 import com.atlassian.sal.api.user.UserManager;
+import com.atlassian.security.random.SecureRandomFactory;
 import com.atlassian.util.concurrent.CopyOnWriteMap;
+import com.atlassian.util.concurrent.ForwardingPromise;
 import com.atlassian.util.concurrent.Promise;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
@@ -16,11 +18,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.security.SecureRandom;
 import java.util.*;
 import java.util.concurrent.*;
 
 import static com.google.common.collect.Sets.newHashSet;
 import static java.util.Collections.emptyMap;
+import static java.util.Collections.singletonMap;
 import static java.util.Collections.unmodifiableSet;
 
 /**
@@ -28,6 +32,7 @@ import static java.util.Collections.unmodifiableSet;
  */
 public final class BigPipeImpl implements BigPipe
 {
+    private static final SecureRandom secureRandom = SecureRandomFactory.newInstance();
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     private final WebResourceManager webResourceManager;
@@ -106,13 +111,20 @@ public final class BigPipeImpl implements BigPipe
 
     public HtmlPromise promiseHtmlContent(Promise<String> stringPromise)
     {
-        HtmlPromise contentPromise = new DefaultHtmlPromise(stringPromise);
-        promiseContent(BigPipe.HTML_CHANNEL_ID, contentPromise);
-        return contentPromise;
+        // @todo figure out how to avoid this ugly ref cycle
+        DefaultHtmlPromise htmlPromise = new DefaultHtmlPromise(stringPromise);
+        final InternalHandler handler = registerContentPromise(BigPipe.HTML_CHANNEL_ID, htmlPromise);
+        htmlPromise.setHandler(handler);
+        return htmlPromise;
     }
 
     @Override
     public void promiseContent(String channelId, Promise<String> stringPromise)
+    {
+        registerContentPromise(channelId, stringPromise);
+    }
+
+    private InternalHandler registerContentPromise(String channelId, Promise<String> stringPromise)
     {
         ContentEnvelopePromise envelopePromise = new ContentEnvelopePromise(stringPromise, channelId);
         webResourceManager.requireResource("com.atlassian.labs.remoteapps-plugin:big-pipe");
@@ -140,6 +152,7 @@ public final class BigPipeImpl implements BigPipe
         });
         InternalHandler handler = new InternalHandler(channelId, requestContentSet, envelopePromise);
         requestContentSet.addHandler(handler);
+        return handler;
     }
 
     @Override
@@ -253,6 +266,11 @@ public final class BigPipeImpl implements BigPipe
         public boolean isFinished()
         {
             return jsonPromise.isDone();
+        }
+
+        public void removeContent()
+        {
+            request.removeContent(this);
         }
 
         @Override
@@ -424,6 +442,50 @@ public final class BigPipeImpl implements BigPipe
                 pendingChannelIds.add(handler.getChannelId());
             }
             return unmodifiableSet(pendingChannelIds);
+        }
+    }
+
+    private class DefaultHtmlPromise extends ForwardingPromise<String> implements HtmlPromise, MetadataProvider
+    {
+        private final Promise<String> delegate;
+        private final String contentId;
+        private InternalHandler handler;
+
+        public DefaultHtmlPromise(Promise<String> delegate)
+        {
+            this.contentId = "bp-" + Long.toHexString(Math.abs(secureRandom.nextLong()));
+            this.delegate = delegate;
+        }
+
+        public String getInitialContent()
+        {
+            if (delegate().isDone())
+            {
+                String content = delegate().claim();
+                handler.removeContent();
+                return "<span id=\"" + contentId + "\">" + content + "</span>";
+            }
+            else
+            {
+                return "<span id=\"" + contentId + "\" class=\"bp-loading\"></span>";
+            }
+        }
+
+        @Override
+        public Map<String, String> getMetadata()
+        {
+            return singletonMap("contentId", contentId);
+        }
+
+        @Override
+        protected Promise<String> delegate()
+        {
+            return delegate;
+        }
+
+        public void setHandler(InternalHandler handler)
+        {
+            this.handler = handler;
         }
     }
 }

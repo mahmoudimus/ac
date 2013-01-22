@@ -23,8 +23,9 @@
   {{#if bigPipeActivated}}
   <script>
     AP.BigPipe.start({
+      localBaseUrl: "{{localBaseUrl}}",
       requestId: "{{bigPipeRequestId}}",
-      localBaseUrl: "{{localBaseUrl}}"
+      ready: {{{bigPipeReadyContents}}}
     });
   </script>
   {{/if}}

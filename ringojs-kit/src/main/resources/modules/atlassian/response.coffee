@@ -2,6 +2,7 @@
 {publicUrl, resourcePath, renderTemplate} = require "atlassian/util"
 context = require "atlassian/context"
 {merge} = require "vendor/underscore"
+bigpipe = require "atlassian/http/bigpipe"
 
 module.exports = (appDir, options) ->
 
@@ -83,18 +84,23 @@ module.exports = (appDir, options) ->
   # response.send(layout, body, headers, statusCode)
   sendWithLayout: (layout, body, headers={}, statusCode=200) ->
     try
-      resType = if options.aui then 'aui' else 'default'
-      # @todo validate that options.aui contains a valid version number
-      resLocals = merge context.toJSON(),
-        aui: (if options.aui then "v#{options.aui.replace('.', '_')}" else null)
-      locals = merge resLocals,
-        stylesheetUrls: ("#{publicUrl 'css', path}" for path in options.stylesheets or [])
-        scriptUrls: ("#{publicUrl 'js', path}" for path in options.scripts or [])
-        head: renderView(appDir, "layout-head-#{resType}", resLocals)
-        tail: renderView(appDir, "layout-tail-#{resType}", resLocals)
-        body: body
-      page = if layout then renderView appDir, layout, locals else body
       @writeHead statusCode, headers
+      page =
+        if layout
+          resType = if options.aui then 'aui' else 'default'
+          # @todo validate that options.aui contains a valid version number
+          auiLocals = merge context.toJSON(),
+            aui: (if options.aui then "v#{options.aui.replace('.', '_')}" else null)
+          layoutLocals = merge auiLocals,
+            stylesheetUrls: ("#{publicUrl 'css', path}" for path in options.stylesheets or [])
+            scriptUrls: ("#{publicUrl 'js', path}" for path in options.scripts or [])
+            head: renderView(appDir, "layout-head-#{resType}", auiLocals)
+            tail: renderView(appDir, "layout-tail-#{resType}", auiLocals)
+            bigPipeReadyContents: bigpipe.consumeContent()
+            body: body
+          renderView appDir, layout, layoutLocals
+        else
+          body
       @end page
     catch ex
       if layout is "layout"
@@ -120,7 +126,8 @@ module.exports = (appDir, options) ->
   # response.renderWithLayout(layout, view, locals, headers, statusCode)
   renderWithLayout: (layout, view, locals, headers, statusCode) ->
     try
-      body = renderView appDir, view, merge(context.toJSON(), locals)
+      locals = merge context.toJSON(), locals
+      body = renderView appDir, view, locals
     catch ex
       @renderErrorWithLayout layout, ex, headers, statusCode
     @sendWithLayout layout, body, headers, statusCode

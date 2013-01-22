@@ -1,6 +1,5 @@
 {mash, extend} = require "vendor/underscore"
 {slurp} = require "atlassian/util"
-renderContext = require "atlassian/context"
 
 properties = ["headers", "method", "env", "host", "port", "version", "remoteAddress", "scheme"]
 
@@ -16,7 +15,6 @@ module.exports = (req, options) ->
   param = (name) ->
     req.params?[name] or @body?[name] or query?[name]
   query = parseUrlEncoded req.queryString
-  context = renderContext.toJSON()
   xhr = req.isXhr
   protocol = req.scheme
   secure = protocol is "https"
@@ -24,7 +22,7 @@ module.exports = (req, options) ->
 
   # @todo from expressjs: is, accepts, accepted, ip, fresh, stale
 
-  self = {path, scriptName, route, pathInfo, header, get, params, param, query, context, xhr, protocol, secure, request}
+  self = {path, scriptName, route, pathInfo, header, get, params, param, query, xhr, protocol, secure, request}
 
   self.__defineGetter__ "body", ->
     @_body ?= do ->

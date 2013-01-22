@@ -208,13 +208,14 @@
     function deliver(response, url) {
       if (response) {
         var items = response.items;
-        if (items.length > 0) {
+        var pending = response.pending;
+        if (items.length > 0 || pending.length > 0) {
           each(items, function (i, item) {
             publish(item);
           });
-          if (response.pending.length > 0) {
+          if (pending.length > 0) {
             each(channels, function (channelId, open) {
-              if (open && response.pending.indexOf(channelId) < 0) {
+              if (open && pending.indexOf(channelId) < 0) {
                 close(channelId);
               }
             });
@@ -249,10 +250,10 @@
     var self = {
       start: function (options) {
         options = options || {};
-        var requestId = options.requestId;
         var baseUrl = options.localBaseUrl;
+        var requestId = options.requestId;
         if (!started && baseUrl && requestId) {
-          poll(baseUrl + "/bigpipe/request/" + requestId);
+          deliver(options.ready, baseUrl + "/bigpipe/request/" + requestId);
           started = true;
         }
       },
@@ -262,8 +263,8 @@
         }
         if (subscriber) {
           subscribers[channelId] = subscriber;
-          each(buffers[channelId], function (i, result) {
-            publish(result);
+          each(buffers[channelId], function (i, event) {
+            publish(event);
           });
           delete buffers[channelId];
           if (closed) close(channelId);
