@@ -150,6 +150,8 @@
       }
     };
     xhr.open("GET", options.url, true);
+    var headers = options.headers || {};
+    headers["AP-Auth-State"] = AP.Meta.get("auth-state");
     each(options.headers, function (k, v) { xhr.setRequestHeader(k, v); });
     xhr.send(null);
     return xhr;
