@@ -79,10 +79,12 @@ if [ "$APP_EXT" == "jar" ]; then
   JAR_ONLY=1
 fi
 POM_XML=$APP_PATH/pom.xml
-if [ "$JAR_ONLY" == "1" ] || [ -e "$POM_XML" ]; then
+SRC_MAIN_JAVA=$APP_PATH/src/main/java
+if [ "$JAR_ONLY" == "1" ] || ([ -e "$POM_XML" ] && [ -e "$SRC_MAIN_JAVA" ]); then
   APP_KIT=servlet
 else
   unset POM_XML
+  unset SRC_MAIN_JAVA
 fi
 
 # export oauth private key into the environment if it exists
