@@ -253,7 +253,8 @@
         var baseUrl = options.localBaseUrl;
         var requestId = options.requestId;
         if (!started && baseUrl && requestId) {
-          deliver(options.ready, baseUrl + "/bigpipe/request/" + requestId);
+          var ready = options.ready || {items: [], pending: [0]};
+          deliver(ready, baseUrl + "/bigpipe/request/" + requestId);
           started = true;
         }
       },
