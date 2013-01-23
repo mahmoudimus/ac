@@ -1,5 +1,5 @@
 {Deferred} = require "atlassian/promises"
-{publicUrl, resourcePath, renderTemplate} = require "atlassian/util"
+{devMode, resourcePath, renderTemplate} = require "atlassian/util"
 context = require "atlassian/context"
 {merge} = require "vendor/underscore"
 bigpipe = require "atlassian/http/bigpipe"
@@ -92,8 +92,8 @@ module.exports = (appDir, options) ->
           auiLocals = merge context.toJSON(),
             aui: (if options.aui then "v#{options.aui.replace('.', '_')}" else null)
           layoutLocals = merge auiLocals,
-            stylesheetUrls: ("#{publicUrl 'css', path}" for path in options.stylesheets or [])
-            scriptUrls: ("#{publicUrl 'js', path}" for path in options.scripts or [])
+            stylesheetUrls: parseResourcePaths("css", options.stylesheets)
+            scriptUrls: parseResourcePaths("js", options.scripts)
             clientOptions: ("#{k}:#{v}" for k, v of options.clientOptions).join(";")
             head: renderView(appDir, "layout-head-#{resType}", auiLocals)
             tail: renderView(appDir, "layout-tail-#{resType}", auiLocals)
@@ -157,6 +157,19 @@ module.exports = (appDir, options) ->
 
   toJSON: ->
     deferred.promise().claim()
+
+parseResourcePaths = (type, paths) ->
+  if typeof paths is "string"
+    paths = paths.split(",").filter((s) -> !!s).map((s) -> s.trim())
+  ("#{publicUrl type, path}" for path in paths or [])
+
+publicUrl = (type, path) ->
+  exts = [".min.#{type}", "-min.#{type}"]
+  exts[if devMode then "unshift" else "push"] ".#{type}"
+  for ext in exts
+    file = resourcePath "public/#{type}/#{path}", ext
+    return file if file
+  throw new Error "No #{type} resource found for path '#{path}'"
 
 renderView = (appDir, view, locals) ->
   html = renderTemplate "#{appDir}views/#{view}", locals

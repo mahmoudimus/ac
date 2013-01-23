@@ -18,6 +18,6 @@ exports = module.exports =
     future = SettableFuture.create()
     promise = Promises.forFuture future
     proxy future,
-      resolve: -> future.set arguments...
-      reject: -> future.setException arguments...
+      resolve: -> future.set arguments...; @
+      reject: -> future.setException arguments...; @
       promise: -> promise

@@ -28,14 +28,6 @@ exports = module.exports =
     throw new Error "Invalid input stream '#{stream}'" if not stream
     IOUtils.toString stream, charset
 
-  publicUrl: (type, path) ->
-    exts = [".min.#{type}", "-min.#{type}"]
-    exts[if devMode then "unshift" else "push"] ".#{type}"
-    for ext in exts
-      file = exports.resourcePath "public/#{type}/#{path}", ext
-      return file if file
-    throw new Error "No #{type} resource found for path '#{path}'"
-
   resourcePath: (base, ext) ->
     ext = "" if base.indexOf(ext) is base.length - ext.length
     if exports.plugin().getResource(path = normal(base + ext)) then path else null
