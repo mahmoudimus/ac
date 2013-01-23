@@ -1,4 +1,4 @@
-/*! AUI Flat Pack - version 5.0-m17 - generated 2012-11-14 02:21:29 -0500 */
+/*! AUI Flat Pack - version 5.0-m25 - generated 2013-01-16 19:47:50 -0500 */
 
 
 /* Solution from https://github.com/necolas/normalize.css/blob/master/normalize.css */
@@ -13,6 +13,8 @@ audio, canvas, video {
     *display: inline;
     *zoom: 1;
 }
+
+/*! Atlassian UI and the Atlassian Design Guidelines are copyright Atlassian. See https://developer.atlassian.com/display/AUI/ and https://developer.atlassian.com/design/ for license details. */
 
 .clear {
     clear: both;
@@ -39,13 +41,13 @@ legend.assistive span {
 /* light shadow for use on dropdowns, inline dialogs */
 .aui-box-shadow {
     -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.13);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.13);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.13); 
 }
 
 /* dialog no longer gets shadow - "blanket is the shadow" */
 .aui-dialog.aui-box-shadow {
     -webkit-box-shadow: none;
-    box-shadow: none;
+    box-shadow: none; 
 }
 
 .aui-blanket {
@@ -74,9 +76,9 @@ legend.assistive span {
 .aui-dialog {
     background: #f0f0f0;
     border: 1px solid #ccc;
-    -moz-border-radius: 4px;
-    -webkit-border-radius: 4px;
-    border-radius: 4px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
     overflow: hidden;
 }
 .aui-dialog .dialog-blanket {
@@ -194,7 +196,9 @@ legend.assistive span {
     background: -ms-linear-gradient(top, #ffffff 0%,#f2f2f2 100%); /* IE10+ */
     background: linear-gradient(top, #ffffff 0%,#f2f2f2 100%); /* W3C */
     border-color: #ccc;
-    border-radius: 3px;
+    -moz-border-radius: 3.01px;
+    -webkit-border-radius: 3.01px;
+    border-radius: 3.01px;
     border-style: solid; /* border width and style don't change after this */
     border-width: 1px; /* border width and style don't change after this */
     color: #333;
@@ -310,7 +314,6 @@ legend.assistive span {
     height: auto;
     text-indent: 0;
     width: auto;
-
 }
 .aui-dd-parent a.aui-dd-trigger-unstyled:link,
 .aui-dd-parent a.aui-dd-trigger-unstyled:visited {}
@@ -335,12 +338,17 @@ legend.assistive span {
 .aui-dropdown,
 .aui-dd-parent .aui-shadow-parent {
     background: #fff;
-    border: 1px solid #6A8EB3;
+    border: 1px solid #ccc;
+    border-bottom-left-radius: 3px;
+    border-bottom-right-radius: 3px;
+    -moz-box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+    -webkit-box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
     color: #000;
+    margin-top: -1px;
     padding: 4px 0 4px 0;
     position: absolute;
     z-index: 2003;
-    margin-top: -1px;
 }
 
 .aui-dd-parent  .aui-dropdown-left{
@@ -367,11 +375,13 @@ legend.assistive span {
 .aui-dd-parent .aui-dropdown a.item-link,
 .aui-dropdown a.item-link {
     background: #fff;
-    color: #036;
+    color: #333;
     display: inline-block;
     float: none;
     height: auto;
+    padding: 4px 14px 3px 12px;
     position: static;
+    text-decoration: none;
     text-indent: 0;
     white-space: nowrap;
     width: auto;
@@ -381,8 +391,7 @@ legend.assistive span {
 .aui-dropdown a.item-link:link,
 .aui-dropdown a.item-link:visited {
     background: #fff;
-    color: #036;
-    padding: 0.3em 0.5em;
+    color: #333;
 }
 .aui-dd-parent .aui-dropdown li.dropdown-item.active a.item-link,
 .aui-dd-parent .aui-dropdown a.item-link:hover,
@@ -391,9 +400,8 @@ legend.assistive span {
 .aui-dropdown a.item-link:hover,
 .aui-dropdown a.item-link:active,
 .aui-dropdown a.item-link:focus  {
-    background: #f2f2f2;
-    color: #036;
-    padding: 0.3em 0.5em;
+    background: #3B73AF;
+    color: #FFF;
 }
 
 .aui-dd-parent .aui-dropdown li.dropdown-item a.item-link span.icon {
@@ -1194,7 +1202,6 @@ form.aui .icon-inline-help,
 .aui-icon-inline-help {
     /* icon-help.png */
     background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABOklEQVR42mXTv0rDUBTH8atDqYPi4mDRya3pAziIz+ETCDpoVt9BbKFRlFqfQGfBCukkODgIpREcddeiiCbR+A38ApfT4RNy/tzDzU3iwjC0mjjCGN8yVq5p+/1gDifIkWGIrgyVyxXX7IAaBihwgQac0UBfPTeo+QO6Kux7zZeYIMU11lTbVW9UDQiQa7qTe7xjG1t4wTNmVe9pTVAGbWRYVnEJBQ7g5FC5FTj1pmg7nXAM51lHXfcbeMNDtQOJkTi9pjMlrU184dEerNb8uPLiDbAGeMWiYjvgo7xJvEew7nBl8xJjNHWIxqrdujnEThm0kKNnmuYxkYUqb15jq0pEKLAHJ3UkUoeTHfzh2H7KtxrSN9uegVPuXD0DrZn6mU7xiwwxuhIjUy2yP5MVoIMnpPjESLnA9v8DHHysLnlPp3QAAAAASUVORK5CYII=);
-    cursor: help;
 }
 
 
@@ -1259,6 +1266,21 @@ form.aui .icon-inline-help,
     width: 0;
 }
 
+
+/* Simple spinner icon for wait/loading time */
+.aui-icon-wait {
+    background-image: url(data:image/gif;base64,R0lGODlhEAAQAPMPALu7u5mZmTMzM93d3REREQAAAHd3d1VVVWZmZqqqqoiIiO7u7kRERCIiIgARAAAAACH/C05FVFNDQVBFMi4wAwEAAAAh+QQFBwAPACwAAAAAEAAQAEAEcPDJtyg6dUrFetDTIopMoSyFcxxD1krD8AwCkASDIlPaUDQLR6G1Cy0SgqIkE1IQGMrFAKCcGWSBzwPAnAwarcKQ15MpTMJYd1ZyUDXSDGelBY0qIoBh/ZoYGgELCjoxCRRvIQcGD1kzgSAgAACQDxEAIfkEBQcADwAsAAAAAA8AEAAABF3wyfkMkotOJpscRKJJwtI4Q1MAoxQ0RFBw0xEvhGAVRZZJh4JgMAEQW7TWI4EwGFjKR+CAQECjn8DoN0kwDtvBT8FILAKJgfoo1iAGAPNVY9DGJXNMIHN/HJVqIxEAIfkEBQcADwAsAAAAABAADwAABFrwyfmColgiydpaQiY5x9Ith7hURdIl0wBIhpCAjKIIxaAUPQ0hFQsAC7MJALFSFi4SgC4wyHyuCYNWxH3AuhSEotkNGAALAPqqkigG8MWAjAnM4A8594vPUyIAIfkEBQcADwAsAAAAABAAEAAABF3wySkDvdKsddg+APYIWrcg2DIRQAcU6DJICjIsjBEETLEEBYLqYSDdJoCGiHgZwG4LQCCRECEIBAdoF5hdEIWwgBJqDs7DgcKyRHZl3uUwuhm2AbNNW+LV7yd+FxEAIfkEBQcACAAsAAAAABAADgAABEYQyYmMoVgeWQrP3NYhBCgZBdAFRUkdBIAUguVVo1ZsWFcEGB5GMBkEjiCBL2a5ZAi+m2SAURExwKqPiuCafBkvBSCcmiYRACH5BAUHAA4ALAAAAAAQABAAAARs0MnpAKDYrbSWMp0xZIvBKYrXjNmADOhAKBiQDF5gGcICNAyJTwFYTBaDQ0HAkgwSmAUj0OkMrkZM4HBgKK7YTKDRICAo2clAEIheKc9CISjEVTuEQrJASGcSBQcSUFEUDQUXJBgDBW0Zj34RACH5BAUHAA8ALAAAAAAQABAAAARf8Mn5xqBYgrVC4EEmBcOSfAEjSopJMglmcQlgBYjE5NJgZwjCAbO4YBAJjpIjSiAQh5ayyRAIDKvJIbnIagoFRFdkQDQKC0RBsCIUFAWsT7RwG410R8HiiK0WBwJjFBEAIfkEBQcADgAsAQABAA8ADwAABFrQybEWADXJLUHHAMJxIDAgnrOo2+AOibEMh1LN62gIxphzitRoCDAYNcNN6FBLShao4WzwHDQKvVGhoFAwGgtFgQHENhoB7nCwHRAIC0EyUcC8Zw1ha3NIRgAAIfkEBQcADwAsAAAAABAAEAAABGDwyfnWoljaNYYFV+Zx3hCEGEcuypBtMJBISpClAWLfWODymIFiCJwMDMiZBNAAYFqUAaNQ2E0YBIXGURAMCo1AAsFYBBoIScBJEwgSVcmP0li4FwcHz+FpCCQMPCFINxEAIfkEBQcADgAsAAABABAADwAABFzQyemWXYNqaSXY2vVtw3UNmROM4JQowKKlFOsgRI6ASQ8IhSADFAjAMIMAgSYJtByxyQIhcEoaBcSiwegpDgvAwSBJ0AIHBoCQqIAEi/TCIAABGhLG8MbcKBQgEQAh+QQFBwAPACwAAAEAEAAPAAAEXfDJSd+qeK5RB8fDRRWFspyotAAfQBbfNLCVUSSdKDV89gDAwcFBIBgywMRnkWBgcJUDKSZRIKAPQcGwYByAAYTEEJAAJIGbATEQ+B4ExmK9CDhBd8ThdHw/AmUYEQAh+QQFBwAPACwAAAEADwAPAAAEXvBJQIa8+ILSspdHkXxS9wxF4Q3L2aTBeC0sFjhAtuyLIjAMhYc2GBgaSKGuyNoBDp7czFAgeBIKwC6kWCAMxUSAFjtNCAAFGGF5tCQLAaJnWCTqHoREvQuQJAkyGBEAOw==);    
+}
+
+.aui-dropdown2 .active .aui-icon-wait,
+.aui-button-primary .aui-icon-wait {
+    background-image: url(data:image/gif;base64,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);    
+}
+
+
+
+
+
 /*! AUI Inline Dialog */
 .aui-inline-dialog {
     display: none;
@@ -1268,7 +1290,7 @@ form.aui .icon-inline-help,
 
 .aui-inline-dialog .aui-box-shadow {
     -webkit-box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.13);
-    box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.13);
+    box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.13); 
 }
 
 .aui-inline-dialog .contents {
@@ -1313,8 +1335,7 @@ form.aui .icon-inline-help,
     border-radius: 5px;
     color: #333;
     margin: 10px 0 0 0;
-    min-height: 1em;
-    padding: 16px 15px 16px 45px; /* Be sure to adjust icon positions below if these values are changed */
+    padding: 10px 10px 10px 36px; /* Be sure to adjust icon positions below if these values are changed */
     position: relative;
 }
 /* Lighter shadow for messages */
@@ -1329,7 +1350,7 @@ form.aui .icon-inline-help,
 }
 
 .aui-message.error {
-    background: #d04437;
+    background: #d04437; 
     border-color: #d04437;
     color: #fff;
 }
@@ -1338,7 +1359,7 @@ form.aui .icon-inline-help,
     border-color: #ffeaae;	/* 50% of palette yellow #ffd351 */
 }
 .aui-message.info {
-    background: #fcfcfc;
+    background: #fcfcfc; 
     border-color: #8c9fb2;	/* 50% of palette blue lozenge #4a6785 */
 }
 .aui-message.success {
@@ -1346,7 +1367,7 @@ form.aui .icon-inline-help,
     border-color: #91c89c;	/* 50% of palette green #14892c */
 }
 .aui-message.hint {
-    background: #fcfcfc;
+    background: #fcfcfc; 
     border-color: #aab8c6;	/* 50% of palette blue lozenge #4a6785 */
 }
 
@@ -1365,32 +1386,11 @@ form.aui .icon-inline-help,
     font-weight: inherit;
 }
 
-/* Messages tweak the spacing a bit to make them sit nicely */
-.aui-message p,
-.aui-message ul li {
-    margin-top: 4px;
-}
-.aui-message .title + p,
-.aui-message .title + ul li {
-    margin-top: 3px;
-}
-.aui-message p:first-child,
-.aui-message ul:first-child,
-.aui-message .title + ul {
-    margin-top: 0;
-}
-.aui-message ul {
-    padding: 0 0 0 1em;
-}
-.aui-message ul li {
-    padding: 0;
-}
-
 /* Positioning aui-icon for messages */
 .aui-message .aui-icon {
-    left: 19px; /* desired spacing between the icon and text = 20px so need to subtract the icon width (16px) from the left padding of the message (45px) then remove 20px */
+    left: 10px; /* desired spacing between the icon and text = 10px so need to subtract the icon width (16px) from the left padding of the message (36px) then remove 10px */
     position: absolute;
-    top: 18px; /* 18px = top padding of the message (16px) + align to the center of the text ((20px line-height - 16px icon height) / 2) */
+    top: 12px; /* 12px = top padding of the message (10px) + align to the center of the text ((20px line-height - 16px icon height) / 2) */
 }
 
 .aui-message.closeable .icon-close {
@@ -1413,6 +1413,25 @@ form.aui .icon-inline-help,
     position: absolute;
     right: 10px;
     top: 10px;
+}
+
+/* Header interop */
+#header .aui-message {
+    border-bottom: none;
+    border-left: none;
+    border-right: none;
+    border-width: 2px;
+    margin: 0;
+    -moz-border-radius: 0;
+    -webkit-border-radius: 0;
+    border-radius: 0;
+}
+
+/* Footer interop (provisional, just enough to stop them looking broken) */
+#footer .aui-message {
+    margin-left: 20px;
+    margin-right: 20px;
+    text-align: left;
 }
 /*! AUI Tables */
 /* Note child combinators are used to ensure nested non-AUI tables don't receive any AUI styles. */
@@ -1466,7 +1485,7 @@ table.aui > tbody > tr > th > ul.menu,
 table.aui > tbody > tr > td > ul.menu,
 table.aui > tfoot > tr > td > ul.menu {
     list-style-type: none;
-    margin: 0;
+    margin: 0; 
     padding: 0;
 }
 table.aui > thead > tr > th > ul.menu > li,
@@ -2018,7 +2037,7 @@ table.aui-zebra tr.aui-zebra th {
 }
 
 
-/*! AUI Flat Pack - version 5.0-m17 - generated 2012-11-14 02:21:29 -0500 */
+/*! AUI Flat Pack - version 5.0-m25 - generated 2013-01-16 19:47:50 -0500 */
 
 
 /**
@@ -2031,8 +2050,8 @@ html, body, p, div, h1, h2, h3, h4, h5, h6, img, pre, form, fieldset {
 ul, ol, dl {
     margin: 0;
 }
-img, fieldset {
-	border: 0;
+img, fieldset { 
+	border: 0; 
 }
 
 /**
@@ -2192,7 +2211,7 @@ img, fieldset {
     margin: 20px 0;
     padding: 0 0 65px 0;
     text-align: center;
-}
+} 
 
 .aui-theme-default #footer .footer-body {
     background: transparent;
@@ -2201,7 +2220,7 @@ img, fieldset {
     line-height: 1.66666666666667;
     margin: 0;
     padding: 0 10px;
-    text-align: center;
+    text-align: center;    
 }
 
 /**
@@ -2290,6 +2309,92 @@ img, fieldset {
 }
 
 /**
+ * Page variations
+ */
+.aui-page-focused .aui-page-header,
+.aui-page-focused .aui-page-panel,
+.aui-page-focused #footer .footer-body,
+.aui-page-fixed .aui-header-inner,
+.aui-page-fixed .aui-page-header-inner,
+.aui-page-fixed .aui-navgroup-horizontal .aui-navgroup-inner,
+.aui-page-fixed .aui-page-panel-inner,
+.aui-page-fixed #footer .footer-body,
+.aui-page-hybrid .aui-page-header,
+.aui-page-hybrid .aui-navgroup-horizontal .aui-navgroup-inner,
+.aui-page-hybrid .aui-page-panel-inner,
+.aui-page-hybrid #footer .footer-body {
+    margin-left: auto;
+    margin-right: auto;
+    width: 980px;
+}
+
+/* extra width so left edge of hoverable content aligns with left edge of content while inactive. On hover, the hover affordance does extend outside the alignment but this looks better than the other way around. */
+.aui-page-fixed .aui-header-inner,
+.aui-page-hybrid .aui-navgroup-horizontal .aui-navgroup-inner,
+.aui-page-fixed .aui-navgroup-horizontal .aui-navgroup-inner {
+    width: 1000px; 
+}
+
+
+.aui-page-focused-small .aui-page-header,
+.aui-page-focused-small .aui-page-panel,
+.aui-page-focused-small #footer .footer-body {
+    width: 400px;
+}
+.aui-page-focused-medium .aui-page-header,
+.aui-page-focused-medium .aui-page-panel,
+.aui-page-focused-medium #footer .footer-body {
+    width: 600px;
+}
+.aui-page-focused-large .aui-page-header,
+.aui-page-focused-large .aui-page-panel,
+.aui-page-focused-large #footer .footer-body {
+    width: 800px;
+}
+.aui-page-focused-xlarge .aui-page-header,
+.aui-page-focused-xlarge .aui-page-panel,
+.aui-page-focused-xlarge #footer .footer-body {
+    width: 980px;
+}
+
+
+.aui-page-focused .aui-page-panel,
+.aui-page-fixed .aui-page-panel {
+    border-width: 1px;
+    border-radius: 5px;
+}
+
+.aui-page-fixed .aui-page-panel-inner,
+.aui-page-fixed.aui-theme-default #content > .aui-page-header {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.aui-page-fixed .aui-page-panel-nav:first-child, 
+.aui-page-fixed .aui-page-panel-content:first-child, 
+.aui-page-fixed .aui-page-panel-item:first-child, 
+.aui-page-fixed .aui-page-panel-sidebar:first-child,
+.aui-page-hybrid .aui-page-panel-nav:first-child, 
+.aui-page-hybrid .aui-page-panel-content:first-child, 
+.aui-page-hybrid .aui-page-panel-item:first-child, 
+.aui-page-hybrid .aui-page-panel-sidebar:first-child {
+    padding-left: 0;
+}
+.aui-page-fixed .aui-page-panel-nav:last-child, 
+.aui-page-fixed .aui-page-panel-content:last-child, 
+.aui-page-fixed .aui-page-panel-item:last-child, 
+.aui-page-fixed .aui-page-panel-sidebar:last-child,
+.aui-page-hybrid .aui-page-panel-nav:last-child, 
+.aui-page-hybrid .aui-page-panel-content:last-child, 
+.aui-page-hybrid .aui-page-panel-item:last-child, 
+.aui-page-hybrid .aui-page-panel-sidebar:last-child {
+    padding-right: 0;
+}
+
+
+
+
+/**
  * TABS AS FIRST CHILD IN CONTENT
  * Explicitly sets bg to white, changes horizontal hovers to work on grey.
  * Remember these extend the standard component styles.
@@ -2319,7 +2424,7 @@ img, fieldset {
  */
 body {
     color: #333;
-    font-family: sans-serif;
+    font-family: Arial, sans-serif;
     font-size: 14px;
     line-height: 1.42857142857143; /* 20px equiv line-height */
 }
@@ -2459,7 +2564,8 @@ cite:before {
 blockquote {
     border-left: 1px solid #ccc;
     color: #707070;
-    padding: 10px 30px;
+    margin-left: 19px;
+    padding: 10px 20px;
 }
 blockquote > cite {
     display: block;
@@ -2545,7 +2651,6 @@ abbr {
     box-sizing: border-box;
     float: left;
     height: 40px;
-    margin-right: 13px; /* 8px (arrow width) + 5px (margin between arrow and logo) */
     padding: 0 10px;
 }
 
@@ -2627,10 +2732,6 @@ abbr {
     float: left;
     max-height: 30px;
     padding: 5px 0;
-}
-
-.aui-header .aui-header-logo a.aui-dropdown2-trigger {
-    margin-right: 0;
 }
 
 /* Positioning icons in the header */
@@ -2731,7 +2832,7 @@ abbr {
 .aui-header a:hover .aui-icon,
 .aui-header a:active .aui-icon {
     opacity: 1;
-    -ms-filter: alpha(opacity=100);
+    filter: alpha(opacity=100);
 }
 
 /**
@@ -2843,30 +2944,29 @@ abbr {
 /* Horizontal, breadcrumbs and pagination are all horizontal */
 .aui-nav-breadcrumbs:after,
 .aui-nav-pagination:after,
-.aui-nav-horizontal:after {
+.aui-nav-horizontal:after,
+.aui-navgroup-horizontal .aui-nav:after,
+.aui-navgroup-horizontal .aui-navgroup-inner:after {
     clear: both;
     content: " ";
     display: table;
 }
 .aui-nav-breadcrumbs > li,
 .aui-nav-pagination > li,
-.aui-nav-horizontal > li {
+.aui-nav-horizontal > li,
+.aui-navgroup-horizontal .aui-nav > li {
     float: left;
 }
 
-.aui-nav-horizontal .aui-icon-dropdown,
-.aui-nav-vertical .aui-icon-dropdown {
-    border-left: 4px solid transparent;
-    border-right: 4px solid transparent;
-    border-top: 4px solid #8e8e8e;
-    content: "";
-    display: inline-block;
-    height: 0;
-    width: 0;
-    text-indent: -99999px;
-    position: relative;
+/* Navigation headings
+-------------------- */
+.aui-nav-heading {
+    color: #707070;
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 1.66666666666667; /* 20px */
+    text-transform: uppercase;
 }
-
 
 /* Breadcrumb navigation
 -------------------- */
@@ -2885,9 +2985,9 @@ abbr {
     color: #333;
 }
 
-
 /* Horizontal Navigation
 -------------------- */
+.aui-navgroup-horizontal .aui-nav > li a,
 .aui-nav-horizontal > li a {
     padding-right: 10px;
 }
@@ -2898,8 +2998,10 @@ abbr {
     padding-right: 10px;
 }
 
+
 /* Vertical Navigation
 -------------------- */
+.aui-navgroup-vertical .aui-nav > li > a,
 .aui-nav-vertical > li > a {
     display: block;
     padding: 7px 10px;
@@ -2907,21 +3009,46 @@ abbr {
     word-wrap: break-word;
 }
 
+.aui-navgroup-vertical .aui-nav > li > a:focus,
+.aui-navgroup-vertical .aui-nav > li > a:hover,
 .aui-nav-vertical > li > a:focus,
 .aui-nav-vertical > li > a:hover {
     background: #e6e6e6;
-	text-decoration: none;
+    text-decoration: none;
 }
 
+.aui-navgroup-vertical .aui-nav-selected a,
 .aui-nav-vertical .aui-nav-selected a {
     color: #333;
     font-weight: bold;
 }
 
+.aui-navgroup-vertical .aui-nav,
+.aui-navgroup-vertical .aui-nav-heading {
+    border-top: 1px solid #ccc;
+    margin-top: 5px;
+    padding-top: 5px;
+}
 
-/* Navbar - a horizontal container, usually for horizontal nav
+.aui-navgroup-vertical .aui-nav-heading {
+    padding: 10px 10px 4px 10px;
+}
+
+.aui-navgroup-vertical .aui-nav:first-child,
+.aui-navgroup-vertical .aui-nav-heading + .aui-nav {
+    border-top: 0;
+    margin-top: 0;
+    padding-top: 0;
+}
+
+
+
+
+
+
+/* Horizontal Navgroup
 -------------------- */
-.aui-navbar {
+.aui-navgroup-horizontal {
     background: #f5f5f5;
     border-top: 1px solid #ccc;
     border-bottom: 1px solid #ccc;
@@ -2929,49 +3056,45 @@ abbr {
     margin: 0;
 }
 
-.aui-theme-default .aui-navbar + .aui-page-panel {
-    border-top: 0;
-    margin-top: 0;
-}
-.aui-theme-default .aui-page-panel-content > .aui-navbar {
+.aui-theme-default .aui-page-panel-content > .aui-navgroup-horizontal {
     margin-left: -20px;
     margin-right: -20px;
 }
-.aui-theme-default .aui-page-panel-content > .aui-navbar:first-child {
+.aui-theme-default .aui-navgroup-horizontal + .aui-page-panel {
+    border-top: 0;
+    margin-top: 0;
+}
+.aui-theme-default .aui-page-panel-content > .aui-navgroup-horizontal:first-child {
     margin-top: -20px;
 }
 
-/* breadcrumbs in navbar */
-.aui-navbar .aui-nav-breadcrumbs > li {
-    padding: 9px 0 9px 10px;
-}
-
-/* Horizontal Nav in a Navbar */
-.aui-navbar .aui-nav-horizontal a {
+/* Nav in a Navbar */
+.aui-navgroup-horizontal .aui-nav > li a {
     color: #3b73af;
     display: block;
-    margin: 0 0 -1px 0;
-    padding: 9px 10px 10px 10px; /* +1 px to bottom to allow for margin pull */
+    margin: 0;
+    padding: 9px 10px;
     text-decoration: none;
 }
-.aui-navbar .aui-nav-horizontal a:focus,
-.aui-navbar .aui-nav-horizontal a:hover {
+.aui-navgroup-horizontal .aui-nav > li a.active,
+.aui-navgroup-horizontal .aui-nav > li a:focus,
+.aui-navgroup-horizontal .aui-nav > li a:hover {
     background: #e6e6e6;
     text-decoration: none;
 }
 
-.aui-navbar .aui-nav-horizontal .aui-nav-selected a {
+.aui-navgroup-horizontal .aui-nav > .aui-nav-selected a {
     font-weight: bold;
     color: #333;
-    position: relative;
+    position: relative;    
 }
 
-.aui-navbar .aui-nav-horizontal .aui-nav-selected a:before,
-.aui-navbar .aui-nav-horizontal .aui-nav-selected a:after {
+.aui-navgroup-horizontal .aui-nav > .aui-nav-selected a:before,
+.aui-navgroup-horizontal .aui-nav > .aui-nav-selected a:after {
     border: 8px solid transparent;
     border-style: outset outset solid outset; /* fixes FF bug */
     border-bottom-color: #ccc;
-    bottom: 1px;
+    bottom: 0;
     content: "";
     height: 0;
     left: 50%;
@@ -2980,37 +3103,66 @@ abbr {
     position: absolute;
     width: 0;
 }
-.aui-navbar .aui-nav-horizontal .aui-nav-selected a:after {
-    background: transparent;
+.aui-navgroup-horizontal .aui-nav > .aui-nav-selected a:after {
+    background: transparent; 
     border-bottom-color: #fff;
-    bottom: 0;
+    bottom: -1px;
 }
 
-/* Vertical Navigation
--------------------- */
-
-.aui-navgroup .aui-nav-heading {
-    color: #707070;
-    font-size: 12px;
-	font-weight: bold;
-    text-transform: uppercase;
-	line-height: 1.667; /* 20px */
-	padding: 5px 10px;
+/* Split horizontal navgroups */
+.aui-navgroup-horizontal .aui-nav,
+.aui-navgroup-horizontal .aui-nav-heading,
+.aui-navgroup-horizontal .aui-navgroup-primary {
+    float: left;
 }
 
-.aui-navgroup .aui-nav-vertical,
-.aui-navgroup .aui-nav-heading {
-    border-top: 1px solid #ccc;
-    margin-top: 5px;
-	padding-top: 5px;
+.aui-navgroup-horizontal .aui-navgroup-secondary {
+    float: right;
 }
 
-.aui-navgroup .aui-nav-heading:first-child,
-.aui-navgroup .aui-nav-vertical:first-child,
-.aui-navgroup .aui-nav-heading + .aui-nav-vertical {
-    border-top: 0;
-    margin-top: 0;
+/* Horizontal navgroup + Dropdown2 integration. Note: ADG prohibits dropdowns in vertical nav. */
+.aui-navgroup-horizontal .aui-dropdown2-trigger .aui-icon-dropdown {
+    display: none;
 }
+.aui-navgroup-horizontal .aui-dropdown2-trigger {
+    padding-right: 23px !important; /* 8px (arrow width) + 10px (right padding) + 5px (margin between arrow and logo) */
+    position: relative;
+}
+.aui-navgroup-horizontal .aui-nav > li a.aui-dropdown2-trigger:after {
+    border: 4px solid transparent;
+    content: "";
+    height: 0;
+    left: 100%; /* "left" + "margin-left" required because of webkit not working properly with "right" */
+    margin-left: -18px;
+    margin-top: -3px; /* Align top of arrow with top of x height */
+    opacity: 0.8;
+    position: absolute;
+    top: 50%;
+    width: 0;
+}
+.aui-navgroup-horizontal .aui-nav > li a.aui-dropdown2-trigger:after {
+    border-top-color: #8e8e8e;
+}
+.aui-navgroup-horizontal .aui-nav > li a.aui-dropdown2-trigger:hover:after,
+.aui-navgroup-horizontal .aui-nav > li a.aui-dropdown2-trigger.active:after {
+    opacity: 1;
+}
+
+/* Breadcrumbs in navbar */
+.aui-navgroup-horizontal .aui-nav-breadcrumbs > li, 
+.aui-navgroup-horizontal .aui-nav-breadcrumbs > li:before {
+    padding: 0;
+}
+
+.aui-navgroup-horizontal .aui-nav-breadcrumbs > li a {
+    display: inline-block;
+}
+
+/* Bulletproofing - headings shouldn't be here but will at least not look heinously broken. */
+.aui-navgroup-horizontal .aui-nav-heading {
+    padding: 10px 10px 0 10px; /* 0 bottom required to unfuck IE9 */ 
+}
+
 
 /* AUI BUTTONS
  * Note hover/disabled styles set directly as they are not precisely the same as
@@ -3229,7 +3381,7 @@ ARIA usage from http://www.paciellogroup.com/blog/misc/ARIA/togglebutton.html */
 .aui-buttons .aui-button[aria-pressed="true"],
 .aui-buttons .aui-button[aria-pressed="true"].aui-button-primary {
     background: #ccc;
-    background: -webkit-linear-gradient(top, #ccc 0%, #ddd 13%);
+    background: -webkit-linear-gradient(top, #ccc 0%, #ddd 13%); 
     background: -moz-linear-gradient(top, #ccc 0%, #ddd 13%); /* FF3.6+ */
     background: -o-linear-gradient(top, #ccc 0%, #ddd 13%); /* Opera 11.10+ */
     background: -ms-linear-gradient(top, #ccc 0%, #ddd 13%); /* IE10+ */
@@ -3398,6 +3550,59 @@ input.aui-button.aui-dropdown2-trigger:after {
     display: none;
 }
 
+/*! AUI Label */
+.aui-label {
+    background: #f5f5f5;
+    border: 1px solid #ccc;
+    border-radius: 3.01px; /* 3.01 for IE10 */
+    color: #3B73AF;
+    display: inline-block;
+    font-size: 14px;
+    font-weight: normal;
+    line-height: 1;
+    padding: 1px 5px;   
+    margin: 0 10px 0 0;
+    text-align: left;
+    text-decoration: none;
+}
+
+span.aui-label {
+    color: #333;
+}
+
+/* Need the split hover to trigger border on parent while split label/X are hovered */
+.aui-label.aui-label-closeable.aui-label-split:hover,
+a.aui-label:focus,
+a.aui-label:hover,
+a.aui-label:active {
+    border-color: #707070;
+    text-decoration: none;
+}
+
+.aui-label-split .aui-label-split-main:hover,
+.aui-label-split .aui-label-split-main:active,
+.aui-label-split .aui-label-split-main:focus{ 
+    text-decoration: none;
+}
+
+.aui-label.aui-label-closeable {
+    padding-right: 18px;
+    position: relative;
+}
+
+.aui-label-closeable .aui-icon-close {
+    /* Small X icon */
+    background: url("data:image/png;base64,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") 0 0 no-repeat;
+    cursor: pointer;
+    display: block;
+    float: right;
+    height: 8px;
+    position: absolute;
+    right: 5px;
+    top: 4px;
+    width: 8px;
+}
+
 /*! AUI Lozenge */
 .aui-lozenge {
     background: #ccc;
@@ -3474,7 +3679,7 @@ input.aui-button.aui-dropdown2-trigger:after {
 .aui-toolbar2 {
     -moz-box-sizing: border-box;
     box-sizing: border-box;
-    margin: 10px 0 0 0;
+    margin: 10px 0 0 0; 
     padding: 0;
 }
 
@@ -3493,11 +3698,11 @@ input.aui-button.aui-dropdown2-trigger:after {
     margin: 0;
     padding: 0;
 }
-.aui-toolbar2-primary {
-    float: left;
+.aui-toolbar2-primary { 
+    float: left; 
 }
-.aui-toolbar2-secondary {
-    float: right;
+.aui-toolbar2-secondary { 
+    float: right; 
 }
 .aui-toolbar2 .aui-buttons {
     float: left;
@@ -3535,8 +3740,9 @@ input.aui-button.aui-dropdown2-trigger:after {
     height: 100%;
     width: 100%;
 }
-.aui-avatar-tiny,
-.aui-avatar-tiny .aui-avatar-inner {
+
+.aui-avatar-xsmall,
+.aui-avatar-xsmall .aui-avatar-inner {
     height: 16px;
     width: 16px;
 }
@@ -3555,19 +3761,34 @@ input.aui-button.aui-dropdown2-trigger:after {
     height: 48px;
     width: 48px;
 }
-.aui-avatar-huge,
-.aui-avatar-huge .aui-avatar-inner {
+.aui-avatar-xlarge,
+.aui-avatar-xlarge .aui-avatar-inner {
+    height: 64px;
+    width: 64px;
+}
+
+.aui-avatar-xxlarge,
+.aui-avatar-xxlarge .aui-avatar-inner {
     height: 96px;
     width: 96px;
 }
-.aui-avatar-huge img {
+
+.aui-avatar-xxxlarge,
+.aui-avatar-xxxlarge .aui-avatar-inner {
+    height: 128px;
+    width: 128px;
+}
+
+
+.aui-avatar-xxlarge img,
+.aui-avatar-xxxlarge img {
     border-radius: 5px;
 }
 
 /* Project avatars - circular and different sizes */
 .aui-avatar-project {
     background-color: #fff;
-    box-shadow: 0 0 0 3px #fff;
+    box-shadow: 0 0 0 1px #ccc;
     position: relative;
 }
 .aui-avatar-project,
@@ -3580,45 +3801,16 @@ input.aui-button.aui-dropdown2-trigger:after {
     max-width: 100%;
     width: auto;
 }
-.aui-page-panel .aui-avatar-project {
-    background-color: transparent;
-    box-shadow: 0 0 0 3px #707070;
-}
 /* The below style aims to minimise any "halo" caused by the antialiasing of the image */
-.aui-page-panel .aui-avatar-project:before {
+.aui-avatar-project:before {
     border-radius: 100%;
-    border: 1px solid #707070;
+    border: 1px solid #ccc;
     bottom: -1px;
     content: "";
     left: -1px;
     position: absolute;
     right: -1px;
     top: -1px;
-}
-.aui-avatar-tiny.aui-avatar-project,
-.aui-avatar-tiny.aui-avatar-project .aui-avatar-inner {
-    height: 24px;
-    width: 24px;
-}
-.aui-avatar-small.aui-avatar-project,
-.aui-avatar-small.aui-avatar-project .aui-avatar-inner {
-    height: 32px;
-    width: 32px;
-}
-.aui-avatar-medium.aui-avatar-project,
-.aui-avatar-medium.aui-avatar-project .aui-avatar-inner {
-    height: 48px;
-    width: 48px;
-}
-.aui-avatar-large.aui-avatar-project,
-.aui-avatar-large.aui-avatar-project .aui-avatar-inner {
-    height: 64px;
-    width: 64px;
-}
-.aui-avatar-huge.aui-avatar-project,
-.aui-avatar-huge.aui-avatar-project .aui-avatar-inner {
-    height: 128px;
-    width: 128px;
 }
 /*
 * Icon Font
@@ -3636,7 +3828,6 @@ input.aui-button.aui-dropdown2-trigger:after {
 }
 
 .aui-icon-small,
-.aui-icon-medium,
 .aui-icon-large {
     line-height: 0;
     position: relative;
@@ -3646,16 +3837,11 @@ input.aui-button.aui-dropdown2-trigger:after {
     height: 16px;
     width: 16px;
 }
-.aui-icon-medium {
-    height: 24px;
-    width: 24px;
-}
 .aui-icon-large {
     height: 32px;
     width: 32px;
 }
 .aui-icon-small:before,
-.aui-icon-medium:before,
 .aui-icon-large:before {
     color: inherit;
     font-family: "Atlassian Icons";
@@ -3672,10 +3858,6 @@ input.aui-button.aui-dropdown2-trigger:after {
 .aui-icon-small:before {
     font-size: 16px;
     margin-top: -9px; /* (font-size/2)+1 negative margin - the +1 is for font rendering weirdness across browsers  */
-}
-.aui-icon-medium:before {
-    font-size: 24px;
-    margin-top: -13px; /* (font-size/2)+1 negative margin - the +1 is for font rendering weirdness across browsers  */
 }
 .aui-icon-large:before {
     font-size: 32px;
@@ -3706,6 +3888,39 @@ input.aui-button.aui-dropdown2-trigger:after {
 }
 .aui-iconfont-workbox-empty:before {
     content: "H";
+}
+.aui-iconfont-email:before {
+    content: "I";
+}
+.aui-iconfont-appswitcher:before {
+    content: "J";
+}
+.aui-iconfont-comment:before {
+    content: "K";
+}
+.aui-iconfont-add-comment:before {
+    content: "L";
+}
+.aui-iconfont-search-small:before {
+    content: "M";
+}
+.aui-iconfont-remove:before {
+    content: "N";
+}
+.aui-iconfont-close-dialog:before {
+    content: "O";
+}
+.aui-iconfont-remove-label:before {
+    content: "P";
+}
+.aui-iconfont-time:before {
+    content: "Q";
+}
+.aui-iconfont-error:before {
+    content: "R";
+}
+.aui-iconfont-info:before {
+    content: "S";
 }
 /*! AUI Badge */
 .aui-badge {
@@ -3748,3 +3963,95 @@ input.aui-button.aui-dropdown2-trigger:after {
 .aui-tabs .menu-item .aui-badge {
     top: -1px; /* slight tweak to position them in specific contexts */
 }
+/* Layout */
+.aui-progress-tracker {
+    display: table;
+    font-size: 12px;
+    margin: 10px 0 0;
+    padding: 0;
+    table-layout: fixed;
+    word-wrap: break-word; /* doesn't work in IE */
+}
+.aui-progress-tracker:first-child {
+    margin-top: 0;
+}
+.aui-progress-tracker-step {
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    display: table-cell;
+    padding: 0 10px;
+    max-width: 140px;
+    min-width: 80px;
+    text-align: center;
+}
+
+/* Progress Bar */
+.aui-progress-tracker-step > span,
+.aui-progress-tracker-step > a {
+    display: block;
+    font-weight: bold;
+    outline: none;
+    padding-top: 25px;
+    position: relative;
+}
+.aui-progress-tracker-step > span:before,
+.aui-progress-tracker-step > a:before {
+    background: #3b73af;
+    border-radius: 100%;
+    box-shadow: 0 0 0 3px #f5f5f5; /* can't just use a 3px border as an IE9 bug causes it to draw a strange additional darker border on the outside in addition to the 3px border */
+    content: "";
+    height: 10px;
+    left: 50%;
+    margin-left: -5px;
+    position: absolute;
+    top: 3px;
+    width: 10px;
+}
+.aui-progress-tracker-step + .aui-progress-tracker-step > span:after,
+.aui-progress-tracker-step + .aui-progress-tracker-step > a:after {
+    background: #3b73af;
+    border: solid #f5f5f5;
+    border-width: 2px 0;
+    box-shadow: -5px 0 0 -2px #3b73af, 5px 0 0 -2px #3b73af;
+    content: "";
+    height: 4px;
+    left: -50%;
+    margin-left: -14px; /* almost touches right edge of previous dot (leaves 1px room for rounding widths like 33.3% in webkit) */
+    margin-right: 6px; /* almost touches left edge of this dot (leaves 1px room for rounding widths like 33.3% in webkit) */
+    position: absolute;
+    right: 50%;
+    top: 4px;
+}
+.aui-progress-tracker-step-current ~ .aui-progress-tracker-step {
+    color: #707070;
+}
+.aui-progress-tracker-step-current ~ .aui-progress-tracker-step > span:before,
+.aui-progress-tracker-step-current ~ .aui-progress-tracker-step > a:before {
+    background-color: #ccc;
+}
+.aui-progress-tracker-step-current ~ .aui-progress-tracker-step > span:after,
+.aui-progress-tracker-step-current ~ .aui-progress-tracker-step > a:after {
+    background-color: #f5f5f5;
+    box-shadow: none;
+}
+
+/* Inverted Colours */
+.aui-progress-tracker-inverted .aui-progress-tracker-step > span:before,
+.aui-progress-tracker-inverted .aui-progress-tracker-step > a:before {
+    box-shadow: 0 0 0 3px #fff;
+}
+.aui-progress-tracker-inverted .aui-progress-tracker-step + .aui-progress-tracker-step > span:after,
+.aui-progress-tracker-inverted .aui-progress-tracker-step + .aui-progress-tracker-step > a:after {
+    border-color: #fff;
+}
+.aui-progress-tracker-inverted .aui-progress-tracker-step-current ~ .aui-progress-tracker-step > span:after,
+.aui-progress-tracker-inverted .aui-progress-tracker-step-current ~ .aui-progress-tracker-step > a:after {
+    background-color: #fff;
+}
+
+/* Interaction wih page layout */
+.aui-page-header-actions .aui-progress-tracker {
+    float: right;
+}
+

@@ -1,4 +1,4 @@
-/*! AUI Flat Pack - version 5.0-m17 - generated 2012-11-14 02:21:29 -0500 */
+/*! AUI Flat Pack - version 5.0-m25 - generated 2013-01-16 19:47:50 -0500 */
 
 
 /**
@@ -8,7 +8,7 @@
 **/
 
 /** * Fixes for IE8, IE7 and IE6 * - each property should be written
-without CSS hacks * eg:
+without CSS hacks * eg: 
 .dashboard {
     margin: 0 0 2px 1px;
 }
@@ -30,18 +30,18 @@ without CSS hacks * eg:
     background: transparent url(bg-000-trans20.png) repeat;
 }
 /** * Fixes for IE7 and IE6 * - each property *must* be prefixed with
-an asterisk (*) * eg:
+an asterisk (*) * eg: 
 .dashboard {
     *margin: 0 0 4px 2px;
 }
-* **/
+* **/ 
 .aui-blanket {
     *height: 100px;
     *position: absolute;
 }
 
 /** * Fixes for IE6 only * - each property *must* be prefixed with an
-underscore (_) * eg:
+underscore (_) * eg: 
 .dashboard {
     _margin: 0 0 0 1px;
     _padding: 0 0
@@ -58,7 +58,7 @@ underscore (_) * eg:
 /**
 * Fixes for IE8, IE7 and IE6
 * - each property should be written without CSS hacks
-* eg:
+* eg: 
 .dashboard {
     margin: 0 0 2px 1px;
 }
@@ -76,7 +76,7 @@ underscore (_) * eg:
 /**
 * Fixes for IE7 and IE6
 * - each property *must* be prefixed with an asterisk (*)
-* eg:
+* eg: 
 .dashboard {
     *margin: 0 0 4px 2px;
 }
@@ -90,7 +90,7 @@ underscore (_) * eg:
 /**
 * Fixes for IE6 only
 * - each property *must* be prefixed with an underscore (_)
-* eg:
+* eg: 
 .dashboard {
     _margin: 0 0 0 1px;
     _padding: 0 0 -3px 0;
@@ -180,7 +180,7 @@ form.aui .full-width-field {
 .aui-toolbar .toolbar-item,
 .aui-toolbar .toolbar-trigger,
 .aui-toolbar .toolbar-trigger span {
-    *white-space: nowrap !important;
+    *white-space: nowrap !important; 
 }
 
 .aui-toolbar .toolbar-group button.toolbar-trigger,
@@ -244,11 +244,33 @@ form.aui .full-width-field {
     *width: 7px;
 }
 /*! AUI Toolbar2 IE Stylesheet */
-/* IE8 - swap the spacing around; doesn't wrap as nicely (last wrapped item doesn't align)
+/* IE8 - swap the spacing around; doesn't wrap as nicely (last wrapped item doesn't align) 
    but avoids permanently showing 20px extra on the right-aligned buttons. */
 .aui-toolbar2 .aui-toolbar2-secondary > .aui-buttons {
     margin: 0 0 0 20px;
 }
 .aui-toolbar2 .aui-toolbar2-secondary > .aui-buttons:first-child {
 	margin-left: 0;
+}
+
+/**
+ * These overrides make up for the lack of box-shadow support in IE8. They:
+ *  - add the grey/white box around the dot
+ *  - pull the grey/white bar between the dots 1px closer to the dot so that they actually touch (wouldn't be needed except for webkit's weird rounding of fractional percentages)
+ */
+
+.aui-progress-tracker-step > span:before,
+.aui-progress-tracker-step > a:before {
+    border: 3px solid #f5f5f5;
+    margin-left: -8px;
+    top: 0;
+}
+.aui-progress-tracker-step + .aui-progress-tracker-step > span:after,
+.aui-progress-tracker-step + .aui-progress-tracker-step > a:after {
+    margin-left: -15px;
+    margin-right: 5px;
+}
+.aui-progress-tracker-inverted .aui-progress-tracker-step > span:before,
+.aui-progress-tracker-inverted .aui-progress-tracker-step > a:before {
+    border-color: #fff;
 }

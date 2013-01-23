@@ -1,4 +1,4 @@
-/*! AUI Flat Pack - version 5.0-m17 - generated 2012-11-14 02:21:29 -0500 */
+/*! AUI Flat Pack - version 5.0-m25 - generated 2013-01-16 19:47:50 -0500 */
 
 
 /**
@@ -11,8 +11,8 @@ html, body, p, div, h1, h2, h3, h4, h5, h6, img, pre, form, fieldset {
 ul, ol, dl {
     margin: 0;
 }
-img, fieldset {
-	border: 0;
+img, fieldset { 
+	border: 0; 
 }
 
 /**
@@ -172,7 +172,7 @@ img, fieldset {
     margin: 20px 0;
     padding: 0 0 65px 0;
     text-align: center;
-}
+} 
 
 .aui-theme-default #footer .footer-body {
     background: transparent;
@@ -181,7 +181,7 @@ img, fieldset {
     line-height: 1.66666666666667;
     margin: 0;
     padding: 0 10px;
-    text-align: center;
+    text-align: center;    
 }
 
 /**
@@ -270,6 +270,92 @@ img, fieldset {
 }
 
 /**
+ * Page variations
+ */
+.aui-page-focused .aui-page-header,
+.aui-page-focused .aui-page-panel,
+.aui-page-focused #footer .footer-body,
+.aui-page-fixed .aui-header-inner,
+.aui-page-fixed .aui-page-header-inner,
+.aui-page-fixed .aui-navgroup-horizontal .aui-navgroup-inner,
+.aui-page-fixed .aui-page-panel-inner,
+.aui-page-fixed #footer .footer-body,
+.aui-page-hybrid .aui-page-header,
+.aui-page-hybrid .aui-navgroup-horizontal .aui-navgroup-inner,
+.aui-page-hybrid .aui-page-panel-inner,
+.aui-page-hybrid #footer .footer-body {
+    margin-left: auto;
+    margin-right: auto;
+    width: 980px;
+}
+
+/* extra width so left edge of hoverable content aligns with left edge of content while inactive. On hover, the hover affordance does extend outside the alignment but this looks better than the other way around. */
+.aui-page-fixed .aui-header-inner,
+.aui-page-hybrid .aui-navgroup-horizontal .aui-navgroup-inner,
+.aui-page-fixed .aui-navgroup-horizontal .aui-navgroup-inner {
+    width: 1000px; 
+}
+
+
+.aui-page-focused-small .aui-page-header,
+.aui-page-focused-small .aui-page-panel,
+.aui-page-focused-small #footer .footer-body {
+    width: 400px;
+}
+.aui-page-focused-medium .aui-page-header,
+.aui-page-focused-medium .aui-page-panel,
+.aui-page-focused-medium #footer .footer-body {
+    width: 600px;
+}
+.aui-page-focused-large .aui-page-header,
+.aui-page-focused-large .aui-page-panel,
+.aui-page-focused-large #footer .footer-body {
+    width: 800px;
+}
+.aui-page-focused-xlarge .aui-page-header,
+.aui-page-focused-xlarge .aui-page-panel,
+.aui-page-focused-xlarge #footer .footer-body {
+    width: 980px;
+}
+
+
+.aui-page-focused .aui-page-panel,
+.aui-page-fixed .aui-page-panel {
+    border-width: 1px;
+    border-radius: 5px;
+}
+
+.aui-page-fixed .aui-page-panel-inner,
+.aui-page-fixed.aui-theme-default #content > .aui-page-header {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.aui-page-fixed .aui-page-panel-nav:first-child, 
+.aui-page-fixed .aui-page-panel-content:first-child, 
+.aui-page-fixed .aui-page-panel-item:first-child, 
+.aui-page-fixed .aui-page-panel-sidebar:first-child,
+.aui-page-hybrid .aui-page-panel-nav:first-child, 
+.aui-page-hybrid .aui-page-panel-content:first-child, 
+.aui-page-hybrid .aui-page-panel-item:first-child, 
+.aui-page-hybrid .aui-page-panel-sidebar:first-child {
+    padding-left: 0;
+}
+.aui-page-fixed .aui-page-panel-nav:last-child, 
+.aui-page-fixed .aui-page-panel-content:last-child, 
+.aui-page-fixed .aui-page-panel-item:last-child, 
+.aui-page-fixed .aui-page-panel-sidebar:last-child,
+.aui-page-hybrid .aui-page-panel-nav:last-child, 
+.aui-page-hybrid .aui-page-panel-content:last-child, 
+.aui-page-hybrid .aui-page-panel-item:last-child, 
+.aui-page-hybrid .aui-page-panel-sidebar:last-child {
+    padding-right: 0;
+}
+
+
+
+
+/**
  * TABS AS FIRST CHILD IN CONTENT
  * Explicitly sets bg to white, changes horizontal hovers to work on grey.
  * Remember these extend the standard component styles.
@@ -299,7 +385,7 @@ img, fieldset {
  */
 body {
     color: #333;
-    font-family: sans-serif;
+    font-family: Arial, sans-serif;
     font-size: 14px;
     line-height: 1.42857142857143; /* 20px equiv line-height */
 }
@@ -439,7 +525,8 @@ cite:before {
 blockquote {
     border-left: 1px solid #ccc;
     color: #707070;
-    padding: 10px 30px;
+    margin-left: 19px;
+    padding: 10px 20px;
 }
 blockquote > cite {
     display: block;
@@ -525,7 +612,6 @@ abbr {
     box-sizing: border-box;
     float: left;
     height: 40px;
-    margin-right: 13px; /* 8px (arrow width) + 5px (margin between arrow and logo) */
     padding: 0 10px;
 }
 
@@ -607,10 +693,6 @@ abbr {
     float: left;
     max-height: 30px;
     padding: 5px 0;
-}
-
-.aui-header .aui-header-logo a.aui-dropdown2-trigger {
-    margin-right: 0;
 }
 
 /* Positioning icons in the header */
@@ -711,7 +793,7 @@ abbr {
 .aui-header a:hover .aui-icon,
 .aui-header a:active .aui-icon {
     opacity: 1;
-    -ms-filter: alpha(opacity=100);
+    filter: alpha(opacity=100);
 }
 
 /**
@@ -823,30 +905,29 @@ abbr {
 /* Horizontal, breadcrumbs and pagination are all horizontal */
 .aui-nav-breadcrumbs:after,
 .aui-nav-pagination:after,
-.aui-nav-horizontal:after {
+.aui-nav-horizontal:after,
+.aui-navgroup-horizontal .aui-nav:after,
+.aui-navgroup-horizontal .aui-navgroup-inner:after {
     clear: both;
     content: " ";
     display: table;
 }
 .aui-nav-breadcrumbs > li,
 .aui-nav-pagination > li,
-.aui-nav-horizontal > li {
+.aui-nav-horizontal > li,
+.aui-navgroup-horizontal .aui-nav > li {
     float: left;
 }
 
-.aui-nav-horizontal .aui-icon-dropdown,
-.aui-nav-vertical .aui-icon-dropdown {
-    border-left: 4px solid transparent;
-    border-right: 4px solid transparent;
-    border-top: 4px solid #8e8e8e;
-    content: "";
-    display: inline-block;
-    height: 0;
-    width: 0;
-    text-indent: -99999px;
-    position: relative;
+/* Navigation headings
+-------------------- */
+.aui-nav-heading {
+    color: #707070;
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 1.66666666666667; /* 20px */
+    text-transform: uppercase;
 }
-
 
 /* Breadcrumb navigation
 -------------------- */
@@ -865,9 +946,9 @@ abbr {
     color: #333;
 }
 
-
 /* Horizontal Navigation
 -------------------- */
+.aui-navgroup-horizontal .aui-nav > li a,
 .aui-nav-horizontal > li a {
     padding-right: 10px;
 }
@@ -878,8 +959,10 @@ abbr {
     padding-right: 10px;
 }
 
+
 /* Vertical Navigation
 -------------------- */
+.aui-navgroup-vertical .aui-nav > li > a,
 .aui-nav-vertical > li > a {
     display: block;
     padding: 7px 10px;
@@ -887,21 +970,46 @@ abbr {
     word-wrap: break-word;
 }
 
+.aui-navgroup-vertical .aui-nav > li > a:focus,
+.aui-navgroup-vertical .aui-nav > li > a:hover,
 .aui-nav-vertical > li > a:focus,
 .aui-nav-vertical > li > a:hover {
     background: #e6e6e6;
-	text-decoration: none;
+    text-decoration: none;
 }
 
+.aui-navgroup-vertical .aui-nav-selected a,
 .aui-nav-vertical .aui-nav-selected a {
     color: #333;
     font-weight: bold;
 }
 
+.aui-navgroup-vertical .aui-nav,
+.aui-navgroup-vertical .aui-nav-heading {
+    border-top: 1px solid #ccc;
+    margin-top: 5px;
+    padding-top: 5px;
+}
 
-/* Navbar - a horizontal container, usually for horizontal nav
+.aui-navgroup-vertical .aui-nav-heading {
+    padding: 10px 10px 4px 10px;
+}
+
+.aui-navgroup-vertical .aui-nav:first-child,
+.aui-navgroup-vertical .aui-nav-heading + .aui-nav {
+    border-top: 0;
+    margin-top: 0;
+    padding-top: 0;
+}
+
+
+
+
+
+
+/* Horizontal Navgroup
 -------------------- */
-.aui-navbar {
+.aui-navgroup-horizontal {
     background: #f5f5f5;
     border-top: 1px solid #ccc;
     border-bottom: 1px solid #ccc;
@@ -909,49 +1017,45 @@ abbr {
     margin: 0;
 }
 
-.aui-theme-default .aui-navbar + .aui-page-panel {
-    border-top: 0;
-    margin-top: 0;
-}
-.aui-theme-default .aui-page-panel-content > .aui-navbar {
+.aui-theme-default .aui-page-panel-content > .aui-navgroup-horizontal {
     margin-left: -20px;
     margin-right: -20px;
 }
-.aui-theme-default .aui-page-panel-content > .aui-navbar:first-child {
+.aui-theme-default .aui-navgroup-horizontal + .aui-page-panel {
+    border-top: 0;
+    margin-top: 0;
+}
+.aui-theme-default .aui-page-panel-content > .aui-navgroup-horizontal:first-child {
     margin-top: -20px;
 }
 
-/* breadcrumbs in navbar */
-.aui-navbar .aui-nav-breadcrumbs > li {
-    padding: 9px 0 9px 10px;
-}
-
-/* Horizontal Nav in a Navbar */
-.aui-navbar .aui-nav-horizontal a {
+/* Nav in a Navbar */
+.aui-navgroup-horizontal .aui-nav > li a {
     color: #3b73af;
     display: block;
-    margin: 0 0 -1px 0;
-    padding: 9px 10px 10px 10px; /* +1 px to bottom to allow for margin pull */
+    margin: 0;
+    padding: 9px 10px;
     text-decoration: none;
 }
-.aui-navbar .aui-nav-horizontal a:focus,
-.aui-navbar .aui-nav-horizontal a:hover {
+.aui-navgroup-horizontal .aui-nav > li a.active,
+.aui-navgroup-horizontal .aui-nav > li a:focus,
+.aui-navgroup-horizontal .aui-nav > li a:hover {
     background: #e6e6e6;
     text-decoration: none;
 }
 
-.aui-navbar .aui-nav-horizontal .aui-nav-selected a {
+.aui-navgroup-horizontal .aui-nav > .aui-nav-selected a {
     font-weight: bold;
     color: #333;
-    position: relative;
+    position: relative;    
 }
 
-.aui-navbar .aui-nav-horizontal .aui-nav-selected a:before,
-.aui-navbar .aui-nav-horizontal .aui-nav-selected a:after {
+.aui-navgroup-horizontal .aui-nav > .aui-nav-selected a:before,
+.aui-navgroup-horizontal .aui-nav > .aui-nav-selected a:after {
     border: 8px solid transparent;
     border-style: outset outset solid outset; /* fixes FF bug */
     border-bottom-color: #ccc;
-    bottom: 1px;
+    bottom: 0;
     content: "";
     height: 0;
     left: 50%;
@@ -960,37 +1064,66 @@ abbr {
     position: absolute;
     width: 0;
 }
-.aui-navbar .aui-nav-horizontal .aui-nav-selected a:after {
-    background: transparent;
+.aui-navgroup-horizontal .aui-nav > .aui-nav-selected a:after {
+    background: transparent; 
     border-bottom-color: #fff;
-    bottom: 0;
+    bottom: -1px;
 }
 
-/* Vertical Navigation
--------------------- */
-
-.aui-navgroup .aui-nav-heading {
-    color: #707070;
-    font-size: 12px;
-	font-weight: bold;
-    text-transform: uppercase;
-	line-height: 1.667; /* 20px */
-	padding: 5px 10px;
+/* Split horizontal navgroups */
+.aui-navgroup-horizontal .aui-nav,
+.aui-navgroup-horizontal .aui-nav-heading,
+.aui-navgroup-horizontal .aui-navgroup-primary {
+    float: left;
 }
 
-.aui-navgroup .aui-nav-vertical,
-.aui-navgroup .aui-nav-heading {
-    border-top: 1px solid #ccc;
-    margin-top: 5px;
-	padding-top: 5px;
+.aui-navgroup-horizontal .aui-navgroup-secondary {
+    float: right;
 }
 
-.aui-navgroup .aui-nav-heading:first-child,
-.aui-navgroup .aui-nav-vertical:first-child,
-.aui-navgroup .aui-nav-heading + .aui-nav-vertical {
-    border-top: 0;
-    margin-top: 0;
+/* Horizontal navgroup + Dropdown2 integration. Note: ADG prohibits dropdowns in vertical nav. */
+.aui-navgroup-horizontal .aui-dropdown2-trigger .aui-icon-dropdown {
+    display: none;
 }
+.aui-navgroup-horizontal .aui-dropdown2-trigger {
+    padding-right: 23px !important; /* 8px (arrow width) + 10px (right padding) + 5px (margin between arrow and logo) */
+    position: relative;
+}
+.aui-navgroup-horizontal .aui-nav > li a.aui-dropdown2-trigger:after {
+    border: 4px solid transparent;
+    content: "";
+    height: 0;
+    left: 100%; /* "left" + "margin-left" required because of webkit not working properly with "right" */
+    margin-left: -18px;
+    margin-top: -3px; /* Align top of arrow with top of x height */
+    opacity: 0.8;
+    position: absolute;
+    top: 50%;
+    width: 0;
+}
+.aui-navgroup-horizontal .aui-nav > li a.aui-dropdown2-trigger:after {
+    border-top-color: #8e8e8e;
+}
+.aui-navgroup-horizontal .aui-nav > li a.aui-dropdown2-trigger:hover:after,
+.aui-navgroup-horizontal .aui-nav > li a.aui-dropdown2-trigger.active:after {
+    opacity: 1;
+}
+
+/* Breadcrumbs in navbar */
+.aui-navgroup-horizontal .aui-nav-breadcrumbs > li, 
+.aui-navgroup-horizontal .aui-nav-breadcrumbs > li:before {
+    padding: 0;
+}
+
+.aui-navgroup-horizontal .aui-nav-breadcrumbs > li a {
+    display: inline-block;
+}
+
+/* Bulletproofing - headings shouldn't be here but will at least not look heinously broken. */
+.aui-navgroup-horizontal .aui-nav-heading {
+    padding: 10px 10px 0 10px; /* 0 bottom required to unfuck IE9 */ 
+}
+
 
 /* AUI BUTTONS
  * Note hover/disabled styles set directly as they are not precisely the same as
@@ -1209,7 +1342,7 @@ ARIA usage from http://www.paciellogroup.com/blog/misc/ARIA/togglebutton.html */
 .aui-buttons .aui-button[aria-pressed="true"],
 .aui-buttons .aui-button[aria-pressed="true"].aui-button-primary {
     background: #ccc;
-    background: -webkit-linear-gradient(top, #ccc 0%, #ddd 13%);
+    background: -webkit-linear-gradient(top, #ccc 0%, #ddd 13%); 
     background: -moz-linear-gradient(top, #ccc 0%, #ddd 13%); /* FF3.6+ */
     background: -o-linear-gradient(top, #ccc 0%, #ddd 13%); /* Opera 11.10+ */
     background: -ms-linear-gradient(top, #ccc 0%, #ddd 13%); /* IE10+ */
@@ -1378,6 +1511,59 @@ input.aui-button.aui-dropdown2-trigger:after {
     display: none;
 }
 
+/*! AUI Label */
+.aui-label {
+    background: #f5f5f5;
+    border: 1px solid #ccc;
+    border-radius: 3.01px; /* 3.01 for IE10 */
+    color: #3B73AF;
+    display: inline-block;
+    font-size: 14px;
+    font-weight: normal;
+    line-height: 1;
+    padding: 1px 5px;   
+    margin: 0 10px 0 0;
+    text-align: left;
+    text-decoration: none;
+}
+
+span.aui-label {
+    color: #333;
+}
+
+/* Need the split hover to trigger border on parent while split label/X are hovered */
+.aui-label.aui-label-closeable.aui-label-split:hover,
+a.aui-label:focus,
+a.aui-label:hover,
+a.aui-label:active {
+    border-color: #707070;
+    text-decoration: none;
+}
+
+.aui-label-split .aui-label-split-main:hover,
+.aui-label-split .aui-label-split-main:active,
+.aui-label-split .aui-label-split-main:focus{ 
+    text-decoration: none;
+}
+
+.aui-label.aui-label-closeable {
+    padding-right: 18px;
+    position: relative;
+}
+
+.aui-label-closeable .aui-icon-close {
+    /* Small X icon */
+    background: url("data:image/png;base64,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") 0 0 no-repeat;
+    cursor: pointer;
+    display: block;
+    float: right;
+    height: 8px;
+    position: absolute;
+    right: 5px;
+    top: 4px;
+    width: 8px;
+}
+
 /*! AUI Lozenge */
 .aui-lozenge {
     background: #ccc;
@@ -1454,7 +1640,7 @@ input.aui-button.aui-dropdown2-trigger:after {
 .aui-toolbar2 {
     -moz-box-sizing: border-box;
     box-sizing: border-box;
-    margin: 10px 0 0 0;
+    margin: 10px 0 0 0; 
     padding: 0;
 }
 
@@ -1473,11 +1659,11 @@ input.aui-button.aui-dropdown2-trigger:after {
     margin: 0;
     padding: 0;
 }
-.aui-toolbar2-primary {
-    float: left;
+.aui-toolbar2-primary { 
+    float: left; 
 }
-.aui-toolbar2-secondary {
-    float: right;
+.aui-toolbar2-secondary { 
+    float: right; 
 }
 .aui-toolbar2 .aui-buttons {
     float: left;
@@ -1515,8 +1701,9 @@ input.aui-button.aui-dropdown2-trigger:after {
     height: 100%;
     width: 100%;
 }
-.aui-avatar-tiny,
-.aui-avatar-tiny .aui-avatar-inner {
+
+.aui-avatar-xsmall,
+.aui-avatar-xsmall .aui-avatar-inner {
     height: 16px;
     width: 16px;
 }
@@ -1535,19 +1722,34 @@ input.aui-button.aui-dropdown2-trigger:after {
     height: 48px;
     width: 48px;
 }
-.aui-avatar-huge,
-.aui-avatar-huge .aui-avatar-inner {
+.aui-avatar-xlarge,
+.aui-avatar-xlarge .aui-avatar-inner {
+    height: 64px;
+    width: 64px;
+}
+
+.aui-avatar-xxlarge,
+.aui-avatar-xxlarge .aui-avatar-inner {
     height: 96px;
     width: 96px;
 }
-.aui-avatar-huge img {
+
+.aui-avatar-xxxlarge,
+.aui-avatar-xxxlarge .aui-avatar-inner {
+    height: 128px;
+    width: 128px;
+}
+
+
+.aui-avatar-xxlarge img,
+.aui-avatar-xxxlarge img {
     border-radius: 5px;
 }
 
 /* Project avatars - circular and different sizes */
 .aui-avatar-project {
     background-color: #fff;
-    box-shadow: 0 0 0 3px #fff;
+    box-shadow: 0 0 0 1px #ccc;
     position: relative;
 }
 .aui-avatar-project,
@@ -1560,45 +1762,16 @@ input.aui-button.aui-dropdown2-trigger:after {
     max-width: 100%;
     width: auto;
 }
-.aui-page-panel .aui-avatar-project {
-    background-color: transparent;
-    box-shadow: 0 0 0 3px #707070;
-}
 /* The below style aims to minimise any "halo" caused by the antialiasing of the image */
-.aui-page-panel .aui-avatar-project:before {
+.aui-avatar-project:before {
     border-radius: 100%;
-    border: 1px solid #707070;
+    border: 1px solid #ccc;
     bottom: -1px;
     content: "";
     left: -1px;
     position: absolute;
     right: -1px;
     top: -1px;
-}
-.aui-avatar-tiny.aui-avatar-project,
-.aui-avatar-tiny.aui-avatar-project .aui-avatar-inner {
-    height: 24px;
-    width: 24px;
-}
-.aui-avatar-small.aui-avatar-project,
-.aui-avatar-small.aui-avatar-project .aui-avatar-inner {
-    height: 32px;
-    width: 32px;
-}
-.aui-avatar-medium.aui-avatar-project,
-.aui-avatar-medium.aui-avatar-project .aui-avatar-inner {
-    height: 48px;
-    width: 48px;
-}
-.aui-avatar-large.aui-avatar-project,
-.aui-avatar-large.aui-avatar-project .aui-avatar-inner {
-    height: 64px;
-    width: 64px;
-}
-.aui-avatar-huge.aui-avatar-project,
-.aui-avatar-huge.aui-avatar-project .aui-avatar-inner {
-    height: 128px;
-    width: 128px;
 }
 /*
 * Icon Font
@@ -1616,7 +1789,6 @@ input.aui-button.aui-dropdown2-trigger:after {
 }
 
 .aui-icon-small,
-.aui-icon-medium,
 .aui-icon-large {
     line-height: 0;
     position: relative;
@@ -1626,16 +1798,11 @@ input.aui-button.aui-dropdown2-trigger:after {
     height: 16px;
     width: 16px;
 }
-.aui-icon-medium {
-    height: 24px;
-    width: 24px;
-}
 .aui-icon-large {
     height: 32px;
     width: 32px;
 }
 .aui-icon-small:before,
-.aui-icon-medium:before,
 .aui-icon-large:before {
     color: inherit;
     font-family: "Atlassian Icons";
@@ -1652,10 +1819,6 @@ input.aui-button.aui-dropdown2-trigger:after {
 .aui-icon-small:before {
     font-size: 16px;
     margin-top: -9px; /* (font-size/2)+1 negative margin - the +1 is for font rendering weirdness across browsers  */
-}
-.aui-icon-medium:before {
-    font-size: 24px;
-    margin-top: -13px; /* (font-size/2)+1 negative margin - the +1 is for font rendering weirdness across browsers  */
 }
 .aui-icon-large:before {
     font-size: 32px;
@@ -1686,6 +1849,39 @@ input.aui-button.aui-dropdown2-trigger:after {
 }
 .aui-iconfont-workbox-empty:before {
     content: "H";
+}
+.aui-iconfont-email:before {
+    content: "I";
+}
+.aui-iconfont-appswitcher:before {
+    content: "J";
+}
+.aui-iconfont-comment:before {
+    content: "K";
+}
+.aui-iconfont-add-comment:before {
+    content: "L";
+}
+.aui-iconfont-search-small:before {
+    content: "M";
+}
+.aui-iconfont-remove:before {
+    content: "N";
+}
+.aui-iconfont-close-dialog:before {
+    content: "O";
+}
+.aui-iconfont-remove-label:before {
+    content: "P";
+}
+.aui-iconfont-time:before {
+    content: "Q";
+}
+.aui-iconfont-error:before {
+    content: "R";
+}
+.aui-iconfont-info:before {
+    content: "S";
 }
 /*! AUI Badge */
 .aui-badge {
@@ -1727,4 +1923,95 @@ input.aui-button.aui-dropdown2-trigger:after {
 .aui-button > .aui-badge,
 .aui-tabs .menu-item .aui-badge {
     top: -1px; /* slight tweak to position them in specific contexts */
+}
+/* Layout */
+.aui-progress-tracker {
+    display: table;
+    font-size: 12px;
+    margin: 10px 0 0;
+    padding: 0;
+    table-layout: fixed;
+    word-wrap: break-word; /* doesn't work in IE */
+}
+.aui-progress-tracker:first-child {
+    margin-top: 0;
+}
+.aui-progress-tracker-step {
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    display: table-cell;
+    padding: 0 10px;
+    max-width: 140px;
+    min-width: 80px;
+    text-align: center;
+}
+
+/* Progress Bar */
+.aui-progress-tracker-step > span,
+.aui-progress-tracker-step > a {
+    display: block;
+    font-weight: bold;
+    outline: none;
+    padding-top: 25px;
+    position: relative;
+}
+.aui-progress-tracker-step > span:before,
+.aui-progress-tracker-step > a:before {
+    background: #3b73af;
+    border-radius: 100%;
+    box-shadow: 0 0 0 3px #f5f5f5; /* can't just use a 3px border as an IE9 bug causes it to draw a strange additional darker border on the outside in addition to the 3px border */
+    content: "";
+    height: 10px;
+    left: 50%;
+    margin-left: -5px;
+    position: absolute;
+    top: 3px;
+    width: 10px;
+}
+.aui-progress-tracker-step + .aui-progress-tracker-step > span:after,
+.aui-progress-tracker-step + .aui-progress-tracker-step > a:after {
+    background: #3b73af;
+    border: solid #f5f5f5;
+    border-width: 2px 0;
+    box-shadow: -5px 0 0 -2px #3b73af, 5px 0 0 -2px #3b73af;
+    content: "";
+    height: 4px;
+    left: -50%;
+    margin-left: -14px; /* almost touches right edge of previous dot (leaves 1px room for rounding widths like 33.3% in webkit) */
+    margin-right: 6px; /* almost touches left edge of this dot (leaves 1px room for rounding widths like 33.3% in webkit) */
+    position: absolute;
+    right: 50%;
+    top: 4px;
+}
+.aui-progress-tracker-step-current ~ .aui-progress-tracker-step {
+    color: #707070;
+}
+.aui-progress-tracker-step-current ~ .aui-progress-tracker-step > span:before,
+.aui-progress-tracker-step-current ~ .aui-progress-tracker-step > a:before {
+    background-color: #ccc;
+}
+.aui-progress-tracker-step-current ~ .aui-progress-tracker-step > span:after,
+.aui-progress-tracker-step-current ~ .aui-progress-tracker-step > a:after {
+    background-color: #f5f5f5;
+    box-shadow: none;
+}
+
+/* Inverted Colours */
+.aui-progress-tracker-inverted .aui-progress-tracker-step > span:before,
+.aui-progress-tracker-inverted .aui-progress-tracker-step > a:before {
+    box-shadow: 0 0 0 3px #fff;
+}
+.aui-progress-tracker-inverted .aui-progress-tracker-step + .aui-progress-tracker-step > span:after,
+.aui-progress-tracker-inverted .aui-progress-tracker-step + .aui-progress-tracker-step > a:after {
+    border-color: #fff;
+}
+.aui-progress-tracker-inverted .aui-progress-tracker-step-current ~ .aui-progress-tracker-step > span:after,
+.aui-progress-tracker-inverted .aui-progress-tracker-step-current ~ .aui-progress-tracker-step > a:after {
+    background-color: #fff;
+}
+
+/* Interaction wih page layout */
+.aui-page-header-actions .aui-progress-tracker {
+    float: right;
 }

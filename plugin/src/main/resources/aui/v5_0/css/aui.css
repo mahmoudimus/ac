@@ -1,4 +1,4 @@
-/*! AUI Flat Pack - version 5.0-m17 - generated 2012-11-14 02:21:29 -0500 */
+/*! AUI Flat Pack - version 5.0-m25 - generated 2013-01-16 19:47:50 -0500 */
 
 
 /* Solution from https://github.com/necolas/normalize.css/blob/master/normalize.css */
@@ -13,6 +13,8 @@ audio, canvas, video {
     *display: inline;
     *zoom: 1;
 }
+
+/*! Atlassian UI and the Atlassian Design Guidelines are copyright Atlassian. See https://developer.atlassian.com/display/AUI/ and https://developer.atlassian.com/design/ for license details. */
 
 .clear {
     clear: both;
@@ -39,13 +41,13 @@ legend.assistive span {
 /* light shadow for use on dropdowns, inline dialogs */
 .aui-box-shadow {
     -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.13);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.13);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.13); 
 }
 
 /* dialog no longer gets shadow - "blanket is the shadow" */
 .aui-dialog.aui-box-shadow {
     -webkit-box-shadow: none;
-    box-shadow: none;
+    box-shadow: none; 
 }
 
 .aui-blanket {
@@ -74,9 +76,9 @@ legend.assistive span {
 .aui-dialog {
     background: #f0f0f0;
     border: 1px solid #ccc;
-    -moz-border-radius: 4px;
-    -webkit-border-radius: 4px;
-    border-radius: 4px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
     overflow: hidden;
 }
 .aui-dialog .dialog-blanket {
@@ -194,7 +196,9 @@ legend.assistive span {
     background: -ms-linear-gradient(top, #ffffff 0%,#f2f2f2 100%); /* IE10+ */
     background: linear-gradient(top, #ffffff 0%,#f2f2f2 100%); /* W3C */
     border-color: #ccc;
-    border-radius: 3px;
+    -moz-border-radius: 3.01px;
+    -webkit-border-radius: 3.01px;
+    border-radius: 3.01px;
     border-style: solid; /* border width and style don't change after this */
     border-width: 1px; /* border width and style don't change after this */
     color: #333;
@@ -310,7 +314,6 @@ legend.assistive span {
     height: auto;
     text-indent: 0;
     width: auto;
-
 }
 .aui-dd-parent a.aui-dd-trigger-unstyled:link,
 .aui-dd-parent a.aui-dd-trigger-unstyled:visited {}
@@ -335,12 +338,17 @@ legend.assistive span {
 .aui-dropdown,
 .aui-dd-parent .aui-shadow-parent {
     background: #fff;
-    border: 1px solid #6A8EB3;
+    border: 1px solid #ccc;
+    border-bottom-left-radius: 3px;
+    border-bottom-right-radius: 3px;
+    -moz-box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+    -webkit-box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
     color: #000;
+    margin-top: -1px;
     padding: 4px 0 4px 0;
     position: absolute;
     z-index: 2003;
-    margin-top: -1px;
 }
 
 .aui-dd-parent  .aui-dropdown-left{
@@ -367,11 +375,13 @@ legend.assistive span {
 .aui-dd-parent .aui-dropdown a.item-link,
 .aui-dropdown a.item-link {
     background: #fff;
-    color: #036;
+    color: #333;
     display: inline-block;
     float: none;
     height: auto;
+    padding: 4px 14px 3px 12px;
     position: static;
+    text-decoration: none;
     text-indent: 0;
     white-space: nowrap;
     width: auto;
@@ -381,8 +391,7 @@ legend.assistive span {
 .aui-dropdown a.item-link:link,
 .aui-dropdown a.item-link:visited {
     background: #fff;
-    color: #036;
-    padding: 0.3em 0.5em;
+    color: #333;
 }
 .aui-dd-parent .aui-dropdown li.dropdown-item.active a.item-link,
 .aui-dd-parent .aui-dropdown a.item-link:hover,
@@ -391,9 +400,8 @@ legend.assistive span {
 .aui-dropdown a.item-link:hover,
 .aui-dropdown a.item-link:active,
 .aui-dropdown a.item-link:focus  {
-    background: #f2f2f2;
-    color: #036;
-    padding: 0.3em 0.5em;
+    background: #3B73AF;
+    color: #FFF;
 }
 
 .aui-dd-parent .aui-dropdown li.dropdown-item a.item-link span.icon {
@@ -1194,7 +1202,6 @@ form.aui .icon-inline-help,
 .aui-icon-inline-help {
     /* icon-help.png */
     background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABOklEQVR42mXTv0rDUBTH8atDqYPi4mDRya3pAziIz+ETCDpoVt9BbKFRlFqfQGfBCukkODgIpREcddeiiCbR+A38ApfT4RNy/tzDzU3iwjC0mjjCGN8yVq5p+/1gDifIkWGIrgyVyxXX7IAaBihwgQac0UBfPTeo+QO6Kux7zZeYIMU11lTbVW9UDQiQa7qTe7xjG1t4wTNmVe9pTVAGbWRYVnEJBQ7g5FC5FTj1pmg7nXAM51lHXfcbeMNDtQOJkTi9pjMlrU184dEerNb8uPLiDbAGeMWiYjvgo7xJvEew7nBl8xJjNHWIxqrdujnEThm0kKNnmuYxkYUqb15jq0pEKLAHJ3UkUoeTHfzh2H7KtxrSN9uegVPuXD0DrZn6mU7xiwwxuhIjUy2yP5MVoIMnpPjESLnA9v8DHHysLnlPp3QAAAAASUVORK5CYII=);
-    cursor: help;
 }
 
 
@@ -1259,6 +1266,21 @@ form.aui .icon-inline-help,
     width: 0;
 }
 
+
+/* Simple spinner icon for wait/loading time */
+.aui-icon-wait {
+    background-image: url(data:image/gif;base64,R0lGODlhEAAQAPMPALu7u5mZmTMzM93d3REREQAAAHd3d1VVVWZmZqqqqoiIiO7u7kRERCIiIgARAAAAACH/C05FVFNDQVBFMi4wAwEAAAAh+QQFBwAPACwAAAAAEAAQAEAEcPDJtyg6dUrFetDTIopMoSyFcxxD1krD8AwCkASDIlPaUDQLR6G1Cy0SgqIkE1IQGMrFAKCcGWSBzwPAnAwarcKQ15MpTMJYd1ZyUDXSDGelBY0qIoBh/ZoYGgELCjoxCRRvIQcGD1kzgSAgAACQDxEAIfkEBQcADwAsAAAAAA8AEAAABF3wyfkMkotOJpscRKJJwtI4Q1MAoxQ0RFBw0xEvhGAVRZZJh4JgMAEQW7TWI4EwGFjKR+CAQECjn8DoN0kwDtvBT8FILAKJgfoo1iAGAPNVY9DGJXNMIHN/HJVqIxEAIfkEBQcADwAsAAAAABAADwAABFrwyfmColgiydpaQiY5x9Ith7hURdIl0wBIhpCAjKIIxaAUPQ0hFQsAC7MJALFSFi4SgC4wyHyuCYNWxH3AuhSEotkNGAALAPqqkigG8MWAjAnM4A8594vPUyIAIfkEBQcADwAsAAAAABAAEAAABF3wySkDvdKsddg+APYIWrcg2DIRQAcU6DJICjIsjBEETLEEBYLqYSDdJoCGiHgZwG4LQCCRECEIBAdoF5hdEIWwgBJqDs7DgcKyRHZl3uUwuhm2AbNNW+LV7yd+FxEAIfkEBQcACAAsAAAAABAADgAABEYQyYmMoVgeWQrP3NYhBCgZBdAFRUkdBIAUguVVo1ZsWFcEGB5GMBkEjiCBL2a5ZAi+m2SAURExwKqPiuCafBkvBSCcmiYRACH5BAUHAA4ALAAAAAAQABAAAARs0MnpAKDYrbSWMp0xZIvBKYrXjNmADOhAKBiQDF5gGcICNAyJTwFYTBaDQ0HAkgwSmAUj0OkMrkZM4HBgKK7YTKDRICAo2clAEIheKc9CISjEVTuEQrJASGcSBQcSUFEUDQUXJBgDBW0Zj34RACH5BAUHAA8ALAAAAAAQABAAAARf8Mn5xqBYgrVC4EEmBcOSfAEjSopJMglmcQlgBYjE5NJgZwjCAbO4YBAJjpIjSiAQh5ayyRAIDKvJIbnIagoFRFdkQDQKC0RBsCIUFAWsT7RwG410R8HiiK0WBwJjFBEAIfkEBQcADgAsAQABAA8ADwAABFrQybEWADXJLUHHAMJxIDAgnrOo2+AOibEMh1LN62gIxphzitRoCDAYNcNN6FBLShao4WzwHDQKvVGhoFAwGgtFgQHENhoB7nCwHRAIC0EyUcC8Zw1ha3NIRgAAIfkEBQcADwAsAAAAABAAEAAABGDwyfnWoljaNYYFV+Zx3hCEGEcuypBtMJBISpClAWLfWODymIFiCJwMDMiZBNAAYFqUAaNQ2E0YBIXGURAMCo1AAsFYBBoIScBJEwgSVcmP0li4FwcHz+FpCCQMPCFINxEAIfkEBQcADgAsAAABABAADwAABFzQyemWXYNqaSXY2vVtw3UNmROM4JQowKKlFOsgRI6ASQ8IhSADFAjAMIMAgSYJtByxyQIhcEoaBcSiwegpDgvAwSBJ0AIHBoCQqIAEi/TCIAABGhLG8MbcKBQgEQAh+QQFBwAPACwAAAEAEAAPAAAEXfDJSd+qeK5RB8fDRRWFspyotAAfQBbfNLCVUSSdKDV89gDAwcFBIBgywMRnkWBgcJUDKSZRIKAPQcGwYByAAYTEEJAAJIGbATEQ+B4ExmK9CDhBd8ThdHw/AmUYEQAh+QQFBwAPACwAAAEADwAPAAAEXvBJQIa8+ILSspdHkXxS9wxF4Q3L2aTBeC0sFjhAtuyLIjAMhYc2GBgaSKGuyNoBDp7czFAgeBIKwC6kWCAMxUSAFjtNCAAFGGF5tCQLAaJnWCTqHoREvQuQJAkyGBEAOw==);    
+}
+
+.aui-dropdown2 .active .aui-icon-wait,
+.aui-button-primary .aui-icon-wait {
+    background-image: url(data:image/gif;base64,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);    
+}
+
+
+
+
+
 /*! AUI Inline Dialog */
 .aui-inline-dialog {
     display: none;
@@ -1268,7 +1290,7 @@ form.aui .icon-inline-help,
 
 .aui-inline-dialog .aui-box-shadow {
     -webkit-box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.13);
-    box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.13);
+    box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.13); 
 }
 
 .aui-inline-dialog .contents {
@@ -1313,8 +1335,7 @@ form.aui .icon-inline-help,
     border-radius: 5px;
     color: #333;
     margin: 10px 0 0 0;
-    min-height: 1em;
-    padding: 16px 15px 16px 45px; /* Be sure to adjust icon positions below if these values are changed */
+    padding: 10px 10px 10px 36px; /* Be sure to adjust icon positions below if these values are changed */
     position: relative;
 }
 /* Lighter shadow for messages */
@@ -1329,7 +1350,7 @@ form.aui .icon-inline-help,
 }
 
 .aui-message.error {
-    background: #d04437;
+    background: #d04437; 
     border-color: #d04437;
     color: #fff;
 }
@@ -1338,7 +1359,7 @@ form.aui .icon-inline-help,
     border-color: #ffeaae;	/* 50% of palette yellow #ffd351 */
 }
 .aui-message.info {
-    background: #fcfcfc;
+    background: #fcfcfc; 
     border-color: #8c9fb2;	/* 50% of palette blue lozenge #4a6785 */
 }
 .aui-message.success {
@@ -1346,7 +1367,7 @@ form.aui .icon-inline-help,
     border-color: #91c89c;	/* 50% of palette green #14892c */
 }
 .aui-message.hint {
-    background: #fcfcfc;
+    background: #fcfcfc; 
     border-color: #aab8c6;	/* 50% of palette blue lozenge #4a6785 */
 }
 
@@ -1365,32 +1386,11 @@ form.aui .icon-inline-help,
     font-weight: inherit;
 }
 
-/* Messages tweak the spacing a bit to make them sit nicely */
-.aui-message p,
-.aui-message ul li {
-    margin-top: 4px;
-}
-.aui-message .title + p,
-.aui-message .title + ul li {
-    margin-top: 3px;
-}
-.aui-message p:first-child,
-.aui-message ul:first-child,
-.aui-message .title + ul {
-    margin-top: 0;
-}
-.aui-message ul {
-    padding: 0 0 0 1em;
-}
-.aui-message ul li {
-    padding: 0;
-}
-
 /* Positioning aui-icon for messages */
 .aui-message .aui-icon {
-    left: 19px; /* desired spacing between the icon and text = 20px so need to subtract the icon width (16px) from the left padding of the message (45px) then remove 20px */
+    left: 10px; /* desired spacing between the icon and text = 10px so need to subtract the icon width (16px) from the left padding of the message (36px) then remove 10px */
     position: absolute;
-    top: 18px; /* 18px = top padding of the message (16px) + align to the center of the text ((20px line-height - 16px icon height) / 2) */
+    top: 12px; /* 12px = top padding of the message (10px) + align to the center of the text ((20px line-height - 16px icon height) / 2) */
 }
 
 .aui-message.closeable .icon-close {
@@ -1413,6 +1413,25 @@ form.aui .icon-inline-help,
     position: absolute;
     right: 10px;
     top: 10px;
+}
+
+/* Header interop */
+#header .aui-message {
+    border-bottom: none;
+    border-left: none;
+    border-right: none;
+    border-width: 2px;
+    margin: 0;
+    -moz-border-radius: 0;
+    -webkit-border-radius: 0;
+    border-radius: 0;
+}
+
+/* Footer interop (provisional, just enough to stop them looking broken) */
+#footer .aui-message {
+    margin-left: 20px;
+    margin-right: 20px;
+    text-align: left;
 }
 /*! AUI Tables */
 /* Note child combinators are used to ensure nested non-AUI tables don't receive any AUI styles. */
@@ -1466,7 +1485,7 @@ table.aui > tbody > tr > th > ul.menu,
 table.aui > tbody > tr > td > ul.menu,
 table.aui > tfoot > tr > td > ul.menu {
     list-style-type: none;
-    margin: 0;
+    margin: 0; 
     padding: 0;
 }
 table.aui > thead > tr > th > ul.menu > li,
@@ -2016,3 +2035,4 @@ table.aui-zebra tr.aui-zebra th {
 .aui-toolbar .toolbar-group .toolbar-item .disabled.aui-dd-trigger {
     border-left-width: 0;
 }
+
