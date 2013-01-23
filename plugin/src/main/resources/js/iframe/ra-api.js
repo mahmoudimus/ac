@@ -201,97 +201,103 @@
   };
 
   AP.BigPipe = function () {
-    var started;
-    var closed;
-    var channels = {};
-    var subscribers = {};
-    var buffers = {};
-    function poll(url) {
-      fetch({
-        url: url,
-        headers: {"Accept": "application/json"},
-        success: function (response) {
-          deliver(response, url);
-        },
-        error: function (xhr, status, ex) {
-          handleError(ex || (xhr && xhr.responseText) || status);
-        }
-      });
-    }
-    function deliver(response, url) {
-      if (response) {
-        var items = response.items;
-        var pending = response.pending;
-        if (items.length > 0 || pending.length > 0) {
-          each(items, function (i, item) {
-            publish(item);
-          });
-          if (pending.length > 0) {
-            each(channels, function (channelId, open) {
-              if (open && pending.indexOf(channelId) < 0) {
-                close(channelId);
-              }
-            });
-            poll(url);
+    function BigPipe() {
+      var started;
+      var closed;
+      var channels = {};
+      var subscribers = {};
+      var buffers = {};
+      function poll(url) {
+        fetch({
+          url: url,
+          headers: {"Accept": "application/json"},
+          success: function (response) {
+            deliver(response, url);
+          },
+          error: function (xhr, status, ex) {
+            handleError(ex || (xhr && xhr.responseText) || status);
           }
-          else {
+        });
+      }
+      function deliver(response, url) {
+        if (response) {
+          var items = response.items;
+          var pending = response.pending;
+          if (items.length > 0 || pending.length > 0) {
+            each(items, function (i, item) {
+              publish(item);
+            });
+            if (pending.length > 0) {
+              each(channels, function (channelId, open) {
+                if (open && pending.indexOf(channelId) < 0) {
+                  close(channelId);
+                }
+              });
+              poll(url);
+            }
+            else {
+              close();
+            }
+          }
+          else if (!closed) {
             close();
           }
         }
+      }
+      function publish(event) {
+        var channelId = event.channelId;
+        channels[channelId] = true;
+        if (subscribers[channelId]) subscribers[channelId](event);
+        else (buffers[channelId] = buffers[channelId] || []).push(event);
+      }
+      function close(channelId) {
+        if (channelId) {
+          publish({channelId: channelId, complete: true});
+          delete subscribers[channelId];
+          channels[channelId] = false;
+        }
         else if (!closed) {
-          close();
+          each(subscribers, close);
+          closed = true;
         }
       }
+      var self = {
+        start: function (options) {
+          options = options || {};
+          var baseUrl = options.localBaseUrl || AP.Meta.get("local-base-url");
+          var requestId = options.requestId;
+          if (!started && baseUrl && requestId) {
+            var ready = options.ready || {items: [], pending: [0]};
+            deliver(ready, baseUrl + "/bigpipe/request/" + requestId);
+            started = true;
+          }
+          return self;
+        },
+        subscribe: function (channelId, subscriber) {
+          if (subscribers[channelId]) {
+            throw new Error("Channel '" + channelId + "' already has a subscriber");
+          }
+          if (subscriber) {
+            subscribers[channelId] = subscriber;
+            each(buffers[channelId], function (i, event) {
+              publish(event);
+            });
+            delete buffers[channelId];
+            if (closed) close(channelId);
+          }
+          return self;
+        }
+      };
+      return self;
     }
-    function publish(event) {
-      var channelId = event.channelId;
-      channels[channelId] = true;
-      if (subscribers[channelId]) subscribers[channelId](event);
-      else (buffers[channelId] = buffers[channelId] || []).push(event);
-    }
-    function close(channelId) {
-      if (channelId) {
-        publish({channelId: channelId, complete: true});
-        delete subscribers[channelId];
-        channels[channelId] = false;
-      }
-      else if (!closed) {
-        each(subscribers, close);
-        closed = true;
-      }
-    }
-    var self = {
-      start: function (options) {
-        options = options || {};
-        var baseUrl = options.localBaseUrl;
-        var requestId = options.requestId;
-        if (!started && baseUrl && requestId) {
-          var ready = options.ready || {items: [], pending: [0]};
-          deliver(ready, baseUrl + "/bigpipe/request/" + requestId);
-          started = true;
-        }
-      },
-      subscribe: function (channelId, subscriber) {
-        if (subscribers[channelId]) {
-          throw new Error("Channel '" + channelId + "' already has a subscriber");
-        }
-        if (subscriber) {
-          subscribers[channelId] = subscriber;
-          each(buffers[channelId], function (i, event) {
-            publish(event);
-          });
-          delete buffers[channelId];
-          if (closed) close(channelId);
-        }
-      }
-    };
-    self.subscribe("html", function (event) {
+    var main = BigPipe();
+    main.subscribe("html", function (event) {
       if (!event.complete) {
         $("#" + event.contentId).removeClass("bp-loading").html(event.content);
         AP.resize();
       }
     });
-    return self;
+    return extend(BigPipe, main);
   }();
 
   // internal maker that converts bridged xhr data into an xhr-like object

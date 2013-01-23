@@ -23,8 +23,7 @@
   #if ($bigPipeActivated)
   <script>
     AP.BigPipe.start({
-      requestId: "$bigPipeRequestId",
-      localBaseUrl: "$localBaseUrl"
+      requestId: "$bigPipeRequestId"
     });
   </script>
   #end
