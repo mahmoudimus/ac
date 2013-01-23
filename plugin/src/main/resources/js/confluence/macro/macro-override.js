@@ -7,6 +7,8 @@
  */
 AJS.bind("init.rte", function () {
 
+  var AP = _AP;
+
   // These parameters are injected contextually by the MacroEditorInjectorTransformer
   var macroName = "%%MACRONAME%%";
   var width = "%%WIDTH%%";

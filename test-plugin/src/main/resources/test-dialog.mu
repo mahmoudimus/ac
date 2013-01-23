@@ -13,7 +13,6 @@
         </div>
 
         <script type="text/javascript">
-            AP.init();
             AP.getUser(function(result) {
                 $("#user").text(result.fullName);
             });

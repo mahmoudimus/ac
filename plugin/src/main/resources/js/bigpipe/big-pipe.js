@@ -1,7 +1,7 @@
 // This code makes a xhr request back to the server before dom ready looking for big pipe content to replace.
 (function (global, AJS) {
   var $ = AJS.$;
-  var AP = global.AP = global.AP || {};
+  var AP = global._AP = global._AP || {};
   var contextPath = AJS.contextPath() || AJS.Meta.get("context-path");
   var requestId = $('meta[name="ra-request-id"]').attr("content");
 

@@ -1,7 +1,7 @@
 (function (global, AJS) {
 
   var $ = AJS.$,
-      AP = global.AP = global.AP || {},
+      AP = global._AP = global._AP || {},
       xhrProperties = ["status", "statusText", "responseText"],
       xhrHeaders = ["Content-Type"],
       events = (AJS.EventQueue = AJS.EventQueue || []);

@@ -22,7 +22,7 @@
   <script>
     (function(jQuery, JIRA) {
         function init() {
-          AP.create({
+          _AP.create({
             ns: "$namespace",
             src: "$iframeSrcHtml",
             width: "$!width",

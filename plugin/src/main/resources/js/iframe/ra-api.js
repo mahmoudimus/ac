@@ -1,7 +1,7 @@
 (function (global) {
   var doc = global.document,
       appDoc = doc,
-      AP = global.AP = global.RA = {}, // consider RA deprecated
+      AP = global.AP = global.RA = {}, // RA is deprecated
       rpc,
       isDialog,
       isInited;
@@ -59,6 +59,11 @@
     else if (el[attach]) {
       el[attach]("on" + e, fn);
     }
+  }
+
+  // string trimmer
+  function trim(s) {
+    return s && s.replace(/^\s+|\s+$/g, "");
   }
 
   // basic dom util
@@ -172,6 +177,12 @@
       }
       timeout = setTimeout(later, wait || 50);
     };
+  }
+
+  function log() {
+    if (global.console) {
+      console.log.apply(console, arguments);
+    }
   }
 
   function handleError(err) {
@@ -395,8 +406,9 @@
   }
 
   function initBridged(options) {
-    AP = global.RA = parent.RA;
+    AP = global.AP = parent.AP;
     options = extend({}, options, {
+      bridged: true,
       window: global,
       document: doc,
       base: false
@@ -410,7 +422,7 @@
     init: function (options) {
       options = options || {};
       var isBridged;
-      try { isBridged = !!parent.RA; } catch (ignore) { }
+      try { isBridged = !!parent.AP; } catch (ignore) { }
       if (isBridged) {
         initBridged(options);
       }
@@ -422,6 +434,9 @@
           initNormal(options);
           isInited = true;
         }
+      }
+      else if (!options.bridged) {
+        log("Manual call to init is a deprecated no-op; use 'data-options' attribute on script to set options");
       }
     },
 
@@ -589,5 +604,30 @@
 
   // reveal the api on the RA global
   extend(AP, api);
+
+  // initialize
+  var options;
+  var $script = $("script[src*='/remotable-plugins/all']");
+  if ($script && /\/remotable-plugins\/all(-debug)?\.js($|\?)/.test($script.attr("src"))) {
+    if ($script.attr("data-bridge") === "true") {
+      // multipage bridge iframe
+      options = "bridge";
+    }
+    else {
+      // normal iframe
+      options = {};
+      var optStr = $script.attr("data-options");
+      if (optStr) {
+        each(optStr.split(";"), function (i, nvpair) {
+          nvpair = trim(nvpair);
+          if (nvpair) {
+            var nv = nvpair.split(":"), k = trim(nv[0]), v = trim(nv[1]);
+            if (k && v != null) options[k] = v === "true";
+          }
+        });
+      }
+    }
+  }
+  AP.init(options);
 
 })(this);

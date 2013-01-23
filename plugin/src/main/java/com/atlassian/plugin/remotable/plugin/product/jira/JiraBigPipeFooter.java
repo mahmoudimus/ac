@@ -53,7 +53,7 @@ public class JiraBigPipeFooter implements PluggableFooter
         String json = bigPipe.consumeContent();
         return "<script>" +
                 "(function(global) {" +
-                "var AP = global.AP = global.AP || {};" +
+                "var AP = global._AP = global._AP || {};" +
                 "if (AP.RemoteConditions) AP.RemoteConditions.hide();" +
                 "var contents = " + json + ";" +
                 "if (AP.BigPipe) AP.BigPipe.processContents(contents);" +

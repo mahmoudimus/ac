@@ -3,7 +3,7 @@
   by the module types directly
  */
 (function ($, global) {
-  var AP = global.AP = global.AP || {};
+  var AP = global._AP = global._AP || {};
   function hide() {
     if (!AP.remoteConditionsHidden) {
       AP.remoteConditionsHidden = true;

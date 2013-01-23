@@ -13,8 +13,6 @@
         </select>
 
         <script type="text/javascript">
-            AP.init();
-
             AP.Dialog.onDialogMessage("submit", function() {
                 var footy = $("#footy");
                 return {

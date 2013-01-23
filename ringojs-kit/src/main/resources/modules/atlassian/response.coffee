@@ -94,6 +94,7 @@ module.exports = (appDir, options) ->
           layoutLocals = merge auiLocals,
             stylesheetUrls: ("#{publicUrl 'css', path}" for path in options.stylesheets or [])
             scriptUrls: ("#{publicUrl 'js', path}" for path in options.scripts or [])
+            clientOptions: ("#{k}:#{v}" for k, v of options.clientOptions).join(";")
             head: renderView(appDir, "layout-head-#{resType}", auiLocals)
             tail: renderView(appDir, "layout-tail-#{resType}", auiLocals)
             bigPipeReadyContents: bigpipe.consumeContent()

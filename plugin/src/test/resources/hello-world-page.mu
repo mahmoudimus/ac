@@ -5,8 +5,5 @@
     </head>
     <body>
         <p>Hello world</p>
-        <script type="text/javascript">
-            AP.init();
-        </script>
     </body>
 </html>

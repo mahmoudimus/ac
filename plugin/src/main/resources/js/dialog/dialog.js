@@ -1,6 +1,6 @@
 (function(global, AJS, $) {
 
-  var AP = global.AP = global.AP || {};
+  var AP = global._AP = global._AP || {};
 
   var enc = encodeURIComponent;
 

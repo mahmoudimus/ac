@@ -1,5 +1,7 @@
 AJS.toInit(function ($) {
 
+  var AP = _AP;
+
   function createEventHandler() {
     return function(event) {
       event.preventDefault();

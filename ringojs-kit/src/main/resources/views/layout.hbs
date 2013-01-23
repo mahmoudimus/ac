@@ -14,8 +14,7 @@
   {{#each stylesheetUrls}}
   <link rel="stylesheet" href="{{this}}">
   {{/each}}
-  <script src="{{hostScriptUrl}}"></script>
-  <script>AP.init();</script>
+  <script src="{{hostScriptUrl}}" data-options="{{clientOptions}}"></script>
 </head>
 <body>
   {{{body}}}

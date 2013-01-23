@@ -5,8 +5,5 @@
 </head>
 <body>
 <div id="message">{{message}}</div>
-<script type="text/javascript">
-  AP.init();
-</script>
 </body>
 </html>
