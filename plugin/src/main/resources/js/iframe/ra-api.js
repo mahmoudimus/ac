@@ -200,6 +200,10 @@
     }
   };
 
+  AP.localUrl = function (path) {
+    return AP.Meta.get("local-base-url") + (path == null ? "" : path);
+  };
+
   AP.BigPipe = function () {
     function BigPipe() {
       var started;
