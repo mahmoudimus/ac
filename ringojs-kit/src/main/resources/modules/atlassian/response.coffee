@@ -33,6 +33,7 @@ module.exports = (appDir, options) ->
   # response.type(type)
   type: (type) ->
     @set "content-type", switch type
+      when "text" then "text/plain"
       when "html" then "text/html"
       when "json" then "application/json"
       when "xml" then "application/xml"
@@ -73,12 +74,6 @@ module.exports = (appDir, options) ->
   send: (body, headers, statusCode) ->
     @sendWithLayout "layout", body, headers, statusCode
 
-  # response.send(path)
-  # response.send(path, headers)
-  sendNotFound: (path, headers) ->
-    @writeHead 404, headers
-    @end "Not Found#{if path then ': ' + path else ''}"
-
   # response.send(layout, body)
   # response.send(layout, body, headers)
   # response.send(layout, body, headers, statusCode)
@@ -109,6 +104,19 @@ module.exports = (appDir, options) ->
         throw new Error "Unable to render default layout: #{err}"
       else
         @renderError ex, headers, statusCode
+
+  # response.sendText(text)
+  # response.sendText(text, headers)
+  # response.sendText(text, headers, statusCode)
+  sendText: (text, headers={}, statusCode=200) ->
+    @type "text"
+    @writeHead statusCode, headers
+    @end text
+
+  # response.send(path)
+  # response.send(path, headers)
+  sendNotFound: (path, headers) ->
+    @sendText "Not Found#{if path then ': ' + path else ''}", headers, 404
 
   # response.sendJson(data)
   # response.sendJson(data, headers)
