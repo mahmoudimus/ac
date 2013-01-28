@@ -34,6 +34,11 @@ public final class IFrameParamsImpl implements IFrameParams
         params.put(key, escapeQuotes(value));
     }
 
+    public void setParamNoEscape(String key, String value)
+    {
+        params.put(key, value);
+    }
+
     @Override
     public Map<String, Object> getAsMap()
     {

@@ -8,12 +8,12 @@ import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.elements.ResourceDescriptor;
 import com.atlassian.plugin.module.ModuleFactory;
-import com.atlassian.plugin.remotable.plugin.integration.plugins.DynamicDescriptorRegistration;
 import com.atlassian.plugin.remotable.plugin.module.jira.workflow.RemoteWorkflowPostFunctionEvent;
 import com.atlassian.plugin.remotable.plugin.module.jira.workflow.RemoteWorkflowPostFunctionModuleDescriptor;
 import com.atlassian.plugin.remotable.plugin.module.jira.workflow.RemoteWorkflowPostFunctionProvider;
 import com.atlassian.plugin.remotable.plugin.product.jira.JiraRestBeanMarshaler;
 import com.atlassian.plugin.remotable.spi.module.IFrameRenderer;
+import com.atlassian.templaterenderer.TemplateRenderer;
 import com.atlassian.webhooks.spi.provider.ConsumerKey;
 import com.atlassian.webhooks.spi.provider.ModuleDescriptorWebHookConsumerRegistry;
 import com.google.common.collect.ImmutableMap;
@@ -50,6 +50,9 @@ public class TestRemoteWorkflowPostFunction
     @Mock
     private EventPublisher eventPublisher;
 
+    @Mock
+    private TemplateRenderer templateRenderer;
+
     private final ConsumerKey consumerKey = new ConsumerKey("plugin", "module");
 
     @Before
@@ -79,7 +82,7 @@ public class TestRemoteWorkflowPostFunction
         RemoteWorkflowPostFunctionProvider postFunctionProvider = new RemoteWorkflowPostFunctionProvider(eventPublisher, issueMarshaler, consumerKey)
         {
             @Override
-            protected JSONObject postFunctionJSON(final Map<?, ?> transientVars)
+            protected JSONObject postFunctionJSON(final Map<?, ?> transientVars, final Map args)
             {
                 return new JSONObject(ImmutableMap.of("id", "10", "issue_type", "bug"));
             }
@@ -102,12 +105,11 @@ public class TestRemoteWorkflowPostFunction
         final RemoteWorkflowPostFunctionModuleDescriptor descriptor = new RemoteWorkflowPostFunctionModuleDescriptor(
                 mock(JiraAuthenticationContext.class),
                 mock(ModuleFactory.class),
-                mock(DynamicDescriptorRegistration.class),
                 mock(IFrameRenderer.class),
                 issueMarshaler,
                 mock(ModuleDescriptorWebHookConsumerRegistry.class),
-                eventPublisher
-        );
+                eventPublisher,
+                templateRenderer);
 
         descriptor.init(Mockito.mock(Plugin.class), root);
         assertEquals(1, descriptor.getResourceDescriptors().size());

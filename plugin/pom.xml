@@ -599,6 +599,7 @@
                             com.atlassian.refapp.auth.external;resolution:=optional,
                             com.atlassian.sal.api.*;version="(2.4,3.0]",
                             com.atlassian.util.concurrent*;version="${atlassian-util-concurrent.version}",
+                            com.atlassian.crowd.embedded.api.*;version="2.0",
                             com.atlassian.webhooks.spi*;version="${webhooks.api.version}",
                             com.atlassian.httpclient.*;version="${httpclient.api.version}",
                             com.sun.mail.handlers;resolution:=optional,

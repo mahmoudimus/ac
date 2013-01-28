@@ -1,4 +1,5 @@
 <div class="ra-container" id="ra-$namespace">
+  $!extraMarkupHtml
   <div class="ra-content" id="embedded-$namespace"></div>
   <div class="ra-stats hidden">
     <div class="ra-loading ra-status">

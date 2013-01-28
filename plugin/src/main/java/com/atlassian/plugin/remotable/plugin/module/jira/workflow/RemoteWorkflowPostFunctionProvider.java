@@ -21,6 +21,8 @@ import org.json.JSONObject;
 import java.util.List;
 import java.util.Map;
 
+import static com.atlassian.plugin.remotable.plugin.module.jira.workflow.RemoteWorkflowFunctionPluginFactory.POST_FUNCTION_CONFIGURATION;
+
 /**
  * Workflow post-function executed when the transition is fired. Builds a JSON of an issue and transition and
  * publishes an webhook event.
@@ -43,11 +45,11 @@ public class RemoteWorkflowPostFunctionProvider extends AbstractJiraFunctionProv
     @Override
     public void execute(final Map transientVars, final Map args, final PropertySet propertySet) throws WorkflowException
     {
-        final JSONObject postFunctionJSON = postFunctionJSON(transientVars);
+        final JSONObject postFunctionJSON = postFunctionJSON(transientVars, args);
         eventPublisher.publish(new RemoteWorkflowPostFunctionEvent(consumerKey, postFunctionJSON));
     }
 
-    protected JSONObject postFunctionJSON(final Map<?, ?> transientVars)
+    protected JSONObject postFunctionJSON(final Map<?, ?> transientVars, final Map args)
     {
         final WorkflowEntry entry = (WorkflowEntry) transientVars.get("entry");
         final Integer actionId = (Integer) transientVars.get("actionId");
@@ -67,10 +69,11 @@ public class RemoteWorkflowPostFunctionProvider extends AbstractJiraFunctionProv
 
         final JSONObject transitionJSON = new JSONObject(transitionBuilder.build());
         final JSONObject issueJSON = beanMarshaler.getRemoteIssue(issue);
-
-        return new JSONObject(ImmutableMap.of("issue", issueJSON, "transition", transitionJSON));
+        final JSONObject configuration = new JSONObject(ImmutableMap.of("value", args.get(POST_FUNCTION_CONFIGURATION)));
+        return new JSONObject(ImmutableMap.of("issue", issueJSON, "transition", transitionJSON, "configuration", configuration));
     }
 
+    @SuppressWarnings("unchecked")
     private String findPreviousStatus(final Step currentStep,
             final WorkflowEntry entry,
             final WorkflowStore workflowStore,

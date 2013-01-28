@@ -1,0 +1,2 @@
+<input id="remoteWorkflowPostFunctionConfiguration-$remoteWorkflowPostFunctionUUID" name="remoteWorkflowPostFunctionConfiguration-$remoteWorkflowPostFunctionUUID" value="$remoteWorkflowPostFunctionConfiguration" type="hidden"/>
+<input name="remoteWorkflowPostFunctionUUID" value="$remoteWorkflowPostFunctionUUID" type="hidden" />

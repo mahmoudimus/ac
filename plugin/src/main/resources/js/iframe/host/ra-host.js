@@ -67,7 +67,9 @@
       props: {width: initWidth, height: initHeight}
     }, {
       remote: {
-        dialogMessage: {}
+        dialogMessage: {},
+        // !!! JIRA specific !!!
+        setWorkflowConfigurationMessage: {}
       },
       local: {
         init: function () {
@@ -106,6 +108,10 @@
             fullName = $("a#user-menu-link").attr("title");
           }
           return {fullName: fullName, id: options.userId};
+        },
+        // !!! JIRA specific !!!
+        getWorkflowConfiguration: function (uuid, callback) {
+          callback($("#remoteWorkflowPostFunctionConfiguration-"+uuid).val());
         },
         showMessage: function (id, title, body) {
           // init message bar if necessary
@@ -213,6 +219,33 @@
         });
       });
     }
+
+    // !!! JIRA specific !!!
+    var done = false;
+    $(document).delegate("#add_submit", "click", function(e) {
+      if (!done) {
+        e.preventDefault();
+        rpc.setWorkflowConfigurationMessage(function(either) {
+          if (either.valid) {
+            $("#remoteWorkflowPostFunctionConfiguration-"+either.uuid).val(either.value);
+            done = true;
+            $("#add_submit").click();
+          }
+        });
+      }
+    });
+    $(document).delegate("#update_submit", "click", function(e) {
+      if (!done) {
+        e.preventDefault();
+        rpc.setWorkflowConfigurationMessage(function(either) {
+          if (either.valid) {
+            $("#remoteWorkflowPostFunctionConfiguration-"+either.uuid).val(either.value);
+            done = true;
+            $("#update_submit").click();
+          }
+        });
+      }
+    });
 
     // clean up when the iframe is removed
     $nexus.bind("ra.iframe.destroy", function () {

@@ -46,9 +46,9 @@
     <remote-workflow-post-function key="remoteWorkflowFunction" name="Remote Workflow Function"
                                    url="/remoteWorkflowFunction/transition_fired">
         <description>Remote workflow</description>
-        <view url="/myAdmin" />
-        <create url="/myAdmin" />
-        <edit url="/myAdmin" />
+        <view url="/myWorkflowFunctionConfiguration?view" />
+        <create url="/myWorkflowFunctionConfiguration?create" />
+        <edit url="/myWorkflowFunctionConfiguration?edit" />
     </remote-workflow-post-function>
 
 </application>

@@ -374,6 +374,8 @@
     var config = {};
     // init stubs for private bridge functions
     var stubs = {
+      // !!! JIRA specific !!!
+      getWorkflowConfiguration: {},
       setDialogButtonEnabled: {},
       isDialogButtonEnabled: {}
     };
@@ -398,6 +400,8 @@
       // expose the dialog sub-api if appropriate
       AP.Dialog = makeDialog();
     }
+    // !!! JIRA specific !!!
+    AP.WorkflowConfiguration = makeWorkflowConfiguration();
   }
 
   function initBridge() {
@@ -462,6 +466,15 @@
     // @param callback  function (user) {...}
     getUser: function (callback) {
       rpc.getUser(callback);
+    },
+
+    // !!! JIRA specific !!!
+    // get a workflow configuration object
+    //
+    // @param callback function (workflow) {...}
+    getWorkflowConfiguration : function (callback) {
+      var uuid = decodeURI(RegExp('remoteWorkflowPostFunctionUUID=([0-9a-z\-]+)').exec(document.location)[1]);
+      rpc.getWorkflowConfiguration(uuid, callback);
     },
 
     // shows a message with body and title by id in the host application
@@ -550,8 +563,11 @@
         handleError(e);
       }
       return result;
+    },
+    // !!! JIRA specific !!!
+    setWorkflowConfigurationMessage: function () {
+      return AP.WorkflowConfiguration.trigger();
     }
-
   };
 
   // dialog-related sub-api for use when the remote plugin is running as the content of a host dialog
@@ -609,6 +625,28 @@
         }
       }
 
+    };
+  }
+  // !!! JIRA specific !!!
+  function makeWorkflowConfiguration() {
+    var workflowListener;
+    var validationListener;
+    return {
+      onSaveValidation: function (listener) {
+          validationListener = listener
+      },
+      onSave: function (listener) {
+        workflowListener = listener
+      },
+      trigger : function () {
+          if (validationListener.call()) {
+            var uuidValue = decodeURI(RegExp('remoteWorkflowPostFunctionUUID=([0-9a-z\-]+)').exec(document.location)[1]);
+            return {valid : true, uuid: uuidValue, value : "" + workflowListener.call()};
+          }
+          else {
+            return {valid : false}
+          }
+      }
     };
   }
 
