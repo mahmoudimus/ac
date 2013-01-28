@@ -1,12 +1,11 @@
 package com.atlassian.plugin.remotable.plugin.integration.plugins;
 
+import com.atlassian.plugin.*;
+import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
+import com.atlassian.plugin.descriptors.UnrecognisedModuleDescriptor;
 import com.atlassian.plugin.remotable.host.common.util.BundleUtil;
 import com.atlassian.osgi.tracker.WaitableServiceTracker;
 import com.atlassian.osgi.tracker.WaitableServiceTrackerFactory;
-import com.atlassian.plugin.ModuleDescriptor;
-import com.atlassian.plugin.ModuleDescriptorFactory;
-import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.util.concurrent.Effect;
 import com.google.common.base.Function;
@@ -79,7 +78,7 @@ public class DynamicDescriptorRegistration
      * @param descriptors
      * @return
      */
-    public Registration registerDescriptors(Plugin plugin, Iterable<DescriptorToRegister> descriptors)
+    public Registration registerDescriptors(final Plugin plugin, Iterable<DescriptorToRegister> descriptors)
     {
         Bundle bundle = BundleUtil.findBundleForPlugin(bundleContext, plugin.getKey());
         BundleContext targetBundleContext = bundle.getBundleContext();
@@ -87,16 +86,15 @@ public class DynamicDescriptorRegistration
         for (DescriptorToRegister reg : descriptors)
         {
             ModuleDescriptor descriptor = reg.getDescriptor();
-            if (plugin.getModuleDescriptor(descriptor.getKey()) != null)
+            ModuleDescriptor<?> existingDescriptor = plugin.getModuleDescriptor(descriptor.getKey());
+            if (existingDescriptor != null)
             {
-                log.error("Duplicate key '" + descriptor.getKey() + "' detected, skipping");
+                log.error("Duplicate key '" + descriptor.getKey() + "' detected, disabling previous instance");
+                ((StateAware)existingDescriptor).disabled();
             }
-            else
-            {
-                log.debug("Registering descriptor {}", descriptor.getClass().getName());
-                registrations.add(targetBundleContext.registerService(ModuleDescriptor.class.getName(),
-                        descriptor, null));
-            }
+            log.debug("Registering descriptor {}", descriptor.getClass().getName());
+            registrations.add(targetBundleContext.registerService(ModuleDescriptor.class.getName(),
+                    descriptor, null));
 
             if (reg.getI18nProperties() != null)
             {

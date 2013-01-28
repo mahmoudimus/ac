@@ -3,9 +3,12 @@ package com.atlassian.plugin.remotable.plugin.module.page;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
+import com.atlassian.plugin.module.LegacyModuleFactory;
 import com.atlassian.plugin.remotable.plugin.integration.plugins.DynamicDescriptorRegistration;
 import com.atlassian.util.concurrent.NotNull;
 import org.dom4j.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Generates a general page with a servlet containing an iframe and a web item
@@ -16,10 +19,12 @@ public class GeneralPageModuleDescriptor extends AbstractModuleDescriptor<Void>
     private final RemotePageDescriptorCreator.Builder remotePageDescriptorBuilder;
     private Element descriptor;
     private DynamicDescriptorRegistration.Registration registration;
+    private static final Logger log = LoggerFactory.getLogger(GeneralPageModuleDescriptor.class);
 
     public GeneralPageModuleDescriptor(DynamicDescriptorRegistration dynamicDescriptorRegistration,
             RemotePageDescriptorCreator remotePageDescriptorCreator)
     {
+        super(LegacyModuleFactory.LEGACY_MODULE_FACTORY);
         this.dynamicDescriptorRegistration = dynamicDescriptorRegistration;
         this.remotePageDescriptorBuilder = remotePageDescriptorCreator.newBuilder()
                 .setDecorator("atl.general");
@@ -43,6 +48,7 @@ public class GeneralPageModuleDescriptor extends AbstractModuleDescriptor<Void>
     public void enabled()
     {
         super.enabled();
+        log.debug("Enabling general page {} instance {}", getKey(), System.identityHashCode(this));
         this.registration = dynamicDescriptorRegistration.registerDescriptors(getPlugin(),
                 remotePageDescriptorBuilder.build(getPlugin(), descriptor));
     }
@@ -50,9 +56,11 @@ public class GeneralPageModuleDescriptor extends AbstractModuleDescriptor<Void>
     @Override
     public void disabled()
     {
+        log.debug("Disabling general page {} instance {}" , getKey(), System.identityHashCode(this));
         super.disabled();
         if (registration != null)
         {
+            log.debug("Unregistering dynamic descriptors for {} instance {}", getKey(), System.identityHashCode(this));
             registration.unregister();
         }
     }
