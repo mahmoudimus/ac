@@ -1,107 +1,147 @@
 package com.atlassian.plugin.remotable.kit.js.ringojs.repository;
 
+import com.atlassian.plugin.util.PluginUtils;
+import org.apache.commons.io.IOUtils;
 import org.ringojs.repository.Repository;
 import org.ringojs.repository.Resource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.nio.charset.Charset;
 
-public abstract class AbstractResource implements Resource {
+public abstract class AbstractResource implements Resource
+{
+    protected static final Logger log = LoggerFactory.getLogger(AbstractResource.class);
+    protected static final boolean devMode = Boolean.getBoolean(PluginUtils.ATLASSIAN_DEV_MODE);
+    protected static final CoffeeScriptCompiler compiler = new CoffeeScriptCompiler();
 
-    protected AbstractRepository repository;
+    protected Repository repository;
     protected String path;
     protected String name;
     protected String baseName;
     private boolean stripShebang = true;
 
-    protected void setBaseNameFromName(String name) {
+    protected void setBaseNameFromName(String name)
+    {
         // base name is short name with extension cut off
         int lastDot = name.lastIndexOf(".");
         this.baseName = (lastDot == -1) ? name : name.substring(0, lastDot);
     }
 
-    public String getPath() {
+    public String getPath()
+    {
         return path;
     }
 
-    public String getName() {
+    public String getName()
+    {
         return name;
     }
 
-    public String getBaseName() {
+    public String getBaseName()
+    {
         return baseName;
     }
 
-    public Repository getParentRepository() {
+    public Repository getParentRepository()
+    {
         return repository;
     }
 
-    public Repository getRootRepository() {
+    public Repository getRootRepository()
+    {
         return repository.getRootRepository();
     }
 
-    protected InputStream stripShebang(InputStream stream) throws IOException {
-        if (stripShebang) {
+    protected InputStream stripShebang(InputStream stream) throws IOException
+    {
+        if (stripShebang)
+        {
             stream = new BufferedInputStream(stream);
             stream.mark(2);
-            if (stream.read() == '#' && stream.read() == '!') {
+            if (stream.read() == '#' && stream.read() == '!')
+            {
                 // skip a line: a line is terminated by \n or \r or \r\n (just as
                 // in BufferedReader#readLine)
-                for (int c = stream.read(); c != -1; c = stream.read()) {
-                    if (c == '\n') {
+                for (int c = stream.read(); c != -1; c = stream.read())
+                {
+                    if (c == '\n')
+                    {
                         break;
-                    } else if (c == '\r') {
+                    }
+                    else if (c == '\r')
+                    {
                         stream.mark(1);
-                        if (stream.read() != '\n') {
+                        if (stream.read() != '\n')
+                        {
                             stream.reset();
                         }
                         break;
                     }
                 }
-            } else {
+            }
+            else
+            {
                 stream.reset();
             }
         }
         return stream;
     }
 
-    public Reader getReader(String encoding) throws IOException {
+    public Reader getReader(String encoding) throws IOException
+    {
         return new InputStreamReader(getInputStream(), encoding);
     }
 
-    public Reader getReader() throws IOException {
+    public Reader getReader() throws IOException
+    {
         return new InputStreamReader(getInputStream());
     }
 
-    public String getContent(String encoding) throws IOException {
+    public String getContent(String encoding) throws IOException
+    {
         InputStream in = getInputStream();
-        try {
+        try
+        {
             byte[] buf = new byte[1024];
             int read = 0;
-            while (true) {
+            while (true)
+            {
                 int r = in.read(buf, read, buf.length - read);
-                if (r == -1) {
+                if (r == -1)
+                {
                     break;
                 }
                 read += r;
-                if (read == buf.length) {
+                if (read == buf.length)
+                {
                     byte[] b = new byte[buf.length * 2];
                     System.arraycopy(buf, 0, b, 0, buf.length);
                     buf = b;
                 }
             }
             return encoding == null ?
-                    new String(buf, 0, read) :
-                    new String(buf, 0, read, encoding);
-        } finally {
-            if (in != null) {
-                try {
+                new String(buf, 0, read) :
+                new String(buf, 0, read, encoding);
+        }
+        finally
+        {
+            if (in != null)
+            {
+                try
+                {
                     in.close();
-                } catch (IOException ignore) {}
+                }
+                catch (IOException ignore)
+                {
+                }
             }
         }
     }
 
-    public String getContent() throws IOException {
+    public String getContent() throws IOException
+    {
         return getContent("utf-8");
     }
 
@@ -110,10 +150,14 @@ public abstract class AbstractResource implements Resource {
      *
      * @return the relative resource path
      */
-    public String getRelativePath() {
-        if (repository == null) {
+    public String getRelativePath()
+    {
+        if (repository == null)
+        {
             return name;
-        } else {
+        }
+        else
+        {
             return repository.getRelativePath() + name;
         }
     }
@@ -123,40 +167,127 @@ public abstract class AbstractResource implements Resource {
      *
      * @return the module name according to the securable module spec
      */
-    public String getModuleName() {
-        if (repository == null) {
+    public String getModuleName()
+    {
+        if (repository == null)
+        {
             return baseName;
-        } else {
+        }
+        else
+        {
             return repository.getRelativePath() + baseName;
         }
     }
 
-    public long getChecksum() {
+    public long getChecksum()
+    {
         return lastModified();
     }
 
-    public boolean getStripShebang() {
+    public boolean getStripShebang()
+    {
         return stripShebang;
     }
 
-    public void setStripShebang(boolean stripShebang) {
+    public void setStripShebang(boolean stripShebang)
+    {
         this.stripShebang = stripShebang;
     }
 
     /**
      * Set this Resource to absolute mode. This will cause all its
      * relative path operations to use absolute paths instead.
+     *
      * @param absolute true to operate in absolute mode
      */
-    public void setAbsolute(boolean absolute) {
+    public void setAbsolute(boolean absolute)
+    {
         repository.setAbsolute(absolute);
     }
 
     /**
      * Return true if this Resource is in absolute mode.
+     *
      * @return true if absolute mode is on
      */
-    public boolean isAbsolute() {
+    public boolean isAbsolute()
+    {
         return repository.isAbsolute();
+    }
+
+    protected InputStream compileCoffeeScript(String source)
+    {
+        String jsSource = compiler.compile(source);
+        if (devMode)
+        {
+            cacheCompiledSource(jsSource, "coffee");
+        }
+        if (log.isDebugEnabled())
+        {
+            log.debug("Compiled " + getName() + " to JavaScript:\n{}", jsSource);
+        }
+        return new ByteArrayInputStream(jsSource.getBytes(Charset.defaultCharset()));
+    }
+
+    protected String getCompiledCacheRoot()
+    {
+        return null;
+    }
+
+    private void cacheCompiledSource(String jsSource, String fileExt)
+    {
+        String cwd = System.getProperty("user.dir");
+        File relFile = new File(getRelativePath());
+        File cacheDir = new File(new File(cwd, ".cache"), "js");
+        String cacheRoot = getCompiledCacheRoot();
+        if (cacheRoot != null) cacheDir = new File(cacheDir, cacheRoot);
+        String relPath = relFile.getParent();
+        if (relPath != null) cacheDir = new File(cacheDir, relPath);
+        String fileName = relFile.getName();
+        File cacheFile = new File(cacheDir, fileName);
+        String origPath = (cacheRoot != null ? cacheRoot : "") + relFile.getPath().replaceAll("\\.js$", "." + fileExt);
+
+        if (!cacheDir.exists())
+        {
+            final String compiledCreateErr = "Failed to create compiled JavaScript cache dir";
+            try
+            {
+                if (!cacheDir.mkdirs())
+                {
+                    if (log.isDebugEnabled())
+                    {
+                        log.debug(compiledCreateErr);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                if (log.isDebugEnabled())
+                {
+                    log.debug(compiledCreateErr + ": {}", e);
+                }
+            }
+        }
+        FileWriter fout = null;
+        try
+        {
+            fout = new FileWriter(cacheFile);
+            fout.write(jsSource);
+            if (log.isDebugEnabled())
+            {
+                log.debug("Compiled JavaScript cache: {} -> {}", origPath, cacheFile.getAbsolutePath());
+            }
+        }
+        catch (Exception e)
+        {
+            if (log.isDebugEnabled())
+            {
+                log.debug("Compiled JavaScript cache failure: {} -> {}:\n{}", new Object[]{origPath, cacheFile.getAbsolutePath(), e});
+            }
+        }
+        finally
+        {
+            IOUtils.closeQuietly(fout);
+        }
     }
 }

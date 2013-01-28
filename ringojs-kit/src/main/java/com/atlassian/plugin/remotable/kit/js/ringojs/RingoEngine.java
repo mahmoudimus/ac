@@ -1,6 +1,7 @@
 package com.atlassian.plugin.remotable.kit.js.ringojs;
 
 import com.atlassian.plugin.remotable.kit.js.ringojs.js.AppContext;
+import com.atlassian.plugin.remotable.kit.js.ringojs.repository.BundleRepository;
 import com.atlassian.plugin.remotable.kit.js.ringojs.repository.FileRepository;
 import com.atlassian.plugin.Plugin;
 import com.google.common.base.Function;

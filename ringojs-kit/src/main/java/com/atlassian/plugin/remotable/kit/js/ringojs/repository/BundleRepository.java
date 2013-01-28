@@ -1,4 +1,4 @@
-package com.atlassian.plugin.remotable.kit.js.ringojs;
+package com.atlassian.plugin.remotable.kit.js.ringojs.repository;
 
 import org.osgi.framework.Bundle;
 import org.ringojs.repository.Repository;
@@ -19,7 +19,6 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class BundleRepository implements Repository
 {
-
     private final Bundle bundle;
     /**
      * Parent repository this repository is contained in.
@@ -573,4 +572,3 @@ public class BundleRepository implements Repository
     */
 
 }
-

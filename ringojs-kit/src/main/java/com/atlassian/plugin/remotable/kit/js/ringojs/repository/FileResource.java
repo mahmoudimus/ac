@@ -18,38 +18,35 @@
 package com.atlassian.plugin.remotable.kit.js.ringojs.repository;
 
 import org.apache.commons.io.FileUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.charset.Charset;
 
 /**
  * File resource modified to support coffeescript
  */
-public class FileResource extends AbstractResource {
-
+public class FileResource extends AbstractResource
+{
     volatile File file;
-    private static final Logger log = LoggerFactory.getLogger(FileResource.class);
-    private static final CoffeeScriptCompiler compiler = new CoffeeScriptCompiler("1.3.3", true);
 
-    public FileResource(String path) throws IOException {
+    public FileResource(String path) throws IOException
+    {
         this(new File(path), null);
     }
 
-    public FileResource(File file) throws IOException {
+    public FileResource(File file) throws IOException
+    {
         this(file, null);
     }
 
-    protected FileResource(File file, FileRepository repository) throws IOException {
+    protected FileResource(File file, FileRepository repository) throws IOException
+    {
         // make sure our directory has an absolute path,
         // see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4117557
         file = file.getAbsoluteFile();
 
-        repository = repository == null ?
-                new FileRepository(file.getParentFile()) : repository;
+        repository = repository == null ? new FileRepository(file.getParentFile()) : repository;
         // Make sure path is canonical for all directories, while acutal file may be a symlink
         // TODO what we probably want to do here is to just normalize the path
         file = new File(repository.getPath(), file.getName());
@@ -62,7 +59,9 @@ public class FileResource extends AbstractResource {
         baseName = (lastDot == -1) ? name : name.substring(0, lastDot);
     }
 
-    public InputStream getInputStream() throws IOException {
+    @Override
+    public InputStream getInputStream() throws IOException
+    {
         return stripShebang(getFileStream(getFile()));
     }
 
@@ -74,46 +73,50 @@ public class FileResource extends AbstractResource {
         }
         else
         {
-            String source = FileUtils.readFileToString(file);
-            String jsSource = compiler.compile(source);
-            if (log.isDebugEnabled())
-            {
-                log.debug("Converted " + file.getName() + " to JavaScript:\n{}", jsSource);
-            }
-            return new ByteArrayInputStream(jsSource.getBytes(
-                    Charset.defaultCharset()));
+            return compileCoffeeScript(FileUtils.readFileToString(file));
         }
     }
 
-    public URL getUrl() throws MalformedURLException {
+    @Override
+    public URL getUrl() throws MalformedURLException
+    {
         return new URL("file:" + getFile().getAbsolutePath());
     }
 
-    public long lastModified() {
+    @Override
+    public long lastModified()
+    {
         return getFile().lastModified();
     }
 
-    public long getLength() {
+    @Override
+    public long getLength()
+    {
         return getFile().length();
     }
 
-    public boolean exists() {
+    @Override
+    public boolean exists()
+    {
         // not a resource if it's a directory
         return getFile().isFile();
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode()
+    {
         return 17 + path.hashCode();
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(Object obj)
+    {
         return obj instanceof FileResource && path.equals(((FileResource)obj).path);
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         return getPath();
     }
 

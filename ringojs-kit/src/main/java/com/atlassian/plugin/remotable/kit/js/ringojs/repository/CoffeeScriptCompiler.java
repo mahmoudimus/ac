@@ -41,28 +41,37 @@ import java.util.concurrent.Executors;
  */
 public class CoffeeScriptCompiler
 {
-
     private boolean bare;
     private String version;
     private final Scriptable globalScope;
     private Scriptable coffeeScript;
     private static final ExecutorService executor = Executors.newSingleThreadExecutor();
 
-    public CoffeeScriptCompiler(String version, boolean bare) {
+    public CoffeeScriptCompiler()
+    {
+        this("1.3.3", true);
+    }
+
+    public CoffeeScriptCompiler(String version, boolean bare)
+    {
         this.bare = bare;
         this.version = version;
 
-        try {
+        try
+        {
             Context context = createContext();
             globalScope = context.initStandardObjects();
             final Require require = getSandboxedRequire(context, globalScope, true);
             coffeeScript = require.requireMain(context, "coffee-script");
-        } catch (Exception e1) {
+        }
+        catch (Exception e1)
+        {
             throw new CoffeeScriptException("Unable to load the coffeeScript compiler into Rhino", e1);
-        } finally {
+        }
+        finally
+        {
             Context.exit();
         }
-
     }
 
     public String compile(final String coffeeScriptSource)
