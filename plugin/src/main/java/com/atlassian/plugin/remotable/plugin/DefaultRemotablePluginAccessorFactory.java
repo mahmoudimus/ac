@@ -5,7 +5,9 @@ import com.atlassian.applinks.api.event.ApplicationLinkAddedEvent;
 import com.atlassian.applinks.api.event.ApplicationLinkDeletedEvent;
 import com.atlassian.event.api.EventListener;
 import com.atlassian.event.api.EventPublisher;
+import com.atlassian.fugue.Iterables;
 import com.atlassian.oauth.ServiceProvider;
+import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.remotable.plugin.loader.universalbinary.UBDispatchFilter;
@@ -18,17 +20,20 @@ import com.atlassian.plugin.remotable.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.remotable.spi.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.remotable.spi.applinks.RemotePluginContainerApplicationType;
 import com.atlassian.plugin.remotable.spi.http.AuthorizationGenerator;
+import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.uri.Uri;
 import com.atlassian.uri.UriBuilder;
 import com.atlassian.util.concurrent.CopyOnWriteMap;
 import com.atlassian.util.concurrent.Promise;
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.collect.Maps;
 import net.oauth.OAuth;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import javax.ws.rs.HttpMethod;
 import java.net.URI;
 import java.util.Arrays;
@@ -47,6 +52,7 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
     private final OAuthLinkManager oAuthLinkManager;
     private final CachingHttpContentRetriever httpContentRetriever;
     private final PluginAccessor pluginAccessor;
+    private final ApplicationProperties applicationProperties;
     private final UBDispatchFilter ubDispatchFilter;
     private final EventPublisher eventPublisher;
 
@@ -57,7 +63,7 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
                                                  OAuthLinkManager oAuthLinkManager,
                                                  CachingHttpContentRetriever httpContentRetriever,
                                                  PluginAccessor pluginAccessor,
-                                                 UBDispatchFilter ubDispatchFilter,
+                                                 ApplicationProperties applicationProperties, UBDispatchFilter ubDispatchFilter,
                                                  EventPublisher eventPublisher
     )
     {
@@ -65,6 +71,7 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
         this.oAuthLinkManager = oAuthLinkManager;
         this.httpContentRetriever = httpContentRetriever;
         this.pluginAccessor = pluginAccessor;
+        this.applicationProperties = applicationProperties;
         this.ubDispatchFilter = ubDispatchFilter;
         this.eventPublisher = eventPublisher;
         this.eventPublisher.register(this);
@@ -118,8 +125,16 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
         else
         {
             ApplicationLink link = applicationLinkAccessor.getApplicationLink(pluginKey);
+            boolean isRemotable = !Iterables.findFirst(pluginAccessor.getPlugin(pluginKey).getModuleDescriptors(), new Predicate<ModuleDescriptor<?>>() {
+                @Override
+                public boolean apply(@Nullable ModuleDescriptor<?> input) {
+                    return input instanceof RemotePluginContainerModuleDescriptor;
+                }
+            }).isEmpty();
             return create(pluginKey,
-                    link != null ? link.getDisplayUrl() : URI.create(ubDispatchFilter.getLocalMountBaseUrl(pluginKey)));
+                    link != null ? link.getDisplayUrl() :
+                            isRemotable ? URI.create(ubDispatchFilter.getLocalMountBaseUrl(pluginKey))
+                                    : URI.create(applicationProperties.getBaseUrl()));
         }
 
     }
