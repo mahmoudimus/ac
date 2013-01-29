@@ -36,8 +36,18 @@
         </xs:restriction>
     </xs:simpleType>
 
+    <xs:simpleType name="ResourcePathType">
+        <xs:restriction base="xs:string">
+            <xs:pattern value='[^"]*'/>
+        </xs:restriction>
+    </xs:simpleType>
+
     <xs:simpleType name="AbsoluteOrRelativeUrlType">
         <xs:union memberTypes="RelativeUrlType HttpUrlType" />
+    </xs:simpleType>
+
+    <xs:simpleType name="ResourcePathOrHttpUrlType">
+        <xs:union memberTypes="ResourcePathType HttpUrlType" />
     </xs:simpleType>
 
     <xs:simpleType name="DescriptionType">
