@@ -19,6 +19,7 @@ package com.atlassian.plugin.remotable.kit.js.ringojs.repository;
 import org.ringojs.repository.Repository;
 import org.ringojs.repository.Resource;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.ref.SoftReference;
 import java.util.*;
@@ -34,6 +35,8 @@ public abstract class AbstractRepository implements Repository {
      * Parent repository this repository is contained in.
      */
     AbstractRepository parent;
+
+    protected File homeDir;
 
     /**
      * Cache for direct child repositories

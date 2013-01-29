@@ -5,6 +5,7 @@ import org.ringojs.repository.Repository;
 import org.ringojs.repository.Resource;
 import org.ringojs.util.StringUtils;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.ref.SoftReference;
 import java.net.URL;
@@ -20,6 +21,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class BundleRepository implements Repository
 {
     private final Bundle bundle;
+    protected File homeDir;
+
     /**
      * Parent repository this repository is contained in.
      */
@@ -51,9 +54,10 @@ public class BundleRepository implements Repository
      */
     private boolean isAbsolute = false;
 
-    public BundleRepository(Bundle bundle, String basePath)
+    public BundleRepository(Bundle bundle, String basePath, File homeDir)
     {
         this.bundle = bundle;
+        this.homeDir = homeDir;
         if (basePath == null)
         {
             basePath = "/";
@@ -65,11 +69,12 @@ public class BundleRepository implements Repository
         this.path = basePath;
     }
 
-    protected BundleRepository(Bundle bundle, BundleRepository parent, String name)
+    protected BundleRepository(Bundle bundle, BundleRepository parent, String name, File homeDir)
     {
         this.bundle = bundle;
         this.parent = parent;
         this.name = name;
+        this.homeDir = homeDir;
         this.path = parent.path + name + "/";
     }
 
@@ -85,7 +90,7 @@ public class BundleRepository implements Repository
         BundleResource res = resources.get(name);
         if (res == null)
         {
-            res = new BundleResource(bundle, this, name);
+            res = new BundleResource(bundle, this, name, homeDir);
             resources.put(name, res);
         }
         return res;
@@ -100,7 +105,7 @@ public class BundleRepository implements Repository
      */
     protected BundleRepository createChildRepository(String name) throws IOException
     {
-        return new BundleRepository(bundle, this, name);
+        return new BundleRepository(bundle, this, name, homeDir);
     }
 
     /**

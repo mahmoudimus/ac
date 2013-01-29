@@ -3,6 +3,7 @@ package com.atlassian.plugin.remotable.kit.js.ringojs.repository;
 import org.apache.commons.io.IOUtils;
 import org.osgi.framework.Bundle;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -15,12 +16,13 @@ public class BundleResource extends AbstractResource
     private int exists = -1;
     private final Bundle bundle;
 
-    protected BundleResource(Bundle bundle, BundleRepository repository, String name)
+    protected BundleResource(Bundle bundle, BundleRepository repository, String name, File homeDir)
     {
         this.bundle = bundle;
         this.repository = repository;
         this.name = name;
         this.path = repository.getPath() + name;
+        this.homeDir = homeDir;
         setBaseNameFromName(name);
     }
 

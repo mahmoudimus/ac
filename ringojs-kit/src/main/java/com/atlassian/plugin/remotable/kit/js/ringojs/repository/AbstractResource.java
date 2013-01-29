@@ -20,6 +20,7 @@ public abstract class AbstractResource implements Resource
     protected String path;
     protected String name;
     protected String baseName;
+    protected File homeDir;
     private boolean stripShebang = true;
 
     protected void setBaseNameFromName(String name)
@@ -236,9 +237,8 @@ public abstract class AbstractResource implements Resource
 
     private void cacheCompiledSource(String jsSource, String fileExt)
     {
-        String cwd = System.getProperty("user.dir");
         File relFile = new File(getRelativePath());
-        File cacheDir = new File(new File(cwd, ".cache"), "js");
+        File cacheDir = new File(new File(homeDir, ".cache"), "js");
         String cacheRoot = getCompiledCacheRoot();
         if (cacheRoot != null) cacheDir = new File(cacheDir, cacheRoot);
         String relPath = relFile.getParent();

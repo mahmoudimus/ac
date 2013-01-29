@@ -4,6 +4,7 @@ import com.atlassian.plugin.remotable.kit.js.ringojs.js.AppContext;
 import com.atlassian.plugin.remotable.kit.js.ringojs.repository.BundleRepository;
 import com.atlassian.plugin.remotable.kit.js.ringojs.repository.FileRepository;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.sal.api.ApplicationProperties;
 import com.google.common.base.Function;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.NativeJavaMethod;
@@ -31,8 +32,9 @@ public class RingoEngine
     private final RhinoEngine engine;
     private static final Logger log = LoggerFactory.getLogger(RingoEngine.class);
 
-    public RingoEngine(Plugin plugin, final BundleContext bundleContext)
+    public RingoEngine(Plugin plugin, final BundleContext bundleContext, ApplicationProperties applicationProperties)
     {
+        File homeDir = applicationProperties.getHomeDirectory();
         try
         {
             Field field = NativeJavaMethod.class.getDeclaredField("debug");
@@ -53,7 +55,7 @@ public class RingoEngine
 
         Repository home = null;
         final Bundle appBundle = bundleContext.getBundle();
-        Repository ringoHome = new BundleRepository(appBundle, "/modules");
+        Repository ringoHome = new BundleRepository(appBundle, "/modules", homeDir);
 
         URL baseUrl = plugin.getResource("/");
         if ("file".equals(baseUrl.getProtocol()))
@@ -61,7 +63,7 @@ public class RingoEngine
             try
             {
                 File baseDir = new File(baseUrl.toURI());
-                home = new FileRepository(baseDir);
+                home = new FileRepository(baseDir, homeDir);
             }
             catch (URISyntaxException e)
             {
@@ -74,7 +76,7 @@ public class RingoEngine
         }
         else
         {
-            home = new BundleRepository(appBundle, "/");
+            home = new BundleRepository(appBundle, "/", homeDir);
         }
         try
         {
@@ -84,10 +86,10 @@ public class RingoEngine
             ringoConfig.addModuleRepository(ringoHome);
             ringoConfig.addModuleRepository(home);
 
-            if (log.isDebugEnabled())
-            {
-                //ringoConfig.setDebug(true);
-            }
+//            if (log.isDebugEnabled())
+//            {
+//                ringoConfig.setDebug(true);
+//            }
             engine = new RhinoEngine(ringoConfig, new HashMap<String, Object>()
             {{
                 put("appContext", new AppContext(appBundle));

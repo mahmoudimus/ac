@@ -30,23 +30,23 @@ public class FileResource extends AbstractResource
 {
     volatile File file;
 
-    public FileResource(String path) throws IOException
+    public FileResource(String path, File homeDir) throws IOException
     {
-        this(new File(path), null);
+        this(new File(path), homeDir, null);
     }
 
-    public FileResource(File file) throws IOException
+    public FileResource(File file, File homeDir) throws IOException
     {
-        this(file, null);
+        this(file, homeDir, null);
     }
 
-    protected FileResource(File file, FileRepository repository) throws IOException
+    protected FileResource(File file, File homeDir, FileRepository repository) throws IOException
     {
         // make sure our directory has an absolute path,
         // see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4117557
         file = file.getAbsoluteFile();
 
-        repository = repository == null ? new FileRepository(file.getParentFile()) : repository;
+        repository = repository == null ? new FileRepository(file.getParentFile(), homeDir) : repository;
         // Make sure path is canonical for all directories, while acutal file may be a symlink
         // TODO what we probably want to do here is to just normalize the path
         file = new File(repository.getPath(), file.getName());
@@ -54,6 +54,7 @@ public class FileResource extends AbstractResource
         name = file.getName();
         this.file = file;
         this.repository = repository;
+        this.homeDir = homeDir;
         // base name is short name with extension cut off
         int lastDot = name.lastIndexOf(".");
         baseName = (lastDot == -1) ? name : name.substring(0, lastDot);
