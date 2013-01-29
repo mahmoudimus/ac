@@ -16,6 +16,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.security.SecureRandom;
@@ -30,7 +31,7 @@ import static java.util.Collections.unmodifiableSet;
 /**
  * Manages big pipe instances
  */
-public final class BigPipeImpl implements BigPipe
+public final class BigPipeImpl implements BigPipe, DisposableBean
 {
     private static final SecureRandom secureRandom = SecureRandomFactory.newInstance();
     private final Logger log = LoggerFactory.getLogger(this.getClass());
@@ -39,7 +40,14 @@ public final class BigPipeImpl implements BigPipe
     private final RequestIdAccessor requestIdAccessor = new RequestIdAccessor();
     private final UserIdRetriever userIdRetriever;
 
-    ScheduledExecutorService cleanupThread = Executors.newSingleThreadScheduledExecutor();
+    ScheduledExecutorService cleanupThread = Executors.newSingleThreadScheduledExecutor(new ThreadFactory() {
+        @Override
+        public Thread newThread(Runnable r) {
+            Thread t = new Thread(r);
+            t.setName("Big Pipe Cleanup");
+            return t;
+        }
+    });
 
     private final Map<String, RequestContentSet> requestContentSets = CopyOnWriteMap.newHashMap();
 
@@ -193,6 +201,11 @@ public final class BigPipeImpl implements BigPipe
     public boolean isActivated()
     {
         return requestContentSets.containsKey(getRequestId());
+    }
+
+    @Override
+    public void destroy() throws Exception {
+        cleanupThread.shutdownNow();
     }
 
     @SuppressWarnings("unchecked")
