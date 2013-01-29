@@ -1,18 +1,18 @@
-<div class="ra-container" id="ra-$namespace">
+<div class="ap-container" id="ap-$namespace">
   $!extraMarkupHtml
-  <div class="ra-content" id="embedded-$namespace"></div>
-  <div class="ra-stats hidden">
-    <div class="ra-loading ra-status">
+  <div class="ap-content" id="embedded-$namespace"></div>
+  <div class="ap-stats hidden">
+    <div class="ap-loading ap-status">
       Loading plugin <a href="${plugin.displayUrl}" target="_blank">$plugin.name</a>.
     </div>
-    <div class="ra-loaded ra-status hidden">
+    <div class="ap-loaded ap-status hidden">
       Loaded plugin <a href="${plugin.displayUrl}" target="_blank">$plugin.name</a>.
     </div>
-    <div class="ra-load-timeout ra-status hidden">
+    <div class="ap-load-timeout ap-status hidden">
       Plugin <a href="${plugin.displayUrl}" target="_blank">$plugin.name</a> is not responding.
-      <a href="#" class="ra-btn-wait">Wait</a> or <a href="#" class="ra-btn-cancel">Cancel</a>?
+      <a href="#" class="ap-btn-wait">Wait</a> or <a href="#" class="ap-btn-cancel">Cancel</a>?
     </div>
-    <div class="ra-load-error ra-status hidden">
+    <div class="ap-load-error ap-status hidden">
       Plugin <a href="${plugin.displayUrl}" target="_blank">$plugin.name</a> failed to load.
     </div>
   </div>
@@ -38,7 +38,7 @@
             jQuery(function() {
                 JIRA.bind(JIRA.Events.NEW_CONTENT_ADDED, function(e, context, reason) {
                     var jcontext = jQuery(context);
-                    if (jQuery('#ra-$namespace', jcontext).length > 0) {
+                    if (jQuery('#ap-$namespace', jcontext).length > 0) {
                         init();
                     }
                 });

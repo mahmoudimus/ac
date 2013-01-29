@@ -137,7 +137,7 @@ public class ConditionProcessor
 
     public String createUniqueUrlHash(String pluginKey, String cUrl)
     {
-        return "ra-hash-" + (cUrl + ":" + pluginKey).hashCode();
+        return "ap-hash-" + (cUrl + ":" + pluginKey).hashCode();
     }
 
     public Plugin getLoadablePlugin(Plugin plugin)

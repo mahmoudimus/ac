@@ -18,10 +18,10 @@ public class RemotePluginDialog
     // The Remotable Plugin iFrame page embedded within the dialog.
     private final RemotePluginTestPage embeddedPage;
 
-    @FindBy(className = "ra-dialog-submit")
+    @FindBy(className = "ap-dialog-submit")
     private WebElement submitButton;
 
-    @FindBy(className = "ra-dialog-cancel")
+    @FindBy(className = "ap-dialog-cancel")
     private WebElement cancelButton;
 
     public RemotePluginDialog(RemotePluginTestPage embeddedPage)
@@ -42,7 +42,7 @@ public class RemotePluginDialog
     public boolean submit()
     {
         submitButton.click();
-        return !driver.elementIsVisible(By.className("ra-dialog-content"));
+        return !driver.elementIsVisible(By.className("ap-dialog-content"));
     }
 
     public void cancel()

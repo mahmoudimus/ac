@@ -27,13 +27,13 @@
       header: "Remotable Plugins Dialog Title",
 
       // These options may be overridden by the caller, but the defaults are OK
-      headerClass: "ra-dialog-header",
+      headerClass: "ap-dialog-header",
       // Default width and height of the dialog
       width: "50%",
       height: "50%"
     };
 
-    var dialogId = options.id || "ra-dialog-" + (idSeq += 1);
+    var dialogId = options.id || "ap-dialog-" + (idSeq += 1);
     var mergedOptions = $.extend({id: dialogId}, defaultOptions, options);
     mergedOptions.width = parseDimension(mergedOptions.width, $global.width());
     mergedOptions.height = parseDimension(mergedOptions.height, $global.height());
@@ -55,25 +55,25 @@
     // the dialog automatically closes on ESC. but we also want to do our clean up
     $(document).keydown(function(e){ if (e.keyCode === 27) { closeDialog(); }});
 
-    var placeholderContent = "<div class='ra-servlet-placeholder'></div>";
-    dialog.addPanel(null, placeholderContent, "ra-dialog-content");
+    var placeholderContent = "<div class='ap-servlet-placeholder'></div>";
+    dialog.addPanel(null, placeholderContent, "ap-dialog-content");
     var $dialog = $("#" + dialogId);
-    $nexus = $dialog.find(".ra-servlet-placeholder");
+    $nexus = $dialog.find(".ap-servlet-placeholder");
 
     return {
       id: dialogId,
       show: function() {
         dialog.show();
 
-        var $panelBody = $dialog.find(".ra-dialog-content");
+        var $panelBody = $dialog.find(".ap-dialog-content");
         contentUrl += (contentUrl.indexOf("?") > 0 ? "&" : "?") + "dialog=1";
         contentUrl = setDimension(contentUrl, "width", $panelBody.width());
         contentUrl = setDimension(contentUrl, "height", $panelBody.height());
 
         var timeout = setTimeout(function () {
           $nexus
-            .append("<div class='ra-dialog-loading hidden'>&nbsp;</div>")
-            .find(".ra-dialog-loading").height($panelBody.height()).fadeIn();
+            .append("<div class='ap-dialog-loading hidden'>&nbsp;</div>")
+            .find(".ap-dialog-loading").height($panelBody.height()).fadeIn();
         }, 500);
 
         function preventTimeout() {
@@ -147,9 +147,9 @@
     $.each(specs, function () {
       var $dialog = $(dialog.popup.element),
           spec = this,
-          className = "ra-dialog-" + spec.name,
+          className = "ap-dialog-" + spec.name,
           disabledAttr = "disabled",
-          disabledClass = "ra-link-disabled",
+          disabledClass = "ap-link-disabled",
           isEnabled = true;
       function dispatch(result) {
         var name = result ? "done" : "fail";

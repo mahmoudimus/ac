@@ -18,7 +18,7 @@
 </head>
 
 <body>
-<div class="ra-servlet-placeholder">
+<div class="ap-servlet-placeholder">
 	$iframeHtml
 </div>
 </body>

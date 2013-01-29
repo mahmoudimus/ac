@@ -25,7 +25,7 @@ public class DialogPageModuleDescriptor extends AbstractModuleDescriptor<Void>
         this.dynamicDescriptorRegistration = dynamicDescriptorRegistration;
         this.remotePageDescriptorBuilder = remotePageDescriptorCreator.newBuilder()
                 .setTemplateSuffix("-dialog")
-                .setWebItemStyleClass("ra-dialog");
+                .setWebItemStyleClass("ap-dialog");
 
     }
 

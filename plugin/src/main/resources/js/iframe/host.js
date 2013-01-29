@@ -9,7 +9,7 @@
   AP.create = AP.create || function (options) {
 
     var ns = options.ns,
-        $home = $("#ra-" + ns),
+        $home = $("#ap-" + ns),
         contentId = "embedded-" + ns,
         channelId = "channel-" + ns,
         $content = $("#" + contentId),
@@ -25,18 +25,18 @@
     }
 
     function showStatus(name) {
-      $home.find(".ra-status").addClass("hidden");
-      $home.find(".ra-" + name).removeClass("hidden");
+      $home.find(".ap-status").addClass("hidden");
+      $home.find(".ap-" + name).removeClass("hidden");
     }
 
     var timeout = setTimeout(function () {
       timeout = null;
       showStatus("load-timeout");
-      var $timeout = $home.find(".ra-load-timeout");
-      $timeout.find("a.ra-btn-wait").click(function () {
+      var $timeout = $home.find(".ap-load-timeout");
+      $timeout.find("a.ap-btn-wait").click(function () {
         showStatus("loading");
       });
-      $timeout.find("a.ra-btn-cancel").click(function () {
+      $timeout.find("a.ap-btn-cancel").click(function () {
         showStatus("load-error");
         $nexus.trigger(isDialog ? "ra.dialog.close" : "ra.iframe.destroy");
       });
@@ -78,7 +78,7 @@
             preventTimeout();
             $content.addClass("iframe-init");
             var elapsed = new Date().getTime() - start;
-            //$home.find(".ra-elapsed").text(elapsed);
+            //$home.find(".ap-elapsed").text(elapsed);
             showStatus("loaded");
             layoutIfNeeded();
             $nexus.trigger("ra.iframe.init");
@@ -163,22 +163,22 @@
               // undo the effect on the accept header of having set dataType to "text"
               "Accept": "*/*",
               // send the app key header to force scope checks
-              "RA-App-Key": options.appKey
+              "AP-App-Key": options.appKey
             }
           }).then(done, fail);
         }
       }
     });
 
-    var $nexus = $content.parents(".ra-servlet-placeholder"),
+    var $nexus = $content.parents(".ap-servlet-placeholder"),
         $iframe = $("iframe", $content);
 
     function layoutIfNeeded() {
-      var $stats = $(".ra-stats", $home);
+      var $stats = $(".ap-stats", $home);
       if (isDialog) {
         var panelHeight = $nexus.parent().height();
-        $iframe.parents(".ra-servlet-placeholder, .ra-container").height(panelHeight);
-        var containerHeight = $iframe.parents(".ra-container").height(),
+        $iframe.parents(".ap-servlet-placeholder, .ap-container").height(panelHeight);
+        var containerHeight = $iframe.parents(".ap-container").height(),
             iframeHeight = containerHeight - $stats.outerHeight(true);
         $iframe.height(iframeHeight);
         $content.height(iframeHeight);

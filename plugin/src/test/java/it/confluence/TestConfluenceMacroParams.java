@@ -101,9 +101,9 @@ public class TestConfluenceMacroParams
             for (Enumeration<String> names = req.getHeaderNames(); names.hasMoreElements(); )
             {
                 String rawName = names.nextElement();
-                if (rawName.startsWith("RA-CTX-"))
+                if (rawName.startsWith("AP-CTX-"))
                 {
-                    String name = rawName.substring("RA-CTX-".length()).replace('-', '_').toLowerCase();
+                    String name = rawName.substring("AP-CTX-".length()).replace('-', '_').toLowerCase();
                     String value = req.getHeader(rawName);
                     headerParams.put(name, value);
                 }

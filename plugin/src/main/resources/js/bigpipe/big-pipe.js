@@ -3,7 +3,7 @@
   var $ = AJS.$;
   var AP = global._AP = global._AP || {};
   var contextPath = AJS.contextPath() || AJS.Meta.get("context-path");
-  var requestId = $('meta[name="ra-request-id"]').attr("content");
+  var requestId = $('meta[name="ap-request-id"]').attr("content");
 
   function insertContent(contentId, html) {
     var contentDiv$ = $('#' + contentId);

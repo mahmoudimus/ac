@@ -99,7 +99,7 @@ public class AuthenticationFilter implements Filter
         // extract the user id, if any
         Map params = req.getParameterMap();
         String[] userIds = (String[]) params.get("user_id");
-        String userId = userIds != null && userIds.length == 1 ? userIds[0] : req.getHeader("RA-CTX-user-id");
+        String userId = userIds != null && userIds.length == 1 ? userIds[0] : req.getHeader("AP-CTX-user-id");
 
         return new AuthenticationInfo(clientKey, userId);
     }

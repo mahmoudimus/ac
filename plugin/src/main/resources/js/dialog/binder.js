@@ -18,10 +18,10 @@ AJS.toInit(function ($) {
   // jquery 1.7 or later
   if ($().on) {
     // Connect any web items to the dialog.  Necessary to bind to dynamic action cogs in JIRA
-    $(window.document).on("click", ".ra-dialog", createEventHandler());
+    $(window.document).on("click", ".ap-dialog", createEventHandler());
   } else {
     // Bind to all static links
-    var $dialogWebItems = $(".ra-dialog");
+    var $dialogWebItems = $(".ap-dialog");
     $dialogWebItems.each(function (index, el) {
       var $el = $(el);
       $el.click(createEventHandler());

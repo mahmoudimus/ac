@@ -42,7 +42,7 @@ public final class RequestIdWebPanel implements WebPanel
     public void writeHtml(Writer writer, Map<String, Object> context) throws IOException
     {
         final String requestId = bigPipe.getRequestId();
-        writer.write("<meta name=\"ra-request-id\" content=\"" + requestId + "\">");
+        writer.write("<meta name=\"ap-request-id\" content=\"" + requestId + "\">");
         writer.close();
     }
 }

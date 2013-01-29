@@ -112,7 +112,7 @@ public class RemotePluginEmbeddedTestPage
 
     public boolean isLoaded()
     {
-        return driver.elementExists(By.cssSelector("#ra-" + key + " .ra-loaded"));
+        return driver.elementExists(By.cssSelector("#ap-" + key + " .ap-loaded"));
     }
 
     public Map<String,String> getIframeQueryParams()

@@ -1,30 +1,30 @@
-.ra-message {
+.ap-message {
   color: gray;
   font-size: smaller;
   line-height: 16px;
 }
 
-.ra-dialog-loading {
+.ap-dialog-loading {
   background: url(loading.gif) center center no-repeat;
 }
 
-.ra-loading, .ra-load-timeout {
+.ap-loading, .ap-load-timeout {
   background: url(loading.gif) left center no-repeat;
   padding-left: 34px;
 }
 
-.ra-dialog-content {
+.ap-dialog-content {
   padding: 0 !important;
   overflow: hidden !important;
 }
 
-.ra-dialog-content .ra-stats {
+.ap-dialog-content .ap-stats {
   padding: 5px 10px;
   background: #f7f7f7;
   border-top: 1px solid #f0f0f0;
 }
 
-.ra-link-disabled, .ra-link-disabled:hover, .ra-link-disabled:visited, .ra-link-disabled:focus {
+.ap-link-disabled, .ap-link-disabled:hover, .ap-link-disabled:visited, .ap-link-disabled:focus {
   color: gray !important;
   text-decoration: none;
 }

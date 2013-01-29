@@ -1122,7 +1122,8 @@
                                     <insertNewLine>true</insertNewLine>
                                     <output>${project.build.outputDirectory}/all.js</output>
                                     <includes>
-                                        <include>js/iframe-min/*.js</include>
+                                        <include>js/iframe-min/easyXDM-min.js</include>
+                                        <include>js/iframe-min/plugin-min.js</include>
                                     </includes>
                                 </aggregation>
                             </aggregations>
@@ -1144,7 +1145,8 @@
                                     <insertNewLine>true</insertNewLine>
                                     <output>${project.build.outputDirectory}/all-debug.js</output>
                                     <includes>
-                                        <include>js/iframe/*.js</include>
+                                        <include>js/iframe/easyXDM.js</include>
+                                        <include>js/iframe/plugin.js</include>
                                     </includes>
                                 </aggregation>
                             </aggregations>
