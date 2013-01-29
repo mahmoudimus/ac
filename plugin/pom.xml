@@ -797,7 +797,7 @@
                                 <pluginArtifact>
                                     <groupId>com.atlassian.gadgets</groupId>
                                     <artifactId>atlassian-gadgets-publisher-plugin</artifactId>
-                                    <version>3.2.0-BREAKIT-5</version>
+                                    <version>3.2.0-m8</version>
                                 </pluginArtifact>
                             </pluginArtifacts>
                             <libArtifacts>
