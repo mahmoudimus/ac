@@ -11,8 +11,8 @@ import org.dom4j.Element;
 import org.dom4j.Node;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,33 +81,32 @@ public class RegistrationFilter implements Filter
 
         if ("post".equalsIgnoreCase(method))
         {
-            if (Boolean.parseBoolean(environment.getOptionalEnv("ALLOW_REGISTRATION", "true")))
-            {
-                try
-                {
-                    JSONObject jsonObject = new JSONObject(IOUtils.toString(req.getReader()));
-                    String baseUrl = jsonObject.getString("baseUrl");
-                    String productType = jsonObject.getString("productType");
-                    String publicKey = jsonObject.getString("publicKey");
+            JSONObject jsonObject = (JSONObject) JSONValue.parse(IOUtils.toString(req.getReader()));
+            String baseUrl = (String) jsonObject.get("baseUrl");
+            String productType = (String) jsonObject.get("productType");
+            String publicKey = (String) jsonObject.get("publicKey");
 
-                    RegistrationSignedRequestHandler tmpHandler = new RegistrationSignedRequestHandler(publicKey, baseUrl,
-                            requestHandler.getLocalBaseUrl());
-                    String clientKey = tmpHandler.validateRequest(req);
+            RegistrationSignedRequestHandler tmpHandler = new RegistrationSignedRequestHandler(publicKey, baseUrl,
+                    requestHandler.getLocalBaseUrl());
+            String clientKey = tmpHandler.validateRequest(req);
 
-                    log.info("Registering host - key: '{}' baseUrl: '{}'", clientKey, baseUrl);
-                    requestHandler.addHost(clientKey, publicKey, baseUrl, productType);
-                    resp.setStatus(204);
-                    resp.getWriter().close();
-                }
-                catch (JSONException e)
-                {
-                    resp.sendError(400, "Unable to parse json body: " + e.toString());
-                }
-            }
-            else
+            if (Boolean.parseBoolean(environment.getOptionalEnv("ALLOW_REGISTRATION", "false")))
             {
-                resp.sendError(403, "Registration not allowed");
+                if (!requestHandler.isHostRegistered(clientKey)) {
+                    log.info("Invalid registration attempt for key {} at {} by {}",
+                            new Object[]{clientKey, baseUrl, request.getRemoteAddr()});
+                    resp.sendError(403, "Registration not allowed");
+                    return;
+                } else {
+                    log.debug("Ignore re-registering of known host " + clientKey);
+                }
+            } else {
+                log.info("Registering host - key: '{}' baseUrl: '{}'", clientKey, baseUrl);
+                requestHandler.addHost(clientKey, publicKey, baseUrl, productType);
+
             }
+            resp.setStatus(204);
+            resp.getWriter().close();
         }
         else if ("get".equalsIgnoreCase(method))
         {

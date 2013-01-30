@@ -112,6 +112,10 @@ public class ContainerOAuthSignedRequestHandler extends AbstractOauthSignedReque
         return env.getEnv("HOST_PRODUCT_TYPE." + key);
     }
 
+    public boolean isHostRegistered(String clientKey) {
+        return env.getOptionalEnv("HOST_BASE_URL." + clientKey, null) != null;
+    }
+
     @Override
     public String getLocalBaseUrl()
     {
