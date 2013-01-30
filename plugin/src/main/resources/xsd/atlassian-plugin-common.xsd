@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" id="sdf"
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" id="sdf"
            xmlns:xhtml="http://www.w3.org/1999/xhtml">
 
     <xs:include schemaLocation="common.xsd"/>
@@ -41,9 +41,19 @@
         </xs:restriction>
     </xs:simpleType>
 
-
     <xs:complexType name="AbstractPluginModuleType" abstract="true">
-        <xs:attribute name="key" use="required" type="KeyType">
+        <xs:sequence>
+            <xs:element name="description" type="DescriptionType" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>
+                        The description of the plugin module. This is
+                        used to display information to administrators/users about
+                        what this module is useful for.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+        <xs:attribute name="key" type="KeyType">
             <xs:annotation>
                 <xs:documentation>
                     The identifier of the plugin module. This key must
@@ -60,8 +70,7 @@
         <xs:attribute name="i18n-name-key" type="NameType">
             <xs:annotation>
                 <xs:documentation>
-                    The localisation key for the human-readable name of
-                    the plugin module.
+                    The localisation key for the human-readable name of the plugin module.
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
@@ -69,8 +78,7 @@
         <xs:attribute name="name" type="NameType">
             <xs:annotation>
                 <xs:documentation>
-                    The human-readable name of the plugin module. I.e.
-                    the human-readable name of the component.
+                    The human-readable name of the plugin module. I.e. the human-readable name of the component.
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
