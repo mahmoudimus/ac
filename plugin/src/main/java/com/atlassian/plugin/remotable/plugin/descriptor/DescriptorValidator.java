@@ -12,6 +12,9 @@ import com.atlassian.plugin.schema.spi.Schema;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.webresource.UrlMode;
 import com.atlassian.plugin.webresource.WebResourceManager;
+import com.google.common.io.CharStreams;
+import com.google.common.io.Closeables;
+import com.google.common.io.InputSupplier;
 import org.dom4j.Document;
 import org.dom4j.DocumentFactory;
 import org.dom4j.Element;
@@ -19,6 +22,8 @@ import org.dom4j.ProcessingInstruction;
 import org.dom4j.io.DocumentSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.w3c.dom.ls.LSInput;
+import org.w3c.dom.ls.LSResourceResolver;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
@@ -27,7 +32,8 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 import java.io.IOException;
-import java.io.StringReader;
+import java.io.InputStream;
+import java.io.Reader;
 import java.net.URI;
 import java.net.URL;
 import java.util.Collection;
@@ -72,32 +78,13 @@ public final class DescriptorValidator
 
     public void validate(URI url, Document document)
     {
-        SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+        final boolean useNamespace = document.getRootElement().getNamespaceURI().equals(pluginDescriptorValidatorProvider.getSchemaNamespace());
 
-        DescriptorValidatorProvider descriptorValidatorProvider = pluginDescriptorValidatorProvider;
-
-        boolean useNamespace = document.getRootElement().getNamespaceURI().equals(
-                descriptorValidatorProvider.getSchemaNamespace());
-        String builtSchema = buildSchema(descriptorValidatorProvider, useNamespace);
-        StreamSource schemaSource = new StreamSource(new StringReader(builtSchema));
-        javax.xml.validation.Schema schema;
-
+        final String builtSchema = buildSchema(pluginDescriptorValidatorProvider, useNamespace);
         try
         {
-            schema = schemaFactory.newSchema(schemaSource);
-        }
-        catch (SAXParseException e)
-        {
-            throw new RuntimeException("Couldn't parse built schema (line " + e.getLineNumber() + "):\n" + builtSchema, e);
-        }
-        catch (SAXException e)
-        {
-            throw new RuntimeException("Couldn't parse built schema", e);
-        }
-
-        Validator validator = schema.newValidator();
-        try
-        {
+            javax.xml.validation.Schema schema = getSchema(CharStreams.newReaderSupplier(builtSchema), new PluginLSResourceResolver(plugin));
+            Validator validator = schema.newValidator();
             DocumentSource source = new DocumentSource(document);
             source.setSystemId(url.toString());
             validator.validate(source);
@@ -111,7 +98,33 @@ public final class DescriptorValidator
             throw new RuntimeException(e);
         }
 
-        descriptorValidatorProvider.performSecondaryValidations(document);
+        pluginDescriptorValidatorProvider.performSecondaryValidations(document);
+    }
+
+    static javax.xml.validation.Schema getSchema(InputSupplier<? extends Reader> schemaInput, LSResourceResolver resourceResolver) throws IOException
+    {
+        final SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+        Reader schemaReader = null;
+        try
+        {
+            schemaReader = schemaInput.getInput();
+            schemaFactory.setResourceResolver(resourceResolver);
+            return schemaFactory.newSchema(new StreamSource(schemaReader));
+        }
+        catch (SAXParseException e)
+        {
+            throw new RuntimeException(String.format("Couldn't parse schema (line %s, column %s):\n%s",
+                    e.getLineNumber(), e.getColumnNumber(), CharStreams.toString(schemaInput)),
+                    e);
+        }
+        catch (SAXException e)
+        {
+            throw new RuntimeException("Couldn't parse schema:\n" + CharStreams.toString(schemaInput), e);
+        }
+        finally
+        {
+            Closeables.closeQuietly(schemaReader);
+        }
     }
 
     public String getPluginSchema()
@@ -167,15 +180,15 @@ public final class DescriptorValidator
                 }
             }
             Element module = modulesChoice.addElement("xs:element")
-                                          .addAttribute("name", schema.getElementName())
-                                          .addAttribute("type",
-                                                  schema.getComplexType())
-                                          .addAttribute("maxOccurs", schema.getMaxOccurs());
+                    .addAttribute("name", schema.getElementName())
+                    .addAttribute("type",
+                            schema.getComplexType())
+                    .addAttribute("maxOccurs", schema.getMaxOccurs());
             addSchemaDocumentation(module, schema);
         }
 
         Element permissionsType = (Element) root.selectSingleNode(
-                        "/xs:schema/xs:simpleType[@name='PermissionValueType']/xs:restriction");
+                "/xs:schema/xs:simpleType[@name='PermissionValueType']/xs:restriction");
         for (Permission permission : permissionManager.getPermissions())
         {
             Element enumeration = permissionsType.addElement("xs:enumeration").addAttribute("value", permission.getKey());
@@ -266,6 +279,31 @@ public final class DescriptorValidator
             {
                 restriction.addElement("xs:enumeration").addAttribute("value", name);
             }
+        }
+    }
+
+    private static class PluginLSResourceResolver implements LSResourceResolver
+    {
+        private final Plugin plugin;
+
+        private PluginLSResourceResolver(Plugin plugin)
+        {
+            this.plugin = plugin;
+        }
+
+        @Override
+        public LSInput resolveResource(String type, String namespaceURI, String publicId, String systemId, String baseURI)
+        {
+            final String resource = systemId;
+            final InputSupplier<InputStream> inputSupplier = new InputSupplier<InputStream>()
+            {
+                @Override
+                public InputStream getInput() throws IOException
+                {
+                    return plugin.getResourceAsStream("/xsd/" + resource);
+                }
+            };
+            return new InputStreamSupplierLSInput(systemId, publicId, inputSupplier);
         }
     }
 }

@@ -40,7 +40,7 @@ public class PluginDescriptorValidatorProvider implements DescriptorValidatorPro
     public PluginDescriptorValidatorProvider(PluginRetrievalService pluginRetrievalService,
                                              ApplicationProperties applicationProperties,
                                              WaitableServiceTrackerFactory waitableServiceTrackerFactory,
-                                             PermissionManager permissionManager, PermissionsReader permissionsReader
+                                             PermissionsReader permissionsReader
     )
     {
         this.applicationProperties = applicationProperties;

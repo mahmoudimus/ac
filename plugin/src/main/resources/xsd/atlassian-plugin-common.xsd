@@ -41,6 +41,65 @@
         </xs:restriction>
     </xs:simpleType>
 
+    <xs:simpleType name="InstallationModeType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="local"/>
+            <xs:enumeration value="remote"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="ApplicationVersionRangeType">
+        <xs:annotation>
+            <xs:documentation><![CDATA[
+                Represents a version range. Version ranges follow those definitions:
+                <table>
+                  <thead>
+                    <th>Range</th> <th>Meaning</th>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>1.0</td> <td>x >= 1.0</td>
+                    </tr>
+                    <tr>
+                      <td>(,1.0]</td> <td>x <= 1.0</td>
+                    </tr>
+                    <tr>
+                      <td>(,1.0)</td> <td>x < 1.0</td>
+                    </tr>
+                    <tr>
+                      <td>[1.0]</td> <td>x == 1.0</td>
+                    </tr>
+                    <tr>
+                      <td>[1.0,)</td> <td>x >= 1.0</td>
+                    </tr>
+                    <tr>
+                      <td>(1.0,)</td> <td>x > 1.0</td>
+                    </tr>
+                    <tr>
+                      <td>(1.0,2.0)</td> <td>1.0 < x < 2.0</td>
+                    </tr>
+                    <tr>
+                      <td>[1.0,2.0]</td> <td>1.0 <= x <= 2.0</td>
+                    </tr>
+                  </tbody>
+                </table>
+            ]]></xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <!-- single version pattern: [a-zA-Z0-9]+([\.-][a-zA-Z0-9]+)* -->
+            <xs:pattern value="(\(|\[)?([a-zA-Z0-9]+([\.-][a-zA-Z0-9]+)*)?(,([a-zA-Z0-9]+([\.-][a-zA-Z0-9]+)*)?)?(\)|\])?"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="RestrictType">
+        <xs:sequence>
+            <xs:element name="version" minOccurs="0" maxOccurs="unbounded" type="ApplicationVersionRangeType" />
+        </xs:sequence>
+        <xs:attribute name="application" use="required" type="ApplicationType"/>
+        <xs:attribute name="mode" use="optional" type="InstallationModeType"/>
+        <xs:attribute name="version" use="optional" type="ApplicationVersionRangeType"/>
+    </xs:complexType>
+
     <xs:complexType name="AbstractPluginModuleType" abstract="true">
         <xs:sequence>
             <xs:element name="description" type="DescriptionType" minOccurs="0" maxOccurs="1">
@@ -49,6 +108,13 @@
                         The description of the plugin module. This is
                         used to display information to administrators/users about
                         what this module is useful for.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="restrict" type="RestrictType" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>
+                        Restricts this module so that it can be enabled only for a given application version range.
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
