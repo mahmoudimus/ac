@@ -90,8 +90,12 @@ public class RegistrationFilter implements Filter
                     requestHandler.getLocalBaseUrl());
             String clientKey = tmpHandler.validateRequest(req);
 
-            if (Boolean.parseBoolean(environment.getOptionalEnv("ALLOW_REGISTRATION", "false")))
+            if (Boolean.parseBoolean(environment.getOptionalEnv("ALLOW_REGISTRATION", "true")))
             {
+                log.info("Registering host - key: '{}' baseUrl: '{}'", clientKey, baseUrl);
+                requestHandler.addHost(clientKey, publicKey, baseUrl, productType);
+
+            } else {
                 if (!requestHandler.isHostRegistered(clientKey)) {
                     log.info("Invalid registration attempt for key {} at {} by {}",
                             new Object[]{clientKey, baseUrl, request.getRemoteAddr()});
@@ -100,10 +104,6 @@ public class RegistrationFilter implements Filter
                 } else {
                     log.debug("Ignore re-registering of known host " + clientKey);
                 }
-            } else {
-                log.info("Registering host - key: '{}' baseUrl: '{}'", clientKey, baseUrl);
-                requestHandler.addHost(clientKey, publicKey, baseUrl, productType);
-
             }
             resp.setStatus(204);
             resp.getWriter().close();
