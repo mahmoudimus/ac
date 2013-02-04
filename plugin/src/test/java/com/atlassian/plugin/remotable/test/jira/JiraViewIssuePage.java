@@ -40,7 +40,6 @@ public class JiraViewIssuePage extends RemotePluginEmbeddedTestPage implements P
         driver.waitUntilElementIsVisible(By.cssSelector("#labels-form .submit"));
         driver.findElement(By.cssSelector("#labels-form .submit")).click();
         driver.waitUntilElementIsVisible(By.className("labels"));
-        init();
         waitForInit();
     }
 }

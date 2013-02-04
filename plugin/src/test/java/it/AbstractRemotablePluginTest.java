@@ -1,6 +1,6 @@
 package it;
 
-import com.atlassian.plugin.remotable.test.HtmlDumpRule;
+import com.atlassian.plugin.remotable.junit.HtmlDumpRule;
 import com.atlassian.plugin.remotable.test.OwnerOfTestedProduct;
 import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.webdriver.pageobjects.WebDriverTester;

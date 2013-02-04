@@ -33,6 +33,14 @@
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>com.atlassian.selenium</groupId>
+            <artifactId>atlassian-pageobjects-elements</artifactId>
+            <version>2.1-m22</version>
+            <optional>true</optional>
+        </dependency>
+
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>remotable-plugins-kit-common</artifactId>
