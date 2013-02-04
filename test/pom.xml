@@ -20,6 +20,12 @@
             <scope>provided</scope>
         </dependency>
 
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>${commons.lang.version}</version>
+        </dependency>
+
         <!-- because maven 3 sucks and won't depend on the right version -->
         <dependency>
             <groupId>${project.groupId}</groupId>
