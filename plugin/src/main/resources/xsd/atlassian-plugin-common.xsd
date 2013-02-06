@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" id="sdf"
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" id="sdf"
            xmlns:xhtml="http://www.w3.org/1999/xhtml">
 
     <xs:include schemaLocation="common.xsd"/>
@@ -25,19 +25,6 @@
         <xs:restriction base="xs:string">
             <xs:enumeration value="disabled"/>
             <xs:enumeration value="enabled"/>
-        </xs:restriction>
-    </xs:simpleType>
-
-    <xs:simpleType name="ClassType">
-        <xs:annotation>
-            <xs:documentation>
-                The class which implements this plugin module. The
-                class you need to provide depends on the module
-                type.
-            </xs:documentation>
-        </xs:annotation>
-        <xs:restriction base="xs:string">
-            <xs:minLength value="1"/>
         </xs:restriction>
     </xs:simpleType>
 

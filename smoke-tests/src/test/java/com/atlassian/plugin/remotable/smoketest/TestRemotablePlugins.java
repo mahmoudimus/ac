@@ -1,6 +1,7 @@
 package com.atlassian.plugin.remotable.smoketest;
 
 import com.atlassian.confluence.pageobjects.ConfluenceTestedProduct;
+import com.atlassian.plugin.remotable.junit.HtmlDumpRule;
 import com.atlassian.plugin.remotable.test.*;
 import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.pageobjects.page.HomePage;

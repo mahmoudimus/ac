@@ -50,6 +50,18 @@
             the 'Fix For version' field for issues. Also see the Close Issues permission.
         </description>
     </plugin-permission>
+    <plugin-permission key="read_metadata" name="Read Metadata"
+        class="com.atlassian.plugin.remotable.plugin.product.jira.JiraReadMetadataScope">
+        <description>
+            Permission to read JIRA metadata.
+        </description>
+    </plugin-permission>
+    <plugin-permission key="read_user_session_data" name="Read User Session Data"
+        class="com.atlassian.plugin.remotable.plugin.product.jira.JiraReadUserSessionData">
+        <description>
+            Permission to read JIRA user's session data.
+        </description>
+    </plugin-permission>
 
     <component key="jiraWebHookProvider"
                interface="com.atlassian.webhooks.spi.provider.WebHookProvider" public="true"

@@ -2,6 +2,7 @@ package com.atlassian.plugin.remotable.test;
 
 import com.atlassian.pageobjects.binder.Init;
 import com.atlassian.pageobjects.binder.WaitUntil;
+import com.atlassian.plugin.remotable.pageobjects.RemotePage;
 import com.atlassian.webdriver.AtlassianWebDriver;
 import com.google.common.base.Function;
 import org.apache.http.NameValuePair;
@@ -20,29 +21,11 @@ import static com.google.common.collect.Maps.newHashMap;
 /**
  *
  */
-public class RemotePluginEmbeddedTestPage
+public class RemotePluginEmbeddedTestPage extends RemotePage
 {
-    @Inject
-    protected AtlassianWebDriver driver;
-
-    private final String key;
-    protected WebElement containerDiv;
-
     public RemotePluginEmbeddedTestPage(String pageKey)
     {
-        this.key = pageKey;
-    }
-
-    @Init
-    public void init()
-    {
-        this.containerDiv = driver.findElement(By.id("embedded-" + key));
-    }
-
-    @WaitUntil
-    public void waitForInit()
-    {
-        driver.waitUntilElementIsLocated(By.className("iframe-init"));
+        super(pageKey);
     }
 
     public String getFullName()
@@ -120,23 +103,6 @@ public class RemotePluginEmbeddedTestPage
         return getValue("server-http-entity");
     }
 
-    public boolean isLoaded()
-    {
-        return driver.elementExists(By.cssSelector("#ap-" + key + " .ap-loaded"));
-    }
-
-    public Map<String,String> getIframeQueryParams()
-    {
-        final WebElement iframe = containerDiv.findElement(By.tagName("iframe"));
-        String iframeSrc = iframe.getAttribute("src");
-        Map<String,String> result = newHashMap();
-        for (NameValuePair pair : URLEncodedUtils.parse(URI.create(iframeSrc), "UTF-8"))
-        {
-            result.put(pair.getName(), pair.getValue());
-        }
-        return result;
-    }
-
     String getValue(final String key)
     {
         return runInFrame(new Callable<String>()
@@ -170,32 +136,5 @@ public class RemotePluginEmbeddedTestPage
         });
 
         return getValue(key);
-    }
-
-    private <T> T runInFrame(Callable<T> runnable)
-    {
-        final WebElement iframe = containerDiv.findElement(By.tagName("iframe"));
-        driver.getDriver().switchTo().frame(iframe);
-        T result = null;
-        try
-        {
-            result = runnable.call();
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-        driver.getDriver().switchTo().defaultContent();
-        return result;
-    }
-
-    private void toIframe()
-    {
-        driver.getDriver().switchTo().frame(containerDiv.findElement(By.tagName("iframe")));
-    }
-
-    private void outIframe()
-    {
-        driver.getDriver().switchTo().frame(containerDiv);
     }
 }

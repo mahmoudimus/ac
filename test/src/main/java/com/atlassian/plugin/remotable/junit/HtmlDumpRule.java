@@ -1,4 +1,4 @@
-package com.atlassian.plugin.remotable.test;
+package com.atlassian.plugin.remotable.junit;
 
 import com.atlassian.webdriver.AtlassianWebDriver;
 import org.junit.rules.TestWatchman;
@@ -9,11 +9,6 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 
 /**
- * Created by IntelliJ IDEA.
- * User: mrdon
- * Date: 17/01/12
- * Time: 1:36 PM
- * To change this template use File | Settings | File Templates.
  */
 public class HtmlDumpRule extends TestWatchman
 {

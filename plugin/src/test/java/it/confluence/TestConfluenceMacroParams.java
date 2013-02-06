@@ -1,6 +1,6 @@
 package it.confluence;
 
-import com.atlassian.plugin.remotable.test.HtmlDumpRule;
+import com.atlassian.plugin.remotable.junit.HtmlDumpRule;
 import com.atlassian.plugin.remotable.test.OwnerOfTestedProduct;
 import com.atlassian.plugin.remotable.test.RemotePluginRunner;
 import com.atlassian.plugin.remotable.test.confluence.ConfluenceMacroPage;

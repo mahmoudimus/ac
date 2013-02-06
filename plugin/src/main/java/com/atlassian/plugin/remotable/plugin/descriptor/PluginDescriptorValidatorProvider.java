@@ -5,7 +5,6 @@ import com.atlassian.osgi.tracker.WaitableServiceTrackerFactory;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.remotable.api.InstallationMode;
-import com.atlassian.plugin.remotable.plugin.PermissionManager;
 import com.atlassian.plugin.remotable.spi.InstallationFailedException;
 import com.atlassian.plugin.remotable.spi.permission.PermissionsReader;
 import com.atlassian.plugin.schema.descriptor.DescribedModuleDescriptorFactory;
@@ -23,7 +22,7 @@ import java.util.List;
 import java.util.Set;
 
 import static com.google.common.collect.Collections2.transform;
-import static com.google.common.collect.Sets.*;
+import static com.google.common.collect.Sets.newHashSet;
 
 /**
  * Provides information to support atlassian-plugin.xml validation
@@ -77,7 +76,11 @@ public class PluginDescriptorValidatorProvider implements DescriptorValidatorPro
         {
             for (String key : factory.getModuleDescriptorKeys())
             {
-                schemas.add(factory.getSchema(key));
+                final Schema schema = factory.getSchema(key);
+                if (schema != null)
+                {
+                    schemas.add(schema);
+                }
             }
         }
         return schemas;

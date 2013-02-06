@@ -19,7 +19,7 @@ import javax.inject.Inject;
  */
 public class JiraProjectAdministrationTab extends RemotePluginEmbeddedTestPage implements ProjectConfigPageTab
 {
-    private static final String TAB_ID = "embedded-servlet-jira-remotePluginProjectConfigTab";
+    private static final String TAB_ID = "servlet-jira-remotePluginProjectConfigTab";
 
     @Inject
     private PageBinder pageBinder;
@@ -46,7 +46,6 @@ public class JiraProjectAdministrationTab extends RemotePluginEmbeddedTestPage i
     public void init()
     {
         projectInfoLocator = pageBinder.bind(ProjectInfoLocator.class);
-        containerDiv = driver.findElement(By.id(TAB_ID));
     }
 
 

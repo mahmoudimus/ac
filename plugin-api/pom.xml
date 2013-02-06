@@ -28,6 +28,12 @@
             <artifactId>activeobjects-plugin</artifactId>
             <version>${ao.version}</version>
             <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.collections</groupId>
+                    <artifactId>google-collections</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.atlassian.event</groupId>

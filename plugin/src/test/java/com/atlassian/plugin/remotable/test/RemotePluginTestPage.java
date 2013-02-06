@@ -5,8 +5,6 @@ import com.atlassian.webdriver.AtlassianWebDriver;
 import javax.inject.Inject;
 
 /**
- * Created by IntelliJ IDEA. User: mrdon Date: 21/02/12 Time: 12:47 AM To change this template use
- * File | Settings | File Templates.
  */
 public class RemotePluginTestPage extends RemotePluginEmbeddedTestPage
 {

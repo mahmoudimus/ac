@@ -281,6 +281,12 @@
             <artifactId>activeobjects-plugin</artifactId>
             <version>${ao.version}</version>
             <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.collections</groupId>
+                    <artifactId>google-collections</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.atlassian.templaterenderer</groupId>
@@ -299,6 +305,12 @@
             <artifactId>atlassian-webhooks-plugin</artifactId>
             <version>${atlassian-httpclient.version}</version>
             <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.json</groupId>
+                    <artifactId>org.json</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.atlassian.org.eclipse.sisu</groupId>
