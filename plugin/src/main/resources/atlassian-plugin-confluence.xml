@@ -2,6 +2,8 @@
     <component key="hostContainer" class="com.atlassian.plugin.osgi.bridge.external.SpringHostContainer" />
     <component key="confluenceProductAccessor"
                class="com.atlassian.plugin.remotable.plugin.product.confluence.ConfluenceProductAccessor"/>
+    <component key="confluenceUserPreferencesRetriever" class="com.atlassian.plugin.remotable.plugin.product.confluence.ConfluenceUserPreferencesRetriever"
+               interface="com.atlassian.plugin.remotable.plugin.UserPreferencesRetriever"/>
 
     <component-import key="confluenceSettingsManager"
                       interface="com.atlassian.confluence.setup.settings.SettingsManager"/>
