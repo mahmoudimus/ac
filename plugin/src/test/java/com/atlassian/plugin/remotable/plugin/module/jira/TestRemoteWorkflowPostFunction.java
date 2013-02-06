@@ -21,6 +21,7 @@ import com.opensymphony.workflow.WorkflowException;
 import org.dom4j.DocumentFactory;
 import org.dom4j.Element;
 import org.hamcrest.Description;
+import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 import org.hamcrest.core.IsCollectionContaining;
 import org.json.JSONObject;
@@ -113,7 +114,8 @@ public class TestRemoteWorkflowPostFunction
 
         descriptor.init(Mockito.mock(Plugin.class), root);
         assertEquals(1, descriptor.getResourceDescriptors().size());
-        assertThat(descriptor.getResourceDescriptors(), IsCollectionContaining.hasItem(new TypeSafeMatcher<ResourceDescriptor>() {
+        final Matcher<Iterable<? super ResourceDescriptor>> hasItem = IsCollectionContaining.hasItem(new TypeSafeMatcher<ResourceDescriptor>()
+        {
             @Override
             public boolean matchesSafely(final ResourceDescriptor resourceDescriptor)
             {
@@ -125,7 +127,8 @@ public class TestRemoteWorkflowPostFunction
             {
                 description.appendText("Resource descriptors should contain view descriptor");
             }
-        }));
+        });
+        assertThat(descriptor.getResourceDescriptors(), hasItem);
     }
 
 
