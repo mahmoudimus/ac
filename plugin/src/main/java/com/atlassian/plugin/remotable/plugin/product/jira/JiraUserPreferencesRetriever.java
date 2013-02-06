@@ -27,7 +27,7 @@ public class JiraUserPreferencesRetriever implements UserPreferencesRetriever
     {
         final User user = userManager.getUser(userName);
         final JiraServiceContextImpl jiraServiceContext = new JiraServiceContextImpl(user);
-        final TimeZoneInfo timeZoneInfo = (user == null) ? timeZoneService.getUserTimeZoneInfo(jiraServiceContext) : timeZoneService.getDefaultTimeZoneInfo(jiraServiceContext);
+        final TimeZoneInfo timeZoneInfo = (user != null) ? timeZoneService.getUserTimeZoneInfo(jiraServiceContext) : timeZoneService.getDefaultTimeZoneInfo(jiraServiceContext);
         return timeZoneInfo.toTimeZone();
     }
 }

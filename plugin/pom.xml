@@ -1292,7 +1292,7 @@
         <product>refapp</product>
         <plugin.version>${project.version}</plugin.version>
         <confluence.plugins.version>2.10.1</confluence.plugins.version>
-		<testkit.version>5.0.26</testkit.version>
+		<testkit.version>5.0.27</testkit.version>
     </properties>
 
 </project>
