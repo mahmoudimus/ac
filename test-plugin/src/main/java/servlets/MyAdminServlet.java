@@ -31,7 +31,8 @@ public class MyAdminServlet extends AbstractPageServlet
             "httpGetStatus", response.getStatusCode(),
             "httpGetStatusText", response.getStatusText(),
             "httpGetContentType", response.getContentType(),
-            "httpGetEntity", response.getEntity()
+            "httpGetEntity", response.getEntity(),
+            "timeZone", req.getParameter("tz")
         ));
     }
 }

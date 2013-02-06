@@ -468,6 +468,14 @@
       rpc.getUser(callback);
     },
 
+    // get current timezone - if user is logged in then this will retrieve user's timezone
+    // the default (application/server) timezone will be used for unauthorized user
+    //
+    // @param callback  function (user) {...}
+    getTimeZone: function (callback) {
+        rpc.getTimeZone(callback);
+    },
+
     // !!! JIRA specific !!!
     // get a workflow configuration object
     //

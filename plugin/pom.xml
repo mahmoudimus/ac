@@ -164,6 +164,12 @@
             <artifactId>atlassian-jira</artifactId>
             <version>${jira.version}</version>
             <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-httpclient</groupId>
+                    <artifactId>commons-httpclient</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.atlassian.jira</groupId>
@@ -386,12 +392,47 @@
             <artifactId>atlassian-jira-pageobjects</artifactId>
             <version>${jira.version}</version>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.httpcomponents</groupId>
+                    <artifactId>httpcore</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.httpcomponents</groupId>
+                    <artifactId>httpmime</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.httpcomponents</groupId>
+                    <artifactId>httpclient</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-core</artifactId>
+            <version>1.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-library</artifactId>
+            <version>1.2</version>
+        </dependency>
+
         <dependency>
             <groupId>com.atlassian.selenium</groupId>
             <artifactId>atlassian-webdriver-core</artifactId>
             <version>${atlassian.selenium.version}</version>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.collections</groupId>
+                    <artifactId>google-collections</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.httpcomponents</groupId>
+                    <artifactId>httpclient</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>commons-lang</groupId>
@@ -438,7 +479,6 @@
             <version>0.2.11</version>
             <scope>test</scope>
         </dependency>
-
 
         <!-- This dependency is only required as a workaround until AMPS-630 is fixed -->
         <dependency>
@@ -491,6 +531,19 @@
             <artifactId>atlassian-webhooks-plugin</artifactId>
             <version>${webhooks.version}</version>
             <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.httpcomponents</groupId>
+                    <artifactId>httpcore</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>com.atlassian.jira.tests</groupId>
+            <artifactId>jira-testkit-client</artifactId>
+            <version>${testkit.version}</version>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>
@@ -799,6 +852,11 @@
                                     <artifactId>atlassian-gadgets-publisher-plugin</artifactId>
                                     <version>3.2.0-m8</version>
                                 </pluginArtifact>
+								<pluginArtifact>
+									<groupId>com.atlassian.jira.tests</groupId>
+									<artifactId>jira-testkit-plugin</artifactId>
+									<version>${testkit.version}</version>
+								</pluginArtifact>
                             </pluginArtifacts>
                             <libArtifacts>
                                 <libArtifact>
@@ -1234,6 +1292,7 @@
         <product>refapp</product>
         <plugin.version>${project.version}</plugin.version>
         <confluence.plugins.version>2.10.1</confluence.plugins.version>
+		<testkit.version>5.0.26</testkit.version>
     </properties>
 
 </project>

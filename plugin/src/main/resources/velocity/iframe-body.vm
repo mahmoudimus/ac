@@ -31,7 +31,12 @@
             contextPath: "$contextPath",
             appKey: "$plugin.key",
             userId: "$userId",
-            dialog: "$!dialog"
+            dialog: "$!dialog",
+            data: {
+                #foreach($e in $data.entrySet())
+                    "${e.key}": "${e.value}"#if(!${foreach.isLast()}),#end
+                #end
+            }
           });
         }
         if (JIRA) {

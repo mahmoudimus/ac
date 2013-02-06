@@ -1,18 +1,24 @@
 package it.jira;
 
 import com.atlassian.jira.pageobjects.JiraTestedProduct;
+import com.atlassian.jira.pageobjects.config.ProductInstanceBasedEnvironmentData;
 import com.atlassian.jira.pageobjects.navigator.AdvancedSearch;
 import com.atlassian.jira.pageobjects.pages.DashboardPage;
 import com.atlassian.jira.pageobjects.pages.project.BrowseProjectPage;
 import com.atlassian.jira.pageobjects.project.ProjectConfigTabs;
 import com.atlassian.jira.pageobjects.project.summary.ProjectSummaryPageTab;
+import com.atlassian.jira.rest.client.api.JiraRestClient;
+import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory;
+import com.atlassian.jira.testkit.client.Backdoor;
 import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.pageobjects.TestedProductFactory;
 import com.atlassian.pageobjects.page.LoginPage;
 import com.atlassian.plugin.remotable.test.HtmlDumpRule;
+import com.atlassian.plugin.remotable.test.RemotePluginAwarePage;
 import com.atlassian.plugin.remotable.test.RemotePluginDialog;
 import com.atlassian.plugin.remotable.test.RemotePluginEmbeddedTestPage;
 import com.atlassian.plugin.remotable.test.RemotePluginTestPage;
+import com.atlassian.plugin.remotable.test.jira.JiraGeneralPage;
 import com.atlassian.plugin.remotable.test.jira.JiraIssueNavigatorPage;
 import com.atlassian.plugin.remotable.test.jira.JiraOps;
 import com.atlassian.plugin.remotable.test.jira.JiraProjectAdministrationPanel;
@@ -28,6 +34,7 @@ import hudson.plugins.jira.soap.RemoteIssue;
 import hudson.plugins.jira.soap.RemoteProject;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
+import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -35,6 +42,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.MethodRule;
 
+import java.net.URI;
 import java.rmi.RemoteException;
 import java.util.concurrent.Callable;
 
@@ -50,6 +58,8 @@ public class TestJira
     private static final String EMBEDDED_ISSUE_PANEL_ID = "issue-panel-jira-remotePluginIssuePanelPage";
     private static final String EMBEDDED_PROJECT_CONFIG_PANEL_ID = "project-config-panel-jira-remoteProjectConfigPanel";
     private static final String REMOTABLE_PROEJECT_CONFIG_TAB_NAME = "Remotable Project Config";
+    public static final String REMOTABLE_PLUGIN_GENERAL_LINK_TEXT = "Remotable Plugin app1 General Link";
+    public static final String REMOTE_PLUGIN_GENERAL_PAGE_KEY = "remotePluginGeneral";
     private static TestedProduct<WebDriverTester> product = TestedProductFactory.create(JiraTestedProduct.class);
     private static JiraOps jiraOps = new JiraOps(product.getProductInstance());
 
@@ -59,6 +69,8 @@ public class TestJira
     @Rule
     public MethodRule rule = new HtmlDumpRule(product.getTester().getDriver());
     private RemoteProject project;
+    private final AsynchronousJiraRestClientFactory restClientFactory = new AsynchronousJiraRestClientFactory();
+    private final Backdoor backdoor = new Backdoor(new ProductInstanceBasedEnvironmentData(product.getProductInstance()));
 
     @After
     public void logout()
@@ -75,7 +87,11 @@ public class TestJira
 
     private void loginAsAdmin()
     {
-        product.visit(LoginPage.class).login(ADMIN, ADMIN, DashboardPage.class);
+        loginAs(ADMIN, ADMIN);
+    }
+
+    private void loginAs(String username, String password) {
+        product.visit(LoginPage.class).login(username, password, DashboardPage.class);
     }
 
     @After
@@ -198,6 +214,52 @@ public class TestJira
                 return null;
             }
         });
+    }
+
+    @Test
+    public void testThatUserTimezoneSettingIsRespectedByRemotablePlugin() throws Exception
+    {
+        final JiraRestClient restClient = createRestClient();
+        try
+        {
+            final DateTime serverTime = restClient.getMetadataClient().getServerInfo().claim().getServerTime();
+            assertNotNull("Expected to get server time using JIRA REST Java Client, but got null instead.", serverTime);
+            final String serverTimeZone = serverTime.getZone().getID();
+
+            // create test user
+            final String testUser = "marcin";
+            backdoor.usersAndGroups().addUserEvenIfUserExists(testUser);
+            backdoor.usersAndGroups().addUserToGroup(testUser, "jira-administrators");
+            loginAs(testUser, testUser);
+
+            // test with a custom timezone
+            final String expectedTimezone = "Africa/Abidjan";
+            testTimezoneImpl(expectedTimezone, expectedTimezone, testUser);
+
+            // test with the default timezone
+            testTimezoneImpl(serverTimeZone, "", testUser);
+        }
+        finally
+        {
+            restClient.destroy();
+        }
+    }
+
+    private void testTimezoneImpl(final String expectedTimeZone, final String setUserTimeZone, final String testUser)
+    {
+        final RemotePluginAwarePage page;
+        final RemotePluginTestPage remotePluginTest;
+        backdoor.userProfile().setUserTimeZone(testUser, setUserTimeZone);
+        page = product.getPageBinder().bind(JiraGeneralPage.class, REMOTE_PLUGIN_GENERAL_PAGE_KEY, REMOTABLE_PLUGIN_GENERAL_LINK_TEXT);
+        remotePluginTest = page.clickRemotePluginLink();
+        assertEquals(expectedTimeZone, remotePluginTest.getTimeZone());
+        assertEquals(expectedTimeZone, remotePluginTest.getTimeZoneFromTemplateContext());
+    }
+
+    private JiraRestClient createRestClient()
+    {
+        final URI baseUri = URI.create(product.getProductInstance().getBaseUrl());
+        return restClientFactory.createWithBasicHttpAuthentication(baseUri, ADMIN, ADMIN);
     }
 
     @Test

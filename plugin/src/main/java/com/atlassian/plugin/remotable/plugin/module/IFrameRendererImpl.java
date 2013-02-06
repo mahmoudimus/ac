@@ -5,6 +5,7 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.elements.ResourceDescriptor;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.remotable.plugin.DefaultRemotablePluginAccessorFactory;
+import com.atlassian.plugin.remotable.plugin.UserPreferencesRetriever;
 import com.atlassian.plugin.remotable.plugin.module.page.PageInfo;
 import com.atlassian.plugin.remotable.spi.PermissionDeniedException;
 import com.atlassian.plugin.remotable.spi.RemotablePluginAccessor;
@@ -45,6 +46,7 @@ public final class IFrameRendererImpl implements IFrameRenderer
     private final DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory;
     private final IFrameHost iframeHost;
     private final Plugin plugin;
+    private final UserPreferencesRetriever userPreferencesRetriever;
 
     @Autowired
     public IFrameRendererImpl(TemplateRenderer templateRenderer,
@@ -52,9 +54,10 @@ public final class IFrameRendererImpl implements IFrameRenderer
                               IFrameHost iframeHost,
                               WebResourceUrlProvider webResourceUrlProvider,
                               PluginRetrievalService pluginRetrievalService,
-                              DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory
-    )
+                              DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory,
+                              UserPreferencesRetriever userPreferencesRetriever)
     {
+        this.userPreferencesRetriever = checkNotNull(userPreferencesRetriever);
         this.remotablePluginAccessorFactory = checkNotNull(remotablePluginAccessorFactory);
         this.templateRenderer = checkNotNull(templateRenderer);
         this.webResourceManager = checkNotNull(webResourceManager);
@@ -121,6 +124,7 @@ public final class IFrameRendererImpl implements IFrameRenderer
         final URI hostUrl = iframeHost.getUrl();
         final URI iframeUrl = URI.create(iframeContext.getIframePath().getPath() + ObjectUtils.toString(extraPath));
         String[] dialog = queryParams.get("dialog");
+        final String timeZone = userPreferencesRetriever.getTimeZoneFor(remoteUser).getID();
 
         Map<String,String[]> allParams = newHashMap(queryParams);
         allParams.put("user_id", new String[]{remoteUser});
@@ -128,6 +132,7 @@ public final class IFrameRendererImpl implements IFrameRenderer
         allParams.put("xdm_c", new String[]{"channel-" + iframeContext.getNamespace()});
         allParams.put("xdm_p", new String[]{"1"});
         allParams.put("cp", new String[]{iframeHost.getContextPath()});
+        allParams.put("tz", new String[]{timeZone});
         if (dialog != null && dialog.length == 1) allParams.put("dialog", dialog);
         String signedUrl = remotablePluginAccessor.signGetUrl(iframeUrl, allParams);
 
@@ -145,6 +150,7 @@ public final class IFrameRendererImpl implements IFrameRenderer
         ctx.put("scriptUrls", getJavaScriptUrls());
         ctx.put("contextPath", iframeHost.getContextPath());
         ctx.put("userId", remoteUser == null ? "" : remoteUser);
+        ctx.put("data", ImmutableMap.of("timeZone", timeZone));
         if (dialog != null && dialog.length == 1) ctx.put("dialog", dialog[0]);
 
         StringWriter output = new StringWriter();

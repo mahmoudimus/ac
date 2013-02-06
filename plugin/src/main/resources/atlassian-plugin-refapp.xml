@@ -3,6 +3,7 @@
 
     <component key="ProductAccessor" class="com.atlassian.plugin.remotable.plugin.product.refapp.RefappProductAccessor" />
     <component key="WebSudoElevator" class="com.atlassian.plugin.remotable.plugin.product.refapp.RefappWebSudoElevator" />
+    <component key="UserPreferencesRetriever" class="com.atlassian.plugin.remotable.plugin.product.refapp.RefappUserPreferencesRetriever" />
 
     <component key="host" class="com.atlassian.plugin.remotable.plugin.module.ApplicationPropertiesIFrameHost" />
 

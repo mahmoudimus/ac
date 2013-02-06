@@ -7,6 +7,8 @@ import com.atlassian.pageobjects.page.LoginPage;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import java.util.TimeZone;
+
 import static org.junit.Assert.*;
 
 public class TestPageModules extends AbstractRemotablePluginTest
@@ -26,6 +28,9 @@ public class TestPageModules extends AbstractRemotablePluginTest
         assertTrue(remotePluginTest.getIframeQueryParams().containsKey("cp"));
         assertEquals("Betty Admin", remotePluginTest.getFullName());
         assertEquals("betty", remotePluginTest.getUserId());
+
+        // timezone should be the same as the default one
+        assertEquals(TimeZone.getDefault().getID(), remotePluginTest.getTimeZone());
 
         // basic tests of the HostHttpClient API
         assertEquals("200", remotePluginTest.getServerHttpStatus());

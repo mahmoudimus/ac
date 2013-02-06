@@ -109,6 +109,9 @@
           }
           return {fullName: fullName, id: options.userId};
         },
+        getTimeZone: function () {
+          return options.data.timeZone;
+        },
         // !!! JIRA specific !!!
         getWorkflowConfiguration: function (uuid, callback) {
           callback($("#remoteWorkflowPostFunctionConfiguration-"+uuid).val());

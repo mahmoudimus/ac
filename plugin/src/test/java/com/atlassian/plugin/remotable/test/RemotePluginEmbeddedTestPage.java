@@ -55,6 +55,16 @@ public class RemotePluginEmbeddedTestPage
         return waitForValue("userId");
     }
 
+    public String getTimeZone()
+    {
+        return waitForValue("timeZone");
+    }
+
+	public String getTimeZoneFromTemplateContext()
+	{
+		return getValue("timeZoneFromTemplateContext");
+	}
+
     public String getMessage()
     {
         return getValue("message");

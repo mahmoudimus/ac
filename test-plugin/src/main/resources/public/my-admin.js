@@ -1,11 +1,15 @@
-(function ($, RA) {
+(function ($, AP) {
   // general api testing
-  RA.getUser(function(user) {
+  AP.getUser(function(user) {
     $("#user").text(user.fullName);
     $("#userId").text(user.id);
   });
 
-  RA.getLocation(function(location) {
+  AP.getTimeZone(function(timeZone) {
+    $("#timeZone").text(timeZone);
+  });
+
+  AP.getLocation(function(location) {
     $("#location").text(location);
   });
 
@@ -16,7 +20,7 @@
     $("#client-http-content-type").text(xhr.getResponseHeader("content-type"));
     $("#client-http-response-text").text(xhr.responseText);
   }
-  RA.request("/rest/remoteplugintest/1/user", {
+  AP.request("/rest/remoteplugintest/1/user", {
     success: function (data, statusText, xhr) {
       $("#client-http-data").text(data);
       bindXhr(xhr);
@@ -25,4 +29,4 @@
       bindXhr(xhr);
     }
   });
-}(jQuery, RA));
+}(jQuery, AP));

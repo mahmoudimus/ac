@@ -22,7 +22,7 @@ import org.dom4j.DocumentFactory;
 import org.dom4j.Element;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
-import org.hamcrest.collection.IsCollectionContaining;
+import org.hamcrest.core.IsCollectionContaining;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
