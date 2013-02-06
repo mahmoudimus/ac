@@ -475,6 +475,14 @@
     getTimeZone: function (callback) {
         rpc.getTimeZone(callback);
     },
+    
+    // fire an analytics event
+    //
+    // @param id  the event id.  Will be prepended with the prefix "p3.iframe."
+    // @param props the event properties
+    fireEvent: function (id, props) {
+      rpc.fireEvent(id, props);
+    },
 
     // !!! JIRA specific !!!
     // get a workflow configuration object

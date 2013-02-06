@@ -13,6 +13,8 @@
     $("#location").text(location);
   });
 
+  AP.fireEvent("testevent", {});
+
   // basic request api testing
   function bindXhr(xhr) {
     $("#client-http-status").text(xhr.status);

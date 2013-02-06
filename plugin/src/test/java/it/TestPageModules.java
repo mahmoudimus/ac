@@ -30,7 +30,7 @@ public class TestPageModules extends AbstractRemotablePluginTest
         assertEquals("betty", remotePluginTest.getUserId());
 
         // timezone should be the same as the default one
-        assertEquals(TimeZone.getDefault().getID(), remotePluginTest.getTimeZone());
+        assertEquals(TimeZone.getDefault().getRawOffset(), TimeZone.getTimeZone(remotePluginTest.getTimeZone()).getRawOffset());
 
         // basic tests of the HostHttpClient API
         assertEquals("200", remotePluginTest.getServerHttpStatus());
