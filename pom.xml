@@ -264,7 +264,6 @@
                 <version>1.2.16</version>
                 <scope>test</scope>
             </dependency>
-            <!-- third party services -->
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-context</artifactId>
