@@ -143,7 +143,7 @@ public class OAuth2LOAuthenticator implements Authenticator
         final String userId = request.getParameter(OAuth2LOFilter.USER_ID);
 
         Principal user;
-        if (userId != null)
+        if (userId != null && !"".equals(userId))
         {
             /*!
             The user must be a valid user in the system and must be able to both log in.

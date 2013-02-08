@@ -1,5 +1,6 @@
 package com.atlassian.plugin.remotable.test.rest;
 
+import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import com.atlassian.sal.api.user.UserManager;
 
 import javax.ws.rs.GET;
@@ -23,6 +24,7 @@ public class UserResource
     @GET
     @Produces("text/plain")
     @Path("/user")
+    @AnonymousAllowed
     public Response getUser()
     {
         return Response.ok(userManager.getRemoteUsername()).build();

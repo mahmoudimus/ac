@@ -68,7 +68,10 @@ public class HttpUtils
                 result.append(line);
                 result.append("\n");
             }
-            result.deleteCharAt(result.length() - 1);
+            if (result.length() > 0)
+            {
+                result.deleteCharAt(result.length() - 1);
+            }
             in.close();
             return result.toString();
         }
