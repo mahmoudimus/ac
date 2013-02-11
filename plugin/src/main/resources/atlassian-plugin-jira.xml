@@ -116,7 +116,9 @@
 
     <!-- plugin points -->
     <described-module-type key="profile-page" name="User Profile Page" class="com.atlassian.plugin.remotable.plugin.module.page.jira.JiraProfileTabModuleDescriptor">
-        <description>A user profile page decorated as a user profile tab</description>
+        <description>
+            A full-sized page that will be decorated as a tab in the user's profile area.
+        </description>
     </described-module-type>
 
     <described-module-type key="remote-search-request-view" class="com.atlassian.plugin.remotable.plugin.module.jira.searchrequestview.RemoteSearchRequestViewModuleDescriptor">

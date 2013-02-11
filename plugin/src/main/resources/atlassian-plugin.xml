@@ -247,15 +247,27 @@
     </described-module-type>
 
     <described-module-type key="general-page" class="com.atlassian.plugin.remotable.plugin.module.page.GeneralPageModuleDescriptor">
-        <description>A non-admin general page decorated by the application, with a link in a globally-accessible place</description>
+        <description>
+            A full-sized page that will be decorated as a general page, meaning it will receive the product header
+            and footer.  A link will be created in a default location in the header.  Viewing the page allowed
+            for both authenticated and anonymous users.
+        </description>
     </described-module-type>
 
     <described-module-type key="admin-page" name="Administration Page" class="com.atlassian.plugin.remotable.plugin.module.page.AdminPageModuleDescriptor">
-        <description>An admin page decorated in the admin section, with a link in the admin menu</description>
+        <description>
+            A full-sized page that will be decorated as a product administration page.  A link will be created
+            in a default location in the administration menu.  Viewing the page will be restricted to product
+            administrators.
+        </description>
     </described-module-type>
 
     <described-module-type key="configure-page" class="com.atlassian.plugin.remotable.plugin.module.page.ConfigurePageModuleDescriptor" max-occurs="1">
-        <description>The configuration page for the app, decorated in the admin section, with a link in the admin menu and a configure link in the Plugin Manager</description>
+        <description>
+            A full-sized page that will be decorated as a product administration page.  A link to the page
+            will show up in the plugin's details page in the Add-On Manager.  Viewing the page will be restricted to product
+            administrators.
+        </description>
     </described-module-type>
 
     <described-module-type key="dialog-page" class="com.atlassian.plugin.remotable.plugin.module.page.dialog.DialogPageModuleDescriptor">

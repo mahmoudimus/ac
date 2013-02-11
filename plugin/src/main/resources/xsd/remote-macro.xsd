@@ -11,22 +11,53 @@
 
     <xs:simpleType name="MacroContextParameterTypeType">
         <xs:restriction base="xs:string">
-            <xs:enumeration value="header" />
-            <xs:enumeration value="query" />
+            <xs:enumeration value="header">
+                <xs:annotation>
+                    <xs:documentation>
+                        Configures the context parameter to be encoded in an HTTP header with a prefix of 'AP-CTX-' and
+                        any '_' characters will be converted into '-'.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="query">
+                <xs:annotation>
+                    <xs:documentation>
+                        Configures the context parameter to be encoded into the query string
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
         </xs:restriction>
     </xs:simpleType>
 
     <xs:complexType name="MacroContextParameterType">
-        <xs:attribute name="name" type="MacroContextParameterNameType" use="required" />
+        <xs:attribute name="name" type="MacroContextParameterNameType" use="required">
+            <xs:annotation>
+                <xs:documentation>
+                    The name of the context parameter
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="type" type="MacroContextParameterTypeType" use="optional"
-                      default="query" />
+                      default="query">
+            <xs:annotation>
+                <xs:documentation>
+                    How the context parameter will be passed to the macro URL.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
 
     <xs:complexType name="RemoteMacroType">
         <xs:complexContent>
             <xs:extension base="AbstractMacroType">
                 <xs:sequence>
-                    <xs:element name="context-parameters" type="MacroContextParametersType" minOccurs="0" maxOccurs="unbounded"/>
+                    <xs:element name="context-parameters" type="MacroContextParametersType" minOccurs="0" maxOccurs="unbounded">
+                        <xs:annotation>
+                            <xs:documentation>
+                                The context parameter values to pass to the macro URL
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
