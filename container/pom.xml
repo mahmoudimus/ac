@@ -303,7 +303,7 @@
         <dependency>
             <groupId>com.atlassian.webhooks</groupId>
             <artifactId>atlassian-webhooks-plugin</artifactId>
-            <version>${atlassian-httpclient.version}</version>
+            <version>${webhooks.version}</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>

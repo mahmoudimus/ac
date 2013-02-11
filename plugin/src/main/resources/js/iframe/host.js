@@ -92,6 +92,9 @@
             $("iframe", $content).css({width: width, height: height});
           }
         }),
+        fireEvent: function(id, props) {
+            publish("p3.iframe." + id, props);
+        },
         getLocation: function () {
           return global.location.href;
         },

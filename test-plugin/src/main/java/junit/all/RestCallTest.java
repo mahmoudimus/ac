@@ -27,6 +27,14 @@ public class RestCallTest
     }
 
     @Test
+    public void testCallAsAnonymousButSigned() throws Exception
+    {
+        String result = sendSignedGet(signedRequestHandler,
+                URI.create(baseUrl + "/rest/remoteplugintest/latest/user"), "");
+        assertEquals("", result);
+    }
+
+    @Test
     public void testForbiddenCallForUnknownScope() throws Exception
     {
         int status = sendFailedSignedGet(signedRequestHandler,

@@ -66,7 +66,7 @@
             <plugin>
                 <groupId>com.atlassian.maven.plugins</groupId>
                 <artifactId>maven-amps-plugin</artifactId>
-                <version>4.1.3-m1</version>
+                <version>4.1.4</version>
                 <extensions>true</extensions>
                 <configuration>
                     <extractDependencies>true</extractDependencies>
@@ -264,7 +264,6 @@
                 <version>1.2.16</version>
                 <scope>test</scope>
             </dependency>
-            <!-- third party services -->
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-context</artifactId>
@@ -420,9 +419,9 @@
         <spring.version>2.5.6</spring.version>
         <atlassian-util-concurrent.version>2.4.0</atlassian-util-concurrent.version>
         <atlassian-httpclient.version>${webhooks.version}</atlassian-httpclient.version>
-        <webhooks.version>0.13.2</webhooks.version>
+        <webhooks.version>0.13.5</webhooks.version>
         <webhooks.api.version>0.13</webhooks.api.version>
         <httpclient.api.version>${webhooks.api.version}</httpclient.api.version>
-        <gatekeeper.property>4</gatekeeper.property>
+        <gatekeeper.property>5</gatekeeper.property>
     </properties>
 </project>
