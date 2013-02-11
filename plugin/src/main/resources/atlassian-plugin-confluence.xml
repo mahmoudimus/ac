@@ -106,7 +106,10 @@
 
     <!-- dynamic modules -->
     <described-module-type key="profile-page" name="User Profile Page" class="com.atlassian.plugin.remotable.plugin.module.page.ProfilePageModuleDescriptor">
-        <description>A user profile page decorated as normal page in the user profile area</description>
+        <description>
+            A full-sized page that will be decorated as a page in the user's profile area.  A link will be created
+            in a default location in the user's profile page.
+        </description>
     </described-module-type>
 
     <described-module-type key="remote-macro" name="Remote Macro" class="com.atlassian.plugin.remotable.plugin.module.confluence.RemoteMacroModuleDescriptor">

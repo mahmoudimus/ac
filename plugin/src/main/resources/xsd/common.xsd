@@ -15,9 +15,6 @@
     </xs:simpleType>
 
     <xs:simpleType name="VersionType">
-        <xs:annotation>
-            <xs:documentation>hi</xs:documentation>
-        </xs:annotation>
         <xs:restriction base="xs:string">
             <xs:minLength value="1"/>
             <xs:maxLength value="20"/>
@@ -65,21 +62,6 @@
         </xs:restriction>
     </xs:simpleType>
 
-    <xs:simpleType name="LinkContextParameterNameType">
-        <xs:restriction base="xs:string">
-        </xs:restriction>
-    </xs:simpleType>
-
-    <xs:complexType name="LinkContextParameterType">
-        <xs:attribute name="name" type="LinkContextParameterNameType" use="required" />
-    </xs:complexType>
-
-    <xs:complexType name="LinkContextParametersType">
-        <xs:sequence>
-            <xs:element name="context-parameter" type="LinkContextParameterType" minOccurs="0" maxOccurs="unbounded" />
-        </xs:sequence>
-    </xs:complexType>
-
     <xs:simpleType name="LocationType">
         <xs:restriction base="xs:string">
         </xs:restriction>
@@ -91,11 +73,6 @@
     </xs:simpleType>
 
     <xs:simpleType name="ClassType">
-        <xs:annotation>
-            <xs:documentation>
-                The fully qualified name of a Java class.
-            </xs:documentation>
-        </xs:annotation>
         <xs:restriction base="xs:string">
             <xs:minLength value="1"/>
         </xs:restriction>
@@ -103,12 +80,44 @@
 
     <xs:complexType name="ConditionType">
         <xs:sequence>
-            <xs:element name="param" type="ParamType" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="param" type="ParamType" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>
+                        A condition parameter, if applicable to the permission type.  If a remote condition, the parameter
+                        will be passed to the URL as a query parameter.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
         </xs:sequence>
-        <xs:attribute name="class" type="ClassType" use="optional" />
-        <xs:attribute name="name" type="ConditionNameType" use="optional" />
-        <xs:attribute name="url" type="RelativeUrlType" use="optional" />
-        <xs:attribute name="invert" type="xs:boolean" default="false" use="optional" />
+        <xs:attribute name="class" type="ClassType" use="optional">
+            <xs:annotation>
+                <xs:documentation>
+                    The fully qualified name of a Java class.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="name" type="ConditionNameType" use="optional">
+            <xs:annotation>
+                <xs:documentation>
+                    The name of the static condition.  If used, the 'url' attribute must not be specified.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="url" type="RelativeUrlType" use="optional">
+            <xs:annotation>
+                <xs:documentation>
+                    The URL to retrieve for the remote condition.  If used, the 'name' attribute must not be specified.
+                    The URL must return a JSON object with a 'shouldDisplay' attribute set to 'true' or 'false'.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="invert" type="xs:boolean" default="false" use="optional">
+            <xs:annotation>
+                <xs:documentation>
+                    Whether this condition should be inverted or not.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
 
     <xs:complexType name="ConditionsType">
@@ -118,9 +127,6 @@
     </xs:complexType>
 
     <xs:complexType name="ParamType">
-        <xs:annotation>
-            <xs:documentation>Supply parameter values if required by your plugin.</xs:documentation>
-        </xs:annotation>
         <xs:simpleContent>
             <xs:extension base="xs:string">
                 <xs:attribute name="name"
