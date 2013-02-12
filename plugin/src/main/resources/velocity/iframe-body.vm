@@ -23,7 +23,6 @@
   <script>
     (function(jQuery, JIRA) {
         function init() {
-            debugger;
           _AP.create({
             ns: "$namespace",
             src: "$iframeSrcHtml",
