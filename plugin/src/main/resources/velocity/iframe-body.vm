@@ -23,6 +23,7 @@
   <script>
     (function(jQuery, JIRA) {
         function init() {
+            debugger;
           _AP.create({
             ns: "$namespace",
             src: "$iframeSrcHtml",
@@ -43,7 +44,9 @@
             jQuery(function() {
                 JIRA.bind(JIRA.Events.NEW_CONTENT_ADDED, function(e, context, reason) {
                     var jcontext = jQuery(context);
-                    if (jQuery('#ap-$namespace', jcontext).length > 0) {
+                    var initializedIFrame = jQuery('#ap-$namespace', jcontext);
+                    if (initializedIFrame.length > 0) {
+                        jQuery('#embedded-$namespace').empty();
                         init();
                     }
                 });
@@ -51,5 +54,6 @@
         }
         init();
     })(jQuery, window.JIRA);
+
   </script>
 </div>
