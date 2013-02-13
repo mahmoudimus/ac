@@ -16,6 +16,8 @@
   <link rel="stylesheet" href="{{this}}">
   {{/each}}
   <script src="{{hostScriptUrl}}" data-options="{{clientOptions}}"></script>
+  <!--  This intialization is no longer required, but kept around for older systems. -->
+  <script>if (!AP) RA.init();</script>
 </head>
 <body>
   {{{body}}}
