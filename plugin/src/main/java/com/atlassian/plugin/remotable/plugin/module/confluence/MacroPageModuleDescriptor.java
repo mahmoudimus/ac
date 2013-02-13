@@ -1,23 +1,26 @@
 package com.atlassian.plugin.remotable.plugin.module.confluence;
 
-import com.atlassian.plugin.remotable.plugin.DefaultRemotablePluginAccessorFactory;
-import com.atlassian.plugin.remotable.plugin.integration.plugins.DynamicDescriptorRegistration;
-import com.atlassian.plugin.remotable.spi.module.IFrameParams;
-import com.atlassian.plugin.remotable.plugin.module.IFrameParamsImpl;
-import com.atlassian.plugin.remotable.plugin.module.IFrameRendererImpl;
-import com.atlassian.plugin.remotable.spi.module.IFrameContext;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
+import com.atlassian.plugin.module.ModuleFactory;
+import com.atlassian.plugin.remotable.plugin.DefaultRemotablePluginAccessorFactory;
+import com.atlassian.plugin.remotable.plugin.integration.plugins.DynamicDescriptorRegistration;
+import com.atlassian.plugin.remotable.plugin.module.IFrameParamsImpl;
+import com.atlassian.plugin.remotable.plugin.module.IFrameRendererImpl;
 import com.atlassian.plugin.remotable.plugin.module.page.IFrameContextImpl;
+import com.atlassian.plugin.remotable.spi.module.IFrameContext;
+import com.atlassian.plugin.remotable.spi.module.IFrameParams;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.util.concurrent.NotNull;
 import org.dom4j.Element;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Generates a macro page with an iframe
  */
-public class MacroPageModuleDescriptor extends AbstractModuleDescriptor<Void>
+public final class MacroPageModuleDescriptor extends AbstractModuleDescriptor<Void>
 {
     private final DynamicDescriptorRegistration dynamicDescriptorRegistration;
     private final MacroModuleDescriptorCreator.Builder macroModuleDescriptorCreatorBuilder;
@@ -26,14 +29,16 @@ public class MacroPageModuleDescriptor extends AbstractModuleDescriptor<Void>
     private DynamicDescriptorRegistration.Registration registration;
 
     public MacroPageModuleDescriptor(
+            ModuleFactory moduleFactory,
             DynamicDescriptorRegistration dynamicDescriptorRegistration,
             MacroModuleDescriptorCreator macroModuleDescriptorCreator,
             final DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory,
             final UserManager userManager,
             final IFrameRendererImpl iFrameRenderer)
     {
-        this.dynamicDescriptorRegistration = dynamicDescriptorRegistration;
-        this.macroModuleDescriptorCreatorBuilder = macroModuleDescriptorCreator.newBuilder()
+        super(moduleFactory);
+        this.dynamicDescriptorRegistration = checkNotNull(dynamicDescriptorRegistration);
+        this.macroModuleDescriptorCreatorBuilder = checkNotNull(macroModuleDescriptorCreator).newBuilder()
             .setMacroFactory(new MacroModuleDescriptorCreator.MacroFactory()
             {
                 @Override

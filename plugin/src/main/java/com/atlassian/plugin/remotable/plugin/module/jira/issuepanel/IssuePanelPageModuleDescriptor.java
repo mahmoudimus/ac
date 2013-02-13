@@ -1,20 +1,20 @@
 package com.atlassian.plugin.remotable.plugin.module.jira.issuepanel;
 
-import com.atlassian.plugin.remotable.plugin.module.ConditionProcessor;
-import com.atlassian.plugin.remotable.plugin.module.ContainingRemoteCondition;
-import com.atlassian.plugin.remotable.plugin.integration.plugins.DescriptorToRegister;
-import com.atlassian.plugin.remotable.plugin.integration.plugins.DynamicDescriptorRegistration;
-import com.atlassian.plugin.remotable.spi.module.IFrameParams;
-import com.atlassian.plugin.remotable.plugin.module.IFrameParamsImpl;
-import com.atlassian.plugin.remotable.plugin.module.IFrameRendererImpl;
-import com.atlassian.plugin.remotable.plugin.module.page.IFrameContextImpl;
-import com.atlassian.plugin.remotable.spi.module.IFrameViewIssuePanel;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
 import com.atlassian.plugin.hostcontainer.HostContainer;
 import com.atlassian.plugin.module.ModuleFactory;
+import com.atlassian.plugin.remotable.plugin.integration.plugins.DescriptorToRegister;
+import com.atlassian.plugin.remotable.plugin.integration.plugins.DynamicDescriptorRegistration;
+import com.atlassian.plugin.remotable.plugin.module.ConditionProcessor;
+import com.atlassian.plugin.remotable.plugin.module.ContainingRemoteCondition;
+import com.atlassian.plugin.remotable.plugin.module.IFrameParamsImpl;
+import com.atlassian.plugin.remotable.plugin.module.IFrameRendererImpl;
+import com.atlassian.plugin.remotable.plugin.module.page.IFrameContextImpl;
+import com.atlassian.plugin.remotable.spi.module.IFrameParams;
+import com.atlassian.plugin.remotable.spi.module.IFrameViewIssuePanel;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.web.WebInterfaceManager;
 import com.atlassian.plugin.web.descriptors.DefaultWebPanelModuleDescriptor;
@@ -28,12 +28,16 @@ import org.slf4j.LoggerFactory;
 import java.net.URI;
 
 import static com.atlassian.plugin.remotable.plugin.util.OsgiServiceUtils.getService;
-import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.*;
+import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.getOptionalAttribute;
+import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.getRequiredAttribute;
+import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.getRequiredUriAttribute;
+import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.printNode;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * A view issue panel page that loads is contents from an iframe
  */
-public class IssuePanelPageModuleDescriptor extends AbstractModuleDescriptor<Void>
+public final class IssuePanelPageModuleDescriptor extends AbstractModuleDescriptor<Void>
 {
     private final IFrameRendererImpl iFrameRenderer;
     private final DynamicDescriptorRegistration dynamicDescriptorRegistration;
@@ -48,16 +52,20 @@ public class IssuePanelPageModuleDescriptor extends AbstractModuleDescriptor<Voi
     private final static Logger log = LoggerFactory.getLogger(IssuePanelPageModuleDescriptor.class);
     private DynamicDescriptorRegistration.Registration registration;
 
-    public IssuePanelPageModuleDescriptor(IFrameRendererImpl iFrameRenderer,
+    public IssuePanelPageModuleDescriptor(
+            ModuleFactory moduleFactory,
+            IFrameRendererImpl iFrameRenderer,
             DynamicDescriptorRegistration dynamicDescriptorRegistration,
             HostContainer hostContainer,
-            BundleContext bundleContext, ConditionProcessor conditionProcessor)
+            BundleContext bundleContext,
+            ConditionProcessor conditionProcessor)
     {
-        this.iFrameRenderer = iFrameRenderer;
-        this.dynamicDescriptorRegistration = dynamicDescriptorRegistration;
-        this.hostContainer = hostContainer;
-        this.bundleContext = bundleContext;
-        this.conditionProcessor = conditionProcessor;
+        super(moduleFactory);
+        this.iFrameRenderer = checkNotNull(iFrameRenderer);
+        this.dynamicDescriptorRegistration = checkNotNull(dynamicDescriptorRegistration);
+        this.hostContainer = checkNotNull(hostContainer);
+        this.bundleContext = checkNotNull(bundleContext);
+        this.conditionProcessor = checkNotNull(conditionProcessor);
     }
 
     @Override

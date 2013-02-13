@@ -24,11 +24,12 @@ import java.net.URI;
 import static com.atlassian.jira.ComponentManager.getComponent;
 import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.getOptionalAttribute;
 import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.getRequiredUriAttribute;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Generates a search request where the browser is redirected to a remote url
  */
-public class RemoteSearchRequestViewModuleDescriptor extends AbstractModuleDescriptor<Void>
+public final class RemoteSearchRequestViewModuleDescriptor extends AbstractModuleDescriptor<Void>
 {
     private final DynamicDescriptorRegistration dynamicDescriptorRegistration;
     private final ApplicationProperties applicationProperties;
@@ -40,16 +41,18 @@ public class RemoteSearchRequestViewModuleDescriptor extends AbstractModuleDescr
     private DynamicDescriptorRegistration.Registration registration;
 
     public RemoteSearchRequestViewModuleDescriptor(
+            ModuleFactory moduleFactory,
             DynamicDescriptorRegistration dynamicDescriptorRegistration,
             ApplicationProperties applicationProperties,
             SearchRequestViewBodyWriterUtil searchRequestViewBodyWriterUtil,
             TemplateRenderer templateRenderer, ConditionDescriptorFactory conditionDescriptorFactory)
     {
-        this.dynamicDescriptorRegistration = dynamicDescriptorRegistration;
-        this.applicationProperties = applicationProperties;
-        this.searchRequestViewBodyWriterUtil = searchRequestViewBodyWriterUtil;
-        this.templateRenderer = templateRenderer;
-        this.conditionDescriptorFactory = conditionDescriptorFactory;
+        super(moduleFactory);
+        this.dynamicDescriptorRegistration = checkNotNull(dynamicDescriptorRegistration);
+        this.applicationProperties = checkNotNull(applicationProperties);
+        this.searchRequestViewBodyWriterUtil = checkNotNull(searchRequestViewBodyWriterUtil);
+        this.templateRenderer = checkNotNull(templateRenderer);
+        this.conditionDescriptorFactory = checkNotNull(conditionDescriptorFactory);
     }
 
     @Override

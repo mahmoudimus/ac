@@ -24,8 +24,7 @@ public final class DefaultPermissionModuleDescriptor extends AbstractModuleDescr
     }
 
     @Override
-    public void init(@NotNull Plugin plugin, @NotNull Element element
-    ) throws PluginParseException
+    public void init(@NotNull Plugin plugin, @NotNull Element element) throws PluginParseException
     {
         super.init(plugin, element);
         permissionSupplier = Suppliers.memoize(new Supplier<Permission>()

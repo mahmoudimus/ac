@@ -36,11 +36,12 @@ import static com.atlassian.plugin.remotable.plugin.module.page.RemotePageDescri
 import static com.atlassian.plugin.remotable.plugin.util.OsgiServiceUtils.getService;
 import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.getRequiredAttribute;
 import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.getRequiredUriAttribute;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Generates a project config tab with a servlet containing an iframe and a web item.
  */
-public class ProjectConfigTabModuleDescriptor extends AbstractModuleDescriptor<Void>
+public final class ProjectConfigTabModuleDescriptor extends AbstractModuleDescriptor<Void>
 {
     private final DynamicDescriptorRegistration dynamicDescriptorRegistration;
 	private final ProjectConfigTabPageBuilder projectConfigTabPageBuilder;
@@ -53,21 +54,24 @@ public class ProjectConfigTabModuleDescriptor extends AbstractModuleDescriptor<V
 	private DynamicDescriptorRegistration.Registration registration;
 	private Condition condition;
 
-	public ProjectConfigTabModuleDescriptor(DynamicDescriptorRegistration dynamicDescriptorRegistration,
-			BundleContext bundleContext,
-			IFrameRendererImpl iFrameRenderer,
-			UserManager userManager,
-			WebItemCreator webItemCreator,
-			JiraAuthenticationContext authenticationContext)
+    public ProjectConfigTabModuleDescriptor(
+            ModuleFactory moduleFactory,
+            DynamicDescriptorRegistration dynamicDescriptorRegistration,
+            BundleContext bundleContext,
+            IFrameRendererImpl iFrameRenderer,
+            UserManager userManager,
+            WebItemCreator webItemCreator,
+            JiraAuthenticationContext authenticationContext)
     {
-        this.dynamicDescriptorRegistration = dynamicDescriptorRegistration;
-		this.bundleContext = bundleContext;
-		this.iFrameRenderer = iFrameRenderer;
-		this.userManager = userManager;
-		this.webItemCreatorBuilder = webItemCreator.newBuilder();
-		this.condition = new IsProjectAdminCondition(authenticationContext);
+        super(moduleFactory);
+        this.dynamicDescriptorRegistration = checkNotNull(dynamicDescriptorRegistration);
+        this.bundleContext = checkNotNull(bundleContext);
+        this.iFrameRenderer = checkNotNull(iFrameRenderer);
+        this.userManager = checkNotNull(userManager);
+        this.webItemCreatorBuilder = checkNotNull(webItemCreator).newBuilder();
+        this.condition = new IsProjectAdminCondition(checkNotNull(authenticationContext));
 
-		this.projectConfigTabPageBuilder = new ProjectConfigTabPageBuilder();
+        this.projectConfigTabPageBuilder = new ProjectConfigTabPageBuilder();
     }
 
     @Override
@@ -94,10 +98,10 @@ public class ProjectConfigTabModuleDescriptor extends AbstractModuleDescriptor<V
 
 		Iterable<DescriptorToRegister> descriptors = projectConfigTabPageBuilder
 				.setWebItemContext(new DefaultWebItemContext(
-						"atl.jira.proj.config/" + location,
-						weight,
-						ImmutableMap.of("projectKey", "$!helper.project.key")
-				))
+                        "atl.jira.proj.config/" + location,
+                        weight,
+                        ImmutableMap.of("projectKey", "$!helper.project.key")
+                ))
 				.setMetaTagContent("adminActiveTab", "webitem-".concat(key))
 				.build(getPlugin(), descriptor);
 		this.registration = dynamicDescriptorRegistration.registerDescriptors(getPlugin(), descriptors);

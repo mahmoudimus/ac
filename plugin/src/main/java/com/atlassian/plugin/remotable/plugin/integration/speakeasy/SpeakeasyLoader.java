@@ -2,7 +2,7 @@ package com.atlassian.plugin.remotable.plugin.integration.speakeasy;
 
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.labs.speakeasy.external.SpeakeasyBackendService;
-import com.atlassian.plugin.PluginAccessor;
+import com.atlassian.plugin.module.ModuleFactory;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
@@ -11,6 +11,8 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Loads the speakeasy event listener when available
  */
@@ -18,15 +20,18 @@ import org.springframework.stereotype.Component;
 public class SpeakeasyLoader implements DisposableBean
 {
     private final ServiceTracker speakeasyBackendTracker;
-    private volatile Object eventListener;
     private final EventPublisher eventPublisher;
 
+    private volatile Object eventListener;
+
     @Autowired
-    public SpeakeasyLoader(final EventPublisher eventPublisher, final BundleContext bundleContext,
-            final PluginAccessor pluginAccessor)
+    public SpeakeasyLoader(final ModuleFactory moduleFactory, final EventPublisher eventPublisher, final BundleContext bundleContext)
     {
-        this.eventPublisher = eventPublisher;
-        speakeasyBackendTracker = new ServiceTracker(
+        checkNotNull(moduleFactory);
+        checkNotNull(bundleContext);
+        this.eventPublisher = checkNotNull(eventPublisher);
+
+        this.speakeasyBackendTracker = new ServiceTracker(
                 bundleContext,
                 "com.atlassian.labs.speakeasy.external.SpeakeasyBackendService",
                 new ServiceTrackerCustomizer()
@@ -40,9 +45,7 @@ public class SpeakeasyLoader implements DisposableBean
                         {
                             eventPublisher.unregister(eventListener);
                         }
-                        eventListener = new SpeakeasyEventListener(
-                                bundleContext,
-                                service);
+                        eventListener = new SpeakeasyEventListener(moduleFactory, bundleContext, service);
                         eventPublisher.register(eventListener);
                         return service;
                     }
@@ -61,7 +64,6 @@ public class SpeakeasyLoader implements DisposableBean
                     }
                 });
         speakeasyBackendTracker.open();
-
     }
 
     @Override

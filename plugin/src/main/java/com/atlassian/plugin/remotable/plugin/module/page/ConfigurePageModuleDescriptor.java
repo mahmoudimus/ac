@@ -3,8 +3,9 @@ package com.atlassian.plugin.remotable.plugin.module.page;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
-import com.atlassian.plugin.remotable.plugin.module.DefaultWebItemContext;
+import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.remotable.plugin.integration.plugins.DynamicDescriptorRegistration;
+import com.atlassian.plugin.remotable.plugin.module.DefaultWebItemContext;
 import com.atlassian.plugin.remotable.spi.module.UserIsAdminCondition;
 import com.atlassian.plugin.remotable.spi.product.ProductAccessor;
 import com.atlassian.util.concurrent.NotNull;
@@ -24,13 +25,15 @@ public final class ConfigurePageModuleDescriptor extends AbstractModuleDescripto
     private DynamicDescriptorRegistration.Registration registration;
 
     public ConfigurePageModuleDescriptor(
+            ModuleFactory moduleFactory,
             DynamicDescriptorRegistration dynamicDescriptorRegistration,
             ProductAccessor productAccessor,
             RemotePageDescriptorCreator remotePageDescriptorCreator,
             UserIsAdminCondition userIsAdminCondition)
     {
-        this.dynamicDescriptorRegistration = dynamicDescriptorRegistration;
-        this.remotePageDescriptorBuilder = remotePageDescriptorCreator.newBuilder()
+        super(moduleFactory);
+        this.dynamicDescriptorRegistration = checkNotNull(dynamicDescriptorRegistration);
+        this.remotePageDescriptorBuilder = checkNotNull(remotePageDescriptorCreator).newBuilder()
                 .setWebItemContext(new DefaultWebItemContext(
                         "no-section",
                         productAccessor.getPreferredAdminWeight(),
@@ -54,7 +57,7 @@ public final class ConfigurePageModuleDescriptor extends AbstractModuleDescripto
 
         checkNotNull(plugin.getPluginInformation().getParameters().get("configure.url"),
                 "You need to set this configuration: <plugin-info><param name=\"configure.url\">" +
-                "/plugins/servlet" + createLocalUrl(getPluginKey(), getKey()) + "</param></plugin-info>");
+                        "/plugins/servlet" + createLocalUrl(getPluginKey(), getKey()) + "</param></plugin-info>");
     }
 
     @Override

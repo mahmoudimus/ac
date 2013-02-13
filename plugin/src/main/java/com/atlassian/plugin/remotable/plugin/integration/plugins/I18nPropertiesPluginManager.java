@@ -5,6 +5,7 @@ import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.PluginController;
+import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.osgi.factory.OsgiPlugin;
 import com.atlassian.plugin.remotable.plugin.loader.StartableForPlugins;
@@ -36,9 +37,10 @@ import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import static com.atlassian.plugin.remotable.host.common.util.BundleUtil.*;
-import static com.google.common.base.Preconditions.*;
-import static java.lang.Math.*;
+import static com.atlassian.plugin.remotable.host.common.util.BundleUtil.findBundleWithName;
+import static com.atlassian.plugin.remotable.host.common.util.BundleUtil.toBundleNames;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static java.lang.Math.abs;
 
 /**
  * This class loads a plugin called "remotable.plugins.i18n", which solely exists to store and expose generated i18n files
@@ -52,6 +54,7 @@ public final class I18nPropertiesPluginManager
     private static final Logger log = LoggerFactory.getLogger(I18nPropertiesPluginManager.class);
     private static final String I18N_SYMBOLIC_NAME = "remotable.plugins.i18n";
 
+    private final ModuleFactory moduleFactory;
     private final PluginAccessor pluginAccessor;
     private final PluginController pluginController;
     private final BundleContext bundleContext;
@@ -62,12 +65,14 @@ public final class I18nPropertiesPluginManager
     private volatile Bundle i18nBundle;
 
     @Autowired
-    public I18nPropertiesPluginManager(PluginAccessor accessor,
+    public I18nPropertiesPluginManager(ModuleFactory moduleFactory,
+                                       PluginAccessor accessor,
                                        PluginController pluginController,
                                        BundleContext bundleContext, StartableForPlugins startableForPlugins,
                                        PluginRetrievalService pluginRetrievalService
     )
     {
+        this.moduleFactory = checkNotNull(moduleFactory);
         this.bundleContext = checkNotNull(bundleContext);
         this.pluginAccessor = checkNotNull(accessor);
         this.pluginController = checkNotNull(pluginController);
@@ -189,7 +194,7 @@ public final class I18nPropertiesPluginManager
 
         for (String name : i18n.keySet())
         {
-            I18nModuleDescriptor descriptor = new I18nModuleDescriptor();
+            I18nModuleDescriptor descriptor = new I18nModuleDescriptor(moduleFactory);
             descriptor.init(findI18nPlugin(), DocumentHelper.createElement("i18n-something")
                     .addAttribute("key", name)
                     .addElement("resource")

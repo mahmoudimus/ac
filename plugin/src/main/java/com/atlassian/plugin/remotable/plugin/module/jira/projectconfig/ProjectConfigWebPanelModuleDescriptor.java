@@ -28,6 +28,7 @@ import static com.atlassian.plugin.remotable.plugin.util.OsgiServiceUtils.getSer
 import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.getOptionalAttribute;
 import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.getRequiredAttribute;
 import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.getRequiredUriAttribute;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * A remote project configuration web panel that loads its contents from an iframe.
@@ -50,15 +51,20 @@ public class ProjectConfigWebPanelModuleDescriptor extends AbstractModuleDescrip
     private DynamicDescriptorRegistration.Registration registration;
     private String location;
 
-    public ProjectConfigWebPanelModuleDescriptor(final IFrameRendererImpl iFrameRenderer,
-            final DynamicDescriptorRegistration dynamicDescriptorRegistration, final HostContainer hostContainer,
-            final BundleContext bundleContext, final ConditionProcessor conditionProcessor)
+    public ProjectConfigWebPanelModuleDescriptor(
+            ModuleFactory moduleFactory,
+            final IFrameRendererImpl iFrameRenderer,
+            final DynamicDescriptorRegistration dynamicDescriptorRegistration,
+            final HostContainer hostContainer,
+            final BundleContext bundleContext,
+            final ConditionProcessor conditionProcessor)
     {
-        this.iFrameRenderer = iFrameRenderer;
-        this.dynamicDescriptorRegistration = dynamicDescriptorRegistration;
-        this.hostContainer = hostContainer;
-        this.bundleContext = bundleContext;
-        this.conditionProcessor = conditionProcessor;
+        super(moduleFactory);
+        this.iFrameRenderer = checkNotNull(iFrameRenderer);
+        this.dynamicDescriptorRegistration = checkNotNull(dynamicDescriptorRegistration);
+        this.hostContainer = checkNotNull(hostContainer);
+        this.bundleContext = checkNotNull(bundleContext);
+        this.conditionProcessor = checkNotNull(conditionProcessor);
     }
 
     @Override

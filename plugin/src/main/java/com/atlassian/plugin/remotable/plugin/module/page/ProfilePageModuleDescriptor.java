@@ -3,9 +3,12 @@ package com.atlassian.plugin.remotable.plugin.module.page;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
+import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.remotable.plugin.integration.plugins.DynamicDescriptorRegistration;
 import com.atlassian.util.concurrent.NotNull;
 import org.dom4j.Element;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Generates a profile page with a servlet containing an iframe and a web item
@@ -17,11 +20,14 @@ public class ProfilePageModuleDescriptor extends AbstractModuleDescriptor<Void>
     private Element descriptor;
     private DynamicDescriptorRegistration.Registration registration;
 
-    public ProfilePageModuleDescriptor(DynamicDescriptorRegistration dynamicDescriptorRegistration,
+    public ProfilePageModuleDescriptor(
+            ModuleFactory moduleFactory,
+            DynamicDescriptorRegistration dynamicDescriptorRegistration,
             RemotePageDescriptorCreator remotePageDescriptorCreator)
     {
-        this.dynamicDescriptorRegistration = dynamicDescriptorRegistration;
-        this.remotePageDescriptorBuilder = remotePageDescriptorCreator.newBuilder()
+        super(moduleFactory);
+        this.dynamicDescriptorRegistration = checkNotNull(dynamicDescriptorRegistration);
+        this.remotePageDescriptorBuilder = checkNotNull(remotePageDescriptorCreator).newBuilder()
                 .setDecorator("atl.userprofile")
                 .setTemplateSuffix("");
 
