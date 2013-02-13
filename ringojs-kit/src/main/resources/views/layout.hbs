@@ -17,17 +17,18 @@
   {{/each}}
   <script src="{{hostScriptUrl}}" data-options="{{clientOptions}}"></script>
   <!--  This intialization is no longer required, but kept around for older systems. -->
-  <script>if (!AP) RA.init();</script>
+  <script>if (!window.AP) RA.init();</script>
 </head>
 <body>
   {{{body}}}
   {{{tail}}}
   {{#if bigPipeActivated}}
   <script>
-    AP.BigPipe.start({
-      requestId: "{{bigPipeRequestId}}",
-      ready: {{{bigPipeReadyContents}}}
-    });
+    if (window.AP) {
+      AP.BigPipe.start({
+        requestId: "$bigPipeRequestId"
+      });
+    }
   </script>
   {{/if}}
   {{#each scriptUrls}}
