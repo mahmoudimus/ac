@@ -125,7 +125,7 @@ public class RegistrationFilter implements Filter
                         if (param.attributeValue("name").equalsIgnoreCase("documentation.url"))
                         {
                             String documentationUrl = param.getTextTrim();
-                            log.error("Redirecting to documentation url '{}'", documentationUrl);
+                            log.info("Redirecting to documentation url '{}'", documentationUrl);
                             resp.sendRedirect(documentationUrl);
                             return;
                         }
