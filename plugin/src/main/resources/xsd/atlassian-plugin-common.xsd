@@ -157,7 +157,7 @@
                </xs:annotation>
             </xs:element>
         </xs:sequence>
-        <xs:attribute name="key" type="KeyType">
+        <xs:attribute name="key" type="KeyType" use="required">
             <xs:annotation>
                 <xs:documentation>
                     The identifier of the plugin module. This key must
