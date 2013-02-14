@@ -35,21 +35,6 @@ public class TestRemotePluginInstallation extends AbstractRemotablePluginTest
     }
 
     @Test
-    public void testInstalledPluginWithSecret() throws Exception
-    {
-        product.visit(LoginPage.class).login("admin", "admin", HomePage.class);
-        RemotePluginRunner pluginFirst = new RemotePluginRunner(product.getProductInstance().getBaseUrl(), "installed")
-                .addGeneralPage("page", "Page", "/page", "hello-world-page.mu")
-                .secret("secret")
-                .start();
-        product.visit(HomePage.class);
-        assertTrue(product.getPageBinder().bind(GeneralPage.class, "page", "Page")
-                .clickRemotePluginLink()
-                .isLoaded());
-        pluginFirst.stop();
-    }
-
-    @Test
     public void testChangedKey() throws Exception
     {
         product.visit(LoginPage.class).login("admin", "admin", HomePage.class);

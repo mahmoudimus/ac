@@ -16,10 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.atlassian.plugin.remotable.plugin.module.page.RemotePageDescriptorCreator.createLocalUrl;
 import static com.atlassian.plugin.remotable.test.HttpUtils.renderHtml;
@@ -29,19 +26,17 @@ import static com.google.common.collect.Maps.newHashMap;
 public class RemotePluginRunner
 {
     private Server server;
+    private int port;
     private final Document doc;
     private final Map<String,HttpServlet> routes = newHashMap();
-    private final int port;
     private final String baseUrl;
     private final RemotePluginInstallerClient installer;
     private final String appKey;
-    private String secret;
 
     public RemotePluginRunner(String baseUrl, String appKey)
     {
         this.baseUrl = baseUrl;
         this.appKey = appKey;
-        port = pickFreePort();
         doc = DocumentFactory.getInstance().createDocument()
                 .addElement("atlassian-plugin")
                     .addAttribute("key", appKey)
@@ -52,7 +47,6 @@ public class RemotePluginRunner
                         .getParent()
                     .addElement("remote-plugin-container")
                         .addAttribute("key", "container")
-                        .addAttribute("display-url", "http://localhost:" + port)
                         .getParent()
                 .getDocument();
         installer = new RemotePluginInstallerClient(baseUrl, "admin", "admin");
@@ -184,15 +178,9 @@ public class RemotePluginRunner
         return this;
     }
 
-    public RemotePluginRunner secret(String secret)
+    private void register() throws IOException
     {
-        this.secret = secret;
-        return this;
-    }
-
-    private void register(String secret) throws IOException
-    {
-        installer.install("http://localhost:" + port + "/register", secret);
+        installer.install("http://localhost:" + port + "/register");
     }
 
     private void unregister() throws IOException
@@ -208,13 +196,16 @@ public class RemotePluginRunner
 
     public RemotePluginRunner start() throws Exception
     {
+        port = pickFreePort();
+        doc.getRootElement().element("remote-plugin-container").addAttribute("display-url", "http://localhost:" + port);
+
         server = new Server(port);
         HandlerList list = new HandlerList();
         server.setHandler(list);
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.setContextPath("/");
 
-        context.addServlet(new ServletHolder(new DescriptorServlet(secret)), "/register");
+        context.addServlet(new ServletHolder(new DescriptorServlet()), "/register");
 
         for (final Map.Entry<String,HttpServlet> entry : routes.entrySet())
         {
@@ -224,13 +215,8 @@ public class RemotePluginRunner
         list.addHandler(context);
         server.start();
 
-        register(secret);
+        register();
         return this;
-    }
-
-    public String getPluginDisplayUrl()
-    {
-        return "http://localhost:" + port;
     }
 
     private class MustacheServlet extends HttpServlet
@@ -255,13 +241,6 @@ public class RemotePluginRunner
 
     private class DescriptorServlet extends HttpServlet
     {
-        private final String secret;
-
-        public DescriptorServlet(String secret)
-        {
-            this.secret = secret;
-        }
-
         @Override
         protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
         {
