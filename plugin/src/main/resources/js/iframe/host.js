@@ -33,9 +33,6 @@
       timeout = null;
       showStatus("load-timeout");
       var $timeout = $home.find(".ap-load-timeout");
-      $timeout.find("a.ap-btn-wait").click(function () {
-        showStatus("loading");
-      });
       $timeout.find("a.ap-btn-cancel").click(function () {
         showStatus("load-error");
         $nexus.trigger(isDialog ? "ra.dialog.close" : "ra.iframe.destroy");

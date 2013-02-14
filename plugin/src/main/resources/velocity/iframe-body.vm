@@ -10,7 +10,7 @@
     </div>
     <div class="ap-load-timeout ap-status hidden">
       Plugin <a href="${plugin.displayUrl}" target="_blank">$plugin.name</a> is not responding.
-      <a href="#" class="ap-btn-wait">Wait</a> or <a href="#" class="ap-btn-cancel">Cancel</a>?
+      Wait or <a href="#" class="ap-btn-cancel">cancel</a>?
     </div>
     <div class="ap-load-error ap-status hidden">
       Plugin <a href="${plugin.displayUrl}" target="_blank">$plugin.name</a> failed to load.
