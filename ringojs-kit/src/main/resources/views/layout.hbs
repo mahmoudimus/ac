@@ -26,7 +26,8 @@
   <script>
     if (window.AP) {
       AP.BigPipe.start({
-        requestId: "$bigPipeRequestId"
+        requestId: "{{bigPipeRequestId}}",
+        ready: {{{bigPipeReadyContents}}}
       });
     }
   </script>
