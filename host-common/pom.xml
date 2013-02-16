@@ -29,6 +29,18 @@
             <artifactId>remotable-plugins-descriptor-common</artifactId>
             <version>${project.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>1.6</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-mapper-asl</artifactId>
+            <version>1.9.1</version>
+        </dependency>
         
         <dependency>
             <groupId>com.atlassian.mail</groupId>

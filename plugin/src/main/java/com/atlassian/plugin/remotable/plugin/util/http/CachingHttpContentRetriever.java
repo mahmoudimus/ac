@@ -5,6 +5,7 @@ import com.atlassian.httpclient.api.Response;
 import com.atlassian.httpclient.api.factory.HttpClientFactory;
 import com.atlassian.httpclient.api.factory.HttpClientOptions;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
+import com.atlassian.plugin.remotable.plugin.license.LicenseRetriever;
 import com.atlassian.plugin.remotable.spi.http.AuthorizationGenerator;
 import com.atlassian.uri.Uri;
 import com.atlassian.uri.UriBuilder;
@@ -30,10 +31,12 @@ public class CachingHttpContentRetriever implements HttpContentRetriever
 {
     private final Logger log = LoggerFactory.getLogger(CachingHttpContentRetriever.class);
     private final HttpClient httpClient;
+    private final LicenseRetriever licenseRetriever;
 
     public CachingHttpContentRetriever(PluginRetrievalService pluginRetrievalService,
-            HttpClientFactory httpClientFactory)
+            HttpClientFactory httpClientFactory, final LicenseRetriever licenseRetriever)
     {
+        this.licenseRetriever = licenseRetriever;
         HttpClientOptions options = new HttpClientOptions();
         options.setIoSelectInterval(100, TimeUnit.MILLISECONDS);
         options.setThreadPrefix("content-ret");
@@ -60,11 +63,16 @@ public class CachingHttpContentRetriever implements HttpContentRetriever
             final Map<String, String> parameters, Map<String, String> headers,
             final String pluginKey)
     {
-        final String urlWithParams = new UriBuilder(Uri.fromJavaUri(url)).addQueryParameters(parameters).toString();
+        final Map<String, String> queryParams = newHashMap(parameters);
+        queryParams.put("lic", licenseRetriever.getLicenseStatus(pluginKey).value());
+
+        final String urlWithParams = new UriBuilder(Uri.fromJavaUri(url))
+                .addQueryParameters(queryParams)
+                .toString();
 
         String authHeaderValue = authorizationGenerator.generate(
                 "GET", url,
-                Maps.transformValues(parameters, new Function<String, List<String>>()
+                Maps.transformValues(queryParams, new Function<String, List<String>>()
                 {
                     @Override
                     public List<String> apply(String from)

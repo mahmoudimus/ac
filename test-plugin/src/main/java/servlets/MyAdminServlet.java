@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Named
-@AppScripts({"jquery-1.7", "my-admin"})
+@AppScripts ({ "jquery-1.7", "my-admin" })
 public class MyAdminServlet extends AbstractPageServlet
 {
     @Inject
@@ -24,15 +24,16 @@ public class MyAdminServlet extends AbstractPageServlet
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse res)
-        throws ServletException, IOException
+            throws ServletException, IOException
     {
         Response response = httpClient.newRequest("/rest/remoteplugintest/1/user").get().claim();
-        render(req, res, ImmutableMap.of(
-            "httpGetStatus", response.getStatusCode(),
-            "httpGetStatusText", response.getStatusText(),
-            "httpGetContentType", response.getContentType(),
-            "httpGetEntity", response.getEntity(),
-            "timeZone", req.getParameter("tz")
-        ));
+        render(req, res, ImmutableMap.<String, Object>builder()
+                .put("httpGetStatus", response.getStatusCode())
+                .put("httpGetStatusText", response.getStatusText())
+                .put("httpGetContentType", response.getContentType())
+                .put("httpGetEntity", response.getEntity())
+                .put("licenseStatus", req.getParameter("lic"))
+                .put("timeZone", req.getParameter("tz"))
+                .build());
     }
 }

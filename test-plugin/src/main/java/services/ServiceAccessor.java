@@ -6,6 +6,7 @@ import com.atlassian.plugin.remotable.api.service.EmailSender;
 import com.atlassian.plugin.remotable.api.service.SignedRequestHandler;
 import com.atlassian.plugin.remotable.api.service.http.HostHttpClient;
 import com.atlassian.plugin.remotable.api.service.http.HostXmlRpcClient;
+import com.atlassian.plugin.remotable.api.service.license.RemotablePluginLicenseRetriever;
 import org.osgi.framework.BundleContext;
 import servlets.SendEmailServlet;
 
@@ -21,17 +22,20 @@ public class ServiceAccessor
     private static SendEmailServlet sendEmailServlet;
     private static EmailSender emailSender;
     private static BundleContext bundleContext;
+    private static RemotablePluginLicenseRetriever licenseRetriever;
 
     @Inject
     public ServiceAccessor(
             @ComponentImport SignedRequestHandler signedRequestHandler,
             @ComponentImport HostXmlRpcClient hostXmlRpcClient,
             @ComponentImport HostHttpClient hostHttpClient,
+            @ComponentImport RemotablePluginLicenseRetriever licenseRetriever,
             SendEmailServlet sendEmailServlet,
             @ComponentImport EmailSender emailSender,
             BundleContext bundleContext)
     {
         ServiceAccessor.bundleContext = bundleContext;
+        ServiceAccessor.licenseRetriever = licenseRetriever;
         ServiceAccessor.signedRequestHandler = signedRequestHandler;
         ServiceAccessor.hostXmlRpcClient = hostXmlRpcClient;
         ServiceAccessor.hostHttpClient = hostHttpClient;
@@ -57,6 +61,11 @@ public class ServiceAccessor
     public static SendEmailServlet getSendEmailServlet()
     {
         return sendEmailServlet;
+    }
+
+    public static RemotablePluginLicenseRetriever getLicenseRetriever()
+    {
+        return licenseRetriever;
     }
 
     public static EmailSender getEmailSender()

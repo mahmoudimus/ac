@@ -6,6 +6,7 @@ import com.atlassian.plugin.elements.ResourceDescriptor;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.remotable.plugin.DefaultRemotablePluginAccessorFactory;
 import com.atlassian.plugin.remotable.plugin.UserPreferencesRetriever;
+import com.atlassian.plugin.remotable.plugin.license.LicenseRetriever;
 import com.atlassian.plugin.remotable.plugin.module.page.PageInfo;
 import com.atlassian.plugin.remotable.spi.PermissionDeniedException;
 import com.atlassian.plugin.remotable.spi.RemotablePluginAccessor;
@@ -46,17 +47,19 @@ public final class IFrameRendererImpl implements IFrameRenderer
     private final DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory;
     private final IFrameHost iframeHost;
     private final Plugin plugin;
+    private final LicenseRetriever licenseRetriever;
     private final UserPreferencesRetriever userPreferencesRetriever;
 
     @Autowired
     public IFrameRendererImpl(TemplateRenderer templateRenderer,
-                              WebResourceManager webResourceManager,
-                              IFrameHost iframeHost,
-                              WebResourceUrlProvider webResourceUrlProvider,
-                              PluginRetrievalService pluginRetrievalService,
-                              DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory,
-                              UserPreferencesRetriever userPreferencesRetriever)
+            WebResourceManager webResourceManager,
+            IFrameHost iframeHost,
+            WebResourceUrlProvider webResourceUrlProvider,
+            PluginRetrievalService pluginRetrievalService,
+            DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory,
+            UserPreferencesRetriever userPreferencesRetriever, final LicenseRetriever licenseRetriever)
     {
+        this.licenseRetriever = licenseRetriever;
         this.userPreferencesRetriever = checkNotNull(userPreferencesRetriever);
         this.remotablePluginAccessorFactory = checkNotNull(remotablePluginAccessorFactory);
         this.templateRenderer = checkNotNull(templateRenderer);
@@ -133,6 +136,8 @@ public final class IFrameRendererImpl implements IFrameRenderer
         allParams.put("xdm_p", new String[]{"1"});
         allParams.put("cp", new String[]{iframeHost.getContextPath()});
         allParams.put("tz", new String[]{timeZone});
+        allParams.put("lic", new String[]{licenseRetriever.getLicenseStatus(plugin.getKey()).value()});
+
         if (dialog != null && dialog.length == 1) allParams.put("dialog", dialog);
         String signedUrl = remotablePluginAccessor.signGetUrl(iframeUrl, allParams);
 

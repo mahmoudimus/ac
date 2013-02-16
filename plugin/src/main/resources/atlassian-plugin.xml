@@ -227,6 +227,9 @@
     <component key="localEmailSender" interface="com.atlassian.plugin.remotable.api.service.EmailSender"
                class="com.atlassian.plugin.remotable.plugin.service.LocalEmailSenderServiceFactory" public="true" />
 
+    <component key="localRemotablePluginLicenseRetriever" interface="com.atlassian.plugin.remotable.api.service.license.RemotablePluginLicenseRetriever"
+               class="com.atlassian.plugin.remotable.plugin.service.LocalRemotablePluginLicenseRetrieverServiceFactory" public="true" />
+
     <component key="userIsSysAdminCondition" class="com.atlassian.plugin.remotable.spi.module.UserIsSysAdminCondition" />
     <component key="userIsAdminCondition" class="com.atlassian.plugin.remotable.spi.module.UserIsAdminCondition" />
 
