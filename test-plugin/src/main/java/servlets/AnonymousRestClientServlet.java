@@ -26,7 +26,7 @@ public class AnonymousRestClientServlet extends AbstractPageServlet
     {
         try
         {
-            searchRestClient.searchJql("project = DEMO").claim();
+            searchRestClient.searchJql("").claim();
             render(req, resp, ImmutableMap.of("status", "Success"));
         }
         catch (Exception e)
