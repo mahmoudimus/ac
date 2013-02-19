@@ -111,7 +111,7 @@ public class OAuth2LOFilter implements Filter
         }
 
         // can only mark the request as successfully authenticated if the user is a real one
-        if (result.getPrincipal() != NonUserAdminPrincipal.INSTANCE)
+        if (result.getStatus() == Authenticator.Result.Status.SUCCESS)
         {
             authenticationListener.authenticationSuccess(result, request, response);
             webSudoElevator.startWebSudoSession(request, response);

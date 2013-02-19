@@ -13,17 +13,17 @@ import com.atlassian.jira.testkit.client.Backdoor;
 import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.pageobjects.TestedProductFactory;
 import com.atlassian.pageobjects.page.LoginPage;
-import com.atlassian.plugin.remotable.test.RemotePluginAwarePage;
 import com.atlassian.plugin.remotable.junit.HtmlDumpRule;
+import com.atlassian.plugin.remotable.test.RemotePluginAwarePage;
 import com.atlassian.plugin.remotable.test.RemotePluginDialog;
 import com.atlassian.plugin.remotable.test.RemotePluginEmbeddedTestPage;
 import com.atlassian.plugin.remotable.test.RemotePluginTestPage;
+import com.atlassian.plugin.remotable.test.jira.AbstractRemotablePluginProjectTab;
 import com.atlassian.plugin.remotable.test.jira.JiraGeneralPage;
 import com.atlassian.plugin.remotable.test.jira.JiraIssueNavigatorPage;
 import com.atlassian.plugin.remotable.test.jira.JiraOps;
 import com.atlassian.plugin.remotable.test.jira.JiraProjectAdministrationPanel;
 import com.atlassian.plugin.remotable.test.jira.JiraProjectAdministrationTab;
-import com.atlassian.plugin.remotable.test.jira.JiraRemotablePluginProjectTab;
 import com.atlassian.plugin.remotable.test.jira.JiraViewIssuePage;
 import com.atlassian.plugin.remotable.test.jira.JiraViewIssuePageWithRemotePluginIssueTab;
 import com.atlassian.plugin.remotable.test.jira.PlainTextView;
@@ -149,10 +149,28 @@ public class TestJira
             public Object call() throws Exception
             {
                 RemotePluginEmbeddedTestPage page = product.visit(BrowseProjectPage.class, project.getKey())
-                                                           .openTab(JiraRemotablePluginProjectTab.class)
+                                                           .openTab(AppProjectTabPage.class)
                                                            .getEmbeddedPage();
 
                 assertEquals("Success", page.getMessage());
+                return null;
+            }
+        });
+
+    }
+
+    @Test
+    public void testAnonymouslyProjectTabWithRestClient() throws Exception
+    {
+        testAnonymous(new Callable()
+        {
+            @Override
+            public Object call() throws Exception
+            {
+                RemotePluginEmbeddedTestPage page = product.visit(BrowseProjectPage.class, project.getKey())
+                        .openTab(RestClientProjectTabPage.class)
+                        .getEmbeddedPage();
+                assertEquals("Success", page.getValue("rest-call-status"));
                 return null;
             }
         });
@@ -318,5 +336,29 @@ public class TestJira
     {
         loginAsAdmin();
         runnable.call();
+    }
+
+    private void testAnonymous(Callable runnable) throws Exception
+    {
+        logout();
+        runnable.call();
+    }
+
+    public static final class AppProjectTabPage extends AbstractRemotablePluginProjectTab
+    {
+
+        public AppProjectTabPage(final String projectKey)
+        {
+            super(projectKey, "project-tab-jira-remotePluginProjectTab");
+        }
+    }
+
+    public static final class RestClientProjectTabPage extends AbstractRemotablePluginProjectTab
+    {
+
+        public RestClientProjectTabPage(final String projectKey)
+        {
+            super(projectKey, "project-tab-jira-restClientProjectTab");
+        }
     }
 }

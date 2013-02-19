@@ -6,20 +6,22 @@ import com.atlassian.pageobjects.PageBinder;
 
 import javax.inject.Inject;
 
-public class JiraRemotablePluginProjectTab extends AbstractProjectTab
+public abstract class AbstractRemotablePluginProjectTab extends AbstractProjectTab
 {
+    private final String projectTabId;
+
     @Inject
     PageBinder pageBinder;
-    public JiraRemotablePluginProjectTab(String projectKey)
+
+    public AbstractRemotablePluginProjectTab(String projectKey, String projectTabId)
     {
-        super("project-tab-jira-remotePluginProjectTab-panel", projectKey);
+        super(projectTabId+"-panel", projectKey);
+        this.projectTabId = projectTabId;
     }
 
     public RemotePluginEmbeddedTestPage getEmbeddedPage()
     {
-        return pageBinder.bind(RemotePluginEmbeddedTestPage.class, "project-tab-jira-remotePluginProjectTab");
+        return pageBinder.bind(RemotePluginEmbeddedTestPage.class, projectTabId);
     }
-
-
 
 }

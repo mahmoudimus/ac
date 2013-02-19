@@ -1,22 +1,12 @@
 package com.atlassian.plugin.remotable.test;
 
-import com.atlassian.pageobjects.binder.Init;
-import com.atlassian.pageobjects.binder.WaitUntil;
 import com.atlassian.plugin.remotable.pageobjects.RemotePage;
-import com.atlassian.webdriver.AtlassianWebDriver;
 import com.google.common.base.Function;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.utils.URLEncodedUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-import javax.inject.Inject;
-import java.net.URI;
-import java.util.Map;
 import java.util.concurrent.Callable;
-
-import static com.google.common.collect.Maps.newHashMap;
 
 /**
  *
@@ -103,7 +93,7 @@ public class RemotePluginEmbeddedTestPage extends RemotePage
         return getValue("server-http-entity");
     }
 
-    String getValue(final String key)
+    public String getValue(final String key)
     {
         return runInFrame(new Callable<String>()
         {
