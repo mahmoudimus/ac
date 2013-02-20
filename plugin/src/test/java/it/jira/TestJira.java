@@ -41,11 +41,13 @@ import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.MethodRule;
+import org.openqa.selenium.By;
 
 import java.net.URI;
 import java.rmi.RemoteException;
 import java.util.concurrent.Callable;
 
+import static org.hamcrest.Matchers.startsWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -229,6 +231,25 @@ public class TestJira
                 JiraProjectAdministrationPanel webPanel = product.visit(JiraProjectAdministrationPanel.class,
                         EMBEDDED_PROJECT_CONFIG_PANEL_ID, project.getKey());
                 assertEquals("Success", webPanel.getMessage());
+                return null;
+            }
+        });
+    }
+
+    @Test
+    public void testIFrameIsNotPointingToLocalhost() throws Exception
+    {
+        testLoggedInAsAdmin(new Callable()
+        {
+            @Override
+            public Object call() throws Exception
+            {
+                final String baseJiraUrl = product.getProductInstance().getBaseUrl();
+                final RemotePluginEmbeddedTestPage page = product.visit(BrowseProjectPage.class, project.getKey())
+                        .openTab(AppProjectTabPage.class)
+                        .getEmbeddedPage();
+                final String iFrameSrc = page.getContainerDiv().findElement(By.tagName("iframe")).getAttribute("src");
+                assertThat(iFrameSrc, startsWith(baseJiraUrl));
                 return null;
             }
         });
