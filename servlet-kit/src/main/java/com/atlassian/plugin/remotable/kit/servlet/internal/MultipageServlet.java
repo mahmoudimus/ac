@@ -1,6 +1,7 @@
 package com.atlassian.plugin.remotable.kit.servlet.internal;
 
 import com.atlassian.plugin.util.PluginUtils;
+import com.google.common.base.Supplier;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -9,22 +10,23 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-public class MultipageServlet extends HttpServlet
-{
-    private String internalUrl;
-    private String hostBaseUrl;
+import static com.google.common.base.Preconditions.checkNotNull;
 
-    public MultipageServlet(String internalUrl, String hostBaseUrl)
+public final class MultipageServlet extends HttpServlet
+{
+    private Supplier<String> internalUrl;
+    private Supplier<String> hostBaseUrl;
+
+    public MultipageServlet(Supplier<String> internalUrl, Supplier<String> hostBaseUrl)
     {
-        this.internalUrl = internalUrl;
-        this.hostBaseUrl = hostBaseUrl;
+        this.internalUrl = checkNotNull(internalUrl);
+        this.hostBaseUrl = checkNotNull(hostBaseUrl);
     }
 
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException
     {
-        boolean isDevMode = Boolean.getBoolean(PluginUtils.ATLASSIAN_DEV_MODE);
-        res.setStatus(200);
+        res.setStatus(HttpServletResponse.SC_OK);
         res.setHeader("Content-Type", "text/html; charset=UTF-8");
         PrintWriter out = res.getWriter();
         out.print("<!DOCTYPE html>");
@@ -33,12 +35,27 @@ public class MultipageServlet extends HttpServlet
         out.print("<meta charset='utf-8'>");
         out.print("<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>");
         out.print("<style>html, body, iframe {padding:0;margin:0;background:transparent;border: none;}</style>");
-        out.print("<script src='" + hostBaseUrl + "/remotable-plugins/all"  + (isDevMode ? "-debug" : "") + ".js' data-bridge='true'></script>");
+        out.printf("<script src='%s' data-bridge='true'></script>", getAllJsSrc());
         out.print("</head>");
         out.print("<body>");
-        out.print("<iframe src='" + internalUrl + "'></iframe>");
+        out.printf("<iframe src='%s'></iframe>", getIFrameSrc());
         out.print("</body>");
         out.print("</html>");
         out.flush();
+    }
+
+    private String getAllJsSrc()
+    {
+        return String.format("%s/remotable-plugins/all%s.js", hostBaseUrl.get(), isDevMode() ? "-debug" : "");
+    }
+
+    private String getIFrameSrc()
+    {
+        return internalUrl.get();
+    }
+
+    private static boolean isDevMode()
+    {
+        return Boolean.getBoolean(PluginUtils.ATLASSIAN_DEV_MODE);
     }
 }
