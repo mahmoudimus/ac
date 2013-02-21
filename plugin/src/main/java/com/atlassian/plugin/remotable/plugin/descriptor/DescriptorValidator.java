@@ -2,6 +2,7 @@ package com.atlassian.plugin.remotable.plugin.descriptor;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
+import com.atlassian.plugin.remotable.api.InstallationMode;
 import com.atlassian.plugin.remotable.plugin.PermissionManager;
 import com.atlassian.plugin.remotable.spi.InstallationFailedException;
 import com.atlassian.plugin.remotable.spi.permission.Permission;
@@ -66,8 +67,7 @@ public final class DescriptorValidator
                                ProductAccessor productAccessor,
                                WebResourceManager webResourceManager,
                                PermissionManager permissionManager,
-                               PluginDescriptorValidatorProvider pluginDescriptorValidatorProvider
-    )
+                               PluginDescriptorValidatorProvider pluginDescriptorValidatorProvider)
     {
         this.productAccessor = productAccessor;
         this.webResourceManager = webResourceManager;
@@ -78,9 +78,10 @@ public final class DescriptorValidator
 
     public void validate(URI url, Document document)
     {
-        final boolean useNamespace = document.getRootElement().getNamespaceURI().equals(pluginDescriptorValidatorProvider.getSchemaNamespace());
+        final InstallationMode installationMode = InstallationMode.LOCAL; // to validate we use the local
+        final boolean useNamespace = document.getRootElement().getNamespaceURI().equals(pluginDescriptorValidatorProvider.getSchemaNamespace(installationMode));
 
-        final String builtSchema = buildSchema(pluginDescriptorValidatorProvider, useNamespace);
+        final String builtSchema = buildSchema(pluginDescriptorValidatorProvider, useNamespace, installationMode);
         try
         {
             javax.xml.validation.Schema schema = getSchema(CharStreams.newReaderSupplier(builtSchema), new PluginLSResourceResolver(plugin));
@@ -127,11 +128,11 @@ public final class DescriptorValidator
         }
     }
 
-    public String getPluginSchema()
+    public String getPluginSchema(InstallationMode installationMode)
     {
         try
         {
-            return buildSchema(pluginDescriptorValidatorProvider, true);
+            return buildSchema(pluginDescriptorValidatorProvider, true, installationMode);
         }
         catch (Exception ex)
         {
@@ -140,7 +141,7 @@ public final class DescriptorValidator
         }
     }
 
-    private String buildSchema(DescriptorValidatorProvider descriptorValidatorProvider, boolean usesNamespace)
+    private String buildSchema(DescriptorValidatorProvider descriptorValidatorProvider, boolean usesNamespace, InstallationMode installationMode)
     {
         Set<String> includedDocIds = newHashSet();
         Element root = parseDocument(descriptorValidatorProvider.getSchemaUrl()).getRootElement();
@@ -155,7 +156,7 @@ public final class DescriptorValidator
         ProcessingInstruction pi = factory.createProcessingInstruction("xml-stylesheet", arguments);
         root.getDocument().content().add(0, pi);
 
-        final String ns = descriptorValidatorProvider.getSchemaNamespace();
+        final String ns = descriptorValidatorProvider.getSchemaNamespace(installationMode);
         if (usesNamespace)
         {
             root.addAttribute("targetNamespace", ns);
@@ -165,7 +166,7 @@ public final class DescriptorValidator
         processIncludes(root.getDocument(), includedDocIds);
         Element modulesChoice = (Element) root.selectSingleNode(
                 "/xs:schema/xs:complexType[@name='" + descriptorValidatorProvider.getRootElementName() + "']//xs:choice");
-        for (final Schema schema : descriptorValidatorProvider.getModuleSchemas())
+        for (final Schema schema : descriptorValidatorProvider.getModuleSchemas(installationMode))
         {
             final String id = schema.getFileName();
             if (!includedDocIds.contains(id))

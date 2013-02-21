@@ -2,6 +2,7 @@ package com.atlassian.plugin.remotable.plugin.descriptor;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
+import com.atlassian.plugin.remotable.api.InstallationMode;
 import com.atlassian.plugin.remotable.plugin.PermissionManager;
 import com.atlassian.plugin.remotable.spi.permission.Permission;
 import com.atlassian.plugin.remotable.spi.product.ProductAccessor;
@@ -35,6 +36,8 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public final class TestDescriptorValidator
 {
+    public static final InstallationMode INSTALLATION_MODE_FOR_TESTS = InstallationMode.LOCAL;
+
     @Mock
     ProductAccessor productAccessor;
 
@@ -65,7 +68,7 @@ public final class TestDescriptorValidator
 
         descriptorValidator = new DescriptorValidator(pluginRetrievalService, productAccessor,
                 webResourceManager, permissionManager, pluginDescriptorValidatorProvider);
-        when(pluginDescriptorValidatorProvider.getModuleSchemas()).thenReturn(Collections.<Schema>emptyList());
+        when(pluginDescriptorValidatorProvider.getModuleSchemas(INSTALLATION_MODE_FOR_TESTS)).thenReturn(Collections.<Schema>emptyList());
         when(plugin.getResource("/xsd/common.xsd")).thenReturn(getClass().getResource("/xsd/common.xsd"));
     }
 
@@ -74,7 +77,7 @@ public final class TestDescriptorValidator
     {
         when(pluginDescriptorValidatorProvider.getSchemaUrl()).thenReturn(getClass().getResource("root-one-include.xsd"));
         when(plugin.getResource("/xsd/first-child.xsd")).thenReturn(getClass().getResource("first-child.xsd"));
-        String doc = descriptorValidator.getPluginSchema();
+        String doc = descriptorValidator.getPluginSchema(INSTALLATION_MODE_FOR_TESTS);
         assertTrue(doc.contains("RootType"));
         assertTrue(doc.contains("ChildType"));
         assertFalse(doc.contains(":include"));
@@ -95,8 +98,8 @@ public final class TestDescriptorValidator
         when(plugin.getResource("/xsd/module-child.xsd")).thenReturn(getClass().getResource("module-child.xsd"));
         when(plugin.getResource("/xsd/first-child.xsd")).thenReturn(getClass().getResource("first-child.xsd"));
 
-        when(pluginDescriptorValidatorProvider.getModuleSchemas()).thenReturn(asList(schema));
-        String doc = descriptorValidator.getPluginSchema();
+        when(pluginDescriptorValidatorProvider.getModuleSchemas(INSTALLATION_MODE_FOR_TESTS)).thenReturn(asList(schema));
+        String doc = descriptorValidator.getPluginSchema(INSTALLATION_MODE_FOR_TESTS);
         assertSnippets(doc, "ModuleChildType", "name=\"ModuleType", "name=\"FirstChildType", "RootType", "name=\"module1\"");
     }
 

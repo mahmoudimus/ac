@@ -33,6 +33,7 @@ import java.util.Set;
 import static com.atlassian.plugin.remotable.host.common.util.RemotablePluginManifestReader
         .isRemotePlugin;
 import static com.google.common.collect.Sets.newHashSet;
+import static java.lang.String.format;
 
 /**
  * Main remotable plugins functions
@@ -237,8 +238,9 @@ public class DefaultRemotablePluginInstallationService implements RemotablePlugi
                     public Document apply(Throwable input)
                     {
                         log.debug("Error retrieving descriptor", input);
-                        throw new InstallationFailedException("Unable to contact and retrieve " +
-                                "descriptor from " + registrationUrl + " : " + input);
+                        throw new InstallationFailedException(
+                                format("Unable to contact and retrieve descriptor from '%s', message is: %s", registrationUrl, input.getMessage()),
+                                input);
                     }
                 })
                 .claim();
