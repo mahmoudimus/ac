@@ -3,6 +3,7 @@ importClass org.apache.commons.io.IOUtils
 pluginRetrievalService = appContext.getService "com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService"
 signedRequestHandler = appContext.getBean "signedRequestHandler"
 
+# @todo Move _.mash() to here
 {normal} = require "fs"
 {merge, mash, extend} = require "vendor/underscore"
 
