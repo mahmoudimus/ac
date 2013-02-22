@@ -5,9 +5,12 @@ import com.atlassian.plugin.remotable.plugin.module.permission.ApiScopingFilter;
 import com.atlassian.upm.api.license.entity.PluginLicense;
 import com.atlassian.upm.api.util.Option;
 
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
@@ -33,7 +36,11 @@ public class LicenseResource
         Option<PluginLicense> license = licenseRetriever.getLicense(pluginKey);
         if (license.isDefined())
         {
-            return Response.ok(LicenseDetailsFactory.createRemotablePluginLicense(license.get())).build();
+            Date expirationDate = new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(5));
+
+            return Response.ok(LicenseDetailsFactory.createRemotablePluginLicense(license.get()))
+                    .expires(expirationDate)
+                    .build();
         }
         else
         {
