@@ -17,6 +17,15 @@ public class TestOAuth2LOAuthenticator
         OAuthMessage message = new OAuthMessage("GET", "http://localhost", Collections.<Map.Entry>emptyList());
         message.addParameter("foo", "bar");
         String auth = message.getAuthorizationHeader("baz");
-        assertEquals("baz", OAuth2LOAuthenticator.extractPluginKey(auth));
+        assertEquals("baz", OAuth2LOAuthenticator.extractPluginKey(auth, "jim"));
+    }
+
+    @Test
+    public void testExtractPluginKeyNoRealm() throws IOException
+    {
+        OAuthMessage message = new OAuthMessage("GET", "http://localhost", Collections.<Map.Entry>emptyList());
+        message.addParameter("foo", "bar");
+        String auth = message.getAuthorizationHeader(null);
+        assertEquals("jim", OAuth2LOAuthenticator.extractPluginKey(auth, "jim"));
     }
 }

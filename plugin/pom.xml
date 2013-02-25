@@ -372,14 +372,8 @@
         <dependency>
             <groupId>com.atlassian.functest</groupId>
             <artifactId>functest-plugin</artifactId>
-            <version>0.4.2</version>
+            <version>${functest.version}</version>
             <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.seleniumhq.selenium</groupId>
-                    <artifactId>selenium</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.atlassian.oauth</groupId>
@@ -721,7 +715,7 @@
                                 <pluginArtifact>
                                     <groupId>com.atlassian.functest</groupId>
                                     <artifactId>functest-plugin</artifactId>
-                                    <version>0.4.2</version>
+                                    <version>${functest.version}</version>
                                 </pluginArtifact>
                                 <pluginArtifact>
                                     <groupId>com.atlassian.labs</groupId>
@@ -811,7 +805,7 @@
                                 <pluginArtifact>
                                     <groupId>com.atlassian.functest</groupId>
                                     <artifactId>functest-plugin</artifactId>
-                                    <version>0.4.2</version>
+                                    <version>${functest.version}</version>
                                 </pluginArtifact>
                                 <pluginArtifact>
                                     <groupId>com.atlassian.labs</groupId>
@@ -902,7 +896,7 @@
                                 <pluginArtifact>
                                     <groupId>com.atlassian.functest</groupId>
                                     <artifactId>functest-plugin</artifactId>
-                                    <version>0.4.2</version>
+                                    <version>${functest.version}</version>
                                 </pluginArtifact>
                                 <pluginArtifact>
                                     <groupId>com.atlassian.labs</groupId>
@@ -1304,6 +1298,7 @@
         <plugin.version>${project.version}</plugin.version>
         <confluence.plugins.version>2.10.1</confluence.plugins.version>
 		<testkit.version>5.0.27</testkit.version>
+        <functest.version>0.7.1</functest.version>
     </properties>
 
 </project>

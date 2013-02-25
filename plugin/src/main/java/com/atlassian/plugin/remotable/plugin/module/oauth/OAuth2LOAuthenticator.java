@@ -96,7 +96,7 @@ public class OAuth2LOAuthenticator implements Authenticator
                 String authHeader = request.getHeader("Authorization");
                 if (authHeader != null)
                 {
-                    consumerKey = extractPluginKey(authHeader);
+                    consumerKey = extractPluginKey(authHeader, consumerKey);
                 }
             }
         }
@@ -185,9 +185,16 @@ public class OAuth2LOAuthenticator implements Authenticator
         /*!-helper methods*/
     }
 
-    static String extractPluginKey(String authHeader)
+    static String extractPluginKey(String authHeader, String defKey)
     {
-        return authHeader.replaceAll(".* realm=\"([^\"]*)\".*", "$1");
+        if (authHeader.contains("realm="))
+        {
+            return authHeader.replaceAll(".* realm=\"([^\"]*)\".*", "$1");
+        }
+        else
+        {
+            return defKey;
+        }
     }
 
     public static String getLogicalUri(HttpServletRequest request)
