@@ -7,3 +7,8 @@ module.exports = do ->
   proxy context,
     toJSON: ->
       mash ([e.key, e.value] for e in context.toContextMap().entrySet().toArray())
+
+    toArray: ->
+      context.toContextMap().entrySet().toArray().map (o) ->
+        key: o.key
+        value: o.value

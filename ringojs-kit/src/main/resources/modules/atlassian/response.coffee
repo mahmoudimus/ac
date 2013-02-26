@@ -146,6 +146,7 @@ module.exports = class Response
           # @todo validate that @options.aui contains a valid version number
           auiLocals = merge context.toJSON(),
             aui: (if @options.aui then "v#{@options.aui.replace('.', '_')}" else null)
+          auiLocals = merge auiLocals, { ctx: context.toArray() }
           layoutLocals = merge auiLocals,
             stylesheetUrls: parseResourcePaths("css", @options.stylesheets)
             scriptUrls: parseResourcePaths("js", @options.scripts)
@@ -235,6 +236,7 @@ module.exports = class Response
   renderWithLayout: (layout, view, locals, headers, statusCode) ->
     try
       locals = merge context.toJSON(), locals
+      locals = merge locals, { ctx: context.toArray() }
       body = renderView @appDir, view, locals
     catch ex
       @renderErrorWithLayout layout, ex, headers, statusCode

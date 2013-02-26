@@ -61,7 +61,6 @@ class PluginSettings
         @factory.createSettingsForKey key
       else
         @factory.createGlobalSettings()
-    console.dir args
     val = args.pop()
     val = JSON.stringify(val) if typeof val == 'object' or typeof val == 'array'
     store.put args.pop(), val
