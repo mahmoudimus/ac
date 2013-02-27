@@ -143,10 +143,15 @@ public final class RemotePluginContainerModuleDescriptor extends AbstractModuleD
                 {
                     log.info("Application link for remote plugin container '{}' already exists", getPluginKey());
                 }
+                else if (link.getProperty(PLUGIN_KEY_PROPERTY) == null)
+                {
+                    log.warn("Found application link for url '{}' is missing associated plugin key", displayUrl);
+                    link.putProperty(PLUGIN_KEY_PROPERTY, getPluginKey());
+                }
                 else
                 {
                     throw new PluginParseException("Application link already exists for id '" + expectedApplicationId + "' but it isn't the target " +
-                            " plugin '" + getPluginKey() + "'");
+                            " plugin '" + getPluginKey() + "': unexpected plugin key is: " + link.getProperty(PLUGIN_KEY_PROPERTY));
                 }
             }
             else
