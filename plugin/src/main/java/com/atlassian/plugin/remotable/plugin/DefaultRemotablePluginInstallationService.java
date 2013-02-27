@@ -338,7 +338,7 @@ public class DefaultRemotablePluginInstallationService implements RemotablePlugi
                 {
                     String registrationUri = RemotablePluginManifestReader.getRegistrationUrl(
                             bundle);
-                    reinstalledKeys.add(installFromMarketplace(remoteUsername, registrationUri));
+                    reinstalledKeys.add(install(remoteUsername, registrationUri));
                 }
             }
             catch (Exception ex)
