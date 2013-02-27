@@ -11,14 +11,14 @@ import java.lang.reflect.Proxy;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public final class AbstractMethodTypeListenerTest
+public final class AbstractAnnotatedMethodTypeListenerTest
 {
-    private AbstractMethodTypeListener listener;
+    private AbstractAnnotatedMethodTypeListener listener;
 
     @Before
     public void setUp()
     {
-        listener = new AbstractMethodTypeListener(TestAnnotation.class)
+        listener = new AbstractAnnotatedMethodTypeListener(TestAnnotation.class)
         {
             @Override
             protected <I> void hear(Method method, TypeEncounter<I> encounter)

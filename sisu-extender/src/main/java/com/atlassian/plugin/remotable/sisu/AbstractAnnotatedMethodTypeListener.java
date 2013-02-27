@@ -16,9 +16,6 @@ package com.atlassian.plugin.remotable.sisu;
  *  limitations under the License.
  */
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.inject.TypeLiteral;
@@ -27,13 +24,17 @@ import com.google.inject.spi.TypeListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+
 import static com.atlassian.fugue.Option.option;
 import static com.atlassian.fugue.Suppliers.alwaysFalse;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * A Guice {@code TypeListener} to hear annotated methods with lifecycle annotations.
  */
-abstract class AbstractMethodTypeListener implements TypeListener
+abstract class AbstractAnnotatedMethodTypeListener implements TypeListener
 {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -52,9 +53,9 @@ abstract class AbstractMethodTypeListener implements TypeListener
      *
      * @param annotationType the lifecycle annotation to search on methods.
      */
-    public <A extends Annotation> AbstractMethodTypeListener( Class<A> annotationType )
+    public <A extends Annotation> AbstractAnnotatedMethodTypeListener(Class<A> annotationType)
     {
-        this.annotationType = annotationType;
+        this.annotationType = checkNotNull(annotationType);
     }
 
     /**
