@@ -211,7 +211,7 @@
           // inject an appropriate margin value
           injectMargin(options);
         }
-        if (options.base !== true) {
+        if (options.base === true) {
           // inject an appropriate base tag
           injectBase(options);
         }
