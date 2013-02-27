@@ -129,7 +129,7 @@ public final class RemotePluginContainerModuleDescriptor extends AbstractModuleD
             // try to find link with old display url
             for (ApplicationLink otherLink : applicationLinkService.getApplicationLinks(RemotePluginContainerApplicationType.class))
             {
-                if (getPluginKey().equals(otherLink.getProperty(PLUGIN_KEY_PROPERTY)))
+                if (getPluginKey().equals(otherLink.getProperty(PLUGIN_KEY_PROPERTY)) && (link == null || link.getId().get().equals(otherLink.getId().get())))
                 {
                     log.debug("Old application link for this plugin '{}' found with different display url '{}', removing",
                         getPluginKey(), displayUrl);
