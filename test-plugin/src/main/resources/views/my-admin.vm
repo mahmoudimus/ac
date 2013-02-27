@@ -22,11 +22,5 @@
 <div>Response text: <span id="client-http-response-text"></span></div>
 <div>Data: <span id="client-http-data"></span></div>
 
-<h3>Links</h3>
-<a href="">Reload Host Page</a><br>
-<a href="/">Host Context Root</a><br>
-<a href="foo">App-Relative Foo</a><br>
-<a href="myAdmin/foo">Page-Relative Foo</a><br>
-
 <h3>Images (Resize Test)</h3>
 <img src="public/sandcastles.jpg">

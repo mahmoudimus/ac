@@ -36,8 +36,6 @@
                   icon-url="/public/sandcastles.jpg" height="600" width="700"/>
     <dialog-page key="remotePluginDialog" name="Remotable Plugin app1 Dialog" url="/myDialog" />
     <profile-page key="remotePluginProfile" name="Remotable Plugin app1 Profile" url="/myAdmin" />
-    <general-page key="remotePluginMultipage" name="Remotable Plugin app1 Multipage"
-                  link-name="Remotable Plugin app1 Multipage Link" url="/myMultipage"/>
 
     <general-page key="onlyBetty" name="Only Betty" url="/myAdmin">
         <conditions>
