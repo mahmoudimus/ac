@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.Calendar;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -91,28 +92,50 @@ public class StaticResourcesFilter implements Filter
             return;
         }
 
-        CacheEntry entry;
+        // special dev mode case to make developing on all-debug.js not suck
         String encoding;
-        if (req.getHeader("Accept-Encoding").contains("gzip"))
+        CacheEntry entry;
+        final String allDebugJsPath = "all-debug.js";
+        if (devMode && allDebugJsPath.equals(localPath))
         {
-            // check if the request accepts gzip, then get a gzipped version of the resource from the cache
-            localPath += ".gz";
-            encoding = "gzip";
+            encoding = "identity";
+
+            final String moduleDir = "js/iframe/";
+            final String[] modules = {"plugin-core.js", "rpc.js", "plugin-api.js"};
+            ByteArrayOutputStream bout = new ByteArrayOutputStream();
+            for (String module : modules)
+            {
+                bout.write(("/* " + module + " */\n").getBytes());
+                InputStream in = plugin.getResourceAsStream(moduleDir + module);
+                IOUtils.copy(in, bout);
+                bout.write('\n');
+            }
+
+            entry = new CacheEntry(allDebugJsPath, bout.toByteArray());
         }
         else
         {
-            encoding = "identity";
-        }
+            if (req.getHeader("Accept-Encoding").contains("gzip"))
+            {
+                // check if the request accepts gzip, then get a gzipped version of the resource from the cache
+                localPath += ".gz";
+                encoding = "gzip";
+            }
+            else
+            {
+                encoding = "identity";
+            }
 
-        // ask the cache for an entry for the named resource
-        entry = cache.get(localPath);
+            // ask the cache for an entry for the named resource
+            entry = cache.get(localPath);
 
-        // the entry's data will be empty if the resource was not found
-        if (entry.getData().length == 0)
-        {
-            // if not found, 404
-            send404(fullPath, res);
-            return;
+            // the entry's data will be empty if the resource was not found
+            if (entry.getData().length == 0)
+            {
+                // if not found, 404
+                send404(fullPath, res);
+                return;
+            }
         }
 
         res.setContentType(entry.getContentType());
@@ -166,10 +189,16 @@ public class StaticResourcesFilter implements Filter
 
     private class CacheEntry
     {
-        private String etag;
         private String contentType;
         private byte[] data;
+        private String etag;
         private int ttl;
+
+        public CacheEntry(String path, byte[] data)
+        {
+            setContentType(path);
+            setData(data);
+        }
 
         public CacheEntry(String path)
         {
@@ -178,6 +207,8 @@ public class StaticResourcesFilter implements Filter
             {
                 path = path.substring(0, path.length() - 3);
             }
+
+            setContentType(path);
 
             InputStream in;
             try
@@ -196,13 +227,12 @@ public class StaticResourcesFilter implements Filter
                         IOUtils.copy(in, out);
                         out.finish();
                         out.close();
-                        data = bytes.toByteArray();
+                        setData(bytes.toByteArray());
                     }
                     else
                     {
-                        data = IOUtils.toByteArray(in);
+                        setData(IOUtils.toByteArray(in));
                     }
-                    etag = DigestUtils.md5Hex(data);
                 }
             }
             catch (IOException e)
@@ -211,14 +241,23 @@ public class StaticResourcesFilter implements Filter
                 clear();
             }
 
+            ttl = path.startsWith("aui/") ? AUI_TTL_FAR_FUTURE : PLUGIN_TTL_NEAR_FUTURE;
+        }
+
+        private void setContentType(String path)
+        {
             contentType = config.getServletContext().getMimeType(path);
             // covers anything not mapped in default servlet context config, such as web fonts
             if (contentType == null)
             {
                 contentType = "application/octet-stream";
             }
+        }
 
-            ttl = path.startsWith("aui/") ? AUI_TTL_FAR_FUTURE : PLUGIN_TTL_NEAR_FUTURE;
+        private void setData(byte[] data)
+        {
+            this.data = data;
+            this.etag = DigestUtils.md5Hex(data);
         }
 
         public String getEtag()

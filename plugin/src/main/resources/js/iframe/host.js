@@ -56,7 +56,7 @@
       return $nexus.data("ra.dialog.buttons").getButton(name);
     }
 
-    var rpc = new easyXDM.Rpc({
+    var rpc = new AP._Rpc({
       remote: options.src,
       container: contentId,
       channel: channelId,
@@ -90,7 +90,7 @@
           }
         }),
         fireEvent: function(id, props) {
-            publish("p3.iframe." + id, props);
+          publish("p3.iframe." + id, props);
         },
         getLocation: function () {
           return global.location.href;

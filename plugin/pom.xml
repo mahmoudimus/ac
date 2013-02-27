@@ -611,7 +611,7 @@
                     <version>1.0.4</version>
                     <configuration>
                         <commands>
-                            <pi>resources com.atlassian.maven.plugins:maven-amps-plugin:filter-plugin-descriptor compile com.atlassian.maven.plugins:maven-amps-plugin:copy-bundled-dependencies net.alchim31.maven:yuicompressor-maven-plugin:compress#all-min-css net.alchim31.maven:yuicompressor-maven-plugin:compress#all-debug-css net.alchim31.maven:yuicompressor-maven-plugin:compress#all-min-js net.alchim31.maven:yuicompressor-maven-plugin:compress#all-debug-js org.codehaus.mojo:xml-maven-plugin:transform com.atlassian.maven.plugins:maven-amps-plugin:generate-manifest com.atlassian.maven.plugins:maven-amps-plugin:jar com.atlassian.maven.plugins:maven-amps-plugin:install</pi>
+                            <pi>resources com.atlassian.maven.plugins:maven-amps-plugin:filter-plugin-descriptor compile com.atlassian.maven.plugins:maven-amps-plugin:copy-bundled-dependencies net.alchim31.maven:yuicompressor-maven-plugin:compress#all-min-css net.alchim31.maven:yuicompressor-maven-plugin:compress#all-debug-css net.alchim31.maven:yuicompressor-maven-plugin:compress#all-min-js org.codehaus.mojo:xml-maven-plugin:transform com.atlassian.maven.plugins:maven-amps-plugin:generate-manifest com.atlassian.maven.plugins:maven-amps-plugin:jar com.atlassian.maven.plugins:maven-amps-plugin:install</pi>
                         </commands>
                     </configuration>
                 </plugin>
@@ -1173,36 +1173,39 @@
                                     <insertNewLine>true</insertNewLine>
                                     <output>${project.build.outputDirectory}/all.js</output>
                                     <includes>
-                                        <include>js/iframe-min/easyXDM-min.js</include>
-                                        <include>js/iframe-min/plugin-min.js</include>
+                                        <include>js/iframe-min/plugin-core-min.js</include>
+                                        <include>js/iframe-min/rpc-min.js</include>
+                                        <include>js/iframe-min/plugin-api-min.js</include>
                                     </includes>
                                 </aggregation>
                             </aggregations>
                         </configuration>
                     </execution>
-                    <execution>
-                        <id>all-debug-js</id>
-                        <goals>
-                            <goal>compress</goal>
-                        </goals>
-                        <configuration>
-                            <gzip>false</gzip>
-                            <nocompress>true</nocompress>
-                            <jswarn>false</jswarn>
-                            <excludeResources>true</excludeResources>
-                            <aggregations>
-                                <aggregation>
-                                    <removeIncluded>false</removeIncluded>
-                                    <insertNewLine>true</insertNewLine>
-                                    <output>${project.build.outputDirectory}/all-debug.js</output>
-                                    <includes>
-                                        <include>js/iframe/easyXDM.js</include>
-                                        <include>js/iframe/plugin.js</include>
-                                    </includes>
-                                </aggregation>
-                            </aggregations>
-                        </configuration>
-                    </execution>
+                    <!-- Now being aggregated in dev mode dynamically by StaticResourcesFilter. -->
+                    <!--<execution>-->
+                        <!--<id>all-debug-js</id>-->
+                        <!--<goals>-->
+                            <!--<goal>compress</goal>-->
+                        <!--</goals>-->
+                        <!--<configuration>-->
+                            <!--<gzip>false</gzip>-->
+                            <!--<nocompress>true</nocompress>-->
+                            <!--<jswarn>false</jswarn>-->
+                            <!--<excludeResources>true</excludeResources>-->
+                            <!--<aggregations>-->
+                                <!--<aggregation>-->
+                                    <!--<removeIncluded>false</removeIncluded>-->
+                                    <!--<insertNewLine>true</insertNewLine>-->
+                                    <!--<output>${project.build.outputDirectory}/all-debug.js</output>-->
+                                    <!--<includes>-->
+                                        <!--<include>js/iframe/plugin-core.js</include>-->
+                                        <!--<include>js/iframe/rpc.js</include>-->
+                                        <!--<include>js/iframe/plugin-api.js</include>-->
+                                    <!--</includes>-->
+                                <!--</aggregation>-->
+                            <!--</aggregations>-->
+                        <!--</configuration>-->
+                    <!--</execution>-->
                 </executions>
             </plugin>
             <plugin>

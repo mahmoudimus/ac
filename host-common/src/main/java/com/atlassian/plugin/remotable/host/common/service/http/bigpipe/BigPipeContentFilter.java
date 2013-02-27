@@ -4,6 +4,8 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -12,6 +14,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class BigPipeContentFilter implements Filter
 {
+    private static final Pattern URI_PATTERN = Pattern.compile("/bigpipe/request/([0-9a-fA-F]+)(/[0-9]+)?$");
+
     private final BigPipeImpl bigPipe;
 
     public BigPipeContentFilter(BigPipeImpl bigPipe)
@@ -44,10 +48,10 @@ public class BigPipeContentFilter implements Filter
         HttpServletResponse res = (HttpServletResponse) sres;
         String uri = req.getRequestURI();
 
-        int idIndex = uri.lastIndexOf('/');
-        String requestId = idIndex >= 0 && idIndex < uri.length() - 1 ? uri.substring(idIndex + 1) : null;
-        if (requestId != null)
+        Matcher matcher = URI_PATTERN.matcher(uri);
+        if (matcher.find())
         {
+            String requestId = matcher.group(1);
             res.setStatus(200);
             res.setContentType("application/json");
             res.setCharacterEncoding("UTF-8");

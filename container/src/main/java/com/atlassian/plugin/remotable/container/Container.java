@@ -101,6 +101,7 @@ import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Sets.newHashSet;
 import static java.lang.Boolean.FALSE;
 import static java.util.Arrays.asList;
+import static java.util.Collections.singleton;
 
 public final class Container
 {
@@ -303,6 +304,11 @@ public final class Container
 
     private Set<URI> findHostProducts()
     {
+        String hostBaseUrl = System.getProperty("hostBaseUrl");
+        if (hostBaseUrl != null)
+        {
+            return singleton(URI.create(hostBaseUrl));
+        }
         Set<URI> found = newHashSet();
         for (URI host : AUTOREGISTER_HOSTS)
         {

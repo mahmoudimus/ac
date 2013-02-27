@@ -126,6 +126,17 @@ public final class RemotePluginContainerModuleDescriptor extends AbstractModuleD
                 manuallyDeleteApplicationId(expectedApplicationId);
             }
 
+            // try to find link with old display url
+            for (ApplicationLink otherLink : applicationLinkService.getApplicationLinks(RemotePluginContainerApplicationType.class))
+            {
+                if (getPluginKey().equals(otherLink.getProperty(PLUGIN_KEY_PROPERTY)))
+                {
+                    log.debug("Old application link for this plugin '{}' found with different display url '{}', removing",
+                        getPluginKey(), displayUrl);
+                    applicationLinkService.deleteApplicationLink(otherLink);
+                }
+            }
+
             if (link != null)
             {
                 if (getPluginKey().equals(link.getProperty(PLUGIN_KEY_PROPERTY)))
@@ -140,17 +151,6 @@ public final class RemotePluginContainerModuleDescriptor extends AbstractModuleD
             }
             else
             {
-                // try to find link with old display url
-                for (ApplicationLink otherLink : applicationLinkService.getApplicationLinks(RemotePluginContainerApplicationType.class))
-                {
-                    if (getPluginKey().equals(otherLink.getProperty(PLUGIN_KEY_PROPERTY)))
-                    {
-                        log.debug("Old application link for this plugin '{}' found with different display url '{}', removing",
-                                getPluginKey(), displayUrl);
-                        applicationLinkService.deleteApplicationLink(otherLink);
-                    }
-                }
-
                 log.info("Creating an application link for the remote plugin container of key '{}'", getPluginKey());
                 link = applicationLinkService.addApplicationLink(expectedApplicationId, applicationType, applicationLinkDetails);
                 link.putProperty(PLUGIN_KEY_PROPERTY, getPluginKey());
