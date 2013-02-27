@@ -177,9 +177,8 @@
   function size(width, height) {
     var w = width == null ? "100%" : width,
         max = Math.max,
-        doc = $.appdoc(),
-        body = doc.body,
-        del = doc.documentElement,
+        body = document.body,
+        del = document.documentElement,
         scroll = "scrollHeight",
         offset = "offsetHeight",
         client = "clientHeight",
@@ -188,90 +187,64 @@
     return {w: w, h: h};
   }
 
-  function initNormal(options) {
-    if (options.document) {
-      $.appdoc(options.document);
-    }
-    isDialog = window.location.toString().indexOf("dialog=1") > 0;
-    var config = {};
-    // init stubs for private bridge functions
-    var stubs = {
-        // !!! JIRA specific !!!
-        getWorkflowConfiguration: {},
-        setDialogButtonEnabled: {},
-        isDialogButtonEnabled: {}
-    };
-    // add stubs for each public api
-    each(api, function (method) { stubs[method] = {}; });
-    rpc = new AP._Rpc(config, {remote: stubs, local: internal});
-    rpc.init();
-    // integrate the iframe with the host document
-    if (options.margin !== false) {
-      // inject an appropriate margin value
-      injectMargin(options);
-    }
-    if (options.base !== false) {
-      // inject an appropriate base tag
-      injectBase(options);
-    }
-    if (options.resize !== false) {
-      // resize the parent iframe for the size of this document on load
-      bind(options.window || window, "load", function () { AP.resize(); });
-    }
-    if (isDialog) {
-      // expose the dialog sub-api if appropriate
-      AP.Dialog = makeDialog();
-    }
-    // !!! JIRA specific !!!
-    AP.WorkflowConfiguration = makeWorkflowConfiguration();
-  }
-
-  function initBridge() {
-    var sup = AP.resize;
-    // on resize, resize frame in this doc then prop to parent
-    AP.resize = debounce(function (w, h) {
-      $("iframe", document).each(function (i, iframe) {
-        var dim = size(w, h);
-        w = dim.w;
-        h = dim.h;
-        iframe.width = typeof w === "number" ? w + "px" : w;
-        iframe.height = typeof h === "number" ? h + "px" : h;
-      });
-      sup.call(AP, w, h);
-    }, 50);
-  }
-
-  function initBridged(options) {
-    AP = window.AP = parent.AP;
-    options = extend({}, options, {
-      bridged: true,
-      window: window,
-      document: document,
-      base: false
-    });
-    AP.init(options);
-  }
-
   var api = {
 
     // inits the remote plugin on iframe content load
     init: function (options) {
       options = options || {};
-      var isBridged;
-      try { isBridged = !!parent.AP; } catch (ignore) { }
-      if (isBridged) {
-        initBridged(options);
-      }
-      else if (!isInited) {
-        if (options === "bridge") {
-          initBridge();
+      if (!isInited) {
+        isDialog = window.location.toString().indexOf("dialog=1") > 0;
+        var config = {};
+        // init stubs for private bridge functions
+        var stubs = {
+          // !!! JIRA specific !!!
+          getWorkflowConfiguration: {},
+          setDialogButtonEnabled: {},
+          isDialogButtonEnabled: {}
+        };
+        // add stubs for each public api
+        each(api, function (method) { stubs[method] = {}; });
+        rpc = new AP._Rpc(config, {remote: stubs, local: internal});
+        rpc.init();
+        // integrate the iframe with the host document
+        if (options.margin !== false) {
+          // inject an appropriate margin value
+          injectMargin(options);
         }
-        else {
-          initNormal(options);
-          isInited = true;
+        if (options.base !== true) {
+          // inject an appropriate base tag
+          injectBase(options);
         }
+        if (options.resize !== false) {
+          var rate = options.resize;
+          rate = rate === "auto" ? 125 : +rate;
+          // force rate to an acceptable minimum if it's a number
+          if (rate >= 0 && rate < 60) rate = 60;
+          if (!isDialog && rate > 0) {
+            // auto-resize when size changes are detected
+            bind(window, "load", function () {
+              var last;
+              setInterval(function () {
+                var curr = size();
+                if (!last || (last.w !== curr.w || last.w !== curr.w)) AP.resize();
+                last = curr;
+              }, rate);
+            });
+          }
+          else {
+            // resize the parent iframe for the size of this document on load
+            bind(window, "load", function () { AP.resize(); });
+          }
+        }
+        if (isDialog) {
+          // expose the dialog sub-api if appropriate
+          AP.Dialog = makeDialog();
+        }
+        // !!! JIRA specific !!!
+        AP.WorkflowConfiguration = makeWorkflowConfiguration();
+        isInited = true;
       }
-      else if (!options.bridged) {
+      else {
         log("Manual call to init is a deprecated no-op; use 'data-options' attribute on script to set options");
       }
     },
@@ -335,10 +308,10 @@
     //
     // @param width   the desired width
     // @param height  the desired height
-    resize: function (width, height) {
+    resize: debounce(function (width, height) {
       var dim = size(width, height);
       rpc.resize(dim.w, dim.h);
-    },
+    }, 50),
 
     // execute an XMLHttpRequest in the context of the host application
     //
@@ -356,8 +329,7 @@
         return success(args[0], args[1], Xhr(args[2]));
       }
       // unpacks bridged error args into local error args
-      function fail(err) {
-        var args = err.message;
+      function fail(args) {
         return error(Xhr(args[0]), args[1], args[2]);
       }
       // shared no-op
@@ -448,9 +420,9 @@
           },
           trigger: function () {
             var self = this,
-              cont = true,
-              result = true,
-              list = listeners[name];
+                cont = true,
+                result = true,
+                list = listeners[name];
             each(list, function (i, listener) {
               result = listener.call(self, {
                 button: self,
@@ -467,8 +439,8 @@
   }
   // !!! JIRA specific !!!
   function makeWorkflowConfiguration() {
-    var workflowListener;
-    var validationListener;
+    var workflowListener,
+        validationListener;
     return {
       onSaveValidation: function (listener) {
         validationListener = listener
@@ -495,23 +467,17 @@
   var options,
       $script = $("script[src*='/remotable-plugins/all']");
   if ($script && /\/remotable-plugins\/all(-debug)?\.js($|\?)/.test($script.attr("src"))) {
-    if ($script.attr("data-bridge") === "true") {
-      // multipage bridge iframe
-      options = "bridge";
-    }
-    else {
-      // normal iframe
-      options = {};
-      var optStr = $script.attr("data-options");
-      if (optStr) {
-        each(optStr.split(";"), function (i, nvpair) {
-          nvpair = trim(nvpair);
-          if (nvpair) {
-            var nv = nvpair.split(":"), k = trim(nv[0]), v = trim(nv[1]);
-            if (k && v != null) options[k] = v === "true";
-          }
-        });
-      }
+    // normal iframe
+    options = {};
+    var optStr = $script.attr("data-options");
+    if (optStr) {
+      each(optStr.split(";"), function (i, nvpair) {
+        nvpair = trim(nvpair);
+        if (nvpair) {
+          var nv = nvpair.split(":"), k = trim(nv[0]), v = trim(nv[1]);
+          if (k && v != null) options[k] = v === "true" || v === "false" ? v === "true" : v;
+        }
+      });
     }
   }
 

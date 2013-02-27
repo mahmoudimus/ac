@@ -1,7 +1,6 @@
 (function (window, document) {
 
-  var AP = window.RA = window.AP = {}, // RA is deprecated
-      appdoc = document;
+  var AP = window.RA = window.AP = {}; // RA is deprecated
 
   // universal iterator utility
   function each(o, it) {
@@ -65,7 +64,7 @@
 
   // basic dom util
   function $(sel, context) {
-    context = context || appdoc;
+    context = context || document;
     var els = [];
     if (sel) {
       if (typeof sel === "string") {
@@ -172,7 +171,7 @@
     var timeout;
     return function () {
       var ctx = this,
-        args = [].slice.call(arguments);
+          args = [].slice.call(arguments);
       function later() {
         timeout = null;
         fn.apply(ctx, args);
@@ -207,10 +206,7 @@
     fetch: fetch,
     debounce: debounce,
     log: log,
-    handleError: handleError,
-    appdoc: function (doc) {
-      return appdoc = doc || appdoc;
-    }
+    handleError: handleError
   });
 
 }(this, document));
