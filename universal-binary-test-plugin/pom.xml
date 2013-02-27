@@ -42,9 +42,9 @@
         </dependency>
 
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>remotable-plugins-servlet-kit</artifactId>
-            <version>${project.version}</version>
+            <groupId>com.atlassian.pluginkit</groupId>
+            <artifactId>servlet-kit</artifactId>
+            <version>${servletkit.version}</version>
         </dependency>
 
         <!-- test -->

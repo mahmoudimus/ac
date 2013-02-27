@@ -42,17 +42,10 @@
         </dependency>
 
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>remotable-plugins-ringojs-kit</artifactId>
-            <version>${project.version}</version>
+            <groupId>com.atlassian.pluginkit</groupId>
+            <artifactId>ringojs-kit</artifactId>
+            <version>${ringojskit.version}</version>
             <scope>compile</scope>
-        </dependency>
-
-        <!-- because maven 3 sucks and won't depend on the right version -->
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>remotable-plugins-kit-common</artifactId>
-            <version>${project.version}</version>
         </dependency>
 
         <dependency>
@@ -423,7 +416,7 @@
                             <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
-                            <includeArtifactIds>remotable-plugins-kit-common,remotable-plugins-ringojs-kit,ringojs</includeArtifactIds>
+                            <includeArtifactIds>ringojs-kit,ringojs</includeArtifactIds>
                             <stripVersion>true</stripVersion>
                             <outputDirectory>${project.build.outputDirectory}</outputDirectory>
                         </configuration>
@@ -478,8 +471,7 @@
                             </transformers>
                             <artifactSet>
                                 <excludes>
-                                    <exclude>${project.groupId}:remotable-plugins-kit-common</exclude>
-                                    <exclude>${project.groupId}:remotable-plugins-ringojs-kit</exclude>
+                                    <exclude>com.atlassian.pluginkit:ringojs-kit</exclude>
                                     <exclude>org.twdata.org.ringojs:ringojs</exclude>
                                 </excludes>
                             </artifactSet>

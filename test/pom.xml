@@ -14,9 +14,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.atlassian.plugins</groupId>
-            <artifactId>remotable-plugins-ringojs-kit</artifactId>
-            <version>${project.version}</version>
+            <groupId>com.atlassian.pluginkit</groupId>
+            <artifactId>ringojs-kit</artifactId>
+            <version>${ringojskit.version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -41,12 +41,6 @@
             <optional>true</optional>
         </dependency>
 
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>remotable-plugins-kit-common</artifactId>
-            <version>${project.version}</version>
-            <scope>provided</scope>
-        </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>remotable-plugins-api</artifactId>

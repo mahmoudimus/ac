@@ -65,14 +65,9 @@
             <version>${api.artifact.version}</version>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>remotable-plugins-kit-common</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>remotable-plugins-ringojs-kit</artifactId>
-            <version>${project.version}</version>
+            <groupId>com.atlassian.pluginkit</groupId>
+            <artifactId>ringojs-kit</artifactId>
+            <version>${ringojskit.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>

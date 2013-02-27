@@ -1,6 +1,0 @@
---name       "Atlassian Plugins 3"
---readme     README.md
---title      "AP3 Ringo-Kit API"
---quiet
---output-dir ./doc
-./

@@ -64,21 +64,12 @@ public class RemotePluginArtifactFactory
         InputStream in = null;
         try
         {
-            in = getClass().getResourceAsStream("/remotable-plugins-kit-common.jar");
-            ZipInputStream zin = new ZipInputStream(in);
-            ZipEntry entry;
-            while ((entry = zin.getNextEntry()) != null)
-            {
-                if (CLASSES_TO_INCLUDE_CLASS_PATH.equals(entry.getName()))
-                {
-                    return IOUtils.toByteArray(zin);
-                }
-            }
-            throw new IllegalStateException("Couldn't find com.atlassian.plugin.remotable.kit.common.ClassesToInclude");
+            return IOUtils.toByteArray(
+                    getClass().getResourceAsStream("/" + ClassesToInclude.class.getName().replace('.', '/') + ".class"));
         }
         catch (IOException e)
         {
-            throw new IllegalStateException("Couldn't read from remotable-plugins-kit-common.jar", e);
+            throw new IllegalStateException("Couldn't read from classes to include class", e);
         }
         finally
         {

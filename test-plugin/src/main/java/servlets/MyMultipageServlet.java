@@ -1,7 +1,7 @@
 package servlets;
 
-import com.atlassian.plugin.remotable.kit.servlet.AbstractPageServlet;
-import com.atlassian.plugin.remotable.kit.servlet.Multipage;
+import com.atlassian.pluginkit.servlet.AbstractPageServlet;
+import com.atlassian.pluginkit.servlet.Multipage;
 import com.google.common.collect.ImmutableMap;
 
 import javax.inject.Named;

@@ -1,9 +1,9 @@
 package servlets;
 
-import com.atlassian.plugin.remotable.kit.servlet.AbstractPageServlet;
-import com.atlassian.plugin.remotable.kit.servlet.AppScripts;
-import com.atlassian.plugin.remotable.kit.servlet.AppStylesheets;
-import com.atlassian.plugin.remotable.kit.servlet.Aui;
+import com.atlassian.pluginkit.servlet.AbstractPageServlet;
+import com.atlassian.pluginkit.servlet.AppScripts;
+import com.atlassian.pluginkit.servlet.AppStylesheets;
+import com.atlassian.pluginkit.servlet.Aui;
 import com.google.common.collect.ImmutableMap;
 
 import javax.inject.Singleton;

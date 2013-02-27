@@ -1,6 +1,6 @@
 package servlets;
 
-import com.atlassian.plugin.remotable.kit.servlet.AbstractPageServlet;
+import com.atlassian.pluginkit.servlet.AbstractPageServlet;
 import com.google.common.collect.ImmutableMap;
 
 import java.io.IOException;

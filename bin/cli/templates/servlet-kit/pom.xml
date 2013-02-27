@@ -12,13 +12,13 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.atlassian.plugins</groupId>
-            <artifactId>remotable-plugins-servlet-kit</artifactId>
-            <version>@plugin_version@</version>
+            <groupId>com.atlassian.pluginkit</groupId>
+            <artifactId>servlet-kit</artifactId>
+            <version>0.7.1</version>
         </dependency>
         <dependency>
             <groupId>com.atlassian.plugins</groupId>
-            <artifactId>remotable-plugins-api</artifactId>
+            <artifactId>remotable-plugins-plugin-api</artifactId>
             <version>@plugin_version@</version>
             <scope>provided</scope>
         </dependency>

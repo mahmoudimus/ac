@@ -1,4 +1,4 @@
-package com.atlassian.plugin.remotable.kit.common;
+package com.atlassian.plugin.remotable.plugin.installer;
 
 import com.atlassian.httpclient.api.HttpClient;
 import com.atlassian.jira.plugin.searchrequestview.SearchRequestView;
