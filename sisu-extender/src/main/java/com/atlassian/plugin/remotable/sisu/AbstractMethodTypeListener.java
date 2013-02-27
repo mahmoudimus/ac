@@ -19,15 +19,24 @@ package com.atlassian.plugin.remotable.sisu;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Function;
 import com.google.inject.TypeLiteral;
 import com.google.inject.spi.TypeEncounter;
 import com.google.inject.spi.TypeListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static com.atlassian.fugue.Option.option;
+import static com.atlassian.fugue.Suppliers.alwaysFalse;
 
 /**
  * A Guice {@code TypeListener} to hear annotated methods with lifecycle annotations.
  */
 abstract class AbstractMethodTypeListener implements TypeListener
 {
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+
     /**
      * The {@code java} package constants.
      */
@@ -64,7 +73,9 @@ abstract class AbstractMethodTypeListener implements TypeListener
      */
     private <I> void hear( Class<? super I> type, TypeEncounter<I> encounter )
     {
-        if ( type == null || isProxy(type) || type.getPackage().getName().startsWith( JAVA_PACKAGE ))
+        logger.debug("Encountering type: {}", type);
+
+        if ( type == null || isProxy(type) || isJdkType(type))
         {
             return;
         }
@@ -86,9 +97,58 @@ abstract class AbstractMethodTypeListener implements TypeListener
         hear( type.getSuperclass(), encounter );
     }
 
-    private <I> boolean isProxy(Class<? super I> type)
+    @VisibleForTesting
+    boolean isProxy(final Class<?> type)
     {
-        return type.getName().startsWith("$Proxy");
+        return option(type)
+                .map(new Function<Class<?>, String>()
+                {
+                    @Override
+                    public String apply(Class<?> type)
+                    {
+                        return type.getSimpleName();
+                    }
+                })
+                .fold(alwaysFalse(), new Function<String, Boolean>()
+                {
+                    @Override
+                    public Boolean apply(String typeSimpleName)
+                    {
+                        final boolean isProxy = typeSimpleName.startsWith("$Proxy");
+                        logger.debug("Type '{}' is {} a proxy", type, isProxy ? "" : "NOT");
+                        return isProxy;
+                    }
+                });
+    }
+
+    @VisibleForTesting
+    boolean isJdkType(Class<?> type)
+    {
+        return option(type)
+                .map(new Function<Class<?>, Package>()
+                {
+                    @Override
+                    public Package apply(Class<?> type)
+                    {
+                        return type.getPackage();
+                    }
+                })
+                .map(new Function<Package, String>()
+                {
+                    @Override
+                    public String apply(Package typePackage)
+                    {
+                        return typePackage.getName();
+                    }
+                })
+                .fold(alwaysFalse(), new Function<String, Boolean>()
+                {
+                    @Override
+                    public Boolean apply(String packageName)
+                    {
+                        return packageName.startsWith(JAVA_PACKAGE);
+                    }
+                });
     }
 
     /**
