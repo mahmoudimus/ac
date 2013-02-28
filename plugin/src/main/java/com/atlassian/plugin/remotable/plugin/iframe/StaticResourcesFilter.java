@@ -96,7 +96,7 @@ public class StaticResourcesFilter implements Filter
         String encoding;
         CacheEntry entry;
         final String allDebugJsPath = "all-debug.js";
-        if (devMode && allDebugJsPath.equals(localPath))
+        if (allDebugJsPath.equals(localPath))
         {
             encoding = "identity";
 
