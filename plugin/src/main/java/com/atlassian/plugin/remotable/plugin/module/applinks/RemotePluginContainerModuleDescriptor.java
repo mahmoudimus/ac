@@ -126,16 +126,17 @@ public final class RemotePluginContainerModuleDescriptor extends AbstractModuleD
                 manuallyDeleteApplicationId(expectedApplicationId);
             }
 
-            // try to find link with old display url
-            for (ApplicationLink otherLink : applicationLinkService.getApplicationLinks(RemotePluginContainerApplicationType.class))
-            {
-                if (getPluginKey().equals(otherLink.getProperty(PLUGIN_KEY_PROPERTY)) && (link == null || link.getId().get().equals(otherLink.getId().get())))
-                {
-                    log.debug("Old application link for this plugin '{}' found with different display url '{}', removing",
-                        getPluginKey(), displayUrl);
-                    applicationLinkService.deleteApplicationLink(otherLink);
-                }
-            }
+// @todo this should work but it just fucks stuff up beyond belief (instead of lines 160-170)
+//            try to find link with old display url
+//            for (ApplicationLink otherLink : applicationLinkService.getApplicationLinks(RemotePluginContainerApplicationType.class))
+//            {
+//                if (getPluginKey().equals(otherLink.getProperty(PLUGIN_KEY_PROPERTY)) && (link == null || link.getId().get().equals(otherLink.getId().get())))
+//                {
+//                    log.debug("Old application link for this plugin '{}' found with different display url '{}', removing",
+//                        getPluginKey(), displayUrl);
+//                    applicationLinkService.deleteApplicationLink(otherLink);
+//                }
+//            }
 
             if (link != null)
             {
@@ -143,11 +144,12 @@ public final class RemotePluginContainerModuleDescriptor extends AbstractModuleD
                 {
                     log.info("Application link for remote plugin container '{}' already exists", getPluginKey());
                 }
-                else if (link.getProperty(PLUGIN_KEY_PROPERTY) == null)
-                {
-                    log.warn("Found application link for url '{}' is missing associated plugin key", displayUrl);
-                    link.putProperty(PLUGIN_KEY_PROPERTY, getPluginKey());
-                }
+// @todo this should work but it just fucks stuff up beyond belief (instead of lines 160-170)
+//                else if (link.getProperty(PLUGIN_KEY_PROPERTY) == null)
+//                {
+//                    log.warn("Found application link for url '{}' is missing associated plugin key", displayUrl);
+//                    link.putProperty(PLUGIN_KEY_PROPERTY, getPluginKey());
+//                }
                 else
                 {
                     throw new PluginParseException("Application link already exists for id '" + expectedApplicationId + "' but it isn't the target " +
@@ -156,6 +158,17 @@ public final class RemotePluginContainerModuleDescriptor extends AbstractModuleD
             }
             else
             {
+                // try to find link with old display url
+                for (ApplicationLink otherLink : applicationLinkService.getApplicationLinks(RemotePluginContainerApplicationType.class))
+                {
+                    if (getPluginKey().equals(otherLink.getProperty(PLUGIN_KEY_PROPERTY)))
+                    {
+                        log.debug("Old application link for this plugin '{}' found with different display url '{}', removing",
+                            getPluginKey(), displayUrl);
+                        applicationLinkService.deleteApplicationLink(otherLink);
+                    }
+                }
+
                 log.info("Creating an application link for the remote plugin container of key '{}'", getPluginKey());
                 link = applicationLinkService.addApplicationLink(expectedApplicationId, applicationType, applicationLinkDetails);
                 link.putProperty(PLUGIN_KEY_PROPERTY, getPluginKey());
