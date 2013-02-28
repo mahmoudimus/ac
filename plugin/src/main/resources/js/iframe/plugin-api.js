@@ -226,8 +226,10 @@
               var last;
               setInterval(function () {
                 var curr = size();
-                if (!last || (last.w !== curr.w || last.w !== curr.w)) AP.resize();
-                last = curr;
+                if (!last || last.w !== curr.w || last.h !== curr.h) {
+                  AP.resize(curr.w, curr.h);
+                  last = curr;
+                }
               }, rate);
             });
           }
