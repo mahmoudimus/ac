@@ -146,7 +146,8 @@ public class ZipWriter
             }
             else
             {
-                if (excludes.contains(files[i].getName()))
+                if (excludes.contains(files[i].getName()) ||
+                    files[i].getName().startsWith("container-"))
                 {
                     continue;
                 }
