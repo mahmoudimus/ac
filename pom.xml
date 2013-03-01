@@ -420,7 +420,7 @@
         <webhooks.api.version>0.13</webhooks.api.version>
         <httpclient.api.version>${webhooks.api.version}</httpclient.api.version>
         <servletkit.version>0.7.1</servletkit.version>
-        <ringojskit.version>0.7.0</ringojskit.version>
+        <ringojskit.version>0.7.1</ringojskit.version>
         <gatekeeper.property>5</gatekeeper.property>
     </properties>
 </project>
