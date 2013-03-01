@@ -1,6 +1,9 @@
 package com.atlassian.plugin.remotable.sisu;
 
+import com.atlassian.fugue.Option;
 import com.atlassian.plugin.remotable.api.annotation.PublicComponent;
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.inject.Provider;
 import com.google.inject.TypeLiteral;
 import com.google.inject.spi.TypeEncounter;
@@ -12,6 +15,7 @@ import org.osgi.framework.ServiceRegistration;
 import java.lang.reflect.Proxy;
 import java.util.Arrays;
 
+import static com.atlassian.fugue.Option.some;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 final class PublicComponentAnnotatedClassTypeListener extends AbstractAnnotatedClassTypeListener<PublicComponent>
@@ -42,19 +46,14 @@ final class PublicComponentAnnotatedClassTypeListener extends AbstractAnnotatedC
         bundleContext.registerService(interfaces, new ServiceFactory()
         {
             @Override
-            public Object getService(Bundle bundle, ServiceRegistration registration)
+            public Object getService(final Bundle bundle, final ServiceRegistration registration)
             {
                 logger.debug("Bundle {} is getting a service reference for {} exposed as {}", new Object[]{bundle, clazz, interfacesAsString});
-                Object service = provider.get();
-                if (service instanceof ServiceFactory)
-                {
-                    ServiceFactory serviceFactory = (ServiceFactory) wrapService(new Class[]{ServiceFactory.class}, service);
-                    return wrapService(annotation.value(), serviceFactory.getService(bundle, registration));
-                }
-                else
-                {
-                    return wrapService(annotation.value(), service);
-                }
+                return wrapService(
+                        annotation.value(),
+                        new ServiceSupplier(clazz, provider, bundle, registration),
+                        clazz.getClassLoader(),
+                        some("Proxy(" + clazz.getName() + ")"));
             }
 
             @Override
@@ -76,13 +75,46 @@ final class PublicComponentAnnotatedClassTypeListener extends AbstractAnnotatedC
      *
      * @param interfaces The interfaces to proxy
      * @param service The instance to proxy
+     * @param classLoader the class loader to use for the proxy
+     * @param toString an optional override for the toString method.
      * @return A proxy that wraps the service
      */
-    private Object wrapService(final Class<?>[] interfaces, final Object service)
+    private static Object wrapService(final Class<?>[] interfaces, final Supplier<Object> service, ClassLoader classLoader, Option<String> toString)
     {
         return Proxy.newProxyInstance(
-                service.getClass().getClassLoader(),
+                classLoader,
                 interfaces,
-                new ContextClassLoaderSettingInvocationHandler(service));
+                new ContextClassLoaderSettingInvocationHandler(service, toString));
+    }
+
+    private static final class ServiceSupplier implements Supplier<Object>
+    {
+        private final Class<?> clazz;
+        private final Provider<?> provider;
+        private final Bundle bundle;
+        private final ServiceRegistration registration;
+
+        public ServiceSupplier(Class<?> clazz, Provider<?> provider, Bundle bundle, ServiceRegistration registration)
+        {
+            this.clazz = clazz;
+            this.provider = provider;
+            this.bundle = bundle;
+            this.registration = registration;
+        }
+
+        @Override
+        public Object get()
+        {
+            final Object service = provider.get();
+            if (service instanceof ServiceFactory)
+            {
+                final ServiceFactory serviceFactory = (ServiceFactory) wrapService(new Class[]{ServiceFactory.class}, Suppliers.ofInstance(service), clazz.getClassLoader(), Option.<String>none());
+                return serviceFactory.getService(bundle, registration);
+            }
+            else
+            {
+                return service;
+            }
+        }
     }
 }
