@@ -12,8 +12,8 @@ import com.atlassian.plugin.remotable.descriptor.PolyglotDescriptorAccessor;
 import com.atlassian.plugin.remotable.host.common.service.AuthenticationFilter;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.remotable.host.common.service.http.bigpipe.BigPipeContentFilter;
-import com.atlassian.plugin.remotable.host.common.service.http.bigpipe.BigPipeImpl;
 import com.atlassian.plugin.remotable.host.common.service.http.bigpipe.BigPipeRequestIdFilter;
+import com.atlassian.plugin.remotable.host.common.service.http.bigpipe.DefaultBigPipeManager;
 import org.osgi.framework.Bundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +41,7 @@ public final class ContainerHttpResourceMounter implements HttpResourceMounter
                                         final ContainerOAuthSignedRequestHandler oAuthSignedRequestHandler,
                                         Environment environment,
                                         RequestContext requestContext,
-                                        BigPipeImpl bigPipe)
+                                        DefaultBigPipeManager bigPipeManager)
     {
         this.httpServer = checkNotNull(httpServer);
         this.plugin = checkNotNull(plugin);
@@ -54,12 +54,12 @@ public final class ContainerHttpResourceMounter implements HttpResourceMounter
             environment.setEnv("OAUTH_LOCAL_PUBLIC_KEY", oauthPublicKey);
         }
 
-        mountFilter(new BigPipeRequestIdFilter(bigPipe), "/*");
+        mountFilter(new BigPipeRequestIdFilter(bigPipeManager), "/*");
         mountFilter(new RegistrationFilter(descriptorAccessor, environment, oAuthSignedRequestHandler), "/");
         mountServlet(new EmptyHttpServlet(), "/"); // this is so that the descriptor's filter gets picked up.
 
         mountFilter(new AuthenticationFilter(oAuthSignedRequestHandler, requestContext), "/*");
-        mountFilter(new BigPipeContentFilter(bigPipe), "/bigpipe/request/*");
+        mountFilter(new BigPipeContentFilter(bigPipeManager), "/bigpipe/request/*");
     }
 
     @Override

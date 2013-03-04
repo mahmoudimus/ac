@@ -14,6 +14,8 @@
 
     <web-resource-transformer key="macroVariableTransformer" class="com.atlassian.plugin.remotable.plugin.module.confluence.MacroVariableInjectorTransformer"/>
 
+    <web-panel key="bigPipeFooter" class="com.atlassian.plugin.remotable.plugin.product.BigPipeFooter" location="atl.footer"/>
+
     <rest key="rest" path="/remotable-plugins" version="1">
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>INCLUDE</dispatcher>

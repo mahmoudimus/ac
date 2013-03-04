@@ -80,10 +80,11 @@
         <package>com.atlassian.plugin.remotable.plugin.rest</package>
     </rest>
 
+    <jira-footer key="bigPipeFooter" class="com.atlassian.plugin.remotable.plugin.product.jira.JiraBigPipeFooter" />
+
     <!-- Handles loading big pipe resources because web items in jira
         can't contribute web resources due to how JIRA renders
      -->
-    <jira-footer key="bigPipeFooter" class="com.atlassian.plugin.remotable.plugin.product.jira.JiraBigPipeFooter" />
 
 	<component-import key="projectService" interface="com.atlassian.jira.bc.project.ProjectService" />
     <component-import key="jiraAuthenticationContext" interface="com.atlassian.jira.security.JiraAuthenticationContext" />

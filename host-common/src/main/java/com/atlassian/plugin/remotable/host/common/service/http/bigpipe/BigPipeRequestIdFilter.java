@@ -1,8 +1,6 @@
 package com.atlassian.plugin.remotable.host.common.service.http.bigpipe;
 
 import javax.servlet.*;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -12,11 +10,11 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class BigPipeRequestIdFilter implements Filter
 {
-    private final BigPipeImpl bigPipe;
+    private final DefaultBigPipeManager bigPipeManager;
 
-    public BigPipeRequestIdFilter(BigPipeImpl bigPipe)
+    public BigPipeRequestIdFilter(DefaultBigPipeManager bigPipeManager)
     {
-        this.bigPipe = checkNotNull(bigPipe);
+        this.bigPipeManager = checkNotNull(bigPipeManager);
     }
 
     @Override
@@ -31,7 +29,7 @@ public class BigPipeRequestIdFilter implements Filter
     public void doFilter(ServletRequest sreq, ServletResponse sres, FilterChain chain)
         throws IOException, ServletException
     {
-        bigPipe.getRequestIdAccessor().resetRequestId();
+        bigPipeManager.getRequestIdAccessor().resetRequestId();
         chain.doFilter(sreq, sres);
     }
 

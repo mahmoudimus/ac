@@ -11,7 +11,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.atlassian.plugins</groupId>
     <artifactId>remotable-plugins-parent</artifactId>
-    <version>0.6.9999-SNAPSHOT</version>
+    <version>0.7.9999-SNAPSHOT</version>
 
     <organization>
         <name>Atlassian</name>
@@ -377,11 +377,10 @@
     </scm>
 
     <properties>
-        <api.version>0.6</api.version>
-
-        <!-- If you change this, make sure you upgrade and release new versions of every plugin bundled in the
-             OBR, otherwise upgrades won't work correctly -->
-        <api.artifact.version>${api.version}.9</api.artifact.version>
+<!-- If you change this, make sure you upgrade and release new versions of every plugin bundled in the
+     OBR, otherwise upgrades won't work correctly -->
+        <api.version>0.7</api.version>
+        <api.artifact.version>${api.version}.0</api.artifact.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <xvfb.enable>true</xvfb.enable>
         <atlassian.selenium.version>2.1.0-m12</atlassian.selenium.version>
@@ -390,7 +389,7 @@
         <jira.version>6.0-OD-04</jira.version>
         <jira.data.version>${jira.version}</jira.data.version>
         <jira.client.version>2.0.0-m9</jira.client.version>
-        <confluence.client.version>0.9.3</confluence.client.version>
+        <confluence.client.version>0.9.4</confluence.client.version>
         <sisu.version>0.0.0.atlassian4</sisu.version>
         <guice.version>3.0</guice.version>
         <confluence.version>5.0-OD-27</confluence.version>
@@ -422,8 +421,8 @@
         <webhooks.version>0.13.8</webhooks.version>
         <webhooks.api.version>0.13</webhooks.api.version>
         <httpclient.api.version>${webhooks.api.version}</httpclient.api.version>
-        <servletkit.version>0.7.1</servletkit.version>
-        <ringojskit.version>0.7.1</ringojskit.version>
-        <gatekeeper.property>7</gatekeeper.property>
+        <servletkit.version>0.7.3</servletkit.version>
+        <ringojskit.version>0.7.2</ringojskit.version>
+        <gatekeeper.property>5</gatekeeper.property>
     </properties>
 </project>

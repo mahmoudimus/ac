@@ -1,6 +1,6 @@
 package com.atlassian.plugin.remotable.host.common.service.http.bigpipe;
 
-import com.atlassian.plugin.remotable.api.service.http.bigpipe.BigPipe;
+import com.atlassian.plugin.remotable.api.service.http.bigpipe.BigPipeManager;
 import com.atlassian.plugin.remotable.host.common.service.RequestContextServiceFactory;
 import com.atlassian.plugin.remotable.host.common.service.TypedServiceFactory;
 import com.atlassian.plugin.webresource.WebResourceManager;
@@ -10,27 +10,27 @@ import com.google.common.cache.CacheLoader;
 import org.osgi.framework.*;
 
 /**
- * Provides a single {@link BigPipeImpl} instance per bundle, using a weak value so that if the bundle isn't using the
+ * Provides a single {@link DefaultBigPipeManager} instance per bundle, using a weak value so that if the bundle isn't using the
  * service, it'll get cleaned up.
  */
-public class BigPipeServiceFactory implements TypedServiceFactory<BigPipe>
+public class BigPipeServiceFactory implements TypedServiceFactory<BigPipeManager>
 {
-    private final Cache<Bundle, BigPipe> instances;
+    private final Cache<Bundle, BigPipeManager> instances;
 
     public BigPipeServiceFactory(final WebResourceManager webResourceManager, final RequestContextServiceFactory requestContextServiceFactory)
     {
-        instances = CacheBuilder.newBuilder().weakKeys().weakValues().build(new CacheLoader<Bundle, BigPipe>()
+        instances = CacheBuilder.newBuilder().weakKeys().weakValues().build(new CacheLoader<Bundle, BigPipeManager>()
         {
             @Override
-            public BigPipe load(Bundle bundle) throws Exception
+            public BigPipeManager load(Bundle bundle) throws Exception
             {
-                return new BigPipeImpl(webResourceManager, requestContextServiceFactory.getService(bundle));
+                return new DefaultBigPipeManager(webResourceManager, requestContextServiceFactory.getService(bundle));
             }
         });
     }
 
     @Override
-    public BigPipe getService(Bundle bundle)
+    public BigPipeManager getService(Bundle bundle)
     {
         return instances.getUnchecked(bundle);
     }

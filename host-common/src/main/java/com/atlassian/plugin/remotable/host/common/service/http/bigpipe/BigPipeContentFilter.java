@@ -1,5 +1,8 @@
 package com.atlassian.plugin.remotable.host.common.service.http.bigpipe;
 
+import com.atlassian.fugue.Option;
+import com.atlassian.plugin.remotable.api.service.http.bigpipe.ConsumableBigPipe;
+
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -16,11 +19,11 @@ public class BigPipeContentFilter implements Filter
 {
     private static final Pattern URI_PATTERN = Pattern.compile("/bigpipe/request/([0-9a-fA-F]+)(/[0-9]+)?$");
 
-    private final BigPipeImpl bigPipe;
+    private final DefaultBigPipeManager bigPipeManager;
 
-    public BigPipeContentFilter(BigPipeImpl bigPipe)
+    public BigPipeContentFilter(DefaultBigPipeManager bigPipeManager)
     {
-        this.bigPipe = checkNotNull(bigPipe);
+        this.bigPipeManager = checkNotNull(bigPipeManager);
     }
 
     @Override
@@ -52,12 +55,20 @@ public class BigPipeContentFilter implements Filter
         if (matcher.find())
         {
             String requestId = matcher.group(1);
-            res.setStatus(200);
-            res.setContentType("application/json");
-            res.setCharacterEncoding("UTF-8");
-            res.setHeader("Cache-Control", "no-cache");
-            String result = bigPipe.waitForContent(requestId);
-            res.getWriter().write(result);
+            Option<ConsumableBigPipe> bigPipeOption = bigPipeManager.getConsumableBigPipe(requestId);
+            if (!bigPipeOption.isEmpty())
+            {
+                res.setStatus(200);
+                res.setContentType("application/json");
+                res.setCharacterEncoding("UTF-8");
+                res.setHeader("Cache-Control", "no-cache");
+                String result = bigPipeOption.get().waitForContent();
+                res.getWriter().write(result);
+            }
+            else
+            {
+                res.sendError(404);
+            }
         }
         else
         {

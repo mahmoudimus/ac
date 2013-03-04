@@ -2,65 +2,38 @@ package com.atlassian.plugin.remotable.plugin.product.jira;
 
 import com.atlassian.jira.plugin.navigation.FooterModuleDescriptor;
 import com.atlassian.jira.plugin.navigation.PluggableFooter;
-import com.atlassian.plugin.remotable.api.service.http.bigpipe.BigPipe;
-import com.atlassian.plugin.webresource.UrlMode;
-import com.atlassian.plugin.webresource.WebResourceUrlProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.atlassian.plugin.remotable.api.service.http.bigpipe.BigPipeManager;
+import com.atlassian.plugin.remotable.plugin.product.BigPipeFooter;
 
 import javax.servlet.http.HttpServletRequest;
-
-import static com.google.common.base.Preconditions.checkNotNull;
+import java.util.Collections;
 
 /**
- * Footer that adds some javascript to handle big pipe requests that have completed.
+ * Adds big pipe content to the footer of JIRA
  */
 public class JiraBigPipeFooter implements PluggableFooter
 {
-    private final BigPipe bigPipe;
-    private final WebResourceUrlProvider webResourceUrlProvider;
+    private final BigPipeFooter webPanelDelegate;
 
-    private static final Logger log = LoggerFactory.getLogger(JiraBigPipeFooter.class);
-
-    public JiraBigPipeFooter(BigPipe bigPipe, WebResourceUrlProvider webResourceUrlProvider)
+    public JiraBigPipeFooter(BigPipeManager bigPipeManager)
     {
-        this.bigPipe = checkNotNull(bigPipe);
-        this.webResourceUrlProvider = checkNotNull(webResourceUrlProvider);
+        this.webPanelDelegate = new BigPipeFooter(bigPipeManager);
     }
 
     @Override
-    public void init(FooterModuleDescriptor descriptor)
+    public void init(FooterModuleDescriptor footerModuleDescriptor)
     {
     }
 
     @Override
-    public String getFullFooterHtml(HttpServletRequest request)
+    public String getFullFooterHtml(HttpServletRequest httpServletRequest)
     {
-        return getFooterHtml();
+        return webPanelDelegate.getHtml(Collections.<String, Object>emptyMap());
     }
 
     @Override
-    public String getSmallFooterHtml(HttpServletRequest request)
+    public String getSmallFooterHtml(HttpServletRequest httpServletRequest)
     {
-        return getFooterHtml();
+        return webPanelDelegate.getHtml(Collections.<String, Object>emptyMap());
     }
-
-    private String getFooterHtml()
-    {
-        String bigPipeJs = webResourceUrlProvider.getStaticPluginResourceUrl(
-                "com.atlassian.labs.remoteapps-plugin:big-pipe", "big-pipe.js", UrlMode.AUTO
-        );
-        String json = bigPipe.consumeContent();
-        return "<script>" +
-                "(function(global) {" +
-                "var AP = global._AP = global._AP || {};" +
-                "if (AP.RemoteConditions) AP.RemoteConditions.hide();" +
-                "var contents = " + json + ";" +
-                "if (AP.BigPipe) AP.BigPipe.processContents(contents);" +
-                "else AJS.$.getScript('" + bigPipeJs + "')" +
-                ".done(function(){AP.BigPipe.processContents(contents);});" +
-                "})(this);" +
-                "</script>";
-    }
-
 }

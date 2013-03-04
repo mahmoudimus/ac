@@ -8,7 +8,7 @@ import com.atlassian.confluence.xhtml.api.XhtmlContent;
 import com.atlassian.event.api.EventListener;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.plugin.remotable.api.service.http.bigpipe.BigPipe;
-import com.atlassian.plugin.remotable.api.service.http.bigpipe.HtmlPromise;
+import com.atlassian.plugin.remotable.api.service.http.bigpipe.BigPipeManager;
 import com.atlassian.plugin.remotable.plugin.DefaultRemotablePluginAccessorFactory;
 import com.atlassian.plugin.remotable.plugin.util.http.CachingHttpContentRetriever;
 import com.atlassian.plugin.remotable.plugin.util.http.ContentRetrievalErrors;
@@ -37,12 +37,11 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public class MacroContentManager implements DisposableBean
 {
-    public static final String BIG_PIPE_REQUEST_ID = "__big_pipe_request_id";
     private final EventPublisher eventPublisher;
     private final XhtmlCleaner xhtmlCleaner;
     private final MacroContentLinkParser macroContentLinkParser;
     private final CachingHttpContentRetriever cachingHttpContentRetriever;
-    private final BigPipe bigPipe;
+    private final BigPipeManager bigPipeManager;
     private final UserManager userManager;
     private final XhtmlContent xhtmlUtils;
     private final DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory;
@@ -54,7 +53,7 @@ public class MacroContentManager implements DisposableBean
             EventPublisher eventPublisher,
             CachingHttpContentRetriever cachingHttpContentRetriever,
             MacroContentLinkParser macroContentLinkParser,
-            BigPipe bigPipe,
+            BigPipeManager bigPipeManager,
             UserManager userManager,
             XhtmlContent xhtmlUtils,
             DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory,
@@ -62,7 +61,7 @@ public class MacroContentManager implements DisposableBean
     {
         this.eventPublisher = eventPublisher;
         this.cachingHttpContentRetriever = cachingHttpContentRetriever;
-        this.bigPipe = checkNotNull(bigPipe);
+        this.bigPipeManager = checkNotNull(bigPipeManager);
         this.userManager = userManager;
         this.xhtmlUtils = xhtmlUtils;
         this.remotablePluginAccessorFactory = remotablePluginAccessorFactory;
@@ -81,14 +80,8 @@ public class MacroContentManager implements DisposableBean
     */
     public String getStaticContent(final MacroInstance macroInstance) throws ContentRetrievalException
     {
+        BigPipe bigPipe = bigPipeManager.getBigPipe();
         ContentEntityObject entity = macroInstance.getEntity();
-
-        String requestId = macroInstance.getConversionContext().getPropertyAsString(BIG_PIPE_REQUEST_ID);
-        if (requestId == null)
-        {
-            requestId = bigPipe.getRequestId();
-            macroInstance.getConversionContext().setProperty(BIG_PIPE_REQUEST_ID, requestId);
-        }
 
         final String author = getUserToRenderMacroAs(entity);
 
@@ -100,18 +93,18 @@ public class MacroContentManager implements DisposableBean
                         new HtmlToSafeHtmlFunction(macroInstance, urlParameters, macroContentLinkParser, xhtmlCleaner,
                                 xhtmlUtils));
 
-        HtmlPromise contentPromise = bigPipe.promiseHtmlContent(promise);
+        String initialContent = bigPipe.getHtmlChannel().promiseContent(promise);
 
         try
         {
             // only render display via big pipe, block for everyone else
             if (RenderContextOutputType.DISPLAY.equals(macroInstance.getConversionContext().getOutputType()))
             {
-                return contentPromise.getInitialContent();
+                return initialContent;
             }
             else
             {
-                return contentPromise.claim();
+                return promise.claim();
             }
         }
         catch (RuntimeException e)

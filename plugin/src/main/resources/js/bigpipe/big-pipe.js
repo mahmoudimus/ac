@@ -3,7 +3,7 @@
   var $ = AJS.$;
   var AP = global._AP = global._AP || {};
   var contextPath = AJS.contextPath() || AJS.Meta.get("context-path");
-  var requestId = $('meta[name="ap-request-id"]').attr("content");
+  var counter = 0;
 
   function insertContent(contentId, html) {
     var contentDiv$ = $('#' + contentId);
@@ -17,13 +17,13 @@
   }
 
   function replaceLoadingWithMessage() {
-    $(document).ready(function() {
+    $(function() {
       $('.bp-loading').html("<img src='" + contextPath + "/download/resources/com.atlassian.labs.remoteapps-plugin:images/images/ajax-loader.gif' alt='loader'>");
     });
   }
 
   function replaceLoadingWithError(errType, status) {
-    $(document).ready(function() {
+    $(function() {
       $('.bp-loading').html("<div>Error: " + status + "</div>").removeClass("bp-loading");
     });
   }
@@ -38,21 +38,15 @@
     }
   }
 
-  function poll() {
-    if (!requestId) {
-      AJS.log("Missing request id.  atl.header web panels not supported?");
-      return;
-    }
+  function poll(requestId) {
     $.ajax({
-      url: contextPath + "/bigpipe/request/" + requestId,
+      url: contextPath + "/bigpipe/request/" + requestId + "/" + (counter += 1),
       dataType: "json",
       timeout: 30000,
       success: function (response) {
         if (response.items && response.items.length !== 0) {
-          $(function() {
-            processContents(response);
-            poll();
-          });
+          poll(requestId);
+          $(function() { processContents(response); });
         }
       },
       error: function(xhr, status, err) {
@@ -60,11 +54,19 @@
       }
     });
   }
-  poll();
-  setTimeout(replaceLoadingWithMessage, 1000);
 
+  var isStarted;
   AP.BigPipe = {
-    processContents: processContents
-  }
+    start: function (options) {
+      if (!isStarted) {
+        isStarted = true;
+        if (options.ready) processContents(options.ready);
+        if (!options.ready || options.ready.pending.length > 0) {
+          poll(options.requestId);
+          setTimeout(replaceLoadingWithMessage, 1000);
+        }
+      }
+    }
+  };
 
 })(this, AJS);
