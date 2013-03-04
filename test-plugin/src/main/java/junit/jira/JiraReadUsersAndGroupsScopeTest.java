@@ -6,11 +6,12 @@ import com.atlassian.jira.rpc.soap.client.JiraSoapService;
 import com.atlassian.jira.rpc.soap.client.JiraSoapServiceServiceLocator;
 import com.atlassian.jira.rpc.soap.client.RemoteUser;
 import com.atlassian.plugin.remotable.api.service.SignedRequestHandler;
+import com.google.common.collect.ImmutableMap;
 import org.apache.axis.client.Stub;
 import org.apache.axis.transport.http.HTTPConstants;
-import org.apache.commons.io.IOUtils;
-import org.json.JSONArray;
-import org.json.JSONObject;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.junit.Test;
 import services.ServiceAccessor;
 
@@ -23,10 +24,12 @@ import java.net.URL;
 import java.util.Hashtable;
 import java.util.concurrent.Callable;
 
+import static java.util.Arrays.asList;
 import static java.util.Collections.*;
 import static junit.ClientKeyRetriever.*;
 import static org.junit.Assert.*;
 import static services.ServiceAccessor.*;
+import static util.JsonUtils.toArray;
 
 /**
  *
@@ -61,22 +64,20 @@ public class JiraReadUsersAndGroupsScopeTest
         conn.setRequestProperty("Content-Type", "application/json");
         signedRequestHandler.sign(url, "POST", "betty", conn);
         PrintWriter out = new PrintWriter(new OutputStreamWriter(conn.getOutputStream()));
-        String body = new JSONObject()
+        String body = new JSONObject(ImmutableMap.builder()
                 .put("jsonrpc", "2.0")
                 .put("method", "getUser")
                 .put("id", 1)
-                .put("params",
-                        new JSONArray()
-                                .put("")
-                                .put("betty"))
-                .toString(2);
+                .put("params", toArray("", "betty"))
+                .build())
+                .toJSONString();
         System.out.println("sending body: " + body);
         out.write(body);
         out.close();
 
-        JSONObject result = new JSONObject(IOUtils.toString(new InputStreamReader(conn.getInputStream())));
-        System.out.println("response: " + result.toString(2));
-        assertEquals("betty", result.getJSONObject("result").getString("name"));
+        JSONObject result = (JSONObject) new JSONParser().parse(new InputStreamReader(conn.getInputStream()));
+        System.out.println("response: " + result.toJSONString());
+        assertEquals("betty", ((JSONObject) result.get("result")).get("name"));
     }
 
     @Test
@@ -90,17 +91,16 @@ public class JiraReadUsersAndGroupsScopeTest
         conn.setRequestProperty("Content-Type", "application/json");
         signedRequestHandler.sign(url, "POST", "betty", conn);
         PrintWriter out = new PrintWriter(new OutputStreamWriter(conn.getOutputStream()));
-        String body = new JSONArray()
-                                .put("")
-                                .put("betty")
-                .toString(2);
+        JSONArray arr = new JSONArray();
+        arr.addAll(asList("", "betty"));
+        String body = arr.toJSONString();
         System.out.println("sending body: " + body);
         out.write(body);
         out.close();
 
-        JSONObject result = new JSONObject(IOUtils.toString(conn.getInputStream()));
-        System.out.println("response: " + result.toString(2));
-        assertEquals("betty", result.getString("name"));
+        JSONObject result = (JSONObject) new JSONParser().parse(new InputStreamReader(conn.getInputStream()));
+        System.out.println("response: " + result.toString());
+        assertEquals("betty", result.get("name"));
     }
 
     @Test

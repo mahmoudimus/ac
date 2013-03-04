@@ -11,7 +11,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.atlassian.plugins</groupId>
     <artifactId>remotable-plugins-parent</artifactId>
-    <version>0.6-SNAPSHOT</version>
+    <version>0.6.9999-SNAPSHOT</version>
 
     <organization>
         <name>Atlassian</name>
@@ -387,7 +387,7 @@
         <jira.version>6.0-OD-04</jira.version>
         <jira.data.version>${jira.version}</jira.data.version>
         <jira.client.version>2.0.0-m8</jira.client.version>
-        <confluence.client.version>0.9.0</confluence.client.version>
+        <confluence.client.version>0.9.2</confluence.client.version>
         <sisu.version>0.0.0.atlassian4</sisu.version>
         <guice.version>3.0</guice.version>
         <confluence.version>5.0-OD-27</confluence.version>
@@ -416,7 +416,7 @@
         <spring.version>2.5.6</spring.version>
         <atlassian-util-concurrent.version>2.4.0</atlassian-util-concurrent.version>
         <atlassian-httpclient.version>${webhooks.version}</atlassian-httpclient.version>
-        <webhooks.version>0.13.5</webhooks.version>
+        <webhooks.version>0.13.3</webhooks.version>
         <webhooks.api.version>0.13</webhooks.api.version>
         <httpclient.api.version>${webhooks.api.version}</httpclient.api.version>
         <servletkit.version>0.7.1</servletkit.version>

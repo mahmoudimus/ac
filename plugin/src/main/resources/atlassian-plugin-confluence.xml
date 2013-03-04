@@ -8,66 +8,6 @@
     <component-import key="confluenceSettingsManager"
                       interface="com.atlassian.confluence.setup.settings.SettingsManager"/>
     
-    <!-- api scopes -->
-    <plugin-permission key="read_content" name="Read Content"
-                       class="com.atlassian.plugin.remotable.plugin.product.confluence.ReadContentScope">
-        <description>Read spaces, blogs, and pages and associated metadata</description>
-    </plugin-permission>
-
-    <plugin-permission key="modify_attachments" name="Modify Attachments"
-            class="com.atlassian.plugin.remotable.plugin.product.confluence.ModifyAttachmentsScope">
-        <description>Add, remove, or move attachments for pages or blog posts</description>
-    </plugin-permission>
-
-    <plugin-permission key="read_users_and_groups" name="Read Users and Groups"
-            class="com.atlassian.plugin.remotable.plugin.product.confluence.ConfluenceReadUsersAndGroupsScope">
-        <description>View users, users info, and groups</description>
-    </plugin-permission>
-
-    <plugin-permission key="modify_spaces" name="Modify Spaces"
-            class="com.atlassian.plugin.remotable.plugin.product.confluence.ModifySpacesScope">
-        <description>Add, edit and remove spaces</description>
-    </plugin-permission>
-    <plugin-permission key="read_server_information" name="Read Server Information"
-            class="com.atlassian.plugin.remotable.plugin.product.confluence.ReadServerInformationScope">
-        <description>View Confluence version number, base URL and build information</description>
-    </plugin-permission>
-
-    <plugin-permission key="modify_users" name="Modify Users"
-            class="com.atlassian.plugin.remotable.plugin.product.confluence.ModifyUsersScope">
-        <description>Change existing users' information, including profile pictures.  Cannot change passwords.</description>
-    </plugin-permission>
-
-    <plugin-permission key="manage_watchers" name="Manage Watchers"
-            class="com.atlassian.plugin.remotable.plugin.product.confluence.ManageWatchersScope">
-        <description>View space, page and blog post watchers. Add new watchers.</description>
-    </plugin-permission>
-
-    <plugin-permission key="label_content" name="Label Content"
-            class="com.atlassian.plugin.remotable.plugin.product.confluence.LabelContentScope">
-        <description>Add and remove labels from spaces, pages and blog posts</description>
-    </plugin-permission>
-
-    <plugin-permission key="render_content" name="Render Content"
-            class="com.atlassian.plugin.remotable.plugin.product.confluence.RenderContentScope">
-        <description>Convert content into viewable HTML</description>
-    </plugin-permission>
-
-    <plugin-permission key="modify_content" name="Modify Content"
-            class="com.atlassian.plugin.remotable.plugin.product.confluence.ModifyContentScope">
-        <description>Add, edit and remove pages and blog posts</description>
-    </plugin-permission>
-
-    <plugin-permission key="manage_index" name="Manage Content Index"
-            class="com.atlassian.plugin.remotable.plugin.product.confluence.ManageIndexScope">
-        <description>Manage the content index, including triggering a re-index</description>
-    </plugin-permission>
-
-    <plugin-permission key="modify_anonymous_permissions" name="Modify Anonymous Permissions"
-                       class="com.atlassian.plugin.remotable.plugin.product.confluence.ManageAnonymousPermissionsScope">
-        <description>Manage anonymous permissions for the Confluence instance</description>
-   </plugin-permission>
-
     <web-section key="admin.pages" name="Remotable Plugins" location="system.admin" weight="100">
         <label>Remote Plugins</label>
     </web-section>
