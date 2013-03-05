@@ -1,6 +1,6 @@
 (function (window, document, JSON, encode, decode, undefined) {
 
-  var AP = window.AP || window._AP,
+  var AP = window._AP || window.AP,
       $ = AP._$ || (window.AJS && AJS.$) || window.jQuery,
       loc = window.location.toString();
 
