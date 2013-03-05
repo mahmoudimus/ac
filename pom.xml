@@ -378,7 +378,10 @@
 
     <properties>
         <api.version>0.6</api.version>
-        <api.artifact.version>${api.version}.8</api.artifact.version>
+
+        <!-- If you change this, make sure you upgrade and release new versions of every plugin bundled in the
+             OBR, otherwise upgrades won't work correctly -->
+        <api.artifact.version>${api.version}.9</api.artifact.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <xvfb.enable>true</xvfb.enable>
         <atlassian.selenium.version>2.1.0-m12</atlassian.selenium.version>
@@ -386,8 +389,8 @@
         <refapp.version>2.20.0-m3</refapp.version>
         <jira.version>6.0-OD-04</jira.version>
         <jira.data.version>${jira.version}</jira.data.version>
-        <jira.client.version>2.0.0-m8</jira.client.version>
-        <confluence.client.version>0.9.2</confluence.client.version>
+        <jira.client.version>2.0.0-m9</jira.client.version>
+        <confluence.client.version>0.9.3</confluence.client.version>
         <sisu.version>0.0.0.atlassian4</sisu.version>
         <guice.version>3.0</guice.version>
         <confluence.version>5.0-OD-27</confluence.version>

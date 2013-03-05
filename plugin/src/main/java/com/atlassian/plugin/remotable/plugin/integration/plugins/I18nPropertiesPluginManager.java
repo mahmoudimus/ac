@@ -52,7 +52,7 @@ import static java.lang.Math.abs;
 public final class I18nPropertiesPluginManager
 {
     private static final Logger log = LoggerFactory.getLogger(I18nPropertiesPluginManager.class);
-    private static final String I18N_SYMBOLIC_NAME = "remotable.plugins.i18n";
+    public static final String I18N_SYMBOLIC_NAME = "remotable.plugins.i18n";
 
     private final ModuleFactory moduleFactory;
     private final PluginAccessor pluginAccessor;
