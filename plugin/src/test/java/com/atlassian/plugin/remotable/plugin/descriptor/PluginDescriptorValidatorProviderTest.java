@@ -2,6 +2,7 @@ package com.atlassian.plugin.remotable.plugin.descriptor;
 
 import com.atlassian.plugin.RequirePermission;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
+import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.remotable.api.InstallationMode;
 import com.atlassian.plugin.remotable.spi.permission.PermissionsReader;
@@ -161,6 +162,11 @@ public final class PluginDescriptorValidatorProviderTest
 
     private static final class ModuleDescriptorWithNoPermission extends AbstractModuleDescriptor<Void>
     {
+        public ModuleDescriptorWithNoPermission(ModuleFactory moduleFactory)
+        {
+            super(moduleFactory);
+        }
+
         @Override
         public Void getModule()
         {
@@ -171,6 +177,11 @@ public final class PluginDescriptorValidatorProviderTest
     @RequirePermission("required_permission")
     private static final class ModuleDescriptorWithPermission extends AbstractModuleDescriptor<Void>
     {
+        public ModuleDescriptorWithPermission(ModuleFactory moduleFactory)
+        {
+            super(moduleFactory);
+        }
+
         @Override
         public Void getModule()
         {
