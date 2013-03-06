@@ -63,7 +63,7 @@
             <plugin>
                 <groupId>com.atlassian.maven.plugins</groupId>
                 <artifactId>maven-amps-plugin</artifactId>
-                <version>4.1.4</version>
+                <version>4.1.5</version>
                 <extensions>true</extensions>
                 <configuration>
                     <extractDependencies>true</extractDependencies>
