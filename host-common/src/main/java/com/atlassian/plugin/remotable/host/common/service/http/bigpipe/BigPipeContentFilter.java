@@ -2,6 +2,8 @@ package com.atlassian.plugin.remotable.host.common.service.http.bigpipe;
 
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.remotable.api.service.http.bigpipe.ConsumableBigPipe;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -18,6 +20,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class BigPipeContentFilter implements Filter
 {
     private static final Pattern URI_PATTERN = Pattern.compile("/bigpipe/request/([0-9a-fA-F]+)(/[0-9]+)?$");
+    private static final Logger log = LoggerFactory.getLogger(BigPipeContentFilter.class);
 
     private final DefaultBigPipeManager bigPipeManager;
 
@@ -51,6 +54,7 @@ public class BigPipeContentFilter implements Filter
         HttpServletResponse res = (HttpServletResponse) sres;
         String uri = req.getRequestURI();
 
+        log.debug("Incoming big pipe content request on {}", Thread.currentThread().getId());
         Matcher matcher = URI_PATTERN.matcher(uri);
         if (matcher.find())
         {
@@ -67,13 +71,16 @@ public class BigPipeContentFilter implements Filter
             }
             else
             {
+                log.warn("Big pipe is empty, returning 404 on {}", Thread.currentThread().getId());
                 res.sendError(404);
             }
         }
         else
         {
+            log.warn("ID pattern not matched for big pipe content request on {}", Thread.currentThread().getId());
             res.sendError(404);
         }
+        log.debug("Big pipe content request sent on {}", Thread.currentThread().getId());
     }
 
     @Override
