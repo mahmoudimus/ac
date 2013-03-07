@@ -388,6 +388,7 @@
         <refapp.version>2.20.0-m3</refapp.version>
         <jira.version>6.0-OD-04</jira.version>
         <jira.data.version>${jira.version}</jira.data.version>
+        <jira.client.api.version>2.0</jira.client.api.version>
         <jira.client.version>2.0.0-m9</jira.client.version>
         <confluence.client.version>0.9.4</confluence.client.version>
         <sisu.version>0.0.0.atlassian4</sisu.version>

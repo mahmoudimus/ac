@@ -627,7 +627,7 @@
                             com.atlassian.jira;resolution:=optional,
                             com.atlassian.jira.config;resolution:=optional,
                             com.atlassian.jira.plugin.webfragment.descriptors;resolution:=optional,
-                            com.atlassian.jira.rest.client.api;version="${jira.client.version}",
+                            com.atlassian.jira.rest.client.api;version="${jira.client.api.version}",
                             com.atlassian.jira.security;resolution:=optional,
                             com.atlassian.jira.security.websudo;resolution:=optional,
                             com.atlassian.oauth*;version="(1.2,2.0]",
