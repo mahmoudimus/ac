@@ -32,12 +32,12 @@ public class PluginBundleActivator implements BundleActivator
     public void start(BundleContext context) throws Exception
     {
         final ServiceReference ref = context.getServiceReference(PackageAdmin.class.getName());
-        PackageAdmin packageAdmin = (PackageAdmin) context.getService(ref);
+        final PackageAdmin packageAdmin = (PackageAdmin) context.getService(ref);
 
         final ServiceReference ref2 = context.getServiceReference(PluginController.class.getName());
         final PluginController pluginController = (PluginController) context.getService(ref2);
 
-        Set<Bundle> bundlesUsingOldApi = getRequiredPluginsFromExports(context, packageAdmin);
+        final Set<Bundle> bundlesUsingOldApi = getRequiredPluginsFromExports(context, packageAdmin);
         if (!bundlesUsingOldApi.isEmpty())
         {
             log.info("Detected bundles using old api versions, refreshing " +
@@ -67,17 +67,16 @@ public class PluginBundleActivator implements BundleActivator
                 }
             });
 
-            for (String pluginKey : pluginKeys)
-            {
-                pluginController.disablePluginWithoutPersisting(pluginKey);
-            }
-
-            packageAdmin.refreshPackages(bundlesUsingOldApi.toArray(new Bundle[bundlesUsingOldApi.size()]));
             new Thread(new Runnable()
             {
                 @Override
                 public void run()
                 {
+                    for (String pluginKey : pluginKeys)
+                    {
+                        pluginController.disablePluginWithoutPersisting(pluginKey);
+                    }
+                    packageAdmin.refreshPackages(bundlesUsingOldApi.toArray(new Bundle[bundlesUsingOldApi.size()]));
                     pluginController.enablePlugins(newArrayList(pluginKeys).toArray(new String[0]));
                 }
             }, "Dep Plugin Refresh").start();
