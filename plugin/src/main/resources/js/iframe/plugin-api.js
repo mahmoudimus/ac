@@ -40,7 +40,13 @@
             deliver(response, url);
           },
           error: function (xhr, status, ex) {
-            handleError(ex || (xhr && xhr.responseText) || status);
+            if (xhr.status === 404) {
+              // despite being a real error, treat a 404 as a termination signal
+              deliver({items: [], pending: []}, url);
+            }
+            else {
+              handleError(ex || (xhr && xhr.responseText) || status);
+            }
           }
         });
       }

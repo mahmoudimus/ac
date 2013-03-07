@@ -1,4 +1,4 @@
-(function (window, document) {
+(function (window, document, console) {
 
   var AP = window.RA = window.AP = {}; // RA is deprecated
 
@@ -61,6 +61,9 @@
   function trim(s) {
     return s && s.replace(/^\s+|\s+$/g, "");
   }
+
+  // no-op
+  function nop() {}
 
   // basic dom util
   function $(sel, context) {
@@ -137,24 +140,33 @@
         (window.XMLHttpRequest && new XMLHttpRequest());
     xhr.onreadystatechange = function () {
       if (xhr.readyState === 4) {
-        var status = xhr.status;
-        var response = xhr.responseText;
-        var contentType = xhr.getResponseHeader("Content-Type");
+        var status = xhr.status,
+            response = xhr.responseText,
+            contentType = xhr.getResponseHeader("Content-Type"),
+            success = options.success || nop,
+            error = options.error || nop,
+            body;
         if (status >= 200 && status <= 300) {
           if (contentType && contentType.indexOf("application/json") === 0) {
             try {
-              if (options.success) options.success(JSON.parse(response), xhr.statusText);
+              body = JSON.parse(response);
+              try {
+                success(body, xhr.statusText);
+              }
+              catch (ex) {
+                handleError(ex);
+              }
             }
             catch (ex) {
-              if (options.error) options.error(xhr, "parseerror", ex);
+              error(xhr, "parseerror", ex);
             }
           }
           else {
-            if (options.success) options.success(response, xhr.statusText);
+            success(response, xhr.statusText);
           }
         }
         else {
-          if (options.error) options.error(xhr, xhr.statusText || "error");
+          error(xhr, xhr.statusText || "error");
         }
       }
     };
@@ -184,14 +196,14 @@
   }
 
   function log() {
-    if (window.console) {
+    if (console) {
       console.log.apply(console, arguments);
     }
   }
 
   function handleError(err) {
-    if (window.console) {
-      console.error(err);
+    if (console) {
+      console.error.apply(console, [err.message, err] || [err]);
     }
     else {
       throw err;
@@ -209,4 +221,4 @@
     handleError: handleError
   });
 
-}(this, document));
+}(this, document, this.console));
