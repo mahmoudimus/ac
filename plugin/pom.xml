@@ -664,7 +664,6 @@
                             <!--com.atlassian.plugin.remotable.api.service.jira;version="${jira.client.version}",-->
                             <!--com.atlassian.jira.rest.client.domain;version="${jira.client.version}",-->
                         </Export-Package>
-                        <Bundle-Activator>com.atlassian.plugin.remotable.plugin.PluginBundleActivator</Bundle-Activator>
                         <Spring-Context>*;timeout:=60</Spring-Context>
                     </instructions>
                     <systemPropertyVariables>

@@ -1,9 +1,11 @@
-package com.atlassian.plugin.remotable.plugin;
+package com.atlassian.plugin.remotable.plugin.installer;
 
 import com.atlassian.plugin.PluginController;
+import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.osgi.util.OsgiHeaderUtil;
 import com.atlassian.plugin.remotable.api.annotation.ComponentImport;
 import com.atlassian.plugin.remotable.plugin.integration.plugins.I18nPropertiesPluginManager;
+import com.atlassian.plugin.remotable.plugin.loader.StartableForPlugins;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import org.osgi.framework.*;
@@ -11,6 +13,8 @@ import org.osgi.service.packageadmin.ExportedPackage;
 import org.osgi.service.packageadmin.PackageAdmin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import java.util.HashSet;
@@ -24,54 +28,56 @@ import static com.google.common.collect.Sets.newHashSet;
 /**
  * Refreshes any plugins that are wired to old api versions
  */
-public class PluginBundleActivator implements BundleActivator
+@Component
+public class DependencyRefresher
 {
-    private final Logger log = LoggerFactory.getLogger(PluginBundleActivator.class);
+    private static final Logger log = LoggerFactory.getLogger(DependencyRefresher.class);
 
-    @Override
-    public void start(BundleContext context) throws Exception
+    @Autowired
+    public DependencyRefresher(final StartableForPlugins startableForPlugins,
+            PluginRetrievalService pluginRetrievalService, final BundleContext context)
     {
-        final ServiceReference ref = context.getServiceReference(PackageAdmin.class.getName());
-        final PackageAdmin packageAdmin = (PackageAdmin) context.getService(ref);
-
-        final ServiceReference ref2 = context.getServiceReference(PluginController.class.getName());
-        final PluginController pluginController = (PluginController) context.getService(ref2);
-
-        final Set<Bundle> bundlesUsingOldApi = getRequiredPluginsFromExports(context, packageAdmin);
-        if (!bundlesUsingOldApi.isEmpty())
+        startableForPlugins.register(pluginRetrievalService.getPlugin().getKey(), new Runnable()
         {
-            log.info("Detected bundles using old api versions, refreshing " +
-                    (transform(bundlesUsingOldApi, new Function<Bundle, String>()
+            @Override
+            public void run()
+            {
+                final ServiceReference ref = context.getServiceReference(PackageAdmin.class.getName());
+                final PackageAdmin packageAdmin = (PackageAdmin) context.getService(ref);
+
+                final ServiceReference ref2 = context.getServiceReference(PluginController.class.getName());
+                final PluginController pluginController = (PluginController) context.getService(ref2);
+
+                final Set<Bundle> bundlesUsingOldApi = getRequiredPluginsFromExports(context, packageAdmin);
+                if (!bundlesUsingOldApi.isEmpty())
+                {
+                    log.info("Detected bundles using old api versions, refreshing " +
+                            (transform(bundlesUsingOldApi, new Function<Bundle, String>()
+                            {
+                                @Override
+                                public String apply(@Nullable Bundle input)
+                                {
+                                    return input.getBundleId() + ": " + input.getSymbolicName() + " - " + input.getVersion();
+                                }
+                            })).toString());
+
+
+                    final Iterable<String> pluginKeys = transform(filter(bundlesUsingOldApi, new Predicate<Bundle>()
+                    {
+                        @Override
+                        public boolean apply(@Nullable Bundle input)
+                        {
+                            return OsgiHeaderUtil.getPluginKey(input) != null;
+                        }
+                    }), new Function<Bundle, String>()
                     {
                         @Override
                         public String apply(@Nullable Bundle input)
                         {
-                            return input.getBundleId() + ": " + input.getSymbolicName() + " - " + input.getVersion();
+                            return OsgiHeaderUtil.getPluginKey(input);
                         }
-                    })).toString());
+                    });
 
-
-            final Iterable<String> pluginKeys = transform(filter(bundlesUsingOldApi, new Predicate<Bundle>()
-            {
-                @Override
-                public boolean apply(@Nullable Bundle input)
-                {
-                    return OsgiHeaderUtil.getPluginKey(input) != null;
-                }
-            }), new Function<Bundle, String>()
-            {
-                @Override
-                public String apply(@Nullable Bundle input)
-                {
-                    return OsgiHeaderUtil.getPluginKey(input);
-                }
-            });
-
-            new Thread(new Runnable()
-            {
-                @Override
-                public void run()
-                {
                     for (String pluginKey : pluginKeys)
                     {
                         pluginController.disablePluginWithoutPersisting(pluginKey);
@@ -79,13 +85,9 @@ public class PluginBundleActivator implements BundleActivator
                     packageAdmin.refreshPackages(bundlesUsingOldApi.toArray(new Bundle[bundlesUsingOldApi.size()]));
                     pluginController.enablePlugins(newArrayList(pluginKeys).toArray(new String[0]));
                 }
-            }, "Dep Plugin Refresh").start();
-        }
-    }
+            }
+        });
 
-    @Override
-    public void stop(BundleContext context) throws Exception
-    {
     }
 
     private Set<Bundle> getRequiredPluginsFromExports(BundleContext bundleContext, PackageAdmin packageAdmin)
@@ -139,7 +141,7 @@ public class PluginBundleActivator implements BundleActivator
         for (Bundle bundle : bundleContext.getBundles())
         {
             if (bundle.getSymbolicName().equals("com.atlassian.plugins.remotable-plugins-api") ||
-                bundle.getSymbolicName().equals("com.atlassian.plugins.remotable-plugins-spi"))
+                    bundle.getSymbolicName().equals("com.atlassian.plugins.remotable-plugins-spi"))
             {
                 imports.addAll(
                         OsgiHeaderUtil.parseHeader((String) bundle.getHeaders().get(Constants.EXPORT_PACKAGE)).keySet());
