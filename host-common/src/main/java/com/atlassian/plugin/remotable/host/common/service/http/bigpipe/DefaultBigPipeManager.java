@@ -449,19 +449,22 @@ public final class DefaultBigPipeManager implements BigPipeManager, DisposableBe
         private Set<String> getPendingChannelIds()
         {
             Set<String> pendingChannelIds = newHashSet();
-            for (InternalHandler handler : handlers)
+            synchronized (lock)
             {
-                pendingChannelIds.add(handler.getChannelId());
-            }
-            if (htmlChannel.isRetained())
-            {
-                pendingChannelIds.add(htmlChannel.getId());
-            }
-            for (DataChannelImpl dataChannel : dataChannels.values())
-            {
-                if (dataChannel.isRetained())
+                for (InternalHandler handler : handlers)
                 {
-                    pendingChannelIds.add(dataChannel.getId());
+                    pendingChannelIds.add(handler.getChannelId());
+                }
+                if (htmlChannel.isRetained())
+                {
+                    pendingChannelIds.add(htmlChannel.getId());
+                }
+                for (DataChannelImpl dataChannel : dataChannels.values())
+                {
+                    if (dataChannel.isRetained())
+                    {
+                        pendingChannelIds.add(dataChannel.getId());
+                    }
                 }
             }
             return unmodifiableSet(pendingChannelIds);
