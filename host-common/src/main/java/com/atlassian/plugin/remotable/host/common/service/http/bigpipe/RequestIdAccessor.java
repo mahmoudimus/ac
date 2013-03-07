@@ -17,14 +17,16 @@ final class RequestIdAccessor
     public String getRequestId()
     {
         String value = id.get();
-        notNull(value);
+        if (value == null)
+        {
+            value = Long.toHexString(Math.abs(random.nextLong()));
+            id.set(value);
+        }
         return value;
     }
 
-    public String resetRequestId()
+    public void resetRequestId()
     {
-        String value = Long.toHexString(Math.abs(random.nextLong()));
-        id.set(value);
-        return value;
+        id.set(null);
     }
 }
