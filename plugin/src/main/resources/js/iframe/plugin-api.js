@@ -60,7 +60,7 @@
             });
             if (pending.length > 0) {
               each(channels, function (channelId, open) {
-                if (open && pending.indexOf(channelId) < 0) {
+                if (open && $.inArray(channelId, pending) < 0) {
                   close(channelId);
                 }
               });

@@ -45,17 +45,21 @@
     return dest;
   }
 
-  // simple event binding
-  function bind(el, e, fn) {
-    var add = "addEventListener",
-        attach = "attachEvent";
-    if (el[add]) {
-      el[add](e, fn, false);
-    }
-    else if (el[attach]) {
-      el[attach]("on" + e, fn);
-    }
+  function binder(std, odd) {
+    std += "EventListener";
+    odd += "Event";
+    return function (el, e, fn) {
+      if (el[std]) {
+        el[std](e, fn, false);
+      }
+      else if (el[odd]) {
+        el[odd]("on" + e, fn);
+      }
+    };
   }
+
+  var bind = binder("add", "attach"),
+      unbind = binder("remove", "detach");
 
   // string trimmer
   function trim(s) {
@@ -195,17 +199,32 @@
     };
   }
 
+  function inArray(value, array, fromIndex) {
+    var k = fromIndex >>> 0, len = array.length >>> 0;
+    for (; k < len; k += 1) {
+      if (array[k] === value) return k;
+    }
+    return -1;
+  }
+
   function log() {
-    if (console) {
-      console.log.apply(console, arguments);
+    if (console && console.log) {
+      var args = [].slice.call(arguments);
+      if (console.log.apply) {
+        console.log.apply(console, args);
+      }
+      else {
+        for (var i = 0, l = args.length; i < l; i += 1) {
+          args[i] = JSON.stringify(args[i]);
+        }
+        console.log(args.join(" "));
+      }
+      return true;
     }
   }
 
   function handleError(err) {
-    if (console) {
-      console.error.apply(console, [err.message, err] || [err]);
-    }
-    else {
+    if (!log.apply(this, err && err.message ? [err, err.message] : [err])) {
       throw err;
     }
   }
@@ -214,9 +233,11 @@
     each: each,
     extend: extend,
     bind: bind,
+    unbind: unbind,
     trim: trim,
     fetch: fetch,
     debounce: debounce,
+    inArray: inArray,
     log: log,
     handleError: handleError
   });

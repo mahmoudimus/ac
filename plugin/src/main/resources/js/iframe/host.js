@@ -75,7 +75,6 @@
             preventTimeout();
             $content.addClass("iframe-init");
             var elapsed = new Date().getTime() - start;
-            //$home.find(".ap-elapsed").text(elapsed);
             showStatus("loaded");
             layoutIfNeeded();
             $nexus.trigger("ra.iframe.init");

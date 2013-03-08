@@ -1,4 +1,4 @@
-(function (window, document, JSON, encode, decode, undefined) {
+(function (window, document, encode, decode, console, JSON, undefined) {
 
   var AP = window._AP || window.AP,
       $ = AP._$ || (window.AJS && AJS.$) || window.jQuery,
@@ -35,8 +35,8 @@
       origin = getBaseUrl(config.remote);
       channel = config.channel;
       self.destroy = function () {
-        // @todo remove iframe
-        // @todo unbind listener
+        $(window).unbind("message", postMessageHandler);
+        if (iframe.parent) iframe.parent.removeChild(iframe);
       };
     }
     else {
@@ -124,9 +124,11 @@
       };
     });
 
-    $(window).bind("message", function (e) {
+    function postMessageHandler(e) {
       receive(e.originalEvent ? e.originalEvent : e);
-    });
+    }
+
+    $(window).bind("message", postMessageHandler);
 
     return self;
   };
@@ -172,7 +174,11 @@
   }
 
   function log() {
-    if (window.console) console.log.apply(console, arguments);
+    var log = $.log || (window.AJS && window.AJS.log);
+    if (log) {
+      log.apply(null, arguments);
+      return true;
+    }
   }
 
-}(this, document, JSON, encodeURIComponent, decodeURIComponent));
+}(this, document, encodeURIComponent, decodeURIComponent, this.console, JSON));
