@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.atlassian.plugins</groupId>
         <artifactId>remotable-plugins-parent</artifactId>
-        <version>0.7.9999-SNAPSHOT</version>
+        <version>0.7.1019</version>
     </parent>
 
     <artifactId>remotable-plugins-universal-binary-test-plugin</artifactId>
