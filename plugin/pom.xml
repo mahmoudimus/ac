@@ -197,7 +197,7 @@
         <dependency>
             <groupId>com.atlassian.refapp</groupId>
             <artifactId>atlassian-refapp-auth-plugin</artifactId>
-            <version>${refapp.version}</version>
+            <version>${refapp2.version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -366,7 +366,7 @@
         <dependency>
             <groupId>com.atlassian.refapp</groupId>
             <artifactId>atlassian-refapp-pageobjects</artifactId>
-            <version>${refapp.version}</version>
+            <version>${refapp2.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -681,7 +681,7 @@
                     <products>
                         <product>
                             <id>refapp</id>
-                            <version>${refapp.version}</version>
+                            <version>${refapp2.version}</version>
                             <log4jProperties>src/test/resources/log4j-refapp.properties</log4jProperties>
                             <pluginArtifacts>
                                 <pluginArtifact>
