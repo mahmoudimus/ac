@@ -35,7 +35,7 @@ public class BrowseProjectsScope extends JiraScope
                         new RestApiScopeHelper.RestScope("api", asList("latest", "2", "2.0.alpha1"), "/project", asList("get")),
                         new RestApiScopeHelper.RestScope("api", asList("latest", "2", "2.0.alpha1"), "/issue", asList("get")),
                         new RestApiScopeHelper.RestScope("api", asList("latest", "2", "2.0.alpha1"), "/filter", asList("get")),
-                        new RestApiScopeHelper.RestScope("api", asList("latest", "2", "2.0.alpha1"), "/search", asList("get"))
+                        new RestApiScopeHelper.RestScope("api", asList("latest", "2", "2.0.alpha1"), "/search", asList("get", "post"))
         )
         );
     }

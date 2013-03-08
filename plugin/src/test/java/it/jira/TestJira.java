@@ -280,7 +280,7 @@ public class TestJira
         }
         finally
         {
-            restClient.destroy();
+            restClient.close();
         }
     }
 
