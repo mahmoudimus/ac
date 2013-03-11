@@ -105,9 +105,10 @@ public class TestPageModules extends AbstractRemotablePluginTest
                 .addConfigurePage("page", "Page", "/page", "hello-world-page.mu")
                 .start();
 
-        assertTrue(product.visit(LoginPage.class).login("betty", "betty",
-                PluginManagerPage.class)
-            .configurePlugin("configurePage", "page", RemotePluginTestPage.class)
+        // fixme: jira page objects don't redirect properly to next page
+        product.visit(LoginPage.class).login("betty", "betty",
+                HomePage.class);
+        assertTrue(product.visit(PluginManagerPage.class).configurePlugin("configurePage", "page", RemotePluginTestPage.class)
             .isLoaded());
 
         runner.stop();
