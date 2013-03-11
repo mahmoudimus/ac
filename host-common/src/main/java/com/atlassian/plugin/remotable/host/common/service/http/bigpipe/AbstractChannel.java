@@ -23,7 +23,7 @@ abstract class AbstractChannel implements Channel
     }
 
     @Override
-    public void retainWhile(Promise promise)
+    public final void retainWhile(Promise promise)
     {
         retain();
         registerHandlers(promise);

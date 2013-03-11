@@ -23,6 +23,7 @@ import java.security.SecureRandom;
 import java.util.*;
 import java.util.concurrent.*;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Sets.newHashSet;
 import static java.util.Collections.*;
@@ -154,25 +155,16 @@ public final class DefaultBigPipeManager implements BigPipeManager, DisposableBe
 
     private BigPipeImpl getBigPipe(String requestId, boolean createIfAbsent)
     {
-        if (requestId == null)
-        {
-            throw new NullPointerException("requestId");
-        }
+        checkNotNull(requestId);
         BigPipeImpl bigPipeImpl = bigPipeImpls.get(requestId);
         if (bigPipeImpl == null)
         {
-            if (createIfAbsent)
+            checkArgument(createIfAbsent, "No bigpipe instance found for request id: '%s'", requestId);
+            BigPipeImpl newBigPipeImpl = new BigPipeImpl(requestId, userIdRetriever.getUserId());
+            bigPipeImpl = bigPipeImpls.putIfAbsent(requestId, newBigPipeImpl);
+            if (bigPipeImpl == null)
             {
-                BigPipeImpl newBigPipeImpl = new BigPipeImpl(requestId, userIdRetriever.getUserId());
-                bigPipeImpl = bigPipeImpls.putIfAbsent(requestId, newBigPipeImpl);
-                if (bigPipeImpl == null)
-                {
-                    bigPipeImpl = newBigPipeImpl;
-                }
-            }
-            else
-            {
-                throw new IllegalArgumentException("No bigpipe instance found for request id: '" + requestId + "'");
+                bigPipeImpl = newBigPipeImpl;
             }
         }
         return bigPipeImpl;
@@ -284,10 +276,8 @@ public final class DefaultBigPipeManager implements BigPipeManager, DisposableBe
         public DataChannel getDataChannel(String channelId)
         {
             checkNotNull(channelId);
-            if (HTML_CHANNEL_ID.equals(channelId))
-            {
-                throw new IllegalArgumentException("Data channels must not use the reserved channel id '" + HTML_CHANNEL_ID + "'");
-            }
+            checkArgument(!HTML_CHANNEL_ID.equals(channelId),
+                "Data channels must not use the reserved channel id '%s'", HTML_CHANNEL_ID);
 
             DataChannel channel = dataChannels.get(channelId);
             if (channel == null)

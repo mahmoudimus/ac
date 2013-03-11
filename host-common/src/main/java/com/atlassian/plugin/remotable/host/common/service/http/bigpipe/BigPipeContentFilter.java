@@ -62,7 +62,7 @@ public class BigPipeContentFilter implements Filter
             Option<ConsumableBigPipe> bigPipeOption = bigPipeManager.getConsumableBigPipe(requestId);
             if (!bigPipeOption.isEmpty())
             {
-                res.setStatus(200);
+                res.setStatus(HttpServletResponse.SC_OK);
                 res.setContentType("application/json");
                 res.setCharacterEncoding("UTF-8");
                 res.setHeader("Cache-Control", "no-cache");
@@ -72,13 +72,13 @@ public class BigPipeContentFilter implements Filter
             else
             {
                 log.warn("Big pipe is empty, returning 404 on {}", Thread.currentThread().getId());
-                res.sendError(404);
+                res.sendError(HttpServletResponse.SC_NOT_FOUND);
             }
         }
         else
         {
             log.warn("ID pattern not matched for big pipe content request on {}", Thread.currentThread().getId());
-            res.sendError(404);
+            res.sendError(HttpServletResponse.SC_NOT_FOUND);
         }
         log.debug("Big pipe content request sent on {}", Thread.currentThread().getId());
     }
