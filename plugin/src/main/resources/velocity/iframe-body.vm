@@ -18,41 +18,15 @@
   </div>
   ## @todo optimize script delivery
   #foreach ($scriptUrl in $scriptUrls)
-    <script src="$scriptUrl"></script>
+  <script src="$scriptUrl"></script>
   #end
   <script>
-    (function(jQuery, JIRA) {
-        function init() {
-          _AP.create({
-            ns: "$namespace",
-            src: "$iframeSrcHtml",
-            width: "$!width",
-            height: "$!height",
-            contextPath: "$contextPath",
-            appKey: "$plugin.key",
-            userId: "$userId",
-            dialog: "$!dialog",
-            data: {
-                #foreach($e in $data.entrySet())
-                    "${e.key}": "${e.value}"#if(!${foreach.isLast()}),#end
-                #end
-            }
-          });
-        }
-        if (JIRA) {
-            jQuery(function() {
-                JIRA.bind(JIRA.Events.NEW_CONTENT_ADDED, function(e, context, reason) {
-                    var jcontext = jQuery(context);
-                    var initializedIFrame = jQuery('#ap-$namespace', jcontext);
-                    if (initializedIFrame.length > 0) {
-                        jQuery('#embedded-$namespace').empty();
-                        init();
-                    }
-                });
-            });
-        }
-        init();
-    })(jQuery, window.JIRA);
-
+  _AP.create({
+    ns:"$namespace",key:"$plugin.key",cp:"$contextPath",uid:"$userId",dlg:"$!dialog",w:"$!width",h:"$!height",src:"$iframeSrcHtml",data:{
+    #foreach($e in $data.entrySet())
+      "${e.key}":"${e.value}"#if(!${foreach.isLast()}),#end
+    #end
+    }
+  });
   </script>
 </div>

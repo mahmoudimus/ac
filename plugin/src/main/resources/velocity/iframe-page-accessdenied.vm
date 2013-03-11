@@ -1,13 +1,11 @@
+<!DOCTYPE html>
 <html>
 <head>
-    <title>$!title</title>
-
-    <meta name="decorator" content="$decorator"></meta>
-
-
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>$!title</title>
+  <meta name="decorator" content="$decorator"></meta>
 </head>
-
 <body>
-    <div id="errorMessage">You do not have the correct permissions to view the page $!title.</div>
+  <div id="errorMessage">You do not have the correct permissions to view the page $!title.</div>
 </body>
 </html>
