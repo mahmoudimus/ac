@@ -6,6 +6,7 @@
             <permission>read_app_links</permission>
             <permission>send_email</permission>
             <permission installation-mode="remote">create_oauth_link</permission>
+            <permission installation-mode="local">execute_java</permission>
         </permissions>
         <param name="configure.url">/plugins/servlet/remotable-plugins/app1/remotePluginConfig</param>
         <param name="documentation.url">https://bitbucket.org/atlassian/remotable-plugins</param>

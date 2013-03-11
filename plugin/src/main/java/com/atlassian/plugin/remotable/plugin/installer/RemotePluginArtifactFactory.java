@@ -24,8 +24,6 @@ import static java.lang.String.format;
 @Component
 public class RemotePluginArtifactFactory
 {
-    public static final String CLASSES_TO_INCLUDE_CLASS_PATH = "com/atlassian/plugin/remotable/kit/common/ClassesToInclude.class";
-
     private final byte[] classesToIncludeClass;
 
     public RemotePluginArtifactFactory()
@@ -45,7 +43,6 @@ public class RemotePluginArtifactFactory
             public void build(ZipBuilder builder) throws IOException
             {
                 builder.addFile("atlassian-plugin.xml", document);
-                builder.addFile(CLASSES_TO_INCLUDE_CLASS_PATH, new ByteArrayInputStream(classesToIncludeClass));
             }
         }));
     }
