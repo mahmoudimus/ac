@@ -2,6 +2,7 @@ package com.atlassian.plugin.remotable.plugin.module.jira.issuetab;
 
 import com.atlassian.jira.ComponentManager;
 import com.atlassian.jira.plugin.issuetabpanel.IssueTabPanelModuleDescriptor;
+import com.atlassian.jira.plugin.issuetabpanel.IssueTabPanelModuleDescriptorImpl;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
@@ -108,7 +109,7 @@ public final class IssueTabPageModuleDescriptor extends AbstractModuleDescriptor
         try
         {
             desc.addAttribute("system", "true");
-            IssueTabPanelModuleDescriptor descriptor = new FixedIssueTabPanelModuleDescriptor(
+            IssueTabPanelModuleDescriptor descriptor = new IssueTabPanelModuleDescriptorImpl(
                     ComponentManager.getComponent(JiraAuthenticationContext.class), new ModuleFactory()
             {
                 @Override

@@ -33,6 +33,11 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>remotable-plugins-descriptor-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.atlassian.util.concurrent</groupId>
             <artifactId>atlassian-util-concurrent</artifactId>
             <scope>provided</scope>
@@ -155,7 +160,7 @@
 
         <dependency>
             <groupId>com.atlassian.jira</groupId>
-            <artifactId>atlassian-jira</artifactId>
+            <artifactId>jira-core</artifactId>
             <version>${jira.version}</version>
             <scope>provided</scope>
             <exclusions>
@@ -197,7 +202,7 @@
         <dependency>
             <groupId>com.atlassian.refapp</groupId>
             <artifactId>atlassian-refapp-auth-plugin</artifactId>
-            <version>${refapp2.version}</version>
+            <version>${refapp.version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -288,7 +293,7 @@
         <dependency>
             <groupId>com.atlassian.plugins</groupId>
             <artifactId>atlassian-plugins-webfragment</artifactId>
-            <version>2.14.0-m5</version>
+            <version>${webfragments.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -366,7 +371,7 @@
         <dependency>
             <groupId>com.atlassian.refapp</groupId>
             <artifactId>atlassian-refapp-pageobjects</artifactId>
-            <version>${refapp2.version}</version>
+            <version>${refapp.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -635,6 +640,8 @@
                             com.atlassian.plugin.remotable.spi*;version="${api.artifact.version}",
                             com.atlassian.plugin.schema.descriptor;version="${plugins.api.version}",
                             com.atlassian.plugin.schema.spi;version="${plugins.api.version}",
+                            com.atlassian.plugin.web.descriptors;resolution:=optional,
+                            com.atlassian.plugin.web.baseconditions;resolution:=optional,
                             com.atlassian.plugin.*;version="2.8",
                             com.atlassian.refapp.auth.external;resolution:=optional,
                             com.atlassian.sal.api.*;version="(2.4,3.0]",
@@ -676,7 +683,7 @@
                     <products>
                         <product>
                             <id>refapp</id>
-                            <version>${refapp2.version}</version>
+                            <version>${refapp.version}</version>
                             <log4jProperties>src/test/resources/log4j-refapp.properties</log4jProperties>
                             <pluginArtifacts>
                                 <pluginArtifact>
@@ -946,7 +953,7 @@
                                 <libArtifact>
                                     <groupId>com.atlassian.plugins</groupId>
                                     <artifactId>atlassian-plugins-webfragment</artifactId>
-                                    <version>${confluence.plugins.version}</version>
+                                    <version>${webfragments.version}</version>
                                 </libArtifact>
                                 <libArtifact>
                                     <groupId>com.atlassian.util.concurrent</groupId>
@@ -1300,7 +1307,7 @@
         <product>refapp</product>
         <plugin.version>${project.version}</plugin.version>
         <confluence.plugins.version>2.10.1</confluence.plugins.version>
-		<testkit.version>5.0.27</testkit.version>
+		<testkit.version>6.0.23</testkit.version>
         <functest.version>0.7.1</functest.version>
     </properties>
 

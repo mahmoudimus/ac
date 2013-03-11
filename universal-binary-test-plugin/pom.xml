@@ -85,7 +85,7 @@
         <dependency>
             <groupId>com.atlassian.refapp</groupId>
             <artifactId>atlassian-refapp-pageobjects</artifactId>
-            <version>${refapp2.version}</version>
+            <version>${refapp.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -253,12 +253,7 @@
                     <products>
                         <product>
                             <id>refapp</id>
-                            <version>${refapp2.version}</version>
-                        </product>
-                        <product>
-                            <id>refapp</id>
-                            <instanceId>refapp_3</instanceId>
-                            <version>${refapp3.version}</version>
+                            <version>${refapp.version}</version>
                         </product>
                     </products>
 
@@ -275,15 +270,6 @@
                             <id>refapp+container</id>
                             <productIds>
                                 <productId>refapp</productId>
-                            </productIds>
-                            <systemProperties>
-                                <pluginMode>container</pluginMode>
-                            </systemProperties>
-                        </testGroup>
-                        <testGroup>
-                            <id>refapp3+container</id>
-                            <productIds>
-                                <productId>refapp_3</productId>
                             </productIds>
                             <systemProperties>
                                 <pluginMode>container</pluginMode>

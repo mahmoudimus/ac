@@ -393,27 +393,27 @@
         <!-- If you change this, make sure you upgrade and release new versions of every plugin bundled in the
              OBR, otherwise upgrades won't work correctly -->
         <api.version>0.8</api.version>
-        <api.artifact.version>${api.version}.1</api.artifact.version>
+        <api.artifact.version>${api.version}.2</api.artifact.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <xvfb.enable>true</xvfb.enable>
         <atlassian.selenium.version>2.1.0-m12</atlassian.selenium.version>
         <!-- Confluence 4.2.8 uses this version, JIRA 5.0.7 uses version 2.1.0-m14 -->
-        <refapp2.version>2.20.0-m4</refapp2.version>
-        <refapp3.version>3.0.0-m4</refapp3.version>
-        <jira.version>6.0-OD-04</jira.version>
+        <refapp.version>3.0.0-m4</refapp.version>
+        <jira.version>6.0-OD-11-gh-start-date-1</jira.version>
         <jira.data.version>${jira.version}</jira.data.version>
         <jira.client.api.version>2.0</jira.client.api.version>
-        <jira.client.version>2.0.0-m15</jira.client.version>
-        <confluence.client.version>0.9.7</confluence.client.version>
+        <jira.client.version>2.0.0-m16</jira.client.version>
+        <confluence.client.version>0.9.8</confluence.client.version>
         <sisu.version>0.0.0.atlassian6</sisu.version>
         <sisu.guice.version>3.1.3</sisu.guice.version>
         <confluence.version>5.0-OD-27</confluence.version>
         <confluence.data.version>${confluence.version}</confluence.data.version>
         <applinks.version>3.5.1</applinks.version>
-        <speakeasy.version>1.3.19</speakeasy.version>
+        <speakeasy.version>1.3.20</speakeasy.version>
         <sal.version>2.7.0</sal.version>
         <plugins.api.version>2.10</plugins.api.version>
-        <plugins.version>3.0.0-m5</plugins.version>
+        <plugins.version>3.0.0-m32</plugins.version>
+        <webfragments.version>3.0.0-m5</webfragments.version>
         <rest.version>2.3.0</rest.version>
         <ao.version>0.19.14</ao.version>
         <oauth.version>1.3.0</oauth.version>

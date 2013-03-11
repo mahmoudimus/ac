@@ -155,7 +155,7 @@
         <dependency>
             <groupId>com.atlassian.plugins</groupId>
             <artifactId>atlassian-plugins-webfragment</artifactId>
-            <version>2.14.0-m5</version>
+            <version>${webfragments.version}</version>
         </dependency>
 
         <dependency>

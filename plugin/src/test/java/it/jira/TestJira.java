@@ -227,7 +227,6 @@ public class TestJira
             {
                 ProjectSummaryPageTab page =
                         product.visit(ProjectSummaryPageTab.class, project.getKey());
-                assertThat(page.getPanelHeadingTexts(), hasItem("Remote Project Config Panel"));
                 JiraProjectAdministrationPanel webPanel = product.visit(JiraProjectAdministrationPanel.class,
                         EMBEDDED_PROJECT_CONFIG_PANEL_ID, project.getKey());
                 assertEquals("Success", webPanel.getMessage());

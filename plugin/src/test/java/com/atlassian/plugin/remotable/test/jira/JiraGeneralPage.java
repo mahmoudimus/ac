@@ -41,12 +41,7 @@ public class JiraGeneralPage implements GeneralPage
     @Init
     public void init()
     {
-        // we do this because sometimes we try to click the dropdown when it isn't ready, and the
-        // default href is '#'
-        driver.executeScript("(function () { var target = document.getElementById('general_dropdown_linkId_drop'); if (target) target.setAttribute('href', 'javascript:void(0)'); }());");
-        remotepluginsGeneralMenuLink = driver.elementExists(By.id("general_dropdown_linkId_drop")) ?
-                                       driver.findElement(By.id("general_dropdown_linkId_drop")) :
-                                       driver.findElement(By.id("general_dropdown_linkId"));
+        remotepluginsGeneralMenuLink = driver.findElement(By.linkText("More"));
     }
 
     @Override

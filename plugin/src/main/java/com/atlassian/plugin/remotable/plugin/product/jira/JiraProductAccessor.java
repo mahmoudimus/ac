@@ -64,7 +64,7 @@ public final class JiraProductAccessor implements ProductAccessor
     @Override
     public String getPreferredGeneralSectionKey()
     {
-        return "general_dropdown_linkId/jira-remotable.plugins.general";
+        return "system.top.navigation.bar";
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.atlassian.plugin.remotable.plugin.module.jira.projecttab;
 
 import com.atlassian.jira.ComponentManager;
 import com.atlassian.jira.plugin.projectpanel.ProjectTabPanelModuleDescriptor;
+import com.atlassian.jira.plugin.projectpanel.ProjectTabPanelModuleDescriptorImpl;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
@@ -104,7 +105,7 @@ public final class ProjectTabPageModuleDescriptor extends AbstractModuleDescript
         try
         {
             desc.addAttribute("system", "true");
-            ProjectTabPanelModuleDescriptor descriptor = new FixedProjectTabPanelModuleDescriptor(
+            ProjectTabPanelModuleDescriptor descriptor = new ProjectTabPanelModuleDescriptorImpl(
                     ComponentManager.getComponent(JiraAuthenticationContext.class), new ModuleFactory()
             {
                 @Override
