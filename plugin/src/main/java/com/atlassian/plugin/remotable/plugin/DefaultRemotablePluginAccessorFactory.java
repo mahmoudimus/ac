@@ -10,6 +10,10 @@ import com.atlassian.oauth.ServiceProvider;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
+import com.atlassian.plugin.event.PluginEventListener;
+import com.atlassian.plugin.event.events.PluginDisabledEvent;
+import com.atlassian.plugin.event.events.PluginEnabledEvent;
+import com.atlassian.plugin.event.events.PluginModuleEnabledEvent;
 import com.atlassian.plugin.remotable.plugin.loader.universalbinary.UBDispatchFilter;
 import com.atlassian.plugin.remotable.plugin.module.applinks.RemotePluginContainerModuleDescriptor;
 import com.atlassian.plugin.remotable.plugin.util.function.MapFunctions;
@@ -107,6 +111,32 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
         {
             accessors.remove(getPluginKey(event.getApplicationLink()));
         }
+    }
+
+    /**
+     * Clear accessor if a plugin is enabled
+     * @param event
+     */
+    @EventListener
+    public void onPluginEnabled(PluginEnabledEvent event)
+    {
+        accessors.remove(event.getPlugin().getKey());
+    }
+
+    /**
+     * Clear accessor if a plugin is disabled
+     * @param event
+     */
+    @EventListener
+    public void onPluginDisabled(PluginDisabledEvent event)
+    {
+        accessors.remove(event.getPlugin().getKey());
+    }
+
+    @PluginEventListener
+    public void onPluginModuleEnabled(PluginModuleEnabledEvent event)
+    {
+        accessors.remove(event.getModule().getPluginKey());
     }
 
     private String getPluginKey(ApplicationLink link)
