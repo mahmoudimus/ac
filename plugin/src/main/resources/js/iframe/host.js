@@ -1,22 +1,28 @@
-(function (global, AJS) {
+(function (window, AJS/*, JIRA*/) {
 
   var $ = AJS.$,
-      AP = global._AP = global._AP || {},
+      AP = window._AP = window._AP || {},
       xhrProperties = ["status", "statusText", "responseText"],
       xhrHeaders = ["Content-Type"],
-      events = (AJS.EventQueue = AJS.EventQueue || []);
+      events = (AJS.EventQueue = AJS.EventQueue || []),
+      defer = window.requestAnimationFrame || function (f) {setTimeout(f,10)};
 
-  AP.create = AP.create || function (options) {
+  function contentDiv(ns) {
+    return $("#embedded-" + ns);
+  }
+
+  function create(options) {
 
     var ns = options.ns,
-        $home = $("#ap-" + ns),
-        contentId = "embedded-" + ns,
+        homeId = "ap-" + ns,
+        $home = $("#" + homeId),
+        $content = contentDiv(ns),
+        contentId = $content.attr("id"),
         channelId = "channel-" + ns,
-        $content = $("#" + contentId),
-        initWidth = options.width || "100%",
-        initHeight = options.height || "0",
+        initWidth = options.w || "100%",
+        initHeight = options.h || "0",
         start = new Date().getTime(),
-        isDialog = !!options.dialog,
+        isDialog = !!options.dlg,
         isInited;
 
     function publish(name, props) {
@@ -92,7 +98,7 @@
           publish("p3.iframe." + id, props);
         },
         getLocation: function () {
-          return global.location.href;
+          return window.location.href;
         },
         getUser: function () {
           // JIRA 5.0, Confluence 4.3(?)
@@ -106,7 +112,7 @@
             // JIRA 6, Confluence 5
             fullName = $("a#user-menu-link").attr("title");
           }
-          return {fullName: fullName, id: options.userId};
+          return {fullName: fullName, id: options.uid};
         },
         getTimeZone: function () {
           return options.data.timeZone;
@@ -142,7 +148,7 @@
         },
         request: function (args, success, error) {
           // add the context path to the request url
-          var url = options.contextPath + args.url;
+          var url = options.cp + args.url;
           // reduce the xhr object to the just bits we can/want to expose over the bridge
           function toJSON(xhr) {
             var json = {headers: {}};
@@ -165,7 +171,7 @@
               // undo the effect on the accept header of having set dataType to "text"
               "Accept": "*/*",
               // send the app key header to force scope checks
-              "AP-App-Key": options.appKey
+              "AP-App-Key": options.key
             }
           }).then(done, fail);
         }
@@ -174,6 +180,8 @@
 
     var $nexus = $content.parents(".ap-servlet-placeholder"),
         $iframe = $("iframe", $content);
+
+    $iframe.data("ap-rpc", rpc);
 
     function layoutIfNeeded() {
       var $stats = $(".ap-stats", $home);
@@ -235,8 +243,7 @@
           }
         });
       }
-    });
-    $(document).delegate("#update_submit", "click", function(e) {
+    }).delegate("#update_submit", "click", function(e) {
       if (!done) {
         e.preventDefault();
         rpc.setWorkflowConfigurationMessage(function(either) {
@@ -248,15 +255,38 @@
         });
       }
     });
+    // !!! end JIRA !!!
 
-    // clean up when the iframe is removed
+    // clean up when the iframe is removed by other sceripts coordinating through the $nexus
     $nexus.bind("ra.iframe.destroy", function () {
       // destroy the rpc bridge and remove the iframe
+      console.log("ra.iframe.destroy:", rpc);
       rpc.destroy();
     });
 
     $nexus.trigger("ra.iframe.create");
-
   }
 
-}(this, AJS));
+  AP.create = AP.create || function (options) {
+    function doCreate() {
+      // make sure the content div is empty
+      contentDiv(options.ns).find("iframe").each(function (_, iframe) {
+        var rpc = $(iframe).data("ap-rpc");
+        if (rpc) rpc.destroy();
+      });
+      // create the new iframe
+      create(options);
+    }
+    if ($.isReady) {
+      // if the dom is ready then this is being run during an ajax update;
+      // in that case, defer creation until the next event loop tick to ensure
+      // that updates to the desired container node's parents have completed
+      defer(doCreate);
+    }
+    else {
+      // if the document hasn't yet loaded, defer creation until domready
+      $(doCreate);
+    }
+  };
+
+}(this, AJS/*, this.JIRA*/));

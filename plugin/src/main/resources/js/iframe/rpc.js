@@ -1,11 +1,14 @@
 (function (window, document, encode, decode, console, JSON, undefined) {
 
-  var AP = window._AP || window.AP,
+  var AP = window._AP || window.AP, Rpc,
       $ = AP._$ || (window.AJS && AJS.$) || window.jQuery,
-      loc = window.location.toString();
+      $window = $(window),
+      loc = window.location.toString(),
+      count = 0;
 
-  AP._Rpc = function (config, bindings) {
-    var self = {}, target, origin, channel,
+  Rpc = AP._Rpc = AP._Rpc || function (config, bindings) {
+    var self, id = (count += 1),
+        target, origin, channel, mixin,
         locals = bindings.local || {},
         remotes = bindings.remote || [];
 
@@ -29,28 +32,46 @@
     }();
 
     if (!/xdm_e/.test(loc)) {
-      // host
       var iframe = createIframe(config);
       target = iframe.contentWindow;
       origin = getBaseUrl(config.remote);
       channel = config.channel;
-      self.destroy = function () {
-        $(window).unbind("message", postMessageHandler);
-        if (iframe.parent) iframe.parent.removeChild(iframe);
+      mixin = {
+        iframe: iframe,
+        destroy: function () {
+          unbind();
+          if (self.iframe) {
+            $(self.iframe).remove();
+            delete self.iframe;
+          }
+        },
+        isActive: function () {
+          return $.contains(document.documentElement, self.iframe);
+        }
       };
     }
     else {
-      // plugin
       target = window.parent;
       origin = param(loc, "xdm_e");
       channel = param(loc, "xdm_c");
+      mixin = {
+        isActive: function () {
+          return true;
+        }
+      };
     }
 
-    function send(id, type, message) {
+    self = $.extend({
+      id: id,
+      origin: origin,
+      channel: channel
+    }, mixin);
+
+    function send(sid, type, message) {
       try {
         target.postMessage(JSON.stringify({
           c: channel,
-          i: id,
+          i: sid,
           t: type,
           m: message
         }), origin);
@@ -90,13 +111,13 @@
             }
           }
           else {
-            log("Unhandled request:", payload);
+            debug("Unhandled request:", payload);
           }
         }
         else if (ptype === "done" || ptype === "fail") {
           var handler = nexus[ptype];
           if (handler) handler(pid, pmessage);
-          else log("Unhandled response:", payload);
+          else debug("Unhandled response:", payload);
         }
       }
       catch (ex) {
@@ -125,10 +146,23 @@
     });
 
     function postMessageHandler(e) {
-      receive(e.originalEvent ? e.originalEvent : e);
+      if (self.isActive()) {
+        receive(e.originalEvent ? e.originalEvent : e);
+      }
+      else {
+        unbind();
+      }
     }
 
-    $(window).bind("message", postMessageHandler);
+    function bind() {
+      $window.bind("message", postMessageHandler);
+    }
+
+    function unbind() {
+      $window.unbind("message", postMessageHandler);
+    }
+
+    bind();
 
     return self;
   };
@@ -163,8 +197,7 @@
       xdm_p: 1
     });
     $.extend(iframe, {id: id, name: id, frameBorder: "0"}, config.props);
-    var container = $("#" + config.container)[0];
-    container.appendChild(iframe);
+    $("#" + config.container).append(iframe);
     iframe.src = src;
     return iframe;
   }
@@ -173,10 +206,14 @@
     return ex.message || ex.toString();
   }
 
+  function debug() {
+    if (Rpc.debug) log.apply(window, ["DEBUG:"].concat([].slice.call(arguments)));
+  }
+
   function log() {
     var log = $.log || (window.AJS && window.AJS.log);
     if (log) {
-      log.apply(null, arguments);
+      log.apply(window, arguments);
       return true;
     }
   }
