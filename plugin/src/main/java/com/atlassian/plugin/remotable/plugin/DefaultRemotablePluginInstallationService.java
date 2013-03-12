@@ -248,7 +248,8 @@ public class DefaultRemotablePluginInstallationService implements RemotablePlugi
 
     String getPluginDescriptorUrl(final String pluginKey)
     {
-        return httpClient.newRequest("https://marketplace.atlassian.com/rest/1.0/plugins/" + pluginKey)
+        String baseurl = System.getProperty("mpac.baseurl", "https://marketplace.atlassian.com");
+        return httpClient.newRequest(baseurl + "/rest/1.0/plugins/" + pluginKey)
                 .get()
                 .<String>transform()
                 .ok(new Function<Response, String>()
