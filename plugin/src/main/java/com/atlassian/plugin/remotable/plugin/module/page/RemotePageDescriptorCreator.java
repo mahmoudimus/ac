@@ -109,6 +109,7 @@ public final class RemotePageDescriptorCreator
             Element config = e.createCopy();
             final String moduleKey = "servlet-" + key;
             config.addAttribute("key", moduleKey);
+            config.addAttribute("system", "true");
             config.addAttribute("class", IFramePageServlet.class.getName());
             config.addElement("url-pattern").setText(localUrl + "");
             config.addElement("url-pattern").setText(localUrl + "/*");

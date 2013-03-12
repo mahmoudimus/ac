@@ -107,6 +107,7 @@ public final class IssueTabPageModuleDescriptor extends AbstractModuleDescriptor
     {
         try
         {
+            desc.addAttribute("system", "true");
             IssueTabPanelModuleDescriptor descriptor = new FixedIssueTabPanelModuleDescriptor(
                     ComponentManager.getComponent(JiraAuthenticationContext.class), new ModuleFactory()
             {

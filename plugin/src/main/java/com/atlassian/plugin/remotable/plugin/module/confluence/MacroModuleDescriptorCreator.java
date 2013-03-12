@@ -137,6 +137,7 @@ public class MacroModuleDescriptorCreator
             config.addAttribute("name", key);
 
             config.addAttribute("i18n-name-key", plugin.getKey() + "." + key + ".label");
+            config.addAttribute("system", "true");
 
             config.addAttribute("class", StorageFormatMacro.class.getName());
             if (config.element("parameters") == null)
@@ -265,6 +266,7 @@ public class MacroModuleDescriptorCreator
             final String moduleKey = "servlet-" + key;
             Element config = e.createCopy()
                     .addAttribute("key", moduleKey)
+                    .addAttribute("system", "true")
                     .addAttribute("class", IFramePageServlet.class.getName());
             config.addElement("url-pattern").setText(localUrl + "");
             config.addElement("url-pattern").setText(localUrl + "/*");

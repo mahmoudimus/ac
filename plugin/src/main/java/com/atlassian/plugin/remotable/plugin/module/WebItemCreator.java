@@ -143,6 +143,7 @@ public final class WebItemCreator
         private WebItemModuleDescriptor createWebItemDescriptor(
                 Plugin plugin, Element config)
         {
+            config.addAttribute("system", "true");
             WebItemModuleDescriptor descriptor = productAccessor.createWebItemModuleDescriptor();
             descriptor.init(plugin, config);
             return descriptor;

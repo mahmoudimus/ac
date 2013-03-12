@@ -101,6 +101,7 @@ public final class RemoteSearchRequestViewModuleDescriptor extends AbstractModul
         final String title = getName();
         try
         {
+            element.addAttribute("system", "true");
             ModuleFactory moduleFactory = new ModuleFactory()
             {
                 @Override

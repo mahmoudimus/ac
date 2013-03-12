@@ -90,6 +90,7 @@ public class JiraProfileTabModuleDescriptor extends AbstractModuleDescriptor<Voi
         Element config = e.createCopy();
         final String moduleKey = "profile-" + key;
         config.addAttribute("key", moduleKey);
+        config.addAttribute("system", "true");
         config.addAttribute("i18n-key", panelName);
         config.addAttribute("class", IFrameViewProfilePanel.class.getName());
 

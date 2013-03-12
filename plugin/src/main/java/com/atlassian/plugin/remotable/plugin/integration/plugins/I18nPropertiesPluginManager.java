@@ -197,6 +197,7 @@ public final class I18nPropertiesPluginManager
             I18nModuleDescriptor descriptor = new I18nModuleDescriptor(moduleFactory);
             descriptor.init(findI18nPlugin(), DocumentHelper.createElement("i18n-something")
                     .addAttribute("key", name)
+                    .addAttribute("system", "true")
                     .addElement("resource")
                     .addAttribute("type", "i18n")
                     .addAttribute("name", "i18n")

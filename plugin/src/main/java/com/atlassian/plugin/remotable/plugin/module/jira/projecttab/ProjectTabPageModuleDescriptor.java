@@ -103,6 +103,7 @@ public final class ProjectTabPageModuleDescriptor extends AbstractModuleDescript
     {
         try
         {
+            desc.addAttribute("system", "true");
             ProjectTabPanelModuleDescriptor descriptor = new FixedProjectTabPanelModuleDescriptor(
                     ComponentManager.getComponent(JiraAuthenticationContext.class), new ModuleFactory()
             {
