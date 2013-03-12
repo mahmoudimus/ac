@@ -314,7 +314,7 @@ public class MacroModuleDescriptorCreator
 
             transformation
                     .addElement("transformer")
-                    .addAttribute("key", "macroVariableTransformer")
+                    .addAttribute("key", "confluence-macroVariableTransformer")
                     .addElement("var")
                     .addAttribute("name", "MACRONAME")
                     .addAttribute("value", macroKey).getParent()
@@ -361,7 +361,7 @@ public class MacroModuleDescriptorCreator
                     .addAttribute("extension", "css");
 
             transformation.addElement("transformer")
-                    .addAttribute("key", "macroVariableTransformer")
+                    .addAttribute("key", "confluence-macroVariableTransformer")
                     .addElement("var")
                     .addAttribute("name", "KEY")
                     .addAttribute("value", macroKey).getParent()
