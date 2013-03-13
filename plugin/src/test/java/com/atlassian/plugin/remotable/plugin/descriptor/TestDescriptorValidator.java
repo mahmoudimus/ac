@@ -6,11 +6,16 @@ import com.atlassian.plugin.remotable.api.InstallationMode;
 import com.atlassian.plugin.remotable.plugin.PermissionManager;
 import com.atlassian.plugin.remotable.spi.permission.Permission;
 import com.atlassian.plugin.remotable.spi.product.ProductAccessor;
+import com.atlassian.plugin.remotable.spi.util.Dom4jUtils;
 import com.atlassian.plugin.schema.spi.Schema;
 import com.atlassian.plugin.webresource.WebResourceManager;
 import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
+import com.google.common.collect.ImmutableList;
 import com.google.common.io.InputSupplier;
+import org.dom4j.Document;
+import org.dom4j.Element;
+import org.dom4j.Node;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,11 +29,13 @@ import javax.xml.transform.stream.StreamSource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
+import java.util.List;
 
-import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.parseDocument;
 import static com.google.common.io.CharStreams.newReaderSupplier;
 import static java.util.Arrays.asList;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -87,8 +94,9 @@ public final class TestDescriptorValidator
     public void testOneModuleOneEmbeddedInclude()
     {
         Schema schema = mock(Schema.class);
-        when(schema.getDocument()).thenReturn(parseDocument(
-                getClass().getResource("module-one-include.xsd")));
+        when(schema.getRequiredPermissions()).thenReturn(ImmutableList.<String>of());
+        when(schema.getOptionalPermissions()).thenReturn(ImmutableList.<String>of());
+        when(schema.getDocument()).thenReturn(getDocument("module-one-include.xsd"));
         when(schema.getComplexType()).thenReturn("ModuleType");
         when(schema.getFileName()).thenReturn("module-one-include.xsd");
         when(schema.getElementName()).thenReturn("module1");
@@ -137,6 +145,105 @@ public final class TestDescriptorValidator
         validate(schema, "<restrict application='jira' version='[1.0,)'></restrict>");
         validate(schema, "<restrict application='jira' version='(,2.0]'></restrict>");
     }
+
+    @Test
+    public void testAddPermissionDocumentationWithSomePermissions() throws Exception
+    {
+        final Element documentation = getTestDocumentation();
+
+        final Schema mockSchema = mock(Schema.class);
+        final List<String> requiredPermissions = ImmutableList.of("a_required_permission");
+        final List<String> optionalPermissions = ImmutableList.of("an_optional_permission");
+
+        when(mockSchema.getRequiredPermissions()).thenReturn(requiredPermissions);
+        when(mockSchema.getOptionalPermissions()).thenReturn(optionalPermissions);
+
+        DescriptorValidator.addPermissionDocumentation(documentation, mockSchema);
+
+        checkPermissions(documentation, "required-permissions", requiredPermissions);
+        checkPermissions(documentation, "optional-permissions", optionalPermissions);
+    }
+
+    @Test
+    public void testAddPermissionDocumentationWithNoPermissions() throws Exception
+    {
+        final Element documentation = getTestDocumentation();
+
+        final Schema mockSchema = mock(Schema.class);
+        final List<String> requiredPermissions = ImmutableList.of();
+        final List<String> optionalPermissions = ImmutableList.of();
+
+        when(mockSchema.getRequiredPermissions()).thenReturn(requiredPermissions);
+        when(mockSchema.getOptionalPermissions()).thenReturn(optionalPermissions);
+
+        DescriptorValidator.addPermissionDocumentation(documentation, mockSchema);
+
+        checkPermissions(documentation, "required-permissions", requiredPermissions);
+        checkPermissions(documentation, "optional-permissions", optionalPermissions);
+    }
+
+    @Test
+    public void testAddPermissionDocumentationWithOnlyRequiredPermissions() throws Exception
+    {
+        final Element documentation = getTestDocumentation();
+
+        final Schema mockSchema = mock(Schema.class);
+        final List<String> requiredPermissions = ImmutableList.of("r1", "r2");
+        final List<String> optionalPermissions = ImmutableList.of();
+
+        when(mockSchema.getRequiredPermissions()).thenReturn(requiredPermissions);
+        when(mockSchema.getOptionalPermissions()).thenReturn(optionalPermissions);
+
+        DescriptorValidator.addPermissionDocumentation(documentation, mockSchema);
+
+        checkPermissions(documentation, "required-permissions", requiredPermissions);
+        checkPermissions(documentation, "optional-permissions", optionalPermissions);
+    }
+
+    @Test
+    public void testAddPermissionDocumentationWithOnlyOptionalPermissions() throws Exception
+    {
+        final Element documentation = getTestDocumentation();
+
+        final Schema mockSchema = mock(Schema.class);
+        final List<String> requiredPermissions = ImmutableList.of();
+        final List<String> optionalPermissions = ImmutableList.of("o1", "o2");
+
+        when(mockSchema.getRequiredPermissions()).thenReturn(requiredPermissions);
+        when(mockSchema.getOptionalPermissions()).thenReturn(optionalPermissions);
+
+        DescriptorValidator.addPermissionDocumentation(documentation, mockSchema);
+
+        checkPermissions(documentation, "required-permissions", requiredPermissions);
+        checkPermissions(documentation, "optional-permissions", optionalPermissions);
+    }
+
+    private Element getTestDocumentation()
+    {
+        final Document schema = getDocument("/xsd/test-permission-documentation.xsd");
+
+        final Element documentation = (Element) schema.selectSingleNode("//xs:documentation");
+        assertEquals("A Module", documentation.selectSingleNode("name").getText());
+        return documentation;
+    }
+
+    private void checkPermissions(Element documentation, String permissionsXpath, List<String> permissionNames)
+    {
+        final Node requiredPermissions = documentation.selectSingleNode(permissionsXpath);
+        assertNotNull(requiredPermissions);
+        List<Element> requiredPermissionsList = requiredPermissions.selectNodes("permission");
+        assertEquals(permissionNames.size(), requiredPermissionsList.size());
+        for (int i = 0; i < permissionNames.size(); i++)
+        {
+            assertEquals(permissionNames.get(i), requiredPermissionsList.get(i).getText());
+        }
+    }
+
+    private Document getDocument(String xsd)
+    {
+        return Dom4jUtils.parseDocument(this.getClass().getResource(xsd));
+    }
+
 
     private void validate(javax.xml.validation.Schema schema, String... xml) throws SAXException, IOException
     {
