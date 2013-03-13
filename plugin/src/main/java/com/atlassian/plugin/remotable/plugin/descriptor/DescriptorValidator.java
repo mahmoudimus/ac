@@ -15,6 +15,7 @@ import com.atlassian.plugin.schema.spi.SchemaDocumented;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.webresource.UrlMode;
 import com.atlassian.plugin.webresource.WebResourceManager;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Supplier;
 import com.google.common.collect.Maps;
 import com.google.common.io.CharStreams;
@@ -196,9 +197,20 @@ public final class DescriptorValidator
         addPermissionDocumentation(moduleDocumentation, moduleSchema);
     }
 
-    private static void addPermissionDocumentation(Element moduleDocumentation, Schema moduleSchema)
+    @VisibleForTesting
+    static void addPermissionDocumentation(Element moduleDocumentation, Schema moduleSchema)
     {
-        // HERE.
+        addPermissionDocumentation(moduleDocumentation, "required-permissions", moduleSchema.getRequiredPermissions());
+        addPermissionDocumentation(moduleDocumentation, "optional-permissions", moduleSchema.getOptionalPermissions());
+    }
+
+    private static void addPermissionDocumentation(Element moduleDocumentation, String permissionsElementName, Iterable<String> permissions)
+    {
+        final Element permissionsElement = moduleDocumentation.addElement(permissionsElementName);
+        for (String permission : permissions)
+        {
+            permissionsElement.addElement("permission").setText(permission);
+        }
     }
 
     private void addModuleSchemaElementsToSchema(Element choiceOfModules, Document doc)
