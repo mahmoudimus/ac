@@ -35,70 +35,8 @@ public final class TestRemotePluginArtifactFactory
         Element bundleInst = newDoc.getRootElement().element("plugin-info").element("bundle-instructions");
         Map<String, Map<String, String>> attrs = OsgiHeaderUtil.parseHeader(
                 bundleInst.element("Remote-Plugin").getTextTrim());
-        /*
-Manifest mf = new Manifest(new ByteArrayInputStream(
-        toByteArray(artifact.getResourceAsStream("META-INF/MANIFEST.MF"))));
-Map<String,Map<String,String>> attrs = OsgiHeaderUtil.parseHeader(
-        mf.getMainAttributes().getValue("Remote-Plugin"));
-        */
         assertEquals("bob", attrs.get("installer").get("user"));
         assertEquals("http://localhost", attrs.get("installer").get("registration-url"));
-    }
-
-    @Test
-    public void testAddExecuteJavaPermissionForAtlassianPluginXmlWithNoPermissions()
-    {
-        Document document = remotePluginArtifactFactory.addExecuteJavaPermission(getAtlassianPluginXml());
-
-        asserSingleNodeExists(document, "/atlassian-plugin/plugin-info/permissions/permission[text() = 'execute_java' and @installation-mode='remote']");
-    }
-
-    @Test
-    public void testAddExecuteJavaPermissionForAtlassianPluginXmlWithExecuteJavaPermissionAndNoInstallMode()
-    {
-        Document atlassianPluginXml = getAtlassianPluginXml();
-        atlassianPluginXml.getRootElement()
-                .element("plugin-info")
-                .addElement("permissions")
-                .addElement("permission").setText("execute_java");
-
-        Document document = remotePluginArtifactFactory.addExecuteJavaPermission(atlassianPluginXml);
-        asserSingleNodeExists(document, "/atlassian-plugin/plugin-info/permissions/permission[text() = 'execute_java' and not(@installation-mode)]");
-    }
-
-    @Test
-    public void testAddExecuteJavaPermissionForAtlassianPluginXmlWithExecuteJavaPermissionAndInstallModeLocal()
-    {
-        Document atlassianPluginXml = getAtlassianPluginXml();
-        atlassianPluginXml.getRootElement()
-                .element("plugin-info")
-                .addElement("permissions")
-                .addElement("permission").addAttribute("installation-mode", "local").setText("execute_java");
-
-        Document document = remotePluginArtifactFactory.addExecuteJavaPermission(atlassianPluginXml);
-
-        asserSingleNodeExists(document, "/atlassian-plugin/plugin-info/permissions/permission[text() = 'execute_java' and @installation-mode = 'local']");
-        asserSingleNodeExists(document, "/atlassian-plugin/plugin-info/permissions/permission[text() = 'execute_java' and @installation-mode = 'remote']");
-    }
-
-    @Test
-    public void testAddExecuteJavaPermissionForAtlassianPluginXmlWithExecuteJavaPermissionAndInstallModeRemote()
-    {
-        Document atlassianPluginXml = getAtlassianPluginXml();
-        atlassianPluginXml.getRootElement()
-                .element("plugin-info")
-                .addElement("permissions")
-                .addElement("permission").addAttribute("installation-mode", "remote").setText("execute_java");
-
-        Document document = remotePluginArtifactFactory.addExecuteJavaPermission(atlassianPluginXml);
-
-        asserSingleNodeExists(document, "/atlassian-plugin/plugin-info/permissions/permission[text() = 'execute_java' and @installation-mode = 'remote']");
-    }
-
-    private void asserSingleNodeExists(Document document, String xpath)
-    {
-        assertNotNull("Could not find expected permission in plugin descriptor:\n" + document.asXML(),
-                document.selectSingleNode(xpath));
     }
 
     private Document getAtlassianPluginXml()
