@@ -12,6 +12,8 @@ import com.atlassian.plugin.webresource.WebResourceManager;
 import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import com.google.common.io.InputSupplier;
 import org.dom4j.Document;
 import org.dom4j.Element;
@@ -36,6 +38,7 @@ import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -68,7 +71,7 @@ public final class TestDescriptorValidator
     @Before
     public void setUp()
     {
-        when(permissionManager.getPermissions()).thenReturn(Collections.<Permission>emptySet());
+        when(permissionManager.getPermissions(InstallationMode.LOCAL)).thenReturn(Collections.<Permission>emptySet());
 
         when(pluginRetrievalService.getPlugin()).thenReturn(plugin);
         when(pluginDescriptorValidatorProvider.getRootElementName()).thenReturn("AtlassianPluginType");
@@ -230,12 +233,20 @@ public final class TestDescriptorValidator
     private void checkPermissions(Element documentation, String permissionsXpath, List<String> permissionNames)
     {
         final Node requiredPermissions = documentation.selectSingleNode(permissionsXpath);
-        assertNotNull(requiredPermissions);
-        List<Element> requiredPermissionsList = requiredPermissions.selectNodes("permission");
-        assertEquals(permissionNames.size(), requiredPermissionsList.size());
-        for (int i = 0; i < permissionNames.size(); i++)
+
+        if (permissionNames.isEmpty())
         {
-            assertEquals(permissionNames.get(i), requiredPermissionsList.get(i).getText());
+            assertNull(requiredPermissions);
+        }
+        else
+        {
+            assertNotNull(requiredPermissions);
+            List<Element> requiredPermissionsList = requiredPermissions.selectNodes("permission");
+            assertEquals(permissionNames.size(), requiredPermissionsList.size());
+            for (int i = 0; i < permissionNames.size(); i++)
+            {
+                assertEquals(permissionNames.get(i), requiredPermissionsList.get(i).getText());
+            }
         }
     }
 

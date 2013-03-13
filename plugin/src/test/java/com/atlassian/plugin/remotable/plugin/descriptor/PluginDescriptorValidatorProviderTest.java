@@ -5,8 +5,8 @@ import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.remotable.api.InstallationMode;
+import com.atlassian.plugin.remotable.plugin.PermissionManager;
 import com.atlassian.plugin.remotable.spi.permission.PermissionsReader;
-import com.atlassian.plugin.remotable.spi.product.ProductAccessor;
 import com.atlassian.plugin.schema.descriptor.DescribedModuleDescriptorFactory;
 import com.atlassian.plugin.schema.spi.Schema;
 import com.atlassian.sal.api.ApplicationProperties;
@@ -44,12 +44,12 @@ public final class PluginDescriptorValidatorProviderTest
     private DescribedModuleDescriptorFactoryAccessor describedModuleDescriptorFactoryAccessor;
 
     @Mock
-    private ProductAccessor productAccessor;
+    private PermissionManager permissionManager;
 
     @Before
     public void setUp()
     {
-        pluginDescriptorValidatorProvider = new PluginDescriptorValidatorProvider(pluginRetrievalService, applicationProperties, describedModuleDescriptorFactoryAccessor, permissionReader, productAccessor);
+        pluginDescriptorValidatorProvider = new PluginDescriptorValidatorProvider(pluginRetrievalService, applicationProperties, describedModuleDescriptorFactoryAccessor, permissionReader, permissionManager);
     }
 
     @Test
@@ -109,7 +109,7 @@ public final class PluginDescriptorValidatorProviderTest
 
         mockModuleDescriptorWithRequiredPermission(factory, "key", schema, ModuleDescriptorWithPermission.class);
 
-        when(productAccessor.getAllowedPermissions(InstallationMode.LOCAL)).thenReturn(ImmutableSet.<String>of("non_matching_permission"));
+        when(permissionManager.getPermissionKeys(InstallationMode.LOCAL)).thenReturn(ImmutableSet.<String>of("non_matching_permission"));
 
         Iterable<Schema> moduleSchemas = pluginDescriptorValidatorProvider.getModuleSchemas(InstallationMode.LOCAL);
 
@@ -127,7 +127,7 @@ public final class PluginDescriptorValidatorProviderTest
         mockModuleDescriptorWithRequiredPermission(factory, "key", schema, ModuleDescriptorWithPermission.class);
 
         Set<String> allPermissions = ImmutableSet.of();
-        when(productAccessor.getAllowedPermissions(InstallationMode.LOCAL)).thenReturn(allPermissions);
+        when(permissionManager.getPermissionKeys(InstallationMode.LOCAL)).thenReturn(allPermissions);
 
         Iterable<Schema> moduleSchemas = pluginDescriptorValidatorProvider.getModuleSchemas(InstallationMode.LOCAL);
 
@@ -145,7 +145,7 @@ public final class PluginDescriptorValidatorProviderTest
 
         mockModuleDescriptorWithRequiredPermission(factory, "key", schema, ModuleDescriptorWithPermission.class);
 
-        when(productAccessor.getAllowedPermissions(InstallationMode.LOCAL)).thenReturn(ImmutableSet.<String>of("required_permission"));
+        when(permissionManager.getPermissionKeys(InstallationMode.LOCAL)).thenReturn(ImmutableSet.<String>of("required_permission"));
 
         Iterable<Schema> moduleSchemas = pluginDescriptorValidatorProvider.getModuleSchemas(InstallationMode.LOCAL);
 

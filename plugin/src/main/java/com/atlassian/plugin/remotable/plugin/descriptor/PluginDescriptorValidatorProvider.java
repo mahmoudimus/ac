@@ -5,9 +5,9 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.RequirePermission;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.remotable.api.InstallationMode;
+import com.atlassian.plugin.remotable.plugin.PermissionManager;
 import com.atlassian.plugin.remotable.spi.InstallationFailedException;
 import com.atlassian.plugin.remotable.spi.permission.PermissionsReader;
-import com.atlassian.plugin.remotable.spi.product.ProductAccessor;
 import com.atlassian.plugin.schema.descriptor.DescribedModuleDescriptorFactory;
 import com.atlassian.plugin.schema.spi.Schema;
 import com.atlassian.sal.api.ApplicationProperties;
@@ -49,19 +49,19 @@ public class PluginDescriptorValidatorProvider implements DescriptorValidatorPro
     private final ApplicationProperties applicationProperties;
     private final DescribedModuleDescriptorFactoryAccessor describedModuleDescriptorFactoryAccessor;
     private final PermissionsReader permissionsReader;
-    private final ProductAccessor productAccessor;
+    private final PermissionManager permissionManager;
 
     @Autowired
     public PluginDescriptorValidatorProvider(PluginRetrievalService pluginRetrievalService,
                                              ApplicationProperties applicationProperties,
                                              DescribedModuleDescriptorFactoryAccessor describedModuleDescriptorFactoryAccessor,
-                                             PermissionsReader permissionsReader, ProductAccessor productAccessor)
+                                             PermissionsReader permissionsReader, PermissionManager permissionManager)
     {
         this.plugin = checkNotNull(pluginRetrievalService).getPlugin();
         this.applicationProperties = checkNotNull(applicationProperties);
         this.describedModuleDescriptorFactoryAccessor = checkNotNull(describedModuleDescriptorFactoryAccessor);
         this.permissionsReader = checkNotNull(permissionsReader);
-        this.productAccessor = checkNotNull(productAccessor);
+        this.permissionManager = checkNotNull(permissionManager);
     }
 
     @Override
@@ -108,7 +108,7 @@ public class PluginDescriptorValidatorProvider implements DescriptorValidatorPro
 
     private Schema getModuleSchema(DescribedModuleDescriptorFactory factory, InstallationMode mode, String key)
     {
-        final Set<String> allowedPermissions = productAccessor.getAllowedPermissions(mode);
+        final Set<String> allowedPermissions = permissionManager.getPermissionKeys(mode);
         if (allowedPermissions.isEmpty())
         {
             return factory.getSchema(key);

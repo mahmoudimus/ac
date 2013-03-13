@@ -7,7 +7,7 @@
 
     <component-import key="confluenceSettingsManager"
                       interface="com.atlassian.confluence.setup.settings.SettingsManager"/>
-    
+
     <web-section key="admin.pages" name="Remotable Plugins" location="system.admin" weight="100">
         <label>Remote Plugins</label>
     </web-section>

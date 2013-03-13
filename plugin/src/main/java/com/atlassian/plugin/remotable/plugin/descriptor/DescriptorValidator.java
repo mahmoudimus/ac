@@ -16,7 +16,9 @@ import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.webresource.UrlMode;
 import com.atlassian.plugin.webresource.WebResourceManager;
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.io.CharStreams;
 import com.google.common.io.Closeables;
@@ -152,21 +154,19 @@ public final class DescriptorValidator
 
     private String buildSchema(Document schema, DescriptorValidatorProvider descriptorValidatorProvider, boolean usesNamespace, InstallationMode installationMode)
     {
-        Element root = schema.getRootElement();
-
         addNamespace(schema, descriptorValidatorProvider, usesNamespace, installationMode);
 
         final Set<String> includedDocIds = newHashSet();
 
-        processIncludes(root.getDocument(), includedDocIds);
+        processIncludes(schema, includedDocIds);
 
         addModules(schema, descriptorValidatorProvider, installationMode, includedDocIds);
 
-        addPermissions(schema);
+        addPermissions(schema, permissionManager.getPermissions(installationMode));
 
         addXslStyleSheet(schema);
 
-        return printNode(root.getDocument());
+        return printNode(schema);
     }
 
     private void addModules(Document schema, DescriptorValidatorProvider descriptorValidatorProvider, InstallationMode installationMode, Set<String> includedDocIds)
@@ -206,6 +206,11 @@ public final class DescriptorValidator
 
     private static void addPermissionDocumentation(Element moduleDocumentation, String permissionsElementName, Iterable<String> permissions)
     {
+        if (Iterables.isEmpty(permissions))
+        {
+            return;
+        }
+
         final Element permissionsElement = moduleDocumentation.addElement(permissionsElementName);
         for (String permission : permissions)
         {
@@ -244,29 +249,42 @@ public final class DescriptorValidator
         return element;
     }
 
-    private void addPermissions(Document schema)
+    private static void addPermissions(Document schema, Iterable<Permission> permissions)
     {
         final Element permissionsType = selectSingleNode(schema, "/xs:schema/xs:simpleType[@name='PermissionValueType']/xs:restriction");
-        for (Permission permission : permissionManager.getPermissions())
+        for (Permission permission : permissions)
         {
-            Element enumeration = permissionsType.addElement("xs:enumeration").addAttribute("value", permission.getKey());
-            Element doc = addSchemaDocumentation(enumeration, permission);
+            addPermission(permissionsType, permission);
+        }
+    }
 
-            if (permission instanceof ApiScope)
-            {
-                ApiScope apiScope = (ApiScope) permission;
-                Element resources = doc.addElement("resources");
-                for (ApiResourceInfo resource : apiScope.getApiResourceInfos())
-                {
-                    Element res = resources.addElement("resource").
-                            addAttribute("path", resource.getPath()).
-                            addAttribute("httpMethod", resource.getHttpMethod());
-                    if (resource.getRpcMethod() != null)
-                    {
-                        res.addAttribute("rpcMethod", resource.getRpcMethod());
-                    }
-                }
-            }
+    private static void addPermission(Element permissionsType, Permission permission)
+    {
+        final Element enumeration = permissionsType.addElement("xs:enumeration").addAttribute("value", permission.getKey());
+        final Element doc = addSchemaDocumentation(enumeration, permission);
+        if (permission instanceof ApiScope)
+        {
+            addApiScopeResourcesInformation(doc, (ApiScope) permission);
+        }
+    }
+
+    private static void addApiScopeResourcesInformation(Element doc, ApiScope apiScope)
+    {
+        final Element resources = doc.addElement("resources");
+        for (ApiResourceInfo resource : apiScope.getApiResourceInfos())
+        {
+            addApiScopeResourceInformation(resources, resource);
+        }
+    }
+
+    private static void addApiScopeResourceInformation(Element resources, ApiResourceInfo resource)
+    {
+        final Element res = resources.addElement("resource").
+                addAttribute("path", resource.getPath()).
+                addAttribute("httpMethod", resource.getHttpMethod());
+        if (resource.getRpcMethod() != null)
+        {
+            res.addAttribute("rpcMethod", resource.getRpcMethod());
         }
     }
 

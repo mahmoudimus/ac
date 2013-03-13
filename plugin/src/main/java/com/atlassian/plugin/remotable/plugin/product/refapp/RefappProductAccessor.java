@@ -188,10 +188,4 @@ public final class RefappProductAccessor implements ProductAccessor
         conditions.put("user_is_admin", UserIsAdminCondition.class);
         return conditions;
     }
-
-    @Override
-    public Set<String> getAllowedPermissions(InstallationMode installationMode)
-    {
-        return Permissions.DEFAULT_REMOTE_PERMISSIONS;
-    }
 }

@@ -11,7 +11,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.atlassian.plugins</groupId>
     <artifactId>remotable-plugins-parent</artifactId>
-    <version>0.7.9999-SNAPSHOT</version>
+    <version>0.8.9999-SNAPSHOT</version>
 
     <organization>
         <name>Atlassian</name>
@@ -68,6 +68,19 @@
                 <configuration>
                     <extractDependencies>true</extractDependencies>
                     <skipManifestValidation>true</skipManifestValidation>
+
+                    <!-- disable as much as we can -->
+                    <skipAllPrompts>true</skipAllPrompts>
+                    <enableDevToolbox>false</enableDevToolbox>
+                    <enableFastdev>false</enableFastdev>
+                    <enablePde>false</enablePde>
+                    <compressResources>false</compressResources>
+                    <systemPropertyVariables>
+                        <upm.pac.disable>true</upm.pac.disable>
+                        <upm.plugin.requests.disable>true</upm.plugin.requests.disable>
+                        <upm.email.notifications.disable>true</upm.email.notifications.disable>
+                        <upm.auto.update.enable>true</upm.auto.update.enable>
+                    </systemPropertyVariables>
                 </configuration>
             </plugin>
             <plugin>
@@ -377,9 +390,9 @@
     </scm>
 
     <properties>
-<!-- If you change this, make sure you upgrade and release new versions of every plugin bundled in the
-     OBR, otherwise upgrades won't work correctly -->
-        <api.version>0.7</api.version>
+        <!-- If you change this, make sure you upgrade and release new versions of every plugin bundled in the
+             OBR, otherwise upgrades won't work correctly -->
+        <api.version>0.8</api.version>
         <api.artifact.version>${api.version}.0</api.artifact.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <xvfb.enable>true</xvfb.enable>
@@ -390,8 +403,8 @@
         <jira.version>6.0-OD-04</jira.version>
         <jira.data.version>${jira.version}</jira.data.version>
         <jira.client.api.version>2.0</jira.client.api.version>
-        <jira.client.version>2.0.0-m12</jira.client.version>
-        <confluence.client.version>0.9.4</confluence.client.version>
+        <jira.client.version>2.0.0-m13</jira.client.version>
+        <confluence.client.version>0.9.5</confluence.client.version>
         <sisu.version>0.0.0.atlassian6</sisu.version>
         <guice.version>3.0</guice.version>
         <confluence.version>5.0-OD-27</confluence.version>
@@ -425,6 +438,6 @@
         <httpclient.api.version>${webhooks.api.version}</httpclient.api.version>
         <servletkit.version>0.7.3</servletkit.version>
         <ringojskit.version>0.7.2</ringojskit.version>
-        <gatekeeper.property>5</gatekeeper.property>
+        <gatekeeper.property>6</gatekeeper.property>
     </properties>
 </project>

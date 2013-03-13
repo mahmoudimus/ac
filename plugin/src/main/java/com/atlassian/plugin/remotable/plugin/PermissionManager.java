@@ -6,13 +6,22 @@ import com.atlassian.plugin.remotable.spi.permission.Permission;
 import org.dom4j.Document;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Set;
 
 /**
  * Handles permissions for remote plugin operations
  */
 public interface PermissionManager
 {
-    Iterable<Permission> getPermissions();
+    /**
+     * Gets the set of permissions for the given installation mode.
+     *
+     * @param installationMode the installation mode for which we want to gather the allowed permissions
+     * @return a set of permissions.
+     */
+    Set<Permission> getPermissions(InstallationMode installationMode);
+
+    Set<String> getPermissionKeys(InstallationMode installationMode);
 
     boolean isRequestInApiScope(HttpServletRequest req, String clientKey, String user);
 

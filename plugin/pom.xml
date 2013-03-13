@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.atlassian.plugins</groupId>
         <artifactId>remotable-plugins-parent</artifactId>
-        <version>0.7.9999-SNAPSHOT</version>
+        <version>0.8.9999-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -669,15 +669,10 @@
                     <systemPropertyVariables>
                         <xvfb.enable>${xvfb.enable}</xvfb.enable>
                         <atlassian.mail.senddisabled>false</atlassian.mail.senddisabled>
-                        <sun.net.http.allowRestrictedHeaders>true
-                        </sun.net.http.allowRestrictedHeaders>
+                        <sun.net.http.allowRestrictedHeaders>true</sun.net.http.allowRestrictedHeaders>
                         <!--atlassian.dev.mode>false</atlassian.dev.mode-->
                     </systemPropertyVariables>
-                    <!-- uncomment when it is safe to upgrade amps:  https://studio.atlassian.com/browse/AMPS-663 -->
-                    <!--enableDevToolbox>false</enableDevToolbox-->
-                    <enableFastdev>false</enableFastdev>
                     <functionalTestPattern>it/**/Test*.java</functionalTestPattern>
-                    <compressResources>false</compressResources>
                     <products>
                         <product>
                             <id>refapp</id>

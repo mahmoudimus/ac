@@ -11,17 +11,15 @@ import com.atlassian.plugin.remotable.spi.permission.Permission;
 import com.atlassian.plugin.remotable.spi.permission.PermissionModuleDescriptor;
 import com.atlassian.plugin.remotable.spi.permission.PermissionsReader;
 import com.atlassian.plugin.remotable.spi.permission.scope.ApiScope;
-import com.atlassian.plugin.remotable.spi.product.ProductAccessor;
 import com.atlassian.plugin.remotable.spi.util.ServletUtils;
 import com.atlassian.plugin.tracker.DefaultPluginModuleTracker;
+import com.atlassian.plugin.tracker.PluginModuleTracker;
 import com.atlassian.sal.api.user.UserManager;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
 import org.dom4j.Document;
 import org.osgi.framework.BundleContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -31,6 +29,8 @@ import java.util.Collections;
 import java.util.Set;
 
 import static com.atlassian.plugin.remotable.host.common.util.RemotablePluginManifestReader.getInstallerUser;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.ImmutableSet.copyOf;
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.transform;
 
@@ -43,41 +43,71 @@ public final class PermissionManagerImpl implements PermissionManager
     private final UserManager userManager;
     private final SettingsManager settingsManager;
     private final PluginAccessor pluginAccessor;
-    private final ProductAccessor productAccessor;
     private final PermissionsReader permissionsReader;
     private final BundleContext bundleContext;
-    private final DefaultPluginModuleTracker<Permission, PermissionModuleDescriptor> permissionTracker;
-    private static final Logger log = LoggerFactory.getLogger(PermissionManagerImpl.class);
+    private final PluginModuleTracker<Permission, PermissionModuleDescriptor> permissionTracker;
 
     private final Set<String> NON_USER_ADMIN_PATHS = ImmutableSet.of(
-        "/rest/remotable-plugins/latest/macro/",
-        "/rest/remotable-plugins/1/macro/"
+            "/rest/remotable-plugins/latest/macro/",
+            "/rest/remotable-plugins/1/macro/"
     );
 
     @Autowired
     public PermissionManagerImpl(
             UserManager userManager,
-            SettingsManager settingsManager, PluginAccessor pluginAccessor,
+            SettingsManager settingsManager,
+            PluginAccessor pluginAccessor,
             PluginEventManager pluginEventManager,
-            ProductAccessor productAccessor, PermissionsReader permissionsReader,
+            PermissionsReader permissionsReader,
             BundleContext bundleContext)
     {
-        this.userManager = userManager;
-        this.settingsManager = settingsManager;
-        this.pluginAccessor = pluginAccessor;
-        this.productAccessor = productAccessor;
-        this.permissionsReader = permissionsReader;
-        this.bundleContext = bundleContext;
-        this.permissionTracker = new DefaultPluginModuleTracker<Permission, PermissionModuleDescriptor>(
-                pluginAccessor, pluginEventManager, PermissionModuleDescriptor.class);
+        this(userManager, settingsManager, pluginAccessor, permissionsReader, bundleContext,
+                new DefaultPluginModuleTracker<Permission, PermissionModuleDescriptor>(
+                        pluginAccessor, pluginEventManager, PermissionModuleDescriptor.class));
+    }
+
+    PermissionManagerImpl(
+            UserManager userManager,
+            SettingsManager settingsManager,
+            PluginAccessor pluginAccessor,
+            PermissionsReader permissionsReader,
+            BundleContext bundleContext,
+            PluginModuleTracker<Permission, PermissionModuleDescriptor> pluginModuleTracker)
+    {
+        this.userManager = checkNotNull(userManager);
+        this.settingsManager = checkNotNull(settingsManager);
+        this.pluginAccessor = checkNotNull(pluginAccessor);
+        this.permissionsReader = checkNotNull(permissionsReader);
+        this.bundleContext = checkNotNull(bundleContext);
+        this.permissionTracker = checkNotNull(pluginModuleTracker);
     }
 
     @Override
-    public Iterable<Permission> getPermissions()
+    public Set<Permission> getPermissions(final InstallationMode mode)
     {
-        return permissionTracker.getModules();
+        return copyOf(filter(permissionTracker.getModules(), new Predicate<Permission>()
+        {
+            @Override
+            public boolean apply(Permission p)
+            {
+                return p.getInstallationModes().contains(mode);
+            }
+        }));
     }
-    
+
+    @Override
+    public Set<String> getPermissionKeys(InstallationMode mode)
+    {
+        return copyOf(transform(getPermissions(mode), new Function<Permission, String>()
+        {
+            @Override
+            public String apply(Permission p)
+            {
+                return p.getKey();
+            }
+        }));
+    }
+
     @Override
     public boolean isRequestInApiScope(HttpServletRequest req, String clientKey, String user)
     {
@@ -107,7 +137,7 @@ public final class PermissionManagerImpl implements PermissionManager
             @Override
             public ApiScope apply(@Nullable Permission input)
             {
-                return (ApiScope)input;
+                return (ApiScope) input;
             }
         });
 
@@ -158,7 +188,7 @@ public final class PermissionManagerImpl implements PermissionManager
         if (!getPermissionsForPlugin(pluginKey).contains(permissionKey))
         {
             throw new PermissionDeniedException(pluginKey, "Required permission '" + permissionKey + "' must be requested " +
-                "for this plugin '" + pluginKey + "'");
+                    "for this plugin '" + pluginKey + "'");
         }
     }
 
@@ -200,7 +230,7 @@ public final class PermissionManagerImpl implements PermissionManager
 
         Set<String> requestedPermissions = permissionsReader.readPermissionsFromDescriptor(descriptor, installationMode);
 
-        return productAccessor.getAllowedPermissions(installationMode).containsAll(requestedPermissions);
+        return getPermissionKeys(installationMode).containsAll(requestedPermissions);
     }
 
     @Override

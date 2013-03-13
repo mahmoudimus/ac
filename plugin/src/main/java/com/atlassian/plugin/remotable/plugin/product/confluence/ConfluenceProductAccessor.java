@@ -83,7 +83,7 @@ public final class ConfluenceProductAccessor implements ProductAccessor
     @Override
     public String getPreferredProfileSectionKey()
     {
-        return "system.profile"; 
+        return "system.profile";
     }
 
     @Override
@@ -126,7 +126,6 @@ public final class ConfluenceProductAccessor implements ProductAccessor
                     }
                 }
             });
-
         }
         catch (RuntimeException e)
         {
@@ -143,7 +142,7 @@ public final class ConfluenceProductAccessor implements ProductAccessor
     @Override
     public Map<String, Class<? extends Condition>> getConditions()
     {
-        Map<String,Class<? extends Condition>> conditions = newHashMap();
+        Map<String, Class<? extends Condition>> conditions = newHashMap();
         conditions.put("not_personal_space", com.atlassian.confluence.plugin.descriptor.web.conditions.NotPersonalSpaceCondition.class);
         conditions.put("user_is_confluence_administrator", com.atlassian.confluence.plugin.descriptor.web.conditions.ConfluenceAdministratorCondition.class);
         conditions.put("user_can_use_confluence", com.atlassian.confluence.plugin.descriptor.web.conditions.user.UserCanUseConfluenceCondition.class);
@@ -189,18 +188,5 @@ public final class ConfluenceProductAccessor implements ProductAccessor
         conditions.put("user_watching_page", com.atlassian.confluence.plugin.descriptor.web.conditions.user.UserWatchingPageCondition.class);
         conditions.put("favourite_space", com.atlassian.confluence.plugin.descriptor.web.conditions.FavouriteSpaceCondition.class);
         return conditions;
-    }
-
-    @Override
-    public Set<String> getAllowedPermissions(InstallationMode installationMode)
-    {
-        if (installationMode == InstallationMode.REMOTE)
-        {
-            return Sets.union(Permissions.DEFAULT_REMOTE_PERMISSIONS, ConfluencePermissions.ALL_REMOTE_PERMISSIONS);
-        }
-        else
-        {
-            return Collections.emptySet();
-        }
     }
 }
