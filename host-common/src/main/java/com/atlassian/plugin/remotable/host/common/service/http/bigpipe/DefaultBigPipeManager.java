@@ -40,14 +40,7 @@ public final class DefaultBigPipeManager implements BigPipeManager, DisposableBe
     private final RequestIdAccessor requestIdAccessor = new RequestIdAccessor();
     private final UserIdRetriever userIdRetriever;
 
-    ScheduledExecutorService cleanupThread = Executors.newSingleThreadScheduledExecutor(new ThreadFactory() {
-        @Override
-        public Thread newThread(Runnable r) {
-            Thread t = new Thread(r);
-            t.setName("Big Pipe Cleanup");
-            return t;
-        }
-    });
+    private final ScheduledExecutorService cleanupThread;
 
     private final ConcurrentMap<String, BigPipeImpl> bigPipeImpls = CopyOnWriteMap.newHashMap();
 
@@ -56,7 +49,8 @@ public final class DefaultBigPipeManager implements BigPipeManager, DisposableBe
         public String getUserId();
     }
 
-    DefaultBigPipeManager(WebResourceManager webResourceManager, final RequestContext requestContext)
+    // called by the service factory for p3 plugins
+    DefaultBigPipeManager(WebResourceManager webResourceManager, final RequestContext requestContext, ScheduledExecutorService cleanupThread)
     {
         this(webResourceManager, new UserIdRetriever()
         {
@@ -65,9 +59,10 @@ public final class DefaultBigPipeManager implements BigPipeManager, DisposableBe
             {
                 return requestContext.getUserId();
             }
-        });
+        }, cleanupThread);
     }
 
+    // called by remotable-plugins-plugin for its own use
     @Autowired
     public DefaultBigPipeManager(WebResourceManager webResourceManager, final UserManager userManager)
     {
@@ -78,13 +73,16 @@ public final class DefaultBigPipeManager implements BigPipeManager, DisposableBe
             {
                 return userManager.getRemoteUsername();
             }
-        });
+        }, createCleanupThread());
     }
 
-    private DefaultBigPipeManager(WebResourceManager webResourceManager, UserIdRetriever userIdRetriever)
+
+
+    private DefaultBigPipeManager(WebResourceManager webResourceManager, UserIdRetriever userIdRetriever, ScheduledExecutorService cleanupThread)
     {
         this.webResourceManager = webResourceManager;
         this.userIdRetriever = userIdRetriever;
+        this.cleanupThread = cleanupThread;
         cleanupThread.scheduleAtFixedRate(new Runnable()
         {
             @Override
@@ -93,6 +91,28 @@ public final class DefaultBigPipeManager implements BigPipeManager, DisposableBe
                 cleanExpiredRequests();
             }
         }, 2, 1, TimeUnit.MINUTES);
+    }
+
+    public static ScheduledExecutorService createCleanupThread()
+    {
+        return Executors.newSingleThreadScheduledExecutor(new ThreadFactory() {
+            @Override
+            public Thread newThread(Runnable r) {
+                ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
+                try
+                {
+                    Thread.currentThread().setContextClassLoader(null);
+                    Thread t = new Thread(r);
+                    t.setName("Big Pipe Cleanup");
+                    return t;
+                }
+                finally
+                {
+                    Thread.currentThread().setContextClassLoader(oldCl);
+                }
+
+            }
+        });
     }
 
     private void cleanExpiredRequests()
