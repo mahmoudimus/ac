@@ -9,4 +9,8 @@
         <xs:choice />
     </xs:complexType>
 
+    <xs:simpleType name="PermissionValueType">
+        <xs:restriction base="xs:string">
+        </xs:restriction>
+    </xs:simpleType>
 </xs:schema>

@@ -9,17 +9,21 @@ import com.atlassian.plugin.remotable.spi.permission.Permission;
 import com.atlassian.plugin.remotable.spi.permission.scope.ApiResourceInfo;
 import com.atlassian.plugin.remotable.spi.permission.scope.ApiScope;
 import com.atlassian.plugin.remotable.spi.product.ProductAccessor;
+import com.atlassian.plugin.remotable.spi.util.Dom4jUtils;
 import com.atlassian.plugin.schema.spi.Schema;
+import com.atlassian.plugin.schema.spi.SchemaDocumented;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.webresource.UrlMode;
 import com.atlassian.plugin.webresource.WebResourceManager;
+import com.google.common.base.Supplier;
+import com.google.common.collect.Maps;
 import com.google.common.io.CharStreams;
 import com.google.common.io.Closeables;
 import com.google.common.io.InputSupplier;
 import org.dom4j.Document;
 import org.dom4j.DocumentFactory;
 import org.dom4j.Element;
-import org.dom4j.ProcessingInstruction;
+import org.dom4j.Node;
 import org.dom4j.io.DocumentSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -39,15 +43,14 @@ import java.net.URI;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.addSchemaDocumentation;
 import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.parseDocument;
 import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.printNode;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.collect.Sets.newHashSet;
 
 /**
@@ -143,53 +146,95 @@ public final class DescriptorValidator
 
     private String buildSchema(DescriptorValidatorProvider descriptorValidatorProvider, boolean usesNamespace, InstallationMode installationMode)
     {
-        Set<String> includedDocIds = newHashSet();
-        Element root = parseDocument(descriptorValidatorProvider.getSchemaUrl()).getRootElement();
+        return buildSchema(parseDocument(descriptorValidatorProvider.getSchemaUrl()), descriptorValidatorProvider, usesNamespace, installationMode);
+    }
 
-        // Add XSL stylesheet
-        Map arguments = new HashMap();
-        arguments.put("type", "text/xsl");
-        arguments.put("href",
-                webResourceManager.getStaticPluginResource("com.atlassian.labs.remoteapps-plugin:schema-xsl",
-                        "xs3p.xsl", UrlMode.ABSOLUTE));
-        DocumentFactory factory = new DocumentFactory();
-        ProcessingInstruction pi = factory.createProcessingInstruction("xml-stylesheet", arguments);
-        root.getDocument().content().add(0, pi);
+    private String buildSchema(Document schema, DescriptorValidatorProvider descriptorValidatorProvider, boolean usesNamespace, InstallationMode installationMode)
+    {
+        Element root = schema.getRootElement();
 
-        final String ns = descriptorValidatorProvider.getSchemaNamespace(installationMode);
-        if (usesNamespace)
-        {
-            root.addAttribute("targetNamespace", ns);
-            root.addAttribute("xmlns", ns);
-        }
+        addNamespace(schema, descriptorValidatorProvider, usesNamespace, installationMode);
+
+        final Set<String> includedDocIds = newHashSet();
 
         processIncludes(root.getDocument(), includedDocIds);
-        Element modulesChoice = (Element) root.selectSingleNode(
-                "/xs:schema/xs:complexType[@name='" + descriptorValidatorProvider.getRootElementName() + "']//xs:choice");
-        for (final Schema schema : descriptorValidatorProvider.getModuleSchemas(installationMode))
+
+        addModules(schema, descriptorValidatorProvider, installationMode, includedDocIds);
+
+        addPermissions(schema);
+
+        addXslStyleSheet(schema);
+
+        return printNode(root.getDocument());
+    }
+
+    private void addModules(Document schema, DescriptorValidatorProvider descriptorValidatorProvider, InstallationMode installationMode, Set<String> includedDocIds)
+    {
+        final Element choiceOfModules = selectSingleNode(schema, "/xs:schema/xs:complexType[@name='%s']//xs:choice", descriptorValidatorProvider.getRootElementName());
+        for (final Schema moduleSchema : descriptorValidatorProvider.getModuleSchemas(installationMode))
         {
-            final String id = schema.getFileName();
-            if (!includedDocIds.contains(id))
-            {
-                includedDocIds.add(id);
-                Document doc = schema.getDocument();
-                checkNotNull(doc, "Document from generator " + schema.getFileName() + " is null");
-                processIncludes(doc, includedDocIds);
-                for (Element child : (List<Element>) doc.getRootElement().elements())
-                {
-                    root.elements().add(0, child.detach());
-                }
-            }
-            Element module = modulesChoice.addElement("xs:element")
-                    .addAttribute("name", schema.getElementName())
-                    .addAttribute("type",
-                            schema.getComplexType())
-                    .addAttribute("maxOccurs", schema.getMaxOccurs());
-            addSchemaDocumentation(module, schema);
+            addModule(choiceOfModules, moduleSchema, includedDocIds);
+        }
+    }
+
+    private void addModule(Element choiceOfModules, Schema moduleSchema, Set<String> includedDocIds)
+    {
+        final String id = moduleSchema.getFileName();
+
+        if (!includedDocIds.contains(id))
+        {
+            includedDocIds.add(id);
+
+            final Document moduleSchemaDocument = moduleSchema.getDocument();
+            checkNotNull(moduleSchemaDocument, "Document from generator " + moduleSchema.getFileName() + " is null");
+            processIncludes(moduleSchemaDocument, includedDocIds);
+            addModuleSchemaElementsToSchema(choiceOfModules, moduleSchemaDocument);
         }
 
-        Element permissionsType = (Element) root.selectSingleNode(
-                "/xs:schema/xs:simpleType[@name='PermissionValueType']/xs:restriction");
+        final Element module = addModuleElementToSchema(choiceOfModules, moduleSchema);
+        final Element moduleDocumentation = addSchemaDocumentation(module, moduleSchema);
+        addPermissionDocumentation(moduleDocumentation, moduleSchema);
+    }
+
+    private static void addPermissionDocumentation(Element moduleDocumentation, Schema moduleSchema)
+    {
+        // HERE.
+    }
+
+    private void addModuleSchemaElementsToSchema(Element choiceOfModules, Document doc)
+    {
+        for (Element child : (List<Element>) doc.getRootElement().elements())
+        {
+            choiceOfModules.getDocument().getRootElement().elements().add(0, child.detach());
+        }
+    }
+
+    private Element addModuleElementToSchema(Element choiceOfModules, Schema moduleSchema)
+    {
+        return choiceOfModules.addElement("xs:element")
+                .addAttribute("name", moduleSchema.getElementName())
+                .addAttribute("type", moduleSchema.getComplexType())
+                .addAttribute("maxOccurs", moduleSchema.getMaxOccurs());
+    }
+
+    private static Element selectSingleNode(final Node node, String xpath, String... args)
+    {
+        final String actualXpath = String.format(xpath, args);
+        final Element element = (Element) node.selectSingleNode(actualXpath);
+        checkState(element != null, "Could not find single node for xpath '%s' in:\n%s\n", actualXpath, LazyToString.of(new Supplier<String>()
+        {
+            @Override
+            public String get()
+            {
+                return Dom4jUtils.printNode(node);
+            }
+        }));
+        return element;
+    }
+
+    private void addPermissions(Document schema)
+    {
+        final Element permissionsType = selectSingleNode(schema, "/xs:schema/xs:simpleType[@name='PermissionValueType']/xs:restriction");
         for (Permission permission : permissionManager.getPermissions())
         {
             Element enumeration = permissionsType.addElement("xs:enumeration").addAttribute("value", permission.getKey());
@@ -211,8 +256,47 @@ public final class DescriptorValidator
                 }
             }
         }
+    }
 
-        return printNode(root.getDocument());
+    public static Element addSchemaDocumentation(Element source, SchemaDocumented generator)
+    {
+        Element doc = source.addElement("xs:annotation").addElement("xs:documentation");
+        Element name = doc.addElement("name");
+        if (generator.getName() != null)
+        {
+            name.setText(generator.getName());
+        }
+        Element desc = doc.addElement("description");
+        if (generator.getDescription() != null)
+        {
+            desc.setText(generator.getDescription());
+        }
+        return doc;
+    }
+
+    private static void addNamespace(Document schema, DescriptorValidatorProvider descriptorValidatorProvider, boolean usesNamespace, InstallationMode installationMode)
+    {
+        if (usesNamespace)
+        {
+            final String ns = descriptorValidatorProvider.getSchemaNamespace(installationMode);
+            final Element root = schema.getRootElement();
+            root.addAttribute("targetNamespace", ns);
+            root.addAttribute("xmlns", ns);
+        }
+    }
+
+    private void addXslStyleSheet(Document schema)
+    {
+        final Map<String, String> arguments = Maps.newHashMap();
+        arguments.put("type", "text/xsl");
+        arguments.put("href", getXslStyleSheetUrl());
+
+        schema.content().add(0, new DocumentFactory().createProcessingInstruction("xml-stylesheet", arguments));
+    }
+
+    private String getXslStyleSheetUrl()
+    {
+        return webResourceManager.getStaticPluginResource("com.atlassian.labs.remoteapps-plugin:schema-xsl", "xs3p.xsl", UrlMode.ABSOLUTE);
     }
 
     private void processIncludes(Document doc, Set<String> includedDocIds)
@@ -258,8 +342,7 @@ public final class DescriptorValidator
 
     private void insertAvailableLinkContextParams(Document includeDoc, Map<String, String> linkContextParams)
     {
-        Element restriction = (Element) includeDoc.selectSingleNode(
-                "/xs:schema/xs:simpleType[@name='LinkContextParameterNameType']/xs:restriction");
+        Element restriction = (Element) includeDoc.selectSingleNode("/xs:schema/xs:simpleType[@name='LinkContextParameterNameType']/xs:restriction");
         if (restriction != null)
         {
             for (Map.Entry<String, String> entry : linkContextParams.entrySet())
@@ -272,8 +355,7 @@ public final class DescriptorValidator
 
     private void insertAvailableWebConditions(Document includeDoc, Map<String, Class<? extends Condition>> webConditions)
     {
-        Element restriction = (Element) includeDoc.selectSingleNode(
-                "/xs:schema/xs:simpleType[@name='ConditionNameType']/xs:restriction");
+        Element restriction = (Element) includeDoc.selectSingleNode("/xs:schema/xs:simpleType[@name='ConditionNameType']/xs:restriction");
         if (restriction != null)
         {
             for (String name : webConditions.keySet())
@@ -305,6 +387,27 @@ public final class DescriptorValidator
                 }
             };
             return new InputStreamSupplierLSInput(systemId, publicId, inputSupplier);
+        }
+    }
+
+    private static final class LazyToString<T>
+    {
+        private final Supplier<T> supplier;
+
+        private LazyToString(Supplier<T> supplier)
+        {
+            this.supplier = checkNotNull(supplier);
+        }
+
+        static <T> LazyToString<T> of(Supplier<T> s)
+        {
+            return new LazyToString<T>(s);
+        }
+
+        @Override
+        public String toString()
+        {
+            return supplier.get().toString();
         }
     }
 }
