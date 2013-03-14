@@ -284,8 +284,7 @@
       defer(doCreate);
     }
     else {
-      // if the document hasn't yet loaded, defer creation until domready
-      $(doCreate);
+      doCreate();
     }
   };
 
