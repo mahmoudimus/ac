@@ -9,7 +9,7 @@
             <permission installation-mode="local">execute_java</permission>
         </permissions>
         <param name="configure.url">/plugins/servlet/remotable-plugins/app1/remotePluginConfig</param>
-        <param name="documentation.url">https://bitbucket.org/atlassian/remotable-plugins</param>
+        <param name="documentation.url">http://example.com</param>
     </plugin-info>
 
     <junit key="all" package="junit.all" />

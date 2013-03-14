@@ -23,25 +23,19 @@ import static org.junit.Assert.assertTrue;
 
 @RunWith(UniversalBinariesContainerJUnitRunner.class)
 @UniversalBinaries(value = "${moduleDir}/target/remotable-plugins-universal-binary-test-plugin.jar", mode = Mode.CONTAINER)
-public final class TestHomePage extends AbstractRemotablePluginTest
+public final class TestRemoteHomePage extends TestHomePage
 {
-    @BeforeClass
-    public static void setupUrlHandlers()
+    @Override
+    protected String getBaseUrl()
     {
-        HttpURLConnection.setFollowRedirects(false);
+        return "http://localhost:8000/sample-ub-java/";
     }
 
     @Test
-    public void testSomething() throws InterruptedException, IOException
+    public void testDescriptorServing() throws InterruptedException, IOException
     {
-        URL url = new URL("http://localhost:8000/sample-ub-java/");
+        URL url = new URL(getBaseUrl());
         HttpURLConnection yc = (HttpURLConnection) url.openConnection();
-        yc.addRequestProperty("Accept", "text/html");
-        assertEquals(HttpStatus.SC_MOVED_TEMPORARILY, yc.getResponseCode());
-        assertEquals("http://example.com", yc.getHeaderField("Location"));
-
-
-        yc = (HttpURLConnection) url.openConnection();
         yc.addRequestProperty("Accept", "application/xml");
         assertEquals(HttpStatus.SC_OK, yc.getResponseCode());
         String body = IOUtils.toString(yc.getInputStream());

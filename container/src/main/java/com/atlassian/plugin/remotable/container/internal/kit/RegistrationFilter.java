@@ -4,7 +4,9 @@ import com.atlassian.plugin.remotable.descriptor.DescriptorAccessor;
 import com.atlassian.plugin.remotable.api.service.SignedRequestHandler;
 import com.atlassian.plugin.remotable.container.internal.Environment;
 import com.atlassian.plugin.remotable.container.service.ContainerOAuthSignedRequestHandler;
+import com.atlassian.plugin.remotable.host.common.descriptor.DocumentationUrlRedirect;
 import com.atlassian.plugin.remotable.host.common.service.AbstractOauthSignedRequestHandler;
+import com.google.common.collect.Maps;
 import org.apache.commons.io.IOUtils;
 import org.dom4j.Document;
 import org.dom4j.Element;
@@ -24,6 +26,9 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
+
+import static com.google.common.collect.Maps.newHashMap;
 
 /**
  * Registers calling applications only if the secret matches. Uses a mutable environment
@@ -120,15 +125,14 @@ public class RegistrationFilter implements Filter
                 Element pluginInfo = doc.getRootElement().element("plugin-info");
                 if (pluginInfo != null)
                 {
+                    Map<String, String> params = newHashMap();
                     for (Element param : (List<Element>) pluginInfo.elements("param"))
                     {
-                        if (param.attributeValue("name").equalsIgnoreCase("documentation.url"))
-                        {
-                            String documentationUrl = param.getTextTrim();
-                            log.info("Redirecting to documentation url '{}'", documentationUrl);
-                            resp.sendRedirect(documentationUrl);
-                            return;
-                        }
+                        params.put(param.attributeValue("name"), param.getTextTrim());
+                    }
+                    if (DocumentationUrlRedirect.redirect(params, resp))
+                    {
+                        return;
                     }
                 }
                 serveXmlDescriptor(resp);

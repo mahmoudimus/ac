@@ -15,7 +15,7 @@ import java.net.URI;
 import java.util.Map;
 
 /**
- * Captures incoming sreq context data and stores for later use by services in the same thread.
+ * Captures incoming req context data and stores for later use by services in the same thread.
  */
 public class AuthenticationFilter implements Filter
 {

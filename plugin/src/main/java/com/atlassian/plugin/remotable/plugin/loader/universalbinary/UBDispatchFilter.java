@@ -51,7 +51,7 @@ public class UBDispatchFilter implements DisposableBean, Filter
     private final PluginEventManager pluginEventManager;
     private final ApplicationProperties applicationProperties;
 
-    private final Pattern APP_KEY_FINDER = Pattern.compile("/app/([^/]*)/.*");
+    private final Pattern APP_KEY_FINDER = Pattern.compile("/app/([^/]*)/?.*");
 
     @Autowired
     public UBDispatchFilter(PluginAccessor pluginAccessor,
@@ -108,7 +108,7 @@ public class UBDispatchFilter implements DisposableBean, Filter
         for (String urlPattern : urlPatterns)
         {
             filterPathMapper.put(entry.key, getLocalMountBasePath(appKey) + urlPattern);
-            if (urlPattern.equals("/"))
+            if (urlPattern.equals("/") || urlPattern.equals("/*"))
             {
                 filterPathMapper.put(entry.key, getLocalMountBasePath(appKey));
             }
