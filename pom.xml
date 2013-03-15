@@ -403,8 +403,8 @@
         <jira.version>6.0-OD-04</jira.version>
         <jira.data.version>${jira.version}</jira.data.version>
         <jira.client.api.version>2.0</jira.client.api.version>
-        <jira.client.version>2.0.0-m13</jira.client.version>
-        <confluence.client.version>0.9.5</confluence.client.version>
+        <jira.client.version>2.0.0-m14</jira.client.version>
+        <confluence.client.version>0.9.6</confluence.client.version>
         <sisu.version>0.0.0.atlassian6</sisu.version>
         <guice.version>3.0</guice.version>
         <confluence.version>5.0-OD-27</confluence.version>
