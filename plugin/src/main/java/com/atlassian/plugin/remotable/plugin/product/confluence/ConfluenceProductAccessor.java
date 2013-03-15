@@ -47,7 +47,7 @@ public final class ConfluenceProductAccessor implements ProductAccessor
     @Override
     public String getPreferredAdminSectionKey()
     {
-        return "system.admin/admin.pages";
+        return "system.admin/marketplace_confluence";
     }
 
     @Override
