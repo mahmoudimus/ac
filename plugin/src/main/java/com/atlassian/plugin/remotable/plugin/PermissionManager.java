@@ -18,9 +18,17 @@ public interface PermissionManager
      *
      * @param installationMode the installation mode for which we want to gather the allowed permissions
      * @return a set of permissions.
+     * @since 0.8
      */
     Set<Permission> getPermissions(InstallationMode installationMode);
 
+    /**
+     * Gets the set of permission keys for the given installation mode.
+     *
+     * @param installationMode the installation mode for which we want to gather the allowed permissions
+     * @return a set of permission keys.
+     * @since 0.8
+     */
     Set<String> getPermissionKeys(InstallationMode installationMode);
 
     boolean isRequestInApiScope(HttpServletRequest req, String clientKey, String user);
