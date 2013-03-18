@@ -1182,9 +1182,16 @@
                                     <insertNewLine>true</insertNewLine>
                                     <output>${project.build.outputDirectory}/all.js</output>
                                     <includes>
-                                        <include>js/iframe-min/plugin-core-min.js</include>
+                                        <include>js/iframe-min/plugin-amd-min.js</include>
+                                        <include>js/iframe-min/plugin-util-min.js</include>
+                                        <include>js/iframe-min/plugin-ajax-min.js</include>
+                                        <include>js/iframe-min/plugin-dollar-min.js</include>
                                         <include>js/iframe-min/rpc-min.js</include>
-                                        <include>js/iframe-min/plugin-api-min.js</include>
+                                        <include>js/iframe-min/plugin-env-min.js</include>
+                                        <include>js/iframe-min/plugin-bigpipe-min.js</include>
+                                        <!-- product-specific inclusions are temporary until made more dynamic -->
+                                        <include>js/iframe-min/plugin-jira-min.js</include>
+                                        <include>js/iframe-min/plugin-init-min.js</include>
                                     </includes>
                                 </aggregation>
                             </aggregations>
@@ -1207,9 +1214,16 @@
                                     <!--<insertNewLine>true</insertNewLine>-->
                                     <!--<output>${project.build.outputDirectory}/all-debug.js</output>-->
                                     <!--<includes>-->
-                                        <!--<include>js/iframe/plugin-core.js</include>-->
+                                        <!--<include>js/iframe/plugin-amd.js</include>-->
+                                        <!--<include>js/iframe/plugin-util.js</include>-->
+                                        <!--<include>js/iframe/plugin-ajax.js</include>-->
+                                        <!--<include>js/iframe/plugin-dollar.js</include>-->
                                         <!--<include>js/iframe/rpc.js</include>-->
-                                        <!--<include>js/iframe/plugin-api.js</include>-->
+                                        <!--<include>js/iframe/plugin-env.js</include>-->
+                                        <!--<include>js/iframe/plugin-bigpipe.js</include>-->
+                                        <!-- product-specific inclusions are temporary until made more dynamic -->
+                                        <!--<include>js/iframe/plugin-jira.js</include>-->
+                                        <!--<include>js/iframe/plugin-init.js</include>-->
                                     <!--</includes>-->
                                 <!--</aggregation>-->
                             <!--</aggregations>-->

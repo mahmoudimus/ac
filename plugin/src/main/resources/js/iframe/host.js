@@ -260,7 +260,6 @@
     // clean up when the iframe is removed by other sceripts coordinating through the $nexus
     $nexus.bind("ra.iframe.destroy", function () {
       // destroy the rpc bridge and remove the iframe
-      console.log("ra.iframe.destroy:", rpc);
       rpc.destroy();
     });
 
@@ -284,6 +283,7 @@
       defer(doCreate);
     }
     else {
+      // if the document hasn't yet loaded, create immediately
       doCreate();
     }
   };

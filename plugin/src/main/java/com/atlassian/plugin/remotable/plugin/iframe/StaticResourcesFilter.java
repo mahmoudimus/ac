@@ -101,7 +101,17 @@ public class StaticResourcesFilter implements Filter
             encoding = "identity";
 
             final String moduleDir = "js/iframe/";
-            final String[] modules = {"plugin-core.js", "rpc.js", "plugin-api.js"};
+            final String[] modules = {
+                "plugin-amd.js",
+                "plugin-util.js",
+                "plugin-ajax.js",
+                "plugin-dollar.js",
+                "rpc.js",
+                "plugin-env.js",
+                "plugin-bigpipe.js",
+                "plugin-jira.js",
+                "plugin-init.js"
+            };
             ByteArrayOutputStream bout = new ByteArrayOutputStream();
             for (String module : modules)
             {

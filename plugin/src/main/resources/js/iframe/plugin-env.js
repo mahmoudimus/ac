@@ -1,135 +1,17 @@
-(function (window, document) {
+AP.define("env", ["_dollar", "_rpc"], function ($, Rpc) {
 
-  var AP = window.AP,
-      $ = AP._$,
+  "use strict";
+
+  var window = this,
+      document = window.document,
       each = $.each,
       extend = $.extend,
       bind = $.bind,
-      trim = $.trim,
-      fetch = $.fetch,
-      debounce = $.debounce,
-      log = $.log,
       handleError = $.handleError,
       rpc,
       isDialog,
-      isInited;
-
-  AP.Meta = {
-    get: function (name) {
-      return $("meta[name='ap-" + name + "']").attr("content");
-    }
-  };
-
-  AP.localUrl = function (path) {
-    return AP.Meta.get("local-base-url") + (path == null ? "" : path);
-  };
-
-  AP.BigPipe = function () {
-    function BigPipe() {
-      var started,
-          closed,
-          channels = {},
-          subscribers = {},
-          buffers = {},
-          counter = 0;
-      function poll(url) {
-        fetch({
-          url: url + "/" + (counter += 1),
-          headers: {"Accept": "application/json"},
-          success: function (response) {
-            deliver(response, url);
-          },
-          error: function (xhr, status, ex) {
-            if (xhr.status === 404) {
-              // despite being a real error, treat a 404 as a termination signal
-              deliver({items: [], pending: []}, url);
-            }
-            else {
-              handleError(ex || (xhr && xhr.responseText) || status);
-            }
-          }
-        });
-      }
-      function deliver(response, url) {
-        if (response) {
-          var items = response.items;
-          var pending = response.pending;
-          if (items.length > 0 || pending.length > 0) {
-            each(items, function (i, item) {
-              publish(item);
-            });
-            if (pending.length > 0) {
-              each(channels, function (channelId, open) {
-                if (open && $.inArray(channelId, pending) < 0) {
-                  close(channelId);
-                }
-              });
-              poll(url);
-            }
-            else {
-              close();
-            }
-          }
-          else if (!closed) {
-            close();
-          }
-        }
-      }
-      function publish(event) {
-        var channelId = event.channelId;
-        channels[channelId] = true;
-        if (subscribers[channelId]) subscribers[channelId](event);
-        else (buffers[channelId] = buffers[channelId] || []).push(event);
-      }
-      function close(channelId) {
-        if (channelId) {
-          publish({channelId: channelId, complete: true});
-          delete subscribers[channelId];
-          channels[channelId] = false;
-        }
-        else if (!closed) {
-          each(subscribers, close);
-          closed = true;
-        }
-      }
-      var self = {
-        start: function (options) {
-          options = options || {};
-          var baseUrl = options.localBaseUrl || AP.Meta.get("local-base-url");
-          var requestId = options.requestId;
-          if (!started && baseUrl && requestId) {
-            var ready = options.ready || {items: [], pending: [0]};
-            deliver(ready, baseUrl + "/bigpipe/request/" + requestId);
-            started = true;
-          }
-          return self;
-        },
-        subscribe: function (channelId, subscriber) {
-          if (subscribers[channelId]) {
-            throw new Error("Channel '" + channelId + "' already has a subscriber");
-          }
-          if (subscriber) {
-            subscribers[channelId] = subscriber;
-            each(buffers[channelId], function (i, event) {
-              publish(event);
-            });
-            delete buffers[channelId];
-            if (closed) close(channelId);
-          }
-          return self;
-        }
-      };
-      return self;
-    }
-    var main = BigPipe();
-    main.subscribe("html", function (event) {
-      if (!event.complete) {
-        $("#" + event.contentId).removeClass("bp-loading").html(event.content);
-        AP.resize();
-      }
-    });
-    return extend(BigPipe, main);
-  }();
+      isInited,
+      exports = {};
 
   // internal maker that converts bridged xhr data into an xhr-like object
   function Xhr(data) {
@@ -166,14 +48,14 @@
     });
   }
 
-  function injectBase(options) {
+  function injectBase() {
     // set the url base
     AP.getLocation(function (loc) {
       $("head").append({tag: "base", href: loc, target: "_parent"});
     });
   }
 
-  function injectMargin(options) {
+  function injectMargin() {
     // set a context-sensitive margin value
     var margin = isDialog ? "10px 10px 0 10px" : "0";
     // @todo stylesheet injection here is rather heavy handed -- switch to setting body style
@@ -182,18 +64,18 @@
 
   function size(width, height) {
     var w = width == null ? "100%" : width,
-        max = Math.max,
-        body = document.body,
-        del = document.documentElement,
-        scroll = "scrollHeight",
-        offset = "offsetHeight",
-        client = "clientHeight",
-        dh = max(del[client], body[scroll], del[scroll], body[offset], del[offset]),
-        h = height == null ? dh : height;
+      max = Math.max,
+      body = document.body,
+      del = document.documentElement,
+      scroll = "scrollHeight",
+      offset = "offsetHeight",
+      client = "clientHeight",
+      dh = max(del[client], body[scroll], del[scroll], body[offset], del[offset]),
+      h = height == null ? dh : height;
     return {w: w, h: h};
   }
 
-  var api = {
+  var host = {
 
     // inits the remote plugin on iframe content load
     init: function (options) {
@@ -209,8 +91,8 @@
           isDialogButtonEnabled: {}
         };
         // add stubs for each public api
-        each(api, function (method) { stubs[method] = {}; });
-        rpc = new AP._Rpc(config, {remote: stubs, local: internal});
+        each(host, function (method) { stubs[method] = {}; });
+        rpc = new Rpc(config, {remote: stubs, local: internal});
         rpc.init();
         // integrate the iframe with the host document
         if (options.margin !== false) {
@@ -253,7 +135,7 @@
         isInited = true;
       }
       else {
-        log("Manual call to init is a deprecated no-op; use 'data-options' attribute on script to set options");
+        $.log("Manual call to init is a deprecated no-op; use 'data-options' attribute on script to set options");
       }
     },
 
@@ -316,7 +198,7 @@
     //
     // @param width   the desired width
     // @param height  the desired height
-    resize: debounce(function (width, height) {
+    resize: $.debounce(function (width, height) {
       var dim = size(width, height);
       rpc.resize(dim.w, dim.h);
     }, 50),
@@ -340,8 +222,6 @@
       function fail(args) {
         return error(Xhr(args[0]), args[1], args[2]);
       }
-      // shared no-op
-      function nop() {}
       // normalize method arguments
       if (typeof url === "object") {
         options = url;
@@ -352,6 +232,8 @@
       else {
         options.url = url;
       }
+      // no-op
+      function nop() {}
       // extract done/fail handlers from options and clean up for serialization
       success = options.success || nop;
       delete options.success;
@@ -428,9 +310,9 @@
           },
           trigger: function () {
             var self = this,
-                cont = true,
-                result = true,
-                list = listeners[name];
+              cont = true,
+              result = true,
+              list = listeners[name];
             each(list, function (i, listener) {
               result = listener.call(self, {
                 button: self,
@@ -445,10 +327,11 @@
 
     };
   }
+
   // !!! JIRA specific !!!
   function makeWorkflowConfiguration() {
     var workflowListener,
-        validationListener;
+      validationListener;
     return {
       onSaveValidation: function (listener) {
         validationListener = listener
@@ -468,27 +351,16 @@
     };
   }
 
-  // reveal the api on the RA window
-  extend(AP, api);
+  return extend(exports, host, {
 
-  // initialize
-  var options,
-      $script = $("script[src*='/remotable-plugins/all']");
-  if ($script && /\/remotable-plugins\/all(-debug)?\.js($|\?)/.test($script.attr("src"))) {
-    // normal iframe
-    options = {};
-    var optStr = $script.attr("data-options");
-    if (optStr) {
-      each(optStr.split(";"), function (i, nvpair) {
-        nvpair = trim(nvpair);
-        if (nvpair) {
-          var nv = nvpair.split(":"), k = trim(nv[0]), v = trim(nv[1]);
-          if (k && v != null) options[k] = v === "true" || v === "false" ? v === "true" : v;
-        }
-      });
+    meta: function (name) {
+      return $("meta[name='ap-" + name + "']").attr("content");
+    },
+
+    localUrl: function (path) {
+      return exports.meta("local-base-url") + (path == null ? "" : path);
     }
-  }
 
-  AP.init(options);
+  });
 
-})(this, document);
+});
