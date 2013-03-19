@@ -16,6 +16,7 @@ import com.atlassian.plugin.tracker.DefaultPluginModuleTracker;
 import com.atlassian.plugin.tracker.PluginModuleTracker;
 import com.atlassian.sal.api.user.UserManager;
 import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
 import org.dom4j.Document;
@@ -85,6 +86,7 @@ public final class PermissionManagerImpl implements PermissionManager
     @Override
     public Set<Permission> getPermissions(final InstallationMode mode)
     {
+        checkNotNull(mode);
         return copyOf(filter(permissionTracker.getModules(), new Predicate<Permission>()
         {
             @Override
@@ -98,6 +100,7 @@ public final class PermissionManagerImpl implements PermissionManager
     @Override
     public Set<String> getPermissionKeys(InstallationMode mode)
     {
+        checkNotNull(mode);
         return copyOf(transform(getPermissions(mode), new Function<Permission, String>()
         {
             @Override
