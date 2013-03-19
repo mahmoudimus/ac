@@ -79,7 +79,7 @@
                         <upm.pac.disable>true</upm.pac.disable>
                         <upm.plugin.requests.disable>true</upm.plugin.requests.disable>
                         <upm.email.notifications.disable>true</upm.email.notifications.disable>
-                        <upm.auto.update.enable>true</upm.auto.update.enable>
+                        <upm.auto.update.enable>false</upm.auto.update.enable>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
