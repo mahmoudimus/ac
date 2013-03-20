@@ -1,19 +1,13 @@
-(function ($, RA) {
+(function ($, AP) {
 
-    RA.init();
-    RA.getWorkflowConfiguration(function(configuration) {
+    AP.getWorkflowConfiguration(function(configuration) {
         $("#configuration").val(configuration);
     });
-    RA.WorkflowConfiguration.onSaveValidation(function(e) {
-        var conf = $("#configuration").val();
-        if (conf == "") {
-            return false;
-        } else {
-            return true;
-        }
+    AP.WorkflowConfiguration.onSaveValidation(function() {
+        return !!$("#configuration").val();
     });
-    RA.WorkflowConfiguration.onSave(function() {
+    AP.WorkflowConfiguration.onSave(function() {
         return $("#configuration").val();
     });
 
-}(jQuery, RA));
+}(jQuery, AP));

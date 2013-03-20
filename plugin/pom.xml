@@ -1187,7 +1187,10 @@
                                         <include>js/iframe-min/plugin-ajax-min.js</include>
                                         <include>js/iframe-min/plugin-dollar-min.js</include>
                                         <include>js/iframe-min/rpc-min.js</include>
+                                        <include>js/iframe-min/plugin-rpc-min.js</include>
                                         <include>js/iframe-min/plugin-env-min.js</include>
+                                        <include>js/iframe-min/plugin-request-min.js</include>
+                                        <include>js/iframe-min/plugin-dialog-min.js</include>
                                         <include>js/iframe-min/plugin-bigpipe-min.js</include>
                                         <!-- product-specific inclusions are temporary until made more dynamic -->
                                         <include>js/iframe-min/plugin-jira-min.js</include>
@@ -1219,7 +1222,10 @@
                                         <!--<include>js/iframe/plugin-ajax.js</include>-->
                                         <!--<include>js/iframe/plugin-dollar.js</include>-->
                                         <!--<include>js/iframe/rpc.js</include>-->
+                                        <!--<include>js/iframe/plugin-rpc.js</include>-->
                                         <!--<include>js/iframe/plugin-env.js</include>-->
+                                        <!--<include>js/iframe/plugin-request.js</include>-->
+                                        <!--<include>js/iframe/plugin-dialog.js</include>-->
                                         <!--<include>js/iframe/plugin-bigpipe.js</include>-->
                                         <!-- product-specific inclusions are temporary until made more dynamic -->
                                         <!--<include>js/iframe/plugin-jira.js</include>-->

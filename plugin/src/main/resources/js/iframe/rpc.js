@@ -8,7 +8,8 @@
 
   function factory($) {
 
-    var $window = $(window);
+    var $window = $(window),
+        isFn = $.isFunction;
 
     function param(url, name) {
       return decode(RegExp(name + "=([^&]+)").exec(url)[1]);
@@ -72,7 +73,7 @@
         function handler() {
           var callbacks = {};
           return function (id, callbackOrArg) {
-            if (typeof callbackOrArg === "function") {
+            if (isFn(callbackOrArg)) {
               callbacks[id] = callbackOrArg;
             }
             else if (callbacks[id]) {
@@ -186,7 +187,9 @@
         self[k] = function () {
           var args = [].slice.call(arguments), done, fail;
           function popFn() {
-            if (typeof args[args.length - 1] === "function") return args.pop();
+            if (isFn(args[args.length - 1])) {
+              return args.pop();
+            }
           }
           fail = popFn();
           done = popFn();

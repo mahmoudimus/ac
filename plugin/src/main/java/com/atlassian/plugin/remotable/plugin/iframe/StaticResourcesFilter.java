@@ -107,7 +107,10 @@ public class StaticResourcesFilter implements Filter
                 "plugin-ajax.js",
                 "plugin-dollar.js",
                 "rpc.js",
+                "plugin-rpc.js",
                 "plugin-env.js",
+                "plugin-request.js",
+                "plugin-dialog.js",
                 "plugin-bigpipe.js",
                 "plugin-jira.js",
                 "plugin-init.js"

@@ -37,6 +37,23 @@ AP.define("_util", function () {
     };
   }
 
+  function log() {
+    var console = this.console;
+    if (console && console.log) {
+      var args = [].slice.call(arguments);
+      if (console.log.apply) {
+        console.log.apply(console, args);
+      }
+      else {
+        for (var i = 0, l = args.length; i < l; i += 1) {
+          args[i] = JSON.stringify(args[i]);
+        }
+        console.log(args.join(" "));
+      }
+      return true;
+    }
+  }
+
   return {
 
     each: each,
@@ -84,22 +101,11 @@ AP.define("_util", function () {
       return -1;
     },
 
-    log: function () {
-      var console = this.console;
-      if (console && console.log) {
-        var args = [].slice.call(arguments);
-        if (console.log.apply) {
-          console.log.apply(console, args);
-        }
-        else {
-          for (var i = 0, l = args.length; i < l; i += 1) {
-            args[i] = JSON.stringify(args[i]);
-          }
-          console.log(args.join(" "));
-        }
-        return true;
-      }
+    isFunction: function (fn) {
+      return typeof fn === "function";
     },
+
+    log: log,
 
     handleError: function (err) {
       if (!log.apply(this, err && err.message ? [err, err.message] : [err])) {
