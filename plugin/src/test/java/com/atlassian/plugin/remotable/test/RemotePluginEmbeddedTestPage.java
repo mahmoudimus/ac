@@ -33,6 +33,11 @@ public class RemotePluginEmbeddedTestPage extends RemotePage
         return waitForValue("timeZone");
     }
 
+    public String getLocale()
+    {
+        return waitForValue("locale");
+    }
+
 	public String getTimeZoneFromTemplateContext()
 	{
 		return getValue("timeZoneFromTemplateContext");

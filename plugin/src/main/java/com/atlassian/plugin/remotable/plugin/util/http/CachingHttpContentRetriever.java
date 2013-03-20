@@ -6,7 +6,9 @@ import com.atlassian.httpclient.api.factory.HttpClientFactory;
 import com.atlassian.httpclient.api.factory.HttpClientOptions;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.remotable.plugin.license.LicenseRetriever;
+import com.atlassian.plugin.remotable.plugin.util.LocaleHelper;
 import com.atlassian.plugin.remotable.spi.http.AuthorizationGenerator;
+import com.atlassian.sal.api.message.LocaleResolver;
 import com.atlassian.uri.Uri;
 import com.atlassian.uri.UriBuilder;
 import com.atlassian.util.concurrent.Promise;
@@ -32,11 +34,13 @@ public class CachingHttpContentRetriever implements HttpContentRetriever
     private final Logger log = LoggerFactory.getLogger(CachingHttpContentRetriever.class);
     private final HttpClient httpClient;
     private final LicenseRetriever licenseRetriever;
+    private final LocaleHelper localeHelper;
 
     public CachingHttpContentRetriever(PluginRetrievalService pluginRetrievalService,
-            HttpClientFactory httpClientFactory, final LicenseRetriever licenseRetriever)
+            HttpClientFactory httpClientFactory, final LicenseRetriever licenseRetriever, LocaleHelper localeHelper)
     {
         this.licenseRetriever = licenseRetriever;
+        this.localeHelper = localeHelper;
         HttpClientOptions options = new HttpClientOptions();
         options.setIoSelectInterval(100, TimeUnit.MILLISECONDS);
         options.setThreadPrefix("content-ret");
@@ -65,6 +69,7 @@ public class CachingHttpContentRetriever implements HttpContentRetriever
     {
         final Map<String, String> queryParams = newHashMap(parameters);
         queryParams.put("lic", licenseRetriever.getLicenseStatus(pluginKey).value());
+        queryParams.put("loc", localeHelper.getLocaleTag());
 
         final String urlWithParams = new UriBuilder(Uri.fromJavaUri(url))
                 .addQueryParameters(queryParams)

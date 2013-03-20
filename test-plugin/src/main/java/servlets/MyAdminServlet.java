@@ -34,6 +34,7 @@ public class MyAdminServlet extends AbstractPageServlet
                 .put("httpGetEntity", response.getEntity())
                 .put("licenseStatus", req.getParameter("lic"))
                 .put("timeZone", req.getParameter("tz"))
+                .put("locale", req.getParameter("loc"))
                 .build());
     }
 }

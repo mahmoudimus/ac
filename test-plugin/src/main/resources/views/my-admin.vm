@@ -6,6 +6,7 @@
 <div>Current user: <span id="user"></span></div>
 <div>Current user id: <span id="userId"></span></div>
 <div>Current location: <span id="location"></span></div>
+<div>Current locale: <span id="locale">$locale</span></div>
 <div>Current time zone: <span id="timeZone"></span></div>
 <div>Current time zone (from the template context): <span id="timeZoneFromTemplateContext">$timeZone</span></div>
 

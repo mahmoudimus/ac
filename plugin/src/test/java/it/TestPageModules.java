@@ -7,6 +7,7 @@ import com.atlassian.pageobjects.page.LoginPage;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import java.util.Locale;
 import java.util.TimeZone;
 
 import static org.junit.Assert.*;
@@ -19,6 +20,8 @@ public class TestPageModules extends AbstractRemotablePluginTest
         product.visit(LoginPage.class).login("betty", "betty", HomePage.class);
         RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "remotePluginGeneral",
                                                                "Remotable Plugin app1 General Link");
+
+        String locale = Locale.getDefault().getLanguage() + "-" + Locale.getDefault().getCountry();
         assertTrue(page.isRemotePluginLinkPresent());
         RemotePluginTestPage remotePluginTest = page.clickRemotePluginLink();
         assertTrue(remotePluginTest.getTitle().contains("Remotable Plugin app1 General"));
@@ -28,6 +31,7 @@ public class TestPageModules extends AbstractRemotablePluginTest
         assertTrue(remotePluginTest.getIframeQueryParams().containsKey("cp"));
         assertEquals("Betty Admin", remotePluginTest.getFullName());
         assertEquals("betty", remotePluginTest.getUserId());
+        assertTrue(remotePluginTest.getLocale().startsWith("en-"));
 
         // timezone should be the same as the default one
         assertEquals(TimeZone.getDefault().getRawOffset(), TimeZone.getTimeZone(remotePluginTest.getTimeZone()).getRawOffset());
