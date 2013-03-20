@@ -21,7 +21,7 @@
         var $submitted = $("#submitted");
         var isFalse = $submitted.text() === "false";
         if (isFalse) $submitted.text("true");
-        return isFalse;
+        return !isFalse;
       });
     </script>
   </body>
