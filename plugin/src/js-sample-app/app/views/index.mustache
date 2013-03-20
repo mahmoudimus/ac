@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
@@ -6,64 +6,64 @@
     <title>Container Sample General</title>
     <link rel="stylesheet" type="text/css" href="{{localBaseUrl}}/remotable-plugins/all.css">
     <link type="text/css" rel="stylesheet" href="public/css/styles.css">
-    <script src="{{localBaseUrl}}/remotable-plugins/all.js"></script>
+    <script src="{{localBaseUrl}}/remotable-plugins/all-debug.js"></script>
   </head>
   <body>
     <h2>It worked!</h2>
 
     <h3>General Info</h3>
     <div>
-        Message: <span id="message">Success</span>
+      Message: <span id="message">Success</span>
     </div>
     <div>
-        Host Consumer Key: <span id="consumerKey">{{clientKey}}</span>
+      Host Consumer Key: <span id="consumerKey">{{clientKey}}</span>
     </div>
     <div>
-        Current user: <span id="user"></span>
+      Current user: <span id="user"></span>
     </div>
     <div>
-        Current user id: <span id="userId"></span>
+      Current user id: <span id="userId"></span>
     </div>
     <div>
-        Current location: <span id="location"></span>
+      Current location: <span id="location"></span>
     </div>
 
     {{#hasHttpGetResponse}}
     <h3>HostHttpClient Response</h3>
     <div>
-        Status: <span id="server-http-status">{{httpGetStatus}}</span>
+      Status: <span id="server-http-status">{{httpGetStatus}}</span>
     </div>
     <div>
-        Status text: <span id="server-http-status-text">{{httpGetStatusText}}</span>
+      Status text: <span id="server-http-status-text">{{httpGetStatusText}}</span>
     </div>
     <div>
-        Content-Type: <span id="server-http-content-type">{{httpGetContentType}}</span>
+      Content-Type: <span id="server-http-content-type">{{httpGetContentType}}</span>
     </div>
     <div>
-        Entity: <span id="server-http-entity">{{httpGetEntity}}</span>
+      Entity: <span id="server-http-entity">{{httpGetEntity}}</span>
     </div>
     {{/hasHttpGetResponse}}
     {{#hasHttpGetError}}
     <div>
-        Error: <span id="server-http-error">{{httpGetError}}</span>
+      Error: <span id="server-http-error">{{httpGetError}}</span>
     </div>
     {{/hasHttpGetError}}
 
     <h3>RA.request() Response</h3>
     <div>
-        Status: <span id="client-http-status"></span>
+      Status: <span id="client-http-status"></span>
     </div>
     <div>
-        Status text: <span id="client-http-status-text"></span>
+      Status text: <span id="client-http-status-text"></span>
     </div>
     <div>
-        Content-Type: <span id="client-http-content-type"></span>
+      Content-Type: <span id="client-http-content-type"></span>
     </div>
     <div>
-        Response text: <span id="client-http-response-text"></span>
+      Response text: <span id="client-http-response-text"></span>
     </div>
     <div>
-        Data: <span id="client-http-data"></span>
+      Data: <span id="client-http-data"></span>
     </div>
 
     <h3>Links</h3>
@@ -76,4 +76,3 @@
     <script src="public/js/client.js"></script>
   </body>
 </html>
-
