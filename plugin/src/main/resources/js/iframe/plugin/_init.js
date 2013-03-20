@@ -1,6 +1,6 @@
 // @todo make product-specific inclusions (e.g. jira) dynamic
 AP.require(
-  ["_dollar", "_plugin-rpc", "env", "request", "dialog", "bigpipe", "jira"],
+  ["_dollar", "_rpc", "env", "request", "dialog", "bigpipe", "jira"],
   function ($, rpc, env, request, dialog, bigpipe, jira) {
 
   "use strict";
@@ -58,6 +58,7 @@ AP.require(
 
   });
 
+  // @todo remove this before final release once all clients have had a chance to move to AMD
   // deprecated, backward-compatibility extension of AP for pre-AMD plugins
   $.extend(AP, env, jira, {
     Meta: {get: env.meta},

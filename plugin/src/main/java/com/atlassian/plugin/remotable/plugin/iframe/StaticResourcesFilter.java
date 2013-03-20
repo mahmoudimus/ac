@@ -102,18 +102,18 @@ public class StaticResourcesFilter implements Filter
 
             final String moduleDir = "js/iframe/";
             final String[] modules = {
-                "plugin-amd.js",
-                "plugin-util.js",
-                "plugin-ajax.js",
-                "plugin-dollar.js",
-                "rpc.js",
-                "plugin-rpc.js",
-                "plugin-env.js",
-                "plugin-request.js",
-                "plugin-dialog.js",
-                "plugin-bigpipe.js",
-                "plugin-jira.js",
-                "plugin-init.js"
+                "plugin/_amd.js",
+                "plugin/_util.js",
+                "plugin/_ajax.js",
+                "plugin/_dollar.js",
+                "xdm-rpc.js",
+                "plugin/_rpc.js",
+                "plugin/env.js",
+                "plugin/request.js",
+                "plugin/dialog.js",
+                "plugin/bigpipe.js",
+                "plugin/jira.js",
+                "plugin/_init.js"
             };
             ByteArrayOutputStream bout = new ByteArrayOutputStream();
             for (String module : modules)

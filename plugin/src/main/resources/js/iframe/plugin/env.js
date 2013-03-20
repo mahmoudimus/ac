@@ -1,4 +1,4 @@
-AP.define("env", ["_dollar", "_plugin-rpc"], function ($, rpc) {
+AP.define("env", ["_dollar", "_rpc"], function ($, rpc) {
 
   "use strict";
 

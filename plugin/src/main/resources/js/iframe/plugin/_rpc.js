@@ -1,4 +1,4 @@
-AP.define("_plugin-rpc", ["_dollar", "_rpc"], function ($, Rpc) {
+AP.define("_rpc", ["_dollar", "_xdm-rpc"], function ($, XdmRpc) {
 
   "use strict";
 
@@ -32,7 +32,7 @@ AP.define("_plugin-rpc", ["_dollar", "_rpc"], function ($, Rpc) {
         var config = {};
         // add stubs for each public api
         each(apis, function (method) { stubs.push(method); });
-        rpc = new Rpc(config, {remote: stubs, local: internals});
+        rpc = new XdmRpc(config, {remote: stubs, local: internals});
         rpc.init();
         extend(proxy, rpc);
         each(inits, function (_, init) {

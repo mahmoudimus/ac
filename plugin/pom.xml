@@ -1182,19 +1182,19 @@
                                     <insertNewLine>true</insertNewLine>
                                     <output>${project.build.outputDirectory}/all.js</output>
                                     <includes>
-                                        <include>js/iframe-min/plugin-amd-min.js</include>
-                                        <include>js/iframe-min/plugin-util-min.js</include>
-                                        <include>js/iframe-min/plugin-ajax-min.js</include>
-                                        <include>js/iframe-min/plugin-dollar-min.js</include>
-                                        <include>js/iframe-min/rpc-min.js</include>
-                                        <include>js/iframe-min/plugin-rpc-min.js</include>
-                                        <include>js/iframe-min/plugin-env-min.js</include>
-                                        <include>js/iframe-min/plugin-request-min.js</include>
-                                        <include>js/iframe-min/plugin-dialog-min.js</include>
-                                        <include>js/iframe-min/plugin-bigpipe-min.js</include>
+                                        <include>js/iframe-min/plugin/_amd-min.js</include>
+                                        <include>js/iframe-min/plugin/_util-min.js</include>
+                                        <include>js/iframe-min/plugin/_ajax-min.js</include>
+                                        <include>js/iframe-min/plugin/_dollar-min.js</include>
+                                        <include>js/iframe-min/xdm-rpc-min.js</include>
+                                        <include>js/iframe-min/plugin/_rpc-min.js</include>
+                                        <include>js/iframe-min/plugin/env-min.js</include>
+                                        <include>js/iframe-min/plugin/request-min.js</include>
+                                        <include>js/iframe-min/plugin/dialog-min.js</include>
+                                        <include>js/iframe-min/plugin/bigpipe-min.js</include>
                                         <!-- product-specific inclusions are temporary until made more dynamic -->
-                                        <include>js/iframe-min/plugin-jira-min.js</include>
-                                        <include>js/iframe-min/plugin-init-min.js</include>
+                                        <include>js/iframe-min/plugin/jira-min.js</include>
+                                        <include>js/iframe-min/plugin/_init-min.js</include>
                                     </includes>
                                 </aggregation>
                             </aggregations>
@@ -1217,19 +1217,19 @@
                                     <!--<insertNewLine>true</insertNewLine>-->
                                     <!--<output>${project.build.outputDirectory}/all-debug.js</output>-->
                                     <!--<includes>-->
-                                        <!--<include>js/iframe/plugin-amd.js</include>-->
-                                        <!--<include>js/iframe/plugin-util.js</include>-->
-                                        <!--<include>js/iframe/plugin-ajax.js</include>-->
-                                        <!--<include>js/iframe/plugin-dollar.js</include>-->
-                                        <!--<include>js/iframe/rpc.js</include>-->
-                                        <!--<include>js/iframe/plugin-rpc.js</include>-->
-                                        <!--<include>js/iframe/plugin-env.js</include>-->
-                                        <!--<include>js/iframe/plugin-request.js</include>-->
-                                        <!--<include>js/iframe/plugin-dialog.js</include>-->
-                                        <!--<include>js/iframe/plugin-bigpipe.js</include>-->
-                                        <!-- product-specific inclusions are temporary until made more dynamic -->
-                                        <!--<include>js/iframe/plugin-jira.js</include>-->
-                                        <!--<include>js/iframe/plugin-init.js</include>-->
+                                        <!--<include>js/iframe/plugin/_amd.js</include>-->
+                                        <!--<include>js/iframe/plugin/_util.js</include>-->
+                                        <!--<include>js/iframe/plugin/_ajax.js</include>-->
+                                        <!--<include>js/iframe/plugin/_dollar.js</include>-->
+                                        <!--<include>js/iframe/xdm-rpc.js</include>-->
+                                        <!--<include>js/iframe/plugin/_rpc.js</include>-->
+                                        <!--<include>js/iframe/plugin/env.js</include>-->
+                                        <!--<include>js/iframe/plugin/request.js</include>-->
+                                        <!--<include>js/iframe/plugin/dialog.js</include>-->
+                                        <!--<include>js/iframe/plugin/bigpipe.js</include>-->
+                                        <!--&lt;!&ndash; product-specific inclusions are temporary until made more dynamic &ndash;&gt;-->
+                                        <!--<include>js/iframe/plugin/jira.js</include>-->
+                                        <!--<include>js/iframe/plugin/_init.js</include>-->
                                     <!--</includes>-->
                                 <!--</aggregation>-->
                             <!--</aggregations>-->

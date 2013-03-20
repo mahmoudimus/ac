@@ -1,4 +1,4 @@
-AP.define("dialog", ["_dollar", "_plugin-rpc"], function ($, rpc) {
+AP.define("dialog", ["_dollar", "_rpc"], function ($, rpc) {
 
   "use strict";
 

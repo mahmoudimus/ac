@@ -1,4 +1,4 @@
-AP.define("request", ["_dollar", "_plugin-rpc"], function ($, rpc) {
+AP.define("request", ["_dollar", "_rpc"], function ($, rpc) {
 
   "use strict";
 

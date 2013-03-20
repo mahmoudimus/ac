@@ -1,4 +1,4 @@
-AP.define("jira", ["_dollar", "_plugin-rpc"], function ($, rpc) {
+AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
 
   "use strict";
 

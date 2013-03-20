@@ -1,4 +1,4 @@
-(function (window, AJS/*, JIRA*/) {
+(function (window, AJS) {
 
   var $ = AJS.$,
       AP = window._AP = window._AP || {},
@@ -62,18 +62,17 @@
       return $nexus.data("ra.dialog.buttons").getButton(name);
     }
 
-    var rpc = new AP._Rpc({
+    var rpc = new AP._XdmRpc({
       remote: options.src,
       container: contentId,
       channel: channelId,
-      protocol: "1", // force to postMessage
       props: {width: initWidth, height: initHeight}
     }, {
-      remote: {
-        dialogMessage: {},
+      remote: [
+        "dialogMessage",
         // !!! JIRA specific !!!
-        setWorkflowConfigurationMessage: {}
-      },
+        "setWorkflowConfigurationMessage"
+      ],
       local: {
         init: function () {
           if (!isInited) {
@@ -117,10 +116,6 @@
         getTimeZone: function () {
           return options.data.timeZone;
         },
-        // !!! JIRA specific !!!
-        getWorkflowConfiguration: function (uuid, callback) {
-          callback($("#remoteWorkflowPostFunctionConfiguration-"+uuid).val());
-        },
         showMessage: function (id, title, body) {
           // init message bar if necessary
           if ($("#aui-message-bar").length === 0) {
@@ -158,8 +153,12 @@
             $.each(xhrHeaders, function (i, v) { json.headers[v] = xhr.getResponseHeader(v); });
             return json;
           }
-          function done(data, textStatus, xhr) { success([data, textStatus, toJSON(xhr)]); }
-          function fail(xhr, textStatus, errorThrown) { error([toJSON(xhr), textStatus, errorThrown]); }
+          function done(data, textStatus, xhr) {
+            success([data, textStatus, toJSON(xhr)]);
+          }
+          function fail(xhr, textStatus, errorThrown) {
+            error([toJSON(xhr), textStatus, errorThrown]);
+          }
           // execute the request with our restricted set of inputs
           $.ajax({
             url: url,
@@ -174,6 +173,10 @@
               "AP-App-Key": options.key
             }
           }).then(done, fail);
+        },
+        // !!! JIRA specific !!!
+        getWorkflowConfiguration: function (uuid, callback) {
+          callback($("#remoteWorkflowPostFunctionConfiguration-"+uuid).val());
         }
       }
     });
@@ -203,7 +206,7 @@
       var timeout;
       return function() {
         var ctx = this,
-          args = [].slice.call(arguments);
+            args = [].slice.call(arguments);
         function later() {
           timeout = null;
           fn.apply(ctx, args);
@@ -232,25 +235,14 @@
 
     // !!! JIRA specific !!!
     var done = false;
-    $(document).delegate("#add_submit", "click", function(e) {
+    $(document).delegate("#add_submit, #update_submit", "click", function (e) {
       if (!done) {
         e.preventDefault();
-        rpc.setWorkflowConfigurationMessage(function(either) {
+        rpc.setWorkflowConfigurationMessage(function (either) {
           if (either.valid) {
-            $("#remoteWorkflowPostFunctionConfiguration-"+either.uuid).val(either.value);
+            $("#remoteWorkflowPostFunctionConfiguration-" + either.uuid).val(either.value);
             done = true;
-            $("#add_submit").click();
-          }
-        });
-      }
-    }).delegate("#update_submit", "click", function(e) {
-      if (!done) {
-        e.preventDefault();
-        rpc.setWorkflowConfigurationMessage(function(either) {
-          if (either.valid) {
-            $("#remoteWorkflowPostFunctionConfiguration-"+either.uuid).val(either.value);
-            done = true;
-            $("#update_submit").click();
+            $(e.target).click();
           }
         });
       }
@@ -288,4 +280,4 @@
     }
   };
 
-}(this, AJS/*, this.JIRA*/));
+}(this, AJS));

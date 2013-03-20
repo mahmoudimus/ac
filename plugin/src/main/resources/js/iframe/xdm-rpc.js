@@ -51,7 +51,7 @@
     }
 
     function debug() {
-      if (Rpc.debug) log.apply(window, ["DEBUG:"].concat([].slice.call(arguments)));
+      if (XdmRpc.debug) log.apply(window, ["DEBUG:"].concat([].slice.call(arguments)));
     }
 
     function log() {
@@ -62,7 +62,7 @@
       }
     }
 
-    function Rpc(config, bindings) {
+    function XdmRpc(config, bindings) {
 
       var self, id = (count += 1),
           target, origin, channel, mixin,
@@ -226,15 +226,15 @@
       return self;
     }
 
-    return Rpc;
+    return XdmRpc;
 
   }
 
   if (AP.define) {
-    AP.define("_rpc", ["_dollar"], factory);
+    AP.define("_xdm-rpc", ["_dollar"], factory);
   }
   else {
-    AP._Rpc = AP._Rpc || factory(AJS.$);
+    AP._XdmRpc = AP._XdmRpc || factory(AJS.$);
   }
 
 }(this, document, encodeURIComponent, decodeURIComponent, this.console, JSON, this.AJS));
