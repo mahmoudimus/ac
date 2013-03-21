@@ -21,7 +21,6 @@ public class TestPageModules extends AbstractRemotablePluginTest
         RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "remotePluginGeneral",
                                                                "Remotable Plugin app1 General Link");
 
-        String locale = Locale.getDefault().getLanguage() + "-" + Locale.getDefault().getCountry();
         assertTrue(page.isRemotePluginLinkPresent());
         RemotePluginTestPage remotePluginTest = page.clickRemotePluginLink();
         assertTrue(remotePluginTest.getTitle().contains("Remotable Plugin app1 General"));

@@ -497,9 +497,9 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.google.inject</groupId>
-            <artifactId>guice</artifactId>
-            <version>3.0</version>
+            <groupId>org.sonatype.sisu</groupId>
+            <artifactId>sisu-guice</artifactId>
+            <version>${sisu.guice.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -720,9 +720,9 @@
                                     <version>${api.artifact.version}</version>
                                 </pluginArtifact>
                                 <pluginArtifact>
-                                    <groupId>com.google.inject</groupId>
-                                    <artifactId>guice</artifactId>
-                                    <version>3.0</version>
+                                    <groupId>org.sonatype.sisu</groupId>
+                                    <artifactId>sisu-guice</artifactId>
+                                    <version>${sisu.guice.version}</version>
                                 </pluginArtifact>
                                 <pluginArtifact>
                                     <groupId>org.apache.servicemix.bundles</groupId>
@@ -810,9 +810,9 @@
                                     <version>${api.artifact.version}</version>
                                 </pluginArtifact>
                                 <pluginArtifact>
-                                    <groupId>com.google.inject</groupId>
-                                    <artifactId>guice</artifactId>
-                                    <version>3.0</version>
+                                    <groupId>org.sonatype.sisu</groupId>
+                                    <artifactId>sisu-guice</artifactId>
+                                    <version>${sisu.guice.version}</version>
                                 </pluginArtifact>
                                 <pluginArtifact>
                                     <groupId>org.apache.servicemix.bundles</groupId>
@@ -906,9 +906,9 @@
                                     <version>${api.artifact.version}</version>
                                 </pluginArtifact>
                                 <pluginArtifact>
-                                    <groupId>com.google.inject</groupId>
-                                    <artifactId>guice</artifactId>
-                                    <version>3.0</version>
+                                    <groupId>org.sonatype.sisu</groupId>
+                                    <artifactId>sisu-guice</artifactId>
+                                    <version>${sisu.guice.version}</version>
                                 </pluginArtifact>
                                 <pluginArtifact>
                                     <groupId>org.apache.servicemix.bundles</groupId>
@@ -974,8 +974,8 @@
                             <artifactId>remotable-plugins-spi</artifactId>
                         </pluginDependency>
                         <pluginDependency>
-                            <groupId>com.google.inject</groupId>
-                            <artifactId>guice</artifactId>
+                            <groupId>org.sonatype.sisu</groupId>
+                            <artifactId>sisu-guice</artifactId>
                         </pluginDependency>
                         <pluginDependency>
                             <groupId>org.apache.servicemix.bundles</groupId>
