@@ -111,7 +111,20 @@ public class RemotePluginEmbeddedTestPage extends RemotePage
         });
     }
 
-    String waitForValue(final String key)
+    public String getValueBySelector(final String selector)
+    {
+        return runInFrame(new Callable<String>()
+        {
+
+            @Override
+            public String call() throws Exception
+            {
+                return driver.findElement(By.cssSelector(selector)).getText();
+            }
+        });
+    }
+
+    public String waitForValue(final String key)
     {
         runInFrame(new Callable<Void>()
         {
@@ -131,5 +144,28 @@ public class RemotePluginEmbeddedTestPage extends RemotePage
         });
 
         return getValue(key);
+    }
+
+    public String waitForValueBySelector(final String selector)
+    {
+        runInFrame(new Callable<Void>()
+        {
+            @Override
+            public Void call() throws Exception
+            {
+                driver.waitUntil(new Function<WebDriver, Boolean>() {
+
+                    @Override
+                    public Boolean apply(WebDriver webDriver) {
+                        WebElement element = webDriver.findElement(By.cssSelector(selector));
+                        String text = element.getText();
+                        return text != null && text.length() > 0;
+                    }
+                });
+                return null;
+            }
+        });
+
+        return getValueBySelector(selector);
     }
 }

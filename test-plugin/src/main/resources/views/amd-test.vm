@@ -1,0 +1,18 @@
+<table>
+  <tr>
+    <td align="right">env</td>
+    <td id="amd-env"></td>
+  </tr>
+  <tr>
+    <td align="right">request</td>
+    <td id="amd-request"></td>
+  </tr>
+  <tr>
+    <td align="right">bigpipe</td>
+    <td id="amd-bigpipe"></td>
+  </tr>
+  <tr>
+    <td align="right">dialog</td>
+    <td id="amd-dialog"></td>
+  </tr>
+</table>

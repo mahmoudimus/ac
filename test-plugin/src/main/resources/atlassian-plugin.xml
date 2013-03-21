@@ -37,6 +37,8 @@
                   icon-url="/public/sandcastles.jpg" height="600" width="700"/>
     <dialog-page key="remotePluginDialog" name="Remotable Plugin app1 Dialog" url="/myDialog" />
     <profile-page key="remotePluginProfile" name="Remotable Plugin app1 Profile" url="/myAdmin" />
+    <general-page key="amdTest" name="AMD Test app1 General" url="/amdTest" />
+    <general-page key="bigPipeTest" name="BigPipe Test app1 General" url="/bigPipeTest" />
 
     <general-page key="onlyBetty" name="Only Betty" url="/myAdmin">
         <conditions>
