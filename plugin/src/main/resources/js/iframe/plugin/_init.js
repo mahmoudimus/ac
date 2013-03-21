@@ -78,7 +78,8 @@ AP.require(
     if (optStr) {
       // if found, parse the value into kv pairs following the format of a style element
       $.each(optStr.split(";"), function (i, nvpair) {
-        nvpair = $.trim(nvpair);
+        var trim = $.trim;
+        nvpair = trim(nvpair);
         if (nvpair) {
           var nv = nvpair.split(":"), k = trim(nv[0]), v = trim(nv[1]);
           if (k && v != null) options[k] = v === "true" || v === "false" ? v === "true" : v;
