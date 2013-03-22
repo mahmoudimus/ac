@@ -178,7 +178,6 @@
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
-
         <xs:attribute name="name" type="NameType">
             <xs:annotation>
                 <xs:documentation>
@@ -202,6 +201,14 @@
                 <xs:documentation>
                     Set to "disabled" if this module should be disabled
                     by default.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="system" type="xs:boolean" use="optional" default="false">
+            <xs:annotation>
+                <xs:documentation>
+                    Indicates whether this plugin module is a system plugin module (value='true') or not (value='false').
+                    Only available for non-OSGi plugins.
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>

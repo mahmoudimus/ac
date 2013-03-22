@@ -12,7 +12,7 @@
 
     <xs:simpleType name="ResourceTypeType">
         <xs:restriction base="xs:string">
-            <xs:enumeration value="i18n" />
+            <xs:enumeration value="i18n"/>
         </xs:restriction>
     </xs:simpleType>
 
@@ -31,7 +31,7 @@
                 <xs:attribute name="application" type="ApplicationType" use="optional">
                     <xs:annotation>
                         <xs:documentation>
-                            The application type for which this permission is applicable.  If the current application
+                            The application type for which this permission is applicable. If the current application
                             is different, the permission is ignored.
                         </xs:documentation>
                     </xs:annotation>
@@ -39,8 +39,8 @@
                 <xs:attribute name="installation-mode" type="InstallationModeType" use="optional">
                     <xs:annotation>
                         <xs:documentation>
-                            The installation mode type for which this permission is applicable.  If the current
-                            installation mode for the plugin is different, the permission is ignored.  This is very
+                            The installation mode type for which this permission is applicable. If the current
+                            installation mode for the plugin is different, the permission is ignored. This is very
                             useful for using local-only modules such as 'macro' or 'customfield-type' that require the
                             'execute_java' permission.
                         </xs:documentation>
@@ -59,38 +59,35 @@
     <xs:complexType name="VendorType">
         <xs:attribute name="name" type="NameType" use="required">
             <xs:annotation>
-               <xs:documentation>
-                   The vendor display name to show in the Add-On Manager
-               </xs:documentation>
-           </xs:annotation>
+                <xs:documentation>
+                    The vendor display name to show in the Add-On Manager
+                </xs:documentation>
+            </xs:annotation>
         </xs:attribute>
         <xs:attribute name="url" type="HttpUrlType" use="required">
             <xs:annotation>
-               <xs:documentation>
-                   The URL to the home page of the plugin or vendor.
-               </xs:documentation>
-           </xs:annotation>
+                <xs:documentation>
+                    The URL to the home page of the plugin or vendor.
+                </xs:documentation>
+            </xs:annotation>
         </xs:attribute>
     </xs:complexType>
 
     <xs:complexType name="PluginInfoType">
         <xs:sequence>
-            <xs:element name="description"
-                        type="DescriptionType" maxOccurs="1" minOccurs="0">
+            <xs:element name="description" type="DescriptionType" maxOccurs="1" minOccurs="0">
                 <xs:annotation>
                     <xs:documentation>A human-readable description of your plugin.</xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="version"
-                        type="xs:string" maxOccurs="1" minOccurs="1">
+            <xs:element name="version" type="xs:string" maxOccurs="1" minOccurs="1">
                 <xs:annotation>
                     <xs:documentation>The version of your plugin. This number is displayed in the application's plugin
                         manager.
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="vendor" maxOccurs="1"
-                        minOccurs="0" type="VendorType">
+            <xs:element name="vendor" maxOccurs="1" minOccurs="0" type="VendorType">
                 <xs:annotation>
                     <xs:documentation>Supply information about the developer of the plugin.</xs:documentation>
                 </xs:annotation>
@@ -100,16 +97,110 @@
                     <xs:documentation>Permissions requested by this plugin</xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="param" type="ParamType"
-                        maxOccurs="unbounded" minOccurs="0">
-            </xs:element>
+            <xs:element name="param" type="ParamType" maxOccurs="unbounded" minOccurs="0"/>
         </xs:sequence>
     </xs:complexType>
 
     <xs:complexType name="ResourceType">
-        <xs:attribute name="type" type="ResourceTypeType" use="required" />
-        <xs:attribute name="name" type="NameType" use="optional" />
-        <xs:attribute name="location" type="ResourceLocationType" use="required" />
+        <xs:attribute name="type" type="ResourceTypeType" use="required"/>
+        <xs:attribute name="name" type="NameType" use="optional"/>
+        <xs:attribute name="location" type="ResourceLocationType" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="ComponentType">
+        <xs:complexContent>
+            <xs:extension base="AbstractPluginModuleType">
+                <xs:sequence>
+                    <xs:element name="interface" type="ClassType" minOccurs="0" maxOccurs="unbounded">
+                        <xs:annotation>
+                            <xs:documentation>
+                                The Java interface under which this component should be registered. This element can
+                                appear zero or more times.
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="service-properties" type="MapType" minOccurs="0" maxOccurs="unbounded">
+                        <xs:annotation>
+                            <xs:documentation>
+                                Map of simple properties to associate with a public component (Plugin Framework 2.3 and
+                                later).
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:sequence>
+                <xs:attribute name="alias" type="NameType" use="optional">
+                    <xs:annotation>
+                        <xs:documentation>
+                            The alias to use for the component when registering it in the internal bean factory.
+                            By default this is the plugin key.
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="class" type="ClassType" use="required">
+                    <xs:annotation>
+                        <xs:documentation>
+                            The Java class of the component. This does not need to extend or implement any class or interface.
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="public" type="xs:boolean" use="optional" default="false">
+                    <xs:annotation>
+                        <xs:documentation>
+                            Indicates whether this component should be made available to other plugins via the
+                            component-import module or not.
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="ComponentImportType">
+        <xs:complexContent>
+            <xs:extension base="AbstractPluginModuleType">
+                <xs:sequence>
+                    <xs:element name="interface" type="ClassType" minOccurs="0" maxOccurs="unbounded">
+                        <xs:annotation>
+                            <xs:documentation>
+                                The Java interface under which the component to retrieve is registered. This element can
+                                appear zero or more times, but is required if the interface attribute is not used.
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:sequence>
+                <xs:attribute name="interface" type="ClassType" use="optional">
+                    <xs:annotation>
+                        <xs:documentation>
+                            The Java interface of the component to import. This attribute is only required if the
+                            interface elements are not used.
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="filter" type="xs:string" use="optional">
+                    <xs:annotation>
+                        <xs:documentation>
+                            The LDAP filter to use to match public components (OSGi services). Note: The format of the
+                            filter must be a valid LDAP filter. (Plugin Framework 2.3 and later.)
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="ModuleTypeType">
+        <xs:complexContent>
+            <xs:extension base="AbstractPluginModuleType">
+                <xs:attribute name="class" type="ClassType" use="required">
+                    <xs:annotation>
+                        <xs:documentation>
+                            The ModuleDescriptor class to instantiate when a new plugin module of this type is found.
+                            See the plugin framework guide to creating plugin module instances.
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+            </xs:extension>
+        </xs:complexContent>
     </xs:complexType>
 
     <xs:complexType name="AtlassianPluginType">
@@ -117,8 +208,7 @@
             <xs:documentation>This is the root element for your plugin descriptor.</xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="plugin-info" maxOccurs="1"
-                        minOccurs="1" type="PluginInfoType">
+            <xs:element name="plugin-info" maxOccurs="1" minOccurs="1" type="PluginInfoType">
                 <xs:annotation>
                     <xs:documentation>
                         This element contains plugin information displayed by the application for administrators,
@@ -132,6 +222,49 @@
                     <xs:annotation>
                         <xs:documentation>
                             Defines i18n resources to be made available to the application
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+                <xs:element name="component" minOccurs="0" maxOccurs="unbounded" type="ComponentType">
+                    <xs:annotation>
+                        <xs:documentation>
+                            <name>Component</name>
+                            <description>
+                                Defines a java component that should be instantiated by the plugin.
+                            </description>
+                            <required-permissions>
+                                <permission>execute_java</permission>
+                            </required-permissions>
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+                <xs:element name="component-import" minOccurs="0" maxOccurs="unbounded" type="ComponentImportType">
+                    <xs:annotation>
+                        <xs:documentation>
+                            <name>Component Import</name>
+                            <description>
+                                Component Import plugin modules allow you to access Java components shared by other
+                                plugins, even if the component is upgraded at runtime.
+                            </description>
+                            <required-permissions>
+                                <permission>execute_java</permission>
+                            </required-permissions>
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+                <xs:element name="module-type" minOccurs="0" maxOccurs="unbounded" type="ModuleTypeType">
+                    <xs:annotation>
+                        <xs:documentation>
+                            <name>Module Type</name>
+                            <description>
+                                Module Type plugin modules allow you to dynamically add new plugin module types to the
+                                plugin framework, generally building on other plugin modules. For example, a plugin
+                                developer could create a &lt;dictionary&gt; plugin module that is used to feed a
+                                dictionary service used by still other plugins.
+                            </description>
+                            <required-permissions>
+                                <permission>execute_java</permission>
+                            </required-permissions>
                         </xs:documentation>
                     </xs:annotation>
                 </xs:element>
