@@ -1,8 +1,5 @@
 package com.atlassian.plugin.remotable.plugin.descriptor;
 
-import com.atlassian.plugin.RequirePermission;
-import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
-import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.remotable.api.InstallationMode;
 import com.atlassian.plugin.remotable.plugin.PermissionManager;
@@ -77,7 +74,7 @@ public final class PluginDescriptorValidatorProviderTest
         when(describedModuleDescriptorFactoryAccessor.getDescribedModuleDescriptorFactories()).thenReturn(ImmutableList.of(factory));
         when(factory.getModuleDescriptorKeys()).thenReturn(ImmutableList.<String>of("key"));
 
-        mockModuleDescriptorWithRequiredPermission(factory, "key", null, ModuleDescriptorWithNoPermission.class);
+        when(factory.getSchema("key")).thenReturn(null);
 
         Iterable<Schema> moduleSchemas = pluginDescriptorValidatorProvider.getModuleSchemas(InstallationMode.LOCAL);
         assertTrue(Iterables.isEmpty(moduleSchemas));
@@ -89,9 +86,7 @@ public final class PluginDescriptorValidatorProviderTest
         final DescribedModuleDescriptorFactory factory = mock(DescribedModuleDescriptorFactory.class);
         when(describedModuleDescriptorFactoryAccessor.getDescribedModuleDescriptorFactories()).thenReturn(ImmutableList.of(factory));
         when(factory.getModuleDescriptorKeys()).thenReturn(ImmutableList.<String>of("key"));
-        final Schema schema = mock(Schema.class);
-
-        mockModuleDescriptorWithRequiredPermission(factory, "key", schema, ModuleDescriptorWithNoPermission.class);
+        final Schema schema = mockSchema(factory, "key");
 
         Iterable<Schema> moduleSchemas = pluginDescriptorValidatorProvider.getModuleSchemas(InstallationMode.LOCAL);
 
@@ -105,9 +100,7 @@ public final class PluginDescriptorValidatorProviderTest
         final DescribedModuleDescriptorFactory factory = mock(DescribedModuleDescriptorFactory.class);
         when(describedModuleDescriptorFactoryAccessor.getDescribedModuleDescriptorFactories()).thenReturn(ImmutableList.of(factory));
         when(factory.getModuleDescriptorKeys()).thenReturn(ImmutableList.<String>of("key"));
-        final Schema schema = mock(Schema.class);
-
-        mockModuleDescriptorWithRequiredPermission(factory, "key", schema, ModuleDescriptorWithPermission.class);
+        final Schema schema = mockSchema(factory, "key", "required_permission");
 
         when(permissionManager.getPermissionKeys(InstallationMode.LOCAL)).thenReturn(ImmutableSet.<String>of("non_matching_permission"));
 
@@ -122,9 +115,8 @@ public final class PluginDescriptorValidatorProviderTest
         final DescribedModuleDescriptorFactory factory = mock(DescribedModuleDescriptorFactory.class);
         when(describedModuleDescriptorFactoryAccessor.getDescribedModuleDescriptorFactories()).thenReturn(ImmutableList.of(factory));
         when(factory.getModuleDescriptorKeys()).thenReturn(ImmutableList.<String>of("key"));
-        final Schema schema = mock(Schema.class);
 
-        mockModuleDescriptorWithRequiredPermission(factory, "key", schema, ModuleDescriptorWithPermission.class);
+        final Schema schema = mockSchema(factory, "key", "required_permission");
 
         Set<String> allPermissions = ImmutableSet.of();
         when(permissionManager.getPermissionKeys(InstallationMode.LOCAL)).thenReturn(allPermissions);
@@ -141,9 +133,8 @@ public final class PluginDescriptorValidatorProviderTest
         final DescribedModuleDescriptorFactory factory = mock(DescribedModuleDescriptorFactory.class);
         when(describedModuleDescriptorFactoryAccessor.getDescribedModuleDescriptorFactories()).thenReturn(ImmutableList.of(factory));
         when(factory.getModuleDescriptorKeys()).thenReturn(ImmutableList.<String>of("key"));
-        final Schema schema = mock(Schema.class);
 
-        mockModuleDescriptorWithRequiredPermission(factory, "key", schema, ModuleDescriptorWithPermission.class);
+        final Schema schema = mockSchema(factory, "key", "required_permission");
 
         when(permissionManager.getPermissionKeys(InstallationMode.LOCAL)).thenReturn(ImmutableSet.<String>of("required_permission"));
 
@@ -153,39 +144,11 @@ public final class PluginDescriptorValidatorProviderTest
         assertEquals(schema, Iterables.get(moduleSchemas, 0));
     }
 
-    @SuppressWarnings("unchecked")
-    private void mockModuleDescriptorWithRequiredPermission(DescribedModuleDescriptorFactory factory, String moduleKey, Schema schema, Class moduleDescriptorClass)
+    private Schema mockSchema(DescribedModuleDescriptorFactory factory, String moduleType, String... permissions)
     {
-        when(factory.getSchema(moduleKey)).thenReturn(schema);
-        when(factory.getModuleDescriptorClass(moduleKey)).thenReturn(moduleDescriptorClass);
-    }
-
-    private static final class ModuleDescriptorWithNoPermission extends AbstractModuleDescriptor<Void>
-    {
-        public ModuleDescriptorWithNoPermission(ModuleFactory moduleFactory)
-        {
-            super(moduleFactory);
-        }
-
-        @Override
-        public Void getModule()
-        {
-            return null;
-        }
-    }
-
-    @RequirePermission("required_permission")
-    private static final class ModuleDescriptorWithPermission extends AbstractModuleDescriptor<Void>
-    {
-        public ModuleDescriptorWithPermission(ModuleFactory moduleFactory)
-        {
-            super(moduleFactory);
-        }
-
-        @Override
-        public Void getModule()
-        {
-            return null;
-        }
+        final Schema schema = mock(Schema.class);
+        when(factory.getSchema(moduleType)).thenReturn(schema);
+        when(schema.getRequiredPermissions()).thenReturn(ImmutableSet.of(permissions));
+        return schema;
     }
 }

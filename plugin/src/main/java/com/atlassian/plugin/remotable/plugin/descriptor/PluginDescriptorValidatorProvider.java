@@ -1,8 +1,6 @@
 package com.atlassian.plugin.remotable.plugin.descriptor;
 
-import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.RequirePermission;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.remotable.api.InstallationMode;
 import com.atlassian.plugin.remotable.plugin.PermissionManager;
@@ -43,8 +41,6 @@ import static java.lang.String.format;
 @Component
 public class PluginDescriptorValidatorProvider implements DescriptorValidatorProvider
 {
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
     private final Plugin plugin;
     private final ApplicationProperties applicationProperties;
     private final DescribedModuleDescriptorFactoryAccessor describedModuleDescriptorFactoryAccessor;
@@ -108,55 +104,26 @@ public class PluginDescriptorValidatorProvider implements DescriptorValidatorPro
 
     private Schema getModuleSchema(DescribedModuleDescriptorFactory factory, InstallationMode mode, String key)
     {
+        final Schema schema = factory.getSchema(key);
+        if (schema == null)
+        {
+            return null;
+        }
+
         final Set<String> allowedPermissions = permissionManager.getPermissionKeys(mode);
+        // empty means all permissions, so whatever permissions the schema defines it's all good
         if (allowedPermissions.isEmpty())
         {
-            return factory.getSchema(key);
+            return schema;
         }
 
-        // a little bit of reflection for those still on Atlassian Plugins 2.x and not yet on 3+
-        if (!hasRequiredPermissionsAnnotation())
-        {
-            return factory.getSchema(key);
-        }
-
-        final Class<? extends ModuleDescriptor> moduleDescriptorClass = factory.getModuleDescriptorClass(key);
-        if (!hasRequiredPermissions(moduleDescriptorClass))
-        {
-            return factory.getSchema(key);
-        }
-
-        final Set<String> requiredPermissions = getRequiredPermissions(moduleDescriptorClass);
+        final Set<String> requiredPermissions = copyOf(schema.getRequiredPermissions());
         if (Sets.difference(requiredPermissions, allowedPermissions).isEmpty())
         {
-            return factory.getSchema(key);
+            return schema;
         }
 
         return null;
-    }
-
-    private boolean hasRequiredPermissionsAnnotation()
-    {
-        try
-        {
-            final Class<RequirePermission> requirePermissionClass = RequirePermission.class;
-            return requirePermissionClass != null;
-        }
-        catch (NoClassDefFoundError e)
-        {
-            logger.debug("Couldn't find annotation RequirePermission. Probably because we're still on Atlassian Plugins 2.", e);
-            return false;
-        }
-    }
-
-    private boolean hasRequiredPermissions(Class<? extends ModuleDescriptor> moduleDescriptorClass)
-    {
-        return moduleDescriptorClass.isAnnotationPresent(RequirePermission.class);
-    }
-
-    private Set<String> getRequiredPermissions(Class<? extends ModuleDescriptor> moduleDescriptorClass)
-    {
-        return copyOf(moduleDescriptorClass.getAnnotation(RequirePermission.class).value());
     }
 
     @Override
