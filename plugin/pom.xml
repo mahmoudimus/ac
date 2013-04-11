@@ -647,7 +647,7 @@
                             com.atlassian.sal.api.*;version="(2.4,3.0]",
                             com.atlassian.util.concurrent*;version="${atlassian-util-concurrent.version}",
                             com.atlassian.crowd.embedded.api.*;version="2.0";resolution:=optional,
-                            com.atlassian.webhooks.spi*;version="${webhooks.api.version}",
+                            com.atlassian.webhooks.spi*;version="${webhooks.spi.version}",
                             com.atlassian.httpclient.*;version="${httpclient.api.version}",
                             com.sun.mail.handlers;resolution:=optional,
                             net.oauth*,
@@ -861,6 +861,11 @@
                                     <artifactId>confluence-xmlrpc-java-client-plugin</artifactId>
                                     <version>${confluence.client.version}</version>
                                 </pluginArtifact>
+                                <!--<pluginArtifact>-->
+                                    <!--<groupId>com.atlassian.webhooks</groupId>-->
+                                    <!--<artifactId>atlassian-webhooks-plugin2-compatibility-plugin</artifactId>-->
+                                    <!--<version>${webhooks.version}</version>-->
+                                <!--</pluginArtifact>-->
                             </pluginArtifacts>
                             <libArtifacts>
                                 <libArtifact>
@@ -946,6 +951,11 @@
                                     <groupId>com.googlecode.json-simple</groupId>
                                     <artifactId>json-simple</artifactId>
                                     <version>1.1.1</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.webhooks</groupId>
+                                    <artifactId>atlassian-webhooks-plugin2-compatibility-plugin</artifactId>
+                                    <version>${webhooks.version}</version>
                                 </pluginArtifact>
                             </pluginArtifacts>
                             <libArtifacts>

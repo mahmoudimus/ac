@@ -18,8 +18,9 @@ import com.atlassian.plugin.remotable.plugin.product.jira.JiraRestBeanMarshaler;
 import com.atlassian.plugin.remotable.spi.module.IFrameParams;
 import com.atlassian.plugin.remotable.spi.module.IFrameRenderer;
 import com.atlassian.templaterenderer.TemplateRenderer;
-import com.atlassian.webhooks.spi.provider.ConsumerKey;
 import com.atlassian.webhooks.spi.provider.ModuleDescriptorWebHookConsumerRegistry;
+import com.atlassian.webhooks.spi.provider.PluginModuleConsumerParams;
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import com.opensymphony.workflow.FunctionProvider;
 import com.opensymphony.workflow.TypeResolver;
@@ -84,7 +85,7 @@ public class RemoteWorkflowPostFunctionModuleDescriptor extends WorkflowFunction
             @Override
             public FunctionProvider getFunction(final String type, final Map args) throws WorkflowException
             {
-                return new RemoteWorkflowPostFunctionProvider(eventPublisher, jiraRestBeanMarshaler, new ConsumerKey(plugin.getKey(), moduleKey));
+                return new RemoteWorkflowPostFunctionProvider(eventPublisher, jiraRestBeanMarshaler, plugin.getKey(), moduleKey);
             }
         };
     }
@@ -131,8 +132,10 @@ public class RemoteWorkflowPostFunctionModuleDescriptor extends WorkflowFunction
         workflowConfigurator.registerTypeResolver(RemoteWorkflowPostFunctionProvider.class.getName(), remoteWorkflowTypeResolver);
         this.webHookConsumerRegistry.register(
                 RemoteWorkflowPostFunctionEvent.REMOTE_WORKFLOW_POST_FUNCTION_EVENT_ID,
-                new ConsumerKey(plugin.getKey(), moduleKey),
-                publishURI);
+                plugin.getKey(),
+                publishURI,
+                new PluginModuleConsumerParams(plugin.getKey(), Optional.of(moduleKey), ImmutableMap.<String, Object>of(), RemoteWorkflowPostFunctionEvent.REMOTE_WORKFLOW_POST_FUNCTION_EVENT_ID)
+        );
     }
 
     @Override
@@ -141,8 +144,10 @@ public class RemoteWorkflowPostFunctionModuleDescriptor extends WorkflowFunction
         workflowConfigurator.unregisterTypeResolver(RemoteWorkflowPostFunctionProvider.class.getName(), remoteWorkflowTypeResolver);
         this.webHookConsumerRegistry.unregister(
                 RemoteWorkflowPostFunctionEvent.REMOTE_WORKFLOW_POST_FUNCTION_EVENT_ID,
-                new ConsumerKey(plugin.getKey(), moduleKey),
-                publishURI);
+                plugin.getKey(),
+                publishURI,
+                new PluginModuleConsumerParams(plugin.getKey(), Optional.of(moduleKey), ImmutableMap.<String, Object>of(), RemoteWorkflowPostFunctionEvent.REMOTE_WORKFLOW_POST_FUNCTION_EVENT_ID)
+        );
     }
 
     @Override

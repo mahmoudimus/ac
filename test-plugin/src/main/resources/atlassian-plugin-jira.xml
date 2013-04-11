@@ -5,9 +5,6 @@
     </permissions>
 
     <webhook key="wh-plugin_enabled" event="plugin_enabled" url="/webHook/plugin_enabled" />
-    <webhook key="wh-issue_created" event="issue_created" url="/webHook/issue_created" />
-    <webhook key="wh-issue_updated" event="issue_updated" url="/webHook/issue_updated" />
-    <webhook key="wh-issue_commented" event="issue_commented" url="/webHook/issue_commented" />
 
     <issue-panel-page key="remotePluginIssuePanelPage" name="Remotable Plugin app1 Issue Page" url="/myAdmin" />
     <issue-panel-page key="onlyBettyIssuePanelPage" name="Only Betty Panel" url="/myAdmin">
