@@ -413,6 +413,8 @@
         <sal.version>2.7.0</sal.version>
         <plugins.api.version>2.10</plugins.api.version>
         <plugins.version>3.0.0-m32</plugins.version>
+
+        <!-- Before upgrading to later, ensure it works on m5 and prior systems.  This may fail due to new superclass -->
         <webfragments.version>3.0.0-m5</webfragments.version>
         <rest.version>2.3.0</rest.version>
         <ao.version>0.19.14</ao.version>
