@@ -792,6 +792,11 @@
                                     <version>${webhooks.version}</version>
                                 </pluginArtifact>
                                 <pluginArtifact>
+                                    <groupId>com.atlassian.webhooks</groupId>
+                                    <artifactId>atlassian-webhooks-plugin2-compatibility-plugin</artifactId>
+                                    <version>${webhooks.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
                                     <groupId>${project.groupId}</groupId>
                                     <artifactId>remotable-plugins-test-plugin</artifactId>
                                     <version>${project.version}</version>
@@ -861,11 +866,6 @@
                                     <artifactId>confluence-xmlrpc-java-client-plugin</artifactId>
                                     <version>${confluence.client.version}</version>
                                 </pluginArtifact>
-                                <!--<pluginArtifact>-->
-                                    <!--<groupId>com.atlassian.webhooks</groupId>-->
-                                    <!--<artifactId>atlassian-webhooks-plugin2-compatibility-plugin</artifactId>-->
-                                    <!--<version>${webhooks.version}</version>-->
-                                <!--</pluginArtifact>-->
                             </pluginArtifacts>
                             <libArtifacts>
                                 <libArtifact>
@@ -890,6 +890,11 @@
                                 <pluginArtifact>
                                     <groupId>com.atlassian.webhooks</groupId>
                                     <artifactId>atlassian-webhooks-plugin</artifactId>
+                                    <version>${webhooks.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.webhooks</groupId>
+                                    <artifactId>atlassian-webhooks-plugin2-compatibility-plugin</artifactId>
                                     <version>${webhooks.version}</version>
                                 </pluginArtifact>
                                 <pluginArtifact>
@@ -951,11 +956,6 @@
                                     <groupId>com.googlecode.json-simple</groupId>
                                     <artifactId>json-simple</artifactId>
                                     <version>1.1.1</version>
-                                </pluginArtifact>
-                                <pluginArtifact>
-                                    <groupId>com.atlassian.webhooks</groupId>
-                                    <artifactId>atlassian-webhooks-plugin2-compatibility-plugin</artifactId>
-                                    <version>${webhooks.version}</version>
                                 </pluginArtifact>
                             </pluginArtifacts>
                             <libArtifacts>
