@@ -792,11 +792,6 @@
                                     <version>${webhooks.version}</version>
                                 </pluginArtifact>
                                 <pluginArtifact>
-                                    <groupId>com.atlassian.webhooks</groupId>
-                                    <artifactId>atlassian-webhooks-plugin2-compatibility-plugin</artifactId>
-                                    <version>${webhooks.version}</version>
-                                </pluginArtifact>
-                                <pluginArtifact>
                                     <groupId>${project.groupId}</groupId>
                                     <artifactId>remotable-plugins-test-plugin</artifactId>
                                     <version>${project.version}</version>

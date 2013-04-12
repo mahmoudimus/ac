@@ -132,6 +132,14 @@
                 <configuration>
                     <extractDependencies>true</extractDependencies>
                     <skipManifestValidation>true</skipManifestValidation>
+                    <instructions>
+                        <Import-Package>
+                            com.atlassian.plugin.remotable.api*;version="${api.artifact.version}",
+                            com.atlassian.plugin.remotable.spi*;version="${api.artifact.version}",
+                            *;resolution:=optional
+                        </Import-Package>
+                        <Spring-Context>*;timeout:=60</Spring-Context>
+                    </instructions>
                 </configuration>
             </plugin>
             <plugin>
