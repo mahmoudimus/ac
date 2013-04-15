@@ -21,6 +21,10 @@ public final class RemotablePluginsPluginUriResolver implements PluginUriResolve
     @Override
     public URI getUri(String pluginKey, URI path)
     {
-        return new UriBuilder(Uri.parse(remotablePluginAccessorFactory.get(pluginKey).getDisplayUrl() + path.toString())).toUri().toJavaUri();
+        if (!path.isAbsolute())
+        {
+            return new UriBuilder(Uri.parse(remotablePluginAccessorFactory.get(pluginKey).getDisplayUrl() + path.toString())).toUri().toJavaUri();
+        }
+        return null;
     }
 }
