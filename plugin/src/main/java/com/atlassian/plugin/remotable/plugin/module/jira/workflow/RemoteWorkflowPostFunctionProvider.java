@@ -4,6 +4,7 @@ import com.atlassian.event.api.EventPublisher;
 import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.workflow.function.issue.AbstractJiraFunctionProvider;
 import com.atlassian.plugin.remotable.plugin.product.jira.JiraRestBeanMarshaler;
+import com.atlassian.webhooks.spi.provider.ConsumerKey;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
@@ -30,23 +31,22 @@ public class RemoteWorkflowPostFunctionProvider extends AbstractJiraFunctionProv
 {
     private final EventPublisher eventPublisher;
     private final JiraRestBeanMarshaler beanMarshaler;
-    private final String pluginKey;
-    private final String moduleKey;
+    private final ConsumerKey consumerKey;
 
     public RemoteWorkflowPostFunctionProvider(final EventPublisher eventPublisher,
-            final JiraRestBeanMarshaler jiraRestBeanMarshaler, final String pluginKey, final String moduleKey)
+            final JiraRestBeanMarshaler jiraRestBeanMarshaler,
+            final ConsumerKey consumerKey)
     {
         this.eventPublisher = eventPublisher;
         this.beanMarshaler = jiraRestBeanMarshaler;
-        this.pluginKey = pluginKey;
-        this.moduleKey = moduleKey;
+        this.consumerKey = consumerKey;
     }
 
     @Override
     public void execute(final Map transientVars, final Map args, final PropertySet propertySet) throws WorkflowException
     {
         final JSONObject postFunctionJSON = postFunctionJSON(transientVars, args);
-        eventPublisher.publish(new RemoteWorkflowPostFunctionEvent(pluginKey, moduleKey, postFunctionJSON));
+        eventPublisher.publish(new RemoteWorkflowPostFunctionEvent(consumerKey, postFunctionJSON));
     }
 
     protected JSONObject postFunctionJSON(final Map<?, ?> transientVars, final Map args)

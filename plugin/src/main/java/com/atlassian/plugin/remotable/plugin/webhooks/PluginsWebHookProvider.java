@@ -4,13 +4,15 @@ import com.atlassian.plugin.remotable.spi.event.RemotePluginDisabledEvent;
 import com.atlassian.plugin.remotable.spi.event.RemotePluginEnabledEvent;
 import com.atlassian.plugin.remotable.spi.event.RemotePluginEvent;
 import com.atlassian.plugin.remotable.spi.event.RemotePluginInstalledEvent;
+import com.atlassian.webhooks.spi.provider.ConsumerKey;
 import com.atlassian.webhooks.spi.provider.EventMatcher;
 import com.atlassian.webhooks.spi.provider.EventSerializer;
 import com.atlassian.webhooks.spi.provider.EventSerializerFactory;
 import com.atlassian.webhooks.spi.provider.EventSerializers;
-import com.atlassian.webhooks.spi.provider.PluginModuleConsumerParams;
 import com.atlassian.webhooks.spi.provider.WebHookProvider;
 import com.atlassian.webhooks.spi.provider.WebHookRegistrar;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Registers Web hooks for remote plugins
@@ -35,10 +37,9 @@ public final class PluginsWebHookProvider implements WebHookProvider
     private static final class RemotePluginEventMatcher<E extends RemotePluginEvent> implements EventMatcher<E>
     {
         @Override
-        public boolean matches(final E event, final Object consumerParams)
+        public boolean matches(E event, ConsumerKey consumerKey)
         {
-            return consumerParams instanceof PluginModuleConsumerParams
-                    && ((PluginModuleConsumerParams) consumerParams).getPluginKey().equals(event.getPluginKey());
+            return checkNotNull(checkNotNull(consumerKey).getPluginKey()).equals(event.getPluginKey());
         }
     }
 

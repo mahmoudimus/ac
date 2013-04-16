@@ -1,24 +1,22 @@
 package com.atlassian.plugin.remotable.plugin.module.jira.workflow;
 
+import com.atlassian.webhooks.spi.provider.ConsumerKey;
 import com.atlassian.webhooks.spi.provider.EventMatcher;
 import com.atlassian.webhooks.spi.provider.EventSerializationException;
 import com.atlassian.webhooks.spi.provider.EventSerializer;
 import com.atlassian.webhooks.spi.provider.EventSerializerFactory;
-import com.atlassian.webhooks.spi.provider.PluginModuleConsumerParams;
 import org.json.JSONObject;
 
 public class RemoteWorkflowPostFunctionEvent
 {
     public static final String REMOTE_WORKFLOW_POST_FUNCTION_EVENT_ID = "remote_workflow_post_function";
 
-    private final String pluginKey;
-    private final String moduleKey;
+    private final ConsumerKey consumerKey;
     private final JSONObject jsonObject;
 
-    public RemoteWorkflowPostFunctionEvent(final String pluginKey, final String moduleKey, final JSONObject jsonObject)
+    public RemoteWorkflowPostFunctionEvent(final ConsumerKey consumerKey, final JSONObject jsonObject)
     {
-        this.pluginKey = pluginKey;
-        this.moduleKey = moduleKey;
+        this.consumerKey = consumerKey;
         this.jsonObject = jsonObject;
     }
 
@@ -27,18 +25,20 @@ public class RemoteWorkflowPostFunctionEvent
         return jsonObject.toString();
     }
 
-    public boolean matches(final PluginModuleConsumerParams consumerParams)
+    public boolean matches(final ConsumerKey consumerKey)
     {
-        return this.pluginKey.equals(consumerParams.getPluginKey())
-                && this.moduleKey.equals(consumerParams.getModuleKey().get());
+        return this.consumerKey.getPluginKey().equals(consumerKey.getPluginKey())
+                && this.consumerKey.getModuleKey().isPresent()
+                && consumerKey.getModuleKey().isPresent()
+                && this.consumerKey.getModuleKey().get().equals(consumerKey.getModuleKey().get());
     }
 
     public static final class FunctionEventMatcher implements EventMatcher<RemoteWorkflowPostFunctionEvent>
     {
         @Override
-        public boolean matches(final RemoteWorkflowPostFunctionEvent event, final Object consumerParams)
+        public boolean matches(final RemoteWorkflowPostFunctionEvent event, final ConsumerKey consumerKey)
         {
-            return consumerParams instanceof PluginModuleConsumerParams && event.matches((PluginModuleConsumerParams) consumerParams);
+            return event.matches(consumerKey);
         }
     }
 
