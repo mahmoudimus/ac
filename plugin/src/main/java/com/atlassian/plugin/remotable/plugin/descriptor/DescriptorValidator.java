@@ -16,13 +16,13 @@ import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.webresource.UrlMode;
 import com.atlassian.plugin.webresource.WebResourceManager;
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.io.CharStreams;
 import com.google.common.io.Closeables;
 import com.google.common.io.InputSupplier;
+import org.apache.commons.lang.StringUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentFactory;
 import org.dom4j.Element;
@@ -55,6 +55,7 @@ import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.printNode;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.collect.Sets.newHashSet;
+import static org.apache.commons.lang.StringUtils.isBlank;
 
 /**
  * Builds a schema and validates descriptors with it.  Supports remote plugin and plugin descriptors.
@@ -290,18 +291,40 @@ public final class DescriptorValidator
 
     public static Element addSchemaDocumentation(Element source, SchemaDocumented generator)
     {
-        Element doc = source.addElement("xs:annotation").addElement("xs:documentation");
-        Element name = doc.addElement("name");
-        if (generator.getName() != null)
+        final Element doc = getOrAddElementsIfDoNotExist(source, "xs:annotation", "xs:documentation");
+
+        final Element name = getOrAddElementIfDoesNotExist(doc, "name");
+        if (isBlank(name.getText()) && generator.getName() != null)
         {
             name.setText(generator.getName());
         }
-        Element desc = doc.addElement("description");
-        if (generator.getDescription() != null)
+
+        final Element desc = getOrAddElementIfDoesNotExist(doc, "description");
+        if (isBlank(desc.getText()) && generator.getDescription() != null)
         {
             desc.setText(generator.getDescription());
         }
         return doc;
+    }
+
+    private static Element getOrAddElementsIfDoNotExist(Element source, String... names)
+    {
+        Element el = source;
+        for (String name : names)
+        {
+            el = getOrAddElementIfDoesNotExist(el, name);
+        }
+        return el;
+    }
+
+    private static Element getOrAddElementIfDoesNotExist(Element source, String name)
+    {
+        Element el = source.element(name);
+        if (el == null)
+        {
+            el = source.addElement(name);
+        }
+        return el;
     }
 
     private static void addNamespace(Document schema, DescriptorValidatorProvider descriptorValidatorProvider, boolean usesNamespace, InstallationMode installationMode)

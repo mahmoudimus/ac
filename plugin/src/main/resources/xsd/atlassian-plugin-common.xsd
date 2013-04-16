@@ -137,6 +137,12 @@
         </xs:attribute>
     </xs:complexType>
 
+    <xs:complexType name="ResourceType">
+        <xs:attribute name="type" type="ResourceTypeType" use="required"/>
+        <xs:attribute name="name" type="NameType" use="optional"/>
+        <xs:attribute name="location" type="ResourceLocationType" use="required"/>
+    </xs:complexType>
+
     <xs:complexType name="AbstractPluginModuleType" abstract="true">
         <xs:sequence>
             <xs:element name="description" type="DescriptionType" minOccurs="0" maxOccurs="1">
@@ -151,11 +157,25 @@
             <xs:element name="restrict" type="RestrictType" minOccurs="0" maxOccurs="unbounded">
                 <xs:annotation>
                    <xs:documentation>
-                       Restricts a plugin module to only applications matching the criteria.  Products that don't match won't even
-                       see the module.
+                       Restricts a plugin module to only applications matching the criteria.  Products that don't match
+                       won't even see the module.
                    </xs:documentation>
                </xs:annotation>
             </xs:element>
+            <!-- TODO: uncomment this once product are on webresource 3.0.0-m11 or higher
+                 since lower version define resource in their own web-resource element which also extends
+                 AbstractPluginModuleType, having 2 elements resource was causing conflicts.
+            <xs:element name="resource" type="ResourceType" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>
+                        A resource for this plugin module. This element may be repeated. A 'resource' is a
+                        non-Java file that a plugin may need in order to operate. Refer to
+                        <a href="https://developer.atlassian.com/display/DOCS/Adding+Resources+to+your+Project">
+                            Adding Resources to your Project</a> for details on defining a resource.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            -->
         </xs:sequence>
         <xs:attribute name="key" type="KeyType" use="required">
             <xs:annotation>

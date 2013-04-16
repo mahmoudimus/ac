@@ -4280,7 +4280,7 @@ div#legend div.hint {
             <xsl:for-each select="$component/xsd:annotation/xsd:documentation">
                <!-- Check for two dashes, which will break the JavaScript
                     code -->
-               <xsl:if test="contains(., '--') or contains(@source, '--')">
+               <!--xsl:if test="contains(., '- -') or contains(@source, '- -')">
                   <xsl:call-template name="HandleError">
                      <xsl:with-param name="isTerminating">true</xsl:with-param>
                      <xsl:with-param name="errorMsg">
@@ -4288,7 +4288,7 @@ A local schema component contains two dashes in
 'documentation' elements within its 'annotation' element.
                      </xsl:with-param>
                   </xsl:call-template>
-               </xsl:if>
+               </xsl:if-->
 
                <xsl:if test="position()!=1">
                   <xsl:text>,</xsl:text>
@@ -8439,12 +8439,11 @@ was not specified in the links file, <xsl:value-of select="$linksFile"/>.
 
       <script type="text/javascript">
          <xsl:text disable-output-escaping="yes">
-&lt;![CDATA[
+
 </xsl:text>
 
          <xsl:value-of select="$code" disable-output-escaping="yes"/>
          <xsl:text disable-output-escaping="yes">
-]]&gt;
 </xsl:text>
       </script>
    </xsl:template>
