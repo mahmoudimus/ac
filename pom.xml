@@ -11,7 +11,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.atlassian.plugins</groupId>
     <artifactId>remotable-plugins-parent</artifactId>
-    <version>0.8.9999-SNAPSHOT</version>
+    <version>0.8.1066</version>
 
     <organization>
         <name>Atlassian</name>
