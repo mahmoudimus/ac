@@ -8,11 +8,13 @@ import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.elements.ResourceDescriptor;
 import com.atlassian.plugin.module.ModuleFactory;
+import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.remotable.plugin.module.jira.workflow.RemoteWorkflowPostFunctionEvent;
 import com.atlassian.plugin.remotable.plugin.module.jira.workflow.RemoteWorkflowPostFunctionModuleDescriptor;
 import com.atlassian.plugin.remotable.plugin.module.jira.workflow.RemoteWorkflowPostFunctionProvider;
 import com.atlassian.plugin.remotable.plugin.product.jira.JiraRestBeanMarshaler;
 import com.atlassian.plugin.remotable.spi.module.IFrameRenderer;
+import com.atlassian.plugin.webresource.WebResourceUrlProvider;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.atlassian.webhooks.spi.provider.ConsumerKey;
 import com.atlassian.webhooks.spi.provider.ModuleDescriptorWebHookConsumerRegistry;
@@ -110,7 +112,9 @@ public class TestRemoteWorkflowPostFunction
                 issueMarshaler,
                 mock(ModuleDescriptorWebHookConsumerRegistry.class),
                 eventPublisher,
-                templateRenderer);
+                templateRenderer,
+                mock(WebResourceUrlProvider.class),
+                mock(PluginRetrievalService.class));
 
         descriptor.init(Mockito.mock(Plugin.class), root);
         assertEquals(1, descriptor.getResourceDescriptors().size());

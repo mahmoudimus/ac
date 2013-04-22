@@ -8,15 +8,20 @@ import com.atlassian.jira.plugin.workflow.WorkflowFunctionModuleDescriptor;
 import com.atlassian.jira.plugin.workflow.WorkflowPluginFunctionFactory;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.workflow.OSWorkflowConfigurator;
+import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.Resources;
+import com.atlassian.plugin.elements.ResourceDescriptor;
 import com.atlassian.plugin.module.ModuleFactory;
+import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.remotable.plugin.module.IFrameParamsImpl;
 import com.atlassian.plugin.remotable.plugin.module.page.IFrameContextImpl;
 import com.atlassian.plugin.remotable.plugin.product.jira.JiraRestBeanMarshaler;
 import com.atlassian.plugin.remotable.spi.module.IFrameParams;
 import com.atlassian.plugin.remotable.spi.module.IFrameRenderer;
+import com.atlassian.plugin.webresource.UrlMode;
+import com.atlassian.plugin.webresource.WebResourceUrlProvider;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.atlassian.webhooks.spi.provider.ConsumerKey;
 import com.atlassian.webhooks.spi.provider.ModuleDescriptorWebHookConsumerRegistry;
@@ -55,6 +60,8 @@ public class RemoteWorkflowPostFunctionModuleDescriptor extends WorkflowFunction
     private final IFrameRenderer iFrameRenderer;
     private final TypeResolver remoteWorkflowTypeResolver;
     private final TemplateRenderer templateRenderer;
+    private final WebResourceUrlProvider webResourceUrlProvider;
+    private final PluginRetrievalService pluginRetrievalService;
 
     private Element descriptor;
     private Map<String, URI> workflowFunctionActionUris;
@@ -67,7 +74,9 @@ public class RemoteWorkflowPostFunctionModuleDescriptor extends WorkflowFunction
             final JiraRestBeanMarshaler jiraRestBeanMarshaler,
             final ModuleDescriptorWebHookConsumerRegistry webHookConsumerRegistry,
             final EventPublisher eventPublisher,
-            final TemplateRenderer templateRenderer)
+            final TemplateRenderer templateRenderer,
+            final WebResourceUrlProvider webResourceUrlProvider,
+            final PluginRetrievalService pluginRetrievalService)
     {
         super(authenticationContext,
                 ComponentAccessor.getComponent(OSWorkflowConfigurator.class),
@@ -76,6 +85,8 @@ public class RemoteWorkflowPostFunctionModuleDescriptor extends WorkflowFunction
 
         this.webHookConsumerRegistry = webHookConsumerRegistry;
         this.templateRenderer = templateRenderer;
+        this.webResourceUrlProvider = webResourceUrlProvider;
+        this.pluginRetrievalService = pluginRetrievalService;
         this.workflowConfigurator = ComponentAccessor.getComponent(OSWorkflowConfigurator.class);
         this.iFrameRenderer = iFrameRenderer;
 
@@ -183,13 +194,28 @@ public class RemoteWorkflowPostFunctionModuleDescriptor extends WorkflowFunction
         final String functionConfiguration = StringUtils.defaultString((String) params.get(POST_FUNCTION_CONFIGURATION));
         final Map<String, Object> extraMarkupParams = ImmutableMap.<String, Object>of(
                 POST_FUNCTION_CONFIGURATION, functionConfiguration,
-                POST_FUNCTION_CONFIGURATION_UUID, uuid
+                POST_FUNCTION_CONFIGURATION_UUID, uuid,
+                "scriptUrl", getDialogScriptUrl()
         );
         // Render the extra markup containing configuration value and descriptor uuid.
         final StringWriter writer = new StringWriter();
         templateRenderer.render(POST_FUNCTION_EXTRA_MARKUP, extraMarkupParams, writer);
         iFrameParams.setParamNoEscape("extraMarkupHtml", writer.toString());
         return iFrameParams;
+    }
+
+    private String getDialogScriptUrl()
+    {
+        ModuleDescriptor<?> dialogModuleDescriptor = pluginRetrievalService.getPlugin().getModuleDescriptor("dialog");
+        for (ResourceDescriptor descriptor : dialogModuleDescriptor.getResourceDescriptors())
+        {
+            String src = webResourceUrlProvider.getStaticPluginResourceUrl(dialogModuleDescriptor, descriptor.getName(), UrlMode.AUTO);
+            if (src.endsWith("js"))
+            {
+                return src;
+            }
+        }
+        return null;
     }
 
     private URI iFrameURI(final String resourceName)
