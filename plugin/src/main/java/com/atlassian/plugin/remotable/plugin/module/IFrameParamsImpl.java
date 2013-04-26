@@ -1,7 +1,7 @@
 package com.atlassian.plugin.remotable.plugin.module;
 
+import com.atlassian.plugin.remotable.plugin.util.node.Node;
 import com.atlassian.plugin.remotable.spi.module.IFrameParams;
-import org.dom4j.Element;
 
 import java.util.Map;
 
@@ -15,17 +15,17 @@ public final class IFrameParamsImpl implements IFrameParams
 {
     private final Map<String,Object> params = newHashMap();
     
-    public IFrameParamsImpl(Element module)
+    public IFrameParamsImpl(Node module)
     {
         addToParams(module, "height");
         addToParams(module, "width");
     }
-    public void addToParams(Element e, String key)
+    public void addToParams(Node e, String key)
     {
-        String val = e.attributeValue(key);
-        if (val != null)
+        Node val = e.get(key);
+        if (val.exists())
         {
-            params.put(key, escapeQuotes(val));
+            params.put(key, escapeQuotes(val.asString()));
         }
     }
     
