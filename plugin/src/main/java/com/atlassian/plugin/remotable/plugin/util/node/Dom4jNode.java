@@ -85,6 +85,12 @@ public class Dom4jNode implements Node
     }
 
     @Override
+    public String toString()
+    {
+        return asString("null");
+    }
+
+    @Override
     public URI asURI()
     {
         return URI.create(asString());
