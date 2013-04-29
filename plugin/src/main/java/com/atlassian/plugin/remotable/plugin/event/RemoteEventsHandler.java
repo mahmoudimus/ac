@@ -101,6 +101,8 @@ public final class RemoteEventsHandler implements InitializingBean, DisposableBe
         final Consumer consumer = consumerService.getConsumer();
 
         return ImmutableMap.<String, Object>builder()
+                .put("links", ImmutableMap.of(
+                        "oauth", applicationProperties.getBaseUrl() + "/rest/remotable-plugins/latest/oauth"))
                 .put("clientKey", nullToEmpty(consumer.getKey()))
                 .put("publicKey", nullToEmpty(RSAKeys.toPemEncoding(consumer.getPublicKey())))
                 .put("serverVersion", nullToEmpty(applicationProperties.getBuildNumber()))
