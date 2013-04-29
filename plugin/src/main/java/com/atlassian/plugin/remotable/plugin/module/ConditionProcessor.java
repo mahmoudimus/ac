@@ -82,7 +82,7 @@ public class ConditionProcessor
                     {
                         condElement.add(createElement("param")
                                 .addAttribute("name", child.get("name").asString())
-                                .addText(child.toString()));
+                                .addText(child.asString()));
                     }
                 }
                 else
