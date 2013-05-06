@@ -1,20 +1,23 @@
 package com.atlassian.plugin.remotable.container.internal.kit;
 
-import com.atlassian.plugin.remotable.descriptor.DescriptorAccessor;
+import com.atlassian.httpclient.api.HttpClient;
+import com.atlassian.httpclient.api.Response;
 import com.atlassian.plugin.remotable.api.service.SignedRequestHandler;
+import com.atlassian.plugin.remotable.container.Container;
 import com.atlassian.plugin.remotable.container.internal.Environment;
 import com.atlassian.plugin.remotable.container.service.ContainerOAuthSignedRequestHandler;
+import com.atlassian.plugin.remotable.descriptor.DescriptorAccessor;
 import com.atlassian.plugin.remotable.host.common.descriptor.DocumentationUrlRedirect;
 import com.atlassian.plugin.remotable.host.common.service.AbstractOauthSignedRequestHandler;
-import com.google.common.collect.Maps;
+import com.google.common.base.Function;
 import org.apache.commons.io.IOUtils;
 import org.dom4j.Document;
 import org.dom4j.Element;
-import org.dom4j.Node;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
+import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,6 +30,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import static com.google.common.collect.Maps.newHashMap;
 
@@ -38,13 +42,16 @@ public class RegistrationFilter implements Filter
 {
     private final DescriptorAccessor descriptorAccessor;
     private final Environment environment;
+    private final ServiceTracker httpClientTracker;
     private final ContainerOAuthSignedRequestHandler requestHandler;
     private static final Logger log = LoggerFactory.getLogger(RegistrationFilter.class);
 
-    public RegistrationFilter(DescriptorAccessor descriptor, Environment environment, SignedRequestHandler requestHandler)
+    public RegistrationFilter(DescriptorAccessor descriptor, Environment environment,
+            SignedRequestHandler requestHandler, ServiceTracker httpClientTracker)
     {
         this.descriptorAccessor = descriptor;
         this.environment = environment;
+        this.httpClientTracker = httpClientTracker;
         this.requestHandler = (ContainerOAuthSignedRequestHandler) requestHandler;
     }
 
@@ -87,19 +94,38 @@ public class RegistrationFilter implements Filter
         if ("post".equalsIgnoreCase(method))
         {
             JSONObject jsonObject = (JSONObject) JSONValue.parse(IOUtils.toString(req.getReader()));
-            String baseUrl = (String) jsonObject.get("baseUrl");
+            final String baseUrl = (String) jsonObject.get("baseUrl");
             String productType = (String) jsonObject.get("productType");
-            String publicKey = (String) jsonObject.get("publicKey");
+            final String publicKey = (String) jsonObject.get("publicKey");
 
             RegistrationSignedRequestHandler tmpHandler = new RegistrationSignedRequestHandler(publicKey, baseUrl,
                     requestHandler.getLocalBaseUrl());
-            String clientKey = tmpHandler.validateRequest(req);
+            final String clientKey = tmpHandler.validateRequest(req);
 
             if (Boolean.parseBoolean(environment.getOptionalEnv("ALLOW_REGISTRATION", "true")))
             {
-                log.info("Registering host - key: '{}' baseUrl: '{}'", clientKey, baseUrl);
-                requestHandler.addHost(clientKey, publicKey, baseUrl, productType);
+                if (!Container.isDevMode() && !URI.create(baseUrl).getHost().endsWith(".jira.com"))
+                {
+                    resp.sendError(403, "Registrations only allowed from jira.com domains");
+                    return;
+                }
 
+                final String oauthUrl = (String) ((Map)jsonObject.get("links")).get("oauth");
+                if (oauthUrl.startsWith(baseUrl))
+                {
+                    if (!verifyOAuthFromHost(baseUrl, publicKey, clientKey, oauthUrl))
+                    {
+                        resp.sendError(403, "OAuth information doesn't match the base URL");
+                        return;
+                    }
+                    log.info("Registering host - key: '{}' baseUrl: '{}'", clientKey, baseUrl);
+                    requestHandler.addHost(clientKey, publicKey, baseUrl, productType);
+                }
+                else
+                {
+                    log.warn("Attempt to send oauth URL '{}' that doesn't match base URL '{}'", oauthUrl, baseUrl);
+                    resp.sendError(403, "OAuth URL doesn't match the base URL");
+                }
             } else {
                 if (!requestHandler.isHostRegistered(clientKey)) {
                     log.info("Invalid registration attempt for key {} at {} by {}",
@@ -138,6 +164,52 @@ public class RegistrationFilter implements Filter
                 serveXmlDescriptor(resp);
             }
         }
+    }
+
+    private boolean verifyOAuthFromHost(final String baseUrl, final String publicKey, final String clientKey,
+            final String oauthUrl)
+    {
+        HttpClient httpClient;
+        try
+        {
+            httpClient = (HttpClient) httpClientTracker.waitForService(TimeUnit.SECONDS.toMillis(30));
+        }
+        catch (InterruptedException ignore)
+        {
+            return false;
+        }
+        return httpClient.newRequest(oauthUrl).get().<Boolean>transform()
+            .ok(new Function<Response, Boolean>()
+            {
+                @Override
+                public Boolean apply(Response input)
+                {
+                    String body = input.getEntity();
+                    Map json = (Map) JSONValue.parse(body);
+                    if (publicKey.equals(json.get("publicKey")) &&
+                            clientKey.equals(json.get("key")))
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        log.warn("Attempt to register with public key '{}' and id '{}' that don't match the " +
+                                "base URL '{}'", new Object[]{publicKey, clientKey, baseUrl});
+                        return false;
+                    }
+
+                }
+            })
+        .otherwise(new Function<Throwable, Boolean>()
+        {
+            @Override
+            public Boolean apply(Throwable input)
+            {
+                log.warn("Unexpected response when retrieving OAuth information: " + input.getMessage());
+                log.debug("Problem retreiving oauth info", input);
+                return false;
+            }
+        }).claim();
     }
 
     private void serveXmlDescriptor(HttpServletResponse resp) throws IOException

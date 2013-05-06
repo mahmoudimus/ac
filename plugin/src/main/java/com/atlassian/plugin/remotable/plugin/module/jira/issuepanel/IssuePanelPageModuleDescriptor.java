@@ -13,6 +13,8 @@ import com.atlassian.plugin.remotable.plugin.module.ContainingRemoteCondition;
 import com.atlassian.plugin.remotable.plugin.module.IFrameParamsImpl;
 import com.atlassian.plugin.remotable.plugin.module.IFrameRendererImpl;
 import com.atlassian.plugin.remotable.plugin.module.page.IFrameContextImpl;
+import com.atlassian.plugin.remotable.plugin.util.node.Dom4jNode;
+import com.atlassian.plugin.remotable.plugin.util.node.Node;
 import com.atlassian.plugin.remotable.spi.module.IFrameParams;
 import com.atlassian.plugin.remotable.spi.module.IFrameViewIssuePanel;
 import com.atlassian.plugin.web.Condition;
@@ -101,10 +103,12 @@ public final class IssuePanelPageModuleDescriptor extends AbstractModuleDescript
         }
         desc.addElement("label").addAttribute("key", panelName);
         desc.addAttribute("class", IFrameViewIssuePanel.class.getName());
-        Condition condition = conditionProcessor.process(descriptor, desc, getPluginKey(), "#" + moduleKey);
+
+        Node node = new Dom4jNode(descriptor);
+        Condition condition = conditionProcessor.process(node, desc, getPluginKey(), "#" + moduleKey);
         log.debug("generated web panel: " + printNode(desc));
 
-        ModuleDescriptor<WebPanel> moduleDescriptor = createWebPanelModuleDescriptor(moduleKey, desc, condition, new IFrameParamsImpl(descriptor));
+        ModuleDescriptor<WebPanel> moduleDescriptor = createWebPanelModuleDescriptor(moduleKey, desc, condition, new IFrameParamsImpl(node));
 
         this.registration = dynamicDescriptorRegistration.registerDescriptors(getPlugin(), new DescriptorToRegister(moduleDescriptor));
     }

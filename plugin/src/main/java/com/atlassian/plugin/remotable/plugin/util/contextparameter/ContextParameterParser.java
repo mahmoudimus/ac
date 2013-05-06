@@ -1,5 +1,6 @@
 package com.atlassian.plugin.remotable.plugin.util.contextparameter;
 
+import com.atlassian.plugin.remotable.plugin.util.node.Node;
 import org.dom4j.Element;
 import org.springframework.stereotype.Component;
 
@@ -15,21 +16,21 @@ import static com.google.common.collect.Sets.newHashSet;
 @Component
 public class ContextParameterParser
 {
-    public RequestContextParameterFactory parseContextParameters(Element entity)
+    public RequestContextParameterFactory parseContextParameters(Node entity)
     {
         Set<String> queryParams = newHashSet();
         Set<String> headerParams = newHashSet();
-        if (entity.element("context-parameters") != null)
+        if (entity.get("context-parameters").exists())
         {
-            for (Element e : (List<Element>) entity.element("context-parameters").elements())
+            for (Node e : entity.get("context-parameters").getChildren("context-parameter"))
             {
-                if ("header".equals(getOptionalAttribute(e, "type", "query")))
+                if ("header".equals(e.get("type").asString("query")))
                 {
-                    headerParams.add(e.attributeValue("name"));
+                    headerParams.add(e.get("name").asString());
                 }
                 else
                 {
-                    queryParams.add(e.attributeValue("name"));
+                    queryParams.add(e.get("name").asString());
                 }
             }
         }

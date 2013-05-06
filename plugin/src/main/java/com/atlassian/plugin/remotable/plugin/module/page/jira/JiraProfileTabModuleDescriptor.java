@@ -13,6 +13,7 @@ import com.atlassian.plugin.remotable.plugin.integration.plugins.DynamicDescript
 import com.atlassian.plugin.remotable.plugin.module.IFrameParamsImpl;
 import com.atlassian.plugin.remotable.plugin.module.IFrameRendererImpl;
 import com.atlassian.plugin.remotable.plugin.module.page.IFrameContextImpl;
+import com.atlassian.plugin.remotable.plugin.util.node.Dom4jNode;
 import com.atlassian.plugin.remotable.spi.module.IFrameViewProfilePanel;
 import com.atlassian.util.concurrent.NotNull;
 import org.dom4j.Element;
@@ -101,7 +102,7 @@ public class JiraProfileTabModuleDescriptor extends AbstractModuleDescriptor<Voi
             {
                 return (T) new IFrameViewProfilePanel(
                         iFrameRenderer,
-                        new IFrameContextImpl(getPluginKey(), path, moduleKey, new IFrameParamsImpl(e)));
+                        new IFrameContextImpl(getPluginKey(), path, moduleKey, new IFrameParamsImpl(new Dom4jNode(e))));
             }
         });
         descriptor.init(getPlugin(), config);

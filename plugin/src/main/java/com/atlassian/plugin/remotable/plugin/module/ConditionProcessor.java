@@ -4,6 +4,7 @@ import com.atlassian.plugin.AutowireCapablePlugin;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
+import com.atlassian.plugin.remotable.plugin.util.node.Node;
 import com.atlassian.plugin.remotable.spi.module.RemoteCondition;
 import com.atlassian.plugin.remotable.spi.product.ProductAccessor;
 import com.atlassian.plugin.web.Condition;
@@ -19,9 +20,11 @@ import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.transform;
 import static org.apache.commons.lang.StringUtils.escape;
 import static org.apache.commons.lang.StringUtils.join;
+import static org.dom4j.DocumentHelper.createElement;
 
 /**
  * Processes conditions, handling static and remote conditions via big pipe
@@ -39,63 +42,61 @@ public class ConditionProcessor
         this.remotablePlugin = (AutowireCapablePlugin) pluginRetrievalService.getPlugin();
     }
 
-    public Condition process(Element oldConfig, Element newConfig, String pluginKey)
+    public Condition process(Node oldConfig, Element newConfig, String pluginKey)
     {
         return process(oldConfig, newConfig, pluginKey, null);
     }
 
-    public Condition process(Element oldConfig, Element newConfig, String pluginKey, String toHideSelector)
+    public Condition process(Node oldConfig, Element newConfig, String pluginKey, String toHideSelector)
     {
         List<String> contextParamKeys = getContextParameters(oldConfig);
         newConfig.elements("conditions").clear();
-        Element conditions = oldConfig.element("conditions");
+        Node conditions = oldConfig.get("conditions");
         String remoteConditionUrl = null;
 
-        if (conditions != null)
+        if (conditions.exists())
         {
-            for (Element cElement : (List<Element>) conditions.elements("condition"))
+            for (Node cElement : conditions.getChildren("condition"))
             {
-                String cName = cElement.attributeValue("name");
-                String cUrl = cElement.attributeValue("url");
-                if (cName != null && cUrl != null)
+                Node cName = cElement.get("name");
+                Node cUrl = cElement.get("url");
+                if (cName.exists() && cUrl.exists())
                 {
                     throw new PluginParseException("Name and url cannot be defined on a condition");
                 }
-                else if (cName == null && cUrl == null)
+                else if (!cName.exists() && !cUrl.exists())
                 {
                     throw new PluginParseException("Either the name or url must be defined on a condition");
                 }
                 Element condElement = newConfig.addElement("condition");
 
-                if (Boolean.parseBoolean(escape(cElement.attributeValue("invert"))))
+                if (Boolean.parseBoolean(escape(cElement.get("invert").asString(null))))
                 {
                     condElement.addAttribute("invert", "true");
                 }
 
-                if (cName != null)
+                if (cName.exists())
                 {
-                    condElement.addAttribute("class", productAccessor.getConditions().get(cName).getName());
-                    for (Object child : cElement.elements())
+                    condElement.addAttribute("class", productAccessor.getConditions().get(cName.asString()).getName());
+                    for (Node child : cElement.getChildren("param"))
                     {
-                        if (child instanceof Element)
-                        {
-                            Element el = (Element) child;
-                            condElement.add(el.createCopy());
-                        }
+                        condElement.add(createElement("param")
+                                .addAttribute("name", child.get("name").asString())
+                                .addText(child.asString()));
                     }
                 }
                 else
                 {
-                    remoteConditionUrl = cUrl;
+                    remoteConditionUrl = cUrl.asString();
                     if (toHideSelector == null)
                     {
-                        String hash = createUniqueUrlHash(pluginKey, cUrl);
+                        String hash = createUniqueUrlHash(pluginKey, remoteConditionUrl);
                         toHideSelector = "." + hash;
                     }
                     String paramList = contextParamKeys.isEmpty() ? "" : join(contextParamKeys, ",");
                     condElement.addAttribute("class", RemoteCondition.class.getName());
                     condElement.addElement("param").addAttribute("name", "pluginKey").addText(pluginKey).getParent()
-                            .addElement("param").addAttribute("name", "url").addText(cUrl).getParent()
+                            .addElement("param").addAttribute("name", "url").addText(remoteConditionUrl).getParent()
                             .addElement("param").addAttribute("name", "contextParams").addText(paramList).getParent()
                             .addElement("param").addAttribute("name", "toHideSelector").addText(
                             toHideSelector);
@@ -145,18 +146,18 @@ public class ConditionProcessor
         return new ConditionLoadingPlugin(remotablePlugin, plugin, Sets.<Class<?>>newHashSet(productAccessor.getConditions().values()));
     }
 
-    private List<String> getContextParameters(Element oldConfig)
+    private List<String> getContextParameters(Node oldConfig)
     {
-        Element contextParameters = oldConfig.element("context-parameters");
-        if (contextParameters != null)
+        Node contextParameters = oldConfig.get("context-parameters");
+        if (contextParameters.exists())
         {
-            return transform((List<Element>)contextParameters.elements("context-parameter"), new Function<Element, String>()
+            return transform(newArrayList(contextParameters.getChildren("context-parameter")), new Function<Node, String>()
 
             {
                 @Override
-                public String apply(@Nullable Element input)
+                public String apply(@Nullable Node input)
                 {
-                    return input.attributeValue("name");
+                    return input.get("name").asString();
                 }
             } );
         }

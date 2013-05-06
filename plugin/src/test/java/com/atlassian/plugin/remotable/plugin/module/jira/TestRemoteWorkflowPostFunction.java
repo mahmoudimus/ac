@@ -8,15 +8,16 @@ import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.elements.ResourceDescriptor;
 import com.atlassian.plugin.module.ModuleFactory;
+import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.remotable.plugin.module.jira.workflow.RemoteWorkflowPostFunctionEvent;
 import com.atlassian.plugin.remotable.plugin.module.jira.workflow.RemoteWorkflowPostFunctionModuleDescriptor;
 import com.atlassian.plugin.remotable.plugin.module.jira.workflow.RemoteWorkflowPostFunctionProvider;
 import com.atlassian.plugin.remotable.plugin.product.jira.JiraRestBeanMarshaler;
 import com.atlassian.plugin.remotable.spi.module.IFrameRenderer;
+import com.atlassian.plugin.webresource.WebResourceUrlProvider;
 import com.atlassian.templaterenderer.TemplateRenderer;
+import com.atlassian.webhooks.spi.provider.ConsumerKey;
 import com.atlassian.webhooks.spi.provider.ModuleDescriptorWebHookConsumerRegistry;
-import com.atlassian.webhooks.spi.provider.PluginModuleConsumerParams;
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import com.opensymphony.workflow.WorkflowException;
 import org.dom4j.DocumentFactory;
@@ -55,7 +56,7 @@ public class TestRemoteWorkflowPostFunction
     @Mock
     private TemplateRenderer templateRenderer;
 
-    private final PluginModuleConsumerParams consumerParams = new PluginModuleConsumerParams("plugin", Optional.of("module"), ImmutableMap.<String, Object>of(), RemoteWorkflowPostFunctionEvent.REMOTE_WORKFLOW_POST_FUNCTION_EVENT_ID);
+    private final ConsumerKey consumerKey = new ConsumerKey("plugin", "module");
 
     @Before
     public void setup()
@@ -72,7 +73,7 @@ public class TestRemoteWorkflowPostFunction
             public Void answer(final InvocationOnMock invocationOnMock) throws Throwable
             {
                 final RemoteWorkflowPostFunctionEvent event = (RemoteWorkflowPostFunctionEvent) invocationOnMock.getArguments()[0];
-                assertTrue(event.matches(consumerParams));
+                assertTrue(event.matches(consumerKey));
                 assertThat(event.getJson(), containsString("id"));
                 assertThat(event.getJson(), containsString("10"));
                 assertThat(event.getJson(), containsString("issue_type"));
@@ -81,7 +82,7 @@ public class TestRemoteWorkflowPostFunction
             }
         }).when(eventPublisher).publish(anyObject());
 
-        RemoteWorkflowPostFunctionProvider postFunctionProvider = new RemoteWorkflowPostFunctionProvider(eventPublisher, issueMarshaler, "plugin", "module")
+        RemoteWorkflowPostFunctionProvider postFunctionProvider = new RemoteWorkflowPostFunctionProvider(eventPublisher, issueMarshaler, consumerKey)
         {
             @Override
             protected JSONObject postFunctionJSON(final Map<?, ?> transientVars, final Map args)
@@ -111,7 +112,9 @@ public class TestRemoteWorkflowPostFunction
                 issueMarshaler,
                 mock(ModuleDescriptorWebHookConsumerRegistry.class),
                 eventPublisher,
-                templateRenderer);
+                templateRenderer,
+                mock(WebResourceUrlProvider.class),
+                mock(PluginRetrievalService.class));
 
         descriptor.init(Mockito.mock(Plugin.class), root);
         assertEquals(1, descriptor.getResourceDescriptors().size());

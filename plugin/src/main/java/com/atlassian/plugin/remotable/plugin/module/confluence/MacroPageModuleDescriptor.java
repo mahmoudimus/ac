@@ -9,6 +9,8 @@ import com.atlassian.plugin.remotable.plugin.integration.plugins.DynamicDescript
 import com.atlassian.plugin.remotable.plugin.module.IFrameParamsImpl;
 import com.atlassian.plugin.remotable.plugin.module.IFrameRendererImpl;
 import com.atlassian.plugin.remotable.plugin.module.page.IFrameContextImpl;
+import com.atlassian.plugin.remotable.plugin.util.node.Dom4jNode;
+import com.atlassian.plugin.remotable.plugin.util.node.Node;
 import com.atlassian.plugin.remotable.spi.module.IFrameContext;
 import com.atlassian.plugin.remotable.spi.module.IFrameParams;
 import com.atlassian.sal.api.user.UserManager;
@@ -25,7 +27,7 @@ public final class MacroPageModuleDescriptor extends AbstractModuleDescriptor<Vo
     private final DynamicDescriptorRegistration dynamicDescriptorRegistration;
     private final MacroModuleDescriptorCreator.Builder macroModuleDescriptorCreatorBuilder;
 
-    private Element descriptor;
+    private Node descriptor;
     private DynamicDescriptorRegistration.Registration registration;
 
     public MacroPageModuleDescriptor(
@@ -44,7 +46,7 @@ public final class MacroPageModuleDescriptor extends AbstractModuleDescriptor<Vo
                 @Override
                 public RemoteMacro create(RemoteMacroInfo remoteMacroInfo)
                 {
-                    String moduleKey = remoteMacroInfo.getElement().attributeValue("key");
+                    String moduleKey = remoteMacroInfo.getElement().get("key").asString();
                     IFrameParams params = new IFrameParamsImpl(remoteMacroInfo.getElement());
                     IFrameContext iFrameContext = new IFrameContextImpl(
                             getPluginKey(),
@@ -68,7 +70,7 @@ public final class MacroPageModuleDescriptor extends AbstractModuleDescriptor<Vo
     public void init(@NotNull Plugin plugin, @NotNull Element element) throws PluginParseException
     {
         super.init(plugin, element);
-        this.descriptor = element;
+        this.descriptor = new Dom4jNode(element);
     }
 
     @Override

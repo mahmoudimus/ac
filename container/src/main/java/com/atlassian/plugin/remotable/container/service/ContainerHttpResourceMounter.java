@@ -1,5 +1,7 @@
 package com.atlassian.plugin.remotable.container.service;
 
+import com.atlassian.httpclient.api.HttpClient;
+import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.remotable.api.service.HttpResourceMounter;
 import com.atlassian.plugin.remotable.api.service.RequestContext;
 import com.atlassian.plugin.remotable.container.HttpServer;
@@ -10,11 +12,11 @@ import com.atlassian.plugin.remotable.descriptor.DescriptorAccessor;
 import com.atlassian.plugin.remotable.descriptor.DevModeTransformingDescriptorAccessor;
 import com.atlassian.plugin.remotable.descriptor.PolyglotDescriptorAccessor;
 import com.atlassian.plugin.remotable.host.common.service.AuthenticationFilter;
-import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.remotable.host.common.service.http.bigpipe.BigPipeContentFilter;
 import com.atlassian.plugin.remotable.host.common.service.http.bigpipe.BigPipeRequestIdFilter;
 import com.atlassian.plugin.remotable.host.common.service.http.bigpipe.DefaultBigPipeManager;
 import org.osgi.framework.Bundle;
+import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,9 +24,10 @@ import javax.servlet.Filter;
 import javax.servlet.http.HttpServlet;
 import java.io.File;
 
-import static com.atlassian.plugin.remotable.descriptor.DescriptorUtils.*;
-import static com.google.common.base.Preconditions.*;
-import static java.util.Arrays.*;
+import static com.atlassian.plugin.remotable.descriptor.DescriptorUtils.getDisplayUrl;
+import static com.atlassian.plugin.remotable.descriptor.DescriptorUtils.getOAuthPublicKey;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Arrays.asList;
 
 /**
  * Kicks off the descriptor generator and sends failure events
@@ -34,17 +37,20 @@ public final class ContainerHttpResourceMounter implements HttpResourceMounter
     private final HttpServer httpServer;
     private static final Logger log = LoggerFactory.getLogger(ContainerHttpResourceMounter.class);
     private final Plugin plugin;
+    private final ServiceTracker httpClientTracker;
 
     public ContainerHttpResourceMounter(Bundle bundle,
-                                        Plugin plugin,
-                                        HttpServer httpServer,
-                                        final ContainerOAuthSignedRequestHandler oAuthSignedRequestHandler,
-                                        Environment environment,
-                                        RequestContext requestContext,
-                                        DefaultBigPipeManager bigPipeManager)
+            Plugin plugin,
+            HttpServer httpServer,
+            final ContainerOAuthSignedRequestHandler oAuthSignedRequestHandler,
+            Environment environment,
+            RequestContext requestContext,
+            DefaultBigPipeManager bigPipeManager)
     {
         this.httpServer = checkNotNull(httpServer);
         this.plugin = checkNotNull(plugin);
+        this.httpClientTracker = new ServiceTracker(bundle.getBundleContext(), HttpClient.class.getName(), null);
+        this.httpClientTracker.open();
 
         final DescriptorAccessor descriptorAccessor = new DevModeTransformingDescriptorAccessor(new LazyDescriptorAccessor(plugin, bundle), this.httpServer);
         environment.setEnv("BASE_URL", checkNotNull(getDisplayUrl(descriptorAccessor.getDescriptor())));
@@ -55,7 +61,7 @@ public final class ContainerHttpResourceMounter implements HttpResourceMounter
         }
 
         mountFilter(new BigPipeRequestIdFilter(bigPipeManager), "/*");
-        mountFilter(new RegistrationFilter(descriptorAccessor, environment, oAuthSignedRequestHandler), "/");
+        mountFilter(new RegistrationFilter(descriptorAccessor, environment, oAuthSignedRequestHandler, httpClientTracker), "/");
         mountServlet(new EmptyHttpServlet(), "/"); // this is so that the descriptor's filter gets picked up.
 
         mountFilter(new AuthenticationFilter(oAuthSignedRequestHandler, requestContext), "/*");

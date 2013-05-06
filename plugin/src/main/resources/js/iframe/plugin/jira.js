@@ -44,7 +44,7 @@ AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
       internals: {
 
         setWorkflowConfigurationMessage: function () {
-          return exports.trigger();
+          return WorkflowConfiguration.trigger();
         }
 
       }

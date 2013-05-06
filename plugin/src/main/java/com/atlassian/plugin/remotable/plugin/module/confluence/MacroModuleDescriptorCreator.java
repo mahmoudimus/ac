@@ -19,6 +19,9 @@ import com.atlassian.plugin.remotable.plugin.module.page.IFramePageServlet;
 import com.atlassian.plugin.remotable.plugin.module.page.PageInfo;
 import com.atlassian.plugin.remotable.plugin.util.contextparameter.ContextParameterParser;
 import com.atlassian.plugin.remotable.plugin.util.contextparameter.RequestContextParameterFactory;
+import com.atlassian.plugin.remotable.plugin.util.node.Dom4jNode;
+import com.atlassian.plugin.remotable.plugin.util.node.Node;
+import com.atlassian.plugin.remotable.plugin.util.node.SingleElementWriter;
 import com.atlassian.plugin.remotable.spi.Permissions;
 import com.atlassian.plugin.remotable.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.remotable.plugin.integration.plugins.DescriptorToRegister;
@@ -38,7 +41,6 @@ import org.dom4j.Element;
 import org.osgi.framework.BundleContext;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Locale;
@@ -48,10 +50,7 @@ import java.util.Set;
 import static com.atlassian.plugin.remotable.plugin.module.util.redirect.RedirectServlet.getPermanentRedirectUrl;
 import static com.atlassian.plugin.remotable.plugin.util.EncodingUtils.escapeAll;
 import static com.atlassian.plugin.remotable.plugin.util.OsgiServiceUtils.getService;
-import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.getOptionalAttribute;
 import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.getOptionalUriAttribute;
-import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.getRequiredAttribute;
-import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.getRequiredUriAttribute;
 
 /**
  * Creates macro module descriptors.  Builder instances are meant to be shared across instances.
@@ -119,19 +118,29 @@ public class MacroModuleDescriptorCreator
             return this;
         }
 
-        public Iterable<DescriptorToRegister> build(Plugin plugin, Element entity)
+        public Iterable<DescriptorToRegister> build(Plugin plugin, Node entity)
         {
-            Element config = entity.createCopy();
+            Element config = DocumentHelper.createElement("macro");
+            new SingleElementWriter(entity, config)
+                    .copyDescription()
+                    .copyIfExists("body-type")
+                    .copyIfExists("output-type")
+                    .copyNodes("alias")
+                        .copyText()
+                        .done()
+                    .copyNodes("category")
+                        .copyIfExists("name")
+                        .done();
 
             final RemotablePluginAccessor remotablePluginAccessor = remotablePluginAccessorFactory.get(plugin.getKey());
 
             // Use the 'key' attribute as the name if no name is specified. The name will be used to uniquely identify the
             // macro within the editor.
-            String key = getRequiredAttribute(entity, "key");
+            String key = entity.get("key").asString();
             String macroKey = "macro-" + key;
             config.addAttribute("key", macroKey);
 
-            String name = getOptionalAttribute(entity, "title", getOptionalAttribute(entity, "name", key));
+            String name = entity.get("title").asString(entity.get("name").asString(key));
 
             // we treat the key as the macro name, with name being the label
             config.addAttribute("name", key);
@@ -160,9 +169,10 @@ public class MacroModuleDescriptorCreator
             descriptor.init(plugin, config);
             descriptors.add(new DescriptorToRegister(descriptor, getI18nMessages(plugin.getKey(), entity)));
 
-            boolean isFeaturedMacro = Boolean.valueOf(getOptionalAttribute(config, "featured", false));
+            boolean isFeaturedMacro = entity.get("featured").asBoolean(false);
             if (isFeaturedMacro)
             {
+                config.addAttribute("featured", "true");
                 descriptors.add(createFeaturedMacroDescriptor(plugin, key, entity));
                 if (icon != null)
                 {
@@ -170,43 +180,43 @@ public class MacroModuleDescriptorCreator
                 }
             }
 
-            boolean hasCustomEditor = config.element("macro-editor") != null;
+            boolean hasCustomEditor = entity.get("macro-editor").exists();
             if (hasCustomEditor)
             {
-                descriptors.addAll(createMacroEditorDescriptors(plugin, config, key, name));
+                descriptors.addAll(createMacroEditorDescriptors(plugin, entity, key, name));
             }
 
             return ImmutableSet.copyOf(descriptors);
         }
 
-        private Properties getI18nMessages(String pluginKey, Element element)
+        private Properties getI18nMessages(String pluginKey, Node element)
         {
             Properties i18n = new Properties();
-            String macroKey = getRequiredAttribute(element, "key");
-            if (element.element("parameters") != null)
+            String macroKey = element.get("key").asString();
+            if (element.get("parameters").exists())
             {
-                for (Element parameter : new ArrayList<Element>(element.element("parameters").elements("parameter")))
+                for (Node parameter : element.get("parameters").getChildren("parameter"))
                 {
-                    String paramTitle = getRequiredAttribute(parameter, "title");
-                    String paramName = getRequiredAttribute(parameter, "name");
+                    String paramTitle = parameter.get("title").asString(null);
+                    String paramName = parameter.get("name").asString();
                     if (paramTitle != null)
                     {
                         i18n.put(pluginKey + "." + macroKey + ".param." + paramName + ".label", paramTitle);
                     }
 
-                    String description = parameter.elementText("description");
+                    String description = parameter.get("description").asString(null);
                     if (!StringUtils.isBlank(description))
                     {
                         i18n.put(pluginKey + "." + macroKey + ".param." + paramName + ".desc", description);
                     }
                 }
             }
-            String macroName = getOptionalAttribute(element, "title", getOptionalAttribute(element, "name", macroKey));
+            String macroName = element.get("title").asString(element.get("name").asString(macroKey));
             i18n.put(pluginKey + "." + macroKey + ".label", macroName);
 
-            if (element.element("description") != null)
+            if (element.get("description").asString(null) != null)
             {
-                i18n.put(pluginKey + "." + macroKey + ".desc", element.element("description").getTextTrim());
+                i18n.put(pluginKey + "." + macroKey + ".desc", element.get("description").asString());
             }
 
             if (!permissionManager.hasPermission(pluginKey, Permissions.GENERATE_ANY_HTML))
@@ -219,10 +229,10 @@ public class MacroModuleDescriptorCreator
             return i18n;
         }
 
-        private Collection<DescriptorToRegister> createMacroEditorDescriptors(final Plugin plugin, Element config, String macroKey, String macroName)
+        private Collection<DescriptorToRegister> createMacroEditorDescriptors(final Plugin plugin, Node config, String macroKey, String macroName)
         {
-            Element macroEditor = config.element("macro-editor");
-            URI originalUrl = getRequiredUriAttribute(macroEditor, "url");
+            Node macroEditor = config.get("macro-editor");
+            URI originalUrl = macroEditor.get("url").asURI();
 
             // Generate a servlet module descriptor that can redirect requests from the Confluence front-end to the Remotable Plugin,
             // performing the necessary authentication.
@@ -237,9 +247,9 @@ public class MacroModuleDescriptorCreator
             return Lists.newArrayList(new DescriptorToRegister(jsDescriptor), new DescriptorToRegister(iFrameServlet));
         }
 
-        private DescriptorToRegister createFeaturedMacroDescriptor(final Plugin plugin, String macroKey, Element macroConfig)
+        private DescriptorToRegister createFeaturedMacroDescriptor(final Plugin plugin, String macroKey, Node macroConfig)
         {
-            String name = macroConfig.attributeValue("name");
+            String name = macroConfig.get("name").asString();
             Element webItem = DocumentHelper.createDocument().addElement("web-item")
                     .addAttribute("name", name)
                     .addAttribute("key", "editor-featured-macro-" + macroKey)
@@ -249,22 +259,22 @@ public class MacroModuleDescriptorCreator
                     .addElement("link")
                     .addAttribute("linkId", macroKey).getParent();
 
-            if (macroConfig.attribute("icon-url") != null)
+            if (macroConfig.get("icon-url").exists())
             {
-                webItem.addAttribute("icon-url", macroConfig.attributeValue("icon-url"));
+                webItem.addAttribute("icon-url", macroConfig.get("icon-url").asString());
             }
 
-            return new DescriptorToRegister(webItemCreatorBuilder.build(plugin, macroKey, null, webItem));
+            return new DescriptorToRegister(webItemCreatorBuilder.build(plugin, macroKey, null, new Dom4jNode(webItem)));
         }
 
         private ServletModuleDescriptor createMacroEditorServletDescriptor(final Plugin plugin,
-                Element e,
+                Node e,
                 final String key,
                 final URI path,
                 URI localUrl)
         {
             final String moduleKey = "servlet-" + key;
-            Element config = e.createCopy()
+            Element config = DocumentHelper.createElement("servlet")
                     .addAttribute("key", moduleKey)
                     .addAttribute("system", "true")
                     .addAttribute("class", IFramePageServlet.class.getName());
@@ -291,7 +301,7 @@ public class MacroModuleDescriptorCreator
         }
 
         private ModuleDescriptor createCustomEditorWebResource(Plugin plugin,
-                Element macroEditorConfig, String macroKey, String macroName,
+                Node macroEditorConfig, String macroKey, String macroName,
                 URI customEditorLocalUrl)
         {
             Element webResource = DocumentHelper.createDocument()
@@ -323,10 +333,10 @@ public class MacroModuleDescriptorCreator
                     .addAttribute("value", "/plugins/servlet" + customEditorLocalUrl).getParent()
                     .addElement("var")
                     .addAttribute("name", "WIDTH")
-                    .addAttribute("value", getOptionalAttribute(macroEditorConfig, "width", "")).getParent()
+                    .addAttribute("value", macroEditorConfig.get("width").asString("")).getParent()
                     .addElement("var")
                     .addAttribute("name", "HEIGHT")
-                    .addAttribute("value", getOptionalAttribute(macroEditorConfig, "height", "")).getParent()
+                    .addAttribute("value", macroEditorConfig.get("height").asString("")).getParent()
                     .addElement("var")
                     .addAttribute("name", "EDIT_TITLE")
                     .addAttribute("value", macroName)
@@ -376,11 +386,11 @@ public class MacroModuleDescriptorCreator
             return new DescriptorToRegister(jsDescriptor);
         }
 
-        private ModuleDescriptor createXhtmlMacroModuleDescriptor(final Plugin plugin, final Element originalEntity)
+        private ModuleDescriptor createXhtmlMacroModuleDescriptor(final Plugin plugin, final Node originalEntity)
         {
             final Macro.BodyType bodyType = parseBodyType(originalEntity);
             final Macro.OutputType outputType = parseOutputType(originalEntity);
-            final URI url = getRequiredUriAttribute(originalEntity, "url");
+            final URI url = originalEntity.get("url").asURI();
             final RequestContextParameterFactory requestContextParameterFactory =
                     contextParameterParser.parseContextParameters(originalEntity);
 
@@ -412,16 +422,16 @@ public class MacroModuleDescriptorCreator
             return new FixedXhtmlMacroModuleDescriptor(factory, macroMetadataParser);
         }
 
-        private Macro.OutputType parseOutputType(Element entity)
+        private Macro.OutputType parseOutputType(Node entity)
         {
-            String value = getOptionalAttribute(entity, "output-type", "block");
+            String value = entity.get("output-type").asString("block");
             return Macro.OutputType.valueOf(value.toUpperCase(Locale.US));
         }
 
-        private Macro.BodyType parseBodyType(Element entity)
+        private Macro.BodyType parseBodyType(Node entity)
         {
             Macro.BodyType bodyType;
-            String bodyTypeValue = getOptionalAttribute(entity, "body-type", "none");
+            String bodyTypeValue = entity.get("body-type").asString("none");
             if ("rich-text".equals(bodyTypeValue))
             {
                 bodyType = Macro.BodyType.RICH_TEXT;
@@ -441,17 +451,17 @@ public class MacroModuleDescriptorCreator
             return bodyType;
         }
 
-        private ImagePlaceholderConfig parseImagePlaceholder(Element entity)
+        private ImagePlaceholderConfig parseImagePlaceholder(Node entity)
         {
-            Element placeholder = entity.element("image-placeholder");
-            if (placeholder == null)
+            Node placeholder = entity.get("image-placeholder");
+            if (!placeholder.exists())
             {
                 return null;
             }
-            URI url = getRequiredUriAttribute(placeholder, "url");
-            String width = getOptionalAttribute(placeholder, "width", null);
-            String height = getOptionalAttribute(placeholder, "height", null);
-            String applyChrome = getOptionalAttribute(placeholder, "apply-chrome", null);
+            URI url = placeholder.get("url").asURI();
+            String width = placeholder.get("width").asString(null);
+            String height = placeholder.get("height").asString(null);
+            String applyChrome = placeholder.get("apply-chrome").asString(null);
 
             return new ImagePlaceholderConfig(url,
                     width == null ? null : Integer.parseInt(width),
