@@ -75,6 +75,12 @@
             <classifier>standalone</classifier>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.atlassian.jira</groupId>
+            <artifactId>ka-func-test-framework</artifactId>
+            <version>${jira.version}</version>
+            <scope>test</scope>
+        </dependency>
 
         <dependency>
             <groupId>com.atlassian.jira</groupId>
@@ -885,6 +891,11 @@
                                 <pluginArtifact>
                                     <groupId>com.atlassian.webhooks</groupId>
                                     <artifactId>atlassian-webhooks-plugin</artifactId>
+                                    <version>${webhooks.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.webhooks</groupId>
+                                    <artifactId>atlassian-webhooks-plugin2-compatibility-plugin</artifactId>
                                     <version>${webhooks.version}</version>
                                 </pluginArtifact>
                                 <pluginArtifact>

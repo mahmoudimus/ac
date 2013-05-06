@@ -16,8 +16,9 @@ import com.atlassian.plugin.remotable.plugin.product.jira.JiraRestBeanMarshaler;
 import com.atlassian.plugin.remotable.spi.module.IFrameRenderer;
 import com.atlassian.plugin.webresource.WebResourceUrlProvider;
 import com.atlassian.templaterenderer.TemplateRenderer;
-import com.atlassian.webhooks.spi.provider.ConsumerKey;
 import com.atlassian.webhooks.spi.provider.ModuleDescriptorWebHookConsumerRegistry;
+import com.atlassian.webhooks.spi.provider.PluginModuleConsumerParams;
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import com.opensymphony.workflow.WorkflowException;
 import org.dom4j.DocumentFactory;
@@ -56,7 +57,7 @@ public class TestRemoteWorkflowPostFunction
     @Mock
     private TemplateRenderer templateRenderer;
 
-    private final ConsumerKey consumerKey = new ConsumerKey("plugin", "module");
+    private final PluginModuleConsumerParams consumerParams = new PluginModuleConsumerParams("plugin", Optional.of("module"), ImmutableMap.<String, Object>of(), RemoteWorkflowPostFunctionEvent.REMOTE_WORKFLOW_POST_FUNCTION_EVENT_ID);
 
     @Before
     public void setup()
@@ -73,7 +74,7 @@ public class TestRemoteWorkflowPostFunction
             public Void answer(final InvocationOnMock invocationOnMock) throws Throwable
             {
                 final RemoteWorkflowPostFunctionEvent event = (RemoteWorkflowPostFunctionEvent) invocationOnMock.getArguments()[0];
-                assertTrue(event.matches(consumerKey));
+                assertTrue(event.matches(consumerParams));
                 assertThat(event.getJson(), containsString("id"));
                 assertThat(event.getJson(), containsString("10"));
                 assertThat(event.getJson(), containsString("issue_type"));
@@ -82,7 +83,7 @@ public class TestRemoteWorkflowPostFunction
             }
         }).when(eventPublisher).publish(anyObject());
 
-        RemoteWorkflowPostFunctionProvider postFunctionProvider = new RemoteWorkflowPostFunctionProvider(eventPublisher, issueMarshaler, consumerKey)
+        RemoteWorkflowPostFunctionProvider postFunctionProvider = new RemoteWorkflowPostFunctionProvider(eventPublisher, issueMarshaler, "plugin", "module")
         {
             @Override
             protected JSONObject postFunctionJSON(final Map<?, ?> transientVars, final Map args)

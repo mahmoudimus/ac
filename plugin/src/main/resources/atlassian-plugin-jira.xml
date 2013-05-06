@@ -7,7 +7,7 @@
 
     <component key="jiraWebHookProvider"
                interface="com.atlassian.webhooks.spi.provider.WebHookProvider" public="true"
-               class="com.atlassian.plugin.remotable.plugin.product.jira.JiraWebHookProvider" />
+               class="com.atlassian.plugin.remotable.plugin.product.jira.PostFunctionWebHookProvider" />
 
     <component key="EventSerializerFactory" class="com.atlassian.plugin.remotable.plugin.product.jira.webhook.JiraEventSerializerFactory" />
 

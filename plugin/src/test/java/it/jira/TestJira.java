@@ -7,6 +7,7 @@ import com.atlassian.jira.pageobjects.pages.DashboardPage;
 import com.atlassian.jira.pageobjects.pages.project.BrowseProjectPage;
 import com.atlassian.jira.pageobjects.project.ProjectConfigTabs;
 import com.atlassian.jira.pageobjects.project.summary.ProjectSummaryPageTab;
+import com.atlassian.jira.plugin.issuenav.pageobjects.IssueDetailPage;
 import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory;
 import com.atlassian.jira.testkit.client.Backdoor;
@@ -20,7 +21,6 @@ import com.atlassian.plugin.remotable.test.RemotePluginEmbeddedTestPage;
 import com.atlassian.plugin.remotable.test.RemotePluginTestPage;
 import com.atlassian.plugin.remotable.test.jira.AbstractRemotablePluginProjectTab;
 import com.atlassian.plugin.remotable.test.jira.JiraGeneralPage;
-import com.atlassian.plugin.remotable.test.jira.JiraIssueNavigatorPage;
 import com.atlassian.plugin.remotable.test.jira.JiraOps;
 import com.atlassian.plugin.remotable.test.jira.JiraProjectAdministrationPanel;
 import com.atlassian.plugin.remotable.test.jira.JiraProjectAdministrationTab;
@@ -128,18 +128,20 @@ public class TestJira
     {
         loginAsAdmin();
         // ensure one issue
-        jiraOps.createIssue(project.getKey(), "Test issue for dialog action cog test");
-        RemotePluginTestPage page = product.getPageBinder().navigateToAndBind(JiraIssueNavigatorPage.class)
-                .getResults()
-                .nextIssue()
-                .openActionsDialog()
-                .queryAndSelect("Test Issue Action", RemotePluginTestPage.class, "jira-issueAction");
-        RemotePluginDialog dialog = product.getPageBinder().bind(RemotePluginDialog.class, page);
-                assertFalse(dialog.wasSubmitted());
-                assertEquals(false, dialog.submit());
-                assertTrue(dialog.wasSubmitted());
-                assertEquals(true, dialog.submit());
+        RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Test issue for dialog action cog test");
 
+        RemotePluginTestPage page = product.getPageBinder()
+                .navigateToAndBind(IssueDetailPage.class, issue.getKey())
+                .details()
+                .openFocusShifter()
+                .queryAndSelect("Test Issue Action", RemotePluginTestPage.class, "jira-issueAction");
+
+        RemotePluginDialog dialog = product.getPageBinder().bind(RemotePluginDialog.class, page);
+
+        assertFalse(dialog.wasSubmitted());
+        assertEquals(false, dialog.submit());
+        assertTrue(dialog.wasSubmitted());
+        assertEquals(true, dialog.submit());
     }
 
     @Test
