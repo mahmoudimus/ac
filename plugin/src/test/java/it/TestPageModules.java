@@ -4,10 +4,10 @@ import com.atlassian.plugin.remotable.test.*;
 import com.atlassian.pageobjects.page.AdminHomePage;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
+import org.hamcrest.Matchers;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import java.util.Locale;
 import java.util.TimeZone;
 
 import static org.junit.Assert.*;
@@ -28,7 +28,8 @@ public class TestPageModules extends AbstractRemotablePluginTest
         assertEquals("Success", remotePluginTest.getMessage());
         assertEquals(OAuthUtils.getConsumerKey(), remotePluginTest.getConsumerKey());
         assertTrue(remotePluginTest.getIframeQueryParams().containsKey("cp"));
-        assertEquals("Betty Admin", remotePluginTest.getFullName());
+        assertNotNull(remotePluginTest.getFullName());
+        assertThat(remotePluginTest.getFullName().toLowerCase(), Matchers.containsString("betty"));
         assertEquals("betty", remotePluginTest.getUserId());
         assertTrue(remotePluginTest.getLocale().startsWith("en-"));
 
@@ -61,7 +62,8 @@ public class TestPageModules extends AbstractRemotablePluginTest
                 "Remotable Plugin app1 Dialog");
         assertTrue(page.isRemotePluginLinkPresent());
         RemotePluginTestPage remotePluginTest = page.clickRemotePluginLink();
-        assertEquals("Betty Admin", remotePluginTest.getFullName());
+        assertNotNull(remotePluginTest.getFullName());
+        assertThat(remotePluginTest.getFullName().toLowerCase(), Matchers.containsString("betty"));
 
         // Exercise the dialog's submit button.
         RemotePluginDialog dialog = product.getPageBinder().bind(RemotePluginDialog.class, remotePluginTest);

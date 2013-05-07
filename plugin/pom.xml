@@ -80,6 +80,24 @@
             <artifactId>ka-func-test-framework</artifactId>
             <version>${jira.version}</version>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.atlassian.browsers</groupId>
+                    <artifactId>atlassian-browsers-windows</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.atlassian.browsers</groupId>
+                    <artifactId>atlassian-browsers-linux</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.atlassian.browsers</groupId>
+                    <artifactId>atlassian-browsers-linux64</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.httpcomponents</groupId>
+                    <artifactId>httpclient</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>

@@ -13,6 +13,7 @@ import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientF
 import com.atlassian.jira.testkit.client.Backdoor;
 import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.pageobjects.TestedProductFactory;
+import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
 import com.atlassian.plugin.remotable.junit.HtmlDumpRule;
 import com.atlassian.plugin.remotable.test.RemotePluginAwarePage;
@@ -267,13 +268,14 @@ public class TestJira
             final String serverTimeZone = serverTime.getZone().getID();
 
             // create test user
-            final String testUser = "marcin";
+            final String testUser = "betty";
             backdoor.usersAndGroups().addUserEvenIfUserExists(testUser);
             backdoor.usersAndGroups().addUserToGroup(testUser, "jira-administrators");
-            loginAs(testUser, testUser);
+//            loginAs(testUser, testUser);
 
             // test with a custom timezone
             final String expectedTimezone = "Africa/Abidjan";
+            product.visit(LoginPage.class).login("betty", "betty", HomePage.class);
             testTimezoneImpl(expectedTimezone, expectedTimezone, testUser);
 
             // test with the default timezone
