@@ -440,6 +440,6 @@
         <httpclient.api.version>${webhooks.api.version}</httpclient.api.version>
         <servletkit.version>0.7.3</servletkit.version>
         <ringojskit.version>0.7.2</ringojskit.version>
-        <gatekeeper.property>6</gatekeeper.property>
+        <gatekeeper.property>7</gatekeeper.property>
     </properties>
 </project>
