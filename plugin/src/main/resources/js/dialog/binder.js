@@ -6,7 +6,7 @@ AJS.toInit(function ($) {
     return function(event) {
       event.preventDefault();
       var $el = $(event.target);
-      var href = $el.attr("href");
+      var href = $el.attr("href") || $el.parents("a").attr("href");
       var options = {header: $el.text()};
       var re = /[?&](width|height)=([^&]+)/g, match;
       while (match = re.exec(href)) {
