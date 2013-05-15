@@ -184,6 +184,7 @@
     <component-import key="httpClient" interface="com.atlassian.httpclient.api.HttpClient" />
     <component-import key="moduleDescriptorWebHookRegistry"
                       interface="com.atlassian.webhooks.spi.provider.ModuleDescriptorWebHookConsumerRegistry" />
+    <component-import key="remotePluginLicenseService" interface="com.atlassian.upm.api.license.RemotePluginLicenseService" />
 
     <!-- speakeasy integration -->
     <commonjs key="speakeasy-commonjs" location="/js/speakeasy" />

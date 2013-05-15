@@ -45,13 +45,13 @@
         <dependency>
             <groupId>com.atlassian.upm</groupId>
             <artifactId>licensing-api</artifactId>
-            <version>2.8</version>
+            <version>2.10</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.atlassian.upm</groupId>
             <artifactId>upm-api</artifactId>
-            <version>2.8</version>
+            <version>2.10</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -912,11 +912,6 @@
                                     <version>${webhooks.version}</version>
                                 </pluginArtifact>
                                 <pluginArtifact>
-                                    <groupId>com.atlassian.webhooks</groupId>
-                                    <artifactId>atlassian-webhooks-plugin2-compatibility-plugin</artifactId>
-                                    <version>${webhooks.version}</version>
-                                </pluginArtifact>
-                                <pluginArtifact>
                                     <groupId>${project.groupId}</groupId>
                                     <artifactId>remotable-plugins-test-plugin</artifactId>
                                     <version>${project.version}</version>
@@ -978,16 +973,11 @@
                                 </pluginArtifact>
                             </pluginArtifacts>
                             <libArtifacts>
-                                <!-- override to allow bug fixes for memory leaks when developing.  See PLUG-484 -->
+                                <!-- Add missing schema jar.  Can be removed once we upgrade conf from 5.2-m6 -->
                                 <libArtifact>
                                     <groupId>com.atlassian.plugins</groupId>
-                                    <artifactId>atlassian-plugins-webfragment</artifactId>
-                                    <version>${webfragments.version}</version>
-                                </libArtifact>
-                                <libArtifact>
-                                    <groupId>com.atlassian.util.concurrent</groupId>
-                                    <artifactId>atlassian-util-concurrent</artifactId>
-                                    <version>${atlassian-util-concurrent.version}</version>
+                                    <artifactId>atlassian-plugins-schema</artifactId>
+                                    <version>${plugins.version}</version>
                                 </libArtifact>
                             </libArtifacts>
                         </product>

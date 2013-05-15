@@ -217,7 +217,7 @@ public final class RemotePluginContainerModuleDescriptor extends AbstractModuleD
     public void disabled()
     {
         super.disabled();
-        if (remoteMode)
+        if (remoteMode && pluginBundle != null)
         {
             // we have to retrive services fresh from plugin bundle as it is possible this is called after the
             // remotable plugins plugin has been disabled

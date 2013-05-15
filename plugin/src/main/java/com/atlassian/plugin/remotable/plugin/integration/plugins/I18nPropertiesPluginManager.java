@@ -168,6 +168,7 @@ public final class I18nPropertiesPluginManager
         i18nToRegister.put(name, data);
         if (started.get())
         {
+            setI18nBundle();
             registerI18n(i18nToRegister);
         }
         return name;
