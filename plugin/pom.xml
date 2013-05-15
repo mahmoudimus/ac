@@ -401,7 +401,7 @@
         <dependency>
             <groupId>com.atlassian.confluence</groupId>
             <artifactId>atlassian-confluence-pageobjects</artifactId>
-            <version>${confluence.version}</version>
+            <version>${confluence.pageobjects.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -896,7 +896,7 @@
                         </product>
                         <product>
                             <id>confluence</id>
-                            <version>${confluence.version}</version>
+                            <version>${confluence.webapp.version}</version>
                             <log4jProperties>src/test/resources/log4j-confluence.properties
                             </log4jProperties>
                             <productDataPath>
