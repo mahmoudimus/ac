@@ -412,7 +412,6 @@
         <confluence.pageobjects.version>5.2-20130515.094009-20</confluence.pageobjects.version>
         <confluence.webapp.version>5.2-20130515.094009-26</confluence.webapp.version>
 
-
         <confluence.data.version>${confluence.version}</confluence.data.version>
         <applinks.version>3.5.1</applinks.version>
         <speakeasy.version>1.3.20</speakeasy.version>
