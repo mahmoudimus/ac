@@ -48,7 +48,7 @@ public final class IFrameRendererImpl implements IFrameRenderer
     private final WebResourceUrlProvider webResourceUrlProvider;
     private final DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory;
     private final IFrameHost iframeHost;
-    private final Plugin plugin;
+    private final Plugin acPlugin;
     private final LicenseRetriever licenseRetriever;
     private final LocaleHelper localeHelper;
     private final UserPreferencesRetriever userPreferencesRetriever;
@@ -71,7 +71,7 @@ public final class IFrameRendererImpl implements IFrameRenderer
         this.webResourceManager = checkNotNull(webResourceManager);
         this.iframeHost = checkNotNull(iframeHost);
         this.webResourceUrlProvider = checkNotNull(webResourceUrlProvider);
-        this.plugin = checkNotNull(pluginRetrievalService).getPlugin();
+        this.acPlugin = checkNotNull(pluginRetrievalService).getPlugin();
     }
 
     @Override
@@ -141,7 +141,7 @@ public final class IFrameRendererImpl implements IFrameRenderer
         allParams.put("cp", new String[]{iframeHost.getContextPath()});
         allParams.put("tz", new String[]{timeZone});
         allParams.put("loc", new String[]{localeHelper.getLocaleTag()});
-        allParams.put("lic", new String[]{licenseRetriever.getLicenseStatus(plugin.getKey()).value()});
+        allParams.put("lic", new String[]{licenseRetriever.getLicenseStatus(iframeContext.getPluginKey()).value()});
 
         if (dialog != null && dialog.length == 1) allParams.put("dialog", dialog);
         String signedUrl = remotablePluginAccessor.signGetUrl(iframeUrl, allParams);
@@ -171,7 +171,7 @@ public final class IFrameRendererImpl implements IFrameRenderer
     public List<String> getJavaScriptUrls()
     {
         List<String> scripts = newArrayList();
-        ModuleDescriptor<?> moduleDescriptor = plugin.getModuleDescriptor("iframe-host-js");
+        ModuleDescriptor<?> moduleDescriptor = acPlugin.getModuleDescriptor("iframe-host-js");
         for (ResourceDescriptor descriptor : moduleDescriptor.getResourceDescriptors())
         {
             String src = webResourceUrlProvider.getStaticPluginResourceUrl(moduleDescriptor, descriptor.getName(), UrlMode.AUTO);

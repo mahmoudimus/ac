@@ -7,7 +7,6 @@ import java.util.Locale;
 public enum LicenseStatus
 {
     ACTIVE,
-    EXPIRED,
     NONE;
 
     public String value()

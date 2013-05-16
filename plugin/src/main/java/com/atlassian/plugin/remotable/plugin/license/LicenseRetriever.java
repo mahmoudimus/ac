@@ -35,8 +35,7 @@ public class LicenseRetriever
             @Override
             public LicenseStatus apply(final PluginLicense input)
             {
-                // todo: is maintenance expired the right thing to switch on?
-                return input.isMaintenanceExpired() ? LicenseStatus.EXPIRED : LicenseStatus.ACTIVE;
+                return input.isActive() ? LicenseStatus.ACTIVE : LicenseStatus.NONE;
             }
         }).getOrElse(LicenseStatus.NONE);
     }
