@@ -1,5 +1,6 @@
 package com.atlassian.plugin.remotable.plugin.module.confluence;
 
+import com.atlassian.confluence.content.render.xhtml.StorageFormatCleaner;
 import com.atlassian.confluence.content.render.xhtml.XhtmlCleaner;
 import com.atlassian.confluence.core.ContentEntityObject;
 import com.atlassian.confluence.event.events.content.page.PageEvent;
@@ -38,7 +39,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class MacroContentManager implements DisposableBean
 {
     private final EventPublisher eventPublisher;
-    private final XhtmlCleaner xhtmlCleaner;
+    private final StorageFormatCleaner xhtmlCleaner;
     private final MacroContentLinkParser macroContentLinkParser;
     private final CachingHttpContentRetriever cachingHttpContentRetriever;
     private final BigPipeManager bigPipeManager;
@@ -56,6 +57,7 @@ public class MacroContentManager implements DisposableBean
             BigPipeManager bigPipeManager,
             UserManager userManager,
             XhtmlContent xhtmlUtils,
+            StorageFormatCleaner cleaner,
             DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory,
             TemplateRenderer templateRenderer)
     {
@@ -68,7 +70,7 @@ public class MacroContentManager implements DisposableBean
         this.templateRenderer = templateRenderer;
         this.eventPublisher.register(this);
         // HACK: Use ComponentLocator until fix for CONFDEV-7103 is available.
-        this.xhtmlCleaner = ComponentLocator.getComponent(XhtmlCleaner.class);
+        this.xhtmlCleaner = cleaner;
         this.macroContentLinkParser = macroContentLinkParser;
     }
 
@@ -221,11 +223,11 @@ public class MacroContentManager implements DisposableBean
         private final MacroInstance macroInstance;
         private final Map<String, String> urlParameters;
         private final MacroContentLinkParser macroContentLinkParser;
-        private final XhtmlCleaner xhtmlCleaner;
+        private final StorageFormatCleaner xhtmlCleaner;
         private final XhtmlContent xhtmlUtils;
 
         public HtmlToSafeHtmlFunction(MacroInstance macroInstance, Map<String, String> urlParameters,
-                MacroContentLinkParser macroContentLinkParser, XhtmlCleaner xhtmlCleaner,
+                MacroContentLinkParser macroContentLinkParser, StorageFormatCleaner xhtmlCleaner,
                 XhtmlContent xhtmlUtils)
         {
             this.macroInstance = macroInstance;

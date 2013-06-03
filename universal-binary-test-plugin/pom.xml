@@ -91,7 +91,7 @@
         <dependency>
             <groupId>com.atlassian.confluence</groupId>
             <artifactId>atlassian-confluence-pageobjects</artifactId>
-            <version>${confluence.pageobjects.version}</version>
+            <version>${confluence.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
