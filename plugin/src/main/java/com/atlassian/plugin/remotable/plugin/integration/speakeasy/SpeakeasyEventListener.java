@@ -1,7 +1,6 @@
 package com.atlassian.plugin.remotable.plugin.integration.speakeasy;
 
 import com.atlassian.event.api.EventListener;
-import com.atlassian.plugin.remotable.host.common.util.BundleUtil;
 import com.atlassian.labs.speakeasy.descriptor.external.ConditionGenerator;
 import com.atlassian.labs.speakeasy.descriptor.external.DescriptorGenerator;
 import com.atlassian.labs.speakeasy.external.SpeakeasyBackendService;
@@ -9,7 +8,8 @@ import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
 import com.atlassian.plugin.event.events.PluginEnabledEvent;
-import com.atlassian.plugin.module.LegacyModuleFactory;
+import com.atlassian.plugin.module.ModuleFactory;
+import com.atlassian.plugin.remotable.host.common.util.BundleUtil;
 import org.dom4j.DocumentFactory;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -17,19 +17,22 @@ import org.osgi.framework.BundleContext;
 import java.util.Collections;
 
 import static com.atlassian.plugin.remotable.host.common.util.RemotablePluginManifestReader.isRemotePlugin;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Marks apps as Speakeasy apps so they show up as global extensions in the UI
  */
 public class SpeakeasyEventListener
 {
+    private final ModuleFactory moduleFactory;
     private final SpeakeasyBackendService speakeasyBackendService;
     private final BundleContext bundleContext;
 
-    public SpeakeasyEventListener(BundleContext bundleContext, SpeakeasyBackendService speakeasyBackendService)
+    public SpeakeasyEventListener(ModuleFactory moduleFactory, BundleContext bundleContext, SpeakeasyBackendService speakeasyBackendService)
     {
-        this.bundleContext = bundleContext;
-        this.speakeasyBackendService = speakeasyBackendService;
+        this.moduleFactory = checkNotNull(moduleFactory);
+        this.bundleContext = checkNotNull(bundleContext);
+        this.speakeasyBackendService = checkNotNull(speakeasyBackendService);
     }
 
     @EventListener
@@ -40,7 +43,6 @@ public class SpeakeasyEventListener
         {
             makeAppVisibleInSpeakeasy(bundle, event.getPlugin());
         }
-
     }
 
     private void makeAppVisibleInSpeakeasy(Bundle bundle, Plugin plugin)
@@ -48,7 +50,7 @@ public class SpeakeasyEventListener
         // ensure the app is visible by speakeasy
         bundle.getBundleContext().registerService(
                 ModuleDescriptor.class.getName(),
-                new SpeakeasyMarkerModuleDescriptor(plugin),
+                new SpeakeasyMarkerModuleDescriptor(moduleFactory, plugin),
                 null);
 
         // It ensures any remotable plugins installed after
@@ -59,14 +61,12 @@ public class SpeakeasyEventListener
         }
     }
 
-    public static class SpeakeasyMarkerModuleDescriptor extends AbstractModuleDescriptor implements
-            DescriptorGenerator
+    public static final class SpeakeasyMarkerModuleDescriptor extends AbstractModuleDescriptor implements DescriptorGenerator
     {
-        public SpeakeasyMarkerModuleDescriptor(Plugin plugin)
+        public SpeakeasyMarkerModuleDescriptor(ModuleFactory moduleFactory, Plugin plugin)
         {
-            super(new LegacyModuleFactory());
-            init(plugin, DocumentFactory.getInstance().createElement("marker")
-                    .addAttribute("key", "__speakeasy_marker"));
+            super(moduleFactory);
+            init(plugin, DocumentFactory.getInstance().createElement("marker").addAttribute("key", "__speakeasy_marker"));
         }
 
         @Override
@@ -76,8 +76,7 @@ public class SpeakeasyEventListener
         }
 
         @Override
-        public Iterable getDescriptorsToExposeForUsers(ConditionGenerator conditionGenerator,
-                long l)
+        public Iterable getDescriptorsToExposeForUsers(ConditionGenerator conditionGenerator, long l)
         {
             return Collections.emptyList();
         }

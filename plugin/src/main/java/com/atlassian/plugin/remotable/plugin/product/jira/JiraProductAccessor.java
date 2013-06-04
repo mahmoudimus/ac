@@ -10,19 +10,13 @@ import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.mail.Email;
 import com.atlassian.mail.queue.MailQueue;
 import com.atlassian.mail.queue.SingleMailQueueItem;
-import com.atlassian.plugin.remotable.api.InstallationMode;
-import com.atlassian.plugin.remotable.api.jira.JiraPermissions;
-import com.atlassian.plugin.remotable.spi.Permissions;
 import com.atlassian.plugin.remotable.spi.product.ProductAccessor;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.web.WebInterfaceManager;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Sets;
 
-import java.util.Collections;
 import java.util.Map;
-import java.util.Set;
 
 import static com.google.common.collect.Maps.newHashMap;
 
@@ -31,8 +25,7 @@ public final class JiraProductAccessor implements ProductAccessor
     private final UserManager userManager;
     private final MailQueue mailQueue;
 
-    public JiraProductAccessor(UserManager userManager,
-            MailQueue mailQueue)
+    public JiraProductAccessor(UserManager userManager, MailQueue mailQueue)
     {
         this.userManager = userManager;
         this.mailQueue = mailQueue;
@@ -71,7 +64,7 @@ public final class JiraProductAccessor implements ProductAccessor
     @Override
     public String getPreferredGeneralSectionKey()
     {
-        return "general_dropdown_linkId/jira-remotable.plugins.general";
+        return "system.top.navigation.bar";
     }
 
     @Override
@@ -105,7 +98,7 @@ public final class JiraProductAccessor implements ProductAccessor
         String prefFormat = userPrefs.getString(PreferenceKeys.USER_NOTIFICATIONS_MIMETYPE);
 
         // Default to text if the property is not configured.
-        if(!"html".equalsIgnoreCase(prefFormat))
+        if (!"html".equalsIgnoreCase(prefFormat))
         {
             email.setMimeType("text/html");
             email.setBody(bodyAsHtml);
@@ -127,7 +120,7 @@ public final class JiraProductAccessor implements ProductAccessor
     @Override
     public Map<String, Class<? extends Condition>> getConditions()
     {
-        Map<String,Class<? extends Condition>> conditions = newHashMap();
+        Map<String, Class<? extends Condition>> conditions = newHashMap();
         conditions.put("has_selected_project", com.atlassian.jira.plugin.webfragment.conditions.HasSelectedProjectCondition.class);
         conditions.put("sub_tasks_enabled", com.atlassian.jira.plugin.webfragment.conditions.SubTasksEnabledCondition.class);
         conditions.put("linking_enabled", com.atlassian.jira.plugin.webfragment.conditions.LinkingEnabledCondition.class);
@@ -168,16 +161,5 @@ public final class JiraProductAccessor implements ProductAccessor
         conditions.put("has_issue_permission", com.atlassian.jira.plugin.webfragment.conditions.HasIssuePermissionCondition.class);
 
         return conditions;
-    }
-
-    @Override
-    public Set<String> getAllowedPermissions(InstallationMode installationMode)
-    {
-        if (installationMode == InstallationMode.REMOTE)
-        {
-            return Sets.union(Permissions.DEFAULT_REMOTE_PERMISSIONS, JiraPermissions.ALL_REMOTE_PERMISSIONS);
-        }
-
-        return Collections.emptySet();
     }
 }

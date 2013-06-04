@@ -1,6 +1,6 @@
-Atlassian Remotable Plugins is the project behind Atlassian Plugins 3.
+Atlassian Remotable Plugins is the project behind Atlassian Connect.
 
-https://remoteapps.jira.com/wiki/display/ARA
+https://developer.atlassian.com/display/AC/
 
 When getting started developing within Atlassian Remotable Plugins, these commands will come in handy.
 You may need to run a 'mvn install' from the project directory first before running these 

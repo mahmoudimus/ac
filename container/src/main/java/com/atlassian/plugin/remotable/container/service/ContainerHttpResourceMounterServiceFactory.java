@@ -5,8 +5,8 @@ import com.atlassian.plugin.remotable.container.HttpServer;
 import com.atlassian.plugin.remotable.container.internal.EnvironmentFactory;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
-import com.atlassian.plugin.remotable.host.common.service.http.bigpipe.BigPipeImpl;
 import com.atlassian.plugin.remotable.host.common.service.http.bigpipe.BigPipeServiceFactory;
+import com.atlassian.plugin.remotable.host.common.service.http.bigpipe.DefaultBigPipeManager;
 import com.atlassian.plugin.util.ContextClassLoaderSwitchingUtil;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.ServiceFactory;
@@ -61,7 +61,7 @@ public class ContainerHttpResourceMounterServiceFactory implements ServiceFactor
                                     oAuthSignedRequestHandlerServiceFactory.getService(bundle),
                                     environmentServiceFactory.getService(bundle),
                                     requestContextServiceFactory.getService(bundle),
-                            (BigPipeImpl) bigPipeServiceFactory.getService(bundle));
+                            (DefaultBigPipeManager) bigPipeServiceFactory.getService(bundle));
                 }
             });
         }

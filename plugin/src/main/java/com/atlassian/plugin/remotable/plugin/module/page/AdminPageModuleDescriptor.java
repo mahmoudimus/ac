@@ -3,12 +3,16 @@ package com.atlassian.plugin.remotable.plugin.module.page;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
-import com.atlassian.plugin.remotable.plugin.module.DefaultWebItemContext;
+import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.remotable.plugin.integration.plugins.DynamicDescriptorRegistration;
+import com.atlassian.plugin.remotable.plugin.module.DefaultWebItemContext;
+import com.atlassian.plugin.remotable.plugin.util.node.Dom4jNode;
 import com.atlassian.plugin.remotable.spi.module.UserIsAdminCondition;
 import com.atlassian.plugin.remotable.spi.product.ProductAccessor;
 import com.atlassian.util.concurrent.NotNull;
 import org.dom4j.Element;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Generates an admin page with a servlet containing an iframe and a web item
@@ -21,13 +25,15 @@ public final class AdminPageModuleDescriptor extends AbstractModuleDescriptor<Vo
     private DynamicDescriptorRegistration.Registration registration;
 
     public AdminPageModuleDescriptor(
+            ModuleFactory moduleFactory,
             DynamicDescriptorRegistration dynamicDescriptorRegistration,
             ProductAccessor productAccessor,
             RemotePageDescriptorCreator remotePageDescriptorCreator,
             UserIsAdminCondition userIsAdminCondition)
     {
-        this.dynamicDescriptorRegistration = dynamicDescriptorRegistration;
-        this.remotePageDescriptorBuilder = remotePageDescriptorCreator.newBuilder()
+        super(moduleFactory);
+        this.dynamicDescriptorRegistration = checkNotNull(dynamicDescriptorRegistration);
+        this.remotePageDescriptorBuilder = checkNotNull(remotePageDescriptorCreator).newBuilder()
                 .setWebItemContext(new DefaultWebItemContext(
                         productAccessor.getPreferredAdminSectionKey(),
                         productAccessor.getPreferredAdminWeight(),
@@ -56,7 +62,7 @@ public final class AdminPageModuleDescriptor extends AbstractModuleDescriptor<Vo
     {
         super.enabled();
         this.registration = dynamicDescriptorRegistration.registerDescriptors(getPlugin(),
-                remotePageDescriptorBuilder.build(getPlugin(), descriptor));
+                remotePageDescriptorBuilder.build(getPlugin(), new Dom4jNode(descriptor)));
     }
 
     @Override

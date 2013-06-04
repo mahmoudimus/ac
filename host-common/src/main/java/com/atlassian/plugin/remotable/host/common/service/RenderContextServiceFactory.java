@@ -2,7 +2,7 @@ package com.atlassian.plugin.remotable.host.common.service;
 
 import com.atlassian.plugin.remotable.api.service.RenderContext;
 import com.atlassian.plugin.remotable.api.service.SignedRequestHandler;
-import com.atlassian.plugin.remotable.api.service.http.bigpipe.BigPipe;
+import com.atlassian.plugin.remotable.api.service.http.bigpipe.BigPipeManager;
 import com.atlassian.plugin.remotable.host.common.service.http.DefaultRequestContext;
 import com.atlassian.plugin.remotable.host.common.service.http.bigpipe.BigPipeServiceFactory;
 import com.atlassian.sal.api.message.I18nResolver;
@@ -41,8 +41,8 @@ public class RenderContextServiceFactory implements TypedServiceFactory<RenderCo
     {
         DefaultRequestContext requestContext = requestContextServiceFactory.getService(bundle);
         SignedRequestHandler signedRequestHandler = signedRequestHandlerServiceFactory.getService(bundle);
-        BigPipe bigPipe = bigPipeServiceFactory.getService(bundle);
-        return new DefaultRenderContext(requestContext, signedRequestHandler, localeResolver, i18nResolver, bigPipe);
+        BigPipeManager bigPipeManager = bigPipeServiceFactory.getService(bundle);
+        return new DefaultRenderContext(requestContext, signedRequestHandler, localeResolver, i18nResolver, bigPipeManager);
     }
 
     @Override

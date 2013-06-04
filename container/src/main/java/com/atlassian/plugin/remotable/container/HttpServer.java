@@ -2,6 +2,8 @@ package com.atlassian.plugin.remotable.container;
 
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.Plugin;
+
+import com.google.common.base.Strings;
 import com.google.common.base.Supplier;
 import org.eclipse.jetty.servlet.DefaultServlet;
 import com.atlassian.plugin.remotable.descriptor.LocalMountBaseUrlResolver;
@@ -197,7 +199,15 @@ public final class HttpServer implements LocalMountBaseUrlResolver
     @Override
     public String getLocalMountBaseUrl(String appKey)
     {
-        return "http://localhost:" + appPort + "/" + appKey;
+        String baseUrlProp = System.getProperty(BASE_URL_PROP);
+        if(Strings.isNullOrEmpty(baseUrlProp))
+        {
+            return "http://localhost:" + appPort + "/" + appKey;
+        }
+        else
+        {
+            return baseUrlProp + "/" + appKey;
+        }
     }
 
     public void stop()

@@ -32,7 +32,7 @@ public final class RemotePluginInstallerClient
                 AuthScope.ANY, new UsernamePasswordCredentials(username, password));
     }
 
-    public void install(String registerUrl, String secret) throws IOException
+    public void install(String registerUrl) throws IOException
     {
         HttpPost post = new HttpPost(baseUrl + "/rest/remotable-plugins/latest/installer?" +
                 URLEncodedUtils.format(singletonList(new BasicNameValuePair("os_authType", "basic")),
@@ -40,7 +40,6 @@ public final class RemotePluginInstallerClient
 
         List<NameValuePair> formparams = new ArrayList<NameValuePair>();
         formparams.add(new BasicNameValuePair("url", registerUrl));
-        formparams.add(new BasicNameValuePair("token", secret));
         UrlEncodedFormEntity entity = new UrlEncodedFormEntity(formparams, "UTF-8");
         post.setEntity(entity);
 

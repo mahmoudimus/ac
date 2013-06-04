@@ -45,16 +45,16 @@ public class ConfluenceMacroTestSuitePage extends ConfluenceMacroPage
 
     public RemotePluginTestPage visitGeneralLink()
     {
-        By browseLocator = By.id("browse-menu-link");
+//        By browseLocator = By.id("browse-menu-link");
         WebElement menuLink;
-        if (driver.elementExists(browseLocator))
-        {
-            menuLink = driver.findElement(browseLocator);
-        }
-        else
-        {
+//        if (driver.elementExists(browseLocator))
+//        {
+//            menuLink = driver.findElement(browseLocator);
+//        }
+//        else
+//        {
             menuLink = driver.findElement(By.id("help-menu-link"));
-        }
+//        }
         menuLink.click();
         driver.findElement(By.id("webitem-remotePluginGeneral")).click();
         return pageBinder.bind(RemotePluginTestPage.class, "remotePluginGeneral");

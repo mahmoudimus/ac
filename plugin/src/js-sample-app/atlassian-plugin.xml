@@ -5,6 +5,7 @@
         <permissions>
             <permission>resttest</permission>
             <permission>create_oauth_link</permission>
+            <permission installation-mode="local">execute_java</permission>
         </permissions>
     </plugin-info>
     <remote-plugin-container key="container"

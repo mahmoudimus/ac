@@ -1,5 +1,6 @@
 package com.atlassian.plugin.remotable.test;
 
+import com.atlassian.plugin.remotable.spi.permission.AbstractPermission;
 import com.atlassian.plugin.remotable.spi.permission.scope.ApiResourceInfo;
 import com.atlassian.plugin.remotable.spi.permission.scope.ApiScope;
 import com.atlassian.plugin.remotable.spi.permission.scope.RestApiScopeHelper;
@@ -8,16 +9,15 @@ import javax.servlet.http.HttpServletRequest;
 
 import static java.util.Arrays.asList;
 
-public class UnrequestedTestApiScope implements ApiScope
+public final class UnrequestedTestApiScope extends AbstractPermission implements ApiScope
 {
     private final RestApiScopeHelper validator = new RestApiScopeHelper(asList(
             new RestApiScopeHelper.RestScope("remoteplugintest", asList("latest", "1"), "/unauthorisedscope", asList("GET"))
     ));
 
-    @Override
-    public String getKey()
+    public UnrequestedTestApiScope()
     {
-        return "unrequested_scope";
+        super("unrequested_scope");
     }
 
     @Override
@@ -30,17 +30,5 @@ public class UnrequestedTestApiScope implements ApiScope
     public Iterable<ApiResourceInfo> getApiResourceInfos()
     {
         return validator.getApiResourceInfos();
-    }
-
-    @Override
-    public String getName()
-    {
-        return "Unrequested API Scope";
-    }
-
-    @Override
-    public String getDescription()
-    {
-        return "An API Scope that never gets used";
     }
 }

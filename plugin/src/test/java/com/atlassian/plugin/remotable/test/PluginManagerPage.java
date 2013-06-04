@@ -2,6 +2,7 @@ package com.atlassian.plugin.remotable.test;
 
 import com.atlassian.pageobjects.Page;
 import com.atlassian.pageobjects.PageBinder;
+import com.atlassian.pageobjects.ProductInstance;
 import com.atlassian.pageobjects.binder.WaitUntil;
 import com.atlassian.webdriver.AtlassianWebDriver;
 import org.openqa.selenium.By;
@@ -17,6 +18,9 @@ public class PluginManagerPage implements Page
     @Inject
     PageBinder pageBinder;
 
+    @Inject
+    ProductInstance productInstance;
+
     @Override
     public String getUrl()
     {
@@ -26,9 +30,17 @@ public class PluginManagerPage implements Page
     @WaitUntil
     public void waitForLoading()
     {
-        driver.waitUntilElementIsLocated(By.id("upm-current-plugins"));
-        WebElement userPlugins = driver.findElement(By.id("upm-current-plugins"));
-        driver.waitUntilElementIsNotLocatedAt(By.className("loading"), userPlugins);
+        if (driver.elementExists(By.id("upm-manage-type")))
+        {
+            driver.navigate().to(productInstance.getBaseUrl() + "/plugins/servlet/upm/manage/user-installed#manage");
+            driver.waitUntilElementIsVisible(By.id("upm-manage-user-installed-plugins"));
+        }
+        else
+        {
+            driver.waitUntilElementIsLocated(By.id("upm-current-plugins"));
+            WebElement userPlugins = driver.findElement(By.id("upm-current-plugins"));
+            driver.waitUntilElementIsNotLocatedAt(By.className("loading"), userPlugins);
+        }
     }
 
     public <P extends Object> P configurePlugin(String pluginKeyAndName, String pageKey, Class<P> nextPage)

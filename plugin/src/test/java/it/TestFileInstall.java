@@ -40,7 +40,7 @@ public class TestFileInstall extends AbstractRemotablePluginTest
 
         RemotePluginInstallerClient client = new RemotePluginInstallerClient(
                 baseUrl, "admin", "admin");
-        client.install(descriptorFile.toURI().toString(), "");
+        client.install(descriptorFile.toURI().toString());
 
         product.visit(LoginPage.class).login("betty", "betty", HomePage.class);
         RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "first",

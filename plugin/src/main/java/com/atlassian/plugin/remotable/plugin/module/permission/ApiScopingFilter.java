@@ -1,5 +1,6 @@
 package com.atlassian.plugin.remotable.plugin.module.permission;
 
+import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.plugin.remotable.plugin.PermissionManager;
 import com.atlassian.sal.api.user.UserManager;
 import org.slf4j.Logger;
@@ -20,11 +21,13 @@ public class ApiScopingFilter implements Filter
     private final UserManager userManager;
     private static final Logger log = LoggerFactory.getLogger(ApiScopingFilter.class);
     public static final String PLUGIN_KEY = "Plugin-Key";
+    private final String ourConsumerKey;
 
-    public ApiScopingFilter(PermissionManager permissionManager, UserManager userManager)
+    public ApiScopingFilter(PermissionManager permissionManager, UserManager userManager, ConsumerService consumerService)
     {
         this.permissionManager = permissionManager;
         this.userManager = userManager;
+        this.ourConsumerKey = consumerService.getConsumer().getKey();
     }
 
     @Override
@@ -38,7 +41,7 @@ public class ApiScopingFilter implements Filter
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse res = (HttpServletResponse) response;
         String clientKey = extractClientKey(req);
-        if (clientKey != null)
+        if (clientKey != null && !ourConsumerKey.equals(clientKey))
         {
             // we consume the input to allow inspection of the body via getInputStream
             InputConsumingHttpServletRequest inputConsumingRequest = new InputConsumingHttpServletRequest(req);

@@ -7,29 +7,29 @@ import com.atlassian.applinks.spi.application.ApplicationIdUtil;
 import com.atlassian.applinks.spi.link.ApplicationLinkDetails;
 import com.atlassian.applinks.spi.link.MutatingApplicationLinkService;
 import com.atlassian.applinks.spi.util.TypeAccessor;
-import com.atlassian.oauth.serviceprovider.ServiceProviderConsumerStore;
-import com.atlassian.plugin.remotable.plugin.OAuthLinkManager;
-import com.atlassian.plugin.remotable.plugin.PermissionManager;
-import com.atlassian.plugin.remotable.plugin.util.OsgiServiceUtils;
-import com.atlassian.plugin.remotable.spi.Permissions;
-import com.atlassian.plugin.remotable.spi.applinks.RemotePluginContainerApplicationType;
-import com.atlassian.plugin.remotable.host.common.util.BundleUtil;
-import com.atlassian.plugin.remotable.plugin.util.RemotePluginUtil;
 import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.ServiceProvider;
+import com.atlassian.oauth.serviceprovider.ServiceProviderConsumerStore;
 import com.atlassian.oauth.util.RSAKeys;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginInformation;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
 import com.atlassian.plugin.descriptors.CannotDisable;
+import com.atlassian.plugin.module.ModuleFactory;
+import com.atlassian.plugin.remotable.host.common.util.BundleUtil;
+import com.atlassian.plugin.remotable.plugin.OAuthLinkManager;
+import com.atlassian.plugin.remotable.plugin.PermissionManager;
+import com.atlassian.plugin.remotable.plugin.util.OsgiServiceUtils;
+import com.atlassian.plugin.remotable.plugin.util.RemotePluginUtil;
+import com.atlassian.plugin.remotable.spi.Permissions;
+import com.atlassian.plugin.remotable.spi.applinks.RemotePluginContainerApplicationType;
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.atlassian.util.concurrent.NotNull;
 import org.dom4j.Element;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,13 +38,16 @@ import java.security.GeneralSecurityException;
 import java.security.PublicKey;
 import java.util.List;
 
-import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.*;
+import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.getOptionalAttribute;
+import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.getRequiredElementText;
+import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.getRequiredUriAttribute;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Dynamically creates an application link for a plugin host
  */
 @CannotDisable
-public class RemotePluginContainerModuleDescriptor extends AbstractModuleDescriptor<Void>
+public final class RemotePluginContainerModuleDescriptor extends AbstractModuleDescriptor<Void>
 {
     public static final String PLUGIN_KEY_PROPERTY = "plugin-key";
 
@@ -63,20 +66,22 @@ public class RemotePluginContainerModuleDescriptor extends AbstractModuleDescrip
     private boolean remoteMode;
     private Bundle pluginBundle;
 
-    public RemotePluginContainerModuleDescriptor(MutatingApplicationLinkService applicationLinkService,
-                                                 OAuthLinkManager oAuthLinkManager,
-                                                 PermissionManager permissionManager,
-                                                 TypeAccessor typeAccessor,
-                                                 BundleContext bundleContext,
-                                                 PluginSettingsFactory pluginSettingsFactory
-    )
+    public RemotePluginContainerModuleDescriptor(
+            ModuleFactory moduleFactory,
+            MutatingApplicationLinkService applicationLinkService,
+            OAuthLinkManager oAuthLinkManager,
+            PermissionManager permissionManager,
+            TypeAccessor typeAccessor,
+            BundleContext bundleContext,
+            PluginSettingsFactory pluginSettingsFactory)
     {
-        this.applicationLinkService = applicationLinkService;
-        this.oAuthLinkManager = oAuthLinkManager;
-        this.permissionManager = permissionManager;
-        this.typeAccessor = typeAccessor;
-        this.bundleContext = bundleContext;
-        this.pluginSettingsFactory = pluginSettingsFactory;
+        super(moduleFactory);
+        this.applicationLinkService = checkNotNull(applicationLinkService);
+        this.oAuthLinkManager = checkNotNull(oAuthLinkManager);
+        this.permissionManager = checkNotNull(permissionManager);
+        this.typeAccessor = checkNotNull(typeAccessor);
+        this.bundleContext = checkNotNull(bundleContext);
+        this.pluginSettingsFactory = checkNotNull(pluginSettingsFactory);
     }
 
     @Override
@@ -121,16 +126,34 @@ public class RemotePluginContainerModuleDescriptor extends AbstractModuleDescrip
                 manuallyDeleteApplicationId(expectedApplicationId);
             }
 
+// @todo this should work but it just fucks stuff up beyond belief (instead of lines 160-170)
+//            try to find link with old display url
+//            for (ApplicationLink otherLink : applicationLinkService.getApplicationLinks(RemotePluginContainerApplicationType.class))
+//            {
+//                if (getPluginKey().equals(otherLink.getProperty(PLUGIN_KEY_PROPERTY)) && (link == null || link.getId().get().equals(otherLink.getId().get())))
+//                {
+//                    log.debug("Old application link for this plugin '{}' found with different display url '{}', removing",
+//                        getPluginKey(), displayUrl);
+//                    applicationLinkService.deleteApplicationLink(otherLink);
+//                }
+//            }
+
             if (link != null)
             {
                 if (getPluginKey().equals(link.getProperty(PLUGIN_KEY_PROPERTY)))
                 {
                     log.info("Application link for remote plugin container '{}' already exists", getPluginKey());
                 }
+// @todo this should work but it just fucks stuff up beyond belief (instead of lines 160-170)
+//                else if (link.getProperty(PLUGIN_KEY_PROPERTY) == null)
+//                {
+//                    log.warn("Found application link for url '{}' is missing associated plugin key", displayUrl);
+//                    link.putProperty(PLUGIN_KEY_PROPERTY, getPluginKey());
+//                }
                 else
                 {
                     throw new PluginParseException("Application link already exists for id '" + expectedApplicationId + "' but it isn't the target " +
-                            " plugin '" + getPluginKey() + "'");
+                            " plugin '" + getPluginKey() + "': unexpected plugin key is: " + link.getProperty(PLUGIN_KEY_PROPERTY));
                 }
             }
             else
@@ -141,7 +164,7 @@ public class RemotePluginContainerModuleDescriptor extends AbstractModuleDescrip
                     if (getPluginKey().equals(otherLink.getProperty(PLUGIN_KEY_PROPERTY)))
                     {
                         log.debug("Old application link for this plugin '{}' found with different display url '{}', removing",
-                                getPluginKey(), displayUrl);
+                            getPluginKey(), displayUrl);
                         applicationLinkService.deleteApplicationLink(otherLink);
                     }
                 }
@@ -194,7 +217,7 @@ public class RemotePluginContainerModuleDescriptor extends AbstractModuleDescrip
     public void disabled()
     {
         super.disabled();
-        if (remoteMode)
+        if (remoteMode && pluginBundle != null)
         {
             // we have to retrive services fresh from plugin bundle as it is possible this is called after the
             // remotable plugins plugin has been disabled

@@ -5,67 +5,9 @@
 			interface="com.atlassian.plugin.remotable.plugin.UserPreferencesRetriever"/>
     <component key="conditionDescriptorFactory" class="com.atlassian.jira.plugin.webfragment.descriptors.ConditionDescriptorFactoryImpl" />
 
-    <web-item key="general-dropdown-item" section="system.top.navigation.bar" weight="100">
-        <label>More</label>
-        <link linkId="general_dropdown_linkId"/>
-        <condition class="com.atlassian.plugin.remotable.plugin.module.jira.HasGeneralPagesCondition" />
-    </web-item>
-
-    <web-section key="remotable.plugins.general" location="general_dropdown_linkId">
-    </web-section>
-
-    <!-- api scopes -->
-    <plugin-permission key="read_users_and_groups" name="Read Users and Groups"
-        class="com.atlassian.plugin.remotable.plugin.product.jira.JiraReadUsersAndGroupsScope">
-        <description>View users and groups</description>
-    </plugin-permission>
-    <plugin-permission key="browse_projects" name="Browse Projects"
-        class="com.atlassian.plugin.remotable.plugin.product.jira.BrowseProjectsScope">
-        <description>
-            Permission to browse projects, search issues, and view individual issues (except issues that have been
-            restricted via Issue Security)
-        </description>
-    </plugin-permission>
-    <plugin-permission key="create_issues" name="Create Issues"
-        class="com.atlassian.plugin.remotable.plugin.product.jira.JiraCreateIssuesScope">
-        <description>
-            Permission to create issues in the project. (Note that the Create Attachments
-            permission is required in order to create attachments.) Includes the ability to
-            create sub-tasks (if sub-tasks are enabled).
-        </description>
-    </plugin-permission>
-    <plugin-permission key="edit_issues" name="Edit Issues"
-        class="com.atlassian.plugin.remotable.plugin.product.jira.JiraEditIssuesScope">
-        <description>
-            Permission to edit issues (excluding the  'Due Date' field - see the Schedule
-            Issues permission). Includes the ability to convert issues to sub-tasks and vice
-            versa (if sub-tasks are enabled). Note that the Delete Issue permission is
-            required in order to delete issues.
-        </description>
-    </plugin-permission>
-    <plugin-permission key="resolve_issues" name="Resolve Issues"
-        class="com.atlassian.plugin.remotable.plugin.product.jira.JiraResolveIssuesScope">
-        <description>
-            Permission to resolve and reopen issues. This also includes the ability to set
-            the 'Fix For version' field for issues. Also see the Close Issues permission.
-        </description>
-    </plugin-permission>
-    <plugin-permission key="read_metadata" name="Read Metadata"
-        class="com.atlassian.plugin.remotable.plugin.product.jira.JiraReadMetadataScope">
-        <description>
-            Permission to read JIRA metadata.
-        </description>
-    </plugin-permission>
-    <plugin-permission key="read_user_session_data" name="Read User Session Data"
-        class="com.atlassian.plugin.remotable.plugin.product.jira.JiraReadUserSessionData">
-        <description>
-            Permission to read JIRA user's session data.
-        </description>
-    </plugin-permission>
-
     <component key="jiraWebHookProvider"
                interface="com.atlassian.webhooks.spi.provider.WebHookProvider" public="true"
-               class="com.atlassian.plugin.remotable.plugin.product.jira.JiraWebHookProvider" />
+               class="com.atlassian.plugin.remotable.plugin.product.jira.PostFunctionWebHookProvider" />
 
     <component key="EventSerializerFactory" class="com.atlassian.plugin.remotable.plugin.product.jira.webhook.JiraEventSerializerFactory" />
 
@@ -80,10 +22,10 @@
         <package>com.atlassian.plugin.remotable.plugin.rest</package>
     </rest>
 
-    <!-- Handles loading big pipe resources because web items in jira
-        can't contribute web resources due to how JIRA renders
-     -->
     <jira-footer key="bigPipeFooter" class="com.atlassian.plugin.remotable.plugin.product.jira.JiraBigPipeFooter" />
+
+    <!-- Handles loading big pipe resources because web items in jira
+        can't contribute web resources due to how JIRA renders  -->
 
 	<component-import key="projectService" interface="com.atlassian.jira.bc.project.ProjectService" />
     <component-import key="jiraAuthenticationContext" interface="com.atlassian.jira.security.JiraAuthenticationContext" />

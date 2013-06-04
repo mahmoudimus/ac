@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.atlassian.plugins</groupId>
         <artifactId>remotable-plugins-parent</artifactId>
-        <version>0.6-SNAPSHOT</version>
+        <version>0.8.9999-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -33,14 +33,25 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.atlassian.labs</groupId>
-            <artifactId>confluence-xmlrpc-java-client-api</artifactId>
-            <version>${confluence.client.version}</version>
-            <scope>provided</scope>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>remotable-plugins-descriptor-common</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.atlassian.util.concurrent</groupId>
             <artifactId>atlassian-util-concurrent</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.upm</groupId>
+            <artifactId>licensing-api</artifactId>
+            <version>2.10</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.upm</groupId>
+            <artifactId>upm-api</artifactId>
+            <version>2.10</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -50,12 +61,6 @@
         <dependency>
             <groupId>com.atlassian.osgi</groupId>
             <artifactId>atlassian-osgi</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>remotable-plugins-ringojs-kit</artifactId>
-            <version>${project.version}</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.atlassian.event</groupId>
@@ -70,6 +75,30 @@
             <classifier>standalone</classifier>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.atlassian.jira</groupId>
+            <artifactId>ka-func-test-framework</artifactId>
+            <version>${jira.version}</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.atlassian.browsers</groupId>
+                    <artifactId>atlassian-browsers-windows</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.atlassian.browsers</groupId>
+                    <artifactId>atlassian-browsers-linux</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.atlassian.browsers</groupId>
+                    <artifactId>atlassian-browsers-linux64</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.httpcomponents</groupId>
+                    <artifactId>httpclient</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
         <dependency>
             <groupId>com.atlassian.jira</groupId>
@@ -81,12 +110,6 @@
             <artifactId>atlassian-mail</artifactId>
             <version>2.4.1</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>remotable-plugins-kit-common</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>net.oauth.core</groupId>
@@ -161,7 +184,7 @@
 
         <dependency>
             <groupId>com.atlassian.jira</groupId>
-            <artifactId>atlassian-jira</artifactId>
+            <artifactId>jira-core</artifactId>
             <version>${jira.version}</version>
             <scope>provided</scope>
             <exclusions>
@@ -247,7 +270,7 @@
         <dependency>
             <groupId>com.atlassian.fugue</groupId>
             <artifactId>fugue</artifactId>
-            <scope>compile</scope>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.atlassian.oauth</groupId>
@@ -294,7 +317,7 @@
         <dependency>
             <groupId>com.atlassian.plugins</groupId>
             <artifactId>atlassian-plugins-webfragment</artifactId>
-            <version>2.14.0-m5</version>
+            <version>${webfragments.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -360,14 +383,8 @@
         <dependency>
             <groupId>com.atlassian.functest</groupId>
             <artifactId>functest-plugin</artifactId>
-            <version>0.4.2</version>
+            <version>${functest.version}</version>
             <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.seleniumhq.selenium</groupId>
-                    <artifactId>selenium</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.atlassian.oauth</groupId>
@@ -509,9 +526,9 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.google.inject</groupId>
-            <artifactId>guice</artifactId>
-            <version>3.0</version>
+            <groupId>org.sonatype.sisu</groupId>
+            <artifactId>sisu-guice</artifactId>
+            <version>${sisu.guice.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -617,7 +634,7 @@
                     <version>1.0.4</version>
                     <configuration>
                         <commands>
-                            <pi>resources com.atlassian.maven.plugins:maven-amps-plugin:filter-plugin-descriptor compile com.atlassian.maven.plugins:maven-amps-plugin:copy-bundled-dependencies net.alchim31.maven:yuicompressor-maven-plugin:compress#all-min-css net.alchim31.maven:yuicompressor-maven-plugin:compress#all-debug-css net.alchim31.maven:yuicompressor-maven-plugin:compress#all-min-js net.alchim31.maven:yuicompressor-maven-plugin:compress#all-debug-js org.codehaus.mojo:xml-maven-plugin:transform com.atlassian.maven.plugins:maven-amps-plugin:generate-manifest com.atlassian.maven.plugins:maven-amps-plugin:jar com.atlassian.maven.plugins:maven-amps-plugin:install</pi>
+                            <pi>resources com.atlassian.maven.plugins:maven-amps-plugin:filter-plugin-descriptor compile com.atlassian.maven.plugins:maven-amps-plugin:copy-bundled-dependencies net.alchim31.maven:yuicompressor-maven-plugin:compress#all-min-css net.alchim31.maven:yuicompressor-maven-plugin:compress#all-debug-css net.alchim31.maven:yuicompressor-maven-plugin:compress#all-min-js org.codehaus.mojo:xml-maven-plugin:transform com.atlassian.maven.plugins:maven-amps-plugin:generate-manifest com.atlassian.maven.plugins:maven-amps-plugin:jar com.atlassian.maven.plugins:maven-amps-plugin:install</pi>
                         </commands>
                     </configuration>
                 </plugin>
@@ -635,11 +652,11 @@
                             com.atlassian.confluence.plugin.descriptor.web.descriptors;resolution:=optional,
                             com.atlassian.confluence.plugin.webresource;resolution:=optional,
                             com.atlassian.confluence.security.websudo;resolution:=optional,
-                            com.atlassian.confluence.xmlrpc.client.api*;version:="${confluence.client.version}";resolution:=optional,
+                            com.atlassian.confluence.xmlrpc.client.api;version:="${confluence.client.version}",
                             com.atlassian.jira;resolution:=optional,
                             com.atlassian.jira.config;resolution:=optional,
                             com.atlassian.jira.plugin.webfragment.descriptors;resolution:=optional,
-                            com.atlassian.jira.rest.client.api*;version="${jira.client.version}";resolution:=optional,
+                            com.atlassian.jira.rest.client.api;version="${jira.client.api.version}",
                             com.atlassian.jira.security;resolution:=optional,
                             com.atlassian.jira.security.websudo;resolution:=optional,
                             com.atlassian.oauth*;version="(1.2,2.0]",
@@ -647,6 +664,8 @@
                             com.atlassian.plugin.remotable.spi*;version="${api.artifact.version}",
                             com.atlassian.plugin.schema.descriptor;version="${plugins.api.version}",
                             com.atlassian.plugin.schema.spi;version="${plugins.api.version}",
+                            com.atlassian.plugin.web.descriptors;resolution:=optional,
+                            com.atlassian.plugin.web.baseconditions;resolution:=optional,
                             com.atlassian.plugin.*;version="2.8",
                             com.atlassian.refapp.auth.external;resolution:=optional,
                             com.atlassian.sal.api.*;version="(2.4,3.0]",
@@ -681,15 +700,10 @@
                     <systemPropertyVariables>
                         <xvfb.enable>${xvfb.enable}</xvfb.enable>
                         <atlassian.mail.senddisabled>false</atlassian.mail.senddisabled>
-                        <sun.net.http.allowRestrictedHeaders>true
-                        </sun.net.http.allowRestrictedHeaders>
+                        <sun.net.http.allowRestrictedHeaders>true</sun.net.http.allowRestrictedHeaders>
                         <!--atlassian.dev.mode>false</atlassian.dev.mode-->
                     </systemPropertyVariables>
-                    <!-- uncomment when it is safe to upgrade amps:  https://studio.atlassian.com/browse/AMPS-663 -->
-                    <!--enableDevToolbox>false</enableDevToolbox-->
-                    <enableFastdev>false</enableFastdev>
                     <functionalTestPattern>it/**/Test*.java</functionalTestPattern>
-                    <compressResources>false</compressResources>
                     <products>
                         <product>
                             <id>refapp</id>
@@ -707,9 +721,19 @@
                                     <version>${project.version}</version>
                                 </pluginArtifact>
                                 <pluginArtifact>
+                                    <groupId>com.atlassian.labs</groupId>
+                                    <artifactId>confluence-xmlrpc-java-client-plugin</artifactId>
+                                    <version>${confluence.client.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.jira</groupId>
+                                    <artifactId>jira-rest-java-client-plugin</artifactId>
+                                    <version>${jira.client.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
                                     <groupId>com.atlassian.functest</groupId>
                                     <artifactId>functest-plugin</artifactId>
-                                    <version>0.4.2</version>
+                                    <version>${functest.version}</version>
                                 </pluginArtifact>
                                 <pluginArtifact>
                                     <groupId>com.atlassian.labs</groupId>
@@ -727,9 +751,9 @@
                                     <version>${api.artifact.version}</version>
                                 </pluginArtifact>
                                 <pluginArtifact>
-                                    <groupId>com.google.inject</groupId>
-                                    <artifactId>guice</artifactId>
-                                    <version>3.0</version>
+                                    <groupId>org.sonatype.sisu</groupId>
+                                    <artifactId>sisu-guice</artifactId>
+                                    <version>${sisu.guice.version}</version>
                                 </pluginArtifact>
                                 <pluginArtifact>
                                     <groupId>org.apache.servicemix.bundles</groupId>
@@ -799,7 +823,7 @@
                                 <pluginArtifact>
                                     <groupId>com.atlassian.functest</groupId>
                                     <artifactId>functest-plugin</artifactId>
-                                    <version>0.4.2</version>
+                                    <version>${functest.version}</version>
                                 </pluginArtifact>
                                 <pluginArtifact>
                                     <groupId>com.atlassian.labs</groupId>
@@ -817,9 +841,9 @@
                                     <version>${api.artifact.version}</version>
                                 </pluginArtifact>
                                 <pluginArtifact>
-                                    <groupId>com.google.inject</groupId>
-                                    <artifactId>guice</artifactId>
-                                    <version>3.0</version>
+                                    <groupId>org.sonatype.sisu</groupId>
+                                    <artifactId>sisu-guice</artifactId>
+                                    <version>${sisu.guice.version}</version>
                                 </pluginArtifact>
                                 <pluginArtifact>
                                     <groupId>org.apache.servicemix.bundles</groupId>
@@ -856,6 +880,11 @@
 									<artifactId>jira-testkit-plugin</artifactId>
 									<version>${testkit.version}</version>
 								</pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.labs</groupId>
+                                    <artifactId>confluence-xmlrpc-java-client-plugin</artifactId>
+                                    <version>${confluence.client.version}</version>
+                                </pluginArtifact>
                             </pluginArtifacts>
                             <libArtifacts>
                                 <libArtifact>
@@ -890,7 +919,7 @@
                                 <pluginArtifact>
                                     <groupId>com.atlassian.functest</groupId>
                                     <artifactId>functest-plugin</artifactId>
-                                    <version>0.4.2</version>
+                                    <version>${functest.version}</version>
                                 </pluginArtifact>
                                 <pluginArtifact>
                                     <groupId>com.atlassian.labs</groupId>
@@ -908,9 +937,9 @@
                                     <version>${api.artifact.version}</version>
                                 </pluginArtifact>
                                 <pluginArtifact>
-                                    <groupId>com.google.inject</groupId>
-                                    <artifactId>guice</artifactId>
-                                    <version>3.0</version>
+                                    <groupId>org.sonatype.sisu</groupId>
+                                    <artifactId>sisu-guice</artifactId>
+                                    <version>${sisu.guice.version}</version>
                                 </pluginArtifact>
                                 <pluginArtifact>
                                     <groupId>org.apache.servicemix.bundles</groupId>
@@ -921,6 +950,11 @@
                                     <groupId>com.atlassian.labs</groupId>
                                     <artifactId>confluence-xmlrpc-java-client-plugin</artifactId>
                                     <version>${confluence.client.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.jira</groupId>
+                                    <artifactId>jira-rest-java-client-plugin</artifactId>
+                                    <version>${jira.client.version}</version>
                                 </pluginArtifact>
                                 <pluginArtifact>
                                     <groupId>org.codehaus.jettison</groupId>
@@ -939,16 +973,11 @@
                                 </pluginArtifact>
                             </pluginArtifacts>
                             <libArtifacts>
-                                <!-- override to allow bug fixes for memory leaks when developing.  See PLUG-484 -->
+                                <!-- Add missing schema jar.  Can be removed once we upgrade conf from 5.2-m6 -->
                                 <libArtifact>
                                     <groupId>com.atlassian.plugins</groupId>
-                                    <artifactId>atlassian-plugins-webfragment</artifactId>
-                                    <version>${confluence.plugins.version}</version>
-                                </libArtifact>
-                                <libArtifact>
-                                    <groupId>com.atlassian.util.concurrent</groupId>
-                                    <artifactId>atlassian-util-concurrent</artifactId>
-                                    <version>${atlassian-util-concurrent.version}</version>
+                                    <artifactId>atlassian-plugins-schema</artifactId>
+                                    <version>${plugins.version}</version>
                                 </libArtifact>
                             </libArtifacts>
                         </product>
@@ -971,8 +1000,8 @@
                             <artifactId>remotable-plugins-spi</artifactId>
                         </pluginDependency>
                         <pluginDependency>
-                            <groupId>com.google.inject</groupId>
-                            <artifactId>guice</artifactId>
+                            <groupId>org.sonatype.sisu</groupId>
+                            <artifactId>sisu-guice</artifactId>
                         </pluginDependency>
                         <pluginDependency>
                             <groupId>org.apache.servicemix.bundles</groupId>
@@ -1179,36 +1208,59 @@
                                     <insertNewLine>true</insertNewLine>
                                     <output>${project.build.outputDirectory}/all.js</output>
                                     <includes>
-                                        <include>js/iframe-min/easyXDM-min.js</include>
-                                        <include>js/iframe-min/plugin-min.js</include>
+                                        <include>js/iframe-min/plugin/_amd-min.js</include>
+                                        <include>js/iframe-min/plugin/_util-min.js</include>
+                                        <include>js/iframe-min/plugin/_ajax-min.js</include>
+                                        <include>js/iframe-min/plugin/_dollar-min.js</include>
+                                        <include>js/iframe-min/xdm-rpc-min.js</include>
+                                        <include>js/iframe-min/plugin/_rpc-min.js</include>
+                                        <include>js/iframe-min/plugin/env-min.js</include>
+                                        <include>js/iframe-min/plugin/request-min.js</include>
+                                        <include>js/iframe-min/plugin/dialog-min.js</include>
+                                        <include>js/iframe-min/plugin/bigpipe-min.js</include>
+                                        <!-- product-specific inclusions are temporary until made more dynamic -->
+                                        <include>js/iframe-min/plugin/jira-min.js</include>
+                                        <include>js/iframe-min/plugin/_init-min.js</include>
                                     </includes>
                                 </aggregation>
                             </aggregations>
                         </configuration>
                     </execution>
-                    <execution>
-                        <id>all-debug-js</id>
-                        <goals>
-                            <goal>compress</goal>
-                        </goals>
-                        <configuration>
-                            <gzip>false</gzip>
-                            <nocompress>true</nocompress>
-                            <jswarn>false</jswarn>
-                            <excludeResources>true</excludeResources>
-                            <aggregations>
-                                <aggregation>
-                                    <removeIncluded>false</removeIncluded>
-                                    <insertNewLine>true</insertNewLine>
-                                    <output>${project.build.outputDirectory}/all-debug.js</output>
-                                    <includes>
-                                        <include>js/iframe/easyXDM.js</include>
-                                        <include>js/iframe/plugin.js</include>
-                                    </includes>
-                                </aggregation>
-                            </aggregations>
-                        </configuration>
-                    </execution>
+                    <!-- Now being aggregated in dev mode dynamically by StaticResourcesFilter. -->
+                    <!--<execution>-->
+                        <!--<id>all-debug-js</id>-->
+                        <!--<goals>-->
+                            <!--<goal>compress</goal>-->
+                        <!--</goals>-->
+                        <!--<configuration>-->
+                            <!--<gzip>false</gzip>-->
+                            <!--<nocompress>true</nocompress>-->
+                            <!--<jswarn>false</jswarn>-->
+                            <!--<excludeResources>true</excludeResources>-->
+                            <!--<aggregations>-->
+                                <!--<aggregation>-->
+                                    <!--<removeIncluded>false</removeIncluded>-->
+                                    <!--<insertNewLine>true</insertNewLine>-->
+                                    <!--<output>${project.build.outputDirectory}/all-debug.js</output>-->
+                                    <!--<includes>-->
+                                        <!--<include>js/iframe/plugin/_amd.js</include>-->
+                                        <!--<include>js/iframe/plugin/_util.js</include>-->
+                                        <!--<include>js/iframe/plugin/_ajax.js</include>-->
+                                        <!--<include>js/iframe/plugin/_dollar.js</include>-->
+                                        <!--<include>js/iframe/xdm-rpc.js</include>-->
+                                        <!--<include>js/iframe/plugin/_rpc.js</include>-->
+                                        <!--<include>js/iframe/plugin/env.js</include>-->
+                                        <!--<include>js/iframe/plugin/request.js</include>-->
+                                        <!--<include>js/iframe/plugin/dialog.js</include>-->
+                                        <!--<include>js/iframe/plugin/bigpipe.js</include>-->
+                                        <!--&lt;!&ndash; product-specific inclusions are temporary until made more dynamic &ndash;&gt;-->
+                                        <!--<include>js/iframe/plugin/jira.js</include>-->
+                                        <!--<include>js/iframe/plugin/_init.js</include>-->
+                                    <!--</includes>-->
+                                <!--</aggregation>-->
+                            <!--</aggregations>-->
+                        <!--</configuration>-->
+                    <!--</execution>-->
                 </executions>
             </plugin>
             <plugin>
@@ -1255,23 +1307,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>2.5.1</version>
-                <executions>
-                    <execution>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>copy-dependencies</goal>
-                        </goals>
-                        <configuration>
-                            <includeArtifactIds>remotable-plugins-kit-common</includeArtifactIds>
-                            <stripVersion>true</stripVersion>
-                            <outputDirectory>${project.build.outputDirectory}</outputDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
 
@@ -1291,7 +1326,8 @@
         <product>refapp</product>
         <plugin.version>${project.version}</plugin.version>
         <confluence.plugins.version>2.10.1</confluence.plugins.version>
-		<testkit.version>5.0.27</testkit.version>
+		<testkit.version>6.0.23</testkit.version>
+        <functest.version>0.7.1</functest.version>
     </properties>
 
 </project>

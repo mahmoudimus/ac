@@ -1,22 +1,12 @@
 package com.atlassian.plugin.remotable.test;
 
-import com.atlassian.pageobjects.binder.Init;
-import com.atlassian.pageobjects.binder.WaitUntil;
 import com.atlassian.plugin.remotable.pageobjects.RemotePage;
-import com.atlassian.webdriver.AtlassianWebDriver;
 import com.google.common.base.Function;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.utils.URLEncodedUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-import javax.inject.Inject;
-import java.net.URI;
-import java.util.Map;
 import java.util.concurrent.Callable;
-
-import static com.google.common.collect.Maps.newHashMap;
 
 /**
  *
@@ -41,6 +31,11 @@ public class RemotePluginEmbeddedTestPage extends RemotePage
     public String getTimeZone()
     {
         return waitForValue("timeZone");
+    }
+
+    public String getLocale()
+    {
+        return waitForValue("locale");
     }
 
 	public String getTimeZoneFromTemplateContext()
@@ -103,7 +98,7 @@ public class RemotePluginEmbeddedTestPage extends RemotePage
         return getValue("server-http-entity");
     }
 
-    String getValue(final String key)
+    public String getValue(final String key)
     {
         return runInFrame(new Callable<String>()
         {
@@ -116,7 +111,20 @@ public class RemotePluginEmbeddedTestPage extends RemotePage
         });
     }
 
-    String waitForValue(final String key)
+    public String getValueBySelector(final String selector)
+    {
+        return runInFrame(new Callable<String>()
+        {
+
+            @Override
+            public String call() throws Exception
+            {
+                return driver.findElement(By.cssSelector(selector)).getText();
+            }
+        });
+    }
+
+    public String waitForValue(final String key)
     {
         runInFrame(new Callable<Void>()
         {
@@ -136,5 +144,28 @@ public class RemotePluginEmbeddedTestPage extends RemotePage
         });
 
         return getValue(key);
+    }
+
+    public String waitForValueBySelector(final String selector)
+    {
+        runInFrame(new Callable<Void>()
+        {
+            @Override
+            public Void call() throws Exception
+            {
+                driver.waitUntil(new Function<WebDriver, Boolean>() {
+
+                    @Override
+                    public Boolean apply(WebDriver webDriver) {
+                        WebElement element = webDriver.findElement(By.cssSelector(selector));
+                        String text = element.getText();
+                        return text != null && text.length() > 0;
+                    }
+                });
+                return null;
+            }
+        });
+
+        return getValueBySelector(selector);
     }
 }

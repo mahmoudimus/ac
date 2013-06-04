@@ -1,6 +1,6 @@
 package servlets;
 
-import com.atlassian.plugin.remotable.kit.servlet.AppUrl;
+import com.atlassian.pluginkit.servlet.AppUrl;
 
 import javax.inject.Named;
 import javax.inject.Singleton;

@@ -10,6 +10,10 @@ import com.atlassian.oauth.ServiceProvider;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
+import com.atlassian.plugin.event.PluginEventListener;
+import com.atlassian.plugin.event.events.PluginDisabledEvent;
+import com.atlassian.plugin.event.events.PluginEnabledEvent;
+import com.atlassian.plugin.event.events.PluginModuleEnabledEvent;
 import com.atlassian.plugin.remotable.plugin.loader.universalbinary.UBDispatchFilter;
 import com.atlassian.plugin.remotable.plugin.module.applinks.RemotePluginContainerModuleDescriptor;
 import com.atlassian.plugin.remotable.plugin.util.function.MapFunctions;
@@ -27,6 +31,8 @@ import com.atlassian.util.concurrent.CopyOnWriteMap;
 import com.atlassian.util.concurrent.Promise;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.common.collect.Maps;
 import net.oauth.OAuth;
 import org.springframework.beans.factory.DisposableBean;
@@ -103,8 +109,39 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
     {
         if (event.getApplicationType() instanceof RemotePluginContainerApplicationType)
         {
-            accessors.remove((String) event.getApplicationLink().getProperty(RemotePluginContainerModuleDescriptor.PLUGIN_KEY_PROPERTY));
+            accessors.remove(getPluginKey(event.getApplicationLink()));
         }
+    }
+
+    /**
+     * Clear accessor if a plugin is enabled
+     * @param event
+     */
+    @EventListener
+    public void onPluginEnabled(PluginEnabledEvent event)
+    {
+        accessors.remove(event.getPlugin().getKey());
+    }
+
+    /**
+     * Clear accessor if a plugin is disabled
+     * @param event
+     */
+    @EventListener
+    public void onPluginDisabled(PluginDisabledEvent event)
+    {
+        accessors.remove(event.getPlugin().getKey());
+    }
+
+    @PluginEventListener
+    public void onPluginModuleEnabled(PluginModuleEnabledEvent event)
+    {
+        accessors.remove(event.getModule().getPluginKey());
+    }
+
+    private String getPluginKey(ApplicationLink link)
+    {
+        return String.valueOf(link.getProperty(RemotePluginContainerModuleDescriptor.PLUGIN_KEY_PROPERTY));
     }
 
     /**
@@ -118,25 +155,64 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
     {
         // this will potentially create multiple instances if called quickly, but we don't really
         // care as they shouldn't be cached
+        final RemotablePluginAccessor accessor;
         if (accessors.containsKey(pluginKey))
         {
-            return accessors.get(pluginKey);
+            accessor = accessors.get(pluginKey);
         }
         else
         {
-            ApplicationLink link = applicationLinkAccessor.getApplicationLink(pluginKey);
-            boolean isRemotable = !Iterables.findFirst(pluginAccessor.getPlugin(pluginKey).getModuleDescriptors(), new Predicate<ModuleDescriptor<?>>() {
-                @Override
-                public boolean apply(@Nullable ModuleDescriptor<?> input) {
-                    return input instanceof RemotePluginContainerModuleDescriptor;
-                }
-            }).isEmpty();
-            return create(pluginKey,
-                    link != null ? link.getDisplayUrl() :
-                            isRemotable ? URI.create(ubDispatchFilter.getLocalMountBaseUrl(pluginKey))
-                                    : URI.create(applicationProperties.getBaseUrl()));
+            accessor = create(pluginKey, getDisplayUrl(pluginKey));
+            accessors.put(pluginKey, accessor);
         }
+        return accessor;
+    }
 
+    private Supplier<URI> getDisplayUrl(final String pluginKey)
+    {
+        final ApplicationLink link = applicationLinkAccessor.getApplicationLink(pluginKey);
+        if (link != null)
+        {
+            return Suppliers.ofInstance(link.getDisplayUrl());
+        }
+        else if (isRemotable(pluginKey))
+        {
+            return Suppliers.compose(ToUriFunction.INSTANCE,
+                    new Supplier<String>()
+                    {
+                        @Override
+                        public String get()
+                        {
+                            return ubDispatchFilter.getLocalMountBaseUrl(pluginKey);
+                        }
+                    }
+            );
+        }
+        else
+        {
+            return Suppliers.compose(ToUriFunction.INSTANCE,
+                    new Supplier<String>()
+                    {
+                        @Override
+                        public String get()
+                        {
+                            return applicationProperties.getBaseUrl();
+                        }
+                    }
+            );
+        }
+    }
+
+    private boolean isRemotable(String pluginKey)
+    {
+        return !Iterables.findFirst(pluginAccessor.getPlugin(pluginKey).getModuleDescriptors(), new Predicate<ModuleDescriptor<?>>()
+        {
+            @Override
+            public boolean apply(@Nullable ModuleDescriptor<?> input)
+            {
+                return input instanceof RemotePluginContainerModuleDescriptor;
+            }
+        }).isEmpty();
     }
 
     /**
@@ -150,18 +226,19 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
      * @param displayUrl The display url
      * @return An accessor for a remote plugin
      */
-    public RemotablePluginAccessor create(String pluginKey, URI displayUrl)
+    public RemotablePluginAccessor create(String pluginKey, Supplier<URI> displayUrl)
     {
-        Plugin plugin = pluginAccessor.getPlugin(pluginKey);
-        checkNotNull(plugin, "Plugin not found: {}", pluginKey);
-        URI dummyUri = URI.create("http://localhost");
-        ServiceProvider dummyProvider = new ServiceProvider(dummyUri, dummyUri, dummyUri);
+        final Plugin plugin = pluginAccessor.getPlugin(pluginKey);
+        checkNotNull(plugin, "Plugin not found: '%s'", pluginKey);
 
         // don't need to get the actual provider as it doesn't really matter
-        OAuthSigningRemotablePluginAccessor oAuthSigningRemotablePluginAccessor = new OAuthSigningRemotablePluginAccessor(
-                pluginKey, plugin.getName(), displayUrl, dummyProvider);
-        accessors.put(pluginKey, oAuthSigningRemotablePluginAccessor);
-        return oAuthSigningRemotablePluginAccessor;
+        return new OAuthSigningRemotablePluginAccessor(pluginKey, plugin.getName(), displayUrl, getDummyServiceProvider());
+    }
+
+    private ServiceProvider getDummyServiceProvider()
+    {
+        URI dummyUri = URI.create("http://localhost");
+        return new ServiceProvider(dummyUri, dummyUri, dummyUri);
     }
 
     @Override
@@ -174,14 +251,13 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
     {
         private final String key;
         private final String name;
-        private final URI displayUrl;
+        private final Supplier<URI> displayUrl;
         private final ServiceProvider serviceProvider;
 
         private OAuthSigningRemotablePluginAccessor(String key,
                                                     String name,
-                                                    URI displayUrl,
-                                                    ServiceProvider serviceProvider
-        )
+                                                    Supplier<URI> displayUrl,
+                                                    ServiceProvider serviceProvider)
         {
             this.key = key;
             this.name = name;
@@ -198,28 +274,31 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
         @Override
         public URI getDisplayUrl()
         {
-            return displayUrl;
+            return displayUrl.get();
         }
 
         @Override
         public String signGetUrl(URI targetPath, Map<String, String[]> params)
         {
-            return signGetUrlForType(serviceProvider, getTargetUrl(displayUrl, targetPath), params);
+            return signGetUrlForType(serviceProvider, getTargetUrl(targetPath), params);
         }
 
         @Override
         public String createGetUrl(URI targetPath, Map<String, String[]> params)
         {
-            return executeCreateGetUrl(getTargetUrl(displayUrl, targetPath), params);
+            return executeCreateGetUrl(getTargetUrl(targetPath), params);
         }
 
         @Override
-        public Promise<String> executeAsyncGet(String username, URI path, Map<String, String> params,
-                Map<String, String> headers)
-                throws ContentRetrievalException
+        public Promise<String> executeAsyncGet(String username, URI path, Map<String, String> params, Map<String, String> headers) throws ContentRetrievalException
         {
             return executeAsyncGetForType(new OAuthAuthorizationGenerator(serviceProvider),
-                    getTargetUrl(displayUrl, path), username, params, headers, key);
+                    getTargetUrl(path), username, params, headers, key);
+        }
+
+        private URI getTargetUrl(URI targetPath)
+        {
+            return URI.create(displayUrl.get().toString() + targetPath.getPath());
         }
 
         @Override
@@ -248,8 +327,7 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
             headers, pluginKey);
     }
 
-    private String signGetUrlForType(ServiceProvider serviceProvider, URI targetUrl,
-            Map<String, String[]> params) throws PermissionDeniedException
+    private String signGetUrlForType(ServiceProvider serviceProvider, URI targetUrl, Map<String, String[]> params) throws PermissionDeniedException
     {
         final UriBuilder uriBuilder = new UriBuilder(Uri.fromJavaUri(targetUrl));
 
@@ -260,11 +338,6 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
             uriBuilder.addQueryParameter(param.getKey(), value);
         }
         return uriBuilder.toString();
-    }
-
-    private URI getTargetUrl(URI displayUrl, URI targetPath)
-    {
-        return URI.create(displayUrl.toString() + targetPath.getPath());
     }
 
     private List<Map.Entry<String, String>> signRequest(ServiceProvider serviceProvider,
@@ -309,6 +382,17 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
         {
             return oAuthLinkManager.generateAuthorizationHeader(method, serviceProvider, url,
                     parameters);
+        }
+    }
+
+    private static enum ToUriFunction implements Function<String, URI>
+    {
+        INSTANCE;
+
+        @Override
+        public URI apply(String uri)
+        {
+            return URI.create(uri);
         }
     }
 }

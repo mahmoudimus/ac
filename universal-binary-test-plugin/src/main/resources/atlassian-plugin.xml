@@ -3,6 +3,7 @@
         <version>${project.version}</version>
         <permissions>
             <permission installation-mode="remote">create_oauth_link</permission>
+            <permission installation-mode="local">execute_java</permission>
         </permissions>
         <param name="documentation.url">http://example.com</param>
     </plugin-info>

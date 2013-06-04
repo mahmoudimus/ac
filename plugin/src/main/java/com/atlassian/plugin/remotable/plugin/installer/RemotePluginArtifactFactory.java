@@ -4,16 +4,19 @@ import com.atlassian.plugin.remotable.plugin.util.zip.ZipBuilder;
 import com.atlassian.plugin.remotable.plugin.util.zip.ZipHandler;
 import com.atlassian.plugin.JarPluginArtifact;
 import com.atlassian.plugin.PluginArtifact;
+import com.google.common.annotations.VisibleForTesting;
 import org.apache.commons.io.IOUtils;
 import org.dom4j.Document;
+import org.dom4j.Element;
+import org.dom4j.Node;
 import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
+
+import static java.lang.String.format;
 
 /**
  * Creates plugin artifacts for plugins installed in remote mode
@@ -21,20 +24,10 @@ import java.util.zip.ZipInputStream;
 @Component
 public class RemotePluginArtifactFactory
 {
-    public static final String CLASSES_TO_INCLUDE_CLASS_PATH = "com/atlassian/plugin/remotable/kit/common/ClassesToInclude.class";
-
-    private final byte[] classesToIncludeClass;
-
-    public RemotePluginArtifactFactory()
-    {
-        this.classesToIncludeClass = extractClassesToIncludeClass();
-    }
-
     public PluginArtifact create(URI registrationUrl, final Document document, String username)
     {
         String pluginKey = document.getRootElement().attributeValue("key");
-        changeDescriptorToIncludeRemotePluginHeader(registrationUrl, document, username);
-
+        changeDescriptorToIncludeRemotePluginHeader(document, registrationUrl, username);
 
         return new JarPluginArtifact(ZipBuilder.buildZip("install-" + pluginKey, new ZipHandler()
         {
@@ -42,12 +35,11 @@ public class RemotePluginArtifactFactory
             public void build(ZipBuilder builder) throws IOException
             {
                 builder.addFile("atlassian-plugin.xml", document);
-                builder.addFile(CLASSES_TO_INCLUDE_CLASS_PATH, new ByteArrayInputStream(classesToIncludeClass));
             }
         }));
     }
 
-    private void changeDescriptorToIncludeRemotePluginHeader(URI registrationUrl, Document document, String username)
+    private void changeDescriptorToIncludeRemotePluginHeader(Document document, URI registrationUrl, String username)
     {
         // fixme: plugin osgi manifest generator should respect existing entries, but it currently just blows everything away,
         // so we have to store the values in the plugin descriptor instead
@@ -57,33 +49,5 @@ public class RemotePluginArtifactFactory
                 .addElement("Remote-Plugin")
                 .addText("installer;user=\"" + username + "\";date=\"" + System.currentTimeMillis() + "\"" +
                         ";registration-url=\"" + registrationUrl + "\"");
-    }
-
-    private byte[] extractClassesToIncludeClass()
-    {
-        InputStream in = null;
-        try
-        {
-            in = getClass().getResourceAsStream("/remotable-plugins-kit-common.jar");
-            ZipInputStream zin = new ZipInputStream(in);
-            ZipEntry entry;
-            while ((entry = zin.getNextEntry()) != null)
-            {
-                if (CLASSES_TO_INCLUDE_CLASS_PATH.equals(entry.getName()))
-                {
-                    return IOUtils.toByteArray(zin);
-                }
-            }
-            throw new IllegalStateException("Couldn't find com.atlassian.plugin.remotable.kit.common.ClassesToInclude");
-        }
-        catch (IOException e)
-        {
-            throw new IllegalStateException("Couldn't read from remotable-plugins-kit-common.jar", e);
-        }
-        finally
-        {
-            IOUtils.closeQuietly(in);
-        }
-
     }
 }

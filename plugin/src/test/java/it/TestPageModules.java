@@ -4,6 +4,7 @@ import com.atlassian.plugin.remotable.test.*;
 import com.atlassian.pageobjects.page.AdminHomePage;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
+import org.hamcrest.Matchers;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -19,6 +20,7 @@ public class TestPageModules extends AbstractRemotablePluginTest
         product.visit(LoginPage.class).login("betty", "betty", HomePage.class);
         RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "remotePluginGeneral",
                                                                "Remotable Plugin app1 General Link");
+
         assertTrue(page.isRemotePluginLinkPresent());
         RemotePluginTestPage remotePluginTest = page.clickRemotePluginLink();
         assertTrue(remotePluginTest.getTitle().contains("Remotable Plugin app1 General"));
@@ -26,8 +28,10 @@ public class TestPageModules extends AbstractRemotablePluginTest
         assertEquals("Success", remotePluginTest.getMessage());
         assertEquals(OAuthUtils.getConsumerKey(), remotePluginTest.getConsumerKey());
         assertTrue(remotePluginTest.getIframeQueryParams().containsKey("cp"));
-        assertEquals("Betty Admin", remotePluginTest.getFullName());
+        assertNotNull(remotePluginTest.getFullName());
+        assertThat(remotePluginTest.getFullName().toLowerCase(), Matchers.containsString("betty"));
         assertEquals("betty", remotePluginTest.getUserId());
+        assertTrue(remotePluginTest.getLocale().startsWith("en-"));
 
         // timezone should be the same as the default one
         assertEquals(TimeZone.getDefault().getRawOffset(), TimeZone.getTimeZone(remotePluginTest.getTimeZone()).getRawOffset());
@@ -58,7 +62,8 @@ public class TestPageModules extends AbstractRemotablePluginTest
                 "Remotable Plugin app1 Dialog");
         assertTrue(page.isRemotePluginLinkPresent());
         RemotePluginTestPage remotePluginTest = page.clickRemotePluginLink();
-        assertEquals("Betty Admin", remotePluginTest.getFullName());
+        assertNotNull(remotePluginTest.getFullName());
+        assertThat(remotePluginTest.getFullName().toLowerCase(), Matchers.containsString("betty"));
 
         // Exercise the dialog's submit button.
         RemotePluginDialog dialog = product.getPageBinder().bind(RemotePluginDialog.class, remotePluginTest);
@@ -105,11 +110,46 @@ public class TestPageModules extends AbstractRemotablePluginTest
                 .addConfigurePage("page", "Page", "/page", "hello-world-page.mu")
                 .start();
 
-        assertTrue(product.visit(LoginPage.class).login("betty", "betty",
-                PluginManagerPage.class)
-            .configurePlugin("configurePage", "page", RemotePluginTestPage.class)
+        // fixme: jira page objects don't redirect properly to next page
+        product.visit(LoginPage.class).login("betty", "betty",
+                HomePage.class);
+        assertTrue(product.visit(PluginManagerPage.class).configurePlugin("configurePage", "page", RemotePluginTestPage.class)
             .isLoaded());
 
         runner.stop();
+    }
+
+    @Test
+    public void testAmd()
+    {
+        product.visit(LoginPage.class).login("betty", "betty", HomePage.class);
+        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "amdTest",
+            "AMD Test app1 General");
+        assertTrue(page.isRemotePluginLinkPresent());
+        RemotePluginTestPage remotePluginTest = page.clickRemotePluginLink();
+
+        assertEquals("true", remotePluginTest.waitForValue("amd-env"));
+        assertEquals("true", remotePluginTest.waitForValue("amd-request"));
+        assertEquals("true", remotePluginTest.waitForValue("amd-bigpipe"));
+        assertEquals("true", remotePluginTest.waitForValue("amd-dialog"));
+    }
+
+    @Test
+    public void testBigPipe()
+    {
+        product.visit(LoginPage.class).login("betty", "betty", HomePage.class);
+        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "bigPipeTest",
+            "BigPipe Test app1 General");
+        assertTrue(page.isRemotePluginLinkPresent());
+        RemotePluginTestPage remotePluginTest = page.clickRemotePluginLink();
+
+        assertEquals("my bigpipe html 1", remotePluginTest.waitForValueBySelector("#html-1 span"));
+        assertEquals("my bigpipe html 2", remotePluginTest.waitForValueBySelector("#html-2 span"));
+
+        assertEquals("my bigpipe data 1", remotePluginTest.waitForValue("data-1"));
+        assertEquals("my bigpipe data 2", remotePluginTest.waitForValue("data-2"));
+
+        assertEquals("my bigpipe xhr data 1", remotePluginTest.waitForValue("xhr-data-1"));
+        assertEquals("my bigpipe xhr data 2", remotePluginTest.waitForValue("xhr-data-2"));
     }
 }

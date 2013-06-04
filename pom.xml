@@ -11,7 +11,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.atlassian.plugins</groupId>
     <artifactId>remotable-plugins-parent</artifactId>
-    <version>0.6-SNAPSHOT</version>
+    <version>0.8.9999-SNAPSHOT</version>
 
     <organization>
         <name>Atlassian</name>
@@ -27,9 +27,6 @@
         <module>descriptor-common</module>
         <module>host-common</module>
         <module>sisu-extender</module>
-        <module>kit-common</module>
-        <module>servlet-kit</module>
-        <module>ringojs-kit</module>
         <module>test-plugin</module>
         <module>plugin</module>
         <module>smoke-tests</module>
@@ -66,11 +63,24 @@
             <plugin>
                 <groupId>com.atlassian.maven.plugins</groupId>
                 <artifactId>maven-amps-plugin</artifactId>
-                <version>4.1.4</version>
+                <version>4.1.5</version>
                 <extensions>true</extensions>
                 <configuration>
                     <extractDependencies>true</extractDependencies>
                     <skipManifestValidation>true</skipManifestValidation>
+
+                    <!-- disable as much as we can -->
+                    <skipAllPrompts>true</skipAllPrompts>
+                    <enableDevToolbox>false</enableDevToolbox>
+                    <enableFastdev>false</enableFastdev>
+                    <enablePde>false</enablePde>
+                    <compressResources>false</compressResources>
+                    <systemPropertyVariables>
+                        <upm.pac.disable>true</upm.pac.disable>
+                        <upm.plugin.requests.disable>true</upm.plugin.requests.disable>
+                        <upm.email.notifications.disable>true</upm.email.notifications.disable>
+                        <upm.auto.update.enable>false</upm.auto.update.enable>
+                    </systemPropertyVariables>
                 </configuration>
             </plugin>
             <plugin>
@@ -380,26 +390,32 @@
     </scm>
 
     <properties>
-        <api.version>0.6</api.version>
-        <api.artifact.version>${api.version}.7</api.artifact.version>
+        <!-- If you change this, make sure you upgrade and release new versions of every plugin bundled in the
+             OBR, otherwise upgrades won't work correctly -->
+        <api.version>0.8</api.version>
+        <api.artifact.version>${api.version}.2</api.artifact.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <xvfb.enable>true</xvfb.enable>
         <atlassian.selenium.version>2.1.0-m12</atlassian.selenium.version>
         <!-- Confluence 4.2.8 uses this version, JIRA 5.0.7 uses version 2.1.0-m14 -->
-        <refapp.version>2.18.0-m2</refapp.version>
-        <jira.version>6.0-OD-04</jira.version>
+        <refapp.version>3.0.0-m7</refapp.version>
+        <jira.version>6.0-rc1</jira.version>
         <jira.data.version>${jira.version}</jira.data.version>
-        <jira.client.version>2.0.0-m7</jira.client.version>
-        <confluence.client.version>0.9.0</confluence.client.version>
-        <sisu.version>0.0.0.atlassian4</sisu.version>
-        <guice.version>3.0</guice.version>
-        <confluence.version>4.2.13</confluence.version>
+        <jira.client.api.version>2.0</jira.client.api.version>
+        <jira.client.version>2.0.0-m16</jira.client.version>
+        <confluence.client.version>0.9.8</confluence.client.version>
+        <sisu.version>0.0.0.atlassian6</sisu.version>
+        <sisu.guice.version>3.1.3</sisu.guice.version>
+        <confluence.version>5.2-m11</confluence.version>
+
         <confluence.data.version>${confluence.version}</confluence.data.version>
         <applinks.version>3.5.1</applinks.version>
-        <speakeasy.version>1.3.19</speakeasy.version>
+        <speakeasy.version>1.3.20</speakeasy.version>
         <sal.version>2.7.0</sal.version>
         <plugins.api.version>2.10</plugins.api.version>
-        <plugins.version>3.0.0-m5</plugins.version>
+        <plugins.version>3.0.0-m34</plugins.version>
+
+        <webfragments.version>3.0.0-m7</webfragments.version>
         <rest.version>2.3.0</rest.version>
         <ao.version>0.19.14</ao.version>
         <oauth.version>1.3.0</oauth.version>
@@ -419,9 +435,11 @@
         <spring.version>2.5.6</spring.version>
         <atlassian-util-concurrent.version>2.4.0</atlassian-util-concurrent.version>
         <atlassian-httpclient.version>${webhooks.version}</atlassian-httpclient.version>
-        <webhooks.version>0.13.5</webhooks.version>
-        <webhooks.api.version>0.13</webhooks.api.version>
+        <webhooks.version>0.15.0-m4</webhooks.version>
+        <webhooks.api.version>0.15</webhooks.api.version>
         <httpclient.api.version>${webhooks.api.version}</httpclient.api.version>
-        <gatekeeper.property>5</gatekeeper.property>
+        <servletkit.version>0.7.3</servletkit.version>
+        <ringojskit.version>0.7.2</ringojskit.version>
+        <gatekeeper.property>7</gatekeeper.property>
     </properties>
 </project>

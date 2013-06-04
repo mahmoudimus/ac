@@ -7,23 +7,24 @@ import com.atlassian.jira.pageobjects.pages.DashboardPage;
 import com.atlassian.jira.pageobjects.pages.project.BrowseProjectPage;
 import com.atlassian.jira.pageobjects.project.ProjectConfigTabs;
 import com.atlassian.jira.pageobjects.project.summary.ProjectSummaryPageTab;
+import com.atlassian.jira.plugin.issuenav.pageobjects.IssueDetailPage;
 import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory;
 import com.atlassian.jira.testkit.client.Backdoor;
 import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.pageobjects.TestedProductFactory;
+import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
-import com.atlassian.plugin.remotable.test.RemotePluginAwarePage;
 import com.atlassian.plugin.remotable.junit.HtmlDumpRule;
+import com.atlassian.plugin.remotable.test.RemotePluginAwarePage;
 import com.atlassian.plugin.remotable.test.RemotePluginDialog;
 import com.atlassian.plugin.remotable.test.RemotePluginEmbeddedTestPage;
 import com.atlassian.plugin.remotable.test.RemotePluginTestPage;
+import com.atlassian.plugin.remotable.test.jira.AbstractRemotablePluginProjectTab;
 import com.atlassian.plugin.remotable.test.jira.JiraGeneralPage;
-import com.atlassian.plugin.remotable.test.jira.JiraIssueNavigatorPage;
 import com.atlassian.plugin.remotable.test.jira.JiraOps;
 import com.atlassian.plugin.remotable.test.jira.JiraProjectAdministrationPanel;
 import com.atlassian.plugin.remotable.test.jira.JiraProjectAdministrationTab;
-import com.atlassian.plugin.remotable.test.jira.JiraRemotablePluginProjectTab;
 import com.atlassian.plugin.remotable.test.jira.JiraViewIssuePage;
 import com.atlassian.plugin.remotable.test.jira.JiraViewIssuePageWithRemotePluginIssueTab;
 import com.atlassian.plugin.remotable.test.jira.PlainTextView;
@@ -41,11 +42,13 @@ import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.MethodRule;
+import org.openqa.selenium.By;
 
 import java.net.URI;
 import java.rmi.RemoteException;
 import java.util.concurrent.Callable;
 
+import static org.hamcrest.Matchers.startsWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -126,18 +129,20 @@ public class TestJira
     {
         loginAsAdmin();
         // ensure one issue
-        jiraOps.createIssue(project.getKey(), "Test issue for dialog action cog test");
-        RemotePluginTestPage page = product.getPageBinder().navigateToAndBind(JiraIssueNavigatorPage.class)
-                .getResults()
-                .nextIssue()
-                .openActionsDialog()
-                .queryAndSelect("Test Issue Action", RemotePluginTestPage.class, "jira-issueAction");
-        RemotePluginDialog dialog = product.getPageBinder().bind(RemotePluginDialog.class, page);
-                assertFalse(dialog.wasSubmitted());
-                assertEquals(false, dialog.submit());
-                assertTrue(dialog.wasSubmitted());
-                assertEquals(true, dialog.submit());
+        RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Test issue for dialog action cog test");
 
+        RemotePluginTestPage page = product.getPageBinder()
+                .navigateToAndBind(IssueDetailPage.class, issue.getKey())
+                .details()
+                .openFocusShifter()
+                .queryAndSelect("Test Issue Action", RemotePluginTestPage.class, "jira-issueAction");
+
+        RemotePluginDialog dialog = product.getPageBinder().bind(RemotePluginDialog.class, page);
+
+        assertFalse(dialog.wasSubmitted());
+        assertEquals(false, dialog.submit());
+        assertTrue(dialog.wasSubmitted());
+        assertEquals(true, dialog.submit());
     }
 
     @Test
@@ -149,10 +154,28 @@ public class TestJira
             public Object call() throws Exception
             {
                 RemotePluginEmbeddedTestPage page = product.visit(BrowseProjectPage.class, project.getKey())
-                                                           .openTab(JiraRemotablePluginProjectTab.class)
+                                                           .openTab(AppProjectTabPage.class)
                                                            .getEmbeddedPage();
 
                 assertEquals("Success", page.getMessage());
+                return null;
+            }
+        });
+
+    }
+
+    @Test
+    public void testAnonymouslyProjectTabWithRestClient() throws Exception
+    {
+        testAnonymous(new Callable()
+        {
+            @Override
+            public Object call() throws Exception
+            {
+                RemotePluginEmbeddedTestPage page = product.visit(BrowseProjectPage.class, project.getKey())
+                        .openTab(RestClientProjectTabPage.class)
+                        .getEmbeddedPage();
+                assertEquals("Success", page.getValue("rest-call-status"));
                 return null;
             }
         });
@@ -207,10 +230,28 @@ public class TestJira
             {
                 ProjectSummaryPageTab page =
                         product.visit(ProjectSummaryPageTab.class, project.getKey());
-                assertThat(page.getPanelHeadingTexts(), hasItem("Remote Project Config Panel"));
                 JiraProjectAdministrationPanel webPanel = product.visit(JiraProjectAdministrationPanel.class,
                         EMBEDDED_PROJECT_CONFIG_PANEL_ID, project.getKey());
                 assertEquals("Success", webPanel.getMessage());
+                return null;
+            }
+        });
+    }
+
+    @Test
+    public void testIFrameIsNotPointingToLocalhost() throws Exception
+    {
+        testLoggedInAsAdmin(new Callable()
+        {
+            @Override
+            public Object call() throws Exception
+            {
+                final String baseJiraUrl = product.getProductInstance().getBaseUrl();
+                final RemotePluginEmbeddedTestPage page = product.visit(BrowseProjectPage.class, project.getKey())
+                        .openTab(AppProjectTabPage.class)
+                        .getEmbeddedPage();
+                final String iFrameSrc = page.getContainerDiv().findElement(By.tagName("iframe")).getAttribute("src");
+                assertThat(iFrameSrc, startsWith(baseJiraUrl));
                 return null;
             }
         });
@@ -227,13 +268,14 @@ public class TestJira
             final String serverTimeZone = serverTime.getZone().getID();
 
             // create test user
-            final String testUser = "marcin";
+            final String testUser = "betty";
             backdoor.usersAndGroups().addUserEvenIfUserExists(testUser);
             backdoor.usersAndGroups().addUserToGroup(testUser, "jira-administrators");
-            loginAs(testUser, testUser);
+//            loginAs(testUser, testUser);
 
             // test with a custom timezone
             final String expectedTimezone = "Africa/Abidjan";
+            product.visit(LoginPage.class).login("betty", "betty", HomePage.class);
             testTimezoneImpl(expectedTimezone, expectedTimezone, testUser);
 
             // test with the default timezone
@@ -241,7 +283,7 @@ public class TestJira
         }
         finally
         {
-            restClient.destroy();
+            restClient.close();
         }
     }
 
@@ -318,5 +360,29 @@ public class TestJira
     {
         loginAsAdmin();
         runnable.call();
+    }
+
+    private void testAnonymous(Callable runnable) throws Exception
+    {
+        logout();
+        runnable.call();
+    }
+
+    public static final class AppProjectTabPage extends AbstractRemotablePluginProjectTab
+    {
+
+        public AppProjectTabPage(final String projectKey)
+        {
+            super(projectKey, "project-tab-jira-remotePluginProjectTab");
+        }
+    }
+
+    public static final class RestClientProjectTabPage extends AbstractRemotablePluginProjectTab
+    {
+
+        public RestClientProjectTabPage(final String projectKey)
+        {
+            super(projectKey, "project-tab-jira-restClientProjectTab");
+        }
     }
 }

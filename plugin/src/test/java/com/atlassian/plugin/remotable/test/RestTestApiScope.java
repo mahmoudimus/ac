@@ -1,26 +1,26 @@
 package com.atlassian.plugin.remotable.test;
 
+import com.atlassian.plugin.remotable.spi.permission.AbstractPermission;
 import com.atlassian.plugin.remotable.spi.permission.scope.ApiResourceInfo;
 import com.atlassian.plugin.remotable.spi.permission.scope.ApiScope;
 import com.atlassian.plugin.remotable.spi.permission.scope.RestApiScopeHelper;
+import com.google.common.collect.ImmutableSet;
 
 import javax.servlet.http.HttpServletRequest;
 
+import static com.atlassian.plugin.remotable.api.InstallationMode.LOCAL;
+import static com.atlassian.plugin.remotable.api.InstallationMode.REMOTE;
 import static java.util.Arrays.asList;
 
-/**
- *
- */
-public class RestTestApiScope implements ApiScope
+public final class RestTestApiScope extends AbstractPermission implements ApiScope
 {
     private final RestApiScopeHelper validator = new RestApiScopeHelper(asList(
-        new RestApiScopeHelper.RestScope("remoteplugintest", asList("latest", "1"), "/user", asList("GET"))
+            new RestApiScopeHelper.RestScope("remoteplugintest", asList("latest", "1"), "/user", asList("GET"))
     ));
 
-    @Override
-    public String getKey()
+    public RestTestApiScope()
     {
-        return "resttest";
+        super("resttest", ImmutableSet.of(LOCAL, REMOTE));
     }
 
     @Override
@@ -33,17 +33,5 @@ public class RestTestApiScope implements ApiScope
     public Iterable<ApiResourceInfo> getApiResourceInfos()
     {
         return validator.getApiResourceInfos();
-    }
-
-    @Override
-    public String getName()
-    {
-        return "Rest Test";
-    }
-
-    @Override
-    public String getDescription()
-    {
-        return "A test resource";
     }
 }

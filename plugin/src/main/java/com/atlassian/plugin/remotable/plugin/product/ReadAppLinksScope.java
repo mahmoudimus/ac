@@ -1,21 +1,28 @@
 package com.atlassian.plugin.remotable.plugin.product;
 
+import com.atlassian.plugin.remotable.spi.Permissions;
+import com.atlassian.plugin.remotable.spi.permission.AbstractPermission;
 import com.atlassian.plugin.remotable.spi.permission.scope.ApiResourceInfo;
+import com.atlassian.plugin.remotable.spi.permission.scope.ApiScope;
 import com.atlassian.plugin.remotable.spi.permission.scope.RestApiScopeHelper;
+import com.google.common.collect.ImmutableSet;
 
 import javax.servlet.http.HttpServletRequest;
 
+import static com.atlassian.plugin.remotable.api.InstallationMode.LOCAL;
+import static com.atlassian.plugin.remotable.api.InstallationMode.REMOTE;
 import static java.util.Arrays.asList;
 
 /**
  * Cross-product API Scope for retrieving the host application's configured Application Links.
  */
-public class ReadAppLinksScope extends AbstractMutableApiScope
+public final class ReadAppLinksScope extends AbstractPermission implements ApiScope
 {
     private final RestApiScopeHelper scopeHelper;
 
     public ReadAppLinksScope()
     {
+        super(Permissions.READ_APP_LINKS, ImmutableSet.of(LOCAL, REMOTE));
         scopeHelper = new RestApiScopeHelper(asList(
                 new RestApiScopeHelper.RestScope("applinks", asList("1.0", "latest"), "/applicationlink", asList("get")),
                 new RestApiScopeHelper.RestScope("applinks", asList("1.0", "latest"), "/applicationlinkInfo", asList("get")),
@@ -25,12 +32,6 @@ public class ReadAppLinksScope extends AbstractMutableApiScope
                 new RestApiScopeHelper.RestScope("applinks", asList("1.0", "latest"), "/manifest", asList("get")),
                 new RestApiScopeHelper.RestScope("applinks", asList("1.0", "latest"), "/type/entity", asList("get"))
         ));
-    }
-
-    @Override
-    public String getKey()
-    {
-        return "read_app_links";
     }
 
     @Override

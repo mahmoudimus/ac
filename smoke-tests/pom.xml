@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.atlassian.plugins</groupId>
         <artifactId>remotable-plugins-parent</artifactId>
-        <version>0.6-SNAPSHOT</version>
+        <version>0.8.9999-SNAPSHOT</version>
     </parent>
 
 
@@ -65,14 +65,9 @@
             <version>${api.artifact.version}</version>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>remotable-plugins-kit-common</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>remotable-plugins-ringojs-kit</artifactId>
-            <version>${project.version}</version>
+            <groupId>com.atlassian.pluginkit</groupId>
+            <artifactId>ringojs-kit</artifactId>
+            <version>${ringojskit.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>

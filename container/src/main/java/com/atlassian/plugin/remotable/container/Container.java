@@ -2,18 +2,14 @@ package com.atlassian.plugin.remotable.container;
 
 import com.atlassian.activeobjects.spi.DataSourceProvider;
 import com.atlassian.event.api.EventPublisher;
-import com.atlassian.plugin.factories.PluginFactory;
 import com.atlassian.plugin.DefaultModuleDescriptorFactory;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.PluginController;
 import com.atlassian.plugin.event.PluginEventManager;
 import com.atlassian.plugin.event.impl.DefaultPluginEventManager;
+import com.atlassian.plugin.factories.PluginFactory;
 import com.atlassian.plugin.hostcontainer.DefaultHostContainer;
-import com.atlassian.plugin.loaders.BundledPluginLoader;
-import com.atlassian.plugin.loaders.DirectoryScanner;
-import com.atlassian.plugin.loaders.FileListScanner;
-import com.atlassian.plugin.loaders.PluginLoader;
-import com.atlassian.plugin.loaders.ScanningPluginLoader;
+import com.atlassian.plugin.loaders.*;
 import com.atlassian.plugin.loaders.classloading.Scanner;
 import com.atlassian.plugin.manager.DefaultPluginManager;
 import com.atlassian.plugin.manager.store.MemoryPluginPersistentStateStore;
@@ -31,38 +27,29 @@ import com.atlassian.plugin.osgi.hostcomponents.ComponentRegistrar;
 import com.atlassian.plugin.osgi.hostcomponents.ContextClassLoaderStrategy;
 import com.atlassian.plugin.osgi.hostcomponents.HostComponentProvider;
 import com.atlassian.plugin.osgi.module.BeanPrefixModuleFactory;
-import com.atlassian.plugin.remotable.api.service.EmailSender;
-import com.atlassian.plugin.remotable.api.service.HttpResourceMounter;
-import com.atlassian.plugin.remotable.api.service.RenderContext;
-import com.atlassian.plugin.remotable.api.service.RequestContext;
-import com.atlassian.plugin.remotable.api.service.SignedRequestHandler;
+import com.atlassian.plugin.remotable.api.service.*;
 import com.atlassian.plugin.remotable.api.service.http.HostHttpClient;
 import com.atlassian.plugin.remotable.api.service.http.HostXmlRpcClient;
-import com.atlassian.plugin.remotable.api.service.http.bigpipe.BigPipe;
+import com.atlassian.plugin.remotable.api.service.http.bigpipe.BigPipeManager;
+import com.atlassian.plugin.remotable.api.service.license.RemotablePluginLicenseRetriever;
 import com.atlassian.plugin.remotable.container.ao.ContainerDataSourceProvider;
 import com.atlassian.plugin.remotable.container.internal.EnvironmentFactory;
 import com.atlassian.plugin.remotable.container.service.ContainerEmailSender;
 import com.atlassian.plugin.remotable.container.service.ContainerHttpResourceMounterServiceFactory;
 import com.atlassian.plugin.remotable.container.service.OAuthSignedRequestHandlerServiceFactory;
 import com.atlassian.plugin.remotable.container.service.event.ContainerEventPublisher;
+import com.atlassian.plugin.remotable.container.service.license.ContainerRemotablePluginLicenseRetriever;
 import com.atlassian.plugin.remotable.container.service.plugins.NoOpWebResourceManager;
-import com.atlassian.plugin.remotable.container.service.sal.ContainerApplicationProperties;
-import com.atlassian.plugin.remotable.container.service.sal.ContainerApplicationPropertiesServiceFactory;
-import com.atlassian.plugin.remotable.container.service.sal.ContainerI18nResolver;
-import com.atlassian.plugin.remotable.container.service.sal.ContainerLocaleResolver;
-import com.atlassian.plugin.remotable.container.service.sal.ContainerUserManagerServiceFactory;
-import com.atlassian.plugin.remotable.container.service.sal.JdbcPluginSettingsFactory;
-import com.atlassian.plugin.remotable.container.service.sal.ResourceBundleResolverImpl;
+import com.atlassian.plugin.remotable.container.service.sal.*;
 import com.atlassian.plugin.remotable.container.util.ZipWriter;
 import com.atlassian.plugin.remotable.descriptor.DescriptorAccessor;
-import com.atlassian.plugin.remotable.host.common.descriptor.DescriptorPermissionsReader;
 import com.atlassian.plugin.remotable.descriptor.PolyglotDescriptorAccessor;
+import com.atlassian.plugin.remotable.host.common.descriptor.DescriptorPermissionsReader;
 import com.atlassian.plugin.remotable.host.common.service.RenderContextServiceFactory;
 import com.atlassian.plugin.remotable.host.common.service.RequestContextServiceFactory;
 import com.atlassian.plugin.remotable.host.common.service.http.HostHttpClientConsumerServiceFactory;
 import com.atlassian.plugin.remotable.host.common.service.http.HostHttpClientServiceFactory;
 import com.atlassian.plugin.remotable.host.common.service.http.HostXmlRpcClientServiceFactory;
-import com.atlassian.plugin.remotable.host.common.service.http.bigpipe.BigPipeImpl;
 import com.atlassian.plugin.remotable.host.common.service.http.bigpipe.BigPipeServiceFactory;
 import com.atlassian.plugin.remotable.host.common.util.BundleLocator;
 import com.atlassian.plugin.remotable.host.common.util.BundleUtil;
@@ -100,6 +87,7 @@ import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Sets.newHashSet;
 import static java.lang.Boolean.FALSE;
 import static java.util.Arrays.asList;
+import static java.util.Collections.singleton;
 
 public final class Container
 {
@@ -229,11 +217,12 @@ public final class Container
         hostComponents.put(HostHttpClient.class, hostHttpClientServiceFactory);
         hostComponents.put(HostXmlRpcClient.class, hostXmlRpcClientHostServiceFactory);
         hostComponents.put(EmailSender.class, new HostHttpClientConsumerServiceFactory<EmailSender>(hostHttpClientServiceFactory, ContainerEmailSender.class));
+        hostComponents.put(RemotablePluginLicenseRetriever.class, new HostHttpClientConsumerServiceFactory<RemotablePluginLicenseRetriever>(hostHttpClientServiceFactory, ContainerRemotablePluginLicenseRetriever.class));
         hostComponents.put(LocaleResolver.class, localeResolver);
         hostComponents.put(I18nResolver.class, i18nResolver);
         hostComponents.put(WebResourceManager.class, webReourceManager);
         hostComponents.put(RenderContext.class, renderContextServiceFactory);
-        hostComponents.put(BigPipe.class, bigPipeServiceFactory);
+        hostComponents.put(BigPipeManager.class, bigPipeServiceFactory);
 
         hostComponents.put(TransactionTemplate.class, new NoOpTransactionTemplate());
         hostComponents.put(UserManager.class, new ContainerUserManagerServiceFactory(requestContextServiceFactory));
@@ -301,6 +290,11 @@ public final class Container
 
     private Set<URI> findHostProducts()
     {
+        String hostBaseUrl = System.getProperty("hostBaseUrl");
+        if (hostBaseUrl != null)
+        {
+            return singleton(URI.create(hostBaseUrl));
+        }
         Set<URI> found = newHashSet();
         for (URI host : AUTOREGISTER_HOSTS)
         {

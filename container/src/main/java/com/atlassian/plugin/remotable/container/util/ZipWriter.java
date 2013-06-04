@@ -59,8 +59,7 @@ public class ZipWriter
                         "Bundle-ManifestVersion: 2\n", zos);
 
                 addJarContents("ringojs.jar", zos);
-                addJarContents("remotable-plugins-kit-common.jar", zos);
-                addJarContents("remotable-plugins-ringojs-kit.jar", zos);
+                addJarContents("ringojs-kit.jar", zos);
             }
         }
         finally
@@ -118,7 +117,7 @@ public class ZipWriter
         }
         catch (IOException e)
         {
-            throw new RuntimeException("Unable to add kit-common to jar", e);
+            throw new RuntimeException("Unable to add files to jar", e);
         }
         finally
         {
@@ -147,7 +146,8 @@ public class ZipWriter
             }
             else
             {
-                if (excludes.contains(files[i].getName()))
+                if (excludes.contains(files[i].getName()) ||
+                    files[i].getName().startsWith("container-"))
                 {
                     continue;
                 }

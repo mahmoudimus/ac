@@ -2,12 +2,15 @@ package com.atlassian.plugin.remotable.host.common.service;
 
 import com.atlassian.plugin.remotable.api.service.RenderContext;
 import com.atlassian.plugin.remotable.api.service.SignedRequestHandler;
-import com.atlassian.plugin.remotable.api.service.http.bigpipe.BigPipe;
+import com.atlassian.plugin.remotable.api.service.http.bigpipe.BigPipeManager;
+import com.atlassian.plugin.remotable.api.service.http.bigpipe.ConsumableBigPipe;
 import com.atlassian.plugin.remotable.host.common.service.http.DefaultRequestContext;
 import com.atlassian.plugin.util.PluginUtils;
 import com.atlassian.sal.api.message.I18nResolver;
 import com.atlassian.sal.api.message.LocaleResolver;
+import com.google.common.base.Function;
 
+import javax.annotation.Nullable;
 import java.net.URI;
 import java.util.Collections;
 import java.util.HashMap;
@@ -24,19 +27,19 @@ public class DefaultRenderContext implements RenderContext
     private SignedRequestHandler signedRequestHandler;
     private final LocaleResolver localeResolver;
     private final I18nResolver i18nResolver;
-    private final BigPipe bigPipe;
+    private final BigPipeManager bigPipeManager;
 
     public DefaultRenderContext(DefaultRequestContext requestContext,
                                 SignedRequestHandler signedRequestHandler,
                                 LocaleResolver localeResolver,
                                 I18nResolver i18nResolver,
-                                BigPipe bigPipe)
+                                BigPipeManager bigPipeManager)
     {
         this.requestContext = requestContext;
         this.signedRequestHandler = signedRequestHandler;
         this.localeResolver = localeResolver;
         this.i18nResolver = i18nResolver;
-        this.bigPipe = bigPipe;
+        this.bigPipeManager = bigPipeManager;
     }
 
     @Override
@@ -98,13 +101,20 @@ public class DefaultRenderContext implements RenderContext
     @Override
     public String getBigPipeRequestId()
     {
-        return bigPipe.getRequestId();
+        return bigPipeManager.getConsumableBigPipe().map(new Function<ConsumableBigPipe, String>()
+        {
+            @Override
+            public String apply(ConsumableBigPipe input)
+            {
+                return input.getRequestId();
+            }
+        }).getOrNull();
     }
 
     @Override
     public boolean getBigPipeActivated()
     {
-        return bigPipe.isActivated();
+        return !bigPipeManager.getConsumableBigPipe().isEmpty();
     }
 
     @Override

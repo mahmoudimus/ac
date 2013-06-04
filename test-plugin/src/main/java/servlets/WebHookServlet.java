@@ -1,11 +1,9 @@
 package servlets;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 import javax.inject.Named;
-import javax.inject.Singleton;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -14,6 +12,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+
+import static util.JsonUtils.parseObject;
 
 /**
  * Receives and stores web hooks
@@ -45,25 +45,13 @@ public class WebHookServlet extends HttpServlet
         JSONArray result = new JSONArray();
         for (final Publication pub : publications)
         {
-            result.put(new JSONObject(new HashMap<String, Object>()
+            result.add(new JSONObject(new HashMap<String, Object>()
             {{
                     put("event", pub.eventIdentifier);
-                    try
-                    {
-                        put("body", new JSONObject(pub.body));
-                    } catch (JSONException e)
-                    {
-                        throw new ServletException(e);
-                    }
+                    put("body", parseObject(pub.body));
                 }}));
         }
-        try
-        {
-            resp.getWriter().write(result.toString(2));
-        } catch (JSONException e)
-        {
-            throw new ServletException(e);
-        }
+        resp.getWriter().write(result.toJSONString());
     }
 
     private static class Publication

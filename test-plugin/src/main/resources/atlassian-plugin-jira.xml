@@ -1,12 +1,10 @@
 <application key="jira">
     <permissions>
         <permission>read_users_and_groups</permission>
+        <permission>browse_projects</permission>
     </permissions>
 
     <webhook key="wh-plugin_enabled" event="plugin_enabled" url="/webHook/plugin_enabled" />
-    <webhook key="wh-issue_created" event="issue_created" url="/webHook/issue_created" />
-    <webhook key="wh-issue_updated" event="issue_updated" url="/webHook/issue_updated" />
-    <webhook key="wh-issue_commented" event="issue_commented" url="/webHook/issue_commented" />
 
     <issue-panel-page key="remotePluginIssuePanelPage" name="Remotable Plugin app1 Issue Page" url="/myAdmin" />
     <issue-panel-page key="onlyBettyIssuePanelPage" name="Only Betty Panel" url="/myAdmin">
@@ -26,6 +24,8 @@
     <remote-search-request-view key="remotePluginSearchRequestView" name="Raw Keys" url="/search/keys"/>
 
     <project-tab-page key="remotePluginProjectTab" name="app1" url="/myAdmin" />
+
+    <project-tab-page key="restClientProjectTab" name="tab using rest client" url="/anonymousRestClient"/>
 
     <project-tab-page key="onlyBettyProjectTabPage" name="Only Betty" url="/myAdmin">
         <conditions>

@@ -1,12 +1,16 @@
 package com.atlassian.plugin.remotable.plugin.module.page.dialog;
 
-import com.atlassian.plugin.remotable.plugin.module.page.RemotePageDescriptorCreator;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
+import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.remotable.plugin.integration.plugins.DynamicDescriptorRegistration;
+import com.atlassian.plugin.remotable.plugin.module.page.RemotePageDescriptorCreator;
+import com.atlassian.plugin.remotable.plugin.util.node.Dom4jNode;
 import com.atlassian.util.concurrent.NotNull;
 import org.dom4j.Element;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Generates a dialog page with a servlet containing an iframe and a web item
@@ -19,11 +23,13 @@ public class DialogPageModuleDescriptor extends AbstractModuleDescriptor<Void>
     private DynamicDescriptorRegistration.Registration registration;
 
     public DialogPageModuleDescriptor(
+            ModuleFactory moduleFactory,
             DynamicDescriptorRegistration dynamicDescriptorRegistration,
             RemotePageDescriptorCreator remotePageDescriptorCreator)
     {
-        this.dynamicDescriptorRegistration = dynamicDescriptorRegistration;
-        this.remotePageDescriptorBuilder = remotePageDescriptorCreator.newBuilder()
+        super(moduleFactory);
+        this.dynamicDescriptorRegistration = checkNotNull(dynamicDescriptorRegistration);
+        this.remotePageDescriptorBuilder = checkNotNull(remotePageDescriptorCreator).newBuilder()
                 .setTemplateSuffix("-dialog")
                 .setWebItemStyleClass("ap-dialog");
 
@@ -47,7 +53,7 @@ public class DialogPageModuleDescriptor extends AbstractModuleDescriptor<Void>
     {
         super.enabled();
         this.registration = dynamicDescriptorRegistration.registerDescriptors(getPlugin(),
-                remotePageDescriptorBuilder.build(getPlugin(), descriptor));
+                remotePageDescriptorBuilder.build(getPlugin(), new Dom4jNode(descriptor)));
     }
 
     @Override

@@ -6,7 +6,9 @@ import com.atlassian.plugin.elements.ResourceDescriptor;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.remotable.plugin.DefaultRemotablePluginAccessorFactory;
 import com.atlassian.plugin.remotable.plugin.UserPreferencesRetriever;
+import com.atlassian.plugin.remotable.plugin.license.LicenseRetriever;
 import com.atlassian.plugin.remotable.plugin.module.page.PageInfo;
+import com.atlassian.plugin.remotable.plugin.util.LocaleHelper;
 import com.atlassian.plugin.remotable.spi.PermissionDeniedException;
 import com.atlassian.plugin.remotable.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.remotable.spi.module.IFrameContext;
@@ -14,6 +16,7 @@ import com.atlassian.plugin.remotable.spi.module.IFrameRenderer;
 import com.atlassian.plugin.webresource.UrlMode;
 import com.atlassian.plugin.webresource.WebResourceManager;
 import com.atlassian.plugin.webresource.WebResourceUrlProvider;
+import com.atlassian.sal.api.message.LocaleResolver;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.atlassian.uri.Uri;
 import com.atlassian.uri.UriBuilder;
@@ -45,25 +48,30 @@ public final class IFrameRendererImpl implements IFrameRenderer
     private final WebResourceUrlProvider webResourceUrlProvider;
     private final DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory;
     private final IFrameHost iframeHost;
-    private final Plugin plugin;
+    private final Plugin acPlugin;
+    private final LicenseRetriever licenseRetriever;
+    private final LocaleHelper localeHelper;
     private final UserPreferencesRetriever userPreferencesRetriever;
 
     @Autowired
     public IFrameRendererImpl(TemplateRenderer templateRenderer,
-                              WebResourceManager webResourceManager,
-                              IFrameHost iframeHost,
-                              WebResourceUrlProvider webResourceUrlProvider,
-                              PluginRetrievalService pluginRetrievalService,
-                              DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory,
-                              UserPreferencesRetriever userPreferencesRetriever)
+            WebResourceManager webResourceManager,
+            IFrameHost iframeHost,
+            WebResourceUrlProvider webResourceUrlProvider,
+            PluginRetrievalService pluginRetrievalService,
+            DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory,
+            UserPreferencesRetriever userPreferencesRetriever, final LicenseRetriever licenseRetriever,
+            LocaleHelper localeHelper)
     {
+        this.licenseRetriever = licenseRetriever;
+        this.localeHelper = localeHelper;
         this.userPreferencesRetriever = checkNotNull(userPreferencesRetriever);
         this.remotablePluginAccessorFactory = checkNotNull(remotablePluginAccessorFactory);
         this.templateRenderer = checkNotNull(templateRenderer);
         this.webResourceManager = checkNotNull(webResourceManager);
         this.iframeHost = checkNotNull(iframeHost);
         this.webResourceUrlProvider = checkNotNull(webResourceUrlProvider);
-        this.plugin = checkNotNull(pluginRetrievalService).getPlugin();
+        this.acPlugin = checkNotNull(pluginRetrievalService).getPlugin();
     }
 
     @Override
@@ -118,8 +126,7 @@ public final class IFrameRendererImpl implements IFrameRenderer
     public String render(IFrameContext iframeContext, String extraPath, Map<String, String[]> queryParams, String remoteUser) throws IOException
     {
         webResourceManager.requireResourcesForContext("remotable-plugins-iframe");
-        RemotablePluginAccessor remotablePluginAccessor = remotablePluginAccessorFactory.get(
-                iframeContext.getPluginKey());
+        RemotablePluginAccessor remotablePluginAccessor = remotablePluginAccessorFactory.get(iframeContext.getPluginKey());
 
         final URI hostUrl = iframeHost.getUrl();
         final URI iframeUrl = URI.create(iframeContext.getIframePath().getPath() + ObjectUtils.toString(extraPath));
@@ -133,6 +140,9 @@ public final class IFrameRendererImpl implements IFrameRenderer
         allParams.put("xdm_p", new String[]{"1"});
         allParams.put("cp", new String[]{iframeHost.getContextPath()});
         allParams.put("tz", new String[]{timeZone});
+        allParams.put("loc", new String[]{localeHelper.getLocaleTag()});
+        allParams.put("lic", new String[]{licenseRetriever.getLicenseStatus(iframeContext.getPluginKey()).value()});
+
         if (dialog != null && dialog.length == 1) allParams.put("dialog", dialog);
         String signedUrl = remotablePluginAccessor.signGetUrl(iframeUrl, allParams);
 
@@ -161,7 +171,7 @@ public final class IFrameRendererImpl implements IFrameRenderer
     public List<String> getJavaScriptUrls()
     {
         List<String> scripts = newArrayList();
-        ModuleDescriptor<?> moduleDescriptor = plugin.getModuleDescriptor("iframe-host-js");
+        ModuleDescriptor<?> moduleDescriptor = acPlugin.getModuleDescriptor("iframe-host-js");
         for (ResourceDescriptor descriptor : moduleDescriptor.getResourceDescriptors())
         {
             String src = webResourceUrlProvider.getStaticPluginResourceUrl(moduleDescriptor, descriptor.getName(), UrlMode.AUTO);

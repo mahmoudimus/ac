@@ -1,18 +1,21 @@
 package com.atlassian.plugin.remotable.plugin.module.confluence;
 
+import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.remotable.plugin.DefaultRemotablePluginAccessorFactory;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
 import com.atlassian.plugin.remotable.plugin.integration.plugins.DynamicDescriptorRegistration;
-import com.atlassian.plugin.webresource.WebResourceManager;
+import com.atlassian.plugin.remotable.plugin.util.node.Dom4jNode;
 import com.atlassian.util.concurrent.NotNull;
 import org.dom4j.Element;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Generates a macro that retrieves its contents via a remote call
  */
-public class RemoteMacroModuleDescriptor extends AbstractModuleDescriptor<Void>
+public final class RemoteMacroModuleDescriptor extends AbstractModuleDescriptor<Void>
 {
     private final DynamicDescriptorRegistration dynamicDescriptorRegistration;
     private final MacroModuleDescriptorCreator.Builder macroModuleDescriptorCreatorBuilder;
@@ -21,22 +24,32 @@ public class RemoteMacroModuleDescriptor extends AbstractModuleDescriptor<Void>
     private DynamicDescriptorRegistration.Registration registration;
 
     public RemoteMacroModuleDescriptor(
+            ModuleFactory moduleFactory,
             DynamicDescriptorRegistration dynamicDescriptorRegistration,
             MacroModuleDescriptorCreator macroModuleDescriptorCreator,
-            final MacroContentManager macroContentManager,
-            final DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory)
+            MacroContentManager macroContentManager,
+            DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory)
     {
-        this.dynamicDescriptorRegistration = dynamicDescriptorRegistration;
-        this.macroModuleDescriptorCreatorBuilder = macroModuleDescriptorCreator.newBuilder()
-            .setMacroFactory(new MacroModuleDescriptorCreator.MacroFactory()
+        super(moduleFactory);
+        this.dynamicDescriptorRegistration = checkNotNull(dynamicDescriptorRegistration);
+        this.macroModuleDescriptorCreatorBuilder = newMacroModuleDescriptorCreatorBuilder(
+                checkNotNull(macroModuleDescriptorCreator),
+                checkNotNull(macroContentManager),
+                checkNotNull(remotablePluginAccessorFactory));
+    }
+
+    private static MacroModuleDescriptorCreator.Builder newMacroModuleDescriptorCreatorBuilder(final MacroModuleDescriptorCreator macroModuleDescriptorCreator,
+                                                                                               final MacroContentManager macroContentManager,
+                                                                                               final DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory)
+    {
+        return macroModuleDescriptorCreator.newBuilder().setMacroFactory(new MacroModuleDescriptorCreator.MacroFactory()
+        {
+            @Override
+            public RemoteMacro create(RemoteMacroInfo remoteMacroInfo)
             {
-                @Override
-                public RemoteMacro create(RemoteMacroInfo remoteMacroInfo)
-                {
-                    return new StorageFormatMacro(remoteMacroInfo,
-                            macroContentManager, remotablePluginAccessorFactory);
-                }
-            });
+                return new StorageFormatMacro(remoteMacroInfo, macroContentManager, remotablePluginAccessorFactory);
+            }
+        });
     }
 
     @Override
@@ -57,7 +70,7 @@ public class RemoteMacroModuleDescriptor extends AbstractModuleDescriptor<Void>
     {
         super.enabled();
         this.registration = dynamicDescriptorRegistration.registerDescriptors(getPlugin(),
-                macroModuleDescriptorCreatorBuilder.build(getPlugin(), descriptor));
+                macroModuleDescriptorCreatorBuilder.build(getPlugin(), new Dom4jNode(descriptor)));
     }
 
     @Override

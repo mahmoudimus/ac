@@ -1,10 +1,11 @@
 package com.atlassian.plugin.remotable.plugin.rest;
 
+import com.atlassian.plugin.remotable.api.InstallationMode;
 import com.atlassian.plugin.remotable.plugin.descriptor.DescriptorValidator;
+import com.atlassian.plugin.remotable.plugin.settings.SettingsManager;
 import com.atlassian.plugin.remotable.spi.InstallationFailedException;
 import com.atlassian.plugin.remotable.spi.PermissionDeniedException;
 import com.atlassian.plugin.remotable.spi.RemotablePluginInstallationService;
-import com.atlassian.plugin.remotable.plugin.settings.SettingsManager;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import com.atlassian.sal.api.user.UserManager;
 import org.bouncycastle.openssl.PEMWriter;
@@ -13,7 +14,14 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ws.rs.*;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.io.StringWriter;
@@ -22,13 +30,17 @@ import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.util.Set;
 
-/**
- *
- */
-@Path("/installer")
+import static com.atlassian.plugin.remotable.plugin.rest.InstallerResource.INSTALLER_RESOURCE_PATH;
+
+@Path(INSTALLER_RESOURCE_PATH)
 public class InstallerResource
 {
+    public static final String INSTALLER_RESOURCE_PATH = "/installer";
+    public static final String ATLASSIAN_PLUGIN_REMOTABLE_SCHEMA_PATH = "/schema/atlassian-plugin-remotable";
+    public static final String ATLASSIAN_PLUGIN_SCHEMA_PATH = "/schema/atlassian-plugin";
+
     private static final Logger log = LoggerFactory.getLogger(InstallerResource.class);
+
     private final RemotablePluginInstallationService remotablePluginInstallationService;
     private final UserManager userManager;
     private final DescriptorValidator descriptorValidator;
@@ -152,12 +164,21 @@ public class InstallerResource
     }
 
     @GET
-    @Path("/schema/atlassian-plugin")
+    @Path(ATLASSIAN_PLUGIN_SCHEMA_PATH)
     @Produces("text/xml")
     @AnonymousAllowed
     public Response getPluginSchema()
     {
-        return Response.ok().entity(descriptorValidator.getPluginSchema()).build();
+        return Response.ok().entity(descriptorValidator.getPluginSchema(InstallationMode.LOCAL)).build();
+    }
+
+    @GET
+    @Path(ATLASSIAN_PLUGIN_REMOTABLE_SCHEMA_PATH)
+    @Produces("text/xml")
+    @AnonymousAllowed
+    public Response getRemotePluginSchema()
+    {
+        return Response.ok().entity(descriptorValidator.getPluginSchema(InstallationMode.REMOTE)).build();
     }
 
     @POST

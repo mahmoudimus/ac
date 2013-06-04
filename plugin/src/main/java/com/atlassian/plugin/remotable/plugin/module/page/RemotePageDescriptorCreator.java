@@ -9,6 +9,7 @@ import com.atlassian.plugin.remotable.plugin.module.IFrameRendererImpl;
 import com.atlassian.plugin.remotable.plugin.module.WebItemContext;
 import com.atlassian.plugin.remotable.plugin.module.WebItemCreator;
 import com.atlassian.plugin.remotable.plugin.integration.plugins.DescriptorToRegister;
+import com.atlassian.plugin.remotable.plugin.util.node.Node;
 import com.atlassian.plugin.remotable.spi.module.IFrameParams;
 import com.atlassian.plugin.remotable.spi.product.ProductAccessor;
 import com.atlassian.plugin.servlet.ServletModuleManager;
@@ -18,6 +19,7 @@ import com.atlassian.plugin.web.conditions.AlwaysDisplayCondition;
 import com.atlassian.sal.api.user.UserManager;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
+import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,8 +29,6 @@ import java.net.URI;
 import java.util.Map;
 
 import static com.atlassian.plugin.remotable.plugin.util.OsgiServiceUtils.getService;
-import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.getRequiredAttribute;
-import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.getRequiredUriAttribute;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -83,11 +83,11 @@ public final class RemotePageDescriptorCreator
             this.webItemCreatorBuilder.setContextParams(productAccessor.getLinkContextParams());
             this.webItemCreatorBuilder.setCondition(condition.getClass());
         }
-        public Iterable<DescriptorToRegister> build(Plugin plugin, Element descriptor)
+        public Iterable<DescriptorToRegister> build(Plugin plugin, Node descriptor)
         {
             checkNotNull(decorator);
-            String key = getRequiredAttribute(descriptor, "key");
-            final URI url = getRequiredUriAttribute(descriptor, "url");
+            String key = descriptor.get("key").asString();
+            final URI url = descriptor.get("url").asURI();
 
             URI localUrl = createLocalUrl(plugin.getKey(), key);
             DescriptorToRegister webItemModuleDescriptor = new DescriptorToRegister(webItemCreatorBuilder.build(plugin, key, localUrl, descriptor));
@@ -99,16 +99,17 @@ public final class RemotePageDescriptorCreator
 
         private DescriptorToRegister createServletDescriptor(
                 final Plugin plugin,
-                Element e,
+                Node e,
                 String key,
                 final URI path,
                 URI localUrl
         )
         {
-            final String pageName = getRequiredAttribute(e, "name");
-            Element config = e.createCopy();
+            final String pageName = e.get("name").asString();
+            Element config = DocumentHelper.createElement("servlet");
             final String moduleKey = "servlet-" + key;
             config.addAttribute("key", moduleKey);
+            config.addAttribute("system", "true");
             config.addAttribute("class", IFramePageServlet.class.getName());
             config.addElement("url-pattern").setText(localUrl + "");
             config.addElement("url-pattern").setText(localUrl + "/*");

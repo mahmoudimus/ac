@@ -13,6 +13,8 @@
         <package>com.atlassian.plugin.remotable.plugin.rest</package>
     </rest>
 
+    <web-panel key="bigPipeFooter" class="com.atlassian.plugin.remotable.plugin.product.BigPipeFooter" location="atl.footer"/>
+
     <described-module-type key="profile-page" name="User Profile Page" class="com.atlassian.plugin.remotable.plugin.module.page.ProfilePageModuleDescriptor">
         <description>
             A full-sized page that will be decorated as a page in the user's profile area.  A link will be created

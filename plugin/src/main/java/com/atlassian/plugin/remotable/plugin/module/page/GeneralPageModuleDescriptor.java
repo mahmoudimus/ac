@@ -3,17 +3,20 @@ package com.atlassian.plugin.remotable.plugin.module.page;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
-import com.atlassian.plugin.module.LegacyModuleFactory;
+import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.remotable.plugin.integration.plugins.DynamicDescriptorRegistration;
+import com.atlassian.plugin.remotable.plugin.util.node.Dom4jNode;
 import com.atlassian.util.concurrent.NotNull;
 import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Generates a general page with a servlet containing an iframe and a web item
  */
-public class GeneralPageModuleDescriptor extends AbstractModuleDescriptor<Void>
+public final class GeneralPageModuleDescriptor extends AbstractModuleDescriptor<Void>
 {
     private final DynamicDescriptorRegistration dynamicDescriptorRegistration;
     private final RemotePageDescriptorCreator.Builder remotePageDescriptorBuilder;
@@ -21,12 +24,14 @@ public class GeneralPageModuleDescriptor extends AbstractModuleDescriptor<Void>
     private DynamicDescriptorRegistration.Registration registration;
     private static final Logger log = LoggerFactory.getLogger(GeneralPageModuleDescriptor.class);
 
-    public GeneralPageModuleDescriptor(DynamicDescriptorRegistration dynamicDescriptorRegistration,
+    public GeneralPageModuleDescriptor(
+            ModuleFactory moduleFactory,
+            DynamicDescriptorRegistration dynamicDescriptorRegistration,
             RemotePageDescriptorCreator remotePageDescriptorCreator)
     {
-        super(LegacyModuleFactory.LEGACY_MODULE_FACTORY);
-        this.dynamicDescriptorRegistration = dynamicDescriptorRegistration;
-        this.remotePageDescriptorBuilder = remotePageDescriptorCreator.newBuilder()
+        super(moduleFactory);
+        this.dynamicDescriptorRegistration = checkNotNull(dynamicDescriptorRegistration);
+        this.remotePageDescriptorBuilder = checkNotNull(remotePageDescriptorCreator).newBuilder()
                 .setDecorator("atl.general");
 
     }
@@ -50,7 +55,7 @@ public class GeneralPageModuleDescriptor extends AbstractModuleDescriptor<Void>
         super.enabled();
         log.debug("Enabling general page {} instance {}", getKey(), System.identityHashCode(this));
         this.registration = dynamicDescriptorRegistration.registerDescriptors(getPlugin(),
-                remotePageDescriptorBuilder.build(getPlugin(), descriptor));
+                remotePageDescriptorBuilder.build(getPlugin(), new Dom4jNode(descriptor)));
     }
 
     @Override

@@ -3,17 +3,18 @@ package com.atlassian.plugin.remotable.plugin.module.page.jira;
 import com.atlassian.jira.plugin.profile.ViewProfilePanelModuleDescriptor;
 import com.atlassian.jira.plugin.profile.ViewProfilePanelModuleDescriptorImpl;
 import com.atlassian.jira.security.JiraAuthenticationContext;
-import com.atlassian.plugin.remotable.plugin.module.IFrameParamsImpl;
-import com.atlassian.plugin.remotable.plugin.module.IFrameRendererImpl;
-import com.atlassian.plugin.remotable.plugin.module.page.IFrameContextImpl;
-import com.atlassian.plugin.remotable.plugin.integration.plugins.DescriptorToRegister;
-import com.atlassian.plugin.remotable.plugin.integration.plugins.DynamicDescriptorRegistration;
-import com.atlassian.plugin.remotable.spi.module.IFrameViewProfilePanel;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
 import com.atlassian.plugin.module.ModuleFactory;
+import com.atlassian.plugin.remotable.plugin.integration.plugins.DescriptorToRegister;
+import com.atlassian.plugin.remotable.plugin.integration.plugins.DynamicDescriptorRegistration;
+import com.atlassian.plugin.remotable.plugin.module.IFrameParamsImpl;
+import com.atlassian.plugin.remotable.plugin.module.IFrameRendererImpl;
+import com.atlassian.plugin.remotable.plugin.module.page.IFrameContextImpl;
+import com.atlassian.plugin.remotable.plugin.util.node.Dom4jNode;
+import com.atlassian.plugin.remotable.spi.module.IFrameViewProfilePanel;
 import com.atlassian.util.concurrent.NotNull;
 import org.dom4j.Element;
 
@@ -21,6 +22,7 @@ import java.net.URI;
 
 import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.getRequiredAttribute;
 import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.getRequiredUriAttribute;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Generates a user profile tab with a servlet containing an iframe and a web item
@@ -35,12 +37,15 @@ public class JiraProfileTabModuleDescriptor extends AbstractModuleDescriptor<Voi
     private DynamicDescriptorRegistration.Registration registration;
 
     public JiraProfileTabModuleDescriptor(
+            ModuleFactory moduleFactory,
             DynamicDescriptorRegistration dynamicDescriptorRegistration,
-            JiraAuthenticationContext jiraAuthenticationContext, IFrameRendererImpl iFrameRenderer)
+            JiraAuthenticationContext jiraAuthenticationContext,
+            IFrameRendererImpl iFrameRenderer)
     {
-        this.dynamicDescriptorRegistration = dynamicDescriptorRegistration;
-        this.jiraAuthenticationContext = jiraAuthenticationContext;
-        this.iFrameRenderer = iFrameRenderer;
+        super(moduleFactory);
+        this.dynamicDescriptorRegistration = checkNotNull(dynamicDescriptorRegistration);
+        this.jiraAuthenticationContext = checkNotNull(jiraAuthenticationContext);
+        this.iFrameRenderer = checkNotNull(iFrameRenderer);
     }
 
     @Override
@@ -86,6 +91,7 @@ public class JiraProfileTabModuleDescriptor extends AbstractModuleDescriptor<Voi
         Element config = e.createCopy();
         final String moduleKey = "profile-" + key;
         config.addAttribute("key", moduleKey);
+        config.addAttribute("system", "true");
         config.addAttribute("i18n-key", panelName);
         config.addAttribute("class", IFrameViewProfilePanel.class.getName());
 
@@ -96,7 +102,7 @@ public class JiraProfileTabModuleDescriptor extends AbstractModuleDescriptor<Voi
             {
                 return (T) new IFrameViewProfilePanel(
                         iFrameRenderer,
-                        new IFrameContextImpl(getPluginKey(), path, moduleKey, new IFrameParamsImpl(e)));
+                        new IFrameContextImpl(getPluginKey(), path, moduleKey, new IFrameParamsImpl(new Dom4jNode(e))));
             }
         });
         descriptor.init(getPlugin(), config);

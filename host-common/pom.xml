@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.atlassian.plugins</groupId>
         <artifactId>remotable-plugins-parent</artifactId>
-        <version>0.6-SNAPSHOT</version>
+        <version>0.8.9999-SNAPSHOT</version>
     </parent>
 
     <artifactId>remotable-plugins-host-common</artifactId>
@@ -28,6 +28,18 @@
             <groupId>com.atlassian.plugins</groupId>
             <artifactId>remotable-plugins-descriptor-common</artifactId>
             <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>1.6</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-mapper-asl</artifactId>
+            <version>1.9.1</version>
         </dependency>
         
         <dependency>

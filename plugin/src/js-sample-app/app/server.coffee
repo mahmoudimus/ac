@@ -10,6 +10,14 @@ exports.app = (req) ->
   catch ex
     error = ex
 
+
+  if context.clientKey == null
+    return {
+      status: 404
+      headers: "Content-Type": "text/plain"
+      body: ["Must be authenticated"]
+    }
+
   # render the index view
   body = renderTemplate "app/views/index",
     clientKey: context.clientKey

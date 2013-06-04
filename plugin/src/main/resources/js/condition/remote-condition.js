@@ -3,33 +3,26 @@
   by the module types directly
  */
 (function ($, global) {
-  var AP = global._AP = global._AP || {};
+  var AP = global._AP = global._AP || {},
+      hidden;
+
   function hide() {
-    if (!AP.remoteConditionsHidden) {
-      AP.remoteConditionsHidden = true;
-      function hide($items) {
-        $items.each(function (index, element) {
-          var element$ = $(element);
-          element$.addClass("hidden");
-          if (element$.parent()[0].tagName == 'LI') {
-            element$.parent().addClass("hidden");
-          }
-        });
-      }
-
-      // Connect any Remotable Plugin hosted Web Items to a dialog that loads the appropriate IFrame Servlet.
-      hide($(".remote-condition"));
-
-      // Look for jira issue tabs
-      hide($("#issue-tabs a[id$='-remote-condition']"));
-
-      // Look for jira project tabs
-      hide($(".tabs a[id$='-remote-condition-panel']"));
+    if (!hidden) {
+      hidden = true;
+      // Connect any Remotable Plugin hosted Web Items to a dialog that loads the appropriate IFrame Servlet,
+      // look for jira issue tabs, and look for jira project tabs
+      $(".remote-condition, #issue-tabs a[id$='-remote-condition'], .tabs a[id$='-remote-condition-panel']").each(function (i, el) {
+        var el$ = $(el), parent$ = el$.parent();
+        el$.addClass("hidden");
+        if (parent$[0].tagName == "LI") {
+          parent$.addClass("hidden");
+        }
+      });
     }
   }
-  AJS.toInit(function () {
-    hide();
-  });
+
+  AJS.toInit(hide);
+
   AP.RemoteConditions = {
     hide: hide
   };

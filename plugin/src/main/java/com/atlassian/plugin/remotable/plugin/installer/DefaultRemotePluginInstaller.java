@@ -1,13 +1,13 @@
 package com.atlassian.plugin.remotable.plugin.installer;
 
-import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.PluginAccessor;
-import com.atlassian.plugin.PluginArtifact;
-import com.atlassian.plugin.PluginController;
+import com.atlassian.plugin.*;
+import com.atlassian.plugin.descriptors.UnloadableModuleDescriptor;
+import com.atlassian.plugin.descriptors.UnrecognisedModuleDescriptor;
 import com.atlassian.plugin.remotable.plugin.OAuthLinkManager;
 import com.atlassian.plugin.remotable.plugin.event.RemoteEventsHandler;
 import com.atlassian.plugin.remotable.spi.InstallationFailedException;
 import com.atlassian.plugin.remotable.spi.PermissionDeniedException;
+import com.atlassian.plugin.util.WaitUntil;
 import org.dom4j.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
+import java.util.Set;
 
 /**
  * Installs a remote plugin or plugin via retrieving content from a url.
@@ -54,7 +55,50 @@ public final class DefaultRemotePluginInstaller implements RemotePluginInstaller
 
             final PluginArtifact pluginArtifact = getPluginArtifact(username, registrationUrl, document);
 
-            pluginController.installPlugins(pluginArtifact).iterator().next();
+            Set<String> pluginKeys = pluginController.installPlugins(pluginArtifact);
+            if (pluginKeys.size() == 1)
+            {
+                final String installedKey = pluginKeys.iterator().next();
+                final Plugin plugin = pluginAccessor.getPlugin(installedKey);
+                WaitUntil.invoke(new WaitUntil.WaitCondition()
+                {
+
+                    public boolean isFinished()
+                    {
+                        for (ModuleDescriptor desc : plugin.getModuleDescriptors())
+                        {
+                            if (!pluginAccessor.isPluginModuleEnabled(
+                                    desc.getCompleteKey()) && desc instanceof UnrecognisedModuleDescriptor)
+                            {
+                                return false;
+                            }
+                        }
+                        return true;
+                    }
+
+                    public String getWaitMessage()
+                    {
+                        return "Waiting for all module descriptors to be resolved and enabled";
+                    }
+                });
+                if (!pluginAccessor.isPluginEnabled(plugin.getKey()))
+                {
+                    String cause = "Plugin didn't install correctly";
+                    for (ModuleDescriptor descriptor : plugin.getModuleDescriptors())
+                    {
+                        if (descriptor instanceof UnloadableModuleDescriptor)
+                        {
+                            cause = ((UnloadableModuleDescriptor)descriptor).getErrorText();
+                            break;
+                        }
+                    }
+                    throw new RuntimeException(cause);
+                }
+            }
+            else
+            {
+                throw new RuntimeException("Plugin didn't install correctly", null);
+            }
 
             remoteEventsHandler.pluginInstalled(pluginKey);
 

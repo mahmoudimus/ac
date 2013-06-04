@@ -1,9 +1,16 @@
 package com.atlassian.plugin.remotable.host.common.service.http.bigpipe;
 
+import com.atlassian.fugue.Option;
+import com.atlassian.plugin.remotable.api.service.http.bigpipe.ConsumableBigPipe;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -12,11 +19,14 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class BigPipeContentFilter implements Filter
 {
-    private final BigPipeImpl bigPipe;
+    private static final Pattern URI_PATTERN = Pattern.compile("/bigpipe/request/([0-9a-fA-F]+)(/[0-9]+)?$");
+    private static final Logger log = LoggerFactory.getLogger(BigPipeContentFilter.class);
 
-    public BigPipeContentFilter(BigPipeImpl bigPipe)
+    private final DefaultBigPipeManager bigPipeManager;
+
+    public BigPipeContentFilter(DefaultBigPipeManager bigPipeManager)
     {
-        this.bigPipe = checkNotNull(bigPipe);
+        this.bigPipeManager = checkNotNull(bigPipeManager);
     }
 
     @Override
@@ -44,21 +54,33 @@ public class BigPipeContentFilter implements Filter
         HttpServletResponse res = (HttpServletResponse) sres;
         String uri = req.getRequestURI();
 
-        int idIndex = uri.lastIndexOf('/');
-        String requestId = idIndex >= 0 && idIndex < uri.length() - 1 ? uri.substring(idIndex + 1) : null;
-        if (requestId != null)
+        log.debug("Incoming big pipe content request on {}", Thread.currentThread().getId());
+        Matcher matcher = URI_PATTERN.matcher(uri);
+        if (matcher.find())
         {
-            res.setStatus(200);
-            res.setContentType("application/json");
-            res.setCharacterEncoding("UTF-8");
-            res.setHeader("Cache-Control", "no-cache");
-            String result = bigPipe.waitForContent(requestId);
-            res.getWriter().write(result);
+            String requestId = matcher.group(1);
+            Option<ConsumableBigPipe> bigPipeOption = bigPipeManager.getConsumableBigPipe(requestId);
+            if (!bigPipeOption.isEmpty())
+            {
+                res.setStatus(HttpServletResponse.SC_OK);
+                res.setContentType("application/json");
+                res.setCharacterEncoding("UTF-8");
+                res.setHeader("Cache-Control", "no-cache");
+                String result = bigPipeOption.get().waitForContent();
+                res.getWriter().write(result);
+            }
+            else
+            {
+                log.warn("Big pipe is empty, returning 404 on {}", Thread.currentThread().getId());
+                res.sendError(HttpServletResponse.SC_NOT_FOUND);
+            }
         }
         else
         {
-            res.sendError(404);
+            log.warn("ID pattern not matched for big pipe content request on {}", Thread.currentThread().getId());
+            res.sendError(HttpServletResponse.SC_NOT_FOUND);
         }
+        log.debug("Big pipe content request sent on {}", Thread.currentThread().getId());
     }
 
     @Override

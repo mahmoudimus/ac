@@ -74,7 +74,7 @@ public class JiraProjectAdministrationTab extends RemotePluginEmbeddedTestPage i
     }
 
     @Override
-    public ProjectConfigActions openOperations()
+    public ProjectConfigActions getOperations()
     {
         operations.click();
         return pageBinder.bind(ProjectConfigActions.class);

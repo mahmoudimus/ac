@@ -89,4 +89,9 @@ public class RemotePage
     {
         driver.getDriver().switchTo().defaultContent();
     }
+
+    public WebElement getContainerDiv()
+    {
+        return containerDiv;
+    }
 }

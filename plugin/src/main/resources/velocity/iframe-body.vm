@@ -3,57 +3,30 @@
   <div class="ap-content" id="embedded-$namespace"></div>
   <div class="ap-stats hidden">
     <div class="ap-loading ap-status">
-      Loading plugin <a href="${plugin.displayUrl}" target="_blank">$plugin.name</a>.
+      <small>Loading plugin <a href="${plugin.displayUrl}" class="ap-doc-url" target="_blank">$plugin.name</a>.</small>
     </div>
     <div class="ap-loaded ap-status hidden">
-      Loaded plugin <a href="${plugin.displayUrl}" target="_blank">$plugin.name</a>.
+      <small>Loaded plugin <a href="${plugin.displayUrl}" class="ap-doc-url" target="_blank">$plugin.name</a>.</small>
     </div>
     <div class="ap-load-timeout ap-status hidden">
-      Plugin <a href="${plugin.displayUrl}" target="_blank">$plugin.name</a> is not responding.
-      <a href="#" class="ap-btn-wait">Wait</a> or <a href="#" class="ap-btn-cancel">Cancel</a>?
+      <small>Plugin <a href="${plugin.displayUrl}" class="ap-doc-url" target="_blank">$plugin.name</a> is not responding.
+      Wait or <a href="#" class="ap-btn-cancel">cancel</a>?</small>
     </div>
     <div class="ap-load-error ap-status hidden">
-      Plugin <a href="${plugin.displayUrl}" target="_blank">$plugin.name</a> failed to load.
+      <small>Plugin <a href="${plugin.displayUrl}" class="ap-doc-url" target="_blank">$plugin.name</a> failed to load.</small>
     </div>
   </div>
   ## @todo optimize script delivery
   #foreach ($scriptUrl in $scriptUrls)
-    <script src="$scriptUrl"></script>
+  <script src="$scriptUrl"></script>
   #end
   <script>
-    (function(jQuery, JIRA) {
-        function init() {
-            debugger;
-          _AP.create({
-            ns: "$namespace",
-            src: "$iframeSrcHtml",
-            width: "$!width",
-            height: "$!height",
-            contextPath: "$contextPath",
-            appKey: "$plugin.key",
-            userId: "$userId",
-            dialog: "$!dialog",
-            data: {
-                #foreach($e in $data.entrySet())
-                    "${e.key}": "${e.value}"#if(!${foreach.isLast()}),#end
-                #end
-            }
-          });
-        }
-        if (JIRA) {
-            jQuery(function() {
-                JIRA.bind(JIRA.Events.NEW_CONTENT_ADDED, function(e, context, reason) {
-                    var jcontext = jQuery(context);
-                    var initializedIFrame = jQuery('#ap-$namespace', jcontext);
-                    if (initializedIFrame.length > 0) {
-                        jQuery('#embedded-$namespace').empty();
-                        init();
-                    }
-                });
-            });
-        }
-        init();
-    })(jQuery, window.JIRA);
-
+  _AP.create({
+    ns:"$namespace",key:"$plugin.key",cp:"$contextPath",uid:"$userId",dlg:"$!dialog",w:"$!width",h:"$!height",src:"$iframeSrcHtml",data:{
+    #foreach($e in $data.entrySet())
+      "${e.key}":"${e.value}"#if(!${foreach.isLast()}),#end
+    #end
+    }
+  });
   </script>
 </div>

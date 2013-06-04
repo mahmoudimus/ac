@@ -2,20 +2,23 @@ package com.atlassian.plugin.remotable.plugin.module.jira.issuetab;
 
 import com.atlassian.jira.ComponentManager;
 import com.atlassian.jira.plugin.issuetabpanel.IssueTabPanelModuleDescriptor;
+import com.atlassian.jira.plugin.issuetabpanel.IssueTabPanelModuleDescriptorImpl;
 import com.atlassian.jira.security.JiraAuthenticationContext;
-import com.atlassian.plugin.remotable.plugin.module.ConditionProcessor;
-import com.atlassian.plugin.remotable.plugin.module.ContainingRemoteCondition;
-import com.atlassian.plugin.remotable.plugin.integration.plugins.DescriptorToRegister;
-import com.atlassian.plugin.remotable.plugin.integration.plugins.DynamicDescriptorRegistration;
-import com.atlassian.plugin.remotable.spi.module.IFrameParams;
-import com.atlassian.plugin.remotable.plugin.module.IFrameParamsImpl;
-import com.atlassian.plugin.remotable.plugin.module.IFrameRendererImpl;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
 import com.atlassian.plugin.module.ModuleFactory;
+import com.atlassian.plugin.remotable.plugin.integration.plugins.DescriptorToRegister;
+import com.atlassian.plugin.remotable.plugin.integration.plugins.DynamicDescriptorRegistration;
+import com.atlassian.plugin.remotable.plugin.module.ConditionProcessor;
+import com.atlassian.plugin.remotable.plugin.module.ContainingRemoteCondition;
+import com.atlassian.plugin.remotable.plugin.module.IFrameParamsImpl;
+import com.atlassian.plugin.remotable.plugin.module.IFrameRendererImpl;
 import com.atlassian.plugin.remotable.plugin.module.page.IFrameContextImpl;
+import com.atlassian.plugin.remotable.plugin.util.node.Dom4jNode;
+import com.atlassian.plugin.remotable.plugin.util.node.Node;
+import com.atlassian.plugin.remotable.spi.module.IFrameParams;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.util.concurrent.NotNull;
 import org.dom4j.Element;
@@ -24,11 +27,12 @@ import java.net.URI;
 
 import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.getRequiredAttribute;
 import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.getRequiredUriAttribute;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * A remote issue tab that loads is contents from an iframe
  */
-public class IssueTabPageModuleDescriptor extends AbstractModuleDescriptor<Void>
+public final class IssueTabPageModuleDescriptor extends AbstractModuleDescriptor<Void>
 {
     private final IFrameRendererImpl iFrameRenderer;
     private final DynamicDescriptorRegistration dynamicDescriptorRegistration;
@@ -37,13 +41,16 @@ public class IssueTabPageModuleDescriptor extends AbstractModuleDescriptor<Void>
     private URI url;
     private DynamicDescriptorRegistration.Registration registration;
 
-    public IssueTabPageModuleDescriptor(IFrameRendererImpl iFrameRenderer,
+    public IssueTabPageModuleDescriptor(
+            ModuleFactory moduleFactory,
+            IFrameRendererImpl iFrameRenderer,
             DynamicDescriptorRegistration dynamicDescriptorRegistration,
             ConditionProcessor conditionProcessor)
     {
-        this.iFrameRenderer = iFrameRenderer;
-        this.dynamicDescriptorRegistration = dynamicDescriptorRegistration;
-        this.conditionProcessor = conditionProcessor;
+        super(moduleFactory);
+        this.iFrameRenderer = checkNotNull(iFrameRenderer);
+        this.dynamicDescriptorRegistration = checkNotNull(dynamicDescriptorRegistration);
+        this.conditionProcessor = checkNotNull(conditionProcessor);
     }
 
     @Override
@@ -70,8 +77,10 @@ public class IssueTabPageModuleDescriptor extends AbstractModuleDescriptor<Void>
 
         String moduleKey = "issue-tab-page-" + getRequiredAttribute(descriptor, "key");
 
+        Node node = new Dom4jNode(descriptor);
+
         // make sure to update remote-condition.js to hide these
-        Condition condition = conditionProcessor.process(descriptor, desc, getPluginKey(), "#" + moduleKey + "-remote-condition");
+        Condition condition = conditionProcessor.process(node, desc, getPluginKey(), "#" + moduleKey + "-remote-condition");
         if (condition instanceof ContainingRemoteCondition)
         {
             moduleKey += "-remote-condition";
@@ -81,7 +90,7 @@ public class IssueTabPageModuleDescriptor extends AbstractModuleDescriptor<Void>
         desc.addAttribute("class", IssueTabPage.class.getName());
 
         IssueTabPanelModuleDescriptor moduleDescriptor = createDescriptor(moduleKey, desc,
-                new IFrameParamsImpl(descriptor), condition);
+                new IFrameParamsImpl(node), condition);
 
         this.registration = dynamicDescriptorRegistration.registerDescriptors(getPlugin(), new DescriptorToRegister(moduleDescriptor));
     }
@@ -103,7 +112,8 @@ public class IssueTabPageModuleDescriptor extends AbstractModuleDescriptor<Void>
     {
         try
         {
-            IssueTabPanelModuleDescriptor descriptor = new FixedIssueTabPanelModuleDescriptor(
+            desc.addAttribute("system", "true");
+            IssueTabPanelModuleDescriptor descriptor = new IssueTabPanelModuleDescriptorImpl(
                     ComponentManager.getComponent(JiraAuthenticationContext.class), new ModuleFactory()
             {
                 @Override
