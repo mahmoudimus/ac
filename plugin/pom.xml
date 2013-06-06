@@ -816,6 +816,11 @@
                                     <version>${webhooks.version}</version>
                                 </pluginArtifact>
                                 <pluginArtifact>
+                                    <groupId>com.atlassian.jira.plugins.webhooks</groupId>
+                                    <artifactId>jira-webhooks-plugin</artifactId>
+                                    <version>${jira.webhooks.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
                                     <groupId>${project.groupId}</groupId>
                                     <artifactId>remotable-plugins-test-plugin</artifactId>
                                     <version>${project.version}</version>
