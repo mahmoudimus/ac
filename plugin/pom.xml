@@ -688,6 +688,7 @@
                             org.json.simple*,
                             *;resolution:=optional
                         </Import-Package>
+                        
                         <DynamicImport-Package>com.atlassian.labs.speakeasy.*</DynamicImport-Package>
                         <Export-Package>
                             <!--javax.inject;version="1",-->
