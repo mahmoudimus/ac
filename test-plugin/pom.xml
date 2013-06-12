@@ -136,6 +136,8 @@
                         <Import-Package>
                             com.atlassian.plugin.remotable.api*;version="${api.artifact.version}",
                             com.atlassian.plugin.remotable.spi*;version="${api.artifact.version}",
+                            javax.servlet;version="0.0.0",
+                            javax.servlet.http;version="0.0.0",
                             *;resolution:=optional
                         </Import-Package>
                         <Spring-Context>*;timeout:=60</Spring-Context>
