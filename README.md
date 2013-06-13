@@ -12,17 +12,17 @@ and is supported by the Atlassian Plugin SDK.
 
 Choose one of the following, for starting the plugin in the refapp, confluence or jira
 
-	mvn amps:debug
+    mvn amps:debug
     mvn amps:debug -Dproduct=confluence
-	mvn amps:debug -Dproduct=jira
-	
+    mvn amps:debug -Dproduct=jira
+    
 ## Deployments
 
 Deploy the plugin at runtime in the desired product:
 
-	mvn amps:cli
-	mvn amps:cli -Dproduct=confluence
-	mvn amps:cli -Dproduct=jira
+    mvn amps:cli
+    mvn amps:cli -Dproduct=confluence
+    mvn amps:cli -Dproduct=jira
 
 Deploy the test plugin (code in `src/test/resources`) with the cli `tpi` for test plugin installation, works like the usual `pi`
 
