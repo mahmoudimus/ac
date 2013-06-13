@@ -435,8 +435,9 @@
         <spring.version>2.5.6</spring.version>
         <atlassian-util-concurrent.version>2.4.0</atlassian-util-concurrent.version>
         <atlassian-httpclient.version>${webhooks.version}</atlassian-httpclient.version>
-        <webhooks.version>0.15.0-m4</webhooks.version>
+        <webhooks.version>0.15.0</webhooks.version>
         <webhooks.api.version>0.15</webhooks.api.version>
+        <jira.webhooks.version>1.1.0</jira.webhooks.version>
         <httpclient.api.version>${webhooks.api.version}</httpclient.api.version>
         <servletkit.version>0.7.3</servletkit.version>
         <ringojskit.version>0.7.2</ringojskit.version>
