@@ -340,11 +340,6 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.springframework.osgi</groupId>
-            <artifactId>spring-osgi-core</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>com.atlassian.applinks</groupId>
             <artifactId>applinks-api</artifactId>
             <version>${applinks.version}</version>

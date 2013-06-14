@@ -9,7 +9,6 @@ import com.atlassian.sal.api.auth.Authenticator;
 import com.google.common.collect.ImmutableSet;
 import net.oauth.OAuth;
 import net.oauth.server.HttpRequestMessage;
-import org.springframework.osgi.service.importer.ServiceProxyDestroyedException;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -60,10 +59,14 @@ public class OAuth2LOFilter implements Filter
                 return;
             }
         }
-        catch (ServiceProxyDestroyedException ex)
+        catch (RuntimeException ex)
         {
             // ignore this exception as it only happens if the plugin has been shutdown while
             // the request has been in this filter
+            if (!ex.getClass().getSimpleName().equals("ServiceProxyDestroyedException"))
+            {
+                throw ex;
+            }
         }
         try
         {
