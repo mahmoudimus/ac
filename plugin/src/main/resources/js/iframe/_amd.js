@@ -1,6 +1,6 @@
 (function (window) {
 
-  var AP = window.RA = window.AP = {}; // RA is deprecated
+  var AP = window._AP ? _AP : (window.RA = window.AP = {}); // RA is deprecated
 
   var modules = {};
 

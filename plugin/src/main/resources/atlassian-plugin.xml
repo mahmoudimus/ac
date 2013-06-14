@@ -52,6 +52,13 @@
     </servlet>
 
     <web-resource key="iframe-host-js">
+        <!--
+        TODO: move _ap.js into its own resource and make all other host-side resources have a dependency on it.
+        Can't do this now as IFrameRendererImpl iterates over this module descriptor to pull out the resources and ignores dependencies.
+        -->
+        <resource type="download" name="_ap.js" location="/js/iframe/host/_ap.js" />
+        <resource type="download" name="_amd.js" location="/js/iframe/_amd.js" />
+        <resource type="download" name="_dollar.js" location="/js/iframe/host/_dollar.js" />
         <resource type="download" name="xdm-rpc.js" location="/js/iframe/xdm-rpc.js" />
         <resource type="download" name="main.js" location="/js/iframe/host/main.js" />
     </web-resource>
