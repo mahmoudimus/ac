@@ -33,8 +33,9 @@
         <module>container</module>
         <module>container-build</module>
         <module>test</module>
-        <module>universal-binary-test-plugin</module>
-        
+        <!-- <module>universal-binary-test-plugin</module> -->
+        <module>integration-tests</module>
+
     </modules>
 
     <build>
@@ -63,7 +64,7 @@
             <plugin>
                 <groupId>com.atlassian.maven.plugins</groupId>
                 <artifactId>maven-amps-plugin</artifactId>
-                <version>4.1.5</version>
+                <version>${amps.version}</version>
                 <extensions>true</extensions>
                 <configuration>
                     <extractDependencies>true</extractDependencies>
@@ -442,5 +443,6 @@
         <servletkit.version>0.7.3</servletkit.version>
         <ringojskit.version>0.7.2</ringojskit.version>
         <gatekeeper.property>7</gatekeeper.property>
+        <amps.version>4.2.1</amps.version>
     </properties>
 </project>

@@ -6,6 +6,8 @@ import com.atlassian.plugin.remotable.test.webhook.WebHookBody;
 import com.atlassian.plugin.remotable.test.webhook.WebHookTester;
 import com.atlassian.plugin.remotable.test.webhook.WebHookWaiter;
 import it.AbstractBrowserlessTest;
+
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Map;
@@ -36,8 +38,8 @@ public class TestConfluenceWebHooks extends AbstractBrowserlessTest
                         confluenceOps.search(testQuery));
                 final WebHookBody body = waiter.waitForHook();
                 assertNotNull(body);
-                assertEquals(testQuery, body.find("query"));
-                assertEquals(results, body.find("results"));
+                Assert.assertEquals(testQuery, body.find("query"));
+                Assert.assertEquals(results, body.find("results"));
             }
         });
     }
@@ -51,11 +53,11 @@ public class TestConfluenceWebHooks extends AbstractBrowserlessTest
             public void test(WebHookWaiter waiter) throws Exception
             {
                 String content = "<h1>Love me</h1>";
-                Map pageData = confluenceOps.setPage("ds", "test",content);
+                Map pageData = confluenceOps.setPage("ds", "test", content);
                 final WebHookBody body = waiter.waitForHook();
                 assertNotNull(body);
-                assertEquals(pageData.get("id"), body.find("page/id"));
-                assertEquals(pageData.get("creator"), body.find("page/creatorName"));
+                Assert.assertEquals(pageData.get("id"), body.find("page/id"));
+                Assert.assertEquals(pageData.get("creator"), body.find("page/creatorName"));
             }
         });
 	}

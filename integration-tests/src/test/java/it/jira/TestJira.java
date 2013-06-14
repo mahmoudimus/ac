@@ -36,11 +36,7 @@ import hudson.plugins.jira.soap.RemoteProject;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 import org.joda.time.DateTime;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.rules.MethodRule;
 import org.openqa.selenium.By;
 
@@ -109,7 +105,7 @@ public class TestJira
         RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Test issue for panel");
         JiraViewIssuePage viewIssuePage = product.visit(JiraViewIssuePage.class, issue.getKey(),
                 EMBEDDED_ISSUE_PANEL_ID);
-        assertEquals("Success", viewIssuePage.getMessage());
+        Assert.assertEquals("Success", viewIssuePage.getMessage());
     }
 
     @Test
@@ -119,9 +115,9 @@ public class TestJira
         RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Test issue for panel");
         JiraViewIssuePage viewIssuePage = product.visit(JiraViewIssuePage.class, issue.getKey(),
                 EMBEDDED_ISSUE_PANEL_ID);
-        assertEquals("Success", viewIssuePage.getMessage());
+        Assert.assertEquals("Success", viewIssuePage.getMessage());
         viewIssuePage.addLabelViaInlineEdit("foo");
-        assertEquals("Success", viewIssuePage.getMessage());
+        Assert.assertEquals("Success", viewIssuePage.getMessage());
     }
 
     @Test
@@ -157,7 +153,7 @@ public class TestJira
                                                            .openTab(AppProjectTabPage.class)
                                                            .getEmbeddedPage();
 
-                assertEquals("Success", page.getMessage());
+                Assert.assertEquals("Success", page.getMessage());
                 return null;
             }
         });
@@ -175,7 +171,7 @@ public class TestJira
                 RemotePluginEmbeddedTestPage page = product.visit(BrowseProjectPage.class, project.getKey())
                         .openTab(RestClientProjectTabPage.class)
                         .getEmbeddedPage();
-                assertEquals("Success", page.getValue("rest-call-status"));
+                Assert.assertEquals("Success", page.getValue("rest-call-status"));
                 return null;
             }
         });
@@ -193,7 +189,7 @@ public class TestJira
                 RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Test issue for tab");
                 JiraViewIssuePageWithRemotePluginIssueTab page = product.visit(
                         JiraViewIssuePageWithRemotePluginIssueTab.class, issue.getKey());
-                assertEquals("Success", page.getMessage());
+                Assert.assertEquals("Success", page.getMessage());
                 return null;
             }
         });
@@ -232,7 +228,7 @@ public class TestJira
                         product.visit(ProjectSummaryPageTab.class, project.getKey());
                 JiraProjectAdministrationPanel webPanel = product.visit(JiraProjectAdministrationPanel.class,
                         EMBEDDED_PROJECT_CONFIG_PANEL_ID, project.getKey());
-                assertEquals("Success", webPanel.getMessage());
+                Assert.assertEquals("Success", webPanel.getMessage());
                 return null;
             }
         });
@@ -294,8 +290,8 @@ public class TestJira
         backdoor.userProfile().setUserTimeZone(testUser, setUserTimeZone);
         page = product.getPageBinder().bind(JiraGeneralPage.class, REMOTE_PLUGIN_GENERAL_PAGE_KEY, REMOTABLE_PLUGIN_GENERAL_LINK_TEXT);
         remotePluginTest = page.clickRemotePluginLink();
-        assertEquals(expectedTimeZone, remotePluginTest.getTimeZone());
-        assertEquals(expectedTimeZone, remotePluginTest.getTimeZoneFromTemplateContext());
+        Assert.assertEquals(expectedTimeZone, remotePluginTest.getTimeZone());
+        Assert.assertEquals(expectedTimeZone, remotePluginTest.getTimeZoneFromTemplateContext());
     }
 
     private JiraRestClient createRestClient()
@@ -340,8 +336,8 @@ public class TestJira
                 // Test of workaround for JRA-26407.
                 assertNotNull(remoteProjectAdministrationTab.getProjectHeader());
                 assertEquals(REMOTABLE_PROEJECT_CONFIG_TAB_NAME, remoteProjectAdministrationTab.getTabs().getSelectedTab().getName());
-                assertEquals(project.getKey(), remoteProjectAdministrationTab.getProjectKey());
-                assertEquals("Success", remoteProjectAdministrationTab.getMessage());
+                Assert.assertEquals(project.getKey(), remoteProjectAdministrationTab.getProjectKey());
+                Assert.assertEquals("Success", remoteProjectAdministrationTab.getMessage());
 
                 return null;
             }
