@@ -3,10 +3,10 @@ package com.atlassian.plugin.remotable.plugin.module.permission;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.plugin.remotable.plugin.PermissionManager;
 import com.atlassian.sal.api.user.UserManager;
-import com.atlassian.util.concurrent.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
