@@ -16,7 +16,7 @@ _AP.define("bigpipe/bigpipe", ["_dollar"], function($) {
     }
   }
 
-  function replaceLoadingWithMessage() {
+  function displayLoadingSpinner() {
     $(function() {
       $('.bp-loading').html("<img src='" + contextPath + "/download/resources/com.atlassian.labs.remoteapps-plugin:images/images/ajax-loader.gif' alt='loader'>");
     });
@@ -63,7 +63,7 @@ _AP.define("bigpipe/bigpipe", ["_dollar"], function($) {
         if (options.ready) processContents(options.ready);
         if (!options.ready || options.ready.pending.length > 0) {
           poll(options.requestId);
-          setTimeout(replaceLoadingWithMessage, 1000);
+          setTimeout(displayLoadingSpinner, 1000);
         }
       }
     }
