@@ -1,7 +1,7 @@
 // This code makes a xhr request back to the server before dom ready looking for big pipe content to replace.
-(function (global, AJS) {
-  var $ = AJS.$;
-  var AP = global._AP = global._AP || {};
+// TODO: naming here (bigpipe/bigpipe) is probably stupid
+_AP.define("bigpipe/bigpipe", ["_dollar"], function($) {
+
   var contextPath = AJS.contextPath() || AJS.Meta.get("context-path");
   var counter = 0;
 
@@ -16,7 +16,7 @@
     }
   }
 
-  function replaceLoadingWithMessage() {
+  function displayLoadingSpinner() {
     $(function() {
       $('.bp-loading').html("<img src='" + contextPath + "/download/resources/com.atlassian.labs.remoteapps-plugin:images/images/ajax-loader.gif' alt='loader'>");
     });
@@ -56,17 +56,27 @@
   }
 
   var isStarted;
-  AP.BigPipe = {
+  return {
     start: function (options) {
       if (!isStarted) {
         isStarted = true;
         if (options.ready) processContents(options.ready);
         if (!options.ready || options.ready.pending.length > 0) {
           poll(options.requestId);
-          setTimeout(replaceLoadingWithMessage, 1000);
+          setTimeout(displayLoadingSpinner, 1000);
         }
       }
     }
   };
 
-})(this, AJS);
+});
+
+/**
+ * Legacy namespace
+ * @deprecated
+ */
+if (!_AP.BigPipe) {
+  _AP.require(["bigpipe/bigpipe"], function(main) {
+    _AP.BigPipe = main;
+  });
+}

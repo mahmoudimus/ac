@@ -727,7 +727,7 @@
                                     <insertNewLine>true</insertNewLine>
                                     <output>${project.build.outputDirectory}/all.js</output>
                                     <includes>
-                                        <include>js/iframe-min/plugin/_amd-min.js</include>
+                                        <include>js/iframe-min/_amd-min.js</include>
                                         <include>js/iframe-min/plugin/_util-min.js</include>
                                         <include>js/iframe-min/plugin/_ajax-min.js</include>
                                         <include>js/iframe-min/plugin/_dollar-min.js</include>
@@ -745,41 +745,6 @@
                             </aggregations>
                         </configuration>
                     </execution>
-                    <!-- Now being aggregated in dev mode dynamically by StaticResourcesFilter. -->
-                    <!--<execution>-->
-                        <!--<id>all-debug-js</id>-->
-                        <!--<goals>-->
-                            <!--<goal>compress</goal>-->
-                        <!--</goals>-->
-                        <!--<configuration>-->
-                            <!--<gzip>false</gzip>-->
-                            <!--<nocompress>true</nocompress>-->
-                            <!--<jswarn>false</jswarn>-->
-                            <!--<excludeResources>true</excludeResources>-->
-                            <!--<aggregations>-->
-                                <!--<aggregation>-->
-                                    <!--<removeIncluded>false</removeIncluded>-->
-                                    <!--<insertNewLine>true</insertNewLine>-->
-                                    <!--<output>${project.build.outputDirectory}/all-debug.js</output>-->
-                                    <!--<includes>-->
-                                        <!--<include>js/iframe/plugin/_amd.js</include>-->
-                                        <!--<include>js/iframe/plugin/_util.js</include>-->
-                                        <!--<include>js/iframe/plugin/_ajax.js</include>-->
-                                        <!--<include>js/iframe/plugin/_dollar.js</include>-->
-                                        <!--<include>js/iframe/xdm-rpc.js</include>-->
-                                        <!--<include>js/iframe/plugin/_rpc.js</include>-->
-                                        <!--<include>js/iframe/plugin/env.js</include>-->
-                                        <!--<include>js/iframe/plugin/request.js</include>-->
-                                        <!--<include>js/iframe/plugin/dialog.js</include>-->
-                                        <!--<include>js/iframe/plugin/bigpipe.js</include>-->
-                                        <!--&lt;!&ndash; product-specific inclusions are temporary until made more dynamic &ndash;&gt;-->
-                                        <!--<include>js/iframe/plugin/jira.js</include>-->
-                                        <!--<include>js/iframe/plugin/_init.js</include>-->
-                                    <!--</includes>-->
-                                <!--</aggregation>-->
-                            <!--</aggregations>-->
-                        <!--</configuration>-->
-                    <!--</execution>-->
                 </executions>
             </plugin>
             <plugin>
