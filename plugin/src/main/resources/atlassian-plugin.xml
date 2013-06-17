@@ -51,14 +51,20 @@
         <url-pattern>/redirect/permanent</url-pattern>
     </servlet>
 
-    <web-resource key="iframe-host-js">
-        <!--
-        TODO: move _ap.js into its own resource and make all other host-side resources have a dependency on it.
-        Can't do this now as IFrameRendererImpl iterates over this module descriptor to pull out the resources and ignores dependencies.
-        -->
+    <web-resource key="ap-amd">
         <resource type="download" name="_ap.js" location="/js/iframe/host/_ap.js" />
         <resource type="download" name="_amd.js" location="/js/iframe/_amd.js" />
         <resource type="download" name="_dollar.js" location="/js/iframe/host/_dollar.js" />
+        <context>atl.general</context>
+    </web-resource>
+
+    <web-resource key="iframe-host-js">
+        <!--
+        TODO: This dependency is ignored by IFrameRendererImpl as it iterates over this module descriptor to pull out the resources and ignores dependencies.
+        We work around this by putting ap-amd in the atl.general context. This may not be necessary; when IFrameRendererImpl is fixed to only include resources once,
+        it should be rethought.
+        -->
+        <dependency>com.atlassian.labs.remoteapps-plugin:ap-amd</dependency>
         <resource type="download" name="xdm-rpc.js" location="/js/iframe/xdm-rpc.js" />
         <resource type="download" name="main.js" location="/js/iframe/host/main.js" />
     </web-resource>
@@ -69,8 +75,9 @@
     </web-resource>
 
     <web-resource key="dialog">
-        <resource type="download" name="dialog.js" location="js/dialog/dialog.js" />
+        <resource type="download" name="simple.js" location="js/dialog/simple.js" />
         <dependency>com.atlassian.auiplugin:ajs</dependency>
+        <dependency>com.atlassian.labs.remoteapps-plugin:ap-amd</dependency>
     </web-resource>
 
     <web-resource key="iframe-host-css">
