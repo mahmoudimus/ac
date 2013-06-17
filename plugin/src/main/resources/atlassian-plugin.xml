@@ -88,9 +88,10 @@
     </web-resource>
 
     <web-resource key="remote-condition">
-        <resource type="download" name="remote-condition.js" location="js/condition/remote-condition.js" />
+        <resource type="download" name="remote.js" location="js/condition/remote.js" />
         <context>atl.general</context>
         <context>atl.admin</context>
+        <dependency>com.atlassian.labs.remoteapps-plugin:ap-amd</dependency>
         <dependency>com.atlassian.labs.remoteapps-plugin:big-pipe</dependency>
     </web-resource>
 
