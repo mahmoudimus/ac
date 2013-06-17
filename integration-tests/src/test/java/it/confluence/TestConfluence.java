@@ -10,6 +10,7 @@ import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
 import com.atlassian.webdriver.pageobjects.WebDriverTester;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.MethodRule;
@@ -58,9 +59,9 @@ public class TestConfluence
         product.visit(LoginPage.class).login("betty", "betty", HomePage.class);
         ConfluenceMacroTestSuitePage page = product.visit(ConfluenceMacroTestSuitePage.class, pageData.get("title"));
 
-        assertEquals(pageData.get("id"), page.getPageIdFromMacro());
-        assertEquals("some note", page.getBodyNoteFromMacro());
-        assertEquals("sandcastles", page.getImageMacroAlt());
+        Assert.assertEquals(pageData.get("id"), page.getPageIdFromMacro());
+        Assert.assertEquals("some note", page.getBodyNoteFromMacro());
+        Assert.assertEquals("sandcastles", page.getImageMacroAlt());
 
         assertTrue(page.getSlowMacroBody().startsWith("There were errors rendering macro:"));
 	}
@@ -75,7 +76,7 @@ public class TestConfluence
 
         ConfluenceMacroTestSuitePage page = product.visit(ConfluenceMacroTestSuitePage.class, pageData.get("title"));
 
-        assertEquals(commentData.get("id"), page.getPageIdFromMacroInComment());
+        Assert.assertEquals(commentData.get("id"), page.getPageIdFromMacroInComment());
     }
     @Test
     public void testAnonymousMacro() throws XmlRpcFault, IOException
@@ -83,7 +84,7 @@ public class TestConfluence
         Map pageData = confluenceOps.setAnonymousPage("ds", "test", loadResourceAsString(
                 "confluence/test-page.xhtml"));
         ConfluenceMacroTestSuitePage page = product.visit(ConfluenceMacroTestSuitePage.class, pageData.get("title"));
-        assertEquals(pageData.get("id"), page.getPageIdFromMacro());
+        Assert.assertEquals(pageData.get("id"), page.getPageIdFromMacro());
     }
 
     @Test
@@ -94,8 +95,8 @@ public class TestConfluence
         product.visit(LoginPage.class).login("betty", "betty", HomePage.class);
         ConfluencePageMacroPage page = product.visit(ConfluencePageMacroPage.class, pageData.get("title"), "app1-page-0");
 
-        assertEquals("Success", page.getMessage());
-        assertEquals(OAuthUtils.getConsumerKey(), page.getConsumerKey());
+        Assert.assertEquals("Success", page.getMessage());
+        Assert.assertEquals(OAuthUtils.getConsumerKey(), page.getConsumerKey());
     }
 
     @Test
@@ -106,13 +107,13 @@ public class TestConfluence
         product.visit(LoginPage.class).login("betty", "betty", HomePage.class);
 
         ConfluencePageMacroPage iframe1 = product.visit(ConfluencePageMacroPage.class, pageData.get("title"), "app1-page-0");
-        assertEquals("Success", iframe1.getMessage());
-        assertEquals(OAuthUtils.getConsumerKey(), iframe1.getConsumerKey());
+        Assert.assertEquals("Success", iframe1.getMessage());
+        Assert.assertEquals(OAuthUtils.getConsumerKey(), iframe1.getConsumerKey());
 
         ConfluencePageMacroPage iframe2 = product.visit(ConfluencePageMacroPage.class, pageData.get("title"), "app1-page-1");
 
-        assertEquals("Success", iframe2.getMessage());
-        assertEquals(OAuthUtils.getConsumerKey(), iframe2.getConsumerKey());
+        Assert.assertEquals("Success", iframe2.getMessage());
+        Assert.assertEquals(OAuthUtils.getConsumerKey(), iframe2.getConsumerKey());
     }
 
     @Test
@@ -121,15 +122,15 @@ public class TestConfluence
         Map pageData = confluenceOps.setPage("ds", "test", loadResourceAsString("confluence/counter-page.xhtml"));
         product.visit(LoginPage.class).login("betty", "betty", HomePage.class);
         ConfluenceCounterMacroPage page = product.visit(ConfluenceCounterMacroPage.class, pageData.get("title"));
-        assertEquals("1", page.getCounterMacroBody());
+        Assert.assertEquals("1", page.getCounterMacroBody());
 
         // stays the same on a new visit
         page = product.visit(ConfluenceCounterMacroPage.class, pageData.get("title"));
-        assertEquals("1", page.getCounterMacroBody());
+        Assert.assertEquals("1", page.getCounterMacroBody());
 
         clearMacroCaches(product.getProductInstance(), "app1");
         page = product.visit(ConfluenceCounterMacroPage.class, pageData.get("title"));
-        assertEquals("2", page.getCounterMacroBody());
+        Assert.assertEquals("2", page.getCounterMacroBody());
 	}
 
     @Test
