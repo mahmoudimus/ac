@@ -50,7 +50,7 @@ public class BigPipeFooter implements WebPanel
                             "var AP=this._AP=this._AP||{};" +
                             // is this really necessary since RC calls hide as well?
                             "_AP.require(['condition/remote'], function(remoteCondition) { remoteCondition.hide(); });" +
-                            "AP.BigPipe.start({requestId:'" + input.getRequestId() + "',ready:" + json + "});" +
+                            "_AP.require(['bigpipe/bigpipe'], function(bigPipe) { bigPipe.start({requestId:'" + input.getRequestId() + "',ready:" + json + "}); });" +
                         "}())" +
                     "</script>\n";
             }
