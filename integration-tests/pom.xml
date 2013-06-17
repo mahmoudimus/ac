@@ -18,19 +18,19 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>remotable-plugins-plugin</artifactId>
             <version>${project.version}</version>
-            <scope>test</scope>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>remotable-plugins-api</artifactId>
             <version>${api.artifact.version}</version>
-            <scope>test</scope>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>remotable-plugins-spi</artifactId>
             <version>${api.artifact.version}</version>
-            <scope>test</scope>
+            <scope>provided</scope>
         </dependency>
         
         <!--
@@ -40,38 +40,38 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>remotable-plugins-test</artifactId>
             <version>${project.version}</version>
-            <scope>test</scope>
+            <scope>provided</scope>
         </dependency>
         
         <dependency>
             <groupId>com.atlassian.functest</groupId>
             <artifactId>functest-plugin</artifactId>
             <version>${functest.version}</version>
-            <scope>test</scope>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.atlassian.jira.tests</groupId>
             <artifactId>jira-testkit-client</artifactId>
             <version>${testkit.version}</version>
-            <scope>test</scope>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.atlassian.refapp</groupId>
             <artifactId>atlassian-refapp-pageobjects</artifactId>
             <version>${refapp.version}</version>
-            <scope>test</scope>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.atlassian.confluence</groupId>
             <artifactId>atlassian-confluence-pageobjects</artifactId>
             <version>${confluence.version}</version>
-            <scope>test</scope>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.atlassian.jira</groupId>
             <artifactId>atlassian-jira-pageobjects</artifactId>
             <version>${jira.version}</version>
-            <scope>test</scope>
+            <scope>provided</scope>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.httpcomponents</groupId>
@@ -91,7 +91,7 @@
             <groupId>com.atlassian.jira</groupId>
             <artifactId>ka-func-test-framework</artifactId>
             <version>${jira.version}</version>
-            <scope>test</scope>
+            <scope>provided</scope>
             <exclusions>
                 <exclusion>
                     <groupId>com.atlassian.browsers</groupId>
@@ -115,7 +115,7 @@
             <groupId>com.atlassian.selenium</groupId>
             <artifactId>atlassian-webdriver-core</artifactId>
             <version>${atlassian.selenium.version}</version>
-            <scope>test</scope>
+            <scope>provided</scope>
             <exclusions>
                 <exclusion>
                     <groupId>com.google.collections</groupId>
@@ -125,72 +125,82 @@
                     <groupId>org.apache.httpcomponents</groupId>
                     <artifactId>httpclient</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>com.atlassian.browsers</groupId>
+                    <artifactId>atlassian-browsers-linux64</artifactId>
+                </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.browsers</groupId>
+            <artifactId>atlassian-browsers-linux64</artifactId>
+            <version>2.4</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>
             <version>7.6.8.v20121106</version>
-            <scope>test</scope>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-servlet</artifactId>
             <version>7.6.8.v20121106</version>
-            <scope>test</scope>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.jvnet.hudson</groupId>
             <artifactId>jira-api</artifactId>
             <version>1.0</version>
-            <scope>test</scope>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>com.samskivert</groupId>
             <artifactId>jmustache</artifactId>
             <version>1.3</version>
-            <scope>test</scope>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>cc.plural</groupId>
             <artifactId>jsonij</artifactId>
             <version>0.2.11</version>
-            <scope>test</scope>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.kohsuke.redstone</groupId>
             <artifactId>redstone</artifactId>
             <version>1.1.1</version>
-            <scope>test</scope>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>com.atlassian.plugins</groupId>
             <artifactId>atlassian-plugins-osgi-bridge</artifactId>
-            <scope>test</scope>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>com.atlassian.jira</groupId>
             <artifactId>jira-rest-java-client-api</artifactId>
-            <scope>test</scope>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>com.atlassian.jira</groupId>
             <artifactId>jira-rest-java-client-plugin</artifactId>
             <version>${jira.client.version}</version>
-            <scope>test</scope>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>com.atlassian.user</groupId>
             <artifactId>atlassian-user</artifactId>
             <version>2.0</version>
-            <scope>test</scope>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
     <build>
@@ -280,7 +290,16 @@
                                     <artifactId>json-simple</artifactId>
                                     <version>1.1.1</version>
                                 </pluginArtifact>
-
+                                <pluginArtifact>
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>remotable-plugins-plugin</artifactId>
+                                    <version>${project.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>remotable-plugins-sisu-extender</artifactId>
+                                    <version>${project.version}</version>
+                                </pluginArtifact>
                             </pluginArtifacts>
                             <libArtifacts>
                                 <!-- necessary for Speakeasy mail handling -->
@@ -324,6 +343,16 @@
                                     <groupId>com.atlassian.jira.plugins.webhooks</groupId>
                                     <artifactId>jira-webhooks-plugin</artifactId>
                                     <version>${jira.webhooks.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>remotable-plugins-plugin</artifactId>
+                                    <version>${project.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>remotable-plugins-sisu-extender</artifactId>
+                                    <version>${project.version}</version>
                                 </pluginArtifact>
                                 <pluginArtifact>
                                     <groupId>${project.groupId}</groupId>
@@ -424,6 +453,16 @@
                                 <pluginArtifact>
                                     <groupId>${project.groupId}</groupId>
                                     <artifactId>remotable-plugins-test-plugin</artifactId>
+                                    <version>${project.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>remotable-plugins-plugin</artifactId>
+                                    <version>${project.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>remotable-plugins-sisu-extender</artifactId>
                                     <version>${project.version}</version>
                                 </pluginArtifact>
                                 <pluginArtifact>
