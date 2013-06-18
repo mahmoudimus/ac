@@ -16,10 +16,6 @@
       <small>Plugin <a href="${plugin.displayUrl}" class="ap-doc-url" target="_blank">$plugin.name</a> failed to load.</small>
     </div>
   </div>
-  ## @todo optimize script delivery
-  #foreach ($scriptUrl in $scriptUrls)
-  <script src="$scriptUrl"></script>
-  #end
   <script>
   _AP.require("host/main", function(create) {
       create({
