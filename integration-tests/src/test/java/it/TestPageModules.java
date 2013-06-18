@@ -131,26 +131,6 @@ public class TestPageModules extends AbstractRemotablePluginTest
 
         Assert.assertEquals("true", remotePluginTest.waitForValue("amd-env"));
         Assert.assertEquals("true", remotePluginTest.waitForValue("amd-request"));
-        Assert.assertEquals("true", remotePluginTest.waitForValue("amd-bigpipe"));
         Assert.assertEquals("true", remotePluginTest.waitForValue("amd-dialog"));
-    }
-
-    @Test
-    public void testBigPipe()
-    {
-        product.visit(LoginPage.class).login("betty", "betty", HomePage.class);
-        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "bigPipeTest",
-            "BigPipe Test app1 General");
-        assertTrue(page.isRemotePluginLinkPresent());
-        RemotePluginTestPage remotePluginTest = page.clickRemotePluginLink();
-
-        Assert.assertEquals("my bigpipe html 1", remotePluginTest.waitForValueBySelector("#html-1 span"));
-        Assert.assertEquals("my bigpipe html 2", remotePluginTest.waitForValueBySelector("#html-2 span"));
-
-        Assert.assertEquals("my bigpipe data 1", remotePluginTest.waitForValue("data-1"));
-        Assert.assertEquals("my bigpipe data 2", remotePluginTest.waitForValue("data-2"));
-
-        Assert.assertEquals("my bigpipe xhr data 1", remotePluginTest.waitForValue("xhr-data-1"));
-        Assert.assertEquals("my bigpipe xhr data 2", remotePluginTest.waitForValue("xhr-data-2"));
     }
 }

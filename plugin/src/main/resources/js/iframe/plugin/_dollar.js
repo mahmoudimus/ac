@@ -1,4 +1,4 @@
-AP.define("_dollar", ["_util", "_ajax"], function (util, ajax) {
+AP.define("_dollar", ["_util"], function (util) {
 
   "use strict";
 
@@ -79,6 +79,6 @@ AP.define("_dollar", ["_util", "_ajax"], function (util, ajax) {
     return els;
   }
 
-  return extend($, util, ajax);
+  return extend($, util);
 
 });
