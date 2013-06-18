@@ -1,10 +1,8 @@
-(function(global, AJS, $) {
-
-  var AP = global._AP = global._AP || {};
+_AP.define("dialog/simple", ["_dollar"], function($) {
 
   var enc = encodeURIComponent;
 
-  var $global = $(global);
+  var $global = $(window);
 
   var idSeq = 0;
 
@@ -13,11 +11,16 @@
    * iframe. The iframe's content is retrieved from the Remotable Plugin via a redirect URl from the host Atlassian app,
    * which the request to the Remotable Plugin to be signed with outgoing OAuth credentials.
    *
-   * @param contentUrl The URL (relative to the Atlassian app root) that will retrieve the content to display,
+   * @param {String} contentUrl The URL (relative to the Atlassian app root) that will retrieve the content to display,
    *           eg. "/plugins/servlet/remotable-plugins/app-key/macro".
-   * @param options Options to configure the behaviour and appearance of the dialog.
+   * @param {Object} options Options to configure the behaviour and appearance of the dialog.
+   * @param {String} [options.header="Remotable Plugins Dialog Title"]  Dialog header.
+   * @param {String} [options.headerClass="ap-dialog-header"] CSS class to apply to dialog header.
+   * @param {String|Number} [options.width="50%"] width of the dialog, expressed as either absolute pixels (eg 800) or percent (eg 50%)
+   * @param {String|Number} [options.height="50%"] height of the dialog, expressed as either absolute pixels (eg 600) or percent (eg 50%)
+   * @param {String} [options.id] ID attribute to assign to the dialog. Default to "ap-dialog-n" where n is an autoincrementing id.
    */
-  AP.makeDialog = function (contentUrl, options) {
+  return function (contentUrl, options) {
     var $nexus;
 
     var defaultOptions = {
@@ -233,4 +236,15 @@
     return url;
   }
 
-})(this, AJS, AJS.$);
+});
+
+
+/**
+ * Legacy namespace
+ * @deprecated
+ */
+if (!_AP.makeDialog) {
+  _AP.require(["dialog/simple"], function(main) {
+    _AP.makeDialog = main;
+  });
+}
