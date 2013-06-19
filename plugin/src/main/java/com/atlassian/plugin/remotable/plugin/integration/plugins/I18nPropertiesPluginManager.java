@@ -62,8 +62,6 @@ public final class I18nPropertiesPluginManager
     private final AtomicBoolean started = new AtomicBoolean(false);
     private final Map<String, String> i18nToRegister = CopyOnWriteMap.newHashMap();
 
-    private volatile Bundle i18nBundle;
-
     @Autowired
     public I18nPropertiesPluginManager(ModuleFactory moduleFactory,
                                        PluginAccessor accessor,
@@ -81,21 +79,25 @@ public final class I18nPropertiesPluginManager
             @Override
             public void run()
             {
-                loadBundle();
+                initI18nPlugin();
                 registerI18n(i18nToRegister);
                 started.set(true);
             }
         });
     }
 
-    private void forBundle(Bundle bundle, BundleManipulator manip)
+    /**
+     * Lookup the currently installed remotable plugins i18n bundle and process it with the supplied {@link BundleManipulator}
+     */
+    private void updateI18nBundle(BundleManipulator bundleManipulator)
     {
+        Bundle i18nBundle = lookupI18nBundle();
         ByteArrayOutputStream bout = null;
         try
         {
             bout = new ByteArrayOutputStream();
             ZipOutputStream zout = new ZipOutputStream(bout);
-            Enumeration<URL> files = bundle.findEntries("/", "*.properties", false);
+            Enumeration<URL> files = i18nBundle.findEntries("/", "*.properties", false);
             if (files != null)
             {
                 while (files.hasMoreElements())
@@ -106,15 +108,15 @@ public final class I18nPropertiesPluginManager
                     {
                         name = name.substring(1);
                     }
-                    if (manip.includeEntry(name))
+                    if (bundleManipulator.includeEntry(name))
                     {
                         zout.putNextEntry(new ZipEntry(name));
                         IOUtils.copy(url.openStream(), zout);
                     }
                 }
             }
-            manip.finish(bundle, zout);
-            Manifest mf = new Manifest(bundle.getEntry("META-INF/MANIFEST.MF").openStream());
+            bundleManipulator.finish(i18nBundle, zout);
+            Manifest mf = new Manifest(i18nBundle.getEntry("META-INF/MANIFEST.MF").openStream());
             zout.putNextEntry(new ZipEntry("META-INF/MANIFEST.MF"));
             mf.write(zout);
             zout.close();
@@ -124,7 +126,6 @@ public final class I18nPropertiesPluginManager
 
             pluginController.installPlugins(new JarPluginArtifact(tmpFile));
             tmpFile.delete();
-            setI18nBundle();
         }
         catch (IOException e)
         {
@@ -136,22 +137,9 @@ public final class I18nPropertiesPluginManager
         }
     }
 
-//    public synchronized boolean remove(final String name)
-//    {
-////        forBundle(new BundleManipulator()
-////        {
-////
-////            public boolean includeEntry(String entryName)
-////            {
-////                return !name.equals(entryName);
-////            }
-////
-////            public void finish(Bundle bundle, ZipOutputStream zout){}
-////        });
-////        return true;
-//        throw new UnsupportedOperationException();
-//    }
-
+    /**
+     * Register i18n properties for a newly installed plugin.
+     */
     public synchronized String add(String pluginKey, Properties i18nProperties)
     {
         final StringWriter writer = new StringWriter();
@@ -168,31 +156,32 @@ public final class I18nPropertiesPluginManager
         i18nToRegister.put(name, data);
         if (started.get())
         {
-            setI18nBundle();
             registerI18n(i18nToRegister);
         }
         return name;
     }
 
+    /**
+     * Add a map of i18n keys to the currently installed remotable plugins i18n bundle.
+     */
     private synchronized void registerI18n(final Map<String, String> i18n)
     {
-        forBundle(i18nBundle, new BundleManipulator()
-        {
-            public boolean includeEntry(String entryName)
-            {
+        updateI18nBundle(new BundleManipulator() {
+            public boolean includeEntry(String entryName) {
                 return !i18n.keySet().contains(entryName.substring(0, entryName.length() - ".properties".length()));
             }
 
-            public void finish(Bundle bundle, ZipOutputStream zout) throws IOException
-            {
-                for (Map.Entry<String, String> entry : i18n.entrySet())
-                {
+            public void finish(Bundle bundle, ZipOutputStream zout) throws IOException {
+                for (Map.Entry<String, String> entry : i18n.entrySet()) {
                     zout.putNextEntry(new ZipEntry(entry.getKey() + ".properties"));
                     IOUtils.copy(new StringReader(entry.getValue()), zout, "UTF-8");
                 }
             }
         });
 
+        // look up the i18nBundle fresh to ensure we have an installed, enabled version of the bundle. The
+        // updateI18nBundle operation above causes the plugin system to scan for new plugins.
+        Bundle i18nBundle = lookupI18nBundle();
         for (String name : i18n.keySet())
         {
             I18nModuleDescriptor descriptor = new I18nModuleDescriptor(moduleFactory);
@@ -208,15 +197,13 @@ public final class I18nPropertiesPluginManager
         }
     }
 
-    private void loadBundle()
+    private void initI18nPlugin()
     {
         if (findI18nPlugin() == null)
         {
             createAndInstallI18nPlugin();
         }
-
         ensureI18nPluginIsEnabled();
-        setI18nBundle();
     }
 
     private Plugin findI18nPlugin()
@@ -279,13 +266,18 @@ public final class I18nPropertiesPluginManager
         return mf;
     }
 
-    private void setI18nBundle()
+    /**
+     * @return the currently installed remotable plugins i18n bundle after ensuring it is enabled.
+     */
+    private Bundle lookupI18nBundle()
     {
-        this.i18nBundle = findBundleWithName(bundleContext, I18N_SYMBOLIC_NAME);
+        Bundle i18nBundle = findBundleWithName(bundleContext, I18N_SYMBOLIC_NAME);
         if (i18nBundle == null)
         {
             throw new IllegalStateException("The i18n bundle (" + I18N_SYMBOLIC_NAME + ") was not found amongst bundles: " + toBundleNames(bundleContext.getBundles()));
         }
+        ensureI18nPluginIsEnabled();
+        return i18nBundle;
     }
 
     private void ensureI18nPluginIsEnabled()
