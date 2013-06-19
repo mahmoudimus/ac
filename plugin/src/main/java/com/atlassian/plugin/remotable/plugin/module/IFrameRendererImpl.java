@@ -125,7 +125,6 @@ public final class IFrameRendererImpl implements IFrameRenderer
 	@Override
     public String render(IFrameContext iframeContext, String extraPath, Map<String, String[]> queryParams, String remoteUser) throws IOException
     {
-        webResourceManager.requireResourcesForContext("remotable-plugins-iframe");
         RemotablePluginAccessor remotablePluginAccessor = remotablePluginAccessorFactory.get(iframeContext.getPluginKey());
 
         final URI hostUrl = iframeHost.getUrl();
