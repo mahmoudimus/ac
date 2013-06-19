@@ -5,7 +5,6 @@ import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.osgi.util.OsgiHeaderUtil;
 import com.atlassian.plugin.remotable.api.service.RequestContext;
 import com.atlassian.plugin.remotable.api.service.SignedRequestHandler;
-import com.atlassian.plugin.remotable.api.service.http.bigpipe.BigPipeManager;
 import com.atlassian.plugin.remotable.host.common.service.RequestContextServiceFactory;
 import com.atlassian.plugin.remotable.host.common.service.http.bigpipe.BigPipeServiceFactory;
 import com.atlassian.plugin.remotable.host.common.service.http.bigpipe.DefaultBigPipeManager;
@@ -14,7 +13,6 @@ import com.atlassian.plugin.remotable.plugin.service.LocalSignedRequestHandlerSe
 import org.osgi.framework.Bundle;
 import org.osgi.framework.ServiceFactory;
 import org.osgi.framework.ServiceRegistration;
-import org.springframework.osgi.io.internal.OsgiHeaderUtils;
 
 /**
  * Provides an http resource mounter specific to a plugin
