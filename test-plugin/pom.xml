@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.atlassian.plugins</groupId>
         <artifactId>remotable-plugins-parent</artifactId>
-        <version>0.8.9999-SNAPSHOT</version>
+        <version>0.8.1098</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
