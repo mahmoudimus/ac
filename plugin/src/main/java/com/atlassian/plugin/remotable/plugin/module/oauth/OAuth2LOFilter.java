@@ -9,6 +9,8 @@ import com.atlassian.sal.api.auth.Authenticator;
 import com.google.common.collect.ImmutableSet;
 import net.oauth.OAuth;
 import net.oauth.server.HttpRequestMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -27,6 +29,7 @@ public class OAuth2LOFilter implements Filter
             OAUTH_SIGNATURE,
             OAUTH_TIMESTAMP,
             OAUTH_NONCE);
+    private final static Logger log = LoggerFactory.getLogger(OAuth2LOFilter.class);
 
     private final Authenticator authenticator;
     private final AuthenticationListener authenticationListener;
@@ -66,6 +69,10 @@ public class OAuth2LOFilter implements Filter
             if (!ex.getClass().getSimpleName().equals("ServiceProxyDestroyedException"))
             {
                 throw ex;
+            }
+            else
+            {
+                log.debug(ex.toString());
             }
         }
         try
