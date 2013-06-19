@@ -1,7 +1,9 @@
-(function (window, AJS) {
+/**
+ * Entry point for xdm messages on the host product side.
+ */
+_AP.define("host/main", ["_xdm-rpc"], function (XdmRpc) {
 
   var $ = AJS.$,
-      AP = window._AP = window._AP || {},
       xhrProperties = ["status", "statusText", "responseText"],
       xhrHeaders = ["Content-Type"],
       events = (AJS.EventQueue = AJS.EventQueue || []),
@@ -62,7 +64,7 @@
       return $nexus.data("ra.dialog.buttons").getButton(name);
     }
 
-    var rpc = new AP._XdmRpc({
+    var rpc = new XdmRpc({
       remote: options.src,
       container: contentId,
       channel: channelId,
@@ -258,7 +260,7 @@
     $nexus.trigger("ra.iframe.create");
   }
 
-  AP.create = AP.create || function (options) {
+  return function (options) {
     function doCreate() {
       // make sure the content div is empty
       contentDiv(options.ns).find("iframe").each(function (_, iframe) {
@@ -280,4 +282,12 @@
     }
   };
 
-}(this, AJS));
+});
+
+// Legacy global namespace
+// TODO: should be able to express this as _AP.create = _AP.require("host/main"). Requires changes in _amd.js
+if (!_AP.create) {
+  _AP.require(["host/main"], function(main) {
+    _AP.create = main;
+  });
+}

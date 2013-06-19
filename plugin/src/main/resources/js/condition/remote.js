@@ -1,10 +1,6 @@
-/*
-  Hides UI elements that are protected by remote conditions.  These are all hacks hiding is supported
-  by the module types directly
- */
-(function ($, global) {
-  var AP = global._AP = global._AP || {},
-      hidden;
+_AP.define("condition/remote", ["_dollar"], function($) {
+
+  var hidden;
 
   function hide() {
     if (!hidden) {
@@ -23,7 +19,21 @@
 
   AJS.toInit(hide);
 
-  AP.RemoteConditions = {
+  return {
+    /**
+     * Hides UI elements that are protected by remote conditions. These are all hacks hiding is supported
+     * by the module types directly
+     */
     hide: hide
   };
-}(AJS.$, this));
+});
+
+/**
+ * Legacy namespace
+ * @deprecated
+ */
+if (!_AP.RemoteConditions) {
+  _AP.require(["condition/remote"], function(main) {
+    _AP.RemoteConditions = main;
+  });
+}

@@ -42,6 +42,12 @@ public class JiraGeneralPage implements GeneralPage
     @Override
     public RemotePluginTestPage clickRemotePluginLink()
     {
+        //get rid of the first time dialog if it's there
+        if(driver.elementExists(By.className("button-panel-cancel-link")))
+        {
+            driver.findElement(By.className("button-panel-cancel-link")).click();  
+        }
+        
         if (driver.elementExists(By.linkText(linkText)))
         {
             driver.findElement(By.linkText(linkText)).click();
