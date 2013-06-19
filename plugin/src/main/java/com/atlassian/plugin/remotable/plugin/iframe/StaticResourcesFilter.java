@@ -102,7 +102,7 @@ public class StaticResourcesFilter implements Filter
 
             final String moduleDir = "js/iframe/";
             final String[] modules = {
-                "plugin/_amd.js",
+                "_amd.js",
                 "plugin/_util.js",
                 "plugin/_ajax.js",
                 "plugin/_dollar.js",

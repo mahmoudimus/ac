@@ -483,7 +483,6 @@ public final class DefaultBigPipeManager implements BigPipeManager, DisposableBe
         private InternalHandler registerContentPromise(String channelId, Promise<String> stringPromise)
         {
             ContentEnvelopePromise envelopePromise = new ContentEnvelopePromise(stringPromise, channelId);
-            webResourceManager.requireResource("com.atlassian.labs.remoteapps-plugin:big-pipe");
             envelopePromise.then(new FutureCallback<JSONObject>()
             {
                 @Override

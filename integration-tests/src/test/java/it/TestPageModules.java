@@ -5,6 +5,7 @@ import com.atlassian.pageobjects.page.AdminHomePage;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
 import org.hamcrest.Matchers;
+import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -25,33 +26,33 @@ public class TestPageModules extends AbstractRemotablePluginTest
         RemotePluginTestPage remotePluginTest = page.clickRemotePluginLink();
         assertTrue(remotePluginTest.getTitle().contains("Remotable Plugin app1 General"));
         assertFalse(remotePluginTest.getTitle().contains("Remotable Plugin app1 General Link"));
-        assertEquals("Success", remotePluginTest.getMessage());
-        assertEquals(OAuthUtils.getConsumerKey(), remotePluginTest.getConsumerKey());
+        Assert.assertEquals("Success", remotePluginTest.getMessage());
+        Assert.assertEquals(OAuthUtils.getConsumerKey(), remotePluginTest.getConsumerKey());
         assertTrue(remotePluginTest.getIframeQueryParams().containsKey("cp"));
         assertNotNull(remotePluginTest.getFullName());
         assertThat(remotePluginTest.getFullName().toLowerCase(), Matchers.containsString("betty"));
-        assertEquals("betty", remotePluginTest.getUserId());
+        Assert.assertEquals("betty", remotePluginTest.getUserId());
         assertTrue(remotePluginTest.getLocale().startsWith("en-"));
 
         // timezone should be the same as the default one
         assertEquals(TimeZone.getDefault().getRawOffset(), TimeZone.getTimeZone(remotePluginTest.getTimeZone()).getRawOffset());
 
         // basic tests of the HostHttpClient API
-        assertEquals("200", remotePluginTest.getServerHttpStatus());
+        Assert.assertEquals("200", remotePluginTest.getServerHttpStatus());
         String statusText = remotePluginTest.getServerHttpStatusText();
         assertTrue("OK".equals(statusText));
         String contentType = remotePluginTest.getServerHttpContentType();
         assertTrue(contentType != null && contentType.startsWith("text/plain"));
-        assertEquals("betty", remotePluginTest.getServerHttpEntity());
+        Assert.assertEquals("betty", remotePluginTest.getServerHttpEntity());
 
         // basic tests of the RA.request API
-        assertEquals("200", remotePluginTest.getClientHttpStatus());
+        Assert.assertEquals("200", remotePluginTest.getClientHttpStatus());
         statusText = remotePluginTest.getClientHttpStatusText();
         assertTrue("OK".equals(statusText) || "success".equals(statusText));
         contentType = remotePluginTest.getClientHttpContentType();
         assertTrue(contentType != null && contentType.startsWith("text/plain"));
-        assertEquals("betty", remotePluginTest.getClientHttpData());
-        assertEquals("betty", remotePluginTest.getClientHttpResponseText());
+        Assert.assertEquals("betty", remotePluginTest.getClientHttpData());
+        Assert.assertEquals("betty", remotePluginTest.getClientHttpResponseText());
     }
 
     @Test
@@ -128,10 +129,10 @@ public class TestPageModules extends AbstractRemotablePluginTest
         assertTrue(page.isRemotePluginLinkPresent());
         RemotePluginTestPage remotePluginTest = page.clickRemotePluginLink();
 
-        assertEquals("true", remotePluginTest.waitForValue("amd-env"));
-        assertEquals("true", remotePluginTest.waitForValue("amd-request"));
-        assertEquals("true", remotePluginTest.waitForValue("amd-bigpipe"));
-        assertEquals("true", remotePluginTest.waitForValue("amd-dialog"));
+        Assert.assertEquals("true", remotePluginTest.waitForValue("amd-env"));
+        Assert.assertEquals("true", remotePluginTest.waitForValue("amd-request"));
+        Assert.assertEquals("true", remotePluginTest.waitForValue("amd-bigpipe"));
+        Assert.assertEquals("true", remotePluginTest.waitForValue("amd-dialog"));
     }
 
     @Test
@@ -143,13 +144,13 @@ public class TestPageModules extends AbstractRemotablePluginTest
         assertTrue(page.isRemotePluginLinkPresent());
         RemotePluginTestPage remotePluginTest = page.clickRemotePluginLink();
 
-        assertEquals("my bigpipe html 1", remotePluginTest.waitForValueBySelector("#html-1 span"));
-        assertEquals("my bigpipe html 2", remotePluginTest.waitForValueBySelector("#html-2 span"));
+        Assert.assertEquals("my bigpipe html 1", remotePluginTest.waitForValueBySelector("#html-1 span"));
+        Assert.assertEquals("my bigpipe html 2", remotePluginTest.waitForValueBySelector("#html-2 span"));
 
-        assertEquals("my bigpipe data 1", remotePluginTest.waitForValue("data-1"));
-        assertEquals("my bigpipe data 2", remotePluginTest.waitForValue("data-2"));
+        Assert.assertEquals("my bigpipe data 1", remotePluginTest.waitForValue("data-1"));
+        Assert.assertEquals("my bigpipe data 2", remotePluginTest.waitForValue("data-2"));
 
-        assertEquals("my bigpipe xhr data 1", remotePluginTest.waitForValue("xhr-data-1"));
-        assertEquals("my bigpipe xhr data 2", remotePluginTest.waitForValue("xhr-data-2"));
+        Assert.assertEquals("my bigpipe xhr data 1", remotePluginTest.waitForValue("xhr-data-1"));
+        Assert.assertEquals("my bigpipe xhr data 2", remotePluginTest.waitForValue("xhr-data-2"));
     }
 }

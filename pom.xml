@@ -33,8 +33,9 @@
         <module>container</module>
         <module>container-build</module>
         <module>test</module>
-        <module>universal-binary-test-plugin</module>
-        
+        <!-- <module>universal-binary-test-plugin</module> -->
+        <module>integration-tests</module>
+
     </modules>
 
     <build>
@@ -63,7 +64,7 @@
             <plugin>
                 <groupId>com.atlassian.maven.plugins</groupId>
                 <artifactId>maven-amps-plugin</artifactId>
-                <version>4.1.5</version>
+                <version>${amps.version}</version>
                 <extensions>true</extensions>
                 <configuration>
                     <extractDependencies>true</extractDependencies>
@@ -280,17 +281,6 @@
                 <version>${spring.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.springframework.osgi</groupId>
-                <artifactId>spring-osgi-core</artifactId>
-                <version>1.2.1</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.springframework</groupId>
-                        <artifactId>org.springframework.context</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
                 <groupId>com.atlassian.plugins</groupId>
                 <artifactId>atlassian-plugins-osgi-bridge</artifactId>
                 <version>${plugins.version}</version>
@@ -393,13 +383,13 @@
         <!-- If you change this, make sure you upgrade and release new versions of every plugin bundled in the
              OBR, otherwise upgrades won't work correctly -->
         <api.version>0.8</api.version>
-        <api.artifact.version>${api.version}.2</api.artifact.version>
+        <api.artifact.version>${api.version}.5</api.artifact.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <xvfb.enable>true</xvfb.enable>
         <atlassian.selenium.version>2.1.0-m12</atlassian.selenium.version>
         <!-- Confluence 4.2.8 uses this version, JIRA 5.0.7 uses version 2.1.0-m14 -->
         <refapp.version>3.0.0-m7</refapp.version>
-        <jira.version>6.0-rc1</jira.version>
+        <jira.version>6.0.2</jira.version>
         <jira.data.version>${jira.version}</jira.data.version>
         <jira.client.api.version>2.0</jira.client.api.version>
         <jira.client.version>2.0.0-m16</jira.client.version>
@@ -442,5 +432,6 @@
         <servletkit.version>0.7.3</servletkit.version>
         <ringojskit.version>0.7.2</ringojskit.version>
         <gatekeeper.property>7</gatekeeper.property>
+        <amps.version>4.2.1</amps.version>
     </properties>
 </project>

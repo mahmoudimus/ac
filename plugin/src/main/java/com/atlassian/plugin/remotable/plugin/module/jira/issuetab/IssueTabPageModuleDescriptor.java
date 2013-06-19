@@ -79,7 +79,7 @@ public final class IssueTabPageModuleDescriptor extends AbstractModuleDescriptor
 
         Node node = new Dom4jNode(descriptor);
 
-        // make sure to update remote-condition.js to hide these
+        // make sure to update condition/remote.js to hide these
         Condition condition = conditionProcessor.process(node, desc, getPluginKey(), "#" + moduleKey + "-remote-condition");
         if (condition instanceof ContainingRemoteCondition)
         {
