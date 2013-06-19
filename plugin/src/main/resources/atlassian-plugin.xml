@@ -59,15 +59,12 @@
     </web-resource>
 
     <web-resource key="iframe-host-js">
-        <context>remotable-plugins-iframe</context>
+        <context>atl.admin</context>
+        <context>atl.general</context>
+        <dependency>com.atlassian.auiplugin:ajs</dependency>
         <dependency>com.atlassian.labs.remoteapps-plugin:ap-amd</dependency>
         <resource type="download" name="xdm-rpc.js" location="/js/iframe/xdm-rpc.js" />
         <resource type="download" name="main.js" location="/js/iframe/host/main.js" />
-    </web-resource>
-
-    <web-resource key="iframe-requirements">
-        <context>remotable-plugins-iframe</context>
-        <dependency>com.atlassian.auiplugin:ajs</dependency>
     </web-resource>
 
     <web-resource key="dialog">
