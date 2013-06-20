@@ -314,7 +314,7 @@ public class MacroModuleDescriptorCreator
                     .addAttribute("location", "js/confluence/macro/macro-override.js");
 
             webResource.addElement("dependency")
-                    .setText("confluence.web.resources:ajs");
+                    .setText("com.atlassian.labs.remoteapps-plugin:ap-amd");
 
             webResource.addElement("context")
                     .setText("editor");
