@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
         <groupId>com.atlassian.plugins</groupId>
         <artifactId>remotable-plugins-parent</artifactId>
-        <version>0.8.1066-SNAPSHOT</version>
+        <version>0.8.1066-confluence1</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -1065,13 +1063,12 @@
                         <phase>package</phase>
                         <configuration>
                             <target>
-                                <taskdef resource="net/sf/antcontrib/antcontrib.properties"/>
+                                <taskdef resource="net/sf/antcontrib/antcontrib.properties" />
 
                                 <if>
-                                    <available file="${project.build.directory}/${project.build.finalName}.obr"/>
+                                    <available file="${project.build.directory}/${project.build.finalName}.obr" />
                                     <then>
-                                        <copy file="${project.build.directory}/${project.build.finalName}.obr"
-                                              tofile="${project.build.directory}/deployable.obr"/>
+                                        <copy file="${project.build.directory}/${project.build.finalName}.obr" tofile="${project.build.directory}/deployable.obr" />
                                     </then>
                                 </if>
                             </target>
@@ -1113,7 +1110,7 @@
                                     com.atlassian.plugin.*;version="2.8",
                                     *;resolution:=optional
                                 </Import-Package>
-                                <Export-Package></Export-Package>
+                                <Export-Package />
                             </instructions>
                             <manifestLocation>${project.build.testOutputDirectory}/META-INF</manifestLocation>
                             <classifier>tests</classifier>
