@@ -61,6 +61,15 @@
                 </configuration>
             </plugin>
             <plugin>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.2.2</version>
+                <configuration>
+                    <!-- When using atlassian-public-pom as parent POM we need this configuration to skip tests, -->
+                    <!-- as command line arguments are ignored. -->
+                    <arguments>-Prelease -DskipTests</arguments>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>com.atlassian.maven.plugins</groupId>
                 <artifactId>maven-amps-plugin</artifactId>
                 <version>4.1.5</version>
