@@ -24,6 +24,12 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>remotable-plugins-spi</artifactId>
+            <version>${api.artifact.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
             <groupId>com.atlassian.activeobjects</groupId>
             <artifactId>activeobjects-plugin</artifactId>
             <version>${ao.version}</version>
@@ -117,16 +123,16 @@
             <version>1.1</version>
         </dependency>
 
-        <dependency>
-            <groupId>com.atlassian.jira</groupId>
-            <artifactId>jira-rest-java-client-api</artifactId>
-            <version>${jira.client.version}</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.atlassian.jira</groupId>-->
+            <!--<artifactId>jira-rest-java-client-api</artifactId>-->
+            <!--<version>${jira.client.version}</version>-->
+        <!--</dependency>-->
 
-        <dependency>
-            <groupId>com.atlassian.labs</groupId>
-            <artifactId>confluence-xmlrpc-java-client-api</artifactId>
-            <version>${confluence.client.version}</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.atlassian.labs</groupId>-->
+            <!--<artifactId>confluence-xmlrpc-java-client-api</artifactId>-->
+            <!--<version>${confluence.client.version}</version>-->
+        <!--</dependency>-->
     </dependencies>
 </project>
