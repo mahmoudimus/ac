@@ -49,6 +49,11 @@
         </dependency>
 
         <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        
+        <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
             <version>1.6</version>
@@ -311,19 +316,19 @@
             <version>${sisu.version}</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>com.atlassian.jira</groupId>
-            <artifactId>jira-rest-java-client-plugin</artifactId>
-            <version>${jira.client.version}</version>
-            <scope>provided</scope>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.atlassian.jira</groupId>-->
+            <!--<artifactId>jira-rest-java-client-plugin</artifactId>-->
+            <!--<version>${jira.client.version}</version>-->
+            <!--<scope>provided</scope>-->
+        <!--</dependency>-->
 
-        <dependency>
-            <groupId>com.atlassian.labs</groupId>
-            <artifactId>confluence-xmlrpc-java-client-plugin</artifactId>
-            <version>${confluence.client.version}</version>
-            <scope>provided</scope>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.atlassian.labs</groupId>-->
+            <!--<artifactId>confluence-xmlrpc-java-client-plugin</artifactId>-->
+            <!--<version>${confluence.client.version}</version>-->
+            <!--<scope>provided</scope>-->
+        <!--</dependency>-->
 
         <dependency>
             <groupId>org.sonatype.sisu</groupId>

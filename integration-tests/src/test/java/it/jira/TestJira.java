@@ -8,8 +8,8 @@ import com.atlassian.jira.pageobjects.pages.project.BrowseProjectPage;
 import com.atlassian.jira.pageobjects.project.ProjectConfigTabs;
 import com.atlassian.jira.pageobjects.project.summary.ProjectSummaryPageTab;
 import com.atlassian.jira.plugin.issuenav.pageobjects.IssueDetailPage;
-import com.atlassian.jira.rest.client.api.JiraRestClient;
-import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory;
+//import com.atlassian.jira.rest.client.api.JiraRestClient;
+//import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory;
 import com.atlassian.jira.testkit.client.Backdoor;
 import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.pageobjects.TestedProductFactory;
@@ -68,7 +68,7 @@ public class TestJira
     @Rule
     public MethodRule rule = new HtmlDumpRule(product.getTester().getDriver());
     private RemoteProject project;
-    private final AsynchronousJiraRestClientFactory restClientFactory = new AsynchronousJiraRestClientFactory();
+    //private final AsynchronousJiraRestClientFactory restClientFactory = new AsynchronousJiraRestClientFactory();
     private final Backdoor backdoor = new Backdoor(new ProductInstanceBasedEnvironmentData(product.getProductInstance()));
 
     @After
@@ -254,35 +254,35 @@ public class TestJira
         });
     }
 
-    @Test
-    public void testThatUserTimezoneSettingIsRespectedByRemotablePlugin() throws Exception
-    {
-        final JiraRestClient restClient = createRestClient();
-        try
-        {
-            final DateTime serverTime = restClient.getMetadataClient().getServerInfo().claim().getServerTime();
-            assertNotNull("Expected to get server time using JIRA REST Java Client, but got null instead.", serverTime);
-            final String serverTimeZone = serverTime.getZone().getID();
-
-            // create test user
-            final String testUser = "betty";
-            backdoor.usersAndGroups().addUserEvenIfUserExists(testUser);
-            backdoor.usersAndGroups().addUserToGroup(testUser, "jira-administrators");
-//            loginAs(testUser, testUser);
-
-            // test with a custom timezone
-            final String expectedTimezone = "Africa/Abidjan";
-            product.visit(LoginPage.class).login("betty", "betty", HomePage.class);
-            testTimezoneImpl(expectedTimezone, expectedTimezone, testUser);
-
-            // test with the default timezone
-            testTimezoneImpl(serverTimeZone, "", testUser);
-        }
-        finally
-        {
-            restClient.close();
-        }
-    }
+//    @Test
+//    public void testThatUserTimezoneSettingIsRespectedByRemotablePlugin() throws Exception
+//    {
+//        final JiraRestClient restClient = createRestClient();
+//        try
+//        {
+//            final DateTime serverTime = restClient.getMetadataClient().getServerInfo().claim().getServerTime();
+//            assertNotNull("Expected to get server time using JIRA REST Java Client, but got null instead.", serverTime);
+//            final String serverTimeZone = serverTime.getZone().getID();
+//
+//            // create test user
+//            final String testUser = "betty";
+//            backdoor.usersAndGroups().addUserEvenIfUserExists(testUser);
+//            backdoor.usersAndGroups().addUserToGroup(testUser, "jira-administrators");
+////            loginAs(testUser, testUser);
+//
+//            // test with a custom timezone
+//            final String expectedTimezone = "Africa/Abidjan";
+//            product.visit(LoginPage.class).login("betty", "betty", HomePage.class);
+//            testTimezoneImpl(expectedTimezone, expectedTimezone, testUser);
+//
+//            // test with the default timezone
+//            testTimezoneImpl(serverTimeZone, "", testUser);
+//        }
+//        finally
+//        {
+//            restClient.close();
+//        }
+//    }
 
     private void testTimezoneImpl(final String expectedTimeZone, final String setUserTimeZone, final String testUser)
     {
@@ -295,11 +295,11 @@ public class TestJira
         Assert.assertEquals(expectedTimeZone, remotePluginTest.getTimeZoneFromTemplateContext());
     }
 
-    private JiraRestClient createRestClient()
-    {
-        final URI baseUri = URI.create(product.getProductInstance().getBaseUrl());
-        return restClientFactory.createWithBasicHttpAuthentication(baseUri, ADMIN, ADMIN);
-    }
+//    private JiraRestClient createRestClient()
+//    {
+//        final URI baseUri = URI.create(product.getProductInstance().getBaseUrl());
+//        return restClientFactory.createWithBasicHttpAuthentication(baseUri, ADMIN, ADMIN);
+//    }
 
     @Test
     public void testViewProjectAdminTab() throws Exception
