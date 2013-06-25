@@ -59,10 +59,15 @@ public class TestPageModules extends AbstractRemotablePluginTest
     public void testLoadGeneralDialog()
     {
         product.visit(LoginPage.class).login("betty", "betty", HomePage.class);
-        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "remotePluginDialog",
-                "Remotable Plugin app1 Dialog");
+
+        acdev269();
+
+        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "remotePluginDialog", "Remotable Plugin app1 Dialog");
         assertTrue(page.isRemotePluginLinkPresent());
         RemotePluginTestPage remotePluginTest = page.clickRemotePluginLink();
+
+        acdev269();
+
         assertNotNull(remotePluginTest.getFullName());
         assertThat(remotePluginTest.getFullName().toLowerCase(), Matchers.containsString("betty"));
 
@@ -70,16 +75,20 @@ public class TestPageModules extends AbstractRemotablePluginTest
         RemotePluginDialog dialog = product.getPageBinder().bind(RemotePluginDialog.class, remotePluginTest);
         assertFalse(dialog.wasSubmitted());
         assertEquals(false, dialog.submit());
+
+        acdev269();
+
         assertTrue(dialog.wasSubmitted());
         assertEquals(true, dialog.submit());
+
+        acdev269();
     }
 
     @Test
     public void testNoAdminPageForNonAdmin()
     {
         product.visit(LoginPage.class).login("barney", "barney", AdminHomePage.class);
-        AccessDeniedIFramePage page = product.getPageBinder().bind(AccessDeniedIFramePage.class,
-                "app1", "remotePluginAdmin");
+        AccessDeniedIFramePage page = product.getPageBinder().bind(AccessDeniedIFramePage.class, "app1", "remotePluginAdmin");
         assertFalse(page.isIframeAvailable());
     }
 
@@ -88,8 +97,7 @@ public class TestPageModules extends AbstractRemotablePluginTest
     public void testRemoteConditionFails()
     {
         product.visit(LoginPage.class).login("barney", "barney", HomePage.class);
-        GeneralPage page = product.getPageBinder().bind(GeneralPage.class, "onlyBetty",
-                "Only Betty");
+        GeneralPage page = product.getPageBinder().bind(GeneralPage.class, "onlyBetty", "Only Betty");
         assertFalse(page.isRemotePluginLinkPresent());
     }
 
@@ -97,10 +105,22 @@ public class TestPageModules extends AbstractRemotablePluginTest
     public void testRemoteConditionSucceeds()
     {
         product.visit(LoginPage.class).login("betty", "betty", HomePage.class);
-        GeneralPage page = product.getPageBinder().bind(GeneralPage.class, "onlyBetty",
-                "Only Betty");
+
+        acdev269();
+
+        GeneralPage page = product.getPageBinder().bind(GeneralPage.class, "onlyBetty", "Only Betty");
         RemotePluginTestPage remotePluginTest = page.clickRemotePluginLink();
+
+        acdev269();
+
         assertTrue(remotePluginTest.getTitle().contains("Only Betty"));
+    }
+
+    // used to track flaky tests.
+    private void acdev269()
+    {
+        htmlDump.dumpHtml();
+        htmlDump.takeScreenShot();
     }
 
     @Test

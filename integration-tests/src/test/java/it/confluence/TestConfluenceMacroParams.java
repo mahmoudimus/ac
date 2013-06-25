@@ -1,5 +1,8 @@
 package it.confluence;
 
+import com.atlassian.pageobjects.TestedProduct;
+import com.atlassian.pageobjects.page.HomePage;
+import com.atlassian.pageobjects.page.LoginPage;
 import com.atlassian.plugin.remotable.junit.HtmlDumpRule;
 import com.atlassian.plugin.remotable.test.OwnerOfTestedProduct;
 import com.atlassian.plugin.remotable.test.RemotePluginRunner;
@@ -7,14 +10,10 @@ import com.atlassian.plugin.remotable.test.confluence.ConfluenceMacroPage;
 import com.atlassian.plugin.remotable.test.confluence.ConfluenceMacroTestSuitePage;
 import com.atlassian.plugin.remotable.test.confluence.ConfluenceOps;
 import com.atlassian.plugin.remotable.test.confluence.FixedConfluenceTestedProduct;
-import com.atlassian.pageobjects.TestedProduct;
-import com.atlassian.pageobjects.page.HomePage;
-import com.atlassian.pageobjects.page.LoginPage;
 import com.atlassian.webdriver.pageobjects.WebDriverTester;
 import org.junit.After;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.MethodRule;
 import redstone.xmlrpc.XmlRpcFault;
 
 import javax.servlet.ServletException;
@@ -45,7 +44,7 @@ public class TestConfluenceMacroParams
     }
 
     @Rule
-    public MethodRule rule = new HtmlDumpRule(product.getTester().getDriver());
+    public HtmlDumpRule htmlDump = new HtmlDumpRule(product.getTester().getDriver());
 
     @After
     public void logout()

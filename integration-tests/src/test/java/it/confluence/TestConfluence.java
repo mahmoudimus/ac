@@ -1,17 +1,24 @@
 package it.confluence;
 
+import com.atlassian.pageobjects.TestedProduct;
+import com.atlassian.pageobjects.page.HomePage;
+import com.atlassian.pageobjects.page.LoginPage;
 import com.atlassian.plugin.remotable.junit.HtmlDumpRule;
 import com.atlassian.plugin.remotable.test.OAuthUtils;
 import com.atlassian.plugin.remotable.test.OwnerOfTestedProduct;
 import com.atlassian.plugin.remotable.test.RemotePluginRunner;
-import com.atlassian.plugin.remotable.test.confluence.*;
-import com.atlassian.pageobjects.TestedProduct;
-import com.atlassian.pageobjects.page.HomePage;
-import com.atlassian.pageobjects.page.LoginPage;
+import com.atlassian.plugin.remotable.test.confluence.ConfluenceCounterMacroPage;
+import com.atlassian.plugin.remotable.test.confluence.ConfluenceMacroPage;
+import com.atlassian.plugin.remotable.test.confluence.ConfluenceMacroTestSuitePage;
+import com.atlassian.plugin.remotable.test.confluence.ConfluenceOps;
+import com.atlassian.plugin.remotable.test.confluence.ConfluencePageMacroPage;
+import com.atlassian.plugin.remotable.test.confluence.FixedConfluenceTestedProduct;
 import com.atlassian.webdriver.pageobjects.WebDriverTester;
-
-import org.junit.*;
-import org.junit.rules.MethodRule;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Ignore;
+import org.junit.Rule;
+import org.junit.Test;
 import redstone.xmlrpc.XmlRpcFault;
 
 import javax.servlet.ServletException;
@@ -24,7 +31,6 @@ import java.util.Map;
 
 import static com.atlassian.plugin.remotable.test.RemotePluginUtils.clearMacroCaches;
 import static com.atlassian.plugin.remotable.test.Utils.loadResourceAsString;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class TestConfluence
@@ -41,7 +47,7 @@ public class TestConfluence
     }
 
     @Rule
-    public MethodRule rule = new HtmlDumpRule(product.getTester().getDriver());
+    public HtmlDumpRule htmlDump = new HtmlDumpRule(product.getTester().getDriver());
 
     @After
     public void logout()

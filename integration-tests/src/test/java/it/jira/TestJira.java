@@ -8,12 +8,9 @@ import com.atlassian.jira.pageobjects.pages.project.BrowseProjectPage;
 import com.atlassian.jira.pageobjects.project.ProjectConfigTabs;
 import com.atlassian.jira.pageobjects.project.summary.ProjectSummaryPageTab;
 import com.atlassian.jira.plugin.issuenav.pageobjects.IssueDetailPage;
-//import com.atlassian.jira.rest.client.api.JiraRestClient;
-//import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory;
 import com.atlassian.jira.testkit.client.Backdoor;
 import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.pageobjects.TestedProductFactory;
-import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
 import com.atlassian.plugin.remotable.junit.HtmlDumpRule;
 import com.atlassian.plugin.remotable.test.RemotePluginAwarePage;
@@ -35,12 +32,14 @@ import hudson.plugins.jira.soap.RemoteIssue;
 import hudson.plugins.jira.soap.RemoteProject;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
-import org.joda.time.DateTime;
-import org.junit.*;
-import org.junit.rules.MethodRule;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Rule;
+import org.junit.Test;
 import org.openqa.selenium.By;
 
-import java.net.URI;
 import java.rmi.RemoteException;
 import java.util.concurrent.Callable;
 
@@ -66,7 +65,8 @@ public class TestJira
 
 
     @Rule
-    public MethodRule rule = new HtmlDumpRule(product.getTester().getDriver());
+    public HtmlDumpRule htmlDump = new HtmlDumpRule(product.getTester().getDriver());
+
     private RemoteProject project;
     //private final AsynchronousJiraRestClientFactory restClientFactory = new AsynchronousJiraRestClientFactory();
     private final Backdoor backdoor = new Backdoor(new ProductInstanceBasedEnvironmentData(product.getProductInstance()));
