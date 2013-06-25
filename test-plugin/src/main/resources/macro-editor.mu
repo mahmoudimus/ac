@@ -14,14 +14,14 @@
       <option name="Rugby League">Rugby League</option>
     </select>
     <script type="text/javascript">
-      AP.Dialog.onDialogMessage("submit", function() {
-        var footy = $("#footy");
-        return {
-          result: true,
-          macroParameters: {
+      AP.require(["confluence", "dialog"], function (confluence, dialog) {
+        dialog.getButton("submit").bind(function() {
+          var footy = $("#footy");
+          confluence.saveMacro({
             footy: footy.val()
-          }
-        }
+          });
+          return true;
+        });
       });
     </script>
   </body>
