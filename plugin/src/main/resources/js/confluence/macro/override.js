@@ -10,8 +10,8 @@ _AP.require("confluence/macro/editor", function(macroEditor) {
     AJS.bind("init.rte", function () {
 
         // These parameters are injected contextually by the MacroVariableInjectorTransformer
-        var injectedParams = {
-          macroName: "%%MACRONAME%%",
+        var macroName = "%%MACRONAME%%";
+        var editorOpts = {
           width: "%%WIDTH%%",
           height: "%%HEIGHT%%",
           editTitle: "%%EDIT_TITLE%%",
@@ -19,9 +19,10 @@ _AP.require("confluence/macro/editor", function(macroEditor) {
           url: AJS.params.contextPath + "%%URL%%"
         };
 
-        AJS.MacroBrowser.setMacroJsOverride(injectedParams.macroName, {
-            opener: function(data) {
-                macroEditor.openCustomEditor(data, injectedParams);
+        AJS.MacroBrowser.setMacroJsOverride(macroName, {
+            opener: function(macroData) {
+                macroData = $.extend({name: macroName}, macroData);
+                macroEditor.openCustomEditor(macroData, editorOpts);
             }
         });
 
