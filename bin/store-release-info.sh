@@ -3,7 +3,7 @@
 BUILD_NUMBER=$2
 GIT_SHA1=$1
 
-API_VERSION=`cat pom.xml | sed -n 's/.*<api.version>\([.0-9]*\)<.*/\1/p'`
+API_VERSION=`cat pom.xml | sed -n 's/.*<version>\([0-9]\.[0-9]\)\([.0-9]*.*-SNAPSHOT\).*<.*/\1/p'`
 echo "Extracted API version as $API_VERSION"
 
 CURRENT_VERSION=`cat pom.xml | sed -n 's/.*<version>\([.0-9]*-SNAPSHOT\)<.*/\1/p'`
