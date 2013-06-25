@@ -45,7 +45,9 @@
 
     <component-import key="webSudoManager" interface="com.atlassian.confluence.security.websudo.WebSudoManager" />
     <component-import key="taskManager" interface="com.atlassian.core.task.MultiQueueTaskManager" />
-    <component-import key="storageFormatCleaner" interface="com.atlassian.confluence.content.render.xhtml.StorageFormatCleaner" />
+    
+    <!-- put this back in for confluence 6 -->
+    <!--<component-import key="storageFormatCleaner" interface="com.atlassian.confluence.content.render.xhtml.StorageFormatCleaner" />-->
 
     <!-- dynamic modules -->
     <described-module-type key="profile-page" name="User Profile Page" class="com.atlassian.plugin.remotable.plugin.module.page.ProfilePageModuleDescriptor">
