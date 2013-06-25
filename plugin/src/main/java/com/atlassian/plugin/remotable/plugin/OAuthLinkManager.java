@@ -119,7 +119,7 @@ public class OAuthLinkManager
             }
             else
             {
-                throw new OAuthProblemException("Unknown consumer: " + consumerKey);
+                throw new OAuthProblemException(OAuth.Problems.CONSUMER_KEY_UNKNOWN);
             }
         }
         final OAuthConsumer oauthConsumer = new OAuthConsumer(null, consumer.getKey(), null,
