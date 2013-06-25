@@ -38,6 +38,7 @@ import static com.atlassian.fugue.Option.none;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Sets.newHashSet;
+import static java.lang.String.format;
 import static java.util.Collections.singletonMap;
 import static java.util.Collections.unmodifiableSet;
 
@@ -218,7 +219,7 @@ public final class DefaultBigPipeManager implements BigPipeManager, DisposableBe
     /**
      * Manages individual bit of content
      */
-    private class InternalHandler
+    private static final class InternalHandler
     {
         private final String channelId;
         private final BigPipeImpl bigPipe;
@@ -265,15 +266,9 @@ public final class DefaultBigPipeManager implements BigPipeManager, DisposableBe
         }
 
         @Override
-        public boolean equals(Object obj)
+        public String toString()
         {
-            return super.equals(obj);
-        }
-
-        @Override
-        public int hashCode()
-        {
-            return super.hashCode();
+            return "Internal handler for channel '" + channelId + "' and " + bigPipe;
         }
     }
 
@@ -299,7 +294,7 @@ public final class DefaultBigPipeManager implements BigPipeManager, DisposableBe
         {
             this.requestId = requestId;
             this.userId = userId;
-            this.handlers = new CopyOnWriteArrayList<InternalHandler>();
+            this.handlers = new LoggingList<InternalHandler>(logger, format("request '%s' handlers'", requestId), new CopyOnWriteArrayList<InternalHandler>());
             this.htmlChannel = new HtmlChannelImpl();
             this.dataChannels = CopyOnWriteMap.newHashMap();
             this.expiry = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(30);
