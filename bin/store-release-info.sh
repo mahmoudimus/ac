@@ -19,4 +19,4 @@ echo "Recording version information `pwd`/release.properties"
 echo "GIT_SHA1=$GIT_SHA1
 API_VERSION=$API_VERSION
 CURRENT_VERSION=$CURRENT_VERSION
-VERSION=$API_VERSION.$BUILD_NUMBER" > release.properties
+VERSION=${API_VERSION}.${BUILD_NUMBER}${CUR_Q}" > release.properties
