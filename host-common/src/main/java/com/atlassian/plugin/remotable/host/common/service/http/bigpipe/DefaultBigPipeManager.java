@@ -34,6 +34,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
+import static com.atlassian.fugue.Option.none;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Sets.newHashSet;
@@ -54,7 +55,7 @@ public final class DefaultBigPipeManager implements BigPipeManager, DisposableBe
 
     private final ScheduledExecutorService cleanupThread;
 
-    private final ConcurrentMap<String, BigPipeImpl> bigPipeImpls = CopyOnWriteMap.newHashMap();
+    private final ConcurrentMap<String, BigPipeImpl> bigPipeImpls = new LoggingConcurrentMap(logger, CopyOnWriteMap.<String, BigPipeImpl>newHashMap());
 
     private interface UserIdRetriever
     {
@@ -104,9 +105,11 @@ public final class DefaultBigPipeManager implements BigPipeManager, DisposableBe
 
     public static ScheduledExecutorService createCleanupThread()
     {
-        return Executors.newSingleThreadScheduledExecutor(new ThreadFactory() {
+        return Executors.newSingleThreadScheduledExecutor(new ThreadFactory()
+        {
             @Override
-            public Thread newThread(Runnable r) {
+            public Thread newThread(Runnable r)
+            {
                 ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
                 try
                 {
@@ -119,7 +122,6 @@ public final class DefaultBigPipeManager implements BigPipeManager, DisposableBe
                 {
                     Thread.currentThread().setContextClassLoader(oldCl);
                 }
-
             }
         });
     }
@@ -160,16 +162,30 @@ public final class DefaultBigPipeManager implements BigPipeManager, DisposableBe
 
     Option<ConsumableBigPipe> getConsumableBigPipe(String requestId)
     {
-        ConsumableBigPipe result = null;
-        if (requestId != null)
+        if (requestId == null)
         {
-            BigPipeImpl bigPipeImpl = bigPipeImpls.get(requestId);
-            if (bigPipeImpl != null)
-            {
-                result = bigPipeImpl.getPendingChannelIds().size() > 0 ? bigPipeImpl : null;
-            }
+            logger.debug("No consumable big pipe for null request id.");
+            return none();
         }
-        return Option.option(result);
+
+        final BigPipeImpl bigPipeImpl = bigPipeImpls.get(requestId);
+        if (bigPipeImpl == null)
+        {
+            logger.debug("No consumable big pipe for request '{}'.", requestId);
+            return none();
+        }
+
+        final Set<String> pendingChannelIds = bigPipeImpl.getPendingChannelIds();
+        if (pendingChannelIds.isEmpty())
+        {
+            logger.debug("Found big pipe for request '{}', but no pending channels", requestId);
+            return none();
+        }
+        else
+        {
+            logger.debug("Found big pipe for request '{}', with pending channel(s): {}", requestId, pendingChannelIds);
+            return Option.<ConsumableBigPipe>some(bigPipeImpl);
+        }
     }
 
     private String getRequestId()
@@ -265,7 +281,7 @@ public final class DefaultBigPipeManager implements BigPipeManager, DisposableBe
      * Manages a set of content for a single page.  Content for the page can be waited upon in a blocking call to be
      * woken up when new content is available.
      */
-    private final class BigPipeImpl implements BigPipe, ConsumableBigPipe
+    final class BigPipeImpl implements BigPipe, ConsumableBigPipe
     {
         private final List<InternalHandler> handlers;
         private final HtmlChannelImpl htmlChannel;
@@ -306,7 +322,7 @@ public final class DefaultBigPipeManager implements BigPipeManager, DisposableBe
         {
             checkNotNull(channelId);
             checkArgument(!HTML_CHANNEL_ID.equals(channelId),
-                "Data channels must not use the reserved channel id '%s'", HTML_CHANNEL_ID);
+                    "Data channels must not use the reserved channel id '%s'", HTML_CHANNEL_ID);
 
             DataChannel channel = dataChannels.get(channelId);
             if (channel == null)
@@ -545,6 +561,12 @@ public final class DefaultBigPipeManager implements BigPipeManager, DisposableBe
                 retainWhile(promise);
                 registerContentPromise(getId(), promise);
             }
+        }
+
+        @Override
+        public String toString()
+        {
+            return "BigPipe for request '" + requestId + "' and user '" + userId + "'";
         }
     }
 
