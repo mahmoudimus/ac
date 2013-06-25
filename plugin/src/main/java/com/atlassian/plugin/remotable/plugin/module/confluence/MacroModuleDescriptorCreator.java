@@ -310,8 +310,8 @@ public class MacroModuleDescriptorCreator
 
             webResource.addElement("resource")
                     .addAttribute("type", "download")
-                    .addAttribute("name", "macro-override.js")
-                    .addAttribute("location", "js/confluence/macro/macro-override.js");
+                    .addAttribute("name", "override.js")
+                    .addAttribute("location", "js/confluence/macro/override.js");
 
             webResource.addElement("dependency")
                     .setText("com.atlassian.labs.remoteapps-plugin:ap-amd");
