@@ -2,8 +2,11 @@ package com.atlassian.plugin.remotable.host.common.service.http.bigpipe;
 
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.remotable.api.service.RequestContext;
-import com.atlassian.plugin.remotable.api.service.http.bigpipe.*;
-import com.atlassian.plugin.webresource.WebResourceManager;
+import com.atlassian.plugin.remotable.api.service.http.bigpipe.BigPipe;
+import com.atlassian.plugin.remotable.api.service.http.bigpipe.BigPipeManager;
+import com.atlassian.plugin.remotable.api.service.http.bigpipe.ConsumableBigPipe;
+import com.atlassian.plugin.remotable.api.service.http.bigpipe.DataChannel;
+import com.atlassian.plugin.remotable.api.service.http.bigpipe.HtmlChannel;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.security.random.SecureRandomFactory;
 import com.atlassian.util.concurrent.CopyOnWriteMap;
@@ -20,13 +23,22 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.security.SecureRandom;
-import java.util.*;
-import java.util.concurrent.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Sets.newHashSet;
-import static java.util.Collections.*;
+import static java.util.Collections.singletonMap;
+import static java.util.Collections.unmodifiableSet;
 
 /**
  * Manages big pipe instances
@@ -34,9 +46,9 @@ import static java.util.Collections.*;
 public final class DefaultBigPipeManager implements BigPipeManager, DisposableBean
 {
     private static final SecureRandom secureRandom = SecureRandomFactory.newInstance();
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
-    private final WebResourceManager webResourceManager;
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
     private final RequestIdAccessor requestIdAccessor = new RequestIdAccessor();
     private final UserIdRetriever userIdRetriever;
 
@@ -50,9 +62,9 @@ public final class DefaultBigPipeManager implements BigPipeManager, DisposableBe
     }
 
     // called by the service factory for p3 plugins
-    DefaultBigPipeManager(WebResourceManager webResourceManager, final RequestContext requestContext, ScheduledExecutorService cleanupThread)
+    DefaultBigPipeManager(final RequestContext requestContext, ScheduledExecutorService cleanupThread)
     {
-        this(webResourceManager, new UserIdRetriever()
+        this(new UserIdRetriever()
         {
             @Override
             public String getUserId()
@@ -64,9 +76,9 @@ public final class DefaultBigPipeManager implements BigPipeManager, DisposableBe
 
     // called by remotable-plugins-plugin for its own use
     @Autowired
-    public DefaultBigPipeManager(WebResourceManager webResourceManager, final UserManager userManager)
+    public DefaultBigPipeManager(final UserManager userManager)
     {
-        this(webResourceManager, new UserIdRetriever()
+        this(new UserIdRetriever()
         {
             @Override
             public String getUserId()
@@ -76,11 +88,8 @@ public final class DefaultBigPipeManager implements BigPipeManager, DisposableBe
         }, createCleanupThread());
     }
 
-
-
-    private DefaultBigPipeManager(WebResourceManager webResourceManager, UserIdRetriever userIdRetriever, ScheduledExecutorService cleanupThread)
+    private DefaultBigPipeManager(UserIdRetriever userIdRetriever, ScheduledExecutorService cleanupThread)
     {
-        this.webResourceManager = webResourceManager;
         this.userIdRetriever = userIdRetriever;
         this.cleanupThread = cleanupThread;
         cleanupThread.scheduleAtFixedRate(new Runnable()
@@ -326,7 +335,7 @@ public final class DefaultBigPipeManager implements BigPipeManager, DisposableBe
                     if (!hasMoreContent())
                     {
                         // we've expired
-                        log.info("All content has been consumed for request id {}", requestId);
+                        logger.info("All content has been consumed for request id {}", requestId);
                         removeBigPipeImpl();
                     }
                 }
@@ -367,7 +376,7 @@ public final class DefaultBigPipeManager implements BigPipeManager, DisposableBe
                     if (isExpired())
                     {
                         // we've expired
-                        log.info("Timeout waiting for {} jobs for request id {}", handlers.size(), requestId);
+                        logger.info("Timeout waiting for {} jobs for request id {}", handlers.size(), requestId);
                         removeBigPipeImpl();
                     }
 
@@ -514,6 +523,9 @@ public final class DefaultBigPipeManager implements BigPipeManager, DisposableBe
             {
                 retainWhile(promise);
                 HtmlPromise htmlPromise = new HtmlPromise(promise);
+
+                logger.debug("Added HTML big pipe content with id {} to request {}", htmlPromise.contentId, requestId);
+
                 final InternalHandler handler = registerContentPromise(BigPipe.HTML_CHANNEL_ID, htmlPromise);
                 htmlPromise.setHandler(handler);
                 return htmlPromise.getInitialContent();

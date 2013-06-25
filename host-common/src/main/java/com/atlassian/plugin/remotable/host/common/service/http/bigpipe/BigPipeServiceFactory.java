@@ -3,11 +3,11 @@ package com.atlassian.plugin.remotable.host.common.service.http.bigpipe;
 import com.atlassian.plugin.remotable.api.service.http.bigpipe.BigPipeManager;
 import com.atlassian.plugin.remotable.host.common.service.RequestContextServiceFactory;
 import com.atlassian.plugin.remotable.host.common.service.TypedServiceFactory;
-import com.atlassian.plugin.webresource.WebResourceManager;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
-import org.osgi.framework.*;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.ServiceRegistration;
 import org.springframework.beans.factory.DisposableBean;
 
 import java.util.concurrent.ScheduledExecutorService;
@@ -22,14 +22,14 @@ public class BigPipeServiceFactory implements TypedServiceFactory<BigPipeManager
     private final ScheduledExecutorService cleanupThread = DefaultBigPipeManager.createCleanupThread();
 
 
-    public BigPipeServiceFactory(final WebResourceManager webResourceManager, final RequestContextServiceFactory requestContextServiceFactory)
+    public BigPipeServiceFactory(final RequestContextServiceFactory requestContextServiceFactory)
     {
         instances = CacheBuilder.newBuilder().weakKeys().weakValues().build(new CacheLoader<Bundle, BigPipeManager>()
         {
             @Override
             public BigPipeManager load(Bundle bundle) throws Exception
             {
-                return new DefaultBigPipeManager(webResourceManager, requestContextServiceFactory.getService(bundle), cleanupThread);
+                return new DefaultBigPipeManager(requestContextServiceFactory.getService(bundle), cleanupThread);
             }
         });
     }

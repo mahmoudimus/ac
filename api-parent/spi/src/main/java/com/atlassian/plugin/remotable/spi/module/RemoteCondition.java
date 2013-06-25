@@ -84,8 +84,8 @@ public final class RemoteCondition implements Condition
         }
         String remoteUsername = userManager.getRemoteUsername();
         params.put("user_id", remoteUsername != null ? remoteUsername : "");
-        Promise<String> responsePromise = remotablePluginAccessorFactory.get(pluginKey).executeAsyncGet(userManager.getRemoteUsername(),
-                url, params, Collections.<String, String>emptyMap())
+        Promise<String> responsePromise = remotablePluginAccessorFactory.get(pluginKey)
+                .executeAsyncGet(userManager.getRemoteUsername(), url, params, Collections.<String, String>emptyMap())
                 .fold(
                         new Function<Throwable, String>()
                         {

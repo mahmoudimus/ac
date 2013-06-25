@@ -18,6 +18,5 @@ public interface HtmlChannel extends Channel
      *         the promise has already been resolved; never null
      * @throws NullPointerException If the stringPromise is null
      */
-    String promiseContent(Promise<String> stringPromise)
-        throws NullPointerException;
+    String promiseContent(Promise<String> stringPromise) throws NullPointerException;
 }

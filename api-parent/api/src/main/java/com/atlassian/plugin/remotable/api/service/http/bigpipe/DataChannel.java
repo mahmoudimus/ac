@@ -16,6 +16,5 @@ public interface DataChannel extends Channel
      * @param stringPromise A promise for the data content string; must not be null
      * @throws NullPointerException If stringPromise is null
      */
-    void promiseContent(Promise<String> stringPromise)
-        throws NullPointerException;
+    void promiseContent(Promise<String> stringPromise) throws NullPointerException;
 }
