@@ -12,8 +12,6 @@ import com.atlassian.plugin.remotable.plugin.module.ConditionProcessor;
 import com.atlassian.plugin.remotable.plugin.module.IFrameParamsImpl;
 import com.atlassian.plugin.remotable.plugin.module.IFrameRendererImpl;
 import com.atlassian.plugin.remotable.plugin.module.page.IFrameContextImpl;
-import com.atlassian.plugin.remotable.plugin.util.node.Dom4jNode;
-import com.atlassian.plugin.remotable.plugin.util.node.Node;
 import com.atlassian.plugin.remotable.spi.module.IFrameParams;
 import com.atlassian.plugin.remotable.spi.module.IFrameViewIssuePanel;
 import com.atlassian.plugin.web.WebInterfaceManager;
@@ -21,7 +19,6 @@ import com.atlassian.plugin.web.descriptors.DefaultWebPanelModuleDescriptor;
 import com.atlassian.plugin.web.model.WebPanel;
 import com.atlassian.util.concurrent.NotNull;
 import org.apache.commons.lang3.StringUtils;
-import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.osgi.framework.BundleContext;
 
@@ -29,6 +26,8 @@ import java.net.URI;
 
 import static com.atlassian.plugin.remotable.plugin.util.OsgiServiceUtils.getService;
 import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.getOptionalAttribute;
+import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.getRequiredAttribute;
+import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.getRequiredUriAttribute;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -45,7 +44,7 @@ public class ProjectConfigWebPanelModuleDescriptor extends AbstractModuleDescrip
     private final BundleContext bundleContext;
     private final ConditionProcessor conditionProcessor;
 
-    private Node descriptor;
+    private Element descriptor;
     private String weight;
     private URI url;
 
@@ -78,20 +77,20 @@ public class ProjectConfigWebPanelModuleDescriptor extends AbstractModuleDescrip
     public void init(@NotNull Plugin plugin, @NotNull Element element) throws PluginParseException
     {
         super.init(plugin, element);
-        this.descriptor = new Dom4jNode(element);
+        this.descriptor = element;
         this.location = getLocation(element);
-        this.weight = descriptor.get("weight").asString(null);
-        this.url = descriptor.get("url").asURI();
+        this.weight = getOptionalAttribute(element, "weight", null);
+        this.url = getRequiredUriAttribute(element, "url");
     }
 
     @Override
     public void enabled()
     {
         super.enabled();
-        final String moduleKey = "project-config-panel-" + descriptor.get("key").asString();
-        final String panelName = descriptor.get("name").asString();
+        final String moduleKey = "project-config-panel-" + getRequiredAttribute(descriptor, "key");
+        final String panelName = getRequiredAttribute(descriptor, "name");
 
-        Element desc = DocumentHelper.createElement("web-panel");
+        Element desc = descriptor.createCopy();
         desc.addAttribute("key", moduleKey);
         desc.addAttribute("i18n-key", panelName);
         desc.addAttribute("location", location);

@@ -5,7 +5,6 @@ import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.remotable.plugin.integration.plugins.DynamicDescriptorRegistration;
-import com.atlassian.plugin.remotable.plugin.util.node.Dom4jNode;
 import com.atlassian.util.concurrent.NotNull;
 import org.dom4j.Element;
 import org.slf4j.Logger;
@@ -55,7 +54,7 @@ public final class GeneralPageModuleDescriptor extends AbstractModuleDescriptor<
         super.enabled();
         log.debug("Enabling general page {} instance {}", getKey(), System.identityHashCode(this));
         this.registration = dynamicDescriptorRegistration.registerDescriptors(getPlugin(),
-                remotePageDescriptorBuilder.build(getPlugin(), new Dom4jNode(descriptor)));
+                remotePageDescriptorBuilder.build(getPlugin(), descriptor));
     }
 
     @Override

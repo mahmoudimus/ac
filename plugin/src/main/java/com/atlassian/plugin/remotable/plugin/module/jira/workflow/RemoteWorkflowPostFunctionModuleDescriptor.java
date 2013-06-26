@@ -17,8 +17,6 @@ import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.remotable.plugin.module.IFrameParamsImpl;
 import com.atlassian.plugin.remotable.plugin.module.page.IFrameContextImpl;
 import com.atlassian.plugin.remotable.plugin.product.jira.JiraRestBeanMarshaler;
-import com.atlassian.plugin.remotable.plugin.util.node.Dom4jNode;
-import com.atlassian.plugin.remotable.plugin.util.node.Node;
 import com.atlassian.plugin.remotable.spi.module.IFrameParams;
 import com.atlassian.plugin.remotable.spi.module.IFrameRenderer;
 import com.atlassian.plugin.webresource.UrlMode;
@@ -39,6 +37,7 @@ import org.dom4j.Element;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Map;
 import javax.annotation.Nullable;
 
@@ -64,7 +63,7 @@ public class RemoteWorkflowPostFunctionModuleDescriptor extends WorkflowFunction
     private final WebResourceUrlProvider webResourceUrlProvider;
     private final PluginRetrievalService pluginRetrievalService;
 
-    private Node descriptor;
+    private Element descriptor;
     private Map<String, URI> workflowFunctionActionUris;
     private String moduleKey;
     private URI publishURI;
@@ -104,30 +103,37 @@ public class RemoteWorkflowPostFunctionModuleDescriptor extends WorkflowFunction
     @Override
     public void init(final Plugin plugin, final Element element) throws PluginParseException
     {
-        element.addElement(getParameterName()).addText(RemoteWorkflowPostFunctionProvider.class.getName());
-        this.descriptor = new Dom4jNode(element);
-        this.moduleKey = getRequiredAttribute(element, "key");
-        this.publishURI = descriptor.get("url").asURI();
+        try
+        {
+            element.addElement(getParameterName()).addText(RemoteWorkflowPostFunctionProvider.class.getName());
+            this.descriptor = element;
+            this.moduleKey = getRequiredAttribute(element, "key");
+            this.publishURI = createURI(element);
 
-        final ImmutableMap.Builder<String, URI> workflowFunctionActionUrisMapBuilder = ImmutableMap.builder();
-        if (descriptor.get("view").exists())
-        {
-            workflowFunctionActionUrisMapBuilder.put(RESOURCE_NAME_VIEW, iFrameURI(RESOURCE_NAME_VIEW));
-        }
-        if (descriptor.get("create").exists())
-        {
-            workflowFunctionActionUrisMapBuilder.put(RESOURCE_NAME_INPUT_PARAMETERS, iFrameURI(RESOURCE_NAME_INPUT_PARAMETERS));
-        }
-        if (descriptor.get("edit").exists())
-        {
-            workflowFunctionActionUrisMapBuilder.put(RESOURCE_NAME_EDIT_PARAMETERS, iFrameURI(RESOURCE_NAME_EDIT_PARAMETERS));
-        }
-        this.workflowFunctionActionUris = workflowFunctionActionUrisMapBuilder.build();
+            final ImmutableMap.Builder<String, URI> workflowFunctionActionUrisMapBuilder = ImmutableMap.builder();
+            if (descriptor.element("view") != null)
+            {
+                workflowFunctionActionUrisMapBuilder.put(RESOURCE_NAME_VIEW, iFrameURI(RESOURCE_NAME_VIEW));
+            }
+            if (descriptor.element("create") != null)
+            {
+                workflowFunctionActionUrisMapBuilder.put(RESOURCE_NAME_INPUT_PARAMETERS, iFrameURI(RESOURCE_NAME_INPUT_PARAMETERS));
+            }
+            if (descriptor.element("edit") != null)
+            {
+                workflowFunctionActionUrisMapBuilder.put(RESOURCE_NAME_EDIT_PARAMETERS, iFrameURI(RESOURCE_NAME_EDIT_PARAMETERS));
+            }
+            this.workflowFunctionActionUris = workflowFunctionActionUrisMapBuilder.build();
 
-        super.init(plugin, element);
-        // Resources have to be initialized after super.init is executed, otherwise super.init will set the
-        // resources to null.
-        this.resources = createResourceDescriptors(workflowFunctionActionUris);
+            super.init(plugin, element);
+            // Resources have to be initialized after super.init is executed, otherwise super.init will set the
+            // resources to null.
+            this.resources = createResourceDescriptors(workflowFunctionActionUris);
+        }
+        catch (URISyntaxException e)
+        {
+            throw new PluginParseException(e);
+        }
     }
 
     @Override
@@ -217,18 +223,30 @@ public class RemoteWorkflowPostFunctionModuleDescriptor extends WorkflowFunction
 
     private URI iFrameURI(final String resourceName)
     {
-        if (resourceName.equals(RESOURCE_NAME_VIEW))
+        try
         {
-            return descriptor.get("view").get("url").asURI();
+            if (resourceName.equals(RESOURCE_NAME_VIEW))
+            {
+                return createURI(descriptor.element("view"));
+            }
+            else if (resourceName.equals(RESOURCE_NAME_INPUT_PARAMETERS))
+            {
+                return createURI(descriptor.element("create"));
+            }
+            else
+            {
+                return createURI(descriptor.element("edit"));
+            }
         }
-        else if (resourceName.equals(RESOURCE_NAME_INPUT_PARAMETERS))
+        catch (URISyntaxException e)
         {
-            return descriptor.get("create").get("url").asURI();
+            throw new PluginParseException(e);
         }
-        else
-        {
-            return descriptor.get("edit").get("url").asURI();
-        }
+    }
+
+    private URI createURI(final Element element) throws URISyntaxException
+    {
+        return new URI(getRequiredAttribute(element, "url"));
     }
 
     private Resources createResourceDescriptors(final Map<String, URI> workflowFunctionActionUris)
