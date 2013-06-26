@@ -179,6 +179,12 @@ _AP.define("host/main", ["_xdm-rpc"], function (XdmRpc) {
         // !!! JIRA specific !!!
         getWorkflowConfiguration: function (uuid, callback) {
           callback($("#remoteWorkflowPostFunctionConfiguration-"+uuid).val());
+        },
+        // !!! Confluence specific !!!
+        saveMacro: function(updatedParams) {
+          _AP.require("confluence/macro/editor", function(editor) {
+              editor.saveMacro(updatedParams);
+          });
         }
       }
     });

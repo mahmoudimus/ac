@@ -36,8 +36,7 @@ public class BigPipeTestServlet extends AbstractPageServlet
     BigPipeManager bigPipeManager;
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse res)
-        throws ServletException, IOException
+    protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException
     {
         if (req.getParameter("xhr") == null)
         {
@@ -49,8 +48,8 @@ public class BigPipeTestServlet extends AbstractPageServlet
             html.promiseContent(promise("my bigpipe <b>html</b> 2"));
             render(req, res, new HashMap<String, String>()
             {{
-                put("htmlOneHtml", html.promiseContent(delayedPromiseFor("my bigpipe html 1", 500)));
-                put("htmlTwoHtml", html.promiseContent(delayedPromiseFor("my bigpipe html 2", 1000)));
+                put("htmlOneHtml", html.promiseContent(delayedPromiseFor("my bigpipe html 1", 500)).get());
+                put("htmlTwoHtml", html.promiseContent(delayedPromiseFor("my bigpipe html 2", 1000)).get());
             }});
         }
         else
