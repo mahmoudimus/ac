@@ -38,9 +38,14 @@ public final class WebHookTestServlet extends HttpServlet
 
     public static void runInRunner(String baseUrl, String webHookId, WebHookTester tester) throws Exception
     {
+        runInRunner(baseUrl, webHookId, webHookId, tester);
+    }
+
+    public static void runInRunner(String baseUrl, String webHookId, String eventId, WebHookTester tester) throws Exception
+    {
         final WebHookTestServlet servlet = new WebHookTestServlet();
         RemotePluginRunner runner = new RemotePluginRunner(baseUrl, webHookId)
-                .addWebhook(webHookId, "/webhook", servlet)
+                .addWebhook(webHookId, "/webhook", eventId, servlet)
                 .start();
 
         tester.test(new WebHookWaiter()

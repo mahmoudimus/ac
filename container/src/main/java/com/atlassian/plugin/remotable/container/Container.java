@@ -199,7 +199,7 @@ public final class Container
         final OAuthSignedRequestHandlerServiceFactory oAuthSignedRequestHandlerServiceFactory = new OAuthSignedRequestHandlerServiceFactory(environmentFactory, httpServer);
         final RequestContextServiceFactory requestContextServiceFactory = new RequestContextServiceFactory(oAuthSignedRequestHandlerServiceFactory);
         final WebResourceManager webReourceManager = new NoOpWebResourceManager();
-        final BigPipeServiceFactory bigPipeServiceFactory = new BigPipeServiceFactory(webReourceManager, requestContextServiceFactory);
+        final BigPipeServiceFactory bigPipeServiceFactory = new BigPipeServiceFactory(requestContextServiceFactory);
         final ContainerHttpResourceMounterServiceFactory containerHttpResourceMounterServiceFactory = new ContainerHttpResourceMounterServiceFactory(pluginManager, httpServer, oAuthSignedRequestHandlerServiceFactory, environmentFactory, requestContextServiceFactory, bigPipeServiceFactory);
         final HostHttpClientServiceFactory hostHttpClientServiceFactory = new HostHttpClientServiceFactory(requestContextServiceFactory, oAuthSignedRequestHandlerServiceFactory);
         final HostXmlRpcClientServiceFactory hostXmlRpcClientHostServiceFactory = new HostXmlRpcClientServiceFactory(hostHttpClientServiceFactory);
