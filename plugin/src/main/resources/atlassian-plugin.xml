@@ -73,6 +73,13 @@
         <dependency>com.atlassian.labs.remoteapps-plugin:ap-amd</dependency>
     </web-resource>
 
+    <web-resource key="confluence-macro">
+        <resource type="download" name="editor.js" location="js/confluence/macro/editor.js" />
+        <context>atl.general</context>
+        <dependency>com.atlassian.auiplugin:ajs</dependency>
+        <dependency>com.atlassian.labs.remoteapps-plugin:ap-amd</dependency>
+    </web-resource>
+
     <web-resource key="iframe-host-css">
         <resource type="download" name="loading.gif" location="/css/iframe/loading.gif" />
         <resource type="download" name="host.css" location="/css/iframe/host.css" />
