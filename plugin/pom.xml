@@ -835,17 +835,14 @@
                         <pluginDependency>
                             <groupId>${project.groupId}</groupId>
                             <artifactId>remotable-plugins-api</artifactId>
-                            <version>${project.version}</version>
                         </pluginDependency>
                         <pluginDependency>
                             <groupId>${project.groupId}</groupId>
                             <artifactId>remotable-plugins-spi</artifactId>
-                            <version>${project.version}</version>
                         </pluginDependency>
                         <pluginDependency>
                             <groupId>${project.groupId}</groupId>
                             <artifactId>remotable-plugins-sisu-extender</artifactId>
-                            <version>${project.version}</version>
                         </pluginDependency>
                         <pluginDependency>
                             <groupId>org.sonatype.sisu</groupId>
