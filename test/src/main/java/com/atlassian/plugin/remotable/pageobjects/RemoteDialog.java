@@ -1,11 +1,13 @@
 package com.atlassian.plugin.remotable.pageobjects;
 
 import com.atlassian.pageobjects.PageBinder;
-import com.atlassian.pageobjects.binder.WaitUntil;
 import com.atlassian.webdriver.AtlassianWebDriver;
 import org.openqa.selenium.By;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 
@@ -14,6 +16,8 @@ import javax.inject.Inject;
  */
 public class RemoteDialog
 {
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+
     @Inject
     protected AtlassianWebDriver driver;
 
@@ -34,7 +38,23 @@ public class RemoteDialog
     public boolean submit()
     {
         submitButton.click();
-        return !driver.elementIsVisible(By.className("ap-dialog-content"));
+        final By dialogContentLocator = By.className("ap-dialog-content");
+        try
+        {
+            return !driver.elementIsVisible(dialogContentLocator);
+        }
+        catch (StaleElementReferenceException e)
+        {
+            if (!driver.elementExists(dialogContentLocator))
+            {
+                return true;
+            }
+            else
+            {
+                logger.debug("We got a 'StaleElementReferenceException' and yet the element still appears to be existing, not sure what's going on here. Rethrowing.");
+                throw e;
+            }
+        }
     }
 
     public void cancel()
