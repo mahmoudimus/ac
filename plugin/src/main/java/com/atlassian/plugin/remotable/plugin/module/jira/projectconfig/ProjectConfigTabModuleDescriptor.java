@@ -17,8 +17,6 @@ import com.atlassian.plugin.remotable.plugin.module.page.IFrameContextImpl;
 import com.atlassian.plugin.remotable.plugin.module.page.IFramePageServlet;
 import com.atlassian.plugin.remotable.plugin.module.page.PageInfo;
 import com.atlassian.plugin.remotable.plugin.module.permission.jira.IsProjectAdminCondition;
-import com.atlassian.plugin.remotable.plugin.util.node.Dom4jNode;
-import com.atlassian.plugin.remotable.plugin.util.node.Node;
 import com.atlassian.plugin.remotable.spi.module.IFrameParams;
 import com.atlassian.plugin.servlet.ServletModuleManager;
 import com.atlassian.plugin.servlet.descriptors.ServletModuleDescriptor;
@@ -36,8 +34,9 @@ import java.util.Map;
 
 import static com.atlassian.plugin.remotable.plugin.module.page.RemotePageDescriptorCreator.createLocalUrl;
 import static com.atlassian.plugin.remotable.plugin.util.OsgiServiceUtils.getService;
+import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.getRequiredAttribute;
+import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.getRequiredUriAttribute;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.dom4j.DocumentHelper.createElement;
 
 /**
  * Generates a project config tab with a servlet containing an iframe and a web item.
@@ -49,7 +48,7 @@ public final class ProjectConfigTabModuleDescriptor extends AbstractModuleDescri
 	private final BundleContext bundleContext;
 	private final IFrameRendererImpl iFrameRenderer;
 	private final UserManager userManager;
-	private Node descriptor;
+	private Element descriptor;
 
 	private WebItemCreator.Builder webItemCreatorBuilder;
 	private DynamicDescriptorRegistration.Registration registration;
@@ -85,17 +84,17 @@ public final class ProjectConfigTabModuleDescriptor extends AbstractModuleDescri
 	public void init(@NotNull Plugin plugin, @NotNull Element element) throws PluginParseException
 	{
 		super.init(plugin, element);
-		this.descriptor = new Dom4jNode(element);
+		this.descriptor = element;
 	}
 
 	@Override
 	public void enabled()
 	{
 		super.enabled();
-		final String key = descriptor.get("key").asString();
+		final String key = getRequiredAttribute(descriptor, "key");
 
-		final String location = descriptor.get("location").asString();
-		final int weight = descriptor.get("weight").asInt();
+		final String location = getRequiredAttribute(descriptor, "location");
+		final int weight = Integer.parseInt(getRequiredAttribute(descriptor, "weight"));
 
 		Iterable<DescriptorToRegister> descriptors = projectConfigTabPageBuilder
 				.setWebItemContext(new DefaultWebItemContext(
@@ -136,10 +135,10 @@ public final class ProjectConfigTabModuleDescriptor extends AbstractModuleDescri
 			return this;
 		}
 
-		public Iterable<DescriptorToRegister> build(Plugin plugin, Node descriptor)
+		public Iterable<DescriptorToRegister> build(Plugin plugin, Element descriptor)
 		{
-			String key = descriptor.get("key").asString();
-			final URI url = descriptor.get("url").asURI();
+			String key = getRequiredAttribute(descriptor, "key");
+			final URI url = getRequiredUriAttribute(descriptor, "url");
 
 			URI localUrl = createLocalUrl(plugin.getKey(), key);
 			DescriptorToRegister webItemModuleDescriptor = new DescriptorToRegister(webItemCreatorBuilder.build(plugin, key, localUrl, descriptor));
@@ -151,14 +150,14 @@ public final class ProjectConfigTabModuleDescriptor extends AbstractModuleDescri
 
 		private DescriptorToRegister createServletDescriptor(
 				final Plugin plugin,
-				Node e,
+				Element e,
 				String key,
 				final URI path,
 				URI localUrl
 		)
 		{
-			final String pageName = e.get("name").asString();
-			Element config = createElement("servlet");
+			final String pageName = getRequiredAttribute(e, "name");
+			Element config = e.createCopy();
 			final String moduleKey = "servlet-" + key;
 			config.addAttribute("key", moduleKey);
             config.addAttribute("system", "true");
