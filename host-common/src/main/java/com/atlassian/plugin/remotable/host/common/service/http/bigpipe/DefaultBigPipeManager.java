@@ -12,6 +12,7 @@ import com.atlassian.security.random.SecureRandomFactory;
 import com.atlassian.util.concurrent.CopyOnWriteMap;
 import com.atlassian.util.concurrent.ForwardingPromise;
 import com.atlassian.util.concurrent.Promise;
+import com.google.common.base.Supplier;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.util.concurrent.FutureCallback;
@@ -530,16 +531,23 @@ public final class DefaultBigPipeManager implements BigPipeManager, DisposableBe
             }
 
             @Override
-            public String promiseContent(Promise<String> promise)
+            public Supplier<String> promiseContent(Promise<String> promise)
             {
                 retainWhile(promise);
-                HtmlPromise htmlPromise = new HtmlPromise(promise);
-
-                logger.debug("Added HTML big pipe content with id {} to request {}", htmlPromise.contentId, requestId);
+                final HtmlPromise htmlPromise = new HtmlPromise(promise);
 
                 final InternalHandler handler = registerContentPromise(BigPipe.HTML_CHANNEL_ID, htmlPromise);
+                logger.debug("Added HTML big pipe content with id {} to request {}", htmlPromise.contentId, requestId);
+
                 htmlPromise.setHandler(handler);
-                return htmlPromise.getInitialContent();
+                return new Supplier<String>()
+                {
+                    @Override
+                    public String get()
+                    {
+                        return htmlPromise.getInitialContent();
+                    }
+                };
             }
         }
 
