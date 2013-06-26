@@ -23,7 +23,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.Charset;
 import java.util.Calendar;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -113,6 +112,7 @@ public class StaticResourcesFilter implements Filter
                 "plugin/dialog.js",
                 "plugin/bigpipe.js",
                 "plugin/jira.js",
+                "plugin/confluence.js",
                 "plugin/_init.js"
             };
             ByteArrayOutputStream bout = new ByteArrayOutputStream();
