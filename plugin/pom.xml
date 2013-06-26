@@ -1006,14 +1006,12 @@
                                     <includes>
                                         <include>js/iframe-min/_amd-min.js</include>
                                         <include>js/iframe-min/plugin/_util-min.js</include>
-                                        <include>js/iframe-min/plugin/_ajax-min.js</include>
                                         <include>js/iframe-min/plugin/_dollar-min.js</include>
                                         <include>js/iframe-min/xdm-rpc-min.js</include>
                                         <include>js/iframe-min/plugin/_rpc-min.js</include>
                                         <include>js/iframe-min/plugin/env-min.js</include>
                                         <include>js/iframe-min/plugin/request-min.js</include>
                                         <include>js/iframe-min/plugin/dialog-min.js</include>
-                                        <include>js/iframe-min/plugin/bigpipe-min.js</include>
                                         <!-- product-specific inclusions are temporary until made more dynamic -->
                                         <include>js/iframe-min/plugin/jira-min.js</include>
                                         <include>js/iframe-min/plugin/_init-min.js</include>
