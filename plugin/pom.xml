@@ -29,6 +29,12 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>remotable-plugins-sisu-extender</artifactId>
+            <version>${api.artifact.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>remotable-plugins-host-common</artifactId>
             <version>${project.version}</version>
         </dependency>
