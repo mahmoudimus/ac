@@ -16,8 +16,6 @@ import com.atlassian.plugin.remotable.plugin.module.ContainingRemoteCondition;
 import com.atlassian.plugin.remotable.plugin.module.IFrameParamsImpl;
 import com.atlassian.plugin.remotable.plugin.module.IFrameRendererImpl;
 import com.atlassian.plugin.remotable.plugin.module.page.IFrameContextImpl;
-import com.atlassian.plugin.remotable.plugin.util.node.Dom4jNode;
-import com.atlassian.plugin.remotable.plugin.util.node.Node;
 import com.atlassian.plugin.remotable.spi.module.IFrameParams;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.util.concurrent.NotNull;
@@ -25,8 +23,9 @@ import org.dom4j.Element;
 
 import java.net.URI;
 
+import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.getRequiredAttribute;
+import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.getRequiredUriAttribute;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.dom4j.DocumentHelper.createElement;
 
 /**
  * A remote project tab that loads is contents from an iframe
@@ -36,7 +35,7 @@ public final class ProjectTabPageModuleDescriptor extends AbstractModuleDescript
     private final IFrameRendererImpl iFrameRenderer;
     private final DynamicDescriptorRegistration dynamicDescriptorRegistration;
     private final ConditionProcessor conditionProcessor;
-    private Node descriptor;
+    private Element descriptor;
     private URI url;
     private DynamicDescriptorRegistration.Registration registration;
 
@@ -62,18 +61,18 @@ public final class ProjectTabPageModuleDescriptor extends AbstractModuleDescript
     public void init(@NotNull Plugin plugin, @NotNull Element element) throws PluginParseException
     {
         super.init(plugin, element);
-        this.descriptor = new Dom4jNode(element);
-        this.url = descriptor.get("url").asURI();
+        this.descriptor = element;
+        this.url = getRequiredUriAttribute(element, "url");
     }
 
     @Override
     public void enabled()
     {
         super.enabled();
-        final String panelName = descriptor.get("name").asString();
+        final String panelName = getRequiredAttribute(descriptor, "name");
 
-        Element desc = createElement("project-tab-panel");
-        String moduleKey = "project-tab-" + descriptor.get("key").asString();
+        Element desc = descriptor.createCopy();
+        String moduleKey = "project-tab-" + getRequiredAttribute(descriptor, "key");
         Condition condition = conditionProcessor.process(descriptor, desc, getPluginKey(), "#" + moduleKey + "-remote-condition-panel");
         if (condition instanceof ContainingRemoteCondition)
         {

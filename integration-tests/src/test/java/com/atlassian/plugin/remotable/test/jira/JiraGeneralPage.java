@@ -7,7 +7,6 @@ import com.atlassian.plugin.remotable.test.RemotePluginTestPage;
 import com.atlassian.webdriver.AtlassianWebDriver;
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
-import com.google.common.base.Suppliers;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
@@ -15,6 +14,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 
+import static com.atlassian.fugue.Option.none;
+import static com.atlassian.fugue.Option.some;
 import static java.lang.String.format;
 
 public final class JiraGeneralPage implements GeneralPage
@@ -31,7 +32,7 @@ public final class JiraGeneralPage implements GeneralPage
     private final String pageKey;
     private final String linkText;
 
-    private final Supplier<Option<WebElement>> link = Suppliers.memoize(new Supplier<Option<WebElement>>()
+    private final Supplier<Option<WebElement>> link = new Supplier<Option<WebElement>>()
     {
         @Override
         public Option<WebElement> get()
@@ -39,9 +40,9 @@ public final class JiraGeneralPage implements GeneralPage
             dismissCreateProjectDialogIfPresent();
             expandMoreMenuIfExists();
 
-            return driver.elementExists(link()) ? Option.some(driver.findElement(link())) : Option.<WebElement>none();
+            return driver.elementExists(link()) ? some(driver.findElement(link())) : Option.<WebElement>none();
         }
-    });
+    };
 
     public JiraGeneralPage(String pageKey, String linkText)
     {
@@ -80,13 +81,42 @@ public final class JiraGeneralPage implements GeneralPage
         );
     }
 
-    private void expandMoreMenuIfExists()
+    private boolean expandMoreMenuIfExists()
     {
-        final boolean moreMenu = clickElementIfExist(MORE_MENU);
-        if (moreMenu)
-        {
-            logger.debug("'More' menu found, expanding as our link might be in there.");
-        }
+        return getElement(MORE_MENU).fold(
+                new Supplier<Boolean>()
+                {
+                    @Override
+                    public Boolean get()
+                    {
+                        logger.debug("'More' menu was not found. Nothing to expand.");
+                        return false;
+                    }
+                },
+                new Function<WebElement, Boolean>()
+                {
+                    @Override
+                    public Boolean apply(WebElement moreElement)
+                    {
+                        final String cssClass = " " + moreElement.getAttribute("class") + " ";
+                        if (!cssClass.contains(" active "))
+                        {
+                            logger.debug("'More' menu found and is not active ({}). Expanding as our link might be in there.", cssClass);
+                            moreElement.click();
+                        }
+                        else
+                        {
+                            logger.debug("'More' menu found, already active and expanded ({}).", cssClass);
+                        }
+                        return true;
+                    }
+                }
+        );
+    }
+
+    private Option<WebElement> getElement(By locator)
+    {
+        return driver.elementExists(locator) ? some(driver.findElement(locator)) : none(WebElement.class);
     }
 
     private By link()

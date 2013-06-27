@@ -2,7 +2,6 @@ package com.atlassian.plugin.remotable.plugin.module;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
-import com.atlassian.plugin.remotable.plugin.util.node.Node;
 import com.atlassian.plugin.remotable.spi.module.DynamicMarkerCondition;
 import com.atlassian.plugin.remotable.spi.product.ProductAccessor;
 import com.atlassian.plugin.web.Condition;
@@ -11,7 +10,6 @@ import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.atlassian.uri.Uri;
 import com.atlassian.uri.UriBuilder;
 import org.apache.commons.lang.StringUtils;
-import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,21 +59,21 @@ public final class WebItemCreator
         private int preferredWeight;
         private String preferredSectionKey;
 
-        public WebItemModuleDescriptor build(Plugin plugin, String key, URI localUrl, Node configurationElement)
+        public WebItemModuleDescriptor build(Plugin plugin, String key, URI localUrl, Element configurationElement)
         {
             notNull(condition);
             notNull(key);
             notNull(configurationElement);
-            Element config = DocumentHelper.createElement("web-item");
+            Element config = configurationElement.createCopy();
             config.elements("conditions").clear();
             final String webItemKey = "webitem-" + key;
             config.addAttribute("key", webItemKey);
             config.addAttribute("section",
-                    configurationElement.get("section").asString(preferredSectionKey));
-            config.addAttribute("weight", configurationElement.get("weight").asString(String.valueOf(preferredWeight)));
+                    getOptionalAttribute(configurationElement, "section", preferredSectionKey));
+            config.addAttribute("weight", getOptionalAttribute(configurationElement, "weight", preferredWeight));
 
-            String name = configurationElement.get("link-name").asString(escapeHtml(
-                    configurationElement.get("name").asString()));
+            String name = getOptionalAttribute(configurationElement, "link-name", escapeHtml(
+                    getRequiredAttribute(configurationElement, "name")));
             config.addElement("label").addAttribute("key", name);
             Element linkElement = config.addElement("link").
                     addAttribute("linkId", webItemKey);
@@ -88,9 +86,9 @@ public final class WebItemCreator
                 }
 
                 UriBuilder uriBuilder = new UriBuilder(Uri.parse("/plugins/servlet" + localUrl));
-                String width = configurationElement.get("width").asString(null);
+                String width = getOptionalAttribute(configurationElement, "width", null);
                 if (width != null) uriBuilder.addQueryParameter("width", width);
-                String height = configurationElement.get("height").asString(null);
+                String height = getOptionalAttribute(configurationElement, "height", null);
                 if (height != null) uriBuilder.addQueryParameter("height", height);
 
                 String url = uriBuilder.toString();
@@ -151,10 +149,10 @@ public final class WebItemCreator
             return descriptor;
         }
 
-        private void convertIcon(Plugin plugin, Node source, Element target)
+        private void convertIcon(Plugin plugin, Element source, Element target)
         {
-            Node iconUri = source.get("icon-url");
-            if (iconUri.exists())
+            URI iconUri = getOptionalUriAttribute(source, "icon-url");
+            if (iconUri != null)
             {
                 // todo: would be nice to detect the size or at least allow it to be configured
                 target.addElement("icon")
@@ -162,7 +160,7 @@ public final class WebItemCreator
                         .addAttribute("height", "16")
                         .addElement("link")
                             .addText(getPermanentRedirectUrl(
-                                    plugin.getKey(), iconUri.asURI()));
+                                    plugin.getKey(), iconUri));
             }
         }
 

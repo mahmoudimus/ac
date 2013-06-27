@@ -841,6 +841,10 @@
                             <artifactId>remotable-plugins-spi</artifactId>
                         </pluginDependency>
                         <pluginDependency>
+                            <groupId>${project.groupId}</groupId>
+                            <artifactId>remotable-plugins-sisu-extender</artifactId>
+                        </pluginDependency>
+                        <pluginDependency>
                             <groupId>org.sonatype.sisu</groupId>
                             <artifactId>sisu-guice</artifactId>
                         </pluginDependency>
@@ -848,14 +852,6 @@
                             <groupId>org.apache.servicemix.bundles</groupId>
                             <artifactId>org.apache.servicemix.bundles.javax-inject</artifactId>
                         </pluginDependency>
-                        <!--<pluginDependency>-->
-                            <!--<groupId>com.atlassian.labs</groupId>-->
-                            <!--<artifactId>confluence-xmlrpc-java-client-plugin</artifactId>-->
-                        <!--</pluginDependency>-->
-                        <!--<pluginDependency>-->
-                            <!--<groupId>com.atlassian.jira</groupId>-->
-                            <!--<artifactId>jira-rest-java-client-plugin</artifactId>-->
-                        <!--</pluginDependency>-->
                         <pluginDependency>
                             <groupId>org.codehaus.jettison</groupId>
                             <artifactId>jettison</artifactId>
@@ -1006,14 +1002,12 @@
                                     <includes>
                                         <include>js/iframe-min/_amd-min.js</include>
                                         <include>js/iframe-min/plugin/_util-min.js</include>
-                                        <include>js/iframe-min/plugin/_ajax-min.js</include>
                                         <include>js/iframe-min/plugin/_dollar-min.js</include>
                                         <include>js/iframe-min/xdm-rpc-min.js</include>
                                         <include>js/iframe-min/plugin/_rpc-min.js</include>
                                         <include>js/iframe-min/plugin/env-min.js</include>
                                         <include>js/iframe-min/plugin/request-min.js</include>
                                         <include>js/iframe-min/plugin/dialog-min.js</include>
-                                        <include>js/iframe-min/plugin/bigpipe-min.js</include>
                                         <!-- product-specific inclusions are temporary until made more dynamic -->
                                         <include>js/iframe-min/plugin/jira-min.js</include>
                                         <include>js/iframe-min/plugin/_init-min.js</include>

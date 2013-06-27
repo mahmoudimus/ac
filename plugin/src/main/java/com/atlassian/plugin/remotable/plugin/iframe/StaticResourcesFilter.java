@@ -103,14 +103,12 @@ public class StaticResourcesFilter implements Filter
             final String[] modules = {
                 "_amd.js",
                 "plugin/_util.js",
-                "plugin/_ajax.js",
                 "plugin/_dollar.js",
                 "xdm-rpc.js",
                 "plugin/_rpc.js",
                 "plugin/env.js",
                 "plugin/request.js",
                 "plugin/dialog.js",
-                "plugin/bigpipe.js",
                 "plugin/jira.js",
                 "plugin/confluence.js",
                 "plugin/_init.js"
