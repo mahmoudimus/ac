@@ -852,14 +852,6 @@
                             <groupId>org.apache.servicemix.bundles</groupId>
                             <artifactId>org.apache.servicemix.bundles.javax-inject</artifactId>
                         </pluginDependency>
-                        <!--<pluginDependency>-->
-                            <!--<groupId>com.atlassian.labs</groupId>-->
-                            <!--<artifactId>confluence-xmlrpc-java-client-plugin</artifactId>-->
-                        <!--</pluginDependency>-->
-                        <!--<pluginDependency>-->
-                            <!--<groupId>com.atlassian.jira</groupId>-->
-                            <!--<artifactId>jira-rest-java-client-plugin</artifactId>-->
-                        <!--</pluginDependency>-->
                         <pluginDependency>
                             <groupId>org.codehaus.jettison</groupId>
                             <artifactId>jettison</artifactId>
