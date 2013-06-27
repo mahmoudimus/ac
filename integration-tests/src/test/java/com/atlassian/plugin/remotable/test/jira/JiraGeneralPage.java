@@ -81,26 +81,37 @@ public final class JiraGeneralPage implements GeneralPage
         );
     }
 
-    private void expandMoreMenuIfExists()
+    private boolean expandMoreMenuIfExists()
     {
-        getElement(MORE_MENU).map(new Function<WebElement, Object>()
-        {
-            @Override
-            public Object apply(WebElement moreElement)
-            {
-                final String cssClass = " " + moreElement.getAttribute("class") + " ";
-                if (!cssClass.contains(" active "))
+        return getElement(MORE_MENU).fold(
+                new Supplier<Boolean>()
                 {
-                    logger.debug("'More' menu found and is not active ({}). Expanding as our link might be in there.", cssClass);
-                    moreElement.click();
-                }
-                else
+                    @Override
+                    public Boolean get()
+                    {
+                        logger.debug("'More' menu was not found. Nothing to expand.");
+                        return false;
+                    }
+                },
+                new Function<WebElement, Boolean>()
                 {
-                    logger.debug("'More' menu found, already active and expanded ({}).", cssClass);
+                    @Override
+                    public Boolean apply(WebElement moreElement)
+                    {
+                        final String cssClass = " " + moreElement.getAttribute("class") + " ";
+                        if (!cssClass.contains(" active "))
+                        {
+                            logger.debug("'More' menu found and is not active ({}). Expanding as our link might be in there.", cssClass);
+                            moreElement.click();
+                        }
+                        else
+                        {
+                            logger.debug("'More' menu found, already active and expanded ({}).", cssClass);
+                        }
+                        return true;
+                    }
                 }
-                return null;
-            }
-        });
+        );
     }
 
     private Option<WebElement> getElement(By locator)
