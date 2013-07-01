@@ -6,7 +6,6 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
 import com.atlassian.plugin.remotable.plugin.integration.plugins.DynamicDescriptorRegistration;
-import com.atlassian.plugin.remotable.plugin.util.node.Dom4jNode;
 import com.atlassian.util.concurrent.NotNull;
 import org.dom4j.Element;
 
@@ -70,7 +69,7 @@ public final class RemoteMacroModuleDescriptor extends AbstractModuleDescriptor<
     {
         super.enabled();
         this.registration = dynamicDescriptorRegistration.registerDescriptors(getPlugin(),
-                macroModuleDescriptorCreatorBuilder.build(getPlugin(), new Dom4jNode(descriptor)));
+                macroModuleDescriptorCreatorBuilder.build(getPlugin(), descriptor));
     }
 
     @Override

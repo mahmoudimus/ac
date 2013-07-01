@@ -1,7 +1,7 @@
 // @todo make product-specific inclusions (e.g. jira) dynamic
 AP.require(
-  ["_dollar", "_rpc", "env", "request", "dialog", "bigpipe", "jira"],
-  function ($, rpc, env, request, dialog, bigpipe, jira) {
+  ["_dollar", "_rpc", "env", "request", "dialog", "jira"],
+  function ($, rpc, env, request, dialog, jira) {
 
   "use strict";
 
@@ -63,8 +63,7 @@ AP.require(
   $.extend(AP, env, jira, {
     Meta: {get: env.meta},
     request: request,
-    Dialog: dialog,
-    BigPipe: bigpipe
+    Dialog: dialog
   });
 
   // initialization

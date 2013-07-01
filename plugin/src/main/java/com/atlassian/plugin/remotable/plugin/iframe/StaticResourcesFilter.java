@@ -23,7 +23,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.Charset;
 import java.util.Calendar;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -102,17 +101,16 @@ public class StaticResourcesFilter implements Filter
 
             final String moduleDir = "js/iframe/";
             final String[] modules = {
-                "plugin/_amd.js",
+                "_amd.js",
                 "plugin/_util.js",
-                "plugin/_ajax.js",
                 "plugin/_dollar.js",
                 "xdm-rpc.js",
                 "plugin/_rpc.js",
                 "plugin/env.js",
                 "plugin/request.js",
                 "plugin/dialog.js",
-                "plugin/bigpipe.js",
                 "plugin/jira.js",
+                "plugin/confluence.js",
                 "plugin/_init.js"
             };
             ByteArrayOutputStream bout = new ByteArrayOutputStream();

@@ -125,7 +125,6 @@ public final class IFrameRendererImpl implements IFrameRenderer
 	@Override
     public String render(IFrameContext iframeContext, String extraPath, Map<String, String[]> queryParams, String remoteUser) throws IOException
     {
-        webResourceManager.requireResourcesForContext("remotable-plugins-iframe");
         RemotablePluginAccessor remotablePluginAccessor = remotablePluginAccessorFactory.get(iframeContext.getPluginKey());
 
         final URI hostUrl = iframeHost.getUrl();
@@ -157,7 +156,6 @@ public final class IFrameRendererImpl implements IFrameRenderer
         ctx.put("iframeSrcHtml", escapeQuotes(signedUrl));
         ctx.put("plugin", remotablePluginAccessor);
         ctx.put("namespace", iframeContext.getNamespace());
-        ctx.put("scriptUrls", getJavaScriptUrls());
         ctx.put("contextPath", iframeHost.getContextPath());
         ctx.put("userId", remoteUser == null ? "" : remoteUser);
         ctx.put("data", ImmutableMap.of("timeZone", timeZone));
@@ -166,20 +164,6 @@ public final class IFrameRendererImpl implements IFrameRenderer
         StringWriter output = new StringWriter();
         templateRenderer.render("velocity/iframe-body.vm", ctx, output);
         return output.toString();
-    }
-
-    public List<String> getJavaScriptUrls()
-    {
-        List<String> scripts = newArrayList();
-        ModuleDescriptor<?> moduleDescriptor = acPlugin.getModuleDescriptor("iframe-host-js");
-        for (ResourceDescriptor descriptor : moduleDescriptor.getResourceDescriptors())
-        {
-            String src = webResourceUrlProvider.getStaticPluginResourceUrl(moduleDescriptor, descriptor.getName(), UrlMode.AUTO);
-            if (src.endsWith(".js")) {
-                scripts.add(src);
-            }
-        }
-        return scripts;
     }
 
 	private Map<String, List<String>> contextQueryParameters(final Map<String, String[]> queryParams)

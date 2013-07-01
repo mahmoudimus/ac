@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.atlassian.plugins</groupId>
         <artifactId>remotable-plugins-parent</artifactId>
-        <version>0.8.9999-SNAPSHOT</version>
+        <version>0.9.9999-SNAPSHOT</version>
     </parent>
 
 
@@ -42,6 +42,13 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>remotable-plugins-plugin</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+        </dependency>
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>remotable-plugins-integration-tests</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
         </dependency>
@@ -123,7 +130,7 @@
                 <plugins>
                     <plugin>
                         <artifactId>maven-surefire-plugin</artifactId>
-                        <version>2.11</version>
+                        <version>2.15</version>
                         <configuration>
                             <skipTests>false</skipTests>
                             <systemPropertyVariables>
@@ -147,7 +154,7 @@
                 <plugins>
                     <plugin>
                         <artifactId>maven-surefire-plugin</artifactId>
-                        <version>2.11</version>
+                        <version>2.15</version>
                         <configuration>
                             <skipTests>false</skipTests>
                             <systemPropertyVariables>

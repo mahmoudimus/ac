@@ -1,18 +1,26 @@
 package com.atlassian.plugin.remotable.smoketest;
 
 import com.atlassian.confluence.pageobjects.ConfluenceTestedProduct;
-import com.atlassian.plugin.remotable.junit.HtmlDumpRule;
-import com.atlassian.plugin.remotable.test.*;
 import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
+import com.atlassian.plugin.remotable.junit.HtmlDumpRule;
+import com.atlassian.plugin.remotable.test.GeneralPage;
+import com.atlassian.plugin.remotable.test.OwnerOfTestedProduct;
+import com.atlassian.plugin.remotable.test.RemotePluginInstallerClient;
+import com.atlassian.plugin.remotable.test.RemotePluginTestPage;
 import com.atlassian.webdriver.pageobjects.WebDriverTester;
-import org.junit.*;
-import org.junit.rules.MethodRule;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Rule;
+import org.junit.Test;
 
 import java.io.IOException;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Smoke tests for a Remotable Plugins instance that can access the Internet
@@ -28,7 +36,6 @@ public class TestRemotablePlugins
         product = OwnerOfTestedProduct.INSTANCE;
         if (product instanceof ConfluenceTestedProduct)
         {
-//            product.getPageBinder().override(LoginPage.class, OnDemandConfluenceLoginPage.class);
             product.getPageBinder().override(HomePage.class, OnDemandConfluenceHomePage.class);
         }
     }
@@ -39,7 +46,7 @@ public class TestRemotablePlugins
     private static final RemotePluginInstallerClient INSTALLER = new RemotePluginInstallerClient(targetBaseUrl, adminUsername, adminPassword);
 
     @Rule
-    public MethodRule rule = new HtmlDumpRule(product.getTester().getDriver());
+    public HtmlDumpRule htmlDump = new HtmlDumpRule(product.getTester().getDriver());
 
     @After
     public void logout()

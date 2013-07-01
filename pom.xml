@@ -11,7 +11,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.atlassian.plugins</groupId>
     <artifactId>remotable-plugins-parent</artifactId>
-    <version>0.8.9999-SNAPSHOT</version>
+    <version>0.9.9999-SNAPSHOT</version>
 
     <organization>
         <name>Atlassian</name>
@@ -23,6 +23,7 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>api-parent</module>
         <module>plugin-api</module>
         <module>descriptor-common</module>
         <module>host-common</module>
@@ -33,10 +34,11 @@
         <module>container</module>
         <module>container-build</module>
         <module>test</module>
-        <module>universal-binary-test-plugin</module>
-        
-    </modules>
+        <!-- <module>universal-binary-test-plugin</module> -->
+        <module>integration-tests</module>
 
+    </modules>
+    
     <build>
         <finalName>${project.artifactId}</finalName>
         <plugins>
@@ -51,7 +53,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.12.2</version>
+                <version>2.15</version>
                 <configuration>
                     <excludes>
                         <exclude>**/*$*</exclude>
@@ -61,9 +63,25 @@
                 </configuration>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+                <version>2.15</version>
+                <executions>
+                    <execution>
+                        <phase>integration-test</phase>
+                        <goals>
+                            <goal>report-only</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <showSuccess>false</showSuccess>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>com.atlassian.maven.plugins</groupId>
                 <artifactId>maven-amps-plugin</artifactId>
-                <version>4.1.5</version>
+                <version>${amps.version}</version>
                 <extensions>true</extensions>
                 <configuration>
                     <extractDependencies>true</extractDependencies>
@@ -210,6 +228,11 @@
                 <version>${atlassian-util-concurrent.version}</version>
             </dependency>
             <dependency>
+                <groupId>com.atlassian.mail</groupId>
+                <artifactId>atlassian-mail</artifactId>
+                <version>2.4.1</version>
+            </dependency>
+            <dependency>
                 <groupId>com.atlassian.httpclient</groupId>
                 <artifactId>atlassian-httpclient-api</artifactId>
                 <version>${atlassian-httpclient.version}</version>
@@ -253,7 +276,7 @@
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
-                <version>4.10</version>
+                <version>4.11</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -271,24 +294,13 @@
             <dependency>
                 <groupId>log4j</groupId>
                 <artifactId>log4j</artifactId>
-                <version>1.2.16</version>
+                <version>${log4j.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-context</artifactId>
                 <version>${spring.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.osgi</groupId>
-                <artifactId>spring-osgi-core</artifactId>
-                <version>1.2.1</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.springframework</groupId>
-                        <artifactId>org.springframework.context</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>com.atlassian.plugins</groupId>
@@ -319,11 +331,11 @@
                 <version>${atr.version}</version>
                 <scope>provided</scope>
             </dependency>
-            <dependency>
+            <!--<dependency>
                 <groupId>com.atlassian.jira</groupId>
                 <artifactId>jira-rest-java-client-api</artifactId>
                 <version>${jira.client.version}</version>
-                <!--exclusions>
+                exclusions>
                     <exclusion>
                         <groupId>com.sun.jersey</groupId>
                         <artifactId>jersey-client</artifactId>
@@ -348,21 +360,19 @@
                         <groupId>com.sun.jersey.contribs.jersey-oauth</groupId>
                         <artifactId>oauth-signature</artifactId>
                     </exclusion>
-                </exclusions-->
-            </dependency>
+                </exclusions
+            </dependency>-->
         </dependencies>
     </dependencyManagement>
 
     <dependencies>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
+        
 
         <!-- test dependencies -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
@@ -373,14 +383,17 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>jcl-over-slf4j</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
     <scm>
@@ -392,18 +405,18 @@
     <properties>
         <!-- If you change this, make sure you upgrade and release new versions of every plugin bundled in the
              OBR, otherwise upgrades won't work correctly -->
-        <api.version>0.8</api.version>
-        <api.artifact.version>${api.version}.2</api.artifact.version>
+        <api.version>${project.version}</api.version>
+        <api.artifact.version>${project.version}</api.artifact.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <xvfb.enable>true</xvfb.enable>
         <atlassian.selenium.version>2.1.0-m12</atlassian.selenium.version>
         <!-- Confluence 4.2.8 uses this version, JIRA 5.0.7 uses version 2.1.0-m14 -->
         <refapp.version>3.0.0-m7</refapp.version>
-        <jira.version>6.0-rc1</jira.version>
+        <jira.version>6.0.2</jira.version>
         <jira.data.version>${jira.version}</jira.data.version>
         <jira.client.api.version>2.0</jira.client.api.version>
         <jira.client.version>2.0.0-m16</jira.client.version>
-        <confluence.client.version>0.9.8</confluence.client.version>
+        <confluence.client.version>${project.version}</confluence.client.version>
         <sisu.version>0.0.0.atlassian6</sisu.version>
         <sisu.guice.version>3.1.3</sisu.guice.version>
         <confluence.version>5.2-m11</confluence.version>
@@ -435,12 +448,13 @@
         <spring.version>2.5.6</spring.version>
         <atlassian-util-concurrent.version>2.4.0</atlassian-util-concurrent.version>
         <atlassian-httpclient.version>${webhooks.version}</atlassian-httpclient.version>
-        <webhooks.version>0.15.0</webhooks.version>
+        <webhooks.version>0.15.1</webhooks.version>
         <webhooks.api.version>0.15</webhooks.api.version>
         <jira.webhooks.version>1.1.0</jira.webhooks.version>
         <httpclient.api.version>${webhooks.api.version}</httpclient.api.version>
         <servletkit.version>0.7.3</servletkit.version>
         <ringojskit.version>0.7.2</ringojskit.version>
         <gatekeeper.property>7</gatekeeper.property>
+        <amps.version>4.2.1</amps.version>
     </properties>
 </project>

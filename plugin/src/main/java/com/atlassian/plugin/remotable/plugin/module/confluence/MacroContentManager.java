@@ -1,7 +1,6 @@
 package com.atlassian.plugin.remotable.plugin.module.confluence;
 
 import com.atlassian.confluence.content.render.xhtml.StorageFormatCleaner;
-import com.atlassian.confluence.content.render.xhtml.XhtmlCleaner;
 import com.atlassian.confluence.core.ContentEntityObject;
 import com.atlassian.confluence.event.events.content.page.PageEvent;
 import com.atlassian.confluence.event.events.content.page.PageViewEvent;
@@ -15,11 +14,11 @@ import com.atlassian.plugin.remotable.plugin.util.http.CachingHttpContentRetriev
 import com.atlassian.plugin.remotable.plugin.util.http.ContentRetrievalErrors;
 import com.atlassian.plugin.remotable.plugin.util.http.ContentRetrievalException;
 import com.atlassian.renderer.RenderContextOutputType;
-import com.atlassian.sal.api.component.ComponentLocator;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.atlassian.util.concurrent.Promise;
 import com.google.common.base.Function;
+import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -95,14 +94,13 @@ public class MacroContentManager implements DisposableBean
                         new HtmlToSafeHtmlFunction(macroInstance, urlParameters, macroContentLinkParser, xhtmlCleaner,
                                 xhtmlUtils));
 
-        String initialContent = bigPipe.getHtmlChannel().promiseContent(promise);
-
+        final Supplier<String> initialContent = bigPipe.getHtmlChannel().promiseContent(promise);
         try
         {
             // only render display via big pipe, block for everyone else
             if (RenderContextOutputType.DISPLAY.equals(macroInstance.getConversionContext().getOutputType()))
             {
-                return initialContent;
+                return initialContent.get();
             }
             else
             {
@@ -248,9 +246,7 @@ public class MacroContentManager implements DisposableBean
            is the same as used in the Confluence editor.
             */
             // todo: do we want to give feedback to the app of what was cleaned?
-            final String cleanedXhtml = xhtmlCleaner.cleanQuietly(value,
-                    macroInstance.getConversionContext());
-
+            final String cleanedXhtml = xhtmlCleaner.cleanQuietly(value,  macroInstance.getConversionContext());
             try
             {
                 return xhtmlUtils.convertStorageToView(cleanedXhtml,

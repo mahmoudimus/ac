@@ -16,8 +16,8 @@
                 <include>com.atlassian.webhooks:atlassian-webhooks-plugin</include>
                 <include>com.atlassian.org.eclipse.sisu:org.eclipse.sisu.inject</include>
                 <include>com.atlassian.plugins:remotable-plugins-sisu-extender</include>
-                <include>com.atlassian.jira:jira-rest-java-client-plugin</include>
-                <include>com.atlassian.labs:confluence-xmlrpc-java-client-plugin</include>
+                <!--<include>com.atlassian.jira:jira-rest-java-client-plugin</include>-->
+                <!--<include>com.atlassian.labs:confluence-xmlrpc-java-client-plugin</include>-->
             </includes>
             <outputDirectory></outputDirectory>
         </dependencySet>
