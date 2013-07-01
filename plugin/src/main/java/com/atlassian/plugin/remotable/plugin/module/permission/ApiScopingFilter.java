@@ -6,6 +6,7 @@ import com.atlassian.sal.api.user.UserManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -64,6 +65,12 @@ public class ApiScopingFilter implements Filter
 
     }
 
+    /**
+     * @param req the context {@link HttpServletRequest}
+     * @return the OAuth client key for the remote app, or {@code null} if 2LO authentication failed or was not
+     *         attempted
+     */
+    @Nullable
     public static String extractClientKey(HttpServletRequest req)
     {
         return (String) req.getAttribute(PLUGIN_KEY);
