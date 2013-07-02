@@ -235,16 +235,16 @@
                                     <artifactId>remotable-plugins-test-plugin</artifactId>
                                     <version>${project.version}</version>
                                 </pluginArtifact>
-                                <pluginArtifact>
-                                    <groupId>com.atlassian.labs</groupId>
-                                    <artifactId>confluence-xmlrpc-java-client-plugin</artifactId>
-                                    <version>${confluence.client.version}</version>
-                                </pluginArtifact>
-                                <pluginArtifact>
-                                    <groupId>com.atlassian.jira</groupId>
-                                    <artifactId>jira-rest-java-client-plugin</artifactId>
-                                    <version>${jira.client.version}</version>
-                                </pluginArtifact>
+                                <!--<pluginArtifact>-->
+                                    <!--<groupId>com.atlassian.labs</groupId>-->
+                                    <!--<artifactId>confluence-xmlrpc-java-client-plugin</artifactId>-->
+                                    <!--<version>${confluence.client.version}</version>-->
+                                <!--</pluginArtifact>-->
+                                <!--<pluginArtifact>-->
+                                    <!--<groupId>com.atlassian.jira</groupId>-->
+                                    <!--<artifactId>jira-rest-java-client-plugin</artifactId>-->
+                                    <!--<version>${jira.client.version}</version>-->
+                                <!--</pluginArtifact>-->
                                 <pluginArtifact>
                                     <groupId>com.atlassian.functest</groupId>
                                     <artifactId>functest-plugin</artifactId>
@@ -389,11 +389,11 @@
                                     <artifactId>org.apache.servicemix.bundles.javax-inject</artifactId>
                                     <version>1_1</version>
                                 </pluginArtifact>
-                                <pluginArtifact>
-                                    <groupId>com.atlassian.jira</groupId>
-                                    <artifactId>jira-rest-java-client-plugin</artifactId>
-                                    <version>${jira.client.version}</version>
-                                </pluginArtifact>
+                                <!--<pluginArtifact>-->
+                                    <!--<groupId>com.atlassian.jira</groupId>-->
+                                    <!--<artifactId>jira-rest-java-client-plugin</artifactId>-->
+                                    <!--<version>${jira.client.version}</version>-->
+                                <!--</pluginArtifact>-->
                                 <pluginArtifact>
                                     <groupId>org.codehaus.jettison</groupId>
                                     <artifactId>jettison</artifactId>
@@ -419,11 +419,11 @@
                                     <artifactId>jira-testkit-plugin</artifactId>
                                     <version>${testkit.version}</version>
                                 </pluginArtifact>
-                                <pluginArtifact>
-                                    <groupId>com.atlassian.labs</groupId>
-                                    <artifactId>confluence-xmlrpc-java-client-plugin</artifactId>
-                                    <version>${confluence.client.version}</version>
-                                </pluginArtifact>
+                                <!--<pluginArtifact>-->
+                                    <!--<groupId>com.atlassian.labs</groupId>-->
+                                    <!--<artifactId>confluence-xmlrpc-java-client-plugin</artifactId>-->
+                                    <!--<version>${confluence.client.version}</version>-->
+                                <!--</pluginArtifact>-->
                             </pluginArtifacts>
                             <libArtifacts>
                                 <libArtifact>
@@ -495,16 +495,16 @@
                                     <artifactId>org.apache.servicemix.bundles.javax-inject</artifactId>
                                     <version>1_1</version>
                                 </pluginArtifact>
-                                <pluginArtifact>
-                                    <groupId>com.atlassian.labs</groupId>
-                                    <artifactId>confluence-xmlrpc-java-client-plugin</artifactId>
-                                    <version>${confluence.client.version}</version>
-                                </pluginArtifact>
-                                <pluginArtifact>
-                                    <groupId>com.atlassian.jira</groupId>
-                                    <artifactId>jira-rest-java-client-plugin</artifactId>
-                                    <version>${jira.client.version}</version>
-                                </pluginArtifact>
+                                <!--<pluginArtifact>-->
+                                    <!--<groupId>com.atlassian.labs</groupId>-->
+                                    <!--<artifactId>confluence-xmlrpc-java-client-plugin</artifactId>-->
+                                    <!--<version>${confluence.client.version}</version>-->
+                                <!--</pluginArtifact>-->
+                                <!--<pluginArtifact>-->
+                                    <!--<groupId>com.atlassian.jira</groupId>-->
+                                    <!--<artifactId>jira-rest-java-client-plugin</artifactId>-->
+                                    <!--<version>${jira.client.version}</version>-->
+                                <!--</pluginArtifact>-->
                                 <pluginArtifact>
                                     <groupId>org.codehaus.jettison</groupId>
                                     <artifactId>jettison</artifactId>
@@ -556,14 +556,14 @@
                             <groupId>org.apache.servicemix.bundles</groupId>
                             <artifactId>org.apache.servicemix.bundles.javax-inject</artifactId>
                         </pluginDependency>
-                        <pluginDependency>
-                            <groupId>com.atlassian.labs</groupId>
-                            <artifactId>confluence-xmlrpc-java-client-plugin</artifactId>
-                        </pluginDependency>
-                        <pluginDependency>
-                            <groupId>com.atlassian.jira</groupId>
-                            <artifactId>jira-rest-java-client-plugin</artifactId>
-                        </pluginDependency>
+                        <!--<pluginDependency>-->
+                            <!--<groupId>com.atlassian.labs</groupId>-->
+                            <!--<artifactId>confluence-xmlrpc-java-client-plugin</artifactId>-->
+                        <!--</pluginDependency>-->
+                        <!--<pluginDependency>-->
+                            <!--<groupId>com.atlassian.jira</groupId>-->
+                            <!--<artifactId>jira-rest-java-client-plugin</artifactId>-->
+                        <!--</pluginDependency>-->
                         <pluginDependency>
                             <groupId>org.codehaus.jettison</groupId>
                             <artifactId>jettison</artifactId>

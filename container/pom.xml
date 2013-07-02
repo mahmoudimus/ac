@@ -311,19 +311,19 @@
             <version>${sisu.version}</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>com.atlassian.jira</groupId>
-            <artifactId>jira-rest-java-client-plugin</artifactId>
-            <version>${jira.client.version}</version>
-            <scope>provided</scope>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.atlassian.jira</groupId>-->
+            <!--<artifactId>jira-rest-java-client-plugin</artifactId>-->
+            <!--<version>${jira.client.version}</version>-->
+            <!--<scope>provided</scope>-->
+        <!--</dependency>-->
 
-        <dependency>
-            <groupId>com.atlassian.labs</groupId>
-            <artifactId>confluence-xmlrpc-java-client-plugin</artifactId>
-            <version>${confluence.client.version}</version>
-            <scope>provided</scope>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.atlassian.labs</groupId>-->
+            <!--<artifactId>confluence-xmlrpc-java-client-plugin</artifactId>-->
+            <!--<version>${confluence.client.version}</version>-->
+            <!--<scope>provided</scope>-->
+        <!--</dependency>-->
 
         <dependency>
             <groupId>org.sonatype.sisu</groupId>
