@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.atlassian.plugins</groupId>
         <artifactId>remotable-plugins-parent</artifactId>
-        <version>0.8.1106</version>
+        <version>0.9.1137</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -24,6 +24,12 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>remotable-plugins-spi</artifactId>
+            <version>${api.artifact.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>remotable-plugins-sisu-extender</artifactId>
             <version>${api.artifact.version}</version>
             <scope>provided</scope>
         </dependency>
@@ -67,23 +73,11 @@
             <artifactId>atlassian-event</artifactId>
         </dependency>
 
-        <!-- because maven 3 sucks and won't depend on the right version -->
-        <!--
-        <dependency>
-            <groupId>com.atlassian.plugins</groupId>
-            <artifactId>remotable-plugins-container</artifactId>
-            <version>${project.version}</version>
-            <classifier>standalone</classifier>
-            <scope>test</scope>
-        </dependency>
-        -->
-        
-
-        <dependency>
-            <groupId>com.atlassian.jira</groupId>
-            <artifactId>jira-rest-java-client-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.atlassian.jira</groupId>-->
+            <!--<artifactId>jira-rest-java-client-api</artifactId>-->
+            <!--<scope>provided</scope>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>com.atlassian.mail</groupId>
             <artifactId>atlassian-mail</artifactId>
@@ -118,30 +112,9 @@
             <artifactId>atlassian-webhooks-spi</artifactId>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>remotable-plugins-test-plugin</artifactId>
-            <version>${project.version}</version>
-            <type>atlassian-plugin</type>
-            <scope>provided</scope>
-        </dependency>
+        
 
-<!--
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>remotable-plugins-test</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-        -->
-        <!--
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>remotable-plugins-container</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
--->
+
         <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-server</artifactId>
@@ -397,12 +370,12 @@
         </dependency>
 
         <!-- dependencies for obr -->
-        <dependency>
-            <groupId>com.atlassian.labs</groupId>
-            <artifactId>confluence-xmlrpc-java-client-plugin</artifactId>
-            <version>${confluence.client.version}</version>
-            <scope>provided</scope>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.atlassian.labs</groupId>-->
+            <!--<artifactId>confluence-xmlrpc-java-client-plugin</artifactId>-->
+            <!--<version>${confluence.client.version}</version>-->
+            <!--<scope>provided</scope>-->
+        <!--</dependency>-->
 
         <dependency>
             <groupId>org.codehaus.jettison</groupId>
@@ -428,12 +401,12 @@
             <version>1_1</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>com.atlassian.jira</groupId>
-            <artifactId>jira-rest-java-client-plugin</artifactId>
-            <version>${jira.client.version}</version>
-            <scope>provided</scope>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.atlassian.jira</groupId>-->
+            <!--<artifactId>jira-rest-java-client-plugin</artifactId>-->
+            <!--<version>${jira.client.version}</version>-->
+            <!--<scope>provided</scope>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>com.atlassian.webhooks</groupId>
             <artifactId>atlassian-webhooks-plugin</artifactId>
@@ -587,6 +560,319 @@
                         <sun.net.http.allowRestrictedHeaders>true</sun.net.http.allowRestrictedHeaders>
                         <!--atlassian.dev.mode>false</atlassian.dev.mode-->
                     </systemPropertyVariables>
+
+                    <products>
+                        <product>
+                            <id>refapp</id>
+                            <version>${refapp.version}</version>
+                            <pluginArtifacts>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.webhooks</groupId>
+                                    <artifactId>atlassian-webhooks-plugin</artifactId>
+                                    <version>${webhooks.version}</version>
+                                </pluginArtifact>
+                                <!--<pluginArtifact>-->
+                                    <!--<groupId>com.atlassian.labs</groupId>-->
+                                    <!--<artifactId>confluence-xmlrpc-java-client-plugin</artifactId>-->
+                                    <!--<version>${confluence.client.version}</version>-->
+                                <!--</pluginArtifact>-->
+                                <!--<pluginArtifact>-->
+                                    <!--<groupId>com.atlassian.jira</groupId>-->
+                                    <!--<artifactId>jira-rest-java-client-plugin</artifactId>-->
+                                    <!--<version>${jira.client.version}</version>-->
+                                <!--</pluginArtifact>-->
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.labs</groupId>
+                                    <artifactId>speakeasy-plugin</artifactId>
+                                    <version>${speakeasy.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>remotable-plugins-api</artifactId>
+                                    <version>${api.artifact.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>remotable-plugins-spi</artifactId>
+                                    <version>${api.artifact.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>org.sonatype.sisu</groupId>
+                                    <artifactId>sisu-guice</artifactId>
+                                    <version>${sisu.guice.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>org.apache.servicemix.bundles</groupId>
+                                    <artifactId>org.apache.servicemix.bundles.javax-inject</artifactId>
+                                    <version>1_1</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>org.codehaus.jettison</groupId>
+                                    <artifactId>jettison</artifactId>
+                                    <version>1.1</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>joda-time</groupId>
+                                    <artifactId>joda-time</artifactId>
+                                    <version>1.6</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>com.googlecode.json-simple</groupId>
+                                    <artifactId>json-simple</artifactId>
+                                    <version>1.1.1</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>remotable-plugins-plugin</artifactId>
+                                    <version>${project.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>remotable-plugins-sisu-extender</artifactId>
+                                    <version>${project.version}</version>
+                                </pluginArtifact>
+                            </pluginArtifacts>
+                            <libArtifacts>
+                                <!-- necessary for Speakeasy mail handling -->
+                                <libArtifact>
+                                    <groupId>org.apache.commons</groupId>
+                                    <artifactId>commons-email</artifactId>
+                                    <version>1.2</version>
+                                </libArtifact>
+                                <libArtifact>
+                                    <groupId>javax.mail</groupId>
+                                    <artifactId>mail</artifactId>
+                                    <version>1.4.1</version>
+                                </libArtifact>
+                                <libArtifact>
+                                    <groupId>com.atlassian.mail</groupId>
+                                    <artifactId>atlassian-mail</artifactId>
+                                    <version>2.4.1</version>
+                                </libArtifact>
+                                <libArtifact>
+                                    <groupId>com.atlassian.util.concurrent</groupId>
+                                    <artifactId>atlassian-util-concurrent</artifactId>
+                                    <version>${atlassian-util-concurrent.version}</version>
+                                </libArtifact>
+                            </libArtifacts>
+                        </product>
+                        <product>
+                            <id>jira</id>
+                            <version>${jira.version}</version>
+                            <systemPropertyVariables>
+                                <product>jira</product>
+                            </systemPropertyVariables>
+                            <pluginArtifacts>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.webhooks</groupId>
+                                    <artifactId>atlassian-webhooks-plugin</artifactId>
+                                    <version>${webhooks.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.jira.plugins.webhooks</groupId>
+                                    <artifactId>jira-webhooks-plugin</artifactId>
+                                    <version>${jira.webhooks.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>remotable-plugins-plugin</artifactId>
+                                    <version>${project.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>remotable-plugins-sisu-extender</artifactId>
+                                    <version>${project.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.labs</groupId>
+                                    <artifactId>speakeasy-plugin</artifactId>
+                                    <version>${speakeasy.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>remotable-plugins-api</artifactId>
+                                    <version>${api.artifact.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>remotable-plugins-spi</artifactId>
+                                    <version>${api.artifact.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>org.sonatype.sisu</groupId>
+                                    <artifactId>sisu-guice</artifactId>
+                                    <version>${sisu.guice.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>org.apache.servicemix.bundles</groupId>
+                                    <artifactId>org.apache.servicemix.bundles.javax-inject</artifactId>
+                                    <version>1_1</version>
+                                </pluginArtifact>
+                                <!--<pluginArtifact>-->
+                                    <!--<groupId>com.atlassian.jira</groupId>-->
+                                    <!--<artifactId>jira-rest-java-client-plugin</artifactId>-->
+                                    <!--<version>${jira.client.version}</version>-->
+                                <!--</pluginArtifact>-->
+                                <pluginArtifact>
+                                    <groupId>org.codehaus.jettison</groupId>
+                                    <artifactId>jettison</artifactId>
+                                    <version>1.1</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>com.googlecode.json-simple</groupId>
+                                    <artifactId>json-simple</artifactId>
+                                    <version>1.1.1</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>com.googlecode.json-simple</groupId>
+                                    <artifactId>json-simple</artifactId>
+                                    <version>1.1.1</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.gadgets</groupId>
+                                    <artifactId>atlassian-gadgets-publisher-plugin</artifactId>
+                                    <version>3.2.0-m8</version>
+                                </pluginArtifact>
+                                <!--<pluginArtifact>-->
+                                    <!--<groupId>com.atlassian.labs</groupId>-->
+                                    <!--<artifactId>confluence-xmlrpc-java-client-plugin</artifactId>-->
+                                    <!--<version>${confluence.client.version}</version>-->
+                                <!--</pluginArtifact>-->
+                            </pluginArtifacts>
+                            <libArtifacts>
+                                <libArtifact>
+                                    <groupId>com.atlassian.util.concurrent</groupId>
+                                    <artifactId>atlassian-util-concurrent</artifactId>
+                                    <version>${atlassian-util-concurrent.version}</version>
+                                </libArtifact>
+                            </libArtifacts>
+                        </product>
+                        <product>
+                            <id>confluence</id>
+                            <version>${confluence.version}</version>
+                            <systemPropertyVariables>
+                                <product>confluence</product>
+                            </systemPropertyVariables>
+                            <pluginArtifacts>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.webhooks</groupId>
+                                    <artifactId>atlassian-webhooks-plugin</artifactId>
+                                    <version>${webhooks.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>remotable-plugins-plugin</artifactId>
+                                    <version>${project.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>remotable-plugins-sisu-extender</artifactId>
+                                    <version>${project.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.labs</groupId>
+                                    <artifactId>speakeasy-plugin</artifactId>
+                                    <version>${speakeasy.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>remotable-plugins-api</artifactId>
+                                    <version>${api.artifact.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>remotable-plugins-spi</artifactId>
+                                    <version>${api.artifact.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>org.sonatype.sisu</groupId>
+                                    <artifactId>sisu-guice</artifactId>
+                                    <version>${sisu.guice.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>org.apache.servicemix.bundles</groupId>
+                                    <artifactId>org.apache.servicemix.bundles.javax-inject</artifactId>
+                                    <version>1_1</version>
+                                </pluginArtifact>
+                                <!--<pluginArtifact>-->
+                                    <!--<groupId>com.atlassian.labs</groupId>-->
+                                    <!--<artifactId>confluence-xmlrpc-java-client-plugin</artifactId>-->
+                                    <!--<version>${confluence.client.version}</version>-->
+                                <!--</pluginArtifact>-->
+                                <!--<pluginArtifact>-->
+                                    <!--<groupId>com.atlassian.jira</groupId>-->
+                                    <!--<artifactId>jira-rest-java-client-plugin</artifactId>-->
+                                    <!--<version>${jira.client.version}</version>-->
+                                <!--</pluginArtifact>-->
+                                <pluginArtifact>
+                                    <groupId>org.codehaus.jettison</groupId>
+                                    <artifactId>jettison</artifactId>
+                                    <version>1.1</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>joda-time</groupId>
+                                    <artifactId>joda-time</artifactId>
+                                    <version>1.6</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>com.googlecode.json-simple</groupId>
+                                    <artifactId>json-simple</artifactId>
+                                    <version>1.1.1</version>
+                                </pluginArtifact>
+                            </pluginArtifacts>
+                            <libArtifacts>
+                                <!-- Add missing schema jar.  Can be removed once we upgrade conf from 5.2-m6 -->
+                                <libArtifact>
+                                    <groupId>com.atlassian.plugins</groupId>
+                                    <artifactId>atlassian-plugins-schema</artifactId>
+                                    <version>${plugins.version}</version>
+                                </libArtifact>
+                            </libArtifacts>
+                        </product>
+                    </products>
+                    
+                    <pluginDependencies>
+                        <pluginDependency>
+                            <groupId>com.atlassian.webhooks</groupId>
+                            <artifactId>atlassian-webhooks-plugin</artifactId>
+                        </pluginDependency>
+                        <pluginDependency>
+                            <groupId>com.atlassian.labs</groupId>
+                            <artifactId>speakeasy-plugin</artifactId>
+                        </pluginDependency>
+                        <pluginDependency>
+                            <groupId>${project.groupId}</groupId>
+                            <artifactId>remotable-plugins-api</artifactId>
+                        </pluginDependency>
+                        <pluginDependency>
+                            <groupId>${project.groupId}</groupId>
+                            <artifactId>remotable-plugins-spi</artifactId>
+                        </pluginDependency>
+                        <pluginDependency>
+                            <groupId>${project.groupId}</groupId>
+                            <artifactId>remotable-plugins-sisu-extender</artifactId>
+                        </pluginDependency>
+                        <pluginDependency>
+                            <groupId>org.sonatype.sisu</groupId>
+                            <artifactId>sisu-guice</artifactId>
+                        </pluginDependency>
+                        <pluginDependency>
+                            <groupId>org.apache.servicemix.bundles</groupId>
+                            <artifactId>org.apache.servicemix.bundles.javax-inject</artifactId>
+                        </pluginDependency>
+                        <pluginDependency>
+                            <groupId>org.codehaus.jettison</groupId>
+                            <artifactId>jettison</artifactId>
+                        </pluginDependency>
+                        <pluginDependency>
+                            <groupId>joda-time</groupId>
+                            <artifactId>joda-time</artifactId>
+                        </pluginDependency>
+                        <pluginDependency>
+                            <groupId>com.googlecode.json-simple</groupId>
+                            <artifactId>json-simple</artifactId>
+                        </pluginDependency>
+                    </pluginDependencies>
                 </configuration>
             </plugin>
             <!-- necessary for build to deploy-->
@@ -724,14 +1010,12 @@
                                     <includes>
                                         <include>js/iframe-min/_amd-min.js</include>
                                         <include>js/iframe-min/plugin/_util-min.js</include>
-                                        <include>js/iframe-min/plugin/_ajax-min.js</include>
                                         <include>js/iframe-min/plugin/_dollar-min.js</include>
                                         <include>js/iframe-min/xdm-rpc-min.js</include>
                                         <include>js/iframe-min/plugin/_rpc-min.js</include>
                                         <include>js/iframe-min/plugin/env-min.js</include>
                                         <include>js/iframe-min/plugin/request-min.js</include>
                                         <include>js/iframe-min/plugin/dialog-min.js</include>
-                                        <include>js/iframe-min/plugin/bigpipe-min.js</include>
                                         <!-- product-specific inclusions are temporary until made more dynamic -->
                                         <include>js/iframe-min/plugin/jira-min.js</include>
                                         <include>js/iframe-min/plugin/_init-min.js</include>

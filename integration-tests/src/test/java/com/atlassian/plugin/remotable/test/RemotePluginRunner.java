@@ -131,11 +131,11 @@ public class RemotePluginRunner
         return this;
     }
 
-    public RemotePluginRunner addWebhook(String hookId, String path, HttpServlet servlet)
+    public RemotePluginRunner addWebhook(String hookId, String path, String eventId, HttpServlet servlet)
     {
         doc.getRootElement().addElement("webhook")
                 .addAttribute("key", hookId + path.hashCode())
-                .addAttribute("event", hookId)
+                .addAttribute("event", eventId)
                 .addAttribute("url", path);
         routes.put(path, servlet);
         return this;

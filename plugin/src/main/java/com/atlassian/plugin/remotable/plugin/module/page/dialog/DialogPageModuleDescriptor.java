@@ -6,7 +6,6 @@ import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.remotable.plugin.integration.plugins.DynamicDescriptorRegistration;
 import com.atlassian.plugin.remotable.plugin.module.page.RemotePageDescriptorCreator;
-import com.atlassian.plugin.remotable.plugin.util.node.Dom4jNode;
 import com.atlassian.util.concurrent.NotNull;
 import org.dom4j.Element;
 
@@ -53,7 +52,7 @@ public class DialogPageModuleDescriptor extends AbstractModuleDescriptor<Void>
     {
         super.enabled();
         this.registration = dynamicDescriptorRegistration.registerDescriptors(getPlugin(),
-                remotePageDescriptorBuilder.build(getPlugin(), new Dom4jNode(descriptor)));
+                remotePageDescriptorBuilder.build(getPlugin(), descriptor));
     }
 
     @Override

@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.atlassian.plugins</groupId>
         <artifactId>remotable-plugins-parent</artifactId>
-        <version>0.8.1106</version>
+        <version>0.9.1137</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>

@@ -10,7 +10,6 @@ import java.util.concurrent.TimeUnit;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
@@ -33,6 +32,13 @@ public class LicenseResource
     public Response getLicense(@Context HttpServletRequest request)
     {
         String pluginKey = ApiScopingFilter.extractClientKey(request);
+        if (pluginKey == null) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                           .entity("Requests to this resource must be authenticated with OAuth headers from an " +
+                                   "Atlassian Connect app.")
+                           .build();
+        }
+
         Option<PluginLicense> license = licenseRetriever.getLicense(pluginKey);
         if (license.isDefined())
         {
@@ -44,7 +50,7 @@ public class LicenseResource
         }
         else
         {
-            return Response.status(404).build();
+            return Response.status(Response.Status.NOT_FOUND).build();
         }
     }
 }

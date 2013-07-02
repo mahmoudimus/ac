@@ -59,7 +59,7 @@ public final class TestWebHooks extends AbstractBrowserlessTest
     private void testRemotePluginWebHookFiredOnlyForOwnPlugin(String webHookId) throws Exception
     {
         final WebHookTestServlet servlet = new WebHookTestServlet();
-        final RemotePluginRunner plugin1 = new RemotePluginRunner(baseUrl, webHookId).addWebhook(webHookId, "/webhook", servlet);
+        final RemotePluginRunner plugin1 = new RemotePluginRunner(baseUrl, webHookId).addWebhook(webHookId, "/webhook", webHookId, servlet);
         final RemotePluginRunner plugin2 = new RemotePluginRunner(baseUrl, "plugin2");
         try
         {

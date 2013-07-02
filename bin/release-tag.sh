@@ -14,8 +14,8 @@ echo "Making ssh-with-key.sh executable"
 chmod 755 ./bin/ssh-with-key.sh
 export GIT_SSH=./bin/ssh-with-key.sh
 
-echo "Pushing branch"
-git push origin remotable-plugins-$VERSION.x
+#echo "Pushing branch"
+#sisu-extendergit push origin remotable-plugins-$VERSION.x
 
 #-------- tagging
 echo "Tagging $VERSION"

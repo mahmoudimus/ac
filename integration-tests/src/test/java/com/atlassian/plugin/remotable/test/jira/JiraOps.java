@@ -36,8 +36,7 @@ public class JiraOps
         soap = svc;
     }
 
-    public RemoteProject createProject() throws java.rmi.RemoteException, RemoteValidationException,
-            RemoteAuthenticationException
+    public RemoteProject createProject() throws java.rmi.RemoteException
     {
         String key = RandomStringUtils.randomAlphabetic(4).toUpperCase(Locale.US);
         return soap.createProject(token, key, "Test project " + key,
@@ -46,8 +45,7 @@ public class JiraOps
 
     }
 
-    public void deleteProject(String key) throws java.rmi.RemoteException,
-            RemoteAuthenticationException
+    public void deleteProject(String key) throws java.rmi.RemoteException
     {
         soap.deleteProject(token, key);
     }
@@ -77,6 +75,22 @@ public class JiraOps
     {
         RemoteComment comment = new RemoteComment();
         comment.setBody(body);
-       soap.addComment(token, issueKey, comment);
+        soap.addComment(token, issueKey, comment);
+    }
+
+    public RemoteNamedObject[] availableActions(String issueKey) throws java.rmi.RemoteException
+    {
+        return soap.getAvailableActions(token, issueKey);
+    }
+
+    public RemoteIssue transitionIssue(String issueKey, String actionId, Map<String,String> fields)
+            throws java.rmi.RemoteException
+    {
+        List<RemoteFieldValue> values = newArrayList();
+        for (Map.Entry<String,String> entry : fields.entrySet())
+        {
+            values.add(new RemoteFieldValue(entry.getKey(), new String[]{entry.getValue()}));
+        }
+        return soap.progressWorkflowAction(token, issueKey, actionId, values.toArray(new RemoteFieldValue[values.size()]));
     }
 }

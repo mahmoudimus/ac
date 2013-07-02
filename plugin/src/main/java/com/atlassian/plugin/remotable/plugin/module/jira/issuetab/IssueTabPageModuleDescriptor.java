@@ -16,8 +16,6 @@ import com.atlassian.plugin.remotable.plugin.module.ContainingRemoteCondition;
 import com.atlassian.plugin.remotable.plugin.module.IFrameParamsImpl;
 import com.atlassian.plugin.remotable.plugin.module.IFrameRendererImpl;
 import com.atlassian.plugin.remotable.plugin.module.page.IFrameContextImpl;
-import com.atlassian.plugin.remotable.plugin.util.node.Dom4jNode;
-import com.atlassian.plugin.remotable.plugin.util.node.Node;
 import com.atlassian.plugin.remotable.spi.module.IFrameParams;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.util.concurrent.NotNull;
@@ -77,10 +75,8 @@ public final class IssueTabPageModuleDescriptor extends AbstractModuleDescriptor
 
         String moduleKey = "issue-tab-page-" + getRequiredAttribute(descriptor, "key");
 
-        Node node = new Dom4jNode(descriptor);
-
-        // make sure to update condition/remote.js to hide these
-        Condition condition = conditionProcessor.process(node, desc, getPluginKey(), "#" + moduleKey + "-remote-condition");
+        // make sure to update remote-condition.js to hide these
+        Condition condition = conditionProcessor.process(descriptor, desc, getPluginKey(), "#" + moduleKey + "-remote-condition");
         if (condition instanceof ContainingRemoteCondition)
         {
             moduleKey += "-remote-condition";
@@ -90,7 +86,7 @@ public final class IssueTabPageModuleDescriptor extends AbstractModuleDescriptor
         desc.addAttribute("class", IssueTabPage.class.getName());
 
         IssueTabPanelModuleDescriptor moduleDescriptor = createDescriptor(moduleKey, desc,
-                new IFrameParamsImpl(node), condition);
+                new IFrameParamsImpl(descriptor), condition);
 
         this.registration = dynamicDescriptorRegistration.registerDescriptors(getPlugin(), new DescriptorToRegister(moduleDescriptor));
     }
