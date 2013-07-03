@@ -29,7 +29,7 @@ import static java.util.Collections.singletonList;
 /**
  * Retrieves http content asynchronously and caches its contents in memory according to the returned headers
  */
-public class CachingHttpContentRetriever implements HttpContentRetriever
+public final class CachingHttpContentRetriever implements HttpContentRetriever
 {
     private final Logger log = LoggerFactory.getLogger(CachingHttpContentRetriever.class);
     private final HttpClient httpClient;
@@ -45,8 +45,7 @@ public class CachingHttpContentRetriever implements HttpContentRetriever
         options.setIoSelectInterval(100, TimeUnit.MILLISECONDS);
         options.setThreadPrefix("content-ret");
         options.setMaxConnectionsPerHost(100);
-        options.setUserAgent("Atlassian-Remotable-Plugins/"
-                + pluginRetrievalService.getPlugin().getPluginInformation().getVersion());
+        options.setUserAgent("Atlassian-Remotable-Plugins/" + pluginRetrievalService.getPlugin().getPluginInformation().getVersion());
 
         options.setConnectionTimeout(3, TimeUnit.SECONDS);
         options.setSocketTimeout(15, TimeUnit.SECONDS);
@@ -157,15 +156,6 @@ public class CachingHttpContentRetriever implements HttpContentRetriever
                     }
                 })
                 .toPromise();
-
-        if (promise.isDone())
-        {
-            log.debug("Request {} retrieved from the cache", url);
-        }
-        else
-        {
-            log.debug("Request {} isn't in the cache, retrieving...", url);
-        }
         return promise;
     }
 }
