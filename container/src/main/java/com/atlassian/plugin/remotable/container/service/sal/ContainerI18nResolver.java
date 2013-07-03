@@ -54,7 +54,7 @@ public class ContainerI18nResolver extends AbstractI18nResolver
 
     public String getRawText(String key)
     {
-        String pattern = getPattern(key);
+        String pattern = getPattern(Locale.getDefault(), key);
         if (pattern == null)
         {
             pattern = key;
@@ -64,15 +64,19 @@ public class ContainerI18nResolver extends AbstractI18nResolver
 
     public String resolveText(String key, Serializable[] arguments)
     {
-        String pattern = getPattern(key);
+        return resolveText(Locale.getDefault(), key, arguments);
+    }
+
+    @Override
+    public String resolveText(Locale locale, String key, Serializable[] arguments) {
+        String pattern = getPattern(locale, key);
         if (pattern == null)
         {
             return key;
         }
-        return MessageFormat.format(pattern, (Object[]) arguments);
-    }
+        return MessageFormat.format(pattern, (Object[]) arguments);    }
 
-    private String getPattern(final String key)
+    private String getPattern(final Locale locale, final String key)
     {
         return locks.read().withLock(new Supplier<String>()
         {
@@ -85,7 +89,7 @@ public class ContainerI18nResolver extends AbstractI18nResolver
                     {
                         try
                         {
-                            ResourceBundle bundle = getBundle(bundleName, Locale.getDefault(), pluginBundleNames.getKey());
+                            ResourceBundle bundle = getBundle(bundleName, locale, pluginBundleNames.getKey());
                             bundleString = bundle.getString(key);
                         }
                         catch (MissingResourceException e)
