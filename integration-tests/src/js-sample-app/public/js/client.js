@@ -27,4 +27,31 @@
       RA.resize();
     }
   });
+  // additional media type requests
+  RA.request("/rest/remoteplugintest/1/user", {
+    headers: {
+      "Accept": "application/json"
+    },
+    success: function (data, statusText, xhr) {
+      $("#client-http-data-json").text(data);
+      RA.resize();
+    },
+    error: function (xhr, statusText, errorThrown) {
+      console.error(xhr, statusText, errorThrown);
+      RA.resize();
+    }
+  });
+  RA.request("/rest/remoteplugintest/1/user", {
+    headers: {
+      "Accept": "application/xml"
+    },
+    success: function (data, statusText, xhr) {
+      $("#client-http-data-xml").text(data);
+      RA.resize();
+    },
+    error: function (xhr, statusText, errorThrown) {
+      console.error(xhr, statusText, errorThrown);
+      RA.resize();
+    }
+  });
 }());

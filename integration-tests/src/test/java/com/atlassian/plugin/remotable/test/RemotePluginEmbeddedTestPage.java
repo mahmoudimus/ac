@@ -78,6 +78,16 @@ public class RemotePluginEmbeddedTestPage extends RemotePage
         return waitForValue("client-http-data");
     }
 
+    public String getClientHttpDataJson()
+    {
+        return waitForValue("client-http-data-json");
+    }
+
+    public String getClientHttpDataXml()
+    {
+        return waitForValue("client-http-data-xml");
+    }
+
     public String getServerHttpStatus()
     {
         return getValue("server-http-status");

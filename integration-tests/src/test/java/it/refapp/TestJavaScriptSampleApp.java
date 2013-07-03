@@ -61,5 +61,9 @@ public final class TestJavaScriptSampleApp extends AbstractRemotablePluginTest
         assertTrue(contentType != null && contentType.startsWith("text/plain")); // startsWith accounts for possible charset
         Assert.assertEquals("betty", remotePluginTest.getClientHttpData());
         Assert.assertEquals("betty", remotePluginTest.getClientHttpResponseText());
+
+        // media type tests of the RA.request API
+        Assert.assertEquals("{\"name\": \"betty\"}", remotePluginTest.getClientHttpDataJson());
+        Assert.assertEquals("<user><name>betty</name></user>", remotePluginTest.getClientHttpDataXml());
     }
 }

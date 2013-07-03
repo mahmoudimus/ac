@@ -55,6 +55,7 @@ AP.define("request", ["_dollar", "_rpc"], function ($, rpc) {
         //          - type      the HTTP method name; defaults to 'GET'
         //          - data      the string entity body of the request; required if type is 'POST' or 'PUT'
         //          - contentType   the content-type string value of the entity body, above; required when data is supplied
+        //          - headers   an object containing headers to set; supported headers are: Accept
         request: function (url, options) {
           var success, error;
           // unpacks bridged success args into local success args
