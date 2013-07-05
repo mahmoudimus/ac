@@ -40,7 +40,7 @@ public final class JiraProductAccessor implements ProductAccessor
     @Override
     public String getPreferredAdminSectionKey()
     {
-        return "system.admin/system";
+        return "advanced_menu_section/advanced_section";
     }
 
     @Override

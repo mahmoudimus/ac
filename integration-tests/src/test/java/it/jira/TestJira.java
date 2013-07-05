@@ -18,6 +18,7 @@ import com.atlassian.plugin.remotable.test.RemotePluginDialog;
 import com.atlassian.plugin.remotable.test.RemotePluginEmbeddedTestPage;
 import com.atlassian.plugin.remotable.test.RemotePluginTestPage;
 import com.atlassian.plugin.remotable.test.jira.AbstractRemotablePluginProjectTab;
+import com.atlassian.plugin.remotable.test.jira.JiraAdministrationPage;
 import com.atlassian.plugin.remotable.test.jira.JiraGeneralPage;
 import com.atlassian.plugin.remotable.test.jira.JiraOps;
 import com.atlassian.plugin.remotable.test.jira.JiraProjectAdministrationPanel;
@@ -81,7 +82,6 @@ public class TestJira
     public void setUp() throws RemoteException, RemoteAuthenticationException
     {
         project = jiraOps.createProject();
-
     }
 
     private void loginAsAdmin()
@@ -249,6 +249,30 @@ public class TestJira
                         .getEmbeddedPage();
                 final String iFrameSrc = page.getContainerDiv().findElement(By.tagName("iframe")).getAttribute("src");
                 assertThat(iFrameSrc, startsWith(baseJiraUrl));
+                return null;
+            }
+        });
+    }
+
+    @Test
+    public void testAdminPages() throws Exception {
+        testLoggedInAsAdmin(new Callable()
+        {
+            @Override
+            public int hashCode()
+            {
+                return super.hashCode();
+            }
+
+            @Override
+            public Object call() throws Exception
+            {
+                JiraAdministrationPage adminPage = product.visit(JiraAdministrationPage.class);
+                assertTrue(adminPage.containsLink("jira-admin-page"));
+                assertEquals("A. D. Ministrator (Sysadmin)", adminPage.goTo("jira-admin-page").getFullName());
+
+                assertTrue(adminPage.containsLink("remotePluginAdmin"));
+                assertEquals("A. D. Ministrator (Sysadmin)", adminPage.goTo("remotePluginAdmin").getFullName());
                 return null;
             }
         });
