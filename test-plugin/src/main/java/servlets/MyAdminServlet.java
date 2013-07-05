@@ -27,6 +27,7 @@ public class MyAdminServlet extends AbstractPageServlet
             throws ServletException, IOException
     {
         Response response = httpClient.newRequest("/rest/remoteplugintest/1/user").get().claim();
+        Response licenseResponse = httpClient.newRequest("/rest/remotable-plugins/latest/license/").get().claim();
         render(req, res, ImmutableMap.<String, Object>builder()
                 .put("httpGetStatus", response.getStatusCode())
                 .put("httpGetStatusText", response.getStatusText())
@@ -35,6 +36,7 @@ public class MyAdminServlet extends AbstractPageServlet
                 .put("licenseStatus", req.getParameter("lic"))
                 .put("timeZone", req.getParameter("tz"))
                 .put("locale", req.getParameter("loc"))
+                .put("licenseResponseStatusCode", licenseResponse.getStatusCode())
                 .build());
     }
 }

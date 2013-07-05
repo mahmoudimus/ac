@@ -9,6 +9,7 @@
 <div>Current locale: <span id="locale">$locale</span></div>
 <div>Current time zone: <span id="timeZone"></span></div>
 <div>Current time zone (from the template context): <span id="timeZoneFromTemplateContext">$timeZone</span></div>
+<div>Plugin license response status code: <span id=pluginLicenseResponseStatusCode">$licenseResponseStatusCode</span></div>
 
 <h3>HostHttpClient Response</h3>
 <div>Status: <span id="server-http-status">$httpGetStatus</span></div>
