@@ -10,15 +10,18 @@ import com.atlassian.plugin.remotable.spi.PermissionDeniedException;
 import com.atlassian.plugin.remotable.spi.permission.Permission;
 import com.atlassian.plugin.remotable.spi.permission.PermissionModuleDescriptor;
 import com.atlassian.plugin.remotable.spi.permission.PermissionsReader;
+import com.atlassian.plugin.remotable.spi.permission.scope.AbstractApiScope;
 import com.atlassian.plugin.remotable.spi.permission.scope.ApiScope;
-import com.atlassian.plugin.remotable.spi.util.ServletUtils;
+import com.atlassian.plugin.remotable.spi.permission.scope.RestApiScopeHelper;
 import com.atlassian.plugin.tracker.DefaultPluginModuleTracker;
 import com.atlassian.plugin.tracker.PluginModuleTracker;
 import com.atlassian.sal.api.user.UserManager;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import org.dom4j.Document;
 import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,15 +29,17 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.Set;
 
+import static com.atlassian.fugue.Option.option;
 import static com.atlassian.plugin.remotable.host.common.util.RemotablePluginManifestReader.getInstallerUser;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.ImmutableSet.copyOf;
 import static com.google.common.collect.Iterables.any;
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.transform;
+import static java.lang.String.format;
 
 /**
  * Handles permissions for remote plugin operations
@@ -49,10 +54,7 @@ public final class PermissionManagerImpl implements PermissionManager
     private final BundleContext bundleContext;
     private final PluginModuleTracker<Permission, PermissionModuleDescriptor> permissionTracker;
 
-    private final Set<String> NON_USER_ADMIN_PATHS = ImmutableSet.of(
-            "/rest/remotable-plugins/latest/macro/",
-            "/rest/remotable-plugins/1/macro/"
-    );
+    private final Set<ApiScope> NON_USER_ADMIN_API_SCOPES = ImmutableSet.<ApiScope>of(new MacroCacheApiScope());
 
     @Autowired
     public PermissionManagerImpl(
@@ -115,25 +117,12 @@ public final class PermissionManagerImpl implements PermissionManager
     @Override
     public boolean isRequestInApiScope(HttpServletRequest req, String pluginKey, String user)
     {
-        // check for non-user admin request
-        if (user == null)
-        {
-            String pathInfo = ServletUtils.extractPathInfo(req);
-            for (String adminPath : NON_USER_ADMIN_PATHS)
-            {
-                if (pathInfo.startsWith(adminPath))
-                {
-                    return true;
-                }
-            }
-        }
-
         return any(getApiScopesForPlugin(pluginKey), new IsInApiScopePredicate(req, user));
     }
 
     private Iterable<ApiScope> getApiScopesForPlugin(String pluginKey)
     {
-        return getApiScopesForPermissions(getPermissionsForPlugin(pluginKey));
+        return Iterables.concat(NON_USER_ADMIN_API_SCOPES, getApiScopesForPermissions(getPermissionsForPlugin(pluginKey)));
     }
 
     private Iterable<ApiScope> getApiScopesForPermissions(final Set<String> permissions)
@@ -153,9 +142,16 @@ public final class PermissionManagerImpl implements PermissionManager
 
     private Set<String> getPermissionsForPlugin(String clientKey)
     {
-        Plugin plugin = pluginAccessor.getPlugin(clientKey);
-        return plugin != null ? permissionsReader.getPermissionsForPlugin(plugin)
-                : Collections.<String>emptySet();
+        return option(pluginAccessor.getPlugin(clientKey)).fold(
+                Suppliers.ofInstance(ImmutableSet.<String>of()),
+                new Function<Plugin, Set<String>>()
+                {
+                    @Override
+                    public Set<String> apply(Plugin plugin)
+                    {
+                        return permissionsReader.getPermissionsForPlugin(plugin);
+                    }
+                });
     }
 
     @Override
@@ -166,8 +162,8 @@ public final class PermissionManagerImpl implements PermissionManager
                 // for OnDemand dogfooding
                 (isDogfoodUser(username) ||
 
-                 // the default
-                 userManager.isAdmin(username));
+                        // the default
+                        userManager.isAdmin(username));
     }
 
     private boolean inDogfoodingGroup(String username)
@@ -187,8 +183,8 @@ public final class PermissionManagerImpl implements PermissionManager
     {
         if (!getPermissionsForPlugin(pluginKey).contains(permissionKey))
         {
-            throw new PermissionDeniedException(pluginKey, "Required permission '" + permissionKey + "' must be requested " +
-                    "for this plugin '" + pluginKey + "'");
+            throw new PermissionDeniedException(pluginKey,
+                    format("Required permission '%s' must be requested for this plugin '%s'", permissionKey, pluginKey));
         }
     }
 
@@ -279,6 +275,16 @@ public final class PermissionManagerImpl implements PermissionManager
         public ApiScope apply(Permission permission)
         {
             return (ApiScope) permission;
+        }
+    }
+
+    private static final class MacroCacheApiScope extends AbstractApiScope
+    {
+        public MacroCacheApiScope()
+        {
+            super("clear_macro_cache", ImmutableSet.of(InstallationMode.LOCAL, InstallationMode.REMOTE), new RestApiScopeHelper(Arrays.asList(
+                    new RestApiScopeHelper.RestScope("remotable-plugins", Arrays.asList("latest", "1"), "/macro", Arrays.asList("DELETE"))
+            )));
         }
     }
 }
