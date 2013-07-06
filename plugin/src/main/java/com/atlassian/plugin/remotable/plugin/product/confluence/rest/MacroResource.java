@@ -51,7 +51,4 @@ public class MacroResource
         macroContentManager.clearContentByInstance(appKey, macroInstanceKey);
         return Response.noContent().build();
     }
-
-
-
 }

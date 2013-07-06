@@ -16,8 +16,8 @@ import com.atlassian.plugin.tracker.DefaultPluginModuleTracker;
 import com.atlassian.plugin.tracker.PluginModuleTracker;
 import com.atlassian.sal.api.user.UserManager;
 import com.google.common.base.Function;
-import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableSet;
 import org.dom4j.Document;
 import org.osgi.framework.BundleContext;
@@ -32,6 +32,7 @@ import java.util.Set;
 import static com.atlassian.plugin.remotable.host.common.util.RemotablePluginManifestReader.getInstallerUser;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.ImmutableSet.copyOf;
+import static com.google.common.collect.Iterables.any;
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.transform;
 
@@ -112,7 +113,7 @@ public final class PermissionManagerImpl implements PermissionManager
     }
 
     @Override
-    public boolean isRequestInApiScope(HttpServletRequest req, String clientKey, String user)
+    public boolean isRequestInApiScope(HttpServletRequest req, String pluginKey, String user)
     {
         // check for non-user admin request
         if (user == null)
@@ -127,31 +128,27 @@ public final class PermissionManagerImpl implements PermissionManager
             }
         }
 
-        final Set<String> permissions = getPermissionsForPlugin(clientKey);
-        Iterable<ApiScope> applicableScopes = transform(filter(permissionTracker.getModules(), new Predicate<Permission>()
-        {
-            @Override
-            public boolean apply(@Nullable Permission input)
-            {
-                return input instanceof ApiScope && permissions.contains(input.getKey());
-            }
-        }), new Function<Permission, ApiScope>()
-        {
-            @Override
-            public ApiScope apply(@Nullable Permission input)
-            {
-                return (ApiScope) input;
-            }
-        });
+        return any(getApiScopesForPlugin(pluginKey), new IsInApiScopePredicate(req, user));
+    }
 
-        for (ApiScope scope : applicableScopes)
-        {
-            if (scope.allow(req, user))
-            {
-                return true;
-            }
-        }
-        return false;
+    private Iterable<ApiScope> getApiScopesForPlugin(String pluginKey)
+    {
+        return getApiScopesForPermissions(getPermissionsForPlugin(pluginKey));
+    }
+
+    private Iterable<ApiScope> getApiScopesForPermissions(final Set<String> permissions)
+    {
+        return castToApiScopes(getApiScopesForPermissionsAsPermissions(permissions));
+    }
+
+    private Iterable<ApiScope> castToApiScopes(Iterable<Permission> permissions)
+    {
+        return transform(permissions, new CastPermissionApiScope());
+    }
+
+    private Iterable<Permission> getApiScopesForPermissionsAsPermissions(Set<String> permissions)
+    {
+        return filter(permissionTracker.getModules(), Predicates.and(new IsApiScope(), new IsInPermissions(permissions)));
     }
 
     private Set<String> getPermissionsForPlugin(String clientKey)
@@ -204,18 +201,9 @@ public final class PermissionManagerImpl implements PermissionManager
     @Override
     public boolean canModifyRemotePlugin(String username, String pluginKey)
     {
-        if (userManager.isAdmin(username))
-        {
-            return true;
-        }
-
-        if (isDogfoodUser(username) && username.equals(
-                getInstallerUser(BundleUtil.findBundleForPlugin(bundleContext, pluginKey))))
-        {
-            return true;
-        }
-
-        return false;
+        return userManager.isAdmin(username)
+                || isDogfoodUser(username)
+                && username.equals(getInstallerUser(BundleUtil.findBundleForPlugin(bundleContext, pluginKey)));
     }
 
     private boolean isDogfoodUser(String username)
@@ -240,5 +228,57 @@ public final class PermissionManagerImpl implements PermissionManager
     public boolean canInstallArbitraryRemotePlugins(String userName)
     {
         return userManager.isSystemAdmin(userName) || isDogfoodUser(userName);
+    }
+
+    private static final class IsInApiScopePredicate implements Predicate<ApiScope>
+    {
+        private final HttpServletRequest request;
+        private final String user;
+
+        public IsInApiScopePredicate(HttpServletRequest request, @Nullable String user)
+        {
+            this.request = checkNotNull(request);
+            this.user = user;
+        }
+
+        @Override
+        public boolean apply(ApiScope scope)
+        {
+            return scope.allow(request, user);
+        }
+    }
+
+    private static final class IsApiScope implements Predicate<Permission>
+    {
+        @Override
+        public boolean apply(@Nullable Permission permission)
+        {
+            return permission instanceof ApiScope;
+        }
+    }
+
+    private static final class IsInPermissions implements Predicate<Permission>
+    {
+        private final Set<String> permissions;
+
+        public IsInPermissions(Set<String> permissions)
+        {
+            this.permissions = checkNotNull(permissions);
+        }
+
+        @Override
+        public boolean apply(@Nullable Permission permission)
+        {
+            return permission != null && permissions.contains(permission.getKey());
+        }
+    }
+
+    private static final class CastPermissionApiScope implements Function<Permission, ApiScope>
+    {
+        @Override
+        public ApiScope apply(Permission permission)
+        {
+            return (ApiScope) permission;
+        }
     }
 }
