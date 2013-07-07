@@ -45,7 +45,7 @@
              name="Remotable Plugins Permanent Redirecting Servlet"
              class="com.atlassian.plugin.remotable.plugin.module.util.redirect.RedirectServlet">
         <description>
-            Redirects to a Pemote App resource, usually an image, with a permanent redirect, but
+            Redirects to a Remote App resource, usually an image, with a permanent redirect, but
             doesn't sign the request.  Request parameters are included in the redirect.
         </description>
         <url-pattern>/redirect/permanent</url-pattern>
