@@ -54,7 +54,7 @@ public final class PermissionManagerImpl implements PermissionManager
     private final BundleContext bundleContext;
     private final PluginModuleTracker<Permission, PermissionModuleDescriptor> permissionTracker;
 
-    private final Set<ApiScope> NON_USER_ADMIN_API_SCOPES = ImmutableSet.<ApiScope>of(new MacroCacheApiScope());
+    private final Set<ApiScope> DEFAULT_API_SCOPES = ImmutableSet.<ApiScope>of(new MacroCacheApiScope());
 
     @Autowired
     public PermissionManagerImpl(
@@ -122,7 +122,7 @@ public final class PermissionManagerImpl implements PermissionManager
 
     private Iterable<ApiScope> getApiScopesForPlugin(String pluginKey)
     {
-        return Iterables.concat(NON_USER_ADMIN_API_SCOPES, getApiScopesForPermissions(getPermissionsForPlugin(pluginKey)));
+        return Iterables.concat(DEFAULT_API_SCOPES, getApiScopesForPermissions(getPermissionsForPlugin(pluginKey)));
     }
 
     private Iterable<ApiScope> getApiScopesForPermissions(final Set<String> permissions)
@@ -184,7 +184,7 @@ public final class PermissionManagerImpl implements PermissionManager
         if (!getPermissionsForPlugin(pluginKey).contains(permissionKey))
         {
             throw new PermissionDeniedException(pluginKey,
-                    format("Required permission '%s' must be requested for this plugin '%s'", permissionKey, pluginKey));
+                    format("Plugin '%s' requires a resource protected by '%s', but it did not request it.", pluginKey, permissionKey));
         }
     }
 
