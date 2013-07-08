@@ -28,7 +28,6 @@ import com.atlassian.plugin.remotable.test.jira.JiraViewIssuePageWithRemotePlugi
 import com.atlassian.plugin.remotable.test.jira.PlainTextView;
 import com.atlassian.plugin.remotable.test.jira.ViewChangingSearchResult;
 import com.atlassian.webdriver.pageobjects.WebDriverTester;
-import hudson.plugins.jira.soap.RemoteAuthenticationException;
 import hudson.plugins.jira.soap.RemoteIssue;
 import hudson.plugins.jira.soap.RemoteProject;
 import org.hamcrest.Description;
@@ -54,15 +53,23 @@ import static org.junit.matchers.JUnitMatchers.hasItem;
 
 public class TestJira
 {
+    public static final String REMOTABLE_PLUGIN_GENERAL_LINK_TEXT = "Remotable Plugin app1 General Link";
+    public static final String REMOTE_PLUGIN_GENERAL_PAGE_KEY = "remotePluginGeneral";
+
     private static final String EMBEDDED_ISSUE_PANEL_ID = "issue-panel-jira-remotePluginIssuePanelPage";
     private static final String EMBEDDED_PROJECT_CONFIG_PANEL_ID = "project-config-panel-jira-remoteProjectConfigPanel";
     private static final String REMOTABLE_PROEJECT_CONFIG_TAB_NAME = "Remotable Project Config";
-    public static final String REMOTABLE_PLUGIN_GENERAL_LINK_TEXT = "Remotable Plugin app1 General Link";
-    public static final String REMOTE_PLUGIN_GENERAL_PAGE_KEY = "remotePluginGeneral";
-    private static TestedProduct<WebDriverTester> product = TestedProductFactory.create(JiraTestedProduct.class);
-    private static JiraOps jiraOps = new JiraOps(product.getProductInstance());
+    private static final String ADMIN_FULL_NAME = "A. D. Ministrator (Sysadmin)";
 
-    public static final String ADMIN = "admin";
+    public TestJira()
+    {
+        super();
+    }
+
+    private static final String ADMIN = "admin";
+    private static TestedProduct<WebDriverTester> product = TestedProductFactory.create(JiraTestedProduct.class);
+
+    private static JiraOps jiraOps = new JiraOps(product.getProductInstance());
 
 
     @Rule
@@ -79,7 +86,7 @@ public class TestJira
     }
 
     @Before
-    public void setUp() throws RemoteException, RemoteAuthenticationException
+    public void setUp() throws RemoteException
     {
         project = jiraOps.createProject();
     }
@@ -255,24 +262,30 @@ public class TestJira
     }
 
     @Test
-    public void testAdminPages() throws Exception {
+    public void testAdminPageInJiraSpecificLocation() throws Exception {
         testLoggedInAsAdmin(new Callable()
         {
             @Override
-            public int hashCode()
+            public Object call() throws Exception
             {
-                return super.hashCode();
+                final JiraAdministrationPage adminPage = product.visit(JiraAdministrationPage.class);
+                assertTrue(adminPage.containsJiraRemotableAdminPageLink());
+                assertEquals(ADMIN_FULL_NAME, adminPage.clickJiraRemotableAdminPage().getFullName());
+                return null;
             }
+        });
+    }
 
+    @Test
+    public void testGeneralAdminPage() throws Exception {
+        testLoggedInAsAdmin(new Callable()
+        {
             @Override
             public Object call() throws Exception
             {
-                JiraAdministrationPage adminPage = product.visit(JiraAdministrationPage.class);
-                assertTrue(adminPage.containsLink("jira-admin-page"));
-                assertEquals("A. D. Ministrator (Sysadmin)", adminPage.goTo("jira-admin-page").getFullName());
-
-                assertTrue(adminPage.containsLink("remotePluginAdmin"));
-                assertEquals("A. D. Ministrator (Sysadmin)", adminPage.goTo("remotePluginAdmin").getFullName());
+                final JiraAdministrationPage adminPage = product.visit(JiraAdministrationPage.class);
+                assertTrue(adminPage.containsGeneralRemotableAdminPage());
+                assertEquals(ADMIN_FULL_NAME, adminPage.clickGeneralRemotableAdminPage().getFullName());
                 return null;
             }
         });
