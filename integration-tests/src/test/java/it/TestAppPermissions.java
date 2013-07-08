@@ -1,10 +1,15 @@
 package it;
 
+import com.atlassian.pageobjects.page.HomePage;
+import com.atlassian.pageobjects.page.LoginPage;
 import com.atlassian.plugin.remotable.api.service.SignedRequestHandler;
 import com.atlassian.plugin.remotable.spi.Permissions;
+import com.atlassian.plugin.remotable.test.GeneralPage;
 import com.atlassian.plugin.remotable.test.HttpUtils;
 import com.atlassian.plugin.remotable.test.MessagePage;
+import com.atlassian.plugin.remotable.test.RemotePluginAwarePage;
 import com.atlassian.plugin.remotable.test.RemotePluginRunner;
+import com.atlassian.plugin.remotable.test.RemotePluginTestPage;
 import com.atlassian.plugin.remotable.test.RunnerSignedRequestHandler;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
@@ -25,6 +30,8 @@ import java.net.URL;
 
 import static com.atlassian.plugin.remotable.test.Utils.createSignedRequestHandler;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -48,6 +55,19 @@ public class TestAppPermissions extends AbstractRemotablePluginTest
                 .getMessage();
         assertEquals("403", status);
         runner.stop();
+    }
+
+
+    @Test
+    public void testPermissionsToRetrievePluginLicense()
+    {
+        product.visit(LoginPage.class).login("betty", "betty", HomePage.class);
+        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "pluginLicensePage", "Plugin License Page");
+
+        assertTrue(page.isRemotePluginLinkPresent());
+        RemotePluginTestPage remotePluginTest = page.clickRemotePluginLink();
+
+        assertNotEquals("403", remotePluginTest.waitForValue("pluginLicenseResponseStatusCode"));
     }
 
     private static class CallServlet extends HttpServlet
