@@ -113,7 +113,7 @@ _AP.define("host/main", ["_xdm-rpc"], function (XdmRpc) {
             // JIRA 6, Confluence 5
             fullName = $("a#user-menu-link").attr("title");
           }
-          return {fullName: fullName, id: options.uid};
+          return {fullName: fullName, id: options.uid, key: options.ukey};
         },
         getTimeZone: function () {
           return options.data.timeZone;

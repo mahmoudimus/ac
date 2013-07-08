@@ -135,9 +135,11 @@ public final class IFrameRendererImpl implements IFrameRenderer
         final URI iframeUrl = URI.create(iframeContext.getIframePath().getPath() + ObjectUtils.toString(extraPath));
         String[] dialog = queryParams.get("dialog");
         final String timeZone = userPreferencesRetriever.getTimeZoneFor(remoteUser).getID();
+        UserProfile user = userManager.getUserProfile(remoteUser);
 
         Map<String,String[]> allParams = newHashMap(queryParams);
         allParams.put("user_id", new String[]{remoteUser});
+        allParams.put("user_key", new String[] {user == null ? "" : user.getUserKey().getStringValue()});
         allParams.put("xdm_e", new String[]{hostUrl.toString()});
         allParams.put("xdm_c", new String[]{"channel-" + iframeContext.getNamespace()});
         allParams.put("xdm_p", new String[]{"1"});
@@ -162,7 +164,6 @@ public final class IFrameRendererImpl implements IFrameRenderer
         ctx.put("namespace", iframeContext.getNamespace());
         ctx.put("contextPath", iframeHost.getContextPath());
 
-        UserProfile user = userManager.getUserProfile(remoteUser);
         ctx.put("userId", remoteUser == null ? "" : remoteUser);
         ctx.put("userKey", user == null ? "" : user.getUserKey().getStringValue());
 
