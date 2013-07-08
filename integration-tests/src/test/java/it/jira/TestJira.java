@@ -1,25 +1,21 @@
 package it.jira;
 
 import com.atlassian.jira.pageobjects.JiraTestedProduct;
-import com.atlassian.jira.pageobjects.config.ProductInstanceBasedEnvironmentData;
 import com.atlassian.jira.pageobjects.navigator.AdvancedSearch;
 import com.atlassian.jira.pageobjects.pages.DashboardPage;
 import com.atlassian.jira.pageobjects.pages.project.BrowseProjectPage;
 import com.atlassian.jira.pageobjects.project.ProjectConfigTabs;
 import com.atlassian.jira.pageobjects.project.summary.ProjectSummaryPageTab;
 import com.atlassian.jira.plugin.issuenav.pageobjects.IssueDetailPage;
-import com.atlassian.jira.testkit.client.Backdoor;
 import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.pageobjects.TestedProductFactory;
 import com.atlassian.pageobjects.page.LoginPage;
 import com.atlassian.plugin.remotable.junit.HtmlDumpRule;
-import com.atlassian.plugin.remotable.test.RemotePluginAwarePage;
 import com.atlassian.plugin.remotable.test.RemotePluginDialog;
 import com.atlassian.plugin.remotable.test.RemotePluginEmbeddedTestPage;
 import com.atlassian.plugin.remotable.test.RemotePluginTestPage;
 import com.atlassian.plugin.remotable.test.jira.AbstractRemotablePluginProjectTab;
 import com.atlassian.plugin.remotable.test.jira.JiraAdministrationPage;
-import com.atlassian.plugin.remotable.test.jira.JiraGeneralPage;
 import com.atlassian.plugin.remotable.test.jira.JiraOps;
 import com.atlassian.plugin.remotable.test.jira.JiraProjectAdministrationPanel;
 import com.atlassian.plugin.remotable.test.jira.JiraProjectAdministrationTab;
@@ -53,31 +49,19 @@ import static org.junit.matchers.JUnitMatchers.hasItem;
 
 public class TestJira
 {
-    public static final String REMOTABLE_PLUGIN_GENERAL_LINK_TEXT = "Remotable Plugin app1 General Link";
-    public static final String REMOTE_PLUGIN_GENERAL_PAGE_KEY = "remotePluginGeneral";
-
     private static final String EMBEDDED_ISSUE_PANEL_ID = "issue-panel-jira-remotePluginIssuePanelPage";
     private static final String EMBEDDED_PROJECT_CONFIG_PANEL_ID = "project-config-panel-jira-remoteProjectConfigPanel";
     private static final String REMOTABLE_PROEJECT_CONFIG_TAB_NAME = "Remotable Project Config";
     private static final String ADMIN_FULL_NAME = "A. D. Ministrator (Sysadmin)";
-
-    public TestJira()
-    {
-        super();
-    }
-
     private static final String ADMIN = "admin";
-    private static TestedProduct<WebDriverTester> product = TestedProductFactory.create(JiraTestedProduct.class);
-
-    private static JiraOps jiraOps = new JiraOps(product.getProductInstance());
-
+    private static final TestedProduct<WebDriverTester> product = TestedProductFactory.create(JiraTestedProduct.class);
+    private static final JiraOps jiraOps = new JiraOps(product.getProductInstance());
 
     @Rule
     public HtmlDumpRule htmlDump = new HtmlDumpRule(product.getTester().getDriver());
 
     private RemoteProject project;
     //private final AsynchronousJiraRestClientFactory restClientFactory = new AsynchronousJiraRestClientFactory();
-    private final Backdoor backdoor = new Backdoor(new ProductInstanceBasedEnvironmentData(product.getProductInstance()));
 
     @After
     public void logout()
@@ -171,19 +155,11 @@ public class TestJira
     @Test
     public void testAnonymouslyProjectTabWithRestClient() throws Exception
     {
-        testAnonymous(new Callable()
-        {
-            @Override
-            public Object call() throws Exception
-            {
-                RemotePluginEmbeddedTestPage page = product.visit(BrowseProjectPage.class, project.getKey())
-                        .openTab(RestClientProjectTabPage.class)
-                        .getEmbeddedPage();
-                Assert.assertEquals("Success", page.getValue("rest-call-status"));
-                return null;
-            }
-        });
-
+        logout();
+        RemotePluginEmbeddedTestPage page = product.visit(BrowseProjectPage.class, project.getKey())
+                .openTab(RestClientProjectTabPage.class)
+                .getEmbeddedPage();
+        Assert.assertEquals("Success", page.getValue("rest-call-status"));
     }
 
     @Test
@@ -227,68 +203,39 @@ public class TestJira
     @Test
     public void testViewProjectAdminPanel() throws Exception
     {
-        testLoggedInAsAdmin(new Callable()
-        {
-            @Override
-            public Object call() throws Exception
-            {
-                ProjectSummaryPageTab page =
-                        product.visit(ProjectSummaryPageTab.class, project.getKey());
-                JiraProjectAdministrationPanel webPanel = product.visit(JiraProjectAdministrationPanel.class,
-                        EMBEDDED_PROJECT_CONFIG_PANEL_ID, project.getKey());
-                Assert.assertEquals("Success", webPanel.getMessage());
-                return null;
-            }
-        });
+        loginAsAdmin();
+        product.visit(ProjectSummaryPageTab.class, project.getKey());
+        JiraProjectAdministrationPanel webPanel = product.visit(JiraProjectAdministrationPanel.class,
+                EMBEDDED_PROJECT_CONFIG_PANEL_ID, project.getKey());
+        Assert.assertEquals("Success", webPanel.getMessage());
     }
 
     @Test
     public void testIFrameIsNotPointingToLocalhost() throws Exception
     {
-        testLoggedInAsAdmin(new Callable()
-        {
-            @Override
-            public Object call() throws Exception
-            {
-                final String baseJiraUrl = product.getProductInstance().getBaseUrl();
-                final RemotePluginEmbeddedTestPage page = product.visit(BrowseProjectPage.class, project.getKey())
-                        .openTab(AppProjectTabPage.class)
-                        .getEmbeddedPage();
-                final String iFrameSrc = page.getContainerDiv().findElement(By.tagName("iframe")).getAttribute("src");
-                assertThat(iFrameSrc, startsWith(baseJiraUrl));
-                return null;
-            }
-        });
+        loginAsAdmin();
+        final String baseJiraUrl = product.getProductInstance().getBaseUrl();
+        final RemotePluginEmbeddedTestPage page = product.visit(BrowseProjectPage.class, project.getKey())
+                .openTab(AppProjectTabPage.class)
+                .getEmbeddedPage();
+        final String iFrameSrc = page.getContainerDiv().findElement(By.tagName("iframe")).getAttribute("src");
+        assertThat(iFrameSrc, startsWith(baseJiraUrl));
     }
 
     @Test
     public void testAdminPageInJiraSpecificLocation() throws Exception {
-        testLoggedInAsAdmin(new Callable()
-        {
-            @Override
-            public Object call() throws Exception
-            {
-                final JiraAdministrationPage adminPage = product.visit(JiraAdministrationPage.class);
-                assertTrue(adminPage.containsJiraRemotableAdminPageLink());
-                assertEquals(ADMIN_FULL_NAME, adminPage.clickJiraRemotableAdminPage().getFullName());
-                return null;
-            }
-        });
+        loginAsAdmin();
+        final JiraAdministrationPage adminPage = product.visit(JiraAdministrationPage.class);
+        assertTrue(adminPage.hasJiraRemotableAdminPageLink());
+        assertEquals(ADMIN_FULL_NAME, adminPage.clickJiraRemotableAdminPage().getFullName());
     }
 
     @Test
     public void testGeneralAdminPage() throws Exception {
-        testLoggedInAsAdmin(new Callable()
-        {
-            @Override
-            public Object call() throws Exception
-            {
-                final JiraAdministrationPage adminPage = product.visit(JiraAdministrationPage.class);
-                assertTrue(adminPage.containsGeneralRemotableAdminPage());
-                assertEquals(ADMIN_FULL_NAME, adminPage.clickGeneralRemotableAdminPage().getFullName());
-                return null;
-            }
-        });
+        loginAsAdmin();
+        final JiraAdministrationPage adminPage = product.visit(JiraAdministrationPage.class);
+        assertTrue(adminPage.hasGeneralRemotableAdminPage());
+        assertEquals(ADMIN_FULL_NAME, adminPage.clickGeneralRemotableAdminPage().getFullName());
     }
 
 //    @Test
@@ -321,16 +268,16 @@ public class TestJira
 //        }
 //    }
 
-    private void testTimezoneImpl(final String expectedTimeZone, final String setUserTimeZone, final String testUser)
-    {
-        final RemotePluginAwarePage page;
-        final RemotePluginTestPage remotePluginTest;
-        backdoor.userProfile().setUserTimeZone(testUser, setUserTimeZone);
-        page = product.getPageBinder().bind(JiraGeneralPage.class, REMOTE_PLUGIN_GENERAL_PAGE_KEY, REMOTABLE_PLUGIN_GENERAL_LINK_TEXT);
-        remotePluginTest = page.clickRemotePluginLink();
-        Assert.assertEquals(expectedTimeZone, remotePluginTest.getTimeZone());
-        Assert.assertEquals(expectedTimeZone, remotePluginTest.getTimeZoneFromTemplateContext());
-    }
+//    private void testTimezoneImpl(final String expectedTimeZone, final String setUserTimeZone, final String testUser)
+//    {
+//        final RemotePluginAwarePage page;
+//        final RemotePluginTestPage remotePluginTest;
+//        backdoor.userProfile().setUserTimeZone(testUser, setUserTimeZone);
+//        page = product.getPageBinder().bind(JiraGeneralPage.class, REMOTE_PLUGIN_GENERAL_PAGE_KEY, REMOTABLE_PLUGIN_GENERAL_LINK_TEXT);
+//        remotePluginTest = page.clickRemotePluginLink();
+//        Assert.assertEquals(expectedTimeZone, remotePluginTest.getTimeZone());
+//        Assert.assertEquals(expectedTimeZone, remotePluginTest.getTimeZoneFromTemplateContext());
+//    }
 
 //    private JiraRestClient createRestClient()
 //    {
@@ -341,63 +288,43 @@ public class TestJira
     @Test
     public void testViewProjectAdminTab() throws Exception
     {
-        testLoggedInAsAdmin(new Callable()
+        loginAsAdmin();
+        final ProjectSummaryPageTab page =
+                product.visit(ProjectSummaryPageTab.class, project.getKey());
+
+        assertThat(page.getTabs().getTabs(), hasItem(new TypeSafeMatcher<ProjectConfigTabs.Tab>()
         {
+
             @Override
-            public Object call() throws Exception
+            public boolean matchesSafely(final ProjectConfigTabs.Tab tab)
             {
-                final ProjectSummaryPageTab page =
-                        product.visit(ProjectSummaryPageTab.class, project.getKey());
-
-                assertThat(page.getTabs().getTabs(), hasItem(new TypeSafeMatcher<ProjectConfigTabs.Tab>()
-                {
-
-                    @Override
-                    public boolean matchesSafely(final ProjectConfigTabs.Tab tab)
-                    {
-                        return tab.getName().equals(REMOTABLE_PROEJECT_CONFIG_TAB_NAME);
-                    }
-
-                    @Override
-                    public void describeTo(final Description description)
-                    {
-                        description.appendText("Project Configuration Tabs should contain Remotable Project Config tab");
-                    }
-                }));
-
-                final JiraProjectAdministrationTab remoteProjectAdministrationTab =
-                        page.getTabs().gotoTab(
-                                "webitem-jira-remotePluginProjectConfigTab",
-                                JiraProjectAdministrationTab.class,
-                                project.getKey());
-
-                // Test of workaround for JRA-26407.
-                assertNotNull(remoteProjectAdministrationTab.getProjectHeader());
-                assertEquals(REMOTABLE_PROEJECT_CONFIG_TAB_NAME, remoteProjectAdministrationTab.getTabs().getSelectedTab().getName());
-                Assert.assertEquals(project.getKey(), remoteProjectAdministrationTab.getProjectKey());
-                Assert.assertEquals("Success", remoteProjectAdministrationTab.getMessage());
-
-                return null;
+                return tab.getName().equals(REMOTABLE_PROEJECT_CONFIG_TAB_NAME);
             }
-        });
+
+            @Override
+            public void describeTo(final Description description)
+            {
+                description.appendText("Project Configuration Tabs should contain Remotable Project Config tab");
+            }
+        }));
+
+        final JiraProjectAdministrationTab remoteProjectAdministrationTab =
+                page.getTabs().gotoTab(
+                        "webitem-jira-remotePluginProjectConfigTab",
+                        JiraProjectAdministrationTab.class,
+                        project.getKey());
+
+        // Test of workaround for JRA-26407.
+        assertNotNull(remoteProjectAdministrationTab.getProjectHeader());
+        assertEquals(REMOTABLE_PROEJECT_CONFIG_TAB_NAME, remoteProjectAdministrationTab.getTabs().getSelectedTab().getName());
+        Assert.assertEquals(project.getKey(), remoteProjectAdministrationTab.getProjectKey());
+        Assert.assertEquals("Success", remoteProjectAdministrationTab.getMessage());
     }
 
     private void testLoggedInAndAnonymous(Callable runnable) throws Exception
     {
         loginAsAdmin();
         runnable.call();
-        logout();
-        runnable.call();
-    }
-
-    private void testLoggedInAsAdmin(Callable runnable) throws Exception
-    {
-        loginAsAdmin();
-        runnable.call();
-    }
-
-    private void testAnonymous(Callable runnable) throws Exception
-    {
         logout();
         runnable.call();
     }
