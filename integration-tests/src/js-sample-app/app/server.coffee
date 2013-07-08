@@ -6,7 +6,11 @@ exports.app = (req) ->
 
   # make a test httpclient request
   try
-    response = http.newRequest("/rest/remoteplugintest/1/user").get().claim()
+    response = http
+      .newRequest("/rest/remoteplugintest/1/user")
+      .setHeader("Accept", "text/plain")
+      .get()
+      .claim()
   catch ex
     error = ex
 

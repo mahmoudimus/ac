@@ -23,6 +23,9 @@
     $("#client-http-response-text").text(xhr.responseText);
   }
   AP.request("/rest/remoteplugintest/1/user", {
+    headers: {
+      "Accept": "text/plain"
+    },
     success: function (data, statusText, xhr) {
       $("#client-http-data").text(data);
       bindXhr(xhr);
