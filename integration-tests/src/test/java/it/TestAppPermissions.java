@@ -29,8 +29,9 @@ import java.net.URI;
 import java.net.URL;
 
 import static com.atlassian.plugin.remotable.test.Utils.createSignedRequestHandler;
+import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -67,7 +68,7 @@ public class TestAppPermissions extends AbstractRemotablePluginTest
         assertTrue(page.isRemotePluginLinkPresent());
         RemotePluginTestPage remotePluginTest = page.clickRemotePluginLink();
 
-        assertNotEquals("403", remotePluginTest.waitForValue("pluginLicenseResponseStatusCode"));
+        assertThat(remotePluginTest.waitForValue("pluginLicenseResponseStatusCode"), not("403"));
     }
 
     private static class CallServlet extends HttpServlet
