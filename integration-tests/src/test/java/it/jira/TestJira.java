@@ -58,7 +58,7 @@ public class TestJira
     private static final String ISSUE_REMOTE_LEFT_WEB_PANEL_ID = "remotable-web-panel-jira-issue-left-web-panel";
     private static final String ISSUE_REMOTE_RIGHT_WEB_PANEL_ID = "remotable-web-panel-jira-issue-right-web-panel";
     private static final String REMOTABLE_WEB_PANEL_JIRA_PROJECT_CONFIG_HEADER_WEB_PANEL = "remotable-web-panel-jira-project-config-header-web-panel";
-    private static final String EMBEDDED_PROJECT_CONFIG_PANEL_ID = "project-config-panel-jira-remoteProjectConfigPanel";
+    private static final String EMBEDDED_PROJECT_CONFIG_PANEL_ID = "remotable-web-panel-jira-remoteProjectConfigPanel";
     private static final String REMOTABLE_PROEJECT_CONFIG_TAB_NAME = "Remotable Project Config";
     public static final String REMOTABLE_PLUGIN_GENERAL_LINK_TEXT = "Remotable Plugin app1 General Link";
     public static final String REMOTE_PLUGIN_GENERAL_PAGE_KEY = "remotePluginGeneral";
