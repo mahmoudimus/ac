@@ -161,6 +161,8 @@ _AP.define("host/main", ["_xdm-rpc"], function (XdmRpc) {
           function fail(xhr, textStatus, errorThrown) {
             error([toJSON(xhr), textStatus, errorThrown]);
           }
+          var headers = {};
+          $.each(args.headers || {}, function (k, v) { headers[k.toLowerCase()] = v; });
           // execute the request with our restricted set of inputs
           $.ajax({
             url: url,
@@ -169,8 +171,8 @@ _AP.define("host/main", ["_xdm-rpc"], function (XdmRpc) {
             dataType: "text", // prevent jquery from parsing the response body
             contentType: args.contentType,
             headers: {
-              // undo the effect on the accept header of having set dataType to "text"
-              "Accept": "*/*",
+              // */* will undo the effect on the accept header of having set dataType to "text"
+              "Accept": headers.accept || "*/*",
               // send the app key header to force scope checks
               "AP-App-Key": options.key
             }

@@ -62,6 +62,10 @@ public class TestPageModules extends AbstractRemotablePluginTest
         assertTrue(contentType != null && contentType.startsWith("text/plain"));
         assertEquals("betty", remotePluginTest.getClientHttpData());
         assertEquals("betty", remotePluginTest.getClientHttpResponseText());
+
+        // media type tests of the RA.request API
+        assertEquals("{\"name\": \"betty\"}", remotePluginTest.getClientHttpDataJson());
+        assertEquals("<user><name>betty</name></user>", remotePluginTest.getClientHttpDataXml());
     }
 
     @Test
