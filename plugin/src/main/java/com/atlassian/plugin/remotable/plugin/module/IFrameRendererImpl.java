@@ -17,6 +17,8 @@ import com.atlassian.plugin.webresource.UrlMode;
 import com.atlassian.plugin.webresource.WebResourceManager;
 import com.atlassian.plugin.webresource.WebResourceUrlProvider;
 import com.atlassian.sal.api.message.LocaleResolver;
+import com.atlassian.sal.api.user.UserManager;
+import com.atlassian.sal.api.user.UserProfile;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.atlassian.uri.Uri;
 import com.atlassian.uri.UriBuilder;
@@ -52,6 +54,7 @@ public final class IFrameRendererImpl implements IFrameRenderer
     private final LicenseRetriever licenseRetriever;
     private final LocaleHelper localeHelper;
     private final UserPreferencesRetriever userPreferencesRetriever;
+    private final UserManager userManager;
 
     @Autowired
     public IFrameRendererImpl(TemplateRenderer templateRenderer,
@@ -61,7 +64,7 @@ public final class IFrameRendererImpl implements IFrameRenderer
             PluginRetrievalService pluginRetrievalService,
             DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory,
             UserPreferencesRetriever userPreferencesRetriever, final LicenseRetriever licenseRetriever,
-            LocaleHelper localeHelper)
+            LocaleHelper localeHelper, UserManager userManager)
     {
         this.licenseRetriever = licenseRetriever;
         this.localeHelper = localeHelper;
@@ -72,6 +75,7 @@ public final class IFrameRendererImpl implements IFrameRenderer
         this.iframeHost = checkNotNull(iframeHost);
         this.webResourceUrlProvider = checkNotNull(webResourceUrlProvider);
         this.acPlugin = checkNotNull(pluginRetrievalService).getPlugin();
+        this.userManager = userManager;
     }
 
     @Override
@@ -131,9 +135,11 @@ public final class IFrameRendererImpl implements IFrameRenderer
         final URI iframeUrl = URI.create(iframeContext.getIframePath().getPath() + ObjectUtils.toString(extraPath));
         String[] dialog = queryParams.get("dialog");
         final String timeZone = userPreferencesRetriever.getTimeZoneFor(remoteUser).getID();
+        UserProfile user = userManager.getUserProfile(remoteUser);
 
         Map<String,String[]> allParams = newHashMap(queryParams);
         allParams.put("user_id", new String[]{remoteUser});
+        allParams.put("user_key", new String[] {user == null ? "" : user.getUserKey().getStringValue()});
         allParams.put("xdm_e", new String[]{hostUrl.toString()});
         allParams.put("xdm_c", new String[]{"channel-" + iframeContext.getNamespace()});
         allParams.put("xdm_p", new String[]{"1"});
@@ -157,7 +163,10 @@ public final class IFrameRendererImpl implements IFrameRenderer
         ctx.put("plugin", remotablePluginAccessor);
         ctx.put("namespace", iframeContext.getNamespace());
         ctx.put("contextPath", iframeHost.getContextPath());
+
         ctx.put("userId", remoteUser == null ? "" : remoteUser);
+        ctx.put("userKey", user == null ? "" : user.getUserKey().getStringValue());
+
         ctx.put("data", ImmutableMap.of("timeZone", timeZone));
         if (dialog != null && dialog.length == 1) ctx.put("dialog", dialog[0]);
 

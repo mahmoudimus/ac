@@ -15,6 +15,7 @@ import com.atlassian.plugin.remotable.plugin.util.http.ContentRetrievalErrors;
 import com.atlassian.plugin.remotable.plugin.util.http.ContentRetrievalException;
 import com.atlassian.renderer.RenderContextOutputType;
 import com.atlassian.sal.api.user.UserManager;
+import com.atlassian.sal.api.user.UserProfile;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.atlassian.util.concurrent.Promise;
 import com.google.common.base.Function;
@@ -22,6 +23,7 @@ import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
@@ -84,12 +86,14 @@ public class MacroContentManager implements DisposableBean
         BigPipe bigPipe = bigPipeManager.getBigPipe();
         ContentEntityObject entity = macroInstance.getEntity();
 
-        final String author = getUserToRenderMacroAs(entity);
+        final UserProfile author = getUserToRenderMacroAs(entity);
+        final String username = author == null ? "" : author.getUsername();
+        final String userKey = author == null ? "" : author.getUserKey().getStringValue();
 
-        final Map<String, String> urlParameters = macroInstance.getUrlParameters(author);
+        final Map<String, String> urlParameters = macroInstance.getUrlParameters(username, userKey);
 
-        Promise<String> promise = macroInstance.getRemotablePluginAccessor().executeAsyncGet(author,
-                macroInstance.getPath(), urlParameters, macroInstance.getHeaders(author))
+        Promise<String> promise = macroInstance.getRemotablePluginAccessor().executeAsyncGet(username,
+                macroInstance.getPath(), urlParameters, macroInstance.getHeaders(username, userKey))
                 .fold(new ContentHandlerFailFunction(templateRenderer),
                         new HtmlToSafeHtmlFunction(macroInstance, urlParameters, macroContentLinkParser, xhtmlCleaner,
                                 xhtmlUtils));
@@ -114,10 +118,13 @@ public class MacroContentManager implements DisposableBean
         }
     }
 
-    private String getUserToRenderMacroAs(ContentEntityObject entity)
+    private UserProfile getUserToRenderMacroAs(ContentEntityObject entity)
     {
-        return entity != null && entity.getLastModifierName() != null
-                ? entity.getLastModifierName() : userManager.getRemoteUsername();
+        if (entity != null && !StringUtils.isBlank(entity.getLastModifierName()))
+        {
+            return userManager.getUserProfile(entity.getLastModifierName());
+        }
+        return userManager.getRemoteUser();
     }
 
     /*!

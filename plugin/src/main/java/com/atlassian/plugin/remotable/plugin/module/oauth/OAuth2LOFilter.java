@@ -24,6 +24,7 @@ import static net.oauth.OAuth.*;
 public class OAuth2LOFilter implements Filter
 {
     public static final String USER_ID = "user_id";
+    public static final String USER_KEY = "user_key";
     private static final Set<String> OAUTH_DATA_REQUEST_PARAMS = ImmutableSet.of(OAUTH_CONSUMER_KEY,
             OAUTH_SIGNATURE_METHOD,
             OAUTH_SIGNATURE,

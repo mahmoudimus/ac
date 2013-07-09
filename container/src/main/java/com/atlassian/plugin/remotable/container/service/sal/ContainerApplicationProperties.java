@@ -1,6 +1,7 @@
 package com.atlassian.plugin.remotable.container.service.sal;
 
 import com.atlassian.sal.api.ApplicationProperties;
+import com.atlassian.sal.api.UrlMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,6 +26,13 @@ public final class ContainerApplicationProperties implements ApplicationProperti
     @Override
     public String getBaseUrl()
     {
+        return getBaseUrl(UrlMode.AUTO);
+    }
+
+    @Override
+    public String getBaseUrl(UrlMode urlMode)
+    {
+        // TODO: Don't ignore the UrlMode
         return baseUrl;
     }
 
