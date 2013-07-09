@@ -16,6 +16,15 @@
     <component key="host" class="com.atlassian.plugin.remotable.plugin.module.ServletContextThreadLocalIFrameHost" />
     <component key="restAccessor" class="com.atlassian.plugin.remotable.plugin.product.jira.JiraRestBeanMarshaler" />
 
+    <!-- Web panel parameter extractors -->
+    <component key="projectIdParameterExtractor"
+               class="com.atlassian.plugin.remotable.plugin.module.webpanel.extractor.jira.ProjectIdWebPanelParameterExtractor"
+               interface="com.atlassian.plugin.remotable.plugin.module.webpanel.extractor.WebPanelParameterExtractor" />
+
+    <component key="issueIdParameterExtractor"
+               class="com.atlassian.plugin.remotable.plugin.module.webpanel.extractor.jira.IssueIdWebPanelParameterExtractor"
+               interface="com.atlassian.plugin.remotable.plugin.module.webpanel.extractor.WebPanelParameterExtractor" />
+
     <rest key="rest" path="/remotable-plugins" version="1">
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>INCLUDE</dispatcher>

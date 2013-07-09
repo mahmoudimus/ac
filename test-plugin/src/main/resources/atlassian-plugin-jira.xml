@@ -51,4 +51,49 @@
         <edit url="/myWorkflowFunctionConfiguration?edit" />
     </remote-workflow-post-function>
 
+    <remote-web-panel key="admin-header-web-panel"
+                      location="system.admin.decorator.header"
+                      name="Admin Header Web Panel"
+                      url="/myContextAwareWebPanel" />
+
+    <remote-web-panel key="project-config-header-web-panel"
+                      location="atl.jira.proj.config.header"
+                      name="Project Config Header Web Panel"
+                      url="/myContextAwareWebPanel" />
+
+    <remote-web-panel key="project-config-remote-web-panel-left"
+                      location="webpanels.admin.summary.left-panels"
+                      name="Project Config Remote Web Panel Left"
+                      url="/myContextAwareWebPanel" />
+
+    <remote-web-panel key="project-config-remote-webpanel-right"
+                      location="webpanels.admin.summary.right-panels"
+                      name="Project Config Remote Web Panel Right"
+                      url="/myContextAwareWebPanel" />
+
+    <remote-web-panel key="create-user-web-panel"
+                      location="webpanels.admin.adduser"
+                      name="Create User Web Panel"
+                      url="/myContextAwareWebPanel" />
+
+    <remote-web-panel key="add-user-web-panel"
+                      location="webpanels.admin.adduser.count"
+                      name="Add User Web Panel"
+                      url="/myContextAwareWebPanel" />
+
+    <remote-web-panel key="user-profile-web-panel"
+                      location="webpanels.user.profile.summary.custom"
+                      name="User Profile Web Panel"
+                      url="/myContextAwareWebPanel" />
+
+    <remote-web-panel key="issue-left-web-panel"
+                      location="atl.jira.view.issue.left.context"
+                      name="Issue Left Web Panel"
+                      url="/myContextAwareWebPanel" />
+
+    <remote-web-panel key="issue-right-web-panel"
+                      location="atl.jira.view.issue.right.context"
+                      name="Issue Right Web Panel"
+                      url="/myContextAwareWebPanel" />
+
 </application>

@@ -7,7 +7,9 @@ import com.atlassian.plugin.remotable.junit.HtmlDumpRule;
 import com.atlassian.plugin.remotable.test.OAuthUtils;
 import com.atlassian.plugin.remotable.test.OwnerOfTestedProduct;
 import com.atlassian.plugin.remotable.test.RemotePluginRunner;
+import com.atlassian.plugin.remotable.test.RemoteWebPanel;
 import com.atlassian.plugin.remotable.test.confluence.ConfluenceCounterMacroPage;
+import com.atlassian.plugin.remotable.test.confluence.ConfluenceEditPage;
 import com.atlassian.plugin.remotable.test.confluence.ConfluenceMacroPage;
 import com.atlassian.plugin.remotable.test.confluence.ConfluenceMacroTestSuitePage;
 import com.atlassian.plugin.remotable.test.confluence.ConfluenceOps;
@@ -27,10 +29,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.MalformedURLException;
 import java.util.Map;
 
 import static com.atlassian.plugin.remotable.test.RemotePluginUtils.clearMacroCaches;
 import static com.atlassian.plugin.remotable.test.Utils.loadResourceAsString;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class TestConfluence
@@ -136,6 +140,17 @@ public class TestConfluence
         page = product.visit(ConfluenceCounterMacroPage.class, pageData.get("title"));
         Assert.assertEquals("2", page.getCounterMacroBody());
 	}
+
+    @Test
+    public void testRemotableWebPanelOnEditPage() throws MalformedURLException, XmlRpcFault
+    {
+        final Map pageData = confluenceOps.setPage("ds", "Page with webpanel", "some page content");
+        final String pageId = (String) pageData.get("id");
+        product.visit(LoginPage.class).login("betty", "betty", HomePage.class);
+        final RemoteWebPanel remoteWebPanel = product.visit(ConfluenceEditPage.class, "remotable-web-panel-confluence-edit-screen-web-panel", pageId).getRemoteWebPanel();
+        assertEquals(pageId, remoteWebPanel.getPageId());
+        assertEquals("betty", remoteWebPanel.getUserId());
+    }
 
     @Ignore("Not sure why, but it times out trying to visit the page")
     @Test

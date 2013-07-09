@@ -4,6 +4,7 @@ import com.atlassian.jira.pageobjects.pages.viewissue.ViewIssuePage;
 import com.atlassian.plugin.remotable.test.RemotePluginEmbeddedTestPage;
 import com.atlassian.pageobjects.Page;
 import com.atlassian.pageobjects.PageBinder;
+import com.atlassian.plugin.remotable.test.RemoteWebPanel;
 import org.openqa.selenium.By;
 
 /**
@@ -31,8 +32,8 @@ public class JiraViewIssuePage extends RemotePluginEmbeddedTestPage implements P
         return "/browse/" + issueKey;
     }
 
-
-    public void addLabelViaInlineEdit(String label) {
+    public void addLabelViaInlineEdit(String label)
+    {
         driver.waitUntilElementIsVisible(By.cssSelector(".editable-field .labels"));
         driver.findElement(By.className("labels")).click();
         driver.waitUntilElementIsVisible(By.id("labels-textarea"));
@@ -41,5 +42,10 @@ public class JiraViewIssuePage extends RemotePluginEmbeddedTestPage implements P
         driver.findElement(By.cssSelector("#labels-form .submit")).click();
         driver.waitUntilElementIsVisible(By.className("labels"));
         waitForInit();
+    }
+
+    public RemoteWebPanel getRemoteWebPanel()
+    {
+        return new RemoteWebPanel(this);
     }
 }

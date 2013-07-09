@@ -5,6 +5,15 @@
     <component key="confluenceUserPreferencesRetriever" class="com.atlassian.plugin.remotable.plugin.product.confluence.ConfluenceUserPreferencesRetriever"
                interface="com.atlassian.plugin.remotable.plugin.UserPreferencesRetriever"/>
 
+    <!-- Web panel parameter extractors -->
+    <component key="pageIdParameterExtractor"
+               class="com.atlassian.plugin.remotable.plugin.module.webpanel.extractor.confluence.PageIdWebPanelParameterExtractor"
+               interface="com.atlassian.plugin.remotable.plugin.module.webpanel.extractor.WebPanelParameterExtractor" />
+
+    <component key="spaceIdParameterExtractor"
+               class="com.atlassian.plugin.remotable.plugin.module.webpanel.extractor.confluence.SpaceIdWebPanelParameterExtractor"
+               interface="com.atlassian.plugin.remotable.plugin.module.webpanel.extractor.WebPanelParameterExtractor" />
+
     <component-import key="confluenceSettingsManager"
                       interface="com.atlassian.confluence.setup.settings.SettingsManager"/>
 
