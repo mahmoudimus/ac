@@ -1,34 +1,20 @@
 package com.atlassian.plugin.remotable.test;
 
-import com.atlassian.plugin.remotable.spi.permission.AbstractPermission;
-import com.atlassian.plugin.remotable.spi.permission.scope.ApiResourceInfo;
-import com.atlassian.plugin.remotable.spi.permission.scope.ApiScope;
+import com.atlassian.plugin.remotable.api.InstallationMode;
+import com.atlassian.plugin.remotable.spi.permission.scope.AbstractApiScope;
 import com.atlassian.plugin.remotable.spi.permission.scope.RestApiScopeHelper;
-
-import javax.servlet.http.HttpServletRequest;
+import com.google.common.collect.ImmutableSet;
 
 import static java.util.Arrays.asList;
 
-public final class UnrequestedTestApiScope extends AbstractPermission implements ApiScope
+public final class UnrequestedTestApiScope extends AbstractApiScope
 {
-    private final RestApiScopeHelper validator = new RestApiScopeHelper(asList(
-            new RestApiScopeHelper.RestScope("remoteplugintest", asList("latest", "1"), "/unauthorisedscope", asList("GET"))
-    ));
-
     public UnrequestedTestApiScope()
     {
-        super("unrequested_scope");
-    }
-
-    @Override
-    public boolean allow(HttpServletRequest request, String user)
-    {
-        return validator.allow(request, user);
-    }
-
-    @Override
-    public Iterable<ApiResourceInfo> getApiResourceInfos()
-    {
-        return validator.getApiResourceInfos();
+        super("unrequested_scope",
+                ImmutableSet.of(InstallationMode.LOCAL),
+                new RestApiScopeHelper(asList(
+                        new RestApiScopeHelper.RestScope("remoteplugintest", asList("latest", "1"), "/unauthorisedscope", asList("GET"))
+                )));
     }
 }
