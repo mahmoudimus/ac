@@ -19,13 +19,11 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>remotable-plugins-api</artifactId>
             <version>${api.artifact.version}</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>remotable-plugins-spi</artifactId>
             <version>${api.artifact.version}</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -142,7 +140,7 @@
         <dependency>
             <groupId>com.atlassian.jira</groupId>
             <artifactId>jira-rest-plugin</artifactId>
-            <version>${jira.version}</version>
+            <version>${jira.rest.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -507,21 +505,35 @@
                             com.atlassian.confluence.plugin.descriptor.web.descriptors;resolution:=optional,
                             com.atlassian.confluence.plugin.webresource;resolution:=optional,
                             com.atlassian.confluence.security.websudo;resolution:=optional,
-                            com.atlassian.confluence.xmlrpc.client.api;version:="${confluence.client.version}",
                             com.atlassian.jira;resolution:=optional,
                             com.atlassian.jira.config;resolution:=optional,
                             com.atlassian.jira.plugin.webfragment.descriptors;resolution:=optional,
-                            com.atlassian.jira.rest.client.api;version="${jira.client.api.version}",
                             com.atlassian.jira.security;resolution:=optional,
                             com.atlassian.jira.security.websudo;resolution:=optional,
                             com.atlassian.oauth*;version="(1.2,2.0]",
-                            com.atlassian.plugin.remotable.api*;version="${api.artifact.version}",
-                            com.atlassian.plugin.remotable.spi*;version="${api.artifact.version}",
+
+                            com.atlassian.plugin;version="${plugins.api.version}",
+                            com.atlassian.plugin.descriptors;resolution:="optional",
+                            com.atlassian.plugin.elements;resolution:="optional",
+                            com.atlassian.plugin.event;version="${plugins.api.version}",
+                            com.atlassian.plugin.event.events;resolution:="optional",
+                            com.atlassian.plugin.hostcontainer;resolution:="optional",
+                            com.atlassian.plugin.module;version="${plugins.api.version}",
                             com.atlassian.plugin.schema.descriptor;version="${plugins.api.version}",
                             com.atlassian.plugin.schema.spi;version="${plugins.api.version}",
-                            com.atlassian.plugin.web.descriptors;resolution:=optional,
-                            com.atlassian.plugin.web.baseconditions;resolution:=optional,
-                            com.atlassian.plugin.*;version="2.8",
+                            com.atlassian.plugin.servlet;version="${plugins.api.version}",
+                            com.atlassian.plugin.servlet.descriptors;resolution:="optional",
+                            com.atlassian.plugin.servlet.filter ;resolution:="optional",
+                            com.atlassian.plugin.servlet.util;resolution: ="optional",
+                            com.atlassian.plugin.tracker;resolution:="optional",
+                            com.atlassian.plugin.util;resolution:="optional",
+                            com.atlassian.plugin.web;version="${plugins.api.version}",
+                            com.atlassian.plugin.web.conditions;resolution:="optional",
+                            com.atlassian.plugin.web.descriptors;resolution:="optional",
+                            com.atlassian.plugin.web.model;resolution:="optional",
+                            com.atlassian.plugin.webresource;version="${plugins.api.version}",
+                            com.atlassian.plugin.webresource.transformer;resolution:="optional",
+                            
                             com.atlassian.templaterenderer;version="1.4.0",
                             com.atlassian.refapp.auth.external;resolution:=optional,
                             com.atlassian.sal.api.*;version="(2.4,3.0]",
@@ -547,7 +559,8 @@
                         <Export-Package>
                             <!--javax.inject;version="1",-->
                             redstone.xmlrpc;version="${redstone.version}",
-                            com.atlassian.xmlrpc;version="${atlassian.xmlrpc.version}",
+                            com.atlassian.plugin.remotable.api*;version="${api.artifact.version}",
+                            com.atlassian.plugin.remotable.spi*;version="${api.artifact.version}"
                             <!--com.atlassian.plugin.remotable.api.service.jira;version="${jira.client.version}",-->
                             <!--com.atlassian.jira.rest.client.domain;version="${jira.client.version}",-->
                         </Export-Package>
@@ -583,16 +596,6 @@
                                     <groupId>com.atlassian.labs</groupId>
                                     <artifactId>speakeasy-plugin</artifactId>
                                     <version>${speakeasy.version}</version>
-                                </pluginArtifact>
-                                <pluginArtifact>
-                                    <groupId>${project.groupId}</groupId>
-                                    <artifactId>remotable-plugins-api</artifactId>
-                                    <version>${api.artifact.version}</version>
-                                </pluginArtifact>
-                                <pluginArtifact>
-                                    <groupId>${project.groupId}</groupId>
-                                    <artifactId>remotable-plugins-spi</artifactId>
-                                    <version>${api.artifact.version}</version>
                                 </pluginArtifact>
                                 <pluginArtifact>
                                     <groupId>org.sonatype.sisu</groupId>
@@ -687,16 +690,6 @@
                                     <version>${speakeasy.version}</version>
                                 </pluginArtifact>
                                 <pluginArtifact>
-                                    <groupId>${project.groupId}</groupId>
-                                    <artifactId>remotable-plugins-api</artifactId>
-                                    <version>${api.artifact.version}</version>
-                                </pluginArtifact>
-                                <pluginArtifact>
-                                    <groupId>${project.groupId}</groupId>
-                                    <artifactId>remotable-plugins-spi</artifactId>
-                                    <version>${api.artifact.version}</version>
-                                </pluginArtifact>
-                                <pluginArtifact>
                                     <groupId>org.sonatype.sisu</groupId>
                                     <artifactId>sisu-guice</artifactId>
                                     <version>${sisu.guice.version}</version>
@@ -773,16 +766,6 @@
                                     <version>${speakeasy.version}</version>
                                 </pluginArtifact>
                                 <pluginArtifact>
-                                    <groupId>${project.groupId}</groupId>
-                                    <artifactId>remotable-plugins-api</artifactId>
-                                    <version>${api.artifact.version}</version>
-                                </pluginArtifact>
-                                <pluginArtifact>
-                                    <groupId>${project.groupId}</groupId>
-                                    <artifactId>remotable-plugins-spi</artifactId>
-                                    <version>${api.artifact.version}</version>
-                                </pluginArtifact>
-                                <pluginArtifact>
                                     <groupId>org.sonatype.sisu</groupId>
                                     <artifactId>sisu-guice</artifactId>
                                     <version>${sisu.guice.version}</version>
@@ -837,14 +820,6 @@
                         <pluginDependency>
                             <groupId>com.atlassian.labs</groupId>
                             <artifactId>speakeasy-plugin</artifactId>
-                        </pluginDependency>
-                        <pluginDependency>
-                            <groupId>${project.groupId}</groupId>
-                            <artifactId>remotable-plugins-api</artifactId>
-                        </pluginDependency>
-                        <pluginDependency>
-                            <groupId>${project.groupId}</groupId>
-                            <artifactId>remotable-plugins-spi</artifactId>
                         </pluginDependency>
                         <pluginDependency>
                             <groupId>${project.groupId}</groupId>

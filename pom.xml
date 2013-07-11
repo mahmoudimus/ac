@@ -412,8 +412,11 @@
         <atlassian.selenium.version>2.1.0-m12</atlassian.selenium.version>
         <!-- Confluence 4.2.8 uses this version, JIRA 5.0.7 uses version 2.1.0-m14 -->
         <refapp.version>3.0.0-m7</refapp.version>
-        <jira.version>6.0.2</jira.version>
-        <jira.data.version>${jira.version}</jira.data.version>
+        <jira.version>6.1-for-AC</jira.version>
+        <jira.modules.version>6.0.2</jira.modules.version>
+        <jira.func.test.version>${jira.modules.version}</jira.func.test.version>
+        <jira.rest.version>${jira.modules.version}</jira.rest.version>
+        <jira.data.version>${jira.modules.version}</jira.data.version>
         <jira.client.api.version>2.0</jira.client.api.version>
         <jira.client.version>2.0.0-m16</jira.client.version>
         <confluence.client.version>${project.version}</confluence.client.version>

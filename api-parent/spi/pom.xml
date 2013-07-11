@@ -10,34 +10,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>remotable-plugins-spi</artifactId>
-    <packaging>bundle</packaging>
 
     <name>Atlassian Remotable Plugins API - Public SPI</name>
     <description>The public SPI for remotable plugins</description>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <version>2.3.7</version>
-                <extensions>true</extensions>
-                <configuration>
-                    <instructions>
-                        <Embed-Dependency>*;scope=runtime|compile;type=!pom;inline=true</Embed-Dependency>
-                        <Import-Package>
-                            com.atlassian.plugin.remotable.api*;version="${project.version}",
-                            com.atlassian.templaterenderer;version="1.4",
-                            *;resolution:=optional
-                        </Import-Package>
-                        <Export-Package>
-                            com.atlassian.plugin.remotable.spi*
-                        </Export-Package>
-                    </instructions>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 
     <dependencies>
         <dependency>

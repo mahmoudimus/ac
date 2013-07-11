@@ -90,7 +90,7 @@
         <dependency>
             <groupId>com.atlassian.jira</groupId>
             <artifactId>ka-func-test-framework</artifactId>
-            <version>${jira.version}</version>
+            <version>${jira.func.test.version}</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>
@@ -256,16 +256,6 @@
                                     <version>${speakeasy.version}</version>
                                 </pluginArtifact>
                                 <pluginArtifact>
-                                    <groupId>${project.groupId}</groupId>
-                                    <artifactId>remotable-plugins-api</artifactId>
-                                    <version>${api.artifact.version}</version>
-                                </pluginArtifact>
-                                <pluginArtifact>
-                                    <groupId>${project.groupId}</groupId>
-                                    <artifactId>remotable-plugins-spi</artifactId>
-                                    <version>${api.artifact.version}</version>
-                                </pluginArtifact>
-                                <pluginArtifact>
                                     <groupId>org.sonatype.sisu</groupId>
                                     <artifactId>sisu-guice</artifactId>
                                     <version>${sisu.guice.version}</version>
@@ -370,16 +360,6 @@
                                     <version>${speakeasy.version}</version>
                                 </pluginArtifact>
                                 <pluginArtifact>
-                                    <groupId>${project.groupId}</groupId>
-                                    <artifactId>remotable-plugins-api</artifactId>
-                                    <version>${api.artifact.version}</version>
-                                </pluginArtifact>
-                                <pluginArtifact>
-                                    <groupId>${project.groupId}</groupId>
-                                    <artifactId>remotable-plugins-spi</artifactId>
-                                    <version>${api.artifact.version}</version>
-                                </pluginArtifact>
-                                <pluginArtifact>
                                     <groupId>org.sonatype.sisu</groupId>
                                     <artifactId>sisu-guice</artifactId>
                                     <version>${sisu.guice.version}</version>
@@ -476,16 +456,6 @@
                                     <version>${speakeasy.version}</version>
                                 </pluginArtifact>
                                 <pluginArtifact>
-                                    <groupId>${project.groupId}</groupId>
-                                    <artifactId>remotable-plugins-api</artifactId>
-                                    <version>${api.artifact.version}</version>
-                                </pluginArtifact>
-                                <pluginArtifact>
-                                    <groupId>${project.groupId}</groupId>
-                                    <artifactId>remotable-plugins-spi</artifactId>
-                                    <version>${api.artifact.version}</version>
-                                </pluginArtifact>
-                                <pluginArtifact>
                                     <groupId>org.sonatype.sisu</groupId>
                                     <artifactId>sisu-guice</artifactId>
                                     <version>${sisu.guice.version}</version>
@@ -539,14 +509,6 @@
                         <pluginDependency>
                             <groupId>com.atlassian.labs</groupId>
                             <artifactId>speakeasy-plugin</artifactId>
-                        </pluginDependency>
-                        <pluginDependency>
-                            <groupId>${project.groupId}</groupId>
-                            <artifactId>remotable-plugins-api</artifactId>
-                        </pluginDependency>
-                        <pluginDependency>
-                            <groupId>${project.groupId}</groupId>
-                            <artifactId>remotable-plugins-spi</artifactId>
                         </pluginDependency>
                         <pluginDependency>
                             <groupId>org.sonatype.sisu</groupId>
