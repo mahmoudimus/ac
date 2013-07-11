@@ -51,4 +51,7 @@
         <edit url="/myWorkflowFunctionConfiguration?edit" />
     </remote-workflow-post-function>
 
+    <admin-page key="admin-page"
+                name="Remotable Admin Page" section="advanced_menu_section/advanced_section" weight="10" url="/myAdmin" />
+
 </application>
