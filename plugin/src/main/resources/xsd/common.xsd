@@ -28,7 +28,7 @@
     </xs:simpleType>
 
     <xs:simpleType name="WeightType">
-        <xs:restriction base="xs:integer"/>
+        <xs:restriction base="xs:positiveInteger"/>
     </xs:simpleType>
 
     <xs:simpleType name="HttpUrlType">

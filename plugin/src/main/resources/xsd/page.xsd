@@ -61,7 +61,7 @@
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
-                <xs:attribute name="weight" type="xs:positiveInteger">
+                <xs:attribute name="weight" type="WeightType">
                     <xs:annotation>
                         <xs:documentation>
                             The weight of the link to the page.  The higher the value, the higher its placement in the
