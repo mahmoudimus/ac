@@ -9,9 +9,10 @@ import org.openqa.selenium.By;
 public class JiraAdministrationPage extends AbstractJiraPage
 {
     private static final String JIRA_ADMIN_PAGE_URI = "/secure/admin/ViewApplicationProperties.jspa";
-    private static final String JIRA_ADMIN_PAGE_KEY = "jira-admin-page";
-    private static final String REMOTE_PLUGIN_ADMIN_KEY = "remotePluginAdmin";
-    private static final String WEBITEM_KEY = "webitem-";
+    private static final String JIRA_ADMIN_PAGE_SERVLET = "servlet-jira-admin-page";
+    private static final String JIRA_ADMIN_PAGE_WEBITEM = "webitem-jira-admin-page";
+    private static final String REMOTE_PLUGIN_ADMIN_KEY_SERVLET = "servlet-remotePluginAdmin";
+    private static final String REMOTE_PLUGIN_ADMIN_KEY_WEBITEM = "webitem-remotePluginAdmin";
 
     @Override
     public String getUrl()
@@ -27,22 +28,22 @@ public class JiraAdministrationPage extends AbstractJiraPage
 
     public RemotePluginEmbeddedTestPage clickJiraRemotableAdminPage()
     {
-        return bindAdminPage(JIRA_ADMIN_PAGE_KEY);
+        return bindAdminPage(JIRA_ADMIN_PAGE_SERVLET);
     }
 
     public RemotePluginEmbeddedTestPage clickGeneralRemotableAdminPage()
     {
-        return bindAdminPage(REMOTE_PLUGIN_ADMIN_KEY);
+        return bindAdminPage(REMOTE_PLUGIN_ADMIN_KEY_SERVLET);
     }
 
     public boolean hasJiraRemotableAdminPageLink()
     {
-        return hasLinkToAdminPage(JIRA_ADMIN_PAGE_KEY);
+        return hasLinkToAdminPage(JIRA_ADMIN_PAGE_WEBITEM);
     }
 
     public boolean hasGeneralRemotableAdminPage()
     {
-        return hasLinkToAdminPage(REMOTE_PLUGIN_ADMIN_KEY);
+        return hasLinkToAdminPage(REMOTE_PLUGIN_ADMIN_KEY_WEBITEM);
     }
 
     private boolean hasLinkToAdminPage(final String adminPageKey)
@@ -53,11 +54,11 @@ public class JiraAdministrationPage extends AbstractJiraPage
     private RemotePluginEmbeddedTestPage bindAdminPage(final String adminPageKey)
     {
         findAdminPage(adminPageKey).click();
-        return pageBinder.bind(RemotePluginEmbeddedTestPage.class, "servlet-" + adminPageKey);
+        return pageBinder.bind(RemotePluginEmbeddedTestPage.class, adminPageKey);
     }
 
     private PageElement findAdminPage(final String adminPageKey)
     {
-        return elementFinder.find(By.id(WEBITEM_KEY + adminPageKey));
+        return elementFinder.find(By.id(adminPageKey));
     }
 }
