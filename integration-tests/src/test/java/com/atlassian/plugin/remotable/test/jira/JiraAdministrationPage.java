@@ -28,12 +28,12 @@ public class JiraAdministrationPage extends AbstractJiraPage
 
     public RemotePluginEmbeddedTestPage clickJiraRemotableAdminPage()
     {
-        return bindAdminPage(JIRA_ADMIN_PAGE_SERVLET);
+        return bindAdminPage(JIRA_ADMIN_PAGE_WEBITEM, JIRA_ADMIN_PAGE_SERVLET);
     }
 
     public RemotePluginEmbeddedTestPage clickGeneralRemotableAdminPage()
     {
-        return bindAdminPage(REMOTE_PLUGIN_ADMIN_KEY_SERVLET);
+        return bindAdminPage(REMOTE_PLUGIN_ADMIN_KEY_WEBITEM, REMOTE_PLUGIN_ADMIN_KEY_SERVLET);
     }
 
     public boolean hasJiraRemotableAdminPageLink()
@@ -48,16 +48,16 @@ public class JiraAdministrationPage extends AbstractJiraPage
 
     private boolean hasLinkToAdminPage(final String adminPageKey)
     {
-        return findAdminPage(adminPageKey) != null;
+        return findAdminPageLink(adminPageKey) != null;
     }
 
-    private RemotePluginEmbeddedTestPage bindAdminPage(final String adminPageKey)
+    private RemotePluginEmbeddedTestPage bindAdminPage(final String adminPageWebItemKey, final String adminPageServletKey)
     {
-        findAdminPage(adminPageKey).click();
-        return pageBinder.bind(RemotePluginEmbeddedTestPage.class, adminPageKey);
+        findAdminPageLink(adminPageWebItemKey).click();
+        return pageBinder.bind(RemotePluginEmbeddedTestPage.class, adminPageServletKey);
     }
 
-    private PageElement findAdminPage(final String adminPageKey)
+    private PageElement findAdminPageLink(final String adminPageKey)
     {
         return elementFinder.find(By.id(adminPageKey));
     }
