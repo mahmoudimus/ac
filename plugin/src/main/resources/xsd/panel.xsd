@@ -62,8 +62,14 @@
                 <xs:attribute name="location" type="LocationType" use="optional">
                     <xs:annotation>
                         <xs:documentation>
-                            The location of the panel.  If not specified, an appropriate default location will be
-                            chosen.
+                            The location of the panel. If not specified, an appropriate default location will be chosen.
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="weight" type="WeightType" use="optional">
+                    <xs:annotation>
+                        <xs:documentation>
+                            The location of the panel. If not specified, an appropriate default location will be chosen.
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>

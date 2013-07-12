@@ -18,6 +18,9 @@ public final class ConfluenceReadUsersAndGroupsScope extends ConfluenceScope
                         "getUserPreferenceBoolean",
                         "getUserPreferenceLong",
                         "getUserPreferenceString",
+                        "getUser",
+                        "getUserByName",
+                        "getUserByKey",
                         "hasUser",
                         "hasGroup"
                 ),

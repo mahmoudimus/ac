@@ -9,6 +9,7 @@ import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.auth.AuthenticationController;
 import com.atlassian.sal.api.auth.Authenticator;
 import com.atlassian.sal.api.user.UserManager;
+import com.atlassian.sal.api.user.UserProfile;
 import net.oauth.OAuth;
 import net.oauth.OAuthException;
 import net.oauth.OAuthMessage;
@@ -138,9 +139,22 @@ public class OAuth2LOAuthenticator implements Authenticator
         }
 
         /*!
-        The user that the request is made as is specified in the request parameter 'user_id'.
+        The user that the request is made as is specified in the request parameter 'user_id' or 'user_key'.
          */
-        final String userId = request.getParameter(OAuth2LOFilter.USER_ID);
+        final String userId;
+        final String userKey = request.getParameter(OAuth2LOFilter.USER_KEY);
+        /*!
+        The 'user_key' is checked first. If it exists, it is used to derive the 'user_id' from the application.
+         */
+        if (userKey != null && !"".equals(userKey))
+        {
+            UserProfile userProfile = userManager.getUserProfile(userKey);
+            userId = userProfile == null ? null : userProfile.getUsername();
+        }
+        else
+        {
+            userId = request.getParameter(OAuth2LOFilter.USER_ID);
+        }
 
         Principal user;
         if (userId != null && !"".equals(userId))

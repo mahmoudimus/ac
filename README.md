@@ -8,6 +8,13 @@ When getting started developing within Atlassian Connect, these commands will co
 
 * Maven 3 (n.b. the Atlassian SDK currently ships with Maven 2.1)
 
+
+## Building
+
+To build the plugin, run:
+  
+    mvn clean install -DskipTests=true
+
 ## Running
 
 To run an Atlassian product with the development version of Atlassian Connect:

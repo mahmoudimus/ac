@@ -36,7 +36,15 @@ public interface PermissionManager
     @NotNull
     Set<String> getPermissionKeys(@NotNull InstallationMode installationMode);
 
-    boolean isRequestInApiScope(HttpServletRequest req, String clientKey, String user);
+    /**
+     * Tells whether a request can proceed given it's API scope and the plugin requested permissions.
+     *
+     * @param req the current {@link HttpServletRequest request}
+     * @param pluginKey the key of the plugin making the request.
+     * @param user the current logged in user username.
+     * @return {@code true} if the request is correctly in the current API scope, {@code false} otherwise
+     */
+    boolean isRequestInApiScope(HttpServletRequest req, String pluginKey, String user);
 
     boolean canInstallRemotePluginsFromMarketplace(String username);
 

@@ -45,7 +45,7 @@
              name="Remotable Plugins Permanent Redirecting Servlet"
              class="com.atlassian.plugin.remotable.plugin.module.util.redirect.RedirectServlet">
         <description>
-            Redirects to a Pemote App resource, usually an image, with a permanent redirect, but
+            Redirects to a Remote App resource, usually an image, with a permanent redirect, but
             doesn't sign the request.  Request parameters are included in the redirect.
         </description>
         <url-pattern>/redirect/permanent</url-pattern>
@@ -201,20 +201,6 @@
     <component-import key="moduleDescriptorWebHookRegistry"
                       interface="com.atlassian.webhooks.spi.provider.ModuleDescriptorWebHookConsumerRegistry" />
     <component-import key="remotePluginLicenseService" interface="com.atlassian.upm.api.license.RemotePluginLicenseService" />
-
-    <!-- speakeasy integration -->
-    <commonjs key="speakeasy-commonjs" location="/js/speakeasy" />
-
-    <web-resource key="speakeasy-integration">
-        <context>speakeasy.user-profile</context>
-        <dependency>com.atlassian.labs.remoteapps-plugin:remotableplugins_installer</dependency>
-    </web-resource>
-
-    <web-item key="speakeasy-install" section="speakeasy.user-profile/actions" weight="100">
-        <label>Install Remotable Plugin</label>
-        <link linkId="rp-install" />
-        <condition class="com.atlassian.plugin.remotable.plugin.integration.speakeasy.CanInstallRemotePluginsCondition" />
-    </web-item>
 
     <!-- universal binary services -->
     <component key="localSignedRequestHandler" interface="com.atlassian.plugin.remotable.api.service.SignedRequestHandler"

@@ -7,6 +7,7 @@ import com.atlassian.plugin.remotable.plugin.module.IFrameRendererImpl;
 import com.atlassian.plugin.remotable.plugin.module.page.IFrameContextImpl;
 import com.atlassian.plugin.remotable.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.remotable.spi.module.IFrameContext;
+import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import com.google.common.base.Function;
 import com.google.common.collect.Maps;
@@ -47,10 +48,13 @@ public final class PageMacro extends AbstractRemoteMacro
                     parameters,
                     remoteMacroInfo.getRequestContextParameterFactory(),
                     remotablePluginAccessorFactory.get(remoteMacroInfo.getPluginKey()));
-             return iFrameRenderer.render(
+
+            UserKey userKey = userManager.getRemoteUserKey();
+
+            return iFrameRenderer.render(
                      new IFrameContextImpl(iframeContext, "-" + counter),
                      "",
-                     convertParams(macroInstance.getUrlParameters(userManager.getRemoteUsername())),
+                     convertParams(macroInstance.getUrlParameters(userManager.getRemoteUsername(), userKey == null ? "" : userKey.getStringValue())),
                      remoteUser);
 
         } catch (IOException e)

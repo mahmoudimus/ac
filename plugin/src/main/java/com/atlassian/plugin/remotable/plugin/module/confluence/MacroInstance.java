@@ -72,9 +72,9 @@ public class MacroInstance
     to pass along macro instance information as well as give the context in which the macro was
     rendered.
     */
-    public Map<String, String> getUrlParameters(String userId)
+    public Map<String, String> getUrlParameters(String userId, String userKey)
     {
-        RequestContextParameters requestContextParameters = createRequestContextParameters(userId);
+        RequestContextParameters requestContextParameters = createRequestContextParameters(userId, userKey);
         Map<String,String> params = newHashMap(requestContextParameters.getQueryParameters());
 
         /*!
@@ -154,13 +154,13 @@ public class MacroInstance
         return String.valueOf(sb.toString().hashCode());
     }
 
-    public Map<String, String> getHeaders(String userId)
+    public Map<String, String> getHeaders(String userId, String userKey)
     {
-        return createRequestContextParameters(userId).getHeaders();
+        return createRequestContextParameters(userId, userKey).getHeaders();
     }
 
-    private RequestContextParameters createRequestContextParameters(String userId)
+    private RequestContextParameters createRequestContextParameters(String userId, String userKey)
     {
-        return requestContextParameterFactory.create(userId, getAllContextParameters());
+        return requestContextParameterFactory.create(userId, userKey, getAllContextParameters());
     }
 }
