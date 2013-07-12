@@ -17,6 +17,7 @@ import redstone.xmlrpc.XmlRpcFault;
 import java.net.MalformedURLException;
 import java.util.Map;
 
+import static it.TestConstants.BETTY;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -41,13 +42,13 @@ public class TestWebPanels
     {
         final Map pageData = confluenceOps.setPage("ds", "Page with webpanel", "some page content");
         final String pageId = (String) pageData.get("id");
-        product.visit(LoginPage.class).login("betty", "betty", HomePage.class);
+        product.visit(LoginPage.class).login(BETTY, BETTY, HomePage.class);
         ConfluenceEditPage editPage = product.visit(ConfluenceEditPage.class, pageId);
         RemoteWebPanels webPanels = editPage.getWebPanels();
         assertNotNull("Remote web panels should be found", webPanels);
         final RemoteWebPanel webPanel = webPanels.getWebPanel("edit-screen-web-panel");
         assertNotNull("Panel should be found", webPanel);
         assertEquals(pageId, webPanel.getPageId());
-        assertEquals("betty", webPanel.getUserId());
+        assertEquals(BETTY, webPanel.getUserId());
     }
 }

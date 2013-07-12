@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import static com.atlassian.plugin.remotable.test.RemotePluginUtils.clearMacroCaches;
 import static com.atlassian.plugin.remotable.test.Utils.loadResourceAsString;
+import static it.TestConstants.BETTY;
 import static org.junit.Assert.assertTrue;
 
 public class TestConfluence
@@ -60,7 +61,7 @@ public class TestConfluence
     {
         Map pageData = confluenceOps.setPage("ds", "test", loadResourceAsString(
                 "confluence/test-page-macros.xhtml"));
-        product.visit(LoginPage.class).login("betty", "betty", HomePage.class);
+        product.visit(LoginPage.class).login(BETTY, BETTY, HomePage.class);
         ConfluenceMacroTestSuitePage page = product.visit(ConfluenceMacroTestSuitePage.class, pageData.get("title"));
 
         Assert.assertEquals(pageData.get("id"), page.getPageIdFromMacro());
@@ -96,7 +97,7 @@ public class TestConfluence
     {
         Map pageData = confluenceOps.setPage("ds", "test", loadResourceAsString(
                 "confluence/test-page-macro.xhtml"));
-        product.visit(LoginPage.class).login("betty", "betty", HomePage.class);
+        product.visit(LoginPage.class).login(BETTY, BETTY, HomePage.class);
         ConfluencePageMacroPage page = product.visit(ConfluencePageMacroPage.class, pageData.get("title"), "app1-page-0");
 
         Assert.assertEquals("Success", page.getMessage());
@@ -108,7 +109,7 @@ public class TestConfluence
     {
         Map pageData = confluenceOps.setPage("ds", "test", loadResourceAsString(
                 "confluence/test-page-macro-multiple.xhtml"));
-        product.visit(LoginPage.class).login("betty", "betty", HomePage.class);
+        product.visit(LoginPage.class).login(BETTY, BETTY, HomePage.class);
 
         ConfluencePageMacroPage iframe1 = product.visit(ConfluencePageMacroPage.class, pageData.get("title"), "app1-page-0");
         Assert.assertEquals("Success", iframe1.getMessage());
@@ -124,7 +125,7 @@ public class TestConfluence
 	public void testMacroCacheFlushes() throws XmlRpcFault, IOException
     {
         Map pageData = confluenceOps.setPage("ds", "test", loadResourceAsString("confluence/counter-page.xhtml"));
-        product.visit(LoginPage.class).login("betty", "betty", HomePage.class);
+        product.visit(LoginPage.class).login(BETTY, BETTY, HomePage.class);
         ConfluenceCounterMacroPage page = product.visit(ConfluenceCounterMacroPage.class, pageData.get("title"));
         Assert.assertEquals("1", page.getCounterMacroBody());
 

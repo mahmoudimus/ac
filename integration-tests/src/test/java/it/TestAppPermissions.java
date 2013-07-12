@@ -24,6 +24,7 @@ import java.net.URI;
 import java.net.URL;
 
 import static com.atlassian.plugin.remotable.test.Utils.createSignedRequestHandler;
+import static it.TestConstants.BETTY;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -72,7 +73,7 @@ public class TestAppPermissions extends AbstractRemotablePluginTest
                 ServletException,
                 IOException
         {
-            int statusCode = sendFailedSignedGet(signedRequestHandler, baseUrl + "/rest/remoteplugintest/latest/user", "betty");
+            int statusCode = sendFailedSignedGet(signedRequestHandler, baseUrl + "/rest/remoteplugintest/latest/user", BETTY);
             httpUtils.renderHtml(resp, "message-page.mu",
                     ImmutableMap.<String, Object>of("baseurl", baseUrl, "message", String.valueOf(statusCode)));
         }

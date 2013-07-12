@@ -10,6 +10,7 @@ import org.junit.Test;
 import java.io.File;
 import java.util.Collections;
 
+import static it.TestConstants.BETTY;
 import static org.apache.commons.io.FileUtils.cleanDirectory;
 import static org.junit.Assert.assertTrue;
 
@@ -42,7 +43,7 @@ public class TestFileInstall extends AbstractRemotablePluginTest
                 baseUrl, "admin", "admin");
         client.install(descriptorFile.toURI().toString());
 
-        product.visit(LoginPage.class).login("betty", "betty", HomePage.class);
+        product.visit(LoginPage.class).login(BETTY, BETTY, HomePage.class);
         RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "first",
                     "First (file)");
         assertTrue(page.isRemotePluginLinkPresent());

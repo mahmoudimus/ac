@@ -1,5 +1,7 @@
 package it.refapp;
 
+import com.atlassian.pageobjects.page.HomePage;
+import com.atlassian.pageobjects.page.LoginPage;
 import com.atlassian.plugin.remotable.junit.Mode;
 import com.atlassian.plugin.remotable.junit.UniversalBinaries;
 import com.atlassian.plugin.remotable.junit.UniversalBinariesContainerJUnitRunner;
@@ -7,8 +9,6 @@ import com.atlassian.plugin.remotable.test.GeneralPage;
 import com.atlassian.plugin.remotable.test.OAuthUtils;
 import com.atlassian.plugin.remotable.test.RemotePluginAwarePage;
 import com.atlassian.plugin.remotable.test.RemotePluginTestPage;
-import com.atlassian.pageobjects.page.HomePage;
-import com.atlassian.pageobjects.page.LoginPage;
 import it.AbstractRemotablePluginTest;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -19,7 +19,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.twdata.pkgscanner.ExportPackageListBuilder;
 
-import static org.junit.Assert.*;
+import static it.TestConstants.BETTY;
+import static org.junit.Assert.assertTrue;
 
 @Ignore("Ignoring until we can get rid of UB stuff")
 @RunWith(UniversalBinariesContainerJUnitRunner.class)
@@ -35,7 +36,7 @@ public final class TestJavaScriptSampleApp extends AbstractRemotablePluginTest
     @Test
     public void testContainerSampleGeneralPage()
     {
-        product.visit(LoginPage.class).login("betty", "betty", HomePage.class);
+        product.visit(LoginPage.class).login(BETTY, BETTY, HomePage.class);
         RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "general", "Container Sample General");
         assertTrue(page.isRemotePluginLinkPresent());
         RemotePluginTestPage remotePluginTest = page.clickRemotePluginLink();
@@ -43,7 +44,7 @@ public final class TestJavaScriptSampleApp extends AbstractRemotablePluginTest
         Assert.assertEquals("Success", remotePluginTest.getMessage());
         Assert.assertEquals(OAuthUtils.getConsumerKey(), remotePluginTest.getConsumerKey());
         Assert.assertEquals("Betty Admin", remotePluginTest.getFullName());
-        Assert.assertEquals("betty", remotePluginTest.getUserId());
+        Assert.assertEquals(BETTY, remotePluginTest.getUserId());
 
         // basic tests of the HostHttpClient API
         Assert.assertEquals("200", remotePluginTest.getServerHttpStatus());
@@ -51,7 +52,7 @@ public final class TestJavaScriptSampleApp extends AbstractRemotablePluginTest
         assertTrue("OK".equals(statusText));
         String contentType = remotePluginTest.getServerHttpContentType();
         assertTrue(contentType != null && contentType.startsWith("text/plain")); // startsWith accounts for possible charset
-        Assert.assertEquals("betty", remotePluginTest.getServerHttpEntity());
+        Assert.assertEquals(BETTY, remotePluginTest.getServerHttpEntity());
 
         // basic tests of the RA.request API
         Assert.assertEquals("200", remotePluginTest.getClientHttpStatus());
@@ -59,7 +60,7 @@ public final class TestJavaScriptSampleApp extends AbstractRemotablePluginTest
         assertTrue("OK".equals(statusText) || "success".equals(statusText)); // differs by jquery version
         contentType = remotePluginTest.getClientHttpContentType();
         assertTrue(contentType != null && contentType.startsWith("text/plain")); // startsWith accounts for possible charset
-        Assert.assertEquals("betty", remotePluginTest.getClientHttpData());
-        Assert.assertEquals("betty", remotePluginTest.getClientHttpResponseText());
+        Assert.assertEquals(BETTY, remotePluginTest.getClientHttpData());
+        Assert.assertEquals(BETTY, remotePluginTest.getClientHttpResponseText());
     }
 }
