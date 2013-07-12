@@ -31,7 +31,7 @@
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
-                <xs:attribute name="weight" type="xs:positiveInteger">
+                <xs:attribute name="weight" type="WeightType">
                     <xs:annotation>
                         <xs:documentation>
                             The weight of the search request view link.  The lower number, the higher it will be placed.
