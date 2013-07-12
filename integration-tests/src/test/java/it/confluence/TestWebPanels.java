@@ -3,6 +3,7 @@ package it.confluence;
 import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
+import com.atlassian.plugin.remotable.junit.HtmlDumpRule;
 import com.atlassian.plugin.remotable.test.OwnerOfTestedProduct;
 import com.atlassian.plugin.remotable.test.RemoteWebPanel;
 import com.atlassian.plugin.remotable.test.RemoteWebPanels;
@@ -10,7 +11,7 @@ import com.atlassian.plugin.remotable.test.confluence.ConfluenceEditPage;
 import com.atlassian.plugin.remotable.test.confluence.ConfluenceOps;
 import com.atlassian.plugin.remotable.test.confluence.FixedConfluenceTestedProduct;
 import com.atlassian.webdriver.pageobjects.WebDriverTester;
-import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 import redstone.xmlrpc.XmlRpcFault;
 
@@ -26,16 +27,18 @@ import static org.junit.Assert.assertNotNull;
  */
 public class TestWebPanels
 {
-    private static TestedProduct<WebDriverTester> product;
-    private static ConfluenceOps confluenceOps;
+    private static final TestedProduct<WebDriverTester> product;
+    private static final ConfluenceOps confluenceOps;
 
-    @BeforeClass
-    public static void setUpXmlClient()
+    static
     {
         System.setProperty("testedProductClass", FixedConfluenceTestedProduct.class.getName());
         product = OwnerOfTestedProduct.INSTANCE;
         confluenceOps = new ConfluenceOps(product.getProductInstance().getBaseUrl());
     }
+
+    @Rule
+    public HtmlDumpRule htmlDump = new HtmlDumpRule(product.getTester().getDriver());
 
     @Test
     public void testRemoteWebPanelOnEditPage() throws MalformedURLException, XmlRpcFault
