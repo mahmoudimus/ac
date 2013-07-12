@@ -1,12 +1,12 @@
 package com.atlassian.plugin.remotable.plugin.module.webpanel;
 
-import com.atlassian.plugin.remotable.plugin.module.webpanel.extractor.WebPanelAllParametersExtractor;
-import com.atlassian.plugin.remotable.spi.PermissionDeniedException;
+import com.atlassian.gzipfilter.org.apache.commons.lang.StringUtils;
+import com.atlassian.plugin.remotable.plugin.module.webpanel.extractor.WebPanelURLParametersSerializer;
 import com.atlassian.plugin.remotable.spi.module.IFrameContext;
 import com.atlassian.plugin.remotable.spi.module.IFrameRenderer;
+import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.web.model.WebPanel;
 import com.atlassian.sal.api.user.UserManager;
-import com.google.common.base.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,22 +26,22 @@ public class IFrameRemoteWebPanel implements WebPanel
 
     private final IFrameRenderer iFrameRenderer;
     private final IFrameContext iFrameContext;
-    private final boolean hiddenByDefault;
-    private final WebPanelAllParametersExtractor webPanelAllParametersExtractor;
+    private final WebPanelURLParametersSerializer webPanelURLParametersSerializer;
     private final UserManager userManager;
+    private final Condition condition;
 
     public IFrameRemoteWebPanel(
-            final IFrameRenderer iFrameRenderer,
-            final IFrameContext iFrameContext,
-            final boolean hiddenByDefault,
-            final WebPanelAllParametersExtractor webPanelAllParametersExtractor,
-            final UserManager userManager)
+            IFrameRenderer iFrameRenderer,
+            IFrameContext iFrameContext,
+            Condition condition,
+            WebPanelURLParametersSerializer webPanelURLParametersSerializer,
+            UserManager userManager)
     {
         this.userManager = checkNotNull(userManager);
-        this.webPanelAllParametersExtractor = checkNotNull(webPanelAllParametersExtractor);
+        this.webPanelURLParametersSerializer = checkNotNull(webPanelURLParametersSerializer);
         this.iFrameRenderer = checkNotNull(iFrameRenderer);
         this.iFrameContext = checkNotNull(iFrameContext);
-        this.hiddenByDefault = checkNotNull(hiddenByDefault);
+        this.condition = checkNotNull(condition);
     }
 
     @Override
@@ -54,7 +54,8 @@ public class IFrameRemoteWebPanel implements WebPanel
         }
         catch (IOException e)
         {
-            throw new RuntimeException(e);
+            writer.write("Unable to render panel: " + e.getMessage());
+            log.error("Error rendering panel", e);
         }
         return writer.toString();
     }
@@ -62,27 +63,17 @@ public class IFrameRemoteWebPanel implements WebPanel
     @Override
     public void writeHtml(final Writer writer, final Map<String, Object> context) throws IOException
     {
-        try
+        if (condition.shouldDisplay(context))
         {
-            final String remoteUser = Objects.firstNonNull(userManager.getRemoteUsername(), "");
-            final Map<String,String[]> params = webPanelAllParametersExtractor.getExtractedWebPanelParameters(context);
+            final String remoteUser = StringUtils.defaultString(userManager.getRemoteUsername());
+            final Map<String,String[]> params = webPanelURLParametersSerializer.getExtractedWebPanelParameters(context);
 
-            String iframe = iFrameRenderer.render(iFrameContext, "", params, remoteUser);
-            if (hiddenByDefault)
-            {
-                iframe = "<script>AJS.$('#" + iFrameContext.getNamespace() + "').addClass('hidden');</script>" + iframe;
-            }
-            writer.write(iframe);
+            writer.write(iFrameRenderer.render(iFrameContext, "", params, remoteUser));
         }
-        catch (PermissionDeniedException ex)
+        else
         {
             writer.write("Unauthorized to view this panel");
-            log.warn("Unauthorized view of panel");
-        }
-        catch (IOException e)
-        {
-            writer.write("Unable to render panel: " + e.getMessage());
-            log.error("Error rendering panel", e);
+            log.error("Unauthorized view of panel");
         }
     }
 }

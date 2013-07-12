@@ -6,7 +6,7 @@ import com.atlassian.plugin.remotable.plugin.integration.plugins.DynamicDescript
 import com.atlassian.plugin.remotable.plugin.module.ConditionProcessor;
 import com.atlassian.plugin.remotable.plugin.module.IFrameRendererImpl;
 import com.atlassian.plugin.remotable.plugin.module.webpanel.RemoteWebPanelModuleDescriptor;
-import com.atlassian.plugin.remotable.plugin.module.webpanel.extractor.WebPanelAllParametersExtractor;
+import com.atlassian.plugin.remotable.plugin.module.webpanel.extractor.WebPanelURLParametersSerializer;
 import com.atlassian.sal.api.user.UserManager;
 import org.dom4j.Element;
 import org.osgi.framework.BundleContext;
@@ -20,20 +20,20 @@ import org.osgi.framework.BundleContext;
 public final class IssuePanelPageModuleDescriptor extends RemoteWebPanelModuleDescriptor
 {
     public IssuePanelPageModuleDescriptor(
-            final ModuleFactory moduleFactory,
-            final IFrameRendererImpl iFrameRenderer,
-            final DynamicDescriptorRegistration dynamicDescriptorRegistration,
-            final HostContainer hostContainer,
-            final BundleContext bundleContext,
-            final ConditionProcessor conditionProcessor,
-            final WebPanelAllParametersExtractor webPanelAllParametersExtractor,
-            final UserManager userManager)
+            ModuleFactory moduleFactory,
+            IFrameRendererImpl iFrameRenderer,
+            DynamicDescriptorRegistration dynamicDescriptorRegistration,
+            HostContainer hostContainer,
+            BundleContext bundleContext,
+            ConditionProcessor conditionProcessor,
+            WebPanelURLParametersSerializer webPanelURLParametersSerializer,
+            UserManager userManager)
     {
-        super(moduleFactory, iFrameRenderer, dynamicDescriptorRegistration, hostContainer, bundleContext, conditionProcessor, webPanelAllParametersExtractor, userManager);
+        super(moduleFactory, iFrameRenderer, dynamicDescriptorRegistration, hostContainer, bundleContext, conditionProcessor, webPanelURLParametersSerializer, userManager);
     }
 
     @Override
-    protected final String getLocation(final Element element)
+    protected String getLocation(final Element element)
     {
         return "atl.jira.view.issue.right.context";
     }

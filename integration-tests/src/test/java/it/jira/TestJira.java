@@ -18,17 +18,17 @@ import com.atlassian.plugin.remotable.test.RemotePluginDialog;
 import com.atlassian.plugin.remotable.test.RemotePluginEmbeddedTestPage;
 import com.atlassian.plugin.remotable.test.RemotePluginTestPage;
 import com.atlassian.plugin.remotable.test.RemoteWebPanel;
+import com.atlassian.plugin.remotable.test.RemoteWebPanels;
 import com.atlassian.plugin.remotable.test.jira.AbstractRemotablePluginProjectTab;
 import com.atlassian.plugin.remotable.test.jira.JiraGeneralPage;
 import com.atlassian.plugin.remotable.test.jira.JiraOps;
-import com.atlassian.plugin.remotable.test.jira.JiraProjectAdministrationPanelPage;
+import com.atlassian.plugin.remotable.test.jira.JiraProjectAdministrationPage;
 import com.atlassian.plugin.remotable.test.jira.JiraProjectAdministrationTab;
 import com.atlassian.plugin.remotable.test.jira.JiraViewIssuePage;
 import com.atlassian.plugin.remotable.test.jira.JiraViewIssuePageWithRemotePluginIssueTab;
 import com.atlassian.plugin.remotable.test.jira.PlainTextView;
 import com.atlassian.plugin.remotable.test.jira.ViewChangingSearchResult;
 import com.atlassian.webdriver.pageobjects.WebDriverTester;
-import hudson.plugins.jira.soap.RemoteAuthenticationException;
 import hudson.plugins.jira.soap.RemoteIssue;
 import hudson.plugins.jira.soap.RemoteProject;
 import org.hamcrest.Description;
@@ -44,6 +44,11 @@ import org.openqa.selenium.By;
 import java.rmi.RemoteException;
 import java.util.concurrent.Callable;
 
+import static it.jira.TestWebPanels.ISSUE_PANEL_ID;
+import static it.jira.TestWebPanels.ISSUE_REMOTE_LEFT_WEB_PANEL_ID;
+import static it.jira.TestWebPanels.ISSUE_REMOTE_RIGHT_WEB_PANEL_ID;
+import static it.jira.TestWebPanels.PROJECT_CONFIG_HEADER_WEB_PANEL;
+import static it.jira.TestWebPanels.PROJECT_CONFIG_PANEL_ID;
 import static org.hamcrest.Matchers.startsWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -54,14 +59,10 @@ import static org.junit.matchers.JUnitMatchers.hasItem;
 
 public class TestJira
 {
-    private static final String EMBEDDED_ISSUE_PANEL_ID = "remotable-web-panel-jira-remotePluginIssuePanelPage";
-    private static final String ISSUE_REMOTE_LEFT_WEB_PANEL_ID = "remotable-web-panel-jira-issue-left-web-panel";
-    private static final String ISSUE_REMOTE_RIGHT_WEB_PANEL_ID = "remotable-web-panel-jira-issue-right-web-panel";
-    private static final String REMOTABLE_WEB_PANEL_JIRA_PROJECT_CONFIG_HEADER_WEB_PANEL = "remotable-web-panel-jira-project-config-header-web-panel";
-    private static final String EMBEDDED_PROJECT_CONFIG_PANEL_ID = "remotable-web-panel-jira-remoteProjectConfigPanel";
     private static final String REMOTABLE_PROEJECT_CONFIG_TAB_NAME = "Remotable Project Config";
     public static final String REMOTABLE_PLUGIN_GENERAL_LINK_TEXT = "Remotable Plugin app1 General Link";
     public static final String REMOTE_PLUGIN_GENERAL_PAGE_KEY = "remotePluginGeneral";
+
     private static TestedProduct<WebDriverTester> product = TestedProductFactory.create(JiraTestedProduct.class);
     private static JiraOps jiraOps = new JiraOps(product.getProductInstance());
 
@@ -82,10 +83,9 @@ public class TestJira
     }
 
     @Before
-    public void setUp() throws RemoteException, RemoteAuthenticationException
+    public void setUp() throws RemoteException
     {
         project = jiraOps.createProject();
-
     }
 
     private void loginAsAdmin()
@@ -107,9 +107,13 @@ public class TestJira
     public void testViewIssuePageWithEmbeddedPanelAnonymous() throws Exception
     {
         RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Test issue for panel");
-        JiraViewIssuePage viewIssuePage = product.visit(JiraViewIssuePage.class, issue.getKey(),
-                EMBEDDED_ISSUE_PANEL_ID);
-        Assert.assertEquals("Success", viewIssuePage.getMessage());
+        JiraViewIssuePage viewIssuePage = product.visit(JiraViewIssuePage.class, issue.getKey());
+        RemoteWebPanels webPanels = viewIssuePage.getWebPanels();
+        assertNotNull("Web Panels should be found", webPanels);
+        RemoteWebPanel panel = webPanels.getWebPanel(ISSUE_PANEL_ID);
+        assertNotNull("Panel should be found", panel);
+        assertEquals(issue.getId(), panel.getIssueId());
+        assertEquals(project.getId(), panel.getProjectId());
     }
 
     @Ignore("TODO: For some reason, there's an issue in the addLabelViaInlineEdit method where webdriver can't click on the submit button.")
@@ -118,11 +122,10 @@ public class TestJira
     {
         loginAsAdmin();
         RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Test issue for panel");
-        JiraViewIssuePage viewIssuePage = product.visit(JiraViewIssuePage.class, issue.getKey(),
-                EMBEDDED_ISSUE_PANEL_ID);
-        Assert.assertEquals("Success", viewIssuePage.getMessage());
+        JiraViewIssuePage viewIssuePage = product.visit(JiraViewIssuePage.class, issue.getKey());
+//        Assert.assertEquals("Success", viewIssuePage.getMessage());
         viewIssuePage.addLabelViaInlineEdit("foo");
-        Assert.assertEquals("Success", viewIssuePage.getMessage());
+//        Assert.assertEquals("Success", viewIssuePage.getMessage());
     }
 
     @Test
@@ -229,9 +232,12 @@ public class TestJira
             @Override
             public Object call() throws Exception
             {
-                JiraProjectAdministrationPanelPage webPanel = product.visit(JiraProjectAdministrationPanelPage.class,
-                        EMBEDDED_PROJECT_CONFIG_PANEL_ID, project.getKey());
-                Assert.assertEquals("Success", webPanel.getMessage());
+                JiraProjectAdministrationPage projectAdministrationPage = product.visit(JiraProjectAdministrationPage.class, project.getKey());
+                assertNotNull("Web panels of project administration page found", projectAdministrationPage.getWebPanels());
+                RemoteWebPanel panel = projectAdministrationPage.getWebPanels().getWebPanel(PROJECT_CONFIG_PANEL_ID);
+                assertNotNull("Remote panel should be found", panel);
+                assertEquals(project.getId(), panel.getProjectId());
+                assertEquals(ADMIN, panel.getUserId());
                 return null;
             }
         });
@@ -352,10 +358,14 @@ public class TestJira
     {
         loginAsAdmin();
         RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Test issue for left remotable-web-panel panel");
-        final RemoteWebPanel remoteWebPanel = product.visit(JiraViewIssuePage.class, issue.getKey(), ISSUE_REMOTE_LEFT_WEB_PANEL_ID).getRemoteWebPanel();
-        assertEquals(project.getId(), remoteWebPanel.getProjectId());
-        assertEquals(issue.getId(), remoteWebPanel.getIssueId());
-        assertEquals(ADMIN, remoteWebPanel.getUserId());
+        RemoteWebPanels webPanels = product.visit(JiraViewIssuePage.class, issue.getKey()).getWebPanels();
+        assertNotNull("Remote web panels should be found", webPanels);
+
+        RemoteWebPanel panel = webPanels.getWebPanel(ISSUE_REMOTE_LEFT_WEB_PANEL_ID);
+        assertNotNull("Remote panel should be found", panel);
+        assertEquals(project.getId(), panel.getProjectId());
+        assertEquals(issue.getId(), panel.getIssueId());
+        assertEquals(ADMIN, panel.getUserId());
     }
 
     @Test
@@ -363,21 +373,28 @@ public class TestJira
     {
         loginAsAdmin();
         RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Another test issue for right remotable-web-panel panel");
-        final RemoteWebPanel remoteWebPanel = product.visit(JiraViewIssuePage.class, issue.getKey(), ISSUE_REMOTE_RIGHT_WEB_PANEL_ID).getRemoteWebPanel();
-        assertEquals(project.getId(), remoteWebPanel.getProjectId());
-        assertEquals(issue.getId(), remoteWebPanel.getIssueId());
-        assertEquals(ADMIN, remoteWebPanel.getUserId());
+        RemoteWebPanels webPanels = product.visit(JiraViewIssuePage.class, issue.getKey()).getWebPanels();
+        assertNotNull("Remote web panels should be found", webPanels);
+
+        RemoteWebPanel panel = webPanels.getWebPanel(ISSUE_REMOTE_RIGHT_WEB_PANEL_ID);
+        assertNotNull("Remote panel should be found", panel);
+        assertEquals(project.getId(), panel.getProjectId());
+        assertEquals(issue.getId(), panel.getIssueId());
+        assertEquals(ADMIN, panel.getUserId());
     }
 
     @Test
     public void testWebPanelInProjectHeader()
     {
         loginAsAdmin();
-        final JiraProjectAdministrationPanelPage projectAdministrationPanelPage =
-                product.visit(JiraProjectAdministrationPanelPage.class, REMOTABLE_WEB_PANEL_JIRA_PROJECT_CONFIG_HEADER_WEB_PANEL, project.getKey());
-        final RemoteWebPanel remoteWebPanel = projectAdministrationPanelPage.getRemoteWebPanel();
-        assertEquals(project.getId(), remoteWebPanel.getProjectId());
-        assertEquals(ADMIN, remoteWebPanel.getUserId());
+        JiraProjectAdministrationPage projectAdministrationPage = product.visit(JiraProjectAdministrationPage.class, project.getKey());
+        RemoteWebPanels webPanels = projectAdministrationPage.getWebPanels();
+        assertNotNull("Remote web panels should be found", webPanels);
+
+        RemoteWebPanel panel = webPanels.getWebPanel(PROJECT_CONFIG_HEADER_WEB_PANEL);
+        assertNotNull("Remote panel should be found", panel);
+        assertEquals(project.getId(), panel.getProjectId());
+        assertEquals(ADMIN, panel.getUserId());
     }
 
     private void testLoggedInAndAnonymous(Callable runnable) throws Exception

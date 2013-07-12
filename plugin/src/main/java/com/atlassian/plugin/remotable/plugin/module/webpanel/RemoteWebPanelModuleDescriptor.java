@@ -9,14 +9,14 @@ import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.remotable.plugin.integration.plugins.DescriptorToRegister;
 import com.atlassian.plugin.remotable.plugin.integration.plugins.DynamicDescriptorRegistration;
 import com.atlassian.plugin.remotable.plugin.module.ConditionProcessor;
-import com.atlassian.plugin.remotable.plugin.module.ContainingRemoteCondition;
 import com.atlassian.plugin.remotable.plugin.module.IFrameParamsImpl;
 import com.atlassian.plugin.remotable.plugin.module.IFrameRendererImpl;
 import com.atlassian.plugin.remotable.plugin.module.page.IFrameContextImpl;
-import com.atlassian.plugin.remotable.plugin.module.webpanel.extractor.WebPanelAllParametersExtractor;
+import com.atlassian.plugin.remotable.plugin.module.webpanel.extractor.WebPanelURLParametersSerializer;
 import com.atlassian.plugin.remotable.spi.module.IFrameParams;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.web.WebInterfaceManager;
+import com.atlassian.plugin.web.conditions.AlwaysDisplayCondition;
 import com.atlassian.plugin.web.descriptors.DefaultWebPanelModuleDescriptor;
 import com.atlassian.plugin.web.model.WebPanel;
 import com.atlassian.sal.api.user.UserManager;
@@ -37,12 +37,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class RemoteWebPanelModuleDescriptor extends AbstractModuleDescriptor<Void>
 {
+    public static final String REMOTE_WEB_PANEL_MODULE_PREFIX = "remote-web-panel-";
     private final IFrameRendererImpl iFrameRenderer;
     private final DynamicDescriptorRegistration dynamicDescriptorRegistration;
     private final HostContainer hostContainer;
     private final BundleContext bundleContext;
     private final ConditionProcessor conditionProcessor;
-    private final WebPanelAllParametersExtractor webPanelAllParametersExtractor;
+    private final WebPanelURLParametersSerializer webPanelURLParametersSerializer;
     private final UserManager userManager;
 
     private String weight;
@@ -53,17 +54,18 @@ public class RemoteWebPanelModuleDescriptor extends AbstractModuleDescriptor<Voi
     private DynamicDescriptorRegistration.Registration registration;
 
     public RemoteWebPanelModuleDescriptor(
-            final ModuleFactory moduleFactory,
-            final IFrameRendererImpl iFrameRenderer,
-            final DynamicDescriptorRegistration dynamicDescriptorRegistration,
-            final HostContainer hostContainer,
-            final BundleContext bundleContext,
-            final ConditionProcessor conditionProcessor,
-            final WebPanelAllParametersExtractor webPanelAllParametersExtractor, final UserManager userManager)
+            ModuleFactory moduleFactory,
+            IFrameRendererImpl iFrameRenderer,
+            DynamicDescriptorRegistration dynamicDescriptorRegistration,
+            HostContainer hostContainer,
+            BundleContext bundleContext,
+            ConditionProcessor conditionProcessor,
+            WebPanelURLParametersSerializer webPanelURLParametersSerializer,
+            UserManager userManager)
     {
         super(moduleFactory);
         this.userManager = checkNotNull(userManager);
-        this.webPanelAllParametersExtractor = checkNotNull(webPanelAllParametersExtractor);
+        this.webPanelURLParametersSerializer = checkNotNull(webPanelURLParametersSerializer);
         this.iFrameRenderer = checkNotNull(iFrameRenderer);
         this.dynamicDescriptorRegistration = checkNotNull(dynamicDescriptorRegistration);
         this.hostContainer = checkNotNull(hostContainer);
@@ -85,7 +87,7 @@ public class RemoteWebPanelModuleDescriptor extends AbstractModuleDescriptor<Voi
     public void enabled()
     {
         super.enabled();
-        final String moduleKey = "remotable-web-panel-" + getRequiredAttribute(descriptor, "key");
+        final String moduleKey = REMOTE_WEB_PANEL_MODULE_PREFIX + getRequiredAttribute(descriptor, "key");
         final String panelName = getRequiredAttribute(descriptor, "name");
 
         Element desc = descriptor.createCopy();
@@ -108,11 +110,11 @@ public class RemoteWebPanelModuleDescriptor extends AbstractModuleDescriptor<Voi
     @Override
     public void disabled()
     {
-        super.disabled();
         if (registration != null)
         {
             registration.unregister();
         }
+        super.disabled();
     }
 
     private ModuleDescriptor<WebPanel> createWebPanelModuleDescriptor(
@@ -132,8 +134,8 @@ public class RemoteWebPanelModuleDescriptor extends AbstractModuleDescriptor<Voi
                     return (T) new IFrameRemoteWebPanel(
                             iFrameRenderer,
                             new IFrameContextImpl(getPluginKey(), url, moduleKey, iFrameParams),
-                            condition instanceof ContainingRemoteCondition,
-                            webPanelAllParametersExtractor, userManager);
+                            condition != null ? condition : new AlwaysDisplayCondition(),
+                            webPanelURLParametersSerializer, userManager);
                 }
             }, getService(bundleContext, WebInterfaceManager.class));
 
@@ -154,6 +156,6 @@ public class RemoteWebPanelModuleDescriptor extends AbstractModuleDescriptor<Voi
 
     protected String getLocation(final Element element)
     {
-        return getOptionalAttribute(element, "location", location);
+        return getRequiredAttribute(element, "location");
     }
 }

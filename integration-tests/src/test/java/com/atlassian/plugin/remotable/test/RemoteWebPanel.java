@@ -1,46 +1,64 @@
 package com.atlassian.plugin.remotable.test;
 
+import com.atlassian.pageobjects.binder.Init;
+import com.atlassian.pageobjects.elements.WebDriverElement;
+import com.atlassian.pageobjects.elements.WebDriverLocatable;
+import com.atlassian.plugin.remotable.pageobjects.RemotePageUtil;
 import com.atlassian.plugin.remotable.plugin.module.webpanel.extractor.confluence.PageIdWebPanelParameterExtractor;
 import com.atlassian.plugin.remotable.plugin.module.webpanel.extractor.confluence.SpaceIdWebPanelParameterExtractor;
 import com.atlassian.plugin.remotable.plugin.module.webpanel.extractor.jira.IssueIdWebPanelParameterExtractor;
 import com.atlassian.plugin.remotable.plugin.module.webpanel.extractor.jira.ProjectIdWebPanelParameterExtractor;
+import com.atlassian.webdriver.AtlassianWebDriver;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import javax.inject.Inject;
 
 /**
- * A remotable web-panel that is expected to contain some test values.
+ * A remote web-panel that is expected to contain some test values.
  */
-public class RemoteWebPanel
+public class RemoteWebPanel extends WebDriverElement
 {
-    private final RemotePluginEmbeddedTestPage remotePluginEmbeddedTestPage;
+    @Inject
+    private AtlassianWebDriver driver;
 
-    public RemoteWebPanel(final RemotePluginEmbeddedTestPage remotePluginEmbeddedTestPage)
+    private final WebDriverLocatable parent;
+    private WebElement webPanelContainerDiv;
+
+    public RemoteWebPanel(final By locator, final WebDriverLocatable parent)
     {
-        this.remotePluginEmbeddedTestPage = checkNotNull(remotePluginEmbeddedTestPage);
+        super(locator, parent);
+        this.parent = parent;
+    }
+
+    @Init
+    public void init()
+    {
+        this.webPanelContainerDiv = driver.findElement(parent.getLocator());
     }
 
     public String getUserId()
     {
-        return remotePluginEmbeddedTestPage.waitForValue("user_id");
+        return RemotePageUtil.waitForValue(driver, webPanelContainerDiv, "user_id");
     }
 
     public String getProjectId()
     {
-        return remotePluginEmbeddedTestPage.waitForValue(ProjectIdWebPanelParameterExtractor.PROJECT_ID);
+        return RemotePageUtil.waitForValue(driver, webPanelContainerDiv, ProjectIdWebPanelParameterExtractor.PROJECT_ID);
     }
 
     public String getIssueId()
     {
-        return remotePluginEmbeddedTestPage.waitForValue(IssueIdWebPanelParameterExtractor.ISSUE_ID);
+        return RemotePageUtil.waitForValue(driver, webPanelContainerDiv, IssueIdWebPanelParameterExtractor.ISSUE_ID);
     }
 
     public String getSpaceId()
     {
-        return remotePluginEmbeddedTestPage.waitForValue(SpaceIdWebPanelParameterExtractor.SPACE_ID);
+        return RemotePageUtil.waitForValue(driver, webPanelContainerDiv, SpaceIdWebPanelParameterExtractor.SPACE_ID);
     }
 
     public String getPageId()
     {
-        return remotePluginEmbeddedTestPage.waitForValue(PageIdWebPanelParameterExtractor.PAGE_ID);
+        return RemotePageUtil.waitForValue(driver, webPanelContainerDiv, PageIdWebPanelParameterExtractor.PAGE_ID);
     }
 }

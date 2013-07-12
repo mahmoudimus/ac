@@ -6,8 +6,8 @@
 
     <webhook key="wh-plugin_enabled" event="plugin_enabled" url="/webHook/plugin_enabled" />
 
-    <issue-panel-page key="remotePluginIssuePanelPage" name="Remotable Plugin app1 Issue Page" url="/myAdmin" />
-    <issue-panel-page key="onlyBettyIssuePanelPage" name="Only Betty Panel" url="/myAdmin">
+    <issue-panel-page key="remotePluginIssuePanelPage" name="Remotable Plugin app1 Issue Page" url="/myContextAwareWebPanel" />
+    <issue-panel-page key="onlyBettyIssuePanelPage" name="Only Betty Panel" url="/myContextAwareWebPanel">
         <conditions>
             <condition url="/onlyBettyCondition" />
         </conditions>
@@ -41,7 +41,7 @@
                         weight="10" location="projectgroup3" />
 
     <project-config-panel key="remoteProjectConfigPanel"
-                          name="Remote Project Config Panel" url="/myAdmin" location="right" />
+                          name="Remote Project Config Panel" url="/myContextAwareWebPanel" location="right" />
 
     <remote-workflow-post-function key="remoteWorkflowFunction" name="Remote Workflow Function"
                                    url="/remoteWorkflowFunction/transition_fired">

@@ -56,13 +56,6 @@ public class ConfluenceOps
         return page;
     }
 
-    public Map getSpace(String spaceKey) throws MalformedURLException, XmlRpcFault
-    {
-        XmlRpcClient client = getClient();
-        XmlRpcStruct space = (XmlRpcStruct) client.invoke( "confluence2.getSpace", new Object[] { "", spaceKey } );
-        return space;
-    }
-
     public int search(String query) throws MalformedURLException, XmlRpcFault
     {
         final int maxResults = 10;

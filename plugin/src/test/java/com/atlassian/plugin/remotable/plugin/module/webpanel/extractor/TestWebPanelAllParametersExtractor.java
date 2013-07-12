@@ -30,11 +30,11 @@ public class TestWebPanelAllParametersExtractor
         Issue issue = mock(Issue.class);
         when(issue.getId()).thenReturn(ISSUE_ID);
 
-        final WebPanelAllParametersExtractor webPanelAllParametersExtractor = new WebPanelAllParametersExtractor(parameterExtractors);
+        final WebPanelURLParametersSerializer webPanelURLParametersSerializer = new WebPanelURLParametersSerializer(parameterExtractors);
         final Map<String, Object> context = ImmutableMap.<String, Object>builder()
                 .put("issue", issue)
                 .build();
-        ImmutableMap<String, String[]> extractedWebPanelParameters = webPanelAllParametersExtractor.getExtractedWebPanelParameters(context);
+        ImmutableMap<String, String[]> extractedWebPanelParameters = webPanelURLParametersSerializer.getExtractedWebPanelParameters(context);
 
         assertThat(extractedWebPanelParameters.keySet(), hasItem("issue_id"));
         assertThat(newArrayList(extractedWebPanelParameters.get("issue_id")), hasItem(String.valueOf(ISSUE_ID)));

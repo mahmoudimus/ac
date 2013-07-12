@@ -11,18 +11,21 @@ import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+/**
+ * Serializes a web-panel's context to URL parameters which will be included in web-panel's iframe URL.
+ */
 @Component
-public class WebPanelAllParametersExtractor
+public class WebPanelURLParametersSerializer
 {
     private final List<WebPanelParameterExtractor> webPanelParameterExtractors;
 
-    public WebPanelAllParametersExtractor()
+    public WebPanelURLParametersSerializer()
     {
         this(Collections.<WebPanelParameterExtractor>emptyList());
     }
 
     @Autowired(required = false)
-    public WebPanelAllParametersExtractor(final List<WebPanelParameterExtractor> webPanelParameterExtractors)
+    public WebPanelURLParametersSerializer(List<WebPanelParameterExtractor> webPanelParameterExtractors)
     {
         this.webPanelParameterExtractors = checkNotNull(webPanelParameterExtractors);
     }
