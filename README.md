@@ -15,6 +15,20 @@ To build the plugin, run:
   
     mvn clean install -DskipTests=true
 
+## Testing Locally
+
+To run the integration tests locally, *cd into the integration-tests directory*
+  
+    mvn clean verify -DtestGroups=jira
+
+or
+
+    mvn clean verify -DtestGroups=confluence
+
+To run a single test/method, do something like:
+
+    mvn clean verify -DtestGroups=jira -Dit.test=TestPageModules#testMyGeneralLoaded
+    
 ## Running
 
 To run an Atlassian product with the development version of Atlassian Connect:
