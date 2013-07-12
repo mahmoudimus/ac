@@ -22,7 +22,8 @@
     $("#client-http-content-type").text(xhr.getResponseHeader("content-type"));
     $("#client-http-response-text").text(xhr.responseText);
   }
-  AP.request("/rest/remoteplugintest/1/user", {
+  // rnd param assures cachebusting
+  AP.request("/rest/remoteplugintest/1/user?rnd=" + Math.random(), {
     headers: {
       "Accept": "text/plain"
     },
@@ -34,35 +35,31 @@
       bindXhr(xhr);
     }
   });
-  // additional media type requests; using timeouts to work around jq cachebuster ms timestamps
-  setTimeout(function () {
-    RA.request("/rest/remoteplugintest/1/user", {
-      headers: {
-        "Accept": "application/json"
-      },
-      success: function (data, statusText, xhr) {
-        $("#client-http-data-json").text(data);
-        RA.resize();
-      },
-      error: function (xhr, statusText, errorThrown) {
-        console.error(xhr, statusText, errorThrown);
-        RA.resize();
-      }
-    });
-  }, 10);
-  setTimeout(function () {
-    RA.request("/rest/remoteplugintest/1/user", {
-      headers: {
-        "Accept": "application/xml"
-      },
-      success: function (data, statusText, xhr) {
-        $("#client-http-data-xml").text(data);
-        RA.resize();
-      },
-      error: function (xhr, statusText, errorThrown) {
-        console.error(xhr, statusText, errorThrown);
-        RA.resize();
-      }
-    });
-  }, 20);
+  // additional media type requests
+  RA.request("/rest/remoteplugintest/1/user?rnd=" + Math.random(), {
+    headers: {
+      "Accept": "application/json"
+    },
+    success: function (data, statusText, xhr) {
+      $("#client-http-data-json").text(data);
+      RA.resize();
+    },
+    error: function (xhr, statusText, errorThrown) {
+      console.error(xhr, statusText, errorThrown);
+      RA.resize();
+    }
+  });
+  RA.request("/rest/remoteplugintest/1/user?rnd=" + Math.random(), {
+    headers: {
+      "Accept": "application/xml"
+    },
+    success: function (data, statusText, xhr) {
+      $("#client-http-data-xml").text(data);
+      RA.resize();
+    },
+    error: function (xhr, statusText, errorThrown) {
+      console.error(xhr, statusText, errorThrown);
+      RA.resize();
+    }
+  });
 }(jQuery, AP));
