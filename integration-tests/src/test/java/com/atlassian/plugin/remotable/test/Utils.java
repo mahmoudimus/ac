@@ -49,8 +49,7 @@ public class Utils
         return createSecureSaxReader().read(inputStream);
     }
 
-    public static RunnerSignedRequestHandler createSignedRequestHandler(String appKey) throws NoSuchAlgorithmException,
-            IOException
+    public static RunnerSignedRequestHandler createSignedRequestHandler(String appKey) throws NoSuchAlgorithmException, IOException
     {
         Environment env = mock(Environment.class);
         KeyPairGenerator gen = KeyPairGenerator.getInstance("RSA");

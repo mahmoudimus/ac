@@ -11,8 +11,10 @@ import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.pageobjects.TestedProductFactory;
 import com.atlassian.pageobjects.page.LoginPage;
 import com.atlassian.plugin.remotable.junit.HtmlDumpRule;
+import com.atlassian.plugin.remotable.spi.Permissions;
 import com.atlassian.plugin.remotable.test.RemotePluginDialog;
 import com.atlassian.plugin.remotable.test.RemotePluginEmbeddedTestPage;
+import com.atlassian.plugin.remotable.test.RemotePluginRunner;
 import com.atlassian.plugin.remotable.test.RemotePluginTestPage;
 import com.atlassian.plugin.remotable.test.jira.AbstractRemotablePluginProjectTab;
 import com.atlassian.plugin.remotable.test.jira.JiraAdministrationPage;
@@ -29,17 +31,18 @@ import hudson.plugins.jira.soap.RemoteProject;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
-import org.openqa.selenium.By;
 
 import java.rmi.RemoteException;
 import java.util.concurrent.Callable;
 
-import static org.hamcrest.Matchers.startsWith;
+import static com.atlassian.plugin.remotable.test.Utils.createSignedRequestHandler;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -54,14 +57,58 @@ public class TestJira
     private static final String REMOTABLE_PROEJECT_CONFIG_TAB_NAME = "Remotable Project Config";
     private static final String ADMIN_FULL_NAME = "A. D. Ministrator (Sysadmin)";
     private static final String ADMIN = "admin";
-    private static final TestedProduct<WebDriverTester> product = TestedProductFactory.create(JiraTestedProduct.class);
-    private static final JiraOps jiraOps = new JiraOps(product.getProductInstance());
+
+    private static TestedProduct<WebDriverTester> product;
+    private static JiraOps jiraOps;
+    private static RemotePluginRunner remotePlugin;
 
     @Rule
     public HtmlDumpRule htmlDump = new HtmlDumpRule(product.getTester().getDriver());
 
     private RemoteProject project;
-    //private final AsynchronousJiraRestClientFactory restClientFactory = new AsynchronousJiraRestClientFactory();
+
+    @BeforeClass
+    public static void setupJiraAndStartConnectAddOn() throws Exception
+    {
+        product = TestedProductFactory.create(JiraTestedProduct.class);
+        jiraOps = new JiraOps(product.getProductInstance());
+        remotePlugin = new RemotePluginRunner(product.getProductInstance().getBaseUrl(), "app1")
+                .addOAuth(createSignedRequestHandler("app1"))
+                .addPermission(Permissions.CREATE_OAUTH_LINK)
+                .addAdminPage("remotePluginAdmin", "Remotable Plugin app1 Admin", "/ap", "iframe.mu")
+                .addAdminPage("jira-admin-page", "Remotable Admin Page", "/jap", "iframe.mu", "advanced_menu_section/advanced_section")
+                .addIssuePanelPage("jira-remotePluginIssuePanelPage", "AC Play Issue Page Panel", "/ipp", "iframe.mu")
+                .addIssueTabPage("jira-remotePluginIssueTabPage", "AC Play Issue Tab Page", "/itp", "iframe.mu")
+                .addProjectTabPage("jira-remotePluginProjectTab", "AC Play Project Tab", "/ptp", "iframe.mu")
+                .addProjectConfigPanel("jira-remoteProjectConfigPanel", "AC Play Project Config Panel", "/pcp", "iframe.mu")
+                .addProjectConfigTab("jira-remotePluginProjectConfigTab", "Remotable Project Config", "/pct", "iframe.mu")
+                .addDialogPage("jira-issueAction", "Test Issue Action", "/jia", "dialog.mu", "operations-subtasks")
+                .start();
+    }
+
+    @AfterClass
+    public static void stopConnectAddOn() throws Exception
+    {
+        if (remotePlugin != null)
+        {
+            remotePlugin.stop();
+        }
+    }
+
+    @Before
+    public void createProject() throws Exception
+    {
+        project = jiraOps.createProject();
+    }
+
+    @After
+    public void deleteProject() throws Exception
+    {
+        if (project != null)
+        {
+            jiraOps.deleteProject(project.getKey());
+        }
+    }
 
     @After
     public void logout()
@@ -69,33 +116,23 @@ public class TestJira
         product.getTester().getDriver().manage().deleteAllCookies();
     }
 
-    @Before
-    public void setUp() throws RemoteException
-    {
-        project = jiraOps.createProject();
-    }
 
     private void loginAsAdmin()
     {
         loginAs(ADMIN, ADMIN);
     }
 
-    private void loginAs(String username, String password) {
+    private void loginAs(String username, String password)
+    {
         product.visit(LoginPage.class).login(username, password, DashboardPage.class);
     }
 
-    @After
-    public void tearDown() throws RemoteException
-    {
-        jiraOps.deleteProject(project.getKey());
-    }
 
     @Test
     public void testViewIssuePageWithEmbeddedPanelAnonymous() throws Exception
     {
         RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Test issue for panel");
-        JiraViewIssuePage viewIssuePage = product.visit(JiraViewIssuePage.class, issue.getKey(),
-                EMBEDDED_ISSUE_PANEL_ID);
+        JiraViewIssuePage viewIssuePage = product.visit(JiraViewIssuePage.class, issue.getKey(), EMBEDDED_ISSUE_PANEL_ID);
         Assert.assertEquals("Success", viewIssuePage.getMessage());
     }
 
@@ -153,16 +190,6 @@ public class TestJira
     }
 
     @Test
-    public void testAnonymouslyProjectTabWithRestClient() throws Exception
-    {
-        logout();
-        RemotePluginEmbeddedTestPage page = product.visit(BrowseProjectPage.class, project.getKey())
-                .openTab(RestClientProjectTabPage.class)
-                .getEmbeddedPage();
-        Assert.assertEquals("Success", page.getValue("rest-call-status"));
-    }
-
-    @Test
     public void testViewIssueTab() throws Exception
     {
         testLoggedInAndAnonymous(new Callable()
@@ -211,18 +238,6 @@ public class TestJira
     }
 
     @Test
-    public void testIFrameIsNotPointingToLocalhost() throws Exception
-    {
-        loginAsAdmin();
-        final String baseJiraUrl = product.getProductInstance().getBaseUrl();
-        final RemotePluginEmbeddedTestPage page = product.visit(BrowseProjectPage.class, project.getKey())
-                .openTab(AppProjectTabPage.class)
-                .getEmbeddedPage();
-        final String iFrameSrc = page.getContainerDiv().findElement(By.tagName("iframe")).getAttribute("src");
-        assertThat(iFrameSrc, startsWith(baseJiraUrl));
-    }
-
-    @Test
     public void testAdminPageInJiraSpecificLocation() throws Exception {
         loginAsAdmin();
         final JiraAdministrationPage adminPage = product.visit(JiraAdministrationPage.class);
@@ -237,53 +252,6 @@ public class TestJira
         assertTrue(adminPage.hasGeneralRemotableAdminPage());
         assertEquals(ADMIN_FULL_NAME, adminPage.clickGeneralRemotableAdminPage().getFullName());
     }
-
-//    @Test
-//    public void testThatUserTimezoneSettingIsRespectedByRemotablePlugin() throws Exception
-//    {
-//        final JiraRestClient restClient = createRestClient();
-//        try
-//        {
-//            final DateTime serverTime = restClient.getMetadataClient().getServerInfo().claim().getServerTime();
-//            assertNotNull("Expected to get server time using JIRA REST Java Client, but got null instead.", serverTime);
-//            final String serverTimeZone = serverTime.getZone().getID();
-//
-//            // create test user
-//            final String testUser = "betty";
-//            backdoor.usersAndGroups().addUserEvenIfUserExists(testUser);
-//            backdoor.usersAndGroups().addUserToGroup(testUser, "jira-administrators");
-////            loginAs(testUser, testUser);
-//
-//            // test with a custom timezone
-//            final String expectedTimezone = "Africa/Abidjan";
-//            product.visit(LoginPage.class).login("betty", "betty", HomePage.class);
-//            testTimezoneImpl(expectedTimezone, expectedTimezone, testUser);
-//
-//            // test with the default timezone
-//            testTimezoneImpl(serverTimeZone, "", testUser);
-//        }
-//        finally
-//        {
-//            restClient.close();
-//        }
-//    }
-
-//    private void testTimezoneImpl(final String expectedTimeZone, final String setUserTimeZone, final String testUser)
-//    {
-//        final RemotePluginAwarePage page;
-//        final RemotePluginTestPage remotePluginTest;
-//        backdoor.userProfile().setUserTimeZone(testUser, setUserTimeZone);
-//        page = product.getPageBinder().bind(JiraGeneralPage.class, REMOTE_PLUGIN_GENERAL_PAGE_KEY, REMOTABLE_PLUGIN_GENERAL_LINK_TEXT);
-//        remotePluginTest = page.clickRemotePluginLink();
-//        Assert.assertEquals(expectedTimeZone, remotePluginTest.getTimeZone());
-//        Assert.assertEquals(expectedTimeZone, remotePluginTest.getTimeZoneFromTemplateContext());
-//    }
-
-//    private JiraRestClient createRestClient()
-//    {
-//        final URI baseUri = URI.create(product.getProductInstance().getBaseUrl());
-//        return restClientFactory.createWithBasicHttpAuthentication(baseUri, ADMIN, ADMIN);
-//    }
 
     @Test
     public void testViewProjectAdminTab() throws Exception

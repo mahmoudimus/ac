@@ -336,11 +336,6 @@
                                     <!--<version>${project.version}</version>-->
                                 <!--</pluginArtifact>-->
                                 <pluginArtifact>
-                                    <groupId>${project.groupId}</groupId>
-                                    <artifactId>remotable-plugins-test-plugin</artifactId>
-                                    <version>${project.version}</version>
-                                </pluginArtifact>
-                                <pluginArtifact>
                                     <groupId>com.atlassian.functest</groupId>
                                     <artifactId>functest-plugin</artifactId>
                                     <version>${functest.version}</version>

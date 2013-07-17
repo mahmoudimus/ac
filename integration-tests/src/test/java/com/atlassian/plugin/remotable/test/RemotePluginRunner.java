@@ -9,6 +9,8 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -25,6 +27,8 @@ import static com.google.common.collect.Maps.newHashMap;
 
 public class RemotePluginRunner
 {
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
     private Server server;
     private int port;
     private final Document doc;
@@ -62,6 +66,22 @@ public class RemotePluginRunner
         return this;
     }
 
+    public RemotePluginRunner addAdminPage(String key, String name, String path, String resource, String section)
+    {
+        Element adminPage = doc.getRootElement().addElement("admin-page");
+        adminPage
+                .addAttribute("url", path)
+                .addAttribute("name", name)
+                .addAttribute("key", key);
+        if (section != null)
+        {
+            adminPage.addAttribute("section", section);
+        }
+
+        routes.put(path, new MustacheServlet(resource));
+        return this;
+    }
+
     public RemotePluginRunner addConfigurePage(String key, String name, String path, String resource)
     {
         doc.getRootElement().addElement("configure-page")
@@ -72,6 +92,70 @@ public class RemotePluginRunner
                 .addElement("param")
                     .addAttribute("name", "configure.url")
                     .addText("/plugins/servlet" + createLocalUrl(doc.getRootElement().attributeValue("key"), path).toString()).getParent();
+        routes.put(path, new MustacheServlet(resource));
+        return this;
+    }
+
+    public RemotePluginRunner addIssuePanelPage(String key, String name, String path, String resource)
+    {
+        doc.getRootElement().addElement("issue-panel-page")
+                .addAttribute("url", path)
+                .addAttribute("key", key)
+                .addAttribute("name", name);
+        routes.put(path, new MustacheServlet(resource));
+        return this;
+    }
+
+    public RemotePluginRunner addIssueTabPage(String key, String name, String path, String resource)
+    {
+        doc.getRootElement().addElement("issue-tab-page")
+                .addAttribute("url", path)
+                .addAttribute("key", key)
+                .addAttribute("name", name);
+        routes.put(path, new MustacheServlet(resource));
+        return this;
+    }
+
+    public RemotePluginRunner addProjectTabPage(String key, String name, String path, String resource)
+    {
+        doc.getRootElement().addElement("project-tab-page")
+                .addAttribute("url", path)
+                .addAttribute("key", key)
+                .addAttribute("name", name);
+        routes.put(path, new MustacheServlet(resource));
+        return this;
+    }
+
+    public RemotePluginRunner addProjectConfigPanel(String key, String name, String path, String resource)
+    {
+        doc.getRootElement().addElement("project-config-panel")
+                .addAttribute("url", path)
+                .addAttribute("key", key)
+                .addAttribute("name", name)
+                .addAttribute("location", "right");
+        routes.put(path, new MustacheServlet(resource));
+        return this;
+    }
+
+    public RemotePluginRunner addProjectConfigTab(String key, String name, String path, String resource)
+    {
+        doc.getRootElement().addElement("project-config-tab")
+                .addAttribute("url", path)
+                .addAttribute("key", key)
+                .addAttribute("name", name)
+                .addAttribute("weight","10")
+                .addAttribute("location", "projectgroup3");
+        routes.put(path, new MustacheServlet(resource));
+        return this;
+    }
+
+    public RemotePluginRunner addDialogPage(String key, String name, String path, String resource, String section)
+    {
+        doc.getRootElement().addElement("dialog-page")
+                .addAttribute("url", path)
+                .addAttribute("name", name)
+                .addAttribute("key", key)
+                .addAttribute("section", section);
         routes.put(path, new MustacheServlet(resource));
         return this;
     }
@@ -197,7 +281,8 @@ public class RemotePluginRunner
     public RemotePluginRunner start() throws Exception
     {
         port = pickFreePort();
-        doc.getRootElement().element("remote-plugin-container").addAttribute("display-url", "http://localhost:" + port);
+        final String displayUrl = "http://localhost:" + port;
+        doc.getRootElement().element("remote-plugin-container").addAttribute("display-url", displayUrl);
 
         server = new Server(port);
         HandlerList list = new HandlerList();
@@ -214,6 +299,8 @@ public class RemotePluginRunner
 
         list.addHandler(context);
         server.start();
+
+        logger.debug("Started Atlassian Connect Add-On at '{}'", displayUrl);
 
         register();
         return this;
