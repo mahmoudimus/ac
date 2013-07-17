@@ -3,8 +3,12 @@ package it;
 import com.atlassian.pageobjects.page.AdminHomePage;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
+import com.atlassian.plugin.remotable.api.service.RequestContext;
+import com.atlassian.plugin.remotable.spi.Permissions;
 import com.atlassian.plugin.remotable.test.AccessDeniedIFramePage;
+import com.atlassian.plugin.remotable.test.Condition;
 import com.atlassian.plugin.remotable.test.GeneralPage;
+import com.atlassian.plugin.remotable.test.GeneralPageModule;
 import com.atlassian.plugin.remotable.test.OAuthUtils;
 import com.atlassian.plugin.remotable.test.PluginManagerPage;
 import com.atlassian.plugin.remotable.test.RemotePluginAwarePage;
@@ -12,11 +16,24 @@ import com.atlassian.plugin.remotable.test.RemotePluginDialog;
 import com.atlassian.plugin.remotable.test.RemotePluginRunner;
 import com.atlassian.plugin.remotable.test.RemotePluginTestPage;
 import org.hamcrest.Matchers;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.TimeZone;
 
+import static com.atlassian.plugin.remotable.test.Utils.createSignedRequestHandler;
+import static java.lang.String.valueOf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -25,6 +42,44 @@ import static org.junit.Assert.assertTrue;
 
 public class TestPageModules extends AbstractRemotablePluginTest
 {
+    private static RemotePluginRunner remotePlugin;
+
+    @BeforeClass
+    public static void startConnectAddOn() throws Exception
+    {
+        remotePlugin = new RemotePluginRunner(product.getProductInstance().getBaseUrl(), "app1")
+                .addOAuth(createSignedRequestHandler("app1"))
+                .addPermission(Permissions.CREATE_OAUTH_LINK)
+                .add(GeneralPageModule.key("remotePluginGeneral")
+                        .name("Remotable Plugin app1 General")
+                        .path("/rpg")
+                        .linkName("Remotable Plugin app1 General Link")
+                        .iconUrl("/public/sandcastles.jpg")
+                        .height("600")
+                        .width("700"),
+                        "iframe.mu")
+                .add(GeneralPageModule.key("amdTest")
+                        .name("AMD Test app1 General")
+                        .path("/amdTest"),
+                        "amd-test.mu")
+                .add(GeneralPageModule.key("onlyBetty")
+                        .name("Only Betty")
+                        .path("/ob")
+                        .conditions(Condition.name("user_is_logged_in"), Condition.path("/onlyBettyCondition").resource(new OnlyBettyConditionServlet())),
+                        "iframe.mu")
+                .addDialogPage("remotePluginDialog", "Remotable Plugin app1 Dialog", "/rpd", "dialog.mu", null)
+                .start();
+    }
+
+    @AfterClass
+    public static void stopConnectAddOn() throws Exception
+    {
+        if (remotePlugin != null)
+        {
+            remotePlugin.stop();
+        }
+    }
+
     @Test
     public void testMyGeneralLoaded()
     {
@@ -46,19 +101,11 @@ public class TestPageModules extends AbstractRemotablePluginTest
         // timezone should be the same as the default one
         assertEquals(TimeZone.getDefault().getRawOffset(), TimeZone.getTimeZone(remotePluginTest.getTimeZone()).getRawOffset());
 
-        // basic tests of the HostHttpClient API
-        assertEquals("200", remotePluginTest.getServerHttpStatus());
-        String statusText = remotePluginTest.getServerHttpStatusText();
-        assertTrue("OK".equals(statusText));
-        String contentType = remotePluginTest.getServerHttpContentType();
-        assertTrue(contentType != null && contentType.startsWith("text/plain"));
-        assertEquals("betty", remotePluginTest.getServerHttpEntity());
-
         // basic tests of the RA.request API
         assertEquals("200", remotePluginTest.getClientHttpStatus());
-        statusText = remotePluginTest.getClientHttpStatusText();
+        String statusText = remotePluginTest.getClientHttpStatusText();
         assertTrue("OK".equals(statusText) || "success".equals(statusText));
-        contentType = remotePluginTest.getClientHttpContentType();
+        String contentType = remotePluginTest.getClientHttpContentType();
         assertTrue(contentType != null && contentType.startsWith("text/plain"));
         assertEquals("betty", remotePluginTest.getClientHttpData());
         assertEquals("betty", remotePluginTest.getClientHttpResponseText());
@@ -145,5 +192,42 @@ public class TestPageModules extends AbstractRemotablePluginTest
         assertEquals("true", remotePluginTest.waitForValue("amd-env"));
         assertEquals("true", remotePluginTest.waitForValue("amd-request"));
         assertEquals("true", remotePluginTest.waitForValue("amd-dialog"));
+    }
+
+    public static final class OnlyBettyConditionServlet extends HttpServlet
+    {
+        private static final String BETTY = "betty";
+
+        private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+        @Override
+        protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
+        {
+            final String loggedInUser = req.getParameter("user_id");
+            final boolean isBetty = isBetty(loggedInUser);
+
+            logger.debug("The logged in user is {}betty, here is their username '{}'", isBetty ? "" : "NOT ", loggedInUser);
+
+            final String json = getJson(isBetty);
+            logger.debug("Responding with the following json: {}", json);
+            sendJson(resp, json);
+        }
+
+        private void sendJson(HttpServletResponse resp, String json) throws IOException
+        {
+            resp.setContentType("application/json");
+            resp.getWriter().write(json);
+            resp.getWriter().close();
+        }
+
+        private String getJson(boolean shouldDisplay)
+        {
+            return "{\"shouldDisplay\" : " + valueOf(shouldDisplay) + "}";
+        }
+
+        private boolean isBetty(String loggedInUser)
+        {
+            return BETTY.equals(loggedInUser);
+        }
     }
 }

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <link rel="stylesheet" type="text/css" href="{{baseurl}}/remotable-plugins/all.css">
+    <script src="{{baseurl}}/remotable-plugins/all-debug.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <table>
+      <tr>
+        <td align="right">env</td>
+        <td id="amd-env"></td>
+      </tr>
+      <tr>
+        <td align="right">request</td>
+        <td id="amd-request"></td>
+      </tr>
+      <tr>
+        <td align="right">dialog</td>
+        <td id="amd-dialog"></td>
+      </tr>
+    </table>
+    <script>
+        AP.require(["env", "request", "dialog"], function (env, request, dialog) {
+          // check that modules were returned and have some of the expected values set on them
+          document.getElementById("amd-env").innerHTML = (!!env && !!env.getUser).toString();
+          document.getElementById("amd-request").innerHTML = (!!request && !!request.__target__).toString();
+          document.getElementById("amd-dialog").innerHTML = (!!dialog && !!dialog.getButton).toString();
+        });
+    </script>
+  </body>
+</html>

@@ -1,5 +1,7 @@
 package com.atlassian.plugin.remotable.test;
 
+import com.atlassian.fugue.Pair;
+import com.google.common.base.Function;
 import net.oauth.signature.RSA_SHA1;
 import org.dom4j.Document;
 import org.dom4j.DocumentFactory;
@@ -32,7 +34,7 @@ public class RemotePluginRunner
     private Server server;
     private int port;
     private final Document doc;
-    private final Map<String,HttpServlet> routes = newHashMap();
+    private final Map<String, HttpServlet> routes = newHashMap();
     private final String baseUrl;
     private final RemotePluginInstallerClient installer;
     private final String appKey;
@@ -43,15 +45,15 @@ public class RemotePluginRunner
         this.appKey = appKey;
         doc = DocumentFactory.getInstance().createDocument()
                 .addElement("atlassian-plugin")
-                    .addAttribute("key", appKey)
-                    .addAttribute("name", appKey)
-                    .addAttribute("plugins-version", "2")
-                    .addElement("plugin-info")
-                        .addElement("version").addText("1").getParent()
-                        .getParent()
-                    .addElement("remote-plugin-container")
-                        .addAttribute("key", "container")
-                        .getParent()
+                .addAttribute("key", appKey)
+                .addAttribute("name", appKey)
+                .addAttribute("plugins-version", "2")
+                .addElement("plugin-info")
+                .addElement("version").addText("1").getParent()
+                .getParent()
+                .addElement("remote-plugin-container")
+                .addAttribute("key", "container")
+                .getParent()
                 .getDocument();
         installer = new RemotePluginInstallerClient(baseUrl, "admin", "admin");
     }
@@ -90,8 +92,8 @@ public class RemotePluginRunner
                 .addAttribute("key", key);
         doc.getRootElement().element("plugin-info")
                 .addElement("param")
-                    .addAttribute("name", "configure.url")
-                    .addText("/plugins/servlet" + createLocalUrl(doc.getRootElement().attributeValue("key"), path).toString()).getParent();
+                .addAttribute("name", "configure.url")
+                .addText("/plugins/servlet" + createLocalUrl(doc.getRootElement().attributeValue("key"), path).toString()).getParent();
         routes.put(path, new MustacheServlet(resource));
         return this;
     }
@@ -143,7 +145,7 @@ public class RemotePluginRunner
                 .addAttribute("url", path)
                 .addAttribute("key", key)
                 .addAttribute("name", name)
-                .addAttribute("weight","10")
+                .addAttribute("weight", "10")
                 .addAttribute("location", "projectgroup3");
         routes.put(path, new MustacheServlet(resource));
         return this;
@@ -151,42 +153,70 @@ public class RemotePluginRunner
 
     public RemotePluginRunner addDialogPage(String key, String name, String path, String resource, String section)
     {
-        doc.getRootElement().addElement("dialog-page")
+        Element dialogPage = doc.getRootElement().addElement("dialog-page");
+        dialogPage
                 .addAttribute("url", path)
                 .addAttribute("name", name)
-                .addAttribute("key", key)
-                .addAttribute("section", section);
+                .addAttribute("key", key);
+
+        if (section != null)
+        {
+            dialogPage.addAttribute("section", section);
+        }
         routes.put(path, new MustacheServlet(resource));
         return this;
     }
 
     public RemotePluginRunner addGeneralPage(String key, String name, String path, String resource)
     {
-        doc.getRootElement().addElement("general-page")
-                .addAttribute("url", path)
-                .addAttribute("name", name)
-                .addAttribute("key", key);
-        routes.put(path, new MustacheServlet(resource));
+        return addGeneralPage(key, name, path, new MustacheServlet(resource));
+    }
+
+    public RemotePluginRunner addGeneralPage(String key, String name, String path, HttpServlet servlet)
+    {
+        return add(GeneralPageModule.key(key).name(name).path(path), servlet);
+    }
+
+    public RemotePluginRunner add(GeneralPageModule generalPageModule, String resource)
+    {
+        add(generalPageModule, new MustacheServlet(resource));
         return this;
+    }
+
+    public RemotePluginRunner add(GeneralPageModule generalPageModule, HttpServlet servlet)
+    {
+        generalPageModule.resource(servlet);
+        generalPageModule.update(doc.getRootElement());
+
+        addResource(generalPageModule);
+
+        for (Condition condition : generalPageModule.conditions())
+        {
+            addResource(condition);
+        }
+        return this;
+    }
+
+    private void addResource(Module module)
+    {
+        module.getResource().map(new Function<Pair<String, HttpServlet>, Void>()
+        {
+            @Override
+            public Void apply(Pair<String, HttpServlet> resource)
+            {
+                routes.put(resource.left(), resource.right());
+                return null;
+            }
+        });
     }
 
     public RemotePluginRunner addOAuth(RunnerSignedRequestHandler signedRequestHandler) throws NoSuchAlgorithmException, IOException
     {
         doc.getRootElement().element("remote-plugin-container")
                 .addElement("oauth")
-                    .addElement("public-key")
-                        .addText(signedRequestHandler.getLocal().getProperty(RSA_SHA1.PUBLIC_KEY).toString());
+                .addElement("public-key")
+                .addText(signedRequestHandler.getLocal().getProperty(RSA_SHA1.PUBLIC_KEY).toString());
 
-        return this;
-    }
-
-    public RemotePluginRunner addGeneralPage(String key, String name, String path, HttpServlet servlet)
-    {
-        doc.getRootElement().addElement("general-page")
-                .addAttribute("url", path)
-                .addAttribute("name", name)
-                .addAttribute("key", key);
-        routes.put(path, servlet);
         return this;
     }
 
@@ -196,7 +226,7 @@ public class RemotePluginRunner
     }
 
     public RemotePluginRunner addMacro(String macroKey, String path, HttpServlet servlet,
-            List<List<String>> contextParameters)
+                                       List<List<String>> contextParameters)
     {
         Element macro = doc.getRootElement().addElement("remote-macro")
                 .addAttribute("key", macroKey)
@@ -226,7 +256,7 @@ public class RemotePluginRunner
     }
 
     public RemotePluginRunner addSearchRequestView(String key, String name, String path,
-            String resource)
+                                                   String resource)
     {
         doc.getRootElement().addElement("remote-search-request-view")
                 .addAttribute("url", path)
@@ -292,7 +322,7 @@ public class RemotePluginRunner
 
         context.addServlet(new ServletHolder(new DescriptorServlet()), "/register");
 
-        for (final Map.Entry<String,HttpServlet> entry : routes.entrySet())
+        for (final Map.Entry<String, HttpServlet> entry : routes.entrySet())
         {
             context.addServlet(new ServletHolder(entry.getValue()), entry.getKey());
         }
@@ -316,13 +346,17 @@ public class RemotePluginRunner
         }
 
         @Override
-        protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
+        protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException
         {
             renderHtml(resp, path, new HashMap<String, Object>()
             {{
-                put("port", port);
-                put("baseurl", baseUrl);
-            }});
+                    put("port", port);
+                    put("baseurl", baseUrl);
+                    put("clientKey", req.getParameter("oauth_consumer_key"));
+                    put("locale", req.getParameter("loc"));
+                    put("licenseStatus", req.getParameter("lic"));
+                    put("timeZone", req.getParameter("tz"));
+                }});
         }
     }
 
