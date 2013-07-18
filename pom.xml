@@ -33,10 +33,7 @@
         <module>smoke-tests</module>
         <module>container</module>
         <module>container-build</module>
-        <module>test</module>
-        <!-- <module>universal-binary-test-plugin</module> -->
         <module>integration-tests</module>
-
     </modules>
     
     <build>
