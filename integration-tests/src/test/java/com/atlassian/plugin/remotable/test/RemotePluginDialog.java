@@ -1,6 +1,6 @@
 package com.atlassian.plugin.remotable.test;
 
-import com.atlassian.plugin.remotable.pageobjects.RemoteDialog;
+import com.atlassian.plugin.remotable.test.pageobjects.RemoteDialog;
 import com.atlassian.plugin.remotable.test.pageobjects.RemotePluginTestPage;
 
 /**

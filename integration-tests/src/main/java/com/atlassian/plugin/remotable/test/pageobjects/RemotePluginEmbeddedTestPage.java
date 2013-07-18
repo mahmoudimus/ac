@@ -1,6 +1,5 @@
 package com.atlassian.plugin.remotable.test.pageobjects;
 
-import com.atlassian.plugin.remotable.pageobjects.RemotePage;
 import com.google.common.base.Function;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;

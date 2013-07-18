@@ -13,7 +13,7 @@
     <div>Host Consumer Key: <span id="consumerKey">{{clientKey}}</span></div>
     <div>Current locale: <span id="locale">{{locale}}</span></div>
     <div>Current time zone: <span id="timeZone"></span></div>
-    <div>Current time zone (from the template context): <span id="timeZoneFromTemplateContext">$timeZone</span></div>
+    <div>Current time zone (from the template context): <span id="timeZoneFromTemplateContext">{{timeZone}}</span></div>
 
     <h3>AP.request() Response</h3>
     <div>Status: <span id="client-http-status"></span></div>

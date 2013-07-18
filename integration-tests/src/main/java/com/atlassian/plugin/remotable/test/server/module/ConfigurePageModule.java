@@ -5,6 +5,7 @@ import org.dom4j.Element;
 
 import java.net.URI;
 
+import static com.atlassian.fugue.Option.none;
 import static com.atlassian.fugue.Option.option;
 import static com.atlassian.fugue.Option.some;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -12,7 +13,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public final class ConfigurePageModule extends AbstractModuleWithResource<ConfigurePageModule>
 {
     private final String key;
-    private Option<String> name;
+    private Option<String> name = none();
 
     private ConfigurePageModule(String key)
     {

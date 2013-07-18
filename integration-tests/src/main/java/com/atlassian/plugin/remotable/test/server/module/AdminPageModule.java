@@ -3,6 +3,7 @@ package com.atlassian.plugin.remotable.test.server.module;
 import com.atlassian.fugue.Option;
 import org.dom4j.Element;
 
+import static com.atlassian.fugue.Option.none;
 import static com.atlassian.fugue.Option.option;
 import static com.atlassian.fugue.Option.some;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -10,8 +11,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public final class AdminPageModule extends AbstractModuleWithResource<AdminPageModule>
 {
     private final String key;
-    private Option<String> name;
-    private Option<String> section;
+    private Option<String> name = none();
+    private Option<String> section = none();
 
     private AdminPageModule(String key)
     {
