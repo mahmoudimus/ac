@@ -209,51 +209,6 @@
                     <functionalTestPattern>it/**/Test*.java</functionalTestPattern>
                     <products>
                         <product>
-                            <id>refapp</id>
-                            <version>${refapp.version}</version>
-                            <log4jProperties>src/test/resources/log4j-refapp.properties</log4jProperties>
-                            <pluginArtifacts>
-                                <pluginArtifact>
-                                    <groupId>com.atlassian.webhooks</groupId>
-                                    <artifactId>atlassian-webhooks-plugin</artifactId>
-                                    <version>${webhooks.version}</version>
-                                </pluginArtifact>
-                                <pluginArtifact>
-                                    <groupId>com.atlassian.functest</groupId>
-                                    <artifactId>functest-plugin</artifactId>
-                                    <version>${functest.version}</version>
-                                </pluginArtifact>
-                                <pluginArtifact>
-                                    <groupId>${project.groupId}</groupId>
-                                    <artifactId>remotable-plugins-plugin</artifactId>
-                                    <version>${project.version}</version>
-                                </pluginArtifact>
-                            </pluginArtifacts>
-                            <libArtifacts>
-                                <!-- necessary for Speakeasy mail handling -->
-                                <libArtifact>
-                                    <groupId>org.apache.commons</groupId>
-                                    <artifactId>commons-email</artifactId>
-                                    <version>1.2</version>
-                                </libArtifact>
-                                <libArtifact>
-                                    <groupId>javax.mail</groupId>
-                                    <artifactId>mail</artifactId>
-                                    <version>1.4.1</version>
-                                </libArtifact>
-                                <libArtifact>
-                                    <groupId>com.atlassian.mail</groupId>
-                                    <artifactId>atlassian-mail</artifactId>
-                                    <version>2.4.1</version>
-                                </libArtifact>
-                                <libArtifact>
-                                    <groupId>com.atlassian.util.concurrent</groupId>
-                                    <artifactId>atlassian-util-concurrent</artifactId>
-                                    <version>${atlassian-util-concurrent.version}</version>
-                                </libArtifact>
-                            </libArtifacts>
-                        </product>
-                        <product>
                             <id>jira</id>
                             <version>${jira.version}</version>
                             <log4jProperties>src/test/resources/log4j-jira.properties</log4jProperties>
@@ -468,19 +423,6 @@
                         <!--</pluginDependency>-->
                     </pluginDependencies>
                     <testGroups>
-                        <testGroup>
-                            <id>refapp</id>
-                            <productIds>
-                                <productId>refapp</productId>
-                            </productIds>
-                            <includes>
-                                <include>it/refapp/*.java</include>
-                            </includes>
-                            <excludes>
-                                <exclude>it/confluence/*.java</exclude>
-                                <exclude>it/jira/*.java</exclude>
-                            </excludes>
-                        </testGroup>
                         <testGroup>
                             <id>confluence</id>
                             <productIds>
