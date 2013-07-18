@@ -5,10 +5,10 @@ import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
 import com.atlassian.plugin.remotable.junit.HtmlDumpRule;
-import com.atlassian.plugin.remotable.test.GeneralPage;
-import com.atlassian.plugin.remotable.test.OwnerOfTestedProduct;
-import com.atlassian.plugin.remotable.test.RemotePluginInstallerClient;
-import com.atlassian.plugin.remotable.test.RemotePluginTestPage;
+import com.atlassian.plugin.remotable.test.client.AtlassianConnectRestClient;
+import com.atlassian.plugin.remotable.test.pageobjects.GeneralPage;
+import com.atlassian.plugin.remotable.test.pageobjects.OwnerOfTestedProduct;
+import com.atlassian.plugin.remotable.test.pageobjects.RemotePluginTestPage;
 import com.atlassian.webdriver.pageobjects.WebDriverTester;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -43,7 +43,7 @@ public class TestRemotablePlugins
     private static final String targetBaseUrl = System.getProperty("remotable.plugins.targetBaseUrl", product.getProductInstance().getBaseUrl());
 
     private static final String displayUrl = System.getProperty("remotable.plugins.displayUrl", targetBaseUrl + "/download/resources/com.atlassian.labs.remoteapps-plugin:smoke-test");
-    private static final RemotePluginInstallerClient INSTALLER = new RemotePluginInstallerClient(targetBaseUrl, adminUsername, adminPassword);
+    private static final AtlassianConnectRestClient INSTALLER = new AtlassianConnectRestClient(targetBaseUrl, adminUsername, adminPassword);
 
     @Rule
     public HtmlDumpRule htmlDump = new HtmlDumpRule(product.getTester().getDriver());

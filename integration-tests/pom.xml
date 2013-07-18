@@ -430,7 +430,7 @@
                             </productIds>
                             <systemProperties>
                                 <testedProductClass>
-                                    com.atlassian.plugin.remotable.test.confluence.FixedConfluenceTestedProduct
+                                    com.atlassian.plugin.remotable.test.pageobjects.confluence.FixedConfluenceTestedProduct
                                 </testedProductClass>
                             </systemProperties>
                             <excludes>

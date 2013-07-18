@@ -25,5 +25,5 @@
     </plugin-permission>
 
     <component-import application="refapp" key="atlassianUserManager" interface="com.atlassian.user.UserManager"/>
-    <component application="refapp" key="fixEmail" class="com.atlassian.plugin.remotable.test.refapp.RefappFixEmailAddresses"/>
+    <component application="refapp" key="fixEmail" class="com.atlassian.plugin.remotable.test.pageobjects.refapp.RefappFixEmailAddresses"/>
 </atlassian-plugin>

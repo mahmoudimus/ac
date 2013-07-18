@@ -5,23 +5,23 @@ import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
 import com.atlassian.plugin.remotable.junit.HtmlDumpRule;
 import com.atlassian.plugin.remotable.spi.Permissions;
-import com.atlassian.plugin.remotable.test.ContextParameter;
-import com.atlassian.plugin.remotable.test.ImagePlaceHolder;
-import com.atlassian.plugin.remotable.test.MacroCategory;
-import com.atlassian.plugin.remotable.test.MacroPageModule;
-import com.atlassian.plugin.remotable.test.RemoteMacroModule;
-import com.atlassian.plugin.remotable.test.MacroParameter;
 import com.atlassian.plugin.remotable.test.OAuthUtils;
-import com.atlassian.plugin.remotable.test.OwnerOfTestedProduct;
-import com.atlassian.plugin.remotable.test.RemotePluginRunner;
-import com.atlassian.plugin.remotable.test.RunnerSignedRequestHandler;
-import com.atlassian.plugin.remotable.test.confluence.ConfluenceCounterMacroPage;
-import com.atlassian.plugin.remotable.test.confluence.ConfluenceMacroPage;
-import com.atlassian.plugin.remotable.test.confluence.ConfluenceMacroTestSuitePage;
-import com.atlassian.plugin.remotable.test.confluence.ConfluenceOps;
-import com.atlassian.plugin.remotable.test.confluence.ConfluencePageMacroPage;
-import com.atlassian.plugin.remotable.test.confluence.FixedConfluenceTestedProduct;
-import com.atlassian.plugin.remotable.test.webhook.MacroEditor;
+import com.atlassian.plugin.remotable.test.pageobjects.OwnerOfTestedProduct;
+import com.atlassian.plugin.remotable.test.pageobjects.confluence.ConfluenceCounterMacroPage;
+import com.atlassian.plugin.remotable.test.pageobjects.confluence.ConfluenceMacroPage;
+import com.atlassian.plugin.remotable.test.pageobjects.confluence.ConfluenceMacroTestSuitePage;
+import com.atlassian.plugin.remotable.test.pageobjects.confluence.ConfluenceOps;
+import com.atlassian.plugin.remotable.test.pageobjects.confluence.ConfluencePageMacroPage;
+import com.atlassian.plugin.remotable.test.pageobjects.confluence.FixedConfluenceTestedProduct;
+import com.atlassian.plugin.remotable.test.server.AtlassianConnectAddOnRunner;
+import com.atlassian.plugin.remotable.test.server.RunnerSignedRequestHandler;
+import com.atlassian.plugin.remotable.test.server.module.ContextParameter;
+import com.atlassian.plugin.remotable.test.server.module.ImagePlaceHolder;
+import com.atlassian.plugin.remotable.test.server.module.MacroCategory;
+import com.atlassian.plugin.remotable.test.server.module.MacroEditor;
+import com.atlassian.plugin.remotable.test.server.module.MacroPageModule;
+import com.atlassian.plugin.remotable.test.server.module.MacroParameter;
+import com.atlassian.plugin.remotable.test.server.module.RemoteMacroModule;
 import com.atlassian.webdriver.pageobjects.WebDriverTester;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -32,7 +32,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import redstone.xmlrpc.XmlRpcFault;
 
-import javax.inject.Named;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -47,9 +46,9 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import static com.atlassian.plugin.remotable.test.HttpUtils.renderHtml;
-import static com.atlassian.plugin.remotable.test.RemotePluginUtils.clearMacroCaches;
 import static com.atlassian.plugin.remotable.test.Utils.createSignedRequestHandler;
 import static com.atlassian.plugin.remotable.test.Utils.loadResourceAsString;
+import static com.atlassian.plugin.remotable.test.server.AtlassianConnectAddOnRunner.newMustacheServlet;
 import static org.junit.Assert.assertTrue;
 
 public class TestConfluence
@@ -58,7 +57,7 @@ public class TestConfluence
 
     private static TestedProduct<WebDriverTester> product;
     private static ConfluenceOps confluenceOps;
-    private static RemotePluginRunner remotePlugin;
+    private static AtlassianConnectAddOnRunner remotePlugin;
     private static RunnerSignedRequestHandler signedRequestHandler;
 
     static
@@ -75,7 +74,7 @@ public class TestConfluence
         product = OwnerOfTestedProduct.INSTANCE;
         confluenceOps = new ConfluenceOps(product.getProductInstance().getBaseUrl());
         signedRequestHandler = createSignedRequestHandler("app1");
-        remotePlugin = new RemotePluginRunner(product.getProductInstance().getBaseUrl(), "app1")
+        remotePlugin = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl(), "app1")
                 .addOAuth(signedRequestHandler)
                 .addPermission(Permissions.CREATE_OAUTH_LINK)
                 .addPermission("read_content")
@@ -92,14 +91,14 @@ public class TestConfluence
                         .category(MacroCategory.name("development"))
                         .parameters(MacroParameter.name("footy").title("Favorite Footy").type("enum").required("true").values("American Football", "Soccer", "Rugby Union", "Rugby League"))
                         .contextParameters(ContextParameter.name("page_id").type("query"))
-                        .editor(MacroEditor.path("/myMacroEditor").height("600").width("600").resource(new MyMacroEditorServlet()))
+                        .editor(MacroEditor.at("/myMacroEditor").height("600").width("600").resource(new MyMacroEditorServlet()))
                         .resource(new MyMacroServlet()))
                 .add(RemoteMacroModule.key("app1-image")
                         .name("app1-image")
                         .path("/myImageMacro")
                         .outputType("block")
                         .bodyType("none")
-                        .imagePlaceHolder(ImagePlaceHolder.path("/public/sandcastles.jpg"))
+                        .imagePlaceHolder(ImagePlaceHolder.at("/public/sandcastles.jpg"))
                         .resource(new MyImageMacroServlet()))
                 .add(RemoteMacroModule.key("app1-slow")
                         .name("app1-slow")
@@ -113,8 +112,8 @@ public class TestConfluence
                         .name("app1-page")
                         .path("/ap")
                         .outputType("block")
-                        .bodyType("none"),
-                        "iframe.mu")
+                        .bodyType("none")
+                        .resource(newMustacheServlet("iframe.mu")))
                 .add(RemoteMacroModule.key("app1-counter")
                         .name("app1-counter")
                         .path("/myCounterMacro")
@@ -244,7 +243,7 @@ public class TestConfluence
                         "   <ac:macro ac:name=\"trickle\" />\n" +
                         "</div>");
 
-        RemotePluginRunner runner = new RemotePluginRunner(product.getProductInstance().getBaseUrl(), "trickle")
+        AtlassianConnectAddOnRunner runner = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl(), "trickle")
                 .addMacro("trickle", "/trickle", new MyTrickleMacroServlet())
                 .start();
 

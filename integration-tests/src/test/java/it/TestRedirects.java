@@ -1,8 +1,9 @@
 package it;
 
 import com.atlassian.plugin.remotable.spi.Permissions;
-import com.atlassian.plugin.remotable.test.RemotePluginRunner;
-import com.atlassian.plugin.remotable.test.RunnerSignedRequestHandler;
+import com.atlassian.plugin.remotable.test.server.AtlassianConnectAddOnRunner;
+import com.atlassian.plugin.remotable.test.server.RunnerSignedRequestHandler;
+import com.atlassian.plugin.remotable.test.server.module.GeneralPageModule;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpStatus;
 import org.junit.BeforeClass;
@@ -30,12 +31,13 @@ public class TestRedirects extends AbstractBrowserlessTest
     }
 
     @Test
-	public void testPermanentRedirect() throws Exception, InterruptedException,
-            NoSuchAlgorithmException
+    public void testPermanentRedirect() throws Exception
     {
-        RemotePluginRunner runner = new RemotePluginRunner(baseUrl,
-                "permanentRedirect")
-                .addGeneralPage("page", "Page", "/page", new MessageServlet())
+        AtlassianConnectAddOnRunner runner = new AtlassianConnectAddOnRunner(baseUrl, "permanentRedirect")
+                .add(GeneralPageModule.key("page")
+                        .name("Page")
+                        .path("/page")
+                        .resource(new MessageServlet()))
                 .start();
 
         URL url = new URL(baseUrl + "/plugins/servlet/redirect/permanent?app_key=permanentRedirect&app_url=/page&message=bar");
@@ -49,16 +51,18 @@ public class TestRedirects extends AbstractBrowserlessTest
         assertEquals("bar", responseText);
 
         runner.stop();
-	}
+    }
 
     @Test
-    public void testOAuthRedirect() throws Exception, InterruptedException,
-            NoSuchAlgorithmException
+    public void testOAuthRedirect() throws Exception
     {
         RunnerSignedRequestHandler signedRequestHandler = createSignedRequestHandler("oauthRedirect");
-        RemotePluginRunner runner = new RemotePluginRunner(baseUrl,
+        AtlassianConnectAddOnRunner runner = new AtlassianConnectAddOnRunner(baseUrl,
                 "oauthRedirect")
-                .addGeneralPage("page", "Page", "/page", new MessageServlet())
+                .add(GeneralPageModule.key("page")
+                        .name("Page")
+                        .path("/page")
+                        .resource(new MessageServlet()))
                 .addOAuth(signedRequestHandler)
                 .addPermission(Permissions.CREATE_OAUTH_LINK)
                 .start();

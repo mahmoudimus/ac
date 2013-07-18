@@ -1,7 +1,7 @@
 package it.confluence;
 
-import com.atlassian.plugin.remotable.test.confluence.ConfluenceOps;
-import com.atlassian.plugin.remotable.test.confluence.FixedConfluenceTestedProduct;
+import com.atlassian.plugin.remotable.test.pageobjects.confluence.ConfluenceOps;
+import com.atlassian.plugin.remotable.test.pageobjects.confluence.FixedConfluenceTestedProduct;
 import com.atlassian.plugin.remotable.test.webhook.WebHookBody;
 import com.atlassian.plugin.remotable.test.webhook.WebHookTester;
 import com.atlassian.plugin.remotable.test.webhook.WebHookWaiter;

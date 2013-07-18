@@ -50,7 +50,6 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>remotable-plugins-integration-tests</artifactId>
             <version>${project.version}</version>
-            <type>test-jar</type>
         </dependency>
 
         <dependency>

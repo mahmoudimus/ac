@@ -1,12 +1,7 @@
 package com.atlassian.plugin.remotable.test;
 
 import com.atlassian.plugin.remotable.pageobjects.RemoteDialog;
-import com.atlassian.webdriver.AtlassianWebDriver;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.FindBy;
-
-import javax.inject.Inject;
+import com.atlassian.plugin.remotable.test.pageobjects.RemotePluginTestPage;
 
 /**
  * Describes a <dialog-page> Remote Module - must be bound after the dialog has been opened.

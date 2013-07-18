@@ -2,12 +2,13 @@ package it;
 
 import com.atlassian.plugin.remotable.api.service.SignedRequestHandler;
 import com.atlassian.plugin.remotable.spi.Permissions;
+import com.atlassian.plugin.remotable.test.server.AtlassianConnectAddOnRunner;
 import com.atlassian.plugin.remotable.test.HttpUtils;
 import com.atlassian.plugin.remotable.test.MessagePage;
-import com.atlassian.plugin.remotable.test.RemotePluginRunner;
-import com.atlassian.plugin.remotable.test.RunnerSignedRequestHandler;
+import com.atlassian.plugin.remotable.test.server.RunnerSignedRequestHandler;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
+import com.atlassian.plugin.remotable.test.server.module.GeneralPageModule;
 import com.google.common.collect.ImmutableMap;
 import org.junit.Test;
 
@@ -35,10 +36,12 @@ public class TestAppPermissions extends AbstractRemotablePluginTest
     public void testNoPermissions() throws Exception
     {
         RunnerSignedRequestHandler signedRequestHandler = createSignedRequestHandler("noPermissions");
-        RemotePluginRunner runner = new RemotePluginRunner(product.getProductInstance().getBaseUrl(),
+        AtlassianConnectAddOnRunner runner = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl(),
                 "noPermissions")
-                .addGeneralPage("page", "Page", "/page",
-                        new CallServlet(product.getProductInstance().getBaseUrl(), signedRequestHandler))
+                .add(GeneralPageModule.key("page")
+                        .name("Page")
+                        .path("/page")
+                        .resource(new CallServlet(product.getProductInstance().getBaseUrl(), signedRequestHandler)))
                 .description("foo")
                 .addOAuth(signedRequestHandler)
                 .addPermission(Permissions.CREATE_OAUTH_LINK)
@@ -87,8 +90,8 @@ public class TestAppPermissions extends AbstractRemotablePluginTest
             yc = (HttpURLConnection) url.openConnection();
             signedRequestHandler.sign(URI.create(uri), "GET", user, yc);
             BufferedReader in = new BufferedReader(
-                                    new InputStreamReader(
-                                    yc.getInputStream()));
+                    new InputStreamReader(
+                            yc.getInputStream()));
             return yc.getResponseCode();
         }
         catch (MalformedURLException e)

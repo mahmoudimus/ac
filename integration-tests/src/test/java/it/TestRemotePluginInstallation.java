@@ -1,9 +1,10 @@
 package it;
 
-import com.atlassian.plugin.remotable.test.GeneralPage;
-import com.atlassian.plugin.remotable.test.RemotePluginRunner;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
+import com.atlassian.plugin.remotable.test.pageobjects.GeneralPage;
+import com.atlassian.plugin.remotable.test.server.AtlassianConnectAddOnRunner;
+import com.atlassian.plugin.remotable.test.server.module.GeneralPageModule;
 import org.apache.http.client.HttpResponseException;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -14,7 +15,10 @@ import java.io.IOException;
 import java.util.List;
 
 import static com.atlassian.plugin.remotable.test.Utils.getXml;
-import static org.junit.Assert.*;
+import static com.atlassian.plugin.remotable.test.server.AtlassianConnectAddOnRunner.newMustacheServlet;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class TestRemotePluginInstallation extends AbstractRemotablePluginTest
 {
@@ -38,8 +42,11 @@ public class TestRemotePluginInstallation extends AbstractRemotablePluginTest
     public void testChangedKey() throws Exception
     {
         product.visit(LoginPage.class).login("admin", "admin", HomePage.class);
-        RemotePluginRunner pluginFirst = new RemotePluginRunner(product.getProductInstance().getBaseUrl(), "pluginFirst")
-                .addGeneralPage("changedPage", "Changed Page", "/page", "hello-world-page.mu")
+        AtlassianConnectAddOnRunner pluginFirst = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl(), "pluginFirst")
+                .add(GeneralPageModule.key("changedPage")
+                        .name("Changed Page")
+                        .path("/page")
+                        .resource(newMustacheServlet("hello-world-page.mu")))
                 .start();
         product.visit(HomePage.class);
         assertTrue(product.getPageBinder().bind(GeneralPage.class, "changedPage", "Changed Page")
@@ -47,8 +54,11 @@ public class TestRemotePluginInstallation extends AbstractRemotablePluginTest
                 .isLoaded());
         pluginFirst.stop();
 
-        RemotePluginRunner pluginSecond = new RemotePluginRunner(product.getProductInstance().getBaseUrl(), "pluginSecond")
-                .addGeneralPage("changedPage", "Changed Page", "/page", "hello-world-page.mu")
+        AtlassianConnectAddOnRunner pluginSecond = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl(), "pluginSecond")
+                .add(GeneralPageModule.key("changedPage")
+                        .name("Changed Page")
+                        .path("/page")
+                        .resource(newMustacheServlet("hello-world-page.mu")))
                 .start();
         product.visit(HomePage.class);
         assertTrue(product.getPageBinder().bind(GeneralPage.class, "changedPage", "Changed Page")
@@ -60,7 +70,7 @@ public class TestRemotePluginInstallation extends AbstractRemotablePluginTest
     @Test(expected = HttpResponseException.class)
     public void testUnknownModuleAndFail() throws Exception
     {
-        new RemotePluginRunner(product.getProductInstance().getBaseUrl(), "appFirst")
+        new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl(), "appFirst")
                 .description("foo")
                 .addUnknownModule("some-key")
                 .start();

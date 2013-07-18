@@ -4,7 +4,7 @@ import cc.plural.jsonij.JPath;
 import cc.plural.jsonij.JSON;
 import cc.plural.jsonij.Value;
 import cc.plural.jsonij.parser.ParserException;
-import com.atlassian.plugin.remotable.test.RemotePluginRunner;
+import com.atlassian.plugin.remotable.test.server.AtlassianConnectAddOnRunner;
 import org.apache.commons.io.IOUtils;
 
 import javax.servlet.ServletException;
@@ -44,7 +44,7 @@ public final class WebHookTestServlet extends HttpServlet
     public static void runInRunner(String baseUrl, String webHookId, String eventId, WebHookTester tester) throws Exception
     {
         final WebHookTestServlet servlet = new WebHookTestServlet();
-        RemotePluginRunner runner = new RemotePluginRunner(baseUrl, webHookId)
+        AtlassianConnectAddOnRunner runner = new AtlassianConnectAddOnRunner(baseUrl, webHookId)
                 .addWebhook(webHookId, "/webhook", eventId, servlet)
                 .start();
 

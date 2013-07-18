@@ -13,18 +13,19 @@ import com.atlassian.pageobjects.page.LoginPage;
 import com.atlassian.plugin.remotable.junit.HtmlDumpRule;
 import com.atlassian.plugin.remotable.spi.Permissions;
 import com.atlassian.plugin.remotable.test.RemotePluginDialog;
-import com.atlassian.plugin.remotable.test.RemotePluginEmbeddedTestPage;
-import com.atlassian.plugin.remotable.test.RemotePluginRunner;
-import com.atlassian.plugin.remotable.test.RemotePluginTestPage;
-import com.atlassian.plugin.remotable.test.jira.AbstractRemotablePluginProjectTab;
-import com.atlassian.plugin.remotable.test.jira.JiraAdministrationPage;
-import com.atlassian.plugin.remotable.test.jira.JiraOps;
-import com.atlassian.plugin.remotable.test.jira.JiraProjectAdministrationPanel;
-import com.atlassian.plugin.remotable.test.jira.JiraProjectAdministrationTab;
-import com.atlassian.plugin.remotable.test.jira.JiraViewIssuePage;
-import com.atlassian.plugin.remotable.test.jira.JiraViewIssuePageWithRemotePluginIssueTab;
-import com.atlassian.plugin.remotable.test.jira.PlainTextView;
-import com.atlassian.plugin.remotable.test.jira.ViewChangingSearchResult;
+import com.atlassian.plugin.remotable.test.pageobjects.RemotePluginEmbeddedTestPage;
+import com.atlassian.plugin.remotable.test.pageobjects.RemotePluginTestPage;
+import com.atlassian.plugin.remotable.test.pageobjects.jira.AbstractRemotablePluginProjectTab;
+import com.atlassian.plugin.remotable.test.pageobjects.jira.JiraAdministrationPage;
+import com.atlassian.plugin.remotable.test.pageobjects.jira.JiraOps;
+import com.atlassian.plugin.remotable.test.pageobjects.jira.JiraProjectAdministrationPanel;
+import com.atlassian.plugin.remotable.test.pageobjects.jira.JiraProjectAdministrationTab;
+import com.atlassian.plugin.remotable.test.pageobjects.jira.JiraViewIssuePage;
+import com.atlassian.plugin.remotable.test.pageobjects.jira.JiraViewIssuePageWithRemotePluginIssueTab;
+import com.atlassian.plugin.remotable.test.pageobjects.jira.PlainTextView;
+import com.atlassian.plugin.remotable.test.pageobjects.jira.ViewChangingSearchResult;
+import com.atlassian.plugin.remotable.test.server.AtlassianConnectAddOnRunner;
+import com.atlassian.plugin.remotable.test.server.module.AdminPageModule;
 import com.atlassian.webdriver.pageobjects.WebDriverTester;
 import hudson.plugins.jira.soap.RemoteIssue;
 import hudson.plugins.jira.soap.RemoteProject;
@@ -43,6 +44,7 @@ import java.rmi.RemoteException;
 import java.util.concurrent.Callable;
 
 import static com.atlassian.plugin.remotable.test.Utils.createSignedRequestHandler;
+import static com.atlassian.plugin.remotable.test.server.AtlassianConnectAddOnRunner.newMustacheServlet;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -60,7 +62,7 @@ public class TestJira
 
     private static TestedProduct<WebDriverTester> product;
     private static JiraOps jiraOps;
-    private static RemotePluginRunner remotePlugin;
+    private static AtlassianConnectAddOnRunner remotePlugin;
 
     @Rule
     public HtmlDumpRule htmlDump = new HtmlDumpRule(product.getTester().getDriver());
@@ -72,17 +74,24 @@ public class TestJira
     {
         product = TestedProductFactory.create(JiraTestedProduct.class);
         jiraOps = new JiraOps(product.getProductInstance());
-        remotePlugin = new RemotePluginRunner(product.getProductInstance().getBaseUrl(), "app1")
+        remotePlugin = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl(), "app1")
                 .addOAuth(createSignedRequestHandler("app1"))
                 .addPermission(Permissions.CREATE_OAUTH_LINK)
-                .addAdminPage("remotePluginAdmin", "Remotable Plugin app1 Admin", "/ap", "iframe.mu")
-                .addAdminPage("jira-admin-page", "Remotable Admin Page", "/jap", "iframe.mu", "advanced_menu_section/advanced_section")
-                .addIssuePanelPage("jira-remotePluginIssuePanelPage", "AC Play Issue Page Panel", "/ipp", "iframe.mu")
-                .addIssueTabPage("jira-remotePluginIssueTabPage", "AC Play Issue Tab Page", "/itp", "iframe.mu")
-                .addProjectTabPage("jira-remotePluginProjectTab", "AC Play Project Tab", "/ptp", "iframe.mu")
-                .addProjectConfigPanel("jira-remoteProjectConfigPanel", "AC Play Project Config Panel", "/pcp", "iframe.mu")
-                .addProjectConfigTab("jira-remotePluginProjectConfigTab", "Remotable Project Config", "/pct", "iframe.mu")
-                .addDialogPage("jira-issueAction", "Test Issue Action", "/jia", "dialog.mu", "operations-subtasks")
+                .add(AdminPageModule.key("remotePluginAdmin")
+                        .name("Remotable Plugin app1 Admin")
+                        .path("/ap")
+                        .resource(newMustacheServlet("iframe.mu")))
+                .add(AdminPageModule.key("jira-admin-page")
+                        .name("Remotable Admin Page")
+                        .path("/jap")
+                        .section("advanced_menu_section/advanced_section")
+                        .resource(newMustacheServlet("iframe.mu")))
+                .addIssuePanelPage("jira-remotePluginIssuePanelPage", "AC Play Issue Page Panel", "/ipp", newMustacheServlet("iframe.mu"))
+                .addIssueTabPage("jira-remotePluginIssueTabPage", "AC Play Issue Tab Page", "/itp", newMustacheServlet("iframe.mu"))
+                .addProjectTabPage("jira-remotePluginProjectTab", "AC Play Project Tab", "/ptp", newMustacheServlet("iframe.mu"))
+                .addProjectConfigPanel("jira-remoteProjectConfigPanel", "AC Play Project Config Panel", "/pcp", newMustacheServlet("iframe.mu"))
+                .addProjectConfigTab("jira-remotePluginProjectConfigTab", "Remotable Project Config", "/pct", newMustacheServlet("iframe.mu"))
+                .addDialogPage("jira-issueAction", "Test Issue Action", "/jia", newMustacheServlet("dialog.mu"), "operations-subtasks")
                 .start();
     }
 
@@ -179,14 +188,13 @@ public class TestJira
             public Object call() throws Exception
             {
                 RemotePluginEmbeddedTestPage page = product.visit(BrowseProjectPage.class, project.getKey())
-                                                           .openTab(AppProjectTabPage.class)
-                                                           .getEmbeddedPage();
+                        .openTab(AppProjectTabPage.class)
+                        .getEmbeddedPage();
 
                 Assert.assertEquals("Success", page.getMessage());
                 return null;
             }
         });
-
     }
 
     @Test
@@ -219,8 +227,8 @@ public class TestJira
                 product.visit(AdvancedSearch.class).enterQuery("project = " + project.getKey()).submit();
 
                 PlainTextView plainTextView = product.getPageBinder()
-                                                     .bind(ViewChangingSearchResult.class)
-                                                     .openView("Raw Keys", PlainTextView.class);
+                        .bind(ViewChangingSearchResult.class)
+                        .openView("Raw Keys", PlainTextView.class);
                 assertTrue(plainTextView.getContent().contains(issue.getKey()));
                 return null;
             }
@@ -238,7 +246,8 @@ public class TestJira
     }
 
     @Test
-    public void testAdminPageInJiraSpecificLocation() throws Exception {
+    public void testAdminPageInJiraSpecificLocation() throws Exception
+    {
         loginAsAdmin();
         final JiraAdministrationPage adminPage = product.visit(JiraAdministrationPage.class);
         assertTrue(adminPage.hasJiraRemotableAdminPageLink());
@@ -246,7 +255,8 @@ public class TestJira
     }
 
     @Test
-    public void testGeneralAdminPage() throws Exception {
+    public void testGeneralAdminPage() throws Exception
+    {
         loginAsAdmin();
         final JiraAdministrationPage adminPage = product.visit(JiraAdministrationPage.class);
         assertTrue(adminPage.hasGeneralRemotableAdminPage());

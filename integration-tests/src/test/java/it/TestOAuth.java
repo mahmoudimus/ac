@@ -1,8 +1,8 @@
 package it;
 
 import com.atlassian.plugin.remotable.spi.Permissions;
-import com.atlassian.plugin.remotable.test.RemotePluginRunner;
-import com.atlassian.plugin.remotable.test.RunnerSignedRequestHandler;
+import com.atlassian.plugin.remotable.test.server.AtlassianConnectAddOnRunner;
+import com.atlassian.plugin.remotable.test.server.RunnerSignedRequestHandler;
 import org.junit.Test;
 
 import java.net.HttpURLConnection;
@@ -18,7 +18,7 @@ public class TestOAuth extends AbstractBrowserlessTest
     {
         RunnerSignedRequestHandler requestHandler = createSignedRequestHandler(
                 "authorizeRequestWorks");
-        RemotePluginRunner runner = new RemotePluginRunner(baseUrl,
+        AtlassianConnectAddOnRunner runner = new AtlassianConnectAddOnRunner(baseUrl,
                 "authorizeRequestWorks")
                 .addOAuth(requestHandler)
                 .addPermission(Permissions.CREATE_OAUTH_LINK)

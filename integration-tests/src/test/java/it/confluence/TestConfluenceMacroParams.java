@@ -5,23 +5,22 @@ import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
 import com.atlassian.plugin.remotable.junit.HtmlDumpRule;
 import com.atlassian.plugin.remotable.spi.Permissions;
-import com.atlassian.plugin.remotable.test.ContextParameter;
-import com.atlassian.plugin.remotable.test.GeneralPageModule;
-import com.atlassian.plugin.remotable.test.MacroCategory;
-import com.atlassian.plugin.remotable.test.MacroParameter;
-import com.atlassian.plugin.remotable.test.OwnerOfTestedProduct;
-import com.atlassian.plugin.remotable.test.RemoteMacroModule;
-import com.atlassian.plugin.remotable.test.RemotePluginRunner;
-import com.atlassian.plugin.remotable.test.confluence.ConfluenceMacroPage;
-import com.atlassian.plugin.remotable.test.confluence.ConfluenceMacroTestSuitePage;
-import com.atlassian.plugin.remotable.test.confluence.ConfluenceOps;
-import com.atlassian.plugin.remotable.test.confluence.FixedConfluenceTestedProduct;
-import com.atlassian.plugin.remotable.test.webhook.MacroEditor;
+import com.atlassian.plugin.remotable.test.pageobjects.OwnerOfTestedProduct;
+import com.atlassian.plugin.remotable.test.pageobjects.confluence.ConfluenceMacroPage;
+import com.atlassian.plugin.remotable.test.pageobjects.confluence.ConfluenceMacroTestSuitePage;
+import com.atlassian.plugin.remotable.test.pageobjects.confluence.ConfluenceOps;
+import com.atlassian.plugin.remotable.test.pageobjects.confluence.FixedConfluenceTestedProduct;
+import com.atlassian.plugin.remotable.test.server.AtlassianConnectAddOnRunner;
+import com.atlassian.plugin.remotable.test.server.module.ContextParameter;
+import com.atlassian.plugin.remotable.test.server.module.GeneralPageModule;
+import com.atlassian.plugin.remotable.test.server.module.MacroCategory;
+import com.atlassian.plugin.remotable.test.server.module.MacroEditor;
+import com.atlassian.plugin.remotable.test.server.module.MacroParameter;
+import com.atlassian.plugin.remotable.test.server.module.RemoteMacroModule;
 import com.atlassian.webdriver.pageobjects.WebDriverTester;
 import org.junit.After;
 import org.junit.Rule;
 import org.junit.Test;
-import redstone.xmlrpc.XmlRpcFault;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -29,12 +28,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.security.NoSuchAlgorithmException;
 import java.util.Enumeration;
 import java.util.Map;
 
 import static com.atlassian.plugin.remotable.test.Utils.createSignedRequestHandler;
 import static com.atlassian.plugin.remotable.test.Utils.loadResourceAsString;
+import static com.atlassian.plugin.remotable.test.server.AtlassianConnectAddOnRunner.newMustacheServlet;
 import static com.google.common.collect.Maps.newHashMap;
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
@@ -45,6 +44,7 @@ public class TestConfluenceMacroParams
 
     private static final TestedProduct<WebDriverTester> product;
     private static final ConfluenceOps confluenceOps;
+
     static
     {
         System.setProperty("testedProductClass", FixedConfluenceTestedProduct.class.getName());
@@ -62,9 +62,9 @@ public class TestConfluenceMacroParams
     }
 
     @Test
-	public void testContextParam() throws Exception
+    public void testContextParam() throws Exception
     {
-        RemotePluginRunner remotePlugin = new RemotePluginRunner(product.getProductInstance().getBaseUrl(), "app1")
+        AtlassianConnectAddOnRunner remotePlugin = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl(), "app1")
                 .addOAuth(createSignedRequestHandler("app1"))
                 .addPermission(Permissions.CREATE_OAUTH_LINK)
                 .addPermission("read_content")
@@ -81,7 +81,7 @@ public class TestConfluenceMacroParams
                         .category(MacroCategory.name("development"))
                         .parameters(MacroParameter.name("footy").title("Favorite Footy").type("enum").required("true").values("American Football", "Soccer", "Rugby Union", "Rugby League"))
                         .contextParameters(ContextParameter.name("page_id").type("query"))
-                        .editor(MacroEditor.path("/myMacroEditor").height("600").width("600").resource(new TestConfluence.MyMacroEditorServlet()))
+                        .editor(MacroEditor.at("/myMacroEditor").height("600").width("600").resource(new TestConfluence.MyMacroEditorServlet()))
                         .resource(new TestConfluence.MyMacroServlet()))
                 .add(GeneralPageModule.key("remotePluginGeneral")
                         .name("Remotable Plugin app1 General")
@@ -89,34 +89,34 @@ public class TestConfluenceMacroParams
                         .linkName("Remotable Plugin app1 General Link")
                         .iconUrl("/public/sandcastles.jpg")
                         .height("600")
-                        .width("700"),
-                        "iframe.mu")
+                        .width("700")
+                        .resource(newMustacheServlet("iframe.mu")))
                 .start();
 
         Map pageData = confluenceOps.setPage("ds", "test", loadResourceAsString("confluence/test-page.xhtml"));
         product.visit(LoginPage.class).login("betty", "betty", HomePage.class);
-        Map<String,String> params = product.visit(ConfluenceMacroTestSuitePage.class, pageData.get("title"))
-                                          .visitGeneralLink()
-                                          .getIframeQueryParams();
+        Map<String, String> params = product.visit(ConfluenceMacroTestSuitePage.class, pageData.get("title"))
+                .visitGeneralLink()
+                .getIframeQueryParams();
 
         assertEquals(pageData.get("id"), params.get("page_id"));
 
         remotePlugin.stop();
-	}
+    }
 
     @Test
     public void testMacroWithHeaderParams() throws Exception
     {
         Map pageData = confluenceOps.setPage("ds", "test",
                 "<div class=\"header-macro\">\n" +
-                "   <ac:macro ac:name=\"header\" />\n" +
-                "</div>");
+                        "   <ac:macro ac:name=\"header\" />\n" +
+                        "</div>");
 
         MyParamsMacroServlet macroServlet = new MyParamsMacroServlet();
-        RemotePluginRunner runner = new RemotePluginRunner(product.getProductInstance().getBaseUrl(), "header")
+        AtlassianConnectAddOnRunner runner = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl(), "header")
                 .addMacro("header", "/header", macroServlet, asList(
-                    asList("page_id", "query"),
-                    asList("user_id", "header")
+                        asList("page_id", "query"),
+                        asList("user_id", "header")
                 ))
                 .start();
         product.visit(LoginPage.class).login("betty", "betty", HomePage.class);
@@ -130,8 +130,8 @@ public class TestConfluenceMacroParams
 
     public static class MyParamsMacroServlet extends HttpServlet
     {
-        private Map<String,String> headerParams = newHashMap();
-        private Map<String,String> queryParams = newHashMap();
+        private Map<String, String> headerParams = newHashMap();
+        private Map<String, String> queryParams = newHashMap();
 
         @Override
         protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
@@ -173,5 +173,4 @@ public class TestConfluenceMacroParams
             return queryParams;
         }
     }
-
 }

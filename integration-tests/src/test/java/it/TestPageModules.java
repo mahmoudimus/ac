@@ -3,18 +3,18 @@ package it;
 import com.atlassian.pageobjects.page.AdminHomePage;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
-import com.atlassian.plugin.remotable.api.service.RequestContext;
 import com.atlassian.plugin.remotable.spi.Permissions;
 import com.atlassian.plugin.remotable.test.AccessDeniedIFramePage;
-import com.atlassian.plugin.remotable.test.Condition;
-import com.atlassian.plugin.remotable.test.GeneralPage;
-import com.atlassian.plugin.remotable.test.GeneralPageModule;
 import com.atlassian.plugin.remotable.test.OAuthUtils;
 import com.atlassian.plugin.remotable.test.PluginManagerPage;
-import com.atlassian.plugin.remotable.test.RemotePluginAwarePage;
 import com.atlassian.plugin.remotable.test.RemotePluginDialog;
-import com.atlassian.plugin.remotable.test.RemotePluginRunner;
-import com.atlassian.plugin.remotable.test.RemotePluginTestPage;
+import com.atlassian.plugin.remotable.test.pageobjects.GeneralPage;
+import com.atlassian.plugin.remotable.test.pageobjects.RemotePluginAwarePage;
+import com.atlassian.plugin.remotable.test.pageobjects.RemotePluginTestPage;
+import com.atlassian.plugin.remotable.test.server.AtlassianConnectAddOnRunner;
+import com.atlassian.plugin.remotable.test.server.module.Condition;
+import com.atlassian.plugin.remotable.test.server.module.ConfigurePageModule;
+import com.atlassian.plugin.remotable.test.server.module.GeneralPageModule;
 import org.hamcrest.Matchers;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -23,8 +23,6 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
-import javax.inject.Named;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -33,6 +31,7 @@ import java.io.IOException;
 import java.util.TimeZone;
 
 import static com.atlassian.plugin.remotable.test.Utils.createSignedRequestHandler;
+import static com.atlassian.plugin.remotable.test.server.AtlassianConnectAddOnRunner.newMustacheServlet;
 import static java.lang.String.valueOf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -42,12 +41,12 @@ import static org.junit.Assert.assertTrue;
 
 public class TestPageModules extends AbstractRemotablePluginTest
 {
-    private static RemotePluginRunner remotePlugin;
+    private static AtlassianConnectAddOnRunner remotePlugin;
 
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        remotePlugin = new RemotePluginRunner(product.getProductInstance().getBaseUrl(), "app1")
+        remotePlugin = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl(), "app1")
                 .addOAuth(createSignedRequestHandler("app1"))
                 .addPermission(Permissions.CREATE_OAUTH_LINK)
                 .add(GeneralPageModule.key("remotePluginGeneral")
@@ -56,18 +55,18 @@ public class TestPageModules extends AbstractRemotablePluginTest
                         .linkName("Remotable Plugin app1 General Link")
                         .iconUrl("/public/sandcastles.jpg")
                         .height("600")
-                        .width("700"),
-                        "iframe.mu")
+                        .width("700")
+                        .resource(newMustacheServlet("iframe.mu")))
                 .add(GeneralPageModule.key("amdTest")
                         .name("AMD Test app1 General")
-                        .path("/amdTest"),
-                        "amd-test.mu")
+                        .path("/amdTest")
+                        .resource(newMustacheServlet("amd-test.mu")))
                 .add(GeneralPageModule.key("onlyBetty")
                         .name("Only Betty")
                         .path("/ob")
-                        .conditions(Condition.name("user_is_logged_in"), Condition.path("/onlyBettyCondition").resource(new OnlyBettyConditionServlet())),
-                        "iframe.mu")
-                .addDialogPage("remotePluginDialog", "Remotable Plugin app1 Dialog", "/rpd", "dialog.mu", null)
+                        .conditions(Condition.name("user_is_logged_in"), Condition.at("/onlyBettyCondition").resource(new OnlyBettyConditionServlet()))
+                        .resource(newMustacheServlet("iframe.mu")))
+                .addDialogPage("remotePluginDialog", "Remotable Plugin app1 Dialog", "/rpd", newMustacheServlet("dialog.mu"), null)
                 .start();
     }
 
@@ -167,9 +166,11 @@ public class TestPageModules extends AbstractRemotablePluginTest
     @Test
     public void testConfigurePage() throws Exception
     {
-        RemotePluginRunner runner = new RemotePluginRunner(product.getProductInstance().getBaseUrl(),
-                "configurePage")
-                .addConfigurePage("page", "Page", "/page", "hello-world-page.mu")
+        AtlassianConnectAddOnRunner runner = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl(), "configurePage")
+                .add(ConfigurePageModule.key("page")
+                        .name("Page")
+                        .path("/page")
+                        .resource(newMustacheServlet("hello-world-page.mu")))
                 .start();
 
         // fixme: jira page objects don't redirect properly to next page

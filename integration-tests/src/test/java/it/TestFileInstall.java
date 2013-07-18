@@ -3,6 +3,10 @@ package it;
 import com.atlassian.plugin.remotable.test.*;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
+import com.atlassian.plugin.remotable.test.client.AtlassianConnectRestClient;
+import com.atlassian.plugin.remotable.test.pageobjects.GeneralPage;
+import com.atlassian.plugin.remotable.test.pageobjects.RemotePluginAwarePage;
+import com.atlassian.plugin.remotable.test.pageobjects.RemotePluginTestPage;
 import org.apache.commons.io.FileUtils;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -38,7 +42,7 @@ public class TestFileInstall extends AbstractRemotablePluginTest
                         Collections.<String, Object>singletonMap(
                         "baseurl", baseUrl)));
 
-        RemotePluginInstallerClient client = new RemotePluginInstallerClient(
+        AtlassianConnectRestClient client = new AtlassianConnectRestClient(
                 baseUrl, "admin", "admin");
         client.install(descriptorFile.toURI().toString());
 

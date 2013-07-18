@@ -1,7 +1,7 @@
 package it.jira;
 
 import com.atlassian.jira.pageobjects.JiraTestedProduct;
-import com.atlassian.plugin.remotable.test.jira.JiraOps;
+import com.atlassian.plugin.remotable.test.pageobjects.jira.JiraOps;
 import com.atlassian.plugin.remotable.test.webhook.WebHookBody;
 import com.atlassian.plugin.remotable.test.webhook.WebHookTester;
 import com.atlassian.plugin.remotable.test.webhook.WebHookWaiter;
@@ -14,8 +14,8 @@ import org.hamcrest.Matchers;
 import org.junit.Test;
 
 import static com.atlassian.plugin.remotable.test.webhook.WebHookTestServlet.runInRunner;
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
 /**
