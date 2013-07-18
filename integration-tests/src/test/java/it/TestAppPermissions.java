@@ -2,6 +2,8 @@ package it;
 
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
+import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.remotable.api.service.SignedRequestHandler;
 import com.atlassian.plugin.remotable.spi.Permissions;
 import com.atlassian.plugin.remotable.test.GeneralPage;
@@ -11,33 +13,32 @@ import com.atlassian.plugin.remotable.test.RemotePluginAwarePage;
 import com.atlassian.plugin.remotable.test.RemotePluginRunner;
 import com.atlassian.plugin.remotable.test.RemotePluginTestPage;
 import com.atlassian.plugin.remotable.test.RunnerSignedRequestHandler;
-import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.google.common.collect.ImmutableMap;
 import org.junit.Test;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.security.NoSuchAlgorithmException;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import static com.atlassian.plugin.remotable.test.Utils.createSignedRequestHandler;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class TestAppPermissions extends AbstractRemotablePluginTest
 {
+
+    private static final String LICENSE_RESPONSE_STATUS_CODE_ID = "licenseResponseStatusCode";
 
     @Test
     public void testNoPermissions() throws Exception
@@ -60,32 +61,70 @@ public class TestAppPermissions extends AbstractRemotablePluginTest
 
 
     @Test
-    public void testPermissionsToRetrievePluginLicense()
+    public void testPluginDoesntHavePermissionToRetrievePluginLicense() throws Exception
+    {
+        RemotePluginRunner runner = createLicenseRetrievingPlugin().start();
+
+        assertThat(visitLicenseResponsePage().waitForValue(LICENSE_RESPONSE_STATUS_CODE_ID), is("403"));
+
+        runner.stop();
+    }
+
+    @Test
+    public void testPluginHasPermissionsToRetrievePluginLicense() throws Exception
+    {
+        RemotePluginRunner runner = createLicenseRetrievingPlugin(Permissions.READ_LICENSE).start();
+
+        assertThat(visitLicenseResponsePage().waitForValue(LICENSE_RESPONSE_STATUS_CODE_ID), not("403"));
+
+        runner.stop();
+    }
+
+    private RemotePluginTestPage visitLicenseResponsePage()
     {
         product.visit(LoginPage.class).login("betty", "betty", HomePage.class);
         RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "pluginLicensePage", "Plugin License Page");
-
-        assertTrue(page.isRemotePluginLinkPresent());
-        RemotePluginTestPage remotePluginTest = page.clickRemotePluginLink();
-
-        assertThat(remotePluginTest.waitForValue("pluginLicenseResponseStatusCode"), not("403"));
+        return page.clickRemotePluginLink();
     }
 
-    private static class CallServlet extends HttpServlet
+    private RemotePluginRunner createLicenseRetrievingPlugin(String... permissions) throws IOException, NoSuchAlgorithmException
     {
-        private final String baseUrl;
-        private final HttpUtils httpUtils;
-        private final RunnerSignedRequestHandler signedRequestHandler;
+        RunnerSignedRequestHandler signedRequestHandler = createSignedRequestHandler("license-permissions");
+        RemotePluginRunner pluginRunner = new RemotePluginRunner(product.getProductInstance().getBaseUrl(), "license-permissions")
+                .addGeneralPage("pluginLicensePage", "Plugin License Page", "/pluginLicense",
+                        new RetrieveLicenseServlet(product.getProductInstance().getBaseUrl(), signedRequestHandler))
+                .description("plugin license retrieve")
+                .addOAuth(signedRequestHandler)
+                .addPermission(Permissions.CREATE_OAUTH_LINK);
+        for (String permission : permissions)
+        {
+            pluginRunner.addPermission(permission);
+        }
+        return pluginRunner;
+    }
 
+    private static class RetrieveLicenseServlet extends AbstractHttpServlet
+    {
+        public RetrieveLicenseServlet(String baseUrl, RunnerSignedRequestHandler signedRequestHandler)
+        {
+            super(baseUrl, signedRequestHandler, "plugin-license.mu");
+        }
+
+        @Override
+        protected void doGet(final HttpServletRequest req, final HttpServletResponse resp)
+                throws ServletException, IOException
+        {
+            int statusCode = sendFailedSignedGet(signedRequestHandler, baseUrl + "/rest/remotable-plugins/latest/license/", "betty");
+            HttpUtils.renderHtml(resp, templateName,
+                    ImmutableMap.<String, Object>of("baseUrl", baseUrl, LICENSE_RESPONSE_STATUS_CODE_ID, String.valueOf(statusCode)));
+        }
+    }
+
+    private static class CallServlet extends AbstractHttpServlet
+    {
         public CallServlet(String baseUrl, RunnerSignedRequestHandler signedRequestHandler)
         {
-            this.signedRequestHandler = signedRequestHandler;
-            this.baseUrl = baseUrl;
-            Plugin plugin = mock(Plugin.class);
-            when(plugin.getResourceAsStream("message-page.mu")).thenReturn(getClass().getResourceAsStream("/message-page.mu"));
-            PluginRetrievalService pluginRetrievalService = mock(PluginRetrievalService.class);
-            when(pluginRetrievalService.getPlugin()).thenReturn(plugin);
-            this.httpUtils = new HttpUtils();
+            super(baseUrl, signedRequestHandler, "message-page.mu");
         }
 
         @Override
@@ -94,8 +133,26 @@ public class TestAppPermissions extends AbstractRemotablePluginTest
                 IOException
         {
             int statusCode = sendFailedSignedGet(signedRequestHandler, baseUrl + "/rest/remoteplugintest/latest/user", "betty");
-            httpUtils.renderHtml(resp, "message-page.mu",
+            HttpUtils.renderHtml(resp, templateName,
                     ImmutableMap.<String, Object>of("baseurl", baseUrl, "message", String.valueOf(statusCode)));
+        }
+    }
+
+    private static abstract class AbstractHttpServlet extends HttpServlet
+    {
+        protected final String baseUrl;
+        protected final RunnerSignedRequestHandler signedRequestHandler;
+        protected final String templateName;
+
+        protected AbstractHttpServlet(String baseUrl, RunnerSignedRequestHandler signedRequestHandler, String templateName)
+        {
+            this.baseUrl = baseUrl;
+            this.signedRequestHandler = signedRequestHandler;
+            this.templateName = templateName;
+            Plugin plugin = mock(Plugin.class);
+            when(plugin.getResourceAsStream(templateName)).thenReturn(getClass().getResourceAsStream("/" + templateName));
+            PluginRetrievalService pluginRetrievalService = mock(PluginRetrievalService.class);
+            when(pluginRetrievalService.getPlugin()).thenReturn(plugin);
         }
     }
 
@@ -107,9 +164,6 @@ public class TestAppPermissions extends AbstractRemotablePluginTest
             URL url = new URL(uri + "?user_id=" + user);
             yc = (HttpURLConnection) url.openConnection();
             signedRequestHandler.sign(URI.create(uri), "GET", user, yc);
-            BufferedReader in = new BufferedReader(
-                                    new InputStreamReader(
-                                    yc.getInputStream()));
             return yc.getResponseCode();
         }
         catch (MalformedURLException e)

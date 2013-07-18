@@ -47,6 +47,4 @@
         </conditions>
     </general-page>
 
-    <general-page key="pluginLicensePage" name="Plugin License Page" url="/pluginLicense" />
-
 </atlassian-plugin>

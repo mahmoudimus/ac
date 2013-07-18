@@ -1,3 +1,4 @@
+<!-- This general-page is used to verify the status code from LicenseResource. -->
 <!DOCTYPE html>
 <html>
   <head>
@@ -8,7 +9,7 @@
   </head>
   <body>
     <div>
-      Plugin license response status code: <span id="pluginLicenseResponseStatusCode">{{licenseResponseStatusCode}}</span></div>
+      Plugin license response status code: <span id="licenseResponseStatusCode">{{licenseResponseStatusCode}}</span></div>
     </div>
   </body>
 </html>
