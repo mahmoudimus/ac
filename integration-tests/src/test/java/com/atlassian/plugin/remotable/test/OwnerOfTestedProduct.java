@@ -22,7 +22,7 @@ public class OwnerOfTestedProduct
 
     static
     {
-        INSTANCE = TestedProductFactory.create(System.getProperty("testedProductClass", JiraTestedProduct.class.getName()));
+        INSTANCE = TestedProductFactory.create(System.getProperty("testedProductClass", RefappTestedProduct.class.getName()));
         if (INSTANCE instanceof JiraTestedProduct)
         {
             INSTANCE.getPageBinder().override(AdminHomePage.class, JiraAdminSummaryPage.class);

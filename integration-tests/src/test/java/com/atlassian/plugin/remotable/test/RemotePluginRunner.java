@@ -245,6 +245,25 @@ public class RemotePluginRunner
         return this;
     }
 
+    public RemotePluginRunner add(RemoteMacroModule remoteMacroModule)
+    {
+        remoteMacroModule.update(doc.getRootElement());
+        addResource(remoteMacroModule);
+        if (remoteMacroModule.editor().isDefined())
+        {
+            addResource(remoteMacroModule.editor().get());
+        }
+        return this;
+    }
+
+    public RemotePluginRunner add(MacroPageModule macroPageModule, String resource)
+    {
+        macroPageModule.resource(new MustacheServlet(resource));
+        macroPageModule.update(doc.getRootElement());
+        addResource(macroPageModule);
+        return this;
+    }
+
     public RemotePluginRunner addWebhook(String hookId, String path, String eventId, HttpServlet servlet)
     {
         doc.getRootElement().addElement("webhook")
@@ -273,8 +292,7 @@ public class RemotePluginRunner
         {
             permissions = doc.getRootElement().element("plugin-info").addElement("permissions");
         }
-        permissions.addElement("permission")
-                .addText(apiScopeKey);
+        permissions.addElement("permission").addText(apiScopeKey);
         return this;
     }
 

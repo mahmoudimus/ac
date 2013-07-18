@@ -30,6 +30,4 @@ public class ConfluencePageMacroPage extends RemotePluginEmbeddedTestPage implem
     {
         return "/display/ds/" + title;
     }
-
-    
 }

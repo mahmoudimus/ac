@@ -4,12 +4,19 @@ import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
 import com.atlassian.plugin.remotable.junit.HtmlDumpRule;
+import com.atlassian.plugin.remotable.spi.Permissions;
+import com.atlassian.plugin.remotable.test.ContextParameter;
+import com.atlassian.plugin.remotable.test.GeneralPageModule;
+import com.atlassian.plugin.remotable.test.MacroCategory;
+import com.atlassian.plugin.remotable.test.MacroParameter;
 import com.atlassian.plugin.remotable.test.OwnerOfTestedProduct;
+import com.atlassian.plugin.remotable.test.RemoteMacroModule;
 import com.atlassian.plugin.remotable.test.RemotePluginRunner;
 import com.atlassian.plugin.remotable.test.confluence.ConfluenceMacroPage;
 import com.atlassian.plugin.remotable.test.confluence.ConfluenceMacroTestSuitePage;
 import com.atlassian.plugin.remotable.test.confluence.ConfluenceOps;
 import com.atlassian.plugin.remotable.test.confluence.FixedConfluenceTestedProduct;
+import com.atlassian.plugin.remotable.test.webhook.MacroEditor;
 import com.atlassian.webdriver.pageobjects.WebDriverTester;
 import org.junit.After;
 import org.junit.Rule;
@@ -22,9 +29,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.security.NoSuchAlgorithmException;
 import java.util.Enumeration;
 import java.util.Map;
 
+import static com.atlassian.plugin.remotable.test.Utils.createSignedRequestHandler;
 import static com.atlassian.plugin.remotable.test.Utils.loadResourceAsString;
 import static com.google.common.collect.Maps.newHashMap;
 import static java.util.Arrays.asList;
@@ -53,20 +62,50 @@ public class TestConfluenceMacroParams
     }
 
     @Test
-	public void testContextParam() throws XmlRpcFault, IOException
+	public void testContextParam() throws Exception
     {
-        Map pageData = confluenceOps.setPage("ds", "test", loadResourceAsString(
-                "confluence/test-page.xhtml"));
+        RemotePluginRunner remotePlugin = new RemotePluginRunner(product.getProductInstance().getBaseUrl(), "app1")
+                .addOAuth(createSignedRequestHandler("app1"))
+                .addPermission(Permissions.CREATE_OAUTH_LINK)
+                .addPermission("read_content")
+                .addPermission("read_users_and_groups")
+                .addPermission("read_server_information")
+                .add(RemoteMacroModule.key("app1-macro")
+                        .name("app1-macro")
+                        .title("Remotable Plugin app1 Macro")
+                        .path("/app1-macro")
+                        .iconUrl("/public/sandcastles.jpg")
+                        .outputType("block")
+                        .bodyType("rich-text")
+                        .featured("true")
+                        .category(MacroCategory.name("development"))
+                        .parameters(MacroParameter.name("footy").title("Favorite Footy").type("enum").required("true").values("American Football", "Soccer", "Rugby Union", "Rugby League"))
+                        .contextParameters(ContextParameter.name("page_id").type("query"))
+                        .editor(MacroEditor.path("/myMacroEditor").height("600").width("600").resource(new TestConfluence.MyMacroEditorServlet()))
+                        .resource(new TestConfluence.MyMacroServlet()))
+                .add(GeneralPageModule.key("remotePluginGeneral")
+                        .name("Remotable Plugin app1 General")
+                        .path("/rpg")
+                        .linkName("Remotable Plugin app1 General Link")
+                        .iconUrl("/public/sandcastles.jpg")
+                        .height("600")
+                        .width("700"),
+                        "iframe.mu")
+                .start();
+
+        Map pageData = confluenceOps.setPage("ds", "test", loadResourceAsString("confluence/test-page.xhtml"));
         product.visit(LoginPage.class).login("betty", "betty", HomePage.class);
         Map<String,String> params = product.visit(ConfluenceMacroTestSuitePage.class, pageData.get("title"))
                                           .visitGeneralLink()
                                           .getIframeQueryParams();
 
         assertEquals(pageData.get("id"), params.get("page_id"));
+
+        remotePlugin.stop();
 	}
 
     @Test
-    public void testMacroWithHeaderParams() throws Exception, IOException
+    public void testMacroWithHeaderParams() throws Exception
     {
         Map pageData = confluenceOps.setPage("ds", "test",
                 "<div class=\"header-macro\">\n" +

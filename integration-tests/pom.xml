@@ -219,68 +219,15 @@
                                     <version>${webhooks.version}</version>
                                 </pluginArtifact>
                                 <pluginArtifact>
-                                    <groupId>${project.groupId}</groupId>
-                                    <artifactId>remotable-plugins-test-plugin</artifactId>
-                                    <version>${project.version}</version>
-                                </pluginArtifact>
-                                <!--<pluginArtifact>-->
-                                    <!--<groupId>com.atlassian.labs</groupId>-->
-                                    <!--<artifactId>confluence-xmlrpc-java-client-plugin</artifactId>-->
-                                    <!--<version>${confluence.client.version}</version>-->
-                                <!--</pluginArtifact>-->
-                                <!--<pluginArtifact>-->
-                                    <!--<groupId>com.atlassian.jira</groupId>-->
-                                    <!--<artifactId>jira-rest-java-client-plugin</artifactId>-->
-                                    <!--<version>${jira.client.version}</version>-->
-                                <!--</pluginArtifact>-->
-                                <pluginArtifact>
                                     <groupId>com.atlassian.functest</groupId>
                                     <artifactId>functest-plugin</artifactId>
                                     <version>${functest.version}</version>
                                 </pluginArtifact>
-                                <!--<pluginArtifact>-->
-                                    <!--<groupId>com.atlassian.labs</groupId>-->
-                                    <!--<artifactId>speakeasy-plugin</artifactId>-->
-                                    <!--<version>${speakeasy.version}</version>-->
-                                <!--</pluginArtifact>-->
-                                
-                                
-                                
-                                <!--<pluginArtifact>-->
-                                    <!--<groupId>org.sonatype.sisu</groupId>-->
-                                    <!--<artifactId>sisu-guice</artifactId>-->
-                                    <!--<version>${sisu.guice.version}</version>-->
-                                <!--</pluginArtifact>-->
-                                <!--<pluginArtifact>-->
-                                    <!--<groupId>org.apache.servicemix.bundles</groupId>-->
-                                    <!--<artifactId>org.apache.servicemix.bundles.javax-inject</artifactId>-->
-                                    <!--<version>1_1</version>-->
-                                <!--</pluginArtifact>-->
-                                <!--<pluginArtifact>-->
-                                    <!--<groupId>org.codehaus.jettison</groupId>-->
-                                    <!--<artifactId>jettison</artifactId>-->
-                                    <!--<version>1.1</version>-->
-                                <!--</pluginArtifact>-->
-                                <!--<pluginArtifact>-->
-                                    <!--<groupId>joda-time</groupId>-->
-                                    <!--<artifactId>joda-time</artifactId>-->
-                                    <!--<version>1.6</version>-->
-                                <!--</pluginArtifact>-->
-                                <!--<pluginArtifact>-->
-                                    <!--<groupId>com.googlecode.json-simple</groupId>-->
-                                    <!--<artifactId>json-simple</artifactId>-->
-                                    <!--<version>1.1.1</version>-->
-                                <!--</pluginArtifact>-->
                                 <pluginArtifact>
                                     <groupId>${project.groupId}</groupId>
                                     <artifactId>remotable-plugins-plugin</artifactId>
                                     <version>${project.version}</version>
                                 </pluginArtifact>
-                                <!--<pluginArtifact>-->
-                                    <!--<groupId>${project.groupId}</groupId>-->
-                                    <!--<artifactId>remotable-plugins-sisu-extender</artifactId>-->
-                                    <!--<version>${project.version}</version>-->
-                                <!--</pluginArtifact>-->
                             </pluginArtifacts>
                             <libArtifacts>
                                 <!-- necessary for Speakeasy mail handling -->
@@ -415,11 +362,6 @@
                                     <groupId>com.atlassian.webhooks</groupId>
                                     <artifactId>atlassian-webhooks-plugin</artifactId>
                                     <version>${webhooks.version}</version>
-                                </pluginArtifact>
-                                <pluginArtifact>
-                                    <groupId>${project.groupId}</groupId>
-                                    <artifactId>remotable-plugins-test-plugin</artifactId>
-                                    <version>${project.version}</version>
                                 </pluginArtifact>
                                 <pluginArtifact>
                                     <groupId>${project.groupId}</groupId>

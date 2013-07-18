@@ -14,7 +14,7 @@ import static com.atlassian.fugue.Option.option;
 import static com.atlassian.fugue.Option.some;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class GeneralPageModule implements Module
+public class GeneralPageModule extends AbstractModule
 {
     private final String key;
     private Option<String> path = none();
@@ -70,11 +70,6 @@ public class GeneralPageModule implements Module
         {
             return none();
         }
-    }
-
-    private Element addAttribute(Element el, String name, Option<String> value)
-    {
-        return value.map(new AddAttribute(el, name)).getOrElse(el);
     }
 
     public GeneralPageModule name(String name)
@@ -133,24 +128,5 @@ public class GeneralPageModule implements Module
     public Iterable<Condition> conditions()
     {
         return conditions;
-    }
-
-    private static final class AddAttribute implements Function<String, Element>
-    {
-        private final Element el;
-        private final String name;
-
-        public AddAttribute(Element el, String name)
-        {
-            this.el = checkNotNull(el);
-            this.name = checkNotNull(name);
-        }
-
-        @Override
-        public Element apply(String path)
-        {
-
-            return el.addAttribute(name, path);
-        }
     }
 }
