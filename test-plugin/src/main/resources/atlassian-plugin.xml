@@ -5,6 +5,7 @@
             <permission>resttest</permission>
             <permission>read_app_links</permission>
             <permission>send_email</permission>
+            <permission>read_license</permission>
             <permission installation-mode="remote">create_oauth_link</permission>
             <permission installation-mode="local">execute_java</permission>
         </permissions>

@@ -357,6 +357,11 @@
         <description>Allows a Remotable Plugin to modify the details of its own configured Application Link.</description>
     </plugin-permission>
 
+    <plugin-permission key="read_license" name="Read License"
+                       class="com.atlassian.plugin.remotable.plugin.product.ReadLicenseScope">
+        <description>Allows a Remotable Plugin to retrieve the information about its license.</description>
+    </plugin-permission>
+
     <plugin-permission key="define_plugin_permission" name="Define Plugin Permission">
         <description>Ability to define new plugin permissions.</description>
     </plugin-permission>
