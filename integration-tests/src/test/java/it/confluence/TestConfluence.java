@@ -244,7 +244,7 @@ public class TestConfluence
                         "</div>");
 
         AtlassianConnectAddOnRunner runner = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl(), "trickle")
-                .addMacro("trickle", "/trickle", new MyTrickleMacroServlet())
+                .add(RemoteMacroModule.key("trickle").path("/trickle").resource(new MyTrickleMacroServlet()))
                 .start();
 
         ConfluenceMacroPage page = product.visit(ConfluenceMacroPage.class, pageData.get("title"));

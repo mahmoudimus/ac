@@ -24,7 +24,6 @@ import static org.junit.Assert.assertThat;
  */
 public class TestJiraWebHooks extends AbstractBrowserlessTest
 {
-
     private final JiraOps jiraOps;
 
     public TestJiraWebHooks()

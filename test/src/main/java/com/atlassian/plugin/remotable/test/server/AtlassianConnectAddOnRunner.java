@@ -26,8 +26,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.security.NoSuchAlgorithmException;
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -64,65 +62,6 @@ public final class AtlassianConnectAddOnRunner
         installer = new AtlassianConnectRestClient(baseUrl, "admin", "admin");
     }
 
-    public AtlassianConnectAddOnRunner addIssueTabPage(String key, String name, String path, HttpServlet resource)
-    {
-        doc.getRootElement().addElement("issue-tab-page")
-                .addAttribute("url", path)
-                .addAttribute("key", key)
-                .addAttribute("name", name);
-        routes.put(path, resource);
-        return this;
-    }
-
-    public AtlassianConnectAddOnRunner addProjectTabPage(String key, String name, String path, HttpServlet resource)
-    {
-        doc.getRootElement().addElement("project-tab-page")
-                .addAttribute("url", path)
-                .addAttribute("key", key)
-                .addAttribute("name", name);
-        routes.put(path, resource);
-        return this;
-    }
-
-    public AtlassianConnectAddOnRunner addProjectConfigPanel(String key, String name, String path, HttpServlet resource)
-    {
-        doc.getRootElement().addElement("project-config-panel")
-                .addAttribute("url", path)
-                .addAttribute("key", key)
-                .addAttribute("name", name)
-                .addAttribute("location", "right");
-        routes.put(path, resource);
-        return this;
-    }
-
-    public AtlassianConnectAddOnRunner addProjectConfigTab(String key, String name, String path, HttpServlet resource)
-    {
-        doc.getRootElement().addElement("project-config-tab")
-                .addAttribute("url", path)
-                .addAttribute("key", key)
-                .addAttribute("name", name)
-                .addAttribute("weight", "10")
-                .addAttribute("location", "projectgroup3");
-        routes.put(path, resource);
-        return this;
-    }
-
-    public AtlassianConnectAddOnRunner addDialogPage(String key, String name, String path, HttpServlet resource, String section)
-    {
-        Element dialogPage = doc.getRootElement().addElement("dialog-page");
-        dialogPage
-                .addAttribute("url", path)
-                .addAttribute("name", name)
-                .addAttribute("key", key);
-
-        if (section != null)
-        {
-            dialogPage.addAttribute("section", section);
-        }
-        routes.put(path, resource);
-        return this;
-    }
-
     public AtlassianConnectAddOnRunner add(Module module)
     {
         module.update(doc.getRootElement());
@@ -145,50 +84,6 @@ public final class AtlassianConnectAddOnRunner
                 .addElement("public-key")
                 .addText(signedRequestHandler.getLocal().getProperty(RSA_SHA1.PUBLIC_KEY).toString());
 
-        return this;
-    }
-
-    public AtlassianConnectAddOnRunner addMacro(String macroKey, String path, HttpServlet servlet)
-    {
-        return addMacro(macroKey, path, servlet, Collections.<List<String>>emptyList());
-    }
-
-    public AtlassianConnectAddOnRunner addMacro(String macroKey, String path, HttpServlet servlet, List<List<String>> contextParameters)
-    {
-        Element macro = doc.getRootElement().addElement("remote-macro")
-                .addAttribute("key", macroKey)
-                .addAttribute("url", path);
-        if (!contextParameters.isEmpty())
-        {
-            Element params = macro.addElement("context-parameters");
-            for (List<String> param : contextParameters)
-            {
-                params.addElement("context-parameter")
-                        .addAttribute("name", param.get(0))
-                        .addAttribute("type", param.get(1));
-            }
-        }
-        routes.put(path, servlet);
-        return this;
-    }
-
-    public AtlassianConnectAddOnRunner addWebhook(String hookId, String path, String eventId, HttpServlet servlet)
-    {
-        doc.getRootElement().addElement("webhook")
-                .addAttribute("key", hookId + path.hashCode())
-                .addAttribute("event", eventId)
-                .addAttribute("url", path);
-        routes.put(path, servlet);
-        return this;
-    }
-
-    public AtlassianConnectAddOnRunner addSearchRequestView(String key, String name, String path, HttpServlet resource)
-    {
-        doc.getRootElement().addElement("remote-search-request-view")
-                .addAttribute("url", path)
-                .addAttribute("name", name)
-                .addAttribute("key", key);
-        routes.put(path, resource);
         return this;
     }
 

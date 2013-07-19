@@ -14,6 +14,7 @@ import com.atlassian.plugin.remotable.test.pageobjects.RemotePluginTestPage;
 import com.atlassian.plugin.remotable.test.server.AtlassianConnectAddOnRunner;
 import com.atlassian.plugin.remotable.test.server.module.Condition;
 import com.atlassian.plugin.remotable.test.server.module.ConfigurePageModule;
+import com.atlassian.plugin.remotable.test.server.module.DialogPageModule;
 import com.atlassian.plugin.remotable.test.server.module.GeneralPageModule;
 import org.hamcrest.Matchers;
 import org.junit.AfterClass;
@@ -66,7 +67,10 @@ public class TestPageModules extends AbstractRemotablePluginTest
                         .path("/ob")
                         .conditions(Condition.name("user_is_logged_in"), Condition.at("/onlyBettyCondition").resource(new OnlyBettyConditionServlet()))
                         .resource(newMustacheServlet("iframe.mu")))
-                .addDialogPage("remotePluginDialog", "Remotable Plugin app1 Dialog", "/rpd", newMustacheServlet("dialog.mu"), null)
+                .add(DialogPageModule.key("remotePluginDialog")
+                        .name("Remotable Plugin app1 Dialog")
+                        .path("/rpd")
+                        .resource(newMustacheServlet("dialog.mu")))
                 .start();
     }
 

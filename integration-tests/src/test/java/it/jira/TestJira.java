@@ -10,6 +10,8 @@ import com.atlassian.jira.plugin.issuenav.pageobjects.IssueDetailPage;
 import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.pageobjects.TestedProductFactory;
 import com.atlassian.pageobjects.page.LoginPage;
+import com.atlassian.plugin.remotable.spi.Permissions;
+import com.atlassian.plugin.remotable.test.RemotePluginDialog;
 import com.atlassian.plugin.remotable.test.junit.HtmlDumpRule;
 import com.atlassian.plugin.remotable.test.pageobjects.RemotePluginEmbeddedTestPage;
 import com.atlassian.plugin.remotable.test.pageobjects.RemotePluginTestPage;
@@ -24,9 +26,12 @@ import com.atlassian.plugin.remotable.test.pageobjects.jira.PlainTextView;
 import com.atlassian.plugin.remotable.test.pageobjects.jira.ViewChangingSearchResult;
 import com.atlassian.plugin.remotable.test.server.AtlassianConnectAddOnRunner;
 import com.atlassian.plugin.remotable.test.server.module.AdminPageModule;
+import com.atlassian.plugin.remotable.test.server.module.DialogPageModule;
 import com.atlassian.plugin.remotable.test.server.module.IssuePanelPageModule;
-import com.atlassian.plugin.remotable.spi.Permissions;
-import com.atlassian.plugin.remotable.test.RemotePluginDialog;
+import com.atlassian.plugin.remotable.test.server.module.IssueTabPageModule;
+import com.atlassian.plugin.remotable.test.server.module.ProjectConfigPanelModule;
+import com.atlassian.plugin.remotable.test.server.module.ProjectConfigTabModule;
+import com.atlassian.plugin.remotable.test.server.module.ProjectTabPageModule;
 import com.atlassian.webdriver.pageobjects.WebDriverTester;
 import hudson.plugins.jira.soap.RemoteIssue;
 import hudson.plugins.jira.soap.RemoteProject;
@@ -91,11 +96,30 @@ public class TestJira
                         .name("AC Play Issue Page Panel")
                         .path("/ipp")
                         .resource(newMustacheServlet("iframe.mu")))
-                .addIssueTabPage("jira-remotePluginIssueTabPage", "AC Play Issue Tab Page", "/itp", newMustacheServlet("iframe.mu"))
-                .addProjectTabPage("jira-remotePluginProjectTab", "AC Play Project Tab", "/ptp", newMustacheServlet("iframe.mu"))
-                .addProjectConfigPanel("jira-remoteProjectConfigPanel", "AC Play Project Config Panel", "/pcp", newMustacheServlet("iframe.mu"))
-                .addProjectConfigTab("jira-remotePluginProjectConfigTab", "Remotable Project Config", "/pct", newMustacheServlet("iframe.mu"))
-                .addDialogPage("jira-issueAction", "Test Issue Action", "/jia", newMustacheServlet("dialog.mu"), "operations-subtasks")
+                .add(IssueTabPageModule.key("jira-remotePluginIssueTabPage")
+                        .name("AC Play Issue Tab Page")
+                        .path("/itp")
+                        .resource(newMustacheServlet("iframe.mu")))
+                .add(ProjectTabPageModule.key("jira-remotePluginProjectTab")
+                        .name("AC Play Project Tab")
+                        .path("/ptp")
+                        .resource(newMustacheServlet("iframe.mu")))
+                .add(ProjectConfigPanelModule.key("jira-remoteProjectConfigPanel")
+                        .name("AC Play Project Config Panel")
+                        .path("/pcp")
+                        .location("right")
+                        .resource(newMustacheServlet("iframe.mu")))
+                .add(ProjectConfigTabModule.key("jira-remotePluginProjectConfigTab")
+                        .name("Remotable Project Config")
+                        .path("/pct")
+                        .weight("10")
+                        .location("projectgroup3")
+                        .resource(newMustacheServlet("iframe.mu")))
+                .add(DialogPageModule.key("jira-issueAction")
+                        .name("Test Issue Action")
+                        .path("/jia")
+                        .section("operations-subtasks")
+                        .resource(newMustacheServlet("dialog.mu")))
                 .start();
     }
 

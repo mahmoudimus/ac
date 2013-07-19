@@ -2,6 +2,7 @@ package it;
 
 import com.atlassian.plugin.remotable.plugin.webhooks.PluginsWebHookProvider;
 import com.atlassian.plugin.remotable.test.server.AtlassianConnectAddOnRunner;
+import com.atlassian.plugin.remotable.test.server.module.WebhookModule;
 import com.atlassian.plugin.remotable.test.webhook.WebHookBody;
 import com.atlassian.plugin.remotable.test.webhook.WebHookTestServlet;
 import com.atlassian.plugin.remotable.test.webhook.WebHookTester;
@@ -57,8 +58,14 @@ public final class TestWebHooks extends AbstractBrowserlessTest
 
     private void testRemotePluginWebHookFiredOnlyForOwnPlugin(String webHookId) throws Exception
     {
+        final String path = "/webhook";
         final WebHookTestServlet servlet = new WebHookTestServlet();
-        final AtlassianConnectAddOnRunner plugin1 = new AtlassianConnectAddOnRunner(baseUrl, webHookId).addWebhook(webHookId, "/webhook", webHookId, servlet);
+
+        final AtlassianConnectAddOnRunner plugin1 = new AtlassianConnectAddOnRunner(baseUrl, webHookId)
+                .add(WebhookModule.key(webHookId + path.hashCode())
+                        .path(path)
+                        .event(webHookId)
+                        .resource(servlet));
         final AtlassianConnectAddOnRunner plugin2 = new AtlassianConnectAddOnRunner(baseUrl, "plugin2");
         try
         {

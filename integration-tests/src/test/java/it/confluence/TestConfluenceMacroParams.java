@@ -35,7 +35,6 @@ import static com.atlassian.plugin.remotable.test.Utils.createSignedRequestHandl
 import static com.atlassian.plugin.remotable.test.Utils.loadResourceAsString;
 import static com.atlassian.plugin.remotable.test.server.AtlassianConnectAddOnRunner.newMustacheServlet;
 import static com.google.common.collect.Maps.newHashMap;
-import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
@@ -114,10 +113,12 @@ public class TestConfluenceMacroParams
 
         MyParamsMacroServlet macroServlet = new MyParamsMacroServlet();
         AtlassianConnectAddOnRunner runner = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl(), "header")
-                .addMacro("header", "/header", macroServlet, asList(
-                        asList("page_id", "query"),
-                        asList("user_id", "header")
-                ))
+                .add(RemoteMacroModule.key("header")
+                        .path("/header")
+                        .contextParameters(
+                                ContextParameter.name("page_id").type("query"),
+                                ContextParameter.name("user_id").type("header"))
+                        .resource(macroServlet))
                 .start();
         product.visit(LoginPage.class).login("betty", "betty", HomePage.class);
         product.visit(ConfluenceMacroPage.class, pageData.get("title"));
