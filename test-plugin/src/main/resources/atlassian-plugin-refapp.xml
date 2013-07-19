@@ -1,7 +1,0 @@
-<application key="refapp">
-    <permissions>
-    </permissions>
-
-    <webhook key="wh-plugin_enabled" event="plugin_enabled" url="/webHook/plugin_enabled" />
-    <webhook key="wh-server_upgraded" event="server_upgraded" url="/webHook/server_upgraded" />
-</application>
