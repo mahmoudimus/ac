@@ -3,8 +3,8 @@ package com.atlassian.plugin.remotable.plugin.module.jira.projecttab;
 import com.atlassian.jira.plugin.projectpanel.ProjectTabPanel;
 import com.atlassian.jira.plugin.projectpanel.ProjectTabPanelModuleDescriptor;
 import com.atlassian.jira.project.browse.BrowseContext;
-import com.atlassian.plugin.remotable.spi.PermissionDeniedException;
 import com.atlassian.plugin.remotable.plugin.module.IFrameRendererImpl;
+import com.atlassian.plugin.remotable.spi.PermissionDeniedException;
 import com.atlassian.plugin.remotable.spi.module.IFrameContext;
 import com.atlassian.plugin.web.Condition;
 import org.slf4j.Logger;
@@ -14,8 +14,8 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Map;
 
+import static com.atlassian.plugin.remotable.plugin.module.jira.JiraTabConditionContext.createConditionContext;
 import static com.google.common.collect.Maps.newHashMap;
-import static java.util.Collections.singletonMap;
 
 /**
  * A tab that displays an iframe
@@ -71,8 +71,6 @@ public class IFrameProjectTab implements ProjectTabPanel
     @Override
     public boolean showPanel(BrowseContext browseContext)
     {
-        Map<String,Object> context = newHashMap();
-        context.put("helper", singletonMap("project", browseContext.getProject()));
-        return condition == null || condition.shouldDisplay(context);
+        return condition == null || condition.shouldDisplay(createConditionContext(browseContext));
     }
 }

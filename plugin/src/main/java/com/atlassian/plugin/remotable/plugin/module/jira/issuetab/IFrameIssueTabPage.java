@@ -1,9 +1,14 @@
 package com.atlassian.plugin.remotable.plugin.module.jira.issuetab;
 
-import com.atlassian.jira.plugin.issuetabpanel.*;
+import com.atlassian.jira.plugin.issuetabpanel.AbstractIssueTabPanel2;
+import com.atlassian.jira.plugin.issuetabpanel.GetActionsReply;
+import com.atlassian.jira.plugin.issuetabpanel.GetActionsRequest;
+import com.atlassian.jira.plugin.issuetabpanel.IssueAction;
+import com.atlassian.jira.plugin.issuetabpanel.ShowPanelReply;
+import com.atlassian.jira.plugin.issuetabpanel.ShowPanelRequest;
 import com.atlassian.plugin.remotable.plugin.module.ContainingRemoteCondition;
-import com.atlassian.plugin.remotable.spi.PermissionDeniedException;
 import com.atlassian.plugin.remotable.plugin.module.IFrameRendererImpl;
+import com.atlassian.plugin.remotable.spi.PermissionDeniedException;
 import com.atlassian.plugin.remotable.spi.module.IFrameContext;
 import com.atlassian.plugin.web.Condition;
 import org.slf4j.Logger;
@@ -14,34 +19,25 @@ import java.io.StringWriter;
 import java.util.Date;
 import java.util.Map;
 
+import static com.atlassian.plugin.remotable.plugin.module.jira.JiraTabConditionContext.createConditionContext;
 import static com.google.common.collect.Maps.newHashMap;
-import static java.util.Collections.singletonMap;
 
 /**
  * An issue tab that displays an iframe but isn't included in the all tab
  */
-public class IssueTabPage extends AbstractIssueTabPanel2
+public class IFrameIssueTabPage extends AbstractIssueTabPanel2
 {
-    private static final Logger log = LoggerFactory.getLogger(IssueTabPage.class);
+    private static final Logger log = LoggerFactory.getLogger(IFrameIssueTabPage.class);
     private final IFrameRendererImpl iFrameRenderer;
     private final Condition condition;
     private final IFrameContext iFrameContext;
 
-    public IssueTabPage(IFrameContext iFrameContext, IFrameRendererImpl iFrameRenderer,
+    public IFrameIssueTabPage(IFrameContext iFrameContext, IFrameRendererImpl iFrameRenderer,
             Condition condition)
     {
         this.iFrameContext = iFrameContext;
         this.iFrameRenderer = iFrameRenderer;
         this.condition = condition;
-    }
-
-    @Override
-    public ShowPanelReply showPanel(ShowPanelRequest request)
-    {
-        Map<String,Object> context = newHashMap();
-        context.put("helper", singletonMap("project", request.issue().getProjectObject()));
-        context.put("issue", request.issue());
-        return ShowPanelReply.create(condition != null ? condition.shouldDisplay(context) : true);
     }
 
     @Override
@@ -100,5 +96,11 @@ public class IssueTabPage extends AbstractIssueTabPanel2
         {
             return false;
         }
+    }
+
+    @Override
+    public ShowPanelReply showPanel(ShowPanelRequest request)
+    {
+        return ShowPanelReply.create(condition == null || condition.shouldDisplay(createConditionContext(request)));
     }
 }
