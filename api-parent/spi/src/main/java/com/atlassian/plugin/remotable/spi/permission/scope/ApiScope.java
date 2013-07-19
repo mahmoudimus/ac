@@ -2,6 +2,7 @@ package com.atlassian.plugin.remotable.spi.permission.scope;
 
 import com.atlassian.plugin.remotable.spi.permission.Permission;
 
+import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -10,13 +11,13 @@ import javax.servlet.http.HttpServletRequest;
 public interface ApiScope extends Permission
 {
     /**
-     * Whether to allow the request or not in this scope
+     * Whether to allow the request or not in this scope.
      *
-     * @param request The request.  The body can be read repeatedly via getInputStream()
-     * @param user The logged in user name
-     * @return True if allowed
+     * @param request the current request. The body can be read repeatedly via {@link HttpServletRequest#getInputStream()}
+     * @param user the username of the logged in user
+     * @return {@code true} if allowed
      */
-    boolean allow(HttpServletRequest request, String user);
+    boolean allow(HttpServletRequest request, @Nullable String user);
 
     Iterable<ApiResourceInfo> getApiResourceInfos();
 }

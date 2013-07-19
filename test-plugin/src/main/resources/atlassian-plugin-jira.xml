@@ -96,4 +96,7 @@
                       name="Issue Right Web Panel"
                       url="/myContextAwareWebPanel" />
 
+    <admin-page key="admin-page"
+                name="Remotable Admin Page" section="advanced_menu_section/advanced_section" weight="10" url="/myAdmin" />
+
 </application>

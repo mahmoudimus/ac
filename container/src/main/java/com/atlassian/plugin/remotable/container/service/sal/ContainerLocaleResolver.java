@@ -7,6 +7,7 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
 import com.atlassian.sal.api.message.LocaleResolver;
+import com.atlassian.sal.api.user.UserKey;
 
 /**
  * Copied from RefimplLocalResolver
@@ -42,6 +43,12 @@ public class ContainerLocaleResolver implements LocaleResolver
     public Locale getLocale()
     {
     	return Locale.getDefault();
+    }
+
+    @Override
+    public Locale getLocale(UserKey userKey)
+    {
+        return Locale.getDefault();
     }
 
     public Set<Locale> getSupportedLocales()

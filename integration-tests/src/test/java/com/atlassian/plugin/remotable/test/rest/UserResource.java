@@ -6,11 +6,9 @@ import com.atlassian.sal.api.user.UserManager;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-/**
- *
- */
 @Path("/")
 public class UserResource
 {
@@ -22,7 +20,7 @@ public class UserResource
     }
 
     @GET
-    @Produces("text/plain")
+    @Produces(MediaType.TEXT_PLAIN)
     @Path("/user")
     @AnonymousAllowed
     public Response getUser()
@@ -31,7 +29,27 @@ public class UserResource
     }
 
     @GET
-    @Produces("text/plain")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/user")
+    @AnonymousAllowed
+    public Response getUserJson()
+    {
+        String username = userManager.getRemoteUsername();
+        return Response.ok("{\"name\": \"" + username + "\"}", MediaType.APPLICATION_JSON_TYPE).build();
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_XML)
+    @Path("/user")
+    @AnonymousAllowed
+    public Response getUserXml()
+    {
+        String username = userManager.getRemoteUsername();
+        return Response.ok("<user><name>" + username + "</name></user>", MediaType.APPLICATION_XML_TYPE).build();
+    }
+
+    @GET
+    @Produces(MediaType.TEXT_PLAIN)
     @Path("/unscoped")
     public Response getUnScopedResource()
     {
@@ -39,8 +57,8 @@ public class UserResource
     }
 
     @GET
+    @Produces(MediaType.TEXT_PLAIN)
     @Path("/unauthorisedscope")
-    @Produces("text/plain")
     public Response getUnauthorisedScopeResource()
     {
         return buildErrorResponse();

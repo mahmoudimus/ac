@@ -21,7 +21,9 @@
 <div>Status text: <span id="client-http-status-text"></span></div>
 <div>Content-Type: <span id="client-http-content-type"></span></div>
 <div>Response text: <span id="client-http-response-text"></span></div>
-<div>Data: <span id="client-http-data"></span></div>
+<div>Text Data: <span id="client-http-data"></span></div>
+<div>JSON Data: <pre id="client-http-data-json"></pre></div>
+<div>XML Data: <pre id="client-http-data-xml"></pre></div>
 
 <h3>Images (Resize Test)</h3>
 <img src="public/sandcastles.jpg">

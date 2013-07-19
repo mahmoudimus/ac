@@ -26,7 +26,11 @@ public class MyAdminServlet extends AbstractPageServlet
     protected void doGet(HttpServletRequest req, HttpServletResponse res)
             throws ServletException, IOException
     {
-        Response response = httpClient.newRequest("/rest/remoteplugintest/1/user").get().claim();
+        Response response = httpClient
+            .newRequest("/rest/remoteplugintest/1/user")
+            .setHeader("Accept", "text/plain")
+            .get()
+            .claim();
         render(req, res, ImmutableMap.<String, Object>builder()
                 .put("httpGetStatus", response.getStatusCode())
                 .put("httpGetStatusText", response.getStatusText())

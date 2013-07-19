@@ -23,6 +23,9 @@
     $("#client-http-response-text").text(xhr.responseText);
   }
   AP.request("/rest/remoteplugintest/1/user", {
+    headers: {
+      "Accept": "text/plain"
+    },
     success: function (data, statusText, xhr) {
       $("#client-http-data").text(data);
       bindXhr(xhr);
@@ -31,4 +34,35 @@
       bindXhr(xhr);
     }
   });
+  // additional media type requests; using timeouts to work around jq cachebuster ms timestamps
+  setTimeout(function () {
+    RA.request("/rest/remoteplugintest/1/user", {
+      headers: {
+        "Accept": "application/json"
+      },
+      success: function (data, statusText, xhr) {
+        $("#client-http-data-json").text(data);
+        RA.resize();
+      },
+      error: function (xhr, statusText, errorThrown) {
+        console.error(xhr, statusText, errorThrown);
+        RA.resize();
+      }
+    });
+  }, 10);
+  setTimeout(function () {
+    RA.request("/rest/remoteplugintest/1/user", {
+      headers: {
+        "Accept": "application/xml"
+      },
+      success: function (data, statusText, xhr) {
+        $("#client-http-data-xml").text(data);
+        RA.resize();
+      },
+      error: function (xhr, statusText, errorThrown) {
+        console.error(xhr, statusText, errorThrown);
+        RA.resize();
+      }
+    });
+  }, 20);
 }(jQuery, AP));

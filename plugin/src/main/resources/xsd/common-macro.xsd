@@ -49,6 +49,7 @@
             </xs:enumeration>
             <xs:enumeration value="page_title" />
             <xs:enumeration value="user_id" />
+            <xs:enumeration value="user_key" />
         </xs:restriction>
     </xs:simpleType>
 

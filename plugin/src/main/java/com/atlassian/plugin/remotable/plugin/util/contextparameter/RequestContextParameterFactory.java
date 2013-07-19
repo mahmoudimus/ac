@@ -26,10 +26,11 @@ public class RequestContextParameterFactory
      * the passed entity-related context parameters are combined with global context parameters such
      * as user_id
      */
-    public RequestContextParameters create(String userId, Map<String, String> entityContextParameters)
+    public RequestContextParameters create(String userId, String userKey, Map<String, String> entityContextParameters)
     {
         Map<String, String> allContextParameters = newHashMap();
         allContextParameters.put("user_id", userId != null ? userId : "");
+        allContextParameters.put("user_key", userKey != null ? userKey : "");
         allContextParameters.putAll(entityContextParameters);
 
         return new RequestContextParameters(allContextParameters, queryParameters, headerParameters);

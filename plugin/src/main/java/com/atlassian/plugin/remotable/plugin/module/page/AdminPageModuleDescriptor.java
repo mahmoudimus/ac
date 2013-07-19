@@ -11,6 +11,7 @@ import com.atlassian.plugin.remotable.spi.product.ProductAccessor;
 import com.atlassian.util.concurrent.NotNull;
 import org.dom4j.Element;
 
+import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.getOptionalAttribute;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -19,7 +20,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public final class AdminPageModuleDescriptor extends AbstractModuleDescriptor<Void>
 {
     private final DynamicDescriptorRegistration dynamicDescriptorRegistration;
-    private final RemotePageDescriptorCreator.Builder remotePageDescriptorBuilder;
+    private final RemotePageDescriptorCreator remotePageDescriptorCreator;
+    private final ProductAccessor productAccessor;
+    private final UserIsAdminCondition userIsAdminCondition;
     private Element descriptor;
     private DynamicDescriptorRegistration.Registration registration;
 
@@ -31,16 +34,10 @@ public final class AdminPageModuleDescriptor extends AbstractModuleDescriptor<Vo
             UserIsAdminCondition userIsAdminCondition)
     {
         super(moduleFactory);
+        this.productAccessor = productAccessor;
+        this.userIsAdminCondition = userIsAdminCondition;
+        this.remotePageDescriptorCreator = checkNotNull(remotePageDescriptorCreator);
         this.dynamicDescriptorRegistration = checkNotNull(dynamicDescriptorRegistration);
-        this.remotePageDescriptorBuilder = checkNotNull(remotePageDescriptorCreator).newBuilder()
-                .setWebItemContext(new DefaultWebItemContext(
-                        productAccessor.getPreferredAdminSectionKey(),
-                        productAccessor.getPreferredAdminWeight(),
-                        productAccessor.getLinkContextParams()
-                ))
-                .setDecorator("atl.admin")
-                .setCondition(userIsAdminCondition);
-
     }
 
     @Override
@@ -60,6 +57,14 @@ public final class AdminPageModuleDescriptor extends AbstractModuleDescriptor<Vo
     public void enabled()
     {
         super.enabled();
+        final String sectionKey = getOptionalAttribute(descriptor, "section", productAccessor.getPreferredAdminSectionKey());
+        final Integer weight = Integer.valueOf(getOptionalAttribute(descriptor, "weight", productAccessor.getPreferredAdminWeight()));
+
+        final RemotePageDescriptorCreator.Builder remotePageDescriptorBuilder = remotePageDescriptorCreator.newBuilder()
+            .setWebItemContext(new DefaultWebItemContext(sectionKey, weight, productAccessor.getLinkContextParams()))
+            .setDecorator("atl.admin")
+            .setCondition(userIsAdminCondition);
+
         this.registration = dynamicDescriptorRegistration.registerDescriptors(getPlugin(),
                 remotePageDescriptorBuilder.build(getPlugin(), descriptor));
     }
