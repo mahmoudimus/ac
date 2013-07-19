@@ -6,6 +6,7 @@ import com.atlassian.plugin.remotable.test.RemoteWebPanels;
 import com.atlassian.plugin.remotable.test.jira.JiraProjectAdministrationPage;
 import com.atlassian.plugin.remotable.test.jira.JiraViewIssuePage;
 import hudson.plugins.jira.soap.RemoteIssue;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.rmi.RemoteException;
@@ -95,5 +96,17 @@ public class TestWebPanels extends JiraWebDriverTestBase
         assertEquals(ADMIN, panel.getUserId());
     }
 
+    @Ignore ("TODO: For some reason, there's an issue in the addLabelViaInlineEdit method where webdriver can't click on the submit button.")
+    @Test
+    public void testViewIssuePageWithEmbeddedPanelLoggedInWithEdit() throws Exception
+    {
+//        loginAsAdmin();
+//        RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Test issue for panel");
+//        JiraViewIssuePage viewIssuePage = product.visit(JiraViewIssuePage.class, issue.getKey());
+//
+//        Assert.assertEquals("Success", viewIssuePage.getMessage());
+//        viewIssuePage.addLabelViaInlineEdit("foo");
+//        Assert.assertEquals("Success", viewIssuePage.getMessage());
+    }
 }
 

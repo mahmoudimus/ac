@@ -36,6 +36,12 @@ public class JiraWebDriverTestBase
         product.getTester().getDriver().manage().deleteAllCookies();
     }
 
+    @After
+    public void tearDown() throws RemoteException
+    {
+        jiraOps.deleteProject(project.getKey());
+    }
+
     protected void testLoggedInAndAnonymous(Callable runnable) throws Exception
     {
         loginAsAdmin();
