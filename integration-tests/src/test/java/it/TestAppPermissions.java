@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import static com.atlassian.plugin.remotable.test.Utils.createSignedRequestHandler;
+import static it.TestConstants.BETTY;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertEquals;
@@ -132,7 +133,7 @@ public class TestAppPermissions extends AbstractRemotablePluginTest
                 ServletException,
                 IOException
         {
-            int statusCode = sendFailedSignedGet(signedRequestHandler, baseUrl + "/rest/remoteplugintest/latest/user", "betty");
+            int statusCode = sendFailedSignedGet(signedRequestHandler, baseUrl + "/rest/remoteplugintest/latest/user", BETTY);
             HttpUtils.renderHtml(resp, templateName,
                     ImmutableMap.<String, Object>of("baseurl", baseUrl, "message", String.valueOf(statusCode)));
         }

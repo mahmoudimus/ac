@@ -1,27 +1,28 @@
 package com.atlassian.plugin.remotable.test.jira;
 
-import com.atlassian.jira.pageobjects.pages.viewissue.ViewIssuePage;
-import com.atlassian.plugin.remotable.test.RemotePluginEmbeddedTestPage;
 import com.atlassian.pageobjects.Page;
-import com.atlassian.pageobjects.PageBinder;
+import com.atlassian.pageobjects.elements.ElementBy;
+import com.atlassian.plugin.remotable.test.RemoteWebPanels;
+import com.atlassian.webdriver.AtlassianWebDriver;
 import org.openqa.selenium.By;
+
+import javax.inject.Inject;
 
 /**
  * A ViewIssue page that is expected to have a panel provided by a remote plugin.
  */
-public class JiraViewIssuePage extends RemotePluginEmbeddedTestPage implements Page
+public class JiraViewIssuePage implements Page
 {
-
     private String issueKey;
 
-    public static JiraViewIssuePage fromViewIssuePage(PageBinder pageBinder, ViewIssuePage viewIssuePage, String embeddedPageKey)
-    {
-        return pageBinder.bind(JiraViewIssuePage.class, viewIssuePage, embeddedPageKey);
-    }
+    @Inject
+    private AtlassianWebDriver driver;
 
-    public JiraViewIssuePage(String issueKey, String embeddedPageKey)
+    @ElementBy (xpath = RemoteWebPanels.REMOTE_WEB_PANELS_XPATH, pageElementClass = RemoteWebPanels.class)
+    private RemoteWebPanels webPanels;
+
+    public JiraViewIssuePage(String issueKey)
     {
-        super(embeddedPageKey);
         this.issueKey = issueKey;
     }
 
@@ -31,8 +32,8 @@ public class JiraViewIssuePage extends RemotePluginEmbeddedTestPage implements P
         return "/browse/" + issueKey;
     }
 
-
-    public void addLabelViaInlineEdit(String label) {
+    public void addLabelViaInlineEdit(String label)
+    {
         driver.waitUntilElementIsVisible(By.cssSelector(".editable-field .labels"));
         driver.findElement(By.className("labels")).click();
         driver.waitUntilElementIsVisible(By.id("labels-textarea"));
@@ -40,6 +41,10 @@ public class JiraViewIssuePage extends RemotePluginEmbeddedTestPage implements P
         driver.waitUntilElementIsVisible(By.cssSelector("#labels-form .submit"));
         driver.findElement(By.cssSelector("#labels-form .submit")).click();
         driver.waitUntilElementIsVisible(By.className("labels"));
-        waitForInit();
+    }
+
+    public RemoteWebPanels getWebPanels()
+    {
+        return webPanels;
     }
 }

@@ -580,6 +580,20 @@
         </plugins>
     </build>
 
+    <!--<profiles>-->
+        <!--<profile>-->
+            <!--<id>mint-13-kde</id>-->
+            <!--<dependencies>-->
+                <!--<dependency>-->
+                    <!--<groupId>com.atlassian.browsers</groupId>-->
+                    <!--<artifactId>atlassian-browsers-linux64</artifactId>-->
+                    <!--<version>2.1.1</version>-->
+                    <!--<scope>provided</scope>-->
+                <!--</dependency>-->
+            <!--</dependencies>-->
+        <!--</profile>-->
+    <!--</profiles>-->
+
     <properties>
         <testkit.version>6.0.23</testkit.version>
         <functest.version>0.7.1</functest.version>
