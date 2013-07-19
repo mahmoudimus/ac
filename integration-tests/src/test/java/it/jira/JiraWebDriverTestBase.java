@@ -9,6 +9,7 @@ import com.atlassian.plugin.remotable.test.jira.JiraOps;
 import com.atlassian.webdriver.pageobjects.WebDriverTester;
 import hudson.plugins.jira.soap.RemoteProject;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.BeforeClass;
 
 import java.rmi.RemoteException;
@@ -20,20 +21,25 @@ public class JiraWebDriverTestBase
 {
     protected static TestedProduct<WebDriverTester> product;
     protected static JiraOps jiraOps;
-    protected static RemoteProject project;
+    protected RemoteProject project;
 
     @BeforeClass
     public static void setup() throws RemoteException
     {
         product = TestedProductFactory.create(JiraTestedProduct.class);
         jiraOps = new JiraOps(product.getProductInstance());
-        project = jiraOps.createProject();
     }
 
     @After
     public void logout()
     {
         product.getTester().getDriver().manage().deleteAllCookies();
+    }
+
+    @Before
+    public void prepare() throws RemoteException
+    {
+        project = jiraOps.createProject();
     }
 
     @After
