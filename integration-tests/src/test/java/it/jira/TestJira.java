@@ -10,8 +10,6 @@ import com.atlassian.jira.plugin.issuenav.pageobjects.IssueDetailPage;
 import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.pageobjects.TestedProductFactory;
 import com.atlassian.pageobjects.page.LoginPage;
-import com.atlassian.plugin.remotable.spi.Permissions;
-import com.atlassian.plugin.remotable.test.RemotePluginDialog;
 import com.atlassian.plugin.remotable.test.junit.HtmlDumpRule;
 import com.atlassian.plugin.remotable.test.pageobjects.RemotePluginEmbeddedTestPage;
 import com.atlassian.plugin.remotable.test.pageobjects.RemotePluginTestPage;
@@ -27,6 +25,8 @@ import com.atlassian.plugin.remotable.test.pageobjects.jira.ViewChangingSearchRe
 import com.atlassian.plugin.remotable.test.server.AtlassianConnectAddOnRunner;
 import com.atlassian.plugin.remotable.test.server.module.AdminPageModule;
 import com.atlassian.plugin.remotable.test.server.module.IssuePanelPageModule;
+import com.atlassian.plugin.remotable.spi.Permissions;
+import com.atlassian.plugin.remotable.test.RemotePluginDialog;
 import com.atlassian.webdriver.pageobjects.WebDriverTester;
 import hudson.plugins.jira.soap.RemoteIssue;
 import hudson.plugins.jira.soap.RemoteProject;
@@ -75,7 +75,7 @@ public class TestJira
     {
         product = TestedProductFactory.create(JiraTestedProduct.class);
         jiraOps = new JiraOps(product.getProductInstance());
-        new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl(), "app1")
+        remotePlugin = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl(), "app1")
                 .addOAuth(createSignedRequestHandler("app1"))
                 .addPermission(Permissions.CREATE_OAUTH_LINK)
                 .add(AdminPageModule.key("remotePluginAdmin")
@@ -90,18 +90,6 @@ public class TestJira
                 .add(IssuePanelPageModule.key("jira-remotePluginIssuePanelPage")
                         .name("AC Play Issue Page Panel")
                         .path("/ipp")
-                        .resource(newMustacheServlet("iframe.mu")));
-        remotePlugin = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl(), "app1")
-                .addOAuth(createSignedRequestHandler("app1"))
-                .addPermission(Permissions.CREATE_OAUTH_LINK)
-                .add(AdminPageModule.key("remotePluginAdmin")
-                        .name("Remotable Plugin app1 Admin")
-                        .path("/ap")
-                        .resource(newMustacheServlet("iframe.mu")))
-                .add(AdminPageModule.key("jira-admin-page")
-                        .name("Remotable Admin Page")
-                        .path("/jap")
-                        .section("advanced_menu_section/advanced_section")
                         .resource(newMustacheServlet("iframe.mu")))
                 .addIssueTabPage("jira-remotePluginIssueTabPage", "AC Play Issue Tab Page", "/itp", newMustacheServlet("iframe.mu"))
                 .addProjectTabPage("jira-remotePluginProjectTab", "AC Play Project Tab", "/ptp", newMustacheServlet("iframe.mu"))

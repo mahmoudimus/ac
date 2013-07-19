@@ -16,7 +16,7 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>remotable-plugins-plugin</artifactId>
+            <artifactId>remotable-plugins-test-library</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
@@ -24,13 +24,6 @@
         <!--
         ******** This needs to be merged or something **********
         -->
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>remotable-plugins-container</artifactId>
-            <version>${project.version}</version>
-            <scope>provided</scope>
-        </dependency>
-
         <dependency>
             <groupId>com.atlassian.functest</groupId>
             <artifactId>functest-plugin</artifactId>
@@ -44,103 +37,15 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.atlassian.refapp</groupId>
-            <artifactId>atlassian-refapp-pageobjects</artifactId>
-            <version>${refapp.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.atlassian.confluence</groupId>
-            <artifactId>atlassian-confluence-pageobjects</artifactId>
-            <version>${confluence.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.atlassian.jira</groupId>
-            <artifactId>atlassian-jira-pageobjects</artifactId>
-            <version>${jira.version}</version>
-            <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.httpcomponents</groupId>
-                    <artifactId>httpcore</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.httpcomponents</groupId>
-                    <artifactId>httpmime</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.httpcomponents</groupId>
-                    <artifactId>httpclient</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>com.atlassian.jira</groupId>
-            <artifactId>ka-func-test-framework</artifactId>
-            <version>${jira.func.test.version}</version>
-            <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.atlassian.browsers</groupId>
-                    <artifactId>atlassian-browsers-windows</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.atlassian.browsers</groupId>
-                    <artifactId>atlassian-browsers-linux</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.atlassian.browsers</groupId>
-                    <artifactId>atlassian-browsers-linux64</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.httpcomponents</groupId>
-                    <artifactId>httpclient</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>com.atlassian.selenium</groupId>
-            <artifactId>atlassian-webdriver-core</artifactId>
-            <version>${atlassian.selenium.version}</version>
-            <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.google.collections</groupId>
-                    <artifactId>google-collections</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.httpcomponents</groupId>
-                    <artifactId>httpclient</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.atlassian.browsers</groupId>
-                    <artifactId>atlassian-browsers-linux64</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
             <groupId>com.atlassian.browsers</groupId>
             <artifactId>atlassian-browsers-linux64</artifactId>
             <version>2.4</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-server</artifactId>
-            <version>7.6.8.v20121106</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-servlet</artifactId>
-            <version>7.6.8.v20121106</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jvnet.hudson</groupId>
-            <artifactId>jira-api</artifactId>
-            <version>1.0</version>
+            <groupId>com.atlassian.plugins.rest</groupId>
+            <artifactId>atlassian-rest-common</artifactId>
+            <version>2.7.2</version>
             <scope>provided</scope>
         </dependency>
 
@@ -151,12 +56,6 @@
             <scope>provided</scope>
         </dependency>
 
-        <dependency>
-            <groupId>cc.plural</groupId>
-            <artifactId>jsonij</artifactId>
-            <version>0.2.11</version>
-            <scope>provided</scope>
-        </dependency>
 
         <dependency>
             <groupId>org.kohsuke.redstone</groupId>
@@ -168,12 +67,6 @@
         <dependency>
             <groupId>com.atlassian.plugins</groupId>
             <artifactId>atlassian-plugins-osgi-bridge</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.atlassian.user</groupId>
-            <artifactId>atlassian-user</artifactId>
-            <version>2.0</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

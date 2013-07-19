@@ -32,6 +32,7 @@
         <module>smoke-tests</module>
         <module>container</module>
         <module>container-build</module>
+        <module>test</module>
         <module>integration-tests</module>
     </modules>
     
@@ -234,6 +235,11 @@
                 <version>${atlassian-httpclient.version}</version>
             </dependency>
             <dependency>
+                <groupId>com.atlassian.httpclient</groupId>
+                <artifactId>atlassian-httpclient-apache-httpcomponents</artifactId>
+                <version>${atlassian-httpclient.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>com.atlassian.webhooks</groupId>
                 <artifactId>atlassian-webhooks-provider-spi</artifactId>
                 <version>${webhooks.version}</version>
@@ -327,37 +333,6 @@
                 <version>${atr.version}</version>
                 <scope>provided</scope>
             </dependency>
-            <!--<dependency>
-                <groupId>com.atlassian.jira</groupId>
-                <artifactId>jira-rest-java-client-api</artifactId>
-                <version>${jira.client.version}</version>
-                exclusions>
-                    <exclusion>
-                        <groupId>com.sun.jersey</groupId>
-                        <artifactId>jersey-client</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.sun.jersey.contribs</groupId>
-                        <artifactId>jersey-multipart</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.sun.jersey.contribs</groupId>
-                        <artifactId>jersey-apache-client</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.sun.jersey</groupId>
-                        <artifactId>jersey-json</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.sun.jersey.contribs.jersey-oauth</groupId>
-                        <artifactId>oauth-client</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.sun.jersey.contribs.jersey-oauth</groupId>
-                        <artifactId>oauth-signature</artifactId>
-                    </exclusion>
-                </exclusions
-            </dependency>-->
         </dependencies>
     </dependencyManagement>
 

@@ -16,7 +16,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.security.NoSuchAlgorithmException;
 
 import static com.atlassian.plugin.remotable.test.Utils.createSignedRequestHandler;
 import static org.junit.Assert.assertEquals;

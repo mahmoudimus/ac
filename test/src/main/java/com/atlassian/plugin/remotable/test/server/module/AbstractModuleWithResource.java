@@ -43,6 +43,7 @@ abstract class AbstractModuleWithResource<T extends AbstractModuleWithResource> 
     protected final void addToElement(Element el)
     {
         addAttribute(el, "url", path);
+        addOthersToElement(el);
     }
 
     protected void addOthersToElement(Element el)
