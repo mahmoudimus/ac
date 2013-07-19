@@ -30,8 +30,6 @@
         <module>sisu-extender</module>
         <module>plugin</module>
         <module>smoke-tests</module>
-        <module>container</module>
-        <module>container-build</module>
         <module>test</module>
         <module>integration-tests</module>
     </modules>

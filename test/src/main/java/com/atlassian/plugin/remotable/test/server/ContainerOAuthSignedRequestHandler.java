@@ -1,9 +1,14 @@
-package com.atlassian.plugin.remotable.container.service;
+package com.atlassian.plugin.remotable.test.server;
 
 import com.atlassian.plugin.remotable.api.service.SignedRequestHandler;
 import com.atlassian.plugin.remotable.host.common.service.AbstractOauthSignedRequestHandler;
-import com.atlassian.plugin.remotable.container.internal.Environment;
-import net.oauth.*;
+import com.atlassian.plugin.remotable.test.Environment;
+import net.oauth.OAuth;
+import net.oauth.OAuthAccessor;
+import net.oauth.OAuthConsumer;
+import net.oauth.OAuthException;
+import net.oauth.OAuthMessage;
+import net.oauth.OAuthServiceProvider;
 import net.oauth.signature.RSA_SHA1;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,9 +19,6 @@ import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Helps with oauth operations
- */
 public class ContainerOAuthSignedRequestHandler extends AbstractOauthSignedRequestHandler implements SignedRequestHandler
 {
     private static final Logger log = LoggerFactory.getLogger(ContainerOAuthSignedRequestHandler.class);

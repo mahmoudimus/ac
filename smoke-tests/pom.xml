@@ -52,12 +52,6 @@
 
         <!-- because maven 3 sucks and won't depend on the right version -->
         <dependency>
-            <groupId>com.atlassian.plugins</groupId>
-            <artifactId>remotable-plugins-container</artifactId>
-            <version>${project.version}</version>
-            <classifier>standalone</classifier>
-        </dependency>
-        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>remotable-plugins-api</artifactId>
             <version>${api.artifact.version}</version>

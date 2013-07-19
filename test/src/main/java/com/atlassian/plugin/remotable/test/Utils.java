@@ -1,6 +1,5 @@
 package com.atlassian.plugin.remotable.test;
 
-import com.atlassian.plugin.remotable.container.internal.Environment;
 import com.atlassian.plugin.remotable.test.server.RunnerSignedRequestHandler;
 import com.google.common.collect.Maps;
 import org.apache.commons.io.IOUtils;

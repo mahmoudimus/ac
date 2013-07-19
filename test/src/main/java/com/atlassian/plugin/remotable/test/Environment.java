@@ -1,9 +1,5 @@
-package com.atlassian.plugin.remotable.container.internal;
+package com.atlassian.plugin.remotable.test;
 
-/**
- * Abstraction on top of environment variables and some sort of simple
- * storage capability.
- */
 public interface Environment
 {
     String getEnv(String name);

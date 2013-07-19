@@ -1,7 +1,6 @@
 package com.atlassian.plugin.remotable.test.server;
 
-import com.atlassian.plugin.remotable.container.internal.Environment;
-import com.atlassian.plugin.remotable.container.service.ContainerOAuthSignedRequestHandler;
+import com.atlassian.plugin.remotable.test.Environment;
 
 public class RunnerSignedRequestHandler extends ContainerOAuthSignedRequestHandler
 {
