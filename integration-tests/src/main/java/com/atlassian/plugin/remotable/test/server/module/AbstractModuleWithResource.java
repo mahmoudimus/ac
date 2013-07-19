@@ -3,6 +3,7 @@ package com.atlassian.plugin.remotable.test.server.module;
 import com.atlassian.fugue.Option;
 import com.atlassian.fugue.Pair;
 import com.google.common.collect.ImmutableList;
+import org.dom4j.Element;
 
 import javax.servlet.http.HttpServlet;
 
@@ -33,9 +34,19 @@ abstract class AbstractModuleWithResource<T extends AbstractModuleWithResource> 
     }
 
     @SuppressWarnings("unchecked")
-    private T cast()
+    protected final T cast()
     {
         return (T) this;
+    }
+
+    @Override
+    protected final void addToElement(Element el)
+    {
+        addAttribute(el, "url", path);
+    }
+
+    protected void addOthersToElement(Element el)
+    {
     }
 
     @Override

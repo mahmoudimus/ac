@@ -26,6 +26,7 @@ import com.atlassian.plugin.remotable.test.pageobjects.jira.PlainTextView;
 import com.atlassian.plugin.remotable.test.pageobjects.jira.ViewChangingSearchResult;
 import com.atlassian.plugin.remotable.test.server.AtlassianConnectAddOnRunner;
 import com.atlassian.plugin.remotable.test.server.module.AdminPageModule;
+import com.atlassian.plugin.remotable.test.server.module.IssuePanelPageModule;
 import com.atlassian.webdriver.pageobjects.WebDriverTester;
 import hudson.plugins.jira.soap.RemoteIssue;
 import hudson.plugins.jira.soap.RemoteProject;
@@ -74,6 +75,22 @@ public class TestJira
     {
         product = TestedProductFactory.create(JiraTestedProduct.class);
         jiraOps = new JiraOps(product.getProductInstance());
+        new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl(), "app1")
+                .addOAuth(createSignedRequestHandler("app1"))
+                .addPermission(Permissions.CREATE_OAUTH_LINK)
+                .add(AdminPageModule.key("remotePluginAdmin")
+                        .name("Remotable Plugin app1 Admin")
+                        .path("/ap")
+                        .resource(newMustacheServlet("iframe.mu")))
+                .add(AdminPageModule.key("jira-admin-page")
+                        .name("Remotable Admin Page")
+                        .path("/jap")
+                        .section("advanced_menu_section/advanced_section")
+                        .resource(newMustacheServlet("iframe.mu")))
+                .add(IssuePanelPageModule.key("jira-remotePluginIssuePanelPage")
+                        .name("AC Play Issue Page Panel")
+                        .path("/ipp")
+                        .resource(newMustacheServlet("iframe.mu")));
         remotePlugin = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl(), "app1")
                 .addOAuth(createSignedRequestHandler("app1"))
                 .addPermission(Permissions.CREATE_OAUTH_LINK)
@@ -86,7 +103,6 @@ public class TestJira
                         .path("/jap")
                         .section("advanced_menu_section/advanced_section")
                         .resource(newMustacheServlet("iframe.mu")))
-                .addIssuePanelPage("jira-remotePluginIssuePanelPage", "AC Play Issue Page Panel", "/ipp", newMustacheServlet("iframe.mu"))
                 .addIssueTabPage("jira-remotePluginIssueTabPage", "AC Play Issue Tab Page", "/itp", newMustacheServlet("iframe.mu"))
                 .addProjectTabPage("jira-remotePluginProjectTab", "AC Play Project Tab", "/ptp", newMustacheServlet("iframe.mu"))
                 .addProjectConfigPanel("jira-remoteProjectConfigPanel", "AC Play Project Config Panel", "/pcp", newMustacheServlet("iframe.mu"))
@@ -309,19 +325,9 @@ public class TestJira
 
     public static final class AppProjectTabPage extends AbstractRemotablePluginProjectTab
     {
-
         public AppProjectTabPage(final String projectKey)
         {
             super(projectKey, "project-tab-jira-remotePluginProjectTab");
-        }
-    }
-
-    public static final class RestClientProjectTabPage extends AbstractRemotablePluginProjectTab
-    {
-
-        public RestClientProjectTabPage(final String projectKey)
-        {
-            super(projectKey, "project-tab-jira-restClientProjectTab");
         }
     }
 }

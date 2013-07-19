@@ -1,24 +1,14 @@
 package com.atlassian.plugin.remotable.test.server.module;
 
-import com.atlassian.fugue.Option;
 import org.dom4j.Element;
 
 import java.net.URI;
 
-import static com.atlassian.fugue.Option.none;
-import static com.atlassian.fugue.Option.option;
-import static com.atlassian.fugue.Option.some;
-import static com.google.common.base.Preconditions.checkNotNull;
-
-public final class ConfigurePageModule extends AbstractModuleWithResource<ConfigurePageModule>
+public final class ConfigurePageModule extends MainModuleWithResource<ConfigurePageModule>
 {
-    private final String key;
-    private Option<String> name = none();
-
     private ConfigurePageModule(String key)
     {
-        super("configure-page");
-        this.key = checkNotNull(key);
+        super("configure-page", key);
     }
 
     public static ConfigurePageModule key(String key)
@@ -26,19 +16,9 @@ public final class ConfigurePageModule extends AbstractModuleWithResource<Config
         return new ConfigurePageModule(key);
     }
 
-    public ConfigurePageModule name(String name)
-    {
-        this.name = option(name);
-        return this;
-    }
-
     @Override
-    protected void addToElement(Element el)
+    protected void addYetOthersToElement(Element el)
     {
-        addAttribute(el, "key", some(key));
-        addAttribute(el, "name", name);
-        addAttribute(el, "url", path);
-
         // bah...
         final Element root = el.getDocument().getRootElement();
         root.element("plugin-info")

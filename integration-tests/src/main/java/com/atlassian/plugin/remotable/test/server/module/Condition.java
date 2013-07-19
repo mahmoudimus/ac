@@ -30,7 +30,7 @@ public final class Condition extends AbstractModuleWithResource<Condition>
     }
 
     @Override
-    protected void addToElement(Element el)
+    protected void addOthersToElement(Element el)
     {
         if (name.isDefined())
         {

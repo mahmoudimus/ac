@@ -5,33 +5,21 @@ import org.dom4j.Element;
 
 import static com.atlassian.fugue.Option.none;
 import static com.atlassian.fugue.Option.option;
-import static com.atlassian.fugue.Option.some;
-import static com.google.common.base.Preconditions.checkNotNull;
 
-public final class MacroPageModule extends AbstractModuleWithResource<MacroPageModule>
+public final class MacroPageModule extends MainModuleWithResource<MacroPageModule>
 {
-    private final String key;
-    private Option<String> name = none();
     private Option<String> outputType = none();
     private Option<String> bodyType = none();
 
     public MacroPageModule(String key)
     {
-        super("macro-page");
-        this.key = checkNotNull(key);
+        super("macro-page", key);
     }
 
     public static MacroPageModule key(String key)
     {
         return new MacroPageModule(key);
     }
-
-    public MacroPageModule name(String name)
-    {
-        this.name = option(name);
-        return this;
-    }
-
 
     public MacroPageModule outputType(String outputType)
     {
@@ -46,11 +34,8 @@ public final class MacroPageModule extends AbstractModuleWithResource<MacroPageM
     }
 
     @Override
-    protected void addToElement(Element el)
+    protected void addYetOthersToElement(Element el)
     {
-        addAttribute(el, "key", some(key));
-        addAttribute(el, "name", name);
-        addAttribute(el, "url", path);
         addAttribute(el, "output-type", outputType);
         addAttribute(el, "body-type", bodyType);
     }

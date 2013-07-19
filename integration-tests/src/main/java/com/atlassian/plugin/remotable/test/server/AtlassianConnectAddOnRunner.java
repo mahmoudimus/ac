@@ -64,16 +64,6 @@ public final class AtlassianConnectAddOnRunner
         installer = new AtlassianConnectRestClient(baseUrl, "admin", "admin");
     }
 
-    public AtlassianConnectAddOnRunner addIssuePanelPage(String key, String name, String path, HttpServlet resource)
-    {
-        doc.getRootElement().addElement("issue-panel-page")
-                .addAttribute("url", path)
-                .addAttribute("key", key)
-                .addAttribute("name", name);
-        routes.put(path, resource);
-        return this;
-    }
-
     public AtlassianConnectAddOnRunner addIssueTabPage(String key, String name, String path, HttpServlet resource)
     {
         doc.getRootElement().addElement("issue-tab-page")

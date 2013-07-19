@@ -38,9 +38,8 @@ public final class MacroEditor extends AbstractModuleWithResource<MacroEditor>
     }
 
     @Override
-    protected void addToElement(Element el)
+    protected void addOthersToElement(Element el)
     {
-        addAttribute(el, "url", path);
         addAttribute(el, "width", width);
         addAttribute(el, "height", height);
     }

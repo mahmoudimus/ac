@@ -9,13 +9,9 @@ import javax.servlet.http.HttpServlet;
 
 import static com.atlassian.fugue.Option.none;
 import static com.atlassian.fugue.Option.option;
-import static com.atlassian.fugue.Option.some;
-import static com.google.common.base.Preconditions.checkNotNull;
 
-public final class GeneralPageModule extends AbstractModuleWithResource<GeneralPageModule>
+public final class GeneralPageModule extends MainModuleWithResource<GeneralPageModule>
 {
-    private final String key;
-    private Option<String> name = none();
     private Option<String> linkName = none();
     private Option<String> iconUrl = none();
     private Option<String> height = none();
@@ -24,24 +20,12 @@ public final class GeneralPageModule extends AbstractModuleWithResource<GeneralP
 
     private GeneralPageModule(String key)
     {
-        super("general-page");
-        this.key = checkNotNull(key);
+        super("general-page", key);
     }
 
     public static GeneralPageModule key(String key)
     {
         return new GeneralPageModule(key);
-    }
-
-    public GeneralPageModule name(String name)
-    {
-        this.name = option(name);
-        return this;
-    }
-
-    public String path()
-    {
-        return path.getOrNull();
     }
 
     public GeneralPageModule linkName(String linkName)
@@ -74,17 +58,9 @@ public final class GeneralPageModule extends AbstractModuleWithResource<GeneralP
         return this;
     }
 
-    public Iterable<Condition> conditions()
-    {
-        return conditions;
-    }
-
     @Override
-    public void addToElement(Element el)
+    public void addYetOthersToElement(Element el)
     {
-        addAttribute(el, "key", some(key));
-        addAttribute(el, "url", path);
-        addAttribute(el, "name", name);
         addAttribute(el, "link-name", linkName);
         addAttribute(el, "icon-url", iconUrl);
         addAttribute(el, "width", width);

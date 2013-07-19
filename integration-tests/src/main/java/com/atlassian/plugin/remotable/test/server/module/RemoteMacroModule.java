@@ -11,13 +11,10 @@ import javax.servlet.http.HttpServlet;
 import static com.atlassian.fugue.Option.none;
 import static com.atlassian.fugue.Option.option;
 import static com.atlassian.fugue.Option.some;
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.concat;
 
-public final class RemoteMacroModule extends AbstractModuleWithResource<RemoteMacroModule>
+public final class RemoteMacroModule extends MainModuleWithResource<RemoteMacroModule>
 {
-    private final String key;
-    private Option<String> name = none();
     private Option<String> title = none();
     private Option<String> iconUrl = none();
     private Option<String> outputType = none();
@@ -31,8 +28,7 @@ public final class RemoteMacroModule extends AbstractModuleWithResource<RemoteMa
 
     private RemoteMacroModule(String key)
     {
-        super("remote-macro");
-        this.key = checkNotNull(key);
+        super("remote-macro", key);
     }
 
     public static RemoteMacroModule key(String key)
@@ -40,19 +36,11 @@ public final class RemoteMacroModule extends AbstractModuleWithResource<RemoteMa
         return new RemoteMacroModule(key);
     }
 
-
-    public RemoteMacroModule name(String name)
-    {
-        this.name = option(name);
-        return this;
-    }
-
     public RemoteMacroModule title(String title)
     {
         this.title = option(title);
         return this;
     }
-
 
     public RemoteMacroModule iconUrl(String icon)
     {
@@ -102,11 +90,6 @@ public final class RemoteMacroModule extends AbstractModuleWithResource<RemoteMa
         return this;
     }
 
-    public Option<MacroEditor> editor()
-    {
-        return editor;
-    }
-
     public RemoteMacroModule imagePlaceHolder(ImagePlaceHolder img)
     {
         this.imagePlaceHolder = option(img);
@@ -114,11 +97,8 @@ public final class RemoteMacroModule extends AbstractModuleWithResource<RemoteMa
     }
 
     @Override
-    protected void addToElement(Element el)
+    protected void addYetOthersToElement(Element el)
     {
-        addAttribute(el, "key", some(key));
-        addAttribute(el, "url", path);
-        addAttribute(el, "name", name);
 //        addAttribute(remoteMacro, "title", title);
         addAttribute(el, "icon-url", iconUrl);
         addAttribute(el, "output-type", outputType);
