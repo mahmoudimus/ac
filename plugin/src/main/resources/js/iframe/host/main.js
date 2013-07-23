@@ -95,9 +95,6 @@ _AP.define("host/main", ["_xdm-rpc"], function (XdmRpc) {
             $("iframe", $content).css({width: width, height: height});
           }
         }),
-        fireEvent: function(id, props) {
-          publish("p3.iframe." + id, props);
-        },
         getLocation: function () {
           return window.location.href;
         },
