@@ -48,7 +48,7 @@
                 document.getElementById("client-http-response-text").innerHTML = xhr.responseText;
             }
 
-            AP.request("/rest/remoteplugintest/1/user", {
+            AP.request("/rest/remoteplugintest/1/user?rnd=" + Math.random(), {
               headers: {
                 "Accept": "text/plain"
               },
@@ -62,8 +62,7 @@
             });
 
             // additional media type requests; using timeouts to work around jq cachebuster ms timestamps
-            setTimeout(function () {
-                AP.request("/rest/remoteplugintest/1/user", {
+            AP.request("/rest/remoteplugintest/1/user?rnd=" + Math.random(), {
                   headers: {
                     "Accept": "application/json"
                   },
@@ -75,11 +74,9 @@
                     console.error(xhr, statusText, errorThrown);
                     AP.resize();
                   }
-                });
-              }, 10);
+            });
 
-              setTimeout(function () {
-                AP.request("/rest/remoteplugintest/1/user", {
+            AP.request("/rest/remoteplugintest/1/user?rnd=" + Math.random(), {
                   headers: {
                     "Accept": "application/xml"
                   },
@@ -92,8 +89,7 @@
                     console.error(xhr, statusText, errorThrown);
                     AP.resize();
                   }
-                });
-              }, 20);
+            });
         })(AP);
     </script>
   </body>
