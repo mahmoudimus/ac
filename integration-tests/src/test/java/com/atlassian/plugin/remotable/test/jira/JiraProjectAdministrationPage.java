@@ -2,7 +2,7 @@ package com.atlassian.plugin.remotable.test.jira;
 
 import com.atlassian.pageobjects.Page;
 import com.atlassian.pageobjects.elements.ElementBy;
-import com.atlassian.plugin.remotable.test.RemoteWebPanels;
+import com.atlassian.plugin.remotable.test.pageobjects.RemoteWebPanels;
 
 /**
  * Describes a project administration page.

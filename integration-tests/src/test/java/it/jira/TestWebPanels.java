@@ -1,16 +1,34 @@
 
 package it.jira;
 
-import com.atlassian.plugin.remotable.test.RemoteWebPanel;
-import com.atlassian.plugin.remotable.test.RemoteWebPanels;
+import com.atlassian.plugin.remotable.spi.Permissions;
+import com.atlassian.plugin.remotable.test.HttpUtils;
 import com.atlassian.plugin.remotable.test.jira.JiraProjectAdministrationPage;
-import com.atlassian.plugin.remotable.test.jira.JiraViewIssuePage;
+import com.atlassian.plugin.remotable.test.pageobjects.RemoteWebPanel;
+import com.atlassian.plugin.remotable.test.pageobjects.RemoteWebPanels;
+import com.atlassian.plugin.remotable.test.pageobjects.jira.JiraViewIssuePage;
+import com.atlassian.plugin.remotable.test.server.AtlassianConnectAddOnRunner;
+import com.atlassian.plugin.remotable.test.server.module.IssuePanelPageModule;
+import com.atlassian.plugin.remotable.test.server.module.ProjectConfigPanelModule;
+import com.atlassian.plugin.remotable.test.server.module.RemoteWebPanelModule;
+import com.google.common.collect.ImmutableMap;
 import hudson.plugins.jira.soap.RemoteIssue;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.rmi.RemoteException;
+import java.util.Map;
 
+import static com.atlassian.plugin.remotable.test.Utils.createSignedRequestHandler;
+import static com.atlassian.plugin.remotable.test.server.AtlassianConnectAddOnRunner.newMustacheServlet;
+import static com.atlassian.plugin.remotable.test.server.AtlassianConnectAddOnRunner.newServlet;
 import static it.TestConstants.ADMIN;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -18,14 +36,58 @@ import static org.junit.Assert.assertNotNull;
 /**
  * Test of remote web panels in JIRA.
  */
-public class TestWebPanels extends JiraWebDriverTestBase
+public final class TestWebPanels extends JiraWebDriverTestBase
 {
     // web panel locations
-    public static final String ISSUE_PANEL_ID = "jira-remotePluginIssuePanelPage";
-    public static final String ISSUE_REMOTE_LEFT_WEB_PANEL_ID = "jira-issue-left-web-panel";
-    public static final String ISSUE_REMOTE_RIGHT_WEB_PANEL_ID = "jira-issue-right-web-panel";
-    public static final String PROJECT_CONFIG_HEADER_WEB_PANEL = "jira-project-config-header-web-panel";
-    public static final String PROJECT_CONFIG_PANEL_ID = "jira-remoteProjectConfigPanel";
+    private static final String ISSUE_PANEL_ID = "jira-remotePluginIssuePanelPage";
+    private static final String ISSUE_REMOTE_LEFT_WEB_PANEL_ID = "jira-issue-left-web-panel";
+    private static final String ISSUE_REMOTE_RIGHT_WEB_PANEL_ID = "jira-issue-right-web-panel";
+    private static final String PROJECT_CONFIG_HEADER_WEB_PANEL = "jira-project-config-header-web-panel";
+    private static final String PROJECT_CONFIG_PANEL_ID = "jira-remoteProjectConfigPanel";
+
+    private static AtlassianConnectAddOnRunner remotePlugin;
+
+    @BeforeClass
+    public static void startConnectAddOn() throws Exception
+    {
+        remotePlugin = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl(), "app1")
+                .addOAuth(createSignedRequestHandler("app1"))
+                .addPermission(Permissions.CREATE_OAUTH_LINK)
+                .add(IssuePanelPageModule.key(ISSUE_PANEL_ID)
+                        .name("AC Play Issue Page Panel")
+                        .path("/ipp")
+                        .resource(newMustacheServlet("iframe.mu")))
+                .add(ProjectConfigPanelModule.key(PROJECT_CONFIG_PANEL_ID)
+                        .name("AC Play Project Config Panel")
+                        .path("/pcp")
+                        .location("right")
+                        .resource(newMustacheServlet("iframe.mu")))
+                .add(RemoteWebPanelModule.key(ISSUE_REMOTE_LEFT_WEB_PANEL_ID)
+                        .name("Issue Left Web Panel")
+                        .location("atl.jira.view.issue.left.context")
+                        .path("/ilwp")
+                        .resource(newServlet(new MyContextAwareWebPanelServlet())))
+                .add(RemoteWebPanelModule.key(ISSUE_REMOTE_RIGHT_WEB_PANEL_ID)
+                        .name("Issue Right Web Panel")
+                        .location("atl.jira.view.issue.right.context")
+                        .path("/irwp")
+                        .resource(newServlet(new MyContextAwareWebPanelServlet())))
+                .add(RemoteWebPanelModule.key(PROJECT_CONFIG_HEADER_WEB_PANEL)
+                        .name("Project Config Header Web Panel")
+                        .location("atl.jira.proj.config.header")
+                        .path("/pch")
+                        .resource(newServlet(new MyContextAwareWebPanelServlet())))
+                .start();
+    }
+
+    @AfterClass
+    public static void stopConnectAddOn() throws Exception
+    {
+        if (remotePlugin != null)
+        {
+            remotePlugin.stop();
+        }
+    }
 
     @Test
     public void testViewIssuePageWithEmbeddedPanelAnonymous() throws Exception
@@ -96,7 +158,7 @@ public class TestWebPanels extends JiraWebDriverTestBase
         assertEquals(ADMIN, panel.getUserId());
     }
 
-    @Ignore ("TODO: For some reason, there's an issue in the addLabelViaInlineEdit method where webdriver can't click on the submit button.")
+    @Ignore("TODO: For some reason, there's an issue in the addLabelViaInlineEdit method where webdriver can't click on the submit button.")
     @Test
     public void testViewIssuePageWithEmbeddedPanelLoggedInWithEdit() throws Exception
     {
@@ -107,6 +169,34 @@ public class TestWebPanels extends JiraWebDriverTestBase
 //        Assert.assertEquals("Success", viewIssuePage.getMessage());
 //        viewIssuePage.addLabelViaInlineEdit("foo");
 //        Assert.assertEquals("Success", viewIssuePage.getMessage());
+    }
+
+
+    public static final class MyContextAwareWebPanelServlet extends AtlassianConnectAddOnRunner.WithContextServlet
+    {
+        @Override
+        protected void doGet(HttpServletRequest req, HttpServletResponse resp, Map<String, Object> context) throws ServletException, IOException
+        {
+            HttpUtils.renderHtml(resp,
+                    "my-context-aware-web-panel.mu",
+                    ImmutableMap.<String, Object>builder()
+                            .putAll(context)
+                            .putAll(buildParams(req.getParameterMap(), "issue_id", "project_id", "user_id", "space_id", "page_id"))
+                            .build());
+        }
+
+        private ImmutableMap<String, Object> buildParams(final Map<String, String[]> parameterMap, final String... params)
+        {
+            final ImmutableMap.Builder<String, Object> servletParamBuilder = ImmutableMap.builder();
+            for (final String param : params)
+            {
+                if (parameterMap.containsKey(param))
+                {
+                    servletParamBuilder.put(param, parameterMap.get(param)[0]);
+                }
+            }
+            return servletParamBuilder.build();
+        }
     }
 }
 

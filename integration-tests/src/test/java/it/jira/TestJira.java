@@ -1,42 +1,20 @@
 package it.jira;
 
-import com.atlassian.jira.pageobjects.JiraTestedProduct;
 import com.atlassian.jira.pageobjects.navigator.AdvancedSearch;
-import com.atlassian.jira.pageobjects.pages.DashboardPage;
-import com.atlassian.jira.pageobjects.pages.project.BrowseProjectPage;
-import com.atlassian.jira.pageobjects.project.ProjectConfigTabs;
-import com.atlassian.jira.pageobjects.project.summary.ProjectSummaryPageTab;
 import com.atlassian.jira.plugin.issuenav.pageobjects.IssueDetailPage;
-import com.atlassian.pageobjects.TestedProduct;
-import com.atlassian.pageobjects.TestedProductFactory;
-import com.atlassian.pageobjects.page.LoginPage;
 import com.atlassian.plugin.remotable.spi.Permissions;
 import com.atlassian.plugin.remotable.test.RemotePluginDialog;
 import com.atlassian.plugin.remotable.test.junit.HtmlDumpRule;
-import com.atlassian.plugin.remotable.test.pageobjects.RemotePluginEmbeddedTestPage;
 import com.atlassian.plugin.remotable.test.pageobjects.RemotePluginTestPage;
-import com.atlassian.plugin.remotable.test.pageobjects.jira.AbstractRemotablePluginProjectTab;
 import com.atlassian.plugin.remotable.test.pageobjects.jira.JiraAdministrationPage;
-import com.atlassian.plugin.remotable.test.pageobjects.jira.JiraOps;
-import com.atlassian.plugin.remotable.test.pageobjects.jira.JiraProjectAdministrationPanel;
-import com.atlassian.plugin.remotable.test.pageobjects.jira.JiraProjectAdministrationTab;
-import com.atlassian.plugin.remotable.test.pageobjects.jira.JiraViewIssuePage;
 import com.atlassian.plugin.remotable.test.pageobjects.jira.JiraViewIssuePageWithRemotePluginIssueTab;
 import com.atlassian.plugin.remotable.test.pageobjects.jira.PlainTextView;
 import com.atlassian.plugin.remotable.test.pageobjects.jira.ViewChangingSearchResult;
 import com.atlassian.plugin.remotable.test.server.AtlassianConnectAddOnRunner;
 import com.atlassian.plugin.remotable.test.server.module.AdminPageModule;
 import com.atlassian.plugin.remotable.test.server.module.DialogPageModule;
-import com.atlassian.plugin.remotable.test.server.module.IssuePanelPageModule;
 import com.atlassian.plugin.remotable.test.server.module.IssueTabPageModule;
-import com.atlassian.plugin.remotable.test.server.module.ProjectConfigPanelModule;
-import com.atlassian.plugin.remotable.test.server.module.ProjectConfigTabModule;
-import com.atlassian.plugin.remotable.test.server.module.ProjectTabPageModule;
-import com.atlassian.webdriver.pageobjects.WebDriverTester;
 import hudson.plugins.jira.soap.RemoteIssue;
-import hudson.plugins.jira.soap.RemoteProject;
-import org.hamcrest.Description;
-import org.hamcrest.TypeSafeMatcher;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -49,15 +27,12 @@ import org.junit.Test;
 import java.rmi.RemoteException;
 import java.util.concurrent.Callable;
 
-import static it.TestConstants.ADMIN_FULL_NAME;
 import static com.atlassian.plugin.remotable.test.Utils.createSignedRequestHandler;
 import static com.atlassian.plugin.remotable.test.server.AtlassianConnectAddOnRunner.newMustacheServlet;
+import static it.TestConstants.ADMIN_FULL_NAME;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.junit.matchers.JUnitMatchers.hasItem;
 
 public class TestJira extends JiraWebDriverTestBase
 {
@@ -67,10 +42,8 @@ public class TestJira extends JiraWebDriverTestBase
     private static AtlassianConnectAddOnRunner remotePlugin; 
 
     @BeforeClass
-    public static void setupJiraAndStartConnectAddOn() throws Exception
+    public static void startConnectAddOn() throws Exception
     {
-        product = TestedProductFactory.create(JiraTestedProduct.class);
-        jiraOps = new JiraOps(product.getProductInstance());
         remotePlugin = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl(), "app1")
                 .addOAuth(createSignedRequestHandler("app1"))
                 .addPermission(Permissions.CREATE_OAUTH_LINK)
@@ -83,28 +56,9 @@ public class TestJira extends JiraWebDriverTestBase
                         .path("/jap")
                         .section("advanced_menu_section/advanced_section")
                         .resource(newMustacheServlet("iframe.mu")))
-                .add(IssuePanelPageModule.key("jira-remotePluginIssuePanelPage")
-                        .name("AC Play Issue Page Panel")
-                        .path("/ipp")
-                        .resource(newMustacheServlet("iframe.mu")))
                 .add(IssueTabPageModule.key("jira-remotePluginIssueTabPage")
                         .name("AC Play Issue Tab Page")
                         .path("/itp")
-                        .resource(newMustacheServlet("iframe.mu")))
-                .add(ProjectTabPageModule.key("jira-remotePluginProjectTab")
-                        .name("AC Play Project Tab")
-                        .path("/ptp")
-                        .resource(newMustacheServlet("iframe.mu")))
-                .add(ProjectConfigPanelModule.key("jira-remoteProjectConfigPanel")
-                        .name("AC Play Project Config Panel")
-                        .path("/pcp")
-                        .location("right")
-                        .resource(newMustacheServlet("iframe.mu")))
-                .add(ProjectConfigTabModule.key("jira-remotePluginProjectConfigTab")
-                        .name("Remotable Project Config")
-                        .path("/pct")
-                        .weight("10")
-                        .location("projectgroup3")
                         .resource(newMustacheServlet("iframe.mu")))
                 .add(DialogPageModule.key("jira-issueAction")
                         .name("Test Issue Action")
@@ -120,21 +74,6 @@ public class TestJira extends JiraWebDriverTestBase
         if (remotePlugin != null)
         {
             remotePlugin.stop();
-        }
-    }
-
-    @Before
-    public void createProject() throws Exception
-    {
-        project = jiraOps.createProject();
-    }
-
-    @After
-    public void deleteProject() throws Exception
-    {
-        if (project != null)
-        {
-            jiraOps.deleteProject(project.getKey());
         }
     }
 

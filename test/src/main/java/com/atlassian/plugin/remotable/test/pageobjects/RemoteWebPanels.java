@@ -2,13 +2,11 @@ package com.atlassian.plugin.remotable.test.pageobjects;
 
 import com.atlassian.pageobjects.elements.WebDriverElement;
 import com.atlassian.pageobjects.elements.timeout.TimeoutType;
-import com.atlassian.plugin.remotable.test.pageobjects.RemoteWebPanel;
+import com.atlassian.plugin.remotable.plugin.module.webpanel.RemoteWebPanelModuleDescriptor;
 import com.atlassian.webdriver.AtlassianWebDriver;
 import org.openqa.selenium.By;
 
 import javax.inject.Inject;
-
-import static com.atlassian.plugin.remotable.plugin.module.webpanel.RemoteWebPanelModuleDescriptor.REMOTE_WEB_PANEL_MODULE_PREFIX;
 
 /**
  * Set of remote web panels on a particular page.

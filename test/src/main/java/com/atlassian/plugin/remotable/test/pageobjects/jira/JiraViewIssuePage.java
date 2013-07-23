@@ -1,9 +1,8 @@
 package com.atlassian.plugin.remotable.test.pageobjects.jira;
 
 import com.atlassian.pageobjects.Page;
-import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.pageobjects.elements.ElementBy;
-import com.atlassian.plugin.remotable.test.pageobjects.RemotePluginEmbeddedTestPage;
+import com.atlassian.plugin.remotable.test.pageobjects.RemoteWebPanels;
 import org.openqa.selenium.By;
 
 import javax.inject.Inject;

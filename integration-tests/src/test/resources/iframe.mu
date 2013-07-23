@@ -84,7 +84,8 @@
                     "Accept": "application/xml"
                   },
                   success: function (data, statusText, xhr) {
-                    document.getElementById("client-http-data-xml").innerHTML = data;
+                    document.getElementById("client-http-data-xml").innerHTML = data
+                        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
                     AP.resize();
                   },
                   error: function (xhr, statusText, errorThrown) {
