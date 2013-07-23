@@ -13,9 +13,6 @@ import com.atlassian.plugin.remotable.test.pageobjects.confluence.FixedConfluenc
 import com.atlassian.plugin.remotable.test.pageobjects.confluence.FixedConfluenceLoginPage;
 import com.atlassian.plugin.remotable.test.pageobjects.jira.JiraAdminSummaryPage;
 import com.atlassian.plugin.remotable.test.pageobjects.jira.JiraGeneralPage;
-import com.atlassian.plugin.remotable.test.pageobjects.refapp.RefappFixedLoginPage;
-import com.atlassian.plugin.remotable.test.pageobjects.refapp.RefappGeneralPage;
-import com.atlassian.webdriver.refapp.RefappTestedProduct;
 
 public class OwnerOfTestedProduct
 {
@@ -35,12 +32,6 @@ public class OwnerOfTestedProduct
             INSTANCE.getPageBinder().override(LoginPage.class, FixedConfluenceLoginPage.class);
             INSTANCE.getPageBinder().override(AdminHomePage.class, FixedConfluenceAdminHomePage.class);
             INSTANCE.getPageBinder().override(HomePage.class, FixedConfluenceDashboardPage.class);
-
-        }
-        else if (INSTANCE instanceof RefappTestedProduct)
-        {
-            INSTANCE.getPageBinder().override(LoginPage.class, RefappFixedLoginPage.class);
-            INSTANCE.getPageBinder().override(GeneralPage.class, RefappGeneralPage.class);
         }
     }
 }
