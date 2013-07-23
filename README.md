@@ -8,7 +8,6 @@ When getting started developing within Atlassian Connect, these commands will co
 
 * Maven 3 (n.b. the Atlassian SDK currently ships with Maven 2.1)
 
-
 ## Building
 
 To build the plugin, run:
@@ -34,5 +33,10 @@ To run a single test/method, do something like:
 To run an Atlassian product with the development version of Atlassian Connect:
 
     mvn amps:debug -pl integration-tests -Dproduct=<product>
-    
+
+To reload plugin (pi) within an Atlassian product:
+
+    atlas-mvn amps:cli -pl <plugin-to-reload> -Dproduct=<same-product-as-above>
+
+Note that it's essential to use Maven 2.1.0 to do pi.
 Where `<product>` is either `jira` or `confluence`. If left empty, the plugin will run inside of the [Atlassian RefApp](https://developer.atlassian.com/display/DOCS/About+the+Atlassian+RefApp).
