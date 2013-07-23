@@ -107,19 +107,6 @@ public class RemotePluginEmbeddedTestPage extends RemotePage
         return getValue("server-http-entity");
     }
 
-    public String getValue(final String key)
-    {
-        return runInFrame(new Callable<String>()
-        {
-
-            @Override
-            public String call() throws Exception
-            {
-                return driver.findElement(By.id(key)).getText();
-            }
-        });
-    }
-
     public String getValueBySelector(final String selector)
     {
         return runInFrame(new Callable<String>()
@@ -131,28 +118,6 @@ public class RemotePluginEmbeddedTestPage extends RemotePage
                 return driver.findElement(By.cssSelector(selector)).getText();
             }
         });
-    }
-
-    public String waitForValue(final String key)
-    {
-        runInFrame(new Callable<Void>()
-        {
-            @Override
-            public Void call() throws Exception
-            {
-                driver.waitUntil(new Function<WebDriver, Boolean>() {
-
-                    @Override
-                    public Boolean apply(WebDriver webDriver) {
-                        WebElement element = webDriver.findElement(By.id(key));
-                        return element.getText() != null;
-                    }
-                });
-                return null;
-            }
-        });
-
-        return getValue(key);
     }
 
     public String waitForValueBySelector(final String selector)

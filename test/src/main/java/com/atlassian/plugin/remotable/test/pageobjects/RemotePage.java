@@ -9,11 +9,11 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-import javax.annotation.Nullable;
-import javax.inject.Inject;
 import java.net.URI;
 import java.util.Map;
 import java.util.concurrent.Callable;
+import javax.annotation.Nullable;
+import javax.inject.Inject;
 
 import static com.google.common.collect.Maps.newHashMap;
 
@@ -63,30 +63,19 @@ public class RemotePage
         return result;
     }
 
-    public <T> T runInFrame(Callable<T> runnable)
+    public String waitForValue(final String key)
     {
-        toIframe();
-        T result = null;
-        try
-        {
-            result = runnable.call();
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-        outIframe();
-        return result;
+        return RemotePageUtil.waitForValue(driver, containerDiv, key);
     }
 
-    public void toIframe()
+    public String getValue(final String key)
     {
-        driver.getDriver().switchTo().frame(containerDiv.findElement(By.tagName("iframe")));
+        return RemotePageUtil.getValue(driver, containerDiv, key);
     }
 
-    public void outIframe()
+    public <T> T runInFrame(Callable<T> callable)
     {
-        driver.getDriver().switchTo().defaultContent();
+        return RemotePageUtil.runInFrame(driver, containerDiv, callable);
     }
 
     public WebElement getContainerDiv()

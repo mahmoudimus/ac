@@ -35,7 +35,7 @@ AP.define("env", ["_dollar", "_rpc"], function ($, rpc) {
         // @param id  the event id.  Will be prepended with the prefix "p3.iframe."
         // @param props the event properties
         fireEvent: function (id, props) {
-          remote.fireEvent(id, props);
+          console.log("AP.fireEvent deprecated; will be removed in future version");
         },
 
         // shows a message with body and title by id in the host application

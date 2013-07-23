@@ -279,6 +279,12 @@
         </required-permissions>
     </described-module-type>
 
+    <described-module-type key="remote-web-panel" class="com.atlassian.plugin.remotable.plugin.module.webpanel.RemoteWebPanelModuleDescriptor">
+        <description>
+            A remote page decorated as a web panel on the project configuration page.
+        </description>
+    </described-module-type>
+
     <plugin-permission key="execute_java" name="Execute Java">
         <description>Ability to execute arbitrary Java code on the Atlassian server</description>
     </plugin-permission>
@@ -355,6 +361,11 @@
     <plugin-permission key="modify_app_link" name="Modify Owned App Link"
                        class="com.atlassian.plugin.remotable.plugin.product.ModifyAppLinkScope">
         <description>Allows a Remotable Plugin to modify the details of its own configured Application Link.</description>
+    </plugin-permission>
+
+    <plugin-permission key="read_license" name="Read License"
+                       class="com.atlassian.plugin.remotable.plugin.product.ReadLicenseScope">
+        <description>Allows a Remotable Plugin to retrieve the information about its license.</description>
     </plugin-permission>
 
     <plugin-permission key="define_plugin_permission" name="Define Plugin Permission">

@@ -49,6 +49,7 @@ import org.junit.Test;
 import java.rmi.RemoteException;
 import java.util.concurrent.Callable;
 
+import static it.TestConstants.ADMIN_FULL_NAME;
 import static com.atlassian.plugin.remotable.test.Utils.createSignedRequestHandler;
 import static com.atlassian.plugin.remotable.test.server.AtlassianConnectAddOnRunner.newMustacheServlet;
 import static org.junit.Assert.assertEquals;
@@ -58,22 +59,12 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.matchers.JUnitMatchers.hasItem;
 
-public class TestJira
+public class TestJira extends JiraWebDriverTestBase
 {
-    private static final String EMBEDDED_ISSUE_PANEL_ID = "issue-panel-jira-remotePluginIssuePanelPage";
-    private static final String EMBEDDED_PROJECT_CONFIG_PANEL_ID = "project-config-panel-jira-remoteProjectConfigPanel";
-    private static final String REMOTABLE_PROEJECT_CONFIG_TAB_NAME = "Remotable Project Config";
-    private static final String ADMIN_FULL_NAME = "A. D. Ministrator (Sysadmin)";
-    private static final String ADMIN = "admin";
-
-    private static TestedProduct<WebDriverTester> product;
-    private static JiraOps jiraOps;
-    private static AtlassianConnectAddOnRunner remotePlugin;
-
     @Rule
     public HtmlDumpRule htmlDump = new HtmlDumpRule(product.getTester().getDriver());
 
-    private RemoteProject project;
+    private static AtlassianConnectAddOnRunner remotePlugin; 
 
     @BeforeClass
     public static void setupJiraAndStartConnectAddOn() throws Exception
@@ -147,45 +138,6 @@ public class TestJira
         }
     }
 
-    @After
-    public void logout()
-    {
-        product.getTester().getDriver().manage().deleteAllCookies();
-    }
-
-
-    private void loginAsAdmin()
-    {
-        loginAs(ADMIN, ADMIN);
-    }
-
-    private void loginAs(String username, String password)
-    {
-        product.visit(LoginPage.class).login(username, password, DashboardPage.class);
-    }
-
-
-    @Test
-    public void testViewIssuePageWithEmbeddedPanelAnonymous() throws Exception
-    {
-        RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Test issue for panel");
-        JiraViewIssuePage viewIssuePage = product.visit(JiraViewIssuePage.class, issue.getKey(), EMBEDDED_ISSUE_PANEL_ID);
-        Assert.assertEquals("Success", viewIssuePage.getMessage());
-    }
-
-    @Ignore("TODO: For some reason, there's an issue in the addLabelViaInlineEdit method where webdriver can't click on the submit button.")
-    @Test
-    public void testViewIssuePageWithEmbeddedPanelLoggedInWithEdit() throws Exception
-    {
-        loginAsAdmin();
-        RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Test issue for panel");
-        JiraViewIssuePage viewIssuePage = product.visit(JiraViewIssuePage.class, issue.getKey(),
-                EMBEDDED_ISSUE_PANEL_ID);
-        Assert.assertEquals("Success", viewIssuePage.getMessage());
-        viewIssuePage.addLabelViaInlineEdit("foo");
-        Assert.assertEquals("Success", viewIssuePage.getMessage());
-    }
-
     @Test
     public void testLoadDialogFromIssueNavigatorActionCog() throws RemoteException
     {
@@ -205,24 +157,6 @@ public class TestJira
         assertEquals(false, dialog.submit());
         assertTrue(dialog.wasSubmitted());
         assertEquals(true, dialog.submit());
-    }
-
-    @Test
-    public void testProjectTab() throws Exception
-    {
-        testLoggedInAndAnonymous(new Callable()
-        {
-            @Override
-            public Object call() throws Exception
-            {
-                RemotePluginEmbeddedTestPage page = product.visit(BrowseProjectPage.class, project.getKey())
-                        .openTab(AppProjectTabPage.class)
-                        .getEmbeddedPage();
-
-                Assert.assertEquals("Success", page.getMessage());
-                return null;
-            }
-        });
     }
 
     @Test
@@ -264,18 +198,7 @@ public class TestJira
     }
 
     @Test
-    public void testViewProjectAdminPanel() throws Exception
-    {
-        loginAsAdmin();
-        product.visit(ProjectSummaryPageTab.class, project.getKey());
-        JiraProjectAdministrationPanel webPanel = product.visit(JiraProjectAdministrationPanel.class,
-                EMBEDDED_PROJECT_CONFIG_PANEL_ID, project.getKey());
-        Assert.assertEquals("Success", webPanel.getMessage());
-    }
-
-    @Test
-    public void testAdminPageInJiraSpecificLocation() throws Exception
-    {
+    public void testAdminPageInJiraSpecificLocation() throws Exception {
         loginAsAdmin();
         final JiraAdministrationPage adminPage = product.visit(JiraAdministrationPage.class);
         assertTrue(adminPage.hasJiraRemotableAdminPageLink());
@@ -289,57 +212,5 @@ public class TestJira
         final JiraAdministrationPage adminPage = product.visit(JiraAdministrationPage.class);
         assertTrue(adminPage.hasGeneralRemotableAdminPage());
         assertEquals(ADMIN_FULL_NAME, adminPage.clickGeneralRemotableAdminPage().getFullName());
-    }
-
-    @Test
-    public void testViewProjectAdminTab() throws Exception
-    {
-        loginAsAdmin();
-        final ProjectSummaryPageTab page =
-                product.visit(ProjectSummaryPageTab.class, project.getKey());
-
-        assertThat(page.getTabs().getTabs(), hasItem(new TypeSafeMatcher<ProjectConfigTabs.Tab>()
-        {
-
-            @Override
-            public boolean matchesSafely(final ProjectConfigTabs.Tab tab)
-            {
-                return tab.getName().equals(REMOTABLE_PROEJECT_CONFIG_TAB_NAME);
-            }
-
-            @Override
-            public void describeTo(final Description description)
-            {
-                description.appendText("Project Configuration Tabs should contain Remotable Project Config tab");
-            }
-        }));
-
-        final JiraProjectAdministrationTab remoteProjectAdministrationTab =
-                page.getTabs().gotoTab(
-                        "webitem-jira-remotePluginProjectConfigTab",
-                        JiraProjectAdministrationTab.class,
-                        project.getKey());
-
-        // Test of workaround for JRA-26407.
-        assertNotNull(remoteProjectAdministrationTab.getProjectHeader());
-        assertEquals(REMOTABLE_PROEJECT_CONFIG_TAB_NAME, remoteProjectAdministrationTab.getTabs().getSelectedTab().getName());
-        Assert.assertEquals(project.getKey(), remoteProjectAdministrationTab.getProjectKey());
-        Assert.assertEquals("Success", remoteProjectAdministrationTab.getMessage());
-    }
-
-    private void testLoggedInAndAnonymous(Callable runnable) throws Exception
-    {
-        loginAsAdmin();
-        runnable.call();
-        logout();
-        runnable.call();
-    }
-
-    public static final class AppProjectTabPage extends AbstractRemotablePluginProjectTab
-    {
-        public AppProjectTabPage(final String projectKey)
-        {
-            super(projectKey, "project-tab-jira-remotePluginProjectTab");
-        }
     }
 }

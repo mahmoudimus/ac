@@ -22,19 +22,20 @@ import org.junit.After;
 import org.junit.Rule;
 import org.junit.Test;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Enumeration;
 import java.util.Map;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import static com.atlassian.plugin.remotable.test.Utils.createSignedRequestHandler;
 import static com.atlassian.plugin.remotable.test.Utils.loadResourceAsString;
 import static com.atlassian.plugin.remotable.test.server.AtlassianConnectAddOnRunner.newMustacheServlet;
 import static com.google.common.collect.Maps.newHashMap;
+import static it.TestConstants.BETTY;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
@@ -93,7 +94,7 @@ public class TestConfluenceMacroParams
                 .start();
 
         Map pageData = confluenceOps.setPage("ds", "test", loadResourceAsString("confluence/test-page.xhtml"));
-        product.visit(LoginPage.class).login("betty", "betty", HomePage.class);
+        product.visit(LoginPage.class).login(BETTY, BETTY, HomePage.class);
         Map<String, String> params = product.visit(ConfluenceMacroTestSuitePage.class, pageData.get("title"))
                 .visitGeneralLink()
                 .getIframeQueryParams();
@@ -120,7 +121,7 @@ public class TestConfluenceMacroParams
                                 ContextParameter.name("user_id").type("header"))
                         .resource(macroServlet))
                 .start();
-        product.visit(LoginPage.class).login("betty", "betty", HomePage.class);
+        product.visit(LoginPage.class).login(BETTY, BETTY, HomePage.class);
         product.visit(ConfluenceMacroPage.class, pageData.get("title"));
         assertEquals(pageData.get("id"), macroServlet.getQueryParams().get("page_id"));
         assertFalse(macroServlet.getQueryParams().containsKey("user_id"));
