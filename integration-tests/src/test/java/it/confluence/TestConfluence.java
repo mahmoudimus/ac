@@ -25,16 +25,13 @@ import com.atlassian.plugin.remotable.test.server.module.RemoteMacroModule;
 import com.atlassian.webdriver.pageobjects.WebDriverTester;
 import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Assert;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import redstone.xmlrpc.XmlRpcFault;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -51,8 +48,9 @@ import java.util.concurrent.TimeUnit;
 import static com.atlassian.plugin.remotable.test.HttpUtils.renderHtml;
 import static com.atlassian.plugin.remotable.test.Utils.createSignedRequestHandler;
 import static com.atlassian.plugin.remotable.test.Utils.loadResourceAsString;
-import static it.TestConstants.BETTY;
 import static com.atlassian.plugin.remotable.test.server.AtlassianConnectAddOnRunner.newMustacheServlet;
+import static it.TestConstants.BETTY;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class TestConfluence
@@ -136,6 +134,7 @@ public class TestConfluence
         }
     }
 
+    @Before
     @After
     public void logout()
     {
@@ -149,9 +148,9 @@ public class TestConfluence
         product.visit(LoginPage.class).login(BETTY, BETTY, HomePage.class);
         ConfluenceMacroTestSuitePage page = product.visit(ConfluenceMacroTestSuitePage.class, pageData.get("title"));
 
-        Assert.assertEquals(pageData.get("id"), page.getPageIdFromMacro());
-        Assert.assertEquals("some note", page.getBodyNoteFromMacro());
-        Assert.assertEquals("sandcastles", page.getImageMacroAlt());
+        assertEquals(pageData.get("id"), page.getPageIdFromMacro());
+        assertEquals("some note", page.getBodyNoteFromMacro());
+        assertEquals("sandcastles", page.getImageMacroAlt());
 
         assertTrue(page.getSlowMacroBody().startsWith("There were errors rendering macro:"));
     }
@@ -164,7 +163,7 @@ public class TestConfluence
 
         ConfluenceMacroTestSuitePage page = product.visit(ConfluenceMacroTestSuitePage.class, pageData.get("title"));
 
-        Assert.assertEquals(commentData.get("id"), page.getPageIdFromMacroInComment());
+        assertEquals(commentData.get("id"), page.getPageIdFromMacroInComment());
     }
 
     @Test
@@ -172,7 +171,7 @@ public class TestConfluence
     {
         Map pageData = confluenceOps.setAnonymousPage("ds", "test", loadResourceAsString("confluence/test-page.xhtml"));
         ConfluenceMacroTestSuitePage page = product.visit(ConfluenceMacroTestSuitePage.class, pageData.get("title"));
-        Assert.assertEquals(pageData.get("id"), page.getPageIdFromMacro());
+        assertEquals(pageData.get("id"), page.getPageIdFromMacro());
     }
 
     @Test
@@ -182,8 +181,8 @@ public class TestConfluence
         product.visit(LoginPage.class).login(BETTY, BETTY, HomePage.class);
         ConfluencePageMacroPage page = product.visit(ConfluencePageMacroPage.class, pageData.get("title"), "app1-page-0");
 
-        Assert.assertEquals("Success", page.getMessage());
-        Assert.assertEquals(OAuthUtils.getConsumerKey(), page.getConsumerKey());
+        assertEquals("Success", page.getMessage());
+        assertEquals(OAuthUtils.getConsumerKey(), page.getConsumerKey());
     }
 
     @Test
@@ -193,13 +192,13 @@ public class TestConfluence
         product.visit(LoginPage.class).login(BETTY, BETTY, HomePage.class);
 
         ConfluencePageMacroPage iframe1 = product.visit(ConfluencePageMacroPage.class, pageData.get("title"), "app1-page-0");
-        Assert.assertEquals("Success", iframe1.getMessage());
-        Assert.assertEquals(OAuthUtils.getConsumerKey(), iframe1.getConsumerKey());
+        assertEquals("Success", iframe1.getMessage());
+        assertEquals(OAuthUtils.getConsumerKey(), iframe1.getConsumerKey());
 
         ConfluencePageMacroPage iframe2 = product.visit(ConfluencePageMacroPage.class, pageData.get("title"), "app1-page-1");
 
-        Assert.assertEquals("Success", iframe2.getMessage());
-        Assert.assertEquals(OAuthUtils.getConsumerKey(), iframe2.getConsumerKey());
+        assertEquals("Success", iframe2.getMessage());
+        assertEquals(OAuthUtils.getConsumerKey(), iframe2.getConsumerKey());
     }
 
     @Test
@@ -208,16 +207,16 @@ public class TestConfluence
         Map pageData = confluenceOps.setPage("ds", "test", loadResourceAsString("confluence/counter-page.xhtml"));
         product.visit(LoginPage.class).login(BETTY, BETTY, HomePage.class);
         ConfluenceCounterMacroPage page = product.visit(ConfluenceCounterMacroPage.class, pageData.get("title"));
-        Assert.assertEquals("1", page.getCounterMacroBody());
+        assertEquals("1", page.getCounterMacroBody());
 
         // stays the same on a new visit
         page = product.visit(ConfluenceCounterMacroPage.class, pageData.get("title"));
-        Assert.assertEquals("1", page.getCounterMacroBody());
+        assertEquals("1", page.getCounterMacroBody());
 
         clearCaches();
 
         page = product.visit(ConfluenceCounterMacroPage.class, pageData.get("title"));
-        Assert.assertEquals("2", page.getCounterMacroBody());
+        assertEquals("2", page.getCounterMacroBody());
     }
 
     private static void clearCaches() throws Exception
