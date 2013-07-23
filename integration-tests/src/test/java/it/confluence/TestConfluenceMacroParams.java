@@ -1,15 +1,10 @@
 package it.confluence;
 
-import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
 import com.atlassian.plugin.remotable.spi.Permissions;
-import com.atlassian.plugin.remotable.test.junit.HtmlDumpRule;
-import com.atlassian.plugin.remotable.test.pageobjects.OwnerOfTestedProduct;
 import com.atlassian.plugin.remotable.test.pageobjects.confluence.ConfluenceMacroPage;
 import com.atlassian.plugin.remotable.test.pageobjects.confluence.ConfluenceMacroTestSuitePage;
-import com.atlassian.plugin.remotable.test.pageobjects.confluence.ConfluenceOps;
-import com.atlassian.plugin.remotable.test.pageobjects.confluence.FixedConfluenceTestedProduct;
 import com.atlassian.plugin.remotable.test.server.AtlassianConnectAddOnRunner;
 import com.atlassian.plugin.remotable.test.server.module.ContextParameter;
 import com.atlassian.plugin.remotable.test.server.module.GeneralPageModule;
@@ -17,19 +12,16 @@ import com.atlassian.plugin.remotable.test.server.module.MacroCategory;
 import com.atlassian.plugin.remotable.test.server.module.MacroEditor;
 import com.atlassian.plugin.remotable.test.server.module.MacroParameter;
 import com.atlassian.plugin.remotable.test.server.module.RemoteMacroModule;
-import com.atlassian.webdriver.pageobjects.WebDriverTester;
-import org.junit.After;
-import org.junit.Rule;
 import org.junit.Test;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Enumeration;
-import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Enumeration;
+import java.util.Map;
 
 import static com.atlassian.plugin.remotable.test.Utils.createSignedRequestHandler;
 import static com.atlassian.plugin.remotable.test.Utils.loadResourceAsString;
@@ -39,28 +31,8 @@ import static it.TestConstants.BETTY;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
-public class TestConfluenceMacroParams
+public final class TestConfluenceMacroParams extends ConfluenceWebDriverTestBase
 {
-
-    private static final TestedProduct<WebDriverTester> product;
-    private static final ConfluenceOps confluenceOps;
-
-    static
-    {
-        System.setProperty("testedProductClass", FixedConfluenceTestedProduct.class.getName());
-        product = OwnerOfTestedProduct.INSTANCE;
-        confluenceOps = new ConfluenceOps(product.getProductInstance().getBaseUrl());
-    }
-
-    @Rule
-    public HtmlDumpRule htmlDump = new HtmlDumpRule(product.getTester().getDriver());
-
-    @After
-    public void logout()
-    {
-        product.getTester().getDriver().manage().deleteAllCookies();
-    }
-
     @Test
     public void testContextParam() throws Exception
     {

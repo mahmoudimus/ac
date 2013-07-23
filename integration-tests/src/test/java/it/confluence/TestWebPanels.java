@@ -1,19 +1,13 @@
 package it.confluence;
 
-import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
 import com.atlassian.plugin.remotable.spi.Permissions;
 import com.atlassian.plugin.remotable.test.confluence.ConfluenceEditPage;
-import com.atlassian.plugin.remotable.test.junit.HtmlDumpRule;
-import com.atlassian.plugin.remotable.test.pageobjects.OwnerOfTestedProduct;
 import com.atlassian.plugin.remotable.test.pageobjects.RemoteWebPanel;
 import com.atlassian.plugin.remotable.test.pageobjects.RemoteWebPanels;
-import com.atlassian.plugin.remotable.test.pageobjects.confluence.ConfluenceOps;
-import com.atlassian.plugin.remotable.test.pageobjects.confluence.FixedConfluenceTestedProduct;
 import com.atlassian.plugin.remotable.test.server.AtlassianConnectAddOnRunner;
 import com.atlassian.plugin.remotable.test.server.module.RemoteWebPanelModule;
-import com.atlassian.webdriver.pageobjects.WebDriverTester;
 import it.MyContextAwareWebPanelServlet;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -33,22 +27,9 @@ import static org.junit.Assert.assertNotNull;
 /**
  * Test of remote web panels in Confluence.
  */
-public class TestWebPanels
+public class TestWebPanels extends ConfluenceWebDriverTestBase
 {
-    private static final TestedProduct<WebDriverTester> product;
-    private static final ConfluenceOps confluenceOps;
-
-    static
-    {
-        System.setProperty("testedProductClass", FixedConfluenceTestedProduct.class.getName());
-        product = OwnerOfTestedProduct.INSTANCE;
-        confluenceOps = new ConfluenceOps(product.getProductInstance().getBaseUrl());
-    }
-
     private static AtlassianConnectAddOnRunner remotePlugin;
-
-    @Rule
-    public HtmlDumpRule htmlDump = new HtmlDumpRule(product.getTester().getDriver());
 
     @BeforeClass
     public static void startConnectAddOn() throws Exception

@@ -1,18 +1,13 @@
 package it.confluence;
 
-import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
 import com.atlassian.plugin.remotable.spi.Permissions;
 import com.atlassian.plugin.remotable.test.OAuthUtils;
-import com.atlassian.plugin.remotable.test.junit.HtmlDumpRule;
-import com.atlassian.plugin.remotable.test.pageobjects.OwnerOfTestedProduct;
 import com.atlassian.plugin.remotable.test.pageobjects.confluence.ConfluenceCounterMacroPage;
 import com.atlassian.plugin.remotable.test.pageobjects.confluence.ConfluenceMacroPage;
 import com.atlassian.plugin.remotable.test.pageobjects.confluence.ConfluenceMacroTestSuitePage;
-import com.atlassian.plugin.remotable.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.remotable.test.pageobjects.confluence.ConfluencePageMacroPage;
-import com.atlassian.plugin.remotable.test.pageobjects.confluence.FixedConfluenceTestedProduct;
 import com.atlassian.plugin.remotable.test.server.AtlassianConnectAddOnRunner;
 import com.atlassian.plugin.remotable.test.server.RunnerSignedRequestHandler;
 import com.atlassian.plugin.remotable.test.server.module.ContextParameter;
@@ -22,7 +17,6 @@ import com.atlassian.plugin.remotable.test.server.module.MacroEditor;
 import com.atlassian.plugin.remotable.test.server.module.MacroPageModule;
 import com.atlassian.plugin.remotable.test.server.module.MacroParameter;
 import com.atlassian.plugin.remotable.test.server.module.RemoteMacroModule;
-import com.atlassian.webdriver.pageobjects.WebDriverTester;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -53,28 +47,16 @@ import static it.TestConstants.BETTY;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class TestConfluence
+public final class TestConfluence extends ConfluenceWebDriverTestBase
 {
     public static final String ERROR_PREFIX = "There were errors rendering macro:";
 
-    private static TestedProduct<WebDriverTester> product;
-    private static ConfluenceOps confluenceOps;
     private static AtlassianConnectAddOnRunner remotePlugin;
     private static RunnerSignedRequestHandler signedRequestHandler;
-
-    static
-    {
-        System.setProperty("testedProductClass", FixedConfluenceTestedProduct.class.getName());
-    }
-
-    @Rule
-    public HtmlDumpRule htmlDump = new HtmlDumpRule(product.getTester().getDriver());
 
     @BeforeClass
     public static void setupJiraAndStartConnectAddOn() throws Exception
     {
-        product = OwnerOfTestedProduct.INSTANCE;
-        confluenceOps = new ConfluenceOps(product.getProductInstance().getBaseUrl());
         signedRequestHandler = createSignedRequestHandler("app1");
         remotePlugin = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl(), "app1")
                 .addOAuth(signedRequestHandler)
@@ -132,13 +114,6 @@ public class TestConfluence
         {
             remotePlugin.stop();
         }
-    }
-
-    @Before
-    @After
-    public void logout()
-    {
-        product.getTester().getDriver().manage().deleteAllCookies();
     }
 
     @Test
