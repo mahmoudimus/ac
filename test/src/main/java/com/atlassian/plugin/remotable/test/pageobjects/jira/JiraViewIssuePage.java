@@ -1,8 +1,8 @@
 package com.atlassian.plugin.remotable.test.pageobjects.jira;
 
 import com.atlassian.pageobjects.Page;
-import com.atlassian.pageobjects.elements.ElementBy;
-import com.atlassian.plugin.remotable.test.pageobjects.RemoteWebPanels;
+import com.atlassian.pageobjects.PageBinder;
+import com.atlassian.plugin.remotable.test.pageobjects.RemoteWebPanel;
 import org.openqa.selenium.By;
 
 import javax.inject.Inject;
@@ -17,8 +17,8 @@ public class JiraViewIssuePage implements Page
     @Inject
     private com.atlassian.webdriver.AtlassianWebDriver driver;
 
-    @ElementBy(xpath = RemoteWebPanels.REMOTE_WEB_PANELS_XPATH, pageElementClass = RemoteWebPanels.class)
-    private RemoteWebPanels webPanels;
+    @Inject
+    private PageBinder pageBinder;
 
     public JiraViewIssuePage(String issueKey)
     {
@@ -42,8 +42,8 @@ public class JiraViewIssuePage implements Page
         driver.waitUntilElementIsVisible(By.className("labels"));
     }
 
-    public RemoteWebPanels getWebPanels()
+    public RemoteWebPanel findWebPanel(String panelId)
     {
-        return webPanels;
+        return pageBinder.bind(RemoteWebPanel.class, panelId);
     }
 }

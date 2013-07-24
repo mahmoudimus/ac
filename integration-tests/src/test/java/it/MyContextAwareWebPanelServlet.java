@@ -19,7 +19,6 @@ public final class MyContextAwareWebPanelServlet extends AtlassianConnectAddOnRu
                 "my-context-aware-web-panel.mu",
                 ImmutableMap.<String, Object>builder()
                         .putAll(context)
-                        .putAll(buildParams(req.getParameterMap(), "issue_id", "project_id", "user_id", "space_id", "page_id"))
                         .build());
     }
 

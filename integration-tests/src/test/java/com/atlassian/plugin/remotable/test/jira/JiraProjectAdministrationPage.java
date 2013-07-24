@@ -1,8 +1,10 @@
 package com.atlassian.plugin.remotable.test.jira;
 
 import com.atlassian.pageobjects.Page;
-import com.atlassian.pageobjects.elements.ElementBy;
-import com.atlassian.plugin.remotable.test.pageobjects.RemoteWebPanels;
+import com.atlassian.pageobjects.PageBinder;
+import com.atlassian.plugin.remotable.test.pageobjects.RemoteWebPanel;
+
+import javax.inject.Inject;
 
 /**
  * Describes a project administration page.
@@ -11,8 +13,8 @@ public class JiraProjectAdministrationPage implements Page
 {
     private final String projectKey;
 
-    @ElementBy (xpath = RemoteWebPanels.REMOTE_WEB_PANELS_XPATH, pageElementClass = RemoteWebPanels.class)
-    private RemoteWebPanels webPanels;
+    @Inject
+    private PageBinder pageBinder;
 
     public JiraProjectAdministrationPage(String projectKey)
     {
@@ -25,9 +27,9 @@ public class JiraProjectAdministrationPage implements Page
         return "/plugins/servlet/project-config/" + projectKey;
     }
 
-    public RemoteWebPanels getWebPanels()
+    public RemoteWebPanel findWebPanel(String panelId)
     {
-        return webPanels;
+        return pageBinder.bind(RemoteWebPanel.class, panelId);
     }
 }
 
