@@ -34,7 +34,7 @@ public class TestWebPanelAllParametersExtractor
         final Map<String, Object> context = ImmutableMap.<String, Object>builder()
                 .put("issue", issue)
                 .build();
-        ImmutableMap<String, String[]> extractedWebPanelParameters = webPanelURLParametersSerializer.getExtractedWebPanelParameters(context);
+        Map<String, Object> extractedWebPanelParameters = webPanelURLParametersSerializer.getExtractedWebPanelParameters(context);
 
         assertThat(extractedWebPanelParameters.keySet(), hasItem("issue_id"));
         assertThat(newArrayList(extractedWebPanelParameters.get("issue_id")), hasItem(String.valueOf(ISSUE_ID)));

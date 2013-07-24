@@ -1,7 +1,6 @@
 package com.atlassian.plugin.remotable.plugin.module.webpanel.extractor;
 
-import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -30,17 +29,13 @@ public class WebPanelURLParametersSerializer
         this.webPanelParameterExtractors = checkNotNull(webPanelParameterExtractors);
     }
 
-    public ImmutableMap<String, String[]> getExtractedWebPanelParameters(final Map<String, Object> context)
+    public Map<String, Object> getExtractedWebPanelParameters(final Map<String, Object> context)
     {
-        final ImmutableMap.Builder<String, String[]> builder = ImmutableMap.builder();
+        Map<String, Object> whiteListedContext = Maps.newHashMap();
         for (WebPanelParameterExtractor extractor : webPanelParameterExtractors)
         {
-            final Optional<Map.Entry<String,String[]>> extractedParameters = extractor.extract(context);
-            if (extractedParameters.isPresent())
-            {
-                builder.put(extractedParameters.get().getKey(), extractedParameters.get().getValue());
-            }
+            extractor.extract(context, whiteListedContext);
         }
-        return builder.build();
+        return Collections.unmodifiableMap(whiteListedContext);
     }
 }

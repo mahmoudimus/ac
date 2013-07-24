@@ -1,7 +1,5 @@
 package com.atlassian.plugin.remotable.plugin.module.webpanel.extractor;
 
-import com.google.common.base.Optional;
-
 import java.util.Map;
 
 /**
@@ -13,40 +11,10 @@ import java.util.Map;
 public interface WebPanelParameterExtractor
 {
     /**
-     * Extracts the parameters from context.
+     * Extracts the parameters from context and adds to a whitelisted context.
      *
      * @param context a web panel's context.
-     * @return a defined option containing pair of key,value which will be included in iframe's URL, otherwise none.
+     * @param whiteListedContext a web panel's context.
      */
-    Optional<Map.Entry<String, String[]>> extract(final Map<String, Object> context);
-
-    class ImmutableWebPanelParameterPair implements Map.Entry<String, String[]>
-    {
-        private final String key;
-        private final String[] values;
-
-        public ImmutableWebPanelParameterPair(final String key, final String[] values)
-        {
-            this.key = key;
-            this.values = values;
-        }
-
-        @Override
-        public String getKey()
-        {
-            return key;
-        }
-
-        @Override
-        public String[] getValue()
-        {
-            return values;
-        }
-
-        @Override
-        public String[] setValue(final String[] value)
-        {
-            throw new UnsupportedOperationException("This object is immutable");
-        }
-    }
+    void extract(final Map<String, Object> context, Map<String, Object> whiteListedContext);
 }

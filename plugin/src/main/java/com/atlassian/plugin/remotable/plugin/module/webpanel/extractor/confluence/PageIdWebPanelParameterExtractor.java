@@ -1,10 +1,8 @@
 package com.atlassian.plugin.remotable.plugin.module.webpanel.extractor.confluence;
 
-import com.atlassian.confluence.pages.AbstractPage;
-import com.atlassian.confluence.plugin.descriptor.web.DefaultWebInterfaceContext;
+import com.atlassian.confluence.plugin.descriptor.web.WebInterfaceContext;
 import com.atlassian.plugin.remotable.plugin.module.webpanel.extractor.WebPanelParameterExtractor;
-import com.google.common.base.Function;
-import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableMap;
 
 import java.util.Map;
 
@@ -13,19 +11,16 @@ import java.util.Map;
  */
 public class PageIdWebPanelParameterExtractor implements WebPanelParameterExtractor
 {
-    public static final String PAGE_ID = "page_id";
-
     @Override
-    public Optional<Map.Entry<String, String[]>> extract(final Map<String, Object> context)
+    public void extract(final Map<String, Object> context, final Map<String, Object> whiteListedContext)
     {
-        return WebInterfaceContextExtractor.extractFromWebInterfaceContext(context, new Function<DefaultWebInterfaceContext, Map.Entry<String, String[]>>()
+        if (context.containsKey("webInterfaceContext"))
         {
-            @Override
-            public Map.Entry<String, String[]> apply(final DefaultWebInterfaceContext context)
+            WebInterfaceContext webInterfaceContext = (WebInterfaceContext) context.get("webInterfaceContext");
+            if (null != webInterfaceContext && null != webInterfaceContext.getPage())
             {
-                final AbstractPage page = context.getPage();
-                return page != null ? new ImmutableWebPanelParameterPair(PAGE_ID, new String[] { String.valueOf(page.getId()) }) : null;
+                whiteListedContext.put("page", ImmutableMap.of("id", webInterfaceContext.getPage().getId()));
             }
-        });
+        }
     }
 }

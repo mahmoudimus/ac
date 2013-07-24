@@ -19,6 +19,7 @@ import java.util.Map;
 import static com.atlassian.plugin.remotable.test.Utils.createSignedRequestHandler;
 import static com.atlassian.plugin.remotable.test.server.AtlassianConnectAddOnRunner.newServlet;
 import static it.TestConstants.BETTY;
+import static junit.framework.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -36,7 +37,12 @@ public class TestWebPanels extends ConfluenceWebDriverTestBase
                 .addPermission(Permissions.CREATE_OAUTH_LINK)
                 .add(RemoteWebPanelModule.key("edit-screen-web-panel")
                         .name("Remotable Edit Screen Web Panel")
-                        .path("/eswp")
+                        .path("/eswp?page_id=${page.id}&space_id=${space.id}")
+                        .location("atl.editor")
+                        .resource(newServlet(new MyContextAwareWebPanelServlet())))
+                .add(RemoteWebPanelModule.key("edit-screen-web-panel-2")
+                        .name("Remotable Edit Screen Web Panel 2")
+                        .path("/eswp2?my-page-id=${page.id}&my-space-id=${space.id}")
                         .location("atl.editor")
                         .resource(newServlet(new MyContextAwareWebPanelServlet())))
                 .start();
@@ -61,6 +67,22 @@ public class TestWebPanels extends ConfluenceWebDriverTestBase
         RemoteWebPanel webPanel = editPage.findWebPanel("edit-screen-web-panel");
 
         assertEquals(pageId, webPanel.getPageId());
+        // Confluence doesn't provide space id via the xml-rpc API, so we can't find the actual space id.
+        assertNotNull(webPanel.getSpaceId());
         assertEquals(BETTY, webPanel.getUserId());
+    }
+
+    @Test
+    public void testRemoteWebPanelOnEditPageArbitraryData() throws MalformedURLException, XmlRpcFault
+    {
+        final Map pageData = confluenceOps.setPage("ds", "Page with webpanel", "some page content");
+        final String pageId = (String) pageData.get("id");
+        product.visit(LoginPage.class).login(BETTY, BETTY, HomePage.class);
+        ConfluenceEditPage editPage = product.visit(ConfluenceEditPage.class, pageId);
+        RemoteWebPanel webPanel = editPage.findWebPanel("edit-screen-web-panel-2");
+
+        assertEquals(pageId, webPanel.getFromQueryString("my-page-id"));
+        // Confluence doesn't provide space id via the xml-rpc API, so we can't find the actual space id.
+        assertNotNull(webPanel.getFromQueryString("my-space-id"));
     }
 }

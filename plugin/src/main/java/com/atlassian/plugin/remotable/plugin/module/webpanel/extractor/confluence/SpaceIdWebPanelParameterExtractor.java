@@ -1,10 +1,8 @@
 package com.atlassian.plugin.remotable.plugin.module.webpanel.extractor.confluence;
 
-import com.atlassian.confluence.plugin.descriptor.web.DefaultWebInterfaceContext;
-import com.atlassian.confluence.spaces.Space;
+import com.atlassian.confluence.plugin.descriptor.web.WebInterfaceContext;
 import com.atlassian.plugin.remotable.plugin.module.webpanel.extractor.WebPanelParameterExtractor;
-import com.google.common.base.Function;
-import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableMap;
 
 import java.util.Map;
 
@@ -13,19 +11,16 @@ import java.util.Map;
  */
 public class SpaceIdWebPanelParameterExtractor implements WebPanelParameterExtractor
 {
-    public static final String SPACE_ID = "space_id";
-
     @Override
-    public Optional<Map.Entry<String, String[]>> extract(final Map<String, Object> context)
+    public void extract(final Map<String, Object> context, final Map<String, Object> whiteListedContext)
     {
-        return WebInterfaceContextExtractor.extractFromWebInterfaceContext(context, new Function<DefaultWebInterfaceContext, Map.Entry<String, String[]>>()
+        if (context.containsKey("webInterfaceContext"))
         {
-            @Override
-            public Map.Entry<String, String[]> apply(final DefaultWebInterfaceContext context)
+            WebInterfaceContext webInterfaceContext = (WebInterfaceContext) context.get("webInterfaceContext");
+            if (null != webInterfaceContext && null != webInterfaceContext.getSpace())
             {
-                final Space space = context.getSpace();
-                return space != null ? new ImmutableWebPanelParameterPair(SPACE_ID, new String[] { String.valueOf(space.getId()) }) : null;
+                whiteListedContext.put("space", ImmutableMap.of("id", webInterfaceContext.getSpace().getId()));
             }
-        });
+        }
     }
 }
