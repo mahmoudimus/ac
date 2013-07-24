@@ -180,9 +180,9 @@ _AP.define("host/main", ["_xdm-rpc"], function (XdmRpc) {
           callback($("#remoteWorkflowPostFunctionConfiguration-"+uuid).val());
         },
         // !!! Confluence specific !!!
-        saveMacro: function(updatedParams) {
+        saveMacro: function(updatedParams, dialogOptions) {
           _AP.require("confluence/macro/editor", function(editor) {
-              editor.saveMacro(updatedParams);
+              editor.saveMacro(updatedParams, dialogOptions);
           });
         }
       }

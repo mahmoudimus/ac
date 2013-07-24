@@ -140,7 +140,8 @@ _AP.define("dialog/simple", ["_dollar"], function($) {
             AJS.log(msg);
           }
         });
-      }
+      },
+      close: closeDialog
     };
   };
 

@@ -6,20 +6,30 @@ _AP.define("confluence/macro/editor", ["_dollar", "dialog/simple"], function($, 
     // being edited to this field. This simplifies the client's job of saving the macro
     // values - they only need to pass back the updated values - and works because only
     // a single macro editor can be open at a time.
-    var saveMacro;
+    var saveMacro,
+        macroEditorDialog;
 
     return {
 
         /**
          * Saves the macro currently being edited. Relies on openCustomEditor() first being invoked by MacroBrowser.
          *
-         * @param {Object} updatedParameters the updated parameters for the macro being edited.
+         * @param {Object} updatedMacroParameters the updated parameters for the macro being edited.
+         * @param {Object} dialogOptions options for dialog handling when saving the macro
+         * @param {Boolean} [dialogOptions.closeDialog] if truthy, close the macro editor after saving the macro
          */
-        saveMacro: function(updatedParameters) {
+        saveMacro: function(updatedMacroParameters, dialogOptions) {
+            console.log("editor.js saveMacro", arguments);
             if (!saveMacro) {
                 $.handleError("Illegal state: no macro currently being edited!");
             }
-            saveMacro(updatedParameters);
+            saveMacro(updatedMacroParameters);
+
+            if (dialogOptions && dialogOptions.closeDialog && macroEditorDialog) {
+                macroEditorDialog.close && macroEditorDialog.close();
+                macroEditorDialog = undefined;
+            }
+
             saveMacro = undefined;
         },
 
@@ -75,8 +85,8 @@ _AP.define("confluence/macro/editor", ["_dollar", "dialog/simple"], function($, 
                 first = false;
             });
 
-            var dialog = simpleDialog(url, dialogOpts);
-            dialog.show();
+            macroEditorDialog = simpleDialog(url, dialogOpts);
+            macroEditorDialog.show();
         }
 
     };
