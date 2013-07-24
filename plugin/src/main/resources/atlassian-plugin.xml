@@ -199,7 +199,7 @@
     <component-import key="httpClientFactory" interface="com.atlassian.httpclient.api.factory.HttpClientFactory" />
     <component-import key="httpClient" interface="com.atlassian.httpclient.api.HttpClient" />
     <component-import key="moduleDescriptorWebHookRegistry"
-                      interface="com.atlassian.webhooks.spi.provider.ModuleDescriptorWebHookConsumerRegistry" />
+                      interface="com.atlassian.webhooks.spi.provider.ModuleDescriptorWebHookListenerRegistry" />
     <component-import key="remotePluginLicenseService" interface="com.atlassian.upm.api.license.RemotePluginLicenseService" />
 
     <!-- universal binary services -->
