@@ -19,7 +19,6 @@ _AP.define("confluence/macro/editor", ["_dollar", "dialog/simple"], function($, 
          * @param {Boolean} [dialogOptions.closeDialog] if truthy, close the macro editor after saving the macro
          */
         saveMacro: function(updatedMacroParameters, dialogOptions) {
-            console.log("editor.js saveMacro", arguments);
             if (!saveMacro) {
                 $.handleError("Illegal state: no macro currently being edited!");
             }
