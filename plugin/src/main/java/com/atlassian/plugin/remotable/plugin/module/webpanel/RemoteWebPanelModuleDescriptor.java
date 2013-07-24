@@ -25,12 +25,11 @@ import com.atlassian.util.concurrent.NotNull;
 import org.dom4j.Element;
 import org.osgi.framework.BundleContext;
 
-import java.net.URI;
+import java.util.Collections;
 
 import static com.atlassian.plugin.remotable.plugin.util.OsgiServiceUtils.getService;
 import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.getOptionalAttribute;
 import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.getRequiredAttribute;
-import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.getRequiredUriAttribute;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -49,7 +48,7 @@ public class RemoteWebPanelModuleDescriptor extends AbstractModuleDescriptor<Voi
     private final StringSubstitutor stringSubstitutor;
 
     private String weight;
-    private URI url;
+    private String url;
     private String location;
 
     private Element descriptor;
@@ -83,7 +82,9 @@ public class RemoteWebPanelModuleDescriptor extends AbstractModuleDescriptor<Voi
         this.descriptor = element;
         this.location = getLocation(element);
         this.weight = getOptionalAttribute(element, "weight", null);
-        this.url = getRequiredUriAttribute(element, "url");
+        this.url = getRequiredAttribute(element, "url");
+        // Validates URL after subtitution
+        stringSubstitutor.replace(this.url, Collections.emptyMap());
     }
 
     @Override

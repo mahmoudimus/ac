@@ -62,7 +62,7 @@ public final class TestWebPanels extends JiraWebDriverTestBase
                 .add(RemoteWebPanelModule.key(ISSUE_REMOTE_LEFT_WEB_PANEL_ID_2)
                         .name("Issue Left Web Panel 2")
                         .location("atl.jira.view.issue.left.context")
-                        .path("/ilwp2?my-issue-id=[issue.id]&my-project-id=[project.id]")
+                        .path("/ilwp2?my-issue-id=${issue.id}&my-project-id=${project.id}")
                         .resource(newServlet(new MyContextAwareWebPanelServlet())))
                 .add(RemoteWebPanelModule.key(ISSUE_REMOTE_RIGHT_WEB_PANEL_ID)
                         .name("Issue Right Web Panel")

@@ -18,25 +18,25 @@ public class TestStringSubstitutor
     @Test
     public void testSingleSubstitution()
     {
-        assertEquals("hi=joe", new StringSubstitutor().replace("hi=[name]", ImmutableMap.<String, Object>of("name", "joe")));
+        assertEquals("hi=joe", new StringSubstitutor().replace("hi=${name}", ImmutableMap.<String, Object>of("name", "joe")));
     }
 
     @Test
     public void testSingleSubstitutionNumber()
     {
-        assertEquals("hi=666.666", new StringSubstitutor().replace("hi=[name]", ImmutableMap.<String, Object>of("name", 666.666f)));
+        assertEquals("hi=666.666", new StringSubstitutor().replace("hi=${name}", ImmutableMap.<String, Object>of("name", 666.666f)));
     }
 
     @Test
     public void testSingleSubstitutionBoolean()
     {
-        assertEquals("hi=true", new StringSubstitutor().replace("hi=[name]", ImmutableMap.<String, Object>of("name", true)));
+        assertEquals("hi=true", new StringSubstitutor().replace("hi=${name}", ImmutableMap.<String, Object>of("name", true)));
     }
 
     @Test
     public void testMultiSubstitutionMap()
     {
-        assertEquals("hi=joe", new StringSubstitutor().replace("hi=[user.name]",
+        assertEquals("hi=joe", new StringSubstitutor().replace("hi=${user.name}",
                 ImmutableMap.<String, Object>of("user",
                         ImmutableMap.of("name", "joe")
                 )));
@@ -45,7 +45,7 @@ public class TestStringSubstitutor
     @Test
     public void testMultiSubstitutionBean()
     {
-        assertEquals("hi=joe", new StringSubstitutor().replace("hi=[value.value]",
+        assertEquals("hi=joe", new StringSubstitutor().replace("hi=${value.value}",
                 new MyBean(
                         new MyBean("joe")
                 )));

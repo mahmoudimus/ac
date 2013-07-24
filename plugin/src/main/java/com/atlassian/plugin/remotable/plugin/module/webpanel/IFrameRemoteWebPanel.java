@@ -15,7 +15,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.net.URI;
 import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -85,7 +84,7 @@ public class IFrameRemoteWebPanel implements WebPanel
     private IFrameContext substituteContext(Map<String, Object> context)
     {
         return new IFrameContextImpl(iFrameContext.getPluginKey(),
-                URI.create(stringSubstitutor.replace(iFrameContext.getIframePath().toString(), context)),
+                stringSubstitutor.replace(iFrameContext.getIframePath(), context),
                 iFrameContext.getNamespace(),
                 iFrameContext.getIFrameParams());
     }

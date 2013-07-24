@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 @Component
 public class StringSubstitutor
 {
-    private static final Pattern PATTERN = Pattern.compile("\\[([^]]*)]");
+    private static final Pattern PATTERN = Pattern.compile("\\$\\{([^}]*)}");
 
     public String replace(String source, Object context)
     {
