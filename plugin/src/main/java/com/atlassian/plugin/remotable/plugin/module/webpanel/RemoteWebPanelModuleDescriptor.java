@@ -12,6 +12,7 @@ import com.atlassian.plugin.remotable.plugin.module.ConditionProcessor;
 import com.atlassian.plugin.remotable.plugin.module.IFrameParamsImpl;
 import com.atlassian.plugin.remotable.plugin.module.IFrameRendererImpl;
 import com.atlassian.plugin.remotable.plugin.module.page.IFrameContextImpl;
+import com.atlassian.plugin.remotable.plugin.module.webfragment.StringSubstitutor;
 import com.atlassian.plugin.remotable.plugin.module.webpanel.extractor.WebPanelURLParametersSerializer;
 import com.atlassian.plugin.remotable.spi.module.IFrameParams;
 import com.atlassian.plugin.web.Condition;
@@ -45,6 +46,7 @@ public class RemoteWebPanelModuleDescriptor extends AbstractModuleDescriptor<Voi
     private final ConditionProcessor conditionProcessor;
     private final WebPanelURLParametersSerializer webPanelURLParametersSerializer;
     private final UserManager userManager;
+    private final StringSubstitutor stringSubstitutor;
 
     private String weight;
     private URI url;
@@ -61,9 +63,10 @@ public class RemoteWebPanelModuleDescriptor extends AbstractModuleDescriptor<Voi
             BundleContext bundleContext,
             ConditionProcessor conditionProcessor,
             WebPanelURLParametersSerializer webPanelURLParametersSerializer,
-            UserManager userManager)
+            UserManager userManager, StringSubstitutor stringSubstitutor)
     {
         super(moduleFactory);
+        this.stringSubstitutor = stringSubstitutor;
         this.userManager = checkNotNull(userManager);
         this.webPanelURLParametersSerializer = checkNotNull(webPanelURLParametersSerializer);
         this.iFrameRenderer = checkNotNull(iFrameRenderer);
@@ -135,7 +138,7 @@ public class RemoteWebPanelModuleDescriptor extends AbstractModuleDescriptor<Voi
                             iFrameRenderer,
                             new IFrameContextImpl(getPluginKey(), url, moduleKey, iFrameParams),
                             condition != null ? condition : new AlwaysDisplayCondition(),
-                            webPanelURLParametersSerializer, userManager);
+                            webPanelURLParametersSerializer, userManager, stringSubstitutor);
                 }
             }, getService(bundleContext, WebInterfaceManager.class));
 

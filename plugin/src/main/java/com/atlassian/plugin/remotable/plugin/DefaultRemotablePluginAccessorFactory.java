@@ -298,7 +298,9 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
 
         private URI getTargetUrl(URI targetPath)
         {
-            return URI.create(displayUrl.get().toString() + targetPath.getPath());
+            UriBuilder uriBuilder = new UriBuilder(Uri.fromJavaUri(targetPath));
+            uriBuilder.setPath(displayUrl.get().toString() + uriBuilder.getPath());
+            return uriBuilder.toUri().toJavaUri();
         }
 
         @Override

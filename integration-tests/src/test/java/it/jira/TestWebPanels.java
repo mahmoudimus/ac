@@ -62,7 +62,7 @@ public final class TestWebPanels extends JiraWebDriverTestBase
                 .add(RemoteWebPanelModule.key(ISSUE_REMOTE_LEFT_WEB_PANEL_ID_2)
                         .name("Issue Left Web Panel 2")
                         .location("atl.jira.view.issue.left.context")
-                        .path("/ilwp2?my-issue-id=[issue.id]")
+                        .path("/ilwp2?my-issue-id=[issue.id]&my-project-id=[project.id]")
                         .resource(newServlet(new MyContextAwareWebPanelServlet())))
                 .add(RemoteWebPanelModule.key(ISSUE_REMOTE_RIGHT_WEB_PANEL_ID)
                         .name("Issue Right Web Panel")
@@ -96,6 +96,17 @@ public final class TestWebPanels extends JiraWebDriverTestBase
 
         assertEquals(issue.getId(), panel.getIssueId());
         assertEquals(project.getId(), panel.getProjectId());
+    }
+
+    @Test
+    public void testViewIssuePageWithArbitraryDataInUrl() throws Exception
+    {
+        RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Test issue for panel");
+        JiraViewIssuePage viewIssuePage = product.visit(JiraViewIssuePage.class, issue.getKey());
+        RemoteWebPanel panel = viewIssuePage.findWebPanel(ISSUE_REMOTE_LEFT_WEB_PANEL_ID_2);
+
+        assertEquals(issue.getId(), panel.getFromQueryString("my-issue-id"));
+        assertEquals(project.getId(), panel.getFromQueryString("my-project-id"));
     }
 
     @Test

@@ -6,6 +6,7 @@ import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.remotable.plugin.integration.plugins.DynamicDescriptorRegistration;
 import com.atlassian.plugin.remotable.plugin.module.ConditionProcessor;
 import com.atlassian.plugin.remotable.plugin.module.IFrameRendererImpl;
+import com.atlassian.plugin.remotable.plugin.module.webfragment.StringSubstitutor;
 import com.atlassian.plugin.remotable.plugin.module.webpanel.RemoteWebPanelModuleDescriptor;
 import com.atlassian.plugin.remotable.plugin.module.webpanel.extractor.WebPanelURLParametersSerializer;
 import com.atlassian.sal.api.user.UserManager;
@@ -33,9 +34,10 @@ public final class ProjectConfigWebPanelModuleDescriptor extends RemoteWebPanelM
             BundleContext bundleContext,
             ConditionProcessor conditionProcessor,
             WebPanelURLParametersSerializer webPanelURLParametersSerializer,
-            UserManager userManager)
+            UserManager userManager,
+            StringSubstitutor stringSubstitutor)
     {
-        super(moduleFactory, iFrameRenderer, dynamicDescriptorRegistration, hostContainer, bundleContext, conditionProcessor, webPanelURLParametersSerializer, userManager);
+        super(moduleFactory, iFrameRenderer, dynamicDescriptorRegistration, hostContainer, bundleContext, conditionProcessor, webPanelURLParametersSerializer, userManager, stringSubstitutor);
     }
 
     protected String getLocation(final Element element)
