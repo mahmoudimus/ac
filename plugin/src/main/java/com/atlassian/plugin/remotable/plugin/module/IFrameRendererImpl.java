@@ -134,7 +134,7 @@ public final class IFrameRendererImpl implements IFrameRenderer
         final URI hostUrl = iframeHost.getUrl();
 
         UriBuilder uriBuilder = new UriBuilder(Uri.fromJavaUri(iframeContext.getIframePath()));
-        uriBuilder.setPath(uriBuilder.getPath() + extraPath);
+        uriBuilder.setPath(uriBuilder.getPath() + ObjectUtils.toString(extraPath));
         final URI iframeUrl = uriBuilder.toUri().toJavaUri();
 
         String[] dialog = queryParams.get("dialog");
