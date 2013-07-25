@@ -11,12 +11,12 @@ import com.atlassian.plugin.remotable.plugin.license.LicenseRetriever;
 import com.atlassian.plugin.remotable.plugin.util.LocaleHelper;
 import com.atlassian.plugin.remotable.plugin.util.function.MapFunctions;
 import com.atlassian.plugin.remotable.spi.http.AuthorizationGenerator;
+import com.atlassian.plugin.remotable.spi.http.HttpMethod;
 import com.atlassian.uri.Uri;
 import com.atlassian.uri.UriBuilder;
 import com.atlassian.util.concurrent.Promise;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.slf4j.Logger;
@@ -25,12 +25,12 @@ import org.slf4j.LoggerFactory;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
-import static com.atlassian.fugue.Option.option;
-import static com.atlassian.httpclient.api.Request.Method;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.collect.Iterables.contains;
 
 /**
@@ -40,13 +40,19 @@ public final class CachingHttpContentRetriever implements HttpContentRetriever
 {
     private final static Logger log = LoggerFactory.getLogger(CachingHttpContentRetriever.class);
 
-    private static final ImmutableSet<Method> METHODS_WITH_BODY = Sets.immutableEnumSet(Method.POST, Method.PUT, Method.TRACE);
-    private static final ImmutableSet<Method> METHODS_WITH_QUERY_PARAMS = Sets.immutableEnumSet(Method.GET, Method.DELETE, Method.HEAD);
+    private static final Set<HttpMethod> METHODS_WITH_BODY = Sets.immutableEnumSet(HttpMethod.POST, HttpMethod.PUT);
+    private static final Set<HttpMethod> METHODS_WITH_QUERY_PARAMS = Sets.immutableEnumSet(HttpMethod.GET);
+    private static final Map<HttpMethod, Request.Method> METHOD_MAPPING = ImmutableMap.of(
+            HttpMethod.GET, Request.Method.GET,
+            HttpMethod.POST, Request.Method.POST,
+            HttpMethod.PUT, Request.Method.PUT
+    );
 
     private final HttpClient httpClient;
     private final LicenseRetriever licenseRetriever;
     private final LocaleHelper localeHelper;
 
+    @SuppressWarnings("unused") // this is the constructor used by the plugin component
     public CachingHttpContentRetriever(LicenseRetriever licenseRetriever, LocaleHelper localeHelper, HttpClientFactory httpClientFactory, PluginRetrievalService pluginRetrievalService)
     {
         this(licenseRetriever, localeHelper, httpClientFactory, getHttpClientOptions(checkNotNull(pluginRetrievalService, "pluginRetrievalService")));
@@ -72,12 +78,14 @@ public final class CachingHttpContentRetriever implements HttpContentRetriever
 
     @Override
     public Promise<String> async(AuthorizationGenerator authorizationGenerator,
-                                 Method method,
+                                 HttpMethod method,
                                  URI url,
                                  Map<String, String> parameters,
                                  Map<String, String> headers,
                                  String pluginKey)
     {
+        checkState(METHOD_MAPPING.keySet().contains(method), "The only valid methods are: %s", METHOD_MAPPING.keySet());
+
         log.info("{}ing content from '{}'", method, url);
 
         final Map<String, String> allParameters = getAllParameters(parameters, pluginKey);
@@ -92,7 +100,7 @@ public final class CachingHttpContentRetriever implements HttpContentRetriever
             request.setEntity(UriBuilder.joinParameters(transformParameters(allParameters)));
         }
 
-        return request.execute(method)
+        return request.execute(METHOD_MAPPING.get(method))
                 .<String>transform()
                 .ok(new OkFunction(url))
                 .forbidden(new ForbiddenFunction(url))
@@ -101,7 +109,7 @@ public final class CachingHttpContentRetriever implements HttpContentRetriever
                 .toPromise();
     }
 
-    private String getFullUrl(Method method, URI url, Map<String, String> allParameters)
+    private String getFullUrl(HttpMethod method, URI url, Map<String, String> allParameters)
     {
         final UriBuilder uriBuilder = new UriBuilder(Uri.fromJavaUri(url));
         if (contains(METHODS_WITH_QUERY_PARAMS, method))
@@ -129,9 +137,9 @@ public final class CachingHttpContentRetriever implements HttpContentRetriever
         return allHeaders.build();
     }
 
-    private Option<String> getAuthHeaderValue(AuthorizationGenerator authorizationGenerator, Method method, URI url, Map<String, String> allParameters)
+    private Option<String> getAuthHeaderValue(AuthorizationGenerator authorizationGenerator, HttpMethod method, URI url, Map<String, String> allParameters)
     {
-        return option(authorizationGenerator.generate(method.name(), url, transformParameters(allParameters)));
+        return authorizationGenerator.generate(method, url, transformParameters(allParameters));
     }
 
     private Map<String, List<String>> transformParameters(Map<String, String> allParameters)
@@ -165,7 +173,7 @@ public final class CachingHttpContentRetriever implements HttpContentRetriever
                                     Map<String, String> headers,
                                     String pluginKey)
     {
-        return async(authorizationGenerator, Method.GET, url, parameters, headers, pluginKey);
+        return async(authorizationGenerator, HttpMethod.GET, url, parameters, headers, pluginKey);
     }
 
     private static HttpClientOptions getHttpClientOptions(PluginRetrievalService pluginRetrievalService)

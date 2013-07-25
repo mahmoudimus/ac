@@ -13,6 +13,7 @@ import com.atlassian.plugin.remotable.plugin.DefaultRemotablePluginAccessorFacto
 import com.atlassian.plugin.remotable.plugin.util.http.CachingHttpContentRetriever;
 import com.atlassian.plugin.remotable.plugin.util.http.ContentRetrievalErrors;
 import com.atlassian.plugin.remotable.plugin.util.http.ContentRetrievalException;
+import com.atlassian.plugin.remotable.spi.http.HttpMethod;
 import com.atlassian.renderer.RenderContextOutputType;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
@@ -92,7 +93,7 @@ public class MacroContentManager implements DisposableBean
 
         final Map<String, String> urlParameters = macroInstance.getUrlParameters(username, userKey);
 
-        Promise<String> promise = macroInstance.getRemotablePluginAccessor().executeAsyncGet(username,
+        Promise<String> promise = macroInstance.getRemotablePluginAccessor().executeAsync(HttpMethod.GET,
                 macroInstance.getPath(), urlParameters, macroInstance.getHeaders(username, userKey))
                 .fold(new ContentHandlerFailFunction(templateRenderer),
                         new HtmlToSafeHtmlFunction(macroInstance, urlParameters, macroContentLinkParser, xhtmlCleaner,

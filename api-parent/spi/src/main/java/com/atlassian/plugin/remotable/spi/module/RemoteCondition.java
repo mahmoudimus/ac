@@ -3,9 +3,9 @@ package com.atlassian.plugin.remotable.spi.module;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.remotable.api.service.http.bigpipe.BigPipeManager;
 import com.atlassian.plugin.remotable.spi.RemotablePluginAccessorFactory;
+import com.atlassian.plugin.remotable.spi.http.HttpMethod;
 import com.atlassian.plugin.remotable.spi.product.ProductAccessor;
 import com.atlassian.plugin.web.Condition;
-import com.atlassian.plugin.webresource.WebResourceManager;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.atlassian.util.concurrent.Promise;
@@ -34,7 +34,6 @@ public final class RemoteCondition implements Condition
     private String pluginKey;
     private String toHideSelector;
     private Iterable<String> contextParams;
-    private final WebResourceManager webResourceManager;
     private final ProductAccessor productAccessor;
     private final RemotablePluginAccessorFactory remotablePluginAccessorFactory;
     private final BigPipeManager bigPipeManager;
@@ -43,14 +42,12 @@ public final class RemoteCondition implements Condition
 
     private static final Logger log = LoggerFactory.getLogger(RemoteCondition.class);
 
-    public RemoteCondition(WebResourceManager webResourceManager,
-                           ProductAccessor productAccessor,
+    public RemoteCondition(ProductAccessor productAccessor,
                            RemotablePluginAccessorFactory remotablePluginAccessorFactory,
                            BigPipeManager bigPipeManager,
                            UserManager userManager,
                            TemplateRenderer templateRenderer)
     {
-        this.webResourceManager = webResourceManager;
         this.productAccessor = productAccessor;
         this.remotablePluginAccessorFactory = remotablePluginAccessorFactory;
         this.bigPipeManager = bigPipeManager;
@@ -77,15 +74,8 @@ public final class RemoteCondition implements Condition
     @Override
     public boolean shouldDisplay(Map<String, Object> context)
     {
-        Map<String,String> params = newHashMap();
-        for (String contextParam : contextParams)
-        {
-            params.put(contextParam, templateRenderer.renderFragment(productAccessor.getLinkContextParams().get(contextParam), context));
-        }
-        String remoteUsername = userManager.getRemoteUsername();
-        params.put("user_id", remoteUsername != null ? remoteUsername : "");
         Promise<String> responsePromise = remotablePluginAccessorFactory.get(pluginKey)
-                .executeAsyncGet(userManager.getRemoteUsername(), url, params, Collections.<String, String>emptyMap())
+                .executeAsync(HttpMethod.GET, url, getParameters(context), Collections.<String, String>emptyMap())
                 .fold(
                         new Function<Throwable, String>()
                         {
@@ -122,5 +112,17 @@ public final class RemoteCondition implements Condition
 
         // always return true as the link will be disabled by default via the 'hidden' class
         return true;
+    }
+
+    private Map<String, String> getParameters(Map<String, Object> context)
+    {
+        Map<String, String> params = newHashMap();
+        for (String contextParam : contextParams)
+        {
+            params.put(contextParam, templateRenderer.renderFragment(productAccessor.getLinkContextParams().get(contextParam), context));
+        }
+        String remoteUsername = userManager.getRemoteUsername();
+        params.put("user_id", remoteUsername != null ? remoteUsername : "");
+        return params;
     }
 }
