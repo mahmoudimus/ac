@@ -37,7 +37,7 @@ public class TestWebPanels extends ConfluenceWebDriverTestBase
                 .addPermission(Permissions.CREATE_OAUTH_LINK)
                 .add(RemoteWebPanelModule.key("edit-screen-web-panel")
                         .name("Remotable Edit Screen Web Panel")
-                        .path("/eswp?page_id=${page.id}&space_id=${space.id}")
+                        .path("/eswp?page_id=${page.id}&space_id=${space.id}&space_key=${space.key}")
                         .location("atl.editor")
                         .resource(newServlet(new MyContextAwareWebPanelServlet())))
                 .add(RemoteWebPanelModule.key("edit-screen-web-panel-2")
@@ -69,6 +69,7 @@ public class TestWebPanels extends ConfluenceWebDriverTestBase
         assertEquals(pageId, webPanel.getPageId());
         // Confluence doesn't provide space id via the xml-rpc API, so we can't find the actual space id.
         assertNotNull(webPanel.getSpaceId());
+        assertEquals("ds", webPanel.getFromQueryString("space_key"));
         assertEquals(BETTY, webPanel.getUserId());
     }
 

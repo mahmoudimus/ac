@@ -19,7 +19,10 @@ public class SpaceIdWebPanelParameterExtractor implements WebPanelParameterExtra
             WebInterfaceContext webInterfaceContext = (WebInterfaceContext) context.get("webInterfaceContext");
             if (null != webInterfaceContext && null != webInterfaceContext.getSpace())
             {
-                whiteListedContext.put("space", ImmutableMap.of("id", webInterfaceContext.getSpace().getId()));
+                whiteListedContext.put("space", ImmutableMap.of(
+                        "id", webInterfaceContext.getSpace().getId(),
+                        "key", webInterfaceContext.getSpace().getKey()
+                ));
             }
         }
     }

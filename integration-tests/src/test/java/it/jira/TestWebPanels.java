@@ -47,7 +47,7 @@ public final class TestWebPanels extends JiraWebDriverTestBase
                 .addPermission(Permissions.CREATE_OAUTH_LINK)
                 .add(IssuePanelPageModule.key(ISSUE_PANEL_ID)
                         .name("AC Play Issue Page Panel")
-                        .path("/ipp?issue_id=${issue.id}&project_id=${project.id}")
+                        .path("/ipp?issue_id=${issue.id}&issue_key=${issue.key}&project_id=${project.id}&project_key=${project.key}")
                         .resource(newMustacheServlet("iframe.mu")))
                 .add(ProjectConfigPanelModule.key(PROJECT_CONFIG_PANEL_ID)
                         .name("AC Play Project Config Panel")
@@ -95,7 +95,9 @@ public final class TestWebPanels extends JiraWebDriverTestBase
         RemoteWebPanel panel = viewIssuePage.findWebPanel(ISSUE_PANEL_ID);
 
         assertEquals(issue.getId(), panel.getIssueId());
+        assertEquals(issue.getKey(), panel.getFromQueryString("issue_key"));
         assertEquals(project.getId(), panel.getProjectId());
+        assertEquals(project.getKey(), panel.getFromQueryString("project_key"));
     }
 
     @Test

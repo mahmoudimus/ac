@@ -21,7 +21,10 @@ public class IssueIdWebPanelParameterExtractor implements WebPanelParameterExtra
             Issue issue = (Issue) context.get(ISSUE_CONTEXT_KEY);
             if (null != issue)
             {
-                whiteListedContext.put("issue", ImmutableMap.of("id", issue.getId()));
+                whiteListedContext.put("issue", ImmutableMap.of(
+                        "id", issue.getId(),
+                        "key", issue.getKey()
+                ));
             }
         }
     }

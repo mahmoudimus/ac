@@ -21,7 +21,10 @@ public class ProjectIdWebPanelParameterExtractor implements WebPanelParameterExt
             Project project = (Project) context.get(PROJECT_CONTEXT_KEY);
             if (null != project)
             {
-                whiteListedContext.put("project", ImmutableMap.of("id", project.getId()));
+                whiteListedContext.put("project", ImmutableMap.of(
+                        "id", project.getId(),
+                        "key", project.getKey()
+                ));
             }
         }
     }
