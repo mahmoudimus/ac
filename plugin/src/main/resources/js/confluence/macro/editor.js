@@ -10,26 +10,15 @@ _AP.define("confluence/macro/editor", ["_dollar", "dialog/simple"], function($, 
         macroEditorDialog;
 
     return {
-
         /**
-         * Saves the macro currently being edited. Relies on openCustomEditor() first being invoked by MacroBrowser.
-         *
-         * @param {Object} updatedMacroParameters the updated parameters for the macro being edited.
-         * @param {Object} dialogOptions options for dialog handling when saving the macro
-         * @param {Boolean} [dialogOptions.closeDialog] if truthy, close the macro editor after saving the macro
+         * Closes the macro editor if it is open. If you need to persist macro configuration, call <code>saveMacro</code>
+         * before closing the editor.
          */
-        saveMacro: function(updatedMacroParameters, dialogOptions) {
-            if (!saveMacro) {
-                $.handleError("Illegal state: no macro currently being edited!");
+        close: function() {
+            if (macroEditorDialog && macroEditorDialog.close) {
+                macroEditorDialog.close();
             }
-            saveMacro(updatedMacroParameters);
-
-            if (dialogOptions && dialogOptions.closeDialog && macroEditorDialog) {
-                macroEditorDialog.close && macroEditorDialog.close();
-                macroEditorDialog = undefined;
-            }
-
-            saveMacro = undefined;
+            macroEditorDialog = undefined;
         },
 
         /**
@@ -86,7 +75,21 @@ _AP.define("confluence/macro/editor", ["_dollar", "dialog/simple"], function($, 
 
             macroEditorDialog = simpleDialog(url, dialogOpts);
             macroEditorDialog.show();
+        },
+
+        /**
+         * Saves the macro currently being edited. Relies on openCustomEditor() first being invoked by MacroBrowser.
+         *
+         * @param {Object} updatedMacroParameters the updated parameters for the macro being edited.
+         */
+        saveMacro: function(updatedMacroParameters) {
+            if (!saveMacro) {
+                $.handleError("Illegal state: no macro currently being edited!");
+            }
+            saveMacro(updatedMacroParameters);
+            saveMacro = undefined;
         }
+
 
     };
 
