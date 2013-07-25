@@ -7,6 +7,8 @@ import com.atlassian.plugin.remotable.pageobjects.RemotePageUtil;
 import com.atlassian.plugin.remotable.plugin.module.webpanel.extractor.confluence.PageIdWebPanelParameterExtractor;
 import com.atlassian.plugin.remotable.plugin.module.webpanel.extractor.confluence.SpaceIdWebPanelParameterExtractor;
 import com.atlassian.plugin.remotable.plugin.module.webpanel.extractor.jira.IssueIdWebPanelParameterExtractor;
+import com.atlassian.plugin.remotable.plugin.module.webpanel.extractor.jira.ProfileUserKeyWebPanelParameterExtractor;
+import com.atlassian.plugin.remotable.plugin.module.webpanel.extractor.jira.ProfileUserNameWebPanelParameterExtractor;
 import com.atlassian.plugin.remotable.plugin.module.webpanel.extractor.jira.ProjectIdWebPanelParameterExtractor;
 import com.atlassian.webdriver.AtlassianWebDriver;
 import org.openqa.selenium.By;
@@ -61,4 +63,15 @@ public class RemoteWebPanel extends WebDriverElement
     {
         return RemotePageUtil.waitForValue(driver, webPanelContainerDiv, PageIdWebPanelParameterExtractor.PAGE_ID);
     }
+
+    public String getProfileUserName()
+    {
+        return RemotePageUtil.waitForValue(driver, webPanelContainerDiv, ProfileUserNameWebPanelParameterExtractor.PROFILE_USER_NAME);
+    }
+
+    public String getProfileUserKey()
+    {
+        return RemotePageUtil.waitForValue(driver, webPanelContainerDiv, ProfileUserKeyWebPanelParameterExtractor.PROFILE_USER_KEY);
+    }
+
 }

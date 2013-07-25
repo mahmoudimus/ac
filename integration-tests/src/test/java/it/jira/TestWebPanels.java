@@ -5,6 +5,7 @@ import com.atlassian.plugin.remotable.test.RemoteWebPanel;
 import com.atlassian.plugin.remotable.test.RemoteWebPanels;
 import com.atlassian.plugin.remotable.test.jira.JiraProjectAdministrationPage;
 import com.atlassian.plugin.remotable.test.jira.JiraViewIssuePage;
+import com.atlassian.plugin.remotable.test.jira.JiraViewProfilePage;
 import hudson.plugins.jira.soap.RemoteIssue;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -24,6 +25,7 @@ public class TestWebPanels extends JiraWebDriverTestBase
     public static final String ISSUE_PANEL_ID = "jira-remotePluginIssuePanelPage";
     public static final String ISSUE_REMOTE_LEFT_WEB_PANEL_ID = "jira-issue-left-web-panel";
     public static final String ISSUE_REMOTE_RIGHT_WEB_PANEL_ID = "jira-issue-right-web-panel";
+    public static final String USER_PROFILE_WEB_PANEL_ID = "user-profile-web-panel";
     public static final String PROJECT_CONFIG_HEADER_WEB_PANEL = "jira-project-config-header-web-panel";
     public static final String PROJECT_CONFIG_PANEL_ID = "jira-remoteProjectConfigPanel";
 
@@ -93,6 +95,23 @@ public class TestWebPanels extends JiraWebDriverTestBase
         RemoteWebPanel panel = webPanels.getWebPanel(PROJECT_CONFIG_HEADER_WEB_PANEL);
         assertNotNull("Remote panel should be found", panel);
         assertEquals(project.getId(), panel.getProjectId());
+        assertEquals(ADMIN, panel.getUserId());
+    }
+
+    @Test
+    public void testWebPanelInUserProfile()
+    {
+        final String USER_PROFILE_NAME = "barney";
+
+        loginAsAdmin();
+        JiraViewProfilePage jiraViewProfilePage = product.visit(JiraViewProfilePage.class, USER_PROFILE_NAME);
+        RemoteWebPanels webPanels = jiraViewProfilePage.getWebPanels();
+        assertNotNull("Remote web panels should be found", webPanels);
+
+        RemoteWebPanel panel = webPanels.getWebPanel(USER_PROFILE_WEB_PANEL_ID);
+        assertNotNull("Remote panel should be found", panel);
+        assertEquals(USER_PROFILE_NAME, panel.getProfileUserKey());
+        assertEquals(USER_PROFILE_NAME, panel.getProfileUserName());
         assertEquals(ADMIN, panel.getUserId());
     }
 

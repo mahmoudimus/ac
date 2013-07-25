@@ -23,6 +23,12 @@
     {{#space_id}}
     <div>Space id <span id="space_id">{{space_id}}</span></div>
     {{/space_id}}
+    {{#profile_user_key}}
+    <div>Profile user key <span id="profile_user_key">{{profile_user_key}}</span></div>
+    {{/profile_user_key}}
+    {{#profile_user_name}}
+    <div>Profile user name <span id="profile_user_name">{{profile_user_name}}</span></div>
+    {{/profile_user_name}}
 
   </body>
 </html>

@@ -12,7 +12,7 @@ import static com.atlassian.plugin.remotable.plugin.module.webpanel.extractor.ji
 
 public class ProfileUserKeyWebPanelParameterExtractor implements WebPanelParameterExtractor
 {
-    private static final String PROFILE_USER_KEY = "profile_user_key";
+    public static final String PROFILE_USER_KEY = "profile_user_key";
 
     private final UserUtil  userUtil;
 

@@ -27,7 +27,7 @@ public class MyContextAwareWebPanelServlet extends HttpServlet
             throws ServletException, IOException
     {
         renderHtml(res, "my-context-aware-web-panel.mu",
-                buildParams(req.getParameterMap(), "issue_id", "project_id", "user_id", "space_id", "page_id")
+                buildParams(req.getParameterMap(), "issue_id", "project_id", "user_id", "space_id", "page_id", "profile_user_key", "profile_user_name")
         );
     }
 
