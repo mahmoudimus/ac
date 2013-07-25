@@ -9,7 +9,7 @@ import java.util.Map;
 /**
  * Extracts project id that will be included in webpanel's iframe url.
  */
-public class ProjectIdWebPanelParameterExtractor implements WebPanelParameterExtractor
+public class ProjectWebPanelParameterExtractor implements WebPanelParameterExtractor
 {
     private static final String PROJECT_CONTEXT_KEY = "project";
 

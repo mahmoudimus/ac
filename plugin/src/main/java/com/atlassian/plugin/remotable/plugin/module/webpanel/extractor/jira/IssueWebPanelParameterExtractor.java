@@ -9,7 +9,7 @@ import java.util.Map;
 /**
  * Extracts issue id that will be included in webpanel's iframe url.
  */
-public class IssueIdWebPanelParameterExtractor implements WebPanelParameterExtractor
+public class IssueWebPanelParameterExtractor implements WebPanelParameterExtractor
 {
     private static final String ISSUE_CONTEXT_KEY = "issue";
 

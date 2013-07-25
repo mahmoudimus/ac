@@ -9,7 +9,7 @@ import java.util.Map;
 /**
  * Extracts page id that will be included in webpanel's iframe url.
  */
-public class PageIdWebPanelParameterExtractor implements WebPanelParameterExtractor
+public class PageWebPanelParameterExtractor implements WebPanelParameterExtractor
 {
     @Override
     public void extract(final Map<String, Object> context, final Map<String, Object> whiteListedContext)

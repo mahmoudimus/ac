@@ -9,7 +9,7 @@ import java.util.Map;
 /**
  * Extracts space id that will be included in webpanel's iframe url.
  */
-public class SpaceIdWebPanelParameterExtractor implements WebPanelParameterExtractor
+public class SpaceWebPanelParameterExtractor implements WebPanelParameterExtractor
 {
     @Override
     public void extract(final Map<String, Object> context, final Map<String, Object> whiteListedContext)
