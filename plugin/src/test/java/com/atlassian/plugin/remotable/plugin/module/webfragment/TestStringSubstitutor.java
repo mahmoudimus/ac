@@ -51,6 +51,14 @@ public class TestStringSubstitutor
                 )));
     }
 
+    @Test
+    public void testEscapingSubstitution()
+    {
+        assertEquals("?foo=%3F%23&bar=%26%3D#", new StringSubstitutor().replace("?foo=${a}&bar=${b}#",
+                ImmutableMap.<String, Object>of("a", "?#", "b", "&=")
+        ));
+    }
+
     private static class MyBean<T>
     {
         private final T value;

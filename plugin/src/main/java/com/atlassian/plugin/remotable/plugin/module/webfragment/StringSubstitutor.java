@@ -1,5 +1,10 @@
 package com.atlassian.plugin.remotable.plugin.module.webfragment;
 
+import org.apache.commons.httpclient.URIException;
+import org.apache.commons.httpclient.util.URIUtil;
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.PropertyAccessorFactory;
 import org.springframework.stereotype.Component;
@@ -16,6 +21,8 @@ import java.util.regex.Pattern;
 @Component
 public class StringSubstitutor
 {
+    private static final Logger log = LoggerFactory.getLogger(StringSubstitutor.class);
+
     private static final Pattern PATTERN = Pattern.compile("\\$\\{([^}]*)}");
 
     public String replace(String source, Object context)
@@ -26,10 +33,23 @@ public class StringSubstitutor
         {
             String term = m.group(1);
             String value = fromContext(term, context);
-            m.appendReplacement(sb, value);
+            m.appendReplacement(sb, encodeQuery(value));
         }
         m.appendTail(sb);
         return sb.toString();
+    }
+
+    private String encodeQuery(String value)
+    {
+        try
+        {
+            return URIUtil.encodeWithinQuery(value);
+        }
+        catch (URIException ex)
+        {
+            log.error("Error encoding value '" + value + "' to querystring", ex);
+            return "";
+        }
     }
 
     private String fromContext(String term, Object context)
