@@ -6,6 +6,9 @@ import com.google.common.base.Optional;
 import java.security.Principal;
 import java.util.Map;
 
+/**
+ * Extracts profile user name that will be included in webpanel's iframe url (used in user profile view).
+ */
 public class ProfileUserNameWebPanelParameterExtractor implements WebPanelParameterExtractor
 {
     public static final String PROFILE_USER_CONTEXT_KEY = "profileUser";

@@ -10,6 +10,9 @@ import java.util.Map;
 
 import static com.atlassian.plugin.remotable.plugin.module.webpanel.extractor.jira.ProfileUserNameWebPanelParameterExtractor.PROFILE_USER_CONTEXT_KEY;
 
+/**
+ * Extracts profile user key that will be included in webpanel's iframe url (used in user profile view).
+ */
 public class ProfileUserKeyWebPanelParameterExtractor implements WebPanelParameterExtractor
 {
     public static final String PROFILE_USER_KEY = "profile_user_key";
