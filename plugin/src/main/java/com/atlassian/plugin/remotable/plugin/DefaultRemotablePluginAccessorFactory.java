@@ -292,8 +292,7 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
         @Override
         public Promise<String> executeAsyncGet(String username, URI path, Map<String, String> params, Map<String, String> headers) throws ContentRetrievalException
         {
-            return executeAsyncGetForType(new OAuthAuthorizationGenerator(serviceProvider),
-                    getTargetUrl(path), username, params, headers, key);
+            return executeAsyncGetForType(new OAuthAuthorizationGenerator(serviceProvider), getTargetUrl(path), username, params, headers, key);
         }
 
         private URI getTargetUrl(URI targetPath)
