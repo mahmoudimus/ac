@@ -5,6 +5,7 @@ import com.atlassian.confluence.core.ContentEntityObject;
 import com.atlassian.plugin.remotable.plugin.util.contextparameter.RequestContextParameterFactory;
 import com.atlassian.plugin.remotable.plugin.util.contextparameter.RequestContextParameters;
 import com.atlassian.plugin.remotable.spi.RemotablePluginAccessor;
+import com.atlassian.plugin.remotable.spi.http.HttpMethod;
 import com.atlassian.renderer.v2.macro.Macro;
 
 import java.net.URI;
@@ -22,13 +23,14 @@ public class MacroInstance
 {
     final ConversionContext conversionContext;
     final URI path;
+    final HttpMethod method;
     final RemotablePluginAccessor remotablePluginAccessor;
     final String body;
     final Map<String,String> parameters;
     final Map<String, String> allContextParameters;
     final RequestContextParameterFactory requestContextParameterFactory;
 
-    public MacroInstance(ConversionContext conversionContext, URI path, String body,
+    public MacroInstance(ConversionContext conversionContext, URI path, HttpMethod httpMethod, String body,
             Map<String, String> parameters,
             RequestContextParameterFactory requestContextParameterFactory,
             RemotablePluginAccessor remotablePluginAccessor
@@ -36,6 +38,7 @@ public class MacroInstance
     {
         this.conversionContext = conversionContext;
         this.path = path;
+        this.method = httpMethod;
         this.body = body;
         this.parameters = parameters;
         this.remotablePluginAccessor = remotablePluginAccessor;
@@ -150,6 +153,7 @@ public class MacroInstance
         sb.append(parameters.toString()).append("|");
         sb.append(body).append("|");
         sb.append(path).append("|");
+        sb.append(method).append("|");
         sb.append(entityId);
         return String.valueOf(sb.toString().hashCode());
     }

@@ -5,7 +5,7 @@
 
     <xs:complexType name="MacroContextParametersType">
         <xs:sequence>
-            <xs:element name="context-parameter" type="MacroContextParameterType" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="context-parameter" type="MacroContextParameterType" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
     </xs:complexType>
 
@@ -37,8 +37,7 @@
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="type" type="MacroContextParameterTypeType" use="optional"
-                      default="query">
+        <xs:attribute name="type" type="MacroContextParameterTypeType" use="optional" default="query">
             <xs:annotation>
                 <xs:documentation>
                     How the context parameter will be passed to the macro URL.
@@ -47,11 +46,20 @@
         </xs:attribute>
     </xs:complexType>
 
+    <xs:simpleType name="RemoteMacroMethod">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="GET"/>
+            <xs:enumeration value="POST"/>
+            <xs:enumeration value="PUT"/>
+        </xs:restriction>
+    </xs:simpleType>
+
     <xs:complexType name="RemoteMacroType">
         <xs:complexContent>
             <xs:extension base="AbstractMacroType">
                 <xs:sequence>
-                    <xs:element name="context-parameters" type="MacroContextParametersType" minOccurs="0" maxOccurs="unbounded">
+                    <xs:element name="context-parameters" type="MacroContextParametersType" minOccurs="0"
+                                maxOccurs="unbounded">
                         <xs:annotation>
                             <xs:documentation>
                                 The context parameter values to pass to the macro URL
@@ -59,6 +67,11 @@
                         </xs:annotation>
                     </xs:element>
                 </xs:sequence>
+                <xs:attribute name="method" type="RemoteMacroMethod" default="GET">
+                    <xs:annotation>
+                        <xs:documentation>The HTTP method to use when calling the macro</xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

@@ -2,9 +2,9 @@ package it.confluence;
 
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
-import com.atlassian.plugin.remotable.spi.Permissions;
 import com.atlassian.plugin.remotable.test.pageobjects.confluence.ConfluenceMacroPage;
 import com.atlassian.plugin.remotable.test.pageobjects.confluence.ConfluenceMacroTestSuitePage;
+import com.atlassian.plugin.remotable.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.remotable.test.server.AtlassianConnectAddOnRunner;
 import com.atlassian.plugin.remotable.test.server.module.ContextParameter;
 import com.atlassian.plugin.remotable.test.server.module.GeneralPageModule;
@@ -23,7 +23,7 @@ import java.io.PrintWriter;
 import java.util.Enumeration;
 import java.util.Map;
 
-import static com.atlassian.plugin.remotable.test.Utils.createSignedRequestHandler;
+import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.remotable.test.Utils.loadResourceAsString;
 import static com.atlassian.plugin.remotable.test.server.AtlassianConnectAddOnRunner.newMustacheServlet;
 import static com.google.common.collect.Maps.newHashMap;
@@ -36,9 +36,8 @@ public final class TestConfluenceMacroParams extends ConfluenceWebDriverTestBase
     @Test
     public void testContextParam() throws Exception
     {
-        AtlassianConnectAddOnRunner remotePlugin = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl(), "app1")
-                .addOAuth(createSignedRequestHandler("app1"))
-                .addPermission(Permissions.CREATE_OAUTH_LINK)
+        AtlassianConnectAddOnRunner remotePlugin = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl())
+                .addOAuth()
                 .addPermission("read_content")
                 .addPermission("read_users_and_groups")
                 .addPermission("read_server_information")
@@ -47,14 +46,14 @@ public final class TestConfluenceMacroParams extends ConfluenceWebDriverTestBase
                         .title("Remotable Plugin app1 Macro")
                         .path("/app1-macro")
                         .iconUrl("/public/sandcastles.jpg")
-                        .outputType("block")
+                        .outputBlock()
                         .bodyType("rich-text")
                         .featured("true")
                         .category(MacroCategory.name("development"))
                         .parameters(MacroParameter.name("footy").title("Favorite Footy").type("enum").required("true").values("American Football", "Soccer", "Rugby Union", "Rugby League"))
-                        .contextParameters(ContextParameter.name("page_id").type("query"))
-                        .editor(MacroEditor.at("/myMacroEditor").height("600").width("600").resource(new TestConfluence.MyMacroEditorServlet()))
-                        .resource(new TestConfluence.MyMacroServlet()))
+                        .contextParameters(ContextParameter.name("page_id").query())
+                        .editor(MacroEditor.at("/myMacroEditor").height("600").width("600").resource(newMustacheServlet("confluence/macro/editor.mu")))
+                        .resource(new TestConfluencePageMacro.MyMacroServlet()))
                 .add(GeneralPageModule.key("remotePluginGeneral")
                         .name("Remotable Plugin app1 General")
                         .path("/rpg")
@@ -65,13 +64,13 @@ public final class TestConfluenceMacroParams extends ConfluenceWebDriverTestBase
                         .resource(newMustacheServlet("iframe.mu")))
                 .start();
 
-        Map pageData = confluenceOps.setPage("ds", "test", loadResourceAsString("confluence/test-page.xhtml"));
+        ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(new ConfluenceOps.ConfluenceUser("admin", "admin")), "ds", "test", loadResourceAsString("confluence/test-page.xhtml"));
         product.visit(LoginPage.class).login(BETTY, BETTY, HomePage.class);
-        Map<String, String> params = product.visit(ConfluenceMacroTestSuitePage.class, pageData.get("title"))
+        Map<String, String> params = product.visit(ConfluenceMacroTestSuitePage.class, pageData.getTitle())
                 .visitGeneralLink()
                 .getIframeQueryParams();
 
-        assertEquals(pageData.get("id"), params.get("page_id"));
+        assertEquals(pageData.getId(), params.get("page_id"));
 
         remotePlugin.stop();
     }
@@ -79,7 +78,7 @@ public final class TestConfluenceMacroParams extends ConfluenceWebDriverTestBase
     @Test
     public void testMacroWithHeaderParams() throws Exception
     {
-        Map pageData = confluenceOps.setPage("ds", "test",
+        ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(new ConfluenceOps.ConfluenceUser("admin", "admin")), "ds", "test",
                 "<div class=\"header-macro\">\n" +
                         "   <ac:macro ac:name=\"header\" />\n" +
                         "</div>");
@@ -89,13 +88,13 @@ public final class TestConfluenceMacroParams extends ConfluenceWebDriverTestBase
                 .add(RemoteMacroModule.key("header")
                         .path("/header")
                         .contextParameters(
-                                ContextParameter.name("page_id").type("query"),
-                                ContextParameter.name("user_id").type("header"))
+                                ContextParameter.name("page_id").query(),
+                                ContextParameter.name("user_id").header())
                         .resource(macroServlet))
                 .start();
         product.visit(LoginPage.class).login(BETTY, BETTY, HomePage.class);
-        product.visit(ConfluenceMacroPage.class, pageData.get("title"));
-        assertEquals(pageData.get("id"), macroServlet.getQueryParams().get("page_id"));
+        product.visit(ConfluenceMacroPage.class, pageData.getTitle());
+        assertEquals(pageData.getId(), macroServlet.getQueryParams().get("page_id"));
         assertFalse(macroServlet.getQueryParams().containsKey("user_id"));
         assertEquals("admin", macroServlet.getHeaderParams().get("user_id"));
         assertFalse(macroServlet.getHeaderParams().containsKey("page_id"));

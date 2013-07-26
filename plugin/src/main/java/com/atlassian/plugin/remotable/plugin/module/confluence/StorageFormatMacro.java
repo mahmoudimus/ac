@@ -6,7 +6,7 @@ import com.atlassian.confluence.content.render.xhtml.macro.annotation.RequiresFo
 import com.atlassian.confluence.macro.MacroExecutionException;
 import com.atlassian.plugin.remotable.plugin.DefaultRemotablePluginAccessorFactory;
 import com.atlassian.plugin.remotable.spi.RemotablePluginAccessor;
-import com.atlassian.plugin.webresource.WebResourceManager;
+import com.atlassian.plugin.remotable.spi.http.HttpMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,17 +30,19 @@ the remote plugin to generate macro content that is:
 public class StorageFormatMacro extends AbstractRemoteMacro
 {
     private final URI remoteUrl;
+    private final HttpMethod httpMethod;
     private final MacroContentManager macroContentManager;
     private final DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory;
     private final Logger log = LoggerFactory.getLogger(StorageFormatMacro.class);
 
     public StorageFormatMacro(RemoteMacroInfo remoteMacroInfo,
-            MacroContentManager macroContentManager,
-            DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory)
+                              MacroContentManager macroContentManager,
+                              DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory)
     {
         super(remotablePluginAccessorFactory, remoteMacroInfo);
         this.remotablePluginAccessorFactory = remotablePluginAccessorFactory;
         this.remoteUrl = remoteMacroInfo.getUrl();
+        this.httpMethod = remoteMacroInfo.getHttpMethod();
         this.macroContentManager = macroContentManager;
     }
 
@@ -62,7 +64,7 @@ public class StorageFormatMacro extends AbstractRemoteMacro
         try
         {
             return macroContentManager.getStaticContent(
-                    new MacroInstance(conversionContext, remoteUrl, storageFormatBody, parameters,
+                    new MacroInstance(conversionContext, remoteUrl, httpMethod, storageFormatBody, parameters,
                             remoteMacroInfo.getRequestContextParameterFactory(), remotablePluginAccessor));
         }
         catch (Exception ex)
@@ -72,10 +74,8 @@ public class StorageFormatMacro extends AbstractRemoteMacro
             {
                 exMessage = "Timeout waiting for reply";
             }
-            String message = "Error: Unable to retrieve macro content from Remotable Plugin '" + remotablePluginAccessor
-                    .getName() + "': " + exMessage;
-            log.error(message + " on page '{}' for url '{}'", escapeHtml(
-                    conversionContext.getEntity().getTitle()), remoteUrl);
+            final String message = "Error: Unable to retrieve macro content from Remotable Plugin '" + remotablePluginAccessor.getName() + "': " + exMessage;
+            log.error(message + " on page '{}' for url '{}'", escapeHtml(conversionContext.getEntity().getTitle()), remoteUrl);
             if (log.isDebugEnabled())
             {
                 log.debug("Unable to retrieve content", ex);
