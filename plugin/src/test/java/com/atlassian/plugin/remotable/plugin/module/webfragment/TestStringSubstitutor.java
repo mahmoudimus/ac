@@ -59,6 +59,20 @@ public class TestStringSubstitutor
         ));
     }
 
+    @Test
+    public void testNoMatch()
+    {
+        assertEquals("hi=", new StringSubstitutor().replace("hi=${foo.bar}", Collections.emptyMap()));
+    }
+
+    @Test
+    public void testNoMatchDeep()
+    {
+        assertEquals("hi=", new StringSubstitutor().replace("hi=${foo.bar}",
+                ImmutableMap.<String, Object>of("foo", Collections.emptyMap())
+        ));
+    }
+
     private static class MyBean<T>
     {
         private final T value;
