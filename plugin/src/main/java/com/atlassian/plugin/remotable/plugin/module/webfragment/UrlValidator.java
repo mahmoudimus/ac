@@ -1,5 +1,6 @@
 package com.atlassian.plugin.remotable.plugin.module.webfragment;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
@@ -13,6 +14,7 @@ public class UrlValidator
 {
     private final UrlVariableSubstitutor urlVariableSubstitutor;
 
+    @Autowired
     public UrlValidator(UrlVariableSubstitutor urlVariableSubstitutor)
     {
         this.urlVariableSubstitutor = urlVariableSubstitutor;
