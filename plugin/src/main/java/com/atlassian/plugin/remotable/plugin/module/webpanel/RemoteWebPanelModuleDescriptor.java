@@ -84,7 +84,7 @@ public class RemoteWebPanelModuleDescriptor extends AbstractModuleDescriptor<Voi
         this.weight = getOptionalAttribute(element, "weight", null);
         this.url = getRequiredAttribute(element, "url");
         // Validates URL after subtitution
-        stringSubstitutor.replace(this.url, Collections.emptyMap());
+        stringSubstitutor.replace(this.url, Collections.<String, Object>emptyMap());
     }
 
     @Override

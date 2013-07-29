@@ -43,15 +43,6 @@ public class TestStringSubstitutor
     }
 
     @Test
-    public void testMultiSubstitutionBean()
-    {
-        assertEquals("hi=joe", new StringSubstitutor().replace("hi=${value.value}",
-                new MyBean(
-                        new MyBean("joe")
-                )));
-    }
-
-    @Test
     public void testEscapingSubstitution()
     {
         assertEquals("?foo=%3F%23&bar=%26%3D#", new StringSubstitutor().replace("?foo=${a}&bar=${b}#",
@@ -62,7 +53,7 @@ public class TestStringSubstitutor
     @Test
     public void testNoMatch()
     {
-        assertEquals("hi=", new StringSubstitutor().replace("hi=${foo.bar}", Collections.emptyMap()));
+        assertEquals("hi=", new StringSubstitutor().replace("hi=${foo.bar}", Collections.<String, Object>emptyMap()));
     }
 
     @Test
@@ -71,20 +62,5 @@ public class TestStringSubstitutor
         assertEquals("hi=", new StringSubstitutor().replace("hi=${foo.bar}",
                 ImmutableMap.<String, Object>of("foo", Collections.emptyMap())
         ));
-    }
-
-    private static class MyBean<T>
-    {
-        private final T value;
-
-        private MyBean(T value)
-        {
-            this.value = value;
-        }
-
-        public T getValue()
-        {
-            return value;
-        }
     }
 }
