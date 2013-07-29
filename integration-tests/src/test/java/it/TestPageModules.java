@@ -51,6 +51,7 @@ public class TestPageModules extends AbstractRemotablePluginTest
         remotePlugin = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl(), "app1")
                 .addOAuth(createSignedRequestHandler("app1"))
                 .addPermission(Permissions.CREATE_OAUTH_LINK)
+                .addPermission("resttest")
                 .add(GeneralPageModule.key("remotePluginGeneral")
                         .name("Remotable Plugin app1 General")
                         .path("/rpg")
@@ -117,6 +118,9 @@ public class TestPageModules extends AbstractRemotablePluginTest
         // media type tests of the RA.request API
         assertEquals("{\"name\": \"betty\"}", remotePluginTest.getClientHttpDataJson());
         assertEquals("<user><name>betty</name></user>", remotePluginTest.getClientHttpDataXml());
+
+        // test unauthorized scope access
+        assertEquals("403", remotePluginTest.getClientHttpUnauthorizedCode());
     }
 
     @Test

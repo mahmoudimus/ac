@@ -73,7 +73,14 @@ public class ApiScopingFilter implements Filter
     @Nullable
     public static String extractClientKey(HttpServletRequest req)
     {
-        return (String) req.getAttribute(PLUGIN_KEY);
+        String clientKey = (String) req.getAttribute(PLUGIN_KEY);
+        if (clientKey == null)
+        {
+            // If sent as a header, this indicates a host-mediated XHR sent on behalf of an add-on
+            // running in a sandboxed iframe; see AP.request(...) in the host-side AP js
+            clientKey = req.getHeader("AP-Client-Key");
+        }
+        return clientKey;
     }
 
     @Override
