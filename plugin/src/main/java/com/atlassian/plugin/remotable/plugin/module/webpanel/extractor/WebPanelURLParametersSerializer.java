@@ -34,7 +34,7 @@ public class WebPanelURLParametersSerializer
         Map<String, Object> whiteListedContext = Maps.newHashMap();
         for (WebPanelParameterExtractor extractor : webPanelParameterExtractors)
         {
-            extractor.extract(context, whiteListedContext);
+            whiteListedContext.putAll(extractor.extract(context));
         }
         return Collections.unmodifiableMap(whiteListedContext);
     }
