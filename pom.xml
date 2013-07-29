@@ -18,6 +18,14 @@
         <url>http://atlassian.com/</url>
     </organization>
 
+    <licenses>
+        <license>
+            <name>Apache License 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
     <name>Atlassian Remotable Plugins - Parent POM</name>
     <description>This is the Atlassian Remotable Plugins parent project</description>
     <packaging>pom</packaging>
