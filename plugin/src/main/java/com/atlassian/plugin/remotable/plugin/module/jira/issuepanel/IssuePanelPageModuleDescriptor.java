@@ -5,6 +5,7 @@ import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.remotable.plugin.integration.plugins.DynamicDescriptorRegistration;
 import com.atlassian.plugin.remotable.plugin.module.ConditionProcessor;
 import com.atlassian.plugin.remotable.plugin.module.IFrameRendererImpl;
+import com.atlassian.plugin.remotable.plugin.module.webfragment.UrlValidator;
 import com.atlassian.plugin.remotable.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.remotable.plugin.module.webpanel.RemoteWebPanelModuleDescriptor;
 import com.atlassian.plugin.remotable.plugin.module.webpanel.extractor.WebPanelURLParametersSerializer;
@@ -29,9 +30,10 @@ public final class IssuePanelPageModuleDescriptor extends RemoteWebPanelModuleDe
             ConditionProcessor conditionProcessor,
             WebPanelURLParametersSerializer webPanelURLParametersSerializer,
             UserManager userManager,
-            UrlVariableSubstitutor urlVariableSubstitutor)
+            UrlVariableSubstitutor urlVariableSubstitutor,
+            UrlValidator urlValidator)
     {
-        super(moduleFactory, iFrameRenderer, dynamicDescriptorRegistration, hostContainer, bundleContext, conditionProcessor, webPanelURLParametersSerializer, userManager, urlVariableSubstitutor);
+        super(moduleFactory, iFrameRenderer, dynamicDescriptorRegistration, hostContainer, bundleContext, conditionProcessor, webPanelURLParametersSerializer, userManager, urlVariableSubstitutor, urlValidator);
     }
 
     @Override
