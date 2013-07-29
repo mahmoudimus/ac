@@ -12,7 +12,7 @@ import com.atlassian.plugin.remotable.plugin.module.ConditionProcessor;
 import com.atlassian.plugin.remotable.plugin.module.IFrameParamsImpl;
 import com.atlassian.plugin.remotable.plugin.module.IFrameRendererImpl;
 import com.atlassian.plugin.remotable.plugin.module.page.IFrameContextImpl;
-import com.atlassian.plugin.remotable.plugin.module.webfragment.StringSubstitutor;
+import com.atlassian.plugin.remotable.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.remotable.plugin.module.webpanel.extractor.WebPanelURLParametersSerializer;
 import com.atlassian.plugin.remotable.spi.module.IFrameParams;
 import com.atlassian.plugin.web.Condition;
@@ -45,7 +45,7 @@ public class RemoteWebPanelModuleDescriptor extends AbstractModuleDescriptor<Voi
     private final ConditionProcessor conditionProcessor;
     private final WebPanelURLParametersSerializer webPanelURLParametersSerializer;
     private final UserManager userManager;
-    private final StringSubstitutor stringSubstitutor;
+    private final UrlVariableSubstitutor urlVariableSubstitutor;
 
     private String weight;
     private String url;
@@ -62,10 +62,10 @@ public class RemoteWebPanelModuleDescriptor extends AbstractModuleDescriptor<Voi
             BundleContext bundleContext,
             ConditionProcessor conditionProcessor,
             WebPanelURLParametersSerializer webPanelURLParametersSerializer,
-            UserManager userManager, StringSubstitutor stringSubstitutor)
+            UserManager userManager, UrlVariableSubstitutor urlVariableSubstitutor)
     {
         super(moduleFactory);
-        this.stringSubstitutor = stringSubstitutor;
+        this.urlVariableSubstitutor = urlVariableSubstitutor;
         this.userManager = checkNotNull(userManager);
         this.webPanelURLParametersSerializer = checkNotNull(webPanelURLParametersSerializer);
         this.iFrameRenderer = checkNotNull(iFrameRenderer);
@@ -84,7 +84,7 @@ public class RemoteWebPanelModuleDescriptor extends AbstractModuleDescriptor<Voi
         this.weight = getOptionalAttribute(element, "weight", null);
         this.url = getRequiredAttribute(element, "url");
         // Validates URL after subtitution
-        stringSubstitutor.replace(this.url, Collections.<String, Object>emptyMap());
+        urlVariableSubstitutor.replace(this.url, Collections.<String, Object>emptyMap());
     }
 
     @Override
@@ -139,7 +139,7 @@ public class RemoteWebPanelModuleDescriptor extends AbstractModuleDescriptor<Voi
                             iFrameRenderer,
                             new IFrameContextImpl(getPluginKey(), url, moduleKey, iFrameParams),
                             condition != null ? condition : new AlwaysDisplayCondition(),
-                            webPanelURLParametersSerializer, userManager, stringSubstitutor);
+                            webPanelURLParametersSerializer, userManager, urlVariableSubstitutor);
                 }
             }, getService(bundleContext, WebInterfaceManager.class));
 

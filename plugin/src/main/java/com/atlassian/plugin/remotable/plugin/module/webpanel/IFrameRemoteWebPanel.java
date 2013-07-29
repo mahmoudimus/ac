@@ -1,20 +1,14 @@
 package com.atlassian.plugin.remotable.plugin.module.webpanel;
 
-import com.atlassian.confluence.pages.Page;
-import com.atlassian.confluence.spaces.Space;
 import com.atlassian.gzipfilter.org.apache.commons.lang.StringUtils;
-import com.atlassian.jira.issue.Issue;
-import com.atlassian.jira.project.Project;
 import com.atlassian.plugin.remotable.plugin.module.page.IFrameContextImpl;
-import com.atlassian.plugin.remotable.plugin.module.webfragment.StringSubstitutor;
+import com.atlassian.plugin.remotable.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.remotable.plugin.module.webpanel.extractor.WebPanelURLParametersSerializer;
 import com.atlassian.plugin.remotable.spi.module.IFrameContext;
 import com.atlassian.plugin.remotable.spi.module.IFrameRenderer;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.web.model.WebPanel;
 import com.atlassian.sal.api.user.UserManager;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,16 +32,16 @@ public class IFrameRemoteWebPanel implements WebPanel
     private final WebPanelURLParametersSerializer webPanelURLParametersSerializer;
     private final UserManager userManager;
     private final Condition condition;
-    private final StringSubstitutor stringSubstitutor;
+    private final UrlVariableSubstitutor urlVariableSubstitutor;
 
     public IFrameRemoteWebPanel(
             IFrameRenderer iFrameRenderer,
             IFrameContext iFrameContext,
             Condition condition,
             WebPanelURLParametersSerializer webPanelURLParametersSerializer,
-            UserManager userManager, StringSubstitutor stringSubstitutor)
+            UserManager userManager, UrlVariableSubstitutor urlVariableSubstitutor)
     {
-        this.stringSubstitutor = stringSubstitutor;
+        this.urlVariableSubstitutor = urlVariableSubstitutor;
         this.userManager = checkNotNull(userManager);
         this.webPanelURLParametersSerializer = checkNotNull(webPanelURLParametersSerializer);
         this.iFrameRenderer = checkNotNull(iFrameRenderer);
@@ -92,7 +86,7 @@ public class IFrameRemoteWebPanel implements WebPanel
     private IFrameContext substituteContext(Map<String, Object> whiteListedContext)
     {
         return new IFrameContextImpl(iFrameContext.getPluginKey(),
-                stringSubstitutor.replace(iFrameContext.getIframePath(), whiteListedContext),
+                urlVariableSubstitutor.replace(iFrameContext.getIframePath(), whiteListedContext),
                 iFrameContext.getNamespace(),
                 iFrameContext.getIFrameParams());
     }

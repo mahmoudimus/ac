@@ -17,19 +17,19 @@ import java.util.regex.Pattern;
  * Variables are in the form ${var.name}, and are looked up in a nested map.
  * <p>
  * For example, given the source string "hi=${user.name}" and a context such as
- * createMapOf("user", createMapOf("name", "joe")), {@link StringSubstitutor#replace(String, java.util.Map)}
+ * createMapOf("user", createMapOf("name", "joe")), {@link UrlVariableSubstitutor#replace(String, java.util.Map)}
  * would return "hi=joe".
  * <p>
  * All values in the context are percent-encoded for subsitution into a URL.
  * <p>
  * Variables that that cannot be found in the map are replaced by an empty string. For example,
- * given the source String "hi=${foo.bar}" and an empty map, {@link StringSubstitutor#replace(String, java.util.Map)}
+ * given the source String "hi=${foo.bar}" and an empty map, {@link UrlVariableSubstitutor#replace(String, java.util.Map)}
  * would return "hi="
  */
 @Component
-public class StringSubstitutor
+public class UrlVariableSubstitutor
 {
-    private static final Logger log = LoggerFactory.getLogger(StringSubstitutor.class);
+    private static final Logger log = LoggerFactory.getLogger(UrlVariableSubstitutor.class);
 
     private static final Pattern PATTERN = Pattern.compile("\\$\\{([^}]*)}");
 
