@@ -138,6 +138,7 @@ public final class TestCallRestEndPointWithScopes
         {
             final URL url = newUrl(uri, user);
             final HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setUseCaches(false);
             signedRequestHandler.sign(uri, "GET", user, connection);
             logger.debug("Opening connection to '{}'", url);
             return connection;
