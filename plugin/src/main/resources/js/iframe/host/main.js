@@ -34,7 +34,6 @@ _AP.define("host/main", ["_xdm-rpc"], function (XdmRpc) {
 
     function showStatus(name) {
       $home.find(".ap-status").addClass("hidden");
-      $home.find(".ap-" + name).removeClass("hidden");
     }
 
     var timeout = setTimeout(function () {
