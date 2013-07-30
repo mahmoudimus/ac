@@ -11,7 +11,15 @@
 
     <artifactId>remotable-plugins-host-common</artifactId>
     <name>Atlassian Remotable Plugins - Host Common</name>
-    <description>Common classes meant for environments that host version 3 plugins</description>
+    <description>Common classes meant for environments that host Atlassian Connect plugins</description>
+
+    <licenses>
+        <license>
+            <name>Apache License 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
 
     <dependencies>
         <dependency>
