@@ -49,7 +49,9 @@ public class RemotePage
 
     public boolean isLoaded()
     {
-        return driver.elementExists(By.cssSelector("#ap-" + key + " .ap-loaded"));
+        return driver.elementExists(By.cssSelector("#ap-" + key + " .ap-loading .ap-status hidden")) &&
+               driver.elementExists(By.cssSelector("#ap-" + key + " .ap-load-timeout .ap-status hidden")) &&
+               driver.elementExists(By.cssSelector("#ap-" + key + " .ap-load-error .ap-status hidden"));
     }
 
     public Map<String,String> getIframeQueryParams()
