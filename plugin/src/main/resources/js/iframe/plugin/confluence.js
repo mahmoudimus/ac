@@ -5,8 +5,11 @@ AP.define("confluence", ["_dollar", "_rpc"], function ($, rpc) {
     return rpc.extend(function (remote) {
         return {
             apis: {
-                saveMacro: function (parameters) {
-                    remote.saveMacro(parameters);
+                saveMacro: function (macroParameters) {
+                    remote.saveMacro(macroParameters);
+                },
+                closeMacroEditor: function () {
+                    remote.closeMacroEditor();
                 }
             }
         };
