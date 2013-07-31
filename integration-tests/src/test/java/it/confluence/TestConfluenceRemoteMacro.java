@@ -141,7 +141,7 @@ public final class TestConfluenceRemoteMacro extends ConfluenceWebDriverTestBase
     @Test
     public void testSimpleMacro() throws Exception
     {
-        final ConfluenceOps.ConfluencePageData pageData = createPage(ADMIN_CONFLUENCE_USER, format("<div class=\"%1$s\"><ac:macro ac:name=\"%1$s\" /></div>", SIMPLE_MACRO));
+        final ConfluenceOps.ConfluencePageData pageData = createPage(ADMIN_CONFLUENCE_USER, pageWithMacro(SIMPLE_MACRO));
         final ConfluencePageWithRemoteMacro page = product.visit(ConfluencePageWithRemoteMacro.class, pageData.getTitle(), SIMPLE_MACRO);
 
         assertEquals(SIMPLE_MACRO_PATH, page.getText(REQUEST_URI));
@@ -159,7 +159,7 @@ public final class TestConfluenceRemoteMacro extends ConfluenceWebDriverTestBase
     @Test
     public void testSimpleMacroUsingHeaderParams() throws Exception
     {
-        final ConfluenceOps.ConfluencePageData pageData = createPage(ADMIN_CONFLUENCE_USER, format("<div class=\"%1$s\"><ac:macro ac:name=\"%1$s\" /></div>", HEADER_MACRO));
+        final ConfluenceOps.ConfluencePageData pageData = createPage(ADMIN_CONFLUENCE_USER, pageWithMacro(HEADER_MACRO));
         final ConfluencePageWithRemoteMacro page = product.visit(ConfluencePageWithRemoteMacro.class, pageData.getTitle(), HEADER_MACRO);
 
         assertEquals(HEADER_MACRO_PATH, page.getText(REQUEST_URI));
@@ -177,7 +177,7 @@ public final class TestConfluenceRemoteMacro extends ConfluenceWebDriverTestBase
     @Test
     public void testSimpleMacroUsingPost() throws Exception
     {
-        final ConfluenceOps.ConfluencePageData pageData = createPage(ADMIN_CONFLUENCE_USER, format("<div class=\"%1$s\"><ac:macro ac:name=\"%1$s\" /></div>", POST_MACRO));
+        final ConfluenceOps.ConfluencePageData pageData = createPage(ADMIN_CONFLUENCE_USER, pageWithMacro(POST_MACRO));
         final ConfluencePageWithRemoteMacro page = product.visit(ConfluencePageWithRemoteMacro.class, pageData.getTitle(), POST_MACRO);
 
         assertEquals(POST_MACRO_PATH, page.getText(REQUEST_URI));
@@ -195,7 +195,7 @@ public final class TestConfluenceRemoteMacro extends ConfluenceWebDriverTestBase
     @Test
     public void testAnonymousMacro() throws XmlRpcFault, IOException
     {
-        final ConfluenceOps.ConfluencePageData pageData = createPage(ANONYMOUS_CONFLUENCE_USER, format("<div class=\"%1$s\"><ac:macro ac:name=\"%1$s\" /></div>", SIMPLE_MACRO));
+        final ConfluenceOps.ConfluencePageData pageData = createPage(ANONYMOUS_CONFLUENCE_USER, pageWithMacro(SIMPLE_MACRO));
         final ConfluencePageWithRemoteMacro page = product.visit(ConfluencePageWithRemoteMacro.class, pageData.getTitle(), SIMPLE_MACRO);
 
         assertEquals(SIMPLE_MACRO_PATH, page.getText(REQUEST_URI));
@@ -214,7 +214,7 @@ public final class TestConfluenceRemoteMacro extends ConfluenceWebDriverTestBase
     public void testMacroInComment() throws XmlRpcFault, IOException
     {
         final ConfluenceOps.ConfluencePageData pageData = createPage(ADMIN_CONFLUENCE_USER, "The macro is in the comment!");
-        final ConfluenceOps.ConfluenceCommentData commentData = confluenceOps.addComment(ADMIN_CONFLUENCE_USER, pageData.getId(), format("<div class=\"%1$s\"><ac:macro ac:name=\"%1$s\" /></div>", SIMPLE_MACRO));
+        final ConfluenceOps.ConfluenceCommentData commentData = confluenceOps.addComment(ADMIN_CONFLUENCE_USER, pageData.getId(), pageWithMacro(SIMPLE_MACRO));
         final ConfluencePageWithRemoteMacro page = product.visit(ConfluencePageWithRemoteMacro.class, pageData.getTitle(), SIMPLE_MACRO);
 
         assertEquals(SIMPLE_MACRO_PATH, page.getText(REQUEST_URI));
@@ -232,7 +232,7 @@ public final class TestConfluenceRemoteMacro extends ConfluenceWebDriverTestBase
     @Test
     public void testMacroCacheFlushes() throws Exception
     {
-        final ConfluenceOps.ConfluencePageData pageData = createPage(ADMIN_CONFLUENCE_USER, format("<div class=\"%1$s\"><ac:macro ac:name=\"%1$s\" /></div>", COUNTER_MACRO));
+        final ConfluenceOps.ConfluencePageData pageData = createPage(ADMIN_CONFLUENCE_USER, pageWithMacro(COUNTER_MACRO));
 
         counterMacroServlet.reset();
 
@@ -269,6 +269,11 @@ public final class TestConfluenceRemoteMacro extends ConfluenceWebDriverTestBase
         assertTrue(page.getText("body").contains("some note"));
     }
 
+    private String pageWithMacro(String macroName)
+    {
+        return format("<div class=\"%1$s\"><ac:macro ac:name=\"%1$s\" /></div>", macroName);
+    }
+
     private int getCounter(ConfluencePageWithRemoteMacro page)
     {
         return Integer.valueOf(page.getText(COUNTER));
@@ -277,7 +282,7 @@ public final class TestConfluenceRemoteMacro extends ConfluenceWebDriverTestBase
     @Test
     public void testSlowMacro() throws Exception
     {
-        final ConfluenceOps.ConfluencePageData confluencePageData = createPage(ADMIN_CONFLUENCE_USER, format("<div class=\"%1$s\"><ac:macro ac:name=\"%1$s\" /></div>", SLOW_MACRO));
+        final ConfluenceOps.ConfluencePageData confluencePageData = createPage(ADMIN_CONFLUENCE_USER, pageWithMacro(SLOW_MACRO));
         final ConfluencePageWithRemoteMacro page = product.visit(ConfluencePageWithRemoteMacro.class, confluencePageData.getTitle(), SLOW_MACRO);
         assertTrue("The macro should have timed out.", page.macroHasTimedOut());
     }
