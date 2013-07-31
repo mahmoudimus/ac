@@ -2,6 +2,7 @@ package com.atlassian.plugin.remotable.plugin.module.confluence;
 
 import com.atlassian.confluence.macro.Macro;
 import com.atlassian.plugin.remotable.plugin.util.contextparameter.RequestContextParameterFactory;
+import com.atlassian.plugin.remotable.spi.http.HttpMethod;
 import org.dom4j.Element;
 
 import java.net.URI;
@@ -17,11 +18,15 @@ public class RemoteMacroInfo
     private final Macro.OutputType outputType;
     private final RequestContextParameterFactory requestContextParameterFactory;
     private final URI url;
+    private final HttpMethod httpMethod;
 
-    public RemoteMacroInfo(
-            Element element, String pluginKey,
-            Macro.BodyType bodyType,
-            Macro.OutputType outputType, RequestContextParameterFactory requestContextParameterFactory, URI url)
+    public RemoteMacroInfo(Element element,
+                           String pluginKey,
+                           Macro.BodyType bodyType,
+                           Macro.OutputType outputType,
+                           RequestContextParameterFactory requestContextParameterFactory,
+                           URI url,
+                           HttpMethod httpMethod)
     {
         this.element = element;
         this.pluginKey = pluginKey;
@@ -29,6 +34,7 @@ public class RemoteMacroInfo
         this.outputType = outputType;
         this.requestContextParameterFactory = requestContextParameterFactory;
         this.url = url;
+        this.httpMethod = httpMethod;
     }
 
     public Macro.BodyType getBodyType()
@@ -59,5 +65,10 @@ public class RemoteMacroInfo
     public RequestContextParameterFactory getRequestContextParameterFactory()
     {
         return requestContextParameterFactory;
+    }
+
+    public HttpMethod getHttpMethod()
+    {
+        return httpMethod;
     }
 }

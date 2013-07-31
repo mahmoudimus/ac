@@ -62,7 +62,6 @@ public final class DefaultRemotePluginInstaller implements RemotePluginInstaller
                 final Plugin plugin = pluginAccessor.getPlugin(installedKey);
                 WaitUntil.invoke(new WaitUntil.WaitCondition()
                 {
-
                     public boolean isFinished()
                     {
                         for (ModuleDescriptor desc : plugin.getModuleDescriptors())

@@ -1,6 +1,9 @@
 package com.atlassian.plugin.remotable.test.server;
 
+import com.atlassian.fugue.Option;
 import com.atlassian.fugue.Pair;
+import com.atlassian.plugin.remotable.api.service.SignedRequestHandler;
+import com.atlassian.plugin.remotable.spi.Permissions;
 import com.atlassian.plugin.remotable.test.HttpUtils;
 import com.atlassian.plugin.remotable.test.Utils;
 import com.atlassian.plugin.remotable.test.client.AtlassianConnectRestClient;
@@ -8,6 +11,7 @@ import com.atlassian.plugin.remotable.test.server.module.Module;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import net.oauth.signature.RSA_SHA1;
+import org.apache.commons.lang.RandomStringUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentFactory;
 import org.dom4j.Element;
@@ -28,29 +32,41 @@ import java.io.StringWriter;
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 
+import static com.atlassian.fugue.Option.option;
+import static com.atlassian.fugue.Option.some;
+import static com.atlassian.plugin.remotable.test.Utils.createSignedRequestHandler;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Strings.nullToEmpty;
 import static com.google.common.collect.Maps.newHashMap;
 
 public final class AtlassianConnectAddOnRunner
 {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private Server server;
-    private int port;
-    private final Document doc;
-    private final Map<String, HttpServlet> routes = newHashMap();
     private final String baseUrl;
+    private final String pluginKey;
+    private final Document doc;
     private final AtlassianConnectRestClient installer;
-    private final String appKey;
+    private final Map<String, HttpServlet> routes = newHashMap();
 
-    public AtlassianConnectAddOnRunner(String baseUrl, String appKey)
+    private int port;
+    private Server server;
+    private Option<? extends SignedRequestHandler> signedRequestHandler;
+
+    public AtlassianConnectAddOnRunner(String baseUrl)
     {
-        this.baseUrl = baseUrl;
-        this.appKey = appKey;
-        doc = DocumentFactory.getInstance().createDocument()
+        this(baseUrl, RandomStringUtils.randomAlphanumeric(20));
+    }
+
+    public AtlassianConnectAddOnRunner(String baseUrl, String pluginKey)
+    {
+        this.baseUrl = checkNotNull(baseUrl);
+        this.pluginKey = checkNotNull(pluginKey);
+
+        this.doc = DocumentFactory.getInstance().createDocument()
                 .addElement("atlassian-plugin")
-                .addAttribute("key", appKey)
-                .addAttribute("name", appKey)
+                .addAttribute("key", pluginKey)
+                .addAttribute("name", pluginKey)
                 .addAttribute("plugins-version", "2")
                 .addElement("plugin-info")
                 .addElement("version").addText("1").getParent()
@@ -59,6 +75,7 @@ public final class AtlassianConnectAddOnRunner
                 .addAttribute("key", "container")
                 .getParent()
                 .getDocument();
+
         installer = new AtlassianConnectRestClient(baseUrl, "admin", "admin");
     }
 
@@ -77,14 +94,20 @@ public final class AtlassianConnectAddOnRunner
         }
     }
 
-    public AtlassianConnectAddOnRunner addOAuth(RunnerSignedRequestHandler signedRequestHandler) throws NoSuchAlgorithmException, IOException
+    public AtlassianConnectAddOnRunner addOAuth() throws NoSuchAlgorithmException, IOException
     {
+        return addOAuth(createSignedRequestHandler(pluginKey));
+    }
+
+    private AtlassianConnectAddOnRunner addOAuth(RunnerSignedRequestHandler signedRequestHandler) throws NoSuchAlgorithmException, IOException
+    {
+        this.signedRequestHandler = some(signedRequestHandler);
         doc.getRootElement().element("remote-plugin-container")
                 .addElement("oauth")
                 .addElement("public-key")
                 .addText(signedRequestHandler.getLocal().getProperty(RSA_SHA1.PUBLIC_KEY).toString());
 
-        return this;
+        return addPermission(Permissions.CREATE_OAUTH_LINK);
     }
 
     public AtlassianConnectAddOnRunner addPermission(String apiScopeKey)
@@ -112,6 +135,16 @@ public final class AtlassianConnectAddOnRunner
         return this;
     }
 
+    public String getPluginKey()
+    {
+        return pluginKey;
+    }
+
+    public Option<? extends SignedRequestHandler> getSignedRequestHandler()
+    {
+        return signedRequestHandler;
+    }
+
     private void register() throws IOException
     {
         installer.install("http://localhost:" + port + "/register");
@@ -119,7 +152,7 @@ public final class AtlassianConnectAddOnRunner
 
     private void unregister() throws IOException
     {
-        installer.uninstall(appKey);
+        installer.uninstall(pluginKey);
     }
 
     public void stop() throws Exception
@@ -182,6 +215,10 @@ public final class AtlassianConnectAddOnRunner
         protected void doGet(final HttpServletRequest req, final HttpServletResponse resp, Map<String, Object> context) throws ServletException, IOException
         {
         }
+
+        protected void doPost(final HttpServletRequest req, final HttpServletResponse resp, Map<String, Object> context) throws ServletException, IOException
+        {
+        }
     }
 
     private static class WithContextHttpServlet extends HttpServlet
@@ -200,14 +237,24 @@ public final class AtlassianConnectAddOnRunner
             servlet.doGet(req, resp, getContext(req));
         }
 
-        private ImmutableMap<String, Object> getContext(HttpServletRequest req)
+        @Override
+        protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
+        {
+            servlet.doPost(req, resp, getContext(req));
+        }
+
+        private ImmutableMap<String, Object> getContext(HttpServletRequest req) throws IOException
         {
             return ImmutableMap.<String, Object>builder()
                     .putAll(baseContext)
-                    .put("clientKey", req.getParameter("oauth_consumer_key"))
-                    .put("locale", req.getParameter("loc"))
-                    .put("licenseStatus", req.getParameter("lic"))
-                    .put("timeZone", req.getParameter("tz"))
+                    .put("req_url", nullToEmpty(option(req.getRequestURL()).getOrElse(new StringBuffer()).toString()))
+                    .put("req_uri", nullToEmpty(req.getRequestURI()))
+                    .put("req_query", nullToEmpty(req.getQueryString()))
+                    .put("req_method", req.getMethod())
+                    .put("clientKey", nullToEmpty(req.getParameter("oauth_consumer_key")))
+                    .put("locale", nullToEmpty(req.getParameter("loc")))
+                    .put("licenseStatus", nullToEmpty(req.getParameter("lic")))
+                    .put("timeZone", nullToEmpty(req.getParameter("tz")))
                     .build();
         }
     }

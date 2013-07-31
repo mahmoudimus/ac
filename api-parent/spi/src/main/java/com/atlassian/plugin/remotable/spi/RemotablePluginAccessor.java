@@ -1,6 +1,7 @@
 package com.atlassian.plugin.remotable.spi;
 
 import com.atlassian.plugin.remotable.spi.http.AuthorizationGenerator;
+import com.atlassian.plugin.remotable.spi.http.HttpMethod;
 import com.atlassian.util.concurrent.Promise;
 
 import java.net.URI;
@@ -19,7 +20,7 @@ public interface RemotablePluginAccessor
 
     String createGetUrl(URI targetPath, Map<String, String[]> params);
 
-    Promise<String> executeAsyncGet(String user, URI path, Map<String, String> params, Map<String, String> headers);
+    Promise<String> executeAsync(HttpMethod method, URI path, Map<String, String> params, Map<String, String> headers);
 
     AuthorizationGenerator getAuthorizationGenerator();
 

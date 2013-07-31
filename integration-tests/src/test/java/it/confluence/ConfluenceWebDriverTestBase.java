@@ -1,6 +1,8 @@
 package it.confluence;
 
 import com.atlassian.pageobjects.TestedProduct;
+import com.atlassian.pageobjects.page.HomePage;
+import com.atlassian.pageobjects.page.LoginPage;
 import com.atlassian.plugin.remotable.test.junit.HtmlDumpRule;
 import com.atlassian.plugin.remotable.test.pageobjects.OwnerOfTestedProduct;
 import com.atlassian.plugin.remotable.test.pageobjects.confluence.ConfluenceOps;
@@ -10,6 +12,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
+
+import static it.TestConstants.BETTY;
 
 public abstract class ConfluenceWebDriverTestBase
 {
@@ -36,5 +40,15 @@ public abstract class ConfluenceWebDriverTestBase
     public final void logout()
     {
         product.getTester().getDriver().manage().deleteAllCookies();
+    }
+
+    protected HomePage loginAsBetty()
+    {
+        return login(BETTY, BETTY);
+    }
+
+    protected HomePage login(String pwd, String username)
+    {
+        return product.visit(LoginPage.class).login(username, pwd, HomePage.class);
     }
 }
