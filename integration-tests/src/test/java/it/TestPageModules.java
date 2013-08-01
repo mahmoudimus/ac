@@ -49,7 +49,6 @@ public class TestPageModules extends AbstractRemotablePluginTest
     {
         remotePlugin = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl())
                 .addOAuth()
-                .addPermission(Permissions.CREATE_OAUTH_LINK)
                 .addPermission("resttest")
                 .add(GeneralPageModule.key("remotePluginGeneral")
                         .name("Remotable Plugin app1 General")
