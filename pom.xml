@@ -415,7 +415,7 @@
         <api.artifact.version>${project.version}</api.artifact.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <xvfb.enable>true</xvfb.enable>
-        <atlassian.selenium.version>2.2-rc1</atlassian.selenium.version>
+        <atlassian.selenium.version>2.1.0-m12</atlassian.selenium.version>
         <!-- Confluence 4.2.8 uses this version, JIRA 5.0.7 uses version 2.1.0-m14 -->
         <refapp.version>3.0.0-m7</refapp.version>
         <jira.version>6.1-for-AC-1</jira.version>
