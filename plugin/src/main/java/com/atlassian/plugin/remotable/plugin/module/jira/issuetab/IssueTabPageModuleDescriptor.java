@@ -19,9 +19,12 @@ import com.atlassian.plugin.remotable.plugin.module.page.IFrameContextImpl;
 import com.atlassian.plugin.remotable.spi.module.IFrameParams;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.util.concurrent.NotNull;
+import com.google.common.base.Optional;
 import org.dom4j.Element;
 
 import java.net.URI;
+
+import javax.annotation.Nullable;
 
 import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.getRequiredAttribute;
 import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.getRequiredUriAttribute;
@@ -32,6 +35,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public final class IssueTabPageModuleDescriptor extends AbstractModuleDescriptor<Void>
 {
+    private static final String ISSUE_TAB_PAGE_MODULE_PREFIX = "issue-tab-page-";
     private final IFrameRendererImpl iFrameRenderer;
     private final DynamicDescriptorRegistration dynamicDescriptorRegistration;
     private final ConditionProcessor conditionProcessor;
@@ -73,7 +77,7 @@ public final class IssueTabPageModuleDescriptor extends AbstractModuleDescriptor
 
         Element desc = descriptor.createCopy();
 
-        String moduleKey = "issue-tab-page-" + getRequiredAttribute(descriptor, "key");
+        String moduleKey = ISSUE_TAB_PAGE_MODULE_PREFIX + getRequiredAttribute(descriptor, "key");
 
         // make sure to update remote-condition.js to hide these
         Condition condition = conditionProcessor.process(descriptor, desc, getPluginKey(), "#" + moduleKey + "-remote-condition");
@@ -83,7 +87,7 @@ public final class IssueTabPageModuleDescriptor extends AbstractModuleDescriptor
         }
         desc.addAttribute("key", moduleKey);
         desc.addElement("label").setText(panelName);
-        desc.addAttribute("class", IssueTabPage.class.getName());
+        desc.addAttribute("class", IFrameIssueTabPage.class.getName());
 
         IssueTabPanelModuleDescriptor moduleDescriptor = createDescriptor(moduleKey, desc,
                 new IFrameParamsImpl(descriptor), condition);
@@ -104,7 +108,8 @@ public final class IssueTabPageModuleDescriptor extends AbstractModuleDescriptor
     private IssueTabPanelModuleDescriptor createDescriptor(
             final String moduleKey,
             final Element desc,
-            final IFrameParams iFrameParams, final Condition condition)
+            final IFrameParams iFrameParams,
+            @Nullable final Condition condition)
     {
         try
         {
@@ -116,9 +121,9 @@ public final class IssueTabPageModuleDescriptor extends AbstractModuleDescriptor
                 public <T> T createModule(String name, ModuleDescriptor<T> moduleDescriptor) throws PluginParseException
                 {
 
-                    return (T) new IssueTabPage(
+                    return (T) new IFrameIssueTabPage(
                             new IFrameContextImpl(getPluginKey() , url, moduleKey, iFrameParams),
-                            iFrameRenderer, condition);
+                            iFrameRenderer, Optional.fromNullable(condition));
                 }
             });
 

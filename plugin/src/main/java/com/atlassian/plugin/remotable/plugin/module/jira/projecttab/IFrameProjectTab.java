@@ -3,7 +3,6 @@ package com.atlassian.plugin.remotable.plugin.module.jira.projecttab;
 import com.atlassian.jira.plugin.projectpanel.ProjectTabPanel;
 import com.atlassian.jira.plugin.projectpanel.ProjectTabPanelModuleDescriptor;
 import com.atlassian.jira.project.browse.BrowseContext;
-import com.atlassian.plugin.remotable.spi.PermissionDeniedException;
 import com.atlassian.plugin.remotable.plugin.module.IFrameRendererImpl;
 import com.atlassian.plugin.remotable.spi.module.IFrameContext;
 import com.atlassian.plugin.web.Condition;
@@ -14,8 +13,8 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Map;
 
+import static com.atlassian.plugin.remotable.plugin.module.jira.JiraTabConditionContext.createConditionContext;
 import static com.google.common.collect.Maps.newHashMap;
-import static java.util.Collections.singletonMap;
 
 /**
  * A tab that displays an iframe
@@ -50,29 +49,25 @@ public class IFrameProjectTab implements ProjectTabPanel
             extraParams.put("ctx_project_key", new String[]{browseContext.getContextKey()});
             extraParams.put("ctx_project_id", new String[]{String.valueOf(browseContext.getProject().getId())});
 
-            String remoteUser = browseContext.getUser() != null ? browseContext.getUser().getName()
-                    : null;
-            writer.write(iFrameRenderer.render(iFrameContext, "", extraParams,
-                    remoteUser));
+            String remoteUser = getRemoteUserName(browseContext);
+            writer.write(iFrameRenderer.render(iFrameContext, "", extraParams, remoteUser));
         }
-        catch (PermissionDeniedException ex)
+         catch (IOException e)
         {
-            writer.write("Unauthorized to view this tab");
-            log.warn("Unauthorized view of tab");
-        }
-        catch (IOException e)
-        {
-            writer.write("Unable to render tab: " + e.getMessage());
             log.error("Error rendering tab", e);
+            throw new RuntimeException(e);
         }
         return writer.toString();
+    }
+
+    private String getRemoteUserName(final BrowseContext browseContext)
+    {
+        return browseContext.getUser() != null ? browseContext.getUser().getName() : null;
     }
 
     @Override
     public boolean showPanel(BrowseContext browseContext)
     {
-        Map<String,Object> context = newHashMap();
-        context.put("helper", singletonMap("project", browseContext.getProject()));
-        return condition == null || condition.shouldDisplay(context);
+        return condition == null || condition.shouldDisplay(createConditionContext(browseContext));
     }
 }
