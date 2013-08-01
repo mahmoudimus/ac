@@ -1,8 +1,6 @@
 package it;
 
-import com.atlassian.plugin.remotable.spi.Permissions;
 import com.atlassian.plugin.remotable.test.server.AtlassianConnectAddOnRunner;
-import com.atlassian.plugin.remotable.test.server.RunnerSignedRequestHandler;
 import com.atlassian.plugin.remotable.test.server.module.GeneralPageModule;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpStatus;
@@ -55,18 +53,15 @@ public class TestRedirects extends AbstractBrowserlessTest
     @Test
     public void testOAuthRedirect() throws Exception
     {
-        RunnerSignedRequestHandler signedRequestHandler = createSignedRequestHandler("oauthRedirect");
-        AtlassianConnectAddOnRunner runner = new AtlassianConnectAddOnRunner(baseUrl,
-                "oauthRedirect")
+        AtlassianConnectAddOnRunner runner = new AtlassianConnectAddOnRunner(baseUrl)
                 .add(GeneralPageModule.key("page")
                         .name("Page")
                         .path("/page")
                         .resource(new MessageServlet()))
-                .addOAuth(signedRequestHandler)
-                .addPermission(Permissions.CREATE_OAUTH_LINK)
+                .addOAuth()
                 .start();
 
-        URL url = new URL(baseUrl + "/plugins/servlet/redirect/oauth?app_key=oauthRedirect&app_url=/page&message=bar");
+        URL url = new URL(baseUrl + "/plugins/servlet/redirect/oauth?app_key=" + runner.getPluginKey() + "&app_url=/page&message=bar");
         HttpURLConnection yc = (HttpURLConnection) url.openConnection();
         assertEquals(HttpStatus.SC_MOVED_TEMPORARILY, yc.getResponseCode());
 
@@ -83,9 +78,7 @@ public class TestRedirects extends AbstractBrowserlessTest
     private static final class MessageServlet extends HttpServlet
     {
         @Override
-        protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws
-                ServletException,
-                IOException
+        protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
         {
             resp.setContentType("text/plain");
             resp.getWriter().write(req.getParameter("message"));

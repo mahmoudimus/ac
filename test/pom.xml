@@ -12,6 +12,14 @@
     <name>Atlassian Remotable Plugins - Test library</name>
     <description>This is meant to be used for unit and integration testing.</description>
 
+    <licenses>
+        <license>
+            <name>Apache License 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
     <properties>
         <jetty.version>8.1.7.v20120910</jetty.version>
     </properties>

@@ -24,7 +24,17 @@ public final class ContextParameter extends AbstractModule
         return new ContextParameter(name);
     }
 
-    public ContextParameter type(String type)
+    public ContextParameter query()
+    {
+        return type("query");
+    }
+
+    public ContextParameter header()
+    {
+        return type("header");
+    }
+
+    private ContextParameter type(String type)
     {
         this.type = option(type);
         return this;

@@ -16,6 +16,7 @@ import static com.google.common.collect.Iterables.concat;
 public final class RemoteMacroModule extends MainModuleWithResource<RemoteMacroModule>
 {
     private Option<String> title = none();
+    private Option<String> method = none();
     private Option<String> iconUrl = none();
     private Option<String> outputType = none();
     private Option<String> bodyType = none();
@@ -42,13 +43,24 @@ public final class RemoteMacroModule extends MainModuleWithResource<RemoteMacroM
         return this;
     }
 
+    public RemoteMacroModule method(String method)
+    {
+        this.method = option(method);
+        return this;
+    }
+
     public RemoteMacroModule iconUrl(String icon)
     {
         this.iconUrl = some(icon);
         return this;
     }
 
-    public RemoteMacroModule outputType(String outputType)
+    public RemoteMacroModule outputBlock()
+    {
+        return outputType("block");
+    }
+
+    private RemoteMacroModule outputType(String outputType)
     {
         this.outputType = option(outputType);
         return this;
@@ -100,6 +112,7 @@ public final class RemoteMacroModule extends MainModuleWithResource<RemoteMacroM
     protected void addYetOthersToElement(Element el)
     {
 //        addAttribute(remoteMacro, "title", title);
+        addAttribute(el, "method", method);
         addAttribute(el, "icon-url", iconUrl);
         addAttribute(el, "output-type", outputType);
         addAttribute(el, "body-type", bodyType);

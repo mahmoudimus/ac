@@ -6,29 +6,27 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.remotable.api.service.SignedRequestHandler;
 import com.atlassian.plugin.remotable.spi.Permissions;
+import com.atlassian.plugin.remotable.test.HttpUtils;
+import com.atlassian.plugin.remotable.test.MessagePage;
 import com.atlassian.plugin.remotable.test.pageobjects.GeneralPage;
 import com.atlassian.plugin.remotable.test.pageobjects.RemotePluginAwarePage;
 import com.atlassian.plugin.remotable.test.pageobjects.RemotePluginTestPage;
 import com.atlassian.plugin.remotable.test.server.AtlassianConnectAddOnRunner;
-import com.atlassian.plugin.remotable.test.HttpUtils;
-import com.atlassian.plugin.remotable.test.MessagePage;
-import com.atlassian.plugin.remotable.test.server.RunnerSignedRequestHandler;
 import com.atlassian.plugin.remotable.test.server.module.GeneralPageModule;
 import com.google.common.collect.ImmutableMap;
 import org.junit.Test;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import static com.atlassian.plugin.remotable.test.Utils.createSignedRequestHandler;
 import static it.TestConstants.BETTY;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
@@ -45,20 +43,17 @@ public class TestAppPermissions extends AbstractRemotablePluginTest
     @Test
     public void testNoPermissions() throws Exception
     {
-        RunnerSignedRequestHandler signedRequestHandler = createSignedRequestHandler("noPermissions");
-        AtlassianConnectAddOnRunner runner = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl(),
-                "noPermissions")
-                .add(GeneralPageModule.key("page")
-                        .name("Page")
-                        .path("/page")
-                        .resource(new CallServlet(product.getProductInstance().getBaseUrl(), signedRequestHandler)))
+        AtlassianConnectAddOnRunner runner = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl())
                 .description("foo")
-                .addOAuth(signedRequestHandler)
-                .addPermission(Permissions.CREATE_OAUTH_LINK)
+                .addOAuth();
+
+        runner.add(GeneralPageModule.key("page")
+                .name("Page")
+                .path("/page")
+                .resource(new CallServlet(product.getProductInstance().getBaseUrl(), runner.getSignedRequestHandler().get())))
                 .start();
 
-        String status = product.visit(MessagePage.class, "noPermissions", "page")
-                .getMessage();
+        String status = product.visit(MessagePage.class, runner.getPluginKey(), "page").getMessage();
         assertEquals("403", status);
         runner.stop();
     }
@@ -93,15 +88,14 @@ public class TestAppPermissions extends AbstractRemotablePluginTest
 
     private AtlassianConnectAddOnRunner createLicenseRetrievingPlugin(String... permissions) throws IOException, NoSuchAlgorithmException
     {
-        RunnerSignedRequestHandler signedRequestHandler = createSignedRequestHandler("license-permissions");
-        AtlassianConnectAddOnRunner pluginRunner = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl(), "license-permissions")
-                .add(GeneralPageModule.key("pluginLicensePage")
-                        .name("Plugin License Page")
-                        .path("/pluginLicense")
-                        .resource(new RetrieveLicenseServlet(product.getProductInstance().getBaseUrl(), signedRequestHandler)))
+        AtlassianConnectAddOnRunner pluginRunner = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl())
                 .description("plugin license retrieve")
-                .addOAuth(signedRequestHandler)
-                .addPermission(Permissions.CREATE_OAUTH_LINK);
+                .addOAuth();
+
+        pluginRunner.add(GeneralPageModule.key("pluginLicensePage")
+                .name("Plugin License Page")
+                .path("/pluginLicense")
+                .resource(new RetrieveLicenseServlet(product.getProductInstance().getBaseUrl(), pluginRunner.getSignedRequestHandler().get())));
         for (String permission : permissions)
         {
             pluginRunner.addPermission(permission);
@@ -111,7 +105,7 @@ public class TestAppPermissions extends AbstractRemotablePluginTest
 
     private static class RetrieveLicenseServlet extends AbstractHttpServlet
     {
-        public RetrieveLicenseServlet(String baseUrl, RunnerSignedRequestHandler signedRequestHandler)
+        public RetrieveLicenseServlet(String baseUrl, SignedRequestHandler signedRequestHandler)
         {
             super(baseUrl, signedRequestHandler, "plugin-license.mu");
         }
@@ -128,7 +122,7 @@ public class TestAppPermissions extends AbstractRemotablePluginTest
 
     private static class CallServlet extends AbstractHttpServlet
     {
-        public CallServlet(String baseUrl, RunnerSignedRequestHandler signedRequestHandler)
+        public CallServlet(String baseUrl, SignedRequestHandler signedRequestHandler)
         {
             super(baseUrl, signedRequestHandler, "message-page.mu");
         }
@@ -147,10 +141,10 @@ public class TestAppPermissions extends AbstractRemotablePluginTest
     private static abstract class AbstractHttpServlet extends HttpServlet
     {
         protected final String baseUrl;
-        protected final RunnerSignedRequestHandler signedRequestHandler;
+        protected final SignedRequestHandler signedRequestHandler;
         protected final String templateName;
 
-        protected AbstractHttpServlet(String baseUrl, RunnerSignedRequestHandler signedRequestHandler, String templateName)
+        protected AbstractHttpServlet(String baseUrl, SignedRequestHandler signedRequestHandler, String templateName)
         {
             this.baseUrl = baseUrl;
             this.signedRequestHandler = signedRequestHandler;

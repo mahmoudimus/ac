@@ -2,7 +2,6 @@ package it.jira;
 
 import com.atlassian.jira.pageobjects.navigator.AdvancedSearch;
 import com.atlassian.jira.plugin.issuenav.pageobjects.IssueDetailPage;
-import com.atlassian.plugin.remotable.spi.Permissions;
 import com.atlassian.plugin.remotable.test.RemotePluginDialog;
 import com.atlassian.plugin.remotable.test.junit.HtmlDumpRule;
 import com.atlassian.plugin.remotable.test.pageobjects.RemotePluginTestPage;
@@ -15,10 +14,8 @@ import com.atlassian.plugin.remotable.test.server.module.AdminPageModule;
 import com.atlassian.plugin.remotable.test.server.module.DialogPageModule;
 import com.atlassian.plugin.remotable.test.server.module.IssueTabPageModule;
 import hudson.plugins.jira.soap.RemoteIssue;
-import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Rule;
@@ -27,7 +24,6 @@ import org.junit.Test;
 import java.rmi.RemoteException;
 import java.util.concurrent.Callable;
 
-import static com.atlassian.plugin.remotable.test.Utils.createSignedRequestHandler;
 import static com.atlassian.plugin.remotable.test.server.AtlassianConnectAddOnRunner.newMustacheServlet;
 import static it.TestConstants.ADMIN_FULL_NAME;
 import static org.junit.Assert.assertEquals;
@@ -39,14 +35,13 @@ public class TestJira extends JiraWebDriverTestBase
     @Rule
     public HtmlDumpRule htmlDump = new HtmlDumpRule(product.getTester().getDriver());
 
-    private static AtlassianConnectAddOnRunner remotePlugin; 
+    private static AtlassianConnectAddOnRunner remotePlugin;
 
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        remotePlugin = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl(), "app1")
-                .addOAuth(createSignedRequestHandler("app1"))
-                .addPermission(Permissions.CREATE_OAUTH_LINK)
+        remotePlugin = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl())
+                .addOAuth()
                 .add(AdminPageModule.key("remotePluginAdmin")
                         .name("Remotable Plugin app1 Admin")
                         .path("/ap")
@@ -108,7 +103,7 @@ public class TestJira extends JiraWebDriverTestBase
             {
                 RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Test issue for tab");
                 JiraViewIssuePageWithRemotePluginIssueTab page = product.visit(
-                        JiraViewIssuePageWithRemotePluginIssueTab.class, issue.getKey());
+                        JiraViewIssuePageWithRemotePluginIssueTab.class, issue.getKey(), remotePlugin.getPluginKey());
                 Assert.assertEquals("Success", page.getMessage());
                 return null;
             }
@@ -137,7 +132,8 @@ public class TestJira extends JiraWebDriverTestBase
     }
 
     @Test
-    public void testAdminPageInJiraSpecificLocation() throws Exception {
+    public void testAdminPageInJiraSpecificLocation() throws Exception
+    {
         loginAsAdmin();
         final JiraAdministrationPage adminPage = product.visit(JiraAdministrationPage.class);
         assertTrue(adminPage.hasJiraRemotableAdminPageLink());

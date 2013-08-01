@@ -1,17 +1,20 @@
 package com.atlassian.plugin.remotable.plugin.webhooks;
 
 import com.atlassian.fugue.Iterables;
+import com.atlassian.fugue.Option;
 import com.atlassian.httpclient.api.Request;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.remotable.plugin.DefaultRemotablePluginAccessorFactory;
 import com.atlassian.plugin.remotable.plugin.module.applinks.RemotePluginContainerModuleDescriptor;
+import com.atlassian.plugin.remotable.spi.http.AuthorizationGenerator;
+import com.atlassian.plugin.remotable.spi.http.HttpMethod;
 import com.atlassian.webhooks.spi.plugin.RequestSigner;
 import com.google.common.base.Predicate;
 
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
-import javax.annotation.Nullable;
 
 /**
  * Signs outgoing webhooks with oauth credentials
@@ -32,14 +35,22 @@ public class RemotePluginRequestSigner implements RequestSigner
     {
         if (canSign(pluginKey))
         {
-            final String authValue = remotablePluginAccessorFactory.get(pluginKey).getAuthorizationGenerator().generate("POST",
-                    request.getUri(), Collections.<String, List<String>>emptyMap());
-
-            if (authValue != null)
+            final Option<String> authValue = getAuthHeader(pluginKey, request);
+            if (authValue.isDefined())
             {
-                request.setHeader("Authorization", authValue);
+                request.setHeader("Authorization", authValue.get());
             }
         }
+    }
+
+    private Option<String> getAuthHeader(String pluginKey, Request request)
+    {
+        return getAuthorizationGenerator(pluginKey).generate(HttpMethod.POST, request.getUri(), Collections.<String, List<String>>emptyMap());
+    }
+
+    private AuthorizationGenerator getAuthorizationGenerator(String pluginKey)
+    {
+        return remotablePluginAccessorFactory.get(pluginKey).getAuthorizationGenerator();
     }
 
     public boolean canSign(final String pluginKey)

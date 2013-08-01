@@ -3,7 +3,6 @@ package it.jira;
 import com.atlassian.jira.pageobjects.pages.project.BrowseProjectPage;
 import com.atlassian.jira.pageobjects.project.ProjectConfigTabs;
 import com.atlassian.jira.pageobjects.project.summary.ProjectSummaryPageTab;
-import com.atlassian.plugin.remotable.spi.Permissions;
 import com.atlassian.plugin.remotable.test.junit.HtmlDumpRule;
 import com.atlassian.plugin.remotable.test.pageobjects.RemotePluginEmbeddedTestPage;
 import com.atlassian.plugin.remotable.test.pageobjects.jira.AbstractRemotablePluginProjectTab;
@@ -20,7 +19,6 @@ import org.junit.Test;
 
 import java.util.concurrent.Callable;
 
-import static com.atlassian.plugin.remotable.test.Utils.createSignedRequestHandler;
 import static com.atlassian.plugin.remotable.test.server.AtlassianConnectAddOnRunner.newMustacheServlet;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -42,9 +40,8 @@ public class TestProjectTab extends JiraWebDriverTestBase
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        remotePlugin = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl(), "app1")
-                .addOAuth(createSignedRequestHandler("app1"))
-                .addPermission(Permissions.CREATE_OAUTH_LINK)
+        remotePlugin = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl())
+                .addOAuth()
                 .add(ProjectTabPageModule.key("jira-remotePluginProjectTab")
                         .name("AC Play Project Tab")
                         .path("/ptp")
@@ -123,7 +120,6 @@ public class TestProjectTab extends JiraWebDriverTestBase
 
     public static final class AppProjectTabPage extends AbstractRemotablePluginProjectTab
     {
-
         public AppProjectTabPage(final String projectKey)
         {
             super(projectKey, "project-tab-jira-remotePluginProjectTab");
