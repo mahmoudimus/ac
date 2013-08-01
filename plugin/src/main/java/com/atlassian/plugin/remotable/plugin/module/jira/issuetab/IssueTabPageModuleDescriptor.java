@@ -19,9 +19,12 @@ import com.atlassian.plugin.remotable.plugin.module.page.IFrameContextImpl;
 import com.atlassian.plugin.remotable.spi.module.IFrameParams;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.util.concurrent.NotNull;
+import com.google.common.base.Optional;
 import org.dom4j.Element;
 
 import java.net.URI;
+
+import javax.annotation.Nullable;
 
 import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.getRequiredAttribute;
 import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.getRequiredUriAttribute;
@@ -105,7 +108,8 @@ public final class IssueTabPageModuleDescriptor extends AbstractModuleDescriptor
     private IssueTabPanelModuleDescriptor createDescriptor(
             final String moduleKey,
             final Element desc,
-            final IFrameParams iFrameParams, final Condition condition)
+            final IFrameParams iFrameParams,
+            @Nullable final Condition condition)
     {
         try
         {
@@ -119,7 +123,7 @@ public final class IssueTabPageModuleDescriptor extends AbstractModuleDescriptor
 
                     return (T) new IFrameIssueTabPage(
                             new IFrameContextImpl(getPluginKey() , url, moduleKey, iFrameParams),
-                            iFrameRenderer, condition);
+                            iFrameRenderer, Optional.fromNullable(condition));
                 }
             });
 

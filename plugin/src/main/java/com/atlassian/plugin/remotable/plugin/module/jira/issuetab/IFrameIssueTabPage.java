@@ -10,6 +10,7 @@ import com.atlassian.plugin.remotable.plugin.module.IFrameRendererImpl;
 import com.atlassian.plugin.remotable.spi.module.IFrameContext;
 import com.atlassian.plugin.remotable.spi.module.IFrameRenderer;
 import com.atlassian.plugin.web.Condition;
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,14 +30,14 @@ public class IFrameIssueTabPage extends AbstractIssueTabPanel2
 {
     private static final Logger log = LoggerFactory.getLogger(IFrameIssueTabPage.class);
     private final IFrameRendererImpl iFrameRenderer;
-    private final Condition condition;
+    private final Optional<Condition> condition;
     private final IFrameContext iFrameContext;
 
-    public IFrameIssueTabPage(IFrameContext iFrameContext, IFrameRendererImpl iFrameRenderer, Condition condition)
+    public IFrameIssueTabPage(IFrameContext iFrameContext, IFrameRendererImpl iFrameRenderer, Optional<Condition> condition)
     {
         this.iFrameContext = checkNotNull(iFrameContext);
         this.iFrameRenderer = checkNotNull(iFrameRenderer);
-        this.condition = checkNotNull(condition);
+        this.condition = condition;
     }
 
     @Override
@@ -98,6 +99,6 @@ public class IFrameIssueTabPage extends AbstractIssueTabPanel2
     @Override
     public ShowPanelReply showPanel(ShowPanelRequest request)
     {
-        return ShowPanelReply.create(condition == null || condition.shouldDisplay(createConditionContext(request)));
+        return ShowPanelReply.create(!condition.isPresent() || condition.get().shouldDisplay(createConditionContext(request)));
     }
 }
