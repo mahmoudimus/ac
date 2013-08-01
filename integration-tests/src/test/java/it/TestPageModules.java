@@ -3,6 +3,7 @@ package it;
 import com.atlassian.pageobjects.page.AdminHomePage;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
+import com.atlassian.plugin.remotable.spi.Permissions;
 import com.atlassian.plugin.remotable.test.AccessDeniedIFramePage;
 import com.atlassian.plugin.remotable.test.OAuthUtils;
 import com.atlassian.plugin.remotable.test.PluginManagerPage;
@@ -48,6 +49,7 @@ public class TestPageModules extends AbstractRemotablePluginTest
     {
         remotePlugin = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl())
                 .addOAuth()
+                .addPermission("resttest")
                 .add(GeneralPageModule.key("remotePluginGeneral")
                         .name("Remotable Plugin app1 General")
                         .path("/rpg")
@@ -114,6 +116,9 @@ public class TestPageModules extends AbstractRemotablePluginTest
         // media type tests of the RA.request API
         assertEquals("{\"name\": \"betty\"}", remotePluginTest.getClientHttpDataJson());
         assertEquals("<user><name>betty</name></user>", remotePluginTest.getClientHttpDataXml());
+
+        // test unauthorized scope access
+        assertEquals("403", remotePluginTest.getClientHttpUnauthorizedCode());
     }
 
     @Test

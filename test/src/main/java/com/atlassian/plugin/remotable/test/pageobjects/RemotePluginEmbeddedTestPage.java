@@ -72,6 +72,11 @@ public class RemotePluginEmbeddedTestPage extends RemotePage
         return waitForValue("client-http-response-text");
     }
 
+    public String getClientHttpUnauthorizedCode()
+    {
+        return waitForValue("client-http-unauthorized-code");
+    }
+
     public String getClientHttpData()
     {
         return waitForValue("client-http-data");
