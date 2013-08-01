@@ -381,15 +381,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.powermock</groupId>
-            <artifactId>powermock-module-junit4</artifactId>
-            <version>${powermock.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.powermock</groupId>
-            <artifactId>powermock-api-mockito</artifactId>
-            <version>${powermock.version}</version>
+            <groupId>com.atlassian.jira</groupId>
+            <artifactId>jira-tests</artifactId>
+            <version>${jira.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -469,7 +463,6 @@
         <httpclient.api.version>${webhooks.api.version}</httpclient.api.version>
         <servletkit.version>0.7.3</servletkit.version>
         <ringojskit.version>0.7.2</ringojskit.version>
-        <powermock.version>1.4.9</powermock.version>
         <gatekeeper.property>7</gatekeeper.property>
         <amps.version>4.2.1</amps.version>
     </properties>

@@ -6,11 +6,11 @@ import com.atlassian.jira.plugin.issuetabpanel.GetActionsRequest;
 import com.atlassian.jira.plugin.issuetabpanel.IssueAction;
 import com.atlassian.jira.plugin.issuetabpanel.ShowPanelReply;
 import com.atlassian.jira.plugin.issuetabpanel.ShowPanelRequest;
-import com.atlassian.plugin.remotable.plugin.module.ContainingRemoteCondition;
 import com.atlassian.plugin.remotable.plugin.module.IFrameRendererImpl;
-import com.atlassian.plugin.remotable.spi.PermissionDeniedException;
 import com.atlassian.plugin.remotable.spi.module.IFrameContext;
+import com.atlassian.plugin.remotable.spi.module.IFrameRenderer;
 import com.atlassian.plugin.web.Condition;
+import com.google.common.collect.ImmutableMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,7 +20,7 @@ import java.util.Date;
 import java.util.Map;
 
 import static com.atlassian.plugin.remotable.plugin.module.jira.JiraTabConditionContext.createConditionContext;
-import static com.google.common.collect.Maps.newHashMap;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * An issue tab that displays an iframe but isn't included in the all tab
@@ -32,27 +32,30 @@ public class IFrameIssueTabPage extends AbstractIssueTabPanel2
     private final Condition condition;
     private final IFrameContext iFrameContext;
 
-    public IFrameIssueTabPage(IFrameContext iFrameContext, IFrameRendererImpl iFrameRenderer,
-            Condition condition)
+    public IFrameIssueTabPage(IFrameContext iFrameContext, IFrameRendererImpl iFrameRenderer, Condition condition)
     {
-        this.iFrameContext = iFrameContext;
-        this.iFrameRenderer = iFrameRenderer;
-        this.condition = condition;
+        this.iFrameContext = checkNotNull(iFrameContext);
+        this.iFrameRenderer = checkNotNull(iFrameRenderer);
+        this.condition = checkNotNull(condition);
     }
 
     @Override
     public GetActionsReply getActions(GetActionsRequest request)
     {
-        return GetActionsReply.create(new IFrameIssueAction(request));
+        return GetActionsReply.create(new IFrameIssueAction(request, iFrameRenderer, iFrameContext));
     }
 
-    public class IFrameIssueAction implements IssueAction
+    public static class IFrameIssueAction implements IssueAction
     {
         private final GetActionsRequest request;
+        private final IFrameRenderer iFrameRenderer;
+        private final IFrameContext iFrameContext;
 
-        public IFrameIssueAction(GetActionsRequest request)
+        public IFrameIssueAction(GetActionsRequest request, IFrameRenderer iFrameRenderer, IFrameContext iFrameContext)
         {
             this.request = request;
+            this.iFrameRenderer = iFrameRenderer;
+            this.iFrameContext = iFrameContext;
         }
 
         @Override
@@ -61,28 +64,22 @@ public class IFrameIssueTabPage extends AbstractIssueTabPanel2
             StringWriter writer = new StringWriter();
             try
             {
-                Map<String,String[]> extraParams = newHashMap();
-                extraParams.put("ctx_issue_key", new String[]{request.issue().getKey()});
-                String remoteUser = request.isAnonymous() ? null : request.remoteUser().getName();
-                String iframe = iFrameRenderer.render(iFrameContext, "", extraParams,
-                        remoteUser);
-                if (condition != null && condition instanceof ContainingRemoteCondition)
-                {
-                    iframe = "<div>" + iframe + "</div>";
-                }
-                writer.write(iframe);
-            }
-            catch (PermissionDeniedException ex)
-            {
-                writer.write("Unauthorized to view this tab");
-                log.warn("Unauthorized view of tab");
+                Map<String, String[]> extraParams =
+                        ImmutableMap.of("ctx_issue_key", new String[] { request.issue().getKey() });
+                String remoteUserName = getRemoteUserName();
+                writer.write(iFrameRenderer.render(iFrameContext, "", extraParams, remoteUserName));
             }
             catch (IOException e)
             {
-                writer.write("Unable to render tab: " + e.getMessage());
                 log.error("Error rendering tab", e);
+                throw new RuntimeException(e);
             }
             return writer.toString();
+        }
+
+        private String getRemoteUserName()
+        {
+            return request.remoteUser() != null ? request.remoteUser().getName() : null;
         }
 
         @Override

@@ -18,8 +18,10 @@ import static com.atlassian.jira.plugin.webfragment.JiraWebInterfaceManager.CONT
  * to a specific contract.
  * This utility class creates contexts for conditions executed by JIRA tabs.
  */
-public class JiraTabConditionContext
+public final class JiraTabConditionContext
 {
+    private JiraTabConditionContext() {}
+
     public static Map<String, Object> createConditionContext(ShowPanelRequest request)
     {
         JiraHelper helper = new JiraHelper(ExecutingHttpRequest.get(),

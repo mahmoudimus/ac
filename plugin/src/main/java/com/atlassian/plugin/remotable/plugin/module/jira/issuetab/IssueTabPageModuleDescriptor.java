@@ -32,7 +32,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public final class IssueTabPageModuleDescriptor extends AbstractModuleDescriptor<Void>
 {
-    public static final String ISSUE_TAB_PAGE_MODULE_PREFIX = "issue-tab-page-";
+    private static final String ISSUE_TAB_PAGE_MODULE_PREFIX = "issue-tab-page-";
     private final IFrameRendererImpl iFrameRenderer;
     private final DynamicDescriptorRegistration dynamicDescriptorRegistration;
     private final ConditionProcessor conditionProcessor;
