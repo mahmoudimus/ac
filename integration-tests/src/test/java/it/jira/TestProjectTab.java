@@ -102,7 +102,6 @@ public class TestProjectTab extends JiraWebDriverTestBase
     }
 
     @Test
-    @Ignore("Blocked by ACDEV-349")
     public void testProjectTab() throws Exception
     {
         testLoggedInAndAnonymous(new Callable()

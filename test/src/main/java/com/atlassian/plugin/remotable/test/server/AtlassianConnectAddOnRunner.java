@@ -55,7 +55,7 @@ public final class AtlassianConnectAddOnRunner
 
     public AtlassianConnectAddOnRunner(String baseUrl)
     {
-        this(baseUrl, RandomStringUtils.randomAlphanumeric(20));
+        this(baseUrl, RandomStringUtils.randomAlphanumeric(20).toLowerCase());
     }
 
     public AtlassianConnectAddOnRunner(String baseUrl, String pluginKey)
