@@ -44,6 +44,7 @@ public final class PageMacro extends AbstractRemoteMacro
             MacroInstance macroInstance = new MacroInstance(
                     conversionContext,
                     remoteMacroInfo.getUrl(),
+                    remoteMacroInfo.getHttpMethod(),
                     storageFormatBody,
                     parameters,
                     remoteMacroInfo.getRequestContextParameterFactory(),

@@ -6,21 +6,19 @@ _AP.define("confluence/macro/editor", ["_dollar", "dialog/simple"], function($, 
     // being edited to this field. This simplifies the client's job of saving the macro
     // values - they only need to pass back the updated values - and works because only
     // a single macro editor can be open at a time.
-    var saveMacro;
+    var saveMacro,
+        macroEditorDialog;
 
     return {
-
         /**
-         * Saves the macro currently being edited. Relies on openCustomEditor() first being invoked by MacroBrowser.
-         *
-         * @param {Object} updatedParameters the updated parameters for the macro being edited.
+         * Closes the macro editor if it is open. If you need to persist macro configuration, call <code>saveMacro</code>
+         * before closing the editor.
          */
-        saveMacro: function(updatedParameters) {
-            if (!saveMacro) {
-                $.handleError("Illegal state: no macro currently being edited!");
+        close: function() {
+            if (macroEditorDialog && macroEditorDialog.close) {
+                macroEditorDialog.close();
             }
-            saveMacro(updatedParameters);
-            saveMacro = undefined;
+            macroEditorDialog = undefined;
         },
 
         /**
@@ -75,9 +73,23 @@ _AP.define("confluence/macro/editor", ["_dollar", "dialog/simple"], function($, 
                 first = false;
             });
 
-            var dialog = simpleDialog(url, dialogOpts);
-            dialog.show();
+            macroEditorDialog = simpleDialog(url, dialogOpts);
+            macroEditorDialog.show();
+        },
+
+        /**
+         * Saves the macro currently being edited. Relies on openCustomEditor() first being invoked by MacroBrowser.
+         *
+         * @param {Object} updatedMacroParameters the updated parameters for the macro being edited.
+         */
+        saveMacro: function(updatedMacroParameters) {
+            if (!saveMacro) {
+                $.handleError("Illegal state: no macro currently being edited!");
+            }
+            saveMacro(updatedMacroParameters);
+            saveMacro = undefined;
         }
+
 
     };
 

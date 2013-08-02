@@ -31,9 +31,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.TimeZone;
 
-import static it.TestConstants.BETTY;
-import static com.atlassian.plugin.remotable.test.Utils.createSignedRequestHandler;
 import static com.atlassian.plugin.remotable.test.server.AtlassianConnectAddOnRunner.newMustacheServlet;
+import static it.TestConstants.BETTY;
 import static java.lang.String.valueOf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -48,9 +47,9 @@ public class TestPageModules extends AbstractRemotablePluginTest
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        remotePlugin = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl(), "app1")
-                .addOAuth(createSignedRequestHandler("app1"))
-                .addPermission(Permissions.CREATE_OAUTH_LINK)
+        remotePlugin = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl())
+                .addOAuth()
+                .addPermission("resttest")
                 .add(GeneralPageModule.key("remotePluginGeneral")
                         .name("Remotable Plugin app1 General")
                         .path("/rpg")
@@ -117,6 +116,9 @@ public class TestPageModules extends AbstractRemotablePluginTest
         // media type tests of the RA.request API
         assertEquals("{\"name\": \"betty\"}", remotePluginTest.getClientHttpDataJson());
         assertEquals("<user><name>betty</name></user>", remotePluginTest.getClientHttpDataXml());
+
+        // test unauthorized scope access
+        assertEquals("403", remotePluginTest.getClientHttpUnauthorizedCode());
     }
 
     @Test

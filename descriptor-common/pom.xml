@@ -12,7 +12,15 @@
     <artifactId>remotable-plugins-descriptor-common</artifactId>
     <packaging>bundle</packaging>
     <name>Atlassian Remotable Plugins - Descriptor Common</name>
-    <description>Common classes meant for dealing with P3 plugin descriptors</description>
+    <description>Common classes meant for dealing with Atlassian Connect plugin descriptors</description>
+
+    <licenses>
+        <license>
+            <name>Apache License 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
 
     <dependencies>
         <dependency>

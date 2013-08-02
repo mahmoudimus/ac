@@ -13,6 +13,7 @@ import com.atlassian.plugin.remotable.plugin.DefaultRemotablePluginAccessorFacto
 import com.atlassian.plugin.remotable.plugin.util.http.CachingHttpContentRetriever;
 import com.atlassian.plugin.remotable.plugin.util.http.ContentRetrievalErrors;
 import com.atlassian.plugin.remotable.plugin.util.http.ContentRetrievalException;
+import com.atlassian.plugin.remotable.spi.http.HttpMethod;
 import com.atlassian.renderer.RenderContextOutputType;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
@@ -92,7 +93,7 @@ public class MacroContentManager implements DisposableBean
 
         final Map<String, String> urlParameters = macroInstance.getUrlParameters(username, userKey);
 
-        Promise<String> promise = macroInstance.getRemotablePluginAccessor().executeAsyncGet(username,
+        Promise<String> promise = macroInstance.getRemotablePluginAccessor().executeAsync(macroInstance.method,
                 macroInstance.getPath(), urlParameters, macroInstance.getHeaders(username, userKey))
                 .fold(new ContentHandlerFailFunction(templateRenderer),
                         new HtmlToSafeHtmlFunction(macroInstance, urlParameters, macroContentLinkParser, xhtmlCleaner,
@@ -232,8 +233,8 @@ public class MacroContentManager implements DisposableBean
         private final XhtmlContent xhtmlUtils;
 
         public HtmlToSafeHtmlFunction(MacroInstance macroInstance, Map<String, String> urlParameters,
-                MacroContentLinkParser macroContentLinkParser, StorageFormatCleaner xhtmlCleaner,
-                XhtmlContent xhtmlUtils)
+                                      MacroContentLinkParser macroContentLinkParser, StorageFormatCleaner xhtmlCleaner,
+                                      XhtmlContent xhtmlUtils)
         {
             this.macroInstance = macroInstance;
             this.urlParameters = urlParameters;
@@ -253,7 +254,7 @@ public class MacroContentManager implements DisposableBean
            is the same as used in the Confluence editor.
             */
             // todo: do we want to give feedback to the app of what was cleaned?
-            final String cleanedXhtml = xhtmlCleaner.cleanQuietly(value,  macroInstance.getConversionContext());
+            final String cleanedXhtml = xhtmlCleaner.cleanQuietly(value, macroInstance.getConversionContext());
             try
             {
                 return xhtmlUtils.convertStorageToView(cleanedXhtml,

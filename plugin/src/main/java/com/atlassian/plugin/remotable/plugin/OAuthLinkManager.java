@@ -1,19 +1,27 @@
 package com.atlassian.plugin.remotable.plugin;
 
 import com.atlassian.applinks.api.ApplicationLink;
-import com.atlassian.applinks.api.ApplicationLinkService;
 import com.atlassian.applinks.api.auth.types.OAuthAuthenticationProvider;
 import com.atlassian.applinks.spi.auth.AuthenticationConfigurationManager;
-import com.atlassian.plugin.remotable.plugin.util.OAuthHelper;
 import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.Request;
 import com.atlassian.oauth.ServiceProvider;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.oauth.serviceprovider.ServiceProviderConsumerStore;
+import com.atlassian.plugin.remotable.plugin.util.OAuthHelper;
+import com.atlassian.plugin.remotable.spi.http.HttpMethod;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-import net.oauth.*;
+import net.oauth.OAuth;
+import net.oauth.OAuthAccessor;
+import net.oauth.OAuthConsumer;
+import net.oauth.OAuthException;
+import net.oauth.OAuthMessage;
+import net.oauth.OAuthProblemException;
+import net.oauth.OAuthServiceProvider;
+import net.oauth.OAuthValidator;
+import net.oauth.SimpleOAuthValidator;
 import net.oauth.signature.RSA_SHA1;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
 import static java.util.Collections.singletonList;
@@ -47,20 +56,16 @@ public class OAuthLinkManager
     private static final Logger log = LoggerFactory.getLogger(OAuthLinkManager.class);
     private final ServiceProviderConsumerStore serviceProviderConsumerStore;
     private final AuthenticationConfigurationManager authenticationConfigurationManager;
-    private final ApplicationLinkService applicationLinkService;
     private final ConsumerService consumerService;
     private final OAuthValidator oauthValidator;
 
     @Autowired
     public OAuthLinkManager(ServiceProviderConsumerStore serviceProviderConsumerStore,
                             AuthenticationConfigurationManager authenticationConfigurationManager,
-                            ApplicationLinkService applicationLinkService,
-                            ConsumerService consumerService
-    )
+                            ConsumerService consumerService)
     {
         this.serviceProviderConsumerStore = serviceProviderConsumerStore;
         this.authenticationConfigurationManager = authenticationConfigurationManager;
-        this.applicationLinkService = applicationLinkService;
         this.consumerService = consumerService;
         this.oauthValidator = new SimpleOAuthValidator();
     }
@@ -145,14 +150,12 @@ public class OAuthLinkManager
         log.debug(sb.toString());
     }
 
-    public String generateAuthorizationHeader(String method,
+    public String generateAuthorizationHeader(HttpMethod method,
                                               ServiceProvider serviceProvider,
                                               URI url,
-                                              Map<String, List<String>> originalParams
-    )
+                                              Map<String, List<String>> originalParams)
     {
-        notNull(url);
-        OAuthMessage message = sign(serviceProvider, method, url, originalParams);
+        final OAuthMessage message = sign(serviceProvider, method, checkNotNull(url), originalParams);
         try
         {
             return message.getAuthorizationHeader(null);
@@ -164,7 +167,7 @@ public class OAuthLinkManager
     }
 
     public List<Map.Entry<String, String>> signAsParameters(ServiceProvider serviceProvider,
-                                                            String method,
+                                                            HttpMethod method,
                                                             URI url,
                                                             Map<String, List<String>> originalParams
     )
@@ -196,7 +199,7 @@ public class OAuthLinkManager
     }
 
     private OAuthMessage sign(ServiceProvider serviceProvider,
-                              String method,
+                              HttpMethod method,
                               URI url,
                               Map<String, List<String>> originalParams
     )
@@ -210,8 +213,7 @@ public class OAuthLinkManager
         {
             dumpParamsToSign(params);
         }
-        Request oAuthRequest = new Request(Request.HttpMethod.valueOf(method), url,
-                convertParameters(params));
+        Request oAuthRequest = new Request(Request.HttpMethod.valueOf(method.name()), url, convertParameters(params));
         final Request signedRequest = consumerService.sign(oAuthRequest, serviceProvider);
         return OAuthHelper.asOAuthMessage(signedRequest);
     }

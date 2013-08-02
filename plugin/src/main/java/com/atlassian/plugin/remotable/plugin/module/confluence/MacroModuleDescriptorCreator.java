@@ -22,6 +22,7 @@ import com.atlassian.plugin.remotable.plugin.util.contextparameter.RequestContex
 import com.atlassian.plugin.remotable.spi.Permissions;
 import com.atlassian.plugin.remotable.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.remotable.plugin.integration.plugins.DescriptorToRegister;
+import com.atlassian.plugin.remotable.spi.http.HttpMethod;
 import com.atlassian.plugin.remotable.spi.module.IFrameParams;
 import com.atlassian.plugin.servlet.ServletModuleManager;
 import com.atlassian.plugin.servlet.descriptors.ServletModuleDescriptor;
@@ -63,6 +64,7 @@ public class MacroModuleDescriptorCreator
 
         RemoteMacro create(RemoteMacroInfo remoteMacroInfo);
     }
+
     private final SystemInformationService systemInformationService;
 
     private final MacroMetadataParser macroMetadataParser;
@@ -76,14 +78,14 @@ public class MacroModuleDescriptorCreator
     private final BundleContext bundleContext;
 
     public MacroModuleDescriptorCreator(SystemInformationService systemInformationService,
-            DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory,
-            HostContainer hostContainer,
-            WebItemCreator webItemCreator,
-            ContextParameterParser contextParameterParser,
-            IFrameRendererImpl iFrameRenderer,
-            UserManager userManager,
-            PermissionManager permissionManager,
-            BundleContext bundleContext)
+                                        DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory,
+                                        HostContainer hostContainer,
+                                        WebItemCreator webItemCreator,
+                                        ContextParameterParser contextParameterParser,
+                                        IFrameRendererImpl iFrameRenderer,
+                                        UserManager userManager,
+                                        PermissionManager permissionManager,
+                                        BundleContext bundleContext)
     {
         this.systemInformationService = systemInformationService;
         this.remotablePluginAccessorFactory = remotablePluginAccessorFactory;
@@ -113,6 +115,7 @@ public class MacroModuleDescriptorCreator
         {
             this.webItemCreatorBuilder = webItemCreator.newBuilder();
         }
+
         public Builder setMacroFactory(MacroFactory macroFactory)
         {
             this.macroFactory = macroFactory;
@@ -258,10 +261,10 @@ public class MacroModuleDescriptorCreator
         }
 
         private ServletModuleDescriptor createMacroEditorServletDescriptor(final Plugin plugin,
-                Element e,
-                final String key,
-                final URI path,
-                URI localUrl)
+                                                                           Element e,
+                                                                           final String key,
+                                                                           final URI path,
+                                                                           URI localUrl)
         {
             final String moduleKey = "servlet-" + key;
             Element config = e.createCopy()
@@ -291,8 +294,8 @@ public class MacroModuleDescriptorCreator
         }
 
         private ModuleDescriptor createCustomEditorWebResource(Plugin plugin,
-                Element macroEditorConfig, String macroKey, String macroName,
-                URI customEditorLocalUrl)
+                                                               Element macroEditorConfig, String macroKey, String macroName,
+                                                               URI customEditorLocalUrl)
         {
             Element webResource = DocumentHelper.createDocument()
                     .addElement("web-resource")
@@ -343,7 +346,7 @@ public class MacroModuleDescriptorCreator
         }
 
         private DescriptorToRegister createFeaturedIconWebResource(Plugin plugin, RemotablePluginAccessor remotablePluginAccessor,
-                String macroKey, URI iconUrl)
+                                                                   String macroKey, URI iconUrl)
         {
             Element webResource = DocumentHelper.createDocument()
                     .addElement("web-resource")
@@ -381,6 +384,8 @@ public class MacroModuleDescriptorCreator
             final Macro.BodyType bodyType = parseBodyType(originalEntity);
             final Macro.OutputType outputType = parseOutputType(originalEntity);
             final URI url = getRequiredUriAttribute(originalEntity, "url");
+            final HttpMethod httpMethod = HttpMethod.valueOf(getOptionalAttribute(originalEntity, "method", "GET"));
+
             final RequestContextParameterFactory requestContextParameterFactory =
                     contextParameterParser.parseContextParameters(originalEntity);
 
@@ -392,7 +397,7 @@ public class MacroModuleDescriptorCreator
                 public <T> T createModule(String name, ModuleDescriptor<T> moduleDescriptor) throws PluginParseException
                 {
                     RemoteMacroInfo macroInfo = new RemoteMacroInfo(originalEntity, plugin.getKey(), bodyType,
-                            outputType, requestContextParameterFactory, url);
+                            outputType, requestContextParameterFactory, url, httpMethod);
                     RemoteMacro macro = macroFactory.create(macroInfo);
                     if (placeholder != null && Macro.BodyType.NONE.equals(bodyType))
                     {

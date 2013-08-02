@@ -4,7 +4,7 @@ import com.atlassian.webhooks.spi.provider.EventMatcher;
 import com.atlassian.webhooks.spi.provider.EventSerializationException;
 import com.atlassian.webhooks.spi.provider.EventSerializer;
 import com.atlassian.webhooks.spi.provider.EventSerializerFactory;
-import com.atlassian.webhooks.spi.provider.PluginModuleConsumerParams;
+import com.atlassian.webhooks.spi.provider.PluginModuleListenerParameters;
 import org.json.JSONObject;
 
 public class RemoteWorkflowPostFunctionEvent
@@ -27,7 +27,7 @@ public class RemoteWorkflowPostFunctionEvent
         return jsonObject.toString();
     }
 
-    public boolean matches(final PluginModuleConsumerParams consumerParams)
+    public boolean matches(final PluginModuleListenerParameters consumerParams)
     {
         return this.pluginKey.equals(consumerParams.getPluginKey())
                 && this.moduleKey.equals(consumerParams.getModuleKey().get());
@@ -38,7 +38,8 @@ public class RemoteWorkflowPostFunctionEvent
         @Override
         public boolean matches(final RemoteWorkflowPostFunctionEvent event, final Object consumerParams)
         {
-            return consumerParams instanceof PluginModuleConsumerParams && event.matches((PluginModuleConsumerParams) consumerParams);
+            return consumerParams instanceof PluginModuleListenerParameters
+                    && event.matches((PluginModuleListenerParameters) consumerParams);
         }
     }
 

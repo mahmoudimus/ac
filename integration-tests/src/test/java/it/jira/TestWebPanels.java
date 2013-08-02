@@ -1,7 +1,6 @@
 
 package it.jira;
 
-import com.atlassian.plugin.remotable.spi.Permissions;
 import com.atlassian.plugin.remotable.test.jira.JiraProjectAdministrationPage;
 import com.atlassian.plugin.remotable.test.pageobjects.RemoteWebPanel;
 import com.atlassian.plugin.remotable.test.pageobjects.jira.JiraViewIssuePage;
@@ -42,9 +41,8 @@ public final class TestWebPanels extends JiraWebDriverTestBase
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        remotePlugin = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl(), "app1")
-                .addOAuth(createSignedRequestHandler("app1"))
-                .addPermission(Permissions.CREATE_OAUTH_LINK)
+        remotePlugin = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl())
+                .addOAuth()
                 .add(IssuePanelPageModule.key(ISSUE_PANEL_ID)
                         .name("AC Play Issue Page Panel")
                         .path("/ipp?issue_id=${issue.id}&issue_key=${issue.key}&project_id=${project.id}&project_key=${project.key}")

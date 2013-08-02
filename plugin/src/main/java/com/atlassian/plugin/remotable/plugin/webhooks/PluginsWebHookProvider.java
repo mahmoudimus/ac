@@ -8,7 +8,7 @@ import com.atlassian.webhooks.spi.provider.EventMatcher;
 import com.atlassian.webhooks.spi.provider.EventSerializer;
 import com.atlassian.webhooks.spi.provider.EventSerializerFactory;
 import com.atlassian.webhooks.spi.provider.EventSerializers;
-import com.atlassian.webhooks.spi.provider.PluginModuleConsumerParams;
+import com.atlassian.webhooks.spi.provider.PluginModuleListenerParameters;
 import com.atlassian.webhooks.spi.provider.WebHookProvider;
 import com.atlassian.webhooks.spi.provider.WebHookRegistrar;
 
@@ -37,8 +37,8 @@ public final class PluginsWebHookProvider implements WebHookProvider
         @Override
         public boolean matches(final E event, final Object consumerParams)
         {
-            return consumerParams instanceof PluginModuleConsumerParams
-                    && ((PluginModuleConsumerParams) consumerParams).getPluginKey().equals(event.getPluginKey());
+            return consumerParams instanceof PluginModuleListenerParameters
+                    && ((PluginModuleListenerParameters) consumerParams).getPluginKey().equals(event.getPluginKey());
         }
     }
 

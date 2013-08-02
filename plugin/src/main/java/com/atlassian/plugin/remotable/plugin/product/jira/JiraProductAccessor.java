@@ -159,6 +159,7 @@ public final class JiraProductAccessor implements ProductAccessor
         conditions.put("has_sub_tasks_available", com.atlassian.jira.plugin.webfragment.conditions.HasSubTasksAvailableCondition.class);
         conditions.put("can_convert_to_sub_task", com.atlassian.jira.plugin.webfragment.conditions.CanConvertToSubTaskCondition.class);
         conditions.put("has_issue_permission", com.atlassian.jira.plugin.webfragment.conditions.HasIssuePermissionCondition.class);
+        conditions.put("has_project_permission", com.atlassian.jira.plugin.webfragment.conditions.HasProjectPermissionCondition.class);
 
         return conditions;
     }

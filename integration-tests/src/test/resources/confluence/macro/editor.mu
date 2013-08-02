@@ -4,7 +4,6 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <link rel="stylesheet" type="text/css" href="{{baseUrl}}/remotable-plugins/all.css">
     <script src="{{baseUrl}}/remotable-plugins/all-debug.js" type="text/javascript"></script>
-    <script src="public/jquery-1.7.min.js" type="text/javascript"></script>
   </head>
   <body>
     <select id="footy">
@@ -16,7 +15,7 @@
     <script type="text/javascript">
       AP.require(["confluence", "dialog"], function (confluence, dialog) {
         dialog.getButton("submit").bind(function() {
-          var footy = $("#footy");
+          var footy = document.getElementById("footy");
           confluence.saveMacro({
             footy: footy.val()
           });

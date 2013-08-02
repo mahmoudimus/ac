@@ -16,8 +16,8 @@ import com.atlassian.plugin.remotable.plugin.product.jira.JiraRestBeanMarshaler;
 import com.atlassian.plugin.remotable.spi.module.IFrameRenderer;
 import com.atlassian.plugin.webresource.WebResourceUrlProvider;
 import com.atlassian.templaterenderer.TemplateRenderer;
-import com.atlassian.webhooks.spi.provider.ModuleDescriptorWebHookConsumerRegistry;
-import com.atlassian.webhooks.spi.provider.PluginModuleConsumerParams;
+import com.atlassian.webhooks.spi.provider.ModuleDescriptorWebHookListenerRegistry;
+import com.atlassian.webhooks.spi.provider.PluginModuleListenerParameters;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import com.opensymphony.workflow.WorkflowException;
@@ -57,7 +57,7 @@ public class TestRemoteWorkflowPostFunction
     @Mock
     private TemplateRenderer templateRenderer;
 
-    private final PluginModuleConsumerParams consumerParams = new PluginModuleConsumerParams("plugin", Optional.of("module"), ImmutableMap.<String, Object>of(), RemoteWorkflowPostFunctionEvent.REMOTE_WORKFLOW_POST_FUNCTION_EVENT_ID);
+    private final PluginModuleListenerParameters consumerParams = new PluginModuleListenerParameters("plugin", Optional.of("module"), ImmutableMap.<String, Object>of(), RemoteWorkflowPostFunctionEvent.REMOTE_WORKFLOW_POST_FUNCTION_EVENT_ID);
 
     @Before
     public void setup()
@@ -111,7 +111,7 @@ public class TestRemoteWorkflowPostFunction
                 mock(ModuleFactory.class),
                 mock(IFrameRenderer.class),
                 issueMarshaler,
-                mock(ModuleDescriptorWebHookConsumerRegistry.class),
+                mock(ModuleDescriptorWebHookListenerRegistry.class),
                 eventPublisher,
                 templateRenderer,
                 mock(WebResourceUrlProvider.class),
