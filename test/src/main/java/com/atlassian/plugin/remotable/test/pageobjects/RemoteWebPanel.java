@@ -1,64 +1,86 @@
 package com.atlassian.plugin.remotable.test.pageobjects;
 
 import com.atlassian.pageobjects.binder.Init;
+import com.atlassian.pageobjects.elements.PageElement;
+import com.atlassian.pageobjects.elements.PageElementFinder;
 import com.atlassian.pageobjects.elements.WebDriverElement;
 import com.atlassian.pageobjects.elements.WebDriverLocatable;
-import com.atlassian.plugin.remotable.pageobjects.RemotePageUtil;
-import com.atlassian.plugin.remotable.plugin.module.webpanel.extractor.confluence.PageIdWebPanelParameterExtractor;
-import com.atlassian.plugin.remotable.plugin.module.webpanel.extractor.confluence.SpaceIdWebPanelParameterExtractor;
-import com.atlassian.plugin.remotable.plugin.module.webpanel.extractor.jira.IssueIdWebPanelParameterExtractor;
-import com.atlassian.plugin.remotable.plugin.module.webpanel.extractor.jira.ProjectIdWebPanelParameterExtractor;
+import com.atlassian.plugin.remotable.plugin.module.webpanel.RemoteWebPanelModuleDescriptor;
 import com.atlassian.webdriver.AtlassianWebDriver;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.utils.URLEncodedUtils;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.internal.seleniumemulation.ElementFinder;
 
 import javax.inject.Inject;
+import java.net.URI;
+
+import static com.atlassian.pageobjects.elements.query.Poller.waitUntilTrue;
 
 /**
  * A remote web-panel that is expected to contain some test values.
  */
-public class RemoteWebPanel extends WebDriverElement
+public class RemoteWebPanel
 {
+    private static final String IFRAME_ID_PREFIX = "easyXDM_embedded-remote-web-panel-";
+    private static final String IFRAME_ID_SUFFIX = "_provider";
+
     @Inject
     private AtlassianWebDriver driver;
 
-    private final WebDriverLocatable parent;
-    private WebElement webPanelContainerDiv;
+    @Inject
+    private PageElementFinder elementFinder;
 
-    public RemoteWebPanel(final By locator, final WebDriverLocatable parent)
+    private String id;
+    private PageElement iframe;
+
+    public RemoteWebPanel(final String id)
     {
-        super(locator, parent);
-        this.parent = parent;
+        this.id = id;
     }
 
     @Init
     public void init()
     {
-        this.webPanelContainerDiv = driver.findElement(parent.getLocator());
+        iframe = elementFinder.find(By.id(IFRAME_ID_PREFIX + id + IFRAME_ID_SUFFIX));
+        waitUntilTrue(iframe.timed().isPresent());
+    }
+
+    public String getFromQueryString(String key)
+    {
+        String src = iframe.getAttribute("src");
+        for (NameValuePair pair : URLEncodedUtils.parse(URI.create(src), "UTF-8"))
+        {
+            if (key.equals(pair.getName()))
+            {
+                return pair.getValue();
+            }
+        }
+        return null;
     }
 
     public String getUserId()
     {
-        return RemotePageUtil.waitForValue(driver, webPanelContainerDiv, "user_id");
+        return getFromQueryString("user_id");
     }
 
     public String getProjectId()
     {
-        return RemotePageUtil.waitForValue(driver, webPanelContainerDiv, ProjectIdWebPanelParameterExtractor.PROJECT_ID);
+        return getFromQueryString("project_id");
     }
 
     public String getIssueId()
     {
-        return RemotePageUtil.waitForValue(driver, webPanelContainerDiv, IssueIdWebPanelParameterExtractor.ISSUE_ID);
+        return getFromQueryString("issue_id");
     }
 
     public String getSpaceId()
     {
-        return RemotePageUtil.waitForValue(driver, webPanelContainerDiv, SpaceIdWebPanelParameterExtractor.SPACE_ID);
+        return getFromQueryString("space_id");
     }
 
     public String getPageId()
     {
-        return RemotePageUtil.waitForValue(driver, webPanelContainerDiv, PageIdWebPanelParameterExtractor.PAGE_ID);
+        return getFromQueryString("page_id");
     }
 }

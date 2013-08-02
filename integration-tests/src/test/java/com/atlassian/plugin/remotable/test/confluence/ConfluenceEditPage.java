@@ -1,8 +1,9 @@
 package com.atlassian.plugin.remotable.test.confluence;
 
 import com.atlassian.pageobjects.Page;
-import com.atlassian.pageobjects.elements.ElementBy;
-import com.atlassian.plugin.remotable.test.pageobjects.RemoteWebPanels;
+import com.atlassian.pageobjects.PageBinder;
+import com.atlassian.plugin.remotable.test.pageobjects.RemoteWebPanel;
+import com.google.inject.Inject;
 
 /**
  * Page for edit of confluence pages.
@@ -11,8 +12,8 @@ public class ConfluenceEditPage implements Page
 {
     private final String pageId;
 
-    @ElementBy (xpath = RemoteWebPanels.REMOTE_WEB_PANELS_XPATH, pageElementClass = RemoteWebPanels.class)
-    private RemoteWebPanels webPanels;
+    @Inject
+    private PageBinder pageBinder;
 
     public ConfluenceEditPage(final String pageId)
     {
@@ -25,8 +26,8 @@ public class ConfluenceEditPage implements Page
         return "/pages/editpage.action?pageId=" + pageId;
     }
 
-    public RemoteWebPanels getWebPanels()
+    public RemoteWebPanel findWebPanel(String id)
     {
-        return webPanels;
+        return pageBinder.bind(RemoteWebPanel.class, id);
     }
 }

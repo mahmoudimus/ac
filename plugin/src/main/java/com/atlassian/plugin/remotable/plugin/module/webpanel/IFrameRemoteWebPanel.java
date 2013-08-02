@@ -1,6 +1,8 @@
 package com.atlassian.plugin.remotable.plugin.module.webpanel;
 
 import com.atlassian.gzipfilter.org.apache.commons.lang.StringUtils;
+import com.atlassian.plugin.remotable.plugin.module.page.IFrameContextImpl;
+import com.atlassian.plugin.remotable.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.remotable.plugin.module.webpanel.extractor.WebPanelURLParametersSerializer;
 import com.atlassian.plugin.remotable.spi.module.IFrameContext;
 import com.atlassian.plugin.remotable.spi.module.IFrameRenderer;
@@ -13,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.Collections;
 import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -29,14 +32,16 @@ public class IFrameRemoteWebPanel implements WebPanel
     private final WebPanelURLParametersSerializer webPanelURLParametersSerializer;
     private final UserManager userManager;
     private final Condition condition;
+    private final UrlVariableSubstitutor urlVariableSubstitutor;
 
     public IFrameRemoteWebPanel(
             IFrameRenderer iFrameRenderer,
             IFrameContext iFrameContext,
             Condition condition,
             WebPanelURLParametersSerializer webPanelURLParametersSerializer,
-            UserManager userManager)
+            UserManager userManager, UrlVariableSubstitutor urlVariableSubstitutor)
     {
+        this.urlVariableSubstitutor = urlVariableSubstitutor;
         this.userManager = checkNotNull(userManager);
         this.webPanelURLParametersSerializer = checkNotNull(webPanelURLParametersSerializer);
         this.iFrameRenderer = checkNotNull(iFrameRenderer);
@@ -66,14 +71,23 @@ public class IFrameRemoteWebPanel implements WebPanel
         if (condition.shouldDisplay(context))
         {
             final String remoteUser = StringUtils.defaultString(userManager.getRemoteUsername());
-            final Map<String,String[]> params = webPanelURLParametersSerializer.getExtractedWebPanelParameters(context);
 
-            writer.write(iFrameRenderer.render(iFrameContext, "", params, remoteUser));
+            final Map<String, Object> whiteListedContext = webPanelURLParametersSerializer.getExtractedWebPanelParameters(context);
+
+            writer.write(iFrameRenderer.render(substituteContext(whiteListedContext), "", Collections.EMPTY_MAP, remoteUser));
         }
         else
         {
             writer.write("Unauthorized to view this panel");
             log.error("Unauthorized view of panel");
         }
+    }
+
+    private IFrameContext substituteContext(Map<String, Object> whiteListedContext)
+    {
+        return new IFrameContextImpl(iFrameContext.getPluginKey(),
+                urlVariableSubstitutor.replace(iFrameContext.getIframePath(), whiteListedContext),
+                iFrameContext.getNamespace(),
+                iFrameContext.getIFrameParams());
     }
 }

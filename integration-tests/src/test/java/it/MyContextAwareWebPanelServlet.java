@@ -16,23 +16,9 @@ public final class MyContextAwareWebPanelServlet extends AtlassianConnectAddOnRu
     protected void doGet(HttpServletRequest req, HttpServletResponse resp, Map<String, Object> context) throws ServletException, IOException
     {
         HttpUtils.renderHtml(resp,
-                "my-context-aware-web-panel.mu",
+                "hello-world-page.mu",
                 ImmutableMap.<String, Object>builder()
                         .putAll(context)
-                        .putAll(buildParams(req.getParameterMap(), "issue_id", "project_id", "user_id", "space_id", "page_id"))
                         .build());
-    }
-
-    private ImmutableMap<String, Object> buildParams(final Map<String, String[]> parameterMap, final String... params)
-    {
-        final ImmutableMap.Builder<String, Object> servletParamBuilder = ImmutableMap.builder();
-        for (final String param : params)
-        {
-            if (parameterMap.containsKey(param))
-            {
-                servletParamBuilder.put(param, parameterMap.get(param)[0]);
-            }
-        }
-        return servletParamBuilder.build();
     }
 }

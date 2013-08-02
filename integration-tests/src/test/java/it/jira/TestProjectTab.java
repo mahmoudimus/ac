@@ -14,6 +14,7 @@ import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -101,6 +102,7 @@ public class TestProjectTab extends JiraWebDriverTestBase
     }
 
     @Test
+    @Ignore("Blocked by ACDEV-349")
     public void testProjectTab() throws Exception
     {
         testLoggedInAndAnonymous(new Callable()
