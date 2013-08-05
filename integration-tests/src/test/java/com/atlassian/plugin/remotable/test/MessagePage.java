@@ -2,6 +2,7 @@ package com.atlassian.plugin.remotable.test;
 
 import com.atlassian.plugin.remotable.plugin.module.page.RemotePageDescriptorCreator;
 import com.atlassian.pageobjects.Page;
+import com.atlassian.plugin.remotable.test.pageobjects.RemotePluginEmbeddedTestPage;
 
 public class MessagePage extends RemotePluginEmbeddedTestPage implements Page
 {

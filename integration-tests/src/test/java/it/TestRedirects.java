@@ -1,8 +1,7 @@
 package it;
 
-import com.atlassian.plugin.remotable.spi.Permissions;
-import com.atlassian.plugin.remotable.test.RemotePluginRunner;
-import com.atlassian.plugin.remotable.test.RunnerSignedRequestHandler;
+import com.atlassian.plugin.remotable.test.server.AtlassianConnectAddOnRunner;
+import com.atlassian.plugin.remotable.test.server.module.GeneralPageModule;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpStatus;
 import org.junit.BeforeClass;
@@ -15,7 +14,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.security.NoSuchAlgorithmException;
 
 import static com.atlassian.plugin.remotable.test.Utils.createSignedRequestHandler;
 import static org.junit.Assert.assertEquals;
@@ -30,12 +28,13 @@ public class TestRedirects extends AbstractBrowserlessTest
     }
 
     @Test
-	public void testPermanentRedirect() throws Exception, InterruptedException,
-            NoSuchAlgorithmException
+    public void testPermanentRedirect() throws Exception
     {
-        RemotePluginRunner runner = new RemotePluginRunner(baseUrl,
-                "permanentRedirect")
-                .addGeneralPage("page", "Page", "/page", new MessageServlet())
+        AtlassianConnectAddOnRunner runner = new AtlassianConnectAddOnRunner(baseUrl, "permanentRedirect")
+                .add(GeneralPageModule.key("page")
+                        .name("Page")
+                        .path("/page")
+                        .resource(new MessageServlet()))
                 .start();
 
         URL url = new URL(baseUrl + "/plugins/servlet/redirect/permanent?app_key=permanentRedirect&app_url=/page&message=bar");
@@ -49,21 +48,20 @@ public class TestRedirects extends AbstractBrowserlessTest
         assertEquals("bar", responseText);
 
         runner.stop();
-	}
+    }
 
     @Test
-    public void testOAuthRedirect() throws Exception, InterruptedException,
-            NoSuchAlgorithmException
+    public void testOAuthRedirect() throws Exception
     {
-        RunnerSignedRequestHandler signedRequestHandler = createSignedRequestHandler("oauthRedirect");
-        RemotePluginRunner runner = new RemotePluginRunner(baseUrl,
-                "oauthRedirect")
-                .addGeneralPage("page", "Page", "/page", new MessageServlet())
-                .addOAuth(signedRequestHandler)
-                .addPermission(Permissions.CREATE_OAUTH_LINK)
+        AtlassianConnectAddOnRunner runner = new AtlassianConnectAddOnRunner(baseUrl)
+                .add(GeneralPageModule.key("page")
+                        .name("Page")
+                        .path("/page")
+                        .resource(new MessageServlet()))
+                .addOAuth()
                 .start();
 
-        URL url = new URL(baseUrl + "/plugins/servlet/redirect/oauth?app_key=oauthRedirect&app_url=/page&message=bar");
+        URL url = new URL(baseUrl + "/plugins/servlet/redirect/oauth?app_key=" + runner.getPluginKey() + "&app_url=/page&message=bar");
         HttpURLConnection yc = (HttpURLConnection) url.openConnection();
         assertEquals(HttpStatus.SC_MOVED_TEMPORARILY, yc.getResponseCode());
 
@@ -80,9 +78,7 @@ public class TestRedirects extends AbstractBrowserlessTest
     private static final class MessageServlet extends HttpServlet
     {
         @Override
-        protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws
-                ServletException,
-                IOException
+        protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
         {
             resp.setContentType("text/plain");
             resp.getWriter().write(req.getParameter("message"));

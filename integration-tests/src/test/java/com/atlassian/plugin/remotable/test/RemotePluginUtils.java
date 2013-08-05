@@ -14,6 +14,7 @@ public class RemotePluginUtils
 {
     public static void clearMacroCaches(ProductInstance productInstance, String appKey) throws IOException
     {
+
         emptyGet(productInstance.getBaseUrl() + "/app/"+appKey+"/macroReset?baseurl=" +
                 URLEncoder.encode(productInstance.getBaseUrl(), "UTF-8"));
     }

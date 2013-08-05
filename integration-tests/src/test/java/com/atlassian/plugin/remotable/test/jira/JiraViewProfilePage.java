@@ -1,8 +1,8 @@
 package com.atlassian.plugin.remotable.test.jira;
 
 import com.atlassian.pageobjects.Page;
-import com.atlassian.pageobjects.elements.ElementBy;
-import com.atlassian.plugin.remotable.test.RemoteWebPanels;
+import com.atlassian.pageobjects.PageBinder;
+import com.atlassian.plugin.remotable.test.pageobjects.RemoteWebPanel;
 import com.atlassian.webdriver.AtlassianWebDriver;
 
 import javax.inject.Inject;
@@ -17,8 +17,8 @@ public class JiraViewProfilePage implements Page
     @Inject
     private AtlassianWebDriver driver;
 
-    @ElementBy (xpath = RemoteWebPanels.REMOTE_WEB_PANELS_XPATH, pageElementClass = RemoteWebPanels.class)
-    private RemoteWebPanels webPanels;
+    @Inject
+    private PageBinder pageBinder;
 
     public JiraViewProfilePage(String userName)
     {
@@ -31,8 +31,8 @@ public class JiraViewProfilePage implements Page
         return "/secure/ViewProfile.jspa?name=" + userName;
     }
 
-    public RemoteWebPanels getWebPanels()
+    public RemoteWebPanel findWebPanel(String panelId)
     {
-        return webPanels;
+        return pageBinder.bind(RemoteWebPanel.class, panelId);
     }
 }

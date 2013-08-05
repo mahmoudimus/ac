@@ -34,7 +34,6 @@ _AP.define("host/main", ["_xdm-rpc"], function (XdmRpc) {
 
     function showStatus(name) {
       $home.find(".ap-status").addClass("hidden");
-      $home.find(".ap-" + name).removeClass("hidden");
     }
 
     var timeout = setTimeout(function () {
@@ -95,9 +94,6 @@ _AP.define("host/main", ["_xdm-rpc"], function (XdmRpc) {
             $("iframe", $content).css({width: width, height: height});
           }
         }),
-        fireEvent: function(id, props) {
-          publish("p3.iframe." + id, props);
-        },
         getLocation: function () {
           return window.location.href;
         },
@@ -173,8 +169,8 @@ _AP.define("host/main", ["_xdm-rpc"], function (XdmRpc) {
             headers: {
               // */* will undo the effect on the accept header of having set dataType to "text"
               "Accept": headers.accept || "*/*",
-              // send the app key header to force scope checks
-              "AP-App-Key": options.key
+              // send the client key header to force scope checks
+              "AP-Client-Key": options.key
             }
           }).then(done, fail);
         },
@@ -187,6 +183,11 @@ _AP.define("host/main", ["_xdm-rpc"], function (XdmRpc) {
           _AP.require("confluence/macro/editor", function(editor) {
               editor.saveMacro(updatedParams);
           });
+        },
+        closeMacroEditor: function () {
+            _AP.require("confluence/macro/editor", function (editor) {
+                editor.close();
+            })
         }
       }
     });

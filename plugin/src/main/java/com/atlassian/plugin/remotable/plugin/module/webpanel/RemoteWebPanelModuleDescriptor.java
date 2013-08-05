@@ -12,6 +12,8 @@ import com.atlassian.plugin.remotable.plugin.module.ConditionProcessor;
 import com.atlassian.plugin.remotable.plugin.module.IFrameParamsImpl;
 import com.atlassian.plugin.remotable.plugin.module.IFrameRendererImpl;
 import com.atlassian.plugin.remotable.plugin.module.page.IFrameContextImpl;
+import com.atlassian.plugin.remotable.plugin.module.webfragment.UrlValidator;
+import com.atlassian.plugin.remotable.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.remotable.plugin.module.webpanel.extractor.WebPanelURLParametersSerializer;
 import com.atlassian.plugin.remotable.spi.module.IFrameParams;
 import com.atlassian.plugin.web.Condition;
@@ -24,12 +26,10 @@ import com.atlassian.util.concurrent.NotNull;
 import org.dom4j.Element;
 import org.osgi.framework.BundleContext;
 
-import java.net.URI;
 
 import static com.atlassian.plugin.remotable.plugin.util.OsgiServiceUtils.getService;
 import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.getOptionalAttribute;
 import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.getRequiredAttribute;
-import static com.atlassian.plugin.remotable.spi.util.Dom4jUtils.getRequiredUriAttribute;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -45,9 +45,11 @@ public class RemoteWebPanelModuleDescriptor extends AbstractModuleDescriptor<Voi
     private final ConditionProcessor conditionProcessor;
     private final WebPanelURLParametersSerializer webPanelURLParametersSerializer;
     private final UserManager userManager;
+    private final UrlVariableSubstitutor urlVariableSubstitutor;
+    private final UrlValidator urlValidator;
 
     private String weight;
-    private URI url;
+    private String url;
     private String location;
 
     private Element descriptor;
@@ -61,7 +63,9 @@ public class RemoteWebPanelModuleDescriptor extends AbstractModuleDescriptor<Voi
             BundleContext bundleContext,
             ConditionProcessor conditionProcessor,
             WebPanelURLParametersSerializer webPanelURLParametersSerializer,
-            UserManager userManager)
+            UserManager userManager,
+            UrlVariableSubstitutor urlVariableSubstitutor,
+            UrlValidator urlValidator)
     {
         super(moduleFactory);
         this.userManager = checkNotNull(userManager);
@@ -71,6 +75,8 @@ public class RemoteWebPanelModuleDescriptor extends AbstractModuleDescriptor<Voi
         this.hostContainer = checkNotNull(hostContainer);
         this.bundleContext = checkNotNull(bundleContext);
         this.conditionProcessor = checkNotNull(conditionProcessor);
+        this.urlVariableSubstitutor = urlVariableSubstitutor;
+        this.urlValidator = urlValidator;
     }
 
     @Override
@@ -80,7 +86,8 @@ public class RemoteWebPanelModuleDescriptor extends AbstractModuleDescriptor<Voi
         this.descriptor = element;
         this.location = getLocation(element);
         this.weight = getOptionalAttribute(element, "weight", null);
-        this.url = getRequiredUriAttribute(element, "url");
+        this.url = getRequiredAttribute(element, "url");
+        urlValidator.validate(this.url);
     }
 
     @Override
@@ -135,7 +142,7 @@ public class RemoteWebPanelModuleDescriptor extends AbstractModuleDescriptor<Voi
                             iFrameRenderer,
                             new IFrameContextImpl(getPluginKey(), url, moduleKey, iFrameParams),
                             condition != null ? condition : new AlwaysDisplayCondition(),
-                            webPanelURLParametersSerializer, userManager);
+                            webPanelURLParametersSerializer, userManager, urlVariableSubstitutor);
                 }
             }, getService(bundleContext, WebInterfaceManager.class));
 

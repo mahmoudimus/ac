@@ -132,7 +132,11 @@ public final class IFrameRendererImpl implements IFrameRenderer
         RemotablePluginAccessor remotablePluginAccessor = remotablePluginAccessorFactory.get(iframeContext.getPluginKey());
 
         final URI hostUrl = iframeHost.getUrl();
-        final URI iframeUrl = URI.create(iframeContext.getIframePath().getPath() + ObjectUtils.toString(extraPath));
+
+        UriBuilder uriBuilder = new UriBuilder(Uri.parse(iframeContext.getIframePath()));
+        uriBuilder.setPath(uriBuilder.getPath() + ObjectUtils.toString(extraPath));
+        final URI iframeUrl = uriBuilder.toUri().toJavaUri();
+
         String[] dialog = queryParams.get("dialog");
         final String timeZone = userPreferencesRetriever.getTimeZoneFor(remoteUser).getID();
         UserProfile user = userManager.getUserProfile(remoteUser);

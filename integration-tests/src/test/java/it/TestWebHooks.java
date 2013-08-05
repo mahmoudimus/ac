@@ -1,7 +1,8 @@
 package it;
 
 import com.atlassian.plugin.remotable.plugin.webhooks.PluginsWebHookProvider;
-import com.atlassian.plugin.remotable.test.RemotePluginRunner;
+import com.atlassian.plugin.remotable.test.server.AtlassianConnectAddOnRunner;
+import com.atlassian.plugin.remotable.test.server.module.WebhookModule;
 import com.atlassian.plugin.remotable.test.webhook.WebHookBody;
 import com.atlassian.plugin.remotable.test.webhook.WebHookTestServlet;
 import com.atlassian.plugin.remotable.test.webhook.WebHookTester;
@@ -10,7 +11,6 @@ import com.atlassian.plugin.remotable.test.webhook.WebHookWaiter;
 import org.junit.Assert;
 import org.junit.Test;
 
-import static com.atlassian.plugin.remotable.test.webhook.WebHookTestServlet.*;
 import static org.junit.Assert.*;
 
 public final class TestWebHooks extends AbstractBrowserlessTest
@@ -58,9 +58,15 @@ public final class TestWebHooks extends AbstractBrowserlessTest
 
     private void testRemotePluginWebHookFiredOnlyForOwnPlugin(String webHookId) throws Exception
     {
+        final String path = "/webhook";
         final WebHookTestServlet servlet = new WebHookTestServlet();
-        final RemotePluginRunner plugin1 = new RemotePluginRunner(baseUrl, webHookId).addWebhook(webHookId, "/webhook", webHookId, servlet);
-        final RemotePluginRunner plugin2 = new RemotePluginRunner(baseUrl, "plugin2");
+
+        final AtlassianConnectAddOnRunner plugin1 = new AtlassianConnectAddOnRunner(baseUrl, webHookId)
+                .add(WebhookModule.key(webHookId + path.hashCode())
+                        .path(path)
+                        .event(webHookId)
+                        .resource(servlet));
+        final AtlassianConnectAddOnRunner plugin2 = new AtlassianConnectAddOnRunner(baseUrl, "plugin2");
         try
         {
             plugin1.start();

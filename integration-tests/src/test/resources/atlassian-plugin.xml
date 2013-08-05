@@ -23,7 +23,4 @@
     <plugin-permission key="unrequested_scope" name="Unrequested API Scope" class="com.atlassian.plugin.remotable.test.UnrequestedTestApiScope">
         <description>An API Scope that never gets used</description>
     </plugin-permission>
-
-    <component-import application="refapp" key="atlassianUserManager" interface="com.atlassian.user.UserManager"/>
-    <component application="refapp" key="fixEmail" class="com.atlassian.plugin.remotable.test.refapp.RefappFixEmailAddresses"/>
 </atlassian-plugin>

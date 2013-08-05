@@ -1,5 +1,6 @@
 package com.atlassian.plugin.remotable.test;
 
+import com.atlassian.plugin.remotable.test.pageobjects.OwnerOfTestedProduct;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.BasicResponseHandler;

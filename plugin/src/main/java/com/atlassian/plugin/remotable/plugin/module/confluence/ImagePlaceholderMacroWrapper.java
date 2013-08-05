@@ -45,6 +45,7 @@ public final class ImagePlaceholderMacroWrapper implements EditorImagePlaceholde
     {
         MacroInstance macroInstance = new MacroInstance(context,
                 delegate.getRemoteMacroInfo().getUrl(),
+                delegate.getRemoteMacroInfo().getHttpMethod(),
                 "",
                 parameters,
                 delegate.getRemoteMacroInfo().getRequestContextParameterFactory(),

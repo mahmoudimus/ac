@@ -22,8 +22,8 @@ import com.atlassian.plugin.remotable.spi.module.IFrameRenderer;
 import com.atlassian.plugin.webresource.UrlMode;
 import com.atlassian.plugin.webresource.WebResourceUrlProvider;
 import com.atlassian.templaterenderer.TemplateRenderer;
-import com.atlassian.webhooks.spi.provider.ModuleDescriptorWebHookConsumerRegistry;
-import com.atlassian.webhooks.spi.provider.PluginModuleConsumerParams;
+import com.atlassian.webhooks.spi.provider.ModuleDescriptorWebHookListenerRegistry;
+import com.atlassian.webhooks.spi.provider.PluginModuleListenerParameters;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import com.opensymphony.workflow.FunctionProvider;
@@ -55,7 +55,7 @@ public class RemoteWorkflowPostFunctionModuleDescriptor extends WorkflowFunction
 {
     private static final String POST_FUNCTION_EXTRA_MARKUP = "velocity/jira/workflow/post-function-extra-markup.vm";
 
-    private final ModuleDescriptorWebHookConsumerRegistry webHookConsumerRegistry;
+    private final ModuleDescriptorWebHookListenerRegistry webHookConsumerRegistry;
     private final OSWorkflowConfigurator workflowConfigurator;
     private final IFrameRenderer iFrameRenderer;
     private final TypeResolver remoteWorkflowTypeResolver;
@@ -72,7 +72,7 @@ public class RemoteWorkflowPostFunctionModuleDescriptor extends WorkflowFunction
             final ModuleFactory moduleFactory,
             final IFrameRenderer iFrameRenderer,
             final JiraRestBeanMarshaler jiraRestBeanMarshaler,
-            final ModuleDescriptorWebHookConsumerRegistry webHookConsumerRegistry,
+            final ModuleDescriptorWebHookListenerRegistry webHookConsumerRegistry,
             final EventPublisher eventPublisher,
             final TemplateRenderer templateRenderer,
             final WebResourceUrlProvider webResourceUrlProvider,
@@ -144,7 +144,7 @@ public class RemoteWorkflowPostFunctionModuleDescriptor extends WorkflowFunction
                 RemoteWorkflowPostFunctionEvent.REMOTE_WORKFLOW_POST_FUNCTION_EVENT_ID,
                 plugin.getKey(),
                 publishURI,
-                new PluginModuleConsumerParams(plugin.getKey(), Optional.of(moduleKey), ImmutableMap.<String, Object>of(), RemoteWorkflowPostFunctionEvent.REMOTE_WORKFLOW_POST_FUNCTION_EVENT_ID)
+                new PluginModuleListenerParameters(plugin.getKey(), Optional.of(moduleKey), ImmutableMap.<String, Object>of(), RemoteWorkflowPostFunctionEvent.REMOTE_WORKFLOW_POST_FUNCTION_EVENT_ID)
         );
     }
 
@@ -156,7 +156,7 @@ public class RemoteWorkflowPostFunctionModuleDescriptor extends WorkflowFunction
                 RemoteWorkflowPostFunctionEvent.REMOTE_WORKFLOW_POST_FUNCTION_EVENT_ID,
                 plugin.getKey(),
                 publishURI,
-                new PluginModuleConsumerParams(plugin.getKey(), Optional.of(moduleKey), ImmutableMap.<String, Object>of(), RemoteWorkflowPostFunctionEvent.REMOTE_WORKFLOW_POST_FUNCTION_EVENT_ID)
+                new PluginModuleListenerParameters(plugin.getKey(), Optional.of(moduleKey), ImmutableMap.<String, Object>of(), RemoteWorkflowPostFunctionEvent.REMOTE_WORKFLOW_POST_FUNCTION_EVENT_ID)
         );
     }
 

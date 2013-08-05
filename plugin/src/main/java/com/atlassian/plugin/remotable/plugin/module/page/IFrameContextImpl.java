@@ -7,7 +7,7 @@ import java.net.URI;
 
 public final class IFrameContextImpl implements IFrameContext
 {
-    private final URI iframePath;
+    private final String iframePath;
 
     private final String namespace;
     private final IFrameParams iframeParams;
@@ -15,6 +15,15 @@ public final class IFrameContextImpl implements IFrameContext
 
     public IFrameContextImpl(String pluginKey,
                              URI iframePath,
+                             String namespace,
+                             IFrameParams iframeParams
+    )
+    {
+        this(pluginKey, iframePath.toString(), namespace, iframeParams);
+    }
+
+    public IFrameContextImpl(String pluginKey,
+                             String iframePath,
                              String namespace,
                              IFrameParams iframeParams
     )
@@ -34,7 +43,7 @@ public final class IFrameContextImpl implements IFrameContext
     }
 
     @Override
-    public URI getIframePath()
+    public String getIframePath()
     {
         return iframePath;
     }

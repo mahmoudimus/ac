@@ -5,7 +5,7 @@ import com.atlassian.jira.pageobjects.pages.DashboardPage;
 import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.pageobjects.TestedProductFactory;
 import com.atlassian.pageobjects.page.LoginPage;
-import com.atlassian.plugin.remotable.test.jira.JiraOps;
+import com.atlassian.plugin.remotable.test.pageobjects.jira.JiraOps;
 import com.atlassian.webdriver.pageobjects.WebDriverTester;
 import hudson.plugins.jira.soap.RemoteProject;
 import org.junit.After;
