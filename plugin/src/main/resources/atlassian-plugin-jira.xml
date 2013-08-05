@@ -25,6 +25,10 @@
                class="com.atlassian.plugin.remotable.plugin.module.webpanel.extractor.jira.IssueWebPanelParameterExtractor"
                interface="com.atlassian.plugin.remotable.plugin.module.webpanel.extractor.WebPanelParameterExtractor" />
 
+    <component key="profileUserParameterExtractor"
+               class="com.atlassian.plugin.remotable.plugin.module.webpanel.extractor.jira.ProfileUserWebPanelParameterExtractor"
+               interface="com.atlassian.plugin.remotable.plugin.module.webpanel.extractor.WebPanelParameterExtractor" />
+
     <rest key="rest" path="/remotable-plugins" version="1">
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>INCLUDE</dispatcher>
@@ -45,6 +49,7 @@
     <component-import key="mailQueue" interface="com.atlassian.mail.queue.MailQueue" />
     <component-import key="projectRoleManager" interface="com.atlassian.jira.security.roles.ProjectRoleManager" />
     <component-import key="jiraBaseUrls" interface="com.atlassian.jira.issue.fields.rest.json.beans.JiraBaseUrls" />
+    <component-import key="userUtils" interface="com.atlassian.jira.user.util.UserUtil" />
 
     <!-- imports for conditions -->
     <component-import key="subtaskManager" interface="com.atlassian.jira.config.SubTaskManager" />
