@@ -30,13 +30,13 @@ import static org.junit.Assert.assertEquals;
 public final class TestWebPanels extends JiraWebDriverTestBase
 {
     // web panel locations
-    public static final String ISSUE_PANEL_ID = "jira-remotePluginIssuePanelPage";
-    public static final String ISSUE_REMOTE_LEFT_WEB_PANEL_ID = "jira-issue-left-web-panel";
+    private static final String ISSUE_PANEL_ID = "jira-remotePluginIssuePanelPage";
+    private static final String ISSUE_REMOTE_LEFT_WEB_PANEL_ID = "jira-issue-left-web-panel";
     private static final String ISSUE_REMOTE_LEFT_WEB_PANEL_ID_2 = "jira-issue-left-web-panel-2";
-    public static final String ISSUE_REMOTE_RIGHT_WEB_PANEL_ID = "jira-issue-right-web-panel";
-    public static final String USER_PROFILE_WEB_PANEL_ID = "user-profile-web-panel";
-    public static final String PROJECT_CONFIG_HEADER_WEB_PANEL = "jira-project-config-header-web-panel";
-    public static final String PROJECT_CONFIG_PANEL_ID = "jira-remoteProjectConfigPanel";
+    private static final String ISSUE_REMOTE_RIGHT_WEB_PANEL_ID = "jira-issue-right-web-panel";
+    private static final String USER_PROFILE_WEB_PANEL_ID = "user-profile-web-panel";
+    private static final String PROJECT_CONFIG_HEADER_WEB_PANEL = "jira-project-config-header-web-panel";
+    private static final String PROJECT_CONFIG_PANEL_ID = "jira-remoteProjectConfigPanel";
 
     private static AtlassianConnectAddOnRunner remotePlugin;
 
