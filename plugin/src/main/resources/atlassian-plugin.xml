@@ -50,6 +50,14 @@
         </description>
         <url-pattern>/redirect/permanent</url-pattern>
     </servlet>
+    <servlet key="remotablePluginsIframe"
+             name="Remotable Plugins Iframe Generator"
+             class="com.atlassian.plugin.remotable.plugin.module.page.ContextFreeIFramePageServlet">
+        <description>
+            Generates a template for serving a signed remote iframe
+        </description>
+        <url-pattern>/render-signed-iframe</url-pattern>
+    </servlet>
 
     <web-resource key="ap-amd">
         <resource type="download" name="_ap.js" location="/js/iframe/host/_ap.js" />
@@ -68,6 +76,7 @@
     </web-resource>
 
     <web-resource key="dialog">
+        <resource type="download" name="main.js" location="js/dialog/main.js" />
         <resource type="download" name="simple.js" location="js/dialog/simple.js" />
         <dependency>com.atlassian.auiplugin:ajs</dependency>
         <dependency>com.atlassian.labs.remoteapps-plugin:ap-amd</dependency>

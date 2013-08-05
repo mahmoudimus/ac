@@ -139,6 +139,17 @@ _AP.define("host/main", ["_xdm-rpc"], function (XdmRpc) {
           var button = getDialogButton(name);
           callback(button ? button.isEnabled() : void 0);
         },
+        dialog: function(dialogOptions) {
+          _AP.require("dialog", function(dialog) {
+            dialog.create(options.key, dialogOptions);
+          });
+        },
+        closeDialog: function() {
+          _AP.require("dialog", function(dialog) {
+            // TODO: only allow closing from same plugin key?
+            dialog.close();
+          });
+        },
         request: function (args, success, error) {
           // add the context path to the request url
           var url = options.cp + args.url;
