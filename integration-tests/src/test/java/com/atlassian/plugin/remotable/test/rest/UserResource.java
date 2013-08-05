@@ -11,7 +11,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import static com.google.common.base.Strings.nullToEmpty;
 import static java.lang.String.format;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
@@ -39,7 +38,9 @@ public class UserResource
     @AnonymousAllowed
     public Response getUserTextPlain()
     {
-        return getUser("%s", TEXT_PLAIN_TYPE);
+        final String content = getUsername();
+        MediaType contentType = TEXT_PLAIN_TYPE;
+        return getUser(content, contentType);
     }
 
     @GET
@@ -64,7 +65,7 @@ public class UserResource
     {
         final String username = getUsername();
         logger.info("Getting the user '{}' as '{}'", username, contentType);
-        return ok(format(format, nullToEmpty(username)), contentType).build();
+        return ok(format(format, username), contentType).build();
     }
 
     @GET

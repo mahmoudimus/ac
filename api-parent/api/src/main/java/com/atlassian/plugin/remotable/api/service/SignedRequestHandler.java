@@ -18,5 +18,6 @@ public interface SignedRequestHandler
 
     void sign(URI uri, String method, String username, HttpURLConnection yc);
 
-    String getAuthorizationHeaderValue(URI uri, String method, String username) throws IllegalArgumentException;
+    String getAuthorizationHeaderValue(URI uri, String method, String username)
+            throws IllegalArgumentException;
 }
