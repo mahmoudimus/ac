@@ -86,7 +86,7 @@ public final class AtlassianConnectAddOnRunner
         return this;
     }
 
-    private void addResources(Module module)
+    public void addResources(Module module)
     {
         for (Pair<String, HttpServlet> resource : module.getResources())
         {
@@ -99,7 +99,7 @@ public final class AtlassianConnectAddOnRunner
         return addOAuth(createSignedRequestHandler(pluginKey));
     }
 
-    private AtlassianConnectAddOnRunner addOAuth(RunnerSignedRequestHandler signedRequestHandler) throws NoSuchAlgorithmException, IOException
+    public AtlassianConnectAddOnRunner addOAuth(RunnerSignedRequestHandler signedRequestHandler) throws NoSuchAlgorithmException, IOException
     {
         this.signedRequestHandler = some(signedRequestHandler);
         doc.getRootElement().element("remote-plugin-container")
