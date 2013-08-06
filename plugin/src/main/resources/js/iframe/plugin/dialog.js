@@ -13,6 +13,14 @@ AP.define("dialog", ["_dollar", "_rpc"], function ($, rpc) {
 
     exports = {
 
+      create: function(options) {
+        remote.createDialog(options);
+      },
+
+      close: function() {
+        remote.closeDialog();
+      },
+
       isDialog: isDialog,
 
       // register callbacks responding to messages from the host dialog, such as "submit" or "cancel"
@@ -92,7 +100,9 @@ AP.define("dialog", ["_dollar", "_rpc"], function ($, rpc) {
 
       stubs: [
         "setDialogButtonEnabled",
-        "isDialogButtonEnabled"
+        "isDialogButtonEnabled",
+        "createDialog",
+        "closeDialog"
       ]
 
     };

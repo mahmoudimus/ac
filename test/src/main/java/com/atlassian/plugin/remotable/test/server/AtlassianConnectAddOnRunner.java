@@ -86,7 +86,13 @@ public final class AtlassianConnectAddOnRunner
         return this;
     }
 
-    public void addResources(Module module)
+    public AtlassianConnectAddOnRunner addRoute(String path, HttpServlet servlet)
+    {
+        routes.put(path, servlet);
+        return this;
+    }
+
+    private void addResources(Module module)
     {
         for (Pair<String, HttpServlet> resource : module.getResources())
         {
