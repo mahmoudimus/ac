@@ -3,14 +3,10 @@ package com.atlassian.plugin.remotable.test.pageobjects;
 import com.atlassian.pageobjects.binder.Init;
 import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.pageobjects.elements.PageElementFinder;
-import com.atlassian.pageobjects.elements.WebDriverElement;
-import com.atlassian.pageobjects.elements.WebDriverLocatable;
-import com.atlassian.plugin.remotable.plugin.module.webpanel.RemoteWebPanelModuleDescriptor;
 import com.atlassian.webdriver.AtlassianWebDriver;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.openqa.selenium.By;
-import org.openqa.selenium.internal.seleniumemulation.ElementFinder;
 
 import javax.inject.Inject;
 import java.net.URI;

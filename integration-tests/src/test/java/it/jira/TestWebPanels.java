@@ -2,12 +2,14 @@
 package it.jira;
 
 import com.atlassian.plugin.remotable.test.jira.JiraProjectAdministrationPage;
+import com.atlassian.plugin.remotable.test.jira.JiraViewProfilePage;
 import com.atlassian.plugin.remotable.test.pageobjects.RemoteWebPanel;
 import com.atlassian.plugin.remotable.test.pageobjects.jira.JiraViewIssuePage;
 import com.atlassian.plugin.remotable.test.server.AtlassianConnectAddOnRunner;
 import com.atlassian.plugin.remotable.test.server.module.IssuePanelPageModule;
 import com.atlassian.plugin.remotable.test.server.module.ProjectConfigPanelModule;
 import com.atlassian.plugin.remotable.test.server.module.RemoteWebPanelModule;
+
 import hudson.plugins.jira.soap.RemoteIssue;
 import it.MyContextAwareWebPanelServlet;
 import org.junit.AfterClass;
@@ -17,7 +19,6 @@ import org.junit.Test;
 
 import java.rmi.RemoteException;
 
-import static com.atlassian.plugin.remotable.test.Utils.createSignedRequestHandler;
 import static com.atlassian.plugin.remotable.test.server.AtlassianConnectAddOnRunner.newMustacheServlet;
 import static com.atlassian.plugin.remotable.test.server.AtlassianConnectAddOnRunner.newServlet;
 import static it.TestConstants.ADMIN;
@@ -33,6 +34,7 @@ public final class TestWebPanels extends JiraWebDriverTestBase
     private static final String ISSUE_REMOTE_LEFT_WEB_PANEL_ID = "jira-issue-left-web-panel";
     private static final String ISSUE_REMOTE_LEFT_WEB_PANEL_ID_2 = "jira-issue-left-web-panel-2";
     private static final String ISSUE_REMOTE_RIGHT_WEB_PANEL_ID = "jira-issue-right-web-panel";
+    private static final String USER_PROFILE_WEB_PANEL_ID = "user-profile-web-panel";
     private static final String PROJECT_CONFIG_HEADER_WEB_PANEL = "jira-project-config-header-web-panel";
     private static final String PROJECT_CONFIG_PANEL_ID = "jira-remoteProjectConfigPanel";
 
@@ -71,6 +73,11 @@ public final class TestWebPanels extends JiraWebDriverTestBase
                         .name("Project Config Header Web Panel")
                         .location("atl.jira.proj.config.header")
                         .path("/pch?issue_id=${issue.id}&project_id=${project.id}")
+                        .resource(newServlet(new MyContextAwareWebPanelServlet())))
+                .add(RemoteWebPanelModule.key(USER_PROFILE_WEB_PANEL_ID)
+                        .name("User Profile Web Panel")
+                        .location("webpanels.user.profile.summary.custom")
+                        .path("/up?profile_user_key=${profileUser.key}&profile_user_name=${profileUser.name}")
                         .resource(newServlet(new MyContextAwareWebPanelServlet())))
                 .start();
     }
@@ -152,6 +159,20 @@ public final class TestWebPanels extends JiraWebDriverTestBase
         RemoteWebPanel panel = projectAdministrationPage.findWebPanel(PROJECT_CONFIG_HEADER_WEB_PANEL);
 
         assertEquals(project.getId(), panel.getProjectId());
+        assertEquals(ADMIN, panel.getUserId());
+    }
+
+    @Test
+    public void testWebPanelInUserProfile()
+    {
+        final String userProfileName = "barney";
+
+        loginAsAdmin();
+        JiraViewProfilePage jiraViewProfilePage = product.visit(JiraViewProfilePage.class, userProfileName);
+        RemoteWebPanel panel = jiraViewProfilePage.findWebPanel(USER_PROFILE_WEB_PANEL_ID);
+
+        assertEquals(userProfileName, panel.getFromQueryString("profile_user_key"));
+        assertEquals(userProfileName, panel.getFromQueryString("profile_user_name"));
         assertEquals(ADMIN, panel.getUserId());
     }
 

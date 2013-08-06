@@ -55,7 +55,7 @@ public final class AtlassianConnectAddOnRunner
 
     public AtlassianConnectAddOnRunner(String baseUrl)
     {
-        this(baseUrl, RandomStringUtils.randomAlphanumeric(20));
+        this(baseUrl, RandomStringUtils.randomAlphanumeric(20).toLowerCase());
     }
 
     public AtlassianConnectAddOnRunner(String baseUrl, String pluginKey)
@@ -105,7 +105,7 @@ public final class AtlassianConnectAddOnRunner
         return addOAuth(createSignedRequestHandler(pluginKey));
     }
 
-    private AtlassianConnectAddOnRunner addOAuth(RunnerSignedRequestHandler signedRequestHandler) throws NoSuchAlgorithmException, IOException
+    public AtlassianConnectAddOnRunner addOAuth(RunnerSignedRequestHandler signedRequestHandler) throws NoSuchAlgorithmException, IOException
     {
         this.signedRequestHandler = some(signedRequestHandler);
         doc.getRootElement().element("remote-plugin-container")
