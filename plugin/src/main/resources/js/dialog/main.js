@@ -52,7 +52,6 @@ _AP.define("dialog", ["_dollar"], function($) {
 
     dialogOptions = filter(options, ["width", "height", "id"]);
     popup = new AJS.popup(dialogOptions);
-    popup.element.addClass("ap-chromeless-dialog");
     $nexus = $("<div class='ap-servlet-placeholder'></div>").appendTo(popup.element);
     popup.show();
     return new PopupApi(popup);
