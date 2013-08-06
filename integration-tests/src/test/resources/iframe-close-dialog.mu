@@ -12,7 +12,7 @@
     <script>
       AP.require(["_dollar", "dialog"], function($, dialog) {
         $("#dialog-close-button").bind("click", function() {
-          dialog.closeDialog();
+          dialog.close();
         });
       });
     </script>

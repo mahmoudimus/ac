@@ -12,7 +12,7 @@
     <script>
       AP.require(["_dollar", "dialog"], function($, dialog) {
         $("#dialog-open-button").bind("click", function() {
-          dialog.dialog({
+          dialog.create({
             url: "/dialog"
           });
         });
