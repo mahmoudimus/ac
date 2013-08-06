@@ -139,7 +139,7 @@ _AP.define("host/main", ["_xdm-rpc"], function (XdmRpc) {
           var button = getDialogButton(name);
           callback(button ? button.isEnabled() : void 0);
         },
-        dialog: function(dialogOptions) {
+        createDialog: function(dialogOptions) {
           _AP.require("dialog", function(dialog) {
             dialog.create(options.key, dialogOptions);
           });

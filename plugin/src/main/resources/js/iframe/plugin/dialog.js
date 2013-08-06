@@ -13,11 +13,11 @@ AP.define("dialog", ["_dollar", "_rpc"], function ($, rpc) {
 
     exports = {
 
-      dialog: function(options) {
-        remote.dialog(options);
+      create: function(options) {
+        remote.createDialog(options);
       },
 
-      closeDialog: function() {
+      close: function() {
         remote.closeDialog();
       },
 
@@ -101,7 +101,7 @@ AP.define("dialog", ["_dollar", "_rpc"], function ($, rpc) {
       stubs: [
         "setDialogButtonEnabled",
         "isDialogButtonEnabled",
-        "dialog",
+        "createDialog",
         "closeDialog"
       ]
 
