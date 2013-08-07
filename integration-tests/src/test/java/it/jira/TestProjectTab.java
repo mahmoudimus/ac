@@ -1,29 +1,27 @@
 package it.jira;
 
+import java.util.concurrent.Callable;
+
 import com.atlassian.jira.pageobjects.pages.project.BrowseProjectPage;
 import com.atlassian.jira.pageobjects.project.ProjectConfigTabs;
 import com.atlassian.jira.pageobjects.project.summary.ProjectSummaryPageTab;
-import com.atlassian.plugin.remotable.test.junit.HtmlDumpRule;
-import com.atlassian.plugin.remotable.test.pageobjects.RemotePluginEmbeddedTestPage;
-import com.atlassian.plugin.remotable.test.pageobjects.jira.AbstractRemotablePluginProjectTab;
-import com.atlassian.plugin.remotable.test.pageobjects.jira.JiraProjectAdministrationTab;
-import com.atlassian.plugin.remotable.test.server.AtlassianConnectAddOnRunner;
-import com.atlassian.plugin.remotable.test.server.module.ProjectConfigTabModule;
-import com.atlassian.plugin.remotable.test.server.module.ProjectTabPageModule;
+import com.atlassian.plugin.connect.test.junit.HtmlDumpRule;
+import com.atlassian.plugin.connect.test.pageobjects.RemotePluginEmbeddedTestPage;
+import com.atlassian.plugin.connect.test.pageobjects.jira.AbstractRemotablePluginProjectTab;
+import com.atlassian.plugin.connect.test.pageobjects.jira.JiraProjectAdministrationTab;
+import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
+import com.atlassian.plugin.connect.test.server.module.ProjectConfigTabModule;
+import com.atlassian.plugin.connect.test.server.module.ProjectTabPageModule;
+
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
-import java.util.concurrent.Callable;
-
-import static com.atlassian.plugin.remotable.test.server.AtlassianConnectAddOnRunner.newMustacheServlet;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
+import static com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner.newMustacheServlet;
+import static org.junit.Assert.*;
 import static org.junit.matchers.JUnitMatchers.hasItem;
 
 /**
@@ -44,15 +42,15 @@ public class TestProjectTab extends JiraWebDriverTestBase
         remotePlugin = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl())
                 .addOAuth()
                 .add(ProjectTabPageModule.key("jira-remotePluginProjectTab")
-                        .name("AC Play Project Tab")
-                        .path("/ptp")
-                        .resource(newMustacheServlet("iframe.mu")))
+                                         .name("AC Play Project Tab")
+                                         .path("/ptp")
+                                         .resource(newMustacheServlet("iframe.mu")))
                 .add(ProjectConfigTabModule.key("jira-remotePluginProjectConfigTab")
-                        .name("Remotable Project Config")
-                        .path("/pct")
-                        .weight("10")
-                        .location("projectgroup3")
-                        .resource(newMustacheServlet("iframe.mu")))
+                                           .name("Remotable Project Config")
+                                           .path("/pct")
+                                           .weight("10")
+                                           .location("projectgroup3")
+                                           .resource(newMustacheServlet("iframe.mu")))
                 .start();
     }
 
@@ -110,8 +108,8 @@ public class TestProjectTab extends JiraWebDriverTestBase
             public Object call() throws Exception
             {
                 RemotePluginEmbeddedTestPage page = product.visit(BrowseProjectPage.class, project.getKey())
-                        .openTab(AppProjectTabPage.class)
-                        .getEmbeddedPage();
+                                                           .openTab(AppProjectTabPage.class)
+                                                           .getEmbeddedPage();
 
                 assertEquals("Success", page.getMessage());
                 return null;

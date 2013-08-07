@@ -1,0 +1,34 @@
+package com.atlassian.plugin.connect.plugin.product.jira;
+
+import java.util.TimeZone;
+
+import javax.annotation.Nullable;
+
+import com.atlassian.crowd.embedded.api.User;
+import com.atlassian.jira.bc.JiraServiceContextImpl;
+import com.atlassian.jira.timezone.TimeZoneInfo;
+import com.atlassian.jira.timezone.TimeZoneService;
+import com.atlassian.jira.user.util.UserManager;
+import com.atlassian.plugin.connect.plugin.UserPreferencesRetriever;
+
+public class JiraUserPreferencesRetriever implements UserPreferencesRetriever
+{
+
+    private final UserManager userManager;
+    private final TimeZoneService timeZoneService;
+
+    public JiraUserPreferencesRetriever(final UserManager userManager, final TimeZoneService timeZoneService)
+    {
+        this.userManager = userManager;
+        this.timeZoneService = timeZoneService;
+    }
+
+    @Override
+    public TimeZone getTimeZoneFor(@Nullable String userName)
+    {
+        final User user = userManager.getUser(userName);
+        final JiraServiceContextImpl jiraServiceContext = new JiraServiceContextImpl(user);
+        final TimeZoneInfo timeZoneInfo = (user != null) ? timeZoneService.getUserTimeZoneInfo(jiraServiceContext) : timeZoneService.getDefaultTimeZoneInfo(jiraServiceContext);
+        return timeZoneInfo.toTimeZone();
+    }
+}

@@ -1,21 +1,22 @@
 package it;
 
-import com.atlassian.plugin.remotable.test.server.AtlassianConnectAddOnRunner;
-import com.atlassian.plugin.remotable.test.server.module.GeneralPageModule;
-import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpStatus;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
 
-import static com.atlassian.plugin.remotable.test.Utils.createSignedRequestHandler;
+import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
+import com.atlassian.plugin.connect.test.server.module.GeneralPageModule;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpStatus;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -32,9 +33,9 @@ public class TestRedirects extends AbstractBrowserlessTest
     {
         AtlassianConnectAddOnRunner runner = new AtlassianConnectAddOnRunner(baseUrl, "permanentRedirect")
                 .add(GeneralPageModule.key("page")
-                        .name("Page")
-                        .path("/page")
-                        .resource(new MessageServlet()))
+                                      .name("Page")
+                                      .path("/page")
+                                      .resource(new MessageServlet()))
                 .start();
 
         URL url = new URL(baseUrl + "/plugins/servlet/redirect/permanent?app_key=permanentRedirect&app_url=/page&message=bar");
@@ -55,9 +56,9 @@ public class TestRedirects extends AbstractBrowserlessTest
     {
         AtlassianConnectAddOnRunner runner = new AtlassianConnectAddOnRunner(baseUrl)
                 .add(GeneralPageModule.key("page")
-                        .name("Page")
-                        .path("/page")
-                        .resource(new MessageServlet()))
+                                      .name("Page")
+                                      .path("/page")
+                                      .resource(new MessageServlet()))
                 .addOAuth()
                 .start();
 

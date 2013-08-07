@@ -1,44 +1,40 @@
 <application key="jira">
     <component key="hostContainer" class="com.atlassian.plugin.osgi.bridge.external.SpringHostContainer" />
-    <component key="jiraProductAccessor" class="com.atlassian.plugin.remotable.plugin.product.jira.JiraProductAccessor"/>
-    <component key="jiraUserPreferencesRetriever" class="com.atlassian.plugin.remotable.plugin.product.jira.JiraUserPreferencesRetriever"
-			interface="com.atlassian.plugin.remotable.plugin.UserPreferencesRetriever"/>
+    <component key="jiraProductAccessor" class="com.atlassian.plugin.connect.plugin.product.jira.JiraProductAccessor"/>
+    <component key="jiraUserPreferencesRetriever" class="com.atlassian.plugin.connect.plugin.product.jira.JiraUserPreferencesRetriever"
+			interface="com.atlassian.plugin.connect.plugin.UserPreferencesRetriever"/>
     <component key="conditionDescriptorFactory" class="com.atlassian.jira.plugin.webfragment.descriptors.ConditionDescriptorFactoryImpl" />
 
     <component key="jiraWebHookProvider"
                interface="com.atlassian.webhooks.spi.provider.WebHookProvider" public="true"
-               class="com.atlassian.plugin.remotable.plugin.product.jira.PostFunctionWebHookProvider" />
+               class="com.atlassian.plugin.connect.plugin.product.jira.PostFunctionWebHookProvider" />
 
-    <component key="EventSerializerFactory" class="com.atlassian.plugin.remotable.plugin.product.jira.webhook.JiraEventSerializerFactory" />
+    <component key="EventSerializerFactory" class="com.atlassian.plugin.connect.plugin.product.jira.webhook.JiraEventSerializerFactory" />
 
-    <component key="WebSudoElevator" class="com.atlassian.plugin.remotable.plugin.product.jira.JiraWebSudoElevator" />
+    <component key="WebSudoElevator" class="com.atlassian.plugin.connect.plugin.product.jira.JiraWebSudoElevator" />
 
-    <component key="host" class="com.atlassian.plugin.remotable.plugin.module.ServletContextThreadLocalIFrameHost" />
-    <component key="restAccessor" class="com.atlassian.plugin.remotable.plugin.product.jira.JiraRestBeanMarshaler" />
+    <component key="host" class="com.atlassian.plugin.connect.plugin.module.ServletContextThreadLocalIFrameHost" />
+    <component key="restAccessor" class="com.atlassian.plugin.connect.plugin.product.jira.JiraRestBeanMarshaler" />
 
     <!-- Web panel parameter extractors -->
     <component key="projectIdParameterExtractor"
-               class="com.atlassian.plugin.remotable.plugin.module.webpanel.extractor.jira.ProjectWebPanelParameterExtractor"
-               interface="com.atlassian.plugin.remotable.plugin.module.webpanel.extractor.WebPanelParameterExtractor" />
+               class="com.atlassian.plugin.connect.plugin.module.webpanel.extractor.jira.ProjectWebPanelParameterExtractor"
+               interface="com.atlassian.plugin.connect.plugin.module.webpanel.extractor.WebPanelParameterExtractor" />
 
     <component key="issueIdParameterExtractor"
-               class="com.atlassian.plugin.remotable.plugin.module.webpanel.extractor.jira.IssueWebPanelParameterExtractor"
-               interface="com.atlassian.plugin.remotable.plugin.module.webpanel.extractor.WebPanelParameterExtractor" />
+               class="com.atlassian.plugin.connect.plugin.module.webpanel.extractor.jira.IssueWebPanelParameterExtractor"
+               interface="com.atlassian.plugin.connect.plugin.module.webpanel.extractor.WebPanelParameterExtractor" />
 
     <component key="profileUserParameterExtractor"
-               class="com.atlassian.plugin.remotable.plugin.module.webpanel.extractor.jira.ProfileUserWebPanelParameterExtractor"
-               interface="com.atlassian.plugin.remotable.plugin.module.webpanel.extractor.WebPanelParameterExtractor" />
+               class="com.atlassian.plugin.connect.plugin.module.webpanel.extractor.jira.ProfileUserWebPanelParameterExtractor"
+               interface="com.atlassian.plugin.connect.plugin.module.webpanel.extractor.WebPanelParameterExtractor" />
 
     <rest key="rest" path="/remotable-plugins" version="1">
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>INCLUDE</dispatcher>
-        <package>com.atlassian.plugin.remotable.plugin.rest</package>
+        <package>com.atlassian.plugin.connect.plugin.rest</package>
     </rest>
 
-    <jira-footer key="bigPipeFooter" class="com.atlassian.plugin.remotable.plugin.product.jira.JiraBigPipeFooter" />
-
-    <!-- Handles loading big pipe resources because web items in jira
-        can't contribute web resources due to how JIRA renders  -->
 
 	<component-import key="projectService" interface="com.atlassian.jira.bc.project.ProjectService" />
     <component-import key="jiraAuthenticationContext" interface="com.atlassian.jira.security.JiraAuthenticationContext" />
@@ -71,50 +67,50 @@
     <component-import key="issueToSubtaskConversionService" interface="com.atlassian.jira.bc.subtask.conversion.IssueToSubTaskConversionService" />
 
     <!-- plugin points -->
-    <described-module-type key="profile-page" name="User Profile Page" class="com.atlassian.plugin.remotable.plugin.module.page.jira.JiraProfileTabModuleDescriptor">
+    <described-module-type key="profile-page" name="User Profile Page" class="com.atlassian.plugin.connect.plugin.module.jira.JiraProfileTabModuleDescriptor">
         <description>
             A full-sized page that will be decorated as a tab in the user's profile area.
         </description>
     </described-module-type>
 
-    <described-module-type key="remote-search-request-view" class="com.atlassian.plugin.remotable.plugin.module.jira.searchrequestview.RemoteSearchRequestViewModuleDescriptor">
+    <described-module-type key="remote-search-request-view" class="com.atlassian.plugin.connect.plugin.module.jira.searchrequestview.RemoteSearchRequestViewModuleDescriptor">
         <description>
             A search request view that redirects to the url with found issue keys as the
             'issues' query parameter
         </description>
     </described-module-type>
 
-    <described-module-type key="project-tab-page" class="com.atlassian.plugin.remotable.plugin.module.jira.projecttab.ProjectTabPageModuleDescriptor">
+    <described-module-type key="project-tab-page" class="com.atlassian.plugin.connect.plugin.module.jira.projecttab.ProjectTabPageModuleDescriptor">
         <description>
             A remote page decorated as its own JIRA project tab
         </description>
     </described-module-type>
 
-    <described-module-type key="issue-tab-page" class="com.atlassian.plugin.remotable.plugin.module.jira.issuetab.IssueTabPageModuleDescriptor">
+    <described-module-type key="issue-tab-page" class="com.atlassian.plugin.connect.plugin.module.jira.issuetab.IssueTabPageModuleDescriptor">
         <description>
             A remote page decorated as its own JIRA issue tab but not included in All tab as it has no individual actions
         </description>
     </described-module-type>
 
-    <described-module-type key="issue-panel-page" class="com.atlassian.plugin.remotable.plugin.module.jira.issuepanel.IssuePanelPageModuleDescriptor">
+    <described-module-type key="issue-panel-page" class="com.atlassian.plugin.connect.plugin.module.jira.issuepanel.IssuePanelPageModuleDescriptor">
         <description>
             A remote page decorated as a web panel on the view issue page
         </description>
     </described-module-type>
 
-    <described-module-type key="project-config-panel" class="com.atlassian.plugin.remotable.plugin.module.jira.projectconfig.ProjectConfigWebPanelModuleDescriptor">
+    <described-module-type key="project-config-panel" class="com.atlassian.plugin.connect.plugin.module.jira.projectconfig.ProjectConfigWebPanelModuleDescriptor">
         <description>
             A remote page decorated as a web panel on the project configuration page.
         </description>
     </described-module-type>
 
-    <described-module-type key="project-config-tab" class="com.atlassian.plugin.remotable.plugin.module.jira.projectconfig.ProjectConfigTabModuleDescriptor">
+    <described-module-type key="project-config-tab" class="com.atlassian.plugin.connect.plugin.module.jira.projectconfig.ProjectConfigTabModuleDescriptor">
         <description>
             A remote page decorated as a tab on the project configuration page.
         </description>
     </described-module-type>
 
-    <described-module-type key="remote-workflow-post-function" class="com.atlassian.plugin.remotable.plugin.module.jira.workflow.RemoteWorkflowPostFunctionModuleDescriptor">
+    <described-module-type key="remote-workflow-post-function" class="com.atlassian.plugin.connect.plugin.module.jira.workflow.RemoteWorkflowPostFunctionModuleDescriptor">
         <description>
             A remote workflow post function.
         </description>
@@ -124,12 +120,12 @@
     <!--       REMOVE THESE AFTER REFACTORING SCOPES!!!!   -->
     <!-- ################################################# -->
     <plugin-permission key="read_users_and_groups" name="Read Users and Groups" application="jira"
-                       class="com.atlassian.plugin.remotable.plugin.oldscopes.jira.JiraReadUsersAndGroupsScope">
+                       class="com.atlassian.plugin.connect.plugin.oldscopes.jira.JiraReadUsersAndGroupsScope">
         <description>View users and groups</description>
     </plugin-permission>
 
     <plugin-permission key="browse_projects" name="Browse Projects" application="jira"
-                       class="com.atlassian.plugin.remotable.plugin.oldscopes.jira.BrowseProjectsScope">
+                       class="com.atlassian.plugin.connect.plugin.oldscopes.jira.BrowseProjectsScope">
         <description>
             Permission to browse projects, search issues, and view individual issues (except issues that have been
             restricted via Issue Security)
@@ -137,7 +133,7 @@
     </plugin-permission>
 
     <plugin-permission key="create_issues" name="Create Issues" application="jira"
-                       class="com.atlassian.plugin.remotable.plugin.oldscopes.jira.JiraCreateIssuesScope">
+                       class="com.atlassian.plugin.connect.plugin.oldscopes.jira.JiraCreateIssuesScope">
         <description>
             Permission to create issues in the project. (Note that the Create Attachments
             permission is required in order to create attachments.) Includes the ability to
@@ -146,7 +142,7 @@
     </plugin-permission>
 
     <plugin-permission key="edit_issues" name="Edit Issues" application="jira"
-                       class="com.atlassian.plugin.remotable.plugin.oldscopes.jira.JiraEditIssuesScope">
+                       class="com.atlassian.plugin.connect.plugin.oldscopes.jira.JiraEditIssuesScope">
         <description>
             Permission to edit issues (excluding the 'Due Date' field - see the Schedule
             Issues permission). Includes the ability to convert issues to sub-tasks and vice
@@ -156,7 +152,7 @@
     </plugin-permission>
 
     <plugin-permission key="resolve_issues" name="Resolve Issues" application="jira"
-                       class="com.atlassian.plugin.remotable.plugin.oldscopes.jira.JiraResolveIssuesScope">
+                       class="com.atlassian.plugin.connect.plugin.oldscopes.jira.JiraResolveIssuesScope">
         <description>
             Permission to resolve and reopen issues. This also includes the ability to set
             the 'Fix For version' field for issues. Also see the Close Issues permission.
@@ -164,14 +160,14 @@
     </plugin-permission>
 
     <plugin-permission key="read_metadata" name="Read Metadata" application="jira"
-                       class="com.atlassian.plugin.remotable.plugin.oldscopes.jira.JiraReadMetadataScope">
+                       class="com.atlassian.plugin.connect.plugin.oldscopes.jira.JiraReadMetadataScope">
         <description>
             Permission to read JIRA metadata.
         </description>
     </plugin-permission>
 
     <plugin-permission key="read_user_session_data" name="Read User Session Data" application="jira"
-                       class="com.atlassian.plugin.remotable.plugin.oldscopes.jira.JiraReadUserSessionData">
+                       class="com.atlassian.plugin.connect.plugin.oldscopes.jira.JiraReadUserSessionData">
         <description>
             Permission to read JIRA user's session data.
         </description>

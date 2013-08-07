@@ -1,34 +1,29 @@
 package it.jira;
 
-import com.atlassian.jira.pageobjects.navigator.AdvancedSearch;
-import com.atlassian.jira.plugin.issuenav.pageobjects.IssueDetailPage;
-import com.atlassian.plugin.remotable.test.RemotePluginDialog;
-import com.atlassian.plugin.remotable.test.junit.HtmlDumpRule;
-import com.atlassian.plugin.remotable.test.pageobjects.RemotePluginTestPage;
-import com.atlassian.plugin.remotable.test.pageobjects.jira.JiraAdministrationPage;
-import com.atlassian.plugin.remotable.test.pageobjects.jira.JiraViewIssuePageWithRemotePluginIssueTab;
-import com.atlassian.plugin.remotable.test.pageobjects.jira.PlainTextView;
-import com.atlassian.plugin.remotable.test.pageobjects.jira.ViewChangingSearchResult;
-import com.atlassian.plugin.remotable.test.server.AtlassianConnectAddOnRunner;
-import com.atlassian.plugin.remotable.test.server.module.AdminPageModule;
-import com.atlassian.plugin.remotable.test.server.module.DialogPageModule;
-import com.atlassian.plugin.remotable.test.server.module.IssueTabPageModule;
-import hudson.plugins.jira.soap.RemoteIssue;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
-
 import java.rmi.RemoteException;
 import java.util.concurrent.Callable;
 
-import static com.atlassian.plugin.remotable.test.server.AtlassianConnectAddOnRunner.newMustacheServlet;
+import com.atlassian.jira.pageobjects.navigator.AdvancedSearch;
+import com.atlassian.jira.plugin.issuenav.pageobjects.IssueDetailPage;
+import com.atlassian.plugin.connect.test.pageobjects.RemotePluginDialog;
+import com.atlassian.plugin.connect.test.junit.HtmlDumpRule;
+import com.atlassian.plugin.connect.test.pageobjects.RemotePluginTestPage;
+import com.atlassian.plugin.connect.test.pageobjects.jira.JiraAdministrationPage;
+import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePageWithRemotePluginIssueTab;
+import com.atlassian.plugin.connect.test.pageobjects.jira.PlainTextView;
+import com.atlassian.plugin.connect.test.pageobjects.jira.ViewChangingSearchResult;
+import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
+import com.atlassian.plugin.connect.test.server.module.AdminPageModule;
+import com.atlassian.plugin.connect.test.server.module.DialogPageModule;
+import com.atlassian.plugin.connect.test.server.module.IssueTabPageModule;
+
+import org.junit.*;
+
+import hudson.plugins.jira.soap.RemoteIssue;
+
+import static com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner.newMustacheServlet;
 import static it.TestConstants.ADMIN_FULL_NAME;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class TestJira extends JiraWebDriverTestBase
 {
@@ -43,23 +38,23 @@ public class TestJira extends JiraWebDriverTestBase
         remotePlugin = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl())
                 .addOAuth()
                 .add(AdminPageModule.key("remotePluginAdmin")
-                        .name("Remotable Plugin app1 Admin")
-                        .path("/ap")
-                        .resource(newMustacheServlet("iframe.mu")))
+                                    .name("Remotable Plugin app1 Admin")
+                                    .path("/ap")
+                                    .resource(newMustacheServlet("iframe.mu")))
                 .add(AdminPageModule.key("jira-admin-page")
-                        .name("Remotable Admin Page")
-                        .path("/jap")
-                        .section("advanced_menu_section/advanced_section")
-                        .resource(newMustacheServlet("iframe.mu")))
+                                    .name("Remotable Admin Page")
+                                    .path("/jap")
+                                    .section("advanced_menu_section/advanced_section")
+                                    .resource(newMustacheServlet("iframe.mu")))
                 .add(IssueTabPageModule.key("jira-remotePluginIssueTabPage")
-                        .name("AC Play Issue Tab Page")
-                        .path("/itp")
-                        .resource(newMustacheServlet("iframe.mu")))
+                                       .name("AC Play Issue Tab Page")
+                                       .path("/itp")
+                                       .resource(newMustacheServlet("iframe.mu")))
                 .add(DialogPageModule.key("jira-issueAction")
-                        .name("Test Issue Action")
-                        .path("/jia")
-                        .section("operations-subtasks")
-                        .resource(newMustacheServlet("dialog.mu")))
+                                     .name("Test Issue Action")
+                                     .path("/jia")
+                                     .section("operations-subtasks")
+                                     .resource(newMustacheServlet("dialog.mu")))
                 .start();
     }
 
@@ -80,10 +75,10 @@ public class TestJira extends JiraWebDriverTestBase
         RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Test issue for dialog action cog test");
 
         RemotePluginTestPage page = product.getPageBinder()
-                .navigateToAndBind(IssueDetailPage.class, issue.getKey())
-                .details()
-                .openFocusShifter()
-                .queryAndSelect("Test Issue Action", RemotePluginTestPage.class, "jira-issueAction");
+                                           .navigateToAndBind(IssueDetailPage.class, issue.getKey())
+                                           .details()
+                                           .openFocusShifter()
+                                           .queryAndSelect("Test Issue Action", RemotePluginTestPage.class, "jira-issueAction");
 
         RemotePluginDialog dialog = product.getPageBinder().bind(RemotePluginDialog.class, page);
 
@@ -123,8 +118,8 @@ public class TestJira extends JiraWebDriverTestBase
                 product.visit(AdvancedSearch.class).enterQuery("project = " + project.getKey()).submit();
 
                 PlainTextView plainTextView = product.getPageBinder()
-                        .bind(ViewChangingSearchResult.class)
-                        .openView("Raw Keys", PlainTextView.class);
+                                                     .bind(ViewChangingSearchResult.class)
+                                                     .openView("Raw Keys", PlainTextView.class);
                 assertTrue(plainTextView.getContent().contains(issue.getKey()));
                 return null;
             }

@@ -1,9 +1,10 @@
 package it;
 
 import com.atlassian.pageobjects.TestedProduct;
-import com.atlassian.plugin.remotable.test.junit.HtmlDumpRule;
-import com.atlassian.plugin.remotable.test.pageobjects.OwnerOfTestedProduct;
+import com.atlassian.plugin.connect.test.junit.HtmlDumpRule;
+import com.atlassian.plugin.connect.test.pageobjects.OwnerOfTestedProduct;
 import com.atlassian.webdriver.pageobjects.WebDriverTester;
+
 import org.junit.After;
 import org.junit.Rule;
 

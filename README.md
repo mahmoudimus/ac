@@ -51,4 +51,4 @@ Where `<product>` is either `jira` or `confluence`. If left empty, the plugin wi
 
 To load via curl:
 
-    curl -v -u admin -X POST -d url=<url-to-remote-app> http://localhost:2990/jira/rest/remotable-plugins/latest/installer
+TODO: add new upm install instructions here.

@@ -1,20 +1,22 @@
 package it.jira;
 
+import java.rmi.RemoteException;
+
 import com.atlassian.jira.pageobjects.JiraTestedProduct;
-import com.atlassian.plugin.remotable.test.pageobjects.jira.JiraOps;
-import com.atlassian.plugin.remotable.test.server.AtlassianConnectAddOnRunner;
-import com.atlassian.plugin.remotable.test.server.module.SearchRequestViewModule;
-import hudson.plugins.jira.soap.RemoteAuthenticationException;
-import hudson.plugins.jira.soap.RemoteProject;
-import it.AbstractBrowserlessTest;
+import com.atlassian.plugin.connect.test.pageobjects.jira.JiraOps;
+import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
+import com.atlassian.plugin.connect.test.server.module.SearchRequestViewModule;
+
 import org.apache.http.client.HttpResponseException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.rmi.RemoteException;
+import hudson.plugins.jira.soap.RemoteAuthenticationException;
+import hudson.plugins.jira.soap.RemoteProject;
+import it.AbstractBrowserlessTest;
 
-import static com.atlassian.plugin.remotable.test.server.AtlassianConnectAddOnRunner.newMustacheServlet;
+import static com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner.newMustacheServlet;
 
 public class TestJiraNoBrowser extends AbstractBrowserlessTest
 {
@@ -47,9 +49,9 @@ public class TestJiraNoBrowser extends AbstractBrowserlessTest
     {
         new AtlassianConnectAddOnRunner(baseUrl, "quoteUrl")
                 .add(SearchRequestViewModule.key("page")
-                        .name("Hello")
-                        .path("/page\"")
-                        .resource(newMustacheServlet("hello-world-page.mu")))
+                                            .name("Hello")
+                                            .path("/page\"")
+                                            .resource(newMustacheServlet("hello-world-page.mu")))
                 .start();
     }
 }

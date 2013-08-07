@@ -1,29 +1,32 @@
 package it.confluence;
 
-import com.atlassian.fugue.Option;
-import com.atlassian.plugin.remotable.test.OAuthUtils;
-import com.atlassian.plugin.remotable.test.pageobjects.confluence.ConfluenceOps;
-import com.atlassian.plugin.remotable.test.pageobjects.confluence.ConfluencePageMacroPage;
-import com.atlassian.plugin.remotable.test.server.AtlassianConnectAddOnRunner;
-import com.atlassian.plugin.remotable.test.server.module.MacroPageModule;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import redstone.xmlrpc.XmlRpcFault;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.concurrent.TimeUnit;
+
+import com.atlassian.fugue.Option;
+import com.atlassian.plugin.connect.test.OAuthUtils;
+import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
+import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluencePageMacroPage;
+import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
+import com.atlassian.plugin.connect.test.server.module.MacroPageModule;
+
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import redstone.xmlrpc.XmlRpcFault;
 
 import static com.atlassian.fugue.Option.some;
-import static com.atlassian.plugin.remotable.test.HttpUtils.renderHtml;
-import static com.atlassian.plugin.remotable.test.Utils.loadResourceAsString;
-import static com.atlassian.plugin.remotable.test.pageobjects.confluence.ConfluenceOps.ConfluenceUser;
-import static com.atlassian.plugin.remotable.test.server.AtlassianConnectAddOnRunner.newMustacheServlet;
+import static com.atlassian.plugin.connect.test.HttpUtils.renderHtml;
+import static com.atlassian.plugin.connect.test.Utils.loadResourceAsString;
+import static com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps.ConfluenceUser;
+import static com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner.newMustacheServlet;
 import static it.TestConstants.ADMIN;
 import static org.junit.Assert.assertEquals;
 
@@ -42,11 +45,11 @@ public final class TestConfluencePageMacro extends ConfluenceWebDriverTestBase
                 .addPermission("read_users_and_groups")
                 .addPermission("read_server_information")
                 .add(MacroPageModule.key("app1-page")
-                        .name("app1-page")
-                        .path("/ap")
-                        .outputType("block")
-                        .bodyType("none")
-                        .resource(newMustacheServlet("iframe.mu")))
+                                    .name("app1-page")
+                                    .path("/ap")
+                                    .outputType("block")
+                                    .bodyType("none")
+                                    .resource(newMustacheServlet("iframe.mu")))
                 .start();
     }
 

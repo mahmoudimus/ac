@@ -1,31 +1,34 @@
 package it;
 
-import com.atlassian.pageobjects.page.HomePage;
-import com.atlassian.pageobjects.page.LoginPage;
-import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
-import com.atlassian.plugin.remotable.api.service.SignedRequestHandler;
-import com.atlassian.plugin.remotable.spi.Permissions;
-import com.atlassian.plugin.remotable.test.HttpUtils;
-import com.atlassian.plugin.remotable.test.MessagePage;
-import com.atlassian.plugin.remotable.test.pageobjects.GeneralPage;
-import com.atlassian.plugin.remotable.test.pageobjects.RemotePluginAwarePage;
-import com.atlassian.plugin.remotable.test.pageobjects.RemotePluginTestPage;
-import com.atlassian.plugin.remotable.test.server.AtlassianConnectAddOnRunner;
-import com.atlassian.plugin.remotable.test.server.module.GeneralPageModule;
-import com.google.common.collect.ImmutableMap;
-import org.junit.Test;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.atlassian.pageobjects.page.HomePage;
+import com.atlassian.pageobjects.page.LoginPage;
+import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.api.service.SignedRequestHandler;
+import com.atlassian.plugin.connect.spi.Permissions;
+import com.atlassian.plugin.connect.test.HttpUtils;
+import com.atlassian.plugin.connect.test.pageobjects.MessagePage;
+import com.atlassian.plugin.connect.test.pageobjects.GeneralPage;
+import com.atlassian.plugin.connect.test.pageobjects.RemotePluginAwarePage;
+import com.atlassian.plugin.connect.test.pageobjects.RemotePluginTestPage;
+import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
+import com.atlassian.plugin.connect.test.server.module.GeneralPageModule;
+import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
+
+import com.google.common.collect.ImmutableMap;
+
+import org.junit.Test;
 
 import static it.TestConstants.BETTY;
 import static org.hamcrest.CoreMatchers.is;
@@ -48,10 +51,10 @@ public class TestAppPermissions extends AbstractRemotablePluginTest
                 .addOAuth();
 
         runner.add(GeneralPageModule.key("page")
-                .name("Page")
-                .path("/page")
-                .resource(new CallServlet(product.getProductInstance().getBaseUrl(), runner.getSignedRequestHandler().get())))
-                .start();
+                                    .name("Page")
+                                    .path("/page")
+                                    .resource(new CallServlet(product.getProductInstance().getBaseUrl(), runner.getSignedRequestHandler().get())))
+              .start();
 
         String status = product.visit(MessagePage.class, runner.getPluginKey(), "page").getMessage();
         assertEquals("403", status);
@@ -93,9 +96,9 @@ public class TestAppPermissions extends AbstractRemotablePluginTest
                 .addOAuth();
 
         pluginRunner.add(GeneralPageModule.key("pluginLicensePage")
-                .name("Plugin License Page")
-                .path("/pluginLicense")
-                .resource(new RetrieveLicenseServlet(product.getProductInstance().getBaseUrl(), pluginRunner.getSignedRequestHandler().get())));
+                                          .name("Plugin License Page")
+                                          .path("/pluginLicense")
+                                          .resource(new RetrieveLicenseServlet(product.getProductInstance().getBaseUrl(), pluginRunner.getSignedRequestHandler().get())));
         for (String permission : permissions)
         {
             pluginRunner.addPermission(permission);

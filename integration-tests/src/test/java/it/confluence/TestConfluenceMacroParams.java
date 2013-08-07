@@ -1,31 +1,28 @@
 package it.confluence;
 
-import com.atlassian.pageobjects.page.HomePage;
-import com.atlassian.pageobjects.page.LoginPage;
-import com.atlassian.plugin.remotable.test.pageobjects.confluence.ConfluenceMacroPage;
-import com.atlassian.plugin.remotable.test.pageobjects.confluence.ConfluenceMacroTestSuitePage;
-import com.atlassian.plugin.remotable.test.pageobjects.confluence.ConfluenceOps;
-import com.atlassian.plugin.remotable.test.server.AtlassianConnectAddOnRunner;
-import com.atlassian.plugin.remotable.test.server.module.ContextParameter;
-import com.atlassian.plugin.remotable.test.server.module.GeneralPageModule;
-import com.atlassian.plugin.remotable.test.server.module.MacroCategory;
-import com.atlassian.plugin.remotable.test.server.module.MacroEditor;
-import com.atlassian.plugin.remotable.test.server.module.MacroParameter;
-import com.atlassian.plugin.remotable.test.server.module.RemoteMacroModule;
-import org.junit.Test;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Enumeration;
 import java.util.Map;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.atlassian.pageobjects.page.HomePage;
+import com.atlassian.pageobjects.page.LoginPage;
+import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceMacroPage;
+import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceMacroTestSuitePage;
+import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
+import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
+import com.atlassian.plugin.connect.test.server.module.*;
+
+import org.junit.Test;
+
 import static com.atlassian.fugue.Option.some;
-import static com.atlassian.plugin.remotable.test.Utils.loadResourceAsString;
-import static com.atlassian.plugin.remotable.test.server.AtlassianConnectAddOnRunner.newMustacheServlet;
+import static com.atlassian.plugin.connect.test.Utils.loadResourceAsString;
+import static com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner.newMustacheServlet;
 import static com.google.common.collect.Maps.newHashMap;
 import static it.TestConstants.BETTY;
 import static org.junit.Assert.assertEquals;
@@ -42,33 +39,33 @@ public final class TestConfluenceMacroParams extends ConfluenceWebDriverTestBase
                 .addPermission("read_users_and_groups")
                 .addPermission("read_server_information")
                 .add(RemoteMacroModule.key("app1-macro")
-                        .name("app1-macro")
-                        .title("Remotable Plugin app1 Macro")
-                        .path("/app1-macro")
-                        .iconUrl("/public/sandcastles.jpg")
-                        .outputBlock()
-                        .bodyType("rich-text")
-                        .featured("true")
-                        .category(MacroCategory.name("development"))
-                        .parameters(MacroParameter.name("footy").title("Favorite Footy").type("enum").required("true").values("American Football", "Soccer", "Rugby Union", "Rugby League"))
-                        .contextParameters(ContextParameter.name("page_id").query())
-                        .editor(MacroEditor.at("/myMacroEditor").height("600").width("600").resource(newMustacheServlet("confluence/macro/editor.mu")))
-                        .resource(new TestConfluencePageMacro.MyMacroServlet()))
+                                      .name("app1-macro")
+                                      .title("Remotable Plugin app1 Macro")
+                                      .path("/app1-macro")
+                                      .iconUrl("/public/sandcastles.jpg")
+                                      .outputBlock()
+                                      .bodyType("rich-text")
+                                      .featured("true")
+                                      .category(MacroCategory.name("development"))
+                                      .parameters(MacroParameter.name("footy").title("Favorite Footy").type("enum").required("true").values("American Football", "Soccer", "Rugby Union", "Rugby League"))
+                                      .contextParameters(ContextParameter.name("page_id").query())
+                                      .editor(MacroEditor.at("/myMacroEditor").height("600").width("600").resource(newMustacheServlet("confluence/macro/editor.mu")))
+                                      .resource(new TestConfluencePageMacro.MyMacroServlet()))
                 .add(GeneralPageModule.key("remotePluginGeneral")
-                        .name("Remotable Plugin app1 General")
-                        .path("/rpg")
-                        .linkName("Remotable Plugin app1 General Link")
-                        .iconUrl("/public/sandcastles.jpg")
-                        .height("600")
-                        .width("700")
-                        .resource(newMustacheServlet("iframe.mu")))
+                                      .name("Remotable Plugin app1 General")
+                                      .path("/rpg")
+                                      .linkName("Remotable Plugin app1 General Link")
+                                      .iconUrl("/public/sandcastles.jpg")
+                                      .height("600")
+                                      .width("700")
+                                      .resource(newMustacheServlet("iframe.mu")))
                 .start();
 
         ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(new ConfluenceOps.ConfluenceUser("admin", "admin")), "ds", "test", loadResourceAsString("confluence/test-page.xhtml"));
         product.visit(LoginPage.class).login(BETTY, BETTY, HomePage.class);
         Map<String, String> params = product.visit(ConfluenceMacroTestSuitePage.class, pageData.getTitle())
-                .visitGeneralLink()
-                .getIframeQueryParams();
+                                            .visitGeneralLink()
+                                            .getIframeQueryParams();
 
         assertEquals(pageData.getId(), params.get("page_id"));
 
@@ -86,11 +83,11 @@ public final class TestConfluenceMacroParams extends ConfluenceWebDriverTestBase
         MyParamsMacroServlet macroServlet = new MyParamsMacroServlet();
         AtlassianConnectAddOnRunner runner = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl(), "header")
                 .add(RemoteMacroModule.key("header")
-                        .path("/header")
-                        .contextParameters(
-                                ContextParameter.name("page_id").query(),
-                                ContextParameter.name("user_id").header())
-                        .resource(macroServlet))
+                                      .path("/header")
+                                      .contextParameters(
+                                              ContextParameter.name("page_id").query(),
+                                              ContextParameter.name("user_id").header())
+                                      .resource(macroServlet))
                 .start();
         product.visit(LoginPage.class).login(BETTY, BETTY, HomePage.class);
         product.visit(ConfluenceMacroPage.class, pageData.getTitle());

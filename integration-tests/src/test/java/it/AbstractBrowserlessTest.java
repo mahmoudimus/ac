@@ -1,8 +1,8 @@
 package it;
 
-import com.atlassian.plugin.remotable.test.pageobjects.OwnerOfTestedProduct;
 import com.atlassian.pageobjects.Defaults;
 import com.atlassian.pageobjects.TestedProduct;
+import com.atlassian.plugin.connect.test.pageobjects.OwnerOfTestedProduct;
 import com.atlassian.webdriver.refapp.RefappTestedProduct;
 
 /**

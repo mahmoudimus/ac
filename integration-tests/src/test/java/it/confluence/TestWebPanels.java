@@ -1,25 +1,26 @@
 package it.confluence;
 
+import java.net.MalformedURLException;
+
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
-import com.atlassian.plugin.remotable.test.confluence.ConfluenceEditPage;
-import com.atlassian.plugin.remotable.test.pageobjects.RemoteWebPanel;
-import com.atlassian.plugin.remotable.test.pageobjects.confluence.ConfluenceOps;
-import com.atlassian.plugin.remotable.test.server.AtlassianConnectAddOnRunner;
-import com.atlassian.plugin.remotable.test.server.module.RemoteWebPanelModule;
-import it.MyContextAwareWebPanelServlet;
+import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceEditPage;
+import com.atlassian.plugin.connect.test.pageobjects.RemoteWebPanel;
+import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
+import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
+import com.atlassian.plugin.connect.test.server.module.RemoteWebPanelModule;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import it.MyContextAwareWebPanelServlet;
 import redstone.xmlrpc.XmlRpcFault;
 
-import java.net.MalformedURLException;
-
 import static com.atlassian.fugue.Option.some;
-import static com.atlassian.plugin.remotable.test.server.AtlassianConnectAddOnRunner.newServlet;
+import static com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner.newServlet;
 import static it.TestConstants.BETTY;
-import static junit.framework.Assert.assertNotNull;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 /**
  * Test of remote web panels in Confluence.
@@ -34,15 +35,15 @@ public class TestWebPanels extends ConfluenceWebDriverTestBase
         remotePlugin = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl())
                 .addOAuth()
                 .add(RemoteWebPanelModule.key("edit-screen-web-panel")
-                        .name("Remotable Edit Screen Web Panel")
-                        .path("/eswp?page_id=${page.id}&space_id=${space.id}&space_key=${space.key}")
-                        .location("atl.editor")
-                        .resource(newServlet(new MyContextAwareWebPanelServlet())))
+                                         .name("Remotable Edit Screen Web Panel")
+                                         .path("/eswp?page_id=${page.id}&space_id=${space.id}&space_key=${space.key}")
+                                         .location("atl.editor")
+                                         .resource(newServlet(new MyContextAwareWebPanelServlet())))
                 .add(RemoteWebPanelModule.key("edit-screen-web-panel-2")
-                        .name("Remotable Edit Screen Web Panel 2")
-                        .path("/eswp2?my-page-id=${page.id}&my-space-id=${space.id}")
-                        .location("atl.editor")
-                        .resource(newServlet(new MyContextAwareWebPanelServlet())))
+                                         .name("Remotable Edit Screen Web Panel 2")
+                                         .path("/eswp2?my-page-id=${page.id}&my-space-id=${space.id}")
+                                         .location("atl.editor")
+                                         .resource(newServlet(new MyContextAwareWebPanelServlet())))
                 .start();
     }
 

@@ -3,16 +3,14 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>remotable-plugins-api-parent</artifactId>
+        <artifactId>atlassian-connect-api-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>0.9.9999-SNAPSHOT</version>
+        <version>1.0-m7-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>remotable-plugins-api</artifactId>
-
-    <name>Atlassian Remotable Plugins API - Public API</name>
-    <description>The public API for remotable plugins</description>
+    <artifactId>atlassian-connect-api</artifactId>
+    <name>Atlassian Connect - Public API</name>
 
     <licenses>
         <license>
@@ -24,39 +22,14 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.atlassian.util.concurrent</groupId>
-            <artifactId>atlassian-util-concurrent</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.sonatype.sisu</groupId>
-            <artifactId>sisu-guice</artifactId>
-            <version>${sisu.guice.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.atlassian.httpclient</groupId>
-            <artifactId>atlassian-httpclient-api</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.atlassian.mail</groupId>
             <artifactId>atlassian-mail</artifactId>
-            <version>2.4.1</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.atlassian.sal</groupId>
-            <artifactId>sal-api</artifactId>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.atlassian.fugue</groupId>
-            <artifactId>fugue</artifactId>
-            <scope>compile</scope>
+            <groupId>com.atlassian.util.concurrent</groupId>
+            <artifactId>atlassian-util-concurrent</artifactId>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
-
-
 </project>

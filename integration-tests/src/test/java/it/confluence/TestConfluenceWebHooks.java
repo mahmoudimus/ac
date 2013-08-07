@@ -1,18 +1,19 @@
 package it.confluence;
 
-import com.atlassian.plugin.remotable.test.pageobjects.confluence.ConfluenceOps;
-import com.atlassian.plugin.remotable.test.pageobjects.confluence.FixedConfluenceTestedProduct;
-import com.atlassian.plugin.remotable.test.webhook.WebHookBody;
-import com.atlassian.plugin.remotable.test.webhook.WebHookTester;
-import com.atlassian.plugin.remotable.test.webhook.WebHookWaiter;
-import it.AbstractBrowserlessTest;
+import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
+import com.atlassian.plugin.connect.test.pageobjects.confluence.FixedConfluenceTestedProduct;
+import com.atlassian.plugin.connect.test.webhook.WebHookBody;
+import com.atlassian.plugin.connect.test.webhook.WebHookTester;
+import com.atlassian.plugin.connect.test.webhook.WebHookWaiter;
 
 import org.junit.Assert;
 import org.junit.Test;
 
+import it.AbstractBrowserlessTest;
+
 import static com.atlassian.fugue.Option.some;
-import static com.atlassian.plugin.remotable.test.webhook.WebHookTestServlet.runInRunner;
-import static org.junit.Assert.*;
+import static com.atlassian.plugin.connect.test.webhook.WebHookTestServlet.runInRunner;
+import static org.junit.Assert.assertNotNull;
 
 public class TestConfluenceWebHooks extends AbstractBrowserlessTest
 {

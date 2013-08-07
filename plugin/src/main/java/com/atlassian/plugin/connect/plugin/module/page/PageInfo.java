@@ -1,0 +1,49 @@
+package com.atlassian.plugin.connect.plugin.module.page;
+
+import java.util.Map;
+
+import com.atlassian.plugin.web.Condition;
+
+public class PageInfo
+{
+    private final String decorator;
+    private final String templateSuffix;
+    private final String title;
+    private final Condition condition;
+	private final Map<String, String> metaTagsContent;
+
+	public PageInfo(String decorator, String templateSuffix, String title,
+            Condition condition, Map<String, String> metaTagsContent)
+    {
+        this.decorator = decorator;
+        this.templateSuffix = templateSuffix;
+        this.title = title;
+        this.condition = condition;
+		this.metaTagsContent = metaTagsContent;
+	}
+
+    public String getDecorator()
+    {
+        return decorator;
+    }
+
+    public String getTemplateSuffix()
+    {
+        return templateSuffix;
+    }
+
+    public String getTitle()
+    {
+        return title;
+    }
+
+    public Condition getCondition()
+    {
+        return condition;
+    }
+
+	public Map<String, String> getMetaTagsContent()
+	{
+		return metaTagsContent;
+	}
+}

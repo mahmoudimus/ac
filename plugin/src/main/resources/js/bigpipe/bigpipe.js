@@ -18,7 +18,7 @@ _AP.define("bigpipe/bigpipe", ["_dollar"], function($) {
 
   function displayLoadingSpinner() {
     $(function() {
-      $('.bp-loading').html("<img src='" + contextPath + "/download/resources/com.atlassian.labs.remoteapps-plugin:images/images/ajax-loader.gif' alt='loader'>");
+      $('.bp-loading').html("<img src='" + contextPath + "/download/resources/com.atlassian.plugins.atlassian-connect-plugin:images/images/ajax-loader.gif' alt='loader'>");
     });
   }
 

@@ -2,17 +2,18 @@ package it;
 
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
-import com.atlassian.plugin.remotable.test.pageobjects.GeneralPage;
-import com.atlassian.plugin.remotable.test.pageobjects.RemoteCloseDialogPage;
-import com.atlassian.plugin.remotable.test.pageobjects.RemoteDialogOpeningPage;
-import com.atlassian.plugin.remotable.test.pageobjects.RemotePluginAwarePage;
-import com.atlassian.plugin.remotable.test.server.AtlassianConnectAddOnRunner;
-import com.atlassian.plugin.remotable.test.server.module.GeneralPageModule;
+import com.atlassian.plugin.connect.test.pageobjects.GeneralPage;
+import com.atlassian.plugin.connect.test.pageobjects.RemoteCloseDialogPage;
+import com.atlassian.plugin.connect.test.pageobjects.RemoteDialogOpeningPage;
+import com.atlassian.plugin.connect.test.pageobjects.RemotePluginAwarePage;
+import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
+import com.atlassian.plugin.connect.test.server.module.GeneralPageModule;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import static com.atlassian.plugin.remotable.test.server.AtlassianConnectAddOnRunner.newMustacheServlet;
+import static com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner.newMustacheServlet;
 import static it.TestConstants.BETTY;
 
 public class TestDialog extends AbstractRemotablePluginTest
@@ -25,10 +26,10 @@ public class TestDialog extends AbstractRemotablePluginTest
         remotePlugin = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl())
                 .addOAuth()
                 .add(GeneralPageModule.key("remotePluginGeneralOpenDialog")
-                        .name("Remotable Plugin app1 Open Dialog")
-                        .path("/rpg")
-                        .linkName("Remotable Plugin app1 Open Dialog")
-                        .resource(newMustacheServlet("iframe-open-dialog.mu")))
+                                      .name("Remotable Plugin app1 Open Dialog")
+                                      .path("/rpg")
+                                      .linkName("Remotable Plugin app1 Open Dialog")
+                                      .resource(newMustacheServlet("iframe-open-dialog.mu")))
                 .addRoute("/dialog", newMustacheServlet("iframe-close-dialog.mu"))
                 .start();
     }

@@ -1,24 +1,23 @@
 package it;
 
+import java.io.IOException;
+import java.util.List;
+
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
-import com.atlassian.plugin.remotable.test.pageobjects.GeneralPage;
-import com.atlassian.plugin.remotable.test.server.AtlassianConnectAddOnRunner;
-import com.atlassian.plugin.remotable.test.server.module.GeneralPageModule;
+import com.atlassian.plugin.connect.test.pageobjects.GeneralPage;
+import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
+import com.atlassian.plugin.connect.test.server.module.GeneralPageModule;
+
 import org.apache.http.client.HttpResponseException;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.junit.Test;
 
-import java.io.IOException;
-import java.util.List;
-
-import static com.atlassian.plugin.remotable.test.Utils.getXml;
-import static com.atlassian.plugin.remotable.test.server.AtlassianConnectAddOnRunner.newMustacheServlet;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static com.atlassian.plugin.connect.test.Utils.getXml;
+import static com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner.newMustacheServlet;
+import static org.junit.Assert.*;
 
 public class TestRemotePluginInstallation extends AbstractRemotablePluginTest
 {
@@ -44,26 +43,26 @@ public class TestRemotePluginInstallation extends AbstractRemotablePluginTest
         product.visit(LoginPage.class).login("admin", "admin", HomePage.class);
         AtlassianConnectAddOnRunner pluginFirst = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl(), "pluginFirst")
                 .add(GeneralPageModule.key("changedPage")
-                        .name("Changed Page")
-                        .path("/page")
-                        .resource(newMustacheServlet("hello-world-page.mu")))
+                                      .name("Changed Page")
+                                      .path("/page")
+                                      .resource(newMustacheServlet("hello-world-page.mu")))
                 .start();
         product.visit(HomePage.class);
         assertTrue(product.getPageBinder().bind(GeneralPage.class, "changedPage", "Changed Page")
-                .clickRemotePluginLink()
-                .isLoaded());
+                          .clickRemotePluginLink()
+                          .isLoaded());
         pluginFirst.stop();
 
         AtlassianConnectAddOnRunner pluginSecond = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl(), "pluginSecond")
                 .add(GeneralPageModule.key("changedPage")
-                        .name("Changed Page")
-                        .path("/page")
-                        .resource(newMustacheServlet("hello-world-page.mu")))
+                                      .name("Changed Page")
+                                      .path("/page")
+                                      .resource(newMustacheServlet("hello-world-page.mu")))
                 .start();
         product.visit(HomePage.class);
         assertTrue(product.getPageBinder().bind(GeneralPage.class, "changedPage", "Changed Page")
-                .clickRemotePluginLink()
-                .isLoaded());
+                          .clickRemotePluginLink()
+                          .isLoaded());
         pluginSecond.stop();
     }
 
