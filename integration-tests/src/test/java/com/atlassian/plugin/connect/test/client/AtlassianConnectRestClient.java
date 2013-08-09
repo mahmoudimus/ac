@@ -34,7 +34,7 @@ public final class AtlassianConnectRestClient
 
     public void install(String registerUrl) throws IOException
     {
-        HttpPost post = new HttpPost(baseUrl + "/rest/remotable-plugins/latest/installer?" +
+        HttpPost post = new HttpPost(baseUrl + "/rest/atlassian-connect/latest/installer?" +
                 URLEncodedUtils.format(singletonList(new BasicNameValuePair("os_authType", "basic")),
                         "UTF-8"));
 
@@ -49,7 +49,7 @@ public final class AtlassianConnectRestClient
 
     public void uninstall(String appKey) throws IOException
     {
-        HttpDelete post = new HttpDelete(baseUrl + "/rest/remotable-plugins/latest/uninstaller/" + appKey + "?" +
+        HttpDelete post = new HttpDelete(baseUrl + "/rest/atlassian-connect/latest/uninstaller/" + appKey + "?" +
                 URLEncodedUtils.format(singletonList(new BasicNameValuePair("os_authType", "basic")), "UTF-8"));
 
         ResponseHandler<String> responseHandler = new BasicResponseHandler();

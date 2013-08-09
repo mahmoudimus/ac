@@ -5,6 +5,16 @@
         <vendor name="${project.organization.name}" url="${project.organization.url}" />
     </plugin-info>
 
+    <servlet-filter key="big-pipe-request-id" class="com.atlassian.plugin.connect.spi.http.bigpipe.BigPipeRequestIdFilter"
+                    location="after-encoding">
+        <url-pattern>/*</url-pattern>
+    </servlet-filter>
+
+    <servlet-filter key="iframe-resources" class="com.atlassian.plugin.connect.plugin.iframe.StaticResourcesFilter"
+                    location="after-encoding">
+        <url-pattern>/remotable-plugins/*</url-pattern>
+    </servlet-filter>
+    
     <servlet-filter key="api-scoping" class="com.atlassian.plugin.connect.plugin.module.permission.ApiScopingFilter"
             location="before-decoration">
         <url-pattern>/*</url-pattern>
@@ -15,6 +25,10 @@
         <url-pattern>/*</url-pattern>
     </servlet-filter>
 
+    <servlet-filter key="big-pipe-content" class="com.atlassian.plugin.connect.spi.http.bigpipe.BigPipeContentFilter"
+                    location="before-dispatch">
+        <url-pattern>/bigpipe/request/*</url-pattern>
+    </servlet-filter>
 
     <servlet key="remotablePlugins2LORedirectingServlet"
              name="Remotable Plugins 2-Legged OAuth Signing and Redirecting Servlet"
@@ -97,14 +111,6 @@
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:dialog</dependency>
     </web-resource>
 
-    <web-resource key="smoke-test">
-        <resource type="download" content-type="application/xml" name="atlassian-plugin.xml" location="/remotable-plugins-smoke-test/atlassian-plugin.xml" />
-        <resource type="download" name="general-page.html" content-type="text/html" location="/remotable-plugins-smoke-test/general-page.html" />
-        <transformation extension="xml">
-            <transformer key="baseUrlTransformer"/>
-        </transformation>
-    </web-resource>
-
     <web-resource key="schema-xsl">
         <resource type="download" content-type="application/xml" name="xs3p.xsl" location="/xsd/xs3p.xsl"/>
     </web-resource>
@@ -150,6 +156,8 @@
     <component key="permissionsReader" class="com.atlassian.plugin.connect.plugin.descriptor.DescriptorPermissionsReader"
                interface="com.atlassian.plugin.connect.spi.permission.PermissionsReader" public="true"/>
 
+    <component key="bigPipeManager" class="com.atlassian.plugin.connect.spi.http.bigpipe.DefaultBigPipeManager"
+               interface="com.atlassian.plugin.connect.api.service.http.bigpipe.BigPipeManager" />
 
     <component-import key="templateRenderer" interface="com.atlassian.templaterenderer.TemplateRenderer"/>
     <component-import key="servletModuleManager" interface="com.atlassian.plugin.servlet.ServletModuleManager" />

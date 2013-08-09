@@ -24,7 +24,7 @@ public class AccessDeniedIFramePage implements Page
     @Override
     public String getUrl()
     {
-        return "/plugins/servlet/remotable-plugins/" + appKey + "/" + pageKey;
+        return "/plugins/servlet/atlassian-connect/" + appKey + "/" + pageKey;
     }
 
     public boolean isIframeAvailable()

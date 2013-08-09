@@ -223,7 +223,7 @@ public class MacroModuleDescriptorCreator
 
             // Generate a servlet module descriptor that can redirect requests from the Confluence front-end to the Remotable Plugin,
             // performing the necessary authentication.
-            URI localUrl = URI.create("/remotable-plugins/" + plugin.getKey() + "/" + macroKey + "-editor");
+            URI localUrl = URI.create("/atlassian-connect/" + plugin.getKey() + "/" + macroKey + "-editor");
             final ServletModuleDescriptor iFrameServlet = createMacroEditorServletDescriptor(plugin, macroEditor, macroKey, originalUrl, localUrl);
 
             // Generate a new web-resource module descriptor with the necessary JavaScript to configure the custom macro editor

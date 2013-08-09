@@ -43,7 +43,7 @@ import static java.lang.Math.abs;
 public final class I18nPropertiesPluginManager
 {
     private static final Logger log = LoggerFactory.getLogger(I18nPropertiesPluginManager.class);
-    public static final String I18N_SYMBOLIC_NAME = "remotable.plugins.i18n";
+    public static final String I18N_SYMBOLIC_NAME = "atlassian-connect.i18n";
 
     private final ModuleFactory moduleFactory;
     private final PluginAccessor pluginAccessor;
@@ -252,7 +252,7 @@ public final class I18nPropertiesPluginManager
         mf.getMainAttributes().putValue("Spring-Context", "*");
 
         // forces a dependency between the i18n plugin and the remotable plugin, so that disabling the latter disables the former
-        mf.getMainAttributes().putValue(Constants.IMPORT_PACKAGE, "com.atlassian.plugin.connect.api");
+        mf.getMainAttributes().putValue(Constants.IMPORT_PACKAGE, "com.atlassian.plugin.connect.api*");
 
         return mf;
     }

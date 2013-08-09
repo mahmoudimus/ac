@@ -35,6 +35,7 @@
         <dependency>
             <groupId>javax.inject</groupId>
             <artifactId>javax.inject</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
@@ -169,6 +170,25 @@
         <dependency>
             <groupId>com.atlassian.osgi</groupId>
             <artifactId>atlassian-osgi</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.atlassian.util.concurrent</groupId>
+                    <artifactId>atlassian-util-concurrent</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.templaterenderer</groupId>
+            <artifactId>atlassian-template-renderer-api</artifactId>
+            <version>${atlassian.templaterenderer.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>1.9.0</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
     
@@ -269,7 +289,22 @@
                                     <artifactId>atlassian-gadgets-publisher-plugin</artifactId>
                                     <version>3.2.0-m8</version>
                                 </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>atlassian-connect-rest-test-plugin</artifactId>
+                                    <version>${project.version}</version>
+                                </pluginArtifact>
                             </pluginArtifacts>
+                            
+                            <bundledArtifacts>
+                                <!-- TODO: remove this once UPM 2.13 is bundled with products -->
+                                <bundledArtifact>
+                                    <groupId>com.atlassian.upm</groupId>
+                                    <artifactId>atlassian-universal-plugin-manager-plugin</artifactId>
+                                    <version>${atlassian.upm.version}</version>
+                                </bundledArtifact>
+                            </bundledArtifacts>
+                            
                             <libArtifacts>
                                 <libArtifact>
                                     <groupId>com.atlassian.util.concurrent</groupId>
@@ -290,7 +325,23 @@
                                     <artifactId>atlassian-webhooks-plugin</artifactId>
                                     <version>${atlassian.webhooks.version}</version>
                                 </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>atlassian-connect-rest-test-plugin</artifactId>
+                                    <version>${project.version}</version>
+                                </pluginArtifact>
                             </pluginArtifacts>
+
+                            <bundledArtifacts>
+                                <!-- TODO: remove this once UPM 2.13 is bundled with products -->
+                                <bundledArtifact>
+                                    <groupId>com.atlassian.upm</groupId>
+                                    <artifactId>atlassian-universal-plugin-manager-plugin</artifactId>
+                                    <version>${atlassian.upm.version}</version>
+                                </bundledArtifact>
+                            </bundledArtifacts>
+                            
+                            
                             <libArtifacts>
                             </libArtifacts>
                         </product>

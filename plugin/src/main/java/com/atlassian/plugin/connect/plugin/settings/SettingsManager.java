@@ -21,11 +21,11 @@ public class SettingsManager
 
     public void setAllowDogfooding(boolean allowed)
     {
-        pluginSettingsFactory.createGlobalSettings().put("remotable-plugins-settings-allow-dogfooding", String.valueOf(allowed));
+        pluginSettingsFactory.createGlobalSettings().put("atlassian-connect-settings-allow-dogfooding", String.valueOf(allowed));
     }
 
     public boolean isAllowDogfooding()
     {
-        return Boolean.valueOf((String) pluginSettingsFactory.createGlobalSettings().get("remotable-plugins-settings-allow-dogfooding"));
+        return Boolean.valueOf((String) pluginSettingsFactory.createGlobalSettings().get("atlassian-connect-settings-allow-dogfooding"));
     }
 }

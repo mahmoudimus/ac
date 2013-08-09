@@ -274,7 +274,7 @@ public final class PermissionManagerImpl implements PermissionManager
         public MacroCacheApiScope()
         {
             super("clear_macro_cache", new RestApiScopeHelper(Arrays.asList(
-                    new RestApiScopeHelper.RestScope("remotable-plugins", Arrays.asList("latest", "1"), "/macro", Arrays.asList("DELETE"))
+                    new RestApiScopeHelper.RestScope("atlassian-connect", Arrays.asList("latest", "1"), "/macro", Arrays.asList("DELETE"))
             )));
         }
     }

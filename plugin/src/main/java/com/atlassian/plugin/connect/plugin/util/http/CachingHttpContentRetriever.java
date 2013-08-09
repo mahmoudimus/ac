@@ -184,7 +184,7 @@ public final class CachingHttpContentRetriever implements HttpContentRetriever
         options.setIoSelectInterval(100, TimeUnit.MILLISECONDS);
         options.setThreadPrefix("http-content-retriever");
         options.setMaxConnectionsPerHost(100);
-        options.setUserAgent("Atlassian-Remotable-Plugins/" + pluginRetrievalService.getPlugin().getPluginInformation().getVersion());
+        options.setUserAgent("Atlassian-Connect/" + pluginRetrievalService.getPlugin().getPluginInformation().getVersion());
 
         options.setConnectionTimeout(3, TimeUnit.SECONDS);
         options.setSocketTimeout(15, TimeUnit.SECONDS);

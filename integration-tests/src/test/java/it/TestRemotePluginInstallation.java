@@ -24,7 +24,7 @@ public class TestRemotePluginInstallation extends AbstractRemotablePluginTest
     @Test
     public void testSchemaContainsCustomScope() throws IOException, DocumentException
     {
-        Document doc = getXml(product.getProductInstance().getBaseUrl() + "/rest/remotable-plugins/1/installer/schema/atlassian-plugin");
+        Document doc = getXml(product.getProductInstance().getBaseUrl() + "/rest/atlassian-connect/1/installer/schema/atlassian-plugin-remotable");
         Element documentation = (Element) doc.selectSingleNode("//xs:enumeration[@value='resttest']/xs:annotation/xs:documentation");
 
         assertNotNull(documentation);

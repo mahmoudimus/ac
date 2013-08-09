@@ -14,6 +14,8 @@ import com.atlassian.confluence.event.events.content.page.PageViewEvent;
 import com.atlassian.confluence.xhtml.api.XhtmlContent;
 import com.atlassian.event.api.EventListener;
 import com.atlassian.event.api.EventPublisher;
+import com.atlassian.plugin.connect.api.service.http.bigpipe.BigPipe;
+import com.atlassian.plugin.connect.api.service.http.bigpipe.BigPipeManager;
 import com.atlassian.plugin.connect.plugin.DefaultRemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.plugin.util.http.CachingHttpContentRetriever;
 import com.atlassian.plugin.connect.plugin.util.http.ContentRetrievalErrors;
@@ -43,6 +45,7 @@ public class MacroContentManager implements DisposableBean
     private final StorageFormatCleaner xhtmlCleaner;
     private final MacroContentLinkParser macroContentLinkParser;
     private final CachingHttpContentRetriever cachingHttpContentRetriever;
+    private final BigPipeManager bigPipeManager;
     private final UserManager userManager;
     private final XhtmlContent xhtmlUtils;
     private final DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory;
@@ -54,6 +57,7 @@ public class MacroContentManager implements DisposableBean
             EventPublisher eventPublisher,
             CachingHttpContentRetriever cachingHttpContentRetriever,
             MacroContentLinkParser macroContentLinkParser,
+            BigPipeManager bigPipeManager,
             UserManager userManager,
             XhtmlContent xhtmlUtils,
             StorageFormatCleaner cleaner,
@@ -62,6 +66,7 @@ public class MacroContentManager implements DisposableBean
     {
         this.eventPublisher = eventPublisher;
         this.cachingHttpContentRetriever = cachingHttpContentRetriever;
+        this.bigPipeManager = checkNotNull(bigPipeManager);
         this.userManager = userManager;
         this.xhtmlUtils = xhtmlUtils;
         this.remotablePluginAccessorFactory = remotablePluginAccessorFactory;
@@ -80,7 +85,7 @@ public class MacroContentManager implements DisposableBean
     */
     public String getStaticContent(final MacroInstance macroInstance) throws ContentRetrievalException
     {
-        //BigPipe bigPipe = bigPipeManager.getBigPipe();
+        BigPipe bigPipe = bigPipeManager.getBigPipe();
         ContentEntityObject entity = macroInstance.getEntity();
 
         final UserProfile author = getUserToRenderMacroAs(entity);
@@ -94,10 +99,19 @@ public class MacroContentManager implements DisposableBean
                 .fold(new ContentHandlerFailFunction(templateRenderer),
                         new HtmlToSafeHtmlFunction(macroInstance, urlParameters, macroContentLinkParser, xhtmlCleaner,
                                 xhtmlUtils));
-
+        
+        final Supplier<String> initialContent = bigPipe.getHtmlChannel().promiseContent(promise);
         try
         {
+            // only render display via big pipe, block for everyone else
+            if (RenderContextOutputType.DISPLAY.equals(macroInstance.getConversionContext().getOutputType()))
+            {
+                return initialContent.get();
+            }
+            else
+            {
                 return promise.claim();
+            }
         }
         catch (RuntimeException e)
         {

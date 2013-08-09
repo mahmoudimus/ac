@@ -290,7 +290,7 @@ public final class TestConfluenceRemoteMacro extends ConfluenceWebDriverTestBase
 
     private static void clearCaches() throws Exception
     {
-        final URL url = new URL(product.getProductInstance().getBaseUrl() + "/rest/remotable-plugins/latest/macro/app/" + remotePlugin.getPluginKey());
+        final URL url = new URL(product.getProductInstance().getBaseUrl() + "/rest/atlassian-connect/latest/macro/app/" + remotePlugin.getPluginKey());
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("DELETE");
         try

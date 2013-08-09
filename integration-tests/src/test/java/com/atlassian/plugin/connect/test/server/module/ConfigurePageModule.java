@@ -29,6 +29,6 @@ public final class ConfigurePageModule extends MainModuleWithResource<ConfigureP
 
     public static String createLocalUrl(String pluginKey, String pageUrl)
     {
-        return URI.create("/remotable-plugins/" + pluginKey + (pageUrl.startsWith("/") ? "" : "/") + pageUrl).toString();
+        return URI.create("/atlassian-connect/" + pluginKey + (pageUrl.startsWith("/") ? "" : "/") + pageUrl).toString();
     }
 }

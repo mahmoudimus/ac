@@ -29,12 +29,13 @@
                class="com.atlassian.plugin.connect.plugin.module.webpanel.extractor.jira.ProfileUserWebPanelParameterExtractor"
                interface="com.atlassian.plugin.connect.plugin.module.webpanel.extractor.WebPanelParameterExtractor" />
 
-    <rest key="rest" path="/remotable-plugins" version="1">
+    <rest key="rest" path="/atlassian-connect" version="1">
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>INCLUDE</dispatcher>
         <package>com.atlassian.plugin.connect.plugin.rest</package>
     </rest>
 
+    <jira-footer key="bigPipeFooter" class="com.atlassian.plugin.connect.plugin.product.jira.JiraBigPipeFooter" />
 
 	<component-import key="projectService" interface="com.atlassian.jira.bc.project.ProjectService" />
     <component-import key="jiraAuthenticationContext" interface="com.atlassian.jira.security.JiraAuthenticationContext" />

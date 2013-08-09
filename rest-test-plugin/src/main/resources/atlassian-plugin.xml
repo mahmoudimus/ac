@@ -3,8 +3,8 @@
         <version>${project.version}</version>
         <bundle-instructions>
             <Import-Package>
-                com.atlassian.plugin.remotable.api*;version="${api.artifact.version}",
-                com.atlassian.plugin.remotable.spi*;version="${api.artifact.version}",
+                com.atlassian.plugin.connect.api*;version="${project.version}",
+                com.atlassian.plugin.connect.spi*;version="${project.version}",
                 *;resolution:=optional
             </Import-Package>
         </bundle-instructions>
@@ -16,11 +16,11 @@
 
     <component-import key="userManager" interface="com.atlassian.sal.api.user.UserManager"/>
 
-    <plugin-permission key="resttest" name="Rest Test" class="com.atlassian.plugin.connect.test.RestTestApiScope">
+    <plugin-permission key="resttest" name="Rest Test" class="com.atlassian.plugin.connect.test.scope.RestTestApiScope">
         <description>A test resource</description>
     </plugin-permission>
 
-    <plugin-permission key="unrequested_scope" name="Unrequested API Scope" class="com.atlassian.plugin.connect.test.UnrequestedTestApiScope">
+    <plugin-permission key="unrequested_scope" name="Unrequested API Scope" class="com.atlassian.plugin.connect.test.scope.UnrequestedTestApiScope">
         <description>An API Scope that never gets used</description>
     </plugin-permission>
 </atlassian-plugin>

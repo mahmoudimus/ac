@@ -66,7 +66,7 @@ public final class RemotePageDescriptorCreator
 
     public static URI createLocalUrl(String pluginKey, String pageUrl)
     {
-        return URI.create("/remotable-plugins/" + pluginKey + (pageUrl.startsWith("/") ? "" : "/") + pageUrl);
+        return URI.create("/atlassian-connect/" + pluginKey + (pageUrl.startsWith("/") ? "" : "/") + pageUrl);
     }
 
     public class Builder

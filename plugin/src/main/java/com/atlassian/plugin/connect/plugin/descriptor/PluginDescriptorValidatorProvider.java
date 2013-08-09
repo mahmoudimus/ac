@@ -60,7 +60,7 @@ public class PluginDescriptorValidatorProvider implements DescriptorValidatorPro
     @Override
     public String getSchemaNamespace()
     {
-        return format("%s/rest/remotable-plugins/1%s%s",
+        return format("%s/rest/atlassian-connect/1%s%s",
                 applicationProperties.getBaseUrl(),
                 INSTALLER_RESOURCE_PATH,
                 ATLASSIAN_PLUGIN_REMOTABLE_SCHEMA_PATH);

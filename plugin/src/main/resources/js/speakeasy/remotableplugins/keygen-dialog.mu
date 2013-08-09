@@ -8,12 +8,12 @@
 <form id="keygen-form" class="aui top-label">
     <fieldset>
         <div class="field-group">
-            <label for="remotable-plugins-public-key">Public Key</label>
-            <textarea name="public-key" cols="75" id="remotable-plugins-public-key" rows="7"></textarea>
+            <label for="atlassian-connect-public-key">Public Key</label>
+            <textarea name="public-key" cols="75" id="atlassian-connect-public-key" rows="7"></textarea>
         </div>
         <div class="field-group">
-            <label for="remotable-plugins-private-key">Private Key</label>
-            <textarea name="private-key" cols="75" id="remotable-plugins-private-key" rows="16"></textarea>
+            <label for="atlassian-connect-private-key">Private Key</label>
+            <textarea name="private-key" cols="75" id="atlassian-connect-private-key" rows="16"></textarea>
         </div>
     </fieldset>
 </form>

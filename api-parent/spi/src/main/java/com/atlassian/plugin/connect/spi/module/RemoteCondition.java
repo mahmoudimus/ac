@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Map;
 
 import com.atlassian.plugin.PluginParseException;
+import com.atlassian.plugin.connect.api.service.http.bigpipe.BigPipeManager;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
@@ -37,6 +38,7 @@ public final class RemoteCondition implements Condition
     private Iterable<String> contextParams;
     private final ProductAccessor productAccessor;
     private final RemotablePluginAccessorFactory remotablePluginAccessorFactory;
+    private final BigPipeManager bigPipeManager;
     private final UserManager userManager;
     private final TemplateRenderer templateRenderer;
 
@@ -44,11 +46,13 @@ public final class RemoteCondition implements Condition
 
     public RemoteCondition(ProductAccessor productAccessor,
                            RemotablePluginAccessorFactory remotablePluginAccessorFactory,
+                           BigPipeManager bigPipeManager,
                            UserManager userManager,
                            TemplateRenderer templateRenderer)
     {
         this.productAccessor = productAccessor;
         this.remotablePluginAccessorFactory = remotablePluginAccessorFactory;
+        this.bigPipeManager = bigPipeManager;
         this.userManager = userManager;
         this.templateRenderer = templateRenderer;
     }
@@ -106,6 +110,8 @@ public final class RemoteCondition implements Condition
                                                                                 }
                                                                         );
 
+        bigPipeManager.getBigPipe().getHtmlChannel().promiseContent(responsePromise);
+        
         // always return true as the link will be disabled by default via the 'hidden' class
         return true;
     }

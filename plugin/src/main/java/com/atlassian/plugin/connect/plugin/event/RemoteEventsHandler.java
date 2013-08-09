@@ -104,7 +104,7 @@ public final class RemoteEventsHandler implements InitializingBean, DisposableBe
 
         return ImmutableMap.<String, Object>builder()
                 .put("links", ImmutableMap.of(
-                        "oauth", applicationProperties.getBaseUrl() + "/rest/remotable-plugins/latest/oauth"))
+                        "oauth", applicationProperties.getBaseUrl() + "/rest/atlassian-connect/latest/oauth"))
                 .put("clientKey", nullToEmpty(consumer.getKey()))
                 .put("publicKey", nullToEmpty(RSAKeys.toPemEncoding(consumer.getPublicKey())))
                 .put("serverVersion", nullToEmpty(applicationProperties.getBuildNumber()))

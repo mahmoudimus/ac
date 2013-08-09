@@ -117,7 +117,7 @@ public class TestAppPermissions extends AbstractRemotablePluginTest
         protected void doGet(final HttpServletRequest req, final HttpServletResponse resp)
                 throws ServletException, IOException
         {
-            int statusCode = sendFailedSignedGet(signedRequestHandler, baseUrl + "/rest/remotable-plugins/latest/license/", "betty");
+            int statusCode = sendFailedSignedGet(signedRequestHandler, baseUrl + "/rest/atlassian-connect/latest/license/", "betty");
             HttpUtils.renderHtml(resp, templateName,
                     ImmutableMap.<String, Object>of("baseUrl", baseUrl, LICENSE_RESPONSE_STATUS_CODE_ID, String.valueOf(statusCode)));
         }
