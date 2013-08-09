@@ -27,7 +27,7 @@ import static org.junit.matchers.JUnitMatchers.hasItem;
 /**
  * Test of project tabs in JIRA.
  */
-public class TestProjectTab extends JiraWebDriverTestBase
+public class TestProjectTabPage extends JiraWebDriverTestBase
 {
     private static AtlassianConnectAddOnRunner remotePlugin;
 

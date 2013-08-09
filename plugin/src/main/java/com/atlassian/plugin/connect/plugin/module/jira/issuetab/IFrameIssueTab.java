@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.atlassian.jira.plugin.issuetabpanel.*;
 import com.atlassian.plugin.connect.plugin.module.IFrameRendererImpl;
+import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.spi.module.IFrameContext;
 import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
 import com.atlassian.plugin.web.Condition;
@@ -23,15 +24,17 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * An issue tab that displays an iframe but isn't included in the all tab
  */
-public class IFrameIssueTabPage extends AbstractIssueTabPanel2
+public class IFrameIssueTab extends AbstractIssueTabPanel2
 {
-    private static final Logger log = LoggerFactory.getLogger(IFrameIssueTabPage.class);
+    private static final Logger log = LoggerFactory.getLogger(IFrameIssueTab.class);
     private final IFrameRendererImpl iFrameRenderer;
     private final Optional<Condition> condition;
     private final IFrameContext iFrameContext;
+    private final UrlVariableSubstitutor urlVariableSubstitutor;
 
-    public IFrameIssueTabPage(IFrameContext iFrameContext, IFrameRendererImpl iFrameRenderer, Optional<Condition> condition)
+    public IFrameIssueTab(IFrameContext iFrameContext, IFrameRendererImpl iFrameRenderer, Optional<Condition> condition, final UrlVariableSubstitutor urlVariableSubstitutor)
     {
+        this.urlVariableSubstitutor = urlVariableSubstitutor;
         this.iFrameContext = checkNotNull(iFrameContext);
         this.iFrameRenderer = checkNotNull(iFrameRenderer);
         this.condition = condition;
