@@ -87,13 +87,13 @@
         </description>
     </described-module-type>
 
-    <described-module-type key="component-tab-page" class="com.atlassian.plugin.remotable.plugin.module.jira.componenttab.ComponentTabPageModuleDescriptor">
+    <described-module-type key="component-tab-page" class="com.atlassian.plugin.connect.plugin.module.jira.componenttab.ComponentTabPageModuleDescriptor">
         <description>
             A remote page decorated as its own JIRA component tab
         </description>
     </described-module-type>
 
-    <described-module-type key="version-tab-page" class="com.atlassian.plugin.remotable.plugin.module.jira.versiontab.VersionTabPageModuleDescriptor">
+    <described-module-type key="version-tab-page" class="com.atlassian.plugin.connect.plugin.module.jira.versiontab.VersionTabPageModuleDescriptor">
         <description>
             A remote page decorated as a tab on the project version page.
         </description>

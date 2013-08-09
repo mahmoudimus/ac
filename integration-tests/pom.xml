@@ -196,6 +196,12 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-server</artifactId>
+            <version>1.8-atlassian-8</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
     
     <build>
@@ -251,6 +257,16 @@
                                     <groupId>com.atlassian.gadgets</groupId>
                                     <artifactId>atlassian-gadgets-publisher-plugin</artifactId>
                                     <version>3.2.0-m8</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.functest</groupId>
+                                    <artifactId>functest-plugin</artifactId>
+                                    <version>${functest.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.jira.tests</groupId>
+                                    <artifactId>jira-testkit-plugin</artifactId>
+                                    <version>${testkit.version}</version>
                                 </pluginArtifact>
                             </pluginArtifacts>
                             <libArtifacts>
@@ -354,6 +370,7 @@
     </build>
 
     <properties>
+        <testkit.version>6.0.23</testkit.version>
         <jetty.version>8.1.7.v20120910</jetty.version>
         <functest.version>0.7.1</functest.version>
         <functestbasics.version>1.9.2</functestbasics.version>

@@ -16,7 +16,7 @@ import org.osgi.framework.BundleContext;
 
 /**
  * A view issue panel page that loads is contents from an iframe.
- * @deprecated use {@link com.atlassian.plugin.remotable.plugin.module.webpanel.RemoteWebPanelModuleDescriptor} with
+ * @deprecated use {@link com.atlassian.plugin.connect.plugin.module.webpanel.RemoteWebPanelModuleDescriptor} with
  * "atl.jira.view.issue.right.context" location instead.
  */
 @Deprecated
