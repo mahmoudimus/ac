@@ -35,6 +35,9 @@ public class PluginManagerPage implements Page
         {
             driver.navigate().to(productInstance.getBaseUrl() + "/plugins/servlet/upm/manage/user-installed#manage");
             driver.waitUntilElementIsVisible(By.id("upm-manage-user-installed-plugins"));
+            
+            //added this to stop flakiness due to not waiting for the plugins list to be loaded
+            driver.waitUntilElementIsVisible(By.className("upm-plugin-list-container"));
         }
         else
         {

@@ -14,7 +14,8 @@ tags
 *.releaseBackup
 release.properties
 pom.release.xml
-
+*debuglog.txt
+debuglog.txt
 dependency-reduced-pom.xml
 .cache
 data

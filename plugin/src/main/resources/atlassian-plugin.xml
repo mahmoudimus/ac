@@ -12,7 +12,7 @@
 
     <servlet-filter key="iframe-resources" class="com.atlassian.plugin.connect.plugin.iframe.StaticResourcesFilter"
                     location="after-encoding">
-        <url-pattern>/remotable-plugins/*</url-pattern>
+        <url-pattern>/atlassian-connect/*</url-pattern>
     </servlet-filter>
     
     <servlet-filter key="api-scoping" class="com.atlassian.plugin.connect.plugin.module.permission.ApiScopingFilter"
