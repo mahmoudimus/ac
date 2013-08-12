@@ -56,7 +56,7 @@ public final class DefaultBigPipeManager implements BigPipeManager, DisposableBe
         public String getUserId();
     }
 
-    // called by remotable-plugins-plugin for its own use
+    // called by atlassian-connect-plugin for its own use
     @Autowired
     public DefaultBigPipeManager(final UserManager userManager)
     {

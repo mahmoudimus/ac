@@ -12,7 +12,7 @@
 
     <servlet-filter key="iframe-resources" class="com.atlassian.plugin.connect.plugin.iframe.StaticResourcesFilter"
                     location="after-encoding">
-        <url-pattern>/remotable-plugins/*</url-pattern>
+        <url-pattern>/atlassian-connect/*</url-pattern>
     </servlet-filter>
     
     <servlet-filter key="api-scoping" class="com.atlassian.plugin.connect.plugin.module.permission.ApiScopingFilter"
@@ -189,13 +189,6 @@
     <component-import key="moduleDescriptorWebHookRegistry"
                       interface="com.atlassian.webhooks.spi.provider.ModuleDescriptorWebHookListenerRegistry" />
     <component-import key="remotePluginLicenseService" interface="com.atlassian.upm.api.license.RemotePluginLicenseService" />
-
-    <!-- universal binary services -->
-    <component key="localEmailSender" interface="com.atlassian.plugin.connect.api.service.EmailSender"
-               class="com.atlassian.plugin.connect.plugin.service.LocalEmailSenderServiceFactory" public="true" />
-
-    <component key="localRemotablePluginLicenseRetriever" interface="com.atlassian.plugin.connect.api.service.license.RemotablePluginLicenseRetriever"
-               class="com.atlassian.plugin.connect.plugin.service.LocalRemotablePluginLicenseRetrieverServiceFactory" public="true" />
 
     <component key="userIsSysAdminCondition" class="com.atlassian.plugin.connect.spi.module.UserIsSysAdminCondition" />
     <component key="userIsAdminCondition" class="com.atlassian.plugin.connect.spi.module.UserIsAdminCondition" />

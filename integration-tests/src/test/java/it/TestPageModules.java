@@ -165,17 +165,21 @@ public class TestPageModules extends AbstractRemotablePluginTest
     @Test
     public void testConfigurePage() throws Exception
     {
-        AtlassianConnectAddOnRunner runner = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl(), "configurePage")
-                .add(ConfigurePageModule.key("page")
-                                        .name("Page")
-                                        .path("/page")
-                                        .resource(newMustacheServlet("hello-world-page.mu")))
-                .start();
+        ConfigurePageModule configPage = ConfigurePageModule.key("page")
+                                                            .name("Page")
+                                                            .path("/page")
+                                                            .resource(newMustacheServlet("hello-world-page.mu"));
+        
+        AtlassianConnectAddOnRunner runner = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl(), "configurePage");
+        
+                runner.add(configPage);
+                runner.start();
 
         // fixme: jira page objects don't redirect properly to next page
         product.visit(LoginPage.class).login(BETTY, BETTY, HomePage.class);
-        final RemotePluginTestPage remotePluginTestPage =
-                product.visit(PluginManagerPage.class).configurePlugin("configurePage", "page", RemotePluginTestPage.class);
+        final PluginManagerPage upm = product.visit(PluginManagerPage.class);
+        
+        final RemotePluginTestPage remotePluginTestPage = upm.configurePlugin("configurePage", "page", RemotePluginTestPage.class);
         assertTrue(remotePluginTestPage.isLoaded());
 
         runner.stop();
