@@ -421,6 +421,7 @@
                                     <insertNewLine>true</insertNewLine>
                                     <output>${project.build.outputDirectory}/all.js</output>
                                     <includes>
+                                        <!-- note: any changes here must also be made in StaticResourcesFilter.java -->
                                         <include>js/iframe-min/_amd-min.js</include>
                                         <include>js/iframe-min/plugin/_util-min.js</include>
                                         <include>js/iframe-min/plugin/_dollar-min.js</include>
