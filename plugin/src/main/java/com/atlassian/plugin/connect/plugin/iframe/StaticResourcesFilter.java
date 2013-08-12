@@ -97,6 +97,7 @@ public class StaticResourcesFilter implements Filter
             encoding = "identity";
 
             final String moduleDir = "js/iframe/";
+            // note: any changes here must also be made in plugin/pom.xml!
             final String[] modules = {
                 "_amd.js",
                 "plugin/_util.js",
