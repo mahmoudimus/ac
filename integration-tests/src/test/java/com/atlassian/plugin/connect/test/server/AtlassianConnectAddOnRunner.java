@@ -160,15 +160,20 @@ public final class AtlassianConnectAddOnRunner
         installer.install("http://localhost:" + port + "/register");
     }
 
-    private void unregister() throws IOException
+    public void uninstall() throws IOException
     {
         installer.uninstall(pluginKey);
     }
 
-    public void stop() throws Exception
+    public void stopRunnerServer() throws Exception
     {
         server.stop();
-        unregister();
+    }
+
+    public void stop() throws Exception
+    {
+        stopRunnerServer();
+        uninstall();
     }
 
     public AtlassianConnectAddOnRunner start() throws Exception

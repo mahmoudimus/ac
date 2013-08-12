@@ -6,13 +6,12 @@ import com.atlassian.event.api.EventPublisher;
 import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.oauth.util.RSAKeys;
-import com.atlassian.plugin.ModuleDescriptor;
+import com.atlassian.plugin.InstallationMode;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.event.PluginEventListener;
 import com.atlassian.plugin.event.PluginEventManager;
-import com.atlassian.plugin.event.events.PluginDisabledEvent;
+import com.atlassian.plugin.event.events.BeforePluginDisabledEvent;
 import com.atlassian.plugin.event.events.PluginEnabledEvent;
-import com.atlassian.plugin.connect.plugin.module.applinks.RemotePluginContainerModuleDescriptor;
 import com.atlassian.plugin.connect.spi.event.RemotePluginDisabledEvent;
 import com.atlassian.plugin.connect.spi.event.RemotePluginEnabledEvent;
 import com.atlassian.plugin.connect.spi.event.RemotePluginInstalledEvent;
@@ -20,9 +19,7 @@ import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.sal.api.ApplicationProperties;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -69,32 +66,25 @@ public final class RemoteEventsHandler implements InitializingBean, DisposableBe
     public void pluginEnabled(PluginEnabledEvent pluginEnabledEvent)
     {
         final Plugin plugin = pluginEnabledEvent.getPlugin();
-        if (isRemotablePlugin(plugin))
+        if (isRemotePlugin(plugin))
         {
             eventPublisher.publish(new RemotePluginEnabledEvent(plugin.getKey(), newRemotePluginEventData()));
         }
     }
 
     @PluginEventListener
-    public void pluginDisabled(PluginDisabledEvent pluginDisabledEvent)
+    public void pluginDisabled(BeforePluginDisabledEvent pluginDisabledEvent)
     {
         final Plugin plugin = pluginDisabledEvent.getPlugin();
-        if (isRemotablePlugin(plugin))
+        if (isRemotePlugin(plugin))
         {
             eventPublisher.publish(new RemotePluginDisabledEvent(plugin.getKey(), newRemotePluginEventData()));
         }
     }
 
-    private boolean isRemotablePlugin(Plugin plugin)
+    private boolean isRemotePlugin(Plugin plugin)
     {
-        return Iterables.any(plugin.getModuleDescriptors(), new Predicate<ModuleDescriptor<?>>()
-        {
-            @Override
-            public boolean apply(ModuleDescriptor<?> moduleDescriptor)
-            {
-                return moduleDescriptor instanceof RemotePluginContainerModuleDescriptor;
-            }
-        });
+        return plugin.getInstallationMode().equals(InstallationMode.REMOTE);
     }
 
     @VisibleForTesting
