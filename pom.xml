@@ -147,6 +147,21 @@
                 <version>2.4</version>
                 <!-- !versions 2.5 and 2.5.1 broke tree filtering -->
             </plugin>
+
+            <plugin>
+                <groupId>com.atlassian.maven.plugins</groupId>
+                <artifactId>maven-jgitflow-plugin</artifactId>
+                <version>${jgitflow.version}</version>
+                <configuration>
+                    <allowSnapshots>true</allowSnapshots>
+                    <enableFeatureVersions>false</enableFeatureVersions>
+                    <pushFeatures>true</pushFeatures>
+                    <pushReleases>true</pushReleases>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                    <releaseBranchVersionSuffix>RC</releaseBranchVersionSuffix>
+                    <defaultOriginUrl>git@bitbucket.org:atlassian/atlassian-connect.git</defaultOriginUrl>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
@@ -442,6 +457,7 @@
         <spring.version>2.5.6</spring.version>
 
         <!-- BUILD STUFF -->
+        <jgitflow.version>1.0-alpha15</jgitflow.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <xvfb.enable>true</xvfb.enable>
     </properties>
