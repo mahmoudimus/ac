@@ -1,12 +1,13 @@
-(window.AP || window._AP).define("_xdm-rpc", ["_dollar"], function ($) {
+(this.AP || this._AP).define("_xdm", ["_dollar", "_events"], function ($, events) {
 
   "use strict";
 
   // Capture some common values and symbol aliases
-  var loc = window.location.toString(),
+  var w = window,
+      $w = $(w),
+      loc = w.location.toString(),
       localOrigin = getBaseUrl(loc),
       count = 0,
-      $window = $(window),
       isFn = $.isFunction;
 
   /**
@@ -21,43 +22,53 @@
    * doneCallback and failCallback are optional.
    *
    * @param {Object} config Configuration parameters
-   * @param {String} config.remote src of remote iframe
-   * @param {String} config.container id of element to which the generated iframe is appended
-   * @param {String} config.channel channel
-   * @param {Object} config.props additional attributes to add to iframe element
+   * @param {String} config.remoteKey The remote peer's add-on key (host only)
+   * @param {String} config.remote The src of remote iframe (host only)
+   * @param {String} config.container The id of element to which the generated iframe is appended (host only)
+   * @param {Object} config.props Additional attributes to add to iframe element (host only)
+   * @param {String} config.channel Channel (host only); deprecated
    * @param {Object} bindings RPC method stubs and implementations
-   * @param {Object} bindings.local local function implementations - functions that exist in the current context.
-   *    XMLRPC exposes these functions so that they can be invoked by code running in the other side of the iframe.
-   * @param {Array} bindings.remote names of functions which exist on the other side of the iframe.
-   *    XMLRPC creates stubs to these functions that can be invoked from the current page.
-   * @returns XDM-RPC instance
+   * @param {Object} bindings.local Local function implementations - functions that exist in the current context.
+   *    XdmRpc exposes these functions so that they can be invoked by code running in the other side of the iframe.
+   * @param {Array} bindings.remote Names of functions which exist on the other side of the iframe.
+   *    XdmRpc creates stubs to these functions that can be invoked from the current page.
+   * @returns XdmRpc instance
    * @constructor
    */
   function XdmRpc(config, bindings) {
 
-    var self, id = (count += 1),
-      target, remoteOrigin, channel, mixin,
-      locals = bindings.local || {},
-      remotes = bindings.remote || [];
+    var self, id = "" + (count += 1),
+        target, remoteOrigin, channel, mixin,
+        localKey, remoteKey,
+        locals = bindings.local || {},
+        remotes = bindings.remote || [];
 
     // A hub through which all async callbacks for remote requests are parked until invoked from a response
     var nexus = function () {
       var callbacks = {};
       return {
         // Registers a callback of a given type by uid
-        add: function (type, uid, callback) {
-          callbacks[uid] = callbacks[uid] || {};
-          callbacks[uid][type] = callback || null;
+        add: function (uid, done, fail) {
+          callbacks[uid] = {};
+          callbacks[uid].done = done || null;
+          callbacks[uid].fail = fail || null;
+          callbacks[uid].async = !!done;
         },
         // Invokes callbacks for a response of a given type by uid if registered, then removes all handlers for the uid
         invoke: function (type, uid, arg) {
-          var complete;
+          var handled;
           if (callbacks[uid]) {
-            if (callbacks[uid][type]) callbacks[uid][type](arg);
-            complete = true;
+            if (callbacks[uid][type]) {
+              // If the intended callback exists, invoke it and mark the response as handled
+              callbacks[uid][type](arg);
+              handled = true;
+            } else {
+              // Only mark other calls as handled if they weren't expecting a callback and didn't fail
+              handled = !callbacks[uid].async && type !== "fail";
+            }
             delete callbacks[uid];
           }
-          return complete;
+          return handled;
         }
       };
     }();
@@ -67,13 +78,18 @@
       // Host-side constructor branch
       var iframe = createIframe(config);
       target = iframe.contentWindow;
+      localKey = param(config.remote, "oauth_consumer_key");
+      remoteKey = config.remoteKey;
       remoteOrigin = getBaseUrl(config.remote);
       channel = config.channel;
+      // Define the host-side mixin
       mixin = {
         isHost: true,
         iframe: iframe,
         destroy: function () {
+          // Unbind postMessage handler when destroyed
           unbind();
+          // Then remove the iframe, if it still exists
           if (self.iframe) {
             $(self.iframe).remove();
             delete self.iframe;
@@ -86,9 +102,12 @@
       };
     } else {
       // Add-on-side constructor branch
-      target = window.parent;
+      target = w.parent;
+      localKey = "local"; // Would be better to make this the add-on key, but it's not readily available at this time
+      remoteKey = param(loc, "oauth_consumer_key");
       remoteOrigin = param(loc, "xdm_e");
       channel = param(loc, "xdm_c");
+      // Define the add-on-side mixin
       mixin = {
         isActive: function () {
           // Add-on-side instances are always active, as they must always have a parent window peer
@@ -123,8 +142,7 @@
       // Generate a random ID for this remote invocation
       var id = Math.floor(Math.random() * 1000000000).toString(16);
       // Register any callbacks with the nexus so they can be invoked when a response is received
-      nexus.add("done", id, done);
-      nexus.add("fail", id, fail);
+      nexus.add(id, done, fail);
       // Send a request to the remote, where:
       //  - n is the name of the remote function
       //  - a is an array of the (hopefully) serializable, non-callback arguments to this method
@@ -194,7 +212,7 @@
       // Add a method to this instance that will convert from 'rpc.method(args..., done?, fail?)'-style
       // invocations to a postMessage event via the 'send' function
       return function () {
-        var args = slice(arguments), done, fail;
+        var args = [].slice.call(arguments), done, fail;
         // Pops the last arg off the args list if it's a function
         function popFn() {
           if (isFn(args[args.length - 1])) {
@@ -222,24 +240,36 @@
     });
 
     // Create and attach a local event emitter for bridged pub/sub
-    var events = self.events = new Bus();
+    var bus = self.events = new events.Events(localKey, localOrigin);
     // Attach an any-listener to forward all locally-originating events to the remote peer
-    events.onAny(function () {
-      var args = slice(arguments);
+    bus.onAny(function () {
+      var args = [].slice.call(arguments);
       // The actual event object is the last argument passed to any listener
       var event = args[args.length - 1];
       // If the event originated locally or this is the host-side and the event didn't originate from the remote peer,
       // then forward it to the remote peer
-      var eventOrigin = event.origin;
+      var eventOrigin = event.source.origin;
       if (eventOrigin === localOrigin || (self.isHost && eventOrigin !== remoteOrigin)) {
-        debug("Firing remote event:", event);
-        sendRequest("_event", event);
+        debug("Forwarding local event:", event);
+        sendRequest("_event", [event]);
       }
     });
     // Define our own reserved local to receive remote events
     locals._event = function (event) {
-      debug("Received remote event:", event);
-      events._emitEvent(event);
+      if (self.isHost) {
+        console.log('hey', arguments);
+        // When the running on the host-side, forcibly reset the event's key and origin fields, to prevent spoofing by
+        // untrusted add-ons; also include the host-side XdmRpc instance id to tag the event with this particular
+        // instance of the host/add-on relationship
+        event.source = {
+          id: id,
+          key: remoteKey,
+          origin: remoteOrigin
+        };
+      }
+      debug("Receiving remote event:", event);
+      // Emit the event on the local bus
+      bus._emitEvent(event);
     };
 
     // Handles incoming postMessages from this XdmRpc instance's remote peer
@@ -255,12 +285,12 @@
 
     // Starts listening for window messaging events
     function bind() {
-      $window.bind("message", postMessageHandler);
+      $w.bind("message", postMessageHandler);
     }
 
     // Stops listening for window messaging events
     function unbind() {
-      $window.unbind("message", postMessageHandler);
+      $w.unbind("message", postMessageHandler);
     }
 
     // Immediately start listening for events
@@ -268,122 +298,6 @@
 
     return self;
   }
-
-  // A simple event bus
-  var Bus = (function () {
-    function Bus() {
-      this._events = {};
-      this._any = [];
-    }
-
-    var proto = Bus.prototype;
-
-    // Returns an array of listeners by name
-    proto.listeners = function (name) {
-      return this._events[name] = this._events[name] || [];
-    };
-
-    // Adds a listener for an event by name
-    proto.on = function (name, listener) {
-      if (name && listener) {
-        this.listeners(name).push(listener);
-      }
-      return this;
-    };
-
-    // Adds a listener for an event by name, removing the listener when fired
-    proto.once = function (name, listener) {
-      var self = this;
-      var interceptor = function () {
-        self.off(name, interceptor);
-        listener.apply(null, arguments);
-      };
-      this.on(name, interceptor);
-      return this;
-    };
-
-    // Adds a listener that fires on any event
-    proto.onAny = function (listener) {
-      this._any.push(listener);
-      return this;
-    };
-
-    // Removes a listener for an event by name
-    proto.off = function (name, listener) {
-      var all = this._events[name];
-      if (all) {
-        var i = all.indexOf(listener);
-        if (i >= 0) {
-          all.splice(i, 1);
-        }
-        if (all.length === 0) {
-          delete this._events[name];
-        }
-      }
-      return this;
-    };
-
-    // Removes all listeners for an event by name, or all (non-any) listeners if name is undefined
-    proto.offAll = function (name) {
-      if (name) {
-        delete this._events[name];
-      } else {
-        this._events = {};
-      }
-      return this;
-    };
-
-    // Removes a listener that fires on any event
-    proto.offAny = function (listener) {
-      var any = this._any;
-      var i = any.indexOf(listener);
-      if (i >= 0) {
-        any.splice(i, 1);
-      }
-      return this;
-    };
-
-    // Returns an array containing all event names with listeners, or an empty array
-    proto.active = function () {
-      // Not using $.map here since it's not implemented in the $-shim on the iframe side
-      var names = [];
-      $.each(this._events, function (k, v) {
-        if (v && v.length > 0) names.push(k);
-      });
-      return names;
-    };
-
-    // Internal helper for firing an event to an array of listeners
-    function fire(listeners, event) {
-      var args = event.args.concat([event]);
-      $.each(listeners, function () {
-        try {
-          this.apply(null, args);
-        } catch (e) {
-          log(e);
-        }
-      });
-    }
-
-    // Emits an event on this bus, firing listeners by name as well as the any listener; arguments following the
-    // name parameter are captured and passed to listeners
-    proto.emit = function (name) {
-      return this._emitEvent(name, {
-        name: name,
-        args: slice(arguments, 1),
-        origin: localOrigin
-      });
-    };
-
-    // An internal method for emitting event objects
-    proto._emitEvent = function (name, event) {
-      fire(this.listeners(name), event);
-      fire(this._any, event);
-      return this;
-    };
-
-    return Bus;
-  })();
 
   // Crudely extracts a query param value from a url by name
   function param(url, name) {
@@ -393,7 +307,7 @@
   // Determines a base url consisting of protocol+domain+port from a given url string
   function getBaseUrl(url) {
     var m = url.toLowerCase().match(/^((http.?:)\/\/([^:\/\s]+)(:\d+)*)/),
-      proto = m[2], domain = m[3], port = m[4] || "";
+        proto = m[2], domain = m[3], port = m[4] || "";
     if ((proto === "http:" && port === ":80") || (proto === "https:" && port === ":443")) port = "";
     return proto + "//" + domain + port;
   }
@@ -428,26 +342,22 @@
     return iframe;
   }
 
-  // Extracts a displayable message from an error or other object
   function errmsg(ex) {
     return ex.message || ex.toString();
   }
 
-  // Logs its arguments as debug messages when the XdmRpc.debug flag is set to a truthy value
   function debug() {
-    if (XdmRpc.debug) log.apply(window, ["DEBUG:"].concat(slice(arguments)));
+    if (XdmRpc.debug) log.apply(w, ["DEBUG:"].concat([].slice.call(arguments)));
   }
 
-  // Logs its arguments to the best available log output
   function log() {
-    var w = window, log = $.log || (w.AJS && w.AJS.log);
+    var log = $.log || (w.AJS && w.AJS.log);
     if (log) log.apply(w, arguments);
   }
 
-  function slice(o, s, e) {
-    var len = o.length >>> 0;
-    return len > 0 ? [].slice.call(o, s || 0, e || len) : [];
-  }
+  // DEBUG
+  XdmRpc.debug = true;
 
   return XdmRpc;
+
 });
