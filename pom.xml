@@ -419,6 +419,19 @@
 
 
     </dependencies>
+    <!-- REMOVE WHEN JGITFLOW IS FINAL -->
+    <pluginRepositories>
+        <pluginRepository>
+            <id>snapshots-repo</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
 
     <properties>
         <!-- VERSIONS -->
@@ -457,7 +470,7 @@
         <spring.version>2.5.6</spring.version>
 
         <!-- BUILD STUFF -->
-        <jgitflow.version>1.0-alpha16-SNAPSHOT</jgitflow.version>
+        <jgitflow.version>1.0-alpha15</jgitflow.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <xvfb.enable>true</xvfb.enable>
     </properties>
