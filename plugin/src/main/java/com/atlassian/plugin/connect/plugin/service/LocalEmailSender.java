@@ -9,6 +9,7 @@ import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -18,6 +19,7 @@ public final class LocalEmailSender implements EmailSender
     private final PermissionManager permissionManager;
     private final UserManager userManager;
 
+    @Autowired
     public LocalEmailSender(ProductAccessor productAccessor,
             PermissionManager permissionManager, UserManager userManager)
     {
