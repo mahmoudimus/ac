@@ -59,6 +59,7 @@ public final class AtlassianConnectAddOnRunner
 
     public AtlassianConnectAddOnRunner(String baseUrl)
     {
+        // Converting 3->4 is a temporary workaround for JRADEV-23912
         this(baseUrl, RandomStringUtils.randomAlphanumeric(20).replaceAll("3", "4").toLowerCase());
     }
 
