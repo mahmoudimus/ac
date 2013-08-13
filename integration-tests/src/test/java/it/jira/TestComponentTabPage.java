@@ -7,6 +7,7 @@ import com.atlassian.jira.tests.TestBase;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraComponentTabPage;
 import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
 import com.atlassian.plugin.connect.test.server.module.ComponentTabPageModule;
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -57,11 +58,16 @@ public class TestComponentTabPage extends TestBase
     @Before
     public void setUpTest() throws Exception
     {
-        backdoor().restoreBlankInstance();
+        backdoor().project().addProject(PROJECT_KEY, PROJECT_KEY, "admin");
         final ComponentClient componentClient = new ComponentClient(jira().environmentData());
-        componentId = Long.toString(componentClient.create(new Component().name(COMPONENT_NAME).project(PROJECT_KEY)).id);
+        componentId = Long.toString(componentClient.create(new Component().name(COMPONENT_NAME + System.currentTimeMillis()).project(PROJECT_KEY)).id);
     }
 
+    @After
+    public void cleanUpTest()
+    {
+        backdoor().project().deleteProject(PROJECT_KEY);
+    }
 
 
     @Test

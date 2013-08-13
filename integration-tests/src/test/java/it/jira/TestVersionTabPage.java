@@ -7,6 +7,7 @@ import com.atlassian.jira.tests.TestBase;
 import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
 import com.atlassian.plugin.connect.test.server.module.VersionTabPageModule;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraVersionTabPage;
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -59,9 +60,15 @@ public class TestVersionTabPage extends TestBase
     @Before
     public void setUpTest() throws Exception
     {
-        backdoor().restoreBlankInstance();
+        backdoor().project().addProject(PROJECT_KEY, PROJECT_KEY, "admin");
         final VersionClient versionClient = new VersionClient(jira().environmentData());
-        versionId = Long.toString(versionClient.create(new Version().name(VERSION_NAME).project(PROJECT_KEY)).id);
+        versionId = Long.toString(versionClient.create(new Version().name(VERSION_NAME + System.currentTimeMillis()).project(PROJECT_KEY)).id);
+    }
+
+    @After
+    public void cleanUpTest()
+    {
+        backdoor().project().deleteProject(PROJECT_KEY);
     }
 
     @Test
