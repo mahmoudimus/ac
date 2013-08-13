@@ -1,7 +1,7 @@
 /**
  * Entry point for xdm messages on the host product side.
  */
-_AP.define("host/main", ["_xdm-rpc"], function (XdmRpc) {
+_AP.define("host/main", ["_xdm"], function (XdmRpc) {
 
   var $ = AJS.$,
       xhrProperties = ["status", "statusText", "responseText"],
@@ -65,6 +65,7 @@ _AP.define("host/main", ["_xdm-rpc"], function (XdmRpc) {
 
     var rpc = new XdmRpc({
       remote: options.src,
+      remoteKey: options.key,
       container: contentId,
       channel: channelId,
       props: {width: initWidth, height: initHeight}
