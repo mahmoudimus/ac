@@ -5,11 +5,9 @@ import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.pageobjects.elements.PageElementFinder;
 import com.atlassian.pageobjects.elements.query.TimedCondition;
 import com.atlassian.plugin.connect.plugin.module.jira.componenttab.ComponentTabPageModuleDescriptor;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.utils.URLEncodedUtils;
+import com.atlassian.plugin.connect.test.pageobjects.RemotePageUtil;
 import org.openqa.selenium.By;
 
-import java.net.URI;
 import javax.inject.Inject;
 
 /**
@@ -26,6 +24,7 @@ public class JiraComponentTabPage extends AbstractJiraPage
     private static final String IFRAME_ID_PREFIX = "easyXDM_embedded-component-tab-";
     private static final String IFRAME_ID_SUFFIX = "-panel_provider";
     private PageElement iframe;
+    private String iframeSrc;
 
     @Inject
     private PageElementFinder elementFinder;
@@ -51,6 +50,7 @@ public class JiraComponentTabPage extends AbstractJiraPage
 
         final String iframeId = IFRAME_ID_PREFIX + componentTabId + IFRAME_ID_SUFFIX;
         iframe = elementFinder.find(By.id(iframeId));
+        iframeSrc = iframe.getAttribute("src");
 
         iframe.timed().isPresent();
     }
@@ -63,23 +63,10 @@ public class JiraComponentTabPage extends AbstractJiraPage
     }
 
     public String getProjectKey() {
-        return findInContext("project_key");
+        return RemotePageUtil.findInContext(iframeSrc, "project_key");
     }
 
     public String getComponentId() {
-        return findInContext("component_id");
-    }
-
-    private String findInContext(final String key)
-    {
-        final String src = iframe.getAttribute("src");
-        for (final NameValuePair pair : URLEncodedUtils.parse(URI.create(src), "UTF-8"))
-        {
-            if (key.equals(pair.getName()))
-            {
-                return pair.getValue();
-            }
-        }
-        return null;
+        return RemotePageUtil.findInContext(iframeSrc, "component_id");
     }
 }
