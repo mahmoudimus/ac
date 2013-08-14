@@ -286,6 +286,12 @@
                 <scope>provided</scope>
             </dependency>
             <dependency>
+                <groupId>com.atlassian.upm</groupId>
+                <artifactId>upm-spi</artifactId>
+                <version>${atlassian.upm.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
                 <groupId>com.atlassian.oauth</groupId>
                 <artifactId>atlassian-oauth-consumer-spi</artifactId>
                 <version>${atlassian.oauth.version}</version>
