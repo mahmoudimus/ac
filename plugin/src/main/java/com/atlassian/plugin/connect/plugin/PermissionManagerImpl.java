@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
+import com.atlassian.plugin.connect.spi.ConnectAddOnIdentifierService;
 import com.atlassian.plugin.event.PluginEventManager;
 import com.atlassian.plugin.connect.plugin.util.BundleUtil;
 import com.atlassian.plugin.connect.plugin.settings.SettingsManager;
@@ -35,7 +36,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import static com.atlassian.fugue.Option.option;
-import static com.atlassian.plugin.connect.plugin.util.RemotablePluginManifestReader.getInstallerUser;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.ImmutableSet.copyOf;
 import static com.google.common.collect.Iterables.*;
@@ -53,6 +53,7 @@ public final class PermissionManagerImpl implements PermissionManager
     private final PermissionsReader permissionsReader;
     private final BundleContext bundleContext;
     private final PluginModuleTracker<Permission, PermissionModuleDescriptor> permissionTracker;
+    private final ConnectAddOnIdentifierService connectIdentifier;
 
     private final Set<ApiScope> DEFAULT_API_SCOPES = ImmutableSet.<ApiScope>of(new MacroCacheApiScope());
 
@@ -63,9 +64,10 @@ public final class PermissionManagerImpl implements PermissionManager
             PluginAccessor pluginAccessor,
             PluginEventManager pluginEventManager,
             PermissionsReader permissionsReader,
-            BundleContext bundleContext)
+            BundleContext bundleContext,
+            ConnectAddOnIdentifierService connectIdentifier)
     {
-        this(userManager, settingsManager, pluginAccessor, permissionsReader, bundleContext,
+        this(userManager, settingsManager, pluginAccessor, permissionsReader, bundleContext,connectIdentifier,
                 new DefaultPluginModuleTracker<Permission, PermissionModuleDescriptor>(
                         pluginAccessor, pluginEventManager, PermissionModuleDescriptor.class));
     }
@@ -76,6 +78,7 @@ public final class PermissionManagerImpl implements PermissionManager
             PluginAccessor pluginAccessor,
             PermissionsReader permissionsReader,
             BundleContext bundleContext,
+            ConnectAddOnIdentifierService connectIdentifier,
             PluginModuleTracker<Permission, PermissionModuleDescriptor> pluginModuleTracker)
     {
         this.userManager = checkNotNull(userManager);
@@ -84,6 +87,7 @@ public final class PermissionManagerImpl implements PermissionManager
         this.permissionsReader = checkNotNull(permissionsReader);
         this.bundleContext = checkNotNull(bundleContext);
         this.permissionTracker = checkNotNull(pluginModuleTracker);
+        this.connectIdentifier = checkNotNull(connectIdentifier);
     }
 
     @Override
@@ -190,7 +194,7 @@ public final class PermissionManagerImpl implements PermissionManager
     {
         return userManager.isAdmin(username)
                 || isDogfoodUser(username)
-                && username.equals(getInstallerUser(BundleUtil.findBundleForPlugin(bundleContext, pluginKey)));
+                && username.equals(connectIdentifier.getInstallerUser(BundleUtil.findBundleForPlugin(bundleContext, pluginKey)));
     }
 
     private boolean isDogfoodUser(String username)

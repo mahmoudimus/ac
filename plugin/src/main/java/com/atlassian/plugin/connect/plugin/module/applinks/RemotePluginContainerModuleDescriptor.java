@@ -19,6 +19,7 @@ import com.atlassian.oauth.util.RSAKeys;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginInformation;
 import com.atlassian.plugin.PluginParseException;
+import com.atlassian.plugin.connect.spi.ConnectAddOnIdentifierService;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
 import com.atlassian.plugin.descriptors.CannotDisable;
 import com.atlassian.plugin.module.ModuleFactory;
@@ -26,7 +27,6 @@ import com.atlassian.plugin.connect.plugin.util.BundleUtil;
 import com.atlassian.plugin.connect.plugin.OAuthLinkManager;
 import com.atlassian.plugin.connect.plugin.PermissionManager;
 import com.atlassian.plugin.connect.plugin.util.OsgiServiceUtils;
-import com.atlassian.plugin.connect.plugin.util.RemotePluginUtil;
 import com.atlassian.plugin.connect.spi.Permissions;
 import com.atlassian.plugin.connect.spi.applinks.RemotePluginContainerApplicationType;
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
@@ -56,6 +56,7 @@ public final class RemotePluginContainerModuleDescriptor extends AbstractModuleD
     private final TypeAccessor typeAccessor;
     private final BundleContext bundleContext;
     private final PluginSettingsFactory pluginSettingsFactory;
+    private final ConnectAddOnIdentifierService connectIdentifier;
 
     private static final Logger log = LoggerFactory.getLogger(RemotePluginContainerModuleDescriptor.class);
 
@@ -72,7 +73,8 @@ public final class RemotePluginContainerModuleDescriptor extends AbstractModuleD
             PermissionManager permissionManager,
             TypeAccessor typeAccessor,
             BundleContext bundleContext,
-            PluginSettingsFactory pluginSettingsFactory)
+            PluginSettingsFactory pluginSettingsFactory,
+            ConnectAddOnIdentifierService connectIdentifier)
     {
         super(moduleFactory);
         this.applicationLinkService = checkNotNull(applicationLinkService);
@@ -81,6 +83,7 @@ public final class RemotePluginContainerModuleDescriptor extends AbstractModuleD
         this.typeAccessor = checkNotNull(typeAccessor);
         this.bundleContext = checkNotNull(bundleContext);
         this.pluginSettingsFactory = checkNotNull(pluginSettingsFactory);
+        this.connectIdentifier = checkNotNull(connectIdentifier);
     }
 
     @Override
@@ -101,7 +104,7 @@ public final class RemotePluginContainerModuleDescriptor extends AbstractModuleD
         {
             throw new PluginParseException("Can only have one remote-plugin-container module in a descriptor");
         }
-        this.remoteMode = RemotePluginUtil.isRemoteMode(BundleUtil.findBundleForPlugin(bundleContext, plugin.getKey()));
+        this.remoteMode = connectIdentifier.isConnectAddOn(BundleUtil.findBundleForPlugin(bundleContext, plugin.getKey()));
     }
 
     @Override

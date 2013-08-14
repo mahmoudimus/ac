@@ -4,12 +4,12 @@ import java.net.URI;
 import java.util.Set;
 
 import com.atlassian.plugin.*;
-import com.atlassian.plugin.descriptors.UnloadableModuleDescriptor;
-import com.atlassian.plugin.descriptors.UnrecognisedModuleDescriptor;
 import com.atlassian.plugin.connect.plugin.OAuthLinkManager;
 import com.atlassian.plugin.connect.plugin.event.RemoteEventsHandler;
 import com.atlassian.plugin.connect.spi.InstallationFailedException;
 import com.atlassian.plugin.connect.spi.PermissionDeniedException;
+import com.atlassian.plugin.descriptors.UnloadableModuleDescriptor;
+import com.atlassian.plugin.descriptors.UnrecognisedModuleDescriptor;
 import com.atlassian.plugin.util.WaitUntil;
 
 import org.dom4j.Document;
@@ -18,48 +18,38 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-//uh, not sure why but spring requires us to import this.
-import org.osgi.service.packageadmin.PackageAdmin;
-
-/**
- * Installs a remote plugin or plugin via retrieving content from a url.
- */
 @Component
-public final class DefaultRemotePluginInstaller implements RemotePluginInstaller
+public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
 {
     private final RemotePluginArtifactFactory remotePluginArtifactFactory;
     private final PluginController pluginController;
     private final PluginAccessor pluginAccessor;
     private final OAuthLinkManager oAuthLinkManager;
     private final RemoteEventsHandler remoteEventsHandler;
-    
 
-    private static final Logger log = LoggerFactory.getLogger(DefaultRemotePluginInstaller.class);
+    private static final Logger log = LoggerFactory.getLogger(DefaultConnectAddOnInstaller.class);
 
     @Autowired
-    public DefaultRemotePluginInstaller(RemotePluginArtifactFactory remotePluginArtifactFactory,
-                                        PluginController pluginController,
-                                        PluginAccessor pluginAccessor,
-                                        OAuthLinkManager oAuthLinkManager,
-                                        RemoteEventsHandler remoteEventsHandler)
+    public DefaultConnectAddOnInstaller(RemotePluginArtifactFactory remotePluginArtifactFactory, PluginController pluginController, PluginAccessor pluginAccessor, OAuthLinkManager oAuthLinkManager, RemoteEventsHandler remoteEventsHandler)
     {
         this.remotePluginArtifactFactory = remotePluginArtifactFactory;
         this.pluginController = pluginController;
         this.pluginAccessor = pluginAccessor;
         this.oAuthLinkManager = oAuthLinkManager;
         this.remoteEventsHandler = remoteEventsHandler;
-        PackageAdmin padmin = null;
     }
 
     @Override
-    public String install(final String username, final URI registrationUrl, Document document) throws PermissionDeniedException
+    public Plugin install(final String username, final Document document)
     {
+        String pluginKey = "unknown";
         try
         {
-            final String pluginKey = getPluginKey(document);
+            pluginKey = getPluginKey(document);
             removeOldPlugin(pluginKey);
 
-            final PluginArtifact pluginArtifact = getPluginArtifact(username, registrationUrl, document);
+            Plugin installedPlugin = null;
+            final PluginArtifact pluginArtifact = getPluginArtifact(username, document);
 
             Set<String> pluginKeys = pluginController.installPlugins(pluginArtifact);
             if (pluginKeys.size() == 1)
@@ -99,6 +89,10 @@ public final class DefaultRemotePluginInstaller implements RemotePluginInstaller
                     }
                     throw new RuntimeException(cause);
                 }
+                else
+                {
+                    installedPlugin = plugin;
+                }
             }
             else
             {
@@ -109,35 +103,35 @@ public final class DefaultRemotePluginInstaller implements RemotePluginInstaller
 
             log.info("Registered app '{}' by '{}'", pluginKey, username);
 
-            return pluginKey;
+            return installedPlugin;
         }
         catch (PermissionDeniedException ex)
         {
-            log.warn("Unable to install remote plugin from '{}' by user '{}' due to permission issues: {}",
-                    new Object[]{registrationUrl, username, ex.getMessage()});
+            log.warn("Unable to install remote plugin '{}' by user '{}' due to permission issues: {}",
+                    new Object[]{pluginKey, username, ex.getMessage()});
             log.debug("Installation failed due to permission issue", ex);
             throw ex;
         }
         catch (InstallationFailedException ex)
         {
-            log.warn("Unable to install remote plugin from '{}' by user '{}' due to installation issue: {}",
-                    new Object[]{registrationUrl, username, ex.getMessage()});
+            log.warn("Unable to install remote plugin '{}' by user '{}' due to installation issue: {}",
+                    new Object[]{pluginKey, username, ex.getMessage()});
             log.debug("Installation failed due to installation issue", ex);
             throw ex;
         }
         catch (Exception e)
         {
-            log.warn("Unable to install remote plugin from '{}' by user '{}'", registrationUrl, username);
+            log.warn("Unable to install remote plugin '{}' by user '{}'", pluginKey, username);
             log.debug("Installation failed due to unknown issue", e);
             throw new InstallationFailedException(e.getCause() != null ? e.getCause() : e);
         }
     }
 
-    private PluginArtifact getPluginArtifact(String username, URI registrationUrl, Document document)
+    private PluginArtifact getPluginArtifact(String username, Document document)
     {
         if (document.getRootElement().attribute("plugins-version") != null)
         {
-            return remotePluginArtifactFactory.create(registrationUrl, document, username);
+            return remotePluginArtifactFactory.create(document, username);
         }
         else
         {

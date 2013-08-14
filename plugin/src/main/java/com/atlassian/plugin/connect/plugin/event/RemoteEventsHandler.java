@@ -8,6 +8,7 @@ import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.oauth.util.RSAKeys;
 import com.atlassian.plugin.InstallationMode;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.spi.ConnectAddOnIdentifierService;
 import com.atlassian.plugin.event.PluginEventListener;
 import com.atlassian.plugin.event.PluginEventManager;
 import com.atlassian.plugin.event.events.BeforePluginDisabledEvent;
@@ -40,6 +41,7 @@ public final class RemoteEventsHandler implements InitializingBean, DisposableBe
     private final ApplicationProperties applicationProperties;
     private final ProductAccessor productAccessor;
     private final BundleContext bundleContext;
+    private final ConnectAddOnIdentifierService connectIdentifier;
 
     @Autowired
     public RemoteEventsHandler(EventPublisher eventPublisher,
@@ -47,7 +49,8 @@ public final class RemoteEventsHandler implements InitializingBean, DisposableBe
                                ApplicationProperties applicationProperties,
                                ProductAccessor productAccessor,
                                BundleContext bundleContext,
-                               PluginEventManager pluginEventManager)
+                               PluginEventManager pluginEventManager,
+                               ConnectAddOnIdentifierService connectIdentifier)
     {
         this.consumerService = checkNotNull(consumerService);
         this.applicationProperties = checkNotNull(applicationProperties);
@@ -55,6 +58,7 @@ public final class RemoteEventsHandler implements InitializingBean, DisposableBe
         this.pluginEventManager = checkNotNull(pluginEventManager);
         this.productAccessor = checkNotNull(productAccessor);
         this.bundleContext = checkNotNull(bundleContext);
+        this.connectIdentifier = checkNotNull(connectIdentifier);
     }
 
     public void pluginInstalled(String pluginKey)
@@ -66,7 +70,7 @@ public final class RemoteEventsHandler implements InitializingBean, DisposableBe
     public void pluginEnabled(PluginEnabledEvent pluginEnabledEvent)
     {
         final Plugin plugin = pluginEnabledEvent.getPlugin();
-        if (isRemotePlugin(plugin))
+        if (connectIdentifier.isConnectAddOn(plugin))
         {
             eventPublisher.publish(new RemotePluginEnabledEvent(plugin.getKey(), newRemotePluginEventData()));
         }
@@ -76,15 +80,10 @@ public final class RemoteEventsHandler implements InitializingBean, DisposableBe
     public void pluginDisabled(BeforePluginDisabledEvent pluginDisabledEvent)
     {
         final Plugin plugin = pluginDisabledEvent.getPlugin();
-        if (isRemotePlugin(plugin))
+        if (connectIdentifier.isConnectAddOn(plugin))
         {
             eventPublisher.publish(new RemotePluginDisabledEvent(plugin.getKey(), newRemotePluginEventData()));
         }
-    }
-
-    private boolean isRemotePlugin(Plugin plugin)
-    {
-        return plugin.getInstallationMode().equals(InstallationMode.REMOTE);
     }
 
     @VisibleForTesting

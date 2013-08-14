@@ -8,7 +8,6 @@ import java.util.concurrent.ExecutionException;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.plugin.util.BundleLocator;
-import com.atlassian.plugin.connect.plugin.util.RemotablePluginManifestReader;
 import com.atlassian.plugin.connect.spi.host.HostProperties;
 import com.atlassian.plugin.connect.spi.permission.PermissionsReader;
 import com.atlassian.plugin.connect.spi.util.XmlUtils;
