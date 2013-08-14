@@ -18,7 +18,7 @@ import static com.atlassian.plugin.connect.plugin.module.jira.JiraTabConditionCo
 import static com.google.common.collect.Maps.newHashMap;
 
 /**
- * A tab that displays an iframe
+ * A project tab that is displayed as an iframe
  */
 public class IFrameProjectTab implements ProjectTabPanel
 {

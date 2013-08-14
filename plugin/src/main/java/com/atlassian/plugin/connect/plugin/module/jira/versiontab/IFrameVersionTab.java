@@ -19,7 +19,7 @@ import java.util.Map;
 import static com.atlassian.plugin.connect.plugin.module.jira.JiraTabConditionContext.createConditionContext;
 
 /**
- * A tab that displays an iframe
+ * A version tab that is displayed as an iframe
  */
 public class IFrameVersionTab implements VersionTabPanel
 {
