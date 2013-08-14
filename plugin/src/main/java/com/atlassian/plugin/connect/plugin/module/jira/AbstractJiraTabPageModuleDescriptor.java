@@ -12,7 +12,6 @@ import com.atlassian.plugin.connect.spi.module.IFrameParams;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.connect.plugin.module.ContainingRemoteCondition;
-import com.atlassian.plugin.connect.plugin.module.jira.componenttab.IFrameComponentTab;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.util.concurrent.NotNull;
 import org.dom4j.Element;
@@ -47,19 +46,25 @@ public abstract class AbstractJiraTabPageModuleDescriptor extends AbstractModule
     }
 
     /**
-     * Prefix used to specify module key
+     * Subclass should return prefix used to specify module key, for instance issue-tab-, project-tab- etc.
      * @return module key prefix
      */
     protected abstract String getModulePrefix();
 
     /**
-     * Subclass should create and return local module descriptor here.
+     * Subclass should create and return the module descriptor which creates a module for this tab, for instance IssueTabPanelModuleDescriptor.
      * @param key plugin key
      * @param iFrameParams plugin params
      * @param condition plugin condition
      * @return plugin module descriptor
      */
     protected abstract JiraResourcedModuleDescriptor createTabPanelModuleDescriptor(final String key, final IFrameParams iFrameParams, final Condition condition);
+
+    /**
+     * Subclass should return the class which displays the tab as an iframe.
+     * @return implementation class of the component
+     */
+    protected abstract Class<?> getIFrameTabClass();
 
     @Override
     public void init(@NotNull final Plugin plugin, @NotNull final Element element) throws PluginParseException
@@ -93,7 +98,7 @@ public abstract class AbstractJiraTabPageModuleDescriptor extends AbstractModule
         }
         desc.addAttribute("key", moduleKey);
         desc.addElement("label").setText(tabName);
-        desc.addAttribute("class", IFrameComponentTab.class.getName());
+        desc.addAttribute("class", getIFrameTabClass().getName());
 
         final JiraResourcedModuleDescriptor moduleDescriptor = createDescriptor(moduleKey,
                 desc, new IFrameParamsImpl(descriptor), condition);

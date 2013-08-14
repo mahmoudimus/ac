@@ -55,4 +55,10 @@ public final class ProjectTabPageModuleDescriptor extends AbstractJiraTabPageMod
             }
         });
     }
+
+    @Override
+    protected Class getIFrameTabClass()
+    {
+        return IFrameProjectTab.class;
+    }
 }

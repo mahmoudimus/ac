@@ -58,4 +58,10 @@ public class VersionTabPageModuleDescriptor extends AbstractJiraTabPageModuleDes
             }
         });
     }
+
+    @Override
+    protected Class getIFrameTabClass()
+    {
+        return IFrameVersionTab.class;
+    }
 }
