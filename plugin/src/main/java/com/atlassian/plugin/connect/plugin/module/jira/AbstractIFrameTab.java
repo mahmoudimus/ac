@@ -1,15 +1,11 @@
 package com.atlassian.plugin.connect.plugin.module.jira;
 
-import com.atlassian.jira.plugin.componentpanel.BrowseComponentContext;
-import com.atlassian.jira.plugin.versionpanel.BrowseVersionContext;
-import com.atlassian.jira.plugin.versionpanel.VersionTabPanelModuleDescriptor;
 import com.atlassian.jira.project.browse.BrowseContext;
 import com.atlassian.plugin.connect.plugin.module.IFrameRendererImpl;
 import com.atlassian.plugin.connect.plugin.module.page.IFrameContextImpl;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.spi.module.IFrameContext;
 import com.atlassian.plugin.web.Condition;
-import com.google.common.collect.ImmutableMap;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -22,10 +18,10 @@ import static com.atlassian.plugin.connect.plugin.module.jira.JiraTabConditionCo
  */
 public abstract class AbstractIFrameTab<D, C extends BrowseContext>
 {
-
     private final UrlVariableSubstitutor urlVariableSubstitutor;
-    private final IFrameContext iFrameContext;
     private final IFrameRendererImpl iFrameRenderer;
+
+    private final IFrameContext iFrameContext;
     private final Condition condition;
 
     public AbstractIFrameTab(UrlVariableSubstitutor urlVariableSubstitutor, IFrameContext iFrameContext, IFrameRendererImpl iFrameRenderer, Condition condition) {
@@ -61,7 +57,7 @@ public abstract class AbstractIFrameTab<D, C extends BrowseContext>
         return condition == null || condition.shouldDisplay(createConditionContext(context));
     }
 
-    protected IFrameContext substituteContext(final Map<String, Object> paramsMap)
+    private IFrameContext substituteContext(final Map<String, Object> paramsMap)
     {
         final String urlWithSubstitutedParameters = urlVariableSubstitutor.replace(iFrameContext.getIframePath(), paramsMap);
 
