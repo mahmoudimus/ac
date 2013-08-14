@@ -1,24 +1,26 @@
 package com.atlassian.plugin.connect.plugin.module.jira.issuetab;
 
+import com.atlassian.jira.plugin.issuetabpanel.AbstractIssueTabPanel3;
+import com.atlassian.jira.plugin.issuetabpanel.GetActionsRequest;
+import com.atlassian.jira.plugin.issuetabpanel.IssueAction;
+import com.atlassian.jira.plugin.issuetabpanel.ShowPanelRequest;
+import com.atlassian.plugin.connect.plugin.module.IFrameRendererImpl;
+import com.atlassian.plugin.connect.plugin.module.page.IFrameContextImpl;
+import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
+import com.atlassian.plugin.connect.spi.module.IFrameContext;
+import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
+import com.atlassian.plugin.web.Condition;
+import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
-import com.atlassian.jira.plugin.issuetabpanel.*;
-import com.atlassian.plugin.connect.plugin.module.IFrameRendererImpl;
-import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
-import com.atlassian.plugin.connect.spi.module.IFrameContext;
-import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
-import com.atlassian.plugin.web.Condition;
-
-import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static com.atlassian.plugin.connect.plugin.module.jira.JiraTabConditionContext.createConditionContext;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -48,7 +50,7 @@ public class IFrameIssueTab extends AbstractIssueTabPanel3
         return ImmutableList.<IssueAction>of(new IFrameIssueAction(request, iFrameRenderer, iFrameContext));
     }
 
-    public static class IFrameIssueAction implements IssueAction
+    public class IFrameIssueAction implements IssueAction
     {
         private final GetActionsRequest request;
         private final IFrameRenderer iFrameRenderer;
@@ -67,10 +69,8 @@ public class IFrameIssueTab extends AbstractIssueTabPanel3
             StringWriter writer = new StringWriter();
             try
             {
-                Map<String, String[]> extraParams =
-                        ImmutableMap.of("ctx_issue_key", new String[] { request.issue().getKey() });
-                String remoteUserName = getRemoteUserName();
-                writer.write(iFrameRenderer.render(iFrameContext, "", extraParams, remoteUserName));
+                writer.write(iFrameRenderer.render(substituteContext(getParams()),
+                        getUserName()));
             }
             catch (IOException e)
             {
@@ -79,7 +79,19 @@ public class IFrameIssueTab extends AbstractIssueTabPanel3
             return writer.toString();
         }
 
-        private String getRemoteUserName()
+        private Map<String, Object> getParams()
+        {
+            return ImmutableMap.<String, Object>of("ctx_issue_key", request.issue().getKey());
+        }
+
+        private IFrameContext substituteContext(final Map<String, Object> paramsMap)
+        {
+            final String urlWithSubstitutedParameters = urlVariableSubstitutor.replace(iFrameContext.getIframePath(), paramsMap);
+
+            return new IFrameContextImpl(iFrameContext.getPluginKey(), urlWithSubstitutedParameters, iFrameContext.getNamespace(), iFrameContext.getIFrameParams());
+        }
+
+        private String getUserName()
         {
             return request.remoteUser() != null ? request.remoteUser().getName() : null;
         }
