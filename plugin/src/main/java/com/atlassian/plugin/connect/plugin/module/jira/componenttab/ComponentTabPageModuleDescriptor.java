@@ -29,7 +29,8 @@ public final class ComponentTabPageModuleDescriptor extends AbstractJiraTabPageM
     private final UrlVariableSubstitutor urlVariableSubstitutor;
     private final JiraAuthenticationContext jiraAuthenticationContext;
 
-    public ComponentTabPageModuleDescriptor(final ModuleFactory moduleFactory, final DynamicDescriptorRegistration dynamicDescriptorRegistration, final ConditionProcessor conditionProcessor, final IFrameRendererImpl iFrameRenderer, final UrlVariableSubstitutor urlVariableSubstitutor, final JiraAuthenticationContext jiraAuthenticationContext, final UrlValidator urlValidator)
+    public ComponentTabPageModuleDescriptor(ModuleFactory moduleFactory, DynamicDescriptorRegistration dynamicDescriptorRegistration, ConditionProcessor conditionProcessor,
+            IFrameRendererImpl iFrameRenderer, UrlVariableSubstitutor urlVariableSubstitutor, JiraAuthenticationContext jiraAuthenticationContext, UrlValidator urlValidator)
     {
         super(moduleFactory, dynamicDescriptorRegistration, conditionProcessor, urlValidator);
         this.iFrameRenderer = checkNotNull(iFrameRenderer);
@@ -57,6 +58,12 @@ public final class ComponentTabPageModuleDescriptor extends AbstractJiraTabPageM
                         iFrameRenderer, condition, urlVariableSubstitutor);
             }
         });
+    }
+
+    @Override
+    protected Class<?> getIFrameTabClass()
+    {
+        return IFrameComponentTab.class;
     }
 
 }

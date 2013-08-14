@@ -10,6 +10,7 @@ import com.atlassian.plugin.connect.plugin.module.ConditionProcessor;
 import com.atlassian.plugin.connect.plugin.module.IFrameRendererImpl;
 import com.atlassian.plugin.connect.plugin.module.page.IFrameContextImpl;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlValidator;
+import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.spi.module.IFrameParams;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.connect.plugin.module.jira.AbstractJiraTabPageModuleDescriptor;
@@ -25,11 +26,14 @@ public final class ProjectTabPageModuleDescriptor extends AbstractJiraTabPageMod
     public static final String PROJECT_TAB_PAGE_MODULE_PREFIX = "project-tab-";
 
     private final IFrameRendererImpl iFrameRenderer;
+    private final UrlVariableSubstitutor urlVariableSubstitutor;
     private final JiraAuthenticationContext jiraAuthenticationContext;
 
-    public ProjectTabPageModuleDescriptor(final ModuleFactory moduleFactory, final DynamicDescriptorRegistration dynamicDescriptorRegistration, final ConditionProcessor conditionProcessor, final IFrameRendererImpl iFrameRenderer, final JiraAuthenticationContext jiraAuthenticationContext, final UrlValidator urlValidator)
+    public ProjectTabPageModuleDescriptor(ModuleFactory moduleFactory, DynamicDescriptorRegistration dynamicDescriptorRegistration, ConditionProcessor conditionProcessor,
+            IFrameRendererImpl iFrameRenderer, JiraAuthenticationContext jiraAuthenticationContext, UrlValidator urlValidator, UrlVariableSubstitutor urlVariableSubstitutor)
     {
         super(moduleFactory, dynamicDescriptorRegistration, conditionProcessor, urlValidator);
+        this.urlVariableSubstitutor = urlVariableSubstitutor;
         this.iFrameRenderer = checkNotNull(iFrameRenderer);
         this.jiraAuthenticationContext = checkNotNull(jiraAuthenticationContext);
     }
@@ -51,7 +55,7 @@ public final class ProjectTabPageModuleDescriptor extends AbstractJiraTabPageMod
             {
                 return (T) new IFrameProjectTab(
                         new IFrameContextImpl(getPluginKey(), url, key, iFrameParams),
-                        iFrameRenderer, condition);
+                        iFrameRenderer, condition, urlVariableSubstitutor);
             }
         });
     }

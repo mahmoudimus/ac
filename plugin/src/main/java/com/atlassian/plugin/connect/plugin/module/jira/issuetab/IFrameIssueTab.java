@@ -34,7 +34,7 @@ public class IFrameIssueTab extends AbstractIssueTabPanel3
     private final IFrameContext iFrameContext;
     private final UrlVariableSubstitutor urlVariableSubstitutor;
 
-    public IFrameIssueTab(IFrameContext iFrameContext, IFrameRendererImpl iFrameRenderer, Optional<Condition> condition, final UrlVariableSubstitutor urlVariableSubstitutor)
+    public IFrameIssueTab(IFrameContext iFrameContext, IFrameRendererImpl iFrameRenderer, Optional<Condition> condition, UrlVariableSubstitutor urlVariableSubstitutor)
     {
         this.urlVariableSubstitutor = urlVariableSubstitutor;
         this.iFrameContext = checkNotNull(iFrameContext);
@@ -74,7 +74,6 @@ public class IFrameIssueTab extends AbstractIssueTabPanel3
             }
             catch (IOException e)
             {
-                log.error("Error rendering tab", e);
                 throw new RuntimeException(e);
             }
             return writer.toString();
