@@ -9,6 +9,7 @@ import com.atlassian.plugin.connect.plugin.integration.plugins.DynamicDescriptor
 import com.atlassian.plugin.connect.plugin.module.ConditionProcessor;
 import com.atlassian.plugin.connect.plugin.module.IFrameRendererImpl;
 import com.atlassian.plugin.connect.plugin.module.page.IFrameContextImpl;
+import com.atlassian.plugin.connect.plugin.module.webfragment.UrlValidator;
 import com.atlassian.plugin.connect.spi.module.IFrameParams;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.connect.plugin.module.jira.AbstractJiraTabPageModuleDescriptor;
@@ -26,9 +27,9 @@ public final class ProjectTabPageModuleDescriptor extends AbstractJiraTabPageMod
     private final IFrameRendererImpl iFrameRenderer;
     private final JiraAuthenticationContext jiraAuthenticationContext;
 
-    public ProjectTabPageModuleDescriptor(final ModuleFactory moduleFactory, final DynamicDescriptorRegistration dynamicDescriptorRegistration, final ConditionProcessor conditionProcessor, final IFrameRendererImpl iFrameRenderer, final JiraAuthenticationContext jiraAuthenticationContext)
+    public ProjectTabPageModuleDescriptor(final ModuleFactory moduleFactory, final DynamicDescriptorRegistration dynamicDescriptorRegistration, final ConditionProcessor conditionProcessor, final IFrameRendererImpl iFrameRenderer, final JiraAuthenticationContext jiraAuthenticationContext, final UrlValidator urlValidator)
     {
-        super(moduleFactory, dynamicDescriptorRegistration, conditionProcessor);
+        super(moduleFactory, dynamicDescriptorRegistration, conditionProcessor, urlValidator);
         this.iFrameRenderer = checkNotNull(iFrameRenderer);
         this.jiraAuthenticationContext = checkNotNull(jiraAuthenticationContext);
     }

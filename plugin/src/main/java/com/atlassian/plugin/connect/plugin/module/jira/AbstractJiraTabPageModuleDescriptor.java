@@ -7,6 +7,7 @@ import com.atlassian.plugin.connect.plugin.integration.plugins.DescriptorToRegis
 import com.atlassian.plugin.connect.plugin.integration.plugins.DynamicDescriptorRegistration;
 import com.atlassian.plugin.connect.plugin.module.ConditionProcessor;
 import com.atlassian.plugin.connect.plugin.module.IFrameParamsImpl;
+import com.atlassian.plugin.connect.plugin.module.webfragment.UrlValidator;
 import com.atlassian.plugin.connect.spi.module.IFrameParams;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
 import com.atlassian.plugin.module.ModuleFactory;
@@ -26,35 +27,37 @@ public abstract class AbstractJiraTabPageModuleDescriptor extends AbstractModule
 {
     private final DynamicDescriptorRegistration dynamicDescriptorRegistration;
     private final ConditionProcessor conditionProcessor;
+    private final UrlValidator urlValidator;
 
     private Element descriptor;
     private DynamicDescriptorRegistration.Registration registration;
 
-    protected  String url;
-
+    protected String url;
 
     public AbstractJiraTabPageModuleDescriptor(
             final ModuleFactory moduleFactory,
             final DynamicDescriptorRegistration dynamicDescriptorRegistration,
-            final ConditionProcessor conditionProcessor)
+            final ConditionProcessor conditionProcessor,
+            final UrlValidator urlValidator)
     {
         super(moduleFactory);
+        this.urlValidator = urlValidator;
         this.dynamicDescriptorRegistration = checkNotNull(dynamicDescriptorRegistration);
         this.conditionProcessor = checkNotNull(conditionProcessor);
     }
 
     /**
      * Prefix used to specify module key
-     * @return
+     * @return module key prefix
      */
     protected abstract String getModulePrefix();
 
     /**
-     * Creating plugin module descriptor
-     * @param key
-     * @param iFrameParams
-     * @param condition
-     * @return
+     * Subclass should create and return local module descriptor here.
+     * @param key plugin key
+     * @param iFrameParams plugin params
+     * @param condition plugin condition
+     * @return plugin module descriptor
      */
     protected abstract JiraResourcedModuleDescriptor createTabPanelModuleDescriptor(final String key, final IFrameParams iFrameParams, final Condition condition);
 
@@ -64,6 +67,7 @@ public abstract class AbstractJiraTabPageModuleDescriptor extends AbstractModule
         super.init(plugin, element);
         this.descriptor = element;
         this.url = getRequiredAttribute(element, "url");
+        urlValidator.validate(this.url);
     }
 
     @Override
