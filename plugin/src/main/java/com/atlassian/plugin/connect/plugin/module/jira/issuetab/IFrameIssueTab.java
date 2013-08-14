@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin.module.jira.issuetab;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import com.atlassian.jira.plugin.issuetabpanel.*;
@@ -13,6 +14,7 @@ import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
 import com.atlassian.plugin.web.Condition;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 import org.slf4j.Logger;
@@ -24,7 +26,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * An issue tab that displays an iframe but isn't included in the all tab
  */
-public class IFrameIssueTab extends AbstractIssueTabPanel2
+public class IFrameIssueTab extends AbstractIssueTabPanel3
 {
     private static final Logger log = LoggerFactory.getLogger(IFrameIssueTab.class);
     private final IFrameRendererImpl iFrameRenderer;
@@ -41,9 +43,9 @@ public class IFrameIssueTab extends AbstractIssueTabPanel2
     }
 
     @Override
-    public GetActionsReply getActions(GetActionsRequest request)
+    public List<IssueAction> getActions(final GetActionsRequest request)
     {
-        return GetActionsReply.create(new IFrameIssueAction(request, iFrameRenderer, iFrameContext));
+        return ImmutableList.<IssueAction>of(new IFrameIssueAction(request, iFrameRenderer, iFrameContext));
     }
 
     public static class IFrameIssueAction implements IssueAction
@@ -97,8 +99,9 @@ public class IFrameIssueTab extends AbstractIssueTabPanel2
     }
 
     @Override
-    public ShowPanelReply showPanel(ShowPanelRequest request)
+    public boolean showPanel(final ShowPanelRequest request)
     {
-        return ShowPanelReply.create(!condition.isPresent() || condition.get().shouldDisplay(createConditionContext(request)));
+        return !condition.isPresent() || condition.get().shouldDisplay(createConditionContext(request));
+
     }
 }
