@@ -21,8 +21,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Common part of module descriptor for all JIRA tab panels
- *
- * @since v6.1
  */
 public abstract class AbstractJiraTabPageModuleDescriptor extends AbstractModuleDescriptor<Void>
 {

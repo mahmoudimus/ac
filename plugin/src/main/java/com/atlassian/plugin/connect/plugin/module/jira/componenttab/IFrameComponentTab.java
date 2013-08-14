@@ -21,8 +21,6 @@ import static com.atlassian.plugin.connect.plugin.module.jira.JiraTabConditionCo
 
 /**
  * A tab that displays an iframe
- *
- * @since v6.1
  */
 public class IFrameComponentTab implements ComponentTabPanel
 {

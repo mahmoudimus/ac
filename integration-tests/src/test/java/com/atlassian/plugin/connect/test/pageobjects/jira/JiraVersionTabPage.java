@@ -14,8 +14,6 @@ import javax.inject.Inject;
 
 /**
  * Describes JIRA version tab
- *
- * @since v6.1
  */
 public class JiraVersionTabPage extends AbstractJiraPage
 {

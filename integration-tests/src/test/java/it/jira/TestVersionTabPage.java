@@ -21,8 +21,6 @@ import static org.junit.Assert.assertThat;
 
 /**
  * Test of remote version tab panel in JIRA
- *
- * @since v6.1
  */
 public class TestVersionTabPage extends TestBase
 {

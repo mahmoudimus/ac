@@ -19,8 +19,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * A remote version tab that loads is contents from an iframe
- *
- * @since v6.1
  */
 public class VersionTabPageModuleDescriptor extends AbstractJiraTabPageModuleDescriptor
 {

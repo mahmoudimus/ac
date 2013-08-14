@@ -14,8 +14,6 @@ import javax.inject.Inject;
 
 /**
  * Describes JIRA component tab
- *
- * @since v6.1
  */
 public class JiraComponentTabPage extends AbstractJiraPage
 {

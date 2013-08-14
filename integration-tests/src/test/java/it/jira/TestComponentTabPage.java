@@ -19,8 +19,6 @@ import static org.junit.Assert.assertThat;
 
 /**
  * Test of remote component tab panel in JIRA
- *
- * @since v6.1
  */
 public class TestComponentTabPage extends TestBase
 {
