@@ -56,6 +56,36 @@ public final class TestWebHooks extends AbstractBrowserlessTest
         testRemotePluginWebHookFiredOnlyForOwnPlugin(PluginsWebHookProvider.REMOTE_PLUGIN_ENABLED);
     }
 
+    @Test
+    public void testRemotePluginDisabledHookFiredOnlyForOwnPlugin() throws Exception
+    {
+        final WebHookTestServlet servlet = new WebHookTestServlet();
+        final String listenerPath = "/webhook";
+        final AtlassianConnectAddOnRunner plugin1 = new AtlassianConnectAddOnRunner(baseUrl, PluginsWebHookProvider.REMOTE_PLUGIN_DISABLED)
+                .add(WebhookModule.key(PluginsWebHookProvider.REMOTE_PLUGIN_DISABLED + listenerPath.hashCode())
+                        .path(listenerPath)
+                        .event(PluginsWebHookProvider.REMOTE_PLUGIN_DISABLED)
+                        .resource(servlet));
+        final AtlassianConnectAddOnRunner plugin2 = new AtlassianConnectAddOnRunner(baseUrl, "plugin2");
+        try
+        {
+            plugin1.start();
+            plugin2.start();
+            plugin1.uninstall();
+
+            WebHookBody body = servlet.waitForHook();
+            assertWebHookBody(body, PluginsWebHookProvider.REMOTE_PLUGIN_DISABLED);
+
+            plugin2.uninstall();
+            assertNull(servlet.waitForHook());
+        }
+        finally
+        {
+            plugin1.stopRunnerServer();
+            plugin2.stopRunnerServer();
+        }
+    }
+
     private void testRemotePluginWebHookFiredOnlyForOwnPlugin(String webHookId) throws Exception
     {
         final String path = "/webhook";
@@ -92,16 +122,21 @@ public final class TestWebHooks extends AbstractBrowserlessTest
             public void test(WebHookWaiter waiter) throws Exception
             {
                 final WebHookBody body = waiter.waitForHook();
-                assertNotNull(body);
-                Assert.assertEquals(webHookId, body.find("key"));
-                assertNotNull(body.find("clientKey"));
-                assertNotNull(body.find("publicKey"));
-                assertNotNull(body.find("serverVersion"));
-                assertNotNull(body.find("pluginsVersion"));
-                assertEquals(baseUrl, body.find("baseUrl"));
-                assertNotNull(body.find("productType"));
-                assertNotNull(body.find("description"));
+                assertWebHookBody(body, webHookId);
             }
         });
+    }
+
+    private void assertWebHookBody(final WebHookBody body, final String webHookId) throws Exception
+    {
+        assertNotNull(body);
+        Assert.assertEquals(webHookId, body.find("key"));
+        assertNotNull(body.find("clientKey"));
+        assertNotNull(body.find("publicKey"));
+        assertNotNull(body.find("serverVersion"));
+        assertNotNull(body.find("pluginsVersion"));
+        assertEquals(baseUrl, body.find("baseUrl"));
+        assertNotNull(body.find("productType"));
+        assertNotNull(body.find("description"));
     }
 }
