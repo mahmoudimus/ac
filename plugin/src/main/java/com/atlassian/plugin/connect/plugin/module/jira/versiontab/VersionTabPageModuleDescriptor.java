@@ -19,7 +19,7 @@ import com.atlassian.plugin.web.Condition;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * A remote version tab that loads is contents from an iframe
+ * A remote version tab that loads its contents from an iframe
  */
 public class VersionTabPageModuleDescriptor extends AbstractJiraTabPageModuleDescriptor
 {

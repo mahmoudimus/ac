@@ -20,7 +20,7 @@ import com.google.common.base.Optional;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * A remote issue tab that loads is contents from an iframe
+ * A remote issue tab that loads its contents from an iframe
  */
 public final class IssueTabPageModuleDescriptor extends AbstractJiraTabPageModuleDescriptor
 {
