@@ -31,14 +31,14 @@ public class TestRedirects extends AbstractBrowserlessTest
     @Test
     public void testPermanentRedirect() throws Exception
     {
-        AtlassianConnectAddOnRunner runner = new AtlassianConnectAddOnRunner(baseUrl, "permanentRedirect")
+        AtlassianConnectAddOnRunner runner = new AtlassianConnectAddOnRunner(baseUrl)
                 .add(GeneralPageModule.key("page")
                                       .name("Page")
                                       .path("/page")
                                       .resource(new MessageServlet()))
                 .start();
 
-        URL url = new URL(baseUrl + "/plugins/servlet/redirect/permanent?app_key=permanentRedirect&app_url=/page&message=bar");
+        URL url = new URL(baseUrl + "/plugins/servlet/redirect/permanent?app_key=" + runner.getPluginKey() + "&app_url=/page&message=bar");
         HttpURLConnection yc = (HttpURLConnection) url.openConnection();
         assertEquals(HttpStatus.SC_MOVED_PERMANENTLY, yc.getResponseCode());
 

@@ -207,6 +207,7 @@ public final class AtlassianConnectAddOnRunner
         new XMLWriter(writer).write(doc);
         logger.debug("Started Atlassian Connect Add-On at '{}' with descriptor:\n{}", displayUrl, writer);
 
+        System.out.println("Started Atlassian Connect Add-On at " + displayUrl);
         register();
         return this;
     }
