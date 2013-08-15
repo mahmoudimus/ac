@@ -313,6 +313,12 @@
                                     <artifactId>atlassian-util-concurrent</artifactId>
                                     <version>${atlassian-util-concurrent.version}</version>
                                 </libArtifact>
+                                <!-- TODO remove this once 3.0.5 is in all products -->
+                                <libArtifact>
+                                    <groupId>com.atlassian.plugins</groupId>
+                                    <artifactId>atlassian-plugins-core</artifactId>
+                                    <version>${atlassian.plugins.version}</version>
+                                </libArtifact>
                             </libArtifacts>
                         </product>
                         <product>
@@ -347,6 +353,12 @@
                             
                             
                             <libArtifacts>
+                                <!-- TODO remove this once 3.0.5 is in all products -->
+                                <libArtifact>
+                                    <groupId>com.atlassian.plugins</groupId>
+                                    <artifactId>atlassian-plugins-core</artifactId>
+                                    <version>${atlassian.plugins.version}</version>
+                                </libArtifact>
                             </libArtifacts>
                         </product>
                     </products>
