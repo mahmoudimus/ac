@@ -37,9 +37,8 @@
    */
   function XdmRpc(config, bindings) {
 
-    var self, id = "" + (count += 1),
-        target, remoteOrigin, channel, mixin,
-        localKey, remoteKey,
+    var self, id, target, remoteOrigin, channel, mixin,
+        localKey, remoteKey, addonKey,
         locals = bindings.local || {},
         remotes = bindings.remote || [];
 
@@ -80,6 +79,7 @@
       target = iframe.contentWindow;
       localKey = param(config.remote, "oauth_consumer_key");
       remoteKey = config.remoteKey;
+      addonKey = remoteKey;
       remoteOrigin = getBaseUrl(config.remote);
       channel = config.channel;
       // Define the host-side mixin
@@ -105,6 +105,7 @@
       target = w.parent;
       localKey = "local"; // Would be better to make this the add-on key, but it's not readily available at this time
       remoteKey = param(loc, "oauth_consumer_key");
+      addonKey = localKey;
       remoteOrigin = param(loc, "xdm_e");
       channel = param(loc, "xdm_c");
       // Define the add-on-side mixin
@@ -115,6 +116,8 @@
         }
       };
     }
+
+    id = addonKey + "|" + (count += 1);
 
     // Create the actual XdmRpc instance, and apply the context-sensitive mixin
     self = $.extend({
@@ -140,21 +143,21 @@
     // Sends a request with a specific remote method name, args, and optional callbacks
     function sendRequest(methodName, args, done, fail) {
       // Generate a random ID for this remote invocation
-      var id = Math.floor(Math.random() * 1000000000).toString(16);
+      var sid = Math.floor(Math.random() * 1000000000).toString(16);
       // Register any callbacks with the nexus so they can be invoked when a response is received
-      nexus.add(id, done, fail);
+      nexus.add(sid, done, fail);
       // Send a request to the remote, where:
       //  - n is the name of the remote function
       //  - a is an array of the (hopefully) serializable, non-callback arguments to this method
-      send(id, "request", {n: methodName, a: args});
+      send(sid, "request", {n: methodName, a: args});
     }
 
-    function sendDone(id, message) {
-      send(id, "done", message);
+    function sendDone(sid, message) {
+      send(sid, "done", message);
     }
 
-    function sendFail(id, message) {
-      send(id, "fail", message);
+    function sendFail(sid, message) {
+      send(sid, "fail", message);
     }
 
     // Handles an normalized, incoming post-message event
@@ -243,31 +246,33 @@
     var bus = self.events = new events.Events(localKey, localOrigin);
     // Attach an any-listener to forward all locally-originating events to the remote peer
     bus.onAny(function () {
-      var args = [].slice.call(arguments);
       // The actual event object is the last argument passed to any listener
-      var event = args[args.length - 1];
-      // If the event originated locally or this is the host-side and the event didn't originate from the remote peer,
-      // then forward it to the remote peer
-      var eventOrigin = event.source.origin;
-      if (eventOrigin === localOrigin || (self.isHost && eventOrigin !== remoteOrigin)) {
-        debug("Forwarding local event:", event);
+      var event = arguments[arguments.length - 1];
+      var trace = event.trace = event.trace || {};
+      var traceKey = id + "|xdm";
+      if ((self.isHost && !trace[traceKey] && event.source.channel !== id)
+          || (!self.isHost && event.source.key === localKey)) {
+        // Only forward an event once in this listener
+        trace[traceKey] = true;
+        debug("Forwarding " + (self.isHost ? "host" : "addon") + " event:", event);
         sendRequest("_event", [event]);
       }
     });
     // Define our own reserved local to receive remote events
     locals._event = function (event) {
+      // Reset tracing info on each bridge-crossing
+      delete event.trace;
       if (self.isHost) {
-        console.log('hey', arguments);
         // When the running on the host-side, forcibly reset the event's key and origin fields, to prevent spoofing by
         // untrusted add-ons; also include the host-side XdmRpc instance id to tag the event with this particular
         // instance of the host/add-on relationship
         event.source = {
-          id: id,
+          channel: id, // Note: the term channel here != the deprecated xdm channel param
           key: remoteKey,
           origin: remoteOrigin
         };
       }
-      debug("Receiving remote event:", event);
+      debug("Receiving " + (self.isHost ? "addon" : "host") + " event:", event);
       // Emit the event on the local bus
       bus._emitEvent(event);
     };
@@ -355,8 +360,7 @@
     if (log) log.apply(w, arguments);
   }
 
-  // DEBUG
-  XdmRpc.debug = true;
+//  XdmRpc.debug = true;
 
   return XdmRpc;
 

@@ -15,9 +15,15 @@ AP.define("dialog", ["_dollar", "_rpc"], function ($, rpc) {
 
       create: function(options) {
         remote.createDialog(options);
+        return {
+          on: function (event, callback) {
+            remote.events.on("dialog." + event, callback);
+          }
+        };
       },
 
-      close: function() {
+      close: function(data) {
+        remote.events.emit("dialog.close", data);
         remote.closeDialog();
       },
 

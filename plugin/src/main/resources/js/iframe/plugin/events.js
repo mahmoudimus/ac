@@ -12,7 +12,24 @@ AP.define("events", ["_dollar", "_rpc"], function ($, rpc) {
         return remote.events[name].apply(remote.events, arguments);
       };
     });
-    return {apis: apis};
+
+// TODO: Experimental cross-addon eventing
+//    // Add additional methods that tag the event as being globally-distributable to all addons.
+//
+//    apis.emitGlobal = function (name) {
+//      return apis.emitWhitelist.apply(apis, [/.*/].concat([].slice.call(arguments, 1)));
+//    };
+//
+//    apis.emitWhitelist = function (regex, name) {
+//      remote.events._event.apply(remote.events, arguments).attrs({
+//        _acAllow: regex.toString()
+//      }).emit();
+//      return remote.events;
+//    };
+
+    return {
+      apis: apis
+    };
   });
 
 });
