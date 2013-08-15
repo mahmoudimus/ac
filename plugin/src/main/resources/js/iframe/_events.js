@@ -147,17 +147,44 @@
    * metadata (e.g. the bus's namespace).
    *
    * @param {String} name The name of event to emit
+   * @param {String[]} args 0 or more additional data arguments to deliver with the event
    * @returns {Events} This Events instance
    */
   proto.emit = function (name) {
-    return this._emitEvent({
+    return this._event.apply(this, arguments).emit();
+  };
+
+  /**
+   * Creates an opaque event object from an argument list containing at least a name, and optionally additional
+   * event payload arguments.
+   *
+   * @param {String} name The name of event to emit
+   * @param {String[]} args 0 or more additional data arguments to deliver with the event
+   * @returns {Object} An opaque event object that can have attributes attached and can be directly emitted
+   * @private
+   */
+  proto._event = function (name) {
+    var self = this;
+    var event = {
       name: name,
       args: [].slice.call(arguments, 1),
+      attrs: {},
       source: {
         key: this._key,
         origin: this._origin
       }
-    });
+    };
+    // TODO: convert to a documentable event object
+    return {
+      attrs: function (attrs) {
+        $.extend(event.attrs, attrs);
+        return this;
+      },
+      emit: function () {
+        self._emitEvent(event);
+        return this;
+      }
+    }
   };
 
   /**
@@ -194,12 +221,14 @@
       try {
         this.apply(null, args);
       } catch (e) {
-        log(e);
+        log(e.stack || e.message || e);
       }
     });
   }
 
-  return {Events: Events};
+  return {
+    Events: Events
+  };
 
 });
 
