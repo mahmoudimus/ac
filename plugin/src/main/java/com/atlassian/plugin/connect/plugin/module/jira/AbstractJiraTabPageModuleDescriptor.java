@@ -16,6 +16,7 @@ import com.atlassian.plugin.web.Condition;
 import com.atlassian.util.concurrent.NotNull;
 import org.dom4j.Element;
 
+import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.getOptionalAttribute;
 import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.getRequiredAttribute;
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -90,6 +91,7 @@ public abstract class AbstractJiraTabPageModuleDescriptor extends AbstractModule
 
         final Element desc = descriptor.createCopy();
         String moduleKey = getModulePrefix() + getRequiredAttribute(descriptor, "key");
+        final String weight = getOptionalAttribute(descriptor, "weight", null);
 
         final Condition condition = conditionProcessor.process(descriptor, desc, getPluginKey(), "#" + moduleKey + "-remote-condition-panel");
         if (condition instanceof ContainingRemoteCondition)
@@ -99,6 +101,10 @@ public abstract class AbstractJiraTabPageModuleDescriptor extends AbstractModule
         desc.addAttribute("key", moduleKey);
         desc.addElement("label").setText(tabName);
         desc.addAttribute("class", getIFrameTabClass().getName());
+        if (weight != null)
+        {
+            desc.addElement("order").setText(weight);
+        }
 
         final JiraResourcedModuleDescriptor moduleDescriptor = createDescriptor(moduleKey,
                 desc, new IFrameParamsImpl(descriptor), condition);
