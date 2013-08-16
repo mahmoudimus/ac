@@ -15,6 +15,8 @@ import static com.atlassian.plugin.connect.plugin.module.jira.JiraTabConditionCo
 
 /**
  * Common part of tab panel for all JIRA tab panels
+ * @param <D> module descriptor class for local tab like VersionTabPanelModuleDescriptor
+ * @param <C> jira-core context given locally to renderer like BrowseVersionContext>
  */
 public abstract class AbstractIFrameTab<D, C extends BrowseContext>
 {
@@ -24,13 +26,19 @@ public abstract class AbstractIFrameTab<D, C extends BrowseContext>
     private final IFrameContext iFrameContext;
     private final Condition condition;
 
-    public AbstractIFrameTab(UrlVariableSubstitutor urlVariableSubstitutor, IFrameContext iFrameContext, IFrameRendererImpl iFrameRenderer, Condition condition) {
+    public AbstractIFrameTab(UrlVariableSubstitutor urlVariableSubstitutor, IFrameContext iFrameContext, IFrameRendererImpl iFrameRenderer, Condition condition)
+    {
         this.urlVariableSubstitutor = urlVariableSubstitutor;
         this.iFrameContext = iFrameContext;
         this.iFrameRenderer = iFrameRenderer;
         this.condition = condition;
     }
 
+    /**
+     * Implement this method to retrieve data from context and provide them to iframe
+     * @param context data context
+     * @return map of params that will be provided to iframe
+     */
     protected abstract Map<String, Object> getParams(final C context);
 
     public void init(D descriptor)

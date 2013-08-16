@@ -36,14 +36,16 @@ public class JiraVersionTabPage extends AbstractJiraPage
     }
 
     @Override
-    public TimedCondition isAt() {
+    public TimedCondition isAt()
+    {
         final String versionTabPanelId = VersionTabPageModuleDescriptor.VERSION_TAB_PAGE_MODULE_PREFIX + versionTabId + "-panel-panel";
         tabField = elementFinder.find(By.id(versionTabPanelId));
 
         return tabField.timed().isPresent();
     }
 
-    public void clickTab() {
+    public void clickTab()
+    {
         tabField.click();
 
         final String iframeId = IFRAME_ID_PREFIX + versionTabId + IFRAME_ID_SUFFIX;

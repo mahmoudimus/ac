@@ -38,14 +38,16 @@ public class JiraComponentTabPage extends AbstractJiraPage
 
 
     @Override
-    public TimedCondition isAt() {
+    public TimedCondition isAt()
+    {
         final String componentTabPanelId = ComponentTabPageModuleDescriptor.COMPONENT_TAB_PAGE_MODULE_PREFIX + componentTabId + "-panel-panel";
         tabField = elementFinder.find(By.id(componentTabPanelId));
 
         return tabField.timed().isPresent();
     }
 
-    public void clickTab() {
+    public void clickTab()
+    {
         tabField.click();
 
         final String iframeId = IFRAME_ID_PREFIX + componentTabId + IFRAME_ID_SUFFIX;
@@ -62,11 +64,13 @@ public class JiraComponentTabPage extends AbstractJiraPage
         return "/browse/" + projectKey + "/component/" + componentId;
     }
 
-    public String getProjectKey() {
+    public String getProjectKey()
+    {
         return RemotePageUtil.findInContext(iframeSrc, "project_key");
     }
 
-    public String getComponentId() {
+    public String getComponentId()
+    {
         return RemotePageUtil.findInContext(iframeSrc, "component_id");
     }
 }

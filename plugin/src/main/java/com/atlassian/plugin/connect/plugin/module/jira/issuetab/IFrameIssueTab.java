@@ -38,10 +38,10 @@ public class IFrameIssueTab extends AbstractIssueTabPanel3
 
     public IFrameIssueTab(IFrameContext iFrameContext, IFrameRendererImpl iFrameRenderer, Optional<Condition> condition, UrlVariableSubstitutor urlVariableSubstitutor)
     {
-        this.urlVariableSubstitutor = urlVariableSubstitutor;
+        this.urlVariableSubstitutor = checkNotNull(urlVariableSubstitutor);
         this.iFrameContext = checkNotNull(iFrameContext);
         this.iFrameRenderer = checkNotNull(iFrameRenderer);
-        this.condition = condition;
+        this.condition = checkNotNull(condition);
     }
 
     @Override
@@ -92,7 +92,7 @@ public class IFrameIssueTab extends AbstractIssueTabPanel3
                             "id", request.issue().getId(),
                             "key", request.issue().getKey()
                     ),
-                    /* //deprecated */
+                    /* //deprecated: use issue.key instead; to be removed with AC-702  */
                     "ctx_issue_key", request.issue().getKey()
             );
 

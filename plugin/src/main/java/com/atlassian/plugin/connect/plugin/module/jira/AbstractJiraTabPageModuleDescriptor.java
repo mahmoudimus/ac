@@ -41,7 +41,7 @@ public abstract class AbstractJiraTabPageModuleDescriptor extends AbstractModule
             final UrlValidator urlValidator)
     {
         super(moduleFactory);
-        this.urlValidator = urlValidator;
+        this.urlValidator = checkNotNull(urlValidator);
         this.dynamicDescriptorRegistration = checkNotNull(dynamicDescriptorRegistration);
         this.conditionProcessor = checkNotNull(conditionProcessor);
     }

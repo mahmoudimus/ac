@@ -31,9 +31,9 @@ public class IFrameProjectTab extends AbstractIFrameTab<ProjectTabPanelModuleDes
                             "id", context.getProject().getId(),
                             "key", context.getProject().getKey()
                     ),
-                /* //deprecated */
+                /* //deprecated: use project.key instead; to be removed with AC-702  */
                 "ctx_project_key", context.getContextKey(),
-                /* //deprecated */
+                /* //deprecated: use project.id instead; to be removed with AC-702  */
                 "ctx_project_id", String.valueOf(context.getProject().getId())
         );
     }
