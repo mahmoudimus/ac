@@ -81,7 +81,21 @@ public class IFrameIssueTab extends AbstractIssueTabPanel3
 
         private Map<String, Object> getParams()
         {
-            return ImmutableMap.<String, Object>of("ctx_issue_key", request.issue().getKey());
+            return ImmutableMap.<String, Object>of(
+                    "project",
+                    ImmutableMap.of(
+                            "id", request.issue().getProjectObject().getId(),
+                            "key", request.issue().getProjectObject().getKey()
+                    ),
+                    "issue",
+                    ImmutableMap.of(
+                            "id", request.issue().getId(),
+                            "key", request.issue().getKey()
+                    ),
+                    /* //deprecated */
+                    "ctx_issue_key", request.issue().getKey()
+            );
+
         }
 
         private IFrameContext substituteContext(final Map<String, Object> paramsMap)

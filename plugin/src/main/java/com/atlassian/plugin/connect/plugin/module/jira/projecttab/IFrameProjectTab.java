@@ -26,7 +26,15 @@ public class IFrameProjectTab extends AbstractIFrameTab<ProjectTabPanelModuleDes
     protected Map<String, Object> getParams(final BrowseContext context)
     {
         return ImmutableMap.<String, Object>of(
+                "project",
+                    ImmutableMap.of(
+                            "id", context.getProject().getId(),
+                            "key", context.getProject().getKey()
+                    ),
+                /* //deprecated */
                 "ctx_project_key", context.getContextKey(),
-                "ctx_project_id", String.valueOf(context.getProject().getId()));
+                /* //deprecated */
+                "ctx_project_id", String.valueOf(context.getProject().getId())
+        );
     }
 }
