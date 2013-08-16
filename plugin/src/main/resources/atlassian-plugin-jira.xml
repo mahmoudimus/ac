@@ -87,6 +87,18 @@
         </description>
     </described-module-type>
 
+    <described-module-type key="component-tab-page" class="com.atlassian.plugin.connect.plugin.module.jira.componenttab.ComponentTabPageModuleDescriptor">
+        <description>
+            A remote page decorated as its own JIRA component tab
+        </description>
+    </described-module-type>
+
+    <described-module-type key="version-tab-page" class="com.atlassian.plugin.connect.plugin.module.jira.versiontab.VersionTabPageModuleDescriptor">
+        <description>
+            A remote page decorated as a tab on the project version page.
+        </description>
+    </described-module-type>
+
     <described-module-type key="issue-tab-page" class="com.atlassian.plugin.connect.plugin.module.jira.issuetab.IssueTabPageModuleDescriptor">
         <description>
             A remote page decorated as its own JIRA issue tab but not included in All tab as it has no individual actions
