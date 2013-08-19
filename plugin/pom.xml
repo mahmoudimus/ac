@@ -207,6 +207,7 @@
                     <jvmArgs>-Xmx1024m -XX:MaxPermSize=256m</jvmArgs>
                     <instructions>
                         <Import-Package>
+                            com.atlassian.upm.*,
                             com.atlassian.confluence.plugin.descriptor.web.descriptors;resolution:=optional,
                             com.atlassian.confluence.plugin.webresource;resolution:=optional,
                             com.atlassian.confluence.security.websudo;resolution:=optional,
