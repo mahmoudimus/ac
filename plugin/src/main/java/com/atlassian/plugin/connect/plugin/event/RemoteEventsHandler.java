@@ -11,7 +11,7 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.spi.ConnectAddOnIdentifierService;
 import com.atlassian.plugin.event.PluginEventListener;
 import com.atlassian.plugin.event.PluginEventManager;
-import com.atlassian.plugin.event.events.BeforePluginDisabledEvent;
+//import com.atlassian.plugin.event.events.BeforePluginDisabledEvent;
 import com.atlassian.plugin.event.events.PluginEnabledEvent;
 import com.atlassian.plugin.connect.spi.event.RemotePluginDisabledEvent;
 import com.atlassian.plugin.connect.spi.event.RemotePluginEnabledEvent;
@@ -76,15 +76,15 @@ public final class RemoteEventsHandler implements InitializingBean, DisposableBe
         }
     }
 
-    @PluginEventListener
-    public void pluginDisabled(BeforePluginDisabledEvent pluginDisabledEvent)
-    {
-        final Plugin plugin = pluginDisabledEvent.getPlugin();
-        if (connectIdentifier.isConnectAddOn(plugin))
-        {
-            eventPublisher.publish(new RemotePluginDisabledEvent(plugin.getKey(), newRemotePluginEventData()));
-        }
-    }
+//    @PluginEventListener
+//    public void pluginDisabled(BeforePluginDisabledEvent pluginDisabledEvent)
+//    {
+//        final Plugin plugin = pluginDisabledEvent.getPlugin();
+//        if (connectIdentifier.isConnectAddOn(plugin))
+//        {
+//            eventPublisher.publish(new RemotePluginDisabledEvent(plugin.getKey(), newRemotePluginEventData()));
+//        }
+//    }
 
     @VisibleForTesting
     Map<String, Object> newRemotePluginEventData()
