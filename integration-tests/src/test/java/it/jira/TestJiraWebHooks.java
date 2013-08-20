@@ -1,22 +1,25 @@
 package it.jira;
 
 import com.atlassian.jira.pageobjects.JiraTestedProduct;
-import com.atlassian.plugin.remotable.test.jira.JiraOps;
-import com.atlassian.plugin.remotable.test.webhook.WebHookBody;
-import com.atlassian.plugin.remotable.test.webhook.WebHookTester;
-import com.atlassian.plugin.remotable.test.webhook.WebHookWaiter;
+import com.atlassian.plugin.connect.test.pageobjects.jira.JiraOps;
+import com.atlassian.plugin.connect.test.webhook.WebHookBody;
+import com.atlassian.plugin.connect.test.webhook.WebHookTester;
+import com.atlassian.plugin.connect.test.webhook.WebHookWaiter;
+
 import com.google.common.collect.ImmutableMap;
+
+import org.hamcrest.Matchers;
+import org.junit.Test;
+
 import hudson.plugins.jira.soap.RemoteIssue;
 import hudson.plugins.jira.soap.RemoteNamedObject;
 import hudson.plugins.jira.soap.RemoteProject;
 import it.AbstractBrowserlessTest;
-import org.hamcrest.Matchers;
-import org.junit.Test;
 
-import static com.atlassian.plugin.remotable.test.webhook.WebHookTestServlet.runInRunner;
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
+import static com.atlassian.plugin.connect.test.webhook.WebHookTestServlet.runInRunner;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Though jira-webhooks-plugin is a seperate component the following test executes a quick smoke test
@@ -24,7 +27,6 @@ import static org.junit.Assert.assertThat;
  */
 public class TestJiraWebHooks extends AbstractBrowserlessTest
 {
-
     private final JiraOps jiraOps;
 
     public TestJiraWebHooks()

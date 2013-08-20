@@ -59,6 +59,30 @@
     }
   }
 
+  /**
+   * Sets up cross-iframe remote procedure calls.
+   * If this is called from a parent window, iframe is created and a RPC interface for communicating with it is set up.
+   * If this is called from within the iframe, and RPC interface for communicating with the parent is set up.
+   *
+   * Calling a remote function is done with the signature:
+   *     fn(data..., doneCallback, failCallback)
+   * doneCallback is called after the remote function executed successfully.
+   * failCallback is called after the remote function throws an exception
+   * doneCallback and failCallback are optional.
+   *
+   * @param {Object} config Configuration parameters
+   * @param {String} config.remote src of remote iframe
+   * @param {String} config.container id of element to which the generated iframe is appended
+   * @param {String} config.channel channel
+   * @param {Object} config.props additional attributes to add to iframe element
+   * @param {Object} bindings RPC method stubs and implementations
+   * @param {Object} bindings.local local function implementations - functions that exist in the current context.
+   *    XMLRPC exposes these functions so that they can be invoked by code running in the other side of the iframe.
+   * @param {Array} bindings.remote names of functions which exist on the other side of the iframe.
+   *    XMLRPC creates stubs to these functions that can be invoked from the current page.
+   * @returns XDM-RPC instance
+   * @constructor
+   */
   function XdmRpc(config, bindings) {
 
     var self, id = (count += 1),

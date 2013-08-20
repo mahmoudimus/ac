@@ -37,7 +37,6 @@
     <xsl:template match="plugin-info/permissions">
         <xsl:copy>
             <xsl:apply-templates select="permission"/>
-            <xsl:apply-templates select="document(concat('file:///',$baseDir,'/atlassian-plugin-refapp.xml'))/application/permissions/permission"/>
             <xsl:apply-templates select="document(concat('file:///',$baseDir,'/atlassian-plugin-confluence.xml'))/application/permissions/permission"/>
             <xsl:apply-templates select="document(concat('file:///',$baseDir,'/atlassian-plugin-jira.xml'))/application/permissions/permission"/>
         </xsl:copy>
@@ -53,7 +52,6 @@
     <xsl:template match="atlassian-plugin">
         <xsl:copy>
             <xsl:apply-templates select="@*|node()"/>
-            <xsl:apply-templates select="document(concat('file:///',$baseDir,'/atlassian-plugin-refapp.xml'))"/>
             <xsl:apply-templates select="document(concat('file:///',$baseDir,'/atlassian-plugin-confluence.xml'))"/>
             <xsl:apply-templates select="document(concat('file:///',$baseDir,'/atlassian-plugin-jira.xml'))"/>
         </xsl:copy>

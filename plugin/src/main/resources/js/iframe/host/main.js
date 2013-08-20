@@ -34,7 +34,6 @@ _AP.define("host/main", ["_xdm-rpc"], function (XdmRpc) {
 
     function showStatus(name) {
       $home.find(".ap-status").addClass("hidden");
-      $home.find(".ap-" + name).removeClass("hidden");
     }
 
     var timeout = setTimeout(function () {
@@ -95,9 +94,6 @@ _AP.define("host/main", ["_xdm-rpc"], function (XdmRpc) {
             $("iframe", $content).css({width: width, height: height});
           }
         }),
-        fireEvent: function(id, props) {
-          publish("p3.iframe." + id, props);
-        },
         getLocation: function () {
           return window.location.href;
         },
@@ -143,6 +139,17 @@ _AP.define("host/main", ["_xdm-rpc"], function (XdmRpc) {
           var button = getDialogButton(name);
           callback(button ? button.isEnabled() : void 0);
         },
+        createDialog: function(dialogOptions) {
+          _AP.require("dialog", function(dialog) {
+            dialog.create(options.key, dialogOptions);
+          });
+        },
+        closeDialog: function() {
+          _AP.require("dialog", function(dialog) {
+            // TODO: only allow closing from same plugin key?
+            dialog.close();
+          });
+        },
         request: function (args, success, error) {
           // add the context path to the request url
           var url = options.cp + args.url;
@@ -172,9 +179,12 @@ _AP.define("host/main", ["_xdm-rpc"], function (XdmRpc) {
             contentType: args.contentType,
             headers: {
               // */* will undo the effect on the accept header of having set dataType to "text"
-              "Accept": headers.accept || "*/*",
-              // send the app key header to force scope checks
-              "AP-App-Key": options.key
+              "Accept": headers.accept || "*/*"
+
+              // send the client key header to force scope checks
+              // ACDEV-363: Temporarily disabling scope checking on the client until
+              // we figure out our long term strategy with permissions
+              // "AP-Client-Key": options.key
             }
           }).then(done, fail);
         },
@@ -187,6 +197,11 @@ _AP.define("host/main", ["_xdm-rpc"], function (XdmRpc) {
           _AP.require("confluence/macro/editor", function(editor) {
               editor.saveMacro(updatedParams);
           });
+        },
+        closeMacroEditor: function () {
+            _AP.require("confluence/macro/editor", function (editor) {
+                editor.close();
+            })
         }
       }
     });

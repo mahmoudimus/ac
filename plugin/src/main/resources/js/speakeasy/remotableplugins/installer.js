@@ -6,7 +6,7 @@ var contextPath = window.contextPath === undefined ? host.findContextPath() : wi
 
 function sendRegistrationToken(url, callbacks) {
     $.ajax({
-      url: contextPath + "/rest/remotable-plugins/latest/installer",
+      url: contextPath + "/rest/atlassian-connect/latest/installer",
       type: 'POST',
       beforeSend: function(jqXHR, settings) {
         jqXHR.setRequestHeader("X-Atlassian-Token", "nocheck");
@@ -19,7 +19,7 @@ function sendRegistrationToken(url, callbacks) {
           callbacks.success();
       },
       error: function(xhr) {
-          AJS.messages.error('#remotable-plugins-errors', {body:xhr.responseText});
+          AJS.messages.error('#atlassian-connect-errors', {body:xhr.responseText});
           callbacks.failure();
       }
     });
@@ -47,12 +47,12 @@ function openKeygen() {
     dialog.addPanel("Keygen", keygenDialogContents, "panel-body");
     dialog.show();
     $.ajax({
-          url: contextPath + "/rest/remotable-plugins/latest/installer/keygen",
+          url: contextPath + "/rest/atlassian-connect/latest/installer/keygen",
           type: 'POST',
           dataType : 'json',
           success: function(data) {
-            $('#remotable-plugins-public-key').text(data.publicKey);
-            $('#remotable-plugins-private-key').text(data.privateKey);
+            $('#atlassian-connect-public-key').text(data.publicKey);
+            $('#atlassian-connect-private-key').text(data.privateKey);
           }
         });
     $('#keygen-close-link').click(function(e) {
@@ -65,7 +65,7 @@ $(document).ready(function() {
     $('#rp-install').click(function(e) {
         e.preventDefault();
         var dialog = openOnePanelDialog({
-                    id : 'remotable-plugins-install-dialog',
+                    id : 'atlassian-connect-install-dialog',
                     width : 700,
                     height : 550,
                     header : 'Install Remotable Plugin',
@@ -73,10 +73,10 @@ $(document).ready(function() {
                       contextPath : contextPath
                     }),
                     submit : function(dialog, callbacks) {
-                        var url = $('#remotable-plugins-url').val();
+                        var url = $('#atlassian-connect-url').val();
                         sendRegistrationToken(url, callbacks);
                     },
-                    submitClass : 'remotable-plugins-submit'
+                    submitClass : 'atlassian-connect-submit'
                 });
         $('#rp-keygen').click(function(e) {
             e.preventDefault();
@@ -108,7 +108,7 @@ $(document).ready(function() {
         $('.rp-uninstall', $row).click(function(e) {
             e.preventDefault();
             $.ajax({
-              url: contextPath + "/rest/remotable-plugins/latest/uninstaller/" + key,
+              url: contextPath + "/rest/atlassian-connect/latest/uninstaller/" + key,
               type: 'DELETE',
               success: function(data) {
                 addMessage('success', {body: "Uninstallation successful <a href='javascript:window.location.reload();'>(refresh)</a> "});

@@ -70,8 +70,8 @@ AP.require(
 
   // find the script element that imported this code
   var options = {},
-      $script = $("script[src*='/remotable-plugins/all']");
-  if ($script && /\/remotable-plugins\/all(-debug)?\.js($|\?)/.test($script.attr("src"))) {
+      $script = $("script[src*='/atlassian-connect/all']");
+  if ($script && /\/atlassian-connect\/all(-debug)?\.js($|\?)/.test($script.attr("src"))) {
     // get its data-options attribute, if any
     var optStr = $script.attr("data-options");
     if (optStr) {

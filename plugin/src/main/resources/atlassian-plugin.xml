@@ -1,54 +1,57 @@
-<atlassian-plugin key="com.atlassian.labs.remoteapps-plugin" name="${project.name}" plugins-version="2">
+<atlassian-plugin key="com.atlassian.plugins.atlassian-connect-plugin" name="${project.name}" plugins-version="2">
     <plugin-info>
         <description>${project.description}</description>
-        <version>${plugin.version}</version>
+        <version>${project.version}</version>
         <vendor name="${project.organization.name}" url="${project.organization.url}" />
     </plugin-info>
 
-    <servlet-filter key="big-pipe-request-id" class="com.atlassian.plugin.remotable.host.common.service.http.bigpipe.BigPipeRequestIdFilter"
+    <servlet-filter key="big-pipe-request-id" class="com.atlassian.plugin.connect.spi.http.bigpipe.BigPipeRequestIdFilter"
                     location="after-encoding">
         <url-pattern>/*</url-pattern>
     </servlet-filter>
 
-    <servlet-filter key="iframe-resources" class="com.atlassian.plugin.remotable.plugin.iframe.StaticResourcesFilter"
-            location="after-encoding">
-        <url-pattern>/remotable-plugins/*</url-pattern>
+    <servlet-filter key="iframe-resources" class="com.atlassian.plugin.connect.plugin.iframe.StaticResourcesFilter"
+                    location="after-encoding">
+        <url-pattern>/atlassian-connect/*</url-pattern>
     </servlet-filter>
-
-    <servlet-filter key="universal-binary-dispatching" class="bean:ubDispatchFilter"
-                    location="after-encoding" weight="1000">
-        <url-pattern>/app/*</url-pattern>
-    </servlet-filter>
-
-    <servlet-filter key="api-scoping" class="com.atlassian.plugin.remotable.plugin.module.permission.ApiScopingFilter"
+    
+    <servlet-filter key="api-scoping" class="com.atlassian.plugin.connect.plugin.module.permission.ApiScopingFilter"
             location="before-decoration">
         <url-pattern>/*</url-pattern>
     </servlet-filter>
 
-    <servlet-filter key="oauth-2lo-authentication" class="com.atlassian.plugin.remotable.plugin.module.oauth.OAuth2LOFilter"
+    <servlet-filter key="oauth-2lo-authentication" class="com.atlassian.plugin.connect.plugin.module.oauth.OAuth2LOFilter"
             location="after-encoding" weight="2000">
         <url-pattern>/*</url-pattern>
     </servlet-filter>
 
-    <servlet-filter key="big-pipe-content" class="com.atlassian.plugin.remotable.host.common.service.http.bigpipe.BigPipeContentFilter"
+    <servlet-filter key="big-pipe-content" class="com.atlassian.plugin.connect.spi.http.bigpipe.BigPipeContentFilter"
                     location="before-dispatch">
         <url-pattern>/bigpipe/request/*</url-pattern>
     </servlet-filter>
 
     <servlet key="remotablePlugins2LORedirectingServlet"
              name="Remotable Plugins 2-Legged OAuth Signing and Redirecting Servlet"
-             class="com.atlassian.plugin.remotable.plugin.module.util.redirect.RedirectServlet">
+             class="com.atlassian.plugin.connect.plugin.module.util.redirect.RedirectServlet">
         <description>Redirects to Remotable Plugins, using 2-legged OAuth to sign the outgoing request.  Request parameters are included in the redirect.</description>
         <url-pattern>/redirect/oauth</url-pattern>
     </servlet>
     <servlet key="remotablePluginsPermanentRedirectingServlet"
              name="Remotable Plugins Permanent Redirecting Servlet"
-             class="com.atlassian.plugin.remotable.plugin.module.util.redirect.RedirectServlet">
+             class="com.atlassian.plugin.connect.plugin.module.util.redirect.RedirectServlet">
         <description>
             Redirects to a Remote App resource, usually an image, with a permanent redirect, but
             doesn't sign the request.  Request parameters are included in the redirect.
         </description>
         <url-pattern>/redirect/permanent</url-pattern>
+    </servlet>
+    <servlet key="remotablePluginsIframe"
+             name="Remotable Plugins Iframe Generator"
+             class="com.atlassian.plugin.connect.plugin.module.page.ContextFreeIFramePageServlet">
+        <description>
+            Generates a template for serving a signed remote iframe
+        </description>
+        <url-pattern>/render-signed-iframe</url-pattern>
     </servlet>
 
     <web-resource key="ap-amd">
@@ -62,22 +65,23 @@
         <context>atl.admin</context>
         <context>atl.general</context>
         <dependency>com.atlassian.auiplugin:ajs</dependency>
-        <dependency>com.atlassian.labs.remoteapps-plugin:ap-amd</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-amd</dependency>
         <resource type="download" name="xdm-rpc.js" location="/js/iframe/xdm-rpc.js" />
         <resource type="download" name="main.js" location="/js/iframe/host/main.js" />
     </web-resource>
 
     <web-resource key="dialog">
+        <resource type="download" name="main.js" location="js/dialog/main.js" />
         <resource type="download" name="simple.js" location="js/dialog/simple.js" />
         <dependency>com.atlassian.auiplugin:ajs</dependency>
-        <dependency>com.atlassian.labs.remoteapps-plugin:ap-amd</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-amd</dependency>
     </web-resource>
 
     <web-resource key="confluence-macro">
         <resource type="download" name="editor.js" location="js/confluence/macro/editor.js" />
         <context>atl.general</context>
         <dependency>com.atlassian.auiplugin:ajs</dependency>
-        <dependency>com.atlassian.labs.remoteapps-plugin:ap-amd</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-amd</dependency>
     </web-resource>
 
     <web-resource key="iframe-host-css">
@@ -91,8 +95,8 @@
         <resource type="download" name="remote.js" location="js/condition/remote.js" />
         <context>atl.general</context>
         <context>atl.admin</context>
-        <dependency>com.atlassian.labs.remoteapps-plugin:ap-amd</dependency>
-        <dependency>com.atlassian.labs.remoteapps-plugin:big-pipe</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-amd</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:big-pipe</dependency>
     </web-resource>
 
     <web-resource key="images">
@@ -104,22 +108,12 @@
         <context>atl.general</context>
         <context>atl.admin</context>
         <dependency>com.atlassian.auiplugin:ajs</dependency>
-        <dependency>com.atlassian.labs.remoteapps-plugin:dialog</dependency>
-    </web-resource>
-
-    <web-resource key="smoke-test">
-        <resource type="download" content-type="application/xml" name="atlassian-plugin.xml" location="/remotable-plugins-smoke-test/atlassian-plugin.xml" />
-        <resource type="download" name="general-page.html" content-type="text/html" location="/remotable-plugins-smoke-test/general-page.html" />
-        <transformation extension="xml">
-            <transformer key="baseUrlTransformer"/>
-        </transformation>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:dialog</dependency>
     </web-resource>
 
     <web-resource key="schema-xsl">
         <resource type="download" content-type="application/xml" name="xs3p.xsl" location="/xsd/xs3p.xsl"/>
     </web-resource>
-
-    <web-resource-transformer key="baseUrlTransformer" class="com.atlassian.plugin.remotable.plugin.integration.smoketest.BaseUrlTransformer"/>
 
     <!-- big pipe stuff -->
     <web-resource key="big-pipe">
@@ -127,49 +121,46 @@
         <context>atl.admin</context>
         <context>atl.general</context>
         <dependency>com.atlassian.auiplugin:ajs</dependency>
-        <dependency>com.atlassian.labs.remoteapps-plugin:ap-amd</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-amd</dependency>
     </web-resource>
 
     <component key="pluginUriResolver"
                interface="com.atlassian.webhooks.spi.plugin.PluginUriResolver" public="true"
-               class="com.atlassian.plugin.remotable.plugin.module.webhook.RemotablePluginsPluginUriResolver" />
+               class="com.atlassian.plugin.connect.plugin.module.webhook.RemotablePluginsPluginUriResolver" />
 
-    <component key="waitableServiceTrackerFactory" class="com.atlassian.osgi.tracker.WaitableServiceTrackerFactory" />
+    <component key="httpContentRetriever" class="com.atlassian.plugin.connect.plugin.util.http.CachingHttpContentRetriever"
+               public="true" interface="com.atlassian.plugin.connect.plugin.util.http.HttpContentRetriever" />
 
-    <component key="httpContentRetriever" class="com.atlassian.plugin.remotable.plugin.util.http.CachingHttpContentRetriever"
-               public="true" interface="com.atlassian.plugin.remotable.plugin.util.http.HttpContentRetriever" />
-
-    <component key="startableForPlugins" class="com.atlassian.plugin.remotable.plugin.loader.StartableForPlugins" public="true"
+    <component key="startableForPlugins" class="com.atlassian.plugin.connect.plugin.integration.plugins.StartableForPlugins" public="true"
                interface="com.atlassian.sal.api.lifecycle.LifecycleAware" />
 
-    <component key="productEventPublisher" class="com.atlassian.plugin.remotable.plugin.event.ProductEventPublisher"
+    <component key="productEventPublisher" class="com.atlassian.plugin.connect.plugin.event.ProductEventPublisher"
                public="true" interface="com.atlassian.sal.api.lifecycle.LifecycleAware" />
 
-    <component key="httpResourceMounter" class="com.atlassian.plugin.remotable.plugin.loader.LocalHttpResourceMounterServiceFactory" interface="com.atlassian.plugin.remotable.api.service.HttpResourceMounter" public="true" />
+    <component key="connectIdentifier" class="com.atlassian.plugin.connect.plugin.service.DefaultConnectAddOnIdentifierService"
+               interface="com.atlassian.plugin.connect.spi.ConnectAddOnIdentifierService" public="true" />
 
-    <component key="remotappsService" class="com.atlassian.plugin.remotable.plugin.DefaultRemotablePluginInstallationService"
-               interface="com.atlassian.plugin.remotable.spi.RemotablePluginInstallationService" public="true" />
+    <component key="upmInstallHandler" class="com.atlassian.plugin.connect.plugin.installer.ConnectUPMInstallHandler"
+               interface="com.atlassian.upm.spi.PluginInstallHandler" public="true" />
 
-    <component key="remotePluginRequestSigner" class="com.atlassian.plugin.remotable.plugin.webhooks.RemotePluginRequestSigner"
+    <component key="remotePluginRequestSigner" class="com.atlassian.plugin.connect.plugin.webhooks.RemotePluginRequestSigner"
                interface="com.atlassian.webhooks.spi.plugin.RequestSigner" public="true" />
 
     <component key="serverWebHookProvider"
                interface="com.atlassian.webhooks.spi.provider.WebHookProvider" public="true"
-               class="com.atlassian.plugin.remotable.plugin.webhooks.ServerWebHookProvider" />
+               class="com.atlassian.plugin.connect.plugin.webhooks.ServerWebHookProvider" />
 
     <component key="pluginsWebHookProvider"
                    interface="com.atlassian.webhooks.spi.provider.WebHookProvider" public="true"
-                   class="com.atlassian.plugin.remotable.plugin.webhooks.PluginsWebHookProvider" />
+                   class="com.atlassian.plugin.connect.plugin.webhooks.PluginsWebHookProvider" />
 
-    <component key="bundleLocator" class="com.atlassian.plugin.remotable.host.common.util.BundleContextBundleLoader" />
-    <component key="permissionsReader" class="com.atlassian.plugin.remotable.host.common.descriptor.DescriptorPermissionsReader"
-               interface="com.atlassian.plugin.remotable.spi.permission.PermissionsReader" public="true"/>
+    <component key="bundleLocator" class="com.atlassian.plugin.connect.plugin.util.BundleContextBundleLoader" />
+    
+    <component key="permissionsReader" class="com.atlassian.plugin.connect.plugin.descriptor.DescriptorPermissionsReader"
+               interface="com.atlassian.plugin.connect.spi.permission.PermissionsReader" public="true"/>
 
-    <component key="bigPipeManager" class="com.atlassian.plugin.remotable.host.common.service.http.bigpipe.DefaultBigPipeManager"
-               interface="com.atlassian.plugin.remotable.api.service.http.bigpipe.BigPipeManager" />
-
-    <component key="bigPipeServiceFactory" class="com.atlassian.plugin.remotable.host.common.service.http.bigpipe.BigPipeServiceFactory"
-               interface="com.atlassian.plugin.remotable.api.service.http.bigpipe.BigPipeManager" public="true" />
+    <component key="bigPipeManager" class="com.atlassian.plugin.connect.spi.http.bigpipe.DefaultBigPipeManager"
+               interface="com.atlassian.plugin.connect.api.service.http.bigpipe.BigPipeManager" />
 
     <component-import key="templateRenderer" interface="com.atlassian.templaterenderer.TemplateRenderer"/>
     <component-import key="servletModuleManager" interface="com.atlassian.plugin.servlet.ServletModuleManager" />
@@ -199,51 +190,29 @@
     <component-import key="httpClientFactory" interface="com.atlassian.httpclient.api.factory.HttpClientFactory" />
     <component-import key="httpClient" interface="com.atlassian.httpclient.api.HttpClient" />
     <component-import key="moduleDescriptorWebHookRegistry"
-                      interface="com.atlassian.webhooks.spi.provider.ModuleDescriptorWebHookConsumerRegistry" />
+                      interface="com.atlassian.webhooks.spi.provider.ModuleDescriptorWebHookListenerRegistry" />
     <component-import key="remotePluginLicenseService" interface="com.atlassian.upm.api.license.RemotePluginLicenseService" />
 
-    <!-- universal binary services -->
-    <component key="localSignedRequestHandler" interface="com.atlassian.plugin.remotable.api.service.SignedRequestHandler"
-               class="com.atlassian.plugin.remotable.plugin.service.LocalSignedRequestHandlerServiceFactory" public="true" />
-
-    <component key="requestContext" interface="com.atlassian.plugin.remotable.api.service.RequestContext"
-               class="com.atlassian.plugin.remotable.host.common.service.RequestContextServiceFactory" public="true" />
-
-    <component key="renderContext" interface="com.atlassian.plugin.remotable.api.service.RenderContext"
-               class="com.atlassian.plugin.remotable.host.common.service.RenderContextServiceFactory" public="true" />
-
-    <component key="hostHttpClient" interface="com.atlassian.plugin.remotable.api.service.http.HostHttpClient"
-               class="com.atlassian.plugin.remotable.host.common.service.http.HostHttpClientServiceFactory" public="true" />
-
-    <component key="hostXmlRpcClient" interface="com.atlassian.plugin.remotable.api.service.http.HostXmlRpcClient"
-               class="com.atlassian.plugin.remotable.host.common.service.http.HostXmlRpcClientServiceFactory" public="true" />
-
-    <component key="localEmailSender" interface="com.atlassian.plugin.remotable.api.service.EmailSender"
-               class="com.atlassian.plugin.remotable.plugin.service.LocalEmailSenderServiceFactory" public="true" />
-
-    <component key="localRemotablePluginLicenseRetriever" interface="com.atlassian.plugin.remotable.api.service.license.RemotablePluginLicenseRetriever"
-               class="com.atlassian.plugin.remotable.plugin.service.LocalRemotablePluginLicenseRetrieverServiceFactory" public="true" />
-
-    <component key="userIsSysAdminCondition" class="com.atlassian.plugin.remotable.spi.module.UserIsSysAdminCondition" />
-    <component key="userIsAdminCondition" class="com.atlassian.plugin.remotable.spi.module.UserIsAdminCondition" />
+    <component key="userIsSysAdminCondition" class="com.atlassian.plugin.connect.spi.module.UserIsSysAdminCondition" />
+    <component key="userIsAdminCondition" class="com.atlassian.plugin.connect.spi.module.UserIsAdminCondition" />
 
     <applinks-application-type name="Remote Plugin Container" key="remote-plugin-container-type"
-                                   class="com.atlassian.plugin.remotable.plugin.module.applinks.RemotePluginContainerApplicationTypeImpl"
-                                   interface="com.atlassian.plugin.remotable.spi.applinks.RemotePluginContainerApplicationType">
-            <manifest-producer class="com.atlassian.plugin.remotable.plugin.module.applinks.RemotePluginContainerManifestProducer"/>
+                                   class="com.atlassian.plugin.connect.plugin.module.applinks.RemotePluginContainerApplicationTypeImpl"
+                                   interface="com.atlassian.plugin.connect.spi.applinks.RemotePluginContainerApplicationType">
+            <manifest-producer class="com.atlassian.plugin.connect.plugin.module.applinks.RemotePluginContainerManifestProducer"/>
     </applinks-application-type>
 
     <!-- remote extension points -->
 
     <described-module-type key="remote-plugin-container" name="Remote Plugin Container"
-                               class="com.atlassian.plugin.remotable.plugin.module.applinks.RemotePluginContainerModuleDescriptor">
+                               class="com.atlassian.plugin.connect.plugin.module.applinks.RemotePluginContainerModuleDescriptor">
         <description>The server that is hosting this plugin</description>
         <optional-permissions>
             <permission>create_oauth_link</permission>
         </optional-permissions>
     </described-module-type>
 
-    <described-module-type key="general-page" class="com.atlassian.plugin.remotable.plugin.module.page.GeneralPageModuleDescriptor">
+    <described-module-type key="general-page" class="com.atlassian.plugin.connect.plugin.module.page.GeneralPageModuleDescriptor">
         <description>
             A full-sized page that will be decorated as a general page, meaning it will receive the product header
             and footer.  A link will be created in a default location in the header.  Viewing the page allowed
@@ -251,7 +220,7 @@
         </description>
     </described-module-type>
 
-    <described-module-type key="admin-page" name="Administration Page" class="com.atlassian.plugin.remotable.plugin.module.page.AdminPageModuleDescriptor">
+    <described-module-type key="admin-page" name="Administration Page" class="com.atlassian.plugin.connect.plugin.module.page.AdminPageModuleDescriptor">
         <description>
             A full-sized page that will be decorated as a product administration page.  A link will be created
             in a default location in the administration menu.  Viewing the page will be restricted to product
@@ -259,7 +228,7 @@
         </description>
     </described-module-type>
 
-    <described-module-type key="configure-page" class="com.atlassian.plugin.remotable.plugin.module.page.ConfigurePageModuleDescriptor" max-occurs="1">
+    <described-module-type key="configure-page" class="com.atlassian.plugin.connect.plugin.module.page.ConfigurePageModuleDescriptor" max-occurs="1">
         <description>
             A full-sized page that will be decorated as a product administration page.  A link to the page
             will show up in the plugin's details page in the Add-On Manager.  Viewing the page will be restricted to product
@@ -267,33 +236,20 @@
         </description>
     </described-module-type>
 
-    <described-module-type key="dialog-page" class="com.atlassian.plugin.remotable.plugin.module.page.dialog.DialogPageModuleDescriptor">
+    <described-module-type key="dialog-page" class="com.atlassian.plugin.connect.plugin.module.page.dialog.DialogPageModuleDescriptor">
         <description>Loads a remote URL (iframe-wrapped) in an AUI Dialog</description>
     </described-module-type>
 
     <described-module-type key="plugin-permission" name="Plugin Permission"
-                                   class="com.atlassian.plugin.remotable.plugin.permission.DefaultPermissionModuleDescriptor">
+                                   class="com.atlassian.plugin.connect.plugin.module.permission.DefaultPermissionModuleDescriptor">
         <description>A permission that needs to be requested by a plugin in order to execute certain functionality</description>
-        <required-permissions>
-            <permission>execute_java</permission>
-        </required-permissions>
     </described-module-type>
 
-    <plugin-permission key="execute_java" name="Execute Java">
-        <description>Ability to execute arbitrary Java code on the Atlassian server</description>
-    </plugin-permission>
-
-    <plugin-permission key="execute_native" name="Execute Native">
-        <description>Ability to execute arbitrary Native code on the Atlassian server</description>
-    </plugin-permission>
-
-    <plugin-permission key="use_private_api" name="Use Private API">
-        <description>Ability to use APIs defined as private by products.</description>
-    </plugin-permission>
-
-    <plugin-permission key="use_private_modules" name="Use Private Modules">
-        <description>Ability to use private modules.</description>
-    </plugin-permission>
+    <described-module-type key="remote-web-panel" class="com.atlassian.plugin.connect.plugin.module.webpanel.RemoteWebPanelModuleDescriptor">
+        <description>
+            A remote page decorated as a web panel on the project configuration page.
+        </description>
+    </described-module-type>
 
     <plugin-permission key="insert_web_resources" name="Insert Web Resources">
         <description>Ability to insert web resources on pages of the product.</description>
@@ -301,14 +257,10 @@
 
     <plugin-permission key="send_email" name="Send Email">
         <description>Ability to send an email from the Atlassian server</description>
-        <installation-mode>local</installation-mode>
-        <installation-mode>remote</installation-mode>
     </plugin-permission>
 
     <plugin-permission key="make_http_requests" name="Make HTTP requests">
         <description>Ability to make HTTP requests from the Atlassian server</description>
-        <installation-mode>local</installation-mode>
-        <installation-mode>remote</installation-mode>
     </plugin-permission>
 
     <plugin-permission key="intercept_requests" name="Intercept Requests">
@@ -317,8 +269,6 @@
 
     <plugin-permission key="store_data" name="Store Data">
         <description>Ability to store data on the Atlassian server</description>
-        <installation-mode>local</installation-mode>
-        <installation-mode>remote</installation-mode>
     </plugin-permission>
 
     <plugin-permission key="use_db_connection" name="Use DB connection">
@@ -343,18 +293,21 @@
 
     <plugin-permission key="create_oauth_link" name="Create OAuth Link">
         <description>Ability to create an incoming OAuth link that will allow trusted access</description>
-        <installation-mode>local</installation-mode>
-        <installation-mode>remote</installation-mode>
     </plugin-permission>
 
     <plugin-permission key="read_app_links" name="Read Application Links"
-                       class="com.atlassian.plugin.remotable.plugin.product.ReadAppLinksScope">
+                       class="com.atlassian.plugin.connect.plugin.product.ReadAppLinksScope">
         <description>Allows a Remotable Plugin to retrieve the host application's configured application links and entity links.</description>
     </plugin-permission>
 
     <plugin-permission key="modify_app_link" name="Modify Owned App Link"
-                       class="com.atlassian.plugin.remotable.plugin.product.ModifyAppLinkScope">
+                       class="com.atlassian.plugin.connect.plugin.product.ModifyAppLinkScope">
         <description>Allows a Remotable Plugin to modify the details of its own configured Application Link.</description>
+    </plugin-permission>
+
+    <plugin-permission key="read_license" name="Read License"
+                       class="com.atlassian.plugin.connect.plugin.product.ReadLicenseScope">
+        <description>Allows a Remotable Plugin to retrieve the information about its license.</description>
     </plugin-permission>
 
     <plugin-permission key="define_plugin_permission" name="Define Plugin Permission">

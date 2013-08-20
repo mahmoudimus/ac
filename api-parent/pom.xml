@@ -1,62 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>remotable-plugins-parent</artifactId>
+        <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
+<<<<<<< HEAD
         <version>0.9.1148</version>
+=======
+        <version>1.0-m7</version>
+>>>>>>> refs/heads/release/1.0-m7
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>remotable-plugins-api-parent</artifactId>
+    <artifactId>atlassian-connect-api-parent</artifactId>
+    <name>Atlassian Connect - API Parent POM</name>
     <packaging>pom</packaging>
 
-    <name>Atlassian Remotable Plugins API - Parent POM</name>
-    <description>This is the Atlassian Remotable Plugins API parent project</description>
-    
     <modules>
         <module>api</module>
         <module>spi</module>
     </modules>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>commons-lang</groupId>
-                <artifactId>commons-lang</artifactId>
-                <version>2.4</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-    
-    <dependencies>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
-            <version>1.9.0</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>jcl-over-slf4j</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
-    
+
 </project>

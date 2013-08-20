@@ -1,79 +1,98 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>remotable-plugins-api-parent</artifactId>
+        <artifactId>atlassian-connect-api-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
+<<<<<<< HEAD
         <version>0.9.1148</version>
+=======
+        <version>1.0-m7</version>
+>>>>>>> refs/heads/release/1.0-m7
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>remotable-plugins-spi</artifactId>
+    <artifactId>atlassian-connect-spi</artifactId>
+    <name>Atlassian Connect - Public SPI</name>
 
-    <name>Atlassian Remotable Plugins API - Public SPI</name>
-    <description>The public SPI for remotable plugins</description>
-
+    <licenses>
+        <license>
+            <name>Apache License 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
 
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>remotable-plugins-api</artifactId>
+            <artifactId>atlassian-connect-api</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>com.googlecode.json-simple</groupId>
-            <artifactId>json-simple</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.atlassian.plugins</groupId>
-            <artifactId>atlassian-plugins-schema</artifactId>
-            <version>${plugins.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.atlassian.plugins</groupId>
-            <artifactId>atlassian-plugins-webfragment</artifactId>
-            <version>${webfragments.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.atlassian.plugins</groupId>
-            <artifactId>atlassian-plugins-webresource</artifactId>
-            <version>2.14.0-m5</version>
-            <scope>provided</scope>
-        </dependency>
+
         <dependency>
             <groupId>com.atlassian.applinks</groupId>
             <artifactId>applinks-spi</artifactId>
-            <version>${applinks.version}</version>
             <scope>provided</scope>
         </dependency>
+
         <dependency>
-            <groupId>com.atlassian.applinks</groupId>
-            <artifactId>applinks-api</artifactId>
-            <version>${applinks.version}</version>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
             <scope>provided</scope>
         </dependency>
+
         <dependency>
-            <groupId>com.atlassian.templaterenderer</groupId>
-            <artifactId>atlassian-template-renderer-api</artifactId>
-            <version>${atr.version}</version>
-            <scope>provided</scope>
+            <groupId>com.atlassian.fugue</groupId>
+            <artifactId>fugue</artifactId>
+            <scope>compile</scope>
         </dependency>
+
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
             <scope>provided</scope>
         </dependency>
+
         <dependency>
             <groupId>com.atlassian.jira</groupId>
             <artifactId>jira-api</artifactId>
-            <version>${jira.version}</version>
+            <version>${atlassian.jira.version}</version>
             <scope>provided</scope>
             <optional>true</optional>
         </dependency>
+
+        <dependency>
+            <groupId>com.googlecode.json-simple</groupId>
+            <artifactId>json-simple</artifactId>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.atlassian.plugins</groupId>
+            <artifactId>atlassian-plugins-schema</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.atlassian.templaterenderer</groupId>
+            <artifactId>atlassian-template-renderer-api</artifactId>
+            <version>${atlassian.templaterenderer.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.atlassian.security</groupId>
+            <artifactId>atlassian-secure-random</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        
+
     </dependencies>
 </project>
