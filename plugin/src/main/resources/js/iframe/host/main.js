@@ -179,9 +179,12 @@ _AP.define("host/main", ["_xdm-rpc"], function (XdmRpc) {
             contentType: args.contentType,
             headers: {
               // */* will undo the effect on the accept header of having set dataType to "text"
-              "Accept": headers.accept || "*/*",
+              "Accept": headers.accept || "*/*"
+
               // send the client key header to force scope checks
-              "AP-Client-Key": options.key
+              // ACDEV-363: Temporarily disabling scope checking on the client until
+              // we figure out our long term strategy with permissions
+              // "AP-Client-Key": options.key
             }
           }).then(done, fail);
         },
