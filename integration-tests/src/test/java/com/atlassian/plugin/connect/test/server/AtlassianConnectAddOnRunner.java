@@ -156,12 +156,12 @@ public final class AtlassianConnectAddOnRunner
         return signedRequestHandler;
     }
 
-    private void register() throws IOException
+    private void register() throws Exception
     {
         installer.install("http://localhost:" + port + "/register");
     }
 
-    public void uninstall() throws IOException
+    public void uninstall() throws Exception
     {
         installer.uninstall(pluginKey);
     }
