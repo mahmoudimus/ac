@@ -1,10 +1,11 @@
-package com.atlassian.plugin.connect.plugin.module.jira.issuetab;
+package com.atlassian.plugin.connect.plugin.module.jira.componenttab;
 
 import com.atlassian.jira.plugin.JiraResourcedModuleDescriptor;
-import com.atlassian.jira.plugin.issuetabpanel.IssueTabPanelModuleDescriptorImpl;
+import com.atlassian.jira.plugin.componentpanel.ComponentTabPanelModuleDescriptorImpl;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.PluginParseException;
+import com.atlassian.plugin.connect.plugin.integration.plugins.DynamicDescriptorRegistration;
 import com.atlassian.plugin.connect.plugin.module.ConditionProcessor;
 import com.atlassian.plugin.connect.plugin.module.IFrameRendererImpl;
 import com.atlassian.plugin.connect.plugin.module.jira.AbstractJiraTabPageModuleDescriptor;
@@ -13,24 +14,22 @@ import com.atlassian.plugin.connect.plugin.module.webfragment.UrlValidator;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.spi.module.IFrameParams;
 import com.atlassian.plugin.module.ModuleFactory;
-import com.atlassian.plugin.connect.plugin.integration.plugins.DynamicDescriptorRegistration;
 import com.atlassian.plugin.web.Condition;
-import com.google.common.base.Optional;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * A remote issue tab that loads its contents from an iframe
+ * A remote component tab that loads its contents from an iframe
  */
-public final class IssueTabPageModuleDescriptor extends AbstractJiraTabPageModuleDescriptor
+public final class ComponentTabPageModuleDescriptor extends AbstractJiraTabPageModuleDescriptor
 {
-    private static final String ISSUE_TAB_PAGE_MODULE_PREFIX = "issue-tab-page-";
+    public static final String COMPONENT_TAB_PAGE_MODULE_PREFIX = "component-tab-";
 
     private final IFrameRendererImpl iFrameRenderer;
     private final UrlVariableSubstitutor urlVariableSubstitutor;
     private final JiraAuthenticationContext jiraAuthenticationContext;
 
-    public IssueTabPageModuleDescriptor(ModuleFactory moduleFactory, DynamicDescriptorRegistration dynamicDescriptorRegistration, ConditionProcessor conditionProcessor,
+    public ComponentTabPageModuleDescriptor(ModuleFactory moduleFactory, DynamicDescriptorRegistration dynamicDescriptorRegistration, ConditionProcessor conditionProcessor,
             IFrameRendererImpl iFrameRenderer, UrlVariableSubstitutor urlVariableSubstitutor, JiraAuthenticationContext jiraAuthenticationContext, UrlValidator urlValidator)
     {
         super(moduleFactory, dynamicDescriptorRegistration, conditionProcessor, urlValidator);
@@ -42,29 +41,29 @@ public final class IssueTabPageModuleDescriptor extends AbstractJiraTabPageModul
     @Override
     public String getModulePrefix()
     {
-        return ISSUE_TAB_PAGE_MODULE_PREFIX;
+        return COMPONENT_TAB_PAGE_MODULE_PREFIX;
     }
 
     protected JiraResourcedModuleDescriptor createTabPanelModuleDescriptor(final String key, final IFrameParams iFrameParams, final Condition condition)
     {
-        return new IssueTabPanelModuleDescriptorImpl(
+        return new ComponentTabPanelModuleDescriptorImpl(
                 jiraAuthenticationContext, new ModuleFactory()
         {
             @Override
             public <T> T createModule(final String name, final ModuleDescriptor<T> moduleDescriptor)
                     throws PluginParseException
             {
-                return (T) new IFrameIssueTab(
-                        new IFrameContextImpl(getPluginKey() , url, key, iFrameParams),
-                        iFrameRenderer, Optional.fromNullable(condition), urlVariableSubstitutor);
+                return (T) new IFrameComponentTab(
+                        new IFrameContextImpl(getPluginKey(), url, key, iFrameParams),
+                        iFrameRenderer, condition, urlVariableSubstitutor);
             }
         });
-
     }
 
     @Override
-    protected Class getIFrameTabClass()
+    protected Class<?> getIFrameTabClass()
     {
-        return IFrameIssueTab.class;
+        return IFrameComponentTab.class;
     }
+
 }

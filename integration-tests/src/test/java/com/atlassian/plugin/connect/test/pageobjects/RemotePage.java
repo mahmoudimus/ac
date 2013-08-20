@@ -61,13 +61,8 @@ public class RemotePage
     public Map<String, String> getIframeQueryParams()
     {
         final WebElement iframe = containerDiv.findElement(By.tagName("iframe"));
-        String iframeSrc = iframe.getAttribute("src");
-        Map<String, String> result = newHashMap();
-        for (NameValuePair pair : URLEncodedUtils.parse(URI.create(iframeSrc), "UTF-8"))
-        {
-            result.put(pair.getName(), pair.getValue());
-        }
-        return result;
+
+        return RemotePageUtil.findAllInContext(iframe.getAttribute("src"));
     }
 
     public String waitForValue(final String key)

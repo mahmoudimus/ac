@@ -1,17 +1,12 @@
 package com.atlassian.plugin.connect.test.pageobjects;
 
-import java.net.URI;
-
-import javax.inject.Inject;
-
 import com.atlassian.pageobjects.binder.Init;
 import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.pageobjects.elements.PageElementFinder;
 import com.atlassian.webdriver.AtlassianWebDriver;
-
-import org.apache.http.NameValuePair;
-import org.apache.http.client.utils.URLEncodedUtils;
 import org.openqa.selenium.By;
+
+import javax.inject.Inject;
 
 import static com.atlassian.pageobjects.elements.query.Poller.waitUntilTrue;
 
@@ -31,6 +26,7 @@ public class RemoteWebPanel
 
     private String id;
     private PageElement iframe;
+    private String iframeSrc;
 
     public RemoteWebPanel(final String id)
     {
@@ -41,20 +37,14 @@ public class RemoteWebPanel
     public void init()
     {
         iframe = elementFinder.find(By.id(IFRAME_ID_PREFIX + id + IFRAME_ID_SUFFIX));
+        iframeSrc = iframe.getAttribute("src");
+
         waitUntilTrue(iframe.timed().isPresent());
     }
 
-    public String getFromQueryString(String key)
+    public String getFromQueryString(final String key)
     {
-        String src = iframe.getAttribute("src");
-        for (NameValuePair pair : URLEncodedUtils.parse(URI.create(src), "UTF-8"))
-        {
-            if (key.equals(pair.getName()))
-            {
-                return pair.getValue();
-            }
-        }
-        return null;
+        return RemotePageUtil.findInContext(iframeSrc, key);
     }
 
     public String getUserId()
