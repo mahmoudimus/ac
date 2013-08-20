@@ -59,16 +59,7 @@ public class ConnectUPMInstallHandler implements PluginInstallHandler
             //TODO: get rid of formatConverter when we go to capabilities
             Document doc = formatConverter.readFileToDoc(descriptorFile);
             
-            String username = "unknown";
-
-            UserProfile up = userManager.getRemoteUser();
-            
-            if(null != up)
-            {
-                username = up.getUsername();    
-            }
-            
-            Plugin plugin = connectInstaller.install(username,doc);
+            Plugin plugin = connectInstaller.install(userManager.getRemoteUsername(),doc);
             
             return new PluginInstallResult(plugin);
         }
