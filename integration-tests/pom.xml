@@ -3,11 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-<<<<<<< HEAD
-        <version>0.9.1148</version>
-=======
         <version>1.0-m7</version>
->>>>>>> refs/heads/release/1.0-m7
     </parent>
     <modelVersion>4.0.0</modelVersion>
 

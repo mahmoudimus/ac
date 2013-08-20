@@ -9,13 +9,8 @@
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.atlassian.plugins</groupId>
-<<<<<<< HEAD
-    <artifactId>remotable-plugins-parent</artifactId>
-    <version>0.9.1148</version>
-=======
     <artifactId>atlassian-connect-parent</artifactId>
     <version>1.0-m7</version>
->>>>>>> refs/heads/release/1.0-m7
 
     <organization>
         <name>Atlassian</name>
@@ -425,42 +420,9 @@
                 </exclusions>
             </dependency>
             <dependency>
-<<<<<<< HEAD
-                <groupId>com.atlassian.event</groupId>
-                <artifactId>atlassian-event</artifactId>
-                <version>${event.version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.atlassian.util.concurrent</groupId>
-                <artifactId>atlassian-util-concurrent</artifactId>
-                <version>${atlassian-util-concurrent.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.atlassian.httpclient</groupId>
-                <artifactId>atlassian-httpclient-api</artifactId>
-                <version>${atlassian-httpclient.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.atlassian.webhooks</groupId>
-                <artifactId>atlassian-webhooks-provider-spi</artifactId>
-                <version>${webhooks.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.atlassian.webhooks</groupId>
-                <artifactId>atlassian-webhooks-spi</artifactId>
-                <version>${webhooks.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>commons-logging</groupId>
-                <artifactId>commons-logging</artifactId>
-                <version>1.1.1</version>
-=======
                 <groupId>com.atlassian.security</groupId>
                 <artifactId>atlassian-secure-random</artifactId>
                 <version>1.0</version>
->>>>>>> refs/heads/release/1.0-m7
                 <scope>provided</scope>
             </dependency>
             <dependency>

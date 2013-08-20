@@ -3,12 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-<<<<<<< HEAD
-        <artifactId>remotable-plugins-parent</artifactId>
-        <version>0.9.1148</version>
-=======
         <version>1.0-m7</version>
->>>>>>> refs/heads/release/1.0-m7
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -146,26 +141,6 @@
             <artifactId>atlassian-webhooks-spi</artifactId>
             <scope>provided</scope>
         </dependency>
-<<<<<<< HEAD
-        
-
-
-        <dependency>
-            <groupId>com.sun.jersey</groupId>
-            <artifactId>jersey-server</artifactId>
-            <version>1.8-atlassian-8</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.atlassian.bandana</groupId>
-            <artifactId>atlassian-bandana</artifactId>
-            <version>3.1</version>
-            <scope>provided</scope>
-        </dependency>
-
-=======
->>>>>>> refs/heads/release/1.0-m7
         <dependency>
             <groupId>com.atlassian.jira</groupId>
             <artifactId>jira-core</artifactId>
