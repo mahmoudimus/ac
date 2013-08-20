@@ -20,7 +20,7 @@ import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.getOptionalAttrib
 
 /**
  * A remote project configuration web panel that loads its contents from an iframe.
- * @deprecated use {@link com.atlassian.plugin.remotable.plugin.module.webpanel.RemoteWebPanelModuleDescriptor} with
+ * @deprecated use {@link com.atlassian.plugin.connect.plugin.module.webpanel.RemoteWebPanelModuleDescriptor} with
  * "webpanels.admin.summary.left-panels" or "webpanels.admin.summary.right-panels" location instead.
  */
 @Deprecated

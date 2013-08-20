@@ -19,6 +19,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.matchers.JUnitMatchers;
 
 import static com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner.newMustacheServlet;
 import static org.junit.Assert.*;
@@ -27,7 +28,7 @@ import static org.junit.matchers.JUnitMatchers.hasItem;
 /**
  * Test of project tabs in JIRA.
  */
-public class TestProjectTab extends JiraWebDriverTestBase
+public class TestProjectTabPage extends JiraWebDriverTestBase
 {
     private static AtlassianConnectAddOnRunner remotePlugin;
 
@@ -70,7 +71,7 @@ public class TestProjectTab extends JiraWebDriverTestBase
         final ProjectSummaryPageTab page =
                 product.visit(ProjectSummaryPageTab.class, project.getKey());
 
-        assertThat(page.getTabs().getTabs(), hasItem(new TypeSafeMatcher<ProjectConfigTabs.Tab>()
+        assertThat(page.getTabs().getTabs(), JUnitMatchers.<ProjectConfigTabs.Tab>hasItem(new TypeSafeMatcher<ProjectConfigTabs.Tab>()
         {
 
             @Override

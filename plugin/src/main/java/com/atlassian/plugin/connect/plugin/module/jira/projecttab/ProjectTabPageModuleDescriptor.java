@@ -1,130 +1,68 @@
 package com.atlassian.plugin.connect.plugin.module.jira.projecttab;
 
-import java.net.URI;
-
-import com.atlassian.jira.ComponentManager;
-import com.atlassian.jira.plugin.projectpanel.ProjectTabPanelModuleDescriptor;
+import com.atlassian.jira.plugin.TabPanelModuleDescriptor;
 import com.atlassian.jira.plugin.projectpanel.ProjectTabPanelModuleDescriptorImpl;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.ModuleDescriptor;
-import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
-import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
-import com.atlassian.plugin.module.ModuleFactory;
-import com.atlassian.plugin.connect.plugin.integration.plugins.DescriptorToRegister;
 import com.atlassian.plugin.connect.plugin.integration.plugins.DynamicDescriptorRegistration;
 import com.atlassian.plugin.connect.plugin.module.ConditionProcessor;
-import com.atlassian.plugin.connect.plugin.module.ContainingRemoteCondition;
-import com.atlassian.plugin.connect.plugin.module.IFrameParamsImpl;
 import com.atlassian.plugin.connect.plugin.module.IFrameRendererImpl;
 import com.atlassian.plugin.connect.plugin.module.page.IFrameContextImpl;
+import com.atlassian.plugin.connect.plugin.module.webfragment.UrlValidator;
+import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.spi.module.IFrameParams;
+import com.atlassian.plugin.module.ModuleFactory;
+import com.atlassian.plugin.connect.plugin.module.jira.AbstractJiraTabPageModuleDescriptor;
 import com.atlassian.plugin.web.Condition;
-import com.atlassian.util.concurrent.NotNull;
 
-import org.dom4j.Element;
-
-import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.getRequiredAttribute;
-import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.getRequiredUriAttribute;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * A remote project tab that loads is contents from an iframe
+ * A remote project tab that loads its contents from an iframe
  */
-public final class ProjectTabPageModuleDescriptor extends AbstractModuleDescriptor<Void>
+public final class ProjectTabPageModuleDescriptor extends AbstractJiraTabPageModuleDescriptor
 {
+    public static final String PROJECT_TAB_PAGE_MODULE_PREFIX = "project-tab-";
+
     private final IFrameRendererImpl iFrameRenderer;
-    private final DynamicDescriptorRegistration dynamicDescriptorRegistration;
-    private final ConditionProcessor conditionProcessor;
-    private Element descriptor;
-    private URI url;
-    private DynamicDescriptorRegistration.Registration registration;
+    private final UrlVariableSubstitutor urlVariableSubstitutor;
+    private final JiraAuthenticationContext jiraAuthenticationContext;
 
-    public ProjectTabPageModuleDescriptor(
-            ModuleFactory moduleFactory,
-            IFrameRendererImpl iFrameRenderer,
-            DynamicDescriptorRegistration dynamicDescriptorRegistration,
-            ConditionProcessor conditionProcessor)
+    public ProjectTabPageModuleDescriptor(ModuleFactory moduleFactory, DynamicDescriptorRegistration dynamicDescriptorRegistration, ConditionProcessor conditionProcessor,
+            IFrameRendererImpl iFrameRenderer, JiraAuthenticationContext jiraAuthenticationContext, UrlValidator urlValidator, UrlVariableSubstitutor urlVariableSubstitutor)
     {
-        super(moduleFactory);
+        super(moduleFactory, dynamicDescriptorRegistration, conditionProcessor, urlValidator);
+        this.urlVariableSubstitutor = urlVariableSubstitutor;
         this.iFrameRenderer = checkNotNull(iFrameRenderer);
-        this.dynamicDescriptorRegistration = checkNotNull(dynamicDescriptorRegistration);
-        this.conditionProcessor = checkNotNull(conditionProcessor);
+        this.jiraAuthenticationContext = checkNotNull(jiraAuthenticationContext);
     }
 
     @Override
-    public Void getModule()
+    public String getModulePrefix()
     {
-        return null;
+        return PROJECT_TAB_PAGE_MODULE_PREFIX;
     }
 
-    @Override
-    public void init(@NotNull Plugin plugin, @NotNull Element element) throws PluginParseException
+    protected TabPanelModuleDescriptor createTabPanelModuleDescriptor(final String key, final IFrameParams iFrameParams, final Condition condition)
     {
-        super.init(plugin, element);
-        this.descriptor = element;
-        this.url = getRequiredUriAttribute(element, "url");
-    }
-
-    @Override
-    public void enabled()
-    {
-        super.enabled();
-        final String panelName = getRequiredAttribute(descriptor, "name");
-
-        Element desc = descriptor.createCopy();
-        String moduleKey = "project-tab-" + getRequiredAttribute(descriptor, "key");
-        Condition condition = conditionProcessor.process(descriptor, desc, getPluginKey(), "#" + moduleKey + "-remote-condition-panel");
-        if (condition instanceof ContainingRemoteCondition)
+        return new ProjectTabPanelModuleDescriptorImpl(
+                jiraAuthenticationContext, new ModuleFactory()
         {
-            moduleKey += "-remote-condition";
-        }
-        desc.addAttribute("key", moduleKey);
-        desc.addElement("label").setText(panelName);
-        desc.addAttribute("class", IFrameProjectTab.class.getName());
-
-        ProjectTabPanelModuleDescriptor moduleDescriptor = createDescriptor(moduleKey,
-                desc, new IFrameParamsImpl(descriptor), condition);
-        this.registration = dynamicDescriptorRegistration.registerDescriptors(getPlugin(), new DescriptorToRegister(moduleDescriptor));
-    }
-
-    @Override
-    public void disabled()
-    {
-        super.disabled();
-        if (registration != null)
-        {
-            registration.unregister();
-        }
-    }
-
-    private ProjectTabPanelModuleDescriptor createDescriptor(
-            final String key,
-            final Element desc,
-            final IFrameParams iFrameParams, final Condition condition)
-    {
-        try
-        {
-            desc.addAttribute("system", "true");
-            ProjectTabPanelModuleDescriptor descriptor = new ProjectTabPanelModuleDescriptorImpl(
-                    ComponentManager.getComponent(JiraAuthenticationContext.class), new ModuleFactory()
+            @Override
+            public <T> T createModule(final String name, final ModuleDescriptor<T> moduleDescriptor)
+                    throws PluginParseException
             {
-                @Override
-                public <T> T createModule(String name, ModuleDescriptor<T> moduleDescriptor) throws PluginParseException
-                {
+                return (T) new IFrameProjectTab(
+                        new IFrameContextImpl(getPluginKey(), url, key, iFrameParams),
+                        iFrameRenderer, condition, urlVariableSubstitutor);
+            }
+        });
+    }
 
-                    return (T) new IFrameProjectTab(
-                            new IFrameContextImpl(getPluginKey() , url, key, iFrameParams),
-                            iFrameRenderer, condition);
-                }
-            });
-
-            descriptor.init(getPlugin(), desc);
-            return descriptor;
-        }
-        catch (Exception ex)
-        {
-            throw new PluginParseException(ex);
-        }
+    @Override
+    protected Class getIFrameTabClass()
+    {
+        return IFrameProjectTab.class;
     }
 }
