@@ -11,6 +11,7 @@ import com.atlassian.plugin.connect.plugin.descriptor.util.FormatConverter;
 import com.atlassian.plugin.connect.plugin.descriptor.util.XmlUtils;
 import com.atlassian.plugin.connect.spi.ConnectAddOnIdentifierService;
 import com.atlassian.sal.api.user.UserManager;
+import com.atlassian.sal.api.user.UserProfile;
 import com.atlassian.upm.api.util.Option;
 import com.atlassian.upm.spi.PluginInstallException;
 import com.atlassian.upm.spi.PluginInstallHandler;
@@ -58,7 +59,16 @@ public class ConnectUPMInstallHandler implements PluginInstallHandler
             //TODO: get rid of formatConverter when we go to capabilities
             Document doc = formatConverter.readFileToDoc(descriptorFile);
             
-            Plugin plugin = connectInstaller.install(userManager.getRemoteUser().getUsername(),doc);
+            String username = "unknown";
+
+            UserProfile up = userManager.getRemoteUser();
+            
+            if(null != up)
+            {
+                username = up.getUsername();    
+            }
+            
+            Plugin plugin = connectInstaller.install(username,doc);
             
             return new PluginInstallResult(plugin);
         }
