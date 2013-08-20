@@ -270,17 +270,17 @@
                                 </pluginArtifact>
                             </pluginArtifacts>
                             <libArtifacts>
-                                <libArtifact>
-                                    <groupId>com.atlassian.util.concurrent</groupId>
-                                    <artifactId>atlassian-util-concurrent</artifactId>
-                                    <version>${atlassian-util-concurrent.version}</version>
-                                </libArtifact>
+                                <!--<libArtifact>-->
+                                    <!--<groupId>com.atlassian.util.concurrent</groupId>-->
+                                    <!--<artifactId>atlassian-util-concurrent</artifactId>-->
+                                    <!--<version>${atlassian-util-concurrent.version}</version>-->
+                                <!--</libArtifact>-->
                                 <!-- TODO remove this once 3.0.5 is in all products -->
-                                <libArtifact>
-                                    <groupId>com.atlassian.plugins</groupId>
-                                    <artifactId>atlassian-plugins-core</artifactId>
-                                    <version>${atlassian.plugins.version}</version>
-                                </libArtifact>
+                                <!--<libArtifact>-->
+                                    <!--<groupId>com.atlassian.plugins</groupId>-->
+                                    <!--<artifactId>atlassian-plugins-core</artifactId>-->
+                                    <!--<version>${atlassian.plugins.version}</version>-->
+                                <!--</libArtifact>-->
                             </libArtifacts>
 
                             <bundledArtifacts>
@@ -323,11 +323,11 @@
                             </pluginArtifacts>
                             <libArtifacts>
                                 <!-- TODO remove this once 3.0.5 is in all products -->
-                                <libArtifact>
-                                    <groupId>com.atlassian.plugins</groupId>
-                                    <artifactId>atlassian-plugins-core</artifactId>
-                                    <version>${atlassian.plugins.version}</version>
-                                </libArtifact>
+                                <!--<libArtifact>-->
+                                    <!--<groupId>com.atlassian.plugins</groupId>-->
+                                    <!--<artifactId>atlassian-plugins-core</artifactId>-->
+                                    <!--<version>${atlassian.plugins.version}</version>-->
+                                <!--</libArtifact>-->
                             </libArtifacts>
 
                             <bundledArtifacts>

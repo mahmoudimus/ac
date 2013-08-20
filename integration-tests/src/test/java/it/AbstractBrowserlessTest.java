@@ -1,5 +1,6 @@
 package it;
 
+import com.atlassian.jira.pageobjects.JiraTestedProduct;
 import com.atlassian.pageobjects.Defaults;
 import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.plugin.connect.test.pageobjects.OwnerOfTestedProduct;
@@ -15,8 +16,7 @@ public class AbstractBrowserlessTest
 
     public AbstractBrowserlessTest()
     {
-        this((Class<? extends TestedProduct>) findClass(System.getProperty("testedProductClass",
-                RefappTestedProduct.class.getName())));
+        this((Class<? extends TestedProduct>) findClass(System.getProperty("testedProductClass",JiraTestedProduct.class.getName())));
     }
 
     private static Class findClass(String name)
