@@ -1,15 +1,12 @@
 package com.atlassian.plugin.connect.spi.permission.scope;
 
-import javax.servlet.http.HttpServletRequest;
-
 import com.atlassian.plugin.connect.spi.util.ServletUtils;
-
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
-import java.util.Locale;
+import javax.servlet.http.HttpServletRequest;
 
 import static com.google.common.collect.Iterables.transform;
 import static java.util.Arrays.asList;
@@ -43,7 +40,7 @@ public final class DownloadScopeHelper
             @Override
             public boolean apply(final String prefix)
             {
-                return pathInfo.startsWith(prefix) && request.getMethod().toLowerCase(Locale.US).equals("get");
+                return pathInfo.startsWith(prefix) && "GET".equalsIgnoreCase(request.getMethod());
             }
         });
     }

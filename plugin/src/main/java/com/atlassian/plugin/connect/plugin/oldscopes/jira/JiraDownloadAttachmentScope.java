@@ -12,11 +12,11 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * Scope which allows to access issue attachments.
  */
-public class JiraAttachmentScope extends AbstractPermission implements ApiScope
+public class JiraDownloadAttachmentScope extends AbstractPermission implements ApiScope
 {
     private final DownloadScopeHelper delegate;
 
-    public JiraAttachmentScope()
+    public JiraDownloadAttachmentScope()
     {
         super(JiraPermissions.DOWNLOAD_ATTACHMENTS);
         this.delegate = new DownloadScopeHelper("/secure/attachment");
