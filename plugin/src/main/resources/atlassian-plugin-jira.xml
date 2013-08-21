@@ -185,6 +185,13 @@
             Permission to read JIRA user's session data.
         </description>
     </plugin-permission>
+
+    <plugin-permission key="download_attachments" name="Download Issue Attachments" application="jira"
+                       class="com.atlassian.plugin.connect.plugin.oldscopes.jira.JiraAttachmentScope">
+        <description>
+            Permission to download JIRA issue attachments.
+        </description>
+    </plugin-permission>
 </application>
 
 

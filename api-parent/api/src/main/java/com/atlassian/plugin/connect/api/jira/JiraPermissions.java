@@ -12,6 +12,7 @@ public final class JiraPermissions
     public static final String RESOLVE_ISSUES = "resolve_issues";
     public static final String READ_METADATA = "read_metadata";
     public static final String READ_USER_SESSION_DATA = "read_user_session_data";
+    public static final String DOWNLOAD_ATTACHMENTS = "download_attachments";
 
     private JiraPermissions()
     {
