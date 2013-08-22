@@ -1,5 +1,17 @@
 package com.atlassian.plugin.connect.plugin.iframe;
 
+import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
+import com.google.common.base.Function;
+import com.google.common.collect.MapMaker;
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -8,21 +20,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPOutputStream;
 
-import javax.servlet.*;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
-import com.atlassian.plugin.util.PluginUtils;
-
-import com.google.common.base.Function;
-import com.google.common.collect.MapMaker;
-
-import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static com.atlassian.plugin.connect.plugin.util.DevModeUtil.DEV_MODE_ENABLED;
 
 /**
  * Provides static host resources for plugin iframes
@@ -37,14 +35,12 @@ public class StaticResourcesFilter implements Filter
     private static final Logger log = LoggerFactory.getLogger(StaticResourcesFilter.class);
     private static Plugin plugin;
 
-    private final boolean devMode;
     private FilterConfig config;
     private Map<String, CacheEntry> cache;
 
     public StaticResourcesFilter(PluginRetrievalService pluginRetreivalService)
     {
         plugin = pluginRetreivalService.getPlugin();
-        devMode = Boolean.getBoolean(PluginUtils.ATLASSIAN_DEV_MODE);
     }
 
     @Override
@@ -168,7 +164,7 @@ public class StaticResourcesFilter implements Filter
             sos.close();
         }
 
-        if (devMode)
+        if (DEV_MODE_ENABLED)
         {
             cache.remove(localPath);
         }
