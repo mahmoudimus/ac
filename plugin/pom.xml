@@ -81,6 +81,17 @@
             <artifactId>licensing-api</artifactId>
             <scope>provided</scope>
         </dependency>
+        <!-- the lib is here just for debugging -->
+        <dependency>
+            <groupId>com.atlassian.upm</groupId>
+            <artifactId>licensing-lib</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.upm</groupId>
+            <artifactId>upm-common</artifactId>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>com.atlassian.upm</groupId>
             <artifactId>upm-api</artifactId>
@@ -278,6 +289,7 @@
                             <productDataPath>${basedir}/../integration-tests/src/test/resources/jira-generated-test-resources.zip</productDataPath>
                             <systemPropertyVariables>
                                 <product>jira</product>
+                                <atlassian.upm.on.demand>${atlassian.upm.on.demand}</atlassian.upm.on.demand>
                             </systemPropertyVariables>
                             <pluginArtifacts>
                                 <pluginArtifact>
@@ -332,6 +344,7 @@
                             <productDataPath>${basedir}/../integration-tests/src/test/resources/confluence-generated-test-resources.zip</productDataPath>
                             <systemPropertyVariables>
                                 <product>confluence</product>
+                                <atlassian.upm.on.demand>${atlassian.upm.on.demand}</atlassian.upm.on.demand>
                             </systemPropertyVariables>
                             <pluginArtifacts>
                                 <pluginArtifact>
