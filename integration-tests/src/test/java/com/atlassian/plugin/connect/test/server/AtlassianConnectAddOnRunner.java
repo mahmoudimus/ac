@@ -132,6 +132,13 @@ public final class AtlassianConnectAddOnRunner
         return this;
     }
 
+    public AtlassianConnectAddOnRunner enableLicensing()
+    {
+        Element info = doc.getRootElement().element("plugin-info");
+        info.addElement("param").addAttribute("name","atlassian-licensing-enabled").setText("true");
+        return this;
+    }
+
     public AtlassianConnectAddOnRunner addUnknownModule(String key)
     {
         doc.getRootElement().addElement("unknown")
