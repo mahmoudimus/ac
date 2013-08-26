@@ -251,6 +251,12 @@
         </description>
     </described-module-type>
 
+    <described-module-type key="remote-web-item" class="com.atlassian.plugin.connect.plugin.module.webitem.RemoteWebItemModuleDescriptor">
+        <description>
+            Relative link leading to a remote page decorated as remote page, or an absolute link leading outside of a product.
+        </description>
+    </described-module-type>
+
     <plugin-permission key="insert_web_resources" name="Insert Web Resources">
         <description>Ability to insert web resources on pages of the product.</description>
     </plugin-permission>

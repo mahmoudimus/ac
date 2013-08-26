@@ -2,8 +2,10 @@ package com.atlassian.plugin.connect.test.pageobjects.confluence;
 
 import com.atlassian.pageobjects.Page;
 import com.atlassian.pageobjects.PageBinder;
+import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebPanel;
 
+import com.google.common.base.Optional;
 import com.google.inject.Inject;
 
 /**
@@ -30,5 +32,10 @@ public class ConfluenceEditPage implements Page
     public RemoteWebPanel findWebPanel(String id)
     {
         return pageBinder.bind(RemoteWebPanel.class, id);
+    }
+
+    public RemoteWebItem findWebItem(String webItemId, Optional<String> dropDownLinkId)
+    {
+        return pageBinder.bind(RemoteWebItem.class, webItemId, dropDownLinkId);
     }
 }

@@ -9,7 +9,7 @@ import java.util.Map;
 import com.atlassian.gzipfilter.org.apache.commons.lang.StringUtils;
 import com.atlassian.plugin.connect.plugin.module.page.IFrameContextImpl;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
-import com.atlassian.plugin.connect.plugin.module.webpanel.extractor.WebPanelURLParametersSerializer;
+import com.atlassian.plugin.connect.plugin.module.context.ContextMapURLSerializer;
 import com.atlassian.plugin.connect.spi.module.IFrameContext;
 import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
 import com.atlassian.plugin.web.Condition;
@@ -30,7 +30,7 @@ public class IFrameRemoteWebPanel implements WebPanel
 
     private final IFrameRenderer iFrameRenderer;
     private final IFrameContext iFrameContext;
-    private final WebPanelURLParametersSerializer webPanelURLParametersSerializer;
+    private final ContextMapURLSerializer contextMapURLSerializer;
     private final UserManager userManager;
     private final Condition condition;
     private final UrlVariableSubstitutor urlVariableSubstitutor;
@@ -39,12 +39,12 @@ public class IFrameRemoteWebPanel implements WebPanel
             IFrameRenderer iFrameRenderer,
             IFrameContext iFrameContext,
             Condition condition,
-            WebPanelURLParametersSerializer webPanelURLParametersSerializer,
+            ContextMapURLSerializer contextMapURLSerializer,
             UserManager userManager, UrlVariableSubstitutor urlVariableSubstitutor)
     {
         this.urlVariableSubstitutor = urlVariableSubstitutor;
         this.userManager = checkNotNull(userManager);
-        this.webPanelURLParametersSerializer = checkNotNull(webPanelURLParametersSerializer);
+        this.contextMapURLSerializer = checkNotNull(contextMapURLSerializer);
         this.iFrameRenderer = checkNotNull(iFrameRenderer);
         this.iFrameContext = checkNotNull(iFrameContext);
         this.condition = checkNotNull(condition);
@@ -73,7 +73,7 @@ public class IFrameRemoteWebPanel implements WebPanel
         {
             final String remoteUser = StringUtils.defaultString(userManager.getRemoteUsername());
 
-            final Map<String, Object> whiteListedContext = webPanelURLParametersSerializer.getExtractedWebPanelParameters(context);
+            final Map<String, Object> whiteListedContext = contextMapURLSerializer.getExtractedWebPanelParameters(context);
 
             writer.write(iFrameRenderer.render(substituteContext(whiteListedContext), "", Collections.EMPTY_MAP, remoteUser));
         }

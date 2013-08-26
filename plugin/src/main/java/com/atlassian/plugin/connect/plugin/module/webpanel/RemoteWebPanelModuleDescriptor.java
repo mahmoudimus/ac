@@ -14,7 +14,7 @@ import com.atlassian.plugin.connect.plugin.module.IFrameRendererImpl;
 import com.atlassian.plugin.connect.plugin.module.page.IFrameContextImpl;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlValidator;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
-import com.atlassian.plugin.connect.plugin.module.webpanel.extractor.WebPanelURLParametersSerializer;
+import com.atlassian.plugin.connect.plugin.module.context.ContextMapURLSerializer;
 import com.atlassian.plugin.connect.spi.module.IFrameParams;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.web.WebInterfaceManager;
@@ -43,7 +43,7 @@ public class RemoteWebPanelModuleDescriptor extends AbstractModuleDescriptor<Voi
     private final HostContainer hostContainer;
     private final BundleContext bundleContext;
     private final ConditionProcessor conditionProcessor;
-    private final WebPanelURLParametersSerializer webPanelURLParametersSerializer;
+    private final ContextMapURLSerializer contextMapURLSerializer;
     private final UserManager userManager;
     private final UrlVariableSubstitutor urlVariableSubstitutor;
     private final UrlValidator urlValidator;
@@ -62,14 +62,14 @@ public class RemoteWebPanelModuleDescriptor extends AbstractModuleDescriptor<Voi
             HostContainer hostContainer,
             BundleContext bundleContext,
             ConditionProcessor conditionProcessor,
-            WebPanelURLParametersSerializer webPanelURLParametersSerializer,
+            ContextMapURLSerializer contextMapURLSerializer,
             UserManager userManager,
             UrlVariableSubstitutor urlVariableSubstitutor,
             UrlValidator urlValidator)
     {
         super(moduleFactory);
         this.userManager = checkNotNull(userManager);
-        this.webPanelURLParametersSerializer = checkNotNull(webPanelURLParametersSerializer);
+        this.contextMapURLSerializer = checkNotNull(contextMapURLSerializer);
         this.iFrameRenderer = checkNotNull(iFrameRenderer);
         this.dynamicDescriptorRegistration = checkNotNull(dynamicDescriptorRegistration);
         this.hostContainer = checkNotNull(hostContainer);
@@ -142,7 +142,7 @@ public class RemoteWebPanelModuleDescriptor extends AbstractModuleDescriptor<Voi
                             iFrameRenderer,
                             new IFrameContextImpl(getPluginKey(), url, moduleKey, iFrameParams),
                             condition != null ? condition : new AlwaysDisplayCondition(),
-                            webPanelURLParametersSerializer, userManager, urlVariableSubstitutor);
+                            contextMapURLSerializer, userManager, urlVariableSubstitutor);
                 }
             }, getService(bundleContext, WebInterfaceManager.class));
 

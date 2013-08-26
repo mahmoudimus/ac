@@ -1,4 +1,6 @@
-package com.atlassian.plugin.connect.plugin.module.webpanel.extractor;
+package com.atlassian.plugin.connect.plugin.module.context;
+
+import com.google.common.base.Optional;
 
 import java.util.Map;
 
@@ -8,12 +10,6 @@ import java.util.Map;
  * <p> E.g., in order to include a page.id in a web-panel's iframe URL, we return a map of ("page", ("id", page_id)).</p>
  * <p>Components implementing this interface should be product specific.</p>
  */
-public interface WebPanelParameterExtractor
+public interface ContextMapParameterExtractor<P> extends ParameterExtractor<Map<String, Object>, P>
 {
-    /**
-     * Extracts the whitelisted parameters from acontext.
-     *
-     * @param context a web panel's context.
-     */
-    Map<String, Object> extract(final Map<String, Object> context);
 }

@@ -8,7 +8,7 @@ import com.atlassian.plugin.connect.plugin.module.IFrameRendererImpl;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlValidator;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.plugin.module.webpanel.RemoteWebPanelModuleDescriptor;
-import com.atlassian.plugin.connect.plugin.module.webpanel.extractor.WebPanelURLParametersSerializer;
+import com.atlassian.plugin.connect.plugin.module.context.ContextMapURLSerializer;
 import com.atlassian.sal.api.user.UserManager;
 
 import org.dom4j.Element;
@@ -29,12 +29,12 @@ public final class IssuePanelPageModuleDescriptor extends RemoteWebPanelModuleDe
             HostContainer hostContainer,
             BundleContext bundleContext,
             ConditionProcessor conditionProcessor,
-            WebPanelURLParametersSerializer webPanelURLParametersSerializer,
+            ContextMapURLSerializer contextMapURLSerializer,
             UserManager userManager,
             UrlVariableSubstitutor urlVariableSubstitutor,
             UrlValidator urlValidator)
     {
-        super(moduleFactory, iFrameRenderer, dynamicDescriptorRegistration, hostContainer, bundleContext, conditionProcessor, webPanelURLParametersSerializer, userManager, urlVariableSubstitutor, urlValidator);
+        super(moduleFactory, iFrameRenderer, dynamicDescriptorRegistration, hostContainer, bundleContext, conditionProcessor, contextMapURLSerializer, userManager, urlVariableSubstitutor, urlValidator);
     }
 
     @Override
