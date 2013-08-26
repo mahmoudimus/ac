@@ -9,6 +9,7 @@ import com.atlassian.plugin.connect.test.webhook.WebHookTester;
 import com.atlassian.plugin.connect.test.webhook.WebHookWaiter;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -56,6 +57,8 @@ public final class TestWebHooks extends AbstractBrowserlessTest
         testRemotePluginWebHookFiredOnlyForOwnPlugin(PluginsWebHookProvider.REMOTE_PLUGIN_ENABLED);
     }
 
+    //TODO: see ignore comment
+    @Ignore("ignoring until plug-core 3.0.5 and plugin disabled events are back in")
     @Test
     public void testRemotePluginDisabledHookFiredOnlyForOwnPlugin() throws Exception
     {

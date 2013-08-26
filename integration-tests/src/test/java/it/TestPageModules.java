@@ -110,7 +110,9 @@ public class TestPageModules extends AbstractRemotablePluginTest
         assertEquals("<user><name>betty</name></user>", remotePluginTest.getClientHttpDataXml());
 
         // test unauthorized scope access
-        assertEquals("403", remotePluginTest.getClientHttpUnauthorizedCode());
+        // ACDEV-363: Temporarily disabling scope checking on the client until
+        // we figure out our long term strategy with permissions
+        // assertEquals("403", remotePluginTest.getClientHttpUnauthorizedCode());
     }
 
     @Test
