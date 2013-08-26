@@ -38,6 +38,11 @@ public final class LucidChartBundler implements InitializingBean
         Plugin oldLucid = pluginAccessor.getPlugin("lucidchart-app");
         if(null != oldLucid)
         {
+            if(oldLucid.getPluginInformation().getVersion().equalsIgnoreCase("1.7.1-connect"))
+            {
+                return;
+            }
+            
             pluginController.uninstall(oldLucid);
         }
         
