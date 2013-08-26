@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.descriptor.util;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -9,7 +10,9 @@ import java.util.Set;
 
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
 
+import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.io.Files;
 
 import org.dom4j.*;
 import org.dom4j.io.OutputFormat;
@@ -39,6 +42,23 @@ public final class FormatConverter
         else
         {
             return loadAsXml(id, text);
+        }
+    }
+
+    public Document readFileToDoc(File file)
+    {
+        SAXReader reader = XmlUtils.createSecureSaxReader();
+        try
+        {
+            InputSource source = new InputSource(Files.newReader(file, Charsets.UTF_8));
+            source.setEncoding("UTF-8");
+            Document document = reader.read(file);
+            document.accept(new NamespaceCleaner());
+            return document;
+        }
+        catch (Exception e)
+        {
+            throw new InvalidDescriptorException("Unable to parse the descriptor: " + e.getMessage(), e);
         }
     }
 

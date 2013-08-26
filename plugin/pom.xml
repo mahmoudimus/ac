@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.0-m7-SNAPSHOT</version>
+        <version>1.0-m9-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -83,9 +81,25 @@
             <artifactId>licensing-api</artifactId>
             <scope>provided</scope>
         </dependency>
+        <!-- the lib is here just for debugging -->
+        <dependency>
+            <groupId>com.atlassian.upm</groupId>
+            <artifactId>licensing-lib</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.upm</groupId>
+            <artifactId>upm-common</artifactId>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>com.atlassian.upm</groupId>
             <artifactId>upm-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.upm</groupId>
+            <artifactId>upm-spi</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -202,6 +216,7 @@
                     <jvmArgs>-Xmx1024m -XX:MaxPermSize=256m</jvmArgs>
                     <instructions>
                         <Import-Package>
+                            com.atlassian.upm.*,
                             com.atlassian.confluence.plugin.descriptor.web.descriptors;resolution:=optional,
                             com.atlassian.confluence.plugin.webresource;resolution:=optional,
                             com.atlassian.confluence.security.websudo;resolution:=optional,
@@ -274,6 +289,7 @@
                             <productDataPath>${basedir}/../integration-tests/src/test/resources/jira-generated-test-resources.zip</productDataPath>
                             <systemPropertyVariables>
                                 <product>jira</product>
+                                <atlassian.upm.on.demand>${atlassian.upm.on.demand}</atlassian.upm.on.demand>
                             </systemPropertyVariables>
                             <pluginArtifacts>
                                 <pluginArtifact>
@@ -308,32 +324,38 @@
                             </bundledArtifacts>
                             
                             <libArtifacts>
-                                <libArtifact>
-                                    <groupId>com.atlassian.util.concurrent</groupId>
-                                    <artifactId>atlassian-util-concurrent</artifactId>
-                                    <version>${atlassian-util-concurrent.version}</version>
-                                </libArtifact>
                                 <!-- TODO remove this once 3.0.5 is in all products -->
-                                <libArtifact>
-                                    <groupId>com.atlassian.plugins</groupId>
-                                    <artifactId>atlassian-plugins-core</artifactId>
-                                    <version>${atlassian.plugins.version}</version>
-                                </libArtifact>
+                                <!--<libArtifact>-->
+                                    <!--<groupId>com.atlassian.plugins</groupId>-->
+                                    <!--<artifactId>atlassian-plugins-core</artifactId>-->
+                                    <!--<version>${atlassian.plugins.version}</version>-->
+                                <!--</libArtifact>-->
+                                <!--<libArtifact>-->
+                                    <!--<groupId>com.atlassian.util.concurrent</groupId>-->
+                                    <!--<artifactId>atlassian-util-concurrent</artifactId>-->
+                                    <!--<version>${atlassian-util-concurrent.version}</version>-->
+                                <!--</libArtifact>-->
                             </libArtifacts>
                         </product>
                         <product>
                             <id>confluence</id>
-                            <version>${confluence.version}</version>
+                            <version>${atlassian.confluence.version}</version>
                             <log4jProperties>${basedir}/../integration-tests/src/test/resources/log4j-confluence.properties</log4jProperties>
                             <productDataPath>${basedir}/../integration-tests/src/test/resources/confluence-generated-test-resources.zip</productDataPath>
                             <systemPropertyVariables>
                                 <product>confluence</product>
+                                <atlassian.upm.on.demand>${atlassian.upm.on.demand}</atlassian.upm.on.demand>
                             </systemPropertyVariables>
                             <pluginArtifacts>
                                 <pluginArtifact>
                                     <groupId>com.atlassian.webhooks</groupId>
                                     <artifactId>atlassian-webhooks-plugin</artifactId>
                                     <version>${atlassian.webhooks.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>atlassian-connect-plugin</artifactId>
+                                    <version>${project.version}</version>
                                 </pluginArtifact>
                                 <pluginArtifact>
                                     <groupId>${project.groupId}</groupId>
@@ -354,11 +376,11 @@
                             
                             <libArtifacts>
                                 <!-- TODO remove this once 3.0.5 is in all products -->
-                                <libArtifact>
-                                    <groupId>com.atlassian.plugins</groupId>
-                                    <artifactId>atlassian-plugins-core</artifactId>
-                                    <version>${atlassian.plugins.version}</version>
-                                </libArtifact>
+                                <!--<libArtifact>-->
+                                    <!--<groupId>com.atlassian.plugins</groupId>-->
+                                    <!--<artifactId>atlassian-plugins-core</artifactId>-->
+                                    <!--<version>${atlassian.plugins.version}</version>-->
+                                <!--</libArtifact>-->
                             </libArtifacts>
                         </product>
                     </products>

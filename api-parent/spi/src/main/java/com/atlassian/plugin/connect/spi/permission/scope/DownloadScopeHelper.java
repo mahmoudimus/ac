@@ -1,10 +1,12 @@
 package com.atlassian.plugin.connect.spi.permission.scope;
 
-import javax.servlet.http.HttpServletRequest;
-
 import com.atlassian.plugin.connect.spi.util.ServletUtils;
-
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+
+import javax.servlet.http.HttpServletRequest;
 
 import static com.google.common.collect.Iterables.transform;
 import static java.util.Arrays.asList;
@@ -15,11 +17,11 @@ import static java.util.Arrays.asList;
 public final class DownloadScopeHelper
 {
     private final Iterable<ApiResourceInfo> apiResourceInfo;
-    private final String[] pathPrefixes;
+    private final Iterable<String> pathPrefixes;
 
     public DownloadScopeHelper(final String... pathPrefixes)
     {
-        this.pathPrefixes = pathPrefixes;
+        this.pathPrefixes = Lists.newArrayList(pathPrefixes);
         this.apiResourceInfo = transform(asList(pathPrefixes), new Function<String, ApiResourceInfo>()
         {
             @Override
@@ -30,17 +32,17 @@ public final class DownloadScopeHelper
         });
     }
 
-    public boolean allow(HttpServletRequest request, String user)
+    public boolean allow(final HttpServletRequest request, String user)
     {
         final String pathInfo = ServletUtils.extractPathInfo(request);
-        for (String prefix : pathPrefixes)
+        return Iterables.any(pathPrefixes, new Predicate<String>()
         {
-            if (pathInfo.startsWith(prefix))
+            @Override
+            public boolean apply(final String prefix)
             {
-                return true;
+                return pathInfo.startsWith(prefix) && "GET".equalsIgnoreCase(request.getMethod());
             }
-        }
-        return false;
+        });
     }
 
     public Iterable<ApiResourceInfo> getApiResourceInfos()

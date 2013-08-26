@@ -139,8 +139,11 @@
     <component key="productEventPublisher" class="com.atlassian.plugin.connect.plugin.event.ProductEventPublisher"
                public="true" interface="com.atlassian.sal.api.lifecycle.LifecycleAware" />
 
-    <component key="remotappsService" class="com.atlassian.plugin.connect.plugin.DefaultRemotablePluginInstallationService"
-               interface="com.atlassian.plugin.connect.spi.RemotablePluginInstallationService" public="true" />
+    <component key="connectIdentifier" class="com.atlassian.plugin.connect.plugin.service.DefaultConnectAddOnIdentifierService"
+               interface="com.atlassian.plugin.connect.spi.ConnectAddOnIdentifierService" public="true" />
+
+    <component key="upmInstallHandler" class="com.atlassian.plugin.connect.plugin.installer.ConnectUPMInstallHandler"
+               interface="com.atlassian.upm.spi.PluginInstallHandler" public="true" />
 
     <component key="remotePluginRequestSigner" class="com.atlassian.plugin.connect.plugin.webhooks.RemotePluginRequestSigner"
                interface="com.atlassian.webhooks.spi.plugin.RequestSigner" public="true" />

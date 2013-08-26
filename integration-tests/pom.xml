@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.0-m7-SNAPSHOT</version>
+        <version>1.0-m9-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -270,17 +268,17 @@
                                 </pluginArtifact>
                             </pluginArtifacts>
                             <libArtifacts>
-                                <libArtifact>
-                                    <groupId>com.atlassian.util.concurrent</groupId>
-                                    <artifactId>atlassian-util-concurrent</artifactId>
-                                    <version>${atlassian-util-concurrent.version}</version>
-                                </libArtifact>
+                                <!--<libArtifact>-->
+                                    <!--<groupId>com.atlassian.util.concurrent</groupId>-->
+                                    <!--<artifactId>atlassian-util-concurrent</artifactId>-->
+                                    <!--<version>${atlassian-util-concurrent.version}</version>-->
+                                <!--</libArtifact>-->
                                 <!-- TODO remove this once 3.0.5 is in all products -->
-                                <libArtifact>
-                                    <groupId>com.atlassian.plugins</groupId>
-                                    <artifactId>atlassian-plugins-core</artifactId>
-                                    <version>${atlassian.plugins.version}</version>
-                                </libArtifact>
+                                <!--<libArtifact>-->
+                                    <!--<groupId>com.atlassian.plugins</groupId>-->
+                                    <!--<artifactId>atlassian-plugins-core</artifactId>-->
+                                    <!--<version>${atlassian.plugins.version}</version>-->
+                                <!--</libArtifact>-->
                             </libArtifacts>
 
                             <bundledArtifacts>
@@ -323,11 +321,11 @@
                             </pluginArtifacts>
                             <libArtifacts>
                                 <!-- TODO remove this once 3.0.5 is in all products -->
-                                <libArtifact>
-                                    <groupId>com.atlassian.plugins</groupId>
-                                    <artifactId>atlassian-plugins-core</artifactId>
-                                    <version>${atlassian.plugins.version}</version>
-                                </libArtifact>
+                                <!--<libArtifact>-->
+                                    <!--<groupId>com.atlassian.plugins</groupId>-->
+                                    <!--<artifactId>atlassian-plugins-core</artifactId>-->
+                                    <!--<version>${atlassian.plugins.version}</version>-->
+                                <!--</libArtifact>-->
                             </libArtifacts>
 
                             <bundledArtifacts>

@@ -5,16 +5,12 @@ import java.io.StringWriter;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
-import java.util.Set;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 
 import com.atlassian.plugin.connect.plugin.descriptor.DescriptorValidator;
 import com.atlassian.plugin.connect.plugin.settings.SettingsManager;
-import com.atlassian.plugin.connect.spi.InstallationFailedException;
-import com.atlassian.plugin.connect.spi.PermissionDeniedException;
-import com.atlassian.plugin.connect.spi.RemotablePluginInstallationService;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import com.atlassian.sal.api.user.UserManager;
 
@@ -35,18 +31,15 @@ public class InstallerResource
 
     private static final Logger log = LoggerFactory.getLogger(InstallerResource.class);
 
-    private final RemotablePluginInstallationService remotablePluginInstallationService;
     private final UserManager userManager;
     private final DescriptorValidator descriptorValidator;
     private final SettingsManager settingsManager;
 
     public InstallerResource(UserManager userManager,
-            DescriptorValidator descriptorValidator,
-            SettingsManager settingsManager,
-            RemotablePluginInstallationService remotablePluginInstallationService
+                             DescriptorValidator descriptorValidator,
+                             SettingsManager settingsManager
     )
     {
-        this.remotablePluginInstallationService = remotablePluginInstallationService;
         this.userManager = userManager;
         this.descriptorValidator = descriptorValidator;
         this.settingsManager = settingsManager;
@@ -90,73 +83,6 @@ public class InstallerResource
         }
     }
 
-    @POST
-    public Response install(@FormParam("url") String registrationUrl)
-    {
-        try
-        {
-            remotablePluginInstallationService.install(userManager.getRemoteUsername(),
-                    registrationUrl);
-        }
-        catch (PermissionDeniedException ex)
-        {
-            log.debug(ex.getMessage(), ex);
-            return Response.status(Response.Status.FORBIDDEN).entity(ex.getMessage()).build();
-        }
-        catch (InstallationFailedException ex)
-        {
-            log.debug(ex.getMessage(), ex);
-            return Response.status(Response.Status.BAD_REQUEST).entity(ex.getMessage()).build();
-        }
-        return Response.ok().build();
-    }
-
-    @POST
-    @Path("/{pluginKey}")
-    public Response installFromMarketplace(@PathParam("pluginKey") String pluginKey)
-    {
-        try
-        {
-            remotablePluginInstallationService.installFromMarketplace(
-                    userManager.getRemoteUsername(),
-                    pluginKey);
-        }
-        catch (PermissionDeniedException ex)
-        {
-            log.debug(ex.getMessage(), ex);
-            return Response.status(Response.Status.FORBIDDEN).entity(ex.getMessage()).build();
-        }
-        catch (InstallationFailedException ex)
-        {
-            log.debug(ex.getMessage(), ex);
-            return Response.status(Response.Status.BAD_REQUEST).entity(ex.getMessage()).build();
-        }
-        return Response.noContent().build();
-    }
-
-    @POST
-    @Path("/reinstall")
-    @Produces("text/plain")
-    public Response reinstall()
-    {
-        Set<String> keys = null;
-        try
-        {
-            keys = remotablePluginInstallationService.reinstallRemotePlugins(
-                    userManager.getRemoteUsername());
-        }
-        catch (PermissionDeniedException ex)
-        {
-            return Response.status(Response.Status.FORBIDDEN).entity(ex.getMessage()).build();
-        }
-        catch (InstallationFailedException ex)
-        {
-            log.debug(ex.getMessage(), ex);
-            return Response.status(Response.Status.BAD_REQUEST).entity(ex.getMessage()).build();
-        }
-        return Response.ok().entity(keys.toString()).build();
-    }
-
     @GET
     @Path(ATLASSIAN_PLUGIN_REMOTABLE_SCHEMA_PATH)
     @Produces("text/xml")
@@ -186,7 +112,7 @@ public class InstallerResource
         return Response.ok(new JSONObject()
                 .put("publicKey", publicKeyWriter.toString())
                 .put("privateKey", privateKeyWriter.toString()).toString(2))
-                .build();
+                       .build();
 
     }
 }

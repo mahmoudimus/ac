@@ -18,6 +18,7 @@ import com.atlassian.oauth.ServiceProvider;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
+import com.atlassian.plugin.connect.spi.ConnectAddOnIdentifierService;
 import com.atlassian.plugin.event.PluginEventListener;
 import com.atlassian.plugin.event.events.PluginDisabledEvent;
 import com.atlassian.plugin.event.events.PluginEnabledEvent;
@@ -64,6 +65,7 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
     private final PluginAccessor pluginAccessor;
     private final ApplicationProperties applicationProperties;
     private final EventPublisher eventPublisher;
+    private final ConnectAddOnIdentifierService connectIdentifier;
 
     private final Map<String, RemotablePluginAccessor> accessors;
 
@@ -73,7 +75,8 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
                                                  CachingHttpContentRetriever httpContentRetriever,
                                                  PluginAccessor pluginAccessor,
                                                  ApplicationProperties applicationProperties,
-                                                 EventPublisher eventPublisher
+                                                 EventPublisher eventPublisher,
+                                                 ConnectAddOnIdentifierService connectIdentifier
     )
     {
         this.applicationLinkAccessor = applicationLinkAccessor;
@@ -83,6 +86,7 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
         this.applicationProperties = applicationProperties;
         this.eventPublisher = eventPublisher;
         this.eventPublisher.register(this);
+        this.connectIdentifier = connectIdentifier;
 
         this.accessors = CopyOnWriteMap.newHashMap();
     }
@@ -211,18 +215,6 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
                     }
             );
         }
-    }
-
-    private boolean isRemotable(String pluginKey)
-    {
-        return !Iterables.findFirst(pluginAccessor.getPlugin(pluginKey).getModuleDescriptors(), new Predicate<ModuleDescriptor<?>>()
-        {
-            @Override
-            public boolean apply(@Nullable ModuleDescriptor<?> input)
-            {
-                return input instanceof RemotePluginContainerModuleDescriptor;
-            }
-        }).isEmpty();
     }
 
     /**

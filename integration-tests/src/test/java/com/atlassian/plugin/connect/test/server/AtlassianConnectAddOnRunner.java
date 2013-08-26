@@ -132,6 +132,13 @@ public final class AtlassianConnectAddOnRunner
         return this;
     }
 
+    public AtlassianConnectAddOnRunner enableLicensing()
+    {
+        Element info = doc.getRootElement().element("plugin-info");
+        info.addElement("param").addAttribute("name","atlassian-licensing-enabled").setText("true");
+        return this;
+    }
+
     public AtlassianConnectAddOnRunner addUnknownModule(String key)
     {
         doc.getRootElement().addElement("unknown")
@@ -156,12 +163,12 @@ public final class AtlassianConnectAddOnRunner
         return signedRequestHandler;
     }
 
-    private void register() throws IOException
+    private void register() throws Exception
     {
         installer.install("http://localhost:" + port + "/register");
     }
 
-    public void uninstall() throws IOException
+    public void uninstall() throws Exception
     {
         installer.uninstall(pluginKey);
     }
@@ -207,6 +214,7 @@ public final class AtlassianConnectAddOnRunner
         new XMLWriter(writer).write(doc);
         logger.debug("Started Atlassian Connect Add-On at '{}' with descriptor:\n{}", displayUrl, writer);
 
+        System.out.println("Started Atlassian Connect Add-On at " + displayUrl);
         register();
         return this;
     }
