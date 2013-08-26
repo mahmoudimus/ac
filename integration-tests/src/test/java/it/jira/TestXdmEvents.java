@@ -14,27 +14,36 @@ import static org.junit.Assert.*;
 
 public class TestXdmEvents extends JiraWebDriverTestBase
 {
-    private static AtlassianConnectAddOnRunner remotePlugin;
+    private static AtlassianConnectAddOnRunner remotePluginA;
+    private static AtlassianConnectAddOnRunner remotePluginB;
 
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        remotePlugin = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl())
-            .add(RemoteWebPanelModule.key("xdm-events-1")
-                .name("XDM Events Panel 1")
+        remotePluginA = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl())
+            .add(RemoteWebPanelModule.key("xdm-events-a1")
+                .name("XDM Events Panel A1")
                 .location("atl.jira.view.issue.right.context")
-                .path("/xdmEventsPanel1")
-                .resource(newServlet(new XdmEventsPanelServlet(1))))
-            .add(RemoteWebPanelModule.key("xdm-events-2")
-                .name("XDM Events Panel 2")
+                .path("/xdmEventsPanelA1")
+                .resource(newServlet(new XdmEventsPanelServlet("A1"))))
+            .add(RemoteWebPanelModule.key("xdm-events-a2")
+                .name("XDM Events Panel A2")
                 .location("atl.jira.view.issue.right.context")
-                .path("/xdmEventsPanel2")
-                .resource(newServlet(new XdmEventsPanelServlet(2))))
-            .add(RemoteWebPanelModule.key("xdm-events-3")
-                .name("XDM Events Panel 3")
+                .path("/xdmEventsPanelA2")
+                .resource(newServlet(new XdmEventsPanelServlet("A2"))))
+            .add(RemoteWebPanelModule.key("xdm-events-a3")
+                .name("XDM Events Panel A3")
                 .location("atl.jira.view.issue.right.context")
-                .path("/xdmEventsPanel3")
-                .resource(newServlet(new XdmEventsPanelServlet(3))))
+                .path("/xdmEventsPanelA3")
+                .resource(newServlet(new XdmEventsPanelServlet("A3"))))
+            .start();
+
+        remotePluginB = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl())
+            .add(RemoteWebPanelModule.key("xdm-events-b1")
+                .name("XDM Events Panel B1")
+                .location("atl.jira.view.issue.right.context")
+                .path("/xdmEventsPanelB1")
+                .resource(newServlet(new XdmEventsPanelServlet("B1"))))
             .start();
     }
 
@@ -46,51 +55,75 @@ public class TestXdmEvents extends JiraWebDriverTestBase
         RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Test issue for panel");
         JiraViewIssuePage viewIssuePage = product.visit(JiraViewIssuePage.class, issue.getKey());
 
-        RemoteXdmEventPanel panel1 = viewIssuePage.findXdmEventPanel("xdm-events-1");
-        RemoteXdmEventPanel panel2 = viewIssuePage.findXdmEventPanel("xdm-events-2");
-        RemoteXdmEventPanel panel3 = viewIssuePage.findXdmEventPanel("xdm-events-3");
+        RemoteXdmEventPanel panelA1 = viewIssuePage.findXdmEventPanel("xdm-events-a1");
+        RemoteXdmEventPanel panelA2 = viewIssuePage.findXdmEventPanel("xdm-events-a2");
+        RemoteXdmEventPanel panelA3 = viewIssuePage.findXdmEventPanel("xdm-events-a3");
+        RemoteXdmEventPanel panelB1 = viewIssuePage.findXdmEventPanel("xdm-events-b1");
 
-        assertEquals(panel1.getPanelId(), "1");
-        assertEquals(panel2.getPanelId(), "2");
-        assertEquals(panel3.getPanelId(), "3");
+        assertEquals(panelA1.getPanelId(), "A1");
+        assertEquals(panelA2.getPanelId(), "A2");
+        assertEquals(panelA3.getPanelId(), "A3");
+        assertEquals(panelB1.getPanelId(), "B1");
 
-        panel1.emit();
-        assertTrue(panel1.hasLoggedEvent("panel-1", "event-1"));
-        assertTrue(panel2.hasLoggedEvent("panel-1", "event-1"));
-        assertTrue(panel3.hasLoggedEvent("panel-1", "event-1"));
+        panelA1.emit();
+        assertTrue(panelA1.hasLoggedEvent("panel-A1", "event-1"));
+        assertTrue(panelA2.hasLoggedEvent("panel-A1", "event-1"));
+        assertTrue(panelA3.hasLoggedEvent("panel-A1", "event-1"));
+        assertTrue(panelB1.hasNotLoggedEvent("panel-A1", "event-1"));
 
-        panel2.emit();
-        assertTrue(panel1.hasLoggedEvent("panel-2", "event-1"));
-        assertTrue(panel2.hasLoggedEvent("panel-2", "event-1"));
-        assertTrue(panel3.hasLoggedEvent("panel-2", "event-1"));
+        panelA2.emit();
+        assertTrue(panelA1.hasLoggedEvent("panel-A2", "event-1"));
+        assertTrue(panelA2.hasLoggedEvent("panel-A2", "event-1"));
+        assertTrue(panelA3.hasLoggedEvent("panel-A2", "event-1"));
+        assertTrue(panelB1.hasNotLoggedEvent("panel-A2", "event-1"));
 
-        panel3.emit();
-        assertTrue(panel1.hasLoggedEvent("panel-3", "event-1"));
-        assertTrue(panel2.hasLoggedEvent("panel-3", "event-1"));
-        assertTrue(panel3.hasLoggedEvent("panel-3", "event-1"));
+        panelA3.emit();
+        assertTrue(panelA1.hasLoggedEvent("panel-A3", "event-1"));
+        assertTrue(panelA2.hasLoggedEvent("panel-A3", "event-1"));
+        assertTrue(panelA3.hasLoggedEvent("panel-A3", "event-1"));
+        assertTrue(panelB1.hasNotLoggedEvent("panel-A3", "event-1"));
 
-        panel1.emit();
-        assertTrue(panel1.hasLoggedEvent("panel-1", "event-2"));
-        assertTrue(panel2.hasLoggedEvent("panel-1", "event-2"));
-        assertTrue(panel3.hasLoggedEvent("panel-1", "event-2"));
+        panelA1.emit();
+        assertTrue(panelA1.hasLoggedEvent("panel-A1", "event-2"));
+        assertTrue(panelA2.hasLoggedEvent("panel-A1", "event-2"));
+        assertTrue(panelA3.hasLoggedEvent("panel-A1", "event-2"));
+        assertTrue(panelB1.hasNotLoggedEvent("panel-A1", "event-2"));
 
-        panel2.emit();
-        assertTrue(panel1.hasLoggedEvent("panel-2", "event-2"));
-        assertTrue(panel2.hasLoggedEvent("panel-2", "event-2"));
-        assertTrue(panel3.hasLoggedEvent("panel-2", "event-2"));
+        panelA2.emit();
+        assertTrue(panelA1.hasLoggedEvent("panel-A2", "event-2"));
+        assertTrue(panelA2.hasLoggedEvent("panel-A2", "event-2"));
+        assertTrue(panelA3.hasLoggedEvent("panel-A2", "event-2"));
+        assertTrue(panelB1.hasNotLoggedEvent("panel-A2", "event-2"));
 
-        panel3.emit();
-        assertTrue(panel1.hasLoggedEvent("panel-3", "event-2"));
-        assertTrue(panel2.hasLoggedEvent("panel-3", "event-2"));
-        assertTrue(panel3.hasLoggedEvent("panel-3", "event-2"));
+        panelA3.emit();
+        assertTrue(panelA1.hasLoggedEvent("panel-A3", "event-2"));
+        assertTrue(panelA2.hasLoggedEvent("panel-A3", "event-2"));
+        assertTrue(panelA3.hasLoggedEvent("panel-A3", "event-2"));
+        assertTrue(panelB1.hasNotLoggedEvent("panel-A3", "event-2"));
+
+        panelB1.emit();
+        assertTrue(panelB1.hasLoggedEvent("panel-B1", "event-1"));
+        assertTrue(panelA1.hasNotLoggedEvent("panel-B1", "event-1"));
+        assertTrue(panelA2.hasNotLoggedEvent("panel-B1", "event-1"));
+        assertTrue(panelA3.hasNotLoggedEvent("panel-B1", "event-1"));
     }
 
     @AfterClass
     public static void stopConnectAddOn() throws Exception
     {
-        if (remotePlugin != null)
+        try
         {
-            remotePlugin.stop();
+            if (remotePluginA != null)
+            {
+                remotePluginA.stop();
+            }
+        }
+        finally
+        {
+            if (remotePluginB != null)
+            {
+                remotePluginB.stop();
+            }
         }
     }
 }

@@ -2,10 +2,13 @@
 
   "use strict";
 
+  // Note that if it's desireable to publish host-level events to add-ons, this would be a good place to wire
+  // up host listeners and publish to each add-on, rather than using each XdmRpc.events object directly.
+
   var addons = {};
 
   // Tracks all channels (iframes with an XDM bridge) for a given add-on key, managing event propagation
-  // between bridges, and potentially between add-ons
+  // between bridges, and potentially between add-ons.
   function Addon(key) {
     this.key = key;
     this._channels = {};

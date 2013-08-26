@@ -9,7 +9,9 @@ AP.define("events", ["_dollar", "_rpc"], function ($, rpc) {
     var apis = {};
     $.each(["listeners", "on", "once", "onAny", "off", "offAll", "offAny", "active", "emit"], function (_, name) {
       apis[name] = function () {
-        return remote.events[name].apply(remote.events, arguments);
+        var events = remote.events;
+        events[name].apply(events, arguments);
+        return apis;
       };
     });
 
@@ -21,10 +23,11 @@ AP.define("events", ["_dollar", "_rpc"], function ($, rpc) {
 //    };
 //
 //    apis.emitWhitelist = function (regex, name) {
-//      remote.events._event.apply(remote.events, arguments).attrs({
-//        _acAllow: regex.toString()
-//      }).emit();
-//      return remote.events;
+//      var events = remote.events;
+//      var event = events._event.apply(events, arguments);
+//      event.attrs._acAllow = regex.toString();
+//      events._emitEvent(event);
+//      return apis;
 //    };
 
     return {

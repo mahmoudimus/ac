@@ -12,9 +12,9 @@ import java.util.Map;
 
 public final class XdmEventsPanelServlet extends AtlassianConnectAddOnRunner.WithContextServlet
 {
-    private final int id;
+    private final String id;
 
-    public XdmEventsPanelServlet(int id)
+    public XdmEventsPanelServlet(String id)
     {
         this.id = id;
     }

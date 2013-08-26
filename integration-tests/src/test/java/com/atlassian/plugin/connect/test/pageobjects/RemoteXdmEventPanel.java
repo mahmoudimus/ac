@@ -7,6 +7,7 @@ import com.atlassian.pageobjects.elements.PageElementFinder;
 import com.atlassian.webdriver.AtlassianWebDriver;
 import com.google.common.base.Function;
 import org.openqa.selenium.By;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
@@ -25,9 +26,6 @@ import static com.atlassian.plugin.connect.test.pageobjects.RemotePageUtil.runIn
  */
 public class RemoteXdmEventPanel
 {
-//    private static final String IFRAME_ID_PREFIX = "easyXDM_embedded-remote-web-panel-";
-//    private static final String IFRAME_ID_SUFFIX = "_provider";
-
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Inject
@@ -51,9 +49,6 @@ public class RemoteXdmEventPanel
     @Init
     public void init()
     {
-//        By selector = By.id(IFRAME_ID_PREFIX + panelId + IFRAME_ID_SUFFIX);
-//        this.containerDiv = driver.findElement(selector);
-//        waitUntilTrue(elementFinder.find(selector).timed().isPresent());
         By selector = By.id("embedded-remote-web-panel-" + panelId);
         driver.waitUntilElementIsLocated(selector);
         this.containerDiv = driver.findElement(selector);
@@ -91,6 +86,35 @@ public class RemoteXdmEventPanel
     {
         String logLineId = panelId + "-" + eventId;
         return waitForValue(logLineId).equals(logLineId);
+    }
+
+    public boolean hasNotLoggedEvent(String panelId, String eventId)
+    {
+        final String logLineId = panelId + "-" + eventId;
+        final By selector = By.id(logLineId);
+        return runInFrame(driver, containerDiv, new Callable<Boolean>()
+        {
+            @Override
+            public Boolean call() throws Exception
+            {
+                try
+                {
+                    driver.waitUntil(new Function<WebDriver, Boolean>()
+                    {
+                        @Override
+                        public Boolean apply(WebDriver webDriver)
+                        {
+                            return webDriver.findElement(selector) != null;
+                        }
+                    }, 1);
+                }
+                catch (TimeoutException e)
+                {
+                    return true;
+                }
+                return false;
+            }
+        });
     }
 
     public String waitForValue(String key)

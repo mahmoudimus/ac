@@ -151,7 +151,7 @@
    * @returns {Events} This Events instance
    */
   proto.emit = function (name) {
-    return this._event.apply(this, arguments).emit();
+    return this._emitEvent(this._event.apply(this, arguments));
   };
 
   /**
@@ -160,12 +160,11 @@
    *
    * @param {String} name The name of event to emit
    * @param {String[]} args 0 or more additional data arguments to deliver with the event
-   * @returns {Object} An opaque event object that can have attributes attached and can be directly emitted
+   * @returns {Object} A new event object
    * @private
    */
   proto._event = function (name) {
-    var self = this;
-    var event = {
+    return {
       name: name,
       args: [].slice.call(arguments, 1),
       attrs: {},
@@ -174,17 +173,6 @@
         origin: this._origin
       }
     };
-    // TODO: convert to a documentable event object
-    return {
-      attrs: function (attrs) {
-        $.extend(event.attrs, attrs);
-        return this;
-      },
-      emit: function () {
-        self._emitEvent(event);
-        return this;
-      }
-    }
   };
 
   /**
@@ -198,8 +186,9 @@
    * @private
    */
   proto._emitEvent = function (event) {
-    fire(this._listeners(event.name), event);
-    fire(this._any, event);
+    var args = event.args.concat(event);
+    fire(this._listeners(event.name), args);
+    fire(this._any, [event.name].concat(args));
     return this;
   };
 
@@ -215,8 +204,7 @@
   };
 
   // Internal helper for firing an event to an array of listeners
-  function fire(listeners, event) {
-    var args = event.args.concat([event]);
+  function fire(listeners, args) {
     $.each(listeners, function () {
       try {
         this.apply(null, args);
@@ -319,7 +307,8 @@ describe('Events', function () {
 
   it('should fire an any listener on any event, with all expected arguments', function (done) {
     var count = 0;
-    bus.onAny(function (a, b, c, event) {
+    bus.onAny(function (name, a, b, c, event) {
+      assert.ok(name === 'foo' || name === 'bar'); // meh
       assert.equal(a, 1);
       assert.equal(b, 2);
       assert.equal(c, 3);
