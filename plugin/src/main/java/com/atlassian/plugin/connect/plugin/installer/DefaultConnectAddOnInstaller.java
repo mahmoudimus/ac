@@ -56,6 +56,12 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
             {
                 final String installedKey = pluginKeys.iterator().next();
                 final Plugin plugin = pluginAccessor.getPlugin(installedKey);
+
+                if (null == plugin)
+                {
+                    throw new InstallationFailedException(String.format("Plugin '%s' is did not load: check the application logs for errors", installedKey));
+                }
+
                 WaitUntil.invoke(new WaitUntil.WaitCondition()
                 {
                     public boolean isFinished()
