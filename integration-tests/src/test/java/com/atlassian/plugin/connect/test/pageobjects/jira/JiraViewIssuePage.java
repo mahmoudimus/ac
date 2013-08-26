@@ -6,6 +6,7 @@ import com.atlassian.pageobjects.Page;
 import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebPanel;
 
+import com.atlassian.plugin.connect.test.pageobjects.RemoteXdmEventPanel;
 import org.openqa.selenium.By;
 
 /**
@@ -46,5 +47,10 @@ public class JiraViewIssuePage implements Page
     public RemoteWebPanel findWebPanel(String panelId)
     {
         return pageBinder.bind(RemoteWebPanel.class, panelId);
+    }
+
+    public RemoteXdmEventPanel findXdmEventPanel(String panelId)
+    {
+        return pageBinder.bind(RemoteXdmEventPanel.class, panelId);
     }
 }

@@ -15,6 +15,7 @@ import org.junit.Test;
 
 import static com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner.newMustacheServlet;
 import static it.TestConstants.BETTY;
+import static org.junit.Assert.*;
 
 public class TestDialog extends AbstractRemotablePluginTest
 {
@@ -56,5 +57,7 @@ public class TestDialog extends AbstractRemotablePluginTest
 
         closeDialogPage.close();
         closeDialogPage.waitUntilClosed();
+        String response = dialogOpeningPage.waitForValue("dialog-close-data");
+        assertEquals("test dialog close data", response);
     }
 }
