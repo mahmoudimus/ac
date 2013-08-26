@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.module.permission;
 
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.plugin.connect.plugin.PermissionManager;
+import com.atlassian.plugin.connect.plugin.module.oauth.OAuth2LOAuthenticator;
 import com.atlassian.plugin.connect.plugin.product.WebSudoService;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
@@ -23,7 +24,15 @@ import static com.atlassian.plugin.connect.plugin.util.DevModeUtil.DEV_MODE_ENAB
  */
 public class ApiScopingFilter implements Filter
 {
+    /**
+     * Set by {@link OAuth2LOAuthenticator}, indicating the Connect add-on that is the origin of the current request.
+     */
     public static final String PLUGIN_KEY = "Plugin-Key";
+
+    /**
+     * Request header set by /iframe/host/main.js, indicating that the current request is an XDM request. The value
+     * is the key of the Connect add-on that made the XDM request.
+     */
     public static final String AP_REQUEST_HEADER = "AP-Client-Key";
 
     private static final Logger log = LoggerFactory.getLogger(ApiScopingFilter.class);
@@ -124,9 +133,16 @@ public class ApiScopingFilter implements Filter
                 finally
                 {
                     // restore the current WebSudo session (if a new one hasn't been established)
-                    if (session.getAttribute(webSudoSessionKey) == null)
+                    Object attribute = session.getAttribute(webSudoSessionKey);
+                    if (attribute == null)
                     {
                         session.setAttribute(webSudoSessionKey, webSudoTimestamp);
+                    }
+                    else
+                    {
+                        // This is not expected behaviour, but should be harmless as a subsequent request will still
+                        // have it's WebSudo session suspended.
+                        log.warn("XDM request unexpectedly initiated a new WebSudo session expiring at " + attribute);
                     }
                 }
                 return;
