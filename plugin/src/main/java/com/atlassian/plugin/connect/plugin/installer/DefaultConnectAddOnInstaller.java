@@ -57,6 +57,9 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
                 final String installedKey = pluginKeys.iterator().next();
                 final Plugin plugin = pluginAccessor.getPlugin(installedKey);
 
+                // a dodgy plugin artifact can result in an UnloadablePlugin: it has a key but is not loaded
+                // so if you try to use that key to find a loaded plugin then you get nothing... boom.
+                // e.g.: atlassian-plugin.xml contains multiple <webhook> entities with the same key.
                 if (null == plugin)
                 {
                     throw new InstallationFailedException(String.format("Plugin '%s' is did not load: check the application logs for errors", installedKey));
