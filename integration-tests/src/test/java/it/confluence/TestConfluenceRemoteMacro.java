@@ -36,13 +36,14 @@ import static com.atlassian.plugin.connect.test.HttpUtils.renderHtml;
 import static com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps.ConfluenceUser;
 import static com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner.*;
 import static com.google.common.base.Strings.nullToEmpty;
-import static it.TestConstants.ADMIN;
+import static it.TestConstants.ADMIN_USERKEY;
+import static it.TestConstants.ADMIN_USERNAME;
 import static java.lang.String.format;
 import static org.junit.Assert.*;
 
 public final class TestConfluenceRemoteMacro extends ConfluenceWebDriverTestBase
 {
-    private static final Option<ConfluenceUser> ADMIN_CONFLUENCE_USER = some(new ConfluenceUser(ADMIN, ADMIN));
+    private static final Option<ConfluenceUser> ADMIN_CONFLUENCE_USER = some(new ConfluenceUser(ADMIN_USERNAME, ADMIN_USERNAME));
     private static final Option<ConfluenceUser> ANONYMOUS_CONFLUENCE_USER = none(ConfluenceUser.class);
 
     private static final String SIMPLE_MACRO = "simple-macro";
@@ -147,7 +148,7 @@ public final class TestConfluenceRemoteMacro extends ConfluenceWebDriverTestBase
         assertEquals(pageData.getId(), page.getText(CTX_PAGE_ID));
         assertEquals("page", page.getText(CTX_PAGE_TYPE));
         assertEquals(pageData.getTitle(), page.getText(CTX_PAGE_TITLE));
-        assertEquals(ADMIN, page.getText(CTX_USER_ID)); // the macro has been created as the admin user
+        assertEquals(ADMIN_USERNAME, page.getText(CTX_USER_ID)); // the macro has been created as the admin user
         assertNotNull(page.getText(CTX_USER_KEY));
     }
 
@@ -165,7 +166,7 @@ public final class TestConfluenceRemoteMacro extends ConfluenceWebDriverTestBase
         assertEquals(pageData.getId(), page.getText(CTX_PAGE_ID));
         assertEquals("page", page.getText(CTX_PAGE_TYPE));
         assertEquals(pageData.getTitle(), page.getText(CTX_PAGE_TITLE));
-        assertEquals(ADMIN, page.getText(CTX_USER_ID)); // the macro has been created as the admin user
+        assertEquals(ADMIN_USERNAME, page.getText(CTX_USER_ID)); // the macro has been created as the admin user
         assertNotNull(page.getText(CTX_USER_KEY));
     }
 
@@ -183,7 +184,7 @@ public final class TestConfluenceRemoteMacro extends ConfluenceWebDriverTestBase
         assertEquals(pageData.getId(), page.getText(CTX_PAGE_ID));
         assertEquals("page", page.getText(CTX_PAGE_TYPE));
         assertEquals(pageData.getTitle(), page.getText(CTX_PAGE_TITLE));
-        assertEquals(ADMIN, page.getText(CTX_USER_ID)); // the macro has been created as the admin user
+        assertEquals(ADMIN_USERNAME, page.getText(CTX_USER_ID)); // the macro has been created as the admin user
         assertNotNull(page.getText(CTX_USER_KEY));
     }
 
@@ -220,7 +221,7 @@ public final class TestConfluenceRemoteMacro extends ConfluenceWebDriverTestBase
         assertEquals(commentData.getId(), page.getText(CTX_PAGE_ID));
         assertEquals("comment", page.getText(CTX_PAGE_TYPE));
         assertNull(page.getText(CTX_PAGE_TITLE));
-        assertEquals(ADMIN, page.getText(CTX_USER_ID)); // the macro has been created as the admin user
+        assertEquals(ADMIN_USERNAME, page.getText(CTX_USER_ID)); // the macro has been created as the admin user
         assertNotNull(page.getText(CTX_USER_KEY));
     }
 

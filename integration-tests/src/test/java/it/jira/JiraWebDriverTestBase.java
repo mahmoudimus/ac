@@ -17,7 +17,7 @@ import org.junit.BeforeClass;
 
 import hudson.plugins.jira.soap.RemoteProject;
 
-import static it.TestConstants.ADMIN;
+import static it.TestConstants.ADMIN_USERNAME;
 
 public class JiraWebDriverTestBase
 {
@@ -61,7 +61,7 @@ public class JiraWebDriverTestBase
 
     protected void loginAsAdmin()
     {
-        loginAs(ADMIN, ADMIN);
+        loginAs(ADMIN_USERNAME, ADMIN_USERNAME);
     }
 
     private void loginAs(String username, String password)

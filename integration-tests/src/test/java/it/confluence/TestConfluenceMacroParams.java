@@ -1,15 +1,5 @@
 package it.confluence;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Enumeration;
-import java.util.Map;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceMacroPage;
@@ -17,19 +7,35 @@ import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceMacroT
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
 import com.atlassian.plugin.connect.test.server.module.*;
-
+import org.junit.BeforeClass;
 import org.junit.Test;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Enumeration;
+import java.util.Map;
 
 import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.test.Utils.loadResourceAsString;
 import static com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner.newMustacheServlet;
 import static com.google.common.collect.Maps.newHashMap;
-import static it.TestConstants.BETTY;
+import static it.TestConstants.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 public final class TestConfluenceMacroParams extends ConfluenceWebDriverTestBase
 {
+    private static ConfluenceOps.ConfluenceUser admin;
+
+    @BeforeClass
+    public static void setupUser() {
+        admin = new ConfluenceOps.ConfluenceUser(ADMIN_USERNAME, ADMIN_USERNAME);
+    }
+
     @Test
     public void testContextParam() throws Exception
     {
@@ -61,8 +67,8 @@ public final class TestConfluenceMacroParams extends ConfluenceWebDriverTestBase
                                       .resource(newMustacheServlet("iframe.mu")))
                 .start();
 
-        ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(new ConfluenceOps.ConfluenceUser("admin", "admin")), "ds", "test", loadResourceAsString("confluence/test-page.xhtml"));
-        product.visit(LoginPage.class).login(BETTY, BETTY, HomePage.class);
+        ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(admin), "ds", "test", loadResourceAsString("confluence/test-page.xhtml"));
+        product.visit(LoginPage.class).login(BETTY_USERNAME, BETTY_USERNAME, HomePage.class);
         Map<String, String> params = product.visit(ConfluenceMacroTestSuitePage.class, pageData.getTitle())
                                             .visitGeneralLink()
                                             .getIframeQueryParams();
@@ -75,7 +81,7 @@ public final class TestConfluenceMacroParams extends ConfluenceWebDriverTestBase
     @Test
     public void testMacroWithHeaderParams() throws Exception
     {
-        ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(new ConfluenceOps.ConfluenceUser("admin", "admin")), "ds", "test",
+        ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(admin), "ds", "test",
                 "<div class=\"header-macro\">\n" +
                         "   <ac:macro ac:name=\"header\" />\n" +
                         "</div>");
@@ -86,14 +92,15 @@ public final class TestConfluenceMacroParams extends ConfluenceWebDriverTestBase
                                       .path("/header")
                                       .contextParameters(
                                               ContextParameter.name("page_id").query(),
-                                              ContextParameter.name("user_id").header())
+                                              ContextParameter.name("user_id").header(),
+                                              ContextParameter.name("user_key").header())
                                       .resource(macroServlet))
                 .start();
-        product.visit(LoginPage.class).login(BETTY, BETTY, HomePage.class);
+        product.visit(LoginPage.class).login(BETTY_USERNAME, BETTY_USERNAME, HomePage.class);
         product.visit(ConfluenceMacroPage.class, pageData.getTitle());
         assertEquals(pageData.getId(), macroServlet.getQueryParams().get("page_id"));
         assertFalse(macroServlet.getQueryParams().containsKey("user_id"));
-        assertEquals("admin", macroServlet.getHeaderParams().get("user_id"));
+        assertEquals(admin.username, macroServlet.getHeaderParams().get("user_id"));
         assertFalse(macroServlet.getHeaderParams().containsKey("page_id"));
         runner.stop();
     }

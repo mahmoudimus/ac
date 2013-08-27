@@ -27,12 +27,13 @@ import static com.atlassian.plugin.connect.test.HttpUtils.renderHtml;
 import static com.atlassian.plugin.connect.test.Utils.loadResourceAsString;
 import static com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps.ConfluenceUser;
 import static com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner.newMustacheServlet;
-import static it.TestConstants.ADMIN;
+import static it.TestConstants.ADMIN_USERKEY;
+import static it.TestConstants.ADMIN_USERNAME;
 import static org.junit.Assert.assertEquals;
 
 public final class TestConfluencePageMacro extends ConfluenceWebDriverTestBase
 {
-    private static final Option<ConfluenceUser> ADMIN_CONFLUENCE_USER = some(new ConfluenceUser(ADMIN, ADMIN));
+    private static final Option<ConfluenceUser> ADMIN_CONFLUENCE_USER = some(new ConfluenceUser(ADMIN_USERNAME, ADMIN_USERNAME));
 
     private static AtlassianConnectAddOnRunner remotePlugin;
 

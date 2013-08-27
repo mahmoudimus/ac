@@ -178,6 +178,12 @@ public class OAuth2LOFilter implements Filter
     }
 
     public void init(FilterConfig filterConfig) throws ServletException
-    {}
-    public void destroy() {}
+    {
+
+    }
+
+    public void destroy()
+    {
+
+    }
 }

@@ -14,7 +14,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 
-import static it.TestConstants.BETTY;
+import static it.TestConstants.BETTY_USERNAME;
 
 public abstract class ConfluenceWebDriverTestBase
 {
@@ -45,7 +45,7 @@ public abstract class ConfluenceWebDriverTestBase
 
     protected HomePage loginAsBetty()
     {
-        return login(BETTY, BETTY);
+        return login(BETTY_USERNAME, BETTY_USERNAME);
     }
 
     protected HomePage login(String pwd, String username)
