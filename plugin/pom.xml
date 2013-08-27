@@ -432,7 +432,8 @@
                                     <insertNewLine>true</insertNewLine>
                                     <output>${project.build.outputDirectory}/all-debug.css</output>
                                     <includes>
-                                        <include>css/iframe/*.css</include>
+                                        <include>css/iframe/core.css</include>
+                                        <include>css/iframe/dialog2.css</include>
                                     </includes>
                                 </aggregation>
                             </aggregations>

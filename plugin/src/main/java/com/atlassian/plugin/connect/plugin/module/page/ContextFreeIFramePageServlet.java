@@ -42,7 +42,7 @@ public class ContextFreeIFramePageServlet extends HttpServlet
 
         String pluginKey = req.getParameterValues("plugin-key")[0];
         String remoteUrl = req.getParameterValues("remote-url")[0];
-        boolean dialog = req.getParameterValues("dialog").length > 0;
+        boolean dialog = req.getParameterValues("dialog") != null && req.getParameterValues("dialog").length > 0;
 
         String namespace = pluginKey + (dialog ? "-dialog" : ""); // iframe id will be <pluginKey>-dialog
         String templateSuffix = dialog ? "-dialog" : "";

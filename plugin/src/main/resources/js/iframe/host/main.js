@@ -25,6 +25,7 @@ _AP.define("host/main", ["_xdm", "host/_addons"], function (XdmRpc, addons) {
         initHeight = options.h || "0",
         start = new Date().getTime(),
         isDialog = !!options.dlg,
+        isSimpleDialog = !!options.simpleDlg,
         isInited;
 
     function publish(name, props) {
@@ -211,7 +212,7 @@ _AP.define("host/main", ["_xdm", "host/_addons"], function (XdmRpc, addons) {
 
     function layoutIfNeeded() {
       var $stats = $(".ap-stats", $home);
-      if (isDialog) {
+      if (isSimpleDialog) {
         var panelHeight = $nexus.parent().height();
         $iframe.parents(".ap-servlet-placeholder, .ap-container").height(panelHeight);
         var containerHeight = $iframe.parents(".ap-container").height(),
