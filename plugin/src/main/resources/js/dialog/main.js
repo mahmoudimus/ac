@@ -1,34 +1,12 @@
 _AP.define("dialog", ["_dollar"], function($) {
 
-  // TODO: this should be somewhere (or on host side, can we assume _)
-  function filter(from, properties) {
-    from = from || {};
-    var to = {};
-    for (var i = 0; i < properties.length; ++i) {
-      var property = properties[i];
-      if (from.hasOwnProperty(property)) {
-        to[property] = from[property];
-      }
-    }
-    return to;
-  }
-
-  // Should be ok to reference the nexus at this level since there should only be one dialog open at a time
+    // Should be ok to reference the nexus at this level since there should only be one dialog open at a time
   var $nexus;
 
-  function PopupApi(popup) {
-    $(document).on("hideLayer", function(e, type, data) {
-      if ("popup" === type && data === popup) {
-        // We always show the dialog when it's created, so we need to remove() when it's hidden
-        popup.remove();
-      }
-    });
-  }
+  var $dialog; // active dialog element
 
   function createDialog(pluginKey, options) {
-    var dialogOptions,
-      popup,
-      contentUrl = AJS.contextPath() + "/plugins/servlet/render-signed-iframe";
+    var contentUrl = AJS.contextPath() + "/plugins/servlet/render-signed-iframe";
 
     if ($nexus) throw new Error("Only one dialog can be open at once");
 
@@ -54,11 +32,37 @@ _AP.define("dialog", ["_dollar"], function($) {
       }
     });
 
-    dialogOptions = filter(options, ["width", "height", "id"]);
-    popup = new AJS.popup(dialogOptions);
-    $nexus = $("<div class='ap-servlet-placeholder'></div>").appendTo(popup.element);
-    popup.show();
-    return new PopupApi(popup);
+    $dialog = createDialogElement(options.id, options.titleId, options.size).appendTo(AJS.$("body"));
+    if (options.width || options.height) {
+      _AP.AJS.layer($dialog).changeSize(options.width, options.height);
+    }
+
+    var dialog = _AP.AJS.dialog2($dialog);
+    $nexus = $("<div class='ap-servlet-placeholder ap-dialog-container'></div>").appendTo($dialog);
+    dialog.on("hide", function() {
+      // We always show the dialog when it's created, so we need to remove() when it's hidden
+      dialog.remove();
+    });
+    dialog.show();
+    return dialog;
+  }
+
+  function createDialogElement(id, titleId, size) {
+    // TODO: copied from AUI dialog2 soy. Should make it use that when it's in products.
+    var $el = AJS.$("<section></section>")
+      .addClass("ap-aui-layer").addClass("ap-aui-layer-hidden").addClass("ap-aui-layer-modal")
+      .addClass("ap-aui-dialog2").addClass("ap-aui-dialog2-" + (size || "medium"))
+      .attr("role", "dialog")
+      .attr("data-aui-blanketed", "true")
+      .attr("data-aui-focus-selector", ".aui-dialog2-content :input:visible:enabled");
+
+    if (id) {
+      $el.attr("id", id);
+    }
+    if (titleId) {
+      $el.attr("aria-labelledby", titleId);
+    }
+    return $el;
   }
 
   function closeDialog() {
@@ -68,7 +72,7 @@ _AP.define("dialog", ["_dollar"], function($) {
       // Clear the nexus handle to allow subsequent dialogs to open
       $nexus = null;
     }
-    AJS.popup.current && AJS.popup.current.hide();
+    _AP.AJS.dialog2($dialog).hide();
   }
 
   return {
