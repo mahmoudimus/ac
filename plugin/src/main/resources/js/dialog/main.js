@@ -13,6 +13,9 @@ _AP.define("dialog", ["_dollar"], function($) {
     return to;
   }
 
+  // Should be ok to reference the nexus at this level since there should only be one dialog open at a time
+  var $nexus;
+
   function PopupApi(popup) {
     $(document).on("hideLayer", function(e, type, data) {
       if ("popup" === type && data === popup) {
@@ -25,8 +28,9 @@ _AP.define("dialog", ["_dollar"], function($) {
   function createDialog(pluginKey, options) {
     var dialogOptions,
       popup,
-      $nexus,
       contentUrl = AJS.contextPath() + "/plugins/servlet/render-signed-iframe";
+
+    if ($nexus) throw new Error("Only one dialog can be open at once");
 
     $.ajax(contentUrl, {
       dataType: "html",
@@ -58,6 +62,12 @@ _AP.define("dialog", ["_dollar"], function($) {
   }
 
   function closeDialog() {
+    if ($nexus) {
+      // Signal the XdmRpc for the dialog's iframe to clean up
+      $nexus.trigger("ra.iframe.destroy");
+      // Clear the nexus handle to allow subsequent dialogs to open
+      $nexus = null;
+    }
     AJS.popup.current && AJS.popup.current.hide();
   }
 

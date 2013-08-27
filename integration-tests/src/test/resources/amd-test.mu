@@ -19,13 +19,18 @@
         <td align="right">dialog</td>
         <td id="amd-dialog"></td>
       </tr>
+      <tr>
+        <td align="right">events</td>
+        <td id="amd-events"></td>
+      </tr>
     </table>
     <script>
-        AP.require(["env", "request", "dialog"], function (env, request, dialog) {
+        AP.require(["env", "request", "dialog", "events"], function (env, request, dialog, events) {
           // check that modules were returned and have some of the expected values set on them
           document.getElementById("amd-env").innerHTML = (!!env && !!env.getUser).toString();
           document.getElementById("amd-request").innerHTML = (!!request && !!request.__target__).toString();
           document.getElementById("amd-dialog").innerHTML = (!!dialog && !!dialog.getButton).toString();
+          document.getElementById("amd-events").innerHTML = (!!events && !!events.on).toString();
         });
     </script>
   </body>

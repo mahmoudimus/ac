@@ -66,7 +66,9 @@
         <context>atl.general</context>
         <dependency>com.atlassian.auiplugin:ajs</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-amd</dependency>
-        <resource type="download" name="xdm-rpc.js" location="/js/iframe/xdm-rpc.js" />
+        <resource type="download" name="_events.js" location="/js/iframe/_events.js" />
+        <resource type="download" name="_xdm.js" location="/js/iframe/_xdm.js" />
+        <resource type="download" name="_addons.js" location="/js/iframe/host/_addons.js" />
         <resource type="download" name="main.js" location="/js/iframe/host/main.js" />
     </web-resource>
 
@@ -255,7 +257,8 @@
         <description>Ability to insert web resources on pages of the product.</description>
     </plugin-permission>
 
-    <plugin-permission key="send_email" name="Send Email">
+    <plugin-permission key="send_email" name="Send Email"
+                       class="com.atlassian.plugin.connect.plugin.product.SendEmailScope">
         <description>Ability to send an email from the Atlassian server</description>
     </plugin-permission>
 

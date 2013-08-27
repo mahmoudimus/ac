@@ -27,7 +27,7 @@ or
 To run a single test/method, do something like:
 
     mvn clean verify -DtestGroups=jira -Dit.test=TestPageModules#testMyGeneralLoaded
-    
+
 ## Running
 
 To run an Atlassian product with the development version of Atlassian Connect:
@@ -41,6 +41,10 @@ To run with UPM available to connect to the marketplace:
 eg,
 
     mvn amps:debug -pl plugin -Dproduct=jira -Dproduct.version=6.1-for-AC-2 -Djvmargs='-Datlassian.upm.on.demand=true'
+
+To run with a fast JS dev loop, set MAVEN_OPTS such that it contains the `plugin/src/main/resources` directory:
+
+    MAVEN_OPTS="$MAVEN_OPTS -Dplugin.resource.directories=/Users/Me/dev/atlassian-connect/plugin/src/main/resources"
 
 To reload plugin (pi) within an Atlassian product:
 
