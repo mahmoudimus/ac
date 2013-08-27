@@ -257,7 +257,8 @@
         <description>Ability to insert web resources on pages of the product.</description>
     </plugin-permission>
 
-    <plugin-permission key="send_email" name="Send Email">
+    <plugin-permission key="send_email" name="Send Email"
+                       class="com.atlassian.plugin.connect.plugin.product.SendEmailScope">
         <description>Ability to send an email from the Atlassian server</description>
     </plugin-permission>
 

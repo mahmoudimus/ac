@@ -1,52 +1,83 @@
 package com.atlassian.plugin.connect.plugin.rest.email;
 
-import java.util.Map;
-
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-
 import com.atlassian.mail.Email;
+import org.codehaus.jackson.annotate.JsonCreator;
+import org.codehaus.jackson.annotate.JsonProperty;
+
+import java.util.Map;
 
 import static com.google.common.collect.Maps.newHashMap;
 
-/**
- */
-@XmlRootElement
 public class RemoteEmail
 {
-    @XmlAttribute
+    @JsonProperty
     private String to;
-    @XmlAttribute
+    @JsonProperty
     private String subject;
 
     // optional fields
-    @XmlAttribute
+    @JsonProperty
     private String from;
-    @XmlAttribute
+    @JsonProperty
     private String fromName;
-    @XmlAttribute
+    @JsonProperty
     private String cc;
-    @XmlAttribute
+    @JsonProperty
     private String bcc;
-    @XmlAttribute
+    @JsonProperty
     private String replyTo;
-    @XmlAttribute
+    @JsonProperty
     private String inReplyTo;
-    @XmlElement
+    @JsonProperty
     private String bodyAsText;
-    @XmlElement
+    @JsonProperty
     private String bodyAsHtml;
-    @XmlAttribute
+    @JsonProperty
     private String mimeType;
-    @XmlAttribute
+    @JsonProperty
     private String encoding;
-    @XmlAttribute
+    @JsonProperty
     private String messageId;
-    @XmlElement
-    private Map<String,String> headers = newHashMap();
+    @JsonProperty
+    private Map<String, String> headers = newHashMap();
 
     // todo: multipart not supported
+
+    @JsonCreator
+    public RemoteEmail(
+            @JsonProperty("id") final String to,
+            @JsonProperty("subject") final String subject,
+            @JsonProperty("from") final String from,
+            @JsonProperty("fromName") final String fromName,
+            @JsonProperty("cc") final String cc,
+            @JsonProperty("bcc") final String bcc,
+            @JsonProperty("replyTo") final String replyTo,
+            @JsonProperty("inReplyTo") final String inReplyTo,
+            @JsonProperty("bodyAsText") final String bodyAsText,
+            @JsonProperty("bodyAsHtml") final String bodyAsHtml,
+            @JsonProperty("mimeType") final String mimeType,
+            @JsonProperty("encoding") final String encoding,
+            @JsonProperty("messageId") final String messageId,
+            @JsonProperty("headers") final Map<String, String> headers)
+    {
+        this.to = to;
+        this.subject = subject;
+        this.from = from;
+        this.fromName = fromName;
+        this.cc = cc;
+        this.bcc = bcc;
+        this.replyTo = replyTo;
+        this.inReplyTo = inReplyTo;
+        this.bodyAsText = bodyAsText;
+        this.bodyAsHtml = bodyAsHtml;
+        this.mimeType = mimeType;
+        this.encoding = encoding;
+        this.messageId = messageId;
+        if(headers != null)
+        {
+            this.headers.putAll(headers);
+        }
+    }
 
     public RemoteEmail(Email email)
     {
@@ -79,13 +110,14 @@ public class RemoteEmail
 
         email.setMessageId(messageId);
 
-        for (Map.Entry<String,String> entry : headers.entrySet())
+        for (Map.Entry<String, String> entry : headers.entrySet())
         {
             email.addHeader(entry.getKey(), entry.getValue());
         }
 
         return email;
     }
+
     public String getTo()
     {
         return to;
