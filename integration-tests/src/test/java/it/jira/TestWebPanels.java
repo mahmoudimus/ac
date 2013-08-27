@@ -126,6 +126,7 @@ public final class TestWebPanels extends JiraWebDriverTestBase
 
         assertEquals(project.getId(), panel.getProjectId());
         assertEquals(ADMIN, panel.getUserId());
+        assertNotNull(panel.getUserKey());
     }
 
     @Test
@@ -138,6 +139,7 @@ public final class TestWebPanels extends JiraWebDriverTestBase
         assertEquals(project.getId(), panel.getProjectId());
         assertEquals(issue.getId(), panel.getIssueId());
         assertEquals(ADMIN, panel.getUserId());
+        assertNotNull(panel.getUserKey());
     }
 
     @Test
@@ -150,6 +152,7 @@ public final class TestWebPanels extends JiraWebDriverTestBase
         assertEquals(project.getId(), panel.getProjectId());
         assertEquals(issue.getId(), panel.getIssueId());
         assertEquals(ADMIN, panel.getUserId());
+        assertNotNull(panel.getUserKey());
     }
 
     @Test
@@ -161,6 +164,7 @@ public final class TestWebPanels extends JiraWebDriverTestBase
 
         assertEquals(project.getId(), panel.getProjectId());
         assertEquals(ADMIN, panel.getUserId());
+        assertNotNull(panel.getUserKey());
     }
 
     @Test
@@ -175,6 +179,7 @@ public final class TestWebPanels extends JiraWebDriverTestBase
         assertEquals(userProfileName, panel.getFromQueryString("profile_user_key"));
         assertEquals(userProfileName, panel.getFromQueryString("profile_user_name"));
         assertEquals(ADMIN, panel.getUserId());
+        assertNotNull(panel.getUserKey());
     }
 
     @Ignore("TODO: For some reason, there's an issue in the addLabelViaInlineEdit method where webdriver can't click on the submit button.")

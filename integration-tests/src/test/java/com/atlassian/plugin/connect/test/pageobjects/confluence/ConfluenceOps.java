@@ -92,8 +92,8 @@ public final class ConfluenceOps
 
     public static final class ConfluenceUser
     {
-        final public String username;
-        final public String password;
+        final String username;
+        final String password;
 
         public ConfluenceUser(String username, String password)
         {

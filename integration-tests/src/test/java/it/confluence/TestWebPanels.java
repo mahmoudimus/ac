@@ -70,6 +70,7 @@ public class TestWebPanels extends ConfluenceWebDriverTestBase
         assertNotNull(webPanel.getSpaceId());
         assertEquals("ds", webPanel.getFromQueryString("space_key"));
         assertEquals(BETTY, webPanel.getUserId());
+        assertNotNull(webPanel.getUserKey());
     }
 
     @Test

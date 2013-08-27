@@ -68,7 +68,7 @@ public final class TestConfluenceMacroParams extends ConfluenceWebDriverTestBase
                                             .getIframeQueryParams();
 
         assertEquals(pageData.getId(), params.get("page_id"));
-        assertEquals(BETTY_USERNAME, params.get("user_id"));
+        assertEquals(BETTY, params.get("user_id"));
         assertFalse(params.containsKey("user_key"));
 
         remotePlugin.stop();
