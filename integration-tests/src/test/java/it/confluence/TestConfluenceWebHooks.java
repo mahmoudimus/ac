@@ -5,16 +5,12 @@ import com.atlassian.plugin.connect.test.pageobjects.confluence.FixedConfluenceT
 import com.atlassian.plugin.connect.test.webhook.WebHookBody;
 import com.atlassian.plugin.connect.test.webhook.WebHookTester;
 import com.atlassian.plugin.connect.test.webhook.WebHookWaiter;
-
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import it.AbstractBrowserlessTest;
+import org.junit.Assert;
+import org.junit.Test;
 
 import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.test.webhook.WebHookTestServlet.runInRunner;
-import static it.TestConstants.ADMIN_USERKEY;
 import static it.TestConstants.ADMIN_USERNAME;
 import static org.junit.Assert.assertNotNull;
 
