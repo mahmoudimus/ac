@@ -45,7 +45,7 @@ public class RemoteEmail
 
     @JsonCreator
     public RemoteEmail(
-            @JsonProperty("id") final String to,
+            @JsonProperty("to") final String to,
             @JsonProperty("subject") final String subject,
             @JsonProperty("from") final String from,
             @JsonProperty("fromName") final String fromName,
