@@ -72,11 +72,30 @@
         <resource type="download" name="main.js" location="/js/iframe/host/main.js" />
     </web-resource>
 
+    <!-- Temporary copy of AUI dialog2 before it lands in all products -->
+    <web-resource key="ajs-dialog2">
+        <resource type="download" name="layer.css" location="css/auidialog2/layer.css" />
+        <resource type="download" name="dialog2.css" location="css/auidialog2/dialog2.css" />
+
+        <resource type="download" name="ap-ajs.js" location="js/auidialog2/ap-ajs.js" />
+        <resource type="download" name="browser.js" location="js/auidialog2/internal/browser.js" />
+        <resource type="download" name="widget.js" location="js/auidialog2/internal/widget.js" />
+        <resource type="download" name="focus-manager.js" location="js/auidialog2/focus-manager.js" />
+        <resource type="download" name="layer-manager.js" location="js/auidialog2/layer-manager.js" />
+        <resource type="download" name="layer-manager-global.js" location="js/auidialog2/layer-manager-global.js" />
+        <resource type="download" name="layer.js" location="js/auidialog2/layer.js" />
+        <resource type="download" name="dialog2.js" location="js/auidialog2/dialog2.js" />
+        <dependency>com.atlassian.auiplugin:ajs</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-amd</dependency>
+    </web-resource>
+
     <web-resource key="dialog">
+        <resource type="download" name="dialog.css" location="css/dialog/dialog.css" />
         <resource type="download" name="main.js" location="js/dialog/main.js" />
         <resource type="download" name="simple.js" location="js/dialog/simple.js" />
         <dependency>com.atlassian.auiplugin:ajs</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-amd</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:ajs-dialog2</dependency>
     </web-resource>
 
     <web-resource key="confluence-macro">

@@ -17,7 +17,11 @@ AP.define("dialog", ["_dollar", "_rpc"], function ($, rpc) {
         remote.createDialog(options);
         return {
           on: function (event, callback) {
-            remote.events.on("dialog." + event, callback);
+            // HACK: Note this is a "once" as it's assumed the only event is "close", and close is only fired
+            // once per dialog. If we changed this to "on", then it would be fired when *any* dialog is closed,
+            // meaning that if say two dialog were opened, closed, opened, then closed, then the callback
+            // registered for the first dialog would be issued when the second was closed.
+            remote.events.once("dialog." + event, callback);
           }
         };
       },
