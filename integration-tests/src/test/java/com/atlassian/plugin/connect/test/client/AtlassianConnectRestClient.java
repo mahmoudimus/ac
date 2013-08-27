@@ -74,7 +74,7 @@ public final class AtlassianConnectRestClient
 
         if (timeout < 2)
         {
-            throw new Exception("Connect App Plugin did not install within the alooted timeout!!!");
+            throw new Exception("Connect App Plugin did not install within the allotted timeout!!!");
         }
     }
 

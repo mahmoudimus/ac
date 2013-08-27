@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.plugin.util.contextparameter;
 
+import com.atlassian.sal.api.user.UserProfile;
+
 import java.util.Map;
 import java.util.Set;
 

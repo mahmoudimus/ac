@@ -15,6 +15,7 @@ import javax.ws.rs.core.HttpHeaders;
 import com.atlassian.plugin.connect.plugin.DefaultRemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.sal.api.user.UserManager;
+import com.atlassian.sal.api.user.UserProfile;
 import com.atlassian.uri.Uri;
 import com.atlassian.uri.UriBuilder;
 
@@ -136,7 +137,11 @@ public final class RedirectServlet extends HttpServlet
         Uri targetUrl = Uri.parse(appRelativeUrl);
 
         Map<String,String[]> params = newHashMap(parameterMap);
-        params.put("user_id", new String[]{userManager.getRemoteUsername()});
+        UserProfile remoteUser = userManager.getRemoteUser();
+        if (remoteUser != null) {
+            params.put("user_id", new String[]{ remoteUser.getUsername() });
+            params.put("user_key", new String[]{ remoteUser.getUserKey().getStringValue() });
+        }
         params.putAll(Maps.transformValues(targetUrl.getQueryParameters(),
                 new Function<List<String>, String[]>()
                 {

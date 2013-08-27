@@ -209,7 +209,7 @@ public class TestPageModules extends AbstractRemotablePluginTest
         @Override
         protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
         {
-            final String loggedInUser = req.getParameter("user_id");
+            final String loggedInUser = req.getParameter("user_key");
             final boolean isBetty = isBetty(loggedInUser);
 
             logger.debug("The logged in user is {}betty, here is their username '{}'", isBetty ? "" : "NOT ", loggedInUser);
