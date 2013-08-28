@@ -1,26 +1,26 @@
 package it.confluence;
 
-import java.net.MalformedURLException;
-
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
-import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceEditPage;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebPanel;
+import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceEditPage;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
 import com.atlassian.plugin.connect.test.server.module.RemoteWebPanelModule;
-
+import it.MyContextAwareWebPanelServlet;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import it.MyContextAwareWebPanelServlet;
 import redstone.xmlrpc.XmlRpcFault;
+
+import java.net.MalformedURLException;
 
 import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner.newServlet;
-import static it.TestConstants.BETTY;
-import static org.junit.Assert.*;
+import static it.TestConstants.ADMIN_USERNAME;
+import static it.TestConstants.BETTY_USERNAME;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Test of remote web panels in Confluence.
@@ -28,6 +28,7 @@ import static org.junit.Assert.*;
 public class TestWebPanels extends ConfluenceWebDriverTestBase
 {
     private static AtlassianConnectAddOnRunner remotePlugin;
+    private static ConfluenceOps.ConfluenceUser admin;
 
     @BeforeClass
     public static void startConnectAddOn() throws Exception
@@ -45,6 +46,7 @@ public class TestWebPanels extends ConfluenceWebDriverTestBase
                                          .location("atl.editor")
                                          .resource(newServlet(new MyContextAwareWebPanelServlet())))
                 .start();
+        admin = new ConfluenceOps.ConfluenceUser(ADMIN_USERNAME, ADMIN_USERNAME);
     }
 
     @AfterClass
@@ -59,9 +61,9 @@ public class TestWebPanels extends ConfluenceWebDriverTestBase
     @Test
     public void testRemoteWebPanelOnEditPage() throws MalformedURLException, XmlRpcFault
     {
-        final ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(new ConfluenceOps.ConfluenceUser("admin", "admin")), "ds", "Page with webpanel", "some page content");
+        final ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(admin), "ds", "Page with webpanel", "some page content");
         final String pageId = pageData.getId();
-        product.visit(LoginPage.class).login(BETTY, BETTY, HomePage.class);
+        product.visit(LoginPage.class).login(BETTY_USERNAME, BETTY_USERNAME, HomePage.class);
         ConfluenceEditPage editPage = product.visit(ConfluenceEditPage.class, pageId);
         RemoteWebPanel webPanel = editPage.findWebPanel("edit-screen-web-panel");
 
@@ -69,15 +71,15 @@ public class TestWebPanels extends ConfluenceWebDriverTestBase
         // Confluence doesn't provide space id via the xml-rpc API, so we can't find the actual space id.
         assertNotNull(webPanel.getSpaceId());
         assertEquals("ds", webPanel.getFromQueryString("space_key"));
-        assertEquals(BETTY, webPanel.getUserId());
+        assertEquals(BETTY_USERNAME, webPanel.getUserId());
     }
 
     @Test
     public void testRemoteWebPanelOnEditPageArbitraryData() throws MalformedURLException, XmlRpcFault
     {
-        final ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(new ConfluenceOps.ConfluenceUser("admin", "admin")), "ds", "Page with webpanel", "some page content");
+        final ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(admin), "ds", "Page with webpanel", "some page content");
         final String pageId = pageData.getId();
-        product.visit(LoginPage.class).login(BETTY, BETTY, HomePage.class);
+        product.visit(LoginPage.class).login(BETTY_USERNAME, BETTY_USERNAME, HomePage.class);
         ConfluenceEditPage editPage = product.visit(ConfluenceEditPage.class, pageId);
         RemoteWebPanel webPanel = editPage.findWebPanel("edit-screen-web-panel-2");
 
