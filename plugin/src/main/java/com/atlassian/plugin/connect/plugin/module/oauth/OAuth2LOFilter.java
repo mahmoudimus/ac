@@ -1,27 +1,23 @@
 package com.atlassian.plugin.connect.plugin.module.oauth;
 
-import java.io.IOException;
-import java.net.URI;
-import java.util.Set;
-
-import javax.servlet.*;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import com.atlassian.oauth.util.Check;
-import com.atlassian.plugin.connect.plugin.product.WebSudoElevator;
+import com.atlassian.plugin.connect.plugin.product.WebSudoService;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.auth.AuthenticationController;
 import com.atlassian.sal.api.auth.AuthenticationListener;
 import com.atlassian.sal.api.auth.Authenticator;
-
 import com.google.common.collect.ImmutableSet;
-
+import net.oauth.OAuth;
+import net.oauth.server.HttpRequestMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.oauth.OAuth;
-import net.oauth.server.HttpRequestMessage;
+import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.net.URI;
+import java.util.Set;
 
 import static net.oauth.OAuth.*;
 
@@ -39,16 +35,16 @@ public class OAuth2LOFilter implements Filter
     private final Authenticator authenticator;
     private final AuthenticationListener authenticationListener;
     private final AuthenticationController authenticationController;
-    private final WebSudoElevator webSudoElevator;
+    private final WebSudoService webSudoService;
     private final ApplicationProperties applicationProperties;
 
     public OAuth2LOFilter(Authenticator authenticator,
                           AuthenticationListener authenticationListener,
                           AuthenticationController authenticationController,
-                          WebSudoElevator webSudoElevator,
+                          WebSudoService webSudoService,
                           ApplicationProperties applicationProperties)
     {
-        this.webSudoElevator = Check.notNull(webSudoElevator, "webSudoElevator");
+        this.webSudoService = Check.notNull(webSudoService, "webSudoService");
         this.authenticator = Check.notNull(authenticator, "authenticator");
         this.authenticationListener = Check.notNull(authenticationListener, "authenticationListener");
         this.authenticationController = Check.notNull(authenticationController, "authenticationController");
@@ -129,7 +125,7 @@ public class OAuth2LOFilter implements Filter
         if (result.getStatus() == Authenticator.Result.Status.SUCCESS)
         {
             authenticationListener.authenticationSuccess(result, request, response);
-            webSudoElevator.startWebSudoSession(request, response);
+            webSudoService.startWebSudoSession(request, response);
         }
 
         //markAsOAuthRequest(request);

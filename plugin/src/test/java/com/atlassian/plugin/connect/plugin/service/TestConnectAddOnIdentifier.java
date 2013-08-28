@@ -12,6 +12,7 @@ import com.atlassian.plugin.connect.spi.ConnectAddOnIdentifierService;
 import org.apache.commons.io.FileUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
+import org.junit.After;
 import org.junit.Test;
 import org.osgi.framework.Bundle;
 
@@ -64,6 +65,17 @@ public class TestConnectAddOnIdentifier
 
     private static final String LOCAL_XML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
             "<atlassian-plugin key=\"1msz5edwyfu0zeo2fs1e\" name=\"1msz5edwyfu0zeo2fs1e\" plugins-version=\"2\"><plugin-info><version>1</version><permissions><permission>create_oauth_link</permission></permissions></plugin-info></atlassian-plugin>";
+
+    private File xml = null;
+
+    @After
+    public void afterEachTest()
+    {
+        if (null != xml)
+        {
+            FileUtils.deleteQuietly(xml);
+        }
+    }
 
     @Test
     public void bundleWithHeaderReturnsTrue() throws Exception
@@ -144,7 +156,6 @@ public class TestConnectAddOnIdentifier
     @Test
     public void documentWithContainerReturnsTrue() throws Exception
     {
-        Plugin plugin = mock(Plugin.class);
         PluginAccessor accessor = mock(PluginAccessor.class);
         Document doc = DocumentHelper.parseText(CONNECT_XML);
 
@@ -156,7 +167,6 @@ public class TestConnectAddOnIdentifier
     @Test
     public void documentWithoutContainerReturnsFalse() throws Exception
     {
-        Plugin plugin = mock(Plugin.class);
         PluginAccessor accessor = mock(PluginAccessor.class);
         Document doc = DocumentHelper.parseText(LOCAL_XML);
 
@@ -169,7 +179,6 @@ public class TestConnectAddOnIdentifier
     @Test
     public void nullDocumentReturnsFalse() throws Exception
     {
-        Plugin plugin = mock(Plugin.class);
         PluginAccessor accessor = mock(PluginAccessor.class);
 
         ConnectAddOnIdentifierService ident = new DefaultConnectAddOnIdentifierService(accessor);
@@ -181,75 +190,45 @@ public class TestConnectAddOnIdentifier
     @Test
     public void fileWithContainerReturnsTrue() throws Exception
     {
-        File xml = null;
-        try
-        {
-            Plugin plugin = mock(Plugin.class);
-            PluginAccessor accessor = mock(PluginAccessor.class);
+        PluginAccessor accessor = mock(PluginAccessor.class);
 
-            xml = File.createTempFile("atlassian-plugin", ".xml");
-            FileUtils.writeStringToFile(xml, CONNECT_XML);
+        xml = File.createTempFile("atlassian-plugin", ".xml");
+        FileUtils.writeStringToFile(xml, CONNECT_XML);
 
-            ConnectAddOnIdentifierService ident = new DefaultConnectAddOnIdentifierService(accessor);
+        ConnectAddOnIdentifierService ident = new DefaultConnectAddOnIdentifierService(accessor);
 
-            assertTrue(ident.isConnectAddOn(xml));
-        }
-        finally
-        {
-            FileUtils.deleteQuietly(xml);
-        }
+        assertTrue(ident.isConnectAddOn(xml));
     }
 
     @Test
     public void fileWithoutContainerReturnsFalse() throws Exception
     {
-        File xml = null;
-        try
-        {
-            Plugin plugin = mock(Plugin.class);
-            PluginAccessor accessor = mock(PluginAccessor.class);
+        PluginAccessor accessor = mock(PluginAccessor.class);
 
-            xml = File.createTempFile("atlassian-plugin", ".xml");
-            FileUtils.writeStringToFile(xml, LOCAL_XML);
+        xml = File.createTempFile("atlassian-plugin", ".xml");
+        FileUtils.writeStringToFile(xml, LOCAL_XML);
 
-            ConnectAddOnIdentifierService ident = new DefaultConnectAddOnIdentifierService(accessor);
+        ConnectAddOnIdentifierService ident = new DefaultConnectAddOnIdentifierService(accessor);
 
-            assertFalse(ident.isConnectAddOn(xml));
-        }
-        finally
-        {
-            FileUtils.deleteQuietly(xml);
-        }
-
+        assertFalse(ident.isConnectAddOn(xml));
     }
 
     @Test
     public void nonXmlFileReturnsFalse() throws Exception
     {
-        File xml = null;
-        try
-        {
-            Plugin plugin = mock(Plugin.class);
-            PluginAccessor accessor = mock(PluginAccessor.class);
+        PluginAccessor accessor = mock(PluginAccessor.class);
 
-            xml = File.createTempFile("atlassian-plugin", ".xml");
-            FileUtils.writeStringToFile(xml, "hi mom!");
+        xml = File.createTempFile("atlassian-plugin", ".xml");
+        FileUtils.writeStringToFile(xml, "hi mom!");
 
-            ConnectAddOnIdentifierService ident = new DefaultConnectAddOnIdentifierService(accessor);
+        ConnectAddOnIdentifierService ident = new DefaultConnectAddOnIdentifierService(accessor);
 
-            assertFalse(ident.isConnectAddOn(xml));
-        }
-        finally
-        {
-            FileUtils.deleteQuietly(xml);
-        }
-
+        assertFalse(ident.isConnectAddOn(xml));
     }
 
     @Test
     public void nullFileReturnsFalse() throws Exception
     {
-        Plugin plugin = mock(Plugin.class);
         PluginAccessor accessor = mock(PluginAccessor.class);
 
         ConnectAddOnIdentifierService ident = new DefaultConnectAddOnIdentifierService(accessor);

@@ -11,7 +11,7 @@
 
     <component key="EventSerializerFactory" class="com.atlassian.plugin.connect.plugin.product.jira.webhook.JiraEventSerializerFactory" />
 
-    <component key="WebSudoElevator" class="com.atlassian.plugin.connect.plugin.product.jira.JiraWebSudoElevator" />
+    <component key="WebSudoService" class="com.atlassian.plugin.connect.plugin.product.jira.JiraWebSudoService" />
 
     <component key="host" class="com.atlassian.plugin.connect.plugin.module.ServletContextThreadLocalIFrameHost" />
     <component key="restAccessor" class="com.atlassian.plugin.connect.plugin.product.jira.JiraRestBeanMarshaler" />
@@ -183,6 +183,13 @@
                        class="com.atlassian.plugin.connect.plugin.oldscopes.jira.JiraReadUserSessionData">
         <description>
             Permission to read JIRA user's session data.
+        </description>
+    </plugin-permission>
+
+    <plugin-permission key="download_attachments" name="Download Issue Attachments" application="jira"
+                       class="com.atlassian.plugin.connect.plugin.oldscopes.jira.JiraDownloadAttachmentScope">
+        <description>
+            Permission to download JIRA issue attachments.
         </description>
     </plugin-permission>
 </application>

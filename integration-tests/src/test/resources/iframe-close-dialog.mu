@@ -7,12 +7,16 @@
   </head>
   <body>
     <div>
+      <form class="aui">
+        <input class="text long-field" type="text" id="dialog-close-data" name="dialog-close-data" title="Message" value="test dialog close data">
+      </form>
+      <br>
       <button class="aui-button" id="dialog-close-button">Close dialog</button>
     </div>
     <script>
       AP.require(["_dollar", "dialog"], function($, dialog) {
         $("#dialog-close-button").bind("click", function() {
-          dialog.close();
+          dialog.close($("#dialog-close-data")[0].value);
         });
       });
     </script>

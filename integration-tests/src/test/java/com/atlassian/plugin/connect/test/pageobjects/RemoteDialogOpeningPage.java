@@ -66,4 +66,9 @@ public class RemoteDialogOpeningPage
         });
         return pageBinder.bind(RemoteCloseDialogPage.class, "ap-" + pluginKey + "-dialog");
     }
+
+    public String waitForValue(String key)
+    {
+        return RemotePageUtil.waitForValue(driver, containerDiv, key);
+    }
 }
