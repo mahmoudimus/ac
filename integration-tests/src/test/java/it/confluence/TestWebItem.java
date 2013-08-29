@@ -19,7 +19,7 @@ import java.rmi.RemoteException;
 
 import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner.newServlet;
-import static it.TestConstants.BETTY;
+import static it.TestConstants.BETTY_USERNAME;
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -70,7 +70,7 @@ public class TestWebItem extends ConfluenceWebDriverTestBase
     {
         final ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(new ConfluenceOps.ConfluenceUser("admin", "admin")), "ds", "Page with webpanel", "some page content");
         final String pageId = pageData.getId();
-        product.visit(LoginPage.class).login(BETTY, BETTY, HomePage.class);
+        product.visit(LoginPage.class).login(BETTY_USERNAME, BETTY_USERNAME, HomePage.class);
         ConfluenceEditPage editPage = product.visit(ConfluenceEditPage.class, pageId);
 
         RemoteWebItem webItem = editPage.findWebItem(GENERAL_WEBITEM, Optional.of("help-menu-link"));
@@ -88,7 +88,7 @@ public class TestWebItem extends ConfluenceWebDriverTestBase
     {
         final ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(new ConfluenceOps.ConfluenceUser("admin", "admin")), "ds", "Page with webpanel", "some page content");
         final String pageId = pageData.getId();
-        product.visit(LoginPage.class).login(BETTY, BETTY, HomePage.class);
+        product.visit(LoginPage.class).login(BETTY_USERNAME, BETTY_USERNAME, HomePage.class);
         ConfluenceEditPage editPage = product.visit(ConfluenceEditPage.class, pageId);
 
         RemoteWebItem webItem = editPage.findWebItem(ABSOLUTE_WEB_ITEM, Optional.of("help-menu-link"));
