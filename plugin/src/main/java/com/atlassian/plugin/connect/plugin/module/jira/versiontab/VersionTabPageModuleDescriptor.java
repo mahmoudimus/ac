@@ -9,6 +9,8 @@ import com.atlassian.plugin.connect.plugin.integration.plugins.DynamicDescriptor
 import com.atlassian.plugin.connect.plugin.module.ConditionProcessor;
 import com.atlassian.plugin.connect.plugin.module.IFrameRendererImpl;
 import com.atlassian.plugin.connect.plugin.module.jira.AbstractJiraTabPageModuleDescriptor;
+import com.atlassian.plugin.connect.plugin.module.jira.context.serializer.ProjectSerializer;
+import com.atlassian.plugin.connect.plugin.module.jira.context.serializer.VersionSerializer;
 import com.atlassian.plugin.connect.plugin.module.page.IFrameContextImpl;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlValidator;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
@@ -28,11 +30,16 @@ public class VersionTabPageModuleDescriptor extends AbstractJiraTabPageModuleDes
     private final IFrameRendererImpl iFrameRenderer;
     private final UrlVariableSubstitutor urlVariableSubstitutor;
     private final JiraAuthenticationContext jiraAuthenticationContext;
+    private final VersionSerializer versionSerializer;
+    private final ProjectSerializer projectSerializer;
 
     public VersionTabPageModuleDescriptor(ModuleFactory moduleFactory, DynamicDescriptorRegistration dynamicDescriptorRegistration, ConditionProcessor conditionProcessor,
-            IFrameRendererImpl iFrameRenderer, UrlVariableSubstitutor urlVariableSubstitutor, JiraAuthenticationContext jiraAuthenticationContext, UrlValidator urlValidator)
+            IFrameRendererImpl iFrameRenderer, UrlVariableSubstitutor urlVariableSubstitutor, JiraAuthenticationContext jiraAuthenticationContext,
+            UrlValidator urlValidator, VersionSerializer versionSerializer, ProjectSerializer projectSerializer)
     {
         super(moduleFactory, dynamicDescriptorRegistration, conditionProcessor, urlValidator);
+        this.versionSerializer = checkNotNull(versionSerializer);
+        this.projectSerializer = checkNotNull(projectSerializer);
         this.iFrameRenderer = checkNotNull(iFrameRenderer);
         this.urlVariableSubstitutor = checkNotNull(urlVariableSubstitutor);
         this.jiraAuthenticationContext = checkNotNull(jiraAuthenticationContext);
@@ -55,7 +62,7 @@ public class VersionTabPageModuleDescriptor extends AbstractJiraTabPageModuleDes
             {
                 return (T) new IFrameVersionTab(
                         new IFrameContextImpl(getPluginKey(), url, key, iFrameParams),
-                        iFrameRenderer, condition, urlVariableSubstitutor);
+                        iFrameRenderer, condition, urlVariableSubstitutor, projectSerializer, versionSerializer);
             }
         });
     }

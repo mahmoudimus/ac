@@ -12,8 +12,6 @@ import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
  */
 public interface ProductAccessor extends HostProperties
 {
-    WebItemModuleDescriptor createWebItemModuleDescriptor();
-
     String getPreferredAdminSectionKey();
 
     int getPreferredAdminWeight();

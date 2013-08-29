@@ -1,15 +1,17 @@
 package com.atlassian.plugin.connect.plugin.module.webfragment;
 
-import java.util.Arrays;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
+import com.google.common.collect.Sets;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.httpclient.util.URIUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+
+import java.util.Arrays;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Substitutes strings with variables defined with those defined in a given context.
@@ -53,6 +55,22 @@ public class UrlVariableSubstitutor
         return sb.toString();
     }
 
+    /**
+     * Returns a set of variables which are expected to be in the URL.
+     * @param source string containing variables.
+     */
+    public Set<String> getContextVariables(final String source)
+    {
+        Set<String> contextVariables = Sets.newHashSet();
+        Matcher m = PATTERN.matcher(source);
+        while (m.find())
+        {
+            String term = m.group(1);
+            contextVariables.add(term);
+        }
+        return contextVariables;
+    }
+
     private String encodeQuery(String value)
     {
         try
@@ -72,6 +90,10 @@ public class UrlVariableSubstitutor
         Object value = fromContext(terms, context);
         if (null == value)
         {
+            value = context.get(term);
+        }
+        if (null == value)
+        {
             return "";
         }
         if (value instanceof Number
@@ -79,6 +101,12 @@ public class UrlVariableSubstitutor
                 || value instanceof Boolean)
         {
             return value.toString();
+        }
+        else if (value instanceof String[]
+                || value instanceof Number[]
+                || value instanceof Boolean[])
+        {
+            return ((Object[]) value)[0].toString();
         }
         return "";
     }

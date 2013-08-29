@@ -9,6 +9,7 @@ import org.openqa.selenium.By;
 import javax.inject.Inject;
 
 import static com.atlassian.pageobjects.elements.query.Poller.waitUntilTrue;
+import static it.TestConstants.IFRAME_ID_SUFFIX;
 
 /**
  * A remote web-panel that is expected to contain some test values.
@@ -16,7 +17,6 @@ import static com.atlassian.pageobjects.elements.query.Poller.waitUntilTrue;
 public class RemoteWebPanel
 {
     private static final String IFRAME_ID_PREFIX = "easyXDM_embedded-remote-web-panel-";
-    private static final String IFRAME_ID_SUFFIX = "_provider";
 
     @Inject
     private AtlassianWebDriver driver;

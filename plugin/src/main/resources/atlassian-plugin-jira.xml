@@ -18,16 +18,25 @@
 
     <!-- Web panel parameter extractors -->
     <component key="projectIdParameterExtractor"
-               class="com.atlassian.plugin.connect.plugin.module.webpanel.extractor.jira.ProjectWebPanelParameterExtractor"
-               interface="com.atlassian.plugin.connect.plugin.module.webpanel.extractor.WebPanelParameterExtractor" />
+               class="com.atlassian.plugin.connect.plugin.module.jira.context.extractor.ProjectContextMapParameterExtractor"
+               interface="com.atlassian.plugin.connect.plugin.module.extractor.ContextMapParameterExtractor" />
 
     <component key="issueIdParameterExtractor"
-               class="com.atlassian.plugin.connect.plugin.module.webpanel.extractor.jira.IssueWebPanelParameterExtractor"
-               interface="com.atlassian.plugin.connect.plugin.module.webpanel.extractor.WebPanelParameterExtractor" />
+               class="com.atlassian.plugin.connect.plugin.module.jira.context.extractor.IssueContextMapParameterExtractor"
+               interface="com.atlassian.plugin.connect.plugin.module.extractor.ContextMapParameterExtractor" />
 
     <component key="profileUserParameterExtractor"
-               class="com.atlassian.plugin.connect.plugin.module.webpanel.extractor.jira.ProfileUserWebPanelParameterExtractor"
-               interface="com.atlassian.plugin.connect.plugin.module.webpanel.extractor.WebPanelParameterExtractor" />
+               class="com.atlassian.plugin.connect.plugin.module.jira.context.extractor.ProfileUserContextMapParameterExtractor"
+               interface="com.atlassian.plugin.connect.plugin.module.extractor.ContextMapParameterExtractor" />
+
+    <component key="projectSerializer" class="com.atlassian.plugin.connect.plugin.module.jira.context.serializer.ProjectSerializer" />
+    <component key="issueSerializer" class="com.atlassian.plugin.connect.plugin.module.jira.context.serializer.IssueSerializer" />
+    <component key="profileUserSerializer" class="com.atlassian.plugin.connect.plugin.module.jira.context.serializer.ProfileUserSerializer" />
+    <component key="versionSerializer" class="com.atlassian.plugin.connect.plugin.module.jira.context.serializer.VersionSerializer" />
+    <component key="componentSerializer" class="com.atlassian.plugin.connect.plugin.module.jira.context.serializer.ComponentSerializer" />
+
+    <component key="webItemModuleDescriptorFactory" class="com.atlassian.plugin.connect.plugin.module.webitem.JiraWebItemModuleDescriptorFactory"
+               interface="com.atlassian.plugin.connect.plugin.module.webitem.WebItemModuleDescriptorFactory" />
 
     <rest key="rest" path="/atlassian-connect" version="1">
         <dispatcher>REQUEST</dispatcher>
@@ -47,6 +56,7 @@
     <component-import key="projectRoleManager" interface="com.atlassian.jira.security.roles.ProjectRoleManager" />
     <component-import key="jiraBaseUrls" interface="com.atlassian.jira.issue.fields.rest.json.beans.JiraBaseUrls" />
     <component-import key="userUtils" interface="com.atlassian.jira.user.util.UserUtil" />
+    <component-import key="webFragmentHelper" interface="com.atlassian.plugin.web.WebFragmentHelper" />
 
     <!-- imports for conditions -->
     <component-import key="subtaskManager" interface="com.atlassian.jira.config.SubTaskManager" />
