@@ -11,7 +11,7 @@
 
     <component key="EventSerializerFactory" class="com.atlassian.plugin.connect.plugin.product.jira.webhook.JiraEventSerializerFactory" />
 
-    <component key="WebSudoElevator" class="com.atlassian.plugin.connect.plugin.product.jira.JiraWebSudoElevator" />
+    <component key="WebSudoService" class="com.atlassian.plugin.connect.plugin.product.jira.JiraWebSudoService" />
 
     <component key="host" class="com.atlassian.plugin.connect.plugin.module.ServletContextThreadLocalIFrameHost" />
     <component key="restAccessor" class="com.atlassian.plugin.connect.plugin.product.jira.JiraRestBeanMarshaler" />

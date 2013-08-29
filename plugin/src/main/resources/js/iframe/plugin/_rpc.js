@@ -1,4 +1,4 @@
-AP.define("_rpc", ["_dollar", "_xdm-rpc"], function ($, XdmRpc) {
+AP.define("_rpc", ["_dollar", "_xdm"], function ($, XdmRpc) {
 
   "use strict";
 
@@ -25,14 +25,14 @@ AP.define("_rpc", ["_dollar", "_xdm-rpc"], function ($, XdmRpc) {
       return config.apis;
     },
 
-    // inits the remote plugin on iframe content load
+    // inits the connect add-on on iframe content load
     init: function (options) {
       options = options || {};
       if (!isInited) {
-        var config = {};
         // add stubs for each public api
         each(apis, function (method) { stubs.push(method); });
-        rpc = new XdmRpc(config, {remote: stubs, local: internals});
+        // empty config for add-on-side ctor
+        rpc = this.rpc = new XdmRpc({}, {remote: stubs, local: internals});
         rpc.init();
         extend(proxy, rpc);
         each(inits, function (_, init) {

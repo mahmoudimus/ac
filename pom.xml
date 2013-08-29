@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.atlassian.plugins</groupId>
     <artifactId>atlassian-connect-parent</artifactId>
-    <version>1.0-m9-SNAPSHOT</version>
+    <version>1.0-m10-SNAPSHOT</version>
 
     <organization>
         <name>Atlassian</name>
@@ -469,7 +469,7 @@
     <properties>
         <!-- VERSIONS -->
         <amps.version>4.2.3</amps.version>
-        <atlassian.applinks.version>3.5.1</atlassian.applinks.version>
+        <atlassian.applinks.version>4.0.2</atlassian.applinks.version>
         <atlassian.confluence.version>5.2-OD-14-1</atlassian.confluence.version>
         <atlassian.fugue.version>1.1</atlassian.fugue.version>
         <atlassian.httpclient.version>${atlassian.webhooks.version}</atlassian.httpclient.version>

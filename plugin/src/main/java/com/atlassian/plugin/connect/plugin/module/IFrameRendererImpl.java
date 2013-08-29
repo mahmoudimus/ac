@@ -171,6 +171,9 @@ public final class IFrameRendererImpl implements IFrameRenderer
         ctx.put("data", ImmutableMap.of("timeZone", timeZone));
         if (dialog != null && dialog.length == 1) ctx.put("dialog", dialog[0]);
 
+        String[] simpleDialog = queryParams.get("simpleDialog");
+        if (simpleDialog != null && simpleDialog.length == 1) ctx.put("simpleDialog", simpleDialog[0]);
+
         StringWriter output = new StringWriter();
         templateRenderer.render("velocity/iframe-body.vm", ctx, output);
         return output.toString();

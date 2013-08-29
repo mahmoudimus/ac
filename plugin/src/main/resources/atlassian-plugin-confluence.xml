@@ -46,7 +46,7 @@
                interface="com.atlassian.webhooks.spi.provider.WebHookProvider" public="true"
                class="com.atlassian.plugin.connect.plugin.product.confluence.webhook.ConfluenceWebHookProvider" />
     <component key="EventSerializerFactory" class="com.atlassian.plugin.connect.plugin.product.confluence.webhook.ConfluenceEventSerializerFactory" />
-    <component key="WebSudoElevator" class="com.atlassian.plugin.connect.plugin.product.confluence.ConfluenceWebSudoElevator" />
+    <component key="WebSudoService" class="com.atlassian.plugin.connect.plugin.product.confluence.ConfluenceWebSudoService" />
 
     <component key="host" class="com.atlassian.plugin.connect.plugin.module.ServletContextThreadLocalIFrameHost" />
 

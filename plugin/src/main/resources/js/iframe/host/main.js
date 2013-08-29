@@ -1,7 +1,7 @@
 /**
  * Entry point for xdm messages on the host product side.
  */
-_AP.define("host/main", ["_xdm-rpc"], function (XdmRpc) {
+_AP.define("host/main", ["_xdm", "host/_addons"], function (XdmRpc, addons) {
 
   var $ = AJS.$,
       xhrProperties = ["status", "statusText", "responseText"],
@@ -25,6 +25,7 @@ _AP.define("host/main", ["_xdm-rpc"], function (XdmRpc) {
         initHeight = options.h || "0",
         start = new Date().getTime(),
         isDialog = !!options.dlg,
+        isSimpleDialog = !!options.simpleDlg,
         isInited;
 
     function publish(name, props) {
@@ -32,7 +33,7 @@ _AP.define("host/main", ["_xdm-rpc"], function (XdmRpc) {
       events.push({name: name, properties: props});
     }
 
-    function showStatus(name) {
+    function showStatus() {
       $home.find(".ap-status").addClass("hidden");
     }
 
@@ -65,6 +66,7 @@ _AP.define("host/main", ["_xdm-rpc"], function (XdmRpc) {
 
     var rpc = new XdmRpc({
       remote: options.src,
+      remoteKey: options.key,
       container: contentId,
       channel: channelId,
       props: {width: initWidth, height: initHeight}
@@ -179,12 +181,9 @@ _AP.define("host/main", ["_xdm-rpc"], function (XdmRpc) {
             contentType: args.contentType,
             headers: {
               // */* will undo the effect on the accept header of having set dataType to "text"
-              "Accept": headers.accept || "*/*"
-
+              "Accept": headers.accept || "*/*",
               // send the client key header to force scope checks
-              // ACDEV-363: Temporarily disabling scope checking on the client until
-              // we figure out our long term strategy with permissions
-              // "AP-Client-Key": options.key
+              "AP-Client-Key": options.key
             }
           }).then(done, fail);
         },
@@ -195,13 +194,13 @@ _AP.define("host/main", ["_xdm-rpc"], function (XdmRpc) {
         // !!! Confluence specific !!!
         saveMacro: function(updatedParams) {
           _AP.require("confluence/macro/editor", function(editor) {
-              editor.saveMacro(updatedParams);
+            editor.saveMacro(updatedParams);
           });
         },
         closeMacroEditor: function () {
-            _AP.require("confluence/macro/editor", function (editor) {
-                editor.close();
-            })
+          _AP.require("confluence/macro/editor", function (editor) {
+            editor.close();
+          })
         }
       }
     });
@@ -213,7 +212,7 @@ _AP.define("host/main", ["_xdm-rpc"], function (XdmRpc) {
 
     function layoutIfNeeded() {
       var $stats = $(".ap-stats", $home);
-      if (isDialog) {
+      if (isSimpleDialog) {
         var panelHeight = $nexus.parent().height();
         $iframe.parents(".ap-servlet-placeholder, .ap-container").height(panelHeight);
         var containerHeight = $iframe.parents(".ap-container").height(),
@@ -274,9 +273,12 @@ _AP.define("host/main", ["_xdm-rpc"], function (XdmRpc) {
     });
     // !!! end JIRA !!!
 
-    // clean up when the iframe is removed by other sceripts coordinating through the $nexus
+    // register the rpc bridge with the addons module
+    addons.get(options.key).add(rpc);
+
+    // clean up when the iframe is removed by other scripts coordinating through the $nexus
     $nexus.bind("ra.iframe.destroy", function () {
-      // destroy the rpc bridge and remove the iframe
+      addons.get(options.key).remove(rpc);
       rpc.destroy();
     });
 

@@ -30,7 +30,7 @@ import com.google.common.collect.ImmutableMap;
 
 import org.junit.Test;
 
-import static it.TestConstants.BETTY;
+import static it.TestConstants.BETTY_USERNAME;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertEquals;
@@ -135,7 +135,7 @@ public class TestAppPermissions extends AbstractRemotablePluginTest
                 ServletException,
                 IOException
         {
-            int statusCode = sendFailedSignedGet(signedRequestHandler, baseUrl + "/rest/remoteplugintest/latest/user", BETTY);
+            int statusCode = sendFailedSignedGet(signedRequestHandler, baseUrl + "/rest/remoteplugintest/latest/user", BETTY_USERNAME);
             HttpUtils.renderHtml(resp, templateName,
                     ImmutableMap.<String, Object>of("baseurl", baseUrl, "message", String.valueOf(statusCode)));
         }

@@ -1,0 +1,16 @@
+.ap-dialog-container .ap-stats {
+    padding: 0px 10px;
+    background-color: #f5f5f5;
+}
+
+.ap-dialog-container {
+    height: 100%;
+}
+
+.ap-dialog-container .ap-container {
+    height: 100%;
+}
+
+.ap-dialog-container .ap-content {
+    height: 100%;
+}

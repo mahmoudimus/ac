@@ -69,7 +69,7 @@ _AP.define("dialog/simple", ["_dollar"], function($) {
         dialog.show();
 
         var $panelBody = $dialog.find(".ap-dialog-content");
-        contentUrl += (contentUrl.indexOf("?") > 0 ? "&" : "?") + "dialog=1";
+        contentUrl += (contentUrl.indexOf("?") > 0 ? "&" : "?") + "dialog=1&simpleDialog=1";
         contentUrl = setDimension(contentUrl, "width", $panelBody.width());
         contentUrl = setDimension(contentUrl, "height", $panelBody.height());
 

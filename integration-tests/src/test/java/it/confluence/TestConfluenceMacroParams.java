@@ -17,6 +17,8 @@ import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceMacroT
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
 import com.atlassian.plugin.connect.test.server.module.*;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 import it.MyContextAwareWebPanelServlet;
 import org.junit.Test;
@@ -26,7 +28,7 @@ import static com.atlassian.plugin.connect.test.Utils.loadResourceAsString;
 import static com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner.newMustacheServlet;
 import static com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner.newServlet;
 import static com.google.common.collect.Maps.newHashMap;
-import static it.TestConstants.BETTY;
+import static it.TestConstants.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 

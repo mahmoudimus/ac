@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.0-m9-SNAPSHOT</version>
+        <version>1.0-m10-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -202,6 +202,13 @@
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
             <version>1.9.0</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-core</artifactId>
+            <version>1.3</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -432,7 +439,8 @@
                                     <insertNewLine>true</insertNewLine>
                                     <output>${project.build.outputDirectory}/all-debug.css</output>
                                     <includes>
-                                        <include>css/iframe/*.css</include>
+                                        <include>css/iframe/core.css</include>
+                                        <include>css/iframe/dialog2.css</include>
                                     </includes>
                                 </aggregation>
                             </aggregations>
@@ -455,11 +463,14 @@
                                     <insertNewLine>true</insertNewLine>
                                     <output>${project.build.outputDirectory}/all.js</output>
                                     <includes>
+                                        <!-- note: any changes here must also be made in StaticResourcesFilter.java -->
                                         <include>js/iframe-min/_amd-min.js</include>
                                         <include>js/iframe-min/plugin/_util-min.js</include>
                                         <include>js/iframe-min/plugin/_dollar-min.js</include>
-                                        <include>js/iframe-min/xdm-rpc-min.js</include>
+                                        <include>js/iframe-min/_events-min.js</include>
+                                        <include>js/iframe-min/_xdm-min.js</include>
                                         <include>js/iframe-min/plugin/_rpc-min.js</include>
+                                        <include>js/iframe-min/plugin/events-min.js</include>
                                         <include>js/iframe-min/plugin/env-min.js</include>
                                         <include>js/iframe-min/plugin/request-min.js</include>
                                         <include>js/iframe-min/plugin/dialog-min.js</include>
@@ -503,6 +514,24 @@
                             </parameters>
                         </transformationSet>
                     </transformationSets>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.twdata.maven</groupId>
+                <artifactId>maven-cli-plugin</artifactId>
+                <version>1.0.10</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>execute</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <commands>
+                        <pi>com.atlassian.maven.plugins:maven-amps-plugin:copy-bundled-dependencies com.atlassian.maven.plugins:maven-amps-plugin:compress-resources org.apache.maven.plugins:maven-resources-plugin:resources com.atlassian.maven.plugins:maven-amps-plugin:filter-plugin-descriptor org.codehaus.mojo:xml-maven-plugin:transform compile com.atlassian.maven.plugins:maven-amps-plugin:generate-manifest com.atlassian.maven.plugins:maven-amps-plugin:validate-manifest com.atlassian.maven.plugins:maven-amps-plugin:jar org.apache.maven.plugins:maven-install-plugin:install com.atlassian.maven.plugins:maven-amps-plugin:install</pi>
+                    </commands>
                 </configuration>
             </plugin>
             
