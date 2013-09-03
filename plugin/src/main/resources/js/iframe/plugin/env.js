@@ -81,14 +81,11 @@ AP.define("env", ["_dollar", "_rpc"], function ($, rpc) {
 
     size: function (width, height) {
       var w = width == null ? "100%" : width,
-          max = Math.max,
-          body = document.body,
-          del = document.documentElement,
-          scroll = "scrollHeight",
-          offset = "offsetHeight",
-          client = "clientHeight",
-          dh = max(del[client], body[scroll], del[scroll], body[offset], del[offset]),
-          h = height == null ? dh : height;
+      // Started with http://james.padolsey.com/javascript/get-document-height-cross-browser/
+      // to determine page height across browsers. Turns out that in our case, we can get by with
+      // document.body.offsetHeight and document.body.clientHeight. Those two return the proper
+      // even when the dom shrinks. Tested on Chrome, Safari, IE8, and Firefox
+      h = Math.max(document.body.offsetHeight, document.body.clientHeight);
       return {w: w, h: h};
     }
 
