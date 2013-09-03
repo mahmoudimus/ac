@@ -476,6 +476,7 @@
                                         <include>js/iframe-min/plugin/dialog-min.js</include>
                                         <!-- product-specific inclusions are temporary until made more dynamic -->
                                         <include>js/iframe-min/plugin/jira-min.js</include>
+                                        <include>js/iframe-min/plugin/confluence-min.js</include>
                                         <include>js/iframe-min/plugin/_init-min.js</include>
                                     </includes>
                                 </aggregation>
