@@ -1,7 +1,8 @@
 // @todo make product-specific inclusions (e.g. jira) dynamic
 AP.require(
-  ["_dollar", "_rpc", "env", "request", "dialog", "jira"],
-  function ($, rpc, env, request, dialog, jira) {
+  ["_dollar", "_rpc", "_resize_listener", "env", "request", "dialog", "jira"],
+
+  function ($, rpc, resizeListener, env, request, dialog, jira) {
 
   "use strict";
 
@@ -51,7 +52,15 @@ AP.require(
         }
         else {
           // resize the parent iframe for the size of this document on load
-          $.bind(window, "load", function () { env.resize(); });
+          $.bind(window, "load", function () {
+              var rootElem = $('.ac-content, #content')[0];
+              if(rootElem) {
+                  resizeListener.addListener(rootElem, function(){
+                      env.resize();
+                  });
+              }
+              env.resize();
+          });
         }
       }
     }
