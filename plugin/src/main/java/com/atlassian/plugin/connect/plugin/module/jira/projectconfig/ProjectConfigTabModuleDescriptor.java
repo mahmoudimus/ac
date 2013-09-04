@@ -98,7 +98,7 @@ public final class ProjectConfigTabModuleDescriptor extends AbstractModuleDescri
 				.setWebItemContext(new DefaultWebItemContext(
                         "atl.jira.proj.config/" + location,
                         weight,
-                        ImmutableMap.of("projectKey", "$!helper.project.key")
+                        ImmutableMap.of("projectKey", "${project.key}")
                 ))
 				.setMetaTagContent("adminActiveTab", "webitem-".concat(key))
 				.build(getPlugin(), descriptor);
@@ -138,7 +138,7 @@ public final class ProjectConfigTabModuleDescriptor extends AbstractModuleDescri
 			String key = getRequiredAttribute(descriptor, "key");
 			final URI url = getRequiredUriAttribute(descriptor, "url");
 
-			URI localUrl = createLocalUrl(plugin.getKey(), key);
+            String localUrl = createLocalUrl(plugin.getKey(), key);
 			DescriptorToRegister webItemModuleDescriptor = new DescriptorToRegister(webItemCreatorBuilder.build(plugin, key, localUrl, descriptor));
 
 			return ImmutableSet.of(
@@ -151,7 +151,7 @@ public final class ProjectConfigTabModuleDescriptor extends AbstractModuleDescri
 				Element e,
 				String key,
 				final URI path,
-				URI localUrl
+                String localUrl
 		)
 		{
 			final String pageName = getRequiredAttribute(e, "name");

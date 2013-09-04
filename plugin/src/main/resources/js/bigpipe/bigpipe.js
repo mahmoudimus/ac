@@ -45,7 +45,9 @@ _AP.define("bigpipe/bigpipe", ["_dollar"], function($) {
       timeout: 30000,
       success: function (response) {
         if (response.items && response.items.length !== 0) {
-          poll(requestId);
+          if (response.pending.length > 0) {
+            poll(requestId);
+          }
           $(function() { processContents(response); });
         }
       },

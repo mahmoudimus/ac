@@ -1,18 +1,14 @@
 package com.atlassian.plugin.connect.plugin.module;
 
-import java.net.URI;
-import java.util.Map;
-
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.PluginParseException;
+import com.atlassian.plugin.connect.plugin.module.webitem.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.spi.module.DynamicMarkerCondition;
-import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.web.conditions.AlwaysDisplayCondition;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.atlassian.uri.Uri;
 import com.atlassian.uri.UriBuilder;
-
+import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang.StringUtils;
 import org.dom4j.Element;
 import org.slf4j.Logger;
@@ -20,8 +16,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.net.URI;
+import java.util.Map;
+import java.util.Set;
+
 import static com.atlassian.plugin.connect.plugin.module.util.redirect.RedirectServlet.getPermanentRedirectUrl;
-import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.*;
+import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.getOptionalAttribute;
+import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.getOptionalUriAttribute;
+import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.getRequiredAttribute;
+import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.printNode;
 import static org.apache.commons.lang.StringEscapeUtils.escapeHtml;
 import static org.apache.commons.lang.Validate.notNull;
 
@@ -33,15 +36,16 @@ import static org.apache.commons.lang.Validate.notNull;
 @Component
 public final class WebItemCreator
 {
-    private final ProductAccessor productAccessor;
     private final ConditionProcessor conditionProcessor;
+    private final WebItemModuleDescriptorFactory webItemModuleDescriptorFactory;
+
     private static final Logger log = LoggerFactory.getLogger(WebItemCreator.class);
 
     @Autowired
-    public WebItemCreator(ProductAccessor productAccessor, ConditionProcessor conditionProcessor)
+    public WebItemCreator(ConditionProcessor conditionProcessor, WebItemModuleDescriptorFactory webItemModuleDescriptorFactory)
     {
-        this.productAccessor = productAccessor;
         this.conditionProcessor = conditionProcessor;
+        this.webItemModuleDescriptorFactory = webItemModuleDescriptorFactory;
     }
 
     public Builder newBuilder()
@@ -56,8 +60,9 @@ public final class WebItemCreator
         private Map<String,String> contextParams;
         private int preferredWeight;
         private String preferredSectionKey;
+        private boolean absolute;
 
-        public WebItemModuleDescriptor build(Plugin plugin, String key, URI localUrl, Element configurationElement)
+        public WebItemModuleDescriptor build(Plugin plugin, String key, String webItemUrl, Element configurationElement)
         {
             notNull(condition);
             notNull(key);
@@ -76,26 +81,29 @@ public final class WebItemCreator
             Element linkElement = config.addElement("link").
                     addAttribute("linkId", webItemKey);
 
-            if (localUrl != null)
+            String url = null;
+            if (webItemUrl != null)
             {
-                if (localUrl.toString().contains("$"))
+                if (absolute)
                 {
-                    throw new PluginParseException("Invalid url '" + localUrl + "', cannot contain velocity expressions");
+                    url = webItemUrl;
                 }
-
-                UriBuilder uriBuilder = new UriBuilder(Uri.parse("/plugins/servlet" + localUrl));
-                String width = getOptionalAttribute(configurationElement, "width", null);
-                if (width != null) uriBuilder.addQueryParameter("width", width);
-                String height = getOptionalAttribute(configurationElement, "height", null);
-                if (height != null) uriBuilder.addQueryParameter("height", height);
-
-                String url = uriBuilder.toString();
-                String sep = url.indexOf("?") > 0 ? "&" : "?";
-
-                for (Map.Entry<String,String> entry : contextParams.entrySet())
+                else
                 {
-                    url += sep + entry.getKey() + "=" + entry.getValue();
-                    sep = "&";
+                    UriBuilder uriBuilder = new UriBuilder(Uri.parse("/plugins/servlet" + webItemUrl));
+                    String width = getOptionalAttribute(configurationElement, "width", null);
+                    if (width != null) uriBuilder.addQueryParameter("width", width);
+                    String height = getOptionalAttribute(configurationElement, "height", null);
+                    if (height != null) uriBuilder.addQueryParameter("height", height);
+
+                    url = uriBuilder.toString();
+                    String sep = url.indexOf("?") > 0 ? "&" : "?";
+
+                    for (Map.Entry<String,String> entry : contextParams.entrySet())
+                    {
+                        url += sep + entry.getKey() + "=" + entry.getValue();
+                        sep = "&";
+                    }
                 }
 
                 linkElement.setText(url);
@@ -103,8 +111,7 @@ public final class WebItemCreator
 
             if (!StringUtils.isBlank(additionalStyleClass))
             {
-                config.addElement("styleClass").
-                        setText(additionalStyleClass);
+                config.addElement("styleClass").setText(additionalStyleClass);
             }
             convertIcon(plugin, configurationElement, config);
             config.addElement("condition")
@@ -135,14 +142,13 @@ public final class WebItemCreator
             {
                 log.debug("Created web item: " + printNode(config));
             }
-            return createWebItemDescriptor(conditionProcessor.getLoadablePlugin(plugin), config);
+            return createWebItemDescriptor(conditionProcessor.getLoadablePlugin(plugin), config, webItemKey, url);
         }
 
-        private WebItemModuleDescriptor createWebItemDescriptor(
-                Plugin plugin, Element config)
+        private WebItemModuleDescriptor createWebItemDescriptor(Plugin plugin, Element config, String key, String url)
         {
             config.addAttribute("system", "true");
-            WebItemModuleDescriptor descriptor = productAccessor.createWebItemModuleDescriptor();
+            final WebItemModuleDescriptor descriptor = webItemModuleDescriptorFactory.createWebItemModuleDescriptor(url, key, absolute);
             descriptor.init(plugin, config);
             return descriptor;
         }
@@ -157,8 +163,8 @@ public final class WebItemCreator
                         .addAttribute("width", "16")
                         .addAttribute("height", "16")
                         .addElement("link")
-                            .addText(getPermanentRedirectUrl(
-                                    plugin.getKey(), iconUri));
+                        .addText(getPermanentRedirectUrl(
+                                plugin.getKey(), iconUri));
             }
         }
 
@@ -180,6 +186,16 @@ public final class WebItemCreator
             return this;
         }
 
+        public Builder setContextParams(Set<String> contextParams)
+        {
+            ImmutableMap.Builder<String, String> mapBuilder = ImmutableMap.builder();
+            for (String param : contextParams)
+            {
+                mapBuilder.put(param, String.format("${%s}", param));
+            }
+            return setContextParams(mapBuilder.build());
+        }
+
         public Builder setPreferredWeight(int preferredWeight)
         {
             this.preferredWeight = preferredWeight;
@@ -189,6 +205,12 @@ public final class WebItemCreator
         public Builder setPreferredSectionKey(String preferredSectionKey)
         {
             this.preferredSectionKey = preferredSectionKey;
+            return this;
+        }
+
+        public Builder setAbsolute(boolean absolute)
+        {
+            this.absolute = absolute;
             return this;
         }
     }

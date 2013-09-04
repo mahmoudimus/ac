@@ -35,12 +35,6 @@ public final class ConfluenceProductAccessor implements ProductAccessor
     }
 
     @Override
-    public WebItemModuleDescriptor createWebItemModuleDescriptor()
-    {
-        return new ConfluenceWebItemModuleDescriptor();
-    }
-
-    @Override
     public String getPreferredAdminSectionKey()
     {
         return "system.admin/marketplace_confluence";

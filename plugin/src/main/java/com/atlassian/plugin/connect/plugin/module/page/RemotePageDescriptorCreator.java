@@ -6,6 +6,8 @@ import java.util.Map;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
+import com.atlassian.plugin.connect.plugin.module.webfragment.UrlValidator;
+import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.connect.plugin.integration.plugins.DescriptorToRegister;
 import com.atlassian.plugin.connect.plugin.module.IFrameParamsImpl;
@@ -45,18 +47,21 @@ public final class RemotePageDescriptorCreator
     private final WebItemCreator webItemCreator;
     private final IFrameRendererImpl iFrameRenderer;
     private final ProductAccessor productAccessor;
+    private final UrlVariableSubstitutor urlVariableSubstitutor;
 
     @Autowired
     public RemotePageDescriptorCreator(
             BundleContext bundleContext, UserManager userManager,
             WebItemCreator webItemCreator, IFrameRendererImpl iFrameRenderer,
-            ProductAccessor productAccessor)
+            ProductAccessor productAccessor, UrlValidator urlValidator,
+            UrlVariableSubstitutor urlVariableSubstitutor)
     {
         this.bundleContext = bundleContext;
         this.userManager = userManager;
         this.webItemCreator = webItemCreator;
         this.iFrameRenderer = iFrameRenderer;
         this.productAccessor = productAccessor;
+        this.urlVariableSubstitutor = urlVariableSubstitutor;
     }
 
     public Builder newBuilder()
@@ -64,9 +69,9 @@ public final class RemotePageDescriptorCreator
         return new Builder();
     }
 
-    public static URI createLocalUrl(String pluginKey, String pageUrl)
+    public static String createLocalUrl(String pluginKey, String pageUrl)
     {
-        return URI.create("/atlassian-connect/" + pluginKey + (pageUrl.startsWith("/") ? "" : "/") + pageUrl);
+        return URI.create("/atlassian-connect/" + pluginKey + (pageUrl.startsWith("/") ? "" : "/") + pageUrl).toString();
     }
 
     public class Builder
@@ -75,23 +80,23 @@ public final class RemotePageDescriptorCreator
         private String decorator = "";
         private String templateSuffix = "";
         private Condition condition = new AlwaysDisplayCondition();
-		private Map<String, String> metaTagsContent = Maps.newHashMap();
+        private Map<String, String> metaTagsContent = Maps.newHashMap();
 
         public Builder()
         {
             this.webItemCreatorBuilder = webItemCreator.newBuilder();
             this.webItemCreatorBuilder.setPreferredWeight(productAccessor.getPreferredGeneralWeight());
             this.webItemCreatorBuilder.setPreferredSectionKey(productAccessor.getPreferredGeneralSectionKey());
-            this.webItemCreatorBuilder.setContextParams(productAccessor.getLinkContextParams());
             this.webItemCreatorBuilder.setCondition(condition.getClass());
         }
         public Iterable<DescriptorToRegister> build(Plugin plugin, Element descriptor)
         {
             checkNotNull(decorator);
             String key = getRequiredAttribute(descriptor, "key");
-            final URI url = getRequiredUriAttribute(descriptor, "url");
+            final String url = getRequiredAttribute(descriptor, "url");
+            this.webItemCreatorBuilder.setContextParams(urlVariableSubstitutor.getContextVariables(url));
 
-            URI localUrl = createLocalUrl(plugin.getKey(), key);
+            String localUrl = createLocalUrl(plugin.getKey(), key);
             DescriptorToRegister webItemModuleDescriptor = new DescriptorToRegister(webItemCreatorBuilder.build(plugin, key, localUrl, descriptor));
 
             return ImmutableSet.of(
@@ -99,13 +104,12 @@ public final class RemotePageDescriptorCreator
                     webItemModuleDescriptor);
         }
 
-        private DescriptorToRegister createServletDescriptor(
+        public DescriptorToRegister createServletDescriptor(
                 final Plugin plugin,
                 Element e,
                 String key,
-                final URI path,
-                URI localUrl
-        )
+                final String path,
+                String localUrl)
         {
             final String pageName = getRequiredAttribute(e, "name");
             Element config = e.createCopy();
@@ -128,7 +132,7 @@ public final class RemotePageDescriptorCreator
                     return (T) new IFramePageServlet(
                             pageInfo,
                             iFrameRenderer,
-                            new IFrameContextImpl(plugin.getKey(), path, moduleKey, params), userManager
+                            new IFrameContextImpl(plugin.getKey(), path, moduleKey, params), userManager, urlVariableSubstitutor
                     );
                 }
             }, getService(bundleContext, ServletModuleManager.class));
@@ -164,8 +168,8 @@ public final class RemotePageDescriptorCreator
         public Builder setWebItemContext(WebItemContext webItemContext)
         {
             webItemCreatorBuilder.setContextParams(webItemContext.getContextParams())
-                                 .setPreferredSectionKey(webItemContext.getPreferredSectionKey())
-                                 .setPreferredWeight(webItemContext.getPreferredWeight());
+                    .setPreferredSectionKey(webItemContext.getPreferredSectionKey())
+                    .setPreferredWeight(webItemContext.getPreferredWeight());
             return this;
         }
 

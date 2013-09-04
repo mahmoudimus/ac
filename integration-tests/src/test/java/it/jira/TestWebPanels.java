@@ -22,7 +22,7 @@ import it.MyContextAwareWebPanelServlet;
 
 import static com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner.newMustacheServlet;
 import static com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner.newServlet;
-import static it.TestConstants.ADMIN;
+import static it.TestConstants.ADMIN_USERNAME;
 import static org.junit.Assert.*;
 
 /**
@@ -125,7 +125,8 @@ public final class TestWebPanels extends JiraWebDriverTestBase
         RemoteWebPanel panel = projectAdministrationPage.findWebPanel(PROJECT_CONFIG_PANEL_ID);
 
         assertEquals(project.getId(), panel.getProjectId());
-        assertEquals(ADMIN, panel.getUserId());
+        assertEquals(ADMIN_USERNAME, panel.getUserId());
+		assertNotNull(panel.getUserKey());
     }
 
     @Test
@@ -137,7 +138,8 @@ public final class TestWebPanels extends JiraWebDriverTestBase
 
         assertEquals(project.getId(), panel.getProjectId());
         assertEquals(issue.getId(), panel.getIssueId());
-        assertEquals(ADMIN, panel.getUserId());
+        assertEquals(ADMIN_USERNAME, panel.getUserId());
+		assertNotNull(panel.getUserKey());
     }
 
     @Test
@@ -149,7 +151,8 @@ public final class TestWebPanels extends JiraWebDriverTestBase
 
         assertEquals(project.getId(), panel.getProjectId());
         assertEquals(issue.getId(), panel.getIssueId());
-        assertEquals(ADMIN, panel.getUserId());
+        assertEquals(ADMIN_USERNAME, panel.getUserId());
+		assertNotNull(panel.getUserKey());
     }
 
     @Test
@@ -160,7 +163,8 @@ public final class TestWebPanels extends JiraWebDriverTestBase
         RemoteWebPanel panel = projectAdministrationPage.findWebPanel(PROJECT_CONFIG_HEADER_WEB_PANEL);
 
         assertEquals(project.getId(), panel.getProjectId());
-        assertEquals(ADMIN, panel.getUserId());
+        assertEquals(ADMIN_USERNAME, panel.getUserId());
+		assertNotNull(panel.getUserKey());
     }
 
     @Test
@@ -174,7 +178,8 @@ public final class TestWebPanels extends JiraWebDriverTestBase
 
         assertEquals(userProfileName, panel.getFromQueryString("profile_user_key"));
         assertEquals(userProfileName, panel.getFromQueryString("profile_user_name"));
-        assertEquals(ADMIN, panel.getUserId());
+        assertEquals(ADMIN_USERNAME, panel.getUserId());
+		assertNotNull(panel.getUserKey());
     }
 
     @Ignore("TODO: For some reason, there's an issue in the addLabelViaInlineEdit method where webdriver can't click on the submit button.")

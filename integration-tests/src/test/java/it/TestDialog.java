@@ -14,7 +14,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner.newMustacheServlet;
-import static it.TestConstants.BETTY;
+import static it.TestConstants.BETTY_USERNAME;
 import static org.junit.Assert.*;
 
 public class TestDialog extends AbstractRemotablePluginTest
@@ -47,7 +47,7 @@ public class TestDialog extends AbstractRemotablePluginTest
     @Test
     public void testOpenCloseDialog()
     {
-        product.visit(LoginPage.class).login(BETTY, BETTY, HomePage.class);
+        product.visit(LoginPage.class).login(BETTY_USERNAME, BETTY_USERNAME, HomePage.class);
         RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "remotePluginGeneralOpenDialog", "Remotable Plugin app1 Open Dialog");
 
         page.clickRemotePluginLink();

@@ -28,7 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner.newMustacheServlet;
-import static it.TestConstants.BETTY;
+import static it.TestConstants.BETTY_USERNAME;
 import static java.lang.String.valueOf;
 import static org.junit.Assert.*;
 
@@ -78,7 +78,7 @@ public class TestPageModules extends AbstractRemotablePluginTest
     @Test
     public void testMyGeneralLoaded()
     {
-        product.visit(LoginPage.class).login(BETTY, BETTY, HomePage.class);
+        product.visit(LoginPage.class).login(BETTY_USERNAME, BETTY_USERNAME, HomePage.class);
         RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "remotePluginGeneral", "Remotable Plugin app1 General Link");
 
         assertTrue(page.isRemotePluginLinkPresent());
@@ -89,8 +89,8 @@ public class TestPageModules extends AbstractRemotablePluginTest
         assertEquals(OAuthUtils.getConsumerKey(), remotePluginTest.getConsumerKey());
         assertTrue(remotePluginTest.getIframeQueryParams().containsKey("cp"));
         assertNotNull(remotePluginTest.getFullName());
-        assertThat(remotePluginTest.getFullName().toLowerCase(), Matchers.containsString(BETTY));
-        assertEquals(BETTY, remotePluginTest.getUserId());
+        assertThat(remotePluginTest.getFullName().toLowerCase(), Matchers.containsString(BETTY_USERNAME));
+        assertEquals(BETTY_USERNAME, remotePluginTest.getUserId());
         assertTrue(remotePluginTest.getLocale().startsWith("en-"));
 
         // timezone should be the same as the default one
@@ -102,8 +102,8 @@ public class TestPageModules extends AbstractRemotablePluginTest
         assertTrue("OK".equals(statusText) || "success".equals(statusText));
         String contentType = remotePluginTest.getClientHttpContentType();
         assertTrue(contentType != null && contentType.startsWith("text/plain"));
-        assertEquals(BETTY, remotePluginTest.getClientHttpData());
-        assertEquals(BETTY, remotePluginTest.getClientHttpResponseText());
+        assertEquals(BETTY_USERNAME, remotePluginTest.getClientHttpData());
+        assertEquals(BETTY_USERNAME, remotePluginTest.getClientHttpResponseText());
 
         // media type tests of the RA.request API
         assertEquals("{\"name\": \"betty\"}", remotePluginTest.getClientHttpDataJson());
@@ -118,14 +118,14 @@ public class TestPageModules extends AbstractRemotablePluginTest
     @Test
     public void testLoadGeneralDialog()
     {
-        product.visit(LoginPage.class).login(BETTY, BETTY, HomePage.class);
+        product.visit(LoginPage.class).login(BETTY_USERNAME, BETTY_USERNAME, HomePage.class);
 
         RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "remotePluginDialog", "Remotable Plugin app1 Dialog");
         assertTrue(page.isRemotePluginLinkPresent());
         RemotePluginTestPage remotePluginTest = page.clickRemotePluginLink();
 
         assertNotNull(remotePluginTest.getFullName());
-        assertThat(remotePluginTest.getFullName().toLowerCase(), Matchers.containsString(BETTY));
+        assertThat(remotePluginTest.getFullName().toLowerCase(), Matchers.containsString(BETTY_USERNAME));
 
         // Exercise the dialog's submit button.
         RemotePluginDialog dialog = product.getPageBinder().bind(RemotePluginDialog.class, remotePluginTest);
@@ -156,7 +156,7 @@ public class TestPageModules extends AbstractRemotablePluginTest
     @Test
     public void testRemoteConditionSucceeds()
     {
-        product.visit(LoginPage.class).login(BETTY, BETTY, HomePage.class);
+        product.visit(LoginPage.class).login(BETTY_USERNAME, BETTY_USERNAME, HomePage.class);
 
         GeneralPage page = product.getPageBinder().bind(GeneralPage.class, "onlyBetty", "Only Betty");
         RemotePluginTestPage remotePluginTest = page.clickRemotePluginLink();
@@ -178,7 +178,7 @@ public class TestPageModules extends AbstractRemotablePluginTest
                 runner.start();
 
         // fixme: jira page objects don't redirect properly to next page
-        product.visit(LoginPage.class).login(BETTY, BETTY, HomePage.class);
+        product.visit(LoginPage.class).login(BETTY_USERNAME, BETTY_USERNAME, HomePage.class);
         final PluginManagerPage upm = product.visit(PluginManagerPage.class);
         
         final RemotePluginTestPage remotePluginTestPage = upm.configurePlugin("configurePage", "page", RemotePluginTestPage.class);
@@ -190,7 +190,7 @@ public class TestPageModules extends AbstractRemotablePluginTest
     @Test
     public void testAmd()
     {
-        product.visit(LoginPage.class).login(BETTY, BETTY, HomePage.class);
+        product.visit(LoginPage.class).login(BETTY_USERNAME, BETTY_USERNAME, HomePage.class);
         RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "amdTest", "AMD Test app1 General");
         assertTrue(page.isRemotePluginLinkPresent());
         RemotePluginTestPage remotePluginTest = page.clickRemotePluginLink();
@@ -212,7 +212,7 @@ public class TestPageModules extends AbstractRemotablePluginTest
             final String loggedInUser = req.getParameter("user_id");
             final boolean isBetty = isBetty(loggedInUser);
 
-            logger.debug("The logged in user is {}betty, here is their username '{}'", isBetty ? "" : "NOT ", loggedInUser);
+            logger.debug("The logged in user is {}betty, their user key is '{}'", isBetty ? "" : "NOT ", loggedInUser);
 
             final String json = getJson(isBetty);
             logger.debug("Responding with the following json: {}", json);

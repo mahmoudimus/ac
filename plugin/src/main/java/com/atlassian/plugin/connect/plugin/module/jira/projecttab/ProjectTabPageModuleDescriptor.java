@@ -8,6 +8,7 @@ import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.plugin.integration.plugins.DynamicDescriptorRegistration;
 import com.atlassian.plugin.connect.plugin.module.ConditionProcessor;
 import com.atlassian.plugin.connect.plugin.module.IFrameRendererImpl;
+import com.atlassian.plugin.connect.plugin.module.jira.context.serializer.ProjectSerializer;
 import com.atlassian.plugin.connect.plugin.module.page.IFrameContextImpl;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlValidator;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
@@ -28,12 +29,15 @@ public final class ProjectTabPageModuleDescriptor extends AbstractJiraTabPageMod
     private final IFrameRendererImpl iFrameRenderer;
     private final UrlVariableSubstitutor urlVariableSubstitutor;
     private final JiraAuthenticationContext jiraAuthenticationContext;
+    private final ProjectSerializer projectSerializer;
 
     public ProjectTabPageModuleDescriptor(ModuleFactory moduleFactory, DynamicDescriptorRegistration dynamicDescriptorRegistration, ConditionProcessor conditionProcessor,
-            IFrameRendererImpl iFrameRenderer, JiraAuthenticationContext jiraAuthenticationContext, UrlValidator urlValidator, UrlVariableSubstitutor urlVariableSubstitutor)
+            IFrameRendererImpl iFrameRenderer, JiraAuthenticationContext jiraAuthenticationContext, UrlValidator urlValidator, UrlVariableSubstitutor urlVariableSubstitutor,
+            ProjectSerializer projectSerializer)
     {
         super(moduleFactory, dynamicDescriptorRegistration, conditionProcessor, urlValidator);
-        this.urlVariableSubstitutor = urlVariableSubstitutor;
+        this.urlVariableSubstitutor = checkNotNull(urlVariableSubstitutor);
+        this.projectSerializer = checkNotNull(projectSerializer);
         this.iFrameRenderer = checkNotNull(iFrameRenderer);
         this.jiraAuthenticationContext = checkNotNull(jiraAuthenticationContext);
     }
@@ -55,7 +59,7 @@ public final class ProjectTabPageModuleDescriptor extends AbstractJiraTabPageMod
             {
                 return (T) new IFrameProjectTab(
                         new IFrameContextImpl(getPluginKey(), url, key, iFrameParams),
-                        iFrameRenderer, condition, urlVariableSubstitutor);
+                        iFrameRenderer, condition, urlVariableSubstitutor, projectSerializer);
             }
         });
     }

@@ -13,6 +13,7 @@ import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.connect.plugin.PermissionManager;
 import com.atlassian.plugin.connect.spi.InstallationFailedException;
@@ -345,7 +346,7 @@ public final class DescriptorValidator
 
     private String getXslStyleSheetUrl()
     {
-        return webResourceManager.getStaticPluginResource("com.atlassian.plugins.atlassian-connect-plugin:schema-xsl", "xs3p.xsl", UrlMode.ABSOLUTE);
+        return webResourceManager.getStaticPluginResource(ConnectPluginInfo.PLUGIN_KEY + ":schema-xsl", "xs3p.xsl", UrlMode.ABSOLUTE);
     }
 
     private void processIncludes(Document doc, Set<String> includedDocIds)

@@ -33,12 +33,6 @@ public final class JiraProductAccessor implements ProductAccessor
     }
 
     @Override
-    public WebItemModuleDescriptor createWebItemModuleDescriptor()
-    {
-        return new JiraWebItemModuleDescriptor(ComponentManager.getInstance().getJiraAuthenticationContext(), ComponentManager.getComponent(WebInterfaceManager.class));
-    }
-
-    @Override
     public String getPreferredAdminSectionKey()
     {
         return "advanced_menu_section/advanced_section";

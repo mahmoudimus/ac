@@ -10,6 +10,8 @@ import com.atlassian.confluence.status.service.SystemInformationService;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
+import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
+import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.hostcontainer.HostContainer;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.connect.plugin.DefaultRemotablePluginAccessorFactory;
@@ -70,16 +72,19 @@ public class MacroModuleDescriptorCreator
     private final UserManager userManager;
     private final PermissionManager permissionManager;
     private final BundleContext bundleContext;
+    private final UrlVariableSubstitutor urlVariableSubstitutor;
 
-    public MacroModuleDescriptorCreator(SystemInformationService systemInformationService,
-                                        DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory,
-                                        HostContainer hostContainer,
-                                        WebItemCreator webItemCreator,
-                                        ContextParameterParser contextParameterParser,
-                                        IFrameRendererImpl iFrameRenderer,
-                                        UserManager userManager,
-                                        PermissionManager permissionManager,
-                                        BundleContext bundleContext)
+    public MacroModuleDescriptorCreator(
+            SystemInformationService systemInformationService,
+            DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory,
+            HostContainer hostContainer,
+            WebItemCreator webItemCreator,
+            ContextParameterParser contextParameterParser,
+            IFrameRendererImpl iFrameRenderer,
+            UserManager userManager,
+            PermissionManager permissionManager,
+            BundleContext bundleContext,
+            UrlVariableSubstitutor urlVariableSubstitutor)
     {
         this.systemInformationService = systemInformationService;
         this.remotablePluginAccessorFactory = remotablePluginAccessorFactory;
@@ -90,6 +95,7 @@ public class MacroModuleDescriptorCreator
         this.userManager = userManager;
         this.permissionManager = permissionManager;
         this.bundleContext = bundleContext;
+        this.urlVariableSubstitutor = urlVariableSubstitutor;
 
         // todo: fix this in confluence
         this.macroMetadataParser = ComponentLocator.getComponent(MacroMetadataParser.class);
@@ -279,7 +285,7 @@ public class MacroModuleDescriptorCreator
                     return (T) new IFramePageServlet(
                             pageInfo,
                             iFrameRenderer,
-                            new IFrameContextImpl(plugin.getKey(), path, moduleKey, params), userManager
+                            new IFrameContextImpl(plugin.getKey(), path, moduleKey, params), userManager, urlVariableSubstitutor
                     );
                 }
             }, getService(bundleContext, ServletModuleManager.class));
@@ -301,7 +307,7 @@ public class MacroModuleDescriptorCreator
                     .addAttribute("location", "js/confluence/macro/override.js");
 
             webResource.addElement("dependency")
-                    .setText("com.atlassian.plugins.atlassian-connect-plugin:ap-amd");
+                    .setText(ConnectPluginInfo.PLUGIN_KEY + ":ap-amd");
 
             webResource.addElement("context")
                     .setText("editor");
