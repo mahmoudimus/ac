@@ -6,6 +6,7 @@ import com.atlassian.pageobjects.Page;
 import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.pageobjects.binder.WaitUntil;
 import com.atlassian.webdriver.AtlassianWebDriver;
+import com.atlassian.webdriver.utils.Check;
 
 import org.openqa.selenium.By;
 
@@ -29,6 +30,11 @@ public class ConfluenceMacroPage implements Page
     @WaitUntil
     public void waitForBigPipe()
     {
+//        if(driver.elementExists(By.className("bp-loading")))
+//        {
+//            driver.waitUntilElementIsNotLocated(By.className("bp-loading"));
+//        }
+
         driver.waitUntilElementIsNotLocated(By.className("bp-loading"));
     }
 
