@@ -3,6 +3,7 @@
     "use strict";
 
     // Normalize overflow/underflow events across browsers
+    // http://www.backalleycoder.com/2013/03/14/oft-overlooked-overflow-and-underflow-events/
     function addFlowListener(element, type, fn){
         var flow = type == 'over';
         element.addEventListener('OverflowEvent' in window ? 'overflowchanged' : type + 'flow', function(e){
@@ -16,6 +17,14 @@
         }, false);
     };
 
+    // Adds a resize listener to a DOM element (other within <body>). It first adds a set of invisible
+    // "sensor" divs to the bottom of the selected element. Those sensor divs serve as over/underflow
+    // detectors using the addFlowLister. The flowListener triggers the over/underflow within the div
+    // which tells us that the element has resized. We compare the previous and current size. If it's
+    // changed, we trigger the resize event.
+    //
+    // This listener is initiated during the page load event in _init.js. The callback function is
+    // the actual iframe resize function in env.js.
     function addListener(element, fn){
         var resize = 'onresize' in element;
         if (!resize && !element._resizeSensor) {
