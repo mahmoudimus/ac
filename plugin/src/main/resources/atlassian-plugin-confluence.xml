@@ -4,15 +4,22 @@
                class="com.atlassian.plugin.connect.plugin.product.confluence.ConfluenceProductAccessor"/>
     <component key="confluenceUserPreferencesRetriever" class="com.atlassian.plugin.connect.plugin.product.confluence.ConfluenceUserPreferencesRetriever"
                interface="com.atlassian.plugin.connect.plugin.UserPreferencesRetriever"/>
+    <component key="webFragmentHelper" class="com.atlassian.confluence.plugin.descriptor.web.ConfluenceWebFragmentHelper" />
 
     <!-- Web panel parameter extractors -->
     <component key="pageIdParameterExtractor"
-               class="com.atlassian.plugin.connect.plugin.module.webpanel.extractor.confluence.PageWebPanelParameterExtractor"
-               interface="com.atlassian.plugin.connect.plugin.module.webpanel.extractor.WebPanelParameterExtractor" />
+               class="com.atlassian.plugin.connect.plugin.module.confluence.context.extractor.PageContextMapParameterExtractor"
+               interface="com.atlassian.plugin.connect.plugin.module.extractor.ContextMapParameterExtractor" />
 
     <component key="spaceIdParameterExtractor"
-               class="com.atlassian.plugin.connect.plugin.module.webpanel.extractor.confluence.SpaceWebPanelParameterExtractor"
-               interface="com.atlassian.plugin.connect.plugin.module.webpanel.extractor.WebPanelParameterExtractor" />
+               class="com.atlassian.plugin.connect.plugin.module.confluence.context.extractor.SpaceContextMapParameterExtractor"
+               interface="com.atlassian.plugin.connect.plugin.module.extractor.ContextMapParameterExtractor" />
+
+    <component key="spaceSerializer" class="com.atlassian.plugin.connect.plugin.module.confluence.context.serializer.SpaceSerializer" />
+    <component key="pageSerializer" class="com.atlassian.plugin.connect.plugin.module.confluence.context.serializer.PageSerializer" />
+
+    <component key="webItemModuleDescriptorFactory" class="com.atlassian.plugin.connect.plugin.module.webitem.ConfluenceWebItemModuleDescriptorFactory"
+               interface="com.atlassian.plugin.connect.plugin.module.webitem.WebItemModuleDescriptorFactory" />
 
     <component-import key="confluenceSettingsManager"
                       interface="com.atlassian.confluence.setup.settings.SettingsManager"/>

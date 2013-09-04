@@ -1,0 +1,80 @@
+package com.atlassian.plugin.connect.plugin.module.webitem;
+
+import com.atlassian.jira.plugin.webfragment.descriptors.JiraWebItemModuleDescriptor;
+import com.atlassian.jira.plugin.webfragment.model.JiraWebLink;
+import com.atlassian.jira.security.JiraAuthenticationContext;
+import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
+import com.atlassian.plugin.connect.plugin.module.context.ContextMapURLSerializer;
+import com.atlassian.plugin.web.WebFragmentHelper;
+import com.atlassian.plugin.web.WebInterfaceManager;
+import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
+import com.atlassian.plugin.web.model.WebLink;
+
+import static com.google.common.base.Preconditions.checkNotNull;
+
+/**
+ * Creates JiraWebItemModuleDescriptor with link pointing to remote plugin.
+ */
+public class JiraWebItemModuleDescriptorFactory implements WebItemModuleDescriptorFactory
+{
+    private final WebFragmentHelper webFragmentHelper;
+    private final WebInterfaceManager webInterfaceManager;
+    private final UrlVariableSubstitutor urlVariableSubstitutor;
+    private final ContextMapURLSerializer contextMapURLSerializer;
+    private final JiraAuthenticationContext jiraAuthenticationContext;
+
+    public JiraWebItemModuleDescriptorFactory(
+            WebFragmentHelper webFragmentHelper,
+            WebInterfaceManager webInterfaceManager,
+            UrlVariableSubstitutor urlVariableSubstitutor,
+            ContextMapURLSerializer contextMapURLSerializer,
+            JiraAuthenticationContext jiraAuthenticationContext)
+    {
+        this.jiraAuthenticationContext = checkNotNull(jiraAuthenticationContext);
+        this.contextMapURLSerializer = checkNotNull(contextMapURLSerializer);
+        this.webInterfaceManager = checkNotNull(webInterfaceManager);
+        this.webFragmentHelper = checkNotNull(webFragmentHelper);
+        this.urlVariableSubstitutor = checkNotNull(urlVariableSubstitutor);
+
+    }
+
+    @Override
+    public WebItemModuleDescriptor createWebItemModuleDescriptor(String url, String moduleKey, boolean absolute)
+    {
+        return new RemoteJiraWebItemModuleDescriptor(jiraAuthenticationContext, webInterfaceManager, webFragmentHelper, urlVariableSubstitutor, contextMapURLSerializer, url, moduleKey, absolute);
+    }
+
+    private static final class RemoteJiraWebItemModuleDescriptor extends JiraWebItemModuleDescriptor
+    {
+        private final WebFragmentHelper webFragmentHelper;
+        private final UrlVariableSubstitutor urlVariableSubstitutor;
+        private final ContextMapURLSerializer contextMapURLSerializer;
+        private final String url;
+        private final String moduleKey;
+        private boolean absolute;
+
+        public RemoteJiraWebItemModuleDescriptor(
+                JiraAuthenticationContext jiraAuthenticationContext,
+                WebInterfaceManager webInterfaceManager,
+                WebFragmentHelper webFragmentHelper,
+                UrlVariableSubstitutor urlVariableSubstitutor,
+                ContextMapURLSerializer contextMapURLSerializer,
+                String url,
+                String moduleKey,
+                boolean absolute)
+        {
+            super(jiraAuthenticationContext, webInterfaceManager);
+            this.webFragmentHelper = webFragmentHelper;
+            this.urlVariableSubstitutor = urlVariableSubstitutor;
+            this.contextMapURLSerializer = contextMapURLSerializer;
+            this.url = url;
+            this.moduleKey = moduleKey;
+            this.absolute = absolute;
+        }
+        @Override
+        public WebLink getLink()
+        {
+            return new JiraWebLink(new RemoteWebLink(this, webFragmentHelper, urlVariableSubstitutor, contextMapURLSerializer, url, moduleKey, absolute), authenticationContext);
+        }
+    }
+}

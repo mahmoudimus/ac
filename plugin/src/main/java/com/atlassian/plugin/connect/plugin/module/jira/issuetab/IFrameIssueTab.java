@@ -5,6 +5,8 @@ import com.atlassian.jira.plugin.issuetabpanel.GetActionsRequest;
 import com.atlassian.jira.plugin.issuetabpanel.IssueAction;
 import com.atlassian.jira.plugin.issuetabpanel.ShowPanelRequest;
 import com.atlassian.plugin.connect.plugin.module.IFrameRendererImpl;
+import com.atlassian.plugin.connect.plugin.module.jira.context.serializer.IssueSerializer;
+import com.atlassian.plugin.connect.plugin.module.jira.context.serializer.ProjectSerializer;
 import com.atlassian.plugin.connect.plugin.module.page.IFrameContextImpl;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.spi.module.IFrameContext;
@@ -35,9 +37,14 @@ public class IFrameIssueTab extends AbstractIssueTabPanel3
     private final Optional<Condition> condition;
     private final IFrameContext iFrameContext;
     private final UrlVariableSubstitutor urlVariableSubstitutor;
+    private final ProjectSerializer projectSerializer;
+    private final IssueSerializer issueSerializer;
 
-    public IFrameIssueTab(IFrameContext iFrameContext, IFrameRendererImpl iFrameRenderer, Optional<Condition> condition, UrlVariableSubstitutor urlVariableSubstitutor)
+    public IFrameIssueTab(IFrameContext iFrameContext, IFrameRendererImpl iFrameRenderer, Optional<Condition> condition, UrlVariableSubstitutor urlVariableSubstitutor,
+            ProjectSerializer projectSerializer, IssueSerializer issueSerializer)
     {
+        this.projectSerializer = checkNotNull(projectSerializer);
+        this.issueSerializer = checkNotNull(issueSerializer);
         this.urlVariableSubstitutor = checkNotNull(urlVariableSubstitutor);
         this.iFrameContext = checkNotNull(iFrameContext);
         this.iFrameRenderer = checkNotNull(iFrameRenderer);
@@ -81,21 +88,12 @@ public class IFrameIssueTab extends AbstractIssueTabPanel3
 
         private Map<String, Object> getParams()
         {
-            return ImmutableMap.<String, Object>of(
-                    "project",
-                    ImmutableMap.of(
-                            "id", request.issue().getProjectObject().getId(),
-                            "key", request.issue().getProjectObject().getKey()
-                    ),
-                    "issue",
-                    ImmutableMap.of(
-                            "id", request.issue().getId(),
-                            "key", request.issue().getKey()
-                    ),
-                    /* //deprecated: use issue.key instead; to be removed with AC-702  */
-                    "ctx_issue_key", request.issue().getKey()
-            );
-
+            ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();
+            builder.putAll(projectSerializer.serialize(request.issue().getProjectObject()));
+            builder.putAll(issueSerializer.serialize(request.issue()));
+            // deprecated AC-702
+            builder.put("ctx_issue_key", request.issue().getKey());
+            return builder.build();
         }
 
         private IFrameContext substituteContext(final Map<String, Object> paramsMap)

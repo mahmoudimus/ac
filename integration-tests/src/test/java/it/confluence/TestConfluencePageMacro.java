@@ -1,38 +1,35 @@
 package it.confluence;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.concurrent.TimeUnit;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.test.OAuthUtils;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluencePageMacroPage;
 import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
 import com.atlassian.plugin.connect.test.server.module.MacroPageModule;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import redstone.xmlrpc.XmlRpcFault;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 
 import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.test.HttpUtils.renderHtml;
 import static com.atlassian.plugin.connect.test.Utils.loadResourceAsString;
 import static com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps.ConfluenceUser;
 import static com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner.newMustacheServlet;
-import static it.TestConstants.ADMIN;
+import static it.TestConstants.ADMIN_USERNAME;
 import static org.junit.Assert.assertEquals;
 
 public final class TestConfluencePageMacro extends ConfluenceWebDriverTestBase
 {
-    private static final Option<ConfluenceUser> ADMIN_CONFLUENCE_USER = some(new ConfluenceUser(ADMIN, ADMIN));
+    private static final Option<ConfluenceUser> ADMIN_CONFLUENCE_USER = some(new ConfluenceUser(ADMIN_USERNAME, ADMIN_USERNAME));
 
     private static AtlassianConnectAddOnRunner remotePlugin;
 
@@ -103,7 +100,7 @@ public final class TestConfluencePageMacro extends ConfluenceWebDriverTestBase
             renderHtml(resp, "confluence/macro/extended.mu", new HashMap<String, Object>()
             {{
                     put("pageId", pageId);
-                    put("favoriteFooty", favoriteFooty);
+                    put("footy", favoriteFooty);
                     put("body", body);
                     put("server", "???");
                 }});

@@ -56,6 +56,12 @@ public class RemotePluginContainerManifestProducer implements ManifestProducer
                 return URI.create("https://localhost");
             }
 
+            @Override
+            public URI getIconUrl()
+            {
+                return null;
+            }
+
             public Version getAppLinksVersion()
             {
                 return null;

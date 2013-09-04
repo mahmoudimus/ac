@@ -58,12 +58,9 @@
         <resource type="download" name="_ap.js" location="/js/iframe/host/_ap.js" />
         <resource type="download" name="_amd.js" location="/js/iframe/_amd.js" />
         <resource type="download" name="_dollar.js" location="/js/iframe/host/_dollar.js" />
-        <context>atl.general</context>
     </web-resource>
 
     <web-resource key="iframe-host-js">
-        <context>atl.admin</context>
-        <context>atl.general</context>
         <dependency>com.atlassian.auiplugin:ajs</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-amd</dependency>
         <resource type="download" name="_events.js" location="/js/iframe/_events.js" />
@@ -72,16 +69,33 @@
         <resource type="download" name="main.js" location="/js/iframe/host/main.js" />
     </web-resource>
 
-    <web-resource key="dialog">
-        <resource type="download" name="main.js" location="js/dialog/main.js" />
-        <resource type="download" name="simple.js" location="js/dialog/simple.js" />
+    <!-- Temporary copy of AUI dialog2 before it lands in all products -->
+    <web-resource key="ajs-dialog2">
+        <resource type="download" name="layer.css" location="css/auidialog2/layer.css" />
+        <resource type="download" name="dialog2.css" location="css/auidialog2/dialog2.css" />
+        <resource type="download" name="ap-ajs.js" location="js/auidialog2/ap-ajs.js" />
+        <resource type="download" name="browser.js" location="js/auidialog2/internal/browser.js" />
+        <resource type="download" name="widget.js" location="js/auidialog2/internal/widget.js" />
+        <resource type="download" name="focus-manager.js" location="js/auidialog2/focus-manager.js" />
+        <resource type="download" name="layer-manager.js" location="js/auidialog2/layer-manager.js" />
+        <resource type="download" name="layer-manager-global.js" location="js/auidialog2/layer-manager-global.js" />
+        <resource type="download" name="layer.js" location="js/auidialog2/layer.js" />
+        <resource type="download" name="dialog2.js" location="js/auidialog2/dialog2.js" />
         <dependency>com.atlassian.auiplugin:ajs</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-amd</dependency>
     </web-resource>
 
+    <web-resource key="dialog">
+        <resource type="download" name="dialog.css" location="css/dialog/dialog.css" />
+        <resource type="download" name="main.js" location="js/dialog/main.js" />
+        <resource type="download" name="simple.js" location="js/dialog/simple.js" />
+        <dependency>com.atlassian.auiplugin:ajs</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-amd</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:ajs-dialog2</dependency>
+    </web-resource>
+
     <web-resource key="confluence-macro">
         <resource type="download" name="editor.js" location="js/confluence/macro/editor.js" />
-        <context>atl.general</context>
         <dependency>com.atlassian.auiplugin:ajs</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-amd</dependency>
     </web-resource>
@@ -89,14 +103,10 @@
     <web-resource key="iframe-host-css">
         <resource type="download" name="loading.gif" location="/css/iframe/loading.gif" />
         <resource type="download" name="host.css" location="/css/iframe/host.css" />
-        <context>atl.general</context>
-        <context>atl.admin</context>
     </web-resource>
 
     <web-resource key="remote-condition">
         <resource type="download" name="remote.js" location="js/condition/remote.js" />
-        <context>atl.general</context>
-        <context>atl.admin</context>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-amd</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:big-pipe</dependency>
     </web-resource>
@@ -107,8 +117,6 @@
 
     <web-resource key="dialog-page-resource">
         <resource type="download" name="dialog-binder.js" location="/js/dialog/binder.js" />
-        <context>atl.general</context>
-        <context>atl.admin</context>
         <dependency>com.atlassian.auiplugin:ajs</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:dialog</dependency>
     </web-resource>
@@ -120,9 +128,21 @@
     <!-- big pipe stuff -->
     <web-resource key="big-pipe">
         <resource type="download" name="bigpipe.js" location="js/bigpipe/bigpipe.js" />
+        <dependency>com.atlassian.auiplugin:ajs</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-amd</dependency>
+    </web-resource>
+
+    <web-resource key="atlassian-connect-resources" name="Connect resources for inclusion on every page.">
         <context>atl.admin</context>
         <context>atl.general</context>
-        <dependency>com.atlassian.auiplugin:ajs</dependency>
+        <!-- workaround for AC-703, the 'preview' view does not include atl.general resources (CONF-30617) -->
+        <context>preview</context>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:big-pipe</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:dialog-page-resource</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:remote-condition</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:iframe-host-css</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:confluence-macro</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:iframe-host-js</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-amd</dependency>
     </web-resource>
 
@@ -253,11 +273,18 @@
         </description>
     </described-module-type>
 
+    <described-module-type key="remote-web-item" class="com.atlassian.plugin.connect.plugin.module.webitem.RemoteWebItemModuleDescriptor">
+        <description>
+            Relative link leading to a remote page decorated as remote page, or an absolute link leading outside of a product.
+        </description>
+    </described-module-type>
+
     <plugin-permission key="insert_web_resources" name="Insert Web Resources">
         <description>Ability to insert web resources on pages of the product.</description>
     </plugin-permission>
 
-    <plugin-permission key="send_email" name="Send Email">
+    <plugin-permission key="send_email" name="Send Email"
+                       class="com.atlassian.plugin.connect.plugin.product.SendEmailScope">
         <description>Ability to send an email from the Atlassian server</description>
     </plugin-permission>
 
