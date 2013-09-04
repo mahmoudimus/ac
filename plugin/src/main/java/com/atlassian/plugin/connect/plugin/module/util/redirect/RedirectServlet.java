@@ -23,6 +23,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.Maps;
 
 import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 
 import static com.google.common.collect.Maps.newHashMap;
@@ -137,9 +138,15 @@ public final class RedirectServlet extends HttpServlet
         Uri targetUrl = Uri.parse(appRelativeUrl);
 
         Map<String,String[]> params = newHashMap(parameterMap);
+        
+        /*
+         TODO: UserManager is flawed in that it will return a UserProfile instead of null even when the underlying user is null.
+         To get around this, we need to use the deprecated getRemoteUsername and check that until the products adopt the fixed sal
+         */
         UserProfile remoteUser = userManager.getRemoteUser();
-        if (remoteUser != null) {
-            params.put("user_id", new String[]{ remoteUser.getUsername() });
+        String remoteUsername = userManager.getRemoteUsername();
+        if (remoteUser != null && StringUtils.isNotBlank(remoteUsername)) {
+            params.put("user_id", new String[]{ remoteUsername });
             params.put("user_key", new String[]{ remoteUser.getUserKey().getStringValue() });
         }
         params.putAll(Maps.transformValues(targetUrl.getQueryParameters(),
