@@ -105,6 +105,7 @@ public class StaticResourcesFilter implements Filter
                 "plugin/env.js",
                 "plugin/request.js",
                 "plugin/dialog.js",
+                "plugin/_resize_listener.js",
                 "plugin/jira.js",
                 "plugin/confluence.js",
                 "plugin/_init.js"
