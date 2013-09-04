@@ -474,8 +474,10 @@
                                         <include>js/iframe-min/plugin/env-min.js</include>
                                         <include>js/iframe-min/plugin/request-min.js</include>
                                         <include>js/iframe-min/plugin/dialog-min.js</include>
+                                        <include>js/iframe-min/plugin/_resize_listener-min.js</include>
                                         <!-- product-specific inclusions are temporary until made more dynamic -->
                                         <include>js/iframe-min/plugin/jira-min.js</include>
+                                        <include>js/iframe-min/plugin/confluence-min.js</include>
                                         <include>js/iframe-min/plugin/_init-min.js</include>
                                     </includes>
                                 </aggregation>
@@ -533,6 +535,34 @@
                         <pi>com.atlassian.maven.plugins:maven-amps-plugin:copy-bundled-dependencies com.atlassian.maven.plugins:maven-amps-plugin:compress-resources org.apache.maven.plugins:maven-resources-plugin:resources com.atlassian.maven.plugins:maven-amps-plugin:filter-plugin-descriptor org.codehaus.mojo:xml-maven-plugin:transform compile com.atlassian.maven.plugins:maven-amps-plugin:generate-manifest com.atlassian.maven.plugins:maven-amps-plugin:validate-manifest com.atlassian.maven.plugins:maven-amps-plugin:jar org.apache.maven.plugins:maven-install-plugin:install com.atlassian.maven.plugins:maven-amps-plugin:install</pi>
                     </commands>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.6</version>
+                <executions>
+                    <execution>
+                        <id>copy-plugin-info</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+                            <overwrite>true</overwrite>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/java</directory>
+                                    <includes>
+                                        <include>**/ConnectPluginInfo.java</include>
+                                    </includes>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             
         </plugins>

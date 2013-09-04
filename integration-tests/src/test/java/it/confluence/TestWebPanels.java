@@ -1,19 +1,21 @@
 package it.confluence;
 
+import java.net.MalformedURLException;
+
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
-import com.atlassian.plugin.connect.test.pageobjects.RemoteWebPanel;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceEditPage;
+import com.atlassian.plugin.connect.test.pageobjects.RemoteWebPanel;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
 import com.atlassian.plugin.connect.test.server.module.RemoteWebPanelModule;
-import it.MyContextAwareWebPanelServlet;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import redstone.xmlrpc.XmlRpcFault;
 
-import java.net.MalformedURLException;
+import it.MyContextAwareWebPanelServlet;
+import redstone.xmlrpc.XmlRpcFault;
 
 import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner.newServlet;
@@ -72,6 +74,7 @@ public class TestWebPanels extends ConfluenceWebDriverTestBase
         assertNotNull(webPanel.getSpaceId());
         assertEquals("ds", webPanel.getFromQueryString("space_key"));
         assertEquals(BETTY_USERNAME, webPanel.getUserId());
+		assertNotNull(webPanel.getUserKey());
     }
 
     @Test

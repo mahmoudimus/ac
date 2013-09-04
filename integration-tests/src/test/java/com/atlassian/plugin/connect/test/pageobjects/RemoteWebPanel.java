@@ -52,6 +52,11 @@ public class RemoteWebPanel
         return getFromQueryString("user_id");
     }
 
+    public String getUserKey()
+    {
+        return getFromQueryString("user_key");
+    }
+
     public String getProjectId()
     {
         return getFromQueryString("project_id");

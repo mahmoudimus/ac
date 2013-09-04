@@ -12,6 +12,7 @@ import com.atlassian.plugin.webresource.transformer.CharSequenceDownloadableReso
 import com.atlassian.plugin.webresource.transformer.WebResourceTransformer;
 
 import org.dom4j.Element;
+import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
 
 import static org.apache.commons.lang.StringEscapeUtils.escapeJavaScript;
 
@@ -35,9 +36,6 @@ import static org.apache.commons.lang.StringEscapeUtils.escapeJavaScript;
  */
 public class MacroVariableInjectorTransformer implements WebResourceTransformer
 {
-    // TODO: Get the parent plugin key in a less hacky way
-    private static final String THIS_PLUGIN_KEY = "com.atlassian.labs.remoteapps-plugin";
-
     private final Plugin thisPlugin;
     private final I18NBeanFactory userI18NBeanFactory;
 
@@ -45,7 +43,7 @@ public class MacroVariableInjectorTransformer implements WebResourceTransformer
             I18NBeanFactory userI18NBeanFactory)
     {
         this.userI18NBeanFactory = userI18NBeanFactory;
-        thisPlugin = pluginAccessor.getPlugin(THIS_PLUGIN_KEY);
+        thisPlugin = pluginAccessor.getPlugin(ConnectPluginInfo.PLUGIN_KEY);
     }
 
     @Override

@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.atlassian.confluence.pageobjects.page.LogoutPage;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceMacroPage;
@@ -31,9 +32,11 @@ import static com.google.common.collect.Maps.newHashMap;
 import static it.TestConstants.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public final class TestConfluenceMacroParams extends ConfluenceWebDriverTestBase
 {
+    
     @Test
     public void testContextParam() throws Exception
     {
@@ -73,6 +76,8 @@ public final class TestConfluenceMacroParams extends ConfluenceWebDriverTestBase
                                             .getIframeQueryParams();
 
         assertEquals(pageData.getId(), params.get("page_id"));
+        assertEquals(BETTY_USERNAME, params.get("user_id"));
+        assertTrue(params.containsKey("user_key"));
 
         remotePlugin.stop();
     }

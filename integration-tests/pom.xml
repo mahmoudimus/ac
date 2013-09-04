@@ -49,6 +49,10 @@
                     <groupId>com.atlassian.browsers</groupId>
                     <artifactId>atlassian-browsers-linux64</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>

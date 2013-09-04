@@ -10,6 +10,7 @@ import com.atlassian.confluence.status.service.SystemInformationService;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
+import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.hostcontainer.HostContainer;
 import com.atlassian.plugin.module.ModuleFactory;
@@ -306,7 +307,7 @@ public class MacroModuleDescriptorCreator
                     .addAttribute("location", "js/confluence/macro/override.js");
 
             webResource.addElement("dependency")
-                    .setText("com.atlassian.plugins.atlassian-connect-plugin:ap-amd");
+                    .setText(ConnectPluginInfo.PLUGIN_KEY + ":ap-amd");
 
             webResource.addElement("context")
                     .setText("editor");

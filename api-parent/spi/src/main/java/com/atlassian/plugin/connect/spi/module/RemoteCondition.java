@@ -11,6 +11,7 @@ import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.sal.api.user.UserManager;
+import com.atlassian.sal.api.user.UserProfile;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.atlassian.util.concurrent.Promise;
 
@@ -123,8 +124,11 @@ public final class RemoteCondition implements Condition
         {
             params.put(contextParam, templateRenderer.renderFragment(productAccessor.getLinkContextParams().get(contextParam), context));
         }
-        String remoteUsername = userManager.getRemoteUsername();
-        params.put("user_id", remoteUsername != null ? remoteUsername : "");
+        UserProfile remoteUser = userManager.getRemoteUser();
+        if (remoteUser != null) {
+            params.put("user_id", remoteUser.getUsername());
+            params.put("user_key", remoteUser.getUserKey().getStringValue());
+        }
         return params;
     }
 }

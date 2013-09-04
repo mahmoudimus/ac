@@ -100,7 +100,7 @@ public final class TestConfluencePageMacro extends ConfluenceWebDriverTestBase
             renderHtml(resp, "confluence/macro/extended.mu", new HashMap<String, Object>()
             {{
                     put("pageId", pageId);
-                    put("favoriteFooty", favoriteFooty);
+                    put("footy", favoriteFooty);
                     put("body", body);
                     put("server", "???");
                 }});

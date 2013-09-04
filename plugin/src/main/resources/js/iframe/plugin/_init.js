@@ -1,7 +1,8 @@
 // @todo make product-specific inclusions (e.g. jira) dynamic
 AP.require(
-  ["_dollar", "_rpc", "env", "request", "dialog", "jira"],
-  function ($, rpc, env, request, dialog, jira) {
+  ["_dollar", "_rpc", "_resize_listener", "env", "request", "dialog", "jira"],
+
+  function ($, rpc, resizeListener, env, request, dialog, jira) {
 
   "use strict";
 
@@ -51,7 +52,17 @@ AP.require(
         }
         else {
           // resize the parent iframe for the size of this document on load
-          $.bind(window, "load", function () { env.resize(); });
+          $.bind(window, "load", function () {
+              var rootElem = $('.ac-content, #content');
+              if(rootElem.length>0) {
+                  resizeListener.addListener(rootElem[0], function(){
+                      env.resize();
+                  });
+              } else {
+                  $.log("Your page should have a root block element with an ID called #content or class called .ac-content if you want your page to dynamically resize after the initial load.");
+              }
+              env.resize();
+          });
         }
       }
     }
