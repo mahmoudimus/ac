@@ -31,6 +31,7 @@ public class TestLicenseRestResource extends AbstractRemotablePluginTest
     @Test
     public void anonymousReturnsLicense() throws Exception
     {
+        
         addPluginLicenses();
         
         AtlassianConnectAddOnRunner runner = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl())
@@ -39,26 +40,30 @@ public class TestLicenseRestResource extends AbstractRemotablePluginTest
             .addPermission("read_license")
             .start();
 
-
-        URL url = new URL(product.getProductInstance().getBaseUrl() + "/rest/atlassian-connect/1/license");
-        HttpURLConnection yc = (HttpURLConnection) url.openConnection();
-
-        yc.setRequestMethod("GET");
-        runner.getSignedRequestHandler().get().sign(url.toURI(), "GET", null, yc);
-
-        assertNotNull(yc.getResponseCode());
-        assertEquals(200, yc.getResponseCode());
-        
-        String responseText = IOUtils.toString(yc.getInputStream());
-        Gson gson = new Gson();
-
-        LicenseDetailsRepresentation lic = gson.fromJson(responseText, LicenseDetailsRepresentation.class);
-        
-        assertTrue(lic.isValid());
-
-        //NOTE: the timebomb license disables the ability to delete plugins!
-        resetLicenses();
-        runner.stop();
+        try
+        {
+            URL url = new URL(product.getProductInstance().getBaseUrl() + "/rest/atlassian-connect/1/license");
+            HttpURLConnection yc = (HttpURLConnection) url.openConnection();
+    
+            yc.setRequestMethod("GET");
+            runner.getSignedRequestHandler().get().sign(url.toURI(), "GET", null, yc);
+    
+            assertNotNull(yc.getResponseCode());
+            assertEquals(200, yc.getResponseCode());
+            
+            String responseText = IOUtils.toString(yc.getInputStream());
+            Gson gson = new Gson();
+    
+            LicenseDetailsRepresentation lic = gson.fromJson(responseText, LicenseDetailsRepresentation.class);
+            
+            assertTrue(lic.isValid());
+        }
+        finally
+        {
+            //NOTE: the timebomb license disables the ability to delete plugins!
+            resetLicenses();
+            runner.stop();
+        }
         
     }
 }
