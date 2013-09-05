@@ -56,8 +56,9 @@ public class TestLicenseRestResource extends AbstractRemotablePluginTest
         
         assertTrue(lic.isValid());
 
-        //NOTE: we can't just call stop because the timebomb license disables the ability to delete plugins!
-        runner.stopRunnerServer();
+        //NOTE: the timebomb license disables the ability to delete plugins!
+        resetLicenses();
+        runner.stop();
         
     }
 }

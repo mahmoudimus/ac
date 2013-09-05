@@ -32,6 +32,11 @@ public abstract class AbstractRemotablePluginTest
             "7bIKK+8fpcbypmqkzXUGVWKUe6EJr7Gs/m+yre+4n+52PM6Dw+tuPeU/k9UU011m99my+Gjuzxra\n" +
             "+Jfyho52Lh//5qpzTAtAhUAj8L7xWFb4yfemMFIqVBg6p3ZzS8CFDVulZlFOu+THivlIbkZbjF76\n" +
             "WhHX02ok";
+    
+    protected static final String JIRA_LICENSE = "AAABgw0ODAoPeNp1kkFPwkAQhe/9FZt4LmmrYiTpAegiIAKBgoZ42W4HWF12m9kW5d9bC41tg9e3b958M7M3AxRknEniuMT1Oo7X8dqELkPiOa5rRewQad2aCA7KAI1FKrTy6TSki/litKTWVpg9nKB0hKcE/EGu0RO8d0gAR5A6AbS41EfAmq1fSDXXNDtEgLPtygAa/97iWm1bjKfiCH6KGVjzDPmeGQhYCr7nuq7ttG3nwarkTtkB/ICu6WQ2p4vyhX4nAk9F2fx2WM5VjV4C5jijwO89PYb222p9Zz9vNkO757iv1odAVoMfjxZdQlUKmKAwjVl/qWuT5oLMQPErvnLkvsxMnjbVMRjfaSy+SOkV0n9Nq4RX7sQx4yKS9UP1L2It6IWJvINiOW1jaRz1V9wIyJVa9eU1X+NKfSr9pawZ7pgShhVE3VQyYwRTf0DVG/QRCl/zvOfOVWf576paAIajSIpGIZiUyDMM2Wokicx2QpG4JDXnjVXrL3+0Kv0AGd4bNDAsAhRW+KkhTg9ACxaro+gIxxowDSCtIgIUIWzKR3uE3+3rtlKrTA0zc/5vUtw=X02iq";
+    protected static final String CONFLUENCE_LICENSE = "nqNpQUhuusvaPpVixrJOMKIewQWfkHmVVdhTPMkBOeQqHgQrRifNADXkaNtpBgnkBFABVFgsQNSjBGMMVkDrdvSquMTaXdwCgtFIedPASuMAwhKfPLUCEQpIGDMVqpDsCxBqIfDSDXVhQmkfrRfsOaGppfoqxoRgXxrBpeQulOWIiTrUSTjbvXathdkBIRHboWUEupOgevcoLQoerWvciCjpkVKIIoqJwGTPddXaPQcbRNuWMCCtKohERQNWHIawUVXcbmjscrIvwTTkAsqGlFjVlwwSJhrhETukmbLwmXNeEEcSDIFMDHVrxiNcDPodHCcUTEvibLDlXbiDUrRetMPtRDbxdSRKsgnixUBrDDHDtVcLPINCTnBDECAFuQrITl2mKzdNqPp6TCc9VKwfc7HqBPBjNj2jv5t<zGb3YI<TUxEvVtpj8WTJsJ><tJtU9RvaZuzh7FxjRJf0PW1CaMKDzsqMJLp2fEG19mpOepEnC<x45J4w6q4aF0rQe0givwS1k2r1qqh9j2MN9y1Dm5BBHSu1Nd0F9jd9kxM5tEF0TsXJ57MbFx9bc5Pt>kxgAl0puJNEVw<znUyOlRjOUwjthBYl5>Ti74f4m6fQzUJNwD1e5bkmAM7HgorvE0Gdnu2bO0>PMJUOJ0K8TKVKeAM4cScEAdfR3Je>360EKgNudAQUuFI8RZvwplEy4GmQByuKPbLLnNC0PN6<O44NWaK8YeTB52oNvCdQ>z8gqBANKr";
+
+
     @Rule
     public final HtmlDumpRule htmlDump = new HtmlDumpRule(product.getTester().getDriver());
 
@@ -59,6 +64,27 @@ public abstract class AbstractRemotablePluginTest
             product.getTester().getDriver().findElement(By.name("licenseString")).sendKeys(TIMEBOMB_WILDCARD_PLUGIN_LICENSE);
             product.getTester().getDriver().findElement(new ByChained(By.tagName("input"),By.name("update"))).click();
             
+        }
+    }
+
+    protected void resetLicenses()
+    {
+        product.visit(LoginPage.class).login(ADMIN_USERNAME, ADMIN_USERNAME, HomePage.class);
+
+        if("jira".equalsIgnoreCase(product.getProductInstance().getInstanceId()))
+        {
+            product.visit(ViewLicensePage.class).updateLicense(JIRA_LICENSE);
+
+        }
+        else if("confluence".equalsIgnoreCase(product.getProductInstance().getInstanceId()))
+        {
+            product.visit(ConfluenceAdminHomePage.class);
+            product.getTester().getDriver().waitUntilElementIsVisible(By.linkText("License Details"));
+            product.getTester().getDriver().findElement(By.linkText("License Details")).click();
+            product.getTester().getDriver().waitUntilElementIsLocated(By.name("licenseString"));
+            product.getTester().getDriver().findElement(By.name("licenseString")).sendKeys(CONFLUENCE_LICENSE);
+            product.getTester().getDriver().findElement(new ByChained(By.tagName("input"),By.name("update"))).click();
+
         }
     }
 }

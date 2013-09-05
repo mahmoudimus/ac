@@ -21,7 +21,7 @@ public class ReadLicenseScope extends AbstractPermission implements ApiScope
     {
         super(Permissions.READ_LICENSE);
         scopeHelper = new RestApiScopeHelper(asList(
-                new RestApiScopeHelper.RestScope("atlassian-connect", asList("1.0", "latest"), "/license", asList("get"))
+                new RestApiScopeHelper.RestScope("atlassian-connect", asList("1", "latest"), "/license", asList("get"))
         ));
     }
 
