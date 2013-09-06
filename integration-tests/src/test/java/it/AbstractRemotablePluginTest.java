@@ -1,10 +1,10 @@
 package it;
 
-import com.atlassian.confluence.pageobjects.ConfluenceTestedProduct;
 import com.atlassian.confluence.pageobjects.page.admin.ConfluenceAdminHomePage;
 import com.atlassian.confluence.pageobjects.page.setup.LicensePage;
 import com.atlassian.jira.pageobjects.pages.admin.ViewLicensePage;
 import com.atlassian.pageobjects.TestedProduct;
+import com.atlassian.pageobjects.page.AdminHomePage;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
 import com.atlassian.plugin.connect.test.junit.HtmlDumpRule;
@@ -58,7 +58,7 @@ public abstract class AbstractRemotablePluginTest
         }
         else if("confluence".equalsIgnoreCase(product.getProductInstance().getInstanceId()))
         {
-            ((ConfluenceTestedProduct)product).gotoAdminHomePage();
+            product.visit(AdminHomePage.class);
             product.getTester().getDriver().waitUntilElementIsVisible(By.linkText("License Details"));
             product.getTester().getDriver().findElement(By.linkText("License Details")).click();
             product.getTester().getDriver().waitUntilElementIsLocated(By.name("licenseString"));
