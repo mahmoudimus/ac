@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.atlassian.plugins</groupId>
     <artifactId>atlassian-connect-parent</artifactId>
-    <version>1.0-m10</version>
+    <version>1.0-m10.1</version>
 
     <organization>
         <name>Atlassian</name>
