@@ -87,27 +87,30 @@ AP.define("env", ["_dollar", "_rpc"], function ($, rpc) {
     },
 
     size: function (width, height, container) {
-      var w = width == null ? "100%" : width,
-      // Started with http://james.padolsey.com/javascript/get-document-height-cross-browser/
-      // to determine page height across browsers. Turns out that in our case, we can get by with
-      // document.body.offsetHeight and document.body.clientHeight. Those two return the proper
-      // height even when the dom shrinks. Tested on Chrome, Safari, IE8/9/10, and Firefox
-      h = Math.max(container.offsetHeight, container.clientHeight);
-      if(h===0){
-          if(container === document.body){
-              h = Math.max(
-                  container.scrollHeight, document.documentElement.scrollHeight,
-                  container.offsetHeight, document.documentElement.offsetHeight,
-                  container.clientHeight, document.documentElement.clientHeight
-              );
-          } else {
-              h = Math.max(container.scrollHeight,container.offsetHeight,container.clientHeight);
+      var w = width == null ? "100%" : width, h, docHeight;
+      if (height) {
+        h = height;
+      } else {
+        // Determine height
+        docHeight = Math.max(
+          container.scrollHeight, document.documentElement.scrollHeight,
+          container.offsetHeight, document.documentElement.offsetHeight,
+          container.clientHeight, document.documentElement.clientHeight
+        );
+        if(container === document.body){
+          h = docHeight;
+        } else {
+          // Started with http://james.padolsey.com/javascript/get-document-height-cross-browser/
+          // to determine page height across browsers. Turns out that in our case, we can get by with
+          // document.body.offsetHeight and document.body.clientHeight. Those two return the proper
+          // height even when the dom shrinks. Tested on Chrome, Safari, IE8/9/10, and Firefox
+          h = Math.max(container.offsetHeight, container.clientHeight);
+          if(h===0){
+              h = docHeight;
           }
+        }
       }
-      h = height == null ? h : height;
       return {w: w, h: h};
     }
-
   });
-
 });
