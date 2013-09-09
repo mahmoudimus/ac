@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin.installer;
 import com.atlassian.event.api.EventListener;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.plugin.*;
+import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
 import com.atlassian.plugin.connect.plugin.util.zip.ZipBuilder;
 import com.atlassian.plugin.connect.plugin.util.zip.ZipHandler;
 import com.atlassian.plugin.event.events.PluginEnabledEvent;
@@ -19,6 +20,7 @@ import java.io.IOException;
 @Component
 public final class LucidChartBundler implements InitializingBean
 {
+    private static final String LUCIDCHART_KEY = "lucidchart-app";
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final EventPublisher eventPublisher;
@@ -44,16 +46,17 @@ public final class LucidChartBundler implements InitializingBean
     @EventListener
     public void onPluginEnabled(PluginEnabledEvent e)
     {
-        if (!"com.atlassian.plugins.atlassian-connect-plugin".equals(e.getPlugin().getKey()))
+        if(!ConnectPluginInfo.PLUGIN_KEY.equals(e.getPlugin().getKey()))
         {
             return;
         }
+
         if(!applicationProperties.getDisplayName().equalsIgnoreCase("Confluence"))
         {
             return;
         }
 
-        Plugin oldLucid = pluginAccessor.getPlugin("lucidchart-app");
+        Plugin oldLucid = pluginAccessor.getPlugin(LUCIDCHART_KEY);
         if(null != oldLucid)
         {
             pluginController.uninstall(oldLucid);
@@ -61,6 +64,7 @@ public final class LucidChartBundler implements InitializingBean
         }
 
         pluginController.installPlugins(getArtifact());
+        pluginAccessor.getPlugin(LUCIDCHART_KEY).enable();
         logger.debug("installed new lucid charts");
         
     }
