@@ -94,8 +94,6 @@ AP.define("env", ["_dollar", "_rpc"], function ($, rpc) {
               D.body.clientHeight, D.documentElement.clientHeight
           );
       }
-      h = height == null ? h : height;
-        console.error(height);
       return {w: w, h: h};
     }
 
