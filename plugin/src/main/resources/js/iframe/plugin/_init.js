@@ -53,9 +53,9 @@ AP.require(
         else {
           // resize the parent iframe for the size of this document on load
           $.bind(window, "load", function () {
-              var rootElem = $('.ac-content, #content');
-              if(rootElem.length>0) {
-                  resizeListener.addListener(rootElem[0], function(){
+              var rootElem = env.container();
+              if(rootElem) {
+                  resizeListener.addListener(rootElem, function(){
                       env.resize();
                   });
               } else {
