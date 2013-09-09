@@ -67,7 +67,7 @@ public abstract class AbstractRemotablePluginTest
             product.getTester().getDriver().findElement(By.xpath("//input[@name='update']")).click();
             
         }
-        logout();
+
     }
 
     protected void resetLicenses()
@@ -90,6 +90,6 @@ public abstract class AbstractRemotablePluginTest
             product.getTester().getDriver().findElement(By.xpath("//input[@name='update']")).click();
 
         }
-        logout();
+
     }
 }
