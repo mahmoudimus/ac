@@ -76,8 +76,10 @@ AP.define("env", ["_dollar", "_rpc"], function ($, rpc) {
     },
 
     container: function(){
-      var container = $('.ac-content, #content, body :first-child');
-      return container.length>0 ? container[0]: null;
+      // Look for these two selectors first... you need these to allow for the auto-shrink to work
+      // Otherwise, it'll default to document.body which can't auto-grow or auto-shrink
+      var container = $('.ac-content, #content');
+      return container.length>0 ? container[0]: document.body;
     },
 
     localUrl: function (path) {
@@ -91,12 +93,16 @@ AP.define("env", ["_dollar", "_rpc"], function ($, rpc) {
       // document.body.offsetHeight and document.body.clientHeight. Those two return the proper
       // height even when the dom shrinks. Tested on Chrome, Safari, IE8/9/10, and Firefox
       h = Math.max(container.offsetHeight, container.clientHeight);
-      if(h==0){
-          h = Math.max(
-              container.scrollHeight,
-              container.offsetHeight,
-              container.clientHeight
-          );
+      if(h===0){
+          if(container === document.body){
+              h = Math.max(
+                  container.scrollHeight, document.documentElement.scrollHeight,
+                  container.offsetHeight, document.documentElement.offsetHeight,
+                  container.clientHeight, document.documentElement.clientHeight
+              );
+          } else {
+              h = Math.max(container.scrollHeight,container.offsetHeight,container.clientHeight);
+          }
       }
       h = height == null ? h : height;
       return {w: w, h: h};
