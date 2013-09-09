@@ -126,6 +126,24 @@ public final class IFrameRendererImpl implements IFrameRenderer
 	@Override
     public String render(IFrameContext iframeContext, String extraPath, Map<String, String[]> queryParams, String remoteUser) throws IOException
     {
+        Map<String, Object> ctx = prepareContext(iframeContext, extraPath, queryParams, remoteUser);
+
+        StringWriter output = new StringWriter();
+        templateRenderer.render("velocity/iframe-body.vm", ctx, output);
+        return output.toString();
+    }
+
+    @Override
+    public String renderInline(IFrameContext iframeContext, String extraPath, Map<String, String[]> queryParams, String remoteUser) throws IOException {
+        Map<String, Object> ctx = prepareContext(iframeContext, extraPath, queryParams, remoteUser);
+
+        StringWriter output = new StringWriter();
+        templateRenderer.render("velocity/iframe-body-inline.vm", ctx, output);
+        return output.toString();
+    }
+
+
+    private Map<String, Object> prepareContext(IFrameContext iframeContext, String extraPath, Map<String, String[]> queryParams, String remoteUser) {
         RemotablePluginAccessor remotablePluginAccessor = remotablePluginAccessorFactory.get(iframeContext.getPluginKey());
 
         final URI hostUrl = iframeHost.getUrl();
@@ -173,13 +191,10 @@ public final class IFrameRendererImpl implements IFrameRenderer
 
         String[] simpleDialog = queryParams.get("simpleDialog");
         if (simpleDialog != null && simpleDialog.length == 1) ctx.put("simpleDialog", simpleDialog[0]);
-
-        StringWriter output = new StringWriter();
-        templateRenderer.render("velocity/iframe-body.vm", ctx, output);
-        return output.toString();
+        return ctx;
     }
 
-	private Map<String, List<String>> contextQueryParameters(final Map<String, String[]> queryParams)
+    private Map<String, List<String>> contextQueryParameters(final Map<String, String[]> queryParams)
 	{
 		final Map<String, List<String>> ctxQueryParams = Maps.newHashMap();
 		for (Map.Entry<String, String[]> param : queryParams.entrySet())

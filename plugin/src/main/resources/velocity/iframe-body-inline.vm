@@ -1,0 +1,15 @@
+<span class="ap-container ap-inline" id="ap-$namespace">
+    $!extraMarkupHtml
+    <span class="ap-content ap-inline" id="embedded-$namespace"></span>
+    <script>
+        _AP.require("host/main", function(create) {
+            create({
+                ns:"$namespace",key:"$plugin.key",cp:"$contextPath",uid:"$userId",ukey:"$userKey",dlg:"$!dialog",simpleDlg:"$!simpleDialog",w:"$!width",h:"$!height",src:"$iframeSrcHtml",data:{
+                    #foreach($e in $data.entrySet())
+                        "${e.key}":"${e.value}"#if(!${foreach.isLast()}),#end
+                    #end
+                }
+            })
+        });
+    </script>
+</span>
