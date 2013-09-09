@@ -31,17 +31,18 @@ public class TestLicenseRestResource extends AbstractRemotablePluginTest
     @Test
     public void anonymousReturnsLicense() throws Exception
     {
-        
-        addPluginLicenses();
-        
-        AtlassianConnectAddOnRunner runner = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl())
+        AtlassianConnectAddOnRunner runner = null;
+        try
+        {
+            addPluginLicenses();
+
+            runner = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl())
             .addOAuth()
             .enableLicensing()
             .addPermission("read_license")
             .start();
 
-        try
-        {
+        
             URL url = new URL(product.getProductInstance().getBaseUrl() + "/rest/atlassian-connect/1/license");
             HttpURLConnection yc = (HttpURLConnection) url.openConnection();
     
@@ -62,7 +63,11 @@ public class TestLicenseRestResource extends AbstractRemotablePluginTest
         {
             //NOTE: the timebomb license disables the ability to delete plugins!
             resetLicenses();
-            runner.stop();
+            
+            if(null != runner)
+            {
+                runner.stop();
+            }
         }
         
     }
