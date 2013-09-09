@@ -46,7 +46,7 @@ public final class LucidChartBundler implements InitializingBean
     @EventListener
     public void onPluginEnabled(PluginEnabledEvent e)
     {
-        if(!ConnectPluginInfo.PLUGIN_KEY.equals(e.getPlugin().getKey()))
+        if(!"com.atlassian.plugins.atlassian-connect-plugin".equals(e.getPlugin().getKey()))
         {
             return;
         }
@@ -64,9 +64,7 @@ public final class LucidChartBundler implements InitializingBean
         }
 
         pluginController.installPlugins(getArtifact());
-        pluginAccessor.getPlugin(LUCIDCHART_KEY).enable();
         logger.debug("installed new lucid charts");
-        
     }
     
     private PluginArtifact getArtifact()
