@@ -53,19 +53,15 @@ public final class LucidChartBundler implements InitializingBean
             return;
         }
 
-        logger.error("onPluginEnabled event for atlassian-connect");
-        
         Plugin oldLucid = pluginAccessor.getPlugin("lucidchart-app");
         if(null != oldLucid)
         {
-            logger.error("uninstalling old lucid charts ...");
             pluginController.uninstall(oldLucid);
-            logger.error("uninstalled old lucid charts");
+            logger.debug("uninstalled old lucid charts");
         }
 
-        logger.error("installing new lucid charts ...");
         pluginController.installPlugins(getArtifact());
-        logger.error("installed new lucid charts");
+        logger.debug("installed new lucid charts");
         
     }
     
