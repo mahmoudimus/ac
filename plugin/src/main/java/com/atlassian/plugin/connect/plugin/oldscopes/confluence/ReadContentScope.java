@@ -64,11 +64,15 @@ public final class ReadContentScope extends ConfluenceScope
                         "getSpaceLevelPermissions"
                 ),
                 asList(
+                        new RestApiScopeHelper.RestScope("mywork", asList("1", "latest"), "/notification", asList("get")),
+                        new RestApiScopeHelper.RestScope("mywork", asList("1", "latest"), "/status", asList("get")),
+                        new RestApiScopeHelper.RestScope("mywork", asList("1", "latest"), "/task", asList("get")),
                         new RestApiScopeHelper.RestScope("prototype", asList("1", "latest"), "/search", asList("get")),
                         new RestApiScopeHelper.RestScope("prototype", asList("1", "latest"), "/content", asList("get")),
                         new RestApiScopeHelper.RestScope("prototype", asList("1", "latest"), "/attachment", asList("get")),
                         new RestApiScopeHelper.RestScope("prototype", asList("1", "latest"), "/breadcrumb", asList("get")),
-                        new RestApiScopeHelper.RestScope("prototype", asList("1", "latest"), "/space", asList("get"))
+                        new RestApiScopeHelper.RestScope("prototype", asList("1", "latest"), "/space", asList("get")),
+                        new RestApiScopeHelper.RestScope("ui", asList("1", "1.0", "latest"), "/content", asList("get"))
                 ),
                 new DownloadScopeHelper("/download/temp/")
         );

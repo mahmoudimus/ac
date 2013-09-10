@@ -160,6 +160,12 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.2.2-atlassian-1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
@@ -384,10 +390,10 @@
     </build>
 
     <properties>
-        <testkit.version>6.0.23</testkit.version>
+        <testkit.version>6.0.45</testkit.version>
         <jetty.version>8.1.7.v20120910</jetty.version>
         <functest.version>0.7.1</functest.version>
-        <functestbasics.version>1.9.2</functestbasics.version>
+        <functestbasics.version>1.9.7</functestbasics.version>
         <jira.func.test.version>${atlassian.jira.modules.version}</jira.func.test.version>
     </properties>
 </project>

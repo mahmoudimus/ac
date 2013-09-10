@@ -43,7 +43,7 @@ public class MacroVariableInjectorTransformer implements WebResourceTransformer
             I18NBeanFactory userI18NBeanFactory)
     {
         this.userI18NBeanFactory = userI18NBeanFactory;
-        thisPlugin = pluginAccessor.getPlugin(ConnectPluginInfo.PLUGIN_KEY);
+        thisPlugin = pluginAccessor.getPlugin(ConnectPluginInfo.getPluginKey());
     }
 
     @Override
