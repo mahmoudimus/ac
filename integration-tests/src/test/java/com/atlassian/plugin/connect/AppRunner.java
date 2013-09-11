@@ -21,6 +21,10 @@ import static com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunn
  */
 public class AppRunner
 {
+    /**
+    * Hello Summit!
+    */
+
     public static void main(String[] args)
     {
         try

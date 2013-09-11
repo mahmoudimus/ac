@@ -9,6 +9,7 @@ import com.atlassian.plugin.connect.test.server.module.MacroPageModule;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.openqa.selenium.By;
 import redstone.xmlrpc.XmlRpcFault;
 
 import javax.servlet.ServletException;
@@ -26,9 +27,9 @@ import static com.atlassian.plugin.connect.test.pageobjects.confluence.Confluenc
 import static com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner.newMustacheServlet;
 import static it.TestConstants.ADMIN_USERNAME;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
-public final class TestConfluencePageMacro extends ConfluenceWebDriverTestBase
+public final class TestConfluenceInlinePageMacro extends ConfluenceWebDriverTestBase
 {
     private static final Option<ConfluenceUser> ADMIN_CONFLUENCE_USER = some(new ConfluenceUser(ADMIN_USERNAME, ADMIN_USERNAME));
 
@@ -43,11 +44,11 @@ public final class TestConfluencePageMacro extends ConfluenceWebDriverTestBase
                 .addPermission("read_users_and_groups")
                 .addPermission("read_server_information")
                 .add(MacroPageModule.key("app1-page")
-                                    .name("app1-page")
-                                    .path("/ap")
-                                    .outputType("block")
-                                    .bodyType("none")
-                                    .resource(newMustacheServlet("iframe.mu")))
+                        .name("app1-page")
+                        .path("/ap")
+                        .outputType("inline")
+                        .bodyType("none")
+                        .resource(newMustacheServlet("iframe.mu")))
                 .start();
     }
 
@@ -61,31 +62,15 @@ public final class TestConfluencePageMacro extends ConfluenceWebDriverTestBase
     }
 
     @Test
-    public void testPageMacro() throws XmlRpcFault, IOException
+    public void testInlinePageMacro() throws XmlRpcFault, IOException
     {
         ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(ADMIN_CONFLUENCE_USER, "ds", "test", loadResourceAsString("confluence/test-page-macro.xhtml"));
         loginAsBetty();
         ConfluencePageMacroPage page = product.visit(ConfluencePageMacroPage.class, pageData.getTitle(), "app1-page-0");
 
-        assertFalse(page.getContainerDiv().getAttribute("class").contains("ap-inline"));
+        assertTrue(page.getContainerDiv().getAttribute("class").contains("ap-inline"));
         assertEquals("Success", page.getMessage());
         assertEquals(OAuthUtils.getConsumerKey(), page.getConsumerKey());
-    }
-
-    @Test
-    public void testPageMacroMultipleImplementations() throws XmlRpcFault, IOException
-    {
-        ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(ADMIN_CONFLUENCE_USER, "ds", "test", loadResourceAsString("confluence/test-page-macro-multiple.xhtml"));
-        loginAsBetty();
-
-        ConfluencePageMacroPage iframe1 = product.visit(ConfluencePageMacroPage.class, pageData.getTitle(), "app1-page-0");
-        assertEquals("Success", iframe1.getMessage());
-        assertEquals(OAuthUtils.getConsumerKey(), iframe1.getConsumerKey());
-
-        ConfluencePageMacroPage iframe2 = product.visit(ConfluencePageMacroPage.class, pageData.getTitle(), "app1-page-1");
-
-        assertEquals("Success", iframe2.getMessage());
-        assertEquals(OAuthUtils.getConsumerKey(), iframe2.getConsumerKey());
     }
 
     public static final class MyMacroServlet extends HttpServlet
