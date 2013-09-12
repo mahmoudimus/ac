@@ -14,9 +14,7 @@
         </permissions>
         <param name="configure.url">/plugins/servlet/atlassian-connect/lucidchart-app/lucidAppAdmin</param>
         <bundle-instructions>
-            <Remote-Plugin>
-                installer;user="sysadmin";date="1361408393232";registration-url="https://www.lucidchart.com/ondemand/register"
-            </Remote-Plugin>
+            <Remote-Plugin>installer;user="sysadmin";date="1361408393232";registration-url="https://www.lucidchart.com/ondemand/register"</Remote-Plugin>
         </bundle-instructions>
     </plugin-info>
     <remote-plugin-container key="lucidchart-plugin" display-url="https://www.lucidchart.com/ondemand">
@@ -38,7 +36,7 @@
     <general-page section="hidden" key="lucidAppAccessDenied" name="Access Denied to Lucidchart Diagram" url="/accessDenied" width="1200" height="800">
     </general-page>
 
-    <webhook key="remote_plugin_enabled" event="remote_plugin_enabled" url="/remotePluginEnabled"></webhook>
+    <webhook key="remote_plugin_enabled" event="remote_plugin_enabled" url="/remotePluginEnabled"/>
 
     <configure-page section="system.admin/configuration" key="lucidAppAdmin" name="Configure Lucidchart Plugin" url="/admin" width="1200" height="800">
     </configure-page>
@@ -58,11 +56,11 @@
             <!--  <parameter name="auto-update" type="boolean" default="true"/> -->
         </parameters>
         <context-parameters>
-            <context-parameter name="user_id"></context-parameter>
-            <context-parameter name="page_id"></context-parameter>
-            <context-parameter name="page_title"></context-parameter>
-            <context-parameter name="page_type"></context-parameter>
-            <context-parameter name="output_type"></context-parameter>
+            <context-parameter name="user_id"/>
+            <context-parameter name="page_id"/>
+            <context-parameter name="page_title"/>
+            <context-parameter name="page_type"/>
+            <context-parameter name="output_type"/>
         </context-parameters>
     </remote-macro>
 </atlassian-plugin>
