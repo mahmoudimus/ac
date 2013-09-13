@@ -3,11 +3,8 @@ package com.atlassian.plugin.connect.plugin.module.jira.context.extractor;
 import com.atlassian.jira.security.PermissionManager;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserManager;
-import com.atlassian.plugin.connect.plugin.module.context.ContextMapParameterExtractor;
+import com.atlassian.plugin.connect.plugin.module.context.AbstractContextMapParameterExtractor;
 import com.atlassian.plugin.connect.plugin.module.context.ParameterSerializer;
-import com.google.common.base.Optional;
-
-import java.util.Map;
 
 import static com.atlassian.jira.security.Permissions.USE;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -15,11 +12,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Extracts issue parameters that can be included in webpanel's iframe url.
  */
-public abstract class AbstractJiraContextMapParameterExtractor<P> implements ContextMapParameterExtractor<P>
+public abstract class AbstractJiraContextMapParameterExtractor<P> extends AbstractContextMapParameterExtractor<P>
 {
-    private final Class<P> resourceClass;
-    private ParameterSerializer<P> parameterSerializer;
-    private final String contextParameterKey;
     private final PermissionManager permissionManager;
     private final UserManager userManager;
 
@@ -27,32 +21,9 @@ public abstract class AbstractJiraContextMapParameterExtractor<P> implements Con
                                                     String contextParameterKey, PermissionManager permissionManager,
                                                     UserManager userManager)
     {
-        this.resourceClass = resourceClass;
-        this.parameterSerializer = parameterSerializer;
-        this.contextParameterKey = contextParameterKey;
+        super(resourceClass, parameterSerializer, contextParameterKey);
         this.permissionManager = checkNotNull(permissionManager, "permissionManager is mandatory");
         this.userManager = checkNotNull(userManager, "userManager is mandatory");
-    }
-
-    @Override
-    public Optional<P> extract(final Map<String, Object> context)
-    {
-        if (context.containsKey(contextParameterKey) && resourceClass.isInstance(context.get(contextParameterKey)))
-        {
-            return Optional.fromNullable(getResource(context));
-        }
-        return Optional.absent();
-    }
-
-    protected P getResource(Map<String, Object> context)
-    {
-        return (P) context.get(contextParameterKey);
-    }
-
-    @Override
-    public ParameterSerializer<P> serializer()
-    {
-        return parameterSerializer;
     }
 
     @Override
