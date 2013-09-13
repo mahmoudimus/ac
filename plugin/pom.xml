@@ -544,18 +544,17 @@
                 <executions>
                     <execution>
                         <id>copy-plugin-info</id>
-                        <phase>generate-sources</phase>
+                        <phase>process-resources</phase>
                         <goals>
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
                             <outputDirectory>${project.build.outputDirectory}</outputDirectory>
-                            <overwrite>true</overwrite>
                             <resources>
                                 <resource>
-                                    <directory>src/main/java</directory>
+                                    <directory>src/main/resources</directory>
                                     <includes>
-                                        <include>**/ConnectPluginInfo.java</include>
+                                        <include>build.properties</include>
                                     </includes>
                                     <filtering>true</filtering>
                                 </resource>
@@ -564,7 +563,7 @@
                     </execution>
                 </executions>
             </plugin>
-            
+
         </plugins>
     </build>
     
