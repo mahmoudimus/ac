@@ -1,23 +1,22 @@
 package com.atlassian.plugin.connect.plugin.module.webpanel;
 
-import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.util.Collections;
-import java.util.Map;
-
 import com.atlassian.gzipfilter.org.apache.commons.lang.StringUtils;
+import com.atlassian.plugin.connect.plugin.module.context.ContextMapURLSerializer;
 import com.atlassian.plugin.connect.plugin.module.page.IFrameContextImpl;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
-import com.atlassian.plugin.connect.plugin.module.context.ContextMapURLSerializer;
 import com.atlassian.plugin.connect.spi.module.IFrameContext;
 import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.web.model.WebPanel;
 import com.atlassian.sal.api.user.UserManager;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.util.Collections;
+import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -73,9 +72,22 @@ public class IFrameRemoteWebPanel implements WebPanel
         {
             final String remoteUser = StringUtils.defaultString(userManager.getRemoteUsername());
 
-            final Map<String, Object> whiteListedContext = contextMapURLSerializer.getExtractedWebPanelParameters(context);
+            final Map<String, Object> whiteListedContext = contextMapURLSerializer.getExtractedWebPanelParameters(context, remoteUser);
 
             writer.write(iFrameRenderer.render(substituteContext(whiteListedContext), "", Collections.EMPTY_MAP, remoteUser));
+
+            // create a json context like below and sign it
+//            ctx: {
+//                issue:
+//                {
+//                    id: 1234
+//                }
+//            }
+
+
+            // requests to IFramePageServlet then need to look like
+//            /my-url?issueId=${issue.id} --> /my-url?issueId=1234&signedcontext="jwt with ctx and signature"
+            // IFramePageServlet then needs to check the signature and then check the url params against the passed ctx
         }
         else
         {

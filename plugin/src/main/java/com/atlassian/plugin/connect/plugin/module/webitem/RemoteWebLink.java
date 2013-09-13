@@ -1,14 +1,14 @@
 package com.atlassian.plugin.connect.plugin.module.webitem;
 
-import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.plugin.module.context.ContextMapURLSerializer;
+import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.web.WebFragmentHelper;
 import com.atlassian.plugin.web.descriptors.WebFragmentModuleDescriptor;
 import com.atlassian.plugin.web.model.AbstractWebItem;
 import com.atlassian.plugin.web.model.WebLink;
 
-import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 /**
  * Link which points to the dialog, inline-dialog or general page coming from the add-on.
@@ -41,7 +41,7 @@ public class RemoteWebLink extends AbstractWebItem implements WebLink
     @Override
     public String getRenderedUrl(final Map<String, Object> context)
     {
-        final Map<String, Object> extractedWebPanelParameters = urlParametersSerializer.getExtractedWebPanelParameters(context);
+        final Map<String, Object> extractedWebPanelParameters = urlParametersSerializer.getExtractedWebPanelParameters(context, "TODO: inject UserManager");
         return urlVariableSubstitutor.replace(url, extractedWebPanelParameters);
     }
 

@@ -31,13 +31,13 @@ public class ContextMapURLSerializer
         this.contextMapParameterExtractors = checkNotNull(contextMapParameterExtractors);
     }
 
-    public Map<String, Object> getExtractedWebPanelParameters(final Map<String, Object> context)
+    public Map<String, Object> getExtractedWebPanelParameters(final Map<String, Object> context, String username)
     {
         Map<String, Object> whiteListedContext = Maps.newHashMap();
         for (ContextMapParameterExtractor extractor : contextMapParameterExtractors)
         {
             Optional<Object> option = extractor.extract(context);
-            if (option.isPresent())
+            if (option.isPresent() && extractor.hasViewPermission(username, option.get()))
             {
                 whiteListedContext.putAll(extractor.serializer().serialize(option.get()));
             }

@@ -46,4 +46,10 @@ public class ProfileUserContextMapParameterExtractor implements ContextMapParame
     {
         return profileUserSerializer;
     }
+
+    @Override
+    public boolean hasViewPermission(String username, ApplicationUser user)
+    {
+        return true;
+    }
 }

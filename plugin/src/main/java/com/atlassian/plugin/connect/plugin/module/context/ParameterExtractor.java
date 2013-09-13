@@ -17,4 +17,6 @@ public interface ParameterExtractor<C, P>
     Optional<P> extract(C context);
 
     ParameterSerializer<P> serializer();
+
+    boolean hasViewPermission(String username, P resource);
 }

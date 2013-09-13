@@ -37,4 +37,10 @@ public class ProjectContextMapParameterExtractor implements ContextMapParameterE
     {
         return projectSerializer;
     }
+
+    @Override
+    public boolean hasViewPermission(String username, Project project)
+    {
+        return true;
+    }
 }
