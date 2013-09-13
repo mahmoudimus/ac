@@ -17,16 +17,17 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public abstract class AbstractJiraContextMapParameterExtractor<P> implements ContextMapParameterExtractor<P>
 {
-    private static final String ISSUE_CONTEXT_KEY = "issue";
+    private final Class<P> resourceClass;
     private ParameterSerializer<P> parameterSerializer;
     private final String contextParameterKey;
     private final PermissionManager permissionManager;
     private final UserManager userManager;
 
-    public AbstractJiraContextMapParameterExtractor(ParameterSerializer<P> parameterSerializer,
+    public AbstractJiraContextMapParameterExtractor(Class<P> resourceClass, ParameterSerializer<P> parameterSerializer,
                                                     String contextParameterKey, PermissionManager permissionManager,
                                                     UserManager userManager)
     {
+        this.resourceClass = resourceClass;
         this.parameterSerializer = parameterSerializer;
         this.contextParameterKey = contextParameterKey;
         this.permissionManager = checkNotNull(permissionManager, "permissionManager is mandatory");
@@ -36,10 +37,9 @@ public abstract class AbstractJiraContextMapParameterExtractor<P> implements Con
     @Override
     public Optional<P> extract(final Map<String, Object> context)
     {
-        if (context.containsKey(contextParameterKey))
+        if (context.containsKey(contextParameterKey) && resourceClass.isInstance(context.get(contextParameterKey)))
         {
-            P project = getResource(context);
-            return Optional.fromNullable(project);
+            return Optional.fromNullable(getResource(context));
         }
         return Optional.absent();
     }

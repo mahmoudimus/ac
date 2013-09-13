@@ -23,7 +23,7 @@ public class ProfileUserContextMapParameterExtractor extends AbstractJiraContext
     // TODO: Should I be using UserManager or UserUtil
     public ProfileUserContextMapParameterExtractor(UserUtil userUtil, ProfileUserSerializer profileUserSerializer, PermissionManager permissionManager, UserManager userManager)
     {
-        super(profileUserSerializer, PROFILE_USER_CONTEXT_KEY, permissionManager, userManager);
+        super(ApplicationUser.class, profileUserSerializer, PROFILE_USER_CONTEXT_KEY, permissionManager, userManager);
         this.userUtil = checkNotNull(userUtil);
     }
 

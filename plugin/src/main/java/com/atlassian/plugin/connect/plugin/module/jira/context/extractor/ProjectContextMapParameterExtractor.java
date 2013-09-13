@@ -13,9 +13,9 @@ public class ProjectContextMapParameterExtractor extends AbstractJiraContextMapP
 {
     private static final String PROJECT_CONTEXT_KEY = "project";
 
-    public ProjectContextMapParameterExtractor(ProjectSerializer issueSerializer, PermissionManager permissionManager, UserManager userManager)
+    public ProjectContextMapParameterExtractor(ProjectSerializer projectSerializer, PermissionManager permissionManager, UserManager userManager)
     {
-        super(issueSerializer, PROJECT_CONTEXT_KEY, permissionManager, userManager);
+        super(Project.class, projectSerializer, PROJECT_CONTEXT_KEY, permissionManager, userManager);
     }
 
     @Override

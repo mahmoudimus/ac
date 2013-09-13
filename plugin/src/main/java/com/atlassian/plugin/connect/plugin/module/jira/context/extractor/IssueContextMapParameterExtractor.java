@@ -15,7 +15,7 @@ public class IssueContextMapParameterExtractor extends AbstractJiraContextMapPar
 
     public IssueContextMapParameterExtractor(IssueSerializer issueSerializer, PermissionManager permissionManager, UserManager userManager)
     {
-        super(issueSerializer, ISSUE_CONTEXT_KEY, permissionManager, userManager);
+        super(Issue.class, issueSerializer, ISSUE_CONTEXT_KEY, permissionManager, userManager);
     }
 
     @Override
