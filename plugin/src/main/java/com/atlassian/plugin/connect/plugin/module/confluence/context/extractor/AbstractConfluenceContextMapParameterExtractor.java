@@ -20,19 +20,21 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public abstract class AbstractConfluenceContextMapParameterExtractor<P> implements ContextMapParameterExtractor<P>
 {
+    private static final String WEB_INTERFACE_CONTEXT_KEY = "webInterfaceContext";
     private final Class<P> resourceClass;
     private final ParameterSerializer<P> parameterSerializer;
-    private final String contextParameter;
+    private final String contextParameterKey;
     private final PermissionManager permissionManager;
     private final UserManager userManager;
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractConfluenceContextMapParameterExtractor.class);
 
-    public AbstractConfluenceContextMapParameterExtractor(Class<P> resourceClass, ParameterSerializer<P> parameterSerializer, String contextParameter,
-                                                          PermissionManager permissionManager, UserManager userManager)
+    public AbstractConfluenceContextMapParameterExtractor(Class<P> resourceClass, ParameterSerializer<P> parameterSerializer,
+                                                          String contextParameterKey, PermissionManager permissionManager,
+                                                          UserManager userManager)
     {
         this.resourceClass = resourceClass;
         this.parameterSerializer = parameterSerializer;
-        this.contextParameter = contextParameter;
+        this.contextParameterKey = contextParameterKey;
         this.permissionManager = checkNotNull(permissionManager, "permissionManager is mandatory");
         this.userManager = checkNotNull(userManager, "userManager is mandatory");
     }
@@ -41,18 +43,18 @@ public abstract class AbstractConfluenceContextMapParameterExtractor<P> implemen
     @Override
     public Optional<P> extract(final Map<String, Object> context)
     {
-        if (context.containsKey("webInterfaceContext"))
+        if (context.containsKey(WEB_INTERFACE_CONTEXT_KEY))
         {
-            WebInterfaceContext webInterfaceContext = (WebInterfaceContext) context.get("webInterfaceContext");
+            WebInterfaceContext webInterfaceContext = (WebInterfaceContext) context.get(WEB_INTERFACE_CONTEXT_KEY);
             if (null != webInterfaceContext && null != webInterfaceContext.getPage())
             {
                 return Optional.of(getResource(webInterfaceContext));
 
             }
         }
-        else if (context.containsKey(contextParameter) && resourceClass.isInstance(context.get(contextParameter)))
+        else if (context.containsKey(contextParameterKey) && resourceClass.isInstance(context.get(contextParameterKey)))
         {
-            return Optional.of((P) context.get(contextParameter));
+            return Optional.of((P) context.get(contextParameterKey));
         }
         return Optional.absent();
     }
