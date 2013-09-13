@@ -46,7 +46,7 @@ public class ConnectPluginInfo
         {
             pluginKey = key;
             pluginVersion = checkNotNull(buildProperties.getProperty(PLUGIN_VERSION), PLUGIN_VERSION);
-            buildNumber = checkNotNull(buildProperties.getProperty(BUILD_NUMBER), PLUGIN_VERSION);
+            buildNumber = checkNotNull(buildProperties.getProperty(BUILD_NUMBER), BUILD_NUMBER);
         }
     }
 
