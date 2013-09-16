@@ -20,26 +20,32 @@ public class ProjectSerializer extends AbstractJiraParameterSerializer<Project, 
 
     public ProjectSerializer(final ProjectService projectService, UserManager userManager)
     {
-        super(userManager, PROJECT_FIELD_NAME, new ServiceLookup<GetProjectResult, Project>()
-        {
-            @Override
-            public GetProjectResult lookupById(User user, Long id)
-            {
-                return projectService.getProjectById(user, id);
-            }
-
-            @Override
-            public GetProjectResult lookupByKey(User user, String key)
-            {
-                return projectService.getProjectByKey(user, key);
-            }
-
-            @Override
-            public Project getItem(GetProjectResult result)
-            {
-                return result.getProject();
-            }
-        });
+        super(userManager, PROJECT_FIELD_NAME,
+                new ParameterUnwrapper<GetProjectResult, Project>()
+                {
+                    @Override
+                    public Project unwrap(GetProjectResult wrapped)
+                    {
+                        return wrapped.getProject();
+                    }
+                },
+                new AbstractIdParameterLookup<GetProjectResult>()
+                {
+                    @Override
+                    public GetProjectResult lookup(User user, Long id)
+                    {
+                        return projectService.getProjectById(user, id);
+                    }
+                },
+                new AbstractKeyParameterLookup<GetProjectResult>()
+                {
+                    @Override
+                    public GetProjectResult lookup(User user, String key)
+                    {
+                        return projectService.getProjectByKey(user, key);
+                    }
+                }
+        );
     }
 
     @Override

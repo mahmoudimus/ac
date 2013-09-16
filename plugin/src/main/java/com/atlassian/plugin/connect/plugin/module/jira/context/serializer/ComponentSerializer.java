@@ -18,26 +18,17 @@ public class ComponentSerializer extends AbstractJiraParameterSerializer<Project
 
     public ComponentSerializer(final ProjectComponentService projectComponentService, UserManager userManager)
     {
-        super(userManager, COMPONENT_FIELD_NAME, new ServiceLookup<ProjectComponent, ProjectComponent>()
-        {
-            @Override
-            public ProjectComponent lookupById(User user, Long id)
-            {
-                return projectComponentService.find(user, null, id);
-            }
-
-            @Override
-            public ProjectComponent lookupByKey(User user, String key)
-            {
-                throw new IllegalStateException("Cannot lookup project components by key");
-            }
-
-            @Override
-            public ProjectComponent getItem(ProjectComponent result)
-            {
-                return result;
-            }
-        }, false);
+        super(userManager, COMPONENT_FIELD_NAME,
+                createNoopUnwrapper(ProjectComponent.class),
+                new AbstractIdParameterLookup<ProjectComponent>()
+                {
+                    @Override
+                    public ProjectComponent lookup(User user, Long id)
+                    {
+                        return projectComponentService.find(user, null, id);
+                    }
+                }
+        );
     }
 
     @Override

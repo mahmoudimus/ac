@@ -20,26 +20,32 @@ public class IssueSerializer extends AbstractJiraParameterSerializer<Issue, Issu
 
     public IssueSerializer(final IssueService issueService, UserManager userManager)
     {
-        super(userManager, ISSUE_FIELD_NAME, new ServiceLookup<IssueResult, Issue>()
-        {
-            @Override
-            public IssueResult lookupById(User user, Long id)
-            {
-                return issueService.getIssue(user, id);
-            }
-
-            @Override
-            public IssueResult lookupByKey(User user, String key)
-            {
-                return issueService.getIssue(user, key);
-            }
-
-            @Override
-            public Issue getItem(IssueResult result)
-            {
-                return result.getIssue();
-            }
-        });
+        super(userManager, ISSUE_FIELD_NAME,
+                new ParameterUnwrapper<IssueResult, Issue>()
+                {
+                    @Override
+                    public Issue unwrap(IssueResult wrapped)
+                    {
+                        return wrapped.getIssue();
+                    }
+                },
+                new AbstractIdParameterLookup<IssueResult>()
+                {
+                    @Override
+                    public IssueResult lookup(User user, Long id)
+                    {
+                        return issueService.getIssue(user, id);
+                    }
+                },
+                new AbstractKeyParameterLookup<IssueResult>()
+                {
+                    @Override
+                    public IssueResult lookup(User user, String key)
+                    {
+                        return issueService.getIssue(user, key);
+                    }
+                }
+        );
     }
 
     @Override

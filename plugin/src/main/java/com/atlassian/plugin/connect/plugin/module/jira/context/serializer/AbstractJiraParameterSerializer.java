@@ -18,47 +18,33 @@ public abstract class AbstractJiraParameterSerializer<T, C> implements Parameter
     public static final String KEY_FIELD_NAME = "key";
     private final UserManager userManager;
     private final String containerFieldName;
-    private final ServiceLookup<C, T> serviceLookup;
-    private final boolean hasKeyField;
+    private final ParameterLookup<C, ?>[] parameterLookups;
+    private final ParameterUnwrapper<C, T> parameterUnwrapper;
 
-    public AbstractJiraParameterSerializer(UserManager userManager, String containerFieldName, ServiceLookup<C, T> serviceLookup)
+    // TODO: abstract a common user interface across products to support simple lookup by username
+    public AbstractJiraParameterSerializer(UserManager userManager, String containerFieldName,
+                                           ParameterUnwrapper<C, T> parameterUnwrapper,
+                                           ParameterLookup<C, ?>... parameterLookups)
     {
-        this(userManager, containerFieldName, serviceLookup, true);
-    }
-
-    public AbstractJiraParameterSerializer(UserManager userManager, String containerFieldName, ServiceLookup<C, T> serviceLookup, boolean hasKeyField)
-    {
-        this.serviceLookup = serviceLookup;
-        this.hasKeyField = hasKeyField;
+        this.parameterUnwrapper = parameterUnwrapper;
         this.userManager = checkNotNull(userManager, "userManager is mandatory");
         this.containerFieldName = checkNotNull(containerFieldName);
+        this.parameterLookups = parameterLookups;
     }
 
     @Override
     public Optional<T> deserialize(Map<String, Object> params, String username)
     {
-        final Optional<Map> issueMap = getParam(params, containerFieldName, Map.class);
-        if (!issueMap.isPresent())
+        final Optional<Map> containerMap = getParam(params, containerFieldName, Map.class);
+        if (!containerMap.isPresent())
         {
             return Optional.absent();
         }
 
-        final Optional<Number> id = getParam(issueMap.get(), ID_FIELD_NAME, Number.class);
-        Optional<String> key = Optional.absent();
-        if (!id.isPresent())
+        final Optional<LookupProxy> lookup = createLookup(containerMap);
+        if (!lookup.isPresent())
         {
-            if (hasKeyField)
-            {
-                key = getParam(issueMap.get(), KEY_FIELD_NAME, String.class);
-                if (!key.isPresent())
-                {
-                    return Optional.absent();
-                }
-            }
-            else
-            {
-                return Optional.absent();
-            }
+            return Optional.absent();
         }
 
         final ApplicationUser appUser = userManager.getUserByName(username);
@@ -70,8 +56,7 @@ public abstract class AbstractJiraParameterSerializer<T, C> implements Parameter
 
         final User user = appUser.getDirectoryUser();
 
-        final C serviceResult = id.isPresent() ? serviceLookup.lookupById(user, id.get().longValue()) :
-                serviceLookup.lookupByKey(user, key.get());
+        final C serviceResult = lookup.get().lookup(user);
 
         if (serviceResult == null || (serviceResult instanceof ServiceResult && !((ServiceResult)serviceResult).isValid()))
         {
@@ -79,7 +64,88 @@ public abstract class AbstractJiraParameterSerializer<T, C> implements Parameter
             return Optional.absent();
         }
 
-        return Optional.of((T) serviceLookup.getItem(serviceResult));
+        return Optional.of(parameterUnwrapper.unwrap(serviceResult));
+    }
+
+    public static interface ParameterLookup<C, P>
+    {
+        String getParamName();
+        Class<P> getType();
+        C lookup(User user, P value);
+    }
+
+    public static interface ParameterUnwrapper<C, T>
+    {
+        T unwrap(C wrapped);
+    }
+
+    protected static <T> ParameterUnwrapper<T, T> createNoopUnwrapper(Class<T> projectComponentClass)
+    {
+        return new ParameterUnwrapper<T, T>()
+        {
+            @Override
+            public T unwrap(T notReallyWrapped)
+            {
+                return notReallyWrapped;
+            }
+        };
+
+    }
+
+    public abstract static class AbstractParameterLookup<C, P> implements ParameterLookup<C, P>
+    {
+        private final String paramName;
+        private final Class<P> type;
+
+        public AbstractParameterLookup(String paramName, Class<P> type)
+        {
+            this.paramName = paramName;
+            this.type = type;
+        }
+
+        @Override
+        public String getParamName()
+        {
+            return paramName;
+        }
+
+        @Override
+        public Class<P> getType()
+        {
+            return type;
+        }
+    }
+
+    public abstract static class AbstractStringParameterLookup<C> extends AbstractParameterLookup<C, String>
+    {
+        public AbstractStringParameterLookup(String paramName)
+        {
+            super(paramName, String.class);
+        }
+    }
+
+    public abstract static class AbstractKeyParameterLookup<C> extends AbstractStringParameterLookup<C>
+    {
+        public AbstractKeyParameterLookup()
+        {
+            super(KEY_FIELD_NAME);
+        }
+    }
+
+    public abstract static class AbstractLongParameterLookup<C> extends AbstractParameterLookup<C, Long>
+    {
+        public AbstractLongParameterLookup(String paramName)
+        {
+            super(paramName, Long.class);
+        }
+    }
+
+    public abstract static class AbstractIdParameterLookup<C> extends AbstractLongParameterLookup<C>
+    {
+        public AbstractIdParameterLookup()
+        {
+            super(ID_FIELD_NAME);
+        }
     }
 
     private <C> Optional<C> getParam(Map<?, ?> params, String paramName, Class<C> type)
@@ -95,12 +161,91 @@ public abstract class AbstractJiraParameterSerializer<T, C> implements Parameter
         }
     }
 
-    public static interface ServiceLookup<C, T>
+    private Optional<LookupProxy> createLookup(Optional<Map> containerMap)
     {
-        C lookupById(User user, Long id);
-
-        C lookupByKey(User user, String key);
-
-        T getItem(C result);
+        Optional<LookupProxy> result = Optional.absent();
+        if (containerMap.isPresent())
+        {
+            for(ParameterLookup<C, ?> parameterLookup : parameterLookups)
+            {
+                result = result.or(optionalLookup(createLookupFor(containerMap.get(), parameterLookup)));
+            }
+        }
+        return result;
     }
+
+    private <P> Optional<? extends Lookup> createLookupFor(Map<?, ?> params, final ParameterLookup<C, P> parameterLookup)
+    {
+        final String paramName = parameterLookup.getParamName();
+        final Class<P> type = parameterLookup.getType();
+        return Number.class.isAssignableFrom(type) ? createLookupForLong(params, paramName, (ParameterLookup<C, Long>) parameterLookup)
+                : createLookupForNonLong(params, paramName, parameterLookup, type);
+    }
+
+    private <P> Optional<? extends Lookup> createLookupForNonLong(Map<?, ?> params, String paramName,
+                                                       final ParameterLookup<C, P> parameterLookup, final Class<P> cls)
+    {
+        final Optional<P> value = getParam(params, paramName, cls);
+        return value.isPresent() ? Optional.of(new Lookup()
+        {
+            @Override
+            public C lookup(User user)
+            {
+                return parameterLookup.lookup(user, value.get());
+            }
+        }) : Optional.<Lookup>absent();
+    }
+
+    // TODO: Can we avoid the code dupe here?
+    private Optional<? extends Lookup> createLookupForLong(Map<?, ?> params, String paramName,
+                                                           final ParameterLookup<C, Long> parameterLookup)
+    {
+        final Optional<Number> value = getParam(params, paramName, Number.class);
+        return value.isPresent() ? Optional.of(new Lookup()
+        {
+
+            @Override
+            public C lookup(User user)
+            {
+                return parameterLookup.lookup(user, value.get().longValue());
+            }
+        }) : Optional.<Lookup>absent();
+    }
+
+
+    private interface Lookup<C>
+    {
+        C lookup(User user);
+    }
+
+
+
+    // unfortunately needed to get around generics issue. At least I can't get it to work otherwise
+    private class LookupProxy implements Lookup<C>
+    {
+        private final Lookup<C> target;
+
+        LookupProxy(Lookup<C> target)
+        {
+            this.target = target;
+        }
+
+        @Override
+        public C lookup(User user)
+        {
+            return target.lookup(user);
+        }
+
+        public Optional<LookupProxy> option()
+        {
+            return Optional.of(this);
+        }
+
+    }
+
+    private Optional<LookupProxy> optionalLookup(Optional<? extends Lookup> target)
+    {
+        return target.isPresent() ? new LookupProxy(target.get()).option() : Optional.<LookupProxy>absent();
+    }
+
 }

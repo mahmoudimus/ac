@@ -8,36 +8,36 @@ import com.google.common.collect.ImmutableMap;
 
 import java.util.Map;
 
+import static com.atlassian.jira.bc.project.version.VersionService.VersionResult;
+
 /**
  * Serializes Version objects.
  */
-public class VersionSerializer extends AbstractJiraParameterSerializer<Version, VersionService.VersionResult>
+public class VersionSerializer extends AbstractJiraParameterSerializer<Version, VersionResult>
 {
 
     public static final String VERSION_FIELD_NAME = "version";
 
     public VersionSerializer(final VersionService versionService, UserManager userManager)
     {
-        super(userManager, VERSION_FIELD_NAME, new ServiceLookup<VersionService.VersionResult, Version>()
-        {
-            @Override
-            public VersionService.VersionResult lookupById(User user, Long id)
-            {
-                return versionService.getVersionById(user, id);
-            }
-
-            @Override
-            public VersionService.VersionResult lookupByKey(User user, String key)
-            {
-                throw new IllegalStateException("Cannot lookup version by key");
-            }
-
-            @Override
-            public Version getItem(VersionService.VersionResult result)
-            {
-                return result.getVersion();
-            }
-        }, false);
+        super(userManager, VERSION_FIELD_NAME,
+                new ParameterUnwrapper<VersionResult, Version>()
+                {
+                    @Override
+                    public Version unwrap(VersionResult wrapped)
+                    {
+                        return wrapped.getVersion();
+                    }
+                },
+                new AbstractIdParameterLookup<VersionResult>()
+                {
+                    @Override
+                    public VersionResult lookup(User user, Long id)
+                    {
+                        return versionService.getVersionById(user, id);
+                    }
+                }
+        );
     }
 
     @Override
