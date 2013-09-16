@@ -13,6 +13,7 @@ import com.google.common.collect.ImmutableMap;
 import java.util.Map;
 
 import static com.atlassian.jira.bc.issue.IssueService.IssueResult;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Serializes Issue objects.
@@ -28,8 +29,8 @@ public class IssueSerializer implements ParameterSerializer<Issue>, ParameterDes
 
     public IssueSerializer(IssueService issueService, UserManager userManager) {
 
-        this.issueService = issueService;
-        this.userManager = userManager;
+        this.issueService = checkNotNull(issueService, "issueService is mandatory");;
+        this.userManager = checkNotNull(userManager, "userManager is mandatory");
     }
     @Override
     public Map<String, Object> serialize(final Issue issue)
@@ -93,26 +94,5 @@ public class IssueSerializer implements ParameterSerializer<Issue>, ParameterDes
         }
     }
 
-//    public Issue deserialize(Map<String, Object>) {
-//        IssueService service = null;
-//        service.getIssue()
-//        new Issue();
-//    }
-//
-//    public Map<String, Object> checkPermission(Map<String, Object> serializedParams)
-//    {
-//        Map<String, Object> issue = serializedParams.get("issue");
-//        if (null != issue)
-//        {
-//            String issueId = issue.get("id");
-//            // do permission check on issue id
-//            String issueKey = issue.get("key");
-//            // do permission check on issue key
-//            return ImmutableMap.<String, Object>of("issue", ImmutableMap.of(
-//                    "id", issueId,
-//                    "key", issueKey
-//            ));
-//        }
-//    }
 
 }
