@@ -12,7 +12,7 @@ import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public abstract class AbstractJiraParameterSerializer<T, C extends ServiceResult> implements ParameterSerializer<T>, ParameterDeserializer<T>
+public abstract class AbstractJiraParameterSerializer<T, C> implements ParameterSerializer<T>, ParameterDeserializer<T>
 {
     public static final String ID_FIELD_NAME = "id";
     public static final String KEY_FIELD_NAME = "key";
@@ -72,7 +72,8 @@ public abstract class AbstractJiraParameterSerializer<T, C extends ServiceResult
 
         final C serviceResult = id.isPresent() ? serviceLookup.lookupById(user, id.get().longValue()) :
                 serviceLookup.lookupByKey(user, key.get());
-        if (!serviceResult.isValid())
+
+        if (serviceResult == null || (serviceResult instanceof ServiceResult && !((ServiceResult)serviceResult).isValid()))
         {
             // TODO: Should this be an exception?
             return Optional.absent();
@@ -94,7 +95,7 @@ public abstract class AbstractJiraParameterSerializer<T, C extends ServiceResult
         }
     }
 
-    public static interface ServiceLookup<C extends ServiceResult, T>
+    public static interface ServiceLookup<C, T>
     {
         C lookupById(User user, Long id);
 
