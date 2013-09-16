@@ -19,22 +19,20 @@ public abstract class AbstractJiraParameterSerializer<T, C extends ServiceResult
     private final UserManager userManager;
     private final String containerFieldName;
     private final ServiceLookup<C, T> serviceLookup;
+    private final boolean hasKeyField;
 
     public AbstractJiraParameterSerializer(UserManager userManager, String containerFieldName, ServiceLookup<C, T> serviceLookup)
     {
+        this(userManager, containerFieldName, serviceLookup, true);
+    }
+
+    public AbstractJiraParameterSerializer(UserManager userManager, String containerFieldName, ServiceLookup<C, T> serviceLookup, boolean hasKeyField)
+    {
         this.serviceLookup = serviceLookup;
+        this.hasKeyField = hasKeyField;
         this.userManager = checkNotNull(userManager, "userManager is mandatory");
         this.containerFieldName = checkNotNull(containerFieldName);
     }
-
-//    @Override
-//    public Map<String, Object> serialize(final T issue)
-//    {
-//        return ImmutableMap.<String, Object>of(containerFieldName, ImmutableMap.of(
-//                ID_FIELD_NAME, issue.getId(),
-//                KEY_FIELD_NAME, issue.getKey()
-//        ));
-//    }
 
     @Override
     public Optional<T> deserialize(Map<String, Object> params, String username)
@@ -49,8 +47,15 @@ public abstract class AbstractJiraParameterSerializer<T, C extends ServiceResult
         Optional<String> key = Optional.absent();
         if (!id.isPresent())
         {
-            key = getParam(issueMap.get(), KEY_FIELD_NAME, String.class);
-            if (!key.isPresent())
+            if (hasKeyField)
+            {
+                key = getParam(issueMap.get(), KEY_FIELD_NAME, String.class);
+                if (!key.isPresent())
+                {
+                    return Optional.absent();
+                }
+            }
+            else
             {
                 return Optional.absent();
             }
@@ -73,7 +78,7 @@ public abstract class AbstractJiraParameterSerializer<T, C extends ServiceResult
             return Optional.absent();
         }
 
-        return Optional.of((T)serviceLookup.getItem(serviceResult));
+        return Optional.of((T) serviceLookup.getItem(serviceResult));
     }
 
     private <C> Optional<C> getParam(Map<?, ?> params, String paramName, Class<C> type)
@@ -92,7 +97,9 @@ public abstract class AbstractJiraParameterSerializer<T, C extends ServiceResult
     public static interface ServiceLookup<C extends ServiceResult, T>
     {
         C lookupById(User user, Long id);
+
         C lookupByKey(User user, String key);
+
         T getItem(C result);
     }
 }

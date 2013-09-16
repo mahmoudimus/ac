@@ -9,7 +9,6 @@ import com.google.common.collect.ImmutableMap;
 import java.util.Map;
 
 import static com.atlassian.jira.bc.project.ProjectService.GetProjectResult;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Serializes Project objects.
@@ -18,7 +17,6 @@ public class ProjectSerializer extends AbstractJiraParameterSerializer<Project, 
 {
 
     public static final String PROJECT_FIELD_NAME = "project";
-    private final ProjectService projectService;
 
     public ProjectSerializer(final ProjectService projectService, UserManager userManager)
     {
@@ -42,7 +40,6 @@ public class ProjectSerializer extends AbstractJiraParameterSerializer<Project, 
                 return result.getProject();
             }
         });
-        this.projectService = checkNotNull(projectService, "projectService is mandatory");
     }
 
     @Override

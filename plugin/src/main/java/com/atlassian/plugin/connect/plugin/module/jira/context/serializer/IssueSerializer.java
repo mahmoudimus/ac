@@ -9,7 +9,6 @@ import com.google.common.collect.ImmutableMap;
 import java.util.Map;
 
 import static com.atlassian.jira.bc.issue.IssueService.IssueResult;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Serializes Issue objects.
@@ -18,7 +17,6 @@ public class IssueSerializer extends AbstractJiraParameterSerializer<Issue, Issu
 {
 
     public static final String ISSUE_FIELD_NAME = "issue";
-    private final IssueService issueService;
 
     public IssueSerializer(final IssueService issueService, UserManager userManager)
     {
@@ -42,7 +40,6 @@ public class IssueSerializer extends AbstractJiraParameterSerializer<Issue, Issu
                 return result.getIssue();
             }
         });
-        this.issueService = checkNotNull(issueService, "issueService is mandatory");
     }
 
     @Override
