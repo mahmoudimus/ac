@@ -34,7 +34,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static java.lang.Math.abs;
 
 /**
- * This class loads a plugin called "remotable.plugins.i18n", which solely exists to store and expose generated i18n files
+ * This class loads a plugin called "atlassian-connect.i18n", which solely exists to store and expose generated i18n files
  * from remote descriptors.  Ideally, the products would support generated i18n resources, but currently they expect
  * them to be declared via <resource> tags pointing at physical files in the plugin.  This plugin is a way to get
  * around that.
@@ -78,7 +78,7 @@ public final class I18nPropertiesPluginManager
     }
 
     /**
-     * Lookup the currently installed remotable plugins i18n bundle and process it with the supplied {@link BundleManipulator}
+     * Lookup the currently installed atlassian connect i18n bundle and process it with the supplied {@link BundleManipulator}
      */
     private void updateI18nBundle(BundleManipulator bundleManipulator)
     {
@@ -153,7 +153,7 @@ public final class I18nPropertiesPluginManager
     }
 
     /**
-     * Add a map of i18n keys to the currently installed remotable plugins i18n bundle.
+     * Add a map of i18n keys to the currently installed atlassian connect i18n bundle.
      */
     private synchronized void registerI18n(final Map<String, String> i18n)
     {
@@ -246,8 +246,8 @@ public final class I18nPropertiesPluginManager
         mf.getMainAttributes().putValue(Constants.BUNDLE_SYMBOLICNAME, I18N_SYMBOLIC_NAME);
         mf.getMainAttributes().putValue(OsgiPlugin.ATLASSIAN_PLUGIN_KEY, I18N_SYMBOLIC_NAME);
         mf.getMainAttributes().putValue(Constants.BUNDLE_VERSION, "1");
-        mf.getMainAttributes().putValue(Constants.BUNDLE_DESCRIPTION, "I18n properties files for remote plugins");
-        mf.getMainAttributes().putValue(Constants.BUNDLE_NAME, "Remotable Plugins I18n plugin");
+        mf.getMainAttributes().putValue(Constants.BUNDLE_DESCRIPTION, "i18n properties files for Atlassian Connect");
+        mf.getMainAttributes().putValue(Constants.BUNDLE_NAME, "Atlassian Connect i18n plugin");
         mf.getMainAttributes().putValue(Constants.BUNDLE_MANIFESTVERSION, "2");
         mf.getMainAttributes().putValue("Spring-Context", "*");
 
@@ -258,7 +258,7 @@ public final class I18nPropertiesPluginManager
     }
 
     /**
-     * @return the currently installed remotable plugins i18n bundle after ensuring it is enabled.
+     * @return the currently installed atlassian connect i18n bundle after ensuring it is enabled.
      */
     private Bundle lookupI18nBundle()
     {
