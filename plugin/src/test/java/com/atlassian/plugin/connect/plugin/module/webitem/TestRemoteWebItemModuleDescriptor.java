@@ -41,7 +41,6 @@ public class TestRemoteWebItemModuleDescriptor
     @Mock ConditionProcessor conditionProcessor;
     @Mock BundleContext bundleContext;
     @Mock UserManager userManager;
-    IFrameRendererImpl iFrameRenderer = null;
     @Mock ProductAccessor productAccessor;
     @Mock UrlValidator urlValidator;
     @Mock RemotablePluginAccessorFactory pluginAccessorFactory;
