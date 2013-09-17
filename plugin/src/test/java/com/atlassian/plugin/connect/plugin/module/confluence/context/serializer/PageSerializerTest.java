@@ -1,8 +1,12 @@
 package com.atlassian.plugin.connect.plugin.module.confluence.context.serializer;
 
 import com.atlassian.confluence.content.service.PageService;
+import com.atlassian.confluence.content.service.page.SinglePageLocator;
 import com.atlassian.confluence.pages.AbstractPage;
+import com.atlassian.confluence.pages.Page;
 import com.atlassian.plugin.connect.plugin.module.context.ParameterDeserializer;
+import com.atlassian.user.EntityException;
+import com.atlassian.user.User;
 import com.atlassian.user.UserManager;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
@@ -13,15 +17,25 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PageSerializerTest
 {
     @Mock
+    private PageService pageService;
+
+    @Mock
     private UserManager userManager;
 
     @Mock
-    private PageService pageService;
+    private User user;
+
+//    @Mock
+//    private ErrorCollection errorCollection;
+
+    @Mock
+    private Page page1;
 
     @Test
     public void shouldReturnAbsentIfNoPageInParams()
@@ -34,59 +48,56 @@ public class PageSerializerTest
     @Test
     public void shouldReturnAbsentIfPageIsNotMap()
     {
-//        final ParameterDeserializer<AbstractPage> serializer = new PageSerializer(pageService, userManager);
-//        final Optional<AbstractPage> page = serializer.deserialize(ImmutableMap.of("page", new Object()), "fred");
-//        assertThat(page.isPresent(), is(false));
+        final ParameterDeserializer<AbstractPage> serializer = new PageSerializer(pageService, userManager);
+        final Optional<AbstractPage> page = serializer.deserialize(ImmutableMap.of("page", new Object()), "fred");
+        assertThat(page.isPresent(), is(false));
     }
 
     @Test
-    public void shouldReturnAbsentIfNoIdInPage()
+    public void shouldReturnAbsentIfNoIdOrKeyInPage()
     {
-//        final ParameterDeserializer<AbstractPage> serializer = new PageSerializer(pageService, userManager);
-//        final Optional<AbstractPage> page = serializer.deserialize(
-//                ImmutableMap.<String, Object>of("page", ImmutableMap.of("foo", new Object())),
-//                "fred");
-//        assertThat(page.isPresent(), is(false));
+        final ParameterDeserializer<AbstractPage> serializer = new PageSerializer(pageService, userManager);
+        final Optional<AbstractPage> page = serializer.deserialize(
+                ImmutableMap.<String, Object>of("page", ImmutableMap.of("foo", new Object())),
+                "fred");
+        assertThat(page.isPresent(), is(false));
     }
 
     @Test
-    public void shouldReturnAbsentIfNoUserForUsername()
+    public void shouldReturnAbsentIfNoUserForUsername() throws EntityException
     {
-//        final ParameterDeserializer<AbstractPage> serializer = new PageSerializer(pageService, userManager);
-//        final Optional<AbstractPage> page = serializer.deserialize(
-//                ImmutableMap.<String, Object>of("page", ImmutableMap.of("id", 10)), "fred");
-//
-//        assertThat(page.isPresent(), is(false));
-//        verify(userManager, times(1)).getUserByName("fred");
+        final ParameterDeserializer<AbstractPage> serializer = new PageSerializer(pageService, userManager);
+        final Optional<AbstractPage> page = serializer.deserialize(
+                ImmutableMap.<String, Object>of("page", ImmutableMap.of("id", 10)), "fred");
+
+        assertThat(page.isPresent(), is(false));
+        verify(userManager, times(1)).getUser("fred");
     }
 
     @Test
-    public void shouldReturnAbsentIfNoPageForId()
+    public void shouldReturnAbsentIfNoPageForId() throws EntityException
     {
-//        when(userManager.getUserByName("fred")).thenReturn(new DelegatingApplicationUser("fred", user));
-//        when(pageService.getPage(any(User.class), eq(10l))).thenReturn(new PageService.PageResult(null, errorCollection));
-//        when(errorCollection.hasAnyErrors()).thenReturn(true);
-//
-//        final ParameterDeserializer<AbstractPage> serializer = new PageSerializer(pageService, userManager);
-//        final Optional<AbstractPage> page = serializer.deserialize(
-//                ImmutableMap.<String, Object>of("page", ImmutableMap.of("id", 10)), "fred");
-//
-//        assertThat(page.isPresent(), is(false));
-//        verify(pageService, times(1)).getPage(any(User.class), eq(10l));
+        when(userManager.getUser("fred")).thenReturn(user);
+        when(pageService.getIdPageLocator(10l)).thenReturn(new SinglePageLocator(null));
+
+        final ParameterDeserializer<AbstractPage> serializer = new PageSerializer(pageService, userManager);
+        final Optional<AbstractPage> page = serializer.deserialize(
+                ImmutableMap.<String, Object>of("page", ImmutableMap.of("id", 10)), "fred");
+
+        assertThat(page.isPresent(), is(false));
+        verify(pageService, times(1)).getIdPageLocator(10l);
     }
 
-
     @Test
-    public void shouldReturnPageWhenTheStarsAlign()
+    public void shouldReturnPageWhenTheStarsAlign() throws EntityException
     {
-//        when(userManager.getUserByName("fred")).thenReturn(new DelegatingApplicationUser("fred", user));
-//        when(pageService.getPage(any(User.class), eq("myKey"))).thenReturn(new PageService.PageResult(page1, errorCollection));
-//        when(errorCollection.hasAnyErrors()).thenReturn(false);
-//
-//        final ParameterDeserializer<AbstractPage> serializer = new PageSerializer(pageService, userManager);
-//        final Optional<AbstractPage> page = serializer.deserialize(
-//                ImmutableMap.<String, Object>of("page", ImmutableMap.of("key", "myKey")), "fred");
-//
-//        assertThat(page.isPresent(), is(true));
+        when(userManager.getUser("fred")).thenReturn(user);
+        when(pageService.getIdPageLocator(10l)).thenReturn(new SinglePageLocator(page1));
+
+        final ParameterDeserializer<AbstractPage> serializer = new PageSerializer(pageService, userManager);
+        final Optional<AbstractPage> page = serializer.deserialize(
+                ImmutableMap.<String, Object>of("page", ImmutableMap.of("id", 10)), "fred");
+
+        assertThat(page.isPresent(), is(true));
     }
 }

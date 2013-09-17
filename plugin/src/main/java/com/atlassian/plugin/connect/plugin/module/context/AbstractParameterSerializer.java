@@ -1,9 +1,6 @@
-package com.atlassian.plugin.connect.plugin.module.jira.context.serializer;
+package com.atlassian.plugin.connect.plugin.module.context;
 
-import com.atlassian.jira.bc.ServiceResult;
 import com.atlassian.plugin.connect.plugin.module.common.user.CommonUserLookup;
-import com.atlassian.plugin.connect.plugin.module.context.ParameterDeserializer;
-import com.atlassian.plugin.connect.plugin.module.context.ParameterSerializer;
 import com.google.common.base.Optional;
 
 import java.util.Map;
@@ -54,7 +51,7 @@ public abstract class AbstractParameterSerializer<T, C, U> implements ParameterS
 
         final C serviceResult = lookup.get().lookup(user);
 
-        if (serviceResult == null || (serviceResult instanceof ServiceResult && !((ServiceResult)serviceResult).isValid()))
+        if (serviceResult == null || !isResultValid(serviceResult))
         {
             // TODO: Should this be an exception?
             return Optional.absent();
@@ -62,6 +59,8 @@ public abstract class AbstractParameterSerializer<T, C, U> implements ParameterS
 
         return Optional.of(parameterUnwrapper.unwrap(serviceResult));
     }
+
+    protected abstract boolean isResultValid(C serviceResult);
 
     public static interface ParameterLookup<C, P, U>
     {
@@ -174,7 +173,8 @@ public abstract class AbstractParameterSerializer<T, C, U> implements ParameterS
     {
         final String paramName = parameterLookup.getParamName();
         final Class<P> type = parameterLookup.getType();
-        return Number.class.isAssignableFrom(type) ? createLookupForLong(params, paramName, (ParameterLookup<C, Long, U>) parameterLookup)
+        return Number.class.isAssignableFrom(type) ? createLookupForLong(params, paramName,
+                (ParameterLookup<C, Long, U>) parameterLookup)
                 : createLookupForNonLong(params, paramName, parameterLookup, type);
     }
 
@@ -209,14 +209,14 @@ public abstract class AbstractParameterSerializer<T, C, U> implements ParameterS
     }
 
 
+
     private static interface Lookup<C, U>
     {
         C lookup(U user);
     }
 
-
-
-    // unfortunately needed to get around generics issue. At least I can't get it to work otherwise
+    // This wrapper class unfortunately needed to get around generics issue. At least I can't get it to work otherwise
+    // Otherwise you end up with Optional<? extends Lookup> and calling or on that won't compile
     private class LookupProxy implements Lookup<C, U>
     {
         private final Lookup<C,U> target;

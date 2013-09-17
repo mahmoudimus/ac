@@ -1,7 +1,9 @@
 package com.atlassian.plugin.connect.plugin.module.jira.context.serializer;
 
 import com.atlassian.crowd.embedded.api.User;
+import com.atlassian.jira.bc.ServiceResult;
 import com.atlassian.jira.user.util.UserManager;
+import com.atlassian.plugin.connect.plugin.module.context.AbstractParameterSerializer;
 import com.atlassian.plugin.connect.plugin.module.jira.user.CommonUserLookupJiraImpl;
 
 public abstract class AbstractJiraParameterSerializer<T, C> extends AbstractParameterSerializer<T, C, User>
@@ -45,5 +47,10 @@ public abstract class AbstractJiraParameterSerializer<T, C> extends AbstractPara
         }
     }
 
+    @Override
+    protected boolean isResultValid(C serviceResult)
+    {
+        return !(serviceResult instanceof ServiceResult) || ((ServiceResult)serviceResult).isValid();
 
+    }
 }

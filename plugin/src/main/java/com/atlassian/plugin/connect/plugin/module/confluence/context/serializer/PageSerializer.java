@@ -1,43 +1,54 @@
 package com.atlassian.plugin.connect.plugin.module.confluence.context.serializer;
 
 import com.atlassian.confluence.content.service.PageService;
+import com.atlassian.confluence.content.service.page.PageLocator;
 import com.atlassian.confluence.pages.AbstractPage;
-import com.atlassian.plugin.connect.plugin.module.context.ParameterDeserializer;
-import com.atlassian.plugin.connect.plugin.module.context.ParameterSerializer;
+import com.atlassian.user.User;
 import com.atlassian.user.UserManager;
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 
 import java.util.Map;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 /**
  * Serializes page objects.
  */
-public class PageSerializer implements ParameterSerializer<AbstractPage>, ParameterDeserializer<AbstractPage>
+public class PageSerializer extends AbstractConfluenceParameterSerializer<AbstractPage, PageLocator>
 {
-    private final PageService pageService;
-    private final UserManager userManager;
 
-    public PageSerializer(PageService pageService, UserManager userManager)
+    public static final String PAGE_FIELD_NAME = "page";
+
+    public PageSerializer(final PageService pageService, UserManager userManager)
     {
-
-        this.pageService = checkNotNull(pageService, "pageService is mandatory");
-        this.userManager = checkNotNull(userManager, "userManager is mandatory");
+        super(userManager, PAGE_FIELD_NAME,
+                new ParameterUnwrapper<PageLocator, AbstractPage>()
+                {
+                    @Override
+                    public AbstractPage unwrap(PageLocator wrapped)
+                    {
+                        return wrapped.getPage();
+                    }
+                },
+                new AbstractConfluenceIdParameterLookup<PageLocator>()
+                {
+                    @Override
+                    public PageLocator lookup(User user, Long id)
+                    {
+                        // TODO: The confluence page service does not check permissions. Need to do that somewhere
+                        return pageService.getIdPageLocator(id);
+                    }
+                }
+        );
     }
 
     @Override
     public Map<String, Object> serialize(final AbstractPage page)
     {
-        return ImmutableMap.<String, Object>of("page",
-                ImmutableMap.of("id", page.getId())
-        );
+        return ImmutableMap.<String, Object>of(PAGE_FIELD_NAME, ImmutableMap.of(ID_FIELD_NAME, page.getId()));
     }
 
     @Override
-    public Optional<AbstractPage> deserialize(Map<String, Object> params, String username)
+    protected boolean isResultValid(PageLocator serviceResult)
     {
-        return null;
+        return serviceResult.getPage() != null;
     }
 }
