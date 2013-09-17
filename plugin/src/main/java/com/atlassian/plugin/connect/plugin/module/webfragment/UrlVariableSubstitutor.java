@@ -71,7 +71,8 @@ public class UrlVariableSubstitutor
             String term = m.group(1);
             contextVariables.add(term);
         }
-        return contextVariables;    }
+        return contextVariables;
+    }
 
     /**
      * Parses from the given URL a {@link Map} of name-in-source to context-variable-name.
