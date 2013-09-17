@@ -41,11 +41,8 @@ import static com.google.common.collect.Maps.newHashMap;
 public final class IFrameRendererImpl implements IFrameRenderer
 {
     private final TemplateRenderer templateRenderer;
-    private final WebResourceManager webResourceManager;
-    private final WebResourceUrlProvider webResourceUrlProvider;
     private final DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory;
     private final IFrameHost iframeHost;
-    private final Plugin acPlugin;
     private final LicenseRetriever licenseRetriever;
     private final LocaleHelper localeHelper;
     private final UserPreferencesRetriever userPreferencesRetriever;
@@ -53,23 +50,17 @@ public final class IFrameRendererImpl implements IFrameRenderer
 
     @Autowired
     public IFrameRendererImpl(TemplateRenderer templateRenderer,
-            WebResourceManager webResourceManager,
-            IFrameHost iframeHost,
-            WebResourceUrlProvider webResourceUrlProvider,
-            PluginRetrievalService pluginRetrievalService,
-            DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory,
-            UserPreferencesRetriever userPreferencesRetriever, final LicenseRetriever licenseRetriever,
-            LocaleHelper localeHelper, UserManager userManager)
+                              IFrameHost iframeHost,
+                              DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory,
+                              UserPreferencesRetriever userPreferencesRetriever, final LicenseRetriever licenseRetriever,
+                              LocaleHelper localeHelper, UserManager userManager)
     {
         this.licenseRetriever = licenseRetriever;
         this.localeHelper = localeHelper;
         this.userPreferencesRetriever = checkNotNull(userPreferencesRetriever);
         this.remotablePluginAccessorFactory = checkNotNull(remotablePluginAccessorFactory);
         this.templateRenderer = checkNotNull(templateRenderer);
-        this.webResourceManager = checkNotNull(webResourceManager);
         this.iframeHost = checkNotNull(iframeHost);
-        this.webResourceUrlProvider = checkNotNull(webResourceUrlProvider);
-        this.acPlugin = checkNotNull(pluginRetrievalService).getPlugin();
         this.userManager = userManager;
     }
 
