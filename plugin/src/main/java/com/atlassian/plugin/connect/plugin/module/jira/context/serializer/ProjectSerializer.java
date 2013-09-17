@@ -29,7 +29,7 @@ public class ProjectSerializer extends AbstractJiraParameterSerializer<Project, 
                         return wrapped.getProject();
                     }
                 },
-                new AbstractIdParameterLookup<GetProjectResult>()
+                new AbstractJiraIdParameterLookup<GetProjectResult>()
                 {
                     @Override
                     public GetProjectResult lookup(User user, Long id)
@@ -37,7 +37,7 @@ public class ProjectSerializer extends AbstractJiraParameterSerializer<Project, 
                         return projectService.getProjectById(user, id);
                     }
                 },
-                new AbstractKeyParameterLookup<GetProjectResult>()
+                new AbstractJiraKeyParameterLookup<GetProjectResult>()
                 {
                     @Override
                     public GetProjectResult lookup(User user, String key)

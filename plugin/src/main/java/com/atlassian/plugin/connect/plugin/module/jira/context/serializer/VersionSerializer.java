@@ -29,7 +29,7 @@ public class VersionSerializer extends AbstractJiraParameterSerializer<Version, 
                         return wrapped.getVersion();
                     }
                 },
-                new AbstractIdParameterLookup<VersionResult>()
+                new AbstractJiraIdParameterLookup<VersionResult>()
                 {
                     @Override
                     public VersionResult lookup(User user, Long id)

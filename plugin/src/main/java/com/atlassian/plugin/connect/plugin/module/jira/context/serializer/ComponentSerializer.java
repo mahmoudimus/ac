@@ -20,7 +20,7 @@ public class ComponentSerializer extends AbstractJiraParameterSerializer<Project
     {
         super(userManager, COMPONENT_FIELD_NAME,
                 createNoopUnwrapper(ProjectComponent.class),
-                new AbstractIdParameterLookup<ProjectComponent>()
+                new AbstractJiraIdParameterLookup<ProjectComponent>()
                 {
                     @Override
                     public ProjectComponent lookup(User user, Long id)

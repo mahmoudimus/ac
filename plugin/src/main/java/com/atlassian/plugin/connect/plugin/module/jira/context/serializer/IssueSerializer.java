@@ -29,7 +29,7 @@ public class IssueSerializer extends AbstractJiraParameterSerializer<Issue, Issu
                         return wrapped.getIssue();
                     }
                 },
-                new AbstractIdParameterLookup<IssueResult>()
+                new AbstractJiraIdParameterLookup<IssueResult>()
                 {
                     @Override
                     public IssueResult lookup(User user, Long id)
@@ -37,7 +37,7 @@ public class IssueSerializer extends AbstractJiraParameterSerializer<Issue, Issu
                         return issueService.getIssue(user, id);
                     }
                 },
-                new AbstractKeyParameterLookup<IssueResult>()
+                new AbstractJiraKeyParameterLookup<IssueResult>()
                 {
                     @Override
                     public IssueResult lookup(User user, String key)
