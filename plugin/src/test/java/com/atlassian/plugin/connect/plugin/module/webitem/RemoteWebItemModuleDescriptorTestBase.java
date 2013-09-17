@@ -20,23 +20,51 @@ import org.dom4j.tree.DefaultElement;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
 import java.net.URI;
 
-import static org.hamcrest.CoreMatchers.endsWith;
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.StringEndsWith.endsWith;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.CALLS_REAL_METHODS;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class TestRemoteWebItemModuleDescriptor
+public abstract class RemoteWebItemModuleDescriptorTestBase
 {
+    protected abstract String getExpectedUrl();
+    protected abstract String getInputLinkText(); // as appears in atlassian-plugin.xml
+
+    @Test
+    public void urlHasBeenSet()
+    {
+        assertThat(MyWebItemModuleDescriptorFactory.url, is(not(nullValue())));
+    }
+
+    @Test
+    public void linkTextHasBeenSet()
+    {
+        assertThat(MyWebItemModuleDescriptor.link, is(not(nullValue())));
+    }
+
+    @Test
+    public void urlIsCorrect()
+    {
+        assertThat(MyWebItemModuleDescriptorFactory.url, is(getExpectedUrl()));
+    }
+
+    @Test
+    public void linkTextAndUrlAreConsistent()
+    {
+        assertThat(MyWebItemModuleDescriptorFactory.url, endsWith(MyWebItemModuleDescriptor.link));
+    }
+
     @Mock ModuleFactory moduleFactory;
     @Mock DynamicDescriptorRegistration dynamicDescriptorRegistration;
     @Mock ConditionProcessor conditionProcessor;
@@ -80,36 +108,12 @@ public class TestRemoteWebItemModuleDescriptor
         descriptorElement.addAttribute("key", "module-key");
 
         DefaultElement linkElement = (DefaultElement) descriptorElement.addElement("link");
-        linkElement.setText("my_page_id=${page.id}");
+        linkElement.setText(getInputLinkText());
 
         return descriptorElement;
     }
 
-    @Test
-    public void urlHasBeenSet()
-    {
-        assertThat(MyWebItemModuleDescriptorFactory.url, is(not(nullValue())));
-    }
-
-    @Test
-    public void linkTextHasBeenSet()
-    {
-        assertThat(MyWebItemModuleDescriptor.link, is(not(nullValue())));
-    }
-
-    @Test
-    public void urlIsCorrect()
-    {
-        assertThat(MyWebItemModuleDescriptorFactory.url, is("/plugins/servlet/atlassian-connect/null/module-key?my_page_id=${page.id}"));
-    }
-
-    @Test
-    public void linkTextAndUrlAreConsistent()
-    {
-        assertThat(MyWebItemModuleDescriptorFactory.url, endsWith(MyWebItemModuleDescriptor.link));
-    }
-
-    private static abstract class MyWebItemModuleDescriptor implements WebItemModuleDescriptor
+    protected static abstract class MyWebItemModuleDescriptor implements WebItemModuleDescriptor
     {
         static String link = null;
 
@@ -130,7 +134,7 @@ public class TestRemoteWebItemModuleDescriptor
         }
     }
 
-    private static class MyWebItemModuleDescriptorFactory implements WebItemModuleDescriptorFactory
+    protected static class MyWebItemModuleDescriptorFactory implements WebItemModuleDescriptorFactory
     {
         static String url = null;
 
