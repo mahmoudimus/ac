@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.module.webfragment;
 
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.httpclient.util.URIUtil;
@@ -33,7 +34,9 @@ public class UrlVariableSubstitutor
 {
     private static final Logger log = LoggerFactory.getLogger(UrlVariableSubstitutor.class);
 
-    private static final Pattern PATTERN = Pattern.compile("\\$\\{([^}]*)}");
+    public static final String PLACEHOLDER_PATTERN_STRING = "\\$\\{([^}]*)}";
+    private static final Pattern PLACEHOLDER_PATTERN = Pattern.compile(PLACEHOLDER_PATTERN_STRING);
+    private static final Pattern VARIABLE_EQUALS_PLACEHOLDER_PATTERN = Pattern.compile("([^}&?]+)=(" + PLACEHOLDER_PATTERN_STRING + ")");
 
     /**
      * Replaces all variables in the given source with values from the given context.
@@ -43,7 +46,7 @@ public class UrlVariableSubstitutor
      */
     public String replace(String source, Map<String, Object> context)
     {
-        Matcher m = PATTERN.matcher(source);
+        Matcher m = PLACEHOLDER_PATTERN.matcher(source);
         StringBuffer sb = new StringBuffer();
         while (m.find())
         {
@@ -62,11 +65,26 @@ public class UrlVariableSubstitutor
     public Set<String> getContextVariables(final String source)
     {
         Set<String> contextVariables = Sets.newHashSet();
-        Matcher m = PATTERN.matcher(source);
+        Matcher m = PLACEHOLDER_PATTERN.matcher(source);
         while (m.find())
         {
             String term = m.group(1);
             contextVariables.add(term);
+        }
+        return contextVariables;    }
+
+    /**
+     * Parses from the given URL a {@link Map} of name-in-source to context-variable-name.
+     * @param source string containing variables (e.g. "http://server:80/path?my_page_id=${page.id}" or "my_page_id=${page.id}")
+     * @return {@link Map} of name-in-source to context-variable-name (e.g. "my_page_id" => "page.id")
+     */
+    public Map<String, String> getContextVariableMap(final String source)
+    {
+        Map<String, String> contextVariables = Maps.newHashMap();
+        Matcher m = VARIABLE_EQUALS_PLACEHOLDER_PATTERN.matcher(source);
+        while (m.find())
+        {
+            contextVariables.put(m.group(1), m.group(2));
         }
         return contextVariables;
     }

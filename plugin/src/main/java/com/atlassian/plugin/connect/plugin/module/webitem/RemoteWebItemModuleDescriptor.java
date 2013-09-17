@@ -74,7 +74,7 @@ public class RemoteWebItemModuleDescriptor extends AbstractModuleDescriptor<Void
         Element desc = descriptor.createCopy();
 
         final WebItemCreator.Builder webItemBuilder = webItemCreator.newBuilder();
-        webItemBuilder.setContextParams(urlVariableSubstitutor.getContextVariables(url));
+        webItemBuilder.setContextParams(urlVariableSubstitutor.getContextVariableMap(url));
         createIcon(desc);
 
         if (isAbsolute())

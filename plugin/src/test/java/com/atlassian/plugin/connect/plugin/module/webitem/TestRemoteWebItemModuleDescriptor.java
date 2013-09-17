@@ -28,6 +28,7 @@ import org.osgi.framework.ServiceReference;
 
 import java.net.URI;
 
+import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.any;
@@ -45,8 +46,6 @@ public class TestRemoteWebItemModuleDescriptor
     @Mock UrlValidator urlValidator;
     @Mock RemotablePluginAccessorFactory pluginAccessorFactory;
 
-    RemoteWebItemModuleDescriptor descriptor;
-
     @Before
     public void before()
     {
@@ -57,7 +56,7 @@ public class TestRemoteWebItemModuleDescriptor
         IFrameRendererImpl iFrameRenderer = null;
         UrlVariableSubstitutor urlVariableSubstitutor = new UrlVariableSubstitutor();
         RemotePageDescriptorCreator remotePageDescriptorCreator = new RemotePageDescriptorCreator(bundleContext, userManager, webItemCreator, iFrameRenderer, productAccessor, urlValidator, urlVariableSubstitutor);
-        descriptor = new RemoteWebItemModuleDescriptor(moduleFactory, dynamicDescriptorRegistration, remotePageDescriptorCreator,
+        RemoteWebItemModuleDescriptor descriptor = new RemoteWebItemModuleDescriptor(moduleFactory, dynamicDescriptorRegistration, remotePageDescriptorCreator,
                 urlValidator, conditionProcessor, webItemCreator, urlVariableSubstitutor, pluginAccessorFactory);
         RemotablePluginAccessor remotablePluginAccessor = mock(RemotablePluginAccessor.class);
         when(remotablePluginAccessor.getDisplayUrl()).thenReturn(URI.create("mock"));
@@ -101,13 +100,13 @@ public class TestRemoteWebItemModuleDescriptor
     @Test
     public void urlIsCorrect()
     {
-        assertThat(MyWebItemModuleDescriptorFactory.url, is("/plugins/servlet/atlassian-connect/null/module-key?my_page_id=1234"));
+        assertThat(MyWebItemModuleDescriptorFactory.url, is("/plugins/servlet/atlassian-connect/null/module-key?my_page_id=${page.id}"));
     }
 
     @Test
-    public void linkTestIsConsistent()
+    public void linkTextAndUrlAreConsistent()
     {
-        assertThat(MyWebItemModuleDescriptor.link, is(MyWebItemModuleDescriptorFactory.url));
+        assertThat(MyWebItemModuleDescriptorFactory.url, endsWith(MyWebItemModuleDescriptor.link));
     }
 
     private static abstract class MyWebItemModuleDescriptor implements WebItemModuleDescriptor
@@ -126,7 +125,7 @@ public class TestRemoteWebItemModuleDescriptor
                     throw new RuntimeException("MyWebItemModuleDescriptor.link should be set to exactly one value");
                 }
 
-                MyWebItemModuleDescriptor.link = element.getStringValue();
+                MyWebItemModuleDescriptor.link = link.getStringValue();
             }
         }
     }
