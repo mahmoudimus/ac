@@ -93,7 +93,7 @@ public final class JiraProductAccessor implements ProductAccessor
         String prefFormat = userPrefs.getString(PreferenceKeys.USER_NOTIFICATIONS_MIMETYPE);
 
         // Default to text if the property is not configured.
-        if (!"html".equalsIgnoreCase(prefFormat))
+        if ("html".equalsIgnoreCase(prefFormat))
         {
             email.setMimeType("text/html");
             email.setBody(bodyAsHtml);
