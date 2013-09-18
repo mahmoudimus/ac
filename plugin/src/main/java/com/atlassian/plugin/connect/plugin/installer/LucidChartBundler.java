@@ -3,13 +3,17 @@ package com.atlassian.plugin.connect.plugin.installer;
 import com.atlassian.event.api.EventListener;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.plugin.*;
+import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
 import com.atlassian.plugin.connect.plugin.util.zip.ZipBuilder;
 import com.atlassian.plugin.connect.plugin.util.zip.ZipHandler;
+import com.atlassian.plugin.event.events.PluginDisabledEvent;
 import com.atlassian.plugin.event.events.PluginEnabledEvent;
+import com.atlassian.plugin.event.events.PluginUninstalledEvent;
 import com.atlassian.plugin.util.ClassLoaderUtils;
 import com.atlassian.sal.api.ApplicationProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -17,7 +21,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 
 @Component
-public final class LucidChartBundler implements InitializingBean
+public final class LucidChartBundler implements InitializingBean, DisposableBean
 {
     private static final String LUCIDCHART_KEY = "lucidchart-app";
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -42,10 +46,16 @@ public final class LucidChartBundler implements InitializingBean
         eventPublisher.register(this);
     }
 
+    @Override
+    public void destroy() throws Exception
+    {
+        eventPublisher.unregister(this);
+    }
+    
     @EventListener
     public void onPluginEnabled(PluginEnabledEvent e)
     {
-        if(!"com.atlassian.plugins.atlassian-connect-plugin".equals(e.getPlugin().getKey()))
+        if(!ConnectPluginInfo.getPluginKey().equals(e.getPlugin().getKey()))
         {
             return;
         }
@@ -53,13 +63,6 @@ public final class LucidChartBundler implements InitializingBean
         if(!applicationProperties.getDisplayName().equalsIgnoreCase("Confluence"))
         {
             return;
-        }
-
-        Plugin oldLucid = pluginAccessor.getPlugin(LUCIDCHART_KEY);
-        if(null != oldLucid)
-        {
-            pluginController.uninstall(oldLucid);
-            logger.debug("uninstalled old lucid charts");
         }
 
         pluginController.installPlugins(getArtifact());
@@ -77,4 +80,5 @@ public final class LucidChartBundler implements InitializingBean
             }
         }));
     }
+
 }

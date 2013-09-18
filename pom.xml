@@ -293,7 +293,13 @@
                 <version>${atlassian.upm.version}</version>
                 <scope>provided</scope>
             </dependency>
-            <!-- the lib is here just for debugging -->
+            <!-- the upm is here just for debugging -->
+            <dependency>
+                <groupId>com.atlassian.upm</groupId>
+                <artifactId>atlassian-universal-plugin-manager-plugin</artifactId>
+                <version>${atlassian.upm.version}</version>
+                <scope>provided</scope>
+            </dependency>
             <dependency>
                 <groupId>com.atlassian.upm</groupId>
                 <artifactId>licensing-lib</artifactId>
