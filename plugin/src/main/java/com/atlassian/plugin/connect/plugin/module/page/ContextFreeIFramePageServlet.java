@@ -1,22 +1,20 @@
 package com.atlassian.plugin.connect.plugin.module.page;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Collections;
-import java.util.Map;
+import com.atlassian.plugin.connect.spi.module.IFrameContext;
+import com.atlassian.plugin.connect.spi.module.IFrameParams;
+import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
+import com.atlassian.plugin.web.conditions.AlwaysDisplayCondition;
+import com.atlassian.sal.api.user.UserManager;
+import com.google.common.collect.Maps;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.atlassian.plugin.connect.plugin.module.IFrameRendererImpl;
-import com.atlassian.plugin.connect.spi.module.IFrameContext;
-import com.atlassian.plugin.connect.spi.module.IFrameParams;
-import com.atlassian.plugin.web.conditions.AlwaysDisplayCondition;
-import com.atlassian.sal.api.user.UserManager;
-
-import com.google.common.collect.Maps;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Collections;
+import java.util.Map;
 
 /**
  * A servlet that loads its content from a remote plugin's iframe.
@@ -24,9 +22,9 @@ import com.google.common.collect.Maps;
 public class ContextFreeIFramePageServlet extends HttpServlet
 {
     private final UserManager userManager;
-    private final IFrameRendererImpl iFrameRenderer;
+    private final IFrameRenderer iFrameRenderer;
 
-    public ContextFreeIFramePageServlet(IFrameRendererImpl iFrameRenderer,
+    public ContextFreeIFramePageServlet(IFrameRenderer iFrameRenderer,
                                         UserManager userManager)
     {
         this.iFrameRenderer = iFrameRenderer;
