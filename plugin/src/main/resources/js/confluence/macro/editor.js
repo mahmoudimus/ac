@@ -46,7 +46,9 @@ _AP.define("confluence/macro/editor", ["_dollar", "dialog/simple"], function($, 
                     macro: {
                         name: macroData.name,
                         params: updatedParameters,
-                        body: macroData.body ? macroData.body : "<p>&nbsp;</p>"
+                        // AC-741: MacroUtils clients in Confluence core set a non-existent macro body to the empty string.
+                        // In the absence of a public API, let's do the same to minimize the chance of breakage in the future.
+                        body: macroData.body ? macroData.body : ""
                     }
                 };
                 tinymce.confluence.MacroUtils.insertMacro(macroRenderRequest);
