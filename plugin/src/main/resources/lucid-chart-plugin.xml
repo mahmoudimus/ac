@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <atlassian-plugin key="lucidchart-app" name="Lucidchart" plugins-version="2">
     <plugin-info>
         <description>Create Lucidchart diagrams and add them to Confluence</description>
-        <version>1.7.1-connect</version>
+        <version>1.7.2-connect</version>
         <vendor name="Lucidchart" url="https://www.lucidchart.com"/>
         <permissions>
             <permission>read_users_and_groups</permission>
@@ -27,7 +28,7 @@
             </public-key>
         </oauth>
     </remote-plugin-container>
-    <general-page section="system.content.action/secondary" key="lucidAppGeneral" link-name="Insert Lucidchart Diagram" name="Select or create a diagram" url="/doclist" width="1200" height="800">
+    <general-page section="system.content.action/secondary" key="lucidAppGeneral" link-name="Insert Lucidchart Diagram" name="Select or create a diagram" url="/doclist?page_id=${page.id}" width="1200" height="800">
         <description>Insert or Create a Lucidchart Diagram</description>
     </general-page>
     <general-page section="hidden" key="lucidAppRemove" name="Remove Lucidchart Diagram" url="/remove" width="1200" height="800">
@@ -35,7 +36,6 @@
     <general-page section="hidden" key="lucidAppAccessDenied" name="Access Denied to Lucidchart Diagram" url="/accessDenied" width="1200" height="800">
     </general-page>
 
-    <webhook key="remote_app_started" event="remote_plugin_installed" url="/remoteAppStarted"/>
     <webhook key="remote_plugin_enabled" event="remote_plugin_enabled" url="/remotePluginEnabled"/>
 
     <configure-page section="system.admin/configuration" key="lucidAppAdmin" name="Configure Lucidchart Plugin" url="/admin" width="1200" height="800">
@@ -43,15 +43,15 @@
 
     <remote-macro key="lucidchart" url="/macro" output-type="block" body-type="none">
         <description>Create a Lucidchart Diagram</description>
-        <category name="development"/>
+        <category name="development" />
         <image-placeholder url="/imagePlaceHolder" width="140" height="140" apply-chrome="true"/>
         <parameters>
             <parameter name="width" title="Width" type="string" default="700"/>
-            <parameter name="height" title="Height" type="string"/>
+            <parameter name="height" title="Height" type="string" />
             <parameter name="align" title="Alignment" type="enum" default="Left">
                 <value name="Left"/>
-                <value name="Right"/>
-                <value name="Center"/>
+                <value name="Right" />
+                <value name="Center" />
             </parameter>
             <!--  <parameter name="auto-update" type="boolean" default="true"/> -->
         </parameters>

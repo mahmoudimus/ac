@@ -30,6 +30,12 @@
         <url-pattern>/bigpipe/request/*</url-pattern>
     </servlet-filter>
 
+    <servlet-filter key="servlet-context-thread-local-filter" name="Servlet Context Thread Local Filter"
+                    class="com.atlassian.core.filters.ServletContextThreadLocalFilter"
+                    location="before-login" weight="100">
+        <url-pattern>*</url-pattern>
+    </servlet-filter>
+
     <servlet key="remotablePlugins2LORedirectingServlet"
              name="Remotable Plugins 2-Legged OAuth Signing and Redirecting Servlet"
              class="com.atlassian.plugin.connect.plugin.module.util.redirect.RedirectServlet">

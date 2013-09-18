@@ -346,7 +346,7 @@ public final class DescriptorValidator
 
     private String getXslStyleSheetUrl()
     {
-        return webResourceManager.getStaticPluginResource(ConnectPluginInfo.PLUGIN_KEY + ":schema-xsl", "xs3p.xsl", UrlMode.ABSOLUTE);
+        return webResourceManager.getStaticPluginResource(ConnectPluginInfo.getPluginKey() + ":schema-xsl", "xs3p.xsl", UrlMode.ABSOLUTE);
     }
 
     private void processIncludes(Document doc, Set<String> includedDocIds)

@@ -52,12 +52,15 @@ public final class PageMacro extends AbstractRemoteMacro
                     remotablePluginAccessorFactory.get(remoteMacroInfo.getPluginKey()));
 
             UserKey userKey = userManager.getRemoteUserKey();
+            IFrameContextImpl iframeContextImpl = new IFrameContextImpl(iframeContext, "-" + counter);
+            Map<String, String[]> queryParams = convertParams(macroInstance.getUrlParameters(userManager.getRemoteUsername(), userKey == null ? "" : userKey.getStringValue()));
 
-            return iFrameRenderer.render(
-                     new IFrameContextImpl(iframeContext, "-" + counter),
-                     "",
-                     convertParams(macroInstance.getUrlParameters(userManager.getRemoteUsername(), userKey == null ? "" : userKey.getStringValue())),
-                     remoteUser);
+            if (getOutputType().equals(OutputType.INLINE)){
+                return iFrameRenderer.renderInline(iframeContextImpl, "", queryParams, remoteUser);
+
+            } else {
+                return iFrameRenderer.render(iframeContextImpl, "", queryParams, remoteUser);
+            }
 
         } catch (IOException e)
         {

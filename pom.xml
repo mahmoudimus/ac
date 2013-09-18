@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.atlassian.plugins</groupId>
     <artifactId>atlassian-connect-parent</artifactId>
-    <version>1.0-m10-SNAPSHOT</version>
+    <version>1.0-m13-SNAPSHOT</version>
 
     <organization>
         <name>Atlassian</name>
@@ -299,7 +299,13 @@
                 <version>${atlassian.upm.version}</version>
                 <scope>provided</scope>
             </dependency>
-            <!-- the lib is here just for debugging -->
+            <!-- the upm is here just for debugging -->
+            <dependency>
+                <groupId>com.atlassian.upm</groupId>
+                <artifactId>atlassian-universal-plugin-manager-plugin</artifactId>
+                <version>${atlassian.upm.version}</version>
+                <scope>provided</scope>
+            </dependency>
             <dependency>
                 <groupId>com.atlassian.upm</groupId>
                 <artifactId>licensing-lib</artifactId>
@@ -481,14 +487,14 @@
 
     <properties>
         <!-- VERSIONS -->
-        <amps.version>4.2.3</amps.version>
+        <amps.version>4.2.7</amps.version>
         <atlassian.applinks.version>4.0.2</atlassian.applinks.version>
-        <atlassian.confluence.version>5.2-OD-14-1</atlassian.confluence.version>
+        <atlassian.confluence.version>5.3-OD-6</atlassian.confluence.version>
         <atlassian.fugue.version>1.1</atlassian.fugue.version>
         <atlassian.httpclient.version>${atlassian.webhooks.version}</atlassian.httpclient.version>
         <atlassian.httpclient.api.version>${atlassian.webhooks.api.version}</atlassian.httpclient.api.version>
-        <atlassian.jira.version>6.1-OD-05-1</atlassian.jira.version>
-        <atlassian.jira.modules.version>6.0.2</atlassian.jira.modules.version>
+        <atlassian.jira.version>6.1-OD-06-1</atlassian.jira.version>
+        <atlassian.jira.modules.version>6.1.5</atlassian.jira.modules.version>
         <atlassian.jira.rest.version>${atlassian.jira.modules.version}</atlassian.jira.rest.version>
         <atlassian.jira.webhooks.version>1.2.3</atlassian.jira.webhooks.version>
         <atlassian.mail.version>2.4.1</atlassian.mail.version>
@@ -499,7 +505,7 @@
         <atlassian.sal.version>2.10.0</atlassian.sal.version>
         <atlassian.selenium.version>2.1.0-m12</atlassian.selenium.version>
         <atlassian.templaterenderer.version>1.4.2.2</atlassian.templaterenderer.version>
-        <atlassian.upm.version>2.13</atlassian.upm.version>
+        <atlassian.upm.version>2.13.2</atlassian.upm.version>
         <atlassian.uri.version>0.1</atlassian.uri.version>
         <atlassian-util-concurrent.version>2.4.0</atlassian-util-concurrent.version>
         <atlassian.webhooks.version>0.16.7</atlassian.webhooks.version>
