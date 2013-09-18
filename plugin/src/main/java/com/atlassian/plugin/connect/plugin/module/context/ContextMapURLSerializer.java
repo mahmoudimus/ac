@@ -37,6 +37,7 @@ public class ContextMapURLSerializer
         for (ContextMapParameterExtractor extractor : contextMapParameterExtractors)
         {
             Optional<Object> option = extractor.extract(context);
+            // TODO: The extractor.hasViewPermission is unnecessary here. Remove
             if (option.isPresent() && extractor.hasViewPermission(username, option.get()))
             {
                 whiteListedContext.putAll(extractor.serializer().serialize(option.get()));

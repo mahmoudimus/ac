@@ -1,8 +1,8 @@
 package com.atlassian.plugin.connect.plugin.module.page;
 
-import java.util.Map;
-
 import com.atlassian.plugin.web.Condition;
+
+import java.util.Map;
 
 public class PageInfo
 {

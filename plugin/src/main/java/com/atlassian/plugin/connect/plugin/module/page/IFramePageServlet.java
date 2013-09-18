@@ -1,20 +1,19 @@
 package com.atlassian.plugin.connect.plugin.module.page;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Map;
-import java.util.Set;
+import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
+import com.atlassian.plugin.connect.spi.module.IFrameContext;
+import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
+import com.atlassian.sal.api.user.UserManager;
+import com.google.common.collect.ImmutableMap;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.atlassian.plugin.connect.plugin.module.IFrameRendererImpl;
-import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
-import com.atlassian.plugin.connect.spi.module.IFrameContext;
-import com.atlassian.sal.api.user.UserManager;
-import com.google.common.collect.ImmutableMap;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * A servlet that loads its content from a remote plugin's iframe
@@ -25,10 +24,10 @@ public class IFramePageServlet extends HttpServlet
     private final UrlVariableSubstitutor urlVariableSubstitutor;
     private final PageInfo pageInfo;
     private final IFrameContext iframeContext;
-    private final IFrameRendererImpl iFrameRenderer;
+    private final IFrameRenderer iFrameRenderer;
 
     public IFramePageServlet(PageInfo pageInfo,
-            IFrameRendererImpl iFrameRenderer,
+            IFrameRenderer iFrameRenderer,
             IFrameContext iframeContext,
             UserManager userManager,
             UrlVariableSubstitutor urlVariableSubstitutor)

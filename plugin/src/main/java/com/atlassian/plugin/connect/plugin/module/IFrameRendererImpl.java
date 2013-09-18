@@ -70,6 +70,7 @@ public final class IFrameRendererImpl implements IFrameRenderer
         return render(iframeContext, "", Collections.<String, String[]>emptyMap(), remoteUser);
     }
 
+    @Override
     public void renderPage(IFrameContext iframeContext, PageInfo pageInfo, String extraPath, Map<String, String[]> queryParams, String remoteUser, Writer writer) throws IOException
     {
         try
