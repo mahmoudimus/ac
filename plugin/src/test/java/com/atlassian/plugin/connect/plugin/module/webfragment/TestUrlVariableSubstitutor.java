@@ -28,13 +28,4 @@ public class TestUrlVariableSubstitutor
         expected.put("thing", "${stuff}");
         assertThat(new UrlVariableSubstitutor().getContextVariableMap("http://server:80/path?my_page_id=${page.id}&thing=${stuff}"), is(expected));
     }
-
-    @Test
-    public void testGetContextVariables()
-    {
-        Set<String> expected = new HashSet<String>(2);
-        expected.add("page.id");
-        expected.add("stuff");
-        assertThat(new UrlVariableSubstitutor().getContextVariables("http://server:80/path?my_page_id=${page.id}&thing=${stuff}"), is(expected));
-    }
 }

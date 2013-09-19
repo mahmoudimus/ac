@@ -14,6 +14,6 @@ public class TestRelativeRemoteWebItemModuleDescriptor extends RemoteWebItemModu
 
     protected String getExpectedUrl()
     {
-        return "/plugins/servlet/atlassian-connect/null/module-key?my_page_id=${page.id}";
+        return "/plugins/servlet/atlassian-connect/null/module-key?" + getInputLinkText();
     }
 }

@@ -34,7 +34,7 @@ import static org.apache.commons.lang.Validate.notNull;
  * into the build() method
  */
 @Component
-public final class WebItemCreator
+    public final class WebItemCreator
 {
     private final ConditionProcessor conditionProcessor;
     private final WebItemModuleDescriptorFactory webItemModuleDescriptorFactory;
@@ -180,20 +180,15 @@ public final class WebItemCreator
             return this;
         }
 
+        public Map<String, String> getContextParams()
+        {
+            return contextParams;
+        }
+
         public Builder setContextParams(Map<String, String> contextParams)
         {
             this.contextParams = contextParams;
             return this;
-        }
-
-        public Builder setContextParams(Set<String> contextParams)
-        {
-            ImmutableMap.Builder<String, String> mapBuilder = ImmutableMap.builder();
-            for (String param : contextParams)
-            {
-                mapBuilder.put(param, String.format("${%s}", param));
-            }
-            return setContextParams(mapBuilder.build());
         }
 
         public Builder setPreferredWeight(int preferredWeight)

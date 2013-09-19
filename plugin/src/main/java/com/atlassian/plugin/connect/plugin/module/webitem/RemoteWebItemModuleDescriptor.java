@@ -89,7 +89,7 @@ public class RemoteWebItemModuleDescriptor extends AbstractModuleDescriptor<Void
             RemotePageDescriptorCreator.Builder containerPageBuilder = remotePageDescriptorCreator.newBuilder();
             decorateWebItem(desc, containerPageBuilder);
 
-            DescriptorToRegister servletDescriptor = containerPageBuilder.createServletDescriptor(plugin, desc, moduleKey, url, localUrl);
+            DescriptorToRegister servletDescriptor = containerPageBuilder.createServletDescriptor(plugin, desc, moduleKey, url, localUrl, webItemBuilder.getContextParams());
             DescriptorToRegister webItemModuleDescriptor = new DescriptorToRegister(webItemBuilder.build(plugin, moduleKey, localUrl, desc));
 
             this.registration = dynamicDescriptorRegistration.registerDescriptors(

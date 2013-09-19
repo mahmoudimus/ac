@@ -1,9 +1,9 @@
 package com.atlassian.plugin.connect.plugin.module.webfragment;
 
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.httpclient.util.URIUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -55,23 +55,40 @@ public class UrlVariableSubstitutor
             m.appendReplacement(sb, encodeQuery(value));
         }
         m.appendTail(sb);
+
+        System.err.println("#### " + getClass().getSimpleName() + ": '" + source + "' -> '" + sb.toString() + "'");
+        System.err.println("     Context:");
+        System.err.println(contextToString(context, "     "));
+
         return sb.toString();
     }
 
-    /**
-     * Returns a set of variables which are expected to be in the URL.
-     * @param source string containing variables.
-     */
-    public Set<String> getContextVariables(final String source)
+    private String contextToString(Map<String, Object> context, String linePrefix)
     {
-        Set<String> contextVariables = Sets.newHashSet();
-        Matcher m = PLACEHOLDER_PATTERN.matcher(source);
-        while (m.find())
+        StringBuilder sb = new StringBuilder();
+
+        for (Map.Entry<String, Object> entry : context.entrySet())
         {
-            String term = m.group(1);
-            contextVariables.add(term);
+            sb.append(linePrefix).append("'").append(entry.getKey()).append("' -> ");
+
+            if (entry.getValue() instanceof Map)
+            {
+                sb.append('\n');
+                sb.append(contextToString((Map<String, Object>)entry.getValue(), linePrefix + StringUtils.repeat(' ', entry.getKey().length() + 6)));
+            }
+            else if (entry.getValue() instanceof String[])
+            {
+                sb.append("[").append(StringUtils.join((String[])entry.getValue(), ',')).append("]");
+            }
+            else
+            {
+                sb.append("'").append(entry.getValue().toString()).append("'");
+            }
+
+            sb.append('\n');
         }
-        return contextVariables;
+
+        return sb.toString();
     }
 
     /**

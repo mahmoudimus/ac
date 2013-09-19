@@ -285,7 +285,8 @@ public class MacroModuleDescriptorCreator
                     return (T) new IFramePageServlet(
                             pageInfo,
                             iFrameRenderer,
-                            new IFrameContextImpl(plugin.getKey(), path, moduleKey, params), userManager, urlVariableSubstitutor
+                            new IFrameContextImpl(plugin.getKey(), path, moduleKey, params), userManager, urlVariableSubstitutor,
+                            webItemCreatorBuilder.getContextParams()
                     );
                 }
             }, getService(bundleContext, ServletModuleManager.class));
