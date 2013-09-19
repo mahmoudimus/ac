@@ -24,16 +24,6 @@
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
-                <xs:attribute name="installation-mode" type="InstallationModeType" use="optional">
-                    <xs:annotation>
-                        <xs:documentation>
-                            The installation mode type for which this permission is applicable. If the current
-                            installation mode for the plugin is different, the permission is ignored. This is very
-                            useful for using local-only modules such as 'macro' or 'customfield-type' that require the
-                            'execute_java' permission.
-                        </xs:documentation>
-                    </xs:annotation>
-                </xs:attribute>
             </xs:extension>
         </xs:simpleContent>
     </xs:complexType>

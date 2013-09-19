@@ -41,26 +41,6 @@
         </xs:restriction>
     </xs:simpleType>
 
-    <xs:simpleType name="InstallationModeType">
-        <xs:restriction base="xs:string">
-            <xs:enumeration value="local">
-                <xs:annotation>
-                    <xs:documentation>
-                        When a plugin's jar containing executable code is installed into the application's process
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:enumeration>
-            <xs:enumeration value="remote">
-                <xs:annotation>
-                    <xs:documentation>
-                        When a plugin's descriptor is installed into the application, but the plugin's code is running
-                        in a remote container
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:enumeration>
-        </xs:restriction>
-    </xs:simpleType>
-
     <xs:simpleType name="ApplicationVersionRangeType">
         <xs:annotation>
             <xs:documentation><![CDATA[
@@ -118,13 +98,6 @@
             <xs:annotation>
                 <xs:documentation>
                     The type of application to which this module is restricted.  Any other application will ignore it.
-                </xs:documentation>
-            </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="mode" use="optional" type="InstallationModeType">
-            <xs:annotation>
-                <xs:documentation>
-                    Which plugin installation mode this is applicable to
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
