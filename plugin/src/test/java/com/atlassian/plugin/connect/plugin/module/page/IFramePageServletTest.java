@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.module.page;
 
+import com.atlassian.plugin.connect.plugin.module.context.ContextMapURLSerializer;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.spi.module.IFrameContext;
 import com.atlassian.plugin.connect.spi.module.IFrameParams;
@@ -55,6 +56,9 @@ public class IFramePageServletTest
     @Mock
     private IFrameParams iFrameParams;
 
+    @Mock
+    private ContextMapURLSerializer contextMapURLSerializer;
+
     @Test
     public void shouldSubstituteVariablesAndCallRender() throws ServletException, IOException
     {
@@ -81,7 +85,9 @@ public class IFramePageServletTest
         when(urlVariableSubstitutor.replace(iFramePathTemplate, params)).thenReturn(iFramePath);
         when(urlVariableSubstitutor.getContextVariables(iFramePathTemplate)).thenReturn(ImmutableSet.of("blah.id", "user.address.street"));
 
-        final IFramePageServlet servlet = new IFramePageServlet(pageInfo, iFrameRenderer, iFrameContext, userManager, urlVariableSubstitutor);
+        final IFramePageServlet servlet = new IFramePageServlet(pageInfo, iFrameRenderer, iFrameContext, userManager,
+                urlVariableSubstitutor, contextMapURLSerializer
+        );
         servlet.doGet(req, resp);
 
         Map<String, String[]> contextParams = ImmutableMap.of("notInUrlTemplate", anotherParamValue);

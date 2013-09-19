@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.module.page;
 
+import com.atlassian.plugin.connect.plugin.module.context.ContextMapURLSerializer;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlTemplateInstance;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.spi.module.IFrameContext;
@@ -20,6 +21,7 @@ public class IFramePageServlet extends HttpServlet
 {
     private final UserManager userManager;
     private final UrlVariableSubstitutor urlVariableSubstitutor;
+    private final ContextMapURLSerializer contextMapURLSerializer;
     private final PageInfo pageInfo;
     private final IFrameContext iframeContext;
     private final IFrameRenderer iFrameRenderer;
@@ -28,13 +30,15 @@ public class IFramePageServlet extends HttpServlet
             IFrameRenderer iFrameRenderer,
             IFrameContext iframeContext,
             UserManager userManager,
-            UrlVariableSubstitutor urlVariableSubstitutor)
+            UrlVariableSubstitutor urlVariableSubstitutor,
+            ContextMapURLSerializer contextMapURLSerializer)
     {
         this.iframeContext = iframeContext;
         this.iFrameRenderer = iFrameRenderer;
         this.pageInfo = pageInfo;
         this.userManager = userManager;
         this.urlVariableSubstitutor = urlVariableSubstitutor;
+        this.contextMapURLSerializer = contextMapURLSerializer;
     }
 
     @Override
@@ -45,7 +49,7 @@ public class IFramePageServlet extends HttpServlet
         resp.setContentType("text/html");
 
         final UrlTemplateInstance urlTemplateInstance = new UrlTemplateInstance(iframeContext.getIframePath(),
-                req.getParameterMap(), urlVariableSubstitutor);
+                req.getParameterMap(), urlVariableSubstitutor, contextMapURLSerializer, null);
 
         iFrameRenderer.renderPage(
                 new IFrameContextImpl(iframeContext.getPluginKey(), urlTemplateInstance.getUrlString(),

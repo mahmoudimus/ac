@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.module.webfragment;
 
+import com.atlassian.plugin.connect.plugin.module.context.ContextMapURLSerializer;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
@@ -14,14 +15,18 @@ public class UrlTemplateInstance
     private final Map<String, Object> context;
     private final Map<String, String[]> contextAsStringArr;
     private final UrlVariableSubstitutor urlVariableSubstitutor;
+    private final ContextMapURLSerializer contextMapURLSerializer;
 
-    public UrlTemplateInstance(String urlTemplate, Map<String, Object> context, UrlVariableSubstitutor urlVariableSubstitutor)
+    public UrlTemplateInstance(String urlTemplate, Map<String, Object> context,
+                               UrlVariableSubstitutor urlVariableSubstitutor,
+                               ContextMapURLSerializer contextMapURLSerializer, String username)
     {
         this.urlTemplate = urlTemplate;
-        this.context = context;
+        this.context = contextMapURLSerializer.getAuthenticatedAddonParameters(context, username);
         this.urlVariableSubstitutor = urlVariableSubstitutor;
+        this.contextMapURLSerializer = contextMapURLSerializer;
         // damn generics
-        this.contextAsStringArr = Maps.transformValues(context, new Function<Object, String[]>()
+        this.contextAsStringArr = Maps.transformValues(this.context, new Function<Object, String[]>()
         {
             @Override
             public String[] apply(@Nullable Object input)
@@ -29,7 +34,6 @@ public class UrlTemplateInstance
                 return (String[]) input;
             }
         });
-
     }
 
     public String getUrlTemplate()

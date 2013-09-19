@@ -6,6 +6,7 @@ import java.util.Map;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
+import com.atlassian.plugin.connect.plugin.module.context.ContextMapURLSerializer;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlValidator;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.module.ModuleFactory;
@@ -48,13 +49,15 @@ public final class RemotePageDescriptorCreator
     private final IFrameRendererImpl iFrameRenderer;
     private final ProductAccessor productAccessor;
     private final UrlVariableSubstitutor urlVariableSubstitutor;
+    private ContextMapURLSerializer contextMapURLSerializer;
 
     @Autowired
     public RemotePageDescriptorCreator(
             BundleContext bundleContext, UserManager userManager,
             WebItemCreator webItemCreator, IFrameRendererImpl iFrameRenderer,
             ProductAccessor productAccessor, UrlValidator urlValidator,
-            UrlVariableSubstitutor urlVariableSubstitutor)
+            UrlVariableSubstitutor urlVariableSubstitutor,
+            ContextMapURLSerializer contextMapURLSerializer)
     {
         this.bundleContext = bundleContext;
         this.userManager = userManager;
@@ -62,6 +65,7 @@ public final class RemotePageDescriptorCreator
         this.iFrameRenderer = iFrameRenderer;
         this.productAccessor = productAccessor;
         this.urlVariableSubstitutor = urlVariableSubstitutor;
+        this.contextMapURLSerializer = contextMapURLSerializer;
     }
 
     public Builder newBuilder()
@@ -132,7 +136,8 @@ public final class RemotePageDescriptorCreator
                     return (T) new IFramePageServlet(
                             pageInfo,
                             iFrameRenderer,
-                            new IFrameContextImpl(plugin.getKey(), path, moduleKey, params), userManager, urlVariableSubstitutor
+                            new IFrameContextImpl(plugin.getKey(), path, moduleKey, params), userManager,
+                            urlVariableSubstitutor, contextMapURLSerializer
                     );
                 }
             }, getService(bundleContext, ServletModuleManager.class));
