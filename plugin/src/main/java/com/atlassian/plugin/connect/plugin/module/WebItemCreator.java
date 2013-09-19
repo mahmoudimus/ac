@@ -79,7 +79,7 @@ public final class WebItemCreator
                     getRequiredAttribute(configurationElement, "name")));
             config.addElement("label").addAttribute("key", name);
             Element linkElement = config.addElement("link").
-                    addAttribute("linkId", webItemKey);
+                    addAttribute("linkId", key);
 
             String url = null;
             if (webItemUrl != null)
@@ -142,13 +142,13 @@ public final class WebItemCreator
             {
                 log.debug("Created web item: " + printNode(config));
             }
-            return createWebItemDescriptor(conditionProcessor.getLoadablePlugin(plugin), config, webItemKey, url);
+            return createWebItemDescriptor(conditionProcessor.getLoadablePlugin(plugin), config, key, url);
         }
 
-        private WebItemModuleDescriptor createWebItemDescriptor(Plugin plugin, Element config, String key, String url)
+        private WebItemModuleDescriptor createWebItemDescriptor(Plugin plugin, Element config, String linkId, String url)
         {
             config.addAttribute("system", "true");
-            final WebItemModuleDescriptor descriptor = webItemModuleDescriptorFactory.createWebItemModuleDescriptor(url, key, absolute);
+            final WebItemModuleDescriptor descriptor = webItemModuleDescriptorFactory.createWebItemModuleDescriptor(url, linkId, absolute);
             descriptor.init(plugin, config);
             return descriptor;
         }
