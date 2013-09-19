@@ -285,45 +285,13 @@
         </description>
     </described-module-type>
 
-    <plugin-permission key="insert_web_resources" name="Insert Web Resources">
-        <description>Ability to insert web resources on pages of the product.</description>
-    </plugin-permission>
-
     <plugin-permission key="send_email" name="Send Email"
                        class="com.atlassian.plugin.connect.plugin.product.SendEmailScope">
         <description>Ability to send an email from the Atlassian server</description>
     </plugin-permission>
 
-    <plugin-permission key="make_http_requests" name="Make HTTP requests">
-        <description>Ability to make HTTP requests from the Atlassian server</description>
-    </plugin-permission>
-
-    <plugin-permission key="intercept_requests" name="Intercept Requests">
-        <description>Ability to intercept requests coming into the Atlassian server.</description>
-    </plugin-permission>
-
-    <plugin-permission key="store_data" name="Store Data">
-        <description>Ability to store data on the Atlassian server</description>
-    </plugin-permission>
-
-    <plugin-permission key="use_db_connection" name="Use DB connection">
-        <description>Ability to use the DB connection provided by the Atlassian server.</description>
-    </plugin-permission>
-
-    <plugin-permission key="access_filesystem" name="Access File System">
-        <description>Ability to access the filesystem on the Atlassian server.</description>
-    </plugin-permission>
-
     <plugin-permission key="generate_any_html" name="Generate Any HTML">
-        <description>Ability to generate any HTML without any sanitisation.</description>
-    </plugin-permission>
-
-    <plugin-permission key="use_reflection" name="Use Reflection">
-        <description>Ability to use reflection on the Atlassian server.</description>
-    </plugin-permission>
-
-    <plugin-permission key="create_classloaders" name="Create Class Loaders">
-        <description>Ability to create class loaders on the Atlassian server.</description>
+            <description>Ability to generate any HTML without any sanitisation.</description>
     </plugin-permission>
 
     <plugin-permission key="create_oauth_link" name="Create OAuth Link">
