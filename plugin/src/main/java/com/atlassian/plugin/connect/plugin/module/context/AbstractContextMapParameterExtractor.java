@@ -46,4 +46,10 @@ public abstract class AbstractContextMapParameterExtractor<P> implements Context
         return parameterSerializer;
     }
 
+    @Override
+    public ParameterDeserializer<P> deserializer()
+    {
+        // TODO sort out whether to keep two separate interfaces or to fold the deserilize method into the serializer
+        return serializer();
+    }
 }

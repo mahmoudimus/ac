@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.plugin.module.context;
 
 import com.google.common.base.Optional;
-import com.google.common.collect.Maps;
+import com.google.common.collect.ImmutableMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -33,16 +33,33 @@ public class ContextMapURLSerializer
 
     public Map<String, Object> getExtractedWebPanelParameters(final Map<String, Object> context, String username)
     {
-        Map<String, Object> whiteListedContext = Maps.newHashMap();
+        final ImmutableMap.Builder<String, Object> builder = ImmutableMap.<String, Object>builder();
         for (ContextMapParameterExtractor extractor : contextMapParameterExtractors)
         {
-            Optional<Object> option = extractor.extract(context);
+            Optional<Object> resource = extractor.extract(context);
             // TODO: The extractor.hasViewPermission is unnecessary here. Remove
-            if (option.isPresent() && extractor.hasViewPermission(username, option.get()))
+            if (resource.isPresent() && extractor.hasViewPermission(username, resource.get()))
             {
-                whiteListedContext.putAll(extractor.serializer().serialize(option.get()));
+                builder.putAll(extractor.serializer().serialize(resource.get()));
             }
         }
-        return Collections.unmodifiableMap(whiteListedContext);
+        return builder.build();
+    }
+
+    public  Map<String, Object> getAuthenticatedAddonParameters(final Map<String, Object> context, String username)
+    {
+        final ImmutableMap.Builder<String, Object> builder = ImmutableMap.<String, Object>builder();
+        for (ContextMapParameterExtractor extractor : contextMapParameterExtractors)
+        {
+            final Optional<Object> resource = extractor.deserializer().deserialize(context, username);
+            if (resource.isPresent() && extractor.hasViewPermission(username, resource.get()))
+            {
+                // TODO: Seems a bit strange to re serialise when the serialised values are already in the original context.
+                // However we don't expose them through this api
+                builder.putAll(extractor.serializer().serialize(resource.get()));
+            }
+        }
+        return builder.build();
+
     }
 }
