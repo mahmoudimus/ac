@@ -126,6 +126,11 @@
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="plugins-version" type="xs:positiveInteger">
+            <xs:annotation>
+                <xs:documentation>Use plugins-version="2".</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
 
     <xs:element name="atlassian-plugin" type="AtlassianPluginType"/>
