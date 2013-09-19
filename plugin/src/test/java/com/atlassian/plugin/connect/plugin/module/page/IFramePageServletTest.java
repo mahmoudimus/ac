@@ -70,11 +70,12 @@ public class IFramePageServletTest
         when(resp.getWriter()).thenReturn(out);
 
         final String[] anotherParamValue = {"88"};
-        Map params = ImmutableMap.builder()
+        Map<String, Object> params = ImmutableMap.<String, Object>builder()
                 .put("blah.id", new String[] {"10"})
                 .put("user.address.street", new String[]{"deadEndSt"})
                 .put("notInUrlTemplate", anotherParamValue)
                 .build();
+
         when(req.getParameterMap()).thenReturn(params);
 
         when(urlVariableSubstitutor.replace(iFramePathTemplate, params)).thenReturn(iFramePath);

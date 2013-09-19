@@ -1,10 +1,10 @@
 package com.atlassian.plugin.connect.plugin.module.page;
 
+import com.atlassian.plugin.connect.plugin.module.webfragment.UrlTemplateInstance;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.spi.module.IFrameContext;
 import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
 import com.atlassian.sal.api.user.UserManager;
-import com.google.common.collect.ImmutableMap;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -12,8 +12,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * A servlet that loads its content from a remote plugin's iframe
@@ -45,28 +43,16 @@ public class IFramePageServlet extends HttpServlet
     {
         PrintWriter out = resp.getWriter();
         resp.setContentType("text/html");
-        String originalPath = iframeContext.getIframePath();
-        String iFramePath = urlVariableSubstitutor.replace(originalPath, req.getParameterMap());
+
+        final UrlTemplateInstance urlTemplateInstance = new UrlTemplateInstance(iframeContext.getIframePath(),
+                req.getParameterMap(), urlVariableSubstitutor);
 
         iFrameRenderer.renderPage(
-                new IFrameContextImpl(iframeContext.getPluginKey(), iFramePath, iframeContext.getNamespace(), iframeContext.getIFrameParams()),
-                pageInfo, req.getPathInfo(), copyRequestContext(req, originalPath), userManager.getRemoteUsername(req), out);
+                new IFrameContextImpl(iframeContext.getPluginKey(), urlTemplateInstance.getUrlString(),
+                        iframeContext.getNamespace(), iframeContext.getIFrameParams()),
+                pageInfo, req.getPathInfo(), urlTemplateInstance.getNonTemplateContextParameters(),
+                userManager.getRemoteUsername(req), out);
     }
 
-    private Map<String, String[]> copyRequestContext(HttpServletRequest req, String path)
-    {
-        Set<String> variablesUsedInPath = urlVariableSubstitutor.getContextVariables(path);
-        ImmutableMap.Builder<String, String[]> builder = ImmutableMap.builder();
-        final Set<Map.Entry<String, String[]>> requestParameters = (Set<Map.Entry<String, String[]>>) req.getParameterMap().entrySet();
-        for (Map.Entry<String, String[]> entry : requestParameters)
-        {
-            // copy only these context parameters which aren't already a part of URL.
-            if (!variablesUsedInPath.contains(entry.getKey()))
-            {
-                builder.put(entry.getKey(), entry.getValue());
-            }
-        }
-        return builder.build();
-    }
 
 }
