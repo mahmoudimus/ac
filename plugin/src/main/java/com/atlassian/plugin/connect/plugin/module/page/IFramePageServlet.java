@@ -48,14 +48,16 @@ public class IFramePageServlet extends HttpServlet
         PrintWriter out = resp.getWriter();
         resp.setContentType("text/html");
 
+        final String remoteUsername = userManager.getRemoteUsername(req);
+
         final UrlTemplateInstance urlTemplateInstance = new UrlTemplateInstance(iframeContext.getIframePath(),
-                req.getParameterMap(), urlVariableSubstitutor, contextMapURLSerializer, null);
+                req.getParameterMap(), urlVariableSubstitutor, contextMapURLSerializer, remoteUsername);
 
         iFrameRenderer.renderPage(
                 new IFrameContextImpl(iframeContext.getPluginKey(), urlTemplateInstance.getUrlString(),
                         iframeContext.getNamespace(), iframeContext.getIFrameParams()),
                 pageInfo, req.getPathInfo(), urlTemplateInstance.getNonTemplateContextParameters(),
-                userManager.getRemoteUsername(req), out);
+                remoteUsername, out);
     }
 
 
