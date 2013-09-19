@@ -34,7 +34,7 @@ import static org.apache.commons.lang.Validate.notNull;
  * into the build() method
  */
 @Component
-    public final class WebItemCreator
+public final class WebItemCreator
 {
     private final ConditionProcessor conditionProcessor;
     private final WebItemModuleDescriptorFactory webItemModuleDescriptorFactory;
