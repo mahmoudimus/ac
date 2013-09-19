@@ -3,14 +3,12 @@ package com.atlassian.plugin.connect.plugin.module.webfragment;
 import com.google.common.collect.Maps;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.httpclient.util.URIUtil;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -55,38 +53,6 @@ public class UrlVariableSubstitutor
             m.appendReplacement(sb, encodeQuery(value));
         }
         m.appendTail(sb);
-
-        System.err.println("#### " + getClass().getSimpleName() + ": '" + source + "' -> '" + sb.toString() + "'");
-        System.err.println("     Context:");
-        System.err.println(contextToString(context, "     "));
-
-        return sb.toString();
-    }
-
-    private String contextToString(Map<String, Object> context, String linePrefix)
-    {
-        StringBuilder sb = new StringBuilder();
-
-        for (Map.Entry<String, Object> entry : context.entrySet())
-        {
-            sb.append(linePrefix).append("'").append(entry.getKey()).append("' -> ");
-
-            if (entry.getValue() instanceof Map)
-            {
-                sb.append('\n');
-                sb.append(contextToString((Map<String, Object>)entry.getValue(), linePrefix + StringUtils.repeat(' ', entry.getKey().length() + 6)));
-            }
-            else if (entry.getValue() instanceof String[])
-            {
-                sb.append("[").append(StringUtils.join((String[])entry.getValue(), ',')).append("]");
-            }
-            else
-            {
-                sb.append("'").append(entry.getValue().toString()).append("'");
-            }
-
-            sb.append('\n');
-        }
 
         return sb.toString();
     }
