@@ -18,7 +18,7 @@ import static org.junit.Assert.fail;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class UrlTemplateInstanceTest
+public class UrlTemplateInstanceImplTest
 {
     @Mock
     private UrlVariableSubstitutor urlVariableSubstitutor;
@@ -36,8 +36,8 @@ public class UrlTemplateInstanceTest
         when(urlVariableSubstitutor.replace(pathTemplate, context)).thenReturn(path);
         when(contextMapURLSerializer.getAuthenticatedAddonParameters(context, "fred")).thenReturn(context);
 
-        final UrlTemplateInstance urlTemplateInstance = new UrlTemplateInstance(pathTemplate, context,
-                urlVariableSubstitutor, contextMapURLSerializer, "fred");
+        final UrlTemplateInstance urlTemplateInstance = new UrlTemplateInstanceImpl(urlVariableSubstitutor, contextMapURLSerializer, pathTemplate, context,
+                "fred");
 
         assertThat(urlTemplateInstance.getUrlTemplate(), is(equalTo(pathTemplate)));
         assertThat(urlTemplateInstance.getUrlString(), is(equalTo(path)));
@@ -62,8 +62,8 @@ public class UrlTemplateInstanceTest
 
         when(urlVariableSubstitutor.getContextVariables(pathTemplate)).thenReturn(templateVariables);
 
-        final UrlTemplateInstance urlTemplateInstance = new UrlTemplateInstance(pathTemplate, context,
-                urlVariableSubstitutor, contextMapURLSerializer, "fred");
+        final UrlTemplateInstance urlTemplateInstance = new UrlTemplateInstanceImpl(urlVariableSubstitutor, contextMapURLSerializer, pathTemplate, context,
+                "fred");
 
         assertThat(urlTemplateInstance.getTemplateVariables(), is(equalTo(templateVariables)));
 
@@ -89,8 +89,8 @@ public class UrlTemplateInstanceTest
         when(urlVariableSubstitutor.getContextVariables(pathTemplate)).thenReturn(templateVariables);
         when(contextMapURLSerializer.getAuthenticatedAddonParameters(context, "fred")).thenReturn(context);
 
-        final UrlTemplateInstance urlTemplateInstance = new UrlTemplateInstance(pathTemplate, context,
-                urlVariableSubstitutor, contextMapURLSerializer, "fred");
+        final UrlTemplateInstance urlTemplateInstance = new UrlTemplateInstanceImpl(urlVariableSubstitutor, contextMapURLSerializer, pathTemplate, context,
+                "fred");
 
         assertThat(urlTemplateInstance.getNonTemplateContextParameters(), is(equalTo(nonTemplateVariables)));
 

@@ -7,6 +7,7 @@ import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.plugin.module.context.ContextMapURLSerializer;
+import com.atlassian.plugin.connect.plugin.module.webfragment.UrlTemplateInstanceFactory;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlValidator;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.module.ModuleFactory;
@@ -33,7 +34,6 @@ import org.springframework.stereotype.Component;
 
 import static com.atlassian.plugin.connect.plugin.util.OsgiServiceUtils.getService;
 import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.getRequiredAttribute;
-import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.getRequiredUriAttribute;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -49,15 +49,15 @@ public final class RemotePageDescriptorCreator
     private final IFrameRendererImpl iFrameRenderer;
     private final ProductAccessor productAccessor;
     private final UrlVariableSubstitutor urlVariableSubstitutor;
-    private ContextMapURLSerializer contextMapURLSerializer;
+    private final UrlTemplateInstanceFactory urlTemplateInstanceFactory;
 
     @Autowired
     public RemotePageDescriptorCreator(
             BundleContext bundleContext, UserManager userManager,
             WebItemCreator webItemCreator, IFrameRendererImpl iFrameRenderer,
-            ProductAccessor productAccessor, UrlValidator urlValidator,
+            ProductAccessor productAccessor,
             UrlVariableSubstitutor urlVariableSubstitutor,
-            ContextMapURLSerializer contextMapURLSerializer)
+            UrlTemplateInstanceFactory urlTemplateInstanceFactory)
     {
         this.bundleContext = bundleContext;
         this.userManager = userManager;
@@ -65,7 +65,7 @@ public final class RemotePageDescriptorCreator
         this.iFrameRenderer = iFrameRenderer;
         this.productAccessor = productAccessor;
         this.urlVariableSubstitutor = urlVariableSubstitutor;
-        this.contextMapURLSerializer = contextMapURLSerializer;
+        this.urlTemplateInstanceFactory = urlTemplateInstanceFactory;
     }
 
     public Builder newBuilder()
@@ -137,7 +137,7 @@ public final class RemotePageDescriptorCreator
                             pageInfo,
                             iFrameRenderer,
                             new IFrameContextImpl(plugin.getKey(), path, moduleKey, params), userManager,
-                            urlVariableSubstitutor, contextMapURLSerializer
+                            urlTemplateInstanceFactory
                     );
                 }
             }, getService(bundleContext, ServletModuleManager.class));

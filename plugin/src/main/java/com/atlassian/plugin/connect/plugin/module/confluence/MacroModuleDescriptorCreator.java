@@ -14,11 +14,10 @@ import com.atlassian.plugin.connect.plugin.integration.plugins.DescriptorToRegis
 import com.atlassian.plugin.connect.plugin.module.IFrameParamsImpl;
 import com.atlassian.plugin.connect.plugin.module.IFrameRendererImpl;
 import com.atlassian.plugin.connect.plugin.module.WebItemCreator;
-import com.atlassian.plugin.connect.plugin.module.context.ContextMapURLSerializer;
 import com.atlassian.plugin.connect.plugin.module.page.IFrameContextImpl;
 import com.atlassian.plugin.connect.plugin.module.page.IFramePageServlet;
 import com.atlassian.plugin.connect.plugin.module.page.PageInfo;
-import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
+import com.atlassian.plugin.connect.plugin.module.webfragment.UrlTemplateInstanceFactory;
 import com.atlassian.plugin.connect.plugin.util.contextparameter.ContextParameterParser;
 import com.atlassian.plugin.connect.plugin.util.contextparameter.RequestContextParameterFactory;
 import com.atlassian.plugin.connect.spi.Permissions;
@@ -71,8 +70,7 @@ public class MacroModuleDescriptorCreator
     private final UserManager userManager;
     private final PermissionManager permissionManager;
     private final BundleContext bundleContext;
-    private final UrlVariableSubstitutor urlVariableSubstitutor;
-    private final ContextMapURLSerializer contextMapURLSerializer;
+    private final UrlTemplateInstanceFactory urlTemplateInstanceFactory;
 
     public MacroModuleDescriptorCreator(
             SystemInformationService systemInformationService,
@@ -84,8 +82,7 @@ public class MacroModuleDescriptorCreator
             UserManager userManager,
             PermissionManager permissionManager,
             BundleContext bundleContext,
-            UrlVariableSubstitutor urlVariableSubstitutor,
-            ContextMapURLSerializer contextMapURLSerializer)
+            UrlTemplateInstanceFactory urlTemplateInstanceFactory)
     {
         this.systemInformationService = systemInformationService;
         this.remotablePluginAccessorFactory = remotablePluginAccessorFactory;
@@ -96,8 +93,7 @@ public class MacroModuleDescriptorCreator
         this.userManager = userManager;
         this.permissionManager = permissionManager;
         this.bundleContext = bundleContext;
-        this.urlVariableSubstitutor = urlVariableSubstitutor;
-        this.contextMapURLSerializer = contextMapURLSerializer;
+        this.urlTemplateInstanceFactory = urlTemplateInstanceFactory;
 
         // todo: fix this in confluence
         this.macroMetadataParser = ComponentLocator.getComponent(MacroMetadataParser.class);
@@ -288,7 +284,7 @@ public class MacroModuleDescriptorCreator
                             pageInfo,
                             iFrameRenderer,
                             new IFrameContextImpl(plugin.getKey(), path, moduleKey, params), userManager,
-                            urlVariableSubstitutor, contextMapURLSerializer
+                            urlTemplateInstanceFactory
                     );
                 }
             }, getService(bundleContext, ServletModuleManager.class));

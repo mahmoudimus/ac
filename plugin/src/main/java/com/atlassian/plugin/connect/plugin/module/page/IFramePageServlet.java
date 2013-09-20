@@ -1,8 +1,7 @@
 package com.atlassian.plugin.connect.plugin.module.page;
 
-import com.atlassian.plugin.connect.plugin.module.context.ContextMapURLSerializer;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlTemplateInstance;
-import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
+import com.atlassian.plugin.connect.plugin.module.webfragment.UrlTemplateInstanceFactory;
 import com.atlassian.plugin.connect.spi.module.IFrameContext;
 import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
 import com.atlassian.sal.api.user.UserManager;
@@ -20,25 +19,22 @@ import java.io.PrintWriter;
 public class IFramePageServlet extends HttpServlet
 {
     private final UserManager userManager;
-    private final UrlVariableSubstitutor urlVariableSubstitutor;
-    private final ContextMapURLSerializer contextMapURLSerializer;
     private final PageInfo pageInfo;
     private final IFrameContext iframeContext;
     private final IFrameRenderer iFrameRenderer;
+    private final UrlTemplateInstanceFactory urlTemplateInstanceFactory;
 
     public IFramePageServlet(PageInfo pageInfo,
-            IFrameRenderer iFrameRenderer,
-            IFrameContext iframeContext,
-            UserManager userManager,
-            UrlVariableSubstitutor urlVariableSubstitutor,
-            ContextMapURLSerializer contextMapURLSerializer)
+                             IFrameRenderer iFrameRenderer,
+                             IFrameContext iframeContext,
+                             UserManager userManager,
+                             UrlTemplateInstanceFactory urlTemplateInstanceFactory)
     {
         this.iframeContext = iframeContext;
         this.iFrameRenderer = iFrameRenderer;
         this.pageInfo = pageInfo;
         this.userManager = userManager;
-        this.urlVariableSubstitutor = urlVariableSubstitutor;
-        this.contextMapURLSerializer = contextMapURLSerializer;
+        this.urlTemplateInstanceFactory = urlTemplateInstanceFactory;
     }
 
     @Override
@@ -50,8 +46,8 @@ public class IFramePageServlet extends HttpServlet
 
         final String remoteUsername = userManager.getRemoteUsername(req);
 
-        final UrlTemplateInstance urlTemplateInstance = new UrlTemplateInstance(iframeContext.getIframePath(),
-                req.getParameterMap(), urlVariableSubstitutor, contextMapURLSerializer, remoteUsername);
+        final UrlTemplateInstance urlTemplateInstance =
+                urlTemplateInstanceFactory.create(iframeContext.getIframePath(), req.getParameterMap(), remoteUsername);
 
         iFrameRenderer.renderPage(
                 new IFrameContextImpl(iframeContext.getPluginKey(), urlTemplateInstance.getUrlString(),

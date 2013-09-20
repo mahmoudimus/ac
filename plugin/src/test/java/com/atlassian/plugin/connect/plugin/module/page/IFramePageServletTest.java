@@ -1,13 +1,12 @@
 package com.atlassian.plugin.connect.plugin.module.page;
 
-import com.atlassian.plugin.connect.plugin.module.context.ContextMapURLSerializer;
-import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
+import com.atlassian.plugin.connect.plugin.module.webfragment.UrlTemplateInstance;
+import com.atlassian.plugin.connect.plugin.module.webfragment.UrlTemplateInstanceFactory;
 import com.atlassian.plugin.connect.spi.module.IFrameContext;
 import com.atlassian.plugin.connect.spi.module.IFrameParams;
 import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
 import com.atlassian.sal.api.user.UserManager;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -40,7 +39,7 @@ public class IFramePageServletTest
     private UserManager userManager;
 
     @Mock
-    private UrlVariableSubstitutor urlVariableSubstitutor;
+    private UrlTemplateInstanceFactory urlTemplateInstanceFactory;
 
     @Mock
     private HttpServletRequest req;
@@ -55,7 +54,7 @@ public class IFramePageServletTest
     private IFrameParams iFrameParams;
 
     @Mock
-    private ContextMapURLSerializer contextMapURLSerializer;
+    private UrlTemplateInstance urlTemplateInstance;
 
     @Test
     public void shouldSubstituteVariablesAndCallRender() throws ServletException, IOException
@@ -65,7 +64,7 @@ public class IFramePageServletTest
 
         String[] anotherParamValue = {"88"};
         Map<String, Object> params = ImmutableMap.<String, Object>builder()
-                .put("blah.id", new String[] {"10"})
+                .put("blah.id", new String[]{"10"})
                 .put("user.address.street", new String[]{"deadEndSt"})
                 .put("notInUrlTemplate", anotherParamValue)
                 .build();
@@ -76,24 +75,20 @@ public class IFramePageServletTest
         when(userManager.getRemoteUsername(req)).thenReturn("barney");
         when(resp.getWriter()).thenReturn(out);
 
-        when(urlVariableSubstitutor.replace(iFramePathTemplate, params)).thenReturn("/foo/bar?arg1=10&arg2=deadEndSt");
-        when(urlVariableSubstitutor.getContextVariables(iFramePathTemplate)).thenReturn(ImmutableSet.of(
-                "blah.id", "user.address.street"));
-
-        when(contextMapURLSerializer.getAuthenticatedAddonParameters(params, "barney")).thenReturn(params);
+        when(urlTemplateInstanceFactory.create(iFramePathTemplate, params, "barney")).thenReturn(urlTemplateInstance);
+        Map<String, String[]> nonTemplateContextParams = ImmutableMap.of("notInUrlTemplate", anotherParamValue);
+        when(urlTemplateInstance.getNonTemplateContextParameters()).thenReturn(nonTemplateContextParams);
+        when(urlTemplateInstance.getUrlString()).thenReturn("/foo/bar?arg1=10&arg2=deadEndSt");
 
         IFramePageServlet servlet = new IFramePageServlet(pageInfo, iFrameRenderer, initialIFrameContext, userManager,
-                urlVariableSubstitutor, contextMapURLSerializer
-        );
+                urlTemplateInstanceFactory);
         servlet.doGet(req, resp);
 
-        Map<String, String[]> contextParams = ImmutableMap.of("notInUrlTemplate", anotherParamValue);
 
         ArgumentCaptor<IFrameContext> argumentCaptor = ArgumentCaptor.forClass(IFrameContext.class);
 
-        verify(iFrameRenderer, times(1)).renderPage(
-                argumentCaptor.capture(),
-                eq(pageInfo), eq("/some/path"), eq(contextParams), eq("barney"), eq(out));
+        verify(iFrameRenderer, times(1)).renderPage(argumentCaptor.capture(), eq(pageInfo), eq("/some/path"),
+                eq(nonTemplateContextParams), eq("barney"), eq(out));
 
         IFrameContext capturedIFrameContext = argumentCaptor.getValue();
 
