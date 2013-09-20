@@ -32,9 +32,9 @@ public class UrlVariableSubstitutor
 {
     private static final Logger log = LoggerFactory.getLogger(UrlVariableSubstitutor.class);
 
-    public static final String PLACEHOLDER_PATTERN_STRING = "\\$\\{([^}]*)}";
+    public static final String PLACEHOLDER_PATTERN_STRING = "\\$\\{([^}]*)}"; // in "http://server/path?foo=${var}&something" match "${var}" with group 1 = "var"
     private static final Pattern PLACEHOLDER_PATTERN = Pattern.compile(PLACEHOLDER_PATTERN_STRING);
-    private static final Pattern VARIABLE_EQUALS_PLACEHOLDER_PATTERN = Pattern.compile("([^}&?]+)=(" + PLACEHOLDER_PATTERN_STRING + ")");
+    private static final Pattern VARIABLE_EQUALS_PLACEHOLDER_PATTERN = Pattern.compile("([^}&?]+)=(" + PLACEHOLDER_PATTERN_STRING + ")"); // in "http://server/path?name=${var}&something" match "name=${var}" with groups = "name", "${var}" and "var"
 
     /**
      * Replaces all variables in the given source with values from the given context.
