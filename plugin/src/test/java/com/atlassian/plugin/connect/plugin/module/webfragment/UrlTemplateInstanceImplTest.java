@@ -97,4 +97,16 @@ public class UrlTemplateInstanceImplTest
         verify(urlVariableSubstitutor, times(1)).getContextVariables(pathTemplate);
 
     }
+
+    @Test
+    public void shouldHandleEmptyContexts()
+    {
+        fail("TODO");
+    }
+
+    @Test
+    public void shouldHandleZeroPathVariables()
+    {
+        fail("TODO");
+    }
 }

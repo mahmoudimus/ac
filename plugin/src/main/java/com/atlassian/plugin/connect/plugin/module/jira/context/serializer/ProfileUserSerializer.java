@@ -24,6 +24,6 @@ public class ProfileUserSerializer implements ParameterSerializer<ApplicationUse
     @Override
     public Optional<ApplicationUser> deserialize(Map<String, Object> params, String username)
     {
-        return null;  // TODO: figure out how to implement this
+        return Optional.absent();  // TODO: figure out how to implement this
     }
 }

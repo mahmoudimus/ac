@@ -53,6 +53,11 @@
     <component-import key="bandanaManager" interface="com.atlassian.bandana.BandanaManager" />
     <component-import key="spaceManager" interface="com.atlassian.confluence.spaces.SpaceManager" />
     <component-import key="pageManager" interface="com.atlassian.confluence.pages.PageManager" />
+    <component-import key="pageService" interface="com.atlassian.confluence.content.service.PageService" />
+    <component-import key="spaceService" interface="com.atlassian.confluence.content.service.SpaceService" />
+    <component-import key="userManager" interface="com.atlassian.user.UserManager" />
+    <component-import key="permissionManager" interface="com.atlassian.confluence.security.PermissionManager" />
+
 
     <component-import key="systemInfoService"
                       interface="com.atlassian.confluence.status.service.SystemInformationService"/>

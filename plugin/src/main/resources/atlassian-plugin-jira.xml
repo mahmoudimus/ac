@@ -47,6 +47,11 @@
     <jira-footer key="bigPipeFooter" class="com.atlassian.plugin.connect.plugin.product.jira.JiraBigPipeFooter" />
 
 	<component-import key="projectService" interface="com.atlassian.jira.bc.project.ProjectService" />
+    <component-import key="issueService" interface="com.atlassian.jira.bc.issue.IssueService"/>
+    <component-import key="versionService" interface="com.atlassian.jira.bc.project.version.VersionService"/>
+    <component-import key="componentService" interface="com.atlassian.jira.bc.project.component.ProjectComponentService"/>
+
+
     <component-import key="jiraAuthenticationContext" interface="com.atlassian.jira.security.JiraAuthenticationContext" />
     <component-import key="jiraUserManager" interface="com.atlassian.jira.user.util.UserManager" />
     <component-import key="timeZoneService" interface="com.atlassian.jira.timezone.TimeZoneService" />
