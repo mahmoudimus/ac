@@ -11,9 +11,9 @@ public class JiraAdministrationPage extends AbstractJiraPage
 {
     private static final String JIRA_ADMIN_PAGE_URI = "/secure/admin/ViewApplicationProperties.jspa";
     private static final String JIRA_ADMIN_PAGE_SERVLET = "servlet-jira-admin-page";
-    private static final String JIRA_ADMIN_PAGE_WEBITEM = "webitem-jira-admin-page";
+    private static final String JIRA_ADMIN_PAGE_WEBITEM = "jira-admin-page";
     private static final String REMOTE_PLUGIN_ADMIN_KEY_SERVLET = "servlet-remotePluginAdmin";
-    private static final String REMOTE_PLUGIN_ADMIN_KEY_WEBITEM = "webitem-remotePluginAdmin";
+    private static final String REMOTE_PLUGIN_ADMIN_KEY_WEBITEM = "remotePluginAdmin";
 
     @Override
     public String getUrl()

@@ -39,9 +39,9 @@ public class JiraWebItemModuleDescriptorFactory implements WebItemModuleDescript
     }
 
     @Override
-    public WebItemModuleDescriptor createWebItemModuleDescriptor(String url, String moduleKey, boolean absolute)
+    public WebItemModuleDescriptor createWebItemModuleDescriptor(String url, String linkId, boolean absolute)
     {
-        return new RemoteJiraWebItemModuleDescriptor(jiraAuthenticationContext, webInterfaceManager, webFragmentHelper, urlVariableSubstitutor, contextMapURLSerializer, url, moduleKey, absolute);
+        return new RemoteJiraWebItemModuleDescriptor(jiraAuthenticationContext, webInterfaceManager, webFragmentHelper, urlVariableSubstitutor, contextMapURLSerializer, url, linkId, absolute);
     }
 
     private static final class RemoteJiraWebItemModuleDescriptor extends JiraWebItemModuleDescriptor
@@ -50,7 +50,7 @@ public class JiraWebItemModuleDescriptorFactory implements WebItemModuleDescript
         private final UrlVariableSubstitutor urlVariableSubstitutor;
         private final ContextMapURLSerializer contextMapURLSerializer;
         private final String url;
-        private final String moduleKey;
+        private final String linkId;
         private boolean absolute;
 
         public RemoteJiraWebItemModuleDescriptor(
@@ -60,7 +60,7 @@ public class JiraWebItemModuleDescriptorFactory implements WebItemModuleDescript
                 UrlVariableSubstitutor urlVariableSubstitutor,
                 ContextMapURLSerializer contextMapURLSerializer,
                 String url,
-                String moduleKey,
+                String linkId,
                 boolean absolute)
         {
             super(jiraAuthenticationContext, webInterfaceManager);
@@ -68,13 +68,13 @@ public class JiraWebItemModuleDescriptorFactory implements WebItemModuleDescript
             this.urlVariableSubstitutor = urlVariableSubstitutor;
             this.contextMapURLSerializer = contextMapURLSerializer;
             this.url = url;
-            this.moduleKey = moduleKey;
+            this.linkId = linkId;
             this.absolute = absolute;
         }
         @Override
         public WebLink getLink()
         {
-            return new JiraWebLink(new RemoteWebLink(this, webFragmentHelper, urlVariableSubstitutor, contextMapURLSerializer, url, moduleKey, absolute), authenticationContext);
+            return new JiraWebLink(new RemoteWebLink(this, webFragmentHelper, urlVariableSubstitutor, contextMapURLSerializer, url, linkId, absolute), authenticationContext);
         }
     }
 }
