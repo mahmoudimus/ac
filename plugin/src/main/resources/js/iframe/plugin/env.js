@@ -61,8 +61,11 @@ AP.define("env", ["_dollar", "_rpc"], function ($, rpc) {
         resize: $.debounce(function (width, height) {
           var dim = apis.size(width, height, apis.container());
           remote.resize(dim.w, dim.h);
-        }, 50)
+        }, 50),
 
+        sizeToParent: $.debounce(function() {
+          remote.sizeToParent();
+        }, 50)
       }
 
     };

@@ -32,8 +32,7 @@ public final class GeneralPageModuleDescriptor extends AbstractModuleDescriptor<
         super(moduleFactory);
         this.dynamicDescriptorRegistration = checkNotNull(dynamicDescriptorRegistration);
         this.remotePageDescriptorBuilder = checkNotNull(remotePageDescriptorCreator).newBuilder()
-                .setDecorator("atl.general");
-
+                .setDecorator("atl.general").addIframeContextParam("general", "1");
     }
 
     @Override
