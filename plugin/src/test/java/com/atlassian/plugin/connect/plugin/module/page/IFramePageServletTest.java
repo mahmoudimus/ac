@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.module.page;
 
+import com.atlassian.plugin.connect.plugin.module.webfragment.InvalidContextParameterException;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlTemplateInstance;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlTemplateInstanceFactory;
 import com.atlassian.plugin.connect.spi.module.IFrameContext;
@@ -57,7 +58,7 @@ public class IFramePageServletTest
     private UrlTemplateInstance urlTemplateInstance;
 
     @Test
-    public void shouldSubstituteVariablesAndCallRender() throws ServletException, IOException
+    public void shouldSubstituteVariablesAndCallRender() throws ServletException, IOException, InvalidContextParameterException
     {
         String iFramePathTemplate = "/foo/bar?arg1=${blah.id}&arg2=${user.address.street}";
         IFrameContext initialIFrameContext = new IFrameContextImpl("myKey", iFramePathTemplate, "namespace1", iFrameParams);
@@ -77,7 +78,7 @@ public class IFramePageServletTest
 
         when(urlTemplateInstanceFactory.create(iFramePathTemplate, params, "barney")).thenReturn(urlTemplateInstance);
         Map<String, String[]> nonTemplateContextParams = ImmutableMap.of("notInUrlTemplate", anotherParamValue);
-        when(urlTemplateInstance.getNonTemplateContextParameters()).thenReturn(nonTemplateContextParams);
+//        when(urlTemplateInstance.getNonTemplateContextParameters()).thenReturn(nonTemplateContextParams);
         when(urlTemplateInstance.getUrlString()).thenReturn("/foo/bar?arg1=10&arg2=deadEndSt");
 
         IFramePageServlet servlet = new IFramePageServlet(pageInfo, iFrameRenderer, initialIFrameContext, userManager,

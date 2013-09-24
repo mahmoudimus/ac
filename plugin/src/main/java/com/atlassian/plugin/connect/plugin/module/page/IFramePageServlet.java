@@ -1,10 +1,12 @@
 package com.atlassian.plugin.connect.plugin.module.page;
 
+import com.atlassian.plugin.connect.plugin.module.webfragment.InvalidContextParameterException;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlTemplateInstance;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlTemplateInstanceFactory;
 import com.atlassian.plugin.connect.spi.module.IFrameContext;
 import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
 import com.atlassian.sal.api.user.UserManager;
+import com.google.common.collect.ImmutableMap;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -46,14 +48,23 @@ public class IFramePageServlet extends HttpServlet
 
         final String remoteUsername = userManager.getRemoteUsername(req);
 
-        final UrlTemplateInstance urlTemplateInstance =
-                urlTemplateInstanceFactory.create(iframeContext.getIframePath(), req.getParameterMap(), remoteUsername);
+        try
+        {
+            final UrlTemplateInstance urlTemplateInstance = urlTemplateInstanceFactory.create(iframeContext.getIframePath(), req.getParameterMap(), remoteUsername);
 
-        iFrameRenderer.renderPage(
-                new IFrameContextImpl(iframeContext.getPluginKey(), urlTemplateInstance.getUrlString(),
-                        iframeContext.getNamespace(), iframeContext.getIFrameParams()),
-                pageInfo, req.getPathInfo(), urlTemplateInstance.getNonTemplateContextParameters(),
-                remoteUsername, out);
+            iFrameRenderer.renderPage(
+                    new IFrameContextImpl(iframeContext.getPluginKey(), urlTemplateInstance.getUrlString(),
+                            iframeContext.getNamespace(), iframeContext.getIFrameParams()),
+                    pageInfo, req.getPathInfo(),
+                    // No longer passing the parameters here. If we need this for some reason then need to be careful they
+                    // don't pass the parameter authorisation mechanism
+                    ImmutableMap.<String, String[]>of()/*urlTemplateInstance.getNonTemplateContextParameters()*/,
+                    remoteUsername, out);
+        }
+        catch (InvalidContextParameterException e)
+        {
+            e.printStackTrace();  // TODO: Implement
+        }
     }
 
 

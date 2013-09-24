@@ -1,38 +1,36 @@
 package com.atlassian.plugin.connect.plugin.module.webfragment;
 
 import com.atlassian.plugin.connect.plugin.module.context.ContextMapURLSerializer;
-import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
+import org.apache.commons.lang3.ArrayUtils;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.TypeReference;
 
-import javax.annotation.Nullable;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 public class UrlTemplateInstanceImpl implements UrlTemplateInstance
 {
+    public static final TypeReference<HashMap<String, Object>> MAP_TYPE_REFERENCE =
+            new TypeReference<HashMap<String, Object>>()
+            {
+            };
+
     private final String urlTemplate;
     private final Map<String, Object> context;
-    private final Map<String, String[]> contextAsStringArr;
     private final UrlVariableSubstitutor urlVariableSubstitutor;
     private final ContextMapURLSerializer contextMapURLSerializer;
 
     public UrlTemplateInstanceImpl(UrlVariableSubstitutor urlVariableSubstitutor, ContextMapURLSerializer contextMapURLSerializer,
-                                   String urlTemplate, Map<String, Object> context, String username)
+                                   String urlTemplate, Map<String, Object> context, String username) throws InvalidContextParameterException
     {
         this.urlTemplate = urlTemplate;
-        this.context = contextMapURLSerializer.getAuthenticatedAddonParameters(context, username);
+        this.context = contextMapURLSerializer.getAuthenticatedAddonParameters(extractContext(context), username);
         this.urlVariableSubstitutor = urlVariableSubstitutor;
         this.contextMapURLSerializer = contextMapURLSerializer;
-        // damn generics
-        this.contextAsStringArr = Maps.transformValues(this.context, new Function<Object, String[]>()
-        {
-            @Override
-            public String[] apply(@Nullable Object input)
-            {
-                return (String[]) input;
-            }
-        });
     }
 
     @Override
@@ -54,21 +52,32 @@ public class UrlTemplateInstanceImpl implements UrlTemplateInstance
         return urlVariableSubstitutor.getContextVariables(urlTemplate);
     }
 
-    @Override
-    public Map<String, String[]> getNonTemplateContextParameters()
+    private Map<String, Object> extractContext(Map<String, Object> requestParams) throws InvalidContextParameterException
     {
-        Set<String> templateVariables = getTemplateVariables();
-        ImmutableMap.Builder<String, String[]> builder = ImmutableMap.builder();
-        final Set<Map.Entry<String, String[]>> requestParameters = contextAsStringArr.entrySet();
-        for (Map.Entry<String, String[]> entry : requestParameters)
+        if (!requestParams.containsKey("context"))
         {
-            // copy only these context parameters which aren't already a part of URL.
-            if (!templateVariables.contains(entry.getKey()))
-            {
-                builder.put(entry.getKey(), entry.getValue());
-            }
+            return requestParams;
         }
-        return builder.build();
+
+        final String[] contextParam = (String[]) requestParams.get("context");
+        if (ArrayUtils.isEmpty(contextParam))
+            throw new InvalidContextParameterException("Empty context received");
+
+        final String contextJsonStr = contextParam[0];
+        ObjectMapper objectMapper = new ObjectMapper();
+        try
+        {
+            Map<String, Object> contextMap = objectMapper.readValue(contextJsonStr, MAP_TYPE_REFERENCE);
+            final HashMap<String, Object> mutableParams = Maps.newHashMap(requestParams);
+            mutableParams.remove("context");
+            return ImmutableMap.<String, Object>builder().putAll(mutableParams).putAll(contextMap).build();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            throw new RuntimeException("TODO: Fix me", e);
+        }
+
     }
 
 }

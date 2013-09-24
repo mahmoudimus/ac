@@ -20,8 +20,9 @@ public class UrlTemplateInstanceFactoryImpl implements UrlTemplateInstanceFactor
     }
 
     @Override
-    public UrlTemplateInstance create(String urlTemplateString, Map<String, Object> context, String username)
+    public UrlTemplateInstance create(String urlTemplateString, Map<String, Object> requestParams, String username) throws InvalidContextParameterException
     {
-        return new UrlTemplateInstanceImpl(urlVariableSubstitutor, contextMapURLSerializer, urlTemplateString, context, username);
+        return new UrlTemplateInstanceImpl(urlVariableSubstitutor, contextMapURLSerializer, urlTemplateString, requestParams, username);
     }
+
 }

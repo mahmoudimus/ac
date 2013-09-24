@@ -41,7 +41,7 @@ public class RemoteWebLink extends AbstractWebItem implements WebLink
     @Override
     public String getRenderedUrl(final Map<String, Object> context)
     {
-        final Map<String, Object> extractedWebPanelParameters = urlParametersSerializer.getExtractedWebPanelParameters(context, "TODO: inject UserManager");
+        final Map<String, Object> extractedWebPanelParameters = urlParametersSerializer.getExtractedWebPanelParameters(context);
         return urlVariableSubstitutor.replace(url, extractedWebPanelParameters);
     }
 

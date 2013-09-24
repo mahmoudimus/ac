@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.module.context;
 
+import com.atlassian.jira.plugin.webfragment.JiraWebInterfaceManager;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Component;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -31,6 +33,11 @@ public class ContextMapURLSerializer
         this.contextMapParameterExtractors = checkNotNull(contextMapParameterExtractors);
     }
 
+    public Map<String, Object> getExtractedWebPanelParameters(final Map<String, Object> context)
+    {
+        return getExtractedWebPanelParameters(context, Objects.toString(context.get(JiraWebInterfaceManager.CONTEXT_KEY_USER)));
+    }
+
     public Map<String, Object> getExtractedWebPanelParameters(final Map<String, Object> context, String username)
     {
         final ImmutableMap.Builder<String, Object> builder = ImmutableMap.<String, Object>builder();
@@ -38,7 +45,7 @@ public class ContextMapURLSerializer
         {
             Optional<Object> resource = extractor.extract(context);
             // TODO: The extractor.hasViewPermission is unnecessary here. Remove
-            if (resource.isPresent() && extractor.hasViewPermission(username, resource.get()))
+            if (resource.isPresent() /*&& extractor.hasViewPermission(username, resource.get())*/)
             {
                 builder.putAll(extractor.serializer().serialize(resource.get()));
             }
@@ -52,7 +59,10 @@ public class ContextMapURLSerializer
         for (ContextMapParameterExtractor extractor : contextMapParameterExtractors)
         {
             final Optional<Object> resource = extractor.deserializer().deserialize(context, username);
-            if (resource.isPresent() && extractor.hasViewPermission(username, resource.get()))
+            // TODO: Should be 403 if no permission
+            // TODO: The Jira impl will already authenticate so don't need to double up here
+            // TODO: Wrong jira usermanager if we want to keep this check
+            if (resource.isPresent() /*&& extractor.hasViewPermission(username, resource.get())*/)
             {
                 // TODO: Seems a bit strange to re serialise when the serialised values are already in the original context.
                 // However we don't expose them through this api

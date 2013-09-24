@@ -14,5 +14,5 @@ public interface UrlTemplateInstanceFactory
      * @param username
      * @return
      */
-    UrlTemplateInstance create(String urlTemplateString, Map<String, Object> context, String username);
+    UrlTemplateInstance create(String urlTemplateString, Map<String, Object> context, String username) throws InvalidContextParameterException;
 }

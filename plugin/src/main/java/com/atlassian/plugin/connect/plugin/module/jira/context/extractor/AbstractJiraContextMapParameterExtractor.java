@@ -15,6 +15,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public abstract class AbstractJiraContextMapParameterExtractor<P> extends AbstractContextMapParameterExtractor<P>
 {
     private final PermissionManager permissionManager;
+
+    // TODO: This may be the wrong usermanager. Maybe the one in com.atlassian.sal.api.user is the right one
     private final UserManager userManager;
 
     public AbstractJiraContextMapParameterExtractor(Class<P> resourceClass, ParameterSerializer<P> parameterSerializer,
