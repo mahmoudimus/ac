@@ -74,8 +74,7 @@ public class UrlTemplateInstanceImpl implements UrlTemplateInstance
         }
         catch (IOException e)
         {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            throw new RuntimeException("TODO: Fix me", e);
+            throw new InvalidContextParameterException("Failed to parse context Json", e);
         }
 
     }

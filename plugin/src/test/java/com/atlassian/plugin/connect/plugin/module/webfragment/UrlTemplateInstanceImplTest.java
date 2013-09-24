@@ -110,11 +110,13 @@ public class UrlTemplateInstanceImplTest
         fail("Not implemented yet");
     }
 
-    @Test
-    public void shouldThrowInvalidContextParameterExceptionWhenCantUnmarshalJsonContext()
+    @Test(expected = InvalidContextParameterException.class)
+    public void shouldThrowInvalidContextParameterExceptionWhenCantUnmarshalJsonContext() throws InvalidContextParameterException
     {
-        fail("Not implemented yet");
+        String[] contextStr = new String[]{"not proper json"};
 
+        Map<String, Object> requestParams = ImmutableMap.<String, Object>of("context", contextStr);
+        new UrlTemplateInstanceImpl(urlVariableSubstitutor, contextMapURLSerializer, "somePath", requestParams, "fred");
     }
 
     @Test(expected = InvalidContextParameterException.class)
