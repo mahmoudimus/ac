@@ -7,6 +7,8 @@ import com.atlassian.jira.user.DelegatingApplicationUser;
 import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.jira.util.ErrorCollection;
 import com.atlassian.plugin.connect.plugin.module.context.ParameterDeserializer;
+import com.atlassian.plugin.connect.plugin.module.context.ResourceNotFoundException;
+import com.atlassian.plugin.connect.plugin.module.permission.UnauthorisedException;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import org.junit.Test;
@@ -37,7 +39,7 @@ public class ComponentSerializerTest
     private ProjectComponent component1;
 
     @Test
-    public void shouldReturnAbsentIfNoProjectComponentInParams()
+    public void shouldReturnAbsentIfNoProjectComponentInParams() throws UnauthorisedException, ResourceNotFoundException
     {
         final ParameterDeserializer<ProjectComponent> serializer = new ComponentSerializer(componentService, userManager);
         final Optional<ProjectComponent> component = serializer.deserialize(ImmutableMap.of("blah", new Object()), "fred");
@@ -45,7 +47,7 @@ public class ComponentSerializerTest
     }
 
     @Test
-    public void shouldReturnAbsentIfProjectComponentIsNotMap()
+    public void shouldReturnAbsentIfProjectComponentIsNotMap() throws UnauthorisedException, ResourceNotFoundException
     {
         final ParameterDeserializer<ProjectComponent> serializer = new ComponentSerializer(componentService, userManager);
         final Optional<ProjectComponent> component = serializer.deserialize(ImmutableMap.of("component", new Object()), "fred");
@@ -53,7 +55,7 @@ public class ComponentSerializerTest
     }
 
     @Test
-    public void shouldReturnAbsentIfNoIdOrKeyInProjectComponent()
+    public void shouldReturnAbsentIfNoIdOrKeyInProjectComponent() throws UnauthorisedException, ResourceNotFoundException
     {
         final ParameterDeserializer<ProjectComponent> serializer = new ComponentSerializer(componentService, userManager);
         final Optional<ProjectComponent> component = serializer.deserialize(
@@ -63,7 +65,7 @@ public class ComponentSerializerTest
     }
 
     @Test
-    public void shouldReturnAbsentIfNoUserForUsername()
+    public void shouldReturnAbsentIfNoUserForUsername() throws UnauthorisedException, ResourceNotFoundException
     {
         final ParameterDeserializer<ProjectComponent> serializer = new ComponentSerializer(componentService, userManager);
         final Optional<ProjectComponent> component = serializer.deserialize(
@@ -74,7 +76,7 @@ public class ComponentSerializerTest
     }
 
     @Test
-    public void shouldReturnAbsentIfNoProjectComponentForId()
+    public void shouldReturnAbsentIfNoProjectComponentForId() throws UnauthorisedException, ResourceNotFoundException
     {
         when(userManager.getUserByName("fred")).thenReturn(new DelegatingApplicationUser("fred", user));
         when(componentService.find(any(User.class), (ErrorCollection) eq(null), eq(10l))).thenReturn(null);
@@ -89,7 +91,7 @@ public class ComponentSerializerTest
     }
 
     @Test
-    public void shouldReturnProjectComponentWhenTheStarsAlign()
+    public void shouldReturnProjectComponentWhenTheStarsAlign() throws UnauthorisedException, ResourceNotFoundException
     {
         when(userManager.getUserByName("fred")).thenReturn(new DelegatingApplicationUser("fred", user));
         when(componentService.find(any(User.class), (ErrorCollection) eq(null), eq(10l))).thenReturn(component1);

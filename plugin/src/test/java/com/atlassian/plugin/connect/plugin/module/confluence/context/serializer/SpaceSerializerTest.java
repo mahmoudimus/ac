@@ -5,6 +5,8 @@ import com.atlassian.confluence.content.service.space.KeySpaceLocator;
 import com.atlassian.confluence.spaces.Space;
 import com.atlassian.confluence.spaces.SpaceManager;
 import com.atlassian.plugin.connect.plugin.module.context.ParameterDeserializer;
+import com.atlassian.plugin.connect.plugin.module.context.ResourceNotFoundException;
+import com.atlassian.plugin.connect.plugin.module.permission.UnauthorisedException;
 import com.atlassian.user.EntityException;
 import com.atlassian.user.User;
 import com.atlassian.user.UserManager;
@@ -41,7 +43,7 @@ public class SpaceSerializerTest
     private SpaceManager spaceManager;
 
     @Test
-    public void shouldReturnAbsentIfNoSpaceInParams()
+    public void shouldReturnAbsentIfNoSpaceInParams() throws ResourceNotFoundException, UnauthorisedException
     {
         final ParameterDeserializer<Space> serializer = new SpaceSerializer(spaceService, userManager);
         final Optional<Space> space = serializer.deserialize(ImmutableMap.of("blah", new Object()), "fred");
@@ -49,7 +51,7 @@ public class SpaceSerializerTest
     }
 
     @Test
-    public void shouldReturnAbsentIfSpaceIsNotMap()
+    public void shouldReturnAbsentIfSpaceIsNotMap() throws ResourceNotFoundException, UnauthorisedException
     {
         final ParameterDeserializer<Space> serializer = new SpaceSerializer(spaceService, userManager);
         final Optional<Space> space = serializer.deserialize(ImmutableMap.of("space", new Object()), "fred");
@@ -57,7 +59,7 @@ public class SpaceSerializerTest
     }
 
     @Test
-    public void shouldReturnAbsentIfNoIdOrKeyInSpace()
+    public void shouldReturnAbsentIfNoIdOrKeyInSpace() throws ResourceNotFoundException, UnauthorisedException
     {
         final ParameterDeserializer<Space> serializer = new SpaceSerializer(spaceService, userManager);
         final Optional<Space> space = serializer.deserialize(
@@ -67,7 +69,7 @@ public class SpaceSerializerTest
     }
 
     @Test
-    public void shouldReturnAbsentIfNoUserForUsername() throws EntityException
+    public void shouldReturnAbsentIfNoUserForUsername() throws EntityException, ResourceNotFoundException, UnauthorisedException
     {
         final ParameterDeserializer<Space> serializer = new SpaceSerializer(spaceService, userManager);
         final Optional<Space> space = serializer.deserialize(
@@ -81,7 +83,7 @@ public class SpaceSerializerTest
     }
 
     @Test
-    public void shouldReturnAbsentIfNoSpaceForKey() throws EntityException
+    public void shouldReturnAbsentIfNoSpaceForKey() throws EntityException, ResourceNotFoundException, UnauthorisedException
     {
         when(userManager.getUser("fred")).thenReturn(user);
         when(spaceService.getKeySpaceLocator("mykey")).thenReturn(new KeySpaceLocator(spaceManager, "mykey"));
@@ -96,7 +98,7 @@ public class SpaceSerializerTest
     }
 
     @Test
-    public void shouldReturnSpaceWhenTheStarsAlign() throws EntityException
+    public void shouldReturnSpaceWhenTheStarsAlign() throws EntityException, ResourceNotFoundException, UnauthorisedException
     {
         when(userManager.getUser("fred")).thenReturn(user);
         when(spaceService.getKeySpaceLocator("mykey")).thenReturn(new KeySpaceLocator(spaceManager, "mykey"));

@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.plugin.module.page;
 
+import com.atlassian.plugin.connect.plugin.module.context.ResourceNotFoundException;
+import com.atlassian.plugin.connect.plugin.module.permission.UnauthorisedException;
 import com.atlassian.plugin.connect.plugin.module.webfragment.InvalidContextParameterException;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlTemplateInstance;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlTemplateInstanceFactory;
@@ -14,6 +16,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+
+import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 
 /**
  * A servlet that loads its content from a remote plugin's iframe
@@ -50,7 +54,8 @@ public class IFramePageServlet extends HttpServlet
 
         try
         {
-            final UrlTemplateInstance urlTemplateInstance = urlTemplateInstanceFactory.create(iframeContext.getIframePath(), req.getParameterMap(), remoteUsername);
+            final UrlTemplateInstance urlTemplateInstance = urlTemplateInstanceFactory.create(iframeContext.getIframePath(),
+                    req.getParameterMap(), remoteUsername);
 
             iFrameRenderer.renderPage(
                     new IFrameContextImpl(iframeContext.getPluginKey(), urlTemplateInstance.getUrlString(),
@@ -63,7 +68,15 @@ public class IFramePageServlet extends HttpServlet
         }
         catch (InvalidContextParameterException e)
         {
-            e.printStackTrace();  // TODO: Implement
+            resp.sendError(SC_BAD_REQUEST, e.getMessage());
+        }
+        catch (UnauthorisedException e)
+        {
+            e.printStackTrace();  // TODO
+        }
+        catch (ResourceNotFoundException e)
+        {
+            e.printStackTrace();  // TODO
         }
     }
 

@@ -1,6 +1,8 @@
 package com.atlassian.plugin.connect.plugin.module.webfragment;
 
 import com.atlassian.plugin.connect.plugin.module.context.ContextMapURLSerializer;
+import com.atlassian.plugin.connect.plugin.module.context.ResourceNotFoundException;
+import com.atlassian.plugin.connect.plugin.module.permission.UnauthorisedException;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import org.apache.commons.lang3.ArrayUtils;
@@ -14,7 +16,7 @@ import java.util.Set;
 
 public class UrlTemplateInstanceImpl implements UrlTemplateInstance
 {
-    public static final TypeReference<HashMap<String, Object>> MAP_TYPE_REFERENCE =
+    private static final TypeReference<HashMap<String, Object>> MAP_TYPE_REFERENCE =
             new TypeReference<HashMap<String, Object>>()
             {
             };
@@ -22,15 +24,13 @@ public class UrlTemplateInstanceImpl implements UrlTemplateInstance
     private final String urlTemplate;
     private final Map<String, Object> context;
     private final UrlVariableSubstitutor urlVariableSubstitutor;
-    private final ContextMapURLSerializer contextMapURLSerializer;
 
     public UrlTemplateInstanceImpl(UrlVariableSubstitutor urlVariableSubstitutor, ContextMapURLSerializer contextMapURLSerializer,
-                                   String urlTemplate, Map<String, Object> context, String username) throws InvalidContextParameterException
+                                   String urlTemplate, Map<String, Object> context, String username) throws InvalidContextParameterException, UnauthorisedException, ResourceNotFoundException
     {
         this.urlTemplate = urlTemplate;
         this.context = contextMapURLSerializer.getAuthenticatedAddonParameters(extractContext(context), username);
         this.urlVariableSubstitutor = urlVariableSubstitutor;
-        this.contextMapURLSerializer = contextMapURLSerializer;
     }
 
     @Override
@@ -54,12 +54,12 @@ public class UrlTemplateInstanceImpl implements UrlTemplateInstance
 
     private Map<String, Object> extractContext(Map<String, Object> requestParams) throws InvalidContextParameterException
     {
-        if (!requestParams.containsKey("context"))
+        if (!requestParams.containsKey(CONTEXT_PARAMETER_KEY))
         {
             return requestParams;
         }
 
-        final String[] contextParam = (String[]) requestParams.get("context");
+        final String[] contextParam = (String[]) requestParams.get(CONTEXT_PARAMETER_KEY);
         if (ArrayUtils.isEmpty(contextParam))
             throw new InvalidContextParameterException("Empty context received");
 
@@ -69,7 +69,7 @@ public class UrlTemplateInstanceImpl implements UrlTemplateInstance
         {
             Map<String, Object> contextMap = objectMapper.readValue(contextJsonStr, MAP_TYPE_REFERENCE);
             final HashMap<String, Object> mutableParams = Maps.newHashMap(requestParams);
-            mutableParams.remove("context");
+            mutableParams.remove(CONTEXT_PARAMETER_KEY);
             return ImmutableMap.<String, Object>builder().putAll(mutableParams).putAll(contextMap).build();
         }
         catch (IOException e)

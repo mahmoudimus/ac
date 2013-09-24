@@ -7,6 +7,8 @@ import com.atlassian.jira.user.DelegatingApplicationUser;
 import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.jira.util.ErrorCollection;
 import com.atlassian.plugin.connect.plugin.module.context.ParameterDeserializer;
+import com.atlassian.plugin.connect.plugin.module.context.ResourceNotFoundException;
+import com.atlassian.plugin.connect.plugin.module.permission.UnauthorisedException;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import org.junit.Test;
@@ -38,7 +40,7 @@ public class ProjectSerializerTest
     private Project project1;
 
     @Test
-    public void shouldReturnAbsentIfNoProjectInParams()
+    public void shouldReturnAbsentIfNoProjectInParams() throws UnauthorisedException, ResourceNotFoundException
     {
         final ParameterDeserializer<Project> serializer = new ProjectSerializer(projectService, userManager);
         final Optional<Project> project = serializer.deserialize(ImmutableMap.of("blah", new Object()), "fred");
@@ -46,7 +48,7 @@ public class ProjectSerializerTest
     }
 
     @Test
-    public void shouldReturnAbsentIfProjectIsNotMap()
+    public void shouldReturnAbsentIfProjectIsNotMap() throws UnauthorisedException, ResourceNotFoundException
     {
         final ParameterDeserializer<Project> serializer = new ProjectSerializer(projectService, userManager);
         final Optional<Project> project = serializer.deserialize(ImmutableMap.of("project", new Object()), "fred");
@@ -54,7 +56,7 @@ public class ProjectSerializerTest
     }
 
     @Test
-    public void shouldReturnAbsentIfNoIdOrKeyInProject()
+    public void shouldReturnAbsentIfNoIdOrKeyInProject() throws UnauthorisedException, ResourceNotFoundException
     {
         final ParameterDeserializer<Project> serializer = new ProjectSerializer(projectService, userManager);
         final Optional<Project> project = serializer.deserialize(
@@ -64,7 +66,7 @@ public class ProjectSerializerTest
     }
 
     @Test
-    public void shouldReturnAbsentIfNoUserForUsername()
+    public void shouldReturnAbsentIfNoUserForUsername() throws UnauthorisedException, ResourceNotFoundException
     {
         final ParameterDeserializer<Project> serializer = new ProjectSerializer(projectService, userManager);
         final Optional<Project> project = serializer.deserialize(
@@ -75,7 +77,7 @@ public class ProjectSerializerTest
     }
 
     @Test
-    public void shouldReturnAbsentIfNoProjectForId()
+    public void shouldReturnAbsentIfNoProjectForId() throws UnauthorisedException, ResourceNotFoundException
     {
         when(userManager.getUserByName("fred")).thenReturn(new DelegatingApplicationUser("fred", user));
         when(projectService.getProjectById(any(User.class), eq(10l))).thenReturn(new GetProjectResult(errorCollection, null));
@@ -90,7 +92,7 @@ public class ProjectSerializerTest
     }
 
     @Test
-    public void shouldReturnAbsentIfNoProjectForKey()
+    public void shouldReturnAbsentIfNoProjectForKey() throws UnauthorisedException, ResourceNotFoundException
     {
         when(userManager.getUserByName("fred")).thenReturn(new DelegatingApplicationUser("fred", user));
         when(projectService.getProjectByKey(any(User.class), eq("myKey"))).thenReturn(new GetProjectResult(errorCollection, null));
@@ -105,7 +107,7 @@ public class ProjectSerializerTest
     }
 
     @Test
-    public void shouldReturnProjectWhenTheStarsAlign()
+    public void shouldReturnProjectWhenTheStarsAlign() throws UnauthorisedException, ResourceNotFoundException
     {
         when(userManager.getUserByName("fred")).thenReturn(new DelegatingApplicationUser("fred", user));
         when(projectService.getProjectByKey(any(User.class), eq("myKey"))).thenReturn(new GetProjectResult(errorCollection, project1));

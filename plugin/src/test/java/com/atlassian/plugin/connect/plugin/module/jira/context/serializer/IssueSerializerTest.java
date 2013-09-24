@@ -8,6 +8,8 @@ import com.atlassian.jira.user.DelegatingApplicationUser;
 import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.jira.util.ErrorCollection;
 import com.atlassian.plugin.connect.plugin.module.context.ParameterDeserializer;
+import com.atlassian.plugin.connect.plugin.module.context.ResourceNotFoundException;
+import com.atlassian.plugin.connect.plugin.module.permission.UnauthorisedException;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import org.junit.Test;
@@ -17,6 +19,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -38,7 +41,7 @@ public class IssueSerializerTest
     private MutableIssue issue1;
 
     @Test
-    public void shouldReturnAbsentIfNoIssueInParams()
+    public void shouldReturnAbsentIfNoIssueInParams() throws UnauthorisedException, ResourceNotFoundException
     {
         final ParameterDeserializer<Issue> serializer = new IssueSerializer(issueService, userManager);
         final Optional<Issue> issue = serializer.deserialize(ImmutableMap.of("blah", new Object()), "fred");
@@ -46,16 +49,19 @@ public class IssueSerializerTest
     }
 
     @Test
-    public void shouldReturnAbsentIfIssueIsNotMap()
+    public void shouldReturnAbsentIfIssueIsNotMap() throws UnauthorisedException, ResourceNotFoundException
     {
+        fail("this should throw an error");
         final ParameterDeserializer<Issue> serializer = new IssueSerializer(issueService, userManager);
         final Optional<Issue> issue = serializer.deserialize(ImmutableMap.of("issue", new Object()), "fred");
         assertThat(issue.isPresent(), is(false));
     }
 
     @Test
-    public void shouldReturnAbsentIfNoIdOrKeyInIssue()
+    public void shouldReturnAbsentIfNoIdOrKeyInIssue() throws UnauthorisedException, ResourceNotFoundException
     {
+        fail("this should throw an error - ResourceNotFoundException???");
+
         final ParameterDeserializer<Issue> serializer = new IssueSerializer(issueService, userManager);
         final Optional<Issue> issue = serializer.deserialize(
                 ImmutableMap.<String, Object>of("issue", ImmutableMap.of("foo", new Object())),
@@ -64,8 +70,11 @@ public class IssueSerializerTest
     }
 
     @Test
-    public void shouldReturnAbsentIfNoUserForUsername()
+    public void shouldReturnAbsentIfNoUserForUsername() throws UnauthorisedException, ResourceNotFoundException
     {
+        fail("this should throw an error. Must not give out details of if user exits. " +
+                "Maybe either ResourceNotFound or Unauthorised depending on policy of product");
+
         final ParameterDeserializer<Issue> serializer = new IssueSerializer(issueService, userManager);
         final Optional<Issue> issue = serializer.deserialize(
                 ImmutableMap.<String, Object>of("issue", ImmutableMap.of("id", 10)), "fred");
@@ -75,8 +84,9 @@ public class IssueSerializerTest
     }
 
     @Test
-    public void shouldReturnAbsentIfNoIssueForId()
+    public void shouldReturnAbsentIfNoIssueForId() throws UnauthorisedException, ResourceNotFoundException
     {
+        fail("this should throw an error - ResourceNotFoundException");
         when(userManager.getUserByName("fred")).thenReturn(new DelegatingApplicationUser("fred", user));
         when(issueService.getIssue(any(User.class), eq(10l))).thenReturn(new IssueService.IssueResult(null, errorCollection));
         when(errorCollection.hasAnyErrors()).thenReturn(true);
@@ -90,8 +100,9 @@ public class IssueSerializerTest
     }
 
     @Test
-    public void shouldReturnAbsentIfNoIssueForKey()
+    public void shouldReturnAbsentIfNoIssueForKey() throws UnauthorisedException, ResourceNotFoundException
     {
+        fail("this should throw an error - ResourceNotFoundException");
         when(userManager.getUserByName("fred")).thenReturn(new DelegatingApplicationUser("fred", user));
         when(issueService.getIssue(any(User.class), eq("myKey"))).thenReturn(new IssueService.IssueResult(null, errorCollection));
         when(errorCollection.hasAnyErrors()).thenReturn(true);
@@ -105,7 +116,7 @@ public class IssueSerializerTest
     }
 
     @Test
-    public void shouldReturnIssueWhenTheStarsAlign()
+    public void shouldReturnIssueWhenTheStarsAlign() throws UnauthorisedException, ResourceNotFoundException
     {
         when(userManager.getUserByName("fred")).thenReturn(new DelegatingApplicationUser("fred", user));
         when(issueService.getIssue(any(User.class), eq("myKey"))).thenReturn(new IssueService.IssueResult(issue1, errorCollection));

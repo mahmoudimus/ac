@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.plugin.module.context;
 
 import com.atlassian.jira.plugin.webfragment.JiraWebInterfaceManager;
+import com.atlassian.plugin.connect.plugin.module.permission.UnauthorisedException;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,13 +54,14 @@ public class ContextMapURLSerializer
         return builder.build();
     }
 
-    public  Map<String, Object> getAuthenticatedAddonParameters(final Map<String, Object> context, String username)
+    public  Map<String, Object> getAuthenticatedAddonParameters(final Map<String, Object> context, String username) throws UnauthorisedException, ResourceNotFoundException
     {
         final ImmutableMap.Builder<String, Object> builder = ImmutableMap.<String, Object>builder();
         for (ContextMapParameterExtractor extractor : contextMapParameterExtractors)
         {
-            final Optional<Object> resource = extractor.deserializer().deserialize(context, username);
-            // TODO: Should be 403 if no permission
+            final ParameterDeserializer deserializer = extractor.deserializer();
+            final Optional<Object> resource = deserializer.deserialize(context, username);
+            // TODO: Should be 401 if no permission
             // TODO: The Jira impl will already authenticate so don't need to double up here
             // TODO: Wrong jira usermanager if we want to keep this check
             if (resource.isPresent() /*&& extractor.hasViewPermission(username, resource.get())*/)

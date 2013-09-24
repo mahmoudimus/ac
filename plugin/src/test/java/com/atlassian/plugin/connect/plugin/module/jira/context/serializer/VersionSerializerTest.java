@@ -7,6 +7,8 @@ import com.atlassian.jira.user.DelegatingApplicationUser;
 import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.jira.util.ErrorCollection;
 import com.atlassian.plugin.connect.plugin.module.context.ParameterDeserializer;
+import com.atlassian.plugin.connect.plugin.module.context.ResourceNotFoundException;
+import com.atlassian.plugin.connect.plugin.module.permission.UnauthorisedException;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import org.junit.Test;
@@ -38,7 +40,7 @@ public class VersionSerializerTest
     private Version version1;
 
     @Test
-    public void shouldReturnAbsentIfNoVersionInParams()
+    public void shouldReturnAbsentIfNoVersionInParams() throws UnauthorisedException, ResourceNotFoundException
     {
         final ParameterDeserializer<Version> serializer = new VersionSerializer(versionService, userManager);
         final Optional<Version> version = serializer.deserialize(ImmutableMap.of("blah", new Object()), "fred");
@@ -46,7 +48,7 @@ public class VersionSerializerTest
     }
 
     @Test
-    public void shouldReturnAbsentIfVersionIsNotMap()
+    public void shouldReturnAbsentIfVersionIsNotMap() throws UnauthorisedException, ResourceNotFoundException
     {
         final ParameterDeserializer<Version> serializer = new VersionSerializer(versionService, userManager);
         final Optional<Version> version = serializer.deserialize(ImmutableMap.of("version", new Object()), "fred");
@@ -54,7 +56,7 @@ public class VersionSerializerTest
     }
 
     @Test
-    public void shouldReturnAbsentIfNoIdOrKeyInVersion()
+    public void shouldReturnAbsentIfNoIdOrKeyInVersion() throws UnauthorisedException, ResourceNotFoundException
     {
         final ParameterDeserializer<Version> serializer = new VersionSerializer(versionService, userManager);
         final Optional<Version> version = serializer.deserialize(
@@ -64,7 +66,7 @@ public class VersionSerializerTest
     }
 
     @Test
-    public void shouldReturnAbsentIfNoUserForUsername()
+    public void shouldReturnAbsentIfNoUserForUsername() throws UnauthorisedException, ResourceNotFoundException
     {
         final ParameterDeserializer<Version> serializer = new VersionSerializer(versionService, userManager);
         final Optional<Version> version = serializer.deserialize(
@@ -75,7 +77,7 @@ public class VersionSerializerTest
     }
 
     @Test
-    public void shouldReturnAbsentIfNoVersionForId()
+    public void shouldReturnAbsentIfNoVersionForId() throws UnauthorisedException, ResourceNotFoundException
     {
         when(userManager.getUserByName("fred")).thenReturn(new DelegatingApplicationUser("fred", user));
         when(versionService.getVersionById(any(User.class), eq(10l))).thenReturn(new VersionResult(errorCollection, null));
@@ -90,7 +92,7 @@ public class VersionSerializerTest
     }
 
     @Test
-    public void shouldReturnVersionWhenTheStarsAlign()
+    public void shouldReturnVersionWhenTheStarsAlign() throws UnauthorisedException, ResourceNotFoundException
     {
         when(userManager.getUserByName("fred")).thenReturn(new DelegatingApplicationUser("fred", user));
         when(versionService.getVersionById(any(User.class), eq(10l))).thenReturn(new VersionResult(errorCollection, version1));

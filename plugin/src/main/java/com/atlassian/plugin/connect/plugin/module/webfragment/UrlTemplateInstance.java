@@ -5,10 +5,13 @@ import java.util.Set;
 /**
  * Represents an instance of a template for a Url being applied to a variable context for a particular user.
  * The URL template will have zero or more place holders for variables that are substituted from the context.
- * The user must have persmission to view any Atlassian resource (e.g. a Confluence page) corresponding to the context variables
+ * The user must have permission to view any Atlassian resource (e.g. a Confluence page) corresponding to the context variables
  */
 public interface UrlTemplateInstance
 {
+    // TODO: Should find a better home
+    String CONTEXT_PARAMETER_KEY = "context";
+
     /**
      * The template form of the url with place holders for variables
      * @return

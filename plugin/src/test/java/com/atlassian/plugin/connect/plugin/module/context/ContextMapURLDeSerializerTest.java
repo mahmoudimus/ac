@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.plugin.module.context;
 
 
+import com.atlassian.plugin.connect.plugin.module.permission.UnauthorisedException;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -59,7 +60,7 @@ public class ContextMapURLDeSerializerTest
 //    }
 
     @Test
-    public void shouldExcludeParametersThatUserDoesNotHaveViewPermissionFor()
+    public void shouldExcludeParametersThatUserDoesNotHaveViewPermissionFor() throws ResourceNotFoundException, UnauthorisedException
     {
         final ContextMapURLSerializer serializer = new ContextMapURLSerializer(ImmutableList.of(parameterExtractor1));
         final Map<String, Object> context = ImmutableMap.<String, Object>of(

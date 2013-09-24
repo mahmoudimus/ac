@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.plugin.module.context;
 
 
+import com.atlassian.plugin.connect.plugin.module.permission.UnauthorisedException;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -16,6 +17,7 @@ import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -61,6 +63,8 @@ public class ContextMapURLSerializerTest
     }
 
     @Test
+    // TODO: The behaviour should be to throw an exception.
+    // However, we likely don't need this method
     public void shouldExcludeParametersThatUserDoesNotHaveViewPermissionFor()
     {
         final ContextMapURLSerializer serializer = new ContextMapURLSerializer(ImmutableList.of(parameterExtractor1));
@@ -80,5 +84,32 @@ public class ContextMapURLSerializerTest
         verify(parameterExtractor1, times(1)).hasViewPermission("fred", extracted1);
 
         assertThat(parameters.isEmpty(), is(true));
+    }
+
+    @Test(expected = ResourceNotFoundException.class)
+    public void shouldThrowResourceNotFoundExceptionWhenKeyExistsButNoResourceReturned() throws UnauthorisedException, ResourceNotFoundException
+    {
+        final ContextMapURLSerializer serializer = new ContextMapURLSerializer(ImmutableList.of(parameterExtractor1));
+        final ImmutableMap<String, Object> context = ImmutableMap.<String, Object>of(
+                "key1", 10,
+                "key2", "blah");
+
+
+        Object someResource = new Object();
+//        when(parameterExtractor1.extract(context)).thenReturn(Optional.of(extracted1));
+        final ParameterDeserializer<Object> deserializer = parameterExtractor1.deserializer();
+//        when(deserializer.containsSerializedResource(context)).thenReturn(false);
+
+        fail("TODO");
+//        when(deserializer.deserialize(context, "fred"))
+//                .thenReturn(Optional.of(someResource));
+
+//        when(parameterExtractor1.hasViewPermission("fred", extracted1)).thenReturn(false);
+
+        final Map<String, Object> parameters = serializer.getAuthenticatedAddonParameters(context, "fred");
+
+//        verify(parameterExtractor1, times(1)).hasViewPermission("fred", extracted1);
+//
+//        assertThat(parameters.isEmpty(), is(true));
     }
 }

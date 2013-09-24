@@ -28,9 +28,9 @@ public abstract class AbstractParameterSerializer<T, C, U> implements ParameterS
     }
 
     @Override
-    public Optional<T> deserialize(Map<String, Object> params, String username)
+    public Optional<T> deserialize(Map<String, Object> params, String username) throws ResourceNotFoundException
     {
-        final Optional<Map> containerMap = getParam(params, containerFieldName, Map.class);
+        final Optional<Map> containerMap = getContainerMap(params);
         if (!containerMap.isPresent())
         {
             return Optional.absent();
@@ -57,7 +57,13 @@ public abstract class AbstractParameterSerializer<T, C, U> implements ParameterS
             return Optional.absent();
         }
 
+        // TODO: likely throw ResourceNotFoundException here
         return Optional.of(parameterUnwrapper.unwrap(serviceResult));
+    }
+
+    private Optional<Map> getContainerMap(Map<String, Object> params)
+    {
+        return getParam(params, containerFieldName, Map.class);
     }
 
     protected abstract boolean isResultValid(C serviceResult);

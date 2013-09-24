@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.plugin.module.page;
 
+import com.atlassian.plugin.connect.plugin.module.context.ResourceNotFoundException;
+import com.atlassian.plugin.connect.plugin.module.permission.UnauthorisedException;
 import com.atlassian.plugin.connect.plugin.module.webfragment.InvalidContextParameterException;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlTemplateInstance;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlTemplateInstanceFactory;
@@ -21,10 +23,11 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Map;
 
+import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
+import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -58,7 +61,7 @@ public class IFramePageServletTest
     private UrlTemplateInstance urlTemplateInstance;
 
     @Test
-    public void shouldSubstituteVariablesAndCallRender() throws ServletException, IOException, InvalidContextParameterException
+    public void shouldSubstituteVariablesAndCallRender() throws ServletException, IOException, InvalidContextParameterException, UnauthorisedException, ResourceNotFoundException
     {
         String iFramePathTemplate = "/foo/bar?arg1=${blah.id}&arg2=${user.address.street}";
         IFrameContext initialIFrameContext = new IFrameContextImpl("myKey", iFramePathTemplate, "namespace1", iFrameParams);
@@ -77,7 +80,7 @@ public class IFramePageServletTest
         when(resp.getWriter()).thenReturn(out);
 
         when(urlTemplateInstanceFactory.create(iFramePathTemplate, params, "barney")).thenReturn(urlTemplateInstance);
-        Map<String, String[]> nonTemplateContextParams = ImmutableMap.of("notInUrlTemplate", anotherParamValue);
+//        Map<String, String[]> nonTemplateContextParams = ImmutableMap.of("notInUrlTemplate", anotherParamValue);
 //        when(urlTemplateInstance.getNonTemplateContextParameters()).thenReturn(nonTemplateContextParams);
         when(urlTemplateInstance.getUrlString()).thenReturn("/foo/bar?arg1=10&arg2=deadEndSt");
 
@@ -89,7 +92,7 @@ public class IFramePageServletTest
         ArgumentCaptor<IFrameContext> argumentCaptor = ArgumentCaptor.forClass(IFrameContext.class);
 
         verify(iFrameRenderer, times(1)).renderPage(argumentCaptor.capture(), eq(pageInfo), eq("/some/path"),
-                eq(nonTemplateContextParams), eq("barney"), eq(out));
+                eq(ImmutableMap.<String, String[]>of()), eq("barney"), eq(out));
 
         IFrameContext capturedIFrameContext = argumentCaptor.getValue();
 
@@ -102,8 +105,52 @@ public class IFramePageServletTest
     }
 
     @Test
-    public void shouldReturn403IfUnauthorisedContextParamsPassed()
+    public void shouldReturn400OnInvalidContextParameterException() throws InvalidContextParameterException, ServletException,
+            IOException, UnauthorisedException, ResourceNotFoundException
     {
-        fail("Not implemented");
+        IFrameContext initialIFrameContext = new IFrameContextImpl("myKey", "path", "namespace1", iFrameParams);
+
+        when(urlTemplateInstanceFactory.create(anyString(), anyMap(), anyString()))
+                .thenThrow(new InvalidContextParameterException("doh"));
+
+        IFramePageServlet servlet = new IFramePageServlet(pageInfo, iFrameRenderer, initialIFrameContext, userManager,
+                urlTemplateInstanceFactory);
+        servlet.doGet(req, resp);
+
+        verify(resp, times(1)).sendError(SC_BAD_REQUEST, "doh");
+    }
+
+    @Test
+    public void shouldReturn401IfUnauthorisedContextParamsPassed() throws InvalidContextParameterException, IOException, ServletException, UnauthorisedException, ResourceNotFoundException
+    {
+        IFrameContext initialIFrameContext = new IFrameContextImpl("myKey", "path", "namespace1", iFrameParams);
+
+        when(urlTemplateInstanceFactory.create(anyString(), anyMap(), anyString()))
+                .thenThrow(new InvalidContextParameterException("doh"));
+
+        IFramePageServlet servlet = new IFramePageServlet(pageInfo, iFrameRenderer, initialIFrameContext, userManager,
+                urlTemplateInstanceFactory);
+        servlet.doGet(req, resp);
+
+        verify(resp, times(1)).sendError(SC_UNAUTHORIZED, "doh");
+        // Note: Filters will populate the WWW-Authenticate for us
+    }
+
+    @Test
+    public void shouldReturn404IfUnauthorisedContextParamsPassedWhenPolicySetTo404() throws InvalidContextParameterException, IOException, ServletException, UnauthorisedException, ResourceNotFoundException
+    {
+//        TODO... Need test for ResourceNotFound. Likely back out the enum from UnauthorisedExc
+
+        IFrameContext initialIFrameContext = new IFrameContextImpl("myKey", "path", "namespace1", iFrameParams);
+
+        when(urlTemplateInstanceFactory.create(anyString(), anyMap(), anyString()))
+                .thenThrow(new InvalidContextParameterException("doh"));
+
+        IFramePageServlet servlet = new IFramePageServlet(pageInfo, iFrameRenderer, initialIFrameContext, userManager,
+                urlTemplateInstanceFactory);
+        servlet.doGet(req, resp);
+
+        verify(resp, times(1)).sendError(SC_UNAUTHORIZED, "doh");
+        // Note: Filters will populate the WWW-Authenticate for us
     }
 }

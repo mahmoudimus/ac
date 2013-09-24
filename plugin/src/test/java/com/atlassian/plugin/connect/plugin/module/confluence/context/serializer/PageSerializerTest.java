@@ -5,6 +5,8 @@ import com.atlassian.confluence.content.service.page.SinglePageLocator;
 import com.atlassian.confluence.pages.AbstractPage;
 import com.atlassian.confluence.pages.Page;
 import com.atlassian.plugin.connect.plugin.module.context.ParameterDeserializer;
+import com.atlassian.plugin.connect.plugin.module.context.ResourceNotFoundException;
+import com.atlassian.plugin.connect.plugin.module.permission.UnauthorisedException;
 import com.atlassian.user.EntityException;
 import com.atlassian.user.User;
 import com.atlassian.user.UserManager;
@@ -38,7 +40,7 @@ public class PageSerializerTest
     private Page page1;
 
     @Test
-    public void shouldReturnAbsentIfNoPageInParams()
+    public void shouldReturnAbsentIfNoPageInParams() throws UnauthorisedException, ResourceNotFoundException
     {
         final ParameterDeserializer<AbstractPage> serializer = new PageSerializer(pageService, userManager);
         final Optional<AbstractPage> page = serializer.deserialize(ImmutableMap.of("blah", new Object()), "fred");
@@ -46,7 +48,7 @@ public class PageSerializerTest
     }
 
     @Test
-    public void shouldReturnAbsentIfPageIsNotMap()
+    public void shouldReturnAbsentIfPageIsNotMap() throws UnauthorisedException, ResourceNotFoundException
     {
         final ParameterDeserializer<AbstractPage> serializer = new PageSerializer(pageService, userManager);
         final Optional<AbstractPage> page = serializer.deserialize(ImmutableMap.of("page", new Object()), "fred");
@@ -54,7 +56,7 @@ public class PageSerializerTest
     }
 
     @Test
-    public void shouldReturnAbsentIfNoIdOrKeyInPage()
+    public void shouldReturnAbsentIfNoIdOrKeyInPage() throws ResourceNotFoundException, UnauthorisedException
     {
         final ParameterDeserializer<AbstractPage> serializer = new PageSerializer(pageService, userManager);
         final Optional<AbstractPage> page = serializer.deserialize(
@@ -64,7 +66,7 @@ public class PageSerializerTest
     }
 
     @Test
-    public void shouldReturnAbsentIfNoUserForUsername() throws EntityException
+    public void shouldReturnAbsentIfNoUserForUsername() throws EntityException, ResourceNotFoundException, UnauthorisedException
     {
         final ParameterDeserializer<AbstractPage> serializer = new PageSerializer(pageService, userManager);
         final Optional<AbstractPage> page = serializer.deserialize(
@@ -75,7 +77,7 @@ public class PageSerializerTest
     }
 
     @Test
-    public void shouldReturnAbsentIfNoPageForId() throws EntityException
+    public void shouldReturnAbsentIfNoPageForId() throws EntityException, ResourceNotFoundException, UnauthorisedException
     {
         when(userManager.getUser("fred")).thenReturn(user);
         when(pageService.getIdPageLocator(10l)).thenReturn(new SinglePageLocator(null));
@@ -89,7 +91,7 @@ public class PageSerializerTest
     }
 
     @Test
-    public void shouldReturnPageWhenTheStarsAlign() throws EntityException
+    public void shouldReturnPageWhenTheStarsAlign() throws EntityException, ResourceNotFoundException, UnauthorisedException
     {
         when(userManager.getUser("fred")).thenReturn(user);
         when(pageService.getIdPageLocator(10l)).thenReturn(new SinglePageLocator(page1));

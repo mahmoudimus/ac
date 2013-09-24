@@ -1,6 +1,8 @@
 package com.atlassian.plugin.connect.plugin.module.webfragment;
 
 import com.atlassian.plugin.connect.plugin.module.context.ContextMapURLSerializer;
+import com.atlassian.plugin.connect.plugin.module.context.ResourceNotFoundException;
+import com.atlassian.plugin.connect.plugin.module.permission.UnauthorisedException;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import org.junit.Test;
@@ -27,7 +29,7 @@ public class UrlTemplateInstanceImplTest
     private ContextMapURLSerializer contextMapURLSerializer;
 
     @Test
-    public void shouldCopeWithEmptyParams() throws InvalidContextParameterException
+    public void shouldCopeWithEmptyParams() throws InvalidContextParameterException, ResourceNotFoundException, UnauthorisedException
     {
         final String pathTemplate = "/foo/bar?arg1=${blah.id}&arg2=${user.address.street}";
         Map<String, Object> context = ImmutableMap.of();
@@ -45,7 +47,7 @@ public class UrlTemplateInstanceImplTest
     }
 
     @Test
-    public void shouldCopeWithZeroPathVariables() throws InvalidContextParameterException
+    public void shouldCopeWithZeroPathVariables() throws InvalidContextParameterException, ResourceNotFoundException, UnauthorisedException
     {
         final String pathTemplate = "/foo/bar";
         Map<String, Object> context = ImmutableMap.<String, Object>of("somekey", new String[]{"somevalue"});
@@ -64,7 +66,7 @@ public class UrlTemplateInstanceImplTest
     }
 
     @Test
-    public void shouldSubstituteVariables() throws InvalidContextParameterException
+    public void shouldSubstituteVariables() throws InvalidContextParameterException, ResourceNotFoundException, UnauthorisedException
     {
         final String pathTemplate = "/foo/bar?arg1=${blah.id}&arg2=${user.address.street}";
         final String path = "/foo/bar?arg1=10&arg2=deadEndSt";
@@ -84,7 +86,7 @@ public class UrlTemplateInstanceImplTest
     }
 
     @Test
-    public void shouldExtractContextAndAddToParamMap() throws InvalidContextParameterException
+    public void shouldExtractContextAndAddToParamMap() throws InvalidContextParameterException, ResourceNotFoundException, UnauthorisedException
     {
         String[] contextStr = new String[]{"{\"project\":{\"id\":10100}}"};
 
@@ -111,7 +113,7 @@ public class UrlTemplateInstanceImplTest
     }
 
     @Test(expected = InvalidContextParameterException.class)
-    public void shouldThrowInvalidContextParameterExceptionWhenCantUnmarshalJsonContext() throws InvalidContextParameterException
+    public void shouldThrowInvalidContextParameterExceptionWhenCantUnmarshalJsonContext() throws InvalidContextParameterException, ResourceNotFoundException, UnauthorisedException
     {
         String[] contextStr = new String[]{"not proper json"};
 
@@ -120,7 +122,7 @@ public class UrlTemplateInstanceImplTest
     }
 
     @Test(expected = InvalidContextParameterException.class)
-    public void shouldThrowInvalidContextParameterExceptionWhenContextJsonEmptyStringArray() throws InvalidContextParameterException
+    public void shouldThrowInvalidContextParameterExceptionWhenContextJsonEmptyStringArray() throws InvalidContextParameterException, ResourceNotFoundException, UnauthorisedException
     {
         String[] contextStr = new String[]{};
 
@@ -130,7 +132,7 @@ public class UrlTemplateInstanceImplTest
     }
 
     @Test
-    public void shouldIdentifyTemplateVariables() throws InvalidContextParameterException
+    public void shouldIdentifyTemplateVariables() throws InvalidContextParameterException, ResourceNotFoundException, UnauthorisedException
     {
         final String pathTemplate = "/foo/bar?arg1=${blah.id}&arg2=${user.address.street}";
         Map<String, Object> requestParams = ImmutableMap.of();

@@ -1,5 +1,8 @@
 package com.atlassian.plugin.connect.plugin.module.webfragment;
 
+import com.atlassian.plugin.connect.plugin.module.context.ResourceNotFoundException;
+import com.atlassian.plugin.connect.plugin.module.permission.UnauthorisedException;
+
 import java.util.Map;
 
 /**
@@ -14,5 +17,5 @@ public interface UrlTemplateInstanceFactory
      * @param username
      * @return
      */
-    UrlTemplateInstance create(String urlTemplateString, Map<String, Object> context, String username) throws InvalidContextParameterException;
+    UrlTemplateInstance create(String urlTemplateString, Map<String, Object> context, String username) throws InvalidContextParameterException, UnauthorisedException, ResourceNotFoundException;
 }
