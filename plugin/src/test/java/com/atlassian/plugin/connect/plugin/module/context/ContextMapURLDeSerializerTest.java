@@ -14,6 +14,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Map;
 
+import static org.hamcrest.Matchers.hasEntry;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
@@ -30,35 +32,45 @@ public class ContextMapURLDeSerializerTest
     private Object extracted1 = new Object();
     private Object extracted2 = new Object();
 
-//    @Test
-//    public void shouldIncludeOnlyEntriesProvidedByExtractors()
-//    {
-//        final ContextMapURLSerializer serializer = new ContextMapURLSerializer(ImmutableList.of(parameterExtractor1, parameterExtractor2));
-//        final ImmutableMap<String, Object> context = ImmutableMap.<String, Object>of(
-//                "key1", 10,
-//                "key2", "blah",
-//                "key3", 22.2);
-//
-//
-//        when(parameterExtractor1.extract(context)).thenReturn(Optional.of(extracted1));
-//        when(parameterExtractor2.extract(context)).thenReturn(Optional.of(extracted2));
-//        when(parameterExtractor1.serializer().serialize(extracted1)).thenReturn(
-//                ImmutableMap.<String, Object>of("new key1", "value1"));
-//        when(parameterExtractor2.serializer().serialize(extracted2)).thenReturn(
-//                ImmutableMap.<String, Object>of("new key2", 22.2));
+    @Test
+    public void shouldAuthoriseAllResourceRefs() throws ResourceNotFoundException, UnauthorisedException
+    {
+        final ContextMapURLSerializer urlSerializer = new ContextMapURLSerializer(ImmutableList.of(parameterExtractor1, parameterExtractor2));
+        final ImmutableMap<String, Object> context = ImmutableMap.<String, Object>of(
+                "key1", 10,
+                "key2", "blah",
+                "key3", 22.2);
+
+
+        when(parameterExtractor1.deserializer().deserialize(context, "fred")).thenReturn(Optional.of(extracted1));
+        when(parameterExtractor2.deserializer().deserialize(context, "fred")).thenReturn(Optional.of(extracted2));
+
+        when(parameterExtractor1.serializer().serialize(extracted1)).thenReturn(
+                ImmutableMap.<String, Object>of("new key1", "value1"));
+        when(parameterExtractor2.serializer().serialize(extracted2)).thenReturn(
+                ImmutableMap.<String, Object>of("new key2", 22.2));
+
 //        when(parameterExtractor1.hasViewPermission(anyString(), any())).thenReturn(true);
 //        when(parameterExtractor2.hasViewPermission(anyString(), any())).thenReturn(true);
-//
-//
-//        final Map<String, Object> parameters = serializer.getExtractedWebPanelParameters(context, "barney");
-//
-//        verify(parameterExtractor1, times(1)).extract(context);
-//        verify(parameterExtractor2, times(1)).extract(context);
-//
-//        assertThat(parameters, hasEntry("new key1", (Object) "value1"));
-//        assertThat(parameters, hasEntry("new key2", (Object) 22.2));
-//        assertThat(parameters.entrySet(), hasSize(2));
-//    }
+
+
+        final Map<String, Object> parameters = urlSerializer.getAuthenticatedAddonParameters(context, "fred");
+
+        verify(parameterExtractor1.deserializer(), times(1)).deserialize(context, "fred");
+        verify(parameterExtractor2.deserializer(), times(1)).deserialize(context, "fred");
+
+        verify(parameterExtractor1.serializer(), times(1)).serialize(extracted1);
+        verify(parameterExtractor2.serializer(), times(1)).serialize(extracted2);
+
+        assertThat(parameters, hasEntry("new key1", (Object) "value1"));
+        assertThat(parameters, hasEntry("new key2", (Object) 22.2));
+        assertThat(parameters.entrySet(), hasSize(2));
+    }
+
+    /* cases
+        - extra params (variables)
+        - all resource refs must be validated
+     */
 
     @Test
     @Ignore // TODO: We may need to bring this back when we do permission checks in confluence.
