@@ -5,6 +5,7 @@ import com.atlassian.plugin.connect.plugin.module.permission.UnauthorisedExcepti
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Answers;
@@ -60,6 +61,7 @@ public class ContextMapURLDeSerializerTest
 //    }
 
     @Test
+    @Ignore // TODO: We may need to bring this back when we do permission checks in confluence.
     public void shouldExcludeParametersThatUserDoesNotHaveViewPermissionFor() throws ResourceNotFoundException, UnauthorisedException
     {
         final ContextMapURLSerializer serializer = new ContextMapURLSerializer(ImmutableList.of(parameterExtractor1));
@@ -80,5 +82,38 @@ public class ContextMapURLDeSerializerTest
         verify(parameterExtractor1, times(1)).hasViewPermission("fred", extracted1);
 
         assertThat(parameters.isEmpty(), is(true));
+    }
+
+    @Test(expected = ResourceNotFoundException.class)
+    public void shouldLetResourceNotFoundExceptionPassThrough() throws ResourceNotFoundException, UnauthorisedException
+    {
+        final ContextMapURLSerializer serializer = new ContextMapURLSerializer(ImmutableList.of(parameterExtractor1));
+        final Map<String, Object> context = ImmutableMap.<String, Object>of();
+
+        when(parameterExtractor1.deserializer().deserialize(context, "fred")).thenThrow(new ResourceNotFoundException("blah"));
+
+        serializer.getAuthenticatedAddonParameters(context, "fred");
+    }
+
+    @Test(expected = MalformedRequestException.class)
+    public void shouldLetMalformedRequestExceptionPassThrough() throws ResourceNotFoundException, UnauthorisedException
+    {
+        final ContextMapURLSerializer serializer = new ContextMapURLSerializer(ImmutableList.of(parameterExtractor1));
+        final Map<String, Object> context = ImmutableMap.<String, Object>of();
+
+        when(parameterExtractor1.deserializer().deserialize(context, "fred")).thenThrow(new MalformedRequestException("blah"));
+
+        serializer.getAuthenticatedAddonParameters(context, "fred");
+    }
+
+    @Test(expected = UnauthorisedException.class)
+    public void shouldLetUnauthorisedExceptionPassThrough() throws ResourceNotFoundException, UnauthorisedException
+    {
+        final ContextMapURLSerializer serializer = new ContextMapURLSerializer(ImmutableList.of(parameterExtractor1));
+        final Map<String, Object> context = ImmutableMap.<String, Object>of();
+
+        when(parameterExtractor1.deserializer().deserialize(context, "fred")).thenThrow(new UnauthorisedException("blah"));
+
+        serializer.getAuthenticatedAddonParameters(context, "fred");
     }
 }
