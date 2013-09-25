@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.module.page;
 
+import com.atlassian.plugin.connect.plugin.module.context.MalformedRequestException;
 import com.atlassian.plugin.connect.plugin.module.context.ResourceNotFoundException;
 import com.atlassian.plugin.connect.plugin.module.permission.UnauthorisedException;
 import com.atlassian.plugin.connect.plugin.module.webfragment.InvalidContextParameterException;
@@ -18,6 +19,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
+import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
+import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
 
 /**
  * A servlet that loads its content from a remote plugin's iframe
@@ -66,17 +69,22 @@ public class IFramePageServlet extends HttpServlet
                     ImmutableMap.<String, String[]>of()/*urlTemplateInstance.getNonTemplateContextParameters()*/,
                     remoteUsername, out);
         }
+        // TODO: Should be a subtype of MalformedRequestException
         catch (InvalidContextParameterException e)
+        {
+            resp.sendError(SC_BAD_REQUEST, e.getMessage());
+        }
+        catch (MalformedRequestException e)
         {
             resp.sendError(SC_BAD_REQUEST, e.getMessage());
         }
         catch (UnauthorisedException e)
         {
-            e.printStackTrace();  // TODO
+            resp.sendError(SC_UNAUTHORIZED, e.getMessage());
         }
         catch (ResourceNotFoundException e)
         {
-            e.printStackTrace();  // TODO
+            resp.sendError(SC_NOT_FOUND, e.getMessage());
         }
     }
 

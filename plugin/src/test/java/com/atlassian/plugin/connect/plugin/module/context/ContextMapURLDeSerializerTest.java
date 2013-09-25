@@ -67,11 +67,6 @@ public class ContextMapURLDeSerializerTest
 //        assertThat(parameters.entrySet(), hasSize(2));
     }
 
-    /* cases
-        - extra params (variables)
-        - all resource refs must be validated
-     */
-
     @Test
     @Ignore // TODO: We may need to bring this back when we do permission checks in confluence.
     public void shouldExcludeParametersThatUserDoesNotHaveViewPermissionFor() throws ResourceNotFoundException, UnauthorisedException
