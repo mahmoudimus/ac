@@ -7,19 +7,21 @@ import com.atlassian.jira.issue.MutableIssue;
 import com.atlassian.jira.user.DelegatingApplicationUser;
 import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.jira.util.ErrorCollection;
+import com.atlassian.plugin.connect.plugin.module.context.MalformedRequestException;
 import com.atlassian.plugin.connect.plugin.module.context.ParameterDeserializer;
 import com.atlassian.plugin.connect.plugin.module.context.ResourceNotFoundException;
 import com.atlassian.plugin.connect.plugin.module.permission.UnauthorisedException;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -40,6 +42,9 @@ public class IssueSerializerTest
     @Mock
     private MutableIssue issue1;
 
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
     @Test
     public void shouldReturnAbsentIfNoIssueInParams() throws UnauthorisedException, ResourceNotFoundException
     {
@@ -51,7 +56,8 @@ public class IssueSerializerTest
     @Test
     public void shouldReturnAbsentIfIssueIsNotMap() throws UnauthorisedException, ResourceNotFoundException
     {
-        fail("this should throw an error");
+        thrown.expect(MalformedRequestException.class);
+        thrown.expectMessage("Invalid type for parameter name issue");
         final ParameterDeserializer<Issue> serializer = new IssueSerializer(issueService, userManager);
         final Optional<Issue> issue = serializer.deserialize(ImmutableMap.of("issue", new Object()), "fred");
         assertThat(issue.isPresent(), is(false));
@@ -60,7 +66,8 @@ public class IssueSerializerTest
     @Test
     public void shouldReturnAbsentIfNoIdOrKeyInIssue() throws UnauthorisedException, ResourceNotFoundException
     {
-        fail("this should throw an error - ResourceNotFoundException???");
+        thrown.expect(MalformedRequestException.class);
+        thrown.expectMessage("No identifiers in request for issue");
 
         final ParameterDeserializer<Issue> serializer = new IssueSerializer(issueService, userManager);
         final Optional<Issue> issue = serializer.deserialize(
@@ -72,8 +79,8 @@ public class IssueSerializerTest
     @Test
     public void shouldReturnAbsentIfNoUserForUsername() throws UnauthorisedException, ResourceNotFoundException
     {
-        fail("this should throw an error. Must not give out details of if user exits. " +
-                "Maybe either ResourceNotFound or Unauthorised depending on policy of product");
+        // TODO: Not sure if this would ever happen. Would the filters have stopped it getting this far?
+        // If not then should we throw an error rather than just not deserialsing???
 
         final ParameterDeserializer<Issue> serializer = new IssueSerializer(issueService, userManager);
         final Optional<Issue> issue = serializer.deserialize(
@@ -84,9 +91,11 @@ public class IssueSerializerTest
     }
 
     @Test
-    public void shouldReturnAbsentIfNoIssueForId() throws UnauthorisedException, ResourceNotFoundException
+    public void shouldThrowResourceNotFoundExceptionIfNoIssueForId() throws UnauthorisedException, ResourceNotFoundException
     {
-        fail("this should throw an error - ResourceNotFoundException");
+        thrown.expect(ResourceNotFoundException.class);
+        thrown.expectMessage("No such issue"); // TODO: would be nice to provide id too
+
         when(userManager.getUserByName("fred")).thenReturn(new DelegatingApplicationUser("fred", user));
         when(issueService.getIssue(any(User.class), eq(10l))).thenReturn(new IssueService.IssueResult(null, errorCollection));
         when(errorCollection.hasAnyErrors()).thenReturn(true);
@@ -100,9 +109,11 @@ public class IssueSerializerTest
     }
 
     @Test
-    public void shouldReturnAbsentIfNoIssueForKey() throws UnauthorisedException, ResourceNotFoundException
+    public void shouldThrowResourceNotFoundExceptionIfNoIssueForKey() throws UnauthorisedException, ResourceNotFoundException
     {
-        fail("this should throw an error - ResourceNotFoundException");
+        thrown.expect(ResourceNotFoundException.class);
+        thrown.expectMessage("No such issue");
+
         when(userManager.getUserByName("fred")).thenReturn(new DelegatingApplicationUser("fred", user));
         when(issueService.getIssue(any(User.class), eq("myKey"))).thenReturn(new IssueService.IssueResult(null, errorCollection));
         when(errorCollection.hasAnyErrors()).thenReturn(true);

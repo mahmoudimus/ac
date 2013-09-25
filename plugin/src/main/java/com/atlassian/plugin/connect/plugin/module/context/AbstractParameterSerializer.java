@@ -16,7 +16,6 @@ public abstract class AbstractParameterSerializer<T, C, U> implements ParameterS
     private final ParameterLookup<C, ?, U>[] parameterLookups;
     private final ParameterUnwrapper<C, T> parameterUnwrapper;
 
-    // TODO: abstract a common user interface across products to support simple lookup by username
     public AbstractParameterSerializer(CommonUserLookup<U> userManager, String containerFieldName,
                                        ParameterUnwrapper<C, T> parameterUnwrapper,
                                        ParameterLookup<C, ?, U>... parameterLookups)
@@ -28,7 +27,7 @@ public abstract class AbstractParameterSerializer<T, C, U> implements ParameterS
     }
 
     @Override
-    public Optional<T> deserialize(Map<String, Object> params, String username) throws ResourceNotFoundException
+    public Optional<T> deserialize(Map<String, Object> params, String username) throws ResourceNotFoundException, MalformedRequestException
     {
         final Optional<Map> containerMap = getContainerMap(params);
         if (!containerMap.isPresent())
@@ -39,7 +38,7 @@ public abstract class AbstractParameterSerializer<T, C, U> implements ParameterS
         final Optional<LookupProxy> lookup = createLookup(containerMap);
         if (!lookup.isPresent())
         {
-            return Optional.absent();
+            throw new MalformedRequestException("No identifiers in request for " + containerFieldName);
         }
 
         final U user = userManager.lookupByUsername(username);
@@ -53,15 +52,13 @@ public abstract class AbstractParameterSerializer<T, C, U> implements ParameterS
 
         if (serviceResult == null || !isResultValid(serviceResult))
         {
-            // TODO: Should this be an exception?
-            return Optional.absent();
+            throw new ResourceNotFoundException("No such " + containerFieldName);
         }
 
-        // TODO: likely throw ResourceNotFoundException here
         return Optional.of(parameterUnwrapper.unwrap(serviceResult));
     }
 
-    private Optional<Map> getContainerMap(Map<String, Object> params)
+    private Optional<Map> getContainerMap(Map<String, Object> params) throws MalformedRequestException
     {
         return getParam(params, containerFieldName, Map.class);
     }
@@ -149,12 +146,16 @@ public abstract class AbstractParameterSerializer<T, C, U> implements ParameterS
         }
     }
 
-    private <C> Optional<C> getParam(Map<?, ?> params, String paramName, Class<C> type)
+    private <C> Optional<C> getParam(Map<?, ?> params, String paramName, Class<C> type) throws MalformedRequestException
     {
         final Object o = params.get(paramName);
-        if (o == null || !type.isInstance(o))
+        if (o == null)
         {
             return Optional.absent();
+        }
+        else if (!type.isInstance(o))
+        {
+            throw new MalformedRequestException("Invalid type for parameter name " + paramName);
         }
         else
         {
@@ -162,7 +163,7 @@ public abstract class AbstractParameterSerializer<T, C, U> implements ParameterS
         }
     }
 
-    private Optional<LookupProxy> createLookup(Optional<Map> containerMap)
+    private Optional<LookupProxy> createLookup(Optional<Map> containerMap) throws MalformedRequestException
     {
         Optional<LookupProxy> result = Optional.absent();
         if (containerMap.isPresent())
@@ -175,7 +176,7 @@ public abstract class AbstractParameterSerializer<T, C, U> implements ParameterS
         return result;
     }
 
-    private <P> Optional<? extends Lookup> createLookupFor(Map<?, ?> params, final ParameterLookup<C, P, U> parameterLookup)
+    private <P> Optional<? extends Lookup> createLookupFor(Map<?, ?> params, final ParameterLookup<C, P, U> parameterLookup) throws MalformedRequestException
     {
         final String paramName = parameterLookup.getParamName();
         final Class<P> type = parameterLookup.getType();
@@ -185,7 +186,7 @@ public abstract class AbstractParameterSerializer<T, C, U> implements ParameterS
     }
 
     private <P> Optional<? extends Lookup> createLookupForNonLong(Map<?, ?> params, String paramName,
-                                                       final ParameterLookup<C, P, U> parameterLookup, final Class<P> cls)
+                                                       final ParameterLookup<C, P, U> parameterLookup, final Class<P> cls) throws MalformedRequestException
     {
         final Optional<P> value = getParam(params, paramName, cls);
         return value.isPresent() ? Optional.of(new Lookup<C,U>()
@@ -200,7 +201,7 @@ public abstract class AbstractParameterSerializer<T, C, U> implements ParameterS
 
     // TODO: Can we avoid the code dupe here?
     private Optional<? extends Lookup> createLookupForLong(Map<?, ?> params, String paramName,
-                                                           final ParameterLookup<C, Long, U> parameterLookup)
+                                                           final ParameterLookup<C, Long, U> parameterLookup) throws MalformedRequestException
     {
         final Optional<Number> value = getParam(params, paramName, Number.class);
         return value.isPresent() ? Optional.of(new Lookup<C,U>()
