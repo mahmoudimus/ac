@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.module.webfragment;
 
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -29,6 +30,8 @@ public interface UrlTemplateInstance
      * @return
      */
     Set<String> getTemplateVariables();
+
+    Map<String, String[]> getNonTemplateContextParameters();
 
 //    /**
 //     * The parameters in the context that are not template variables

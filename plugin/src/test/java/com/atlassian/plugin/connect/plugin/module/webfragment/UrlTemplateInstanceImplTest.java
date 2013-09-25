@@ -10,7 +10,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.stubbing.Answer;
 
 import java.util.Map;
 import java.util.Set;
@@ -174,4 +176,67 @@ public class UrlTemplateInstanceImplTest
 
     }
 
+    @Test
+    public void shouldIdentifyNonTemplateContextVariables() throws ResourceNotFoundException, UnauthorisedException, InvalidContextParameterException
+    {
+        final String pathTemplate = "/foo/bar?arg1=${blah.id}&arg2=${user.address.street}";
+        final String[] anotherParamValue = {"88"};
+
+        Map<String, Object> requestParams = ImmutableMap.<String, Object>builder()
+                .put("blah.id", new String[]{"10"})
+                .put("user.address.street", new String[]{"deadEndSt"})
+                .put("notInUrlTemplate", anotherParamValue)
+                .build();
+
+        final Set<String> templateVariables = ImmutableSet.of("blah.id", "user.address.street");
+        final Map<String, String[]> nonTemplateVariables = ImmutableMap.of("notInUrlTemplate", anotherParamValue);
+
+        when(urlVariableSubstitutor.getContextVariables(pathTemplate)).thenReturn(templateVariables);
+        when(contextMapURLSerializer.getAuthenticatedAddonParameters(requestParams, "fred")).thenReturn(requestParams);
+
+        final UrlTemplateInstance urlTemplateInstance = new UrlTemplateInstanceImpl(urlVariableSubstitutor, contextMapURLSerializer, pathTemplate, requestParams,
+                "fred");
+
+        assertThat(urlTemplateInstance.getNonTemplateContextParameters(), is(equalTo(nonTemplateVariables)));
+
+        verify(urlVariableSubstitutor, times(1)).getContextVariables(pathTemplate);
+
+    }
+
+    @Test
+    public void shouldIdentifyNonTemplateContextVariablesWhenContextIsJson() throws ResourceNotFoundException, UnauthorisedException, InvalidContextParameterException
+    {
+        final String pathTemplate = "/foo/bar?arg1=${blah.id}&arg2=${user.address.street}";
+        final String[] anotherParamValue = {"88"};
+
+        String[] contextStr = new String[]{"{\"blah\":{\"id\":10100}},\"user\":{\"address\":{\"street\":\"deadEndSt\"}}}"};
+
+//        Map<String, Object> requestParams = ImmutableMap.<String, Object>of("context", contextStr, "someparam", "somevalue");
+
+        Map<String, Object> requestParams = ImmutableMap.<String, Object>builder()
+                .put("context", contextStr)
+                .put("notInUrlTemplate", anotherParamValue)
+                .build();
+
+        final Set<String> templateVariables = ImmutableSet.of("blah.id", "user.address.street");
+        final Map<String, String[]> nonTemplateVariables = ImmutableMap.of("notInUrlTemplate", anotherParamValue);
+
+        when(urlVariableSubstitutor.getContextVariables(pathTemplate)).thenReturn(templateVariables);
+        when(contextMapURLSerializer.getAuthenticatedAddonParameters(anyMap(), eq("fred"))).thenAnswer(new Answer<Object>()
+        {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable
+            {
+                return invocation.getArguments()[0];
+            }
+        });
+
+        final UrlTemplateInstance urlTemplateInstance = new UrlTemplateInstanceImpl(urlVariableSubstitutor, contextMapURLSerializer, pathTemplate, requestParams,
+                "fred");
+
+        assertThat(urlTemplateInstance.getNonTemplateContextParameters(), is(equalTo(nonTemplateVariables)));
+
+        verify(urlVariableSubstitutor, times(1)).getContextVariables(pathTemplate);
+
+    }
 }

@@ -6,6 +6,7 @@ import com.atlassian.plugin.connect.plugin.module.permission.UnauthorisedExcepti
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 
@@ -13,6 +14,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+
+import static com.google.common.collect.ImmutableMap.Builder;
 
 public class UrlTemplateInstanceImpl implements UrlTemplateInstance
 {
@@ -26,7 +29,8 @@ public class UrlTemplateInstanceImpl implements UrlTemplateInstance
     private final UrlVariableSubstitutor urlVariableSubstitutor;
 
     public UrlTemplateInstanceImpl(UrlVariableSubstitutor urlVariableSubstitutor, ContextMapURLSerializer contextMapURLSerializer,
-                                   String urlTemplate, Map<String, Object> context, String username) throws InvalidContextParameterException, UnauthorisedException, ResourceNotFoundException
+                                   String urlTemplate, Map<String, Object> context, String username)
+            throws InvalidContextParameterException, UnauthorisedException, ResourceNotFoundException
     {
         this.urlTemplate = urlTemplate;
         this.context = contextMapURLSerializer.getAuthenticatedAddonParameters(extractContext(context), username);
@@ -68,7 +72,7 @@ public class UrlTemplateInstanceImpl implements UrlTemplateInstance
         try
         {
             Map<String, Object> contextMap = objectMapper.readValue(contextJsonStr, MAP_TYPE_REFERENCE);
-            final HashMap<String, Object> mutableParams = Maps.newHashMap(requestParams);
+            final Map<String, Object> mutableParams = Maps.newHashMap(requestParams);
             mutableParams.remove(CONTEXT_PARAMETER_KEY);
             return ImmutableMap.<String, Object>builder().putAll(mutableParams).putAll(contextMap).build();
         }
@@ -78,5 +82,67 @@ public class UrlTemplateInstanceImpl implements UrlTemplateInstance
         }
 
     }
+
+
+    @Override
+    public Map<String, String[]> getNonTemplateContextParameters()
+    {
+        Set<String> templateVariables = getTemplateVariables();
+        Builder<String, String[]> builder = ImmutableMap.builder();
+        final Set<Map.Entry<String, String[]>> requestParameters = getContextAsStringArr().entrySet();
+        for (Map.Entry<String, String[]> entry : requestParameters)
+        {
+            // copy only these context parameters which aren't already a part of URL.
+            if (!templateVariables.contains(entry.getKey()))
+            {
+                builder.put(entry.getKey(), entry.getValue());
+            }
+        }
+        return builder.build();
+    }
+
+    private Map<String, String[]> getContextAsStringArr()
+    {
+        final Builder<String, String[]> builder = ImmutableMap.<String, String[]>builder();
+        for (Map.Entry<String, Object> entry : context.entrySet())
+        {
+            final Object value = entry.getValue();
+            final String key = entry.getKey();
+            addToMap(key, value, builder);
+        }
+        return builder.build();
+    }
+
+    private void addToMap(String key, Object value, Builder<String, String[]> builder)
+    {
+        if (value instanceof String[])
+        {
+            builder.put(key, (String[]) value);
+        }
+        else if (value instanceof Map)
+        {
+            addFlattenedMap(key, (Map) value, builder);
+        }
+        else
+        {
+            builder.put(key, new String[] { ObjectUtils.toString(value) });
+        }
+    }
+
+    private void addFlattenedMap(String key, Map<?, ?> map, Builder<String, String[]> builder)
+    {
+        for (Map.Entry<?, ?> entry : map.entrySet())
+        {
+            addToMap(key, entry.getKey(), entry.getValue(), builder);
+        }
+
+    }
+
+    private void addToMap(String parentKey, Object subKey, Object value, Builder<String,String[]> builder)
+    {
+        String key = parentKey + '.' + subKey.toString();
+        addToMap(key, value, builder);
+    }
+
 
 }
