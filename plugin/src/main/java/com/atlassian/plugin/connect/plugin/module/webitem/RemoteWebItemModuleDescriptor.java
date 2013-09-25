@@ -74,7 +74,7 @@ public class RemoteWebItemModuleDescriptor extends AbstractModuleDescriptor<Void
         Element desc = descriptor.createCopy();
 
         final WebItemCreator.Builder webItemBuilder = webItemCreator.newBuilder();
-        webItemBuilder.setContextParams(urlVariableSubstitutor.getContextVariables(url));
+        webItemBuilder.setContextParams(urlVariableSubstitutor.getContextVariableMap(url));
         createIcon(desc);
 
         if (isAbsolute())
@@ -89,7 +89,7 @@ public class RemoteWebItemModuleDescriptor extends AbstractModuleDescriptor<Void
             RemotePageDescriptorCreator.Builder containerPageBuilder = remotePageDescriptorCreator.newBuilder();
             decorateWebItem(desc, containerPageBuilder);
 
-            DescriptorToRegister servletDescriptor = containerPageBuilder.createServletDescriptor(plugin, desc, moduleKey, url, localUrl);
+            DescriptorToRegister servletDescriptor = containerPageBuilder.createServletDescriptor(plugin, desc, moduleKey, url, localUrl, webItemBuilder.getContextParams());
             DescriptorToRegister webItemModuleDescriptor = new DescriptorToRegister(webItemBuilder.build(plugin, moduleKey, localUrl, desc));
 
             this.registration = dynamicDescriptorRegistration.registerDescriptors(
