@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.plugin.module.webfragment;
 
 import com.atlassian.plugin.connect.plugin.module.context.ContextMapURLSerializer;
+import com.atlassian.plugin.connect.plugin.module.context.MalformedRequestException;
 import com.atlassian.plugin.connect.plugin.module.context.ResourceNotFoundException;
 import com.atlassian.plugin.connect.plugin.module.permission.UnauthorisedException;
 import com.google.common.collect.ImmutableMap;
@@ -16,7 +17,6 @@ import java.util.Set;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -106,10 +106,34 @@ public class UrlTemplateInstanceImplTest
     }
 
 
-    @Test
-    public void shouldThrowBlahXXXXXXXWhenUserDoesNotHavePermissionOnResource()
+    @Test(expected = ResourceNotFoundException.class)
+    public void shouldLetResourceNotFoundExceptionPassThrough() throws ResourceNotFoundException, UnauthorisedException, InvalidContextParameterException
     {
-        fail("Not implemented yet");
+        final Map<String, Object> requestParams = ImmutableMap.<String, Object>of();
+
+        when(contextMapURLSerializer.getAuthenticatedAddonParameters(requestParams, "fred")).thenThrow(new ResourceNotFoundException("blah"));
+
+        new UrlTemplateInstanceImpl(urlVariableSubstitutor, contextMapURLSerializer, "somePath", requestParams, "fred");
+    }
+
+    @Test(expected = MalformedRequestException.class)
+    public void shouldLetMalformedRequestExceptionPassThrough() throws ResourceNotFoundException, UnauthorisedException, InvalidContextParameterException
+    {
+        final Map<String, Object> requestParams = ImmutableMap.<String, Object>of();
+
+        when(contextMapURLSerializer.getAuthenticatedAddonParameters(requestParams, "fred")).thenThrow(new MalformedRequestException("blah"));
+
+        new UrlTemplateInstanceImpl(urlVariableSubstitutor, contextMapURLSerializer, "somePath", requestParams, "fred");
+    }
+
+    @Test(expected = UnauthorisedException.class)
+    public void shouldLetUnauthorisedExceptionPassThrough() throws ResourceNotFoundException, UnauthorisedException, InvalidContextParameterException
+    {
+        final Map<String, Object> requestParams = ImmutableMap.<String, Object>of();
+
+        when(contextMapURLSerializer.getAuthenticatedAddonParameters(requestParams, "fred")).thenThrow(new UnauthorisedException("blah"));
+
+        new UrlTemplateInstanceImpl(urlVariableSubstitutor, contextMapURLSerializer, "somePath", requestParams, "fred");
     }
 
     @Test(expected = InvalidContextParameterException.class)
