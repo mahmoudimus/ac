@@ -9,7 +9,6 @@ import com.atlassian.plugin.connect.plugin.module.webfragment.UrlTemplateInstanc
 import com.atlassian.plugin.connect.spi.module.IFrameContext;
 import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
 import com.atlassian.sal.api.user.UserManager;
-import com.google.common.collect.ImmutableMap;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -18,9 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
-import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
-import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
+import static javax.servlet.http.HttpServletResponse.*;
 
 /**
  * A servlet that loads its content from a remote plugin's iframe
@@ -64,9 +61,9 @@ public class IFramePageServlet extends HttpServlet
                     new IFrameContextImpl(iframeContext.getPluginKey(), urlTemplateInstance.getUrlString(),
                             iframeContext.getNamespace(), iframeContext.getIFrameParams()),
                     pageInfo, req.getPathInfo(),
-                    // No longer passing the parameters here. If we need this for some reason then need to be careful they
-                    // don't pass the parameter authorisation mechanism
-                    ImmutableMap.<String, String[]>of()/*urlTemplateInstance.getNonTemplateContextParameters()*/,
+                    // For backwards compatibility we continue to pass the not template params through. This is deprecated
+                    // and will be removed soon
+                    /* ImmutableMap.<String, String[]>of()*/ urlTemplateInstance.getNonTemplateContextParameters(),
                     remoteUsername, out);
         }
         // TODO: Should be a subtype of MalformedRequestException

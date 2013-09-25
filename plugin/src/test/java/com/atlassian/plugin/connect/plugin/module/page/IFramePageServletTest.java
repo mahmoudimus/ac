@@ -82,8 +82,8 @@ public class IFramePageServletTest
         when(resp.getWriter()).thenReturn(out);
 
         when(urlTemplateInstanceFactory.create(iFramePathTemplate, params, "barney")).thenReturn(urlTemplateInstance);
-//        Map<String, String[]> nonTemplateContextParams = ImmutableMap.of("notInUrlTemplate", anotherParamValue);
-//        when(urlTemplateInstance.getNonTemplateContextParameters()).thenReturn(nonTemplateContextParams);
+        Map<String, String[]> nonTemplateContextParams = ImmutableMap.of("notInUrlTemplate", anotherParamValue);
+        when(urlTemplateInstance.getNonTemplateContextParameters()).thenReturn(nonTemplateContextParams);
         when(urlTemplateInstance.getUrlString()).thenReturn("/foo/bar?arg1=10&arg2=deadEndSt");
 
         IFramePageServlet servlet = new IFramePageServlet(pageInfo, iFrameRenderer, initialIFrameContext, userManager,
@@ -94,7 +94,7 @@ public class IFramePageServletTest
         ArgumentCaptor<IFrameContext> argumentCaptor = ArgumentCaptor.forClass(IFrameContext.class);
 
         verify(iFrameRenderer, times(1)).renderPage(argumentCaptor.capture(), eq(pageInfo), eq("/some/path"),
-                eq(ImmutableMap.<String, String[]>of()), eq("barney"), eq(out));
+                eq(nonTemplateContextParams), eq("barney"), eq(out));
 
         IFrameContext capturedIFrameContext = argumentCaptor.getValue();
 

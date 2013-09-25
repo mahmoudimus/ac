@@ -10,9 +10,6 @@ import java.util.Set;
  */
 public interface UrlTemplateInstance
 {
-    // TODO: Should find a better home
-    String CONTEXT_PARAMETER_KEY = "context";
-
     /**
      * The template form of the url with place holders for variables
      * @return
