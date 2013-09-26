@@ -28,11 +28,9 @@ public interface UrlTemplateInstance
      */
     Set<String> getTemplateVariables();
 
+    /**
+     * The parameters in the context that are not template variables
+     * @return
+     */
     Map<String, String[]> getNonTemplateContextParameters();
-
-//    /**
-//     * The parameters in the context that are not template variables
-//     * @return
-//     */
-//    Map<String, String[]> getNonTemplateContextParameters();
 }
