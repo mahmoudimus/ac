@@ -45,17 +45,8 @@ public class RequestParameterHelper
           then us a multimap like foo -> {([bar, id], 10) & ([blah], 6)}
           and then recurse
          */
-        final Map<String, String> singleValueParams = Maps.transformValues(getParamsInPathForm(), new Function<String[], String>()
-        {
-            @Override
-            public String apply(@Nullable String[] input)
-            {
-                return isEmpty(input) ? "" : input[0]; // TODO: assuming only one value. Is this valid for us?;
-            }
-        });
-
-        final ImmutableList.Builder<Pair<List<String>, String>> builder = ImmutableList.builder();
-        for (Map.Entry<String, String> entry : singleValueParams.entrySet())
+        final ImmutableList.Builder<Pair<List<String>, String[]>> builder = ImmutableList.builder();
+        for (Map.Entry<String, String[]> entry : getParamsInPathForm().entrySet())
         {
             builder.add(Pair.of(Arrays.asList(entry.getKey().split("\\.")), entry.getValue()));
         }
@@ -63,14 +54,14 @@ public class RequestParameterHelper
         return transformToNestedMap(builder.build());
     }
 
-    private Map<String, Object> transformToNestedMap(Iterable<Pair<List<String>, String>> pairs)
+    private Map<String, Object> transformToNestedMap(Iterable<Pair<List<String>, String[]>> pairs)
     {
-        final ImmutableMultimap.Builder<String, Pair<List<String>, String>> builder =
-                ImmutableMultimap.<String, Pair<List<String>, String>>builder();
-        for (Pair<List<String>, String> pair : pairs)
+        final ImmutableMultimap.Builder<String, Pair<List<String>, String[]>> builder =
+                ImmutableMultimap.<String, Pair<List<String>, String[]>>builder();
+        for (Pair<List<String>, String[]> pair : pairs)
         {
             final List<String> pathComponents = pair.getLeft();
-            final String value = pair.getRight();
+            final String[] value = pair.getRight();
             if (pathComponents.isEmpty())
             {
                 continue; // TODO: Should we throw error? This would happen if they passed something like foo.bar = 10 & foo = 6
@@ -82,10 +73,10 @@ public class RequestParameterHelper
             builder.put(key, Pair.of(remainingPathComponents, value));
         }
 
-        return Maps.transformValues(builder.build().asMap(), new Function<Collection<Pair<List<String>, String>>, Object>()
+        return Maps.transformValues(builder.build().asMap(), new Function<Collection<Pair<List<String>, String[]>>, Object>()
         {
             @Override
-            public Object apply(@Nullable Collection<Pair<List<String>, String>> input)
+            public Object apply(@Nullable Collection<Pair<List<String>, String[]>> input)
             {
                 return transform(input);
             }
@@ -93,16 +84,16 @@ public class RequestParameterHelper
 
     }
 
-    private Object transform(Iterable<Pair<List<String>, String>> pairs) //throws MalformedRequestException
+    private Object transform(Iterable<Pair<List<String>, String[]>> pairs) //throws MalformedRequestException
     {
         if (Iterables.size(pairs) == 1)
         {
-            final Pair<List<String>, String> pair = Iterables.getFirst(pairs, null);
+            final Pair<List<String>, String[]> pair = Iterables.getFirst(pairs, null);
             final List<String> pathComponents = pair.getLeft();
-            final String value = pair.getRight();
+            final String[] value = pair.getRight();
             if (pathComponents.isEmpty())
             {
-                return value;
+                return isEmpty(value) ? "" : value[0]; // TODO: assuming only one value. Is this valid for us?;
             }
         }
 
