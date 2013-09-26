@@ -6,6 +6,7 @@ import com.atlassian.plugin.connect.plugin.module.context.ResourceNotFoundExcept
 import com.atlassian.plugin.connect.plugin.module.permission.UnauthorisedException;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -52,19 +53,20 @@ public class UrlTemplateInstanceImplTest
     public void shouldCopeWithZeroPathVariables() throws InvalidContextParameterException, ResourceNotFoundException, UnauthorisedException
     {
         final String pathTemplate = "/foo/bar";
-        Map<String, Object> context = ImmutableMap.<String, Object>of("somekey", new String[]{"somevalue"});
+        Map<String, Object> requestParams = ImmutableMap.<String, Object>of("somekey", new String[]{"somevalue"});
+        Map<String, Object> expectedNestedParams = ImmutableMap.<String, Object>of("somekey", "somevalue");
 
-        when(urlVariableSubstitutor.replace(pathTemplate, context)).thenReturn(pathTemplate);
-        when(contextMapURLSerializer.getAuthenticatedAddonParameters(context, "fred")).thenReturn(context);
+        when(urlVariableSubstitutor.replace(pathTemplate, requestParams)).thenReturn(pathTemplate);
+        when(contextMapURLSerializer.getAuthenticatedAddonParameters(expectedNestedParams, "fred")).thenReturn(requestParams);
 
-        final UrlTemplateInstance urlTemplateInstance = new UrlTemplateInstanceImpl(urlVariableSubstitutor, contextMapURLSerializer, pathTemplate, context,
+        final UrlTemplateInstance urlTemplateInstance = new UrlTemplateInstanceImpl(urlVariableSubstitutor, contextMapURLSerializer, pathTemplate, requestParams,
                 "fred");
 
         assertThat(urlTemplateInstance.getUrlTemplate(), is(equalTo(pathTemplate)));
         assertThat(urlTemplateInstance.getUrlString(), is(equalTo(pathTemplate)));
 
-        verify(contextMapURLSerializer, times(1)).getAuthenticatedAddonParameters(context, "fred");
-        verify(urlVariableSubstitutor, times(1)).replace(pathTemplate, context);
+        verify(contextMapURLSerializer, times(1)).getAuthenticatedAddonParameters(expectedNestedParams, "fred");
+        verify(urlVariableSubstitutor, times(1)).replace(pathTemplate, requestParams);
     }
 
     @Test
@@ -88,6 +90,7 @@ public class UrlTemplateInstanceImplTest
     }
 
     @Test
+    @Ignore // Removed support for Json request param form for now
     public void shouldExtractContextAndAddToParamMap() throws InvalidContextParameterException, ResourceNotFoundException, UnauthorisedException
     {
         String[] contextStr = new String[]{"{\"project\":{\"id\":10100}}"};
@@ -138,6 +141,7 @@ public class UrlTemplateInstanceImplTest
         new UrlTemplateInstanceImpl(urlVariableSubstitutor, contextMapURLSerializer, "somePath", requestParams, "fred");
     }
 
+    @Ignore // Removed support for Json request param form for now
     @Test(expected = InvalidContextParameterException.class)
     public void shouldThrowInvalidContextParameterExceptionWhenCantUnmarshalJsonContext() throws InvalidContextParameterException, ResourceNotFoundException, UnauthorisedException
     {
@@ -147,6 +151,7 @@ public class UrlTemplateInstanceImplTest
         new UrlTemplateInstanceImpl(urlVariableSubstitutor, contextMapURLSerializer, "somePath", requestParams, "fred");
     }
 
+    @Ignore // Removed support for Json request param form for now
     @Test(expected = InvalidContextParameterException.class)
     public void shouldThrowInvalidContextParameterExceptionWhenContextJsonEmptyStringArray() throws InvalidContextParameterException, ResourceNotFoundException, UnauthorisedException
     {
@@ -203,6 +208,7 @@ public class UrlTemplateInstanceImplTest
 
     }
 
+    @Ignore // Removed support for Json request param form for now
     @Test
     public void shouldIdentifyNonTemplateContextVariablesWhenContextIsJson() throws ResourceNotFoundException, UnauthorisedException, InvalidContextParameterException
     {

@@ -32,7 +32,7 @@ public class RequestParameterHelperTest
         assertThat(projectMapObj, is(notNullValue()));
         assertThat(projectMapObj, is(instanceOf(Map.class)));
         Map<String, Object> projectMap = (Map<String, Object>) projectMapObj;
-        assertThat(projectMap.get("id"), is(equalTo((Object)10)));
+        assertThat(projectMap.get("id"), is(equalTo((Object)"10")));
         assertThat(projectMap.get("key"), is(equalTo((Object)"myKey")));
 
 
@@ -42,4 +42,6 @@ public class RequestParameterHelperTest
         Map<String, Object> otherMap = (Map<String, Object>) otherMapObj;
         assertThat(otherMap.get("blah"), is(equalTo((Object)"stuff")));
     }
+
+    // TODO: more tests. negative tests. corner cases
 }

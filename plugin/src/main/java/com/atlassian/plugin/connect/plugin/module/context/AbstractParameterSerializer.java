@@ -42,11 +42,7 @@ public abstract class AbstractParameterSerializer<T, C, U> implements ParameterS
         }
 
         final U user = userManager.lookupByUsername(username);
-        if (user == null)
-        {
-            // TODO: Should this be an exception?
-            return Optional.absent();
-        }
+        // leave it to the applications to deal with a potentially null user as it likely represents "Guest"
 
         final C serviceResult = lookup.get().lookup(user);
 
@@ -68,7 +64,9 @@ public abstract class AbstractParameterSerializer<T, C, U> implements ParameterS
     public static interface ParameterLookup<C, P, U>
     {
         String getParamName();
+
         Class<P> getType();
+
         C lookup(U user, P value);
     }
 
@@ -168,7 +166,7 @@ public abstract class AbstractParameterSerializer<T, C, U> implements ParameterS
         Optional<LookupProxy> result = Optional.absent();
         if (containerMap.isPresent())
         {
-            for(ParameterLookup<C, ?, U> parameterLookup : parameterLookups)
+            for (ParameterLookup<C, ?, U> parameterLookup : parameterLookups)
             {
                 result = result.or(optionalLookup(createLookupFor(containerMap.get(), parameterLookup)));
             }
@@ -186,10 +184,10 @@ public abstract class AbstractParameterSerializer<T, C, U> implements ParameterS
     }
 
     private <P> Optional<? extends Lookup> createLookupForNonLong(Map<?, ?> params, String paramName,
-                                                       final ParameterLookup<C, P, U> parameterLookup, final Class<P> cls) throws MalformedRequestException
+                                                                  final ParameterLookup<C, P, U> parameterLookup, final Class<P> cls) throws MalformedRequestException
     {
         final Optional<P> value = getParam(params, paramName, cls);
-        return value.isPresent() ? Optional.of(new Lookup<C,U>()
+        return value.isPresent() ? Optional.of(new Lookup<C, U>()
         {
             @Override
             public C lookup(U user)
@@ -203,18 +201,40 @@ public abstract class AbstractParameterSerializer<T, C, U> implements ParameterS
     private Optional<? extends Lookup> createLookupForLong(Map<?, ?> params, String paramName,
                                                            final ParameterLookup<C, Long, U> parameterLookup) throws MalformedRequestException
     {
-        final Optional<Number> value = getParam(params, paramName, Number.class);
-        return value.isPresent() ? Optional.of(new Lookup<C,U>()
+        final Optional<Object> optValue = getParam(params, paramName, Object.class);
+        if (!optValue.isPresent())
         {
+            return Optional.absent();
+        }
+        Object value = optValue.get();
+        Long longValue = null;
 
+        if (value instanceof Number)
+        {
+            longValue = ((Number) value).longValue();
+        }
+        else
+        {
+            try
+            {
+                longValue = Long.parseLong(value.toString());
+            }
+            catch (NumberFormatException e)
+            {
+                throw new MalformedRequestException("parameter name " + paramName + " must be a number");
+            }
+        }
+        final Long finalLong = longValue;
+
+        return optValue.isPresent() ? Optional.of(new Lookup<C, U>()
+        {
             @Override
             public C lookup(U user)
             {
-                return parameterLookup.lookup(user, value.get().longValue());
+                return parameterLookup.lookup(user, finalLong);
             }
         }) : Optional.<Lookup>absent();
     }
-
 
 
     private static interface Lookup<C, U>
@@ -226,9 +246,9 @@ public abstract class AbstractParameterSerializer<T, C, U> implements ParameterS
     // Otherwise you end up with Optional<? extends Lookup> and calling or on that won't compile
     private class LookupProxy implements Lookup<C, U>
     {
-        private final Lookup<C,U> target;
+        private final Lookup<C, U> target;
 
-        LookupProxy(Lookup<C,U> target)
+        LookupProxy(Lookup<C, U> target)
         {
             this.target = target;
         }

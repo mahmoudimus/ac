@@ -77,11 +77,11 @@ public class IssueSerializerTest
     }
 
     @Test
-    public void shouldReturnAbsentIfNoUserForUsername() throws UnauthorisedException, ResourceNotFoundException
+    public void shouldThrowResourceNotFoundExceptionIfNoUserForUsername() throws UnauthorisedException, ResourceNotFoundException
     {
-        // TODO: Not sure if this would ever happen. Would the filters have stopped it getting this far?
-        // If not then should we throw an error rather than just not deserialsing???
-
+        // null username is treated like "guest" so should not have access to resource
+        thrown.expect(ResourceNotFoundException.class);
+        thrown.expectMessage("No such issue");
         final ParameterDeserializer<Issue> serializer = new IssueSerializer(issueService, userManager);
         final Optional<Issue> issue = serializer.deserialize(
                 ImmutableMap.<String, Object>of("issue", ImmutableMap.of("id", 10)), "fred");

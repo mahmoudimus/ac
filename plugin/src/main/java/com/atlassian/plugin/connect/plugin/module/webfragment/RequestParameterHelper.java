@@ -2,7 +2,6 @@ package com.atlassian.plugin.connect.plugin.module.webfragment;
 
 import com.google.common.base.Function;
 import com.google.common.collect.*;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
@@ -68,24 +67,6 @@ public class RequestParameterHelper
         }
         final Iterable<Pair<List<String>, String>> pairs = listBuilder.build();
         return  transformToNestedMap(pairs);
-//        final ImmutableMultimap.Builder<String, Pair<List<String>, String>> builder = ImmutableMultimap.<String, Pair<List<String>, String>>builder();
-//        for (Pair<List<String>, String> pair : pairs)
-//        {
-//            final List<String> pathComponents = pair.getLeft();
-//            final String key = pathComponents.get(0);
-//            final List<String> remainingPathComponents = pathComponents.subList(1, pathComponents.size());
-//            final String value = pair.getRight();
-//            builder.put(key, Pair.of(remainingPathComponents, value));
-//        }
-//
-//        return Maps.transformValues(builder.build().asMap(), new Function<Collection<Pair<List<String>, String>>, Object>()
-//        {
-//            @Override
-//            public Object apply(@Nullable Collection<Pair<List<String>, String>> input)
-//            {
-//                return transform(input);
-//            }
-//        });
     }
 
     private Map<String, Object> transformToNestedMap(Iterable<Pair<List<String>, String>> pairs)
@@ -96,17 +77,6 @@ public class RequestParameterHelper
 
     private Object transform(Iterable<Pair<List<String>, String>> pairs) //throws MalformedRequestException
     {
-//        final ImmutableMultimap.Builder<String, Pair<List<String>, String>> builder = ImmutableMultimap.<String, Pair<List<String>, String>>builder();
-        /*
-         cases:
-           1/ empty list???
-           2/ single entry
-             a/ remainingpaths empty. Return value
-             b/ remainingpaths !empty. return map
-           3/ > 1 entry
-             a/ remainingpaths empty. error
-             b/ remainingpaths !empty. return map
-         */
         if (Iterables.size(pairs) == 1)
         {
             final Pair<List<String>, String> pair = Iterables.getFirst(pairs, null);
@@ -162,7 +132,7 @@ public class RequestParameterHelper
         return requestParams;
     }
 
-    // TODO: Remove??
+    // TODO: Looks like we have moved away from the json form again. Remove??
     private Map<String, Object> extractContext(Map<String, Object> requestParams) throws InvalidContextParameterException
     {
         if (!requestParams.containsKey(CONTEXT_PARAMETER_KEY))
@@ -192,43 +162,5 @@ public class RequestParameterHelper
 
     }
 
-
-    private Map<String, String[]> getContextAsStringArr()
-    {
-        final ImmutableMap.Builder<String, String[]> builder = ImmutableMap.<String, String[]>builder();
-        for (Map.Entry<String, Object> entry : requestParams.entrySet())
-        {
-            final Object value = entry.getValue();
-            final String key = entry.getKey();
-            addToMap(key, value, builder);
-        }
-        return builder.build();
-    }
-
-    private void addToMap(String key, Object value, ImmutableMap.Builder<String, String[]> builder)
-    {
-        if (value instanceof String[])
-        {
-            builder.put(key, (String[]) value);
-        }
-        else if (value instanceof Map)
-        {
-            addFlattenedMap(key, (Map) value, builder);
-        }
-        else
-        {
-            builder.put(key, new String[] { ObjectUtils.toString(value) });
-        }
-    }
-
-    private void addFlattenedMap(String key, Map<?, ?> map, ImmutableMap.Builder<String, String[]> builder)
-    {
-        for (Map.Entry<?, ?> entry : map.entrySet())
-        {
-            String newKey = key + '.' + entry.getKey().toString();
-            addToMap(newKey, entry.getValue(), builder);
-        }
-
-    }
 
 }
