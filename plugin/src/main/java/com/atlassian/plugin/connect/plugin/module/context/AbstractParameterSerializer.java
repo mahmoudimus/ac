@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.plugin.module.context;
 
 import com.atlassian.plugin.connect.plugin.module.common.user.CommonUserLookup;
+import com.atlassian.plugin.connect.plugin.module.permission.UnauthorisedException;
 import com.google.common.base.Optional;
 
 import java.util.Map;
@@ -27,7 +28,8 @@ public abstract class AbstractParameterSerializer<T, C, U> implements ParameterS
     }
 
     @Override
-    public Optional<T> deserialize(Map<String, Object> params, String username) throws ResourceNotFoundException, MalformedRequestException
+    public Optional<T> deserialize(Map<String, Object> params, String username) throws ResourceNotFoundException,
+            MalformedRequestException, UnauthorisedException
     {
         final Optional<Map> containerMap = getContainerMap(params);
         if (!containerMap.isPresent())
@@ -48,10 +50,21 @@ public abstract class AbstractParameterSerializer<T, C, U> implements ParameterS
 
         if (serviceResult == null || !isResultValid(serviceResult))
         {
-            throw new ResourceNotFoundException("No such " + containerFieldName);
+            throwResourceNotFoundException();
         }
 
-        return Optional.of(parameterUnwrapper.unwrap(serviceResult));
+        final T resource = parameterUnwrapper.unwrap(serviceResult);
+        checkViewPermission(resource, user);
+        return Optional.of(resource);
+    }
+
+    protected void throwResourceNotFoundException() throws ResourceNotFoundException
+    {
+        throw new ResourceNotFoundException("No such " + containerFieldName);
+    }
+
+    protected void checkViewPermission(T resource, U user) throws UnauthorisedException, ResourceNotFoundException
+    {
     }
 
     private Optional<Map> getContainerMap(Map<String, Object> params) throws MalformedRequestException
@@ -60,6 +73,11 @@ public abstract class AbstractParameterSerializer<T, C, U> implements ParameterS
     }
 
     protected abstract boolean isResultValid(C serviceResult);
+
+    protected U getUser(String username)
+    {
+        return userManager.lookupByUsername(username);
+    }
 
     public static interface ParameterLookup<C, P, U>
     {

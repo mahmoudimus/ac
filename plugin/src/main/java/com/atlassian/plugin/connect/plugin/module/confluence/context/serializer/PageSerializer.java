@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin.module.confluence.context.serializer
 import com.atlassian.confluence.content.service.PageService;
 import com.atlassian.confluence.content.service.page.PageLocator;
 import com.atlassian.confluence.pages.AbstractPage;
+import com.atlassian.confluence.security.PermissionManager;
 import com.atlassian.user.User;
 import com.atlassian.user.UserManager;
 import com.google.common.collect.ImmutableMap;
@@ -17,9 +18,9 @@ public class PageSerializer extends AbstractConfluenceParameterSerializer<Abstra
 
     public static final String PAGE_FIELD_NAME = "page";
 
-    public PageSerializer(final PageService pageService, UserManager userManager)
+    public PageSerializer(final PageService pageService, UserManager userManager, PermissionManager permissionManager)
     {
-        super(userManager, PAGE_FIELD_NAME,
+        super(userManager, permissionManager, PAGE_FIELD_NAME,
                 new ParameterUnwrapper<PageLocator, AbstractPage>()
                 {
                     @Override
@@ -33,7 +34,6 @@ public class PageSerializer extends AbstractConfluenceParameterSerializer<Abstra
                     @Override
                     public PageLocator lookup(User user, Long id)
                     {
-                        // TODO: The confluence page service does not check permissions. Need to do that somewhere
                         return pageService.getIdPageLocator(id);
                     }
                 }

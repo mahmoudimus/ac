@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.module.confluence.context.serializer
 
 import com.atlassian.confluence.content.service.SpaceService;
 import com.atlassian.confluence.content.service.space.KeySpaceLocator;
+import com.atlassian.confluence.security.PermissionManager;
 import com.atlassian.confluence.spaces.Space;
 import com.atlassian.confluence.spaces.SpaceManager;
 import com.atlassian.plugin.connect.plugin.module.context.ParameterDeserializer;
@@ -44,10 +45,13 @@ public class SpaceSerializerTest
     @Mock
     private SpaceManager spaceManager;
 
+    @Mock
+    private PermissionManager permissionManager;
+
     @Test
     public void shouldReturnAbsentIfNoSpaceInParams() throws ResourceNotFoundException, UnauthorisedException
     {
-        final ParameterDeserializer<Space> serializer = new SpaceSerializer(spaceService, userManager);
+        final ParameterDeserializer<Space> serializer = new SpaceSerializer(spaceService, userManager, permissionManager);
         final Optional<Space> space = serializer.deserialize(ImmutableMap.of("blah", new Object()), "fred");
         assertThat(space.isPresent(), is(false));
     }
@@ -55,7 +59,7 @@ public class SpaceSerializerTest
     @Test
     public void shouldReturnAbsentIfSpaceIsNotMap() throws ResourceNotFoundException, UnauthorisedException
     {
-        final ParameterDeserializer<Space> serializer = new SpaceSerializer(spaceService, userManager);
+        final ParameterDeserializer<Space> serializer = new SpaceSerializer(spaceService, userManager, permissionManager);
         final Optional<Space> space = serializer.deserialize(ImmutableMap.of("space", new Object()), "fred");
         assertThat(space.isPresent(), is(false));
     }
@@ -63,7 +67,7 @@ public class SpaceSerializerTest
     @Test
     public void shouldReturnAbsentIfNoIdOrKeyInSpace() throws ResourceNotFoundException, UnauthorisedException
     {
-        final ParameterDeserializer<Space> serializer = new SpaceSerializer(spaceService, userManager);
+        final ParameterDeserializer<Space> serializer = new SpaceSerializer(spaceService, userManager, permissionManager);
         final Optional<Space> space = serializer.deserialize(
                 ImmutableMap.<String, Object>of("space", ImmutableMap.of("foo", new Object())),
                 "fred");
@@ -73,7 +77,7 @@ public class SpaceSerializerTest
     @Test
     public void shouldReturnAbsentIfNoUserForUsername() throws EntityException, ResourceNotFoundException, UnauthorisedException
     {
-        final ParameterDeserializer<Space> serializer = new SpaceSerializer(spaceService, userManager);
+        final ParameterDeserializer<Space> serializer = new SpaceSerializer(spaceService, userManager, permissionManager);
         final Optional<Space> space = serializer.deserialize(
                 ImmutableMap.<String, Object>of("space", ImmutableMap.of(
                         "id", 10,
@@ -91,7 +95,7 @@ public class SpaceSerializerTest
         when(spaceService.getKeySpaceLocator("mykey")).thenReturn(new KeySpaceLocator(spaceManager, "mykey"));
         when(spaceManager.getSpace("mykey")).thenReturn(null);
 
-        final ParameterDeserializer<Space> serializer = new SpaceSerializer(spaceService, userManager);
+        final ParameterDeserializer<Space> serializer = new SpaceSerializer(spaceService, userManager, permissionManager);
         final Optional<Space> space = serializer.deserialize(
                 ImmutableMap.<String, Object>of("space", ImmutableMap.of("key", "mykey")), "fred");
 
@@ -106,7 +110,7 @@ public class SpaceSerializerTest
         when(spaceService.getKeySpaceLocator("mykey")).thenReturn(new KeySpaceLocator(spaceManager, "mykey"));
         when(spaceManager.getSpace("mykey")).thenReturn(space1);
 
-        final ParameterDeserializer<Space> serializer = new SpaceSerializer(spaceService, userManager);
+        final ParameterDeserializer<Space> serializer = new SpaceSerializer(spaceService, userManager, permissionManager);
         final Optional<Space> space = serializer.deserialize(
                 ImmutableMap.<String, Object>of("space", ImmutableMap.of("key", "mykey")), "fred");
 

@@ -54,7 +54,7 @@ public class IssueSerializerTest
     }
 
     @Test
-    public void shouldReturnAbsentIfIssueIsNotMap() throws UnauthorisedException, ResourceNotFoundException
+    public void shouldThrowMalformedRequestIfIssueIsNotMap() throws UnauthorisedException, ResourceNotFoundException
     {
         thrown.expect(MalformedRequestException.class);
         thrown.expectMessage("Invalid type for parameter name issue");
@@ -64,7 +64,7 @@ public class IssueSerializerTest
     }
 
     @Test
-    public void shouldReturnAbsentIfNoIdOrKeyInIssue() throws UnauthorisedException, ResourceNotFoundException
+    public void shouldThrowMalformedRequestIfNoIdOrKeyInIssue() throws UnauthorisedException, ResourceNotFoundException
     {
         thrown.expect(MalformedRequestException.class);
         thrown.expectMessage("No identifiers in request for issue");

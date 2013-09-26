@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.module.confluence.context.serializer
 
 import com.atlassian.confluence.content.service.SpaceService;
 import com.atlassian.confluence.content.service.space.SpaceLocator;
+import com.atlassian.confluence.security.PermissionManager;
 import com.atlassian.confluence.spaces.Space;
 import com.atlassian.user.User;
 import com.atlassian.user.UserManager;
@@ -16,9 +17,9 @@ public class SpaceSerializer extends AbstractConfluenceParameterSerializer<Space
 {
    public static final String SPACE_FIELD_NAME = "space";
 
-    public SpaceSerializer(final SpaceService spaceService, UserManager userManager)
+    public SpaceSerializer(final SpaceService spaceService, UserManager userManager, PermissionManager permissionManager)
     {
-        super(userManager, SPACE_FIELD_NAME,
+        super(userManager, permissionManager, SPACE_FIELD_NAME,
                 new ParameterUnwrapper<SpaceLocator, Space>()
                 {
                     @Override
@@ -27,22 +28,11 @@ public class SpaceSerializer extends AbstractConfluenceParameterSerializer<Space
                         return wrapped.getSpace();
                     }
                 },
-                // There is no lookup by id
-//                new AbstractConfluenceIdParameterLookup<SpaceLocator>()
-//                {
-//                    @Override
-//                    public SpaceLocator lookup(User user, Long id)
-//                    {
-//                        // TODO: The confluence space service does not check permissions. Need to do that somewhere
-//                        return spaceService.getIdSpaceLocator(id);
-//                    }
-//                },
                 new AbstractConfluenceKeyParameterLookup<SpaceLocator>()
                 {
                     @Override
                     public SpaceLocator lookup(User user, String key)
                     {
-                        // TODO: The confluence space service does not check permissions. Need to do that somewhere
                         return spaceService.getKeySpaceLocator(key);
                     }
                 }
