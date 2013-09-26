@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.plugin.module.jira;
+package com.atlassian.plugin.connect.plugin.module.jira.conditions;
 
 import java.util.Map;
 
