@@ -12,7 +12,7 @@ import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.project.Project;
 import com.atlassian.plugin.connect.plugin.module.IFrameRendererImpl;
 import com.atlassian.plugin.connect.plugin.module.page.PageInfo;
-import com.atlassian.plugin.connect.plugin.module.permission.jira.IsProjectAdminCondition;
+import com.atlassian.plugin.connect.plugin.module.jira.conditions.IsProjectAdminCondition;
 import com.atlassian.plugin.connect.spi.module.IFrameContext;
 import com.atlassian.sal.api.user.UserManager;
 
