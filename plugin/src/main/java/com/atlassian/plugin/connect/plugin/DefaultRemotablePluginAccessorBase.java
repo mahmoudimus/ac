@@ -1,0 +1,117 @@
+package com.atlassian.plugin.connect.plugin;
+
+import com.atlassian.gzipfilter.org.apache.commons.lang.StringUtils;
+import com.atlassian.plugin.connect.plugin.util.MapFunctions;
+import com.atlassian.plugin.connect.plugin.util.http.HttpContentRetriever;
+import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
+import com.atlassian.plugin.connect.spi.http.HttpMethod;
+import com.atlassian.uri.Uri;
+import com.atlassian.uri.UriBuilder;
+import com.atlassian.util.concurrent.Promise;
+import com.google.common.base.Supplier;
+import com.google.common.collect.Maps;
+import org.apache.commons.httpclient.NameValuePair;
+import org.apache.commons.httpclient.util.ParameterParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.net.URI;
+import java.util.List;
+import java.util.Map;
+
+import static com.google.common.collect.Maps.transformValues;
+
+public abstract class DefaultRemotablePluginAccessorBase implements RemotablePluginAccessor
+{
+    private final String pluginKey;
+    private final String pluginName;
+    private final Supplier<URI> displayUrl;
+    private final HttpContentRetriever httpContentRetriever;
+
+    private static final Logger log = LoggerFactory.getLogger(DefaultRemotablePluginAccessorBase.class);
+
+    protected DefaultRemotablePluginAccessorBase(String pluginKey, String pluginName, Supplier<URI> displayUrl, HttpContentRetriever httpContentRetriever)
+    {
+        this.pluginKey = pluginKey;
+        this.pluginName = pluginName;
+        this.displayUrl = displayUrl;
+        this.httpContentRetriever = httpContentRetriever;
+    }
+
+    @Override
+    public String createGetUrl(URI targetPath, Map<String, String[]> params)
+    {
+        return new UriBuilder(Uri.fromJavaUri(getTargetUrl(targetPath))).addQueryParameters(transformValues(params, MapFunctions.STRING_ARRAY_TO_STRING)).toString();
+    }
+
+    @Override
+    public Promise<String> executeAsync(HttpMethod method,
+                                        URI targetPath,
+                                        Map<String, String> params,
+                                        Map<String, String> headers)
+    {
+        return httpContentRetriever.async(getAuthorizationGenerator(),
+                method,
+                getTargetUrl(targetPath),
+                Maps.transformValues(params, MapFunctions.OBJECT_TO_STRING),
+                headers,
+                getKey());
+    }
+
+    @Override
+    public String getKey()
+    {
+        return pluginKey;
+    }
+
+    @Override
+    public String getName()
+    {
+        return pluginName;
+    }
+
+    @Override
+    public URI getDisplayUrl()
+    {
+        return displayUrl.get();
+    }
+
+    protected URI getTargetUrl(URI targetPath)
+    {
+        UriBuilder uriBuilder = new UriBuilder(Uri.fromJavaUri(targetPath));
+        uriBuilder.setPath(getDisplayUrl().toString() + uriBuilder.getPath());
+        return uriBuilder.toUri().toJavaUri();
+    }
+
+    protected void assertThatTargetPathAndParamsDoNotDuplicateParams(URI targetPath, Map<String, String[]> params)
+    {
+        if (null == targetPath)
+        {
+            throw new IllegalArgumentException("targetPath cannot be null");
+        }
+
+        if (null != params && !params.isEmpty())
+        {
+            List queryParams = new ParameterParser().parse(targetPath.getQuery(), '&'); // TODO: reference constant for '&' char in URLs
+
+            for (Object queryParam : queryParams)
+            {
+                if (queryParam instanceof NameValuePair)
+                {
+                    NameValuePair nameValuePair = (NameValuePair) queryParam;
+
+                    if (params.containsKey(nameValuePair.getName()))
+                    {
+                        throw new IllegalArgumentException(String.format("targetPath and params arguments both contain a parameter called '%s'. " +
+                                "This is ambiguous (which takes precedence? is it a mistake?). Please supply this parameters in one or the other. targetPath = '%s', params['%s'] = [%s]",
+                                nameValuePair.getName(), targetPath.getQuery(), StringUtils.join(params.get(nameValuePair.getName()), ',')));
+                    }
+                }
+                else
+                {
+                    log.warn("Ignoring query parameter '{}' that is of type '{}' rather than the expected NameValuePair", queryParam, null == queryParam ? null : queryParam.getClass().getName());
+                }
+            }
+        }
+    }
+}

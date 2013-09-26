@@ -1,54 +1,43 @@
 package com.atlassian.plugin.connect.plugin;
 
-import java.net.URI;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Nullable;
-
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.applinks.api.event.ApplicationLinkAddedEvent;
 import com.atlassian.applinks.api.event.ApplicationLinkDeletedEvent;
 import com.atlassian.event.api.EventListener;
 import com.atlassian.event.api.EventPublisher;
-import com.atlassian.fugue.Iterables;
 import com.atlassian.fugue.Option;
 import com.atlassian.oauth.ServiceProvider;
-import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
-import com.atlassian.plugin.connect.spi.ConnectAddOnIdentifierService;
-import com.atlassian.plugin.event.PluginEventListener;
-import com.atlassian.plugin.event.events.PluginDisabledEvent;
-import com.atlassian.plugin.event.events.PluginEnabledEvent;
-import com.atlassian.plugin.event.events.PluginModuleEnabledEvent;
 import com.atlassian.plugin.connect.plugin.module.applinks.RemotePluginContainerModuleDescriptor;
-import com.atlassian.plugin.connect.plugin.util.MapFunctions;
 import com.atlassian.plugin.connect.plugin.util.http.CachingHttpContentRetriever;
+import com.atlassian.plugin.connect.spi.ConnectAddOnIdentifierService;
 import com.atlassian.plugin.connect.spi.PermissionDeniedException;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.spi.applinks.RemotePluginContainerApplicationType;
 import com.atlassian.plugin.connect.spi.http.AuthorizationGenerator;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
+import com.atlassian.plugin.event.PluginEventListener;
+import com.atlassian.plugin.event.events.PluginDisabledEvent;
+import com.atlassian.plugin.event.events.PluginEnabledEvent;
+import com.atlassian.plugin.event.events.PluginModuleEnabledEvent;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.uri.Uri;
 import com.atlassian.uri.UriBuilder;
 import com.atlassian.util.concurrent.CopyOnWriteMap;
-import com.atlassian.util.concurrent.Promise;
-
 import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
-import com.google.common.collect.Maps;
-
+import net.oauth.OAuth;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import net.oauth.OAuth;
+import java.net.URI;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 import static com.atlassian.fugue.Option.option;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -250,11 +239,8 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
         eventPublisher.unregister(this);
     }
 
-    private class OAuthSigningRemotablePluginAccessor implements RemotablePluginAccessor
+    private class OAuthSigningRemotablePluginAccessor extends DefaultRemotablePluginAccessorBase
     {
-        private final String key;
-        private final String name;
-        private final Supplier<URI> displayUrl;
         private final ServiceProvider serviceProvider;
 
         private OAuthSigningRemotablePluginAccessor(String key,
@@ -262,22 +248,8 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
                                                     Supplier<URI> displayUrl,
                                                     ServiceProvider serviceProvider)
         {
-            this.key = key;
-            this.name = name;
-            this.displayUrl = displayUrl;
+            super(key, name, displayUrl, httpContentRetriever);
             this.serviceProvider = serviceProvider;
-        }
-
-        @Override
-        public String getKey()
-        {
-            return key;
-        }
-
-        @Override
-        public URI getDisplayUrl()
-        {
-            return displayUrl.get();
         }
 
         @Override
@@ -287,55 +259,10 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
         }
 
         @Override
-        public String createGetUrl(URI targetPath, Map<String, String[]> params)
-        {
-            return executeCreateGetUrl(getTargetUrl(targetPath), params);
-        }
-
-        @Override
-        public Promise<String> executeAsync(HttpMethod method, URI path, Map<String, String> params, Map<String, String> headers)
-        {
-            return executeAsyncForType(new OAuthAuthorizationGenerator(serviceProvider), method, getTargetUrl(path), params, headers, key);
-        }
-
-        private URI getTargetUrl(URI targetPath)
-        {
-            UriBuilder uriBuilder = new UriBuilder(Uri.fromJavaUri(targetPath));
-            uriBuilder.setPath(displayUrl.get().toString() + uriBuilder.getPath());
-            return uriBuilder.toUri().toJavaUri();
-        }
-
-        @Override
         public AuthorizationGenerator getAuthorizationGenerator()
         {
             return new OAuthAuthorizationGenerator(serviceProvider);
         }
-
-        @Override
-        public String getName()
-        {
-            return name;
-        }
-    }
-
-    private String executeCreateGetUrl(URI targetUrl, Map<String, String[]> params)
-    {
-        return new UriBuilder(Uri.fromJavaUri(targetUrl)).addQueryParameters(transformValues(params, MapFunctions.STRING_ARRAY_TO_STRING)).toString();
-    }
-
-    private Promise<String> executeAsyncForType(AuthorizationGenerator authorizationGenerator,
-                                                HttpMethod method,
-                                                URI targetUrl,
-                                                Map<String, String> params,
-                                                Map<String, String> headers,
-                                                String pluginKey)
-    {
-        return httpContentRetriever.async(authorizationGenerator,
-                method,
-                targetUrl,
-                Maps.transformValues(params, MapFunctions.OBJECT_TO_STRING),
-                headers,
-                pluginKey);
     }
 
     private String signGetUrlForType(ServiceProvider serviceProvider, URI targetUrl, Map<String, String[]> params) throws PermissionDeniedException
@@ -378,20 +305,13 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
         return oAuthLinkManager.signAsParameters(serviceProvider, method, url, params);
     }
 
-    private class OAuthAuthorizationGenerator implements AuthorizationGenerator
+    private class OAuthAuthorizationGenerator extends DefaultAuthorizationGeneratorBase
     {
         private final ServiceProvider serviceProvider;
 
         private OAuthAuthorizationGenerator(ServiceProvider serviceProvider)
         {
             this.serviceProvider = serviceProvider;
-        }
-
-        @Override
-        @Deprecated
-        public String generate(String method, URI url, Map<String, List<String>> parameters)
-        {
-            return generate(HttpMethod.valueOf(method), url, parameters).getOrNull();
         }
 
         @Override
