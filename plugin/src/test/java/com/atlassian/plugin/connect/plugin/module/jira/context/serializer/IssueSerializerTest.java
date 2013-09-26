@@ -139,4 +139,18 @@ public class IssueSerializerTest
 
         assertThat(issue.isPresent(), is(true));
     }
+
+    @Test
+    public void shouldConvertStringsToLongsForId() throws UnauthorisedException, ResourceNotFoundException
+    {
+        when(userManager.getUserByName("fred")).thenReturn(new DelegatingApplicationUser("fred", user));
+        when(issueService.getIssue(any(User.class), eq(10l))).thenReturn(new IssueService.IssueResult(issue1, errorCollection));
+        when(errorCollection.hasAnyErrors()).thenReturn(false);
+
+        final ParameterDeserializer<Issue> serializer = new IssueSerializer(issueService, userManager);
+        final Optional<Issue> issue = serializer.deserialize(
+                ImmutableMap.<String, Object>of("issue", ImmutableMap.of("id", "10")), "fred");
+
+        assertThat(issue.isPresent(), is(true));
+    }
 }

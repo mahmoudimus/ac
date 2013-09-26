@@ -14,44 +14,37 @@ import static org.apache.commons.lang3.ArrayUtils.isEmpty;
 
 /**
  * Helper to create the various forms we need the parameters in. It's functions are:
- * - unmarshal the context from Json
- * - TODO: !!!!! complete
- * Converts between a map of params in json style form
- * [project -> [id -> 10; key -> "foo"]]
- * and a map of individual params in path expression form
+ * Converts between
+ * a map of individual params in path expression form
  * [project.id -> 10; project.key -> "foo"]
+ * and a nested map of params in json style form
+ * [project -> [id -> 10; key -> "foo"]]
  */
 public class RequestParameterHelper
 {
     // TODO: Should find a better home
     public static final String CONTEXT_PARAMETER_KEY = "context";
 
-
     private static final TypeReference<HashMap<String, Object>> MAP_TYPE_REFERENCE =
             new TypeReference<HashMap<String, Object>>()
             {
             };
+
     private final Map<String, Object> requestParams;
 
     public RequestParameterHelper(Map<String, Object> requestParams)
     {
-        /*
-         1/ extract Json context variable. !!!!! Maybe skip this step as we likely don't need
-            a/ The context will be in nested form so convert to path form
-            b/ Add into request params
-            c/ remove context variable
-            => at this point the params will be in a consistent form where all params are path style regardless of how they were passed to the servlet
-            ? hold as String -> String[] or String -> Object?
-
-         2/ when authenticating use the nested form
-         3/ when substituting use path form (Object)
-         4/ when calculating non path variables use path form (String[])
-         */
         this.requestParams = requestParams;
     }
 
     public Map<String, Object> getParamsInNestedForm()
     {
+        /*
+          We process by splitting params like foo.bar.id = 10 & foo.blah = 6
+          into a list of pairs like ([foo, bar, id], 10) & ([foo, blah], 6)
+          then us a multimap like foo -> {([bar, id], 10) & ([blah], 6)}
+          and then recurse
+         */
         final Map<String, String> singleValueParams = Maps.transformValues(getParamsInPathForm(), new Function<String[], String>()
         {
             @Override
@@ -60,42 +53,27 @@ public class RequestParameterHelper
                 return isEmpty(input) ? "" : input[0]; // TODO: assuming only one value. Is this valid for us?;
             }
         });
-        final ImmutableList.Builder<Pair<List<String>, String>> listBuilder = ImmutableList.builder();
+
+        final ImmutableList.Builder<Pair<List<String>, String>> builder = ImmutableList.builder();
         for (Map.Entry<String, String> entry : singleValueParams.entrySet())
         {
-            listBuilder.add(Pair.of(Arrays.asList(entry.getKey().split("\\.")), entry.getValue()));
+            builder.add(Pair.of(Arrays.asList(entry.getKey().split("\\.")), entry.getValue()));
         }
-        final Iterable<Pair<List<String>, String>> pairs = listBuilder.build();
-        return  transformToNestedMap(pairs);
+
+        return transformToNestedMap(builder.build());
     }
 
     private Map<String, Object> transformToNestedMap(Iterable<Pair<List<String>, String>> pairs)
     {
-        // TODO: do some checking
-        return (Map<String, Object>)transform(pairs);
-    }
-
-    private Object transform(Iterable<Pair<List<String>, String>> pairs) //throws MalformedRequestException
-    {
-        if (Iterables.size(pairs) == 1)
-        {
-            final Pair<List<String>, String> pair = Iterables.getFirst(pairs, null);
-            final List<String> pathComponents = pair.getLeft();
-            final String value = pair.getRight();
-            if (pathComponents.isEmpty())
-            {
-                return value;
-            }
-        }
-
-        final ImmutableMultimap.Builder<String, Pair<List<String>, String>> builder = ImmutableMultimap.<String, Pair<List<String>, String>>builder();
+        final ImmutableMultimap.Builder<String, Pair<List<String>, String>> builder =
+                ImmutableMultimap.<String, Pair<List<String>, String>>builder();
         for (Pair<List<String>, String> pair : pairs)
         {
             final List<String> pathComponents = pair.getLeft();
             final String value = pair.getRight();
             if (pathComponents.isEmpty())
             {
-                continue; // TODO: Should we throw error?
+                continue; // TODO: Should we throw error? This would happen if they passed something like foo.bar = 10 & foo = 6
 //                throw new MalformedRequestException("TODO");
             }
             final String key = pathComponents.get(0);
@@ -113,6 +91,22 @@ public class RequestParameterHelper
             }
         });
 
+    }
+
+    private Object transform(Iterable<Pair<List<String>, String>> pairs) //throws MalformedRequestException
+    {
+        if (Iterables.size(pairs) == 1)
+        {
+            final Pair<List<String>, String> pair = Iterables.getFirst(pairs, null);
+            final List<String> pathComponents = pair.getLeft();
+            final String value = pair.getRight();
+            if (pathComponents.isEmpty())
+            {
+                return value;
+            }
+        }
+
+        return transformToNestedMap(pairs);
     }
 
     public Map<String, String[]> getParamsInPathForm()
