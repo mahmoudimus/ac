@@ -5,6 +5,7 @@ import com.atlassian.confluence.content.service.space.KeySpaceLocator;
 import com.atlassian.confluence.security.PermissionManager;
 import com.atlassian.confluence.spaces.Space;
 import com.atlassian.confluence.spaces.SpaceManager;
+import com.atlassian.plugin.connect.plugin.module.context.MalformedRequestException;
 import com.atlassian.plugin.connect.plugin.module.context.ParameterDeserializer;
 import com.atlassian.plugin.connect.plugin.module.context.ResourceNotFoundException;
 import com.atlassian.plugin.connect.plugin.module.permission.UnauthorisedException;
@@ -47,7 +48,7 @@ public class SpaceSerializerTest
     // Just sunny day here. Negative tests in PageSerializerTest
 
     @Test
-    public void shouldReturnSpaceWhenTheStarsAlign() throws EntityException, ResourceNotFoundException, UnauthorisedException
+    public void shouldReturnSpaceWhenTheStarsAlign() throws EntityException, ResourceNotFoundException, UnauthorisedException, MalformedRequestException
     {
         when(userManager.getUser("fred")).thenReturn(user);
         when(spaceService.getKeySpaceLocator("mykey")).thenReturn(new KeySpaceLocator(spaceManager, "mykey"));

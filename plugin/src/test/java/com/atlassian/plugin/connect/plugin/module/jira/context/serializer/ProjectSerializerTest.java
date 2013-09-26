@@ -6,6 +6,7 @@ import com.atlassian.jira.project.Project;
 import com.atlassian.jira.user.DelegatingApplicationUser;
 import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.jira.util.ErrorCollection;
+import com.atlassian.plugin.connect.plugin.module.context.MalformedRequestException;
 import com.atlassian.plugin.connect.plugin.module.context.ParameterDeserializer;
 import com.atlassian.plugin.connect.plugin.module.context.ResourceNotFoundException;
 import com.atlassian.plugin.connect.plugin.module.permission.UnauthorisedException;
@@ -41,7 +42,7 @@ public class ProjectSerializerTest
 
     // Just sunny day here. Negative tests in IssueSerializerTest
     @Test
-    public void shouldReturnProjectWhenTheStarsAlign() throws UnauthorisedException, ResourceNotFoundException
+    public void shouldReturnProjectWhenTheStarsAlign() throws UnauthorisedException, ResourceNotFoundException, MalformedRequestException
     {
         when(userManager.getUserByName("fred")).thenReturn(new DelegatingApplicationUser("fred", user));
         when(projectService.getProjectByKey(any(User.class), eq("myKey"))).thenReturn(new GetProjectResult(errorCollection, project1));

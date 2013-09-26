@@ -32,7 +32,7 @@ public class UrlTemplateInstanceImplTest
     private ContextMapURLSerializer contextMapURLSerializer;
 
     @Test
-    public void shouldCopeWithEmptyParams() throws InvalidContextParameterException, ResourceNotFoundException, UnauthorisedException
+    public void shouldCopeWithEmptyParams() throws MalformedRequestException, ResourceNotFoundException, UnauthorisedException
     {
         final String pathTemplate = "/foo/bar?arg1=${blah.id}&arg2=${user.address.street}";
         Map<String, Object> context = ImmutableMap.of();
@@ -50,7 +50,7 @@ public class UrlTemplateInstanceImplTest
     }
 
     @Test
-    public void shouldCopeWithZeroPathVariables() throws InvalidContextParameterException, ResourceNotFoundException, UnauthorisedException
+    public void shouldCopeWithZeroPathVariables() throws MalformedRequestException, ResourceNotFoundException, UnauthorisedException
     {
         final String pathTemplate = "/foo/bar";
         Map<String, Object> requestParams = ImmutableMap.<String, Object>of("somekey", new String[]{"somevalue"});
@@ -70,7 +70,7 @@ public class UrlTemplateInstanceImplTest
     }
 
     @Test
-    public void shouldSubstituteVariables() throws InvalidContextParameterException, ResourceNotFoundException, UnauthorisedException
+    public void shouldSubstituteVariables() throws MalformedRequestException, ResourceNotFoundException, UnauthorisedException
     {
         final String pathTemplate = "/foo/bar?arg1=${blah.id}&arg2=${user.address.street}";
         final String path = "/foo/bar?arg1=10&arg2=deadEndSt";
@@ -91,7 +91,7 @@ public class UrlTemplateInstanceImplTest
 
     @Test
     @Ignore // Removed support for Json request param form for now
-    public void shouldExtractContextAndAddToParamMap() throws InvalidContextParameterException, ResourceNotFoundException, UnauthorisedException
+    public void shouldExtractContextAndAddToParamMap() throws MalformedRequestException, ResourceNotFoundException, UnauthorisedException
     {
         String[] contextStr = new String[]{"{\"project\":{\"id\":10100}}"};
 
@@ -112,7 +112,7 @@ public class UrlTemplateInstanceImplTest
 
 
     @Test(expected = ResourceNotFoundException.class)
-    public void shouldLetResourceNotFoundExceptionPassThrough() throws ResourceNotFoundException, UnauthorisedException, InvalidContextParameterException
+    public void shouldLetResourceNotFoundExceptionPassThrough() throws ResourceNotFoundException, UnauthorisedException, MalformedRequestException
     {
         final Map<String, Object> requestParams = ImmutableMap.<String, Object>of();
 
@@ -122,7 +122,7 @@ public class UrlTemplateInstanceImplTest
     }
 
     @Test(expected = MalformedRequestException.class)
-    public void shouldLetMalformedRequestExceptionPassThrough() throws ResourceNotFoundException, UnauthorisedException, InvalidContextParameterException
+    public void shouldLetMalformedRequestExceptionPassThrough() throws ResourceNotFoundException, UnauthorisedException, MalformedRequestException
     {
         final Map<String, Object> requestParams = ImmutableMap.<String, Object>of();
 
@@ -132,7 +132,7 @@ public class UrlTemplateInstanceImplTest
     }
 
     @Test(expected = UnauthorisedException.class)
-    public void shouldLetUnauthorisedExceptionPassThrough() throws ResourceNotFoundException, UnauthorisedException, InvalidContextParameterException
+    public void shouldLetUnauthorisedExceptionPassThrough() throws ResourceNotFoundException, UnauthorisedException, MalformedRequestException
     {
         final Map<String, Object> requestParams = ImmutableMap.<String, Object>of();
 
@@ -143,7 +143,7 @@ public class UrlTemplateInstanceImplTest
 
     @Ignore // Removed support for Json request param form for now
     @Test(expected = InvalidContextParameterException.class)
-    public void shouldThrowInvalidContextParameterExceptionWhenCantUnmarshalJsonContext() throws InvalidContextParameterException, ResourceNotFoundException, UnauthorisedException
+    public void shouldThrowInvalidContextParameterExceptionWhenCantUnmarshalJsonContext() throws MalformedRequestException, ResourceNotFoundException, UnauthorisedException
     {
         String[] contextStr = new String[]{"not proper json"};
 
@@ -153,7 +153,7 @@ public class UrlTemplateInstanceImplTest
 
     @Ignore // Removed support for Json request param form for now
     @Test(expected = InvalidContextParameterException.class)
-    public void shouldThrowInvalidContextParameterExceptionWhenContextJsonEmptyStringArray() throws InvalidContextParameterException, ResourceNotFoundException, UnauthorisedException
+    public void shouldThrowInvalidContextParameterExceptionWhenContextJsonEmptyStringArray() throws MalformedRequestException, ResourceNotFoundException, UnauthorisedException
     {
         String[] contextStr = new String[]{};
 
@@ -163,7 +163,7 @@ public class UrlTemplateInstanceImplTest
     }
 
     @Test
-    public void shouldIdentifyTemplateVariables() throws InvalidContextParameterException, ResourceNotFoundException, UnauthorisedException
+    public void shouldIdentifyTemplateVariables() throws MalformedRequestException, ResourceNotFoundException, UnauthorisedException
     {
         final String pathTemplate = "/foo/bar?arg1=${blah.id}&arg2=${user.address.street}";
         Map<String, Object> requestParams = ImmutableMap.of();
@@ -182,7 +182,7 @@ public class UrlTemplateInstanceImplTest
     }
 
     @Test
-    public void shouldIdentifyNonTemplateContextVariables() throws ResourceNotFoundException, UnauthorisedException, InvalidContextParameterException
+    public void shouldIdentifyNonTemplateContextVariables() throws ResourceNotFoundException, UnauthorisedException, MalformedRequestException
     {
         final String pathTemplate = "/foo/bar?arg1=${blah.id}&arg2=${user.address.street}";
         final String[] anotherParamValue = {"88"};
@@ -210,14 +210,12 @@ public class UrlTemplateInstanceImplTest
 
     @Ignore // Removed support for Json request param form for now
     @Test
-    public void shouldIdentifyNonTemplateContextVariablesWhenContextIsJson() throws ResourceNotFoundException, UnauthorisedException, InvalidContextParameterException
+    public void shouldIdentifyNonTemplateContextVariablesWhenContextIsJson() throws ResourceNotFoundException, UnauthorisedException, MalformedRequestException
     {
         final String pathTemplate = "/foo/bar?arg1=${blah.id}&arg2=${user.address.street}";
         final String[] anotherParamValue = {"88"};
 
         String[] contextStr = new String[]{"{\"blah\":{\"id\":10100}},\"user\":{\"address\":{\"street\":\"deadEndSt\"}}}"};
-
-//        Map<String, Object> requestParams = ImmutableMap.<String, Object>of("context", contextStr, "someparam", "somevalue");
 
         Map<String, Object> requestParams = ImmutableMap.<String, Object>builder()
                 .put("context", contextStr)

@@ -46,7 +46,7 @@ public class IssueSerializerTest
     public ExpectedException thrown = ExpectedException.none();
 
     @Test
-    public void shouldReturnAbsentIfNoIssueInParams() throws UnauthorisedException, ResourceNotFoundException
+    public void shouldReturnAbsentIfNoIssueInParams() throws UnauthorisedException, ResourceNotFoundException, MalformedRequestException
     {
         final ParameterDeserializer<Issue> serializer = new IssueSerializer(issueService, userManager);
         final Optional<Issue> issue = serializer.deserialize(ImmutableMap.of("blah", new Object()), "fred");
@@ -54,7 +54,7 @@ public class IssueSerializerTest
     }
 
     @Test
-    public void shouldThrowMalformedRequestIfIssueIsNotMap() throws UnauthorisedException, ResourceNotFoundException
+    public void shouldThrowMalformedRequestIfIssueIsNotMap() throws UnauthorisedException, ResourceNotFoundException, MalformedRequestException
     {
         thrown.expect(MalformedRequestException.class);
         thrown.expectMessage("Invalid type for parameter name issue");
@@ -64,7 +64,7 @@ public class IssueSerializerTest
     }
 
     @Test
-    public void shouldThrowMalformedRequestIfNoIdOrKeyInIssue() throws UnauthorisedException, ResourceNotFoundException
+    public void shouldThrowMalformedRequestIfNoIdOrKeyInIssue() throws UnauthorisedException, ResourceNotFoundException, MalformedRequestException
     {
         thrown.expect(MalformedRequestException.class);
         thrown.expectMessage("No identifiers in request for issue");
@@ -77,7 +77,7 @@ public class IssueSerializerTest
     }
 
     @Test
-    public void shouldThrowMalformedRequestIfIdNotANumber() throws UnauthorisedException, ResourceNotFoundException
+    public void shouldThrowMalformedRequestIfIdNotANumber() throws UnauthorisedException, ResourceNotFoundException, MalformedRequestException
     {
         thrown.expect(MalformedRequestException.class);
         thrown.expectMessage("parameter id must be a number");
@@ -90,7 +90,7 @@ public class IssueSerializerTest
     }
 
     @Test
-    public void shouldThrowResourceNotFoundExceptionIfNoUserForUsername() throws UnauthorisedException, ResourceNotFoundException
+    public void shouldThrowResourceNotFoundExceptionIfNoUserForUsername() throws UnauthorisedException, ResourceNotFoundException, MalformedRequestException
     {
         // null username is treated like "guest" so should not have access to resource
         thrown.expect(ResourceNotFoundException.class);
@@ -104,7 +104,7 @@ public class IssueSerializerTest
     }
 
     @Test
-    public void shouldThrowResourceNotFoundExceptionIfNoIssueForId() throws UnauthorisedException, ResourceNotFoundException
+    public void shouldThrowResourceNotFoundExceptionIfNoIssueForId() throws UnauthorisedException, ResourceNotFoundException, MalformedRequestException
     {
         thrown.expect(ResourceNotFoundException.class);
         thrown.expectMessage("No such issue"); // TODO: would be nice to provide id too
@@ -122,7 +122,7 @@ public class IssueSerializerTest
     }
 
     @Test
-    public void shouldThrowResourceNotFoundExceptionIfNoIssueForKey() throws UnauthorisedException, ResourceNotFoundException
+    public void shouldThrowResourceNotFoundExceptionIfNoIssueForKey() throws UnauthorisedException, ResourceNotFoundException, MalformedRequestException
     {
         thrown.expect(ResourceNotFoundException.class);
         thrown.expectMessage("No such issue");
@@ -140,7 +140,7 @@ public class IssueSerializerTest
     }
 
     @Test
-    public void shouldReturnIssueWhenTheStarsAlign() throws UnauthorisedException, ResourceNotFoundException
+    public void shouldReturnIssueWhenTheStarsAlign() throws UnauthorisedException, ResourceNotFoundException, MalformedRequestException
     {
         when(userManager.getUserByName("fred")).thenReturn(new DelegatingApplicationUser("fred", user));
         when(issueService.getIssue(any(User.class), eq("myKey"))).thenReturn(new IssueService.IssueResult(issue1, errorCollection));
@@ -154,7 +154,7 @@ public class IssueSerializerTest
     }
 
     @Test
-    public void shouldConvertStringsToLongsForId() throws UnauthorisedException, ResourceNotFoundException
+    public void shouldConvertStringsToLongsForId() throws UnauthorisedException, ResourceNotFoundException, MalformedRequestException
     {
         when(userManager.getUserByName("fred")).thenReturn(new DelegatingApplicationUser("fred", user));
         when(issueService.getIssue(any(User.class), eq(10l))).thenReturn(new IssueService.IssueResult(issue1, errorCollection));

@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.plugin.module.webfragment;
 
 import com.atlassian.plugin.connect.plugin.module.context.ContextMapURLSerializer;
+import com.atlassian.plugin.connect.plugin.module.context.MalformedRequestException;
 import com.atlassian.plugin.connect.plugin.module.context.ResourceNotFoundException;
 import com.atlassian.plugin.connect.plugin.module.permission.UnauthorisedException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,9 +23,11 @@ public class UrlTemplateInstanceFactoryImpl implements UrlTemplateInstanceFactor
     }
 
     @Override
-    public UrlTemplateInstance create(String urlTemplateString, Map<String, Object> requestParams, String username) throws InvalidContextParameterException, UnauthorisedException, ResourceNotFoundException
+    public UrlTemplateInstance create(String urlTemplateString, Map<String, Object> requestParams, String username)
+            throws MalformedRequestException, UnauthorisedException, ResourceNotFoundException
     {
-        return new UrlTemplateInstanceImpl(urlVariableSubstitutor, contextMapURLSerializer, urlTemplateString, requestParams, username);
+        return new UrlTemplateInstanceImpl(urlVariableSubstitutor, contextMapURLSerializer, urlTemplateString,
+                requestParams, username);
     }
 
 }

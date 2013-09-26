@@ -54,7 +54,8 @@ public class ContextMapURLSerializer
         return builder.build();
     }
 
-    public  Map<String, Object> getAuthenticatedAddonParameters(final Map<String, Object> context, String username) throws UnauthorisedException, ResourceNotFoundException
+    public  Map<String, Object> getAuthenticatedAddonParameters(final Map<String, Object> context, String username)
+            throws UnauthorisedException, ResourceNotFoundException, MalformedRequestException
     {
         /*
          * We just pass through all the deserialisers. If no exception then we return the original context.
@@ -63,14 +64,9 @@ public class ContextMapURLSerializer
         for (ContextMapParameterExtractor extractor : contextMapParameterExtractors)
         {
             final ParameterDeserializer deserializer = extractor.deserializer();
-            final Optional<Object> resource = deserializer.deserialize(context, username);
-            // TODO: Should be 401 if no permission
-            // TODO: The Jira impl will already authenticate so don't need to double up here
-            // TODO: Wrong jira usermanager if we want to keep this check
-            if (resource.isPresent() /*&& !extractor.hasViewPermission(username, resource.get())*/)
-            {
-                // TODO: May need to throw exception here for confluence
-            }
+            // As both Confluence and Jira deserialisers now check permissions and throw appropriate exceptions
+            // its enough to run the deserialiser without checking result
+            deserializer.deserialize(context, username);
         }
         return context;
 

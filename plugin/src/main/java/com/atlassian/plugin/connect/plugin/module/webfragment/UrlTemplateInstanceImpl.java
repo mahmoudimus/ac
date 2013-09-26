@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.plugin.module.webfragment;
 
 import com.atlassian.plugin.connect.plugin.module.context.ContextMapURLSerializer;
+import com.atlassian.plugin.connect.plugin.module.context.MalformedRequestException;
 import com.atlassian.plugin.connect.plugin.module.context.ResourceNotFoundException;
 import com.atlassian.plugin.connect.plugin.module.permission.UnauthorisedException;
 import com.google.common.collect.ImmutableMap;
@@ -18,7 +19,7 @@ public class UrlTemplateInstanceImpl implements UrlTemplateInstance
 
     public UrlTemplateInstanceImpl(UrlVariableSubstitutor urlVariableSubstitutor, ContextMapURLSerializer contextMapURLSerializer,
                                    String urlTemplate, Map<String, Object> context, String username)
-            throws InvalidContextParameterException, UnauthorisedException, ResourceNotFoundException
+            throws MalformedRequestException, UnauthorisedException, ResourceNotFoundException
     {
         this.urlTemplate = urlTemplate;
         requestParameterHelper = new RequestParameterHelper(context);
@@ -27,7 +28,7 @@ public class UrlTemplateInstanceImpl implements UrlTemplateInstance
     }
 
     private void authenticateContextParams(ContextMapURLSerializer contextMapURLSerializer, String username)
-            throws ResourceNotFoundException, UnauthorisedException
+            throws ResourceNotFoundException, UnauthorisedException, MalformedRequestException
     {
         contextMapURLSerializer.getAuthenticatedAddonParameters(requestParameterHelper.getParamsInNestedForm(), username);
     }

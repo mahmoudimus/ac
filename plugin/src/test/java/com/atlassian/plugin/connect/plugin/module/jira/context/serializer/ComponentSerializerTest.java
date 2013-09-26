@@ -6,6 +6,7 @@ import com.atlassian.jira.bc.project.component.ProjectComponentService;
 import com.atlassian.jira.user.DelegatingApplicationUser;
 import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.jira.util.ErrorCollection;
+import com.atlassian.plugin.connect.plugin.module.context.MalformedRequestException;
 import com.atlassian.plugin.connect.plugin.module.context.ParameterDeserializer;
 import com.atlassian.plugin.connect.plugin.module.context.ResourceNotFoundException;
 import com.atlassian.plugin.connect.plugin.module.permission.UnauthorisedException;
@@ -40,7 +41,7 @@ public class ComponentSerializerTest
 
     // Just sunny day here. Negative tests in IssueSerializerTest
     @Test
-    public void shouldReturnProjectComponentWhenTheStarsAlign() throws UnauthorisedException, ResourceNotFoundException
+    public void shouldReturnProjectComponentWhenTheStarsAlign() throws UnauthorisedException, ResourceNotFoundException, MalformedRequestException
     {
         when(userManager.getUserByName("fred")).thenReturn(new DelegatingApplicationUser("fred", user));
         when(componentService.find(any(User.class), (ErrorCollection) eq(null), eq(10l))).thenReturn(component1);

@@ -24,6 +24,6 @@ public interface ParameterDeserializer<T>
      * @throws ResourceNotFoundException if the a serialised resource is present in the params but does not represent an
      * existing resource. Note this may be thrown instead of UnauthorisedException if that is the policy of the application
      */
-    Optional<T> deserialize(Map<String, Object> params, String username) throws UnauthorisedException, ResourceNotFoundException;
+    Optional<T> deserialize(Map<String, Object> params, String username) throws UnauthorisedException, ResourceNotFoundException, MalformedRequestException;
 
 }

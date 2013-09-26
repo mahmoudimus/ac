@@ -55,7 +55,7 @@ public class PageSerializerTest
     }
 
     @Test
-    public void shouldReturnAbsentIfNoPageInParams() throws UnauthorisedException, ResourceNotFoundException
+    public void shouldReturnAbsentIfNoPageInParams() throws UnauthorisedException, ResourceNotFoundException, MalformedRequestException
     {
         final ParameterDeserializer<AbstractPage> serializer = new PageSerializer(pageService, userManager, permissionManager);
         final Optional<AbstractPage> page = serializer.deserialize(ImmutableMap.of("blah", new Object()), "fred");
@@ -63,7 +63,7 @@ public class PageSerializerTest
     }
 
     @Test
-    public void shouldThrowMalformedRequestIfIssueIsNotMap() throws UnauthorisedException, ResourceNotFoundException
+    public void shouldThrowMalformedRequestIfIssueIsNotMap() throws UnauthorisedException, ResourceNotFoundException, MalformedRequestException
     {
         thrown.expect(MalformedRequestException.class);
         thrown.expectMessage("Invalid type for parameter name page");
@@ -73,7 +73,7 @@ public class PageSerializerTest
     }
 
     @Test
-    public void shouldThrowMalformedRequestIfNoIdOrKeyInIssue() throws ResourceNotFoundException, UnauthorisedException
+    public void shouldThrowMalformedRequestIfNoIdOrKeyInIssue() throws ResourceNotFoundException, UnauthorisedException, MalformedRequestException
     {
         thrown.expect(MalformedRequestException.class);
         thrown.expectMessage("No identifiers in request for page");
@@ -86,7 +86,7 @@ public class PageSerializerTest
     }
 
     @Test
-    public void shouldThrowResourceNotFoundExceptionIfNoUserForUsername() throws EntityException, ResourceNotFoundException, UnauthorisedException
+    public void shouldThrowResourceNotFoundExceptionIfNoUserForUsername() throws EntityException, ResourceNotFoundException, UnauthorisedException, MalformedRequestException
     {
         // null username is treated like "guest" so should not have access to resource
         thrown.expect(ResourceNotFoundException.class);
@@ -101,7 +101,7 @@ public class PageSerializerTest
     }
 
     @Test
-    public void shouldThrowResourceNotFoundExceptionIfNoPageForId() throws EntityException, ResourceNotFoundException, UnauthorisedException
+    public void shouldThrowResourceNotFoundExceptionIfNoPageForId() throws EntityException, ResourceNotFoundException, UnauthorisedException, MalformedRequestException
     {
         thrown.expect(ResourceNotFoundException.class);
         thrown.expectMessage("No such page");
@@ -118,7 +118,7 @@ public class PageSerializerTest
     }
 
     @Test
-    public void shouldThrowResourceNotFoundExceptionWhenNoPermisssionForPage() throws EntityException, ResourceNotFoundException, UnauthorisedException
+    public void shouldThrowResourceNotFoundExceptionWhenNoPermisssionForPage() throws EntityException, ResourceNotFoundException, UnauthorisedException, MalformedRequestException
     {
         thrown.expect(ResourceNotFoundException.class);
         thrown.expectMessage("No such page");
@@ -135,7 +135,7 @@ public class PageSerializerTest
     }
 
     @Test
-    public void shouldReturnPageWhenTheStarsAlign() throws EntityException, ResourceNotFoundException, UnauthorisedException
+    public void shouldReturnPageWhenTheStarsAlign() throws EntityException, ResourceNotFoundException, UnauthorisedException, MalformedRequestException
     {
         when(userManager.getUser("fred")).thenReturn(user);
         when(pageService.getIdPageLocator(10l)).thenReturn(new SinglePageLocator(page1));

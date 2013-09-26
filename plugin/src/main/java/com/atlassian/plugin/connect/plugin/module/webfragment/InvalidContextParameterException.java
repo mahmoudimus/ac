@@ -1,6 +1,8 @@
 package com.atlassian.plugin.connect.plugin.module.webfragment;
 
-public class InvalidContextParameterException extends Exception
+import com.atlassian.plugin.connect.plugin.module.context.MalformedRequestException;
+
+public class InvalidContextParameterException extends MalformedRequestException
 {
     public InvalidContextParameterException(String message)
     {

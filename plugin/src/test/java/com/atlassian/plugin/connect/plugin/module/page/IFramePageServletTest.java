@@ -63,7 +63,7 @@ public class IFramePageServletTest
     private UrlTemplateInstance urlTemplateInstance;
 
     @Test
-    public void shouldSubstituteVariablesAndCallRender() throws ServletException, IOException, InvalidContextParameterException, UnauthorisedException, ResourceNotFoundException
+    public void shouldSubstituteVariablesAndCallRender() throws ServletException, IOException, MalformedRequestException, UnauthorisedException, ResourceNotFoundException
     {
         String iFramePathTemplate = "/foo/bar?arg1=${blah.id}&arg2=${user.address.street}";
         IFrameContext initialIFrameContext = new IFrameContextImpl("myKey", iFramePathTemplate, "namespace1", iFrameParams);
@@ -107,7 +107,7 @@ public class IFramePageServletTest
     }
 
     @Test
-    public void shouldReturn400OnInvalidContextParameterException() throws InvalidContextParameterException, ServletException,
+    public void shouldReturn400OnInvalidContextParameterException() throws MalformedRequestException, ServletException,
             IOException, UnauthorisedException, ResourceNotFoundException
     {
         IFrameContext initialIFrameContext = new IFrameContextImpl("myKey", "path", "namespace1", iFrameParams);
@@ -123,7 +123,7 @@ public class IFramePageServletTest
     }
 
     @Test
-    public void shouldReturn401IfUnauthorisedContextParamsPassed() throws InvalidContextParameterException, IOException, ServletException, UnauthorisedException, ResourceNotFoundException
+    public void shouldReturn401IfUnauthorisedContextParamsPassed() throws MalformedRequestException, IOException, ServletException, UnauthorisedException, ResourceNotFoundException
     {
         IFrameContext initialIFrameContext = new IFrameContextImpl("myKey", "path", "namespace1", iFrameParams);
 
@@ -139,7 +139,7 @@ public class IFramePageServletTest
     }
 
     @Test
-    public void shouldReturn404IfResourceNotFound() throws InvalidContextParameterException, IOException, ServletException, UnauthorisedException, ResourceNotFoundException
+    public void shouldReturn404IfResourceNotFound() throws MalformedRequestException, IOException, ServletException, UnauthorisedException, ResourceNotFoundException
     {
         IFrameContext initialIFrameContext = new IFrameContextImpl("myKey", "path", "namespace1", iFrameParams);
 
@@ -154,7 +154,7 @@ public class IFramePageServletTest
     }
 
     @Test
-    public void shouldReturn400IfMalformedParams() throws InvalidContextParameterException, IOException, ServletException, UnauthorisedException, ResourceNotFoundException
+    public void shouldReturn400IfMalformedParams() throws MalformedRequestException, IOException, ServletException, UnauthorisedException, ResourceNotFoundException
     {
         IFrameContext initialIFrameContext = new IFrameContextImpl("myKey", "path", "namespace1", iFrameParams);
 

@@ -6,6 +6,7 @@ import com.atlassian.jira.project.version.Version;
 import com.atlassian.jira.user.DelegatingApplicationUser;
 import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.jira.util.ErrorCollection;
+import com.atlassian.plugin.connect.plugin.module.context.MalformedRequestException;
 import com.atlassian.plugin.connect.plugin.module.context.ParameterDeserializer;
 import com.atlassian.plugin.connect.plugin.module.context.ResourceNotFoundException;
 import com.atlassian.plugin.connect.plugin.module.permission.UnauthorisedException;
@@ -41,7 +42,7 @@ public class VersionSerializerTest
 
     // Just sunny day here. Negative tests in IssueSerializerTest
     @Test
-    public void shouldReturnVersionWhenTheStarsAlign() throws UnauthorisedException, ResourceNotFoundException
+    public void shouldReturnVersionWhenTheStarsAlign() throws UnauthorisedException, ResourceNotFoundException, MalformedRequestException
     {
         when(userManager.getUserByName("fred")).thenReturn(new DelegatingApplicationUser("fred", user));
         when(versionService.getVersionById(any(User.class), eq(10l))).thenReturn(new VersionResult(errorCollection, version1));

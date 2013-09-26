@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.module.webfragment;
 
+import com.atlassian.plugin.connect.plugin.module.context.MalformedRequestException;
 import com.atlassian.plugin.connect.plugin.module.context.ResourceNotFoundException;
 import com.atlassian.plugin.connect.plugin.module.permission.UnauthorisedException;
 
@@ -17,5 +18,6 @@ public interface UrlTemplateInstanceFactory
      * @param username
      * @return
      */
-    UrlTemplateInstance create(String urlTemplateString, Map<String, Object> context, String username) throws InvalidContextParameterException, UnauthorisedException, ResourceNotFoundException;
+    UrlTemplateInstance create(String urlTemplateString, Map<String, Object> context, String username)
+            throws MalformedRequestException, UnauthorisedException, ResourceNotFoundException;
 }

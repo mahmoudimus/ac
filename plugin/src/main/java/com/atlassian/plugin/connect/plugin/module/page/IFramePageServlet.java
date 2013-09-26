@@ -3,7 +3,6 @@ package com.atlassian.plugin.connect.plugin.module.page;
 import com.atlassian.plugin.connect.plugin.module.context.MalformedRequestException;
 import com.atlassian.plugin.connect.plugin.module.context.ResourceNotFoundException;
 import com.atlassian.plugin.connect.plugin.module.permission.UnauthorisedException;
-import com.atlassian.plugin.connect.plugin.module.webfragment.InvalidContextParameterException;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlTemplateInstance;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlTemplateInstanceFactory;
 import com.atlassian.plugin.connect.spi.module.IFrameContext;
@@ -67,10 +66,6 @@ public class IFramePageServlet extends HttpServlet
                     remoteUsername, out);
         }
         // TODO: Should be a subtype of MalformedRequestException
-        catch (InvalidContextParameterException e)
-        {
-            resp.sendError(SC_BAD_REQUEST, e.getMessage());
-        }
         catch (MalformedRequestException e)
         {
             resp.sendError(SC_BAD_REQUEST, e.getMessage());

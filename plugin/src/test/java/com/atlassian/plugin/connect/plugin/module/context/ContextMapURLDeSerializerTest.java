@@ -32,7 +32,7 @@ public class ContextMapURLDeSerializerTest
     private Object extracted2 = new Object();
 
     @Test
-    public void shouldAuthoriseAllResourceRefs() throws ResourceNotFoundException, UnauthorisedException
+    public void shouldAuthoriseAllResourceRefs() throws ResourceNotFoundException, UnauthorisedException, MalformedRequestException
     {
         final ContextMapURLSerializer urlSerializer = new ContextMapURLSerializer(ImmutableList.of(parameterExtractor1, parameterExtractor2));
         final Map<String, Object> context = ImmutableMap.<String, Object>of(
@@ -69,7 +69,7 @@ public class ContextMapURLDeSerializerTest
 
     @Test
     @Ignore // TODO: We may need to bring this back when we do permission checks in confluence.
-    public void shouldExcludeParametersThatUserDoesNotHaveViewPermissionFor() throws ResourceNotFoundException, UnauthorisedException
+    public void shouldExcludeParametersThatUserDoesNotHaveViewPermissionFor() throws ResourceNotFoundException, UnauthorisedException, MalformedRequestException
     {
         final ContextMapURLSerializer serializer = new ContextMapURLSerializer(ImmutableList.of(parameterExtractor1));
         final Map<String, Object> context = ImmutableMap.<String, Object>of(
@@ -92,7 +92,7 @@ public class ContextMapURLDeSerializerTest
     }
 
     @Test(expected = ResourceNotFoundException.class)
-    public void shouldLetResourceNotFoundExceptionPassThrough() throws ResourceNotFoundException, UnauthorisedException
+    public void shouldLetResourceNotFoundExceptionPassThrough() throws ResourceNotFoundException, UnauthorisedException, MalformedRequestException
     {
         final ContextMapURLSerializer serializer = new ContextMapURLSerializer(ImmutableList.of(parameterExtractor1));
         final Map<String, Object> context = ImmutableMap.<String, Object>of();
@@ -103,7 +103,7 @@ public class ContextMapURLDeSerializerTest
     }
 
     @Test(expected = MalformedRequestException.class)
-    public void shouldLetMalformedRequestExceptionPassThrough() throws ResourceNotFoundException, UnauthorisedException
+    public void shouldLetMalformedRequestExceptionPassThrough() throws ResourceNotFoundException, UnauthorisedException, MalformedRequestException
     {
         final ContextMapURLSerializer serializer = new ContextMapURLSerializer(ImmutableList.of(parameterExtractor1));
         final Map<String, Object> context = ImmutableMap.<String, Object>of();
@@ -114,7 +114,7 @@ public class ContextMapURLDeSerializerTest
     }
 
     @Test(expected = UnauthorisedException.class)
-    public void shouldLetUnauthorisedExceptionPassThrough() throws ResourceNotFoundException, UnauthorisedException
+    public void shouldLetUnauthorisedExceptionPassThrough() throws ResourceNotFoundException, UnauthorisedException, MalformedRequestException
     {
         final ContextMapURLSerializer serializer = new ContextMapURLSerializer(ImmutableList.of(parameterExtractor1));
         final Map<String, Object> context = ImmutableMap.<String, Object>of();
