@@ -239,7 +239,7 @@ public abstract class AbstractParameterSerializer<T, C, U> implements ParameterS
             }
             catch (NumberFormatException e)
             {
-                throw new MalformedRequestException("parameter name " + paramName + " must be a number");
+                throw new MalformedRequestException("parameter " + paramName + " must be a number");
             }
         }
         final Long finalLong = longValue;

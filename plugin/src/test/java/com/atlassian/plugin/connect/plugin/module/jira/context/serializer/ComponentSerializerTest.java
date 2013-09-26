@@ -11,7 +11,6 @@ import com.atlassian.plugin.connect.plugin.module.context.ResourceNotFoundExcept
 import com.atlassian.plugin.connect.plugin.module.permission.UnauthorisedException;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -21,7 +20,6 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
 
-@Ignore // TODO: Apply changes that were applied to IssueSerializerTest
 @RunWith(MockitoJUnitRunner.class)
 public class ComponentSerializerTest
 {
@@ -40,58 +38,7 @@ public class ComponentSerializerTest
     @Mock
     private ProjectComponent component1;
 
-    @Test
-    public void shouldReturnAbsentIfNoProjectComponentInParams() throws UnauthorisedException, ResourceNotFoundException
-    {
-        final ParameterDeserializer<ProjectComponent> serializer = new ComponentSerializer(componentService, userManager);
-        final Optional<ProjectComponent> component = serializer.deserialize(ImmutableMap.of("blah", new Object()), "fred");
-        assertThat(component.isPresent(), is(false));
-    }
-
-    @Test
-    public void shouldReturnAbsentIfProjectComponentIsNotMap() throws UnauthorisedException, ResourceNotFoundException
-    {
-        final ParameterDeserializer<ProjectComponent> serializer = new ComponentSerializer(componentService, userManager);
-        final Optional<ProjectComponent> component = serializer.deserialize(ImmutableMap.of("component", new Object()), "fred");
-        assertThat(component.isPresent(), is(false));
-    }
-
-    @Test
-    public void shouldReturnAbsentIfNoIdOrKeyInProjectComponent() throws UnauthorisedException, ResourceNotFoundException
-    {
-        final ParameterDeserializer<ProjectComponent> serializer = new ComponentSerializer(componentService, userManager);
-        final Optional<ProjectComponent> component = serializer.deserialize(
-                ImmutableMap.<String, Object>of("component", ImmutableMap.of("foo", new Object())),
-                "fred");
-        assertThat(component.isPresent(), is(false));
-    }
-
-    @Test
-    public void shouldReturnAbsentIfNoUserForUsername() throws UnauthorisedException, ResourceNotFoundException
-    {
-        final ParameterDeserializer<ProjectComponent> serializer = new ComponentSerializer(componentService, userManager);
-        final Optional<ProjectComponent> component = serializer.deserialize(
-                ImmutableMap.<String, Object>of("component", ImmutableMap.of("id", 10)), "fred");
-
-        assertThat(component.isPresent(), is(false));
-        verify(userManager, times(1)).getUserByName("fred");
-    }
-
-    @Test
-    public void shouldReturnAbsentIfNoProjectComponentForId() throws UnauthorisedException, ResourceNotFoundException
-    {
-        when(userManager.getUserByName("fred")).thenReturn(new DelegatingApplicationUser("fred", user));
-        when(componentService.find(any(User.class), (ErrorCollection) eq(null), eq(10l))).thenReturn(null);
-        when(errorCollection.hasAnyErrors()).thenReturn(true);
-
-        final ParameterDeserializer<ProjectComponent> serializer = new ComponentSerializer(componentService, userManager);
-        final Optional<ProjectComponent> component = serializer.deserialize(
-                ImmutableMap.<String, Object>of("component", ImmutableMap.of("id", 10)), "fred");
-
-        assertThat(component.isPresent(), is(false));
-        verify(componentService, times(1)).find(any(User.class), (ErrorCollection) eq(null), eq(10l));
-    }
-
+    // Just sunny day here. Negative tests in IssueSerializerTest
     @Test
     public void shouldReturnProjectComponentWhenTheStarsAlign() throws UnauthorisedException, ResourceNotFoundException
     {

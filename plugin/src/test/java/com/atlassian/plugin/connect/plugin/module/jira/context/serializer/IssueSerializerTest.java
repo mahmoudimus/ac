@@ -77,6 +77,19 @@ public class IssueSerializerTest
     }
 
     @Test
+    public void shouldThrowMalformedRequestIfIdNotANumber() throws UnauthorisedException, ResourceNotFoundException
+    {
+        thrown.expect(MalformedRequestException.class);
+        thrown.expectMessage("parameter id must be a number");
+
+        final ParameterDeserializer<Issue> serializer = new IssueSerializer(issueService, userManager);
+        final Optional<Issue> issue = serializer.deserialize(
+                ImmutableMap.<String, Object>of("issue", ImmutableMap.of("id", new Object())),
+                "fred");
+        assertThat(issue.isPresent(), is(false));
+    }
+
+    @Test
     public void shouldThrowResourceNotFoundExceptionIfNoUserForUsername() throws UnauthorisedException, ResourceNotFoundException
     {
         // null username is treated like "guest" so should not have access to resource

@@ -13,17 +13,16 @@ import com.atlassian.user.User;
 import com.atlassian.user.UserManager;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import static com.atlassian.confluence.security.Permission.VIEW;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
-@Ignore // TODO: Apply changes that were applied to IssueSerializerTest
 @RunWith(MockitoJUnitRunner.class)
 public class SpaceSerializerTest
 {
@@ -36,9 +35,6 @@ public class SpaceSerializerTest
     @Mock
     private User user;
 
-//    @Mock
-//    private ErrorCollection errorCollection;
-
     @Mock
     private Space space1;
 
@@ -48,60 +44,7 @@ public class SpaceSerializerTest
     @Mock
     private PermissionManager permissionManager;
 
-    @Test
-    public void shouldReturnAbsentIfNoSpaceInParams() throws ResourceNotFoundException, UnauthorisedException
-    {
-        final ParameterDeserializer<Space> serializer = new SpaceSerializer(spaceService, userManager, permissionManager);
-        final Optional<Space> space = serializer.deserialize(ImmutableMap.of("blah", new Object()), "fred");
-        assertThat(space.isPresent(), is(false));
-    }
-
-    @Test
-    public void shouldReturnAbsentIfSpaceIsNotMap() throws ResourceNotFoundException, UnauthorisedException
-    {
-        final ParameterDeserializer<Space> serializer = new SpaceSerializer(spaceService, userManager, permissionManager);
-        final Optional<Space> space = serializer.deserialize(ImmutableMap.of("space", new Object()), "fred");
-        assertThat(space.isPresent(), is(false));
-    }
-
-    @Test
-    public void shouldReturnAbsentIfNoIdOrKeyInSpace() throws ResourceNotFoundException, UnauthorisedException
-    {
-        final ParameterDeserializer<Space> serializer = new SpaceSerializer(spaceService, userManager, permissionManager);
-        final Optional<Space> space = serializer.deserialize(
-                ImmutableMap.<String, Object>of("space", ImmutableMap.of("foo", new Object())),
-                "fred");
-        assertThat(space.isPresent(), is(false));
-    }
-
-    @Test
-    public void shouldReturnAbsentIfNoUserForUsername() throws EntityException, ResourceNotFoundException, UnauthorisedException
-    {
-        final ParameterDeserializer<Space> serializer = new SpaceSerializer(spaceService, userManager, permissionManager);
-        final Optional<Space> space = serializer.deserialize(
-                ImmutableMap.<String, Object>of("space", ImmutableMap.of(
-                        "id", 10,
-                        "key", "mykey")),
-                "fred");
-
-        assertThat(space.isPresent(), is(false));
-        verify(userManager, times(1)).getUser("fred");
-    }
-
-    @Test
-    public void shouldReturnAbsentIfNoSpaceForKey() throws EntityException, ResourceNotFoundException, UnauthorisedException
-    {
-        when(userManager.getUser("fred")).thenReturn(user);
-        when(spaceService.getKeySpaceLocator("mykey")).thenReturn(new KeySpaceLocator(spaceManager, "mykey"));
-        when(spaceManager.getSpace("mykey")).thenReturn(null);
-
-        final ParameterDeserializer<Space> serializer = new SpaceSerializer(spaceService, userManager, permissionManager);
-        final Optional<Space> space = serializer.deserialize(
-                ImmutableMap.<String, Object>of("space", ImmutableMap.of("key", "mykey")), "fred");
-
-        assertThat(space.isPresent(), is(false));
-        verify(spaceService, times(1)).getKeySpaceLocator("mykey");
-    }
+    // Just sunny day here. Negative tests in PageSerializerTest
 
     @Test
     public void shouldReturnSpaceWhenTheStarsAlign() throws EntityException, ResourceNotFoundException, UnauthorisedException
@@ -109,6 +52,7 @@ public class SpaceSerializerTest
         when(userManager.getUser("fred")).thenReturn(user);
         when(spaceService.getKeySpaceLocator("mykey")).thenReturn(new KeySpaceLocator(spaceManager, "mykey"));
         when(spaceManager.getSpace("mykey")).thenReturn(space1);
+        when(permissionManager.hasPermission(user, VIEW, space1)).thenReturn(true);
 
         final ParameterDeserializer<Space> serializer = new SpaceSerializer(spaceService, userManager, permissionManager);
         final Optional<Space> space = serializer.deserialize(
