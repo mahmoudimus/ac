@@ -10,6 +10,7 @@ import com.atlassian.uri.UriBuilder;
 import com.atlassian.util.concurrent.Promise;
 import com.google.common.base.Supplier;
 import com.google.common.collect.Maps;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.util.ParameterParser;
 import org.slf4j.Logger;
@@ -19,6 +20,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Maps.transformValues;
 
 public abstract class DefaultRemotablePluginAccessorBase implements RemotablePluginAccessor
@@ -94,12 +96,9 @@ public abstract class DefaultRemotablePluginAccessorBase implements RemotablePlu
     // This is to protect against duplicate result values ("some_param=1&some_param=1"), contradictory values ("some_param=1&some_param=2") and not knowing which (if any) is correct.
     protected void assertThatTargetPathAndParamsDoNotDuplicateParams(URI targetPath, Map<String, String[]> params)
     {
-        if (null == targetPath)
-        {
-            throw new IllegalArgumentException("targetPath cannot be null");
-        }
+        checkNotNull(targetPath);
 
-        if (null != params && !params.isEmpty())
+        if (!MapUtils.isEmpty(params))
         {
             List queryParams = new ParameterParser().parse(targetPath.getQuery(), QUERY_PARAM_SEPARATOR);
 
