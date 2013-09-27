@@ -4,7 +4,7 @@ import com.atlassian.jira.security.PermissionManager;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.plugin.connect.plugin.module.context.AbstractContextMapParameterExtractor;
-import com.atlassian.plugin.connect.plugin.module.context.ParameterSerializer;
+import com.atlassian.plugin.connect.plugin.module.context.CombinedParameterSerializer;
 
 import static com.atlassian.jira.security.Permissions.USE;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -19,7 +19,7 @@ public abstract class AbstractJiraContextMapParameterExtractor<P> extends Abstra
     // TODO: This may be the wrong usermanager. Maybe the one in com.atlassian.sal.api.user is the right one
     private final UserManager userManager;
 
-    public AbstractJiraContextMapParameterExtractor(Class<P> resourceClass, ParameterSerializer<P> parameterSerializer,
+    public AbstractJiraContextMapParameterExtractor(Class<P> resourceClass, CombinedParameterSerializer<P> parameterSerializer,
                                                     String contextParameterKey, PermissionManager permissionManager,
                                                     UserManager userManager)
     {

@@ -15,17 +15,27 @@ public abstract class AbstractContextMapParameterExtractor<P> implements Context
 {
     private final Class<P> resourceClass;
     private final ParameterSerializer<P> parameterSerializer;
+    private final ParameterDeserializer<P> parameterDeserializer;
     private final String contextParameterKey;
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractContextMapParameterExtractor.class);
 
-    public AbstractContextMapParameterExtractor(Class<P> resourceClass, ParameterSerializer<P> parameterSerializer,
+    public AbstractContextMapParameterExtractor(Class<P> resourceClass,
+                                                ParameterSerializer<P> parameterSerializer,
+                                                ParameterDeserializer<P> parameterDeserializer,
                                                 String contextParameterKey)
     {
         this.resourceClass = resourceClass;
         this.parameterSerializer = parameterSerializer;
+        this.parameterDeserializer = parameterDeserializer;
         this.contextParameterKey = contextParameterKey;
     }
 
+    public AbstractContextMapParameterExtractor(Class<P> resourceClass,
+                                                CombinedParameterSerializer<P> combinedParameterSerializer,
+                                                String contextParameterKey)
+    {
+        this(resourceClass, combinedParameterSerializer, combinedParameterSerializer, contextParameterKey);
+    }
 
     @Override
     public Optional<P> extract(final Map<String, Object> context)
@@ -51,7 +61,6 @@ public abstract class AbstractContextMapParameterExtractor<P> implements Context
     @Override
     public ParameterDeserializer<P> deserializer()
     {
-        // TODO sort out whether to keep two separate interfaces or to fold the deserialize method into the serializer
-        return serializer();
+        return parameterDeserializer;
     }
 }

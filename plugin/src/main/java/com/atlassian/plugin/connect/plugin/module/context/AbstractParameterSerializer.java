@@ -15,7 +15,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  *           the actual resource or an error
  * @param <U> The user type
  */
-public abstract class AbstractParameterSerializer<R, W, U> implements ParameterSerializer<R>, ParameterDeserializer<R>
+public abstract class AbstractParameterSerializer<R, W, U> implements CombinedParameterSerializer<R>
 {
     /**
      * An interface for objects that look up the resource via a particular key (e.g. id, key, name etc)

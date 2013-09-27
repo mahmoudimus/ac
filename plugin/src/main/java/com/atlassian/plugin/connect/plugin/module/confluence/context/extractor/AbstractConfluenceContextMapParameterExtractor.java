@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin.module.confluence.context.extractor;
 import com.atlassian.confluence.plugin.descriptor.web.WebInterfaceContext;
 import com.atlassian.confluence.security.PermissionManager;
 import com.atlassian.plugin.connect.plugin.module.context.AbstractContextMapParameterExtractor;
+import com.atlassian.plugin.connect.plugin.module.context.CombinedParameterSerializer;
 import com.atlassian.plugin.connect.plugin.module.context.ParameterSerializer;
 import com.atlassian.user.EntityException;
 import com.atlassian.user.UserManager;
@@ -27,7 +28,7 @@ public abstract class AbstractConfluenceContextMapParameterExtractor<P> extends 
     private final UserManager userManager;
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractConfluenceContextMapParameterExtractor.class);
 
-    public AbstractConfluenceContextMapParameterExtractor(Class<P> resourceClass, ParameterSerializer<P> parameterSerializer,
+    public AbstractConfluenceContextMapParameterExtractor(Class<P> resourceClass, CombinedParameterSerializer<P> parameterSerializer,
                                                           String contextParameterKey, PermissionManager permissionManager,
                                                           UserManager userManager)
     {

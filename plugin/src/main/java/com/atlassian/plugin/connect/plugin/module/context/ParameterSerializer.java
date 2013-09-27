@@ -5,8 +5,7 @@ import java.util.Map;
 /**
  * Implementations of this interface are supposed to serialize parameters from P2 context to connect context.
  */
-// TODO: Temporarily extend ParameterDeserializer. Wanted to keep the two interfaces but this could lead to a painful refactor
-public interface ParameterSerializer<T> extends ParameterDeserializer<T>
+public interface ParameterSerializer<T>
 {
     /**
      * Serializes the whitelisted parameters from a context.
