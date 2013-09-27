@@ -29,6 +29,7 @@ public abstract class DefaultRemotablePluginAccessorBase implements RemotablePlu
     private final HttpContentRetriever httpContentRetriever;
 
     private static final Logger log = LoggerFactory.getLogger(DefaultRemotablePluginAccessorBase.class);
+    private static final char QUERY_PARAM_SEPARATOR = '&';
 
     protected DefaultRemotablePluginAccessorBase(String pluginKey, String pluginName, Supplier<URI> displayUrl, HttpContentRetriever httpContentRetriever)
     {
@@ -83,6 +84,8 @@ public abstract class DefaultRemotablePluginAccessorBase implements RemotablePlu
         return uriBuilder.toUri().toJavaUri();
     }
 
+    // Call this method to ensure that you don't have "some_param=<any value>" in targetPath and also "some_param" => [ <any values> ] in params.
+    // This is to protect against duplicate result values ("some_param=1&some_param=1"), contradictory values ("some_param=1&some_param=2") and not knowing which (if any) is correct.
     protected void assertThatTargetPathAndParamsDoNotDuplicateParams(URI targetPath, Map<String, String[]> params)
     {
         if (null == targetPath)
@@ -92,7 +95,7 @@ public abstract class DefaultRemotablePluginAccessorBase implements RemotablePlu
 
         if (null != params && !params.isEmpty())
         {
-            List queryParams = new ParameterParser().parse(targetPath.getQuery(), '&'); // TODO: reference constant for '&' char in URLs
+            List queryParams = new ParameterParser().parse(targetPath.getQuery(), QUERY_PARAM_SEPARATOR);
 
             for (Object queryParam : queryParams)
             {
