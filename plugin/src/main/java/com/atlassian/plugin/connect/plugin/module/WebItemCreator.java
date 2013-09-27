@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -62,6 +63,11 @@ public final class WebItemCreator
         private String preferredSectionKey;
         private boolean absolute;
 
+        public Builder()
+        {
+            this.contextParams = new HashMap<String, String>();
+        }
+        
         public WebItemModuleDescriptor build(Plugin plugin, String key, String webItemUrl, Element configurationElement)
         {
             notNull(condition);
