@@ -61,7 +61,7 @@ public class DefaultRemotablePluginAccessorFactoryTest
     private static final Map<String,String> GET_PARAMS = Collections.singletonMap("param", "param value");
     private static final URI GET_PATH = URI.create("/path");
     public static final String EXPECTED_GET_RESPONSE = "expected";
-    public static final String DISPLAY_URL = "http://server:1234/contextPath";
+    public static final String BASE_URL = "http://server:1234/contextPath";
 
     @Mock private ApplicationLinkAccessor applicationLinkAccessor;
     @Mock private PluginAccessor pluginAccessor;
@@ -179,9 +179,9 @@ public class DefaultRemotablePluginAccessorFactoryTest
     }
 
     @Test
-    public void createdRemotePluginAccessorHasCorrectDisplayUrl()
+    public void createdRemotePluginAccessorHasCorrectBaseUrl()
     {
-        assertThat(createRemotePluginAccessor().getDisplayUrl().toString(), is(DISPLAY_URL));
+        assertThat(createRemotePluginAccessor().getBaseUrl().toString(), is(BASE_URL));
     }
 
     @Test
@@ -367,7 +367,7 @@ public class DefaultRemotablePluginAccessorFactoryTest
             @Override
             public URI get()
             {
-                return URI.create(DISPLAY_URL);
+                return URI.create(BASE_URL);
             }
         });
     }

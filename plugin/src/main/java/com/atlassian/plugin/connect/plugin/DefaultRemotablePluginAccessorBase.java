@@ -25,17 +25,17 @@ public abstract class DefaultRemotablePluginAccessorBase implements RemotablePlu
 {
     private final String pluginKey;
     private final String pluginName;
-    private final Supplier<URI> displayUrl;
+    private final Supplier<URI> baseUrlSupplier;
     private final HttpContentRetriever httpContentRetriever;
 
     private static final Logger log = LoggerFactory.getLogger(DefaultRemotablePluginAccessorBase.class);
     private static final char QUERY_PARAM_SEPARATOR = '&';
 
-    protected DefaultRemotablePluginAccessorBase(String pluginKey, String pluginName, Supplier<URI> displayUrl, HttpContentRetriever httpContentRetriever)
+    protected DefaultRemotablePluginAccessorBase(String pluginKey, String pluginName, Supplier<URI> baseUrlSupplier, HttpContentRetriever httpContentRetriever)
     {
         this.pluginKey = pluginKey;
         this.pluginName = pluginName;
-        this.displayUrl = displayUrl;
+        this.baseUrlSupplier = baseUrlSupplier;
         this.httpContentRetriever = httpContentRetriever;
     }
 
@@ -74,13 +74,19 @@ public abstract class DefaultRemotablePluginAccessorBase implements RemotablePlu
     @Override
     public URI getDisplayUrl()
     {
-        return displayUrl.get();
+        return getBaseUrl();
+    }
+
+    @Override
+    public URI getBaseUrl()
+    {
+        return baseUrlSupplier.get();
     }
 
     protected URI getTargetUrl(URI targetPath)
     {
         UriBuilder uriBuilder = new UriBuilder(Uri.fromJavaUri(targetPath));
-        uriBuilder.setPath(getDisplayUrl().toString() + uriBuilder.getPath());
+        uriBuilder.setPath(getBaseUrl().toString() + uriBuilder.getPath());
         return uriBuilder.toUri().toJavaUri();
     }
 
