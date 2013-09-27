@@ -6,16 +6,16 @@ import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.plugin.connect.plugin.module.context.AbstractParameterSerializer;
 import com.atlassian.plugin.connect.plugin.module.jira.user.CommonUserLookupJiraImpl;
 
-public abstract class AbstractJiraParameterSerializer<T, C> extends AbstractParameterSerializer<T, C, User>
+public abstract class AbstractJiraParameterSerializer<R, W> extends AbstractParameterSerializer<R, W, User>
 {
     public AbstractJiraParameterSerializer(UserManager userManager, String containerFieldName,
-                                           ParameterUnwrapper<C, T> parameterUnwrapper,
-                                           ParameterLookup<C, ?, User>... parameterLookups)
+                                           ParameterUnwrapper<W, R> parameterUnwrapper,
+                                           ParameterLookup<W, ?, User>... parameterLookups)
     {
         super(new CommonUserLookupJiraImpl(userManager), containerFieldName, parameterUnwrapper, parameterLookups);
     }
 
-    public abstract static class AbstractJiraStringParameterLookup<C> extends AbstractStringParameterLookup<C, User>
+    public abstract static class AbstractJiraStringParameterLookup<W> extends AbstractStringParameterLookup<W, User>
     {
         public AbstractJiraStringParameterLookup(String paramName)
         {
@@ -23,7 +23,7 @@ public abstract class AbstractJiraParameterSerializer<T, C> extends AbstractPara
         }
     }
 
-    public abstract static class AbstractJiraKeyParameterLookup<C> extends AbstractJiraStringParameterLookup<C>
+    public abstract static class AbstractJiraKeyParameterLookup<W> extends AbstractJiraStringParameterLookup<W>
     {
         public AbstractJiraKeyParameterLookup()
         {
@@ -31,7 +31,7 @@ public abstract class AbstractJiraParameterSerializer<T, C> extends AbstractPara
         }
     }
 
-    public abstract static class AbstractJiraLongParameterLookup<C> extends AbstractLongParameterLookup<C, User>
+    public abstract static class AbstractJiraLongParameterLookup<W> extends AbstractLongParameterLookup<W, User>
     {
         public AbstractJiraLongParameterLookup(String paramName)
         {
@@ -39,7 +39,7 @@ public abstract class AbstractJiraParameterSerializer<T, C> extends AbstractPara
         }
     }
 
-    public abstract static class AbstractJiraIdParameterLookup<C> extends AbstractJiraLongParameterLookup<C>
+    public abstract static class AbstractJiraIdParameterLookup<W> extends AbstractJiraLongParameterLookup<W>
     {
         public AbstractJiraIdParameterLookup()
         {
@@ -48,7 +48,7 @@ public abstract class AbstractJiraParameterSerializer<T, C> extends AbstractPara
     }
 
     @Override
-    protected boolean isResultValid(C serviceResult)
+    protected boolean isResultValid(W serviceResult)
     {
         return !(serviceResult instanceof ServiceResult) || ((ServiceResult)serviceResult).isValid();
 

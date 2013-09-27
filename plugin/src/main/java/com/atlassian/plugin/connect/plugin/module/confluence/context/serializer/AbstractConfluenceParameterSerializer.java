@@ -10,14 +10,14 @@ import com.atlassian.user.UserManager;
 
 import static com.atlassian.confluence.security.Permission.VIEW;
 
-public abstract class AbstractConfluenceParameterSerializer<T, C> extends AbstractParameterSerializer<T, C, User>
+public abstract class AbstractConfluenceParameterSerializer<R, W> extends AbstractParameterSerializer<R, W, User>
 {
     private final PermissionManager permissionManager;
 
     public AbstractConfluenceParameterSerializer(UserManager userManager, PermissionManager permissionManager,
                                                  String containerFieldName,
-                                                 ParameterUnwrapper<C, T> parameterUnwrapper,
-                                                 ParameterLookup<C, ?, User>... parameterLookups)
+                                                 ParameterUnwrapper<W, R> parameterUnwrapper,
+                                                 ParameterLookup<W, ?, User>... parameterLookups)
     {
         super(new CommonUserLookupConfluenceImpl(userManager), containerFieldName, parameterUnwrapper, parameterLookups);
         this.permissionManager = permissionManager;
@@ -56,11 +56,11 @@ public abstract class AbstractConfluenceParameterSerializer<T, C> extends Abstra
     }
 
     @Override
-    protected void checkViewPermission(T resource, User user) throws UnauthorisedException, ResourceNotFoundException
+    protected void checkViewPermission(R resource, User user) throws UnauthorisedException, ResourceNotFoundException
     {
         if (!permissionManager.hasPermission(user, VIEW, resource))
         {
-            // TODO: Assuming confluence has same policy as Jira and return's 404's rather than 401's. Check
+            // this will result in a 404 which gives out less information to potential hackers
             throwResourceNotFoundException();
         }
     }
