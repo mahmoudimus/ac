@@ -7,7 +7,9 @@ import org.slf4j.LoggerFactory;
 import java.util.Map;
 
 /**
- * Extracts resource parameters that can be included in webpanel's iframe url.
+ * Base class for ContextMapParameterExtractors
+ *
+ * @param P the parameter (resource) type
  */
 public abstract class AbstractContextMapParameterExtractor<P> implements ContextMapParameterExtractor<P>
 {
@@ -49,7 +51,7 @@ public abstract class AbstractContextMapParameterExtractor<P> implements Context
     @Override
     public ParameterDeserializer<P> deserializer()
     {
-        // TODO sort out whether to keep two separate interfaces or to fold the deserilize method into the serializer
+        // TODO sort out whether to keep two separate interfaces or to fold the deserialize method into the serializer
         return serializer();
     }
 }

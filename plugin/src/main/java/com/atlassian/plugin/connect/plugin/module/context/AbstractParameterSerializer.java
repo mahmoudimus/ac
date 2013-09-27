@@ -8,8 +8,54 @@ import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+/**
+ * Base class for parameter serializers / deserializers
+ * @param <T> the type of the parameter (resource)
+ * @param <C> the wrapped type for parameter lookups. Note Jira and Concluence tend to return result objects that contain
+ *           the actual resource or an error
+ * @param <U> The user type
+ */
 public abstract class AbstractParameterSerializer<T, C, U> implements ParameterSerializer<T>, ParameterDeserializer<T>
 {
+    /**
+     * An interface for objects that look up the resource (wrapper) via a particular parameter (e.g. id, key, name etc)
+     * TODO: Parameter name is likely confusing here. Maybe key? field? property?
+     * @param <C> The (possibly) wrapped resource
+     * @param <P> The type of the parameter that is being used as the key (e.g. String, Long etc)
+     * @param <U> The type of the user
+     */
+    public static interface ParameterLookup<C, P, U>
+    {
+        /**
+         * The name of the key to look up by
+         */
+        String getParamName();
+
+        /**
+         * The type of the lookup key
+=        */
+        Class<P> getType();
+
+        /**
+         * Looks up the resource by user and key value
+         * @param user the user
+         * @param value the value of the key
+         * @return
+         */
+        C lookup(U user, P value);
+    }
+
+    /**
+     * Interface for objects that unwrap a wrapped resource
+     * @param <C> The type of the wrapper
+     * @param <T> The type of the resource
+     */
+    public static interface ParameterUnwrapper<C, T>
+    {
+        T unwrap(C wrapped);
+    }
+
+
     public static final String ID_FIELD_NAME = "id";
     public static final String KEY_FIELD_NAME = "key";
     private final CommonUserLookup<U> userManager;
@@ -17,6 +63,14 @@ public abstract class AbstractParameterSerializer<T, C, U> implements ParameterS
     private final ParameterLookup<C, ?, U>[] parameterLookups;
     private final ParameterUnwrapper<C, T> parameterUnwrapper;
 
+    /**
+     * Creates an AbstractParameterSerializer with the userManager to lookup users, the field name for the top level map entry,
+     * an object to unwrap looked up resources, and one or more objects to look up resources via different keys
+     * @param userManager
+     * @param containerFieldName
+     * @param parameterUnwrapper
+     * @param parameterLookups
+     */
     public AbstractParameterSerializer(CommonUserLookup<U> userManager, String containerFieldName,
                                        ParameterUnwrapper<C, T> parameterUnwrapper,
                                        ParameterLookup<C, ?, U>... parameterLookups)
@@ -37,7 +91,7 @@ public abstract class AbstractParameterSerializer<T, C, U> implements ParameterS
             return Optional.absent();
         }
 
-        final Optional<LookupProxy> lookup = createLookup(containerMap);
+        final Optional<EncapsulatedLookupProxy> lookup = createLookup(containerMap);
         if (!lookup.isPresent())
         {
             throw new MalformedRequestException("No identifiers in request for " + containerFieldName);
@@ -79,20 +133,6 @@ public abstract class AbstractParameterSerializer<T, C, U> implements ParameterS
         return userManager.lookupByUsername(username);
     }
 
-    public static interface ParameterLookup<C, P, U>
-    {
-        String getParamName();
-
-        Class<P> getType();
-
-        C lookup(U user, P value);
-    }
-
-    public static interface ParameterUnwrapper<C, T>
-    {
-        T unwrap(C wrapped);
-    }
-
     protected static <T> ParameterUnwrapper<T, T> createNoopUnwrapper(Class<T> projectComponentClass)
     {
         return new ParameterUnwrapper<T, T>()
@@ -106,7 +146,7 @@ public abstract class AbstractParameterSerializer<T, C, U> implements ParameterS
 
     }
 
-    public abstract static class AbstractParameterLookup<C, P, U> implements ParameterLookup<C, P, U>
+    protected abstract static class AbstractParameterLookup<C, P, U> implements ParameterLookup<C, P, U>
     {
         private final String paramName;
         private final Class<P> type;
@@ -130,7 +170,7 @@ public abstract class AbstractParameterSerializer<T, C, U> implements ParameterS
         }
     }
 
-    public abstract static class AbstractStringParameterLookup<C, U> extends AbstractParameterLookup<C, String, U>
+    protected abstract static class AbstractStringParameterLookup<C, U> extends AbstractParameterLookup<C, String, U>
     {
         public AbstractStringParameterLookup(String paramName)
         {
@@ -138,7 +178,7 @@ public abstract class AbstractParameterSerializer<T, C, U> implements ParameterS
         }
     }
 
-    public abstract static class AbstractKeyParameterLookup<C, U> extends AbstractStringParameterLookup<C, U>
+    protected abstract static class AbstractKeyParameterLookup<C, U> extends AbstractStringParameterLookup<C, U>
     {
         public AbstractKeyParameterLookup()
         {
@@ -146,7 +186,7 @@ public abstract class AbstractParameterSerializer<T, C, U> implements ParameterS
         }
     }
 
-    public abstract static class AbstractLongParameterLookup<C, U> extends AbstractParameterLookup<C, Long, U>
+    protected abstract static class AbstractLongParameterLookup<C, U> extends AbstractParameterLookup<C, Long, U>
     {
         public AbstractLongParameterLookup(String paramName)
         {
@@ -154,7 +194,7 @@ public abstract class AbstractParameterSerializer<T, C, U> implements ParameterS
         }
     }
 
-    public abstract static class AbstractIdParameterLookup<C, U> extends AbstractLongParameterLookup<C, U>
+    protected abstract static class AbstractIdParameterLookup<C, U> extends AbstractLongParameterLookup<C, U>
     {
         public AbstractIdParameterLookup()
         {
@@ -179,9 +219,23 @@ public abstract class AbstractParameterSerializer<T, C, U> implements ParameterS
         }
     }
 
-    private Optional<LookupProxy> createLookup(Optional<Map> containerMap) throws MalformedRequestException
+    /**
+     * Wraps a ParameterLookup such that it encapsulates the retrieval of the look up of the key value in the container map
+     */
+    private static interface EncapsulatedLookup<C, U>
     {
-        Optional<LookupProxy> result = Optional.absent();
+        C lookup(U user);
+    }
+
+
+    /*
+     * Creates a EncapsulatedLookup by going through each of the provided ParameterLookups and checking for the presence of the
+     * associated lookup key in the container map. The first ParameterLookup with a key present will be used to do
+     * the actual lookup
+     */
+    private Optional<EncapsulatedLookupProxy> createLookup(Optional<Map> containerMap) throws MalformedRequestException
+    {
+        Optional<EncapsulatedLookupProxy> result = Optional.absent();
         if (containerMap.isPresent())
         {
             for (ParameterLookup<C, ?, U> parameterLookup : parameterLookups)
@@ -192,7 +246,7 @@ public abstract class AbstractParameterSerializer<T, C, U> implements ParameterS
         return result;
     }
 
-    private <P> Optional<? extends Lookup> createLookupFor(Map<?, ?> params, final ParameterLookup<C, P, U> parameterLookup) throws MalformedRequestException
+    private <P> Optional<? extends EncapsulatedLookup> createLookupFor(Map<?, ?> params, final ParameterLookup<C, P, U> parameterLookup) throws MalformedRequestException
     {
         final String paramName = parameterLookup.getParamName();
         final Class<P> type = parameterLookup.getType();
@@ -201,22 +255,23 @@ public abstract class AbstractParameterSerializer<T, C, U> implements ParameterS
                 : createLookupForNonLong(params, paramName, parameterLookup, type);
     }
 
-    private <P> Optional<? extends Lookup> createLookupForNonLong(Map<?, ?> params, String paramName,
+    private <P> Optional<? extends EncapsulatedLookup> createLookupForNonLong(Map<?, ?> params, String paramName,
                                                                   final ParameterLookup<C, P, U> parameterLookup, final Class<P> cls) throws MalformedRequestException
     {
         final Optional<P> value = getParam(params, paramName, cls);
-        return value.isPresent() ? Optional.of(new Lookup<C, U>()
+        return value.isPresent() ? Optional.of(new EncapsulatedLookup<C, U>()
         {
             @Override
             public C lookup(U user)
             {
                 return parameterLookup.lookup(user, value.get());
             }
-        }) : Optional.<Lookup>absent();
+        }) : Optional.<EncapsulatedLookup>absent();
     }
 
-    // TODO: Can we avoid the code dupe here?
-    private Optional<? extends Lookup> createLookupForLong(Map<?, ?> params, String paramName,
+    // TODO: Can we avoid the code dupe here? The difference is the need to type convert into Long. Could build type
+    // optional conversion into the main lookup
+    private Optional<? extends EncapsulatedLookup> createLookupForLong(Map<?, ?> params, String paramName,
                                                            final ParameterLookup<C, Long, U> parameterLookup) throws MalformedRequestException
     {
         final Optional<Object> optValue = getParam(params, paramName, Object.class);
@@ -244,29 +299,24 @@ public abstract class AbstractParameterSerializer<T, C, U> implements ParameterS
         }
         final Long finalLong = longValue;
 
-        return optValue.isPresent() ? Optional.of(new Lookup<C, U>()
+        return optValue.isPresent() ? Optional.of(new EncapsulatedLookup<C, U>()
         {
             @Override
             public C lookup(U user)
             {
                 return parameterLookup.lookup(user, finalLong);
             }
-        }) : Optional.<Lookup>absent();
+        }) : Optional.<EncapsulatedLookup>absent();
     }
 
-
-    private static interface Lookup<C, U>
-    {
-        C lookup(U user);
-    }
 
     // This wrapper class unfortunately needed to get around generics issue. At least I can't get it to work otherwise
-    // Otherwise you end up with Optional<? extends Lookup> and calling or on that won't compile
-    private class LookupProxy implements Lookup<C, U>
+    // Otherwise you end up with Optional<? extends EncapsulatedLookup> and calling or on that won't compile
+    private class EncapsulatedLookupProxy implements EncapsulatedLookup<C, U>
     {
-        private final Lookup<C, U> target;
+        private final EncapsulatedLookup<C, U> target;
 
-        LookupProxy(Lookup<C, U> target)
+        EncapsulatedLookupProxy(EncapsulatedLookup<C, U> target)
         {
             this.target = target;
         }
@@ -277,16 +327,16 @@ public abstract class AbstractParameterSerializer<T, C, U> implements ParameterS
             return target.lookup(user);
         }
 
-        public Optional<LookupProxy> option()
+        public Optional<EncapsulatedLookupProxy> option()
         {
             return Optional.of(this);
         }
 
     }
 
-    private Optional<LookupProxy> optionalLookup(Optional<? extends Lookup> target)
+    private Optional<EncapsulatedLookupProxy> optionalLookup(Optional<? extends EncapsulatedLookup> target)
     {
-        return target.isPresent() ? new LookupProxy(target.get()).option() : Optional.<LookupProxy>absent();
+        return target.isPresent() ? new EncapsulatedLookupProxy(target.get()).option() : Optional.<EncapsulatedLookupProxy>absent();
     }
 
 }

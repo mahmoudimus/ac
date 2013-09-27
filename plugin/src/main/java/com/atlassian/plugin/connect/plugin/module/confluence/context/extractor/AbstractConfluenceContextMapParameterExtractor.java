@@ -16,7 +16,9 @@ import static com.atlassian.confluence.security.Permission.VIEW;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Extracts resource parameters that can be included in webpanel's iframe url.
+ * Base class for Confluence related ContextMapParameterExtractors
+ *
+ * @param P the parameter (resource) type
  */
 public abstract class AbstractConfluenceContextMapParameterExtractor<P> extends AbstractContextMapParameterExtractor<P>
 {
