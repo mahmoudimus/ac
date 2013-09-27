@@ -96,7 +96,7 @@ public abstract class AbstractParameterSerializer<R, W, U> implements CombinedPa
             throw new MalformedRequestException("No identifiers in request for " + containerFieldName);
         }
 
-        final U user = userManager.lookupByUsername(username);
+        final U user = getUser(username);
         // leave it to the applications to deal with a potentially null user as it likely represents "Guest"
 
         final W serviceResult = lookup.get().lookup(user);
