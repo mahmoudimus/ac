@@ -34,6 +34,7 @@ import com.atlassian.util.concurrent.Promise;
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.collect.Maps;
+import net.oauth.OAuth;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -107,25 +108,25 @@ public class DefaultRemotablePluginAccessorFactoryTest
                                                                 URI url,
                                                                 Map<String, List<String>> originalParams)
         {
-            Map<String, List<String>> paramsWithoutUnpredicatableOAuthValues = new HashMap<String, List<String>>(originalParams.size());
+            Map<String, List<String>> paramsWithPredicatableOAuthValues = new HashMap<String, List<String>>(originalParams.size());
 
             for (Map.Entry<String, List<String>> param : originalParams.entrySet())
             {
-                if ("oauth_nonce".equals(param.getKey()))
+                if (OAuth.OAUTH_NONCE.equals(param.getKey()))
                 {
-                    paramsWithoutUnpredicatableOAuthValues.put(param.getKey(), Arrays.asList("fake_nonce"));
+                    paramsWithPredicatableOAuthValues.put(param.getKey(), Arrays.asList("fake_nonce"));
                 }
-                else if ("oauth_timestamp".equals(param.getKey()))
+                else if (OAuth.OAUTH_TIMESTAMP.equals(param.getKey()))
                 {
-                    paramsWithoutUnpredicatableOAuthValues.put(param.getKey(), Arrays.asList("fake_timestamp"));
+                    paramsWithPredicatableOAuthValues.put(param.getKey(), Arrays.asList("fake_timestamp"));
                 }
                 else
                 {
-                    paramsWithoutUnpredicatableOAuthValues.put(param.getKey(), param.getValue());
+                    paramsWithPredicatableOAuthValues.put(param.getKey(), param.getValue());
                 }
             }
 
-            return newArrayList(Maps.transformValues(paramsWithoutUnpredicatableOAuthValues, new Function<List<String>, String>()
+            return newArrayList(Maps.transformValues(paramsWithPredicatableOAuthValues, new Function<List<String>, String>()
             {
                 @Override
                 public String apply(List<String> strings)
