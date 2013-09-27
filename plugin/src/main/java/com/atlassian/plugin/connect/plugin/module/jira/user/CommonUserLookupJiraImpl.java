@@ -4,7 +4,6 @@ import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.plugin.connect.plugin.module.common.user.CommonUserLookup;
-import com.atlassian.plugin.connect.plugin.module.common.user.UserLookupException;
 
 public class CommonUserLookupJiraImpl implements CommonUserLookup<User>
 {
@@ -16,7 +15,7 @@ public class CommonUserLookupJiraImpl implements CommonUserLookup<User>
     }
 
     @Override
-    public User lookupByUsername(String username) throws UserLookupException
+    public User lookupByUsername(String username)
     {
         final ApplicationUser appUser = userManager.getUserByName(username);
 

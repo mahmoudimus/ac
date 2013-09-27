@@ -7,5 +7,5 @@ package com.atlassian.plugin.connect.plugin.module.common.user;
  */
 public interface CommonUserLookup<U>
 {
-    U lookupByUsername(String username) throws UserLookupException;
+    U lookupByUsername(String username);
 }

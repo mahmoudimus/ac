@@ -1,14 +1,16 @@
 package com.atlassian.plugin.connect.plugin.module.confluence.user;
 
 import com.atlassian.plugin.connect.plugin.module.common.user.CommonUserLookup;
-import com.atlassian.plugin.connect.plugin.module.common.user.UserLookupException;
 import com.atlassian.user.EntityException;
 import com.atlassian.user.User;
 import com.atlassian.user.UserManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CommonUserLookupConfluenceImpl implements CommonUserLookup<User>
 {
     private final UserManager userManager;
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
     public CommonUserLookupConfluenceImpl(UserManager userManager)
     {
@@ -16,7 +18,7 @@ public class CommonUserLookupConfluenceImpl implements CommonUserLookup<User>
     }
 
     @Override
-    public User lookupByUsername(String username) throws UserLookupException
+    public User lookupByUsername(String username)
     {
         try
         {
@@ -24,7 +26,8 @@ public class CommonUserLookupConfluenceImpl implements CommonUserLookup<User>
         }
         catch (EntityException e)
         {
-            throw new UserLookupException(e);
+            logger.warn("Unexpected exception when looking up a Confluence user. Continuing as anonymous");
+            return null;
         }
     }
 }
