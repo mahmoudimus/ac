@@ -65,7 +65,6 @@ public class IFramePageServlet extends HttpServlet
                     /* ImmutableMap.<String, String[]>of()*/ urlTemplateInstance.getNonTemplateContextParameters(),
                     remoteUsername, out);
         }
-        // TODO: Should be a subtype of MalformedRequestException
         catch (MalformedRequestException e)
         {
             resp.sendError(SC_BAD_REQUEST, e.getMessage());

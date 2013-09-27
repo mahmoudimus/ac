@@ -33,7 +33,7 @@ public class RequestParameterHelper
 
     public RequestParameterHelper(Map<String, Object> requestParams)
     {
-        this.requestParams = requestParams;
+        this.requestParams = ImmutableMap.copyOf(requestParams);
     }
 
     /**

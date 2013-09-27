@@ -75,19 +75,6 @@ public class IFrameRemoteWebPanel implements WebPanel
             final Map<String, Object> whiteListedContext = contextMapURLSerializer.getExtractedWebPanelParameters(context, remoteUser);
 
             writer.write(iFrameRenderer.render(substituteContext(whiteListedContext), "", Collections.EMPTY_MAP, remoteUser));
-
-            // create a json context like below and sign it
-//            ctx: {
-//                issue:
-//                {
-//                    id: 1234
-//                }
-//            }
-
-
-            // requests to IFramePageServlet then need to look like
-//            /my-url?issueId=${issue.id} --> /my-url?issueId=1234&signedcontext="jwt with ctx and signature"
-            // IFramePageServlet then needs to check the signature and then check the url params against the passed ctx
         }
         else
         {
