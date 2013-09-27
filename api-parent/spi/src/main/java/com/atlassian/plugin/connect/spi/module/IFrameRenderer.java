@@ -10,7 +10,7 @@ public interface IFrameRenderer
 {
     /**
      * Renders the block container for an iFrame into the containing page
-     * @param iframeContext
+     * @param iframeContext configuration for a plugins iframe
      * @param remoteUser
      * @return
      * @throws IOException
@@ -40,9 +40,9 @@ public interface IFrameRenderer
     String renderInline(IFrameContext iframeContext, String extraPath, Map<String,  String[]> queryParams, String remoteUser) throws IOException;
 
     /**
-     * Renders the content of an iFrame (i.e. what goes inside the iframe)
-     * @param iframeContext
-     * @param pageInfo
+     * Renders the a full iFrame (i.e. container and body)
+     * @param iframeContext configuration for the plugins iframe
+     * @param pageInfo information about the page
      * @param extraPath
      * @param queryParams
      * @param remoteUser
