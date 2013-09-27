@@ -55,6 +55,9 @@ public abstract class AbstractConfluenceParameterSerializer<R, W> extends Abstra
         }
     }
 
+    /*
+     * Confluence does not have a service layer that provides authenticated lookup of resources. We do the authentication here
+     */
     @Override
     protected void checkViewPermission(R resource, User user) throws UnauthorisedException, ResourceNotFoundException
     {

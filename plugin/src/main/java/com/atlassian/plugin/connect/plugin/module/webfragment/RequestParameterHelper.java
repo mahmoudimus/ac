@@ -14,10 +14,9 @@ import static org.apache.commons.lang3.ArrayUtils.isEmpty;
 
 /**
  * Helper to create the various forms we need the parameters in. It's functions are:
- * Converts between
- * a map of individual params in path expression form
+ * Converts between a map of individual params in path expression form like
  * [project.id -> 10; project.key -> "foo"]
- * and a nested map of params in json style form
+ * and a nested map of params in json style form like
  * [project -> [id -> 10; key -> "foo"]]
  */
 public class RequestParameterHelper
@@ -37,12 +36,16 @@ public class RequestParameterHelper
         this.requestParams = requestParams;
     }
 
+    /**
+     * The request parameters in the form of nested maps
+     * @return
+     */
     public Map<String, Object> getParamsInNestedForm()
     {
         /*
           We process by splitting params like foo.bar.id = 10 & foo.blah = 6
           into a list of pairs like ([foo, bar, id], 10) & ([foo, blah], 6)
-          then us a multimap like foo -> {([bar, id], 10) & ([blah], 6)}
+          then convert into a multimap like foo -> {([bar, id], 10) & ([blah], 6)}
           and then recurse
          */
         final ImmutableList.Builder<Pair<List<String>, String[]>> builder = ImmutableList.builder();
@@ -52,6 +55,31 @@ public class RequestParameterHelper
         }
 
         return transformToNestedMap(builder.build());
+    }
+
+    /**
+     * The request parameters in the form of individual path variables
+     * @return
+     */
+    public Map<String, String[]> getParamsInPathForm()
+    {
+        return Maps.transformValues(requestParams, new Function<Object, String[]>()
+        {
+            @Override
+            public String[] apply(@Nullable Object input)
+            {
+                return (String[]) input;
+            }
+        });
+    }
+
+    /**
+     * Same as #getParamsInPathForm but the Map is type with Object as it's values
+     * @return
+     */
+    public Map<String, Object> getParamsInPathFormAsObjectValues()
+    {
+        return requestParams;
     }
 
     private Map<String, Object> transformToNestedMap(Iterable<Pair<List<String>, String[]>> pairs)
@@ -100,22 +128,6 @@ public class RequestParameterHelper
         return transformToNestedMap(pairs);
     }
 
-    public Map<String, String[]> getParamsInPathForm()
-    {
-        return Maps.transformValues(requestParams, new Function<Object, String[]>()
-        {
-            @Override
-            public String[] apply(@Nullable Object input)
-            {
-                return (String[]) input;
-            }
-        });
-    }
-
-    public Map<String, Object> getParamsInPathFormAsObjectValues()
-    {
-        return requestParams;
-    }
 
     // TODO: Looks like we have moved away from the json form again. Remove??
     private Map<String, Object> extractContext(Map<String, Object> requestParams) throws InvalidContextParameterException

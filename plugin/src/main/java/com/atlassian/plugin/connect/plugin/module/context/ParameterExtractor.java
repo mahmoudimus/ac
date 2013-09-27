@@ -20,5 +20,6 @@ public interface ParameterExtractor<C, P>
 
     ParameterDeserializer<P> deserializer();
 
+    // TODO: This is not used any more. Remove
     boolean hasViewPermission(String username, P resource);
 }

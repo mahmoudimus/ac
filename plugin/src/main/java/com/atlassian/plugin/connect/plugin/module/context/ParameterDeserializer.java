@@ -6,17 +6,17 @@ import com.google.common.base.Optional;
 import java.util.Map;
 
 /**
- * Implementations of this interface are supposed to deserialize parameters a request into a product resource that the
- * user has permission to view.
+ * An interface for objects that deserialise request parameters into some application resource. The user must have
+ * permission to view the resource.
  *
- * TODO: Its not ideal to mix the concerns of deserialising and permission checking. Its the simplest and most practical
- * in this case but will limit reusability.
  */
 public interface ParameterDeserializer<T>
 {
     /**
      * De-serializes the given parameters into a resource that the user has access to. If the parameters don't contain
      * keys matching a resource or if the user has no view permission on that resource then the result is empty
+     *
+     * TODO: Would it be cleaner for implementations to only be passed the params that pertain to them rather than all the params?
      *
      * @param params the form params to check.
      * @return Optionally a deserialised resource.
