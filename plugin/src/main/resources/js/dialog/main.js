@@ -21,13 +21,14 @@ _AP.define("dialog", ["_dollar"], function($) {
     });
   }
 
-  function getIframeHtmlForKey(pluginKey, options) {
+  function getIframeHtmlForKey(pluginKey, productContextJson, options) {
     var contentUrl = AJS.contextPath() + "/plugins/servlet/atlassian-connect/" + pluginKey + "/" + options.key;
     return $.ajax(contentUrl, {
       dataType: "html",
       data: {
         "dialog": true,
         "plugin-key": pluginKey,
+        "product-context": productContextJson,
         "key": options.key,
         "width": "100%",
         "height": "100%"
@@ -35,11 +36,11 @@ _AP.define("dialog", ["_dollar"], function($) {
     });
   }
 
-  function createDialog(pluginKey, options) {
+  function createDialog(pluginKey, productContextJson, options) {
 
     if ($nexus) throw new Error("Only one dialog can be open at once");
 
-    var promise = options.url ? getIframeHtmlForUrl(pluginKey, options) : getIframeHtmlForKey(pluginKey, options);
+    var promise = options.url ? getIframeHtmlForUrl(pluginKey, options) : getIframeHtmlForKey(pluginKey, productContextJson, options);
 
     promise
       .done(function(data) {

@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.module.jira.projectconfig;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Collections;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -52,7 +53,7 @@ public class IFrameProjectConfigTabServlet extends HttpServlet
 		((IsProjectAdminCondition)pageInfo.getCondition()).setProject(project);
 
 		iFrameRenderer.renderPage(iframeContext, pageInfo, req.getPathInfo(), req.getParameterMap(),
-				userManager.getRemoteUsername(req), out);
+				userManager.getRemoteUsername(req), Collections.<String, Object>emptyMap(), out);
 	}
 
 	private Project getProject(final HttpServletRequest request)

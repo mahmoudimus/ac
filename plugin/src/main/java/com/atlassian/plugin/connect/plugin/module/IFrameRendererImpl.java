@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.module;
 
+import com.atlassian.html.encode.JavascriptEncoder;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.DefaultRemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.plugin.UserPreferencesRetriever;
@@ -21,6 +22,7 @@ import com.atlassian.uri.UriBuilder;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import org.apache.commons.lang.ObjectUtils;
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -79,7 +81,7 @@ public final class IFrameRendererImpl implements IFrameRenderer
         return render(iframeContext, "", Collections.<String, String[]>emptyMap(), remoteUser);
     }
 
-    public void renderPage(IFrameContext iframeContext, PageInfo pageInfo, String extraPath, Map<String, String[]> queryParams, String remoteUser, Writer writer) throws IOException
+    public void renderPage(IFrameContext iframeContext, PageInfo pageInfo, String extraPath, Map<String, String[]> queryParams, String remoteUser, Map<String, Object> productContext, Writer writer) throws IOException
     {
         try
         {
@@ -101,7 +103,7 @@ public final class IFrameRendererImpl implements IFrameRenderer
 			ctx.put("queryParams", contextQueryParameters(queryParams));
             ctx.put("title", pageInfo.getTitle());
             ctx.put("contextPath", iframeHost.getContextPath());
-            ctx.put("iframeHtml", render(iframeContext, extraPath, queryParams, remoteUser));
+            ctx.put("iframeHtml", render(iframeContext, extraPath, queryParams, remoteUser, productContext));
             ctx.put("decorator", pageInfo.getDecorator());
 
 			for (Map.Entry<String, String> metaTag : pageInfo.getMetaTagsContent().entrySet())
@@ -121,16 +123,28 @@ public final class IFrameRendererImpl implements IFrameRenderer
         }
     }
 
-	@Override
+    @Override
     public String render(IFrameContext iframeContext, String extraPath, Map<String, String[]> queryParams, String remoteUser) throws IOException
     {
-        return renderWithTemplate(prepareContext(iframeContext, extraPath, queryParams, remoteUser), "velocity/iframe-body.vm");
+        return render(iframeContext, extraPath, queryParams, remoteUser, Collections.<String, Object>emptyMap());
+    }
+
+    @Override
+    public String render(IFrameContext iframeContext, String extraPath, Map<String, String[]> queryParams, String remoteUser, Map<String, Object> productContext) throws IOException
+    {
+        return renderWithTemplate(prepareContext(iframeContext, extraPath, queryParams, remoteUser, productContext), "velocity/iframe-body.vm");
     }
 
     @Override
     public String renderInline(IFrameContext iframeContext, String extraPath, Map<String, String[]> queryParams, String remoteUser) throws IOException
     {
-        return renderWithTemplate(prepareContext(iframeContext, extraPath, queryParams, remoteUser), "velocity/iframe-body-inline.vm");
+        return renderInline(iframeContext, extraPath, queryParams, remoteUser, Collections.<String, Object>emptyMap());
+    }
+
+    @Override
+    public String renderInline(IFrameContext iframeContext, String extraPath, Map<String, String[]> queryParams, String remoteUser, Map<String, Object> productContext) throws IOException
+    {
+        return renderWithTemplate(prepareContext(iframeContext, extraPath, queryParams, remoteUser, productContext), "velocity/iframe-body-inline.vm");
     }
 
     private String renderWithTemplate(Map<String, Object> ctx, String templatePath) throws IOException {
@@ -139,7 +153,7 @@ public final class IFrameRendererImpl implements IFrameRenderer
         return output.toString();
     }
 
-    private Map<String, Object> prepareContext(IFrameContext iframeContext, String extraPath, Map<String, String[]> queryParams, String remoteUser) {
+    private Map<String, Object> prepareContext(IFrameContext iframeContext, String extraPath, Map<String, String[]> queryParams, String remoteUser, Map<String, Object> productContext) {
         RemotablePluginAccessor remotablePluginAccessor = remotablePluginAccessorFactory.get(iframeContext.getPluginKey());
 
         final URI hostUrl = iframeHost.getUrl();
@@ -187,7 +201,24 @@ public final class IFrameRendererImpl implements IFrameRenderer
 
         String[] simpleDialog = queryParams.get("simpleDialog");
         if (simpleDialog != null && simpleDialog.length == 1) ctx.put("simpleDialog", simpleDialog[0]);
+
+        ctx.put("productContextHtml", encodeProductContext(productContext));
         return ctx;
+    }
+
+    private String encodeProductContext(Map<String, Object> productContext)
+    {
+        try
+        {
+            String json = new JSONObject(productContext).toString();
+            StringWriter writer = new StringWriter();
+            JavascriptEncoder.escape(writer, json);
+            return writer.toString();
+        }
+        catch (IOException ex)
+        {
+            throw new RuntimeException("Error encoding JSON string", ex);
+        }
     }
 
     private Map<String, List<String>> contextQueryParameters(final Map<String, String[]> queryParams)

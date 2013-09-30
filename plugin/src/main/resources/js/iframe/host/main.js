@@ -26,6 +26,8 @@ _AP.define("host/main", ["_xdm", "host/_addons"], function (XdmRpc, addons) {
         start = new Date().getTime(),
         isDialog = !!options.dlg,
         isSimpleDialog = !!options.simpleDlg,
+        // json string representing product context
+        productContextJson = options.productCtx,
         isInited;
 
     function publish(name, props) {
@@ -143,7 +145,7 @@ _AP.define("host/main", ["_xdm", "host/_addons"], function (XdmRpc, addons) {
         },
         createDialog: function(dialogOptions) {
           _AP.require("dialog", function(dialog) {
-            dialog.create(options.key, dialogOptions);
+            dialog.create(options.key, productContextJson, dialogOptions);
           });
         },
         closeDialog: function() {

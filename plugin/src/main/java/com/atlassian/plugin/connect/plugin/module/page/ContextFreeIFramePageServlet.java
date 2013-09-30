@@ -58,7 +58,7 @@ public class ContextFreeIFramePageServlet extends HttpServlet
         }
 
         iFrameRenderer.renderPage(iframeContext, pageInfo, req.getPathInfo(), req.getParameterMap(),
-                userManager.getRemoteUsername(req), out);
+                userManager.getRemoteUsername(req), Collections.<String, Object>emptyMap(), out);
 
     }
 

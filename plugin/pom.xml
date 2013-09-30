@@ -204,6 +204,11 @@
             <version>${atlassian.templaterenderer.version}</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.atlassian.html</groupId>
+            <artifactId>atlassian-html-encoder</artifactId>
+            <version>${atlassian.html.encoder.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>org.mockito</groupId>
