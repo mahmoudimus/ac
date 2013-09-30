@@ -27,11 +27,11 @@ public class TestDialogWithContext extends JiraWebDriverTestBase
                 .add(RemoteWebPanelModule.key("my-issue-panel")
                         .name("Issue WebPanel")
                         .location("atl.jira.view.issue.left.context")
-                        .path("/ilwp?my-issue-id=${issue.id}&my-project-id=${project.id}")
+                        .path("/ilwp")
                         .resource(newMustacheServlet("iframe-open-dialog.mu")))
                 .add(DialogPageModule.key("my-dialog")
                         .name("Remote dialog")
-                        .path("/my-dialog")
+                        .path("/my-dialog?my-issue-id=${issue.id}")
                         .section("")
                         .resource(newMustacheServlet("iframe-close-dialog.mu")))
                 .start();
@@ -46,8 +46,6 @@ public class TestDialogWithContext extends JiraWebDriverTestBase
         }
     }
 
-    // TODO: fix this; web-panel contents are never displayed
-    @Ignore
     @Test
     public void testOpenCloseDialogUrl() throws Exception
     {
@@ -60,9 +58,6 @@ public class TestDialogWithContext extends JiraWebDriverTestBase
         RemoteDialogOpeningPage dialogOpeningPage = product.getPageBinder().bind(RemoteDialogOpeningPage.class, "remote-web-panel", "my-issue-panel", remotePlugin.getPluginKey());
         RemoteCloseDialogPage closeDialogPage = dialogOpeningPage.openKey("servlet-my-dialog");
 
-        closeDialogPage.close();
-        closeDialogPage.waitUntilClosed();
-        String response = dialogOpeningPage.waitForValue("dialog-close-data");
-        assertEquals("test dialog close data", response);
+        assertEquals("test dialog close url", issue.getId(), closeDialogPage.getFromQueryString("my-issue-id"));
     }
 }
