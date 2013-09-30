@@ -20,7 +20,9 @@ import com.google.common.collect.Maps;
 
 /**
  * A servlet that loads its content from a remote plugin's iframe.
+ * @deprecated this is insecure. will be deleted in an upcoming release.
  */
+@Deprecated
 public class ContextFreeIFramePageServlet extends HttpServlet
 {
     private final UserManager userManager;
