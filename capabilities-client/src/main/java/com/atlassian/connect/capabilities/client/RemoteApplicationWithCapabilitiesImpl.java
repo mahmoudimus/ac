@@ -8,25 +8,28 @@ import javax.annotation.Nullable;
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableMap;
 
+import org.codehaus.jackson.annotate.JsonCreator;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 
 /**
  * @since version
  */
 public class RemoteApplicationWithCapabilitiesImpl implements RemoteApplicationWithCapabilities
 {
-    @JsonProperty protected final String type;
-    @JsonProperty protected final String selfUrl;
-    @JsonProperty protected final DateTime buildDate;
-    @JsonProperty protected final Map<String, String> capabilities;
+    protected final String key;
 
-    public RemoteApplicationWithCapabilitiesImpl(@Nullable String type, @Nullable DateTime buildDate, final String selfUrl, Map<String, String> capabilities)
+    protected final Map<String, String> links;
+
+    protected final DateTime buildDate;
+
+    protected final Map<String, String> capabilities;
+
+    public RemoteApplicationWithCapabilitiesImpl(@Nullable String key, @Nullable DateTime buildDate, Map<String, String> links, Map<String, String> capabilities)
     {
-        this.type = type;
+        this.key = key;
         this.buildDate = toNonnull(buildDate);
-        this.selfUrl = selfUrl;
+        this.links = links;
         this.capabilities = ImmutableMap.copyOf(capabilities);
     }
 
@@ -35,9 +38,9 @@ public class RemoteApplicationWithCapabilitiesImpl implements RemoteApplicationW
         return buildDate != null ? buildDate : UniversalDateFormatter.NULL_DATE;
     }
 
-    public String getType()
+    public String getKey()
     {
-        return type;
+        return key;
     }
 
     /**
@@ -47,18 +50,12 @@ public class RemoteApplicationWithCapabilitiesImpl implements RemoteApplicationW
      */
     public DateTime getBuildDate()
     {
-        return buildDate;
+        return toNonnull(buildDate);
     }
 
-    /**
-     * The origin url of the remote application's capabilities. If you are interested in requesting the capabilities
-     * again, use this url.
-     *
-     * @return origin url of the remote application's capabilities
-     */
-    public String getSelfUrl()
+    public Map<String, String> getLinks()
     {
-        return selfUrl;
+        return links;
     }
 
     public boolean hasCapabilities()
@@ -75,7 +72,7 @@ public class RemoteApplicationWithCapabilitiesImpl implements RemoteApplicationW
     @Override
     public int hashCode()
     {
-        return Objects.hashCode(type, buildDate);
+        return Objects.hashCode(key, buildDate);
     }
 
     @Override
@@ -92,9 +89,9 @@ public class RemoteApplicationWithCapabilitiesImpl implements RemoteApplicationW
         else
         {
             final RemoteApplicationWithCapabilitiesImpl that = (RemoteApplicationWithCapabilitiesImpl) obj;
-            return Objects.equal(type, that.type) &&
-                    Objects.equal(selfUrl, that.selfUrl) &&
-                    Objects.equal(buildDate.secondOfDay().roundFloorCopy(), that.buildDate.secondOfDay().roundFloorCopy());
+            return Objects.equal(key, that.key) &&
+                    Objects.equal(links, that.links) &&
+                    Objects.equal(getBuildDate().secondOfDay().roundFloorCopy(), that.getBuildDate().secondOfDay().roundFloorCopy());
         }
     }
 
@@ -102,9 +99,9 @@ public class RemoteApplicationWithCapabilitiesImpl implements RemoteApplicationW
     public String toString()
     {
         return "ApplicationWithCapabilities{" +
-                "type='" + type + '\'' +
-                ", selfUrl='" + selfUrl + '\'' +
-                ", buildDate='" + buildDate.secondOfDay().roundFloorCopy() + '\'' +
+                "type='" + key + '\'' +
+                ", links='" + links + '\'' +
+                ", buildDate='" + getBuildDate().secondOfDay().roundFloorCopy() + '\'' +
                 ", capabilities=" + capabilities +
                 '}';
     }

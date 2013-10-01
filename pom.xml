@@ -30,11 +30,11 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>capabilities-client</module>
         <module>api-parent</module>
         <module>plugin</module>
         <module>rest-test-plugin</module>
         <module>integration-tests</module>
-        <module>capabilities-client</module>
     </modules>
 
     <build>

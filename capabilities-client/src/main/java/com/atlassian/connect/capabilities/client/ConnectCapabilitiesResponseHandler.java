@@ -1,6 +1,9 @@
 package com.atlassian.connect.capabilities.client;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
@@ -23,17 +26,12 @@ public class ConnectCapabilitiesResponseHandler implements ResponseHandler<Remot
     @Override
     public RemoteApplicationWithCapabilities handleResponse(HttpResponse response) throws ClientProtocolException, IOException
     {
-        final String responseBody = basicHandler.handleResponse(response);
-        return Strings.isNullOrEmpty(responseBody)? null: parseBody(responseBody);
+        return (null == response.getEntity() ? null: parseBody(response.getEntity().getContent()));
     }
 
-    @VisibleForTesting
-    RemoteApplicationWithCapabilities parseBody(String responseBody)
+    
+    public RemoteApplicationWithCapabilities parseBody(InputStream in)
     {
-        GsonBuilder builder = new GsonBuilder();
-        builder.registerTypeAdapter(DateTime.class,new DateTimeTypeAdapter());
-        
-        Gson gson = builder.create();
-        return gson.fromJson(responseBody,RemoteApplicationWithCapabilitiesImpl.class);
+        return CapabilitiesGsonFactory.getGson().fromJson(new BufferedReader(new InputStreamReader(in)),RemoteApplicationWithCapabilitiesImpl.class);
     }
 }

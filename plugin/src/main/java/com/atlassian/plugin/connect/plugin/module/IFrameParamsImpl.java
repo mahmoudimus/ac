@@ -9,12 +9,17 @@ import org.dom4j.Element;
 import static com.atlassian.plugin.connect.plugin.util.EncodingUtils.escapeQuotes;
 import static com.google.common.collect.Maps.newHashMap;
 
+//TODO: make this NOT rely on xml elements!!!!
 /**
  * Parameters for this iframe instance
  */
 public final class IFrameParamsImpl implements IFrameParams
 {
     private final Map<String,Object> params = newHashMap();
+
+    public IFrameParamsImpl()
+    {
+    }
     
     public IFrameParamsImpl(Element module)
     {

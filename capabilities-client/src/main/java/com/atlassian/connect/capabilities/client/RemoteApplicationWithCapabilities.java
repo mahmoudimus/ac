@@ -20,7 +20,7 @@ public interface RemoteApplicationWithCapabilities
      * a canonical value representing the application type
      */
     @Nonnull
-    String getType();
+    String getKey();
 
     /**
      * Build date of the application, or a 'null' date (01/01/1970 UTC) if unknown.
@@ -30,7 +30,7 @@ public interface RemoteApplicationWithCapabilities
     @Nonnull
     DateTime getBuildDate();
 
-    String getSelfUrl();
+    Map<String,String> getLinks();
 
     /**
      *
