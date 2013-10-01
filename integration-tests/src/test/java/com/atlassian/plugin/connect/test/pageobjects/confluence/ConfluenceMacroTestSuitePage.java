@@ -57,7 +57,7 @@ public class ConfluenceMacroTestSuitePage extends ConfluenceMacroPage
         menuLink = driver.findElement(By.id("help-menu-link"));
 //        }
         menuLink.click();
-        driver.findElement(By.id("webitem-remotePluginGeneral")).click();
+        driver.findElement(By.id("remotePluginGeneral")).click();
         return pageBinder.bind(RemotePluginTestPage.class, "remotePluginGeneral");
     }
 }
