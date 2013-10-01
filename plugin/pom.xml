@@ -118,6 +118,26 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>com.atlassian.jwt</groupId>
+            <artifactId>jwt-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.jwt</groupId>
+            <artifactId>jwt-core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.jwt</groupId>
+            <artifactId>jwt-applinks</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.jwt</groupId>
+            <artifactId>jwt-http-client</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>com.atlassian.plugins.rest</groupId>
             <artifactId>atlassian-rest-common</artifactId>
             <scope>provided</scope>
