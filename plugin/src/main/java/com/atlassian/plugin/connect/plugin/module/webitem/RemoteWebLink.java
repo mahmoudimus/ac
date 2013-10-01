@@ -1,14 +1,14 @@
 package com.atlassian.plugin.connect.plugin.module.webitem;
 
-import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.plugin.module.context.ContextMapURLSerializer;
+import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.web.WebFragmentHelper;
 import com.atlassian.plugin.web.descriptors.WebFragmentModuleDescriptor;
 import com.atlassian.plugin.web.model.AbstractWebItem;
 import com.atlassian.plugin.web.model.WebLink;
 
-import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 /**
  * Link which points to the dialog, inline-dialog or general page coming from the add-on.
@@ -18,7 +18,7 @@ public class RemoteWebLink extends AbstractWebItem implements WebLink
     private final UrlVariableSubstitutor urlVariableSubstitutor;
     private final ContextMapURLSerializer urlParametersSerializer;
     private final String url;
-    private final String key;
+    private final String id;
     private final boolean absolute;
 
     public RemoteWebLink(
@@ -27,14 +27,14 @@ public class RemoteWebLink extends AbstractWebItem implements WebLink
             UrlVariableSubstitutor urlVariableSubstitutor,
             ContextMapURLSerializer urlParametersSerializer,
             String url,
-            String key,
+            String id,
             boolean absolute)
     {
         super(webFragmentHelper, null, webFragmentModuleDescriptor);
         this.urlVariableSubstitutor = urlVariableSubstitutor;
         this.urlParametersSerializer = urlParametersSerializer;
         this.url = url;
-        this.key = key;
+        this.id = id;
         this.absolute = absolute;
     }
 
@@ -74,6 +74,6 @@ public class RemoteWebLink extends AbstractWebItem implements WebLink
     @Override
     public String getId()
     {
-        return key;
+        return id;
     }
 }

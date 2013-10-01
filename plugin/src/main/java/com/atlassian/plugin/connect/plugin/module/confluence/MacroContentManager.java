@@ -21,6 +21,8 @@ import com.atlassian.plugin.connect.plugin.util.http.CachingHttpContentRetriever
 import com.atlassian.plugin.connect.plugin.util.http.ContentRetrievalErrors;
 import com.atlassian.plugin.connect.plugin.util.http.ContentRetrievalException;
 import com.atlassian.renderer.RenderContextOutputType;
+import com.atlassian.sal.api.transaction.TransactionCallback;
+import com.atlassian.sal.api.transaction.TransactionTemplate;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import com.atlassian.templaterenderer.TemplateRenderer;
@@ -50,6 +52,7 @@ public class MacroContentManager implements DisposableBean
     private final XhtmlContent xhtmlUtils;
     private final DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory;
     private final TemplateRenderer templateRenderer;
+    private final TransactionTemplate transactionTemplate;
 
     private static final Logger log = LoggerFactory.getLogger(MacroContentManager.class);
 
@@ -62,10 +65,11 @@ public class MacroContentManager implements DisposableBean
             XhtmlContent xhtmlUtils,
             StorageFormatCleaner cleaner,
             DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory,
-            TemplateRenderer templateRenderer)
+            TemplateRenderer templateRenderer, TransactionTemplate transactionTemplate)
     {
         this.eventPublisher = eventPublisher;
         this.cachingHttpContentRetriever = cachingHttpContentRetriever;
+        this.transactionTemplate = transactionTemplate;
         this.bigPipeManager = checkNotNull(bigPipeManager);
         this.userManager = userManager;
         this.xhtmlUtils = xhtmlUtils;
@@ -98,7 +102,7 @@ public class MacroContentManager implements DisposableBean
                 macroInstance.getPath(), urlParameters, macroInstance.getHeaders(username, userKey))
                 .fold(new ContentHandlerFailFunction(templateRenderer),
                         new HtmlToSafeHtmlFunction(macroInstance, urlParameters, macroContentLinkParser, xhtmlCleaner,
-                                xhtmlUtils));
+                                xhtmlUtils, transactionTemplate));
         
         final Supplier<String> initialContent = bigPipe.getHtmlChannel().promiseContent(promise);
         try
@@ -232,16 +236,18 @@ public class MacroContentManager implements DisposableBean
         private final MacroContentLinkParser macroContentLinkParser;
         private final StorageFormatCleaner xhtmlCleaner;
         private final XhtmlContent xhtmlUtils;
+        private final TransactionTemplate transactionTemplate;
 
         public HtmlToSafeHtmlFunction(MacroInstance macroInstance, Map<String, String> urlParameters,
                                       MacroContentLinkParser macroContentLinkParser, StorageFormatCleaner xhtmlCleaner,
-                                      XhtmlContent xhtmlUtils)
+                                      XhtmlContent xhtmlUtils, TransactionTemplate transactionTemplate)
         {
             this.macroInstance = macroInstance;
             this.urlParameters = urlParameters;
             this.macroContentLinkParser = macroContentLinkParser;
             this.xhtmlCleaner = xhtmlCleaner;
             this.xhtmlUtils = xhtmlUtils;
+            this.transactionTemplate = transactionTemplate;
         }
 
         @Override
@@ -256,22 +262,31 @@ public class MacroContentManager implements DisposableBean
             */
             // todo: do we want to give feedback to the app of what was cleaned?
             final String cleanedXhtml = xhtmlCleaner.cleanQuietly(value, macroInstance.getConversionContext());
-            try
-            {
-                return xhtmlUtils.convertStorageToView(cleanedXhtml,
-                        macroInstance.getConversionContext());
-            }
-            catch (Exception e)
-            {
-                log.warn("Unable to convert storage format for app {} with error {}",
-                        macroInstance.getRemotablePluginAccessor().getKey(), e.getMessage());
-                if (log.isDebugEnabled())
-                {
-                    log.debug("Error converting storage format", e);
-                }
-                throw new ContentRetrievalException(
-                        "Unable to convert storage format to HTML: " + e.getMessage(), e);
-            }
+            String content = transactionTemplate.execute(
+                    new TransactionCallback<String>() {
+                        @Override
+                        public String doInTransaction()
+                        {
+                            try
+                            {
+                                return xhtmlUtils.convertStorageToView(cleanedXhtml, macroInstance.getConversionContext());
+                            }
+                            catch (Exception e)
+                            {
+                                log.warn("Unable to convert storage format for app {} with error {}",
+                                        macroInstance.getRemotablePluginAccessor().getKey(), e.getMessage());
+                                if (log.isDebugEnabled())
+                                {
+                                    log.debug("Error converting storage format", e);
+                                }
+                                throw new ContentRetrievalException(
+                                        "Unable to convert storage format to HTML: " + e.getMessage(), e);
+                            }
+                        }
+                    }
+            );
+
+            return content;
         }
     }
 }

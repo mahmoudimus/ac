@@ -12,6 +12,7 @@ import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.mail.Email;
 import com.atlassian.mail.queue.MailQueue;
 import com.atlassian.mail.queue.SingleMailQueueItem;
+import com.atlassian.plugin.connect.plugin.module.jira.conditions.ViewingOwnProfileCondition;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.web.WebInterfaceManager;
@@ -93,7 +94,7 @@ public final class JiraProductAccessor implements ProductAccessor
         String prefFormat = userPrefs.getString(PreferenceKeys.USER_NOTIFICATIONS_MIMETYPE);
 
         // Default to text if the property is not configured.
-        if (!"html".equalsIgnoreCase(prefFormat))
+        if ("html".equalsIgnoreCase(prefFormat))
         {
             email.setMimeType("text/html");
             email.setBody(bodyAsHtml);
@@ -127,7 +128,7 @@ public final class JiraProductAccessor implements ProductAccessor
         conditions.put("is_field_hidden", com.atlassian.jira.plugin.webfragment.conditions.IsFieldHiddenCondition.class);
         conditions.put("browse_users_permission", com.atlassian.jira.plugin.webfragment.conditions.BrowseUsersPermissionCondition.class);
         conditions.put("voting_enabled", com.atlassian.jira.plugin.webfragment.conditions.VotingEnabledCondition.class);
-        conditions.put("user_is_the_logged_in_user", com.atlassian.jira.plugin.webfragment.conditions.UserIsTheLoggedInUserCondition.class);
+        conditions.put("user_is_the_logged_in_user", ViewingOwnProfileCondition.class);
         conditions.put("has_last_search_request", com.atlassian.jira.plugin.webfragment.conditions.HasLastSearchRequestCondition.class);
         conditions.put("not_version_context", com.atlassian.jira.plugin.webfragment.conditions.NotVersionContextCondition.class);
         conditions.put("user_is_sysadmin", com.atlassian.jira.plugin.webfragment.conditions.UserIsSysAdminCondition.class);
