@@ -218,8 +218,8 @@ _AP.define("host/main", ["_xdm", "host/_addons"], function (XdmRpc, addons) {
         $iframe.parents(".ap-servlet-placeholder, .ap-container").height(panelHeight);
         var containerHeight = $iframe.parents(".ap-container").height(),
             iframeHeight = containerHeight;
-        if ($stats.find(".ap-status:not(.hidden)").length > 0) {
-            iframeHeight-= $stats.outerHeight(true);
+        if ($stats.find(".ap-status:visible").length > 0) {
+            iframeHeight -= $stats.outerHeight(true);
         }
         $iframe.height(iframeHeight);
         $content.height(iframeHeight);
