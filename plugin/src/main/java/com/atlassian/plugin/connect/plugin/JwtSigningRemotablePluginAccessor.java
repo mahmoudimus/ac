@@ -29,6 +29,7 @@ public class JwtSigningRemotablePluginAccessor extends DefaultRemotablePluginAcc
 
     private static final Logger log = LoggerFactory.getLogger(JwtSigningRemotablePluginAccessor.class);
     private static final int JWT_EXPIRY_WINDOW_SECONDS = 60 * 3; // TODO: make a configuration option?
+    private static final AuthorizationGenerator AUTH_GENERATOR = new JwtAuthorizationGenerator(); // it's tiny and does very little, so share this instance
 
     public JwtSigningRemotablePluginAccessor(String pluginKey,
                                              String pluginName,
@@ -83,6 +84,6 @@ public class JwtSigningRemotablePluginAccessor extends DefaultRemotablePluginAcc
     @Override
     public AuthorizationGenerator getAuthorizationGenerator()
     {
-        return new JwtAuthorizationGenerator(); // TODO: is it wise to always return a new object?
+        return AUTH_GENERATOR;
     }
 }
