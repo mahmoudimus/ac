@@ -5,11 +5,13 @@ import com.atlassian.applinks.api.event.ApplicationLinkAddedEvent;
 import com.atlassian.applinks.api.event.ApplicationLinkDeletedEvent;
 import com.atlassian.event.api.EventListener;
 import com.atlassian.event.api.EventPublisher;
+import com.atlassian.jwt.applinks.JwtService;
 import com.atlassian.oauth.ServiceProvider;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.plugin.module.applinks.RemotePluginContainerModuleDescriptor;
 import com.atlassian.plugin.connect.plugin.util.http.CachingHttpContentRetriever;
+import com.atlassian.plugin.connect.spi.AuthenticationMethod;
 import com.atlassian.plugin.connect.spi.ConnectAddOnIdentifierService;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
@@ -42,6 +44,7 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
     private final ApplicationProperties applicationProperties;
     private final EventPublisher eventPublisher;
     private final ConnectAddOnIdentifierService connectIdentifier;
+    private final JwtService jwtService;
 
     private final Map<String, RemotablePluginAccessor> accessors;
 
@@ -52,8 +55,8 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
                                                  PluginAccessor pluginAccessor,
                                                  ApplicationProperties applicationProperties,
                                                  EventPublisher eventPublisher,
-                                                 ConnectAddOnIdentifierService connectIdentifier
-    )
+                                                 ConnectAddOnIdentifierService connectIdentifier,
+                                                 JwtService jwtService)
     {
         this.applicationLinkAccessor = applicationLinkAccessor;
         this.oAuthLinkManager = oAuthLinkManager;
@@ -63,6 +66,7 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
         this.eventPublisher = eventPublisher;
         this.eventPublisher.register(this);
         this.connectIdentifier = connectIdentifier;
+        this.jwtService = jwtService;
 
         this.accessors = CopyOnWriteMap.newHashMap();
     }
@@ -210,8 +214,17 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
         final Plugin plugin = pluginAccessor.getPlugin(pluginKey);
         checkNotNull(plugin, "Plugin not found: '%s'", pluginKey);
 
-        // don't need to get the actual provider as it doesn't really matter
-        return new OAuthSigningRemotablePluginAccessor(pluginKey, plugin.getName(), displayUrl, getDummyServiceProvider(), httpContentRetriever, oAuthLinkManager);
+        return signsWithJwt(pluginKey)
+            // don't need to get the actual provider as it doesn't really matter
+            ? new JwtSigningRemotablePluginAccessor(pluginKey, plugin.getName(), displayUrl, jwtService, applicationLinkAccessor, httpContentRetriever)
+            : new OAuthSigningRemotablePluginAccessor(pluginKey, plugin.getName(), displayUrl, getDummyServiceProvider(), httpContentRetriever, oAuthLinkManager);
+    }
+
+    private boolean signsWithJwt(String pluginKey)
+    {
+        Object authTypeProperty = applicationLinkAccessor.getApplicationLink(pluginKey).getProperty(AuthenticationMethod.PROPERTY_NAME);
+        // for backwards compatibility default to "not JWT" if the property does not exist
+        return null != authTypeProperty && AuthenticationMethod.JWT.equals(AuthenticationMethod.forName(authTypeProperty.toString()));
     }
 
     private ServiceProvider getDummyServiceProvider()

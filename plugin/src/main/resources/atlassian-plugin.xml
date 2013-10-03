@@ -220,6 +220,7 @@
     <component-import key="moduleDescriptorWebHookRegistry"
                       interface="com.atlassian.webhooks.spi.provider.ModuleDescriptorWebHookListenerRegistry" />
     <component-import key="remotePluginLicenseService" interface="com.atlassian.upm.api.license.RemotePluginLicenseService" />
+    <component-import key="jwt-service" interface="com.atlassian.jwt.applinks.JwtService" />
 
     <component key="userIsSysAdminCondition" class="com.atlassian.plugin.connect.spi.module.UserIsSysAdminCondition" />
     <component key="userIsAdminCondition" class="com.atlassian.plugin.connect.spi.module.UserIsAdminCondition" />
