@@ -14,8 +14,6 @@ import com.atlassian.uri.Uri;
 import com.atlassian.uri.UriBuilder;
 import com.google.common.base.Supplier;
 import org.apache.http.client.methods.HttpGet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
@@ -27,7 +25,6 @@ public class JwtSigningRemotablePluginAccessor extends DefaultRemotablePluginAcc
     private final JwtService jwtService;
     private final ApplicationLinkAccessor applicationLinkAccessor;
 
-    private static final Logger log = LoggerFactory.getLogger(JwtSigningRemotablePluginAccessor.class);
     private static final int JWT_EXPIRY_WINDOW_SECONDS = 60 * 3; // TODO: make a configuration option?
     private static final AuthorizationGenerator AUTH_GENERATOR = new JwtAuthorizationGenerator(); // it's tiny and does very little, so share this instance
 
