@@ -12,6 +12,6 @@ public class JwtAuthorizationGenerator extends DefaultAuthorizationGeneratorBase
     @Override
     public Option<String> generate(HttpMethod method, URI url, Map<String, List<String>> parameters)
     {
-        return Option.option(""); // this appears to be needed only for adding an OAuth1 WWW-Authenticate or Authentication header
+        return Option.none(String.class); // this appears to be needed only for adding an OAuth1 WWW-Authenticate or Authentication header
     }
 }

@@ -32,12 +32,12 @@ public class JwtSigningRemotablePluginAccessor extends DefaultRemotablePluginAcc
 
     public JwtSigningRemotablePluginAccessor(String pluginKey,
                                              String pluginName,
-                                             Supplier<URI> displayUrl,
+                                             Supplier<URI> baseUrlSupplier,
                                              JwtService jwtService,
                                              ApplicationLinkAccessor applicationLinkAccessor,
                                              HttpContentRetriever httpContentRetriever)
     {
-        super(pluginKey, pluginName, displayUrl, httpContentRetriever);
+        super(pluginKey, pluginName, baseUrlSupplier, httpContentRetriever);
         this.jwtService = jwtService;
         this.applicationLinkAccessor = applicationLinkAccessor;
     }
@@ -46,24 +46,7 @@ public class JwtSigningRemotablePluginAccessor extends DefaultRemotablePluginAcc
     public String signGetUrl(URI targetPath, Map<String, String[]> params)
     {
         assertThatTargetPathAndParamsDoNotDuplicateParams(targetPath, params);
-        final UriBuilder uriBuilder = new UriBuilder(Uri.fromJavaUri(getTargetUrl(targetPath)));
-
-        // adding all the parameters of the signed request
-        for (Map.Entry<String, String[]> param : params.entrySet())
-        {
-            if (null == param.getValue())
-            {
-                uriBuilder.addQueryParameter(param.getKey(), "");
-            }
-            else
-            {
-                for (String paramValue : param.getValue())
-                {
-                    final String value = paramValue == null ? "" : paramValue;
-                    uriBuilder.addQueryParameter(param.getKey(), value);
-                }
-            }
-        }
+        final UriBuilder uriBuilder = new UriBuilder(Uri.fromJavaUri(URI.create(createGetUrl(targetPath, params))));
 
         final ApplicationLink appLink = applicationLinkAccessor.getApplicationLink(getKey());
         JwtJsonBuilder jsonBuilder = new JsonSmartJwtJsonBuilder()

@@ -43,8 +43,8 @@ public class OAuthSigningRemotablePluginAccessorTest
     private static final Map<String,String> GET_HEADERS = Collections.singletonMap("header", "header value");
     private static final Map<String,String> GET_PARAMS = Collections.singletonMap("param", "param value");
     private static final URI GET_PATH = URI.create("/path");
-    public static final String EXPECTED_GET_RESPONSE = "expected";
-    public static final String BASE_URL = "http://server:1234/contextPath";
+    private static final String EXPECTED_GET_RESPONSE = "expected";
+    private static final String BASE_URL = "http://server:1234/contextPath";
 
     @Test
     public void createdRemotePluginAccessorHasCorrectPluginKey() throws ExecutionException, InterruptedException
