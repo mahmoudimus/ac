@@ -367,6 +367,12 @@
                 <scope>provided</scope>
             </dependency>
             <dependency>
+                <groupId>com.atlassian.jwt</groupId>
+                <artifactId>jwt-plugin</artifactId>
+                <version>${atlassian.jwt.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
                 <groupId>com.atlassian.plugins.rest</groupId>
                 <artifactId>atlassian-rest-common</artifactId>
                 <version>${atlassian.rest.version}</version>
