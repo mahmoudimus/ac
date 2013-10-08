@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.module.page;
 
+import com.atlassian.plugin.connect.plugin.module.IFramePageRenderer;
 import com.atlassian.plugin.connect.plugin.module.IFrameRendererImpl;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.spi.module.IFrameContext;
@@ -31,18 +32,18 @@ public class IFramePageServlet extends HttpServlet
     private final UrlVariableSubstitutor urlVariableSubstitutor;
     private final PageInfo pageInfo;
     private final IFrameContext iframeContext;
-    private final IFrameRendererImpl iFrameRenderer;
+    private final IFramePageRenderer iFramePageRenderer;
     private final Map<String, String> contextParamNameToSymbolicName; // e.g. "my_space_id": "space.id"
 
     public IFramePageServlet(PageInfo pageInfo,
-            IFrameRendererImpl iFrameRenderer,
+                             IFramePageRenderer iFramePageRenderer,
             IFrameContext iframeContext,
             UserManager userManager,
             UrlVariableSubstitutor urlVariableSubstitutor,
             Map<String, String> contextParamNameToSymbolicName)
     {
         this.iframeContext = iframeContext;
-        this.iFrameRenderer = iFrameRenderer;
+        this.iFramePageRenderer = iFramePageRenderer;
         this.pageInfo = pageInfo;
         this.userManager = userManager;
         this.urlVariableSubstitutor = urlVariableSubstitutor;
@@ -62,7 +63,7 @@ public class IFramePageServlet extends HttpServlet
         paramsFromRequest.putAll(productContext);
         String iFramePath = urlVariableSubstitutor.replace(originalPath, paramsFromRequest);
 
-        iFrameRenderer.renderPage(
+        iFramePageRenderer.renderPage(
                 new IFrameContextImpl(iframeContext.getPluginKey(), iFramePath, iframeContext.getNamespace(), iframeContext.getIFrameParams()),
                 pageInfo, req.getPathInfo(), copyRequestContext(req, originalPath), userManager.getRemoteUsername(req),
                 productContext, out);

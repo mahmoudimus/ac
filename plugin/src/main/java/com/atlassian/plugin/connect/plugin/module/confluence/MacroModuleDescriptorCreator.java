@@ -11,6 +11,7 @@ import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
 import com.atlassian.plugin.connect.plugin.DefaultRemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.plugin.PermissionManager;
 import com.atlassian.plugin.connect.plugin.integration.plugins.DescriptorToRegister;
+import com.atlassian.plugin.connect.plugin.module.IFramePageRenderer;
 import com.atlassian.plugin.connect.plugin.module.IFrameParamsImpl;
 import com.atlassian.plugin.connect.plugin.module.IFrameRendererImpl;
 import com.atlassian.plugin.connect.plugin.module.WebItemCreator;
@@ -66,7 +67,7 @@ public class MacroModuleDescriptorCreator
     private final HostContainer hostContainer;
     private final WebItemCreator webItemCreator;
     private final ContextParameterParser contextParameterParser;
-    private final IFrameRendererImpl iFrameRenderer;
+    private final IFramePageRenderer iFramePageRenderer;
     private final UserManager userManager;
     private final PermissionManager permissionManager;
     private final BundleContext bundleContext;
@@ -78,7 +79,7 @@ public class MacroModuleDescriptorCreator
             HostContainer hostContainer,
             WebItemCreator webItemCreator,
             ContextParameterParser contextParameterParser,
-            IFrameRendererImpl iFrameRenderer,
+            IFramePageRenderer iFramePageRenderer,
             UserManager userManager,
             PermissionManager permissionManager,
             BundleContext bundleContext,
@@ -89,7 +90,7 @@ public class MacroModuleDescriptorCreator
         this.hostContainer = hostContainer;
         this.webItemCreator = webItemCreator;
         this.contextParameterParser = contextParameterParser;
-        this.iFrameRenderer = iFrameRenderer;
+        this.iFramePageRenderer = iFramePageRenderer;
         this.userManager = userManager;
         this.permissionManager = permissionManager;
         this.bundleContext = bundleContext;
@@ -281,7 +282,7 @@ public class MacroModuleDescriptorCreator
 
                     return (T) new IFramePageServlet(
                             pageInfo,
-                            iFrameRenderer,
+                            iFramePageRenderer,
                             new IFrameContextImpl(plugin.getKey(), path, moduleKey, params), userManager, urlVariableSubstitutor,
                             webItemCreatorBuilder.getContextParams()
                     );

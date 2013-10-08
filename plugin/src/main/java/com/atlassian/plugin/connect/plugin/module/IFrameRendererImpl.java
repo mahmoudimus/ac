@@ -68,48 +68,6 @@ public final class IFrameRendererImpl implements IFrameRenderer
         return render(iframeContext, "", Collections.<String, String[]>emptyMap(), remoteUser, Collections.<String, Object>emptyMap());
     }
 
-    public void renderPage(IFrameContext iframeContext, PageInfo pageInfo, String extraPath, Map<String, String[]> queryParams, String remoteUser, Map<String, Object> productContext, Writer writer) throws IOException
-    {
-        try
-        {
-            if (!pageInfo.getCondition().shouldDisplay(Collections.<String, Object>emptyMap()))
-            {
-                throw new PermissionDeniedException(iframeContext.getPluginKey(), "Cannot render iframe for this page");
-            }
-
-            Map<String, Object> ctx = newHashMap(iframeContext.getIFrameParams().getAsMap());
-            if (queryParams.get("width") != null)
-            {
-                iframeContext.getIFrameParams().setParam("width", queryParams.get("width")[0]);
-            }
-            if (queryParams.get("height") != null)
-            {
-                iframeContext.getIFrameParams().setParam("height", queryParams.get("height")[0]);
-            }
-
-			ctx.put("queryParams", contextQueryParameters(queryParams));
-            ctx.put("title", pageInfo.getTitle());
-            ctx.put("contextPath", iframeHost.getContextPath());
-            ctx.put("iframeHtml", render(iframeContext, extraPath, queryParams, remoteUser, productContext));
-            ctx.put("decorator", pageInfo.getDecorator());
-
-			for (Map.Entry<String, String> metaTag : pageInfo.getMetaTagsContent().entrySet())
-			{
-				ctx.put(metaTag.getKey(), metaTag.getValue());
-			}
-
-            templateRenderer.render("velocity/iframe-page" + pageInfo.getTemplateSuffix() + ".vm", ctx, writer);
-        }
-        catch (PermissionDeniedException ex)
-        {
-            templateRenderer.render(
-                    "velocity/iframe-page-accessdenied" + pageInfo.getTemplateSuffix() + ".vm",
-                    ImmutableMap.<String, Object>of(
-                            "title", pageInfo.getTitle(),
-                            "decorator", pageInfo.getDecorator()), writer);
-        }
-    }
-
     @Override
     @Deprecated
     public String render(IFrameContext iframeContext, String extraPath, Map<String, String[]> queryParams, String remoteUser) throws IOException
@@ -205,14 +163,4 @@ public final class IFrameRendererImpl implements IFrameRenderer
         JavascriptEncoder.escape(writer, json);
         return writer.toString();
     }
-
-    private Map<String, List<String>> contextQueryParameters(final Map<String, String[]> queryParams)
-	{
-		final Map<String, List<String>> ctxQueryParams = Maps.newHashMap();
-		for (Map.Entry<String, String[]> param : queryParams.entrySet())
-		{
-			ctxQueryParams.put(param.getKey(), Arrays.asList(param.getValue()));
-		}
-		return ctxQueryParams;
-	}
 }

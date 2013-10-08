@@ -6,6 +6,7 @@ import java.util.Map;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
+import com.atlassian.plugin.connect.plugin.module.IFramePageRenderer;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlValidator;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.module.ModuleFactory;
@@ -45,21 +46,21 @@ public final class RemotePageDescriptorCreator
     private final BundleContext bundleContext;
     private final UserManager userManager;
     private final WebItemCreator webItemCreator;
-    private final IFrameRendererImpl iFrameRenderer;
+    private final IFramePageRenderer iFramePageRenderer;
     private final ProductAccessor productAccessor;
     private final UrlVariableSubstitutor urlVariableSubstitutor;
 
     @Autowired
     public RemotePageDescriptorCreator(
             BundleContext bundleContext, UserManager userManager,
-            WebItemCreator webItemCreator, IFrameRendererImpl iFrameRenderer,
+            WebItemCreator webItemCreator, IFramePageRenderer iFramePageRenderer,
             ProductAccessor productAccessor, UrlValidator urlValidator,
             UrlVariableSubstitutor urlVariableSubstitutor)
     {
         this.bundleContext = bundleContext;
         this.userManager = userManager;
         this.webItemCreator = webItemCreator;
-        this.iFrameRenderer = iFrameRenderer;
+        this.iFramePageRenderer = iFramePageRenderer;
         this.productAccessor = productAccessor;
         this.urlVariableSubstitutor = urlVariableSubstitutor;
     }
@@ -132,7 +133,7 @@ public final class RemotePageDescriptorCreator
 
                     return (T) new IFramePageServlet(
                             pageInfo,
-                            iFrameRenderer,
+                            iFramePageRenderer,
                             new IFrameContextImpl(plugin.getKey(), path, moduleKey, params), userManager, urlVariableSubstitutor,
                             contextParamNameToSymbolicName
                     );
