@@ -38,7 +38,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class TestIFrameRendererImpl
+public class TestIFrameRenderer
 {
     @Mock private TemplateRenderer templateRenderer;
     @Mock private RemotablePluginAccessorFactory remotablePluginAccessorFactory;
@@ -163,22 +163,22 @@ public class TestIFrameRendererImpl
         return argument.getValue();
     }
 
-    private static final Map<String, String[]> emptyParams()
+    public static final Map<String, String[]> emptyParams()
     {
         return Collections.emptyMap();
     }
 
-    private static final Map<String, Object> emptyContext()
+    public static final Map<String, Object> emptyContext()
     {
         return Collections.emptyMap();
     }
 
-    private IFrameContext createContext(String pluginKey, String iframePath, String namespace)
+    public static IFrameContext createContext(String pluginKey, String iframePath, String namespace)
     {
         return createContext(pluginKey, iframePath, namespace, Collections.<String, Object>emptyMap());
     }
 
-    private IFrameContext createContext(String pluginKey, String iframePath, String namespace, Map<String, Object> params)
+    public static IFrameContext createContext(String pluginKey, String iframePath, String namespace, Map<String, Object> params)
     {
         final Map<String, Object> internalParams = Maps.newHashMap(params);
         IFrameParams iframeParams = new IFrameParams()
