@@ -15,6 +15,7 @@ import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static com.atlassian.pageobjects.elements.query.Poller.waitUntil;
 import static com.atlassian.pageobjects.elements.query.Poller.waitUntilFalse;
 import static com.atlassian.pageobjects.elements.query.Poller.waitUntilTrue;
 import static com.atlassian.plugin.connect.test.pageobjects.RemotePageUtil.runInFrame;
@@ -38,6 +39,7 @@ public class RemoteCloseDialogPage
     private String key;
 
     protected PageElement containerDiv;
+    protected PageElement iframe;
 
     public RemoteCloseDialogPage(String key)
     {
@@ -49,6 +51,8 @@ public class RemoteCloseDialogPage
     {
         this.containerDiv = elementFinder.find(By.id(key));
         waitUntilTrue(this.containerDiv.timed().isPresent());
+        this.iframe = containerDiv.find(By.tagName("iframe"));
+        waitUntilTrue(this.iframe.timed().isPresent());
     }
 
     public RemoteCloseDialogPage close()
@@ -71,5 +75,10 @@ public class RemoteCloseDialogPage
     public void waitUntilClosed()
     {
         waitUntilFalse(this.containerDiv.timed().isPresent());
+    }
+
+    public String getFromQueryString(final String key)
+    {
+        return RemotePageUtil.findInContext(iframe.getAttribute("src"), key);
     }
 }

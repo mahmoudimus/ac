@@ -75,7 +75,7 @@ public class IFrameRemoteWebPanel implements WebPanel
 
             final Map<String, Object> whiteListedContext = contextMapURLSerializer.getExtractedWebPanelParameters(context);
 
-            writer.write(iFrameRenderer.render(substituteContext(whiteListedContext), "", Collections.EMPTY_MAP, remoteUser));
+            writer.write(iFrameRenderer.render(substituteContext(whiteListedContext), "", Collections.EMPTY_MAP, remoteUser, whiteListedContext));
         }
         else
         {

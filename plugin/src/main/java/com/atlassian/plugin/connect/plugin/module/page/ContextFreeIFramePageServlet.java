@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.atlassian.plugin.connect.plugin.module.IFramePageRenderer;
 import com.atlassian.plugin.connect.plugin.module.IFrameRendererImpl;
 import com.atlassian.plugin.connect.spi.module.IFrameContext;
 import com.atlassian.plugin.connect.spi.module.IFrameParams;
@@ -20,16 +21,18 @@ import com.google.common.collect.Maps;
 
 /**
  * A servlet that loads its content from a remote plugin's iframe.
+ * @deprecated this is insecure. will be deleted in an upcoming release.
  */
+@Deprecated
 public class ContextFreeIFramePageServlet extends HttpServlet
 {
     private final UserManager userManager;
-    private final IFrameRendererImpl iFrameRenderer;
+    private final IFramePageRenderer iFramePageRenderer;
 
-    public ContextFreeIFramePageServlet(IFrameRendererImpl iFrameRenderer,
+    public ContextFreeIFramePageServlet(IFramePageRenderer iFramePageRenderer,
                                         UserManager userManager)
     {
-        this.iFrameRenderer = iFrameRenderer;
+        this.iFramePageRenderer = iFramePageRenderer;
         this.userManager = userManager;
     }
 
@@ -55,8 +58,8 @@ public class ContextFreeIFramePageServlet extends HttpServlet
             iFrameParams.setParam("dialog", "1");
         }
 
-        iFrameRenderer.renderPage(iframeContext, pageInfo, req.getPathInfo(), req.getParameterMap(),
-                userManager.getRemoteUsername(req), out);
+        iFramePageRenderer.renderPage(iframeContext, pageInfo, req.getPathInfo(), req.getParameterMap(),
+                userManager.getRemoteUsername(req), Collections.<String, Object>emptyMap(), out);
 
     }
 
