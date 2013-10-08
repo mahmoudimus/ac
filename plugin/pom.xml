@@ -265,7 +265,7 @@
                             com.atlassian.jira.security;resolution:=optional,
                             com.atlassian.jira.security.websudo;resolution:=optional,
                             com.atlassian.oauth*;version="(1.2,2.0]",
-                            com.atlassian.jwt;version=${atlassian.jwt.version},
+                            com.atlassian.jwt.*;version="${atlassian.jwt.version}",
 
                             com.atlassian.plugin;version="${atlassian.plugins.api.version}",
                             com.atlassian.plugin.descriptors;resolution:="optional",
@@ -298,9 +298,6 @@
                             com.atlassian.httpclient.*;version="${atlassian.httpclient.api.version}",
                             com.sun.mail.handlers;resolution:=optional,
                             net.oauth*,
-                            com.nimbusds.jose,
-                            com.nimbusds.jwt,
-                            net.minidev.json,
                             javax.servlet;version="0.0.0",
                             javax.servlet.http;version="0.0.0",
                             javax.inject;version="1",
@@ -355,6 +352,11 @@
                                     <artifactId>atlassian-connect-rest-test-plugin</artifactId>
                                     <version>${project.version}</version>
                                 </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.jwt</groupId>
+                                    <artifactId>jwt-plugin</artifactId>
+                                    <version>${atlassian.jwt.version}</version>
+                                </pluginArtifact>
                             </pluginArtifacts>
                             
                             <bundledArtifacts>
@@ -404,6 +406,11 @@
                                     <groupId>${project.groupId}</groupId>
                                     <artifactId>atlassian-connect-rest-test-plugin</artifactId>
                                     <version>${project.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.jwt</groupId>
+                                    <artifactId>jwt-plugin</artifactId>
+                                    <version>${atlassian.jwt.version}</version>
                                 </pluginArtifact>
                             </pluginArtifacts>
 
