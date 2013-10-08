@@ -19,9 +19,9 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Map;
 
-import static com.atlassian.plugin.connect.plugin.module.TestIFrameRendererImpl.createContext;
-import static com.atlassian.plugin.connect.plugin.module.TestIFrameRendererImpl.emptyContext;
-import static com.atlassian.plugin.connect.plugin.module.TestIFrameRendererImpl.emptyParams;
+import static com.atlassian.plugin.connect.plugin.module.TestIFrameRenderer.createContext;
+import static com.atlassian.plugin.connect.plugin.module.TestIFrameRenderer.emptyContext;
+import static com.atlassian.plugin.connect.plugin.module.TestIFrameRenderer.emptyParams;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
