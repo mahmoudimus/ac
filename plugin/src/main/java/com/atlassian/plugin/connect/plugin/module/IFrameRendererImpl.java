@@ -1,19 +1,15 @@
 package com.atlassian.plugin.connect.plugin.module;
 
 import com.atlassian.html.encode.JavascriptEncoder;
-import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.DefaultRemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.plugin.UserPreferencesRetriever;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.module.page.PageInfo;
 import com.atlassian.plugin.connect.plugin.util.LocaleHelper;
 import com.atlassian.plugin.connect.spi.PermissionDeniedException;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
+import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.spi.module.IFrameContext;
 import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
-import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
-import com.atlassian.plugin.webresource.WebResourceManager;
-import com.atlassian.plugin.webresource.WebResourceUrlProvider;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import com.atlassian.templaterenderer.TemplateRenderer;
@@ -43,11 +39,8 @@ import static com.google.common.collect.Maps.newHashMap;
 public final class IFrameRendererImpl implements IFrameRenderer
 {
     private final TemplateRenderer templateRenderer;
-    private final WebResourceManager webResourceManager;
-    private final WebResourceUrlProvider webResourceUrlProvider;
-    private final DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory;
+    private final RemotablePluginAccessorFactory remotablePluginAccessorFactory;
     private final IFrameHost iframeHost;
-    private final Plugin acPlugin;
     private final LicenseRetriever licenseRetriever;
     private final LocaleHelper localeHelper;
     private final UserPreferencesRetriever userPreferencesRetriever;
@@ -55,11 +48,8 @@ public final class IFrameRendererImpl implements IFrameRenderer
 
     @Autowired
     public IFrameRendererImpl(TemplateRenderer templateRenderer,
-            WebResourceManager webResourceManager,
             IFrameHost iframeHost,
-            WebResourceUrlProvider webResourceUrlProvider,
-            PluginRetrievalService pluginRetrievalService,
-            DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory,
+            RemotablePluginAccessorFactory remotablePluginAccessorFactory,
             UserPreferencesRetriever userPreferencesRetriever, final LicenseRetriever licenseRetriever,
             LocaleHelper localeHelper, UserManager userManager)
     {
@@ -68,17 +58,14 @@ public final class IFrameRendererImpl implements IFrameRenderer
         this.userPreferencesRetriever = checkNotNull(userPreferencesRetriever);
         this.remotablePluginAccessorFactory = checkNotNull(remotablePluginAccessorFactory);
         this.templateRenderer = checkNotNull(templateRenderer);
-        this.webResourceManager = checkNotNull(webResourceManager);
         this.iframeHost = checkNotNull(iframeHost);
-        this.webResourceUrlProvider = checkNotNull(webResourceUrlProvider);
-        this.acPlugin = checkNotNull(pluginRetrievalService).getPlugin();
         this.userManager = userManager;
     }
 
     @Override
     public String render(IFrameContext iframeContext, String remoteUser) throws IOException
     {
-        return render(iframeContext, "", Collections.<String, String[]>emptyMap(), remoteUser);
+        return render(iframeContext, "", Collections.<String, String[]>emptyMap(), remoteUser, Collections.<String, Object>emptyMap());
     }
 
     public void renderPage(IFrameContext iframeContext, PageInfo pageInfo, String extraPath, Map<String, String[]> queryParams, String remoteUser, Map<String, Object> productContext, Writer writer) throws IOException
@@ -124,6 +111,7 @@ public final class IFrameRendererImpl implements IFrameRenderer
     }
 
     @Override
+    @Deprecated
     public String render(IFrameContext iframeContext, String extraPath, Map<String, String[]> queryParams, String remoteUser) throws IOException
     {
         return render(iframeContext, extraPath, queryParams, remoteUser, Collections.<String, Object>emptyMap());
@@ -136,6 +124,7 @@ public final class IFrameRendererImpl implements IFrameRenderer
     }
 
     @Override
+    @Deprecated
     public String renderInline(IFrameContext iframeContext, String extraPath, Map<String, String[]> queryParams, String remoteUser) throws IOException
     {
         return renderInline(iframeContext, extraPath, queryParams, remoteUser, Collections.<String, Object>emptyMap());
@@ -147,13 +136,16 @@ public final class IFrameRendererImpl implements IFrameRenderer
         return renderWithTemplate(prepareContext(iframeContext, extraPath, queryParams, remoteUser, productContext), "velocity/iframe-body-inline.vm");
     }
 
-    private String renderWithTemplate(Map<String, Object> ctx, String templatePath) throws IOException {
+    private String renderWithTemplate(Map<String, Object> ctx, String templatePath) throws IOException
+    {
         StringWriter output = new StringWriter();
         templateRenderer.render(templatePath, ctx, output);
         return output.toString();
     }
 
-    private Map<String, Object> prepareContext(IFrameContext iframeContext, String extraPath, Map<String, String[]> queryParams, String remoteUser, Map<String, Object> productContext) {
+    private Map<String, Object> prepareContext(IFrameContext iframeContext, String extraPath, Map<String, String[]> queryParams, String remoteUser, Map<String, Object> productContext)
+            throws IOException
+    {
         RemotablePluginAccessor remotablePluginAccessor = remotablePluginAccessorFactory.get(iframeContext.getPluginKey());
 
         final URI hostUrl = iframeHost.getUrl();
@@ -206,19 +198,12 @@ public final class IFrameRendererImpl implements IFrameRenderer
         return ctx;
     }
 
-    private String encodeProductContext(Map<String, Object> productContext)
+    private String encodeProductContext(Map<String, Object> productContext) throws IOException
     {
-        try
-        {
-            String json = new JSONObject(productContext).toString();
-            StringWriter writer = new StringWriter();
-            JavascriptEncoder.escape(writer, json);
-            return writer.toString();
-        }
-        catch (IOException ex)
-        {
-            throw new RuntimeException("Error encoding JSON string", ex);
-        }
+        String json = new JSONObject(productContext).toString();
+        StringWriter writer = new StringWriter();
+        JavascriptEncoder.escape(writer, json);
+        return writer.toString();
     }
 
     private Map<String, List<String>> contextQueryParameters(final Map<String, String[]> queryParams)
