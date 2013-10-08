@@ -58,7 +58,6 @@ public class IFramePageServlet extends HttpServlet
         resp.setContentType("text/html");
         String originalPath = iframeContext.getIframePath();
         Map<String, Object> productContext = getProductContext(req);
-        // TODO: unclear whether we should be passing all params from request here
         Map<String, Object> paramsFromRequest = mapRequestParametersToContextParameters(req);
         paramsFromRequest.putAll(productContext);
         String iFramePath = urlVariableSubstitutor.replace(originalPath, paramsFromRequest);
@@ -66,7 +65,7 @@ public class IFramePageServlet extends HttpServlet
         iFramePageRenderer.renderPage(
                 new IFrameContextImpl(iframeContext.getPluginKey(), iFramePath, iframeContext.getNamespace(), iframeContext.getIFrameParams()),
                 pageInfo, req.getPathInfo(), copyRequestContext(req, originalPath), userManager.getRemoteUsername(req),
-                productContext, out);
+                paramsFromRequest, out);
     }
 
     private Map<String, Object> getProductContext(HttpServletRequest req) throws IOException
