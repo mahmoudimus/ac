@@ -26,6 +26,7 @@ _AP.define("host/main", ["_xdm", "host/_addons"], function (XdmRpc, addons) {
         start = new Date().getTime(),
         isDialog = !!options.dlg,
         isSimpleDialog = !!options.simpleDlg,
+        isGeneral = !!options.general,
         // json string representing product context
         productContextJson = options.productCtx,
         isInited;
@@ -96,6 +97,24 @@ _AP.define("host/main", ["_xdm", "host/_addons"], function (XdmRpc, addons) {
           if (!isDialog) {
             // dialog content plugins do not honor resize requests, since their content size is fixed
             $("iframe", $content).css({width: width, height: height});
+          }
+        }),
+        sizeToParent: debounce(function() {
+          // sizeToParent is only available for general-pages
+          if (isGeneral) {
+            // This adds border between the iframe and the page footer as the connect addon has scrolling content and can't do this
+            $iframe.addClass("full-size-general-page");
+            function resizeHandler() {
+              var height = $(document).height() - AJS.$("#header > nav").outerHeight() - AJS.$("#footer").outerHeight() - 20;
+              $("iframe", $content).css({width: "100%", height: height + "px"});
+            }
+            $(window).on('resize', resizeHandler);
+            resizeHandler();
+          }
+          else {
+            // This is only here to support integration testing
+            // see com.atlassian.plugin.connect.test.pageobjects.RemotePage#isNotFullSize()
+            $iframe.addClass("full-size-general-page-fail");
           }
         }),
         getLocation: function () {
