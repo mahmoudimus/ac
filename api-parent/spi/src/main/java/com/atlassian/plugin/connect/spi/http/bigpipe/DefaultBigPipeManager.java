@@ -260,6 +260,7 @@ public final class DefaultBigPipeManager implements BigPipeManager, DisposableBe
     {
         private final List<InternalHandler> handlers;
         private final HtmlChannelImpl htmlChannel;
+        private final HtmlChannelImpl scriptChannel;
         private final ConcurrentMap<String, DataChannelImpl> dataChannels;
 
         /**
@@ -275,7 +276,8 @@ public final class DefaultBigPipeManager implements BigPipeManager, DisposableBe
             this.requestId = requestId;
             this.userId = userId;
             this.handlers = new LoggingList<InternalHandler>(logger, format("request '%s' handlers'", requestId), new CopyOnWriteArrayList<InternalHandler>());
-            this.htmlChannel = new HtmlChannelImpl();
+            this.htmlChannel = new HtmlContentChannelImpl();
+            this.scriptChannel = new ScriptContentChannelImpl();
             this.dataChannels = CopyOnWriteMap.newHashMap();
             this.expiry = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(30);
         }
@@ -293,11 +295,19 @@ public final class DefaultBigPipeManager implements BigPipeManager, DisposableBe
         }
 
         @Override
+        public HtmlChannel getScriptChannel()
+        {
+            return scriptChannel;
+        }
+
+        @Override
         public DataChannel getDataChannel(String channelId)
         {
             checkNotNull(channelId);
             checkArgument(!HTML_CHANNEL_ID.equals(channelId),
                     "Data channels must not use the reserved channel id '%s'", HTML_CHANNEL_ID);
+            checkArgument(!SCRIPT_CHANNEL_ID.equals(channelId),
+                    "Data channels must not use the reserved channel id '%s'", SCRIPT_CHANNEL_ID);
 
             DataChannel channel = dataChannels.get(channelId);
             if (channel == null)
@@ -469,6 +479,10 @@ public final class DefaultBigPipeManager implements BigPipeManager, DisposableBe
                 {
                     pendingChannelIds.add(htmlChannel.getId());
                 }
+                if (scriptChannel.isRetained())
+                {
+                    pendingChannelIds.add(scriptChannel.getId());
+                }
                 for (DataChannelImpl dataChannel : dataChannels.values())
                 {
                     if (dataChannel.isRetained())
@@ -502,11 +516,28 @@ public final class DefaultBigPipeManager implements BigPipeManager, DisposableBe
             return handler;
         }
 
-        private class HtmlChannelImpl extends AbstractChannel implements HtmlChannel
+        private class HtmlContentChannelImpl extends HtmlChannelImpl
         {
-            HtmlChannelImpl()
-            {
+            private HtmlContentChannelImpl() {
                 super(HTML_CHANNEL_ID);
+            }
+        }
+
+        private class ScriptContentChannelImpl extends HtmlChannelImpl
+        {
+            private ScriptContentChannelImpl() {
+                super(SCRIPT_CHANNEL_ID);
+            }
+        }
+
+        private abstract class HtmlChannelImpl extends AbstractChannel implements HtmlChannel
+        {
+            private final String channelId;
+
+            HtmlChannelImpl(String channelId)
+            {
+                super(channelId);
+                this.channelId = channelId;
             }
 
             @Override
@@ -515,8 +546,8 @@ public final class DefaultBigPipeManager implements BigPipeManager, DisposableBe
                 retainWhile(promise);
                 final HtmlPromise htmlPromise = new HtmlPromise(promise);
 
-                final InternalHandler handler = registerContentPromise(BigPipe.HTML_CHANNEL_ID, htmlPromise);
-                logger.debug("Added HTML big pipe content with id {} to request {}", htmlPromise.contentId, requestId);
+                final InternalHandler handler = registerContentPromise(channelId, htmlPromise);
+                logger.debug("Added big pipe content with id {} to request {}", htmlPromise.contentId, requestId);
 
                 htmlPromise.setHandler(handler);
                 return new Supplier<String>()
