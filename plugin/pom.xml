@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.0-m13.2</version>
+        <version>1.0-m14.2-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -203,6 +203,11 @@
             <artifactId>atlassian-template-renderer-api</artifactId>
             <version>${atlassian.templaterenderer.version}</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.html</groupId>
+            <artifactId>atlassian-html-encoder</artifactId>
+            <version>${atlassian.html.encoder.version}</version>
         </dependency>
 
         <dependency>

@@ -1,11 +1,14 @@
 package com.atlassian.plugin.connect.plugin.module.page;
 
-import com.atlassian.extras.common.org.springframework.util.StringUtils;
+import com.atlassian.plugin.connect.plugin.module.IFramePageRenderer;
 import com.atlassian.plugin.connect.plugin.module.IFrameRendererImpl;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.spi.module.IFrameContext;
 import com.atlassian.sal.api.user.UserManager;
 import com.google.common.collect.ImmutableMap;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -13,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -28,18 +32,18 @@ public class IFramePageServlet extends HttpServlet
     private final UrlVariableSubstitutor urlVariableSubstitutor;
     private final PageInfo pageInfo;
     private final IFrameContext iframeContext;
-    private final IFrameRendererImpl iFrameRenderer;
+    private final IFramePageRenderer iFramePageRenderer;
     private final Map<String, String> contextParamNameToSymbolicName; // e.g. "my_space_id": "space.id"
 
     public IFramePageServlet(PageInfo pageInfo,
-            IFrameRendererImpl iFrameRenderer,
+                             IFramePageRenderer iFramePageRenderer,
             IFrameContext iframeContext,
             UserManager userManager,
             UrlVariableSubstitutor urlVariableSubstitutor,
             Map<String, String> contextParamNameToSymbolicName)
     {
         this.iframeContext = iframeContext;
-        this.iFrameRenderer = iFrameRenderer;
+        this.iFramePageRenderer = iFramePageRenderer;
         this.pageInfo = pageInfo;
         this.userManager = userManager;
         this.urlVariableSubstitutor = urlVariableSubstitutor;
@@ -53,11 +57,35 @@ public class IFramePageServlet extends HttpServlet
         PrintWriter out = resp.getWriter();
         resp.setContentType("text/html");
         String originalPath = iframeContext.getIframePath();
-        String iFramePath = urlVariableSubstitutor.replace(originalPath, mapRequestParametersToContextParameters(req));
+        Map<String, Object> productContext = getProductContext(req);
+        Map<String, Object> paramsFromRequest = mapRequestParametersToContextParameters(req);
+        paramsFromRequest.putAll(productContext);
+        String iFramePath = urlVariableSubstitutor.replace(originalPath, paramsFromRequest);
 
-        iFrameRenderer.renderPage(
+        iFramePageRenderer.renderPage(
                 new IFrameContextImpl(iframeContext.getPluginKey(), iFramePath, iframeContext.getNamespace(), iframeContext.getIFrameParams()),
-                pageInfo, req.getPathInfo(), copyRequestContext(req, originalPath), userManager.getRemoteUsername(req), out);
+                pageInfo, req.getPathInfo(), copyRequestContext(req, originalPath), userManager.getRemoteUsername(req),
+                paramsFromRequest, out);
+    }
+
+    private Map<String, Object> getProductContext(HttpServletRequest req) throws IOException
+    {
+        String productContextJson = req.getParameter("product-context");
+        if (null != productContextJson)
+        {
+            try
+            {
+                return (JSONObject) new JSONParser().parse(productContextJson);
+            }
+            catch (ParseException e)
+            {
+                throw new IOException("Error parsing product context JSON", e);
+            }
+        }
+        else
+        {
+            return Collections.emptyMap();
+        }
     }
 
     /**

@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.atlassian.plugins</groupId>
     <artifactId>atlassian-connect-parent</artifactId>
-    <version>1.0-m13.2</version>
+    <version>1.0-m14.2-SNAPSHOT</version>
 
     <organization>
         <name>Atlassian</name>
@@ -450,6 +450,11 @@
                 <version>${atlassian.plugins.version}</version>
                 <scope>provided</scope>
             </dependency>
+            <dependency>
+                <groupId>com.atlassian.html</groupId>
+                <artifactId>atlassian-html-encoder</artifactId>
+                <version>${atlassian.html.encoder.version}</version>
+            </dependency>
         </dependencies>
         
     </dependencyManagement>
@@ -499,6 +504,7 @@
         <atlassian.webhooks.api.version>0.16</atlassian.webhooks.api.version>
         <atlassian.webresource.version>2.14.0-m5</atlassian.webresource.version>
         <atlassian.webfragments.version>3.0.0-m7</atlassian.webfragments.version>
+        <atlassian.html.encoder.version>1.4</atlassian.html.encoder.version>
 
         <guava.version>10.0.1</guava.version>
         <jetty.version>8.1.7.v20120910</jetty.version>

@@ -5,12 +5,11 @@ _AP.define("dialog", ["_dollar"], function($) {
 
   var $dialog; // active dialog element
 
-  function createDialog(pluginKey, options) {
+  // Deprecated. This passes the raw url to ContextFreeIframePageServlet, which is vulnerable to spoofing.
+  // Will be removed - plugins should pass key of the <dialog-page>, NOT the url.
+  function getIframeHtmlForUrl(pluginKey, options) {
     var contentUrl = AJS.contextPath() + "/plugins/servlet/render-signed-iframe";
-
-    if ($nexus) throw new Error("Only one dialog can be open at once");
-
-    $.ajax(contentUrl, {
+    return $.ajax(contentUrl, {
       dataType: "html",
       data: {
         "dialog": true,
@@ -18,19 +17,43 @@ _AP.define("dialog", ["_dollar"], function($) {
         "remote-url": options.url,
         "width": "100%",
         "height": "100%"
-      },
-      success: function(data) {
+      }
+    });
+  }
+
+  function getIframeHtmlForKey(pluginKey, productContextJson, options) {
+    var contentUrl = AJS.contextPath() + "/plugins/servlet/atlassian-connect/" + pluginKey + "/" + options.key;
+    return $.ajax(contentUrl, {
+      dataType: "html",
+      data: {
+        "dialog": true,
+        "plugin-key": pluginKey,
+        "product-context": productContextJson,
+        "key": options.key,
+        "width": "100%",
+        "height": "100%"
+      }
+    });
+  }
+
+  function createDialog(pluginKey, productContextJson, options) {
+
+    if ($nexus) throw new Error("Only one dialog can be open at once");
+
+    var promise = options.url ? getIframeHtmlForUrl(pluginKey, options) : getIframeHtmlForKey(pluginKey, productContextJson, options);
+
+    promise
+      .done(function(data) {
         $nexus.html(data);
-      },
-      error: function(xhr, status, ex) {
+      })
+      .fail(function(xhr, status, ex) {
         var title = "Unable to load plugin content.  Please try again later.";
         $nexus.html("<div class='aui-message error' style='margin: 10px'></div>");
         $nexus.find(".error").append("<p class='title'>" + title + "</p>");
         var msg = status + (ex ? ": " + ex.toString() : "");
         $nexus.find(".error").append(msg);
         AJS.log(msg);
-      }
-    });
+      });
 
     $dialog = createDialogElement(options.id, options.titleId, options.size).appendTo(AJS.$("body"));
     if (options.width || options.height) {

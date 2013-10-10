@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin.module.webitem;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.integration.plugins.DynamicDescriptorRegistration;
 import com.atlassian.plugin.connect.plugin.module.ConditionProcessor;
+import com.atlassian.plugin.connect.plugin.module.IFramePageRenderer;
 import com.atlassian.plugin.connect.plugin.module.IFrameRendererImpl;
 import com.atlassian.plugin.connect.plugin.module.WebItemCreator;
 import com.atlassian.plugin.connect.plugin.module.page.RemotePageDescriptorCreator;
@@ -81,9 +82,9 @@ public abstract class RemoteWebItemModuleDescriptorTestBase
         when(bundleContext.getService(any(ServiceReference.class))).thenReturn(mock(ServletModuleManager.class));
         MyWebItemModuleDescriptorFactory webItemModuleDescriptorFactory = new MyWebItemModuleDescriptorFactory();
         WebItemCreator webItemCreator = new WebItemCreator(conditionProcessor, webItemModuleDescriptorFactory);
-        IFrameRendererImpl iFrameRenderer = null;
+        IFramePageRenderer iFramePageRenderer = null;
         UrlVariableSubstitutor urlVariableSubstitutor = new UrlVariableSubstitutor();
-        RemotePageDescriptorCreator remotePageDescriptorCreator = new RemotePageDescriptorCreator(bundleContext, userManager, webItemCreator, iFrameRenderer, productAccessor, urlValidator, urlVariableSubstitutor);
+        RemotePageDescriptorCreator remotePageDescriptorCreator = new RemotePageDescriptorCreator(bundleContext, userManager, webItemCreator, iFramePageRenderer, productAccessor, urlValidator, urlVariableSubstitutor);
         RemoteWebItemModuleDescriptor descriptor = new RemoteWebItemModuleDescriptor(moduleFactory, dynamicDescriptorRegistration, remotePageDescriptorCreator,
                 urlValidator, conditionProcessor, webItemCreator, urlVariableSubstitutor, pluginAccessorFactory);
         RemotablePluginAccessor remotablePluginAccessor = mock(RemotablePluginAccessor.class);

@@ -27,6 +27,8 @@ _AP.define("host/main", ["_xdm", "host/_addons"], function (XdmRpc, addons) {
         isDialog = !!options.dlg,
         isSimpleDialog = !!options.simpleDlg,
         isGeneral = !!options.general,
+        // json string representing product context
+        productContextJson = options.productCtx,
         isInited;
 
     function publish(name, props) {
@@ -162,7 +164,7 @@ _AP.define("host/main", ["_xdm", "host/_addons"], function (XdmRpc, addons) {
         },
         createDialog: function(dialogOptions) {
           _AP.require("dialog", function(dialog) {
-            dialog.create(options.key, dialogOptions);
+            dialog.create(options.key, productContextJson, dialogOptions);
           });
         },
         closeDialog: function() {
@@ -231,15 +233,18 @@ _AP.define("host/main", ["_xdm", "host/_addons"], function (XdmRpc, addons) {
 
     function layoutIfNeeded() {
       var $stats = $(".ap-stats", $home);
+      $stats.removeClass("hidden");
       if (isSimpleDialog) {
         var panelHeight = $nexus.parent().height();
         $iframe.parents(".ap-servlet-placeholder, .ap-container").height(panelHeight);
         var containerHeight = $iframe.parents(".ap-container").height(),
-            iframeHeight = containerHeight - $stats.outerHeight(true);
+            iframeHeight = containerHeight;
+        if ($stats.find(".ap-status:visible").length > 0) {
+            iframeHeight -= $stats.outerHeight(true);
+        }
         $iframe.height(iframeHeight);
         $content.height(iframeHeight);
       }
-      $stats.removeClass("hidden");
     }
 
     layoutIfNeeded();

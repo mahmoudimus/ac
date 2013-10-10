@@ -34,13 +34,16 @@ public class RemoteDialogOpeningPage
     @Inject
     protected PageElementFinder elementFinder;
 
+    // "servlet" || "remote-web-item"
+    private final String type;
     private final String key;
     private final String pluginKey;
 
     protected WebElement containerDiv;
 
-    public RemoteDialogOpeningPage(String key, String pluginKey)
+    public RemoteDialogOpeningPage(String type, String key, String pluginKey)
     {
+        this.type = type;
         this.key = key;
         this.pluginKey = pluginKey;
     }
@@ -48,23 +51,34 @@ public class RemoteDialogOpeningPage
     @Init
     public void init()
     {
-        this.containerDiv = driver.findElement(By.id("embedded-servlet-" + key));
+        this.containerDiv = driver.findElement(By.id("embedded-" + type + "-" + key));
     }
 
-    public RemoteCloseDialogPage open()
+    public RemoteCloseDialogPage openUrl()
+    {
+        open("dialog-open-button-url");
+        return pageBinder.bind(RemoteCloseDialogPage.class, "ap-" + pluginKey + "-dialog");
+    }
+
+    public RemoteCloseDialogPage openKey(String expectedNamespace)
+    {
+        open("dialog-open-button-key");
+        return pageBinder.bind(RemoteCloseDialogPage.class, "ap-" + expectedNamespace);
+    }
+
+    private void open(final String id)
     {
         runInFrame(driver, containerDiv, new Callable<Void>()
         {
             @Override
             public Void call() throws Exception
             {
-                PageElement element = elementFinder.find(By.id("dialog-open-button"));
+                PageElement element = elementFinder.find(By.id(id));
                 waitUntilTrue(element.timed().isVisible());
                 element.click();
                 return null;
             }
         });
-        return pageBinder.bind(RemoteCloseDialogPage.class, "ap-" + pluginKey + "-dialog");
     }
 
     public String waitForValue(String key)
