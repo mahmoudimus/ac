@@ -36,7 +36,7 @@ public class RemoteWebItem
     @Init
     public void init()
     {
-        webItem = elementFinder.find(By.id("webitem-" + id));
+        webItem = elementFinder.find(By.id(id));
         waitUntilTrue(webItem.timed().isPresent());
     }
 

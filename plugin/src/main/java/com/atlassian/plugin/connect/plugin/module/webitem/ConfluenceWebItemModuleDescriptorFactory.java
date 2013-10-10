@@ -29,9 +29,9 @@ public class ConfluenceWebItemModuleDescriptorFactory implements WebItemModuleDe
     }
 
     @Override
-    public WebItemModuleDescriptor createWebItemModuleDescriptor(String url, String moduleKey, boolean absolute)
+    public WebItemModuleDescriptor createWebItemModuleDescriptor(String url, String linkId, boolean absolute)
     {
-        return new RemoteConfluenceWebItemModuleDescriptor(urlVariableSubstitutor, contextMapURLSerializer, contextMapURLSerializer, webFragmentHelper, url, moduleKey, absolute);
+        return new RemoteConfluenceWebItemModuleDescriptor(urlVariableSubstitutor, contextMapURLSerializer, contextMapURLSerializer, webFragmentHelper, url, linkId, absolute);
     }
 
     private static final class RemoteConfluenceWebItemModuleDescriptor extends ConfluenceWebItemModuleDescriptor
@@ -41,7 +41,7 @@ public class ConfluenceWebItemModuleDescriptorFactory implements WebItemModuleDe
         private final ContextMapURLSerializer contextMapURLSerializer;
         private final WebFragmentHelper webFragmentHelper;
         private final String url;
-        private final String moduleKey;
+        private final String linkId;
         private final boolean absolute;
 
         private RemoteConfluenceWebItemModuleDescriptor(
@@ -50,7 +50,7 @@ public class ConfluenceWebItemModuleDescriptorFactory implements WebItemModuleDe
                 ContextMapURLSerializer contextMapURLSerializer,
                 WebFragmentHelper webFragmentHelper,
                 String url,
-                String moduleKey,
+                String linkId,
                 boolean absolute)
         {
             this.urlVariableSubstitutor = urlVariableSubstitutor;
@@ -58,14 +58,14 @@ public class ConfluenceWebItemModuleDescriptorFactory implements WebItemModuleDe
             this.contextMapURLSerializer = contextMapURLSerializer;
             this.webFragmentHelper = webFragmentHelper;
             this.url = url;
-            this.moduleKey = moduleKey;
+            this.linkId = linkId;
             this.absolute = absolute;
         }
 
         @Override
         public ConfluenceWebLink getLink()
         {
-            return new ConfluenceWebLink(new RemoteWebLink(this, webFragmentHelper, urlVariableSubstitutor, contextMapURLSerializer, url, moduleKey, absolute));
+            return new ConfluenceWebLink(new RemoteWebLink(this, webFragmentHelper, urlVariableSubstitutor, contextMapURLSerializer, url, linkId, absolute));
         }
     }
 }

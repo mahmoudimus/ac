@@ -1,7 +1,5 @@
 package it.jira;
 
-import java.util.concurrent.Callable;
-
 import com.atlassian.jira.pageobjects.pages.project.BrowseProjectPage;
 import com.atlassian.jira.pageobjects.project.ProjectConfigTabs;
 import com.atlassian.jira.pageobjects.project.summary.ProjectSummaryPageTab;
@@ -12,7 +10,6 @@ import com.atlassian.plugin.connect.test.pageobjects.jira.JiraProjectAdministrat
 import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
 import com.atlassian.plugin.connect.test.server.module.ProjectConfigTabModule;
 import com.atlassian.plugin.connect.test.server.module.ProjectTabPageModule;
-
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.AfterClass;
@@ -21,9 +18,10 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.matchers.JUnitMatchers;
 
+import java.util.concurrent.Callable;
+
 import static com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner.newMustacheServlet;
 import static org.junit.Assert.*;
-import static org.junit.matchers.JUnitMatchers.hasItem;
 
 /**
  * Test of project tabs in JIRA.
@@ -89,7 +87,7 @@ public class TestProjectTabPage extends JiraWebDriverTestBase
 
         final JiraProjectAdministrationTab remoteProjectAdministrationTab =
                 page.getTabs().gotoTab(
-                        "webitem-jira-remotePluginProjectConfigTab",
+                        "jira-remotePluginProjectConfigTab",
                         JiraProjectAdministrationTab.class,
                         project.getKey());
 

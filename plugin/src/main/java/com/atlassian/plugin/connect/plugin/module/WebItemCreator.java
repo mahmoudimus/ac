@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -62,6 +63,11 @@ public final class WebItemCreator
         private String preferredSectionKey;
         private boolean absolute;
 
+        public Builder()
+        {
+            this.contextParams = new HashMap<String, String>();
+        }
+        
         public WebItemModuleDescriptor build(Plugin plugin, String key, String webItemUrl, Element configurationElement)
         {
             notNull(condition);
@@ -79,7 +85,7 @@ public final class WebItemCreator
                     getRequiredAttribute(configurationElement, "name")));
             config.addElement("label").addAttribute("key", name);
             Element linkElement = config.addElement("link").
-                    addAttribute("linkId", webItemKey);
+                    addAttribute("linkId", key);
 
             String url = null;
             if (webItemUrl != null)
@@ -142,13 +148,13 @@ public final class WebItemCreator
             {
                 log.debug("Created web item: " + printNode(config));
             }
-            return createWebItemDescriptor(conditionProcessor.getLoadablePlugin(plugin), config, webItemKey, url);
+            return createWebItemDescriptor(conditionProcessor.getLoadablePlugin(plugin), config, key, url);
         }
 
-        private WebItemModuleDescriptor createWebItemDescriptor(Plugin plugin, Element config, String key, String url)
+        private WebItemModuleDescriptor createWebItemDescriptor(Plugin plugin, Element config, String linkId, String url)
         {
             config.addAttribute("system", "true");
-            final WebItemModuleDescriptor descriptor = webItemModuleDescriptorFactory.createWebItemModuleDescriptor(url, key, absolute);
+            final WebItemModuleDescriptor descriptor = webItemModuleDescriptorFactory.createWebItemModuleDescriptor(url, linkId, absolute);
             descriptor.init(plugin, config);
             return descriptor;
         }
@@ -180,20 +186,15 @@ public final class WebItemCreator
             return this;
         }
 
+        public Map<String, String> getContextParams()
+        {
+            return contextParams;
+        }
+
         public Builder setContextParams(Map<String, String> contextParams)
         {
             this.contextParams = contextParams;
             return this;
-        }
-
-        public Builder setContextParams(Set<String> contextParams)
-        {
-            ImmutableMap.Builder<String, String> mapBuilder = ImmutableMap.builder();
-            for (String param : contextParams)
-            {
-                mapBuilder.put(param, String.format("${%s}", param));
-            }
-            return setContextParams(mapBuilder.build());
         }
 
         public Builder setPreferredWeight(int preferredWeight)

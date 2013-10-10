@@ -95,13 +95,13 @@ public final class RemotePageDescriptorCreator
             checkNotNull(decorator);
             String key = getRequiredAttribute(descriptor, "key");
             final String url = getRequiredAttribute(descriptor, "url");
-            this.webItemCreatorBuilder.setContextParams(urlVariableSubstitutor.getContextVariables(url));
+            this.webItemCreatorBuilder.setContextParams(urlVariableSubstitutor.getContextVariableMap(url));
 
             String localUrl = createLocalUrl(plugin.getKey(), key);
             DescriptorToRegister webItemModuleDescriptor = new DescriptorToRegister(webItemCreatorBuilder.build(plugin, key, localUrl, descriptor));
 
             return ImmutableSet.of(
-                    createServletDescriptor(plugin, descriptor, key, url, localUrl),
+                    createServletDescriptor(plugin, descriptor, key, url, localUrl, webItemCreatorBuilder.getContextParams()),
                     webItemModuleDescriptor);
         }
 
@@ -110,7 +110,8 @@ public final class RemotePageDescriptorCreator
                 Element e,
                 String key,
                 final String path,
-                String localUrl)
+                String localUrl,
+                final Map<String, String> contextParamNameToSymbolicName)
         {
             final String pageName = getRequiredAttribute(e, "name");
             Element config = e.createCopy();
@@ -137,7 +138,8 @@ public final class RemotePageDescriptorCreator
                     return (T) new IFramePageServlet(
                             pageInfo,
                             iFrameRenderer,
-                            new IFrameContextImpl(plugin.getKey(), path, moduleKey, params), userManager, urlVariableSubstitutor
+                            new IFrameContextImpl(plugin.getKey(), path, moduleKey, params), userManager, urlVariableSubstitutor,
+                            contextParamNameToSymbolicName
                     );
                 }
             }, getService(bundleContext, ServletModuleManager.class));
