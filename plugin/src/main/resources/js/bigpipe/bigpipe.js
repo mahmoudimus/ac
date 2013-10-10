@@ -16,7 +16,7 @@ _AP.define("bigpipe/bigpipe", ["_dollar"], function($) {
         }
         else {
           if (console) {
-              console.warn('Ignoring content for channel "' + channelId + '" because it is not in channel "script" and there is no "' + contentId + '" div where we can put it.');
+            console.warn('Ignoring content for channel "' + channelId + '" because it is not in channel "script" and there is no "' + contentId + '" div where we can put it.');
           }
         }
       }
