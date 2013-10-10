@@ -10,8 +10,15 @@ _AP.define("bigpipe/bigpipe", ["_dollar"], function($) {
     var contentDiv$ = $('#' + contentId);
     if (contentDiv$.length == 0) {
       // Only append 'script' channel types to the bottom of the page
-      if (bodyHtml && channelId === 'script') {
-        $("body").append(bodyHtml);
+      if (bodyHtml) {
+        if (channelId === 'script') {
+          $("body").append(bodyHtml);
+        }
+        else {
+          if (console) {
+              console.warn('Ignoring content for channel "' + channelId + '" because it is not in channel "script" and there is no "' + contentId + '" div where we can put it.');
+          }
+        }
       }
     } else {
       contentDiv$.html(bodyHtml).removeClass("bp-loading");
@@ -33,7 +40,7 @@ _AP.define("bigpipe/bigpipe", ["_dollar"], function($) {
   function processContents(contents) {
     if (contents.items && contents.items.length > 0) {
       $.each(contents.items, function () {
-        if ($.inArray(this.channelId, ["html", "script"]) > -1 && this.content) {
+        if (this.content && (this.channelId === "html" || this.channelId === "script")) {
           insertContent(this.channelId, this.contentId, this.content);
         }
       });
