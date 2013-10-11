@@ -1,12 +1,5 @@
 package com.atlassian.plugin.connect.plugin.module.confluence;
 
-import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.net.URI;
-import java.util.Map;
-import java.util.regex.Pattern;
-
 import com.atlassian.confluence.content.render.xhtml.StorageFormatCleaner;
 import com.atlassian.confluence.core.ContentEntityObject;
 import com.atlassian.confluence.event.events.content.page.PageEvent;
@@ -14,30 +7,33 @@ import com.atlassian.confluence.event.events.content.page.PageViewEvent;
 import com.atlassian.confluence.xhtml.api.XhtmlContent;
 import com.atlassian.event.api.EventListener;
 import com.atlassian.event.api.EventPublisher;
-import com.atlassian.plugin.connect.api.service.http.bigpipe.BigPipe;
 import com.atlassian.plugin.connect.api.service.http.bigpipe.BigPipeManager;
 import com.atlassian.plugin.connect.plugin.DefaultRemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.plugin.util.http.CachingHttpContentRetriever;
 import com.atlassian.plugin.connect.plugin.util.http.ContentRetrievalErrors;
 import com.atlassian.plugin.connect.plugin.util.http.ContentRetrievalException;
-import com.atlassian.renderer.RenderContextOutputType;
+import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.sal.api.transaction.TransactionCallback;
 import com.atlassian.sal.api.transaction.TransactionTemplate;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.atlassian.util.concurrent.Promise;
-
 import com.google.common.base.Function;
-import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
+
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.net.URI;
+import java.util.*;
+import java.util.regex.Pattern;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -81,6 +77,86 @@ public class MacroContentManager implements DisposableBean
         this.macroContentLinkParser = macroContentLinkParser;
     }
 
+    // AC-795: remove this cache when bigpipe- and confluence-related infinite rendering loop is fixed
+    private static class FiniteLinkedHashMap<K,V> extends LinkedHashMap<K,V>
+    {
+        private final int maxSize;
+
+        FiniteLinkedHashMap(final int maxSize)
+        {
+            this.maxSize = maxSize;
+        }
+
+        @Override
+        protected boolean removeEldestEntry(Map.Entry<K,V> eldest)
+        {
+            boolean evict = size() > maxSize;
+
+            if (evict)
+            {
+                log.warn("Evicting eldest cache entry because the cache is at its maximum size: {}", maxSize);
+            }
+
+            return evict;
+        }
+    }
+
+    // AC-795: remove this cache when bigpipe- and confluence-related infinite rendering loop is fixed
+    private static class CurrentMacroRequestCache
+    {
+        private static final int MAX_CACHE_SIZE = 1000;
+        private static CurrentMacroRequestCache instance = new CurrentMacroRequestCache();
+        private Map<String, Boolean> macroRequestKeys = Collections.synchronizedMap(new FiniteLinkedHashMap<String, Boolean>(MAX_CACHE_SIZE));
+
+        private CurrentMacroRequestCache() {} // no externally constructed instances
+
+        boolean contains(String macroRequestKey)
+        {
+            return macroRequestKeys.containsKey(macroRequestKey);
+        }
+
+        void cache(String macroRequestKey)
+        {
+            log.debug("Caching macro request key: '{}'", macroRequestKey);
+            macroRequestKeys.put(macroRequestKey, true);
+        }
+
+        void evict(String macroRequestKey)
+        {
+            log.debug("Evicting macro request key: '{}'", macroRequestKey);
+            macroRequestKeys.remove(macroRequestKey);
+        }
+
+        static CurrentMacroRequestCache getInstance()
+        {
+            return instance;
+        }
+
+        static String constructKey(HttpMethod method, URI path, Map<String, String> urlParameters, Map<String, String> headers)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.append(method.name())
+              .append(path)
+              .append(constructKeyFromMap(urlParameters))
+              .append(constructKeyFromMap(headers));
+            return sb.toString();
+        }
+
+        private static String constructKeyFromMap(Map<String, String> urlParameters)
+        {
+            StringBuilder sb = new StringBuilder();
+            List<String> urlParamKeys = new ArrayList<String>(urlParameters.keySet());
+            Collections.sort(urlParamKeys);
+
+            for (String urlParamKey : urlParamKeys)
+            {
+                sb.append(urlParamKey).append(urlParameters.get(urlParamKey));
+            }
+
+            return sb.toString();
+        }
+    }
+
     /*!
      The macro content retrieval process details how content is retrieved from the remote plugin
      for display in a macro.  This process does not guarantee the content is only retrieved once
@@ -89,7 +165,6 @@ public class MacroContentManager implements DisposableBean
     */
     public String getStaticContent(final MacroInstance macroInstance) throws ContentRetrievalException
     {
-        BigPipe bigPipe = bigPipeManager.getBigPipe();
         ContentEntityObject entity = macroInstance.getEntity();
 
         final UserProfile author = getUserToRenderMacroAs(entity);
@@ -98,29 +173,36 @@ public class MacroContentManager implements DisposableBean
 
         final Map<String, String> urlParameters = macroInstance.getUrlParameters(username, userKey);
 
+        Map<String, String> headers = macroInstance.getHeaders(username, userKey);
+        String macroContentRequestKey = CurrentMacroRequestCache.constructKey(macroInstance.method,
+                macroInstance.getPath(), urlParameters, headers);
+        CurrentMacroRequestCache currentMacroRequestCache = CurrentMacroRequestCache.getInstance(); // AC-795: remove this cache when bigpipe- and confluence-related infinite rendering loop is fixed
+
+        if (currentMacroRequestCache.contains(macroContentRequestKey))
+        {
+            log.warn("This macro request is already in progress so I'm returning nothing: '{}'", macroContentRequestKey);
+            return "";
+        }
+
+        currentMacroRequestCache.cache(macroContentRequestKey);
         Promise<String> promise = macroInstance.getRemotablePluginAccessor().executeAsync(macroInstance.method,
-                macroInstance.getPath(), urlParameters, macroInstance.getHeaders(username, userKey))
+                macroInstance.getPath(), urlParameters, headers)
                 .fold(new ContentHandlerFailFunction(templateRenderer),
                         new HtmlToSafeHtmlFunction(macroInstance, urlParameters, macroContentLinkParser, xhtmlCleaner,
                                 xhtmlUtils, transactionTemplate));
         
-        final Supplier<String> initialContent = bigPipe.getHtmlChannel().promiseContent(promise);
         try
         {
-            // only render display via big pipe, block for everyone else
-            if (RenderContextOutputType.DISPLAY.equals(macroInstance.getConversionContext().getOutputType()))
-            {
-                return initialContent.get();
-            }
-            else
-            {
-                return promise.claim();
-            }
+            return promise.claim(); // AC-795: synchronous until bigpipe- and confluence-related infinite rendering loop is fixed
         }
         catch (RuntimeException e)
         {
             log.debug("Exception retrieving content", e);
             throw new ContentRetrievalException(Throwables.getRootCause(e));
+        }
+        finally
+        {
+            currentMacroRequestCache.evict(macroContentRequestKey);
         }
     }
 
