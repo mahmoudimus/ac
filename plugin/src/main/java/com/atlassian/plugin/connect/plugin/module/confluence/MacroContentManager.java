@@ -94,7 +94,7 @@ public class MacroContentManager implements DisposableBean
 
             if (evict)
             {
-                log.warn("Evicting eldest cache entry because the cache is at its maximum size: {}", maxSize);
+                log.warn("Evicting eldest cache entry because the cache is at its maximum size of {}: '{}'", maxSize, eldest.getKey().toString());
             }
 
             return evict;
@@ -117,13 +117,13 @@ public class MacroContentManager implements DisposableBean
 
         void cache(String macroRequestKey)
         {
-            log.debug("Caching macro request key: '{}'", macroRequestKey);
+            log.warn("Caching macro request key: '{}'", macroRequestKey);
             macroRequestKeys.put(macroRequestKey, true);
         }
 
         void evict(String macroRequestKey)
         {
-            log.debug("Evicting macro request key: '{}'", macroRequestKey);
+            log.warn("Evicting macro request key: '{}'", macroRequestKey);
             macroRequestKeys.remove(macroRequestKey);
         }
 
