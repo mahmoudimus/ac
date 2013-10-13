@@ -276,6 +276,11 @@
                                     <artifactId>jira-testkit-plugin</artifactId>
                                     <version>${testkit.version}</version>
                                 </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.jwt</groupId>
+                                    <artifactId>jwt-plugin</artifactId>
+                                    <version>${atlassian.jwt.version}</version>
+                                </pluginArtifact>
                             </pluginArtifacts>
                             <libArtifacts>
                                 <!--<libArtifact>-->
@@ -327,6 +332,11 @@
                                     <groupId>${project.groupId}</groupId>
                                     <artifactId>atlassian-connect-rest-test-plugin</artifactId>
                                     <version>${project.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.jwt</groupId>
+                                    <artifactId>jwt-plugin</artifactId>
+                                    <version>${atlassian.jwt.version}</version>
                                 </pluginArtifact>
                             </pluginArtifacts>
                             <libArtifacts>
