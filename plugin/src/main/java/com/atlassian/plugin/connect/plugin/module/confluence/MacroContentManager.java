@@ -97,8 +97,7 @@ public class MacroContentManager implements DisposableBean
         
         try
         {
-            //return promise.claim(); // AC-795: synchronous until bigpipe- and confluence-related infinite rendering loop is fixed
-            
+            // AC-795: synchronous until bigpipe- and confluence-related infinite rendering loop is fixed.
             //we are now rendering in the same thread as any sub-rendering macro which "fixes the glitch".
             //Now we need to figure out how to handle http errors with the ContentHandlerFailFunction like before.
             String response = promise.claim();
