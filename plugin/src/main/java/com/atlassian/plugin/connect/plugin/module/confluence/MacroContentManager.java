@@ -178,22 +178,31 @@ public class MacroContentManager implements DisposableBean
                 macroInstance.getPath(), urlParameters, headers);
         CurrentMacroRequestCache currentMacroRequestCache = CurrentMacroRequestCache.getInstance(); // AC-795: remove this cache when bigpipe- and confluence-related infinite rendering loop is fixed
 
-        if (currentMacroRequestCache.contains(macroContentRequestKey))
-        {
-            log.warn("This macro request is already in progress so I'm returning nothing: '{}'", macroContentRequestKey);
-            return "";
-        }
+//        if (currentMacroRequestCache.contains(macroContentRequestKey))
+//        {
+//            log.warn("This macro request is already in progress so I'm returning nothing: '{}'", macroContentRequestKey);
+//            return "";
+//        }
 
         currentMacroRequestCache.cache(macroContentRequestKey);
-        Promise<String> promise = macroInstance.getRemotablePluginAccessor().executeAsync(macroInstance.method,
-                macroInstance.getPath(), urlParameters, headers)
-                .fold(new ContentHandlerFailFunction(templateRenderer),
-                        new HtmlToSafeHtmlFunction(macroInstance, urlParameters, macroContentLinkParser, xhtmlCleaner,
-                                xhtmlUtils, transactionTemplate));
+
+//        Promise<String> promise = macroInstance.getRemotablePluginAccessor().executeAsync(macroInstance.method,
+//                macroInstance.getPath(), urlParameters, headers)
+//                                               .fold(new ContentHandlerFailFunction(templateRenderer),
+//                                                       new HtmlToSafeHtmlFunction(macroInstance, urlParameters, macroContentLinkParser, xhtmlCleaner,
+//                                                               xhtmlUtils, transactionTemplate));
+        
+        Promise<String> promise = macroInstance.getRemotablePluginAccessor().executeAsync(macroInstance.method,macroInstance.getPath(), urlParameters, headers);
         
         try
         {
-            return promise.claim(); // AC-795: synchronous until bigpipe- and confluence-related infinite rendering loop is fixed
+            //return promise.claim(); // AC-795: synchronous until bigpipe- and confluence-related infinite rendering loop is fixed
+            
+            //we are now rendering in the same thread as any sub-rendering macro which "fixes the glitch".
+            //Now we need to figure out how to handle http errors with the ContentHandlerFailFunction like before.
+            String response = promise.claim();
+            HtmlToSafeHtmlFunction func = new HtmlToSafeHtmlFunction(macroInstance, urlParameters, macroContentLinkParser, xhtmlCleaner, xhtmlUtils, transactionTemplate);
+            return func.apply(response);
         }
         catch (RuntimeException e)
         {
