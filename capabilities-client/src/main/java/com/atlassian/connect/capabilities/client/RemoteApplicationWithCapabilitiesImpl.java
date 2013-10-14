@@ -38,6 +38,10 @@ public class RemoteApplicationWithCapabilitiesImpl implements RemoteApplicationW
         return buildDate != null ? buildDate : UniversalDateFormatter.NULL_DATE;
     }
 
+    /**
+     * 
+     * @return
+     */
     public String getKey()
     {
         return key;

@@ -36,6 +36,11 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>biz.aQute</groupId>
+            <artifactId>bndlib</artifactId>
+            <version>1.43.0-atlassian-1</version>
+        </dependency>
+        <dependency>
             <groupId>javax.inject</groupId>
             <artifactId>javax.inject</artifactId>
             <scope>provided</scope>
@@ -58,6 +63,11 @@
         <dependency>
             <groupId>com.atlassian.plugins</groupId>
             <artifactId>atlassian-plugins-osgi-bridge</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.plugins</groupId>
+            <artifactId>atlassian-plugins-osgi</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>

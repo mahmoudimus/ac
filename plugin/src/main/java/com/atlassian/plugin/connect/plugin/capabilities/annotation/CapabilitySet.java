@@ -1,11 +1,12 @@
-package com.atlassian.plugin.connect.api.capabilities.annotation;
+package com.atlassian.plugin.connect.plugin.capabilities.annotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import com.atlassian.plugin.connect.api.capabilities.provider.ConnectModuleProvider;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectModuleProvider;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.NullModuleProvider;
 
 import org.atteo.evo.classindex.IndexAnnotated;
 
@@ -28,6 +29,6 @@ public @interface CapabilitySet
      */
     String key();
     
-    Class<? extends ConnectModuleProvider> moduleProvider();
+    Class<? extends ConnectModuleProvider> moduleProvider() default NullModuleProvider.class;
 
 }

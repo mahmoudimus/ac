@@ -1,15 +1,23 @@
 package com.atlassian.plugin.connect.plugin.installer;
 
 import java.io.IOException;
-import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.atlassian.plugin.JarPluginArtifact;
 import com.atlassian.plugin.PluginArtifact;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectPluginXmlFactory;
+import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAddOnBundleBuilder;
 import com.atlassian.plugin.connect.plugin.util.zip.ZipBuilder;
 import com.atlassian.plugin.connect.plugin.util.zip.ZipHandler;
 import com.atlassian.plugin.connect.spi.ConnectAddOnIdentifierService;
 
+import com.google.common.base.Strings;
+
 import org.dom4j.Document;
+import org.osgi.framework.Constants;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -18,6 +26,16 @@ import org.springframework.stereotype.Component;
 @Component
 public class RemotePluginArtifactFactory
 {
+    private static final String ATLASSIAN_PLUGIN_KEY = "Atlassian-Plugin-Key";
+    private final ConnectPluginXmlFactory pluginXmlFactory;
+    public static String CLEAN_FILENAME_PATTERN = "[:\\\\/*?|<> _]";
+
+    @Autowired
+    public RemotePluginArtifactFactory(ConnectPluginXmlFactory pluginXmlFactory)
+    {
+        this.pluginXmlFactory = pluginXmlFactory;
+    }
+
     public PluginArtifact create(final Document document, String username)
     {
         String pluginKey = document.getRootElement().attributeValue("key");
@@ -42,5 +60,43 @@ public class RemotePluginArtifactFactory
                 .addElement("bundle-instructions")
                 .addElement(ConnectAddOnIdentifierService.CONNECT_HEADER)
                 .addText("installer;user=\"" + username + "\";date=\"" + System.currentTimeMillis() + "\"");
+    }
+
+    public PluginArtifact create(ConnectAddonBean addOn, String username)
+    {
+        ConnectAddOnBundleBuilder builder = new ConnectAddOnBundleBuilder();
+        
+        //create a proper manifest
+        builder.manifest(createManifest(addOn,username));
+        
+        //create the plugin.xml
+        builder.addResource("atlassian-plugin.xml",pluginXmlFactory.createPluginXml(addOn));
+
+        return new JarPluginArtifact(builder.build(addOn.getKey().replaceAll(CLEAN_FILENAME_PATTERN, "-").toLowerCase()));
+    }
+
+    private Map<String, String> createManifest(ConnectAddonBean addOn, String username)
+    {
+        Map<String,String> manifest = new HashMap<String, String>();
+        manifest.put(ATLASSIAN_PLUGIN_KEY,addOn.getKey());
+        manifest.put(Constants.BUNDLE_SYMBOLICNAME,addOn.getKey());
+        manifest.put(Constants.BUNDLE_VERSION,addOn.getVersion());
+        manifest.put(Constants.BUNDLE_CLASSPATH,".");
+        manifest.put("Spring-Context","*;timeout:=60");
+        manifest.put(ConnectAddOnIdentifierService.CONNECT_HEADER,"installer;user=\"" + username + "\";date=\"" + System.currentTimeMillis() + "\"");
+
+        if(null != addOn.getVendor())
+        {
+            if(!Strings.isNullOrEmpty(addOn.getVendor().getName()))
+            {
+                manifest.put(Constants.BUNDLE_VENDOR,addOn.getVendor().getName());
+            }
+            if(!Strings.isNullOrEmpty(addOn.getVendor().getUrl()))
+            {
+                manifest.put(Constants.BUNDLE_DOCURL,addOn.getVendor().getUrl());
+            }
+        }
+        
+        return manifest;
     }
 }

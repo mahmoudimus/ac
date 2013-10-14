@@ -1,10 +1,15 @@
 package com.atlassian.plugin.connect.plugin.installer;
 
-import java.net.URI;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.atlassian.plugin.*;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.CapabilityBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.OAuthLinkManager;
+import com.atlassian.plugin.connect.plugin.capabilities.BeanToModuleRegistrar;
+import com.atlassian.plugin.connect.plugin.capabilities.gson.CapabilitiesGsonFactory;
 import com.atlassian.plugin.connect.plugin.event.RemoteEventsHandler;
 import com.atlassian.plugin.connect.spi.InstallationFailedException;
 import com.atlassian.plugin.connect.spi.PermissionDeniedException;
@@ -13,10 +18,13 @@ import com.atlassian.plugin.descriptors.UnrecognisedModuleDescriptor;
 import com.atlassian.plugin.util.WaitUntil;
 
 import org.dom4j.Document;
+import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import static com.google.common.collect.Lists.newArrayList;
 
 @Component
 public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
@@ -26,37 +34,93 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
     private final PluginAccessor pluginAccessor;
     private final OAuthLinkManager oAuthLinkManager;
     private final RemoteEventsHandler remoteEventsHandler;
+    private final BeanToModuleRegistrar beanToModuleRegistrar;
+    private final BundleContext bundleContext;
 
     private static final Logger log = LoggerFactory.getLogger(DefaultConnectAddOnInstaller.class);
 
     @Autowired
-    public DefaultConnectAddOnInstaller(RemotePluginArtifactFactory remotePluginArtifactFactory, PluginController pluginController, PluginAccessor pluginAccessor, OAuthLinkManager oAuthLinkManager, RemoteEventsHandler remoteEventsHandler)
+    public DefaultConnectAddOnInstaller(RemotePluginArtifactFactory remotePluginArtifactFactory, PluginController pluginController, PluginAccessor pluginAccessor, OAuthLinkManager oAuthLinkManager, RemoteEventsHandler remoteEventsHandler, BeanToModuleRegistrar beanToModuleRegistrar, BundleContext bundleContext)
     {
         this.remotePluginArtifactFactory = remotePluginArtifactFactory;
         this.pluginController = pluginController;
         this.pluginAccessor = pluginAccessor;
         this.oAuthLinkManager = oAuthLinkManager;
         this.remoteEventsHandler = remoteEventsHandler;
+        this.beanToModuleRegistrar = beanToModuleRegistrar;
+        this.bundleContext = bundleContext;
     }
 
     @Override
     public Plugin install(final String username, final Document document)
     {
+        String pluginKey = getPluginKey(document);
+        removeOldPlugin(pluginKey);
+
+        final PluginArtifact pluginArtifact = getPluginArtifact(username, document);
+        
+        return installPlugin(pluginArtifact, pluginKey, username);
+    }
+    
+    @Override
+    public Plugin install(String username, String capabilities)
+    {
         String pluginKey = "unknown";
         try
         {
-            pluginKey = getPluginKey(document);
-            removeOldPlugin(pluginKey);
+            ConnectAddonBean addOn = CapabilitiesGsonFactory.getGson(bundleContext).fromJson(capabilities, ConnectAddonBean.class);
+            pluginKey = addOn.getKey();
 
-            Plugin installedPlugin = null;
-            final PluginArtifact pluginArtifact = getPluginArtifact(username, document);
+            removeOldPlugin(addOn.getKey());
+            final PluginArtifact pluginArtifact = remotePluginArtifactFactory.create(addOn, username);
 
+            long startTime = System.currentTimeMillis();
+            Plugin installedPlugin = installPlugin(pluginArtifact, pluginKey, username);
+            
+            try
+            {
+                List<CapabilityBean> capabilityBeans = newArrayList();
+                
+                for(Map.Entry<String,List<? extends CapabilityBean>> entry : addOn.getCapabilities().entrySet())
+                {
+                    capabilityBeans.addAll(entry.getValue());
+                }
+                
+                beanToModuleRegistrar.registerDescriptorsForBeans(installedPlugin,capabilityBeans);
+            }
+            catch (Exception e)
+            {
+                beanToModuleRegistrar.unregisterDescriptorsForPlugin(installedPlugin);
+                pluginController.uninstall(installedPlugin);
+                throw e;
+            }
+
+            long endTime = System.currentTimeMillis();
+
+            log.info("Capabilities based connect app started in " +(endTime - startTime) + "ms");
+            
+            return installedPlugin;
+
+        }
+        catch (Exception e)
+        {
+            throw new InstallationFailedException(e.getCause() != null ? e.getCause() : e);
+        }
+
+    }
+
+    private Plugin installPlugin(PluginArtifact pluginArtifact, String pluginKey, String username)
+    {
+        Plugin installedPlugin = null;
+        int moduleSize = 0;
+        try
+        {
             Set<String> pluginKeys = pluginController.installPlugins(pluginArtifact);
             if (pluginKeys.size() == 1)
             {
                 final String installedKey = pluginKeys.iterator().next();
                 final Plugin plugin = pluginAccessor.getPlugin(installedKey);
-
+                
                 // a dodgy plugin artifact can result in an UnloadablePlugin: it has a key but is not loaded
                 // so if you try to use that key to find a loaded plugin then you get nothing... boom.
                 // e.g.: atlassian-plugin.xml contains multiple <webhook> entities with the same key.
@@ -77,6 +141,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
                                 return false;
                             }
                         }
+                        
                         return true;
                     }
 
@@ -92,7 +157,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
                     {
                         if (descriptor instanceof UnloadableModuleDescriptor)
                         {
-                            cause = ((UnloadableModuleDescriptor)descriptor).getErrorText();
+                            cause = ((UnloadableModuleDescriptor) descriptor).getErrorText();
                             break;
                         }
                     }
@@ -111,7 +176,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
             remoteEventsHandler.pluginInstalled(pluginKey);
 
             log.info("Registered app '{}' by '{}'", pluginKey, username);
-
+            
             return installedPlugin;
         }
         catch (PermissionDeniedException ex)

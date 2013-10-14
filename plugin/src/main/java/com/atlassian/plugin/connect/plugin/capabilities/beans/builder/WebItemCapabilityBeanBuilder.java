@@ -2,21 +2,22 @@ package com.atlassian.plugin.connect.plugin.capabilities.beans.builder;
 
 import java.util.List;
 
-import com.atlassian.plugin.connect.plugin.capabilities.beans.I18nProperty;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.IconCapabilityBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean;
 
-/**
- * @since version
- */
-public class WebItemCapabilityBeanBuilder<T extends WebItemCapabilityBeanBuilder, B extends WebItemCapabilityBean> extends BaseCapabilityBeanBuilder<T, B>
+import static com.google.common.collect.Lists.newArrayList;
+
+public class WebItemCapabilityBeanBuilder extends NameToKeyBeanBuilder<WebItemCapabilityBeanBuilder, WebItemCapabilityBean>
 {
     private String link;
-    private String section;
+    private String location;
+    private AddOnUrlContext context;
     private int weight;
     private List<String> styleClasses;
     private I18nProperty tooltip;
-    private IconCapabilityBean icon;
+    private IconBean icon;
 
     public WebItemCapabilityBeanBuilder()
     {
@@ -28,7 +29,8 @@ public class WebItemCapabilityBeanBuilder<T extends WebItemCapabilityBeanBuilder
         super(defaultBean);
 
         this.link = defaultBean.getLink();
-        this.section = defaultBean.getSection();
+        this.location = defaultBean.getLocation();
+        this.context = defaultBean.getContext();
         this.weight = defaultBean.getWeight();
         this.styleClasses = defaultBean.getStyleClasses();
         this.tooltip = defaultBean.getTooltip();
@@ -41,9 +43,15 @@ public class WebItemCapabilityBeanBuilder<T extends WebItemCapabilityBeanBuilder
         return this;
     }
 
-    public WebItemCapabilityBeanBuilder withSection(String section)
+    public WebItemCapabilityBeanBuilder withContext(AddOnUrlContext context)
     {
-        this.section = section;
+        this.context = context;
+        return this;
+    }
+
+    public WebItemCapabilityBeanBuilder withLocation(String location)
+    {
+        this.location = location;
         return this;
     }
 
@@ -59,21 +67,27 @@ public class WebItemCapabilityBeanBuilder<T extends WebItemCapabilityBeanBuilder
         return this;
     }
 
+    public WebItemCapabilityBeanBuilder withStyleClasses(String ... styleClasses)
+    {
+        this.styleClasses = newArrayList(styleClasses);
+        return this;
+    }
+
     public WebItemCapabilityBeanBuilder withTooltip(I18nProperty tooltip)
     {
         this.tooltip = tooltip;
         return this;
     }
 
-    public WebItemCapabilityBeanBuilder withIcon(IconCapabilityBean icon)
+    public WebItemCapabilityBeanBuilder withIcon(IconBean icon)
     {
         this.icon = icon;
         return this;
     }
 
     @Override
-    public B build()
+    public WebItemCapabilityBean build()
     {
-        return (B) new WebItemCapabilityBean(this);
+        return new WebItemCapabilityBean(this);
     }
 }

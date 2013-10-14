@@ -100,7 +100,7 @@ public final class RemotePluginContainerModuleDescriptor extends AbstractModuleD
                 .rpcUrl(displayUrl)
                 .build();
 
-        if (element.getParent().elements(element.getName()).size() > 1)
+        if (null != element.getParent() && element.getParent().elements(element.getName()).size() > 1)
         {
             throw new PluginParseException("Can only have one remote-plugin-container module in a descriptor");
         }

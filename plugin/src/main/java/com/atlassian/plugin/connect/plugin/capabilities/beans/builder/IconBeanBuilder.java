@@ -1,40 +1,40 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans.builder;
 
-import com.atlassian.plugin.connect.plugin.capabilities.beans.IconCapabilityBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean;
 
 /**
  * @since version
  */
-public class IconCapabilityBeanBuilder<T extends IconCapabilityBeanBuilder, B extends IconCapabilityBean>
+public class IconBeanBuilder<T extends IconBeanBuilder, B extends IconBean>
 {
     private int width;
     private int height;
     private String url;
 
-    public IconCapabilityBeanBuilder()
+    public IconBeanBuilder()
     {
     }
 
-    public IconCapabilityBeanBuilder(IconCapabilityBean defaultBean)
+    public IconBeanBuilder(IconBean defaultBean)
     {
         this.width = defaultBean.getWidth();
         this.height = defaultBean.getHeight();
         this.url = defaultBean.getUrl();
     }
 
-    public IconCapabilityBeanBuilder withWidth(int width)
+    public IconBeanBuilder withWidth(int width)
     {
         this.width = width;
         return this;
     }
 
-    public IconCapabilityBeanBuilder withHeight(int height)
+    public IconBeanBuilder withHeight(int height)
     {
         this.height = height;
         return this;
     }
 
-    public IconCapabilityBeanBuilder withUrl(String url)
+    public IconBeanBuilder withUrl(String url)
     {
         this.url = url;
         return this;
@@ -42,6 +42,6 @@ public class IconCapabilityBeanBuilder<T extends IconCapabilityBeanBuilder, B ex
 
     public B build()
     {
-        return (B) new IconCapabilityBean(this);
+        return (B) new IconBean(this);
     }
 }
