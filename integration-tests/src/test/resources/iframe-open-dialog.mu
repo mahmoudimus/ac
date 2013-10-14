@@ -7,15 +7,25 @@
   </head>
   <body>
     <div>
-      <button class="aui-button" id="dialog-open-button">Open dialog</button>
+      <button class="aui-button" id="dialog-open-button-key">Open dialog via URL</button>
+      <button class="aui-button" id="dialog-open-button-url">Open dialog via Key</button>
       <br>
       Dialog Close Data: <span id="dialog-close-data"></span>
     </div>
     <script>
       AP.require(["_dollar", "dialog"], function($, dialog) {
-        $("#dialog-open-button").bind("click", function() {
+        $("#dialog-open-button-url").bind("click", function() {
           dialog.create({
             url: "/dialog"
+          }).on("close", function (data) {
+            $("#dialog-close-data")[0].innerHTML = data;
+          });
+        });
+      });
+      AP.require(["_dollar", "dialog"], function($, dialog) {
+        $("#dialog-open-button-key").bind("click", function() {
+          dialog.create({
+            key: "my-dialog"
           }).on("close", function (data) {
             $("#dialog-close-data")[0].innerHTML = data;
           });

@@ -1,60 +1,38 @@
 package com.atlassian.plugin.connect.plugin;
 
-import java.net.URI;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Nullable;
-
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.applinks.api.event.ApplicationLinkAddedEvent;
 import com.atlassian.applinks.api.event.ApplicationLinkDeletedEvent;
 import com.atlassian.event.api.EventListener;
 import com.atlassian.event.api.EventPublisher;
-import com.atlassian.fugue.Iterables;
-import com.atlassian.fugue.Option;
+import com.atlassian.jwt.applinks.JwtService;
 import com.atlassian.oauth.ServiceProvider;
-import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
+import com.atlassian.plugin.connect.plugin.module.applinks.RemotePluginContainerModuleDescriptor;
+import com.atlassian.plugin.connect.plugin.util.http.CachingHttpContentRetriever;
+import com.atlassian.plugin.connect.spi.AuthenticationMethod;
 import com.atlassian.plugin.connect.spi.ConnectAddOnIdentifierService;
+import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
+import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
+import com.atlassian.plugin.connect.spi.applinks.RemotePluginContainerApplicationType;
 import com.atlassian.plugin.event.PluginEventListener;
 import com.atlassian.plugin.event.events.PluginDisabledEvent;
 import com.atlassian.plugin.event.events.PluginEnabledEvent;
 import com.atlassian.plugin.event.events.PluginModuleEnabledEvent;
-import com.atlassian.plugin.connect.plugin.module.applinks.RemotePluginContainerModuleDescriptor;
-import com.atlassian.plugin.connect.plugin.util.MapFunctions;
-import com.atlassian.plugin.connect.plugin.util.http.CachingHttpContentRetriever;
-import com.atlassian.plugin.connect.spi.PermissionDeniedException;
-import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
-import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
-import com.atlassian.plugin.connect.spi.applinks.RemotePluginContainerApplicationType;
-import com.atlassian.plugin.connect.spi.http.AuthorizationGenerator;
-import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.sal.api.ApplicationProperties;
-import com.atlassian.uri.Uri;
-import com.atlassian.uri.UriBuilder;
 import com.atlassian.util.concurrent.CopyOnWriteMap;
-import com.atlassian.util.concurrent.Promise;
-
 import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
-import com.google.common.collect.Maps;
-
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import net.oauth.OAuth;
+import java.net.URI;
+import java.util.Map;
 
-import static com.atlassian.fugue.Option.option;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.collect.Maps.newHashMap;
-import static com.google.common.collect.Maps.transformValues;
-import static java.util.Collections.singletonList;
 
 @Component
 public final class DefaultRemotablePluginAccessorFactory implements RemotablePluginAccessorFactory, DisposableBean
@@ -66,6 +44,7 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
     private final ApplicationProperties applicationProperties;
     private final EventPublisher eventPublisher;
     private final ConnectAddOnIdentifierService connectIdentifier;
+    private final JwtService jwtService;
 
     private final Map<String, RemotablePluginAccessor> accessors;
 
@@ -76,8 +55,8 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
                                                  PluginAccessor pluginAccessor,
                                                  ApplicationProperties applicationProperties,
                                                  EventPublisher eventPublisher,
-                                                 ConnectAddOnIdentifierService connectIdentifier
-    )
+                                                 ConnectAddOnIdentifierService connectIdentifier,
+                                                 JwtService jwtService)
     {
         this.applicationLinkAccessor = applicationLinkAccessor;
         this.oAuthLinkManager = oAuthLinkManager;
@@ -87,6 +66,7 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
         this.eventPublisher = eventPublisher;
         this.eventPublisher.register(this);
         this.connectIdentifier = connectIdentifier;
+        this.jwtService = jwtService;
 
         this.accessors = CopyOnWriteMap.newHashMap();
     }
@@ -234,8 +214,17 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
         final Plugin plugin = pluginAccessor.getPlugin(pluginKey);
         checkNotNull(plugin, "Plugin not found: '%s'", pluginKey);
 
-        // don't need to get the actual provider as it doesn't really matter
-        return new OAuthSigningRemotablePluginAccessor(pluginKey, plugin.getName(), displayUrl, getDummyServiceProvider());
+        return signsWithJwt(pluginKey)
+            // don't need to get the actual provider as it doesn't really matter
+            ? new JwtSigningRemotablePluginAccessor(pluginKey, plugin.getName(), displayUrl, jwtService, applicationLinkAccessor, httpContentRetriever)
+            : new OAuthSigningRemotablePluginAccessor(pluginKey, plugin.getName(), displayUrl, getDummyServiceProvider(), httpContentRetriever, oAuthLinkManager);
+    }
+
+    private boolean signsWithJwt(String pluginKey)
+    {
+        Object authTypeProperty = applicationLinkAccessor.getApplicationLink(pluginKey).getProperty(AuthenticationMethod.PROPERTY_NAME);
+        // for backwards compatibility default to "not JWT" if the property does not exist
+        return null != authTypeProperty && AuthenticationMethod.JWT.equals(AuthenticationMethod.forName(authTypeProperty.toString()));
     }
 
     private ServiceProvider getDummyServiceProvider()
@@ -248,157 +237,6 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
     public void destroy() throws Exception
     {
         eventPublisher.unregister(this);
-    }
-
-    private class OAuthSigningRemotablePluginAccessor implements RemotablePluginAccessor
-    {
-        private final String key;
-        private final String name;
-        private final Supplier<URI> displayUrl;
-        private final ServiceProvider serviceProvider;
-
-        private OAuthSigningRemotablePluginAccessor(String key,
-                                                    String name,
-                                                    Supplier<URI> displayUrl,
-                                                    ServiceProvider serviceProvider)
-        {
-            this.key = key;
-            this.name = name;
-            this.displayUrl = displayUrl;
-            this.serviceProvider = serviceProvider;
-        }
-
-        @Override
-        public String getKey()
-        {
-            return key;
-        }
-
-        @Override
-        public URI getDisplayUrl()
-        {
-            return displayUrl.get();
-        }
-
-        @Override
-        public String signGetUrl(URI targetPath, Map<String, String[]> params)
-        {
-            return signGetUrlForType(serviceProvider, getTargetUrl(targetPath), params);
-        }
-
-        @Override
-        public String createGetUrl(URI targetPath, Map<String, String[]> params)
-        {
-            return executeCreateGetUrl(getTargetUrl(targetPath), params);
-        }
-
-        @Override
-        public Promise<String> executeAsync(HttpMethod method, URI path, Map<String, String> params, Map<String, String> headers)
-        {
-            return executeAsyncForType(new OAuthAuthorizationGenerator(serviceProvider), method, getTargetUrl(path), params, headers, key);
-        }
-
-        private URI getTargetUrl(URI targetPath)
-        {
-            UriBuilder uriBuilder = new UriBuilder(Uri.fromJavaUri(targetPath));
-            uriBuilder.setPath(displayUrl.get().toString() + uriBuilder.getPath());
-            return uriBuilder.toUri().toJavaUri();
-        }
-
-        @Override
-        public AuthorizationGenerator getAuthorizationGenerator()
-        {
-            return new OAuthAuthorizationGenerator(serviceProvider);
-        }
-
-        @Override
-        public String getName()
-        {
-            return name;
-        }
-    }
-
-    private String executeCreateGetUrl(URI targetUrl, Map<String, String[]> params)
-    {
-        return new UriBuilder(Uri.fromJavaUri(targetUrl)).addQueryParameters(transformValues(params, MapFunctions.STRING_ARRAY_TO_STRING)).toString();
-    }
-
-    private Promise<String> executeAsyncForType(AuthorizationGenerator authorizationGenerator,
-                                                HttpMethod method,
-                                                URI targetUrl,
-                                                Map<String, String> params,
-                                                Map<String, String> headers,
-                                                String pluginKey)
-    {
-        return httpContentRetriever.async(authorizationGenerator,
-                method,
-                targetUrl,
-                Maps.transformValues(params, MapFunctions.OBJECT_TO_STRING),
-                headers,
-                pluginKey);
-    }
-
-    private String signGetUrlForType(ServiceProvider serviceProvider, URI targetUrl, Map<String, String[]> params) throws PermissionDeniedException
-    {
-        final UriBuilder uriBuilder = new UriBuilder(Uri.fromJavaUri(targetUrl));
-
-        // adding all the parameters of the signed request
-        for (Map.Entry<String, String> param : signRequest(serviceProvider, targetUrl, params, HttpMethod.GET))
-        {
-            final String value = param.getValue() == null ? "" : param.getValue();
-            uriBuilder.addQueryParameter(param.getKey(), value);
-        }
-        return uriBuilder.toString();
-    }
-
-    private List<Map.Entry<String, String>> signRequest(ServiceProvider serviceProvider,
-                                                        URI url,
-                                                        Map<String, String[]> queryParams,
-                                                        HttpMethod method)
-    {
-        String timestamp = System.currentTimeMillis() / 1000 + "";
-        String nonce = System.nanoTime() + "";
-        String signatureMethod = OAuth.RSA_SHA1;
-        String oauthVersion = "1.0";
-
-        Map<String, List<String>> params = newHashMap(transformValues(queryParams, new Function<String[], List<String>>()
-        {
-            @Override
-            public List<String> apply(String[] from)
-            {
-                return Arrays.asList(from);
-            }
-        }));
-
-        params.put(OAuth.OAUTH_SIGNATURE_METHOD, singletonList(signatureMethod));
-        params.put(OAuth.OAUTH_NONCE, singletonList(nonce));
-        params.put(OAuth.OAUTH_VERSION, singletonList(oauthVersion));
-        params.put(OAuth.OAUTH_TIMESTAMP, singletonList(timestamp));
-
-        return oAuthLinkManager.signAsParameters(serviceProvider, method, url, params);
-    }
-
-    private class OAuthAuthorizationGenerator implements AuthorizationGenerator
-    {
-        private final ServiceProvider serviceProvider;
-
-        private OAuthAuthorizationGenerator(ServiceProvider serviceProvider)
-        {
-            this.serviceProvider = serviceProvider;
-        }
-
-        @Override
-        @Deprecated
-        public String generate(String method, URI url, Map<String, List<String>> parameters)
-        {
-            return generate(HttpMethod.valueOf(method), url, parameters).getOrNull();
-        }
-
-        @Override
-        public Option<String> generate(HttpMethod method, URI url, Map<String, List<String>> parameters)
-        {
-            return option(oAuthLinkManager.generateAuthorizationHeader(method, serviceProvider, url, parameters));
-        }
     }
 
     private static enum ToUriFunction implements Function<String, URI>

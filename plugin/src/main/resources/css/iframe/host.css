@@ -30,3 +30,7 @@
 .ap-container iframe {
   border: 0;
 }
+
+.ap-container iframe.full-size-general-page {
+  border-bottom: 1px solid #ccc;
+}

@@ -7,5 +7,5 @@ import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
  */
 public interface WebItemModuleDescriptorFactory
 {
-    WebItemModuleDescriptor createWebItemModuleDescriptor(String url, String moduleKey, boolean absolute);
+    WebItemModuleDescriptor createWebItemModuleDescriptor(String url, String linkId, boolean absolute);
 }

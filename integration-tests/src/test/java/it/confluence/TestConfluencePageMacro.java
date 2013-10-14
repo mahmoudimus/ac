@@ -26,6 +26,7 @@ import static com.atlassian.plugin.connect.test.pageobjects.confluence.Confluenc
 import static com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner.newMustacheServlet;
 import static it.TestConstants.ADMIN_USERNAME;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 public final class TestConfluencePageMacro extends ConfluenceWebDriverTestBase
 {
@@ -34,7 +35,7 @@ public final class TestConfluencePageMacro extends ConfluenceWebDriverTestBase
     private static AtlassianConnectAddOnRunner remotePlugin;
 
     @BeforeClass
-    public static void setupJiraAndStartConnectAddOn() throws Exception
+    public static void setupConfluenceAndStartConnectAddOn() throws Exception
     {
         remotePlugin = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl())
                 .addOAuth()
@@ -66,6 +67,7 @@ public final class TestConfluencePageMacro extends ConfluenceWebDriverTestBase
         loginAsBetty();
         ConfluencePageMacroPage page = product.visit(ConfluencePageMacroPage.class, pageData.getTitle(), "app1-page-0");
 
+        assertFalse(page.getContainerDiv().getAttribute("class").contains("ap-inline"));
         assertEquals("Success", page.getMessage());
         assertEquals(OAuthUtils.getConsumerKey(), page.getConsumerKey());
     }

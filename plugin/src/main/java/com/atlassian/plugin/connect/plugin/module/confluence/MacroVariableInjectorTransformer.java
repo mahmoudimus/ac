@@ -1,18 +1,17 @@
 package com.atlassian.plugin.connect.plugin.module.confluence;
 
-import java.util.List;
-
 import com.atlassian.confluence.util.i18n.I18NBeanFactory;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
+import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
 import com.atlassian.plugin.elements.ResourceLocation;
 import com.atlassian.plugin.servlet.DownloadableClasspathResource;
 import com.atlassian.plugin.servlet.DownloadableResource;
 import com.atlassian.plugin.webresource.transformer.CharSequenceDownloadableResource;
 import com.atlassian.plugin.webresource.transformer.WebResourceTransformer;
-
 import org.dom4j.Element;
-import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
+
+import java.util.List;
 
 import static org.apache.commons.lang.StringEscapeUtils.escapeJavaScript;
 
@@ -43,7 +42,11 @@ public class MacroVariableInjectorTransformer implements WebResourceTransformer
             I18NBeanFactory userI18NBeanFactory)
     {
         this.userI18NBeanFactory = userI18NBeanFactory;
-        thisPlugin = pluginAccessor.getPlugin(ConnectPluginInfo.PLUGIN_KEY);
+        Plugin connectPlugin = pluginAccessor.getPlugin(ConnectPluginInfo.getPluginKey());
+        if (connectPlugin == null) {
+            throw new IllegalStateException("Failed to resolve plugin '" + ConnectPluginInfo.getPluginKey() + "'");
+        }
+        thisPlugin = connectPlugin;
     }
 
     @Override

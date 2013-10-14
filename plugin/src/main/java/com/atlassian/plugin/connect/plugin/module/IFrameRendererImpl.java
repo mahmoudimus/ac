@@ -1,5 +1,27 @@
 package com.atlassian.plugin.connect.plugin.module;
 
+import com.atlassian.html.encode.JavascriptEncoder;
+import com.atlassian.plugin.connect.plugin.UserPreferencesRetriever;
+import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
+import com.atlassian.plugin.connect.plugin.module.page.PageInfo;
+import com.atlassian.plugin.connect.plugin.util.LocaleHelper;
+import com.atlassian.plugin.connect.spi.PermissionDeniedException;
+import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
+import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
+import com.atlassian.plugin.connect.spi.module.IFrameContext;
+import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
+import com.atlassian.sal.api.user.UserManager;
+import com.atlassian.sal.api.user.UserProfile;
+import com.atlassian.templaterenderer.TemplateRenderer;
+import com.atlassian.uri.Uri;
+import com.atlassian.uri.UriBuilder;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
+import org.apache.commons.lang.ObjectUtils;
+import org.json.simple.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -9,32 +31,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
-import com.atlassian.plugin.connect.plugin.DefaultRemotablePluginAccessorFactory;
-import com.atlassian.plugin.connect.plugin.UserPreferencesRetriever;
-import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
-import com.atlassian.plugin.connect.plugin.module.page.PageInfo;
-import com.atlassian.plugin.connect.plugin.util.LocaleHelper;
-import com.atlassian.plugin.connect.spi.PermissionDeniedException;
-import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
-import com.atlassian.plugin.connect.spi.module.IFrameContext;
-import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
-import com.atlassian.plugin.webresource.WebResourceManager;
-import com.atlassian.plugin.webresource.WebResourceUrlProvider;
-import com.atlassian.sal.api.user.UserManager;
-import com.atlassian.sal.api.user.UserProfile;
-import com.atlassian.templaterenderer.TemplateRenderer;
-import com.atlassian.uri.Uri;
-import com.atlassian.uri.UriBuilder;
-
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
-
-import org.apache.commons.lang.ObjectUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import static com.atlassian.plugin.connect.plugin.util.EncodingUtils.escapeQuotes;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Maps.newHashMap;
@@ -43,11 +39,8 @@ import static com.google.common.collect.Maps.newHashMap;
 public final class IFrameRendererImpl implements IFrameRenderer
 {
     private final TemplateRenderer templateRenderer;
-    private final WebResourceManager webResourceManager;
-    private final WebResourceUrlProvider webResourceUrlProvider;
-    private final DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory;
+    private final RemotablePluginAccessorFactory remotablePluginAccessorFactory;
     private final IFrameHost iframeHost;
-    private final Plugin acPlugin;
     private final LicenseRetriever licenseRetriever;
     private final LocaleHelper localeHelper;
     private final UserPreferencesRetriever userPreferencesRetriever;
@@ -55,11 +48,8 @@ public final class IFrameRendererImpl implements IFrameRenderer
 
     @Autowired
     public IFrameRendererImpl(TemplateRenderer templateRenderer,
-            WebResourceManager webResourceManager,
             IFrameHost iframeHost,
-            WebResourceUrlProvider webResourceUrlProvider,
-            PluginRetrievalService pluginRetrievalService,
-            DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory,
+            RemotablePluginAccessorFactory remotablePluginAccessorFactory,
             UserPreferencesRetriever userPreferencesRetriever, final LicenseRetriever licenseRetriever,
             LocaleHelper localeHelper, UserManager userManager)
     {
@@ -68,63 +58,51 @@ public final class IFrameRendererImpl implements IFrameRenderer
         this.userPreferencesRetriever = checkNotNull(userPreferencesRetriever);
         this.remotablePluginAccessorFactory = checkNotNull(remotablePluginAccessorFactory);
         this.templateRenderer = checkNotNull(templateRenderer);
-        this.webResourceManager = checkNotNull(webResourceManager);
         this.iframeHost = checkNotNull(iframeHost);
-        this.webResourceUrlProvider = checkNotNull(webResourceUrlProvider);
-        this.acPlugin = checkNotNull(pluginRetrievalService).getPlugin();
         this.userManager = userManager;
     }
 
     @Override
     public String render(IFrameContext iframeContext, String remoteUser) throws IOException
     {
-        return render(iframeContext, "", Collections.<String, String[]>emptyMap(), remoteUser);
+        return render(iframeContext, "", Collections.<String, String[]>emptyMap(), remoteUser, Collections.<String, Object>emptyMap());
     }
 
-    public void renderPage(IFrameContext iframeContext, PageInfo pageInfo, String extraPath, Map<String, String[]> queryParams, String remoteUser, Writer writer) throws IOException
-    {
-        try
-        {
-            if (!pageInfo.getCondition().shouldDisplay(Collections.<String, Object>emptyMap()))
-            {
-                throw new PermissionDeniedException(iframeContext.getPluginKey(), "Cannot render iframe for this page");
-            }
-
-            Map<String, Object> ctx = newHashMap(iframeContext.getIFrameParams().getAsMap());
-            if (queryParams.get("width") != null)
-            {
-                iframeContext.getIFrameParams().setParam("width", queryParams.get("width")[0]);
-            }
-            if (queryParams.get("height") != null)
-            {
-                iframeContext.getIFrameParams().setParam("height", queryParams.get("height")[0]);
-            }
-
-			ctx.put("queryParams", contextQueryParameters(queryParams));
-            ctx.put("title", pageInfo.getTitle());
-            ctx.put("contextPath", iframeHost.getContextPath());
-            ctx.put("iframeHtml", render(iframeContext, extraPath, queryParams, remoteUser));
-            ctx.put("decorator", pageInfo.getDecorator());
-
-			for (Map.Entry<String, String> metaTag : pageInfo.getMetaTagsContent().entrySet())
-			{
-				ctx.put(metaTag.getKey(), metaTag.getValue());
-			}
-
-            templateRenderer.render("velocity/iframe-page" + pageInfo.getTemplateSuffix() + ".vm", ctx, writer);
-        }
-        catch (PermissionDeniedException ex)
-        {
-            templateRenderer.render(
-                    "velocity/iframe-page-accessdenied" + pageInfo.getTemplateSuffix() + ".vm",
-                    ImmutableMap.<String, Object>of(
-                            "title", pageInfo.getTitle(),
-                            "decorator", pageInfo.getDecorator()), writer);
-        }
-    }
-
-	@Override
+    @Override
+    @Deprecated
     public String render(IFrameContext iframeContext, String extraPath, Map<String, String[]> queryParams, String remoteUser) throws IOException
+    {
+        return render(iframeContext, extraPath, queryParams, remoteUser, Collections.<String, Object>emptyMap());
+    }
+
+    @Override
+    public String render(IFrameContext iframeContext, String extraPath, Map<String, String[]> queryParams, String remoteUser, Map<String, Object> productContext) throws IOException
+    {
+        return renderWithTemplate(prepareContext(iframeContext, extraPath, queryParams, remoteUser, productContext), "velocity/iframe-body.vm");
+    }
+
+    @Override
+    @Deprecated
+    public String renderInline(IFrameContext iframeContext, String extraPath, Map<String, String[]> queryParams, String remoteUser) throws IOException
+    {
+        return renderInline(iframeContext, extraPath, queryParams, remoteUser, Collections.<String, Object>emptyMap());
+    }
+
+    @Override
+    public String renderInline(IFrameContext iframeContext, String extraPath, Map<String, String[]> queryParams, String remoteUser, Map<String, Object> productContext) throws IOException
+    {
+        return renderWithTemplate(prepareContext(iframeContext, extraPath, queryParams, remoteUser, productContext), "velocity/iframe-body-inline.vm");
+    }
+
+    private String renderWithTemplate(Map<String, Object> ctx, String templatePath) throws IOException
+    {
+        StringWriter output = new StringWriter();
+        templateRenderer.render(templatePath, ctx, output);
+        return output.toString();
+    }
+
+    private Map<String, Object> prepareContext(IFrameContext iframeContext, String extraPath, Map<String, String[]> queryParams, String remoteUser, Map<String, Object> productContext)
+            throws IOException
     {
         RemotablePluginAccessor remotablePluginAccessor = remotablePluginAccessorFactory.get(iframeContext.getPluginKey());
 
@@ -174,18 +152,15 @@ public final class IFrameRendererImpl implements IFrameRenderer
         String[] simpleDialog = queryParams.get("simpleDialog");
         if (simpleDialog != null && simpleDialog.length == 1) ctx.put("simpleDialog", simpleDialog[0]);
 
-        StringWriter output = new StringWriter();
-        templateRenderer.render("velocity/iframe-body.vm", ctx, output);
-        return output.toString();
+        ctx.put("productContextHtml", encodeProductContext(productContext));
+        return ctx;
     }
 
-	private Map<String, List<String>> contextQueryParameters(final Map<String, String[]> queryParams)
-	{
-		final Map<String, List<String>> ctxQueryParams = Maps.newHashMap();
-		for (Map.Entry<String, String[]> param : queryParams.entrySet())
-		{
-			ctxQueryParams.put(param.getKey(), Arrays.asList(param.getValue()));
-		}
-		return ctxQueryParams;
-	}
+    private String encodeProductContext(Map<String, Object> productContext) throws IOException
+    {
+        String json = new JSONObject(productContext).toString();
+        StringWriter writer = new StringWriter();
+        JavascriptEncoder.escape(writer, json);
+        return writer.toString();
+    }
 }

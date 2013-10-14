@@ -1,20 +1,21 @@
 package com.atlassian.plugin.connect.plugin.module.jira.projectconfig;
 
-import java.io.IOException;
-import java.io.PrintWriter;
+import com.atlassian.jira.component.ComponentAccessor;
+import com.atlassian.jira.project.Project;
+import com.atlassian.plugin.connect.plugin.module.IFramePageRenderer;
+import com.atlassian.plugin.connect.plugin.module.IFrameRendererImpl;
+import com.atlassian.plugin.connect.plugin.module.jira.conditions.IsProjectAdminCondition;
+import com.atlassian.plugin.connect.plugin.module.page.PageInfo;
+import com.atlassian.plugin.connect.spi.module.IFrameContext;
+import com.atlassian.sal.api.user.UserManager;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.atlassian.jira.component.ComponentAccessor;
-import com.atlassian.jira.project.Project;
-import com.atlassian.plugin.connect.plugin.module.IFrameRendererImpl;
-import com.atlassian.plugin.connect.plugin.module.page.PageInfo;
-import com.atlassian.plugin.connect.plugin.module.permission.jira.IsProjectAdminCondition;
-import com.atlassian.plugin.connect.spi.module.IFrameContext;
-import com.atlassian.sal.api.user.UserManager;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Collections;
 
 
 /**
@@ -26,17 +27,17 @@ public class IFrameProjectConfigTabServlet extends HttpServlet
 	private final UserManager userManager;
 	private final PageInfo pageInfo;
 	private final IFrameContext iframeContext;
-	private final IFrameRendererImpl iFrameRenderer;
+	private final IFramePageRenderer iFramePageRenderer;
 
 	public IFrameProjectConfigTabServlet(PageInfo pageInfo,
-			IFrameRendererImpl iFrameRenderer,
+            IFramePageRenderer iFramePageRenderer,
 			IFrameContext iframeContext,
 			UserManager userManager)
 	{
 		this.userManager = userManager;
 		this.pageInfo = pageInfo;
 		this.iframeContext = iframeContext;
-		this.iFrameRenderer = iFrameRenderer;
+		this.iFramePageRenderer = iFramePageRenderer;
 	}
 
 	@Override
@@ -51,8 +52,8 @@ public class IFrameProjectConfigTabServlet extends HttpServlet
 		// This is a workaround for JRA-26407.
 		((IsProjectAdminCondition)pageInfo.getCondition()).setProject(project);
 
-		iFrameRenderer.renderPage(iframeContext, pageInfo, req.getPathInfo(), req.getParameterMap(),
-				userManager.getRemoteUsername(req), out);
+        iFramePageRenderer.renderPage(iframeContext, pageInfo, req.getPathInfo(), req.getParameterMap(),
+				userManager.getRemoteUsername(req), Collections.<String, Object>emptyMap(), out);
 	}
 
 	private Project getProject(final HttpServletRequest request)

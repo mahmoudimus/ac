@@ -1,8 +1,5 @@
 package com.atlassian.plugin.connect.plugin.module.confluence;
 
-import java.net.URI;
-import java.util.*;
-
 import com.atlassian.confluence.macro.Macro;
 import com.atlassian.confluence.pages.thumbnail.Dimensions;
 import com.atlassian.confluence.plugin.descriptor.MacroMetadataParser;
@@ -11,39 +8,41 @@ import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
-import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
-import com.atlassian.plugin.hostcontainer.HostContainer;
-import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.connect.plugin.DefaultRemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.plugin.PermissionManager;
 import com.atlassian.plugin.connect.plugin.integration.plugins.DescriptorToRegister;
+import com.atlassian.plugin.connect.plugin.module.IFramePageRenderer;
 import com.atlassian.plugin.connect.plugin.module.IFrameParamsImpl;
 import com.atlassian.plugin.connect.plugin.module.IFrameRendererImpl;
 import com.atlassian.plugin.connect.plugin.module.WebItemCreator;
 import com.atlassian.plugin.connect.plugin.module.page.IFrameContextImpl;
 import com.atlassian.plugin.connect.plugin.module.page.IFramePageServlet;
 import com.atlassian.plugin.connect.plugin.module.page.PageInfo;
+import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.plugin.util.contextparameter.ContextParameterParser;
 import com.atlassian.plugin.connect.plugin.util.contextparameter.RequestContextParameterFactory;
 import com.atlassian.plugin.connect.spi.Permissions;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.plugin.connect.spi.module.IFrameParams;
+import com.atlassian.plugin.hostcontainer.HostContainer;
+import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.servlet.ServletModuleManager;
 import com.atlassian.plugin.servlet.descriptors.ServletModuleDescriptor;
 import com.atlassian.plugin.web.conditions.AlwaysDisplayCondition;
 import com.atlassian.plugin.webresource.WebResourceModuleDescriptor;
 import com.atlassian.sal.api.component.ComponentLocator;
 import com.atlassian.sal.api.user.UserManager;
-
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
-
 import org.apache.commons.lang.StringUtils;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.osgi.framework.BundleContext;
+
+import java.net.URI;
+import java.util.*;
 
 import static com.atlassian.plugin.connect.plugin.module.util.redirect.RedirectServlet.getPermanentRedirectUrl;
 import static com.atlassian.plugin.connect.plugin.util.EncodingUtils.escapeAll;
@@ -68,7 +67,7 @@ public class MacroModuleDescriptorCreator
     private final HostContainer hostContainer;
     private final WebItemCreator webItemCreator;
     private final ContextParameterParser contextParameterParser;
-    private final IFrameRendererImpl iFrameRenderer;
+    private final IFramePageRenderer iFramePageRenderer;
     private final UserManager userManager;
     private final PermissionManager permissionManager;
     private final BundleContext bundleContext;
@@ -80,7 +79,7 @@ public class MacroModuleDescriptorCreator
             HostContainer hostContainer,
             WebItemCreator webItemCreator,
             ContextParameterParser contextParameterParser,
-            IFrameRendererImpl iFrameRenderer,
+            IFramePageRenderer iFramePageRenderer,
             UserManager userManager,
             PermissionManager permissionManager,
             BundleContext bundleContext,
@@ -91,7 +90,7 @@ public class MacroModuleDescriptorCreator
         this.hostContainer = hostContainer;
         this.webItemCreator = webItemCreator;
         this.contextParameterParser = contextParameterParser;
-        this.iFrameRenderer = iFrameRenderer;
+        this.iFramePageRenderer = iFramePageRenderer;
         this.userManager = userManager;
         this.permissionManager = permissionManager;
         this.bundleContext = bundleContext;
@@ -166,7 +165,7 @@ public class MacroModuleDescriptorCreator
             boolean isFeaturedMacro = Boolean.valueOf(getOptionalAttribute(config, "featured", false));
             if (isFeaturedMacro)
             {
-                descriptors.add(createFeaturedMacroDescriptor(plugin, key, entity));
+                descriptors.add(createFeaturedMacroDescriptor(plugin, key, name, entity));
                 if (icon != null)
                 {
                     descriptors.add(createFeaturedIconWebResource(plugin, remotablePluginAccessor, key, icon));
@@ -240,9 +239,8 @@ public class MacroModuleDescriptorCreator
             return Lists.newArrayList(new DescriptorToRegister(jsDescriptor), new DescriptorToRegister(iFrameServlet));
         }
 
-        private DescriptorToRegister createFeaturedMacroDescriptor(final Plugin plugin, String macroKey, Element macroConfig)
+        private DescriptorToRegister createFeaturedMacroDescriptor(final Plugin plugin, String macroKey, String name, Element macroConfig)
         {
-            String name = macroConfig.attributeValue("name");
             Element webItem = DocumentHelper.createDocument().addElement("web-item")
                     .addAttribute("name", name)
                     .addAttribute("key", "editor-featured-macro-" + macroKey)
@@ -284,8 +282,9 @@ public class MacroModuleDescriptorCreator
 
                     return (T) new IFramePageServlet(
                             pageInfo,
-                            iFrameRenderer,
-                            new IFrameContextImpl(plugin.getKey(), path, moduleKey, params), userManager, urlVariableSubstitutor
+                            iFramePageRenderer,
+                            new IFrameContextImpl(plugin.getKey(), path, moduleKey, params), userManager, urlVariableSubstitutor,
+                            webItemCreatorBuilder.getContextParams()
                     );
                 }
             }, getService(bundleContext, ServletModuleManager.class));
@@ -307,7 +306,7 @@ public class MacroModuleDescriptorCreator
                     .addAttribute("location", "js/confluence/macro/override.js");
 
             webResource.addElement("dependency")
-                    .setText(ConnectPluginInfo.PLUGIN_KEY + ":ap-amd");
+                    .setText(ConnectPluginInfo.getPluginKey() + ":ap-amd");
 
             webResource.addElement("context")
                     .setText("editor");

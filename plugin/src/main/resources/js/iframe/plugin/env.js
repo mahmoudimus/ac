@@ -59,10 +59,13 @@ AP.define("env", ["_dollar", "_rpc"], function ($, rpc) {
         // @param width   the desired width
         // @param height  the desired height
         resize: $.debounce(function (width, height) {
-          var dim = apis.size(width, height);
+          var dim = apis.size(width, height, apis.container());
           remote.resize(dim.w, dim.h);
-        }, 50)
+        }, 50),
 
+        sizeToParent: $.debounce(function() {
+          remote.sizeToParent();
+        }, 50)
       }
 
     };
@@ -75,28 +78,42 @@ AP.define("env", ["_dollar", "_rpc"], function ($, rpc) {
       return $("meta[name='ap-" + name + "']").attr("content");
     },
 
+    container: function(){
+      // Look for these two selectors first... you need these to allow for the auto-shrink to work
+      // Otherwise, it'll default to document.body which can't auto-grow or auto-shrink
+      var container = $('.ac-content, #content');
+      return container.length>0 ? container[0]: document.body;
+    },
+
     localUrl: function (path) {
       return this.meta("local-base-url") + (path == null ? "" : path);
     },
 
-    size: function (width, height) {
-      var w = width == null ? "100%" : width,
-      // Started with http://james.padolsey.com/javascript/get-document-height-cross-browser/
-      // to determine page height across browsers. Turns out that in our case, we can get by with
-      // document.body.offsetHeight and document.body.clientHeight. Those two return the proper
-      // height even when the dom shrinks. Tested on Chrome, Safari, IE8/9/10, and Firefox
-      D = document,
-      h = Math.max(D.body.offsetHeight, D.body.clientHeight);
-      if(h===0){
-          h = Math.max(
-              D.body.scrollHeight, D.documentElement.scrollHeight,
-              D.body.offsetHeight, D.documentElement.offsetHeight,
-              D.body.clientHeight, D.documentElement.clientHeight
-          );
+    size: function (width, height, container) {
+      var w = width == null ? "100%" : width, h, docHeight;
+      if (height) {
+        h = height;
+      } else {
+        // Determine height
+        docHeight = Math.max(
+          container.scrollHeight, document.documentElement.scrollHeight,
+          container.offsetHeight, document.documentElement.offsetHeight,
+          container.clientHeight, document.documentElement.clientHeight
+        );
+        if(container === document.body){
+          h = docHeight;
+        } else {
+          // Started with http://james.padolsey.com/javascript/get-document-height-cross-browser/
+          // to determine page height across browsers. Turns out that in our case, we can get by with
+          // document.body.offsetHeight and document.body.clientHeight. Those two return the proper
+          // height even when the dom shrinks. Tested on Chrome, Safari, IE8/9/10, and Firefox
+          h = Math.max(container.offsetHeight, container.clientHeight);
+          if(h===0){
+              h = docHeight;
+          }
+        }
       }
       return {w: w, h: h};
     }
-
   });
-
 });

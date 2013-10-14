@@ -60,9 +60,7 @@ public class RemotePage
 
     public Map<String, String> getIframeQueryParams()
     {
-        final WebElement iframe = containerDiv.findElement(By.tagName("iframe"));
-
-        return RemotePageUtil.findAllInContext(iframe.getAttribute("src"));
+        return RemotePageUtil.findAllInContext(iframe().getAttribute("src"));
     }
 
     public String waitForValue(final String key)
@@ -83,5 +81,38 @@ public class RemotePage
     public WebElement getContainerDiv()
     {
         return containerDiv;
+    }
+
+    public boolean isFullSize()
+    {
+        return waitForCssClass("full-size-general-page");
+    }
+
+    public boolean isNotFullSize()
+    {
+        // We have to wait for the css class, and waiting for something to NOT appear can take a long time,
+        // so we add a failure class here
+        return waitForCssClass("full-size-general-page-fail");
+    }
+
+    private boolean waitForCssClass(final String cssClass)
+    {
+        driver.waitUntil(new Function<WebDriver, Boolean>()
+        {
+
+            @Override
+            public Boolean apply(WebDriver webDriver)
+            {
+                System.out.println(iframe().getAttribute("class"));
+                return iframe().getAttribute("class").contains(cssClass);
+            }
+        });
+        return true;
+    }
+
+    private WebElement iframe()
+    {
+        driver.waitUntilElementIsLocated(By.cssSelector("#embedded-" + key + " iframe"));
+        return containerDiv.findElement(By.tagName("iframe"));
     }
 }

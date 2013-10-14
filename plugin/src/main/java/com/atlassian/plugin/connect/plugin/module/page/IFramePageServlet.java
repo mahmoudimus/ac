@@ -1,20 +1,27 @@
 package com.atlassian.plugin.connect.plugin.module.page;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.atlassian.plugin.connect.plugin.module.IFramePageRenderer;
 import com.atlassian.plugin.connect.plugin.module.IFrameRendererImpl;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.spi.module.IFrameContext;
 import com.atlassian.sal.api.user.UserManager;
 import com.google.common.collect.ImmutableMap;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * A servlet that loads its content from a remote plugin's iframe
@@ -25,19 +32,22 @@ public class IFramePageServlet extends HttpServlet
     private final UrlVariableSubstitutor urlVariableSubstitutor;
     private final PageInfo pageInfo;
     private final IFrameContext iframeContext;
-    private final IFrameRendererImpl iFrameRenderer;
+    private final IFramePageRenderer iFramePageRenderer;
+    private final Map<String, String> contextParamNameToSymbolicName; // e.g. "my_space_id": "space.id"
 
     public IFramePageServlet(PageInfo pageInfo,
-            IFrameRendererImpl iFrameRenderer,
+                             IFramePageRenderer iFramePageRenderer,
             IFrameContext iframeContext,
             UserManager userManager,
-            UrlVariableSubstitutor urlVariableSubstitutor)
+            UrlVariableSubstitutor urlVariableSubstitutor,
+            Map<String, String> contextParamNameToSymbolicName)
     {
         this.iframeContext = iframeContext;
-        this.iFrameRenderer = iFrameRenderer;
+        this.iFramePageRenderer = iFramePageRenderer;
         this.pageInfo = pageInfo;
         this.userManager = userManager;
         this.urlVariableSubstitutor = urlVariableSubstitutor;
+        this.contextParamNameToSymbolicName = checkNotNull(contextParamNameToSymbolicName);
     }
 
     @Override
@@ -47,16 +57,65 @@ public class IFramePageServlet extends HttpServlet
         PrintWriter out = resp.getWriter();
         resp.setContentType("text/html");
         String originalPath = iframeContext.getIframePath();
-        String iFramePath = urlVariableSubstitutor.replace(originalPath, req.getParameterMap());
+        Map<String, Object> productContext = getProductContext(req);
+        Map<String, Object> paramsFromRequest = mapRequestParametersToContextParameters(req);
+        paramsFromRequest.putAll(productContext);
+        String iFramePath = urlVariableSubstitutor.replace(originalPath, paramsFromRequest);
 
-        iFrameRenderer.renderPage(
+        iFramePageRenderer.renderPage(
                 new IFrameContextImpl(iframeContext.getPluginKey(), iFramePath, iframeContext.getNamespace(), iframeContext.getIFrameParams()),
-                pageInfo, req.getPathInfo(), copyRequestContext(req, originalPath), userManager.getRemoteUsername(req), out);
+                pageInfo, req.getPathInfo(), copyRequestContext(req, originalPath), userManager.getRemoteUsername(req),
+                paramsFromRequest, out);
+    }
+
+    private Map<String, Object> getProductContext(HttpServletRequest req) throws IOException
+    {
+        String productContextJson = req.getParameter("product-context");
+        if (null != productContextJson)
+        {
+            try
+            {
+                return (JSONObject) new JSONParser().parse(productContextJson);
+            }
+            catch (ParseException e)
+            {
+                throw new IOException("Error parsing product context JSON", e);
+            }
+        }
+        else
+        {
+            return Collections.emptyMap();
+        }
+    }
+
+    /**
+     * Map ( {"page_id":"${page.id}"}, {"page_id":1234} ) to {"page.id":1234}}
+     * @param req Incoming {@link HttpServletRequest} containing concrete parameters and their values
+     * @return {@link Map<String, Object>} suitable for sending to {@link UrlVariableSubstitutor}
+     */
+    private Map<String, Object> mapRequestParametersToContextParameters(HttpServletRequest req)
+    {
+        Map<String, String[]> parameterMap = req.getParameterMap();
+        Map<String, Object> result = new HashMap<String, Object>(parameterMap.size());
+
+        for (Map.Entry<String, String[]> paramWithValue : parameterMap.entrySet())
+        {
+            String requestParamName = paramWithValue.getKey(); // e.g. "space_id"
+
+            if (contextParamNameToSymbolicName.containsKey(requestParamName))
+            {
+                String symbolicName = contextParamNameToSymbolicName.get(requestParamName); // e.g. "${space.id}"
+                symbolicName = symbolicName.replaceAll("\\$\\{([^}]*)}", "$1"); // "${space.id}" -> "space.id"
+                result.put(symbolicName, paramWithValue.getValue());
+            }
+        }
+
+        return result;
     }
 
     private Map<String, String[]> copyRequestContext(HttpServletRequest req, String path)
     {
-        Set<String> variablesUsedInPath = urlVariableSubstitutor.getContextVariables(path);
+        Set<String> variablesUsedInPath = urlVariableSubstitutor.getContextVariableMap(path).keySet();
         ImmutableMap.Builder<String, String[]> builder = ImmutableMap.builder();
         final Set<Map.Entry<String, String[]>> requestParameters = (Set<Map.Entry<String, String[]>>) req.getParameterMap().entrySet();
         for (Map.Entry<String, String[]> entry : requestParameters)

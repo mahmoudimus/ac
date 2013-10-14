@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.Map;
 
 import javax.annotation.Nullable;
@@ -183,7 +184,8 @@ public class RemoteWorkflowPostFunctionModuleDescriptor extends WorkflowFunction
                             iFrameParams),
                     "",
                     ImmutableMap.of(POST_FUNCTION_CONFIGURATION_UUID, new String[] { uuid }),
-                    ComponentAccessor.getJiraAuthenticationContext().getUser().getDisplayName());
+                    ComponentAccessor.getJiraAuthenticationContext().getUser().getDisplayName(),
+                    Collections.<String, Object>emptyMap());
         }
         catch (IOException e)
         {

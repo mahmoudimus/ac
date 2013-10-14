@@ -1,34 +1,32 @@
 package com.atlassian.plugin.connect.plugin.module.jira.projectconfig;
 
-import java.net.URI;
-import java.util.Map;
-
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
-import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
-import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.connect.plugin.integration.plugins.DescriptorToRegister;
 import com.atlassian.plugin.connect.plugin.integration.plugins.DynamicDescriptorRegistration;
 import com.atlassian.plugin.connect.plugin.module.*;
 import com.atlassian.plugin.connect.plugin.module.page.IFrameContextImpl;
 import com.atlassian.plugin.connect.plugin.module.page.IFramePageServlet;
 import com.atlassian.plugin.connect.plugin.module.page.PageInfo;
-import com.atlassian.plugin.connect.plugin.module.permission.jira.IsProjectAdminCondition;
+import com.atlassian.plugin.connect.plugin.module.jira.conditions.IsProjectAdminCondition;
 import com.atlassian.plugin.connect.spi.module.IFrameParams;
+import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
+import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.servlet.ServletModuleManager;
 import com.atlassian.plugin.servlet.descriptors.ServletModuleDescriptor;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.util.concurrent.NotNull;
-
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
-
 import org.dom4j.Element;
 import org.osgi.framework.BundleContext;
+
+import java.net.URI;
+import java.util.Map;
 
 import static com.atlassian.plugin.connect.plugin.module.page.RemotePageDescriptorCreator.createLocalUrl;
 import static com.atlassian.plugin.connect.plugin.util.OsgiServiceUtils.getService;
@@ -44,7 +42,7 @@ public final class ProjectConfigTabModuleDescriptor extends AbstractModuleDescri
     private final DynamicDescriptorRegistration dynamicDescriptorRegistration;
 	private final ProjectConfigTabPageBuilder projectConfigTabPageBuilder;
 	private final BundleContext bundleContext;
-	private final IFrameRendererImpl iFrameRenderer;
+	private final IFramePageRenderer iFramePageRenderer;
 	private final UserManager userManager;
 	private Element descriptor;
 
@@ -56,7 +54,7 @@ public final class ProjectConfigTabModuleDescriptor extends AbstractModuleDescri
             ModuleFactory moduleFactory,
             DynamicDescriptorRegistration dynamicDescriptorRegistration,
             BundleContext bundleContext,
-            IFrameRendererImpl iFrameRenderer,
+            IFramePageRenderer iFramePageRenderer,
             UserManager userManager,
             WebItemCreator webItemCreator,
             JiraAuthenticationContext authenticationContext)
@@ -64,7 +62,7 @@ public final class ProjectConfigTabModuleDescriptor extends AbstractModuleDescri
         super(moduleFactory);
         this.dynamicDescriptorRegistration = checkNotNull(dynamicDescriptorRegistration);
         this.bundleContext = checkNotNull(bundleContext);
-        this.iFrameRenderer = checkNotNull(iFrameRenderer);
+        this.iFramePageRenderer = checkNotNull(iFramePageRenderer);
         this.userManager = checkNotNull(userManager);
         this.webItemCreatorBuilder = checkNotNull(webItemCreator).newBuilder();
         this.condition = new IsProjectAdminCondition(checkNotNull(authenticationContext));
@@ -100,7 +98,7 @@ public final class ProjectConfigTabModuleDescriptor extends AbstractModuleDescri
                         weight,
                         ImmutableMap.of("projectKey", "${project.key}")
                 ))
-				.setMetaTagContent("adminActiveTab", "webitem-".concat(key))
+				.setMetaTagContent("adminActiveTab", key)
 				.build(getPlugin(), descriptor);
 		this.registration = dynamicDescriptorRegistration.registerDescriptors(getPlugin(), descriptors);
 	}
@@ -175,7 +173,7 @@ public final class ProjectConfigTabModuleDescriptor extends AbstractModuleDescri
 
 					return (T) new IFrameProjectConfigTabServlet(
 							pageInfo,
-							iFrameRenderer,
+                            iFramePageRenderer,
 							new IFrameContextImpl(plugin.getKey(), path, moduleKey, params), userManager);
 				}
 			}, getService(bundleContext, ServletModuleManager.class));
