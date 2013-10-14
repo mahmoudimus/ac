@@ -33,6 +33,7 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import com.google.common.base.Objects;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
@@ -241,7 +242,7 @@ public class JwtSigningRemotablePluginAccessorTest
             {
                 JSONObject jsonObject = (JSONObject) new JSONParser(JSONParser.MODE_JSON_SIMPLE).parse((String) argument);
                 boolean hasClaim = jsonObject.containsKey(claimName);
-                return valueMatters ? hasClaim && Objects.equals(expectedClaimValue, jsonObject.get(claimName)) : hasClaim;
+                return valueMatters ? hasClaim && Objects.equal(expectedClaimValue, jsonObject.get(claimName)) : hasClaim;
             }
             catch (ParseException e)
             {
