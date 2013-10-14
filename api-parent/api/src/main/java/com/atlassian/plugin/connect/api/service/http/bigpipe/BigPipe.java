@@ -16,11 +16,23 @@ public interface BigPipe
     String HTML_CHANNEL_ID = "html";
 
     /**
+     * Channel for scripts
+     */
+    String SCRIPT_CHANNEL_ID = "script";
+
+    /**
      * Returns a handle to the HTML channel.
      *
      * @return The HTML channel; never null
      */
     HtmlChannel getHtmlChannel();
+
+    /**
+     * Returns a handle to the script channel.
+     *
+     * @return The Script channel; never null
+     */
+    HtmlChannel getScriptChannel();
 
     /**
      * Returns a handle to a data channel, by id.

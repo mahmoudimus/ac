@@ -111,7 +111,7 @@ public final class RemoteCondition implements Condition
                                                                                 }
                                                                         );
 
-        bigPipeManager.getBigPipe().getHtmlChannel().promiseContent(responsePromise);
+        bigPipeManager.getBigPipe().getScriptChannel().promiseContent(responsePromise);
         
         // always return true as the link will be disabled by default via the 'hidden' class
         return true;
