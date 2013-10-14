@@ -63,6 +63,14 @@ public class TestPageModules extends AbstractRemotablePluginTest
                                      .name("Remotable Plugin app1 Dialog")
                                      .path("/rpd")
                                      .resource(newMustacheServlet("dialog.mu")))
+                .add(GeneralPageModule.key("sizeToParent")
+                                     .name("Size to parent general page")
+                                     .path("/fsg")
+                                     .resource(newMustacheServlet("iframe-size-to-parent.mu")))
+                .add(DialogPageModule.key("sizeToParentDialog")
+                                     .name("Size to parent dialog page")
+                                     .path("/fsg")
+                                     .resource(newMustacheServlet("iframe-size-to-parent.mu")))
                 .start();
     }
 
@@ -198,6 +206,28 @@ public class TestPageModules extends AbstractRemotablePluginTest
         assertEquals("true", remotePluginTest.waitForValue("amd-env"));
         assertEquals("true", remotePluginTest.waitForValue("amd-request"));
         assertEquals("true", remotePluginTest.waitForValue("amd-dialog"));
+    }
+
+    @Test
+    public void testSizeToParent()
+    {
+        product.visit(LoginPage.class).login(BETTY_USERNAME, BETTY_USERNAME, HomePage.class);
+        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "sizeToParent", "Size to parent general page");
+        assertTrue(page.isRemotePluginLinkPresent());
+        RemotePluginTestPage remotePluginTest = page.clickRemotePluginLink();
+
+        assertTrue(remotePluginTest.isFullSize());
+    }
+
+    @Test
+    public void testSizeToParentDoesNotWorkInDialog()
+    {
+        product.visit(LoginPage.class).login(BETTY_USERNAME, BETTY_USERNAME, HomePage.class);
+        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "sizeToParentDialog", "Size to parent dialog page");
+        assertTrue(page.isRemotePluginLinkPresent());
+        RemotePluginTestPage remotePluginTest = page.clickRemotePluginLink();
+
+        assertTrue(remotePluginTest.isNotFullSize());
     }
 
     public static final class OnlyBettyConditionServlet extends HttpServlet

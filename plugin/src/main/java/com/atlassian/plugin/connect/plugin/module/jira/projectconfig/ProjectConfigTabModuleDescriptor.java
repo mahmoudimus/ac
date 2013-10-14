@@ -42,7 +42,7 @@ public final class ProjectConfigTabModuleDescriptor extends AbstractModuleDescri
     private final DynamicDescriptorRegistration dynamicDescriptorRegistration;
 	private final ProjectConfigTabPageBuilder projectConfigTabPageBuilder;
 	private final BundleContext bundleContext;
-	private final IFrameRendererImpl iFrameRenderer;
+	private final IFramePageRenderer iFramePageRenderer;
 	private final UserManager userManager;
 	private Element descriptor;
 
@@ -54,7 +54,7 @@ public final class ProjectConfigTabModuleDescriptor extends AbstractModuleDescri
             ModuleFactory moduleFactory,
             DynamicDescriptorRegistration dynamicDescriptorRegistration,
             BundleContext bundleContext,
-            IFrameRendererImpl iFrameRenderer,
+            IFramePageRenderer iFramePageRenderer,
             UserManager userManager,
             WebItemCreator webItemCreator,
             JiraAuthenticationContext authenticationContext)
@@ -62,7 +62,7 @@ public final class ProjectConfigTabModuleDescriptor extends AbstractModuleDescri
         super(moduleFactory);
         this.dynamicDescriptorRegistration = checkNotNull(dynamicDescriptorRegistration);
         this.bundleContext = checkNotNull(bundleContext);
-        this.iFrameRenderer = checkNotNull(iFrameRenderer);
+        this.iFramePageRenderer = checkNotNull(iFramePageRenderer);
         this.userManager = checkNotNull(userManager);
         this.webItemCreatorBuilder = checkNotNull(webItemCreator).newBuilder();
         this.condition = new IsProjectAdminCondition(checkNotNull(authenticationContext));
@@ -173,7 +173,7 @@ public final class ProjectConfigTabModuleDescriptor extends AbstractModuleDescri
 
 					return (T) new IFrameProjectConfigTabServlet(
 							pageInfo,
-							iFrameRenderer,
+                            iFramePageRenderer,
 							new IFrameContextImpl(plugin.getKey(), path, moduleKey, params), userManager);
 				}
 			}, getService(bundleContext, ServletModuleManager.class));

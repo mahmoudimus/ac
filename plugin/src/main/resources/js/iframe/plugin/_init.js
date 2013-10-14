@@ -32,7 +32,10 @@ AP.require(
         // inject an appropriate base tag
         injectBase(options);
       }
-      if (options.resize !== false) {
+      if (options.sizeToParent) {
+        env.sizeToParent();
+      }
+      else if (options.resize !== false) {
         var rate = options.resize;
         rate = rate === "auto" ? 125 : +rate;
         // force rate to an acceptable minimum if it's a number

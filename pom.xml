@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.atlassian.plugins</groupId>
     <artifactId>atlassian-connect-parent</artifactId>
-    <version>1.0-m13.2</version>
+    <version>1.0-m14.2</version>
 
     <organization>
         <name>Atlassian</name>
@@ -343,6 +343,36 @@
                 <scope>provided</scope>
             </dependency>
             <dependency>
+                <groupId>com.atlassian.jwt</groupId>
+                <artifactId>jwt-api</artifactId>
+                <version>${atlassian.jwt.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.jwt</groupId>
+                <artifactId>jwt-core</artifactId>
+                <version>${atlassian.jwt.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.jwt</groupId>
+                <artifactId>jwt-applinks</artifactId>
+                <version>${atlassian.jwt.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.jwt</groupId>
+                <artifactId>jwt-http-client</artifactId>
+                <version>${atlassian.jwt.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.jwt</groupId>
+                <artifactId>jwt-plugin</artifactId>
+                <version>${atlassian.jwt.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
                 <groupId>com.atlassian.plugins.rest</groupId>
                 <artifactId>atlassian-rest-common</artifactId>
                 <version>${atlassian.rest.version}</version>
@@ -450,6 +480,11 @@
                 <version>${atlassian.plugins.version}</version>
                 <scope>provided</scope>
             </dependency>
+            <dependency>
+                <groupId>com.atlassian.html</groupId>
+                <artifactId>atlassian-html-encoder</artifactId>
+                <version>${atlassian.html.encoder.version}</version>
+            </dependency>
         </dependencies>
         
     </dependencyManagement>
@@ -486,19 +521,21 @@
         <atlassian.jira.webhooks.version>1.2.3</atlassian.jira.webhooks.version>
         <atlassian.mail.version>2.4.1</atlassian.mail.version>
         <atlassian.oauth.version>1.3.0</atlassian.oauth.version>
+        <atlassian.jwt.version>1.0-m0</atlassian.jwt.version>
         <atlassian.plugins.version>3.0.0</atlassian.plugins.version>
         <atlassian.plugins.api.version>2.10</atlassian.plugins.api.version>
         <atlassian.rest.version>2.3.0</atlassian.rest.version>
         <atlassian.sal.version>2.10.0</atlassian.sal.version>
-        <atlassian.selenium.version>2.1.0-m12</atlassian.selenium.version>
+        <atlassian.selenium.version>2.2-rc3</atlassian.selenium.version>
         <atlassian.templaterenderer.version>1.4.2.2</atlassian.templaterenderer.version>
         <atlassian.upm.version>2.13.2</atlassian.upm.version>
         <atlassian.uri.version>0.1</atlassian.uri.version>
         <atlassian-util-concurrent.version>2.4.0</atlassian-util-concurrent.version>
-        <atlassian.webhooks.version>0.16.7</atlassian.webhooks.version>
+        <atlassian.webhooks.version>0.16.10</atlassian.webhooks.version>
         <atlassian.webhooks.api.version>0.16</atlassian.webhooks.api.version>
         <atlassian.webresource.version>2.14.0-m5</atlassian.webresource.version>
         <atlassian.webfragments.version>3.0.0-m7</atlassian.webfragments.version>
+        <atlassian.html.encoder.version>1.4</atlassian.html.encoder.version>
 
         <guava.version>10.0.1</guava.version>
         <jetty.version>8.1.7.v20120910</jetty.version>
