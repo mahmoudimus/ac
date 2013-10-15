@@ -1,41 +1,39 @@
 package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.IssueTabPageCapabilityBean;
+import com.atlassian.plugin.connect.plugin.capabilities.descriptor.IssueTabPageModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.RelativeAddOnUrlConverter;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
-
 import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean.newWebItemBean;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.IssueTabPageCapabilityBean.newIssueTabPageBean;
 
 @Component
-public class WebItemModuleProvider implements ConnectModuleProvider<WebItemCapabilityBean>
+public class IssueTabPageModuleProvider implements ConnectModuleProvider<IssueTabPageCapabilityBean>
 {
-    private final WebItemModuleDescriptorFactory webItemFactory;
+    private final IssueTabPageModuleDescriptorFactory webItemFactory;
     private final RelativeAddOnUrlConverter relativeAddOnUrlConverter;
 
     @Autowired
-    public WebItemModuleProvider(WebItemModuleDescriptorFactory webItemFactory, RelativeAddOnUrlConverter relativeAddOnUrlConverter)
+    public IssueTabPageModuleProvider(IssueTabPageModuleDescriptorFactory webItemFactory, RelativeAddOnUrlConverter relativeAddOnUrlConverter)
     {
         this.webItemFactory = webItemFactory;
         this.relativeAddOnUrlConverter = relativeAddOnUrlConverter;
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(Plugin plugin, BundleContext addonBundleContext, List<WebItemCapabilityBean> beans)
+    public List<ModuleDescriptor> provideModules(Plugin plugin, BundleContext addonBundleContext, List<IssueTabPageCapabilityBean> beans)
     {
         List<ModuleDescriptor> descriptors = new ArrayList<ModuleDescriptor>();
 
-        for (WebItemCapabilityBean bean : beans)
+        for (IssueTabPageCapabilityBean bean : beans)
         {
             descriptors.addAll(beanToDescriptors(plugin,addonBundleContext, bean));
         }
@@ -43,20 +41,14 @@ public class WebItemModuleProvider implements ConnectModuleProvider<WebItemCapab
         return descriptors;
     }
 
-    private Collection<? extends ModuleDescriptor> beanToDescriptors(Plugin plugin, BundleContext addonBundleContext, WebItemCapabilityBean bean)
+    private Collection<? extends ModuleDescriptor> beanToDescriptors(Plugin plugin, BundleContext addonBundleContext, IssueTabPageCapabilityBean bean)
     {
         List<ModuleDescriptor> descriptors = new ArrayList<ModuleDescriptor>();
 
-        if (bean.isAbsolute() || bean.getContext().equals(AddOnUrlContext.product))
-        {
-            descriptors.add(webItemFactory.createModuleDescriptor(plugin, addonBundleContext,bean));
-        }
-        else
-        {
-            String localUrl = relativeAddOnUrlConverter.addOnUrlToLocalServletUrl(plugin.getKey(), bean.getLink());
-            
-            WebItemCapabilityBean newBean = newWebItemBean(bean).withLink(localUrl).build();
-            descriptors.add(webItemFactory.createModuleDescriptor(plugin, addonBundleContext, newBean));
+        String localUrl = relativeAddOnUrlConverter.addOnUrlToLocalServletUrl(plugin.getKey(), bean.getUrl());
+
+        IssueTabPageCapabilityBean newBean = newIssueTabPageBean(bean).withUrl(localUrl).build();
+        descriptors.add(webItemFactory.createModuleDescriptor(plugin, addonBundleContext, newBean));
 
             //todo: make sure we do something to actually look up condition and metaTags map
             //ONLY create the servlet if one doesn't already exist!!!
@@ -75,7 +67,6 @@ public class WebItemModuleProvider implements ConnectModuleProvider<WebItemCapab
 //            {
 //                descriptors.add(iframePageFactory.createIFrameServletDescriptor(plugin,newBean,localUrl,bean.getUrl(),"atl.general","", new AlwaysDisplayCondition(),new HashMap<String, String>()));
 //            }
-        }
 
         return descriptors;
     }
