@@ -12,43 +12,27 @@ import static com.google.common.collect.Lists.newArrayList;
 
 public class WebPanelCapabilityBeanBuilder extends NameToKeyBeanBuilder<WebPanelCapabilityBeanBuilder, WebPanelCapabilityBean>
 {
-    private String link;
+
     private String location;
-    private AddOnUrlContext context;
+    private WebPanelLayout layout;
+    private String url;
     private int weight;
-    private List<String> styleClasses;
-    private I18nProperty tooltip;
-    private IconBean icon;
 
     public WebPanelCapabilityBeanBuilder()
     {
 
     }
 
-    public WebPanelCapabilityBeanBuilder(WebPanelCapabilityBean defaultBean)
+    public WebPanelCapabilityBeanBuilder(WebPanelCapabilityBean webPanelBean)
     {
-        super(defaultBean);
+        super(webPanelBean);
 
-        this.link = defaultBean.getLink();
-        this.location = defaultBean.getLocation();
-        this.context = defaultBean.getContext();
-        this.weight = defaultBean.getWeight();
-        this.styleClasses = defaultBean.getStyleClasses();
-        this.tooltip = defaultBean.getTooltip();
-        this.icon = defaultBean.getIcon();
+        this.location = webPanelBean.getLocation();
+        this.layout = webPanelBean.getLayout();
+        this.url = webPanelBean.getUrl();
+        this.weight = webPanelBean.getWeight();
     }
 
-    public WebPanelCapabilityBeanBuilder withLink(String link)
-    {
-        this.link = link;
-        return this;
-    }
-
-    public WebPanelCapabilityBeanBuilder withContext(AddOnUrlContext context)
-    {
-        this.context = context;
-        return this;
-    }
 
     public WebPanelCapabilityBeanBuilder withLocation(String location)
     {
@@ -56,35 +40,24 @@ public class WebPanelCapabilityBeanBuilder extends NameToKeyBeanBuilder<WebPanel
         return this;
     }
 
+    public WebPanelCapabilityBeanBuilder withLayout(WebPanelLayout layout){
+        this.layout = layout;
+        return this;
+    }
+
+    public WebPanelCapabilityBeanBuilder withUrl(String url)
+    {
+        this.url = url;
+        return this;
+    }
+
+
     public WebPanelCapabilityBeanBuilder withWeight(int weight)
     {
         this.weight = weight;
         return this;
     }
 
-    public WebPanelCapabilityBeanBuilder withStyleClasses(List<String> styleClasses)
-    {
-        this.styleClasses = styleClasses;
-        return this;
-    }
-
-    public WebPanelCapabilityBeanBuilder withStyleClasses(String ... styleClasses)
-    {
-        this.styleClasses = newArrayList(styleClasses);
-        return this;
-    }
-
-    public WebPanelCapabilityBeanBuilder withTooltip(I18nProperty tooltip)
-    {
-        this.tooltip = tooltip;
-        return this;
-    }
-
-    public WebPanelCapabilityBeanBuilder withIcon(IconBean icon)
-    {
-        this.icon = icon;
-        return this;
-    }
 
     @Override
     public WebPanelCapabilityBean build()
