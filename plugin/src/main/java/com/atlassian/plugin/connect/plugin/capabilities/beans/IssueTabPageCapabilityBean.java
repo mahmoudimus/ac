@@ -67,6 +67,7 @@ public class IssueTabPageCapabilityBean extends NameToKeyBean
         return weight;
     }
 
+    //TODO: Not sure the issueTabPage really has an icon
     public IconBean getIcon()
     {
         return icon;
