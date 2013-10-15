@@ -2,16 +2,18 @@ package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.WebPanelCapabilityBean;
+import com.atlassian.plugin.connect.plugin.capabilities.descriptor.IFramePageServletDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.RelativeAddOnUrlConverter;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebPanelModuleDescriptorFactory;
+import com.atlassian.plugin.web.conditions.AlwaysDisplayCondition;
 import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebPanelCapabilityBean.newWebPanelBean;
@@ -19,14 +21,16 @@ import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebPanelCap
 @Component
 public class WebPanelModuleProvider implements ConnectModuleProvider<WebPanelCapabilityBean>
 {
-    private final WebPanelModuleDescriptorFactory WebPanelFactory;
+    private final WebPanelModuleDescriptorFactory webPanelFactory;
     private final RelativeAddOnUrlConverter relativeAddOnUrlConverter;
+    private final IFramePageServletDescriptorFactory iFramePageServletDescriptorFactory;
 
     @Autowired
-    public WebPanelModuleProvider(WebPanelModuleDescriptorFactory webPanelFactory, RelativeAddOnUrlConverter relativeAddOnUrlConverter)
+    public WebPanelModuleProvider(WebPanelModuleDescriptorFactory webPanelFactory, RelativeAddOnUrlConverter relativeAddOnUrlConverter, IFramePageServletDescriptorFactory iFramePageServletDescriptorFactory)
     {
-        this.WebPanelFactory = webPanelFactory;
+        this.webPanelFactory = webPanelFactory;
         this.relativeAddOnUrlConverter = relativeAddOnUrlConverter;
+        this.iFramePageServletDescriptorFactory = iFramePageServletDescriptorFactory;
     }
 
     @Override
@@ -46,34 +50,17 @@ public class WebPanelModuleProvider implements ConnectModuleProvider<WebPanelCap
     {
         List<ModuleDescriptor> descriptors = new ArrayList<ModuleDescriptor>();
 
-        if (bean.isAbsolute() || bean.getContext().equals(AddOnUrlContext.product))
+        if (bean.isAbsolute())
         {
-            descriptors.add(WebPanelFactory.createModuleDescriptor(plugin, addonBundleContext,bean));
+            descriptors.add(webPanelFactory.createModuleDescriptor(plugin, addonBundleContext, bean));
         }
         else
         {
-            String localUrl = relativeAddOnUrlConverter.addOnUrlToLocalServletUrl(plugin.getKey(), bean.getLink());
+            String localUrl = relativeAddOnUrlConverter.addOnUrlToLocalServletUrl(plugin.getKey(), bean.getUrl());
             
-            WebPanelCapabilityBean newBean = newWebPanelBean(bean).withLink(localUrl).build();
-            descriptors.add(WebPanelFactory.createModuleDescriptor(plugin, addonBundleContext, newBean));
-
-            //todo: make sure we do something to actually look up condition and metaTags map
-            //ONLY create the servlet if one doesn't already exist!!!
-//            List<ServletModuleDescriptor> servletDescriptors = pluginAccessor.getEnabledModuleDescriptorsByClass(ServletModuleDescriptor.class);
-//            boolean servletExists = false;
-//            for(ServletModuleDescriptor servletDescriptor : servletDescriptors)
-//            {
-//                if(servletDescriptor.getPaths().contains(localUrl))
-//                {
-//                    servletExists = true;
-//                    break;
-//                }
-//            }
-//            
-//            if(!servletExists)
-//            {
-//                descriptors.add(iframePageFactory.createIFrameServletDescriptor(plugin,newBean,localUrl,bean.getLink(),"atl.general","", new AlwaysDisplayCondition(),new HashMap<String, String>()));
-//            }
+            WebPanelCapabilityBean newBean = newWebPanelBean(bean).withUrl(localUrl).build();
+            descriptors.add(webPanelFactory.createModuleDescriptor(plugin, addonBundleContext, newBean));
+            descriptors.add(iFramePageServletDescriptorFactory.createIFrameServletDescriptor(plugin, newBean, localUrl, bean.getUrl(), "atl.general", "", new AlwaysDisplayCondition(), new HashMap<String, String>()));
         }
 
         return descriptors;
