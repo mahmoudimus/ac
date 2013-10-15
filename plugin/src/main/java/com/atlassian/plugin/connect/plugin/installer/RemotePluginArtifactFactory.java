@@ -2,9 +2,12 @@ package com.atlassian.plugin.connect.plugin.installer;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import com.atlassian.plugin.JarPluginArtifact;
+import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginArtifact;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectPluginXmlFactory;
@@ -12,10 +15,14 @@ import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAddOnBundleB
 import com.atlassian.plugin.connect.plugin.util.zip.ZipBuilder;
 import com.atlassian.plugin.connect.plugin.util.zip.ZipHandler;
 import com.atlassian.plugin.connect.spi.ConnectAddOnIdentifierService;
+import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
+import com.atlassian.plugin.osgi.factory.OsgiPlugin;
+import com.atlassian.plugin.osgi.util.OsgiHeaderUtil;
 
 import com.google.common.base.Strings;
 
 import org.dom4j.Document;
+import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -28,12 +35,16 @@ public class RemotePluginArtifactFactory
 {
     private static final String ATLASSIAN_PLUGIN_KEY = "Atlassian-Plugin-Key";
     private final ConnectPluginXmlFactory pluginXmlFactory;
+    private final PluginRetrievalService pluginRetrievalService;
+    private final BundleContext bundleContext;
     public static String CLEAN_FILENAME_PATTERN = "[:\\\\/*?|<> _]";
 
     @Autowired
-    public RemotePluginArtifactFactory(ConnectPluginXmlFactory pluginXmlFactory)
+    public RemotePluginArtifactFactory(ConnectPluginXmlFactory pluginXmlFactory, PluginRetrievalService pluginRetrievalService, BundleContext bundleContext)
     {
         this.pluginXmlFactory = pluginXmlFactory;
+        this.pluginRetrievalService = pluginRetrievalService;
+        this.bundleContext = bundleContext;
     }
 
     public PluginArtifact create(final Document document, String username)
@@ -96,6 +107,12 @@ public class RemotePluginArtifactFactory
                 manifest.put(Constants.BUNDLE_DOCURL,addOn.getVendor().getUrl());
             }
         }
+        
+        //copy the imports from the connect plugin to the addon manifest so addons can autowire stuff
+        OsgiPlugin theConnectPlugin = (OsgiPlugin)pluginRetrievalService.getPlugin();
+        String connectImports = (String)bundleContext.getBundle().getHeaders().get(Constants.IMPORT_PACKAGE);
+
+        manifest.put(Constants.IMPORT_PACKAGE,connectImports);
         
         return manifest;
     }
