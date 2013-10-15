@@ -7,7 +7,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.Nullable;
 
-import com.atlassian.plugin.AutowireCapablePlugin;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.annotation.CapabilitySet;
@@ -42,25 +41,24 @@ public class BeanToModuleRegistrar
     private final ProductAccessor productAccessor;
     
     //TODO refactor to use ContainerManagedPlugin
-    private final AutowireCapablePlugin theConnectPlugin;
+    private final ContainerManagedPlugin theConnectPlugin;
 
     @Autowired
     public BeanToModuleRegistrar(DynamicDescriptorRegistration dynamicDescriptorRegistration, PluginRetrievalService pluginRetrievalService, ProductAccessor productAccessor)
     {
         this.dynamicDescriptorRegistration = dynamicDescriptorRegistration;
         this.productAccessor = productAccessor;
-        this.theConnectPlugin = (AutowireCapablePlugin) pluginRetrievalService.getPlugin();
+        this.theConnectPlugin = (ContainerManagedPlugin) pluginRetrievalService.getPlugin();
         this.registrations = new ConcurrentHashMap<String, DynamicDescriptorRegistration.Registration>();
     }
 
     //TODO: change this to use the capability map instead of the raw list
     public void registerDescriptorsForBeans(Plugin plugin, List<CapabilityBean> beans)
     {
-        ConditionLoadingPlugin conditionLoadingPlugin = new ConditionLoadingPlugin(theConnectPlugin, plugin, Sets.<Class<?>>newHashSet(productAccessor.getConditions().values()));
         BundleContext addonBundleContext = ((OsgiPlugin) plugin).getBundle().getBundleContext();
         
         List<DescriptorToRegister> descriptorsToRegister = new ArrayList<DescriptorToRegister>();
-        ContainerAccessor accessor = ((ContainerManagedPlugin) theConnectPlugin).getContainerAccessor();
+        ContainerAccessor accessor = theConnectPlugin.getContainerAccessor();
         for (CapabilityBean bean : beans)
         {
             if (bean.getClass().isAnnotationPresent(CapabilitySet.class))
@@ -77,7 +75,7 @@ public class BeanToModuleRegistrar
                 if (!providers.isEmpty())
                 {
                     ConnectModuleProvider provider = providers.iterator().next();
-                    descriptorsToRegister.addAll(Lists.transform(provider.provideModules(conditionLoadingPlugin,addonBundleContext, newArrayList(bean)), new Function<ModuleDescriptor, DescriptorToRegister>()
+                    descriptorsToRegister.addAll(Lists.transform(provider.provideModules(plugin,addonBundleContext, newArrayList(bean)), new Function<ModuleDescriptor, DescriptorToRegister>()
                     {
                         @Override
                         public DescriptorToRegister apply(@Nullable ModuleDescriptor input)
@@ -91,7 +89,7 @@ public class BeanToModuleRegistrar
 
         if (!descriptorsToRegister.isEmpty())
         {
-            registrations.putIfAbsent(conditionLoadingPlugin.getKey(), dynamicDescriptorRegistration.registerDescriptors(conditionLoadingPlugin, descriptorsToRegister));
+            registrations.putIfAbsent(plugin.getKey(), dynamicDescriptorRegistration.registerDescriptors(plugin, descriptorsToRegister));
         }
 
     }

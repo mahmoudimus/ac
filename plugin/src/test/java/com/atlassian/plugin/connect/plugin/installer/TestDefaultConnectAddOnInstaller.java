@@ -8,6 +8,8 @@ import com.atlassian.plugin.connect.plugin.capabilities.BeanToModuleRegistrar;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectPluginXmlFactory;
 import com.atlassian.plugin.connect.plugin.event.RemoteEventsHandler;
 import com.atlassian.plugin.connect.spi.InstallationFailedException;
+import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
+
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
@@ -36,7 +38,7 @@ import static org.mockito.Mockito.when;
 public class TestDefaultConnectAddOnInstaller
 {
     public static final String PLUGIN_KEY = "plugin-key";
-    private RemotePluginArtifactFactory remotePluginArtifactFactory = new RemotePluginArtifactFactory(new ConnectPluginXmlFactory());
+    private RemotePluginArtifactFactory remotePluginArtifactFactory = new RemotePluginArtifactFactory(new ConnectPluginXmlFactory(), mock(PluginRetrievalService.class), mock(BundleContext.class));
     private @Mock PluginController pluginController;
     private @Mock PluginAccessor pluginAccessor;
     private @Mock OAuthLinkManager oAuthLinkManager;
