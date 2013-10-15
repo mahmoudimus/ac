@@ -7,7 +7,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.provider.WebPanelModuleP
 /**
  * @since version
  */
-@CapabilitySet(key = "web-items", moduleProvider = WebPanelModuleProvider.class)
+@CapabilitySet(key = "webPanels", moduleProvider = WebPanelModuleProvider.class)
 public class WebPanelCapabilityBean extends NameToKeyBean
 {
     private String location;
