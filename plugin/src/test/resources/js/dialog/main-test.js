@@ -33,10 +33,6 @@ _AP.require(["dialog"], function(dialog) {
     ok(dialog.create, "Dialog create function exists");
   });
 
-  test("Fake failing test", function() {
-    ok(false, "Smoke test to check that build breaks");
-  });
-
   test("Dialog create launches an xhr", function() {
     this.server.respondWith("GET", /.*my-plugin\/blah/,
       [200, { "Content-Type": "text/html" }, 'This is the <span id="my-span">content</span>']);
