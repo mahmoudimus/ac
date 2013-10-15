@@ -2,13 +2,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
 import com.atlassian.plugin.connect.plugin.capabilities.annotation.CapabilitySet;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.WebPanelCapabilityBeanBuilder;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.WebPanelCapabilityBeanBuilder;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.WebPanelModuleProvider;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @since version
@@ -40,7 +34,12 @@ public class WebPanelCapabilityBean extends NameToKeyBean
 
         if (null == layout)
         {
-            this.la
+            this.layout = new WebPanelLayout();
+        }
+
+        if (null == url)
+        {
+            this.url = "";
         }
 
         if(null == weight)
@@ -54,6 +53,16 @@ public class WebPanelCapabilityBean extends NameToKeyBean
         return location;
     }
 
+    public WebPanelLayout getLayout()
+    {
+        return layout;
+    }
+
+    public String getUrl()
+    {
+        return url;
+    }
+
     public int getWeight()
     {
         return weight;
@@ -61,7 +70,7 @@ public class WebPanelCapabilityBean extends NameToKeyBean
     
     public boolean isAbsolute()
     {
-        return (null != getLink() && getLink().startsWith("http"));    
+        return (null != getUrl() && getUrl().toLowerCase().startsWith("http"));
     }
     
     public static WebPanelCapabilityBeanBuilder newWebPanelBean()
