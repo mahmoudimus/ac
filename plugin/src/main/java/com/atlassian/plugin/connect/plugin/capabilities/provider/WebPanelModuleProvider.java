@@ -5,7 +5,7 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.WebPanelCapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.IFramePageServletDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.RelativeAddOnUrlConverter;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebPanelModuleDescriptorFactory;
+import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebPanelConnectModuleDescriptorFactory;
 import com.atlassian.plugin.web.conditions.AlwaysDisplayCondition;
 import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,12 +21,12 @@ import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebPanelCap
 @Component
 public class WebPanelModuleProvider implements ConnectModuleProvider<WebPanelCapabilityBean>
 {
-    private final WebPanelModuleDescriptorFactory webPanelFactory;
+    private final WebPanelConnectModuleDescriptorFactory webPanelFactory;
     private final RelativeAddOnUrlConverter relativeAddOnUrlConverter;
     private final IFramePageServletDescriptorFactory iFramePageServletDescriptorFactory;
 
     @Autowired
-    public WebPanelModuleProvider(WebPanelModuleDescriptorFactory webPanelFactory, RelativeAddOnUrlConverter relativeAddOnUrlConverter, IFramePageServletDescriptorFactory iFramePageServletDescriptorFactory)
+    public WebPanelModuleProvider(WebPanelConnectModuleDescriptorFactory webPanelFactory, RelativeAddOnUrlConverter relativeAddOnUrlConverter, IFramePageServletDescriptorFactory iFramePageServletDescriptorFactory)
     {
         this.webPanelFactory = webPanelFactory;
         this.relativeAddOnUrlConverter = relativeAddOnUrlConverter;
