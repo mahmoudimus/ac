@@ -19,13 +19,12 @@ import org.dom4j.dom.DOMElement;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.printNode;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-@Component
+// Turning off component scanning until ACDEV-445 is resolved
+//@Component
 public class IssueTabPageModuleDescriptorFactory implements ConnectModuleDescriptorFactory<IssueTabPageCapabilityBean, IssueTabPageModuleDescriptor>
 {
     private static final Logger log = LoggerFactory.getLogger(IssueTabPageModuleDescriptorFactory.class);
@@ -44,7 +43,7 @@ public class IssueTabPageModuleDescriptorFactory implements ConnectModuleDescrip
     private final IssueSerializer issueSerializer;
 
 
-    @Autowired
+//    @Autowired
     public IssueTabPageModuleDescriptorFactory(IconModuleFragmentFactory iconModuleFragmentFactory,
                                                ModuleFactory moduleFactory, DynamicDescriptorRegistration dynamicDescriptorRegistration,
                                                ConditionProcessor conditionProcessor,
