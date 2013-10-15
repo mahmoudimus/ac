@@ -639,7 +639,7 @@
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>extract-lib-dependencies</id>
+                        <id>extract-qunit-dependencies</id>
                         <phase>generate-test-resources</phase>
                         <goals>
                             <goal>unpack-dependencies</goal>
@@ -668,7 +668,7 @@
                 <configuration>
                     <systemPropertyVariables>
                         <xvfb.enable>${xvfb.enable}</xvfb.enable>
-                        <webdriver.browser>firefox</webdriver.browser>
+                        <webdriver.browser>${webdriver.browser}</webdriver.browser>
                     </systemPropertyVariables>
                     <resourceLocations>
                         <resourceLocation>${project.basedir}/src/main/resources</resourceLocation>
