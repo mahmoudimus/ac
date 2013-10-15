@@ -5,6 +5,7 @@ import com.atlassian.jira.plugin.issuetabpanel.IssueTabPanelModuleDescriptorImpl
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.PluginParseException;
+import com.atlassian.plugin.connect.plugin.integration.plugins.DynamicDescriptorRegistration;
 import com.atlassian.plugin.connect.plugin.module.ConditionProcessor;
 import com.atlassian.plugin.connect.plugin.module.IFrameRendererImpl;
 import com.atlassian.plugin.connect.plugin.module.jira.AbstractJiraTabPageModuleDescriptor;
@@ -14,8 +15,8 @@ import com.atlassian.plugin.connect.plugin.module.page.IFrameContextImpl;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlValidator;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.spi.module.IFrameParams;
+import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
 import com.atlassian.plugin.module.ModuleFactory;
-import com.atlassian.plugin.connect.plugin.integration.plugins.DynamicDescriptorRegistration;
 import com.atlassian.plugin.web.Condition;
 import com.google.common.base.Optional;
 
@@ -28,14 +29,14 @@ public final class IssueTabPageModuleDescriptor extends AbstractJiraTabPageModul
 {
     private static final String ISSUE_TAB_PAGE_MODULE_PREFIX = "issue-tab-page-";
 
-    private final IFrameRendererImpl iFrameRenderer;
+    private final IFrameRenderer iFrameRenderer;
     private final UrlVariableSubstitutor urlVariableSubstitutor;
     private final JiraAuthenticationContext jiraAuthenticationContext;
     private final ProjectSerializer projectSerializer;
     private final IssueSerializer issueSerializer;
 
     public IssueTabPageModuleDescriptor(ModuleFactory moduleFactory, DynamicDescriptorRegistration dynamicDescriptorRegistration, ConditionProcessor conditionProcessor,
-            IFrameRendererImpl iFrameRenderer, UrlVariableSubstitutor urlVariableSubstitutor, JiraAuthenticationContext jiraAuthenticationContext, UrlValidator urlValidator,
+            IFrameRenderer iFrameRenderer, UrlVariableSubstitutor urlVariableSubstitutor, JiraAuthenticationContext jiraAuthenticationContext, UrlValidator urlValidator,
             ProjectSerializer projectSerializer, IssueSerializer issueSerializer)
     {
         super(moduleFactory, dynamicDescriptorRegistration, conditionProcessor, urlValidator);
@@ -63,7 +64,7 @@ public final class IssueTabPageModuleDescriptor extends AbstractJiraTabPageModul
             {
                 return (T) new IFrameIssueTab(
                         new IFrameContextImpl(getPluginKey() , url, key, iFrameParams),
-                        iFrameRenderer, Optional.fromNullable(condition), urlVariableSubstitutor, projectSerializer, issueSerializer);
+                        (IFrameRendererImpl)iFrameRenderer, Optional.fromNullable(condition), urlVariableSubstitutor, projectSerializer, issueSerializer); // TODO: remove cast
             }
         });
 
