@@ -1,10 +1,13 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
+import com.atlassian.jira.plugin.issuetabpanel.IssueTabPanelModuleDescriptor;
 import com.atlassian.jira.security.JiraAuthenticationContext;
+import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.IssueTabPageCapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.testobjects.PluginForTests;
+import com.atlassian.plugin.connect.plugin.integration.plugins.DescriptorToRegister;
 import com.atlassian.plugin.connect.plugin.integration.plugins.DynamicDescriptorRegistration;
 import com.atlassian.plugin.connect.plugin.module.ConditionProcessor;
 import com.atlassian.plugin.connect.plugin.module.jira.context.serializer.IssueSerializer;
@@ -20,6 +23,7 @@ import com.atlassian.plugin.web.WebInterfaceManager;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -29,11 +33,18 @@ import org.osgi.framework.BundleContext;
 import javax.servlet.http.HttpServletRequest;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.IssueTabPageCapabilityBean.newIssueTabPageBean;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyMap;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -98,6 +109,7 @@ public class IssueTabPageModuleDescriptorFactoryTest
         );
 
         when(conditionProcessor.getLoadablePlugin(plugin)).thenReturn(plugin);
+//        when(dynamicDescriptorRegistration.registerDescriptors(eq(plugin), any(DescriptorToRegister.class))).thenReturn();
     }
 
     @Test
@@ -116,10 +128,17 @@ public class IssueTabPageModuleDescriptorFactoryTest
         descriptor.enabled();
 
         assertEquals("my-key:my-issue-tab-page", descriptor.getCompleteKey());
+        assertEquals("My Issue Tab Page", descriptor.getName());
         assertEquals("http://www.google.com", descriptor.getUrl());
 
-        // TODO: the descriptor doesn't have these properties. Where do they live?
-//        assertEquals(100, descriptor.getWeight());
+        ArgumentCaptor<DescriptorToRegister> argumentCaptor = ArgumentCaptor.forClass(DescriptorToRegister.class);
+        verify(dynamicDescriptorRegistration, times(1)).registerDescriptors(eq(plugin), argumentCaptor.capture());
+        DescriptorToRegister descriptorToRegister = argumentCaptor.getValue();
+        ModuleDescriptor moduleDescriptor = descriptorToRegister.getDescriptor();
+        assertThat(moduleDescriptor, is(instanceOf(IssueTabPanelModuleDescriptor.class)));
+        IssueTabPanelModuleDescriptor issueTabPanelModuleDescriptor = (IssueTabPanelModuleDescriptor) moduleDescriptor;
+        assertThat(issueTabPanelModuleDescriptor.getOrder(), is(equalTo(100)));
+
 //        assertNull(descriptor.getIcon());
     }
 }
