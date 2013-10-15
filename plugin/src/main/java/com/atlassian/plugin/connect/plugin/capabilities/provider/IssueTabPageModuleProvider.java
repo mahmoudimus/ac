@@ -6,8 +6,6 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.IssueTabPageCapabi
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.IssueTabPageModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.RelativeAddOnUrlConverter;
 import org.osgi.framework.BundleContext;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -15,13 +13,13 @@ import java.util.List;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.IssueTabPageCapabilityBean.newIssueTabPageBean;
 
-@Component
+//@Component
 public class IssueTabPageModuleProvider implements ConnectModuleProvider<IssueTabPageCapabilityBean>
 {
     private final IssueTabPageModuleDescriptorFactory webItemFactory;
     private final RelativeAddOnUrlConverter relativeAddOnUrlConverter;
 
-    @Autowired
+//    @Autowired
     public IssueTabPageModuleProvider(IssueTabPageModuleDescriptorFactory webItemFactory, RelativeAddOnUrlConverter relativeAddOnUrlConverter)
     {
         this.webItemFactory = webItemFactory;
