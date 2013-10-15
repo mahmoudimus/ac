@@ -31,11 +31,6 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>atlassian-connect-capabilities-client</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
             <groupId>biz.aQute</groupId>
             <artifactId>bndlib</artifactId>
             <version>1.43.0-atlassian-1</version>

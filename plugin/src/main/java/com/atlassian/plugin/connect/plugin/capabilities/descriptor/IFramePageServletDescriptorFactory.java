@@ -12,7 +12,6 @@ import com.atlassian.plugin.connect.plugin.module.page.IFrameContextImpl;
 import com.atlassian.plugin.connect.plugin.module.page.IFramePageServlet;
 import com.atlassian.plugin.connect.plugin.module.page.PageInfo;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
-import com.atlassian.plugin.connect.spi.module.IFrameParams;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.servlet.ServletModuleManager;
 import com.atlassian.plugin.servlet.descriptors.ServletModuleDescriptor;
@@ -60,27 +59,30 @@ public class IFramePageServletDescriptorFactory
 
         final Map<String,String> contextParams = urlVariableSubstitutor.getContextVariableMap(path);
 
-        final IFrameParams params = new IFrameParamsImpl();
-        final ServletModuleDescriptor descriptor = new ServletModuleDescriptor(new ModuleFactory()
-        {
-            @Override
-            public <T> T createModule(String name, ModuleDescriptor<T> moduleDescriptor) throws
-                    PluginParseException
-            {
-                PageInfo pageInfo = new PageInfo(decorator, templateSuffix, pageName, condition, metaTagsContent);
-
-                return (T) new IFramePageServlet(
-                        pageInfo,
-                        iFrameRenderer,
-                        new IFrameContextImpl(plugin.getKey(), path, moduleKey, params), userManager, urlVariableSubstitutor,
-                        contextParams
-                );
-            }
-        }, getService(bundleContext, ServletModuleManager.class));
+        //TODO: Changes to develop broke this. we need to fix.
         
-       descriptor.init(plugin,servletElement);
-        
-        return descriptor;
+//        final IFrameParams params = new IFrameParamsImpl();
+//        final ServletModuleDescriptor descriptor = new ServletModuleDescriptor(new ModuleFactory()
+//        {
+//            @Override
+//            public <T> T createModule(String name, ModuleDescriptor<T> moduleDescriptor) throws
+//                    PluginParseException
+//            {
+//                PageInfo pageInfo = new PageInfo(decorator, templateSuffix, pageName, condition, metaTagsContent);
+//
+//                return (T) new IFramePageServlet(
+//                        pageInfo,
+//                        iFrameRenderer,
+//                        new IFrameContextImpl(plugin.getKey(), path, moduleKey, params), userManager, urlVariableSubstitutor,
+//                        contextParams
+//                );
+//            }
+//        }, getService(bundleContext, ServletModuleManager.class));
+//        
+//       descriptor.init(plugin,servletElement);
+//        
+//        return descriptor;
+        return null;
     }
     
     private Element createServletElement(String moduleKey, String localUrl)
