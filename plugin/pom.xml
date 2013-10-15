@@ -260,6 +260,12 @@
         </dependency>
 
         <dependency>
+            <groupId>com.atlassian.aui</groupId>
+            <artifactId>auiplugin</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.atteo</groupId>
             <artifactId>evo-classindex</artifactId>
             <version>2.0</version>
@@ -626,6 +632,50 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+
+            <!-- unpack lib dependencies to make available to qunit -->
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>extract-lib-dependencies</id>
+                        <phase>generate-test-resources</phase>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/qunit/dependencies</outputDirectory>
+                            <includeGroupIds>com.atlassian.aui</includeGroupIds>
+                            <includeArtifactIds>auiplugin</includeArtifactIds>
+                            <includes>**/*.js</includes>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- qunit plugin -->
+            <plugin>
+                <groupId>com.atlassian.maven.plugins</groupId>
+                <artifactId>qunit-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <systemPropertyVariables>
+                        <xvfb.enable>${xvfb.enable}</xvfb.enable>
+                        <webdriver.browser>firefox</webdriver.browser>
+                    </systemPropertyVariables>
+                    <resourceLocations>
+                        <resourceLocation>${project.basedir}/src/main/resources</resourceLocation>
+                        <resourceLocation>${project.basedir}/src/test/resources</resourceLocation>
+                        <resourceLocation>${project.build.directory}/qunit</resourceLocation>
+                    </resourceLocations>
+                </configuration>
             </plugin>
 
         </plugins>

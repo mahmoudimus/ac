@@ -53,6 +53,11 @@
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <version>2.9.1</version>
                 </plugin>
+                <plugin>
+                    <groupId>com.atlassian.maven.plugins</groupId>
+                    <artifactId>qunit-maven-plugin</artifactId>
+                    <version>1.11</version>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
@@ -503,6 +508,13 @@
                 <scope>provided</scope>
             </dependency>
             
+            <!-- Only exists for qunit -->
+            <dependency>
+                <groupId>com.atlassian.aui</groupId>
+                <artifactId>auiplugin</artifactId>
+                <version>${aui.version}</version>
+                <scope>test</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <dependencies></dependencies>
@@ -548,6 +560,8 @@
         <atlassian.webresource.version>2.14.0-m5</atlassian.webresource.version>
         <atlassian.webfragments.version>3.0.0-m7</atlassian.webfragments.version>
         <atlassian.html.encoder.version>1.4</atlassian.html.encoder.version>
+        <aui.version>5.2</aui.version>
+
         <guava.version>10.0.1</guava.version>
         <jetty.version>8.1.7.v20120910</jetty.version>
         <json-simple.version>1.1.1</json-simple.version>
