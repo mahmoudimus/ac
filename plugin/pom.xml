@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.0-m14.2-SNAPSHOT</version>
+        <version>1.0-m16-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -140,6 +140,31 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>com.atlassian.jwt</groupId>
+            <artifactId>jwt-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.jwt</groupId>
+            <artifactId>jwt-core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.jwt</groupId>
+            <artifactId>jwt-applinks</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.jwt</groupId>
+            <artifactId>jwt-http-client</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.jwt</groupId>
+            <artifactId>jwt-plugin</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>com.atlassian.plugins.rest</groupId>
             <artifactId>atlassian-rest-common</artifactId>
             <scope>provided</scope>
@@ -219,6 +244,11 @@
             <version>${atlassian.templaterenderer.version}</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.atlassian.html</groupId>
+            <artifactId>atlassian-html-encoder</artifactId>
+            <version>${atlassian.html.encoder.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>org.mockito</groupId>
@@ -261,6 +291,7 @@
                             com.atlassian.jira.security;resolution:=optional,
                             com.atlassian.jira.security.websudo;resolution:=optional,
                             com.atlassian.oauth*;version="(1.2,2.0]",
+                            com.atlassian.jwt.*;version="${atlassian.jwt.version}",
 
                             com.atlassian.plugin;version="${atlassian.plugins.api.version}",
                             com.atlassian.plugin.descriptors;resolution:="optional",
@@ -347,6 +378,11 @@
                                     <artifactId>atlassian-connect-rest-test-plugin</artifactId>
                                     <version>${project.version}</version>
                                 </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.jwt</groupId>
+                                    <artifactId>jwt-plugin</artifactId>
+                                    <version>${atlassian.jwt.version}</version>
+                                </pluginArtifact>
                             </pluginArtifacts>
                             
                             <bundledArtifacts>
@@ -396,6 +432,11 @@
                                     <groupId>${project.groupId}</groupId>
                                     <artifactId>atlassian-connect-rest-test-plugin</artifactId>
                                     <version>${project.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.jwt</groupId>
+                                    <artifactId>jwt-plugin</artifactId>
+                                    <version>${atlassian.jwt.version}</version>
                                 </pluginArtifact>
                             </pluginArtifacts>
 

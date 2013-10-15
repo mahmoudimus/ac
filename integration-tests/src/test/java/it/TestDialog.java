@@ -7,6 +7,7 @@ import com.atlassian.plugin.connect.test.pageobjects.RemoteCloseDialogPage;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteDialogOpeningPage;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginAwarePage;
 import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
+import com.atlassian.plugin.connect.test.server.module.DialogPageModule;
 import com.atlassian.plugin.connect.test.server.module.GeneralPageModule;
 
 import org.junit.AfterClass;
@@ -31,6 +32,11 @@ public class TestDialog extends AbstractRemotablePluginTest
                                       .path("/rpg")
                                       .linkName("Remotable Plugin app1 Open Dialog")
                                       .resource(newMustacheServlet("iframe-open-dialog.mu")))
+                .add(DialogPageModule.key("my-dialog")
+                                      .name("Remote dialog")
+                                      .path("/my-dialog")
+                                      .section("")
+                                      .resource(newMustacheServlet("iframe-close-dialog.mu")))
                 .addRoute("/dialog", newMustacheServlet("iframe-close-dialog.mu"))
                 .start();
     }
@@ -44,16 +50,36 @@ public class TestDialog extends AbstractRemotablePluginTest
         }
     }
 
+    /**
+     * Tests deprecated functionality; should be removed when ContextFreeIframePageServlet is deleted
+     */
     @Test
-    public void testOpenCloseDialog()
+    public void testOpenCloseDialogUrl()
     {
         product.visit(LoginPage.class).login(BETTY_USERNAME, BETTY_USERNAME, HomePage.class);
         RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "remotePluginGeneralOpenDialog", "Remotable Plugin app1 Open Dialog");
 
         page.clickRemotePluginLink();
 
-        RemoteDialogOpeningPage dialogOpeningPage = product.getPageBinder().bind(RemoteDialogOpeningPage.class, "remotePluginGeneralOpenDialog", remotePlugin.getPluginKey());
-        RemoteCloseDialogPage closeDialogPage = dialogOpeningPage.open();
+        RemoteDialogOpeningPage dialogOpeningPage = product.getPageBinder().bind(RemoteDialogOpeningPage.class, "servlet", "remotePluginGeneralOpenDialog", remotePlugin.getPluginKey());
+        RemoteCloseDialogPage closeDialogPage = dialogOpeningPage.openUrl();
+
+        closeDialogPage.close();
+        closeDialogPage.waitUntilClosed();
+        String response = dialogOpeningPage.waitForValue("dialog-close-data");
+        assertEquals("test dialog close data", response);
+    }
+
+    @Test
+    public void testOpenCloseDialogKey()
+    {
+        product.visit(LoginPage.class).login(BETTY_USERNAME, BETTY_USERNAME, HomePage.class);
+        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "remotePluginGeneralOpenDialog", "Remotable Plugin app1 Open Dialog");
+
+        page.clickRemotePluginLink();
+
+        RemoteDialogOpeningPage dialogOpeningPage = product.getPageBinder().bind(RemoteDialogOpeningPage.class, "servlet", "remotePluginGeneralOpenDialog", remotePlugin.getPluginKey());
+        RemoteCloseDialogPage closeDialogPage = dialogOpeningPage.openKey("servlet-my-dialog");
 
         closeDialogPage.close();
         closeDialogPage.waitUntilClosed();

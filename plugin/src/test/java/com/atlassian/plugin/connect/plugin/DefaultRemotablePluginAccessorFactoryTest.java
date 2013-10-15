@@ -6,12 +6,14 @@ import com.atlassian.applinks.api.event.ApplicationLinkAddedEvent;
 import com.atlassian.applinks.api.event.ApplicationLinkDeletedEvent;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.httpclient.api.factory.HttpClientFactory;
+import com.atlassian.jwt.applinks.JwtService;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.module.applinks.RemotePluginContainerModuleDescriptor;
 import com.atlassian.plugin.connect.plugin.util.LocaleHelper;
 import com.atlassian.plugin.connect.plugin.util.http.CachingHttpContentRetriever;
+import com.atlassian.plugin.connect.spi.AuthenticationMethod;
 import com.atlassian.plugin.connect.spi.ConnectAddOnIdentifierService;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.spi.applinks.RemotePluginContainerApplicationType;
@@ -49,6 +51,7 @@ public class DefaultRemotablePluginAccessorFactoryTest
     @Mock private LicenseRetriever licenseRetriever;
     @Mock private LocaleHelper localeHelper;
     @Mock private PluginRetrievalService pluginRetrievalService;
+    @Mock private JwtService jwtService;
 
     private DefaultRemotablePluginAccessorFactory factory;
 
@@ -58,7 +61,8 @@ public class DefaultRemotablePluginAccessorFactoryTest
         Plugin plugin = mockPlugin();
         when(pluginAccessor.getPlugin(PLUGIN_KEY)).thenReturn(plugin);
 
-        factory = new DefaultRemotablePluginAccessorFactory(applicationLinkAccessor, oAuthLinkManager, mockCachingHttpContentRetriever(), pluginAccessor, applicationProperties, eventPublisher, connectIdentifier);
+        when(applicationLinkAccessor.getApplicationLink(PLUGIN_KEY)).thenReturn(mock(ApplicationLink.class));
+        factory = new DefaultRemotablePluginAccessorFactory(applicationLinkAccessor, oAuthLinkManager, mockCachingHttpContentRetriever(), pluginAccessor, applicationProperties, eventPublisher, connectIdentifier, jwtService);
     }
 
     @Test
@@ -68,9 +72,37 @@ public class DefaultRemotablePluginAccessorFactoryTest
     }
 
     @Test
-    public void createdRemotePluginAccessorIsOfTheExpectedType()
+    public void createsOAuthSigningPluginAccessorByDefault()
     {
-        assertThat(createRemotePluginAccessor(), is(instanceOf(OAuthSigningRemotablePluginAccessor.class)));
+        when(applicationLinkAccessor.getApplicationLink(PLUGIN_KEY)).thenReturn(mock(ApplicationLink.class));
+        assertThat(factory.create(PLUGIN_KEY, null), is(instanceOf(OAuthSigningRemotablePluginAccessor.class)));
+    }
+
+    @Test
+    public void createsOAuthSigningPluginAccessorWhenRequired()
+    {
+        ApplicationLink applicationLink = mock(ApplicationLink.class);
+        when(applicationLink.getProperty(AuthenticationMethod.PROPERTY_NAME)).thenReturn(AuthenticationMethod.OAUTH1.toString().toLowerCase());
+        when(applicationLinkAccessor.getApplicationLink(PLUGIN_KEY)).thenReturn(applicationLink);
+        assertThat(factory.create(PLUGIN_KEY, null), is(instanceOf(OAuthSigningRemotablePluginAccessor.class)));
+    }
+
+    @Test
+    public void createsJwtSigningPluginAccessorWhenRequired()
+    {
+        ApplicationLink applicationLink = mock(ApplicationLink.class);
+        when(applicationLink.getProperty(AuthenticationMethod.PROPERTY_NAME)).thenReturn(AuthenticationMethod.JWT.toString().toLowerCase());
+        when(applicationLinkAccessor.getApplicationLink(PLUGIN_KEY)).thenReturn(applicationLink);
+        assertThat(factory.create(PLUGIN_KEY, null), is(instanceOf(JwtSigningRemotablePluginAccessor.class)));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void unknownSigningMethodResultsInException()
+    {
+        ApplicationLink applicationLink = mock(ApplicationLink.class);
+        when(applicationLink.getProperty(AuthenticationMethod.PROPERTY_NAME)).thenReturn("unknown");
+        when(applicationLinkAccessor.getApplicationLink(PLUGIN_KEY)).thenReturn(applicationLink);
+        factory.create(PLUGIN_KEY, null);
     }
 
     @Test

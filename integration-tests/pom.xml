@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.0-m14.2-SNAPSHOT</version>
+        <version>1.0-m16-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -276,6 +276,11 @@
                                     <artifactId>jira-testkit-plugin</artifactId>
                                     <version>${testkit.version}</version>
                                 </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.jwt</groupId>
+                                    <artifactId>jwt-plugin</artifactId>
+                                    <version>${atlassian.jwt.version}</version>
+                                </pluginArtifact>
                             </pluginArtifacts>
                             <libArtifacts>
                                 <!--<libArtifact>-->
@@ -327,6 +332,11 @@
                                     <groupId>${project.groupId}</groupId>
                                     <artifactId>atlassian-connect-rest-test-plugin</artifactId>
                                     <version>${project.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.jwt</groupId>
+                                    <artifactId>jwt-plugin</artifactId>
+                                    <version>${atlassian.jwt.version}</version>
                                 </pluginArtifact>
                             </pluginArtifacts>
                             <libArtifacts>

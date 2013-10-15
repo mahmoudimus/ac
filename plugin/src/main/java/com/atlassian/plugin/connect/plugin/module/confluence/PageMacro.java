@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.plugin.module.confluence;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Map;
 
 import com.atlassian.confluence.content.render.xhtml.ConversionContext;
@@ -56,10 +57,10 @@ public final class PageMacro extends AbstractRemoteMacro
             Map<String, String[]> queryParams = convertParams(macroInstance.getUrlParameters(userManager.getRemoteUsername(), userKey == null ? "" : userKey.getStringValue()));
 
             if (getOutputType().equals(OutputType.INLINE)){
-                return iFrameRenderer.renderInline(iframeContextImpl, "", queryParams, remoteUser);
+                return iFrameRenderer.renderInline(iframeContextImpl, "", queryParams, remoteUser, Collections.<String, Object>emptyMap());
 
             } else {
-                return iFrameRenderer.render(iframeContextImpl, "", queryParams, remoteUser);
+                return iFrameRenderer.render(iframeContextImpl, "", queryParams, remoteUser, Collections.<String, Object>emptyMap());
             }
 
         } catch (IOException e)

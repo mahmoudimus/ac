@@ -6,6 +6,7 @@ import java.util.Map;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
+import com.atlassian.plugin.connect.plugin.module.IFramePageRenderer;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlValidator;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.module.ModuleFactory;
@@ -45,21 +46,21 @@ public final class RemotePageDescriptorCreator
     private final BundleContext bundleContext;
     private final UserManager userManager;
     private final WebItemCreator webItemCreator;
-    private final IFrameRendererImpl iFrameRenderer;
+    private final IFramePageRenderer iFramePageRenderer;
     private final ProductAccessor productAccessor;
     private final UrlVariableSubstitutor urlVariableSubstitutor;
 
     @Autowired
     public RemotePageDescriptorCreator(
             BundleContext bundleContext, UserManager userManager,
-            WebItemCreator webItemCreator, IFrameRendererImpl iFrameRenderer,
+            WebItemCreator webItemCreator, IFramePageRenderer iFramePageRenderer,
             ProductAccessor productAccessor, UrlValidator urlValidator,
             UrlVariableSubstitutor urlVariableSubstitutor)
     {
         this.bundleContext = bundleContext;
         this.userManager = userManager;
         this.webItemCreator = webItemCreator;
-        this.iFrameRenderer = iFrameRenderer;
+        this.iFramePageRenderer = iFramePageRenderer;
         this.productAccessor = productAccessor;
         this.urlVariableSubstitutor = urlVariableSubstitutor;
     }
@@ -81,6 +82,7 @@ public final class RemotePageDescriptorCreator
         private String templateSuffix = "";
         private Condition condition = new AlwaysDisplayCondition();
         private Map<String, String> metaTagsContent = Maps.newHashMap();
+        private Map<String, String> contextParams = Maps.newHashMap();
 
         public Builder()
         {
@@ -122,6 +124,10 @@ public final class RemotePageDescriptorCreator
             config.addElement("url-pattern").setText(localUrl + "/*");
 
             final IFrameParams params = new IFrameParamsImpl(e);
+            for (Map.Entry<String, String> entry : this.contextParams.entrySet())
+            {
+                params.setParam(entry.getKey(), entry.getValue());
+            }
             final ServletModuleDescriptor descriptor = new ServletModuleDescriptor(new ModuleFactory()
             {
                 @Override
@@ -132,7 +138,7 @@ public final class RemotePageDescriptorCreator
 
                     return (T) new IFramePageServlet(
                             pageInfo,
-                            iFrameRenderer,
+                            iFramePageRenderer,
                             new IFrameContextImpl(plugin.getKey(), path, moduleKey, params), userManager, urlVariableSubstitutor,
                             contextParamNameToSymbolicName
                     );
@@ -180,5 +186,11 @@ public final class RemotePageDescriptorCreator
 			metaTagsContent.put(name, content);
 			return this;
 		}
+
+        public Builder addIframeContextParam(String key, String value)
+        {
+            contextParams.put(key, value);
+            return this;
+        }
 	}
 }

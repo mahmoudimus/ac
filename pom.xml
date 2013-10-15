@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.atlassian.plugins</groupId>
     <artifactId>atlassian-connect-parent</artifactId>
-    <version>1.0-m14.2-SNAPSHOT</version>
+    <version>1.0-m16-SNAPSHOT</version>
 
     <organization>
         <name>Atlassian</name>
@@ -30,7 +30,6 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>capabilities-client</module>
         <module>api-parent</module>
         <module>plugin</module>
         <module>rest-test-plugin</module>
@@ -239,11 +238,6 @@
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>com.google.code.gson</groupId>
-                <artifactId>gson</artifactId>
-                <version>${gson.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
                 <version>${slf4j.version}</version>
@@ -272,12 +266,6 @@
             <dependency>
                 <groupId>com.atlassian.plugins</groupId>
                 <artifactId>atlassian-plugins-osgi-bridge</artifactId>
-                <version>${atlassian.plugins.version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.atlassian.plugins</groupId>
-                <artifactId>atlassian-plugins-osgi</artifactId>
                 <version>${atlassian.plugins.version}</version>
                 <scope>provided</scope>
             </dependency>
@@ -462,13 +450,6 @@
                 <version>${atlassian.plugins.version}</version>
                 <scope>provided</scope>
             </dependency>
-
-            <dependency>
-                <groupId>joda-time</groupId>
-                <artifactId>joda-time</artifactId>
-                <version>${joda.time.version}</version>
-                <scope>provided</scope>
-            </dependency>
         </dependencies>
         
     </dependencyManagement>
@@ -526,8 +507,6 @@
         <oauth.core.version>20090531</oauth.core.version>
         <slf4j.version>1.6.4</slf4j.version>
         <spring.version>2.5.6</spring.version>
-        <joda.time.version>1.6</joda.time.version>
-        <gson.version>2.2.2-atlassian-1</gson.version>
 
         <!-- BUILD STUFF -->
         <jgitflow.version>1.0-alpha20</jgitflow.version>
