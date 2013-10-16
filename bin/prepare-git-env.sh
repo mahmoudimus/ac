@@ -11,4 +11,5 @@ export GIT_AUTHOR_EMAIL=$EMAIL
 export GIT_AUTHOR_NAME=$AUTHOR
 export GIT_COMMITTER_EMAIL=$EMAIL
 export GIT_COMMITTER_NAME=$AUTHOR
+export GIT_SSH=./bin/ssh-with-key-check-disabled.sh
 
