@@ -5,11 +5,10 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.WebPanelLayout;
 
 public class WebPanelCapabilityBeanBuilder extends NameToKeyBeanBuilder<WebPanelCapabilityBeanBuilder, WebPanelCapabilityBean>
 {
-
     private String location;
     private WebPanelLayout layout;
     private String url;
-    private int weight;
+    private Integer weight;
 
     public WebPanelCapabilityBeanBuilder()
     {
