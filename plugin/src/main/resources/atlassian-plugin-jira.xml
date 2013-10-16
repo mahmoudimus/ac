@@ -39,7 +39,7 @@
                interface="com.atlassian.plugin.connect.plugin.module.webitem.WebItemModuleDescriptorFactory" />
 
 
-    <component key="issueTabPageModuleDescriptorFactory" class="com.atlassian.plugin.connect.plugin.capabilities.descriptor.IssueTabPageModuleDescriptorFactory" />
+    <component key="connectIssueTabPanelModuleDescriptorFactory" class="com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectIssueTabPanelModuleDescriptorFactory" />
     <component key="issueTabPageModuleProvider" class="com.atlassian.plugin.connect.plugin.capabilities.provider.IssueTabPageModuleProvider" />
 
 

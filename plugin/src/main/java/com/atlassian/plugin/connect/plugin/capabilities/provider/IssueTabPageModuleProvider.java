@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.provider;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.IssueTabPageCapabilityBean;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.IssueTabPageModuleDescriptorFactory;
+import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectIssueTabPanelModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.RelativeAddOnUrlConverter;
 import org.osgi.framework.BundleContext;
 
@@ -16,13 +16,13 @@ import static com.atlassian.plugin.connect.plugin.capabilities.beans.IssueTabPag
 //@Component
 public class IssueTabPageModuleProvider implements ConnectModuleProvider<IssueTabPageCapabilityBean>
 {
-    private final IssueTabPageModuleDescriptorFactory webItemFactory;
+    private final ConnectIssueTabPanelModuleDescriptorFactory issueTabFactory;
     private final RelativeAddOnUrlConverter relativeAddOnUrlConverter;
 
 //    @Autowired
-    public IssueTabPageModuleProvider(IssueTabPageModuleDescriptorFactory webItemFactory, RelativeAddOnUrlConverter relativeAddOnUrlConverter)
+    public IssueTabPageModuleProvider(ConnectIssueTabPanelModuleDescriptorFactory issueTabFactory, RelativeAddOnUrlConverter relativeAddOnUrlConverter)
     {
-        this.webItemFactory = webItemFactory;
+        this.issueTabFactory = issueTabFactory;
         this.relativeAddOnUrlConverter = relativeAddOnUrlConverter;
     }
 
@@ -46,7 +46,7 @@ public class IssueTabPageModuleProvider implements ConnectModuleProvider<IssueTa
         String localUrl = relativeAddOnUrlConverter.addOnUrlToLocalServletUrl(plugin.getKey(), bean.getUrl());
 
         IssueTabPageCapabilityBean newBean = newIssueTabPageBean(bean).withUrl(localUrl).build();
-        descriptors.add(webItemFactory.createModuleDescriptor(plugin, addonBundleContext, newBean));
+        descriptors.add(issueTabFactory.createModuleDescriptor(plugin, addonBundleContext, newBean));
 
             //todo: make sure we do something to actually look up condition and metaTags map
             //ONLY create the servlet if one doesn't already exist!!!

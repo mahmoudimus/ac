@@ -1,25 +1,15 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
-import com.atlassian.jira.plugin.issuetabpanel.IssueTabPanelModuleDescriptor;
-import com.atlassian.jira.security.JiraAuthenticationContext;
-import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.IssueTabPageCapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.plugin.capabilities.testobjects.PluginForTests;
-import com.atlassian.plugin.connect.plugin.integration.plugins.DescriptorToRegister;
-import com.atlassian.plugin.connect.plugin.integration.plugins.DynamicDescriptorRegistration;
 import com.atlassian.plugin.connect.plugin.module.ConditionProcessor;
-import com.atlassian.plugin.connect.plugin.module.jira.context.serializer.IssueSerializer;
-import com.atlassian.plugin.connect.plugin.module.jira.context.serializer.ProjectSerializer;
-import com.atlassian.plugin.connect.plugin.module.jira.issuetab.IssueTabPageModuleDescriptor;
-import com.atlassian.plugin.connect.plugin.module.webfragment.UrlValidator;
-import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.spi.module.DynamicMarkerCondition;
-import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
-import com.atlassian.plugin.module.ModuleFactory;
+import com.atlassian.plugin.module.ContainerAccessor;
+import com.atlassian.plugin.module.ContainerManagedPlugin;
 import com.atlassian.plugin.web.WebFragmentHelper;
 import com.atlassian.plugin.web.WebInterfaceManager;
+import org.dom4j.Element;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,9 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.IssueTabPageCapabilityBean.newIssueTabPageBean;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyMap;
@@ -47,12 +35,14 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class IssueTabPageModuleDescriptorFactoryTest
-{
-    private Plugin plugin;
-    private IssueTabPageModuleDescriptorFactory issueTabPageFactory;
 
+@RunWith(MockitoJUnitRunner.class)
+public class ConnectIssueTabPanelModuleDescriptorFactoryTest
+{
+    private ConnectIssueTabPanelModuleDescriptorFactory issueTabPageFactory;
+
+    @Mock
+    private ContainerManagedPlugin plugin;
     @Mock
     private WebInterfaceManager webInterfaceManager;
     @Mock
@@ -63,34 +53,26 @@ public class IssueTabPageModuleDescriptorFactoryTest
     @Mock
     private IconModuleFragmentFactory iconModuleFragmentFactory;
     @Mock
-    private ModuleFactory moduleFactory;
-    @Mock
-    private DynamicDescriptorRegistration dynamicDescriptorRegistration;
-    @Mock
     private ConditionProcessor conditionProcessor;
 
-    @Mock
-    private IFrameRenderer iFrameRenderer;
-    @Mock
-    private UrlVariableSubstitutor urlVariableSubstitutor;
-    @Mock
-    private JiraAuthenticationContext jiraAuthenticationContext;
-    @Mock
-    private UrlValidator urlValidator;
-    @Mock
-    private ProjectSerializer projectSerializer;
-    @Mock
-    private IssueSerializer issueSerializer;
 
+    @Mock
+    private ContainerAccessor containerAccessor;
+
+    @Mock
+    private ConnectIssueTabPanelModuleDescriptor connectIssueTabPanelModuleDescriptor;
 
     @Before
     public void setup()
     {
-        plugin = new PluginForTests("my-key", "My Plugin");
+        when(plugin.getKey()).thenReturn("my-key");
+        when(plugin.getName()).thenReturn("My Plugin");
+//        plugin = new PluginForTests("my-key", "My Plugin");
 
-        issueTabPageFactory = new IssueTabPageModuleDescriptorFactory(iconModuleFragmentFactory, moduleFactory, dynamicDescriptorRegistration,
-                conditionProcessor, iFrameRenderer, urlVariableSubstitutor,
-                jiraAuthenticationContext, urlValidator, projectSerializer, issueSerializer);
+        when(plugin.getContainerAccessor()).thenReturn(containerAccessor);
+        when(containerAccessor.createBean(ConnectIssueTabPanelModuleDescriptor.class)).thenReturn(connectIssueTabPanelModuleDescriptor);
+
+        issueTabPageFactory = new ConnectIssueTabPanelModuleDescriptorFactory(iconModuleFragmentFactory);
 
         when(servletRequest.getContextPath()).thenReturn("http://ondemand.com/jira");
 
@@ -110,6 +92,8 @@ public class IssueTabPageModuleDescriptorFactoryTest
 
         when(conditionProcessor.getLoadablePlugin(plugin)).thenReturn(plugin);
 //        when(dynamicDescriptorRegistration.registerDescriptors(eq(plugin), any(DescriptorToRegister.class))).thenReturn();
+
+
     }
 
     @Test
@@ -124,20 +108,28 @@ public class IssueTabPageModuleDescriptorFactoryTest
                 .withWeight(99)
                 .build();
 
-        IssueTabPageModuleDescriptor descriptor = issueTabPageFactory.createModuleDescriptor(plugin, mock(BundleContext.class), bean);
-        descriptor.enabled();
+        ConnectIssueTabPanelModuleDescriptor descriptor = issueTabPageFactory.createModuleDescriptor(plugin, mock(BundleContext.class), bean);
+        ArgumentCaptor<Element> agumentCaptor = ArgumentCaptor.forClass(Element.class);
+        verify(connectIssueTabPanelModuleDescriptor, times(1)).init(eq(plugin), agumentCaptor.capture());
 
-        assertEquals("my-key:my-issue-tab-page", descriptor.getCompleteKey());
-        assertEquals("My Issue Tab Page", descriptor.getName());
-        assertEquals("http://www.google.com", descriptor.getUrl());
+        Element issueTabPageElement = agumentCaptor.getValue();
 
-        ArgumentCaptor<DescriptorToRegister> argumentCaptor = ArgumentCaptor.forClass(DescriptorToRegister.class);
-        verify(dynamicDescriptorRegistration, times(1)).registerDescriptors(eq(plugin), argumentCaptor.capture());
-        DescriptorToRegister descriptorToRegister = argumentCaptor.getValue();
-        ModuleDescriptor moduleDescriptor = descriptorToRegister.getDescriptor();
-        assertThat(moduleDescriptor, is(instanceOf(IssueTabPanelModuleDescriptor.class)));
-        IssueTabPanelModuleDescriptor issueTabPanelModuleDescriptor = (IssueTabPanelModuleDescriptor) moduleDescriptor;
-        assertThat(issueTabPanelModuleDescriptor.getOrder(), is(equalTo(100)));
+        assertThat(issueTabPageElement.attributeValue("key"), is(equalTo("my-issue-tab-page")));
+        assertThat(issueTabPageElement.attributeValue("weight"), is(equalTo("100")));
+        assertThat(issueTabPageElement.attributeValue("url"), is(equalTo("http://www.google.com")));
+        Element label = issueTabPageElement.element("label");
+        assertThat(label.attributeValue("key"), is(equalTo("my.issuetabpage")));
+        assertThat(label.getText(), is(equalTo("My Issue Tab Page")));
+        assertThat(issueTabPageElement.attributeValue("name"), is(equalTo("My Issue Tab Page")));
+
+//        descriptor.setPlugin(plugin);
+//        descriptor.enabled();
+
+//        assertEquals("my-key:my-issue-tab-page", descriptor.getCompleteKey());
+//        assertEquals("My Issue Tab Page", descriptor.getName());
+//        assertEquals("http://www.google.com", descriptor.getUrl());
+//
+//        assertThat(descriptor.getOrder(), is(equalTo(100)));
 
 //        assertNull(descriptor.getIcon());
     }
