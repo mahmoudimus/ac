@@ -151,7 +151,7 @@
                     <pushReleases>true</pushReleases>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
                     <releaseBranchVersionSuffix>RC</releaseBranchVersionSuffix>
-                    <defaultOriginUrl>git@bitbucket.org:atlassian/atlassian-connect.git</defaultOriginUrl>
+                    <defaultOriginUrl>git@stash.atlassian.com:7997/ac/atlassian-connect.git</defaultOriginUrl>
                 </configuration>
             </plugin>
         </plugins>
