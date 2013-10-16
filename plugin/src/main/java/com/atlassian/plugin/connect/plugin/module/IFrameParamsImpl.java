@@ -50,4 +50,12 @@ public final class IFrameParamsImpl implements IFrameParams
     {
         return params;
     }
+
+    @Override
+    public String toString()
+    {
+        return "IFrameParamsImpl{" +
+                "params=" + params +
+                '}';
+    }
 }

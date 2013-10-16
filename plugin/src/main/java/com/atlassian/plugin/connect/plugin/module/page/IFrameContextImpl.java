@@ -65,5 +65,16 @@ public final class IFrameContextImpl implements IFrameContext
     {
         return pluginKey;
     }
+
+    @Override
+    public String toString()
+    {
+        return "IFrameContextImpl{" +
+                "iframePath='" + iframePath + '\'' +
+                ", namespace='" + namespace + '\'' +
+                ", iframeParams=" + iframeParams +
+                ", pluginKey='" + pluginKey + '\'' +
+                '}';
+    }
 }
 

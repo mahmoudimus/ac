@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.WebPanelCapabilityBean;
+import com.atlassian.plugin.connect.plugin.module.webpanel.IFrameRemoteWebPanel;
 import com.atlassian.plugin.module.ContainerManagedPlugin;
 import com.atlassian.plugin.web.descriptors.WebPanelModuleDescriptor;
 import org.dom4j.Element;
@@ -18,27 +19,30 @@ public class WebPanelConnectModuleDescriptorFactory implements ConnectModuleDesc
     @Override
     public WebPanelModuleDescriptor createModuleDescriptor(Plugin plugin, BundleContext addonBundleContext, WebPanelCapabilityBean bean)
     {
-        final WebPanelModuleDescriptor descriptor = ((ContainerManagedPlugin)plugin).getContainerAccessor().createBean(WebPanelModuleDescriptor.class);
-        descriptor.init(plugin, createDomElement(bean, bean.getKey()));
+        Element domElement = createDomElement(bean, bean.getKey());
+        final WebPanelModuleDescriptor descriptor = new ConnectDefaultWebPanelModuleDescriptor((ContainerManagedPlugin) plugin, bean, domElement);
+        descriptor.init(plugin, domElement);
         return descriptor;
     }
 
     private Element createDomElement(WebPanelCapabilityBean bean, String webPanelKey)
     {
+        String i18nKey = escapeHtml(bean.getName().getI18n());
         Element webPanelElement = new DOMElement("remote-web-panel");
         webPanelElement.addAttribute("key", webPanelKey);
+        webPanelElement.addAttribute("i18n-name-key", i18nKey);
         webPanelElement.addAttribute("location", escapeHtml(bean.getLocation()));
+
+        if (null != bean.getWeight())
+        {
+            webPanelElement.addAttribute("weight", Integer.toString(bean.getWeight()));
+        }
+
+        webPanelElement.addElement("label").addAttribute("key", i18nKey);
+        webPanelElement.addAttribute("class", IFrameRemoteWebPanel.class.getName());
         webPanelElement.addAttribute("width", escapeHtml(bean.getLayout().getWidth()));
         webPanelElement.addAttribute("height", escapeHtml(bean.getLayout().getHeight()));
-        webPanelElement.addAttribute("weight", Integer.toString(bean.getWeight()));
         webPanelElement.addAttribute("url", escapeHtml(bean.getUrl()));
-        webPanelElement.addAttribute("state", "enabled");
-
-        webPanelElement.addElement("label")
-                .addAttribute("key", escapeHtml(bean.getName().getI18n()))
-                .setText(escapeHtml(bean.getName().getValue()));
-
-        webPanelElement.addAttribute("system", "true");
 
         return webPanelElement;
     }

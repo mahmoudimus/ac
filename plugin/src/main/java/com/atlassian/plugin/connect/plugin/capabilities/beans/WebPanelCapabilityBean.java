@@ -63,7 +63,7 @@ public class WebPanelCapabilityBean extends NameToKeyBean
         return url;
     }
 
-    public int getWeight()
+    public Integer getWeight()
     {
         return weight;
     }

@@ -4,9 +4,14 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.WebPanelCapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.WebPanelLayout;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.plugin.module.context.ContextMapURLSerializer;
+import com.atlassian.plugin.connect.spi.module.IFrameContext;
+import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
 import com.atlassian.plugin.module.ContainerAccessor;
 import com.atlassian.plugin.module.ContainerManagedPlugin;
+import com.atlassian.plugin.web.WebInterfaceManager;
 import com.atlassian.plugin.web.descriptors.WebPanelModuleDescriptor;
+import com.atlassian.sal.api.user.UserManager;
 import com.google.common.base.Objects;
 import org.dom4j.Attribute;
 import org.dom4j.Element;
@@ -19,13 +24,14 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.osgi.framework.BundleContext;
 
+import java.io.IOException;
+import java.util.Collections;
+
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebPanelCapabilityBean.newWebPanelBean;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.argThat;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -33,18 +39,26 @@ public class WebPanelConnectModuleDescriptorFactoryTest
 {
     private interface PluginForTests extends Plugin, ContainerManagedPlugin {}
 
+    private WebPanelModuleDescriptor descriptor;
+
     @Mock private PluginForTests plugin;
     @Mock private ContainerAccessor containerAccessor;
-    @Mock private WebPanelModuleDescriptor descriptor;
+    @Mock private WebInterfaceManager webInterfaceManager;
+    @Mock private UserManager userManager;
+    @Mock private ContextMapURLSerializer contextMapURLSerializer;
+    @Mock private IFrameRenderer iFrameRenderer;
 
     @Before
     public void beforeEachTest()
     {
         WebPanelConnectModuleDescriptorFactory webPanelFactory = new WebPanelConnectModuleDescriptorFactory();
-        when(plugin.getKey()).thenReturn("my-key");
+        when(plugin.getKey()).thenReturn("my-plugin");
         when(plugin.getName()).thenReturn("My Plugin");
         when(plugin.getContainerAccessor()).thenReturn(containerAccessor);
-        when(containerAccessor.createBean(WebPanelModuleDescriptor.class)).thenReturn(descriptor);
+        when(containerAccessor.createBean(WebInterfaceManager.class)).thenReturn(webInterfaceManager);
+        when(containerAccessor.createBean(UserManager.class)).thenReturn(userManager);
+        when(containerAccessor.createBean(ContextMapURLSerializer.class)).thenReturn(contextMapURLSerializer);
+        when(containerAccessor.createBean(IFrameRenderer.class)).thenReturn(iFrameRenderer);
 
         WebPanelCapabilityBean bean = newWebPanelBean()
                 .withName(new I18nProperty("My Web Panel", "my.webpanel"))
@@ -54,7 +68,8 @@ public class WebPanelConnectModuleDescriptorFactoryTest
                 .withWeight(50)
                 .build();
 
-        webPanelFactory.createModuleDescriptor(plugin, mock(BundleContext.class), bean);
+        descriptor = webPanelFactory.createModuleDescriptor(plugin, mock(BundleContext.class), bean);
+        descriptor.enabled();
     }
 
     // TODO: test condition when JD has added conditions support to capabilities
@@ -62,61 +77,119 @@ public class WebPanelConnectModuleDescriptorFactoryTest
     @Test
     public void keyIsCorrect() throws Exception
     {
-        verify(descriptor).init(eq(plugin), argThat(hasAttribute("key", withValue("my-web-panel"))));
+        assertThat(descriptor.getKey(), is("my-web-panel"));
+    }
+
+    @Test
+    public void completeKeyIsCorrect() throws Exception
+    {
+        assertThat(descriptor.getCompleteKey(), is("my-plugin:my-web-panel"));
     }
 
     @Test
     public void locationIsCorrect()
     {
-        verify(descriptor).init(eq(plugin), argThat(hasAttribute("location", withValue("atl.admin/menu"))));
+        assertThat(descriptor.getLocation(), is("atl.admin/menu"));
     }
 
     @Test
-    public void widthIsCorrect()
+    public void widthIsCorrect() throws IOException
     {
-        verify(descriptor).init(eq(plugin), argThat(hasAttribute("width", withValue("10px"))));
+        descriptor.getModule().getHtml(Collections.<String, Object>emptyMap());
+        verify(iFrameRenderer).render(argThat(hasIFrameWidth("10px")), anyString(), anyMap(), anyString(), anyMap());
     }
 
     @Test
-    public void heightIsCorrect()
+    public void heightIsCorrect() throws IOException
     {
-        verify(descriptor).init(eq(plugin), argThat(hasAttribute("height", withValue("100%"))));
+        descriptor.getModule().getHtml(Collections.<String, Object>emptyMap());
+        verify(iFrameRenderer).render(argThat(hasIFrameHeight("100%")), anyString(), anyMap(), anyString(), anyMap());
     }
 
     @Test
     public void weightIsCorrect()
     {
-        verify(descriptor).init(eq(plugin), argThat(hasAttribute("weight", withValue("50"))));
+        assertThat(descriptor.getWeight(), is(50));
     }
 
     @Test
-    public void urlIsCorrect()
+    public void urlIsCorrect() throws IOException
     {
-        verify(descriptor).init(eq(plugin), argThat(hasAttribute("url", withValue("http://www.google.com"))));
-    }
-
-    @Test
-    public void isEnabled()
-    {
-        verify(descriptor).init(eq(plugin), argThat(hasAttribute("state", withValue("enabled"))));
+        descriptor.getModule().getHtml(Collections.<String, Object>emptyMap());
+        verify(iFrameRenderer).render(argThat(hasIFramePath("http://www.google.com")), anyString(), anyMap(), anyString(), anyMap());
     }
 
     @Test
     public void i18nKeyIsCorrect()
     {
-        verify(descriptor).init(eq(plugin), argThat(hasElement("label", withAttribute("key", withValue("my.webpanel")))));
+        assertThat(descriptor.getI18nNameKey(), is("my.webpanel"));
     }
 
-    @Test
-    public void i18TextIsCorrect()
+    private static ArgumentMatcher<IFrameContext> hasIFrameWidth(String width)
     {
-        verify(descriptor).init(eq(plugin), argThat(hasElement("label", withText("My Web Panel"))));
+        return hasIFrameParam("width", width);
     }
 
-    @Test
-    public void isSystem()
+    private static ArgumentMatcher<IFrameContext> hasIFrameHeight(String height)
     {
-        verify(descriptor).init(eq(plugin), argThat(hasAttribute("system", withValue("true"))));
+        return hasIFrameParam("height", height);
+    }
+
+    private static ArgumentMatcher<IFrameContext> hasIFrameParam(String name, String expectedValue)
+    {
+        return new IFrameParamMatcher(name, expectedValue);
+    }
+
+    private static class IFrameParamMatcher extends ArgumentMatcher<IFrameContext>
+    {
+        private final String name;
+        private final String expectedValue;
+
+        private IFrameParamMatcher(String name, String expectedValue)
+        {
+            this.name = checkNotNull(name);
+            this.expectedValue = checkNotNull(expectedValue);
+        }
+
+        @Override
+        public boolean matches(Object argument)
+        {
+            assertThat(argument, is(instanceOf(IFrameContext.class)));
+            IFrameContext iFrameContext = (IFrameContext) argument;
+            return expectedValue.equals(iFrameContext.getIFrameParams().getAsMap().get(name));
+        }
+
+        @Override
+        public void describeTo(Description description)
+        {
+            description.appendText("IFrameContext with param ");
+            description.appendValue(name);
+            description.appendText(" = ");
+            description.appendValue(expectedValue);
+        }
+    }
+
+    private static ArgumentMatcher<IFrameContext> hasIFramePath(final String url)
+    {
+        assertThat(url, is(not(nullValue())));
+
+        return new ArgumentMatcher<IFrameContext>()
+        {
+            @Override
+            public boolean matches(Object argument)
+            {
+                assertThat(argument, is(instanceOf(IFrameContext.class)));
+                IFrameContext iFrameContext = (IFrameContext) argument;
+                return url.equals(iFrameContext.getIframePath());
+            }
+
+            @Override
+            public void describeTo(Description description)
+            {
+                description.appendText("IFrameContext with iFrame URL ");
+                description.appendValue(url);
+            }
+        };
     }
 
     private static ArgumentMatcher<Element> hasElement(String name, ArgumentMatcher<Element> expectedValueMatcher)
