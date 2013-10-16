@@ -56,7 +56,7 @@
                 <plugin>
                     <groupId>com.atlassian.maven.plugins</groupId>
                     <artifactId>qunit-maven-plugin</artifactId>
-                    <version>1.11</version>
+                    <version>1.13</version>
                 </plugin>
             </plugins>
         </pluginManagement>
