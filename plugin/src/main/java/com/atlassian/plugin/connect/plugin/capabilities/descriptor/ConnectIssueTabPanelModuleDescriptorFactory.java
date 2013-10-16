@@ -39,7 +39,7 @@ public class ConnectIssueTabPanelModuleDescriptorFactory implements ConnectModul
         String issueTabPageKey = bean.getKey();
 
         issueTabPageElement.addAttribute("key", issueTabPageKey);
-        issueTabPageElement.addAttribute("weight", Integer.toString(bean.getWeight()));
+        issueTabPageElement.addElement("order").setText(Integer.toString(bean.getWeight()));
         issueTabPageElement.addAttribute("url", bean.getUrl());
         issueTabPageElement.addAttribute("name", bean.getName().getValue());
 //        issueTabPageElement.addAttribute("label", bean.getName().getValue());

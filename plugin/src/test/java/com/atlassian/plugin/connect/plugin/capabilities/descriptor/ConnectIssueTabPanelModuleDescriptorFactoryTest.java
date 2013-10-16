@@ -115,7 +115,7 @@ public class ConnectIssueTabPanelModuleDescriptorFactoryTest
         Element issueTabPageElement = agumentCaptor.getValue();
 
         assertThat(issueTabPageElement.attributeValue("key"), is(equalTo("my-issue-tab-page")));
-        assertThat(issueTabPageElement.attributeValue("weight"), is(equalTo("100")));
+        assertThat(issueTabPageElement.element("order").getText(), is(equalTo("100")));
         assertThat(issueTabPageElement.attributeValue("url"), is(equalTo("http://www.google.com")));
         Element label = issueTabPageElement.element("label");
         assertThat(label.attributeValue("key"), is(equalTo("my.issuetabpage")));
