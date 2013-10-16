@@ -5,10 +5,11 @@ import java.util.Map;
 import java.util.Set;
 
 import com.atlassian.plugin.*;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.CapabilityBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.OAuthLinkManager;
 import com.atlassian.plugin.connect.plugin.capabilities.BeanToModuleRegistrar;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.CapabilityBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.RemoteContainerCapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.gson.CapabilitiesGsonFactory;
 import com.atlassian.plugin.connect.plugin.event.RemoteEventsHandler;
 import com.atlassian.plugin.connect.spi.InstallationFailedException;
@@ -58,10 +59,10 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
         removeOldPlugin(pluginKey);
 
         final PluginArtifact pluginArtifact = getPluginArtifact(username, document);
-        
+
         return installPlugin(pluginArtifact, pluginKey, username);
     }
-    
+
     @Override
     public Plugin install(String username, String capabilities)
     {
@@ -76,17 +77,32 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
 
             long startTime = System.currentTimeMillis();
             Plugin installedPlugin = installPlugin(pluginArtifact, pluginKey, username);
+
+            //we need to make sure the container is registered first
+            List<CapabilityBean> capabilityBeans = newArrayList();
+            if (addOn.getCapabilities().containsKey("connect-container"))
+            {
+                RemoteContainerCapabilityBean container = ((List<RemoteContainerCapabilityBean>) addOn.getCapabilities().get("connect-container")).get(0);
+                if (null == container)
+                {
+                    throw new InstallationFailedException("No connect-container found in capabilities!");
+                }
+                
+                capabilityBeans.add(container);
+            }
             
             try
             {
-                List<CapabilityBean> capabilityBeans = newArrayList();
-                
-                for(Map.Entry<String,List<? extends CapabilityBean>> entry : addOn.getCapabilities().entrySet())
+
+                for (Map.Entry<String, List<? extends CapabilityBean>> entry : addOn.getCapabilities().entrySet())
                 {
-                    capabilityBeans.addAll(entry.getValue());
+                    if(!"connect-container".equals(entry.getKey()))
+                    {
+                        capabilityBeans.addAll(entry.getValue());
+                    }
                 }
-                
-                beanToModuleRegistrar.registerDescriptorsForBeans(installedPlugin,capabilityBeans);
+
+                beanToModuleRegistrar.registerDescriptorsForBeans(installedPlugin, capabilityBeans);
             }
             catch (Exception e)
             {
@@ -97,8 +113,8 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
 
             long endTime = System.currentTimeMillis();
 
-            log.info("Capabilities based connect app started in " +(endTime - startTime) + "ms");
-            
+            log.info("Capabilities based connect app started in " + (endTime - startTime) + "ms");
+
             return installedPlugin;
 
         }
@@ -120,7 +136,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
             {
                 final String installedKey = pluginKeys.iterator().next();
                 final Plugin plugin = pluginAccessor.getPlugin(installedKey);
-                
+
                 // a dodgy plugin artifact can result in an UnloadablePlugin: it has a key but is not loaded
                 // so if you try to use that key to find a loaded plugin then you get nothing... boom.
                 // e.g.: atlassian-plugin.xml contains multiple <webhook> entities with the same key.
@@ -141,7 +157,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
                                 return false;
                             }
                         }
-                        
+
                         return true;
                     }
 
@@ -176,7 +192,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
             remoteEventsHandler.pluginInstalled(pluginKey);
 
             log.info("Registered app '{}' by '{}'", pluginKey, username);
-            
+
             return installedPlugin;
         }
         catch (PermissionDeniedException ex)
