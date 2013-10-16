@@ -4,7 +4,8 @@ import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.WorkflowPostFunctionCapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.RelativeAddOnUrlConverter;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
+import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WorkflowPostFunctionModuleDescriptorFactory;
+import com.google.common.collect.Lists;
 import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -13,18 +14,16 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean.newWebItemBean;
-
 @Component
 public class WorkflowPostFunctionModuleProvider implements ConnectModuleProvider<WorkflowPostFunctionCapabilityBean>
 {
 
-    private final RelativeAddOnUrlConverter relativeAddOnUrlConverter;
+    private final WorkflowPostFunctionModuleDescriptorFactory workflowPostFunctionFactory;
 
     @Autowired
-    public WorkflowPostFunctionModuleProvider(WebItemModuleDescriptorFactory webItemFactory, RelativeAddOnUrlConverter relativeAddOnUrlConverter)
+    public WorkflowPostFunctionModuleProvider(WorkflowPostFunctionModuleDescriptorFactory workflowPostFunctionFactory, RelativeAddOnUrlConverter relativeAddOnUrlConverter)
     {
-        this.relativeAddOnUrlConverter = relativeAddOnUrlConverter;
+        this.workflowPostFunctionFactory = workflowPostFunctionFactory;
     }
 
     @Override
@@ -35,7 +34,7 @@ public class WorkflowPostFunctionModuleProvider implements ConnectModuleProvider
 
         for (WorkflowPostFunctionCapabilityBean bean : beans)
         {
-            descriptors.addAll(beanToDescriptors(plugin,addonBundleContext, bean));
+            descriptors.addAll(beanToDescriptors(plugin, addonBundleContext, bean));
         }
 
         return descriptors;
@@ -43,9 +42,7 @@ public class WorkflowPostFunctionModuleProvider implements ConnectModuleProvider
 
     private Collection<? extends ModuleDescriptor> beanToDescriptors(Plugin plugin, BundleContext addonBundleContext, WorkflowPostFunctionCapabilityBean bean)
     {
-        List<ModuleDescriptor> descriptors = new ArrayList<ModuleDescriptor>();
-
-        return descriptors;
+        return Lists.newArrayList(workflowPostFunctionFactory.createModuleDescriptor(plugin, addonBundleContext, bean));
     }
 
 }

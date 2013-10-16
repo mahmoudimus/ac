@@ -16,6 +16,7 @@ public class WorkflowPostFunctionCapabilityBean extends NameToKeyBean
     private I18nProperty description;
     private UrlBean view;
     private UrlBean edit;
+    private UrlBean create;
     private UrlBean triggered;
     private Boolean allowMultiple;
 
@@ -56,6 +57,11 @@ public class WorkflowPostFunctionCapabilityBean extends NameToKeyBean
     public UrlBean getEdit()
     {
         return edit;
+    }
+
+    public UrlBean getCreate()
+    {
+        return create;
     }
 
     public UrlBean getTriggered()
