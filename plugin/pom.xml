@@ -653,28 +653,46 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- qunit plugin -->
+            <!-- npm plugin, used to get plugins for karma testrunner -->
             <plugin>
-                <groupId>com.atlassian.maven.plugins</groupId>
-                <artifactId>qunit-maven-plugin</artifactId>
+                <groupId>org.mule.tools.javascript</groupId>
+                <artifactId>npm-maven-plugin</artifactId>
+                <version>1.0</version>
                 <executions>
                     <execution>
-                        <phase>test</phase>
+                        <phase>generate-sources</phase>
                         <goals>
-                            <goal>test</goal>
+                            <goal>fetch-modules</goal>
+                        </goals>
+                        <configuration>
+                            <packages>
+                                <package>karma:0.10.2</package>
+                                <package>karma-sinon:0.0.1</package>
+                                <package>karma-qunit:0.1.1</package>
+                                <package>karma-requirejs:0.1.0</package>
+                                <package>karma-chrome-launcher:0.1.0</package>
+                                <package>qunitjs:1.12.0</package>
+                            </packages>
+                            <outputDirectory>node_modules</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- karma testrunner plugin -->
+            <plugin>
+                <groupId>com.kelveden</groupId>
+                <artifactId>maven-karma-plugin</artifactId>
+                <version>1.5</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>start</goal>
                         </goals>
                     </execution>
                 </executions>
                 <configuration>
-                    <systemPropertyVariables>
-                        <xvfb.enable>${xvfb.enable}</xvfb.enable>
-                        <webdriver.browser>${webdriver.browser}</webdriver.browser>
-                    </systemPropertyVariables>
-                    <resourceLocations>
-                        <resourceLocation>${project.basedir}/src/main/resources</resourceLocation>
-                        <resourceLocation>${project.basedir}/src/test/resources</resourceLocation>
-                        <resourceLocation>${project.build.directory}/qunit</resourceLocation>
-                    </resourceLocations>
+                    <browsers>Chrome</browsers>
+                    <karmaExecutable>node_modules/karma/bin/karma</karmaExecutable>
                 </configuration>
             </plugin>
 

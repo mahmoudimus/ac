@@ -53,11 +53,6 @@
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <version>2.9.1</version>
                 </plugin>
-                <plugin>
-                    <groupId>com.atlassian.maven.plugins</groupId>
-                    <artifactId>qunit-maven-plugin</artifactId>
-                    <version>1.13</version>
-                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
@@ -512,8 +507,8 @@
         </dependencies>
     </dependencyManagement>
     <dependencies></dependencies>
-    <!-- REMOVE WHEN JGITFLOW IS FINAL -->
     <pluginRepositories>
+        <!-- REMOVE WHEN JGITFLOW IS FINAL -->
         <pluginRepository>
             <id>snapshots-repo</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
@@ -523,6 +518,11 @@
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
+        </pluginRepository>
+        <pluginRepository>
+            <id>mulesoft-releases</id>
+            <name>MuleSoft Repository</name>
+            <url>https://repository.mulesoft.org/releases</url>
         </pluginRepository>
     </pluginRepositories>
     <properties>
