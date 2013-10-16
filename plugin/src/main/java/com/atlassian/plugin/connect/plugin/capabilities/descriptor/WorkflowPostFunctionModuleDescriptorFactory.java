@@ -37,15 +37,16 @@ public class WorkflowPostFunctionModuleDescriptorFactory implements ConnectModul
 
 
     @Autowired
-    public WorkflowPostFunctionModuleDescriptorFactory(final JiraAuthenticationContext authenticationContext,
-                                                       final ModuleFactory moduleFactory,
-                                                       final IFrameRenderer iFrameRenderer,
-                                                       final JiraRestBeanMarshaler jiraRestBeanMarshaler,
-                                                       final ModuleDescriptorWebHookListenerRegistry webHookConsumerRegistry,
-                                                       final EventPublisher eventPublisher,
-                                                       final TemplateRenderer templateRenderer,
-                                                       final WebResourceUrlProvider webResourceUrlProvider,
-                                                       final PluginRetrievalService pluginRetrievalService)
+    public WorkflowPostFunctionModuleDescriptorFactory(
+            final JiraAuthenticationContext authenticationContext,
+            final ModuleFactory moduleFactory,
+            final IFrameRenderer iFrameRenderer,
+            final JiraRestBeanMarshaler jiraRestBeanMarshaler,
+            final ModuleDescriptorWebHookListenerRegistry webHookConsumerRegistry,
+            final EventPublisher eventPublisher,
+            final TemplateRenderer templateRenderer,
+            final WebResourceUrlProvider webResourceUrlProvider,
+            final PluginRetrievalService pluginRetrievalService)
     {
 
         this.authenticationContext = authenticationContext;
@@ -62,7 +63,7 @@ public class WorkflowPostFunctionModuleDescriptorFactory implements ConnectModul
     @Override
     public WorkflowFunctionModuleDescriptor createModuleDescriptor(Plugin plugin, BundleContext addonBundleContext, WorkflowPostFunctionCapabilityBean bean)
     {
-        ConnectWorkflowFunctionModuleDescriptor moduleDescriptor =  new ConnectWorkflowFunctionModuleDescriptor(
+        ConnectWorkflowFunctionModuleDescriptor moduleDescriptor = new ConnectWorkflowFunctionModuleDescriptor(
                 authenticationContext, moduleFactory, iFrameRenderer, jiraRestBeanMarshaler, webHookConsumerRegistry,
                 eventPublisher, templateRenderer, webResourceUrlProvider, pluginRetrievalService);
 

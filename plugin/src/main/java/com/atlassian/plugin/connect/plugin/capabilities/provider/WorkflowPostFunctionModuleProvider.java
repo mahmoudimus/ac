@@ -34,15 +34,15 @@ public class WorkflowPostFunctionModuleProvider implements ConnectModuleProvider
 
         for (WorkflowPostFunctionCapabilityBean bean : beans)
         {
-            descriptors.addAll(beanToDescriptors(plugin, addonBundleContext, bean));
+            descriptors.add(beanToDescriptor(plugin, addonBundleContext, bean));
         }
 
         return descriptors;
     }
 
-    private Collection<? extends ModuleDescriptor> beanToDescriptors(Plugin plugin, BundleContext addonBundleContext, WorkflowPostFunctionCapabilityBean bean)
+    private ModuleDescriptor beanToDescriptor(Plugin plugin, BundleContext addonBundleContext, WorkflowPostFunctionCapabilityBean bean)
     {
-        return Lists.newArrayList(workflowPostFunctionFactory.createModuleDescriptor(plugin, addonBundleContext, bean));
+        return workflowPostFunctionFactory.createModuleDescriptor(plugin, addonBundleContext, bean);
     }
 
 }
