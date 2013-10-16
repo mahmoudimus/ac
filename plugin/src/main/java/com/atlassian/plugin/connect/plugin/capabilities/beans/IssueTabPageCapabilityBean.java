@@ -6,29 +6,30 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.IssueTabPageModuleProvider;
 
 /**
- * @since version
+ * Capabilities bean for Jira Issue Tab Pages. The capability JSON looks like
+ * <p>
+ * "issueTabPanels": [{
+ * "name": {
+ *     "value": "My Issue Tab",
+ *     "i18n": "my.tab"
+ * },
+ * "url": "/my-general-page",
+ * "icon": {
+ *     "width": 16,
+ *     "height": 16,
+ *     "url": "/some/icon.png"
+ * },
+ * "weight": 100
+}]
+ * </p>
  */
 @CapabilitySet(key = "issueTabPanels", moduleProvider = IssueTabPageModuleProvider.class)
 public class IssueTabPageCapabilityBean extends NameToKeyBean
 {
-    /*
-    "issueTabPanels": [{
-    "name": {
-        "value": "My Issue Tab",
-        "i18n": "my.tab"
-    },
-    "url": "/my-general-page",
-    "icon": {
-        "width": 16,
-        "height": 16,
-        "url": "/some/icon.png"
-    },
-    "weight": 100
-}]
-     */
     private String url;
     private Integer weight;
-    private IconBean icon;
+    private IconBean icon; //TODO: Not sure the issueTabPage really has an icon
+
 
     public IssueTabPageCapabilityBean()
     {
@@ -67,7 +68,6 @@ public class IssueTabPageCapabilityBean extends NameToKeyBean
         return weight;
     }
 
-    //TODO: Not sure the issueTabPage really has an icon
     public IconBean getIcon()
     {
         return icon;
