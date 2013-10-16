@@ -57,7 +57,7 @@ public class WebPanelConnectModuleDescriptorFactoryTest
         webPanelFactory.createModuleDescriptor(plugin, mock(BundleContext.class), bean);
     }
 
-    // TODO: test condition
+    // TODO: test condition when JD has added conditions support to capabilities
 
     @Test
     public void keyIsCorrect() throws Exception
@@ -102,12 +102,6 @@ public class WebPanelConnectModuleDescriptorFactoryTest
     }
 
     @Test
-    public void isSystem()
-    {
-        verify(descriptor).init(eq(plugin), argThat(hasAttribute("system", withValue("true"))));
-    }
-
-    @Test
     public void i18nKeyIsCorrect()
     {
         verify(descriptor).init(eq(plugin), argThat(hasElement("label", withAttribute("key", withValue("my.webpanel")))));
@@ -117,6 +111,12 @@ public class WebPanelConnectModuleDescriptorFactoryTest
     public void i18TextIsCorrect()
     {
         verify(descriptor).init(eq(plugin), argThat(hasElement("label", withText("My Web Panel"))));
+    }
+
+    @Test
+    public void isSystem()
+    {
+        verify(descriptor).init(eq(plugin), argThat(hasAttribute("system", withValue("true"))));
     }
 
     private static ArgumentMatcher<Element> hasElement(String name, ArgumentMatcher<Element> expectedValueMatcher)
