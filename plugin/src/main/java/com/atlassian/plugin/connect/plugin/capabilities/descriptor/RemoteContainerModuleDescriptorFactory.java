@@ -2,14 +2,15 @@ package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
 import com.atlassian.applinks.spi.link.MutatingApplicationLinkService;
 import com.atlassian.applinks.spi.util.TypeAccessor;
-import com.atlassian.plugin.AutowireCapablePlugin;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.OAuthLinkManager;
 import com.atlassian.plugin.connect.plugin.PermissionManager;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.OAuthBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.RemoteContainerCapabilityBean;
+import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAutowireUtil;
 import com.atlassian.plugin.connect.plugin.module.applinks.RemotePluginContainerModuleDescriptor;
 import com.atlassian.plugin.connect.spi.ConnectAddOnIdentifierService;
+import com.atlassian.plugin.module.ContainerManagedPlugin;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.osgi.factory.OsgiPlugin;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
@@ -25,24 +26,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class RemoteContainerModuleDescriptorFactory implements ConnectModuleDescriptorFactory<RemoteContainerCapabilityBean,RemotePluginContainerModuleDescriptor>
 {
-    private final ModuleFactory moduleFactory;
-    private final MutatingApplicationLinkService applicationLinkService;
-    private final OAuthLinkManager oAuthLinkManager;
-    private final PermissionManager permissionManager;
-    private final TypeAccessor typeAccessor;
-    private final PluginSettingsFactory pluginSettingsFactory;
-    private final ConnectAddOnIdentifierService connectIdentifier;
+    private final ConnectAutowireUtil autowireUtil;
 
     @Autowired
-    public RemoteContainerModuleDescriptorFactory(ModuleFactory moduleFactory, MutatingApplicationLinkService applicationLinkService, OAuthLinkManager oAuthLinkManager, PermissionManager permissionManager, TypeAccessor typeAccessor, PluginSettingsFactory pluginSettingsFactory, ConnectAddOnIdentifierService connectIdentifier)
+    public RemoteContainerModuleDescriptorFactory(ConnectAutowireUtil autowireUtil)
     {
-        this.moduleFactory = moduleFactory;
-        this.applicationLinkService = applicationLinkService;
-        this.oAuthLinkManager = oAuthLinkManager;
-        this.permissionManager = permissionManager;
-        this.typeAccessor = typeAccessor;
-        this.pluginSettingsFactory = pluginSettingsFactory;
-        this.connectIdentifier = connectIdentifier;
+        this.autowireUtil = autowireUtil;
     }
 
     @Override
@@ -84,7 +73,8 @@ public class RemoteContainerModuleDescriptorFactory implements ConnectModuleDesc
         }
 
        
-        RemotePluginContainerModuleDescriptor descriptor = new RemotePluginContainerModuleDescriptor(moduleFactory,applicationLinkService,oAuthLinkManager,permissionManager,typeAccessor,addonBundleContext,pluginSettingsFactory,connectIdentifier);
+        //RemotePluginContainerModuleDescriptor descriptor = new RemotePluginContainerModuleDescriptor(moduleFactory,applicationLinkService,oAuthLinkManager,permissionManager,typeAccessor,addonBundleContext,pluginSettingsFactory,connectIdentifier);
+        RemotePluginContainerModuleDescriptor descriptor = autowireUtil.createBean(RemotePluginContainerModuleDescriptor.class);
         descriptor.init(plugin,containerElement);
         
         return descriptor;
