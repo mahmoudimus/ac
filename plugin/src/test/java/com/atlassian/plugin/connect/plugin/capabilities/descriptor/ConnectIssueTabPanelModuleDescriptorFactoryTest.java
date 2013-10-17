@@ -3,9 +3,9 @@ package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectIssueTabPanelCapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAutowireUtil;
 import com.atlassian.plugin.connect.plugin.module.ConditionProcessor;
 import com.atlassian.plugin.connect.spi.module.DynamicMarkerCondition;
-import com.atlassian.plugin.module.ContainerAccessor;
 import com.atlassian.plugin.module.ContainerManagedPlugin;
 import com.atlassian.plugin.web.WebFragmentHelper;
 import com.atlassian.plugin.web.WebInterfaceManager;
@@ -57,10 +57,10 @@ public class ConnectIssueTabPanelModuleDescriptorFactoryTest
 
 
     @Mock
-    private ContainerAccessor containerAccessor;
+    private ConnectIssueTabPanelModuleDescriptor connectIssueTabPanelModuleDescriptor;
 
     @Mock
-    private ConnectIssueTabPanelModuleDescriptor connectIssueTabPanelModuleDescriptor;
+    private ConnectAutowireUtil connectAutowireUtil;
 
     @Before
     public void setup()
@@ -68,10 +68,9 @@ public class ConnectIssueTabPanelModuleDescriptorFactoryTest
         when(plugin.getKey()).thenReturn("my-key");
         when(plugin.getName()).thenReturn("My Plugin");
 
-        when(plugin.getContainerAccessor()).thenReturn(containerAccessor);
-        when(containerAccessor.createBean(ConnectIssueTabPanelModuleDescriptor.class)).thenReturn(connectIssueTabPanelModuleDescriptor);
+        when(connectAutowireUtil.createBean(ConnectIssueTabPanelModuleDescriptor.class)).thenReturn(connectIssueTabPanelModuleDescriptor);
 
-        issueTabPageFactory = new ConnectIssueTabPanelModuleDescriptorFactory(iconModuleFragmentFactory);
+        issueTabPageFactory = new ConnectIssueTabPanelModuleDescriptorFactory(iconModuleFragmentFactory, connectAutowireUtil);
 
         when(servletRequest.getContextPath()).thenReturn("http://ondemand.com/jira");
 

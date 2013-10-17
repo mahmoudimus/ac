@@ -2,8 +2,8 @@ package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectIssueTabPanelCapabilityBean;
+import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAutowireUtil;
 import com.atlassian.plugin.connect.spi.module.DynamicMarkerCondition;
-import com.atlassian.plugin.module.ContainerManagedPlugin;
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
 import org.osgi.framework.BundleContext;
@@ -25,10 +25,12 @@ public class ConnectIssueTabPanelModuleDescriptorFactory implements ConnectModul
 
 
     private final IconModuleFragmentFactory iconModuleFragmentFactory;
+    private final ConnectAutowireUtil connectAutowireUtil;
 
-//    @Autowired
-    public ConnectIssueTabPanelModuleDescriptorFactory(IconModuleFragmentFactory iconModuleFragmentFactory)
+    //    @Autowired
+    public ConnectIssueTabPanelModuleDescriptorFactory(IconModuleFragmentFactory iconModuleFragmentFactory, ConnectAutowireUtil connectAutowireUtil)
     {
+        this.connectAutowireUtil = connectAutowireUtil;
         this.iconModuleFragmentFactory = checkNotNull(iconModuleFragmentFactory);
     }
 
@@ -73,7 +75,7 @@ public class ConnectIssueTabPanelModuleDescriptorFactory implements ConnectModul
 
         issueTabPageElement.addAttribute("system", "true");
 
-        ConnectIssueTabPanelModuleDescriptor descriptor = ((ContainerManagedPlugin)plugin).getContainerAccessor().createBean(ConnectIssueTabPanelModuleDescriptor.class);
+        ConnectIssueTabPanelModuleDescriptor descriptor = connectAutowireUtil.createBean(ConnectIssueTabPanelModuleDescriptor.class);
 
         descriptor.init(plugin, issueTabPageElement);
 
