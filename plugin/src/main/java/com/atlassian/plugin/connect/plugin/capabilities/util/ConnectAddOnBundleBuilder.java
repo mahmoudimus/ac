@@ -130,7 +130,13 @@ public class ConnectAddOnBundleBuilder
         {
             String ip = (String)mergedManifest.getMainAttributes().get(Constants.IMPORT_PACKAGE);
             ip = ip + "," + CONNECT_API_PACKAGE;
-            mergedManifest.getMainAttributes().put(Constants.IMPORT_PACKAGE,ip);
+            mergedManifest.getMainAttributes().putValue(Constants.IMPORT_PACKAGE,ip);
+        }
+        else if(manifest.containsKey(Constants.IMPORT_PACKAGE))
+        {
+            String ip = manifest.get(Constants.IMPORT_PACKAGE);
+            ip = ip + "," + CONNECT_API_PACKAGE;
+            mergedManifest.getMainAttributes().putValue(Constants.IMPORT_PACKAGE,ip);
         }
         else
         {
@@ -151,21 +157,12 @@ public class ConnectAddOnBundleBuilder
             {
                 append.putNextEntry(e);
             }
-            else if (!e.isDirectory() && !e.getName().equals("META-INF/MANIFEST.MF"))
+            else
             {
                 append.putNextEntry(e);
                 IOUtils.copy(jarZip.getInputStream(e), append);
             }
-            else if (e.getName().equals("META-INF/MANIFEST.MF"))
-            {
-                ZipEntry mfe = new ZipEntry("META-INF/MANIFEST.MF");
-                append.putNextEntry(mfe);
-                ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                mergedManifest.write(bos);
-                bos.close();
-
-                IOUtils.copy(new ByteArrayInputStream(bos.toByteArray()), append);
-            }
+            
             append.closeEntry();
         }
 

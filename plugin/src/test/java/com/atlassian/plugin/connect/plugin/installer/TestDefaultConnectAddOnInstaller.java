@@ -38,7 +38,7 @@ import static org.mockito.Mockito.when;
 public class TestDefaultConnectAddOnInstaller
 {
     public static final String PLUGIN_KEY = "plugin-key";
-    private RemotePluginArtifactFactory remotePluginArtifactFactory = new RemotePluginArtifactFactory(new ConnectPluginXmlFactory(), mock(PluginRetrievalService.class), mock(BundleContext.class));
+    private RemotePluginArtifactFactory remotePluginArtifactFactory = new RemotePluginArtifactFactory(new ConnectPluginXmlFactory(), mock(BundleContext.class));
     private @Mock PluginController pluginController;
     private @Mock PluginAccessor pluginAccessor;
     private @Mock OAuthLinkManager oAuthLinkManager;

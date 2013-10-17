@@ -35,15 +35,13 @@ public class RemotePluginArtifactFactory
 {
     private static final String ATLASSIAN_PLUGIN_KEY = "Atlassian-Plugin-Key";
     private final ConnectPluginXmlFactory pluginXmlFactory;
-    private final PluginRetrievalService pluginRetrievalService;
     private final BundleContext bundleContext;
     public static String CLEAN_FILENAME_PATTERN = "[:\\\\/*?|<> _]";
 
     @Autowired
-    public RemotePluginArtifactFactory(ConnectPluginXmlFactory pluginXmlFactory, PluginRetrievalService pluginRetrievalService, BundleContext bundleContext)
+    public RemotePluginArtifactFactory(ConnectPluginXmlFactory pluginXmlFactory, BundleContext bundleContext)
     {
         this.pluginXmlFactory = pluginXmlFactory;
-        this.pluginRetrievalService = pluginRetrievalService;
         this.bundleContext = bundleContext;
     }
 
@@ -109,7 +107,6 @@ public class RemotePluginArtifactFactory
         }
         
         //copy the imports from the connect plugin to the addon manifest so addons can autowire stuff
-        OsgiPlugin theConnectPlugin = (OsgiPlugin)pluginRetrievalService.getPlugin();
         String connectImports = (String)bundleContext.getBundle().getHeaders().get(Constants.IMPORT_PACKAGE);
 
         manifest.put(Constants.IMPORT_PACKAGE,connectImports);
