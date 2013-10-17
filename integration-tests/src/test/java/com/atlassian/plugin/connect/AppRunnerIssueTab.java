@@ -17,7 +17,7 @@ public class AppRunnerIssueTab
         {
             ConnectCapabilitiesRunner remotePlugin = new ConnectCapabilitiesRunner(JIRA,"my-plugin")
                     .addCapability(ConnectIssueTabPanelCapabilityBean.newIssueTabPageBean()
-                            .withName(new I18nProperty("My Tab","ac.mytab"))
+                            .withName(new I18nProperty("My Tab","My Tab"))
                             .withWeight(1)
                             .withUrl("/irwi")
                             .build())
