@@ -4,6 +4,7 @@ import java.io.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -25,6 +26,8 @@ public class ConnectAddOnBundleBuilder
     private static final DateFormat BUILD_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
     private static final String ATLASSIAN_BUILD_DATE = "Atlassian-Build-Date";
     private static final String CONNECT_API_PACKAGE = "com.atlassian.plugin.connect.api*";
+    private static final String CONNECT_SPI_PACKAGE = "com.atlassian.plugin.connect.spi*,com.atlassian.plugin.connect.spi.module*";
+    private static final String CONNECT_PLUGIN_PACKAGE = "com.atlassian.plugin.connect.plugin*";
     
     private final Map<String, byte[]> jarContents;
     private Map<String, String> manifestMap;
@@ -129,18 +132,19 @@ public class ConnectAddOnBundleBuilder
         if(mergedManifest.getMainAttributes().containsKey(Constants.IMPORT_PACKAGE))
         {
             String ip = (String)mergedManifest.getMainAttributes().get(Constants.IMPORT_PACKAGE);
-            ip = ip + "," + CONNECT_API_PACKAGE;
-            mergedManifest.getMainAttributes().putValue(Constants.IMPORT_PACKAGE,ip);
+            ip = ip + "," + CONNECT_API_PACKAGE + "," + CONNECT_SPI_PACKAGE + "," + CONNECT_PLUGIN_PACKAGE;
+            mergedManifest.getMainAttributes().putValue(Constants.IMPORT_PACKAGE, ip);
         }
         else if(manifest.containsKey(Constants.IMPORT_PACKAGE))
         {
             String ip = manifest.get(Constants.IMPORT_PACKAGE);
-            ip = ip + "," + CONNECT_API_PACKAGE;
-            mergedManifest.getMainAttributes().putValue(Constants.IMPORT_PACKAGE,ip);
+            ip = ip + "," + CONNECT_API_PACKAGE + "," + CONNECT_SPI_PACKAGE + "," + CONNECT_PLUGIN_PACKAGE;
+            mergedManifest.getMainAttributes().putValue(Constants.IMPORT_PACKAGE, ip);
         }
         else
         {
-            mergedManifest.getMainAttributes().putValue(Constants.IMPORT_PACKAGE,CONNECT_API_PACKAGE);
+            String ip = CONNECT_API_PACKAGE + "," + CONNECT_SPI_PACKAGE + "," + CONNECT_PLUGIN_PACKAGE;
+            mergedManifest.getMainAttributes().putValue(Constants.IMPORT_PACKAGE,ip);
         }
 
         
@@ -157,10 +161,20 @@ public class ConnectAddOnBundleBuilder
             {
                 append.putNextEntry(e);
             }
-            else
+            else if (!e.isDirectory() && !e.getName().equals("META-INF/MANIFEST.MF"))
             {
                 append.putNextEntry(e);
                 IOUtils.copy(jarZip.getInputStream(e), append);
+            }
+            else if (e.getName().equals("META-INF/MANIFEST.MF"))
+            {
+                ZipEntry mfe = new ZipEntry("META-INF/MANIFEST.MF");
+                append.putNextEntry(mfe);
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                mergedManifest.write(bos);
+                bos.close();
+
+                IOUtils.copy(new ByteArrayInputStream(bos.toByteArray()), append);
             }
             
             append.closeEntry();
@@ -173,7 +187,7 @@ public class ConnectAddOnBundleBuilder
         return newJar;
     }
     
-    private void addManifest()
+    private void addManifest() throws IOException
     {
         if(null == manifestMap)
         {
@@ -183,15 +197,27 @@ public class ConnectAddOnBundleBuilder
         final String buildDateStr = String.valueOf(BUILD_DATE_FORMAT.format(new Date()));
         manifestMap.put(ATLASSIAN_BUILD_DATE,buildDateStr);
 
-
-        StringBuilder sb = new StringBuilder();
+        Manifest mf = new Manifest();
         for (Map.Entry<String, String> entry : manifestMap.entrySet())
         {
-            sb.append(entry.getKey()).append(": ").append(entry.getValue()).append('\n');
+            mf.getMainAttributes().putValue(entry.getKey(),entry.getValue());
         }
-        sb.append('\n');
 
-        addResource("META-INF/MANIFEST.MF", sb.toString());
+        ByteArrayOutputStream bos = null;
+        try
+        {
+             bos = new ByteArrayOutputStream();
+            mf.getMainAttributes().put(Attributes.Name.MANIFEST_VERSION,"1.0");
+            mf.write(bos);
+            String entries = bos.toString();
+            
+            addResource("META-INF/MANIFEST.MF", entries);
+        }
+        finally
+        {
+            IOUtils.closeQuietly(bos);
+        }
+        
     }
     
     public File createExtractableTempFile(String key, String suffix) throws IOException

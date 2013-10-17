@@ -67,7 +67,6 @@ public final class RemotePluginContainerModuleDescriptor extends AbstractModuleD
     private Bundle pluginBundle;
 
     public RemotePluginContainerModuleDescriptor(
-            ModuleFactory moduleFactory,
             MutatingApplicationLinkService applicationLinkService,
             OAuthLinkManager oAuthLinkManager,
             PermissionManager permissionManager,
@@ -76,7 +75,7 @@ public final class RemotePluginContainerModuleDescriptor extends AbstractModuleD
             PluginSettingsFactory pluginSettingsFactory,
             ConnectAddOnIdentifierService connectIdentifier)
     {
-        super(moduleFactory);
+        super(ModuleFactory.LEGACY_MODULE_FACTORY);
         this.applicationLinkService = checkNotNull(applicationLinkService);
         this.oAuthLinkManager = checkNotNull(oAuthLinkManager);
         this.permissionManager = checkNotNull(permissionManager);
