@@ -7,7 +7,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.descriptor.RelativeAddOn
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectIssueTabPanelCapabilityBean.newIssueTabPageBean;
 
 //@Component
-public class ConnectIssueTabPanelModuleProvider extends AbstractConnectTabPanelModuleProvider
+public class ConnectIssueTabPanelModuleProvider extends AbstractConnectTabPanelModuleProvider<ConnectIssueTabPanelCapabilityBean, ConnectIssueTabPanelModuleDescriptorFactory>
 {
 
     //    @Autowired
