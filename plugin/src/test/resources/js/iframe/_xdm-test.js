@@ -22,23 +22,6 @@ define(['iframe-host-xdm'], function() {
       },
       getBaseUrl: function(){
         return window.location.origin;
-      },
-      iframeContents: function(){
-        var i,
-          container = '',
-          scripts = [
-            '_amd',
-            'plugin/_util',
-            'plugin/_dollar',
-            'plugin/_rpc',
-            '_events',
-            '_xdm'
-          ];
-
-        for (i in scripts){
-          container += '<script src="' +  '/js/iframe/' + scripts[i] + '.js"></script>';
-        }
-        return container;
       }
     });
 
@@ -57,15 +40,5 @@ define(['iframe-host-xdm'], function() {
       //TODO: test post message handler is unbound.
       equal($("iframe").length, 0, "Iframe was destroyed");
     });
-
-//    test('messages are sent', function(){
-//      var xdm = this.createXdm(),
-//        iframedoc = $('iframe')[0].contentWindow.document;
-//      iframedoc.body.innerHTML = this.iframeContents();
-//      window.postMessage('something', this.getBaseUrl());
-//      ok(true, 'remove me');
-//    });
-
-
   });
 });

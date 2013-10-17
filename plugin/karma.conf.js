@@ -16,9 +16,6 @@ module.exports = function(config) {
     files: [
       'src/test/resources/test-main.js',
       {pattern: 'src/test/resources/**/*-test.js', included: false},
-//      {pattern: 'src/test/resources/**/shit-test.js', included: false},
-//      {pattern: 'src/test/resources/**/_events-test.js', included: false},
-//      {pattern: 'src/test/resources/**/_xdm-test.js', included: false},
       {pattern: 'target/qunit/dependencies/**/*.js', included: false},
       {pattern: 'src/main/resources/**/*.js', included: false}
     ],
