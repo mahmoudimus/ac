@@ -67,11 +67,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.atlassian.httpclient</groupId>
-            <artifactId>atlassian-httpclient-apache-httpcomponents</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.kohsuke.redstone</groupId>
             <artifactId>redstone</artifactId>
             <version>1.1.1</version>

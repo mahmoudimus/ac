@@ -400,18 +400,6 @@
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>com.atlassian.httpclient</groupId>
-                <artifactId>atlassian-httpclient-spi</artifactId>
-                <version>${atlassian.httpclient.version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.atlassian.httpclient</groupId>
-                <artifactId>atlassian-httpclient-apache-httpcomponents</artifactId>
-                <version>${atlassian.httpclient.version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
                 <groupId>com.atlassian.webhooks</groupId>
                 <artifactId>atlassian-webhooks-provider-spi</artifactId>
                 <version>${atlassian.webhooks.version}</version>
@@ -525,8 +513,8 @@
         <atlassian.applinks.version>4.0.2</atlassian.applinks.version>
         <atlassian.confluence.version>5.3-OD-6</atlassian.confluence.version>
         <atlassian.fugue.version>1.1</atlassian.fugue.version>
-        <atlassian.httpclient.version>${atlassian.webhooks.version}</atlassian.httpclient.version>
-        <atlassian.httpclient.api.version>${atlassian.webhooks.api.version}</atlassian.httpclient.api.version>
+        <atlassian.httpclient.version>0.17.0-m05-ACDEV-250</atlassian.httpclient.version>
+        <atlassian.httpclient.api.version>0.17</atlassian.httpclient.api.version>
         <atlassian.jira.version>6.1-OD-06-1</atlassian.jira.version>
         <atlassian.jira.modules.version>6.1.5</atlassian.jira.modules.version>
         <atlassian.jira.rest.version>${atlassian.jira.modules.version}</atlassian.jira.rest.version>
@@ -543,8 +531,8 @@
         <atlassian.upm.version>2.13.2</atlassian.upm.version>
         <atlassian.uri.version>0.1</atlassian.uri.version>
         <atlassian-util-concurrent.version>2.4.0</atlassian-util-concurrent.version>
-        <atlassian.webhooks.version>0.16.10</atlassian.webhooks.version>
-        <atlassian.webhooks.api.version>0.16</atlassian.webhooks.api.version>
+        <atlassian.webhooks.version>0.17.0-m01-ACDEV-250</atlassian.webhooks.version>
+        <atlassian.webhooks.api.version>0.17</atlassian.webhooks.api.version>
         <atlassian.webresource.version>2.14.0-m5</atlassian.webresource.version>
         <atlassian.webfragments.version>3.0.0-m7</atlassian.webfragments.version>
         <atlassian.html.encoder.version>1.4</atlassian.html.encoder.version>
