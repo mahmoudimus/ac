@@ -62,11 +62,27 @@ define(['iframe-host-xdm'], function() {
         start();
       });
       stop();
-      $("iframe#" + this.iframeId()).load(function(){
+      $("iframe#" + this.iframeId()).load(function() {
         xdm.events.emit('hostevent', '9876');
       });
       
     });
+
+    test('remoteOrigin is resolved to the iframe url', function() {
+      var remoteUrl = 'http://www.example.com?oauth_consumer_key=jira:12345',
+      xdm = new XdmRpc({
+          remoteKey: 'myremotekey',
+          remote: remoteUrl,
+          container: 'qunit-container',
+          channel: 'testchannel',
+          props: {}
+        }, {
+          local: [],
+          remote: {}
+        });
+      equal(xdm.remoteOrigin, remoteUrl);
+    });
+
 
   });
 });
