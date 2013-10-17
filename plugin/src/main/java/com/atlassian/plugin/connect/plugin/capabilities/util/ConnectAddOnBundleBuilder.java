@@ -25,9 +25,6 @@ public class ConnectAddOnBundleBuilder
     public static final String CONNECT_FILE_SUFFIX = "_-atlassian-connect-_";
     private static final DateFormat BUILD_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
     private static final String ATLASSIAN_BUILD_DATE = "Atlassian-Build-Date";
-    private static final String CONNECT_API_PACKAGE = "com.atlassian.plugin.connect.api*";
-    private static final String CONNECT_SPI_PACKAGE = "com.atlassian.plugin.connect.spi*,com.atlassian.plugin.connect.spi.module*";
-    private static final String CONNECT_PLUGIN_PACKAGE = "com.atlassian.plugin.connect.plugin*";
     
     private final Map<String, byte[]> jarContents;
     private Map<String, String> manifestMap;
@@ -129,22 +126,11 @@ public class ConnectAddOnBundleBuilder
 
         Jar bundle = bnd.build();
         Manifest mergedManifest = bundle.getManifest();
-        if(mergedManifest.getMainAttributes().containsKey(Constants.IMPORT_PACKAGE))
-        {
-            String ip = (String)mergedManifest.getMainAttributes().get(Constants.IMPORT_PACKAGE);
-            ip = ip + "," + CONNECT_API_PACKAGE + "," + CONNECT_SPI_PACKAGE + "," + CONNECT_PLUGIN_PACKAGE;
-            mergedManifest.getMainAttributes().putValue(Constants.IMPORT_PACKAGE, ip);
-        }
-        else if(manifest.containsKey(Constants.IMPORT_PACKAGE))
+
+        if(!mergedManifest.getMainAttributes().containsKey(Constants.IMPORT_PACKAGE) && manifest.containsKey(Constants.IMPORT_PACKAGE))
         {
             String ip = manifest.get(Constants.IMPORT_PACKAGE);
-            ip = ip + "," + CONNECT_API_PACKAGE + "," + CONNECT_SPI_PACKAGE + "," + CONNECT_PLUGIN_PACKAGE;
             mergedManifest.getMainAttributes().putValue(Constants.IMPORT_PACKAGE, ip);
-        }
-        else
-        {
-            String ip = CONNECT_API_PACKAGE + "," + CONNECT_SPI_PACKAGE + "," + CONNECT_PLUGIN_PACKAGE;
-            mergedManifest.getMainAttributes().putValue(Constants.IMPORT_PACKAGE,ip);
         }
 
         
