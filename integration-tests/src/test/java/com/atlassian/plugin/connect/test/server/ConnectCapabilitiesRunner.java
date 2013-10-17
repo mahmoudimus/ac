@@ -45,6 +45,7 @@ import static com.atlassian.plugin.connect.plugin.capabilities.beans.RemoteConta
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.OAuthBean.newOAuthBean;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.nullToEmpty;
+import static com.google.common.collect.Maps.newHashMap;
 
 /**
  * @since version
@@ -63,7 +64,7 @@ public class ConnectCapabilitiesRunner
     
     private int port;
     private Server server;
-    
+    private final Map<String, HttpServlet> routes = newHashMap();
     
     public ConnectCapabilitiesRunner(String baseUrl, String pluginKey)
     {
@@ -102,6 +103,12 @@ public class ConnectCapabilitiesRunner
     public ConnectCapabilitiesRunner addCapability(CapabilityBean bean)
     {
         addonBuilder.withCapability(bean);
+        return this;
+    }
+
+    public ConnectCapabilitiesRunner addRoute(String path, HttpServlet servlet)
+    {
+        routes.put(path, servlet);
         return this;
     }
 
@@ -176,14 +183,14 @@ public class ConnectCapabilitiesRunner
 
         context.addServlet(new ServletHolder(new DescriptorServlet()), "/register");
 
-//        for (final Map.Entry<String, HttpServlet> entry : routes.entrySet())
-//        {
-//            if (entry.getValue() instanceof WithContextHttpServlet)
-//            {
-//                ((WithContextHttpServlet) entry.getValue()).baseContext.putAll(getBaseContext());
-//            }
-//            context.addServlet(new ServletHolder(entry.getValue()), entry.getKey());
-//        }
+        for (final Map.Entry<String, HttpServlet> entry : routes.entrySet())
+        {
+            if (entry.getValue() instanceof WithContextHttpServlet)
+            {
+                ((WithContextHttpServlet) entry.getValue()).baseContext.putAll(getBaseContext());
+            }
+            context.addServlet(new ServletHolder(entry.getValue()), entry.getKey());
+        }
 
         list.addHandler(context);
         server.start();

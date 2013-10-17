@@ -1,12 +1,15 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans.builder;
 
+import java.util.Arrays;
 import java.util.List;
 
+import com.atlassian.plugin.connect.plugin.capabilities.beans.ConditionalBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean;
 
+import static com.google.common.collect.Lists.asList;
 import static com.google.common.collect.Lists.newArrayList;
 
 public class WebItemCapabilityBeanBuilder extends NameToKeyBeanBuilder<WebItemCapabilityBeanBuilder, WebItemCapabilityBean>
@@ -18,6 +21,7 @@ public class WebItemCapabilityBeanBuilder extends NameToKeyBeanBuilder<WebItemCa
     private List<String> styleClasses;
     private I18nProperty tooltip;
     private IconBean icon;
+    private List<ConditionalBean> conditions;
 
     public WebItemCapabilityBeanBuilder()
     {
@@ -35,6 +39,7 @@ public class WebItemCapabilityBeanBuilder extends NameToKeyBeanBuilder<WebItemCa
         this.styleClasses = defaultBean.getStyleClasses();
         this.tooltip = defaultBean.getTooltip();
         this.icon = defaultBean.getIcon();
+        this.conditions = defaultBean.getConditions();
     }
 
     public WebItemCapabilityBeanBuilder withLink(String link)
@@ -82,6 +87,18 @@ public class WebItemCapabilityBeanBuilder extends NameToKeyBeanBuilder<WebItemCa
     public WebItemCapabilityBeanBuilder withIcon(IconBean icon)
     {
         this.icon = icon;
+        return this;
+    }
+
+    public WebItemCapabilityBeanBuilder withConditions(ConditionalBean ... beans)
+    {
+        if(null == conditions)
+        {
+            conditions = newArrayList();
+        }
+        
+        conditions.addAll(Arrays.asList(beans));
+
         return this;
     }
 

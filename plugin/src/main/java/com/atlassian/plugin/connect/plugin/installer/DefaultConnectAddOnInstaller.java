@@ -77,6 +77,8 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
             long startTime = System.currentTimeMillis();
             Plugin installedPlugin = installPlugin(pluginArtifact, pluginKey, username);
             
+            //we need to register the container first
+            
             try
             {
                 List<CapabilityBean> capabilityBeans = newArrayList();

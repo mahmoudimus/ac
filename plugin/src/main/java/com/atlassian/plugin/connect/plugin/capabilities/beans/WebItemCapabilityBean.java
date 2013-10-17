@@ -9,6 +9,8 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nPropert
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.WebItemModuleProvider;
 
+import static com.google.common.collect.Lists.newArrayList;
+
 /**
  * @since version
  */
@@ -23,6 +25,7 @@ public class WebItemCapabilityBean extends NameToKeyBean
     private List<String> styleClasses;
     private I18nProperty tooltip;
     private IconBean icon;
+    private List<ConditionalBean> conditions;
 
     public WebItemCapabilityBean()
     {
@@ -34,6 +37,7 @@ public class WebItemCapabilityBean extends NameToKeyBean
         this.styleClasses = new ArrayList<String>();
         this.tooltip = new I18nProperty("", "");
         this.icon = IconBean.newIconBean().withWidth(0).withHeight(0).withUrl("").build();
+        this.conditions = newArrayList();
     }
 
     public WebItemCapabilityBean(WebItemCapabilityBeanBuilder builder)
@@ -76,6 +80,10 @@ public class WebItemCapabilityBean extends NameToKeyBean
         {
             this.icon = IconBean.newIconBean().withWidth(16).withHeight(16).withUrl("").build();
         }
+        if(null == conditions)
+        {
+            this.conditions = newArrayList();
+        }
     }
 
     public String getLink()
@@ -116,6 +124,11 @@ public class WebItemCapabilityBean extends NameToKeyBean
     public IconBean getIcon()
     {
         return icon;
+    }
+
+    public List<ConditionalBean> getConditions()
+    {
+        return conditions;
     }
 
     public boolean isAbsolute()

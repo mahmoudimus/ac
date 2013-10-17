@@ -32,6 +32,7 @@ public class VendorBeanBuilder<T extends VendorBeanBuilder, B extends VendorBean
         return (T) this;
     }
     
+    @Override
     public B build()
     {
         return (B) new VendorBean(this);

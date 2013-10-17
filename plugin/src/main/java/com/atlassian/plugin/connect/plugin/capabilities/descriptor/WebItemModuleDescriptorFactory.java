@@ -29,12 +29,14 @@ public class WebItemModuleDescriptorFactory implements ConnectModuleDescriptorFa
     private final com.atlassian.plugin.connect.plugin.module.webitem.WebItemModuleDescriptorFactory remoteWebItemDescriptorFactory;
     
     private final IconModuleFragmentFactory iconModuleFragmentFactory;
+    private final ConditionModuleFragmentFactory conditionModuleFragmentFactory;
 
     @Autowired
-    public WebItemModuleDescriptorFactory(com.atlassian.plugin.connect.plugin.module.webitem.WebItemModuleDescriptorFactory remoteWebItemDescriptorFactory, IconModuleFragmentFactory iconModuleFragmentFactory)
+    public WebItemModuleDescriptorFactory(com.atlassian.plugin.connect.plugin.module.webitem.WebItemModuleDescriptorFactory remoteWebItemDescriptorFactory, IconModuleFragmentFactory iconModuleFragmentFactory, ConditionModuleFragmentFactory conditionModuleFragmentFactory)
     {
         this.remoteWebItemDescriptorFactory = remoteWebItemDescriptorFactory;
         this.iconModuleFragmentFactory = iconModuleFragmentFactory;
+        this.conditionModuleFragmentFactory = conditionModuleFragmentFactory;
     }
 
     @Override
@@ -60,7 +62,14 @@ public class WebItemModuleDescriptorFactory implements ConnectModuleDescriptorFa
             webItemElement.add(iconModuleFragmentFactory.createFragment(plugin.getKey(), bean.getIcon()));
         }
 
-        webItemElement.addElement("condition").addAttribute("class", DynamicMarkerCondition.class.getName());
+        if(!bean.getConditions().isEmpty())
+        {
+            DOMElement conditions = conditionModuleFragmentFactory.createFragment(plugin.getKey(),bean.getConditions());
+            if(null != conditions)
+            {
+                webItemElement.add(conditions);
+            }
+        }
 
         //TODO: implement condition beans and grab the condition from the bean. e.g. bean.getConditioon();
 //        if (conditionClass != null)
