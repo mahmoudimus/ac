@@ -12,60 +12,61 @@ define(['iframe-host-xdm'], function() {
       iframeId: function() {
         return "easyXDM_qunit-container_provider";
       },
-      createXdm: function(){
+      createXdm: function(fixture){
+        var f = fixture || 'xdm-emit.html';
         return new XdmRpc({
           remoteKey: 'myremotekey',
-          remote: this.getBaseUrl() + '/?oauth_consumer_key=jira:12345',
+          remote: this.getBaseUrl() + '/base/src/test/resources/fixtures/' + f + '?oauth_consumer_key=jira:12345',
           container: 'qunit-container',
+          channel: 'testchannel',
           props: {}
-        }, {});
+        }, {
+          local: [],
+          remote: {}
+        });
       },
       getBaseUrl: function(){
         return window.location.origin;
-      },
-      iframeContents: function(){
-        var i,
-          container = '',
-          scripts = [
-            '_amd',
-            'plugin/_util',
-            'plugin/_dollar',
-            'plugin/_rpc',
-            '_events',
-            '_xdm'
-          ];
-
-        for (i in scripts){
-          container += '<script src="' +  '/js/iframe/' + scripts[i] + '.js"></script>';
-        }
-        return container;
       }
     });
 
     test('creates an iframe', function () {
       var xdm = this.createXdm();
-      equal($("iframe").length, 1, "Iframe was created");
+      equal($("iframe#" + this.iframeId()).length, 1, "Iframe was created");
       ok(xdm.isActive(), 'XDM is active');
       ok(xdm.isHost, 'XDM is host');
 
     });
 
-    test('destroys an iframe', function() {
+    test('destroys an iframe', function () {
       var xdm = this.createXdm();
-      equal($("iframe").length, 1, "Iframe was created");
+      equal($("iframe#" + this.iframeId()).length, 1, "Iframe was created");
       xdm.destroy();
       //TODO: test post message handler is unbound.
-      equal($("iframe").length, 0, "Iframe was destroyed");
+      equal($("iframe#" + this.iframeId()).length, 0, "Iframe was destroyed");
     });
 
-//    test('messages are sent', function(){
-//      var xdm = this.createXdm(),
-//        iframedoc = $('iframe')[0].contentWindow.document;
-//      iframedoc.body.innerHTML = this.iframeContents();
-//      window.postMessage('something', this.getBaseUrl());
-//      ok(true, 'remove me');
-//    });
+    test('messages are received', function () {
+      var xdm = this.createXdm();
+      xdm.events.on('clientevent', function (e){
+        equal(e, '12345');
+        start();
+      });
+      stop();
+    });
 
+    test('messages are sent', function () {
+      var xdm = this.createXdm('xdm-emit-on.html');
+      xdm.events.on('clientevent', function(e){
+        equal(e, '9876');
+        start();
+      });
+      stop();
+      $("iframe#" + this.iframeId()).load(function(){
+        xdm.events.emit('hostevent', '9876');
+      });
+      
+    });
 
   });
 });
