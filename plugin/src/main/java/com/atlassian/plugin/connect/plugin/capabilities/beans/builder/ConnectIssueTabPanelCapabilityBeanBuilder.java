@@ -5,7 +5,8 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectIssueTabPan
 /**
  * Builder for a ConnectIssueTabPanelCapabilityBean
  */
-public class ConnectIssueTabPanelCapabilityBeanBuilder extends AbstractConnectTabPanelCapabilityBeanBuilder
+public class ConnectIssueTabPanelCapabilityBeanBuilder
+        extends AbstractConnectTabPanelCapabilityBeanBuilder<ConnectIssueTabPanelCapabilityBeanBuilder, ConnectIssueTabPanelCapabilityBean>
 {
 
     public ConnectIssueTabPanelCapabilityBeanBuilder()

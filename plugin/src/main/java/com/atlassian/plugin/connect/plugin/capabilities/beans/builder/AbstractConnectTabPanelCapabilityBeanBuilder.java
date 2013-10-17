@@ -19,16 +19,16 @@ public class AbstractConnectTabPanelCapabilityBeanBuilder<T extends AbstractConn
     {
     }
 
-    public AbstractConnectTabPanelCapabilityBeanBuilder withUrl(String link)
+    public T withUrl(String link)
     {
         this.url = link;
-        return this;
+        return (T) this;
     }
 
-    public AbstractConnectTabPanelCapabilityBeanBuilder<T, B> withWeight(int weight)
+    public T withWeight(int weight)
     {
         this.weight = weight;
-        return this;
+        return (T) this;
     }
 
     public String getUrl()
