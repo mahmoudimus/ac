@@ -11,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.printNode;
-import static com.google.common.base.Preconditions.checkNotNull;
 import static org.apache.commons.lang.StringEscapeUtils.escapeHtml;
 
 /**
@@ -24,14 +23,12 @@ public class ConnectIssueTabPanelModuleDescriptorFactory implements ConnectModul
     private static final Logger log = LoggerFactory.getLogger(ConnectIssueTabPanelModuleDescriptorFactory.class);
 
 
-    private final IconModuleFragmentFactory iconModuleFragmentFactory;
     private final ConnectAutowireUtil connectAutowireUtil;
 
     //    @Autowired
-    public ConnectIssueTabPanelModuleDescriptorFactory(IconModuleFragmentFactory iconModuleFragmentFactory, ConnectAutowireUtil connectAutowireUtil)
+    public ConnectIssueTabPanelModuleDescriptorFactory(ConnectAutowireUtil connectAutowireUtil)
     {
         this.connectAutowireUtil = connectAutowireUtil;
-        this.iconModuleFragmentFactory = checkNotNull(iconModuleFragmentFactory);
     }
 
 
