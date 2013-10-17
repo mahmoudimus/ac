@@ -13,11 +13,6 @@ import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectIssueTab
  *     "i18n": "my.tab"
  * },
  * "url": "/my-general-page",
- * "icon": {
- *     "width": 16,
- *     "height": 16,
- *     "url": "/some/icon.png"
- * },
  * "weight": 100
 }]
  * </p>
