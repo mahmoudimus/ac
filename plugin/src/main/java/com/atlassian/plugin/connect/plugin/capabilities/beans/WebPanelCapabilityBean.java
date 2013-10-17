@@ -5,7 +5,25 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.WebPanelCa
 import com.atlassian.plugin.connect.plugin.capabilities.provider.WebPanelModuleProvider;
 
 /**
- * @since version
+ * Capabilities bean for web panels. <p></p>
+ * The capability JSON looks like this:
+ * <p><pre>
+ *   "webPanels": [{
+ *     "name": {
+ *       "value": "My Web Panel",
+ *       "i18n": "my.webpanel"
+ *     },
+ *     "location": "some.jira.location.code",
+ *     "layout": {
+ *       "width": "100%",
+ *       "height": "400px",
+ *     },
+ *     "url": "/foo/bah?projectId=${project.id}",
+ *     "weight": 100,
+ *   }]
+ * </pre></p>
+ *
+ * @since version 1.0
  */
 @CapabilitySet(key = "webPanels", moduleProvider = WebPanelModuleProvider.class)
 public class WebPanelCapabilityBean extends NameToKeyBean
