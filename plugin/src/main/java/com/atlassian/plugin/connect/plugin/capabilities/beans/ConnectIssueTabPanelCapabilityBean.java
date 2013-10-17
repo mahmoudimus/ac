@@ -18,42 +18,14 @@ import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectIssueTab
  * </p>
  */
 @CapabilitySet(key = "issueTabPanels", moduleProvider = ConnectIssueTabPanelModuleProvider.class)
-public class ConnectIssueTabPanelCapabilityBean extends NameToKeyBean
+public class ConnectIssueTabPanelCapabilityBean extends AbstractConnectTabPanelCapabilityBean
 {
-    private String url;
-    private Integer weight;
-
-
-    public ConnectIssueTabPanelCapabilityBean()
-    {
-        this.url = "";
-        this.weight = 100;
-    }
+    public ConnectIssueTabPanelCapabilityBean() {}
 
     public ConnectIssueTabPanelCapabilityBean(ConnectIssueTabPanelCapabilityBeanBuilder builder)
     {
         super(builder);
-        
-        if (null == url)
-        {
-            this.url = "";
-        }
 
-        if(null == weight)
-        {
-            this.weight = 100;
-        }
-        
-    }
-
-    public String getUrl()
-    {
-        return url;
-    }
-
-    public int getWeight()
-    {
-        return weight;
     }
 
     public static ConnectIssueTabPanelCapabilityBeanBuilder newIssueTabPageBean()
