@@ -2,7 +2,7 @@
   "name": "atlassian-connect-plugin",
   "version": "1.0.0",
   "devDependencies": {
-    "karma-sinon": "0.10.2",
-    "karma-sinon": "0.0.1"
+    "karma-sinon": "0.0.1",
+    "karma-qunit": "0.1.1"
   }
 }
