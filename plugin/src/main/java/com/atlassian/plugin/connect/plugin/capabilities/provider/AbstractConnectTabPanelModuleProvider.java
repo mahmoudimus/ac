@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.provider;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectIssueTabPanelCapabilityBean;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectIssueTabPanelModuleDescriptorFactory;
+import com.atlassian.plugin.connect.plugin.capabilities.descriptor.AbstractConnectTabPanelModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.RelativeAddOnUrlConverter;
 import org.osgi.framework.BundleContext;
 
@@ -11,13 +11,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public abstract class AbstractConnectTabPanelModuleProvider<B extends ConnectIssueTabPanelCapabilityBean> implements ConnectModuleProvider<B>
+public abstract class AbstractConnectTabPanelModuleProvider<B extends ConnectIssueTabPanelCapabilityBean,
+        F extends AbstractConnectTabPanelModuleDescriptorFactory> implements ConnectModuleProvider<B>
 {
     protected final RelativeAddOnUrlConverter relativeAddOnUrlConverter;
-    private final ConnectIssueTabPanelModuleDescriptorFactory issueTabFactory;
+    private final F moduleFactory;
 
-    public AbstractConnectTabPanelModuleProvider(ConnectIssueTabPanelModuleDescriptorFactory issueTabFactory, RelativeAddOnUrlConverter relativeAddOnUrlConverter)
+    public AbstractConnectTabPanelModuleProvider(F moduleFactory, RelativeAddOnUrlConverter relativeAddOnUrlConverter)
     {
+        this.moduleFactory = moduleFactory;
         this.relativeAddOnUrlConverter = relativeAddOnUrlConverter;
     }
 
@@ -64,12 +66,10 @@ public abstract class AbstractConnectTabPanelModuleProvider<B extends ConnectIss
         return descriptors;
     }
 
-    protected abstract ModuleDescriptor createModuleDescriptor(Plugin plugin, BundleContext addonBundleContext, B newBean);
-
     protected abstract B createCapabilityBean(B bean, String localUrl);
 
-    protected ModuleDescriptor createModuleDescriptor(Plugin plugin, BundleContext addonBundleContext, ConnectIssueTabPanelCapabilityBean newBean)
+    private ModuleDescriptor createModuleDescriptor(Plugin plugin, BundleContext addonBundleContext, B newBean)
     {
-        return issueTabFactory.createModuleDescriptor(plugin, addonBundleContext, newBean);
+        return moduleFactory.createModuleDescriptor(plugin, addonBundleContext, newBean);
     }
 }
