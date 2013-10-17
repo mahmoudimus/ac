@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect;
 
-import com.atlassian.plugin.connect.plugin.capabilities.beans.IssueTabPageCapabilityBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectIssueTabPanelCapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.server.ConnectCapabilitiesRunner;
 
@@ -43,7 +43,7 @@ public class AppRunnerIssueTab
                             .withWeight(1)
                             .withLink("http://www.google.com")
                             .build())
-                    .addCapability(IssueTabPageCapabilityBean.newIssueTabPageBean()
+                    .addCapability(ConnectIssueTabPanelCapabilityBean.newIssueTabPageBean()
                             .withName(new I18nProperty("My Tab","ac.mytab"))
                             .withWeight(1)
                             .withUrl("/irwi")

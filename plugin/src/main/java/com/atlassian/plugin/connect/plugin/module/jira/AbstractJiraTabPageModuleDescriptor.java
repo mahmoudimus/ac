@@ -121,13 +121,6 @@ public abstract class AbstractJiraTabPageModuleDescriptor extends AbstractModule
         }
     }
 
-    public String getUrl()
-    {
-        return url;
-    }
-
-
-
     private JiraResourcedModuleDescriptor createDescriptor(
             final String key,
             final Element desc,

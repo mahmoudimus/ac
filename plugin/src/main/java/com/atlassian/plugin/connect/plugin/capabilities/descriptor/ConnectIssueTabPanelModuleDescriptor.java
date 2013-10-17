@@ -21,6 +21,9 @@ import org.dom4j.Element;
 import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.getRequiredAttribute;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+/**
+ * A ModuleDescriptor for a Connect version of a Jira Issue Tab Panel
+ */
 public class ConnectIssueTabPanelModuleDescriptor extends IssueTabPanelModuleDescriptorImpl
 {
 

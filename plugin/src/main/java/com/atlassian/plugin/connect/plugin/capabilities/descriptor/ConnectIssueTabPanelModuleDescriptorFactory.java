@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.IssueTabPageCapabilityBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectIssueTabPanelCapabilityBean;
 import com.atlassian.plugin.connect.spi.module.DynamicMarkerCondition;
 import com.atlassian.plugin.module.ContainerManagedPlugin;
 import com.google.common.base.Strings;
@@ -15,9 +15,12 @@ import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.printNode;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.apache.commons.lang.StringEscapeUtils.escapeHtml;
 
+/**
+ * A factory to produce a ConnectIssueTabPanelModuleDescriptor from a ConnectIssueTabPanelCapabilityBean
+ */
 // Turning off component scanning until ACDEV-445 is resolved
 //@Component
-public class ConnectIssueTabPanelModuleDescriptorFactory implements ConnectModuleDescriptorFactory<IssueTabPageCapabilityBean, ConnectIssueTabPanelModuleDescriptor>
+public class ConnectIssueTabPanelModuleDescriptorFactory implements ConnectModuleDescriptorFactory<ConnectIssueTabPanelCapabilityBean, ConnectIssueTabPanelModuleDescriptor>
 {
     private static final Logger log = LoggerFactory.getLogger(ConnectIssueTabPanelModuleDescriptorFactory.class);
 
@@ -32,7 +35,7 @@ public class ConnectIssueTabPanelModuleDescriptorFactory implements ConnectModul
 
 
     @Override
-    public ConnectIssueTabPanelModuleDescriptor createModuleDescriptor(Plugin plugin, BundleContext addonBundleContext, IssueTabPageCapabilityBean bean)
+    public ConnectIssueTabPanelModuleDescriptor createModuleDescriptor(Plugin plugin, BundleContext addonBundleContext, ConnectIssueTabPanelCapabilityBean bean)
     {
         Element issueTabPageElement = new DOMElement("issue-tab-page");
 
@@ -42,14 +45,10 @@ public class ConnectIssueTabPanelModuleDescriptorFactory implements ConnectModul
         issueTabPageElement.addElement("order").setText(Integer.toString(bean.getWeight()));
         issueTabPageElement.addAttribute("url", bean.getUrl());
         issueTabPageElement.addAttribute("name", bean.getName().getValue());
-//        issueTabPageElement.addAttribute("label", bean.getName().getValue());
 
         issueTabPageElement.addElement("label")
                 .addAttribute("key", escapeHtml(bean.getName().getI18n()))
                 .setText(escapeHtml(bean.getName().getValue()));
-
-//        Element linkElement = issueTabPageElement.addElement("url").addAttribute("linkId", issueTabPageKey);
-//        linkElement.setText(bean.getUrl());
 
         if (null != bean.getIcon() && !Strings.isNullOrEmpty(bean.getIcon().getUrl()))
         {

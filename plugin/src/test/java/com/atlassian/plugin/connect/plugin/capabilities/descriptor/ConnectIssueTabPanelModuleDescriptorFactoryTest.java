@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.IssueTabPageCapabilityBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectIssueTabPanelCapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.module.ConditionProcessor;
 import com.atlassian.plugin.connect.spi.module.DynamicMarkerCondition;
@@ -22,7 +22,7 @@ import org.osgi.framework.BundleContext;
 
 import javax.servlet.http.HttpServletRequest;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.IssueTabPageCapabilityBean.newIssueTabPageBean;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectIssueTabPanelCapabilityBean.newIssueTabPageBean;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -67,7 +67,6 @@ public class ConnectIssueTabPanelModuleDescriptorFactoryTest
     {
         when(plugin.getKey()).thenReturn("my-key");
         when(plugin.getName()).thenReturn("My Plugin");
-//        plugin = new PluginForTests("my-key", "My Plugin");
 
         when(plugin.getContainerAccessor()).thenReturn(containerAccessor);
         when(containerAccessor.createBean(ConnectIssueTabPanelModuleDescriptor.class)).thenReturn(connectIssueTabPanelModuleDescriptor);
@@ -91,7 +90,6 @@ public class ConnectIssueTabPanelModuleDescriptorFactoryTest
         );
 
         when(conditionProcessor.getLoadablePlugin(plugin)).thenReturn(plugin);
-//        when(dynamicDescriptorRegistration.registerDescriptors(eq(plugin), any(DescriptorToRegister.class))).thenReturn();
 
 
     }
@@ -102,7 +100,7 @@ public class ConnectIssueTabPanelModuleDescriptorFactoryTest
 
         when(webFragmentHelper.loadCondition(anyString(), any(Plugin.class))).thenReturn(new DynamicMarkerCondition());
 
-        IssueTabPageCapabilityBean bean = newIssueTabPageBean()
+        ConnectIssueTabPanelCapabilityBean bean = newIssueTabPageBean()
                 .withName(new I18nProperty("My Issue Tab Page", "my.issuetabpage"))
                 .withUrl("http://www.google.com")
                 .withWeight(99)
@@ -121,16 +119,5 @@ public class ConnectIssueTabPanelModuleDescriptorFactoryTest
         assertThat(label.attributeValue("key"), is(equalTo("my.issuetabpage")));
         assertThat(label.getText(), is(equalTo("My Issue Tab Page")));
         assertThat(issueTabPageElement.attributeValue("name"), is(equalTo("My Issue Tab Page")));
-
-//        descriptor.setPlugin(plugin);
-//        descriptor.enabled();
-
-//        assertEquals("my-key:my-issue-tab-page", descriptor.getCompleteKey());
-//        assertEquals("My Issue Tab Page", descriptor.getName());
-//        assertEquals("http://www.google.com", descriptor.getUrl());
-//
-//        assertThat(descriptor.getOrder(), is(equalTo(100)));
-
-//        assertNull(descriptor.getIcon());
     }
 }

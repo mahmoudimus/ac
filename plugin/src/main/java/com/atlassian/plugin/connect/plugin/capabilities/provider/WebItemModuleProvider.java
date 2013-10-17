@@ -1,19 +1,18 @@
 package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.RelativeAddOnUrlConverter;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
-
 import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean.newWebItemBean;
 
@@ -73,7 +72,7 @@ public class WebItemModuleProvider implements ConnectModuleProvider<WebItemCapab
 //            
 //            if(!servletExists)
 //            {
-//                descriptors.add(iframePageFactory.createIFrameServletDescriptor(plugin,newBean,localUrl,bean.getUrl(),"atl.general","", new AlwaysDisplayCondition(),new HashMap<String, String>()));
+//                descriptors.add(iframePageFactory.createIFrameServletDescriptor(plugin,newBean,localUrl,bean.getLink(),"atl.general","", new AlwaysDisplayCondition(),new HashMap<String, String>()));
 //            }
         }
 

@@ -1,8 +1,8 @@
 package com.atlassian.plugin.connect.plugin.capabilities;
 
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectIssueTabPanelCapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.IssueTabPageCapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.gson.CapabilitiesGsonFactory;
 import com.google.gson.Gson;
 import org.junit.Test;
@@ -13,7 +13,7 @@ import java.util.Map;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.RemoteContainerCapabilityBean.newRemoteContainerBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean.newIconBean;
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.IssueTabPageCapabilityBean.newIssueTabPageBean;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectIssueTabPanelCapabilityBean.newIssueTabPageBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.OAuthBean.newOAuthBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.VendorBean.newVendorBean;
 
@@ -25,7 +25,7 @@ public class JunkIssueTabTest
     @Test
     public void testName() throws Exception
     {
-        IssueTabPageCapabilityBean bean = newIssueTabPageBean()
+        ConnectIssueTabPanelCapabilityBean bean = newIssueTabPageBean()
                 .withName(new I18nProperty("My Issue Tab Page", "my.issueTabPage"))
                 .withUrl("/my-general-page")
                 .withWeight(100)
@@ -34,7 +34,7 @@ public class JunkIssueTabTest
 
         Gson gson = CapabilitiesGsonFactory.getGson();
 
-        String json = gson.toJson(bean,IssueTabPageCapabilityBean.class);
+        String json = gson.toJson(bean,ConnectIssueTabPanelCapabilityBean.class);
 
         System.out.println(json);
     }

@@ -40,7 +40,7 @@
 
 
     <component key="connectIssueTabPanelModuleDescriptorFactory" class="com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectIssueTabPanelModuleDescriptorFactory" />
-    <component key="issueTabPageModuleProvider" class="com.atlassian.plugin.connect.plugin.capabilities.provider.IssueTabPageModuleProvider" />
+    <component key="connectIssueTabPanelModuleProvider" class="com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectIssueTabPanelModuleProvider" />
 
 
     <rest key="rest" path="/atlassian-connect" version="1">
