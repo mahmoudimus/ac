@@ -39,8 +39,6 @@ public class BeanToModuleRegistrar
 
     private final ConcurrentHashMap<String, DynamicDescriptorRegistration.Registration> registrations;
     private final ProductAccessor productAccessor;
-    
-    //TODO refactor to use ContainerManagedPlugin
     private final ContainerManagedPlugin theConnectPlugin;
 
     @Autowired
