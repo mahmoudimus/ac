@@ -1,9 +1,9 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
 import com.atlassian.plugin.connect.plugin.capabilities.annotation.CapabilitySet;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.IssueTabPageCapabilityBeanBuilder;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConnectIssueTabPanelCapabilityBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean;
-import com.atlassian.plugin.connect.plugin.capabilities.provider.IssueTabPageModuleProvider;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectIssueTabPanelModuleProvider;
 
 /**
  * Capabilities bean for Jira Issue Tab Pages. The capability JSON looks like
@@ -23,22 +23,22 @@ import com.atlassian.plugin.connect.plugin.capabilities.provider.IssueTabPageMod
 }]
  * </p>
  */
-@CapabilitySet(key = "issueTabPanels", moduleProvider = IssueTabPageModuleProvider.class)
-public class IssueTabPageCapabilityBean extends NameToKeyBean
+@CapabilitySet(key = "issueTabPanels", moduleProvider = ConnectIssueTabPanelModuleProvider.class)
+public class ConnectIssueTabPanelCapabilityBean extends NameToKeyBean
 {
     private String url;
     private Integer weight;
-    private IconBean icon; //TODO: Not sure the issueTabPage really has an icon
+    private IconBean icon; //TODO: Remove as issueTabPanel doesn't have an icon
 
 
-    public IssueTabPageCapabilityBean()
+    public ConnectIssueTabPanelCapabilityBean()
     {
         this.url = "";
         this.weight = 100;
         this.icon = IconBean.newIconBean().withWidth(0).withHeight(0).withUrl("").build();
     }
 
-    public IssueTabPageCapabilityBean(IssueTabPageCapabilityBeanBuilder builder)
+    public ConnectIssueTabPanelCapabilityBean(ConnectIssueTabPanelCapabilityBeanBuilder builder)
     {
         super(builder);
         
@@ -73,14 +73,14 @@ public class IssueTabPageCapabilityBean extends NameToKeyBean
         return icon;
     }
 
-    public static IssueTabPageCapabilityBeanBuilder newIssueTabPageBean()
+    public static ConnectIssueTabPanelCapabilityBeanBuilder newIssueTabPageBean()
     {
-        return new IssueTabPageCapabilityBeanBuilder();
+        return new ConnectIssueTabPanelCapabilityBeanBuilder();
     }
 
-    public static IssueTabPageCapabilityBeanBuilder newIssueTabPageBean(IssueTabPageCapabilityBean defaultBean)
+    public static ConnectIssueTabPanelCapabilityBeanBuilder newIssueTabPageBean(ConnectIssueTabPanelCapabilityBean defaultBean)
     {
-        return new IssueTabPageCapabilityBeanBuilder(defaultBean);
+        return new ConnectIssueTabPanelCapabilityBeanBuilder(defaultBean);
     }
 
 }
