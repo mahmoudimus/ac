@@ -38,7 +38,7 @@ public class WebPanelCapabilityBean extends NameToKeyBean
         this.location = "";
         this.layout = new WebPanelLayout();
         this.url = "";
-        this.weight = 100;
+        this.weight = ConnectAddonBean.DEFAULT_WEIGHT;
     }
 
     public WebPanelCapabilityBean(WebPanelCapabilityBeanBuilder builder)
@@ -62,7 +62,7 @@ public class WebPanelCapabilityBean extends NameToKeyBean
 
         if(null == weight)
         {
-            this.weight = 100;
+            this.weight = ConnectAddonBean.DEFAULT_WEIGHT;
         }
     }
 
