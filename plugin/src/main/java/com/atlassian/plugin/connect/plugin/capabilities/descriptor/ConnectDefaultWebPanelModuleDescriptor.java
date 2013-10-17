@@ -6,6 +6,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.WebPanelCapability
 import com.atlassian.plugin.connect.plugin.module.IFrameParamsImpl;
 import com.atlassian.plugin.connect.plugin.module.context.ContextMapURLSerializer;
 import com.atlassian.plugin.connect.plugin.module.page.IFrameContextImpl;
+import com.atlassian.plugin.connect.plugin.module.webfragment.UrlValidator;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.plugin.module.webpanel.IFrameRemoteWebPanel;
 import com.atlassian.plugin.connect.spi.module.IFrameContext;
@@ -45,6 +46,9 @@ public class ConnectDefaultWebPanelModuleDescriptor extends DefaultWebPanelModul
         this.iFrameRenderer = plugin.getContainerAccessor().createBean(IFrameRenderer.class);
         this.contextMapURLSerializer = plugin.getContainerAccessor().createBean(ContextMapURLSerializer.class);
         this.userManager = plugin.getContainerAccessor().createBean(UserManager.class);
+
+        UrlValidator urlValidator = plugin.getContainerAccessor().createBean(UrlValidator.class);
+        urlValidator.validate(url);
     }
 
     @Override

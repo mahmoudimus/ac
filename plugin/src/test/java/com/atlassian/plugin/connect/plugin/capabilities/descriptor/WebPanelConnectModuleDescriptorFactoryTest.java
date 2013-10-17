@@ -5,6 +5,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.WebPanelCapability
 import com.atlassian.plugin.connect.plugin.capabilities.beans.WebPanelLayout;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.module.context.ContextMapURLSerializer;
+import com.atlassian.plugin.connect.plugin.module.webfragment.UrlValidator;
 import com.atlassian.plugin.connect.spi.module.IFrameContext;
 import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
 import com.atlassian.plugin.module.ContainerAccessor;
@@ -47,6 +48,7 @@ public class WebPanelConnectModuleDescriptorFactoryTest
     @Mock private UserManager userManager;
     @Mock private ContextMapURLSerializer contextMapURLSerializer;
     @Mock private IFrameRenderer iFrameRenderer;
+    @Mock private UrlValidator urlValidator;
 
     @Before
     public void beforeEachTest()
@@ -59,6 +61,7 @@ public class WebPanelConnectModuleDescriptorFactoryTest
         when(containerAccessor.createBean(UserManager.class)).thenReturn(userManager);
         when(containerAccessor.createBean(ContextMapURLSerializer.class)).thenReturn(contextMapURLSerializer);
         when(containerAccessor.createBean(IFrameRenderer.class)).thenReturn(iFrameRenderer);
+        when(containerAccessor.createBean(UrlValidator.class)).thenReturn(urlValidator);
 
         WebPanelCapabilityBean bean = newWebPanelBean()
                 .withName(new I18nProperty("My Web Panel", "my.webpanel"))
