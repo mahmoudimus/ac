@@ -2,7 +2,6 @@ package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
 import com.atlassian.plugin.connect.plugin.capabilities.annotation.CapabilitySet;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConnectIssueTabPanelCapabilityBeanBuilder;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectIssueTabPanelModuleProvider;
 
 /**
@@ -28,14 +27,12 @@ public class ConnectIssueTabPanelCapabilityBean extends NameToKeyBean
 {
     private String url;
     private Integer weight;
-    private IconBean icon; //TODO: Remove as issueTabPanel doesn't have an icon
 
 
     public ConnectIssueTabPanelCapabilityBean()
     {
         this.url = "";
         this.weight = 100;
-        this.icon = IconBean.newIconBean().withWidth(0).withHeight(0).withUrl("").build();
     }
 
     public ConnectIssueTabPanelCapabilityBean(ConnectIssueTabPanelCapabilityBeanBuilder builder)
@@ -52,10 +49,6 @@ public class ConnectIssueTabPanelCapabilityBean extends NameToKeyBean
             this.weight = 100;
         }
         
-        if (null == icon)
-        {
-            this.icon = IconBean.newIconBean().withWidth(16).withHeight(16).withUrl("").build();
-        }
     }
 
     public String getUrl()
@@ -66,11 +59,6 @@ public class ConnectIssueTabPanelCapabilityBean extends NameToKeyBean
     public int getWeight()
     {
         return weight;
-    }
-
-    public IconBean getIcon()
-    {
-        return icon;
     }
 
     public static ConnectIssueTabPanelCapabilityBeanBuilder newIssueTabPageBean()

@@ -4,7 +4,6 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectIssueTabPanelCapabilityBean;
 import com.atlassian.plugin.connect.spi.module.DynamicMarkerCondition;
 import com.atlassian.plugin.module.ContainerManagedPlugin;
-import com.google.common.base.Strings;
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
 import org.osgi.framework.BundleContext;
@@ -49,11 +48,6 @@ public class ConnectIssueTabPanelModuleDescriptorFactory implements ConnectModul
         issueTabPageElement.addElement("label")
                 .addAttribute("key", escapeHtml(bean.getName().getI18n()))
                 .setText(escapeHtml(bean.getName().getValue()));
-
-        if (null != bean.getIcon() && !Strings.isNullOrEmpty(bean.getIcon().getUrl()))
-        {
-            issueTabPageElement.add(iconModuleFragmentFactory.createFragment(plugin.getKey(), bean.getIcon()));
-        }
 
         issueTabPageElement.addElement("condition").addAttribute("class", DynamicMarkerCondition.class.getName());
 
