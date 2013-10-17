@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans.builder;
 
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectIssueTabPanelCapabilityBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean;
 
 /**
  * Builder for a ConnectIssueTabPanelCapabilityBean
@@ -10,7 +9,6 @@ public class ConnectIssueTabPanelCapabilityBeanBuilder extends NameToKeyBeanBuil
 {
     private String url;
     private int weight;
-    private IconBean icon;
 
     public ConnectIssueTabPanelCapabilityBeanBuilder()
     {
@@ -23,7 +21,6 @@ public class ConnectIssueTabPanelCapabilityBeanBuilder extends NameToKeyBeanBuil
 
         this.url = defaultBean.getUrl();
         this.weight = defaultBean.getWeight();
-        this.icon = defaultBean.getIcon();
     }
 
     public ConnectIssueTabPanelCapabilityBeanBuilder withUrl(String link)
@@ -35,12 +32,6 @@ public class ConnectIssueTabPanelCapabilityBeanBuilder extends NameToKeyBeanBuil
     public ConnectIssueTabPanelCapabilityBeanBuilder withWeight(int weight)
     {
         this.weight = weight;
-        return this;
-    }
-
-    public ConnectIssueTabPanelCapabilityBeanBuilder withIcon(IconBean icon)
-    {
-        this.icon = icon;
         return this;
     }
 

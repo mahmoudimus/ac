@@ -11,9 +11,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean.newConnectAddonBean;
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.RemoteContainerCapabilityBean.newRemoteContainerBean;
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean.newIconBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectIssueTabPanelCapabilityBean.newIssueTabPageBean;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.RemoteContainerCapabilityBean.newRemoteContainerBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.OAuthBean.newOAuthBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.VendorBean.newVendorBean;
 
@@ -29,7 +28,6 @@ public class JunkIssueTabTest
                 .withName(new I18nProperty("My Issue Tab Page", "my.issueTabPage"))
                 .withUrl("/my-general-page")
                 .withWeight(100)
-                .withIcon(newIconBean().withUrl("/some/icon.png").withWidth(16).withHeight(16).build())
                 .build();
 
         Gson gson = CapabilitiesGsonFactory.getGson();
@@ -56,7 +54,6 @@ public class JunkIssueTabTest
                         .withName(new I18nProperty("My Issue Tab Page", "my.issueTabPage"))
                         .withUrl("/my-general-page")
                         .withWeight(100)
-                        .withIcon(newIconBean().withUrl("/some/icon.png").withWidth(16).withHeight(16).build())
                         .build())
                 .withCapability(newRemoteContainerBean().withDisplayUrl("http://www.example.com").withOAuth(
                         newOAuthBean().withPublicKey("S0m3Publ1cK3y").build()
