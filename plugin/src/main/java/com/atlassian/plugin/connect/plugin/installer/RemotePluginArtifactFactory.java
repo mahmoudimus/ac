@@ -108,8 +108,9 @@ public class RemotePluginArtifactFactory
         
         //copy the imports from the connect plugin to the addon manifest so addons can autowire stuff
         String connectImports = (String)bundleContext.getBundle().getHeaders().get(Constants.IMPORT_PACKAGE);
+        String connectExports = (String)bundleContext.getBundle().getHeaders().get(Constants.EXPORT_PACKAGE);
 
-        manifest.put(Constants.IMPORT_PACKAGE,connectImports);
+        manifest.put(Constants.IMPORT_PACKAGE,connectImports + "," + connectExports);
         
         return manifest;
     }

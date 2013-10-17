@@ -340,8 +340,11 @@
                         </Import-Package>
                         <Export-Package>
                             com.atlassian.plugin.connect.api*;version="${project.version}",
+                            com.atlassian.plugin.connect.api.*;version="${project.version}",
                             com.atlassian.plugin.connect.spi*;version="${project.version}",
-                            com.atlassian.plugin.connect.plugin*;version="${project.version}"
+                            com.atlassian.plugin.connect.spi.*;version="${project.version}",
+                            com.atlassian.plugin.connect.plugin*;version="${project.version}",
+                            com.atlassian.plugin.connect.plugin.*;version="${project.version}"
                         </Export-Package>
                         <Spring-Context>*;timeout:=60</Spring-Context>
 
