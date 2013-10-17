@@ -13,9 +13,6 @@ import com.atlassian.plugin.module.ContainerManagedPlugin;
 import com.atlassian.plugin.web.WebInterfaceManager;
 import com.atlassian.plugin.web.descriptors.WebPanelModuleDescriptor;
 import com.atlassian.sal.api.user.UserManager;
-import com.google.common.base.Objects;
-import org.dom4j.Attribute;
-import org.dom4j.Element;
 import org.hamcrest.Description;
 import org.junit.Before;
 import org.junit.Test;
@@ -96,6 +93,7 @@ public class WebPanelConnectModuleDescriptorFactoryTest
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void widthIsCorrect() throws IOException
     {
         descriptor.getModule().getHtml(Collections.<String, Object>emptyMap());
@@ -103,6 +101,7 @@ public class WebPanelConnectModuleDescriptorFactoryTest
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void heightIsCorrect() throws IOException
     {
         descriptor.getModule().getHtml(Collections.<String, Object>emptyMap());
@@ -116,6 +115,7 @@ public class WebPanelConnectModuleDescriptorFactoryTest
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void urlIsCorrect() throws IOException
     {
         descriptor.getModule().getHtml(Collections.<String, Object>emptyMap());
@@ -193,136 +193,5 @@ public class WebPanelConnectModuleDescriptorFactoryTest
                 description.appendValue(url);
             }
         };
-    }
-
-    private static ArgumentMatcher<Element> hasElement(String name, ArgumentMatcher<Element> expectedValueMatcher)
-    {
-        return new SubElementMatcher(name, expectedValueMatcher);
-    }
-
-    private static ArgumentMatcher<Element> hasAttribute(String name, ArgumentMatcher<Attribute> expectedValueMatcher)
-    {
-        return withAttribute(name, expectedValueMatcher); // just a synonym to make test assertions read as natural English
-    }
-
-    private static ArgumentMatcher<Element> withAttribute(String name, ArgumentMatcher<Attribute> expectedValueMatcher)
-    {
-        return new ElementAttributeMatcher(name, expectedValueMatcher);
-    }
-
-    private static ArgumentMatcher<Attribute> withValue(String expectedValue)
-    {
-        return new AttributeValueMatcher(expectedValue);
-    }
-
-    private static ArgumentMatcher<Element> withText(String expectedValue)
-    {
-        return new ElementTextMatcher(expectedValue);
-    }
-
-    private static class AttributeValueMatcher extends ArgumentMatcher<Attribute>
-    {
-        private final String expectedValue;
-
-        private AttributeValueMatcher(String expectedValue)
-        {
-            this.expectedValue = checkNotNull(expectedValue);
-        }
-
-        @Override
-        public boolean matches(Object argument)
-        {
-            assertThat(argument, is(instanceOf(Attribute.class)));
-            return Objects.equal(expectedValue, ((Attribute)argument).getValue());
-        }
-
-        @Override
-        public void describeTo(Description description)
-        {
-            description.appendText("Attribute with value ");
-            description.appendValue(expectedValue);
-        }
-    }
-
-    private static class ElementTextMatcher extends ArgumentMatcher<Element>
-    {
-        private final String expectedValue;
-
-        private ElementTextMatcher(String expectedValue)
-        {
-            this.expectedValue = checkNotNull(expectedValue);
-        }
-
-        @Override
-        public boolean matches(Object argument)
-        {
-            assertThat(argument, is(instanceOf(Element.class)));
-            return Objects.equal(expectedValue, ((Element)argument).getText());
-        }
-
-        @Override
-        public void describeTo(Description description)
-        {
-            description.appendText("Attribute with text ");
-            description.appendValue(expectedValue);
-        }
-    }
-
-    private static class SubElementMatcher extends ArgumentMatcher<Element>
-    {
-        private final String name;
-        private final ArgumentMatcher<Element> expectedValueMatcher;
-
-        private SubElementMatcher(String name, ArgumentMatcher<Element> expectedValueMatcher)
-        {
-            this.name = checkNotNull(name);
-            this.expectedValueMatcher = checkNotNull(expectedValueMatcher);
-        }
-
-        @Override
-        public boolean matches(Object argument)
-        {
-            assertThat(argument, is(instanceOf(Element.class)));
-            return expectedValueMatcher.matches(((Element)argument).element(name));
-        }
-
-        @Override
-        public void describeTo(Description description)
-        {
-            description.appendText("Element with child Element ");
-            description.appendValue(name);
-            description.appendText(" { ");
-            expectedValueMatcher.describeTo(description);
-            description.appendText(" } ");
-        }
-    }
-
-    private static class ElementAttributeMatcher extends ArgumentMatcher<Element>
-    {
-        private final String name;
-        private final ArgumentMatcher<Attribute> expectedValueMatcher;
-
-        private ElementAttributeMatcher(String name, ArgumentMatcher<Attribute> expectedValueMatcher)
-        {
-            this.name = checkNotNull(name);
-            this.expectedValueMatcher = checkNotNull(expectedValueMatcher);
-        }
-
-        @Override
-        public boolean matches(Object argument)
-        {
-            assertThat(argument, is(instanceOf(Element.class)));
-            return expectedValueMatcher.matches(((Element) argument).attribute(name));
-        }
-
-        @Override
-        public void describeTo(Description description)
-        {
-            description.appendText("Element with attribute ");
-            description.appendValue(name);
-            description.appendText(" { ");
-            expectedValueMatcher.describeTo(description);
-            description.appendText(" } ");
-        }
     }
 }
