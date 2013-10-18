@@ -7,11 +7,12 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.UrlBean;
 
 public class WorkflowPostFunctionCapabilityBeanBuilder extends NameToKeyBeanBuilder<WorkflowPostFunctionCapabilityBeanBuilder, WorkflowPostFunctionCapabilityBean>
 {
+
     private I18nProperty description;
     private UrlBean view;
     private UrlBean edit;
+    private UrlBean create;
     private UrlBean triggered;
-    private Boolean allowMultiple;
 
     public WorkflowPostFunctionCapabilityBeanBuilder()
     {
@@ -24,8 +25,8 @@ public class WorkflowPostFunctionCapabilityBeanBuilder extends NameToKeyBeanBuil
         this.description = defaultBean.getDescription();
         this.view = defaultBean.getView();
         this.edit = defaultBean.getEdit();
+        this.create = defaultBean.getCreate();
         this.triggered = defaultBean.getTriggered();
-        this.allowMultiple = defaultBean.getAllowMultiple();
     }
 
     public WorkflowPostFunctionCapabilityBeanBuilder withDescription(I18nProperty description)
@@ -46,15 +47,15 @@ public class WorkflowPostFunctionCapabilityBeanBuilder extends NameToKeyBeanBuil
         return this;
     }
 
-    public WorkflowPostFunctionCapabilityBeanBuilder withTriggered(UrlBean triggered)
+    public WorkflowPostFunctionCapabilityBeanBuilder withCreate(UrlBean create)
     {
-        this.triggered = triggered;
+        this.create = create;
         return this;
     }
 
-    public WorkflowPostFunctionCapabilityBeanBuilder withAllowMultiple(Boolean allowMultiple)
+    public WorkflowPostFunctionCapabilityBeanBuilder withTriggered(UrlBean triggered)
     {
-        this.allowMultiple = allowMultiple;
+        this.triggered = triggered;
         return this;
     }
 

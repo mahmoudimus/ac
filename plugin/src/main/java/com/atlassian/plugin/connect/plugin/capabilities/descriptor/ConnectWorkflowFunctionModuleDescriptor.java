@@ -3,7 +3,6 @@ package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.plugin.ComponentClassManager;
-import com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants;
 import com.atlassian.jira.plugin.workflow.WorkflowFunctionModuleDescriptor;
 import com.atlassian.jira.plugin.workflow.WorkflowPluginFunctionFactory;
 import com.atlassian.jira.security.JiraAuthenticationContext;
@@ -50,18 +49,15 @@ import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.Map;
 
-import static com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants.RESOURCE_NAME_EDIT_PARAMETERS;
-import static com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants.RESOURCE_NAME_INPUT_PARAMETERS;
-import static com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants.RESOURCE_NAME_VIEW;
+import static com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants.*;
 import static com.atlassian.plugin.connect.plugin.module.jira.workflow.RemoteWorkflowFunctionPluginFactory.POST_FUNCTION_CONFIGURATION;
 import static com.atlassian.plugin.connect.plugin.module.jira.workflow.RemoteWorkflowFunctionPluginFactory.POST_FUNCTION_CONFIGURATION_UUID;
-
-import static com.atlassian.plugin.util.Assertions.notNull;
 
 /**
  *
  */
-public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionModuleDescriptor {
+public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionModuleDescriptor
+{
 
     private static final String POST_FUNCTION_EXTRA_MARKUP = "velocity/jira/workflow/post-function-extra-markup.vm";
 
@@ -74,31 +70,32 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
     private WorkflowPostFunctionCapabilityBean capabilityBean;
 
     private final ModuleDescriptorWebHookListenerRegistry webHookConsumerRegistry;
-    private ImmutableMap<String,URI> workflowFunctionActionUris;
+    private ImmutableMap<String, URI> workflowFunctionActionUris;
     private URI triggeredURI;
     private String completeKey;
 
 
-    public ConnectWorkflowFunctionModuleDescriptor(final JiraAuthenticationContext authenticationContext,
-                                                   final ModuleFactory moduleFactory,
-                                                   final IFrameRenderer iFrameRenderer,
-                                                   final JiraRestBeanMarshaler jiraRestBeanMarshaler,
-                                                   final ModuleDescriptorWebHookListenerRegistry webHookConsumerRegistry,
-                                                   final EventPublisher eventPublisher,
-                                                   final TemplateRenderer templateRenderer,
-                                                   final WebResourceUrlProvider webResourceUrlProvider,
-                                                   final PluginRetrievalService pluginRetrievalService) {
-        super(authenticationContext, 
-                ComponentAccessor.getComponent(OSWorkflowConfigurator.class),
-                ComponentAccessor.getComponent(ComponentClassManager.class), 
-                moduleFactory);
-        
+    public ConnectWorkflowFunctionModuleDescriptor(
+            final JiraAuthenticationContext authenticationContext,
+            final ModuleFactory moduleFactory,
+            final IFrameRenderer iFrameRenderer,
+            final JiraRestBeanMarshaler jiraRestBeanMarshaler,
+            final ModuleDescriptorWebHookListenerRegistry webHookConsumerRegistry,
+            final EventPublisher eventPublisher,
+            final TemplateRenderer templateRenderer,
+            final WebResourceUrlProvider webResourceUrlProvider,
+            final PluginRetrievalService pluginRetrievalService,
+            final OSWorkflowConfigurator osWorkflowConfigurator,
+            final ComponentClassManager componentClassManager)
+    {
+        super(authenticationContext, osWorkflowConfigurator, componentClassManager, moduleFactory);
+
         this.webHookConsumerRegistry = webHookConsumerRegistry;
         this.iFrameRenderer = iFrameRenderer;
         this.templateRenderer = templateRenderer;
         this.webResourceUrlProvider = webResourceUrlProvider;
         this.pluginRetrievalService = pluginRetrievalService;
-        this.workflowConfigurator = ComponentAccessor.getComponent(OSWorkflowConfigurator.class);
+        this.workflowConfigurator = osWorkflowConfigurator;
 
         this.remoteWorkflowTypeResolver = new TypeResolver()
         {
@@ -110,13 +107,11 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
         };
     }
 
-
     public void init(Plugin plugin, WorkflowPostFunctionCapabilityBean capabilityBean) throws PluginParseException
     {
         this.plugin = plugin;
-        this.completeKey = buildCompleteKey(plugin, capabilityBean.getKey());
-
         this.capabilityBean = capabilityBean;
+        this.completeKey = buildCompleteKey(plugin, capabilityBean.getKey());
 
         final ImmutableMap.Builder<String, URI> workflowFunctionActionUrisMapBuilder = ImmutableMap.builder();
         if (capabilityBean.getView() != null)
@@ -137,6 +132,44 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
     }
 
     @Override
+    public void init(Plugin plugin, Element element) throws PluginParseException
+    {
+        throw new UnsupportedOperationException("This descriptor does not support elements");
+    }
+
+    @Override
+    public String getName()
+    {
+        //TODO: Handle i18n
+        return capabilityBean.getName().getValue();
+    }
+
+    @Override
+    public String getDescription()
+    {
+        //TODO: Handle i18n
+        return capabilityBean.getDescription().getValue();
+    }
+
+    @Override
+    public String getHtml(String resourceName)
+    {
+        return getHtml(resourceName, (AbstractDescriptor) null);
+    }
+
+    @Override
+    public String getHtml(String resourceName, Map<String, ?> startingParams)
+    {
+        return getHtml(resourceName);
+    }
+
+    @Override
+    public void writeHtml(String resourceName, Map<String, ?> startingParams, Writer writer) throws IOException
+    {
+        writer.write(getHtml(resourceName));
+    }
+
+    @Override
     public String getHtml(final String resourceName, @Nullable final AbstractDescriptor functionDescriptor)
     {
         try
@@ -151,7 +184,7 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
                             namespace,
                             iFrameParams),
                     "",
-                    ImmutableMap.of(POST_FUNCTION_CONFIGURATION_UUID, new String[] { uuid }),
+                    ImmutableMap.of(POST_FUNCTION_CONFIGURATION_UUID, new String[]{uuid}),
                     ComponentAccessor.getJiraAuthenticationContext().getUser().getDisplayName(),
                     Collections.<String, Object>emptyMap());
         }
@@ -216,96 +249,98 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
     }
 
     @Override
-    public void init(Plugin plugin, Element element) throws PluginParseException
+    public boolean isOrderable()
     {
-        throw new UnsupportedOperationException("This descriptor does not support initialization with an element");
-    }
-
-    @Override
-    public boolean isOrderable() {
         return true; // all remote post-functions are orderable
     }
 
     @Override
-    public boolean isUnique() {
-        return !capabilityBean.allowMultiple();
+    public boolean isUnique()
+    {
+        return false; // we currently cannot support unique remote post-functions as they share a common implementation
     }
 
     @Override
-    public boolean isDeletable() {
+    public boolean isDeletable()
+    {
         return true; // all remote post-functions are deletable
     }
 
     @Override
-    public boolean isAddable(String actionType) {
+    public boolean isAddable(String actionType)
+    {
         return true; // remote post-functions can be added to any transition
     }
 
     @Override
-    public Integer getWeight() {
+    public Integer getWeight()
+    {
         return null; // JIRA assumes only system post-functions should have weight
     }
 
     @Override
-    public boolean isDefault() {
+    public boolean isDefault()
+    {
         return false; // remote post-functions are not added by default
     }
 
     @Override
-    public Class getImplementationClass() {
-        return RemoteWorkflowFunctionPluginFactory.class;
+    public Class getImplementationClass()
+    {
+        return RemoteWorkflowPostFunctionProvider.class;
     }
 
     @Override
-    public boolean isEditable() {
+    public boolean isEditable()
+    {
         return null != capabilityBean.getEdit();
     }
 
     @Override
-    protected void assertResourceExists(String type, String name) throws PluginParseException {
+    protected void assertResourceExists(String type, String name) throws PluginParseException
+    {
         // no-op
     }
 
-    @Override
-    public String getHtml(String resourceName, Map<String, ?> startingParams) {
-        return getHtml(resourceName);
-    }
 
     @Override
-    public void writeHtml(String resourceName, Map<String, ?> startingParams, Writer writer) throws IOException {
-        writer.write(getHtml(resourceName));
-    }
-
-    @Override
-    protected WorkflowPluginFunctionFactory createModule() {
+    protected WorkflowPluginFunctionFactory createModule()
+    {
         return new RemoteWorkflowFunctionPluginFactory();
     }
 
-    @Override
-    public String getDescription() {
-        return getI18nBean().getText(capabilityBean.getDescription().getI18n());
-    }
 
     @Override
-    public String getName() {
-        return getI18nBean().getText(capabilityBean.getName().getI18n());
-    }
-
-    @Override
-    protected void provideValidationRules(ValidationPattern pattern) {
+    protected void provideValidationRules(ValidationPattern pattern)
+    {
         // no-op
     }
 
     @Override
-    protected void loadClass(Plugin plugin, Element element) throws PluginParseException {
-        throw new UnsupportedOperationException("This descriptor doesn't support 'element'");
+    protected void loadClass(Plugin plugin, Element element) throws PluginParseException
+    {
+        throw new UnsupportedOperationException("This descriptor doesn't support elements");
     }
 
     @Override
     public void enabled()
     {
+        //TODO: This should not be tied to the lifecycle of the add-on instance
         workflowConfigurator.registerTypeResolver(RemoteWorkflowPostFunctionProvider.class.getName(), remoteWorkflowTypeResolver);
         webHookConsumerRegistry.register(
+                RemoteWorkflowPostFunctionEvent.REMOTE_WORKFLOW_POST_FUNCTION_EVENT_ID,
+                plugin.getKey(),
+                getTriggeredURI(),
+                new PluginModuleListenerParameters(plugin.getKey(), Optional.of(getKey()), ImmutableMap.<String, Object>of(), RemoteWorkflowPostFunctionEvent.REMOTE_WORKFLOW_POST_FUNCTION_EVENT_ID)
+        );
+    }
+
+    @Override
+    public void disabled()
+    {
+        //TODO: This should not be tied to the lifecycle of the add-on instance
+        workflowConfigurator.unregisterTypeResolver(RemoteWorkflowPostFunctionProvider.class.getName(), remoteWorkflowTypeResolver);
+        webHookConsumerRegistry.unregister(
                 RemoteWorkflowPostFunctionEvent.REMOTE_WORKFLOW_POST_FUNCTION_EVENT_ID,
                 plugin.getKey(),
                 getTriggeredURI(),
@@ -326,22 +361,11 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
 
     private URI createURI(final UrlBean urlBean) throws URISyntaxException
     {
-        if (urlBean == null) {
+        if (urlBean == null)
+        {
             throw new PluginParseException("URL is required");
         }
         return URI.create(urlBean.getUrl());
-    }
-
-    @Override
-    public void disabled()
-    {
-        workflowConfigurator.unregisterTypeResolver(RemoteWorkflowPostFunctionProvider.class.getName(), remoteWorkflowTypeResolver);
-        webHookConsumerRegistry.unregister(
-                RemoteWorkflowPostFunctionEvent.REMOTE_WORKFLOW_POST_FUNCTION_EVENT_ID,
-                plugin.getKey(),
-                getTriggeredURI(),
-                new PluginModuleListenerParameters(plugin.getKey(), Optional.of(getKey()), ImmutableMap.<String, Object>of(), RemoteWorkflowPostFunctionEvent.REMOTE_WORKFLOW_POST_FUNCTION_EVENT_ID)
-        );
     }
 
     private Resources createResourceDescriptors(final Map<String, URI> workflowFunctionActionUris)
@@ -360,35 +384,42 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
     }
 
     @Override
-    public boolean isSystemModule() {
+    public boolean isSystemModule()
+    {
         return false;
     }
 
     @Override
-    public String getKey() {
+    public String getKey()
+    {
         return capabilityBean.getKey();
     }
 
     @Override
-    public String getModuleClassName() {
+    public String getModuleClassName()
+    {
         return RemoteWorkflowFunctionPluginFactory.class.getName();
     }
 
     @Override
-    public Map<String, String> getParams() {
+    public Map<String, String> getParams()
+    {
         return ImmutableMap.of();
     }
 
     @Override
-    public String getI18nNameKey() {
+    public String getI18nNameKey()
+    {
         return capabilityBean.getName().getI18n();
     }
 
     @Override
-    public String getDescriptionKey() {
+    public String getDescriptionKey()
+    {
         return capabilityBean.getDescription().getI18n();
     }
 
+    //TODO: Copied from super-class
     private String buildCompleteKey(final Plugin plugin, final String moduleKey)
     {
         if (plugin == null)

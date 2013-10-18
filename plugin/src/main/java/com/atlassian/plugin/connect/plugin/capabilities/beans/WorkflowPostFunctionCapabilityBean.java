@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
 import com.atlassian.plugin.connect.plugin.capabilities.annotation.CapabilitySet;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.WebItemCapabilityBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.WorkflowPostFunctionCapabilityBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.UrlBean;
@@ -18,7 +17,6 @@ public class WorkflowPostFunctionCapabilityBean extends NameToKeyBean
     private UrlBean edit;
     private UrlBean create;
     private UrlBean triggered;
-    private Boolean allowMultiple;
 
     public WorkflowPostFunctionCapabilityBean()
     {
@@ -26,7 +24,6 @@ public class WorkflowPostFunctionCapabilityBean extends NameToKeyBean
         this.view = null;
         this.edit = null;
         this.triggered = null;
-        this.allowMultiple = true;
     }
 
     public WorkflowPostFunctionCapabilityBean(WorkflowPostFunctionCapabilityBeanBuilder builder)
@@ -36,11 +33,6 @@ public class WorkflowPostFunctionCapabilityBean extends NameToKeyBean
         if (null == description)
         {
             this.description = new I18nProperty("", "");
-        }
-
-        if (null == allowMultiple)
-        {
-            this.allowMultiple = true;
         }
     }
 
@@ -67,16 +59,6 @@ public class WorkflowPostFunctionCapabilityBean extends NameToKeyBean
     public UrlBean getTriggered()
     {
         return triggered;
-    }
-
-    public boolean getAllowMultiple()
-    {
-        return allowMultiple;
-    }
-
-    public boolean allowMultiple()
-    {
-        return null == allowMultiple ? true : allowMultiple.booleanValue();
     }
 
     public static WorkflowPostFunctionCapabilityBeanBuilder newWorkflowPostFunctionBean()

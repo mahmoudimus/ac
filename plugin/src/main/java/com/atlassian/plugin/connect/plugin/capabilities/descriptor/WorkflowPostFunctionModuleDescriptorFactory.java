@@ -7,6 +7,7 @@ import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.workflow.OSWorkflowConfigurator;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.WorkflowPostFunctionCapabilityBean;
+import com.atlassian.plugin.connect.plugin.capabilities.util.DelegatingComponentAccessor;
 import com.atlassian.plugin.connect.plugin.product.jira.JiraRestBeanMarshaler;
 import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
 import com.atlassian.plugin.module.ModuleFactory;
@@ -34,6 +35,7 @@ public class WorkflowPostFunctionModuleDescriptorFactory implements ConnectModul
     private final TemplateRenderer templateRenderer;
     private final WebResourceUrlProvider webResourceUrlProvider;
     private final PluginRetrievalService pluginRetrievalService;
+    private final DelegatingComponentAccessor componentAccessor;
 
 
     @Autowired
@@ -58,6 +60,8 @@ public class WorkflowPostFunctionModuleDescriptorFactory implements ConnectModul
         this.templateRenderer = templateRenderer;
         this.webResourceUrlProvider = webResourceUrlProvider;
         this.pluginRetrievalService = pluginRetrievalService;
+
+        this.componentAccessor = createDelegatingComponentAccessor();
     }
 
     @Override
@@ -65,11 +69,18 @@ public class WorkflowPostFunctionModuleDescriptorFactory implements ConnectModul
     {
         ConnectWorkflowFunctionModuleDescriptor moduleDescriptor = new ConnectWorkflowFunctionModuleDescriptor(
                 authenticationContext, moduleFactory, iFrameRenderer, jiraRestBeanMarshaler, webHookConsumerRegistry,
-                eventPublisher, templateRenderer, webResourceUrlProvider, pluginRetrievalService);
+                eventPublisher, templateRenderer, webResourceUrlProvider, pluginRetrievalService,
+                componentAccessor.getComponent(OSWorkflowConfigurator.class),
+                componentAccessor.getComponent(ComponentClassManager.class));
 
         moduleDescriptor.init(plugin, bean);
 
         return moduleDescriptor;
+    }
+
+    protected DelegatingComponentAccessor createDelegatingComponentAccessor()
+    {
+        return new DelegatingComponentAccessor();
     }
 
 }
