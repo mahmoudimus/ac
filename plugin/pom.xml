@@ -316,7 +316,7 @@
                             com.atlassian.util.concurrent*;version="${atlassian-util-concurrent.version}",
                             com.atlassian.crowd.embedded.api.*;version="2.0";resolution:=optional,
                             com.atlassian.webhooks.spi*;version="${atlassian.webhooks.api.version}",
-                            com.atlassian.httpclient.*;version="${atlassian.httpclient.api.version}",
+                            com.atlassian.httpclient.api*;version="${atlassian.httpclient.api.version}",
                             com.sun.mail.handlers;resolution:=optional,
                             net.oauth*,
                             javax.servlet;version="0.0.0",
