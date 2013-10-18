@@ -12,6 +12,7 @@ import com.atlassian.plugin.connect.plugin.module.jira.issuetab.IFrameIssueTab;
 import com.atlassian.plugin.connect.plugin.module.page.IFrameContextImpl;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlValidator;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
+import com.atlassian.plugin.connect.spi.module.IFrameParams;
 import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.web.Condition;
@@ -35,7 +36,7 @@ public class ConnectIssueTabPanelModuleDescriptor extends IssueTabPanelModuleDes
 
     private String url;
     private Condition condition; // TODO: populate properly
-    private IFrameParamsImpl iframeParams;
+    private IFrameParams iframeParams;
 
 
     public ConnectIssueTabPanelModuleDescriptor(ModuleFactory moduleFactory,

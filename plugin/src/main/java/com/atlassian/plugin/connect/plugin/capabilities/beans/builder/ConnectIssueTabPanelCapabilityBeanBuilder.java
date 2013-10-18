@@ -8,7 +8,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectIssueTabPan
 public class ConnectIssueTabPanelCapabilityBeanBuilder extends NameToKeyBeanBuilder<ConnectIssueTabPanelCapabilityBeanBuilder, ConnectIssueTabPanelCapabilityBean>
 {
     private String url;
-    private int weight;
+    private Integer weight;
 
     public ConnectIssueTabPanelCapabilityBeanBuilder()
     {
