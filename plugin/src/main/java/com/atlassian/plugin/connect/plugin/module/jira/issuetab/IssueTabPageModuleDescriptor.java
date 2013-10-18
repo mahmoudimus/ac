@@ -7,7 +7,6 @@ import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.plugin.integration.plugins.DynamicDescriptorRegistration;
 import com.atlassian.plugin.connect.plugin.module.ConditionProcessor;
-import com.atlassian.plugin.connect.plugin.module.IFrameRendererImpl;
 import com.atlassian.plugin.connect.plugin.module.jira.AbstractJiraTabPageModuleDescriptor;
 import com.atlassian.plugin.connect.plugin.module.jira.context.serializer.IssueSerializer;
 import com.atlassian.plugin.connect.plugin.module.jira.context.serializer.ProjectSerializer;
@@ -64,7 +63,7 @@ public final class IssueTabPageModuleDescriptor extends AbstractJiraTabPageModul
             {
                 return (T) new IFrameIssueTab(
                         new IFrameContextImpl(getPluginKey() , url, key, iFrameParams),
-                        (IFrameRendererImpl)iFrameRenderer, Optional.fromNullable(condition), urlVariableSubstitutor, projectSerializer, issueSerializer); // TODO: remove cast
+                        iFrameRenderer, Optional.fromNullable(condition), urlVariableSubstitutor, projectSerializer, issueSerializer);
             }
         });
 
