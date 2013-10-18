@@ -4,8 +4,11 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.gson.CapabilitiesGsonFactory;
 import com.google.gson.Gson;
+import com.opensymphony.util.FileUtils;
 import org.junit.Test;
+import org.springframework.core.io.DefaultResourceLoader;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,9 +17,9 @@ import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectIssu
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.RemoteContainerCapabilityBean.newRemoteContainerBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.OAuthBean.newOAuthBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.VendorBean.newVendorBean;
-import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
+import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
 /**
  * @since version
@@ -49,13 +52,13 @@ public class ConnectIssueTabPanelCapabilityBeanTest
         Gson gson = CapabilitiesGsonFactory.getGson();
 
         String json = gson.toJson(addon,ConnectAddonBean.class);
+        String expectedJson = readTestFile();
 
-        assertThat(json, is(equalTo("{\"key\":\"my-plugin\",\"name\":\"My Plugin\",\"version\":\"1.0\",\"description\":" +
-                "\"\",\"vendor\":{\"name\":\"Atlassian\",\"url\":\"http://www.atlassian.com\"},\"links\":{" +
-                "\"self\":\"http://www.example.com/capabilities\",\"homepage\":\"http://www.example.com\"}," +
-                "\"capabilities\":{\"connect-container\":{\"displayUrl\":\"http://www.example.com\",\"oauth\":{" +
-                "\"publicKey\":\"S0m3Publ1cK3y\",\"callback\":\"\",\"requestTokenUrl\":\"\",\"accessTokenUrl\":\"\"," +
-                "\"authorizeUrl\":\"\"}},\"issueTabPanels\":{\"url\":\"/my-general-page\",\"weight\":100,\"name\":" +
-                "{\"value\":\"My Issue Tab Page\",\"i18n\":\"my.issueTabPage\"}}}}")));
+        assertThat(json, is(sameJSONAs(expectedJson)));
+    }
+
+    private static String readTestFile() throws IOException
+    {
+        return FileUtils.readFile(new DefaultResourceLoader().getResource("classpath:/testfiles/capabilities/issueTabAddon.json").getFile());
     }
 }
