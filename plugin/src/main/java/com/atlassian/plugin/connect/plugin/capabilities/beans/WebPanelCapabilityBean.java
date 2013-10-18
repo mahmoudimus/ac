@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
 import com.atlassian.plugin.connect.plugin.capabilities.annotation.CapabilitySet;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.WebPanelCapabilityBeanBuilder;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.WebPanelLayout;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.WebPanelModuleProvider;
 
 /**

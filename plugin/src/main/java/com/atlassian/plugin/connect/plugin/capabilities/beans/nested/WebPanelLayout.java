@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.plugin.capabilities.beans;
+package com.atlassian.plugin.connect.plugin.capabilities.beans.nested;
 
 public class WebPanelLayout
 {
