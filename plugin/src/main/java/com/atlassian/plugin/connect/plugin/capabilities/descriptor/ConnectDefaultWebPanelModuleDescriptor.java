@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.WebPanelCapabilityBean;
+import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAutowireUtil;
 import com.atlassian.plugin.connect.plugin.module.IFrameParamsImpl;
 import com.atlassian.plugin.connect.plugin.module.context.ContextMapURLSerializer;
 import com.atlassian.plugin.connect.plugin.module.page.IFrameContextImpl;
@@ -13,7 +14,6 @@ import com.atlassian.plugin.connect.spi.module.IFrameContext;
 import com.atlassian.plugin.connect.spi.module.IFrameParams;
 import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
 import com.atlassian.plugin.hostcontainer.HostContainer;
-import com.atlassian.plugin.module.ContainerManagedPlugin;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.web.WebInterfaceManager;
 import com.atlassian.plugin.web.conditions.AlwaysDisplayCondition;
@@ -37,18 +37,17 @@ public class ConnectDefaultWebPanelModuleDescriptor extends DefaultWebPanelModul
     private final ContextMapURLSerializer contextMapURLSerializer;
     private final UserManager userManager;
 
-    public ConnectDefaultWebPanelModuleDescriptor(ContainerManagedPlugin plugin, WebPanelCapabilityBean bean, Element domElement)
+    public ConnectDefaultWebPanelModuleDescriptor(ConnectAutowireUtil connectAutowireUtil, WebPanelCapabilityBean bean, Element domElement)
     {
-        super(createHostContainer(plugin), createModuleFactory(), findWebInterfaceManager(plugin));
+        super(connectAutowireUtil.createBean(HostContainer.class), createModuleFactory(), connectAutowireUtil.createBean(WebInterfaceManager.class));
         this.url = bean.getUrl();
         this.moduleKey = bean.getKey();
         this.iFrameParams = new IFrameParamsImpl(domElement);
-        this.iFrameRenderer = plugin.getContainerAccessor().createBean(IFrameRenderer.class);
-        this.contextMapURLSerializer = plugin.getContainerAccessor().createBean(ContextMapURLSerializer.class);
-        this.userManager = plugin.getContainerAccessor().createBean(UserManager.class);
+        this.iFrameRenderer = connectAutowireUtil.createBean(IFrameRenderer.class);
+        this.contextMapURLSerializer = connectAutowireUtil.createBean(ContextMapURLSerializer.class);
+        this.userManager = connectAutowireUtil.createBean(UserManager.class);
 
-        UrlValidator urlValidator = plugin.getContainerAccessor().createBean(UrlValidator.class);
-        urlValidator.validate(url);
+        connectAutowireUtil.createBean(UrlValidator.class).validate(url);
     }
 
     @Override
@@ -61,11 +60,6 @@ public class ConnectDefaultWebPanelModuleDescriptor extends DefaultWebPanelModul
         return new ContextAwareWebPanel(delegate, this);
     }
 
-    private static HostContainer createHostContainer(ContainerManagedPlugin plugin)
-    {
-        return plugin.getContainerAccessor().createBean(HostContainer.class);
-    }
-
     private static ModuleFactory createModuleFactory()
     {
         return new ModuleFactory()
@@ -76,11 +70,6 @@ public class ConnectDefaultWebPanelModuleDescriptor extends DefaultWebPanelModul
                 return null; // never called
             }
         };
-    }
-
-    private static WebInterfaceManager findWebInterfaceManager(ContainerManagedPlugin plugin)
-    {
-        return ((ContainerManagedPlugin)plugin).getContainerAccessor().createBean(WebInterfaceManager.class);
     }
 
     private static class ContextAwareWebPanel implements WebPanel

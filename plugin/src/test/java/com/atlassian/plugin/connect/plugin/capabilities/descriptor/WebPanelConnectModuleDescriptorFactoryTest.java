@@ -4,11 +4,11 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.WebPanelCapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.WebPanelLayout;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAutowireUtil;
 import com.atlassian.plugin.connect.plugin.module.context.ContextMapURLSerializer;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlValidator;
 import com.atlassian.plugin.connect.spi.module.IFrameContext;
 import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
-import com.atlassian.plugin.module.ContainerAccessor;
 import com.atlassian.plugin.module.ContainerManagedPlugin;
 import com.atlassian.plugin.web.WebInterfaceManager;
 import com.atlassian.plugin.web.descriptors.WebPanelModuleDescriptor;
@@ -40,7 +40,7 @@ public class WebPanelConnectModuleDescriptorFactoryTest
     private WebPanelModuleDescriptor descriptor;
 
     @Mock private PluginForTests plugin;
-    @Mock private ContainerAccessor containerAccessor;
+    @Mock private ConnectAutowireUtil connectAutowireUtil;
     @Mock private WebInterfaceManager webInterfaceManager;
     @Mock private UserManager userManager;
     @Mock private ContextMapURLSerializer contextMapURLSerializer;
@@ -50,15 +50,14 @@ public class WebPanelConnectModuleDescriptorFactoryTest
     @Before
     public void beforeEachTest()
     {
-        WebPanelConnectModuleDescriptorFactory webPanelFactory = new WebPanelConnectModuleDescriptorFactory();
+        WebPanelConnectModuleDescriptorFactory webPanelFactory = new WebPanelConnectModuleDescriptorFactory(connectAutowireUtil);
         when(plugin.getKey()).thenReturn("my-plugin");
         when(plugin.getName()).thenReturn("My Plugin");
-        when(plugin.getContainerAccessor()).thenReturn(containerAccessor);
-        when(containerAccessor.createBean(WebInterfaceManager.class)).thenReturn(webInterfaceManager);
-        when(containerAccessor.createBean(UserManager.class)).thenReturn(userManager);
-        when(containerAccessor.createBean(ContextMapURLSerializer.class)).thenReturn(contextMapURLSerializer);
-        when(containerAccessor.createBean(IFrameRenderer.class)).thenReturn(iFrameRenderer);
-        when(containerAccessor.createBean(UrlValidator.class)).thenReturn(urlValidator);
+        when(connectAutowireUtil.createBean(WebInterfaceManager.class)).thenReturn(webInterfaceManager);
+        when(connectAutowireUtil.createBean(UserManager.class)).thenReturn(userManager);
+        when(connectAutowireUtil.createBean(ContextMapURLSerializer.class)).thenReturn(contextMapURLSerializer);
+        when(connectAutowireUtil.createBean(IFrameRenderer.class)).thenReturn(iFrameRenderer);
+        when(connectAutowireUtil.createBean(UrlValidator.class)).thenReturn(urlValidator);
 
         WebPanelCapabilityBean bean = newWebPanelBean()
                 .withName(new I18nProperty("My Web Panel", "my.webpanel"))
