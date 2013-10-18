@@ -45,6 +45,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Dynamically creates an application link for a plugin host
  */
+//TODO: do we really need this? maybe we can just create the app links somewhere else.
 @CannotDisable
 public final class RemotePluginContainerModuleDescriptor extends AbstractModuleDescriptor<Void>
 {
@@ -103,29 +104,33 @@ public final class RemotePluginContainerModuleDescriptor extends AbstractModuleD
         {
             throw new PluginParseException("Can only have one remote-plugin-container module in a descriptor");
         }
-        this.remoteMode = connectIdentifier.isConnectAddOn(BundleUtil.findBundleForPlugin(bundleContext, plugin.getKey()));
+        
+        createAppLink();
     }
 
     @Override
     public void enabled()
     {
+        super.enabled();
+    }
+    
+    protected void createAppLink()
+    {
         this.pluginBundle = BundleUtil.findBundleForPlugin(bundleContext, getPluginKey());
 
-        if (remoteMode)
+        final ApplicationId expectedApplicationId = ApplicationIdUtil.generate(displayUrl);
+        ApplicationLink link = null;
+        final RemotePluginContainerApplicationType applicationType = typeAccessor.getApplicationType(
+                RemotePluginContainerApplicationType.class);
+        try
         {
-            final ApplicationId expectedApplicationId = ApplicationIdUtil.generate(displayUrl);
-            ApplicationLink link = null;
-            final RemotePluginContainerApplicationType applicationType = typeAccessor.getApplicationType(
-                    RemotePluginContainerApplicationType.class);
-            try
-            {
-                link = applicationLinkService.getApplicationLink(expectedApplicationId);
-            }
-            catch (TypeNotInstalledException ex)
-            {
-                log.info("Link found for '{}' but the type cannot be found, treating as not found", getPluginKey());
-                manuallyDeleteApplicationId(expectedApplicationId);
-            }
+            link = applicationLinkService.getApplicationLink(expectedApplicationId);
+        }
+        catch (TypeNotInstalledException ex)
+        {
+            log.info("Link found for '{}' but the type cannot be found, treating as not found", getPluginKey());
+            manuallyDeleteApplicationId(expectedApplicationId);
+        }
 
 // @todo this should work but it just fucks stuff up beyond belief (instead of lines 160-170)
 //            try to find link with old display url
@@ -139,58 +144,52 @@ public final class RemotePluginContainerModuleDescriptor extends AbstractModuleD
 //                }
 //            }
 
-            if (link != null)
+        if (link != null)
+        {
+            if (getPluginKey().equals(link.getProperty(PLUGIN_KEY_PROPERTY)))
             {
-                if (getPluginKey().equals(link.getProperty(PLUGIN_KEY_PROPERTY)))
-                {
-                    log.info("Application link for remote plugin container '{}' already exists", getPluginKey());
-                }
+                log.info("Application link for remote plugin container '{}' already exists", getPluginKey());
+            }
 // @todo this should work but it just fucks stuff up beyond belief (instead of lines 160-170)
 //                else if (link.getProperty(PLUGIN_KEY_PROPERTY) == null)
 //                {
 //                    log.warn("Found application link for url '{}' is missing associated plugin key", displayUrl);
 //                    link.putProperty(PLUGIN_KEY_PROPERTY, getPluginKey());
 //                }
-                else
-                {
-                    throw new PluginParseException("Application link already exists for id '" + expectedApplicationId + "' but it isn't the target " +
-                            " plugin '" + getPluginKey() + "': unexpected plugin key is: " + link.getProperty(PLUGIN_KEY_PROPERTY));
-                }
-            }
             else
             {
-                // try to find link with old display url
-                for (ApplicationLink otherLink : applicationLinkService.getApplicationLinks(RemotePluginContainerApplicationType.class))
-                {
-                    if (getPluginKey().equals(otherLink.getProperty(PLUGIN_KEY_PROPERTY)))
-                    {
-                        log.debug("Old application link for this plugin '{}' found with different display url '{}', removing",
-                            getPluginKey(), displayUrl);
-                        applicationLinkService.deleteApplicationLink(otherLink);
-                    }
-                }
-
-                log.info("Creating an application link for the remote plugin container of key '{}'", getPluginKey());
-                link = applicationLinkService.addApplicationLink(expectedApplicationId, applicationType, applicationLinkDetails);
-                link.putProperty(PLUGIN_KEY_PROPERTY, getPluginKey());
-            }
-
-            link.putProperty("IS_ACTIVITY_ITEM_PROVIDER", Boolean.FALSE.toString());
-            link.putProperty("system", Boolean.TRUE.toString());
-
-            ServiceProvider serviceProvider = createOAuthServiceProvider(displayUrl, oauthElement);
-            oAuthLinkManager.associateProviderWithLink(link, applicationType.getId().get(), serviceProvider);
-
-            if (oauthElement != null)
-            {
-                registerOAuth(link, oauthElement);
+                throw new PluginParseException("Application link already exists for id '" + expectedApplicationId + "' but it isn't the target " +
+                        " plugin '" + getPluginKey() + "': unexpected plugin key is: " + link.getProperty(PLUGIN_KEY_PROPERTY));
             }
         }
         else
         {
-            log.info("Plugin '{}' in local mode, so not setting up remote plugin container link", getPluginKey());
+            // try to find link with old display url
+            for (ApplicationLink otherLink : applicationLinkService.getApplicationLinks(RemotePluginContainerApplicationType.class))
+            {
+                if (getPluginKey().equals(otherLink.getProperty(PLUGIN_KEY_PROPERTY)))
+                {
+                    log.debug("Old application link for this plugin '{}' found with different display url '{}', removing",
+                            getPluginKey(), displayUrl);
+                    applicationLinkService.deleteApplicationLink(otherLink);
+                }
+            }
+
+            log.info("Creating an application link for the remote plugin container of key '{}'", getPluginKey());
+            link = applicationLinkService.addApplicationLink(expectedApplicationId, applicationType, applicationLinkDetails);
+            link.putProperty(PLUGIN_KEY_PROPERTY, getPluginKey());
         }
-        super.enabled();
+
+        link.putProperty("IS_ACTIVITY_ITEM_PROVIDER", Boolean.FALSE.toString());
+        link.putProperty("system", Boolean.TRUE.toString());
+
+        ServiceProvider serviceProvider = createOAuthServiceProvider(displayUrl, oauthElement);
+        oAuthLinkManager.associateProviderWithLink(link, applicationType.getId().get(), serviceProvider);
+
+        if (oauthElement != null)
+        {
+            registerOAuth(link, oauthElement);
+        }
     }
 
     private void manuallyDeleteApplicationId(ApplicationId expectedApplicationId)
