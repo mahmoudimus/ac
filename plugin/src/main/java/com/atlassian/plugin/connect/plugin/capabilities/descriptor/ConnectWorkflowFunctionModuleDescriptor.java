@@ -58,7 +58,6 @@ import static com.atlassian.plugin.connect.plugin.module.jira.workflow.RemoteWor
  */
 public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionModuleDescriptor
 {
-
     private static final String POST_FUNCTION_EXTRA_MARKUP = "velocity/jira/workflow/post-function-extra-markup.vm";
 
     private final TypeResolver remoteWorkflowTypeResolver;
@@ -67,13 +66,13 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
     private final WebResourceUrlProvider webResourceUrlProvider;
     private final PluginRetrievalService pluginRetrievalService;
     private final OSWorkflowConfigurator workflowConfigurator;
+    private final ModuleDescriptorWebHookListenerRegistry webHookConsumerRegistry;
+
     private WorkflowPostFunctionCapabilityBean capabilityBean;
 
-    private final ModuleDescriptorWebHookListenerRegistry webHookConsumerRegistry;
     private ImmutableMap<String, URI> workflowFunctionActionUris;
     private URI triggeredURI;
     private String completeKey;
-
 
     public ConnectWorkflowFunctionModuleDescriptor(
             final JiraAuthenticationContext authenticationContext,
@@ -302,13 +301,11 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
         // no-op
     }
 
-
     @Override
     protected WorkflowPluginFunctionFactory createModule()
     {
         return new RemoteWorkflowFunctionPluginFactory();
     }
-
 
     @Override
     protected void provideValidationRules(ValidationPattern pattern)

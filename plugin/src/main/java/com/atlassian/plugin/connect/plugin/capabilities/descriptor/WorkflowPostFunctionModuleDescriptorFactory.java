@@ -37,7 +37,6 @@ public class WorkflowPostFunctionModuleDescriptorFactory implements ConnectModul
     private final PluginRetrievalService pluginRetrievalService;
     private final DelegatingComponentAccessor componentAccessor;
 
-
     @Autowired
     public WorkflowPostFunctionModuleDescriptorFactory(
             final JiraAuthenticationContext authenticationContext,
@@ -50,7 +49,6 @@ public class WorkflowPostFunctionModuleDescriptorFactory implements ConnectModul
             final WebResourceUrlProvider webResourceUrlProvider,
             final PluginRetrievalService pluginRetrievalService)
     {
-
         this.authenticationContext = authenticationContext;
         this.moduleFactory = moduleFactory;
         this.iFrameRenderer = iFrameRenderer;
@@ -60,7 +58,6 @@ public class WorkflowPostFunctionModuleDescriptorFactory implements ConnectModul
         this.templateRenderer = templateRenderer;
         this.webResourceUrlProvider = webResourceUrlProvider;
         this.pluginRetrievalService = pluginRetrievalService;
-
         this.componentAccessor = createDelegatingComponentAccessor();
     }
 

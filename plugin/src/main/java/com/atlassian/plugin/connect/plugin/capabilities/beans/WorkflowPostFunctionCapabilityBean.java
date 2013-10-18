@@ -23,6 +23,7 @@ public class WorkflowPostFunctionCapabilityBean extends NameToKeyBean
         this.description = new I18nProperty("", "");
         this.view = null;
         this.edit = null;
+        this.create = null;
         this.triggered = null;
     }
 
@@ -70,5 +71,4 @@ public class WorkflowPostFunctionCapabilityBean extends NameToKeyBean
     {
         return new WorkflowPostFunctionCapabilityBeanBuilder(defaultBean);
     }
-
 }
