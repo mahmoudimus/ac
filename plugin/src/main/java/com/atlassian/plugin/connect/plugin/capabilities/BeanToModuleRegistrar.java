@@ -7,6 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.Nullable;
 
+import com.atlassian.plugin.AutowireCapablePlugin;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.annotation.CapabilitySet;
@@ -55,6 +56,9 @@ public class BeanToModuleRegistrar
     {
         BundleContext addonBundleContext = ((OsgiPlugin) plugin).getBundle().getBundleContext();
         
+        //TODO, fix this shit. Essentially the "ConditionLoadingPlugin" swipes any calls to plugin.autowire made to the addon and instead uses the connect plugin to do the autowiring.
+        // problem is, the AutowireCapablePlugin interface is deprecated so the first module descriptor that stops using the deprecated class will screw us.
+        ConditionLoadingPlugin clp = new ConditionLoadingPlugin((AutowireCapablePlugin)theConnectPlugin,plugin,Sets.<Class<?>>newHashSet(productAccessor.getConditions().values()));
         List<DescriptorToRegister> descriptorsToRegister = new ArrayList<DescriptorToRegister>();
         ContainerAccessor accessor = theConnectPlugin.getContainerAccessor();
         for (CapabilityBean bean : beans)
@@ -73,7 +77,7 @@ public class BeanToModuleRegistrar
                 if (!providers.isEmpty())
                 {
                     ConnectModuleProvider provider = providers.iterator().next();
-                    descriptorsToRegister.addAll(Lists.transform(provider.provideModules(plugin,addonBundleContext, newArrayList(bean)), new Function<ModuleDescriptor, DescriptorToRegister>()
+                    descriptorsToRegister.addAll(Lists.transform(provider.provideModules(clp,addonBundleContext, newArrayList(bean)), new Function<ModuleDescriptor, DescriptorToRegister>()
                     {
                         @Override
                         public DescriptorToRegister apply(@Nullable ModuleDescriptor input)

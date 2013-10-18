@@ -1,12 +1,10 @@
 package com.atlassian.plugin.connect.plugin.capabilities.util;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginArtifact;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
@@ -14,6 +12,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectPlugin
 import com.atlassian.plugin.connect.plugin.installer.RemotePluginArtifactFactory;
 import com.atlassian.plugin.module.ContainerManagedPlugin;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
+import com.atlassian.sal.api.ApplicationProperties;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
@@ -57,8 +56,11 @@ public class BundleBuilderTest
         when(plugin.getResourceAsStream(anyString())).thenReturn(getClass().getResourceAsStream("/test-import-packages.txt"));
         PluginRetrievalService pluginRetrievalService = mock(PluginRetrievalService.class);
         when(pluginRetrievalService.getPlugin()).thenReturn(plugin);
+
+        ApplicationProperties appProps = mock(ApplicationProperties.class);
+        when(appProps.getDisplayName()).thenReturn("jira");
         
-        artifactFactory = new RemotePluginArtifactFactory(xmlFactory,bc,pluginRetrievalService);
+        artifactFactory = new RemotePluginArtifactFactory(xmlFactory,bc,pluginRetrievalService, appProps);
     }
     
     @Test

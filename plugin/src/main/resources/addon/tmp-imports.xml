@@ -1,0 +1,65 @@
+    <osgi:reference id="pluginUriResolver">
+        <osgi:interfaces>
+            <beans:value>com.atlassian.webhooks.spi.plugin.PluginUriResolver</beans:value>
+        </osgi:interfaces>
+    </osgi:reference>
+    <osgi:reference id="httpContentRetriever">
+        <osgi:interfaces>
+            <beans:value>com.atlassian.plugin.connect.plugin.util.http.HttpContentRetriever</beans:value>
+        </osgi:interfaces>
+    </osgi:reference>
+    <osgi:reference id="startableForPlugins">
+        <osgi:interfaces>
+            <beans:value>com.atlassian.sal.api.lifecycle.LifecycleAware</beans:value>
+        </osgi:interfaces>
+    </osgi:reference>
+    <osgi:reference id="productEventPublisher">
+        <osgi:interfaces>
+            <beans:value>com.atlassian.sal.api.lifecycle.LifecycleAware</beans:value>
+        </osgi:interfaces>
+    </osgi:reference>
+    <osgi:reference id="connectIdentifier">
+        <osgi:interfaces>
+            <beans:value>com.atlassian.plugin.connect.spi.ConnectAddOnIdentifierService</beans:value>
+        </osgi:interfaces>
+    </osgi:reference>
+    <osgi:reference id="upmInstallHandler">
+        <osgi:interfaces>
+            <beans:value>com.atlassian.upm.spi.PluginInstallHandler</beans:value>
+        </osgi:interfaces>
+    </osgi:reference>
+    <osgi:reference id="remotePluginRequestSigner">
+        <osgi:interfaces>
+            <beans:value>com.atlassian.webhooks.spi.plugin.RequestSigner</beans:value>
+        </osgi:interfaces>
+    </osgi:reference>
+    <osgi:reference id="serverWebHookProvider">
+        <osgi:interfaces>
+            <beans:value>com.atlassian.webhooks.spi.provider.WebHookProvider</beans:value>
+        </osgi:interfaces>
+    </osgi:reference>
+    <osgi:reference id="pluginsWebHookProvider">
+        <osgi:interfaces>
+            <beans:value>com.atlassian.webhooks.spi.provider.WebHookProvider</beans:value>
+        </osgi:interfaces>
+    </osgi:reference>
+    <osgi:reference id="permissionsReader">
+        <osgi:interfaces>
+            <beans:value>com.atlassian.plugin.connect.spi.permission.PermissionsReader</beans:value>
+        </osgi:interfaces>
+    </osgi:reference>
+    <osgi:reference id="jira-hostContainer">
+        <osgi:interfaces>
+            <beans:value>com.atlassian.plugin.hostcontainer.HostContainer</beans:value>
+        </osgi:interfaces>
+    </osgi:reference>
+    <osgi:reference id="jira-jiraProductAccessor">
+        <osgi:interfaces>
+            <beans:value>com.atlassian.plugin.connect.spi.product.ProductAccessor</beans:value>
+        </osgi:interfaces>
+    </osgi:reference>
+    <osgi:reference id="jira-jiraWebHookProvider">
+        <osgi:interfaces>
+            <beans:value>com.atlassian.webhooks.spi.provider.WebHookProvider</beans:value>
+        </osgi:interfaces>
+    </osgi:reference>

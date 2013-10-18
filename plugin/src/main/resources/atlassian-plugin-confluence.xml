@@ -1,7 +1,7 @@
 <application key="confluence">
-    <component key="hostContainer" class="com.atlassian.plugin.osgi.bridge.external.SpringHostContainer" />
+    <component key="hostContainer" class="com.atlassian.plugin.osgi.bridge.external.SpringHostContainer" interface="com.atlassian.plugin.hostcontainer.HostContainer" public="true"/>
     <component key="confluenceProductAccessor"
-               class="com.atlassian.plugin.connect.plugin.product.confluence.ConfluenceProductAccessor"/>
+               class="com.atlassian.plugin.connect.plugin.product.confluence.ConfluenceProductAccessor" interface="com.atlassian.plugin.connect.spi.product.ProductAccessor" public="true"/>
     <component key="confluenceUserPreferencesRetriever" class="com.atlassian.plugin.connect.plugin.product.confluence.ConfluenceUserPreferencesRetriever"
                interface="com.atlassian.plugin.connect.plugin.UserPreferencesRetriever"/>
     <component key="webFragmentHelper" class="com.atlassian.confluence.plugin.descriptor.web.ConfluenceWebFragmentHelper" />

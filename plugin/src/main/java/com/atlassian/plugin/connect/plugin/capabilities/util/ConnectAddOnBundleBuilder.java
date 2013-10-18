@@ -132,6 +132,11 @@ public class ConnectAddOnBundleBuilder
             String ip = manifest.get(Constants.IMPORT_PACKAGE);
             mergedManifest.getMainAttributes().putValue(Constants.IMPORT_PACKAGE, ip);
         }
+        
+        if(!mergedManifest.getMainAttributes().containsKey(Constants.BUNDLE_CLASSPATH))
+        {
+            mergedManifest.getMainAttributes().putValue(Constants.BUNDLE_CLASSPATH, ".");
+        }
 
         
         File newJar = createExtractableTempFile(fileNamePrefix,".jar");

@@ -19,6 +19,7 @@ import com.atlassian.plugin.module.ContainerManagedPlugin;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.osgi.factory.OsgiPlugin;
 import com.atlassian.plugin.osgi.util.OsgiHeaderUtil;
+import com.atlassian.sal.api.ApplicationProperties;
 
 import com.google.common.base.Strings;
 
@@ -39,14 +40,16 @@ public class RemotePluginArtifactFactory
     private final ConnectPluginXmlFactory pluginXmlFactory;
     private final BundleContext bundleContext;
     private final ContainerManagedPlugin theConnectPlugin;
+    private final ApplicationProperties applicationProperties;
     
     public static String CLEAN_FILENAME_PATTERN = "[:\\\\/*?|<> _]";
 
     @Autowired
-    public RemotePluginArtifactFactory(ConnectPluginXmlFactory pluginXmlFactory, BundleContext bundleContext,PluginRetrievalService pluginRetrievalService)
+    public RemotePluginArtifactFactory(ConnectPluginXmlFactory pluginXmlFactory, BundleContext bundleContext, PluginRetrievalService pluginRetrievalService, ApplicationProperties applicationProperties)
     {
         this.pluginXmlFactory = pluginXmlFactory;
         this.bundleContext = bundleContext;
+        this.applicationProperties = applicationProperties;
         this.theConnectPlugin = (ContainerManagedPlugin)pluginRetrievalService.getPlugin();
     }
 
@@ -125,13 +128,17 @@ public class RemotePluginArtifactFactory
 
     private void addSpringFiles(ConnectAddOnBundleBuilder builder) throws IOException
     {
-        String importsXml = IOUtils.toString(theConnectPlugin.getResourceAsStream("/META-INF/spring/atlassian-plugins-component-imports.xml"));
-        String componentsXml = IOUtils.toString(theConnectPlugin.getResourceAsStream("/META-INF/spring/atlassian-plugins-components.xml"));
-        String hostComponentsXml = IOUtils.toString(theConnectPlugin.getResourceAsStream("/META-INF/spring/atlassian-plugins-host-components.xml"));
+        String importsXml = "";
+        if("jira".equals(applicationProperties.getDisplayName().toLowerCase()))
+        {
+            importsXml = IOUtils.toString(theConnectPlugin.getResourceAsStream("/addon/jira-component-imports.xml"));
+        }
+        else if("confluence".equals(applicationProperties.getDisplayName().toLowerCase()))
+        {
+            importsXml = IOUtils.toString(theConnectPlugin.getResourceAsStream("/addon/confluence-component-imports.xml"));
+        }
         
         builder.addResource("/META-INF/spring/atlassian-plugins-component-imports.xml",importsXml);
-        builder.addResource("/META-INF/spring/atlassian-plugins-components.xml",componentsXml);
-        builder.addResource("/META-INF/spring/atlassian-plugins-host-components.xml",hostComponentsXml);
-        
+       
     }
 }

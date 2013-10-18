@@ -127,7 +127,7 @@ public class ConditionModuleFragmentFactory implements ConnectModuleFragmentFact
             params.put("pluginKey",pluginKey);
             params.put("url",conditionUrl);
             
-            if(!Strings.isNullOrEmpty(toHideSelector))
+            if(Strings.isNullOrEmpty(toHideSelector))
             {
                 String hash = createUniqueUrlHash(pluginKey, conditionUrl);
                 String hashedSelector = "." + hash;

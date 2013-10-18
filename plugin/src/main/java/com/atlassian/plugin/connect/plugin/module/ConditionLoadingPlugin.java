@@ -4,17 +4,19 @@ import java.util.Set;
 
 import com.atlassian.plugin.AutowireCapablePlugin;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.PluginArtifact;
 import com.atlassian.plugin.impl.AbstractDelegatingPlugin;
 import com.atlassian.plugin.connect.spi.module.UserIsLoggedInCondition;
+import com.atlassian.plugin.module.ContainerAccessor;
+import com.atlassian.plugin.module.ContainerManagedPlugin;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-//TODO refactor to use ContainerManagedPlugin
 /**
  * Plugin that can load conditions from the remotable plugins plugin
  */
-public class ConditionLoadingPlugin extends AbstractDelegatingPlugin implements AutowireCapablePlugin
+public class ConditionLoadingPlugin extends AbstractDelegatingPlugin implements AutowireCapablePlugin, ContainerManagedPlugin
 {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -103,5 +105,17 @@ public class ConditionLoadingPlugin extends AbstractDelegatingPlugin implements 
     private <T> Class<T> cast(Class<?> aClass)
     {
         return (Class<T>) aClass;
+    }
+
+    @Override
+    public ContainerAccessor getContainerAccessor()
+    {
+        return ((ContainerManagedPlugin)getDelegate()).getContainerAccessor();
+    }
+
+    @Override
+    public PluginArtifact getPluginArtifact()
+    {
+        return ((ContainerManagedPlugin)getDelegate()).getPluginArtifact();
     }
 }
