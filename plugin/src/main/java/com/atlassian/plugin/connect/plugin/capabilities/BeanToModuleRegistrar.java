@@ -16,7 +16,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectModulePr
 import com.atlassian.plugin.connect.plugin.capabilities.provider.NullModuleProvider;
 import com.atlassian.plugin.connect.plugin.integration.plugins.DescriptorToRegister;
 import com.atlassian.plugin.connect.plugin.integration.plugins.DynamicDescriptorRegistration;
-import com.atlassian.plugin.connect.plugin.module.ConditionLoadingPlugin;
+import com.atlassian.plugin.connect.plugin.module.AutowireWithConnectPluginDecorator;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.module.ContainerAccessor;
 import com.atlassian.plugin.module.ContainerManagedPlugin;
@@ -55,10 +55,8 @@ public class BeanToModuleRegistrar
     public void registerDescriptorsForBeans(Plugin plugin, List<CapabilityBean> beans)
     {
         BundleContext addonBundleContext = ((OsgiPlugin) plugin).getBundle().getBundleContext();
-        
-        //TODO, fix this shit. Essentially the "ConditionLoadingPlugin" swipes any calls to plugin.autowire made to the addon and instead uses the connect plugin to do the autowiring.
-        // problem is, the AutowireCapablePlugin interface is deprecated so the first module descriptor that stops using the deprecated class will screw us.
-        ConditionLoadingPlugin clp = new ConditionLoadingPlugin((AutowireCapablePlugin)theConnectPlugin,plugin,Sets.<Class<?>>newHashSet(productAccessor.getConditions().values()));
+
+        AutowireWithConnectPluginDecorator connectAutowiringPlugin = new AutowireWithConnectPluginDecorator((AutowireCapablePlugin)theConnectPlugin,plugin,Sets.<Class<?>>newHashSet(productAccessor.getConditions().values()));
         List<DescriptorToRegister> descriptorsToRegister = new ArrayList<DescriptorToRegister>();
         ContainerAccessor accessor = theConnectPlugin.getContainerAccessor();
         for (CapabilityBean bean : beans)
@@ -77,7 +75,7 @@ public class BeanToModuleRegistrar
                 if (!providers.isEmpty())
                 {
                     ConnectModuleProvider provider = providers.iterator().next();
-                    descriptorsToRegister.addAll(Lists.transform(provider.provideModules(clp,addonBundleContext, newArrayList(bean)), new Function<ModuleDescriptor, DescriptorToRegister>()
+                    descriptorsToRegister.addAll(Lists.transform(provider.provideModules(connectAutowiringPlugin,addonBundleContext, newArrayList(bean)), new Function<ModuleDescriptor, DescriptorToRegister>()
                     {
                         @Override
                         public DescriptorToRegister apply(@Nullable ModuleDescriptor input)

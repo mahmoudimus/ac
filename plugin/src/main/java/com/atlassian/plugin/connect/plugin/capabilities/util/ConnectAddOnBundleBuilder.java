@@ -127,12 +127,7 @@ public class ConnectAddOnBundleBuilder
         Jar bundle = bnd.build();
         Manifest mergedManifest = bundle.getManifest();
 
-        if(!mergedManifest.getMainAttributes().containsKey(Constants.IMPORT_PACKAGE) && manifest.containsKey(Constants.IMPORT_PACKAGE))
-        {
-            String ip = manifest.get(Constants.IMPORT_PACKAGE);
-            mergedManifest.getMainAttributes().putValue(Constants.IMPORT_PACKAGE, ip);
-        }
-        
+                
         if(!mergedManifest.getMainAttributes().containsKey(Constants.BUNDLE_CLASSPATH))
         {
             mergedManifest.getMainAttributes().putValue(Constants.BUNDLE_CLASSPATH, ".");

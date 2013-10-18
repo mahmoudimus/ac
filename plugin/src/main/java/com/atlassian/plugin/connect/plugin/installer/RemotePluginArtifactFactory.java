@@ -88,9 +88,6 @@ public class RemotePluginArtifactFactory
         
         //create the plugin.xml
         builder.addResource("atlassian-plugin.xml",pluginXmlFactory.createPluginXml(addOn));
-        
-        //add the spring files from the connect plugin
-        addSpringFiles(builder);
 
         return new JarPluginArtifact(builder.build(addOn.getKey().replaceAll(CLEAN_FILENAME_PATTERN, "-").toLowerCase()));
     }
@@ -117,28 +114,8 @@ public class RemotePluginArtifactFactory
             }
         }
         
-        //copy the imports from the connect plugin to the addon manifest so addons can autowire stuff
-        String connectImports = (String)bundleContext.getBundle().getHeaders().get(Constants.IMPORT_PACKAGE);
-        String connectExports = (String)bundleContext.getBundle().getHeaders().get(Constants.EXPORT_PACKAGE);
-
-        manifest.put(Constants.IMPORT_PACKAGE,connectImports + "," + connectExports);
-        
         return manifest;
     }
 
-    private void addSpringFiles(ConnectAddOnBundleBuilder builder) throws IOException
-    {
-        String importsXml = "";
-        if("jira".equals(applicationProperties.getDisplayName().toLowerCase()))
-        {
-            importsXml = IOUtils.toString(theConnectPlugin.getResourceAsStream("/addon/jira-component-imports.xml"));
-        }
-        else if("confluence".equals(applicationProperties.getDisplayName().toLowerCase()))
-        {
-            importsXml = IOUtils.toString(theConnectPlugin.getResourceAsStream("/addon/confluence-component-imports.xml"));
-        }
-        
-        builder.addResource("/META-INF/spring/atlassian-plugins-component-imports.xml",importsXml);
-       
-    }
+   
 }
