@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect;
 
-import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectIssueTabPanelCapabilityBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectVersionTabPanelCapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.server.ConnectCapabilitiesRunner;
 
@@ -13,8 +13,13 @@ public class AppRunnerIssueTab
         try
         {
             ConnectCapabilitiesRunner remotePlugin = new ConnectCapabilitiesRunner(JIRA,"my-plugin")
-                    .addCapability(ConnectIssueTabPanelCapabilityBean.newIssueTabPageBean()
-                            .withName(new I18nProperty("My Tab","My Tab"))
+//                    .addCapability(ConnectIssueTabPanelCapabilityBean.newIssueTabPageBean()
+//                            .withName(new I18nProperty("My Tab","My Tab"))
+//                            .withWeight(1)
+//                            .withUrl("/irwi")
+//                            .build())
+                    .addCapability(ConnectVersionTabPanelCapabilityBean.newVersionTabPageBean()
+                            .withName(new I18nProperty("My Version Tab", "My Version Tab"))
                             .withWeight(1)
                             .withUrl("/irwi")
                             .build())

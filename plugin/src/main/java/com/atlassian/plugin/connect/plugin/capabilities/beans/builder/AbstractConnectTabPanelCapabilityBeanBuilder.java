@@ -6,7 +6,7 @@ public class AbstractConnectTabPanelCapabilityBeanBuilder<T extends AbstractConn
         extends NameToKeyBeanBuilder<T, B>
 {
     private String url;
-    private int weight;
+    private Integer weight;
 
     public AbstractConnectTabPanelCapabilityBeanBuilder(AbstractConnectTabPanelCapabilityBean defaultBean)
     {

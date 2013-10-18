@@ -2,7 +2,6 @@ package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectIssueTabPanelCapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectIssueTabPanelModuleDescriptorFactory;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.RelativeAddOnUrlConverter;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectIssueTabPanelCapabilityBean.newIssueTabPageBean;
 
@@ -11,15 +10,15 @@ public class ConnectIssueTabPanelModuleProvider extends AbstractConnectTabPanelM
 {
 
     //    @Autowired
-    public ConnectIssueTabPanelModuleProvider(ConnectIssueTabPanelModuleDescriptorFactory issueTabFactory, RelativeAddOnUrlConverter relativeAddOnUrlConverter)
+    public ConnectIssueTabPanelModuleProvider(ConnectIssueTabPanelModuleDescriptorFactory issueTabFactory)
     {
-        super(issueTabFactory, relativeAddOnUrlConverter);
+        super(issueTabFactory);
     }
 
     @Override
-    protected ConnectIssueTabPanelCapabilityBean createCapabilityBean(ConnectIssueTabPanelCapabilityBean bean, String localUrl)
+    protected ConnectIssueTabPanelCapabilityBean createCapabilityBean(ConnectIssueTabPanelCapabilityBean bean)
     {
-        return newIssueTabPageBean(bean).withUrl(localUrl).build();
+        return newIssueTabPageBean(bean).build();
     }
 
 }

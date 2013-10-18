@@ -2,7 +2,6 @@ package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectVersionTabPanelCapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectVersionTabPanelModuleDescriptorFactory;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.RelativeAddOnUrlConverter;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectVersionTabPanelCapabilityBean.newVersionTabPageBean;
 
@@ -11,15 +10,16 @@ public class ConnectVersionTabPanelModuleProvider extends AbstractConnectTabPane
 {
 
     //    @Autowired
-    public ConnectVersionTabPanelModuleProvider(ConnectVersionTabPanelModuleDescriptorFactory issueTabFactory, RelativeAddOnUrlConverter relativeAddOnUrlConverter)
+    public ConnectVersionTabPanelModuleProvider(ConnectVersionTabPanelModuleDescriptorFactory issueTabFactory)
     {
-        super(issueTabFactory, relativeAddOnUrlConverter);
+        super(issueTabFactory);
     }
 
     @Override
-    protected ConnectVersionTabPanelCapabilityBean createCapabilityBean(ConnectVersionTabPanelCapabilityBean bean, String localUrl)
+    protected ConnectVersionTabPanelCapabilityBean createCapabilityBean(ConnectVersionTabPanelCapabilityBean bean)
     {
-        return newVersionTabPageBean(bean).withUrl(localUrl).build();
+        return newVersionTabPageBean(bean).build(); // TODO: can I just return the orig bean or is it decorating it?
+//        return bean;
     }
 
 }
