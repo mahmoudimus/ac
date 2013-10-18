@@ -65,7 +65,7 @@ public class ConnectVersionTabPanelModuleDescriptorFactoryTest
         Element versionTabPageElement = agumentCaptor.getValue();
 
         assertThat(versionTabPageElement.attributeValue("key"), is(equalTo("my-version-tab-page")));
-        assertThat(versionTabPageElement.element("order").getText(), is(equalTo("100")));
+        assertThat(versionTabPageElement.element("order").getText(), is(equalTo("99")));
         assertThat(versionTabPageElement.attributeValue("url"), is(equalTo("http://www.google.com")));
         Element label = versionTabPageElement.element("label");
         assertThat(label.attributeValue("key"), is(equalTo("my.versiontabpage")));
