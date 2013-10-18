@@ -13,7 +13,6 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.osgi.framework.BundleContext;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectVersionTabPanelCapabilityBean.newVersionTabPageBean;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -52,7 +51,7 @@ public class ConnectVersionTabPanelModuleDescriptorFactoryTest
     @Test
     public void simpleDescriptorCreation() throws Exception
     {
-        ConnectVersionTabPanelCapabilityBean bean = newVersionTabPageBean()
+        ConnectVersionTabPanelCapabilityBean bean = ConnectVersionTabPanelCapabilityBean.newVersionTabPanelBean()
                 .withName(new I18nProperty("My Version Tab Page", "my.versiontabpage"))
                 .withUrl("http://www.google.com")
                 .withWeight(99)

@@ -6,7 +6,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectIssueTab
 
 /**
  * Capabilities bean for Jira Issue Tab Pages. The capability JSON looks like
- * <p>
+ * <pre>
  * "issueTabPanels": [{
  * "name": {
  *     "value": "My Issue Tab",
@@ -15,7 +15,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectIssueTab
  * "url": "/my-general-page",
  * "weight": 100
 }]
- * </p>
+ * </pre>
  */
 // TODO: Note that we only need to subtype here because the annotation lives on this class rather than the descriptorFactory.
 // see https://extranet.atlassian.com/display/~aholmgren/Thoughts+on+Capabilities
@@ -30,12 +30,12 @@ public class ConnectIssueTabPanelCapabilityBean extends AbstractConnectTabPanelC
 
     }
 
-    public static ConnectIssueTabPanelCapabilityBeanBuilder newIssueTabPageBean()
+    public static ConnectIssueTabPanelCapabilityBeanBuilder newIssueTabPanelBean()
     {
         return new ConnectIssueTabPanelCapabilityBeanBuilder();
     }
 
-    public static ConnectIssueTabPanelCapabilityBeanBuilder newIssueTabPageBean(ConnectIssueTabPanelCapabilityBean defaultBean)
+    public static ConnectIssueTabPanelCapabilityBeanBuilder newIssueTabPanelBean(ConnectIssueTabPanelCapabilityBean defaultBean)
     {
         return new ConnectIssueTabPanelCapabilityBeanBuilder(defaultBean);
     }

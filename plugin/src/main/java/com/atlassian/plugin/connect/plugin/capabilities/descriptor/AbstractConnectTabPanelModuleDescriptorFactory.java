@@ -68,8 +68,6 @@ public class AbstractConnectTabPanelModuleDescriptorFactory<B extends AbstractCo
             log.debug("Created tab page: " + printNode(domElement));
         }
 
-        domElement.addAttribute("system", "true");
-
         D descriptor = connectAutowireUtil.createBean(descriptorClass);
 
         descriptor.init(plugin, domElement);
