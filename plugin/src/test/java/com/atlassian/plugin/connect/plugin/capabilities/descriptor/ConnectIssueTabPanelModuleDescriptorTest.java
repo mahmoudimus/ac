@@ -20,6 +20,7 @@ import com.atlassian.plugin.module.ModuleFactory;
 import com.google.common.collect.ImmutableMap;
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -29,7 +30,7 @@ import java.io.IOException;
 import java.util.List;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
@@ -73,16 +74,35 @@ public class ConnectIssueTabPanelModuleDescriptorTest
 
 
     @Test
-    public void populatesDescriptorPropertiesFromElement() throws IOException
+    public void createsDescriptorWithCorrectCompleteKey() throws IOException
     {
-        ConnectIssueTabPanelModuleDescriptor descriptor = createDescriptor();
-
-        assertThat(descriptor.getCompleteKey(), is(equalTo(PLUGIN_KEY + ":" + ADDON_KEY)));
-        assertThat(descriptor.getName(), is(equalTo(ADDON_NAME)));
-        assertThat(descriptor.getUrl(), is(equalTo(ADDON_URL)));
-        assertThat(descriptor.getOrder(), is(equalTo(100)));
-        assertThat(descriptor.getLabel(), is(equalTo(ADDON_I18_NAME)));
+        assertThat(createDescriptor().getCompleteKey(), is(equalTo(PLUGIN_KEY + ":" + ADDON_KEY)));
     }
+
+    @Test
+    public void createsDescriptorWithCorrectName() throws IOException
+    {
+        assertThat(createDescriptor().getName(), is(equalTo(ADDON_NAME)));
+    }
+
+    @Test
+    public void createsDescriptorWithCorrectUrl() throws IOException
+    {
+        assertThat(createDescriptor().getUrl(), is(equalTo(ADDON_URL)));
+    }
+
+    @Test
+    public void createsDescriptorWithCorrectOrder() throws IOException
+    {
+        assertThat(createDescriptor().getOrder(), is(equalTo(99)));
+    }
+
+    @Test
+    public void createsDescriptorWithCorrectLabel() throws IOException
+    {
+        assertThat(createDescriptor().getLabel(), is(equalTo(ADDON_I18_NAME)));
+    }
+
 
     @Test
     public void createdModuleReturnsAddOnContentForHTML() throws IOException
@@ -92,8 +112,7 @@ public class ConnectIssueTabPanelModuleDescriptorTest
         IssueTabPanel3 module = descriptor.getModule();
 
         List<IssueAction> actions = module.getActions(new GetActionsRequest(issue, user, false, false, null));
-        assertThat(actions, hasSize(1));
-        assertThat(actions.get(0).getHtml(), is(equalTo(ADDON_HTML_CONTENT)));
+        assertThat(actions, Matchers.<IssueAction>contains(hasProperty("html", equalTo(ADDON_HTML_CONTENT))));
     }
 
     private ConnectIssueTabPanelModuleDescriptor createDescriptor() throws IOException
@@ -117,7 +136,7 @@ public class ConnectIssueTabPanelModuleDescriptorTest
     {
         Element issueTabPageElement = new DOMElement("issue-tab-page");
         issueTabPageElement.addAttribute("key", ADDON_KEY);
-        issueTabPageElement.addElement("order").setText("100");
+        issueTabPageElement.addElement("order").setText("99");
         issueTabPageElement.addAttribute("url", ADDON_URL);
         issueTabPageElement.addAttribute("name", ADDON_NAME);
         issueTabPageElement.addElement("label")

@@ -53,12 +53,11 @@ public class ConnectIssueTabPanelModuleDescriptor extends IssueTabPanelModuleDes
     }
 
 
-
     @Override
     public IssueTabPanel3 getModule()
     {
         return new IFrameIssueTab(
-                new IFrameContextImpl(getPluginKey() , url, key, iframeParams),
+                new IFrameContextImpl(getPluginKey(), url, key, iframeParams),
                 iFrameRenderer, Optional.fromNullable(condition), urlVariableSubstitutor, projectSerializer, issueSerializer);
     }
 
@@ -77,7 +76,6 @@ public class ConnectIssueTabPanelModuleDescriptor extends IssueTabPanelModuleDes
     {
         return url;
     }
-
 
 
 }

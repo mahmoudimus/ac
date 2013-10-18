@@ -4,9 +4,6 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectIssueTabPan
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.server.ConnectCapabilitiesRunner;
 
-/**
- * @since version
- */
 public class AppRunnerIssueTab
 {
     public static final String JIRA = "http://localhost:2990/jira";
