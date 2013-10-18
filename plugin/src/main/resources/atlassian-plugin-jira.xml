@@ -38,6 +38,11 @@
     <component key="webItemModuleDescriptorFactory" class="com.atlassian.plugin.connect.plugin.module.webitem.JiraWebItemModuleDescriptorFactory"
                interface="com.atlassian.plugin.connect.plugin.module.webitem.WebItemModuleDescriptorFactory" />
 
+
+    <component key="connectIssueTabPanelModuleDescriptorFactory" class="com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectIssueTabPanelModuleDescriptorFactory" />
+    <component key="connectIssueTabPanelModuleProvider" class="com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectIssueTabPanelModuleProvider" />
+
+
     <rest key="rest" path="/atlassian-connect" version="1">
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>INCLUDE</dispatcher>
