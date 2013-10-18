@@ -30,7 +30,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * @since version
+ * @since 1.0
  */
 public class WebItemModuleDescriptorFactoryTest
 {

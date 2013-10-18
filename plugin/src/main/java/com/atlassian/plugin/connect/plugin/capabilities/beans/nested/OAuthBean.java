@@ -6,7 +6,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.OAuthBeanB
 import com.google.common.base.Objects;
 
 /**
- * @since version
+ * @since 1.0
  */
 public class OAuthBean extends BaseCapabilityBean
 {

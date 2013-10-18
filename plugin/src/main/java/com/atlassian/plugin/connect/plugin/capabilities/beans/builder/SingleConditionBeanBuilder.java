@@ -8,7 +8,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.ParamsBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.SingleConditionBean;
 
 /**
- * @since version
+ * @since 1.0
  */
 public class SingleConditionBeanBuilder extends BaseCapabilityBeanBuilder<SingleConditionBeanBuilder,SingleConditionBean>
 {

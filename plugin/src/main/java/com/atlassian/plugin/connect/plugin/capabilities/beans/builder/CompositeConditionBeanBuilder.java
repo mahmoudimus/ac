@@ -10,7 +10,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.CompositeCo
 import static com.google.common.collect.Lists.newArrayList;
 
 /**
- * @since version
+ * @since 1.0
  */
 public class CompositeConditionBeanBuilder extends BaseCapabilityBeanBuilder<CompositeConditionBeanBuilder,CompositeConditionBean>
 {

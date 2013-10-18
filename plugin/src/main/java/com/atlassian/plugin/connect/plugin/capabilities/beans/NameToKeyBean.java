@@ -8,7 +8,7 @@ import com.google.common.base.Strings;
 import static com.atlassian.plugin.connect.plugin.capabilities.util.ModuleKeyGenerator.nameToKey;
 
 /**
- * @since version
+ * @since 1.0
  */
 public class NameToKeyBean extends BaseCapabilityBean
 {

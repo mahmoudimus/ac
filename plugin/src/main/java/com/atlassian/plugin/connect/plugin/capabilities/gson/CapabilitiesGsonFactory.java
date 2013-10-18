@@ -12,7 +12,7 @@ import com.google.gson.reflect.TypeToken;
 import org.osgi.framework.BundleContext;
 
 /**
- * @since version
+ * @since 1.0
  */
 public class CapabilitiesGsonFactory
 {

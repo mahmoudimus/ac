@@ -34,7 +34,7 @@ import static org.junit.Assert.*;
 
 
 /**
- * @since version
+ * @since 1.0
  */
 public class WebItemTest extends JiraWebDriverTestBase
 {

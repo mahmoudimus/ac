@@ -12,7 +12,7 @@ import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.Para
 import static com.google.common.collect.Lists.newArrayList;
 
 /**
- * @since version
+ * @since 1.0
  */
 public class ParamsBean
 {

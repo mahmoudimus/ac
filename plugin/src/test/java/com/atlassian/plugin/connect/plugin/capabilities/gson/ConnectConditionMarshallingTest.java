@@ -21,7 +21,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
- * @since version
+ * @since 1.0
  */
 public class ConnectConditionMarshallingTest
 {

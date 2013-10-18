@@ -12,7 +12,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.provider.WebItemModulePr
 import static com.google.common.collect.Lists.newArrayList;
 
 /**
- * @since version
+ * @since 1.0
  */
 @CapabilitySet(key = "web-items", moduleProvider = WebItemModuleProvider.class)
 public class WebItemCapabilityBean extends NameToKeyBean

@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
 /**
- * @since version
+ * @since 1.0
  */
 public interface NullModuleProvider extends ConnectModuleProvider
 {

@@ -18,7 +18,7 @@ import aQute.lib.osgi.Builder;
 import aQute.lib.osgi.Jar;
 
 /**
- * @since version
+ * @since 1.0
  */
 public class ConnectAddOnBundleBuilder
 {

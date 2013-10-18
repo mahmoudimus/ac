@@ -25,7 +25,7 @@ import static com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunn
 import static com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner.newServlet;
 
 /**
- * @since version
+ * @since 1.0
  */
 public class AppRunner
 {

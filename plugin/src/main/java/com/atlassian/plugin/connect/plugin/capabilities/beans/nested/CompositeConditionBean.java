@@ -11,7 +11,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.CompositeC
 import com.google.common.base.Objects;
 
 /**
- * @since version
+ * @since 1.0
  */
 public class CompositeConditionBean extends BaseCapabilityBean implements ConditionalBean
 {

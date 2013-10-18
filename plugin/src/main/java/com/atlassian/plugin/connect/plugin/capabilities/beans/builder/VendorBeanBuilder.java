@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.beans.builder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.VendorBean;
 
 /**
- * @since version
+ * @since 1.0
  */
 public class VendorBeanBuilder<T extends VendorBeanBuilder, B extends VendorBean> extends BaseCapabilityBeanBuilder<T,B>
 {

@@ -48,7 +48,7 @@ import static com.google.common.base.Strings.nullToEmpty;
 import static com.google.common.collect.Maps.newHashMap;
 
 /**
- * @since version
+ * @since 1.0
  */
 public class ConnectCapabilitiesRunner
 {
