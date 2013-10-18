@@ -4,6 +4,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.WebPanelLayout;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebPanel;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePage;
+import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewProjectPage;
 import com.atlassian.plugin.connect.test.server.ConnectCapabilitiesRunner;
 import it.jira.JiraWebDriverTestBase;
 import org.junit.AfterClass;
@@ -29,7 +30,7 @@ public class WebPanelTest extends JiraWebDriverTestBase
                 .addCapability(newWebPanelBean()
                         .withName(new I18nProperty("HipChat Discussions", "hipchat.discussions"))
                         .withUrl("http://www.google.com")
-                        .withLocation("atl.jira.view.issue.right.context")
+                                .withLocation("com.atlassian.jira.plugin.headernav.left.context")
                         .withLayout(new WebPanelLayout("100%", "200px"))
                         .withWeight(1234)
                         .build()).start();
@@ -48,8 +49,8 @@ public class WebPanelTest extends JiraWebDriverTestBase
     public void beforeEachTest()
     {
         loginAsAdmin();
-        JiraViewIssuePage viewIssuePage = product.visit(JiraViewIssuePage.class, project.getKey());
-        webPanel = viewIssuePage.findWebPanel("hipchat-discussions");
+        JiraViewProjectPage viewProjectPage = product.visit(JiraViewProjectPage.class, project.getKey());
+        webPanel = viewProjectPage.findWebPanel("hip-chat-discussions");
     }
 
     @Test
@@ -61,6 +62,6 @@ public class WebPanelTest extends JiraWebDriverTestBase
     @Test
     public void urlIsCorrect()
     {
-        assertThat(webPanel.getIFrameSourceUrl(), is("http://www.google.com"));
+        assertThat(webPanel.getIFrameSourceUrl(), startsWith("http://www.google.com")); // will end with the plugin's displayUrl and auth parameters
     }
 }

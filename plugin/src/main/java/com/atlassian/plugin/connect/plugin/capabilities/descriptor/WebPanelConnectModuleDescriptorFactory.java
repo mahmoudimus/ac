@@ -17,6 +17,7 @@ import static org.apache.commons.lang.StringEscapeUtils.escapeHtml;
 @Component
 public class WebPanelConnectModuleDescriptorFactory implements ConnectModuleDescriptorFactory<WebPanelCapabilityBean,WebPanelModuleDescriptor>
 {
+    public static final String REMOTE_WEB_PANEL_MODULE_PREFIX = "remote-web-panel-";
     private final ConnectAutowireUtil connectAutowireUtil;
 
     @Autowired
@@ -28,8 +29,8 @@ public class WebPanelConnectModuleDescriptorFactory implements ConnectModuleDesc
     @Override
     public WebPanelModuleDescriptor createModuleDescriptor(Plugin plugin, BundleContext addonBundleContext, WebPanelCapabilityBean bean)
     {
-        Element domElement = createDomElement(bean, bean.getKey());
-        final WebPanelModuleDescriptor descriptor = new ConnectDefaultWebPanelModuleDescriptor(connectAutowireUtil, bean, domElement);
+        Element domElement = createDomElement(bean, REMOTE_WEB_PANEL_MODULE_PREFIX + bean.getKey());
+        final WebPanelModuleDescriptor descriptor = connectAutowireUtil.createBean(ConnectDefaultWebPanelModuleDescriptor.class);
         descriptor.init(plugin, domElement);
         return descriptor;
     }

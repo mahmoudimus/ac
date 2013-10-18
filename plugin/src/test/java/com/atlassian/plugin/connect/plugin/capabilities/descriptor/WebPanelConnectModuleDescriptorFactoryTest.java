@@ -9,6 +9,7 @@ import com.atlassian.plugin.connect.plugin.module.context.ContextMapURLSerialize
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlValidator;
 import com.atlassian.plugin.connect.spi.module.IFrameContext;
 import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
+import com.atlassian.plugin.hostcontainer.HostContainer;
 import com.atlassian.plugin.module.ContainerManagedPlugin;
 import com.atlassian.plugin.web.WebInterfaceManager;
 import com.atlassian.plugin.web.descriptors.WebPanelModuleDescriptor;
@@ -41,6 +42,7 @@ public class WebPanelConnectModuleDescriptorFactoryTest
 
     @Mock private PluginForTests plugin;
     @Mock private ConnectAutowireUtil connectAutowireUtil;
+    @Mock private HostContainer hostContainer;
     @Mock private WebInterfaceManager webInterfaceManager;
     @Mock private UserManager userManager;
     @Mock private ContextMapURLSerializer contextMapURLSerializer;
@@ -53,16 +55,13 @@ public class WebPanelConnectModuleDescriptorFactoryTest
         WebPanelConnectModuleDescriptorFactory webPanelFactory = new WebPanelConnectModuleDescriptorFactory(connectAutowireUtil);
         when(plugin.getKey()).thenReturn("my-plugin");
         when(plugin.getName()).thenReturn("My Plugin");
-        when(connectAutowireUtil.createBean(WebInterfaceManager.class)).thenReturn(webInterfaceManager);
-        when(connectAutowireUtil.createBean(UserManager.class)).thenReturn(userManager);
-        when(connectAutowireUtil.createBean(ContextMapURLSerializer.class)).thenReturn(contextMapURLSerializer);
-        when(connectAutowireUtil.createBean(IFrameRenderer.class)).thenReturn(iFrameRenderer);
-        when(connectAutowireUtil.createBean(UrlValidator.class)).thenReturn(urlValidator);
+        ConnectDefaultWebPanelModuleDescriptor aDescriptor = new ConnectDefaultWebPanelModuleDescriptor(hostContainer, webInterfaceManager, iFrameRenderer, contextMapURLSerializer, userManager, urlValidator);
+        when(connectAutowireUtil.createBean(ConnectDefaultWebPanelModuleDescriptor.class)).thenReturn(aDescriptor);
 
         WebPanelCapabilityBean bean = newWebPanelBean()
                 .withName(new I18nProperty("My Web Panel", "my.webpanel"))
                 .withUrl("http://www.google.com")
-                .withLocation("atl.admin/menu")
+                .withLocation("com.atlassian.jira.plugin.headernav.left.context")
                 .withLayout(new WebPanelLayout("10px", "100%"))
                 .withWeight(50)
                 .build();
@@ -76,19 +75,19 @@ public class WebPanelConnectModuleDescriptorFactoryTest
     @Test
     public void keyIsCorrect() throws Exception
     {
-        assertThat(descriptor.getKey(), is("my-web-panel"));
+        assertThat(descriptor.getKey(), is("remote-web-panel-my-web-panel"));
     }
 
     @Test
     public void completeKeyIsCorrect() throws Exception
     {
-        assertThat(descriptor.getCompleteKey(), is("my-plugin:my-web-panel"));
+        assertThat(descriptor.getCompleteKey(), is("my-plugin:remote-web-panel-my-web-panel"));
     }
 
     @Test
     public void locationIsCorrect()
     {
-        assertThat(descriptor.getLocation(), is("atl.admin/menu"));
+        assertThat(descriptor.getLocation(), is("com.atlassian.jira.plugin.headernav.left.context"));
     }
 
     @Test
