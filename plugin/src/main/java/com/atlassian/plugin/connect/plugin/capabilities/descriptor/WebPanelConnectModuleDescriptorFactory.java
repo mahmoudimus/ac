@@ -30,7 +30,7 @@ public class WebPanelConnectModuleDescriptorFactory implements ConnectModuleDesc
     public WebPanelModuleDescriptor createModuleDescriptor(Plugin plugin, BundleContext addonBundleContext, WebPanelCapabilityBean bean)
     {
         Element domElement = createDomElement(bean, REMOTE_WEB_PANEL_MODULE_PREFIX + bean.getKey());
-        final WebPanelModuleDescriptor descriptor = connectAutowireUtil.createBean(ConnectDefaultWebPanelModuleDescriptor.class);
+        final WebPanelModuleDescriptor descriptor = connectAutowireUtil.createBean(WebPanelConnectModuleDescriptor.class);
         descriptor.init(plugin, domElement);
         return descriptor;
     }

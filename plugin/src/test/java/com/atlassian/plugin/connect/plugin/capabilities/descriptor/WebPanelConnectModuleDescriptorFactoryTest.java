@@ -55,8 +55,8 @@ public class WebPanelConnectModuleDescriptorFactoryTest
         WebPanelConnectModuleDescriptorFactory webPanelFactory = new WebPanelConnectModuleDescriptorFactory(connectAutowireUtil);
         when(plugin.getKey()).thenReturn("my-plugin");
         when(plugin.getName()).thenReturn("My Plugin");
-        ConnectDefaultWebPanelModuleDescriptor aDescriptor = new ConnectDefaultWebPanelModuleDescriptor(hostContainer, webInterfaceManager, iFrameRenderer, contextMapURLSerializer, userManager, urlValidator);
-        when(connectAutowireUtil.createBean(ConnectDefaultWebPanelModuleDescriptor.class)).thenReturn(aDescriptor);
+        WebPanelConnectModuleDescriptor aDescriptor = new WebPanelConnectModuleDescriptor(hostContainer, webInterfaceManager, iFrameRenderer, contextMapURLSerializer, userManager, urlValidator);
+        when(connectAutowireUtil.createBean(WebPanelConnectModuleDescriptor.class)).thenReturn(aDescriptor);
 
         WebPanelCapabilityBean bean = newWebPanelBean()
                 .withName(new I18nProperty("My Web Panel", "my.webpanel"))

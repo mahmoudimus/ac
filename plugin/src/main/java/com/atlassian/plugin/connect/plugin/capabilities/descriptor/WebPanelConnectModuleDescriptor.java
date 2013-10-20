@@ -29,7 +29,7 @@ import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class ConnectDefaultWebPanelModuleDescriptor extends DefaultWebPanelModuleDescriptor
+public class WebPanelConnectModuleDescriptor extends DefaultWebPanelModuleDescriptor
 {
     private String url;
     private String moduleKey;
@@ -40,8 +40,8 @@ public class ConnectDefaultWebPanelModuleDescriptor extends DefaultWebPanelModul
     private final UserManager userManager;
     private final UrlValidator urlValidator;
 
-    public ConnectDefaultWebPanelModuleDescriptor(HostContainer hostContainer, WebInterfaceManager webInterfaceManager, IFrameRenderer iFrameRenderer,
-                                                  ContextMapURLSerializer contextMapURLSerializer, UserManager userManager, UrlValidator urlValidator)
+    public WebPanelConnectModuleDescriptor(HostContainer hostContainer, WebInterfaceManager webInterfaceManager, IFrameRenderer iFrameRenderer,
+                                           ContextMapURLSerializer contextMapURLSerializer, UserManager userManager, UrlValidator urlValidator)
     {
         super(hostContainer, createModuleFactory(), webInterfaceManager);
         this.iFrameRenderer = checkNotNull(iFrameRenderer);
