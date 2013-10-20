@@ -27,6 +27,8 @@ import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 public class ConnectDefaultWebPanelModuleDescriptor extends DefaultWebPanelModuleDescriptor
 {
     private String url;
@@ -42,18 +44,18 @@ public class ConnectDefaultWebPanelModuleDescriptor extends DefaultWebPanelModul
                                                   ContextMapURLSerializer contextMapURLSerializer, UserManager userManager, UrlValidator urlValidator)
     {
         super(hostContainer, createModuleFactory(), webInterfaceManager);
-        this.iFrameRenderer = iFrameRenderer;
-        this.contextMapURLSerializer = contextMapURLSerializer;
-        this.userManager = userManager;
-        this.urlValidator = urlValidator;
+        this.iFrameRenderer = checkNotNull(iFrameRenderer);
+        this.contextMapURLSerializer = checkNotNull(contextMapURLSerializer);
+        this.userManager = checkNotNull(userManager);
+        this.urlValidator = checkNotNull(urlValidator);
     }
 
     @Override
     public void init(Plugin plugin, Element domElement)
     {
         this.url = validateUrl(domElement.attributeValue("url"));
-        this.moduleKey = domElement.attributeValue("key");
-        this.iFrameParams = new IFrameParamsImpl(domElement);
+        this.moduleKey = checkNotNull(domElement.attributeValue("key"));
+        this.iFrameParams = checkNotNull(new IFrameParamsImpl(domElement));
         super.init(plugin, domElement);
     }
 
@@ -80,7 +82,7 @@ public class ConnectDefaultWebPanelModuleDescriptor extends DefaultWebPanelModul
             @Override
             public <T> T createModule(String name, ModuleDescriptor<T> moduleDescriptor) throws PluginParseException
             {
-                return null; // never called
+                throw new IllegalStateException("The ModuleFactory of " + getClass().getSimpleName() + " should never be instantiated. Please do not call createModuleFactory() on this instance.");
             }
         };
     }
