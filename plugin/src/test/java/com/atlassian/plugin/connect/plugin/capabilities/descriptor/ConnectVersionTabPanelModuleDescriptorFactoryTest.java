@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
+import com.atlassian.jira.plugin.versionpanel.VersionTabPanel;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectVersionTabPanelCapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAutowireUtil;
@@ -70,5 +71,6 @@ public class ConnectVersionTabPanelModuleDescriptorFactoryTest
         assertThat(label.attributeValue("key"), is(equalTo("my.versiontabpage")));
         assertThat(label.getText(), is(equalTo("My Version Tab Page")));
         assertThat(versionTabPageElement.attributeValue("name"), is(equalTo("My Version Tab Page")));
+        assertThat(versionTabPageElement.attributeValue("class"), is(equalTo(VersionTabPanel.class.getName())));
     }
 }

@@ -81,6 +81,7 @@ public class ConnectVersionTabPanelModuleDescriptorTest
         assertThat(descriptor.getUrl(), is(equalTo(ADDON_URL)));
         assertThat(descriptor.getOrder(), is(equalTo(100)));
         assertThat(descriptor.getLabel(), is(equalTo(ADDON_I18_NAME)));
+        assertThat(descriptor.getModuleClass(), is(equalTo(VersionTabPanel.class)));
     }
 
     @Test
@@ -106,7 +107,7 @@ public class ConnectVersionTabPanelModuleDescriptorTest
                 iFrameRenderer, urlVariableSubstitutor, jiraAuthenticationContext, urlValidator, projectSerializer,
                 versionSerializer);
         descriptor.init(PLUGIN, ISSUE_TAB_PAGE_ELEMENT);
-
+        descriptor.enabled();
         return descriptor;
     }
 
@@ -117,6 +118,7 @@ public class ConnectVersionTabPanelModuleDescriptorTest
         versionTabPageElement.addElement("order").setText("100");
         versionTabPageElement.addAttribute("url", ADDON_URL);
         versionTabPageElement.addAttribute("name", ADDON_NAME);
+        versionTabPageElement.addAttribute("class", VersionTabPanel.class.getName());
         versionTabPageElement.addElement("label")
                 .addAttribute("key", ADDON_LABEL_KEY)
                 .setText(ADDON_I18_NAME);

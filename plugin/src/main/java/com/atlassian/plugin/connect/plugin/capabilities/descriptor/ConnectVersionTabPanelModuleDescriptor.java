@@ -59,7 +59,6 @@ public class ConnectVersionTabPanelModuleDescriptor extends VersionTabPanelModul
     @Override
     public void init(Plugin plugin, Element element) throws PluginParseException
     {
-        element.addAttribute("class", VersionTabPanel.class.getName());
         super.init(plugin, element);
 
         this.url = getRequiredAttribute(element, "url");

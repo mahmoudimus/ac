@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
+import com.atlassian.jira.plugin.versionpanel.VersionTabPanel;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectVersionTabPanelCapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAutowireUtil;
 
@@ -13,6 +14,6 @@ public class ConnectVersionTabPanelModuleDescriptorFactory
 {
     public ConnectVersionTabPanelModuleDescriptorFactory(ConnectAutowireUtil connectAutowireUtil)
     {
-        super(ConnectVersionTabPanelModuleDescriptor.class, "version-tab-page", connectAutowireUtil);
+        super(ConnectVersionTabPanelModuleDescriptor.class, "version-tab-page", connectAutowireUtil, VersionTabPanel.class);
     }
 }
