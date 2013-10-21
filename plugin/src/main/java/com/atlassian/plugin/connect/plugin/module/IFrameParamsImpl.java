@@ -1,10 +1,10 @@
 package com.atlassian.plugin.connect.plugin.module;
 
-import java.util.Map;
-
 import com.atlassian.plugin.connect.spi.module.IFrameParams;
-
+import com.google.common.base.Objects;
 import org.dom4j.Element;
+
+import java.util.Map;
 
 import static com.atlassian.plugin.connect.plugin.util.EncodingUtils.escapeQuotes;
 import static com.google.common.collect.Maps.newHashMap;
@@ -49,5 +49,11 @@ public final class IFrameParamsImpl implements IFrameParams
     public Map<String, Object> getAsMap()
     {
         return params;
+    }
+
+    @Override
+    public String toString()
+    {
+        return Objects.toStringHelper(this).add("params", params).toString();
     }
 }
