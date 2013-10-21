@@ -36,7 +36,6 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 
-import org.apache.http.client.utils.URIBuilder;
 import org.json.JSONObject;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -119,7 +118,7 @@ public final class RemoteEventsHandler implements InitializingBean, DisposableBe
                             
                             String json = new JSONObject(data).toString(2);
 
-                            URI installHandler = new URIBuilder(addonAccessor.getBaseUrl().toString() + path).build();
+                            URI installHandler = new UriBuilder().setPath(addonAccessor.getBaseUrl().toString() + path).toUri().toJavaUri();
                             Request request = httpClient.newRequest(installHandler);
                             request.setContentType(MediaType.APPLICATION_JSON);
                             request.setEntity(json);

@@ -18,7 +18,7 @@ public class AbstractBrowserlessTest
 
     public AbstractBrowserlessTest()
     {
-        this((Class<? extends TestedProduct>) findClass(System.getProperty("testedProductClass",JiraTestedProduct.class.getName())));
+        this(product.getClass());
     }
 
     private static Class findClass(String name)
