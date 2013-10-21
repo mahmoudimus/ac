@@ -6,9 +6,6 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nPropert
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.UrlBean;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.WorkflowPostFunctionModuleProvider;
 
-/**
- * @since version
- */
 @CapabilitySet(key = "workflowPostFunctions", moduleProvider = WorkflowPostFunctionModuleProvider.class)
 public class WorkflowPostFunctionCapabilityBean extends NameToKeyBean
 {
@@ -47,9 +44,19 @@ public class WorkflowPostFunctionCapabilityBean extends NameToKeyBean
         return view;
     }
 
+    public boolean hasView()
+    {
+        return null != view;
+    }
+
     public UrlBean getEdit()
     {
         return edit;
+    }
+
+    public boolean hasEdit()
+    {
+        return null != edit;
     }
 
     public UrlBean getCreate()
@@ -57,9 +64,19 @@ public class WorkflowPostFunctionCapabilityBean extends NameToKeyBean
         return create;
     }
 
+    public boolean hasCreate()
+    {
+        return null != create;
+    }
+
     public UrlBean getTriggered()
     {
         return triggered;
+    }
+
+    public boolean hasTriggered()
+    {
+        return null != triggered;
     }
 
     public static WorkflowPostFunctionCapabilityBeanBuilder newWorkflowPostFunctionBean()

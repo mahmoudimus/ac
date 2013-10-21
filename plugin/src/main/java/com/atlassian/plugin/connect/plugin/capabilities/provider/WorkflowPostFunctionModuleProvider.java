@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.List;
 
-//@Component
 public class WorkflowPostFunctionModuleProvider implements ConnectModuleProvider<WorkflowPostFunctionCapabilityBean>
 {
     private final WorkflowPostFunctionModuleDescriptorFactory workflowPostFunctionFactory;

@@ -20,7 +20,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-//@Component
+/**
+ * A Factory that creates WorkflowFunctionModuleDescriptors from WorkflowPostFunctionCapabilityBeans
+ */
 public class WorkflowPostFunctionModuleDescriptorFactory implements ConnectModuleDescriptorFactory<WorkflowPostFunctionCapabilityBean, WorkflowFunctionModuleDescriptor>
 {
     private static final Logger log = LoggerFactory.getLogger(WorkflowPostFunctionModuleDescriptorFactory.class);
@@ -46,7 +48,8 @@ public class WorkflowPostFunctionModuleDescriptorFactory implements ConnectModul
             final EventPublisher eventPublisher,
             final TemplateRenderer templateRenderer,
             final WebResourceUrlProvider webResourceUrlProvider,
-            final PluginRetrievalService pluginRetrievalService)
+            final PluginRetrievalService pluginRetrievalService,
+            final DelegatingComponentAccessor delegatingComponentAccessor)
     {
         this.authenticationContext = authenticationContext;
         this.moduleFactory = moduleFactory;
@@ -57,7 +60,7 @@ public class WorkflowPostFunctionModuleDescriptorFactory implements ConnectModul
         this.templateRenderer = templateRenderer;
         this.webResourceUrlProvider = webResourceUrlProvider;
         this.pluginRetrievalService = pluginRetrievalService;
-        this.componentAccessor = createDelegatingComponentAccessor();
+        this.componentAccessor = delegatingComponentAccessor;
     }
 
     @Override
@@ -72,11 +75,6 @@ public class WorkflowPostFunctionModuleDescriptorFactory implements ConnectModul
         moduleDescriptor.init(plugin, bean);
 
         return moduleDescriptor;
-    }
-
-    protected DelegatingComponentAccessor createDelegatingComponentAccessor()
-    {
-        return new DelegatingComponentAccessor();
     }
 
 }

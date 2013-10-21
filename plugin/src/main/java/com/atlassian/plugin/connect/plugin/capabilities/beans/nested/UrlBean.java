@@ -1,7 +1,10 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans.nested;
 
-public class UrlBean {
+import java.net.URI;
+import java.net.URISyntaxException;
 
+public class UrlBean
+{
     private String url;
 
     public UrlBean(String url)
@@ -14,9 +17,14 @@ public class UrlBean {
         return url;
     }
 
-    // TODO: Factor out
-    public boolean isAbsolute()
+    public boolean hasUrl()
     {
-        return (null != getUrl() && getUrl().startsWith("http"));
+        return null != url;
     }
+
+    public URI createUri() throws URISyntaxException
+    {
+        return null == url ? null : new URI(url);
+    }
+
 }

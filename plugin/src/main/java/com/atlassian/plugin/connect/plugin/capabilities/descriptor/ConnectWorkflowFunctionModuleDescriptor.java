@@ -39,6 +39,8 @@ import com.opensymphony.workflow.loader.AbstractDescriptor;
 import org.apache.commons.lang.StringUtils;
 import org.dom4j.DocumentFactory;
 import org.dom4j.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
@@ -48,16 +50,21 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.Map;
+import java.util.UUID;
 
-import static com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants.*;
+import static com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants.RESOURCE_NAME_EDIT_PARAMETERS;
+import static com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants.RESOURCE_NAME_INPUT_PARAMETERS;
+import static com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants.RESOURCE_NAME_VIEW;
 import static com.atlassian.plugin.connect.plugin.module.jira.workflow.RemoteWorkflowFunctionPluginFactory.POST_FUNCTION_CONFIGURATION;
 import static com.atlassian.plugin.connect.plugin.module.jira.workflow.RemoteWorkflowFunctionPluginFactory.POST_FUNCTION_CONFIGURATION_UUID;
 
 /**
- *
+ * A ModuleDescriptor for Connect's version of a Jira Workflow Post Function.
  */
 public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionModuleDescriptor
 {
+    private static final Logger log = LoggerFactory.getLogger(ConnectWorkflowFunctionModuleDescriptor.class);
+
     private static final String POST_FUNCTION_EXTRA_MARKUP = "velocity/jira/workflow/post-function-extra-markup.vm";
 
     private final TypeResolver remoteWorkflowTypeResolver;
@@ -71,7 +78,7 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
     private WorkflowPostFunctionCapabilityBean capabilityBean;
 
     private ImmutableMap<String, URI> workflowFunctionActionUris;
-    private URI triggeredURI;
+    private URI triggeredUri;
     private String completeKey;
 
     public ConnectWorkflowFunctionModuleDescriptor(
@@ -115,20 +122,21 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
         final ImmutableMap.Builder<String, URI> workflowFunctionActionUrisMapBuilder = ImmutableMap.builder();
         if (capabilityBean.getView() != null)
         {
-            workflowFunctionActionUrisMapBuilder.put(RESOURCE_NAME_VIEW, iFrameURI(RESOURCE_NAME_VIEW));
+            workflowFunctionActionUrisMapBuilder.put(RESOURCE_NAME_VIEW, getResourceIFrameURI(RESOURCE_NAME_VIEW));
         }
         if (capabilityBean.getCreate() != null)
         {
-            workflowFunctionActionUrisMapBuilder.put(RESOURCE_NAME_INPUT_PARAMETERS, iFrameURI(RESOURCE_NAME_INPUT_PARAMETERS));
+            workflowFunctionActionUrisMapBuilder.put(RESOURCE_NAME_INPUT_PARAMETERS, getResourceIFrameURI(RESOURCE_NAME_INPUT_PARAMETERS));
         }
         if (capabilityBean.getEdit() != null)
         {
-            workflowFunctionActionUrisMapBuilder.put(RESOURCE_NAME_EDIT_PARAMETERS, iFrameURI(RESOURCE_NAME_EDIT_PARAMETERS));
+            workflowFunctionActionUrisMapBuilder.put(RESOURCE_NAME_EDIT_PARAMETERS, getResourceIFrameURI(RESOURCE_NAME_EDIT_PARAMETERS));
         }
         this.workflowFunctionActionUris = workflowFunctionActionUrisMapBuilder.build();
         this.resources = createResourceDescriptors(workflowFunctionActionUris);
-        this.triggeredURI = URI.create(capabilityBean.getTriggered().getUrl());
+        this.triggeredUri = createUri(capabilityBean.getTriggered());
     }
+
 
     @Override
     public void init(Plugin plugin, Element element) throws PluginParseException
@@ -171,10 +179,24 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
     @Override
     public String getHtml(final String resourceName, @Nullable final AbstractDescriptor functionDescriptor)
     {
+        final Map<String, ?> params = getModule().getVelocityParams(resourceName, functionDescriptor);
+        final String uuid = (String) params.get(POST_FUNCTION_CONFIGURATION_UUID);
+
+        if (isValidUUID(uuid))
+        {
+            return renderIFrame(params, uuid, resourceName);
+        }
+        else
+        {
+            log.error("Invalid UUID: " + uuid);
+            return "";
+        }
+    }
+
+    private String renderIFrame(Map<String, ?> params, String uuid, String resourceName)
+    {
         try
         {
-            final Map<String, ?> params = getModule().getVelocityParams(resourceName, functionDescriptor);
-            final String uuid = (String) params.get(POST_FUNCTION_CONFIGURATION_UUID);
             final IFrameParams iFrameParams = createIFrameParams(params, uuid);
             final String namespace = getKey() + uuid;
             return iFrameRenderer.render(
@@ -189,8 +211,26 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
         }
         catch (IOException e)
         {
-            throw new RuntimeException(e);
+            log.warn("Could not render iFrame", e);
+            return "";
         }
+    }
+
+    private static boolean isValidUUID(String uuid)
+    {
+        if (null == uuid)
+        {
+            return false;
+        }
+        try
+        {
+            UUID.fromString(uuid);
+        }
+        catch (IllegalArgumentException e)
+        {
+            return false;
+        }
+        return true;
     }
 
     private IFrameParams createIFrameParams(final Map<String, ?> params, final String uuid)
@@ -224,26 +264,19 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
         return null;
     }
 
-    private URI iFrameURI(final String resourceName)
+    private URI getResourceIFrameURI(final String resourceName)
     {
-        try
+        if (resourceName.equals(RESOURCE_NAME_VIEW))
         {
-            if (resourceName.equals(RESOURCE_NAME_VIEW))
-            {
-                return createURI(capabilityBean.getView());
-            }
-            else if (resourceName.equals(RESOURCE_NAME_INPUT_PARAMETERS))
-            {
-                return createURI(capabilityBean.getCreate());
-            }
-            else
-            {
-                return createURI(capabilityBean.getEdit());
-            }
+            return createUri(capabilityBean.getView());
         }
-        catch (URISyntaxException e)
+        else if (resourceName.equals(RESOURCE_NAME_INPUT_PARAMETERS))
         {
-            throw new PluginParseException(e);
+            return createUri(capabilityBean.getCreate());
+        }
+        else
+        {
+            return createUri(capabilityBean.getEdit());
         }
     }
 
@@ -292,7 +325,7 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
     @Override
     public boolean isEditable()
     {
-        return null != capabilityBean.getEdit();
+        return capabilityBean.hasEdit();
     }
 
     @Override
@@ -327,7 +360,7 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
         webHookConsumerRegistry.register(
                 RemoteWorkflowPostFunctionEvent.REMOTE_WORKFLOW_POST_FUNCTION_EVENT_ID,
                 plugin.getKey(),
-                getTriggeredURI(),
+                getTriggeredUri(),
                 new PluginModuleListenerParameters(plugin.getKey(), Optional.of(getKey()), ImmutableMap.<String, Object>of(), RemoteWorkflowPostFunctionEvent.REMOTE_WORKFLOW_POST_FUNCTION_EVENT_ID)
         );
     }
@@ -340,7 +373,7 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
         webHookConsumerRegistry.unregister(
                 RemoteWorkflowPostFunctionEvent.REMOTE_WORKFLOW_POST_FUNCTION_EVENT_ID,
                 plugin.getKey(),
-                getTriggeredURI(),
+                getTriggeredUri(),
                 new PluginModuleListenerParameters(plugin.getKey(), Optional.of(getKey()), ImmutableMap.<String, Object>of(), RemoteWorkflowPostFunctionEvent.REMOTE_WORKFLOW_POST_FUNCTION_EVENT_ID)
         );
     }
@@ -351,18 +384,25 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
         return completeKey;
     }
 
-    private URI getTriggeredURI()
+    private URI getTriggeredUri()
     {
-        return triggeredURI;
+        return triggeredUri;
     }
 
-    private URI createURI(final UrlBean urlBean) throws URISyntaxException
+    private URI createUri(UrlBean urlBean) throws PluginParseException
     {
-        if (urlBean == null)
+        if (urlBean == null || !urlBean.hasUrl())
         {
             throw new PluginParseException("URL is required");
         }
-        return URI.create(urlBean.getUrl());
+        try
+        {
+            return urlBean.createUri();
+        }
+        catch (URISyntaxException e)
+        {
+            throw new PluginParseException(e);
+        }
     }
 
     private Resources createResourceDescriptors(final Map<String, URI> workflowFunctionActionUris)
