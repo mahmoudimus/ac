@@ -6,21 +6,25 @@ import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectVersionT
 
 /**
  * Capabilities bean for Jira Version Tab Pages. The capability JSON looks like
+ * <p>
  * <pre>
  * "versionTabPanels": [{
- * "name": {
+ *   "name": {
  *     "value": "My Version Tab",
  *     "i18n": "my.tab"
- * },
- * "url": "/my-general-page",
- * "weight": 100
-}]
+ *   },
+ *   "url": "/my-general-page",
+ *   "weight": 100
+ * }]
  * </pre>
+ * </p>
  */
 @CapabilitySet(key = "versionTabPanels", moduleProvider = ConnectVersionTabPanelModuleProvider.class)
 public class ConnectVersionTabPanelCapabilityBean extends AbstractConnectTabPanelCapabilityBean
 {
-    public ConnectVersionTabPanelCapabilityBean() {}
+    public ConnectVersionTabPanelCapabilityBean()
+    {
+    }
 
     public ConnectVersionTabPanelCapabilityBean(ConnectVersionTabPanelCapabilityBeanBuilder builder)
     {
