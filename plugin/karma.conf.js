@@ -30,7 +30,10 @@ module.exports = function(config) {
 
     // test results reporter to use
     // possible values: 'dots', 'progress', 'junit', 'growl', 'coverage'
-    reporters: ['progress', 'junit'],
+    reporters: ['progress', 'coverage'],
+    preprocessors: {
+        'src/main/resources/**/*.js': ['coverage']
+    },
     junitReporter: {
       outputFile: 'target/surefire-reports/karma-results.xml',
       suite: ''
@@ -62,6 +65,7 @@ module.exports = function(config) {
     // - Safari (only Mac)
     // - PhantomJS
     // - IE (only Windows)
+    //browsers: ['Chrome', 'Safari', 'Firefox', 'Opera', 'IE11 - Win7', 'IE10 - Win7', 'IE9 - Win7'],
     browsers: ['Chrome'],
 
 

@@ -22,7 +22,10 @@ requirejs.config({
     // shared
     'iframe/_amd': '../src/main/resources/js/iframe/_amd',
     'iframe/_events': '../src/main/resources/js/iframe/_events',
-    'iframe/_xdm': '../src/main/resources/js/iframe/_xdm'
+    'iframe/_xdm': '../src/main/resources/js/iframe/_xdm',
+    'iframe-host-main': '../src/main/resources/js/iframe/host/main',
+    'iframe-host-resize_listener': '../src/main/resources/js/iframe/plugin/_resize_listener',
+    'iframe-plugin-confluence': '../src/main/resources/js/confluence/macro/editor'
   },
 
   shim: {
@@ -63,6 +66,27 @@ requirejs.config({
       deps: [
         'iframe/_events'
       ]
+    },
+    'iframe-host-main':{
+        deps: [
+        'iframe-host-ap',
+        'iframe-host-amd',
+        'iframe-host-dollar'
+        ]
+    },
+    'iframe-host-resize_listener': {
+        deps: [
+        'iframe-host-amd',
+        'iframe-host-dollar',
+        'iframe-host-main',
+        ]
+    },
+    'iframe-plugin-confluence': {
+        deps:[
+        'iframe-host-amd',
+        'iframe-host-dollar',
+        'iframe-host-main',
+        ]
     }
   },
 
