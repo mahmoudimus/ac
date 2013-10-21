@@ -8,11 +8,9 @@ import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectIssu
 /**
  * Module Provider for a Connect IssueTabPanel Module
  */
-//@Component
 public class ConnectIssueTabPanelModuleProvider extends AbstractConnectTabPanelModuleProvider<ConnectIssueTabPanelCapabilityBean, ConnectIssueTabPanelModuleDescriptorFactory>
 {
 
-    //    @Autowired
     public ConnectIssueTabPanelModuleProvider(ConnectIssueTabPanelModuleDescriptorFactory issueTabFactory)
     {
         super(issueTabFactory);

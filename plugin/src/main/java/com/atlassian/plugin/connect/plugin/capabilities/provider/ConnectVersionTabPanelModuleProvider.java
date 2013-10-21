@@ -8,11 +8,9 @@ import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectVers
 /**
  * Module Provider for a Connect VersionTabPanel Module
  */
-//@Component
 public class ConnectVersionTabPanelModuleProvider extends AbstractConnectTabPanelModuleProvider<ConnectVersionTabPanelCapabilityBean, ConnectVersionTabPanelModuleDescriptorFactory>
 {
 
-    //    @Autowired
     public ConnectVersionTabPanelModuleProvider(ConnectVersionTabPanelModuleDescriptorFactory issueTabFactory)
     {
         super(issueTabFactory);
