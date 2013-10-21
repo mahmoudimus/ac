@@ -9,6 +9,8 @@ import org.osgi.framework.BundleContext;
 
 import java.util.List;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Base class for ConnectModuleProviders of TabPanel modules
  * @param <B> the type of the capability bean
@@ -21,7 +23,7 @@ public abstract class AbstractConnectTabPanelModuleProvider<B extends AbstractCo
 
     public AbstractConnectTabPanelModuleProvider(F moduleFactory)
     {
-        this.moduleFactory = moduleFactory;
+        this.moduleFactory = checkNotNull(moduleFactory);
     }
 
     @Override

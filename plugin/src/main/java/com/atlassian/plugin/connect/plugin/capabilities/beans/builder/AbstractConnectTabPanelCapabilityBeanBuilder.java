@@ -2,6 +2,9 @@ package com.atlassian.plugin.connect.plugin.capabilities.beans.builder;
 
 import com.atlassian.plugin.connect.plugin.capabilities.beans.AbstractConnectTabPanelCapabilityBean;
 
+/**
+ * Base class for TabPanel capability beans builders
+ */
 public class AbstractConnectTabPanelCapabilityBeanBuilder<T extends AbstractConnectTabPanelCapabilityBeanBuilder, B extends AbstractConnectTabPanelCapabilityBean>
         extends NameToKeyBeanBuilder<T, B>
 {

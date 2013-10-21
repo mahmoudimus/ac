@@ -3,6 +3,8 @@ package com.atlassian.plugin.connect.plugin.capabilities.provider;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectIssueTabPanelCapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectIssueTabPanelModuleDescriptorFactory;
 
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectIssueTabPanelCapabilityBean.newIssueTabPanelBean;
+
 /**
  * Module Provider for a Connect IssueTabPanel Module
  */
@@ -19,7 +21,7 @@ public class ConnectIssueTabPanelModuleProvider extends AbstractConnectTabPanelM
     @Override
     protected ConnectIssueTabPanelCapabilityBean createCapabilityBean(ConnectIssueTabPanelCapabilityBean bean)
     {
-        return ConnectIssueTabPanelCapabilityBean.newIssueTabPanelBean(bean).build();
+        return newIssueTabPanelBean(bean).build();
     }
 
 }

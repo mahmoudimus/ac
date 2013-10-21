@@ -21,9 +21,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
-/**
- * @since version
- */
+
 public class ConnectIssueTabPanelCapabilityBeanTest
 {
     @Test

@@ -21,8 +21,7 @@ public class ConnectVersionTabPanelModuleProvider extends AbstractConnectTabPane
     @Override
     protected ConnectVersionTabPanelCapabilityBean createCapabilityBean(ConnectVersionTabPanelCapabilityBean bean)
     {
-        return newVersionTabPanelBean(bean).build(); // TODO: can I just return the orig bean or is it decorating it?
-//        return bean;
+        return newVersionTabPanelBean(bean).build();
     }
 
 }
