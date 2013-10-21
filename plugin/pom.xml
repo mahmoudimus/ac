@@ -679,16 +679,31 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- karma testrunner plugin for host code -->
+            <!-- karma testrunner plugin for iframe code -->
             <plugin>
                 <groupId>com.kelveden</groupId>
                 <artifactId>maven-karma-plugin</artifactId>
                 <version>1.5</version>
                 <executions>
+                    <!-- test plugin-side code -->
                     <execution>
+                        <id>karma-iframe-tests</id>
                         <goals>
                             <goal>start</goal>
                         </goals>
+                        <configuration>
+                            <configFile>karma.iframe.conf.js</configFile>
+                        </configuration>
+                    </execution>
+                    <!-- test host-side code -->
+                    <execution>
+                        <id>karma-host-tests</id>
+                        <goals>
+                            <goal>start</goal>
+                        </goals>
+                        <configuration>
+                            <configFile>karma.conf.js</configFile>
+                        </configuration>
                     </execution>
                 </executions>
                 <configuration>
@@ -696,25 +711,6 @@
                     <karmaExecutable>node_modules/karma/bin/karma</karmaExecutable>
                 </configuration>
             </plugin>
-            <!-- karma testrunner plugin for iframe code -->
-            <!--<plugin>-->
-                <!--<groupId>com.kelveden</groupId>-->
-                <!--<artifactId>maven-karma-plugin</artifactId>-->
-                <!--<version>1.5</version>-->
-                <!--<executions>-->
-                    <!--<execution>-->
-                        <!--<goals>-->
-                            <!--<goal>start</goal>-->
-                        <!--</goals>-->
-                    <!--</execution>-->
-                <!--</executions>-->
-                <!--<configuration>-->
-                    <!--<browsers>Chrome</browsers>-->
-                    <!--<karmaExecutable>node_modules/karma/bin/karma</karmaExecutable>-->
-                    <!--<configFile>karma.iframe.conf.js</configFile>-->
-                <!--</configuration>-->
-            <!--</plugin>-->
-
         </plugins>
     </build>
     
