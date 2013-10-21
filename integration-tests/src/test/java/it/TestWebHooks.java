@@ -40,6 +40,12 @@ public final class TestWebHooks extends AbstractBrowserlessTest
     }
 
     @Test
+    public void testRemotePluginInstalledSyncCallFired() throws Exception
+    {
+        testRemotePluginSyncCallFired("install-handler");
+    }
+
+    @Test
     public void testRemotePluginEnabledWebHookFired() throws Exception
     {
         testRemotePluginWebHookFired(PluginsWebHookProvider.REMOTE_PLUGIN_ENABLED);
@@ -126,6 +132,19 @@ public final class TestWebHooks extends AbstractBrowserlessTest
             {
                 final WebHookBody body = waiter.waitForHook();
                 assertWebHookBody(body, webHookId);
+            }
+        });
+    }
+
+    private void testRemotePluginSyncCallFired(final String eventId) throws Exception
+    {
+        WebHookTestServlet.runSyncInRunner(baseUrl, eventId, new WebHookTester()
+        {
+            @Override
+            public void test(WebHookWaiter waiter) throws Exception
+            {
+                final WebHookBody body = waiter.waitForHook();
+                assertWebHookBody(body, eventId);
             }
         });
     }

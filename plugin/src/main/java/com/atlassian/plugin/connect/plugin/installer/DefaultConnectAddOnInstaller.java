@@ -189,7 +189,15 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
                 throw new RuntimeException("Plugin didn't install correctly", null);
             }
 
-            remoteEventsHandler.pluginInstalled(pluginKey);
+            try
+            {
+                remoteEventsHandler.pluginInstalled(pluginKey);
+            }
+            catch (Exception e)
+            {
+                pluginController.uninstall(installedPlugin);
+            }
+            
 
             log.info("Registered app '{}' by '{}'", pluginKey, username);
 

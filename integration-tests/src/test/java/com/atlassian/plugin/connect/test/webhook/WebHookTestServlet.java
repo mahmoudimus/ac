@@ -32,11 +32,13 @@ public final class WebHookTestServlet extends HttpServlet
             try
             {
                 webHooksQueue.push(new JsonWebHookBody(JSON.parse(IOUtils.toString(req.getReader()))));
+                resp.getWriter().write("OKEY DOKEY");
             }
             catch (ParserException e)
             {
                 throw new ServletException(e);
             }
+            
         }
     }
 
@@ -54,6 +56,27 @@ public final class WebHookTestServlet extends HttpServlet
                                   .path(path)
                                   .event(eventId)
                                   .resource(servlet))
+                .start();
+
+        tester.test(new WebHookWaiter()
+        {
+            @Override
+            public WebHookBody waitForHook() throws Exception
+            {
+                return servlet.waitForHook();
+            }
+        });
+
+        runner.stop();
+    }
+
+    public static void runSyncInRunner(String baseUrl, String eventId, WebHookTester tester) throws Exception
+    {
+        final String path = "/webhook";
+        final WebHookTestServlet servlet = new WebHookTestServlet();
+        AtlassianConnectAddOnRunner runner = new AtlassianConnectAddOnRunner(baseUrl, eventId)
+                .addInfoParam(eventId,path)
+                .addRoute(path,servlet)
                 .start();
 
         tester.test(new WebHookWaiter()
