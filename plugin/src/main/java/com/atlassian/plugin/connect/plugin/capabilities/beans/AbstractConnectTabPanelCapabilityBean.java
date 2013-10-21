@@ -2,6 +2,9 @@ package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.NameToKeyBeanBuilder;
 
+/**
+ * Base class for TabPanel capability beans
+ */
 public abstract class AbstractConnectTabPanelCapabilityBean extends NameToKeyBean
 {
     private String url;

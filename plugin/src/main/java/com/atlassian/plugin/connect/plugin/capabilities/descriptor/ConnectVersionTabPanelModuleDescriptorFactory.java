@@ -5,7 +5,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectVersionTabP
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAutowireUtil;
 
 /**
- * A factory to produce a ConnectIssueTabPanelModuleDescriptor from a ConnectIssueTabPanelCapabilityBean
+ * A factory to produce a ConnectVersionTabPanelModuleDescriptor from a ConnectVersionTabPanelCapabilityBean
  */
 // Turning off component scanning until ACDEV-445 is resolved
 //@Component

@@ -21,6 +21,9 @@ import org.dom4j.Element;
 import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.getRequiredAttribute;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+/**
+ * ModuleDescriptor for Connect version of a VersionTabPanel
+ */
 public class ConnectVersionTabPanelModuleDescriptor extends VersionTabPanelModuleDescriptorImpl
 {
 

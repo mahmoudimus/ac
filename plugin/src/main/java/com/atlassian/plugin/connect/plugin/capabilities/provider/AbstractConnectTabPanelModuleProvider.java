@@ -9,6 +9,11 @@ import org.osgi.framework.BundleContext;
 
 import java.util.List;
 
+/**
+ * Base class for ConnectModuleProviders of TabPanel modules
+ * @param <B> the type of the capability bean
+ * @param <F> the type of factory
+ */
 public abstract class AbstractConnectTabPanelModuleProvider<B extends AbstractConnectTabPanelCapabilityBean,
         F extends AbstractConnectTabPanelModuleDescriptorFactory> implements ConnectModuleProvider<B>
 {

@@ -5,6 +5,9 @@ import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectVersio
 
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectVersionTabPanelCapabilityBean.newVersionTabPanelBean;
 
+/**
+ * Module Provider for a Connect VersionTabPanel Module
+ */
 //@Component
 public class ConnectVersionTabPanelModuleProvider extends AbstractConnectTabPanelModuleProvider<ConnectVersionTabPanelCapabilityBean, ConnectVersionTabPanelModuleDescriptorFactory>
 {

@@ -16,6 +16,11 @@ import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.printNode;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.apache.commons.lang.StringEscapeUtils.escapeHtml;
 
+/**
+ * Base class for connect TabPanel module descriptor factories
+ * @param <B> the type of capability bean
+ * @param <D> the type of module descriptor
+ */
 public class AbstractConnectTabPanelModuleDescriptorFactory<B extends AbstractConnectTabPanelCapabilityBean, D extends ModuleDescriptor>
         implements ConnectModuleDescriptorFactory<B, D>
 {
