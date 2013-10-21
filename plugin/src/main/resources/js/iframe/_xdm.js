@@ -1,14 +1,11 @@
-(this.AP || this._AP).define("_xdm", ["_dollar", "_events"], function ($, events) {
+(this.AP || this._AP).define("_xdm", ["_events"], function (events) {
 
   "use strict";
 
   // Capture some common values and symbol aliases
   var w = window,
-      $w = $(w),
       loc = w.location.toString(),
-      localOrigin = getBaseUrl(loc),
-      count = 0,
-      isFn = $.isFunction;
+      count = 0;
 
   /**
    * Sets up cross-iframe remote procedure calls.
@@ -21,6 +18,7 @@
    * failCallback is called after the remote function throws an exception.
    * doneCallback and failCallback are optional.
    *
+   * @param {Object} $ jquery or jquery-like utility
    * @param {Object} config Configuration parameters
    * @param {String} config.remoteKey The remote peer's add-on key (host only)
    * @param {String} config.remote The src of remote iframe (host only)
@@ -35,12 +33,13 @@
    * @returns XdmRpc instance
    * @constructor
    */
-  function XdmRpc(config, bindings) {
+  function XdmRpc($, config, bindings) {
 
     var self, id, target, remoteOrigin, channel, mixin,
         localKey, remoteKey, addonKey,
         locals = bindings.local || {},
-        remotes = bindings.remote || [];
+        remotes = bindings.remote || [],
+        localOrigin = getBaseUrl(loc);
 
     // A hub through which all async callbacks for remote requests are parked until invoked from a response
     var nexus = function () {
@@ -236,7 +235,7 @@
         var args = [].slice.call(arguments), done, fail;
         // Pops the last arg off the args list if it's a function
         function popFn() {
-          if (isFn(args[args.length - 1])) {
+          if ($.isFunction(args[args.length - 1])) {
             return args.pop();
           }
         }
@@ -311,74 +310,74 @@
 
     // Starts listening for window messaging events
     function bind() {
-      $w.bind("message", postMessageHandler);
+      $(window).bind("message", postMessageHandler);
     }
 
     // Stops listening for window messaging events
     function unbind() {
-      $w.unbind("message", postMessageHandler);
+      $(window).unbind("message", postMessageHandler);
+    }
+
+    // Crudely extracts a query param value from a url by name
+    function param(url, name) {
+      return decodeURIComponent(RegExp(name + "=([^&]+)").exec(url)[1]);
+    }
+
+    // Determines a base url consisting of protocol+domain+port from a given url string
+    function getBaseUrl(url) {
+      var m = url.toLowerCase().match(/^((http.?:)\/\/([^:\/\s]+)(:\d+)*)/),
+        proto = m[2], domain = m[3], port = m[4] || "";
+      if ((proto === "http:" && port === ":80") || (proto === "https:" && port === ":443")) port = "";
+      return proto + "//" + domain + port;
+    }
+
+    // Appends a map of query parameters to a base url
+    function toUrl(base, params) {
+      var url = base, sep = /\?/.test(base) ? "&" : "?";
+      $.each(params, function (k, v) {
+        url += sep + encodeURIComponent(k) + "=" + encodeURIComponent(v);
+        sep = "&";
+      });
+      return url;
+    }
+
+    // Creates an iframe element from a config option consisting of the following values:
+    //  - container:  the parent element of the new iframe
+    //  - remote:     the src url of the new iframe
+    //  - props:      a map of additional HTML attributes for the new iframe
+    //  - channel:    deprecated
+    function createIframe(config) {
+      var iframe = document.createElement("iframe"),
+        id = "easyXDM_" + config.container + "_provider";
+      var src = toUrl(config.remote, {
+        xdm_e: localOrigin,
+        // for signing compat until server is changed to omit it
+        xdm_c: config.channel,
+        xdm_p: 1
+      });
+      $.extend(iframe, {id: id, name: id, frameBorder: "0"}, config.props);
+      $("#" + config.container).append(iframe);
+      iframe.src = src;
+      return iframe;
+    }
+
+    function errmsg(ex) {
+      return ex.message || ex.toString();
+    }
+
+    function debug() {
+      if (XdmRpc.debug) log.apply(w, ["DEBUG:"].concat([].slice.call(arguments)));
+    }
+
+    function log() {
+      var log = $.log || (w.AJS && w.AJS.log);
+      if (log) log.apply(w, arguments);
     }
 
     // Immediately start listening for events
     bind();
 
     return self;
-  }
-
-  // Crudely extracts a query param value from a url by name
-  function param(url, name) {
-    return decodeURIComponent(RegExp(name + "=([^&]+)").exec(url)[1]);
-  }
-
-  // Determines a base url consisting of protocol+domain+port from a given url string
-  function getBaseUrl(url) {
-    var m = url.toLowerCase().match(/^((http.?:)\/\/([^:\/\s]+)(:\d+)*)/),
-        proto = m[2], domain = m[3], port = m[4] || "";
-    if ((proto === "http:" && port === ":80") || (proto === "https:" && port === ":443")) port = "";
-    return proto + "//" + domain + port;
-  }
-
-  // Appends a map of query parameters to a base url
-  function toUrl(base, params) {
-    var url = base, sep = /\?/.test(base) ? "&" : "?";
-    $.each(params, function (k, v) {
-      url += sep + encodeURIComponent(k) + "=" + encodeURIComponent(v);
-      sep = "&";
-    });
-    return url;
-  }
-
-  // Creates an iframe element from a config option consisting of the following values:
-  //  - container:  the parent element of the new iframe
-  //  - remote:     the src url of the new iframe
-  //  - props:      a map of additional HTML attributes for the new iframe
-  //  - channel:    deprecated
-  function createIframe(config) {
-    var iframe = document.createElement("iframe"),
-        id = "easyXDM_" + config.container + "_provider";
-    var src = toUrl(config.remote, {
-      xdm_e: localOrigin,
-      // for signing compat until server is changed to omit it
-      xdm_c: config.channel,
-      xdm_p: 1
-    });
-    $.extend(iframe, {id: id, name: id, frameBorder: "0"}, config.props);
-    $("#" + config.container).append(iframe);
-    iframe.src = src;
-    return iframe;
-  }
-
-  function errmsg(ex) {
-    return ex.message || ex.toString();
-  }
-
-  function debug() {
-    if (XdmRpc.debug) log.apply(w, ["DEBUG:"].concat([].slice.call(arguments)));
-  }
-
-  function log() {
-    var log = $.log || (w.AJS && w.AJS.log);
-    if (log) log.apply(w, arguments);
   }
 
 //  XdmRpc.debug = true;

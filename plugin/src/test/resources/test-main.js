@@ -12,49 +12,56 @@ requirejs.config({
   baseUrl: '/base/src',
 
   paths: {
+    // dependencies
     'jquery': '../target/qunit/dependencies/js/external/jquery/jquery',
     'aui-atlassian': '../target/qunit/dependencies/js/atlassian/atlassian',
-    'iframe-host-ap': '../src/main/resources/js/iframe/host/_ap',
-    'iframe-host-amd': '../src/main/resources/js/iframe/_amd',
-    'iframe-host-dollar': '../src/main/resources/js/iframe/host/_dollar',
-    'iframe-host-events': '../src/main/resources/js/iframe/_events',
-    'iframe-host-xdm': '../src/main/resources/js/iframe/_xdm',
-    'dialog-main': '../src/main/resources/js/dialog/main'
+    // host side
+    'iframe/host/_ap': '../src/main/resources/js/iframe/host/_ap',
+    'iframe/host/_dollar': '../src/main/resources/js/iframe/host/_dollar',
+    'dialog/main': '../src/main/resources/js/dialog/main',
+    // shared
+    'iframe/_amd': '../src/main/resources/js/iframe/_amd',
+    'iframe/_events': '../src/main/resources/js/iframe/_events',
+    'iframe/_xdm': '../src/main/resources/js/iframe/_xdm'
   },
 
   shim: {
+    /////////////////
+    //  HOST SIDE  //
+    /////////////////
     'aui-atlassian': {
       deps: [
         'jquery'
       ]
     },
-    'iframe-host-amd': {
-      deps: [
-        'iframe-host-ap'
-      ]
-    },
-    'iframe-host-dollar': {
+    'iframe/host/_dollar': {
       deps: [
         'jquery',
         'aui-atlassian',
-        'iframe-host-amd'
+        'iframe/_amd'
       ]
     },
-    'iframe-host-events': {
+    'dialog/main': {
       deps: [
-        'iframe-host-amd',
-        'iframe-host-dollar'
+        'iframe/host/_dollar'
       ]
     },
-    'iframe-host-xdm': {
+    ///////////////////
+    //  SHARED SIDE  //
+    ///////////////////
+    'iframe/_amd': {
       deps: [
-        'iframe-host-events',
-        'iframe-host-dollar'
+        'iframe/host/_ap'
       ]
     },
-    'dialog-main': {
+    'iframe/_events': {
       deps: [
-        'iframe-host-dollar'
+        'iframe/_amd'
+      ]
+    },
+    'iframe/_xdm': {
+      deps: [
+        'iframe/_events'
       ]
     }
   },

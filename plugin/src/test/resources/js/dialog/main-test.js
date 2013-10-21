@@ -1,5 +1,5 @@
 
-define(['dialog-main'], function() {
+define(['dialog/main'], function() {
 
   _AP.require(["dialog"], function(dialog) {
 

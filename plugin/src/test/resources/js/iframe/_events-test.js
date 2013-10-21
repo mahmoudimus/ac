@@ -1,4 +1,4 @@
-define(['iframe-host-events'], function() {
+define(['iframe/_events'], function() {
 
   _AP.require(["_events"], function(events) {
 

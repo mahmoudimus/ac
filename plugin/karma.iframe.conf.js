@@ -14,27 +14,21 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-      'src/test/resources/test-main.js',
-      {pattern: 'src/test/resources/**/*-test.js', included: false},
-      {pattern: 'src/test/resources/fixtures/**', included: false},
-      {pattern: 'target/qunit/dependencies/**/*.js', included: false},
-      {pattern: 'src/main/resources/**/*.js', included: false}
+      'src/test/resources/test-iframe-main.js',
+      'src/test/resources/js/iframe/plugin/fixture.js',
+      {pattern: 'src/test/resources/js/iframe/plugin/*-test.js', included: false},
+      {pattern: 'src/main/resources/js/iframe/plugin/*.js', included: false}
     ],
 
 
     // list of files to exclude
     exclude: [
-      'src/test/resources/js/iframe/plugin/*-test.js'
     ],
 
 
     // test results reporter to use
     // possible values: 'dots', 'progress', 'junit', 'growl', 'coverage'
-    reporters: ['progress', 'junit'],
-    junitReporter: {
-      outputFile: 'target/surefire-reports/karma-results.xml',
-      suite: ''
-    },
+    reporters: ['progress'],
 
 
     // web server port

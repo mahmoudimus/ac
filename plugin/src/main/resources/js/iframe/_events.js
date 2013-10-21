@@ -1,9 +1,9 @@
-(window.AP || window._AP).define("_events", ["_dollar"], function ($) {
+(window.AP || window._AP).define("_events", [], function () {
 
   "use strict";
 
   var w = window,
-      log = $.log || (w.AJS && w.AJS.log);
+      log = (w.AJS && w.AJS.log) || (w.console && w.console.log) || (function() {});
 
   /**
    * A simple pub/sub event bus capable of running on either side of the XDM bridge with no external
@@ -181,13 +181,13 @@
 
   // Internal helper for firing an event to an array of listeners
   function fire(listeners, args) {
-    $.each(listeners, function () {
+    for (var i = 0; i < listeners.length; ++i) {
       try {
-        this.apply(null, args);
+        listeners[i].apply(null, args);
       } catch (e) {
         log(e.stack || e.message || e);
       }
-    });
+    }
   }
 
   return {

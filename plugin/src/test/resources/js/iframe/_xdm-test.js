@@ -1,4 +1,4 @@
-define(['iframe-host-xdm'], function() {
+define(['iframe/_xdm'], function() {
 
   _AP.require(["_xdm", "_dollar"], function(XdmRpc, $) {
 
@@ -14,7 +14,7 @@ define(['iframe-host-xdm'], function() {
       },
       createXdm: function(fixture){
         var f = fixture || 'xdm-emit.html';
-        return new XdmRpc({
+        return new XdmRpc($, {
           remoteKey: 'myremotekey',
           remote: this.getBaseUrl() + '/base/src/test/resources/fixtures/' + f + '?oauth_consumer_key=jira:12345',
           container: 'qunit-container',

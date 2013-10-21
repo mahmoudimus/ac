@@ -1,10 +1,9 @@
 /**
  * Entry point for xdm messages on the host product side.
  */
-_AP.define("host/main", ["_xdm", "host/_addons"], function (XdmRpc, addons) {
+_AP.define("host/main", ["_dollar", "_xdm", "host/_addons"], function ($, XdmRpc, addons) {
 
-  var $ = AJS.$,
-      xhrProperties = ["status", "statusText", "responseText"],
+  var xhrProperties = ["status", "statusText", "responseText"],
       xhrHeaders = ["Content-Type"],
       events = (AJS.EventQueue = AJS.EventQueue || []),
       defer = window.requestAnimationFrame || function (f) {setTimeout(f,10)};
@@ -67,7 +66,7 @@ _AP.define("host/main", ["_xdm", "host/_addons"], function (XdmRpc, addons) {
       return $nexus.data("ra.dialog.buttons").getButton(name);
     }
 
-    var rpc = new XdmRpc({
+    var rpc = new XdmRpc($, {
       remote: options.src,
       remoteKey: options.key,
       container: contentId,
