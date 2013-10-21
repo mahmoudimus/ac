@@ -3,12 +3,12 @@ package com.atlassian.plugin.connect.plugin.module.jira.versiontab;
 import com.atlassian.jira.plugin.versionpanel.BrowseVersionContext;
 import com.atlassian.jira.plugin.versionpanel.VersionTabPanel;
 import com.atlassian.jira.plugin.versionpanel.VersionTabPanelModuleDescriptor;
-import com.atlassian.plugin.connect.plugin.module.IFrameRendererImpl;
 import com.atlassian.plugin.connect.plugin.module.jira.AbstractIFrameTab;
 import com.atlassian.plugin.connect.plugin.module.jira.context.serializer.ProjectSerializer;
 import com.atlassian.plugin.connect.plugin.module.jira.context.serializer.VersionSerializer;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.spi.module.IFrameContext;
+import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
 import com.atlassian.plugin.web.Condition;
 import com.google.common.collect.ImmutableMap;
 
@@ -22,7 +22,7 @@ public class IFrameVersionTab extends AbstractIFrameTab<VersionTabPanelModuleDes
     private final VersionSerializer versionSerializer;
     private final ProjectSerializer projectSerializer;
 
-    public IFrameVersionTab(IFrameContext iFrameContext, IFrameRendererImpl iFrameRenderer,
+    public IFrameVersionTab(IFrameContext iFrameContext, IFrameRenderer iFrameRenderer,
             Condition condition, UrlVariableSubstitutor urlVariableSubstitutor, ProjectSerializer projectSerializer,
             VersionSerializer versionSerializer)
     {

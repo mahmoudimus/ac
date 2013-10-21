@@ -1,10 +1,10 @@
 package com.atlassian.plugin.connect.plugin.module.jira;
 
 import com.atlassian.jira.project.browse.BrowseContext;
-import com.atlassian.plugin.connect.plugin.module.IFrameRendererImpl;
 import com.atlassian.plugin.connect.plugin.module.page.IFrameContextImpl;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.spi.module.IFrameContext;
+import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
 import com.atlassian.plugin.web.Condition;
 
 import java.io.IOException;
@@ -21,12 +21,12 @@ import static com.atlassian.plugin.connect.plugin.module.jira.JiraTabConditionCo
 public abstract class AbstractIFrameTab<D, C extends BrowseContext>
 {
     private final UrlVariableSubstitutor urlVariableSubstitutor;
-    private final IFrameRendererImpl iFrameRenderer;
+    private final IFrameRenderer iFrameRenderer;
 
     private final IFrameContext iFrameContext;
     private final Condition condition;
 
-    public AbstractIFrameTab(UrlVariableSubstitutor urlVariableSubstitutor, IFrameContext iFrameContext, IFrameRendererImpl iFrameRenderer, Condition condition)
+    public AbstractIFrameTab(UrlVariableSubstitutor urlVariableSubstitutor, IFrameContext iFrameContext, IFrameRenderer iFrameRenderer, Condition condition)
     {
         this.urlVariableSubstitutor = urlVariableSubstitutor;
         this.iFrameContext = iFrameContext;

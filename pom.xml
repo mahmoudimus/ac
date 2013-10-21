@@ -151,7 +151,7 @@
                     <pushReleases>true</pushReleases>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
                     <releaseBranchVersionSuffix>RC</releaseBranchVersionSuffix>
-                    <defaultOriginUrl>git@bitbucket.org:atlassian/atlassian-connect.git</defaultOriginUrl>
+                    <defaultOriginUrl>ssh://git@stash.atlassian.com:7997/ac/atlassian-connect.git</defaultOriginUrl>
                 </configuration>
             </plugin>
         </plugins>
@@ -496,7 +496,7 @@
                 <artifactId>gson</artifactId>
                 <version>${gson.version}</version>
             </dependency>
-            
+
             <!-- Only exists for qunit -->
             <dependency>
                 <groupId>com.atlassian.aui</groupId>
