@@ -76,4 +76,9 @@ public class RemoteWebPanel
     {
         return getFromQueryString("page_id");
     }
+
+    public String getIFrameSourceUrl()
+    {
+        return iframeSrc;
+    }
 }
