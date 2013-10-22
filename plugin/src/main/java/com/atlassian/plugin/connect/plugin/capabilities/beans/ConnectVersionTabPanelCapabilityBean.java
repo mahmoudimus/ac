@@ -29,7 +29,6 @@ public class ConnectVersionTabPanelCapabilityBean extends AbstractConnectTabPane
     public ConnectVersionTabPanelCapabilityBean(ConnectVersionTabPanelCapabilityBeanBuilder builder)
     {
         super(builder);
-
     }
 
     public static ConnectVersionTabPanelCapabilityBeanBuilder newVersionTabPanelBean()
