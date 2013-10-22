@@ -18,6 +18,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.osgi.framework.BundleContext;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -52,21 +53,68 @@ public class WorkflowPostFunctionModuleDescriptorFactoryTest
     }
 
     @Test
-    public void simpleDescriptorCreation() throws Exception
+    public void verifyDescriptorKeyIsSet() throws Exception
     {
         WorkflowPostFunctionCapabilityBean bean = WorkflowPostFunctionCapabilityBean.newWorkflowPostFunctionBean()
                 .withName(new I18nProperty("My Post Function", "my.pf.name"))
-                .withDescription(new I18nProperty("Some description", "my.pf.desc"))
-                .withCreate(new UrlBean("/create"))
-                .withView(new UrlBean("/view"))
-                .withTriggered(new UrlBean("/triggered"))
+                .withTriggered(new UrlBean("/callme"))
                 .build();
 
         WorkflowFunctionModuleDescriptor descriptor = wfPostFunctionFactory.createModuleDescriptor(plugin, mock(BundleContext.class), bean);
 
         assertEquals("my-key:my-post-function", descriptor.getCompleteKey());
+    }
+
+    @Test
+    public void verifyNameIsSet() throws Exception
+    {
+        WorkflowPostFunctionCapabilityBean bean = WorkflowPostFunctionCapabilityBean.newWorkflowPostFunctionBean()
+                .withName(new I18nProperty("My Post Function", "my.pf.name"))
+                .withTriggered(new UrlBean("/callme"))
+                .build();
+
+        WorkflowFunctionModuleDescriptor descriptor = wfPostFunctionFactory.createModuleDescriptor(plugin, mock(BundleContext.class), bean);
+
         assertEquals("My Post Function", descriptor.getName());
+    }
+
+    @Test
+    public void verifyDescriptionIsSet() throws Exception
+    {
+        WorkflowPostFunctionCapabilityBean bean = WorkflowPostFunctionCapabilityBean.newWorkflowPostFunctionBean()
+                .withDescription(new I18nProperty("Some description", "my.pf.desc"))
+                .withTriggered(new UrlBean("/callme"))
+                .build();
+
+        WorkflowFunctionModuleDescriptor descriptor = wfPostFunctionFactory.createModuleDescriptor(plugin, mock(BundleContext.class), bean);
+
         assertEquals("Some description", descriptor.getDescription());
+    }
+
+    @Test
+    public void verifyIsEditable() throws Exception
+    {
+        WorkflowPostFunctionCapabilityBean bean = WorkflowPostFunctionCapabilityBean.newWorkflowPostFunctionBean()
+                .withCreate(new UrlBean("/create"))
+                .withEdit(new UrlBean("/edit"))
+                .withTriggered(new UrlBean("/callme"))
+                .build();
+
+        WorkflowFunctionModuleDescriptor descriptor = wfPostFunctionFactory.createModuleDescriptor(plugin, mock(BundleContext.class), bean);
+
+        assertTrue(descriptor.isEditable());
+    }
+
+    @Test
+    public void verifyIsNotEditable() throws Exception
+    {
+        WorkflowPostFunctionCapabilityBean bean = WorkflowPostFunctionCapabilityBean.newWorkflowPostFunctionBean()
+                .withView(new UrlBean("/view"))
+                .withTriggered(new UrlBean("/callme"))
+                .build();
+
+        WorkflowFunctionModuleDescriptor descriptor = wfPostFunctionFactory.createModuleDescriptor(plugin, mock(BundleContext.class), bean);
+
         assertFalse(descriptor.isEditable());
     }
 }
