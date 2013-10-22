@@ -30,10 +30,7 @@ module.exports = function(config) {
 
     // test results reporter to use
     // possible values: 'dots', 'progress', 'junit', 'growl', 'coverage'
-    reporters: ['progress', 'coverage'],
-    preprocessors: {
-        'src/main/resources/**/*.js': ['coverage']
-    },
+    reporters: ['progress', 'junit'],
     junitReporter: {
       outputFile: 'target/surefire-reports/karma-results.xml',
       suite: ''
