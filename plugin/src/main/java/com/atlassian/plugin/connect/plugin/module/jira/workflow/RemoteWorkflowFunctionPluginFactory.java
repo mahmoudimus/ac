@@ -14,8 +14,8 @@ import com.opensymphony.workflow.loader.FunctionDescriptor;
 public class RemoteWorkflowFunctionPluginFactory extends AbstractWorkflowPluginFactory
         implements WorkflowPluginFunctionFactory
 {
-    static final String POST_FUNCTION_CONFIGURATION = "remoteWorkflowPostFunctionConfiguration";
-    static final String POST_FUNCTION_CONFIGURATION_UUID = "remoteWorkflowPostFunctionUUID";
+    public static final String POST_FUNCTION_CONFIGURATION = "remoteWorkflowPostFunctionConfiguration";
+    public static final String POST_FUNCTION_CONFIGURATION_UUID = "remoteWorkflowPostFunctionUUID";
 
     @Override
     protected void getVelocityParamsForInput(final Map<String, Object> velocityParams)
