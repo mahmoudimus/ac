@@ -6,16 +6,18 @@ import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectComponen
 
 /**
  * Capabilities bean for Jira Component Tab Pages. The capability JSON looks like
+ * <p>
  * <pre>
  * "componentTabPanels": [{
- * "name": {
+ *   "name": {
  *     "value": "My Component Tab",
  *     "i18n": "my.tab"
- * },
- * "url": "/my-general-page",
- * "weight": 100
-}]
+ *   },
+ *   "url": "/my-general-page",
+ *   "weight": 100
+ * }]
  * </pre>
+ * </p>
  */
 @CapabilitySet(key = "componentTabPanels", moduleProvider = ConnectComponentTabPanelModuleProvider.class)
 public class ConnectComponentTabPanelCapabilityBean extends AbstractConnectTabPanelCapabilityBean
@@ -25,7 +27,6 @@ public class ConnectComponentTabPanelCapabilityBean extends AbstractConnectTabPa
     public ConnectComponentTabPanelCapabilityBean(ConnectComponentTabPanelCapabilityBeanBuilder builder)
     {
         super(builder);
-
     }
 
     public static ConnectComponentTabPanelCapabilityBeanBuilder newComponentTabPanelBean()
