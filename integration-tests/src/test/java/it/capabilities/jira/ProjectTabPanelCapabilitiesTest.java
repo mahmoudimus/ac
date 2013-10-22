@@ -1,4 +1,4 @@
-package it.jira;
+package it.capabilities.jira;
 
 import com.atlassian.jira.pageobjects.pages.project.BrowseProjectPage;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
@@ -6,6 +6,7 @@ import com.atlassian.plugin.connect.test.junit.HtmlDumpRule;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.AbstractRemotablePluginProjectTab;
 import com.atlassian.plugin.connect.test.server.ConnectCapabilitiesRunner;
+import it.jira.JiraWebDriverTestBase;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
