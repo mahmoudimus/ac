@@ -6,16 +6,18 @@ import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectProjectT
 
 /**
  * Capabilities bean for Jira Project Tab Pages. The capability JSON looks like
+ * <p>
  * <pre>
  * "projectTabPanels": [{
- * "name": {
+ *   "name": {
  *     "value": "My Project Tab",
  *     "i18n": "my.tab"
- * },
- * "url": "/my-general-page",
- * "weight": 100
-}]
+ *   },
+ *   "url": "/my-general-page",
+ *   "weight": 100
+ * }]
  * </pre>
+ * </p>
  */
 @CapabilitySet(key = "projectTabPanels", moduleProvider = ConnectProjectTabPanelModuleProvider.class)
 public class ConnectProjectTabPanelCapabilityBean extends AbstractConnectTabPanelCapabilityBean
@@ -25,7 +27,6 @@ public class ConnectProjectTabPanelCapabilityBean extends AbstractConnectTabPane
     public ConnectProjectTabPanelCapabilityBean(ConnectProjectTabPanelCapabilityBeanBuilder builder)
     {
         super(builder);
-
     }
 
     public static ConnectProjectTabPanelCapabilityBeanBuilder newProjectTabPanelBean()
