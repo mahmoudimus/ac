@@ -24,6 +24,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean.newWebItemBean;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.*;
@@ -75,25 +77,25 @@ public class WebItemModuleDescriptorFactoryTest
     @Test
     public void completeKeyIsCorrect()
     {
-        assertEquals("my-key:my-web-item", descriptor.getCompleteKey());
+        assertThat(descriptor.getCompleteKey(), is("my-key:my-web-item"));
     }
 
     @Test
     public void setionIsCorrect()
     {
-        assertEquals("atl.admin/menu", descriptor.getSection());
+        assertThat(descriptor.getSection(), is("atl.admin/menu"));
     }
 
     @Test
     public void urlIsCorrect()
     {
-        assertEquals("http://www.google.com", descriptor.getLink().getDisplayableUrl(mock(HttpServletRequest.class), new HashMap<String, Object>()));
+        assertThat(descriptor.getLink().getDisplayableUrl(mock(HttpServletRequest.class), new HashMap<String, Object>()), is("http://www.google.com"));
     }
 
     @Test
     public void weightIsCorrect()
     {
-        assertEquals(100, descriptor.getWeight());
+        assertThat(descriptor.getWeight(), is(100));
     }
 
     @Test
