@@ -24,7 +24,7 @@ import static org.apache.commons.lang.StringEscapeUtils.escapeHtml;
 public class AbstractConnectTabPanelModuleDescriptorFactory<B extends AbstractConnectTabPanelCapabilityBean, D extends ModuleDescriptor>
         implements ConnectModuleDescriptorFactory<B, D>
 {
-    private static final Logger log = LoggerFactory.getLogger(ConnectIssueTabPanelModuleDescriptorFactory.class);
+    private static final Logger log = LoggerFactory.getLogger(AbstractConnectTabPanelModuleDescriptorFactory.class);
     private final Class<D> descriptorClass;
     private final ConnectAutowireUtil connectAutowireUtil;
     private final Optional<? extends Class<?>> moduleClass;
