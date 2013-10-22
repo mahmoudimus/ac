@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
+import com.atlassian.jira.plugin.issuetabpanel.IssueTabPanel;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectIssueTabPanelCapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAutowireUtil;
 
@@ -13,6 +14,6 @@ public class ConnectIssueTabPanelModuleDescriptorFactory
 {
     public ConnectIssueTabPanelModuleDescriptorFactory(ConnectAutowireUtil connectAutowireUtil)
     {
-        super(ConnectIssueTabPanelModuleDescriptor.class, "issue-tab-page", connectAutowireUtil);
+        super(ConnectIssueTabPanelModuleDescriptor.class, "issue-tab-page", connectAutowireUtil, IssueTabPanel.class);
     }
 }
