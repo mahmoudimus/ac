@@ -70,7 +70,7 @@ define(['iframe/_xdm'], function() {
 
     test('remoteOrigin is resolved to the iframe url', function() {
       var remoteUrl = 'http://www.example.com?oauth_consumer_key=jira:12345',
-      xdm = new XdmRpc({
+      xdm = new XdmRpc($, {
           remoteKey: 'myremotekey',
           remote: remoteUrl,
           container: 'qunit-container',

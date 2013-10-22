@@ -23,9 +23,7 @@ requirejs.config({
     'iframe/_amd': '../src/main/resources/js/iframe/_amd',
     'iframe/_events': '../src/main/resources/js/iframe/_events',
     'iframe/_xdm': '../src/main/resources/js/iframe/_xdm',
-    'iframe-host-main': '../src/main/resources/js/iframe/host/main',
-    'iframe-host-resize_listener': '../src/main/resources/js/iframe/plugin/_resize_listener',
-    'iframe-plugin-confluence': '../src/main/resources/js/confluence/macro/editor'
+    'iframe/host/main': '../src/main/resources/js/iframe/host/main'
   },
 
   shim: {
@@ -67,25 +65,18 @@ requirejs.config({
         'iframe/_events'
       ]
     },
-    'iframe-host-main':{
+    'iframe/host/main':{
         deps: [
-        'iframe-host-ap',
-        'iframe-host-amd',
-        'iframe-host-dollar'
-        ]
-    },
-    'iframe-host-resize_listener': {
-        deps: [
-        'iframe-host-amd',
-        'iframe-host-dollar',
-        'iframe-host-main',
+        'iframe/host/_ap',
+        'iframe/host/_dollar',
+        'iframe/_amd'
         ]
     },
     'iframe-plugin-confluence': {
         deps:[
-        'iframe-host-amd',
-        'iframe-host-dollar',
-        'iframe-host-main',
+        'iframe/_amd',
+        'iframe/host/_dollar',
+        'iframe/host/main'
         ]
     }
   },
