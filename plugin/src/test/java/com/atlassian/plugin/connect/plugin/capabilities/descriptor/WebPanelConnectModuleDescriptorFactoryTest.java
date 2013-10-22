@@ -1,11 +1,15 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
+import com.atlassian.jira.project.Project;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.WebPanelCapabilityBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.WebPanelLayout;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.WebPanelLayout;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAutowireUtil;
+import com.atlassian.plugin.connect.plugin.module.context.ContextMapParameterExtractor;
 import com.atlassian.plugin.connect.plugin.module.context.ContextMapURLSerializer;
+import com.atlassian.plugin.connect.plugin.module.jira.context.extractor.ProjectContextMapParameterExtractor;
+import com.atlassian.plugin.connect.plugin.module.jira.context.serializer.ProjectSerializer;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlValidator;
 import com.atlassian.plugin.connect.spi.module.IFrameContext;
 import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
@@ -24,7 +28,10 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.osgi.framework.BundleContext;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebPanelCapabilityBean.newWebPanelBean;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -45,7 +52,6 @@ public class WebPanelConnectModuleDescriptorFactoryTest
     @Mock private HostContainer hostContainer;
     @Mock private WebInterfaceManager webInterfaceManager;
     @Mock private UserManager userManager;
-    @Mock private ContextMapURLSerializer contextMapURLSerializer;
     @Mock private IFrameRenderer iFrameRenderer;
     @Mock private UrlValidator urlValidator;
 
@@ -55,12 +61,13 @@ public class WebPanelConnectModuleDescriptorFactoryTest
         WebPanelConnectModuleDescriptorFactory webPanelFactory = new WebPanelConnectModuleDescriptorFactory(connectAutowireUtil);
         when(plugin.getKey()).thenReturn("my-plugin");
         when(plugin.getName()).thenReturn("My Plugin");
+        ContextMapURLSerializer contextMapURLSerializer = new ContextMapURLSerializer(Arrays.asList((ContextMapParameterExtractor) new ProjectContextMapParameterExtractor(new ProjectSerializer())));
         WebPanelConnectModuleDescriptor aDescriptor = new WebPanelConnectModuleDescriptor(hostContainer, webInterfaceManager, iFrameRenderer, contextMapURLSerializer, userManager, urlValidator);
         when(connectAutowireUtil.createBean(WebPanelConnectModuleDescriptor.class)).thenReturn(aDescriptor);
 
         WebPanelCapabilityBean bean = newWebPanelBean()
                 .withName(new I18nProperty("My Web Panel", "my.webpanel"))
-                .withUrl("http://www.google.com")
+                .withUrl("http://www.google.com?my_project_id=${project.id}&my_project_key=${project.key}")
                 .withLocation("com.atlassian.jira.plugin.headernav.left.context")
                 .withLayout(new WebPanelLayout("10px", "100%"))
                 .withWeight(50)
@@ -114,10 +121,25 @@ public class WebPanelConnectModuleDescriptorFactoryTest
 
     @Test
     @SuppressWarnings("unchecked")
-    public void urlIsCorrect() throws IOException
+    public void urlIsCorrectWhenContextIsEmpty() throws IOException
     {
         descriptor.getModule().getHtml(Collections.<String, Object>emptyMap());
-        verify(iFrameRenderer).render(argThat(hasIFramePath("http://www.google.com")), anyString(), anyMap(), anyString(), anyMap());
+        verify(iFrameRenderer).render(argThat(hasIFramePath("http://www.google.com?my_project_id=&amp;my_project_key=")), anyString(), anyMap(), anyString(), anyMap());
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void urlIsCorrectWhenContextIsPopulated() throws IOException
+    {
+        Project project = mock(Project.class);
+        when(project.getKey()).thenReturn("KEY");
+        when(project.getId()).thenReturn(1234L);
+
+        Map<String, Object> context = new HashMap<String, Object>();
+        context.put("project", project);
+
+        descriptor.getModule().getHtml(context);
+        verify(iFrameRenderer).render(argThat(hasIFramePath("http://www.google.com?my_project_id=1234&amp;my_project_key=KEY")), anyString(), anyMap(), anyString(), anyMap());
     }
 
     @Test
