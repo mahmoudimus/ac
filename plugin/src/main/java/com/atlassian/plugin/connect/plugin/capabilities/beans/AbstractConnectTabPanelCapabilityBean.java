@@ -2,6 +2,8 @@ package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.NameToKeyBeanBuilder;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Base class for TabPanel capability beans
  */
@@ -16,8 +18,8 @@ public abstract class AbstractConnectTabPanelCapabilityBean extends NameToKeyBea
 
     public AbstractConnectTabPanelCapabilityBean(String url, Integer weight)
     {
-        this.url = url;
-        this.weight = weight;
+        this.url = checkNotNull(url);
+        this.weight = checkNotNull(weight);
     }
 
     public AbstractConnectTabPanelCapabilityBean(NameToKeyBeanBuilder builder)
