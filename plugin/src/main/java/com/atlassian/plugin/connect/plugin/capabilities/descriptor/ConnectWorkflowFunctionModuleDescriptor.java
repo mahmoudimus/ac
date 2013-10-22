@@ -13,6 +13,7 @@ import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.Resources;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.WorkflowPostFunctionCapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.UrlBean;
+import com.atlassian.plugin.connect.plugin.capabilities.util.DelegatingComponentAccessor;
 import com.atlassian.plugin.connect.plugin.module.IFrameParamsImpl;
 import com.atlassian.plugin.connect.plugin.module.jira.workflow.RemoteWorkflowFunctionPluginFactory;
 import com.atlassian.plugin.connect.plugin.module.jira.workflow.RemoteWorkflowPostFunctionEvent;
@@ -57,6 +58,7 @@ import static com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants.RES
 import static com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants.RESOURCE_NAME_VIEW;
 import static com.atlassian.plugin.connect.plugin.module.jira.workflow.RemoteWorkflowFunctionPluginFactory.POST_FUNCTION_CONFIGURATION;
 import static com.atlassian.plugin.connect.plugin.module.jira.workflow.RemoteWorkflowFunctionPluginFactory.POST_FUNCTION_CONFIGURATION_UUID;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * A ModuleDescriptor for Connect's version of a Jira Workflow Post Function.
@@ -91,17 +93,17 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
             final TemplateRenderer templateRenderer,
             final WebResourceUrlProvider webResourceUrlProvider,
             final PluginRetrievalService pluginRetrievalService,
-            final OSWorkflowConfigurator osWorkflowConfigurator,
-            final ComponentClassManager componentClassManager)
+            final DelegatingComponentAccessor componentAccessor)
     {
-        super(authenticationContext, osWorkflowConfigurator, componentClassManager, moduleFactory);
+        super(authenticationContext, componentAccessor.getComponent(OSWorkflowConfigurator.class),
+                componentAccessor.getComponent(ComponentClassManager.class), moduleFactory);
 
-        this.webHookConsumerRegistry = webHookConsumerRegistry;
-        this.iFrameRenderer = iFrameRenderer;
-        this.templateRenderer = templateRenderer;
-        this.webResourceUrlProvider = webResourceUrlProvider;
-        this.pluginRetrievalService = pluginRetrievalService;
-        this.workflowConfigurator = osWorkflowConfigurator;
+        this.webHookConsumerRegistry = checkNotNull(webHookConsumerRegistry);
+        this.iFrameRenderer = checkNotNull(iFrameRenderer);
+        this.templateRenderer = checkNotNull(templateRenderer);
+        this.webResourceUrlProvider = checkNotNull(webResourceUrlProvider);
+        this.pluginRetrievalService = checkNotNull(pluginRetrievalService);
+        this.workflowConfigurator = checkNotNull(componentAccessor.getComponent(OSWorkflowConfigurator.class));
 
         this.remoteWorkflowTypeResolver = new TypeResolver()
         {
