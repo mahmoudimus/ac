@@ -4,10 +4,11 @@ import com.atlassian.jira.plugin.projectpanel.ProjectTabPanel;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectProjectTabPanelCapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAutowireUtil;
+import com.atlassian.plugin.connect.plugin.util.matchers.ElementAttributeParamMatcher;
+import com.atlassian.plugin.connect.plugin.util.matchers.ElementSubElementTextMatcher;
+import com.atlassian.plugin.connect.plugin.util.matchers.SubElementParamMatcher;
 import com.atlassian.plugin.module.ContainerManagedPlugin;
-import com.google.common.base.Objects;
 import org.dom4j.Element;
-import org.hamcrest.Description;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,10 +17,6 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.osgi.framework.BundleContext;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
@@ -160,98 +157,5 @@ public class ConnectProjectTabPanelModuleDescriptorFactoryTest
     {
         return new ElementSubElementTextMatcher(name, expectedValue);
     }
-
-    private abstract static class ElementParamMatcher extends ArgumentMatcher<Element>
-    {
-        private final String name;
-        private final String expectedValue;
-
-        private ElementParamMatcher(String name, String expectedValue)
-        {
-            this.name = checkNotNull(name);
-            this.expectedValue = checkNotNull(expectedValue);
-        }
-
-        @Override
-        public boolean matches(Object argument)
-        {
-            assertThat(argument, is(instanceOf(Element.class)));
-            Element element = (Element) argument;
-            return matchesOnElement(element, name, expectedValue);
-        }
-
-        protected boolean matchesOnElement(Element element, String name, String expectedValue)
-        {
-            return Objects.equal(getValue(element, name), expectedValue);
-        }
-
-        protected abstract String getValue(Element element, String name);
-
-        @Override
-        public void describeTo(Description description)
-        {
-            description.appendText("Element with param ");
-            description.appendValue(name);
-            description.appendText(" = ");
-            description.appendValue(expectedValue);
-        }
-    }
-
-    private static class ElementAttributeParamMatcher extends ElementParamMatcher
-    {
-        private ElementAttributeParamMatcher(String name, String expectedValue)
-        {
-            super(name, expectedValue);
-        }
-
-        @Override
-        protected String getValue(Element element, String name)
-        {
-            return element.attributeValue(name);
-        }
-
-    }
-
-    private static class SubElementParamMatcher extends ArgumentMatcher<Element>
-    {
-        private final String subElementName;
-        private final ElementParamMatcher paramMatcher;
-
-        public SubElementParamMatcher(String subElementName, ElementParamMatcher paramMatcher)
-        {
-            this.subElementName = subElementName;
-            this.paramMatcher = paramMatcher;
-        }
-
-        @Override
-        public boolean matches(Object argument)
-        {
-            assertThat(argument, is(instanceOf(Element.class)));
-            Element element = (Element) argument;
-            return paramMatcher.matches(element.element(subElementName));
-        }
-
-        @Override
-        public void describeTo(Description description)
-        {
-            paramMatcher.describeTo(description);
-        }
-    }
-
-
-    private static class ElementSubElementTextMatcher extends ElementParamMatcher
-    {
-        private ElementSubElementTextMatcher(String name, String expectedValue)
-        {
-            super(name, expectedValue);
-        }
-
-        @Override
-        protected String getValue(Element element, String name)
-        {
-            return element.element(name).getText();
-        }
-    }
-
 
 }
