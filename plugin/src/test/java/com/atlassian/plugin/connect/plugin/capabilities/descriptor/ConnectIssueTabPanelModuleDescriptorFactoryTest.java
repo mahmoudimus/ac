@@ -13,7 +13,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.osgi.framework.BundleContext;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectIssueTabPanelCapabilityBean.newIssueTabPageBean;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectIssueTabPanelCapabilityBean.newIssueTabPanelBean;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -52,7 +52,7 @@ public class ConnectIssueTabPanelModuleDescriptorFactoryTest
     @Test
     public void simpleDescriptorCreation() throws Exception
     {
-        ConnectIssueTabPanelCapabilityBean bean = newIssueTabPageBean()
+        ConnectIssueTabPanelCapabilityBean bean = newIssueTabPanelBean()
                 .withName(new I18nProperty("My Issue Tab Page", "my.issuetabpage"))
                 .withUrl("http://www.google.com")
                 .withWeight(99)
