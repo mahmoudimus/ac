@@ -11,8 +11,10 @@ import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAutowireUtil
 public class ConnectProjectTabPanelModuleDescriptorFactory
         extends AbstractConnectTabPanelModuleDescriptorFactory<ConnectProjectTabPanelCapabilityBean, ConnectProjectTabPanelModuleDescriptor>
 {
+    private static final String PROJECT_TAB_PAGE = "project-tab-page";
+
     public ConnectProjectTabPanelModuleDescriptorFactory(ConnectAutowireUtil connectAutowireUtil)
     {
-        super(ConnectProjectTabPanelModuleDescriptor.class, "project-tab-page", connectAutowireUtil, ProjectTabPanel.class);
+        super(ConnectProjectTabPanelModuleDescriptor.class, PROJECT_TAB_PAGE, connectAutowireUtil, ProjectTabPanel.class);
     }
 }

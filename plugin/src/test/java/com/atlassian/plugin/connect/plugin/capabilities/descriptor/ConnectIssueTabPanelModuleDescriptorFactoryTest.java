@@ -21,12 +21,12 @@ public class ConnectIssueTabPanelModuleDescriptorFactoryTest extends AbstractCon
     }
 
     @Override
-    protected AbstractConnectTabPanelCapabilityBean createCapabilityBean()
+    protected AbstractConnectTabPanelCapabilityBean createCapabilityBean(String name, String i18NameKey, String url, int weight)
     {
         return newIssueTabPanelBean()
-                .withName(new I18nProperty("My Tab Page", "my.tabpage"))
-                .withUrl("http://www.google.com")
-                .withWeight(99)
+                .withName(new I18nProperty(name, i18NameKey))
+                .withUrl(url)
+                .withWeight(weight)
                 .build();
     }
 }
