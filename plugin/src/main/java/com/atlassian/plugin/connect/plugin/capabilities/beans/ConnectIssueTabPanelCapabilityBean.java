@@ -31,7 +31,6 @@ public class ConnectIssueTabPanelCapabilityBean extends AbstractConnectTabPanelC
     public ConnectIssueTabPanelCapabilityBean(ConnectIssueTabPanelCapabilityBeanBuilder builder)
     {
         super(builder);
-
     }
 
     public static ConnectIssueTabPanelCapabilityBeanBuilder newIssueTabPanelBean()
