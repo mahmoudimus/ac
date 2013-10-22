@@ -7,61 +7,39 @@ import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectIssueTab
 /**
  * Capabilities bean for Jira Issue Tab Pages. The capability JSON looks like
  * <p>
+ * <pre>
  * "issueTabPanels": [{
- * "name": {
+ *   "name": {
  *     "value": "My Issue Tab",
  *     "i18n": "my.tab"
- * },
- * "url": "/my-general-page",
- * "weight": 100
-}]
+ *   },
+ *   "url": "/my-general-page",
+ *   "weight": 100
+ * }]
+ * </pre>
  * </p>
  */
+// TODO: Note that we only need to subtype here because the annotation lives on this class rather than the descriptorFactory.
+// see https://extranet.atlassian.com/display/~aholmgren/Thoughts+on+Capabilities
 @CapabilitySet(key = "issueTabPanels", moduleProvider = ConnectIssueTabPanelModuleProvider.class)
-public class ConnectIssueTabPanelCapabilityBean extends NameToKeyBean
+public class ConnectIssueTabPanelCapabilityBean extends AbstractConnectTabPanelCapabilityBean
 {
-    private String url;
-    private Integer weight;
-
-
     public ConnectIssueTabPanelCapabilityBean()
     {
-        this.url = "";
-        this.weight = 100;
     }
 
     public ConnectIssueTabPanelCapabilityBean(ConnectIssueTabPanelCapabilityBeanBuilder builder)
     {
         super(builder);
-        
-        if (null == url)
-        {
-            this.url = "";
-        }
 
-        if(null == weight)
-        {
-            this.weight = 100;
-        }
-        
     }
 
-    public String getUrl()
-    {
-        return url;
-    }
-
-    public int getWeight()
-    {
-        return weight;
-    }
-
-    public static ConnectIssueTabPanelCapabilityBeanBuilder newIssueTabPageBean()
+    public static ConnectIssueTabPanelCapabilityBeanBuilder newIssueTabPanelBean()
     {
         return new ConnectIssueTabPanelCapabilityBeanBuilder();
     }
 
-    public static ConnectIssueTabPanelCapabilityBeanBuilder newIssueTabPageBean(ConnectIssueTabPanelCapabilityBean defaultBean)
+    public static ConnectIssueTabPanelCapabilityBeanBuilder newIssueTabPanelBean(ConnectIssueTabPanelCapabilityBean defaultBean)
     {
         return new ConnectIssueTabPanelCapabilityBeanBuilder(defaultBean);
     }

@@ -1,44 +1,31 @@
 package com.atlassian.plugin.connect.plugin.capabilities;
 
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectIssueTabPanelCapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.gson.CapabilitiesGsonFactory;
 import com.google.gson.Gson;
+import com.opensymphony.util.FileUtils;
 import org.junit.Test;
+import org.springframework.core.io.DefaultResourceLoader;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean.newConnectAddonBean;
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectIssueTabPanelCapabilityBean.newIssueTabPageBean;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectVersionTabPanelCapabilityBean.newVersionTabPanelBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.RemoteContainerCapabilityBean.newRemoteContainerBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.OAuthBean.newOAuthBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.VendorBean.newVendorBean;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
+import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
-/**
- * @since version
- */
-public class JunkIssueTabTest
+
+public class ConnectVersionTabPanelCapabilityBeanTest
 {
     @Test
-    public void testName() throws Exception
-    {
-        ConnectIssueTabPanelCapabilityBean bean = newIssueTabPageBean()
-                .withName(new I18nProperty("My Issue Tab Page", "my.issueTabPage"))
-                .withUrl("/my-general-page")
-                .withWeight(100)
-                .build();
-
-        Gson gson = CapabilitiesGsonFactory.getGson();
-
-        String json = gson.toJson(bean,ConnectIssueTabPanelCapabilityBean.class);
-
-        System.out.println(json);
-    }
-
-    @Test
-    public void testAddon() throws Exception
+    public void producesCorrectJSON() throws Exception
     {
         Map<String,String> links = new HashMap<String,String>();
         links.put("self","http://www.example.com/capabilities");
@@ -50,8 +37,8 @@ public class JunkIssueTabTest
                 .withVersion("1.0")
                 .withLinks(links)
                 .withVendor(newVendorBean().withName("Atlassian").withUrl("http://www.atlassian.com").build())
-                .withCapability(newIssueTabPageBean()
-                        .withName(new I18nProperty("My Issue Tab Page", "my.issueTabPage"))
+                .withCapability(newVersionTabPanelBean()
+                        .withName(new I18nProperty("My Version Tab Page", "my.versionTabPage"))
                         .withUrl("/my-general-page")
                         .withWeight(100)
                         .build())
@@ -63,7 +50,13 @@ public class JunkIssueTabTest
         Gson gson = CapabilitiesGsonFactory.getGson();
 
         String json = gson.toJson(addon,ConnectAddonBean.class);
+        String expectedJson = readTestFile();
 
-        System.out.println(json);
+        assertThat(json, is(sameJSONAs(expectedJson)));
+    }
+
+    private static String readTestFile() throws IOException
+    {
+        return FileUtils.readFile(new DefaultResourceLoader().getResource("classpath:/testfiles/capabilities/versionTabAddon.json").getFile());
     }
 }
