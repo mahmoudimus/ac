@@ -1,22 +1,17 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd" xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <parent>
         <artifactId>atlassian-public-pom</artifactId>
         <groupId>com.atlassian.pom</groupId>
         <version>42</version>
     </parent>
-
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.atlassian.plugins</groupId>
     <artifactId>atlassian-connect-parent</artifactId>
-    <version>1.0-m14.2</version>
-
+    <version>1.0-m16-SNAPSHOT</version>
     <organization>
         <name>Atlassian</name>
         <url>http://atlassian.com/</url>
     </organization>
-
     <licenses>
         <license>
             <name>Apache License 2.0</name>
@@ -24,21 +19,17 @@
             <distribution>repo</distribution>
         </license>
     </licenses>
-
     <name>Atlassian Connect - Parent POM</name>
     <description>This is the Atlassian Connect parent project</description>
     <packaging>pom</packaging>
-
     <modules>
         <module>api-parent</module>
         <module>plugin</module>
         <module>rest-test-plugin</module>
         <module>integration-tests</module>
     </modules>
-
     <build>
         <finalName>${project.artifactId}</finalName>
-
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -106,7 +97,6 @@
                 <configuration>
                     <extractDependencies>true</extractDependencies>
                     <skipManifestValidation>true</skipManifestValidation>
-
                     <!-- disable as much as we can -->
                     <skipAllPrompts>true</skipAllPrompts>
                     <enableDevToolbox>false</enableDevToolbox>
@@ -144,14 +134,12 @@
                     </execution>
                 </executions>
             </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <version>2.4</version>
                 <!-- !versions 2.5 and 2.5.1 broke tree filtering -->
             </plugin>
-
             <plugin>
                 <groupId>com.atlassian.maven.plugins</groupId>
                 <artifactId>maven-jgitflow-plugin</artifactId>
@@ -163,12 +151,11 @@
                     <pushReleases>true</pushReleases>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
                     <releaseBranchVersionSuffix>RC</releaseBranchVersionSuffix>
-                    <defaultOriginUrl>git@bitbucket.org:atlassian/atlassian-connect.git</defaultOriginUrl>
+                    <defaultOriginUrl>ssh://git@stash.atlassian.com:7997/ac/atlassian-connect.git</defaultOriginUrl>
                 </configuration>
             </plugin>
         </plugins>
     </build>
-
     <reporting>
         <plugins>
             <plugin>
@@ -178,7 +165,6 @@
             </plugin>
         </plugins>
     </reporting>
-
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -191,6 +177,24 @@
                 <groupId>com.atlassian.selenium</groupId>
                 <artifactId>atlassian-webdriver-core</artifactId>
                 <version>${atlassian.selenium.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.google.collections</groupId>
+                        <artifactId>google-collections</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.httpcomponents</groupId>
+                        <artifactId>httpclient</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.atlassian.browsers</groupId>
+                        <artifactId>atlassian-browsers-linux64</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-log4j12</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
@@ -485,14 +489,17 @@
                 <artifactId>atlassian-html-encoder</artifactId>
                 <version>${atlassian.html.encoder.version}</version>
             </dependency>
+
+            <!-- capabilities -->
+            <dependency>
+                <groupId>com.google.code.gson</groupId>
+                <artifactId>gson</artifactId>
+                <version>${gson.version}</version>
+            </dependency>
+
         </dependencies>
-        
     </dependencyManagement>
-
-    <dependencies>
-
-
-    </dependencies>
+    <dependencies></dependencies>
     <!-- REMOVE WHEN JGITFLOW IS FINAL -->
     <pluginRepositories>
         <pluginRepository>
@@ -506,7 +513,6 @@
             </snapshots>
         </pluginRepository>
     </pluginRepositories>
-
     <properties>
         <!-- VERSIONS -->
         <amps.version>4.2.7</amps.version>
@@ -536,7 +542,6 @@
         <atlassian.webresource.version>2.14.0-m5</atlassian.webresource.version>
         <atlassian.webfragments.version>3.0.0-m7</atlassian.webfragments.version>
         <atlassian.html.encoder.version>1.4</atlassian.html.encoder.version>
-
         <guava.version>10.0.1</guava.version>
         <jetty.version>8.1.7.v20120910</jetty.version>
         <json-simple.version>1.1.1</json-simple.version>
@@ -544,7 +549,8 @@
         <oauth.core.version>20090531</oauth.core.version>
         <slf4j.version>1.6.4</slf4j.version>
         <spring.version>2.5.6</spring.version>
-
+        <gson.version>2.2.2-atlassian-1</gson.version>
+        
         <!-- BUILD STUFF -->
         <jgitflow.version>1.0-alpha20</jgitflow.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

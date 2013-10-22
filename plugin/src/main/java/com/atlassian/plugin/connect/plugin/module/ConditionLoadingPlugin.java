@@ -10,20 +10,21 @@ import com.atlassian.plugin.connect.spi.module.UserIsLoggedInCondition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+//TODO refactor to use ContainerManagedPlugin
 /**
  * Plugin that can load conditions from the remotable plugins plugin
  */
-class ConditionLoadingPlugin extends AbstractDelegatingPlugin implements AutowireCapablePlugin
+public class ConditionLoadingPlugin extends AbstractDelegatingPlugin implements AutowireCapablePlugin
 {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private final AutowireCapablePlugin remotablePlugin;
+    private final AutowireCapablePlugin theConnectPlugin;
     private final Set<Class<?>> productConditions;
 
-    public ConditionLoadingPlugin(AutowireCapablePlugin remotablePlugin, Plugin delegate, Set<Class<?>> productConditions)
+    public ConditionLoadingPlugin(AutowireCapablePlugin theConnectPlugin, Plugin delegate, Set<Class<?>> productConditions)
     {
         super(delegate);
-        this.remotablePlugin = remotablePlugin;
+        this.theConnectPlugin = theConnectPlugin;
         this.productConditions = productConditions;
     }
 
@@ -45,7 +46,7 @@ class ConditionLoadingPlugin extends AbstractDelegatingPlugin implements Autowir
     {
         if (isRemotablePluginCondition(clazz))
         {
-            return remotablePlugin.autowire(clazz);
+            return theConnectPlugin.autowire(clazz);
         }
         return getAutowireCapableDelegate().autowire(clazz);
     }
@@ -55,7 +56,7 @@ class ConditionLoadingPlugin extends AbstractDelegatingPlugin implements Autowir
     {
         if (isRemotablePluginCondition(clazz))
         {
-            return remotablePlugin.autowire(clazz, autowireStrategy);
+            return theConnectPlugin.autowire(clazz, autowireStrategy);
         }
         return getAutowireCapableDelegate().autowire(clazz, autowireStrategy);
     }

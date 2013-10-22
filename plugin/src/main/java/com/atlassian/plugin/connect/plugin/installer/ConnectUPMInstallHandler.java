@@ -1,29 +1,24 @@
 package com.atlassian.plugin.connect.plugin.installer;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.StringReader;
-import java.net.MalformedURLException;
 
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.plugin.capabilities.gson.CapabilitiesGsonFactory;
 import com.atlassian.plugin.connect.plugin.descriptor.util.FormatConverter;
-import com.atlassian.plugin.connect.plugin.descriptor.util.XmlUtils;
 import com.atlassian.plugin.connect.spi.ConnectAddOnIdentifierService;
 import com.atlassian.sal.api.user.UserManager;
-import com.atlassian.sal.api.user.UserProfile;
 import com.atlassian.upm.api.util.Option;
 import com.atlassian.upm.spi.PluginInstallException;
 import com.atlassian.upm.spi.PluginInstallHandler;
 import com.atlassian.upm.spi.PluginInstallResult;
 
 import com.google.common.base.Charsets;
+import com.google.common.base.Strings;
 import com.google.common.io.Files;
 
 import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.io.SAXReader;
-import org.xml.sax.InputSource;
+import org.osgi.framework.BundleContext;
 
 /**
  * @since version
@@ -34,19 +29,36 @@ public class ConnectUPMInstallHandler implements PluginInstallHandler
     private final ConnectAddOnInstaller connectInstaller;
     private final UserManager userManager;
     private final FormatConverter formatConverter;
+    private final BundleContext bundleContext;
 
-    public ConnectUPMInstallHandler(ConnectAddOnIdentifierService connectIdentifier, ConnectAddOnInstaller connectInstaller, UserManager userManager, FormatConverter formatConverter)
+    public ConnectUPMInstallHandler(ConnectAddOnIdentifierService connectIdentifier, ConnectAddOnInstaller connectInstaller, UserManager userManager, FormatConverter formatConverter, BundleContext bundleContext)
     {
         this.connectIdentifier = connectIdentifier;
         this.connectInstaller = connectInstaller;
         this.userManager = userManager;
         this.formatConverter = formatConverter;
+        this.bundleContext = bundleContext;
     }
 
     @Override
     public boolean canInstallPlugin(File descriptorFile, Option<String> contentType)
     {
         boolean caninstall = connectIdentifier.isConnectAddOn(descriptorFile);
+        
+        if(!caninstall)
+        {
+            try
+            {
+                String json = Files.toString(descriptorFile,Charsets.UTF_8);
+                ConnectAddonBean addOn = CapabilitiesGsonFactory.getGson(bundleContext).fromJson(json, ConnectAddonBean.class);
+                
+                caninstall = (null != addOn && !Strings.isNullOrEmpty(addOn.getKey()));
+            }
+            catch (Exception e)
+            {
+                caninstall = false;
+            }
+        }
         
         return caninstall;
     }
@@ -56,10 +68,21 @@ public class ConnectUPMInstallHandler implements PluginInstallHandler
     {
         try
         {
-            //TODO: get rid of formatConverter when we go to capabilities
-            Document doc = formatConverter.readFileToDoc(descriptorFile);
+            boolean isXml = connectIdentifier.isConnectAddOn(descriptorFile);
+            Plugin plugin;
             
-            Plugin plugin = connectInstaller.install(userManager.getRemoteUsername(),doc);
+            if(isXml)
+            {
+                //TODO: get rid of formatConverter when we go to capabilities
+                Document doc = formatConverter.readFileToDoc(descriptorFile);
+                
+                plugin = connectInstaller.install(userManager.getRemoteUsername(),doc);
+            }
+            else
+            {
+                String json = Files.toString(descriptorFile,Charsets.UTF_8);
+                plugin = connectInstaller.install(userManager.getRemoteUsername(),json);
+            }
             
             return new PluginInstallResult(plugin);
         }
