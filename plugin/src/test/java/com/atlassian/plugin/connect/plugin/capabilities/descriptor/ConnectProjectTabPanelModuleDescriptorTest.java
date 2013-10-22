@@ -75,7 +75,7 @@ public class ConnectProjectTabPanelModuleDescriptorTest
         assertThat(descriptor.getCompleteKey(), is(equalTo(PLUGIN_KEY + ":" + ADDON_KEY)));
         assertThat(descriptor.getName(), is(equalTo(ADDON_NAME)));
         assertThat(descriptor.getUrl(), is(equalTo(ADDON_URL)));
-        assertThat(descriptor.getOrder(), is(equalTo(100)));
+        assertThat(descriptor.getOrder(), is(equalTo(99)));
         assertThat(descriptor.getLabel(), is(equalTo(ADDON_I18_NAME)));
         assertThat(descriptor.getModuleClass(), is(equalTo(ProjectTabPanel.class)));
     }
@@ -95,7 +95,6 @@ public class ConnectProjectTabPanelModuleDescriptorTest
         when(projectSerializer.serialize(any(Project.class))).thenReturn(ImmutableMap.<String, Object>of());
         when(projectSerializer.serialize(any(Project.class))).thenReturn(ImmutableMap.<String, Object>of());
         when(iFrameRenderer.render(any(IFrameContext.class), anyString())).thenReturn(ADDON_HTML_CONTENT);
-//        when(project.getName()).thenReturn("ABC-123");
         when(jiraAuthenticationContext.getI18nHelper()).thenReturn(i18nHelper);
         when(i18nHelper.getText(ADDON_LABEL_KEY)).thenReturn(ADDON_I18_NAME);
         when(browseProjectContext.getContextKey()).thenReturn(ADDON_KEY);
@@ -112,7 +111,7 @@ public class ConnectProjectTabPanelModuleDescriptorTest
     {
         Element projectTabPageElement = new DOMElement("project-tab-page");
         projectTabPageElement.addAttribute("key", ADDON_KEY);
-        projectTabPageElement.addElement("order").setText("100");
+        projectTabPageElement.addElement("order").setText("99");
         projectTabPageElement.addAttribute("url", ADDON_URL);
         projectTabPageElement.addAttribute("name", ADDON_NAME);
         projectTabPageElement.addAttribute("class", ProjectTabPanel.class.getName());
