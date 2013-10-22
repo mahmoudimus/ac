@@ -15,7 +15,7 @@ public class NameToKeyBeanBuilder<T extends NameToKeyBeanBuilder, B extends Name
     {
     }
 
-    public NameToKeyBeanBuilder(B defaultBean)
+    public NameToKeyBeanBuilder(NameToKeyBean defaultBean)
     {
         this.name = defaultBean.getName();
         this.key = defaultBean.getRawKey();
