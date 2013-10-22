@@ -8,6 +8,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nPropert
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectVersionTabPanelModuleDescriptor;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectVersionTabPanelModuleDescriptorFactory;
 import com.google.common.collect.ImmutableList;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -52,24 +53,15 @@ public class ConnectVersionTabPanelModuleProviderTest
             .build();
 
     @Test
-    public void createsASingleDescriptor()
+    public void producesTheExpectedDescriptor()
     {
-        ConnectVersionTabPanelModuleProvider provider = createProvider();
-
-        List<ModuleDescriptor> moduleDescriptors = provider.provideModules(plugin, bundleContext, ImmutableList.of(bean));
-
-        assertThat(moduleDescriptors, hasItem(descriptor));
+        assertThat(providedModules(), Matchers.<ModuleDescriptor>contains(descriptor));
     }
 
     @Test
     public void callsDescriptorFactoryWithExpectedArgs()
     {
-        ConnectVersionTabPanelModuleProvider provider = createProvider();
-
-        List<ModuleDescriptor> moduleDescriptors = provider.provideModules(plugin, bundleContext, ImmutableList.of(bean));
-
-        assertThat(moduleDescriptors, hasItem(descriptor));
-
+        providedModules();
         verify(moduleDescriptorFactory, times(1)).createModuleDescriptor(eq(plugin), eq(bundleContext), any(ConnectVersionTabPanelCapabilityBean.class));
     }
 
@@ -123,4 +115,9 @@ public class ConnectVersionTabPanelModuleProviderTest
 
         return provider;
     }
+    private List<ModuleDescriptor> providedModules()
+    {
+        return createProvider().provideModules(plugin, bundleContext, ImmutableList.of(bean));
+    }
+
 }
