@@ -33,6 +33,7 @@ import com.atlassian.webhooks.spi.provider.ModuleDescriptorWebHookListenerRegist
 import com.atlassian.webhooks.spi.provider.PluginModuleListenerParameters;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import com.opensymphony.workflow.FunctionProvider;
 import com.opensymphony.workflow.TypeResolver;
 import com.opensymphony.workflow.WorkflowException;
@@ -49,6 +50,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
 import java.util.UUID;
@@ -254,16 +256,21 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
 
     private String getDialogScriptUrl()
     {
+        ArrayList<String> scriptUrls = Lists.newArrayList();
         ModuleDescriptor<?> dialogModuleDescriptor = pluginRetrievalService.getPlugin().getModuleDescriptor("dialog");
         for (ResourceDescriptor descriptor : dialogModuleDescriptor.getResourceDescriptors())
         {
             String src = webResourceUrlProvider.getStaticPluginResourceUrl(dialogModuleDescriptor, descriptor.getName(), UrlMode.AUTO);
             if (src.endsWith("js"))
             {
-                return src;
+                scriptUrls.add(src);
             }
         }
-        return null;
+        if (scriptUrls.size() > 1)
+        {
+            log.warn("Expected only one static plugin resource URL, but found " + scriptUrls.size());
+        }
+        return scriptUrls.isEmpty() ? null : scriptUrls.get(0);
     }
 
     private URI getResourceIFrameURI(final String resourceName)
