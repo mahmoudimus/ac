@@ -8,12 +8,13 @@ import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAutowireUtil
  * A factory to produce a ConnectVersionTabPanelModuleDescriptor from a ConnectVersionTabPanelCapabilityBean
  */
 // Turning off component scanning until ACDEV-445 is resolved
-//@Component
 public class ConnectVersionTabPanelModuleDescriptorFactory
         extends AbstractConnectTabPanelModuleDescriptorFactory<ConnectVersionTabPanelCapabilityBean, ConnectVersionTabPanelModuleDescriptor>
 {
+    private static final String VERSION_TAB_PAGE = "version-tab-page";
+
     public ConnectVersionTabPanelModuleDescriptorFactory(ConnectAutowireUtil connectAutowireUtil)
     {
-        super(ConnectVersionTabPanelModuleDescriptor.class, "version-tab-page", connectAutowireUtil, VersionTabPanel.class);
+        super(ConnectVersionTabPanelModuleDescriptor.class, VERSION_TAB_PAGE, connectAutowireUtil, VersionTabPanel.class);
     }
 }
