@@ -4,7 +4,6 @@ AP.define("_dollar", ["_util"], function (util) {
 
   var each = util.each,
       extend = util.extend,
-      window = this,
       document = window.document;
 
   function $(sel, context) {
