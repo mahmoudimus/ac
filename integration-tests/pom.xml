@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.0-m14.2</version>
+        <version>1.0-m16</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -162,7 +162,6 @@
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            <version>2.2.2-atlassian-1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -226,7 +225,7 @@
                         <xvfb.enable>${xvfb.enable}</xvfb.enable>
                         <atlassian.mail.senddisabled>false</atlassian.mail.senddisabled>
                         <sun.net.http.allowRestrictedHeaders>true</sun.net.http.allowRestrictedHeaders>
-                        <webdriver.browser>chrome</webdriver.browser>
+                        <webdriver.browser>${webdriver.browser}</webdriver.browser>
                     </systemPropertyVariables>
                     
                     <functionalTestPattern>it/**/Test*.java</functionalTestPattern>

@@ -12,4 +12,6 @@ import org.dom4j.Document;
 public interface ConnectAddOnInstaller
 {
     Plugin install(String username, Document document);
+
+    Plugin install(String username, String capabilities);
 }

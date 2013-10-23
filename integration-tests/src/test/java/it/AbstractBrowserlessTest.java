@@ -3,6 +3,7 @@ package it;
 import com.atlassian.jira.pageobjects.JiraTestedProduct;
 import com.atlassian.pageobjects.Defaults;
 import com.atlassian.pageobjects.TestedProduct;
+import com.atlassian.plugin.connect.test.BaseUrlLocator;
 import com.atlassian.plugin.connect.test.pageobjects.OwnerOfTestedProduct;
 import com.atlassian.webdriver.pageobjects.WebDriverTester;
 import com.atlassian.webdriver.refapp.RefappTestedProduct;
@@ -18,7 +19,7 @@ public class AbstractBrowserlessTest
 
     public AbstractBrowserlessTest()
     {
-        this((Class<? extends TestedProduct>) findClass(System.getProperty("testedProductClass",JiraTestedProduct.class.getName())));
+        this(product.getClass());
     }
 
     private static Class findClass(String name)
@@ -35,14 +36,6 @@ public class AbstractBrowserlessTest
 
     public AbstractBrowserlessTest(Class<? extends TestedProduct> testedProductClass)
     {
-        if (System.getProperty("baseurl") == null)
-        {
-            Defaults defs = testedProductClass.getAnnotation(Defaults.class);
-            baseUrl = "http://localhost:" + defs.httpPort() + defs.contextPath();
-        }
-        else
-        {
-            baseUrl = OwnerOfTestedProduct.INSTANCE.getProductInstance().getBaseUrl();
-        }
+        baseUrl = BaseUrlLocator.getBaseUrl(testedProductClass);
     }
 }

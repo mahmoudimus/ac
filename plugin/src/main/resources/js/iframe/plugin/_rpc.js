@@ -32,7 +32,7 @@ AP.define("_rpc", ["_dollar", "_xdm"], function ($, XdmRpc) {
         // add stubs for each public api
         each(apis, function (method) { stubs.push(method); });
         // empty config for add-on-side ctor
-        rpc = this.rpc = new XdmRpc({}, {remote: stubs, local: internals});
+        rpc = this.rpc = new XdmRpc($, {}, {remote: stubs, local: internals});
         rpc.init();
         extend(proxy, rpc);
         each(inits, function (_, init) {

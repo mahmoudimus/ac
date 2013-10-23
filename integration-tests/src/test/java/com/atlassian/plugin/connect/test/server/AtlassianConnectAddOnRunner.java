@@ -139,6 +139,13 @@ public final class AtlassianConnectAddOnRunner
         return this;
     }
 
+    public AtlassianConnectAddOnRunner addInfoParam(String name, String value)
+    {
+        Element info = doc.getRootElement().element("plugin-info");
+        info.addElement("param").addAttribute("name",name).setText(value);
+        return this;
+    }
+
     public AtlassianConnectAddOnRunner addUnknownModule(String key)
     {
         doc.getRootElement().addElement("unknown")
@@ -212,9 +219,11 @@ public final class AtlassianConnectAddOnRunner
 
         StringWriter writer = new StringWriter();
         new XMLWriter(writer).write(doc);
-        logger.debug("Started Atlassian Connect Add-On at '{}' with descriptor:\n{}", displayUrl, writer);
+        
+        String xml = writer.toString();
+        logger.debug("Started Atlassian Connect Add-On at '{}' with descriptor:\n{}", displayUrl, xml);
 
-        System.out.println("Started Atlassian Connect Add-On at " + displayUrl);
+        System.out.println("Started Atlassian Connect Add-On at '" + displayUrl + "' with descriptor:\n" + xml);
         register();
         return this;
     }

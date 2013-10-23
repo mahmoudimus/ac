@@ -67,7 +67,6 @@ public final class RemotePluginContainerModuleDescriptor extends AbstractModuleD
     private Bundle pluginBundle;
 
     public RemotePluginContainerModuleDescriptor(
-            ModuleFactory moduleFactory,
             MutatingApplicationLinkService applicationLinkService,
             OAuthLinkManager oAuthLinkManager,
             PermissionManager permissionManager,
@@ -76,7 +75,7 @@ public final class RemotePluginContainerModuleDescriptor extends AbstractModuleD
             PluginSettingsFactory pluginSettingsFactory,
             ConnectAddOnIdentifierService connectIdentifier)
     {
-        super(moduleFactory);
+        super(ModuleFactory.LEGACY_MODULE_FACTORY);
         this.applicationLinkService = checkNotNull(applicationLinkService);
         this.oAuthLinkManager = checkNotNull(oAuthLinkManager);
         this.permissionManager = checkNotNull(permissionManager);
@@ -100,7 +99,7 @@ public final class RemotePluginContainerModuleDescriptor extends AbstractModuleD
                 .rpcUrl(displayUrl)
                 .build();
 
-        if (element.getParent().elements(element.getName()).size() > 1)
+        if (null != element.getParent() && element.getParent().elements(element.getName()).size() > 1)
         {
             throw new PluginParseException("Can only have one remote-plugin-container module in a descriptor");
         }
