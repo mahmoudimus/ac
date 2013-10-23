@@ -1,6 +1,5 @@
-package com.atlassian.plugin.connect.plugin.capabilities;
+package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
-import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.gson.CapabilitiesGsonFactory;
 import com.google.gson.Gson;
@@ -13,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean.newConnectAddonBean;
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectVersionTabPanelCapabilityBean.newVersionTabPanelBean;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectProjectTabPanelCapabilityBean.newProjectTabPanelBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.RemoteContainerCapabilityBean.newRemoteContainerBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.OAuthBean.newOAuthBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.VendorBean.newVendorBean;
@@ -22,7 +21,7 @@ import static org.junit.Assert.assertThat;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
 
-public class ConnectVersionTabPanelCapabilityBeanTest
+public class ConnectProjectTabPanelCapabilityBeanTest
 {
     @Test
     public void producesCorrectJSON() throws Exception
@@ -37,8 +36,8 @@ public class ConnectVersionTabPanelCapabilityBeanTest
                 .withVersion("1.0")
                 .withLinks(links)
                 .withVendor(newVendorBean().withName("Atlassian").withUrl("http://www.atlassian.com").build())
-                .withCapability(newVersionTabPanelBean()
-                        .withName(new I18nProperty("My Version Tab Page", "my.versionTabPage"))
+                .withCapability(newProjectTabPanelBean()
+                        .withName(new I18nProperty("My Project Tab Page", "my.projectTabPage"))
                         .withUrl("/my-general-page")
                         .withWeight(100)
                         .build())
@@ -57,6 +56,6 @@ public class ConnectVersionTabPanelCapabilityBeanTest
 
     private static String readTestFile() throws IOException
     {
-        return FileUtils.readFile(new DefaultResourceLoader().getResource("classpath:/testfiles/capabilities/versionTabAddon.json").getFile());
+        return FileUtils.readFile(new DefaultResourceLoader().getResource("classpath:/testfiles/capabilities/projectTabAddon.json").getFile());
     }
 }
