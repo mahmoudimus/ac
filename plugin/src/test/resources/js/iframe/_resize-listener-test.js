@@ -55,14 +55,10 @@ define(['iframe/_xdm'], function(_rpc, $) {
       var spy = sinon.spy(),
       xdm = this.createXdm('resize-listener-autoresize.html', {width:10, height:11}, {
         resize: spy
-      }),
-      frame = "iframe#" + this.iframeId();
+      });
       xdm.events.on('resized', function(e){
-        // resize is debounced to once every 50ms
-        setTimeout(function(){
           ok(spy.calledTwice, 'resize function was called twice');
           start();
-        }, 55);
       });
       stop();
     });

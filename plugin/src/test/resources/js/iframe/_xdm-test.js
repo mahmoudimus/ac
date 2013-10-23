@@ -56,13 +56,14 @@ define(['iframe/_xdm'], function() {
     });
 
     test('messages are sent', function () {
+      stop();
+
       var xdm = this.createXdm('xdm-emit-on.html');
       xdm.events.on('clientevent', function(e){
         equal(e, '9876');
         start();
       });
-      stop();
-      $("iframe#" + this.iframeId()).load(function() {
+      xdm.events.on('loaded', function(){
         xdm.events.emit('hostevent', '9876');
       });
       
