@@ -131,15 +131,8 @@ public class WebPanelConnectModuleDescriptorFactoryTest
     @SuppressWarnings("unchecked")
     public void urlIsCorrectWhenContextIsPopulated() throws IOException
     {
-        Project project = mock(Project.class);
-        when(project.getKey()).thenReturn("KEY");
-        when(project.getId()).thenReturn(1234L);
-
-        Map<String, Object> context = new HashMap<String, Object>();
-        context.put("project", project);
-
-        descriptor.getModule().getHtml(context);
-        verify(iFrameRenderer).render(argThat(hasIFramePath("http://www.google.com?my_project_id=1234&amp;my_project_key=KEY")), anyString(), anyMap(), anyString(), anyMap());
+        descriptor.getModule().getHtml(TestContextBuilder.build());
+        verify(iFrameRenderer).render(argThat(hasIFramePath(String.format("http://www.google.com?my_project_id=%d&amp;my_project_key=%s", TestContextBuilder.PROJECT_ID, TestContextBuilder.PROJECT_KEY))), anyString(), anyMap(), anyString(), anyMap());
     }
 
     @Test

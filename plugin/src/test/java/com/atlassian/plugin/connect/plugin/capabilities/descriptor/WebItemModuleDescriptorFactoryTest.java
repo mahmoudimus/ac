@@ -66,7 +66,7 @@ public class WebItemModuleDescriptorFactoryTest
 
         WebItemCapabilityBean bean = newWebItemBean()
                 .withName(new I18nProperty("My Web Item", "my.webitem"))
-                .withLink("http://www.google.com")
+                .withLink("http://www.google.com?my_project_id=${project.id}&my_project_key=${project.key}")
                 .withLocation("atl.admin/menu")
                 .build();
 
@@ -87,9 +87,15 @@ public class WebItemModuleDescriptorFactoryTest
     }
 
     @Test
-    public void urlIsCorrect()
+    public void urlIsCorrectWhenThereIsNoContext()
     {
-        assertThat(descriptor.getLink().getDisplayableUrl(mock(HttpServletRequest.class), new HashMap<String, Object>()), is("http://www.google.com"));
+        assertThat(descriptor.getLink().getDisplayableUrl(mock(HttpServletRequest.class), new HashMap<String, Object>()), is("http://www.google.com?my_project_id=&my_project_key="));
+    }
+
+    @Test
+    public void urlIsCorrectWhenThereIsContext()
+    {
+        assertThat(descriptor.getLink().getDisplayableUrl(mock(HttpServletRequest.class), TestContextBuilder.build()), is(String.format("http://www.google.com?my_project_id=%d&my_project_key=%s", TestContextBuilder.PROJECT_ID, TestContextBuilder.PROJECT_KEY)));
     }
 
     @Test
