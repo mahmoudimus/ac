@@ -151,6 +151,7 @@
                     <pushReleases>true</pushReleases>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
                     <releaseBranchVersionSuffix>RC</releaseBranchVersionSuffix>
+                    <pullMaster>true</pullMaster>
                     <defaultOriginUrl>ssh://git@stash.atlassian.com:7997/ac/atlassian-connect.git</defaultOriginUrl>
                 </configuration>
             </plugin>
@@ -547,7 +548,7 @@
         <atlassian.sal.version>2.10.0</atlassian.sal.version>
         <atlassian.selenium.version>2.2-rc3</atlassian.selenium.version>
         <atlassian.templaterenderer.version>1.4.2.2</atlassian.templaterenderer.version>
-        <atlassian.upm.version>2.13.2</atlassian.upm.version>
+        <atlassian.upm.version>2.13.3</atlassian.upm.version>
         <atlassian.uri.version>0.1</atlassian.uri.version>
         <atlassian-util-concurrent.version>2.4.0</atlassian-util-concurrent.version>
         <atlassian.webhooks.version>0.16.10</atlassian.webhooks.version>
@@ -568,7 +569,7 @@
         <gson.version>2.2.2-atlassian-1</gson.version>
         
         <!-- BUILD STUFF -->
-        <jgitflow.version>1.0-alpha20</jgitflow.version>
+        <jgitflow.version>1.0-alpha22</jgitflow.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <xvfb.enable>true</xvfb.enable>
         <atlassian.upm.on.demand>false</atlassian.upm.on.demand>
