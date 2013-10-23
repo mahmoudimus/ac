@@ -1,14 +1,14 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
 import com.atlassian.crowd.embedded.api.User;
-import com.atlassian.jira.plugin.versionpanel.BrowseVersionContext;
 import com.atlassian.jira.plugin.versionpanel.VersionTabPanel;
-import com.atlassian.jira.project.Project;
+import com.atlassian.jira.project.browse.BrowseContext;
 import com.atlassian.jira.project.version.Version;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.util.I18nHelper;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.testobjects.PluginForTests;
+import com.atlassian.plugin.connect.plugin.capabilities.util.TestContextBuilder;
 import com.atlassian.plugin.connect.plugin.module.jira.context.serializer.ProjectSerializer;
 import com.atlassian.plugin.connect.plugin.module.jira.context.serializer.VersionSerializer;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlValidator;
@@ -52,13 +52,9 @@ public class ConnectVersionTabPanelModuleDescriptorTest extends AbstractConnectT
     @Mock
     private IFrameRenderer iFrameRenderer;
     @Mock
-    private UrlVariableSubstitutor urlVariableSubstitutor;
-    @Mock
     private JiraAuthenticationContext jiraAuthenticationContext;
     @Mock
     private UrlValidator urlValidator;
-    @Mock
-    private ProjectSerializer projectSerializer;
     @Mock
     private VersionSerializer versionSerializer;
     @Mock
@@ -67,8 +63,6 @@ public class ConnectVersionTabPanelModuleDescriptorTest extends AbstractConnectT
     private User user;
     @Mock
     private I18nHelper i18nHelper;
-    @Mock
-    private BrowseVersionContext browseVersionContext;
 
 
     @Test
@@ -91,13 +85,12 @@ public class ConnectVersionTabPanelModuleDescriptorTest extends AbstractConnectT
 
         VersionTabPanel module = descriptor.getModule();
 
-        assertThat(module.getHtml(browseVersionContext), is(equalTo(ADDON_HTML_CONTENT)));
+        assertThat(module.getHtml(TestContextBuilder.buildBrowseVersionContext()), is(equalTo(ADDON_HTML_CONTENT)));
     }
 
     @Override
     protected ConnectVersionTabPanelModuleDescriptor createDescriptor() throws IOException
     {
-        when(projectSerializer.serialize(any(Project.class))).thenReturn(ImmutableMap.<String, Object>of());
         when(versionSerializer.serialize(any(Version.class))).thenReturn(ImmutableMap.<String, Object>of());
         when(iFrameRenderer.render(any(IFrameContext.class), anyString())).thenReturn(ADDON_HTML_CONTENT);
 //        when(version.getName()).thenReturn("ABC-123");
@@ -105,7 +98,7 @@ public class ConnectVersionTabPanelModuleDescriptorTest extends AbstractConnectT
         when(i18nHelper.getText(ADDON_LABEL_KEY)).thenReturn(ADDON_I18_NAME);
 
         ConnectVersionTabPanelModuleDescriptor descriptor = new ConnectVersionTabPanelModuleDescriptor(moduleFactory,
-                iFrameRenderer, urlVariableSubstitutor, jiraAuthenticationContext, urlValidator, projectSerializer,
+                iFrameRenderer, new UrlVariableSubstitutor(), jiraAuthenticationContext, urlValidator, new ProjectSerializer(),
                 versionSerializer);
         descriptor.init(PLUGIN, ISSUE_TAB_PAGE_ELEMENT);
         descriptor.enabled();
@@ -122,6 +115,12 @@ public class ConnectVersionTabPanelModuleDescriptorTest extends AbstractConnectT
     protected String getRawUrl()
     {
         return ADDON_URL;
+    }
+
+    @Override
+    protected BrowseContext createBrowseContext()
+    {
+        return TestContextBuilder.buildBrowseVersionContext();
     }
 
     private static Element createElement()

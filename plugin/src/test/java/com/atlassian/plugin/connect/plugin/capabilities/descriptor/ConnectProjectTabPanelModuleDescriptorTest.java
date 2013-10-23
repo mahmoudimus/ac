@@ -2,19 +2,17 @@ package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.plugin.projectpanel.ProjectTabPanel;
-import com.atlassian.jira.project.Project;
-import com.atlassian.jira.project.browse.BrowseProjectContext;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.util.I18nHelper;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.testobjects.PluginForTests;
+import com.atlassian.plugin.connect.plugin.capabilities.util.TestContextBuilder;
 import com.atlassian.plugin.connect.plugin.module.jira.context.serializer.ProjectSerializer;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlValidator;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.spi.module.IFrameContext;
 import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
 import com.atlassian.plugin.module.ModuleFactory;
-import com.google.common.collect.ImmutableMap;
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
 import org.junit.Test;
@@ -50,21 +48,13 @@ public class ConnectProjectTabPanelModuleDescriptorTest extends AbstractConnectT
     @Mock
     private IFrameRenderer iFrameRenderer;
     @Mock
-    private UrlVariableSubstitutor urlVariableSubstitutor;
-    @Mock
     private JiraAuthenticationContext jiraAuthenticationContext;
     @Mock
     private UrlValidator urlValidator;
     @Mock
-    private ProjectSerializer projectSerializer;
-    @Mock
-    private Project project;
-    @Mock
     private User user;
     @Mock
     private I18nHelper i18nHelper;
-    @Mock
-    private BrowseProjectContext browseProjectContext;
 
 
     @Test
@@ -87,22 +77,18 @@ public class ConnectProjectTabPanelModuleDescriptorTest extends AbstractConnectT
 
         ProjectTabPanel module = descriptor.getModule();
 
-        assertThat(module.getHtml(browseProjectContext), is(equalTo(ADDON_HTML_CONTENT)));
+        assertThat(module.getHtml(TestContextBuilder.buildBrowseProjectContext(ADDON_KEY)), is(equalTo(ADDON_HTML_CONTENT)));
     }
 
     @Override
     protected ConnectProjectTabPanelModuleDescriptor createDescriptor() throws IOException
     {
-        when(projectSerializer.serialize(any(Project.class))).thenReturn(ImmutableMap.<String, Object>of());
-        when(projectSerializer.serialize(any(Project.class))).thenReturn(ImmutableMap.<String, Object>of());
         when(iFrameRenderer.render(any(IFrameContext.class), anyString())).thenReturn(ADDON_HTML_CONTENT);
         when(jiraAuthenticationContext.getI18nHelper()).thenReturn(i18nHelper);
         when(i18nHelper.getText(ADDON_LABEL_KEY)).thenReturn(ADDON_I18_NAME);
-        when(browseProjectContext.getContextKey()).thenReturn(ADDON_KEY);
-        when(browseProjectContext.getProject()).thenReturn(project);
 
         ConnectProjectTabPanelModuleDescriptor descriptor = new ConnectProjectTabPanelModuleDescriptor(moduleFactory,
-                iFrameRenderer, urlVariableSubstitutor, jiraAuthenticationContext, urlValidator, projectSerializer);
+                iFrameRenderer, new UrlVariableSubstitutor(), jiraAuthenticationContext, urlValidator, new ProjectSerializer());
         descriptor.init(PLUGIN, ISSUE_TAB_PAGE_ELEMENT);
         descriptor.enabled();
         return descriptor;

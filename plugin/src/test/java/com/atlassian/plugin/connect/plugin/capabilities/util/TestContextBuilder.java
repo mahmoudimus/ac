@@ -2,7 +2,9 @@ package com.atlassian.plugin.connect.plugin.capabilities.util;
 
 import com.atlassian.jira.bc.project.component.ProjectComponent;
 import com.atlassian.jira.plugin.componentpanel.BrowseComponentContext;
+import com.atlassian.jira.plugin.versionpanel.BrowseVersionContext;
 import com.atlassian.jira.project.Project;
+import com.atlassian.jira.project.browse.BrowseProjectContext;
 
 import java.util.Collections;
 import java.util.Map;
@@ -28,12 +30,30 @@ public class TestContextBuilder
         return project;
     }
 
-    public static BrowseComponentContext buildBrowseComponentContext()
+    public static BrowseComponentContext buildBrowseComponentContext(String addonKey)
     {
         Project project = buildProject();
         BrowseComponentContext browseContext = mock(BrowseComponentContext.class);
         when(browseContext.getProject()).thenReturn(project);
         when(browseContext.getComponent()).thenReturn(mock(ProjectComponent.class));
+        when(browseContext.getContextKey()).thenReturn(addonKey);
+        return browseContext;
+    }
+
+    public static BrowseVersionContext buildBrowseVersionContext()
+    {
+        BrowseVersionContext browseContext = mock(BrowseVersionContext.class);
+        Project project = buildProject();
+        when(browseContext.getProject()).thenReturn(project);
+        return browseContext;
+    }
+
+    public static BrowseProjectContext buildBrowseProjectContext(String addonKey)
+    {
+        BrowseProjectContext browseContext = mock(BrowseProjectContext.class);
+        Project project = buildProject();
+        when(browseContext.getProject()).thenReturn(project);
+        when(browseContext.getContextKey()).thenReturn(addonKey);
         return browseContext;
     }
 }

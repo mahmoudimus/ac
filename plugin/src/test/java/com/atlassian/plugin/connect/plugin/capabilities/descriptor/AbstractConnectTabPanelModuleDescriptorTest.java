@@ -2,8 +2,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
 import com.atlassian.jira.plugin.TabPanelModuleDescriptor;
 import com.atlassian.jira.plugin.browsepanel.TabPanel;
-import com.atlassian.jira.plugin.componentpanel.BrowseComponentContext;
-import com.atlassian.plugin.ModuleDescriptor;
+import com.atlassian.jira.project.browse.BrowseContext;
 import com.atlassian.plugin.connect.plugin.capabilities.util.TestContextBuilder;
 import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
 import org.junit.Before;
@@ -18,12 +17,12 @@ import static org.mockito.Mockito.verify;
 
 public abstract class AbstractConnectTabPanelModuleDescriptorTest<T extends TabPanel>
 {
-    private BrowseComponentContext browseComponentContext;
+    private BrowseContext browseComponentContext;
 
     @Before
     public void beforeEachTest()
     {
-        browseComponentContext = TestContextBuilder.buildBrowseComponentContext();
+        browseComponentContext = createBrowseContext();
     }
 
     @Test
@@ -38,4 +37,15 @@ public abstract class AbstractConnectTabPanelModuleDescriptorTest<T extends TabP
     protected abstract TabPanelModuleDescriptor<T> createDescriptor() throws IOException;
     protected abstract IFrameRenderer getIFrameRenderer();
     protected abstract String getRawUrl();
+
+    /**
+     * Generate the argument to {@link TabPanel#getHtml(com.atlassian.jira.project.browse.BrowseContext)}.
+     * The super-class implementation is sufficient for most cases.
+     * Override this method to provide a different {@link BrowseContext} implementation.
+     * @return a {@link BrowseContext} sub-class.
+     */
+    protected BrowseContext createBrowseContext()
+    {
+        return TestContextBuilder.buildBrowseComponentContext("addon-key");
+    }
 }

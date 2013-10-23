@@ -6,7 +6,6 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nPropert
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.WebPanelLayout;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAutowireUtil;
 import com.atlassian.plugin.connect.plugin.capabilities.util.TestContextBuilder;
-import com.atlassian.plugin.connect.plugin.capabilities.util.TestMatchers;
 import com.atlassian.plugin.connect.plugin.module.context.ContextMapParameterExtractor;
 import com.atlassian.plugin.connect.plugin.module.context.ContextMapURLSerializer;
 import com.atlassian.plugin.connect.plugin.module.jira.context.extractor.ProjectContextMapParameterExtractor;
@@ -33,8 +32,10 @@ import java.util.Arrays;
 import java.util.Collections;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebPanelCapabilityBean.newWebPanelBean;
+import static com.atlassian.plugin.connect.plugin.capabilities.util.TestMatchers.hasIFramePath;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.*;
@@ -123,7 +124,7 @@ public class WebPanelConnectModuleDescriptorFactoryTest
     public void urlIsCorrectWhenContextIsEmpty() throws IOException
     {
         descriptor.getModule().getHtml(Collections.<String, Object>emptyMap());
-        verify(iFrameRenderer).render(argThat(TestMatchers.hasIFramePath("http://www.google.com?my_project_id=&amp;my_project_key=")), anyString(), anyMap(), anyString(), anyMap());
+        verify(iFrameRenderer).render(argThat(hasIFramePath("http://www.google.com?my_project_id=&amp;my_project_key=")), anyString(), anyMap(), anyString(), anyMap());
     }
 
     @Test
@@ -131,7 +132,7 @@ public class WebPanelConnectModuleDescriptorFactoryTest
     public void urlIsCorrectWhenContextIsPopulated() throws IOException
     {
         descriptor.getModule().getHtml(TestContextBuilder.buildContextMap());
-        verify(iFrameRenderer).render(argThat(TestMatchers.hasIFramePath(String.format("http://www.google.com?my_project_id=%d&amp;my_project_key=%s", TestContextBuilder.PROJECT_ID, TestContextBuilder.PROJECT_KEY))), anyString(), anyMap(), anyString(), anyMap());
+        verify(iFrameRenderer).render(argThat(hasIFramePath(String.format("http://www.google.com?my_project_id=%d&amp;my_project_key=%s", TestContextBuilder.PROJECT_ID, TestContextBuilder.PROJECT_KEY))), anyString(), anyMap(), anyString(), anyMap());
     }
 
     @Test
