@@ -1,11 +1,12 @@
 package it.capabilities.jira;
 
 import com.atlassian.jira.functest.framework.FunctTestConstants;
-import com.atlassian.jira.testkit.client.restclient.Version;
-import com.atlassian.jira.testkit.client.restclient.VersionClient;
+import com.atlassian.jira.rest.api.issue.IssueFields;
+import com.atlassian.jira.rest.api.issue.IssueUpdateRequest;
+import com.atlassian.jira.testkit.client.restclient.IssueClient;
 import com.atlassian.jira.tests.TestBase;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.test.pageobjects.jira.JiraVersionTabPage;
+import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePageWithRemotePluginIssueTab;
 import com.atlassian.plugin.connect.test.server.ConnectCapabilitiesRunner;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -15,22 +16,21 @@ import org.junit.Test;
 
 import java.rmi.RemoteException;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectVersionTabPanelCapabilityBean.newVersionTabPanelBean;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectIssueTabPanelCapabilityBean.newIssueTabPanelBean;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 /**
- * Test of remote version tab panel in JIRA
+ * Test of remote issue tab panel in JIRA
  */
-public class VersionTabPageCapabilitiesTest extends TestBase
+public class TestIssueTabPanel extends TestBase
 {
     private static ConnectCapabilitiesRunner remotePlugin;
 
     private static final String PROJECT_KEY = FunctTestConstants.PROJECT_HOMOSAP_KEY;
-    private static final String JIRA_VERSION_TAB_PANEL = "jira-version-tab-panel";
+    private static final String JIRA_ISSUE_TAB_PANEL = "jira-issue-tab-panel";
 
-    private String versionId;
-    private static final String VERSION_NAME = "2.7.1";
+    private String issueId;
 
 
     @BeforeClass
@@ -38,10 +38,10 @@ public class VersionTabPageCapabilitiesTest extends TestBase
     {
         remotePlugin = new ConnectCapabilitiesRunner(jira().getProductInstance().getBaseUrl(),"my-plugin")
                 .addOAuth()
-                .addCapability(newVersionTabPanelBean()
-                        .withKey(JIRA_VERSION_TAB_PANEL)
-                        .withName(new I18nProperty("Version Tab Panel", "my.versiontabpanel"))
-                        .withUrl("/ipp?version_id=${version.id}&project_id=${project.id}&project_key=${project.key}")
+                .addCapability(newIssueTabPanelBean()
+                        .withKey(JIRA_ISSUE_TAB_PANEL)
+                        .withName(new I18nProperty("Issue Tab Panel", "my.issuetabpanel"))
+                        .withUrl("/ipp?issue_id=${issue.id}&project_id=${project.id}&project_key=${project.key}")
                         .withWeight(1234)
                         .build())
                 .start();
@@ -60,8 +60,8 @@ public class VersionTabPageCapabilitiesTest extends TestBase
     public void setUpTest() throws Exception
     {
         backdoor().project().addProject(PROJECT_KEY, PROJECT_KEY, "admin");
-        final VersionClient versionClient = new VersionClient(jira().environmentData());
-        versionId = Long.toString(versionClient.create(new Version().name(VERSION_NAME + System.currentTimeMillis()).project(PROJECT_KEY)).id);
+        final IssueClient issueClient = new IssueClient(jira().environmentData());
+        issueId = issueClient.create(new IssueUpdateRequest().fields(new IssueFields().summary("blah"))).id;
     }
 
     @After
@@ -71,14 +71,12 @@ public class VersionTabPageCapabilitiesTest extends TestBase
     }
 
     @Test
-    public void testVersionTabPanel() throws RemoteException
+    public void testIssueTabPanel() throws RemoteException
     {
         jira().gotoLoginPage().loginAsSysadminAndGoToHome();
-        final JiraVersionTabPage versionTabPage = jira().goTo(JiraVersionTabPage.class, PROJECT_KEY, versionId, "jira-version-tab");
+        final JiraViewIssuePageWithRemotePluginIssueTab issueTabPage = jira().goTo(JiraViewIssuePageWithRemotePluginIssueTab.class,
+                PROJECT_KEY, issueId, "jira-issue-tab");
 
-        versionTabPage.clickTab();
-
-        assertThat(versionTabPage.getVersionId(), equalTo(versionId));
-        assertThat(versionTabPage.getProjectKey(), equalTo(PROJECT_KEY));
+        assertThat(issueTabPage.getMessage(), equalTo("Sucess"));
     }
 }

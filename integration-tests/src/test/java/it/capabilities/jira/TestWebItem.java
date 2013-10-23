@@ -24,7 +24,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * @since version
  */
-public class WebItemTest extends JiraWebDriverTestBase
+public class TestWebItem extends JiraWebDriverTestBase
 {
     private static final String ADDON_WEBITEM = "ac-general-web-item";
     private static final String PRODUCT_WEBITEM = "quick-project-link";

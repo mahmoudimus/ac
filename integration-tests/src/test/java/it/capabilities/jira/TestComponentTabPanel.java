@@ -20,7 +20,7 @@ import static org.junit.Assert.assertThat;
 /**
  * Test of remote component tab panel in JIRA
  */
-public class ComponentTabPageCapabilitiesTest extends TestBase
+public class TestComponentTabPanel extends TestBase
 {
     private static final String PROJECT_KEY = FunctTestConstants.PROJECT_HOMOSAP_KEY;
     private static final String COMPONENT_NAME = "test-component";

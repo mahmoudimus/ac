@@ -20,7 +20,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * Test of project tabs in JIRA.
  */
-public class ProjectTabPanelCapabilitiesTest extends JiraWebDriverTestBase
+public class TestProjectTabPanel extends JiraWebDriverTestBase
 {
     private static ConnectCapabilitiesRunner remotePlugin;
 
