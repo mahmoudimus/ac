@@ -50,7 +50,7 @@ public class ConnectProjectAdminTabPanelModuleProvider implements ConnectModuleP
 
             // TODO: what is the right decorator???
             builder.add(servletDescriptorFactory.createIFrameServletDescriptor(plugin, webItemCapabilityBean, localUrl,
-                    bean.getUrl(), "atl.general", "", new AlwaysDisplayCondition(), ImmutableMap.<String, String>of()));
+                    bean.getUrl(), bean.getAbsoluteLocation(), "", new AlwaysDisplayCondition(), ImmutableMap.<String, String>of()));
         }
 
         return builder.build();
