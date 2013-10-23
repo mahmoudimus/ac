@@ -2,6 +2,8 @@ package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
 import com.atlassian.jira.plugin.ComponentClassManager;
 import com.atlassian.jira.plugin.workflow.WorkflowFunctionModuleDescriptor;
+import com.atlassian.jira.security.JiraAuthenticationContext;
+import com.atlassian.jira.util.I18nHelper;
 import com.atlassian.jira.workflow.OSWorkflowConfigurator;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.WorkflowPostFunctionCapabilityBean;
@@ -22,6 +24,8 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import static com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants.RESOURCE_TYPE_VELOCITY;
 
 @RunWith(MockitoJUnitRunner.class)
 public class WorkflowPostFunctionModuleDescriptorFactoryTest
@@ -56,7 +60,7 @@ public class WorkflowPostFunctionModuleDescriptorFactoryTest
     public void verifyDescriptorKeyIsSet() throws Exception
     {
         WorkflowPostFunctionCapabilityBean bean = WorkflowPostFunctionCapabilityBean.newWorkflowPostFunctionBean()
-                .withName(new I18nProperty("My Post Function", "my.pf.name"))
+                .withName(new I18nProperty("My Post Function", null))
                 .withTriggered(new UrlBean("/callme"))
                 .build();
 
@@ -69,7 +73,7 @@ public class WorkflowPostFunctionModuleDescriptorFactoryTest
     public void verifyNameIsSet() throws Exception
     {
         WorkflowPostFunctionCapabilityBean bean = WorkflowPostFunctionCapabilityBean.newWorkflowPostFunctionBean()
-                .withName(new I18nProperty("My Post Function", "my.pf.name"))
+                .withName(new I18nProperty("My Post Function", null))
                 .withTriggered(new UrlBean("/callme"))
                 .build();
 
@@ -82,7 +86,7 @@ public class WorkflowPostFunctionModuleDescriptorFactoryTest
     public void verifyDescriptionIsSet() throws Exception
     {
         WorkflowPostFunctionCapabilityBean bean = WorkflowPostFunctionCapabilityBean.newWorkflowPostFunctionBean()
-                .withDescription(new I18nProperty("Some description", "my.pf.desc"))
+                .withDescription(new I18nProperty("Some description", null))
                 .withTriggered(new UrlBean("/callme"))
                 .build();
 
@@ -116,5 +120,80 @@ public class WorkflowPostFunctionModuleDescriptorFactoryTest
         WorkflowFunctionModuleDescriptor descriptor = wfPostFunctionFactory.createModuleDescriptor(plugin, mock(BundleContext.class), bean);
 
         assertFalse(descriptor.isEditable());
+    }
+
+    @Test
+    public void verifyResourceDescriptorsArePresent() throws Exception
+    {
+        WorkflowPostFunctionCapabilityBean bean = WorkflowPostFunctionCapabilityBean.newWorkflowPostFunctionBean()
+                .withView(new UrlBean("/view"))
+                .withEdit(new UrlBean(("/edit")))
+                .withCreate(new UrlBean("/create"))
+                .withTriggered(new UrlBean("/callme"))
+                .build();
+
+        WorkflowFunctionModuleDescriptor descriptor = wfPostFunctionFactory.createModuleDescriptor(plugin, mock(BundleContext.class), bean);
+
+        assertEquals(3, descriptor.getResourceDescriptors(RESOURCE_TYPE_VELOCITY).size());
+    }
+
+    @Test
+    public void verifyIsDeletable() throws Exception
+    {
+        WorkflowPostFunctionCapabilityBean bean = WorkflowPostFunctionCapabilityBean.newWorkflowPostFunctionBean()
+                .withTriggered(new UrlBean("/callme"))
+                .build();
+
+        WorkflowFunctionModuleDescriptor descriptor = wfPostFunctionFactory.createModuleDescriptor(plugin, mock(BundleContext.class), bean);
+
+        assertTrue(descriptor.isDeletable());
+    }
+
+    @Test
+    public void verifyIsOrderable() throws Exception
+    {
+        WorkflowPostFunctionCapabilityBean bean = WorkflowPostFunctionCapabilityBean.newWorkflowPostFunctionBean()
+                .withTriggered(new UrlBean("/callme"))
+                .build();
+
+        WorkflowFunctionModuleDescriptor descriptor = wfPostFunctionFactory.createModuleDescriptor(plugin, mock(BundleContext.class), bean);
+
+        assertTrue(descriptor.isOrderable());
+    }
+
+    @Test
+    public void verifyIsNotUnique() throws Exception
+    {
+        WorkflowPostFunctionCapabilityBean bean = WorkflowPostFunctionCapabilityBean.newWorkflowPostFunctionBean()
+                .withTriggered(new UrlBean("/callme"))
+                .build();
+
+        WorkflowFunctionModuleDescriptor descriptor = wfPostFunctionFactory.createModuleDescriptor(plugin, mock(BundleContext.class), bean);
+
+        assertFalse(descriptor.isUnique());
+    }
+
+    @Test
+    public void verifyIsNoSystemModule() throws Exception
+    {
+        WorkflowPostFunctionCapabilityBean bean = WorkflowPostFunctionCapabilityBean.newWorkflowPostFunctionBean()
+                .withTriggered(new UrlBean("/callme"))
+                .build();
+
+        WorkflowFunctionModuleDescriptor descriptor = wfPostFunctionFactory.createModuleDescriptor(plugin, mock(BundleContext.class), bean);
+
+        assertFalse(descriptor.isSystemModule());
+    }
+
+    @Test
+    public void verifyIsEnabledByDefault() throws Exception
+    {
+        WorkflowPostFunctionCapabilityBean bean = WorkflowPostFunctionCapabilityBean.newWorkflowPostFunctionBean()
+                .withTriggered(new UrlBean("/callme"))
+                .build();
+
+        WorkflowFunctionModuleDescriptor descriptor = wfPostFunctionFactory.createModuleDescriptor(plugin, mock(BundleContext.class), bean);
+
+        assertTrue(descriptor.isEnabledByDefault());
     }
 }
