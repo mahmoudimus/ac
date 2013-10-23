@@ -32,11 +32,11 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ConnectProjectTabPanelModuleDescriptorTest
+public class ConnectProjectTabPanelModuleDescriptorTest extends AbstractConnectTabPanelModuleDescriptorTest<ProjectTabPanel>
 {
     private static final String ADDON_HTML_CONTENT = "the content goes here";
     private static final String ADDON_NAME = "My Project Tab Page";
-    private static final String ADDON_URL = "http://blah";
+    private static final String ADDON_URL = "http://blah?my_project_id=${project.id}&my_project_key=${project.key}";
     private static final String ADDON_KEY = "my-project-tab-page";
     private static final String ADDON_I18_NAME = "My Plugin i18";
     private static final Element ISSUE_TAB_PAGE_ELEMENT = createElement();
@@ -90,7 +90,8 @@ public class ConnectProjectTabPanelModuleDescriptorTest
         assertThat(module.getHtml(browseProjectContext), is(equalTo(ADDON_HTML_CONTENT)));
     }
 
-    private ConnectProjectTabPanelModuleDescriptor createDescriptor() throws IOException
+    @Override
+    protected ConnectProjectTabPanelModuleDescriptor createDescriptor() throws IOException
     {
         when(projectSerializer.serialize(any(Project.class))).thenReturn(ImmutableMap.<String, Object>of());
         when(projectSerializer.serialize(any(Project.class))).thenReturn(ImmutableMap.<String, Object>of());
@@ -105,6 +106,18 @@ public class ConnectProjectTabPanelModuleDescriptorTest
         descriptor.init(PLUGIN, ISSUE_TAB_PAGE_ELEMENT);
         descriptor.enabled();
         return descriptor;
+    }
+
+    @Override
+    protected IFrameRenderer getIFrameRenderer()
+    {
+        return iFrameRenderer;
+    }
+
+    @Override
+    protected String getRawUrl()
+    {
+        return ADDON_URL;
     }
 
     private static Element createElement()

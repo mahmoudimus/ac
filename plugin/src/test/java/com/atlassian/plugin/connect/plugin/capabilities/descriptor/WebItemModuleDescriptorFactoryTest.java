@@ -6,6 +6,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nPropert
 import com.atlassian.plugin.connect.plugin.capabilities.testobjects.PluginForTests;
 import com.atlassian.plugin.connect.plugin.capabilities.testobjects.RemotablePluginAccessorFactoryForTests;
 import com.atlassian.plugin.connect.plugin.capabilities.testobjects.descriptor.WebItemModuleDescriptorFactoryForTests;
+import com.atlassian.plugin.connect.plugin.capabilities.util.TestContextBuilder;
 import com.atlassian.plugin.connect.spi.module.DynamicMarkerCondition;
 import com.atlassian.plugin.web.WebFragmentHelper;
 import com.atlassian.plugin.web.WebInterfaceManager;
@@ -96,7 +97,7 @@ public class WebItemModuleDescriptorFactoryTest
     @Test
     public void urlIsCorrectWhenThereIsContext()
     {
-        assertThat(descriptor.getLink().getDisplayableUrl(mock(HttpServletRequest.class), TestContextBuilder.build()), is(String.format("http://www.google.com?my_project_id=%d&my_project_key=%s", TestContextBuilder.PROJECT_ID, TestContextBuilder.PROJECT_KEY)));
+        assertThat(descriptor.getLink().getDisplayableUrl(mock(HttpServletRequest.class), TestContextBuilder.buildContextMap()), is(String.format("http://www.google.com?my_project_id=%d&my_project_key=%s", TestContextBuilder.PROJECT_ID, TestContextBuilder.PROJECT_KEY)));
     }
 
     @Test
