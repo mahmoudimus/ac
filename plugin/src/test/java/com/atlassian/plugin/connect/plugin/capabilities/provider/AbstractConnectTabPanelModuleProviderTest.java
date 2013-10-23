@@ -78,12 +78,6 @@ public abstract class AbstractConnectTabPanelModuleProviderTest<T extends Abstra
     }
 
     @Test
-    public void callsDescriptorFactoryWithExpectedArgs()
-    {
-        verify(moduleDescriptorFactory(), times(1)).createModuleDescriptor(eq(plugin), eq(bundleContext), any(AbstractConnectTabPanelCapabilityBean.class));
-    }
-
-    @Test
     public void capabilityBeanHasCorrectKey()
     {
         verify(moduleDescriptorFactory(), times(1)).createModuleDescriptor(eq(plugin), eq(bundleContext), argThat(hasAddonKeyValue(ADDON_KEY)));

@@ -3,21 +3,21 @@ package com.atlassian.plugin.connect.plugin.capabilities.beans.matchers;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.AbstractConnectTabPanelCapabilityBean;
 import org.mockito.ArgumentMatcher;
 
-public class TabPanelCapabilityBeanMatchers extends CapabilityBeanMatchers
+public class TabPanelCapabilityBeanMatchers extends NameToKeyBeanMatchers
 {
     public static <T extends AbstractConnectTabPanelCapabilityBean> ArgumentMatcher<T> hasAddonKeyValue(String expectedValue)
     {
-        return CapabilityBeanMatchers.hasKeyValue(expectedValue);
+        return NameToKeyBeanMatchers.hasKeyValue(expectedValue);
     }
 
     public static <T extends AbstractConnectTabPanelCapabilityBean> ArgumentMatcher<T> hasAddonNameValue(String expectedValue)
     {
-        return CapabilityBeanMatchers.hasNameValue(expectedValue);
+        return NameToKeyBeanMatchers.hasNameValue(expectedValue);
     }
 
     public static <T extends AbstractConnectTabPanelCapabilityBean> ArgumentMatcher<T> hasAddonNameI18KeyValue(String expectedValue)
     {
-        return CapabilityBeanMatchers.hasNameI18KeyValue(expectedValue);
+        return NameToKeyBeanMatchers.hasNameI18KeyValue(expectedValue);
     }
 
     public static <T extends AbstractConnectTabPanelCapabilityBean> ArgumentMatcher<T> hasUrlValue(String expectedValue)
@@ -34,7 +34,7 @@ public class TabPanelCapabilityBeanMatchers extends CapabilityBeanMatchers
 
     public static <T extends AbstractConnectTabPanelCapabilityBean> ArgumentMatcher<T> hasWeightValue(int expectedValue)
     {
-        return new TabPanelCapabilityBeanParamMatcher<T>("url", expectedValue)
+        return new TabPanelCapabilityBeanParamMatcher<T>("weight", expectedValue)
         {
             @Override
             protected Integer getValue(AbstractConnectTabPanelCapabilityBean capabilityBean)

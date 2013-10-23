@@ -8,7 +8,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
-public class CapabilityBeanMatchers
+public class NameToKeyBeanMatchers
 {
     public static <T extends NameToKeyBean> ArgumentMatcher<T> hasKeyValue(String expectedValue)
     {
