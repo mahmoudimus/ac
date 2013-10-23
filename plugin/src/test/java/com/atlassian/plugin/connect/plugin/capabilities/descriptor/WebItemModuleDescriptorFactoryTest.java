@@ -68,6 +68,7 @@ public class WebItemModuleDescriptorFactoryTest
                 .withName(new I18nProperty("My Web Item", "my.webitem"))
                 .withLink("http://www.google.com?my_project_id=${project.id}&my_project_key=${project.key}")
                 .withLocation("atl.admin/menu")
+                .withWeight(123)
                 .build();
 
         this.descriptor = webItemFactory.createModuleDescriptor(plugin, mock(BundleContext.class), bean);
@@ -101,7 +102,7 @@ public class WebItemModuleDescriptorFactoryTest
     @Test
     public void weightIsCorrect()
     {
-        assertThat(descriptor.getWeight(), is(100));
+        assertThat(descriptor.getWeight(), is(123));
     }
 
     @Test
