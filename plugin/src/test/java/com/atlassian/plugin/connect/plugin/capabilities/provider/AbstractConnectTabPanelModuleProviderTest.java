@@ -3,7 +3,6 @@ package com.atlassian.plugin.connect.plugin.capabilities.provider;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.AbstractConnectTabPanelCapabilityBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectProjectTabPanelCapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.AbstractConnectTabPanelModuleDescriptorFactory;
 import com.google.common.collect.ImmutableList;
 import org.hamcrest.Matchers;
@@ -80,7 +79,7 @@ public abstract class AbstractConnectTabPanelModuleProviderTest<T extends Abstra
     public void callsDescriptorFactoryWithExpectedArgs()
     {
         providedModules();
-        verify(moduleDescriptorFactory, times(1)).createModuleDescriptor(eq(plugin), eq(bundleContext), any(ConnectProjectTabPanelCapabilityBean.class));
+        verify(moduleDescriptorFactory, times(1)).createModuleDescriptor(eq(plugin), eq(bundleContext), any(AbstractConnectTabPanelCapabilityBean.class));
     }
 
     @Test
@@ -123,7 +122,7 @@ public abstract class AbstractConnectTabPanelModuleProviderTest<T extends Abstra
 
         assertThat(moduleDescriptors, contains(descriptor));
 
-        ArgumentCaptor<ConnectProjectTabPanelCapabilityBean> argumentCaptor = ArgumentCaptor.forClass(ConnectProjectTabPanelCapabilityBean.class);
+        ArgumentCaptor<AbstractConnectTabPanelCapabilityBean> argumentCaptor = ArgumentCaptor.forClass(AbstractConnectTabPanelCapabilityBean.class);
         verify(moduleDescriptorFactory, times(1)).createModuleDescriptor(eq(plugin), eq(bundleContext), argumentCaptor.capture());
         return argumentCaptor.getValue();
     }
