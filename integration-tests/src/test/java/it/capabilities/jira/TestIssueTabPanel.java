@@ -37,7 +37,6 @@ public class TestIssueTabPanel extends TestBase
     public static void startConnectAddOn() throws Exception
     {
         remotePlugin = new ConnectCapabilitiesRunner(jira().getProductInstance().getBaseUrl(),"my-plugin")
-                .addOAuth()
                 .addCapability(newIssueTabPanelBean()
                         .withKey(JIRA_ISSUE_TAB_PANEL)
                         .withName(new I18nProperty("Issue Tab Panel", "my.issuetabpanel"))

@@ -37,7 +37,6 @@ public class TestVersionTabPanel extends TestBase
     public static void startConnectAddOn() throws Exception
     {
         remotePlugin = new ConnectCapabilitiesRunner(jira().getProductInstance().getBaseUrl(),"my-plugin")
-                .addOAuth()
                 .addCapability(newVersionTabPanelBean()
                         .withKey(JIRA_VERSION_TAB_PANEL)
                         .withName(new I18nProperty("Version Tab Panel", "my.versiontabpanel"))
