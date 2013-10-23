@@ -9,18 +9,20 @@ import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.osgi.framework.BundleContext;
 
 import java.util.List;
 
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.matchers.TabPanelCapabilityBeanMatchers.hasAddonKeyValue;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.matchers.TabPanelCapabilityBeanMatchers.hasAddonNameI18KeyValue;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.matchers.TabPanelCapabilityBeanMatchers.hasAddonNameValue;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.matchers.TabPanelCapabilityBeanMatchers.hasUrlValue;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.matchers.TabPanelCapabilityBeanMatchers.hasWeightValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -78,58 +80,51 @@ public abstract class AbstractConnectTabPanelModuleProviderTest<T extends Abstra
     @Test
     public void callsDescriptorFactoryWithExpectedArgs()
     {
-        providedModules();
-        verify(moduleDescriptorFactory, times(1)).createModuleDescriptor(eq(plugin), eq(bundleContext), any(AbstractConnectTabPanelCapabilityBean.class));
+        verify(moduleDescriptorFactory(), times(1)).createModuleDescriptor(eq(plugin), eq(bundleContext), any(AbstractConnectTabPanelCapabilityBean.class));
     }
 
     @Test
     public void capabilityBeanHasCorrectKey()
     {
-        assertThat(capturedCapabilityBean().getKey(), is(equalTo(ADDON_KEY)));
+        verify(moduleDescriptorFactory(), times(1)).createModuleDescriptor(eq(plugin), eq(bundleContext), argThat(hasAddonKeyValue(ADDON_KEY)));
     }
 
     @Test
     public void capabilityBeanHasCorrectName()
     {
-        assertThat(capturedCapabilityBean().getName().getValue(), is(equalTo(ADDON_NAME)));
+        verify(moduleDescriptorFactory(), times(1)).createModuleDescriptor(eq(plugin), eq(bundleContext), argThat(hasAddonNameValue(ADDON_NAME)));
     }
 
     @Test
     public void capabilityBeanHasCorrectI18NameKey()
     {
-        assertThat(capturedCapabilityBean().getName().getI18n(), is(equalTo(ADDON_I18_NAME_KEY)));
+        verify(moduleDescriptorFactory(), times(1)).createModuleDescriptor(eq(plugin), eq(bundleContext), argThat(hasAddonNameI18KeyValue(ADDON_I18_NAME_KEY)));
     }
 
     @Test
     public void capabilityBeanHasCorrectUrl()
     {
-        assertThat(capturedCapabilityBean().getUrl(), is(equalTo(ADDON_URL)));
+        verify(moduleDescriptorFactory(), times(1)).createModuleDescriptor(eq(plugin), eq(bundleContext), argThat(hasUrlValue(ADDON_URL)));
     }
 
     @Test
     public void capabilityBeanHasCorrectWeight()
     {
-        assertThat(capturedCapabilityBean().getWeight(), is(equalTo(WEIGHT)));
+        verify(moduleDescriptorFactory(), times(1)).createModuleDescriptor(eq(plugin), eq(bundleContext), argThat(hasWeightValue(WEIGHT)));
     }
 
     protected abstract AbstractConnectTabPanelCapabilityBean createCapabilityBean();
 
     protected abstract AbstractConnectTabPanelModuleProvider createProvider();
 
-    private AbstractConnectTabPanelCapabilityBean capturedCapabilityBean()
-    {
-        List<ModuleDescriptor> moduleDescriptors = createProvider().provideModules(plugin, bundleContext, ImmutableList.of(bean));
-
-        assertThat(moduleDescriptors, contains(descriptor));
-
-        ArgumentCaptor<AbstractConnectTabPanelCapabilityBean> argumentCaptor = ArgumentCaptor.forClass(AbstractConnectTabPanelCapabilityBean.class);
-        verify(moduleDescriptorFactory, times(1)).createModuleDescriptor(eq(plugin), eq(bundleContext), argumentCaptor.capture());
-        return argumentCaptor.getValue();
-    }
-
     private List<ModuleDescriptor> providedModules()
     {
         return createProvider().provideModules(plugin, bundleContext, ImmutableList.of(bean));
     }
 
+    private T moduleDescriptorFactory()
+    {
+        providedModules();
+        return moduleDescriptorFactory;
+    }
 }
