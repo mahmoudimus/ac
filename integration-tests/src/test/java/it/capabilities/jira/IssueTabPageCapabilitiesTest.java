@@ -1,4 +1,4 @@
-package it.jira;
+package it.capabilities.jira;
 
 import com.atlassian.jira.functest.framework.FunctTestConstants;
 import com.atlassian.jira.rest.api.issue.IssueFields;

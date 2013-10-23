@@ -1,29 +1,29 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
-import com.atlassian.jira.plugin.issuetabpanel.IssueTabPanel;
+import com.atlassian.jira.plugin.projectpanel.ProjectTabPanel;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.AbstractConnectTabPanelCapabilityBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectProjectTabPanelCapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAutowireUtil;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectIssueTabPanelCapabilityBean.newIssueTabPanelBean;
 
-public class ConnectIssueTabPanelModuleDescriptorFactoryTest extends AbstractConnectTabPanelModuleDescriptorFactoryTest
+public class ConnectProjectTabPanelModuleDescriptorFactoryTest extends AbstractConnectTabPanelModuleDescriptorFactoryTest
 {
-    public ConnectIssueTabPanelModuleDescriptorFactoryTest()
+    public ConnectProjectTabPanelModuleDescriptorFactoryTest()
     {
-        super(ConnectIssueTabPanelModuleDescriptor.class, IssueTabPanel.class);
+        super(ConnectProjectTabPanelModuleDescriptor.class, ProjectTabPanel.class);
     }
 
     @Override
     protected AbstractConnectTabPanelModuleDescriptorFactory createDescriptorFactory(ConnectAutowireUtil connectAutowireUtil)
     {
-        return new ConnectIssueTabPanelModuleDescriptorFactory(connectAutowireUtil);
+        return new ConnectProjectTabPanelModuleDescriptorFactory(connectAutowireUtil);
     }
 
     @Override
     protected AbstractConnectTabPanelCapabilityBean createCapabilityBean(String name, String i18NameKey, String url, int weight)
     {
-        return newIssueTabPanelBean()
+        return ConnectProjectTabPanelCapabilityBean.newProjectTabPanelBean()
                 .withName(new I18nProperty(name, i18NameKey))
                 .withUrl(url)
                 .withWeight(weight)

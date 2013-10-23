@@ -497,11 +497,18 @@
                 <version>${gson.version}</version>
             </dependency>
 
+            <!-- Only exists for qunit -->
+            <dependency>
+                <groupId>com.atlassian.aui</groupId>
+                <artifactId>auiplugin</artifactId>
+                <version>${aui.version}</version>
+                <scope>test</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <dependencies></dependencies>
-    <!-- REMOVE WHEN JGITFLOW IS FINAL -->
     <pluginRepositories>
+        <!-- REMOVE WHEN JGITFLOW IS FINAL -->
         <pluginRepository>
             <id>snapshots-repo</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
@@ -511,6 +518,11 @@
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
+        </pluginRepository>
+        <pluginRepository>
+            <id>mulesoft-releases</id>
+            <name>MuleSoft Repository</name>
+            <url>https://repository.mulesoft.org/releases</url>
         </pluginRepository>
     </pluginRepositories>
     <properties>
@@ -543,6 +555,9 @@
         <atlassian.webresource.version>2.14.0-m5</atlassian.webresource.version>
         <atlassian.webfragments.version>3.0.0-m7</atlassian.webfragments.version>
         <atlassian.html.encoder.version>1.4</atlassian.html.encoder.version>
+        <aui.version>5.2</aui.version>
+        <webdriver.browser>chrome</webdriver.browser>
+
         <guava.version>10.0.1</guava.version>
         <jetty.version>8.1.7.v20120910</jetty.version>
         <json-simple.version>1.1.1</json-simple.version>

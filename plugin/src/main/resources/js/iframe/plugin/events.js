@@ -7,7 +7,7 @@ AP.define("events", ["_dollar", "_rpc"], function ($, rpc) {
     // itself isn't actually created until the XdmRpc object is constructed, which hasn't happened yet at this point;
     // see the jsdoc in ../_events.js for API docs
     var apis = {};
-    $.each(["listeners", "on", "once", "onAny", "off", "offAll", "offAny", "active", "emit"], function (_, name) {
+    $.each(["on", "once", "onAny", "off", "offAll", "offAny", "emit"], function (_, name) {
       apis[name] = function () {
         var events = remote.events;
         events[name].apply(events, arguments);
