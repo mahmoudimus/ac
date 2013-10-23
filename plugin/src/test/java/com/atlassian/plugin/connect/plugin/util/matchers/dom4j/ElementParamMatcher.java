@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.plugin.util.matchers;
+package com.atlassian.plugin.connect.plugin.util.matchers.dom4j;
 
 import com.google.common.base.Objects;
 import org.dom4j.Element;

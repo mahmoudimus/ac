@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.plugin.util.matchers;
+package com.atlassian.plugin.connect.plugin.util.matchers.dom4j;
 
 import org.dom4j.Element;
 
