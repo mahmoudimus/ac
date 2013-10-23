@@ -3,11 +3,11 @@ package com.atlassian.plugin.connect.plugin.module.jira.projecttab;
 import com.atlassian.jira.plugin.projectpanel.ProjectTabPanel;
 import com.atlassian.jira.plugin.projectpanel.ProjectTabPanelModuleDescriptor;
 import com.atlassian.jira.project.browse.BrowseContext;
-import com.atlassian.plugin.connect.plugin.module.IFrameRendererImpl;
 import com.atlassian.plugin.connect.plugin.module.jira.AbstractIFrameTab;
 import com.atlassian.plugin.connect.plugin.module.jira.context.serializer.ProjectSerializer;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.spi.module.IFrameContext;
+import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
 import com.atlassian.plugin.web.Condition;
 import com.google.common.collect.ImmutableMap;
 
@@ -20,7 +20,7 @@ public class IFrameProjectTab extends AbstractIFrameTab<ProjectTabPanelModuleDes
 {
     private final ProjectSerializer projectSerializer;
 
-    public IFrameProjectTab(IFrameContext iFrameContext, IFrameRendererImpl iFrameRenderer, Condition condition, UrlVariableSubstitutor urlVariableSubstitutor, ProjectSerializer projectSerializer)
+    public IFrameProjectTab(IFrameContext iFrameContext, IFrameRenderer iFrameRenderer, Condition condition, UrlVariableSubstitutor urlVariableSubstitutor, ProjectSerializer projectSerializer)
     {
         super(urlVariableSubstitutor, iFrameContext, iFrameRenderer, condition);
         this.projectSerializer = projectSerializer;

@@ -22,12 +22,12 @@
                 "authorizeUrl": ""
             }
         },
-        "issueTabPanels": {
+        "versionTabPanels": {
             "url": "/my-general-page",
             "weight": 100,
             "name": {
-                "value": "My Issue Tab Page",
-                "i18n": "my.issueTabPage"
+                "value": "My Version Tab Page",
+                "i18n": "my.versionTabPage"
             }
         }
     }
