@@ -74,7 +74,6 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
     private final PluginRetrievalService pluginRetrievalService;
     private final OSWorkflowConfigurator workflowConfigurator;
     private final ModuleDescriptorWebHookListenerRegistry webHookConsumerRegistry;
-    private final UrlVariableSubstitutor urlVariableSubstitutor;
     private final UrlValidator urlValidator;
 
     private URI triggeredUri;
@@ -89,7 +88,6 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
             final TemplateRenderer templateRenderer,
             final WebResourceUrlProvider webResourceUrlProvider,
             final PluginRetrievalService pluginRetrievalService,
-            final UrlVariableSubstitutor urlVariableSubstitutor,
             final UrlValidator urlValidator,
             final DelegatingComponentAccessor componentAccessor)
     {
@@ -101,7 +99,6 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
         this.templateRenderer = checkNotNull(templateRenderer);
         this.webResourceUrlProvider = checkNotNull(webResourceUrlProvider);
         this.pluginRetrievalService = checkNotNull(pluginRetrievalService);
-        this.urlVariableSubstitutor = checkNotNull(urlVariableSubstitutor);
         this.urlValidator = checkNotNull(urlValidator);
         this.workflowConfigurator = checkNotNull(componentAccessor.getComponent(OSWorkflowConfigurator.class));
 
@@ -150,6 +147,7 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
     @Override
     public void enabled()
     {
+        super.enabled();
         //TODO: This should not be tied to the lifecycle of the add-on instance
         workflowConfigurator.registerTypeResolver(RemoteWorkflowPostFunctionProvider.class.getName(), remoteWorkflowTypeResolver);
         webHookConsumerRegistry.register(
@@ -171,13 +169,8 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
                 getTriggeredUri(),
                 new PluginModuleListenerParameters(plugin.getKey(), Optional.of(getKey()), ImmutableMap.<String, Object>of(), RemoteWorkflowPostFunctionEvent.REMOTE_WORKFLOW_POST_FUNCTION_EVENT_ID)
         );
+        super.disabled();
     }
-
-//    @Override
-//    protected WorkflowPluginFunctionFactory createModule()
-//    {
-//        return new RemoteWorkflowFunctionPluginFactory();
-//    }
 
     @Override
     public void writeHtml(String resourceName, Map<String, ?> startingParams, Writer writer) throws IOException

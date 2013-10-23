@@ -23,7 +23,6 @@ import static org.apache.commons.lang.StringEscapeUtils.escapeHtml;
  */
 public class WorkflowPostFunctionModuleDescriptorFactory implements ConnectModuleDescriptorFactory<WorkflowPostFunctionCapabilityBean, WorkflowFunctionModuleDescriptor>
 {
-
     private final ConnectAutowireUtil connectAutowireUtil;
 
     @Autowired
@@ -59,26 +58,24 @@ public class WorkflowPostFunctionModuleDescriptorFactory implements ConnectModul
 
         if (bean.hasView())
         {
-            element.addElement("resource")
-                    .addAttribute("name", RESOURCE_NAME_VIEW)
-                    .addAttribute("type", RESOURCE_TYPE_VELOCITY)
-                    .addAttribute("location", bean.getView().getUrl());
+            addResource(element, RESOURCE_NAME_VIEW, bean.getView().getUrl());
         }
         if (bean.hasEdit())
         {
-            element.addElement("resource")
-                    .addAttribute("name", RESOURCE_NAME_EDIT_PARAMETERS)
-                    .addAttribute("type", RESOURCE_TYPE_VELOCITY)
-                    .addAttribute("location", bean.getEdit().getUrl());
+            addResource(element, RESOURCE_NAME_EDIT_PARAMETERS, bean.getEdit().getUrl());
         }
         if (bean.hasCreate())
         {
-            element.addElement("resource")
-                    .addAttribute("name", RESOURCE_NAME_INPUT_PARAMETERS)
-                    .addAttribute("type", RESOURCE_TYPE_VELOCITY)
-                    .addAttribute("location", bean.getCreate().getUrl());
+            addResource(element, RESOURCE_NAME_INPUT_PARAMETERS, bean.getCreate().getUrl());
         }
         return element;
     }
 
+    private void addResource(Element element, String resourceName, String url)
+    {
+        element.addElement("resource")
+                .addAttribute("name", resourceName)
+                .addAttribute("type", RESOURCE_TYPE_VELOCITY)
+                .addAttribute("location", url);
+    }
 }
