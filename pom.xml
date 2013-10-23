@@ -512,12 +512,12 @@
         <atlassian.applinks.version>4.0.2</atlassian.applinks.version>
         <atlassian.confluence.version>5.3-OD-6</atlassian.confluence.version>
         <atlassian.fugue.version>1.1</atlassian.fugue.version>
-        <atlassian.httpclient.version>0.17.0-m06-ACDEV-250</atlassian.httpclient.version>
+        <atlassian.httpclient.version>0.17.0</atlassian.httpclient.version>
         <atlassian.httpclient.api.version>0.17</atlassian.httpclient.api.version>
         <atlassian.jira.version>6.1-OD-06-1</atlassian.jira.version>
         <atlassian.jira.modules.version>6.1.5</atlassian.jira.modules.version>
         <atlassian.jira.rest.version>${atlassian.jira.modules.version}</atlassian.jira.rest.version>
-        <atlassian.jira.webhooks.version>1.2.5-ACDEV-250-m03</atlassian.jira.webhooks.version>
+        <atlassian.jira.webhooks.version>1.2.5</atlassian.jira.webhooks.version>
         <atlassian.mail.version>2.4.1</atlassian.mail.version>
         <atlassian.oauth.version>1.3.0</atlassian.oauth.version>
         <atlassian.jwt.version>1.0-m0</atlassian.jwt.version>
@@ -530,7 +530,7 @@
         <atlassian.upm.version>2.13.2</atlassian.upm.version>
         <atlassian.uri.version>0.1</atlassian.uri.version>
         <atlassian-util-concurrent.version>2.4.0</atlassian-util-concurrent.version>
-        <atlassian.webhooks.version>0.17.0-m04-ACDEV-250</atlassian.webhooks.version>
+        <atlassian.webhooks.version>0.17.0</atlassian.webhooks.version>
         <atlassian.webhooks.api.version>0.17</atlassian.webhooks.api.version>
         <atlassian.webresource.version>2.14.0-m5</atlassian.webresource.version>
         <atlassian.webfragments.version>3.0.0-m7</atlassian.webfragments.version>
