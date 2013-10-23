@@ -17,6 +17,7 @@ import com.atlassian.plugin.connect.spi.PermissionDeniedException;
 import com.atlassian.plugin.descriptors.UnloadableModuleDescriptor;
 import com.atlassian.plugin.descriptors.UnrecognisedModuleDescriptor;
 import com.atlassian.plugin.util.WaitUntil;
+import com.atlassian.upm.spi.PluginInstallException;
 
 import org.dom4j.Document;
 import org.osgi.framework.BundleContext;
@@ -118,6 +119,10 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
             return installedPlugin;
 
         }
+        catch (PluginInstallException e)
+        {
+            throw e;
+        }
         catch (Exception e)
         {
             throw new InstallationFailedException(e.getCause() != null ? e.getCause() : e);
@@ -193,9 +198,10 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
             {
                 remoteEventsHandler.pluginInstalled(pluginKey);
             }
-            catch (Exception e)
+            catch (PluginInstallException e)
             {
                 pluginController.uninstall(installedPlugin);
+                throw e;
             }
             
 
@@ -216,6 +222,10 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
                     new Object[]{pluginKey, username, ex.getMessage()});
             log.debug("Installation failed due to installation issue", ex);
             throw ex;
+        }
+        catch (PluginInstallException e)
+        {
+            throw e;
         }
         catch (Exception e)
         {
