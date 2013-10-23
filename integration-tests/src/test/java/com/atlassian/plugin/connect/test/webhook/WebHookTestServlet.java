@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.test.webhook;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeUnit;
@@ -31,12 +32,14 @@ public final class WebHookTestServlet extends HttpServlet
         {
             try
             {
-                webHooksQueue.push(new JsonWebHookBody(JSON.parse(IOUtils.toString(req.getReader()))));
+                webHooksQueue.push(new JsonWebHookBody(getFullURL(req),JSON.parse(IOUtils.toString(req.getReader()))));
+                resp.getWriter().write("OKEY DOKEY");
             }
             catch (ParserException e)
             {
                 throw new ServletException(e);
             }
+            
         }
     }
 
@@ -68,6 +71,39 @@ public final class WebHookTestServlet extends HttpServlet
         runner.stop();
     }
 
+    public static void runSyncInRunner(String baseUrl, String eventId, WebHookTester tester) throws Exception
+    {
+        final String path = "/webhook";
+        final WebHookTestServlet servlet = new WebHookTestServlet();
+        AtlassianConnectAddOnRunner runner = new AtlassianConnectAddOnRunner(baseUrl, eventId)
+                .addInfoParam(eventId,path)
+                .addRoute(path,servlet)
+                .start();
+
+        tester.test(new WebHookWaiter()
+        {
+            @Override
+            public WebHookBody waitForHook() throws Exception
+            {
+                return servlet.waitForHook();
+            }
+        });
+
+        runner.stop();
+    }
+
+    public static String getFullURL(HttpServletRequest request) 
+    {
+        StringBuffer requestURL = request.getRequestURL();
+        String queryString = request.getQueryString();
+
+        if (queryString == null) {
+            return requestURL.toString();
+        } else {
+            return requestURL.append('?').append(queryString).toString();
+        }
+    }
+
     public WebHookBody waitForHook() throws InterruptedException
     {
         return webHooksQueue.poll(5, TimeUnit.SECONDS);
@@ -76,9 +112,11 @@ public final class WebHookTestServlet extends HttpServlet
     private static final class JsonWebHookBody implements WebHookBody
     {
         private volatile JSON body;
+        private volatile String requestURI;
 
-        private JsonWebHookBody(JSON body)
+        private JsonWebHookBody(String requestURI, JSON body)
         {
+            this.requestURI = requestURI;
             this.body = body;
         }
 
@@ -96,6 +134,12 @@ public final class WebHookTestServlet extends HttpServlet
             {
                 return value.toString();
             }
+        }
+
+        @Override
+        public URI getRequestURI() throws Exception
+        {
+            return new URI(requestURI);
         }
     }
 }

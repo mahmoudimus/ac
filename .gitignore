@@ -20,5 +20,6 @@ dependency-reduced-pom.xml
 .cache
 data
 apps
+node_modules
 
 build-number.txt
