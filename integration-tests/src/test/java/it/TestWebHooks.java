@@ -1,5 +1,10 @@
 package it;
 
+import java.net.URI;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.atlassian.plugin.connect.plugin.webhooks.PluginsWebHookProvider;
 import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
 import com.atlassian.plugin.connect.test.server.module.WebhookModule;
@@ -12,6 +17,7 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static org.junit.Assert.*;
 
 public final class TestWebHooks extends AbstractBrowserlessTest
@@ -145,9 +151,54 @@ public final class TestWebHooks extends AbstractBrowserlessTest
             {
                 final WebHookBody body = waiter.waitForHook();
                 assertWebHookBody(body, eventId);
+                assertUserInUrlParams(body);
+                assertUserInBody(body);
             }
         });
     }
+
+    private void assertUserInBody(WebHookBody body) throws Exception
+    {
+        assertNotNull(body.find("user_id"));
+        assertNotNull(body.find("user_key"));
+        assertEquals("admin", body.find("user_id"));
+    }
+
+    private void assertUserInUrlParams(WebHookBody body) throws Exception
+    {
+        assertNotNull(body);
+        URI uri = body.getRequestURI();
+
+        Map<String,String> params = parseQueryParams(uri.getQuery());
+        
+        assertTrue(params.containsKey("user_id"));
+        assertTrue(params.containsKey("user_key"));
+        
+        assertEquals("admin",params.get("user_id"));
+        
+    }
+
+    private Map<String, String> parseQueryParams(String query)
+    {
+        Map<String,String> params = new HashMap<String, String>();
+        String[] nvps = query.split("&");
+        
+        for(String nvp : nvps)
+        {
+            String[] param = nvp.split("=");
+            String val = "";
+            if(param.length > 1)
+            {
+                val = param[1];
+            }
+            
+            params.put(param[0],val);
+        }
+        
+        return params;
+    }
+
+    
 
     private void assertWebHookBody(final WebHookBody body, final String webHookId) throws Exception
     {
