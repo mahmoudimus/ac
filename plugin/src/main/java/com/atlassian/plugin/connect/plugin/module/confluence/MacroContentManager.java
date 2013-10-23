@@ -128,10 +128,12 @@ public class MacroContentManager implements DisposableBean
         }
         catch (ContentRetrievalException e)
         {
+            log.error("Could not render macro", e);
             return renderErrors(e.getErrors());
         }
         catch (Exception e)
         {
+            log.error("Could not render macro", e);
             return renderErrors(new ContentRetrievalErrors(ImmutableList.of("An unknown error occurred.")));
         }
     }
