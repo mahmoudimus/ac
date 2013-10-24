@@ -1,11 +1,19 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor.dom;
 
+import com.atlassian.plugin.connect.plugin.capabilities.beans.AbstractConnectTabPanelCapabilityBean;
+import com.atlassian.plugin.connect.spi.module.DynamicMarkerCondition;
 import com.atlassian.plugin.web.Condition;
+import com.google.common.base.Optional;
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
 
 import static org.apache.commons.lang.StringEscapeUtils.escapeHtml;
 
+/**
+ * A wrapper around the dom element for a tab panel descriptor so that only one place needs to know the structure of the dom.
+ * As the compiler won't enforce whether we have used the correct names for attributes / elements or that we have accessed
+ * an attribute as an element, the less places that do it the better
+ */
 public class TabPanelElement
 {
     private static final String KEY = "key";
@@ -15,6 +23,7 @@ public class TabPanelElement
     private static final String LABEL = "label";
     private static final String CLASS = "class";
     private static final String CONDITION = "condition";
+
     private final Element domElement;
 
     public TabPanelElement(String domElementName)
@@ -25,6 +34,27 @@ public class TabPanelElement
     public TabPanelElement(Element element)
     {
         this.domElement = element;
+    }
+
+    public TabPanelElement(String domElementName, AbstractConnectTabPanelCapabilityBean bean,
+                           Optional<? extends Class<?>> moduleClass)
+    {
+        this(domElementName);
+        String issueTabPageKey = bean.getKey();
+        String name = bean.getName().getValue();
+
+        setKey(issueTabPageKey);
+        setName(name);
+        setOrder(bean.getWeight());
+        setUrl(bean.getUrl());
+        setLabel(name, bean.getName().getI18n());
+        setCondition(DynamicMarkerCondition.class);
+
+        if (moduleClass.isPresent())
+        {
+            setModuleClass(moduleClass.get());
+        }
+
     }
 
     public void setKey(String value)

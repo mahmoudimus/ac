@@ -5,8 +5,8 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.AbstractConnectTabPanelCapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.dom.TabPanelElement;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAutowireUtil;
-import com.atlassian.plugin.connect.spi.module.DynamicMarkerCondition;
 import com.google.common.base.Optional;
+import org.dom4j.Element;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,31 +46,16 @@ public class AbstractConnectTabPanelModuleDescriptorFactory<B extends AbstractCo
     @Override
     public D createModuleDescriptor(Plugin plugin, BundleContext addonBundleContext, B bean)
     {
-        TabPanelElement tabPanelElement = new TabPanelElement(domElementName);
-
-        String issueTabPageKey = bean.getKey();
-        String name = bean.getName().getValue();
-
-        tabPanelElement.setKey(issueTabPageKey);
-        tabPanelElement.setName(name);
-        tabPanelElement.setOrder(bean.getWeight());
-        tabPanelElement.setUrl(bean.getUrl());
-        tabPanelElement.setLabel(name, bean.getName().getI18n());
-        tabPanelElement.setCondition(DynamicMarkerCondition.class);
-
-        if (moduleClass.isPresent())
-        {
-            tabPanelElement.setModuleClass(moduleClass.get());
-        }
+        Element tabPanelElement = new TabPanelElement(domElementName, bean, moduleClass).getElement();
 
         if (log.isDebugEnabled())
         {
-            log.debug("Created tab page: " + printNode(tabPanelElement.getElement()));
+            log.debug("Created tab page: " + printNode(tabPanelElement));
         }
 
         D descriptor = connectAutowireUtil.createBean(descriptorClass);
 
-        descriptor.init(plugin, tabPanelElement.getElement());
+        descriptor.init(plugin, tabPanelElement);
 
         return descriptor;
     }
