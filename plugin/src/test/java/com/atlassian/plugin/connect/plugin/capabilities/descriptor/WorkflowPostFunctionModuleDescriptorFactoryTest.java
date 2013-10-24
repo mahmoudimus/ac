@@ -13,7 +13,6 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.UrlBean;
 import com.atlassian.plugin.connect.plugin.capabilities.testobjects.ConnectAutowireUtilForTests;
 import com.atlassian.plugin.connect.plugin.capabilities.util.DelegatingComponentAccessor;
 import com.atlassian.plugin.connect.plugin.module.jira.workflow.RemoteWorkflowFunctionPluginFactory;
-import com.atlassian.plugin.connect.spi.module.IFrameContext;
 import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
 import com.atlassian.plugin.elements.ResourceDescriptor;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
@@ -23,9 +22,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.mockito.stubbing.Answer;
 import org.osgi.framework.BundleContext;
 
 import java.io.IOException;
@@ -37,13 +34,16 @@ import static com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants.RES
 import static com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants.RESOURCE_NAME_INPUT_PARAMETERS;
 import static com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants.RESOURCE_NAME_VIEW;
 import static com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants.RESOURCE_TYPE_VELOCITY;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.matchers.TestMatchers.hasIFramePath;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyMap;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -99,20 +99,6 @@ public class WorkflowPostFunctionModuleDescriptorFactoryTest
 
         when(moduleDescriptor.getResourceDescriptors()).thenReturn(Collections.<ResourceDescriptor>singletonList(resourceDescriptor));
         when(webResourceUrlProvider.getStaticPluginResourceUrl(any(ModuleDescriptor.class), anyString(), any(UrlMode.class))).thenReturn("test.js");
-
-        when(iFrameRenderer.render(any(IFrameContext.class), anyString(), anyMap(), anyString(), anyMap())).thenAnswer(
-                new Answer<String>()
-                {
-                    @Override
-                    public String answer(InvocationOnMock invocationOnMock) throws Throwable
-                    {
-                        Object[] arguments = invocationOnMock.getArguments();
-                        assertTrue(IFrameContext.class.isAssignableFrom(arguments[0].getClass()));
-                        IFrameContext context = (IFrameContext) arguments[0];
-                        return context.getIframePath();
-                    }
-                }
-        );
 
         wfPostFunctionFactory = new WorkflowPostFunctionModuleDescriptorFactory(connectAutowireUtil);
     }
@@ -312,7 +298,8 @@ public class WorkflowPostFunctionModuleDescriptorFactoryTest
         Map<String, String> startingParams = Collections.singletonMap(RemoteWorkflowFunctionPluginFactory.POST_FUNCTION_CONFIGURATION_UUID, uuid.toString());
 
         WorkflowFunctionModuleDescriptor descriptor = wfPostFunctionFactory.createModuleDescriptor(plugin, mock(BundleContext.class), bean);
-        String rendered = descriptor.getHtml(RESOURCE_NAME_VIEW, startingParams);
-        assertEquals("/view", rendered);
+
+        descriptor.getHtml(RESOURCE_NAME_VIEW, startingParams);
+        verify(iFrameRenderer).render(argThat(hasIFramePath("/view")), anyString(), anyMap(), anyString(), anyMap());
     }
 }
