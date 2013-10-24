@@ -15,6 +15,7 @@ import static com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants.RES
 import static com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants.RESOURCE_NAME_INPUT_PARAMETERS;
 import static com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants.RESOURCE_NAME_VIEW;
 import static com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants.RESOURCE_TYPE_VELOCITY;
+import static com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectWorkflowFunctionModuleDescriptor.TRIGGERED_URL;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.apache.commons.lang.StringEscapeUtils.escapeHtml;
 
@@ -54,7 +55,7 @@ public class WorkflowPostFunctionModuleDescriptorFactory implements ConnectModul
                 .addText(escapeHtml(bean.getDescription().getValue()))
                 .addAttribute("key", bean.getDescription().getI18n());
 
-        element.addAttribute("triggeredUrl", bean.getTriggered().getUrl());
+        element.addAttribute(TRIGGERED_URL, bean.getTriggered().getUrl());
 
         if (bean.hasView())
         {

@@ -1,10 +1,10 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
 import com.atlassian.event.api.EventPublisher;
-import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.plugin.ComponentClassManager;
 import com.atlassian.jira.plugin.workflow.WorkflowFunctionModuleDescriptor;
 import com.atlassian.jira.security.JiraAuthenticationContext;
+import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.workflow.OSWorkflowConfigurator;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
@@ -15,13 +15,11 @@ import com.atlassian.plugin.connect.plugin.module.jira.workflow.RemoteWorkflowPo
 import com.atlassian.plugin.connect.plugin.module.jira.workflow.RemoteWorkflowPostFunctionProvider;
 import com.atlassian.plugin.connect.plugin.module.page.IFrameContextImpl;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlValidator;
-import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.plugin.product.jira.JiraRestBeanMarshaler;
 import com.atlassian.plugin.connect.spi.module.IFrameContext;
 import com.atlassian.plugin.connect.spi.module.IFrameParams;
 import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
 import com.atlassian.plugin.elements.ResourceDescriptor;
-import com.atlassian.plugin.elements.ResourceLocation;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.webresource.UrlMode;
@@ -44,18 +42,17 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
 import java.util.UUID;
 
-import static com.atlassian.plugin.connect.plugin.module.jira.workflow.RemoteWorkflowFunctionPluginFactory.POST_FUNCTION_CONFIGURATION;
-import static com.atlassian.plugin.connect.plugin.module.jira.workflow.RemoteWorkflowFunctionPluginFactory.POST_FUNCTION_CONFIGURATION_UUID;
 import static com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants.RESOURCE_NAME_EDIT_PARAMETERS;
 import static com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants.RESOURCE_NAME_INPUT_PARAMETERS;
 import static com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants.RESOURCE_NAME_VIEW;
 import static com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants.RESOURCE_TYPE_VELOCITY;
+import static com.atlassian.plugin.connect.plugin.module.jira.workflow.RemoteWorkflowFunctionPluginFactory.POST_FUNCTION_CONFIGURATION;
+import static com.atlassian.plugin.connect.plugin.module.jira.workflow.RemoteWorkflowFunctionPluginFactory.POST_FUNCTION_CONFIGURATION_UUID;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -63,10 +60,12 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionModuleDescriptor
 {
+    public static final String TRIGGERED_URL = "triggeredUrl";
     private static final Logger log = LoggerFactory.getLogger(ConnectWorkflowFunctionModuleDescriptor.class);
 
     private static final String POST_FUNCTION_EXTRA_MARKUP = "velocity/jira/workflow/post-function-extra-markup.vm";
 
+    private final JiraAuthenticationContext jiraAuthenticationContext;
     private final TypeResolver remoteWorkflowTypeResolver;
     private final IFrameRenderer iFrameRenderer;
     private final TemplateRenderer templateRenderer;
@@ -94,6 +93,7 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
         super(authenticationContext, componentAccessor.getComponent(OSWorkflowConfigurator.class),
                 componentAccessor.getComponent(ComponentClassManager.class), moduleFactory);
 
+        this.jiraAuthenticationContext = checkNotNull(authenticationContext);
         this.webHookConsumerRegistry = checkNotNull(webHookConsumerRegistry);
         this.iFrameRenderer = checkNotNull(iFrameRenderer);
         this.templateRenderer = checkNotNull(templateRenderer);
@@ -117,14 +117,14 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
         super.init(plugin, element);
         validateElement(element);
 
-        this.triggeredUri = URI.create(element.attributeValue("triggeredUrl"));
+        this.triggeredUri = URI.create(element.attributeValue(TRIGGERED_URL));
     }
 
     private void validateElement(Element element) throws PluginParseException
     {
         try
         {
-            urlValidator.validate(element.attributeValue("triggeredUrl"));
+            urlValidator.validate(element.attributeValue(TRIGGERED_URL));
             validateResourceLocation(RESOURCE_NAME_VIEW);
             validateResourceLocation(RESOURCE_NAME_EDIT_PARAMETERS);
             validateResourceLocation(RESOURCE_NAME_INPUT_PARAMETERS);
@@ -182,13 +182,15 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
     {
         try
         {
+            ApplicationUser user = jiraAuthenticationContext.getUser();
+            String userName = (user != null) ? user.getDisplayName() : "";
             UUID uuid = checkValidUUID((String) params.get(POST_FUNCTION_CONFIGURATION_UUID));
             IFrameContext iFrameContext = createIFrameContext(resourceName, params, uuid);
             return iFrameRenderer.render(
                     iFrameContext,
                     "",
                     ImmutableMap.of(POST_FUNCTION_CONFIGURATION_UUID, new String[]{uuid.toString()}),
-                    ComponentAccessor.getJiraAuthenticationContext().getUser().getDisplayName(),
+                    userName,
                     Collections.<String, Object>emptyMap());
         }
         catch (IOException e)
@@ -207,9 +209,13 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
         IFrameParams iFrameParams = createIFrameParams(params, uuid);
         String namespace = getKey() + uuid;
         ResourceDescriptor resource = getResourceDescriptor(RESOURCE_TYPE_VELOCITY, resourceName);
-        if (null == resource || null == resource.getLocation())
+        if (null == resource)
         {
-            throw new IllegalArgumentException("Illegal resourceName specified or no location registered");
+            throw new IllegalArgumentException("Check the XML initialization element. No resource found for: " + resourceName);
+        }
+        if (null == resource.getLocation())
+        {
+            throw new IllegalArgumentException("Check the XML initialization element. No location registered for: " + resourceName);
         }
         return new IFrameContextImpl(getPluginKey(), resource.getLocation(), namespace, iFrameParams);
     }
