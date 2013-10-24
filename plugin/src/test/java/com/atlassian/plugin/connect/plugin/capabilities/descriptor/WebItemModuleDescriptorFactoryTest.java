@@ -84,7 +84,7 @@ public class WebItemModuleDescriptorFactoryTest
     }
 
     @Test
-    public void setionIsCorrect()
+    public void sectionIsCorrect()
     {
         assertThat(descriptor.getSection(), is("atl.admin/menu"));
     }
