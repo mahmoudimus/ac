@@ -32,11 +32,11 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ConnectComponentTabPanelModuleDescriptorTest
+public class ConnectComponentTabPanelModuleDescriptorTest extends AbstractConnectTabPanelModuleDescriptorTest<ComponentTabPanel>
 {
     private static final String ADDON_HTML_CONTENT = "the content goes here";
     private static final String ADDON_NAME = "My Component Tab Page";
-    private static final String ADDON_URL = "http://blah";
+    private static final String ADDON_URL = "http://blah?my_project_id=${project.id}&my_project_key=${project.key}";
     private static final String ADDON_KEY = "my-component-tab-page";
     private static final String ADDON_I18_NAME = "My Plugin i18";
     private static final Element ISSUE_TAB_PAGE_ELEMENT = createElement();
@@ -49,9 +49,6 @@ public class ConnectComponentTabPanelModuleDescriptorTest
 
     @Mock
     private IFrameRenderer iFrameRenderer;
-
-    @Mock
-    private UrlVariableSubstitutor urlVariableSubstitutor;
 
     @Mock
     private JiraAuthenticationContext jiraAuthenticationContext;
@@ -98,7 +95,8 @@ public class ConnectComponentTabPanelModuleDescriptorTest
         assertThat(module.getHtml(browseComponentContext), is(equalTo(ADDON_HTML_CONTENT)));
     }
 
-    private ConnectComponentTabPanelModuleDescriptor createDescriptor() throws IOException
+    @Override
+    protected ConnectComponentTabPanelModuleDescriptor createDescriptor() throws IOException
     {
         when(iFrameRenderer.render(any(IFrameContext.class), anyString())).thenReturn(ADDON_HTML_CONTENT);
         when(jiraAuthenticationContext.getI18nHelper()).thenReturn(i18nHelper);
@@ -109,10 +107,22 @@ public class ConnectComponentTabPanelModuleDescriptorTest
         when(project.getKey()).thenReturn("42"); // not sure why the deep stubs aren't mocking this
 
         ConnectComponentTabPanelModuleDescriptor descriptor = new ConnectComponentTabPanelModuleDescriptor(moduleFactory,
-                iFrameRenderer, urlVariableSubstitutor, jiraAuthenticationContext, urlValidator);
+                iFrameRenderer, new UrlVariableSubstitutor(), jiraAuthenticationContext, urlValidator);
         descriptor.init(PLUGIN, ISSUE_TAB_PAGE_ELEMENT);
         descriptor.enabled();
         return descriptor;
+    }
+
+    @Override
+    protected IFrameRenderer getIFrameRenderer()
+    {
+        return iFrameRenderer;
+    }
+
+    @Override
+    protected String getRawUrl()
+    {
+        return ADDON_URL;
     }
 
     private static Element createElement()

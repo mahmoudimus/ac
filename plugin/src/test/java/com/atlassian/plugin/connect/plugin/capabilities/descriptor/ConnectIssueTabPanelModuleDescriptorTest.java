@@ -29,26 +29,27 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.io.IOException;
 import java.util.List;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasProperty;
-import static org.hamcrest.Matchers.is;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.matchers.TestMatchers.hasIFramePath;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.when;
+import static org.mockito.Matchers.argThat;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ConnectIssueTabPanelModuleDescriptorTest
 {
     private static final String ADDON_HTML_CONTENT = "the content goes here";
     private static final String ADDON_NAME = "My Issue Tab Page";
-    private static final String ADDON_URL = "http://blah";
+    private static final String ADDON_URL = "http://blah?my_issue_key=${issue.key}";
     private static final String ADDON_KEY = "my-issue-tab-page";
     private static final String ADDON_I18_NAME = "My Plugin i18";
     private static final Element ISSUE_TAB_PAGE_ELEMENT = createElement();
     private static final String PLUGIN_KEY = "my-key";
     private static final String ADDON_LABEL_KEY = "My Plugin";
     private static final Plugin PLUGIN = new PluginForTests(PLUGIN_KEY, ADDON_LABEL_KEY);
+    private static final String ISSUE_KEY = "ABC-123";
 
     @Mock
     private ModuleFactory moduleFactory;
@@ -56,15 +57,11 @@ public class ConnectIssueTabPanelModuleDescriptorTest
     @Mock
     private IFrameRenderer iFrameRenderer;
     @Mock
-    private UrlVariableSubstitutor urlVariableSubstitutor;
-    @Mock
     private JiraAuthenticationContext jiraAuthenticationContext;
     @Mock
     private UrlValidator urlValidator;
     @Mock
     private ProjectSerializer projectSerializer;
-    @Mock
-    private IssueSerializer issueSerializer;
     @Mock
     private Issue issue;
     @Mock
@@ -115,18 +112,27 @@ public class ConnectIssueTabPanelModuleDescriptorTest
         assertThat(actions, Matchers.<IssueAction>contains(hasProperty("html", equalTo(ADDON_HTML_CONTENT))));
     }
 
+    @Test
+    @SuppressWarnings("unchecked")
+    public void rendersWithCorrectUrl() throws IOException
+    {
+        List<IssueAction> actions = createDescriptor().getModule().getActions(new GetActionsRequest(issue, mock(User.class), true, true, ""));
+        actions.get(0).getHtml();
+        String expectedUrl = ADDON_URL.replace("${issue.key}", ISSUE_KEY);
+        verify(iFrameRenderer).render(argThat(hasIFramePath(expectedUrl)), anyString());
+    }
+
     private ConnectIssueTabPanelModuleDescriptor createDescriptor() throws IOException
     {
         when(projectSerializer.serialize(any(Project.class))).thenReturn(ImmutableMap.<String, Object>of());
-        when(issueSerializer.serialize(any(Issue.class))).thenReturn(ImmutableMap.<String, Object>of());
         when(iFrameRenderer.render(any(IFrameContext.class), anyString())).thenReturn(ADDON_HTML_CONTENT);
-        when(issue.getKey()).thenReturn("ABC-123");
+        when(issue.getKey()).thenReturn(ISSUE_KEY);
         when(jiraAuthenticationContext.getI18nHelper()).thenReturn(i18nHelper);
         when(i18nHelper.getText(ADDON_LABEL_KEY)).thenReturn(ADDON_I18_NAME);
 
         ConnectIssueTabPanelModuleDescriptor descriptor = new ConnectIssueTabPanelModuleDescriptor(moduleFactory,
-                iFrameRenderer, urlVariableSubstitutor, jiraAuthenticationContext, urlValidator, projectSerializer,
-                issueSerializer);
+                iFrameRenderer, new UrlVariableSubstitutor(), jiraAuthenticationContext, urlValidator, projectSerializer,
+                new IssueSerializer());
         descriptor.init(PLUGIN, ISSUE_TAB_PAGE_ELEMENT);
 
         return descriptor;
