@@ -3,18 +3,16 @@ package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.AbstractConnectTabPanelCapabilityBean;
+import com.atlassian.plugin.connect.plugin.capabilities.descriptor.dom.TabPanelElement;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAutowireUtil;
 import com.atlassian.plugin.connect.spi.module.DynamicMarkerCondition;
 import com.google.common.base.Optional;
-import org.dom4j.Element;
-import org.dom4j.dom.DOMElement;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.printNode;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.apache.commons.lang.StringEscapeUtils.escapeHtml;
 
 /**
  * Base class for connect TabPanel module descriptor factories
@@ -48,34 +46,31 @@ public class AbstractConnectTabPanelModuleDescriptorFactory<B extends AbstractCo
     @Override
     public D createModuleDescriptor(Plugin plugin, BundleContext addonBundleContext, B bean)
     {
-        Element domElement = new DOMElement(domElementName);
+        TabPanelElement tabPanelElement = new TabPanelElement(domElementName);
 
         String issueTabPageKey = bean.getKey();
+        String name = bean.getName().getValue();
 
-        domElement.addAttribute("key", issueTabPageKey);
-        domElement.addElement("order").setText(Integer.toString(bean.getWeight()));
-        domElement.addAttribute("url", bean.getUrl());
-        domElement.addAttribute("name", bean.getName().getValue());
-
-        domElement.addElement("label")
-                .addAttribute("key", escapeHtml(bean.getName().getI18n()))
-                .setText(escapeHtml(bean.getName().getValue()));
-
-        domElement.addElement("condition").addAttribute("class", DynamicMarkerCondition.class.getName());
+        tabPanelElement.setKey(issueTabPageKey);
+        tabPanelElement.setName(name);
+        tabPanelElement.setOrder(bean.getWeight());
+        tabPanelElement.setUrl(bean.getUrl());
+        tabPanelElement.setLabel(name, bean.getName().getI18n());
+        tabPanelElement.setCondition(DynamicMarkerCondition.class);
 
         if (moduleClass.isPresent())
         {
-            domElement.addAttribute("class", moduleClass.get().getName());
+            tabPanelElement.setModuleClass(moduleClass.get());
         }
 
         if (log.isDebugEnabled())
         {
-            log.debug("Created tab page: " + printNode(domElement));
+            log.debug("Created tab page: " + printNode(tabPanelElement.getElement()));
         }
 
         D descriptor = connectAutowireUtil.createBean(descriptorClass);
 
-        descriptor.init(plugin, domElement);
+        descriptor.init(plugin, tabPanelElement.getElement());
 
         return descriptor;
     }
