@@ -44,7 +44,7 @@ public class WebItemCapabilityBeanMatchers extends NameToKeyBeanMatchers
         };
     }
 
-    public static <T extends WebItemCapabilityBean> ArgumentMatcher<T> hasLocationValue(int expectedValue)
+    public static <T extends WebItemCapabilityBean> ArgumentMatcher<T> hasLocationValue(String expectedValue)
     {
         return new WebItemCapabilityBeanParamMatcher<T>("location", expectedValue)
         {

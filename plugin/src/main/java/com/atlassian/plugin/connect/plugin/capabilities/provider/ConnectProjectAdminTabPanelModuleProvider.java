@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
+import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectProjectAdminTabPanelCapabilityBean;
@@ -7,7 +8,8 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityB
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.IFramePageServletDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.RelativeAddOnUrlConverter;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
-import com.atlassian.plugin.web.conditions.AlwaysDisplayCondition;
+import com.atlassian.plugin.connect.plugin.module.jira.conditions.IsProjectAdminCondition;
+import com.atlassian.plugin.web.Condition;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import org.osgi.framework.BundleContext;
@@ -23,17 +25,21 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class ConnectProjectAdminTabPanelModuleProvider implements ConnectModuleProvider<ConnectProjectAdminTabPanelCapabilityBean>
 {
+    private static final String TEMPLATE_SUFFIX = "-project-admin";
+    private static final String ADMIN_ACTIVE_TAB = "adminActiveTab";
     private final WebItemModuleDescriptorFactory webItemModuleDescriptorFactory;
     private final IFramePageServletDescriptorFactory servletDescriptorFactory;
     private final RelativeAddOnUrlConverter relativeAddOnUrlConverter;
+    private final Condition condition;
 
     public ConnectProjectAdminTabPanelModuleProvider(WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
                                                      IFramePageServletDescriptorFactory servletDescriptorFactory,
-                                                     RelativeAddOnUrlConverter relativeAddOnUrlConverter)
+                                                     RelativeAddOnUrlConverter relativeAddOnUrlConverter, JiraAuthenticationContext authenticationContext)
     {
         this.webItemModuleDescriptorFactory = checkNotNull(webItemModuleDescriptorFactory);
         this.servletDescriptorFactory = checkNotNull(servletDescriptorFactory);
         this.relativeAddOnUrlConverter = checkNotNull(relativeAddOnUrlConverter);
+        this.condition = new IsProjectAdminCondition(checkNotNull(authenticationContext));
     }
 
     @Override
@@ -48,9 +54,9 @@ public class ConnectProjectAdminTabPanelModuleProvider implements ConnectModuleP
             WebItemCapabilityBean webItemCapabilityBean = createWebItemCapabilityBean(bean, localUrl);
             builder.add(webItemModuleDescriptorFactory.createModuleDescriptor(plugin, addonBundleContext, webItemCapabilityBean));
 
-            // TODO: what is the right decorator???
             builder.add(servletDescriptorFactory.createIFrameServletDescriptor(plugin, webItemCapabilityBean, localUrl,
-                    bean.getUrl(), bean.getAbsoluteLocation(), "", new AlwaysDisplayCondition(), ImmutableMap.<String, String>of()));
+                    bean.getUrl(), "", TEMPLATE_SUFFIX, condition,
+                    ImmutableMap.<String, String>of(ADMIN_ACTIVE_TAB, bean.getKey())));
         }
 
         return builder.build();
@@ -63,7 +69,7 @@ public class ConnectProjectAdminTabPanelModuleProvider implements ConnectModuleP
                 .withName(bean.getName())
                 .withKey(bean.getKey())
                 .withLink(localUrl)
-                .withLocation(bean.getLocation())
+                .withLocation(bean.getAbsoluteLocation())
                 .withWeight(bean.getWeight())
                 .build();
     }
