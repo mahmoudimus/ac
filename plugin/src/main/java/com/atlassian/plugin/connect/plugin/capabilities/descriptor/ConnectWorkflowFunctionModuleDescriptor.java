@@ -28,6 +28,7 @@ import com.atlassian.templaterenderer.TemplateRenderer;
 import com.atlassian.webhooks.spi.provider.ModuleDescriptorWebHookListenerRegistry;
 import com.atlassian.webhooks.spi.provider.PluginModuleListenerParameters;
 import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.opensymphony.workflow.FunctionProvider;
@@ -183,14 +184,14 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
         try
         {
             ApplicationUser user = jiraAuthenticationContext.getUser();
-            String userName = (user != null) ? user.getDisplayName() : "";
+            Preconditions.checkNotNull(user);
             UUID uuid = checkValidUUID((String) params.get(POST_FUNCTION_CONFIGURATION_UUID));
             IFrameContext iFrameContext = createIFrameContext(resourceName, params, uuid);
             return iFrameRenderer.render(
                     iFrameContext,
                     "",
                     ImmutableMap.of(POST_FUNCTION_CONFIGURATION_UUID, new String[]{uuid.toString()}),
-                    userName,
+                    user.getDisplayName(),
                     Collections.<String, Object>emptyMap());
         }
         catch (IOException e)
