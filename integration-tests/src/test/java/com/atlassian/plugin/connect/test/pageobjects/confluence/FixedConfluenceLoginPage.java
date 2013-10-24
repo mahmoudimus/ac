@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 
 import com.atlassian.confluence.pageobjects.page.ConfluenceLoginPage;
+import com.atlassian.plugin.connect.test.BaseUrlLocator;
 import com.atlassian.plugin.connect.test.client.AtlassianConnectRestClient;
 import com.atlassian.plugin.connect.test.pageobjects.OwnerOfTestedProduct;
 
@@ -33,7 +34,7 @@ public class FixedConfluenceLoginPage extends ConfluenceLoginPage
     public void login(String username, String password, boolean rememberMe)
     {
         //ALL of this is a shitty hack to get around the licese reminder confluence pops up over the main nav
-        String baseUrl = OwnerOfTestedProduct.INSTANCE.getProductInstance().getBaseUrl();
+        String baseUrl = BaseUrlLocator.getBaseUrl();
         AtlassianConnectRestClient client = new AtlassianConnectRestClient(baseUrl,username,password);
         
         HttpPost post = new HttpPost(baseUrl + "/rest/stp/1.0/license/remindMeNever");

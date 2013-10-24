@@ -4,7 +4,6 @@ import com.atlassian.jira.plugin.issuetabpanel.AbstractIssueTabPanel3;
 import com.atlassian.jira.plugin.issuetabpanel.GetActionsRequest;
 import com.atlassian.jira.plugin.issuetabpanel.IssueAction;
 import com.atlassian.jira.plugin.issuetabpanel.ShowPanelRequest;
-import com.atlassian.plugin.connect.plugin.module.IFrameRendererImpl;
 import com.atlassian.plugin.connect.plugin.module.jira.context.serializer.IssueSerializer;
 import com.atlassian.plugin.connect.plugin.module.jira.context.serializer.ProjectSerializer;
 import com.atlassian.plugin.connect.plugin.module.page.IFrameContextImpl;
@@ -33,14 +32,14 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class IFrameIssueTab extends AbstractIssueTabPanel3
 {
     private static final Logger log = LoggerFactory.getLogger(IFrameIssueTab.class);
-    private final IFrameRendererImpl iFrameRenderer;
+    private final IFrameRenderer iFrameRenderer;
     private final Optional<Condition> condition;
     private final IFrameContext iFrameContext;
     private final UrlVariableSubstitutor urlVariableSubstitutor;
     private final ProjectSerializer projectSerializer;
     private final IssueSerializer issueSerializer;
 
-    public IFrameIssueTab(IFrameContext iFrameContext, IFrameRendererImpl iFrameRenderer, Optional<Condition> condition, UrlVariableSubstitutor urlVariableSubstitutor,
+    public IFrameIssueTab(IFrameContext iFrameContext, IFrameRenderer iFrameRenderer, Optional<Condition> condition, UrlVariableSubstitutor urlVariableSubstitutor,
             ProjectSerializer projectSerializer, IssueSerializer issueSerializer)
     {
         this.projectSerializer = checkNotNull(projectSerializer);

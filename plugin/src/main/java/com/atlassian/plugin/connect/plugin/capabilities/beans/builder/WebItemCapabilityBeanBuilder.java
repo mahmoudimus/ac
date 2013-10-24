@@ -17,7 +17,7 @@ public class WebItemCapabilityBeanBuilder extends NameToKeyBeanBuilder<WebItemCa
     private String link;
     private String location;
     private AddOnUrlContext context;
-    private int weight;
+    private Integer weight;
     private List<String> styleClasses;
     private I18nProperty tooltip;
     private IconBean icon;

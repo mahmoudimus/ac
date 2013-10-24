@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>fixture</title>
+    <script>
+    window.requireLoaded = function(){
+        AP.require("events", function (events) {
+            AP.resize(50, 60);
+            //set timeout is needed as resize takes 50ms to be executed...
+            setTimeout(function(){
+                events.emit("resized");
+            }, 60);
+        });
+    }
+    </script>
+    <script src="/base/src/test/resources/fixtures/require.js"></script>
+    <script src="/base/src/test/resources/fixtures/include-all.js"></script>
+</head>
+<body>
+</body>
+</html>

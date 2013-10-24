@@ -38,6 +38,19 @@
     <component key="webItemModuleDescriptorFactory" class="com.atlassian.plugin.connect.plugin.module.webitem.JiraWebItemModuleDescriptorFactory"
                interface="com.atlassian.plugin.connect.plugin.module.webitem.WebItemModuleDescriptorFactory" />
 
+    <component key="workflowPostFunctionModuleProvider"
+               class="com.atlassian.plugin.connect.plugin.capabilities.provider.WorkflowPostFunctionModuleProvider"
+               interface="com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectModuleProvider"/>
+    <component key="workflowPostFunctionModuleDescriptorFactory"
+               class="com.atlassian.plugin.connect.plugin.capabilities.descriptor.WorkflowPostFunctionModuleDescriptorFactory"
+               interface="com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectModuleDescriptorFactory"/>
+
+    <component key="connectIssueTabPanelModuleDescriptorFactory" class="com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectIssueTabPanelModuleDescriptorFactory" />
+    <component key="connectIssueTabPanelModuleProvider" class="com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectIssueTabPanelModuleProvider" />
+
+    <component key="connectVersionTabPanelModuleDescriptorFactory" class="com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectVersionTabPanelModuleDescriptorFactory" />
+    <component key="connectVersionTabPanelModuleProvider" class="com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectVersionTabPanelModuleProvider" />
+
     <rest key="rest" path="/atlassian-connect" version="1">
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>INCLUDE</dispatcher>

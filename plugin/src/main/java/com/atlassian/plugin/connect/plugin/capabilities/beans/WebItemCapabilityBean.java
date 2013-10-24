@@ -133,7 +133,7 @@ public class WebItemCapabilityBean extends NameToKeyBean
 
     public boolean isAbsolute()
     {
-        return (null != getLink() && getLink().startsWith("http"));    
+        return (null != getLink() && getLink().toLowerCase().startsWith("http"));
     }
     
     public static WebItemCapabilityBeanBuilder newWebItemBean()
