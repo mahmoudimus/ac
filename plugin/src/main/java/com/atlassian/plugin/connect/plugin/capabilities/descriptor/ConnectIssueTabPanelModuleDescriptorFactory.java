@@ -12,9 +12,10 @@ public class ConnectIssueTabPanelModuleDescriptorFactory
         extends AbstractConnectTabPanelModuleDescriptorFactory<ConnectIssueTabPanelCapabilityBean, ConnectIssueTabPanelModuleDescriptor>
 {
     private static final String ISSUE_TAB_PAGE = "issue-tab-page";
+    static final String MODULE_PREFIX = "issue-tab-"; // package visible for testing
 
     public ConnectIssueTabPanelModuleDescriptorFactory(ConnectAutowireUtil connectAutowireUtil)
     {
-        super(ConnectIssueTabPanelModuleDescriptor.class, ISSUE_TAB_PAGE, connectAutowireUtil, IssueTabPanel.class);
+        super(ConnectIssueTabPanelModuleDescriptor.class, ISSUE_TAB_PAGE, MODULE_PREFIX, connectAutowireUtil, IssueTabPanel.class);
     }
 }

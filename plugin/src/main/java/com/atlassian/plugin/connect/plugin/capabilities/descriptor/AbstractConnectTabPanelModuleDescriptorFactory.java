@@ -16,6 +16,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Base class for connect TabPanel module descriptor factories
+ *
  * @param <B> the type of capability bean
  * @param <D> the type of module descriptor
  */
@@ -26,19 +27,21 @@ public class AbstractConnectTabPanelModuleDescriptorFactory<B extends AbstractCo
     private final Class<D> descriptorClass;
     private final ConnectAutowireUtil connectAutowireUtil;
     private final Optional<? extends Class<?>> moduleClass;
+    private final String modulePrefix;
     private String domElementName;
 
-    public AbstractConnectTabPanelModuleDescriptorFactory(Class<D> descriptorClass, String domElementName, ConnectAutowireUtil connectAutowireUtil)
+    public AbstractConnectTabPanelModuleDescriptorFactory(Class<D> descriptorClass, String domElementName, String modulePrefix,
+                                                          ConnectAutowireUtil connectAutowireUtil)
     {
-        this(descriptorClass, domElementName, connectAutowireUtil, null);
+        this(descriptorClass, domElementName, modulePrefix, connectAutowireUtil, null);
     }
 
-    public AbstractConnectTabPanelModuleDescriptorFactory(Class<D> descriptorClass, String domElementName, ConnectAutowireUtil connectAutowireUtil,
-                                                          Class<?> moduleClass)
+    public AbstractConnectTabPanelModuleDescriptorFactory(Class<D> descriptorClass, String domElementName, String modulePrefix,
+                                                          ConnectAutowireUtil connectAutowireUtil, Class<?> moduleClass)
     {
-        this.domElementName = checkNotNull(domElementName);
-
         this.descriptorClass = checkNotNull(descriptorClass);
+        this.domElementName = checkNotNull(domElementName);
+        this.modulePrefix = checkNotNull(modulePrefix);
         this.connectAutowireUtil = checkNotNull(connectAutowireUtil);
         this.moduleClass = Optional.fromNullable(moduleClass);
     }
@@ -46,7 +49,7 @@ public class AbstractConnectTabPanelModuleDescriptorFactory<B extends AbstractCo
     @Override
     public D createModuleDescriptor(Plugin plugin, BundleContext addonBundleContext, B bean)
     {
-        Element tabPanelElement = new TabPanelElement(domElementName, bean, moduleClass).getElement();
+        Element tabPanelElement = new TabPanelElement(domElementName, modulePrefix, bean, moduleClass).getElement();
 
         if (log.isDebugEnabled())
         {

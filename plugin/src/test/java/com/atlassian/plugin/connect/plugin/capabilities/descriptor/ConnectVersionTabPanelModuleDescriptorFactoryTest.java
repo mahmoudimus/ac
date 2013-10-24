@@ -6,12 +6,14 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectVersionTabP
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAutowireUtil;
 
+import static com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectVersionTabPanelModuleDescriptorFactory.MODULE_PREFIX;
+
 
 public class ConnectVersionTabPanelModuleDescriptorFactoryTest extends AbstractConnectTabPanelModuleDescriptorFactoryTest
 {
     public ConnectVersionTabPanelModuleDescriptorFactoryTest()
     {
-        super(ConnectVersionTabPanelModuleDescriptor.class, VersionTabPanel.class);
+        super(ConnectVersionTabPanelModuleDescriptor.class, VersionTabPanel.class, MODULE_PREFIX);
     }
 
     @Override

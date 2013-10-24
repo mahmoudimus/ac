@@ -24,6 +24,7 @@ public class TestComponentTabPanel extends TestBase
 {
     private static final String PROJECT_KEY = FunctTestConstants.PROJECT_HOMOSAP_KEY;
     private static final String COMPONENT_NAME = "test-component";
+    private static final String JIRA_COMPONENT_TAB_PANEL = "jira-component-tab-panel";
     private static ConnectCapabilitiesRunner remotePlugin;
 
     private String componentId;
@@ -34,7 +35,8 @@ public class TestComponentTabPanel extends TestBase
     {
         remotePlugin = new ConnectCapabilitiesRunner(jira().getProductInstance().getBaseUrl(),"my-plugin")
                 .addCapability(newComponentTabPanelBean()
-                        .withName(new I18nProperty("Component Tab Panel", "my.componenttabpanel"))
+                        .withKey(JIRA_COMPONENT_TAB_PANEL)
+                        .withName(new I18nProperty("Component Tab Panel", null))
                         .withUrl("/ipp?component_id=${component.id}&project_id=${project.id}&project_key=${project.key}")
                         .withWeight(1234)
                         .build())

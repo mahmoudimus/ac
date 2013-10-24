@@ -12,9 +12,10 @@ public class ConnectVersionTabPanelModuleDescriptorFactory
         extends AbstractConnectTabPanelModuleDescriptorFactory<ConnectVersionTabPanelCapabilityBean, ConnectVersionTabPanelModuleDescriptor>
 {
     private static final String VERSION_TAB_PAGE = "version-tab-page";
+    static final String MODULE_PREFIX = "version-tab-"; // package visible for testing
 
     public ConnectVersionTabPanelModuleDescriptorFactory(ConnectAutowireUtil connectAutowireUtil)
     {
-        super(ConnectVersionTabPanelModuleDescriptor.class, VERSION_TAB_PAGE, connectAutowireUtil, VersionTabPanel.class);
+        super(ConnectVersionTabPanelModuleDescriptor.class, VERSION_TAB_PAGE, MODULE_PREFIX, connectAutowireUtil, VersionTabPanel.class);
     }
 }

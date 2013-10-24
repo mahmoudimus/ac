@@ -12,9 +12,10 @@ public class ConnectProjectTabPanelModuleDescriptorFactory
         extends AbstractConnectTabPanelModuleDescriptorFactory<ConnectProjectTabPanelCapabilityBean, ConnectProjectTabPanelModuleDescriptor>
 {
     private static final String PROJECT_TAB_PAGE = "project-tab-page";
+    static final String MODULE_PREFIX = "project-tab-"; // package visible for testing
 
     public ConnectProjectTabPanelModuleDescriptorFactory(ConnectAutowireUtil connectAutowireUtil)
     {
-        super(ConnectProjectTabPanelModuleDescriptor.class, PROJECT_TAB_PAGE, connectAutowireUtil, ProjectTabPanel.class);
+        super(ConnectProjectTabPanelModuleDescriptor.class, PROJECT_TAB_PAGE, MODULE_PREFIX, connectAutowireUtil, ProjectTabPanel.class);
     }
 }

@@ -36,14 +36,14 @@ public class TabPanelElement
         this.domElement = element;
     }
 
-    public TabPanelElement(String domElementName, AbstractConnectTabPanelCapabilityBean bean,
+    public TabPanelElement(String domElementName, String modulePrefix, AbstractConnectTabPanelCapabilityBean bean,
                            Optional<? extends Class<?>> moduleClass)
     {
         this(domElementName);
-        String issueTabPageKey = bean.getKey();
+        String completeKey = modulePrefix + bean.getKey();
         String name = bean.getName().getValue();
 
-        setKey(issueTabPageKey);
+        setKey(completeKey);
         setName(name);
         setOrder(bean.getWeight());
         setUrl(bean.getUrl());
