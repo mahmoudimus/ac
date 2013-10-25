@@ -5,6 +5,7 @@
         <vendor name="${project.organization.name}" url="${project.organization.url}" />
     </plugin-info>
 
+    <resource type="i18n" name="i18n" location="com.atlassian.connect.i18n"/>
     <servlet-filter key="big-pipe-request-id" class="com.atlassian.plugin.connect.spi.http.bigpipe.BigPipeRequestIdFilter"
                     location="after-encoding">
         <url-pattern>/*</url-pattern>

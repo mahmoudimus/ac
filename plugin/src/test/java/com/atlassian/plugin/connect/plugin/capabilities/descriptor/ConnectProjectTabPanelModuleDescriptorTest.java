@@ -2,19 +2,17 @@ package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.plugin.projectpanel.ProjectTabPanel;
-import com.atlassian.jira.project.Project;
-import com.atlassian.jira.project.browse.BrowseProjectContext;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.util.I18nHelper;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.testobjects.PluginForTests;
+import com.atlassian.plugin.connect.plugin.capabilities.util.TestContextBuilder;
 import com.atlassian.plugin.connect.plugin.module.jira.context.serializer.ProjectSerializer;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlValidator;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.spi.module.IFrameContext;
 import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
 import com.atlassian.plugin.module.ModuleFactory;
-import com.google.common.collect.ImmutableMap;
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
 import org.junit.Test;
@@ -32,11 +30,11 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ConnectProjectTabPanelModuleDescriptorTest
+public class ConnectProjectTabPanelModuleDescriptorTest extends AbstractConnectTabPanelModuleDescriptorTest<ProjectTabPanel>
 {
     private static final String ADDON_HTML_CONTENT = "the content goes here";
     private static final String ADDON_NAME = "My Project Tab Page";
-    private static final String ADDON_URL = "http://blah";
+    private static final String ADDON_URL = "http://blah?my_project_id=${project.id}&my_project_key=${project.key}";
     private static final String ADDON_KEY = "my-project-tab-page";
     private static final String ADDON_I18_NAME = "My Plugin i18";
     private static final Element ISSUE_TAB_PAGE_ELEMENT = createElement();
@@ -50,21 +48,13 @@ public class ConnectProjectTabPanelModuleDescriptorTest
     @Mock
     private IFrameRenderer iFrameRenderer;
     @Mock
-    private UrlVariableSubstitutor urlVariableSubstitutor;
-    @Mock
     private JiraAuthenticationContext jiraAuthenticationContext;
     @Mock
     private UrlValidator urlValidator;
     @Mock
-    private ProjectSerializer projectSerializer;
-    @Mock
-    private Project project;
-    @Mock
     private User user;
     @Mock
     private I18nHelper i18nHelper;
-    @Mock
-    private BrowseProjectContext browseProjectContext;
 
 
     @Test
@@ -87,24 +77,33 @@ public class ConnectProjectTabPanelModuleDescriptorTest
 
         ProjectTabPanel module = descriptor.getModule();
 
-        assertThat(module.getHtml(browseProjectContext), is(equalTo(ADDON_HTML_CONTENT)));
+        assertThat(module.getHtml(TestContextBuilder.buildBrowseProjectContext(ADDON_KEY)), is(equalTo(ADDON_HTML_CONTENT)));
     }
 
-    private ConnectProjectTabPanelModuleDescriptor createDescriptor() throws IOException
+    @Override
+    protected ConnectProjectTabPanelModuleDescriptor createDescriptor() throws IOException
     {
-        when(projectSerializer.serialize(any(Project.class))).thenReturn(ImmutableMap.<String, Object>of());
-        when(projectSerializer.serialize(any(Project.class))).thenReturn(ImmutableMap.<String, Object>of());
         when(iFrameRenderer.render(any(IFrameContext.class), anyString())).thenReturn(ADDON_HTML_CONTENT);
         when(jiraAuthenticationContext.getI18nHelper()).thenReturn(i18nHelper);
         when(i18nHelper.getText(ADDON_LABEL_KEY)).thenReturn(ADDON_I18_NAME);
-        when(browseProjectContext.getContextKey()).thenReturn(ADDON_KEY);
-        when(browseProjectContext.getProject()).thenReturn(project);
 
         ConnectProjectTabPanelModuleDescriptor descriptor = new ConnectProjectTabPanelModuleDescriptor(moduleFactory,
-                iFrameRenderer, urlVariableSubstitutor, jiraAuthenticationContext, urlValidator, projectSerializer);
+                iFrameRenderer, new UrlVariableSubstitutor(), jiraAuthenticationContext, urlValidator, new ProjectSerializer());
         descriptor.init(PLUGIN, ISSUE_TAB_PAGE_ELEMENT);
         descriptor.enabled();
         return descriptor;
+    }
+
+    @Override
+    protected IFrameRenderer getIFrameRenderer()
+    {
+        return iFrameRenderer;
+    }
+
+    @Override
+    protected String getRawUrl()
+    {
+        return ADDON_URL;
     }
 
     private static Element createElement()

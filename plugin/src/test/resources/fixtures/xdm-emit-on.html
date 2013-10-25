@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>fixture</title>
+    <script>
+    window.requireLoaded = function(){
+        AP.require("events", function (events) {
+            events.emit('loaded');
+            events.on('hostevent', function(e){
+                events.emit('clientevent', e);
+            });
+        });
+    }
+    </script>
+
+    <script src="/base/src/test/resources/fixtures/require.js"></script>
+    <script src="/base/src/test/resources/fixtures/include-all.js"></script>
+</head>
+<body>
+</body>
+</html>

@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.0-m16-SNAPSHOT</version>
+        <version>1.0-m17-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -256,6 +256,12 @@
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-all</artifactId>
             <version>1.3</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.atlassian.aui</groupId>
+            <artifactId>auiplugin</artifactId>
             <scope>test</scope>
         </dependency>
 
@@ -665,9 +671,101 @@
                     </execution>
                 </executions>
             </plugin>
-
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>karma-tests</id>
+            <activation>
+                <property>
+                    <name>runKarma</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <!-- unpack lib dependencies to make available to qunit -->
+                    <plugin>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>extract-qunit-dependencies</id>
+                                <phase>generate-test-resources</phase>
+                                <goals>
+                                    <goal>unpack-dependencies</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${project.build.directory}/qunit/dependencies</outputDirectory>
+                                    <includeGroupIds>com.atlassian.aui</includeGroupIds>
+                                    <includeArtifactIds>auiplugin</includeArtifactIds>
+                                    <includes>**/*.js</includes>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!-- npm plugin, used to get plugins for karma testrunner -->
+                    <plugin>
+                        <groupId>org.mule.tools.javascript</groupId>
+                        <artifactId>npm-maven-plugin</artifactId>
+                        <version>1.0</version>
+                        <executions>
+                            <execution>
+                                <phase>generate-sources</phase>
+                                <goals>
+                                    <goal>fetch-modules</goal>
+                                </goals>
+                                <configuration>
+                                    <packages>
+                                        <package>karma:0.10.2</package>
+                                        <package>karma-sinon:0.0.1</package>
+                                        <package>karma-qunit:0.1.1</package>
+                                        <package>karma-requirejs:0.1.0</package>
+                                        <package>karma-chrome-launcher:0.1.0</package>
+                                        <package>qunitjs:1.12.0</package>
+                                        <package>karma-junit-reporter:0.1.0</package>
+                                    </packages>
+                                    <outputDirectory>node_modules</outputDirectory>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!-- karma testrunner plugin for iframe code -->
+                    <plugin>
+                        <groupId>com.kelveden</groupId>
+                        <artifactId>maven-karma-plugin</artifactId>
+                        <version>1.5</version>
+                        <executions>
+                            <!-- test plugin-side code -->
+                            <execution>
+                                <id>karma-iframe-tests</id>
+                                <goals>
+                                    <goal>start</goal>
+                                </goals>
+                                <configuration>
+                                    <configFile>karma.iframe.conf.js</configFile>
+                                </configuration>
+                            </execution>
+                            <!-- test host-side code -->
+                            <execution>
+                                <id>karma-host-tests</id>
+                                <goals>
+                                    <goal>start</goal>
+                                </goals>
+                                <configuration>
+                                    <configFile>karma.conf.js</configFile>
+                                </configuration>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <browsers>Chrome</browsers>
+                            <karmaExecutable>node_modules/karma/bin/karma</karmaExecutable>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
     
     <properties>
         <product>jira</product>
