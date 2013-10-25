@@ -1,9 +1,5 @@
 package it.capabilities.jira;
 
-import com.atlassian.pageobjects.page.HomePage;
-import com.atlassian.pageobjects.page.LoginPage;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.CompositeConditionBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.CompositeConditionType;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
@@ -16,8 +12,6 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import it.HttpContextServlet;
-import it.MyContextAwareWebPanelServlet;
 import it.capabilities.CheckUsernameConditionServlet;
 import it.jira.JiraWebDriverTestBase;
 
@@ -59,7 +53,7 @@ public class TestJiraConditions extends JiraWebDriverTestBase
                         .withConditions(
                                 newSingleConditionBean().withCondition("user_is_logged_in").build()
                                 , newCompositeConditionBean()
-                                .withType(CompositeConditionType.or)
+                                .withType(CompositeConditionType.OR)
                                 .withConditions(
                                         newSingleConditionBean().withCondition("/onlyBettyCondition").build()
                                         , newSingleConditionBean().withCondition("/onlyBarneyCondition").build()

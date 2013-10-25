@@ -8,12 +8,9 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.CompositeCo
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.CompositeConditionType;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.SingleConditionBean;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import org.hamcrest.Matchers;
 import org.junit.Test;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.TestFileReader.readCapabilitiesTestFile;
@@ -48,8 +45,8 @@ public class ConnectConditionMarshallingTest
                         instanceOf(CompositeConditionBean.class)));
 
         assertThat(((SingleConditionBean) conditionList.get(0)).getParams(), hasEntry("someParam","woot"));
-        assertThat((CompositeConditionBean)conditionList.get(2), both(hasProperty("type", is(CompositeConditionType.and))).and(hasProperty("conditions", hasSize(2))));
-        assertThat((CompositeConditionBean)conditionList.get(3), both(hasProperty("type", is(CompositeConditionType.or))).and(hasProperty("conditions", hasSize(2))));
+        assertThat((CompositeConditionBean)conditionList.get(2), both(hasProperty("type", is(CompositeConditionType.AND))).and(hasProperty("conditions", hasSize(2))));
+        assertThat((CompositeConditionBean)conditionList.get(3), both(hasProperty("type", is(CompositeConditionType.OR))).and(hasProperty("conditions", hasSize(2))));
 
     }
 
@@ -68,9 +65,9 @@ public class ConnectConditionMarshallingTest
                         newSingleConditionBean().withCondition("some_condition2").build(),
                         newCompositeConditionBean().withConditions(
                                 newSingleConditionBean().withCondition("some_condition3").build()
-                        ).withType(CompositeConditionType.or)
+                        ).withType(CompositeConditionType.OR)
                                 .build()
-                ).withType(CompositeConditionType.and)
+                ).withType(CompositeConditionType.AND)
                         .build()
         );
 

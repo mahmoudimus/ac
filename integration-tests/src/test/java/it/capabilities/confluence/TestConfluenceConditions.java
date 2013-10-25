@@ -5,7 +5,6 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nPropert
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceEditPage;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
-import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewProjectPage;
 import com.atlassian.plugin.connect.test.server.ConnectCapabilitiesRunner;
 
 import com.google.common.base.Optional;
@@ -56,7 +55,7 @@ public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
                         .withConditions(
                                 newSingleConditionBean().withCondition("user_is_logged_in").build()
                                 , newCompositeConditionBean()
-                                .withType(CompositeConditionType.or)
+                                .withType(CompositeConditionType.OR)
                                 .withConditions(
                                         newSingleConditionBean().withCondition("/onlyBettyCondition").build()
                                         , newSingleConditionBean().withCondition("/onlyBarneyCondition").build()

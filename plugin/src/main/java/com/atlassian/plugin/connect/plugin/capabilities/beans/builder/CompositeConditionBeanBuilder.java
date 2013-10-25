@@ -20,7 +20,7 @@ public class CompositeConditionBeanBuilder extends BaseCapabilityBeanBuilder<Com
     public CompositeConditionBeanBuilder()
     {
         this.conditions = newArrayList();
-        this.type = CompositeConditionType.and;
+        this.type = CompositeConditionType.AND;
     }
 
     public CompositeConditionBeanBuilder(CompositeConditionBean defaultBean)

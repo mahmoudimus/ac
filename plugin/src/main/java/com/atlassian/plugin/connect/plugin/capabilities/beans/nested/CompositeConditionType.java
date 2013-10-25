@@ -5,5 +5,5 @@ package com.atlassian.plugin.connect.plugin.capabilities.beans.nested;
  */
 public enum CompositeConditionType
 {
-    and,or;
+    AND, OR;
 }

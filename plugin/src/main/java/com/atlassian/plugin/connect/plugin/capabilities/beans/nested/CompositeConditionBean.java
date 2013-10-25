@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.atlassian.plugin.connect.plugin.capabilities.beans.BaseCapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConditionalBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.BaseCapabilityBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.CompositeConditionBeanBuilder;
 
 import com.google.common.base.Objects;
@@ -21,7 +20,7 @@ public class CompositeConditionBean extends BaseCapabilityBean implements Condit
     public CompositeConditionBean()
     {
         this.conditions = new ArrayList<ConditionalBean>();
-        this.type = CompositeConditionType.and;
+        this.type = CompositeConditionType.AND;
     }
 
     public CompositeConditionBean(CompositeConditionBeanBuilder builder)
@@ -35,7 +34,7 @@ public class CompositeConditionBean extends BaseCapabilityBean implements Condit
         
         if(null == type)
         {
-            this.type = CompositeConditionType.and;
+            this.type = CompositeConditionType.AND;
         }
     }
 

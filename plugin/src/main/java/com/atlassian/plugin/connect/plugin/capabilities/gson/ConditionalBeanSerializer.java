@@ -38,11 +38,11 @@ public class ConditionalBeanSerializer implements JsonSerializer<List<Conditiona
             }
             else if (conditionalObject.has("and"))
             {
-                conditionalList.add(getCompositeCondition(gson,CompositeConditionType.and,conditionalObject));
+                conditionalList.add(getCompositeCondition(gson,CompositeConditionType.AND,conditionalObject));
             }
             else if (conditionalObject.has("or"))
             {
-                conditionalList.add(getCompositeCondition(gson, CompositeConditionType.or, conditionalObject));
+                conditionalList.add(getCompositeCondition(gson, CompositeConditionType.OR, conditionalObject));
             }
         }
         
@@ -65,7 +65,7 @@ public class ConditionalBeanSerializer implements JsonSerializer<List<Conditiona
             {
                 CompositeConditionBean ccb = (CompositeConditionBean) bean;
                 JsonObject obj = new JsonObject();
-                obj.add(ccb.getType().name(),context.serialize(ccb.getConditions(),conditionalType));
+                obj.add(ccb.getType().name().toLowerCase(),context.serialize(ccb.getConditions(),conditionalType));
                 ja.add(obj);
             }
         }
@@ -75,8 +75,9 @@ public class ConditionalBeanSerializer implements JsonSerializer<List<Conditiona
     
     private CompositeConditionBean getCompositeCondition(Gson gson, CompositeConditionType type, JsonObject root)
     {
-        JsonArray conditions = root.getAsJsonArray(type.name());
-        root.remove(type.name());
+        String jsonTypeName = type.name().toLowerCase();
+        JsonArray conditions = root.getAsJsonArray(jsonTypeName);
+        root.remove(jsonTypeName);
         root.add("conditions",conditions);
 
         return newCompositeConditionBean(gson.fromJson(root, CompositeConditionBean.class)).withType(type).build();
