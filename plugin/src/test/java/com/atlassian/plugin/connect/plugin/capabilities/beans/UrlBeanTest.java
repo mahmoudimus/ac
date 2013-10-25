@@ -28,4 +28,11 @@ public class UrlBeanTest
         UrlBean bean = new UrlBean("/endpoint");
         assertEquals("/endpoint", bean.createUri().toString());
     }
+
+    @Test
+    public void verifyNullUri() throws Exception
+    {
+        UrlBean bean = new UrlBean(null);
+        assertEquals(null, bean.createUri());
+    }
 }
