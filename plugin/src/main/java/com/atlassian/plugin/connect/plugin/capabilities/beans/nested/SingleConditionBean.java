@@ -1,62 +1,44 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans.nested;
 
-import java.util.List;
-import java.util.Map;
-
-import com.atlassian.plugin.connect.plugin.capabilities.beans.BaseCapabilityBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.BeanWithParams;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConditionalBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.BaseCapabilityBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.SingleConditionBeanBuilder;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.VendorBeanBuilder;
 
 import com.google.common.base.Objects;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.ParamsBean.newParamsBean;
-import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
 
 /**
  * @since 1.0
  */
-public class SingleConditionBean extends BaseCapabilityBean implements ConditionalBean
+public class SingleConditionBean extends BeanWithParams implements ConditionalBean
 {
     private String condition;
     private Boolean invert;
-    private Map<String,String> params;
 
     public SingleConditionBean()
     {
         this.condition = "";
         this.invert = false;
-        this.params = newHashMap();
     }
 
     public SingleConditionBean(SingleConditionBeanBuilder builder)
     {
         super(builder);
 
-        if(null == condition)
+        if (null == condition)
         {
             this.condition = "";
         }
-        if(null == invert)
+        if (null == invert)
         {
             this.invert = false;
-        }
-        if(null == params)
-        {
-            this.params = newHashMap();
         }
     }
 
     public String getCondition()
     {
         return condition;
-    }
-
-    public Map<String,String> getParams()
-    {
-        return params;
     }
 
     public Boolean isInvert()
@@ -77,7 +59,7 @@ public class SingleConditionBean extends BaseCapabilityBean implements Condition
     @Override
     public int hashCode()
     {
-        return Objects.hashCode(condition, invert, params);
+        return Objects.hashCode(condition, invert);
     }
 
     @Override
@@ -95,8 +77,7 @@ public class SingleConditionBean extends BaseCapabilityBean implements Condition
         {
             final SingleConditionBean that = (SingleConditionBean) obj;
             return Objects.equal(condition, that.condition) &&
-                    Objects.equal(invert, that.invert) &&
-                    Objects.equal(params, that.params);
+                    Objects.equal(invert, that.invert);
         }
     }
 }
