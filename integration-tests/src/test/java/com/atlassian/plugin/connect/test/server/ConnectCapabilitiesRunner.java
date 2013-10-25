@@ -1,17 +1,5 @@
 package com.atlassian.plugin.connect.test.server;
 
-import java.io.IOException;
-import java.io.StringWriter;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.NoSuchAlgorithmException;
-import java.util.Map;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.api.service.SignedRequestHandler;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.CapabilityBean;
@@ -19,15 +7,13 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConnectAddonBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.OAuthBean;
 import com.atlassian.plugin.connect.plugin.capabilities.gson.CapabilitiesGsonFactory;
-import com.atlassian.plugin.connect.spi.Permissions;
 import com.atlassian.plugin.connect.test.Environment;
 import com.atlassian.plugin.connect.test.HttpUtils;
 import com.atlassian.plugin.connect.test.Utils;
 import com.atlassian.plugin.connect.test.client.AtlassianConnectRestClient;
-
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-
+import net.oauth.signature.RSA_SHA1;
 import org.bouncycastle.openssl.PEMWriter;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.HandlerList;
@@ -36,7 +22,16 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.oauth.signature.RSA_SHA1;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
+import java.util.Map;
 
 import static com.atlassian.fugue.Option.option;
 import static com.atlassian.fugue.Option.some;
@@ -45,6 +40,7 @@ import static com.atlassian.plugin.connect.plugin.capabilities.beans.RemoteConta
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.OAuthBean.newOAuthBean;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.nullToEmpty;
+import static com.google.common.collect.Maps.newHashMap;
 
 /**
  * @since version
@@ -60,7 +56,8 @@ public class ConnectCapabilitiesRunner
     private Option<? extends SignedRequestHandler> signedRequestHandler;
     private ConnectAddonBean addon;
     private OAuthBean oAuthBean;
-    
+    private final Map<String, HttpServlet> routes = newHashMap();
+
     private int port;
     private Server server;
     
@@ -122,6 +119,13 @@ public class ConnectCapabilitiesRunner
         return this;
     }
 
+    public ConnectCapabilitiesRunner addRoute(String path, HttpServlet servlet)
+    {
+        routes.put(path, servlet);
+        return this;
+    }
+
+
     public static RunnerSignedRequestHandler createSignedRequestHandler(String appKey) throws NoSuchAlgorithmException, IOException
     {
         KeyPairGenerator gen = KeyPairGenerator.getInstance("RSA");
@@ -176,14 +180,14 @@ public class ConnectCapabilitiesRunner
 
         context.addServlet(new ServletHolder(new DescriptorServlet()), "/register");
 
-//        for (final Map.Entry<String, HttpServlet> entry : routes.entrySet())
-//        {
-//            if (entry.getValue() instanceof WithContextHttpServlet)
-//            {
-//                ((WithContextHttpServlet) entry.getValue()).baseContext.putAll(getBaseContext());
-//            }
-//            context.addServlet(new ServletHolder(entry.getValue()), entry.getKey());
-//        }
+        for (final Map.Entry<String, HttpServlet> entry : routes.entrySet())
+        {
+            if (entry.getValue() instanceof WithContextHttpServlet)
+            {
+                ((WithContextHttpServlet) entry.getValue()).baseContext.putAll(getBaseContext());
+            }
+            context.addServlet(new ServletHolder(entry.getValue()), entry.getKey());
+        }
 
         list.addHandler(context);
         server.start();

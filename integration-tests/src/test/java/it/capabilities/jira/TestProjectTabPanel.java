@@ -15,6 +15,7 @@ import org.junit.Test;
 import java.util.concurrent.Callable;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectProjectTabPanelCapabilityBean.newProjectTabPanelBean;
+import static com.atlassian.plugin.connect.test.server.ConnectCapabilitiesRunner.newMustacheServlet;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -34,11 +35,11 @@ public class TestProjectTabPanel extends JiraWebDriverTestBase
     {
         remotePlugin = new ConnectCapabilitiesRunner(product.getProductInstance().getBaseUrl(),"my-plugin")
                 .addCapability(newProjectTabPanelBean()
-                        .withKey("jira-remotePluginProjectTab")
-                        .withName(new I18nProperty("AC Play Project Tab", "my.projecttabpanel"))
+                        .withName(new I18nProperty("AC Play Project Tab", null))
                         .withUrl("/ptp")
                         .withWeight(1234)
                         .build())
+                .addRoute("/ptp", newMustacheServlet("iframe.mu"))
 // TODO: TestProjectTabPage had a second module for project config tab. Need to cover this but likely in another class
 //                .addCapability(newProjectTabPanelBean()
 //                        .withKey("jira-remotePluginProjectConfigTab")
@@ -116,7 +117,7 @@ public class TestProjectTabPanel extends JiraWebDriverTestBase
     {
         public AppProjectTabPage(final String projectKey)
         {
-            super(projectKey, "project-tab-jira-remotePluginProjectTab");
+            super(projectKey, "project-tab-ac-play-project-tab");
         }
     }
 }
