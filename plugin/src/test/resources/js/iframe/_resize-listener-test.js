@@ -49,7 +49,7 @@ define(['iframe/_xdm'], function(_rpc, $) {
 
         test('AP.resize crosses the bridge', function () {
             stop();
-            var spy = spyinon.spy(),
+            var spy = sinon.spy(),
             xdm = this.createXdm(null, null, {resize: spy});
 
             xdm.events.on('resized', function(e){
