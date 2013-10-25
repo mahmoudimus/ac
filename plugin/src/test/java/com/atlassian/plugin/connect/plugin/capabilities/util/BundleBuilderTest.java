@@ -57,10 +57,7 @@ public class BundleBuilderTest
         PluginRetrievalService pluginRetrievalService = mock(PluginRetrievalService.class);
         when(pluginRetrievalService.getPlugin()).thenReturn(plugin);
 
-        ApplicationProperties appProps = mock(ApplicationProperties.class);
-        when(appProps.getDisplayName()).thenReturn("jira");
-        
-        artifactFactory = new RemotePluginArtifactFactory(xmlFactory,bc,pluginRetrievalService, appProps);
+        artifactFactory = new RemotePluginArtifactFactory(xmlFactory,bc,pluginRetrievalService);
     }
     
     @Test

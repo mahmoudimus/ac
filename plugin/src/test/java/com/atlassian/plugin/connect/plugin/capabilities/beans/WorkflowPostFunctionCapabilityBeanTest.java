@@ -10,6 +10,7 @@ import org.springframework.core.io.DefaultResourceLoader;
 
 import java.io.IOException;
 
+import static com.atlassian.plugin.connect.plugin.capabilities.TestFileReader.readCapabilitiesTestFile;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -78,7 +79,7 @@ public class WorkflowPostFunctionCapabilityBeanTest
         Gson gson = CapabilitiesGsonFactory.getGson();
         WorkflowPostFunctionCapabilityBean addOn = gson.fromJson(json, WorkflowPostFunctionCapabilityBean.class);
 
-        assertEquals("myfunction", addOn.getKey());
+        assertEquals("my-function", addOn.getKey());
         assertEquals("My function", addOn.getName().getValue());
         assertEquals("my.function", addOn.getName().getI18n());
         assertEquals("My function explanation", addOn.getDescription().getValue());
@@ -109,6 +110,6 @@ public class WorkflowPostFunctionCapabilityBeanTest
 
     private static String readTestFile() throws IOException
     {
-        return FileUtils.readFile(new DefaultResourceLoader().getResource("classpath:/testfiles/capabilities/workflowPostFunction.json").getFile());
+        return readCapabilitiesTestFile("workflowPostFunction.json");
     }
 }

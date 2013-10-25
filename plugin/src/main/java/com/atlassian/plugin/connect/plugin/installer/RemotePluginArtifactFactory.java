@@ -40,16 +40,14 @@ public class RemotePluginArtifactFactory
     private final ConnectPluginXmlFactory pluginXmlFactory;
     private final BundleContext bundleContext;
     private final ContainerManagedPlugin theConnectPlugin;
-    private final ApplicationProperties applicationProperties;
     
     public static String CLEAN_FILENAME_PATTERN = "[:\\\\/*?|<> _]";
 
     @Autowired
-    public RemotePluginArtifactFactory(ConnectPluginXmlFactory pluginXmlFactory, BundleContext bundleContext, PluginRetrievalService pluginRetrievalService, ApplicationProperties applicationProperties)
+    public RemotePluginArtifactFactory(ConnectPluginXmlFactory pluginXmlFactory, BundleContext bundleContext, PluginRetrievalService pluginRetrievalService)
     {
         this.pluginXmlFactory = pluginXmlFactory;
         this.bundleContext = bundleContext;
-        this.applicationProperties = applicationProperties;
         this.theConnectPlugin = (ContainerManagedPlugin)pluginRetrievalService.getPlugin();
     }
 

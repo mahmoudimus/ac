@@ -23,11 +23,14 @@ import org.dom4j.dom.DOMElement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import static com.atlassian.plugin.connect.plugin.capabilities.util.ConditionUtils.isRemoteCondition;
 import static com.google.common.collect.Maps.newHashMap;
 
 @Component
 public class ConditionModuleFragmentFactory implements ConnectModuleFragmentFactory<List<ConditionalBean>>
 {
+    private static final String TYPE_KEY = "type";
+    
     private final ProductAccessor productAccessor;
     private final RemotablePluginAccessorFactory remotablePluginAccessorFactory;
 
@@ -57,7 +60,7 @@ public class ConditionModuleFragmentFactory implements ConnectModuleFragmentFact
     public DOMElement createFragment(String pluginKey, List<ConditionalBean> beans, String toHideSelector, List<String> contextParams)
     {
         DOMElement element = new DOMElement("conditions");
-        element.addAttribute("type", "AND");
+        element.addAttribute(TYPE_KEY, "AND");
         
         List<DOMElement> conditions = processConditionBeans(pluginKey, beans, toHideSelector, contextParams);
         
@@ -90,7 +93,7 @@ public class ConditionModuleFragmentFactory implements ConnectModuleFragmentFact
                 DOMElement composite = new DOMElement("conditions");
                 CompositeConditionBean ccb = (CompositeConditionBean) bean;
                 
-                composite.addAttribute("type",ccb.getType().toString().toUpperCase());
+                composite.addAttribute(TYPE_KEY,ccb.getType().toString().toUpperCase());
                 
                 List<DOMElement> subConditions = processConditionBeans(pluginKey, ccb.getConditions(), toHideSelector, contextParams);
                 
@@ -115,12 +118,13 @@ public class ConditionModuleFragmentFactory implements ConnectModuleFragmentFact
         
         if(isRemoteCondition(bean))
         {
+            //TODO: use URIBean.isAbsolute when it's merged in
             String conditionUrl = bean.getCondition();
-            if(conditionUrl.startsWith("/"))
-            {
-                RemotablePluginAccessor remotablePluginAccessor = remotablePluginAccessorFactory.get(pluginKey);
-                conditionUrl = remotablePluginAccessor.getBaseUrl().toString() + conditionUrl;
-            }
+//            if(conditionUrl.startsWith("/"))
+//            {
+//                RemotablePluginAccessor remotablePluginAccessor = remotablePluginAccessorFactory.get(pluginKey);
+//                conditionUrl = remotablePluginAccessor.getBaseUrl().toString() + conditionUrl;
+//            }
             
             className = RemoteCondition.class.getName();
             
@@ -130,9 +134,10 @@ public class ConditionModuleFragmentFactory implements ConnectModuleFragmentFact
             if(Strings.isNullOrEmpty(toHideSelector))
             {
                 String hash = createUniqueUrlHash(pluginKey, conditionUrl);
-                String hashedSelector = "." + hash;
-                params.put("toHideSelector",hashedSelector);
+                toHideSelector = "." + hash;
             }
+
+            params.put("toHideSelector",toHideSelector);
             
             if(null != contextParams && !contextParams.isEmpty())
             {
@@ -165,11 +170,6 @@ public class ConditionModuleFragmentFactory implements ConnectModuleFragmentFact
         }
         
         return element;
-    }
-    
-    private boolean isRemoteCondition(SingleConditionBean bean)
-    {
-        return (bean.getCondition().startsWith("http") || bean.getCondition().startsWith("/"));
     }
 
     private String createUniqueUrlHash(String pluginKey, String cUrl)

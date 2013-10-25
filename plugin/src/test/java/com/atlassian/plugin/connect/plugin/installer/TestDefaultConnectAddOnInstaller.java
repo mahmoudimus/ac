@@ -61,7 +61,7 @@ public class TestDefaultConnectAddOnInstaller
         ApplicationProperties appProps = mock(ApplicationProperties.class);
         when(appProps.getDisplayName()).thenReturn("jira");
         
-        this.remotePluginArtifactFactory = new RemotePluginArtifactFactory(new ConnectPluginXmlFactory(), mock(BundleContext.class),pluginRetrievalService, appProps);
+        this.remotePluginArtifactFactory = new RemotePluginArtifactFactory(new ConnectPluginXmlFactory(), mock(BundleContext.class),pluginRetrievalService);
         // this plugin xml needs to be syntactically valid
         // (and incidentally the duplicate <webhook> elements, while not strictly necessary for this test,
         //  demonstrate how this problem manifests in production)
