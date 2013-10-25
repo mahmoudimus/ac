@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.beans.builder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.OAuthBean;
 
 /**
- * @since version
+ * @since 1.0
  */
 public class OAuthBeanBuilder<T extends OAuthBeanBuilder, B extends OAuthBean> extends BaseCapabilityBeanBuilder<T,B>
 {

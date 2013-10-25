@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * @since version
+ * @since 1.0
  */
 public class CapabilityBeanUtils
 {

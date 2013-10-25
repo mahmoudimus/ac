@@ -20,7 +20,7 @@ import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.OAut
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.VendorBean.newVendorBean;
 
 /**
- * @since version
+ * @since 1.0
  */
 public class JunkTest
 {

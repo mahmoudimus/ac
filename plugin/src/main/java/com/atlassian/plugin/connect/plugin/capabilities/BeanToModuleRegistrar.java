@@ -7,6 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.Nullable;
 
+import com.atlassian.plugin.AutowireCapablePlugin;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.annotation.CapabilitySet;
@@ -15,7 +16,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectModulePr
 import com.atlassian.plugin.connect.plugin.capabilities.provider.NullModuleProvider;
 import com.atlassian.plugin.connect.plugin.integration.plugins.DescriptorToRegister;
 import com.atlassian.plugin.connect.plugin.integration.plugins.DynamicDescriptorRegistration;
-import com.atlassian.plugin.connect.plugin.module.ConditionLoadingPlugin;
+import com.atlassian.plugin.connect.plugin.module.AutowireWithConnectPluginDecorator;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.module.ContainerAccessor;
 import com.atlassian.plugin.module.ContainerManagedPlugin;
@@ -54,7 +55,8 @@ public class BeanToModuleRegistrar
     public void registerDescriptorsForBeans(Plugin plugin, List<CapabilityBean> beans)
     {
         BundleContext addonBundleContext = ((OsgiPlugin) plugin).getBundle().getBundleContext();
-        
+
+        AutowireWithConnectPluginDecorator connectAutowiringPlugin = new AutowireWithConnectPluginDecorator((AutowireCapablePlugin)theConnectPlugin,plugin,Sets.<Class<?>>newHashSet(productAccessor.getConditions().values()));
         List<DescriptorToRegister> descriptorsToRegister = new ArrayList<DescriptorToRegister>();
         ContainerAccessor accessor = theConnectPlugin.getContainerAccessor();
         for (CapabilityBean bean : beans)
@@ -73,7 +75,7 @@ public class BeanToModuleRegistrar
                 if (!providers.isEmpty())
                 {
                     ConnectModuleProvider provider = providers.iterator().next();
-                    descriptorsToRegister.addAll(Lists.transform(provider.provideModules(plugin,addonBundleContext, newArrayList(bean)), new Function<ModuleDescriptor, DescriptorToRegister>()
+                    descriptorsToRegister.addAll(Lists.transform(provider.provideModules(connectAutowiringPlugin,addonBundleContext, newArrayList(bean)), new Function<ModuleDescriptor, DescriptorToRegister>()
                     {
                         @Override
                         public DescriptorToRegister apply(@Nullable ModuleDescriptor input)

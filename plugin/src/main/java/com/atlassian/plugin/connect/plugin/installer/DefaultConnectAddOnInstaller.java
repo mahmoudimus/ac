@@ -92,6 +92,8 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
                 capabilityBeans.add(container);
             }
             
+            //we need to register the container first
+            
             try
             {
 

@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.atlassian.plugin.connect.plugin.capabilities.TestFileReader.readCapabilitiesTestFile;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectVersionTabPanelCapabilityBean.newVersionTabPanelBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.RemoteContainerCapabilityBean.newRemoteContainerBean;
@@ -57,6 +58,6 @@ public class ConnectVersionTabPanelCapabilityBeanTest
 
     private static String readTestFile() throws IOException
     {
-        return FileUtils.readFile(new DefaultResourceLoader().getResource("classpath:/testfiles/capabilities/versionTabAddon.json").getFile());
+        return readCapabilitiesTestFile("versionTabAddon.json");
     }
 }

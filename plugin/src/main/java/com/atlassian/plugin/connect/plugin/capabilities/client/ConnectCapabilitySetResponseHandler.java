@@ -11,7 +11,7 @@ import org.apache.http.client.ResponseHandler;
 import org.apache.http.impl.client.BasicResponseHandler;
 
 /**
- * @since version
+ * @since 1.0
  */
 public class ConnectCapabilitySetResponseHandler<T extends CapabilityBean> implements ResponseHandler<List<T>>
 {

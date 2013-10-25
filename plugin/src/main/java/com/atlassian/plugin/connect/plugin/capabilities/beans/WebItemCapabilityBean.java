@@ -9,11 +9,13 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nPropert
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.WebItemModuleProvider;
 
+import static com.google.common.collect.Lists.newArrayList;
+
 /**
- * @since version
+ * @since 1.0
  */
 @CapabilitySet(key = "web-items", moduleProvider = WebItemModuleProvider.class)
-public class WebItemCapabilityBean extends NameToKeyBean
+public class WebItemCapabilityBean extends BeanWithKeyAndParamsAndConditions
 {
     private String link;
     private String location;
@@ -76,6 +78,7 @@ public class WebItemCapabilityBean extends NameToKeyBean
         {
             this.icon = IconBean.newIconBean().withWidth(16).withHeight(16).withUrl("").build();
         }
+        
     }
 
     public String getLink()

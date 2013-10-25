@@ -11,7 +11,7 @@ import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
 
 /**
- * @since version
+ * @since 1.0
  */
 public class ConnectAddonBean extends BaseCapabilityBean
 {

@@ -24,7 +24,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 /**
- * @since version
+ * @since 1.0
  */
 public class TestLicenseRestResource extends AbstractRemotablePluginTest
 {
