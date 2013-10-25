@@ -87,3 +87,6 @@ requirejs.config({
   // start test run, once Require.js is done
   callback: window.__karma__.start
 });
+
+//tests will timeout after 30 seconds
+window.QUnit.config.testTimeout = 30000;
