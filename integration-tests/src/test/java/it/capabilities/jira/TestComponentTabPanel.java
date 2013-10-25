@@ -14,6 +14,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectComponentTabPanelCapabilityBean.newComponentTabPanelBean;
+import static com.atlassian.plugin.connect.test.server.ConnectCapabilitiesRunner.newMustacheServlet;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
@@ -35,11 +36,11 @@ public class TestComponentTabPanel extends TestBase
     {
         remotePlugin = new ConnectCapabilitiesRunner(jira().getProductInstance().getBaseUrl(),"my-plugin")
                 .addCapability(newComponentTabPanelBean()
-                        .withKey(JIRA_COMPONENT_TAB_PANEL)
                         .withName(new I18nProperty("Component Tab Panel", null))
                         .withUrl("/ipp?component_id=${component.id}&project_id=${project.id}&project_key=${project.key}")
                         .withWeight(1234)
                         .build())
+                .addRoute("/ipp", newMustacheServlet("iframe.mu"))
                 .start();
     }
 
@@ -72,7 +73,7 @@ public class TestComponentTabPanel extends TestBase
     public void testComponentTabPanel() throws Exception
     {
         jira().gotoLoginPage().loginAsSysadminAndGoToHome();
-        final JiraComponentTabPage componentTabPage = jira().goTo(JiraComponentTabPage.class, PROJECT_KEY, componentId, "jira-component-tab");
+        final JiraComponentTabPage componentTabPage = jira().goTo(JiraComponentTabPage.class, PROJECT_KEY, componentId, "component-tab");
 
         componentTabPage.clickTab();
 

@@ -17,6 +17,7 @@ import org.junit.Test;
 import java.rmi.RemoteException;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectIssueTabPanelCapabilityBean.newIssueTabPanelBean;
+import static com.atlassian.plugin.connect.test.server.ConnectCapabilitiesRunner.newMustacheServlet;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
@@ -38,11 +39,11 @@ public class TestIssueTabPanel extends TestBase
     {
         remotePlugin = new ConnectCapabilitiesRunner(jira().getProductInstance().getBaseUrl(),"my-plugin")
                 .addCapability(newIssueTabPanelBean()
-                        .withKey(JIRA_ISSUE_TAB_PANEL)
-                        .withName(new I18nProperty("Issue Tab Panel", "my.issuetabpanel"))
+                        .withName(new I18nProperty("Issue Tab Panel", null))
                         .withUrl("/ipp?issue_id=${issue.id}&project_id=${project.id}&project_key=${project.key}")
                         .withWeight(1234)
                         .build())
+                .addRoute("/ipp", newMustacheServlet("iframe.mu"))
                 .start();
     }
 
