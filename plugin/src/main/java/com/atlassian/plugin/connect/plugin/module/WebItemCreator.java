@@ -140,8 +140,9 @@ public final class WebItemCreator
                 {
                     styleClass.addText(" ");
                 }
-                styleClass.addText("remote-condition hidden " + conditionProcessor.createUniqueUrlHash(
-                        plugin.getKey(), ((ContainingRemoteCondition) condition).getConditionUrl()));
+                //FYI the below is commented out because conditions are now synchronous and don't use css selectors anymore
+//                styleClass.addText("remote-condition hidden " + conditionProcessor.createUniqueUrlHash(
+//                        plugin.getKey(), ((ContainingRemoteCondition) condition).getConditionUrl()));
             }
 
             if (log.isDebugEnabled())

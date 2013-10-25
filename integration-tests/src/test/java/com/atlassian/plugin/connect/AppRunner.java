@@ -7,22 +7,18 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
 import com.atlassian.plugin.connect.test.server.ConnectCapabilitiesRunner;
-import com.atlassian.plugin.connect.test.server.module.Condition;
-import com.atlassian.plugin.connect.test.server.module.DialogPageModule;
-import com.atlassian.plugin.connect.test.server.module.GeneralPageModule;
-import com.atlassian.plugin.connect.test.server.module.RemoteWebItemModule;
 
+import it.HttpContextServlet;
 import it.MyContextAwareWebPanelServlet;
-import it.TestPageModules;
+import it.capabilities.CheckUsernameConditionServlet;
+import it.capabilities.jira.TestJiraWebItem;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean.newWebItemBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.SingleConditionBean.newSingleConditionBean;
-import static com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner.newMustacheServlet;
-import static com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner.newServlet;
 
 /**
  * @since 1.0
@@ -71,30 +67,33 @@ public class AppRunner
 //                    .start();
 
 
-            ConnectCapabilitiesRunner remotePlugin = new ConnectCapabilitiesRunner(JIRA,"my-plugin2")
+            ConnectCapabilitiesRunner remotePlugin = new ConnectCapabilitiesRunner(JIRA,"my-plugin")
                     .addCapability(newWebItemBean()
                             .withName(new I18nProperty("AC General Web Item", "ac.gen"))
                             .withLocation("system.top.navigation.bar")
                             .withWeight(1)
-                            .withLink("/irwi")
+                            .withLink("/irwi?issue_id=${issue.id}&project_key=${project.key}&pid=${project.id}")
                             .build())
                     .addCapability(newWebItemBean()
+                            .withContext(AddOnUrlContext.product)
                             .withName(new I18nProperty("Quick project link", "ac.qp"))
                             .withLocation("system.top.navigation.bar")
                             .withWeight(1)
-                            .withLink(JIRA + "/browse/ACDEV-1234")
-                            .withConditions(
-                                    newSingleConditionBean().withCondition("user_is_logged_in").build()
-                                    , newSingleConditionBean().withCondition("/onlyBettyCondition").build()
-                            )
+                            .withLink("/browse/ACDEV-1234")
                             .build())
                     .addCapability(newWebItemBean()
                             .withName(new I18nProperty("google link", "ac.gl"))
                             .withLocation("system.top.navigation.bar")
                             .withWeight(1)
                             .withLink("http://www.google.com")
+                            .withConditions(
+                                    newSingleConditionBean().withCondition("user_is_logged_in").build()
+                                    , newSingleConditionBean().withCondition("/onlyBettyCondition").build()
+                            )
                             .build())
 
+                    .addRoute("/onlyBettyCondition", new CheckUsernameConditionServlet("betty"))
+                    .addRoute("/irwi?issue_id=${issue.id}&project_key=${project.key}&pid=${project.id}", new HttpContextServlet(new MyContextAwareWebPanelServlet()))
                     .start();
             while (true)
             {

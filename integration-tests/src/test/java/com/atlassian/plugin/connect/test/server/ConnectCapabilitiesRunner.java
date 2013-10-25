@@ -19,7 +19,6 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConnectAddonBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.OAuthBean;
 import com.atlassian.plugin.connect.plugin.capabilities.gson.CapabilitiesGsonFactory;
-import com.atlassian.plugin.connect.spi.Permissions;
 import com.atlassian.plugin.connect.test.Environment;
 import com.atlassian.plugin.connect.test.HttpUtils;
 import com.atlassian.plugin.connect.test.Utils;
@@ -36,15 +35,15 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import it.ContextServlet;
+import it.HttpContextServlet;
 import net.oauth.signature.RSA_SHA1;
 
-import static com.atlassian.fugue.Option.option;
 import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.RemoteContainerCapabilityBean.newRemoteContainerBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.OAuthBean.newOAuthBean;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Strings.nullToEmpty;
 import static com.google.common.collect.Maps.newHashMap;
 
 /**
@@ -61,21 +60,21 @@ public class ConnectCapabilitiesRunner
     private Option<? extends SignedRequestHandler> signedRequestHandler;
     private ConnectAddonBean addon;
     private OAuthBean oAuthBean;
-    
+
     private int port;
     private Server server;
     private final Map<String, HttpServlet> routes = newHashMap();
-    
+
     public ConnectCapabilitiesRunner(String baseUrl, String pluginKey)
     {
         this.baseUrl = checkNotNull(baseUrl);
         this.pluginKey = checkNotNull(pluginKey);
-        
+
         this.addonBuilder = newConnectAddonBean()
                 .withKey(pluginKey)
                 .withName(pluginKey)
                 .withVersion("1.0");
-        
+
         this.installer = new AtlassianConnectRestClient(baseUrl, "admin", "admin");
     }
 
@@ -120,7 +119,7 @@ public class ConnectCapabilitiesRunner
     public ConnectCapabilitiesRunner addOAuth(RunnerSignedRequestHandler signedRequestHandler) throws NoSuchAlgorithmException, IOException
     {
         this.signedRequestHandler = some(signedRequestHandler);
-        
+
         this.oAuthBean = newOAuthBean()
                 .withPublicKey(signedRequestHandler.getLocal().getProperty(RSA_SHA1.PUBLIC_KEY).toString())
                 .build();
@@ -149,19 +148,19 @@ public class ConnectCapabilitiesRunner
         env.setEnv("OAUTH_LOCAL_KEY", appKey);
         return new RunnerSignedRequestHandler(appKey, env);
     }
-    
+
     public ConnectCapabilitiesRunner start() throws Exception
     {
         port = Utils.pickFreePort();
         final String displayUrl = "http://localhost:" + port;
-        
-        if(null != oAuthBean)
+
+        if (null != oAuthBean)
         {
             addonBuilder.withCapability(
                     newRemoteContainerBean()
-                    .withDisplayUrl(displayUrl)
-                    .withOAuth(oAuthBean)
-                    .build()
+                            .withDisplayUrl(displayUrl)
+                            .withOAuth(oAuthBean)
+                            .build()
             );
         }
         else
@@ -172,7 +171,7 @@ public class ConnectCapabilitiesRunner
                             .build()
             );
         }
-        
+
         this.addon = addonBuilder.build();
 
         server = new Server(port);
@@ -185,9 +184,9 @@ public class ConnectCapabilitiesRunner
 
         for (final Map.Entry<String, HttpServlet> entry : routes.entrySet())
         {
-            if (entry.getValue() instanceof WithContextHttpServlet)
+            if (entry.getValue() instanceof HttpContextServlet)
             {
-                ((WithContextHttpServlet) entry.getValue()).baseContext.putAll(getBaseContext());
+                ((HttpContextServlet) entry.getValue()).getBaseContext().putAll(getBaseContext());
             }
             context.addServlet(new ServletHolder(entry.getValue()), entry.getKey());
         }
@@ -200,9 +199,9 @@ public class ConnectCapabilitiesRunner
         return this;
     }
 
-    public static HttpServlet newServlet(WithContextServlet servlet)
+    public static HttpServlet newServlet(ContextServlet servlet)
     {
-        return new WithContextHttpServlet(servlet);
+        return new HttpContextServlet(servlet);
     }
 
     public static HttpServlet newMustacheServlet(String resource)
@@ -215,56 +214,7 @@ public class ConnectCapabilitiesRunner
         return ImmutableMap.<String, Object>of("port", port, "baseurl", baseUrl);
     }
 
-    public static class WithContextServlet
-    {
-        protected void doGet(final HttpServletRequest req, final HttpServletResponse resp, Map<String, Object> context) throws ServletException, IOException
-        {
-        }
-
-        protected void doPost(final HttpServletRequest req, final HttpServletResponse resp, Map<String, Object> context) throws ServletException, IOException
-        {
-        }
-    }
-
-    private static class WithContextHttpServlet extends HttpServlet
-    {
-        private final Map<String, Object> baseContext = Maps.newHashMap();
-        private final WithContextServlet servlet;
-
-        private WithContextHttpServlet(WithContextServlet servlet)
-        {
-            this.servlet = checkNotNull(servlet);
-        }
-
-        @Override
-        protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
-        {
-            servlet.doGet(req, resp, getContext(req));
-        }
-
-        @Override
-        protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
-        {
-            servlet.doPost(req, resp, getContext(req));
-        }
-
-        private ImmutableMap<String, Object> getContext(HttpServletRequest req) throws IOException
-        {
-            return ImmutableMap.<String, Object>builder()
-                               .putAll(baseContext)
-                               .put("req_url", nullToEmpty(option(req.getRequestURL()).getOrElse(new StringBuffer()).toString()))
-                               .put("req_uri", nullToEmpty(req.getRequestURI()))
-                               .put("req_query", nullToEmpty(req.getQueryString()))
-                               .put("req_method", req.getMethod())
-                               .put("clientKey", nullToEmpty(req.getParameter("oauth_consumer_key")))
-                               .put("locale", nullToEmpty(req.getParameter("loc")))
-                               .put("licenseStatus", nullToEmpty(req.getParameter("lic")))
-                               .put("timeZone", nullToEmpty(req.getParameter("tz")))
-                               .build();
-        }
-    }
-
-    private static final class MustacheServlet extends WithContextServlet
+    private static final class MustacheServlet extends ContextServlet
     {
         private final String path;
 

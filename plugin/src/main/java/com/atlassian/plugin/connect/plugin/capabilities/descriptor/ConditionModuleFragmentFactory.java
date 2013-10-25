@@ -118,13 +118,7 @@ public class ConditionModuleFragmentFactory implements ConnectModuleFragmentFact
         
         if(isRemoteCondition(bean))
         {
-            //TODO: use URIBean.isAbsolute when it's merged in
             String conditionUrl = bean.getCondition();
-//            if(conditionUrl.startsWith("/"))
-//            {
-//                RemotablePluginAccessor remotablePluginAccessor = remotablePluginAccessorFactory.get(pluginKey);
-//                conditionUrl = remotablePluginAccessor.getBaseUrl().toString() + conditionUrl;
-//            }
             
             className = RemoteCondition.class.getName();
             

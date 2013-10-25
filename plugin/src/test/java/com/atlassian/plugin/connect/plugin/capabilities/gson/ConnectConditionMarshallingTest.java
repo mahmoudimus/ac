@@ -13,14 +13,14 @@ import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import org.hamcrest.Matchers;
 import org.junit.Test;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.TestFileReader.readCapabilitiesTestFile;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.CompositeConditionBean.newCompositeConditionBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.SingleConditionBean.newSingleConditionBean;
 import static com.google.common.collect.Lists.newArrayList;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -38,44 +38,18 @@ public class ConnectConditionMarshallingTest
         Gson gson = CapabilitiesGsonFactory.getGson();
         Type listType = new TypeToken<List<ConditionalBean>>() {}.getType();
 
-//        List<ConditionalBean> expectedList = ImmutableList.<ConditionalBean> of(
-//                newSingleConditionBean()
-//                        .withInvert(true)
-//                        .withCondition("never_displays")
-//                        .withParams(ImmutableMap.<String, String>builder().put("someParam", "woot").build())
-//                        .build()
-//                , newSingleConditionBean().withCondition("http://example.com/condition/got_woot").build()
-//                , newCompositeConditionBean()
-//                .withConditions(
-//                        newSingleConditionBean().withCondition("http://example.com/condition/got_woot").build()
-//                        , newSingleConditionBean().withCondition("http://example.com/condition/got_woot").build()
-//                )
-//                .build()
-//                , newCompositeConditionBean()
-//                .withType(CompositeConditionType.or)
-//                .withConditions(
-//                        newSingleConditionBean().withCondition("http://example.com/condition/got_woot").build()
-//                        , newSingleConditionBean().withCondition("http://example.com/condition/got_woot").build()
-//                )
-//                .build()
-//        );
-        
         List<ConditionalBean> conditionList = gson.fromJson(json, listType);
 
-        assertEquals(4, conditionList.size());
-        assertEquals(SingleConditionBean.class, conditionList.get(0).getClass());
-        assertEquals(SingleConditionBean.class, conditionList.get(1).getClass());
-        assertEquals(CompositeConditionBean.class, conditionList.get(2).getClass());
-        assertEquals(CompositeConditionBean.class, conditionList.get(3).getClass());
+        assertThat(conditionList, 
+                contains(
+                        instanceOf(SingleConditionBean.class), 
+                        instanceOf(SingleConditionBean.class), 
+                        instanceOf(CompositeConditionBean.class), 
+                        instanceOf(CompositeConditionBean.class)));
 
-        assertTrue(((SingleConditionBean) conditionList.get(0)).getParams().containsKey("someParam"));
-        assertEquals("woot", ((SingleConditionBean) conditionList.get(0)).getParams().get("someParam"));
-
-        assertEquals(CompositeConditionType.and, ((CompositeConditionBean) conditionList.get(2)).getType());
-        assertEquals(2, ((CompositeConditionBean) conditionList.get(2)).getConditions().size());
-
-        assertEquals(CompositeConditionType.or, ((CompositeConditionBean) conditionList.get(3)).getType());
-        assertEquals(2, ((CompositeConditionBean) conditionList.get(3)).getConditions().size());
+        assertThat(((SingleConditionBean) conditionList.get(0)).getParams(), hasEntry("someParam","woot"));
+        assertThat((CompositeConditionBean)conditionList.get(2), both(hasProperty("type", is(CompositeConditionType.and))).and(hasProperty("conditions", hasSize(2))));
+        assertThat((CompositeConditionBean)conditionList.get(3), both(hasProperty("type", is(CompositeConditionType.or))).and(hasProperty("conditions", hasSize(2))));
 
     }
 

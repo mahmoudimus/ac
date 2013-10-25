@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewProjectPage;
@@ -22,21 +23,25 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import it.TestPageModules;
+import it.HttpContextServlet;
+import it.MyContextAwareWebPanelServlet;
+import it.capabilities.CheckUsernameConditionServlet;
 import it.jira.JiraWebDriverTestBase;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean.newWebItemBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.SingleConditionBean.newSingleConditionBean;
+import static it.TestConstants.BARNEY_USERNAME;
 import static it.TestConstants.BETTY_USERNAME;
 import static java.lang.String.valueOf;
 import static org.junit.Assert.*;
+import static it.capabilities.ConnectAsserts.*;
 
 
 /**
  * @since 1.0
  */
-public class WebItemTest extends JiraWebDriverTestBase
+public class TestJiraWebItem extends JiraWebDriverTestBase
 {
     private static final String ADDON_WEBITEM = "ac-general-web-item";
     private static final String PRODUCT_WEBITEM = "quick-project-link";
@@ -52,26 +57,29 @@ public class WebItemTest extends JiraWebDriverTestBase
                         .withName(new I18nProperty("AC General Web Item", "ac.gen"))
                         .withLocation("system.top.navigation.bar")
                         .withWeight(1)
-                        .withLink("/irwi")
+                        .withLink("/irwi?issue_id=${issue.id}&project_key=${project.key}&pid=${project.id}")
                         .build())
                 .addCapability(newWebItemBean()
-                        .withName(new I18nProperty("Quick project link","ac.qp"))
+                        .withContext(AddOnUrlContext.product)
+                        .withName(new I18nProperty("Quick project link", "ac.qp"))
                         .withLocation("system.top.navigation.bar")
                         .withWeight(1)
-                        .withLink(product.getProductInstance().getBaseUrl() + "/browse/ACDEV-1234")
+                        .withLink("/browse/ACDEV-1234")
+                        .build())
+                .addCapability(newWebItemBean()
+                        .withName(new I18nProperty("google link", "ac.gl"))
+                        .withLocation("system.top.navigation.bar")
+                        .withWeight(1)
+                        .withLink("http://www.google.com")
                         .withConditions(
                                 newSingleConditionBean().withCondition("user_is_logged_in").build()
                                 ,newSingleConditionBean().withCondition("/onlyBettyCondition").build()
                         )
                         .build())
-                .addCapability(newWebItemBean()
-                        .withName(new I18nProperty("google link","ac.gl"))
-                        .withLocation("system.top.navigation.bar")
-                        .withWeight(1)
-                        .withLink("http://www.google.com")
-                        .build())
                 
-                .addRoute("/onlyBettyCondition",new OnlyBettyConditionServlet())
+                .addRoute("/onlyBarneyCondition", new CheckUsernameConditionServlet(BARNEY_USERNAME))
+                .addRoute("/onlyBettyCondition", new CheckUsernameConditionServlet(BETTY_USERNAME))
+                .addRoute("/irwi?issue_id=${issue.id}&project_key=${project.key}&pid=${project.id}", new HttpContextServlet(new MyContextAwareWebPanelServlet()))
                 .start();
     }
 
@@ -87,25 +95,52 @@ public class WebItemTest extends JiraWebDriverTestBase
     @Test
     public void testAbsoluteWebItem()
     {
-        loginAsAdmin();
+        loginAs(BETTY_USERNAME, BETTY_USERNAME);
 
         JiraViewProjectPage viewProjectPage = product.visit(JiraViewProjectPage.class, project.getKey());
         RemoteWebItem webItem = viewProjectPage.findWebItem(ABSOLUTE_WEBITEM, Optional.<String>absent());
         assertNotNull("Web item should be found", webItem);
 
-        webItem.click();
-
-        assertTrue("Web item link should be absolute", webItem.isAbsolute());
-        assertEquals("http://www.google.com", webItem.getPath());
+        assertTrue("Web item link should be absolute", webItem.isPonitingToOldXmlInternalUrl());
+        assertURIEquals("http://www.google.com", webItem.getPath());
     }
+    
+    //TODO: add these tests back in once url variable substitution is working for web items
+//    @Test
+//    public void testRelativeWebItem()
+//    {
+//        loginAsAdmin();
+//
+//        JiraViewProjectPage viewProjectPage = product.visit(JiraViewProjectPage.class, project.getKey());
+//        RemoteWebItem webItem = viewProjectPage.findWebItem(ADDON_WEBITEM, Optional.<String>absent());
+//        assertNotNull("Web item should be found", webItem);
+//        
+//        assertEquals(project.getKey(), webItem.getFromQueryString("project_key"));
+//        assertEquals(project.getId(), webItem.getFromQueryString("pid"));
+//    }
+//
+//    @Test
+//    public void testProductWebItem()
+//    {
+//        loginAsAdmin();
+//
+//        JiraViewProjectPage viewProjectPage = product.visit(JiraViewProjectPage.class, project.getKey());
+//        RemoteWebItem webItem = viewProjectPage.findWebItem(PRODUCT_WEBITEM, Optional.<String>absent());
+//        assertNotNull("Web item should be found", webItem);
+//
+//        webItem.click();
+//
+//        assertFalse("Web item link shouldn't be absolute", webItem.isPonitingToOldXmlInternalUrl());
+//        assertThat(webItem.getPath(), endsWith(project.getKey()));
+//    }
 
     @Test
     public void bettyCanSeeWebItem()
     {
-        product.visit(LoginPage.class).login(BETTY_USERNAME, BETTY_USERNAME, HomePage.class);
+        loginAs(BETTY_USERNAME, BETTY_USERNAME);
 
         JiraViewProjectPage viewProjectPage = product.visit(JiraViewProjectPage.class, project.getKey());
-        RemoteWebItem webItem = viewProjectPage.findWebItem(PRODUCT_WEBITEM, Optional.<String>absent());
+        RemoteWebItem webItem = viewProjectPage.findWebItem(ABSOLUTE_WEBITEM, Optional.<String>absent());
         assertNotNull("Web item should be found", webItem);
     }
 
@@ -115,44 +150,10 @@ public class WebItemTest extends JiraWebDriverTestBase
         loginAsAdmin();
 
         JiraViewProjectPage viewProjectPage = product.visit(JiraViewProjectPage.class, project.getKey());
-        RemoteWebItem webItem = viewProjectPage.findWebItem(PRODUCT_WEBITEM, Optional.<String>absent());
-        assertNull("Web item should NOT be found", webItem);
+        assertTrue("Web item should NOT be found", viewProjectPage.webItemDoesNotExist(ABSOLUTE_WEBITEM));
     }
 
-    public static final class OnlyBettyConditionServlet extends HttpServlet
-    {
-        private static final String BETTY = "betty";
+    //TODO: once generalPage is complete, add a test to check that a web item pointing to the page works properly
 
-        private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
-        @Override
-        protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
-        {
-            final String loggedInUser = req.getParameter("user_id");
-            final boolean isBetty = isBetty(loggedInUser);
-
-            logger.debug("The logged in user is {}betty, their user key is '{}'", isBetty ? "" : "NOT ", loggedInUser);
-
-            final String json = getJson(isBetty);
-            logger.debug("Responding with the following json: {}", json);
-            sendJson(resp, json);
-        }
-
-        private void sendJson(HttpServletResponse resp, String json) throws IOException
-        {
-            resp.setContentType("application/json");
-            resp.getWriter().write(json);
-            resp.getWriter().close();
-        }
-
-        private String getJson(boolean shouldDisplay)
-        {
-            return "{\"shouldDisplay\" : " + valueOf(shouldDisplay) + "}";
-        }
-
-        private boolean isBetty(String loggedInUser)
-        {
-            return BETTY.equals(loggedInUser);
-        }
-    }
+        
 }

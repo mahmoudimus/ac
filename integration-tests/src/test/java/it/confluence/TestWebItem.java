@@ -75,7 +75,7 @@ public class TestWebItem extends ConfluenceWebDriverTestBase
 
         RemoteWebItem webItem = editPage.findWebItem(GENERAL_WEBITEM, Optional.of("help-menu-link"));
         assertNotNull("Web item should be found", webItem);
-        assertFalse("Web item link shouldn't be absolute", webItem.isAbsolute());
+        assertFalse("Web item link shouldn't be absolute", webItem.isPonitingToOldXmlInternalUrl());
 
         webItem.click();
 
@@ -93,7 +93,7 @@ public class TestWebItem extends ConfluenceWebDriverTestBase
 
         RemoteWebItem webItem = editPage.findWebItem(ABSOLUTE_WEB_ITEM, Optional.of("help-menu-link"));
         assertNotNull("Web item should be found", webItem);
-        assertTrue("Web item link should be absolute", webItem.isAbsolute());
+        assertTrue("Web item link should be absolute", webItem.isPonitingToOldXmlInternalUrl());
 
         webItem.click();
 
