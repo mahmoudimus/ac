@@ -47,12 +47,12 @@ define(['iframe/_xdm'], function() {
     });
 
     test('messages are received', function () {
+      stop();
       var xdm = this.createXdm();
       xdm.events.on('clientevent', function (e){
         equal(e, '12345');
         start();
       });
-      stop();
     });
 
     test('messages are sent', function () {
