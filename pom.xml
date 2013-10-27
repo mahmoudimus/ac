@@ -1,4 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd" xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <parent>
         <artifactId>atlassian-public-pom</artifactId>
         <groupId>com.atlassian.pom</groupId>
@@ -151,7 +151,6 @@
                     <pushReleases>true</pushReleases>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
                     <releaseBranchVersionSuffix>RC</releaseBranchVersionSuffix>
-                    <pullMaster>true</pullMaster>
                     <defaultOriginUrl>ssh://git@stash.atlassian.com:7997/ac/atlassian-connect.git</defaultOriginUrl>
                 </configuration>
             </plugin>
@@ -507,7 +506,8 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-    <dependencies />
+    <dependencies></dependencies>
+    <!-- REMOVE WHEN JGITFLOW IS FINAL -->
     <pluginRepositories>
         <!-- REMOVE WHEN JGITFLOW IS FINAL -->
         <pluginRepository>

@@ -6,7 +6,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.VendorBean
 import com.google.common.base.Objects;
 
 /**
- * @since version
+ * @since 1.0
  */
 public class VendorBean extends BaseCapabilityBean
 {

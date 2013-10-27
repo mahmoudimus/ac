@@ -13,7 +13,7 @@ import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
 
 /**
- * @since version
+ * @since 1.0
  */
 public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extends ConnectAddonBean> extends BaseCapabilityBeanBuilder<T,B>
 {

@@ -4,7 +4,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.CapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.BaseCapabilityBean;
 
 /**
- * @since version
+ * @since 1.0
  */
 public abstract class BaseCapabilityBeanBuilder<T extends BaseCapabilityBeanBuilder, B extends BaseCapabilityBean> implements CapabilityBeanBuilder<B>
 {

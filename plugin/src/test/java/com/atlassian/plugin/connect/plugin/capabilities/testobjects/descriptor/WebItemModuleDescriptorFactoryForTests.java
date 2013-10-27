@@ -8,7 +8,7 @@ import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import static org.mockito.Mockito.mock;
 
 /**
- * @since version
+ * @since 1.0
  */
 public class WebItemModuleDescriptorFactoryForTests implements WebItemModuleDescriptorFactory
 {

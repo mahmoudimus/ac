@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.plugin.capabilities.util;
 
 /**
- * @since version
+ * @since 1.0
  */
 public interface ConnectAutowireUtil
 {

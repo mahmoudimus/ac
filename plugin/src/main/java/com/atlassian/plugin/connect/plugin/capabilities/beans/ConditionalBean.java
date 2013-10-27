@@ -6,11 +6,9 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.CompositeCo
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.SingleConditionBean;
 
 /**
- * @since version
+ * @since 1.0
  */
-public interface CapabilityWithConditionsBean
+public interface ConditionalBean
 {
-    List<SingleConditionBean> getSingleConditions();
-    
-    List<CompositeConditionBean> getCompositeConditions();
+
 }

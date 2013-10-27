@@ -14,6 +14,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 
+import static it.TestConstants.ADMIN_USERNAME;
+import static it.TestConstants.BARNEY_USERNAME;
 import static it.TestConstants.BETTY_USERNAME;
 
 public abstract class ConfluenceWebDriverTestBase
@@ -43,13 +45,24 @@ public abstract class ConfluenceWebDriverTestBase
         product.getTester().getDriver().manage().deleteAllCookies();
     }
 
-    protected HomePage loginAsBetty()
+    protected void loginAsAdmin()
     {
-        return login(BETTY_USERNAME, BETTY_USERNAME);
+        loginAs(ADMIN_USERNAME, ADMIN_USERNAME);
     }
 
-    protected HomePage login(String pwd, String username)
+    protected HomePage loginAsBetty()
     {
-        return product.visit(LoginPage.class).login(username, pwd, HomePage.class);
+        return loginAs(BETTY_USERNAME, BETTY_USERNAME);
     }
+
+    protected HomePage loginAsBarney()
+    {
+        return loginAs(BARNEY_USERNAME, BARNEY_USERNAME);
+    }
+
+    protected HomePage loginAs(String username, String password)
+    {
+        return product.visit(LoginPage.class).login(username, password, HomePage.class);
+    }
+
 }

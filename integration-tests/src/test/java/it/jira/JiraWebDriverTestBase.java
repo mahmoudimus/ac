@@ -64,7 +64,7 @@ public class JiraWebDriverTestBase
         loginAs(ADMIN_USERNAME, ADMIN_USERNAME);
     }
 
-    private void loginAs(String username, String password)
+    protected void loginAs(String username, String password)
     {
         product.visit(LoginPage.class).login(username, password, DashboardPage.class);
     }

@@ -12,7 +12,7 @@ import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
 
 import com.google.common.collect.ImmutableMap;
 
-public final class MyContextAwareWebPanelServlet extends AtlassianConnectAddOnRunner.WithContextServlet
+public final class MyContextAwareWebPanelServlet extends ContextServlet
 {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp, Map<String, Object> context) throws ServletException, IOException

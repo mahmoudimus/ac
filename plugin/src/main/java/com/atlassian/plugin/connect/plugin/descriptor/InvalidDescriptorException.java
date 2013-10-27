@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.plugin.descriptor;
 
 /**
- * @since version
+ * @since 1.0
  */
 public class InvalidDescriptorException extends RuntimeException
 {

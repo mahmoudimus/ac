@@ -27,7 +27,7 @@ import org.springframework.stereotype.Component;
 import static com.atlassian.plugin.connect.plugin.util.OsgiServiceUtils.getService;
 
 /**
- * @since version
+ * @since 1.0
  */
 @Component
 public class IFramePageServletDescriptorFactory
