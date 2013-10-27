@@ -3,6 +3,9 @@ package com.atlassian.plugin.connect.plugin.capabilities.beans.matchers;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.AbstractConnectTabPanelCapabilityBean;
 import org.mockito.ArgumentMatcher;
 
+/**
+ * Matchers that operate on properties of the AbstractConnectTabPanelCapabilityBean class
+ */
 public class TabPanelCapabilityBeanMatchers extends NameToKeyBeanMatchers
 {
     public static <T extends AbstractConnectTabPanelCapabilityBean> ArgumentMatcher<T> hasAddonKeyValue(String expectedValue)

@@ -10,6 +10,11 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
+/**
+ * A hamcrest ArgumentMatcher for matching against properties of CapabilityBeans
+ * @param <M> The type of capability bean that is required for the matching methods on this class
+ * @param <T> The type of capability bean the test is running against. Note this is typically a subtype of M
+ */
 public abstract class CapabilityBeanParamMatcher<M extends CapabilityBean, T extends M> extends ArgumentMatcher<T>
 {
     private final String name;

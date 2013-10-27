@@ -5,6 +5,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.AbstractConnectTab
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectProjectTabPanelCapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAutowireUtil;
+import com.atlassian.plugin.connect.plugin.module.jira.projecttab.IFrameProjectTab;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectProjectTabPanelModuleDescriptorFactory.MODULE_PREFIX;
 
@@ -13,7 +14,7 @@ public class ConnectProjectTabPanelModuleDescriptorFactoryTest extends AbstractC
 {
     public ConnectProjectTabPanelModuleDescriptorFactoryTest()
     {
-        super(ConnectProjectTabPanelModuleDescriptor.class, ProjectTabPanel.class, MODULE_PREFIX);
+        super(ConnectProjectTabPanelModuleDescriptor.class, IFrameProjectTab.class, MODULE_PREFIX);
     }
 
     @Override

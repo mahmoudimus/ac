@@ -3,6 +3,10 @@ package com.atlassian.plugin.connect.plugin.capabilities.beans.matchers;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean;
 import org.mockito.ArgumentMatcher;
 
+/**
+ * Matchers that operate on properties of the WebItemCapabilityBean class
+ */
+
 public class WebItemCapabilityBeanMatchers extends NameToKeyBeanMatchers
 {
     public static <T extends WebItemCapabilityBean> ArgumentMatcher<T> hasAddonKeyValue(String expectedValue)

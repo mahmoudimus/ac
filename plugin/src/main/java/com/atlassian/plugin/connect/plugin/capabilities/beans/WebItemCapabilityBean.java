@@ -1,14 +1,14 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.atlassian.plugin.connect.plugin.capabilities.annotation.CapabilitySet;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.WebItemCapabilityBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.WebItemModuleProvider;
 import com.google.common.base.Objects;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
 

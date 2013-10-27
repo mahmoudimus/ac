@@ -12,7 +12,8 @@ import static org.apache.commons.lang.StringEscapeUtils.escapeHtml;
 /**
  * A wrapper around the dom element for a tab panel descriptor so that only one place needs to know the structure of the dom.
  * As the compiler won't enforce whether we have used the correct names for attributes / elements or that we have accessed
- * an attribute as an element, the less places that do it the better
+ * an attribute as an element, the less places that do it the better.
+ * A bit like a poor mans JAXB
  */
 public class TabPanelElement
 {

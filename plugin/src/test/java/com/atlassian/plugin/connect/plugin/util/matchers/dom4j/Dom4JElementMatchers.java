@@ -3,6 +3,9 @@ package com.atlassian.plugin.connect.plugin.util.matchers.dom4j;
 import org.dom4j.Element;
 import org.mockito.ArgumentMatcher;
 
+/**
+ * Matchers that operation on DOM4J Element classes
+ */
 public class Dom4JElementMatchers
 {
     public static ArgumentMatcher<Element> hasAttributeValue(String name, String expectedValue)

@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 import com.atlassian.jira.plugin.projectpanel.ProjectTabPanel;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectProjectTabPanelCapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAutowireUtil;
+import com.atlassian.plugin.connect.plugin.module.jira.projecttab.IFrameProjectTab;
 
 /**
  * A factory to produce a ConnectProjectTabPanelModuleDescriptor from a ConnectProjectTabPanelCapabilityBean
@@ -16,6 +17,6 @@ public class ConnectProjectTabPanelModuleDescriptorFactory
 
     public ConnectProjectTabPanelModuleDescriptorFactory(ConnectAutowireUtil connectAutowireUtil)
     {
-        super(ConnectProjectTabPanelModuleDescriptor.class, PROJECT_TAB_PAGE, MODULE_PREFIX, connectAutowireUtil, ProjectTabPanel.class);
+        super(ConnectProjectTabPanelModuleDescriptor.class, PROJECT_TAB_PAGE, MODULE_PREFIX, connectAutowireUtil, IFrameProjectTab.class);
     }
 }
