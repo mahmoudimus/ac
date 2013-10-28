@@ -160,13 +160,6 @@ public class ConnectProjectAdminTabPanelModuleProviderTest
                 anyString(), eq(ADDON_URL), anyString(), anyString(), any(Condition.class), anyMap());
     }
 
-//    @Test
-//    public void callsServletDescriptorFactoryWithCorrectLocation()
-//    {
-//        verify(servletDescriptorFactory, times(1)).createIFrameServletDescriptor(eq(plugin), any(WebItemCapabilityBean.class),
-//                anyString(), anyString(), eq(EXPECTED_LOCATION), anyString(), any(Condition.class), anyMap());
-//    }
-
     @Test
     public void callsServletDescriptorFactoryWithCorrectDecorator()
     {
