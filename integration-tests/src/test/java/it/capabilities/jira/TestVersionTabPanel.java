@@ -16,13 +16,14 @@ import org.junit.Test;
 import java.rmi.RemoteException;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectVersionTabPanelCapabilityBean.newVersionTabPanelBean;
+import static com.atlassian.plugin.connect.test.server.ConnectCapabilitiesRunner.newMustacheServlet;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 /**
  * Test of remote version tab panel in JIRA
  */
-public class VersionTabPageCapabilitiesTest extends TestBase
+public class TestVersionTabPanel extends TestBase
 {
     private static ConnectCapabilitiesRunner remotePlugin;
 
@@ -37,13 +38,12 @@ public class VersionTabPageCapabilitiesTest extends TestBase
     public static void startConnectAddOn() throws Exception
     {
         remotePlugin = new ConnectCapabilitiesRunner(jira().getProductInstance().getBaseUrl(),"my-plugin")
-                .addOAuth()
                 .addCapability(newVersionTabPanelBean()
-                        .withKey(JIRA_VERSION_TAB_PANEL)
-                        .withName(new I18nProperty("Version Tab Panel", "my.versiontabpanel"))
+                        .withName(new I18nProperty("Version Tab Panel", null))
                         .withUrl("/ipp?version_id=${version.id}&project_id=${project.id}&project_key=${project.key}")
                         .withWeight(1234)
                         .build())
+                .addRoute("/ipp", newMustacheServlet("iframe.mu"))
                 .start();
     }
 
@@ -74,7 +74,7 @@ public class VersionTabPageCapabilitiesTest extends TestBase
     public void testVersionTabPanel() throws RemoteException
     {
         jira().gotoLoginPage().loginAsSysadminAndGoToHome();
-        final JiraVersionTabPage versionTabPage = jira().goTo(JiraVersionTabPage.class, PROJECT_KEY, versionId, "jira-version-tab");
+        final JiraVersionTabPage versionTabPage = jira().goTo(JiraVersionTabPage.class, PROJECT_KEY, versionId, "version-tab");
 
         versionTabPage.clickTab();
 

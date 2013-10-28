@@ -17,7 +17,7 @@ import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
 
 
-public class WebPanelTest extends JiraWebDriverTestBase
+public class TestWebPanel extends JiraWebDriverTestBase
 {
     private static ConnectCapabilitiesRunner remotePlugin;
 

@@ -5,13 +5,16 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.AbstractConnectTab
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectVersionTabPanelCapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAutowireUtil;
+import com.atlassian.plugin.connect.plugin.module.jira.versiontab.IFrameVersionTab;
+
+import static com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectVersionTabPanelModuleDescriptorFactory.MODULE_PREFIX;
 
 
 public class ConnectVersionTabPanelModuleDescriptorFactoryTest extends AbstractConnectTabPanelModuleDescriptorFactoryTest
 {
     public ConnectVersionTabPanelModuleDescriptorFactoryTest()
     {
-        super(ConnectVersionTabPanelModuleDescriptor.class, VersionTabPanel.class);
+        super(ConnectVersionTabPanelModuleDescriptor.class, IFrameVersionTab.class, MODULE_PREFIX);
     }
 
     @Override

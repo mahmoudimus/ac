@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.plugin.capabilities;
+package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;

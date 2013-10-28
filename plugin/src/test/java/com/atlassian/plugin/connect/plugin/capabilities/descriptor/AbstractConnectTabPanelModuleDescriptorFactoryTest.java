@@ -3,9 +3,6 @@ package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.AbstractConnectTabPanelCapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAutowireUtil;
-import com.atlassian.plugin.connect.plugin.util.matchers.ElementAttributeParamMatcher;
-import com.atlassian.plugin.connect.plugin.util.matchers.ElementSubElementTextMatcher;
-import com.atlassian.plugin.connect.plugin.util.matchers.SubElementParamMatcher;
 import com.atlassian.plugin.module.ContainerManagedPlugin;
 import org.dom4j.Element;
 import org.junit.Before;
@@ -16,6 +13,9 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.osgi.framework.BundleContext;
 
+import static com.atlassian.plugin.connect.plugin.util.matchers.dom4j.Dom4JElementMatchers.hasAttributeValue;
+import static com.atlassian.plugin.connect.plugin.util.matchers.dom4j.Dom4JElementMatchers.hasSubElementAttributeValue;
+import static com.atlassian.plugin.connect.plugin.util.matchers.dom4j.Dom4JElementMatchers.hasSubElementTextValue;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
@@ -37,6 +37,7 @@ public abstract class AbstractConnectTabPanelModuleDescriptorFactoryTest
     private static final String ADDON_LABEL_KEY = "my.tabpage";
     private final Class<? extends ModuleDescriptor<?>> descriptorClass;
     private final Class<?> moduleClass;
+    private final String modulePrefix;
     private AbstractConnectTabPanelModuleDescriptorFactory tabPanelModuleDescriptorFactory;
 
     @Mock
@@ -48,10 +49,12 @@ public abstract class AbstractConnectTabPanelModuleDescriptorFactoryTest
     @Mock
     private ConnectAutowireUtil connectAutowireUtil;
 
-    protected AbstractConnectTabPanelModuleDescriptorFactoryTest(Class<? extends ModuleDescriptor<?>> descriptorClass, Class<?> moduleClass)
+    protected AbstractConnectTabPanelModuleDescriptorFactoryTest(Class<? extends ModuleDescriptor<?>> descriptorClass,
+                                                                 Class<?> moduleClass, String modulePrefix)
     {
         this.descriptorClass = descriptorClass;
         this.moduleClass = moduleClass;
+        this.modulePrefix = modulePrefix;
     }
 
     @Before
@@ -82,7 +85,7 @@ public abstract class AbstractConnectTabPanelModuleDescriptorFactoryTest
     @Test
     public void createsElementWithCorrectKey()
     {
-        verify(connectTabPanelModuleDescriptor, times(1)).init(eq(plugin), argThat(hasElementKey(ADDON_NAME_KEY)));
+        verify(connectTabPanelModuleDescriptor, times(1)).init(eq(plugin), argThat(hasElementKey(modulePrefix + ADDON_NAME_KEY)));
     }
 
     @Test
@@ -157,23 +160,4 @@ public abstract class AbstractConnectTabPanelModuleDescriptorFactoryTest
     {
         return hasSubElementAttributeValue("label", "key", expectedValue);
     }
-
-
-    private static ArgumentMatcher<Element> hasAttributeValue(String name, String expectedValue)
-    {
-        return new ElementAttributeParamMatcher(name, expectedValue);
-    }
-
-    private static ArgumentMatcher<Element> hasSubElementAttributeValue(String subElementName, String attributeName, String expectedValue)
-    {
-        return new SubElementParamMatcher(subElementName, new ElementAttributeParamMatcher(attributeName, expectedValue));
-    }
-
-
-    private static ArgumentMatcher<Element> hasSubElementTextValue(String name, String expectedValue)
-    {
-        return new ElementSubElementTextMatcher(name, expectedValue);
-    }
-
-
 }

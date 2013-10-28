@@ -14,16 +14,18 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectComponentTabPanelCapabilityBean.newComponentTabPanelBean;
+import static com.atlassian.plugin.connect.test.server.ConnectCapabilitiesRunner.newMustacheServlet;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 /**
  * Test of remote component tab panel in JIRA
  */
-public class ComponentTabPageCapabilitiesTest extends TestBase
+public class TestComponentTabPanel extends TestBase
 {
     private static final String PROJECT_KEY = FunctTestConstants.PROJECT_HOMOSAP_KEY;
     private static final String COMPONENT_NAME = "test-component";
+    private static final String JIRA_COMPONENT_TAB_PANEL = "jira-component-tab-panel";
     private static ConnectCapabilitiesRunner remotePlugin;
 
     private String componentId;
@@ -33,12 +35,12 @@ public class ComponentTabPageCapabilitiesTest extends TestBase
     public static void setUpClassTest() throws Exception
     {
         remotePlugin = new ConnectCapabilitiesRunner(jira().getProductInstance().getBaseUrl(),"my-plugin")
-                .addOAuth()
                 .addCapability(newComponentTabPanelBean()
-                        .withName(new I18nProperty("Component Tab Panel", "my.componenttabpanel"))
+                        .withName(new I18nProperty("Component Tab Panel", null))
                         .withUrl("/ipp?component_id=${component.id}&project_id=${project.id}&project_key=${project.key}")
                         .withWeight(1234)
                         .build())
+                .addRoute("/ipp", newMustacheServlet("iframe.mu"))
                 .start();
     }
 
@@ -71,7 +73,7 @@ public class ComponentTabPageCapabilitiesTest extends TestBase
     public void testComponentTabPanel() throws Exception
     {
         jira().gotoLoginPage().loginAsSysadminAndGoToHome();
-        final JiraComponentTabPage componentTabPage = jira().goTo(JiraComponentTabPage.class, PROJECT_KEY, componentId, "jira-component-tab");
+        final JiraComponentTabPage componentTabPage = jira().goTo(JiraComponentTabPage.class, PROJECT_KEY, componentId, "component-tab");
 
         componentTabPage.clickTab();
 

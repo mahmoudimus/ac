@@ -1,18 +1,19 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
-import com.atlassian.jira.plugin.componentpanel.ComponentTabPanel;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.AbstractConnectTabPanelCapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAutowireUtil;
+import com.atlassian.plugin.connect.plugin.module.jira.componenttab.IFrameComponentTab;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectComponentTabPanelCapabilityBean.newComponentTabPanelBean;
+import static com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectComponentTabPanelModuleDescriptorFactory.MODULE_PREFIX;
 
 
 public class ConnectComponentTabPanelModuleDescriptorFactoryTest extends AbstractConnectTabPanelModuleDescriptorFactoryTest
 {
     public ConnectComponentTabPanelModuleDescriptorFactoryTest()
     {
-        super(ConnectComponentTabPanelModuleDescriptor.class, ComponentTabPanel.class);
+        super(ConnectComponentTabPanelModuleDescriptor.class, IFrameComponentTab.class, MODULE_PREFIX);
     }
 
     @Override

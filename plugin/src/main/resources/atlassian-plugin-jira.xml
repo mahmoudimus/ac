@@ -51,6 +51,14 @@
     <component key="connectVersionTabPanelModuleDescriptorFactory" class="com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectVersionTabPanelModuleDescriptorFactory" />
     <component key="connectVersionTabPanelModuleProvider" class="com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectVersionTabPanelModuleProvider" />
 
+    <component key="connectProjectTabPanelModuleDescriptorFactory" class="com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectProjectTabPanelModuleDescriptorFactory" />
+    <component key="connectProjectTabPanelModuleProvider" class="com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectProjectTabPanelModuleProvider" />
+
+    <component key="connectComponentTabPanelModuleDescriptorFactory" class="com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectComponentTabPanelModuleDescriptorFactory" />
+    <component key="connectComponentTabPanelModuleProvider" class="com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectComponentTabPanelModuleProvider" />
+
+    <component key="connectProjectAdminTabPanelModuleProvider" class="com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectProjectAdminTabPanelModuleProvider" />
+
     <rest key="rest" path="/atlassian-connect" version="1">
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>INCLUDE</dispatcher>

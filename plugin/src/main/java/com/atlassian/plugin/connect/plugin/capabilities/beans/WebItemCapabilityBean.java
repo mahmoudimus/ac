@@ -8,6 +8,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.WebItemCap
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.WebItemModuleProvider;
+import com.google.common.base.Objects;
 
 import static com.google.common.collect.Lists.newArrayList;
 
@@ -136,4 +137,14 @@ public class WebItemCapabilityBean extends BeanWithKeyAndParamsAndConditions
         return new WebItemCapabilityBeanBuilder(defaultBean);
     }
 
+    @Override
+    public String toString()
+    {
+        return Objects.toStringHelper(this)
+                .add("key", getKey())
+                .add("name", getName())
+                .add("link", getLink())
+                .add("location", getLocation())
+                .toString();
+    }
 }
