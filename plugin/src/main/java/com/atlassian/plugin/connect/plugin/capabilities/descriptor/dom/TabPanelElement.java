@@ -90,7 +90,7 @@ public class TabPanelElement
 
     public String getOrder()
     {
-        return domElement.element(ORDER).getText();
+        return domElement.elementText(ORDER);
     }
 
     public void setUrl(String value)
