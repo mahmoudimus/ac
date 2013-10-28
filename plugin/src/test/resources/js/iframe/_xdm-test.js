@@ -46,16 +46,7 @@ define(['iframe/_xdm'], function() {
       equal($("iframe#" + this.iframeId()).length, 0, "Iframe was destroyed");
     });
 
-    test('messages are received', function () {
-      var xdm = this.createXdm();
-      xdm.events.on('clientevent', function (e){
-        equal(e, '12345');
-        start();
-      });
-      stop();
-    });
-
-    test('messages are sent', function () {
+    test('messages are sent and received', function () {
       stop();
 
       var xdm = this.createXdm('xdm-emit-on.html');
