@@ -10,7 +10,6 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityB
 import com.atlassian.plugin.connect.plugin.capabilities.testobjects.PluginForTests;
 import com.atlassian.plugin.connect.plugin.capabilities.testobjects.RemotablePluginAccessorFactoryForTests;
 import com.atlassian.plugin.connect.plugin.capabilities.testobjects.descriptor.WebItemModuleDescriptorFactoryForTests;
-import com.atlassian.plugin.connect.plugin.capabilities.util.TestContextBuilder;
 import com.atlassian.plugin.connect.spi.module.DynamicMarkerCondition;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.web.WebFragmentHelper;
@@ -26,9 +25,6 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import org.osgi.framework.BundleContext;
-
-import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean.newWebItemBean;
 import static org.hamcrest.CoreMatchers.is;
@@ -54,7 +50,7 @@ public class WebItemModuleDescriptorFactoryTest
         Plugin plugin = new PluginForTests("my-key", "My Plugin");
 
         RemotablePluginAccessorFactoryForTests remotablePluginAccessorFactoryForTests = new RemotablePluginAccessorFactoryForTests();
-        ConditionModuleFragmentFactory conditionModuleFragmentFactory = new ConditionModuleFragmentFactory(mock(ProductAccessor.class),remotablePluginAccessorFactoryForTests);
+        ConditionModuleFragmentFactory conditionModuleFragmentFactory = new ConditionModuleFragmentFactory(mock(ProductAccessor.class),remotablePluginAccessorFactoryForTests, new ParamsModuleFragmentFactory());
 
         WebItemModuleDescriptorFactory webItemFactory = new WebItemModuleDescriptorFactory(new WebItemModuleDescriptorFactoryForTests(webInterfaceManager), new IconModuleFragmentFactory(new RemotablePluginAccessorFactoryForTests()), conditionModuleFragmentFactory);
 

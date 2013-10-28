@@ -33,12 +33,14 @@ public class ConditionModuleFragmentFactory implements ConnectModuleFragmentFact
     
     private final ProductAccessor productAccessor;
     private final RemotablePluginAccessorFactory remotablePluginAccessorFactory;
+    private final ParamsModuleFragmentFactory paramsModuleFragmentFactory;
 
     @Autowired
-    public ConditionModuleFragmentFactory(ProductAccessor productAccessor, RemotablePluginAccessorFactory remotablePluginAccessorFactory)
+    public ConditionModuleFragmentFactory(ProductAccessor productAccessor, RemotablePluginAccessorFactory remotablePluginAccessorFactory, ParamsModuleFragmentFactory paramsModuleFragmentFactory)
     {
         this.productAccessor = productAccessor;
         this.remotablePluginAccessorFactory = remotablePluginAccessorFactory;
+        this.paramsModuleFragmentFactory = paramsModuleFragmentFactory;
     }
 
     @Override
@@ -155,12 +157,7 @@ public class ConditionModuleFragmentFactory implements ConnectModuleFragmentFact
             element.addAttribute("class", className);
             element.addAttribute("invert",Boolean.toString(bean.isInvert()));
             
-            for(Map.Entry<String,String> entry : params.entrySet())
-            {
-                element.addElement("param")
-                       .addAttribute("name",entry.getKey())
-                       .addAttribute("value",entry.getValue());
-            }
+            paramsModuleFragmentFactory.addParamsToElement(element,params);
         }
         
         return element;

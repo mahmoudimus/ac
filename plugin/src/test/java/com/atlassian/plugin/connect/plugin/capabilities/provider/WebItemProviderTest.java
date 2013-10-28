@@ -10,10 +10,7 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConditionModuleFragmentFactory;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.IconModuleFragmentFactory;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.RelativeAddOnUrlConverter;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
+import com.atlassian.plugin.connect.plugin.capabilities.descriptor.*;
 import com.atlassian.plugin.connect.plugin.capabilities.testobjects.PluginForTests;
 import com.atlassian.plugin.connect.plugin.capabilities.testobjects.RemotablePluginAccessorFactoryForTests;
 import com.atlassian.plugin.connect.plugin.capabilities.testobjects.descriptor.WebItemModuleDescriptorFactoryForTests;
@@ -59,7 +56,7 @@ public class WebItemProviderTest
         RemotablePluginAccessorFactoryForTests remotablePluginAccessorFactoryForTests = new RemotablePluginAccessorFactoryForTests();
         webInterfaceManager = mock(WebInterfaceManager.class);
         webFragmentHelper = mock(WebFragmentHelper.class);
-        webItemFactory = new WebItemModuleDescriptorFactory(new WebItemModuleDescriptorFactoryForTests(webInterfaceManager), new IconModuleFragmentFactory(remotablePluginAccessorFactoryForTests), new ConditionModuleFragmentFactory(mock(ProductAccessor.class),remotablePluginAccessorFactoryForTests));
+        webItemFactory = new WebItemModuleDescriptorFactory(new WebItemModuleDescriptorFactoryForTests(webInterfaceManager), new IconModuleFragmentFactory(remotablePluginAccessorFactoryForTests), new ConditionModuleFragmentFactory(mock(ProductAccessor.class),remotablePluginAccessorFactoryForTests, new ParamsModuleFragmentFactory()));
         servletRequest = mock(HttpServletRequest.class);
         
         when(webInterfaceManager.getWebFragmentHelper()).thenReturn(webFragmentHelper);
