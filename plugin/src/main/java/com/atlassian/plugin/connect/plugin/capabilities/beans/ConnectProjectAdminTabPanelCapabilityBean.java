@@ -31,7 +31,6 @@ public class ConnectProjectAdminTabPanelCapabilityBean extends AbstractConnectTa
     public ConnectProjectAdminTabPanelCapabilityBean(ConnectProjectAdminTabPanelCapabilityBeanBuilder builder)
     {
         super(builder);
-        // TODO: is location mandatory?
         if (null == location)
         {
             this.location = "";
