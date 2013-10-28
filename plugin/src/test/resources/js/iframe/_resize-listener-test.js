@@ -26,8 +26,9 @@ define(['iframe/_xdm'], function(_rpc, $) {
                 });
             },
             getBaseUrl: function(){
-                if (!window.location.origin)
-                window.location.origin = window.location.protocol+"//"+window.location.host;
+                if (!window.location.origin) {
+                    window.location.origin = window.location.protocol+"//"+window.location.host;
+                }
                 return window.location.origin;
             }
         });
