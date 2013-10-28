@@ -102,29 +102,4 @@ public class TestProjectAdminTabPanel extends JiraWebDriverTestBase
         assertEquals("Success", remoteProjectAdministrationTab.getMessage());
     }
 
-//    @Test
-//    public void testProjectTab() throws Exception
-//    {
-//        testLoggedInAndAnonymous(new Callable()
-//        {
-//            @Override
-//            public Object call() throws Exception
-//            {
-//                RemotePluginEmbeddedTestPage page = product.visit(BrowseProjectPage.class, project.getKey())
-//                                                           .openTab(AppProjectTabPage.class)
-//                                                           .getEmbeddedPage();
-//
-//                assertEquals("Success", page.getMessage());
-//                return null;
-//            }
-//        });
-//    }
-//
-//    public static final class AppProjectTabPage extends AbstractRemotablePluginProjectTab
-//    {
-//        public AppProjectTabPage(final String projectKey)
-//        {
-//            super(projectKey, "project-tab-ac-play-project-tab");
-//        }
-//    }
 }
