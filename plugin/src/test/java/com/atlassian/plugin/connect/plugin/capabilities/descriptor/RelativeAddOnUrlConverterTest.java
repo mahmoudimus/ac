@@ -12,8 +12,6 @@ import static org.junit.Assert.assertThat;
 public class RelativeAddOnUrlConverterTest
 {
     private static final String URL = "/irwi?issue_id=${issue.id}&project_key=${project.key}&pid=${project.id}";
-    //    @Mock
-//    UrlVariableSubstitutor urlVariableSubstitutor;
 
     @Test
     public void substitutesHost()
