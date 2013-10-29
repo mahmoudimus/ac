@@ -1,7 +1,9 @@
 package com.atlassian.plugin.connect.plugin.capabilities.gson;
 
 import java.lang.reflect.Type;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConditionalBean;
 
@@ -24,11 +26,11 @@ public class CapabilitiesGsonFactory
     public static GsonBuilder getGsonBuilder(BundleContext bundleContext)
     {
         Type conditionalType = new TypeToken<List<ConditionalBean>>(){}.getType();
-        
+        Type mapStringType = new TypeToken<Map<String,String>>(){}.getType();
         return new GsonBuilder()
-                .registerTypeAdapterFactory(new CapabilityMapAdapterFactory(bundleContext))
-                //.registerTypeAdapterFactory(new ConditionalTypeAdapterFactory())
                 .registerTypeAdapter(conditionalType,new ConditionalBeanSerializer())
+                .registerTypeAdapter(List.class, new IgnoredEmptyCollectionSerializer())
+                .registerTypeAdapter(mapStringType, new IgnoredEmptyMapSerializer())
                 ;
     }
     

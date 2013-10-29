@@ -1,15 +1,11 @@
 package com.atlassian.plugin.connect.plugin.installer;
 
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import com.atlassian.plugin.*;
 import com.atlassian.plugin.connect.plugin.OAuthLinkManager;
 import com.atlassian.plugin.connect.plugin.capabilities.BeanToModuleRegistrar;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.CapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.RemoteContainerCapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.gson.CapabilitiesGsonFactory;
 import com.atlassian.plugin.connect.plugin.event.RemoteEventsHandler;
 import com.atlassian.plugin.connect.spi.InstallationFailedException;
@@ -25,8 +21,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import static com.google.common.collect.Lists.newArrayList;
 
 @Component
 public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
@@ -79,33 +73,9 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
             long startTime = System.currentTimeMillis();
             Plugin installedPlugin = installPlugin(pluginArtifact, pluginKey, username);
 
-            //we need to make sure the container is registered first
-            List<CapabilityBean> capabilityBeans = newArrayList();
-            if (addOn.getCapabilities().containsKey("connect-container"))
-            {
-                RemoteContainerCapabilityBean container = ((List<RemoteContainerCapabilityBean>) addOn.getCapabilities().get("connect-container")).get(0);
-                if (null == container)
-                {
-                    throw new InstallationFailedException("No connect-container found in capabilities!");
-                }
-                
-                capabilityBeans.add(container);
-            }
-            
-            //we need to register the container first
-            
             try
             {
-
-                for (Map.Entry<String, List<? extends CapabilityBean>> entry : addOn.getCapabilities().entrySet())
-                {
-                    if(!"connect-container".equals(entry.getKey()))
-                    {
-                        capabilityBeans.addAll(entry.getValue());
-                    }
-                }
-
-                beanToModuleRegistrar.registerDescriptorsForBeans(installedPlugin, capabilityBeans);
+                beanToModuleRegistrar.registerDescriptorsForBeans(installedPlugin, addOn.getCapabilities());
             }
             catch (Exception e)
             {
@@ -205,7 +175,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
                 pluginController.uninstall(installedPlugin);
                 throw e;
             }
-            
+
 
             log.info("Registered app '{}' by '{}'", pluginKey, username);
 

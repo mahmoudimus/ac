@@ -35,7 +35,7 @@ public class TestComponentTabPanel extends TestBase
     public static void setUpClassTest() throws Exception
     {
         remotePlugin = new ConnectCapabilitiesRunner(jira().getProductInstance().getBaseUrl(),"my-plugin")
-                .addCapability(newComponentTabPanelBean()
+                .addCapability("componentTabPanels",newComponentTabPanelBean()
                         .withName(new I18nProperty("Component Tab Panel", null))
                         .withUrl("/ipp?component_id=${component.id}&project_id=${project.id}&project_key=${project.key}")
                         .withWeight(1234)

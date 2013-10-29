@@ -12,7 +12,7 @@
         "homepage": "http://www.example.com"
     },
     "capabilities": {
-        "connect-container": {
+        "connectContainer": {
             "displayUrl": "http://www.example.com",
             "oauth": {
                 "publicKey": "S0m3Publ1cK3y",
@@ -22,13 +22,13 @@
                 "authorizeUrl": ""
             }
         },
-        "issueTabPanels": {
+        "issueTabPanels": [{
             "url": "/my-general-page",
             "weight": 100,
             "name": {
                 "value": "My Issue Tab Page",
                 "i18n": "my.issueTabPage"
             }
-        }
+        }]
     }
 }

@@ -43,7 +43,7 @@ public class ConnectProjectAdminTabPanelModuleProvider implements ConnectModuleP
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(Plugin plugin, BundleContext addonBundleContext, List<ConnectProjectAdminTabPanelCapabilityBean> beans)
+    public List<ModuleDescriptor> provideModules(Plugin plugin, BundleContext addonBundleContext, String jsonFieldName, List<ConnectProjectAdminTabPanelCapabilityBean> beans)
     {
         ImmutableList.Builder<ModuleDescriptor> builder = ImmutableList.builder();
 

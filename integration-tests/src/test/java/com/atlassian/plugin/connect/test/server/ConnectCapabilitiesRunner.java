@@ -99,9 +99,15 @@ public class ConnectCapabilitiesRunner
         uninstall();
     }
 
-    public ConnectCapabilitiesRunner addCapability(CapabilityBean bean)
+    public ConnectCapabilitiesRunner addCapability(String fieldName, CapabilityBean bean)
     {
-        addonBuilder.withCapability(bean);
+        addonBuilder.withCapability(fieldName, bean);
+        return this;
+    }
+
+    public ConnectCapabilitiesRunner addCapabilities(String fieldName, CapabilityBean ... beans)
+    {
+        addonBuilder.withCapabilities(fieldName, beans);
         return this;
     }
 
@@ -157,7 +163,7 @@ public class ConnectCapabilitiesRunner
         if (null != oAuthBean)
         {
             addonBuilder.withCapability(
-                    newRemoteContainerBean()
+                    "connectContainer", newRemoteContainerBean()
                             .withDisplayUrl(displayUrl)
                             .withOAuth(oAuthBean)
                             .build()
@@ -166,7 +172,7 @@ public class ConnectCapabilitiesRunner
         else
         {
             addonBuilder.withCapability(
-                    newRemoteContainerBean()
+                    "connectContainer", newRemoteContainerBean()
                             .withDisplayUrl(displayUrl)
                             .build()
             );

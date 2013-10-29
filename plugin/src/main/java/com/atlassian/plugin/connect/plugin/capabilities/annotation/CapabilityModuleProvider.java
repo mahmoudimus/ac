@@ -10,25 +10,20 @@ import com.atlassian.plugin.connect.plugin.capabilities.provider.NullModuleProvi
 
 import org.atteo.evo.classindex.IndexAnnotated;
 
+import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * Marks a class as a Gson marshallable bean that represents a capability module.
  */
-@Target(TYPE)
+@Target(FIELD)
 @Retention(RUNTIME)
 @Documented
 @IndexAnnotated
 @Inherited
-public @interface CapabilitySet
+public @interface CapabilityModuleProvider
 {
-    /**
-     * The key of the capability in the root capabilities json
-     * @return
-     */
-    String key();
-    
-    Class<? extends ConnectModuleProvider> moduleProvider() default NullModuleProvider.class;
-
+    Class<? extends ConnectModuleProvider> value();
+    ProductFilter[] products() default {ProductFilter.ALL};
 }

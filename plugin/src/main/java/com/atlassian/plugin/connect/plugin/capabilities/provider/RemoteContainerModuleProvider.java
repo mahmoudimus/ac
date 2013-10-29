@@ -25,7 +25,7 @@ public class RemoteContainerModuleProvider implements ConnectModuleProvider<Remo
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(Plugin plugin, BundleContext addonBundleContext, List<RemoteContainerCapabilityBean> beans)
+    public List<ModuleDescriptor> provideModules(Plugin plugin, BundleContext addonBundleContext, String jsonFieldName, List<RemoteContainerCapabilityBean> beans)
     {
         List<ModuleDescriptor> descriptors = new ArrayList<ModuleDescriptor>();
 

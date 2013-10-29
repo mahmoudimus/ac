@@ -57,7 +57,7 @@ public class JunkTest
                 .withVersion("1.0")
                 .withLinks(links)
                 .withVendor(newVendorBean().withName("Atlassian").withUrl("http://www.atlassian.com").build())
-                .withCapability(newWebItemBean()
+                .withCapability("webItems", newWebItemBean()
                         .withName(new I18nProperty("My Web Item","my.webitem"))
                         .withLink("/my-general-page")
                         .withLocation("atl.admin/menu")
@@ -66,7 +66,7 @@ public class JunkTest
                         .withStyleClasses("ac-link","aui-link")
                         .withIcon(newIconBean().withUrl("/some/icon.png").withWidth(16).withHeight(16).build())
                         .build())
-                .withCapability(newRemoteContainerBean().withDisplayUrl("http://www.example.com").withOAuth(
+                .withCapability("connectContainer", newRemoteContainerBean().withDisplayUrl("http://www.example.com").withOAuth(
                         newOAuthBean().withPublicKey("S0m3Publ1cK3y").build()
                 ).build())
                 .build();

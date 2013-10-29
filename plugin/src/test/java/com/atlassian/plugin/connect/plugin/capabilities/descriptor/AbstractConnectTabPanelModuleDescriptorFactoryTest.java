@@ -2,6 +2,9 @@ package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.AbstractConnectTabPanelCapabilityBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectTabPanelCapabilityBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.TabPanelDescriptorHints;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAutowireUtil;
 import com.atlassian.plugin.module.ContainerManagedPlugin;
 import org.dom4j.Element;
@@ -10,12 +13,16 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.stubbing.Answer;
 import org.osgi.framework.BundleContext;
 
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectTabPanelCapabilityBean.newTabPanelBean;
 import static com.atlassian.plugin.connect.plugin.util.matchers.dom4j.Dom4JElementMatchers.hasAttributeValue;
 import static com.atlassian.plugin.connect.plugin.util.matchers.dom4j.Dom4JElementMatchers.hasSubElementAttributeValue;
 import static com.atlassian.plugin.connect.plugin.util.matchers.dom4j.Dom4JElementMatchers.hasSubElementTextValue;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
@@ -37,9 +44,10 @@ public abstract class AbstractConnectTabPanelModuleDescriptorFactoryTest
     private static final String ADDON_LABEL_KEY = "my.tabpage";
     private final Class<? extends ModuleDescriptor<?>> descriptorClass;
     private final Class<?> moduleClass;
-    private final String modulePrefix;
-    private AbstractConnectTabPanelModuleDescriptorFactory tabPanelModuleDescriptorFactory;
-
+    private final TabPanelDescriptorHints descriptorHints;
+    private ConnectTabPanelModuleDescriptorFactory tabPanelModuleDescriptorFactory;
+    
+    
     @Mock
     private ContainerManagedPlugin plugin;
 
@@ -50,42 +58,57 @@ public abstract class AbstractConnectTabPanelModuleDescriptorFactoryTest
     private ConnectAutowireUtil connectAutowireUtil;
 
     protected AbstractConnectTabPanelModuleDescriptorFactoryTest(Class<? extends ModuleDescriptor<?>> descriptorClass,
-                                                                 Class<?> moduleClass, String modulePrefix)
+                                                                 Class<?> moduleClass, TabPanelDescriptorHints descriptorHints)
     {
         this.descriptorClass = descriptorClass;
         this.moduleClass = moduleClass;
-        this.modulePrefix = modulePrefix;
+        this.descriptorHints = descriptorHints;
     }
 
     @Before
     public void setup()
     {
-        connectTabPanelModuleDescriptor = mock(descriptorClass);
-
         when(plugin.getKey()).thenReturn(ADDON_KEY);
         when(plugin.getName()).thenReturn(ADDON_NAME);
 
-        when(connectAutowireUtil.createBean(descriptorClass)).thenReturn(connectTabPanelModuleDescriptor);
-
+        when(connectAutowireUtil.createBean(any(Class.class))).thenAnswer(new Answer<Object>() {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable
+            {
+                return mock((Class)invocation.getArguments()[0]);
+            }
+        });
+        
         tabPanelModuleDescriptorFactory = createDescriptorFactory(connectAutowireUtil);
         createCapabilityModuleDescriptor();
     }
 
-    protected abstract AbstractConnectTabPanelModuleDescriptorFactory createDescriptorFactory(ConnectAutowireUtil connectAutowireUtil);
-
-    protected abstract AbstractConnectTabPanelCapabilityBean createCapabilityBean(String name, String i18NameKey, String url, int weight);
-
-    private AbstractConnectTabPanelCapabilityBean createCapabilityModuleDescriptor()
+    protected ConnectTabPanelModuleDescriptorFactory createDescriptorFactory(ConnectAutowireUtil connectAutowireUtil)
     {
-        AbstractConnectTabPanelCapabilityBean bean = createCapabilityBean(ADDON_MODULE_NAME, ADDON_LABEL_KEY, ADDON_URL, ADDON_WEIGHT);
-        tabPanelModuleDescriptorFactory.createModuleDescriptor(plugin, mock(BundleContext.class), bean);
+        return new ConnectTabPanelModuleDescriptorFactory(mock(ConditionModuleFragmentFactory.class),connectAutowireUtil);
+    }
+
+    protected ConnectTabPanelCapabilityBean createCapabilityBean(String name, String i18NameKey, String url, int weight)
+    {
+        return newTabPanelBean()
+                .withName(new I18nProperty(name, i18NameKey))
+                .withUrl(url)
+                .withWeight(weight)
+                .withDescriptorHints(descriptorHints)
+                .build();
+    }
+
+    private ConnectTabPanelCapabilityBean createCapabilityModuleDescriptor()
+    {
+        ConnectTabPanelCapabilityBean bean = createCapabilityBean(ADDON_MODULE_NAME, ADDON_LABEL_KEY, ADDON_URL, ADDON_WEIGHT);
+        connectTabPanelModuleDescriptor = tabPanelModuleDescriptorFactory.createModuleDescriptor(plugin, mock(BundleContext.class), bean);
         return bean;
     }
 
     @Test
     public void createsElementWithCorrectKey()
     {
-        verify(connectTabPanelModuleDescriptor, times(1)).init(eq(plugin), argThat(hasElementKey(modulePrefix + ADDON_NAME_KEY)));
+        verify(connectTabPanelModuleDescriptor, times(1)).init(eq(plugin), argThat(hasElementKey(descriptorHints.getModulePrefix() + ADDON_NAME_KEY)));
     }
 
     @Test

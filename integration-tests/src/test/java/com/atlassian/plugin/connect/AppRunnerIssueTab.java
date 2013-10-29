@@ -15,7 +15,7 @@ public class AppRunnerIssueTab
         try
         {
             ConnectCapabilitiesRunner remotePlugin = new ConnectCapabilitiesRunner(JIRA,"my-plugin")
-                    .addCapability(ConnectVersionTabPanelCapabilityBean.newVersionTabPanelBean()
+                    .addCapability("versionTabPanels",ConnectVersionTabPanelCapabilityBean.newVersionTabPanelBean()
                             .withName(new I18nProperty("My Version Tab", "My Version Tab"))
                             .withWeight(1)
                             .withUrl("/irwi")

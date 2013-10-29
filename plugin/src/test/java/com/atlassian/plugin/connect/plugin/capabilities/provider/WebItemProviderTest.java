@@ -43,6 +43,8 @@ import static org.mockito.Mockito.when;
  */
 public class WebItemProviderTest
 {
+    private static final String JSON_FIELD_NAME = "webItems";
+    
     Plugin plugin;
     WebInterfaceManager webInterfaceManager;
     WebFragmentHelper webFragmentHelper;
@@ -88,7 +90,7 @@ public class WebItemProviderTest
 
         WebItemModuleProvider moduleProvier = new WebItemModuleProvider(webItemFactory, new RelativeAddOnUrlConverter(new UrlVariableSubstitutor()));
         
-        List<ModuleDescriptor> descriptors = moduleProvier.provideModules(plugin, mock(BundleContext.class), newArrayList(bean));
+        List<ModuleDescriptor> descriptors = moduleProvier.provideModules(plugin, mock(BundleContext.class), JSON_FIELD_NAME, newArrayList(bean));
         
         assertEquals(1,descriptors.size());
 
@@ -110,7 +112,7 @@ public class WebItemProviderTest
 
         WebItemModuleProvider moduleProvier = new WebItemModuleProvider(webItemFactory, new RelativeAddOnUrlConverter(new UrlVariableSubstitutor()));
 
-        List<ModuleDescriptor> descriptors = moduleProvier.provideModules(plugin, mock(BundleContext.class), newArrayList(bean));
+        List<ModuleDescriptor> descriptors = moduleProvier.provideModules(plugin, mock(BundleContext.class), JSON_FIELD_NAME, newArrayList(bean));
 
         assertEquals(1,descriptors.size());
 
@@ -132,7 +134,7 @@ public class WebItemProviderTest
 
         WebItemModuleProvider moduleProvier = new WebItemModuleProvider(webItemFactory, new RelativeAddOnUrlConverter(new UrlVariableSubstitutor()));
 
-        List<ModuleDescriptor> descriptors = moduleProvier.provideModules(plugin, mock(BundleContext.class), newArrayList(bean));
+        List<ModuleDescriptor> descriptors = moduleProvier.provideModules(plugin, mock(BundleContext.class), JSON_FIELD_NAME, newArrayList(bean));
 
         assertEquals(1,descriptors.size());
 
@@ -153,7 +155,7 @@ public class WebItemProviderTest
 
         WebItemModuleProvider moduleProvier = new WebItemModuleProvider(webItemFactory, new RelativeAddOnUrlConverter(new UrlVariableSubstitutor()));
 
-        List<ModuleDescriptor> descriptors = moduleProvier.provideModules(plugin, mock(BundleContext.class), newArrayList(bean));
+        List<ModuleDescriptor> descriptors = moduleProvier.provideModules(plugin, mock(BundleContext.class), JSON_FIELD_NAME, newArrayList(bean));
 
         assertEquals(1,descriptors.size());
 
@@ -175,7 +177,7 @@ public class WebItemProviderTest
 
         WebItemModuleProvider moduleProvier = new WebItemModuleProvider(webItemFactory, new RelativeAddOnUrlConverter(new UrlVariableSubstitutor()));
 
-        List<ModuleDescriptor> descriptors = moduleProvier.provideModules(plugin, mock(BundleContext.class), newArrayList(bean));
+        List<ModuleDescriptor> descriptors = moduleProvier.provideModules(plugin, mock(BundleContext.class), JSON_FIELD_NAME, newArrayList(bean));
 
         assertEquals(1,descriptors.size());
 
@@ -197,7 +199,7 @@ public class WebItemProviderTest
 
         WebItemModuleProvider moduleProvier = new WebItemModuleProvider(webItemFactory, new RelativeAddOnUrlConverter(new UrlVariableSubstitutor()));
 
-        List<ModuleDescriptor> descriptors = moduleProvier.provideModules(plugin, mock(BundleContext.class), newArrayList(bean));
+        List<ModuleDescriptor> descriptors = moduleProvier.provideModules(plugin, mock(BundleContext.class), JSON_FIELD_NAME, newArrayList(bean));
 
         assertEquals(1,descriptors.size());
 
@@ -224,7 +226,7 @@ public class WebItemProviderTest
 
         WebItemModuleProvider moduleProvier = new WebItemModuleProvider(webItemFactory, new RelativeAddOnUrlConverter(new UrlVariableSubstitutor()));
 
-        List<ModuleDescriptor> descriptors = moduleProvier.provideModules(plugin, mock(BundleContext.class), newArrayList(bean,bean2));
+        List<ModuleDescriptor> descriptors = moduleProvier.provideModules(plugin, mock(BundleContext.class), JSON_FIELD_NAME, newArrayList(bean,bean2));
 
         assertEquals(2,descriptors.size());
 

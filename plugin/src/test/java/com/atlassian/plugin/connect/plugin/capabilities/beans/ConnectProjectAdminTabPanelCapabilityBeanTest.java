@@ -35,7 +35,7 @@ public class ConnectProjectAdminTabPanelCapabilityBeanTest
     @Test
     public void producesExactlyOneProjectAdminTabPanelCapability()
     {
-        List<? extends CapabilityBean> capabilityBeans = createBean().getCapabilities().get("projectAdminTabPanels");
+        List<? extends CapabilityBean> capabilityBeans = createBean().getCapabilities().getProjectAdminTabPanels();
 
         assertThat(capabilityBeans, hasSize(1));
     }
@@ -43,7 +43,7 @@ public class ConnectProjectAdminTabPanelCapabilityBeanTest
     @Test
     public void producesCapabilityIsCorrectType()
     {
-        CapabilityBean capabilityBean = createBean().getCapabilities().get("projectAdminTabPanels").get(0);
+        CapabilityBean capabilityBean = createBean().getCapabilities().getProjectAdminTabPanels().get(0);
 
         assertThat(capabilityBean, is(instanceOf(ConnectProjectAdminTabPanelCapabilityBean.class)));
     }
@@ -52,7 +52,7 @@ public class ConnectProjectAdminTabPanelCapabilityBeanTest
     public void prefixesLocationCorrectly()
     {
         ConnectProjectAdminTabPanelCapabilityBean capabilityBean =
-                (ConnectProjectAdminTabPanelCapabilityBean) createBean().getCapabilities().get("projectAdminTabPanels").get(0);
+                (ConnectProjectAdminTabPanelCapabilityBean) createBean().getCapabilities().getProjectAdminTabPanels().get(0);
 
         assertThat(capabilityBean.getAbsoluteLocation(), is("atl.jira.proj.config/a-location"));
     }
@@ -69,13 +69,13 @@ public class ConnectProjectAdminTabPanelCapabilityBeanTest
                 .withVersion("1.0")
                 .withLinks(links)
                 .withVendor(newVendorBean().withName("Atlassian").withUrl("http://www.atlassian.com").build())
-                .withCapability(newProjectAdminTabPanelBean()
+                .withCapability("projectAdminTabPanels", newProjectAdminTabPanelBean()
                         .withName(new I18nProperty("My ProjectAdmin Tab Page", "my.projectAdminTabPage"))
                         .withUrl("/my-general-page")
                         .withWeight(100)
                         .withLocation("a-location")
                         .build())
-                .withCapability(newRemoteContainerBean().withDisplayUrl("http://www.example.com").withOAuth(
+                .withCapability("connectContainer", newRemoteContainerBean().withDisplayUrl("http://www.example.com").withOAuth(
                         newOAuthBean().withPublicKey("S0m3Publ1cK3y").build()
                 ).build()
                 ).build();

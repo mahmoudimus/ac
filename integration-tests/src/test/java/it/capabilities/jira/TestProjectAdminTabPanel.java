@@ -41,13 +41,13 @@ public class TestProjectAdminTabPanel extends JiraWebDriverTestBase
     public static void startConnectAddOn() throws Exception
     {
         remotePlugin = new ConnectCapabilitiesRunner(product.getProductInstance().getBaseUrl(), "my-plugin")
-                .addCapability(newProjectAdminTabPanelBean()
+                .addCapability("projectAdminTabPanels",newProjectAdminTabPanelBean()
                         .withName(new I18nProperty(REMOTE_PROJECT_CONFIG_TAB_NAME, null))
                         .withUrl("/pct")
                         .withWeight(10)
                         .withLocation("projectgroup4")
                         .build())
-                .addCapability(newRemoteContainerBean()
+                .addCapability("connectContainer",newRemoteContainerBean()
                         .withDisplayUrl("http://www.example.com")
 //                        .withOAuth(newOAuthBean().withPublicKey("S0m3Publ1cK3y").build())
                         .build())

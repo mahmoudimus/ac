@@ -21,7 +21,7 @@ public class WorkflowPostFunctionModuleProvider implements ConnectModuleProvider
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(Plugin plugin, BundleContext addonBundleContext, List<WorkflowPostFunctionCapabilityBean> beans)
+    public List<ModuleDescriptor> provideModules(Plugin plugin, BundleContext addonBundleContext, String jsonFieldName, List<WorkflowPostFunctionCapabilityBean> beans)
     {
 
         List<ModuleDescriptor> descriptors = new ArrayList<ModuleDescriptor>();

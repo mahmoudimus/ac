@@ -8,7 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.atlassian.plugin.connect.plugin.capabilities.annotation.CapabilitySet;
+import com.atlassian.plugin.connect.plugin.capabilities.annotation.CapabilityModuleProvider;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.CapabilityBean;
 import com.atlassian.plugin.osgi.util.BundleClassLoaderAccessor;
 
@@ -52,20 +52,20 @@ public class CapabilityMapAdapterFactory implements TypeAdapterFactory
                 ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
                 Thread.currentThread().setContextClassLoader(BundleClassLoaderAccessor.getClassLoader(bundleContext.getBundle(),null));
                 
-                capabilityClasses = ClassIndex.getAnnotated(CapabilitySet.class);
+                capabilityClasses = ClassIndex.getAnnotated(CapabilityModuleProvider.class);
                 
                 Thread.currentThread().setContextClassLoader(oldCl);
             } 
             else
             {
-                capabilityClasses = ClassIndex.getAnnotated(CapabilitySet.class);
+                capabilityClasses = ClassIndex.getAnnotated(CapabilityModuleProvider.class);
             }
             
             for (Class<?> clazz : capabilityClasses)
             {
                 TypeAdapter delegate = gson.getDelegateAdapter(this, TypeToken.get(clazz));
 
-                labelToDelegate.put(clazz.getAnnotation(CapabilitySet.class).key(), delegate);
+                //labelToDelegate.put(clazz.getAnnotation(CapabilityModuleProvider.class).key(), delegate);
             }
         }
     }
