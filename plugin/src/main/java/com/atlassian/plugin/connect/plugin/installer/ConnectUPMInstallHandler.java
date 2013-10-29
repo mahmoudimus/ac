@@ -21,7 +21,7 @@ import org.dom4j.Document;
 import org.osgi.framework.BundleContext;
 
 /**
- * @since version
+ * @since 1.0
  */
 public class ConnectUPMInstallHandler implements PluginInstallHandler
 {
@@ -66,6 +66,7 @@ public class ConnectUPMInstallHandler implements PluginInstallHandler
     @Override
     public PluginInstallResult installPlugin(File descriptorFile, Option<String> contentType) throws PluginInstallException
     {
+        Option<String> errorI18nKey = Option.<String>some("connect.remote.upm.install.exception");
         try
         {
             boolean isXml = connectIdentifier.isConnectAddOn(descriptorFile);
@@ -86,9 +87,13 @@ public class ConnectUPMInstallHandler implements PluginInstallHandler
             
             return new PluginInstallResult(plugin);
         }
+        catch (PluginInstallException e)
+        {
+            throw e;
+        }
         catch(Exception e)
         {
-            throw new PluginInstallException("unable to install connect add on", e);
+            throw new PluginInstallException("unable to install connect add on", errorI18nKey);
         }
     }
     

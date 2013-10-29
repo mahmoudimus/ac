@@ -15,12 +15,15 @@ import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAddOnBundleB
 import com.atlassian.plugin.connect.plugin.util.zip.ZipBuilder;
 import com.atlassian.plugin.connect.plugin.util.zip.ZipHandler;
 import com.atlassian.plugin.connect.spi.ConnectAddOnIdentifierService;
+import com.atlassian.plugin.module.ContainerManagedPlugin;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.osgi.factory.OsgiPlugin;
 import com.atlassian.plugin.osgi.util.OsgiHeaderUtil;
+import com.atlassian.sal.api.ApplicationProperties;
 
 import com.google.common.base.Strings;
 
+import org.apache.commons.io.IOUtils;
 import org.dom4j.Document;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -36,13 +39,16 @@ public class RemotePluginArtifactFactory
     private static final String ATLASSIAN_PLUGIN_KEY = "Atlassian-Plugin-Key";
     private final ConnectPluginXmlFactory pluginXmlFactory;
     private final BundleContext bundleContext;
+    private final ContainerManagedPlugin theConnectPlugin;
+    
     public static String CLEAN_FILENAME_PATTERN = "[:\\\\/*?|<> _]";
 
     @Autowired
-    public RemotePluginArtifactFactory(ConnectPluginXmlFactory pluginXmlFactory, BundleContext bundleContext)
+    public RemotePluginArtifactFactory(ConnectPluginXmlFactory pluginXmlFactory, BundleContext bundleContext, PluginRetrievalService pluginRetrievalService)
     {
         this.pluginXmlFactory = pluginXmlFactory;
         this.bundleContext = bundleContext;
+        this.theConnectPlugin = (ContainerManagedPlugin)pluginRetrievalService.getPlugin();
     }
 
     public PluginArtifact create(final Document document, String username)
@@ -71,7 +77,7 @@ public class RemotePluginArtifactFactory
                 .addText("installer;user=\"" + username + "\";date=\"" + System.currentTimeMillis() + "\"");
     }
 
-    public PluginArtifact create(ConnectAddonBean addOn, String username)
+    public PluginArtifact create(ConnectAddonBean addOn, String username) throws IOException
     {
         ConnectAddOnBundleBuilder builder = new ConnectAddOnBundleBuilder();
         
@@ -106,12 +112,8 @@ public class RemotePluginArtifactFactory
             }
         }
         
-        //copy the imports from the connect plugin to the addon manifest so addons can autowire stuff
-        String connectImports = (String)bundleContext.getBundle().getHeaders().get(Constants.IMPORT_PACKAGE);
-        String connectExports = (String)bundleContext.getBundle().getHeaders().get(Constants.EXPORT_PACKAGE);
-
-        manifest.put(Constants.IMPORT_PACKAGE,connectImports + "," + connectExports);
-        
         return manifest;
     }
+
+   
 }

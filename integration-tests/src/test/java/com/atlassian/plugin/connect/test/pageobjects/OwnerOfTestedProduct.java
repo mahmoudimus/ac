@@ -7,10 +7,7 @@ import com.atlassian.pageobjects.TestedProductFactory;
 import com.atlassian.pageobjects.page.AdminHomePage;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
-import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceGeneralPage;
-import com.atlassian.plugin.connect.test.pageobjects.confluence.FixedConfluenceAdminHomePage;
-import com.atlassian.plugin.connect.test.pageobjects.confluence.FixedConfluenceDashboardPage;
-import com.atlassian.plugin.connect.test.pageobjects.confluence.FixedConfluenceLoginPage;
+import com.atlassian.plugin.connect.test.pageobjects.confluence.*;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraAdminSummaryPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraGeneralPage;
 
@@ -20,7 +17,26 @@ public class OwnerOfTestedProduct
 
     static
     {
-        INSTANCE = TestedProductFactory.create(System.getProperty("testedProductClass", JiraTestedProduct.class.getName()));
+        if (null != System.getProperty("testedProduct"))
+        {
+            if ("jira".equalsIgnoreCase(System.getProperty("testedProduct")))
+            {
+                INSTANCE = TestedProductFactory.create(JiraTestedProduct.class.getName());
+            }
+            else if ("confluence".equalsIgnoreCase(System.getProperty("testedProduct")))
+            {
+                INSTANCE = TestedProductFactory.create(FixedConfluenceTestedProduct.class.getName());
+            }
+            else
+            {
+                INSTANCE = TestedProductFactory.create(System.getProperty("testedProductClass", JiraTestedProduct.class.getName()));
+            }
+        }
+        else
+        {
+            INSTANCE = TestedProductFactory.create(System.getProperty("testedProductClass", JiraTestedProduct.class.getName()));
+        }
+
         if (INSTANCE instanceof JiraTestedProduct)
         {
             INSTANCE.getPageBinder().override(AdminHomePage.class, JiraAdminSummaryPage.class);

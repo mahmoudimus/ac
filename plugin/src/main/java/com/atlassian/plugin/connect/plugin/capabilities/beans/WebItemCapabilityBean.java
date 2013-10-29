@@ -8,12 +8,15 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.WebItemCap
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.WebItemModuleProvider;
+import com.google.common.base.Objects;
+
+import static com.google.common.collect.Lists.newArrayList;
 
 /**
- * @since version
+ * @since 1.0
  */
 @CapabilitySet(key = "web-items", moduleProvider = WebItemModuleProvider.class)
-public class WebItemCapabilityBean extends NameToKeyBean
+public class WebItemCapabilityBean extends BeanWithKeyAndParamsAndConditions
 {
     private String link;
     private String location;
@@ -76,6 +79,7 @@ public class WebItemCapabilityBean extends NameToKeyBean
         {
             this.icon = IconBean.newIconBean().withWidth(16).withHeight(16).withUrl("").build();
         }
+        
     }
 
     public String getLink()
@@ -120,7 +124,7 @@ public class WebItemCapabilityBean extends NameToKeyBean
 
     public boolean isAbsolute()
     {
-        return (null != getLink() && getLink().startsWith("http"));    
+        return (null != getLink() && getLink().toLowerCase().startsWith("http"));
     }
     
     public static WebItemCapabilityBeanBuilder newWebItemBean()
@@ -133,4 +137,14 @@ public class WebItemCapabilityBean extends NameToKeyBean
         return new WebItemCapabilityBeanBuilder(defaultBean);
     }
 
+    @Override
+    public String toString()
+    {
+        return Objects.toStringHelper(this)
+                .add("key", getKey())
+                .add("name", getName())
+                .add("link", getLink())
+                .add("location", getLocation())
+                .toString();
+    }
 }

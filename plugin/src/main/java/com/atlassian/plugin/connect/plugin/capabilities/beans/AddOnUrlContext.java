@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
 /**
- * @since version
+ * @since 1.0
  */
 public enum AddOnUrlContext
 {

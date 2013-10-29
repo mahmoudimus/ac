@@ -1,9 +1,10 @@
 package com.atlassian.plugin.connect.plugin.module.page;
 
-import java.net.URI;
-
 import com.atlassian.plugin.connect.spi.module.IFrameContext;
 import com.atlassian.plugin.connect.spi.module.IFrameParams;
+import com.google.common.base.Objects;
+
+import java.net.URI;
 
 public final class IFrameContextImpl implements IFrameContext
 {
@@ -64,6 +65,17 @@ public final class IFrameContextImpl implements IFrameContext
     public String getPluginKey()
     {
         return pluginKey;
+    }
+
+    @Override
+    public String toString()
+    {
+        return Objects.toStringHelper(this)
+                .add("iframePath", iframePath)
+                .add("namespace", namespace)
+                .add("iframeParams", iframeParams)
+                .add("pluginKey", pluginKey)
+                .toString();
     }
 }
 

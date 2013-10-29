@@ -5,12 +5,18 @@ import com.atlassian.plugin.connect.test.pageobjects.RemotePluginEmbeddedTestPag
 
 public class JiraViewIssuePageWithRemotePluginIssueTab extends RemotePluginEmbeddedTestPage implements Page
 {
+    private static final String DEFAULT_PAGE_KEY = "issue-tab-page-jira-remotePluginIssueTabPage";
     private final String issueKey;
     private final String pluginKey;
 
     public JiraViewIssuePageWithRemotePluginIssueTab(String issueKey, String pluginKey)
     {
-        super("issue-tab-page-jira-remotePluginIssueTabPage");
+        this(DEFAULT_PAGE_KEY, issueKey, pluginKey);
+    }
+
+    public JiraViewIssuePageWithRemotePluginIssueTab(String pageKey, String issueKey, String pluginKey)
+    {
+        super(pageKey);
         this.issueKey = issueKey;
         this.pluginKey = pluginKey;
     }
@@ -18,7 +24,7 @@ public class JiraViewIssuePageWithRemotePluginIssueTab extends RemotePluginEmbed
     @Override
     public String getUrl()
     {
-        return "/browse/" + issueKey + "?page=" + pluginKey + ":issue-tab-page-jira-remotePluginIssueTabPage";
+        return "/browse/" + issueKey + "?page=" + pluginKey + ":" + key;
     }
 
 

@@ -6,7 +6,7 @@ import java.net.URL;
 import com.atlassian.plugin.impl.AbstractPlugin;
 
 /**
- * @since version
+ * @since 1.0
  */
 public class PluginForTests extends AbstractPlugin
 {

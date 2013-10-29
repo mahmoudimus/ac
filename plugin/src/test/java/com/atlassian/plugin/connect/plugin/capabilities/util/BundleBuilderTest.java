@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.plugin.capabilities.util;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Map;
@@ -11,6 +10,9 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectPluginXmlFactory;
 import com.atlassian.plugin.connect.plugin.installer.RemotePluginArtifactFactory;
+import com.atlassian.plugin.module.ContainerManagedPlugin;
+import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
+import com.atlassian.sal.api.ApplicationProperties;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
@@ -25,11 +27,12 @@ import org.osgi.framework.Constants;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean.newWebItemBean;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * @since version
+ * @since 1.0
  */
 public class BundleBuilderTest
 {
@@ -48,8 +51,13 @@ public class BundleBuilderTest
         
         when(bc.getBundle()).thenReturn(bundle);
         when(bundle.getHeaders()).thenReturn(headers);
-        
-        artifactFactory = new RemotePluginArtifactFactory(xmlFactory,bc);
+
+        ContainerManagedPlugin plugin = mock(ContainerManagedPlugin.class);
+        when(plugin.getResourceAsStream(anyString())).thenReturn(getClass().getResourceAsStream("/test-import-packages.txt"));
+        PluginRetrievalService pluginRetrievalService = mock(PluginRetrievalService.class);
+        when(pluginRetrievalService.getPlugin()).thenReturn(plugin);
+
+        artifactFactory = new RemotePluginArtifactFactory(xmlFactory,bc,pluginRetrievalService);
     }
     
     @Test

@@ -8,7 +8,9 @@ import com.atlassian.plugin.connect.plugin.capabilities.BeanToModuleRegistrar;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectPluginXmlFactory;
 import com.atlassian.plugin.connect.plugin.event.RemoteEventsHandler;
 import com.atlassian.plugin.connect.spi.InstallationFailedException;
+import com.atlassian.plugin.module.ContainerManagedPlugin;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
+import com.atlassian.sal.api.ApplicationProperties;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -26,6 +28,7 @@ import java.util.HashSet;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -38,7 +41,7 @@ import static org.mockito.Mockito.when;
 public class TestDefaultConnectAddOnInstaller
 {
     public static final String PLUGIN_KEY = "plugin-key";
-    private RemotePluginArtifactFactory remotePluginArtifactFactory = new RemotePluginArtifactFactory(new ConnectPluginXmlFactory(), mock(BundleContext.class));
+    private RemotePluginArtifactFactory remotePluginArtifactFactory;
     private @Mock PluginController pluginController;
     private @Mock PluginAccessor pluginAccessor;
     private @Mock OAuthLinkManager oAuthLinkManager;
@@ -50,6 +53,15 @@ public class TestDefaultConnectAddOnInstaller
     @Before
     public void beforeTests() throws DocumentException
     {
+        ContainerManagedPlugin plugin = mock(ContainerManagedPlugin.class);
+        when(plugin.getResourceAsStream(anyString())).thenReturn(getClass().getResourceAsStream("/test-import-packages.txt"));
+        PluginRetrievalService pluginRetrievalService = mock(PluginRetrievalService.class);
+        when(pluginRetrievalService.getPlugin()).thenReturn(plugin);
+
+        ApplicationProperties appProps = mock(ApplicationProperties.class);
+        when(appProps.getDisplayName()).thenReturn("jira");
+        
+        this.remotePluginArtifactFactory = new RemotePluginArtifactFactory(new ConnectPluginXmlFactory(), mock(BundleContext.class),pluginRetrievalService);
         // this plugin xml needs to be syntactically valid
         // (and incidentally the duplicate <webhook> elements, while not strictly necessary for this test,
         //  demonstrate how this problem manifests in production)

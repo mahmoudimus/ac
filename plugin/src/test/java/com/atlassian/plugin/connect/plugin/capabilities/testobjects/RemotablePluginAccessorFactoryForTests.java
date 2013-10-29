@@ -10,7 +10,7 @@ import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.util.concurrent.Promise;
 
 /**
- * @since version
+ * @since 1.0
  */
 public class RemotablePluginAccessorFactoryForTests implements RemotablePluginAccessorFactory
 {

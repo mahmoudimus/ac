@@ -8,7 +8,7 @@ import com.atlassian.plugin.Plugin;
 import org.osgi.framework.BundleContext;
 
 /**
- * @since version
+ * @since 1.0
  */
 public interface ConnectModuleProvider<T>
 {

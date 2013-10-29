@@ -18,7 +18,7 @@ import aQute.lib.osgi.Builder;
 import aQute.lib.osgi.Jar;
 
 /**
- * @since version
+ * @since 1.0
  */
 public class ConnectAddOnBundleBuilder
 {
@@ -127,10 +127,10 @@ public class ConnectAddOnBundleBuilder
         Jar bundle = bnd.build();
         Manifest mergedManifest = bundle.getManifest();
 
-        if(!mergedManifest.getMainAttributes().containsKey(Constants.IMPORT_PACKAGE) && manifest.containsKey(Constants.IMPORT_PACKAGE))
+                
+        if(!mergedManifest.getMainAttributes().containsKey(Constants.BUNDLE_CLASSPATH))
         {
-            String ip = manifest.get(Constants.IMPORT_PACKAGE);
-            mergedManifest.getMainAttributes().putValue(Constants.IMPORT_PACKAGE, ip);
+            mergedManifest.getMainAttributes().putValue(Constants.BUNDLE_CLASSPATH, ".");
         }
 
         
