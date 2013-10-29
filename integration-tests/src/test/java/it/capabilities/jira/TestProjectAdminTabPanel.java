@@ -4,7 +4,6 @@ import com.atlassian.jira.pageobjects.project.ProjectConfigTabs;
 import com.atlassian.jira.pageobjects.project.summary.ProjectSummaryPageTab;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.junit.HtmlDumpRule;
-import com.atlassian.plugin.connect.test.pageobjects.jira.AbstractRemotablePluginProjectTab;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraProjectAdministrationTab;
 import com.atlassian.plugin.connect.test.server.ConnectCapabilitiesRunner;
 import it.jira.JiraWebDriverTestBase;
@@ -19,7 +18,6 @@ import org.junit.matchers.JUnitMatchers;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectProjectAdminTabPanelCapabilityBean.newProjectAdminTabPanelBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.RemoteContainerCapabilityBean.newRemoteContainerBean;
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.OAuthBean.newOAuthBean;
 import static com.atlassian.plugin.connect.test.server.ConnectCapabilitiesRunner.newMustacheServlet;
 import static junit.framework.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
