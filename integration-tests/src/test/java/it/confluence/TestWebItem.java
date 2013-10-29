@@ -1,5 +1,9 @@
 package it.confluence;
 
+import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
+
+package it.confluence;
+
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
@@ -75,7 +79,7 @@ public class TestWebItem extends ConfluenceWebDriverTestBase
 
         RemoteWebItem webItem = editPage.findWebItem(GENERAL_WEBITEM, Optional.of("help-menu-link"));
         assertNotNull("Web item should be found", webItem);
-        assertFalse("Web item link shouldn't be absolute", webItem.isPonitingToOldXmlInternalUrl());
+        assertFalse("Web item link shouldn't be absolute", webItem.isPointingToOldXmlInternalUrl());
 
         webItem.click();
 
@@ -93,7 +97,7 @@ public class TestWebItem extends ConfluenceWebDriverTestBase
 
         RemoteWebItem webItem = editPage.findWebItem(ABSOLUTE_WEB_ITEM, Optional.of("help-menu-link"));
         assertNotNull("Web item should be found", webItem);
-        assertTrue("Web item link should be absolute", webItem.isPonitingToOldXmlInternalUrl());
+        assertTrue("Web item link should be absolute", webItem.isPointingToOldXmlInternalUrl());
 
         webItem.click();
 
