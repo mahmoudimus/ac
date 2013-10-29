@@ -1,9 +1,5 @@
 package it.confluence;
 
-import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
-
-package it.confluence;
-
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;

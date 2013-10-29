@@ -14,14 +14,16 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean.newWebItemBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.SingleConditionBean.newSingleConditionBean;
 import static it.TestConstants.BARNEY_USERNAME;
 import static it.TestConstants.BETTY_USERNAME;
 import static it.capabilities.ConnectAsserts.assertURIEquals;
-import static org.hamcrest.Matchers.endsWith;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -108,7 +110,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     }
 
     @Test
-    public void testProductWebItem()
+    public void testProductWebItem() throws MalformedURLException
     {
         loginAsAdmin();
 
@@ -118,8 +120,8 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
 
         webItem.click();
 
-        assertFalse("Web item link shouldn't be absolute", webItem.isPointingToOldXmlInternalUrl());
-        assertThat(webItem.getPath(), endsWith(project.getKey()));
+        URL url = new URL(webItem.getPath());
+        assertThat(url.getPath(), is("/jira/browse/ACDEV-1234"));
     }
 
     @Test
