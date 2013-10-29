@@ -14,7 +14,7 @@ public class RelativeAddOnUrlConverterTest
     private static final String URL = "/irwi?issue_id=${issue.id}&project_key=${project.key}&pid=${project.id}";
 
     @Test
-    public void substitutesHost()
+    public void prependsACContextToPath()
     {
         RelativeAddOnUrlConverter urlConverter = new RelativeAddOnUrlConverter(new UrlVariableSubstitutor());
         String localUrl = urlConverter.addOnUrlToLocalServletUrl("my-plugin", URL);
