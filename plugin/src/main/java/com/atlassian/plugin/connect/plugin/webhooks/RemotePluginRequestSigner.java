@@ -1,10 +1,5 @@
 package com.atlassian.plugin.connect.plugin.webhooks;
 
-import java.util.Collections;
-import java.util.List;
-
-import javax.annotation.Nullable;
-
 import com.atlassian.fugue.Iterables;
 import com.atlassian.fugue.Option;
 import com.atlassian.httpclient.api.Request;
@@ -15,8 +10,12 @@ import com.atlassian.plugin.connect.plugin.module.applinks.RemotePluginContainer
 import com.atlassian.plugin.connect.spi.http.AuthorizationGenerator;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.webhooks.spi.plugin.RequestSigner;
-
 import com.google.common.base.Predicate;
+
+import java.net.URI;
+import java.util.Collections;
+import java.util.List;
+import javax.annotation.Nullable;
 
 /**
  * Signs outgoing webhooks with oauth credentials
@@ -33,11 +32,11 @@ public class RemotePluginRequestSigner implements RequestSigner
     }
 
     @Override
-    public void sign(String pluginKey, Request request)
+    public void sign(URI uri, String pluginKey, Request.Builder request)
     {
         if (canSign(pluginKey))
         {
-            final Option<String> authValue = getAuthHeader(pluginKey, request);
+            final Option<String> authValue = getAuthHeader(uri, pluginKey);
             if (authValue.isDefined())
             {
                 request.setHeader("Authorization", authValue.get());
@@ -45,9 +44,9 @@ public class RemotePluginRequestSigner implements RequestSigner
         }
     }
 
-    private Option<String> getAuthHeader(String pluginKey, Request request)
+    private Option<String> getAuthHeader(URI uri, String pluginKey)
     {
-        return getAuthorizationGenerator(pluginKey).generate(HttpMethod.POST, request.getUri(), Collections.<String, List<String>>emptyMap());
+        return getAuthorizationGenerator(pluginKey).generate(HttpMethod.POST, uri, Collections.<String, List<String>>emptyMap());
     }
 
     private AuthorizationGenerator getAuthorizationGenerator(String pluginKey)
