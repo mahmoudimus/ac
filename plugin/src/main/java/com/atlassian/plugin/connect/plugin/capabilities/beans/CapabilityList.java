@@ -14,6 +14,8 @@ import static com.google.common.collect.Lists.newArrayList;
  * This class represents the list of modules in the json descriptor.
  * Every new module type needs to be added here as a private field and annotated with @CapabilityModuleProvider
  * 
+ * The field name will be what appears in the json.
+ * 
  * Note: this class does NOT have a builder. Instead the {@link ConnectAddonBean} has a special reflective builder
  * that will handle adding beans to the proper fields in this class by name and type.
  * You can buy me a beer later for that little trick when you realize you don't need to keep updating a builder everytime you add a new type here.
