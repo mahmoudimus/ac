@@ -180,11 +180,6 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.atlassian.httpclient</groupId>
-            <artifactId>atlassian-httpclient-spi</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>com.atlassian.webhooks</groupId>
             <artifactId>atlassian-webhooks-provider-spi</artifactId>
             <scope>provided</scope>
@@ -348,7 +343,7 @@
                             com.atlassian.util.concurrent*;version="${atlassian-util-concurrent.version}",
                             com.atlassian.crowd.embedded.api.*;version="2.0";resolution:=optional,
                             com.atlassian.webhooks.spi*;version="${atlassian.webhooks.api.version}",
-                            com.atlassian.httpclient.*;version="${atlassian.httpclient.api.version}",
+                            com.atlassian.httpclient.api*;version="${atlassian.httpclient.api.version}",
                             com.sun.mail.handlers;resolution:=optional,
                             net.oauth*,
                             javax.servlet;version="0.0.0",
@@ -403,6 +398,11 @@
                                     <groupId>com.atlassian.jira.plugins.webhooks</groupId>
                                     <artifactId>jira-webhooks-plugin</artifactId>
                                     <version>${atlassian.jira.webhooks.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.httpclient</groupId>
+                                    <artifactId>atlassian-httpclient-plugin</artifactId>
+                                    <version>${atlassian.httpclient.version}</version>
                                 </pluginArtifact>
                                 <pluginArtifact>
                                     <groupId>com.atlassian.gadgets</groupId>
@@ -463,6 +463,11 @@
                                     <groupId>com.atlassian.webhooks</groupId>
                                     <artifactId>atlassian-webhooks-plugin</artifactId>
                                     <version>${atlassian.webhooks.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.httpclient</groupId>
+                                    <artifactId>atlassian-httpclient-plugin</artifactId>
+                                    <version>${atlassian.httpclient.version}</version>
                                 </pluginArtifact>
                                 <pluginArtifact>
                                     <groupId>${project.groupId}</groupId>

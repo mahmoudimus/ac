@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin;
 
 import com.atlassian.applinks.api.ApplicationId;
 import com.atlassian.applinks.api.ApplicationLink;
+import com.atlassian.httpclient.api.DefaultResponseTransformation;
 import com.atlassian.httpclient.api.HttpClient;
 import com.atlassian.httpclient.api.Request;
 import com.atlassian.httpclient.api.ResponsePromise;
@@ -21,7 +22,7 @@ import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.util.concurrent.Promise;
-import com.google.common.base.Function;
+import com.google.common.base.Objects;
 import com.google.common.base.Supplier;
 import net.minidev.json.JSONObject;
 import net.minidev.json.parser.JSONParser;
@@ -33,18 +34,30 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import com.google.common.base.Objects;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.security.NoSuchAlgorithmException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
+import static org.mockito.Mockito.argThat;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class JwtSigningRemotablePluginAccessorTest
@@ -378,54 +391,46 @@ public class JwtSigningRemotablePluginAccessorTest
         return new CachingHttpContentRetriever(licenseRetriever, localeHelper, httpClientFactory, mock(PluginRetrievalService.class, RETURNS_DEEP_STUBS));
     }
 
-    private HttpClient mockHttpClient(Request request)
+    private HttpClient mockHttpClient(Request.Builder request)
     {
         HttpClient httpClient = mock(HttpClient.class, RETURNS_DEEP_STUBS);
         when(httpClient.newRequest(INTERNAL_FULL_GET_URL)).thenReturn(request);
+        when(httpClient.transformation()).thenReturn(DefaultResponseTransformation.builder());
         return httpClient;
     }
 
-    private Request mockRequest(String promisedHttpResponse)
+    private Request.Builder mockRequest(String promisedHttpResponse)
     {
-        Request request = mock(Request.class);
+        Request.Builder requestBuilder = mock(Request.Builder.class);
         {
-            when(request.setHeaders(GET_HEADERS)).thenReturn(request);
-            when(request.setAttributes(any(Map.class))).thenReturn(request);
+            when(requestBuilder.setHeaders(GET_HEADERS)).thenReturn(requestBuilder);
+            when(requestBuilder.setAttributes(any(Map.class))).thenReturn(requestBuilder);
             {
-                ResponseTransformation responseTransformation = mockResponseTransformation(promisedHttpResponse);
                 ResponsePromise responsePromise = mock(ResponsePromise.class);
-                when(responsePromise.transform()).thenReturn(responseTransformation);
-                when(request.execute(any(Request.Method.class))).thenReturn(responsePromise);
+                when(requestBuilder.execute(any(Request.Method.class))).thenReturn(responsePromise);
+
+                Promise<String> promise = mockPromise(promisedHttpResponse);
+                when(responsePromise.transform(any(ResponseTransformation.class))).thenReturn(promise);
             }
         }
-        return request;
+        return requestBuilder;
     }
 
-    private ResponseTransformation mockResponseTransformation(String promisedHttpResponse)
+    private Promise<String> mockPromise(String promisedHttpResponse)
     {
-        ResponseTransformation responseTransformation = mock(ResponseTransformation.class);
-        when(responseTransformation.ok(any(Function.class))).thenReturn(responseTransformation);
-        when(responseTransformation.forbidden(any(Function.class))).thenReturn(responseTransformation);
-        when(responseTransformation.others(any(Function.class))).thenReturn(responseTransformation);
-        when(responseTransformation.fail(any(Function.class))).thenReturn(responseTransformation);
+        Promise<String> promise = mock(Promise.class);
+        try
         {
-            Promise<String> promise = mock(Promise.class);
-
-            try
-            {
-                when(promise.get()).thenReturn(promisedHttpResponse);
-            }
-            catch (InterruptedException e)
-            {
-                throw new RuntimeException(e);
-            }
-            catch (ExecutionException e)
-            {
-                throw new RuntimeException(e);
-            }
-
-            when(responseTransformation.toPromise()).thenReturn(promise);
+            when(promise.get()).thenReturn(promisedHttpResponse);
         }
-        return responseTransformation;
+        catch (InterruptedException e)
+        {
+            throw new RuntimeException(e);
+        }
+        catch (ExecutionException e)
+        {
+            throw new RuntimeException(e);
+        }
+        return promise;
     }
 }
