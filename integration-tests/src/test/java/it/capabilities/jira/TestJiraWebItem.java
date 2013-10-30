@@ -1,41 +1,25 @@
 package it.capabilities.jira;
 
-import java.io.IOException;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import com.atlassian.pageobjects.page.HomePage;
-import com.atlassian.pageobjects.page.LoginPage;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewProjectPage;
 import com.atlassian.plugin.connect.test.server.ConnectCapabilitiesRunner;
-
 import com.google.common.base.Optional;
-
+import it.capabilities.CheckUsernameConditionServlet;
+import it.jira.JiraWebDriverTestBase;
+import it.servlet.iframe.IFrameServlets;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import it.HttpContextServlet;
-import it.MyContextAwareWebPanelServlet;
-import it.capabilities.CheckUsernameConditionServlet;
-import it.jira.JiraWebDriverTestBase;
-
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean.newWebItemBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.SingleConditionBean.newSingleConditionBean;
 import static it.TestConstants.BARNEY_USERNAME;
 import static it.TestConstants.BETTY_USERNAME;
-import static java.lang.String.valueOf;
-import static org.junit.Assert.*;
-import static it.capabilities.ConnectAsserts.*;
+import static it.capabilities.ConnectAsserts.assertURIEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 
 /**
@@ -79,7 +63,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
                 
                 .addRoute("/onlyBarneyCondition", new CheckUsernameConditionServlet(BARNEY_USERNAME))
                 .addRoute("/onlyBettyCondition", new CheckUsernameConditionServlet(BETTY_USERNAME))
-                .addRoute("/irwi?issue_id=${issue.id}&project_key=${project.key}&pid=${project.id}", new HttpContextServlet(new MyContextAwareWebPanelServlet()))
+                .addRoute("/irwi?issue_id=${issue.id}&project_key=${project.key}&pid=${project.id}", IFrameServlets.helloWorldServlet())
                 .start();
     }
 

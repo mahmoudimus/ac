@@ -36,8 +36,8 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import it.ContextServlet;
-import it.HttpContextServlet;
+import it.servlet.ContextServlet;
+import it.servlet.HttpContextServlet;
 import net.oauth.signature.RSA_SHA1;
 
 import static com.atlassian.fugue.Option.some;

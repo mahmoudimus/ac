@@ -1,24 +1,21 @@
 package it.confluence;
 
-import java.net.MalformedURLException;
-
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
-import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceEditPage;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebPanel;
+import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceEditPage;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
 import com.atlassian.plugin.connect.test.server.module.RemoteWebPanelModule;
-
+import it.servlet.iframe.IFrameServlets;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import it.MyContextAwareWebPanelServlet;
 import redstone.xmlrpc.XmlRpcFault;
 
+import java.net.MalformedURLException;
+
 import static com.atlassian.fugue.Option.some;
-import static com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner.newServlet;
 import static it.TestConstants.ADMIN_USERNAME;
 import static it.TestConstants.BETTY_USERNAME;
 import static org.junit.Assert.assertEquals;
@@ -41,12 +38,12 @@ public class TestWebPanels extends ConfluenceWebDriverTestBase
                                          .name("Remotable Edit Screen Web Panel")
                                          .path("/eswp?page_id=${page.id}&space_id=${space.id}&space_key=${space.key}")
                                          .location("atl.editor")
-                                         .resource(newServlet(new MyContextAwareWebPanelServlet())))
+                                         .resource(IFrameServlets.helloWorldServlet()))
                 .add(RemoteWebPanelModule.key("edit-screen-web-panel-2")
                                          .name("Remotable Edit Screen Web Panel 2")
                                          .path("/eswp2?my-page-id=${page.id}&my-space-id=${space.id}")
                                          .location("atl.editor")
-                                         .resource(newServlet(new MyContextAwareWebPanelServlet())))
+                                         .resource(IFrameServlets.helloWorldServlet()))
                 .start();
         admin = new ConfluenceOps.ConfluenceUser(ADMIN_USERNAME, ADMIN_USERNAME);
     }

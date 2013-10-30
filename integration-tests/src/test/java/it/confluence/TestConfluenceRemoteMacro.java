@@ -1,5 +1,25 @@
 package it.confluence;
 
+import com.atlassian.fugue.Option;
+import com.atlassian.fugue.Suppliers;
+import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
+import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluencePageWithRemoteMacro;
+import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
+import com.atlassian.plugin.connect.test.server.module.*;
+import com.google.common.collect.ImmutableMap;
+import it.servlet.ContextServlet;
+import it.servlet.iframe.IFrameServlets;
+import it.servlet.macro.SimpleMacroServlet;
+import org.apache.commons.lang3.StringUtils;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import redstone.xmlrpc.XmlRpcFault;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
@@ -8,37 +28,14 @@ import java.net.URL;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import com.atlassian.fugue.Option;
-import com.atlassian.fugue.Suppliers;
-import com.atlassian.plugin.connect.test.HttpUtils;
-import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
-import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluencePageWithRemoteMacro;
-import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
-import com.atlassian.plugin.connect.test.server.module.*;
-
-import com.google.common.collect.ImmutableMap;
-
-import org.apache.commons.lang3.StringUtils;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import it.ContextServlet;
-import redstone.xmlrpc.XmlRpcFault;
-
 import static com.atlassian.fugue.Option.none;
 import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.test.HttpUtils.renderHtml;
 import static com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps.ConfluenceUser;
-import static com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner.newMustacheServlet;
 import static com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner.newServlet;
 import static com.google.common.base.Strings.nullToEmpty;
 import static it.TestConstants.ADMIN_USERNAME;
+import static it.confluence.ContextParameters.*;
 import static java.lang.String.format;
 import static org.junit.Assert.*;
 
@@ -62,13 +59,6 @@ public final class TestConfluenceRemoteMacro extends ConfluenceWebDriverTestBase
     private static final String REQUEST_METHOD = "req_method";
     private static final String REQUEST_URI = "req_uri";
     private static final String REQUEST_QUERY = "req_query";
-
-    private static final String CTX_OUTPUT_TYPE = "output_type";
-    private static final String CTX_PAGE_ID = "page_id";
-    private static final String CTX_PAGE_TYPE = "page_type";
-    private static final String CTX_PAGE_TITLE = "page_title";
-    private static final String CTX_USER_ID = "user_id";
-    private static final String CTX_USER_KEY = "user_key";
 
     private static AtlassianConnectAddOnRunner remotePlugin;
     private static CounterMacroServlet counterMacroServlet;
@@ -103,7 +93,10 @@ public final class TestConfluenceRemoteMacro extends ConfluenceWebDriverTestBase
                                                   .type("enum")
                                                   .required("true")
                                                   .values("American Football", "Soccer", "Rugby Union", "Rugby League"))
-                        .editor(MacroEditor.at("/extended-macro-editor").height("600").width("600").resource(newMustacheServlet("confluence/macro/editor.mu")))
+                        .editor(MacroEditor.at("/extended-macro-editor")
+                                .height("600")
+                                .width("600")
+                                .resource(IFrameServlets.macroEditor()))
                         .resource(newServlet(new ExtendedMacroServlet())))
                 .start();
     }
@@ -123,7 +116,7 @@ public final class TestConfluenceRemoteMacro extends ConfluenceWebDriverTestBase
                                         ContextParameter.name(CTX_USER_ID).query(),
                                         ContextParameter.name(CTX_USER_KEY).query()
                                 )
-                                .resource(newServlet(new SimpleMacroServlet()));
+                                .resource(IFrameServlets.macroSimple());
     }
 
     @AfterClass
@@ -311,44 +304,6 @@ public final class TestConfluenceRemoteMacro extends ConfluenceWebDriverTestBase
         int code = conn.getResponseCode();
         System.out.println("Reset from " + product.getProductInstance().getBaseUrl() + " returned: " + code);
         conn.disconnect();
-    }
-
-    private static class SimpleMacroServlet extends ContextServlet
-    {
-        @Override
-        protected void doGet(HttpServletRequest req, HttpServletResponse resp, Map<String, Object> context) throws ServletException, IOException
-        {
-            doExecute(req, resp, context);
-        }
-
-        @Override
-        protected void doPost(HttpServletRequest req, HttpServletResponse resp, Map<String, Object> context) throws ServletException, IOException
-        {
-            doExecute(req, resp, context);
-        }
-
-        private void doExecute(HttpServletRequest req, HttpServletResponse resp, Map<String, Object> context) throws IOException
-        {
-            HttpUtils.renderHtml(resp, "confluence/macro/simple.mu", getContext(req, context));
-        }
-
-        private Map<String, Object> getContext(HttpServletRequest req, Map<String, Object> context)
-        {
-            return ImmutableMap.<String, Object>builder()
-                               .putAll(context)
-                               .put(CTX_OUTPUT_TYPE, getParam(req, CTX_OUTPUT_TYPE))
-                               .put(CTX_PAGE_ID, getParam(req, CTX_PAGE_ID))
-                               .put(CTX_PAGE_TYPE, getParam(req, CTX_PAGE_TYPE))
-                               .put(CTX_PAGE_TITLE, getParam(req, CTX_PAGE_TITLE))
-                               .put(CTX_USER_ID, getParam(req, CTX_USER_ID))
-                               .put(CTX_USER_KEY, getParam(req, CTX_USER_KEY))
-                               .build();
-        }
-
-        protected String getParam(HttpServletRequest req, String name)
-        {
-            return nullToEmpty(req.getParameter("ctx_" + name));
-        }
     }
 
     private static final class HeaderMacroServlet extends SimpleMacroServlet

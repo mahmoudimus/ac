@@ -6,10 +6,10 @@ import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluencePageMacroPage;
 import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
 import com.atlassian.plugin.connect.test.server.module.MacroPageModule;
+import it.servlet.iframe.IFrameServlets;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.openqa.selenium.By;
 import redstone.xmlrpc.XmlRpcFault;
 
 import javax.servlet.ServletException;
@@ -24,7 +24,6 @@ import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.test.HttpUtils.renderHtml;
 import static com.atlassian.plugin.connect.test.Utils.loadResourceAsString;
 import static com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps.ConfluenceUser;
-import static com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner.newMustacheServlet;
 import static it.TestConstants.ADMIN_USERNAME;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -48,7 +47,7 @@ public final class TestConfluenceInlinePageMacro extends ConfluenceWebDriverTest
                         .path("/ap")
                         .outputType("inline")
                         .bodyType("none")
-                        .resource(newMustacheServlet("iframe.mu")))
+                        .resource(IFrameServlets.apRequestServlet()))
                 .start();
     }
 

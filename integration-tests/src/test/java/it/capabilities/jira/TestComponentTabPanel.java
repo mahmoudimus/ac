@@ -12,7 +12,8 @@ import com.atlassian.plugin.connect.test.server.ConnectCapabilitiesRunner;
 import org.junit.*;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectTabPanelCapabilityBean.newTabPanelBean;
-import static com.atlassian.plugin.connect.test.server.ConnectCapabilitiesRunner.newMustacheServlet;
+import it.servlet.iframe.IFrameServlets;
+
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
@@ -38,7 +39,7 @@ public class TestComponentTabPanel extends TestBase
                         .withUrl("/ipp?component_id=${component.id}&project_id=${project.id}&project_key=${project.key}")
                         .withWeight(1234)
                         .build())
-                .addRoute("/ipp", newMustacheServlet("iframe.mu"))
+                .addRoute("/ipp", IFrameServlets.apRequestServlet())
                 .start();
     }
 

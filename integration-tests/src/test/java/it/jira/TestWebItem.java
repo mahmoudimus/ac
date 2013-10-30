@@ -6,20 +6,15 @@ import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewProjectPage;
 import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
 import com.atlassian.plugin.connect.test.server.module.RemoteWebItemModule;
 import com.google.common.base.Optional;
-import it.MyContextAwareWebPanelServlet;
+import it.servlet.iframe.IFrameServlets;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.rmi.RemoteException;
 
-import static com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner.newServlet;
 import static org.hamcrest.Matchers.endsWith;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * Test of remote web items in JIRA.
@@ -41,7 +36,7 @@ public class TestWebItem extends JiraWebDriverTestBase
                         .section("system.top.navigation.bar")
                         .weight(1)
                         .link(RemoteWebItemModule.Link.link("/irwi?issue_id=${issue.id}&project_key=${project.key}&pid=${project.id}", false))
-                        .resource(newServlet(new MyContextAwareWebPanelServlet())))
+                        .resource(IFrameServlets.helloWorldServlet()))
                 .add(RemoteWebItemModule.key(ABSOLUTE_WEB_ITEM)
                         .name("Quick project link")
                         .section("system.top.navigation.bar")

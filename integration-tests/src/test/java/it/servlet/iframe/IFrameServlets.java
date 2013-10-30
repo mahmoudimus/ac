@@ -1,0 +1,105 @@
+package it.servlet.iframe;
+
+import com.atlassian.plugin.connect.test.pageobjects.RemoteWebPanel;
+import it.servlet.ContextServlet;
+import it.servlet.HttpContextServlet;
+
+import javax.servlet.http.HttpServlet;
+
+/**
+ * Utility methods for creating test servlets suitable for serving Connect iframes.
+ */
+public class IFrameServlets
+{
+    /**
+     * @return a servlet that tests AMD is working correctly
+     */
+    public static HttpServlet amdTestServlet()
+    {
+        return wrapContextAwareServlet(new MustacheServlet("amd-test.mu"));
+    }
+
+    /**
+     * Verify from a WebDriver test using {@link RemoteWebPanel#getApRequestStatusCode()},
+     * {@link RemoteWebPanel#getApRequestUnauthorizedStatusCode()} and {@link RemoteWebPanel#getApRequestMessage()}.
+     *
+     * @return a servlet that makes a test AP.request()
+     */
+    public static HttpServlet apRequestServlet()
+    {
+        return wrapContextAwareServlet(new MustacheServlet("iframe-ap-request.mu"));
+    }
+
+    /**
+     * Verify from a WebDriver test using {@link RemoteWebPanel#containsHelloWorld()}.
+     *
+     * @return a servlet that returns a "hello world" string
+     */
+    public static HttpServlet helloWorldServlet()
+    {
+        return wrapContextAwareServlet(new MustacheServlet("iframe-hello-world.mu"));
+    }
+
+    /**
+     * @return a servlet that automatically resizes to the parent
+     */
+    public static HttpServlet sizeToParentServlet()
+    {
+        return wrapContextAwareServlet(new MustacheServlet("iframe-hello-world.mu"));
+    }
+
+    /**
+     * Verify from a WebDriver test using {@link RemoteWebPanel#getCustomMessage()}.
+     *
+     * @param message the message to display
+     * @return a servlet that contains a custom message
+     */
+    public static HttpServlet customMessageServlet(String message)
+    {
+        return wrapContextAwareServlet(new CustomMessageServlet(message));
+    }
+
+    /**
+     * @return a servlet that tests AP.onDialogMessage()
+     */
+    public static HttpServlet dialogServlet()
+    {
+        return wrapContextAwareServlet(new MustacheServlet("dialog.mu"));
+    }
+
+    /**
+     * @return a servlet that opens a dialog
+     */
+    public static HttpServlet openDialogServlet()
+    {
+        return wrapContextAwareServlet(new MustacheServlet("iframe-open-dialog.mu"));
+    }
+
+    /**
+     * @return a servlet that closes a dialog
+     */
+    public static HttpServlet closeDialogServlet()
+    {
+        return wrapContextAwareServlet(new MustacheServlet("iframe-close-dialog.mu"));
+    }
+
+    public static HttpServlet macroSimple()
+    {
+        return wrapContextAwareServlet(new MustacheServlet("confluence/macro/simple.mu"));
+    }
+
+    public static HttpServlet macroExtended()
+    {
+        return wrapContextAwareServlet(new MustacheServlet("confluence/macro/extended.mu"));
+    }
+
+    public static HttpServlet macroEditor()
+    {
+        return wrapContextAwareServlet(new MustacheServlet("confluence/macro/editor.mu"));
+    }
+
+    public static HttpServlet wrapContextAwareServlet(ContextServlet servlet)
+    {
+        return new HttpContextServlet(servlet);
+    }
+}
