@@ -36,17 +36,36 @@ define(['confluence/macro/editor'], function() {
           }
         };
         this.server = sinon.fakeServer.create();
-        
+        //mock the dialog
         _AP.define('dialog/simple', function () {
             return dialogSpy;
         });
-    
+        //mock main Confluence object
+        window.Confluence = {
+            Editor: {
+                getContentId: sinon.stub().returns('12345')
+            }
+        };
+        //mock tinymce
+        tinymce = {
+            confluence: {
+                MacroUtils: {
+                    insertMacro: sinon.spy()
+                }
+            }
+        };
+
       },
       teardown: function() {
         this.server.restore();
         // remove any dialog elements
-        // clean up mock
+        // clean up mocks
         AJS.Rte = null;
+        window.Confluence = null;
+        tinymce = null;
+        MacroData = null;
+        MacroEditorOpts = null;
+        dialogSpy = null;
       }
     });
 
@@ -103,14 +122,6 @@ define(['confluence/macro/editor'], function() {
     });
 
     test("saveMacro writes macro to page", function () {
-        tinymce = {
-            confluence: {
-                MacroUtils: {
-                    insertMacro: sinon.spy()
-                }
-            }
-        };
-
         confluenceMacroEditor.openCustomEditor(MacroData, MacroEditorOpts);
         confluenceMacroEditor.saveMacro();
         ok(tinymce.confluence.MacroUtils.insertMacro.calledOnce, 'saveMacro calls the confluence macro save function');

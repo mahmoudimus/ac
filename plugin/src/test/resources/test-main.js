@@ -19,6 +19,7 @@ requirejs.config({
     'iframe/host/_ap': '../src/main/resources/js/iframe/host/_ap',
     'iframe/host/_dollar': '../src/main/resources/js/iframe/host/_dollar',
     'dialog/main': '../src/main/resources/js/dialog/main',
+    'confluence/macro/editor': '../src/main/resources/js/confluence/macro/editor',
     // shared
     'iframe/_amd': '../src/main/resources/js/iframe/_amd',
     'iframe/_events': '../src/main/resources/js/iframe/_events',
@@ -46,6 +47,12 @@ requirejs.config({
       deps: [
         'iframe/host/_dollar'
       ]
+    },
+    'confluence/macro/editor': {
+        deps: [
+        'iframe/host/_dollar',
+        ''
+        ]
     },
     ///////////////////
     //  SHARED SIDE  //
