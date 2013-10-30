@@ -1,11 +1,8 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
-import java.util.Map;
-
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.CapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.NameToKeyBean;
 import com.atlassian.plugin.connect.plugin.module.IFramePageRenderer;
 import com.atlassian.plugin.connect.plugin.module.IFrameParamsImpl;
@@ -19,13 +16,14 @@ import com.atlassian.plugin.servlet.ServletModuleManager;
 import com.atlassian.plugin.servlet.descriptors.ServletModuleDescriptor;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.sal.api.user.UserManager;
-
 import com.google.common.base.Strings;
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
 import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.Map;
 
 import static com.atlassian.plugin.connect.plugin.util.OsgiServiceUtils.getService;
 
@@ -50,7 +48,11 @@ public class IFramePageServletDescriptorFactory
         this.bundleContext = bundleContext;
     }
 
-    public ServletModuleDescriptor createIFrameServletDescriptor(final Plugin plugin, final NameToKeyBean bean, final String localUrl, final String path, final String decorator, final String templateSuffix, final Condition condition, final Map<String, String> metaTagsContent)
+    public ServletModuleDescriptor createIFrameServletDescriptor(final Plugin plugin, final NameToKeyBean bean,
+                                                                 final String localUrl, final String path,
+                                                                 final String decorator, final String templateSuffix,
+                                                                 final Condition condition,
+                                                                 final Map<String, String> metaTagsContent)
     {
         final String pageName = (!Strings.isNullOrEmpty(bean.getName().getValue()) ? bean.getName().getValue() : bean.getKey());
         
@@ -85,7 +87,7 @@ public class IFramePageServletDescriptorFactory
 
         return descriptor;
     }
-    
+
     private Element createServletElement(String moduleKey, String localUrl)
     {
         Element root = new DOMElement("servlet");

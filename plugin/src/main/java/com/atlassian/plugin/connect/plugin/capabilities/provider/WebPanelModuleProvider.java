@@ -4,8 +4,9 @@ import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.WebPanelCapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.IFramePageServletDescriptorFactory;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.RelativeAddOnUrlConverter;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebPanelConnectModuleDescriptorFactory;
+import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.RelativeAddOnUrl;
+import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.RelativeAddOnUrlConverter;
 import com.atlassian.plugin.web.conditions.AlwaysDisplayCondition;
 import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,11 +57,13 @@ public class WebPanelModuleProvider implements ConnectModuleProvider<WebPanelCap
         }
         else
         {
-            String localUrl = relativeAddOnUrlConverter.addOnUrlToLocalServletUrl(plugin.getKey(), bean.getUrl());
+            RelativeAddOnUrl localUrl = relativeAddOnUrlConverter.addOnUrlToLocalServletUrl(plugin.getKey(), bean.getUrl());
             
-            WebPanelCapabilityBean newBean = newWebPanelBean(bean).withUrl(localUrl).build();
+            WebPanelCapabilityBean newBean = newWebPanelBean(bean).withUrl(localUrl.getRelativeUrl()).build();
             descriptors.add(webPanelFactory.createModuleDescriptor(plugin, addonBundleContext, newBean));
-            descriptors.add(iFramePageServletDescriptorFactory.createIFrameServletDescriptor(plugin, newBean, localUrl, bean.getUrl(), "atl.general", "", new AlwaysDisplayCondition(), new HashMap<String, String>()));
+            descriptors.add(iFramePageServletDescriptorFactory.createIFrameServletDescriptor(plugin, newBean,
+                    localUrl.getServletDescriptorUrl(), bean.getUrl(), "atl.general", "", new AlwaysDisplayCondition(),
+                    new HashMap<String, String>()));
         }
 
         return descriptors;
