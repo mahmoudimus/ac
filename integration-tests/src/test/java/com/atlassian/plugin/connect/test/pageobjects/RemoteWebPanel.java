@@ -45,7 +45,14 @@ public class RemoteWebPanel
         iframeSrc = iframe.getAttribute("src");
 
         waitUntilTrue(iframe.timed().isPresent());
+    }
 
+    /**
+     * Waits until a script tag (any script tag) has loaded. Most web panels containing a script tag pointing at all.js
+     * or all-debug.js
+     */
+    public RemoteWebPanel waitUntilContentLoaded()
+    {
         // wait until the remote panel has loaded
         waitUntilTrue(Queries.forSupplier(new DefaultTimeouts(), new Supplier<Boolean>()
         {
@@ -57,13 +64,12 @@ public class RemoteWebPanel
                     @Override
                     public Boolean apply(WebDriver iframe)
                     {
-                        // Just test that a script tag (any script tag) has loaded. All web panels should
-                        // include all.js or all-debug.js
                         return !iframe.findElements(By.tagName("script")).isEmpty();
                     }
                 });
             }
         }));
+        return this;
     }
 
     private String getFrameId()
