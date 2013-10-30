@@ -1,18 +1,20 @@
 package com.atlassian.plugin.connect.test.pageobjects.confluence;
 
 /**
- * Page for edit of confluence pages.
+ * Edit Confluence pages.
  */
 public class ConfluenceEditPage extends ConfluenceBasePage
 {
+    private final String pageId;
+
     public ConfluenceEditPage(final String pageId)
     {
-        super(pageId);
+        this.pageId = pageId;
     }
 
     @Override
     public String getUrl()
     {
-        return "/pages/editpage.action?pageId=" + getPageId();
+        return "/pages/editpage.action?pageId=" + pageId;
     }
 }

@@ -7,6 +7,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.WebPanelLay
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebPanel;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceEditPage;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
+import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceUserProfilePage;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceViewPage;
 import com.atlassian.plugin.connect.test.server.ConnectCapabilitiesRunner;
 import it.confluence.ConfluenceWebDriverTestBase;
@@ -27,25 +28,52 @@ import static org.junit.Assert.assertThat;
 
 public class TestConfluenceWebPanel extends ConfluenceWebDriverTestBase
 {
-    private static final String IFRAME_URL = "http://www.example.com";
+    private static final String IFRAME_URL_EDIT = "http://edit.example.com";
+    private static final String IFRAME_URL_VIEW = "http://view.example.com";
+    private static final String IFRAME_URL_PROFILE = "http://profile.example.com";
+
+    private static final int IFRAME_EDIT_HEIGHT = 200;
+    private static final int IFRAME_VIEW_HEIGHT = 50;
+    private static final int IFRAME_PROFILE_HEIGHT = 100;
+
     private static final String SPACE = "ds";
 
     private static ConnectCapabilitiesRunner remotePlugin;
-    private static WebPanelCapabilityBean webPanelCapability;
+    private static WebPanelCapabilityBean editorWebPanel;
+    private static WebPanelCapabilityBean viewWebPanel;
+    private static WebPanelCapabilityBean profileWebPanel;
 
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        webPanelCapability = WebPanelCapabilityBean.newWebPanelBean()
-                .withName(new I18nProperty("Connect Panel", "connect-panel"))
+        editorWebPanel = WebPanelCapabilityBean.newWebPanelBean()
+                .withName(new I18nProperty("Editor Panel", "editor-panel"))
                 .withLocation("atl.editor")
-                .withUrl(IFRAME_URL)
-                .withLayout(new WebPanelLayout("100%", "200px"))
+                .withUrl(IFRAME_URL_EDIT)
+                .withLayout(new WebPanelLayout("100%", IFRAME_EDIT_HEIGHT + "px"))
+                .withWeight(1)
+                .build();
+
+        viewWebPanel = WebPanelCapabilityBean.newWebPanelBean()
+                .withName(new I18nProperty("View Panel", "view-panel"))
+                .withLocation("atl.general")
+                .withUrl(IFRAME_URL_VIEW)
+                .withLayout(new WebPanelLayout("100%", IFRAME_VIEW_HEIGHT + "px"))
+                .withWeight(1)
+                .build();
+
+        profileWebPanel = WebPanelCapabilityBean.newWebPanelBean()
+                .withName(new I18nProperty("Profile Panel", "profile-panel"))
+                .withLocation("atl.userprofile")
+                .withUrl(IFRAME_URL_PROFILE)
+                .withLayout(new WebPanelLayout("100%", IFRAME_PROFILE_HEIGHT + "px"))
                 .withWeight(1)
                 .build();
 
         remotePlugin = new ConnectCapabilitiesRunner(product.getProductInstance().getBaseUrl(), "my-plugin")
-                .addCapability(webPanelCapability)
+                .addCapability(editorWebPanel)
+                .addCapability(viewWebPanel)
+                .addCapability(profileWebPanel)
                 .start();
     }
 
@@ -67,46 +95,85 @@ public class TestConfluenceWebPanel extends ConfluenceWebDriverTestBase
     @Test
     public void webPanelExistsOnEditPage() throws Exception
     {
-        ConfluenceEditPage editPage = visitEditPage();
-        RemoteWebPanel webPanel = editPage.findWebPanel(webPanelCapability.getKey());
+        RemoteWebPanel webPanel = findEditPageWebPanel();
         assertThat(webPanel, is(not(nullValue())));
     }
 
     @Test
     public void iFrameUrlIsCorrectOnEditPage() throws Exception
     {
-        ConfluenceEditPage editPage = visitEditPage();
-        RemoteWebPanel webPanel = editPage.findWebPanel(webPanelCapability.getKey());
-        assertThat(webPanel.getIFrameSourceUrl(), startsWith(IFRAME_URL)); // will end with the plugin's displayUrl and auth parameters
+        RemoteWebPanel webPanel = findEditPageWebPanel();
+        assertThat(webPanel.getIFrameSourceUrl(), startsWith(IFRAME_URL_EDIT)); // will end with the plugin's displayUrl and auth parameters
+    }
+
+    @Test
+    public void iFrameHeightIsCorrectOnEditPage() throws Exception
+    {
+        RemoteWebPanel webPanel = findEditPageWebPanel();
+        assertThat(webPanel.getIFrame().getSize().getHeight(), is(IFRAME_EDIT_HEIGHT));
     }
 
     @Test
     public void webPanelExistsOnViewPage() throws Exception
     {
-        ConfluenceViewPage viewPage = visitViewPage();
-        RemoteWebPanel webPanel = viewPage.findWebPanel(webPanelCapability.getKey());
+        RemoteWebPanel webPanel = findViewPageWebPanel();
         assertThat(webPanel, is(not(nullValue())));
     }
 
     @Test
     public void iFrameUrlIsCorrectOnViewPage() throws Exception
     {
-        ConfluenceViewPage viewPage = visitViewPage();
-        RemoteWebPanel webPanel = viewPage.findWebPanel(webPanelCapability.getKey());
-        assertThat(webPanel.getIFrameSourceUrl(), startsWith(IFRAME_URL)); // will end with the plugin's displayUrl and auth parameters
+        RemoteWebPanel webPanel = findViewPageWebPanel();
+        assertThat(webPanel.getIFrameSourceUrl(), startsWith(IFRAME_URL_VIEW)); // will end with the plugin's displayUrl and auth parameters
     }
 
-    private ConfluenceViewPage visitViewPage() throws Exception
+    @Test
+    public void iFrameHeightIsCorrectOnViewPage() throws Exception
     {
-        return visitPage(ConfluenceViewPage.class);
+        RemoteWebPanel webPanel = findViewPageWebPanel();
+        assertThat(webPanel.getIFrame().getSize().getHeight(), is(IFRAME_VIEW_HEIGHT));
     }
 
-    private ConfluenceEditPage visitEditPage() throws Exception
+    @Test
+    public void webPanelExistsOnProfilePage() throws Exception
     {
-        return visitPage(ConfluenceEditPage.class);
+        RemoteWebPanel webPanel = findProfilePageWebPanel();
+        assertThat(webPanel, is(not(nullValue())));
     }
 
-    private <P extends Page> P visitPage(Class<P> pageClass) throws Exception
+    @Test
+    public void iFrameUrlIsCorrectOnProfilePage() throws Exception
+    {
+        RemoteWebPanel webPanel = findProfilePageWebPanel();
+        assertThat(webPanel.getIFrameSourceUrl(), startsWith(IFRAME_URL_PROFILE)); // will end with the plugin's displayUrl and auth parameters
+    }
+
+    @Test
+    public void iFrameHeightIsCorrectOnProfilePage() throws Exception
+    {
+        RemoteWebPanel webPanel = findProfilePageWebPanel();
+        assertThat(webPanel.getIFrame().getSize().getHeight(), is(IFRAME_PROFILE_HEIGHT));
+    }
+
+    private RemoteWebPanel findEditPageWebPanel() throws Exception
+    {
+        ConfluenceEditPage editPage = createAndVisitPage(ConfluenceEditPage.class);
+        return editPage.findWebPanel(editorWebPanel.getKey());
+    }
+
+    private RemoteWebPanel findViewPageWebPanel() throws Exception
+    {
+        ConfluenceViewPage viewPage = createAndVisitPage(ConfluenceViewPage.class);
+        return viewPage.findWebPanel(viewWebPanel.getKey());
+    }
+
+    private RemoteWebPanel findProfilePageWebPanel() throws Exception
+    {
+        ConfluenceUserProfilePage profilePage = product.visit(ConfluenceUserProfilePage.class);
+        return profilePage.findWebPanel(profileWebPanel.getKey());
+    }
+
+    private <P extends Page> P createAndVisitPage(Class<P> pageClass) throws Exception
     {
         final ConfluenceOps.ConfluencePageData pageData = createPage();
         return product.visit(pageClass, pageData.getId());

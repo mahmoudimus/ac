@@ -13,18 +13,11 @@ import org.openqa.selenium.By;
  */
 public abstract class ConfluenceBasePage implements Page
 {
-    private final String pageId;
-
     @Inject
     private PageBinder pageBinder;
 
     @javax.inject.Inject
     private com.atlassian.webdriver.AtlassianWebDriver driver;
-
-    public ConfluenceBasePage(final String pageId)
-    {
-        this.pageId = pageId;
-    }
 
     public RemoteWebPanel findWebPanel(String id)
     {
@@ -41,8 +34,4 @@ public abstract class ConfluenceBasePage implements Page
         return !driver.elementExists(By.id(webItemId));
     }
 
-    protected String getPageId()
-    {
-        return pageId;
-    }
 }

@@ -81,4 +81,9 @@ public class RemoteWebPanel
     {
         return iframeSrc;
     }
+
+    public PageElement getIFrame()
+    {
+        return iframe;
+    }
 }
