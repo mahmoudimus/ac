@@ -312,6 +312,7 @@ _AP.define("host/main", ["_xdm", "host/_addons"], function (XdmRpc, addons) {
   return function (options) {
     var attemptCounter = 0;
     function doCreate() {
+        //If the element we are going to append the iframe to doesn't exist in the dom (yet). Wait for it to appear.
         if(contentDiv(options.ns).length === 0 && attemptCounter < 10){
             setTimeout(function(){
                 attemptCounter++;
