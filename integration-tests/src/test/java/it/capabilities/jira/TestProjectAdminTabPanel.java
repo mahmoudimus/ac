@@ -12,7 +12,10 @@ import it.jira.JiraWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
-import org.junit.*;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Rule;
+import org.junit.Test;
 import org.junit.matchers.JUnitMatchers;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectProjectAdminTabPanelCapabilityBean.newProjectAdminTabPanelBean;
@@ -24,7 +27,6 @@ import static org.junit.Assert.assertThat;
 /**
  * Test of project admin tabs in JIRA.
  */
-@Ignore // TODO: skipping until ACDEV-496 resolved. Currently no servlet (IFramePageServlet) is responding causing the test to timeout and fail
 public class TestProjectAdminTabPanel extends JiraWebDriverTestBase
 {
     private static final String REMOTE_PROJECT_CONFIG_TAB_NAME = "My Connect Project Config";
@@ -43,7 +45,7 @@ public class TestProjectAdminTabPanel extends JiraWebDriverTestBase
                         .withWeight(10)
                         .withLocation("projectgroup4")
                         .build())
-                .addCapability(RemoteContainerCapabilityBean.CONNECT_CONTAINER,newRemoteContainerBean()
+                .addCapability(RemoteContainerCapabilityBean.CONNECT_CONTAINER, newRemoteContainerBean()
                         .withDisplayUrl("http://www.example.com")
 //                        .withOAuth(newOAuthBean().withPublicKey("S0m3Publ1cK3y").build())
                         .build())
@@ -87,7 +89,7 @@ public class TestProjectAdminTabPanel extends JiraWebDriverTestBase
         }));
 
         final JiraProjectAdministrationTab remoteProjectAdministrationTab =
-                page.getTabs().gotoTab("my-connect-project-config",
+                page.getTabs().gotoTab(JiraProjectAdministrationTab.MODULE_KEY,
                         JiraProjectAdministrationTab.class,
                         project.getKey());
 

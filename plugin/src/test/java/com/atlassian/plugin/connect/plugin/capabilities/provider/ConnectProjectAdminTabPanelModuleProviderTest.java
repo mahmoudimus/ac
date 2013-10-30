@@ -14,6 +14,7 @@ import com.atlassian.plugin.connect.plugin.module.jira.conditions.IsProjectAdmin
 import com.atlassian.plugin.servlet.descriptors.ServletModuleDescriptor;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
+import com.atlassian.uri.Uri;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import org.hamcrest.Matchers;
@@ -47,7 +48,7 @@ public class ConnectProjectAdminTabPanelModuleProviderTest
     private static final String ADDON_URL = "/myUrl";
     private static final String EXPECTED_IFRAME_DESCRIPTOR_URL = "/plugins/servlet/xx/myUrl";
     private static final String EXPECTED_IFRAME_URL = "/xx/myUrl";
-    private static final RelativeAddOnUrl EXPECTED_IFRAME_URL_HOLDER = new RelativeAddOnUrl(EXPECTED_IFRAME_URL);
+    private static final RelativeAddOnUrl EXPECTED_IFRAME_URL_HOLDER = new RelativeAddOnUrl(Uri.parse(EXPECTED_IFRAME_URL));
     private static final String ADDON_I18_NAME_KEY = "myi18key";
     private static final int WEIGHT = 99;
     private static final String LOCATION = "a-location";
