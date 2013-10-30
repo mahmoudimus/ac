@@ -101,7 +101,7 @@ public class MacroContentManager implements DisposableBean
            is the same as used in the Confluence editor.
             */
             // todo: do we want to give feedback to the app of what was cleaned?
-            final String cleanedXhtml = xhtmlCleaner.cleanQuietly(remoteXhtml, macroInstance.getConversionContext());
+            final String cleanedXhtml = xhtmlCleaner.cleanQuietly(remoteXhtml);
             return transactionTemplate.execute(
                 new TransactionCallback<String>() {
                     @Override
