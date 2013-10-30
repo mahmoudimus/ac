@@ -7,7 +7,7 @@ _AP.define("host/main", ["_xdm", "host/_addons"], function (XdmRpc, addons) {
       xhrProperties = ["status", "statusText", "responseText"],
       xhrHeaders = ["Content-Type"],
       events = (AJS.EventQueue = AJS.EventQueue || []),
-      defer = window.requestAnimationFrame || function (f) {setTimeout(f,10)};
+      defer = window.requestAnimationFrame || function (f) {setTimeout(f,10); };
 
   function contentDiv(ns) {
     return $("#embedded-" + ns);
@@ -221,7 +221,7 @@ _AP.define("host/main", ["_xdm", "host/_addons"], function (XdmRpc, addons) {
         closeMacroEditor: function () {
           _AP.require("confluence/macro/editor", function (editor) {
             editor.close();
-          })
+          });
         }
       }
     });
@@ -310,7 +310,15 @@ _AP.define("host/main", ["_xdm", "host/_addons"], function (XdmRpc, addons) {
   }
 
   return function (options) {
+    var attemptCounter = 0;
     function doCreate() {
+        if(contentDiv(options.ns).length === 0 && attemptCounter < 10){
+            setTimeout(function(){
+                attemptCounter++;
+                doCreate();
+            }, 50);
+            return;
+        }
       // make sure the content div is empty
       contentDiv(options.ns).find("iframe").each(function (_, iframe) {
         var rpc = $(iframe).data("ap-rpc");
