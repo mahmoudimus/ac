@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
+import com.atlassian.plugin.connect.test.server.ConnectCapabilitiesRunner;
 import com.atlassian.plugin.connect.test.server.module.WebhookModule;
 
 import org.apache.commons.io.IOUtils;
@@ -20,6 +21,8 @@ import cc.plural.jsonij.JPath;
 import cc.plural.jsonij.JSON;
 import cc.plural.jsonij.Value;
 import cc.plural.jsonij.parser.ParserException;
+
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebhookCapabilityBean.newWebhookBean;
 
 public final class WebHookTestServlet extends HttpServlet
 {
@@ -57,6 +60,32 @@ public final class WebHookTestServlet extends HttpServlet
                                   .path(path)
                                   .event(eventId)
                                   .resource(servlet))
+                .start();
+
+        tester.test(new WebHookWaiter()
+        {
+            @Override
+            public WebHookBody waitForHook() throws Exception
+            {
+                return servlet.waitForHook();
+            }
+        });
+
+        runner.stop();
+    }
+
+    public static void runInJsonRunner(String baseUrl, String webHookId, WebHookTester tester) throws Exception
+    {
+        runInJsonRunner(baseUrl, webHookId, webHookId, tester);
+    }
+
+    public static void runInJsonRunner(String baseUrl, String webHookId, String eventId, WebHookTester tester) throws Exception
+    {
+        final String path = "/webhook";
+        final WebHookTestServlet servlet = new WebHookTestServlet();
+        ConnectCapabilitiesRunner runner = new ConnectCapabilitiesRunner(baseUrl, webHookId)
+                .addCapability(newWebhookBean().withEvent(eventId).withUrl(path).build())
+                .addRoute(path, servlet)
                 .start();
 
         tester.test(new WebHookWaiter()
