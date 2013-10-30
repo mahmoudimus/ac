@@ -52,6 +52,11 @@ public class ConditionalBeanSerializer implements JsonSerializer<List<Conditiona
     @Override
     public JsonElement serialize(List<ConditionalBean> src, Type typeOfSrc, JsonSerializationContext context)
     {
+        if(null == src || src.isEmpty())
+        {
+            return null;
+        }
+        
         Type conditionalType = new TypeToken<List<ConditionalBean>>(){}.getType();
         JsonArray ja = new JsonArray();
         
