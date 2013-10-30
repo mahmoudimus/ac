@@ -10,18 +10,86 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.WebItemModuleProvider;
 
 /**
- * @since version
+ * Adds a web item to a specified location in the application interface. A web item is a hyperlink
+ * that’s inserted into some standard place in the Atlassian application interface, such as the
+ * administration menu.
+ *
+ * The form that the link takes can vary depending on the location. For instance, a web item in the header bar
+ * (with a location section of system.top.navigation.bar) adds a link to the navigation bar across the top of the
+ * interface. On the other hand, a web item in the opsbar-operation location section in JIRA adds an item to the issue
+ * operation buttons.
+ *
+ * A web item link can open a new page in the application or a dialog, depending on your configuration.
+ *
+ * Web links are a simple and useful way to extend Atlassian applications. If you want to extend an Atlassian
+ * application and don't know where to start, a web item may be all you need.
  */
 @CapabilitySet(key = "web-items", moduleProvider = WebItemModuleProvider.class)
 public class WebItemCapabilityBean extends NameToKeyBean
 {
+    /**
+     *  Specifies the URL targeted by the link as a string. Some parts of the link should be dynamically generated,
+     *  such as the base URL, issue ID, page id, or other dynamic elements of the link.    [[ ???]]
+     */
     private String link;
+    /**
+     * The location in the application interface where the web item should appear. For the Atlassian application
+     * interface, a location is something like the coordinates on a map. It points to a particular drop-down menu or
+     * navigation list in the UI.
+     *
+     * Places in the Atlassian UI are identified by what are known as "well-known locations."
+     * For example, the "system.admin/globalsettings" location is in the administrative
+     * menu link on the left side of the Administration Console.
+     *
+     * Related items in the UI are sometimes grouped into sections. To add a web item to a non-sectioned location,
+     * just specify the location key (system.admin). For sectioned locations, use the location key
+     * followed by a slash ('/') and then the name of the web section in which it should appear (globalsettings).
+     *
+     * While many location keys are specific to the application, there are common location keys as well. To discover
+     * the well-known locations for the application you're targeting, see.... .
+     */
     private String location;
+    /**
+     *  [[don't know...guesssing...]]
+     *
+     *  Additional context information you want to pass to the add-on. This information supplements the default
+     *  context that the Atlassian application provides to your add-on, such as information about the
+     *  current user, JIRA project, or Confluence space key.
+     *
+     *  You can use this context parameter to pass a URL to a resource that supplies additional information
+     *  (as URL query parameters) to the web item add-on.
+     */
     private AddOnUrlContext context;
+    /**
+     * Determines the order in which the web item appears in the menu or list.
+     *
+     * The "lightest" weight (i.e., lowest number) appears first, rising relative to other items,
+     * while the "heaviest" weights sink to the bottom of the menu or list.
+     *
+     * Built-in web items have weights that are incremented by 10, leaving room for additional items. Weight value
+     * collisions are handled gracefully in the interface, which chooses  the order chosen based on context (???))
+     */
     private Integer weight;
+    /**
+     *  If true, the web link opens a dialog box. Otherwise, your item opens a new page in the application. The
+     *  page gets the usual "atl.general" page decorator, which adds the standard footer and header content
+     *  for the application.
+     */
     private Boolean dialog;
+    /**
+     * Specifies custom styles for the web link target page, if desired. By default, the web item content gets
+     * styled in the default style of the target application.
+     */
     private List<String> styleClasses;
+    /**
+     * The i18n key to be used to look up the textual, mouse-over text of the link. [[??]]
+     */
     private I18nProperty tooltip;
+    /**
+     *  An optional icon to display with the link text or as the link, specified by URL to its hosted location.
+     *  You can specify a particular width and height for the icon. Most link icons in Atlassian applications
+     *  are 16 by 16 pixels.
+     */
     private IconBean icon;
 
     public WebItemCapabilityBean()

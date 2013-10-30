@@ -9,10 +9,21 @@ import com.google.common.base.Objects;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.OAuthBean.newOAuthBean;
 
+
+/**
+ * Identifies the remote server hosting the add-on and specifies OAuth settings for the server.
+ */
+
 @CapabilitySet(key = "connect-container", moduleProvider = RemoteContainerModuleProvider.class)
 public class RemoteContainerCapabilityBean extends BaseCapabilityBean
 {
+    /**
+     *  The public URL for the add-on.
+     */
     private String displayUrl;
+    /**
+     * OAuth information used for this host when signing requests to the target Atlassian application.
+     */
     private OAuthBean oauth;
 
     public RemoteContainerCapabilityBean()

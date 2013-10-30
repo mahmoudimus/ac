@@ -5,19 +5,8 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConnectPro
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectProjectTabPanelModuleProvider;
 
 /**
- * Capabilities bean for Jira Project Tab Pages. The capability JSON looks like
- * <p>
- * <pre>
- * "projectTabPanels": [{
- *   "name": {
- *     "value": "My Project Tab",
- *     "i18n": "my.tab"
- *   },
- *   "url": "/my-general-page",
- *   "weight": 100
- * }]
- * </pre>
- * </p>
+ * Adds a tab in JIRA to the Browse Projects page, supplementing the built-in tabs such as Open Issues,
+ *
  */
 @CapabilitySet(key = "projectTabPanels", moduleProvider = ConnectProjectTabPanelModuleProvider.class)
 public class ConnectProjectTabPanelCapabilityBean extends AbstractConnectTabPanelCapabilityBean

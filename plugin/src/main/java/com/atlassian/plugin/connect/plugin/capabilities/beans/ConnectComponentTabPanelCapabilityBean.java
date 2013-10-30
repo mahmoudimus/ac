@@ -5,19 +5,9 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConnectCom
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectComponentTabPanelModuleProvider;
 
 /**
- * Capabilities bean for Jira Component Tab Pages. The capability JSON looks like
- * <p>
- * <pre>
- * "componentTabPanels": [{
- *   "name": {
- *     "value": "My Component Tab",
- *     "i18n": "my.tab"
- *   },
- *   "url": "/my-general-page",
- *   "weight": 100
- * }]
- * </pre>
- * </p>
+ * Adds a tab in JIRA to the project Browse Components page, supplementing the existing tabs such as Issues, Road Map,
+ * and Change Log.
+ *
  */
 @CapabilitySet(key = "componentTabPanels", moduleProvider = ConnectComponentTabPanelModuleProvider.class)
 public class ConnectComponentTabPanelCapabilityBean extends AbstractConnectTabPanelCapabilityBean

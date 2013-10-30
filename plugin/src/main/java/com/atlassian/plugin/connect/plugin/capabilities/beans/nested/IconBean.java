@@ -9,8 +9,17 @@ import static com.atlassian.plugin.connect.plugin.capabilities.util.CapabilityBe
  */
 public class IconBean
 {
+    /**
+     * The width in pixels of the icon image.
+     */
     private int width;
+    /**
+     * The height in pixels of the icon image.
+     */
     private int height;
+    /**
+     * The URL of the icon. Your icon needs to be hosted remotely at a web-accessible location.
+     */
     private String url;
 
     public IconBean()

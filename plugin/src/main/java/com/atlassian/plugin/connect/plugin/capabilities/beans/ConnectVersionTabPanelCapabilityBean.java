@@ -5,19 +5,10 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConnectVer
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectVersionTabPanelModuleProvider;
 
 /**
- * Capabilities bean for Jira Version Tab Pages. The capability JSON looks like
- * <p>
- * <pre>
- * "versionTabPanels": [{
- *   "name": {
- *     "value": "My Version Tab",
- *     "i18n": "my.tab"
- *   },
- *   "url": "/my-general-page",
- *   "weight": 100
- * }]
- * </pre>
- * </p>
+ *
+ *  Adds a tab in JIRA to the Version Summary page, supplementing existing tabs such as
+ *  Summary, Issues, and Popular Issues.
+ *
  */
 @CapabilitySet(key = "versionTabPanels", moduleProvider = ConnectVersionTabPanelModuleProvider.class)
 public class ConnectVersionTabPanelCapabilityBean extends AbstractConnectTabPanelCapabilityBean

@@ -5,19 +5,9 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConnectIss
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectIssueTabPanelModuleProvider;
 
 /**
- * Capabilities bean for Jira Issue Tab Pages. The capability JSON looks like
- * <p>
- * <pre>
- * "issueTabPanels": [{
- *   "name": {
- *     "value": "My Issue Tab",
- *     "i18n": "my.tab"
- *   },
- *   "url": "/my-general-page",
- *   "weight": 100
- * }]
- * </pre>
- * </p>
+ * Adds a tab in JIRA to the View Issue page. The new tab supplements existing tabs such as Comments and History
+ * in the Activity section of the page.
+ *
  */
 // TODO: Note that we only need to subtype here because the annotation lives on this class rather than the descriptorFactory.
 // see https://extranet.atlassian.com/display/~aholmgren/Thoughts+on+Capabilities
