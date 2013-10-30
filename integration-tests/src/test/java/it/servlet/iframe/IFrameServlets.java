@@ -45,7 +45,7 @@ public class IFrameServlets
      */
     public static HttpServlet sizeToParentServlet()
     {
-        return wrapContextAwareServlet(new MustacheServlet("iframe-hello-world.mu"));
+        return wrapContextAwareServlet(new MustacheServlet("iframe-size-to-parent.mu"));
     }
 
     /**
