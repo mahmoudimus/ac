@@ -7,7 +7,7 @@ import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
 import com.atlassian.plugin.connect.test.server.module.DialogPageModule;
 import com.atlassian.plugin.connect.test.server.module.RemoteWebPanelModule;
 import hudson.plugins.jira.soap.RemoteIssue;
-import it.servlet.iframe.IFrameServlets;
+import it.servlet.ConnectAppServlets;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -27,12 +27,12 @@ public class TestDialogWithContext extends JiraWebDriverTestBase
                         .name("Issue WebPanel")
                         .location("atl.jira.view.issue.left.context")
                         .path("/ilwp")
-                        .resource(IFrameServlets.openDialogServlet()))
+                        .resource(ConnectAppServlets.openDialogServlet()))
                 .add(DialogPageModule.key("my-dialog")
                         .name("Remote dialog")
                         .path("/my-dialog?my-issue-id=${issue.id}")
                         .section("")
-                        .resource(IFrameServlets.closeDialogServlet()))
+                        .resource(ConnectAppServlets.closeDialogServlet()))
                 .start();
     }
 

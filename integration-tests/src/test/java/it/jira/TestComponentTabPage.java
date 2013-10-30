@@ -7,7 +7,7 @@ import com.atlassian.jira.tests.TestBase;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraComponentTabPage;
 import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
 import com.atlassian.plugin.connect.test.server.module.ComponentTabPageModule;
-import it.servlet.iframe.IFrameServlets;
+import it.servlet.ConnectAppServlets;
 import org.junit.*;
 
 import static org.hamcrest.Matchers.equalTo;
@@ -35,7 +35,7 @@ public class TestComponentTabPage extends TestBase
                 .add(ComponentTabPageModule.key(JIRA_COMPONENT_TAB_PANEL)
                         .name("Component Tab Panel")
                         .path("/ipp?component_id=${component.id}&project_id=${project.id}&project_key=${project.key}")
-                        .resource(IFrameServlets.apRequestServlet()))
+                        .resource(ConnectAppServlets.apRequestServlet()))
                 .start();
     }
 

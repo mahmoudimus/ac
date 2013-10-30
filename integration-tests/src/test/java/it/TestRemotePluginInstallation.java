@@ -5,7 +5,7 @@ import com.atlassian.pageobjects.page.LoginPage;
 import com.atlassian.plugin.connect.test.pageobjects.GeneralPage;
 import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
 import com.atlassian.plugin.connect.test.server.module.GeneralPageModule;
-import it.servlet.iframe.IFrameServlets;
+import it.servlet.ConnectAppServlets;
 import org.apache.http.client.HttpResponseException;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -45,7 +45,7 @@ public class TestRemotePluginInstallation extends AbstractRemotablePluginTest
                 .add(GeneralPageModule.key("changedPage")
                                       .name("Changed Page")
                                       .path("/page")
-                                      .resource(IFrameServlets.helloWorldServlet()))
+                                      .resource(ConnectAppServlets.helloWorldServlet()))
                 .start();
         product.visit(HomePage.class);
         assertTrue(product.getPageBinder().bind(GeneralPage.class, "changedPage", "Changed Page")
@@ -57,7 +57,7 @@ public class TestRemotePluginInstallation extends AbstractRemotablePluginTest
                 .add(GeneralPageModule.key("changedPage")
                                       .name("Changed Page")
                                       .path("/page")
-                                      .resource(IFrameServlets.helloWorldServlet()))
+                                      .resource(ConnectAppServlets.helloWorldServlet()))
                 .start();
         product.visit(HomePage.class);
         assertTrue(product.getPageBinder().bind(GeneralPage.class, "changedPage", "Changed Page")

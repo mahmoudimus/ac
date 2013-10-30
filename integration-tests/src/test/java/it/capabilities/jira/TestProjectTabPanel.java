@@ -11,7 +11,7 @@ import com.atlassian.plugin.connect.test.pageobjects.jira.AbstractRemotablePlugi
 import com.atlassian.plugin.connect.test.server.ConnectCapabilitiesRunner;
 
 import it.jira.JiraWebDriverTestBase;
-import it.servlet.iframe.IFrameServlets;
+import it.servlet.ConnectAppServlets;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -40,7 +40,7 @@ public class TestProjectTabPanel extends JiraWebDriverTestBase
                         .withUrl("/ptp")
                         .withWeight(1234)
                         .build())
-                .addRoute("/ptp", IFrameServlets.apRequestServlet())
+                .addRoute("/ptp", ConnectAppServlets.apRequestServlet())
                 .start();
     }
 

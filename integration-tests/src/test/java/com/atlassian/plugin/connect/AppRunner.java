@@ -4,7 +4,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.server.ConnectCapabilitiesRunner;
 import it.capabilities.CheckUsernameConditionServlet;
-import it.servlet.iframe.IFrameServlets;
+import it.servlet.ConnectAppServlets;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -37,16 +37,16 @@ public class AppRunner
 //                                          .iconUrl("/public/sandcastles.jpg")
 //                                          .height("600")
 //                                          .width("700")
-//                                          .resource(IFrameServlets.apRequestServlet()))
+//                                          .resource(ConnectAppServlets.apRequestServlet()))
 //                    .add(GeneralPageModule.key("amdTest")
 //                                          .name("AMD Test app1 General")
 //                                          .path("/amdTest")
-//                                          .resource(IFrameServlets.apRequestServlet()))
+//                                          .resource(ConnectAppServlets.apRequestServlet()))
 //                    .add(GeneralPageModule.key("onlyBetty")
 //                                          .name("Only Betty")
 //                                          .path("/ob")
 //                                          .conditions(Condition.name("user_is_logged_in"), Condition.at("/onlyBettyCondition").resource(new TestPageModules.OnlyBettyConditionServlet()))
-//                                          .resource(IFrameServlets.apRequestServlet()))
+//                                          .resource(ConnectAppServlets.apRequestServlet()))
 //                    .add(DialogPageModule.key("remotePluginDialog")
 //                                         .name("Remotable Plugin app1 Dialog")
 //                                         .path("/rpd")
@@ -89,7 +89,7 @@ public class AppRunner
 
                     .addRoute("/onlyBettyCondition", new CheckUsernameConditionServlet("betty"))
                     .addRoute("/irwi?issue_id=${issue.id}&project_key=${project.key}&pid=${project.id}",
-                            IFrameServlets.helloWorldServlet())
+                            ConnectAppServlets.helloWorldServlet())
                     .start();
             while (true)
             {

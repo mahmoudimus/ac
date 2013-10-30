@@ -1,15 +1,17 @@
-package it.servlet.iframe;
+package it.servlet;
 
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebPanel;
-import it.servlet.ContextServlet;
-import it.servlet.HttpContextServlet;
+import it.servlet.iframe.CustomMessageServlet;
+import it.servlet.iframe.MustacheServlet;
+import it.servlet.macro.ExtendedMacroServlet;
+import it.servlet.macro.SimpleMacroServlet;
 
 import javax.servlet.http.HttpServlet;
 
 /**
  * Utility methods for creating test servlets suitable for serving Connect iframes.
  */
-public class IFrameServlets
+public class ConnectAppServlets
 {
     /**
      * @return a servlet that tests AMD is working correctly
@@ -85,12 +87,12 @@ public class IFrameServlets
 
     public static HttpServlet macroSimple()
     {
-        return wrapContextAwareServlet(new MustacheServlet("confluence/macro/simple.mu"));
+        return wrapContextAwareServlet(new SimpleMacroServlet());
     }
 
     public static HttpServlet macroExtended()
     {
-        return wrapContextAwareServlet(new MustacheServlet("confluence/macro/extended.mu"));
+        return wrapContextAwareServlet(new ExtendedMacroServlet());
     }
 
     public static HttpServlet macroEditor()

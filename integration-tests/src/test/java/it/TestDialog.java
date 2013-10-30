@@ -9,7 +9,7 @@ import com.atlassian.plugin.connect.test.pageobjects.RemotePluginAwarePage;
 import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
 import com.atlassian.plugin.connect.test.server.module.DialogPageModule;
 import com.atlassian.plugin.connect.test.server.module.GeneralPageModule;
-import it.servlet.iframe.IFrameServlets;
+import it.servlet.ConnectAppServlets;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -30,13 +30,13 @@ public class TestDialog extends AbstractRemotablePluginTest
                                       .name("Remotable Plugin app1 Open Dialog")
                                       .path("/rpg")
                                       .linkName("Remotable Plugin app1 Open Dialog")
-                                      .resource(IFrameServlets.openDialogServlet()))
+                                      .resource(ConnectAppServlets.openDialogServlet()))
                 .add(DialogPageModule.key("my-dialog")
                                       .name("Remote dialog")
                                       .path("/my-dialog")
                                       .section("")
-                                      .resource(IFrameServlets.closeDialogServlet()))
-                .addRoute("/dialog", IFrameServlets.closeDialogServlet())
+                                      .resource(ConnectAppServlets.closeDialogServlet()))
+                .addRoute("/dialog", ConnectAppServlets.closeDialogServlet())
                 .start();
     }
 

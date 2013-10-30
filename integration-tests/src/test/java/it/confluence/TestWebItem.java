@@ -8,7 +8,7 @@ import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
 import com.atlassian.plugin.connect.test.server.module.RemoteWebItemModule;
 import com.google.common.base.Optional;
-import it.servlet.iframe.IFrameServlets;
+import it.servlet.ConnectAppServlets;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -42,7 +42,7 @@ public class TestWebItem extends ConfluenceWebDriverTestBase
                         .section("system.browse")
                         .weight(100)
                         .link(RemoteWebItemModule.Link.link("/irwi?space_id=${space.key}&page_id=${page.id}", false))
-                        .resource(IFrameServlets.helloWorldServlet()))
+                        .resource(ConnectAppServlets.helloWorldServlet()))
                 .add(RemoteWebItemModule.key(ABSOLUTE_WEB_ITEM)
                         .name("Quick project link")
                         .section("system.browse")

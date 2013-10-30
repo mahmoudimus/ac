@@ -9,7 +9,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanel
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraOps;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePageWithRemotePluginIssueTab;
 import com.atlassian.plugin.connect.test.server.ConnectCapabilitiesRunner;
-import it.servlet.iframe.IFrameServlets;
+import it.servlet.ConnectAppServlets;
 import org.junit.*;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectTabPanelCapabilityBean.newTabPanelBean;
@@ -35,7 +35,7 @@ public class TestIssueTabPanel extends TestBase
                         .withUrl("/ipp?issue_id=${issue.id}&project_id=${project.id}&project_key=${project.key}")
                         .withWeight(1234)
                         .build())
-                .addRoute("/ipp", IFrameServlets.apRequestServlet())
+                .addRoute("/ipp", ConnectAppServlets.apRequestServlet())
                 .start();
     }
 

@@ -8,7 +8,7 @@ import com.atlassian.plugin.connect.test.server.ConnectCapabilitiesRunner;
 import com.google.common.base.Optional;
 import it.capabilities.CheckUsernameConditionServlet;
 import it.jira.JiraWebDriverTestBase;
-import it.servlet.iframe.IFrameServlets;
+import it.servlet.ConnectAppServlets;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -63,7 +63,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
                 
                 .addRoute("/onlyBarneyCondition", new CheckUsernameConditionServlet(BARNEY_USERNAME))
                 .addRoute("/onlyBettyCondition", new CheckUsernameConditionServlet(BETTY_USERNAME))
-                .addRoute("/irwi?issue_id=${issue.id}&project_key=${project.key}&pid=${project.id}", IFrameServlets.helloWorldServlet())
+                .addRoute("/irwi?issue_id=${issue.id}&project_key=${project.key}&pid=${project.id}", ConnectAppServlets.helloWorldServlet())
                 .start();
     }
 

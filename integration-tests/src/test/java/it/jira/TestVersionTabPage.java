@@ -7,7 +7,7 @@ import com.atlassian.jira.tests.TestBase;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraVersionTabPage;
 import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
 import com.atlassian.plugin.connect.test.server.module.VersionTabPageModule;
-import it.servlet.iframe.IFrameServlets;
+import it.servlet.ConnectAppServlets;
 import org.junit.*;
 
 import java.rmi.RemoteException;
@@ -37,7 +37,7 @@ public class TestVersionTabPage extends TestBase
                 .add(VersionTabPageModule.key(JIRA_VERSION_TAB_PANEL)
                         .name("Version Tab Panel")
                         .path("/ipp?version_id=${version.id}&project_id=${project.id}&project_key=${project.key}")
-                        .resource(IFrameServlets.apRequestServlet()))
+                        .resource(ConnectAppServlets.apRequestServlet()))
                 .start();
 
     }

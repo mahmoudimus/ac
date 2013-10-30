@@ -7,7 +7,7 @@ import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceMacroT
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
 import com.atlassian.plugin.connect.test.server.module.*;
-import it.servlet.iframe.IFrameServlets;
+import it.servlet.ConnectAppServlets;
 import org.junit.Test;
 
 import javax.servlet.ServletException;
@@ -47,7 +47,7 @@ public final class TestConfluenceMacroParams extends ConfluenceWebDriverTestBase
                         .category(MacroCategory.name("development"))
                         .parameters(MacroParameter.name("footy").title("Favorite Footy").type("enum").required("true").values("American Football", "Soccer", "Rugby Union", "Rugby League"))
                         .contextParameters(ContextParameter.name("page.id").query())
-                        .editor(MacroEditor.at("/myMacroEditor").height("600").width("600").resource(IFrameServlets.macroEditor()))
+                        .editor(MacroEditor.at("/myMacroEditor").height("600").width("600").resource(ConnectAppServlets.macroEditor()))
                         .resource(new TestConfluencePageMacro.MyMacroServlet()))
                 .add(GeneralPageModule.key("remotePluginGeneral")
                         .name("Remotable Plugin app1 General")
@@ -56,8 +56,8 @@ public final class TestConfluenceMacroParams extends ConfluenceWebDriverTestBase
                         .iconUrl("/public/sandcastles.jpg")
                         .height("600")
                         .width("700")
-                        .resource(IFrameServlets.helloWorldServlet()))
-                .addRoute("/page/*", IFrameServlets.helloWorldServlet())
+                        .resource(ConnectAppServlets.helloWorldServlet()))
+                .addRoute("/page/*", ConnectAppServlets.helloWorldServlet())
                 .start();
 
         ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(new ConfluenceOps.ConfluenceUser("admin", "admin")), "ds", "test", loadResourceAsString("confluence/test-page.xhtml"));

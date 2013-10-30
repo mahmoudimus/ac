@@ -14,7 +14,7 @@ import com.atlassian.plugin.connect.test.server.module.AdminPageModule;
 import com.atlassian.plugin.connect.test.server.module.DialogPageModule;
 import com.atlassian.plugin.connect.test.server.module.IssueTabPageModule;
 import hudson.plugins.jira.soap.RemoteIssue;
-import it.servlet.iframe.IFrameServlets;
+import it.servlet.ConnectAppServlets;
 import org.junit.*;
 
 import java.rmi.RemoteException;
@@ -38,21 +38,21 @@ public class TestJira extends JiraWebDriverTestBase
                 .add(AdminPageModule.key("remotePluginAdmin")
                                     .name("Remotable Plugin app1 Admin")
                                     .path("/ap")
-                                    .resource(IFrameServlets.apRequestServlet()))
+                                    .resource(ConnectAppServlets.apRequestServlet()))
                 .add(AdminPageModule.key("jira-admin-page")
                                     .name("Remotable Admin Page")
                                     .path("/jap")
                                     .section("advanced_menu_section/advanced_section")
-                                    .resource(IFrameServlets.apRequestServlet()))
+                                    .resource(ConnectAppServlets.apRequestServlet()))
                 .add(IssueTabPageModule.key("jira-remotePluginIssueTabPage")
                                        .name("AC Play Issue Tab Page")
                                        .path("/itp")
-                                       .resource(IFrameServlets.apRequestServlet()))
+                                       .resource(ConnectAppServlets.apRequestServlet()))
                 .add(DialogPageModule.key("jira-issueAction")
                                      .name("Test Issue Action")
                                      .path("/jia")
                                      .section("operations-subtasks")
-                                     .resource(IFrameServlets.dialogServlet()))
+                                     .resource(ConnectAppServlets.dialogServlet()))
                 .start();
     }
 

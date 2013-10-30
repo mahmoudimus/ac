@@ -10,7 +10,7 @@ import com.atlassian.plugin.connect.test.pageobjects.jira.JiraProjectAdministrat
 import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
 import com.atlassian.plugin.connect.test.server.module.ProjectConfigTabModule;
 import com.atlassian.plugin.connect.test.server.module.ProjectTabPageModule;
-import it.servlet.iframe.IFrameServlets;
+import it.servlet.ConnectAppServlets;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.AfterClass;
@@ -43,13 +43,13 @@ public class TestProjectTabPage extends JiraWebDriverTestBase
                 .add(ProjectTabPageModule.key("jira-remotePluginProjectTab")
                                          .name("AC Play Project Tab")
                                          .path("/ptp")
-                                         .resource(IFrameServlets.apRequestServlet()))
+                                         .resource(ConnectAppServlets.apRequestServlet()))
                 .add(ProjectConfigTabModule.key("jira-remotePluginProjectConfigTab")
                                            .name("Remotable Project Config")
                                            .path("/pct")
                                            .weight("10")
                                            .location("projectgroup3")
-                                           .resource(IFrameServlets.apRequestServlet()))
+                                           .resource(ConnectAppServlets.apRequestServlet()))
                 .start();
     }
 

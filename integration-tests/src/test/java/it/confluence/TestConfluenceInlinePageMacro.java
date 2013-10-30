@@ -6,7 +6,7 @@ import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluencePageMacroPage;
 import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
 import com.atlassian.plugin.connect.test.server.module.MacroPageModule;
-import it.servlet.iframe.IFrameServlets;
+import it.servlet.ConnectAppServlets;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -47,7 +47,7 @@ public final class TestConfluenceInlinePageMacro extends ConfluenceWebDriverTest
                         .path("/ap")
                         .outputType("inline")
                         .bodyType("none")
-                        .resource(IFrameServlets.apRequestServlet()))
+                        .resource(ConnectAppServlets.apRequestServlet()))
                 .start();
     }
 

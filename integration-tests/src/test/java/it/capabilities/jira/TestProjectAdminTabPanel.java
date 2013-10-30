@@ -9,7 +9,7 @@ import com.atlassian.plugin.connect.test.junit.HtmlDumpRule;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraProjectAdministrationTab;
 import com.atlassian.plugin.connect.test.server.ConnectCapabilitiesRunner;
 import it.jira.JiraWebDriverTestBase;
-import it.servlet.iframe.IFrameServlets;
+import it.servlet.ConnectAppServlets;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.*;
@@ -47,7 +47,7 @@ public class TestProjectAdminTabPanel extends JiraWebDriverTestBase
                         .withDisplayUrl("http://www.example.com")
 //                        .withOAuth(newOAuthBean().withPublicKey("S0m3Publ1cK3y").build())
                         .build())
-                .addRoute("/pct", IFrameServlets.apRequestServlet())
+                .addRoute("/pct", ConnectAppServlets.apRequestServlet())
                 .start();
     }
 

@@ -14,7 +14,7 @@ public final class CustomMessageServlet extends ContextServlet
 {
     private final String message;
 
-    CustomMessageServlet(String message)
+    public CustomMessageServlet(String message)
     {
         this.message = message;
     }

@@ -10,7 +10,7 @@ import com.atlassian.plugin.connect.test.server.module.Condition;
 import com.atlassian.plugin.connect.test.server.module.ConfigurePageModule;
 import com.atlassian.plugin.connect.test.server.module.DialogPageModule;
 import com.atlassian.plugin.connect.test.server.module.GeneralPageModule;
-import it.servlet.iframe.IFrameServlets;
+import it.servlet.ConnectAppServlets;
 import org.hamcrest.Matchers;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -47,28 +47,28 @@ public class TestPageModules extends AbstractRemotablePluginTest
                                       .iconUrl("/public/sandcastles.jpg")
                                       .height("600")
                                       .width("700")
-                                      .resource(IFrameServlets.apRequestServlet()))
+                                      .resource(ConnectAppServlets.apRequestServlet()))
                 .add(GeneralPageModule.key("amdTest")
                                       .name("AMD Test app1 General")
                                       .path("/amdTest")
-                                      .resource(IFrameServlets.amdTestServlet()))
+                                      .resource(ConnectAppServlets.amdTestServlet()))
                 .add(GeneralPageModule.key("onlyBetty")
                                       .name("Only Betty")
                                       .path("/ob")
                                       .conditions(Condition.name("user_is_logged_in"), Condition.at("/onlyBettyCondition").resource(new OnlyBettyConditionServlet()))
-                                      .resource(IFrameServlets.apRequestServlet()))
+                                      .resource(ConnectAppServlets.apRequestServlet()))
                 .add(DialogPageModule.key("remotePluginDialog")
                                      .name("Remotable Plugin app1 Dialog")
                                      .path("/rpd")
-                                     .resource(IFrameServlets.dialogServlet()))
+                                     .resource(ConnectAppServlets.dialogServlet()))
                 .add(GeneralPageModule.key("sizeToParent")
                                      .name("Size to parent general page")
                                      .path("/fsg")
-                                     .resource(IFrameServlets.sizeToParentServlet()))
+                                     .resource(ConnectAppServlets.sizeToParentServlet()))
                 .add(DialogPageModule.key("sizeToParentDialog")
                                      .name("Size to parent dialog page")
                                      .path("/fsg")
-                                     .resource(IFrameServlets.sizeToParentServlet()))
+                                     .resource(ConnectAppServlets.sizeToParentServlet()))
                 .start();
     }
 
@@ -176,7 +176,7 @@ public class TestPageModules extends AbstractRemotablePluginTest
         ConfigurePageModule configPage = ConfigurePageModule.key("page")
                                                             .name("Page")
                                                             .path("/page")
-                                                            .resource(IFrameServlets.helloWorldServlet());
+                                                            .resource(ConnectAppServlets.helloWorldServlet());
         
         AtlassianConnectAddOnRunner runner = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl(), "configurePage");
         

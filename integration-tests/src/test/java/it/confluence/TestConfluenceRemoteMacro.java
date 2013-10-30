@@ -6,9 +6,7 @@ import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluencePageWithRemoteMacro;
 import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
 import com.atlassian.plugin.connect.test.server.module.*;
-import com.google.common.collect.ImmutableMap;
-import it.servlet.ContextServlet;
-import it.servlet.iframe.IFrameServlets;
+import it.servlet.ConnectAppServlets;
 import it.servlet.macro.SimpleMacroServlet;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.AfterClass;
@@ -25,12 +23,9 @@ import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import static com.atlassian.fugue.Option.none;
 import static com.atlassian.fugue.Option.some;
-import static com.atlassian.plugin.connect.test.HttpUtils.renderHtml;
 import static com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps.ConfluenceUser;
 import static com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner.newServlet;
 import static com.google.common.base.Strings.nullToEmpty;
@@ -96,8 +91,8 @@ public final class TestConfluenceRemoteMacro extends ConfluenceWebDriverTestBase
                         .editor(MacroEditor.at("/extended-macro-editor")
                                 .height("600")
                                 .width("600")
-                                .resource(IFrameServlets.macroEditor()))
-                        .resource(newServlet(new ExtendedMacroServlet())))
+                                .resource(ConnectAppServlets.macroEditor()))
+                        .resource(ConnectAppServlets.macroExtended()))
                 .start();
     }
 
@@ -116,7 +111,7 @@ public final class TestConfluenceRemoteMacro extends ConfluenceWebDriverTestBase
                                         ContextParameter.name(CTX_USER_ID).query(),
                                         ContextParameter.name(CTX_USER_KEY).query()
                                 )
-                                .resource(IFrameServlets.macroSimple());
+                                .resource(ConnectAppServlets.macroSimple());
     }
 
     @AfterClass
@@ -365,21 +360,4 @@ public final class TestConfluenceRemoteMacro extends ConfluenceWebDriverTestBase
         }
     }
 
-    public static final class ExtendedMacroServlet extends ContextServlet
-    {
-        @Override
-        protected void doGet(HttpServletRequest req, HttpServletResponse resp, Map<String, Object> context) throws ServletException, IOException
-        {
-            resp.setDateHeader("Expires", System.currentTimeMillis() + TimeUnit.DAYS.toMillis(10));
-            resp.setHeader("Cache-Control", "public");
-
-            final Map<String, Object> newContext = ImmutableMap.<String, Object>builder()
-                                                               .putAll(context)
-                                                               .put("footy", nullToEmpty(req.getParameter("footy")))
-                                                               .put("body", nullToEmpty(req.getParameter("body")))
-                                                               .build();
-
-            renderHtml(resp, "confluence/macro/extended.mu", newContext);
-        }
-    }
 }

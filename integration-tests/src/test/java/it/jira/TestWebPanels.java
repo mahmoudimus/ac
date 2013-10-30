@@ -10,7 +10,7 @@ import com.atlassian.plugin.connect.test.server.module.IssuePanelPageModule;
 import com.atlassian.plugin.connect.test.server.module.ProjectConfigPanelModule;
 import com.atlassian.plugin.connect.test.server.module.RemoteWebPanelModule;
 import hudson.plugins.jira.soap.RemoteIssue;
-import it.servlet.iframe.IFrameServlets;
+import it.servlet.ConnectAppServlets;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -46,37 +46,37 @@ public final class TestWebPanels extends JiraWebDriverTestBase
                 .add(IssuePanelPageModule.key(ISSUE_PANEL_ID)
                         .name("AC Play Issue Page Panel")
                         .path("/ipp?issue_id=${issue.id}&issue_key=${issue.key}&project_id=${project.id}&project_key=${project.key}")
-                        .resource(IFrameServlets.apRequestServlet()))
+                        .resource(ConnectAppServlets.apRequestServlet()))
                 .add(ProjectConfigPanelModule.key(PROJECT_CONFIG_PANEL_ID)
                         .name("AC Play Project Config Panel")
                         .path("/pcp?issue_id=${issue.id}&project_id=${project.id}")
                         .location("right")
-                        .resource(IFrameServlets.apRequestServlet()))
+                        .resource(ConnectAppServlets.apRequestServlet()))
                 .add(RemoteWebPanelModule.key(ISSUE_REMOTE_LEFT_WEB_PANEL_ID)
                         .name("Issue Left Web Panel")
                         .location("atl.jira.view.issue.left.context")
                         .path("/ilwp?issue_id=${issue.id}&project_id=${project.id}")
-                        .resource(IFrameServlets.customMessageServlet("ilwp-OK")))
+                        .resource(ConnectAppServlets.customMessageServlet("ilwp-OK")))
                 .add(RemoteWebPanelModule.key(ISSUE_REMOTE_LEFT_WEB_PANEL_ID_2)
                         .name("Issue Left Web Panel 2")
                         .location("atl.jira.view.issue.left.context")
                         .path("/ilwp2?my-issue-id=${issue.id}&my-project-id=${project.id}")
-                        .resource(IFrameServlets.customMessageServlet("ilwp2-OK")))
+                        .resource(ConnectAppServlets.customMessageServlet("ilwp2-OK")))
                 .add(RemoteWebPanelModule.key(ISSUE_REMOTE_RIGHT_WEB_PANEL_ID)
                         .name("Issue Right Web Panel")
                         .location("atl.jira.view.issue.right.context")
                         .path("/irwp?issue_id=${issue.id}&project_id=${project.id}")
-                        .resource(IFrameServlets.customMessageServlet("irwp-OK")))
+                        .resource(ConnectAppServlets.customMessageServlet("irwp-OK")))
                 .add(RemoteWebPanelModule.key(PROJECT_CONFIG_HEADER_WEB_PANEL)
                         .name("Project Config Header Web Panel")
                         .location("atl.jira.proj.config.header")
                         .path("/pch?issue_id=${issue.id}&project_id=${project.id}")
-                        .resource(IFrameServlets.customMessageServlet("pch-OK")))
+                        .resource(ConnectAppServlets.customMessageServlet("pch-OK")))
                 .add(RemoteWebPanelModule.key(USER_PROFILE_WEB_PANEL_ID)
                         .name("User Profile Web Panel")
                         .location("webpanels.user.profile.summary.custom")
                         .path("/up?profile_user_key=${profileUser.key}&profile_user_name=${profileUser.name}")
-                        .resource(IFrameServlets.customMessageServlet("up-OK")))
+                        .resource(ConnectAppServlets.customMessageServlet("up-OK")))
                 .start();
     }
 

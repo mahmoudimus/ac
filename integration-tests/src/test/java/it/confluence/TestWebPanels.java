@@ -7,7 +7,7 @@ import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceEditPa
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
 import com.atlassian.plugin.connect.test.server.module.RemoteWebPanelModule;
-import it.servlet.iframe.IFrameServlets;
+import it.servlet.ConnectAppServlets;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -38,12 +38,12 @@ public class TestWebPanels extends ConfluenceWebDriverTestBase
                                          .name("Remotable Edit Screen Web Panel")
                                          .path("/eswp?page_id=${page.id}&space_id=${space.id}&space_key=${space.key}")
                                          .location("atl.editor")
-                                         .resource(IFrameServlets.helloWorldServlet()))
+                                         .resource(ConnectAppServlets.helloWorldServlet()))
                 .add(RemoteWebPanelModule.key("edit-screen-web-panel-2")
                                          .name("Remotable Edit Screen Web Panel 2")
                                          .path("/eswp2?my-page-id=${page.id}&my-space-id=${space.id}")
                                          .location("atl.editor")
-                                         .resource(IFrameServlets.helloWorldServlet()))
+                                         .resource(ConnectAppServlets.helloWorldServlet()))
                 .start();
         admin = new ConfluenceOps.ConfluenceUser(ADMIN_USERNAME, ADMIN_USERNAME);
     }

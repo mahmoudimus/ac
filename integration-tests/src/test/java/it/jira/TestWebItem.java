@@ -6,7 +6,7 @@ import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewProjectPage;
 import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
 import com.atlassian.plugin.connect.test.server.module.RemoteWebItemModule;
 import com.google.common.base.Optional;
-import it.servlet.iframe.IFrameServlets;
+import it.servlet.ConnectAppServlets;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -36,7 +36,7 @@ public class TestWebItem extends JiraWebDriverTestBase
                         .section("system.top.navigation.bar")
                         .weight(1)
                         .link(RemoteWebItemModule.Link.link("/irwi?issue_id=${issue.id}&project_key=${project.key}&pid=${project.id}", false))
-                        .resource(IFrameServlets.helloWorldServlet()))
+                        .resource(ConnectAppServlets.helloWorldServlet()))
                 .add(RemoteWebItemModule.key(ABSOLUTE_WEB_ITEM)
                         .name("Quick project link")
                         .section("system.top.navigation.bar")

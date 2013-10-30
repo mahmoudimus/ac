@@ -14,7 +14,7 @@ public final class MustacheServlet extends ContextServlet
 {
     private final String templatePath;
 
-    MustacheServlet(String templatePath)
+    public MustacheServlet(String templatePath)
     {
         this.templatePath = templatePath;
     }

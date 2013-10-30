@@ -7,7 +7,7 @@ import com.atlassian.plugin.connect.test.server.module.SearchRequestViewModule;
 import hudson.plugins.jira.soap.RemoteAuthenticationException;
 import hudson.plugins.jira.soap.RemoteProject;
 import it.AbstractBrowserlessTest;
-import it.servlet.iframe.IFrameServlets;
+import it.servlet.ConnectAppServlets;
 import org.apache.http.client.HttpResponseException;
 import org.junit.After;
 import org.junit.Before;
@@ -51,7 +51,7 @@ public class TestJiraNoBrowser extends AbstractBrowserlessTest
                 .add(SearchRequestViewModule.key("page")
                                             .name("Hello")
                                             .path("/page\"")
-                                            .resource(IFrameServlets.helloWorldServlet()))
+                                            .resource(ConnectAppServlets.helloWorldServlet()))
                 .start();
     }
 }
