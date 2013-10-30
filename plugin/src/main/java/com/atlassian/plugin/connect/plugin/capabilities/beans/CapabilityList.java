@@ -10,6 +10,14 @@ import com.atlassian.plugin.connect.plugin.capabilities.provider.*;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.RemoteContainerCapabilityBean.newRemoteContainerBean;
 import static com.google.common.collect.Lists.newArrayList;
 
+/**
+ * This class represents the list of modules in the json descriptor.
+ * Every new module type needs to be added here as a private field and annotated with @CapabilityModuleProvider
+ * 
+ * Note: this class does NOT have a builder. Instead the {@link ConnectAddonBean} has a special reflective builder
+ * that will handle adding beans to the proper fields in this class by name and type.
+ * You can buy me a beer later for that little trick when you realize you don't need to keep updating a builder everytime you add a new type here.
+ */
 public class CapabilityList extends BaseCapabilityBean
 {
     @CapabilityModuleProvider(WebItemModuleProvider.class)
