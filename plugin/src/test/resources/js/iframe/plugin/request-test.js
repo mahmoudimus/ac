@@ -1,7 +1,7 @@
 require.config({
     map: {
         '*': {
-          '_xdm': '_xdmMock',
+          '_xdm': '_xdmMockRequestTest',
         }
     }
 });
@@ -11,14 +11,13 @@ var xdmMock = {
     request: sinon.spy()
 };
 
-define('_xdmMock', function () {
+define('_xdmMockRequestTest', function () {
     return function() {
         return xdmMock;
     };
 });
 
 define(["request", "_rpc"], function(request, _rpc) {
-
     _rpc.init();
     module("Request Plugin", {
         teardown: function () {
