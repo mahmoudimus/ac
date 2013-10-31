@@ -31,7 +31,7 @@ public class WebItemModuleProvider implements ConnectModuleProvider<WebItemCapab
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(Plugin plugin, BundleContext addonBundleContext, List<WebItemCapabilityBean> beans)
+    public List<ModuleDescriptor> provideModules(Plugin plugin, BundleContext addonBundleContext, String jsonFieldName, List<WebItemCapabilityBean> beans)
     {
         List<ModuleDescriptor> descriptors = new ArrayList<ModuleDescriptor>();
 

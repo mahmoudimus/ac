@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
-import com.atlassian.plugin.connect.plugin.capabilities.annotation.CapabilitySet;
+import com.atlassian.plugin.connect.plugin.capabilities.annotation.CapabilityModuleProvider;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.RemoteContainerCapabilityBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.OAuthBean;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.RemoteContainerModuleProvider;
@@ -9,9 +9,10 @@ import com.google.common.base.Objects;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.OAuthBean.newOAuthBean;
 
-@CapabilitySet(key = "connect-container", moduleProvider = RemoteContainerModuleProvider.class)
 public class RemoteContainerCapabilityBean extends BaseCapabilityBean
 {
+    public static final String CONNECT_CONTAINER = "connectContainer";
+    
     private String displayUrl;
     private OAuthBean oauth;
 

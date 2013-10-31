@@ -12,5 +12,5 @@ import org.osgi.framework.BundleContext;
  */
 public interface ConnectModuleProvider<T>
 {
-    List<ModuleDescriptor> provideModules(Plugin plugin, BundleContext addonBundleContext, List<T> beans);
+    List<ModuleDescriptor> provideModules(Plugin plugin, BundleContext addonBundleContext, String jsonFieldName, List<T> beans);
 }

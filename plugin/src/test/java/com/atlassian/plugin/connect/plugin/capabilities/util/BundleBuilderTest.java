@@ -67,7 +67,7 @@ public class BundleBuilderTest
                 .withKey("my-plugin")
                 .withName("my plugin")
                 .withVersion("1.0")
-                .withCapabilities(newWebItemBean()
+                .withCapabilities("webItems",newWebItemBean()
                         .withName(new I18nProperty("AC General Web Item", "ac.gen"))
                         .withLocation("system.top.navigation.bar")
                         .withWeight(1)
