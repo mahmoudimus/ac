@@ -19,6 +19,7 @@ define('_xdmMock', function () {
 
 define(["request", "_rpc"], function(request, _rpc) {
 
+    _rpc.init();
     module("Request Plugin", {
         teardown: function () {
             if(xdmMock.request){
