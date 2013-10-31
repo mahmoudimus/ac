@@ -1,6 +1,6 @@
 <application key="jira">
     <component key="hostContainer" class="com.atlassian.plugin.osgi.bridge.external.SpringHostContainer" />
-    <component key="jiraProductAccessor" class="com.atlassian.plugin.connect.plugin.product.jira.JiraProductAccessor"/>
+    <!--<component key="jiraProductAccessor" class="com.atlassian.plugin.connect.plugin.product.jira.JiraProductAccessor"/>-->
     <component key="jiraUserPreferencesRetriever" class="com.atlassian.plugin.connect.plugin.product.jira.JiraUserPreferencesRetriever"
 			interface="com.atlassian.plugin.connect.plugin.UserPreferencesRetriever"/>
     <component key="conditionDescriptorFactory" class="com.atlassian.jira.plugin.webfragment.descriptors.ConditionDescriptorFactoryImpl" />

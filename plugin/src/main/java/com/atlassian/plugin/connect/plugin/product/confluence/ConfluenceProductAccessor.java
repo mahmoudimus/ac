@@ -8,6 +8,7 @@ import com.atlassian.mail.Email;
 import com.atlassian.mail.MailException;
 import com.atlassian.mail.MailFactory;
 import com.atlassian.mail.server.SMTPMailServer;
+import com.atlassian.plugin.connect.plugin.spring.ConfluenceComponent;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.util.ContextClassLoaderSwitchingUtil;
 import com.atlassian.plugin.web.Condition;
@@ -17,6 +18,8 @@ import com.google.common.collect.ImmutableMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Maps.newHashMap;
@@ -24,11 +27,13 @@ import static com.google.common.collect.Maps.newHashMap;
 /**
  *
  */
+@ConfluenceComponent
 public final class ConfluenceProductAccessor implements ProductAccessor
 {
     private static final Logger log = LoggerFactory.getLogger(ConfluenceProductAccessor.class);
     private final MultiQueueTaskManager taskManager;
 
+    @Autowired
     public ConfluenceProductAccessor(MultiQueueTaskManager taskManager)
     {
         this.taskManager = checkNotNull(taskManager);

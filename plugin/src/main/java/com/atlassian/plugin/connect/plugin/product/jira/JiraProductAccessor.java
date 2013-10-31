@@ -13,6 +13,7 @@ import com.atlassian.mail.Email;
 import com.atlassian.mail.queue.MailQueue;
 import com.atlassian.mail.queue.SingleMailQueueItem;
 import com.atlassian.plugin.connect.plugin.module.jira.conditions.ViewingOwnProfileCondition;
+import com.atlassian.plugin.connect.plugin.spring.JiraComponent;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.web.WebInterfaceManager;
@@ -20,13 +21,17 @@ import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 
 import com.google.common.collect.ImmutableMap;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import static com.google.common.collect.Maps.newHashMap;
 
+@JiraComponent
 public final class JiraProductAccessor implements ProductAccessor
 {
     private final UserManager userManager;
     private final MailQueue mailQueue;
 
+    @Autowired
     public JiraProductAccessor(UserManager userManager, MailQueue mailQueue)
     {
         this.userManager = userManager;
