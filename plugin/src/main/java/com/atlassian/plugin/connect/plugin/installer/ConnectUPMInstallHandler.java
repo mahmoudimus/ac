@@ -58,9 +58,9 @@ public class ConnectUPMInstallHandler implements PluginInstallHandler
             }
             catch (Exception e)
             {
-                if (log.isDebugEnabled())
+                if (log.isTraceEnabled())
                 {
-                    log.debug(ConnectUPMInstallHandler.class.getSimpleName() + " can not install descriptor " +
+                    log.trace(ConnectUPMInstallHandler.class.getSimpleName() + " can not install descriptor " +
                             descriptorFile.getName(), e);
                 }
                 caninstall = false;
