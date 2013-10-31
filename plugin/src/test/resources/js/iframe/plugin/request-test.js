@@ -20,8 +20,10 @@ define('_xdmMock', function () {
 define(["request", "_rpc"], function(request, _rpc) {
 
     module("Request Plugin", {
-        setup: function () {
-            xdmMock.request.reset();
+        teardown: function () {
+            if(xdmMock.request){
+                xdmMock.request.reset();
+            }
         },
         isFunction: function(functionToCheck) {
             var getType = {};
