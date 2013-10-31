@@ -3,9 +3,9 @@ package com.atlassian.plugin.connect.plugin.capabilities.provider;
 import java.util.List;
 import java.util.Map;
 
-import com.atlassian.fugue.Pair;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.plugin.capabilities.annotation.ProductFilter;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectTabPanelCapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.TabPanelDescriptorHints;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.*;
@@ -13,18 +13,17 @@ import com.atlassian.plugin.connect.plugin.module.jira.componenttab.IFrameCompon
 import com.atlassian.plugin.connect.plugin.module.jira.issuetab.IFrameIssueTab;
 import com.atlassian.plugin.connect.plugin.module.jira.projecttab.IFrameProjectTab;
 import com.atlassian.plugin.connect.plugin.module.jira.versiontab.IFrameVersionTab;
-import com.atlassian.plugin.connect.plugin.spring.JiraComponent;
+import com.atlassian.plugin.connect.plugin.spring.ScopedComponent;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectTabPanelCapabilityBean.newTabPanelBean;
 
-@JiraComponent
+@ScopedComponent(products = {ProductFilter.JIRA})
 public class ConnectTabPanelModuleProvider implements ConnectModuleProvider<ConnectTabPanelCapabilityBean>
 {
     private final ConnectTabPanelModuleDescriptorFactory descriptorFactory;

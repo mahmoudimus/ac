@@ -3,9 +3,10 @@ package com.atlassian.plugin.connect.plugin.module.webitem;
 import com.atlassian.jira.plugin.webfragment.descriptors.JiraWebItemModuleDescriptor;
 import com.atlassian.jira.plugin.webfragment.model.JiraWebLink;
 import com.atlassian.jira.security.JiraAuthenticationContext;
+import com.atlassian.plugin.connect.plugin.capabilities.annotation.ProductFilter;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.plugin.module.context.ContextMapURLSerializer;
-import com.atlassian.plugin.connect.plugin.spring.JiraComponent;
+import com.atlassian.plugin.connect.plugin.spring.ScopedComponent;
 import com.atlassian.plugin.web.WebFragmentHelper;
 import com.atlassian.plugin.web.WebInterfaceManager;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
@@ -18,7 +19,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Creates JiraWebItemModuleDescriptor with link pointing to remote plugin.
  */
-@JiraComponent
+@ScopedComponent(products = {ProductFilter.JIRA})
 public class JiraWebItemModuleDescriptorFactory implements ProductSpecificWebItemModuleDescriptorFactory
 {
     private final WebFragmentHelper webFragmentHelper;

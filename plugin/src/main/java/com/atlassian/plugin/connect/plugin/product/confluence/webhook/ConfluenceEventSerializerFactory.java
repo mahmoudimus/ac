@@ -4,8 +4,9 @@ import java.util.List;
 
 import com.atlassian.confluence.event.events.ConfluenceEvent;
 import com.atlassian.confluence.setup.settings.SettingsManager;
+import com.atlassian.plugin.connect.plugin.capabilities.annotation.ProductFilter;
 import com.atlassian.plugin.connect.plugin.product.EventMapper;
-import com.atlassian.plugin.connect.plugin.spring.ConfluenceComponent;
+import com.atlassian.plugin.connect.plugin.spring.ScopedComponent;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.webhooks.spi.provider.EventSerializer;
 import com.atlassian.webhooks.spi.provider.EventSerializerFactory;
@@ -22,7 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * Maps {@link com.atlassian.confluence.event.events.ConfluenceEvent} instances to {@link com.atlassian.webhooks.spi.provider.EventSerializer} instances so that the event information
  * can be transmitted via the WebHookPublisher.
  */
-@ConfluenceComponent
+@ScopedComponent(products = {ProductFilter.CONFLUENCE})
 public final class ConfluenceEventSerializerFactory implements EventSerializerFactory<ConfluenceEvent>
 {
     private static final Logger log = LoggerFactory.getLogger(ConfluenceEventSerializerFactory.class);

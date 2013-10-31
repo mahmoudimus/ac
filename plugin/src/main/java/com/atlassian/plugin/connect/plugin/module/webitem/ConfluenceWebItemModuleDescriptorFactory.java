@@ -2,9 +2,10 @@ package com.atlassian.plugin.connect.plugin.module.webitem;
 
 import com.atlassian.confluence.plugin.descriptor.web.descriptors.ConfluenceWebItemModuleDescriptor;
 import com.atlassian.confluence.plugin.descriptor.web.model.ConfluenceWebLink;
+import com.atlassian.plugin.connect.plugin.capabilities.annotation.ProductFilter;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.plugin.module.context.ContextMapURLSerializer;
-import com.atlassian.plugin.connect.plugin.spring.ConfluenceComponent;
+import com.atlassian.plugin.connect.plugin.spring.ScopedComponent;
 import com.atlassian.plugin.web.WebFragmentHelper;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 
@@ -15,7 +16,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Creates ConfluenceWebItemModuleDescriptor with link pointing to remote plugin.
  */
-@ConfluenceComponent
+@ScopedComponent(products = {ProductFilter.CONFLUENCE})
 public class ConfluenceWebItemModuleDescriptorFactory implements ProductSpecificWebItemModuleDescriptorFactory
 {
     private final UrlVariableSubstitutor urlVariableSubstitutor;

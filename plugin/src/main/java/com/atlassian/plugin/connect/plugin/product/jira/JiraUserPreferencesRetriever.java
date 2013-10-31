@@ -10,11 +10,12 @@ import com.atlassian.jira.timezone.TimeZoneInfo;
 import com.atlassian.jira.timezone.TimeZoneService;
 import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.plugin.connect.plugin.UserPreferencesRetriever;
-import com.atlassian.plugin.connect.plugin.spring.JiraComponent;
+import com.atlassian.plugin.connect.plugin.capabilities.annotation.ProductFilter;
+import com.atlassian.plugin.connect.plugin.spring.ScopedComponent;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-@JiraComponent
+@ScopedComponent(products = {ProductFilter.JIRA})
 public class JiraUserPreferencesRetriever implements UserPreferencesRetriever
 {
 

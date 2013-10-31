@@ -1,8 +1,9 @@
 package com.atlassian.plugin.connect.plugin.module.confluence.context.serializer;
 
 import com.atlassian.confluence.pages.AbstractPage;
+import com.atlassian.plugin.connect.plugin.capabilities.annotation.ProductFilter;
 import com.atlassian.plugin.connect.plugin.module.context.ParameterSerializer;
-import com.atlassian.plugin.connect.plugin.spring.ConfluenceComponent;
+import com.atlassian.plugin.connect.plugin.spring.ScopedComponent;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -11,7 +12,7 @@ import java.util.Map;
 /**
  * Serializes page objects.
  */
-@ConfluenceComponent
+@ScopedComponent(products = {ProductFilter.CONFLUENCE})
 public class PageSerializer implements ParameterSerializer<AbstractPage>
 {
     @Override

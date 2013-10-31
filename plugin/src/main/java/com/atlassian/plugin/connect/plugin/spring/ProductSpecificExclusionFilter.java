@@ -56,11 +56,7 @@ public class ProductSpecificExclusionFilter implements TypeFilter
         
         if(isJira())
         {
-            if(metadata.hasAnnotation(ConfluenceComponent.class.getName()))
-            {
-                mismatch = true;
-            }
-            else if(metadata.hasAnnotation(ScopedComponent.class.getName()))
+            if(metadata.hasAnnotation(ScopedComponent.class.getName()))
             {
                 List<ProductFilter> products = Arrays.asList((ProductFilter[]) metadata.getAnnotationAttributes(ScopedComponent.class.getName()).get(PRODUCTS));
                 mismatch = (!products.contains(ProductFilter.ALL) && !products.contains(ProductFilter.JIRA));
@@ -68,11 +64,7 @@ public class ProductSpecificExclusionFilter implements TypeFilter
         }
         else if(isConfluence())
         {
-            if(metadata.hasAnnotation(JiraComponent.class.getName()))
-            {
-                mismatch = true;
-            }
-            else if(metadata.hasAnnotation(ScopedComponent.class.getName()))
+            if(metadata.hasAnnotation(ScopedComponent.class.getName()))
             {
                 List<ProductFilter> products = Arrays.asList((ProductFilter[]) metadata.getAnnotationAttributes(ScopedComponent.class.getName()).get(PRODUCTS));
                 mismatch = (!products.contains(ProductFilter.ALL) && !products.contains(ProductFilter.CONFLUENCE));

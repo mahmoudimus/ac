@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.provider;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.plugin.capabilities.annotation.ProductFilter;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectProjectAdminTabPanelCapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.IFramePageServletDescriptorFactory;
@@ -10,7 +11,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModule
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.RelativeAddOnUrl;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.RelativeAddOnUrlConverter;
 import com.atlassian.plugin.connect.plugin.module.jira.conditions.IsProjectAdminCondition;
-import com.atlassian.plugin.connect.plugin.spring.JiraComponent;
+import com.atlassian.plugin.connect.plugin.spring.ScopedComponent;
 import com.atlassian.plugin.web.Condition;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -26,7 +27,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Module Provider for a Connect Project Admin TabPanel Module.
  * Note that there is actually no P2 module descriptor. Instead it is modelled as a web-item plus a servlet
  */
-@JiraComponent
+@ScopedComponent(products = {ProductFilter.JIRA})
 public class ConnectProjectAdminTabPanelModuleProvider implements ConnectModuleProvider<ConnectProjectAdminTabPanelCapabilityBean>
 {
     public static final String PROJECT_ADMIN_TAB_PANELS = "jiraProjectAdminTabPanels";

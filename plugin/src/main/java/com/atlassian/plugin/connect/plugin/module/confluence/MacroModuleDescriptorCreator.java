@@ -10,16 +10,16 @@ import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
 import com.atlassian.plugin.connect.plugin.DefaultRemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.plugin.PermissionManager;
+import com.atlassian.plugin.connect.plugin.capabilities.annotation.ProductFilter;
 import com.atlassian.plugin.connect.plugin.integration.plugins.DescriptorToRegister;
 import com.atlassian.plugin.connect.plugin.module.IFramePageRenderer;
 import com.atlassian.plugin.connect.plugin.module.IFrameParamsImpl;
-import com.atlassian.plugin.connect.plugin.module.IFrameRendererImpl;
 import com.atlassian.plugin.connect.plugin.module.WebItemCreator;
 import com.atlassian.plugin.connect.plugin.module.page.IFrameContextImpl;
 import com.atlassian.plugin.connect.plugin.module.page.IFramePageServlet;
 import com.atlassian.plugin.connect.plugin.module.page.PageInfo;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
-import com.atlassian.plugin.connect.plugin.spring.ConfluenceComponent;
+import com.atlassian.plugin.connect.plugin.spring.ScopedComponent;
 import com.atlassian.plugin.connect.plugin.util.contextparameter.ContextParameterParser;
 import com.atlassian.plugin.connect.plugin.util.contextparameter.RequestContextParameterFactory;
 import com.atlassian.plugin.connect.spi.Permissions;
@@ -54,7 +54,7 @@ import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.*;
 /**
  * Creates macro module descriptors.  Builder instances are meant to be shared across instances.
  */
-@ConfluenceComponent
+@ScopedComponent(products = {ProductFilter.CONFLUENCE})
 public class MacroModuleDescriptorCreator
 {
     public static interface MacroFactory

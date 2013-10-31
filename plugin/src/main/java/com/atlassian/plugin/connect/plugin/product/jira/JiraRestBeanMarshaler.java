@@ -25,7 +25,8 @@ import com.atlassian.jira.rest.v2.issue.builder.BeanBuilderFactory;
 import com.atlassian.jira.rest.v2.issue.scope.RequestScope;
 import com.atlassian.jira.rest.v2.issue.scope.RequestScopeInterceptor;
 import com.atlassian.jira.security.roles.ProjectRoleManager;
-import com.atlassian.plugin.connect.plugin.spring.JiraComponent;
+import com.atlassian.plugin.connect.plugin.capabilities.annotation.ProductFilter;
+import com.atlassian.plugin.connect.plugin.spring.ScopedComponent;
 import com.atlassian.plugins.rest.common.interceptor.MethodInvocation;
 import com.atlassian.plugins.rest.common.json.DefaultJaxbJsonMarshaller;
 import com.atlassian.sal.api.ApplicationProperties;
@@ -51,7 +52,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * Super ugly hack to render beans with JIRA's bean marshaling code
  */
-@JiraComponent
+@ScopedComponent(products = {ProductFilter.JIRA})
 public class JiraRestBeanMarshaler implements DisposableBean
 {
     private final ServiceTracker beanFactoryTracker;
