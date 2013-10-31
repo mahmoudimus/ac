@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.beans;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.atlassian.plugin.connect.plugin.capabilities.annotation.CapabilitySet;
+import com.atlassian.plugin.connect.plugin.capabilities.annotation.CapabilityModuleProvider;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.WebItemCapabilityBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean;
@@ -15,7 +15,6 @@ import static com.google.common.collect.Lists.newArrayList;
 /**
  * @since 1.0
  */
-@CapabilitySet(key = "web-items", moduleProvider = WebItemModuleProvider.class)
 public class WebItemCapabilityBean extends BeanWithKeyAndParamsAndConditions
 {
     private String link;

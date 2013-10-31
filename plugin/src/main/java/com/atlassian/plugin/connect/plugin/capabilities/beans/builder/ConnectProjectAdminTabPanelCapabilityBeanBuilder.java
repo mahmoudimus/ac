@@ -6,7 +6,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectProjectAdmi
  * Builder for a ConnectProjectAdminTabPanelCapabilityBean
  */
 public class ConnectProjectAdminTabPanelCapabilityBeanBuilder
-        extends AbstractConnectTabPanelCapabilityBeanBuilder<ConnectProjectAdminTabPanelCapabilityBeanBuilder, ConnectProjectAdminTabPanelCapabilityBean>
+        extends ConnectTabPanelCapabilityBeanBuilder<ConnectProjectAdminTabPanelCapabilityBeanBuilder, ConnectProjectAdminTabPanelCapabilityBean>
 {
     private String location;
 
