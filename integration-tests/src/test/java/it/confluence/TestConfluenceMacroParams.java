@@ -103,7 +103,7 @@ public final class TestConfluenceMacroParams extends ConfluenceWebDriverTestBase
         product.visit(ConfluenceMacroPage.class, pageData.getTitle());
         assertEquals(pageData.getId(), macroServlet.getQueryParams().get("page_id"));
         assertFalse(macroServlet.getQueryParams().containsKey("user_id"));
-        assertEquals("admin", macroServlet.getHeaderParams().get("user_id"));
+        assertEquals(BETTY_USERNAME, macroServlet.getHeaderParams().get("user_id"));
         assertFalse(macroServlet.getHeaderParams().containsKey("page_id"));
         runner.stop();
     }
