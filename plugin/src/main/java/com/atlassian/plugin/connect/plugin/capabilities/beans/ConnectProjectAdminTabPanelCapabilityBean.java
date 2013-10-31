@@ -1,14 +1,12 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
-import com.atlassian.plugin.connect.plugin.capabilities.annotation.CapabilitySet;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConnectProjectAdminTabPanelCapabilityBeanBuilder;
-import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectProjectAdminTabPanelModuleProvider;
 
 /**
  * Capabilities bean for Jira ProjectAdmin Tab Pages. The capability JSON looks like
  * <p>
  * <pre>
- * "projectAdminTabPanels": [{
+ * "jiraProjectAdminTabPanels": [{
  *   "name": {
  *     "value": "My ProjectAdmin Tab",
  *     "i18n": "my.tab"
@@ -20,8 +18,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectProjectA
  * </pre>
  * </p>
  */
-@CapabilitySet(key = "projectAdminTabPanels", moduleProvider = ConnectProjectAdminTabPanelModuleProvider.class)
-public class ConnectProjectAdminTabPanelCapabilityBean extends AbstractConnectTabPanelCapabilityBean
+public class ConnectProjectAdminTabPanelCapabilityBean extends ConnectTabPanelCapabilityBean
 {
     private static final String PROJECT_CONFIG_TAB_LOCATION_PREFIX = "atl.jira.proj.config/";
     private String location;
