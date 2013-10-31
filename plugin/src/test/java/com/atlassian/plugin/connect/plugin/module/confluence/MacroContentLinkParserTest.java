@@ -18,6 +18,7 @@ import java.util.Map;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -25,7 +26,7 @@ import static org.mockito.Mockito.when;
 public class MacroContentLinkParserTest
 {
     private static final ImmutableMap<String, String> EMPTY = ImmutableMap.of();
-    private static final ImmutableMap<String,String[]> EMPTY_REQUEST_PARAMS = ImmutableMap.<String, String[]>of();
+    private static final ImmutableMap<String, String[]> EMPTY_REQUEST_PARAMS = ImmutableMap.<String, String[]>of();
 
     @Mock(answer = Answers.RETURNS_DEEP_STUBS)
     private SettingsManager confluenceSettingsManager;
@@ -65,10 +66,26 @@ public class MacroContentLinkParserTest
     }
 
     @Test
-    public void callsUrlSignerWithCorrectUrlAndParams() throws URISyntaxException
+    public void callsUrlSignerWithCorrectUrl() throws URISyntaxException
     {
         parseMacroAndSignUrl(MACRO_BODY_WITH_SIGN_URL, EMPTY);
         verify(remotablePluginAccessor).signGetUrl(new URI("/viewSport/10?foo=bar"), EMPTY_REQUEST_PARAMS);
+    }
+
+    @Test
+    public void callsUrlSignerWithEmptyParams() throws URISyntaxException
+    {
+        // TODO: I think this is correct cause the macro params are added as query params
+        parseMacroAndSignUrl(MACRO_BODY_WITH_SIGN_URL, ImmutableMap.of("key1", "value1"));
+        verify(remotablePluginAccessor).signGetUrl(any(URI.class), eq(EMPTY_REQUEST_PARAMS));
+    }
+
+    @Test
+    public void appendsMacroParametersAsQueryParams() throws URISyntaxException
+    {
+        parseMacroAndSignUrl("<a href='sign://Macintosh.local:3000/viewSport/10?foo=bar'>Edit Sport</a>",
+                ImmutableMap.of("key1", "value1", "key2", "value2"));
+        verify(remotablePluginAccessor).signGetUrl(new URI("/viewSport/10?foo=bar&key1=value1&key2=value2"), EMPTY_REQUEST_PARAMS);
     }
 
     @Test
@@ -77,6 +94,7 @@ public class MacroContentLinkParserTest
         assertThat(parseMacroAndSignUrl("<a href='sign://Macintosh.local:3000'>Edit Sport</a>", EMPTY),
                 is("<a href='" + SIGNED_URL + "'>Edit Sport</a>"));
     }
+
 
     @Ignore // Current code clips it instead of either throwing error or ignoring it. Dangerous and flakey. Fix
     @Test
@@ -106,10 +124,11 @@ public class MacroContentLinkParserTest
     @Test
     public void returnsNullWhenContentIsNull()
     {
-        assertThat(macroContentLinkParser.parse(remotablePluginAccessor, null, EMPTY), is((String)null));
+        assertThat(macroContentLinkParser.parse(remotablePluginAccessor, null, EMPTY), is((String) null));
     }
 
-    private String parseMacroAndSignUrl(String macroBody, Map<String, String> macroParams) {
+    private String parseMacroAndSignUrl(String macroBody, Map<String, String> macroParams)
+    {
         when(remotablePluginAccessor.signGetUrl(any(URI.class), any(Map.class))).thenReturn(SIGNED_URL);
         return macroContentLinkParser.parse(remotablePluginAccessor, macroBody, macroParams);
     }
