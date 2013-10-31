@@ -77,12 +77,12 @@ public class ConnectUPMInstallHandler implements PluginInstallHandler
                 //TODO: get rid of formatConverter when we go to capabilities
                 Document doc = formatConverter.readFileToDoc(descriptorFile);
                 
-                plugin = connectInstaller.install(userManager.getRemoteUsername(),doc);
+                plugin = connectInstaller.install(userManager.getRemoteUsername(), doc);
             }
             else
             {
                 String json = Files.toString(descriptorFile,Charsets.UTF_8);
-                plugin = connectInstaller.install(userManager.getRemoteUsername(),json);
+                plugin = connectInstaller.install(userManager.getRemoteUsername(), json);
             }
             
             return new PluginInstallResult(plugin);
