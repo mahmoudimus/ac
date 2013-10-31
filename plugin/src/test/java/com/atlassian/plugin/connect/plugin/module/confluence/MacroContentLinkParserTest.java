@@ -16,12 +16,14 @@ import java.net.URISyntaxException;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MacroContentLinkParserTest
 {
     private static final ImmutableMap<String, String> EMPTY = ImmutableMap.of();
+    private static final ImmutableMap<String,String[]> EMPTY_REQUEST_PARAMS = ImmutableMap.<String, String[]>of();
 
     @Mock(answer = Answers.RETURNS_DEEP_STUBS)
     private SettingsManager confluenceSettingsManager;
@@ -37,10 +39,12 @@ public class MacroContentLinkParserTest
                     "   <a href='sign://Macintosh.local:3000/viewSport/10?foo=bar'>Edit Sport</a>\n" +
                     "</p>\n";
 
-    public static final String EXPECTED_MACRO_BODY_WITH_SUBSTITUTED_URL =
+    private static final String SIGNED_URL = "look at me I'm a signed URL";
+
+    private static final String EXPECTED_MACRO_BODY_WITH_SUBSTITUTED_URL =
             "<p>\n" +
                     "   <img src='http://Macintosh.local:3000/baseball.png' height='16' width='16'>baseball\n" +
-                    "   <a href='http://blah.confluence.atlassian.com:1990/plugins/servlet/redirect/oauth?app_key=mykey&app_url=%2FviewSport%2F10%3Ffoo%3Dbar'>Edit Sport</a>\n" +
+                    "   <a href='" + SIGNED_URL + "'>Edit Sport</a>\n" +
                     "</p>\n";
 
     @Before
@@ -53,17 +57,24 @@ public class MacroContentLinkParserTest
     }
 
     @Test
-    public void replacesSignUrlsWithCallToSigningService()
+    public void replacesSignUrlsWithSignedUrlToAddon() throws URISyntaxException
     {
+        URI targetPath = new URI("/viewSport/10?foo=bar");
+        when(remotablePluginAccessor.signGetUrl(targetPath, EMPTY_REQUEST_PARAMS)).thenReturn(SIGNED_URL);
         assertThat(macroContentLinkParser.parse(remotablePluginAccessor, MACRO_BODY_WITH_SIGN_URL, EMPTY), is(EXPECTED_MACRO_BODY_WITH_SUBSTITUTED_URL));
+        verify(remotablePluginAccessor).signGetUrl(targetPath, EMPTY_REQUEST_PARAMS);
     }
 
     @Test
-    public void replacesSignUrlForBaseUrl()
+    public void replacesSignUrlForBaseUrl() throws URISyntaxException
     {
+        URI targetPath = new URI("/");
+        when(remotablePluginAccessor.signGetUrl(targetPath, EMPTY_REQUEST_PARAMS)).thenReturn(SIGNED_URL);
+//        assertThat(macroContentLinkParser.parse(remotablePluginAccessor, MACRO_BODY_WITH_SIGN_URL, EMPTY), is(EXPECTED_MACRO_BODY_WITH_SUBSTITUTED_URL));
         assertThat(macroContentLinkParser.parse(remotablePluginAccessor,
                 "<a href='sign://Macintosh.local:3000'>Edit Sport</a>", EMPTY),
-                is("<a href='http://blah.confluence.atlassian.com:1990/plugins/servlet/redirect/oauth?app_key=mykey&app_url=%2F'>Edit Sport</a>"));
+                is("<a href='" + SIGNED_URL + "'>Edit Sport</a>"));
+        verify(remotablePluginAccessor).signGetUrl(targetPath, EMPTY_REQUEST_PARAMS);
     }
 
     @Ignore // Current code clips it instead of either throwing error or ignoring it. Dangerous and flakey. Fix
