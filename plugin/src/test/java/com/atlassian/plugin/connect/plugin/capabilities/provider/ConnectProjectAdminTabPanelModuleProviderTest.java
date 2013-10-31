@@ -40,6 +40,8 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class ConnectProjectAdminTabPanelModuleProviderTest
 {
+    private static final String JSON_FIELD_NAME = "projectAdminTabPanels";
+    
     private static final String ADDON_KEY = "myKey";
     private static final String ADDON_NAME = "myName";
     private static final String ADDON_URL = "/myUrl";
@@ -196,7 +198,7 @@ public class ConnectProjectAdminTabPanelModuleProviderTest
 
     private List<ModuleDescriptor> providedModules()
     {
-        return projectAdminTabPanelModuleProvider.provideModules(plugin, bundleContext, ImmutableList.of(bean));
+        return projectAdminTabPanelModuleProvider.provideModules(plugin, bundleContext, JSON_FIELD_NAME, ImmutableList.of(bean));
     }
 
 }

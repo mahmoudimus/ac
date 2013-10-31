@@ -26,6 +26,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class ConnectProjectAdminTabPanelModuleProvider implements ConnectModuleProvider<ConnectProjectAdminTabPanelCapabilityBean>
 {
+    public static final String PROJECT_ADMIN_TAB_PANELS = "jiraProjectAdminTabPanels";
     private static final String TEMPLATE_SUFFIX = "-project-admin";
     private static final String ADMIN_ACTIVE_TAB = "adminActiveTab";
     private final WebItemModuleDescriptorFactory webItemModuleDescriptorFactory;
@@ -44,7 +45,7 @@ public class ConnectProjectAdminTabPanelModuleProvider implements ConnectModuleP
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(Plugin plugin, BundleContext addonBundleContext, List<ConnectProjectAdminTabPanelCapabilityBean> beans)
+    public List<ModuleDescriptor> provideModules(Plugin plugin, BundleContext addonBundleContext, String jsonFieldName, List<ConnectProjectAdminTabPanelCapabilityBean> beans)
     {
         ImmutableList.Builder<ModuleDescriptor> builder = ImmutableList.builder();
 

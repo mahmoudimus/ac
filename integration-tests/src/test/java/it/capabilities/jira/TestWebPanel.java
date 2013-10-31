@@ -27,7 +27,7 @@ public class TestWebPanel extends JiraWebDriverTestBase
     public static void startConnectAddOn() throws Exception
     {
         remotePlugin = new ConnectCapabilitiesRunner(product.getProductInstance().getBaseUrl(),"my-plugin")
-                .addCapability(newWebPanelBean()
+                .addCapability("webPanels", newWebPanelBean()
                         .withName(new I18nProperty("HipChat Discussions", "hipchat.discussions"))
                         .withUrl("http://www.google.com")
                                 .withLocation("com.atlassian.jira.plugin.headernav.left.context")
