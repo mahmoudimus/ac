@@ -22,6 +22,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.DisposableBean;
 
 import java.net.URI;
 import java.util.List;
@@ -37,7 +38,7 @@ import static com.google.common.collect.Iterables.contains;
 /**
  * Retrieves http content asynchronously and caches its contents in memory according to the returned headers
  */
-public final class CachingHttpContentRetriever implements HttpContentRetriever
+public final class CachingHttpContentRetriever implements HttpContentRetriever, DisposableBean
 {
     private final static Logger log = LoggerFactory.getLogger(CachingHttpContentRetriever.class);
 
@@ -52,6 +53,7 @@ public final class CachingHttpContentRetriever implements HttpContentRetriever
     private final HttpClient httpClient;
     private final LicenseRetriever licenseRetriever;
     private final LocaleHelper localeHelper;
+    private final HttpClientFactory factory;
 
     @SuppressWarnings("unused") // this is the constructor used by the plugin component
     public CachingHttpContentRetriever(LicenseRetriever licenseRetriever, LocaleHelper localeHelper, HttpClientFactory httpClientFactory, PluginRetrievalService pluginRetrievalService)
@@ -61,14 +63,15 @@ public final class CachingHttpContentRetriever implements HttpContentRetriever
 
     CachingHttpContentRetriever(LicenseRetriever licenseRetriever, LocaleHelper localeHelper, HttpClientFactory httpClientFactory, HttpClientOptions httpClientOptions)
     {
-        this(licenseRetriever, localeHelper, checkNotNull(httpClientFactory, "httpClientFactory").create(checkNotNull(httpClientOptions, "httpClientOptions")));
+        this(licenseRetriever, localeHelper, checkNotNull(httpClientFactory, "httpClientFactory").create(checkNotNull(httpClientOptions, "httpClientOptions")), httpClientFactory);
     }
 
-    CachingHttpContentRetriever(LicenseRetriever licenseRetriever, LocaleHelper localeHelper, HttpClient httpClient)
+    CachingHttpContentRetriever(LicenseRetriever licenseRetriever, LocaleHelper localeHelper, HttpClient httpClient, HttpClientFactory factory)
     {
         this.licenseRetriever = checkNotNull(licenseRetriever);
         this.localeHelper = checkNotNull(localeHelper);
         this.httpClient = checkNotNull(httpClient);
+        this.factory = factory;
     }
 
     @Override
@@ -189,6 +192,12 @@ public final class CachingHttpContentRetriever implements HttpContentRetriever
         options.setSocketTimeout(15, TimeUnit.SECONDS);
         options.setRequestTimeout(20, TimeUnit.SECONDS);
         return options;
+    }
+
+    @Override
+    public void destroy() throws Exception
+    {
+        factory.dispose(httpClient);
     }
 
     private static class OkFunction implements Function<Response, String>
