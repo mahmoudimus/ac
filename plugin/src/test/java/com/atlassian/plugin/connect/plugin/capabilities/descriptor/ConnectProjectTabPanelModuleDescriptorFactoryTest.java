@@ -8,7 +8,7 @@ public class ConnectProjectTabPanelModuleDescriptorFactoryTest extends AbstractC
 {
     public ConnectProjectTabPanelModuleDescriptorFactoryTest()
     {
-        super(ConnectProjectTabPanelModuleDescriptor.class, IFrameProjectTab.class, ConnectTabPanelModuleProvider.FIELD_TO_HINTS.get("projectTabPanels"));
+        super(ConnectTabPanelModuleProvider.FIELD_TO_HINTS.get(ConnectTabPanelModuleProvider.PROJECT_TAB_PANELS));
     }
 
 }

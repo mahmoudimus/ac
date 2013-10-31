@@ -6,6 +6,6 @@ public class ConnectComponentTabPanelModuleProviderTest extends BaseConnectTabPa
 {
     public ConnectComponentTabPanelModuleProviderTest()
     {
-        super(ConnectComponentTabPanelModuleDescriptor.class, "componentTabPanels");
+        super(ConnectComponentTabPanelModuleDescriptor.class, ConnectTabPanelModuleProvider.COMPONENT_TAB_PANELS);
     }
 }

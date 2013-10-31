@@ -6,7 +6,7 @@ public class ConnectVersionTabPanelModuleProviderTest extends BaseConnectTabPane
 {
     public ConnectVersionTabPanelModuleProviderTest()
     {
-        super(ConnectVersionTabPanelModuleDescriptor.class, "versionTabPanels");
+        super(ConnectVersionTabPanelModuleDescriptor.class, ConnectTabPanelModuleProvider.VERSION_TAB_PANELS);
     }
 
 }

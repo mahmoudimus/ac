@@ -26,69 +26,69 @@ public class CapabilityList extends BaseCapabilityBean
     private List<WebItemCapabilityBean> webItems;
 
     @CapabilityModuleProvider(value = ConnectTabPanelModuleProvider.class, products = {ProductFilter.JIRA})
-    private List<ConnectTabPanelCapabilityBean> componentTabPanels;
+    private List<ConnectTabPanelCapabilityBean> jiraComponentTabPanels;
 
     @CapabilityModuleProvider(value = ConnectTabPanelModuleProvider.class, products = {ProductFilter.JIRA})
-    private List<ConnectTabPanelCapabilityBean> issueTabPanels;
+    private List<ConnectTabPanelCapabilityBean> jiraIssueTabPanels;
 
-    @CapabilityModuleProvider(ConnectProjectAdminTabPanelModuleProvider.class)
-    private List<ConnectProjectAdminTabPanelCapabilityBean> projectAdminTabPanels;
-
-    @CapabilityModuleProvider(value = ConnectTabPanelModuleProvider.class, products = {ProductFilter.JIRA})
-    private List<ConnectTabPanelCapabilityBean> projectTabPanels;
+    @CapabilityModuleProvider(value = ConnectProjectAdminTabPanelModuleProvider.class, products = {ProductFilter.JIRA})
+    private List<ConnectProjectAdminTabPanelCapabilityBean> jiraProjectAdminTabPanels;
 
     @CapabilityModuleProvider(value = ConnectTabPanelModuleProvider.class, products = {ProductFilter.JIRA})
-    private List<ConnectTabPanelCapabilityBean> versionTabPanels;
+    private List<ConnectTabPanelCapabilityBean> jiraProjectTabPanels;
 
-    @CapabilityModuleProvider(WebPanelModuleProvider.class)
-    private List<WebPanelCapabilityBean> webPanels;
+    @CapabilityModuleProvider(value = ConnectTabPanelModuleProvider.class, products = {ProductFilter.JIRA})
+    private List<ConnectTabPanelCapabilityBean> jiraVersionTabPanels;
 
     @CapabilityModuleProvider(value = WorkflowPostFunctionModuleProvider.class, products = {ProductFilter.JIRA})
-    private List<WorkflowPostFunctionCapabilityBean> workflowPostFunctions;
+    private List<WorkflowPostFunctionCapabilityBean> jiraWorkflowPostFunctions;
+    
+    @CapabilityModuleProvider(WebPanelModuleProvider.class)
+    private List<WebPanelCapabilityBean> webPanels;
 
     @CapabilityModuleProvider(RemoteContainerModuleProvider.class)
     private RemoteContainerCapabilityBean connectContainer;
 
     public CapabilityList()
     {
-        this.componentTabPanels = newArrayList();
+        this.jiraComponentTabPanels = newArrayList();
         this.connectContainer = newRemoteContainerBean().build();
-        this.issueTabPanels = newArrayList();
-        this.projectAdminTabPanels = newArrayList();
-        this.projectTabPanels = newArrayList();
-        this.versionTabPanels = newArrayList();
+        this.jiraIssueTabPanels = newArrayList();
+        this.jiraProjectAdminTabPanels = newArrayList();
+        this.jiraProjectTabPanels = newArrayList();
+        this.jiraVersionTabPanels = newArrayList();
         this.webItems = newArrayList();
         this.webPanels = newArrayList();
-        this.workflowPostFunctions = newArrayList();
+        this.jiraWorkflowPostFunctions = newArrayList();
     }
 
     public CapabilityList(BaseCapabilityBeanBuilder builder)
     {
         super(builder);
 
-        if (null == componentTabPanels)
+        if (null == jiraComponentTabPanels)
         {
-            this.componentTabPanels = newArrayList();
+            this.jiraComponentTabPanels = newArrayList();
         }
         if (null == connectContainer)
         {
             this.connectContainer = newRemoteContainerBean().build();
         }
-        if (null == issueTabPanels)
+        if (null == jiraIssueTabPanels)
         {
-            this.issueTabPanels = newArrayList();
+            this.jiraIssueTabPanels = newArrayList();
         }
-        if (null == projectAdminTabPanels)
+        if (null == jiraProjectAdminTabPanels)
         {
-            this.projectAdminTabPanels = newArrayList();
+            this.jiraProjectAdminTabPanels = newArrayList();
         }
-        if (null == projectTabPanels)
+        if (null == jiraProjectTabPanels)
         {
-            this.projectTabPanels = newArrayList();
+            this.jiraProjectTabPanels = newArrayList();
         }
-        if (null == versionTabPanels)
+        if (null == jiraVersionTabPanels)
         {
-            this.versionTabPanels = newArrayList();
+            this.jiraVersionTabPanels = newArrayList();
         }
         if (null == webItems)
         {
@@ -98,9 +98,9 @@ public class CapabilityList extends BaseCapabilityBean
         {
             this.webPanels = newArrayList();
         }
-        if (null == workflowPostFunctions)
+        if (null == jiraWorkflowPostFunctions)
         {
-            this.workflowPostFunctions = newArrayList();
+            this.jiraWorkflowPostFunctions = newArrayList();
         }
     }
 
@@ -109,29 +109,29 @@ public class CapabilityList extends BaseCapabilityBean
         return webItems;
     }
 
-    public List<ConnectTabPanelCapabilityBean> getComponentTabPanels()
+    public List<ConnectTabPanelCapabilityBean> getJiraComponentTabPanels()
     {
-        return componentTabPanels;
+        return jiraComponentTabPanels;
     }
 
-    public List<ConnectTabPanelCapabilityBean> getIssueTabPanels()
+    public List<ConnectTabPanelCapabilityBean> getJiraIssueTabPanels()
     {
-        return issueTabPanels;
+        return jiraIssueTabPanels;
     }
 
-    public List<ConnectProjectAdminTabPanelCapabilityBean> getProjectAdminTabPanels()
+    public List<ConnectProjectAdminTabPanelCapabilityBean> getJiraProjectAdminTabPanels()
     {
-        return projectAdminTabPanels;
+        return jiraProjectAdminTabPanels;
     }
 
-    public List<ConnectTabPanelCapabilityBean> getProjectTabPanels()
+    public List<ConnectTabPanelCapabilityBean> getJiraProjectTabPanels()
     {
-        return projectTabPanels;
+        return jiraProjectTabPanels;
     }
 
-    public List<ConnectTabPanelCapabilityBean> getVersionTabPanels()
+    public List<ConnectTabPanelCapabilityBean> getJiraVersionTabPanels()
     {
-        return versionTabPanels;
+        return jiraVersionTabPanels;
     }
 
     public List<WebPanelCapabilityBean> getWebPanels()
@@ -139,9 +139,9 @@ public class CapabilityList extends BaseCapabilityBean
         return webPanels;
     }
 
-    public List<WorkflowPostFunctionCapabilityBean> getWorkflowPostFunctions()
+    public List<WorkflowPostFunctionCapabilityBean> getJiraWorkflowPostFunctions()
     {
-        return workflowPostFunctions;
+        return jiraWorkflowPostFunctions;
     }
 
     public RemoteContainerCapabilityBean getConnectContainer()

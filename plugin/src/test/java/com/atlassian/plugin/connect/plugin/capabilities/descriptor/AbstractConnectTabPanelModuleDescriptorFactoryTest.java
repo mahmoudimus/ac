@@ -42,8 +42,6 @@ public abstract class AbstractConnectTabPanelModuleDescriptorFactoryTest
     private static final int ADDON_WEIGHT = 99;
     private static final String ADDON_WEIGHT_STR = Integer.toString(ADDON_WEIGHT);
     private static final String ADDON_LABEL_KEY = "my.tabpage";
-    private final Class<? extends ModuleDescriptor<?>> descriptorClass;
-    private final Class<?> moduleClass;
     private final TabPanelDescriptorHints descriptorHints;
     private ConnectTabPanelModuleDescriptorFactory tabPanelModuleDescriptorFactory;
     
@@ -57,11 +55,8 @@ public abstract class AbstractConnectTabPanelModuleDescriptorFactoryTest
     @Mock
     private ConnectAutowireUtil connectAutowireUtil;
 
-    protected AbstractConnectTabPanelModuleDescriptorFactoryTest(Class<? extends ModuleDescriptor<?>> descriptorClass,
-                                                                 Class<?> moduleClass, TabPanelDescriptorHints descriptorHints)
+    protected AbstractConnectTabPanelModuleDescriptorFactoryTest(TabPanelDescriptorHints descriptorHints)
     {
-        this.descriptorClass = descriptorClass;
-        this.moduleClass = moduleClass;
         this.descriptorHints = descriptorHints;
     }
 
@@ -94,14 +89,13 @@ public abstract class AbstractConnectTabPanelModuleDescriptorFactoryTest
                 .withName(new I18nProperty(name, i18NameKey))
                 .withUrl(url)
                 .withWeight(weight)
-                .withDescriptorHints(descriptorHints)
                 .build();
     }
 
     private ConnectTabPanelCapabilityBean createCapabilityModuleDescriptor()
     {
         ConnectTabPanelCapabilityBean bean = createCapabilityBean(ADDON_MODULE_NAME, ADDON_LABEL_KEY, ADDON_URL, ADDON_WEIGHT);
-        connectTabPanelModuleDescriptor = tabPanelModuleDescriptorFactory.createModuleDescriptor(plugin, mock(BundleContext.class), bean);
+        connectTabPanelModuleDescriptor = tabPanelModuleDescriptorFactory.createModuleDescriptor(plugin, mock(BundleContext.class), bean, descriptorHints);
         return bean;
     }
 
@@ -126,7 +120,7 @@ public abstract class AbstractConnectTabPanelModuleDescriptorFactoryTest
     @Test
     public void createsElementWithCorrectClass()
     {
-        verify(connectTabPanelModuleDescriptor, times(1)).init(eq(plugin), argThat(hasElementClass(moduleClass.getName())));
+        verify(connectTabPanelModuleDescriptor, times(1)).init(eq(plugin), argThat(hasElementClass(descriptorHints.getModuleClass().getName())));
     }
 
     @Test

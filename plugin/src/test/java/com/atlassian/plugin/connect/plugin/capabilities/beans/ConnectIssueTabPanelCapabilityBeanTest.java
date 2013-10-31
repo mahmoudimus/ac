@@ -6,6 +6,7 @@ import java.util.Map;
 
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.gson.CapabilitiesGsonFactory;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanelModuleProvider;
 
 import com.google.gson.Gson;
 
@@ -37,12 +38,12 @@ public class ConnectIssueTabPanelCapabilityBeanTest
                 .withVersion("1.0")
                 .withLinks(links)
                 .withVendor(newVendorBean().withName("Atlassian").withUrl("http://www.atlassian.com").build())
-                .withCapability("issueTabPanels", newTabPanelBean()
+                .withCapability(ConnectTabPanelModuleProvider.ISSUE_TAB_PANELS, newTabPanelBean()
                         .withName(new I18nProperty("My Issue Tab Page", "my.issueTabPage"))
                         .withUrl("/my-general-page")
                         .withWeight(100)
                         .build())
-                .withCapability("connectContainer", newRemoteContainerBean().withDisplayUrl("http://www.example.com").withOAuth(
+                .withCapability(RemoteContainerCapabilityBean.CONNECT_CONTAINER, newRemoteContainerBean().withDisplayUrl("http://www.example.com").withOAuth(
                         newOAuthBean().withPublicKey("S0m3Publ1cK3y").build()
                 ).build())
                 .build();

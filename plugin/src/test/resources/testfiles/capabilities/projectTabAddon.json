@@ -22,7 +22,7 @@
                 "authorizeUrl": ""
             }
         },
-        "projectTabPanels": [{
+        "jiraProjectTabPanels": [{
             "url": "/my-general-page",
             "weight": 100,
             "name": {

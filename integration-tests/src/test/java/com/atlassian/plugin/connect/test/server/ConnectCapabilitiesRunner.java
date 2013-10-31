@@ -16,6 +16,7 @@ import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.api.service.SignedRequestHandler;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.CapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.RemoteContainerCapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConnectAddonBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.OAuthBean;
 import com.atlassian.plugin.connect.plugin.capabilities.gson.CapabilitiesGsonFactory;
@@ -163,7 +164,7 @@ public class ConnectCapabilitiesRunner
         if (null != oAuthBean)
         {
             addonBuilder.withCapability(
-                    "connectContainer", newRemoteContainerBean()
+                    RemoteContainerCapabilityBean.CONNECT_CONTAINER, newRemoteContainerBean()
                             .withDisplayUrl(displayUrl)
                             .withOAuth(oAuthBean)
                             .build()
@@ -172,7 +173,7 @@ public class ConnectCapabilitiesRunner
         else
         {
             addonBuilder.withCapability(
-                    "connectContainer", newRemoteContainerBean()
+                    RemoteContainerCapabilityBean.CONNECT_CONTAINER, newRemoteContainerBean()
                             .withDisplayUrl(displayUrl)
                             .build()
             );

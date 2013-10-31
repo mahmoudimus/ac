@@ -6,7 +6,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConnectPro
  * Capabilities bean for Jira ProjectAdmin Tab Pages. The capability JSON looks like
  * <p>
  * <pre>
- * "projectAdminTabPanels": [{
+ * "jiraProjectAdminTabPanels": [{
  *   "name": {
  *     "value": "My ProjectAdmin Tab",
  *     "i18n": "my.tab"

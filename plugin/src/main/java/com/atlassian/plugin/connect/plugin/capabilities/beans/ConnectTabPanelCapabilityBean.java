@@ -9,8 +9,6 @@ public class ConnectTabPanelCapabilityBean extends BeanWithKeyAndParamsAndCondit
 {
     private String url;
     private Integer weight;
-    
-    private transient TabPanelDescriptorHints descriptorHints;
 
     public ConnectTabPanelCapabilityBean() {
         this("", 100, new TabPanelDescriptorHints());
@@ -20,7 +18,6 @@ public class ConnectTabPanelCapabilityBean extends BeanWithKeyAndParamsAndCondit
     {
         this.url = checkNotNull(url);
         this.weight = checkNotNull(weight);
-        this.descriptorHints = checkNotNull(descriptorHints);
     }
 
     public ConnectTabPanelCapabilityBean(ConnectTabPanelCapabilityBeanBuilder builder)
@@ -35,11 +32,6 @@ public class ConnectTabPanelCapabilityBean extends BeanWithKeyAndParamsAndCondit
         {
             this.url = "";
         }
-
-        if (null == descriptorHints)
-        {
-            this.descriptorHints = new TabPanelDescriptorHints();
-        }
     }
 
     public String getUrl()
@@ -50,11 +42,6 @@ public class ConnectTabPanelCapabilityBean extends BeanWithKeyAndParamsAndCondit
     public int getWeight()
     {
         return weight;
-    }
-
-    public TabPanelDescriptorHints getDescriptorHints()
-    {
-        return descriptorHints;
     }
 
     public static ConnectTabPanelCapabilityBeanBuilder newTabPanelBean()

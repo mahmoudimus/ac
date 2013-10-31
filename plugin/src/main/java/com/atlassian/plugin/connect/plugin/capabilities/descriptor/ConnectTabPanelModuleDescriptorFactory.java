@@ -13,8 +13,11 @@ import org.springframework.stereotype.Component;
 
 import static org.apache.commons.lang.StringEscapeUtils.escapeHtml;
 
+/*
+ * NOTE: we are not implementing the "normal" factory interface because we need specialized method params
+ */
 @Component
-public class ConnectTabPanelModuleDescriptorFactory implements ConnectModuleDescriptorFactory<ConnectTabPanelCapabilityBean, ModuleDescriptor>
+public class ConnectTabPanelModuleDescriptorFactory
 {
     private static final String KEY = "key";
     private static final String ORDER = "order";
@@ -34,10 +37,8 @@ public class ConnectTabPanelModuleDescriptorFactory implements ConnectModuleDesc
         this.connectAutowireUtil = connectAutowireUtil;
     }
 
-    @Override
-    public ModuleDescriptor createModuleDescriptor(Plugin plugin, BundleContext addonBundleContext, ConnectTabPanelCapabilityBean bean)
+    public ModuleDescriptor createModuleDescriptor(Plugin plugin, BundleContext addonBundleContext, ConnectTabPanelCapabilityBean bean, TabPanelDescriptorHints hints)
     {
-        TabPanelDescriptorHints hints = bean.getDescriptorHints();
         DOMElement element = new DOMElement(hints.getDomElementName());
         
         String completeKey = hints.getModulePrefix() + bean.getKey();
@@ -59,12 +60,7 @@ public class ConnectTabPanelModuleDescriptorFactory implements ConnectModuleDesc
 
         if(!bean.getConditions().isEmpty())
         {
-            DOMElement conditions = conditionModuleFragmentFactory.createFragment(plugin.getKey(),bean.getConditions(),"#" + completeKey);
-
-            if(null != conditions)
-            {
-                element.add(conditions);
-            }
+            element.add(conditionModuleFragmentFactory.createFragment(plugin.getKey(),bean.getConditions(),"#" + completeKey));
         }
 
         ModuleDescriptor descriptor = connectAutowireUtil.createBean(hints.getDescriptorClass());

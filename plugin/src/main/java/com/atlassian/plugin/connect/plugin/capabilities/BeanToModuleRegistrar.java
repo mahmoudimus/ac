@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.plugin.capabilities;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -36,13 +35,12 @@ import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import static com.atlassian.plugin.connect.plugin.capabilities.util.ConnectReflectionHelper.isParameterizedListWithType;
 import static com.google.common.collect.Lists.newArrayList;
 
 @Component
 public class BeanToModuleRegistrar
 {
-    private static final String CONNECT_CONTAINER_FIELD = "connectContainer";
-
     private final DynamicDescriptorRegistration dynamicDescriptorRegistration;
 
     private final ConcurrentHashMap<String, DynamicDescriptorRegistration.Registration> registrations;
@@ -60,41 +58,56 @@ public class BeanToModuleRegistrar
         this.registrations = new ConcurrentHashMap<String, DynamicDescriptorRegistration.Registration>();
     }
 
-    //TODO: change this to use the capability map instead of the raw list
     public void registerDescriptorsForBeans(Plugin plugin, CapabilityList capabilityList)
     {
         BundleContext addonBundleContext = ((OsgiPlugin) plugin).getBundle().getBundleContext();
         AutowireWithConnectPluginDecorator connectAutowiringPlugin = new AutowireWithConnectPluginDecorator((AutowireCapablePlugin) theConnectPlugin, plugin, Sets.<Class<?>>newHashSet(productAccessor.getConditions().values()));
         List<DescriptorToRegister> descriptorsToRegister = new ArrayList<DescriptorToRegister>();
-        
-        ProductFilter thisAppFilter = ProductFilter.valueOf(applicationProperties.getDisplayName().toUpperCase());
-                
-        //we MUST to the container bean first
+
+        BeanTransformContext ctx = new BeanTransformContext(connectAutowiringPlugin, addonBundleContext, ProductFilter.valueOf(applicationProperties.getDisplayName().toUpperCase()));
+
+        //we MUST process the container bean first
+        processContainer(capabilityList, ctx, descriptorsToRegister);
+
+        //now process the other fields
+        processFields(capabilityList, ctx, descriptorsToRegister);
+
+
+        if (!descriptorsToRegister.isEmpty())
+        {
+            registrations.putIfAbsent(plugin.getKey(), dynamicDescriptorRegistration.registerDescriptors(plugin, descriptorsToRegister));
+        }
+    }
+
+    private void processContainer(CapabilityList capabilityList, BeanTransformContext ctx, List<DescriptorToRegister> descriptorsToRegister)
+    {
         RemoteContainerCapabilityBean connectContainer = capabilityList.getConnectContainer();
         if (null != connectContainer && !Strings.isNullOrEmpty(connectContainer.getDisplayUrl()))
         {
             try
             {
+
                 //just to be safe, use reflection to pull the module provider
-                Field containerField = capabilityList.getClass().getDeclaredField(CONNECT_CONTAINER_FIELD);
+                Field containerField = capabilityList.getClass().getDeclaredField(RemoteContainerCapabilityBean.CONNECT_CONTAINER);
                 CapabilityModuleProvider containerAnno = containerField.getAnnotation(CapabilityModuleProvider.class);
                 if (null != containerAnno)
                 {
-                    descriptorsToRegister.addAll(getDescriptors(connectAutowiringPlugin, addonBundleContext, containerField.getName(), containerAnno, thisAppFilter, newArrayList(connectContainer)));
+                    descriptorsToRegister.addAll(getDescriptors(ctx, containerField.getName(), containerAnno, newArrayList(connectContainer)));
                 }
             }
             catch (NoSuchFieldException e)
             {
                 //ignore
             }
-
         }
+    }
 
-        //now process the other fields
+    private void processFields(CapabilityList capabilityList, BeanTransformContext ctx, List<DescriptorToRegister> descriptorsToRegister)
+    {
         for (Field field : capabilityList.getClass().getDeclaredFields())
         {
             //ignore the container field since we already processed it
-            if (CONNECT_CONTAINER_FIELD.equals(field.getName()))
+            if (RemoteContainerCapabilityBean.CONNECT_CONTAINER.equals(field.getName()))
             {
                 continue;
             }
@@ -105,20 +118,21 @@ public class BeanToModuleRegistrar
                 {
                     CapabilityModuleProvider anno = field.getAnnotation(CapabilityModuleProvider.class);
                     field.setAccessible(true);
-    
+
                     Type fieldType = field.getGenericType();
-    
-                    if (fieldType instanceof ParameterizedType && ((ParameterizedType) fieldType).getRawType().equals(List.class))
+
+                    List<? extends CapabilityBean> beanList;
+
+                    if (isParameterizedListWithType(fieldType, CapabilityBean.class))
                     {
-                        List<? extends CapabilityBean> beanList = (List<? extends CapabilityBean>) field.get(capabilityList);
-                        descriptorsToRegister.addAll(getDescriptors(connectAutowiringPlugin, addonBundleContext, field.getName(), anno, thisAppFilter, beanList));
+                        beanList = (List<? extends CapabilityBean>) field.get(capabilityList);
                     }
                     else
                     {
-                        List<? extends CapabilityBean> beanList = (List<? extends CapabilityBean>) newArrayList((CapabilityBean)field.get(capabilityList));
-                        descriptorsToRegister.addAll(getDescriptors(connectAutowiringPlugin, addonBundleContext, field.getName(), anno, thisAppFilter, beanList));
+                        beanList = (List<? extends CapabilityBean>) newArrayList((CapabilityBean) field.get(capabilityList));
                     }
-                    field.setAccessible(false);
+
+                    descriptorsToRegister.addAll(getDescriptors(ctx, field.getName(), anno, beanList));
                 }
                 catch (IllegalAccessException e)
                 {
@@ -126,25 +140,20 @@ public class BeanToModuleRegistrar
                 }
             }
         }
-        
-        if (!descriptorsToRegister.isEmpty())
-        {
-            registrations.putIfAbsent(plugin.getKey(), dynamicDescriptorRegistration.registerDescriptors(plugin, descriptorsToRegister));
-        }
     }
 
 
-    private List<DescriptorToRegister> getDescriptors(AutowireWithConnectPluginDecorator connectAutowiringPlugin, BundleContext addonBundleContext, String jsonFieldName, CapabilityModuleProvider providerAnnotation, ProductFilter thisAppFilter, List<? extends CapabilityBean> beans)
+    private List<DescriptorToRegister> getDescriptors(BeanTransformContext ctx, String jsonFieldName, CapabilityModuleProvider providerAnnotation, List<? extends CapabilityBean> beans)
     {
         List<ProductFilter> products = Arrays.asList(providerAnnotation.products());
-        if(products.contains(ProductFilter.ALL) || (null!= thisAppFilter && products.contains(thisAppFilter)))
+        if (products.contains(ProductFilter.ALL) || (null != ctx.getAppFilter() && products.contains(ctx.getAppFilter())))
         {
             ContainerAccessor accessor = theConnectPlugin.getContainerAccessor();
             Collection<? extends ConnectModuleProvider> providers = accessor.getBeansOfType(providerAnnotation.value());
             if (!providers.isEmpty())
             {
                 ConnectModuleProvider provider = providers.iterator().next();
-                return Lists.transform(provider.provideModules(connectAutowiringPlugin, addonBundleContext, jsonFieldName, beans), new Function<ModuleDescriptor, DescriptorToRegister>()
+                return Lists.transform(provider.provideModules(ctx.getConnectAutowiringPlugin(), ctx.getAddonBundleContext(), jsonFieldName, beans), new Function<ModuleDescriptor, DescriptorToRegister>()
                 {
                     @Override
                     public DescriptorToRegister apply(@Nullable ModuleDescriptor input)
@@ -172,6 +181,35 @@ public class BeanToModuleRegistrar
             reg.unregister();
 
             registrations.remove(plugin.getKey());
+        }
+    }
+
+    private class BeanTransformContext
+    {
+        private final AutowireWithConnectPluginDecorator connectAutowiringPlugin;
+        private final BundleContext addonBundleContext;
+        private final ProductFilter appFilter;
+
+        private BeanTransformContext(AutowireWithConnectPluginDecorator connectAutowiringPlugin, BundleContext addonBundleContext, ProductFilter appFilter)
+        {
+            this.connectAutowiringPlugin = connectAutowiringPlugin;
+            this.addonBundleContext = addonBundleContext;
+            this.appFilter = appFilter;
+        }
+
+        private AutowireWithConnectPluginDecorator getConnectAutowiringPlugin()
+        {
+            return connectAutowiringPlugin;
+        }
+
+        private BundleContext getAddonBundleContext()
+        {
+            return addonBundleContext;
+        }
+
+        private ProductFilter getAppFilter()
+        {
+            return appFilter;
         }
     }
 }

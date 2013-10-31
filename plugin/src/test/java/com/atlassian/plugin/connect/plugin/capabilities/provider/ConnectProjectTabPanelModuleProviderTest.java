@@ -6,7 +6,7 @@ public class ConnectProjectTabPanelModuleProviderTest extends BaseConnectTabPane
 {
     public ConnectProjectTabPanelModuleProviderTest()
     {
-        super(ConnectProjectTabPanelModuleDescriptor.class, "projectTabPanels");
+        super(ConnectProjectTabPanelModuleDescriptor.class, ConnectTabPanelModuleProvider.PROJECT_TAB_PANELS);
     }
 
 }

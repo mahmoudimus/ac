@@ -24,17 +24,22 @@ import org.springframework.stereotype.Component;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectTabPanelCapabilityBean.newTabPanelBean;
 
 /*
- * NOTE: this class is a component in the jira=plugin.xml since it contains references to JIRA specific classes 
+ * NOTE: this class is a component in the atlassian-plugin-jira.xml since it contains references to JIRA specific classes 
  */
 public class ConnectTabPanelModuleProvider implements ConnectModuleProvider<ConnectTabPanelCapabilityBean>
 {
     private final ConnectTabPanelModuleDescriptorFactory descriptorFactory;
     
+    public static final String COMPONENT_TAB_PANELS = "jiraComponentTabPanels";
+    public static final String ISSUE_TAB_PANELS = "jiraIssueTabPanels";
+    public static final String PROJECT_TAB_PANELS = "jiraProjectTabPanels";
+    public static final String VERSION_TAB_PANELS = "jiraVersionTabPanels";
+    
     public static final Map<String,TabPanelDescriptorHints> FIELD_TO_HINTS = new ImmutableMap.Builder<String,TabPanelDescriptorHints>()
-            .put("componentTabPanels", new TabPanelDescriptorHints("component-tab-", "component-tab-page", ConnectComponentTabPanelModuleDescriptor.class, IFrameComponentTab.class))
-            .put("issueTabPanels", new TabPanelDescriptorHints("issue-tab-","issue-tab-page", ConnectIssueTabPanelModuleDescriptor.class, IFrameIssueTab.class))
-            .put("projectTabPanels", new TabPanelDescriptorHints("project-tab-", "project-tab-page", ConnectProjectTabPanelModuleDescriptor.class, IFrameProjectTab.class))
-            .put("versionTabPanels", new TabPanelDescriptorHints("version-tab-","version-tab-page", ConnectVersionTabPanelModuleDescriptor.class, IFrameVersionTab.class))
+            .put(COMPONENT_TAB_PANELS, new TabPanelDescriptorHints("component-tab-", "component-tab-page", ConnectComponentTabPanelModuleDescriptor.class, IFrameComponentTab.class))
+            .put(ISSUE_TAB_PANELS, new TabPanelDescriptorHints("issue-tab-","issue-tab-page", ConnectIssueTabPanelModuleDescriptor.class, IFrameIssueTab.class))
+            .put(PROJECT_TAB_PANELS, new TabPanelDescriptorHints("project-tab-", "project-tab-page", ConnectProjectTabPanelModuleDescriptor.class, IFrameProjectTab.class))
+            .put(VERSION_TAB_PANELS, new TabPanelDescriptorHints("version-tab-","version-tab-page", ConnectVersionTabPanelModuleDescriptor.class, IFrameVersionTab.class))
             .build();
 
     public ConnectTabPanelModuleProvider(ConnectTabPanelModuleDescriptorFactory descriptorFactory) 
@@ -51,12 +56,7 @@ public class ConnectTabPanelModuleProvider implements ConnectModuleProvider<Conn
         {
             if(FIELD_TO_HINTS.containsKey(jsonFieldName))
             {
-                
-                ConnectTabPanelCapabilityBean beanWithHints = newTabPanelBean(bean)
-                        .withDescriptorHints(FIELD_TO_HINTS.get(jsonFieldName))
-                        .build();
-                
-                builder.add(descriptorFactory.createModuleDescriptor(plugin,addonBundleContext,beanWithHints));
+                builder.add(descriptorFactory.createModuleDescriptor(plugin,addonBundleContext,bean,FIELD_TO_HINTS.get(jsonFieldName)));
             }
         }
         

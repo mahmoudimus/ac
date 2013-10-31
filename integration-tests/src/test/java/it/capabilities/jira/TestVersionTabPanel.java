@@ -7,6 +7,7 @@ import com.atlassian.jira.testkit.client.restclient.Version;
 import com.atlassian.jira.testkit.client.restclient.VersionClient;
 import com.atlassian.jira.tests.TestBase;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanelModuleProvider;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraVersionTabPage;
 import com.atlassian.plugin.connect.test.server.ConnectCapabilitiesRunner;
 
@@ -35,7 +36,7 @@ public class TestVersionTabPanel extends TestBase
     public static void startConnectAddOn() throws Exception
     {
         remotePlugin = new ConnectCapabilitiesRunner(jira().getProductInstance().getBaseUrl(), "my-plugin")
-                .addCapability("versionTabPanels", newTabPanelBean()
+                .addCapability(ConnectTabPanelModuleProvider.VERSION_TAB_PANELS, newTabPanelBean()
                         .withName(new I18nProperty("Version Tab Panel", null))
                         .withUrl("/ipp?version_id=${version.id}&project_id=${project.id}&project_key=${project.key}")
                         .withWeight(1234)

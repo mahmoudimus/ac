@@ -22,7 +22,7 @@
                 "authorizeUrl": ""
             }
         },
-        "componentTabPanels": [{
+        "jiraComponentTabPanels": [{
             "url": "/my-general-page",
             "weight": 100,
             "name": {

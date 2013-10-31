@@ -22,7 +22,7 @@
                 "authorizeUrl": ""
             }
         },
-        "versionTabPanels": [{
+        "jiraVersionTabPanels": [{
             "url": "/my-general-page",
             "weight": 100,
             "name": {

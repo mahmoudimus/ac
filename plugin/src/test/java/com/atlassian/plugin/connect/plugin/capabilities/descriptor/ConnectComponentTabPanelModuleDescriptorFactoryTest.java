@@ -11,7 +11,7 @@ public class ConnectComponentTabPanelModuleDescriptorFactoryTest extends Abstrac
 {
     public ConnectComponentTabPanelModuleDescriptorFactoryTest()
     {
-        super(ConnectComponentTabPanelModuleDescriptor.class, IFrameComponentTab.class, ConnectTabPanelModuleProvider.FIELD_TO_HINTS.get("componentTabPanels"));
+        super(ConnectTabPanelModuleProvider.FIELD_TO_HINTS.get(ConnectTabPanelModuleProvider.COMPONENT_TAB_PANELS));
     }
 
 }

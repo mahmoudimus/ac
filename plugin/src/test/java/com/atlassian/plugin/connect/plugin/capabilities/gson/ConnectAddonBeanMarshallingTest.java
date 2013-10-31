@@ -15,7 +15,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 /**
- * Tests the basic marshalling of capability beans with our custom {@link CapabilityMapAdapterFactory}
+ * Tests the basic marshalling of capability beans
  * <p/>
  * This is the only place where we should actually have to test the marshalling as the adapter factory handles everything.
  * This is also the only class that should be using hard-coded json strings.

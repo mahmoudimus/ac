@@ -4,6 +4,7 @@ import java.util.concurrent.Callable;
 
 import com.atlassian.jira.pageobjects.pages.project.BrowseProjectPage;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanelModuleProvider;
 import com.atlassian.plugin.connect.test.junit.HtmlDumpRule;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.AbstractRemotablePluginProjectTab;
@@ -34,7 +35,7 @@ public class TestProjectTabPanel extends JiraWebDriverTestBase
     public static void startConnectAddOn() throws Exception
     {
         remotePlugin = new ConnectCapabilitiesRunner(product.getProductInstance().getBaseUrl(), "my-plugin")
-                .addCapability("projectTabPanels", newTabPanelBean()
+                .addCapability(ConnectTabPanelModuleProvider.PROJECT_TAB_PANELS, newTabPanelBean()
                         .withName(new I18nProperty("AC Play Project Tab", null))
                         .withUrl("/ptp")
                         .withWeight(1234)

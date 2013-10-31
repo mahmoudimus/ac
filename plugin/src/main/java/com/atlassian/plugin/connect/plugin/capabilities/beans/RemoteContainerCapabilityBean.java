@@ -11,6 +11,8 @@ import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.OAut
 
 public class RemoteContainerCapabilityBean extends BaseCapabilityBean
 {
+    public static final String CONNECT_CONTAINER = "connectContainer";
+    
     private String displayUrl;
     private OAuthBean oauth;
 

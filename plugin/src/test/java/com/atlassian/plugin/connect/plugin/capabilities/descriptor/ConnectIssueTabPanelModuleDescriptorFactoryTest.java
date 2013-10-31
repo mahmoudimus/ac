@@ -7,7 +7,7 @@ public class ConnectIssueTabPanelModuleDescriptorFactoryTest extends AbstractCon
 {
     public ConnectIssueTabPanelModuleDescriptorFactoryTest()
     {
-        super(ConnectIssueTabPanelModuleDescriptor.class, IFrameIssueTab.class, ConnectTabPanelModuleProvider.FIELD_TO_HINTS.get("issueTabPanels"));
+        super(ConnectTabPanelModuleProvider.FIELD_TO_HINTS.get(ConnectTabPanelModuleProvider.ISSUE_TAB_PANELS));
     }
 
 }

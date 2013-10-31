@@ -5,6 +5,7 @@ import java.rmi.RemoteException;
 import com.atlassian.jira.functest.framework.FunctTestConstants;
 import com.atlassian.jira.tests.TestBase;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanelModuleProvider;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraOps;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePageWithRemotePluginIssueTab;
 import com.atlassian.plugin.connect.test.server.ConnectCapabilitiesRunner;
@@ -30,7 +31,7 @@ public class TestIssueTabPanel extends TestBase
     public static void startConnectAddOn() throws Exception
     {
         remotePlugin = new ConnectCapabilitiesRunner(jira().getProductInstance().getBaseUrl(), PLUGIN_KEY)
-                .addCapability("issueTabPanels", newTabPanelBean()
+                .addCapability(ConnectTabPanelModuleProvider.ISSUE_TAB_PANELS, newTabPanelBean()
                         .withName(new I18nProperty("Issue Tab Panel", null))
                         .withUrl("/ipp?issue_id=${issue.id}&project_id=${project.id}&project_key=${project.key}")
                         .withWeight(1234)

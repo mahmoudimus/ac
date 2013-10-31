@@ -1,6 +1,8 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectProjectAdminTabPanelModuleProvider;
+
 import com.opensymphony.util.FileUtils;
 import org.junit.Test;
 import org.springframework.core.io.DefaultResourceLoader;
@@ -35,7 +37,7 @@ public class ConnectProjectAdminTabPanelCapabilityBeanTest
     @Test
     public void producesExactlyOneProjectAdminTabPanelCapability()
     {
-        List<? extends CapabilityBean> capabilityBeans = createBean().getCapabilities().getProjectAdminTabPanels();
+        List<? extends CapabilityBean> capabilityBeans = createBean().getCapabilities().getJiraProjectAdminTabPanels();
 
         assertThat(capabilityBeans, hasSize(1));
     }
@@ -43,7 +45,7 @@ public class ConnectProjectAdminTabPanelCapabilityBeanTest
     @Test
     public void producesCapabilityIsCorrectType()
     {
-        CapabilityBean capabilityBean = createBean().getCapabilities().getProjectAdminTabPanels().get(0);
+        CapabilityBean capabilityBean = createBean().getCapabilities().getJiraProjectAdminTabPanels().get(0);
 
         assertThat(capabilityBean, is(instanceOf(ConnectProjectAdminTabPanelCapabilityBean.class)));
     }
@@ -52,7 +54,7 @@ public class ConnectProjectAdminTabPanelCapabilityBeanTest
     public void prefixesLocationCorrectly()
     {
         ConnectProjectAdminTabPanelCapabilityBean capabilityBean =
-                (ConnectProjectAdminTabPanelCapabilityBean) createBean().getCapabilities().getProjectAdminTabPanels().get(0);
+                (ConnectProjectAdminTabPanelCapabilityBean) createBean().getCapabilities().getJiraProjectAdminTabPanels().get(0);
 
         assertThat(capabilityBean.getAbsoluteLocation(), is("atl.jira.proj.config/a-location"));
     }
@@ -69,13 +71,13 @@ public class ConnectProjectAdminTabPanelCapabilityBeanTest
                 .withVersion("1.0")
                 .withLinks(links)
                 .withVendor(newVendorBean().withName("Atlassian").withUrl("http://www.atlassian.com").build())
-                .withCapability("projectAdminTabPanels", newProjectAdminTabPanelBean()
+                .withCapability(ConnectProjectAdminTabPanelModuleProvider.PROJECT_ADMIN_TAB_PANELS, newProjectAdminTabPanelBean()
                         .withName(new I18nProperty("My ProjectAdmin Tab Page", "my.projectAdminTabPage"))
                         .withUrl("/my-general-page")
                         .withWeight(100)
                         .withLocation("a-location")
                         .build())
-                .withCapability("connectContainer", newRemoteContainerBean().withDisplayUrl("http://www.example.com").withOAuth(
+                .withCapability(RemoteContainerCapabilityBean.CONNECT_CONTAINER, newRemoteContainerBean().withDisplayUrl("http://www.example.com").withOAuth(
                         newOAuthBean().withPublicKey("S0m3Publ1cK3y").build()
                 ).build()
                 ).build();

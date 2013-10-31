@@ -11,6 +11,8 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.CapabilityList;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.VendorBean;
 
+import static com.atlassian.plugin.connect.plugin.capabilities.util.ConnectReflectionHelper.isParameterizedList;
+
 /**
  * @since 1.0
  */
@@ -101,9 +103,8 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extend
             {
                 field.setAccessible(true);
                 field.set(capabilities, bean);
-                field.setAccessible(false);
             }
-            else if (fieldType instanceof ParameterizedType && ((ParameterizedType) fieldType).getRawType().equals(List.class))
+            else if (isParameterizedList(fieldType))
             {
                 Type listType = ((ParameterizedType) fieldType).getActualTypeArguments()[0];
                 if (listType.equals(beanClass))
@@ -111,14 +112,12 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extend
                     field.setAccessible(true);
                     List beanList = (List) field.get(capabilities);
                     beanList.add(bean);
-                    field.setAccessible(false);
                 }
             }
         }
         catch (IllegalAccessException e)
         {
-            e.printStackTrace();
-            throw new RuntimeException("Unable to access capability field for bean of type: " + bean.getClass());
+            throw new RuntimeException("Unable to access capability field for bean of type: " + bean.getClass(),e);
         }
         catch (NoSuchFieldException e)
         {

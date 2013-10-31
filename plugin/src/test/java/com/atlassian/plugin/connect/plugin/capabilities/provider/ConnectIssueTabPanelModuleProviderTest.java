@@ -6,7 +6,7 @@ public class ConnectIssueTabPanelModuleProviderTest extends BaseConnectTabPanelM
 {
     public ConnectIssueTabPanelModuleProviderTest()
     {
-        super(ConnectIssueTabPanelModuleDescriptor.class, "issueTabPanels");
+        super(ConnectIssueTabPanelModuleDescriptor.class, ConnectTabPanelModuleProvider.ISSUE_TAB_PANELS);
     }
 
 }

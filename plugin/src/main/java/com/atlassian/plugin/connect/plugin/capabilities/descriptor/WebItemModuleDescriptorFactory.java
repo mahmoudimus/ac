@@ -70,17 +70,7 @@ public class WebItemModuleDescriptorFactory implements ConnectModuleDescriptorFa
 
         if(!bean.getConditions().isEmpty())
         {
-            DOMElement conditions = conditionModuleFragmentFactory.createFragment(plugin.getKey(),bean.getConditions(),"#" + webItemKey);
-            
-            if(null != conditions)
-            {
-                webItemElement.add(conditions);
-            }
-            
-//            if(containsRemoteCondition(bean.getConditions()))
-//            {
-//                styles.add("remote-condition");
-//            }
+            webItemElement.add(conditionModuleFragmentFactory.createFragment(plugin.getKey(),bean.getConditions(),"#" + webItemKey));
         }
 
         if(!styles.isEmpty())
