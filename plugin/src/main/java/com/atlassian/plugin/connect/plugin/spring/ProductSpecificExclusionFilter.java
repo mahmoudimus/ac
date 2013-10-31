@@ -6,6 +6,8 @@ import java.util.List;
 
 import com.atlassian.plugin.connect.plugin.capabilities.annotation.ProductFilter;
 
+import com.google.common.annotations.VisibleForTesting;
+
 import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.core.type.classreading.MetadataReader;
 import org.springframework.core.type.classreading.MetadataReaderFactory;
@@ -13,7 +15,12 @@ import org.springframework.core.type.filter.TypeFilter;
 
 public class ProductSpecificExclusionFilter implements TypeFilter
 {
-    public static final String PRODUCTS = "products";
+	public static final String PRODUCTS = "products";
+    @VisibleForTesting
+    static final String CLASS_ON_JIRA_CLASSPATH = "com.atlassian.jira.plugin.issuetabpanel.IssueTabPanelModuleDescriptor";
+    @VisibleForTesting
+    static final String CLASS_ON_CONFLUENCE_CLASSPATH = "com.atlassian.confluence.plugin.descriptor.MacroModuleDescriptor";
+
     private boolean jira;
     private boolean confluence;
     
@@ -21,7 +28,7 @@ public class ProductSpecificExclusionFilter implements TypeFilter
     {
         try
         {
-            Class.forName("com.atlassian.jira.plugin.issuetabpanel.IssueTabPanelModuleDescriptor");
+            Class.forName(CLASS_ON_JIRA_CLASSPATH);
             this.jira = true;
         }
         catch (ClassNotFoundException e)
@@ -31,7 +38,7 @@ public class ProductSpecificExclusionFilter implements TypeFilter
 
         try
         {
-            Class.forName("com.atlassian.confluence.plugin.descriptor.MacroModuleDescriptor");
+            Class.forName(CLASS_ON_CONFLUENCE_CLASSPATH);
             this.confluence = true;
         }
         catch (ClassNotFoundException e)
