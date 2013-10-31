@@ -8,7 +8,7 @@ public class ConnectReflectionHelper
 {
     public static boolean isParameterizedListWithType(Type type, Class typeParam)
     {
-        return (type instanceof ParameterizedType && ((ParameterizedType) type).getRawType().equals(List.class) && typeParam.isAssignableFrom(((ParameterizedType) type).getActualTypeArguments()[0].getClass()));
+        return (type instanceof ParameterizedType && ((ParameterizedType) type).getRawType().equals(List.class) && typeParam.isAssignableFrom((Class)((ParameterizedType) type).getActualTypeArguments()[0]));
     }
 
     public static boolean isParameterizedList(Type type)
