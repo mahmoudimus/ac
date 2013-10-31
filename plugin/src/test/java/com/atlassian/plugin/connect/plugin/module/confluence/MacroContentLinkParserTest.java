@@ -95,6 +95,13 @@ public class MacroContentLinkParserTest
                 is("<a href='" + SIGNED_URL + "'>Edit Sport</a>"));
     }
 
+    @Test
+    public void replacesSignUrlForUrlWithSrc() throws URISyntaxException
+    {
+        assertThat(parseMacroAndSignUrl("<img src='sign://Macintosh.local:3000'>Edit Sport</a>", EMPTY),
+                is("<img src='" + SIGNED_URL + "'>Edit Sport</a>"));
+    }
+
 
     @Ignore // Current code clips it instead of either throwing error or ignoring it. Dangerous and flakey. Fix
     @Test
