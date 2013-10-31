@@ -76,9 +76,7 @@ public class MacroContentManager implements DisposableBean
     */
     public String getStaticContent(final MacroInstance macroInstance)
     {
-        ContentEntityObject entity = macroInstance.getEntity();
-
-        final UserProfile author = getUserToRenderMacroAs(entity);
+        final UserProfile author = userManager.getRemoteUser();
         final String username = author == null ? "" : author.getUsername();
         final String userKey = author == null ? "" : author.getUserKey().getStringValue();
 
@@ -128,10 +126,12 @@ public class MacroContentManager implements DisposableBean
         }
         catch (ContentRetrievalException e)
         {
+            log.error("Could not render macro", e);
             return renderErrors(e.getErrors());
         }
         catch (Exception e)
         {
+            log.error("Could not render macro", e);
             return renderErrors(new ContentRetrievalErrors(ImmutableList.of("An unknown error occurred.")));
         }
     }
@@ -151,15 +151,6 @@ public class MacroContentManager implements DisposableBean
         {
             throw new RuntimeException(e);
         }
-    }
-
-    private UserProfile getUserToRenderMacroAs(ContentEntityObject entity)
-    {
-        if (entity != null && !StringUtils.isBlank(entity.getLastModifierName()))
-        {
-            return userManager.getUserProfile(entity.getLastModifierName());
-        }
-        return userManager.getRemoteUser();
     }
 
     /*!
