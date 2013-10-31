@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.test.rest;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,7 +84,7 @@ public class UserResource
     private String getUsername()
     {
         UserProfile user = userManager.getRemoteUser();
-        return user.getUsername();
+        return user == null ? null : user.getUsername();
     }
 
     private Response buildErrorResponse()
