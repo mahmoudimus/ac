@@ -5,6 +5,7 @@ import java.util.List;
 import com.atlassian.confluence.event.events.ConfluenceEvent;
 import com.atlassian.confluence.setup.settings.SettingsManager;
 import com.atlassian.plugin.connect.plugin.product.EventMapper;
+import com.atlassian.plugin.connect.plugin.spring.ConfluenceComponent;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.webhooks.spi.provider.EventSerializer;
 import com.atlassian.webhooks.spi.provider.EventSerializerFactory;
@@ -15,17 +16,20 @@ import com.google.common.collect.ImmutableMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Maps {@link com.atlassian.confluence.event.events.ConfluenceEvent} instances to {@link com.atlassian.webhooks.spi.provider.EventSerializer} instances so that the event information
  * can be transmitted via the WebHookPublisher.
  */
+@ConfluenceComponent
 public final class ConfluenceEventSerializerFactory implements EventSerializerFactory<ConfluenceEvent>
 {
     private static final Logger log = LoggerFactory.getLogger(ConfluenceEventSerializerFactory.class);
 
     private final List<EventMapper<ConfluenceEvent>> mappers;
 
+    @Autowired
     public ConfluenceEventSerializerFactory(UserManager userManager, SettingsManager confluenceSettingsManager)
     {
         // This list is deliberately ordered. More-specific mappers such as PageMoveEventMapper must appear in the

@@ -2,14 +2,18 @@ package com.atlassian.plugin.connect.plugin.util;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  *
  */
+@Component
 public class BundleContextBundleLoader implements BundleLocator
 {
     private final BundleContext bundleContext;
 
+    @Autowired
     public BundleContextBundleLoader(BundleContext bundleContext)
     {
         this.bundleContext = bundleContext;

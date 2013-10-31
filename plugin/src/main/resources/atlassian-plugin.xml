@@ -153,6 +153,8 @@
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-amd</dependency>
     </web-resource>
 
+    <component key="hostContainer" class="com.atlassian.plugin.osgi.bridge.external.SpringHostContainer" />
+    
     <component key="pluginUriResolver"
                interface="com.atlassian.webhooks.spi.plugin.PluginUriResolver" public="true"
                class="com.atlassian.plugin.connect.plugin.module.webhook.RemotablePluginsPluginUriResolver" />
@@ -183,13 +185,9 @@
                    interface="com.atlassian.webhooks.spi.provider.WebHookProvider" public="true"
                    class="com.atlassian.plugin.connect.plugin.webhooks.PluginsWebHookProvider" />
 
-    <component key="bundleLocator" class="com.atlassian.plugin.connect.plugin.util.BundleContextBundleLoader" />
     
     <component key="permissionsReader" class="com.atlassian.plugin.connect.plugin.descriptor.DescriptorPermissionsReader"
                interface="com.atlassian.plugin.connect.spi.permission.PermissionsReader" public="true"/>
-
-    <component key="bigPipeManager" class="com.atlassian.plugin.connect.spi.http.bigpipe.DefaultBigPipeManager"
-               interface="com.atlassian.plugin.connect.api.service.http.bigpipe.BigPipeManager" />
 
     <component-import key="templateRenderer" interface="com.atlassian.templaterenderer.TemplateRenderer"/>
     <component-import key="servletModuleManager" interface="com.atlassian.plugin.servlet.ServletModuleManager" />

@@ -4,7 +4,6 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.integration.plugins.DynamicDescriptorRegistration;
 import com.atlassian.plugin.connect.plugin.module.ConditionProcessor;
 import com.atlassian.plugin.connect.plugin.module.IFramePageRenderer;
-import com.atlassian.plugin.connect.plugin.module.IFrameRendererImpl;
 import com.atlassian.plugin.connect.plugin.module.WebItemCreator;
 import com.atlassian.plugin.connect.plugin.module.page.RemotePageDescriptorCreator;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlValidator;
@@ -135,7 +134,7 @@ public abstract class RemoteWebItemModuleDescriptorTestBase
         }
     }
 
-    protected static class MyWebItemModuleDescriptorFactory implements WebItemModuleDescriptorFactory
+    protected static class MyWebItemModuleDescriptorFactory implements ProductSpecificWebItemModuleDescriptorFactory
     {
         static String url = null;
 

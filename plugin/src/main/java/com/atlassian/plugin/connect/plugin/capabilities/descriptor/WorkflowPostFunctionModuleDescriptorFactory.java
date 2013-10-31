@@ -6,6 +6,8 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.WorkflowPostFuncti
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAutowireUtil;
 import com.atlassian.plugin.connect.plugin.module.jira.workflow.RemoteWorkflowFunctionPluginFactory;
 import com.atlassian.plugin.connect.plugin.module.jira.workflow.RemoteWorkflowPostFunctionProvider;
+import com.atlassian.plugin.connect.plugin.spring.JiraComponent;
+
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
 import org.osgi.framework.BundleContext;
@@ -22,6 +24,7 @@ import static org.apache.commons.lang.StringEscapeUtils.escapeHtml;
 /**
  * A Factory that creates WorkflowFunctionModuleDescriptors from WorkflowPostFunctionCapabilityBeans
  */
+@JiraComponent
 public class WorkflowPostFunctionModuleDescriptorFactory implements ConnectModuleDescriptorFactory<WorkflowPostFunctionCapabilityBean, WorkflowFunctionModuleDescriptor>
 {
     private final ConnectAutowireUtil connectAutowireUtil;

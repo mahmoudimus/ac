@@ -2,14 +2,19 @@ package com.atlassian.plugin.connect.plugin.product.confluence;
 
 import com.atlassian.confluence.security.websudo.WebSudoManager;
 import com.atlassian.plugin.connect.plugin.product.WebSudoService;
+import com.atlassian.plugin.connect.plugin.spring.ConfluenceComponent;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
+@ConfluenceComponent
 public class ConfluenceWebSudoService implements WebSudoService
 {
     private final WebSudoManager webSudoManager;
 
+    @Autowired
     public ConfluenceWebSudoService(WebSudoManager webSudoManager)
     {
         this.webSudoManager = webSudoManager;

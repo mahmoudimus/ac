@@ -1,53 +1,8 @@
 <application key="jira">
-    <component key="hostContainer" class="com.atlassian.plugin.osgi.bridge.external.SpringHostContainer" />
-    <!--<component key="jiraProductAccessor" class="com.atlassian.plugin.connect.plugin.product.jira.JiraProductAccessor"/>-->
-    <component key="jiraUserPreferencesRetriever" class="com.atlassian.plugin.connect.plugin.product.jira.JiraUserPreferencesRetriever"
-			interface="com.atlassian.plugin.connect.plugin.UserPreferencesRetriever"/>
-    <component key="conditionDescriptorFactory" class="com.atlassian.jira.plugin.webfragment.descriptors.ConditionDescriptorFactoryImpl" />
 
     <component key="jiraWebHookProvider"
                interface="com.atlassian.webhooks.spi.provider.WebHookProvider" public="true"
                class="com.atlassian.plugin.connect.plugin.product.jira.PostFunctionWebHookProvider" />
-
-    <component key="EventSerializerFactory" class="com.atlassian.plugin.connect.plugin.product.jira.webhook.JiraEventSerializerFactory" />
-
-    <component key="WebSudoService" class="com.atlassian.plugin.connect.plugin.product.jira.JiraWebSudoService" />
-
-    <component key="host" class="com.atlassian.plugin.connect.plugin.module.ServletContextThreadLocalIFrameHost" />
-    <component key="restAccessor" class="com.atlassian.plugin.connect.plugin.product.jira.JiraRestBeanMarshaler" />
-
-    <!-- Web panel parameter extractors -->
-    <component key="projectIdParameterExtractor"
-               class="com.atlassian.plugin.connect.plugin.module.jira.context.extractor.ProjectContextMapParameterExtractor"
-               interface="com.atlassian.plugin.connect.plugin.module.extractor.ContextMapParameterExtractor" />
-
-    <component key="issueIdParameterExtractor"
-               class="com.atlassian.plugin.connect.plugin.module.jira.context.extractor.IssueContextMapParameterExtractor"
-               interface="com.atlassian.plugin.connect.plugin.module.extractor.ContextMapParameterExtractor" />
-
-    <component key="profileUserParameterExtractor"
-               class="com.atlassian.plugin.connect.plugin.module.jira.context.extractor.ProfileUserContextMapParameterExtractor"
-               interface="com.atlassian.plugin.connect.plugin.module.extractor.ContextMapParameterExtractor" />
-
-    <component key="projectSerializer" class="com.atlassian.plugin.connect.plugin.module.jira.context.serializer.ProjectSerializer" />
-    <component key="issueSerializer" class="com.atlassian.plugin.connect.plugin.module.jira.context.serializer.IssueSerializer" />
-    <component key="profileUserSerializer" class="com.atlassian.plugin.connect.plugin.module.jira.context.serializer.ProfileUserSerializer" />
-    <component key="versionSerializer" class="com.atlassian.plugin.connect.plugin.module.jira.context.serializer.VersionSerializer" />
-    <component key="componentSerializer" class="com.atlassian.plugin.connect.plugin.module.jira.context.serializer.ComponentSerializer" />
-
-    <component key="webItemModuleDescriptorFactory" class="com.atlassian.plugin.connect.plugin.module.webitem.JiraWebItemModuleDescriptorFactory"
-               interface="com.atlassian.plugin.connect.plugin.module.webitem.WebItemModuleDescriptorFactory" />
-
-    <component key="workflowPostFunctionModuleProvider"
-               class="com.atlassian.plugin.connect.plugin.capabilities.provider.WorkflowPostFunctionModuleProvider"
-               interface="com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectModuleProvider"/>
-    <component key="workflowPostFunctionModuleDescriptorFactory"
-               class="com.atlassian.plugin.connect.plugin.capabilities.descriptor.WorkflowPostFunctionModuleDescriptorFactory"
-               interface="com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectModuleDescriptorFactory"/>
-
-    <component key="connectTabPanelModuleProvider" class="com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanelModuleProvider" />
-    
-    <component key="connectProjectAdminTabPanelModuleProvider" class="com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectProjectAdminTabPanelModuleProvider" />
 
     <rest key="rest" path="/atlassian-connect" version="1">
         <dispatcher>REQUEST</dispatcher>

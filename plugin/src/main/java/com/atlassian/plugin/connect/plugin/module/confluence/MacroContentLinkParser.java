@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin.module.confluence;
 import java.util.Map;
 
 import com.atlassian.confluence.setup.settings.SettingsManager;
+import com.atlassian.plugin.connect.plugin.spring.ConfluenceComponent;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.uri.Uri;
 import com.atlassian.uri.UriBuilder;
@@ -11,6 +12,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import static com.atlassian.plugin.connect.plugin.module.util.redirect.RedirectServlet.getOAuthRedirectUrl;
 
@@ -18,11 +20,13 @@ import static com.atlassian.plugin.connect.plugin.module.util.redirect.RedirectS
 /**
  *
  */
+@ConfluenceComponent
 public class MacroContentLinkParser
 {
     private final SettingsManager confluenceSettingsManager;
     private static final Logger log = LoggerFactory.getLogger(MacroContentLinkParser.class);
 
+    @Autowired
     public MacroContentLinkParser(SettingsManager confluenceSettingsManager)
     {
         this.confluenceSettingsManager = confluenceSettingsManager;

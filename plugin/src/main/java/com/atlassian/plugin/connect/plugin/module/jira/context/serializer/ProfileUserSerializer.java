@@ -2,6 +2,8 @@ package com.atlassian.plugin.connect.plugin.module.jira.context.serializer;
 
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.plugin.connect.plugin.module.context.ParameterSerializer;
+import com.atlassian.plugin.connect.plugin.spring.JiraComponent;
+
 import com.google.common.collect.ImmutableMap;
 
 import java.util.Map;
@@ -9,6 +11,7 @@ import java.util.Map;
 /**
  * Serializes ProfileUser objects.
  */
+@JiraComponent
 public class ProfileUserSerializer implements ParameterSerializer<ApplicationUser>
 {
     @Override

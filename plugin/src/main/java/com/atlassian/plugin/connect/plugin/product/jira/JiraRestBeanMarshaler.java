@@ -25,6 +25,7 @@ import com.atlassian.jira.rest.v2.issue.builder.BeanBuilderFactory;
 import com.atlassian.jira.rest.v2.issue.scope.RequestScope;
 import com.atlassian.jira.rest.v2.issue.scope.RequestScopeInterceptor;
 import com.atlassian.jira.security.roles.ProjectRoleManager;
+import com.atlassian.plugin.connect.plugin.spring.JiraComponent;
 import com.atlassian.plugins.rest.common.interceptor.MethodInvocation;
 import com.atlassian.plugins.rest.common.json.DefaultJaxbJsonMarshaller;
 import com.atlassian.sal.api.ApplicationProperties;
@@ -45,10 +46,12 @@ import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.util.tracker.ServiceTracker;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Super ugly hack to render beans with JIRA's bean marshaling code
  */
+@JiraComponent
 public class JiraRestBeanMarshaler implements DisposableBean
 {
     private final ServiceTracker beanFactoryTracker;
@@ -56,6 +59,7 @@ public class JiraRestBeanMarshaler implements DisposableBean
     private final JiraBaseUrls jiraBaseUrls;
     private final ProjectRoleManager projectRoleManager;
 
+    @Autowired
     public JiraRestBeanMarshaler(BundleContext bundleContext,
                                  ApplicationProperties applicationProperties, JiraBaseUrls jiraBaseUrls,
                                  ProjectRoleManager projectRoleManager)

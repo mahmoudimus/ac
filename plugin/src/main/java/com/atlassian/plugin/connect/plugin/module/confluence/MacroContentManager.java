@@ -8,6 +8,7 @@ import com.atlassian.confluence.xhtml.api.XhtmlContent;
 import com.atlassian.event.api.EventListener;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.plugin.connect.plugin.DefaultRemotablePluginAccessorFactory;
+import com.atlassian.plugin.connect.plugin.spring.ConfluenceComponent;
 import com.atlassian.plugin.connect.plugin.util.http.CachingHttpContentRetriever;
 import com.atlassian.plugin.connect.plugin.util.http.ContentRetrievalErrors;
 import com.atlassian.plugin.connect.plugin.util.http.ContentRetrievalException;
@@ -23,6 +24,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -31,6 +33,7 @@ import java.net.URI;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+@ConfluenceComponent
 public class MacroContentManager implements DisposableBean
 {
     private final EventPublisher eventPublisher;
@@ -45,6 +48,7 @@ public class MacroContentManager implements DisposableBean
 
     private static final Logger log = LoggerFactory.getLogger(MacroContentManager.class);
 
+    @Autowired
     public MacroContentManager(
             EventPublisher eventPublisher,
             CachingHttpContentRetriever cachingHttpContentRetriever,

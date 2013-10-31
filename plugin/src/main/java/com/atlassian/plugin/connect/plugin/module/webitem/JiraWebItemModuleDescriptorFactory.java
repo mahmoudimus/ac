@@ -5,17 +5,21 @@ import com.atlassian.jira.plugin.webfragment.model.JiraWebLink;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.plugin.module.context.ContextMapURLSerializer;
+import com.atlassian.plugin.connect.plugin.spring.JiraComponent;
 import com.atlassian.plugin.web.WebFragmentHelper;
 import com.atlassian.plugin.web.WebInterfaceManager;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.atlassian.plugin.web.model.WebLink;
+
+import org.springframework.beans.factory.annotation.Autowired;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Creates JiraWebItemModuleDescriptor with link pointing to remote plugin.
  */
-public class JiraWebItemModuleDescriptorFactory implements WebItemModuleDescriptorFactory
+@JiraComponent
+public class JiraWebItemModuleDescriptorFactory implements ProductSpecificWebItemModuleDescriptorFactory
 {
     private final WebFragmentHelper webFragmentHelper;
     private final WebInterfaceManager webInterfaceManager;
@@ -23,6 +27,7 @@ public class JiraWebItemModuleDescriptorFactory implements WebItemModuleDescript
     private final ContextMapURLSerializer contextMapURLSerializer;
     private final JiraAuthenticationContext jiraAuthenticationContext;
 
+    @Autowired
     public JiraWebItemModuleDescriptorFactory(
             WebFragmentHelper webFragmentHelper,
             WebInterfaceManager webInterfaceManager,

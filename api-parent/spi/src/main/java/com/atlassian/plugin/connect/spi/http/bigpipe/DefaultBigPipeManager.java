@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import static com.atlassian.fugue.Option.none;
 import static com.google.common.base.Preconditions.checkArgument;
@@ -38,6 +39,7 @@ import static java.util.Collections.unmodifiableSet;
 /**
  * Manages big pipe instances
  */
+@Component
 public final class DefaultBigPipeManager implements BigPipeManager, DisposableBean
 {
     private static final SecureRandom secureRandom = SecureRandomFactory.newInstance();

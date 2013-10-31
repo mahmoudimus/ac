@@ -3,14 +3,19 @@ package com.atlassian.plugin.connect.plugin.product.jira;
 import com.atlassian.jira.security.websudo.InternalWebSudoManager;
 import com.atlassian.jira.web.SessionKeys;
 import com.atlassian.plugin.connect.plugin.product.WebSudoService;
+import com.atlassian.plugin.connect.plugin.spring.JiraComponent;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
+@JiraComponent
 public class JiraWebSudoService implements WebSudoService
 {
     private final InternalWebSudoManager jiraWebSudoManager;
 
+    @Autowired
     public JiraWebSudoService(InternalWebSudoManager jiraWebSudoManager)
     {
         this.jiraWebSudoManager = jiraWebSudoManager;

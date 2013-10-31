@@ -370,8 +370,8 @@
                             com.atlassian.plugin.connect.plugin.product*;version="${project.version}"
                             com.atlassian.plugin.connect.plugin.product.*;version="${project.version}"
                         </Export-Package>
-                        <Spring-Context>*;timeout:=60</Spring-Context>
-
+                        <Spring-Context>*</Spring-Context>
+                        <!-- DO NOT put Atlassian-Plugin-Key here!! it will bypass all transforms and component-imports will break -->
                     </instructions>
                     <systemPropertyVariables>
                         <atlassian.mail.senddisabled>false</atlassian.mail.senddisabled>

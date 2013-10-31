@@ -7,12 +7,17 @@ import javax.servlet.http.HttpServletRequest;
 import com.atlassian.core.filters.ServletContextThreadLocal;
 import com.atlassian.sal.api.ApplicationProperties;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
+@Component
 public final class ServletContextThreadLocalIFrameHost extends AbstractIFrameHost
 {
     private final IFrameHost fallback;
 
+    @Autowired
     public ServletContextThreadLocalIFrameHost(ApplicationProperties applicationProperties)
     {
         this(new ApplicationPropertiesIFrameHost(applicationProperties));
