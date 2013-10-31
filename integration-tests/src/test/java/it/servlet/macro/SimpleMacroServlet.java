@@ -13,9 +13,6 @@ import java.util.Map;
 import static com.google.common.base.Strings.nullToEmpty;
 import static it.confluence.ContextParameters.*;
 
-/**
-*
-*/
 public class SimpleMacroServlet extends ContextServlet
 {
     @Override

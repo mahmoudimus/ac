@@ -13,9 +13,6 @@ import java.util.concurrent.TimeUnit;
 import static com.atlassian.plugin.connect.test.HttpUtils.renderHtml;
 import static com.google.common.base.Strings.nullToEmpty;
 
-/**
-*
-*/
 public final class ExtendedMacroServlet extends ContextServlet
 {
     @Override
