@@ -18,6 +18,7 @@ import java.net.MalformedURLException;
 import static com.atlassian.fugue.Option.some;
 import static it.TestConstants.ADMIN_USERNAME;
 import static it.TestConstants.BETTY_USERNAME;
+import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -64,7 +65,7 @@ public class TestWebPanels extends ConfluenceWebDriverTestBase
         final String pageId = pageData.getId();
         product.visit(LoginPage.class).login(BETTY_USERNAME, BETTY_USERNAME, HomePage.class);
         ConfluenceEditPage editPage = product.visit(ConfluenceEditPage.class, pageId);
-        RemoteWebPanel webPanel = editPage.findWebPanel("edit-screen-web-panel");
+        RemoteWebPanel webPanel = editPage.findWebPanel("edit-screen-web-panel").waitUntilContentLoaded();
 
         assertEquals(pageId, webPanel.getPageId());
         // Confluence doesn't provide space id via the xml-rpc API, so we can't find the actual space id.
@@ -72,6 +73,8 @@ public class TestWebPanels extends ConfluenceWebDriverTestBase
         assertEquals("ds", webPanel.getFromQueryString("space_key"));
         assertEquals(BETTY_USERNAME, webPanel.getUserId());
 		assertNotNull(webPanel.getUserKey());
+
+        assertTrue(webPanel.containsHelloWorld());
     }
 
     @Test
@@ -81,10 +84,12 @@ public class TestWebPanels extends ConfluenceWebDriverTestBase
         final String pageId = pageData.getId();
         product.visit(LoginPage.class).login(BETTY_USERNAME, BETTY_USERNAME, HomePage.class);
         ConfluenceEditPage editPage = product.visit(ConfluenceEditPage.class, pageId);
-        RemoteWebPanel webPanel = editPage.findWebPanel("edit-screen-web-panel-2");
+        RemoteWebPanel webPanel = editPage.findWebPanel("edit-screen-web-panel-2").waitUntilContentLoaded();
 
         assertEquals(pageId, webPanel.getFromQueryString("my-page-id"));
         // Confluence doesn't provide space id via the xml-rpc API, so we can't find the actual space id.
         assertNotNull(webPanel.getFromQueryString("my-space-id"));
+
+        assertTrue(webPanel.containsHelloWorld());
     }
 }
