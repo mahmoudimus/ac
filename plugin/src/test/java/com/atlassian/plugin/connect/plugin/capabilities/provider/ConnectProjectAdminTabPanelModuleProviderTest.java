@@ -46,9 +46,9 @@ public class ConnectProjectAdminTabPanelModuleProviderTest
     private static final String ADDON_KEY = "myKey";
     private static final String ADDON_NAME = "myName";
     private static final String ADDON_URL = "/myUrl";
-    private static final String EXPECTED_IFRAME_DESCRIPTOR_URL = "/plugins/servlet/xx/myUrl";
-    private static final String EXPECTED_IFRAME_URL = "/xx/myUrl";
-    private static final RelativeAddOnUrl EXPECTED_IFRAME_URL_HOLDER = new RelativeAddOnUrl(Uri.parse(EXPECTED_IFRAME_URL));
+    private static final String EXPECTED_IFRAME_URL = "/plugins/servlet/xx/myUrl?projectKey=${project.key}";
+    private static final String EXPECTED_IFRAME_DESCRIPTOR_URL = "/xx/myUrl";
+    private static final RelativeAddOnUrl EXPECTED_IFRAME_URL_HOLDER = new RelativeAddOnUrl(Uri.parse(EXPECTED_IFRAME_DESCRIPTOR_URL));
     private static final String ADDON_I18_NAME_KEY = "myi18key";
     private static final int WEIGHT = 99;
     private static final String LOCATION = "a-location";
@@ -91,7 +91,7 @@ public class ConnectProjectAdminTabPanelModuleProviderTest
         when(webItemModuleDescriptorFactory.createModuleDescriptor(eq(plugin), eq(bundleContext), any(WebItemCapabilityBean.class)))
                 .thenReturn(webItemDescriptor);
 
-        when(servletDescriptorFactory.createIFrameServletDescriptor(eq(plugin), any(WebItemCapabilityBean.class), anyString(),
+        when(servletDescriptorFactory.createIFrameProjectConfigTabServletDescriptor(eq(plugin), any(WebItemCapabilityBean.class), anyString(),
                 anyString(), anyString(), anyString(), any(Condition.class), anyMap())).thenReturn(servletModuleDescriptor);
 
         when(relativeAddOnUrlConverter.addOnUrlToLocalServletUrl(ADDON_KEY, ADDON_URL)).thenReturn(EXPECTED_IFRAME_URL_HOLDER);
@@ -129,7 +129,7 @@ public class ConnectProjectAdminTabPanelModuleProviderTest
     @Test
     public void capabilityBeanHasCorrectUrl()
     {
-        verify(webItemModuleDescriptorFactory, times(1)).createModuleDescriptor(eq(plugin), eq(bundleContext), argThat(hasUrlValue(EXPECTED_IFRAME_DESCRIPTOR_URL)));
+        verify(webItemModuleDescriptorFactory, times(1)).createModuleDescriptor(eq(plugin), eq(bundleContext), argThat(hasUrlValue(EXPECTED_IFRAME_URL)));
     }
 
     @Test
@@ -147,42 +147,42 @@ public class ConnectProjectAdminTabPanelModuleProviderTest
     @Test
     public void callsServletDescriptorFactoryWithCorrectLocalUrl()
     {
-        verify(servletDescriptorFactory, times(1)).createIFrameServletDescriptor(eq(plugin), any(WebItemCapabilityBean.class),
-                eq(EXPECTED_IFRAME_URL), anyString(), anyString(), anyString(), any(Condition.class), anyMap());
+        verify(servletDescriptorFactory, times(1)).createIFrameProjectConfigTabServletDescriptor(eq(plugin), any(WebItemCapabilityBean.class),
+                eq(EXPECTED_IFRAME_DESCRIPTOR_URL), anyString(), anyString(), anyString(), any(Condition.class), anyMap());
     }
 
     @Test
     public void callsServletDescriptorFactoryWithCorrectAddonUrl()
     {
-        verify(servletDescriptorFactory, times(1)).createIFrameServletDescriptor(eq(plugin), any(WebItemCapabilityBean.class),
+        verify(servletDescriptorFactory, times(1)).createIFrameProjectConfigTabServletDescriptor(eq(plugin), any(WebItemCapabilityBean.class),
                 anyString(), eq(ADDON_URL), anyString(), anyString(), any(Condition.class), anyMap());
     }
 
     @Test
     public void callsServletDescriptorFactoryWithCorrectDecorator()
     {
-        verify(servletDescriptorFactory, times(1)).createIFrameServletDescriptor(eq(plugin), any(WebItemCapabilityBean.class),
+        verify(servletDescriptorFactory, times(1)).createIFrameProjectConfigTabServletDescriptor(eq(plugin), any(WebItemCapabilityBean.class),
                 anyString(), anyString(), eq(EXPECTED_DECORATOR), anyString(), any(Condition.class), anyMap());
     }
 
     @Test
     public void callsServletDescriptorFactoryWithCorrectTemplateSuffix()
     {
-        verify(servletDescriptorFactory, times(1)).createIFrameServletDescriptor(eq(plugin), any(WebItemCapabilityBean.class),
+        verify(servletDescriptorFactory, times(1)).createIFrameProjectConfigTabServletDescriptor(eq(plugin), any(WebItemCapabilityBean.class),
                 anyString(), anyString(), anyString(), eq(EXPECTED_TEMPLATE_SUFFIX), any(Condition.class), anyMap());
     }
 
     @Test
     public void callsServletDescriptorFactoryWithCorrectCondition()
     {
-        verify(servletDescriptorFactory, times(1)).createIFrameServletDescriptor(eq(plugin), any(WebItemCapabilityBean.class),
+        verify(servletDescriptorFactory, times(1)).createIFrameProjectConfigTabServletDescriptor(eq(plugin), any(WebItemCapabilityBean.class),
                 anyString(), anyString(), anyString(), anyString(), any(IsProjectAdminCondition.class), anyMap());
     }
 
     @Test
     public void callsServletDescriptorFactoryWithCorrectTemplateMetaTags()
     {
-        verify(servletDescriptorFactory, times(1)).createIFrameServletDescriptor(eq(plugin), any(WebItemCapabilityBean.class),
+        verify(servletDescriptorFactory, times(1)).createIFrameProjectConfigTabServletDescriptor(eq(plugin), any(WebItemCapabilityBean.class),
                 anyString(), anyString(), anyString(), anyString(), any(Condition.class), eq(EXPECTED_META_TAGS));
     }
 
