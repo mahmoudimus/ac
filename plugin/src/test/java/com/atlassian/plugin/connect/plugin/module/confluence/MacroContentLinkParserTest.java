@@ -13,9 +13,11 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Map;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -59,22 +61,21 @@ public class MacroContentLinkParserTest
     @Test
     public void replacesSignUrlsWithSignedUrlToAddon() throws URISyntaxException
     {
-        URI targetPath = new URI("/viewSport/10?foo=bar");
-        when(remotablePluginAccessor.signGetUrl(targetPath, EMPTY_REQUEST_PARAMS)).thenReturn(SIGNED_URL);
-        assertThat(macroContentLinkParser.parse(remotablePluginAccessor, MACRO_BODY_WITH_SIGN_URL, EMPTY), is(EXPECTED_MACRO_BODY_WITH_SUBSTITUTED_URL));
-        verify(remotablePluginAccessor).signGetUrl(targetPath, EMPTY_REQUEST_PARAMS);
+        assertThat(parseMacroAndSignUrl(MACRO_BODY_WITH_SIGN_URL, EMPTY), is(EXPECTED_MACRO_BODY_WITH_SUBSTITUTED_URL));
+    }
+
+    @Test
+    public void callsUrlSignerWithCorrectUrlAndParams() throws URISyntaxException
+    {
+        parseMacroAndSignUrl(MACRO_BODY_WITH_SIGN_URL, EMPTY);
+        verify(remotablePluginAccessor).signGetUrl(new URI("/viewSport/10?foo=bar"), EMPTY_REQUEST_PARAMS);
     }
 
     @Test
     public void replacesSignUrlForBaseUrl() throws URISyntaxException
     {
-        URI targetPath = new URI("/");
-        when(remotablePluginAccessor.signGetUrl(targetPath, EMPTY_REQUEST_PARAMS)).thenReturn(SIGNED_URL);
-//        assertThat(macroContentLinkParser.parse(remotablePluginAccessor, MACRO_BODY_WITH_SIGN_URL, EMPTY), is(EXPECTED_MACRO_BODY_WITH_SUBSTITUTED_URL));
-        assertThat(macroContentLinkParser.parse(remotablePluginAccessor,
-                "<a href='sign://Macintosh.local:3000'>Edit Sport</a>", EMPTY),
+        assertThat(parseMacroAndSignUrl("<a href='sign://Macintosh.local:3000'>Edit Sport</a>", EMPTY),
                 is("<a href='" + SIGNED_URL + "'>Edit Sport</a>"));
-        verify(remotablePluginAccessor).signGetUrl(targetPath, EMPTY_REQUEST_PARAMS);
     }
 
     @Ignore // Current code clips it instead of either throwing error or ignoring it. Dangerous and flakey. Fix
@@ -107,4 +108,11 @@ public class MacroContentLinkParserTest
     {
         assertThat(macroContentLinkParser.parse(remotablePluginAccessor, null, EMPTY), is((String)null));
     }
+
+    private String parseMacroAndSignUrl(String macroBody, Map<String, String> macroParams) {
+        when(remotablePluginAccessor.signGetUrl(any(URI.class), any(Map.class))).thenReturn(SIGNED_URL);
+        return macroContentLinkParser.parse(remotablePluginAccessor, macroBody, macroParams);
+    }
+
+
 }
