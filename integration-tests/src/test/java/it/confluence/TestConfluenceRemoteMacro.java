@@ -143,7 +143,7 @@ public final class TestConfluenceRemoteMacro extends ConfluenceWebDriverTestBase
         assertEquals(pageData.getId(), page.getText(CTX_PAGE_ID));
         assertEquals("page", page.getText(CTX_PAGE_TYPE));
         assertEquals(pageData.getTitle(), page.getText(CTX_PAGE_TITLE));
-        // the macro is being viewed by an anonymous admin user
+        // the macro is being viewed by an anonymous user
         assertNull(page.getText(CTX_USER_ID));
         assertNull(page.getText(CTX_USER_KEY));
     }
@@ -162,7 +162,7 @@ public final class TestConfluenceRemoteMacro extends ConfluenceWebDriverTestBase
         assertEquals(pageData.getId(), page.getText(CTX_PAGE_ID));
         assertEquals("page", page.getText(CTX_PAGE_TYPE));
         assertEquals(pageData.getTitle(), page.getText(CTX_PAGE_TITLE));
-        // the macro is being viewed by an anonymous admin user
+        // the macro is being viewed by an anonymous user
         assertNull(page.getText(CTX_USER_ID));
         assertNull(page.getText(CTX_USER_KEY));
     }
@@ -181,7 +181,7 @@ public final class TestConfluenceRemoteMacro extends ConfluenceWebDriverTestBase
         assertEquals(pageData.getId(), page.getText(CTX_PAGE_ID));
         assertEquals("page", page.getText(CTX_PAGE_TYPE));
         assertEquals(pageData.getTitle(), page.getText(CTX_PAGE_TITLE));
-        // the macro is being viewed by an anonymous admin user
+        // the macro is being viewed by an anonymous user
         assertNull(page.getText(CTX_USER_ID));
         assertNull(page.getText(CTX_USER_KEY));
     }
@@ -200,7 +200,8 @@ public final class TestConfluenceRemoteMacro extends ConfluenceWebDriverTestBase
         assertEquals(pageData.getId(), page.getText(CTX_PAGE_ID));
         assertEquals("page", page.getText(CTX_PAGE_TYPE));
         assertEquals(pageData.getTitle(), page.getText(CTX_PAGE_TITLE));
-        assertNull(page.getText(CTX_USER_ID)); // the macro has been created as the anonymous user
+        // the macro is being viewed by an anonymous user
+        assertNull(page.getText(CTX_USER_ID));
         assertNull(page.getText(CTX_USER_KEY));
     }
 
@@ -219,7 +220,7 @@ public final class TestConfluenceRemoteMacro extends ConfluenceWebDriverTestBase
         assertEquals(commentData.getId(), page.getText(CTX_PAGE_ID));
         assertEquals("comment", page.getText(CTX_PAGE_TYPE));
         assertNull(page.getText(CTX_PAGE_TITLE));
-        // the macro is being viewed by an anonymous admin user
+        // the macro is being viewed by an anonymous user
         assertNull(page.getText(CTX_USER_ID));
         assertNull(page.getText(CTX_USER_KEY));
     }
