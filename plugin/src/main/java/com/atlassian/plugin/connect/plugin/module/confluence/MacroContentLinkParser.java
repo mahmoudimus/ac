@@ -70,9 +70,6 @@ public class MacroContentLinkParser
 
                                 String urlToEmbed =
                                         remotablePluginAccessor.signGetUrl(b.toUri().toJavaUri(), ImmutableMap.<String, String[]>of());
-//                                        getOAuthRedirectUrl(
-//                                        confluenceSettingsManager.getGlobalSettings().getBaseUrl(),
-//                                        remotablePluginAccessor.getKey(), b.toUri().toJavaUri());
                                 processedContent.append(urlToEmbed);
                             }
                             catch (IllegalArgumentException ex)
