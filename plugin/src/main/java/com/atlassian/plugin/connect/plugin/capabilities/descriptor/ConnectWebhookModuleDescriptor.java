@@ -34,12 +34,13 @@ public class ConnectWebhookModuleDescriptor extends AbstractModuleDescriptor<Voi
         this.pluginKey = pluginKey;
         this.bean = bean;
         this.webHookListenerRegistry = checkNotNull(webHookListenerRegistry);
-        moduleParams = Maps.<String, Object>newHashMap(bean.getParams());
+        this.moduleParams = Maps.<String, Object>newHashMap(bean.getParams());
         this.moduleKey = ModuleKeyGenerator.generateKey("webhook");
     }
 
     @Override
     public void init(@NotNull Plugin plugin, @NotNull Element element) throws PluginParseException {
+        super.init(plugin, element);
     }
 
     @Override

@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
 import com.atlassian.plugin.connect.plugin.capabilities.annotation.CapabilitySet;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.BaseCapabilityBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.WebhookCapabilityBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.WebhookModuleProvider;
 

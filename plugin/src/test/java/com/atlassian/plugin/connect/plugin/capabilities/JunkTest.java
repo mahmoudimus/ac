@@ -14,6 +14,7 @@ import org.junit.Test;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.RemoteContainerCapabilityBean.newRemoteContainerBean;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebhookCapabilityBean.newWebhookBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean.newIconBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean.newWebItemBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.OAuthBean.newOAuthBean;
@@ -65,6 +66,10 @@ public class JunkTest
                         .withTooltip(new I18nProperty("click me!","click.me"))
                         .withStyleClasses("ac-link","aui-link")
                         .withIcon(newIconBean().withUrl("/some/icon.png").withWidth(16).withHeight(16).build())
+                        .build())
+                .withCapability(newWebhookBean()
+                        .withEvent("remote_plugin_enabled")
+                        .withUrl("/enabled")
                         .build())
                 .withCapability(newRemoteContainerBean().withDisplayUrl("http://www.example.com").withOAuth(
                         newOAuthBean().withPublicKey("S0m3Publ1cK3y").build()
