@@ -22,6 +22,11 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>atlassian-connect-annotation-processor</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>atlassian-connect-api</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -278,12 +283,6 @@
                     <artifactId>jsonassert</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>org.atteo</groupId>
-            <artifactId>evo-classindex</artifactId>
-            <version>1.4</version>
         </dependency>
 
         <dependency>
