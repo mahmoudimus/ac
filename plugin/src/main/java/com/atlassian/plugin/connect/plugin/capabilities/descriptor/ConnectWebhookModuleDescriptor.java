@@ -24,6 +24,7 @@ public class ConnectWebhookModuleDescriptor extends AbstractModuleDescriptor<Voi
     private final WebhookCapabilityBean bean;
     private final Map<String, Object> moduleParams;
     private final String moduleKey;
+    private final String completeKey;
 
     public ConnectWebhookModuleDescriptor(ModuleDescriptorWebHookListenerRegistry webHookListenerRegistry,
                                           WebhookCapabilityBean bean, Plugin plugin)
@@ -35,6 +36,7 @@ public class ConnectWebhookModuleDescriptor extends AbstractModuleDescriptor<Voi
         this.moduleKey = ModuleKeyGenerator.generateKey("webhook");
         this.plugin = plugin;
         this.pluginKey = plugin.getKey();
+        this.completeKey = buildCompleteKey(plugin, moduleKey);
     }
 
     @Override
@@ -56,6 +58,12 @@ public class ConnectWebhookModuleDescriptor extends AbstractModuleDescriptor<Voi
     }
 
     @Override
+    public String getCompleteKey()
+    {
+        return completeKey;
+    }
+
+    @Override
     public void enabled()
     {
         super.enabled();
@@ -72,5 +80,20 @@ public class ConnectWebhookModuleDescriptor extends AbstractModuleDescriptor<Voi
         webHookListenerRegistry.unregister(bean.getEvent(), pluginKey, URI.create(bean.getUrl()), new PluginModuleListenerParameters(pluginKey,
                 Optional.of(moduleKey), moduleParams, bean.getEvent()));
         super.disabled();
+    }
+
+    /**
+     * Copied from {@link AbstractModuleDescriptor} for the time being, should be made accessible.
+     */
+    private static String buildCompleteKey(final Plugin plugin, final String moduleKey)
+    {
+        if (plugin == null)
+        {
+            return null;
+        }
+
+        final StringBuffer completeKeyBuffer = new StringBuffer(32);
+        completeKeyBuffer.append(plugin.getKey()).append(":").append(moduleKey);
+        return completeKeyBuffer.toString();
     }
 }
