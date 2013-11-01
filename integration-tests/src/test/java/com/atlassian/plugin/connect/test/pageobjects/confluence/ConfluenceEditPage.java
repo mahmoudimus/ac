@@ -17,4 +17,9 @@ public class ConfluenceEditPage extends ConfluenceBasePage
     {
         return "/pages/editpage.action?pageId=" + pageId;
     }
+
+    public String getPageId()
+    {
+        return pageId;
+    }
 }

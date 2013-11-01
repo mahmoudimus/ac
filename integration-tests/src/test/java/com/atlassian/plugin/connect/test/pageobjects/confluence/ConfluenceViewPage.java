@@ -18,4 +18,8 @@ public class ConfluenceViewPage extends ConfluenceBasePage
         return "/pages/viewpage.action?pageId=" + pageId;
     }
 
+    public String getPageId()
+    {
+        return pageId;
+    }
 }
