@@ -80,7 +80,7 @@ public class TestConfluenceWebPanel extends ConfluenceWebDriverTestBase
                 .withWeight(1)
                 .build();
 
-        remotePlugin = new ConnectCapabilitiesRunner(product.getProductInstance().getBaseUrl(), "my-plugin")
+        remotePlugin = new ConnectCapabilitiesRunner(product.getProductInstance().getBaseUrl(), "cwp-plugin")
                 .addCapability(WEB_PANELS, editorWebPanel)
                 .addCapability(WEB_PANELS, viewWebPanel)
                 .addCapability(WEB_PANELS, profileWebPanel)
