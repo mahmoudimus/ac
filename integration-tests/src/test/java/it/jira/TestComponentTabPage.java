@@ -7,13 +7,9 @@ import com.atlassian.jira.tests.TestBase;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraComponentTabPage;
 import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
 import com.atlassian.plugin.connect.test.server.module.ComponentTabPageModule;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import it.servlet.ConnectAppServlets;
+import org.junit.*;
 
-import static com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner.newMustacheServlet;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
@@ -39,7 +35,7 @@ public class TestComponentTabPage extends TestBase
                 .add(ComponentTabPageModule.key(JIRA_COMPONENT_TAB_PANEL)
                         .name("Component Tab Panel")
                         .path("/ipp?component_id=${component.id}&project_id=${project.id}&project_key=${project.key}")
-                        .resource(newMustacheServlet("iframe.mu")))
+                        .resource(ConnectAppServlets.apRequestServlet()))
                 .start();
     }
 

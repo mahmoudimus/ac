@@ -1,8 +1,5 @@
 package it;
 
-import java.io.File;
-import java.util.Collections;
-
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
 import com.atlassian.plugin.connect.test.HttpUtils;
@@ -10,10 +7,12 @@ import com.atlassian.plugin.connect.test.client.AtlassianConnectRestClient;
 import com.atlassian.plugin.connect.test.pageobjects.GeneralPage;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginAwarePage;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginTestPage;
-
 import org.apache.commons.io.FileUtils;
 import org.junit.Ignore;
 import org.junit.Test;
+
+import java.io.File;
+import java.util.Collections;
 
 import static it.TestConstants.BETTY_USERNAME;
 import static org.apache.commons.io.FileUtils.cleanDirectory;
@@ -40,7 +39,7 @@ public class TestFileInstall extends AbstractRemotablePluginTest
         File descriptorFile = new File(base, "descriptor.yaml");
         FileUtils.writeStringToFile(descriptorFile, descriptor);
         FileUtils.writeStringToFile(new File(base, "first.html"),
-                HttpUtils.render("hello-world-page.mu",
+                HttpUtils.render("iframe-hello-world.mu",
                         Collections.<String, Object>singletonMap(
                                 "baseurl", baseUrl)));
 

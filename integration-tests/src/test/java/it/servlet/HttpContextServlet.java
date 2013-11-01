@@ -1,15 +1,14 @@
-package it;
+package it.servlet;
 
-import java.io.IOException;
-import java.util.Map;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
+import java.io.IOException;
+import java.util.Map;
 
 import static com.atlassian.fugue.Option.option;
 import static com.google.common.base.Preconditions.checkNotNull;
