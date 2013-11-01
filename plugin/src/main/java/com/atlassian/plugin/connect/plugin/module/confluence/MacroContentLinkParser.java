@@ -4,14 +4,13 @@ import com.atlassian.confluence.setup.settings.SettingsManager;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.uri.Uri;
 import com.atlassian.uri.UriBuilder;
+import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
-
-import static com.atlassian.plugin.connect.plugin.module.util.redirect.RedirectServlet.getOAuthRedirectUrl;
 
 
 /**
