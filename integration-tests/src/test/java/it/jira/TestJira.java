@@ -1,12 +1,9 @@
 package it.jira;
 
-import java.rmi.RemoteException;
-import java.util.concurrent.Callable;
-
 import com.atlassian.jira.pageobjects.navigator.AdvancedSearch;
 import com.atlassian.jira.plugin.issuenav.pageobjects.IssueDetailPage;
-import com.atlassian.plugin.connect.test.pageobjects.RemotePluginDialog;
 import com.atlassian.plugin.connect.test.junit.HtmlDumpRule;
+import com.atlassian.plugin.connect.test.pageobjects.RemotePluginDialog;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraAdministrationPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePageWithRemotePluginIssueTab;
@@ -16,12 +13,13 @@ import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
 import com.atlassian.plugin.connect.test.server.module.AdminPageModule;
 import com.atlassian.plugin.connect.test.server.module.DialogPageModule;
 import com.atlassian.plugin.connect.test.server.module.IssueTabPageModule;
-
+import hudson.plugins.jira.soap.RemoteIssue;
+import it.servlet.ConnectAppServlets;
 import org.junit.*;
 
-import hudson.plugins.jira.soap.RemoteIssue;
+import java.rmi.RemoteException;
+import java.util.concurrent.Callable;
 
-import static com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner.newMustacheServlet;
 import static it.TestConstants.ADMIN_FULL_NAME;
 import static org.junit.Assert.*;
 
@@ -40,21 +38,21 @@ public class TestJira extends JiraWebDriverTestBase
                 .add(AdminPageModule.key("remotePluginAdmin")
                                     .name("Remotable Plugin app1 Admin")
                                     .path("/ap")
-                                    .resource(newMustacheServlet("iframe.mu")))
+                                    .resource(ConnectAppServlets.apRequestServlet()))
                 .add(AdminPageModule.key("jira-admin-page")
                                     .name("Remotable Admin Page")
                                     .path("/jap")
                                     .section("advanced_menu_section/advanced_section")
-                                    .resource(newMustacheServlet("iframe.mu")))
+                                    .resource(ConnectAppServlets.apRequestServlet()))
                 .add(IssueTabPageModule.key("jira-remotePluginIssueTabPage")
                                        .name("AC Play Issue Tab Page")
                                        .path("/itp")
-                                       .resource(newMustacheServlet("iframe.mu")))
+                                       .resource(ConnectAppServlets.apRequestServlet()))
                 .add(DialogPageModule.key("jira-issueAction")
                                      .name("Test Issue Action")
                                      .path("/jia")
                                      .section("operations-subtasks")
-                                     .resource(newMustacheServlet("dialog.mu")))
+                                     .resource(ConnectAppServlets.dialogServlet()))
                 .start();
     }
 

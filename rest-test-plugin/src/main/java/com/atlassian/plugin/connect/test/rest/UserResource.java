@@ -84,7 +84,7 @@ public class UserResource
     private String getUsername()
     {
         UserProfile user = userManager.getRemoteUser();
-        return user == null ? null : user.getUsername();
+        return user == null ? "anonymous" : user.getUsername();
     }
 
     private Response buildErrorResponse()

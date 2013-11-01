@@ -1,14 +1,11 @@
 package it;
 
-import java.io.IOException;
-import java.util.List;
-
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
 import com.atlassian.plugin.connect.test.pageobjects.GeneralPage;
 import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
 import com.atlassian.plugin.connect.test.server.module.GeneralPageModule;
-
+import it.servlet.ConnectAppServlets;
 import org.apache.http.client.HttpResponseException;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -16,8 +13,10 @@ import org.dom4j.Element;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import java.io.IOException;
+import java.util.List;
+
 import static com.atlassian.plugin.connect.test.Utils.getXml;
-import static com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner.newMustacheServlet;
 import static org.junit.Assert.*;
 
 public class TestRemotePluginInstallation extends AbstractRemotablePluginTest
@@ -46,7 +45,7 @@ public class TestRemotePluginInstallation extends AbstractRemotablePluginTest
                 .add(GeneralPageModule.key("changedPage")
                                       .name("Changed Page")
                                       .path("/page")
-                                      .resource(newMustacheServlet("hello-world-page.mu")))
+                                      .resource(ConnectAppServlets.helloWorldServlet()))
                 .start();
         product.visit(HomePage.class);
         assertTrue(product.getPageBinder().bind(GeneralPage.class, "changedPage", "Changed Page")
@@ -58,7 +57,7 @@ public class TestRemotePluginInstallation extends AbstractRemotablePluginTest
                 .add(GeneralPageModule.key("changedPage")
                                       .name("Changed Page")
                                       .path("/page")
-                                      .resource(newMustacheServlet("hello-world-page.mu")))
+                                      .resource(ConnectAppServlets.helloWorldServlet()))
                 .start();
         product.visit(HomePage.class);
         assertTrue(product.getPageBinder().bind(GeneralPage.class, "changedPage", "Changed Page")
