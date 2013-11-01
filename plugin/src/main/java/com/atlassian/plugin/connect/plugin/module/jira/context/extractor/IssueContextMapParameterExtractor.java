@@ -1,11 +1,10 @@
 package com.atlassian.plugin.connect.plugin.module.jira.context.extractor;
 
 import com.atlassian.jira.issue.Issue;
-import com.atlassian.plugin.connect.plugin.capabilities.annotation.ProductFilter;
 import com.atlassian.plugin.connect.plugin.module.context.ContextMapParameterExtractor;
 import com.atlassian.plugin.connect.plugin.module.context.ParameterSerializer;
 import com.atlassian.plugin.connect.plugin.module.jira.context.serializer.IssueSerializer;
-import com.atlassian.plugin.connect.plugin.spring.ScopedComponent;
+import com.atlassian.plugin.connect.plugin.spring.JiraComponent;
 
 import com.google.common.base.Optional;
 
@@ -16,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * Extracts issue parameters that can be included in webpanel's iframe url.
  */
-@ScopedComponent(products = {ProductFilter.JIRA})
+@JiraComponent
 public class IssueContextMapParameterExtractor implements ContextMapParameterExtractor<Issue>
 {
     private static final String ISSUE_CONTEXT_KEY = "issue";

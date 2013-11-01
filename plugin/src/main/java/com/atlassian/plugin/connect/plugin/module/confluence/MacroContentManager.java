@@ -9,7 +9,7 @@ import com.atlassian.event.api.EventListener;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.plugin.connect.plugin.DefaultRemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.annotation.ProductFilter;
-import com.atlassian.plugin.connect.plugin.spring.ScopedComponent;
+import com.atlassian.plugin.connect.plugin.spring.ConfluenceComponent;
 import com.atlassian.plugin.connect.plugin.util.http.CachingHttpContentRetriever;
 import com.atlassian.plugin.connect.plugin.util.http.ContentRetrievalErrors;
 import com.atlassian.plugin.connect.plugin.util.http.ContentRetrievalException;
@@ -34,7 +34,7 @@ import java.net.URI;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-@ScopedComponent(products = {ProductFilter.CONFLUENCE})
+@ConfluenceComponent
 public class MacroContentManager implements DisposableBean
 {
     private final EventPublisher eventPublisher;

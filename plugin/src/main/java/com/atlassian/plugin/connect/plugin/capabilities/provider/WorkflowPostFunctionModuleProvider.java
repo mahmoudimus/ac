@@ -2,10 +2,9 @@ package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.capabilities.annotation.ProductFilter;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.WorkflowPostFunctionCapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WorkflowPostFunctionModuleDescriptorFactory;
-import com.atlassian.plugin.connect.plugin.spring.ScopedComponent;
+import com.atlassian.plugin.connect.plugin.spring.JiraComponent;
 
 import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.List;
 
-@ScopedComponent(products = {ProductFilter.JIRA})
+@JiraComponent
 public class WorkflowPostFunctionModuleProvider implements ConnectModuleProvider<WorkflowPostFunctionCapabilityBean>
 {
     private final WorkflowPostFunctionModuleDescriptorFactory workflowPostFunctionFactory;

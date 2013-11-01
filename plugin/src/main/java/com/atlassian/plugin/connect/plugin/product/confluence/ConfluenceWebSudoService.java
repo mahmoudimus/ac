@@ -3,14 +3,14 @@ package com.atlassian.plugin.connect.plugin.product.confluence;
 import com.atlassian.confluence.security.websudo.WebSudoManager;
 import com.atlassian.plugin.connect.plugin.capabilities.annotation.ProductFilter;
 import com.atlassian.plugin.connect.plugin.product.WebSudoService;
-import com.atlassian.plugin.connect.plugin.spring.ScopedComponent;
+import com.atlassian.plugin.connect.plugin.spring.ConfluenceComponent;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-@ScopedComponent(products = {ProductFilter.CONFLUENCE})
+@ConfluenceComponent
 public class ConfluenceWebSudoService implements WebSudoService
 {
     private final WebSudoManager webSudoManager;

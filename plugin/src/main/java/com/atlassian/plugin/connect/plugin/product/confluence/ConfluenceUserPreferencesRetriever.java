@@ -6,12 +6,12 @@ import javax.annotation.Nullable;
 
 import com.atlassian.plugin.connect.plugin.UserPreferencesRetriever;
 import com.atlassian.plugin.connect.plugin.capabilities.annotation.ProductFilter;
-import com.atlassian.plugin.connect.plugin.spring.ScopedComponent;
+import com.atlassian.plugin.connect.plugin.spring.ConfluenceComponent;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@ScopedComponent(products = {ProductFilter.CONFLUENCE})
+@ConfluenceComponent
 public class ConfluenceUserPreferencesRetriever implements UserPreferencesRetriever
 {
 

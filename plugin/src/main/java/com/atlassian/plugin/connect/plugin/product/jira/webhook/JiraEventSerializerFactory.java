@@ -3,10 +3,9 @@ package com.atlassian.plugin.connect.plugin.product.jira.webhook;
 import java.util.List;
 
 import com.atlassian.jira.event.JiraEvent;
-import com.atlassian.plugin.connect.plugin.capabilities.annotation.ProductFilter;
 import com.atlassian.plugin.connect.plugin.product.EventMapper;
 import com.atlassian.plugin.connect.plugin.product.jira.JiraRestBeanMarshaler;
-import com.atlassian.plugin.connect.plugin.spring.ScopedComponent;
+import com.atlassian.plugin.connect.plugin.spring.JiraComponent;
 import com.atlassian.webhooks.spi.provider.EventSerializer;
 import com.atlassian.webhooks.spi.provider.EventSerializerFactory;
 import com.atlassian.webhooks.spi.provider.EventSerializers;
@@ -24,7 +23,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Maps {@link com.atlassian.jira.event.JiraEvent} instances to {@link com.atlassian.webhooks.spi.provider.EventSerializer} instances so that the event information
  * can be transmitted via the WebHookPublisher.
  */
-@ScopedComponent(products = {ProductFilter.JIRA})
+@JiraComponent
 public final class JiraEventSerializerFactory implements EventSerializerFactory<JiraEvent>
 {
     private static final Logger log = LoggerFactory.getLogger(JiraEventSerializerFactory.class);

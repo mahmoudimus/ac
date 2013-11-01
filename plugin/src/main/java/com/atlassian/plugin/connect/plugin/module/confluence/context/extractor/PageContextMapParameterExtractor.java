@@ -6,7 +6,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.annotation.ProductFilter
 import com.atlassian.plugin.connect.plugin.module.confluence.context.serializer.PageSerializer;
 import com.atlassian.plugin.connect.plugin.module.context.ParameterSerializer;
 import com.atlassian.plugin.connect.plugin.module.context.ContextMapParameterExtractor;
-import com.atlassian.plugin.connect.plugin.spring.ScopedComponent;
+import com.atlassian.plugin.connect.plugin.spring.ConfluenceComponent;
 
 import com.google.common.base.Optional;
 
@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * Extracts page parameters that can be included in webpanel's iframe url.
  */
-@ScopedComponent(products = {ProductFilter.CONFLUENCE})
+@ConfluenceComponent
 public class PageContextMapParameterExtractor implements ContextMapParameterExtractor<AbstractPage>
 {
     private static final String PAGE_CONTEXT_PARAMETER = "page";

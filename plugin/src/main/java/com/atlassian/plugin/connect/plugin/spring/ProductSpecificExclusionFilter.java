@@ -1,21 +1,32 @@
 package com.atlassian.plugin.connect.plugin.spring;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
+
+import javax.annotation.Nullable;
 
 import com.atlassian.plugin.connect.plugin.capabilities.annotation.ProductFilter;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.core.type.classreading.MetadataReader;
 import org.springframework.core.type.classreading.MetadataReaderFactory;
 import org.springframework.core.type.filter.TypeFilter;
 
+import static com.google.common.collect.Lists.newArrayList;
+
 public class ProductSpecificExclusionFilter implements TypeFilter
 {
-	public static final String PRODUCTS = "products";
+	public static final String PRODUCTS = "value";
     @VisibleForTesting
     static final String CLASS_ON_JIRA_CLASSPATH = "com.atlassian.jira.plugin.issuetabpanel.IssueTabPanelModuleDescriptor";
     @VisibleForTesting
@@ -23,27 +34,26 @@ public class ProductSpecificExclusionFilter implements TypeFilter
 
     private boolean jira;
     private boolean confluence;
+    private ProductFilter filterForProduct;
     
     public ProductSpecificExclusionFilter()
     {
         try
         {
             Class.forName(CLASS_ON_JIRA_CLASSPATH);
-            this.jira = true;
+            filterForProduct = ProductFilter.JIRA;
         }
         catch (ClassNotFoundException e)
         {
-            this.jira = false;
         }
 
         try
         {
             Class.forName(CLASS_ON_CONFLUENCE_CLASSPATH);
-            this.confluence = true;
+            filterForProduct = ProductFilter.CONFLUENCE;
         }
         catch (ClassNotFoundException e)
         {
-            this.confluence = false;
         }
     }
 
@@ -51,27 +61,47 @@ public class ProductSpecificExclusionFilter implements TypeFilter
     public boolean match(MetadataReader metadataReader, MetadataReaderFactory metadataReaderFactory) throws IOException
     {
         AnnotationMetadata metadata = metadataReader.getAnnotationMetadata();
+        List<ProductFilter> filters = findProductFiltersFromAnnotations(metadata);
         
-        boolean mismatch = false;
-        
-        if(isJira())
+        if(filters.isEmpty())
         {
-            if(metadata.hasAnnotation(ScopedComponent.class.getName()))
-            {
-                List<ProductFilter> products = Arrays.asList((ProductFilter[]) metadata.getAnnotationAttributes(ScopedComponent.class.getName()).get(PRODUCTS));
-                mismatch = (!products.contains(ProductFilter.ALL) && !products.contains(ProductFilter.JIRA));
-            } 
+            return false;
         }
-        else if(isConfluence())
+        
+        if(!filters.contains(filterForProduct))
         {
-            if(metadata.hasAnnotation(ScopedComponent.class.getName()))
+            return true;
+        }
+        
+        return false;
+    }
+
+    private List<ProductFilter> findProductFiltersFromAnnotations(AnnotationMetadata metadata)
+    {
+      
+        return newArrayList(Iterables.filter(Iterables.transform(metadata.getAnnotationTypes(),new Function<String, ProductFilter>() {
+            @Override
+            public ProductFilter apply(@Nullable String input)
             {
-                List<ProductFilter> products = Arrays.asList((ProductFilter[]) metadata.getAnnotationAttributes(ScopedComponent.class.getName()).get(PRODUCTS));
-                mismatch = (!products.contains(ProductFilter.ALL) && !products.contains(ProductFilter.CONFLUENCE));
+                String annoName = StringUtils.substringAfterLast(input,".").toUpperCase();
+                for(ProductFilter filter : ProductFilter.values())
+                {
+                    if(annoName.startsWith(filter.name()))
+                    {
+                        return filter;
+                    }
+                }
+                
+                return null;
             }
-        }
-        
-        return mismatch;
+        }),new Predicate<ProductFilter>() {
+            @Override
+            public boolean apply(@Nullable ProductFilter input)
+            {
+                return null != input;
+            }
+        }));
+
     }
 
     public boolean isJira()

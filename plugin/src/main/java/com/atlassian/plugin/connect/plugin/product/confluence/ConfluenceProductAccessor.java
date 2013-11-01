@@ -8,7 +8,7 @@ import com.atlassian.mail.MailException;
 import com.atlassian.mail.MailFactory;
 import com.atlassian.mail.server.SMTPMailServer;
 import com.atlassian.plugin.connect.plugin.capabilities.annotation.ProductFilter;
-import com.atlassian.plugin.connect.plugin.spring.ScopedComponent;
+import com.atlassian.plugin.connect.plugin.spring.ConfluenceComponent;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.util.ContextClassLoaderSwitchingUtil;
 import com.atlassian.plugin.web.Condition;
@@ -25,7 +25,7 @@ import static com.google.common.collect.Maps.newHashMap;
 /**
  *
  */
-@ScopedComponent(products = {ProductFilter.CONFLUENCE})
+@ConfluenceComponent
 public final class ConfluenceProductAccessor implements ProductAccessor
 {
     private static final Logger log = LoggerFactory.getLogger(ConfluenceProductAccessor.class);

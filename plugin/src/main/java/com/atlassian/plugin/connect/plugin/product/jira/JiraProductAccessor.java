@@ -10,9 +10,8 @@ import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.mail.Email;
 import com.atlassian.mail.queue.MailQueue;
 import com.atlassian.mail.queue.SingleMailQueueItem;
-import com.atlassian.plugin.connect.plugin.capabilities.annotation.ProductFilter;
 import com.atlassian.plugin.connect.plugin.module.jira.conditions.ViewingOwnProfileCondition;
-import com.atlassian.plugin.connect.plugin.spring.ScopedComponent;
+import com.atlassian.plugin.connect.plugin.spring.JiraComponent;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.web.Condition;
 
@@ -22,7 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import static com.google.common.collect.Maps.newHashMap;
 
-@ScopedComponent(products = {ProductFilter.JIRA})
+@JiraComponent
 public final class JiraProductAccessor implements ProductAccessor
 {
     private final UserManager userManager;

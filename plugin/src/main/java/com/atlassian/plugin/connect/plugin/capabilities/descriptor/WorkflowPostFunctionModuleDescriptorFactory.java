@@ -2,12 +2,11 @@ package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
 import com.atlassian.jira.plugin.workflow.WorkflowFunctionModuleDescriptor;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.capabilities.annotation.ProductFilter;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.WorkflowPostFunctionCapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAutowireUtil;
 import com.atlassian.plugin.connect.plugin.module.jira.workflow.RemoteWorkflowFunctionPluginFactory;
 import com.atlassian.plugin.connect.plugin.module.jira.workflow.RemoteWorkflowPostFunctionProvider;
-import com.atlassian.plugin.connect.plugin.spring.ScopedComponent;
+import com.atlassian.plugin.connect.plugin.spring.JiraComponent;
 
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
@@ -25,7 +24,7 @@ import static org.apache.commons.lang.StringEscapeUtils.escapeHtml;
 /**
  * A Factory that creates WorkflowFunctionModuleDescriptors from WorkflowPostFunctionCapabilityBeans
  */
-@ScopedComponent(products = {ProductFilter.JIRA})
+@JiraComponent
 public class WorkflowPostFunctionModuleDescriptorFactory implements ConnectModuleDescriptorFactory<WorkflowPostFunctionCapabilityBean, WorkflowFunctionModuleDescriptor>
 {
     private final ConnectAutowireUtil connectAutowireUtil;
