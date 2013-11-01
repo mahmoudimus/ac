@@ -24,7 +24,7 @@ public class ConnectWebhookModuleDescriptorFactory implements ConnectModuleDescr
     @Override
     public ConnectWebhookModuleDescriptor createModuleDescriptor(Plugin plugin, BundleContext addonBundleContext, WebhookCapabilityBean bean) {
         ConnectWebhookModuleDescriptor descriptor = new ConnectWebhookModuleDescriptor(moduleDescriptorWebHookListenerRegistry,
-                bean, plugin.getKey());
+                bean, plugin);
         return descriptor;
     }
 }
