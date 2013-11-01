@@ -1,16 +1,17 @@
 package com.atlassian.plugin.connect.test.rest;
 
+import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
+import com.atlassian.sal.api.user.UserManager;
+import com.atlassian.sal.api.user.UserProfile;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
-import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
-import com.atlassian.sal.api.user.UserManager;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static java.lang.String.format;
 import static javax.ws.rs.core.MediaType.*;
@@ -82,7 +83,8 @@ public class UserResource
 
     private String getUsername()
     {
-        return userManager.getRemoteUsername();
+        UserProfile user = userManager.getRemoteUser();
+        return user == null ? null : user.getUsername();
     }
 
     private Response buildErrorResponse()

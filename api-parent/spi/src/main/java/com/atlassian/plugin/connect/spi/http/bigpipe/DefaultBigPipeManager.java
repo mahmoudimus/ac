@@ -1,31 +1,30 @@
 package com.atlassian.plugin.connect.spi.http.bigpipe;
 
-import java.security.SecureRandom;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.*;
-
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.api.service.http.bigpipe.*;
+import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.security.random.SecureRandomFactory;
 import com.atlassian.util.concurrent.CopyOnWriteMap;
 import com.atlassian.util.concurrent.ForwardingPromise;
 import com.atlassian.util.concurrent.Promise;
-
 import com.google.common.base.Supplier;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.util.concurrent.FutureCallback;
-
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.security.SecureRandom;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.*;
 
 import static com.atlassian.fugue.Option.none;
 import static com.google.common.base.Preconditions.checkArgument;
@@ -65,7 +64,8 @@ public final class DefaultBigPipeManager implements BigPipeManager, DisposableBe
             @Override
             public String getUserId()
             {
-                return userManager.getRemoteUsername();
+                UserKey userKey = userManager.getRemoteUserKey();
+                return userKey == null ? null : userKey.getStringValue();
             }
         }, createCleanupThread());
     }
