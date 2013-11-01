@@ -24,7 +24,7 @@ import org.springframework.stereotype.Component;
 public class ComponentAnnotationProcessor extends AbstractProcessor
 {
     public static final String ANNOTATED_INDEX_PREFIX = "META-INF/annotations/";
-    private Multimap<TypeElement, TypeElement> annotatedMap = HashMultimap.create();
+    private Set<TypeElement> annotatedTypes = new HashSet<TypeElement>();
     private Set<String> indexedAnnotations;
     private Filer filer;
 
@@ -71,7 +71,7 @@ public class ComponentAnnotationProcessor extends AbstractProcessor
 
                     if (annotationElement.getQualifiedName().toString().equals(Component.class.getName()) || annotationElement.getAnnotation(Component.class) != null)
                     {
-                        annotatedMap.put(annotationElement, typeElement);
+                        annotatedTypes.add(typeElement);
                     }
                 }
             }
@@ -81,10 +81,7 @@ public class ComponentAnnotationProcessor extends AbstractProcessor
                 return false;
             }
 
-            for (TypeElement element : annotatedMap.keySet())
-            {
-                writeIndexFile(annotatedMap.get(element), ANNOTATED_INDEX_PREFIX + Component.class.getName());
-            }
+            writeIndexFile(annotatedTypes, ANNOTATED_INDEX_PREFIX + Component.class.getName());
 
         }
         catch (IOException e)
