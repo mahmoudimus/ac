@@ -1,11 +1,5 @@
 package com.atlassian.plugin.connect.plugin.module.jira.searchrequestview;
 
-import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.net.URI;
-import java.util.Map;
-
 import com.atlassian.jira.ComponentManager;
 import com.atlassian.jira.exception.DataAccessException;
 import com.atlassian.jira.issue.Issue;
@@ -20,14 +14,21 @@ import com.atlassian.jira.plugin.searchrequestview.SearchRequestParams;
 import com.atlassian.jira.plugin.searchrequestview.SearchRequestView;
 import com.atlassian.jira.plugin.searchrequestview.SearchRequestViewModuleDescriptor;
 import com.atlassian.jira.security.JiraAuthenticationContext;
-import com.atlassian.plugin.connect.plugin.module.util.redirect.RedirectServlet;
+import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.templaterenderer.TemplateRenderer;
-
+import com.atlassian.uri.Uri;
+import com.atlassian.uri.UriBuilder;
 import com.google.common.collect.ImmutableMap;
-
 import org.apache.commons.lang.StringUtils;
 
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.net.URI;
+import java.util.Map;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Maps.newHashMap;
 
 /**
@@ -41,11 +42,13 @@ public class RemoteSearchRequestView implements SearchRequestView
     private final String appKey;
     private final URI path;
     private final String name;
+    private final RemotablePluginAccessor remotablePluginAccessor;
 
     public RemoteSearchRequestView(
             ApplicationProperties applicationProperties,
             final SearchRequestViewBodyWriterUtil searchRequestViewBodyWriterUtil,
-            TemplateRenderer templateRenderer, String appKey, URI path, String name)
+            TemplateRenderer templateRenderer, String appKey, URI path, String name,
+            RemotablePluginAccessor remotablePluginAccessor)
     {
         this.applicationProperties = applicationProperties;
         this.searchRequestViewBodyWriterUtil = searchRequestViewBodyWriterUtil;
@@ -53,6 +56,7 @@ public class RemoteSearchRequestView implements SearchRequestView
         this.appKey = appKey;
         this.path = path;
         this.name = name;
+        this.remotablePluginAccessor = checkNotNull(remotablePluginAccessor);
     }
 
     @Override
@@ -87,14 +91,17 @@ public class RemoteSearchRequestView implements SearchRequestView
         String issueKeysValue = getIssueKeysList(searchRequest, searchRequestParams);
         queryParams.put("issues", issueKeysValue);
 
-        String redirectUrl = RedirectServlet.getOAuthRedirectUrl(baseUrl, appKey, path, queryParams);
+        Uri target = Uri.fromJavaUri(path);
+        UriBuilder b = new UriBuilder(target);
+        b.addQueryParameters(queryParams);
 
+        String signedAddonURL = remotablePluginAccessor.signGetUrl(b.toUri().toJavaUri(), ImmutableMap.<String, String[]>of());
 
         try
         {
             templateRenderer.render("velocity/view-search-request-redirect.vm", ImmutableMap.<String,
                     Object>of(
-                    "redirectUrl", redirectUrl,
+                    "redirectUrl", signedAddonURL, // TODO: change velocity variable name
                     "name", name
 
             ), writer);
