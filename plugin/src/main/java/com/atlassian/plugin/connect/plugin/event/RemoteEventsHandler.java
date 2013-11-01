@@ -1,10 +1,5 @@
 package com.atlassian.plugin.connect.plugin.event;
 
-import java.net.URI;
-import java.util.Map;
-
-import javax.ws.rs.core.MediaType;
-
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.httpclient.api.HttpClient;
 import com.atlassian.httpclient.api.Request;
@@ -12,21 +7,17 @@ import com.atlassian.httpclient.api.Response;
 import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.oauth.util.RSAKeys;
-import com.atlassian.plugin.InstallationMode;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.spi.ConnectAddOnIdentifierService;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
-import com.atlassian.plugin.event.PluginEventListener;
-import com.atlassian.plugin.event.PluginEventManager;
-//import com.atlassian.plugin.event.events.BeforePluginDisabledEvent;
-import com.atlassian.plugin.event.events.PluginEnabledEvent;
-import com.atlassian.plugin.connect.spi.event.RemotePluginDisabledEvent;
 import com.atlassian.plugin.connect.spi.event.RemotePluginEnabledEvent;
 import com.atlassian.plugin.connect.spi.event.RemotePluginInstalledEvent;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
-import com.atlassian.plugins.rest.common.MediaTypes;
+import com.atlassian.plugin.event.PluginEventListener;
+import com.atlassian.plugin.event.PluginEventManager;
+import com.atlassian.plugin.event.events.PluginEnabledEvent;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
@@ -34,11 +25,9 @@ import com.atlassian.upm.api.util.Option;
 import com.atlassian.upm.spi.PluginInstallException;
 import com.atlassian.uri.UriBuilder;
 import com.atlassian.webhooks.spi.plugin.RequestSigner;
-
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
-
 import org.json.JSONObject;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -49,9 +38,15 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.net.URI;
+import java.util.Map;
+import javax.ws.rs.core.MediaType;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.nullToEmpty;
 import static com.google.common.collect.Maps.newHashMap;
+
+//import com.atlassian.plugin.event.events.BeforePluginDisabledEvent;
 
 @Component
 public final class RemoteEventsHandler implements InitializingBean, DisposableBean
@@ -130,13 +125,13 @@ public final class RemoteEventsHandler implements InitializingBean, DisposableBe
                             
                             URI installHandler = getURI(addonAccessor.getBaseUrl().toString() + path);
                             
-                            Request request = httpClient.newRequest(installHandler);
+                            Request.Builder request = httpClient.newRequest(installHandler);
                             request.setAttribute("purpose","web-hook-notification");
                             request.setAttribute("pluginKey",pluginKey);
                             request.setContentType(MediaType.APPLICATION_JSON);
                             request.setEntity(json);
 
-                            requestSigner.sign(pluginKey,request);
+                            requestSigner.sign(installHandler, pluginKey,request);
 
                             Response response = request.execute(Request.Method.POST).claim();
                             if(response.getStatusCode() != 200)

@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.beans.builder;
 import java.util.Map;
 
 import com.atlassian.plugin.connect.plugin.capabilities.beans.BeanWithKeyAndParams;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Maps.newHashMap;
@@ -34,6 +35,20 @@ public class BeanWithKeyAndParamsBuilder<T extends BeanWithKeyAndParamsBuilder, 
     public T withParam(String key, String value)
     {
         params.put(key,value);
+        return (T) this;
+    }
+
+    @Override
+    public T withKey(String key)
+    {
+        super.withKey(key);
+        return (T) this;
+    }
+
+    @Override
+    public T withName(I18nProperty name)
+    {
+        super.withName(name);
         return (T) this;
     }
 

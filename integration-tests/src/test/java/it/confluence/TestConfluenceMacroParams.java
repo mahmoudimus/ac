@@ -1,16 +1,5 @@
 package it.confluence;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Enumeration;
-import java.util.Map;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import com.atlassian.confluence.pageobjects.page.LogoutPage;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceMacroPage;
@@ -18,21 +7,23 @@ import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceMacroT
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
 import com.atlassian.plugin.connect.test.server.module.*;
-import org.junit.BeforeClass;
+import it.servlet.ConnectAppServlets;
 import org.junit.Test;
 
-import it.MyContextAwareWebPanelServlet;
-import org.junit.Test;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Enumeration;
+import java.util.Map;
 
 import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.test.Utils.loadResourceAsString;
-import static com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner.newMustacheServlet;
-import static com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner.newServlet;
 import static com.google.common.collect.Maps.newHashMap;
-import static it.TestConstants.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static it.TestConstants.BETTY_USERNAME;
+import static org.junit.Assert.*;
 
 public final class TestConfluenceMacroParams extends ConfluenceWebDriverTestBase
 {
@@ -56,7 +47,7 @@ public final class TestConfluenceMacroParams extends ConfluenceWebDriverTestBase
                         .category(MacroCategory.name("development"))
                         .parameters(MacroParameter.name("footy").title("Favorite Footy").type("enum").required("true").values("American Football", "Soccer", "Rugby Union", "Rugby League"))
                         .contextParameters(ContextParameter.name("page.id").query())
-                        .editor(MacroEditor.at("/myMacroEditor").height("600").width("600").resource(newMustacheServlet("confluence/macro/editor.mu")))
+                        .editor(MacroEditor.at("/myMacroEditor").height("600").width("600").resource(ConnectAppServlets.macroEditor()))
                         .resource(new TestConfluencePageMacro.MyMacroServlet()))
                 .add(GeneralPageModule.key("remotePluginGeneral")
                         .name("Remotable Plugin app1 General")
@@ -65,8 +56,8 @@ public final class TestConfluenceMacroParams extends ConfluenceWebDriverTestBase
                         .iconUrl("/public/sandcastles.jpg")
                         .height("600")
                         .width("700")
-                        .resource(newServlet(new MyContextAwareWebPanelServlet())))
-                .addRoute("/page/*", newServlet(new MyContextAwareWebPanelServlet()))
+                        .resource(ConnectAppServlets.helloWorldServlet()))
+                .addRoute("/page/*", ConnectAppServlets.helloWorldServlet())
                 .start();
 
         ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(new ConfluenceOps.ConfluenceUser("admin", "admin")), "ds", "test", loadResourceAsString("confluence/test-page.xhtml"));
@@ -103,7 +94,7 @@ public final class TestConfluenceMacroParams extends ConfluenceWebDriverTestBase
         product.visit(ConfluenceMacroPage.class, pageData.getTitle());
         assertEquals(pageData.getId(), macroServlet.getQueryParams().get("page_id"));
         assertFalse(macroServlet.getQueryParams().containsKey("user_id"));
-        assertEquals("admin", macroServlet.getHeaderParams().get("user_id"));
+        assertEquals(BETTY_USERNAME, macroServlet.getHeaderParams().get("user_id"));
         assertFalse(macroServlet.getHeaderParams().containsKey("page_id"));
         runner.stop();
     }

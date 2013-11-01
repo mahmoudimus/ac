@@ -1,26 +1,16 @@
 package com.atlassian.plugin.connect.test.server;
 
-import java.io.IOException;
-import java.io.StringWriter;
-import java.security.NoSuchAlgorithmException;
-import java.util.Map;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import com.atlassian.fugue.Option;
 import com.atlassian.fugue.Pair;
 import com.atlassian.plugin.connect.api.service.SignedRequestHandler;
 import com.atlassian.plugin.connect.spi.Permissions;
-import com.atlassian.plugin.connect.test.HttpUtils;
 import com.atlassian.plugin.connect.test.Utils;
 import com.atlassian.plugin.connect.test.client.AtlassianConnectRestClient;
 import com.atlassian.plugin.connect.test.server.module.Module;
-
 import com.google.common.collect.ImmutableMap;
-
+import it.servlet.ContextServlet;
+import it.servlet.HttpContextServlet;
+import net.oauth.signature.RSA_SHA1;
 import org.apache.commons.lang.RandomStringUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentFactory;
@@ -33,9 +23,14 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import it.ContextServlet;
-import it.HttpContextServlet;
-import net.oauth.signature.RSA_SHA1;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.security.NoSuchAlgorithmException;
+import java.util.Map;
 
 import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.test.Utils.createSignedRequestHandler;
@@ -210,7 +205,7 @@ public final class AtlassianConnectAddOnRunner
             {
                 ((HttpContextServlet) entry.getValue()).getBaseContext().putAll(getBaseContext());
             }
-            context.addServlet(new ServletHolder(entry.getValue()), entry.getKey());
+            context.addServlet(new ServletHolder(entry.getValue()), toPathSpec(entry.getKey()));
         }
 
         list.addHandler(context);
@@ -227,36 +222,23 @@ public final class AtlassianConnectAddOnRunner
         return this;
     }
 
+    /**
+     * Transform a URL into a servlet path spec (i.e. drop the query string if present)
+     */
+    private static String toPathSpec(String url)
+    {
+        int queryIndex = url.indexOf("?");
+        return queryIndex > -1 ? url.substring(0, queryIndex) : url;
+    }
+
     public static HttpServlet newServlet(ContextServlet servlet)
     {
         return new HttpContextServlet(servlet);
     }
 
-    public static HttpServlet newMustacheServlet(String resource)
-    {
-        return newServlet(new MustacheServlet(resource));
-    }
-
     private ImmutableMap<String, Object> getBaseContext()
     {
         return ImmutableMap.<String, Object>of("port", port, "baseurl", baseUrl);
-    }
-
-
-    private static final class MustacheServlet extends ContextServlet
-    {
-        private final String path;
-
-        private MustacheServlet(String path)
-        {
-            this.path = checkNotNull(path);
-        }
-
-        @Override
-        protected void doGet(HttpServletRequest req, HttpServletResponse resp, Map<String, Object> context) throws ServletException, IOException
-        {
-            HttpUtils.renderHtml(resp, path, context);
-        }
     }
 
     private class DescriptorServlet extends HttpServlet

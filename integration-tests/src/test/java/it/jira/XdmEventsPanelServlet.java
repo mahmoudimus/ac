@@ -11,7 +11,7 @@ import com.atlassian.plugin.connect.test.HttpUtils;
 
 import com.google.common.collect.ImmutableMap;
 
-import it.ContextServlet;
+import it.servlet.ContextServlet;
 
 public final class XdmEventsPanelServlet extends ContextServlet
 {

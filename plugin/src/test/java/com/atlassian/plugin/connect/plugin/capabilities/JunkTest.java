@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.RemoteContainerCapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.gson.CapabilitiesGsonFactory;
@@ -51,27 +52,27 @@ public class JunkTest
         Map<String,String> links = new HashMap<String,String>();
         links.put("self","http://www.example.com/capabilities");
         links.put("homepage","http://www.example.com");
-        
+
         ConnectAddonBean addon = newConnectAddonBean()
                 .withName("My Plugin")
                 .withKey("my-plugin")
                 .withVersion("1.0")
                 .withLinks(links)
                 .withVendor(newVendorBean().withName("Atlassian").withUrl("http://www.atlassian.com").build())
-                .withCapability(newWebItemBean()
-                        .withName(new I18nProperty("My Web Item","my.webitem"))
+                .withCapability("webItems", newWebItemBean()
+                        .withName(new I18nProperty("My Web Item", "my.webitem"))
                         .withLink("/my-general-page")
                         .withLocation("atl.admin/menu")
                         .withWeight(100)
-                        .withTooltip(new I18nProperty("click me!","click.me"))
-                        .withStyleClasses("ac-link","aui-link")
+                        .withTooltip(new I18nProperty("click me!", "click.me"))
+                        .withStyleClasses("ac-link", "aui-link")
                         .withIcon(newIconBean().withUrl("/some/icon.png").withWidth(16).withHeight(16).build())
                         .build())
                 .withCapability(newWebhookBean()
                         .withEvent("remote_plugin_enabled")
                         .withUrl("/enabled")
                         .build())
-                .withCapability(newRemoteContainerBean().withDisplayUrl("http://www.example.com").withOAuth(
+                .withCapability(RemoteContainerCapabilityBean.CONNECT_CONTAINER, newRemoteContainerBean().withDisplayUrl("http://www.example.com").withOAuth(
                         newOAuthBean().withPublicKey("S0m3Publ1cK3y").build()
                 ).build())
                 .build();
