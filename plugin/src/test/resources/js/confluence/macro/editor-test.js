@@ -90,7 +90,7 @@ define(['confluence/macro/editor'], function() {
     test("Dialog header is set", function () {
         MacroEditorOpts.insertTitle = 'insert title';
         confluenceMacroEditor.openCustomEditor(MacroData, MacroEditorOpts);
-        equal(dialogSpy.args[0][1].header, MacroEditorOpts.insertTitle, 'dialog header is set to insert title');
+        equal(dialogSpy.args[0][1].header, MacroEditorOpts.insertTitle, 'dialog header is set to "insert title"');
     });
 
     test("dialog header uses edit title when editing", function () {
@@ -101,7 +101,7 @@ define(['confluence/macro/editor'], function() {
             foo: 'bar'
         };
         confluenceMacroEditor.openCustomEditor(MacroData, MacroEditorOpts);
-        equal(dialogSpy.args[0][1].header, MacroEditorOpts.editTitle, 'dialog header is set to edit title');
+        equal(dialogSpy.args[0][1].header, MacroEditorOpts.editTitle, 'dialog header is set to "edit title"');
     });
 
     test("dialog header uses insert title when inserting", function () {
@@ -109,7 +109,7 @@ define(['confluence/macro/editor'], function() {
         MacroEditorOpts.editTitle = 'edit title';
         MacroEditorOpts.url = '/foo/?foo';
         confluenceMacroEditor.openCustomEditor(MacroData, MacroEditorOpts);
-        equal(dialogSpy.args[0][1].header, MacroEditorOpts.insertTitle, 'dialog header is set to insert title');
+        equal(dialogSpy.args[0][1].header, MacroEditorOpts.insertTitle, 'dialog header is set to "insert title"');
     });
 
     test("dialog url contains parameters", function () {
