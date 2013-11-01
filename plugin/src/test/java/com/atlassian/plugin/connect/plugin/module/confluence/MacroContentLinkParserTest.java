@@ -123,7 +123,6 @@ public class MacroContentLinkParserTest
     @Test
     public void ignoresSignUrlsWhenUrlIsInvalid()
     {
-        // TODO: should we throw an error instead
         String invalidUrl = "<a href='sign:???";
         assertThat(macroContentLinkParser.parse(remotablePluginAccessor, invalidUrl, EMPTY), is(invalidUrl));
     }
