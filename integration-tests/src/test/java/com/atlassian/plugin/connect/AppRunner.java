@@ -1,22 +1,17 @@
 package com.atlassian.plugin.connect;
 
-import java.io.IOException;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.test.server.ConnectCapabilitiesRunner;
+import it.capabilities.CheckUsernameConditionServlet;
+import it.servlet.ConnectAppServlets;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
-import com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.test.server.ConnectCapabilitiesRunner;
-
-import it.HttpContextServlet;
-import it.MyContextAwareWebPanelServlet;
-import it.capabilities.CheckUsernameConditionServlet;
-import it.capabilities.jira.TestJiraWebItem;
-
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean.newWebItemBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.SingleConditionBean.newSingleConditionBean;
 
@@ -42,16 +37,16 @@ public class AppRunner
 //                                          .iconUrl("/public/sandcastles.jpg")
 //                                          .height("600")
 //                                          .width("700")
-//                                          .resource(newMustacheServlet("iframe.mu")))
+//                                          .resource(ConnectAppServlets.apRequestServlet()))
 //                    .add(GeneralPageModule.key("amdTest")
 //                                          .name("AMD Test app1 General")
 //                                          .path("/amdTest")
-//                                          .resource(newMustacheServlet("amd-test.mu")))
+//                                          .resource(ConnectAppServlets.apRequestServlet()))
 //                    .add(GeneralPageModule.key("onlyBetty")
 //                                          .name("Only Betty")
 //                                          .path("/ob")
 //                                          .conditions(Condition.name("user_is_logged_in"), Condition.at("/onlyBettyCondition").resource(new TestPageModules.OnlyBettyConditionServlet()))
-//                                          .resource(newMustacheServlet("iframe.mu")))
+//                                          .resource(ConnectAppServlets.apRequestServlet()))
 //                    .add(DialogPageModule.key("remotePluginDialog")
 //                                         .name("Remotable Plugin app1 Dialog")
 //                                         .path("/rpd")
@@ -93,7 +88,8 @@ public class AppRunner
                             .build())
 
                     .addRoute("/onlyBettyCondition", new CheckUsernameConditionServlet("betty"))
-                    .addRoute("/irwi?issue_id=${issue.id}&project_key=${project.key}&pid=${project.id}", new HttpContextServlet(new MyContextAwareWebPanelServlet()))
+                    .addRoute("/irwi?issue_id=${issue.id}&project_key=${project.key}&pid=${project.id}",
+                            ConnectAppServlets.helloWorldServlet())
                     .start();
             while (true)
             {

@@ -6,6 +6,6 @@
     <script src="{{baseurl}}/atlassian-connect/all-debug.js" type="text/javascript"></script>
   </head>
   <body>
-    <p>Hello world</p>
+    <p id="hello-world-message">Hello world</p>
   </body>
 </html>
