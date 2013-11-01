@@ -54,7 +54,7 @@ public class MacroContentLinkParserTest
     public void initParser() throws URISyntaxException
     {
         macroContentLinkParser = new MacroContentLinkParser(confluenceSettingsManager);
-        when(remotablePluginAccessor.getDisplayUrl()).thenReturn(new URI("http://Macintosh.local:3000"));
+        when(remotablePluginAccessor.getBaseUrl()).thenReturn(new URI("http://Macintosh.local:3000"));
         when(confluenceSettingsManager.getGlobalSettings().getBaseUrl()).thenReturn("http://blah.confluence.atlassian.com:1990");
         when(remotablePluginAccessor.getKey()).thenReturn("mykey");
     }
