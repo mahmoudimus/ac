@@ -5,7 +5,8 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConnectPro
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectProjectTabPanelModuleProvider;
 
 /**
- * Adds a tab in JIRA to the Browse Projects page, supplementing the built-in tabs such as Open Issues,
+ * Adds a tab in JIRA to the Browse Projects page, supplementing existing tabs such as Open Issues and
+ * Change Log.
  *
  */
 @CapabilitySet(key = "projectTabPanels", moduleProvider = ConnectProjectTabPanelModuleProvider.class)

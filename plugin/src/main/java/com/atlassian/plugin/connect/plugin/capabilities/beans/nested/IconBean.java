@@ -18,7 +18,8 @@ public class IconBean
      */
     private int height;
     /**
-     * The URL of the icon. Your icon needs to be hosted remotely at a web-accessible location.
+     * The URL of the icon. Your icon needs to be hosted remotely at a web-accessible location. You can specify the
+     * URL as an absolute URL or relative to the add-on's base URL.
      */
     private String url;
 

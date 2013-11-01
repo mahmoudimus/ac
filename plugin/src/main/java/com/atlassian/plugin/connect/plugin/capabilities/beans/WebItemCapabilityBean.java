@@ -28,8 +28,8 @@ import com.atlassian.plugin.connect.plugin.capabilities.provider.WebItemModulePr
 public class WebItemCapabilityBean extends NameToKeyBean
 {
     /**
-     *  Specifies the URL targeted by the link as a string. Some parts of the link should be dynamically generated,
-     *  such as the base URL, issue ID, page id, or other dynamic elements of the link.    [[ ???]]
+     *  Specifies the URL targeted by the link as a string. The URL can be absolute or relative to either the
+     *  product URL or the add-on's base URL, depending on the context parameter.
      */
     private String link;
     /**
@@ -41,23 +41,13 @@ public class WebItemCapabilityBean extends NameToKeyBean
      * For example, the "system.admin/globalsettings" location is in the administrative
      * menu link on the left side of the Administration Console.
      *
-     * Related items in the UI are sometimes grouped into sections. To add a web item to a non-sectioned location,
-     * just specify the location key (system.admin). For sectioned locations, use the location key
-     * followed by a slash ('/') and then the name of the web section in which it should appear (globalsettings).
-     *
-     * While many location keys are specific to the application, there are common location keys as well. To discover
-     * the well-known locations for the application you're targeting, see.... .
      */
     private String location;
     /**
-     *  [[don't know...guesssing...]]
+     *  The context for the URL parameter, if the URL is specified as a relative (not absolute) URL.
      *
-     *  Additional context information you want to pass to the add-on. This information supplements the default
-     *  context that the Atlassian application provides to your add-on, such as information about the
-     *  current user, JIRA project, or Confluence space key.
-     *
-     *  You can use this context parameter to pass a URL to a resource that supplies additional information
-     *  (as URL query parameters) to the web item add-on.
+     *  This context can be either "add-on", which renders the URL relative to the add-on's base URL, or
+     *  "product", which renders the URL relative to the product's base URL.
      */
     private AddOnUrlContext context;
     /**
@@ -66,12 +56,13 @@ public class WebItemCapabilityBean extends NameToKeyBean
      * The "lightest" weight (i.e., lowest number) appears first, rising relative to other items,
      * while the "heaviest" weights sink to the bottom of the menu or list.
      *
-     * Built-in web items have weights that are incremented by 10, leaving room for additional items. Weight value
-     * collisions are handled gracefully in the interface, which chooses  the order chosen based on context (???))
+     * Built-in web items have weights that are incremented by numbers that leave room for additional
+     * items, such as by 10 or 100. Be mindful of the weight you choose for your item, so that it does not
+     * conflict with existing items and appears in a sensible order given those items.
      */
     private Integer weight;
     /**
-     *  If true, the web link opens a dialog box. Otherwise, your item opens a new page in the application. The
+     *  If true, the web link opens a modal dialog. Otherwise, your item opens a new page in the application. The
      *  page gets the usual "atl.general" page decorator, which adds the standard footer and header content
      *  for the application.
      */
