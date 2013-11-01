@@ -50,8 +50,7 @@ requirejs.config({
     },
     'confluence/macro/editor': {
         deps: [
-        'iframe/host/_dollar',
-        ''
+        'iframe/host/_dollar'
         ]
     },
     ///////////////////
