@@ -19,11 +19,10 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
-import org.springframework.stereotype.Component;
-
 public class ComponentAnnotationProcessor extends AbstractProcessor
 {
     public static final String ANNOTATED_INDEX_PREFIX = "META-INF/annotations/";
+    public static final String SPRING_COMPONENT_ANNOTATION = "org.springframework.stereotype.Component";
     private Set<TypeElement> annotatedTypes = new HashSet<TypeElement>();
     private Set<String> indexedAnnotations;
     private Filer filer;
@@ -68,8 +67,8 @@ public class ComponentAnnotationProcessor extends AbstractProcessor
                 for (AnnotationMirror mirror : element.getAnnotationMirrors())
                 {
                     TypeElement annotationElement = (TypeElement) mirror.getAnnotationType().asElement();
-
-                    if (annotationElement.getQualifiedName().toString().equals(Component.class.getName()) || annotationElement.getAnnotation(Component.class) != null)
+                    
+                    if (annotationElement.getQualifiedName().toString().equals(SPRING_COMPONENT_ANNOTATION) || annotationHasComponentAnnotation(annotationElement))
                     {
                         annotatedTypes.add(typeElement);
                     }
@@ -81,7 +80,7 @@ public class ComponentAnnotationProcessor extends AbstractProcessor
                 return false;
             }
 
-            writeIndexFile(annotatedTypes, ANNOTATED_INDEX_PREFIX + Component.class.getName());
+            writeIndexFile(annotatedTypes, ANNOTATED_INDEX_PREFIX + SPRING_COMPONENT_ANNOTATION);
 
         }
         catch (IOException e)
@@ -90,6 +89,20 @@ public class ComponentAnnotationProcessor extends AbstractProcessor
         }
 
         return false;
+    }
+
+    private boolean annotationHasComponentAnnotation(TypeElement annotationElement)
+    {
+        boolean hasComponent = false;
+        for(AnnotationMirror mirror : annotationElement.getAnnotationMirrors())
+        {
+            if(SPRING_COMPONENT_ANNOTATION.equals(((TypeElement) mirror.getAnnotationType().asElement()).getQualifiedName().toString()))
+            {
+                hasComponent = true;
+                break;
+            }
+        }
+        return hasComponent;
     }
 
     private void readOldIndexFile(Set<String> entries, String resourceName) throws IOException

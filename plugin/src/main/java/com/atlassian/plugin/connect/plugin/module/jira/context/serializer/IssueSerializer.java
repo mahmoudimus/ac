@@ -2,7 +2,7 @@ package com.atlassian.plugin.connect.plugin.module.jira.context.serializer;
 
 import com.atlassian.jira.issue.Issue;
 import com.atlassian.plugin.connect.plugin.module.context.ParameterSerializer;
-import com.atlassian.plugin.connect.plugin.spring.JiraComponent;
+import com.atlassian.plugin.connect.annotation.JiraComponent;
 
 import com.google.common.collect.ImmutableMap;
 

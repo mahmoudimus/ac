@@ -5,7 +5,7 @@ import java.util.List;
 import com.atlassian.jira.event.JiraEvent;
 import com.atlassian.plugin.connect.plugin.product.EventMapper;
 import com.atlassian.plugin.connect.plugin.product.jira.JiraRestBeanMarshaler;
-import com.atlassian.plugin.connect.plugin.spring.JiraComponent;
+import com.atlassian.plugin.connect.annotation.JiraComponent;
 import com.atlassian.webhooks.spi.provider.EventSerializer;
 import com.atlassian.webhooks.spi.provider.EventSerializerFactory;
 import com.atlassian.webhooks.spi.provider.EventSerializers;

@@ -1,19 +1,15 @@
-package com.atlassian.plugin.connect.plugin.spring;
+package com.atlassian.plugin.connect.spring;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 
 import javax.annotation.Nullable;
 
-import com.atlassian.plugin.connect.plugin.capabilities.annotation.ProductFilter;
+import com.atlassian.plugin.connect.annotation.ProductFilter;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
 import org.apache.commons.lang.StringUtils;

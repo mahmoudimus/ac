@@ -2,11 +2,10 @@ package com.atlassian.plugin.connect.plugin.module.confluence.context.extractor;
 
 import com.atlassian.confluence.pages.AbstractPage;
 import com.atlassian.confluence.plugin.descriptor.web.WebInterfaceContext;
-import com.atlassian.plugin.connect.plugin.capabilities.annotation.ProductFilter;
 import com.atlassian.plugin.connect.plugin.module.confluence.context.serializer.PageSerializer;
 import com.atlassian.plugin.connect.plugin.module.context.ParameterSerializer;
 import com.atlassian.plugin.connect.plugin.module.context.ContextMapParameterExtractor;
-import com.atlassian.plugin.connect.plugin.spring.ConfluenceComponent;
+import com.atlassian.plugin.connect.annotation.ConfluenceComponent;
 
 import com.google.common.base.Optional;
 

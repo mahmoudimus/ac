@@ -2,10 +2,9 @@ package com.atlassian.plugin.connect.plugin.module.webitem;
 
 import com.atlassian.confluence.plugin.descriptor.web.descriptors.ConfluenceWebItemModuleDescriptor;
 import com.atlassian.confluence.plugin.descriptor.web.model.ConfluenceWebLink;
-import com.atlassian.plugin.connect.plugin.capabilities.annotation.ProductFilter;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.plugin.module.context.ContextMapURLSerializer;
-import com.atlassian.plugin.connect.plugin.spring.ConfluenceComponent;
+import com.atlassian.plugin.connect.annotation.ConfluenceComponent;
 import com.atlassian.plugin.web.WebFragmentHelper;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 

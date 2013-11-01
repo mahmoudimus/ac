@@ -5,6 +5,7 @@ import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+import com.atlassian.plugin.connect.annotation.ProductFilter;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectModuleProvider;
 
 import static java.lang.annotation.ElementType.FIELD;

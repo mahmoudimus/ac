@@ -11,7 +11,7 @@ import com.atlassian.mail.Email;
 import com.atlassian.mail.queue.MailQueue;
 import com.atlassian.mail.queue.SingleMailQueueItem;
 import com.atlassian.plugin.connect.plugin.module.jira.conditions.ViewingOwnProfileCondition;
-import com.atlassian.plugin.connect.plugin.spring.JiraComponent;
+import com.atlassian.plugin.connect.annotation.JiraComponent;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.web.Condition;
 

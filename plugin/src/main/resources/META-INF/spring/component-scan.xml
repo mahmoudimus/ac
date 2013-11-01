@@ -8,7 +8,7 @@
            http://www.atlassian.com/schema/atlasplugin/atlasplugin.xsd">
 
      <atlasplugin:component-scan>
-        <atlasplugin:exclude-filter type="custom" expression="com.atlassian.plugin.connect.plugin.spring.ProductSpecificExclusionFilter"/>
+        <atlasplugin:exclude-filter type="custom" expression="com.atlassian.plugin.connect.spring.ProductSpecificExclusionFilter"/>
     </atlasplugin:component-scan>
 
 </beans>

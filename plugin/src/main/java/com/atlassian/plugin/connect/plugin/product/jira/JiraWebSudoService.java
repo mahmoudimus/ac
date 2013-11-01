@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.plugin.product.jira;
 import com.atlassian.jira.security.websudo.InternalWebSudoManager;
 import com.atlassian.jira.web.SessionKeys;
 import com.atlassian.plugin.connect.plugin.product.WebSudoService;
-import com.atlassian.plugin.connect.plugin.spring.JiraComponent;
+import com.atlassian.plugin.connect.annotation.JiraComponent;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

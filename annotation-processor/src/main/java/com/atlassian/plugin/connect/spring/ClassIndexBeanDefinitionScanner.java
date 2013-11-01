@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.plugin.spring;
+package com.atlassian.plugin.connect.spring;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;

@@ -12,7 +12,7 @@ import com.atlassian.plugin.connect.plugin.module.jira.componenttab.IFrameCompon
 import com.atlassian.plugin.connect.plugin.module.jira.issuetab.IFrameIssueTab;
 import com.atlassian.plugin.connect.plugin.module.jira.projecttab.IFrameProjectTab;
 import com.atlassian.plugin.connect.plugin.module.jira.versiontab.IFrameVersionTab;
-import com.atlassian.plugin.connect.plugin.spring.JiraComponent;
+import com.atlassian.plugin.connect.annotation.JiraComponent;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;

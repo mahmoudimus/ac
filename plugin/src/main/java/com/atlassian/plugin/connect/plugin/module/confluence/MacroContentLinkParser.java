@@ -3,8 +3,7 @@ package com.atlassian.plugin.connect.plugin.module.confluence;
 import java.util.Map;
 
 import com.atlassian.confluence.setup.settings.SettingsManager;
-import com.atlassian.plugin.connect.plugin.capabilities.annotation.ProductFilter;
-import com.atlassian.plugin.connect.plugin.spring.ConfluenceComponent;
+import com.atlassian.plugin.connect.annotation.ConfluenceComponent;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.uri.Uri;
 import com.atlassian.uri.UriBuilder;

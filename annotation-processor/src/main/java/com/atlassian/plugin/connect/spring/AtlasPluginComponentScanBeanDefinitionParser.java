@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.plugin.spring;
+package com.atlassian.plugin.connect.spring;
 
 import java.util.Set;
 
@@ -6,9 +6,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.beans.factory.xml.XmlReaderContext;
-import org.springframework.context.annotation.ClassPathBeanDefinitionScanner;
 import org.springframework.context.annotation.ComponentScanBeanDefinitionParser;
-import org.springframework.util.StringUtils;
 import org.w3c.dom.Element;
 
 public class AtlasPluginComponentScanBeanDefinitionParser extends ComponentScanBeanDefinitionParser

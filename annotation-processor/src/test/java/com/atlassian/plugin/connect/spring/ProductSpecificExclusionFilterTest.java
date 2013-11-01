@@ -1,10 +1,12 @@
-package com.atlassian.plugin.connect.plugin.spring;
+package com.atlassian.plugin.connect.spring;
+
+import com.atlassian.plugin.connect.spring.ProductSpecificExclusionFilter;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import static junit.framework.Assert.fail;
+import static org.junit.Assert.fail;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ProductSpecificExclusionFilterTest
@@ -29,7 +31,7 @@ public class ProductSpecificExclusionFilterTest
         } catch (ClassNotFoundException e) {
             fail(String.format(
                     "Class %s not found on classpath, is it no longer exported from %s? If so, %s will need to be " +
-                    "updated to use an exported class from %s.",
+                            "updated to use an exported class from %s.",
                     clazz, product, ProductSpecificExclusionFilter.class.getName(), product));
         }
     }
