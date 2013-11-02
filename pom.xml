@@ -579,8 +579,8 @@
 
     <repositories>
         <repository>
-            <id>central</id>
-            <url>https://maven.atlassian.com/content/repositories/central</url>
+            <id>maven-central</id>
+            <url>http://repo1.maven.org/maven2</url>
             <releases>
                 <checksumPolicy>fail</checksumPolicy>
                 <enabled>true</enabled>
