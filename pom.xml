@@ -125,10 +125,10 @@
                         <configuration>
                             <rules>
                                 <bannedDependencies>
-                                    <excludes>
+                                    <includes>
                                         <!-- use org.springframework:spring-context instead -->
-                                        <exclude>org.springframework:org.springframework.context</exclude>
-                                    </excludes>
+                                        <include>org.springframework:org.springframework.context</include>
+                                    </includes>
                                 </bannedDependencies>
                             </rules>
                         </configuration>
