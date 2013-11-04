@@ -101,7 +101,7 @@ public class RemoteSearchRequestView implements SearchRequestView
         {
             templateRenderer.render("velocity/view-search-request-redirect.vm", ImmutableMap.<String,
                     Object>of(
-                    "redirectUrl", signedAddonURL, // TODO: change velocity variable name
+                    "redirectUrl", signedAddonURL,
                     "name", name
 
             ), writer);
