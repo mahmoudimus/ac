@@ -1,11 +1,11 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor.url;
 
-import com.google.common.base.Preconditions;
+import com.atlassian.uri.Uri;
 
 import javax.annotation.Nonnull;
 
 /**
- * A holder for a URL that targets a local servlet that is registered on behalf of a remote addon.
+ * A holder for a URL targeting a local servlet that is registered on behalf of a remote addon.
  */
 public class RelativeAddOnUrl
 {
@@ -13,28 +13,30 @@ public class RelativeAddOnUrl
     private static String PLUGINS_SERVLET_PREFIX = "/plugins/servlet";
 
     private final String relativeUrl;
+    private final String servletDescriptorUrl;
 
-    public RelativeAddOnUrl(@Nonnull String relativeUrl)
+    public RelativeAddOnUrl(@Nonnull Uri relativeUri)
     {
-        this.relativeUrl = Preconditions.checkNotNull(relativeUrl);
+        this.relativeUrl = PLUGINS_SERVLET_PREFIX + ensureLeadingSlash(relativeUri.toString());
+        this.servletDescriptorUrl = ensureLeadingSlash(relativeUri.getPath());
     }
 
     /**
      * @return a URL targeting a local servlet that is registered on behalf of a remote addon.
      */
-    public String getRelativeUrl()
+    public String getRelativeUri()
     {
-        return PLUGINS_SERVLET_PREFIX + ensureLeadingSlash(relativeUrl);
+        return relativeUrl;
     }
 
     /**
      * @return a URL suitable for use as the value of the &lt;url-pattern&gt; of a servlet capable of servicing requests
-     *         targeting {@link #getRelativeUrl()}. This differs slightly from the result of {@link #getRelativeUrl()} as it is
+     *         targeting {@link #getRelativeUri()}. This differs slightly from the result of {@link #getRelativeUri()} as it is
      *         not prefixed by {@link #PLUGINS_SERVLET_PREFIX}, which is added automatically by the plugin system.
      */
     public String getServletDescriptorUrl()
     {
-        return relativeUrl;
+        return servletDescriptorUrl;
     }
 
     private String ensureLeadingSlash(String s)
@@ -60,6 +62,10 @@ public class RelativeAddOnUrl
         {
             return false;
         }
+        if (!servletDescriptorUrl.equals(that.servletDescriptorUrl))
+        {
+            return false;
+        }
 
         return true;
     }
@@ -67,6 +73,8 @@ public class RelativeAddOnUrl
     @Override
     public int hashCode()
     {
-        return relativeUrl.hashCode();
+        int result = relativeUrl.hashCode();
+        result = 31 * result + servletDescriptorUrl.hashCode();
+        return result;
     }
 }

@@ -59,7 +59,7 @@ public class WebPanelModuleProvider implements ConnectModuleProvider<WebPanelCap
         {
             RelativeAddOnUrl localUrl = relativeAddOnUrlConverter.addOnUrlToLocalServletUrl(plugin.getKey(), bean.getUrl());
             
-            WebPanelCapabilityBean newBean = newWebPanelBean(bean).withUrl(localUrl.getRelativeUrl()).build();
+            WebPanelCapabilityBean newBean = newWebPanelBean(bean).withUrl(localUrl.getRelativeUri()).build();
             descriptors.add(webPanelFactory.createModuleDescriptor(plugin, addonBundleContext, newBean));
             descriptors.add(iFramePageServletDescriptorFactory.createIFrameServletDescriptor(plugin, newBean,
                     localUrl.getServletDescriptorUrl(), bean.getUrl(), "atl.general", "", new AlwaysDisplayCondition(),
