@@ -506,8 +506,8 @@
         </dependencies>
     </dependencyManagement>
     <dependencies />
-    <!-- REMOVE WHEN JGITFLOW IS FINAL -->
     <pluginRepositories>
+        <!-- REMOVE WHEN JGITFLOW IS FINAL -->
         <pluginRepository>
             <id>snapshots-repo</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
