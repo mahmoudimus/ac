@@ -68,7 +68,7 @@ public class JunkTest
                         .withStyleClasses("ac-link", "aui-link")
                         .withIcon(newIconBean().withUrl("/some/icon.png").withWidth(16).withHeight(16).build())
                         .build())
-                .withCapability(newWebhookBean()
+                .withCapability("webhooks",newWebhookBean()
                         .withEvent("remote_plugin_enabled")
                         .withUrl("/enabled")
                         .build())

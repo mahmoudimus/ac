@@ -1,8 +1,6 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
-import com.atlassian.plugin.connect.plugin.capabilities.annotation.CapabilitySet;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.WebhookCapabilityBeanBuilder;
-import com.atlassian.plugin.connect.plugin.capabilities.provider.WebhookModuleProvider;
 
 /**
  * Webhook registration for an internal event
@@ -24,7 +22,6 @@ import com.atlassian.plugin.connect.plugin.capabilities.provider.WebhookModulePr
  *  }
  *
  */
-@CapabilitySet(key = "webhooks", moduleProvider = WebhookModuleProvider.class)
 public class WebhookCapabilityBean extends BeanWithParams
 {
     private String event;

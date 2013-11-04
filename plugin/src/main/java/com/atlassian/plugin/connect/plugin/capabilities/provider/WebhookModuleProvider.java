@@ -24,7 +24,7 @@ public class WebhookModuleProvider  implements ConnectModuleProvider<WebhookCapa
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(Plugin plugin, BundleContext addonBundleContext, List<WebhookCapabilityBean> beans) {
+    public List<ModuleDescriptor> provideModules(Plugin plugin, BundleContext addonBundleContext, String jsonFieldName, List<WebhookCapabilityBean> beans) {
         List<ModuleDescriptor> descriptors = new ArrayList<ModuleDescriptor>();
 
         for (WebhookCapabilityBean bean : beans)
@@ -41,5 +41,4 @@ public class WebhookModuleProvider  implements ConnectModuleProvider<WebhookCapa
 
         return descriptors;
     }
-
 }
