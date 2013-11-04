@@ -16,6 +16,7 @@ import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.api.service.SignedRequestHandler;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.CapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.RemoteContainerCapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConnectAddonBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.OAuthBean;
 import com.atlassian.plugin.connect.plugin.capabilities.gson.CapabilitiesGsonFactory;
@@ -35,8 +36,8 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import it.ContextServlet;
-import it.HttpContextServlet;
+import it.servlet.ContextServlet;
+import it.servlet.HttpContextServlet;
 import net.oauth.signature.RSA_SHA1;
 
 import static com.atlassian.fugue.Option.some;
@@ -51,6 +52,8 @@ import static com.google.common.collect.Maps.newHashMap;
  */
 public class ConnectCapabilitiesRunner
 {
+    private static final String CONNECT_PLUGIN_SERVLET_PREFIX = "/plugins/servlet/ac/";
+
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final String baseUrl;
@@ -99,10 +102,27 @@ public class ConnectCapabilitiesRunner
         uninstall();
     }
 
-    public ConnectCapabilitiesRunner addCapability(CapabilityBean bean)
+    public ConnectCapabilitiesRunner addCapability(String fieldName, CapabilityBean bean)
     {
-        addonBuilder.withCapability(bean);
+        addonBuilder.withCapability(fieldName, bean);
         return this;
+    }
+
+    public ConnectCapabilitiesRunner addCapabilities(String fieldName, CapabilityBean ... beans)
+    {
+        addonBuilder.withCapabilities(fieldName, beans);
+        return this;
+    }
+
+    public ConnectCapabilitiesRunner addPluginRoute(String relativePath, HttpServlet servlet)
+    {
+       String path = CONNECT_PLUGIN_SERVLET_PREFIX + pluginKey;
+       if (!relativePath.startsWith("/"))
+       {
+            path += "/";
+       }
+       addRoute(path + relativePath, servlet);
+       return this;
     }
 
     public ConnectCapabilitiesRunner addRoute(String path, HttpServlet servlet)
@@ -157,7 +177,7 @@ public class ConnectCapabilitiesRunner
         if (null != oAuthBean)
         {
             addonBuilder.withCapability(
-                    newRemoteContainerBean()
+                    RemoteContainerCapabilityBean.CONNECT_CONTAINER, newRemoteContainerBean()
                             .withDisplayUrl(displayUrl)
                             .withOAuth(oAuthBean)
                             .build()
@@ -166,7 +186,7 @@ public class ConnectCapabilitiesRunner
         else
         {
             addonBuilder.withCapability(
-                    newRemoteContainerBean()
+                    RemoteContainerCapabilityBean.CONNECT_CONTAINER, newRemoteContainerBean()
                             .withDisplayUrl(displayUrl)
                             .build()
             );

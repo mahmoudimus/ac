@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
-import com.atlassian.plugin.connect.plugin.capabilities.annotation.CapabilitySet;
+import com.atlassian.plugin.connect.plugin.capabilities.annotation.CapabilityModuleProvider;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.WebPanelCapabilityBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.WebPanelLayout;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.WebPanelModuleProvider;
@@ -26,7 +26,6 @@ import com.atlassian.plugin.connect.plugin.capabilities.provider.WebPanelModuleP
  *
  * @since version 1.0
  */
-@CapabilitySet(key = "webPanels", moduleProvider = WebPanelModuleProvider.class)
 public class WebPanelCapabilityBean extends NameToKeyBean
 {
     private String location;

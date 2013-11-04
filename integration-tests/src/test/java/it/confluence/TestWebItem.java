@@ -8,7 +8,7 @@ import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
 import com.atlassian.plugin.connect.test.server.module.RemoteWebItemModule;
 import com.google.common.base.Optional;
-import it.MyContextAwareWebPanelServlet;
+import it.servlet.ConnectAppServlets;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -18,14 +18,9 @@ import java.net.MalformedURLException;
 import java.rmi.RemoteException;
 
 import static com.atlassian.fugue.Option.some;
-import static com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner.newServlet;
 import static it.TestConstants.BETTY_USERNAME;
 import static org.hamcrest.Matchers.containsString;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * Test of remote web items in Confluence.
@@ -47,7 +42,7 @@ public class TestWebItem extends ConfluenceWebDriverTestBase
                         .section("system.browse")
                         .weight(100)
                         .link(RemoteWebItemModule.Link.link("/irwi?space_id=${space.key}&page_id=${page.id}", false))
-                        .resource(newServlet(new MyContextAwareWebPanelServlet())))
+                        .resource(ConnectAppServlets.helloWorldServlet()))
                 .add(RemoteWebItemModule.key(ABSOLUTE_WEB_ITEM)
                         .name("Quick project link")
                         .section("system.browse")

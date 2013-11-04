@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.plugin;
 
 import com.atlassian.applinks.spi.auth.AuthenticationConfigurationManager;
+import com.atlassian.httpclient.api.DefaultResponseTransformation;
 import com.atlassian.httpclient.api.HttpClient;
 import com.atlassian.httpclient.api.Request;
 import com.atlassian.httpclient.api.ResponsePromise;
@@ -26,14 +27,22 @@ import net.oauth.OAuth;
 import org.junit.Test;
 
 import java.net.URI;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class OAuthSigningRemotablePluginAccessorTest
 {
@@ -125,42 +134,30 @@ public class OAuthSigningRemotablePluginAccessorTest
         return new CachingHttpContentRetriever(licenseRetriever, localeHelper, httpClientFactory, mock(PluginRetrievalService.class, RETURNS_DEEP_STUBS));
     }
 
-    private HttpClient mockHttpClient(Request request)
+    private HttpClient mockHttpClient(Request.Builder request)
     {
         HttpClient httpClient = mock(HttpClient.class, RETURNS_DEEP_STUBS);
         when(httpClient.newRequest(GET_FULL_URL)).thenReturn(request);
+        when(httpClient.transformation()).thenReturn(DefaultResponseTransformation.builder());
         return httpClient;
     }
 
-    private Request mockRequest(String promisedHttpResponse) throws InterruptedException, ExecutionException
+    private Request.Builder mockRequest(String promisedHttpResponse) throws InterruptedException, ExecutionException
     {
-        Request request = mock(Request.class);
+        Request.Builder requestBuilder = mock(Request.Builder.class);
         {
-            when(request.setHeaders(GET_HEADERS)).thenReturn(request);
-            when(request.setAttributes(any(Map.class))).thenReturn(request);
+            when(requestBuilder.setHeaders(GET_HEADERS)).thenReturn(requestBuilder);
+            when(requestBuilder.setAttributes(any(Map.class))).thenReturn(requestBuilder);
             {
-                ResponseTransformation responseTransformation = mockResponseTransformation(promisedHttpResponse);
                 ResponsePromise responsePromise = mock(ResponsePromise.class);
-                when(responsePromise.transform()).thenReturn(responseTransformation);
-                when(request.execute(any(Request.Method.class))).thenReturn(responsePromise);
+                when(requestBuilder.execute(any(Request.Method.class))).thenReturn(responsePromise);
+
+                Promise<String> promise = mock(Promise.class);
+                when(promise.get()).thenReturn(promisedHttpResponse);
+                when(responsePromise.transform(any(ResponseTransformation.class))).thenReturn(promise);
             }
         }
-        return request;
-    }
-
-    private ResponseTransformation mockResponseTransformation(String promisedHttpResponse) throws InterruptedException, ExecutionException
-    {
-        ResponseTransformation responseTransformation = mock(ResponseTransformation.class);
-        when(responseTransformation.ok(any(Function.class))).thenReturn(responseTransformation);
-        when(responseTransformation.forbidden(any(Function.class))).thenReturn(responseTransformation);
-        when(responseTransformation.others(any(Function.class))).thenReturn(responseTransformation);
-        when(responseTransformation.fail(any(Function.class))).thenReturn(responseTransformation);
-        {
-            Promise<String> promise = mock(Promise.class);
-            when(promise.get()).thenReturn(promisedHttpResponse);
-            when(responseTransformation.toPromise()).thenReturn(promise);
-        }
-        return responseTransformation;
+        return requestBuilder;
     }
 
     private static class MockOAuthLinkManager extends OAuthLinkManager
@@ -172,9 +169,9 @@ public class OAuthSigningRemotablePluginAccessorTest
 
         @Override
         public List<Map.Entry<String, String>> signAsParameters(ServiceProvider serviceProvider,
-                                                                HttpMethod method,
-                                                                URI url,
-                                                                Map<String, List<String>> originalParams)
+                HttpMethod method,
+                URI url,
+                Map<String, List<String>> originalParams)
         {
             Map<String, List<String>> paramsWithPredicatableOAuthValues = new HashMap<String, List<String>>(originalParams.size());
 
@@ -207,9 +204,9 @@ public class OAuthSigningRemotablePluginAccessorTest
 
         @Override
         public String generateAuthorizationHeader(HttpMethod method,
-                                                  ServiceProvider serviceProvider,
-                                                  URI url,
-                                                  Map<String, List<String>> originalParams)
+                ServiceProvider serviceProvider,
+                URI url,
+                Map<String, List<String>> originalParams)
         {
             return null; // results in no Authorization header being added, allowing us to assert that headers-in == headers-out
         }

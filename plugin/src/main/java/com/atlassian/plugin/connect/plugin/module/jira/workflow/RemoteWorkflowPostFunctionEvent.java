@@ -54,7 +54,7 @@ public class RemoteWorkflowPostFunctionEvent
                 }
 
                 @Override
-                public String getJson() throws EventSerializationException
+                public String getWebHookBody() throws EventSerializationException
                 {
                     return event.getJson();
                 }

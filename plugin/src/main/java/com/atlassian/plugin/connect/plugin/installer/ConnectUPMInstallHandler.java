@@ -1,7 +1,5 @@
 package com.atlassian.plugin.connect.plugin.installer;
 
-import java.io.File;
-
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.capabilities.gson.CapabilitiesGsonFactory;
@@ -12,19 +10,23 @@ import com.atlassian.upm.api.util.Option;
 import com.atlassian.upm.spi.PluginInstallException;
 import com.atlassian.upm.spi.PluginInstallHandler;
 import com.atlassian.upm.spi.PluginInstallResult;
-
 import com.google.common.base.Charsets;
 import com.google.common.base.Strings;
 import com.google.common.io.Files;
-
 import org.dom4j.Document;
 import org.osgi.framework.BundleContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
 
 /**
  * @since 1.0
  */
 public class ConnectUPMInstallHandler implements PluginInstallHandler
 {
+    private static final Logger log = LoggerFactory.getLogger(ConnectUPMInstallHandler.class);
+
     private final ConnectAddOnIdentifierService connectIdentifier;
     private final ConnectAddOnInstaller connectInstaller;
     private final UserManager userManager;
@@ -56,6 +58,11 @@ public class ConnectUPMInstallHandler implements PluginInstallHandler
             }
             catch (Exception e)
             {
+                if (log.isTraceEnabled())
+                {
+                    log.trace(ConnectUPMInstallHandler.class.getSimpleName() + " can not install descriptor " +
+                            descriptorFile.getName(), e);
+                }
                 caninstall = false;
             }
         }
@@ -66,7 +73,6 @@ public class ConnectUPMInstallHandler implements PluginInstallHandler
     @Override
     public PluginInstallResult installPlugin(File descriptorFile, Option<String> contentType) throws PluginInstallException
     {
-        Option<String> errorI18nKey = Option.<String>some("connect.remote.upm.install.exception");
         try
         {
             boolean isXml = connectIdentifier.isConnectAddOn(descriptorFile);
@@ -77,12 +83,12 @@ public class ConnectUPMInstallHandler implements PluginInstallHandler
                 //TODO: get rid of formatConverter when we go to capabilities
                 Document doc = formatConverter.readFileToDoc(descriptorFile);
                 
-                plugin = connectInstaller.install(userManager.getRemoteUsername(),doc);
+                plugin = connectInstaller.install(userManager.getRemoteUsername(), doc);
             }
             else
             {
                 String json = Files.toString(descriptorFile,Charsets.UTF_8);
-                plugin = connectInstaller.install(userManager.getRemoteUsername(),json);
+                plugin = connectInstaller.install(userManager.getRemoteUsername(), json);
             }
             
             return new PluginInstallResult(plugin);
@@ -91,9 +97,11 @@ public class ConnectUPMInstallHandler implements PluginInstallHandler
         {
             throw e;
         }
-        catch(Exception e)
+        catch (Exception e)
         {
-            throw new PluginInstallException("unable to install connect add on", errorI18nKey);
+            log.error("Failed to install " + descriptorFile.getName(), e);
+            throw new PluginInstallException("Unable to install connect add on.",
+                    Option.some("connect.remote.upm.install.exception"));
         }
     }
     

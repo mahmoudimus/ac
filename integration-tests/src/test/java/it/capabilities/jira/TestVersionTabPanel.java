@@ -1,22 +1,19 @@
 package it.capabilities.jira;
 
+import java.rmi.RemoteException;
+
 import com.atlassian.jira.functest.framework.FunctTestConstants;
 import com.atlassian.jira.testkit.client.restclient.Version;
 import com.atlassian.jira.testkit.client.restclient.VersionClient;
 import com.atlassian.jira.tests.TestBase;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanelModuleProvider;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraVersionTabPage;
 import com.atlassian.plugin.connect.test.server.ConnectCapabilitiesRunner;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import it.servlet.ConnectAppServlets;
+import org.junit.*;
 
-import java.rmi.RemoteException;
-
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectVersionTabPanelCapabilityBean.newVersionTabPanelBean;
-import static com.atlassian.plugin.connect.test.server.ConnectCapabilitiesRunner.newMustacheServlet;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectTabPanelCapabilityBean.newTabPanelBean;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
@@ -37,13 +34,13 @@ public class TestVersionTabPanel extends TestBase
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        remotePlugin = new ConnectCapabilitiesRunner(jira().getProductInstance().getBaseUrl(),"my-plugin")
-                .addCapability(newVersionTabPanelBean()
+        remotePlugin = new ConnectCapabilitiesRunner(jira().getProductInstance().getBaseUrl(), "my-plugin")
+                .addCapability(ConnectTabPanelModuleProvider.VERSION_TAB_PANELS, newTabPanelBean()
                         .withName(new I18nProperty("Version Tab Panel", null))
                         .withUrl("/ipp?version_id=${version.id}&project_id=${project.id}&project_key=${project.key}")
                         .withWeight(1234)
                         .build())
-                .addRoute("/ipp", newMustacheServlet("iframe.mu"))
+                .addRoute("/ipp", ConnectAppServlets.apRequestServlet())
                 .start();
     }
 
