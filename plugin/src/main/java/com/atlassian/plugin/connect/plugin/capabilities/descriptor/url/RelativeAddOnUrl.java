@@ -1,6 +1,8 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor.url;
 
 import com.atlassian.uri.Uri;
+import com.google.common.base.Splitter;
+import com.google.common.collect.Iterables;
 
 import javax.annotation.Nonnull;
 
@@ -19,6 +21,17 @@ public class RelativeAddOnUrl
     {
         this.relativeUrl = PLUGINS_SERVLET_PREFIX + ensureLeadingSlash(relativeUri.toString());
         this.servletDescriptorUrl = ensureLeadingSlash(relativeUri.getPath());
+    }
+
+    /**
+     * Use this for URI's with variable placeholders to avoid them being url encoded
+     * @param relativeUri
+     */
+    public RelativeAddOnUrl(@Nonnull String relativeUri)
+    {
+        String path = Iterables.getFirst(Splitter.on('?').split(relativeUri), relativeUri);
+        this.relativeUrl = PLUGINS_SERVLET_PREFIX + ensureLeadingSlash(relativeUri);
+        this.servletDescriptorUrl = ensureLeadingSlash(path);
     }
 
     /**

@@ -1,12 +1,9 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor.url;
 
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
-import com.atlassian.uri.Uri;
-import com.atlassian.uri.UriBuilder;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ObjectArrays;
-import org.apache.commons.lang.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,23 +42,7 @@ public class RelativeAddOnUrlConverter
     public RelativeAddOnUrl addOnUrlToLocalServletUrl(String pluginKey, String addOnUrl, NameValuePair... extraParams)
     {
         String addonPath = (addOnUrl.startsWith("/") ? addOnUrl : "/" + addOnUrl);
-        String addonPathMinusQueryString = StringUtils.split(addonPath, "?")[0];
-
-        UriBuilder uriBuilder = new UriBuilder(Uri.parse(CONNECT_SERVLET_PREFIX + pluginKey + addonPathMinusQueryString));
-
-        Map<String, String> contextParams = urlVariableSubstitutor.getContextVariableMap(addOnUrl);
-
-        for (Map.Entry<String, String> entry : contextParams.entrySet())
-        {
-            uriBuilder.addQueryParameter(entry.getKey(), entry.getValue());
-        }
-
-        for (NameValuePair nvp : extraParams)
-        {
-            uriBuilder.addQueryParameter(nvp.getName(), nvp.getValue());
-        }
-
-        return new RelativeAddOnUrl(uriBuilder.toUri());
+        return new RelativeAddOnUrl(CONNECT_SERVLET_PREFIX + pluginKey + addonPath);
     }
 
     /**

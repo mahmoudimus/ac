@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
+import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.RelativeAddOnUrl;
+import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.RelativeAddOnUrlConverter;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,7 +19,7 @@ public class RelativeAddOnUrlConverterTest
     public void prependsACContextToPath()
     {
         RelativeAddOnUrlConverter urlConverter = new RelativeAddOnUrlConverter(new UrlVariableSubstitutor());
-        String localUrl = urlConverter.addOnUrlToLocalServletUrl("my-plugin", URL);
-        assertThat(localUrl, is("/plugins/servlet/ac/my-plugin" + URL));
+        RelativeAddOnUrl localUrl = urlConverter.addOnUrlToLocalServletUrl("my-plugin", URL);
+        assertThat(localUrl.getRelativeUri(), is("/plugins/servlet/ac/my-plugin" + URL));
     }
 }
