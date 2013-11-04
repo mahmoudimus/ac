@@ -54,7 +54,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
                         .withName(new I18nProperty("Quick project link", "ac.qp"))
                         .withLocation("system.top.navigation.bar")
                         .withWeight(1)
-                        .withLink("/browse/ACDEV-1234")
+                        .withLink("/browse/ACDEV-1234?project_key=${project.key}")
                         .build()
                         ,newWebItemBean()
                         .withName(new I18nProperty("google link", "ac.gl"))
@@ -91,7 +91,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
         RemoteWebItem webItem = viewProjectPage.findWebItem(ABSOLUTE_WEBITEM, Optional.<String>absent());
         assertNotNull("Web item should be found", webItem);
 
-        assertTrue("Web item link should be absolute", webItem.isPointingToOldXmlInternalUrl());
+        assertTrue("Web item link should be absolute", webItem.isPointingToACInternalUrl());
         assertURIEquals("http://www.google.com", webItem.getPath());
     }
     
@@ -121,6 +121,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
 
         URL url = new URL(webItem.getPath());
         assertThat(url.getPath(), is("/jira/browse/ACDEV-1234"));
+        assertEquals(project.getKey(), webItem.getFromQueryString("project_key"));
     }
 
     @Test
