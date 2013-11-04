@@ -532,7 +532,7 @@
         <atlassian.applinks.version>4.0.2</atlassian.applinks.version>
         <atlassian.confluence.version>5.3-OD-6</atlassian.confluence.version>
         <atlassian.fugue.version>1.1</atlassian.fugue.version>
-        <atlassian.httpclient.version>0.17.0</atlassian.httpclient.version>
+        <atlassian.httpclient.version>0.17.1</atlassian.httpclient.version>
         <atlassian.httpclient.api.version>0.17</atlassian.httpclient.api.version>
         <atlassian.jira.version>6.1-OD-06-1</atlassian.jira.version>
         <atlassian.jira.modules.version>6.1.5</atlassian.jira.modules.version>
