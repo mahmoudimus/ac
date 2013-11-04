@@ -1,26 +1,23 @@
 package com.atlassian.plugin.connect.test.webhook;
 
-import java.io.IOException;
-import java.net.URI;
-import java.util.concurrent.BlockingDeque;
-import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.TimeUnit;
+import cc.plural.jsonij.JPath;
+import cc.plural.jsonij.JSON;
+import cc.plural.jsonij.Value;
+import cc.plural.jsonij.parser.ParserException;
+import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
+import com.atlassian.plugin.connect.test.server.ConnectCapabilitiesRunner;
+import com.atlassian.plugin.connect.test.server.module.WebhookModule;
+import org.apache.commons.io.IOUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
-import com.atlassian.plugin.connect.test.server.ConnectCapabilitiesRunner;
-import com.atlassian.plugin.connect.test.server.module.WebhookModule;
-
-import org.apache.commons.io.IOUtils;
-
-import cc.plural.jsonij.JPath;
-import cc.plural.jsonij.JSON;
-import cc.plural.jsonij.Value;
-import cc.plural.jsonij.parser.ParserException;
+import java.io.IOException;
+import java.net.URI;
+import java.util.concurrent.BlockingDeque;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.TimeUnit;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebhookCapabilityBean.newWebhookBean;
 
@@ -84,7 +81,7 @@ public final class WebHookTestServlet extends HttpServlet
         final String path = "/webhook";
         final WebHookTestServlet servlet = new WebHookTestServlet();
         ConnectCapabilitiesRunner runner = new ConnectCapabilitiesRunner(baseUrl, webHookId)
-                .addCapability(newWebhookBean().withEvent(eventId).withUrl(path).build())
+                .addCapability("webhooks",newWebhookBean().withEvent(eventId).withUrl(path).build())
                 .addRoute(path, servlet)
                 .start();
 
