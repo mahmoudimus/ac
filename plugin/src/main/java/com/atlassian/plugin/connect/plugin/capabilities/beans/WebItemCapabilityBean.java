@@ -28,54 +28,66 @@ import com.atlassian.plugin.connect.plugin.capabilities.provider.WebItemModulePr
 public class WebItemCapabilityBean extends NameToKeyBean
 {
     /**
-     *  Specifies the URL targeted by the link as a string. The URL can be absolute or relative to either the
-     *  product URL or the add-on's base URL, depending on the context parameter.
+     *  Specifies the URL targeted by the link. The URL can be absolute or relative to either the
+     *  product URL or the add-on's base URL, depending on the {@link AddOnUrlContext} parameter.
      */
     private String link;
+
     /**
      * The location in the application interface where the web item should appear. For the Atlassian application
      * interface, a location is something like the coordinates on a map. It points to a particular drop-down menu or
      * navigation list in the UI.
      *
+     * <p/>
+     *
      * Places in the Atlassian UI are identified by what are known as "well-known locations."
      * For example, the "system.admin/globalsettings" location is in the administrative
      * menu link on the left side of the Administration Console.
-     *
      */
     private String location;
+
     /**
      *  The context for the URL parameter, if the URL is specified as a relative (not absolute) URL.
+     *
+     * <p/>
      *
      *  This context can be either "add-on", which renders the URL relative to the add-on's base URL, or
      *  "product", which renders the URL relative to the product's base URL.
      */
     private AddOnUrlContext context;
+
     /**
      * Determines the order in which the web item appears in the menu or list.
+     *
+     * <p/>
      *
      * The "lightest" weight (i.e., lowest number) appears first, rising relative to other items,
      * while the "heaviest" weights sink to the bottom of the menu or list.
      *
+     * <p/>
+     *
      * Built-in web items have weights that are incremented by numbers that leave room for additional
-     * items, such as by 10 or 100. Be mindful of the weight you choose for your item, so that it does not
-     * conflict with existing items and appears in a sensible order given those items.
+     * items, such as by 10 or 100. Be mindful of the weight you choose for your item, so that it appears
+     * in a sensible order given existing items.
      */
     private Integer weight;
+
     /**
-     *  If true, the web link opens a modal dialog. Otherwise, your item opens a new page in the application. The
-     *  page gets the usual "atl.general" page decorator, which adds the standard footer and header content
-     *  for the application.
+     *  If true, the link opens a modal dialog. Otherwise the link behaves as a regular hyperlink.
      */
     private Boolean dialog;
+
     /**
      * Specifies custom styles for the web link target page, if desired. By default, the web item content gets
      * styled in the default style of the target application.
      */
     private List<String> styleClasses;
+
     /**
-     * The i18n key to be used to look up the textual, mouse-over text of the link. [[??]]
+     * The internationalised text to be used in the link's tooltip.
      */
     private I18nProperty tooltip;
+
     /**
      *  An optional icon to display with the link text or as the link, specified by URL to its hosted location.
      *  You can specify a particular width and height for the icon. Most link icons in Atlassian applications
