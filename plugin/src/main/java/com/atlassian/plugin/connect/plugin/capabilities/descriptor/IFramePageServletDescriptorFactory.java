@@ -6,6 +6,7 @@ import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.NameToKeyBean;
 import com.atlassian.plugin.connect.plugin.module.IFramePageRenderer;
 import com.atlassian.plugin.connect.plugin.module.IFrameParamsImpl;
+import com.atlassian.plugin.connect.plugin.module.jira.projectconfig.IFrameProjectConfigTabServlet;
 import com.atlassian.plugin.connect.plugin.module.page.IFrameContextImpl;
 import com.atlassian.plugin.connect.plugin.module.page.IFramePageServlet;
 import com.atlassian.plugin.connect.plugin.module.page.PageInfo;
@@ -23,6 +24,7 @@ import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.servlet.http.HttpServlet;
 import java.util.Map;
 
 import static com.atlassian.plugin.connect.plugin.util.OsgiServiceUtils.getService;
@@ -48,42 +50,53 @@ public class IFramePageServletDescriptorFactory
         this.bundleContext = bundleContext;
     }
 
+    /**
+     * @return a generic iframe module servlet descriptor.
+     */
     public ServletModuleDescriptor createIFrameServletDescriptor(final Plugin plugin, final NameToKeyBean bean,
+                                                                 final String localUrl, final String path,
+                                                                 final String decorator, final String templateSuffix,
+                                                                 final Condition condition,
+                                                                 final Map<String, String> metaTagsContent) {
+        return createIFrameServletDescriptor(plugin, bean, localUrl, path, decorator, templateSuffix, condition,
+                metaTagsContent, ModuleFactoryType.PAGE);
+    }
+
+    /**
+     * @return an iframe servlet module descriptor suitable for providing a JIRA Project admin tab.
+     */
+    public ServletModuleDescriptor createIFrameProjectConfigTabServletDescriptor(final Plugin plugin, final NameToKeyBean bean,
                                                                  final String localUrl, final String path,
                                                                  final String decorator, final String templateSuffix,
                                                                  final Condition condition,
                                                                  final Map<String, String> metaTagsContent)
     {
+        return createIFrameServletDescriptor(plugin, bean, localUrl, path, decorator, templateSuffix, condition,
+                metaTagsContent, ModuleFactoryType.JIRA_PROJECT_ADMIN_TAB);
+    }
+
+    private ServletModuleDescriptor createIFrameServletDescriptor(final Plugin plugin, final NameToKeyBean bean,
+                                                                 final String localUrl, final String path,
+                                                                 final String decorator, final String templateSuffix,
+                                                                 final Condition condition,
+                                                                 final Map<String, String> metaTagsContent,
+                                                                 final ModuleFactoryType type)
+    {
         final String pageName = (!Strings.isNullOrEmpty(bean.getName().getValue()) ? bean.getName().getValue() : bean.getKey());
-        
         final String moduleKey = "servlet-" + bean.getKey();
 
-//        final String pageName = "";
-//        final String moduleKey = "";
-        
         final Element servletElement = createServletElement(moduleKey,localUrl);
 
         final Map<String,String> contextParams = urlVariableSubstitutor.getContextVariableMap(path);
 
         final IFrameParams params = new IFrameParamsImpl();
-        final ServletModuleDescriptor descriptor = new ServletModuleDescriptor(new ModuleFactory()
-        {
-            @Override
-            public <T> T createModule(String name, ModuleDescriptor<T> moduleDescriptor) throws
-                    PluginParseException
-            {
-                PageInfo pageInfo = new PageInfo(decorator, templateSuffix, pageName, condition, metaTagsContent);
+        final ServletModuleDescriptor descriptor = new ServletModuleDescriptor(
+                getModuleFactory(plugin, path, decorator, templateSuffix, condition, metaTagsContent, pageName,
+                                 moduleKey, contextParams, params, type),
+                getService(bundleContext, ServletModuleManager.class)
+        );
 
-                return (T) new IFramePageServlet(
-                        pageInfo,
-                        iFramePageRenderer,
-                        new IFrameContextImpl(plugin.getKey(), path, moduleKey, params), userManager, urlVariableSubstitutor,
-                        contextParams
-                );
-            }
-        }, getService(bundleContext, ServletModuleManager.class));
-
-       descriptor.init(plugin,servletElement);
+        descriptor.init(plugin,servletElement);
 
         return descriptor;
     }
@@ -96,7 +109,75 @@ public class IFramePageServletDescriptorFactory
         root.addAttribute("class",IFramePageServlet.class.getName());
         root.addElement("url-pattern").setText(localUrl + "");
         root.addElement("url-pattern").setText(localUrl + "/*");
-        
+
         return root;
+    }
+
+    /**
+     * This enumerates the different types of {@link HttpServlet} that can be returned by
+     * {@link ServletModuleDescriptor ServletModuleDescriptors} created by the
+     * {@link IFramePageServletDescriptorFactory}.
+     */
+    private static enum ModuleFactoryType {
+        /**
+         * A generic iframe servlet.
+         */
+        PAGE,
+        /**
+         * An iframe servlet that provides JIRA Project admin tabs.
+         */
+        JIRA_PROJECT_ADMIN_TAB
+    }
+
+    /**
+     * The {@link ModuleFactory} factory method.
+     */
+    private ModuleFactory getModuleFactory(final Plugin plugin, final String path, final String decorator,
+                                           final String templateSuffix, final Condition condition,
+                                           final Map<String, String> metaTagsContent, final String pageName,
+                                           final String moduleKey, final Map<String, String> contextParams,
+                                           final IFrameParams params, final ModuleFactoryType type)
+    {
+        switch (type) {
+            case PAGE:
+                return new ModuleFactory()
+                {
+                    @Override
+                    public <T> T createModule(String name, ModuleDescriptor<T> moduleDescriptor) throws
+                            PluginParseException
+                    {
+                        PageInfo pageInfo = new PageInfo(decorator, templateSuffix, pageName, condition, metaTagsContent);
+
+                        return (T) new IFramePageServlet(
+                                pageInfo,
+                                iFramePageRenderer,
+                                new IFrameContextImpl(plugin.getKey(), path, moduleKey, params), userManager, urlVariableSubstitutor,
+                                contextParams
+                        );
+                    }
+                };
+
+            case JIRA_PROJECT_ADMIN_TAB:
+                return new ModuleFactory()
+                {
+                    @Override
+                    public <T> T createModule(String name, ModuleDescriptor<T> moduleDescriptor) throws
+                            PluginParseException
+                    {
+                        PageInfo pageInfo = new PageInfo(decorator, templateSuffix, pageName, condition, metaTagsContent);
+
+                        return (T) new IFrameProjectConfigTabServlet(
+                                pageInfo,
+                                iFramePageRenderer,
+                                new IFrameContextImpl(plugin.getKey(), path, moduleKey, params), userManager, urlVariableSubstitutor,
+                                contextParams
+                        );
+                    }
+                };
+
+            default:
+                throw new IllegalStateException("Unrecognized " + ModuleFactoryType.class + ": " + type);
+        }
+
     }
 }

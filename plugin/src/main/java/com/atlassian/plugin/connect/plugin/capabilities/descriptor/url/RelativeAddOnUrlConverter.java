@@ -35,7 +35,7 @@ public class RelativeAddOnUrlConverter
     /**
      * Converts an addon-relative url to a local servlet url using the plugin and module keys
      * and copies any query parameters from the relative url to the local url. This method also
-     * accepts "extra" {@link NameValuePair}s to be added to the query string
+     * accepts "extra" {@link NameValuePair}s to be added to the query string.
      *
      * @param pluginKey   the plugin key of the connect addon
      * @param addOnUrl    an addon-relative url
@@ -61,7 +61,7 @@ public class RelativeAddOnUrlConverter
             uriBuilder.addQueryParameter(nvp.getName(), nvp.getValue());
         }
 
-        return new RelativeAddOnUrl(uriBuilder.toString());
+        return new RelativeAddOnUrl(uriBuilder.toUri());
     }
 
     /**
