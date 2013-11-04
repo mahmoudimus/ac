@@ -165,23 +165,6 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
         {
             return Suppliers.ofInstance(link.getDisplayUrl());
         }
-        /*
-        ** I'm pretty sure this was for UB, but need to test **
-         
-        else if (isRemotable(pluginKey))
-        {
-            return Suppliers.compose(ToUriFunction.INSTANCE,
-                    new Supplier<String>()
-                    {
-                        @Override
-                        public String get()
-                        {
-                            return ubDispatchFilter.getLocalMountBaseUrl(pluginKey);
-                        }
-                    }
-            );
-        }
-        */
         else
         {
             return Suppliers.compose(ToUriFunction.INSTANCE,

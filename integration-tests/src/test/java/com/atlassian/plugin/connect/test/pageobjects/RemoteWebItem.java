@@ -38,21 +38,8 @@ public class RemoteWebItem
     {
         webItem = elementFinder.find(By.id(id));
         waitUntilTrue(webItem.timed().isPresent());
-    }
 
-    public boolean isAbsolute()
-    {
-        return !webItem.getAttribute("href").contains("/plugins/servlet/atlassian-connect/");
-    }
-
-    public void click()
-    {
-        if (dropDownLinkId.isPresent())
-        {
-            elementFinder.find(By.id(dropDownLinkId.get())).click();
-        }
-        webItem.click();
-        if (!isAbsolute())
+        if (!isPonitingToOldXmlInternalUrl() && !isPonitingToACInternalUrl())
         {
             path = elementFinder.find(By.id(IFRAME_ID_PREFIX + id + IFRAME_ID_SUFFIX)).getAttribute("src");
         }
@@ -62,6 +49,35 @@ public class RemoteWebItem
         }
     }
 
+    public boolean isPonitingToOldXmlInternalUrl()
+    {
+        return !webItem.getAttribute("href").contains("/plugins/servlet/atlassian-connect/");
+    }
+
+    public boolean isPonitingToACInternalUrl()
+    {
+        return !webItem.getAttribute("href").contains("/plugins/servlet/ac/");
+    }
+
+    public void click()
+    {
+        if (dropDownLinkId.isPresent())
+        {
+            elementFinder.find(By.id(dropDownLinkId.get())).click();
+        }
+        webItem.click();
+    }
+
+    public boolean isVisible()
+    {
+        if(null == webItem)
+        {
+            return false;
+        }
+        
+        return webItem.isVisible();
+    }
+    
     public String getFromQueryString(final String key)
     {
         return RemotePageUtil.findInContext(path, key);

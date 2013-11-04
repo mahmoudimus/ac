@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.0-m17-SNAPSHOT</version>
+        <version>1.0-m19-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -64,11 +64,6 @@
         <dependency>
             <groupId>com.atlassian.httpclient</groupId>
             <artifactId>atlassian-httpclient-api</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.atlassian.httpclient</groupId>
-            <artifactId>atlassian-httpclient-apache-httpcomponents</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -251,6 +246,11 @@
                                     <version>${atlassian.jira.webhooks.version}</version>
                                 </pluginArtifact>
                                 <pluginArtifact>
+                                    <groupId>com.atlassian.httpclient</groupId>
+                                    <artifactId>atlassian-httpclient-plugin</artifactId>
+                                    <version>${atlassian.httpclient.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
                                     <groupId>${project.groupId}</groupId>
                                     <artifactId>atlassian-connect-plugin</artifactId>
                                     <version>${project.version}</version>
@@ -323,6 +323,11 @@
                                     <version>${atlassian.webhooks.version}</version>
                                 </pluginArtifact>
                                 <pluginArtifact>
+                                    <groupId>com.atlassian.httpclient</groupId>
+                                    <artifactId>atlassian-httpclient-plugin</artifactId>
+                                    <version>${atlassian.httpclient.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
                                     <groupId>${project.groupId}</groupId>
                                     <artifactId>atlassian-connect-plugin</artifactId>
                                     <version>${project.version}</version>
@@ -376,6 +381,7 @@
                             </systemProperties>
                             <excludes>
                                 <exclude>it/jira/*.java</exclude>
+                                <exclude>it/*/jira/*.java</exclude>
                             </excludes>
                         </testGroup>
                         <testGroup>
@@ -390,6 +396,7 @@
                             </systemProperties>
                             <excludes>
                                 <exclude>it/confluence/*.java</exclude>
+                                <exclude>it/*/confluence/*.java</exclude>
                             </excludes>
                         </testGroup>
                     </testGroups>

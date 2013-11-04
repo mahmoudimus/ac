@@ -110,4 +110,13 @@ public class ModuleKeyGeneratorTest
         assertEquals(expected, ModuleKeyGenerator.camelCaseOrSpaceToDashed(test));
 
     }
+
+    @Test
+    public void alreadyLower() throws Exception
+    {
+        String expected = "google-link";
+        String test = "google link";
+
+        assertEquals(expected, ModuleKeyGenerator.nameToKey(test));
+    }
 }

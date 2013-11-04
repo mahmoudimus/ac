@@ -1,7 +1,5 @@
 package com.atlassian.plugin.connect.test.pageobjects.jira;
 
-import javax.inject.Inject;
-
 import com.atlassian.jira.pageobjects.project.*;
 import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.pageobjects.binder.Init;
@@ -9,12 +7,16 @@ import com.atlassian.pageobjects.elements.ElementBy;
 import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginEmbeddedTestPage;
 
+import javax.inject.Inject;
+
 /**
  * Describes a project administration tab.
  */
 public class JiraProjectAdministrationTab extends RemotePluginEmbeddedTestPage implements ProjectConfigPageTab
 {
-    private static final String TAB_ID = "servlet-jira-remotePluginProjectConfigTab";
+    // TODO this PageObject should not be tied to a particular key
+    public static final String MODULE_KEY = "my-connect-project-config";
+    public static final String TAB_ID = "servlet-my-connect-project-config";
 
     @Inject
     private PageBinder pageBinder;

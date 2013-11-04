@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
-import com.atlassian.plugin.connect.plugin.capabilities.annotation.CapabilitySet;
+import com.atlassian.plugin.connect.plugin.capabilities.annotation.CapabilityModuleProvider;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.WebPanelCapabilityBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.WebPanelLayout;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.WebPanelModuleProvider;
@@ -10,7 +10,6 @@ import com.atlassian.plugin.connect.plugin.capabilities.provider.WebPanelModuleP
  * controls in the application interface as a group. For example, the existing "People" panel in JIRA issue view
  * shows the assignee, reporter, and similar information for the issue.
  */
-@CapabilitySet(key = "webPanels", moduleProvider = WebPanelModuleProvider.class)
 public class WebPanelCapabilityBean extends NameToKeyBean
 {
     /**

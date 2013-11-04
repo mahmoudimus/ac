@@ -2,15 +2,25 @@
 <html>
 <head>
     <title>fixture</title>
+    <script src="/base/src/main/resources/js/iframe/_amd.js"></script>
+    <script src="/base/src/main/resources/js/iframe/plugin/_util.js"></script>
+    <script src="/base/src/main/resources/js/iframe/plugin/_dollar.js"></script>
+    <script src="/base/src/main/resources/js/iframe/_events.js"></script>
+    <script src="/base/src/main/resources/js/iframe/_xdm.js"></script>
+    <script src="/base/src/main/resources/js/iframe/plugin/_rpc.js"></script>
+    <script src="/base/src/main/resources/js/iframe/plugin/events.js"></script>
+    <script src="/base/src/main/resources/js/iframe/plugin/env.js"></script>
+    <script src="/base/src/main/resources/js/iframe/plugin/request.js"></script>
+    <script src="/base/src/main/resources/js/iframe/plugin/dialog.js"></script>
+    <script src="/base/src/main/resources/js/iframe/plugin/_resize_listener.js"></script>
+    <script src="/base/src/main/resources/js/iframe/plugin/jira.js"></script>
+    <script src="/base/src/main/resources/js/iframe/plugin/confluence.js"></script>
+    <script src="/base/src/main/resources/js/iframe/plugin/_init.js"></script>
     <script>
-    window.requireLoaded = function(){
         AP.require("events", function (events) {
             events.emit("clientevent", '12345');
         });
-    }
     </script>
-    <script src="/base/src/test/resources/fixtures/require.js"></script>
-    <script src="/base/src/test/resources/fixtures/include-all.js"></script>
 </head>
 <body>
 </body>

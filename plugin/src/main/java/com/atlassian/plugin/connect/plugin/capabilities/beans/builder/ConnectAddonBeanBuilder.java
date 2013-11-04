@@ -1,28 +1,29 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans.builder;
 
-import java.util.Arrays;
+import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 
-import com.atlassian.plugin.connect.plugin.capabilities.annotation.CapabilitySet;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.CapabilityBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.CapabilityList;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.VendorBean;
 
-import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Maps.newHashMap;
+import static com.atlassian.plugin.connect.plugin.capabilities.util.ConnectReflectionHelper.isParameterizedList;
 
 /**
- * @since version
+ * @since 1.0
  */
-public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extends ConnectAddonBean> extends BaseCapabilityBeanBuilder<T,B>
+public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extends ConnectAddonBean> extends BaseCapabilityBeanBuilder<T, B>
 {
     private String key;
     private String name;
     private String version;
     private VendorBean vendor;
-    private Map<String,String> links;
-    private Map<String,List<? extends CapabilityBean>> capabilities;
+    private Map<String, String> links;
+    private CapabilityList capabilities;
 
     public ConnectAddonBeanBuilder()
     {
@@ -43,7 +44,7 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extend
         this.key = key;
         return (T) this;
     }
-    
+
     public T withName(String name)
     {
         this.name = name;
@@ -61,67 +62,67 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extend
         this.vendor = vendor;
         return (T) this;
     }
-    
-    public T withCapabilities(Map<String,List<? extends CapabilityBean>> capabilities)
+
+    public T withCapabilities(String fieldName, CapabilityBean... beans)
     {
-        this.capabilities = capabilities;
+        for (CapabilityBean bean : beans)
+        {
+            withCapability(fieldName, bean);
+        }
         return (T) this;
     }
 
-    public T withCapabilities(List<CapabilityBean> beans)
+    public T withCapability(String fieldName, CapabilityBean bean)
     {
-        if(null == capabilities)
+        if (null == capabilities)
         {
-            this.capabilities = newHashMap();
+            this.capabilities = new CapabilityList();
         }
-        
-        String key = beans.get(0).getClass().getAnnotation(CapabilitySet.class).key();
-        
-        capabilities.put(key,beans);
-        
+
+        addBeanReflectivelyByType(fieldName, capabilities, bean);
+
         return (T) this;
     }
 
-    public T withCapabilities(CapabilityBean ... beans)
-    {
-        if(null == capabilities)
-        {
-            this.capabilities = newHashMap();
-        }
-
-        String key = beans[0].getClass().getAnnotation(CapabilitySet.class).key();
-
-        capabilities.put(key, Arrays.asList(beans));
-
-        return (T) this;
-    }
-    
-    public T withCapability(CapabilityBean bean)
-    {
-        if(null == capabilities)
-        {
-            this.capabilities = newHashMap();
-        }
-        String key = bean.getClass().getAnnotation(CapabilitySet.class).key();
-        
-        if(capabilities.containsKey(key))
-        {
-            List<CapabilityBean> beanList = (List<CapabilityBean>) capabilities.get(key);
-            beanList.add(bean);
-        }
-        else
-        {
-            capabilities.put(bean.getClass().getAnnotation(CapabilitySet.class).key(), newArrayList(bean));
-        }
-        
-        return (T) this;
-    }
-
-    public T withLinks(Map<String,String> links)
+    public T withLinks(Map<String, String> links)
     {
         this.links = links;
 
         return (T) this;
+    }
+
+    private void addBeanReflectivelyByType(String fieldName, CapabilityList capabilities, CapabilityBean bean)
+    {
+        Class beanClass = bean.getClass();
+        try
+        {
+            Field field = capabilities.getClass().getDeclaredField(fieldName);
+            Type fieldType = field.getGenericType();
+
+            if (fieldType.equals(beanClass))
+            {
+                field.setAccessible(true);
+                field.set(capabilities, bean);
+            }
+            else if (isParameterizedList(fieldType))
+            {
+                Type listType = ((ParameterizedType) fieldType).getActualTypeArguments()[0];
+                if (listType.equals(beanClass))
+                {
+                    field.setAccessible(true);
+                    List beanList = (List) field.get(capabilities);
+                    beanList.add(bean);
+                }
+            }
+        }
+        catch (IllegalAccessException e)
+        {
+            throw new RuntimeException("Unable to access capability field for bean of type: " + bean.getClass(),e);
+        }
+        catch (NoSuchFieldException e)
+        {
+            throw new RuntimeException("Unable to find capability field '" + fieldName + "' for bean of type: " + bean.getClass());
+        }
     }
 
     public B build()

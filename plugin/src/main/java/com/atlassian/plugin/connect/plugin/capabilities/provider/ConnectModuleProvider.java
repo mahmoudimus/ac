@@ -8,9 +8,9 @@ import com.atlassian.plugin.Plugin;
 import org.osgi.framework.BundleContext;
 
 /**
- * @since version
+ * @since 1.0
  */
 public interface ConnectModuleProvider<T>
 {
-    List<ModuleDescriptor> provideModules(Plugin plugin, BundleContext addonBundleContext, List<T> beans);
+    List<ModuleDescriptor> provideModules(Plugin plugin, BundleContext addonBundleContext, String jsonFieldName, List<T> beans);
 }

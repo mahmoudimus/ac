@@ -1,30 +1,26 @@
 package com.atlassian.plugin.connect.plugin.module.util.redirect;
 
-import java.io.IOException;
-import java.net.URI;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.core.HttpHeaders;
-
 import com.atlassian.plugin.connect.plugin.DefaultRemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import com.atlassian.uri.Uri;
 import com.atlassian.uri.UriBuilder;
-
 import com.google.common.base.Function;
 import com.google.common.collect.Maps;
-
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.HttpHeaders;
+import java.io.IOException;
+import java.net.URI;
+import java.util.List;
+import java.util.Map;
 
 import static com.google.common.collect.Maps.newHashMap;
 
@@ -66,37 +62,6 @@ public final class RedirectServlet extends HttpServlet
                 .toString();
     }
 
-    /**
-     * @return an absolute url that includes oauth signing information as query parameters
-     */
-    public static String getOAuthRedirectUrl(String baseUrl, String appKey, URI path)
-    {
-       return getOAuthRedirectUrl(baseUrl, appKey, path, Collections.<String, String>emptyMap());
-    }
-
-    /**
-     * @return an absolute url that includes oauth signing information as query parameters
-     */
-    public static String getRelativeOAuthRedirectUrl(String appKey, URI path, Map<String,String> params)
-    {
-        return getOAuthRedirectUrl("", appKey, path, params);
-    }
-    /**
-     * @return an absolute url that includes oauth signing information as query parameters
-     */
-    public static String getOAuthRedirectUrl(String baseUrl, String appKey, URI path, Map<String,String> params)
-    {
-        UriBuilder builder = new UriBuilder(Uri.parse(baseUrl + "/plugins/servlet/redirect/oauth"))
-                .addQueryParameter(RedirectServlet.APP_KEY_PARAM, appKey)
-                .addQueryParameter(RedirectServlet.APP_URL_PARAM, path.toString());
-
-        for (Map.Entry<String,String> entry : params.entrySet())
-        {
-            builder.addQueryParameter(entry.getKey(), entry.getValue());
-        }
-
-        return builder.toString();
-    }
     /**
      * Expected URL query parameters:
      * <ul>

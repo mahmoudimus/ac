@@ -1,13 +1,11 @@
 package com.atlassian.plugin.connect.plugin.installer;
 
-import java.net.URI;
-
 import com.atlassian.plugin.Plugin;
 
 import org.dom4j.Document;
 
 /**
- * @since version
+ * @since 1.0
  */
 public interface ConnectAddOnInstaller
 {

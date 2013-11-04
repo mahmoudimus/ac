@@ -145,7 +145,7 @@ public class ConditionProcessor
 
     public Plugin getLoadablePlugin(Plugin plugin)
     {
-        return new ConditionLoadingPlugin(remotablePlugin, plugin, Sets.<Class<?>>newHashSet(productAccessor.getConditions().values()));
+        return new AutowireWithConnectPluginDecorator(remotablePlugin, plugin, Sets.<Class<?>>newHashSet(productAccessor.getConditions().values()));
     }
 
     private List<String> getContextParameters(Element oldConfig)

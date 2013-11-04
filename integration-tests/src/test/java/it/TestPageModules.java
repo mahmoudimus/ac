@@ -1,13 +1,5 @@
 package it;
 
-import java.io.IOException;
-import java.util.TimeZone;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import com.atlassian.pageobjects.page.AdminHomePage;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
@@ -18,7 +10,7 @@ import com.atlassian.plugin.connect.test.server.module.Condition;
 import com.atlassian.plugin.connect.test.server.module.ConfigurePageModule;
 import com.atlassian.plugin.connect.test.server.module.DialogPageModule;
 import com.atlassian.plugin.connect.test.server.module.GeneralPageModule;
-
+import it.servlet.ConnectAppServlets;
 import org.hamcrest.Matchers;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -27,7 +19,13 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner.newMustacheServlet;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.TimeZone;
+
 import static it.TestConstants.BETTY_USERNAME;
 import static java.lang.String.valueOf;
 import static org.junit.Assert.*;
@@ -49,28 +47,28 @@ public class TestPageModules extends AbstractRemotablePluginTest
                                       .iconUrl("/public/sandcastles.jpg")
                                       .height("600")
                                       .width("700")
-                                      .resource(newMustacheServlet("iframe.mu")))
+                                      .resource(ConnectAppServlets.apRequestServlet()))
                 .add(GeneralPageModule.key("amdTest")
                                       .name("AMD Test app1 General")
                                       .path("/amdTest")
-                                      .resource(newMustacheServlet("amd-test.mu")))
+                                      .resource(ConnectAppServlets.amdTestServlet()))
                 .add(GeneralPageModule.key("onlyBetty")
                                       .name("Only Betty")
                                       .path("/ob")
                                       .conditions(Condition.name("user_is_logged_in"), Condition.at("/onlyBettyCondition").resource(new OnlyBettyConditionServlet()))
-                                      .resource(newMustacheServlet("iframe.mu")))
+                                      .resource(ConnectAppServlets.apRequestServlet()))
                 .add(DialogPageModule.key("remotePluginDialog")
                                      .name("Remotable Plugin app1 Dialog")
                                      .path("/rpd")
-                                     .resource(newMustacheServlet("dialog.mu")))
+                                     .resource(ConnectAppServlets.dialogServlet()))
                 .add(GeneralPageModule.key("sizeToParent")
                                      .name("Size to parent general page")
                                      .path("/fsg")
-                                     .resource(newMustacheServlet("iframe-size-to-parent.mu")))
+                                     .resource(ConnectAppServlets.sizeToParentServlet()))
                 .add(DialogPageModule.key("sizeToParentDialog")
                                      .name("Size to parent dialog page")
                                      .path("/fsg")
-                                     .resource(newMustacheServlet("iframe-size-to-parent.mu")))
+                                     .resource(ConnectAppServlets.sizeToParentServlet()))
                 .start();
     }
 
@@ -178,7 +176,7 @@ public class TestPageModules extends AbstractRemotablePluginTest
         ConfigurePageModule configPage = ConfigurePageModule.key("page")
                                                             .name("Page")
                                                             .path("/page")
-                                                            .resource(newMustacheServlet("hello-world-page.mu"));
+                                                            .resource(ConnectAppServlets.helloWorldServlet());
         
         AtlassianConnectAddOnRunner runner = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl(), "configurePage");
         

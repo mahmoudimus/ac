@@ -1,35 +1,35 @@
 package com.atlassian.plugin.connect.plugin.util.http;
 
+import com.atlassian.fugue.Option;
+import com.atlassian.httpclient.api.HttpClient;
+import com.atlassian.httpclient.api.Request;
+import com.atlassian.httpclient.api.Response;
+import com.atlassian.httpclient.api.ResponseTransformation;
+import com.atlassian.httpclient.api.factory.HttpClientFactory;
+import com.atlassian.httpclient.api.factory.HttpClientOptions;
+import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
+import com.atlassian.plugin.connect.plugin.util.LocaleHelper;
+import com.atlassian.plugin.connect.plugin.util.MapFunctions;
+import com.atlassian.plugin.connect.spi.http.AuthorizationGenerator;
+import com.atlassian.plugin.connect.spi.http.HttpMethod;
+import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
+import com.atlassian.uri.Uri;
+import com.atlassian.uri.UriBuilder;
+import com.atlassian.util.concurrent.Promise;
+import com.google.common.base.Function;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.DisposableBean;
+
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
-
-import com.atlassian.fugue.Option;
-import com.atlassian.httpclient.api.HttpClient;
-import com.atlassian.httpclient.api.Request;
-import com.atlassian.httpclient.api.Response;
-import com.atlassian.httpclient.api.factory.HttpClientFactory;
-import com.atlassian.httpclient.api.factory.HttpClientOptions;
-import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
-import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
-import com.atlassian.plugin.connect.plugin.util.LocaleHelper;
-import com.atlassian.plugin.connect.plugin.util.MapFunctions;
-import com.atlassian.plugin.connect.spi.http.AuthorizationGenerator;
-import com.atlassian.plugin.connect.spi.http.HttpMethod;
-import com.atlassian.uri.Uri;
-import com.atlassian.uri.UriBuilder;
-import com.atlassian.util.concurrent.Promise;
-
-import com.google.common.base.Function;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
@@ -38,7 +38,7 @@ import static com.google.common.collect.Iterables.contains;
 /**
  * Retrieves http content asynchronously and caches its contents in memory according to the returned headers
  */
-public final class CachingHttpContentRetriever implements HttpContentRetriever
+public final class CachingHttpContentRetriever implements HttpContentRetriever, DisposableBean
 {
     private final static Logger log = LoggerFactory.getLogger(CachingHttpContentRetriever.class);
 
@@ -53,6 +53,7 @@ public final class CachingHttpContentRetriever implements HttpContentRetriever
     private final HttpClient httpClient;
     private final LicenseRetriever licenseRetriever;
     private final LocaleHelper localeHelper;
+    private final HttpClientFactory factory;
 
     @SuppressWarnings("unused") // this is the constructor used by the plugin component
     public CachingHttpContentRetriever(LicenseRetriever licenseRetriever, LocaleHelper localeHelper, HttpClientFactory httpClientFactory, PluginRetrievalService pluginRetrievalService)
@@ -62,14 +63,15 @@ public final class CachingHttpContentRetriever implements HttpContentRetriever
 
     CachingHttpContentRetriever(LicenseRetriever licenseRetriever, LocaleHelper localeHelper, HttpClientFactory httpClientFactory, HttpClientOptions httpClientOptions)
     {
-        this(licenseRetriever, localeHelper, checkNotNull(httpClientFactory, "httpClientFactory").create(checkNotNull(httpClientOptions, "httpClientOptions")));
+        this(licenseRetriever, localeHelper, checkNotNull(httpClientFactory, "httpClientFactory").create(checkNotNull(httpClientOptions, "httpClientOptions")), httpClientFactory);
     }
 
-    CachingHttpContentRetriever(LicenseRetriever licenseRetriever, LocaleHelper localeHelper, HttpClient httpClient)
+    CachingHttpContentRetriever(LicenseRetriever licenseRetriever, LocaleHelper localeHelper, HttpClient httpClient, HttpClientFactory factory)
     {
         this.licenseRetriever = checkNotNull(licenseRetriever);
         this.localeHelper = checkNotNull(localeHelper);
         this.httpClient = checkNotNull(httpClient);
+        this.factory = factory;
     }
 
     @Override
@@ -92,9 +94,9 @@ public final class CachingHttpContentRetriever implements HttpContentRetriever
 
         final Map<String, String> allParameters = getAllParameters(parameters, pluginKey);
 
-        final Request request = httpClient.newRequest(getFullUrl(method, url, allParameters))
-                .setHeaders(getAllHeaders(headers, getAuthHeaderValue(authorizationGenerator, method, url, allParameters)))
-                .setAttributes(getAttributes(pluginKey));
+        final Request.Builder request = httpClient.newRequest(getFullUrl(method, url, allParameters))
+                .setAttributes(getAttributes(pluginKey))
+                .setHeaders(getAllHeaders(headers, getAuthHeaderValue(authorizationGenerator, method, url, allParameters)));
 
         if (contains(METHODS_WITH_BODY, method))
         {
@@ -102,13 +104,13 @@ public final class CachingHttpContentRetriever implements HttpContentRetriever
             request.setEntity(UriBuilder.joinParameters(transformParameters(allParameters)));
         }
 
-        return request.execute(METHOD_MAPPING.get(method))
-                .<String>transform()
+        ResponseTransformation<String> responseTransformation = httpClient.<String>transformation()
                 .ok(new OkFunction(url))
                 .forbidden(new ForbiddenFunction(url))
                 .others(new OthersFunction(url))
                 .fail(new FailFunction(url))
-                .toPromise();
+                .build();
+        return request.execute(METHOD_MAPPING.get(method)).transform(responseTransformation);
     }
 
     private String getFullUrl(HttpMethod method, URI url, Map<String, String> allParameters)
@@ -190,6 +192,12 @@ public final class CachingHttpContentRetriever implements HttpContentRetriever
         options.setSocketTimeout(15, TimeUnit.SECONDS);
         options.setRequestTimeout(20, TimeUnit.SECONDS);
         return options;
+    }
+
+    @Override
+    public void destroy() throws Exception
+    {
+        factory.dispose(httpClient);
     }
 
     private static class OkFunction implements Function<Response, String>

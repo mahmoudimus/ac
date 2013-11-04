@@ -1,10 +1,10 @@
 package com.atlassian.plugin.connect.spi.module;
 
-import java.util.Map;
-
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.sal.api.user.UserManager;
+
+import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -28,6 +28,6 @@ public final class UserIsSysAdminCondition implements Condition
     @Override
     public boolean shouldDisplay(Map<String, Object> context)
     {
-        return userManager.isSystemAdmin(userManager.getRemoteUsername());
+        return userManager.isSystemAdmin(userManager.getRemoteUserKey());
     }
 }

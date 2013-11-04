@@ -1,18 +1,21 @@
 package com.atlassian.plugin.connect.plugin.module.confluence;
 
-import java.net.URI;
-import java.util.Map;
-
+import com.atlassian.confluence.content.render.image.ImageDimensions;
 import com.atlassian.confluence.content.render.xhtml.ConversionContext;
 import com.atlassian.confluence.macro.DefaultImagePlaceholder;
 import com.atlassian.confluence.macro.EditorImagePlaceholder;
 import com.atlassian.confluence.macro.ImagePlaceholder;
 import com.atlassian.confluence.macro.MacroExecutionException;
 import com.atlassian.confluence.pages.thumbnail.Dimensions;
-import com.atlassian.plugin.connect.plugin.module.util.redirect.RedirectServlet;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
+import com.atlassian.uri.Uri;
+import com.atlassian.uri.UriBuilder;
+import com.google.common.collect.ImmutableMap;
+
+import java.net.URI;
+import java.util.Map;
 
 /**
  * Wrapper to give a macro an image placeholder
@@ -24,12 +27,12 @@ public final class ImagePlaceholderMacroWrapper implements EditorImagePlaceholde
     private final String pluginKey;
 
     private final URI imageUrl;
-    private final Dimensions dimensions;
+    private final ImageDimensions dimensions;
     private final boolean applyChrome;
     private final UserManager userManager;
 
     public ImagePlaceholderMacroWrapper(RemoteMacro delegate, boolean applyChrome,
-            Dimensions dimensions,
+            ImageDimensions dimensions,
             URI imageUrl, String pluginKey, UserManager userManager)
     {
         this.delegate = delegate;
@@ -52,9 +55,15 @@ public final class ImagePlaceholderMacroWrapper implements EditorImagePlaceholde
                 delegate.getRemotablePluginAccessor(delegate.getRemoteMacroInfo().getPluginKey()));
 
         UserKey remoteUserKey = userManager.getRemoteUserKey();
-        String uri = RedirectServlet.getRelativeOAuthRedirectUrl(pluginKey, imageUrl, macroInstance.getUrlParameters(userManager.getRemoteUsername(), remoteUserKey == null ? "" : remoteUserKey.getStringValue()));
+        Map<String, String> urlParameters = macroInstance.getUrlParameters(userManager.getRemoteUsername(), remoteUserKey == null ? "" : remoteUserKey.getStringValue());
 
-        return new DefaultImagePlaceholder(uri, dimensions, applyChrome);
+        Uri target = Uri.fromJavaUri(imageUrl);
+        UriBuilder b = new UriBuilder(target);
+        b.addQueryParameters(urlParameters);
+
+        String uri = macroInstance.getRemotablePluginAccessor().signGetUrl(b.toUri().toJavaUri(), ImmutableMap.<String, String[]>of());
+
+        return new DefaultImagePlaceholder(uri, new Dimensions(dimensions.getWidth(), dimensions.getHeight()), applyChrome);
     }
 
     @Override

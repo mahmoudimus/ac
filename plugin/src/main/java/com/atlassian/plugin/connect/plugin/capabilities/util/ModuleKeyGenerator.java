@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.util;
 import java.security.SecureRandom;
 
 import com.google.common.base.CaseFormat;
+import com.google.common.base.Joiner;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -13,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 public class ModuleKeyGenerator
 {
     private static final SecureRandom random = new SecureRandom();
+    public static String CLEAN_FILENAME_PATTERN = "[:\\\\/*?|<>_]";
 
     /**
      * Generates a key using the given prefix and a random number.
@@ -49,20 +51,10 @@ public class ModuleKeyGenerator
 
     public static String camelCaseOrSpaceToDashed(String s)
     {
-        String trimmed = s.replaceAll("[\\s]", "");
+        String dashed = Joiner.on("-").join(s.split("(?<!(^|[A-Z]))(?=[A-Z])|(?<!^)(?=[A-Z][a-z])"));
+        String trimmed = StringUtils.replace(StringUtils.replace(StringUtils.replace(dashed," -","-"),"- ","-")," ","-");
 
-        String dashed = trimmed.replaceAll(
-                String.format("%s|%s|%s",
-                        "(?<=[A-Z])(?=[A-Z][a-z])",
-                        "(?<=[^A-Z])(?=[A-Z])",
-                        "(?<=[A-Za-z])(?=[^A-Za-z])"
-                ),
-                "-"
-        );
-
-        dashed = dashed.replaceAll("--","-");
-
-        return dashed.toLowerCase();
+        return trimmed.toLowerCase();
     }
 
     private static String randomName(String base)

@@ -1,13 +1,12 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.atlassian.plugin.connect.plugin.capabilities.annotation.CapabilitySet;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.WebItemCapabilityBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean;
-import com.atlassian.plugin.connect.plugin.capabilities.provider.WebItemModuleProvider;
+import com.google.common.base.Objects;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Adds a web item to a specified location in the application interface. A web item is a hyperlink
@@ -23,9 +22,10 @@ import com.atlassian.plugin.connect.plugin.capabilities.provider.WebItemModulePr
  *
  * Web links are a simple and useful way to extend Atlassian applications. If you want to extend an Atlassian
  * application and don't know where to start, a web item may be all you need.
+ * 
+ * @since 1.0
  */
-@CapabilitySet(key = "web-items", moduleProvider = WebItemModuleProvider.class)
-public class WebItemCapabilityBean extends NameToKeyBean
+public class WebItemCapabilityBean extends BeanWithKeyAndParamsAndConditions
 {
     /**
      *  Specifies the URL targeted by the link. The URL can be absolute or relative to either the
@@ -204,4 +204,14 @@ public class WebItemCapabilityBean extends NameToKeyBean
         return new WebItemCapabilityBeanBuilder(defaultBean);
     }
 
+    @Override
+    public String toString()
+    {
+        return Objects.toStringHelper(this)
+                .add("key", getKey())
+                .add("name", getName())
+                .add("link", getLink())
+                .add("location", getLocation())
+                .toString();
+    }
 }

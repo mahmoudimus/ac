@@ -5,7 +5,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.IconBeanBu
 import static com.atlassian.plugin.connect.plugin.capabilities.util.CapabilityBeanUtils.copyFieldsByNameAndType;
 
 /**
- * @since version
+ * @since 1.0
  */
 public class IconBean
 {

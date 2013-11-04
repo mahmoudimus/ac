@@ -22,19 +22,21 @@ define(["confluence", "_rpc"], function(confluence, _rpc) {
   xdmMock.closeMacroEditor = sinon.spy();
   _rpc.init();
 
-  module("Confluence", {
+  module("Confluence Plugin", {
     setup: function() {
       xdmMock.saveMacro.reset();
       xdmMock.closeMacroEditor.reset();
     }
   });
 
-  test("smoke test", function() {
-    ok(true, "this shit works");
-  });
-
   test("saveMacro", function() {
     confluence.saveMacro("1");
     ok(xdmMock.saveMacro.calledOnce);
   });
+
+  test("closeMacro", function(){
+    confluence.closeMacroEditor();
+    ok(xdmMock.closeMacroEditor.calledOnce);
+  });
+
 });

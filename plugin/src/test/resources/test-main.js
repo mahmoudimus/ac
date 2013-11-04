@@ -19,6 +19,7 @@ requirejs.config({
     'iframe/host/_ap': '../src/main/resources/js/iframe/host/_ap',
     'iframe/host/_dollar': '../src/main/resources/js/iframe/host/_dollar',
     'dialog/main': '../src/main/resources/js/dialog/main',
+    'confluence/macro/editor': '../src/main/resources/js/confluence/macro/editor',
     // shared
     'iframe/_amd': '../src/main/resources/js/iframe/_amd',
     'iframe/_events': '../src/main/resources/js/iframe/_events',
@@ -46,6 +47,11 @@ requirejs.config({
       deps: [
         'iframe/host/_dollar'
       ]
+    },
+    'confluence/macro/editor': {
+        deps: [
+        'iframe/host/_dollar'
+        ]
     },
     ///////////////////
     //  SHARED SIDE  //
@@ -87,3 +93,6 @@ requirejs.config({
   // start test run, once Require.js is done
   callback: window.__karma__.start
 });
+
+//tests will timeout after 5 seconds
+window.QUnit.config.testTimeout = 5000;

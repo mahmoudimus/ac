@@ -25,7 +25,7 @@ import org.dom4j.io.SAXReader;
 import org.osgi.framework.Bundle;
 
 /**
- * @since version
+ * @since 1.0
  */
 public class DefaultConnectAddOnIdentifierService implements ConnectAddOnIdentifierService
 {
