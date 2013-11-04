@@ -9,6 +9,7 @@ import com.atlassian.webdriver.AtlassianWebDriver;
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
 
 import javax.inject.Inject;
@@ -107,6 +108,11 @@ public class RemoteWebPanel
         return getFromQueryString("space_id");
     }
 
+    public String getSpaceKey()
+    {
+        return getFromQueryString("space_key");
+    }
+
     public String getPageId()
     {
         return getFromQueryString("page_id");
@@ -115,6 +121,11 @@ public class RemoteWebPanel
     public String getIFrameSourceUrl()
     {
         return iframeSrc;
+    }
+
+    public Dimension getIFrameSize()
+    {
+        return iframe.getSize();
     }
 
     public String getCustomMessage()
