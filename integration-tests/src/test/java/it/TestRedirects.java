@@ -7,10 +7,14 @@ import org.apache.http.HttpStatus;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import static it.servlet.ConnectAppServlets.customMessageServlet;
 import static org.junit.Assert.assertEquals;
 
 public class TestRedirects extends AbstractBrowserlessTest
@@ -28,7 +32,7 @@ public class TestRedirects extends AbstractBrowserlessTest
                 .add(GeneralPageModule.key("page")
                                       .name("Page")
                                       .path("/page")
-                                      .resource(customMessageServlet("message")))
+                                      .resource(new MessageServlet()))
                 .start();
 
         URL url = new URL(baseUrl + "/plugins/servlet/redirect/permanent?app_key=" + runner.getPluginKey() + "&app_url=/page&message=bar");
@@ -44,4 +48,14 @@ public class TestRedirects extends AbstractBrowserlessTest
         runner.stop();
     }
 
+    private static final class MessageServlet extends HttpServlet
+    {
+        @Override
+        protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
+        {
+            resp.setContentType("text/plain");
+            resp.getWriter().write(req.getParameter("message"));
+            resp.getWriter().close();
+        }
+    }
 }
