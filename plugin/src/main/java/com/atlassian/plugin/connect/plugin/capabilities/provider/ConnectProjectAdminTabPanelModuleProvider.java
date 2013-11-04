@@ -53,12 +53,15 @@ public class ConnectProjectAdminTabPanelModuleProvider implements ConnectModuleP
         {
             RelativeAddOnUrl localUrl = relativeAddOnUrlConverter.addOnUrlToLocalServletUrl(plugin.getKey(), bean.getUrl());
 
-            WebItemCapabilityBean webItemCapabilityBean = createWebItemCapabilityBean(bean, localUrl.getRelativeUrl());
+            // we can't pass projectKey as an "extra param" to relativeAddOnUrlConverter as it will encode the ${}
+            String webItemUri = localUrl.getRelativeUri() + "?projectKey=${project.key}";
+            WebItemCapabilityBean webItemCapabilityBean = createWebItemCapabilityBean(bean,
+                    webItemUri);
             builder.add(webItemModuleDescriptorFactory.createModuleDescriptor(plugin, addonBundleContext, webItemCapabilityBean));
 
-            builder.add(servletDescriptorFactory.createIFrameServletDescriptor(plugin, webItemCapabilityBean,
-                        localUrl.getServletDescriptorUrl(), bean.getUrl(), "", TEMPLATE_SUFFIX, condition,
-                        ImmutableMap.<String, String>of(ADMIN_ACTIVE_TAB, bean.getKey())));
+            builder.add(servletDescriptorFactory.createIFrameProjectConfigTabServletDescriptor(plugin,
+                    webItemCapabilityBean, localUrl.getServletDescriptorUrl(), bean.getUrl(), "", TEMPLATE_SUFFIX,
+                    condition, ImmutableMap.<String, String>of(ADMIN_ACTIVE_TAB, bean.getKey())));
         }
 
         return builder.build();
