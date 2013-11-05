@@ -3,28 +3,41 @@ package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.WebhookCapabilityBean;
-import com.atlassian.webhooks.spi.provider.ModuleDescriptorWebHookListenerRegistry;
+import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAutowireUtil;
+import com.atlassian.plugin.connect.plugin.capabilities.util.ModuleKeyGenerator;
+import com.atlassian.webhooks.spi.plugin.WebHookModuleDescriptor;
+import org.dom4j.Element;
+import org.dom4j.dom.DOMElement;
 import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ConnectWebhookModuleDescriptorFactory implements ConnectModuleDescriptorFactory<WebhookCapabilityBean,ConnectWebhookModuleDescriptor>
+public class ConnectWebhookModuleDescriptorFactory implements ConnectModuleDescriptorFactory<WebhookCapabilityBean,WebHookModuleDescriptor>
 {
-    private ParamsModuleFragmentFactory paramsModuleFragmentFactory;
-    private ModuleDescriptorWebHookListenerRegistry moduleDescriptorWebHookListenerRegistry;
+    private final ParamsModuleFragmentFactory paramsModuleFragmentFactory;
+    private final ConnectAutowireUtil autowireUtil;
 
     @Autowired
-    public ConnectWebhookModuleDescriptorFactory(ParamsModuleFragmentFactory paramsModuleFragmentFactory,
-                                                 ModuleDescriptorWebHookListenerRegistry moduleDescriptorWebHookListenerRegistry) {
+    public ConnectWebhookModuleDescriptorFactory(ParamsModuleFragmentFactory paramsModuleFragmentFactory, ConnectAutowireUtil autowireUtil) {
         this.paramsModuleFragmentFactory = paramsModuleFragmentFactory;
-        this.moduleDescriptorWebHookListenerRegistry = moduleDescriptorWebHookListenerRegistry;
+        this.autowireUtil = autowireUtil;
     }
 
     @Override
-    public ConnectWebhookModuleDescriptor createModuleDescriptor(Plugin plugin, BundleContext addonBundleContext, WebhookCapabilityBean bean) {
-        ConnectWebhookModuleDescriptor descriptor = new ConnectWebhookModuleDescriptor(moduleDescriptorWebHookListenerRegistry,
-                bean, plugin);
+    public WebHookModuleDescriptor createModuleDescriptor(Plugin plugin, BundleContext addonBundleContext, WebhookCapabilityBean bean) {
+        Element webhookElement = new DOMElement("webhook");
+
+        webhookElement.addAttribute("key", ModuleKeyGenerator.generateKey("webhook"));
+        webhookElement.addAttribute("event", bean.getEvent());
+        webhookElement.addAttribute("url", bean.getUrl());
+        paramsModuleFragmentFactory.addParamsToElement(webhookElement, bean.getParams());
+
+
+        WebHookModuleDescriptor descriptor = autowireUtil.createBean(WebHookModuleDescriptor.class);
+        descriptor.init(plugin,webhookElement);
+
         return descriptor;
     }
+
 }
