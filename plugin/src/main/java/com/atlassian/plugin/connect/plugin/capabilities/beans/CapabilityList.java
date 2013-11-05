@@ -49,8 +49,8 @@ public class CapabilityList extends BaseCapabilityBean
     @CapabilityModuleProvider(RemoteContainerModuleProvider.class)
     private RemoteContainerCapabilityBean connectContainer;
 
-    @CapabilityModuleProvider(WebhookModuleProvider.class)
-    private List<WebhookCapabilityBean> webhooks;
+    @CapabilityModuleProvider(WebHookModuleProvider.class)
+    private List<WebHookCapabilityBean> webhooks;
 
     public CapabilityList()
     {
@@ -147,7 +147,7 @@ public class CapabilityList extends BaseCapabilityBean
         return webPanels;
     }
 
-    public List<WebhookCapabilityBean> getWebhooks() {
+    public List<WebHookCapabilityBean> getWebhooks() {
         return webhooks;
     }
 

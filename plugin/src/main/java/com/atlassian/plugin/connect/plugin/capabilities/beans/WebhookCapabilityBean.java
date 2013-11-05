@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
-import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.WebhookCapabilityBeanBuilder;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.WebHookCapabilityBeanBuilder;
 
 /**
  * A webhook is a standard mechanism for implementing HTTP callbacks. Atlassian OnDemand applications can execute
@@ -82,7 +82,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.WebhookCap
  *
  * @since 1.0
  */
-public class WebhookCapabilityBean extends BeanWithParams
+public class WebHookCapabilityBean extends BeanWithParams
 {
     /**
     * Specifies the named event you would like to listen to (e.g., "enabled", "jira:issue_created", etc.)
@@ -93,7 +93,7 @@ public class WebhookCapabilityBean extends BeanWithParams
     **/
     private String url;
 
-    public WebhookCapabilityBean(WebhookCapabilityBeanBuilder builder) {
+    public WebHookCapabilityBean(WebHookCapabilityBeanBuilder builder) {
         super(builder);
 
         if(null == event)
@@ -108,7 +108,7 @@ public class WebhookCapabilityBean extends BeanWithParams
 
     }
 
-    protected WebhookCapabilityBean() {
+    protected WebHookCapabilityBean() {
         this.event = "";
         this.url = "";
     }
@@ -121,14 +121,14 @@ public class WebhookCapabilityBean extends BeanWithParams
         return url;
     }
 
-    public static WebhookCapabilityBeanBuilder newWebhookBean()
+    public static WebHookCapabilityBeanBuilder newWebHookBean()
     {
-        return new WebhookCapabilityBeanBuilder();
+        return new WebHookCapabilityBeanBuilder();
     }
 
-    public static WebhookCapabilityBeanBuilder newWebhookBean(WebhookCapabilityBean defaultBean)
+    public static WebHookCapabilityBeanBuilder newWebhookBean(WebHookCapabilityBean defaultBean)
     {
-        return new WebhookCapabilityBeanBuilder(defaultBean);
+        return new WebHookCapabilityBeanBuilder(defaultBean);
     }
 
 }

@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.RemoteContainerCapabilityBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.WebHookCapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.gson.CapabilitiesGsonFactory;
@@ -15,7 +16,6 @@ import org.junit.Test;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.RemoteContainerCapabilityBean.newRemoteContainerBean;
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebhookCapabilityBean.newWebhookBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean.newIconBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean.newWebItemBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.OAuthBean.newOAuthBean;
@@ -68,7 +68,7 @@ public class JunkTest
                         .withStyleClasses("ac-link", "aui-link")
                         .withIcon(newIconBean().withUrl("/some/icon.png").withWidth(16).withHeight(16).build())
                         .build())
-                .withCapability("webhooks",newWebhookBean()
+                .withCapability("webhooks", WebHookCapabilityBean.newWebHookBean()
                         .withEvent("remote_plugin_enabled")
                         .withUrl("/enabled")
                         .build())

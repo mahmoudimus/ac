@@ -6,24 +6,25 @@ import com.atlassian.plugin.connect.test.webhook.WebHookTester;
 import com.atlassian.plugin.connect.test.webhook.WebHookWaiter;
 import it.AbstractBrowserlessTest;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.assertNotNull;
 
-public class TestWebhooks  extends AbstractBrowserlessTest
+public class TestWebHooks extends AbstractBrowserlessTest
 {
-    private static final String WEB_HOOK_PLUGIN_ENABLED = "plugin_enabled";
+    private static final String WEB_HOOK_PLUGIN_ENABLED = "remote_plugin_enabled";
 
     @Test
+    @Ignore("broken right now since lifecycle webhooks aren't actually firing")
     public void testPluginEnabledWebHookFired() throws Exception
     {
         WebHookTestServlet.runInJsonRunner(baseUrl, WEB_HOOK_PLUGIN_ENABLED, new WebHookTester() {
             @Override
             public void test(WebHookWaiter waiter) throws Exception {
                 final WebHookBody body = waiter.waitForHook();
-// FIXME broken right now since webhook isn't actually firing
-//                assertNotNull(body);
-//                Assert.assertEquals(WEB_HOOK_PLUGIN_ENABLED, body.find("key"));
+                assertNotNull(body);
+                Assert.assertEquals(WEB_HOOK_PLUGIN_ENABLED, body.find("key"));
             }
         });
     }

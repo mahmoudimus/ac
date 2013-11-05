@@ -1,38 +1,38 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans.builder;
 
-import com.atlassian.plugin.connect.plugin.capabilities.beans.WebhookCapabilityBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.WebHookCapabilityBean;
 
-public class WebhookCapabilityBeanBuilder extends BeanWithParamsBuilder<WebhookCapabilityBeanBuilder, WebhookCapabilityBean>
+public class WebHookCapabilityBeanBuilder extends BeanWithParamsBuilder<WebHookCapabilityBeanBuilder, WebHookCapabilityBean>
 {
     private String event;
     private String url;
 
-    public WebhookCapabilityBeanBuilder()
+    public WebHookCapabilityBeanBuilder()
     {
     }
 
-    public WebhookCapabilityBeanBuilder(WebhookCapabilityBean defaultBean)
+    public WebHookCapabilityBeanBuilder(WebHookCapabilityBean defaultBean)
     {
         this.event = defaultBean.getEvent();
         this.url = defaultBean.getUrl();
     }
 
-    public WebhookCapabilityBeanBuilder withEvent(String event)
+    public WebHookCapabilityBeanBuilder withEvent(String event)
     {
         this.event = event;
         return this;
     }
 
-    public WebhookCapabilityBeanBuilder withUrl(String url)
+    public WebHookCapabilityBeanBuilder withUrl(String url)
     {
         this.url = url;
         return this;
     }
 
     @Override
-    public WebhookCapabilityBean build()
+    public WebHookCapabilityBean build()
     {
-        return new WebhookCapabilityBean(this);
+        return new WebHookCapabilityBean(this);
     }
 
 }

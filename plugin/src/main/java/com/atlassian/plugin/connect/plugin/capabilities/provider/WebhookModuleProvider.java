@@ -2,9 +2,8 @@ package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.WebhookCapabilityBean;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectWebhookModuleDescriptorFactory;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.WebHookCapabilityBean;
+import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectWebHookModuleDescriptorFactory;
 import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -14,20 +13,20 @@ import java.util.Collection;
 import java.util.List;
 
 @Component
-public class WebhookModuleProvider  implements ConnectModuleProvider<WebhookCapabilityBean>
+public class WebHookModuleProvider implements ConnectModuleProvider<WebHookCapabilityBean>
 {
-    private ConnectWebhookModuleDescriptorFactory connectWebhookModuleDescriptorFactory;
+    private ConnectWebHookModuleDescriptorFactory connectWebHookModuleDescriptorFactory;
 
     @Autowired
-    public WebhookModuleProvider(ConnectWebhookModuleDescriptorFactory connectWebhookModuleDescriptorFactory) {
-        this.connectWebhookModuleDescriptorFactory = connectWebhookModuleDescriptorFactory;
+    public WebHookModuleProvider(ConnectWebHookModuleDescriptorFactory connectWebHookModuleDescriptorFactory) {
+        this.connectWebHookModuleDescriptorFactory = connectWebHookModuleDescriptorFactory;
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(Plugin plugin, BundleContext addonBundleContext, String jsonFieldName, List<WebhookCapabilityBean> beans) {
+    public List<ModuleDescriptor> provideModules(Plugin plugin, BundleContext addonBundleContext, String jsonFieldName, List<WebHookCapabilityBean> beans) {
         List<ModuleDescriptor> descriptors = new ArrayList<ModuleDescriptor>();
 
-        for (WebhookCapabilityBean bean : beans)
+        for (WebHookCapabilityBean bean : beans)
         {
             descriptors.addAll(beanToDescriptors(plugin,addonBundleContext, bean));
         }
@@ -35,9 +34,9 @@ public class WebhookModuleProvider  implements ConnectModuleProvider<WebhookCapa
         return descriptors;
     }
 
-    private Collection<? extends ModuleDescriptor> beanToDescriptors(Plugin plugin, BundleContext addonBundleContext, WebhookCapabilityBean bean) {
+    private Collection<? extends ModuleDescriptor> beanToDescriptors(Plugin plugin, BundleContext addonBundleContext, WebHookCapabilityBean bean) {
         List<ModuleDescriptor> descriptors = new ArrayList<ModuleDescriptor>();
-        descriptors.add(connectWebhookModuleDescriptorFactory.createModuleDescriptor(plugin,addonBundleContext,bean));
+        descriptors.add(connectWebHookModuleDescriptorFactory.createModuleDescriptor(plugin,addonBundleContext,bean));
 
         return descriptors;
     }
