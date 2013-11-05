@@ -9,6 +9,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public abstract class AbstractConnectTabPanelCapabilityBean extends NameToKeyBean
 {
+
     private String url;
     private Integer weight;
 

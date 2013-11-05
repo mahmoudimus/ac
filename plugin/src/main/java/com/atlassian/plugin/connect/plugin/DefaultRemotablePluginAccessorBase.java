@@ -88,7 +88,12 @@ public abstract class DefaultRemotablePluginAccessorBase implements RemotablePlu
     protected URI getTargetUrl(URI targetPath)
     {
         UriBuilder uriBuilder = new UriBuilder(Uri.fromJavaUri(targetPath));
-        uriBuilder.setPath(getBaseUrl().toString() + uriBuilder.getPath());
+        String path = uriBuilder.getPath();
+        if (!StringUtils.startsWith(path, "/"))
+        {
+            path = "/" + path;
+        }
+        uriBuilder.setPath(getBaseUrl().toString() + path);
         return uriBuilder.toUri().toJavaUri();
     }
 

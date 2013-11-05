@@ -1,6 +1,5 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
-import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConnectTabPanelCapabilityBeanBuilder;
 
 import static com.google.common.base.Preconditions.checkNotNull;
