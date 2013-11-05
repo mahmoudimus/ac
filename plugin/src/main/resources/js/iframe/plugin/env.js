@@ -75,7 +75,17 @@ AP.define("env", ["_dollar", "_rpc"], function ($, rpc) {
   return $.extend(apis, {
 
     meta: function (name) {
-      return $("meta[name='ap-" + name + "']").attr("content");
+      if(navigator.userAgent.indexOf('MSIE 8') >= 0){
+        var metas = document.getElementsByTagName('meta'),
+        i = 0;
+        for (i=0; i<metas.length; i++) {
+          if(metas[i].getAttribute("name") === 'ap-' + name) {
+             return metas[i].getAttribute("content");
+          }
+        }
+      } else {
+        return $("meta[name='ap-" + name + "']").attr("content");
+      }
     },
 
     container: function(){
