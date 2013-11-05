@@ -1,0 +1,37 @@
+[
+    {
+        "condition": "never_display",
+        "invert": true,
+        "params": {
+            "someParam": "woot"
+        }
+    },
+    {
+        "condition": "http://example.com/condition/got_woot",
+        "invert": false
+    },
+    {
+        "and": [
+            {
+                "condition": "http://example.com/condition/got_woot",
+                "invert": false
+            },
+            {
+                "condition": "http://example.com/condition/got_woot",
+                "invert": false
+            }
+        ]
+    },
+    {
+        "or": [
+            {
+                "condition": "http://example.com/condition/got_woot",
+                "invert": false
+            },
+            {
+                "condition": "http://example.com/condition/got_woot",
+                "invert": false
+            }
+        ]
+    }
+]

@@ -45,11 +45,9 @@
                class="com.atlassian.plugin.connect.plugin.capabilities.descriptor.WorkflowPostFunctionModuleDescriptorFactory"
                interface="com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectModuleDescriptorFactory"/>
 
-    <component key="connectIssueTabPanelModuleDescriptorFactory" class="com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectIssueTabPanelModuleDescriptorFactory" />
-    <component key="connectIssueTabPanelModuleProvider" class="com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectIssueTabPanelModuleProvider" />
-
-    <component key="connectVersionTabPanelModuleDescriptorFactory" class="com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectVersionTabPanelModuleDescriptorFactory" />
-    <component key="connectVersionTabPanelModuleProvider" class="com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectVersionTabPanelModuleProvider" />
+    <component key="connectTabPanelModuleProvider" class="com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanelModuleProvider" />
+    
+    <component key="connectProjectAdminTabPanelModuleProvider" class="com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectProjectAdminTabPanelModuleProvider" />
 
     <rest key="rest" path="/atlassian-connect" version="1">
         <dispatcher>REQUEST</dispatcher>

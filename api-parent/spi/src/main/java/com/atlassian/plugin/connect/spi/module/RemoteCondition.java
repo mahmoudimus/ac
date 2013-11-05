@@ -77,44 +77,47 @@ public final class RemoteCondition implements Condition
     @Override
     public boolean shouldDisplay(Map<String, Object> context)
     {
-        Promise<String> responsePromise = remotablePluginAccessorFactory.get(pluginKey)
+        return remotablePluginAccessorFactory.get(pluginKey)
                                                                         .executeAsync(HttpMethod.GET, url, getParameters(context), Collections.<String, String>emptyMap())
                                                                         .fold(
-                                                                                new Function<Throwable, String>()
+                                                                                new Function<Throwable, Boolean>()
                                                                                 {
                                                                                     @Override
-                                                                                    public String apply(Throwable t)
+                                                                                    public Boolean apply(Throwable t)
                                                                                     {
                                                                                         log.warn("Unable to retrieve remote condition from plugin {}: {}", pluginKey, t);
-                                                                                        return "<script>AJS.log('Unable to retrieve remote condition from plugin \'" + pluginKey + "\'');</script>";
+                                                                                        t.printStackTrace();
+                                                                                        //return "<script>AJS.log('Unable to retrieve remote condition from plugin \'" + pluginKey + "\'');</script>";
+                                                                                        return false;
                                                                                     }
                                                                                 },
-                                                                                new Function<String, String>()
+                                                                                new Function<String, Boolean>()
                                                                                 {
                                                                                     @Override
-                                                                                    public String apply(String value)
+                                                                                    public Boolean apply(String value)
                                                                                     {
                                                                                         try
                                                                                         {
                                                                                             JSONObject obj = (JSONObject) JSONValue.parseWithException(value);
-                                                                                            if ((Boolean) obj.get("shouldDisplay"))
-                                                                                            {
-                                                                                                return "<script>AJS.$(\"" + toHideSelector + "\").removeClass('hidden').parent().removeClass('hidden');</script>";
-                                                                                            }
+//                                                                                            if ((Boolean) obj.get("shouldDisplay"))
+//                                                                                            {
+//                                                                                                return "<script>AJS.$(\"" + toHideSelector + "\").removeClass('hidden').parent().removeClass('hidden');</script>";
+//                                                                                            }
+                                                                                            return (Boolean) obj.get("shouldDisplay");
                                                                                         }
                                                                                         catch (ParseException e)
                                                                                         {
                                                                                             log.warn("Invalid JSON returned from remote condition: " + value);
+                                                                                            return false;
                                                                                         }
-                                                                                        return "";
+                                                                                        
                                                                                     }
                                                                                 }
-                                                                        );
+                                                                        ).claim();
 
-        bigPipeManager.getBigPipe().getScriptChannel().promiseContent(responsePromise);
+//        bigPipeManager.getBigPipe().getScriptChannel().promiseContent(responsePromise);
         
         // always return true as the link will be disabled by default via the 'hidden' class
-        return true;
     }
 
     private Map<String, String> getParameters(Map<String, Object> context)

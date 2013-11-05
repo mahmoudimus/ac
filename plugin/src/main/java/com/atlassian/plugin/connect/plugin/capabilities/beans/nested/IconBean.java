@@ -5,12 +5,22 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.IconBeanBu
 import static com.atlassian.plugin.connect.plugin.capabilities.util.CapabilityBeanUtils.copyFieldsByNameAndType;
 
 /**
- * @since version
+ * @since 1.0
  */
 public class IconBean
 {
+    /**
+     * The width in pixels of the icon image.
+     */
     private int width;
+    /**
+     * The height in pixels of the icon image.
+     */
     private int height;
+    /**
+     * The URL of the icon. Your icon needs to be hosted remotely at a web-accessible location. You can specify the
+     * URL as an absolute URL or relative to the add-on's base URL.
+     */
     private String url;
 
     public IconBean()

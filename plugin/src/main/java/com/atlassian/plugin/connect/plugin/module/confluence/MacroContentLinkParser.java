@@ -41,7 +41,7 @@ public class MacroContentLinkParser
             processedContent.append(content.substring(lastPos, pos));
             lastPos = pos;
 
-            String signToken = "sign://" + remotablePluginAccessor.getDisplayUrl().getAuthority();
+            String signToken = "sign://" + remotablePluginAccessor.getBaseUrl().getAuthority();
             char prevChar = content.charAt(pos - 1);
             if (prevChar == '\'' || prevChar == '\"')
             {

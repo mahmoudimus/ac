@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * @since version
+ * @since 1.0
  */
 public class CapabilityBeanUtils
 {
@@ -28,8 +28,6 @@ public class CapabilityBeanUtils
                 Field destField = getFieldInObjectChain(destClass,sourceField.getName());
                 if (destField != null && !alreadySet.contains(sourceField.getName()))
                 {
-                    boolean destAccess = destField.isAccessible();
-                    boolean sourceAccess = sourceField.isAccessible();
                     destField.setAccessible(true);
                     sourceField.setAccessible(true);
                     try
@@ -44,11 +42,6 @@ public class CapabilityBeanUtils
                     catch (IllegalAccessException e)
                     {
                         //just doesn't get set, but this should never happen
-                    }
-                    finally
-                    {
-                        destField.setAccessible(destAccess);
-                        sourceField.setAccessible(sourceAccess);
                     }
                 }
             }

@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.0-m18</version>
+        <version>1.0-m19</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -180,11 +180,6 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.atlassian.httpclient</groupId>
-            <artifactId>atlassian-httpclient-spi</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>com.atlassian.webhooks</groupId>
             <artifactId>atlassian-webhooks-provider-spi</artifactId>
             <scope>provided</scope>
@@ -260,10 +255,42 @@
         </dependency>
 
         <dependency>
+            <groupId>com.atlassian.aui</groupId>
+            <artifactId>auiplugin</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.skyscreamer</groupId>
+            <artifactId>jsonassert</artifactId>
+            <version>1.2.0</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>uk.co.datumedge</groupId>
+            <artifactId>hamcrest-json</artifactId>
+            <version>0.2</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.skyscreamer</groupId>
+                    <artifactId>jsonassert</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
             <groupId>org.atteo</groupId>
             <artifactId>evo-classindex</artifactId>
             <version>1.4</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+        </dependency>
+
     </dependencies>
     
     <build>
@@ -316,7 +343,7 @@
                             com.atlassian.util.concurrent*;version="${atlassian-util-concurrent.version}",
                             com.atlassian.crowd.embedded.api.*;version="2.0";resolution:=optional,
                             com.atlassian.webhooks.spi*;version="${atlassian.webhooks.api.version}",
-                            com.atlassian.httpclient.*;version="${atlassian.httpclient.api.version}",
+                            com.atlassian.httpclient.api*;version="${atlassian.httpclient.api.version}",
                             com.sun.mail.handlers;resolution:=optional,
                             net.oauth*,
                             javax.servlet;version="0.0.0",
@@ -328,11 +355,20 @@
                             org.joda.time*;version="1.6",
                             org.slf4j*;version="1.5",
                             org.xml.sax*,
+                            com.atlassian.plugin.connect.api*;version="${project.version}",
+                            com.atlassian.plugin.connect.spi*;version="${project.version}",
+                            com.atlassian.plugin.connect.plugin*;version="${project.version}",
                             *;resolution:=optional
                         </Import-Package>
                         <Export-Package>
                             com.atlassian.plugin.connect.api*;version="${project.version}",
-                            com.atlassian.plugin.connect.spi*;version="${project.version}"
+                            com.atlassian.plugin.connect.api.*;version="${project.version}",
+                            com.atlassian.plugin.connect.spi*;version="${project.version}",
+                            com.atlassian.plugin.connect.spi.*;version="${project.version}",
+                            com.atlassian.plugin.connect.plugin*;version="${project.version}",
+                            com.atlassian.plugin.connect.plugin.*;version="${project.version}"
+                            com.atlassian.plugin.connect.plugin.product*;version="${project.version}"
+                            com.atlassian.plugin.connect.plugin.product.*;version="${project.version}"
                         </Export-Package>
                         <Spring-Context>*;timeout:=60</Spring-Context>
 
@@ -364,6 +400,11 @@
                                     <version>${atlassian.jira.webhooks.version}</version>
                                 </pluginArtifact>
                                 <pluginArtifact>
+                                    <groupId>com.atlassian.httpclient</groupId>
+                                    <artifactId>atlassian-httpclient-plugin</artifactId>
+                                    <version>${atlassian.httpclient.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
                                     <groupId>com.atlassian.gadgets</groupId>
                                     <artifactId>atlassian-gadgets-publisher-plugin</artifactId>
                                     <version>3.2.0-m8</version>
@@ -377,6 +418,11 @@
                                     <groupId>com.atlassian.jwt</groupId>
                                     <artifactId>jwt-plugin</artifactId>
                                     <version>${atlassian.jwt.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.jira.tests</groupId>
+                                    <artifactId>jira-testkit-plugin</artifactId>
+                                    <version>${atlassian.jira.testkit.version}</version>
                                 </pluginArtifact>
                             </pluginArtifacts>
                             
@@ -417,6 +463,11 @@
                                     <groupId>com.atlassian.webhooks</groupId>
                                     <artifactId>atlassian-webhooks-plugin</artifactId>
                                     <version>${atlassian.webhooks.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.httpclient</groupId>
+                                    <artifactId>atlassian-httpclient-plugin</artifactId>
+                                    <version>${atlassian.httpclient.version}</version>
                                 </pluginArtifact>
                                 <pluginArtifact>
                                     <groupId>${project.groupId}</groupId>
@@ -627,9 +678,101 @@
                     </execution>
                 </executions>
             </plugin>
-
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>karma-tests</id>
+            <activation>
+                <property>
+                    <name>runKarma</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <!-- unpack lib dependencies to make available to qunit -->
+                    <plugin>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>extract-qunit-dependencies</id>
+                                <phase>generate-test-resources</phase>
+                                <goals>
+                                    <goal>unpack-dependencies</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${project.build.directory}/qunit/dependencies</outputDirectory>
+                                    <includeGroupIds>com.atlassian.aui</includeGroupIds>
+                                    <includeArtifactIds>auiplugin</includeArtifactIds>
+                                    <includes>**/*.js</includes>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!-- npm plugin, used to get plugins for karma testrunner -->
+                    <plugin>
+                        <groupId>org.mule.tools.javascript</groupId>
+                        <artifactId>npm-maven-plugin</artifactId>
+                        <version>1.0</version>
+                        <executions>
+                            <execution>
+                                <phase>generate-sources</phase>
+                                <goals>
+                                    <goal>fetch-modules</goal>
+                                </goals>
+                                <configuration>
+                                    <packages>
+                                        <package>karma:0.10.2</package>
+                                        <package>karma-sinon:0.0.1</package>
+                                        <package>karma-qunit:0.1.1</package>
+                                        <package>karma-requirejs:0.1.0</package>
+                                        <package>karma-chrome-launcher:0.1.0</package>
+                                        <package>qunitjs:1.12.0</package>
+                                        <package>karma-junit-reporter:0.1.0</package>
+                                    </packages>
+                                    <outputDirectory>node_modules</outputDirectory>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!-- karma testrunner plugin for iframe code -->
+                    <plugin>
+                        <groupId>com.kelveden</groupId>
+                        <artifactId>maven-karma-plugin</artifactId>
+                        <version>1.5</version>
+                        <executions>
+                            <!-- test plugin-side code -->
+                            <execution>
+                                <id>karma-iframe-tests</id>
+                                <goals>
+                                    <goal>start</goal>
+                                </goals>
+                                <configuration>
+                                    <configFile>karma.iframe.conf.js</configFile>
+                                </configuration>
+                            </execution>
+                            <!-- test host-side code -->
+                            <execution>
+                                <id>karma-host-tests</id>
+                                <goals>
+                                    <goal>start</goal>
+                                </goals>
+                                <configuration>
+                                    <configFile>karma.conf.js</configFile>
+                                </configuration>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <browsers>Chrome</browsers>
+                            <karmaExecutable>node_modules/karma/bin/karma</karmaExecutable>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
     
     <properties>
         <product>jira</product>

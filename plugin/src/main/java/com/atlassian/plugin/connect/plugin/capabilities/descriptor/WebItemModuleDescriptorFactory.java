@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
+import java.util.List;
+
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean;
 import com.atlassian.plugin.connect.spi.module.DynamicMarkerCondition;
@@ -16,8 +18,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import static com.atlassian.plugin.connect.plugin.capabilities.util.ConditionUtils.containsRemoteCondition;
 import static com.atlassian.plugin.connect.plugin.capabilities.util.ModuleKeyGenerator.nameToKey;
 import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.*;
+import static com.google.common.collect.Lists.newArrayList;
 import static org.apache.commons.lang.StringEscapeUtils.escapeHtml;
 
 @Component
@@ -29,12 +33,14 @@ public class WebItemModuleDescriptorFactory implements ConnectModuleDescriptorFa
     private final com.atlassian.plugin.connect.plugin.module.webitem.WebItemModuleDescriptorFactory remoteWebItemDescriptorFactory;
     
     private final IconModuleFragmentFactory iconModuleFragmentFactory;
+    private final ConditionModuleFragmentFactory conditionModuleFragmentFactory;
 
     @Autowired
-    public WebItemModuleDescriptorFactory(com.atlassian.plugin.connect.plugin.module.webitem.WebItemModuleDescriptorFactory remoteWebItemDescriptorFactory, IconModuleFragmentFactory iconModuleFragmentFactory)
+    public WebItemModuleDescriptorFactory(com.atlassian.plugin.connect.plugin.module.webitem.WebItemModuleDescriptorFactory remoteWebItemDescriptorFactory, IconModuleFragmentFactory iconModuleFragmentFactory, ConditionModuleFragmentFactory conditionModuleFragmentFactory)
     {
         this.remoteWebItemDescriptorFactory = remoteWebItemDescriptorFactory;
         this.iconModuleFragmentFactory = iconModuleFragmentFactory;
+        this.conditionModuleFragmentFactory = conditionModuleFragmentFactory;
     }
 
     @Override
@@ -55,31 +61,21 @@ public class WebItemModuleDescriptorFactory implements ConnectModuleDescriptorFa
         Element linkElement = webItemElement.addElement("link").addAttribute("linkId", webItemKey);
         linkElement.setText(bean.getLink());
 
+        List<String> styles = newArrayList(bean.getStyleClasses());
+        
         if(null != bean.getIcon() && !Strings.isNullOrEmpty(bean.getIcon().getUrl()))
         {
             webItemElement.add(iconModuleFragmentFactory.createFragment(plugin.getKey(), bean.getIcon()));
         }
 
-        webItemElement.addElement("condition").addAttribute("class", DynamicMarkerCondition.class.getName());
-
-        //TODO: implement condition beans and grab the condition from the bean. e.g. bean.getConditioon();
-//        if (conditionClass != null)
-//        {
-//            webItemElement.addElement("condition").addAttribute("class", conditionClass.getName());
-//        }
-//
-//        Condition condition = conditionProcessor.process(configurationElement, webItemElement, plugin.getKey());
-//        
-//        if (condition instanceof ContainingRemoteCondition)
-//        {
-//            styleClasses.add("remote-condition");
-//            styleClasses.add("hidden");
-//            styleClasses.add(conditionProcessor.createUniqueUrlHash(plugin.getKey(), ((ContainingRemoteCondition) condition).getConditionUrl()));
-//        }
-
-        if(!bean.getStyleClasses().isEmpty())
+        if(!bean.getConditions().isEmpty())
         {
-            webItemElement.addElement("styleClass").setText(Joiner.on(" ").join(bean.getStyleClasses()));
+            webItemElement.add(conditionModuleFragmentFactory.createFragment(plugin.getKey(),bean.getConditions(),"#" + webItemKey));
+        }
+
+        if(!styles.isEmpty())
+        {
+            webItemElement.addElement("styleClass").setText(Joiner.on(" ").join(styles));
         }
 
         if (log.isDebugEnabled())

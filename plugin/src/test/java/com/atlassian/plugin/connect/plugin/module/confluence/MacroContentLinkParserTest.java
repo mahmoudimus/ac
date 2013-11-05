@@ -54,7 +54,7 @@ public class MacroContentLinkParserTest
     public void initParser() throws URISyntaxException
     {
         macroContentLinkParser = new MacroContentLinkParser(confluenceSettingsManager);
-        when(remotablePluginAccessor.getDisplayUrl()).thenReturn(new URI("http://Macintosh.local:3000"));
+        when(remotablePluginAccessor.getBaseUrl()).thenReturn(new URI("http://Macintosh.local:3000"));
         when(confluenceSettingsManager.getGlobalSettings().getBaseUrl()).thenReturn("http://blah.confluence.atlassian.com:1990");
         when(remotablePluginAccessor.getKey()).thenReturn("mykey");
     }
@@ -123,7 +123,6 @@ public class MacroContentLinkParserTest
     @Test
     public void ignoresSignUrlsWhenUrlIsInvalid()
     {
-        // TODO: should we throw an error instead
         String invalidUrl = "<a href='sign:???";
         assertThat(macroContentLinkParser.parse(remotablePluginAccessor, invalidUrl, EMPTY), is(invalidUrl));
     }

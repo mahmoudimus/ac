@@ -19,6 +19,7 @@ import com.atlassian.plugin.module.ContainerManagedPlugin;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.osgi.factory.OsgiPlugin;
 import com.atlassian.plugin.osgi.util.OsgiHeaderUtil;
+import com.atlassian.sal.api.ApplicationProperties;
 
 import com.google.common.base.Strings;
 
@@ -43,7 +44,7 @@ public class RemotePluginArtifactFactory
     public static String CLEAN_FILENAME_PATTERN = "[:\\\\/*?|<> _]";
 
     @Autowired
-    public RemotePluginArtifactFactory(ConnectPluginXmlFactory pluginXmlFactory, BundleContext bundleContext,PluginRetrievalService pluginRetrievalService)
+    public RemotePluginArtifactFactory(ConnectPluginXmlFactory pluginXmlFactory, BundleContext bundleContext, PluginRetrievalService pluginRetrievalService)
     {
         this.pluginXmlFactory = pluginXmlFactory;
         this.bundleContext = bundleContext;
@@ -85,9 +86,6 @@ public class RemotePluginArtifactFactory
         
         //create the plugin.xml
         builder.addResource("atlassian-plugin.xml",pluginXmlFactory.createPluginXml(addOn));
-        
-        //add the spring files from the connect plugin
-        addSpringFiles(builder);
 
         return new JarPluginArtifact(builder.build(addOn.getKey().replaceAll(CLEAN_FILENAME_PATTERN, "-").toLowerCase()));
     }
@@ -114,24 +112,8 @@ public class RemotePluginArtifactFactory
             }
         }
         
-        //copy the imports from the connect plugin to the addon manifest so addons can autowire stuff
-        String connectImports = (String)bundleContext.getBundle().getHeaders().get(Constants.IMPORT_PACKAGE);
-        String connectExports = (String)bundleContext.getBundle().getHeaders().get(Constants.EXPORT_PACKAGE);
-
-        manifest.put(Constants.IMPORT_PACKAGE,connectImports + "," + connectExports);
-        
         return manifest;
     }
 
-    private void addSpringFiles(ConnectAddOnBundleBuilder builder) throws IOException
-    {
-        String importsXml = IOUtils.toString(theConnectPlugin.getResourceAsStream("/META-INF/spring/atlassian-plugins-component-imports.xml"));
-        String componentsXml = IOUtils.toString(theConnectPlugin.getResourceAsStream("/META-INF/spring/atlassian-plugins-components.xml"));
-        String hostComponentsXml = IOUtils.toString(theConnectPlugin.getResourceAsStream("/META-INF/spring/atlassian-plugins-host-components.xml"));
-        
-        builder.addResource("/META-INF/spring/atlassian-plugins-component-imports.xml",importsXml);
-        builder.addResource("/META-INF/spring/atlassian-plugins-components.xml",componentsXml);
-        builder.addResource("/META-INF/spring/atlassian-plugins-host-components.xml",hostComponentsXml);
-        
-    }
+   
 }

@@ -11,6 +11,7 @@ import com.atlassian.plugin.connect.plugin.module.page.IFrameContextImpl;
 import com.atlassian.plugin.connect.plugin.module.page.IFramePageServlet;
 import com.atlassian.plugin.connect.plugin.module.page.PageInfo;
 import com.atlassian.plugin.connect.plugin.module.jira.conditions.IsProjectAdminCondition;
+import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.spi.module.IFrameParams;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
 import com.atlassian.plugin.module.ModuleFactory;
@@ -44,7 +45,9 @@ public final class ProjectConfigTabModuleDescriptor extends AbstractModuleDescri
 	private final BundleContext bundleContext;
 	private final IFramePageRenderer iFramePageRenderer;
 	private final UserManager userManager;
-	private Element descriptor;
+    private final UrlVariableSubstitutor urlVariableSubstitutor;
+
+    private Element descriptor;
 
 	private WebItemCreator.Builder webItemCreatorBuilder;
 	private DynamicDescriptorRegistration.Registration registration;
@@ -57,9 +60,11 @@ public final class ProjectConfigTabModuleDescriptor extends AbstractModuleDescri
             IFramePageRenderer iFramePageRenderer,
             UserManager userManager,
             WebItemCreator webItemCreator,
-            JiraAuthenticationContext authenticationContext)
+            JiraAuthenticationContext authenticationContext,
+            UrlVariableSubstitutor urlVariableSubstitutor)
     {
         super(moduleFactory);
+        this.urlVariableSubstitutor = urlVariableSubstitutor;
         this.dynamicDescriptorRegistration = checkNotNull(dynamicDescriptorRegistration);
         this.bundleContext = checkNotNull(bundleContext);
         this.iFramePageRenderer = checkNotNull(iFramePageRenderer);
@@ -170,11 +175,13 @@ public final class ProjectConfigTabModuleDescriptor extends AbstractModuleDescri
 						PluginParseException
 				{
 					final PageInfo pageInfo = new PageInfo("", "-project-admin", pageName, condition, metaTagsContent);
-
 					return (T) new IFrameProjectConfigTabServlet(
-							pageInfo,
+                            pageInfo,
                             iFramePageRenderer,
-							new IFrameContextImpl(plugin.getKey(), path, moduleKey, params), userManager);
+                            new IFrameContextImpl(plugin.getKey(), path, moduleKey, params), userManager,
+                            urlVariableSubstitutor,
+                            Maps.<String, String>newHashMap()
+                    );
 				}
 			}, getService(bundleContext, ServletModuleManager.class));
 			descriptor.init(plugin, config);

@@ -125,6 +125,11 @@ public final class ConfluenceOps
         {
             return String.valueOf(pageData.get("creator"));
         }
+
+        public String getUrl()
+        {
+            return String.valueOf(pageData.get("url"));
+        }
     }
 
     public static final class ConfluenceCommentData

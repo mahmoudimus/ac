@@ -1,20 +1,23 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans.builder;
 
+import java.util.Arrays;
 import java.util.List;
 
+import com.atlassian.plugin.connect.plugin.capabilities.beans.ConditionalBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean;
 
+import static com.google.common.collect.Lists.asList;
 import static com.google.common.collect.Lists.newArrayList;
 
-public class WebItemCapabilityBeanBuilder extends NameToKeyBeanBuilder<WebItemCapabilityBeanBuilder, WebItemCapabilityBean>
+public class WebItemCapabilityBeanBuilder extends BeanWithKeyParamsAndConditionsBuilder<WebItemCapabilityBeanBuilder, WebItemCapabilityBean>
 {
     private String link;
     private String location;
     private AddOnUrlContext context;
-    private int weight;
+    private Integer weight;
     private List<String> styleClasses;
     private I18nProperty tooltip;
     private IconBean icon;

@@ -4,7 +4,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.OAuthBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.RemoteContainerCapabilityBean;
 
 /**
- * @since version
+ * @since 1.0
  */
 public class RemoteContainerCapabilityBeanBuilder<T extends RemoteContainerCapabilityBeanBuilder, B extends RemoteContainerCapabilityBean> extends BaseCapabilityBeanBuilder<T,B>
 {

@@ -11,7 +11,7 @@ import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
 
 /**
- * @since version
+ * @since 1.0
  */
 public class ConnectAddonBean extends BaseCapabilityBean
 {
@@ -23,7 +23,8 @@ public class ConnectAddonBean extends BaseCapabilityBean
     private String description;
     private VendorBean vendor;
     private Map<String,String> links;
-    private Map<String,List<? extends CapabilityBean>> capabilities;
+    
+    private CapabilityList capabilities;
     
     public ConnectAddonBean()
     {
@@ -33,7 +34,7 @@ public class ConnectAddonBean extends BaseCapabilityBean
         this.description = "";
         this.vendor = VendorBean.newVendorBean().build();
         this.links = newHashMap();
-        this.capabilities = newHashMap();
+        this.capabilities = new CapabilityList();
     }
 
     public ConnectAddonBean(ConnectAddonBeanBuilder builder)
@@ -62,7 +63,7 @@ public class ConnectAddonBean extends BaseCapabilityBean
 
         if(null == capabilities)
         {
-            this.capabilities = newHashMap();
+            this.capabilities = new CapabilityList();
         }
 
         if(null == vendor)
@@ -101,7 +102,7 @@ public class ConnectAddonBean extends BaseCapabilityBean
         return vendor;
     }
 
-    public Map<String,List<? extends CapabilityBean>> getCapabilities()
+    public CapabilityList getCapabilities()
     {
         return capabilities;
     }

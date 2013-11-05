@@ -4,18 +4,14 @@ import com.atlassian.jira.functest.framework.FunctTestConstants;
 import com.atlassian.jira.testkit.client.restclient.Version;
 import com.atlassian.jira.testkit.client.restclient.VersionClient;
 import com.atlassian.jira.tests.TestBase;
+import com.atlassian.plugin.connect.test.pageobjects.jira.JiraVersionTabPage;
 import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
 import com.atlassian.plugin.connect.test.server.module.VersionTabPageModule;
-import com.atlassian.plugin.connect.test.pageobjects.jira.JiraVersionTabPage;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import it.servlet.ConnectAppServlets;
+import org.junit.*;
 
 import java.rmi.RemoteException;
 
-import static com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner.newMustacheServlet;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
@@ -41,7 +37,7 @@ public class TestVersionTabPage extends TestBase
                 .add(VersionTabPageModule.key(JIRA_VERSION_TAB_PANEL)
                         .name("Version Tab Panel")
                         .path("/ipp?version_id=${version.id}&project_id=${project.id}&project_key=${project.key}")
-                        .resource(newMustacheServlet("iframe.mu")))
+                        .resource(ConnectAppServlets.apRequestServlet()))
                 .start();
 
     }

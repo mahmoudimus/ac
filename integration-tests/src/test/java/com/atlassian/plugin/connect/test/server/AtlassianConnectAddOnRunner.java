@@ -1,27 +1,16 @@
 package com.atlassian.plugin.connect.test.server;
 
-import java.io.IOException;
-import java.io.StringWriter;
-import java.security.NoSuchAlgorithmException;
-import java.util.Map;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import com.atlassian.fugue.Option;
 import com.atlassian.fugue.Pair;
 import com.atlassian.plugin.connect.api.service.SignedRequestHandler;
 import com.atlassian.plugin.connect.spi.Permissions;
-import com.atlassian.plugin.connect.test.HttpUtils;
 import com.atlassian.plugin.connect.test.Utils;
 import com.atlassian.plugin.connect.test.client.AtlassianConnectRestClient;
 import com.atlassian.plugin.connect.test.server.module.Module;
-
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
-
+import it.servlet.ContextServlet;
+import it.servlet.HttpContextServlet;
+import net.oauth.signature.RSA_SHA1;
 import org.apache.commons.lang.RandomStringUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentFactory;
@@ -34,13 +23,18 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.oauth.signature.RSA_SHA1;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.security.NoSuchAlgorithmException;
+import java.util.Map;
 
-import static com.atlassian.fugue.Option.option;
 import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.test.Utils.createSignedRequestHandler;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Strings.nullToEmpty;
 import static com.google.common.collect.Maps.newHashMap;
 
 public final class AtlassianConnectAddOnRunner
@@ -135,14 +129,14 @@ public final class AtlassianConnectAddOnRunner
     public AtlassianConnectAddOnRunner enableLicensing()
     {
         Element info = doc.getRootElement().element("plugin-info");
-        info.addElement("param").addAttribute("name","atlassian-licensing-enabled").setText("true");
+        info.addElement("param").addAttribute("name", "atlassian-licensing-enabled").setText("true");
         return this;
     }
 
     public AtlassianConnectAddOnRunner addInfoParam(String name, String value)
     {
         Element info = doc.getRootElement().element("plugin-info");
-        info.addElement("param").addAttribute("name",name).setText(value);
+        info.addElement("param").addAttribute("name", name).setText(value);
         return this;
     }
 
@@ -207,11 +201,11 @@ public final class AtlassianConnectAddOnRunner
 
         for (final Map.Entry<String, HttpServlet> entry : routes.entrySet())
         {
-            if (entry.getValue() instanceof WithContextHttpServlet)
+            if (entry.getValue() instanceof HttpContextServlet)
             {
-                ((WithContextHttpServlet) entry.getValue()).baseContext.putAll(getBaseContext());
+                ((HttpContextServlet) entry.getValue()).getBaseContext().putAll(getBaseContext());
             }
-            context.addServlet(new ServletHolder(entry.getValue()), entry.getKey());
+            context.addServlet(new ServletHolder(entry.getValue()), toPathSpec(entry.getKey()));
         }
 
         list.addHandler(context);
@@ -219,7 +213,7 @@ public final class AtlassianConnectAddOnRunner
 
         StringWriter writer = new StringWriter();
         new XMLWriter(writer).write(doc);
-        
+
         String xml = writer.toString();
         logger.debug("Started Atlassian Connect Add-On at '{}' with descriptor:\n{}", displayUrl, xml);
 
@@ -228,84 +222,23 @@ public final class AtlassianConnectAddOnRunner
         return this;
     }
 
-    public static HttpServlet newServlet(WithContextServlet servlet)
+    /**
+     * Transform a URL into a servlet path spec (i.e. drop the query string if present)
+     */
+    private static String toPathSpec(String url)
     {
-        return new WithContextHttpServlet(servlet);
+        int queryIndex = url.indexOf("?");
+        return queryIndex > -1 ? url.substring(0, queryIndex) : url;
     }
 
-    public static HttpServlet newMustacheServlet(String resource)
+    public static HttpServlet newServlet(ContextServlet servlet)
     {
-        return newServlet(new MustacheServlet(resource));
+        return new HttpContextServlet(servlet);
     }
 
     private ImmutableMap<String, Object> getBaseContext()
     {
         return ImmutableMap.<String, Object>of("port", port, "baseurl", baseUrl);
-    }
-
-    public static class WithContextServlet
-    {
-        protected void doGet(final HttpServletRequest req, final HttpServletResponse resp, Map<String, Object> context) throws ServletException, IOException
-        {
-        }
-
-        protected void doPost(final HttpServletRequest req, final HttpServletResponse resp, Map<String, Object> context) throws ServletException, IOException
-        {
-        }
-    }
-
-    private static class WithContextHttpServlet extends HttpServlet
-    {
-        private final Map<String, Object> baseContext = Maps.newHashMap();
-        private final WithContextServlet servlet;
-
-        private WithContextHttpServlet(WithContextServlet servlet)
-        {
-            this.servlet = checkNotNull(servlet);
-        }
-
-        @Override
-        protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
-        {
-            servlet.doGet(req, resp, getContext(req));
-        }
-
-        @Override
-        protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
-        {
-            servlet.doPost(req, resp, getContext(req));
-        }
-
-        private ImmutableMap<String, Object> getContext(HttpServletRequest req) throws IOException
-        {
-            return ImmutableMap.<String, Object>builder()
-                               .putAll(baseContext)
-                               .put("req_url", nullToEmpty(option(req.getRequestURL()).getOrElse(new StringBuffer()).toString()))
-                               .put("req_uri", nullToEmpty(req.getRequestURI()))
-                               .put("req_query", nullToEmpty(req.getQueryString()))
-                               .put("req_method", req.getMethod())
-                               .put("clientKey", nullToEmpty(req.getParameter("oauth_consumer_key")))
-                               .put("locale", nullToEmpty(req.getParameter("loc")))
-                               .put("licenseStatus", nullToEmpty(req.getParameter("lic")))
-                               .put("timeZone", nullToEmpty(req.getParameter("tz")))
-                               .build();
-        }
-    }
-
-    private static final class MustacheServlet extends WithContextServlet
-    {
-        private final String path;
-
-        private MustacheServlet(String path)
-        {
-            this.path = checkNotNull(path);
-        }
-
-        @Override
-        protected void doGet(HttpServletRequest req, HttpServletResponse resp, Map<String, Object> context) throws ServletException, IOException
-        {
-            HttpUtils.renderHtml(resp, path, context);
-        }
     }
 
     private class DescriptorServlet extends HttpServlet

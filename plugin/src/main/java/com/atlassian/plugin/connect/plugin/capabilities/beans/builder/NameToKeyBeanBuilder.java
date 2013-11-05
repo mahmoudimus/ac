@@ -4,7 +4,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nPropert
 import com.atlassian.plugin.connect.plugin.capabilities.beans.NameToKeyBean;
 
 /**
- * @since version
+ * @since 1.0
  */
 public class NameToKeyBeanBuilder<T extends NameToKeyBeanBuilder, B extends NameToKeyBean> extends BaseCapabilityBeanBuilder<T,B>
 {

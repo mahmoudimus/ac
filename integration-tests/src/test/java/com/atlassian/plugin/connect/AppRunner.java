@@ -1,25 +1,22 @@
 package com.atlassian.plugin.connect;
 
-import java.io.IOException;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.test.server.ConnectCapabilitiesRunner;
+import it.capabilities.CheckUsernameConditionServlet;
+import it.servlet.ConnectAppServlets;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
-import com.atlassian.plugin.connect.test.server.ConnectCapabilitiesRunner;
-import com.atlassian.plugin.connect.test.server.module.RemoteWebItemModule;
-
-import it.MyContextAwareWebPanelServlet;
-
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean.newWebItemBean;
-import static com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner.newServlet;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.SingleConditionBean.newSingleConditionBean;
 
 /**
- * @since version
+ * @since 1.0
  */
 public class AppRunner
 {
@@ -30,9 +27,8 @@ public class AppRunner
     {
         try
         {
-//            AtlassianConnectAddOnRunner runner = new AtlassianConnectAddOnRunner("http://localhost:1990/confluence", "permanentRedirect")
+//            AtlassianConnectAddOnRunner runner = new AtlassianConnectAddOnRunner(JIRA,"xml-condition-plugin")
 //                    .addOAuth()
-//                    //.enableLicensing()
 //                    .addPermission("resttest")
 //                    .add(GeneralPageModule.key("remotePluginGeneral")
 //                                          .name("Remotable Plugin app1 General")
@@ -41,65 +37,60 @@ public class AppRunner
 //                                          .iconUrl("/public/sandcastles.jpg")
 //                                          .height("600")
 //                                          .width("700")
-//                                          .resource(newMustacheServlet("iframe.mu")))
+//                                          .resource(ConnectAppServlets.apRequestServlet()))
 //                    .add(GeneralPageModule.key("amdTest")
 //                                          .name("AMD Test app1 General")
 //                                          .path("/amdTest")
-//                                          .resource(newMustacheServlet("amd-test.mu")))
+//                                          .resource(ConnectAppServlets.apRequestServlet()))
+//                    .add(GeneralPageModule.key("onlyBetty")
+//                                          .name("Only Betty")
+//                                          .path("/ob")
+//                                          .conditions(Condition.name("user_is_logged_in"), Condition.at("/onlyBettyCondition").resource(new TestPageModules.OnlyBettyConditionServlet()))
+//                                          .resource(ConnectAppServlets.apRequestServlet()))
 //                    .add(DialogPageModule.key("remotePluginDialog")
 //                                         .name("Remotable Plugin app1 Dialog")
 //                                         .path("/rpd")
 //                                         .resource(newMustacheServlet("dialog.mu")))
+//                    .add(GeneralPageModule.key("sizeToParent")
+//                                          .name("Size to parent general page")
+//                                          .path("/fsg")
+//                                          .resource(newMustacheServlet("iframe-size-to-parent.mu")))
+//                    .add(DialogPageModule.key("sizeToParentDialog")
+//                                         .name("Size to parent dialog page")
+//                                         .path("/fsg")
+//                                         .resource(newMustacheServlet("iframe-size-to-parent.mu")))
 //                    .start();
 
-//            AtlassianConnectAddOnRunner remotePlugin = new AtlassianConnectAddOnRunner("http://localhost:1990/confluence")
-//                    .addOAuth()
-//                    .addPermission("read_content")
-//                    .addPermission("read_users_and_groups")
-//                    .addPermission("read_server_information")
-//                    .add(RemoteMacroModule.key("app1-macro")
-//                                          .name("app1-macro")
-//                                          .title("Remotable Plugin app1 Macro")
-//                                          .path("/app1-macro")
-//                                          .iconUrl("/public/sandcastles.jpg")
-//                                          .outputBlock()
-//                                          .bodyType("rich-text")
-//                                          .featured("true")
-//                                          .category(MacroCategory.name("development"))
-//                                          .parameters(MacroParameter.name("footy").title("Favorite Footy").type("enum").required("true").values("American Football", "Soccer", "Rugby Union", "Rugby League"))
-//                                          .contextParameters(ContextParameter.name("page.id").query())
-//                                          .editor(MacroEditor.at("/myMacroEditor").height("600").width("600").resource(newMustacheServlet("confluence/macro/editor.mu")))
-//                                          .resource(new TestConfluencePageMacro.MyMacroServlet()))
-//                    .add(GeneralPageModule.key("remotePluginGeneral")
-//                                          .name("Remotable Plugin app1 General")
-//                                          .path("/page?page_id=${page.id}")
-//                                          .linkName("Remotable Plugin app1 General Link")
-//                                          .iconUrl("/public/sandcastles.jpg")
-//                                          .height("600")
-//                                          .width("700")
-//                                          .resource(newServlet(new MyContextAwareWebPanelServlet())))
-//                    .addRoute("/page/*", newServlet(new MyContextAwareWebPanelServlet()))
-//                    .start();
 
             ConnectCapabilitiesRunner remotePlugin = new ConnectCapabilitiesRunner(JIRA,"my-plugin")
-                    .addCapability(newWebItemBean()
+                    .addCapabilities("webItems", newWebItemBean()
                             .withName(new I18nProperty("AC General Web Item", "ac.gen"))
                             .withLocation("system.top.navigation.bar")
                             .withWeight(1)
-                            .withLink("/irwi")
-                            .build())
-                    .addCapability(newWebItemBean()
-                            .withName(new I18nProperty("Quick project link","ac.qp"))
+                            .withLink("/irwi?issue_id=${issue.id}&project_key=${project.key}&pid=${project.id}")
+                            .build(),
+                            newWebItemBean()
+                            .withContext(AddOnUrlContext.product)
+                            .withName(new I18nProperty("Quick project link", "ac.qp"))
                             .withLocation("system.top.navigation.bar")
                             .withWeight(1)
-                            .withLink(JIRA + "/browse/ACDEV-1234")
-                            .build())
-                    .addCapability(newWebItemBean()
-                            .withName(new I18nProperty("google link","ac.gl"))
+                            .withLink("/browse/ACDEV-1234")
+                            .build()
+                            ,newWebItemBean()
+                            .withName(new I18nProperty("google link", "ac.gl"))
                             .withLocation("system.top.navigation.bar")
                             .withWeight(1)
                             .withLink("http://www.google.com")
-                            .build()).start();
+                            .withConditions(
+                                    newSingleConditionBean().withCondition("user_is_logged_in").build()
+                                    , newSingleConditionBean().withCondition("/onlyBettyCondition").build()
+                            )
+                            .build())
+
+                    .addRoute("/onlyBettyCondition", new CheckUsernameConditionServlet("betty"))
+                    .addRoute("/irwi?issue_id=${issue.id}&project_key=${project.key}&pid=${project.id}",
+                            ConnectAppServlets.helloWorldServlet())
+                    .start();
             while (true)
             {
                 //do nothing

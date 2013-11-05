@@ -1,5 +1,5 @@
 <application key="confluence">
-    <component key="hostContainer" class="com.atlassian.plugin.osgi.bridge.external.SpringHostContainer" />
+    <component key="hostContainer" class="com.atlassian.plugin.osgi.bridge.external.SpringHostContainer"/>
     <component key="confluenceProductAccessor"
                class="com.atlassian.plugin.connect.plugin.product.confluence.ConfluenceProductAccessor"/>
     <component key="confluenceUserPreferencesRetriever" class="com.atlassian.plugin.connect.plugin.product.confluence.ConfluenceUserPreferencesRetriever"
