@@ -3,22 +3,14 @@ package it;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import com.atlassian.pageobjects.page.HomePage;
-import com.atlassian.pageobjects.page.LoginPage;
 import com.atlassian.plugin.connect.plugin.rest.license.LicenseDetailsRepresentation;
 import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
-import com.atlassian.plugin.connect.test.server.module.Condition;
-import com.atlassian.plugin.connect.test.server.module.DialogPageModule;
-import com.atlassian.plugin.connect.test.server.module.GeneralPageModule;
 
 import com.google.gson.Gson;
 
 import org.apache.commons.io.IOUtils;
-import org.junit.Ignore;
 import org.junit.Test;
 
-import static it.TestConstants.ADMIN_USERNAME;
-import static com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner.newMustacheServlet;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;

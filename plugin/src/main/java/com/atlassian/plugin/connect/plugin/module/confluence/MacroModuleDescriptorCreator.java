@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.plugin.module.confluence;
 
+import com.atlassian.confluence.content.render.image.ImageDimensions;
 import com.atlassian.confluence.macro.Macro;
-import com.atlassian.confluence.pages.thumbnail.Dimensions;
 import com.atlassian.confluence.plugin.descriptor.MacroMetadataParser;
 import com.atlassian.confluence.status.service.SystemInformationService;
 import com.atlassian.plugin.ModuleDescriptor;
@@ -373,7 +373,7 @@ public class MacroModuleDescriptorCreator
                     .addElement("var")
                     .addAttribute("name", "ICON_URL")
                     .addAttribute("value",
-                            remotablePluginAccessor.getDisplayUrl() + iconUrl.toString()).getParent();
+                            remotablePluginAccessor.getBaseUrl() + iconUrl.toString()).getParent();
 
             ModuleDescriptor jsDescriptor = new WebResourceModuleDescriptor(hostContainer);
             jsDescriptor.init(plugin, webResource);
@@ -481,11 +481,11 @@ public class MacroModuleDescriptorCreator
                 this.applyChrome = applyChrome;
             }
 
-            public Dimensions getDimensions()
+            public ImageDimensions getDimensions()
             {
                 if (height != null && width != null)
                 {
-                    return new Dimensions(width, height);
+                    return new ImageDimensions(width, height);
                 }
                 else
                 {

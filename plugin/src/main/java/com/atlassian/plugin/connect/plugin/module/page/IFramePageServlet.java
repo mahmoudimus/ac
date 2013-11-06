@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.plugin.module.page;
 
 import com.atlassian.plugin.connect.plugin.module.IFramePageRenderer;
-import com.atlassian.plugin.connect.plugin.module.IFrameRendererImpl;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.spi.module.IFrameContext;
 import com.atlassian.sal.api.user.UserManager;
@@ -30,7 +29,7 @@ public class IFramePageServlet extends HttpServlet
 {
     private final UserManager userManager;
     private final UrlVariableSubstitutor urlVariableSubstitutor;
-    private final PageInfo pageInfo;
+    protected final PageInfo pageInfo;
     private final IFrameContext iframeContext;
     private final IFramePageRenderer iFramePageRenderer;
     private final Map<String, String> contextParamNameToSymbolicName; // e.g. "my_space_id": "space.id"
@@ -63,9 +62,9 @@ public class IFramePageServlet extends HttpServlet
         String iFramePath = urlVariableSubstitutor.replace(originalPath, paramsFromRequest);
 
         iFramePageRenderer.renderPage(
-                new IFrameContextImpl(iframeContext.getPluginKey(), iFramePath, iframeContext.getNamespace(), iframeContext.getIFrameParams()),
-                pageInfo, req.getPathInfo(), copyRequestContext(req, originalPath), userManager.getRemoteUsername(req),
-                paramsFromRequest, out);
+                new IFrameContextImpl(iframeContext.getPluginKey(), iFramePath, iframeContext.getNamespace(),
+                iframeContext.getIFrameParams()), pageInfo, req.getPathInfo(), copyRequestContext(req, originalPath),
+                userManager.getRemoteUsername(req), paramsFromRequest, out);
     }
 
     private Map<String, Object> getProductContext(HttpServletRequest req) throws IOException
@@ -91,7 +90,7 @@ public class IFramePageServlet extends HttpServlet
     /**
      * Map ( {"page_id":"${page.id}"}, {"page_id":1234} ) to {"page.id":1234}}
      * @param req Incoming {@link HttpServletRequest} containing concrete parameters and their values
-     * @return {@link Map<String, Object>} suitable for sending to {@link UrlVariableSubstitutor}
+     * @return {@link Map&lt;String, Object&gt;} suitable for sending to {@link UrlVariableSubstitutor}
      */
     private Map<String, Object> mapRequestParametersToContextParameters(HttpServletRequest req)
     {

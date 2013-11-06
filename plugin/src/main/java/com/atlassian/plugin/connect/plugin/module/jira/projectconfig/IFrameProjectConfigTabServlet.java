@@ -3,57 +3,48 @@ package com.atlassian.plugin.connect.plugin.module.jira.projectconfig;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.project.Project;
 import com.atlassian.plugin.connect.plugin.module.IFramePageRenderer;
-import com.atlassian.plugin.connect.plugin.module.IFrameRendererImpl;
 import com.atlassian.plugin.connect.plugin.module.jira.conditions.IsProjectAdminCondition;
+import com.atlassian.plugin.connect.plugin.module.page.IFramePageServlet;
 import com.atlassian.plugin.connect.plugin.module.page.PageInfo;
+import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.spi.module.IFrameContext;
 import com.atlassian.sal.api.user.UserManager;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Collections;
+import java.util.Map;
 
 
 /**
  * A servlet that loads a plugin config tab from a remote plugin's iframe.
+ * <p/>
+ * This differs slightly from the regular {@link IFramePageServlet} in that it includes nasty workaround for JRA-16407.
  */
-public class IFrameProjectConfigTabServlet extends HttpServlet
+public class IFrameProjectConfigTabServlet extends IFramePageServlet
 {
 
-	private final UserManager userManager;
-	private final PageInfo pageInfo;
-	private final IFrameContext iframeContext;
-	private final IFramePageRenderer iFramePageRenderer;
-
 	public IFrameProjectConfigTabServlet(PageInfo pageInfo,
-            IFramePageRenderer iFramePageRenderer,
-			IFrameContext iframeContext,
-			UserManager userManager)
+                                         IFramePageRenderer iFramePageRenderer,
+                                         IFrameContext iframeContext,
+                                         UserManager userManager,
+                                         UrlVariableSubstitutor urlVariableSubstitutor,
+                                         Map<String, String> contextParamNameToSymbolicName)
 	{
-		this.userManager = userManager;
-		this.pageInfo = pageInfo;
-		this.iframeContext = iframeContext;
-		this.iFramePageRenderer = iFramePageRenderer;
+		super(pageInfo, iFramePageRenderer, iframeContext, userManager, urlVariableSubstitutor, contextParamNameToSymbolicName);
 	}
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
 	{
-		PrintWriter out = resp.getWriter();
-		resp.setContentType("text/html");
+        final Project project = getProject(req);
+        req.setAttribute("com.atlassian.jira.projectconfig.util.ServletRequestProjectConfigRequestCache:project", project);
 
-		final Project project = getProject(req);
-		req.setAttribute("com.atlassian.jira.projectconfig.util.ServletRequestProjectConfigRequestCache:project", project);
+        // This is a workaround for JRA-26407.
+        ((IsProjectAdminCondition)pageInfo.getCondition()).setProject(project);
 
-		// This is a workaround for JRA-26407.
-		((IsProjectAdminCondition)pageInfo.getCondition()).setProject(project);
-
-        iFramePageRenderer.renderPage(iframeContext, pageInfo, req.getPathInfo(), req.getParameterMap(),
-				userManager.getRemoteUsername(req), Collections.<String, Object>emptyMap(), out);
+        super.doGet(req, resp);
 	}
 
 	private Project getProject(final HttpServletRequest request)

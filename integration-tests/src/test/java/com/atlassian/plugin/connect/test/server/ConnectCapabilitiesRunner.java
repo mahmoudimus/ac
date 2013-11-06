@@ -36,8 +36,8 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import it.ContextServlet;
-import it.HttpContextServlet;
+import it.servlet.ContextServlet;
+import it.servlet.HttpContextServlet;
 import net.oauth.signature.RSA_SHA1;
 
 import static com.atlassian.fugue.Option.some;
@@ -52,6 +52,8 @@ import static com.google.common.collect.Maps.newHashMap;
  */
 public class ConnectCapabilitiesRunner
 {
+    private static final String CONNECT_PLUGIN_SERVLET_PREFIX = "/plugins/servlet/ac/";
+
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final String baseUrl;
@@ -110,6 +112,17 @@ public class ConnectCapabilitiesRunner
     {
         addonBuilder.withCapabilities(fieldName, beans);
         return this;
+    }
+
+    public ConnectCapabilitiesRunner addPluginRoute(String relativePath, HttpServlet servlet)
+    {
+       String path = CONNECT_PLUGIN_SERVLET_PREFIX + pluginKey;
+       if (!relativePath.startsWith("/"))
+       {
+            path += "/";
+       }
+       addRoute(path + relativePath, servlet);
+       return this;
     }
 
     public ConnectCapabilitiesRunner addRoute(String path, HttpServlet servlet)

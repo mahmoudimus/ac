@@ -9,14 +9,13 @@ import com.atlassian.plugin.connect.test.pageobjects.RemotePluginAwarePage;
 import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
 import com.atlassian.plugin.connect.test.server.module.DialogPageModule;
 import com.atlassian.plugin.connect.test.server.module.GeneralPageModule;
-
+import it.servlet.ConnectAppServlets;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import static com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner.newMustacheServlet;
 import static it.TestConstants.BETTY_USERNAME;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class TestDialog extends AbstractRemotablePluginTest
 {
@@ -31,13 +30,13 @@ public class TestDialog extends AbstractRemotablePluginTest
                                       .name("Remotable Plugin app1 Open Dialog")
                                       .path("/rpg")
                                       .linkName("Remotable Plugin app1 Open Dialog")
-                                      .resource(newMustacheServlet("iframe-open-dialog.mu")))
+                                      .resource(ConnectAppServlets.openDialogServlet()))
                 .add(DialogPageModule.key("my-dialog")
                                       .name("Remote dialog")
                                       .path("/my-dialog")
                                       .section("")
-                                      .resource(newMustacheServlet("iframe-close-dialog.mu")))
-                .addRoute("/dialog", newMustacheServlet("iframe-close-dialog.mu"))
+                                      .resource(ConnectAppServlets.closeDialogServlet()))
+                .addRoute("/dialog", ConnectAppServlets.closeDialogServlet())
                 .start();
     }
 

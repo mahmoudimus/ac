@@ -37,12 +37,6 @@
         <url-pattern>*</url-pattern>
     </servlet-filter>
 
-    <servlet key="remotablePlugins2LORedirectingServlet"
-             name="Remotable Plugins 2-Legged OAuth Signing and Redirecting Servlet"
-             class="com.atlassian.plugin.connect.plugin.module.util.redirect.RedirectServlet">
-        <description>Redirects to Remotable Plugins, using 2-legged OAuth to sign the outgoing request.  Request parameters are included in the redirect.</description>
-        <url-pattern>/redirect/oauth</url-pattern>
-    </servlet>
     <servlet key="remotablePluginsPermanentRedirectingServlet"
              name="Remotable Plugins Permanent Redirecting Servlet"
              class="com.atlassian.plugin.connect.plugin.module.util.redirect.RedirectServlet">

@@ -55,7 +55,7 @@ public class WebItemModuleProvider implements ConnectModuleProvider<WebItemCapab
         {
             RelativeAddOnUrl localUrl = relativeAddOnUrlConverter.addOnUrlToLocalServletUrl(plugin.getKey(), bean.getLink());
             
-            WebItemCapabilityBean newBean = newWebItemBean(bean).withLink(localUrl.getRelativeUrl()).build();
+            WebItemCapabilityBean newBean = newWebItemBean(bean).withLink(localUrl.getRelativeUri()).build();
             descriptors.add(webItemFactory.createModuleDescriptor(plugin, addonBundleContext, newBean));
 
             //todo: make sure we do something to actually look up condition and metaTags map

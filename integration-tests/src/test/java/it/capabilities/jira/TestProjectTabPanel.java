@@ -10,15 +10,15 @@ import com.atlassian.plugin.connect.test.pageobjects.RemotePluginEmbeddedTestPag
 import com.atlassian.plugin.connect.test.pageobjects.jira.AbstractRemotablePluginProjectTab;
 import com.atlassian.plugin.connect.test.server.ConnectCapabilitiesRunner;
 
+import it.jira.JiraWebDriverTestBase;
+import it.servlet.ConnectAppServlets;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 
-import it.jira.JiraWebDriverTestBase;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectTabPanelCapabilityBean.newTabPanelBean;
-import static com.atlassian.plugin.connect.test.server.ConnectCapabilitiesRunner.newMustacheServlet;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -40,7 +40,7 @@ public class TestProjectTabPanel extends JiraWebDriverTestBase
                         .withUrl("/ptp")
                         .withWeight(1234)
                         .build())
-                .addRoute("/ptp", newMustacheServlet("iframe.mu"))
+                .addRoute("/ptp", ConnectAppServlets.apRequestServlet())
                 .start();
     }
 
