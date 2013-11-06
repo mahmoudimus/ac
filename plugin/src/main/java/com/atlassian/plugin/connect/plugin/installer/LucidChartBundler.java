@@ -3,12 +3,11 @@ package com.atlassian.plugin.connect.plugin.installer;
 import com.atlassian.event.api.EventListener;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.plugin.*;
+import com.atlassian.plugin.spring.scanner.annotation.componentimport.ComponentImport;
 import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
 import com.atlassian.plugin.connect.plugin.util.zip.ZipBuilder;
 import com.atlassian.plugin.connect.plugin.util.zip.ZipHandler;
-import com.atlassian.plugin.event.events.PluginDisabledEvent;
 import com.atlassian.plugin.event.events.PluginEnabledEvent;
-import com.atlassian.plugin.event.events.PluginUninstalledEvent;
 import com.atlassian.plugin.util.ClassLoaderUtils;
 import com.atlassian.sal.api.ApplicationProperties;
 import org.slf4j.Logger;
@@ -32,7 +31,7 @@ public final class LucidChartBundler implements InitializingBean, DisposableBean
     private final ApplicationProperties applicationProperties;
 
     @Autowired
-    public LucidChartBundler(EventPublisher eventPublisher, PluginController pluginController, PluginAccessor pluginAccessor, ApplicationProperties applicationProperties)
+    public LucidChartBundler(EventPublisher eventPublisher, @ComponentImport PluginController pluginController, PluginAccessor pluginAccessor, ApplicationProperties applicationProperties)
     {
         this.eventPublisher = eventPublisher;
         this.pluginController = pluginController;

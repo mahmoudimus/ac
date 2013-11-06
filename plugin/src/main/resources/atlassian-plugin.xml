@@ -195,7 +195,7 @@
     <component-import key="pluginRetrievalService" interface="com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService" />
     <component-import key="oauthConsumerService" interface="com.atlassian.oauth.consumer.ConsumerService" />
     <component-import key="requestFactory" interface="com.atlassian.sal.api.net.RequestFactory" />
-    <component-import key="pluginController" interface="com.atlassian.plugin.PluginController" />
+    <!--<component-import key="pluginController" interface="com.atlassian.plugin.PluginController" />-->
     <component-import key="applicationProperties" interface="com.atlassian.sal.api.ApplicationProperties" />
     <component-import key="serviceProviderConsumerStore" interface="com.atlassian.oauth.serviceprovider.ServiceProviderConsumerStore" />
     <component-import key="applicationLinkService" interface="com.atlassian.applinks.spi.link.MutatingApplicationLinkService" />

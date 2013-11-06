@@ -1,1 +1,1 @@
-http\://www.atlassian.com/schema/atlasplugin=com.atlassian.plugin.connect.spring.AtlasPluginNamespaceHandler
+http\://www.atlassian.com/schema/atlassian-scanner=com.atlassian.plugin.spring.scanner.extension.AtlassianScannerNamespaceHandler

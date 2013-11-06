@@ -12,6 +12,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import com.atlassian.plugin.*;
+import com.atlassian.plugin.spring.scanner.annotation.componentimport.ComponentImport;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.osgi.factory.OsgiPlugin;
@@ -56,7 +57,7 @@ public final class I18nPropertiesPluginManager
     @Autowired
     public I18nPropertiesPluginManager(ModuleFactory moduleFactory,
                                        PluginAccessor accessor,
-                                       PluginController pluginController,
+                                       @ComponentImport PluginController pluginController,
                                        BundleContext bundleContext, StartableForPlugins startableForPlugins,
                                        PluginRetrievalService pluginRetrievalService
     )

@@ -10,7 +10,7 @@ import com.atlassian.jira.timezone.TimeZoneInfo;
 import com.atlassian.jira.timezone.TimeZoneService;
 import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.plugin.connect.plugin.UserPreferencesRetriever;
-import com.atlassian.plugin.connect.annotation.JiraComponent;
+import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 
 import org.springframework.beans.factory.annotation.Autowired;
 

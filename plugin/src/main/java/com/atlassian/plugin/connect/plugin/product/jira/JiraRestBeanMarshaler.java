@@ -25,7 +25,7 @@ import com.atlassian.jira.rest.v2.issue.builder.BeanBuilderFactory;
 import com.atlassian.jira.rest.v2.issue.scope.RequestScope;
 import com.atlassian.jira.rest.v2.issue.scope.RequestScopeInterceptor;
 import com.atlassian.jira.security.roles.ProjectRoleManager;
-import com.atlassian.plugin.connect.annotation.JiraComponent;
+import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugins.rest.common.interceptor.MethodInvocation;
 import com.atlassian.plugins.rest.common.json.DefaultJaxbJsonMarshaller;
 import com.atlassian.sal.api.ApplicationProperties;

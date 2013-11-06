@@ -8,7 +8,7 @@ import com.atlassian.confluence.xhtml.api.XhtmlContent;
 import com.atlassian.event.api.EventListener;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.plugin.connect.plugin.DefaultRemotablePluginAccessorFactory;
-import com.atlassian.plugin.connect.annotation.ConfluenceComponent;
+import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.plugin.connect.plugin.util.http.CachingHttpContentRetriever;
 import com.atlassian.plugin.connect.plugin.util.http.ContentRetrievalErrors;
 import com.atlassian.plugin.connect.plugin.util.http.ContentRetrievalException;

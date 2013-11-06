@@ -2,7 +2,7 @@ package com.atlassian.plugin.connect.plugin.product.confluence;
 
 import com.atlassian.confluence.security.websudo.WebSudoManager;
 import com.atlassian.plugin.connect.plugin.product.WebSudoService;
-import com.atlassian.plugin.connect.annotation.ConfluenceComponent;
+import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

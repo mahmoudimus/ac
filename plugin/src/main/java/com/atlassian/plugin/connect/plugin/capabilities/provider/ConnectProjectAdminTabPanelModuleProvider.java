@@ -10,7 +10,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModule
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.RelativeAddOnUrl;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.RelativeAddOnUrlConverter;
 import com.atlassian.plugin.connect.plugin.module.jira.conditions.IsProjectAdminCondition;
-import com.atlassian.plugin.connect.annotation.JiraComponent;
+import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.web.Condition;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;

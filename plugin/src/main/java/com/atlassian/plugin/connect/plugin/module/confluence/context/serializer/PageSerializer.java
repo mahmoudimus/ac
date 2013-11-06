@@ -2,7 +2,7 @@ package com.atlassian.plugin.connect.plugin.module.confluence.context.serializer
 
 import com.atlassian.confluence.pages.AbstractPage;
 import com.atlassian.plugin.connect.plugin.module.context.ParameterSerializer;
-import com.atlassian.plugin.connect.annotation.ConfluenceComponent;
+import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 
 import com.google.common.collect.ImmutableMap;
 

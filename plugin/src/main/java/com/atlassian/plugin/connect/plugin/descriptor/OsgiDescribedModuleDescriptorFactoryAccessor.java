@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.descriptor;
 
 import com.atlassian.osgi.tracker.WaitableServiceTracker;
 import com.atlassian.osgi.tracker.WaitableServiceTrackerFactory;
+import com.atlassian.plugin.spring.scanner.annotation.component.ClasspathComponent;
 import com.atlassian.plugin.schema.descriptor.DescribedModuleDescriptorFactory;
 
 import com.google.common.base.Function;
@@ -17,7 +18,7 @@ public final class OsgiDescribedModuleDescriptorFactoryAccessor implements Descr
     private final WaitableServiceTracker<String, DescribedModuleDescriptorFactory> serviceTracker;
 
     @Autowired
-    public OsgiDescribedModuleDescriptorFactoryAccessor(WaitableServiceTrackerFactory waitableServiceTrackerFactory)
+    public OsgiDescribedModuleDescriptorFactoryAccessor(@ClasspathComponent WaitableServiceTrackerFactory waitableServiceTrackerFactory)
     {
         Function<DescribedModuleDescriptorFactory, String> f = identityHashCode();
         serviceTracker = checkNotNull(waitableServiceTrackerFactory).create(DescribedModuleDescriptorFactory.class, f);

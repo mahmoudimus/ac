@@ -5,7 +5,7 @@ import com.atlassian.confluence.spaces.Space;
 import com.atlassian.plugin.connect.plugin.module.confluence.context.serializer.SpaceSerializer;
 import com.atlassian.plugin.connect.plugin.module.context.ContextMapParameterExtractor;
 import com.atlassian.plugin.connect.plugin.module.context.ParameterSerializer;
-import com.atlassian.plugin.connect.annotation.ConfluenceComponent;
+import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 
 import com.google.common.base.Optional;
 

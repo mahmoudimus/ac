@@ -5,7 +5,7 @@ import com.atlassian.jira.plugin.webfragment.model.JiraWebLink;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.plugin.module.context.ContextMapURLSerializer;
-import com.atlassian.plugin.connect.annotation.JiraComponent;
+import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.web.WebFragmentHelper;
 import com.atlassian.plugin.web.WebInterfaceManager;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
@@ -80,6 +80,12 @@ public class JiraWebItemModuleDescriptorFactory implements ProductSpecificWebIte
         public WebLink getLink()
         {
             return new JiraWebLink(new RemoteWebLink(this, webFragmentHelper, urlVariableSubstitutor, contextMapURLSerializer, url, linkId, absolute), authenticationContext);
+        }
+
+        @Override
+        public void destroy()
+        {
+            //To change body of implemented methods use File | Settings | File Templates.
         }
     }
 }

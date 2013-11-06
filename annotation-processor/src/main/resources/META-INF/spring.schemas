@@ -1,1 +1,1 @@
-http\://www.atlassian.com/schema/atlasplugin/atlasplugin.xsd=com/atlassian/connect/atlasplugin.xsd
+http\://www.atlassian.com/schema/atlassian-scanner/atlassian-scanner.xsd=com/atlassian/plugin/spring/scanner/atlassian-scanner.xsd

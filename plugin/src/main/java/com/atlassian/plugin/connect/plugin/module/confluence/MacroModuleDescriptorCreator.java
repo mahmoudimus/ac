@@ -18,7 +18,7 @@ import com.atlassian.plugin.connect.plugin.module.page.IFrameContextImpl;
 import com.atlassian.plugin.connect.plugin.module.page.IFramePageServlet;
 import com.atlassian.plugin.connect.plugin.module.page.PageInfo;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
-import com.atlassian.plugin.connect.annotation.ConfluenceComponent;
+import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.plugin.connect.plugin.util.contextparameter.ContextParameterParser;
 import com.atlassian.plugin.connect.plugin.util.contextparameter.RequestContextParameterFactory;
 import com.atlassian.plugin.connect.spi.Permissions;

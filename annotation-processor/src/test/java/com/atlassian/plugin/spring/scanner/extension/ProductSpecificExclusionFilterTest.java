@@ -1,6 +1,6 @@
-package com.atlassian.plugin.connect.spring;
+package com.atlassian.plugin.spring.scanner.extension;
 
-import com.atlassian.plugin.connect.spring.ProductSpecificExclusionFilter;
+import com.atlassian.plugin.spring.scanner.extension.ProductSpecificExclusionFilter;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

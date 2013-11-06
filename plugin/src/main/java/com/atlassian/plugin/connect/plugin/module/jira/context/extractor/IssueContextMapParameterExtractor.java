@@ -4,7 +4,7 @@ import com.atlassian.jira.issue.Issue;
 import com.atlassian.plugin.connect.plugin.module.context.ContextMapParameterExtractor;
 import com.atlassian.plugin.connect.plugin.module.context.ParameterSerializer;
 import com.atlassian.plugin.connect.plugin.module.jira.context.serializer.IssueSerializer;
-import com.atlassian.plugin.connect.annotation.JiraComponent;
+import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 
 import com.google.common.base.Optional;
 

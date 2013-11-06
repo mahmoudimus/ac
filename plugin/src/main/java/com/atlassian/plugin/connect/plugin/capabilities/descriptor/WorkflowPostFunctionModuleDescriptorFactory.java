@@ -6,7 +6,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.WorkflowPostFuncti
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAutowireUtil;
 import com.atlassian.plugin.connect.plugin.module.jira.workflow.RemoteWorkflowFunctionPluginFactory;
 import com.atlassian.plugin.connect.plugin.module.jira.workflow.RemoteWorkflowPostFunctionProvider;
-import com.atlassian.plugin.connect.annotation.JiraComponent;
+import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;

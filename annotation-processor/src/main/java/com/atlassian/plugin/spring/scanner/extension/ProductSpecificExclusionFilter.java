@@ -1,11 +1,11 @@
-package com.atlassian.plugin.connect.spring;
+package com.atlassian.plugin.spring.scanner.extension;
 
 import java.io.IOException;
 import java.util.List;
 
 import javax.annotation.Nullable;
 
-import com.atlassian.plugin.connect.annotation.ProductFilter;
+import com.atlassian.plugin.spring.scanner.annotation.ProductFilter;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
@@ -23,6 +23,7 @@ import static com.google.common.collect.Lists.newArrayList;
 public class ProductSpecificExclusionFilter implements TypeFilter
 {
 	public static final String PRODUCTS = "value";
+    
     @VisibleForTesting
     static final String CLASS_ON_JIRA_CLASSPATH = "com.atlassian.jira.plugin.issuetabpanel.IssueTabPanelModuleDescriptor";
     @VisibleForTesting

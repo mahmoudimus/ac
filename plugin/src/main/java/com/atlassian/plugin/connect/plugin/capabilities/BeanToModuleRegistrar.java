@@ -11,7 +11,7 @@ import com.atlassian.plugin.AutowireCapablePlugin;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.annotation.CapabilityModuleProvider;
-import com.atlassian.plugin.connect.annotation.ProductFilter;
+import com.atlassian.plugin.spring.scanner.annotation.ProductFilter;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.CapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.CapabilityList;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.RemoteContainerCapabilityBean;

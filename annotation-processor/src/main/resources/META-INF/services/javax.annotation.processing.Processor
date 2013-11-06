@@ -1,1 +1,2 @@
-com.atlassian.plugin.connect.processor.ComponentAnnotationProcessor
+com.atlassian.plugin.spring.scanner.processor.ComponentAnnotationProcessor
+com.atlassian.plugin.spring.scanner.processor.ComponentImportAnnotationProcessor
