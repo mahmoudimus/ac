@@ -45,7 +45,7 @@ public class TestRedirects extends AbstractBrowserlessTest
         String responseText = IOUtils.toString(conn.getInputStream());
         assertEquals("bar", responseText);
 
-        runner.stop();
+        runner.stopAndUninstall();
     }
 
     private static final class MessageServlet extends HttpServlet

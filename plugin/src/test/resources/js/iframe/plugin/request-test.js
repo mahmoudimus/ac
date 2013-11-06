@@ -1,3 +1,4 @@
+var xdmMockRequest;
 (function(){
 
     var context = require.config({
@@ -8,59 +9,57 @@
             '*': {
                 '_xdm': '_xdmMockRequestTest'
             }
+        },
+        paths: {
+            '_xdmMockRequestTest': '/base/src/test/resources/js/iframe/plugin/_xdmMockRequestTest'
         }
+
     });
 
-    var xdmMock = {
+    xdmMockRequest = {
         init: function() {},
         request: sinon.spy()
     };
-
-    define('_xdmMockRequestTest', function () {
-        return function() {
-            return xdmMock;
-        };
-    });
 
     context(["_rpc", "request"], function(_rpc, request) {
         _rpc.init();
         module("Request Plugin", {
             teardown: function () {
-                xdmMock.request.reset();
+                xdmMockRequest.request.reset();
             },
             isFunction: function(functionToCheck) {
                 return functionToCheck && (functionToCheck instanceof Function);
             },
             invokeSuccessRequestResponse: function(args){
-                return xdmMock.request.args[0][1]( args );
+                return xdmMockRequest.request.args[0][1]( args );
             },
             invokeErrorRequestResponse: function(args){
-                return xdmMock.request.args[0][2]( args );
+                return xdmMockRequest.request.args[0][2]( args );
             }
         });
 
         test("invokes to host request", function () {
             request("/foo/bar");
 
-            ok(xdmMock.request.calledOnce, "invokes host request function");
+            ok(xdmMockRequest.request.calledOnce, "invokes host request function");
         });
 
         test("host request is passed url", function () {
             request("/foo/bar");
 
-            equal(xdmMock.request.args[0][0].url, "/foo/bar", "passes correct url");
+            equal(xdmMockRequest.request.args[0][0].url, "/foo/bar", "passes correct url");
         });
 
         test("host request is passed success callback", function () {
             request('/foo/bar');
 
-            ok(this.isFunction(xdmMock.request.args[0][1]));
+            ok(this.isFunction(xdmMockRequest.request.args[0][1]));
         });
 
         test("host request is passed fail callback", function () {
             request('/foo/bar');
 
-            ok(this.isFunction(xdmMock.request.args[0][2]));
+            ok(this.isFunction(xdmMockRequest.request.args[0][2]));
         });
 
         test("custom success callback passed", function () {
