@@ -18,7 +18,7 @@ public class RelativeAddOnUrlConverterTest
     @Test
     public void prependsACContextToPath()
     {
-        RelativeAddOnUrlConverter urlConverter = new RelativeAddOnUrlConverter(new UrlVariableSubstitutor());
+        RelativeAddOnUrlConverter urlConverter = new RelativeAddOnUrlConverter();
         RelativeAddOnUrl localUrl = urlConverter.addOnUrlToLocalServletUrl("my-plugin", URL);
         assertThat(localUrl.getRelativeUri(), is("/plugins/servlet/ac/my-plugin" + URL));
     }
