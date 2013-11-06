@@ -10,13 +10,16 @@ import com.atlassian.plugin.web.conditions.ConditionLoadingException;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.atlassian.spring.container.ContainerContext;
 import com.atlassian.spring.container.ContainerManager;
+import com.google.common.collect.ImmutableMap;
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.stubbing.Answer;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -24,6 +27,7 @@ import java.util.HashMap;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.startsWith;
+import static org.mockito.Matchers.anyMap;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -58,6 +62,14 @@ public class ConfluenceWebItemModuleDescriptorFactoryTest
 
         ContainerManager.getInstance().setContainerContext(containerContext);
         when(containerContext.getComponent("webInterfaceManager")).thenReturn(webInterfaceManager);
+        when(contextMapURLSerializer.getExtractedWebPanelParameters(anyMap())).thenAnswer(new Answer<Object>()
+        {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable
+            {
+                return invocation.getArguments()[0];
+            }
+        });
 
         descriptor = webItemFactory.createWebItemModuleDescriptor(
                 "/myplugin?my_project_id=${project.id}&my_project_key=${project.key}",
@@ -86,5 +98,11 @@ public class ConfluenceWebItemModuleDescriptorFactoryTest
                 is("ElContexto/myplugin?my_project_id=&my_project_key="));
     }
 
-
+    @Test
+    public void urlIsCorrectWhenThereIsAContext()
+    {
+        assertThat(descriptor.getLink().getDisplayableUrl(servletRequest, ImmutableMap.<String, Object>of("project",
+                ImmutableMap.<String, Object>of("key", "FOO", "id", "10"))),
+                is("ElContexto/myplugin?my_project_id=10&my_project_key=FOO"));
+    }
 }
