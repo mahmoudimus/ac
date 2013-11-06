@@ -54,7 +54,7 @@ public class TestWebPanels extends ConfluenceWebDriverTestBase
     {
         if (remotePlugin != null)
         {
-            remotePlugin.stop();
+            remotePlugin.stopAndUninstall();
         }
     }
 

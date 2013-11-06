@@ -56,7 +56,7 @@ public final class TestConfluenceInlinePageMacro extends ConfluenceWebDriverTest
     {
         if (remotePlugin != null)
         {
-            remotePlugin.stop();
+            remotePlugin.stopAndUninstall();
         }
     }
 

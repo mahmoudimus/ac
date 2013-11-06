@@ -44,7 +44,7 @@ public class TestComponentTabPage extends TestBase
     {
         if (remotePlugin != null)
         {
-            remotePlugin.stop();
+            remotePlugin.stopAndUninstall();
         }
     }
 
