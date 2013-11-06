@@ -1,15 +1,10 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
-import java.util.List;
-
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean;
-import com.atlassian.plugin.connect.spi.module.DynamicMarkerCondition;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
-
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
-
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
 import org.osgi.framework.BundleContext;
@@ -18,11 +13,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.util.ConditionUtils.containsRemoteCondition;
-import static com.atlassian.plugin.connect.plugin.capabilities.util.ModuleKeyGenerator.nameToKey;
-import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.*;
+import java.util.List;
+
+import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.printNode;
 import static com.google.common.collect.Lists.newArrayList;
-import static org.apache.commons.lang.StringEscapeUtils.escapeHtml;
+
 
 @Component
 public class WebItemModuleDescriptorFactory implements ConnectModuleDescriptorFactory<WebItemCapabilityBean,WebItemModuleDescriptor>
@@ -55,8 +50,8 @@ public class WebItemModuleDescriptorFactory implements ConnectModuleDescriptorFa
         webItemElement.addAttribute("weight", Integer.toString(bean.getWeight()));
 
         webItemElement.addElement("label")
-                      .addAttribute("key", escapeHtml(bean.getName().getI18n()))
-                      .setText(escapeHtml(bean.getName().getValue()));
+                      .addAttribute("key", bean.getName().getI18n())
+                      .setText(bean.getName().getValue());
 
         Element linkElement = webItemElement.addElement("link").addAttribute("linkId", webItemKey);
         linkElement.setText(bean.getLink());

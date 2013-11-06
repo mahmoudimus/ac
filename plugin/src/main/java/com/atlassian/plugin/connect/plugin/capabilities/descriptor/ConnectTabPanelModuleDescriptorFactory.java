@@ -11,7 +11,6 @@ import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import static org.apache.commons.lang.StringEscapeUtils.escapeHtml;
 
 /*
  * NOTE: we are not implementing the "normal" factory interface because we need specialized method params
@@ -55,8 +54,8 @@ public class ConnectTabPanelModuleDescriptorFactory
         element.addElement(ORDER).setText(Integer.toString(bean.getWeight()));
         
         element.addElement(LABEL)
-               .addAttribute(KEY, escapeHtml(bean.getName().getI18n()))
-               .setText(escapeHtml(bean.getName().getValue()));
+               .addAttribute(KEY, bean.getName().getI18n())
+               .setText(bean.getName().getValue());
 
         if(!bean.getConditions().isEmpty())
         {

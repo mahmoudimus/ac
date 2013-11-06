@@ -11,8 +11,6 @@ import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import static org.apache.commons.lang.StringEscapeUtils.escapeHtml;
-
 
 @Component
 public class WebPanelConnectModuleDescriptorFactory implements ConnectModuleDescriptorFactory<WebPanelCapabilityBean,WebPanelModuleDescriptor>
@@ -37,11 +35,11 @@ public class WebPanelConnectModuleDescriptorFactory implements ConnectModuleDesc
 
     private Element createDomElement(WebPanelCapabilityBean bean, String webPanelKey)
     {
-        String i18nKey = escapeHtml(bean.getName().getI18n());
+        String i18nKey = bean.getName().getI18n();
         Element webPanelElement = new DOMElement("remote-web-panel");
         webPanelElement.addAttribute("key", webPanelKey);
         webPanelElement.addAttribute("i18n-name-key", i18nKey);
-        webPanelElement.addAttribute("location", escapeHtml(bean.getLocation()));
+        webPanelElement.addAttribute("location", bean.getLocation());
 
         if (null != bean.getWeight())
         {
@@ -50,9 +48,9 @@ public class WebPanelConnectModuleDescriptorFactory implements ConnectModuleDesc
 
         webPanelElement.addElement("label").addAttribute("key", i18nKey);
         webPanelElement.addAttribute("class", IFrameRemoteWebPanel.class.getName());
-        webPanelElement.addAttribute("width", escapeHtml(bean.getLayout().getWidth()));
-        webPanelElement.addAttribute("height", escapeHtml(bean.getLayout().getHeight()));
-        webPanelElement.addAttribute("url", escapeHtml(bean.getUrl()));
+        webPanelElement.addAttribute("width", bean.getLayout().getWidth());
+        webPanelElement.addAttribute("height", bean.getLayout().getHeight());
+        webPanelElement.addAttribute("url", bean.getUrl());
 
         return webPanelElement;
     }

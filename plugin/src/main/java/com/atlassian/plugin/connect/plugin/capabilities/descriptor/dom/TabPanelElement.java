@@ -7,7 +7,6 @@ import com.google.common.base.Optional;
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
 
-import static org.apache.commons.lang.StringEscapeUtils.escapeHtml;
 
 /**
  * A wrapper around the dom element for a tab panel descriptor so that only one place needs to know the structure of the dom.
@@ -106,8 +105,8 @@ public class TabPanelElement
     public void setLabel(String name, String i18Key)
     {
         domElement.addElement(LABEL)
-                .addAttribute(KEY, escapeHtml(i18Key))
-                .setText(escapeHtml(name));
+                .addAttribute(KEY, i18Key)
+                .setText(name);
     }
 
     public void setModuleClass(Class<?> moduleClass)
