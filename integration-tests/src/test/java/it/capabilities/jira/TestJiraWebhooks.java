@@ -28,9 +28,12 @@ import static org.junit.Assert.assertThat;
 
 public class TestJiraWebHooks extends AbstractBrowserlessTest
 {
+    public static final String JIRA_ISSUE_CREATED = "jira:issue_created";
+    public static final String JIRA_ISSUE_UPDATED = "jira:issue_updated";
     private final JiraOps jiraOps;
 
-    public TestJiraWebHooks() {
+    public TestJiraWebHooks()
+    {
         super(JiraTestedProduct.class);
         this.jiraOps = new JiraOps(baseUrl);
     }
@@ -38,32 +41,39 @@ public class TestJiraWebHooks extends AbstractBrowserlessTest
     @Test
     public void testWebHookOnIssueCreated() throws Exception
     {
-        runInJsonRunner(baseUrl, "issue_created", "jira:issue_created", new WebHookTester() {
+        runInJsonRunner(baseUrl, "issue_created", JIRA_ISSUE_CREATED, new WebHookTester()
+        {
             @Override
-            public void test(WebHookWaiter waiter) throws Exception {
+            public void test(WebHookWaiter waiter) throws Exception
+            {
                 RemoteProject project = jiraOps.createProject();
                 jiraOps.createIssue(project.getKey(), "As Filip I want JIRA WebHooks to really work.");
                 WebHookBody body = waiter.waitForHook();
-                assertNotNull(body);
-                assertEquals("jira:issue_created", body.find("webhookEvent"));
-                assertThat(body.find("issue"), Matchers.containsString("As Filip I want"));
+                assertWebHookDidFire(body, JIRA_ISSUE_CREATED);
             }
         });
+    }
+
+    private void assertWebHookDidFire(WebHookBody body, String event) throws Exception
+    {
+        assertNotNull(body);
+        assertEquals(event, body.find("webhookEvent"));
+        assertThat(body.find("issue"), Matchers.containsString("As Filip I want"));
     }
 
     @Test
     public void testWebHookOnIssueUpdated() throws Exception
     {
-        runInJsonRunner(baseUrl, "issue_updated", "jira:issue_updated", new WebHookTester() {
+        runInJsonRunner(baseUrl, "issue_updated", JIRA_ISSUE_UPDATED, new WebHookTester()
+        {
             @Override
-            public void test(WebHookWaiter waiter) throws Exception {
+            public void test(WebHookWaiter waiter) throws Exception
+            {
                 RemoteProject project = jiraOps.createProject();
-                RemoteIssue issue = jiraOps.createIssue(project.getKey(), "As Ben I want JIRA WebHooks listeners to get issue updates");
-                jiraOps.updateIssue(issue.getKey(), ImmutableMap.of("summary", "As Ben I want JIRA WebHooks listeners to get all issue updates"));
+                RemoteIssue issue = jiraOps.createIssue(project.getKey(), "As Filip I want JIRA WebHooks listeners to get issue updates");
+                jiraOps.updateIssue(issue.getKey(), ImmutableMap.of("summary", "As Filip I want JIRA WebHooks listeners to get all issue updates"));
                 WebHookBody body = waiter.waitForHook();
-                assertNotNull(body);
-                assertEquals("jira:issue_updated", body.find("webhookEvent"));
-                assertThat(body.find("issue"), Matchers.containsString("As Ben I want"));
+                assertWebHookDidFire(body, JIRA_ISSUE_UPDATED);
             }
         });
     }
@@ -71,17 +81,17 @@ public class TestJiraWebHooks extends AbstractBrowserlessTest
     @Test
     public void testWebHookOnIssueTransitioned() throws Exception
     {
-        runInJsonRunner(baseUrl, "issue_transitioned", "jira:issue_updated", new WebHookTester() {
+        runInJsonRunner(baseUrl, "issue_transitioned", "jira:issue_updated", new WebHookTester()
+        {
             @Override
-            public void test(WebHookWaiter waiter) throws Exception {
+            public void test(WebHookWaiter waiter) throws Exception
+            {
                 RemoteProject project = jiraOps.createProject();
-                RemoteIssue issue = jiraOps.createIssue(project.getKey(), "As Ben I want JIRA WebHooks listeners to get issue transition");
+                RemoteIssue issue = jiraOps.createIssue(project.getKey(), "As Filip I want JIRA WebHooks listeners to get issue transition");
                 RemoteNamedObject[] availableActions = jiraOps.availableActions(issue.getKey());
-                jiraOps.transitionIssue(issue.getKey(), availableActions[0].getId(), ImmutableMap.of("summary", "As Ben I want JIRA WebHooks listeners to get all issue transitions"));
+                jiraOps.transitionIssue(issue.getKey(), availableActions[0].getId(), ImmutableMap.of("summary", "As Filip I want JIRA WebHooks listeners to get all issue transitions"));
                 WebHookBody body = waiter.waitForHook();
-                assertNotNull(body);
-                assertEquals("jira:issue_updated", body.find("webhookEvent"));
-                assertThat(body.find("issue"), Matchers.containsString("As Ben I want"));
+                assertWebHookDidFire(body, JIRA_ISSUE_UPDATED);
             }
         });
     }

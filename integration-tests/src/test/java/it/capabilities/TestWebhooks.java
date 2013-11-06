@@ -19,9 +19,11 @@ public class TestWebHooks extends AbstractBrowserlessTest
     @Ignore("broken right now since lifecycle webhooks aren't actually firing")
     public void testPluginEnabledWebHookFired() throws Exception
     {
-        WebHookTestServlet.runInJsonRunner(baseUrl, WEB_HOOK_PLUGIN_ENABLED, new WebHookTester() {
+        WebHookTestServlet.runInJsonRunner(baseUrl, WEB_HOOK_PLUGIN_ENABLED, new WebHookTester()
+        {
             @Override
-            public void test(WebHookWaiter waiter) throws Exception {
+            public void test(WebHookWaiter waiter) throws Exception
+            {
                 final WebHookBody body = waiter.waitForHook();
                 assertNotNull(body);
                 Assert.assertEquals(WEB_HOOK_PLUGIN_ENABLED, body.find("key"));

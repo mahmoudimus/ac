@@ -108,7 +108,7 @@ public class ConnectCapabilitiesRunner
         return this;
     }
 
-    public ConnectCapabilitiesRunner addCapabilities(String fieldName, CapabilityBean ... beans)
+    public ConnectCapabilitiesRunner addCapabilities(String fieldName, CapabilityBean... beans)
     {
         addonBuilder.withCapabilities(fieldName, beans);
         return this;
@@ -116,13 +116,13 @@ public class ConnectCapabilitiesRunner
 
     public ConnectCapabilitiesRunner addPluginRoute(String relativePath, HttpServlet servlet)
     {
-       String path = CONNECT_PLUGIN_SERVLET_PREFIX + pluginKey;
-       if (!relativePath.startsWith("/"))
-       {
+        String path = CONNECT_PLUGIN_SERVLET_PREFIX + pluginKey;
+        if (!relativePath.startsWith("/"))
+        {
             path += "/";
-       }
-       addRoute(path + relativePath, servlet);
-       return this;
+        }
+        addRoute(path + relativePath, servlet);
+        return this;
     }
 
     public ConnectCapabilitiesRunner addRoute(String path, HttpServlet servlet)
@@ -178,17 +178,16 @@ public class ConnectCapabilitiesRunner
         {
             addonBuilder.withCapability(
                     RemoteContainerCapabilityBean.CONNECT_CONTAINER, newRemoteContainerBean()
-                            .withDisplayUrl(displayUrl)
-                            .withOAuth(oAuthBean)
-                            .build()
+                    .withDisplayUrl(displayUrl)
+                    .withOAuth(oAuthBean)
+                    .build()
             );
-        }
-        else
+        } else
         {
             addonBuilder.withCapability(
                     RemoteContainerCapabilityBean.CONNECT_CONTAINER, newRemoteContainerBean()
-                            .withDisplayUrl(displayUrl)
-                            .build()
+                    .withDisplayUrl(displayUrl)
+                    .build()
             );
         }
 

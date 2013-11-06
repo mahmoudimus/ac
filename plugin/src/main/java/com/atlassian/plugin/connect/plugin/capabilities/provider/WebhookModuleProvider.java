@@ -18,25 +18,28 @@ public class WebHookModuleProvider implements ConnectModuleProvider<WebHookCapab
     private ConnectWebHookModuleDescriptorFactory connectWebHookModuleDescriptorFactory;
 
     @Autowired
-    public WebHookModuleProvider(ConnectWebHookModuleDescriptorFactory connectWebHookModuleDescriptorFactory) {
+    public WebHookModuleProvider(ConnectWebHookModuleDescriptorFactory connectWebHookModuleDescriptorFactory)
+    {
         this.connectWebHookModuleDescriptorFactory = connectWebHookModuleDescriptorFactory;
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(Plugin plugin, BundleContext addonBundleContext, String jsonFieldName, List<WebHookCapabilityBean> beans) {
+    public List<ModuleDescriptor> provideModules(Plugin plugin, BundleContext addonBundleContext, String jsonFieldName, List<WebHookCapabilityBean> beans)
+    {
         List<ModuleDescriptor> descriptors = new ArrayList<ModuleDescriptor>();
 
         for (WebHookCapabilityBean bean : beans)
         {
-            descriptors.addAll(beanToDescriptors(plugin,addonBundleContext, bean));
+            descriptors.addAll(beanToDescriptors(plugin, addonBundleContext, bean));
         }
 
         return descriptors;
     }
 
-    private Collection<? extends ModuleDescriptor> beanToDescriptors(Plugin plugin, BundleContext addonBundleContext, WebHookCapabilityBean bean) {
+    private Collection<? extends ModuleDescriptor> beanToDescriptors(Plugin plugin, BundleContext addonBundleContext, WebHookCapabilityBean bean)
+    {
         List<ModuleDescriptor> descriptors = new ArrayList<ModuleDescriptor>();
-        descriptors.add(connectWebHookModuleDescriptorFactory.createModuleDescriptor(plugin,addonBundleContext,bean));
+        descriptors.add(connectWebHookModuleDescriptorFactory.createModuleDescriptor(plugin, addonBundleContext, bean));
 
         return descriptors;
     }

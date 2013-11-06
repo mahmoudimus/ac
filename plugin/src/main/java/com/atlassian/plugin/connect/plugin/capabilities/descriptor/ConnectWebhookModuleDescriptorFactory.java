@@ -13,19 +13,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ConnectWebHookModuleDescriptorFactory implements ConnectModuleDescriptorFactory<WebHookCapabilityBean,WebHookModuleDescriptor>
+public class ConnectWebHookModuleDescriptorFactory implements ConnectModuleDescriptorFactory<WebHookCapabilityBean, WebHookModuleDescriptor>
 {
     private final ParamsModuleFragmentFactory paramsModuleFragmentFactory;
     private final ConnectAutowireUtil autowireUtil;
 
     @Autowired
-    public ConnectWebHookModuleDescriptorFactory(ParamsModuleFragmentFactory paramsModuleFragmentFactory, ConnectAutowireUtil autowireUtil) {
+    public ConnectWebHookModuleDescriptorFactory(ParamsModuleFragmentFactory paramsModuleFragmentFactory, ConnectAutowireUtil autowireUtil)
+    {
         this.paramsModuleFragmentFactory = paramsModuleFragmentFactory;
         this.autowireUtil = autowireUtil;
     }
 
     @Override
-    public WebHookModuleDescriptor createModuleDescriptor(Plugin plugin, BundleContext addonBundleContext, WebHookCapabilityBean bean) {
+    public WebHookModuleDescriptor createModuleDescriptor(Plugin plugin, BundleContext addonBundleContext, WebHookCapabilityBean bean)
+    {
         Element webhookElement = new DOMElement("webhook");
 
         webhookElement.addAttribute("key", ModuleKeyGenerator.generateKey("webhook"));
@@ -35,7 +37,7 @@ public class ConnectWebHookModuleDescriptorFactory implements ConnectModuleDescr
 
 
         WebHookModuleDescriptor descriptor = autowireUtil.createBean(WebHookModuleDescriptor.class);
-        descriptor.init(plugin,webhookElement);
+        descriptor.init(plugin, webhookElement);
 
         return descriptor;
     }

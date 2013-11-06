@@ -31,14 +31,13 @@ public final class WebHookTestServlet extends HttpServlet
         {
             try
             {
-                webHooksQueue.push(new JsonWebHookBody(getFullURL(req),JSON.parse(IOUtils.toString(req.getReader()))));
+                webHooksQueue.push(new JsonWebHookBody(getFullURL(req), JSON.parse(IOUtils.toString(req.getReader()))));
                 resp.getWriter().write("OKEY DOKEY");
-            }
-            catch (ParserException e)
+            } catch (ParserException e)
             {
                 throw new ServletException(e);
             }
-            
+
         }
     }
 
@@ -53,9 +52,9 @@ public final class WebHookTestServlet extends HttpServlet
         final WebHookTestServlet servlet = new WebHookTestServlet();
         AtlassianConnectAddOnRunner runner = new AtlassianConnectAddOnRunner(baseUrl, webHookId)
                 .add(WebhookModule.key(webHookId + path.hashCode())
-                                  .path(path)
-                                  .event(eventId)
-                                  .resource(servlet))
+                        .path(path)
+                        .event(eventId)
+                        .resource(servlet))
                 .start();
 
         tester.test(new WebHookWaiter()
@@ -101,8 +100,8 @@ public final class WebHookTestServlet extends HttpServlet
         final String path = "/webhook";
         final WebHookTestServlet servlet = new WebHookTestServlet();
         AtlassianConnectAddOnRunner runner = new AtlassianConnectAddOnRunner(baseUrl, eventId)
-                .addInfoParam(eventId,path)
-                .addRoute(path,servlet)
+                .addInfoParam(eventId, path)
+                .addRoute(path, servlet)
                 .start();
 
         tester.test(new WebHookWaiter()
@@ -117,14 +116,16 @@ public final class WebHookTestServlet extends HttpServlet
         runner.stop();
     }
 
-    public static String getFullURL(HttpServletRequest request) 
+    public static String getFullURL(HttpServletRequest request)
     {
         StringBuffer requestURL = request.getRequestURL();
         String queryString = request.getQueryString();
 
-        if (queryString == null) {
+        if (queryString == null)
+        {
             return requestURL.toString();
-        } else {
+        } else
+        {
             return requestURL.append('?').append(queryString).toString();
         }
     }
@@ -154,8 +155,7 @@ public final class WebHookTestServlet extends HttpServlet
             {
                 System.out.println("Can't find expression '" + expression + "' in\n" + body.toJSON());
                 return null;
-            }
-            else
+            } else
             {
                 return value.toString();
             }
