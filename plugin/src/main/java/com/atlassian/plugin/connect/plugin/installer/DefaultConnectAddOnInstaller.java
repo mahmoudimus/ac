@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.plugin.installer;
 import java.util.Set;
 
 import com.atlassian.plugin.*;
-import com.atlassian.plugin.spring.scanner.annotation.componentimport.ComponentImport;
+import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.atlassian.plugin.connect.plugin.OAuthLinkManager;
 import com.atlassian.plugin.connect.plugin.capabilities.BeanToModuleRegistrar;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;

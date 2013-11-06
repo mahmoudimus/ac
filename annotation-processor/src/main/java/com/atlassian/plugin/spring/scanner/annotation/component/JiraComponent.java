@@ -5,6 +5,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import com.atlassian.plugin.spring.scanner.ProductFilter;
+import com.atlassian.plugin.spring.scanner.annotation.OnlyInProduct;
+
 import org.springframework.stereotype.Component;
 /**
  * Annotation representing a component that should only be considered when running in JIRA.
@@ -14,6 +17,7 @@ import org.springframework.stereotype.Component;
 @Target({ElementType.TYPE, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 @Component
+@OnlyInProduct(ProductFilter.JIRA)
 public @interface JiraComponent
 {
     String value() default "";

@@ -1,6 +1,6 @@
 package com.atlassian.plugin.spring.scanner.util;
 
-import com.atlassian.plugin.spring.scanner.annotation.ProductFilter;
+import com.atlassian.plugin.spring.scanner.ProductFilter;
 
 import com.google.common.annotations.VisibleForTesting;
 

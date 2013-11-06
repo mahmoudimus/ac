@@ -155,9 +155,9 @@
 
     <component key="hostContainer" class="com.atlassian.plugin.osgi.bridge.external.SpringHostContainer" />
     
-    <component key="pluginUriResolver"
-               interface="com.atlassian.webhooks.spi.plugin.PluginUriResolver" public="true"
-               class="com.atlassian.plugin.connect.plugin.module.webhook.RemotablePluginsPluginUriResolver" />
+    <!--<component key="pluginUriResolver"-->
+               <!--interface="com.atlassian.webhooks.spi.plugin.PluginUriResolver" public="true"-->
+               <!--class="com.atlassian.plugin.connect.plugin.module.webhook.RemotablePluginsPluginUriResolver" />-->
 
     <component key="httpContentRetriever" class="com.atlassian.plugin.connect.plugin.util.http.CachingHttpContentRetriever"
                public="true" interface="com.atlassian.plugin.connect.plugin.util.http.HttpContentRetriever" />

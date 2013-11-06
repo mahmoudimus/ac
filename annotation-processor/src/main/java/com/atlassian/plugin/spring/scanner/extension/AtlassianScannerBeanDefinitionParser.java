@@ -1,9 +1,9 @@
 package com.atlassian.plugin.spring.scanner.extension;
 
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 
+import org.springframework.beans.MutablePropertyValues;
+import org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.parsing.BeanComponentDefinition;
@@ -15,6 +15,7 @@ import org.springframework.beans.factory.xml.BeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.beans.factory.xml.XmlReaderContext;
 import org.springframework.context.annotation.AnnotationConfigUtils;
+import org.springframework.util.ClassUtils;
 import org.w3c.dom.Element;
 
 /**
@@ -23,6 +24,9 @@ import org.w3c.dom.Element;
  */
 public class AtlassianScannerBeanDefinitionParser implements BeanDefinitionParser
 {
+
+    public static final String JAVAX_INJECT_CLASSNAME = "javax.inject.Inject";
+
     @Override
     public BeanDefinition parse(Element element, ParserContext parserContext)
     {
@@ -55,9 +59,16 @@ public class AtlassianScannerBeanDefinitionParser implements BeanDefinitionParse
             compositeDef.addNestedComponent(new BeanComponentDefinition(beanDefHolder));
         }
 
-        //add our custom post-processors along with the standard @Inject and @Autowired processors
+        //add our custom post-processors along with the standard @Autowired processor
         Set<BeanDefinitionHolder> processorDefinitions = new LinkedHashSet<BeanDefinitionHolder>();
         processorDefinitions.addAll(AnnotationConfigUtils.registerAnnotationConfigProcessors(readerContext.getRegistry(), source));
+        
+        //Let's be nice and support javax.inject.Inject annotations
+        BeanDefinitionHolder javaxInject = getJavaxInjectPostProcessor(readerContext.getRegistry(), source);
+        if(null != javaxInject)
+        {
+            processorDefinitions.add(javaxInject);
+        }
         processorDefinitions.add(getComponentImportPostProcessor(readerContext.getRegistry(), source));
         processorDefinitions.add(getServiceExportPostProcessor(readerContext.getRegistry(), source));
 
@@ -67,6 +78,32 @@ public class AtlassianScannerBeanDefinitionParser implements BeanDefinitionParse
         }
 
         readerContext.fireComponentRegistered(compositeDef);
+    }
+
+    private BeanDefinitionHolder getJavaxInjectPostProcessor(BeanDefinitionRegistry registry, Object source)
+    {
+        if(ClassUtils.isPresent(JAVAX_INJECT_CLASSNAME, getClass().getClassLoader()))
+        {
+            try
+            {
+                Class injectClass = getClass().getClassLoader().loadClass(JAVAX_INJECT_CLASSNAME);
+                Map<String,Object> properties = new HashMap<String, Object>();
+                properties.put("autowiredAnnotationType",injectClass);
+                
+                RootBeanDefinition def = new RootBeanDefinition(AutowiredAnnotationBeanPostProcessor.class);
+                def.setSource(source);
+                def.setRole(BeanDefinition.ROLE_INFRASTRUCTURE);
+                def.setPropertyValues(new MutablePropertyValues(properties));
+                
+                return registerBeanPostProcessor(registry, def, "javaxInjectBeanPostProcessor");
+            }
+            catch (ClassNotFoundException e)
+            {
+               //ignore
+            }
+        }
+        
+        return null;
     }
 
     /**

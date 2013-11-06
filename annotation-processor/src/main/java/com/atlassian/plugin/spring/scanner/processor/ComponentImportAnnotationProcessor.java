@@ -25,16 +25,14 @@ import com.atlassian.plugin.spring.scanner.util.ClassIndexFiles;
  * com.some.component.without.a.name.MyClass
  * com.some.component.with.a.name.MyClass#myBeanName
  */
-@SupportedAnnotationTypes("com.atlassian.plugin.spring.scanner.annotation.componentimport.*")
+@SupportedAnnotationTypes("com.atlassian.plugin.spring.scanner.annotation.imports.*")
 public class ComponentImportAnnotationProcessor extends IndexWritingAnnotationProcessor
 {
-    public static final String COMPONENT_IMPORT_KEY = "componentimport";
-
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv)
     {
 
-        doProcess(annotations,roundEnv,ClassIndexFiles.COMPONENT_IMPORT_INDEX_FILE,COMPONENT_IMPORT_KEY);
+        doProcess(annotations,roundEnv,ClassIndexFiles.COMPONENT_IMPORT_KEY);
 
         return false;
     }

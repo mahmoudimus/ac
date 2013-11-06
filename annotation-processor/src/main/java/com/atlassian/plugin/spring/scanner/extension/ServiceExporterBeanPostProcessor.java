@@ -38,7 +38,6 @@ public class ServiceExporterBeanPostProcessor implements DestructionAwareBeanPos
     @Override
     public void postProcessBeforeDestruction(Object bean, String beanName) throws BeansException
     {
-        boolean isComponent = isPublicComponent(bean);
 
         if(isPublicComponent(bean))
         {
@@ -78,6 +77,12 @@ public class ServiceExporterBeanPostProcessor implements DestructionAwareBeanPos
             if (interfaces.length < 1)
             {
                 interfaces = bean.getClass().getInterfaces();
+                
+                //if we still don't have any, just export with the classname (yes, OSGi allows this.
+                if (interfaces.length < 1)
+                {
+                    interfaces = new Class<?>[]{bean.getClass()};
+                }
             }
 
             try

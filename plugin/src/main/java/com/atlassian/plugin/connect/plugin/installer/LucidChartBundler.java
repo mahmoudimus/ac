@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.plugin.installer;
 import com.atlassian.event.api.EventListener;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.plugin.*;
-import com.atlassian.plugin.spring.scanner.annotation.componentimport.ComponentImport;
+import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
 import com.atlassian.plugin.connect.plugin.util.zip.ZipBuilder;
 import com.atlassian.plugin.connect.plugin.util.zip.ZipHandler;

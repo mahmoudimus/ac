@@ -1,4 +1,4 @@
-package com.atlassian.plugin.spring.scanner.annotation.componentimport;
+package com.atlassian.plugin.spring.scanner.annotation.imports;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

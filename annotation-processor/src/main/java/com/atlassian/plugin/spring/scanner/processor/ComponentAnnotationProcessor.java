@@ -23,16 +23,15 @@ import com.atlassian.plugin.spring.scanner.util.ClassIndexFiles;
  * com.some.component.without.a.name.MyClass
  * com.some.component.with.a.name.MyClass#myBeanName
  */
-@SupportedAnnotationTypes({"org.springframework.stereotype.Component", "com.atlassian.plugin.spring.scanner.annotation.component.*"})
+@SupportedAnnotationTypes({"org.springframework.stereotype.Component", "javax.inject.Named", "com.atlassian.plugin.spring.scanner.annotation.component.*"})
 public class ComponentAnnotationProcessor extends IndexWritingAnnotationProcessor
 {
     public static final String SPRING_COMPONENT_ANNOTATION = "org.springframework.stereotype.Component";
-    public static final String COMPONENT_KEY = "component";
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv)
     {
-        doProcess(annotations,roundEnv,ClassIndexFiles.COMPONENT_INDEX_FILE,COMPONENT_KEY);
+        doProcess(annotations,roundEnv,ClassIndexFiles.COMPONENT_KEY);
         
         return false;
     }

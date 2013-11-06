@@ -12,7 +12,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import com.atlassian.plugin.*;
-import com.atlassian.plugin.spring.scanner.annotation.componentimport.ComponentImport;
+import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.osgi.factory.OsgiPlugin;

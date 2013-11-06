@@ -1,4 +1,4 @@
-package com.atlassian.plugin.spring.scanner.annotation;
+package com.atlassian.plugin.spring.scanner;
 
 /**
  * An enum representing the products that we can filter beans by.

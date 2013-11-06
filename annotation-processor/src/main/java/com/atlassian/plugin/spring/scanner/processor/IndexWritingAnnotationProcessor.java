@@ -19,7 +19,9 @@ import javax.lang.model.element.TypeElement;
 import javax.tools.FileObject;
 import javax.tools.StandardLocation;
 
-import com.atlassian.plugin.spring.scanner.annotation.ProductFilter;
+import com.atlassian.plugin.spring.scanner.ProductFilter;
+import com.atlassian.plugin.spring.scanner.annotation.OnlyInProduct;
+import com.atlassian.plugin.spring.scanner.util.ClassIndexFiles;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -37,7 +39,7 @@ public abstract class IndexWritingAnnotationProcessor extends AbstractProcessor 
 
     }
     
-    protected void doProcess(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv, String indexFile, String suffix)
+    protected void doProcess(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv, String indexKey)
     {
         try
         {
@@ -53,7 +55,7 @@ public abstract class IndexWritingAnnotationProcessor extends AbstractProcessor 
                     }
 
                     //get the lower-case name of the product from the annotation if any. e.g. JiraComponent returns "jira"
-                    String lowerFilterName = getFilterNameFromAnnotation(typeAndAnnotation.getAnnotation(),suffix);
+                    String lowerFilterName = getFilterNameFromAnnotation(typeAndAnnotation.getAnnotation(),indexKey);
 
                     //get the bean name specififed on the annotation (as it's value) if any
                     String nameFromAnnotation = "";
@@ -102,7 +104,7 @@ public abstract class IndexWritingAnnotationProcessor extends AbstractProcessor 
                 return;
             }
 
-            writeIndexFiles(indexFile,suffix);
+            writeIndexFiles(indexKey);
 
         }
         catch (IOException e)
@@ -190,12 +192,14 @@ public abstract class IndexWritingAnnotationProcessor extends AbstractProcessor 
      * @param suffix
      * @throws IOException
      */
-    protected void writeIndexFiles(String file, String suffix) throws IOException
+    protected void writeIndexFiles(String indexKey) throws IOException
     {
         for (Map.Entry<String, Set<String>> entry : getAnnotatedTypeMap().entrySet())
         {
-            StringBuilder filePath = new StringBuilder(file);
-            if (!entry.getKey().equals(suffix))
+            StringBuilder filePath = new StringBuilder(ClassIndexFiles.INDEX_FILES_DIR );
+            filePath.append("/").append(indexKey);
+            
+            if (!entry.getKey().equals(indexKey))
             {
                 filePath.append("-").append(entry.getKey());
             }
@@ -243,19 +247,19 @@ public abstract class IndexWritingAnnotationProcessor extends AbstractProcessor 
      * @param suffix
      * @return
      */
-    protected String getFilterNameFromAnnotation(Annotation annotation, String suffix)
+    protected String getFilterNameFromAnnotation(Annotation annotation, String indexKey)
     {
-        String annoName = annotation.annotationType().getSimpleName().toLowerCase();
-        String productName = StringUtils.substringBefore(annoName, suffix);
-
-        if(ProductFilter.hasProduct(productName.toUpperCase()))
+        String filterName = "";
+        if(annotation.annotationType().isAnnotationPresent(OnlyInProduct.class))
         {
-            return productName;
+            filterName = annotation.annotationType().getAnnotation(OnlyInProduct.class).value().name().toLowerCase();
         }
         else
         {
-            return suffix;
+            filterName = indexKey;
         }
+        
+        return filterName;
     }
 
     /**
