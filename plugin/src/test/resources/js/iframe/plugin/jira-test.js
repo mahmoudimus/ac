@@ -61,11 +61,7 @@ var xdmMockJira;
             ok(callback.calledOnce);
         });
 
-        test('uuid is returned when workflow configuration is triggered', function(){
-            equal(jira.WorkflowConfiguration.trigger().uuid, this.getUuidWorkflowStub());
-        });
-
-        test('uuid is returned when workflow configuration is triggered', function(){
+        test('when triggered onSave value is returned as value', function(){
             var value = 'abc123';
 
             jira.WorkflowConfiguration.onSaveValidation(sinon.stub().returns(true));
@@ -74,13 +70,17 @@ var xdmMockJira;
             equal(jira.WorkflowConfiguration.trigger().value, value);
         });
 
+        test('uuid is returned when workflow configuration is triggered', function(){
+            equal(jira.WorkflowConfiguration.trigger().uuid, this.getUuidWorkflowStub());
+        });
+
         test('valid is true when workflow validation function returns true', function(){
             jira.WorkflowConfiguration.onSaveValidation(sinon.stub().returns(true));
 
             ok(jira.WorkflowConfiguration.trigger().valid);
         });
 
-        test('valid is false when workflow validation function returns true', function(){
+        test('valid is false when workflow validation function returns false', function(){
             jira.WorkflowConfiguration.onSaveValidation(sinon.stub().returns(false));
 
             ok(!jira.WorkflowConfiguration.trigger().valid);
