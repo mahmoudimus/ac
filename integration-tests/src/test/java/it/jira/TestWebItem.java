@@ -50,7 +50,7 @@ public class TestWebItem extends JiraWebDriverTestBase
     {
         if (remotePlugin != null)
         {
-            remotePlugin.stop();
+            remotePlugin.stopAndUninstall();
         }
     }
 

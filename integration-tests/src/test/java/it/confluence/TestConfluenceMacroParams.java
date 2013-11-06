@@ -70,7 +70,7 @@ public final class TestConfluenceMacroParams extends ConfluenceWebDriverTestBase
         assertEquals(BETTY_USERNAME, params.get("user_id"));
         assertTrue(params.containsKey("user_key"));
 
-        remotePlugin.stop();
+        remotePlugin.stopAndUninstall();
     }
 
     @Test
@@ -96,7 +96,7 @@ public final class TestConfluenceMacroParams extends ConfluenceWebDriverTestBase
         assertFalse(macroServlet.getQueryParams().containsKey("user_id"));
         assertEquals(BETTY_USERNAME, macroServlet.getHeaderParams().get("user_id"));
         assertFalse(macroServlet.getHeaderParams().containsKey("page_id"));
-        runner.stop();
+        runner.stopAndUninstall();
     }
 
     public static class MyParamsMacroServlet extends HttpServlet

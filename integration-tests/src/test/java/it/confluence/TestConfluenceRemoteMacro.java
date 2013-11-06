@@ -119,7 +119,7 @@ public final class TestConfluenceRemoteMacro extends ConfluenceWebDriverTestBase
     {
         if (remotePlugin != null)
         {
-            remotePlugin.stop();
+            remotePlugin.stopAndUninstall();
         }
     }
 

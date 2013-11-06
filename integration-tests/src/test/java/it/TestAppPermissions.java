@@ -1,34 +1,31 @@
 package it;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URL;
-import java.security.NoSuchAlgorithmException;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.service.SignedRequestHandler;
 import com.atlassian.plugin.connect.spi.Permissions;
 import com.atlassian.plugin.connect.test.HttpUtils;
-import com.atlassian.plugin.connect.test.pageobjects.MessagePage;
 import com.atlassian.plugin.connect.test.pageobjects.GeneralPage;
+import com.atlassian.plugin.connect.test.pageobjects.MessagePage;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginAwarePage;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginTestPage;
 import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
 import com.atlassian.plugin.connect.test.server.module.GeneralPageModule;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
-
 import com.google.common.collect.ImmutableMap;
-
 import org.junit.Test;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
+import java.security.NoSuchAlgorithmException;
 
 import static it.TestConstants.BETTY_USERNAME;
 import static org.hamcrest.CoreMatchers.is;
@@ -58,7 +55,7 @@ public class TestAppPermissions extends AbstractRemotablePluginTest
 
         String status = product.visit(MessagePage.class, runner.getPluginKey(), "page").getMessage();
         assertEquals("403", status);
-        runner.stop();
+        runner.stopAndUninstall();
     }
 
 
@@ -69,7 +66,7 @@ public class TestAppPermissions extends AbstractRemotablePluginTest
 
         assertThat(visitLicenseResponsePage().waitForValue(LICENSE_RESPONSE_STATUS_CODE_ID), is("403"));
 
-        runner.stop();
+        runner.stopAndUninstall();
     }
 
     @Test
@@ -79,7 +76,7 @@ public class TestAppPermissions extends AbstractRemotablePluginTest
 
         assertThat(visitLicenseResponsePage().waitForValue(LICENSE_RESPONSE_STATUS_CODE_ID), not("403"));
 
-        runner.stop();
+        runner.stopAndUninstall();
     }
 
     private RemotePluginTestPage visitLicenseResponsePage()

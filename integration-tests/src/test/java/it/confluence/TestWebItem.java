@@ -56,7 +56,7 @@ public class TestWebItem extends ConfluenceWebDriverTestBase
     {
         if (remotePlugin != null)
         {
-            remotePlugin.stop();
+            remotePlugin.stopAndUninstall();
         }
     }
 
