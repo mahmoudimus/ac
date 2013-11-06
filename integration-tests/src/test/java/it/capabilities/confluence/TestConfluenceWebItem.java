@@ -118,14 +118,16 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
     {
         loginAsAdmin();
 
-        Pair<ConfluenceViewPage, RemoteWebItem> pageAndWebItem = findViewPageWebItem(PRODUCT_WEBITEM);
-        RemoteWebItem webItem = pageAndWebItem.right();
+        ConfluenceViewPage viewPage = createAndVisitViewPage();
+
+        RemoteWebItem webItem = viewPage.findWebItem(PRODUCT_WEBITEM, Optional.<String>of("action-menu-link"));
         assertNotNull("Web item should be found", webItem);
+
         webItem.click();
 
         URL url = new URL(webItem.getPath());
         assertThat(url.getPath(), is("/confluence/pages/viewpage.action"));
-        assertEquals(pageAndWebItem.left().getPageId(), webItem.getFromQueryString("page_id"));
+        assertEquals(viewPage.getPageId(), webItem.getFromQueryString("pageId"));
     }
 
     @Test
