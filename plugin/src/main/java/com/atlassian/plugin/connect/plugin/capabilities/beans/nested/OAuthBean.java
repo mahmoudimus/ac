@@ -10,10 +10,21 @@ import com.google.common.base.Objects;
  */
 public class OAuthBean extends BaseCapabilityBean
 {
+    /**
+     * The PEM-encoded public key to be used to sign all requests from this add-on to the target Atlassian
+     * application. The key value must start with "-----BEGIN PUBLIC KEY-----".
+     */
     private String publicKey;
+
+    /**
+     * The add-on host's callback URL to use in the OAuth dance.
+     */
     private String callback;
+
     private String requestTokenUrl;
+
     private String accessTokenUrl;
+
     private String authorizeUrl;
 
     public OAuthBean()
