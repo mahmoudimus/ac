@@ -73,7 +73,7 @@ public final class TestConfluenceRemoteMacro extends ConfluenceWebDriverTestBase
                                 ContextParameter.name(CTX_PAGE_ID).header(),
                                 ContextParameter.name(CTX_PAGE_TYPE).header(),
                                 ContextParameter.name(CTX_PAGE_TITLE).header(),
-                                ContextParameter.name(CTX_SPACE_KEY).query(),
+                                ContextParameter.name(CTX_SPACE_KEY).header(),
                                 ContextParameter.name(CTX_USER_ID).header(),
                                 ContextParameter.name(CTX_USER_KEY).header())
                         .resource(newServlet(new HeaderMacroServlet())))
@@ -160,6 +160,7 @@ public final class TestConfluenceRemoteMacro extends ConfluenceWebDriverTestBase
         assertEquals(pageData.getId(), page.getText(CTX_PAGE_ID));
         assertEquals("page", page.getText(CTX_PAGE_TYPE));
         assertEquals(pageData.getTitle(), page.getText(CTX_PAGE_TITLE));
+
         assertEquals(SPACE_KEY, page.getText(CTX_SPACE_KEY));
         // the macro is being viewed by an anonymous user
         assertNull(page.getText(CTX_USER_ID));

@@ -5,12 +5,13 @@ import java.util.Map;
 
 import com.atlassian.confluence.content.render.xhtml.ConversionContext;
 import com.atlassian.confluence.core.ContentEntityObject;
-import com.atlassian.confluence.pages.Page;
+import com.atlassian.confluence.spaces.Spaced;
 import com.atlassian.plugin.connect.plugin.util.contextparameter.RequestContextParameterFactory;
 import com.atlassian.plugin.connect.plugin.util.contextparameter.RequestContextParameters;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.renderer.v2.macro.Macro;
+import org.apache.commons.lang.StringUtils;
 
 import static com.google.common.collect.Maps.newHashMap;
 
@@ -108,25 +109,27 @@ public class MacroInstance
         params.put("output_type", conversionContext.getOutputType());
 
         ContentEntityObject entity = conversionContext.getEntity();
-        if (entity != null && (entity instanceof Page))
+
+        String pageId = "";
+        String pageTitle = "";
+        String pageType = "";
+        String spaceKey = "";
+
+        if (entity != null)
         {
-            Page page = (Page) entity;
-            String pageId = page.getIdAsString();
-            String pageTitle = page.getTitle();
-            String spaceKey = page.getSpaceKey();
-            pageTitle = pageTitle != null ? pageTitle : "";
-            params.put("page_id", pageId);
-            params.put("page_type", entity.getType());
-            params.put("page_title", pageTitle);
-            params.put("space_key", spaceKey);
+            pageId = entity.getIdAsString();
+            pageTitle = StringUtils.defaultString(entity.getTitle());
+            pageType = entity.getType();
+            if (entity instanceof Spaced) {
+                spaceKey = ((Spaced) entity).getSpace().getKey();
+            }
         }
-        else
-        {
-            params.put("page_id", "");
-            params.put("page_title", "");
-            params.put("page_type", "");
-            params.put("space_key", "");
-        }
+
+        params.put("page_id", pageId);
+        params.put("page_title", pageTitle);
+        params.put("page_type", pageType);
+        params.put("space_key", spaceKey);
+
         return params;
     }
 
