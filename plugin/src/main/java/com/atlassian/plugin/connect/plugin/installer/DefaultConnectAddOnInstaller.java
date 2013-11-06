@@ -3,7 +3,6 @@ package com.atlassian.plugin.connect.plugin.installer;
 import java.util.Set;
 
 import com.atlassian.plugin.*;
-import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.atlassian.plugin.connect.plugin.OAuthLinkManager;
 import com.atlassian.plugin.connect.plugin.capabilities.BeanToModuleRegistrar;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
@@ -37,7 +36,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
     private static final Logger log = LoggerFactory.getLogger(DefaultConnectAddOnInstaller.class);
 
     @Autowired
-    public DefaultConnectAddOnInstaller(RemotePluginArtifactFactory remotePluginArtifactFactory, @ComponentImport PluginController pluginController, PluginAccessor pluginAccessor, OAuthLinkManager oAuthLinkManager, RemoteEventsHandler remoteEventsHandler, BeanToModuleRegistrar beanToModuleRegistrar, BundleContext bundleContext)
+    public DefaultConnectAddOnInstaller(RemotePluginArtifactFactory remotePluginArtifactFactory, PluginController pluginController, PluginAccessor pluginAccessor, OAuthLinkManager oAuthLinkManager, RemoteEventsHandler remoteEventsHandler, BeanToModuleRegistrar beanToModuleRegistrar, BundleContext bundleContext)
     {
         this.remotePluginArtifactFactory = remotePluginArtifactFactory;
         this.pluginController = pluginController;

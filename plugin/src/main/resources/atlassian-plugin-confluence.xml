@@ -1,29 +1,5 @@
 <application key="confluence">
 
-
-    <component key="webFragmentHelper" class="com.atlassian.confluence.plugin.descriptor.web.ConfluenceWebFragmentHelper" />
-
-    <component key="confluenceWebHookProvider"
-               interface="com.atlassian.webhooks.spi.provider.WebHookProvider" public="true"
-               class="com.atlassian.plugin.connect.plugin.product.confluence.webhook.ConfluenceWebHookProvider" />
-    
-    
-    <component-import key="confluenceSettingsManager"
-                      interface="com.atlassian.confluence.setup.settings.SettingsManager"/>
-    <component-import key="bandanaManager" interface="com.atlassian.bandana.BandanaManager" />
-    <component-import key="spaceManager" interface="com.atlassian.confluence.spaces.SpaceManager" />
-    <component-import key="pageManager" interface="com.atlassian.confluence.pages.PageManager" />
-
-    <component-import key="systemInfoService"
-                      interface="com.atlassian.confluence.status.service.SystemInformationService"/>
-    <component-import key="xmlService" interface="com.atlassian.confluence.xhtml.api.XhtmlContent"/>
-    <component-import key="i18nBean" interface="com.atlassian.confluence.util.i18n.I18NBeanFactory"/>
-
-    <component-import key="webSudoManager" interface="com.atlassian.confluence.security.websudo.WebSudoManager" />
-    <component-import key="taskManager" interface="com.atlassian.core.task.MultiQueueTaskManager" />
-    <component-import key="storageFormatCleaner" interface="com.atlassian.confluence.content.render.xhtml.StorageFormatCleaner" />
-
-
     <web-section key="admin.pages" name="Remotable Plugins" location="system.admin" weight="100">
         <label>Remote Plugins</label>
     </web-section>

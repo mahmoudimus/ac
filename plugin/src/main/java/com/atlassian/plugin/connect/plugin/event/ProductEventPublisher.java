@@ -1,8 +1,12 @@
 package com.atlassian.plugin.connect.plugin.event;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.plugin.connect.spi.event.product.PluginsUpgradedEvent;
 import com.atlassian.plugin.connect.spi.event.product.ServerUpgradedEvent;
+import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.lifecycle.LifecycleAware;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
@@ -13,6 +17,8 @@ import org.osgi.framework.Constants;
 /**
  * Publishes product and framework upgraded events when the host starts
  */
+@ExportAsService(ProductEventPublisher.class)
+@Named
 public class ProductEventPublisher implements LifecycleAware
 {
     public static final String PLUGINS_LAST_VERSION = "plugins.lastVersion";
@@ -22,6 +28,7 @@ public class ProductEventPublisher implements LifecycleAware
     private final BundleContext bundleContext;
     private volatile boolean started = false;
 
+    @Inject
     public ProductEventPublisher(EventPublisher eventPublisher,
             ApplicationProperties applicationProperties,
             PluginSettingsFactory pluginSettingsFactory, BundleContext bundleContext)

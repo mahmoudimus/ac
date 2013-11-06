@@ -12,7 +12,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import com.atlassian.plugin.*;
-import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.osgi.factory.OsgiPlugin;
@@ -57,7 +56,7 @@ public final class I18nPropertiesPluginManager
     @Autowired
     public I18nPropertiesPluginManager(ModuleFactory moduleFactory,
                                        PluginAccessor accessor,
-                                       @ComponentImport PluginController pluginController,
+                                       PluginController pluginController,
                                        BundleContext bundleContext, StartableForPlugins startableForPlugins,
                                        PluginRetrievalService pluginRetrievalService
     )
@@ -158,13 +157,17 @@ public final class I18nPropertiesPluginManager
      */
     private synchronized void registerI18n(final Map<String, String> i18n)
     {
-        updateI18nBundle(new BundleManipulator() {
-            public boolean includeEntry(String entryName) {
+        updateI18nBundle(new BundleManipulator()
+        {
+            public boolean includeEntry(String entryName)
+            {
                 return !i18n.keySet().contains(entryName.substring(0, entryName.length() - ".properties".length()));
             }
 
-            public void finish(Bundle bundle, ZipOutputStream zout) throws IOException {
-                for (Map.Entry<String, String> entry : i18n.entrySet()) {
+            public void finish(Bundle bundle, ZipOutputStream zout) throws IOException
+            {
+                for (Map.Entry<String, String> entry : i18n.entrySet())
+                {
                     zout.putNextEntry(new ZipEntry(entry.getKey() + ".properties"));
                     IOUtils.copy(new StringReader(entry.getValue()), zout, "UTF-8");
                 }
@@ -178,13 +181,13 @@ public final class I18nPropertiesPluginManager
         {
             I18nModuleDescriptor descriptor = new I18nModuleDescriptor(moduleFactory);
             descriptor.init(findI18nPlugin(), DocumentHelper.createElement("i18n-something")
-                    .addAttribute("key", name)
-                    .addAttribute("system", "true")
-                    .addElement("resource")
-                    .addAttribute("type", "i18n")
-                    .addAttribute("name", "i18n")
-                    .addAttribute("location", name)
-                    .getParent());
+                                                            .addAttribute("key", name)
+                                                            .addAttribute("system", "true")
+                                                            .addElement("resource")
+                                                            .addAttribute("type", "i18n")
+                                                            .addAttribute("name", "i18n")
+                                                            .addAttribute("location", name)
+                                                            .getParent());
             i18nBundle.getBundleContext().registerService(ModuleDescriptor.class.getName(), descriptor, null);
         }
     }

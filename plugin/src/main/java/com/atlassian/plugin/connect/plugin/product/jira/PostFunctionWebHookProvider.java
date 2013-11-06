@@ -1,9 +1,13 @@
 package com.atlassian.plugin.connect.plugin.product.jira;
 
 import com.atlassian.plugin.connect.plugin.module.jira.workflow.RemoteWorkflowPostFunctionEvent;
+import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
+import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.webhooks.spi.provider.WebHookProvider;
 import com.atlassian.webhooks.spi.provider.WebHookRegistrar;
 
+@ExportAsService
+@JiraComponent
 public class PostFunctionWebHookProvider implements WebHookProvider
 {
 

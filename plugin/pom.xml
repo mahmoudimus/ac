@@ -306,7 +306,7 @@
                     <skipManifestValidation>true</skipManifestValidation>
                     <jvmArgs>-Xmx1024m -XX:MaxPermSize=256m</jvmArgs>
                     <instructions>
-                        <Import-Package>
+                        <!-- <Import-Package>
                             com.atlassian.upm.*,
                             com.atlassian.confluence.plugin.descriptor.web.descriptors;resolution:=optional,
                             com.atlassian.confluence.plugin.webresource;resolution:=optional,
@@ -363,7 +363,7 @@
                             com.atlassian.plugin.connect.spi*;version="${project.version}",
                             com.atlassian.plugin.connect.plugin*;version="${project.version}",
                             *;resolution:=optional
-                        </Import-Package>
+                        </Import-Package> -->
                         <Export-Package>
                             com.atlassian.plugin.connect.api*;version="${project.version}",
                             com.atlassian.plugin.connect.api.*;version="${project.version}",
@@ -375,6 +375,7 @@
                             com.atlassian.plugin.connect.plugin.product.*;version="${project.version}"
                         </Export-Package>
                         <Spring-Context>*</Spring-Context>
+                        <Atlassian-Plugin-Key>${groupId}.${artifactId}</Atlassian-Plugin-Key>
                         <!-- DO NOT put Atlassian-Plugin-Key here!! it will bypass all transforms and component-imports will break -->
                     </instructions>
                     <systemPropertyVariables>

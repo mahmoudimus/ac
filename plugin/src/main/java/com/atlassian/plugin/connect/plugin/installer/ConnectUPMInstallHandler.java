@@ -5,6 +5,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.capabilities.gson.CapabilitiesGsonFactory;
 import com.atlassian.plugin.connect.plugin.descriptor.util.FormatConverter;
 import com.atlassian.plugin.connect.spi.ConnectAddOnIdentifierService;
+import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.upm.api.util.Option;
 import com.atlassian.upm.spi.PluginInstallException;
@@ -20,9 +21,14 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 /**
  * @since 1.0
  */
+@ExportAsService(PluginInstallHandler.class)
+@Named
 public class ConnectUPMInstallHandler implements PluginInstallHandler
 {
     private static final Logger log = LoggerFactory.getLogger(ConnectUPMInstallHandler.class);
@@ -33,6 +39,7 @@ public class ConnectUPMInstallHandler implements PluginInstallHandler
     private final FormatConverter formatConverter;
     private final BundleContext bundleContext;
 
+    @Inject
     public ConnectUPMInstallHandler(ConnectAddOnIdentifierService connectIdentifier, ConnectAddOnInstaller connectInstaller, UserManager userManager, FormatConverter formatConverter, BundleContext bundleContext)
     {
         this.connectIdentifier = connectIdentifier;

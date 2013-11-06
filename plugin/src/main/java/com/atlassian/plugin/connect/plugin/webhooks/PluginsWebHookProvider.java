@@ -1,14 +1,19 @@
 package com.atlassian.plugin.connect.plugin.webhooks;
 
+import javax.inject.Named;
+
 import com.atlassian.plugin.connect.spi.event.RemotePluginDisabledEvent;
 import com.atlassian.plugin.connect.spi.event.RemotePluginEnabledEvent;
 import com.atlassian.plugin.connect.spi.event.RemotePluginEvent;
 import com.atlassian.plugin.connect.spi.event.RemotePluginInstalledEvent;
+import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.webhooks.spi.provider.*;
 
 /**
  * Registers Web hooks for remote plugins
  */
+@ExportAsService(PluginsWebHookProvider.class)
+@Named
 public final class PluginsWebHookProvider implements WebHookProvider
 {
     public static final String REMOTE_PLUGIN_INSTALLED = "remote_plugin_installed";
