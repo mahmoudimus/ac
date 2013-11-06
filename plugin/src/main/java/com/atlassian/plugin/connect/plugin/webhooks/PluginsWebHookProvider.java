@@ -12,7 +12,7 @@ import com.atlassian.webhooks.spi.provider.*;
 /**
  * Registers Web hooks for remote plugins
  */
-@ExportAsService(PluginsWebHookProvider.class)
+@ExportAsService
 @Named
 public final class PluginsWebHookProvider implements WebHookProvider
 {

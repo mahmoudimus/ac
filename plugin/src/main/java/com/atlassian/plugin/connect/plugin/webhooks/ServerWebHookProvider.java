@@ -23,7 +23,7 @@ import static com.google.common.base.Strings.nullToEmpty;
  * <li>the remotable plugins plugin (eg. remotable plugins plugin upgraded, etc.)</li>
  * </ul>
  */
-@ExportAsService(ServerWebHookProvider.class)
+@ExportAsService
 @Named
 public final class ServerWebHookProvider implements WebHookProvider
 {
