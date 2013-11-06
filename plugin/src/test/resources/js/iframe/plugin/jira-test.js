@@ -74,13 +74,13 @@ var xdmMockJira;
             equal(jira.WorkflowConfiguration.trigger().value, value);
         });
 
-        test('true is returned when workflow validation returns true', function(){
+        test('valid is true when workflow validation function returns true', function(){
             jira.WorkflowConfiguration.onSaveValidation(sinon.stub().returns(true));
 
             ok(jira.WorkflowConfiguration.trigger().valid);
         });
 
-        test('false is returned when workflow validation returns false', function(){
+        test('valid is false when workflow validation function returns true', function(){
             jira.WorkflowConfiguration.onSaveValidation(sinon.stub().returns(false));
 
             ok(!jira.WorkflowConfiguration.trigger().valid);
