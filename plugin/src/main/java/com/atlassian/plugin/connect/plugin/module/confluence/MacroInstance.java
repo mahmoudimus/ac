@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.atlassian.confluence.content.render.xhtml.ConversionContext;
 import com.atlassian.confluence.core.ContentEntityObject;
+import com.atlassian.confluence.pages.Page;
 import com.atlassian.plugin.connect.plugin.util.contextparameter.RequestContextParameterFactory;
 import com.atlassian.plugin.connect.plugin.util.contextparameter.RequestContextParameters;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
@@ -106,20 +107,25 @@ public class MacroInstance
 
         params.put("output_type", conversionContext.getOutputType());
 
-        if (conversionContext.getEntity() != null)
+        ContentEntityObject entity = conversionContext.getEntity();
+        if (entity != null && (entity instanceof Page))
         {
-            String pageId = conversionContext.getEntity().getIdAsString();
-            String pageTitle = conversionContext.getEntity().getTitle();
+            Page page = (Page) entity;
+            String pageId = page.getIdAsString();
+            String pageTitle = page.getTitle();
+            String spaceKey = page.getSpaceKey();
             pageTitle = pageTitle != null ? pageTitle : "";
             params.put("page_id", pageId);
-            params.put("page_type", conversionContext.getEntity().getType());
+            params.put("page_type", entity.getType());
             params.put("page_title", pageTitle);
+            params.put("space_key", spaceKey);
         }
         else
         {
             params.put("page_id", "");
             params.put("page_title", "");
             params.put("page_type", "");
+            params.put("space_key", "");
         }
         return params;
     }

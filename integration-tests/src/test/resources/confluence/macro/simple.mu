@@ -7,6 +7,7 @@
 
 <h2>Macro Context Parameters</h2>
 <div>Output Type: <span class="output_type">{{output_type}}</span></div>
+<div>Page ID: <span class="space_key">{{space_key}}</span></div>
 <div>Page ID: <span class="page_id">{{page_id}}</span></div>
 <div>Page Type: <span class="page_type">{{page_type}}</span></div>
 <div>Page Title: <span class="page_title">{{page_title}}</span></div>
