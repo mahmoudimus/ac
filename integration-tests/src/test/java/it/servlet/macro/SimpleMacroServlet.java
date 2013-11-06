@@ -40,6 +40,7 @@ public class SimpleMacroServlet extends ContextServlet
                            .put(CTX_PAGE_ID, getParam(req, CTX_PAGE_ID))
                            .put(CTX_PAGE_TYPE, getParam(req, CTX_PAGE_TYPE))
                            .put(CTX_PAGE_TITLE, getParam(req, CTX_PAGE_TITLE))
+                           .put(CTX_SPACE_KEY, getParam(req, CTX_SPACE_KEY))
                            .put(CTX_USER_ID, getParam(req, CTX_USER_ID))
                            .put(CTX_USER_KEY, getParam(req, CTX_USER_KEY))
                            .build();
