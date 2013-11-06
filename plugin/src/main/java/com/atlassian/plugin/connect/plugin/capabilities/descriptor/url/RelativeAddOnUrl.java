@@ -24,7 +24,7 @@ public class RelativeAddOnUrl
     }
 
     /**
-     * Use this for URI's with variable placeholders to avoid them being url encoded
+     * Use this for URIs with variable placeholders to avoid them being url encoded
      * @param relativeUri
      */
     public RelativeAddOnUrl(@Nonnull String relativeUri)
