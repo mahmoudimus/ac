@@ -21,9 +21,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>atlassian-connect-annotation-processor</artifactId>
-            <version>${project.version}</version>
+            <groupId>com.atlassian.plugin</groupId>
+            <artifactId>atlassian-spring-scanner</artifactId>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
