@@ -18,7 +18,7 @@ import org.springframework.beans.factory.DisposableBean;
 /**
  * Handles executing runnables when the plugin has been loaded and the system is fully up
  */
-@ExportAsService(StartableForPlugins.class)
+@ExportAsService(LifecycleAware.class)
 @Named
 public class StartableForPlugins implements LifecycleAware, DisposableBean
 {

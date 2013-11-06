@@ -17,7 +17,7 @@ import org.osgi.framework.Constants;
 /**
  * Publishes product and framework upgraded events when the host starts
  */
-@ExportAsService(ProductEventPublisher.class)
+@ExportAsService
 @Named
 public class ProductEventPublisher implements LifecycleAware
 {
