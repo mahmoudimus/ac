@@ -551,8 +551,8 @@
         <atlassian.upm.version>2.13.3</atlassian.upm.version>
         <atlassian.uri.version>0.1</atlassian.uri.version>
         <atlassian-util-concurrent.version>2.4.0</atlassian-util-concurrent.version>
-        <atlassian.webhooks.version>0.17.2</atlassian.webhooks.version>
-        <atlassian.webhooks.api.version>0.17.2</atlassian.webhooks.api.version>
+        <atlassian.webhooks.version>0.17.3</atlassian.webhooks.version>
+        <atlassian.webhooks.api.version>0.17.3</atlassian.webhooks.api.version>
         <atlassian.webresource.version>2.14.0-m5</atlassian.webresource.version>
         <atlassian.webfragments.version>3.0.0-m7</atlassian.webfragments.version>
         <atlassian.html.encoder.version>1.4</atlassian.html.encoder.version>
