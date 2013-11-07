@@ -17,7 +17,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.WebHookCap
  * While some webhooks are specific to the Atlassian application, JIRA or Confluence, others are common to all
  * applications. This type includes, for example, the webhooks that generate notifications when the add-on is enabled.
  * <p/>
- * Most add-ons should implement the remote-plugin-enabled webhook. The Atlassian application uses this event to supply
+ * Most add-ons should implement the remote_plugin_enabled webhook. The Atlassian application uses this event to supply
  * its public key to the add-on. The Authenticating with OAuth page shows an example of how to use this webhook.
  * <p/>
  * <h3>Handling the webhook event</h3>
@@ -25,7 +25,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.WebHookCap
  * declaration indicates the relative URL of the local resource at which it will receive the notification. In other
  * words, the Atlassian application will send an HTTP POST to this resource in response to an application event. The
  * add-on code that handles the POST should process any information passed in the body of the message, as appropriate.
- * Each webhook POST sent to the add-on will also include the JWT authentication headers that allow the add-on to
+ * Each webhook POST sent to the add-on will also include the authentication headers that allow the add-on to
  * validate the authenticity of that request.
  * <p/>
  * <h4>Sample webhooks JSON block</h4>
