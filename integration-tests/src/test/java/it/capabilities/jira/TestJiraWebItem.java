@@ -13,12 +13,18 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean.newWebItemBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.SingleConditionBean.newSingleConditionBean;
 import static it.TestConstants.BARNEY_USERNAME;
 import static it.TestConstants.BETTY_USERNAME;
 import static it.capabilities.ConnectAsserts.assertURIEquals;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 
@@ -48,7 +54,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
                         .withName(new I18nProperty("Quick project link", "ac.qp"))
                         .withLocation("system.top.navigation.bar")
                         .withWeight(1)
-                        .withLink("/browse/ACDEV-1234")
+                        .withLink("/browse/ACDEV-1234?project_key=${project.key}")
                         .build()
                         ,newWebItemBean()
                         .withName(new I18nProperty("google link", "ac.gl"))
@@ -85,38 +91,38 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
         RemoteWebItem webItem = viewProjectPage.findWebItem(ABSOLUTE_WEBITEM, Optional.<String>absent());
         assertNotNull("Web item should be found", webItem);
 
-        assertTrue("Web item link should be absolute", webItem.isPonitingToOldXmlInternalUrl());
+        assertTrue("Web item link should be absolute", webItem.isPointingToACInternalUrl());
         assertURIEquals("http://www.google.com", webItem.getPath());
     }
     
-    //TODO: add these tests back in once url variable substitution is working for web items
-//    @Test
-//    public void testRelativeWebItem()
-//    {
-//        loginAsAdmin();
-//
-//        JiraViewProjectPage viewProjectPage = product.visit(JiraViewProjectPage.class, project.getKey());
-//        RemoteWebItem webItem = viewProjectPage.findWebItem(ADDON_WEBITEM, Optional.<String>absent());
-//        assertNotNull("Web item should be found", webItem);
-//        
-//        assertEquals(project.getKey(), webItem.getFromQueryString("project_key"));
-//        assertEquals(project.getId(), webItem.getFromQueryString("pid"));
-//    }
-//
-//    @Test
-//    public void testProductWebItem()
-//    {
-//        loginAsAdmin();
-//
-//        JiraViewProjectPage viewProjectPage = product.visit(JiraViewProjectPage.class, project.getKey());
-//        RemoteWebItem webItem = viewProjectPage.findWebItem(PRODUCT_WEBITEM, Optional.<String>absent());
-//        assertNotNull("Web item should be found", webItem);
-//
-//        webItem.click();
-//
-//        assertFalse("Web item link shouldn't be absolute", webItem.isPonitingToOldXmlInternalUrl());
-//        assertThat(webItem.getPath(), endsWith(project.getKey()));
-//    }
+    @Test
+    public void testRelativeWebItem()
+    {
+        loginAsAdmin();
+
+        JiraViewProjectPage viewProjectPage = product.visit(JiraViewProjectPage.class, project.getKey());
+        RemoteWebItem webItem = viewProjectPage.findWebItem(ADDON_WEBITEM, Optional.<String>absent());
+        assertNotNull("Web item should be found", webItem);
+
+        assertEquals(project.getKey(), webItem.getFromQueryString("project_key"));
+        assertEquals(project.getId(), webItem.getFromQueryString("pid"));
+    }
+
+    @Test
+    public void testProductWebItem() throws MalformedURLException
+    {
+        loginAsAdmin();
+
+        JiraViewProjectPage viewProjectPage = product.visit(JiraViewProjectPage.class, project.getKey());
+        RemoteWebItem webItem = viewProjectPage.findWebItem(PRODUCT_WEBITEM, Optional.<String>absent());
+        assertNotNull("Web item should be found", webItem);
+
+        webItem.click();
+
+        URL url = new URL(webItem.getPath());
+        assertThat(url.getPath(), is("/jira/browse/ACDEV-1234"));
+        assertEquals(project.getKey(), webItem.getFromQueryString("project_key"));
+    }
 
     @Test
     public void bettyCanSeeWebItem()

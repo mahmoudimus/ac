@@ -39,7 +39,7 @@ public class RemoteWebItem
         webItem = elementFinder.find(By.id(id));
         waitUntilTrue(webItem.timed().isPresent());
 
-        if (!isPonitingToOldXmlInternalUrl() && !isPonitingToACInternalUrl())
+        if (!isPointingToOldXmlInternalUrl() && !isPointingToACInternalUrl())
         {
             path = elementFinder.find(By.id(IFRAME_ID_PREFIX + id + IFRAME_ID_SUFFIX)).getAttribute("src");
         }
@@ -49,12 +49,12 @@ public class RemoteWebItem
         }
     }
 
-    public boolean isPonitingToOldXmlInternalUrl()
+    public boolean isPointingToOldXmlInternalUrl()
     {
         return !webItem.getAttribute("href").contains("/plugins/servlet/atlassian-connect/");
     }
 
-    public boolean isPonitingToACInternalUrl()
+    public boolean isPointingToACInternalUrl()
     {
         return !webItem.getAttribute("href").contains("/plugins/servlet/ac/");
     }

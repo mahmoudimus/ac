@@ -1,6 +1,5 @@
 package com.atlassian.plugin.connect.plugin;
 
-import com.atlassian.gzipfilter.org.apache.commons.lang.StringUtils;
 import com.atlassian.plugin.connect.plugin.util.MapFunctions;
 import com.atlassian.plugin.connect.plugin.util.http.HttpContentRetriever;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
@@ -13,6 +12,7 @@ import com.google.common.collect.Maps;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.util.ParameterParser;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

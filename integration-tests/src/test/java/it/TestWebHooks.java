@@ -1,10 +1,5 @@
 package it;
 
-import java.net.URI;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.atlassian.plugin.connect.plugin.webhooks.PluginsWebHookProvider;
 import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
 import com.atlassian.plugin.connect.test.server.module.WebhookModule;
@@ -12,13 +7,18 @@ import com.atlassian.plugin.connect.test.webhook.WebHookBody;
 import com.atlassian.plugin.connect.test.webhook.WebHookTestServlet;
 import com.atlassian.plugin.connect.test.webhook.WebHookTester;
 import com.atlassian.plugin.connect.test.webhook.WebHookWaiter;
-
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import static com.google.common.collect.Lists.newArrayList;
-import static org.junit.Assert.*;
+import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public final class TestWebHooks extends AbstractBrowserlessTest
 {
@@ -124,8 +124,8 @@ public final class TestWebHooks extends AbstractBrowserlessTest
         }
         finally
         {
-            plugin1.stop();
-            plugin2.stop();
+            plugin1.stopAndUninstall();
+            plugin2.stopAndUninstall();
         }
     }
 

@@ -115,14 +115,14 @@ public class TestXdmEvents extends JiraWebDriverTestBase
         {
             if (remotePluginA != null)
             {
-                remotePluginA.stop();
+                remotePluginA.stopAndUninstall();
             }
         }
         finally
         {
             if (remotePluginB != null)
             {
-                remotePluginB.stop();
+                remotePluginB.stopAndUninstall();
             }
         }
     }

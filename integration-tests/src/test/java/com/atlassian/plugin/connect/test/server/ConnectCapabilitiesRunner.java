@@ -52,8 +52,6 @@ import static com.google.common.collect.Maps.newHashMap;
  */
 public class ConnectCapabilitiesRunner
 {
-    private static final String CONNECT_PLUGIN_SERVLET_PREFIX = "/plugins/servlet/ac/";
-
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final String baseUrl;
@@ -111,17 +109,6 @@ public class ConnectCapabilitiesRunner
     public ConnectCapabilitiesRunner addCapabilities(String fieldName, CapabilityBean... beans)
     {
         addonBuilder.withCapabilities(fieldName, beans);
-        return this;
-    }
-
-    public ConnectCapabilitiesRunner addPluginRoute(String relativePath, HttpServlet servlet)
-    {
-        String path = CONNECT_PLUGIN_SERVLET_PREFIX + pluginKey;
-        if (!relativePath.startsWith("/"))
-        {
-            path += "/";
-        }
-        addRoute(path + relativePath, servlet);
         return this;
     }
 

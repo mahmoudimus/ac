@@ -179,7 +179,7 @@ public final class AtlassianConnectAddOnRunner
         server.stop();
     }
 
-    public void stop() throws Exception
+    public void stopAndUninstall() throws Exception
     {
         stopRunnerServer();
         uninstall();

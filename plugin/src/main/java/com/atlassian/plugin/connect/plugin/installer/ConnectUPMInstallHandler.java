@@ -99,8 +99,8 @@ public class ConnectUPMInstallHandler implements PluginInstallHandler
         }
         catch (Exception e)
         {
-            log.error("Failed to install " + descriptorFile.getName(), e);
-            throw new PluginInstallException("Unable to install connect add on.",
+            log.error("Failed to install " + descriptorFile.getName() + ": " + e.getMessage(), e);
+            throw new PluginInstallException("Unable to install connect add on. " + e.getMessage(),
                     Option.some("connect.remote.upm.install.exception"));
         }
     }
