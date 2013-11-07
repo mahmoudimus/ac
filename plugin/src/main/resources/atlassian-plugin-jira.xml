@@ -1,53 +1,4 @@
 <application key="jira">
-    <component key="hostContainer" class="com.atlassian.plugin.osgi.bridge.external.SpringHostContainer" />
-    <component key="jiraProductAccessor" class="com.atlassian.plugin.connect.plugin.product.jira.JiraProductAccessor"/>
-    <component key="jiraUserPreferencesRetriever" class="com.atlassian.plugin.connect.plugin.product.jira.JiraUserPreferencesRetriever"
-			interface="com.atlassian.plugin.connect.plugin.UserPreferencesRetriever"/>
-    <component key="conditionDescriptorFactory" class="com.atlassian.jira.plugin.webfragment.descriptors.ConditionDescriptorFactoryImpl" />
-
-    <component key="jiraWebHookProvider"
-               interface="com.atlassian.webhooks.spi.provider.WebHookProvider" public="true"
-               class="com.atlassian.plugin.connect.plugin.product.jira.PostFunctionWebHookProvider" />
-
-    <component key="EventSerializerFactory" class="com.atlassian.plugin.connect.plugin.product.jira.webhook.JiraEventSerializerFactory" />
-
-    <component key="WebSudoService" class="com.atlassian.plugin.connect.plugin.product.jira.JiraWebSudoService" />
-
-    <component key="host" class="com.atlassian.plugin.connect.plugin.module.ServletContextThreadLocalIFrameHost" />
-    <component key="restAccessor" class="com.atlassian.plugin.connect.plugin.product.jira.JiraRestBeanMarshaler" />
-
-    <!-- Web panel parameter extractors -->
-    <component key="projectIdParameterExtractor"
-               class="com.atlassian.plugin.connect.plugin.module.jira.context.extractor.ProjectContextMapParameterExtractor"
-               interface="com.atlassian.plugin.connect.plugin.module.extractor.ContextMapParameterExtractor" />
-
-    <component key="issueIdParameterExtractor"
-               class="com.atlassian.plugin.connect.plugin.module.jira.context.extractor.IssueContextMapParameterExtractor"
-               interface="com.atlassian.plugin.connect.plugin.module.extractor.ContextMapParameterExtractor" />
-
-    <component key="profileUserParameterExtractor"
-               class="com.atlassian.plugin.connect.plugin.module.jira.context.extractor.ProfileUserContextMapParameterExtractor"
-               interface="com.atlassian.plugin.connect.plugin.module.extractor.ContextMapParameterExtractor" />
-
-    <component key="projectSerializer" class="com.atlassian.plugin.connect.plugin.module.jira.context.serializer.ProjectSerializer" />
-    <component key="issueSerializer" class="com.atlassian.plugin.connect.plugin.module.jira.context.serializer.IssueSerializer" />
-    <component key="profileUserSerializer" class="com.atlassian.plugin.connect.plugin.module.jira.context.serializer.ProfileUserSerializer" />
-    <component key="versionSerializer" class="com.atlassian.plugin.connect.plugin.module.jira.context.serializer.VersionSerializer" />
-    <component key="componentSerializer" class="com.atlassian.plugin.connect.plugin.module.jira.context.serializer.ComponentSerializer" />
-
-    <component key="webItemModuleDescriptorFactory" class="com.atlassian.plugin.connect.plugin.module.webitem.JiraWebItemModuleDescriptorFactory"
-               interface="com.atlassian.plugin.connect.plugin.module.webitem.WebItemModuleDescriptorFactory" />
-
-    <component key="workflowPostFunctionModuleProvider"
-               class="com.atlassian.plugin.connect.plugin.capabilities.provider.WorkflowPostFunctionModuleProvider"
-               interface="com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectModuleProvider"/>
-    <component key="workflowPostFunctionModuleDescriptorFactory"
-               class="com.atlassian.plugin.connect.plugin.capabilities.descriptor.WorkflowPostFunctionModuleDescriptorFactory"
-               interface="com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectModuleDescriptorFactory"/>
-
-    <component key="connectTabPanelModuleProvider" class="com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanelModuleProvider" />
-    
-    <component key="connectProjectAdminTabPanelModuleProvider" class="com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectProjectAdminTabPanelModuleProvider" />
 
     <rest key="rest" path="/atlassian-connect" version="1">
         <dispatcher>REQUEST</dispatcher>
@@ -56,37 +7,6 @@
     </rest>
 
     <jira-footer key="bigPipeFooter" class="com.atlassian.plugin.connect.plugin.product.jira.JiraBigPipeFooter" />
-
-	<component-import key="projectService" interface="com.atlassian.jira.bc.project.ProjectService" />
-    <component-import key="jiraAuthenticationContext" interface="com.atlassian.jira.security.JiraAuthenticationContext" />
-    <component-import key="jiraUserManager" interface="com.atlassian.jira.user.util.UserManager" />
-    <component-import key="timeZoneService" interface="com.atlassian.jira.timezone.TimeZoneService" />
-    <component-import key="InternalWebSudoManager" interface="com.atlassian.jira.security.websudo.InternalWebSudoManager" />
-    <component-import key="SearchRequestViewBodyWriterUtil" interface="com.atlassian.jira.issue.views.util.SearchRequestViewBodyWriterUtil" />
-    <component-import key="mailQueue" interface="com.atlassian.mail.queue.MailQueue" />
-    <component-import key="projectRoleManager" interface="com.atlassian.jira.security.roles.ProjectRoleManager" />
-    <component-import key="jiraBaseUrls" interface="com.atlassian.jira.issue.fields.rest.json.beans.JiraBaseUrls" />
-    <component-import key="userUtils" interface="com.atlassian.jira.user.util.UserUtil" />
-    <component-import key="webFragmentHelper" interface="com.atlassian.plugin.web.WebFragmentHelper" />
-
-    <!-- imports for conditions -->
-    <component-import key="subtaskManager" interface="com.atlassian.jira.config.SubTaskManager" />
-    <component-import key="jiraApplicationProperties" interface="com.atlassian.jira.config.properties.ApplicationProperties" />
-    <component-import key="worklogService" interface="com.atlassian.jira.bc.issue.worklog.WorklogService" />
-    <component-import key="userIssueHistoryManager" interface="com.atlassian.jira.user.UserIssueHistoryManager" />
-    <component-import key="jiraPermissionmanager" interface="com.atlassian.jira.security.PermissionManager" />
-    <component-import key="fieldVisibilityManager" interface="com.atlassian.jira.web.FieldVisibilityManager" />
-    <component-import key="velocityRequestContextFactory" interface="com.atlassian.jira.util.velocity.VelocityRequestContextFactory" />
-    <component-import key="sessionSearchObjectManagerFactory" interface="com.atlassian.jira.web.session.SessionSearchObjectManagerFactory" />
-    <component-import key="issueLinkTypeManager" interface="com.atlassian.jira.issue.link.IssueLinkTypeManager" />
-    <component-import key="userPreferenceManager" interface="com.atlassian.jira.user.preferences.UserPreferencesManager" />
-    <component-import key="subtaskToIssueConversionService" interface="com.atlassian.jira.bc.subtask.conversion.SubTaskToIssueConversionService" />
-    <component-import key="attachmentService" interface="com.atlassian.jira.bc.issue.attachment.AttachmentService" />
-    <component-import key="issueManager" interface="com.atlassian.jira.issue.IssueManager" />
-    <component-import key="voteManager" interface="com.atlassian.jira.issue.vote.VoteManager" />
-    <component-import key="watcherManager" interface="com.atlassian.jira.issue.watchers.WatcherManager" />
-    <component-import key="fieldManager" interface="com.atlassian.jira.issue.fields.FieldManager" />
-    <component-import key="issueToSubtaskConversionService" interface="com.atlassian.jira.bc.subtask.conversion.IssueToSubTaskConversionService" />
 
     <!-- plugin points -->
     <described-module-type key="profile-page" name="User Profile Page" class="com.atlassian.plugin.connect.plugin.module.jira.JiraProfileTabModuleDescriptor">

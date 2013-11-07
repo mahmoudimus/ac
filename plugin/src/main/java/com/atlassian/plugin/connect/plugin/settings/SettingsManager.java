@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 /**
  *
  */
-@Component
+@Component("connectSettingsManager")
 public class SettingsManager
 {
     private final PluginSettingsFactory pluginSettingsFactory;

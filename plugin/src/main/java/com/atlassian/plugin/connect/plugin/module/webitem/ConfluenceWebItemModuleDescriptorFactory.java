@@ -4,20 +4,25 @@ import com.atlassian.confluence.plugin.descriptor.web.descriptors.ConfluenceWebI
 import com.atlassian.confluence.plugin.descriptor.web.model.ConfluenceWebLink;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.plugin.module.context.ContextMapURLSerializer;
+import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.plugin.web.WebFragmentHelper;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
+
+import org.springframework.beans.factory.annotation.Autowired;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Creates ConfluenceWebItemModuleDescriptor with link pointing to remote plugin.
  */
-public class ConfluenceWebItemModuleDescriptorFactory implements WebItemModuleDescriptorFactory
+@ConfluenceComponent
+public class ConfluenceWebItemModuleDescriptorFactory implements ProductSpecificWebItemModuleDescriptorFactory
 {
     private final UrlVariableSubstitutor urlVariableSubstitutor;
     private final ContextMapURLSerializer contextMapURLSerializer;
     private final WebFragmentHelper webFragmentHelper;
 
+    @Autowired
     public ConfluenceWebItemModuleDescriptorFactory(
             UrlVariableSubstitutor urlVariableSubstitutor,
             ContextMapURLSerializer contextMapURLSerializer,

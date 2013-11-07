@@ -3,9 +3,7 @@ package com.atlassian.plugin.connect.plugin.product.jira;
 import java.util.Map;
 
 import com.atlassian.crowd.embedded.api.User;
-import com.atlassian.jira.ComponentManager;
 import com.atlassian.jira.plugin.webfragment.conditions.CanConvertToIssueCondition;
-import com.atlassian.jira.plugin.webfragment.descriptors.JiraWebItemModuleDescriptor;
 import com.atlassian.jira.user.preferences.JiraUserPreferences;
 import com.atlassian.jira.user.preferences.PreferenceKeys;
 import com.atlassian.jira.user.util.UserManager;
@@ -13,20 +11,23 @@ import com.atlassian.mail.Email;
 import com.atlassian.mail.queue.MailQueue;
 import com.atlassian.mail.queue.SingleMailQueueItem;
 import com.atlassian.plugin.connect.plugin.module.jira.conditions.ViewingOwnProfileCondition;
+import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.web.Condition;
-import com.atlassian.plugin.web.WebInterfaceManager;
-import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 
 import com.google.common.collect.ImmutableMap;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import static com.google.common.collect.Maps.newHashMap;
 
+@JiraComponent
 public final class JiraProductAccessor implements ProductAccessor
 {
     private final UserManager userManager;
     private final MailQueue mailQueue;
 
+    @Autowired
     public JiraProductAccessor(UserManager userManager, MailQueue mailQueue)
     {
         this.userManager = userManager;

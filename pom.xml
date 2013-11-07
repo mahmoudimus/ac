@@ -124,10 +124,10 @@
                         <configuration>
                             <rules>
                                 <bannedDependencies>
-                                    <excludes>
+                                    <includes>
                                         <!-- use org.springframework:spring-context instead -->
-                                        <exclude>org.springframework:org.springframework.context</exclude>
-                                    </excludes>
+                                        <include>org.springframework:org.springframework.context</include>
+                                    </includes>
                                 </bannedDependencies>
                             </rules>
                         </configuration>
@@ -496,6 +496,14 @@
                 <artifactId>gson</artifactId>
                 <version>${gson.version}</version>
             </dependency>
+            
+            <!-- spring scanning -->
+            <dependency>
+                <groupId>com.atlassian.plugin</groupId>
+                <artifactId>atlassian-spring-scanner</artifactId>
+                <version>${atlassian.spring.scanner.version}</version>
+                <scope>compile</scope>
+            </dependency>
 
             <!-- Only exists for qunit -->
             <dependency>
@@ -567,12 +575,28 @@
         <slf4j.version>1.6.4</slf4j.version>
         <spring.version>2.5.6</spring.version>
         <gson.version>2.2.2-atlassian-1</gson.version>
-        
+
         <!-- BUILD STUFF -->
         <jgitflow.version>1.0-alpha22</jgitflow.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <xvfb.enable>true</xvfb.enable>
         <atlassian.upm.on.demand>false</atlassian.upm.on.demand>
         <buildNumber>SNAPSHOT</buildNumber>
+        <atlassian.spring.scanner.version>1.0-m4</atlassian.spring.scanner.version>
     </properties>
+
+    <repositories>
+        <repository>
+            <id>maven-central</id>
+            <url>http://repo1.maven.org/maven2</url>
+            <releases>
+                <checksumPolicy>fail</checksumPolicy>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <checksumPolicy>fail</checksumPolicy>
+                <updatePolicy>never</updatePolicy>
+            </snapshots>
+        </repository>
+    </repositories>
 </project>

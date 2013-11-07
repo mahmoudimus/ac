@@ -8,10 +8,14 @@ import java.util.Map;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.spi.ConnectAddOnIdentifierService;
 import com.atlassian.plugin.osgi.util.OsgiHeaderUtil;
+import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.CharStreams;
@@ -27,10 +31,13 @@ import org.osgi.framework.Bundle;
 /**
  * @since 1.0
  */
+@Named
+@ExportAsService(ConnectAddOnIdentifierService.class)
 public class DefaultConnectAddOnIdentifierService implements ConnectAddOnIdentifierService
 {
     private final PluginAccessor pluginAccessor;
 
+    @Inject
     public DefaultConnectAddOnIdentifierService(PluginAccessor pluginAccessor)
     {
         this.pluginAccessor = pluginAccessor;

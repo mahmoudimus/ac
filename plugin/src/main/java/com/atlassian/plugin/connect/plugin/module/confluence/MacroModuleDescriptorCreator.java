@@ -18,6 +18,7 @@ import com.atlassian.plugin.connect.plugin.module.page.IFrameContextImpl;
 import com.atlassian.plugin.connect.plugin.module.page.IFramePageServlet;
 import com.atlassian.plugin.connect.plugin.module.page.PageInfo;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
+import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.plugin.connect.plugin.util.contextparameter.ContextParameterParser;
 import com.atlassian.plugin.connect.plugin.util.contextparameter.RequestContextParameterFactory;
 import com.atlassian.plugin.connect.spi.Permissions;
@@ -39,6 +40,7 @@ import org.apache.commons.lang.StringUtils;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.osgi.framework.BundleContext;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.net.URI;
 import java.util.*;
@@ -51,6 +53,7 @@ import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.*;
 /**
  * Creates macro module descriptors.  Builder instances are meant to be shared across instances.
  */
+@ConfluenceComponent
 public class MacroModuleDescriptorCreator
 {
     public static interface MacroFactory
@@ -72,6 +75,7 @@ public class MacroModuleDescriptorCreator
     private final BundleContext bundleContext;
     private final UrlVariableSubstitutor urlVariableSubstitutor;
 
+    @Autowired
     public MacroModuleDescriptorCreator(
             SystemInformationService systemInformationService,
             DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory,

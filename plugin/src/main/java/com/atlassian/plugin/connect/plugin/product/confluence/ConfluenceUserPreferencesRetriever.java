@@ -5,10 +5,12 @@ import java.util.TimeZone;
 import javax.annotation.Nullable;
 
 import com.atlassian.plugin.connect.plugin.UserPreferencesRetriever;
+import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@ConfluenceComponent
 public class ConfluenceUserPreferencesRetriever implements UserPreferencesRetriever
 {
 
