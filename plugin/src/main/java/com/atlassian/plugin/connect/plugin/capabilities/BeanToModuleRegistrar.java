@@ -178,7 +178,14 @@ public class BeanToModuleRegistrar
         if (registrations.containsKey(plugin.getKey()))
         {
             DynamicDescriptorRegistration.Registration reg = registrations.get(plugin.getKey());
-            reg.unregister();
+            try
+            {
+                reg.unregister();
+            }
+            catch (IllegalStateException e)
+            {
+                //service was already unregistered, just ignore
+            }
 
             registrations.remove(plugin.getKey());
         }
