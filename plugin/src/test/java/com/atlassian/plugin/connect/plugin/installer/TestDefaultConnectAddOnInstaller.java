@@ -84,7 +84,7 @@ public class TestDefaultConnectAddOnInstaller
                 "    <webhook application=\"confluence\" key=\"page_created\" event=\"page_updated\" url=\"/confluence/page_updated\"/>\n" +
                 "\n" +
                 "</atlassian-plugin>");
-        installer = new DefaultConnectAddOnInstaller(remotePluginArtifactFactory, pluginController, pluginAccessor, oAuthLinkManager, remoteEventsHandler, mock(BeanToModuleRegistrar.class), mock(BundleContext.class));
+        installer = new DefaultConnectAddOnInstaller(remotePluginArtifactFactory, pluginController, pluginAccessor, oAuthLinkManager, remoteEventsHandler, mock(BeanToModuleRegistrar.class), mock(BundleContext.class), connectApplinkManager);
         // the DefaultConnectAddOnInstaller parses the plugin key for an unloadable plugin, which is returned by installPlugins(),
         // but then does not load the unloadable plugin, resulting in getPlugin(key) returning null
         when(pluginController.installPlugins(any(PluginArtifact.class))).thenReturn(new HashSet<String>(Arrays.asList(PLUGIN_KEY)));

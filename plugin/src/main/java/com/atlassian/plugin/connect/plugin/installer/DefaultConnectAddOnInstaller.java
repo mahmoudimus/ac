@@ -5,6 +5,7 @@ import java.util.Set;
 import com.atlassian.plugin.*;
 import com.atlassian.plugin.connect.plugin.OAuthLinkManager;
 import com.atlassian.plugin.connect.plugin.capabilities.BeanToModuleRegistrar;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.AuthenticationType;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.capabilities.gson.CapabilitiesGsonFactory;
 import com.atlassian.plugin.connect.plugin.event.RemoteEventsHandler;
@@ -32,11 +33,12 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
     private final RemoteEventsHandler remoteEventsHandler;
     private final BeanToModuleRegistrar beanToModuleRegistrar;
     private final BundleContext bundleContext;
+    private final ConnectApplinkManager connectApplinkManager;
 
     private static final Logger log = LoggerFactory.getLogger(DefaultConnectAddOnInstaller.class);
 
     @Autowired
-    public DefaultConnectAddOnInstaller(RemotePluginArtifactFactory remotePluginArtifactFactory, PluginController pluginController, PluginAccessor pluginAccessor, OAuthLinkManager oAuthLinkManager, RemoteEventsHandler remoteEventsHandler, BeanToModuleRegistrar beanToModuleRegistrar, BundleContext bundleContext)
+    public DefaultConnectAddOnInstaller(RemotePluginArtifactFactory remotePluginArtifactFactory, PluginController pluginController, PluginAccessor pluginAccessor, OAuthLinkManager oAuthLinkManager, RemoteEventsHandler remoteEventsHandler, BeanToModuleRegistrar beanToModuleRegistrar, BundleContext bundleContext, ConnectApplinkManager connectApplinkManager)
     {
         this.remotePluginArtifactFactory = remotePluginArtifactFactory;
         this.pluginController = pluginController;
@@ -45,6 +47,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
         this.remoteEventsHandler = remoteEventsHandler;
         this.beanToModuleRegistrar = beanToModuleRegistrar;
         this.bundleContext = bundleContext;
+        this.connectApplinkManager = connectApplinkManager;
     }
 
     @Override
@@ -75,13 +78,19 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
 
             try
             {
+                AuthenticationType authType = addOn.getAuthentication().getType();
+                String sharedKey = addOn.getAuthentication().getSharedKey();
+                
+                connectApplinkManager.createAppLink(installedPlugin,addOn.getBaseUrl(),authType,sharedKey);
                 beanToModuleRegistrar.registerDescriptorsForBeans(installedPlugin, addOn.getCapabilities());
+            }
+            catch (IllegalStateException e)
+            {
+                uninstallWithException(installedPlugin, e);
             }
             catch (Exception e)
             {
-                beanToModuleRegistrar.unregisterDescriptorsForPlugin(installedPlugin);
-                pluginController.uninstall(installedPlugin);
-                throw e;
+                uninstallWithException(installedPlugin, e);
             }
 
             long endTime = System.currentTimeMillis();
@@ -100,6 +109,13 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
             throw new InstallationFailedException(e.getCause() != null ? e.getCause() : e);
         }
 
+    }
+
+    private void uninstallWithException(Plugin installedPlugin, Exception e) throws Exception
+    {
+        beanToModuleRegistrar.unregisterDescriptorsForPlugin(installedPlugin);
+        pluginController.uninstall(installedPlugin);
+        throw e;
     }
 
     private Plugin installPlugin(PluginArtifact pluginArtifact, String pluginKey, String username)
