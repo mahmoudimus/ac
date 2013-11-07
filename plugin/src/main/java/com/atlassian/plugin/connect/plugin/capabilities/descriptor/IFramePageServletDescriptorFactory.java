@@ -4,6 +4,8 @@ import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.NameToKeyBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IFrameServletBean;
+import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AddonUrlTemplatePair;
 import com.atlassian.plugin.connect.plugin.module.IFramePageRenderer;
 import com.atlassian.plugin.connect.plugin.module.IFrameParamsImpl;
 import com.atlassian.plugin.connect.plugin.module.jira.projectconfig.IFrameProjectConfigTabServlet;
@@ -18,6 +20,7 @@ import com.atlassian.plugin.servlet.descriptors.ServletModuleDescriptor;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.sal.api.user.UserManager;
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
 import org.osgi.framework.BundleContext;
@@ -75,6 +78,32 @@ public class IFramePageServletDescriptorFactory
                 metaTagsContent, ModuleFactoryType.JIRA_PROJECT_ADMIN_TAB);
     }
 
+    public ServletModuleDescriptor createIFrameServletDescriptor(final Plugin plugin, IFrameServletBean servletBean)
+    {
+        NameToKeyBean linkBean = servletBean.getLinkBean();
+        AddonUrlTemplatePair urlTemplatePair = servletBean.getUrlTemplatePair();
+        AddonUrlTemplatePair.HostUrlPaths hostUrlPaths = urlTemplatePair.getHostUrlPaths();
+
+        final String moduleKey = "servlet-" + linkBean.getKey();
+
+        final Element servletElement = createServletElement(moduleKey, hostUrlPaths.getServletRegistrationPaths());
+
+        // TODO: In ACDEV-396 push the url template into IFramePageContext
+        String path = urlTemplatePair.getAddonUrlTemplate().getTemplateString();
+        final Map<String,String> contextParams = urlVariableSubstitutor.getContextVariableMap(path);
+
+        final IFrameParams params = new IFrameParamsImpl();
+        final ServletModuleDescriptor descriptor = new ServletModuleDescriptor(
+                getModuleFactory(plugin, path, servletBean.getPageInfo(),
+                        moduleKey, contextParams, params, ModuleFactoryType.PAGE),
+                getService(bundleContext, ServletModuleManager.class)
+        );
+
+        descriptor.init(plugin,servletElement);
+
+        return descriptor;
+    }
+
     private ServletModuleDescriptor createIFrameServletDescriptor(final Plugin plugin, final NameToKeyBean bean,
                                                                  final String localUrl, final String path,
                                                                  final String decorator, final String templateSuffix,
@@ -103,12 +132,19 @@ public class IFramePageServletDescriptorFactory
 
     private Element createServletElement(String moduleKey, String localUrl)
     {
+        return createServletElement(moduleKey, ImmutableList.<String>of(localUrl + "", localUrl + "/*"));
+    }
+
+    private Element createServletElement(String moduleKey, Iterable<String> servletUrlPatterns)
+    {
         Element root = new DOMElement("servlet");
         root.addAttribute("key",moduleKey);
         root.addAttribute("system","true");
         root.addAttribute("class",IFramePageServlet.class.getName());
-        root.addElement("url-pattern").setText(localUrl + "");
-        root.addElement("url-pattern").setText(localUrl + "/*");
+        for (String urlPattern : servletUrlPatterns)
+        {
+            root.addElement("url-pattern").setText(urlPattern);
+        }
 
         return root;
     }
@@ -138,6 +174,14 @@ public class IFramePageServletDescriptorFactory
                                            final String moduleKey, final Map<String, String> contextParams,
                                            final IFrameParams params, final ModuleFactoryType type)
     {
+        return getModuleFactory(plugin, path, new PageInfo(decorator, templateSuffix, pageName, condition, metaTagsContent),
+                moduleKey, contextParams, params, type);
+    }
+
+    private ModuleFactory getModuleFactory(final Plugin plugin, final String path, final PageInfo pageInfo,
+                                           final String moduleKey, final Map<String, String> contextParams,
+                                           final IFrameParams params, final ModuleFactoryType type)
+    {
         switch (type) {
             case PAGE:
                 return new ModuleFactory()
@@ -146,7 +190,6 @@ public class IFramePageServletDescriptorFactory
                     public <T> T createModule(String name, ModuleDescriptor<T> moduleDescriptor) throws
                             PluginParseException
                     {
-                        PageInfo pageInfo = new PageInfo(decorator, templateSuffix, pageName, condition, metaTagsContent);
 
                         return (T) new IFramePageServlet(
                                 pageInfo,
@@ -164,8 +207,6 @@ public class IFramePageServletDescriptorFactory
                     public <T> T createModule(String name, ModuleDescriptor<T> moduleDescriptor) throws
                             PluginParseException
                     {
-                        PageInfo pageInfo = new PageInfo(decorator, templateSuffix, pageName, condition, metaTagsContent);
-
                         return (T) new IFrameProjectConfigTabServlet(
                                 pageInfo,
                                 iFramePageRenderer,

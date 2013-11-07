@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.beans;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConnectPageCapabilityBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean;
 
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean.newWebItemBean;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class ConnectPageCapabilityBean extends BeanWithKeyAndParamsAndConditions
@@ -63,6 +64,11 @@ public class ConnectPageCapabilityBean extends BeanWithKeyAndParamsAndConditions
     public String getLocation()
     {
         return location;
+    }
+
+    public String getAbsoluteLocation()
+    {
+        return location; // TODO: is this needed?
     }
 
     public static ConnectPageCapabilityBeanBuilder newPageBean()
