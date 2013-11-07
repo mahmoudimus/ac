@@ -31,6 +31,7 @@ public class CapabilitiesGsonFactory
         Type mapStringType = new TypeToken<Map<String,String>>(){}.getType();
         return new GsonBuilder()
                 .registerTypeAdapter(conditionalType,new ConditionalBeanSerializer())
+                .registerTypeAdapter(mapStringType, new AuthenticationSerializer())
                 .registerTypeHierarchyAdapter(List.class, new IgnoredEmptyCollectionSerializer())
                 .registerTypeAdapter(mapStringType, new IgnoredEmptyMapSerializer())
                 ;

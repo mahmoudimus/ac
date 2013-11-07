@@ -6,6 +6,8 @@ import java.util.Map;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConnectAddonBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.VendorBean;
 
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.AuthenticationBean.newAuthenticationBean;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.LifecycleBean.newLifecycleBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.VendorBean.newVendorBean;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
@@ -23,6 +25,9 @@ public class ConnectAddonBean extends BaseCapabilityBean
     private String description;
     private VendorBean vendor;
     private Map<String,String> links;
+    private LifecycleBean lifecycle;
+    private String baseUrl;
+    private AuthenticationBean authentication;
     
     private CapabilityList capabilities;
     
@@ -34,7 +39,10 @@ public class ConnectAddonBean extends BaseCapabilityBean
         this.description = "";
         this.vendor = VendorBean.newVendorBean().build();
         this.links = newHashMap();
+        this.lifecycle = newLifecycleBean().build();
         this.capabilities = new CapabilityList();
+        this.baseUrl = "";
+        this.authentication = newAuthenticationBean().build();
     }
 
     public ConnectAddonBean(ConnectAddonBeanBuilder builder)
@@ -75,6 +83,19 @@ public class ConnectAddonBean extends BaseCapabilityBean
         {
             this.links = newHashMap();
         }
+        
+        if(null == lifecycle)
+        {
+            this.lifecycle = newLifecycleBean().build();
+        }
+        if(null == baseUrl)
+        {
+            this.baseUrl = "";
+        }
+        if(null == authentication)
+        {
+            this.authentication = newAuthenticationBean().build();
+        }
     }
 
     public String getKey()
@@ -110,6 +131,21 @@ public class ConnectAddonBean extends BaseCapabilityBean
     public Map<String, String> getLinks()
     {
         return links;
+    }
+
+    public LifecycleBean getLifecycle()
+    {
+        return lifecycle;
+    }
+
+    public String getBaseUrl()
+    {
+        return baseUrl;
+    }
+
+    public AuthenticationBean getAuthentication()
+    {
+        return authentication;
     }
 
     public static ConnectAddonBeanBuilder newConnectAddonBean()
