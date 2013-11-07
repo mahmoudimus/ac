@@ -13,7 +13,6 @@ import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.RelativeA
 import com.atlassian.plugin.connect.plugin.capabilities.testobjects.PluginForTests;
 import com.atlassian.plugin.connect.plugin.capabilities.testobjects.RemotablePluginAccessorFactoryForTests;
 import com.atlassian.plugin.connect.plugin.capabilities.testobjects.descriptor.WebItemModuleDescriptorFactoryForTests;
-import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.spi.module.DynamicMarkerCondition;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.web.WebFragmentHelper;
@@ -33,7 +32,9 @@ import static com.atlassian.plugin.connect.plugin.capabilities.ConnectAsserts.as
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean.newWebItemBean;
 import static com.google.common.collect.Lists.newArrayList;
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyMap;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -87,7 +88,7 @@ public class WebItemProviderTest
                 .withLocation("atl.admin/menu")
                 .build();
 
-        WebItemModuleProvider moduleProvier = new WebItemModuleProvider(webItemFactory, new RelativeAddOnUrlConverter(new UrlVariableSubstitutor()));
+        WebItemModuleProvider moduleProvier = new WebItemModuleProvider(webItemFactory, new RelativeAddOnUrlConverter());
         
         List<ModuleDescriptor> descriptors = moduleProvier.provideModules(plugin, mock(BundleContext.class), JSON_FIELD_NAME, newArrayList(bean));
         
@@ -109,7 +110,7 @@ public class WebItemProviderTest
                 .withContext(AddOnUrlContext.addon)
                 .build();
 
-        WebItemModuleProvider moduleProvier = new WebItemModuleProvider(webItemFactory, new RelativeAddOnUrlConverter(new UrlVariableSubstitutor()));
+        WebItemModuleProvider moduleProvier = new WebItemModuleProvider(webItemFactory, new RelativeAddOnUrlConverter());
 
         List<ModuleDescriptor> descriptors = moduleProvier.provideModules(plugin, mock(BundleContext.class), JSON_FIELD_NAME, newArrayList(bean));
 
@@ -131,7 +132,7 @@ public class WebItemProviderTest
                 .withContext(AddOnUrlContext.product)
                 .build();
 
-        WebItemModuleProvider moduleProvier = new WebItemModuleProvider(webItemFactory, new RelativeAddOnUrlConverter(new UrlVariableSubstitutor()));
+        WebItemModuleProvider moduleProvier = new WebItemModuleProvider(webItemFactory, new RelativeAddOnUrlConverter());
 
         List<ModuleDescriptor> descriptors = moduleProvier.provideModules(plugin, mock(BundleContext.class), JSON_FIELD_NAME, newArrayList(bean));
 
@@ -152,7 +153,7 @@ public class WebItemProviderTest
                 .withLocation("atl.admin/menu")
                 .build();
 
-        WebItemModuleProvider moduleProvier = new WebItemModuleProvider(webItemFactory, new RelativeAddOnUrlConverter(new UrlVariableSubstitutor()));
+        WebItemModuleProvider moduleProvier = new WebItemModuleProvider(webItemFactory, new RelativeAddOnUrlConverter());
 
         List<ModuleDescriptor> descriptors = moduleProvier.provideModules(plugin, mock(BundleContext.class), JSON_FIELD_NAME, newArrayList(bean));
 
@@ -174,7 +175,7 @@ public class WebItemProviderTest
                 .withContext(AddOnUrlContext.addon)
                 .build();
 
-        WebItemModuleProvider moduleProvier = new WebItemModuleProvider(webItemFactory, new RelativeAddOnUrlConverter(new UrlVariableSubstitutor()));
+        WebItemModuleProvider moduleProvier = new WebItemModuleProvider(webItemFactory, new RelativeAddOnUrlConverter());
 
         List<ModuleDescriptor> descriptors = moduleProvier.provideModules(plugin, mock(BundleContext.class), JSON_FIELD_NAME, newArrayList(bean));
 
@@ -196,7 +197,7 @@ public class WebItemProviderTest
                 .withContext(AddOnUrlContext.product)
                 .build();
 
-        WebItemModuleProvider moduleProvier = new WebItemModuleProvider(webItemFactory, new RelativeAddOnUrlConverter(new UrlVariableSubstitutor()));
+        WebItemModuleProvider moduleProvier = new WebItemModuleProvider(webItemFactory, new RelativeAddOnUrlConverter());
 
         List<ModuleDescriptor> descriptors = moduleProvier.provideModules(plugin, mock(BundleContext.class), JSON_FIELD_NAME, newArrayList(bean));
 
@@ -223,7 +224,7 @@ public class WebItemProviderTest
                 .withLocation("atl.admin/menu")
                 .build();
 
-        WebItemModuleProvider moduleProvier = new WebItemModuleProvider(webItemFactory, new RelativeAddOnUrlConverter(new UrlVariableSubstitutor()));
+        WebItemModuleProvider moduleProvier = new WebItemModuleProvider(webItemFactory, new RelativeAddOnUrlConverter());
 
         List<ModuleDescriptor> descriptors = moduleProvier.provideModules(plugin, mock(BundleContext.class), JSON_FIELD_NAME, newArrayList(bean,bean2));
 

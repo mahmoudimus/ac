@@ -1,15 +1,13 @@
 package it;
 
-import java.net.HttpURLConnection;
-import java.net.URL;
-
 import com.atlassian.plugin.connect.plugin.rest.license.LicenseDetailsRepresentation;
 import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
-
 import com.google.gson.Gson;
-
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
+
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -58,7 +56,7 @@ public class TestLicenseRestResource extends AbstractRemotablePluginTest
             
             if(null != runner)
             {
-                runner.stop();
+                runner.stopAndUninstall();
             }
         }
         

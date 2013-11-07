@@ -75,7 +75,19 @@ AP.define("env", ["_dollar", "_rpc"], function ($, rpc) {
   return $.extend(apis, {
 
     meta: function (name) {
-      return $("meta[name='ap-" + name + "']").attr("content");
+      //IE8 fallback: querySelectorAll will never find nodes by name.
+      if(navigator.userAgent.indexOf('MSIE 8') >= 0){
+        var i,
+        metas = document.getElementsByTagName('meta');
+
+        for (i=0; i<metas.length; i++) {
+          if(metas[i].getAttribute("name") === 'ap-' + name) {
+             return metas[i].getAttribute("content");
+          }
+        }
+      } else {
+        return $("meta[name='ap-" + name + "']").attr("content");
+      }
     },
 
     container: function(){

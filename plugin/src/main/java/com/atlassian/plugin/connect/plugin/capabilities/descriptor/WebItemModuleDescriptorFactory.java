@@ -18,17 +18,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.util.ModuleKeyGenerator.nameToKey;
-import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.*;
+import java.util.List;
+
+import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.printNode;
 import static com.google.common.collect.Lists.newArrayList;
-import static org.apache.commons.lang.StringEscapeUtils.escapeHtml;
+
 
 @Component
 public class WebItemModuleDescriptorFactory implements ConnectModuleDescriptorFactory<WebItemCapabilityBean,WebItemModuleDescriptor>
 {
     private static final Logger log = LoggerFactory.getLogger(WebItemModuleDescriptorFactory.class);
     
-    //TODO: rename this class to RemoteWebItemModuleDescriptorFactory
     private final ProductSpecificWebItemModuleDescriptorFactory productWebItemDescriptorFactory;
     
     private final IconModuleFragmentFactory iconModuleFragmentFactory;
@@ -54,8 +54,8 @@ public class WebItemModuleDescriptorFactory implements ConnectModuleDescriptorFa
         webItemElement.addAttribute("weight", Integer.toString(bean.getWeight()));
 
         webItemElement.addElement("label")
-                      .addAttribute("key", escapeHtml(bean.getName().getI18n()))
-                      .setText(escapeHtml(bean.getName().getValue()));
+                      .addAttribute("key", bean.getName().getI18n())
+                      .setText(bean.getName().getValue());
 
         Element linkElement = webItemElement.addElement("link").addAttribute("linkId", webItemKey);
         linkElement.setText(bean.getLink());

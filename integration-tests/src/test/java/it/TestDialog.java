@@ -45,7 +45,7 @@ public class TestDialog extends AbstractRemotablePluginTest
     {
         if (remotePlugin != null)
         {
-            remotePlugin.stop();
+            remotePlugin.stopAndUninstall();
         }
     }
 

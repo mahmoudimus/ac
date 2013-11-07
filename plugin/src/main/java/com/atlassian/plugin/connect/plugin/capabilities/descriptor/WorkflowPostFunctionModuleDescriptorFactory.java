@@ -19,7 +19,6 @@ import static com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants.RES
 import static com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants.RESOURCE_TYPE_VELOCITY;
 import static com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectWorkflowFunctionModuleDescriptor.TRIGGERED_URL;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.apache.commons.lang.StringEscapeUtils.escapeHtml;
 
 /**
  * A Factory that creates WorkflowFunctionModuleDescriptors from WorkflowPostFunctionCapabilityBeans
@@ -52,10 +51,10 @@ public class WorkflowPostFunctionModuleDescriptorFactory implements ConnectModul
         element.addElement("function-class").addText(RemoteWorkflowPostFunctionProvider.class.getName());
 
         element.addAttribute("key", bean.getKey());
-        element.addAttribute("name", escapeHtml(bean.getName().getValue()));
+        element.addAttribute("name", bean.getName().getValue());
         element.addAttribute("i18n-name-key", bean.getName().getI18n());
         element.addElement("description")
-                .addText(escapeHtml(bean.getDescription().getValue()))
+                .addText(bean.getDescription().getValue())
                 .addAttribute("key", bean.getDescription().getI18n());
 
         element.addAttribute(TRIGGERED_URL, bean.getTriggered().getUrl());

@@ -124,7 +124,7 @@ public class WebPanelConnectModuleDescriptorFactoryTest
     public void urlIsCorrectWhenContextIsEmpty() throws IOException
     {
         descriptor.getModule().getHtml(Collections.<String, Object>emptyMap());
-        verify(iFrameRenderer).render(argThat(hasIFramePath("http://www.google.com?my_project_id=&amp;my_project_key=")), anyString(), anyMap(), anyString(), anyMap());
+        verify(iFrameRenderer).render(argThat(hasIFramePath("http://www.google.com?my_project_id=&my_project_key=")), anyString(), anyMap(), anyString(), anyMap());
     }
 
     @Test
@@ -132,7 +132,7 @@ public class WebPanelConnectModuleDescriptorFactoryTest
     public void urlIsCorrectWhenContextIsPopulated() throws IOException
     {
         descriptor.getModule().getHtml(TestContextBuilder.buildContextMap());
-        verify(iFrameRenderer).render(argThat(hasIFramePath(String.format("http://www.google.com?my_project_id=%d&amp;my_project_key=%s", TestContextBuilder.PROJECT_ID, TestContextBuilder.PROJECT_KEY))), anyString(), anyMap(), anyString(), anyMap());
+        verify(iFrameRenderer).render(argThat(hasIFramePath(String.format("http://www.google.com?my_project_id=%d&my_project_key=%s", TestContextBuilder.PROJECT_ID, TestContextBuilder.PROJECT_KEY))), anyString(), anyMap(), anyString(), anyMap());
     }
 
     @Test
