@@ -94,6 +94,10 @@ AP.define("_util", function () {
     },
 
     inArray: function (value, array, fromIndex) {
+      //optimisation for all browsers after IE8
+      if (Array.prototype.indexOf) {
+        return array.indexOf(value, fromIndex);
+      }
       var k = fromIndex >>> 0, len = array.length >>> 0;
       for (; k < len; k += 1) {
         if (array[k] === value) return k;
