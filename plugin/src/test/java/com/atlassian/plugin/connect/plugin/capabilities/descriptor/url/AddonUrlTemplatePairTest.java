@@ -52,26 +52,21 @@ public class AddonUrlTemplatePairTest
 
     private String addonUrlTemplateString()
     {
-        return addonUrlTemplateString(ONE_VARIABLE_URL, PLUGIN_KEY);
-    }
-
-    private String addonUrlTemplateString(String addonURLStr, String pluginKey)
-    {
-        return new AddonUrlTemplatePair(addonURLStr, pluginKey).getAddonUrlTemplate().getTemplateString();
+        return defaultTemplatePair().getAddonUrlTemplate().getTemplateString();
     }
 
     private String hostUrlTemplateString()
     {
-        return hostUrlTemplateString(ONE_VARIABLE_URL, PLUGIN_KEY);
-    }
-
-    private String hostUrlTemplateString(String addonURLStr, String pluginKey)
-    {
-        return new AddonUrlTemplatePair(addonURLStr, pluginKey).getHostUrlPaths().getHostUrlTemplate().getTemplateString();
+        return defaultTemplatePair().getHostUrlPaths().getHostUrlTemplate().getTemplateString();
     }
 
     private List<String> servletPaths()
     {
-        return ImmutableList.copyOf(new AddonUrlTemplatePair(ONE_VARIABLE_URL, PLUGIN_KEY).getHostUrlPaths().getServletRegistrationPaths());
+        return ImmutableList.copyOf(defaultTemplatePair().getHostUrlPaths().getServletRegistrationPaths());
+    }
+
+    private AddonUrlTemplatePair defaultTemplatePair()
+    {
+        return new AddonUrlTemplatePair(ONE_VARIABLE_URL, PLUGIN_KEY);
     }
 }
