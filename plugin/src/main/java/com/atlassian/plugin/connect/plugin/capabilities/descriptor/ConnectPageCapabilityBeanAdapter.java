@@ -4,6 +4,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectPageCapabil
 import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IFrameServletBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AddonUrlTemplatePair;
+import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.UrlTemplate;
 import com.atlassian.plugin.connect.plugin.module.page.PageInfo;
 import com.atlassian.plugin.web.Condition;
 import com.google.common.base.Strings;
@@ -33,7 +34,7 @@ public class ConnectPageCapabilityBeanAdapter // TODO: Shit name
         AddonUrlTemplatePair urlTemplatePair = createUrlTemplatePair(pageBean, pluginKey);
 
         // TODO: In ACDEV-396 push the url template into RemoteWebLink
-        webItemBean = createWebItemCapabilityBean(pageBean, urlTemplatePair.getHostUrlPaths().getHostUrlTemplate().getTemplateString());
+        webItemBean = createWebItemCapabilityBean(pageBean, urlTemplatePair.getHostUrlPaths().getHostUrlTemplate());
         servletBean = createServletBean(pageBean, urlTemplatePair, decorator, templateSuffix, metaTagsContent, condition);
     }
 
@@ -42,20 +43,20 @@ public class ConnectPageCapabilityBeanAdapter // TODO: Shit name
         return new AddonUrlTemplatePair(pageBean.getUrl(), pluginKey);
     }
 
-    private WebItemCapabilityBean createWebItemCapabilityBean(ConnectPageCapabilityBean bean,
-                                                              String localUrl)
+    private WebItemCapabilityBean createWebItemCapabilityBean(ConnectPageCapabilityBean bean, UrlTemplate hostUrlTemplate)
     {
         return newWebItemBean()
                 .withName(bean.getName())
                 .withKey(bean.getKey())
-                .withLink(localUrl)
+                .withLink(hostUrlTemplate.getTemplateString())
                 .withLocation(bean.getAbsoluteLocation())
                 .withWeight(bean.getWeight())
                 .build();
     }
 
     private IFrameServletBean createServletBean(ConnectPageCapabilityBean pageBean, AddonUrlTemplatePair urlTemplatePair,
-                                                String decorator, String templateSuffix, Map<String, String> metaTagsContent, Condition condition)
+                                                String decorator, String templateSuffix, Map<String, String> metaTagsContent,
+                                                Condition condition)
     {
         final String pageName = (!Strings.isNullOrEmpty(pageBean.getName().getValue()) ? pageBean.getName().getValue() : pageBean.getKey());
         PageInfo pageInfo = new PageInfo(decorator, templateSuffix, pageName, condition, metaTagsContent);
