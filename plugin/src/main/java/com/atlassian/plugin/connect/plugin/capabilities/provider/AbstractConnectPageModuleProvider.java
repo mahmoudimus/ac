@@ -6,10 +6,12 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectPageCapabil
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectPageCapabilityBeanAdapter;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.IFramePageServletDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
+import com.atlassian.plugin.web.Condition;
 import com.google.common.collect.ImmutableList;
 import org.osgi.framework.BundleContext;
 
 import java.util.List;
+import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -17,14 +19,24 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Module Provider for a Connect Page Module.
  * Note that there is actually no P2 module descriptor. Instead it is modelled as a web-item plus a servlet
  */
-public class ConnectPageModuleProvider implements ConnectModuleProvider<ConnectPageCapabilityBean>
+public abstract class AbstractConnectPageModuleProvider implements ConnectModuleProvider<ConnectPageCapabilityBean>
 {
     private final WebItemModuleDescriptorFactory webItemModuleDescriptorFactory;
     private final IFramePageServletDescriptorFactory servletDescriptorFactory;
+    private String decorator;
+    private String templateSuffix;
+    private Map<String,String> metaTagContents;
+    private Condition condition;
 
-    public ConnectPageModuleProvider(WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
-                                     IFramePageServletDescriptorFactory servletDescriptorFactory)
+    public AbstractConnectPageModuleProvider(WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
+                                             IFramePageServletDescriptorFactory servletDescriptorFactory,
+                                             String decorator, String templateSuffix,
+                                             Map<String, String> metaTagContents, Condition condition)
     {
+        this.decorator = decorator;
+        this.templateSuffix = templateSuffix;
+        this.metaTagContents = metaTagContents;
+        this.condition = condition;
         this.webItemModuleDescriptorFactory = checkNotNull(webItemModuleDescriptorFactory);
         this.servletDescriptorFactory = checkNotNull(servletDescriptorFactory);
     }
@@ -37,7 +49,8 @@ public class ConnectPageModuleProvider implements ConnectModuleProvider<ConnectP
 
         for (ConnectPageCapabilityBean bean : beans)
         {
-            ConnectPageCapabilityBeanAdapter adapter = createBeanAdapter(bean, jsonFieldName, plugin.getKey());
+            ConnectPageCapabilityBeanAdapter adapter = new ConnectPageCapabilityBeanAdapter(bean, plugin.getKey(),
+                    decorator, templateSuffix, metaTagContents, condition);
             builder.add(webItemModuleDescriptorFactory.createModuleDescriptor(plugin, addonBundleContext, adapter.getWebItemBean()));
             builder.add(servletDescriptorFactory.createIFrameServletDescriptor(plugin, adapter.getServletBean()));
         }
@@ -45,14 +58,13 @@ public class ConnectPageModuleProvider implements ConnectModuleProvider<ConnectP
         return builder.build();
     }
 
-    private ConnectPageCapabilityBeanAdapter createBeanAdapter(ConnectPageCapabilityBean bean, String jsonFieldName, String pluginKey)
-    {
-        //    private final String decorator; // e.g. "atl.general"
-//    private final String templateSuffix; // e.g. "-project-admin". Note general page etc has "", dialogPage &
-//    private final Map<String, String> metaTagsContent; // e.g. "adminActiveTab" -> bean.getKey()
-
-        // TODO: Need to pass in decorator etc. Could use same trick as ConnectTabPanelModuleProvider altho not pretty
-        return new ConnectPageCapabilityBeanAdapter(bean, pluginKey);
-    }
+//    private ConnectPageCapabilityBeanAdapter createBeanAdapter(ConnectPageCapabilityBean bean, String pluginKey)
+//    {
+//        //    private final String decorator; // e.g. "atl.general"
+////    private final String templateSuffix; // e.g. "-project-admin". Note general page etc has "", dialogPage &
+////    private final Map<String, String> metaTagsContent; // e.g. "adminActiveTab" -> bean.getKey()
+//
+//        return new ConnectPageCapabilityBeanAdapter(bean, pluginKey, decorator, templateSuffix, metaTagContents, condition);
+//    }
 
 }

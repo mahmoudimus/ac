@@ -1,11 +1,17 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
-import java.util.List;
-
 import com.atlassian.plugin.connect.plugin.capabilities.annotation.CapabilityModuleProvider;
-import com.atlassian.plugin.spring.scanner.ProductFilter;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.BaseCapabilityBeanBuilder;
-import com.atlassian.plugin.connect.plugin.capabilities.provider.*;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectProjectAdminTabPanelModuleProvider;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanelModuleProvider;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.GeneralPageModuleProvider;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.RemoteContainerModuleProvider;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.WebItemModuleProvider;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.WebPanelModuleProvider;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.WorkflowPostFunctionModuleProvider;
+import com.atlassian.plugin.spring.scanner.ProductFilter;
+
+import java.util.List;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.RemoteContainerCapabilityBean.newRemoteContainerBean;
 import static com.google.common.collect.Lists.newArrayList;
@@ -46,6 +52,9 @@ public class CapabilityList extends BaseCapabilityBean
     @CapabilityModuleProvider(WebPanelModuleProvider.class)
     private List<WebPanelCapabilityBean> webPanels;
 
+    @CapabilityModuleProvider(GeneralPageModuleProvider.class)
+    private List<ConnectPageCapabilityBean> generalPages;
+
     @CapabilityModuleProvider(RemoteContainerModuleProvider.class)
     private RemoteContainerCapabilityBean connectContainer;
 
@@ -59,6 +68,7 @@ public class CapabilityList extends BaseCapabilityBean
         this.jiraVersionTabPanels = newArrayList();
         this.webItems = newArrayList();
         this.webPanels = newArrayList();
+        this.generalPages = newArrayList();
         this.jiraWorkflowPostFunctions = newArrayList();
     }
 
@@ -142,6 +152,11 @@ public class CapabilityList extends BaseCapabilityBean
     public List<WorkflowPostFunctionCapabilityBean> getJiraWorkflowPostFunctions()
     {
         return jiraWorkflowPostFunctions;
+    }
+
+    public List<ConnectPageCapabilityBean> getGeneralPages()
+    {
+        return generalPages;
     }
 
     public RemoteContainerCapabilityBean getConnectContainer()
