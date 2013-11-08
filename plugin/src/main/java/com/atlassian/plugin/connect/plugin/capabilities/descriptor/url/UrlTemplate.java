@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor.url;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -41,4 +43,26 @@ public class UrlTemplate
     {
         return urlTemplateStr;
     }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (obj == null)
+        {
+            return false;
+        }
+        if (obj == this)
+        {
+            return true;
+        }
+        if (obj.getClass() != getClass())
+        {
+            return false;
+        }
+        UrlTemplate rhs = (UrlTemplate) obj;
+        return new EqualsBuilder()
+                .append(urlTemplateStr, rhs.urlTemplateStr)
+                .isEquals();
+    }
+
 }

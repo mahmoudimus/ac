@@ -1,6 +1,9 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor.url;
 
+import com.atlassian.gzipfilter.org.apache.commons.lang.ObjectUtils;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
+import org.apache.commons.lang3.builder.EqualsBuilder;
 
 /**
  * Represents the paired URLs needed to support Addon content in an iFrame.
@@ -39,6 +42,28 @@ public class AddonUrlTemplatePair
         return hostUrlPaths;
     }
 
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (obj == null)
+        {
+            return false;
+        }
+        if (obj == this)
+        {
+            return true;
+        }
+        if (obj.getClass() != getClass())
+        {
+            return false;
+        }
+        AddonUrlTemplatePair rhs = (AddonUrlTemplatePair) obj;
+        return new EqualsBuilder()
+                .append(addonUrlTemplate, rhs.addonUrlTemplate)
+                .append(hostUrlPaths, rhs.getHostUrlPaths())
+                .isEquals();
+    }
+
     /**
      * The URL template for the host application plus the corresponding servlet paths that will be registered to support it
      */
@@ -61,6 +86,26 @@ public class AddonUrlTemplatePair
         public Iterable<String> getServletRegistrationPaths()
         {
             return servletRegistrationPaths;
+        }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            if (obj == null)
+            {
+                return false;
+            }
+            if (obj == this)
+            {
+                return true;
+            }
+            if (obj.getClass() != getClass())
+            {
+                return false;
+            }
+            HostUrlPaths rhs = (HostUrlPaths) obj;
+            return ObjectUtils.equals(hostUrlTemplate, rhs.getHostUrlTemplate()) &&
+                    Iterables.elementsEqual(servletRegistrationPaths, rhs.getServletRegistrationPaths());
         }
     }
 }
