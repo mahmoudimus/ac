@@ -1,5 +1,9 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor.url;
 
+/**
+ * An implementation of URLTemplate that signs the URL's after variable substitution.
+ * Prior to Signing it validates the users access to any resources identified in the url
+ */
 public class SignedUrlTemplate extends UrlTemplate
 {
     public SignedUrlTemplate(String urlTemplateStr)
