@@ -18,6 +18,7 @@ import org.dom4j.Document;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.io.File;
 
@@ -40,7 +41,7 @@ public class ConnectUPMInstallHandler implements PluginInstallHandler
     private final BundleContext bundleContext;
 
     @Inject
-    public ConnectUPMInstallHandler(ConnectAddOnIdentifierService connectIdentifier, ConnectAddOnInstaller connectInstaller, UserManager userManager, FormatConverter formatConverter, BundleContext bundleContext)
+    public ConnectUPMInstallHandler(@Qualifier("legacyAddOnIdentifierService") ConnectAddOnIdentifierService connectIdentifier, ConnectAddOnInstaller connectInstaller, UserManager userManager, FormatConverter formatConverter, BundleContext bundleContext)
     {
         this.connectIdentifier = connectIdentifier;
         this.connectInstaller = connectInstaller;

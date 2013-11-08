@@ -3,7 +3,6 @@ package com.atlassian.plugin.connect.plugin.capabilities.gson;
 import java.util.List;
 
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.RemoteContainerCapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean;
 
 import com.google.gson.Gson;

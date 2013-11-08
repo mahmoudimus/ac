@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
@@ -72,7 +73,7 @@ public final class RemoteEventsHandler implements InitializingBean, DisposableBe
                                ProductAccessor productAccessor,
                                BundleContext bundleContext,
                                PluginEventManager pluginEventManager,
-                               ConnectAddOnIdentifierService connectIdentifier, PluginAccessor pluginAccessor, RemotablePluginAccessorFactory pluginAccessorFactory, RequestSigner requestSigner, HttpClient httpClient, UserManager userManager)
+                               @Qualifier("legacyAddOnIdentifierService") ConnectAddOnIdentifierService connectIdentifier, PluginAccessor pluginAccessor, RemotablePluginAccessorFactory pluginAccessorFactory, RequestSigner requestSigner, HttpClient httpClient, UserManager userManager)
     {
         this.pluginAccessor = pluginAccessor;
         this.pluginAccessorFactory = pluginAccessorFactory;

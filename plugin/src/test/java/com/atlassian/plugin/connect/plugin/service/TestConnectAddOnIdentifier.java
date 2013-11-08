@@ -88,7 +88,7 @@ public class TestConnectAddOnIdentifier
 
         when(bundle.getHeaders()).thenReturn((Dictionary) map);
 
-        ConnectAddOnIdentifierService ident = new DefaultConnectAddOnIdentifierService(accessor);
+        ConnectAddOnIdentifierService ident = new LegacyAddOnIdentifierService(accessor);
 
         assertTrue(ident.isConnectAddOn(bundle));
 
@@ -104,7 +104,7 @@ public class TestConnectAddOnIdentifier
 
         when(bundle.getHeaders()).thenReturn((Dictionary) map);
 
-        ConnectAddOnIdentifierService ident = new DefaultConnectAddOnIdentifierService(accessor);
+        ConnectAddOnIdentifierService ident = new LegacyAddOnIdentifierService(accessor);
 
         assertFalse(ident.isConnectAddOn(bundle));
 
@@ -119,7 +119,7 @@ public class TestConnectAddOnIdentifier
 
         when(plugin.getResourceAsStream(anyString())).thenReturn(new ByteArrayInputStream(CONNECT_MANIFEST.getBytes()));
 
-        ConnectAddOnIdentifierService ident = new DefaultConnectAddOnIdentifierService(accessor);
+        ConnectAddOnIdentifierService ident = new LegacyAddOnIdentifierService(accessor);
 
         assertTrue(ident.isConnectAddOn(plugin));
 
@@ -133,7 +133,7 @@ public class TestConnectAddOnIdentifier
 
         when(plugin.getResourceAsStream(anyString())).thenReturn(new ByteArrayInputStream(LOCAL_MANIFEST.getBytes()));
 
-        ConnectAddOnIdentifierService ident = new DefaultConnectAddOnIdentifierService(accessor);
+        ConnectAddOnIdentifierService ident = new LegacyAddOnIdentifierService(accessor);
 
         assertFalse(ident.isConnectAddOn(plugin));
 
@@ -147,7 +147,7 @@ public class TestConnectAddOnIdentifier
 
         when(plugin.getResourceAsStream(anyString())).thenReturn(null);
 
-        ConnectAddOnIdentifierService ident = new DefaultConnectAddOnIdentifierService(accessor);
+        ConnectAddOnIdentifierService ident = new LegacyAddOnIdentifierService(accessor);
 
         assertFalse(ident.isConnectAddOn(plugin));
 
@@ -159,7 +159,7 @@ public class TestConnectAddOnIdentifier
         PluginAccessor accessor = mock(PluginAccessor.class);
         Document doc = DocumentHelper.parseText(CONNECT_XML);
 
-        ConnectAddOnIdentifierService ident = new DefaultConnectAddOnIdentifierService(accessor);
+        ConnectAddOnIdentifierService ident = new LegacyAddOnIdentifierService(accessor);
 
         assertTrue(ident.isConnectAddOn(doc));
     }
@@ -170,7 +170,7 @@ public class TestConnectAddOnIdentifier
         PluginAccessor accessor = mock(PluginAccessor.class);
         Document doc = DocumentHelper.parseText(LOCAL_XML);
 
-        ConnectAddOnIdentifierService ident = new DefaultConnectAddOnIdentifierService(accessor);
+        ConnectAddOnIdentifierService ident = new LegacyAddOnIdentifierService(accessor);
 
         assertFalse(ident.isConnectAddOn(doc));
 
@@ -181,7 +181,7 @@ public class TestConnectAddOnIdentifier
     {
         PluginAccessor accessor = mock(PluginAccessor.class);
 
-        ConnectAddOnIdentifierService ident = new DefaultConnectAddOnIdentifierService(accessor);
+        ConnectAddOnIdentifierService ident = new LegacyAddOnIdentifierService(accessor);
 
         assertFalse(ident.isConnectAddOn((Document) null));
 
@@ -195,7 +195,7 @@ public class TestConnectAddOnIdentifier
         xml = File.createTempFile("atlassian-plugin", ".xml");
         FileUtils.writeStringToFile(xml, CONNECT_XML);
 
-        ConnectAddOnIdentifierService ident = new DefaultConnectAddOnIdentifierService(accessor);
+        ConnectAddOnIdentifierService ident = new LegacyAddOnIdentifierService(accessor);
 
         assertTrue(ident.isConnectAddOn(xml));
     }
@@ -208,7 +208,7 @@ public class TestConnectAddOnIdentifier
         xml = File.createTempFile("atlassian-plugin", ".xml");
         FileUtils.writeStringToFile(xml, LOCAL_XML);
 
-        ConnectAddOnIdentifierService ident = new DefaultConnectAddOnIdentifierService(accessor);
+        ConnectAddOnIdentifierService ident = new LegacyAddOnIdentifierService(accessor);
 
         assertFalse(ident.isConnectAddOn(xml));
     }
@@ -221,7 +221,7 @@ public class TestConnectAddOnIdentifier
         xml = File.createTempFile("atlassian-plugin", ".xml");
         FileUtils.writeStringToFile(xml, "hi mom!");
 
-        ConnectAddOnIdentifierService ident = new DefaultConnectAddOnIdentifierService(accessor);
+        ConnectAddOnIdentifierService ident = new LegacyAddOnIdentifierService(accessor);
 
         assertFalse(ident.isConnectAddOn(xml));
     }
@@ -231,7 +231,7 @@ public class TestConnectAddOnIdentifier
     {
         PluginAccessor accessor = mock(PluginAccessor.class);
 
-        ConnectAddOnIdentifierService ident = new DefaultConnectAddOnIdentifierService(accessor);
+        ConnectAddOnIdentifierService ident = new LegacyAddOnIdentifierService(accessor);
 
         assertFalse(ident.isConnectAddOn((File) null));
 

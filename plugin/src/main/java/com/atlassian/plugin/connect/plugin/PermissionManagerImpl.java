@@ -8,10 +8,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
-import com.atlassian.plugin.connect.spi.ConnectAddOnIdentifierService;
-import com.atlassian.plugin.event.PluginEventManager;
-import com.atlassian.plugin.connect.plugin.util.BundleUtil;
 import com.atlassian.plugin.connect.plugin.settings.SettingsManager;
+import com.atlassian.plugin.connect.plugin.util.BundleUtil;
+import com.atlassian.plugin.connect.spi.ConnectAddOnIdentifierService;
 import com.atlassian.plugin.connect.spi.PermissionDeniedException;
 import com.atlassian.plugin.connect.spi.permission.Permission;
 import com.atlassian.plugin.connect.spi.permission.PermissionModuleDescriptor;
@@ -19,6 +18,7 @@ import com.atlassian.plugin.connect.spi.permission.PermissionsReader;
 import com.atlassian.plugin.connect.spi.permission.scope.AbstractApiScope;
 import com.atlassian.plugin.connect.spi.permission.scope.ApiScope;
 import com.atlassian.plugin.connect.spi.permission.scope.RestApiScopeHelper;
+import com.atlassian.plugin.event.PluginEventManager;
 import com.atlassian.plugin.tracker.DefaultPluginModuleTracker;
 import com.atlassian.plugin.tracker.PluginModuleTracker;
 import com.atlassian.sal.api.user.UserManager;
@@ -67,7 +67,7 @@ public final class PermissionManagerImpl implements PermissionManager
             BundleContext bundleContext,
             ConnectAddOnIdentifierService connectIdentifier)
     {
-        this(userManager, settingsManager, pluginAccessor, permissionsReader, bundleContext,connectIdentifier,
+        this(userManager, settingsManager, pluginAccessor, permissionsReader, bundleContext, connectIdentifier,
                 new DefaultPluginModuleTracker<Permission, PermissionModuleDescriptor>(
                         pluginAccessor, pluginEventManager, PermissionModuleDescriptor.class));
     }

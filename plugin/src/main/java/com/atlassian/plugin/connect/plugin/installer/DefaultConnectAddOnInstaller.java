@@ -7,6 +7,7 @@ import com.atlassian.plugin.connect.plugin.OAuthLinkManager;
 import com.atlassian.plugin.connect.plugin.capabilities.BeanToModuleRegistrar;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.AuthenticationType;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.plugin.capabilities.event.ConnectEventHandler;
 import com.atlassian.plugin.connect.plugin.capabilities.gson.CapabilitiesGsonFactory;
 import com.atlassian.plugin.connect.plugin.event.RemoteEventsHandler;
 import com.atlassian.plugin.connect.spi.InstallationFailedException;
@@ -34,11 +35,13 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
     private final BeanToModuleRegistrar beanToModuleRegistrar;
     private final BundleContext bundleContext;
     private final ConnectApplinkManager connectApplinkManager;
+    private final ConnectDescriptorRegistry connectDescriptorRegistry;
+    private final ConnectEventHandler connectEventHandler;
 
     private static final Logger log = LoggerFactory.getLogger(DefaultConnectAddOnInstaller.class);
 
     @Autowired
-    public DefaultConnectAddOnInstaller(RemotePluginArtifactFactory remotePluginArtifactFactory, PluginController pluginController, PluginAccessor pluginAccessor, OAuthLinkManager oAuthLinkManager, RemoteEventsHandler remoteEventsHandler, BeanToModuleRegistrar beanToModuleRegistrar, BundleContext bundleContext, ConnectApplinkManager connectApplinkManager)
+    public DefaultConnectAddOnInstaller(RemotePluginArtifactFactory remotePluginArtifactFactory, PluginController pluginController, PluginAccessor pluginAccessor, OAuthLinkManager oAuthLinkManager, RemoteEventsHandler remoteEventsHandler, BeanToModuleRegistrar beanToModuleRegistrar, BundleContext bundleContext, ConnectApplinkManager connectApplinkManager, ConnectDescriptorRegistry connectDescriptorRegistry, ConnectEventHandler connectEventHandler)
     {
         this.remotePluginArtifactFactory = remotePluginArtifactFactory;
         this.pluginController = pluginController;
@@ -48,6 +51,8 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
         this.beanToModuleRegistrar = beanToModuleRegistrar;
         this.bundleContext = bundleContext;
         this.connectApplinkManager = connectApplinkManager;
+        this.connectDescriptorRegistry = connectDescriptorRegistry;
+        this.connectEventHandler = connectEventHandler;
     }
 
     @Override
@@ -58,16 +63,28 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
 
         final PluginArtifact pluginArtifact = getPluginArtifact(username, document);
 
-        return installPlugin(pluginArtifact, pluginKey, username);
+        Plugin installedPlugin = installPlugin(pluginArtifact, pluginKey, username);
+
+        try
+        {
+            remoteEventsHandler.pluginInstalled(pluginKey);
+        }
+        catch (PluginInstallException e)
+        {
+            pluginController.uninstall(installedPlugin);
+            throw e;
+        }
+        
+        return installedPlugin;
     }
 
     @Override
-    public Plugin install(String username, String capabilities)
+    public Plugin install(String username, String jsonDescriptor)
     {
         String pluginKey = "unknown";
         try
         {
-            ConnectAddonBean addOn = CapabilitiesGsonFactory.getGson(bundleContext).fromJson(capabilities, ConnectAddonBean.class);
+            ConnectAddonBean addOn = CapabilitiesGsonFactory.getGson(bundleContext).fromJson(jsonDescriptor, ConnectAddonBean.class);
             pluginKey = addOn.getKey();
 
             removeOldPlugin(addOn.getKey());
@@ -81,8 +98,15 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
                 AuthenticationType authType = addOn.getAuthentication().getType();
                 String sharedKey = addOn.getAuthentication().getSharedKey();
                 
+                //applink MUST be created before any modules
                 connectApplinkManager.createAppLink(installedPlugin,addOn.getBaseUrl(),authType,sharedKey);
+                
                 beanToModuleRegistrar.registerDescriptorsForBeans(installedPlugin, addOn.getCapabilities());
+
+                connectDescriptorRegistry.storeDescriptor(pluginKey,jsonDescriptor);
+                
+                connectEventHandler.pluginInstalled(pluginKey);
+                
             }
             catch (IllegalStateException e)
             {
@@ -181,17 +205,6 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
             {
                 throw new RuntimeException("Plugin didn't install correctly", null);
             }
-
-            try
-            {
-                remoteEventsHandler.pluginInstalled(pluginKey);
-            }
-            catch (PluginInstallException e)
-            {
-                pluginController.uninstall(installedPlugin);
-                throw e;
-            }
-
 
             log.info("Registered app '{}' by '{}'", pluginKey, username);
 

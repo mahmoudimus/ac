@@ -3,19 +3,18 @@ package com.atlassian.plugin.connect.plugin.capabilities.beans;
 import java.util.List;
 
 import com.atlassian.plugin.connect.plugin.capabilities.annotation.CapabilityModuleProvider;
-import com.atlassian.plugin.spring.scanner.ProductFilter;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.BaseCapabilityBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.*;
+import com.atlassian.plugin.spring.scanner.ProductFilter;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.RemoteContainerCapabilityBean.newRemoteContainerBean;
 import static com.google.common.collect.Lists.newArrayList;
 
 /**
  * This class represents the list of modules in the json descriptor.
  * Every new module type needs to be added here as a private field and annotated with @CapabilityModuleProvider
- * 
+ * <p/>
  * The field name will be what appears in the json.
- * 
+ * <p/>
  * Note: this class does NOT have a builder. Instead the {@link ConnectAddonBean} has a special reflective builder
  * that will handle adding beans to the proper fields in this class by name and type.
  * You can buy me a beer later for that little trick when you realize you don't need to keep updating a builder everytime you add a new type here.
@@ -42,17 +41,13 @@ public class CapabilityList extends BaseCapabilityBean
 
     @CapabilityModuleProvider(value = WorkflowPostFunctionModuleProvider.class, products = {ProductFilter.JIRA})
     private List<WorkflowPostFunctionCapabilityBean> jiraWorkflowPostFunctions;
-    
+
     @CapabilityModuleProvider(WebPanelModuleProvider.class)
     private List<WebPanelCapabilityBean> webPanels;
-
-    @CapabilityModuleProvider(RemoteContainerModuleProvider.class)
-    private RemoteContainerCapabilityBean connectContainer;
 
     public CapabilityList()
     {
         this.jiraComponentTabPanels = newArrayList();
-        this.connectContainer = newRemoteContainerBean().build();
         this.jiraIssueTabPanels = newArrayList();
         this.jiraProjectAdminTabPanels = newArrayList();
         this.jiraProjectTabPanels = newArrayList();
@@ -69,10 +64,6 @@ public class CapabilityList extends BaseCapabilityBean
         if (null == jiraComponentTabPanels)
         {
             this.jiraComponentTabPanels = newArrayList();
-        }
-        if (null == connectContainer)
-        {
-            this.connectContainer = newRemoteContainerBean().build();
         }
         if (null == jiraIssueTabPanels)
         {
@@ -142,10 +133,5 @@ public class CapabilityList extends BaseCapabilityBean
     public List<WorkflowPostFunctionCapabilityBean> getJiraWorkflowPostFunctions()
     {
         return jiraWorkflowPostFunctions;
-    }
-
-    public RemoteContainerCapabilityBean getConnectContainer()
-    {
-        return connectContainer;
     }
 }

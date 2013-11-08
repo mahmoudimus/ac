@@ -38,6 +38,7 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.*;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -74,7 +75,7 @@ public final class RemotePluginContainerModuleDescriptor extends AbstractModuleD
             TypeAccessor typeAccessor,
             BundleContext bundleContext,
             PluginSettingsFactory pluginSettingsFactory,
-            ConnectAddOnIdentifierService connectIdentifier)
+            @Qualifier("legacyAddOnIdentifierService") ConnectAddOnIdentifierService connectIdentifier)
     {
         super(ModuleFactory.LEGACY_MODULE_FACTORY);
         this.applicationLinkService = checkNotNull(applicationLinkService);

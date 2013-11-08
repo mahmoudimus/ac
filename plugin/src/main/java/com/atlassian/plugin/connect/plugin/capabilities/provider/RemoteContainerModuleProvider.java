@@ -6,7 +6,6 @@ import java.util.List;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.RemoteContainerCapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.RemoteContainerModuleDescriptorFactory;
 
 import org.osgi.framework.BundleContext;
