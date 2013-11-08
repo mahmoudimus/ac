@@ -33,12 +33,12 @@ public abstract class AbstractConnectPageModuleProvider implements ConnectModule
                                              String decorator, String templateSuffix,
                                              Map<String, String> metaTagContents, Condition condition)
     {
+        this.webItemModuleDescriptorFactory = checkNotNull(webItemModuleDescriptorFactory);
+        this.servletDescriptorFactory = checkNotNull(servletDescriptorFactory);
         this.decorator = decorator;
         this.templateSuffix = templateSuffix;
         this.metaTagContents = metaTagContents;
         this.condition = condition;
-        this.webItemModuleDescriptorFactory = checkNotNull(webItemModuleDescriptorFactory);
-        this.servletDescriptorFactory = checkNotNull(servletDescriptorFactory);
     }
 
     @Override
@@ -57,14 +57,4 @@ public abstract class AbstractConnectPageModuleProvider implements ConnectModule
 
         return builder.build();
     }
-
-//    private ConnectPageCapabilityBeanAdapter createBeanAdapter(ConnectPageCapabilityBean bean, String pluginKey)
-//    {
-//        //    private final String decorator; // e.g. "atl.general"
-////    private final String templateSuffix; // e.g. "-project-admin". Note general page etc has "", dialogPage &
-////    private final Map<String, String> metaTagsContent; // e.g. "adminActiveTab" -> bean.getKey()
-//
-//        return new ConnectPageCapabilityBeanAdapter(bean, pluginKey, decorator, templateSuffix, metaTagContents, condition);
-//    }
-
 }
