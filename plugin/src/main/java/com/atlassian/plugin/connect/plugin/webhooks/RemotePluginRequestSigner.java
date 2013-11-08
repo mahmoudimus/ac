@@ -9,6 +9,7 @@ import com.atlassian.plugin.connect.plugin.DefaultRemotablePluginAccessorFactory
 import com.atlassian.plugin.connect.plugin.module.applinks.RemotePluginContainerModuleDescriptor;
 import com.atlassian.plugin.connect.spi.http.AuthorizationGenerator;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
+import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.webhooks.spi.plugin.RequestSigner;
 import com.google.common.base.Predicate;
 
@@ -16,15 +17,20 @@ import java.net.URI;
 import java.util.Collections;
 import java.util.List;
 import javax.annotation.Nullable;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 /**
  * Signs outgoing webhooks with oauth credentials
  */
+@ExportAsService(RequestSigner.class)
+@Named
 public class RemotePluginRequestSigner implements RequestSigner
 {
     private final DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory;
     private final PluginAccessor pluginAccessor;
 
+    @Inject
     public RemotePluginRequestSigner(DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory, PluginAccessor pluginAccessor)
     {
         this.remotablePluginAccessorFactory = remotablePluginAccessorFactory;

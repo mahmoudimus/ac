@@ -1,9 +1,13 @@
 package com.atlassian.plugin.connect.plugin.integration.plugins;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.event.PluginEventListener;
 import com.atlassian.plugin.event.PluginEventManager;
 import com.atlassian.plugin.event.events.PluginEnabledEvent;
+import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.sal.api.lifecycle.LifecycleAware;
 
 import com.google.common.collect.ArrayListMultimap;
@@ -14,6 +18,8 @@ import org.springframework.beans.factory.DisposableBean;
 /**
  * Handles executing runnables when the plugin has been loaded and the system is fully up
  */
+@ExportAsService(LifecycleAware.class)
+@Named
 public class StartableForPlugins implements LifecycleAware, DisposableBean
 {
     private final Multimap<String,Runnable> runnables = ArrayListMultimap.create();
@@ -22,6 +28,7 @@ public class StartableForPlugins implements LifecycleAware, DisposableBean
     private final PluginEventManager pluginEventManager;
     private final PluginAccessor pluginAccessor;
 
+    @Inject
     public StartableForPlugins(PluginEventManager pluginEventManager, PluginAccessor pluginAccessor)
     {
         this.pluginEventManager = pluginEventManager;

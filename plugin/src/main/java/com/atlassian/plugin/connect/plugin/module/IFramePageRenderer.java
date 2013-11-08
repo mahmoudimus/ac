@@ -1,15 +1,5 @@
 package com.atlassian.plugin.connect.plugin.module;
 
-import com.atlassian.plugin.connect.plugin.module.page.PageInfo;
-import com.atlassian.plugin.connect.spi.PermissionDeniedException;
-import com.atlassian.plugin.connect.spi.module.IFrameContext;
-import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
-import com.atlassian.templaterenderer.TemplateRenderer;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Arrays;
@@ -17,16 +7,28 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import com.atlassian.plugin.connect.plugin.module.page.PageInfo;
+import com.atlassian.plugin.connect.spi.PermissionDeniedException;
+import com.atlassian.plugin.connect.spi.module.IFrameContext;
+import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
+import com.atlassian.templaterenderer.TemplateRenderer;
+
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
+
 import static com.google.common.collect.Maps.newHashMap;
 
-@Component
+@Named
 public class IFramePageRenderer
 {
     private final TemplateRenderer templateRenderer;
     private final IFrameRenderer iframeRenderer;
     private final IFrameHost iframeHost;
 
-    @Autowired
+    @Inject
     public IFramePageRenderer(TemplateRenderer templateRenderer, IFrameRenderer iframeRenderer, IFrameHost iframeHost)
     {
         this.templateRenderer = templateRenderer;

@@ -97,7 +97,7 @@ public class RemotePluginArtifactFactory
         manifest.put(Constants.BUNDLE_SYMBOLICNAME,addOn.getKey());
         manifest.put(Constants.BUNDLE_VERSION,addOn.getVersion());
         manifest.put(Constants.BUNDLE_CLASSPATH,".");
-        manifest.put("Spring-Context","*;timeout:=60");
+        manifest.put("Spring-Context","*");
         manifest.put(ConnectAddOnIdentifierService.CONNECT_HEADER,"installer;user=\"" + username + "\";date=\"" + System.currentTimeMillis() + "\"");
 
         if(null != addOn.getVendor())

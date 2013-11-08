@@ -11,7 +11,7 @@ import com.atlassian.plugin.AutowireCapablePlugin;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.annotation.CapabilityModuleProvider;
-import com.atlassian.plugin.connect.plugin.capabilities.annotation.ProductFilter;
+import com.atlassian.plugin.spring.scanner.ProductFilter;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.CapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.CapabilityList;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.RemoteContainerCapabilityBean;
@@ -178,7 +178,14 @@ public class BeanToModuleRegistrar
         if (registrations.containsKey(plugin.getKey()))
         {
             DynamicDescriptorRegistration.Registration reg = registrations.get(plugin.getKey());
-            reg.unregister();
+            try
+            {
+                reg.unregister();
+            }
+            catch (IllegalStateException e)
+            {
+                //service was already unregistered, just ignore
+            }
 
             registrations.remove(plugin.getKey());
         }

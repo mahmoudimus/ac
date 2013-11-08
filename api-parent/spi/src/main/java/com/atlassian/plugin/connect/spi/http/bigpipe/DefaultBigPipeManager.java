@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.security.SecureRandom;
 import java.util.Collection;
@@ -37,6 +38,7 @@ import static java.util.Collections.unmodifiableSet;
 /**
  * Manages big pipe instances
  */
+@Component
 public final class DefaultBigPipeManager implements BigPipeManager, DisposableBean
 {
     private static final SecureRandom secureRandom = SecureRandomFactory.newInstance();

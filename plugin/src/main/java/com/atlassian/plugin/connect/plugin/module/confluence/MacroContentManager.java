@@ -1,7 +1,15 @@
 package com.atlassian.plugin.connect.plugin.module.confluence;
 
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.net.URI;
+import java.util.Map;
+import java.util.regex.Pattern;
+
+import javax.inject.Inject;
+
 import com.atlassian.confluence.content.render.xhtml.StorageFormatCleaner;
-import com.atlassian.confluence.core.ContentEntityObject;
 import com.atlassian.confluence.event.events.content.page.PageEvent;
 import com.atlassian.confluence.event.events.content.page.PageViewEvent;
 import com.atlassian.confluence.xhtml.api.XhtmlContent;
@@ -11,26 +19,22 @@ import com.atlassian.plugin.connect.plugin.DefaultRemotablePluginAccessorFactory
 import com.atlassian.plugin.connect.plugin.util.http.CachingHttpContentRetriever;
 import com.atlassian.plugin.connect.plugin.util.http.ContentRetrievalErrors;
 import com.atlassian.plugin.connect.plugin.util.http.ContentRetrievalException;
+import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.sal.api.transaction.TransactionCallback;
 import com.atlassian.sal.api.transaction.TransactionTemplate;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.atlassian.util.concurrent.Promise;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import org.apache.commons.lang.StringUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 
-import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.net.URI;
-import java.util.Map;
-import java.util.regex.Pattern;
-
+@ConfluenceComponent
 public class MacroContentManager implements DisposableBean
 {
     private final EventPublisher eventPublisher;
@@ -45,6 +49,7 @@ public class MacroContentManager implements DisposableBean
 
     private static final Logger log = LoggerFactory.getLogger(MacroContentManager.class);
 
+    @Inject
     public MacroContentManager(
             EventPublisher eventPublisher,
             CachingHttpContentRetriever cachingHttpContentRetriever,
@@ -84,7 +89,7 @@ public class MacroContentManager implements DisposableBean
 
         Map<String, String> headers = macroInstance.getHeaders(username, userKey);
         Promise<String> promise = macroInstance.getRemotablePluginAccessor()
-                .executeAsync(macroInstance.method, macroInstance.getPath(), urlParameters, headers);
+                                               .executeAsync(macroInstance.method, macroInstance.getPath(), urlParameters, headers);
 
         try
         {
@@ -101,27 +106,28 @@ public class MacroContentManager implements DisposableBean
             // todo: do we want to give feedback to the app of what was cleaned?
             final String cleanedXhtml = xhtmlCleaner.cleanQuietly(remoteXhtml);
             return transactionTemplate.execute(
-                new TransactionCallback<String>() {
-                    @Override
-                    public String doInTransaction()
+                    new TransactionCallback<String>()
                     {
-                        try
+                        @Override
+                        public String doInTransaction()
                         {
-                            return xhtmlUtils.convertStorageToView(cleanedXhtml, macroInstance.getConversionContext());
-                        }
-                        catch (Exception e)
-                        {
-                            log.warn("Unable to convert storage format for app {} with error {}",
-                                    macroInstance.getRemotablePluginAccessor().getKey(), e.getMessage());
-                            if (log.isDebugEnabled())
+                            try
                             {
-                                log.debug("Error converting storage format", e);
+                                return xhtmlUtils.convertStorageToView(cleanedXhtml, macroInstance.getConversionContext());
                             }
-                            throw new ContentRetrievalException(
-                                    "Unable to convert storage format to HTML: " + e.getMessage(), e);
+                            catch (Exception e)
+                            {
+                                log.warn("Unable to convert storage format for app {} with error {}",
+                                        macroInstance.getRemotablePluginAccessor().getKey(), e.getMessage());
+                                if (log.isDebugEnabled())
+                                {
+                                    log.debug("Error converting storage format", e);
+                                }
+                                throw new ContentRetrievalException(
+                                        "Unable to convert storage format to HTML: " + e.getMessage(), e);
+                            }
                         }
                     }
-                }
             );
         }
         catch (ContentRetrievalException e)

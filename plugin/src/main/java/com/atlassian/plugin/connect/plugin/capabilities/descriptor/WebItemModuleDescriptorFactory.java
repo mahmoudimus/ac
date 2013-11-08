@@ -1,10 +1,15 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
+import java.util.List;
+
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean;
+import com.atlassian.plugin.connect.plugin.module.webitem.ProductSpecificWebItemModuleDescriptorFactory;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
+
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
+
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
 import org.osgi.framework.BundleContext;
@@ -24,16 +29,15 @@ public class WebItemModuleDescriptorFactory implements ConnectModuleDescriptorFa
 {
     private static final Logger log = LoggerFactory.getLogger(WebItemModuleDescriptorFactory.class);
     
-    //TODO: rename this class to RemoteWebItemModuleDescriptorFactory
-    private final com.atlassian.plugin.connect.plugin.module.webitem.WebItemModuleDescriptorFactory remoteWebItemDescriptorFactory;
+    private final ProductSpecificWebItemModuleDescriptorFactory productWebItemDescriptorFactory;
     
     private final IconModuleFragmentFactory iconModuleFragmentFactory;
     private final ConditionModuleFragmentFactory conditionModuleFragmentFactory;
 
     @Autowired
-    public WebItemModuleDescriptorFactory(com.atlassian.plugin.connect.plugin.module.webitem.WebItemModuleDescriptorFactory remoteWebItemDescriptorFactory, IconModuleFragmentFactory iconModuleFragmentFactory, ConditionModuleFragmentFactory conditionModuleFragmentFactory)
+    public WebItemModuleDescriptorFactory(ProductSpecificWebItemModuleDescriptorFactory productWebItemDescriptorFactory, IconModuleFragmentFactory iconModuleFragmentFactory, ConditionModuleFragmentFactory conditionModuleFragmentFactory)
     {
-        this.remoteWebItemDescriptorFactory = remoteWebItemDescriptorFactory;
+        this.productWebItemDescriptorFactory = productWebItemDescriptorFactory;
         this.iconModuleFragmentFactory = iconModuleFragmentFactory;
         this.conditionModuleFragmentFactory = conditionModuleFragmentFactory;
     }
@@ -85,7 +89,7 @@ public class WebItemModuleDescriptorFactory implements ConnectModuleDescriptorFa
     {
         webItemElement.addAttribute("system", "true");
         
-        final WebItemModuleDescriptor descriptor = remoteWebItemDescriptorFactory.createWebItemModuleDescriptor(url, key, absolute);
+        final WebItemModuleDescriptor descriptor = productWebItemDescriptorFactory.createWebItemModuleDescriptor(url, key, absolute);
         
         descriptor.init(plugin, webItemElement);
         
