@@ -106,7 +106,7 @@ public class ConnectCapabilitiesRunner
         return this;
     }
 
-    public ConnectCapabilitiesRunner addCapabilities(String fieldName, CapabilityBean ... beans)
+    public ConnectCapabilitiesRunner addCapabilities(String fieldName, CapabilityBean... beans)
     {
         addonBuilder.withCapabilities(fieldName, beans);
         return this;
@@ -165,17 +165,16 @@ public class ConnectCapabilitiesRunner
         {
             addonBuilder.withCapability(
                     RemoteContainerCapabilityBean.CONNECT_CONTAINER, newRemoteContainerBean()
-                            .withDisplayUrl(displayUrl)
-                            .withOAuth(oAuthBean)
-                            .build()
+                    .withDisplayUrl(displayUrl)
+                    .withOAuth(oAuthBean)
+                    .build()
             );
-        }
-        else
+        } else
         {
             addonBuilder.withCapability(
                     RemoteContainerCapabilityBean.CONNECT_CONTAINER, newRemoteContainerBean()
-                            .withDisplayUrl(displayUrl)
-                            .build()
+                    .withDisplayUrl(displayUrl)
+                    .build()
             );
         }
 

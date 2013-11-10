@@ -7,7 +7,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.atlassian.plugins</groupId>
     <artifactId>atlassian-connect-parent</artifactId>
-    <version>1.0-m19-SNAPSHOT</version>
+    <version>1.0-m20-SNAPSHOT</version>
     <organization>
         <name>Atlassian</name>
         <url>http://atlassian.com/</url>
@@ -151,6 +151,8 @@
                     <pushReleases>true</pushReleases>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
                     <releaseBranchVersionSuffix>RC</releaseBranchVersionSuffix>
+                    <pullMaster>true</pullMaster>
+                    <pullDevelop>true</pullDevelop>
                     <defaultOriginUrl>ssh://git@stash.atlassian.com:7997/ac/atlassian-connect.git</defaultOriginUrl>
                 </configuration>
             </plugin>
@@ -559,8 +561,8 @@
         <atlassian.upm.version>2.13.3</atlassian.upm.version>
         <atlassian.uri.version>0.1</atlassian.uri.version>
         <atlassian-util-concurrent.version>2.4.0</atlassian-util-concurrent.version>
-        <atlassian.webhooks.version>0.17.0</atlassian.webhooks.version>
-        <atlassian.webhooks.api.version>0.17</atlassian.webhooks.api.version>
+        <atlassian.webhooks.version>0.17.3</atlassian.webhooks.version>
+        <atlassian.webhooks.api.version>0.17.3</atlassian.webhooks.api.version>
         <atlassian.webresource.version>2.14.0-m5</atlassian.webresource.version>
         <atlassian.webfragments.version>3.0.0-m7</atlassian.webfragments.version>
         <atlassian.html.encoder.version>1.4</atlassian.html.encoder.version>
@@ -577,7 +579,7 @@
         <gson.version>2.2.2-atlassian-1</gson.version>
 
         <!-- BUILD STUFF -->
-        <jgitflow.version>1.0-alpha22</jgitflow.version>
+        <jgitflow.version>1.0-alpha23</jgitflow.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <xvfb.enable>true</xvfb.enable>
         <atlassian.upm.on.demand>false</atlassian.upm.on.demand>
