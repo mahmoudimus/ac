@@ -6,6 +6,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectProjectA
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanelModuleProvider;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.GeneralPageModuleProvider;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.RemoteContainerModuleProvider;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.WebHookModuleProvider;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.WebItemModuleProvider;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.WebPanelModuleProvider;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.WorkflowPostFunctionModuleProvider;
