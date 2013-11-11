@@ -16,6 +16,7 @@ public class AuthenticationBean extends BaseCapabilityBean
 
     public AuthenticationBean(AuthenticationBeanBuilder builder)
     {
+        super(builder);
         if(null == sharedKey)
         {
             this.sharedKey = "";

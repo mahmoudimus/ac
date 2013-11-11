@@ -1,6 +1,125 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans.builder;
 
-public class ConnectAddonEventDataBuilder
-{
+import java.util.Map;
 
+import com.atlassian.plugin.connect.plugin.capabilities.beans.CapabilityBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonEventData;
+
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Maps.newHashMap;
+
+public class ConnectAddonEventDataBuilder extends BaseCapabilityBeanBuilder<ConnectAddonEventDataBuilder,ConnectAddonEventData>
+{
+    private Map<String,String> links;
+    //this is the plugin key
+    private String key;
+    private String clientKey;
+    private String publicKey;
+    private String serverVersion;
+    private String pluginsVersion;
+    private String baseUrl;
+    private String productType;
+    private String decription;
+    private String user_id;
+    private String user_key;
+    
+    public ConnectAddonEventDataBuilder()
+    {
+        this.links = newHashMap();
+    }
+
+    public ConnectAddonEventDataBuilder(ConnectAddonEventData defaultBean)
+    {
+        this.links = defaultBean.getLinks();
+        this.key = defaultBean.getPluginKey();
+        this.clientKey = defaultBean.getClientKey();
+        this.publicKey = defaultBean.getPublicKey();
+        this.serverVersion = defaultBean.getServerVersion();
+        this.pluginsVersion = defaultBean.getPluginsVersion();
+        this.baseUrl = defaultBean.getBaseUrl();
+        this.productType = defaultBean.getProductType();
+        this.decription = defaultBean.getDecription();
+        this.user_id = defaultBean.getUserId();
+        this.user_key = defaultBean.getUserKey();
+    }
+
+    public ConnectAddonEventDataBuilder withLinks(Map<String, String> params)
+    {
+        checkNotNull(params);
+
+        this.links = params;
+        return this;
+    }
+
+    public ConnectAddonEventDataBuilder withLink(String key, String value)
+    {
+        links.put(key,value);
+        return this;
+    }
+
+    public ConnectAddonEventDataBuilder withPluginKey(String key)
+    {
+        this.key = key;
+        return this;
+    }
+    
+    public ConnectAddonEventDataBuilder withClientKey(String key)
+    {
+        this.clientKey = key;
+        return this;
+    }
+
+    public ConnectAddonEventDataBuilder withPublicKey(String key)
+    {
+        this.publicKey = key;
+        return this;
+    }
+
+    public ConnectAddonEventDataBuilder withServerVersion(String version)
+    {
+        this.serverVersion = version;
+        return this;
+    }
+
+    public ConnectAddonEventDataBuilder withPluginsVersion(String version)
+    {
+        this.pluginsVersion = version;
+        return this;
+    }
+
+    public ConnectAddonEventDataBuilder withBaseUrl(String url)
+    {
+        this.baseUrl = url;
+        return this;
+    }
+
+    public ConnectAddonEventDataBuilder withProductType(String type)
+    {
+        this.productType = type;
+        return this;
+    }
+
+    public ConnectAddonEventDataBuilder withDescription(String description)
+    {
+        this.decription = description;
+        return this;
+    }
+
+    public ConnectAddonEventDataBuilder withUserId(String id)
+    {
+        this.user_id = id;
+        return this;
+    }
+
+    public ConnectAddonEventDataBuilder withUserKey(String key)
+    {
+        this.user_key = key;
+        return this;
+    }
+
+    @Override
+    public ConnectAddonEventData build()
+    {
+        return new ConnectAddonEventData(this);
+    }
 }

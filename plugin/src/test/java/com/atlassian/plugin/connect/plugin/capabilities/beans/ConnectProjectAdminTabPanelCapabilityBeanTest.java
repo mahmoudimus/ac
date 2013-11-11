@@ -1,26 +1,24 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectProjectAdminTabPanelModuleProvider;
-
-import com.opensymphony.util.FileUtils;
-import org.junit.Test;
-import org.springframework.core.io.DefaultResourceLoader;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectProjectAdminTabPanelModuleProvider;
+
+import com.opensymphony.util.FileUtils;
+
+import org.junit.Test;
+import org.springframework.core.io.DefaultResourceLoader;
+
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.AuthenticationBean.newAuthenticationBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectProjectAdminTabPanelCapabilityBean.newProjectAdminTabPanelBean;
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.RemoteContainerCapabilityBean.newRemoteContainerBean;
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.OAuthBean.newOAuthBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.VendorBean.newVendorBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.gson.CapabilitiesGsonFactory.getGson;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
@@ -70,6 +68,7 @@ public class ConnectProjectAdminTabPanelCapabilityBeanTest
                 .withKey("my-plugin")
                 .withVersion("1.0")
                 .withLinks(links)
+                .withBaseurl("http://www.example.com")
                 .withVendor(newVendorBean().withName("Atlassian").withUrl("http://www.atlassian.com").build())
                 .withCapability(ConnectProjectAdminTabPanelModuleProvider.PROJECT_ADMIN_TAB_PANELS, newProjectAdminTabPanelBean()
                         .withName(new I18nProperty("My ProjectAdmin Tab Page", "my.projectAdminTabPage"))
@@ -77,10 +76,8 @@ public class ConnectProjectAdminTabPanelCapabilityBeanTest
                         .withWeight(100)
                         .withLocation("a-location")
                         .build())
-                .withCapability(RemoteContainerCapabilityBean.CONNECT_CONTAINER, newRemoteContainerBean().withDisplayUrl("http://www.example.com").withOAuth(
-                        newOAuthBean().withPublicKey("S0m3Publ1cK3y").build()
-                ).build()
-                ).build();
+                .withAuthentication(newAuthenticationBean().withType(AuthenticationType.OAUTH).withSharedKey("S0m3Publ1cK3y").build())
+                .build();
     }
 
     private static String expectedJson() throws IOException

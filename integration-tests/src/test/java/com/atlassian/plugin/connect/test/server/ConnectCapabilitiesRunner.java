@@ -14,16 +14,18 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.api.service.SignedRequestHandler;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.AuthenticationBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.AuthenticationType;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.CapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConnectAddonBeanBuilder;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.OAuthBean;
 import com.atlassian.plugin.connect.plugin.capabilities.gson.CapabilitiesGsonFactory;
 import com.atlassian.plugin.connect.test.Environment;
 import com.atlassian.plugin.connect.test.HttpUtils;
 import com.atlassian.plugin.connect.test.Utils;
 import com.atlassian.plugin.connect.test.client.AtlassianConnectRestClient;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
@@ -40,9 +42,8 @@ import it.servlet.HttpContextServlet;
 import net.oauth.signature.RSA_SHA1;
 
 import static com.atlassian.fugue.Option.some;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.AuthenticationBean.newAuthenticationBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean.newConnectAddonBean;
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.RemoteContainerCapabilityBean.newRemoteContainerBean;
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.OAuthBean.newOAuthBean;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Maps.newHashMap;
 
@@ -59,7 +60,6 @@ public class ConnectCapabilitiesRunner
     private final String pluginKey;
     private Option<? extends SignedRequestHandler> signedRequestHandler;
     private ConnectAddonBean addon;
-    private OAuthBean oAuthBean;
 
     private int port;
     private Server server;
@@ -126,9 +126,7 @@ public class ConnectCapabilitiesRunner
     {
         this.signedRequestHandler = some(signedRequestHandler);
 
-        this.oAuthBean = newOAuthBean()
-                .withPublicKey(signedRequestHandler.getLocal().getProperty(RSA_SHA1.PUBLIC_KEY).toString())
-                .build();
+        addonBuilder.withAuthentication(newAuthenticationBean().withType(AuthenticationType.OAUTH).withSharedKey(signedRequestHandler.getLocal().getProperty(RSA_SHA1.PUBLIC_KEY).toString()).build());
 
         //return addPermission(Permissions.CREATE_OAUTH_LINK);
         return this;
@@ -159,25 +157,16 @@ public class ConnectCapabilitiesRunner
     {
         port = Utils.pickFreePort();
         final String displayUrl = "http://localhost:" + port;
+        
+        addonBuilder.withBaseurl(displayUrl);
 
-        if (null != oAuthBean)
+        AuthenticationBean auth = addonBuilder.getAuthentication();
+        
+        if(null != auth && auth.getType().equals(AuthenticationType.OAUTH) && !Strings.isNullOrEmpty(auth.getSharedKey()))
         {
-            addonBuilder.withCapability(
-                    RemoteContainerCapabilityBean.CONNECT_CONTAINER, newRemoteContainerBean()
-                            .withDisplayUrl(displayUrl)
-                            .withOAuth(oAuthBean)
-                            .build()
-            );
+            addOAuth();
         }
-        else
-        {
-            addonBuilder.withCapability(
-                    RemoteContainerCapabilityBean.CONNECT_CONTAINER, newRemoteContainerBean()
-                            .withDisplayUrl(displayUrl)
-                            .build()
-            );
-        }
-
+        
         this.addon = addonBuilder.build();
 
         server = new Server(port);

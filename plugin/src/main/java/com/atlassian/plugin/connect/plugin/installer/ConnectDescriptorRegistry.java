@@ -46,6 +46,21 @@ public class ConnectDescriptorRegistry
 
         saveDescriptorMap(descriptorMap);
     }
+    
+    public boolean hasDescriptor(String pluginKey)
+    {
+        return getDescriptorMap().containsKey(pluginKey);
+    }
+
+    public String getDescriptor(String pluginKey)
+    {
+        if(hasDescriptor(pluginKey))
+        {
+            return getDescriptorMap().get(pluginKey);
+        }
+        
+        return "";
+    }
 
     private Map<String, String> getDescriptorMap()
     {

@@ -25,6 +25,24 @@
             <artifactId>atlassian-spring-scanner</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.atlassian.labs</groupId>
+            <artifactId>fastdev-plugin</artifactId>
+            <version>${fastdev.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.devrel</groupId>
+            <artifactId>developer-toolbox-plugin</artifactId>
+            <version>${toolbox.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.plugins</groupId>
+            <artifactId>atlassian-plugins-osgi-testrunner</artifactId>
+            <version>${plugin.testrunner.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>atlassian-connect-api</artifactId>
             <version>${project.version}</version>
@@ -305,6 +323,7 @@
                 <configuration>
                     <skipManifestValidation>true</skipManifestValidation>
                     <jvmArgs>-Xmx1024m -XX:MaxPermSize=256m</jvmArgs>
+                    <buildTestPlugin>${buildTestPlugin}</buildTestPlugin>
                     <instructions>
                         <!-- <Import-Package>
                             com.atlassian.upm.*,
@@ -370,9 +389,11 @@
                             com.atlassian.plugin.connect.spi*;version="${project.version}",
                             com.atlassian.plugin.connect.spi.*;version="${project.version}",
                             com.atlassian.plugin.connect.plugin*;version="${project.version}",
-                            com.atlassian.plugin.connect.plugin.*;version="${project.version}"
-                            com.atlassian.plugin.connect.plugin.product*;version="${project.version}"
-                            com.atlassian.plugin.connect.plugin.product.*;version="${project.version}"
+                            com.atlassian.plugin.connect.plugin.*;version="${project.version}",
+                            com.atlassian.plugin.connect.plugin.product*;version="${project.version}",
+                            com.atlassian.plugin.connect.plugin.product.*;version="${project.version}",
+                            com.atlassian.plugin.connect.plugin.installer*;version="${project.version}",
+                            com.atlassian.plugin.connect.plugin.installer.*;version="${project.version}"
                         </Export-Package>
                         <Spring-Context>*</Spring-Context>
                         <Atlassian-Plugin-Key>${groupId}.${artifactId}</Atlassian-Plugin-Key>
@@ -381,6 +402,7 @@
                     <systemPropertyVariables>
                         <atlassian.mail.senddisabled>false</atlassian.mail.senddisabled>
                         <sun.net.http.allowRestrictedHeaders>true</sun.net.http.allowRestrictedHeaders>
+                        <atlassian.dev.mode>${devmode}</atlassian.dev.mode>
                     </systemPropertyVariables>
 
                     <products>
@@ -777,9 +799,24 @@
                 </plugins>
             </build>
         </profile>
+        
+        <profile>
+            <id>wired</id>
+            <properties>
+                <skipITs>false</skipITs>
+                <buildTestPlugin>true</buildTestPlugin>
+                <devmode>true</devmode>
+            </properties>
+        </profile>
     </profiles>
     
     <properties>
         <product>jira</product>
+        <skipITs>true</skipITs>
+        <buildTestPlugin>false</buildTestPlugin>
+        <devmode>false</devmode>
+        <fastdev.version>2.2</fastdev.version>
+        <toolbox.version>2.0.6</toolbox.version>
+        <plugin.testrunner.version>1.1.2</plugin.testrunner.version>
     </properties>
 </project>

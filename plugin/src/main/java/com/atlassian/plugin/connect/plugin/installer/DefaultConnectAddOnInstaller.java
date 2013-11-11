@@ -101,11 +101,20 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
                 //applink MUST be created before any modules
                 connectApplinkManager.createAppLink(installedPlugin,addOn.getBaseUrl(),authType,sharedKey);
                 
-                beanToModuleRegistrar.registerDescriptorsForBeans(installedPlugin, addOn.getCapabilities());
+                //create the modules
+                beanToModuleRegistrar.registerDescriptorsForBeans(installedPlugin, addOn);
 
+                //save the descriptor so we can use it again if we ever need to re-enable the addon
                 connectDescriptorRegistry.storeDescriptor(pluginKey,jsonDescriptor);
                 
-                connectEventHandler.pluginInstalled(pluginKey);
+                //make the sync callback if needed
+                connectEventHandler.pluginInstalled(addOn);
+                
+                /*
+                We need to manually fire the enabled event because the actual plugin enabled already fired and we ignored it.
+                This is so we can register webhooks during the module registration phase and they will get fired with this enabled event.
+                 */
+                connectEventHandler.publishEnabledEvent(pluginKey);
                 
             }
             catch (IllegalStateException e)

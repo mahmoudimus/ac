@@ -103,7 +103,7 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extend
 
     public T withBaseurl(String url)
     {
-        this.baseUrl = baseUrl;
+        this.baseUrl = url;
         return (T) this;
     }
 
@@ -145,6 +145,11 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extend
         {
             throw new RuntimeException("Unable to find capability field '" + fieldName + "' for bean of type: " + bean.getClass());
         }
+    }
+
+    public AuthenticationBean getAuthentication()
+    {
+        return authentication;
     }
 
     public B build()

@@ -19,16 +19,16 @@ import com.atlassian.oauth.util.RSAKeys;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginInformation;
 import com.atlassian.plugin.PluginParseException;
-import com.atlassian.plugin.connect.spi.ConnectAddOnIdentifierService;
-import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
-import com.atlassian.plugin.descriptors.CannotDisable;
-import com.atlassian.plugin.module.ModuleFactory;
-import com.atlassian.plugin.connect.plugin.util.BundleUtil;
 import com.atlassian.plugin.connect.plugin.OAuthLinkManager;
 import com.atlassian.plugin.connect.plugin.PermissionManager;
+import com.atlassian.plugin.connect.plugin.service.LegacyAddOnIdentifierService;
+import com.atlassian.plugin.connect.plugin.util.BundleUtil;
 import com.atlassian.plugin.connect.plugin.util.OsgiServiceUtils;
 import com.atlassian.plugin.connect.spi.Permissions;
 import com.atlassian.plugin.connect.spi.applinks.RemotePluginContainerApplicationType;
+import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
+import com.atlassian.plugin.descriptors.CannotDisable;
+import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.atlassian.util.concurrent.NotNull;
@@ -38,7 +38,6 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.*;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -58,7 +57,7 @@ public final class RemotePluginContainerModuleDescriptor extends AbstractModuleD
     private final TypeAccessor typeAccessor;
     private final BundleContext bundleContext;
     private final PluginSettingsFactory pluginSettingsFactory;
-    private final ConnectAddOnIdentifierService connectIdentifier;
+    private final LegacyAddOnIdentifierService connectIdentifier;
 
     private static final Logger log = LoggerFactory.getLogger(RemotePluginContainerModuleDescriptor.class);
 
@@ -75,7 +74,7 @@ public final class RemotePluginContainerModuleDescriptor extends AbstractModuleD
             TypeAccessor typeAccessor,
             BundleContext bundleContext,
             PluginSettingsFactory pluginSettingsFactory,
-            @Qualifier("legacyAddOnIdentifierService") ConnectAddOnIdentifierService connectIdentifier)
+            LegacyAddOnIdentifierService connectIdentifier)
     {
         super(ModuleFactory.LEGACY_MODULE_FACTORY);
         this.applicationLinkService = checkNotNull(applicationLinkService);
@@ -94,9 +93,9 @@ public final class RemotePluginContainerModuleDescriptor extends AbstractModuleD
         this.oauthElement = element.element("oauth");
         this.displayUrl = getRequiredUriAttribute(element, "display-url");
         this.applicationLinkDetails = ApplicationLinkDetails.builder()
-                .displayUrl(displayUrl)
+                                                            .displayUrl(displayUrl)
                 .isPrimary(false)
-                // todo: support i18n names
+                        // todo: support i18n names
                 .name(plugin.getName() != null ? plugin.getName() : plugin.getKey())
                 .rpcUrl(displayUrl)
                 .build();
@@ -105,7 +104,7 @@ public final class RemotePluginContainerModuleDescriptor extends AbstractModuleD
         {
             throw new PluginParseException("Can only have one remote-plugin-container module in a descriptor");
         }
-        
+
         createAppLink();
     }
 
@@ -114,7 +113,7 @@ public final class RemotePluginContainerModuleDescriptor extends AbstractModuleD
     {
         super.enabled();
     }
-    
+
     protected void createAppLink()
     {
         this.pluginBundle = BundleUtil.findBundleForPlugin(bundleContext, getPluginKey());
@@ -272,7 +271,7 @@ public final class RemotePluginContainerModuleDescriptor extends AbstractModuleD
         final PublicKey publicKey = getPublicKey(getRequiredElementText(oauthElement, "public-key"));
 
         Consumer consumer = Consumer.key(getPluginKey()).name(name != null ? name : getPluginKey()).publicKey(publicKey).description(description).callback(
-                        callback).build();
+                callback).build();
 
         oAuthLinkManager.associateConsumerWithLink(link, consumer);
 

@@ -3,6 +3,8 @@ package com.atlassian.plugin.connect.plugin.capabilities.beans;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.BaseCapabilityBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.LifecycleBeanBuilder;
 
+import com.google.common.base.Strings;
+
 /**
  * Allows an addon to register callbacks for plugin lifecycle events.
  */
@@ -63,6 +65,10 @@ public class LifecycleBean extends BaseCapabilityBean
         return disabled;
     }
 
+    public boolean isEmpty()
+    {
+        return (Strings.isNullOrEmpty(installed) && Strings.isNullOrEmpty(uninstalled) && Strings.isNullOrEmpty(enabled) && Strings.isNullOrEmpty(disabled));
+    }
     public static LifecycleBeanBuilder newLifecycleBean()
     {
         return new LifecycleBeanBuilder();
