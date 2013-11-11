@@ -9,4 +9,6 @@ public interface RemotePluginAwarePage
     boolean isRemotePluginLinkPresent();
 
     RemotePluginTestPage clickRemotePluginLink();
+
+    String getRemotePluginLinkHref();
 }
