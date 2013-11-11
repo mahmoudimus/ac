@@ -1,6 +1,6 @@
 define(['iframe/_events'], function() {
 
-  _AP.require(["_events"], function(events) {
+  (window.AP || window._AP).require(["_events", "_dollar"], function(events, $) {
 
     var Events = events.Events;
 

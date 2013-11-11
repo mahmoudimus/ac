@@ -1,4 +1,4 @@
-(window.AP || window._AP).define("_events", [], function () {
+(window.AP || window._AP).define("_events", ["_dollar"], function ($) {
 
   "use strict";
 

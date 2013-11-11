@@ -10,8 +10,8 @@ for (var file in window.__karma__.files) {
 requirejs.config({
   // Karma serves files from '/base'
   baseUrl: 'base/src/main/resources/js/iframe/plugin',
-
   paths: {
+    'iframe/_events': '../_events',
     '_events': '../_events'
   },
 
