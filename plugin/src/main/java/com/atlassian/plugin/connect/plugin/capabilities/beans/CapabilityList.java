@@ -3,9 +3,9 @@ package com.atlassian.plugin.connect.plugin.capabilities.beans;
 import java.util.List;
 
 import com.atlassian.plugin.connect.plugin.capabilities.annotation.CapabilityModuleProvider;
+import com.atlassian.plugin.spring.scanner.ProductFilter;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.BaseCapabilityBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.*;
-import com.atlassian.plugin.spring.scanner.ProductFilter;
 
 import static com.google.common.collect.Lists.newArrayList;
 
@@ -41,9 +41,12 @@ public class CapabilityList extends BaseCapabilityBean
 
     @CapabilityModuleProvider(value = WorkflowPostFunctionModuleProvider.class, products = {ProductFilter.JIRA})
     private List<WorkflowPostFunctionCapabilityBean> jiraWorkflowPostFunctions;
-
+    
     @CapabilityModuleProvider(WebPanelModuleProvider.class)
     private List<WebPanelCapabilityBean> webPanels;
+
+    @CapabilityModuleProvider(WebHookModuleProvider.class)
+    private List<WebHookCapabilityBean> webhooks;
 
     public CapabilityList()
     {
@@ -55,6 +58,7 @@ public class CapabilityList extends BaseCapabilityBean
         this.webItems = newArrayList();
         this.webPanels = newArrayList();
         this.jiraWorkflowPostFunctions = newArrayList();
+        this.webhooks = newArrayList();
     }
 
     public CapabilityList(BaseCapabilityBeanBuilder builder)
@@ -92,6 +96,10 @@ public class CapabilityList extends BaseCapabilityBean
         if (null == jiraWorkflowPostFunctions)
         {
             this.jiraWorkflowPostFunctions = newArrayList();
+        }
+        if (null == webhooks)
+        {
+            this.webhooks = newArrayList();
         }
     }
 
@@ -133,5 +141,10 @@ public class CapabilityList extends BaseCapabilityBean
     public List<WorkflowPostFunctionCapabilityBean> getJiraWorkflowPostFunctions()
     {
         return jiraWorkflowPostFunctions;
+    }
+    
+    public List<WebHookCapabilityBean> getWebhooks() 
+    {
+        return webhooks;
     }
 }

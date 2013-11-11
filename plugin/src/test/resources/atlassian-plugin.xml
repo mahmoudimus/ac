@@ -6,6 +6,9 @@
         <bundle-instructions>
             <Import-Package>
                 com.atlassian.plugin.connect*,
+                com.atlassian.plugin.connect.*,
+                com.atlassian.plugin.connect.plugin.capabilities.beans*,
+                com.atlassian.plugin.connect.plugin.capabilities.beans.*,
                 *;resolution:=optional
             </Import-Package>
         </bundle-instructions>

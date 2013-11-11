@@ -60,6 +60,7 @@ public class ConnectCapabilitiesRunner
     private final String pluginKey;
     private Option<? extends SignedRequestHandler> signedRequestHandler;
     private ConnectAddonBean addon;
+    
 
     private int port;
     private Server server;
