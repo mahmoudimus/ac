@@ -8,6 +8,7 @@ import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 
 import static org.junit.Assert.assertNotNull;
 
+//TODO: add wire test harness facillities and write actual tests. This can happen over time. JD will work on this during his vacation
 @RunWith(AtlassianPluginsTestRunner.class)
 public class TestApplinkManager
 {

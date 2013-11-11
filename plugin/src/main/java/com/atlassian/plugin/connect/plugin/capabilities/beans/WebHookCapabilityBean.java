@@ -112,7 +112,7 @@ public class WebHookCapabilityBean extends BeanWithParams
         return new WebHookCapabilityBeanBuilder();
     }
 
-    public static WebHookCapabilityBeanBuilder newWebhookBean(WebHookCapabilityBean defaultBean)
+    public static WebHookCapabilityBeanBuilder newWebHookBean(WebHookCapabilityBean defaultBean)
     {
         return new WebHookCapabilityBeanBuilder(defaultBean);
     }

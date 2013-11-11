@@ -14,6 +14,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.annotation.CapabilityMod
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.LifecycleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConnectAddonBeanBuilder;
+import com.atlassian.plugin.connect.plugin.webhooks.PluginsWebHookProvider;
 import com.atlassian.plugin.spring.scanner.ProductFilter;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.CapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.CapabilityList;
@@ -38,6 +39,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean.newConnectAddonBean;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebHookCapabilityBean.newWebHookBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.util.ConnectReflectionHelper.isParameterizedListWithType;
 import static com.google.common.collect.Lists.newArrayList;
 
@@ -92,17 +94,17 @@ public class BeanToModuleRegistrar
         if(!Strings.isNullOrEmpty(lifecycle.getEnabled()))
         {
             //add webhook
-            //builder.withCapability(WEBHOOKS_FIELD,null);
+            builder.withCapability(WEBHOOKS_FIELD, newWebHookBean().withEvent(PluginsWebHookProvider.CONNECT_ADDON_ENABLED).withUrl(lifecycle.getEnabled()).build());
         }
         if(!Strings.isNullOrEmpty(lifecycle.getDisabled()))
         {
             //add webhook
-            //builder.withCapability(WEBHOOKS_FIELD,null);
+            builder.withCapability(WEBHOOKS_FIELD,newWebHookBean().withEvent(PluginsWebHookProvider.CONNECT_ADDON_DISABLED).withUrl(lifecycle.getDisabled()).build());
         }
         if(!Strings.isNullOrEmpty(lifecycle.getUninstalled()))
         {
             //add webhook
-            //builder.withCapability(WEBHOOKS_FIELD,null);
+            builder.withCapability(WEBHOOKS_FIELD, newWebHookBean().withEvent(PluginsWebHookProvider.CONNECT_ADDON_UNINSTALLED).withUrl(lifecycle.getUninstalled()).build());
         }
         
         return builder.build().getCapabilities();

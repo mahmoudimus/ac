@@ -152,6 +152,11 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extend
         return authentication;
     }
 
+    public LifecycleBean getLifecycle()
+    {
+        return lifecycle;
+    }
+
     public B build()
     {
         return (B) new ConnectAddonBean(this);

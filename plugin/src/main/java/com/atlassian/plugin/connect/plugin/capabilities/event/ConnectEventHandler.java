@@ -30,6 +30,7 @@ import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.event.PluginEventListener;
 import com.atlassian.plugin.event.PluginEventManager;
 import com.atlassian.plugin.event.events.BeforePluginDisabledEvent;
+import com.atlassian.plugin.event.events.PluginDisabledEvent;
 import com.atlassian.plugin.event.events.PluginEnabledEvent;
 import com.atlassian.plugin.event.events.PluginUninstalledEvent;
 import com.atlassian.sal.api.ApplicationProperties;
@@ -95,7 +96,7 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
     {
         if (!Strings.isNullOrEmpty(addon.getLifecycle().getInstalled()))
         {
-            callSyncHandler(addon);
+            callSyncHandler(addon, addon.getLifecycle().getInstalled());
         }
     }
 
@@ -124,8 +125,17 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
         final Plugin plugin = pluginDisabledEvent.getPlugin();
         if (connectIdentifier.isConnectAddOn(plugin))
         {
-            beanToModuleRegistrar.unregisterDescriptorsForPlugin(plugin);
             eventPublisher.publish(new ConnectAddonDisabledEvent(plugin.getKey(), createEventData(plugin.getKey())));
+        }
+    }
+
+    @PluginEventListener
+    public void pluginDisabled(PluginDisabledEvent pluginDisabledEvent)
+    {
+        final Plugin plugin = pluginDisabledEvent.getPlugin();
+        if (connectIdentifier.isConnectAddOn(plugin))
+        {
+            beanToModuleRegistrar.unregisterDescriptorsForPlugin(plugin);
         }
     }
 
@@ -133,12 +143,18 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
     public void pluginUninstalled(PluginUninstalledEvent pluginUninstalledEvent)
     {
         final Plugin plugin = pluginUninstalledEvent.getPlugin();
-        if (connectIdentifier.isConnectAddOn(plugin))
+        String pluginKey = plugin.getKey();
+        if (connectIdentifier.isConnectAddOn(plugin) && descriptorRegistry.hasDescriptor(pluginKey))
         {
-            //just in case
-            beanToModuleRegistrar.unregisterDescriptorsForPlugin(plugin);
+            ConnectAddonBean addon = CapabilitiesGsonFactory.getGson().fromJson(descriptorRegistry.getDescriptor(pluginKey), ConnectAddonBean.class);
 
-            eventPublisher.publish(new ConnectAddonUninstalledEvent(plugin.getKey(), createEventData(plugin.getKey())));
+            if (null != addon)
+            {
+                if (!Strings.isNullOrEmpty(addon.getLifecycle().getInstalled()))
+                {
+                    callSyncHandler(addon, addon.getLifecycle().getUninstalled());
+                }
+            }
         }
     }
 
@@ -159,13 +175,13 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
         this.pluginEventManager.unregister(this);
     }
 
-    private void callSyncHandler(ConnectAddonBean addon)
+    private void callSyncHandler(ConnectAddonBean addon, String path)
     {
         Option<String> errorI18nKey = Option.<String>some("connect.remote.upm.install.exception");
         try
         {
             String pluginKey = addon.getKey();
-            String callbackUrl = addon.getBaseUrl() + addon.getLifecycle().getInstalled();
+            String callbackUrl = addon.getBaseUrl() + path;
 
             String json = createEventData(pluginKey);
 

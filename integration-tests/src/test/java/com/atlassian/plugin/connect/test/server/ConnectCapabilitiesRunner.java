@@ -14,10 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.api.service.SignedRequestHandler;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.AuthenticationBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.AuthenticationType;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.CapabilityBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.*;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConnectAddonBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.gson.CapabilitiesGsonFactory;
 import com.atlassian.plugin.connect.test.Environment;
@@ -44,6 +41,7 @@ import net.oauth.signature.RSA_SHA1;
 import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.AuthenticationBean.newAuthenticationBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean.newConnectAddonBean;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.LifecycleBean.newLifecycleBean;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Maps.newHashMap;
 
@@ -52,6 +50,10 @@ import static com.google.common.collect.Maps.newHashMap;
  */
 public class ConnectCapabilitiesRunner
 {
+    public static final String INSTALLED_PATH = "/installed-lifecycle";
+    public static final String ENABLED_PATH = "/enabled-lifecycle";
+    public static final String DISABLED_PATH = "/disabled-lifecycle";
+    public static final String UNINSTALLED_PATH = "/uninstalled-lifecycle";
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final String baseUrl;
@@ -60,7 +62,7 @@ public class ConnectCapabilitiesRunner
     private final String pluginKey;
     private Option<? extends SignedRequestHandler> signedRequestHandler;
     private ConnectAddonBean addon;
-    
+
 
     private int port;
     private Server server;
@@ -100,13 +102,51 @@ public class ConnectCapabilitiesRunner
         uninstall();
     }
 
+    public ConnectCapabilitiesRunner addInstallLifecycle()
+    {
+        LifecycleBean lifecycle = getLifecycle();
+        addonBuilder.withLifecycle(newLifecycleBean(lifecycle).withInstalled(INSTALLED_PATH).build());
+        return this;
+    }
+
+    public ConnectCapabilitiesRunner addEnableLifecycle()
+    {
+        LifecycleBean lifecycle = getLifecycle();
+        addonBuilder.withLifecycle(newLifecycleBean(lifecycle).withEnabled(ENABLED_PATH).build());
+        return this;
+    }
+
+    public ConnectCapabilitiesRunner addDisableLifecycle()
+    {
+        LifecycleBean lifecycle = getLifecycle();
+        addonBuilder.withLifecycle(newLifecycleBean(lifecycle).withDisabled(DISABLED_PATH).build());
+        return this;
+    }
+
+    public ConnectCapabilitiesRunner addUninstallLifecycle()
+    {
+        LifecycleBean lifecycle = getLifecycle();
+        addonBuilder.withLifecycle(newLifecycleBean(lifecycle).withUninstalled(UNINSTALLED_PATH).build());
+        return this;
+    }
+
+    private LifecycleBean getLifecycle()
+    {
+        if (null == addonBuilder.getLifecycle())
+        {
+            addonBuilder.withLifecycle(newLifecycleBean().build());
+        }
+
+        return addonBuilder.getLifecycle();
+    }
+
     public ConnectCapabilitiesRunner addCapability(String fieldName, CapabilityBean bean)
     {
         addonBuilder.withCapability(fieldName, bean);
         return this;
     }
 
-    public ConnectCapabilitiesRunner addCapabilities(String fieldName, CapabilityBean ... beans)
+    public ConnectCapabilitiesRunner addCapabilities(String fieldName, CapabilityBean... beans)
     {
         addonBuilder.withCapabilities(fieldName, beans);
         return this;
@@ -158,16 +198,16 @@ public class ConnectCapabilitiesRunner
     {
         port = Utils.pickFreePort();
         final String displayUrl = "http://localhost:" + port;
-        
+
         addonBuilder.withBaseurl(displayUrl);
 
         AuthenticationBean auth = addonBuilder.getAuthentication();
-        
-        if(null != auth && auth.getType().equals(AuthenticationType.OAUTH) && !Strings.isNullOrEmpty(auth.getSharedKey()))
+
+        if (null != auth && auth.getType().equals(AuthenticationType.OAUTH) && !Strings.isNullOrEmpty(auth.getSharedKey()))
         {
             addOAuth();
         }
-        
+
         this.addon = addonBuilder.build();
 
         server = new Server(port);
