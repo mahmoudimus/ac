@@ -1,20 +1,18 @@
 package com.atlassian.plugin.connect.test.pageobjects.jira;
 
-import javax.inject.Inject;
-
 import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.plugin.connect.test.pageobjects.GeneralPage;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginTestPage;
 import com.atlassian.webdriver.AtlassianWebDriver;
-
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.inject.Inject;
 
 import static com.atlassian.fugue.Option.none;
 import static com.atlassian.fugue.Option.some;
@@ -31,6 +29,7 @@ public final class JiraGeneralPage implements GeneralPage
 
     @Inject
     private PageBinder pageBinder;
+    private final String projectKey;
     private final String pageKey;
     private final String linkText;
 
@@ -46,8 +45,9 @@ public final class JiraGeneralPage implements GeneralPage
         }
     };
 
-    public JiraGeneralPage(String pageKey, String linkText)
+    public JiraGeneralPage(String projectKey, String pageKey, String linkText)
     {
+        this.projectKey = projectKey;
         this.pageKey = pageKey;
         this.linkText = linkText;
     }
@@ -78,6 +78,28 @@ public final class JiraGeneralPage implements GeneralPage
                         l.click();
                         logger.debug("Link '{}' was found and clicked.", l);
                         return pageBinder.bind(RemotePluginTestPage.class, pageKey);
+                    }
+                }
+        );
+    }
+
+    public String getRemotePluginLinkHref()
+    {
+        return link.get().fold(
+                new Supplier<String>()
+                {
+                    @Override
+                    public String get()
+                    {
+                        throw new IllegalStateException(format("Could not find link '%s'", link()));
+                    }
+                },
+                new Function<WebElement, String>()
+                {
+                    @Override
+                    public String apply(WebElement l)
+                    {
+                        return l.getAttribute("href");
                     }
                 }
         );
@@ -149,5 +171,11 @@ public final class JiraGeneralPage implements GeneralPage
     private By createProjectDialogCancelButton()
     {
         return By.className("button-panel-cancel-link");
+    }
+
+    @Override
+    public String getUrl()
+    {
+        return "/browse/" + projectKey;
     }
 }

@@ -4,9 +4,13 @@ import com.atlassian.plugin.connect.plugin.capabilities.descriptor.IFramePageSer
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.web.conditions.AlwaysDisplayCondition;
 import com.google.common.collect.ImmutableMap;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class GeneralPageModuleProvider extends AbstractConnectPageModuleProvider
 {
+    @Autowired
     public GeneralPageModuleProvider(WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
                                      IFramePageServletDescriptorFactory servletDescriptorFactory)
     {

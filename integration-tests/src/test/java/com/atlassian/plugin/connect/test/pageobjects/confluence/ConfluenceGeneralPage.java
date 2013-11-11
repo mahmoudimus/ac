@@ -1,15 +1,14 @@
 package com.atlassian.plugin.connect.test.pageobjects.confluence;
 
-import javax.inject.Inject;
-
 import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.pageobjects.binder.Init;
 import com.atlassian.plugin.connect.test.pageobjects.GeneralPage;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginTestPage;
 import com.atlassian.webdriver.AtlassianWebDriver;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+
+import javax.inject.Inject;
 
 /**
  *
@@ -69,5 +68,11 @@ public class ConfluenceGeneralPage implements GeneralPage
         driver.waitUntilElementIsLocated(By.linkText(linkText));
         driver.findElement(By.linkText(linkText)).click();
         return pageBinder.bind(RemotePluginTestPage.class, pageKey);
+    }
+
+    @Override
+    public String getUrl()
+    {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 }

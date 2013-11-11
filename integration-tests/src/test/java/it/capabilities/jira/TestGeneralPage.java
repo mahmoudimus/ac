@@ -1,21 +1,26 @@
 package it.capabilities.jira;
 
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
-import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewProjectPage;
+import com.atlassian.plugin.connect.test.pageobjects.RemotePluginTestPage;
+import com.atlassian.plugin.connect.test.pageobjects.jira.JiraGeneralPage;
 import com.atlassian.plugin.connect.test.server.ConnectCapabilitiesRunner;
-import com.google.common.base.Optional;
 import it.jira.JiraWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
-import org.junit.After;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.http.message.BasicNameValuePair;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.rmi.RemoteException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectPageCapabilityBean.newPageBean;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
 
 /**
  * Test of general page in JIRA
@@ -25,7 +30,6 @@ public class TestGeneralPage extends JiraWebDriverTestBase
     private static final String PLUGIN_KEY = "my-plugin";
 
     private static ConnectCapabilitiesRunner remotePlugin;
-    private RemoteWebItem webItem;
 
     @BeforeClass
     public static void startConnectAddOn() throws Exception
@@ -35,7 +39,8 @@ public class TestGeneralPage extends JiraWebDriverTestBase
                         "generalPages",
                         newPageBean()
                                 .withName(new I18nProperty("My Awesome Page", null))
-                                .withUrl("/pg?issue_id=${issue.id}&project_id=${project.id}&project_key=${project.key}")
+                                .withLocation("system.top.navigation.bar")
+                                .withUrl("/pg?project_id=${project.id}&project_key=${project.key}")
                                 .withWeight(1234)
                                 .build())
                 .addRoute("/pg", ConnectAppServlets.apRequestServlet())
@@ -51,32 +56,25 @@ public class TestGeneralPage extends JiraWebDriverTestBase
         }
     }
 
-    @Before
-    public void setUpTest() throws Exception
-    {
-//        backdoor().project().addProject(PROJECT_KEY, PROJECT_KEY, "admin");
-//
-//        issueKey = jiraOps.createIssue(PROJECT_KEY, "Test issue for tab").getKey();
-//        loginAsAdmin();
-//        JiraViewProjectPage viewProjectPage = product.visit(JiraViewProjectPage.class, project.getKey());
-//        webItem = viewProjectPage.findWebItem("my-awesome-page");
-    }
-
-    @After
-    public void cleanUpTest()
-    {
-//        backdoor().project().deleteProject(PROJECT_KEY);
-    }
-
     @Test
-    public void canViewPage() throws RemoteException
+    public void canClickOnPageLinkAndSeeAddonContents() throws MalformedURLException, URISyntaxException
     {
         loginAsAdmin();
-        JiraViewProjectPage viewProjectPage = product.visit(JiraViewProjectPage.class, project.getKey());
-        webItem = viewProjectPage.findWebItem("my-awesome-page", Optional.<String>absent());
-//        loginAsAdmin();
-//        JiraViewIssuePageWithRemotePluginIssueTab page = jira().visit(
-//                JiraViewIssuePageWithRemotePluginIssueTab.class, "issue-tab-issue-tab-panel", issueKey, PLUGIN_KEY);
-//        Assert.assertEquals("Success", page.getMessage());
+        JiraGeneralPage viewProjectPage = product.visit(JiraGeneralPage.class, project.getKey(), "my-awesome-page", "My Awesome Page");
+
+        assertThat(viewProjectPage.isRemotePluginLinkPresent(), is(true));
+
+        URI url = new URI(viewProjectPage.getRemotePluginLinkHref());
+        assertThat(url.getPath(), is("/jira/plugins/servlet/ac/my-plugin/pg"));
+
+        assertThat(URLEncodedUtils.parse(url, "UTF-8"),
+                containsInAnyOrder(
+                        (NameValuePair) new BasicNameValuePair("project_key", project.getKey()),
+                        new BasicNameValuePair("project_id", project.getId())
+                )
+        );
+
+        RemotePluginTestPage addonContentsPage = viewProjectPage.clickRemotePluginLink();
+        assertThat(addonContentsPage.getMessage(), is("Success"));
     }
 }
