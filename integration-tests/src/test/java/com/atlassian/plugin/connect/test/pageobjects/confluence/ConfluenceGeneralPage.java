@@ -71,7 +71,7 @@ public class ConfluenceGeneralPage implements GeneralPage
     }
 
     @Override
-    public String getUrl()
+    public String getRemotePluginLinkHref()
     {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }

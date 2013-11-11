@@ -29,7 +29,6 @@ public final class JiraGeneralPage implements GeneralPage
 
     @Inject
     private PageBinder pageBinder;
-    private final String projectKey;
     private final String pageKey;
     private final String linkText;
 
@@ -45,9 +44,8 @@ public final class JiraGeneralPage implements GeneralPage
         }
     };
 
-    public JiraGeneralPage(String projectKey, String pageKey, String linkText)
+    public JiraGeneralPage(String pageKey, String linkText)
     {
-        this.projectKey = projectKey;
         this.pageKey = pageKey;
         this.linkText = linkText;
     }
@@ -83,6 +81,7 @@ public final class JiraGeneralPage implements GeneralPage
         );
     }
 
+    @Override
     public String getRemotePluginLinkHref()
     {
         return link.get().fold(
@@ -171,11 +170,5 @@ public final class JiraGeneralPage implements GeneralPage
     private By createProjectDialogCancelButton()
     {
         return By.className("button-panel-cancel-link");
-    }
-
-    @Override
-    public String getUrl()
-    {
-        return "/browse/" + projectKey;
     }
 }

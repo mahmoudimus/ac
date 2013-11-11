@@ -3,6 +3,7 @@ package it.capabilities.jira;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraGeneralPage;
+import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewProjectPage;
 import com.atlassian.plugin.connect.test.server.ConnectCapabilitiesRunner;
 import it.jira.JiraWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
@@ -60,7 +61,10 @@ public class TestGeneralPage extends JiraWebDriverTestBase
     public void canClickOnPageLinkAndSeeAddonContents() throws MalformedURLException, URISyntaxException
     {
         loginAsAdmin();
-        JiraGeneralPage viewProjectPage = product.visit(JiraGeneralPage.class, project.getKey(), "my-awesome-page", "My Awesome Page");
+
+        product.visit(JiraViewProjectPage.class, project.getKey());
+
+        JiraGeneralPage viewProjectPage = product.getPageBinder().bind(JiraGeneralPage.class, "my-awesome-page", "My Awesome Page");
 
         assertThat(viewProjectPage.isRemotePluginLinkPresent(), is(true));
 
@@ -77,4 +81,6 @@ public class TestGeneralPage extends JiraWebDriverTestBase
         RemotePluginTestPage addonContentsPage = viewProjectPage.clickRemotePluginLink();
         assertThat(addonContentsPage.getMessage(), is("Success"));
     }
+
+
 }
