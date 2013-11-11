@@ -74,7 +74,7 @@
   proto.off = function (name, listener) {
     var all = this._events[name];
     if (all) {
-      var i = $.inArray(listener, all);
+      var i = all.indexOf(listener);
       if (i >= 0) {
         all.splice(i, 1);
       }
@@ -109,7 +109,7 @@
    */
   proto.offAny = function (listener) {
     var any = this._any;
-    var i = $.inArray(listener, any);
+    var i = any.indexOf(listener);
     if (i >= 0) {
       any.splice(i, 1);
     }
