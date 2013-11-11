@@ -23,21 +23,27 @@ public class ConfluenceGeneralPage implements GeneralPage
     private PageBinder pageBinder;
     private final String pageKey;
     private final String linkText;
+    private final boolean ignoreBrowseMenu;
 
     private WebElement browseMenuLink;
 
 
     public ConfluenceGeneralPage(String pageKey, String linkText)
     {
-        this.pageKey = pageKey;
-        this.linkText = linkText;
+        this(pageKey, linkText, false);
     }
 
+    public ConfluenceGeneralPage(String pageKey, String linkText, boolean ignoreBrowseMenu)
+    {
+        this.pageKey = pageKey;
+        this.linkText = linkText;
+        this.ignoreBrowseMenu = ignoreBrowseMenu;
+    }
     @Init
     public void init()
     {
         By browseLocator = By.id("browse-menu-link");
-        if (driver.elementExists(browseLocator))
+        if (!ignoreBrowseMenu && driver.elementExists(browseLocator))
         {
             browseMenuLink = driver.findElement(browseLocator);
         }
@@ -73,6 +79,9 @@ public class ConfluenceGeneralPage implements GeneralPage
     @Override
     public String getRemotePluginLinkHref()
     {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        browseMenuLink.click();
+        driver.waitUntilElementIsLocated(By.linkText(linkText));
+        WebElement element = driver.findElement(By.linkText(linkText));
+        return element.getAttribute("href");
     }
 }
