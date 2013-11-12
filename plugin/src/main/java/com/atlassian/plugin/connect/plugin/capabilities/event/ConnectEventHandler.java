@@ -57,6 +57,11 @@ import static com.google.common.base.Strings.nullToEmpty;
 @Named
 public class ConnectEventHandler implements InitializingBean, DisposableBean
 {
+    public static final String INSTALLED = "installed";
+    public static final String ENABLED = "enabled";
+    public static final String DISABLED = "disabled";
+    public static final String UNINSTALLED = "uninstalled";
+    
     private static final Logger log = LoggerFactory.getLogger(ConnectEventHandler.class);
     private final EventPublisher eventPublisher;
     private final PluginEventManager pluginEventManager;
@@ -96,7 +101,7 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
     {
         if (!Strings.isNullOrEmpty(addon.getLifecycle().getInstalled()))
         {
-            callSyncHandler(addon, addon.getLifecycle().getInstalled());
+            callSyncHandler(addon, addon.getLifecycle().getInstalled(), INSTALLED);
         }
     }
 
@@ -129,7 +134,7 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
         final Plugin plugin = pluginDisabledEvent.getPlugin();
         if (connectIdentifier.isConnectAddOn(plugin))
         {
-            eventPublisher.publish(new ConnectAddonDisabledEvent(plugin.getKey(), createEventData(plugin.getKey())));
+            eventPublisher.publish(new ConnectAddonDisabledEvent(plugin.getKey(), createEventData(plugin.getKey(), DISABLED)));
         }
     }
 
@@ -154,9 +159,9 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
 
             if (null != addon)
             {
-                if (!Strings.isNullOrEmpty(addon.getLifecycle().getInstalled()))
+                if (!Strings.isNullOrEmpty(addon.getLifecycle().getUninstalled()))
                 {
-                    callSyncHandler(addon, addon.getLifecycle().getUninstalled());
+                    callSyncHandler(addon, addon.getLifecycle().getUninstalled(),UNINSTALLED);
                 }
             }
         }
@@ -164,7 +169,7 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
 
     public void publishEnabledEvent(String pluginKey)
     {
-        eventPublisher.publish(new ConnectAddonEnabledEvent(pluginKey, createEventData(pluginKey)));
+        eventPublisher.publish(new ConnectAddonEnabledEvent(pluginKey, createEventData(pluginKey, ENABLED)));
     }
 
     @Override
@@ -179,14 +184,14 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
         this.pluginEventManager.unregister(this);
     }
 
-    private void callSyncHandler(ConnectAddonBean addon, String path)
+    private void callSyncHandler(ConnectAddonBean addon, String path, String eventType)
     {
         Option<String> errorI18nKey = Option.<String>some("connect.remote.upm.install.exception");
         String callbackUrl = addon.getBaseUrl() + path;
         try
         {
             String pluginKey = addon.getKey();
-            String json = createEventData(pluginKey);
+            String json = createEventData(pluginKey, eventType);
 
             URI installHandler = getURI(callbackUrl);
 
@@ -215,7 +220,7 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
     }
 
     @VisibleForTesting
-    String createEventData(String pluginKey)
+    String createEventData(String pluginKey, String eventType)
     {
         final Consumer consumer = consumerService.getConsumer();
 
@@ -228,6 +233,7 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
                    .withServerVersion(nullToEmpty(applicationProperties.getBuildNumber()))
                    .withProductType(nullToEmpty(productAccessor.getKey()))
                    .withDescription(nullToEmpty(consumer.getDescription()))
+                   .withEventType(eventType)
                    .withLink("oauth", applicationProperties.getBaseUrl() + "/rest/atlassian-connect/latest/oauth");
 
         UserProfile user = userManager.getRemoteUser();

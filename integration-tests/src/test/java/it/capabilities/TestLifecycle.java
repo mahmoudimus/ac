@@ -1,5 +1,6 @@
 package it.capabilities;
 
+import com.atlassian.plugin.connect.plugin.capabilities.event.ConnectEventHandler;
 import com.atlassian.plugin.connect.plugin.webhooks.PluginsWebHookProvider;
 import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
 import com.atlassian.plugin.connect.test.server.ConnectCapabilitiesRunner;
@@ -28,7 +29,7 @@ public class TestLifecycle extends AbstractBrowserlessTest
             public void test(WebHookWaiter waiter) throws Exception
             {
                 final WebHookBody body = waiter.waitForHook();
-                assertWebHookDidFire(body);
+                assertWebHookDidFire(body, ConnectEventHandler.INSTALLED);
             }
         });
     }
@@ -42,7 +43,7 @@ public class TestLifecycle extends AbstractBrowserlessTest
             public void test(WebHookWaiter waiter) throws Exception
             {
                 final WebHookBody body = waiter.waitForHook();
-                assertWebHookDidFire(body);
+                assertWebHookDidFire(body,ConnectEventHandler.ENABLED);
             }
         });
     }
@@ -60,7 +61,7 @@ public class TestLifecycle extends AbstractBrowserlessTest
             plugin1.uninstall();
 
             WebHookBody body = servlet.waitForHook();
-            assertWebHookDidFire(body);
+            assertWebHookDidFire(body,ConnectEventHandler.DISABLED);
         }
         finally
         {
@@ -83,7 +84,7 @@ public class TestLifecycle extends AbstractBrowserlessTest
             plugin1.uninstall();
 
             WebHookBody body = servlet.waitForHook();
-            assertWebHookDidFire(body);
+            assertWebHookDidFire(body,ConnectEventHandler.UNINSTALLED);
         }
         finally
         {
@@ -91,10 +92,11 @@ public class TestLifecycle extends AbstractBrowserlessTest
         }
     }
 
-    private void assertWebHookDidFire(WebHookBody body) throws Exception
+    private void assertWebHookDidFire(WebHookBody body, String eventType) throws Exception
     {
         assertNotNull(body);
-        Assert.assertEquals("lifecycle-plugin", body.find("key"));
+        assertEquals("lifecycle-plugin", body.find("key"));
+        assertEquals(eventType, body.find("eventType"));
     }
 
 }

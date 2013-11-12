@@ -22,6 +22,7 @@ public class ConnectAddonEventData extends BaseCapabilityBean
     private String productType;
     private String decription;
     private String userKey;
+    private String eventType;
     
     
     public ConnectAddonEventData()
@@ -36,6 +37,7 @@ public class ConnectAddonEventData extends BaseCapabilityBean
         this.productType = "";
         this.decription = "";
         this.userKey = "";
+        this.eventType = "";
     }
 
     public ConnectAddonEventData(ConnectAddonEventDataBuilder builder)
@@ -82,6 +84,10 @@ public class ConnectAddonEventData extends BaseCapabilityBean
         if(null == userKey)
         {
             this.userKey = "";
+        }
+        if(null == eventType)
+        {
+            this.eventType = "";
         }
     }
 
@@ -133,6 +139,11 @@ public class ConnectAddonEventData extends BaseCapabilityBean
     public String getUserKey()
     {
         return userKey;
+    }
+
+    public String getEventType()
+    {
+        return eventType;
     }
 
     public static ConnectAddonEventDataBuilder newConnectAddonEventData()

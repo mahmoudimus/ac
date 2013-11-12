@@ -20,6 +20,7 @@ public class ConnectAddonEventDataBuilder extends BaseCapabilityBeanBuilder<Conn
     private String productType;
     private String decription;
     private String userKey;
+    private String eventType;
     
     public ConnectAddonEventDataBuilder()
     {
@@ -38,6 +39,7 @@ public class ConnectAddonEventDataBuilder extends BaseCapabilityBeanBuilder<Conn
         this.productType = defaultBean.getProductType();
         this.decription = defaultBean.getDecription();
         this.userKey = defaultBean.getUserKey();
+        this.eventType = defaultBean.getEventType();
     }
 
     public ConnectAddonEventDataBuilder withLinks(Map<String, String> params)
@@ -105,6 +107,12 @@ public class ConnectAddonEventDataBuilder extends BaseCapabilityBeanBuilder<Conn
     public ConnectAddonEventDataBuilder withUserKey(String key)
     {
         this.userKey = key;
+        return this;
+    }
+
+    public ConnectAddonEventDataBuilder withEventType(String type)
+    {
+        this.eventType = type;
         return this;
     }
 
