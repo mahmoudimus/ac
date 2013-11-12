@@ -7,6 +7,9 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConnectAdd
 
 import static com.google.common.collect.Maps.newHashMap;
 
+/**
+ * Represents the data that an addon will receive with lifecycle events.
+ */
 public class ConnectAddonEventData extends BaseCapabilityBean
 {
     private Map<String,String> links;

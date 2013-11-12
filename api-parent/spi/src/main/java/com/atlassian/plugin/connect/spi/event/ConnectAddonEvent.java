@@ -31,6 +31,9 @@ public abstract class ConnectAddonEvent
         return pluginKey;
     }
 
+    /**
+     * @return The json data to be sent to the remote add on
+     */
     public final String getData()
     {
         return data;
