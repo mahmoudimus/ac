@@ -281,8 +281,17 @@
                                     <version>${atlassian.jwt.version}</version>
                                 </pluginArtifact>
                             </pluginArtifacts>
-                        </product>
 
+                            <bundledArtifacts>
+                                <!-- TODO: remove this once UPM 2.13 is bundled with products -->
+                                <bundledArtifact>
+                                    <groupId>com.atlassian.upm</groupId>
+                                    <artifactId>atlassian-universal-plugin-manager-plugin</artifactId>
+                                    <version>${atlassian.upm.version}</version>
+                                </bundledArtifact>
+                            </bundledArtifacts>
+                            
+                        </product>
                         <product>
                             <id>confluence</id>
                             <version>${atlassian.confluence.version}</version>
