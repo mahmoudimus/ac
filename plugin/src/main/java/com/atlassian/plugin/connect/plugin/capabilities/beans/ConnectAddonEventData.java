@@ -2,7 +2,6 @@ package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
 import java.util.Map;
 
-import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.BaseCapabilityBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConnectAddonEventDataBuilder;
 
 import static com.google.common.collect.Maps.newHashMap;
@@ -22,7 +21,7 @@ public class ConnectAddonEventData extends BaseCapabilityBean
     private String baseUrl;
     private String productType;
     private String decription;
-    private String user_key;
+    private String userKey;
     
     
     public ConnectAddonEventData()
@@ -36,7 +35,7 @@ public class ConnectAddonEventData extends BaseCapabilityBean
         this.baseUrl = "";
         this.productType = "";
         this.decription = "";
-        this.user_key = "";
+        this.userKey = "";
     }
 
     public ConnectAddonEventData(ConnectAddonEventDataBuilder builder)
@@ -80,9 +79,9 @@ public class ConnectAddonEventData extends BaseCapabilityBean
         {
             this.decription = "";
         }
-        if(null == user_key)
+        if(null == userKey)
         {
-            this.user_key = "";
+            this.userKey = "";
         }
     }
 
@@ -133,7 +132,7 @@ public class ConnectAddonEventData extends BaseCapabilityBean
 
     public String getUserKey()
     {
-        return user_key;
+        return userKey;
     }
 
     public static ConnectAddonEventDataBuilder newConnectAddonEventData()
