@@ -116,6 +116,10 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
                 beanToModuleRegistrar.registerDescriptorsForBeans(plugin, addon);
                 publishEnabledEvent(pluginKey);
             }
+            else
+            {
+                log.warn("Tried to publish plugin enabled event for connect addon ['" + pluginKey + "'], but got a null ConnectAddonBean when trying to deserialize it's stored descriptor. Ignoring...");
+            }
         }
     }
 
@@ -178,11 +182,10 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
     private void callSyncHandler(ConnectAddonBean addon, String path)
     {
         Option<String> errorI18nKey = Option.<String>some("connect.remote.upm.install.exception");
+        String callbackUrl = addon.getBaseUrl() + path;
         try
         {
             String pluginKey = addon.getKey();
-            String callbackUrl = addon.getBaseUrl() + path;
-
             String json = createEventData(pluginKey);
 
             URI installHandler = getURI(callbackUrl);
@@ -199,14 +202,14 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
             Response response = request.execute(Request.Method.POST).claim();
             if (response.getStatusCode() != 200)
             {
-                log.error("Error contacting remote application [" + response.getStatusText() + "]");
+                log.error("Error contacting remote application at " + callbackUrl + " [" + response.getStatusText() + "]");
                 throw new PluginInstallException("Error contacting remote application [" + response.getStatusText() + "]", errorI18nKey);
             }
 
         }
         catch (Exception e)
         {
-            log.error("Error contacting remote application [" + e.getMessage() + "]", e);
+            log.error("Error contacting remote application at " + callbackUrl + "  [" + e.getMessage() + "]", e);
             throw new PluginInstallException("Error contacting remote application [" + e.getMessage() + "]", errorI18nKey);
         }
     }
@@ -230,8 +233,7 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
         UserProfile user = userManager.getRemoteUser();
         if (null != user)
         {
-            dataBuilder.withUserId(user.getUsername())
-                       .withUserKey(user.getUserKey().getStringValue());
+            dataBuilder.withUserKey(user.getUserKey().getStringValue());
         }
 
         ConnectAddonEventData data = dataBuilder.build();

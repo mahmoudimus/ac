@@ -20,7 +20,6 @@ public class ConnectAddonEventDataBuilder extends BaseCapabilityBeanBuilder<Conn
     private String baseUrl;
     private String productType;
     private String decription;
-    private String user_id;
     private String user_key;
     
     public ConnectAddonEventDataBuilder()
@@ -39,7 +38,6 @@ public class ConnectAddonEventDataBuilder extends BaseCapabilityBeanBuilder<Conn
         this.baseUrl = defaultBean.getBaseUrl();
         this.productType = defaultBean.getProductType();
         this.decription = defaultBean.getDecription();
-        this.user_id = defaultBean.getUserId();
         this.user_key = defaultBean.getUserKey();
     }
 
@@ -102,12 +100,6 @@ public class ConnectAddonEventDataBuilder extends BaseCapabilityBeanBuilder<Conn
     public ConnectAddonEventDataBuilder withDescription(String description)
     {
         this.decription = description;
-        return this;
-    }
-
-    public ConnectAddonEventDataBuilder withUserId(String id)
-    {
-        this.user_id = id;
         return this;
     }
 

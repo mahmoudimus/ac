@@ -8,6 +8,7 @@ import javax.inject.Named;
 
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
+import com.atlassian.util.concurrent.NotNull;
 
 @Named
 public class ConnectDescriptorRegistry
@@ -62,6 +63,7 @@ public class ConnectDescriptorRegistry
         return "";
     }
 
+    @NotNull
     private Map<String, String> getDescriptorMap()
     {
         return (Map<String, String>) getGlobalSettings().get(CONNECT_DESCRIPTOR_KEY);

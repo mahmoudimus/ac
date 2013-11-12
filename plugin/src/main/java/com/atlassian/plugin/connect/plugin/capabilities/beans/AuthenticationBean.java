@@ -3,9 +3,20 @@ package com.atlassian.plugin.connect.plugin.capabilities.beans;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.AuthenticationBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.BaseCapabilityBeanBuilder;
 
+/**
+ * Defines the authentication type to use when signing requests between the host application and the connect add on.
+ * The authentication type can be eithe jwt or oauth. If the type is not supplied it will default to jwt.
+ */
 public class AuthenticationBean extends BaseCapabilityBean
 {
+    /**
+     * The type of authentication to use. Defaults to jwt.
+     */
     private AuthenticationType type;
+
+    /**
+     * Either the JWT shared secret ot the OAUTH publickKey depending on authentication type.
+     */
     private String sharedKey;
 
     public AuthenticationBean()

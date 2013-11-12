@@ -71,6 +71,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
         }
         catch (PluginInstallException e)
         {
+            log.error("An exception occurred while installing the plugin '[" + installedPlugin.getKey() + "]. Uninstalling...",e);
             pluginController.uninstall(installedPlugin);
             throw e;
         }
@@ -146,6 +147,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
 
     private void uninstallWithException(Plugin installedPlugin, Exception e) throws Exception
     {
+        log.error("An exception occurred while installing the plugin '[" + installedPlugin.getKey() + "]. Uninstalling...",e);
         beanToModuleRegistrar.unregisterDescriptorsForPlugin(installedPlugin);
         pluginController.uninstall(installedPlugin);
         throw e;
