@@ -12,6 +12,7 @@ import it.jira.JiraWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
+import org.hamcrest.core.IsCollectionContaining;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -69,7 +70,7 @@ public class TestProjectAdminTabPanel extends JiraWebDriverTestBase
         final ProjectSummaryPageTab page =
                 product.visit(ProjectSummaryPageTab.class, project.getKey());
 
-        assertThat(page.getTabs().getTabs(), JUnitMatchers.<ProjectConfigTabs.Tab>hasItem(new TypeSafeMatcher<ProjectConfigTabs.Tab>()
+        assertThat(page.getTabs().getTabs(), IsCollectionContaining.<ProjectConfigTabs.Tab>hasItem(new TypeSafeMatcher<ProjectConfigTabs.Tab>()
         {
 
             @Override

@@ -186,7 +186,8 @@ public class ConnectCapabilitiesRunner
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.setContextPath("/");
 
-        context.addServlet(new ServletHolder(new DescriptorServlet()), "/register");
+        String descriptorUrl = "/register";
+        context.addServlet(new ServletHolder(new DescriptorServlet()), descriptorUrl);
 
         for (final Map.Entry<String, HttpServlet> entry : routes.entrySet())
         {
@@ -200,7 +201,7 @@ public class ConnectCapabilitiesRunner
         list.addHandler(context);
         server.start();
 
-        System.out.println("Started Atlassian Connect Add-On at " + displayUrl);
+        System.out.println("Started Atlassian Connect Add-On at " + displayUrl + descriptorUrl);
         register();
         return this;
     }
