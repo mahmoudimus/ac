@@ -127,7 +127,7 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
         }
         catch (TypeNotInstalledException ex)
         {
-            log.info("Link found for '{}' but the type cannot be found, treating as not found", pluginKey);
+            log.warn("Link found for '{}' but the type cannot be found, deleting...", pluginKey);
             manuallyDeleteApplicationId(appId);
 
             return false;
@@ -137,7 +137,7 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
         {
             if (pluginKey.equals(link.getProperty(PLUGIN_KEY_PROPERTY)))
             {
-                log.info("Application link for remote plugin container '{}' already exists", pluginKey);
+                log.debug("Application link for remote plugin container '{}' already exists", pluginKey);
 
                 return true;
             }
@@ -154,11 +154,9 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
             {
                 if (pluginKey.equals(otherLink.getProperty(PLUGIN_KEY_PROPERTY)))
                 {
-                    log.debug("Old application link for this plugin '{}' found with different display url '{}', removing",
-                            pluginKey, otherLink.getDisplayUrl());
+                    log.debug("Old application link for this plugin '{}' found with different display url '{}', removing", pluginKey, otherLink.getDisplayUrl());
 
                     applicationLinkService.deleteApplicationLink(otherLink);
-                    
                 }
             }
 
