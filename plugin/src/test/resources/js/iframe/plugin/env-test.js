@@ -71,8 +71,12 @@ var xdmMockEnv;
             },
         });
 
-        test("meta", function() {
+        test("meta tag is found", function() {
             equal(env.meta('fixture'), 'foo bar');
+        });
+
+        test("non existant meta tag is not found", function() {
+            ok(!env.meta('fdsjnfks'));
         });
 
         test("#content container found", function() {
