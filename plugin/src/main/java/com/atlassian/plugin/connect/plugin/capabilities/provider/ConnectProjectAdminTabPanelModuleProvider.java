@@ -10,10 +10,12 @@ import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModule
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.RelativeAddOnUrl;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.RelativeAddOnUrlConverter;
 import com.atlassian.plugin.connect.plugin.module.jira.conditions.IsProjectAdminCondition;
+import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.web.Condition;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import org.osgi.framework.BundleContext;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
@@ -24,6 +26,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Module Provider for a Connect Project Admin TabPanel Module.
  * Note that there is actually no P2 module descriptor. Instead it is modelled as a web-item plus a servlet
  */
+@JiraComponent
 public class ConnectProjectAdminTabPanelModuleProvider implements ConnectModuleProvider<ConnectProjectAdminTabPanelCapabilityBean>
 {
     public static final String PROJECT_ADMIN_TAB_PANELS = "jiraProjectAdminTabPanels";
@@ -34,6 +37,7 @@ public class ConnectProjectAdminTabPanelModuleProvider implements ConnectModuleP
     private final RelativeAddOnUrlConverter relativeAddOnUrlConverter;
     private final Condition condition;
 
+    @Autowired
     public ConnectProjectAdminTabPanelModuleProvider(WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
                                                      IFramePageServletDescriptorFactory servletDescriptorFactory,
                                                      RelativeAddOnUrlConverter relativeAddOnUrlConverter, JiraAuthenticationContext authenticationContext)
@@ -53,12 +57,15 @@ public class ConnectProjectAdminTabPanelModuleProvider implements ConnectModuleP
         {
             RelativeAddOnUrl localUrl = relativeAddOnUrlConverter.addOnUrlToLocalServletUrl(plugin.getKey(), bean.getUrl());
 
-            WebItemCapabilityBean webItemCapabilityBean = createWebItemCapabilityBean(bean, localUrl.getRelativeUrl());
+            // we can't pass projectKey as an "extra param" to relativeAddOnUrlConverter as it will encode the ${}
+            String webItemUri = localUrl.getRelativeUri() + "?projectKey=${project.key}";
+            WebItemCapabilityBean webItemCapabilityBean = createWebItemCapabilityBean(bean,
+                    webItemUri);
             builder.add(webItemModuleDescriptorFactory.createModuleDescriptor(plugin, addonBundleContext, webItemCapabilityBean));
 
-            builder.add(servletDescriptorFactory.createIFrameServletDescriptor(plugin, webItemCapabilityBean,
-                        localUrl.getServletDescriptorUrl(), bean.getUrl(), "", TEMPLATE_SUFFIX, condition,
-                        ImmutableMap.<String, String>of(ADMIN_ACTIVE_TAB, bean.getKey())));
+            builder.add(servletDescriptorFactory.createIFrameProjectConfigTabServletDescriptor(plugin,
+                    webItemCapabilityBean, localUrl.getServletDescriptorUrl(), bean.getUrl(), "", TEMPLATE_SUFFIX,
+                    condition, ImmutableMap.<String, String>of(ADMIN_ACTIVE_TAB, bean.getKey())));
         }
 
         return builder.build();

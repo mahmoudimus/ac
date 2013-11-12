@@ -54,6 +54,7 @@ public final class TestConfluenceRemoteMacro extends ConfluenceWebDriverTestBase
     private static final String REQUEST_METHOD = "req_method";
     private static final String REQUEST_URI = "req_uri";
     private static final String REQUEST_QUERY = "req_query";
+    private static final String SPACE_KEY = "ds";
 
     private static AtlassianConnectAddOnRunner remotePlugin;
     private static CounterMacroServlet counterMacroServlet;
@@ -72,6 +73,7 @@ public final class TestConfluenceRemoteMacro extends ConfluenceWebDriverTestBase
                                 ContextParameter.name(CTX_PAGE_ID).header(),
                                 ContextParameter.name(CTX_PAGE_TYPE).header(),
                                 ContextParameter.name(CTX_PAGE_TITLE).header(),
+                                ContextParameter.name(CTX_SPACE_KEY).header(),
                                 ContextParameter.name(CTX_USER_ID).header(),
                                 ContextParameter.name(CTX_USER_KEY).header())
                         .resource(newServlet(new HeaderMacroServlet())))
@@ -109,6 +111,7 @@ public final class TestConfluenceRemoteMacro extends ConfluenceWebDriverTestBase
                                         ContextParameter.name(CTX_PAGE_TYPE).query(),
                                         ContextParameter.name(CTX_PAGE_TITLE).query(),
                                         ContextParameter.name(CTX_USER_ID).query(),
+                                        ContextParameter.name(CTX_SPACE_KEY).query(),
                                         ContextParameter.name(CTX_USER_KEY).query()
                                 )
                                 .resource(ConnectAppServlets.macroSimple());
@@ -119,7 +122,7 @@ public final class TestConfluenceRemoteMacro extends ConfluenceWebDriverTestBase
     {
         if (remotePlugin != null)
         {
-            remotePlugin.stop();
+            remotePlugin.stopAndUninstall();
         }
     }
 
@@ -137,6 +140,7 @@ public final class TestConfluenceRemoteMacro extends ConfluenceWebDriverTestBase
         assertEquals(pageData.getId(), page.getText(CTX_PAGE_ID));
         assertEquals("page", page.getText(CTX_PAGE_TYPE));
         assertEquals(pageData.getTitle(), page.getText(CTX_PAGE_TITLE));
+        assertEquals(SPACE_KEY, page.getText(CTX_SPACE_KEY));
         // the macro is being viewed by an anonymous user
         assertNull(page.getText(CTX_USER_ID));
         assertNull(page.getText(CTX_USER_KEY));
@@ -156,6 +160,8 @@ public final class TestConfluenceRemoteMacro extends ConfluenceWebDriverTestBase
         assertEquals(pageData.getId(), page.getText(CTX_PAGE_ID));
         assertEquals("page", page.getText(CTX_PAGE_TYPE));
         assertEquals(pageData.getTitle(), page.getText(CTX_PAGE_TITLE));
+
+        assertEquals(SPACE_KEY, page.getText(CTX_SPACE_KEY));
         // the macro is being viewed by an anonymous user
         assertNull(page.getText(CTX_USER_ID));
         assertNull(page.getText(CTX_USER_KEY));
@@ -175,6 +181,7 @@ public final class TestConfluenceRemoteMacro extends ConfluenceWebDriverTestBase
         assertEquals(pageData.getId(), page.getText(CTX_PAGE_ID));
         assertEquals("page", page.getText(CTX_PAGE_TYPE));
         assertEquals(pageData.getTitle(), page.getText(CTX_PAGE_TITLE));
+        assertEquals(SPACE_KEY, page.getText(CTX_SPACE_KEY));
         // the macro is being viewed by an anonymous user
         assertNull(page.getText(CTX_USER_ID));
         assertNull(page.getText(CTX_USER_KEY));
@@ -193,6 +200,7 @@ public final class TestConfluenceRemoteMacro extends ConfluenceWebDriverTestBase
         assertEquals("display", page.getText(CTX_OUTPUT_TYPE));
         assertEquals(pageData.getId(), page.getText(CTX_PAGE_ID));
         assertEquals("page", page.getText(CTX_PAGE_TYPE));
+        assertEquals(SPACE_KEY, page.getText(CTX_SPACE_KEY));
         assertEquals(pageData.getTitle(), page.getText(CTX_PAGE_TITLE));
         // the macro is being viewed by an anonymous user
         assertNull(page.getText(CTX_USER_ID));
@@ -214,6 +222,7 @@ public final class TestConfluenceRemoteMacro extends ConfluenceWebDriverTestBase
         assertEquals(commentData.getId(), page.getText(CTX_PAGE_ID));
         assertEquals("comment", page.getText(CTX_PAGE_TYPE));
         assertNull(page.getText(CTX_PAGE_TITLE));
+        assertEquals(SPACE_KEY, page.getText(CTX_SPACE_KEY));
         // the macro is being viewed by an anonymous user
         assertNull(page.getText(CTX_USER_ID));
         assertNull(page.getText(CTX_USER_KEY));
@@ -280,7 +289,7 @@ public final class TestConfluenceRemoteMacro extends ConfluenceWebDriverTestBase
 
     private static ConfluenceOps.ConfluencePageData createPage(Option<ConfluenceUser> user, String content) throws XmlRpcFault, IOException
     {
-        return confluenceOps.setPage(user, "ds", "test", content);
+        return confluenceOps.setPage(user, SPACE_KEY, "test", content);
     }
 
     private static void clearCaches() throws Exception

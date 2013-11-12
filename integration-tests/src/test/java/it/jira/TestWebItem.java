@@ -50,7 +50,7 @@ public class TestWebItem extends JiraWebDriverTestBase
     {
         if (remotePlugin != null)
         {
-            remotePlugin.stop();
+            remotePlugin.stopAndUninstall();
         }
     }
 
@@ -66,7 +66,7 @@ public class TestWebItem extends JiraWebDriverTestBase
 
         webItem.click();
 
-        assertFalse("Web item link shouldn't be absolute", webItem.isPonitingToOldXmlInternalUrl());
+        assertFalse("Web item link shouldn't be absolute", webItem.isPointingToOldXmlInternalUrl());
         assertEquals(project.getKey(), webItem.getFromQueryString("project_key"));
         assertEquals(project.getId(), webItem.getFromQueryString("pid"));
     }
@@ -82,7 +82,7 @@ public class TestWebItem extends JiraWebDriverTestBase
 
         webItem.click();
 
-        assertTrue("Web item link should be absolute", webItem.isPonitingToOldXmlInternalUrl());
+        assertTrue("Web item link should be absolute", webItem.isPointingToOldXmlInternalUrl());
         assertThat(webItem.getPath(), endsWith(project.getKey()));
     }
 

@@ -37,12 +37,6 @@
         <url-pattern>*</url-pattern>
     </servlet-filter>
 
-    <servlet key="remotablePlugins2LORedirectingServlet"
-             name="Remotable Plugins 2-Legged OAuth Signing and Redirecting Servlet"
-             class="com.atlassian.plugin.connect.plugin.module.util.redirect.RedirectServlet">
-        <description>Redirects to Remotable Plugins, using 2-legged OAuth to sign the outgoing request.  Request parameters are included in the redirect.</description>
-        <url-pattern>/redirect/oauth</url-pattern>
-    </servlet>
     <servlet key="remotablePluginsPermanentRedirectingServlet"
              name="Remotable Plugins Permanent Redirecting Servlet"
              class="com.atlassian.plugin.connect.plugin.module.util.redirect.RedirectServlet">
@@ -152,79 +146,6 @@
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:iframe-host-js</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-amd</dependency>
     </web-resource>
-
-    <component key="pluginUriResolver"
-               interface="com.atlassian.webhooks.spi.plugin.PluginUriResolver" public="true"
-               class="com.atlassian.plugin.connect.plugin.module.webhook.RemotablePluginsPluginUriResolver" />
-
-    <component key="httpContentRetriever" class="com.atlassian.plugin.connect.plugin.util.http.CachingHttpContentRetriever"
-               public="true" interface="com.atlassian.plugin.connect.plugin.util.http.HttpContentRetriever" />
-
-    <component key="startableForPlugins" class="com.atlassian.plugin.connect.plugin.integration.plugins.StartableForPlugins" public="true"
-               interface="com.atlassian.sal.api.lifecycle.LifecycleAware" />
-
-    <component key="productEventPublisher" class="com.atlassian.plugin.connect.plugin.event.ProductEventPublisher"
-               public="true" interface="com.atlassian.sal.api.lifecycle.LifecycleAware" />
-
-    <component key="connectIdentifier" class="com.atlassian.plugin.connect.plugin.service.DefaultConnectAddOnIdentifierService"
-               interface="com.atlassian.plugin.connect.spi.ConnectAddOnIdentifierService" public="true" />
-
-    <component key="upmInstallHandler" class="com.atlassian.plugin.connect.plugin.installer.ConnectUPMInstallHandler"
-               interface="com.atlassian.upm.spi.PluginInstallHandler" public="true" />
-
-    <component key="remotePluginRequestSigner" class="com.atlassian.plugin.connect.plugin.webhooks.RemotePluginRequestSigner"
-               interface="com.atlassian.webhooks.spi.plugin.RequestSigner" public="true" />
-
-    <component key="serverWebHookProvider"
-               interface="com.atlassian.webhooks.spi.provider.WebHookProvider" public="true"
-               class="com.atlassian.plugin.connect.plugin.webhooks.ServerWebHookProvider" />
-
-    <component key="pluginsWebHookProvider"
-                   interface="com.atlassian.webhooks.spi.provider.WebHookProvider" public="true"
-                   class="com.atlassian.plugin.connect.plugin.webhooks.PluginsWebHookProvider" />
-
-    <component key="bundleLocator" class="com.atlassian.plugin.connect.plugin.util.BundleContextBundleLoader" />
-    
-    <component key="permissionsReader" class="com.atlassian.plugin.connect.plugin.descriptor.DescriptorPermissionsReader"
-               interface="com.atlassian.plugin.connect.spi.permission.PermissionsReader" public="true"/>
-
-    <component key="bigPipeManager" class="com.atlassian.plugin.connect.spi.http.bigpipe.DefaultBigPipeManager"
-               interface="com.atlassian.plugin.connect.api.service.http.bigpipe.BigPipeManager" />
-
-    <component-import key="templateRenderer" interface="com.atlassian.templaterenderer.TemplateRenderer"/>
-    <component-import key="servletModuleManager" interface="com.atlassian.plugin.servlet.ServletModuleManager" />
-    <component-import key="webInterfaceManager" interface="com.atlassian.plugin.web.WebInterfaceManager" />
-    <component-import key="pluginRetrievalService" interface="com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService" />
-    <component-import key="oauthConsumerService" interface="com.atlassian.oauth.consumer.ConsumerService" />
-    <component-import key="requestFactory" interface="com.atlassian.sal.api.net.RequestFactory" />
-    <component-import key="pluginController" interface="com.atlassian.plugin.PluginController" />
-    <component-import key="applicationProperties" interface="com.atlassian.sal.api.ApplicationProperties" />
-    <component-import key="serviceProviderConsumerStore" interface="com.atlassian.oauth.serviceprovider.ServiceProviderConsumerStore" />
-    <component-import key="applicationLinkService" interface="com.atlassian.applinks.spi.link.MutatingApplicationLinkService" />
-    <component-import key="authenticationConfigurationManager" interface="com.atlassian.applinks.spi.auth.AuthenticationConfigurationManager" />
-    <component-import key="userManager" interface="com.atlassian.sal.api.user.UserManager" />
-    <component-import key="authenticationListener" interface="com.atlassian.sal.api.auth.AuthenticationListener" />
-    <component-import key="authenticationController" interface="com.atlassian.sal.api.auth.AuthenticationController" />
-    <component-import key="transactionTemplate" interface="com.atlassian.sal.api.transaction.TransactionTemplate" />
-    <component-import key="pluginEventManager" interface="com.atlassian.plugin.event.PluginEventManager" />
-    <component-import key="pluginAccessor" interface="com.atlassian.plugin.PluginAccessor" />
-    <component-import key="webResourceManager" interface="com.atlassian.plugin.webresource.WebResourceManager" />
-    <component-import key="eventPublisher" interface="com.atlassian.event.api.EventPublisher" />
-    <component-import key="i18nResolver" interface="com.atlassian.sal.api.message.I18nResolver" />
-    <component-import key="localeResolver" interface="com.atlassian.sal.api.message.LocaleResolver" />
-    <component-import key="pluginSettingsFactory" interface="com.atlassian.sal.api.pluginsettings.PluginSettingsFactory" />
-    <component-import key="typeAccessor" interface="com.atlassian.applinks.spi.util.TypeAccessor" />
-    <component-import key="webResourceUrlProvider" interface="com.atlassian.plugin.webresource.WebResourceUrlProvider" />
-    <component-import key="moduleFactory" interface="com.atlassian.plugin.module.ModuleFactory" />
-    <component-import key="httpClientFactory" interface="com.atlassian.httpclient.api.factory.HttpClientFactory" />
-    <component-import key="httpClient" interface="com.atlassian.httpclient.api.HttpClient" />
-    <component-import key="moduleDescriptorWebHookRegistry"
-                      interface="com.atlassian.webhooks.spi.provider.ModuleDescriptorWebHookListenerRegistry" />
-    <component-import key="remotePluginLicenseService" interface="com.atlassian.upm.api.license.RemotePluginLicenseService" />
-    <component-import key="jwt-service" interface="com.atlassian.jwt.applinks.JwtService" />
-
-    <component key="userIsSysAdminCondition" class="com.atlassian.plugin.connect.spi.module.UserIsSysAdminCondition" />
-    <component key="userIsAdminCondition" class="com.atlassian.plugin.connect.spi.module.UserIsAdminCondition" />
 
     <applinks-application-type name="Remote Plugin Container" key="remote-plugin-container-type"
                                    class="com.atlassian.plugin.connect.plugin.module.applinks.RemotePluginContainerApplicationTypeImpl"

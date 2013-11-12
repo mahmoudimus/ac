@@ -51,7 +51,7 @@ public class TestRemotePluginInstallation extends AbstractRemotablePluginTest
         assertTrue(product.getPageBinder().bind(GeneralPage.class, "changedPage", "Changed Page")
                           .clickRemotePluginLink()
                           .isLoaded());
-        pluginFirst.stop();
+        pluginFirst.stopAndUninstall();
 
         AtlassianConnectAddOnRunner pluginSecond = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl(), "pluginSecond")
                 .add(GeneralPageModule.key("changedPage")
@@ -63,7 +63,7 @@ public class TestRemotePluginInstallation extends AbstractRemotablePluginTest
         assertTrue(product.getPageBinder().bind(GeneralPage.class, "changedPage", "Changed Page")
                           .clickRemotePluginLink()
                           .isLoaded());
-        pluginSecond.stop();
+        pluginSecond.stopAndUninstall();
     }
 
     //TODO: JD fix this, need better trapping of errors during install

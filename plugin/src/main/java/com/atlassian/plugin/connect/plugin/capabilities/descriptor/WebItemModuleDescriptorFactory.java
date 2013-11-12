@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean;
-import com.atlassian.plugin.connect.spi.module.DynamicMarkerCondition;
+import com.atlassian.plugin.connect.plugin.module.webitem.ProductSpecificWebItemModuleDescriptorFactory;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 
 import com.google.common.base.Joiner;
@@ -18,27 +18,26 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.util.ConditionUtils.containsRemoteCondition;
-import static com.atlassian.plugin.connect.plugin.capabilities.util.ModuleKeyGenerator.nameToKey;
-import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.*;
+import java.util.List;
+
+import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.printNode;
 import static com.google.common.collect.Lists.newArrayList;
-import static org.apache.commons.lang.StringEscapeUtils.escapeHtml;
+
 
 @Component
 public class WebItemModuleDescriptorFactory implements ConnectModuleDescriptorFactory<WebItemCapabilityBean,WebItemModuleDescriptor>
 {
     private static final Logger log = LoggerFactory.getLogger(WebItemModuleDescriptorFactory.class);
     
-    //TODO: rename this class to RemoteWebItemModuleDescriptorFactory
-    private final com.atlassian.plugin.connect.plugin.module.webitem.WebItemModuleDescriptorFactory remoteWebItemDescriptorFactory;
+    private final ProductSpecificWebItemModuleDescriptorFactory productWebItemDescriptorFactory;
     
     private final IconModuleFragmentFactory iconModuleFragmentFactory;
     private final ConditionModuleFragmentFactory conditionModuleFragmentFactory;
 
     @Autowired
-    public WebItemModuleDescriptorFactory(com.atlassian.plugin.connect.plugin.module.webitem.WebItemModuleDescriptorFactory remoteWebItemDescriptorFactory, IconModuleFragmentFactory iconModuleFragmentFactory, ConditionModuleFragmentFactory conditionModuleFragmentFactory)
+    public WebItemModuleDescriptorFactory(ProductSpecificWebItemModuleDescriptorFactory productWebItemDescriptorFactory, IconModuleFragmentFactory iconModuleFragmentFactory, ConditionModuleFragmentFactory conditionModuleFragmentFactory)
     {
-        this.remoteWebItemDescriptorFactory = remoteWebItemDescriptorFactory;
+        this.productWebItemDescriptorFactory = productWebItemDescriptorFactory;
         this.iconModuleFragmentFactory = iconModuleFragmentFactory;
         this.conditionModuleFragmentFactory = conditionModuleFragmentFactory;
     }
@@ -55,8 +54,8 @@ public class WebItemModuleDescriptorFactory implements ConnectModuleDescriptorFa
         webItemElement.addAttribute("weight", Integer.toString(bean.getWeight()));
 
         webItemElement.addElement("label")
-                      .addAttribute("key", escapeHtml(bean.getName().getI18n()))
-                      .setText(escapeHtml(bean.getName().getValue()));
+                      .addAttribute("key", bean.getName().getI18n())
+                      .setText(bean.getName().getValue());
 
         Element linkElement = webItemElement.addElement("link").addAttribute("linkId", webItemKey);
         linkElement.setText(bean.getLink());
@@ -90,7 +89,7 @@ public class WebItemModuleDescriptorFactory implements ConnectModuleDescriptorFa
     {
         webItemElement.addAttribute("system", "true");
         
-        final WebItemModuleDescriptor descriptor = remoteWebItemDescriptorFactory.createWebItemModuleDescriptor(url, key, absolute);
+        final WebItemModuleDescriptor descriptor = productWebItemDescriptorFactory.createWebItemModuleDescriptor(url, key, absolute);
         
         descriptor.init(plugin, webItemElement);
         

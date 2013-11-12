@@ -41,15 +41,15 @@ public class TestProjectTabPage extends JiraWebDriverTestBase
         remotePlugin = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl())
                 .addOAuth()
                 .add(ProjectTabPageModule.key("jira-remotePluginProjectTab")
-                                         .name("AC Play Project Tab")
-                                         .path("/ptp")
-                                         .resource(ConnectAppServlets.apRequestServlet()))
-                .add(ProjectConfigTabModule.key("jira-remotePluginProjectConfigTab")
-                                           .name("Remotable Project Config")
-                                           .path("/pct")
-                                           .weight("10")
-                                           .location("projectgroup3")
-                                           .resource(ConnectAppServlets.apRequestServlet()))
+                         .name("AC Play Project Tab")
+                         .path("/ptp")
+                         .resource(ConnectAppServlets.apRequestServlet()))
+                .add(ProjectConfigTabModule.key(JiraProjectAdministrationTab.MODULE_KEY)
+                         .name("Remotable Project Config")
+                         .path("/pct")
+                         .weight("10")
+                         .location("projectgroup3")
+                         .resource(ConnectAppServlets.apRequestServlet()))
                 .start();
     }
 
@@ -58,7 +58,7 @@ public class TestProjectTabPage extends JiraWebDriverTestBase
     {
         if (remotePlugin != null)
         {
-            remotePlugin.stop();
+            remotePlugin.stopAndUninstall();
         }
     }
 
@@ -87,7 +87,7 @@ public class TestProjectTabPage extends JiraWebDriverTestBase
 
         final JiraProjectAdministrationTab remoteProjectAdministrationTab =
                 page.getTabs().gotoTab(
-                        "jira-remotePluginProjectConfigTab",
+                        JiraProjectAdministrationTab.MODULE_KEY,
                         JiraProjectAdministrationTab.class,
                         project.getKey());
 

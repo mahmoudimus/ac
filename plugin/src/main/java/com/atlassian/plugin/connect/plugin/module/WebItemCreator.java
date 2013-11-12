@@ -1,14 +1,14 @@
 package com.atlassian.plugin.connect.plugin.module;
 
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.module.webitem.WebItemModuleDescriptorFactory;
+import com.atlassian.plugin.connect.plugin.module.webitem.ProductSpecificWebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.spi.module.DynamicMarkerCondition;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.web.conditions.AlwaysDisplayCondition;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.atlassian.uri.Uri;
 import com.atlassian.uri.UriBuilder;
-import com.google.common.collect.ImmutableMap;
+
 import org.apache.commons.lang.StringUtils;
 import org.dom4j.Element;
 import org.slf4j.Logger;
@@ -19,7 +19,6 @@ import org.springframework.stereotype.Component;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import static com.atlassian.plugin.connect.plugin.module.util.redirect.RedirectServlet.getPermanentRedirectUrl;
 import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.getOptionalAttribute;
@@ -38,12 +37,12 @@ import static org.apache.commons.lang.Validate.notNull;
 public final class WebItemCreator
 {
     private final ConditionProcessor conditionProcessor;
-    private final WebItemModuleDescriptorFactory webItemModuleDescriptorFactory;
+    private final ProductSpecificWebItemModuleDescriptorFactory webItemModuleDescriptorFactory;
 
     private static final Logger log = LoggerFactory.getLogger(WebItemCreator.class);
 
     @Autowired
-    public WebItemCreator(ConditionProcessor conditionProcessor, WebItemModuleDescriptorFactory webItemModuleDescriptorFactory)
+    public WebItemCreator(ConditionProcessor conditionProcessor, ProductSpecificWebItemModuleDescriptorFactory webItemModuleDescriptorFactory)
     {
         this.conditionProcessor = conditionProcessor;
         this.webItemModuleDescriptorFactory = webItemModuleDescriptorFactory;

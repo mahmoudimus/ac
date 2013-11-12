@@ -1,7 +1,5 @@
 package com.atlassian.plugin.connect.plugin.module.jira.searchrequestview;
 
-import java.net.URI;
-
 import com.atlassian.jira.issue.views.util.SearchRequestViewBodyWriterUtil;
 import com.atlassian.jira.plugin.searchrequestview.SearchRequestURLHandler;
 import com.atlassian.jira.plugin.searchrequestview.SearchRequestView;
@@ -12,15 +10,17 @@ import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
-import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
-import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.connect.plugin.integration.plugins.DescriptorToRegister;
 import com.atlassian.plugin.connect.plugin.integration.plugins.DynamicDescriptorRegistration;
+import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
+import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
+import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.atlassian.util.concurrent.NotNull;
-
 import org.dom4j.Element;
+
+import java.net.URI;
 
 import static com.atlassian.jira.ComponentManager.getComponent;
 import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.getOptionalAttribute;
@@ -37,6 +37,7 @@ public final class RemoteSearchRequestViewModuleDescriptor extends AbstractModul
     private final SearchRequestViewBodyWriterUtil searchRequestViewBodyWriterUtil;
     private final TemplateRenderer templateRenderer;
     private final ConditionDescriptorFactory conditionDescriptorFactory;
+    private final RemotablePluginAccessorFactory remotablePluginAccessorFactory;
     private Element descriptor;
     private URI url;
     private DynamicDescriptorRegistration.Registration registration;
@@ -46,9 +47,11 @@ public final class RemoteSearchRequestViewModuleDescriptor extends AbstractModul
             DynamicDescriptorRegistration dynamicDescriptorRegistration,
             ApplicationProperties applicationProperties,
             SearchRequestViewBodyWriterUtil searchRequestViewBodyWriterUtil,
-            TemplateRenderer templateRenderer, ConditionDescriptorFactory conditionDescriptorFactory)
+            TemplateRenderer templateRenderer, ConditionDescriptorFactory conditionDescriptorFactory,
+            RemotablePluginAccessorFactory remotablePluginAccessorFactory)
     {
         super(moduleFactory);
+        this.remotablePluginAccessorFactory = remotablePluginAccessorFactory;
         this.dynamicDescriptorRegistration = checkNotNull(dynamicDescriptorRegistration);
         this.applicationProperties = checkNotNull(applicationProperties);
         this.searchRequestViewBodyWriterUtil = checkNotNull(searchRequestViewBodyWriterUtil);
@@ -114,7 +117,8 @@ public final class RemoteSearchRequestViewModuleDescriptor extends AbstractModul
                         templateRenderer,
                         getPluginKey(),
                         url,
-                        title);
+                        title,
+                        remotablePluginAccessorFactory.get(getPluginKey()));
                 }
             };
 
