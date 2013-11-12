@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>fixture</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <script src="/base/src/main/resources/js/iframe/_amd.js"></script>
     <script src="/base/src/main/resources/js/iframe/plugin/_util.js"></script>
     <script src="/base/src/main/resources/js/iframe/plugin/_dollar.js"></script>
@@ -16,16 +17,16 @@
     <script src="/base/src/main/resources/js/iframe/plugin/jira.js"></script>
     <script src="/base/src/main/resources/js/iframe/plugin/confluence.js"></script>
     <script src="/base/src/main/resources/js/iframe/plugin/_init.js"></script>
-    <script>
-        AP.require("events", function (events) {
-            AP.resize(50, 60);
-            //set timeout is needed as resize takes 50ms to be executed...
-            setTimeout(function(){
-                events.emit("resized");
-            }, 60);
-        });
-    </script>
+
 </head>
 <body>
+    <script>
+        AP.require("events", function (events) {
+            setTimeout(function(){
+                AP.resize(50, 60);
+                events.emit("resized");
+            }, 80);
+        });
+    </script>
 </body>
 </html>
