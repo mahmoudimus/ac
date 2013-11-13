@@ -101,7 +101,7 @@
             <artifactId>licensing-api</artifactId>
             <scope>provided</scope>
         </dependency>
-        
+
         <!-- the upm is here just for debugging -->
         <dependency>
             <groupId>com.atlassian.upm</groupId>
@@ -128,7 +128,7 @@
             <artifactId>atlassian-universal-plugin-manager-plugin</artifactId>
             <scope>provided</scope>
         </dependency>
-        
+
         <dependency>
             <groupId>com.atlassian.oauth</groupId>
             <artifactId>atlassian-oauth-api</artifactId>
@@ -296,7 +296,7 @@
         </dependency>
 
     </dependencies>
-    
+
     <build>
         <plugins>
             <plugin>
@@ -430,7 +430,7 @@
                                     <version>${atlassian.jira.testkit.version}</version>
                                 </pluginArtifact>
                             </pluginArtifacts>
-                            
+
                             <bundledArtifacts>
                                 <!-- TODO: remove this once UPM 2.13 is bundled with products -->
                                 <bundledArtifact>
@@ -439,18 +439,18 @@
                                     <version>${atlassian.upm.version}</version>
                                 </bundledArtifact>
                             </bundledArtifacts>
-                            
+
                             <libArtifacts>
                                 <!-- TODO remove this once 3.0.5 is in all products -->
                                 <!--<libArtifact>-->
-                                    <!--<groupId>com.atlassian.plugins</groupId>-->
-                                    <!--<artifactId>atlassian-plugins-core</artifactId>-->
-                                    <!--<version>${atlassian.plugins.version}</version>-->
+                                <!--<groupId>com.atlassian.plugins</groupId>-->
+                                <!--<artifactId>atlassian-plugins-core</artifactId>-->
+                                <!--<version>${atlassian.plugins.version}</version>-->
                                 <!--</libArtifact>-->
                                 <!--<libArtifact>-->
-                                    <!--<groupId>com.atlassian.util.concurrent</groupId>-->
-                                    <!--<artifactId>atlassian-util-concurrent</artifactId>-->
-                                    <!--<version>${atlassian-util-concurrent.version}</version>-->
+                                <!--<groupId>com.atlassian.util.concurrent</groupId>-->
+                                <!--<artifactId>atlassian-util-concurrent</artifactId>-->
+                                <!--<version>${atlassian-util-concurrent.version}</version>-->
                                 <!--</libArtifact>-->
                             </libArtifacts>
                         </product>
@@ -499,14 +499,14 @@
                                     <version>${atlassian.upm.version}</version>
                                 </bundledArtifact>
                             </bundledArtifacts>
-                            
-                            
+
+
                             <libArtifacts>
                                 <!-- TODO remove this once 3.0.5 is in all products -->
                                 <!--<libArtifact>-->
-                                    <!--<groupId>com.atlassian.plugins</groupId>-->
-                                    <!--<artifactId>atlassian-plugins-core</artifactId>-->
-                                    <!--<version>${atlassian.plugins.version}</version>-->
+                                <!--<groupId>com.atlassian.plugins</groupId>-->
+                                <!--<artifactId>atlassian-plugins-core</artifactId>-->
+                                <!--<version>${atlassian.plugins.version}</version>-->
                                 <!--</libArtifact>-->
                             </libArtifacts>
                         </product>
@@ -652,7 +652,9 @@
                 </executions>
                 <configuration>
                     <commands>
-                        <pi>com.atlassian.maven.plugins:maven-amps-plugin:copy-bundled-dependencies com.atlassian.maven.plugins:maven-amps-plugin:compress-resources org.apache.maven.plugins:maven-resources-plugin:resources com.atlassian.maven.plugins:maven-amps-plugin:filter-plugin-descriptor org.codehaus.mojo:xml-maven-plugin:transform compile com.atlassian.maven.plugins:maven-amps-plugin:generate-manifest com.atlassian.maven.plugins:maven-amps-plugin:validate-manifest com.atlassian.maven.plugins:maven-amps-plugin:jar org.apache.maven.plugins:maven-install-plugin:install com.atlassian.maven.plugins:maven-amps-plugin:install</pi>
+                        <pi>com.atlassian.maven.plugins:maven-amps-plugin:copy-bundled-dependencies com.atlassian.maven.plugins:maven-amps-plugin:compress-resources org.apache.maven.plugins:maven-resources-plugin:resources com.atlassian.maven.plugins:maven-amps-plugin:filter-plugin-descriptor org.codehaus.mojo:xml-maven-plugin:transform compile
+                            com.atlassian.maven.plugins:maven-amps-plugin:generate-manifest com.atlassian.maven.plugins:maven-amps-plugin:validate-manifest com.atlassian.maven.plugins:maven-amps-plugin:jar org.apache.maven.plugins:maven-install-plugin:install com.atlassian.maven.plugins:maven-amps-plugin:install
+                        </pi>
                     </commands>
                 </configuration>
             </plugin>
@@ -679,6 +681,33 @@
                                     <filtering>true</filtering>
                                 </resource>
                             </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.9.1</version>
+                <executions>
+                    <execution>
+                        <id>jsaon-schema</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>javadoc</goal>
+                        </goals>
+                        <configuration>
+                            <doclet>com.atlassian.json.schema.JsonSchemaDoclet</doclet>
+                            <docletArtifact>
+                                <groupId>${project.groupId}</groupId>
+                                <artifactId>json-schema-generator</artifactId>
+                                <version>${project.version}</version>
+                            </docletArtifact>
+                            <sourceFileIncludes>
+                                <sourceFileInclude>**\/ConnectAddonBean.java</sourceFileInclude>
+                            </sourceFileIncludes>
+                            <useStandardDocletOptions>false</useStandardDocletOptions>
                         </configuration>
                     </execution>
                 </executions>
@@ -778,7 +807,7 @@
             </build>
         </profile>
     </profiles>
-    
+
     <properties>
         <product>jira</product>
     </properties>
