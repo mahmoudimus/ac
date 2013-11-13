@@ -40,7 +40,6 @@ public class TestGeneralPage extends JiraWebDriverTestBase
                         "generalPages",
                         newPageBean()
                                 .withName(new I18nProperty("My Awesome Page", null))
-                                .withLocation("system.top.navigation.bar")
                                 .withUrl("/pg?project_id=${project.id}&project_key=${project.key}")
                                 .withWeight(1234)
                                 .build())
