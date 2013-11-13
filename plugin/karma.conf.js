@@ -14,6 +14,7 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
+      {pattern: 'node_modules/sinon/lib/sinon/util/timers_ie.js', included: true},
       'src/test/resources/test-main.js',
       {pattern: 'src/test/resources/**/*-test.js', included: false},
       {pattern: 'src/test/resources/fixtures/**', included: false},
