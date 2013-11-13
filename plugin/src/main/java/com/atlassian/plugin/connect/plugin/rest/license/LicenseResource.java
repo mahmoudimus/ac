@@ -1,19 +1,20 @@
 package com.atlassian.plugin.connect.plugin.rest.license;
 
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
+import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
+import com.atlassian.plugin.connect.plugin.module.permission.RequestAddOnKeyLabeler;
+import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
+import com.atlassian.upm.api.license.entity.PluginLicense;
+import com.atlassian.upm.api.util.Option;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
-import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
-import com.atlassian.plugin.connect.plugin.module.permission.LegacyApiScopingFilter;
-import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
-import com.atlassian.upm.api.license.entity.PluginLicense;
-import com.atlassian.upm.api.util.Option;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * fixme: mostly copied from UPM master at 75cee855ebd6475a3e7d9b619694e613c8906f09
@@ -24,10 +25,12 @@ import com.atlassian.upm.api.util.Option;
 public class LicenseResource
 {
     private final LicenseRetriever licenseRetriever;
+    private final RequestAddOnKeyLabeler requestAddOnKeyLabeler;
 
-    public LicenseResource(final LicenseRetriever licenseRetriever)
+    public LicenseResource(final LicenseRetriever licenseRetriever, RequestAddOnKeyLabeler requestAddOnKeyLabeler)
     {
         this.licenseRetriever = licenseRetriever;
+        this.requestAddOnKeyLabeler = checkNotNull(requestAddOnKeyLabeler);
     }
 
     @GET
@@ -35,7 +38,7 @@ public class LicenseResource
     @Produces("application/json")
     public Response getLicense(@Context javax.servlet.http.HttpServletRequest request)
     {
-        String pluginKey = LegacyApiScopingFilter.extractClientKey(request);
+        String pluginKey = requestAddOnKeyLabeler.getAddOnKey(request);
         if (pluginKey == null) {
             return Response.status(Response.Status.BAD_REQUEST)
                            .entity("Requests to this resource must be authenticated with OAuth headers from an " +

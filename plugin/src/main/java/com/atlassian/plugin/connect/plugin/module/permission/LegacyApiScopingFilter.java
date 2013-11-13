@@ -25,7 +25,7 @@ import static com.atlassian.plugin.connect.plugin.util.DevModeUtil.DEV_MODE_ENAB
  * @deprecated Uses legacy scopes implementation. Superseded by {@link ApiScopingFilter}.
  */
 @Deprecated
-public class LegacyApiScopingFilter implements Filter
+public class LegacyApiScopingFilter implements Filter, RequestAddOnKeyLabeler
 {
     /**
      * Set by {@link OAuth2LOAuthenticator}, indicating the Connect add-on that is the origin of the current request.
@@ -66,7 +66,7 @@ public class LegacyApiScopingFilter implements Filter
         HttpServletResponse res = (HttpServletResponse) response;
 
         // apply scopes if this is an authenticated request from a Connect app
-        String clientKey = extractClientKey(req);
+        String clientKey = getAddOnKey(req);
         if (clientKey != null && !ourConsumerKey.equals(clientKey))
         {
             handleScopedRequest(clientKey, req, res, chain);
@@ -158,27 +158,6 @@ public class LegacyApiScopingFilter implements Filter
 
     /**
      * @param req the context {@link javax.servlet.http.HttpServletRequest}
-     * @return the OAuth client key for the remote app, or {@code null} if 2LO authentication failed or was not
-     *         attempted
-     */
-    @Nullable
-    public static String extractClientKey(HttpServletRequest req)
-    {
-        return (String) req.getAttribute(PLUGIN_KEY);
-    }
-
-    /**
-     * Set the OAuth client key for the remote app for later retrieval by {@link #extractClientKey(javax.servlet.http.HttpServletRequest)}.
-     * @param req the context {@link javax.servlet.http.HttpServletRequest}
-     * @param clientKey the OAuth client key for the remote app
-     */
-    public static void setClientKey(@Nonnull HttpServletRequest req, @Nonnull String clientKey)
-    {
-        req.setAttribute(PLUGIN_KEY, clientKey);
-    }
-
-    /**
-     * @param req the context {@link javax.servlet.http.HttpServletRequest}
      * @return a {@link #AP_REQUEST_HEADER header} set by the XDM host library, indicating the current request is a host-mediated XHR sent on
      *         behalf of an add-on running in a sandboxed iframe; see AP.request(...) in the host-side AP js
      */
@@ -192,5 +171,17 @@ public class LegacyApiScopingFilter implements Filter
     public void destroy()
     {
 
+    }
+
+    @Override
+    public String getAddOnKey(@Nonnull HttpServletRequest request)
+    {
+        return (String) request.getAttribute(PLUGIN_KEY);
+    }
+
+    @Override
+    public void setAddOnKey(@Nonnull HttpServletRequest request, @Nonnull String addOnKey)
+    {
+        request.setAttribute(PLUGIN_KEY, addOnKey);
     }
 }
