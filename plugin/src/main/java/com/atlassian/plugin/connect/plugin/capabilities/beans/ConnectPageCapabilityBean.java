@@ -3,8 +3,6 @@ package com.atlassian.plugin.connect.plugin.capabilities.beans;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConnectPageCapabilityBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 /**
  * Page modules are UI extension points that add-ons can use to insert content into various areas of the host
  * application's interface. You implement a page module (along with the other type of module you can use with
@@ -50,24 +48,11 @@ public class ConnectPageCapabilityBean extends BeanWithKeyAndParamsAndConditions
     private IconBean icon;
 //    private String application; TODO: Figure out what to do with application. Only reference to it I see is in DescriptorPermissionsReader. Not sure how that ties in
 
-    public ConnectPageCapabilityBean() {
-        this("", 100);
-    }
-
-    public ConnectPageCapabilityBean(String url, Integer weight)
-    {
-        this.url = checkNotNull(url);
-        this.weight = checkNotNull(weight);
-    }
-
     public ConnectPageCapabilityBean(ConnectPageCapabilityBeanBuilder builder)
     {
         super(builder);
-        
-        if (null == weight)
-        {
-            this.weight = 100;
-        }
+
+        // Note: weight is not defaulted here. Defaulting is done later by delegating to the product accessor
         if (null == url)
         {
             this.url = "";
@@ -105,7 +90,7 @@ public class ConnectPageCapabilityBean extends BeanWithKeyAndParamsAndConditions
      * items, such as by 10 or 100. Be mindful of the weight you choose for your item, so that it appears
      * in a sensible order given existing items.
      */
-    public int getWeight()
+    public Integer getWeight()
     {
         return weight;
     }

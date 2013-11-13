@@ -6,18 +6,25 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nPropert
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IFrameServletBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AddonUrlTemplatePair;
 import com.atlassian.plugin.connect.plugin.module.page.PageInfo;
+import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.web.conditions.AlwaysDisplayCondition;
 import com.google.common.collect.ImmutableMap;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Map;
 
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectPageCapabilityBean.newPageBean;
 import static org.hamcrest.Matchers.hasProperty;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ConnectPageCapabilityBeanAdapterTest
@@ -34,9 +41,23 @@ public class ConnectPageCapabilityBeanAdapterTest
 
     private static final Condition CONDITION = new AlwaysDisplayCondition();
     private static final Map<String, String> META_TAGS = ImmutableMap.of("foo", "bar");
-    private static final ConnectPageCapabilityBean defaultPageBean = createDefaultPageBean();
-    private static final ConnectPageCapabilityBeanAdapter defaultAdapter = createAdapter(defaultPageBean);
+    private static final String DEFAULT_LOCATION = "defaultLocation";
+    private static final int DEFAULT_WEIGHT = 123;
 
+    private final ConnectPageCapabilityBean defaultPageBean = createDefaultPageBean();
+    private final ConnectPageCapabilityBeanAdapter defaultAdapter = createAdapter(defaultPageBean);
+    private ConnectPageCapabilityBeanAdapter emptyBeanAdapter;
+
+    @Mock
+    private ProductAccessor productAccessor;
+
+    @Before
+    public void init()
+    {
+        when(productAccessor.getPreferredGeneralSectionKey()).thenReturn(DEFAULT_LOCATION);
+        when(productAccessor.getPreferredGeneralWeight()).thenReturn(DEFAULT_WEIGHT);
+        emptyBeanAdapter = createAdapter(newPageBean().build());
+    }
 
     @Test
     public void createsWebItemWithSameKeyAsPageBean()
@@ -67,6 +88,31 @@ public class ConnectPageCapabilityBeanAdapterTest
     {
         assertThat(webItem(), hasProperty("link", is("/plugins/servlet/ac/" + PLUGIN_KEY + "/" + URL)));
     }
+
+    @Test
+    public void fetchesDefaultLocationFromProductAccessorWhenNotSpecified()
+    {
+        verify(productAccessor).getPreferredGeneralSectionKey();
+    }
+
+    @Test
+    public void createsWebItemWithDefaultLocationWhenNotSpecified()
+    {
+        assertThat(emptyBeanAdapter.getWebItemBean().getLocation(), is(DEFAULT_LOCATION));
+    }
+
+    @Test
+    public void fetchesDefaultWeightFromProductAccessorWhenNotSpecified()
+    {
+        verify(productAccessor).getPreferredGeneralWeight();
+    }
+
+    @Test
+    public void createsWebItemWithDefaultWeightWhenNotSpecified()
+    {
+        assertThat(emptyBeanAdapter.getWebItemBean().getWeight(), is(DEFAULT_WEIGHT));
+    }
+
 
     @Test
     public void createsServletBeanWithSameKeyAsPageBean()
@@ -110,6 +156,11 @@ public class ConnectPageCapabilityBeanAdapterTest
         assertThat(pageInfo(), hasProperty("metaTagsContent", is(META_TAGS)));
     }
 
+    @Test
+    public void createsServletBeanWithDefaultedConditionWhenNotPresent()
+    {
+        assertThat(emptyBeanAdapter.getServletBean().getPageInfo().getCondition(), is(instanceOf(AlwaysDisplayCondition.class)));
+    }
 
     private PageInfo pageInfo()
     {
@@ -132,14 +183,15 @@ public class ConnectPageCapabilityBeanAdapterTest
         return defaultAdapter.getServletBean();
     }
 
-    private static ConnectPageCapabilityBeanAdapter createAdapter(ConnectPageCapabilityBean pageBean)
+    private ConnectPageCapabilityBeanAdapter createAdapter(ConnectPageCapabilityBean pageBean)
     {
-        return new ConnectPageCapabilityBeanAdapter(pageBean, PLUGIN_KEY, DECORATOR, TEMPLATE_SUFFIX, META_TAGS, CONDITION);
+        return new ConnectPageCapabilityBeanAdapter(pageBean, PLUGIN_KEY, productAccessor,
+                DECORATOR, TEMPLATE_SUFFIX, META_TAGS, CONDITION);
     }
 
     private static ConnectPageCapabilityBean createDefaultPageBean()
     {
-        return ConnectPageCapabilityBean.newPageBean()
+        return newPageBean()
                 .withKey(PAGE_BEAN_KEY)
                 .withLocation(LOCATION)
                 .withName(NAME)

@@ -7,6 +7,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IFrameServl
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.IFramePageServletDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.testobjects.PluginForTests;
+import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.servlet.descriptors.ServletModuleDescriptor;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.google.common.collect.ImmutableList;
@@ -41,6 +42,9 @@ public class GeneralPageModuleProviderTest
     @Mock
     private BundleContext bundleContext;
 
+    @Mock
+    private ProductAccessor productAccessor;
+
     private GeneralPageModuleProvider moduleProvider;
     private Plugin plugin = new PluginForTests(PLUGIN_KEY, "pluginName");
 
@@ -51,7 +55,7 @@ public class GeneralPageModuleProviderTest
     @Before
     public void init()
     {
-        moduleProvider = new GeneralPageModuleProvider(webItemModuleDescriptorFactory, servletDescriptorFactory);
+        moduleProvider = new GeneralPageModuleProvider(webItemModuleDescriptorFactory, servletDescriptorFactory, productAccessor);
         when(webItemModuleDescriptorFactory.createModuleDescriptor(any(Plugin.class), any(BundleContext.class),
                 any(WebItemCapabilityBean.class))).thenReturn(mock(WebItemModuleDescriptor.class));
         when(servletDescriptorFactory.createIFrameServletDescriptor(any(Plugin.class), any(IFrameServletBean.class)))

@@ -6,6 +6,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectPageCapabil
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectPageCapabilityBeanAdapter;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.IFramePageServletDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
+import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.web.Condition;
 import com.google.common.collect.ImmutableList;
 import org.osgi.framework.BundleContext;
@@ -23,18 +24,21 @@ public abstract class AbstractConnectPageModuleProvider implements ConnectModule
 {
     private final WebItemModuleDescriptorFactory webItemModuleDescriptorFactory;
     private final IFramePageServletDescriptorFactory servletDescriptorFactory;
+    private final ProductAccessor productAccessor;
     private String decorator;
     private String templateSuffix;
-    private Map<String,String> metaTagContents;
+    private Map<String, String> metaTagContents;
     private Condition condition;
 
     public AbstractConnectPageModuleProvider(WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
                                              IFramePageServletDescriptorFactory servletDescriptorFactory,
+                                             ProductAccessor productAccessor,
                                              String decorator, String templateSuffix,
                                              Map<String, String> metaTagContents, Condition condition)
     {
         this.webItemModuleDescriptorFactory = checkNotNull(webItemModuleDescriptorFactory);
         this.servletDescriptorFactory = checkNotNull(servletDescriptorFactory);
+        this.productAccessor = checkNotNull(productAccessor);
         this.decorator = decorator;
         this.templateSuffix = templateSuffix;
         this.metaTagContents = metaTagContents;
@@ -50,7 +54,7 @@ public abstract class AbstractConnectPageModuleProvider implements ConnectModule
         for (ConnectPageCapabilityBean bean : beans)
         {
             ConnectPageCapabilityBeanAdapter adapter = new ConnectPageCapabilityBeanAdapter(bean, plugin.getKey(),
-                    decorator, templateSuffix, metaTagContents, condition);
+                    productAccessor, decorator, templateSuffix, metaTagContents, condition);
             builder.add(webItemModuleDescriptorFactory.createModuleDescriptor(plugin, addonBundleContext, adapter.getWebItemBean()));
             builder.add(servletDescriptorFactory.createIFrameServletDescriptor(plugin, adapter.getServletBean()));
         }
