@@ -296,19 +296,6 @@
                                     <version>${atlassian.jwt.version}</version>
                                 </pluginArtifact>
                             </pluginArtifacts>
-                            <libArtifacts>
-                                <!--<libArtifact>-->
-                                    <!--<groupId>com.atlassian.util.concurrent</groupId>-->
-                                    <!--<artifactId>atlassian-util-concurrent</artifactId>-->
-                                    <!--<version>${atlassian-util-concurrent.version}</version>-->
-                                <!--</libArtifact>-->
-                                <!-- TODO remove this once 3.0.5 is in all products -->
-                                <!--<libArtifact>-->
-                                    <!--<groupId>com.atlassian.plugins</groupId>-->
-                                    <!--<artifactId>atlassian-plugins-core</artifactId>-->
-                                    <!--<version>${atlassian.plugins.version}</version>-->
-                                <!--</libArtifact>-->
-                            </libArtifacts>
 
                             <bundledArtifacts>
                                 <!-- TODO: remove this once UPM 2.13 is bundled with products -->
@@ -358,30 +345,8 @@
                                     <version>${atlassian.jwt.version}</version>
                                 </pluginArtifact>
                             </pluginArtifacts>
-                            <libArtifacts>
-                                <!-- TODO remove this once 3.0.5 is in all products -->
-                                <!--<libArtifact>-->
-                                    <!--<groupId>com.atlassian.plugins</groupId>-->
-                                    <!--<artifactId>atlassian-plugins-core</artifactId>-->
-                                    <!--<version>${atlassian.plugins.version}</version>-->
-                                <!--</libArtifact>-->
-                            </libArtifacts>
-
-                            <bundledArtifacts>
-                                <!-- TODO: remove this once UPM 2.13 is bundled with products -->
-                                <bundledArtifact>
-                                    <groupId>com.atlassian.upm</groupId>
-                                    <artifactId>atlassian-universal-plugin-manager-plugin</artifactId>
-                                    <version>${atlassian.upm.version}</version>
-                                </bundledArtifact>
-                            </bundledArtifacts>
-                            
-                            
                         </product>
                     </products>
-
-                    <pluginDependencies>
-                    </pluginDependencies>
 
                     <testGroups>
                         <testGroup>
