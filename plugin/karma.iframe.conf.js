@@ -15,7 +15,7 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
       'src/test/resources/test-iframe-main.js',
-      {pattern: 'node_modules/sinon/lib/sinon/util/timers_ie.js', included: true},
+      {pattern: 'node_modules/karma-sinon/node_modules/sinon/lib/sinon/util/timers_ie.js', included: true},
       'src/test/resources/js/iframe/plugin/fixture.js',
       //events run on both sides of the bridge.
       {pattern: 'src/test/resources/js/iframe/_events-test.js', included: false},
@@ -28,6 +28,11 @@ module.exports = function(config) {
     // list of files to exclude
     exclude: [
     ],
+
+    //do not process my html files.
+    preprocessors: {
+      'src/test/resources/fixtures/!(*).html': ['html2js']
+    },
 
 
     // test results reporter to use
