@@ -6,8 +6,8 @@ import com.google.common.collect.Iterables;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 
 /**
- * Represents the paired URLs needed to support Addon content in an iFrame.
- * One URL is for the addon itself. The other for the host application that will sign the addon URL and set it as the iframe src
+ * Represents the pair of URLs needed to support Addon content in an iFrame.
+ * One URL is for the addon itself. The other for the host application servlet that will sign the addon URL and set it as the iframe src
  */
 public class AddonUrlTemplatePair
 {

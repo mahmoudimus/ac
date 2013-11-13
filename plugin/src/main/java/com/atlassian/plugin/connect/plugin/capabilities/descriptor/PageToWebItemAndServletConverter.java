@@ -16,16 +16,16 @@ import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapa
 import static com.google.common.base.Strings.isNullOrEmpty;
 
 /**
- * Adapts a connect page bean into a web item and iframe servlet bean.
+ * Creates a web item bean and a iFrame servlet bean from a page bean.
  */
-public class ConnectPageCapabilityBeanAdapter // TODO: Shit name
+public class PageToWebItemAndServletConverter
 {
     private final WebItemCapabilityBean webItemBean;
     private final IFrameServletBean servletBean;
     private final static Condition DEFAULT_CONDITION = new AlwaysDisplayCondition();
 
 
-    public ConnectPageCapabilityBeanAdapter(ConnectPageCapabilityBean pageBean, String pluginKey,
+    public PageToWebItemAndServletConverter(ConnectPageCapabilityBean pageBean, String pluginKey,
                                             ProductAccessor productAccessor, String decorator, String templateSuffix,
                                             Map<String, String> metaTagsContent, Condition condition)
     {

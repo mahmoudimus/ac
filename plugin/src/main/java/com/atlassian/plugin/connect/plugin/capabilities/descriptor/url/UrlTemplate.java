@@ -35,7 +35,6 @@ public class UrlTemplate
 // TODO: Will be implemented in ACDEV-396
 //    public URL createUrl(UrlTemplateContext context)
 //    {
-//        return null;
 //    }
 
     @Deprecated // Only exposed until ACDEV-396 implemented. After that createUrl will be used instead

@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.provider;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectPageCapabilityBean;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectPageCapabilityBeanAdapter;
+import com.atlassian.plugin.connect.plugin.capabilities.descriptor.PageToWebItemAndServletConverter;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.IFramePageServletDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
@@ -53,7 +53,7 @@ public abstract class AbstractConnectPageModuleProvider implements ConnectModule
 
         for (ConnectPageCapabilityBean bean : beans)
         {
-            ConnectPageCapabilityBeanAdapter adapter = new ConnectPageCapabilityBeanAdapter(bean, plugin.getKey(),
+            PageToWebItemAndServletConverter adapter = new PageToWebItemAndServletConverter(bean, plugin.getKey(),
                     productAccessor, decorator, templateSuffix, metaTagContents, condition);
             builder.add(webItemModuleDescriptorFactory.createModuleDescriptor(plugin, addonBundleContext, adapter.getWebItemBean()));
             builder.add(servletDescriptorFactory.createIFrameServletDescriptor(plugin, adapter.getServletBean()));

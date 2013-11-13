@@ -27,7 +27,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ConnectPageCapabilityBeanAdapterTest
+public class PageToWebItemAndServletConverterTest
 {
     private static final String PLUGIN_KEY = "FOO";
     private static final String PAGE_BEAN_KEY = "KEY";
@@ -45,8 +45,8 @@ public class ConnectPageCapabilityBeanAdapterTest
     private static final int DEFAULT_WEIGHT = 123;
 
     private final ConnectPageCapabilityBean defaultPageBean = createDefaultPageBean();
-    private final ConnectPageCapabilityBeanAdapter defaultAdapter = createAdapter(defaultPageBean);
-    private ConnectPageCapabilityBeanAdapter emptyBeanAdapter;
+    private final PageToWebItemAndServletConverter defaultAdapter = createAdapter(defaultPageBean);
+    private PageToWebItemAndServletConverter emptyBeanAdapter;
 
     @Mock
     private ProductAccessor productAccessor;
@@ -183,9 +183,9 @@ public class ConnectPageCapabilityBeanAdapterTest
         return defaultAdapter.getServletBean();
     }
 
-    private ConnectPageCapabilityBeanAdapter createAdapter(ConnectPageCapabilityBean pageBean)
+    private PageToWebItemAndServletConverter createAdapter(ConnectPageCapabilityBean pageBean)
     {
-        return new ConnectPageCapabilityBeanAdapter(pageBean, PLUGIN_KEY, productAccessor,
+        return new PageToWebItemAndServletConverter(pageBean, PLUGIN_KEY, productAccessor,
                 DECORATOR, TEMPLATE_SUFFIX, META_TAGS, CONDITION);
     }
 
