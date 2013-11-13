@@ -61,8 +61,9 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
     public static final String ENABLED = "enabled";
     public static final String DISABLED = "disabled";
     public static final String UNINSTALLED = "uninstalled";
-    
+
     private static final Logger log = LoggerFactory.getLogger(ConnectEventHandler.class);
+    public static final String USER_KEY = "user_key";
     private final EventPublisher eventPublisher;
     private final PluginEventManager pluginEventManager;
     private final PluginAccessor pluginAccessor;
@@ -164,6 +165,10 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
                     callSyncHandler(addon, addon.getLifecycle().getUninstalled(),UNINSTALLED);
                 }
             }
+            else
+            {
+                log.warn("Tried to publish plugin uninstalled event for connect addon ['" + pluginKey + "'], but got a null ConnectAddonBean when trying to deserialize it's stored descriptor. Ignoring...");
+            }
         }
     }
 
@@ -254,8 +259,7 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
         UserProfile user = userManager.getRemoteUser();
         if (null != user)
         {
-            builder.addQueryParameter("user_id", user.getUsername())
-                   .addQueryParameter("user_key", user.getUserKey().getStringValue());
+            builder.addQueryParameter(USER_KEY, user.getUserKey().getStringValue());
         }
 
         return builder.toUri().toJavaUri();

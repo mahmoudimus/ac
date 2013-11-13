@@ -201,13 +201,6 @@ public class ConnectCapabilitiesRunner
 
         addonBuilder.withBaseurl(displayUrl);
 
-        AuthenticationBean auth = addonBuilder.getAuthentication();
-
-        if (null != auth && auth.getType().equals(AuthenticationType.OAUTH) && !Strings.isNullOrEmpty(auth.getSharedKey()))
-        {
-            addOAuth();
-        }
-
         this.addon = addonBuilder.build();
 
         server = new Server(port);
