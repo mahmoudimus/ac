@@ -450,6 +450,11 @@ public class MacroModuleDescriptorCreator
 
         private ImagePlaceholderConfig parseImagePlaceholder(Element entity)
         {
+            return null;
+
+            // Uncomment when https://jira.atlassian.com/browse/CONF-31585 is deployed
+
+            /*
             Element placeholder = entity.element("image-placeholder");
             if (placeholder == null)
             {
@@ -464,6 +469,7 @@ public class MacroModuleDescriptorCreator
                     width == null ? null : Integer.parseInt(width),
                     height == null ? null : Integer.parseInt(height),
                     applyChrome == null || Boolean.parseBoolean(applyChrome)); // applyChrome defaults to true
+            */
         }
 
         private class ImagePlaceholderConfig

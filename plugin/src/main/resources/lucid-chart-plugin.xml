@@ -44,8 +44,7 @@
     <remote-macro key="lucidchart" url="/macro" output-type="block" body-type="none">
         <description>Create a Lucidchart Diagram</description>
         <category name="development" />
-        <!-- add when CONFDEV-20848 is deployed -->
-        <!--<image-placeholder url="/imagePlaceHolder" width="140" height="140" apply-chrome="true"/>-->
+        <image-placeholder url="/imagePlaceHolder" width="140" height="140" apply-chrome="true"/>
         <parameters>
             <parameter name="width" title="Width" type="string" default="700"/>
             <parameter name="height" title="Height" type="string" />
