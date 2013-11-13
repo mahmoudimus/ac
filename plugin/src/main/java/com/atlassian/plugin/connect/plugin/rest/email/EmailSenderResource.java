@@ -6,7 +6,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
-import com.atlassian.plugin.connect.plugin.module.permission.ApiScopingFilter;
+import com.atlassian.plugin.connect.plugin.module.permission.LegacyApiScopingFilter;
 import com.atlassian.plugin.connect.plugin.service.LocalEmailSender;
 
 @Path("email")
@@ -22,7 +22,7 @@ public class EmailSenderResource
     @POST
     public Response sendEmail(@Context javax.servlet.http.HttpServletRequest request, RemoteEmail remoteEmail)
     {
-        localEmailSender.send(ApiScopingFilter.extractClientKey(request), remoteEmail.getTo(), remoteEmail.toEmail(), remoteEmail.getBodyAsHtml(), remoteEmail.getBodyAsText());
+        localEmailSender.send(LegacyApiScopingFilter.extractClientKey(request), remoteEmail.getTo(), remoteEmail.toEmail(), remoteEmail.getBodyAsHtml(), remoteEmail.getBodyAsText());
         return Response.noContent().build();
     }
 
@@ -30,7 +30,7 @@ public class EmailSenderResource
     @Path("/flush")
     public Response flush(@Context javax.servlet.http.HttpServletRequest request)
     {
-        localEmailSender.flush(ApiScopingFilter.extractClientKey(request));
+        localEmailSender.flush(LegacyApiScopingFilter.extractClientKey(request));
         return Response.noContent().build();
     }
 }

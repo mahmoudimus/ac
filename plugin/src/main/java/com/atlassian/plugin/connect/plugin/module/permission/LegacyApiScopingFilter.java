@@ -9,6 +9,7 @@ import com.atlassian.sal.api.user.UserManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -21,13 +22,15 @@ import static com.atlassian.plugin.connect.plugin.util.DevModeUtil.DEV_MODE_ENAB
 /**
  * A filter to restrict incoming requests unless they have been authorized via api scopes.  Only handles 2LO-authenticated
  * requests by looking for the client key as a request attribute or a header.
+ * @deprecated Uses legacy scopes implementation. Superseded by {@link ApiScopingFilter}.
  */
-public class ApiScopingFilter implements Filter
+@Deprecated
+public class LegacyApiScopingFilter implements Filter
 {
     /**
      * Set by {@link OAuth2LOAuthenticator}, indicating the Connect add-on that is the origin of the current request.
      */
-    public static final String PLUGIN_KEY = "Plugin-Key";
+    private static final String PLUGIN_KEY = "Plugin-Key";
 
     /**
      * Request header set by /iframe/host/main.js, indicating that the current request is an XDM request. The value
@@ -35,15 +38,15 @@ public class ApiScopingFilter implements Filter
      */
     public static final String AP_REQUEST_HEADER = "AP-Client-Key";
 
-    private static final Logger log = LoggerFactory.getLogger(ApiScopingFilter.class);
+    private static final Logger log = LoggerFactory.getLogger(LegacyApiScopingFilter.class);
 
     private final PermissionManager permissionManager;
     private final UserManager userManager;
     private final WebSudoService webSudoService;
     private final String ourConsumerKey;
 
-    public ApiScopingFilter(PermissionManager permissionManager, UserManager userManager,
-                            ConsumerService consumerService, WebSudoService webSudoService)
+    public LegacyApiScopingFilter(PermissionManager permissionManager, UserManager userManager,
+                                  ConsumerService consumerService, WebSudoService webSudoService)
     {
         this.permissionManager = permissionManager;
         this.userManager = userManager;
@@ -162,6 +165,16 @@ public class ApiScopingFilter implements Filter
     public static String extractClientKey(HttpServletRequest req)
     {
         return (String) req.getAttribute(PLUGIN_KEY);
+    }
+
+    /**
+     * Set the OAuth client key for the remote app for later retrieval by {@link #extractClientKey(javax.servlet.http.HttpServletRequest)}.
+     * @param req the context {@link javax.servlet.http.HttpServletRequest}
+     * @param clientKey the OAuth client key for the remote app
+     */
+    public static void setClientKey(@Nonnull HttpServletRequest req, @Nonnull String clientKey)
+    {
+        req.setAttribute(PLUGIN_KEY, clientKey);
     }
 
     /**

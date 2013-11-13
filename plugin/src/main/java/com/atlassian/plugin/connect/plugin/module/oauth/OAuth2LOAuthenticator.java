@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.oauth.util.Check;
 import com.atlassian.plugin.connect.plugin.OAuthLinkManager;
-import com.atlassian.plugin.connect.plugin.module.permission.ApiScopingFilter;
+import com.atlassian.plugin.connect.plugin.module.permission.LegacyApiScopingFilter;
 import com.atlassian.plugin.connect.plugin.util.DefaultMessage;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.auth.AuthenticationController;
@@ -196,7 +196,7 @@ public class OAuth2LOAuthenticator implements Authenticator
         the request needs
         to be authorized to ensure it has access to the appropriate API scope.
          */
-        request.setAttribute(ApiScopingFilter.PLUGIN_KEY, consumerKey);
+        LegacyApiScopingFilter.setClientKey(request, consumerKey);
         log.info("Authenticated app '{}' as user '{}' successfully", consumerKey, user.getName());
         return new Result.Success(user);
         /*!-helper methods*/

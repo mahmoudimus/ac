@@ -10,7 +10,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
-import com.atlassian.plugin.connect.plugin.module.permission.ApiScopingFilter;
+import com.atlassian.plugin.connect.plugin.module.permission.LegacyApiScopingFilter;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import com.atlassian.upm.api.license.entity.PluginLicense;
 import com.atlassian.upm.api.util.Option;
@@ -35,7 +35,7 @@ public class LicenseResource
     @Produces("application/json")
     public Response getLicense(@Context javax.servlet.http.HttpServletRequest request)
     {
-        String pluginKey = ApiScopingFilter.extractClientKey(request);
+        String pluginKey = LegacyApiScopingFilter.extractClientKey(request);
         if (pluginKey == null) {
             return Response.status(Response.Status.BAD_REQUEST)
                            .entity("Requests to this resource must be authenticated with OAuth headers from an " +
