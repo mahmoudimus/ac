@@ -49,7 +49,7 @@ public class ConnectPageCapabilityBeanAdapter // TODO: Shit name
                 .withName(bean.getName())
                 .withKey(bean.getKey())
                 .withLink(hostUrlTemplate.getTemplateString())
-                .withLocation(bean.getAbsoluteLocation())
+                .withLocation(bean.getLocation())
                 .withWeight(bean.getWeight())
                 .build();
     }
