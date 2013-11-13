@@ -74,7 +74,7 @@ public class PageToWebItemAndServletConverterTest
     @Test
     public void createsWebItemWithSameLocationAsPageBean()
     {
-        assertThat(webItem(), hasProperty("location", is(LOCATION))); // TODO: This is probably not true. Think needs a prefix
+        assertThat(webItem(), hasProperty("location", is(LOCATION)));
     }
 
     @Test
@@ -117,7 +117,7 @@ public class PageToWebItemAndServletConverterTest
     @Test
     public void createsServletBeanWithSameKeyAsPageBean()
     {
-        assertThat(iFrameServlet(), hasProperty("linkBean", is(defaultPageBean))); // TODO: Or should that be the web item?
+        assertThat(iFrameServlet(), hasProperty("linkBean", is(defaultPageBean)));
     }
 
     @Test

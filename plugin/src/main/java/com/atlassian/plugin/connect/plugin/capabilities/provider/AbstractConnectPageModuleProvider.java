@@ -17,7 +17,7 @@ import java.util.Map;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Module Provider for a Connect Page Module.
+ * Base class for ConnectModuleProviders of Connect Pages.
  * Note that there is actually no P2 module descriptor. Instead it is modelled as a web-item plus a servlet
  */
 public abstract class AbstractConnectPageModuleProvider implements ConnectModuleProvider<ConnectPageCapabilityBean>
@@ -53,10 +53,10 @@ public abstract class AbstractConnectPageModuleProvider implements ConnectModule
 
         for (ConnectPageCapabilityBean bean : beans)
         {
-            PageToWebItemAndServletConverter adapter = new PageToWebItemAndServletConverter(bean, plugin.getKey(),
+            PageToWebItemAndServletConverter converter = new PageToWebItemAndServletConverter(bean, plugin.getKey(),
                     productAccessor, decorator, templateSuffix, metaTagContents, condition);
-            builder.add(webItemModuleDescriptorFactory.createModuleDescriptor(plugin, addonBundleContext, adapter.getWebItemBean()));
-            builder.add(servletDescriptorFactory.createIFrameServletDescriptor(plugin, adapter.getServletBean()));
+            builder.add(webItemModuleDescriptorFactory.createModuleDescriptor(plugin, addonBundleContext, converter.getWebItemBean()));
+            builder.add(servletDescriptorFactory.createIFrameServletDescriptor(plugin, converter.getServletBean()));
         }
 
         return builder.build();
