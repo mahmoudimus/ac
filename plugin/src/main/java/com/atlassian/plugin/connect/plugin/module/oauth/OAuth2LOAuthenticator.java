@@ -1,33 +1,34 @@
 package com.atlassian.plugin.connect.plugin.module.oauth;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.security.Principal;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.oauth.util.Check;
 import com.atlassian.plugin.connect.plugin.OAuthLinkManager;
-import com.atlassian.plugin.connect.plugin.module.permission.RequestAddOnKeyLabeler;
+import com.atlassian.plugin.connect.plugin.module.permission.ApiScopingFilter;
 import com.atlassian.plugin.connect.plugin.util.DefaultMessage;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.auth.AuthenticationController;
 import com.atlassian.sal.api.auth.Authenticator;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
-import net.oauth.OAuth;
-import net.oauth.OAuthException;
-import net.oauth.OAuthMessage;
-import net.oauth.OAuthProblemException;
-import net.oauth.server.OAuthServlet;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.security.Principal;
-
-import static com.google.common.base.Preconditions.checkNotNull;
+import net.oauth.OAuth;
+import net.oauth.OAuthException;
+import net.oauth.OAuthMessage;
+import net.oauth.OAuthProblemException;
+import net.oauth.server.OAuthServlet;
 
 /**
  * Authenticates an incoming 2LO request
@@ -48,13 +49,12 @@ public class OAuth2LOAuthenticator implements Authenticator
     private final ApplicationProperties applicationProperties;
     private final UserManager userManager;
     private final String ourConsumerKey;
-    private final RequestAddOnKeyLabeler requestAddOnKeyLabeler;
 
     @Autowired
     public OAuth2LOAuthenticator(AuthenticationController authenticationController,
-                                 ApplicationProperties applicationProperties,
-                                 OAuthLinkManager oAuthLinkManager, UserManager userManager,
-                                 ConsumerService consumerService, RequestAddOnKeyLabeler requestAddOnKeyLabeler)
+            ApplicationProperties applicationProperties,
+            OAuthLinkManager oAuthLinkManager, UserManager userManager,
+            ConsumerService consumerService)
     {
         this.oAuthLinkManager = oAuthLinkManager;
         this.userManager = userManager;
@@ -62,7 +62,6 @@ public class OAuth2LOAuthenticator implements Authenticator
                 "authenticationController");
         this.applicationProperties = Check.notNull(applicationProperties, "applicationProperties");
         this.ourConsumerKey = consumerService.getConsumer().getKey();
-        this.requestAddOnKeyLabeler = checkNotNull(requestAddOnKeyLabeler);
     }
 
     public Result authenticate(HttpServletRequest request, HttpServletResponse response)
@@ -197,7 +196,7 @@ public class OAuth2LOAuthenticator implements Authenticator
         the request needs
         to be authorized to ensure it has access to the appropriate API scope.
          */
-        requestAddOnKeyLabeler.setAddOnKey(request, consumerKey);
+        request.setAttribute(ApiScopingFilter.PLUGIN_KEY, consumerKey);
         log.info("Authenticated app '{}' as user '{}' successfully", consumerKey, user.getName());
         return new Result.Success(user);
         /*!-helper methods*/

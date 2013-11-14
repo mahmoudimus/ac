@@ -1,12 +1,5 @@
 package com.atlassian.plugin.connect.plugin.product.confluence.rest;
 
-import com.atlassian.fugue.Option;
-import com.atlassian.plugin.connect.plugin.module.confluence.MacroContentManager;
-import com.atlassian.plugin.connect.plugin.module.permission.RequestAddOnKeyLabeler;
-import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
-import com.google.common.base.Function;
-import com.google.common.base.Suppliers;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.Path;
@@ -14,20 +7,25 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
+import com.atlassian.fugue.Option;
+import com.atlassian.plugin.connect.plugin.module.confluence.MacroContentManager;
+import com.atlassian.plugin.connect.plugin.module.permission.ApiScopingFilter;
+import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
+
+import com.google.common.base.Function;
+import com.google.common.base.Suppliers;
+
 import static com.atlassian.fugue.Option.option;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 @Path("/macro")
 @AnonymousAllowed
 public class MacroResource
 {
     private final MacroContentManager macroContentManager;
-    private final RequestAddOnKeyLabeler requestAddOnKeyLabeler;
 
-    public MacroResource(MacroContentManager macroContentManager, RequestAddOnKeyLabeler requestAddOnKeyLabeler)
+    public MacroResource(MacroContentManager macroContentManager)
     {
         this.macroContentManager = macroContentManager;
-        this.requestAddOnKeyLabeler = checkNotNull(requestAddOnKeyLabeler);
     }
 
     @Path("/app/{appKey}")
@@ -76,6 +74,6 @@ public class MacroResource
 
     private Option<String> getConsumerKeyFromRequest(HttpServletRequest request)
     {
-        return option(requestAddOnKeyLabeler.getAddOnKey(request));
+        return option((String) request.getAttribute(ApiScopingFilter.PLUGIN_KEY));
     }
 }

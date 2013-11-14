@@ -1,32 +1,28 @@
 package com.atlassian.plugin.connect.plugin.rest.email;
 
-import com.atlassian.plugin.connect.plugin.module.permission.RequestAddOnKeyLabeler;
-import com.atlassian.plugin.connect.plugin.service.LocalEmailSender;
-
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import com.atlassian.plugin.connect.plugin.module.permission.ApiScopingFilter;
+import com.atlassian.plugin.connect.plugin.service.LocalEmailSender;
 
 @Path("email")
 public class EmailSenderResource
 {
     private final LocalEmailSender localEmailSender;
-    private final RequestAddOnKeyLabeler requestAddOnKeyLabeler;
 
-    public EmailSenderResource(LocalEmailSender localEmailSender, RequestAddOnKeyLabeler requestAddOnKeyLabeler)
+    public EmailSenderResource(LocalEmailSender localEmailSender)
     {
         this.localEmailSender = localEmailSender;
-        this.requestAddOnKeyLabeler = checkNotNull(requestAddOnKeyLabeler);
     }
 
     @POST
     public Response sendEmail(@Context javax.servlet.http.HttpServletRequest request, RemoteEmail remoteEmail)
     {
-        localEmailSender.send(requestAddOnKeyLabeler.getAddOnKey(request), remoteEmail.getTo(), remoteEmail.toEmail(), remoteEmail.getBodyAsHtml(), remoteEmail.getBodyAsText());
+        localEmailSender.send(ApiScopingFilter.extractClientKey(request), remoteEmail.getTo(), remoteEmail.toEmail(), remoteEmail.getBodyAsHtml(), remoteEmail.getBodyAsText());
         return Response.noContent().build();
     }
 
@@ -34,7 +30,7 @@ public class EmailSenderResource
     @Path("/flush")
     public Response flush(@Context javax.servlet.http.HttpServletRequest request)
     {
-        localEmailSender.flush(requestAddOnKeyLabeler.getAddOnKey(request));
+        localEmailSender.flush(ApiScopingFilter.extractClientKey(request));
         return Response.noContent().build();
     }
 }
