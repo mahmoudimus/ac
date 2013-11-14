@@ -25,9 +25,10 @@ import static com.atlassian.plugin.connect.plugin.util.DevModeUtil.DEV_MODE_ENAB
 public class ApiScopingFilter implements Filter
 {
     /**
-     * Set by {@link OAuth2LOAuthenticator}, indicating the Connect add-on that is the origin of the current request.
+     * Set by a {@link Filter}, possibly using {@link OAuth2LOAuthenticator} or {@link com.atlassian.jwt.plugin.sal.JwtAuthenticator},
+     * indicating the Connect add-on that is the origin of the current request.
      */
-    public static final String PLUGIN_KEY = "Plugin-Key";
+    public static final String PLUGIN_KEY = "Add-on-Key";
 
     /**
      * Request header set by /iframe/host/main.js, indicating that the current request is an XDM request. The value
