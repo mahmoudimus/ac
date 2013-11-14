@@ -4,6 +4,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectPageCapabil
 import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IFrameServletBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AddonUrlTemplatePair;
 import com.atlassian.plugin.connect.plugin.module.IFrameParamsImpl;
 import com.atlassian.plugin.connect.plugin.module.page.PageInfo;
@@ -47,6 +48,7 @@ public class PageToWebItemAndServletConverterTest
     private static final String DEFAULT_LOCATION = "defaultLocation";
     private static final int DEFAULT_WEIGHT = 123;
     private static final IFrameParams IFRAME_PARAMS = new IFrameParamsImpl();
+    private static final IconBean ICON = IconBean.newIconBean().withUrl("moiImage").build();
 
     private final ConnectPageCapabilityBean defaultPageBean = createDefaultPageBean();
     private final PageToWebItemAndServletConverter defaultAdapter = createAdapter(defaultPageBean, IFRAME_PARAMS);
@@ -91,6 +93,12 @@ public class PageToWebItemAndServletConverterTest
     public void createsWebItemWithHostVersionOfPageBeanUrl()
     {
         assertThat(webItem(), hasProperty("link", is("/plugins/servlet/ac/" + PLUGIN_KEY + "/" + URL)));
+    }
+
+    @Test
+    public void createsWebItemWithSameIconAsPageBean()
+    {
+        assertThat(webItem(), hasProperty("icon", is(ICON)));
     }
 
     @Test
@@ -213,8 +221,8 @@ public class PageToWebItemAndServletConverterTest
                 .withName(NAME)
                 .withUrl(URL)
                 .withWeight(WEIGHT)
+                .withIcon(ICON)
 //                .withConditions()
-//                .withIcon()
                 .build();
     }
 

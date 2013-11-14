@@ -57,6 +57,7 @@ public class PageToWebItemAndServletConverter
                 .withLink(hostUrlTemplate.getTemplateString())
                 .withLocation(location)
                 .withWeight(weight)
+                .withIcon(bean.getIcon())
                 .build();
     }
 
