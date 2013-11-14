@@ -89,16 +89,16 @@ public class LegacyApiScopingFilter implements Filter, RequestAddOnKeyLabeler
     {
         // we consume the input to allow inspection of the body via getInputStream
         InputConsumingHttpServletRequest inputConsumingRequest = new InputConsumingHttpServletRequest(req);
-        String user = userManager.getRemoteUsername(req);
-        if (!permissionManager.isRequestInApiScope(inputConsumingRequest, clientKey, user))
+        UserKey userKey = userManager.getRemoteUserKey(req);
+        if (!permissionManager.isRequestInApiScope(inputConsumingRequest, clientKey, userKey))
         {
-            log.warn("Request not in an authorized API scope from app '{}' as user '{}' on URL '{}'",
-                    new Object[]{clientKey, user, req.getRequestURI()});
+            log.warn("Request not in an authorized API scope from app '{}' as userKey '{}' on URL '{}'",
+                    new Object[]{clientKey, userKey, req.getRequestURI()});
             res.sendError(HttpServletResponse.SC_FORBIDDEN, "Request not in an authorized API scope");
             return;
         }
-        log.info("Authorized app '{}' to access API at URL '{}' for user '{}'",
-                new Object[]{clientKey, req.getRequestURI(), user});
+        log.info("Authorized app '{}' to access API at URL '{}' for userKey '{}'",
+                new Object[]{clientKey, req.getRequestURI(), userKey});
         chain.doFilter(inputConsumingRequest, res);
     }
 

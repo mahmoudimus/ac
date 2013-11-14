@@ -12,7 +12,7 @@ import java.io.IOException;
 public class ApiScopingFilter implements Filter, RequestAddOnKeyLabeler
 {
     /**
-     * Set by an authorisation {@link Filter} to indicate the Connect add-on that is the origin of the current request.
+     * Set by an authorisation {@link Filter} calling {@link #setAddOnKey(HttpServletRequest, String)} to indicate the Connect add-on that is the origin of the current request.
      */
     private static final String ADD_ON_KEY = "Add-On-Key";
 

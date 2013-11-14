@@ -21,6 +21,7 @@ import com.atlassian.plugin.connect.spi.permission.scope.ApiScope;
 import com.atlassian.plugin.connect.spi.permission.scope.RestApiScopeHelper;
 import com.atlassian.plugin.tracker.DefaultPluginModuleTracker;
 import com.atlassian.plugin.tracker.PluginModuleTracker;
+import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 
 import com.google.common.base.Function;
@@ -110,7 +111,7 @@ public final class PermissionManagerImpl implements PermissionManager
     }
 
     @Override
-    public boolean isRequestInApiScope(HttpServletRequest req, String pluginKey, String user)
+    public boolean isRequestInApiScope(HttpServletRequest req, String pluginKey, UserKey user)
     {
         return any(getApiScopesForPlugin(pluginKey), new IsInApiScopePredicate(req, user));
     }
@@ -224,9 +225,9 @@ public final class PermissionManagerImpl implements PermissionManager
     private static final class IsInApiScopePredicate implements Predicate<ApiScope>
     {
         private final HttpServletRequest request;
-        private final String user;
+        private final UserKey user;
 
-        public IsInApiScopePredicate(HttpServletRequest request, @Nullable String user)
+        public IsInApiScopePredicate(HttpServletRequest request, @Nullable UserKey user)
         {
             this.request = checkNotNull(request);
             this.user = user;

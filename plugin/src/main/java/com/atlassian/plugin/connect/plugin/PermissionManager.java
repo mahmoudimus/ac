@@ -8,6 +8,7 @@ import javax.validation.constraints.NotNull;
 import com.atlassian.plugin.connect.spi.PermissionDeniedException;
 import com.atlassian.plugin.connect.spi.permission.Permission;
 
+import com.atlassian.sal.api.user.UserKey;
 import org.dom4j.Document;
 
 /**
@@ -40,12 +41,13 @@ public interface PermissionManager
     /**
      * Tells whether a request can proceed given it's API scope and the plugin requested permissions.
      *
-     * @param req the current {@link HttpServletRequest request}
+     *
+     * @param req the current {@link javax.servlet.http.HttpServletRequest request}
      * @param pluginKey the key of the plugin making the request.
      * @param user the current logged in user username.
      * @return {@code true} if the request is correctly in the current API scope, {@code false} otherwise
      */
-    boolean isRequestInApiScope(HttpServletRequest req, String pluginKey, String user);
+    boolean isRequestInApiScope(HttpServletRequest req, String pluginKey, UserKey user);
 
     boolean canInstallRemotePluginsFromMarketplace(String username);
 

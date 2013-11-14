@@ -1,12 +1,8 @@
 package com.atlassian.plugin.connect.plugin.module.permission;
 
-import java.util.List;
-import java.util.Set;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
 
-import com.atlassian.fugue.Option;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
@@ -20,8 +16,7 @@ import com.atlassian.plugin.connect.spi.permission.PermissionModuleDescriptor;
 import com.atlassian.plugin.connect.spi.permission.scope.ApiResourceInfo;
 import com.atlassian.plugin.connect.spi.permission.scope.ApiScope;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
+import com.atlassian.sal.api.user.UserKey;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 
@@ -32,7 +27,6 @@ import org.slf4j.LoggerFactory;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.ImmutableSet.copyOf;
 import static com.google.common.collect.Iterables.filter;
-import static com.google.common.collect.Iterables.transform;
 
 public final class DefaultPermissionModuleDescriptor extends AbstractModuleDescriptor<Permission> implements PermissionModuleDescriptor
 {
@@ -192,7 +186,7 @@ public final class DefaultPermissionModuleDescriptor extends AbstractModuleDescr
         }
 
         @Override
-        public boolean allow(HttpServletRequest request, String user)
+        public boolean allow(HttpServletRequest request, UserKey user)
         {
             return delegate.allow(request, user);
         }

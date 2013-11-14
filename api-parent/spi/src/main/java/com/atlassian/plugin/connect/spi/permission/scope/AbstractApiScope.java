@@ -4,6 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.atlassian.plugin.connect.spi.permission.AbstractPermission;
 import com.atlassian.plugin.connect.spi.permission.PermissionInfo;
+import com.atlassian.sal.api.user.UserKey;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -24,7 +25,7 @@ public abstract class AbstractApiScope extends AbstractPermission implements Api
     }
 
     @Override
-    public final boolean allow(HttpServletRequest request, String user)
+    public final boolean allow(HttpServletRequest request, UserKey user)
     {
         return restApiScopeHelper.allow(request, user);
     }
