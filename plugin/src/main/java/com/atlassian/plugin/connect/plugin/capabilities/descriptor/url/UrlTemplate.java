@@ -27,6 +27,9 @@ public class UrlTemplate
 {
     private final String urlTemplateStr;
 
+    /**
+     * Creates a URL template from a string form of the url template
+     */
     public UrlTemplate(String urlTemplateStr)
     {
         this.urlTemplateStr = checkNotNull(urlTemplateStr);

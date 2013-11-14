@@ -20,7 +20,8 @@ import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapa
 import static com.google.common.base.Strings.isNullOrEmpty;
 
 /**
- * Creates a web item bean and a iFrame servlet bean from a page bean.
+ * Creates a web item bean and an iFrame servlet bean from a page bean.
+ * As there are no P2 implementations of pages they are implemented with a web item plus servlet
  */
 public class PageToWebItemAndServletConverter
 {

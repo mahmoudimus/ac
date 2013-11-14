@@ -78,11 +78,17 @@ public class AddonUrlTemplatePair
             this.servletRegistrationPaths = servletRegistrationPaths;
         }
 
+        /**
+         * The URLTemplate for the host signing servlet
+         */
         public UrlTemplate getHostUrlTemplate()
         {
             return hostUrlTemplate;
         }
 
+        /**
+         * Servlet paths to register
+         */
         public Iterable<String> getServletRegistrationPaths()
         {
             return servletRegistrationPaths;
