@@ -33,10 +33,11 @@ public class CapabilitiesGsonFactory
         Type mapStringType = new TypeToken<Map<String,String>>(){}.getType();
         return new GsonBuilder()
                 .registerTypeAdapter(conditionalType,new ConditionalBeanSerializer())
-                .registerTypeAdapter(AuthenticationBean.class, new AuthenticationSerializer())
                 .registerTypeAdapter(LifecycleBean.class, new LifecycleSerializer())
                 .registerTypeHierarchyAdapter(List.class, new IgnoredEmptyCollectionSerializer())
                 .registerTypeAdapter(mapStringType, new IgnoredEmptyMapSerializer())
+                .registerTypeAdapter(String.class,new EmptyStringIgnoringTypeAdapter().nullSafe())
+                .registerTypeAdapterFactory(new LowercaseEnumTypeAdapterFactory())
                 ;
     }
     
