@@ -29,6 +29,9 @@ public abstract class AbstractConnectPageModuleProvider implements ConnectModule
 
     public static class ConnectPageIFrameParams extends IFrameParamsImpl
     {
+        /**
+         * Used in UI to change sizing etc
+         */
         public void setIsGeneralPage()
         {
             setParam("general", "1");
