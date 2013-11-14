@@ -3,14 +3,17 @@ package com.atlassian.plugin.connect.plugin.capabilities.provider;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectPageCapabilityBean;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.PageToWebItemAndServletConverter;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.IFramePageServletDescriptorFactory;
+import com.atlassian.plugin.connect.plugin.capabilities.descriptor.PageToWebItemAndServletConverter;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
+import com.atlassian.plugin.connect.plugin.module.IFrameParamsImpl;
+import com.atlassian.plugin.connect.spi.module.IFrameParams;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.web.Condition;
 import com.google.common.collect.ImmutableList;
 import org.osgi.framework.BundleContext;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 
@@ -22,19 +25,37 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public abstract class AbstractConnectPageModuleProvider implements ConnectModuleProvider<ConnectPageCapabilityBean>
 {
+    private final IFrameParams iFrameParams;
+
+    public static class ConnectPageIFrameParams extends IFrameParamsImpl
+    {
+        public void setIsGeneralPage()
+        {
+            setParam("general", "1");
+        }
+
+        public static IFrameParams withGeneralPage()
+        {
+            ConnectPageIFrameParams params = new ConnectPageIFrameParams();
+            params.setIsGeneralPage();
+            return params;
+        }
+    }
+
     private final WebItemModuleDescriptorFactory webItemModuleDescriptorFactory;
     private final IFramePageServletDescriptorFactory servletDescriptorFactory;
     private final ProductAccessor productAccessor;
-    private String decorator;
-    private String templateSuffix;
-    private Map<String, String> metaTagContents;
-    private Condition condition;
+    private final String decorator;
+    private final String templateSuffix;
+    private final Map<String, String> metaTagContents;
+    private final Condition condition;
 
     public AbstractConnectPageModuleProvider(WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
                                              IFramePageServletDescriptorFactory servletDescriptorFactory,
                                              ProductAccessor productAccessor,
                                              String decorator, String templateSuffix,
-                                             Map<String, String> metaTagContents, Condition condition)
+                                             Map<String, String> metaTagContents, Condition condition,
+                                             @Nullable IFrameParams iFrameParams)
     {
         this.webItemModuleDescriptorFactory = checkNotNull(webItemModuleDescriptorFactory);
         this.servletDescriptorFactory = checkNotNull(servletDescriptorFactory);
@@ -43,6 +64,7 @@ public abstract class AbstractConnectPageModuleProvider implements ConnectModule
         this.templateSuffix = templateSuffix;
         this.metaTagContents = metaTagContents;
         this.condition = condition;
+        this.iFrameParams = iFrameParams;
     }
 
     @Override
@@ -54,7 +76,7 @@ public abstract class AbstractConnectPageModuleProvider implements ConnectModule
         for (ConnectPageCapabilityBean bean : beans)
         {
             PageToWebItemAndServletConverter converter = new PageToWebItemAndServletConverter(bean, plugin.getKey(),
-                    productAccessor, decorator, templateSuffix, metaTagContents, condition);
+                    productAccessor, decorator, templateSuffix, metaTagContents, condition, iFrameParams);
             builder.add(webItemModuleDescriptorFactory.createModuleDescriptor(plugin, addonBundleContext, converter.getWebItemBean()));
             builder.add(servletDescriptorFactory.createIFrameServletDescriptor(plugin, converter.getServletBean()));
         }

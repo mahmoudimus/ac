@@ -13,7 +13,7 @@ import static com.google.common.collect.Maps.newHashMap;
 /**
  * Parameters for this iframe instance
  */
-public final class IFrameParamsImpl implements IFrameParams
+public class IFrameParamsImpl implements IFrameParams
 {
     private final Map<String,Object> params = newHashMap();
 

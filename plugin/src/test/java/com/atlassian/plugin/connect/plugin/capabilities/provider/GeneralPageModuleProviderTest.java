@@ -10,10 +10,13 @@ import com.atlassian.plugin.connect.plugin.capabilities.testobjects.PluginForTes
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.servlet.descriptors.ServletModuleDescriptor;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
+import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
+import org.hamcrest.Description;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.osgi.framework.BundleContext;
@@ -21,6 +24,9 @@ import org.osgi.framework.BundleContext;
 import java.util.List;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.matchers.WebItemCapabilityBeanMatchers.hasUrlValue;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
@@ -88,6 +94,33 @@ public class GeneralPageModuleProviderTest
     public void callsServletDescriptorFactoryWithProvidedPlugin()
     {
         verify(servletDescriptorFactory()).createIFrameServletDescriptor(eq(plugin), any(IFrameServletBean.class));
+    }
+
+    @Test
+    public void callsServletDescriptorFactoryWithGeneralPageParamSet()
+    {
+        verify(servletDescriptorFactory()).createIFrameServletDescriptor(eq(plugin), argThat(hasGeneralParamSet()));
+    }
+
+    // handling explicitly as only one test on it
+    private ArgumentMatcher<IFrameServletBean> hasGeneralParamSet()
+    {
+        return new ArgumentMatcher<IFrameServletBean>()
+        {
+            @Override
+            public boolean matches(Object item)
+            {
+                assertThat(item, is(instanceOf(IFrameServletBean.class)));
+                IFrameServletBean iFrameServletBean = (IFrameServletBean) item;
+                return Objects.equal(iFrameServletBean.getiFrameParams().getAsMap().get("general"), "1");
+            }
+
+            @Override
+            public void describeTo(Description description)
+            {
+                description.appendText("IFrameServletBean with iframe param param general = 1");
+            }
+        };
     }
 
     private IFramePageServletDescriptorFactory servletDescriptorFactory()

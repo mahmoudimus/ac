@@ -8,6 +8,8 @@ import com.google.common.collect.ImmutableMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import static com.atlassian.plugin.connect.plugin.capabilities.provider.AbstractConnectPageModuleProvider.ConnectPageIFrameParams.withGeneralPage;
+
 @Component
 public class GeneralPageModuleProvider extends AbstractConnectPageModuleProvider
 {
@@ -17,8 +19,7 @@ public class GeneralPageModuleProvider extends AbstractConnectPageModuleProvider
                                      ProductAccessor productAccessor)
     {
         super(webItemModuleDescriptorFactory, servletDescriptorFactory, productAccessor,
-                "atl.general", "", ImmutableMap.<String, String>of(), new AlwaysDisplayCondition());
-
-        // TODO what becomes of the context param bit of => .setDecorator("atl.general").addIframeContextParam("general", "1");
+                "atl.general", "", ImmutableMap.<String, String>of(), new AlwaysDisplayCondition(),
+                withGeneralPage());
     }
 }

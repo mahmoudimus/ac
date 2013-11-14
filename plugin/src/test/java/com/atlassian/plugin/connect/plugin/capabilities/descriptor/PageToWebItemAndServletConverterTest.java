@@ -5,7 +5,9 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityB
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IFrameServletBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AddonUrlTemplatePair;
+import com.atlassian.plugin.connect.plugin.module.IFrameParamsImpl;
 import com.atlassian.plugin.connect.plugin.module.page.PageInfo;
+import com.atlassian.plugin.connect.spi.module.IFrameParams;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.web.conditions.AlwaysDisplayCondition;
@@ -22,6 +24,7 @@ import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectPage
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -43,9 +46,10 @@ public class PageToWebItemAndServletConverterTest
     private static final Map<String, String> META_TAGS = ImmutableMap.of("foo", "bar");
     private static final String DEFAULT_LOCATION = "defaultLocation";
     private static final int DEFAULT_WEIGHT = 123;
+    private static final IFrameParams IFRAME_PARAMS = new IFrameParamsImpl();
 
     private final ConnectPageCapabilityBean defaultPageBean = createDefaultPageBean();
-    private final PageToWebItemAndServletConverter defaultAdapter = createAdapter(defaultPageBean);
+    private final PageToWebItemAndServletConverter defaultAdapter = createAdapter(defaultPageBean, IFRAME_PARAMS);
     private PageToWebItemAndServletConverter emptyBeanAdapter;
 
     @Mock
@@ -56,7 +60,7 @@ public class PageToWebItemAndServletConverterTest
     {
         when(productAccessor.getPreferredGeneralSectionKey()).thenReturn(DEFAULT_LOCATION);
         when(productAccessor.getPreferredGeneralWeight()).thenReturn(DEFAULT_WEIGHT);
-        emptyBeanAdapter = createAdapter(newPageBean().build());
+        emptyBeanAdapter = createAdapter(newPageBean().build(), null);
     }
 
     @Test
@@ -162,6 +166,18 @@ public class PageToWebItemAndServletConverterTest
         assertThat(emptyBeanAdapter.getServletBean().getPageInfo().getCondition(), is(instanceOf(AlwaysDisplayCondition.class)));
     }
 
+    @Test
+    public void createsServletBeanWithExpectedIFrameParams()
+    {
+        assertThat(iFrameServlet(), hasProperty("iFrameParams", is(IFRAME_PARAMS)));
+    }
+
+    @Test
+    public void createsServletBeanWithDefaultedIFrameParamsIfNotPresent()
+    {
+        assertThat(emptyBeanAdapter.getServletBean(), is(notNullValue()));
+    }
+
     private PageInfo pageInfo()
     {
         return iFrameServlet().getPageInfo();
@@ -183,10 +199,10 @@ public class PageToWebItemAndServletConverterTest
         return defaultAdapter.getServletBean();
     }
 
-    private PageToWebItemAndServletConverter createAdapter(ConnectPageCapabilityBean pageBean)
+    private PageToWebItemAndServletConverter createAdapter(ConnectPageCapabilityBean pageBean, IFrameParams iFrameParams)
     {
         return new PageToWebItemAndServletConverter(pageBean, PLUGIN_KEY, productAccessor,
-                DECORATOR, TEMPLATE_SUFFIX, META_TAGS, CONDITION);
+                DECORATOR, TEMPLATE_SUFFIX, META_TAGS, CONDITION, iFrameParams);
     }
 
     private static ConnectPageCapabilityBean createDefaultPageBean()
@@ -197,7 +213,6 @@ public class PageToWebItemAndServletConverterTest
                 .withName(NAME)
                 .withUrl(URL)
                 .withWeight(WEIGHT)
-//                .withParam()
 //                .withConditions()
 //                .withIcon()
                 .build();

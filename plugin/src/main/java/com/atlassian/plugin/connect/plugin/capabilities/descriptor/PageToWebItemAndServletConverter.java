@@ -5,7 +5,9 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityB
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IFrameServletBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AddonUrlTemplatePair;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.UrlTemplate;
+import com.atlassian.plugin.connect.plugin.module.IFrameParamsImpl;
 import com.atlassian.plugin.connect.plugin.module.page.PageInfo;
+import com.atlassian.plugin.connect.spi.module.IFrameParams;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.web.conditions.AlwaysDisplayCondition;
@@ -27,14 +29,15 @@ public class PageToWebItemAndServletConverter
 
     public PageToWebItemAndServletConverter(ConnectPageCapabilityBean pageBean, String pluginKey,
                                             ProductAccessor productAccessor, String decorator, String templateSuffix,
-                                            Map<String, String> metaTagsContent, Condition condition)
+                                            Map<String, String> metaTagsContent, Condition condition,
+                                            IFrameParams iFrameParams)
     {
         AddonUrlTemplatePair urlTemplatePair = createUrlTemplatePair(pageBean, pluginKey);
 
         // TODO: In ACDEV-396 push the url template into RemoteWebLink
         webItemBean = createWebItemCapabilityBean(pageBean, urlTemplatePair.getHostUrlPaths().getHostUrlTemplate(), productAccessor);
         servletBean = createServletBean(pageBean, urlTemplatePair, decorator, templateSuffix, metaTagsContent,
-                condition == null ? DEFAULT_CONDITION : condition);
+                condition, iFrameParams);
     }
 
     private AddonUrlTemplatePair createUrlTemplatePair(ConnectPageCapabilityBean pageBean, String pluginKey)
@@ -59,11 +62,13 @@ public class PageToWebItemAndServletConverter
 
     private IFrameServletBean createServletBean(ConnectPageCapabilityBean pageBean, AddonUrlTemplatePair urlTemplatePair,
                                                 String decorator, String templateSuffix, Map<String, String> metaTagsContent,
-                                                Condition condition)
+                                                Condition condition, IFrameParams iFrameParams)
     {
-        final String pageName = (!isNullOrEmpty(pageBean.getName().getValue()) ? pageBean.getName().getValue() : pageBean.getKey());
-        PageInfo pageInfo = new PageInfo(decorator, templateSuffix, pageName, condition, metaTagsContent);
-        return new IFrameServletBean(pageBean, urlTemplatePair, pageInfo);
+        PageInfo pageInfo = new PageInfo(decorator, templateSuffix, pageBean.getDisplayName(),
+                condition == null ? DEFAULT_CONDITION : condition, metaTagsContent);
+
+        return new IFrameServletBean(pageBean, urlTemplatePair, pageInfo,
+                iFrameParams == null ? new IFrameParamsImpl() : iFrameParams);
     }
 
     public WebItemCapabilityBean getWebItemBean()

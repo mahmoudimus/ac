@@ -89,7 +89,8 @@ public class IFramePageServletDescriptorFactory
 
         return createIFrameServletDescriptor(plugin, servletBean.getLinkBean(), path,
                 servletBean.getPageInfo(),
-                ModuleFactoryType.PAGE, urlTemplatePair.getHostUrlPaths().getServletRegistrationPaths());
+                ModuleFactoryType.PAGE, urlTemplatePair.getHostUrlPaths().getServletRegistrationPaths(),
+                servletBean.getiFrameParams());
     }
 
     private ServletModuleDescriptor createIFrameServletDescriptor(final Plugin plugin, final NameToKeyBean bean,
@@ -103,14 +104,16 @@ public class IFramePageServletDescriptorFactory
 
         return createIFrameServletDescriptor(plugin, bean, path,
                 new PageInfo(decorator, templateSuffix, pageName, condition, metaTagsContent),
-                type, ImmutableList.<String>of(localUrl + "", localUrl + "/*"));
+                type, ImmutableList.<String>of(localUrl + "", localUrl + "/*"),
+                new IFrameParamsImpl());
     }
 
     private ServletModuleDescriptor createIFrameServletDescriptor(final Plugin plugin, final NameToKeyBean bean,
                                                                   final String path,
                                                                   final PageInfo pageInfo,
                                                                   final ModuleFactoryType type,
-                                                                  Iterable<String> servletUrlPatterns)
+                                                                  Iterable<String> servletUrlPatterns,
+                                                                  IFrameParams iFrameParams)
     {
         final String moduleKey = "servlet-" + bean.getKey();
 
@@ -118,9 +121,8 @@ public class IFramePageServletDescriptorFactory
 
         final Map<String, String> contextParams = urlVariableSubstitutor.getContextVariableMap(path);
 
-        final IFrameParams params = new IFrameParamsImpl();
         final ServletModuleDescriptor descriptor = new ServletModuleDescriptor(
-                getModuleFactory(plugin, path, pageInfo, moduleKey, contextParams, params, type),
+                getModuleFactory(plugin, path, pageInfo, moduleKey, contextParams, iFrameParams, type),
                 getService(bundleContext, ServletModuleManager.class)
         );
 

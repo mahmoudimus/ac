@@ -3,6 +3,8 @@ package com.atlassian.plugin.connect.plugin.capabilities.beans;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConnectPageCapabilityBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
+
 /**
  * Page modules are UI extension points that add-ons can use to insert content into various areas of the host
  * application's interface. You implement a page module (along with the other type of module you can use with
@@ -119,6 +121,12 @@ public class ConnectPageCapabilityBean extends BeanWithKeyAndParamsAndConditions
     public String getLocation()
     {
         return location;
+    }
+
+    // TODO: I think this should be in NameToKeyBean. What do youse reviewers think?
+    public String getDisplayName()
+    {
+        return (!isNullOrEmpty(getName().getValue()) ? getName().getValue() : getKey());
     }
 
     public static ConnectPageCapabilityBeanBuilder newPageBean()
