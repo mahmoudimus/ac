@@ -16,6 +16,7 @@ import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.api.service.SignedRequestHandler;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.*;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConnectAddonBeanBuilder;
+
 import com.atlassian.plugin.connect.plugin.capabilities.gson.CapabilitiesGsonFactory;
 import com.atlassian.plugin.connect.test.Environment;
 import com.atlassian.plugin.connect.test.HttpUtils;
@@ -54,7 +55,7 @@ public class ConnectCapabilitiesRunner
     public static final String ENABLED_PATH = "/enabled-lifecycle";
     public static final String DISABLED_PATH = "/disabled-lifecycle";
     public static final String UNINSTALLED_PATH = "/uninstalled-lifecycle";
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private static final String REGISTRATION_ROUTE = "/register";
 
     private final String baseUrl;
     private final AtlassianConnectRestClient installer;
@@ -62,8 +63,7 @@ public class ConnectCapabilitiesRunner
     private final String pluginKey;
     private Option<? extends SignedRequestHandler> signedRequestHandler;
     private ConnectAddonBean addon;
-
-
+    
     private int port;
     private Server server;
     private final Map<String, HttpServlet> routes = newHashMap();
@@ -83,7 +83,7 @@ public class ConnectCapabilitiesRunner
 
     private void register() throws Exception
     {
-        installer.install("http://localhost:" + port + "/register");
+        installer.install("http://localhost:" + port + REGISTRATION_ROUTE);
     }
 
     public void uninstall() throws Exception
@@ -209,7 +209,7 @@ public class ConnectCapabilitiesRunner
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.setContextPath("/");
 
-        context.addServlet(new ServletHolder(new DescriptorServlet()), "/register");
+        context.addServlet(new ServletHolder(new DescriptorServlet()), REGISTRATION_ROUTE);
 
         for (final Map.Entry<String, HttpServlet> entry : routes.entrySet())
         {
@@ -223,7 +223,7 @@ public class ConnectCapabilitiesRunner
         list.addHandler(context);
         server.start();
 
-        System.out.println("Started Atlassian Connect Add-On at " + displayUrl);
+        System.out.println("Started Atlassian Connect Add-On at " + displayUrl + REGISTRATION_ROUTE);
         register();
         return this;
     }

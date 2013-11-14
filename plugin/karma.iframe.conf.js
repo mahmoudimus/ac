@@ -17,9 +17,12 @@ module.exports = function(config) {
       'src/test/resources/test-iframe-main.js',
       {pattern: 'node_modules/sinon/lib/sinon/util/timers_ie.js', included: true},
       'src/test/resources/js/iframe/plugin/fixture.js',
+      //events run on both sides of the bridge.
+      {pattern: 'src/test/resources/js/iframe/_events-test.js', included: false},
       {pattern: 'src/test/resources/js/iframe/plugin/*-test.js', included: false},
       {pattern: 'src/test/resources/js/iframe/plugin/_*Mock*.js', included: false},
-      {pattern: 'src/main/resources/js/iframe/plugin/*.js', included: false}
+      {pattern: 'src/main/resources/js/iframe/plugin/*.js', included: false},
+      {pattern: 'src/main/resources/**/*.js', included: false}
     ],
 
 
