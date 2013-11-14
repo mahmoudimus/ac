@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
+import com.atlassian.plugin.connect.plugin.capabilities.beans.ConditionalBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectPageCapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IFrameServletBean;
@@ -11,6 +12,7 @@ import com.atlassian.plugin.connect.spi.module.IFrameParams;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.web.conditions.AlwaysDisplayCondition;
+import com.google.common.collect.Iterables;
 
 import java.util.Map;
 
@@ -58,6 +60,7 @@ public class PageToWebItemAndServletConverter
                 .withLocation(location)
                 .withWeight(weight)
                 .withIcon(bean.getIcon())
+                .withConditions(Iterables.toArray(bean.getConditions(), ConditionalBean.class))
                 .build();
     }
 

@@ -1,7 +1,9 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
+import com.atlassian.plugin.connect.plugin.capabilities.beans.ConditionalBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectPageCapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.SingleConditionBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IFrameServletBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean;
@@ -26,6 +28,7 @@ import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -49,6 +52,7 @@ public class PageToWebItemAndServletConverterTest
     private static final int DEFAULT_WEIGHT = 123;
     private static final IFrameParams IFRAME_PARAMS = new IFrameParamsImpl();
     private static final IconBean ICON = IconBean.newIconBean().withUrl("moiImage").build();
+    private static final ConditionalBean CONDITION_BEAN = new SingleConditionBeanBuilder().withCondition("unconditional").build();
 
     private final ConnectPageCapabilityBean defaultPageBean = createDefaultPageBean();
     private final PageToWebItemAndServletConverter defaultAdapter = createAdapter(defaultPageBean, IFRAME_PARAMS);
@@ -99,6 +103,12 @@ public class PageToWebItemAndServletConverterTest
     public void createsWebItemWithSameIconAsPageBean()
     {
         assertThat(webItem(), hasProperty("icon", is(ICON)));
+    }
+
+    @Test
+    public void createsWebItemWithSameConditionAsPageBean()
+    {
+        assertThat(webItem(), hasProperty("conditions", contains(CONDITION_BEAN)));
     }
 
     @Test
@@ -222,7 +232,7 @@ public class PageToWebItemAndServletConverterTest
                 .withUrl(URL)
                 .withWeight(WEIGHT)
                 .withIcon(ICON)
-//                .withConditions()
+                .withConditions(CONDITION_BEAN)
                 .build();
     }
 
