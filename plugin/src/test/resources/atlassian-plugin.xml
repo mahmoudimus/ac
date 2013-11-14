@@ -1,0 +1,20 @@
+<atlassian-plugin key="${project.groupId}.${project.artifactId}-tests" name="${project.name} tests" plugins-version="2">
+    <plugin-info>
+        <description>${project.description}</description>
+        <version>${project.version}</version>
+        <vendor name="${project.organization.name}" url="${project.organization.url}"/>
+        <bundle-instructions>
+            <Import-Package>
+                com.atlassian.plugin.connect*,
+                com.atlassian.plugin.connect.*,
+                com.atlassian.plugin.connect.plugin.capabilities.beans*,
+                com.atlassian.plugin.connect.plugin.capabilities.beans.*,
+                *;resolution:=optional
+            </Import-Package>
+        </bundle-instructions>
+    </plugin-info>
+
+    <!-- NOTE, this plugin has to be transformed because there's some magic that makes wired tests work -->
+    <component-import key="connectApplinkManager" interface="com.atlassian.plugin.connect.plugin.installer.ConnectApplinkManager" />
+
+</atlassian-plugin>

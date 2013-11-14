@@ -7,17 +7,13 @@ import java.util.Map;
 
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConditionalBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.CompositeConditionBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.SingleConditionBean;
-import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
-import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.spi.module.RemoteCondition;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.web.Condition;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
-import com.google.gson.JsonObject;
 
 import org.dom4j.dom.DOMElement;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,16 +26,14 @@ import static com.google.common.collect.Maps.newHashMap;
 public class ConditionModuleFragmentFactory implements ConnectModuleFragmentFactory<List<ConditionalBean>>
 {
     private static final String TYPE_KEY = "type";
-    
+
     private final ProductAccessor productAccessor;
-    private final RemotablePluginAccessorFactory remotablePluginAccessorFactory;
     private final ParamsModuleFragmentFactory paramsModuleFragmentFactory;
 
     @Autowired
-    public ConditionModuleFragmentFactory(ProductAccessor productAccessor, RemotablePluginAccessorFactory remotablePluginAccessorFactory, ParamsModuleFragmentFactory paramsModuleFragmentFactory)
+    public ConditionModuleFragmentFactory(ProductAccessor productAccessor, ParamsModuleFragmentFactory paramsModuleFragmentFactory)
     {
         this.productAccessor = productAccessor;
-        this.remotablePluginAccessorFactory = remotablePluginAccessorFactory;
         this.paramsModuleFragmentFactory = paramsModuleFragmentFactory;
     }
 
@@ -63,103 +57,103 @@ public class ConditionModuleFragmentFactory implements ConnectModuleFragmentFact
     {
         DOMElement element = new DOMElement("conditions");
         element.addAttribute(TYPE_KEY, "AND");
-        
+
         List<DOMElement> conditions = processConditionBeans(pluginKey, beans, toHideSelector, contextParams);
-        
-        for(DOMElement condition : conditions)
+
+        for (DOMElement condition : conditions)
         {
             element.add(condition);
         }
-        
+
         return element;
 
     }
-    
+
     private List<DOMElement> processConditionBeans(String pluginKey, List<ConditionalBean> beans, String toHideSelector, List<String> contextParams)
     {
         List<DOMElement> elements = new ArrayList<DOMElement>();
-        
-        for(ConditionalBean bean : beans)
+
+        for (ConditionalBean bean : beans)
         {
-            if(SingleConditionBean.class.isAssignableFrom(bean.getClass()))
+            if (SingleConditionBean.class.isAssignableFrom(bean.getClass()))
             {
-                DOMElement element = createSingleCondition(pluginKey,(SingleConditionBean)bean,toHideSelector,contextParams);
-                
-                if(null != element)
+                DOMElement element = createSingleCondition(pluginKey, (SingleConditionBean) bean, toHideSelector, contextParams);
+
+                if (null != element)
                 {
                     elements.add(element);
                 }
             }
-            else if(CompositeConditionBean.class.isAssignableFrom(bean.getClass()))
+            else if (CompositeConditionBean.class.isAssignableFrom(bean.getClass()))
             {
                 DOMElement composite = new DOMElement("conditions");
                 CompositeConditionBean ccb = (CompositeConditionBean) bean;
-                
-                composite.addAttribute(TYPE_KEY,ccb.getType().toString().toUpperCase());
-                
+
+                composite.addAttribute(TYPE_KEY, ccb.getType().toString().toUpperCase());
+
                 List<DOMElement> subConditions = processConditionBeans(pluginKey, ccb.getConditions(), toHideSelector, contextParams);
-                
-                for(DOMElement subcondition : subConditions)
+
+                for (DOMElement subcondition : subConditions)
                 {
                     composite.add(subcondition);
                 }
-                
-                elements.add(composite);   
+
+                elements.add(composite);
             }
         }
-        
+
         return elements;
     }
- 
-    
+
+
     private DOMElement createSingleCondition(String pluginKey, SingleConditionBean bean, String toHideSelector, List<String> contextParams)
     {
         String className = "";
         DOMElement element = null;
-        Map<String,String> params = newHashMap(bean.getParams());
-        
-        if(isRemoteCondition(bean))
+        Map<String, String> params = newHashMap(bean.getParams());
+
+        if (isRemoteCondition(bean))
         {
             String conditionUrl = bean.getCondition();
-            
+
             className = RemoteCondition.class.getName();
-            
-            params.put("pluginKey",pluginKey);
-            params.put("url",conditionUrl);
-            
-            if(Strings.isNullOrEmpty(toHideSelector))
+
+            params.put("pluginKey", pluginKey);
+            params.put("url", conditionUrl);
+
+            if (Strings.isNullOrEmpty(toHideSelector))
             {
                 String hash = createUniqueUrlHash(pluginKey, conditionUrl);
                 toHideSelector = "." + hash;
             }
 
-            params.put("toHideSelector",toHideSelector);
-            
-            if(null != contextParams && !contextParams.isEmpty())
+            params.put("toHideSelector", toHideSelector);
+
+            if (null != contextParams && !contextParams.isEmpty())
             {
                 params.put("contextParams", Joiner.on(",").join(contextParams));
             }
-            
+
         }
         else
         {
             Class<? extends Condition> clazz = productAccessor.getConditions().get(bean.getCondition());
-            
-            if(null != clazz)
+
+            if (null != clazz)
             {
                 className = clazz.getName();
             }
         }
-        
-        if(!Strings.isNullOrEmpty(className))
+
+        if (!Strings.isNullOrEmpty(className))
         {
             element = new DOMElement("condition");
             element.addAttribute("class", className);
-            element.addAttribute("invert",Boolean.toString(bean.isInvert()));
-            
-            paramsModuleFragmentFactory.addParamsToElement(element,params);
+            element.addAttribute("invert", Boolean.toString(bean.isInvert()));
+
+            paramsModuleFragmentFactory.addParamsToElement(element, params);
         }
-        
+
         return element;
     }
 

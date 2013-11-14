@@ -2,14 +2,12 @@ package it.capabilities.jira;
 
 import com.atlassian.jira.pageobjects.project.ProjectConfigTabs;
 import com.atlassian.jira.pageobjects.project.summary.ProjectSummaryPageTab;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.RemoteContainerCapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectProjectAdminTabPanelModuleProvider;
 import com.atlassian.plugin.connect.test.junit.HtmlDumpRule;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraProjectAdministrationTab;
 import com.atlassian.plugin.connect.test.server.ConnectCapabilitiesRunner;
-import it.jira.JiraWebDriverTestBase;
-import it.servlet.ConnectAppServlets;
+
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 import org.hamcrest.core.IsCollectionContaining;
@@ -18,8 +16,10 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 
+import it.jira.JiraWebDriverTestBase;
+import it.servlet.ConnectAppServlets;
+
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectProjectAdminTabPanelCapabilityBean.newProjectAdminTabPanelBean;
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.RemoteContainerCapabilityBean.newRemoteContainerBean;
 import static junit.framework.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -39,15 +39,11 @@ public class TestProjectAdminTabPanel extends JiraWebDriverTestBase
     public static void startConnectAddOn() throws Exception
     {
         remotePlugin = new ConnectCapabilitiesRunner(product.getProductInstance().getBaseUrl(), "my-plugin")
-                .addCapability(ConnectProjectAdminTabPanelModuleProvider.PROJECT_ADMIN_TAB_PANELS,newProjectAdminTabPanelBean()
+                .addCapability(ConnectProjectAdminTabPanelModuleProvider.PROJECT_ADMIN_TAB_PANELS, newProjectAdminTabPanelBean()
                         .withName(new I18nProperty(REMOTE_PROJECT_CONFIG_TAB_NAME, null))
                         .withUrl("/pct")
                         .withWeight(10)
                         .withLocation("projectgroup4")
-                        .build())
-                .addCapability(RemoteContainerCapabilityBean.CONNECT_CONTAINER, newRemoteContainerBean()
-                        .withDisplayUrl("http://www.example.com")
-//                        .withOAuth(newOAuthBean().withPublicKey("S0m3Publ1cK3y").build())
                         .build())
                 .addRoute("/pct", ConnectAppServlets.apRequestServlet())
                 .start();

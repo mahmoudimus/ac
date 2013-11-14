@@ -11,6 +11,7 @@
         "self": "http://www.example.com/capabilities",
         "homepage": "http://www.example.com"
     },
+    "baseUrl" : "http://www.example.com",
     "capabilities": {
         "webItems": [
             {
@@ -19,9 +20,6 @@
             {
                 "name": {"value": "another web item", "i18n":"another.name.key"}
             }
-        ],
-        "connectContainer": {
-            "displayUrl": "http://www.example.com"
-        }
+        ]
     }
 }

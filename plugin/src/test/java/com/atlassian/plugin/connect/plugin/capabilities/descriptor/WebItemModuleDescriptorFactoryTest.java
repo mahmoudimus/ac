@@ -50,7 +50,7 @@ public class WebItemModuleDescriptorFactoryTest
         Plugin plugin = new PluginForTests("my-key", "My Plugin");
 
         RemotablePluginAccessorFactoryForTests remotablePluginAccessorFactoryForTests = new RemotablePluginAccessorFactoryForTests();
-        ConditionModuleFragmentFactory conditionModuleFragmentFactory = new ConditionModuleFragmentFactory(mock(ProductAccessor.class),remotablePluginAccessorFactoryForTests, new ParamsModuleFragmentFactory());
+        ConditionModuleFragmentFactory conditionModuleFragmentFactory = new ConditionModuleFragmentFactory(mock(ProductAccessor.class),new ParamsModuleFragmentFactory());
 
         WebItemModuleDescriptorFactory webItemFactory = new WebItemModuleDescriptorFactory(new WebItemModuleDescriptorFactoryForTests(webInterfaceManager), new IconModuleFragmentFactory(new RemotablePluginAccessorFactoryForTests()), conditionModuleFragmentFactory);
 

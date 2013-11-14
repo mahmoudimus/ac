@@ -3,7 +3,6 @@ package com.atlassian.plugin.connect.plugin.capabilities.gson;
 import java.util.List;
 
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.RemoteContainerCapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean;
 
 import com.google.gson.Gson;
@@ -120,13 +119,11 @@ public class ConnectAddonBeanMarshallingTest
         ConnectAddonBean addOn = gson.fromJson(json, ConnectAddonBean.class);
 
         List<WebItemCapabilityBean> moduleList = addOn.getCapabilities().getWebItems();
-        RemoteContainerCapabilityBean containerBean = addOn.getCapabilities().getConnectContainer();
 
         assertEquals(2, moduleList.size());
         assertEquals("a web item", moduleList.get(0).getName().getValue());
         assertEquals("another web item", moduleList.get(1).getName().getValue());
 
-        assertNotNull(containerBean);
-        assertEquals("http://www.example.com", containerBean.getDisplayUrl());
+        assertEquals("http://www.example.com", addOn.getBaseUrl());
     }
 }

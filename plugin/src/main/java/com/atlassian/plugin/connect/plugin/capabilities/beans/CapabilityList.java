@@ -1,20 +1,12 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
-import com.atlassian.plugin.connect.plugin.capabilities.annotation.CapabilityModuleProvider;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.BaseCapabilityBeanBuilder;
-import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectProjectAdminTabPanelModuleProvider;
-import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanelModuleProvider;
-import com.atlassian.plugin.connect.plugin.capabilities.provider.GeneralPageModuleProvider;
-import com.atlassian.plugin.connect.plugin.capabilities.provider.RemoteContainerModuleProvider;
-import com.atlassian.plugin.connect.plugin.capabilities.provider.WebHookModuleProvider;
-import com.atlassian.plugin.connect.plugin.capabilities.provider.WebItemModuleProvider;
-import com.atlassian.plugin.connect.plugin.capabilities.provider.WebPanelModuleProvider;
-import com.atlassian.plugin.connect.plugin.capabilities.provider.WorkflowPostFunctionModuleProvider;
-import com.atlassian.plugin.spring.scanner.ProductFilter;
-
 import java.util.List;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.RemoteContainerCapabilityBean.newRemoteContainerBean;
+import com.atlassian.plugin.connect.plugin.capabilities.annotation.CapabilityModuleProvider;
+import com.atlassian.plugin.spring.scanner.ProductFilter;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.BaseCapabilityBeanBuilder;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.*;
+
 import static com.google.common.collect.Lists.newArrayList;
 
 /**
@@ -56,16 +48,12 @@ public class CapabilityList extends BaseCapabilityBean
     @CapabilityModuleProvider(GeneralPageModuleProvider.class)
     private List<ConnectPageCapabilityBean> generalPages;
 
-    @CapabilityModuleProvider(RemoteContainerModuleProvider.class)
-    private RemoteContainerCapabilityBean connectContainer;
-
     @CapabilityModuleProvider(WebHookModuleProvider.class)
     private List<WebHookCapabilityBean> webhooks;
 
     public CapabilityList()
     {
         this.jiraComponentTabPanels = newArrayList();
-        this.connectContainer = newRemoteContainerBean().build();
         this.jiraIssueTabPanels = newArrayList();
         this.jiraProjectAdminTabPanels = newArrayList();
         this.jiraProjectTabPanels = newArrayList();
@@ -84,10 +72,6 @@ public class CapabilityList extends BaseCapabilityBean
         if (null == jiraComponentTabPanels)
         {
             this.jiraComponentTabPanels = newArrayList();
-        }
-        if (null == connectContainer)
-        {
-            this.connectContainer = newRemoteContainerBean().build();
         }
         if (null == jiraIssueTabPanels)
         {
@@ -158,10 +142,6 @@ public class CapabilityList extends BaseCapabilityBean
         return webPanels;
     }
 
-    public List<WebHookCapabilityBean> getWebhooks() {
-        return webhooks;
-    }
-
     public List<WorkflowPostFunctionCapabilityBean> getJiraWorkflowPostFunctions()
     {
         return jiraWorkflowPostFunctions;
@@ -171,9 +151,9 @@ public class CapabilityList extends BaseCapabilityBean
     {
         return generalPages;
     }
-
-    public RemoteContainerCapabilityBean getConnectContainer()
+    
+    public List<WebHookCapabilityBean> getWebhooks() 
     {
-        return connectContainer;
+        return webhooks;
     }
 }

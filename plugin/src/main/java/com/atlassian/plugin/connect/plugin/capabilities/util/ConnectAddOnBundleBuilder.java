@@ -25,7 +25,7 @@ public class ConnectAddOnBundleBuilder
     public static final String CONNECT_FILE_SUFFIX = "_-atlassian-connect-_";
     private static final DateFormat BUILD_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
     private static final String ATLASSIAN_BUILD_DATE = "Atlassian-Build-Date";
-    private static final String ATLASSIAN_CONNECT_API_PACKAGE = "com.atlassian.plugin.connect.api.*";
+    private static final String ATLASSIAN_CONNECT_SPI_PACKAGE = "com.atlassian.plugin.connect.spi";
     
     private final Map<String, byte[]> jarContents;
     private Map<String, String> manifestMap;
@@ -134,7 +134,7 @@ public class ConnectAddOnBundleBuilder
             mergedManifest.getMainAttributes().putValue(Constants.BUNDLE_CLASSPATH, ".");
         }
 
-        mergedManifest.getMainAttributes().putValue(Constants.IMPORT_PACKAGE, ATLASSIAN_CONNECT_API_PACKAGE);
+        mergedManifest.getMainAttributes().putValue(Constants.IMPORT_PACKAGE, ATLASSIAN_CONNECT_SPI_PACKAGE);
 
         
         File newJar = createExtractableTempFile(fileNamePrefix,".jar");

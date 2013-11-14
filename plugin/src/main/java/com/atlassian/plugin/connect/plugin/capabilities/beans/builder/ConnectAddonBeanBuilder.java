@@ -6,9 +6,7 @@ import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 
-import com.atlassian.plugin.connect.plugin.capabilities.beans.CapabilityBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.CapabilityList;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.*;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.VendorBean;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.util.ConnectReflectionHelper.isParameterizedList;
@@ -24,6 +22,9 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extend
     private VendorBean vendor;
     private Map<String, String> links;
     private CapabilityList capabilities;
+    private LifecycleBean lifecycle;
+    private String baseUrl;
+    private AuthenticationBean authentication;
 
     public ConnectAddonBeanBuilder()
     {
@@ -37,6 +38,9 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extend
         this.vendor = defaultBean.getVendor();
         this.links = defaultBean.getLinks();
         this.capabilities = defaultBean.getCapabilities();
+        this.lifecycle = defaultBean.getLifecycle();
+        this.baseUrl = defaultBean.getBaseUrl();
+        this.authentication = defaultBean.getAuthentication();
     }
 
     public T withKey(String key)
@@ -90,7 +94,25 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extend
 
         return (T) this;
     }
+    
+    public T withLifecycle(LifecycleBean lifecycle)
+    {
+        this.lifecycle = lifecycle;
+        return (T) this;
+    }
 
+    public T withBaseurl(String url)
+    {
+        this.baseUrl = url;
+        return (T) this;
+    }
+
+    public T withAuthentication(AuthenticationBean authentication)
+    {
+        this.authentication = authentication;
+        return (T) this;
+    }
+    
     private void addBeanReflectivelyByType(String fieldName, CapabilityList capabilities, CapabilityBean bean)
     {
         Class beanClass = bean.getClass();
@@ -123,6 +145,16 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extend
         {
             throw new RuntimeException("Unable to find capability field '" + fieldName + "' for bean of type: " + bean.getClass());
         }
+    }
+
+    public AuthenticationBean getAuthentication()
+    {
+        return authentication;
+    }
+
+    public LifecycleBean getLifecycle()
+    {
+        return lifecycle;
     }
 
     public B build()
