@@ -9,6 +9,7 @@ import com.atlassian.sal.api.user.UserManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -28,7 +29,7 @@ public class ApiScopingFilter implements Filter
      * Set by a {@link Filter}, possibly using {@link OAuth2LOAuthenticator} or {@link com.atlassian.jwt.plugin.sal.JwtAuthenticator},
      * indicating the Connect add-on that is the origin of the current request.
      */
-    public static final String PLUGIN_KEY = "Add-on-Key";
+    private static final String ADD_ON_ID_ATTRIBUTE = "Add-on-Key"; // TODO: extract out to be used by this class & atlassian-jwt classes
 
     /**
      * Request header set by /iframe/host/main.js, indicating that the current request is an XDM request. The value
@@ -155,14 +156,25 @@ public class ApiScopingFilter implements Filter
     }
 
     /**
-     * @param req the context {@link javax.servlet.http.HttpServletRequest}
-     * @return the OAuth client key for the remote app, or {@code null} if 2LO authentication failed or was not
+     * @param req the context {@link HttpServletRequest}
+     * @return the unique add-on id, synonymous with OAuth client key and JWT issuer, or {@code null} if 2LO authentication failed or was not
      *         attempted
      */
     @Nullable
     public static String extractClientKey(HttpServletRequest req)
     {
-        return (String) req.getAttribute(PLUGIN_KEY);
+        return (String) req.getAttribute(ADD_ON_ID_ATTRIBUTE);
+    }
+
+    /**
+     * Set the id of a Connect add-on in the request attributes.
+     * @param req the context {@link HttpServletRequest}
+     * @return the unique add-on id, synonymous with OAuth client key and JWT issuer, or {@code null} if 2LO authentication failed or was not
+     *         attempted
+     */
+    public static void setClientKey(@Nonnull HttpServletRequest req, @Nonnull String clientKey)
+    {
+        req.setAttribute(ADD_ON_ID_ATTRIBUTE, clientKey);
     }
 
     /**

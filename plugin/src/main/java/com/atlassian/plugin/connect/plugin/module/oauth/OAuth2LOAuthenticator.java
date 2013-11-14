@@ -196,7 +196,7 @@ public class OAuth2LOAuthenticator implements Authenticator
         the request needs
         to be authorized to ensure it has access to the appropriate API scope.
          */
-        request.setAttribute(ApiScopingFilter.PLUGIN_KEY, consumerKey);
+        ApiScopingFilter.setClientKey(request, consumerKey);
         log.info("Authenticated app '{}' as user '{}' successfully", consumerKey, user.getName());
         return new Result.Success(user);
         /*!-helper methods*/
