@@ -715,7 +715,7 @@
                 <version>2.9.1</version>
                 <executions>
                     <execution>
-                        <id>jsaon-schema</id>
+                        <id>json-schema</id>
                         <phase>generate-sources</phase>
                         <goals>
                             <goal>javadoc</goal>
@@ -724,7 +724,7 @@
                             <doclet>com.atlassian.json.schema.doclet.JsonSchemaDoclet</doclet>
                             <docletArtifact>
                                 <groupId>${project.groupId}</groupId>
-                                <artifactId>json-schema-generator</artifactId>
+                                <artifactId>json-schemagen-core</artifactId>
                                 <version>${project.version}</version>
                             </docletArtifact>
                             <sourceFileIncludes>

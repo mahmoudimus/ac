@@ -9,6 +9,9 @@ public class FoodObject
     private String name;
     private List<String> grownIn;
     private Map<String,String> params;
+    private FoodType foodType;
+    private SoldAs soldAs;
+    private List<Smell> smells;
 
     public void setColor(String color)
     {
