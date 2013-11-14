@@ -8,18 +8,18 @@ for (var file in window.__karma__.files) {
 }
 
 requirejs.config({
-  // Karma serves files from '/base'
-  baseUrl: 'base/src/main/resources/js/iframe/plugin',
+    // Karma serves files from '/base'
+    baseUrl: 'base/src/main/resources/js/iframe/plugin',
 
-  paths: {
-    '_events': '../_events'
-  },
+    paths: {
+        'iframe/_events': '../_events',
+        '_events': '../_events'
+    },
+    // ask Require.js to load these files (all our tests)
+    deps: tests,
 
-  // ask Require.js to load these files (all our tests)
-  deps: tests,
-
-  // start test run, once Require.js is done
-  callback: window.__karma__.start
+    // start test run, once Require.js is done
+    callback: window.__karma__.start
 });
 
 //tests will timeout after 5 seconds

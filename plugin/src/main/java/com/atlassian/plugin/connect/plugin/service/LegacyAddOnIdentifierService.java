@@ -1,10 +1,6 @@
 package com.atlassian.plugin.connect.plugin.service;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.util.Map;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
@@ -17,13 +13,7 @@ import com.atlassian.plugin.connect.spi.ConnectAddOnIdentifierService;
 import com.atlassian.plugin.osgi.util.OsgiHeaderUtil;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 
-import com.google.common.base.Charsets;
-import com.google.common.io.CharStreams;
-import com.google.common.io.InputSupplier;
-
 import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.osgi.framework.Bundle;
@@ -31,14 +21,13 @@ import org.osgi.framework.Bundle;
 /**
  * @since 1.0
  */
-@Named
-@ExportAsService(ConnectAddOnIdentifierService.class)
-public class DefaultConnectAddOnIdentifierService implements ConnectAddOnIdentifierService
+@Named("legacyAddOnIdentifierService")
+public class LegacyAddOnIdentifierService implements ConnectAddOnIdentifierService
 {
     private final PluginAccessor pluginAccessor;
 
     @Inject
-    public DefaultConnectAddOnIdentifierService(PluginAccessor pluginAccessor)
+    public LegacyAddOnIdentifierService(PluginAccessor pluginAccessor)
     {
         this.pluginAccessor = pluginAccessor;
     }
@@ -48,7 +37,7 @@ public class DefaultConnectAddOnIdentifierService implements ConnectAddOnIdentif
     {
         try
         {
-            return (bundle.getHeaders() != null && (bundle.getHeaders().get(CONNECT_HEADER) != null));
+            return (bundle.getHeaders() != null && (bundle.getHeaders().get(REMOTE_PLUGIN) != null));
         }
         catch (Exception e)
         {
@@ -63,7 +52,7 @@ public class DefaultConnectAddOnIdentifierService implements ConnectAddOnIdentif
         {
             Manifest mf = new Manifest(plugin.getResourceAsStream("/META-INF/MANIFEST.MF"));
            
-            return mf.getMainAttributes().containsKey(new Attributes.Name(CONNECT_HEADER));
+            return mf.getMainAttributes().containsKey(new Attributes.Name(REMOTE_PLUGIN));
         }
         catch (Exception e)
         {
@@ -110,7 +99,7 @@ public class DefaultConnectAddOnIdentifierService implements ConnectAddOnIdentif
     @Override
     public String getInstallerUser(Bundle bundle)
     {
-        String header = (String) bundle.getHeaders().get(CONNECT_HEADER);
+        String header = (String) bundle.getHeaders().get(REMOTE_PLUGIN);
         if (header != null)
         {
             return OsgiHeaderUtil.parseHeader(header).get("installer").get("user");
@@ -121,7 +110,7 @@ public class DefaultConnectAddOnIdentifierService implements ConnectAddOnIdentif
     @Override
     public String getRegistrationUrl(Bundle bundle)
     {
-        String header = (String) bundle.getHeaders().get(CONNECT_HEADER);
+        String header = (String) bundle.getHeaders().get(REMOTE_PLUGIN);
         if (header != null)
         {
             return OsgiHeaderUtil.parseHeader(header).get("installer").get("registration-url");

@@ -14,17 +14,16 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.api.service.SignedRequestHandler;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.CapabilityBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.RemoteContainerCapabilityBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.*;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConnectAddonBeanBuilder;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.OAuthBean;
+
 import com.atlassian.plugin.connect.plugin.capabilities.gson.CapabilitiesGsonFactory;
 import com.atlassian.plugin.connect.test.Environment;
 import com.atlassian.plugin.connect.test.HttpUtils;
 import com.atlassian.plugin.connect.test.Utils;
 import com.atlassian.plugin.connect.test.client.AtlassianConnectRestClient;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
@@ -41,9 +40,9 @@ import it.servlet.HttpContextServlet;
 import net.oauth.signature.RSA_SHA1;
 
 import static com.atlassian.fugue.Option.some;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.AuthenticationBean.newAuthenticationBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean.newConnectAddonBean;
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.RemoteContainerCapabilityBean.newRemoteContainerBean;
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.OAuthBean.newOAuthBean;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.LifecycleBean.newLifecycleBean;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Maps.newHashMap;
 
@@ -52,7 +51,11 @@ import static com.google.common.collect.Maps.newHashMap;
  */
 public class ConnectCapabilitiesRunner
 {
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    public static final String INSTALLED_PATH = "/installed-lifecycle";
+    public static final String ENABLED_PATH = "/enabled-lifecycle";
+    public static final String DISABLED_PATH = "/disabled-lifecycle";
+    public static final String UNINSTALLED_PATH = "/uninstalled-lifecycle";
+    private static final String REGISTRATION_ROUTE = "/register";
 
     private final String baseUrl;
     private final AtlassianConnectRestClient installer;
@@ -60,8 +63,7 @@ public class ConnectCapabilitiesRunner
     private final String pluginKey;
     private Option<? extends SignedRequestHandler> signedRequestHandler;
     private ConnectAddonBean addon;
-    private OAuthBean oAuthBean;
-
+    
     private int port;
     private Server server;
     private final Map<String, HttpServlet> routes = newHashMap();
@@ -81,7 +83,7 @@ public class ConnectCapabilitiesRunner
 
     private void register() throws Exception
     {
-        installer.install("http://localhost:" + port + "/register");
+        installer.install("http://localhost:" + port + REGISTRATION_ROUTE);
     }
 
     public void uninstall() throws Exception
@@ -98,6 +100,44 @@ public class ConnectCapabilitiesRunner
     {
         stopRunnerServer();
         uninstall();
+    }
+
+    public ConnectCapabilitiesRunner addInstallLifecycle()
+    {
+        LifecycleBean lifecycle = getLifecycle();
+        addonBuilder.withLifecycle(newLifecycleBean(lifecycle).withInstalled(INSTALLED_PATH).build());
+        return this;
+    }
+
+    public ConnectCapabilitiesRunner addEnableLifecycle()
+    {
+        LifecycleBean lifecycle = getLifecycle();
+        addonBuilder.withLifecycle(newLifecycleBean(lifecycle).withEnabled(ENABLED_PATH).build());
+        return this;
+    }
+
+    public ConnectCapabilitiesRunner addDisableLifecycle()
+    {
+        LifecycleBean lifecycle = getLifecycle();
+        addonBuilder.withLifecycle(newLifecycleBean(lifecycle).withDisabled(DISABLED_PATH).build());
+        return this;
+    }
+
+    public ConnectCapabilitiesRunner addUninstallLifecycle()
+    {
+        LifecycleBean lifecycle = getLifecycle();
+        addonBuilder.withLifecycle(newLifecycleBean(lifecycle).withUninstalled(UNINSTALLED_PATH).build());
+        return this;
+    }
+
+    private LifecycleBean getLifecycle()
+    {
+        if (null == addonBuilder.getLifecycle())
+        {
+            addonBuilder.withLifecycle(newLifecycleBean().build());
+        }
+
+        return addonBuilder.getLifecycle();
     }
 
     public ConnectCapabilitiesRunner addCapability(String fieldName, CapabilityBean bean)
@@ -127,9 +167,7 @@ public class ConnectCapabilitiesRunner
     {
         this.signedRequestHandler = some(signedRequestHandler);
 
-        this.oAuthBean = newOAuthBean()
-                .withPublicKey(signedRequestHandler.getLocal().getProperty(RSA_SHA1.PUBLIC_KEY).toString())
-                .build();
+        addonBuilder.withAuthentication(newAuthenticationBean().withType(AuthenticationType.OAUTH).withSharedKey(signedRequestHandler.getLocal().getProperty(RSA_SHA1.PUBLIC_KEY).toString()).build());
 
         //return addPermission(Permissions.CREATE_OAUTH_LINK);
         return this;
@@ -161,22 +199,7 @@ public class ConnectCapabilitiesRunner
         port = Utils.pickFreePort();
         final String displayUrl = "http://localhost:" + port;
 
-        if (null != oAuthBean)
-        {
-            addonBuilder.withCapability(
-                    RemoteContainerCapabilityBean.CONNECT_CONTAINER, newRemoteContainerBean()
-                    .withDisplayUrl(displayUrl)
-                    .withOAuth(oAuthBean)
-                    .build()
-            );
-        } else
-        {
-            addonBuilder.withCapability(
-                    RemoteContainerCapabilityBean.CONNECT_CONTAINER, newRemoteContainerBean()
-                    .withDisplayUrl(displayUrl)
-                    .build()
-            );
-        }
+        addonBuilder.withBaseurl(displayUrl);
 
         this.addon = addonBuilder.build();
 
@@ -186,7 +209,7 @@ public class ConnectCapabilitiesRunner
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.setContextPath("/");
 
-        context.addServlet(new ServletHolder(new DescriptorServlet()), "/register");
+        context.addServlet(new ServletHolder(new DescriptorServlet()), REGISTRATION_ROUTE);
 
         for (final Map.Entry<String, HttpServlet> entry : routes.entrySet())
         {
@@ -200,7 +223,7 @@ public class ConnectCapabilitiesRunner
         list.addHandler(context);
         server.start();
 
-        System.out.println("Started Atlassian Connect Add-On at " + displayUrl);
+        System.out.println("Started Atlassian Connect Add-On at " + displayUrl + REGISTRATION_ROUTE);
         register();
         return this;
     }

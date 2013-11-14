@@ -1,4 +1,4 @@
-(window.AP || window._AP).define("_events", [], function () {
+(window.AP || window._AP).define("_events", ["_dollar"], function ($) {
 
   "use strict";
 
@@ -74,7 +74,7 @@
   proto.off = function (name, listener) {
     var all = this._events[name];
     if (all) {
-      var i = all.indexOf(listener);
+      var i = $.inArray(listener, all);
       if (i >= 0) {
         all.splice(i, 1);
       }
@@ -109,7 +109,7 @@
    */
   proto.offAny = function (listener) {
     var any = this._any;
-    var i = any.indexOf(listener);
+    var i = $.inArray(listener, any);
     if (i >= 0) {
       any.splice(i, 1);
     }
