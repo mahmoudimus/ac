@@ -47,7 +47,7 @@ public class TestGeneralPage extends ConfluenceWebDriverTestBase
                                 .withUrl("/pg?page_id=${page.id}")
                                 .withWeight(1234)
                                 .build())
-                .addRoute("/pg", ConnectAppServlets.apRequestServlet())
+                .addRoute("/pg", ConnectAppServlets.sizeToParentServlet())
                 .start();
     }
 
@@ -81,7 +81,8 @@ public class TestGeneralPage extends ConfluenceWebDriverTestBase
         );
 
         RemotePluginTestPage addonContentsPage = viewProjectPage.clickRemotePluginLink();
-        assertThat(addonContentsPage.getMessage(), is("Success"));
+
+        assertThat(addonContentsPage.isFullSize(), is(true));
     }
 
     private ConfluenceViewPage createAndVisitViewPage() throws Exception

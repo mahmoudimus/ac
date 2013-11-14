@@ -43,7 +43,7 @@ public class TestGeneralPage extends JiraWebDriverTestBase
                                 .withUrl("/pg?project_id=${project.id}&project_key=${project.key}")
                                 .withWeight(1234)
                                 .build())
-                .addRoute("/pg", ConnectAppServlets.apRequestServlet())
+                .addRoute("/pg", ConnectAppServlets.sizeToParentServlet())
                 .start();
     }
 
@@ -78,7 +78,7 @@ public class TestGeneralPage extends JiraWebDriverTestBase
         );
 
         RemotePluginTestPage addonContentsPage = viewProjectPage.clickRemotePluginLink();
-        assertThat(addonContentsPage.getMessage(), is("Success"));
+        assertThat(addonContentsPage.isFullSize(), is(true));
     }
 
 
