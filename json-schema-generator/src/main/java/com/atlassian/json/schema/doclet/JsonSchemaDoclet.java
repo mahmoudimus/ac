@@ -1,4 +1,4 @@
-package com.atlassian.json.schema;
+package com.atlassian.json.schema.doclet;
 
 import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.RootDoc;

@@ -698,7 +698,7 @@
                             <goal>javadoc</goal>
                         </goals>
                         <configuration>
-                            <doclet>com.atlassian.json.schema.JsonSchemaDoclet</doclet>
+                            <doclet>com.atlassian.json.schema.doclet.JsonSchemaDoclet</doclet>
                             <docletArtifact>
                                 <groupId>${project.groupId}</groupId>
                                 <artifactId>json-schema-generator</artifactId>
