@@ -21,6 +21,7 @@ module.exports = function(config) {
       {pattern: 'src/test/resources/js/iframe/_events-test.js', included: false},
       {pattern: 'src/test/resources/js/iframe/plugin/*-test.js', included: false},
       {pattern: 'src/test/resources/js/iframe/plugin/_*Mock*.js', included: false},
+      {pattern: 'src/main/resources/js/iframe/plugin/*.js', included: false},
       {pattern: 'src/main/resources/**/*.js', included: false}
     ],
 
