@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
 import com.atlassian.plugin.ModuleDescriptor;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.AbstractConnectTabPanelCapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectTabPanelCapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.TabPanelDescriptorHints;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
