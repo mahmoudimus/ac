@@ -7,7 +7,7 @@ import org.mockito.ArgumentMatcher;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class TestMatchers
+public class IFrameContextMatchers
 {
     public static ArgumentMatcher<IFrameContext> hasIFramePath(final String url)
     {
@@ -31,4 +31,5 @@ public class TestMatchers
             }
         };
     }
+
 }
