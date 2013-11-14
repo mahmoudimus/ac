@@ -10,7 +10,7 @@ import com.google.common.base.Strings;
 @Named
 public class ConnectDescriptorRegistry
 {
-    private static final String CONNECT_DESCRIPTOR_PREFIX = "ac.descriptor.";
+    private static final String CONNECT_DESCRIPTOR_PREFIX = "ac.desc.";
 
     private final PluginSettingsFactory pluginSettingsFactory;
 
