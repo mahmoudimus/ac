@@ -1,19 +1,17 @@
 package com.atlassian.plugin.connect.plugin.installer;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
-import com.atlassian.util.concurrent.NotNull;
+import com.google.common.base.Strings;
 
 @Named
 public class ConnectDescriptorRegistry
 {
-    public static final String CONNECT_DESCRIPTOR_KEY = "atlassian.connect.descriptor.registry";
+    private static final String CONNECT_DESCRIPTOR_PREFIX = "ac.desc.";
+
     private final PluginSettingsFactory pluginSettingsFactory;
 
     @Inject
@@ -24,60 +22,32 @@ public class ConnectDescriptorRegistry
     
     public void storeDescriptor(String pluginKey, String json)
     {
-        Map<String,String> descriptorMap = getDescriptorMap();
-        
-        descriptorMap.put(pluginKey,json);
-        
-        saveDescriptorMap(descriptorMap);
-    }
-
-    private void saveDescriptorMap(Map<String, String> descriptorMap)
-    {
-        PluginSettings settings = getGlobalSettings();
-
-        settings.remove(CONNECT_DESCRIPTOR_KEY);
-        settings.put(CONNECT_DESCRIPTOR_KEY,descriptorMap);
+        settings().put(namespace(pluginKey), json);
     }
 
     public void removeDescriptor(String pluginKey)
     {
-        Map<String,String> descriptorMap = getDescriptorMap();
-
-        descriptorMap.remove(pluginKey);
-
-        saveDescriptorMap(descriptorMap);
-    }
-    
-    public boolean hasDescriptor(String pluginKey)
-    {
-        return getDescriptorMap().containsKey(pluginKey);
+        settings().remove(namespace(pluginKey));
     }
 
     public String getDescriptor(String pluginKey)
     {
-        if(hasDescriptor(pluginKey))
-        {
-            return getDescriptorMap().get(pluginKey);
-        }
-        
-        return "";
+        return Strings.nullToEmpty((String) settings().get(namespace(pluginKey)));
     }
 
-    @NotNull
-    private Map<String, String> getDescriptorMap()
+    public boolean hasDescriptor(String pluginKey)
     {
-        return (Map<String, String>) getGlobalSettings().get(CONNECT_DESCRIPTOR_KEY);
+        return !Strings.isNullOrEmpty(getDescriptor(pluginKey));
     }
-    
-    private PluginSettings getGlobalSettings()
+
+    private PluginSettings settings()
     {
-        PluginSettings settings = pluginSettingsFactory.createGlobalSettings();
-        if(null == settings.get(CONNECT_DESCRIPTOR_KEY))
-        {
-            settings.put(CONNECT_DESCRIPTOR_KEY,new HashMap<String,String>());
-        }
-        
-        return settings;
+        return pluginSettingsFactory.createGlobalSettings();
+    }
+
+    private static String namespace(String key)
+    {
+        return CONNECT_DESCRIPTOR_PREFIX + key;
     }
 
 }
