@@ -1,5 +1,10 @@
 package com.atlassian.plugin.connect.plugin.event;
 
+import java.net.URI;
+import java.util.Map;
+
+import javax.ws.rs.core.MediaType;
+
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.httpclient.api.HttpClient;
 import com.atlassian.httpclient.api.Request;
@@ -9,7 +14,7 @@ import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.oauth.util.RSAKeys;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
-import com.atlassian.plugin.connect.spi.ConnectAddOnIdentifierService;
+import com.atlassian.plugin.connect.plugin.service.LegacyAddOnIdentifierService;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.spi.event.RemotePluginEnabledEvent;
@@ -25,9 +30,11 @@ import com.atlassian.upm.api.util.Option;
 import com.atlassian.upm.spi.PluginInstallException;
 import com.atlassian.uri.UriBuilder;
 import com.atlassian.webhooks.spi.plugin.RequestSigner;
+
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
+
 import org.json.JSONObject;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -37,10 +44,6 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.net.URI;
-import java.util.Map;
-import javax.ws.rs.core.MediaType;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.nullToEmpty;
@@ -58,7 +61,7 @@ public final class RemoteEventsHandler implements InitializingBean, DisposableBe
     private final ApplicationProperties applicationProperties;
     private final ProductAccessor productAccessor;
     private final BundleContext bundleContext;
-    private final ConnectAddOnIdentifierService connectIdentifier;
+    private final LegacyAddOnIdentifierService connectIdentifier;
     private final PluginAccessor pluginAccessor;
     private final RemotablePluginAccessorFactory pluginAccessorFactory;
     private final RequestSigner requestSigner;
@@ -72,7 +75,7 @@ public final class RemoteEventsHandler implements InitializingBean, DisposableBe
                                ProductAccessor productAccessor,
                                BundleContext bundleContext,
                                PluginEventManager pluginEventManager,
-                               ConnectAddOnIdentifierService connectIdentifier, PluginAccessor pluginAccessor, RemotablePluginAccessorFactory pluginAccessorFactory, RequestSigner requestSigner, HttpClient httpClient, UserManager userManager)
+                               LegacyAddOnIdentifierService connectIdentifier, PluginAccessor pluginAccessor, RemotablePluginAccessorFactory pluginAccessorFactory, RequestSigner requestSigner, HttpClient httpClient, UserManager userManager)
     {
         this.pluginAccessor = pluginAccessor;
         this.pluginAccessorFactory = pluginAccessorFactory;
@@ -91,12 +94,12 @@ public final class RemoteEventsHandler implements InitializingBean, DisposableBe
     public void pluginInstalled(String pluginKey)
     {
         //if we have an "install-handler" in plugin info, do a sync call, otherwise fallback to the webhook
-        if(!callSyncHandler(pluginKey))
+        if (!callSyncHandler(pluginKey))
         {
             eventPublisher.publish(new RemotePluginInstalledEvent(checkNotNull(pluginKey), newRemotePluginEventData()));
         }
     }
-    
+
     private boolean callSyncHandler(String pluginKey)
     {
         boolean called = false;
@@ -105,39 +108,39 @@ public final class RemoteEventsHandler implements InitializingBean, DisposableBe
         {
             Plugin addon = pluginAccessor.getPlugin(pluginKey);
 
-            if(null != addon)
+            if (null != addon)
             {
-                Map<String,String> params = addon.getPluginInformation().getParameters();
-                if(params.containsKey("install-handler"))
+                Map<String, String> params = addon.getPluginInformation().getParameters();
+                if (params.containsKey("install-handler"))
                 {
                     String path = params.get("install-handler");
-                    if(!Strings.isNullOrEmpty(path))
+                    if (!Strings.isNullOrEmpty(path))
                     {
-                        RemotablePluginAccessor addonAccessor =  pluginAccessorFactory.get(pluginKey);
+                        RemotablePluginAccessor addonAccessor = pluginAccessorFactory.get(pluginKey);
 
-                        if(null != addonAccessor)
+                        if (null != addonAccessor)
                         {
-                            Map<String,Object> data = newHashMap(newRemotePluginEventData());
+                            Map<String, Object> data = newHashMap(newRemotePluginEventData());
                             data.put("key", pluginKey);
-                            
+
                             String json = new JSONObject(data).toString(2);
 
-                            
+
                             URI installHandler = getURI(addonAccessor.getBaseUrl().toString() + path);
-                            
+
                             Request.Builder request = httpClient.newRequest(installHandler);
-                            request.setAttribute("purpose","web-hook-notification");
-                            request.setAttribute("pluginKey",pluginKey);
+                            request.setAttribute("purpose", "web-hook-notification");
+                            request.setAttribute("pluginKey", pluginKey);
                             request.setContentType(MediaType.APPLICATION_JSON);
                             request.setEntity(json);
 
-                            requestSigner.sign(installHandler, pluginKey,request);
+                            requestSigner.sign(installHandler, pluginKey, request);
 
                             Response response = request.execute(Request.Method.POST).claim();
-                            if(response.getStatusCode() != 200)
+                            if (response.getStatusCode() != 200)
                             {
                                 log.error("Error contacting remote application [" + response.getStatusText() + "]");
-                                throw new PluginInstallException("Error contacting remote application [" + response.getStatusText() + "]",errorI18nKey);
+                                throw new PluginInstallException("Error contacting remote application [" + response.getStatusText() + "]", errorI18nKey);
                             }
                             else
                             {
@@ -150,24 +153,24 @@ public final class RemoteEventsHandler implements InitializingBean, DisposableBe
         }
         catch (Exception e)
         {
-            log.error("Error contacting remote application [" + e.getMessage() + "]",e);
-            throw new PluginInstallException("Error contacting remote application [" + e.getMessage() + "]",errorI18nKey);
+            log.error("Error contacting remote application [" + e.getMessage() + "]", e);
+            throw new PluginInstallException("Error contacting remote application [" + e.getMessage() + "]", errorI18nKey);
         }
-        
+
         return called;
     }
 
     private URI getURI(String url)
     {
         UriBuilder builder = new UriBuilder().setPath(url);
-        
+
         UserProfile user = userManager.getRemoteUser();
-        if(null != user)
+        if (null != user)
         {
-            builder.addQueryParameter("user_id",user.getUsername())
-                    .addQueryParameter("user_key",user.getUserKey().getStringValue());
+            builder.addQueryParameter("user_id", user.getUsername())
+                   .addQueryParameter("user_key", user.getUserKey().getStringValue());
         }
-        
+
         return builder.toUri().toJavaUri();
     }
 
@@ -197,23 +200,23 @@ public final class RemoteEventsHandler implements InitializingBean, DisposableBe
         final Consumer consumer = consumerService.getConsumer();
 
         ImmutableMap.Builder builder = ImmutableMap.<String, Object>builder()
-                .put("links", ImmutableMap.of(
-                        "oauth", applicationProperties.getBaseUrl() + "/rest/atlassian-connect/latest/oauth"))
-                .put("clientKey", nullToEmpty(consumer.getKey()))
-                .put("publicKey", nullToEmpty(RSAKeys.toPemEncoding(consumer.getPublicKey())))
-                .put("serverVersion", nullToEmpty(applicationProperties.getBuildNumber()))
-                .put("pluginsVersion", nullToEmpty(getRemotablePluginsPluginVersion()))
-                .put("baseUrl", nullToEmpty(applicationProperties.getBaseUrl()))
-                .put("productType", nullToEmpty(productAccessor.getKey()))
-                .put("description", nullToEmpty(consumer.getDescription()));
+                                                   .put("links", ImmutableMap.of(
+                                                           "oauth", applicationProperties.getBaseUrl() + "/rest/atlassian-connect/latest/oauth"))
+                                                   .put("clientKey", nullToEmpty(consumer.getKey()))
+                                                   .put("publicKey", nullToEmpty(RSAKeys.toPemEncoding(consumer.getPublicKey())))
+                                                   .put("serverVersion", nullToEmpty(applicationProperties.getBuildNumber()))
+                                                   .put("pluginsVersion", nullToEmpty(getRemotablePluginsPluginVersion()))
+                                                   .put("baseUrl", nullToEmpty(applicationProperties.getBaseUrl()))
+                                                   .put("productType", nullToEmpty(productAccessor.getKey()))
+                                                   .put("description", nullToEmpty(consumer.getDescription()));
 
         UserProfile user = userManager.getRemoteUser();
-        if(null != user)
+        if (null != user)
         {
-            builder.put("user_id",user.getUsername())
-                   .put("user_key",user.getUserKey().getStringValue());
+            builder.put("user_id", user.getUsername())
+                   .put("user_key", user.getUserKey().getStringValue());
         }
-        
+
         return builder.build();
     }
 
