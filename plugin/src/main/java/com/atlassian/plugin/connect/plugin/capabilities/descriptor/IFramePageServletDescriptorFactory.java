@@ -84,7 +84,7 @@ public class IFramePageServletDescriptorFactory
     {
         AddonUrlTemplatePair urlTemplatePair = servletBean.getUrlTemplatePair();
 
-        // TODO: In ACDEV-396 push the url template into IFramePageContext
+        // TODO: In ACDEV-498 push the url template into IFramePageContext
         String path = urlTemplatePair.getAddonUrlTemplate().getTemplateString();
 
         return createIFrameServletDescriptor(plugin, servletBean.getLinkBean(), path,

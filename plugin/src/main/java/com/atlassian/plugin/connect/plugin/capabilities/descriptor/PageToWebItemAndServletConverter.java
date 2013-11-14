@@ -37,7 +37,7 @@ public class PageToWebItemAndServletConverter
     {
         AddonUrlTemplatePair urlTemplatePair = createUrlTemplatePair(pageBean, pluginKey);
 
-        // TODO: In ACDEV-396 push the url template into RemoteWebLink
+        // TODO: In ACDEV-498 push the url template into RemoteWebLink
         webItemBean = createWebItemCapabilityBean(pageBean, urlTemplatePair.getHostUrlPaths().getHostUrlTemplate(), productAccessor);
         servletBean = createServletBean(pageBean, urlTemplatePair, decorator, templateSuffix, metaTagsContent,
                 condition, iFrameParams);

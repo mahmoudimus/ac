@@ -35,12 +35,12 @@ public class UrlTemplate
         this.urlTemplateStr = checkNotNull(urlTemplateStr);
     }
 
-// TODO: Will be implemented in ACDEV-396
+// TODO: Will be implemented in ACDEV-498
 //    public URL createUrl(UrlTemplateContext context)
 //    {
 //    }
 
-    @Deprecated // Only exposed until ACDEV-396 implemented. After that createUrl will be used instead
+    @Deprecated // Only exposed until ACDEV-498 implemented. After that createUrl will be used instead
     public String getTemplateString()
     {
         return urlTemplateStr;
