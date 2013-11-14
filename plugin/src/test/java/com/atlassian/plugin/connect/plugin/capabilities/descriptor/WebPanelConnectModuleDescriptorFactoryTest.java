@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.WebPanelCapabilityBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.SingleConditionBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.WebPanelLayout;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAutowireUtil;
@@ -15,9 +16,13 @@ import com.atlassian.plugin.connect.spi.module.IFrameContext;
 import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
 import com.atlassian.plugin.hostcontainer.HostContainer;
 import com.atlassian.plugin.module.ContainerManagedPlugin;
+import com.atlassian.plugin.web.Condition;
+import com.atlassian.plugin.web.WebFragmentHelper;
 import com.atlassian.plugin.web.WebInterfaceManager;
+import com.atlassian.plugin.web.conditions.AndCompositeCondition;
 import com.atlassian.plugin.web.descriptors.WebPanelModuleDescriptor;
 import com.atlassian.sal.api.user.UserManager;
+import org.dom4j.dom.DOMElement;
 import org.hamcrest.Description;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,7 +37,8 @@ import java.util.Arrays;
 import java.util.Collections;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebPanelCapabilityBean.newWebPanelBean;
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.matchers.TestMatchers.hasIFramePath;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.matchers.ConditionMatchers.isCompositeConditionContaining;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.matchers.IFrameContextMatchers.hasIFramePath;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -43,6 +49,8 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class WebPanelConnectModuleDescriptorFactoryTest
 {
+    private static final String CONDITION_CLASSNAME = Condition.class.getName();
+
     private interface PluginForTests extends Plugin, ContainerManagedPlugin {}
 
     private WebPanelModuleDescriptor descriptor;
@@ -54,16 +62,25 @@ public class WebPanelConnectModuleDescriptorFactoryTest
     @Mock private UserManager userManager;
     @Mock private IFrameRenderer iFrameRenderer;
     @Mock private UrlValidator urlValidator;
+    @Mock private ConditionModuleFragmentFactory conditionModuleFragmentFactory;
+    @Mock private WebFragmentHelper webFragmentHelper;
+    @Mock private Condition condition;
 
     @Before
-    public void beforeEachTest()
+    public void beforeEachTest() throws Exception
     {
-        WebPanelConnectModuleDescriptorFactory webPanelFactory = new WebPanelConnectModuleDescriptorFactory(connectAutowireUtil);
+        WebPanelConnectModuleDescriptorFactory webPanelFactory = new WebPanelConnectModuleDescriptorFactory(connectAutowireUtil, conditionModuleFragmentFactory);
         when(plugin.getKey()).thenReturn("my-plugin");
         when(plugin.getName()).thenReturn("My Plugin");
         ContextMapURLSerializer contextMapURLSerializer = new ContextMapURLSerializer(Arrays.asList((ContextMapParameterExtractor) new ProjectContextMapParameterExtractor(new ProjectSerializer())));
         WebPanelConnectModuleDescriptor aDescriptor = new WebPanelConnectModuleDescriptor(hostContainer, webInterfaceManager, iFrameRenderer, contextMapURLSerializer, userManager, urlValidator);
         when(connectAutowireUtil.createBean(WebPanelConnectModuleDescriptor.class)).thenReturn(aDescriptor);
+
+        when(conditionModuleFragmentFactory.createFragment(eq("my-plugin"), anyList(), eq("#remote-web-panel-my-web-panel")))
+                .thenReturn(conditionElement());
+        when(webInterfaceManager.getWebFragmentHelper()).thenReturn(webFragmentHelper);
+        when(webFragmentHelper.loadCondition(eq(CONDITION_CLASSNAME), eq(plugin))).thenReturn(condition);
+        when(condition.shouldDisplay(anyMap())).thenReturn(true);
 
         WebPanelCapabilityBean bean = newWebPanelBean()
                 .withName(new I18nProperty("My Web Panel", "my.webpanel"))
@@ -71,13 +88,22 @@ public class WebPanelConnectModuleDescriptorFactoryTest
                 .withLocation("com.atlassian.jira.plugin.headernav.left.context")
                 .withLayout(new WebPanelLayout("10px", "100%"))
                 .withWeight(50)
+                .withConditions(new SingleConditionBeanBuilder().withCondition("unconditional").build())
                 .build();
 
         descriptor = webPanelFactory.createModuleDescriptor(plugin, mock(BundleContext.class), bean);
         descriptor.enabled();
     }
 
-    // TODO: test condition when JD has added conditions support to capabilities
+    private DOMElement conditionElement()
+    {
+        DOMElement conditions = new DOMElement("conditions");
+        conditions.addAttribute("type", "and");
+        DOMElement condition = new DOMElement("condition");
+        condition.addAttribute("class", CONDITION_CLASSNAME);
+        conditions.appendChild(condition);
+        return conditions;
+    }
 
     @Test
     public void keyIsCorrect() throws Exception
@@ -124,7 +150,7 @@ public class WebPanelConnectModuleDescriptorFactoryTest
     public void urlIsCorrectWhenContextIsEmpty() throws IOException
     {
         descriptor.getModule().getHtml(Collections.<String, Object>emptyMap());
-        verify(iFrameRenderer).render(argThat(hasIFramePath("http://www.google.com?my_project_id=&amp;my_project_key=")), anyString(), anyMap(), anyString(), anyMap());
+        verify(iFrameRenderer).render(argThat(hasIFramePath("http://www.google.com?my_project_id=&my_project_key=")), anyString(), anyMap(), anyString(), anyMap());
     }
 
     @Test
@@ -132,13 +158,19 @@ public class WebPanelConnectModuleDescriptorFactoryTest
     public void urlIsCorrectWhenContextIsPopulated() throws IOException
     {
         descriptor.getModule().getHtml(TestContextBuilder.buildContextMap());
-        verify(iFrameRenderer).render(argThat(hasIFramePath(String.format("http://www.google.com?my_project_id=%d&amp;my_project_key=%s", TestContextBuilder.PROJECT_ID, TestContextBuilder.PROJECT_KEY))), anyString(), anyMap(), anyString(), anyMap());
+        verify(iFrameRenderer).render(argThat(hasIFramePath(String.format("http://www.google.com?my_project_id=%d&my_project_key=%s", TestContextBuilder.PROJECT_ID, TestContextBuilder.PROJECT_KEY))), anyString(), anyMap(), anyString(), anyMap());
     }
 
     @Test
     public void i18nKeyIsCorrect()
     {
         assertThat(descriptor.getI18nNameKey(), is("my.webpanel"));
+    }
+
+    @Test
+    public void conditionIsCorrect()
+    {
+        assertThat(descriptor.getCondition(), isCompositeConditionContaining(AndCompositeCondition.class, condition));
     }
 
     private static ArgumentMatcher<IFrameContext> hasIFrameWidth(String width)

@@ -5,19 +5,24 @@ import com.atlassian.confluence.spaces.Space;
 import com.atlassian.plugin.connect.plugin.module.confluence.context.serializer.SpaceSerializer;
 import com.atlassian.plugin.connect.plugin.module.context.ContextMapParameterExtractor;
 import com.atlassian.plugin.connect.plugin.module.context.ParameterSerializer;
+import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
+
 import com.google.common.base.Optional;
 
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 /**
  * Extracts space parameters that can be included in webpanel's iframe url.
  */
+@ConfluenceComponent
 public class SpaceContextMapParameterExtractor implements ContextMapParameterExtractor<Space>
 {
     private static final String SPACE_CONTEXT_PARAMETER = "space";
     private SpaceSerializer spaceSerializer;
 
-
+    @Autowired
     public SpaceContextMapParameterExtractor(SpaceSerializer spaceSerializer)
     {
         this.spaceSerializer = spaceSerializer;

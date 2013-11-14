@@ -3,7 +3,6 @@ package com.atlassian.plugin.connect.plugin.capabilities.provider;
 import java.util.List;
 import java.util.Map;
 
-import com.atlassian.fugue.Pair;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectTabPanelCapabilityBean;
@@ -13,19 +12,17 @@ import com.atlassian.plugin.connect.plugin.module.jira.componenttab.IFrameCompon
 import com.atlassian.plugin.connect.plugin.module.jira.issuetab.IFrameIssueTab;
 import com.atlassian.plugin.connect.plugin.module.jira.projecttab.IFrameProjectTab;
 import com.atlassian.plugin.connect.plugin.module.jira.versiontab.IFrameVersionTab;
+import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectTabPanelCapabilityBean.newTabPanelBean;
 
-/*
- * NOTE: this class is a component in the atlassian-plugin-jira.xml since it contains references to JIRA specific classes 
- */
+@JiraComponent
 public class ConnectTabPanelModuleProvider implements ConnectModuleProvider<ConnectTabPanelCapabilityBean>
 {
     private final ConnectTabPanelModuleDescriptorFactory descriptorFactory;
@@ -42,6 +39,7 @@ public class ConnectTabPanelModuleProvider implements ConnectModuleProvider<Conn
             .put(VERSION_TAB_PANELS, new TabPanelDescriptorHints("version-tab-","version-tab-page", ConnectVersionTabPanelModuleDescriptor.class, IFrameVersionTab.class))
             .build();
 
+    @Autowired
     public ConnectTabPanelModuleProvider(ConnectTabPanelModuleDescriptorFactory descriptorFactory) 
     {
         this.descriptorFactory = descriptorFactory;

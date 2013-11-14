@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.RemoteContainerCapabilityBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.WebHookCapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.gson.CapabilitiesGsonFactory;
@@ -51,7 +52,7 @@ public class JunkTest
         Map<String,String> links = new HashMap<String,String>();
         links.put("self","http://www.example.com/capabilities");
         links.put("homepage","http://www.example.com");
-        
+
         ConnectAddonBean addon = newConnectAddonBean()
                 .withName("My Plugin")
                 .withKey("my-plugin")
@@ -66,6 +67,10 @@ public class JunkTest
                         .withTooltip(new I18nProperty("click me!", "click.me"))
                         .withStyleClasses("ac-link", "aui-link")
                         .withIcon(newIconBean().withUrl("/some/icon.png").withWidth(16).withHeight(16).build())
+                        .build())
+                .withCapability("webhooks", WebHookCapabilityBean.newWebHookBean()
+                        .withEvent("remote_plugin_enabled")
+                        .withUrl("/enabled")
                         .build())
                 .withCapability(RemoteContainerCapabilityBean.CONNECT_CONTAINER, newRemoteContainerBean().withDisplayUrl("http://www.example.com").withOAuth(
                         newOAuthBean().withPublicKey("S0m3Publ1cK3y").build()

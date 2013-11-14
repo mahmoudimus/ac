@@ -2,14 +2,16 @@ package com.atlassian.plugin.connect.plugin.webhooks;
 
 import java.util.HashMap;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.plugin.connect.spi.event.product.PluginsUpgradedEvent;
 import com.atlassian.plugin.connect.spi.event.product.ServerUpgradedEvent;
 import com.atlassian.plugin.connect.spi.event.product.UpgradedEvent;
+import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.webhooks.spi.provider.*;
-
-import org.springframework.beans.factory.annotation.Autowired;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.nullToEmpty;
@@ -17,16 +19,18 @@ import static com.google.common.base.Strings.nullToEmpty;
 /**
  * Registers Web hooks relative to:
  * <ul>
- *     <li>the host server (eg. server upgrades, etc.)</li>
- *     <li>the remotable plugins plugin (eg. remotable plugins plugin upgraded, etc.)</li>
+ * <li>the host server (eg. server upgrades, etc.)</li>
+ * <li>the remotable plugins plugin (eg. remotable plugins plugin upgraded, etc.)</li>
  * </ul>
  */
+@ExportAsService
+@Named
 public final class ServerWebHookProvider implements WebHookProvider
 {
     private final ApplicationProperties applicationProperties;
     private final ConsumerService consumerService;
 
-    @Autowired
+    @Inject
     public ServerWebHookProvider(ApplicationProperties applicationProperties, ConsumerService consumerService)
     {
         this.applicationProperties = checkNotNull(applicationProperties);

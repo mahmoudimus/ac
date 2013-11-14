@@ -1,11 +1,10 @@
 package it;
 
+import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
+import org.junit.Test;
+
 import java.net.HttpURLConnection;
 import java.net.URL;
-
-import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
-
-import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
@@ -27,7 +26,7 @@ public class TestOAuth extends AbstractBrowserlessTest
         yc.getOutputStream().close();
         assertEquals(200, yc.getResponseCode());
 
-        runner.stop();
+        runner.stopAndUninstall();
     }
 
 }

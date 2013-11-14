@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>fixture</title>
+    <script>
+    window.requireLoaded = function(){
+        AP.request('/jira/url');
+        AP.require('events', function(events){
+            events.emit('done');
+        });
+    }
+    </script>
+    <script src="/base/src/test/resources/fixtures/require.js"></script>
+    <script src="/base/src/test/resources/fixtures/include-all.js"></script>
+</head>
+<body>
+</body>
+</html>

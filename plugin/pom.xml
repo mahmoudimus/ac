@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.0-m19</version>
+        <version>1.0-m20</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -20,6 +20,10 @@
     </licenses>
 
     <dependencies>
+        <dependency>
+            <groupId>com.atlassian.plugin</groupId>
+            <artifactId>atlassian-spring-scanner</artifactId>
+        </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>atlassian-connect-api</artifactId>
@@ -43,6 +47,12 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.osgi</groupId>
+            <artifactId>spring-osgi-annotation</artifactId>
+            <version>1.2.1</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -281,12 +291,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.atteo</groupId>
-            <artifactId>evo-classindex</artifactId>
-            <version>1.4</version>
-        </dependency>
-
-        <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
         </dependency>
@@ -302,7 +306,7 @@
                     <skipManifestValidation>true</skipManifestValidation>
                     <jvmArgs>-Xmx1024m -XX:MaxPermSize=256m</jvmArgs>
                     <instructions>
-                        <Import-Package>
+                        <!-- <Import-Package>
                             com.atlassian.upm.*,
                             com.atlassian.confluence.plugin.descriptor.web.descriptors;resolution:=optional,
                             com.atlassian.confluence.plugin.webresource;resolution:=optional,
@@ -359,7 +363,7 @@
                             com.atlassian.plugin.connect.spi*;version="${project.version}",
                             com.atlassian.plugin.connect.plugin*;version="${project.version}",
                             *;resolution:=optional
-                        </Import-Package>
+                        </Import-Package> -->
                         <Export-Package>
                             com.atlassian.plugin.connect.api*;version="${project.version}",
                             com.atlassian.plugin.connect.api.*;version="${project.version}",
@@ -370,8 +374,9 @@
                             com.atlassian.plugin.connect.plugin.product*;version="${project.version}"
                             com.atlassian.plugin.connect.plugin.product.*;version="${project.version}"
                         </Export-Package>
-                        <Spring-Context>*;timeout:=60</Spring-Context>
-
+                        <Spring-Context>*</Spring-Context>
+                        <Atlassian-Plugin-Key>${groupId}.${artifactId}</Atlassian-Plugin-Key>
+                        <!-- DO NOT put Atlassian-Plugin-Key here!! it will bypass all transforms and component-imports will break -->
                     </instructions>
                     <systemPropertyVariables>
                         <atlassian.mail.senddisabled>false</atlassian.mail.senddisabled>

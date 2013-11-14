@@ -77,7 +77,7 @@ public class TestPageModules extends AbstractRemotablePluginTest
     {
         if (remotePlugin != null)
         {
-            remotePlugin.stop();
+            remotePlugin.stopAndUninstall();
         }
     }
 
@@ -190,7 +190,7 @@ public class TestPageModules extends AbstractRemotablePluginTest
         final RemotePluginTestPage remotePluginTestPage = upm.configurePlugin("configurePage", "page", RemotePluginTestPage.class);
         assertTrue(remotePluginTestPage.isLoaded());
 
-        runner.stop();
+        runner.stopAndUninstall();
     }
 
     @Test

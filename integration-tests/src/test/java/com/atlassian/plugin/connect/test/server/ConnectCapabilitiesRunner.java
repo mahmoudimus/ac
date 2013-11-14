@@ -52,9 +52,7 @@ import static com.google.common.collect.Maps.newHashMap;
  */
 public class ConnectCapabilitiesRunner
 {
-    private static final String CONNECT_PLUGIN_SERVLET_PREFIX = "/plugins/servlet/ac/";
-
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private static final String REGISTRATION_ROUTE = "/register";
 
     private final String baseUrl;
     private final AtlassianConnectRestClient installer;
@@ -83,7 +81,7 @@ public class ConnectCapabilitiesRunner
 
     private void register() throws Exception
     {
-        installer.install("http://localhost:" + port + "/register");
+        installer.install("http://localhost:" + port + REGISTRATION_ROUTE);
     }
 
     public void uninstall() throws Exception
@@ -108,21 +106,10 @@ public class ConnectCapabilitiesRunner
         return this;
     }
 
-    public ConnectCapabilitiesRunner addCapabilities(String fieldName, CapabilityBean ... beans)
+    public ConnectCapabilitiesRunner addCapabilities(String fieldName, CapabilityBean... beans)
     {
         addonBuilder.withCapabilities(fieldName, beans);
         return this;
-    }
-
-    public ConnectCapabilitiesRunner addPluginRoute(String relativePath, HttpServlet servlet)
-    {
-       String path = CONNECT_PLUGIN_SERVLET_PREFIX + pluginKey;
-       if (!relativePath.startsWith("/"))
-       {
-            path += "/";
-       }
-       addRoute(path + relativePath, servlet);
-       return this;
     }
 
     public ConnectCapabilitiesRunner addRoute(String path, HttpServlet servlet)
@@ -178,17 +165,16 @@ public class ConnectCapabilitiesRunner
         {
             addonBuilder.withCapability(
                     RemoteContainerCapabilityBean.CONNECT_CONTAINER, newRemoteContainerBean()
-                            .withDisplayUrl(displayUrl)
-                            .withOAuth(oAuthBean)
-                            .build()
+                    .withDisplayUrl(displayUrl)
+                    .withOAuth(oAuthBean)
+                    .build()
             );
-        }
-        else
+        } else
         {
             addonBuilder.withCapability(
                     RemoteContainerCapabilityBean.CONNECT_CONTAINER, newRemoteContainerBean()
-                            .withDisplayUrl(displayUrl)
-                            .build()
+                    .withDisplayUrl(displayUrl)
+                    .build()
             );
         }
 
@@ -200,7 +186,7 @@ public class ConnectCapabilitiesRunner
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.setContextPath("/");
 
-        context.addServlet(new ServletHolder(new DescriptorServlet()), "/register");
+        context.addServlet(new ServletHolder(new DescriptorServlet()), REGISTRATION_ROUTE);
 
         for (final Map.Entry<String, HttpServlet> entry : routes.entrySet())
         {
@@ -214,7 +200,7 @@ public class ConnectCapabilitiesRunner
         list.addHandler(context);
         server.start();
 
-        System.out.println("Started Atlassian Connect Add-On at " + displayUrl);
+        System.out.println("Started Atlassian Connect Add-On at " + displayUrl + REGISTRATION_ROUTE);
         register();
         return this;
     }

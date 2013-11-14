@@ -3,35 +3,24 @@ package com.atlassian.plugin.connect.plugin.capabilities.provider;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.WebPanelCapabilityBean;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.IFramePageServletDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebPanelConnectModuleDescriptorFactory;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.RelativeAddOnUrl;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.RelativeAddOnUrlConverter;
-import com.atlassian.plugin.web.conditions.AlwaysDisplayCondition;
 import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebPanelCapabilityBean.newWebPanelBean;
 
 @Component
 public class WebPanelModuleProvider implements ConnectModuleProvider<WebPanelCapabilityBean>
 {
     private final WebPanelConnectModuleDescriptorFactory webPanelFactory;
-    private final RelativeAddOnUrlConverter relativeAddOnUrlConverter;
-    private final IFramePageServletDescriptorFactory iFramePageServletDescriptorFactory;
 
     @Autowired
-    public WebPanelModuleProvider(WebPanelConnectModuleDescriptorFactory webPanelFactory, RelativeAddOnUrlConverter relativeAddOnUrlConverter, IFramePageServletDescriptorFactory iFramePageServletDescriptorFactory)
+    public WebPanelModuleProvider(WebPanelConnectModuleDescriptorFactory webPanelFactory)
     {
         this.webPanelFactory = webPanelFactory;
-        this.relativeAddOnUrlConverter = relativeAddOnUrlConverter;
-        this.iFramePageServletDescriptorFactory = iFramePageServletDescriptorFactory;
     }
 
     @Override
@@ -41,7 +30,7 @@ public class WebPanelModuleProvider implements ConnectModuleProvider<WebPanelCap
 
         for (WebPanelCapabilityBean bean : beans)
         {
-            descriptors.addAll(beanToDescriptors(plugin,addonBundleContext, bean));
+            descriptors.addAll(beanToDescriptors(plugin, addonBundleContext, bean));
         }
 
         return descriptors;
@@ -51,20 +40,7 @@ public class WebPanelModuleProvider implements ConnectModuleProvider<WebPanelCap
     {
         List<ModuleDescriptor> descriptors = new ArrayList<ModuleDescriptor>();
 
-        if (bean.isAbsolute())
-        {
-            descriptors.add(webPanelFactory.createModuleDescriptor(plugin, addonBundleContext, bean));
-        }
-        else
-        {
-            RelativeAddOnUrl localUrl = relativeAddOnUrlConverter.addOnUrlToLocalServletUrl(plugin.getKey(), bean.getUrl());
-            
-            WebPanelCapabilityBean newBean = newWebPanelBean(bean).withUrl(localUrl.getRelativeUri()).build();
-            descriptors.add(webPanelFactory.createModuleDescriptor(plugin, addonBundleContext, newBean));
-            descriptors.add(iFramePageServletDescriptorFactory.createIFrameServletDescriptor(plugin, newBean,
-                    localUrl.getServletDescriptorUrl(), bean.getUrl(), "atl.general", "", new AlwaysDisplayCondition(),
-                    new HashMap<String, String>()));
-        }
+        descriptors.add(webPanelFactory.createModuleDescriptor(plugin, addonBundleContext, bean));
 
         return descriptors;
     }

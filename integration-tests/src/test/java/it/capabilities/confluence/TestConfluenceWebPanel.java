@@ -84,9 +84,9 @@ public class TestConfluenceWebPanel extends ConfluenceWebDriverTestBase
                 .addCapability(WEB_PANELS, editorWebPanel)
                 .addCapability(WEB_PANELS, viewWebPanel)
                 .addCapability(WEB_PANELS, profileWebPanel)
-                .addPluginRoute(IFRAME_URL_EDIT, ConnectAppServlets.customMessageServlet(IFRAME_CONTENT_EDIT))
-                .addPluginRoute(IFRAME_URL_VIEW, ConnectAppServlets.customMessageServlet(IFRAME_CONTENT_VIEW))
-                .addPluginRoute(IFRAME_URL_PROFILE, ConnectAppServlets.customMessageServlet(IFRAME_CONTENT_PROFILE))
+                .addRoute(IFRAME_URL_EDIT, ConnectAppServlets.customMessageServlet(IFRAME_CONTENT_EDIT))
+                .addRoute(IFRAME_URL_VIEW, ConnectAppServlets.customMessageServlet(IFRAME_CONTENT_VIEW))
+                .addRoute(IFRAME_URL_PROFILE, ConnectAppServlets.customMessageServlet(IFRAME_CONTENT_PROFILE))
                 .start();
     }
 
@@ -119,7 +119,7 @@ public class TestConfluenceWebPanel extends ConfluenceWebDriverTestBase
         assertThat(webPanel.getIFrameSourceUrl(), containsString(IFRAME_URL_EDIT));
     }
 
-    //@Test - disabled until web panel parameter substitution works
+    @Test
     public void iFrameParametersAreCorrectOnEditPage() throws Exception
     {
         ConfluenceEditPage editPage = createAndVisitPage(ConfluenceEditPage.class);
@@ -163,15 +163,6 @@ public class TestConfluenceWebPanel extends ConfluenceWebDriverTestBase
         assertThat(webPanel.getIFrameSourceUrl(), containsString(IFRAME_URL_VIEW));
     }
 
-    //@Test - disabled until web panel parameter substitution works
-    public void iFrameParametersAreCorrectOnViewPage() throws Exception
-    {
-        ConfluenceViewPage viewPage = createAndVisitPage(ConfluenceViewPage.class);
-        RemoteWebPanel webPanel = viewPage.findWebPanel(viewWebPanel.getKey());
-        assertThat(webPanel.getSpaceKey(), is(SPACE));
-        assertThat(webPanel.getPageId(), is(viewPage.getPageId()));
-    }
-
     @Test
     public void iFrameHeightIsCorrectOnViewPage() throws Exception
     {
@@ -205,13 +196,6 @@ public class TestConfluenceWebPanel extends ConfluenceWebDriverTestBase
     {
         RemoteWebPanel webPanel = findProfilePageWebPanel();
         assertThat(webPanel.getIFrameSourceUrl(), containsString(IFRAME_URL_PROFILE));
-    }
-
-    //@Test - disabled until web panel parameter substitution works
-    public void iFrameParametersAreCorrectOnProfilePage() throws Exception
-    {
-        RemoteWebPanel webPanel = findProfilePageWebPanel();
-        assertThat(webPanel.getSpaceKey(), is(SPACE));
     }
 
     @Test

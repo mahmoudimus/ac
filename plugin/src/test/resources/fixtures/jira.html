@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>fixture</title>
+    <script>
+    window.requireLoaded = function(){
+        AP.require(["events", "jira"], function (events, jira) {
+            jira.getWorkflowConfiguration();
+            events.emit('done');
+        });
+    }
+    </script>
+
+    <script src="/base/src/test/resources/fixtures/require.js"></script>
+    <script src="/base/src/test/resources/fixtures/include-all.js"></script>
+</head>
+<body>
+</body>
+</html>

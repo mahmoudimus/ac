@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.beans;
 import java.util.List;
 
 import com.atlassian.plugin.connect.plugin.capabilities.annotation.CapabilityModuleProvider;
-import com.atlassian.plugin.connect.plugin.capabilities.annotation.ProductFilter;
+import com.atlassian.plugin.spring.scanner.ProductFilter;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.BaseCapabilityBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.*;
 
@@ -49,6 +49,9 @@ public class CapabilityList extends BaseCapabilityBean
     @CapabilityModuleProvider(RemoteContainerModuleProvider.class)
     private RemoteContainerCapabilityBean connectContainer;
 
+    @CapabilityModuleProvider(WebHookModuleProvider.class)
+    private List<WebHookCapabilityBean> webhooks;
+
     public CapabilityList()
     {
         this.jiraComponentTabPanels = newArrayList();
@@ -60,6 +63,7 @@ public class CapabilityList extends BaseCapabilityBean
         this.webItems = newArrayList();
         this.webPanels = newArrayList();
         this.jiraWorkflowPostFunctions = newArrayList();
+        this.webhooks = newArrayList();
     }
 
     public CapabilityList(BaseCapabilityBeanBuilder builder)
@@ -102,6 +106,10 @@ public class CapabilityList extends BaseCapabilityBean
         {
             this.jiraWorkflowPostFunctions = newArrayList();
         }
+        if (null == webhooks)
+        {
+            this.webhooks = newArrayList();
+        }
     }
 
     public List<WebItemCapabilityBean> getWebItems()
@@ -137,6 +145,10 @@ public class CapabilityList extends BaseCapabilityBean
     public List<WebPanelCapabilityBean> getWebPanels()
     {
         return webPanels;
+    }
+
+    public List<WebHookCapabilityBean> getWebhooks() {
+        return webhooks;
     }
 
     public List<WorkflowPostFunctionCapabilityBean> getJiraWorkflowPostFunctions()

@@ -5,12 +5,16 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.plugin.util.BundleLocator;
 import com.atlassian.plugin.connect.spi.host.HostProperties;
 import com.atlassian.plugin.connect.spi.permission.PermissionsReader;
 import com.atlassian.plugin.connect.spi.util.XmlUtils;
+import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -29,11 +33,14 @@ import static com.google.common.collect.Sets.newHashSet;
  * Reads permissions from a plugin instance.  Currently it extracts the permissions from the descriptor
  * by loading the document, but soon will read natively from Plugin
  */
+@ExportAsService(PermissionsReader.class)
+@Named
 public final class DescriptorPermissionsReader implements PermissionsReader
 {
     private final Cache<Plugin,Set<String>> permissionsCache;
     private final String productKey;
 
+    @Inject
     public DescriptorPermissionsReader(final HostProperties hostProperties, final BundleLocator bundleLocator)
     {
         this.productKey = hostProperties.getKey();

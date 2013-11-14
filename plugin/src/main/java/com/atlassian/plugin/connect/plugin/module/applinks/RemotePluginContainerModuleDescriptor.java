@@ -31,6 +31,8 @@ import com.atlassian.plugin.connect.spi.Permissions;
 import com.atlassian.plugin.connect.spi.applinks.RemotePluginContainerApplicationType;
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
+import com.atlassian.sal.api.transaction.TransactionCallback;
+import com.atlassian.sal.api.transaction.TransactionTemplate;
 import com.atlassian.util.concurrent.NotNull;
 
 import org.dom4j.Element;
@@ -58,6 +60,7 @@ public final class RemotePluginContainerModuleDescriptor extends AbstractModuleD
     private final BundleContext bundleContext;
     private final PluginSettingsFactory pluginSettingsFactory;
     private final ConnectAddOnIdentifierService connectIdentifier;
+    private final TransactionTemplate transactionTemplate;
 
     private static final Logger log = LoggerFactory.getLogger(RemotePluginContainerModuleDescriptor.class);
 
@@ -74,9 +77,10 @@ public final class RemotePluginContainerModuleDescriptor extends AbstractModuleD
             TypeAccessor typeAccessor,
             BundleContext bundleContext,
             PluginSettingsFactory pluginSettingsFactory,
-            ConnectAddOnIdentifierService connectIdentifier)
+            ConnectAddOnIdentifierService connectIdentifier, TransactionTemplate transactionTemplate)
     {
         super(ModuleFactory.LEGACY_MODULE_FACTORY);
+        this.transactionTemplate = transactionTemplate;
         this.applicationLinkService = checkNotNull(applicationLinkService);
         this.oAuthLinkManager = checkNotNull(oAuthLinkManager);
         this.permissionManager = checkNotNull(permissionManager);
@@ -105,7 +109,15 @@ public final class RemotePluginContainerModuleDescriptor extends AbstractModuleD
             throw new PluginParseException("Can only have one remote-plugin-container module in a descriptor");
         }
         
-        createAppLink();
+        transactionTemplate.execute(new TransactionCallback<Void>() {
+            @Override
+            public Void doInTransaction()
+            {
+                createAppLink();
+                return null;
+            }
+        });
+        
     }
 
     @Override
@@ -217,6 +229,11 @@ public final class RemotePluginContainerModuleDescriptor extends AbstractModuleD
     public void disabled()
     {
         super.disabled();
+        /*
+        Uh, let's NOT delete the applinks when a plugin is disabled
+         */
+        
+        /*
         if (remoteMode && pluginBundle != null)
         {
             // we have to retrive services fresh from plugin bundle as it is possible this is called after the
@@ -240,6 +257,7 @@ public final class RemotePluginContainerModuleDescriptor extends AbstractModuleD
                 store.remove(getPluginKey());
             }
         }
+        */
     }
 
     private ServiceProvider createOAuthServiceProvider(URI displayUrl, Element oauthElement)
