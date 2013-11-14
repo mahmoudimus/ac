@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.beans.builder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.WebPanelCapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.WebPanelLayout;
 
-public class WebPanelCapabilityBeanBuilder extends NameToKeyBeanBuilder<WebPanelCapabilityBeanBuilder, WebPanelCapabilityBean>
+public class WebPanelCapabilityBeanBuilder extends BeanWithKeyParamsAndConditionsBuilder<WebPanelCapabilityBeanBuilder, WebPanelCapabilityBean>
 {
     private String location;
     private WebPanelLayout layout;

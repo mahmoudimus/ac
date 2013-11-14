@@ -12,11 +12,11 @@ import it.jira.JiraWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
+import org.hamcrest.core.IsCollectionContaining;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.matchers.JUnitMatchers;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectProjectAdminTabPanelCapabilityBean.newProjectAdminTabPanelBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.RemoteContainerCapabilityBean.newRemoteContainerBean;
@@ -69,7 +69,7 @@ public class TestProjectAdminTabPanel extends JiraWebDriverTestBase
         final ProjectSummaryPageTab page =
                 product.visit(ProjectSummaryPageTab.class, project.getKey());
 
-        assertThat(page.getTabs().getTabs(), JUnitMatchers.<ProjectConfigTabs.Tab>hasItem(new TypeSafeMatcher<ProjectConfigTabs.Tab>()
+        assertThat(page.getTabs().getTabs(), IsCollectionContaining.<ProjectConfigTabs.Tab>hasItem(new TypeSafeMatcher<ProjectConfigTabs.Tab>()
         {
 
             @Override

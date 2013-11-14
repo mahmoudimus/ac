@@ -1,10 +1,8 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
-import com.atlassian.plugin.connect.plugin.capabilities.annotation.CapabilityModuleProvider;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.WorkflowPostFunctionCapabilityBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.UrlBean;
-import com.atlassian.plugin.connect.plugin.capabilities.provider.WorkflowPostFunctionModuleProvider;
 
 public class WorkflowPostFunctionCapabilityBean extends NameToKeyBean
 {

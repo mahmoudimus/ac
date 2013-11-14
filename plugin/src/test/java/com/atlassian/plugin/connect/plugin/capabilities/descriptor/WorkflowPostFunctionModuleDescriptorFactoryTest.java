@@ -34,7 +34,7 @@ import static com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants.RES
 import static com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants.RESOURCE_NAME_INPUT_PARAMETERS;
 import static com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants.RESOURCE_NAME_VIEW;
 import static com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants.RESOURCE_TYPE_VELOCITY;
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.matchers.TestMatchers.hasIFramePath;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.matchers.IFrameContextMatchers.hasIFramePath;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
