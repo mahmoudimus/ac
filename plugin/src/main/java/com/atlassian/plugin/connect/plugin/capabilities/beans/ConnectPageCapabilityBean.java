@@ -56,12 +56,8 @@ public class ConnectPageCapabilityBean extends BeanWithKeyAndParamsAndConditions
     /**
      * Determines the order in which the page's link appears in the menu or list.
      *
-     * <p/>
-     *
      * The "lightest" weight (i.e., lowest number) appears first, rising relative to other items,
      * while the "heaviest" weights sink to the bottom of the menu or list.
-     *
-     * <p/>
      *
      * Built-in web items have weights that are incremented by numbers that leave room for additional
      * items, such as by 10 or 100. Be mindful of the weight you choose for your item, so that it appears
@@ -86,8 +82,6 @@ public class ConnectPageCapabilityBean extends BeanWithKeyAndParamsAndConditions
      * The location in the application interface where the page's link should appear. For the Atlassian application
      * interface, a location is something like the coordinates on a map. It points to a particular drop-down menu or
      * navigation list in the UI.
-     *
-     * <p/>
      *
      * Places in the Atlassian UI are identified by what are known as "well-known locations."
      * For example, the "system.admin/globalsettings" location is in the administrative
