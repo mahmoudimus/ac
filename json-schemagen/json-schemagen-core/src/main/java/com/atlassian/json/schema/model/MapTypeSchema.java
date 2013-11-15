@@ -1,8 +1,6 @@
 package com.atlassian.json.schema.model;
 
-import com.atlassian.json.schema.SchemaTypes;
-
-public class MapTypeSchema extends RootSchema
+public class MapTypeSchema extends BasicSchema
 {
     private boolean additionalProperties = true;
 }

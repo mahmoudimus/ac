@@ -22,12 +22,11 @@
     <name>Atlassian Connect - Parent POM</name>
     <description>This is the Atlassian Connect parent project</description>
     <packaging>pom</packaging>
+    
     <modules>
         <module>json-schemagen</module>
         <module>api-parent</module>
         <module>plugin</module>
-        <module>rest-test-plugin</module>
-        <module>integration-tests</module>
     </modules>
     
     <profiles>

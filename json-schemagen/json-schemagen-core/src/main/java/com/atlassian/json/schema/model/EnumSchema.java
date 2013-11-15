@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.google.gson.annotations.SerializedName;
 
-public class EnumSchema<T> extends RootSchema
+public class EnumSchema<T> extends BasicSchema
 {
     @SerializedName("enum")
     private List<T> enumList;

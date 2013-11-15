@@ -21,6 +21,14 @@
 
     <dependencies>
         <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>json-schemagen-core</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        
+        
+        <dependency>
             <groupId>com.atlassian.plugin</groupId>
             <artifactId>atlassian-spring-scanner</artifactId>
         </dependency>
@@ -709,6 +717,7 @@
                 </executions>
             </plugin>
 
+            <!-- this MUST run after compilation -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
@@ -716,7 +725,7 @@
                 <executions>
                     <execution>
                         <id>json-schema</id>
-                        <phase>generate-sources</phase>
+                        <phase>process-classes</phase>
                         <goals>
                             <goal>javadoc</goal>
                         </goals>
@@ -727,10 +736,13 @@
                                 <artifactId>json-schemagen-core</artifactId>
                                 <version>${project.version}</version>
                             </docletArtifact>
+                            <docletPath>${project.build.outputDirectory}</docletPath>
                             <sourceFileIncludes>
                                 <sourceFileInclude>**\/ConnectAddonBean.java</sourceFileInclude>
                             </sourceFileIncludes>
                             <useStandardDocletOptions>false</useStandardDocletOptions>
+                            <additionalparam>-output "${project.basedir}/target/jsonSchemaDocs.json"</additionalparam>
+                            <show>private</show>
                         </configuration>
                     </execution>
                 </executions>

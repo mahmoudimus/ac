@@ -5,6 +5,8 @@ public class AbstractSchema implements JsonSchema
     private String id;
     private String $ref;
     private String type;
+    private String title;
+    private String description;
 
     public String getId()
     {
@@ -34,5 +36,35 @@ public class AbstractSchema implements JsonSchema
     public void setRef(String $ref)
     {
         this.$ref = $ref;
+    }
+
+    public String get$ref()
+    {
+        return $ref;
+    }
+
+    public void set$ref(String $ref)
+    {
+        this.$ref = $ref;
+    }
+
+    public String getTitle()
+    {
+        return title;
+    }
+
+    public void setTitle(String title)
+    {
+        this.title = title;
+    }
+
+    public String getDescription()
+    {
+        return description;
+    }
+
+    public void setDescription(String description)
+    {
+        this.description = description;
     }
 }

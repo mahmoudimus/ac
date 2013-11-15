@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.atlassian.json.schema.SchemaTypes;
 
-public class InterfaceSchema extends RootSchema
+public class InterfaceSchema extends BasicSchema
 {
     List<ObjectSchema> anyOf;
     

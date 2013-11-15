@@ -1,6 +1,6 @@
 package com.atlassian.json.schema.model;
 
-public class RootSchema extends AbstractSchema
+public class BasicSchema extends AbstractSchema
 {
     public static final String DRAFTV4 = "http://json-schema.org/draft-04/schema#";
     

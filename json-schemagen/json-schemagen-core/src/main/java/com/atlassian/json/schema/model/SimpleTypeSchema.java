@@ -1,6 +1,6 @@
 package com.atlassian.json.schema.model;
 
-public class SimpleTypeSchema extends RootSchema
+public class SimpleTypeSchema extends BasicSchema
 {
     public SimpleTypeSchema(String type) 
     {

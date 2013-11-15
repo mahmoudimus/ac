@@ -1,14 +1,11 @@
 package com.atlassian.json.schema.model;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.atlassian.json.schema.SchemaTypes;
 
-import com.google.common.base.CaseFormat;
-
-public class ObjectSchema extends RootSchema
+public class ObjectSchema extends BasicSchema
 {
     private Map<String,Object> properties;
     private List<String> required;

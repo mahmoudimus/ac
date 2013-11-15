@@ -13,12 +13,19 @@ import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
 
 /**
+ * The root descriptor for an Atlassian Connect add on
+ * 
+ * Json Example:
+ * @exampleJson {@see ConnectJsonExamples#ADDON_EXAMPLE}
  * @since 1.0
  */
 public class ConnectAddonBean extends BaseCapabilityBean
 {
     public static final int DEFAULT_WEIGHT = 100;
 
+    /**
+     * The plugin key for the add on
+     */
     private String key;
     private String name;
     private String version;
@@ -103,6 +110,10 @@ public class ConnectAddonBean extends BaseCapabilityBean
         return key;
     }
 
+    /**
+     * the name of the addon
+     * @return
+     */
     public String getName()
     {
         return name;
