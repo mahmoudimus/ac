@@ -739,32 +739,6 @@
                             </execution>
                         </executions>
                     </plugin>
-                    <!-- npm plugin, used to get plugins for karma testrunner -->
-                    <plugin>
-                        <groupId>org.mule.tools.javascript</groupId>
-                        <artifactId>npm-maven-plugin</artifactId>
-                        <version>1.0</version>
-                        <executions>
-                            <execution>
-                                <phase>generate-sources</phase>
-                                <goals>
-                                    <goal>fetch-modules</goal>
-                                </goals>
-                                <configuration>
-                                    <packages>
-                                        <package>karma:0.10.2</package>
-                                        <package>karma-sinon:0.0.1</package>
-                                        <package>karma-qunit:0.1.1</package>
-                                        <package>karma-requirejs:0.1.0</package>
-                                        <package>karma-chrome-launcher:0.1.0</package>
-                                        <package>qunitjs:1.12.0</package>
-                                        <package>karma-junit-reporter:0.1.0</package>
-                                    </packages>
-                                    <outputDirectory>node_modules</outputDirectory>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
                     <!-- karma testrunner plugin for iframe code -->
                     <plugin>
                         <groupId>com.kelveden</groupId>
