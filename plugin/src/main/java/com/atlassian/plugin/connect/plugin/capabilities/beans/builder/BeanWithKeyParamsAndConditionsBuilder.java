@@ -34,12 +34,15 @@ public class BeanWithKeyParamsAndConditionsBuilder<T extends BeanWithKeyParamsAn
 
     public T withConditions(Collection<? extends ConditionalBean> beans)
     {
-        if (null == conditions)
+        if (beans != null) // not sure why this comes in as null sometimes
         {
-            conditions = newArrayList();
-        }
+            if (null == conditions)
+            {
+                conditions = newArrayList();
+            }
 
-        conditions.addAll(beans);
+            conditions.addAll(beans);
+        }
 
         return (T) this;
 
