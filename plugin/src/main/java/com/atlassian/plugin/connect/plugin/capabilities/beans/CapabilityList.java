@@ -12,9 +12,9 @@ import static com.google.common.collect.Lists.newArrayList;
 /**
  * This class represents the list of modules in the json descriptor.
  * Every new module type needs to be added here as a private field and annotated with @CapabilityModuleProvider
- * <p/>
+ * 
  * The field name will be what appears in the json.
- * <p/>
+ * 
  * Note: this class does NOT have a builder. Instead the {@link ConnectAddonBean} has a special reflective builder
  * that will handle adding beans to the proper fields in this class by name and type.
  * You can buy me a beer later for that little trick when you realize you don't need to keep updating a builder everytime you add a new type here.
@@ -45,6 +45,9 @@ public class CapabilityList extends BaseCapabilityBean
     @CapabilityModuleProvider(WebPanelModuleProvider.class)
     private List<WebPanelCapabilityBean> webPanels;
 
+    @CapabilityModuleProvider(GeneralPageModuleProvider.class)
+    private List<ConnectPageCapabilityBean> generalPages;
+
     @CapabilityModuleProvider(WebHookModuleProvider.class)
     private List<WebHookCapabilityBean> webhooks;
 
@@ -57,6 +60,7 @@ public class CapabilityList extends BaseCapabilityBean
         this.jiraVersionTabPanels = newArrayList();
         this.webItems = newArrayList();
         this.webPanels = newArrayList();
+        this.generalPages = newArrayList();
         this.jiraWorkflowPostFunctions = newArrayList();
         this.webhooks = newArrayList();
     }
@@ -141,6 +145,11 @@ public class CapabilityList extends BaseCapabilityBean
     public List<WorkflowPostFunctionCapabilityBean> getJiraWorkflowPostFunctions()
     {
         return jiraWorkflowPostFunctions;
+    }
+
+    public List<ConnectPageCapabilityBean> getGeneralPages()
+    {
+        return generalPages;
     }
     
     public List<WebHookCapabilityBean> getWebhooks() 
