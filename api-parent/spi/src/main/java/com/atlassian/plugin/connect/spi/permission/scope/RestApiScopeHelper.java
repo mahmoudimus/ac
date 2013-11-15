@@ -1,19 +1,17 @@
 package com.atlassian.plugin.connect.spi.permission.scope;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Locale;
-
-import javax.servlet.http.HttpServletRequest;
-
 import com.atlassian.plugin.connect.spi.util.ServletUtils;
-
 import com.atlassian.sal.api.user.UserKey;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
-
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.*;
 
 import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.transform;
@@ -90,9 +88,9 @@ public final class RestApiScopeHelper
         public RestScope(String name, Collection<String> versions, String basePath, Collection<String> methods)
         {
             this.name = name;
-            this.versions = Collections2.transform(versions, LOWERCASE_TRANSFORM);
+            this.versions = new ArrayList<String>(Collections2.transform(versions, LOWERCASE_TRANSFORM)); // TransformedCollection.equals() is broken
             this.basePath = basePath;
-            this.methods = Collections2.transform(methods, LOWERCASE_TRANSFORM);
+            this.methods = new ArrayList<String>(Collections2.transform(methods, LOWERCASE_TRANSFORM));
         }
 
         public String getName()
@@ -123,6 +121,49 @@ public final class RestApiScopeHelper
                 }
             }
             return infos;
+        }
+
+        @Override
+        public boolean equals(Object o)
+        {
+            if (this == o)
+            {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass())
+            {
+                return false;
+            }
+
+            RestScope restScope = (RestScope) o;
+            return new EqualsBuilder()
+                    .append(name, restScope.name)
+                    .append(versions, restScope.versions)
+                    .append(basePath, restScope.basePath)
+                    .append(methods, restScope.methods)
+                    .isEquals();
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return new HashCodeBuilder(29, 7)
+                    .append(name)
+                    .append(versions)
+                    .append(basePath)
+                    .append(methods)
+                    .toHashCode();
+        }
+
+        @Override
+        public String toString()
+        {
+            return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+                    .append(name)
+                    .append(versions)
+                    .append(basePath)
+                    .append(methods)
+                    .toString();
         }
     }
 }
