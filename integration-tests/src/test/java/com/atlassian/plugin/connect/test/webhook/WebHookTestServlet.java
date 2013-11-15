@@ -93,7 +93,7 @@ public final class WebHookTestServlet extends HttpServlet
             }
         });
 
-        runner.stop();
+        runner.stopAndUninstall();
     }
 
     public static void runEnableInJsonRunner(String baseUrl, WebHookTester tester) throws Exception
@@ -113,7 +113,7 @@ public final class WebHookTestServlet extends HttpServlet
             }
         });
 
-        runner.stop();
+        runner.stopAndUninstall();
     }
 
     public static void runDisableInJsonRunner(String baseUrl, WebHookTester tester) throws Exception
@@ -133,7 +133,7 @@ public final class WebHookTestServlet extends HttpServlet
             }
         });
 
-        runner.stop();
+        runner.stopAndUninstall();
     }
 
     public static void runUninstalledInJsonRunner(String baseUrl, WebHookTester tester) throws Exception
@@ -153,7 +153,7 @@ public final class WebHookTestServlet extends HttpServlet
             }
         });
 
-        runner.stop();
+        runner.stopAndUninstall();
     }
 
     public static void runInJsonRunner(String baseUrl, String webHookId, String eventId, WebHookTester tester) throws Exception
@@ -174,7 +174,7 @@ public final class WebHookTestServlet extends HttpServlet
             }
         });
 
-        runner.stop();
+        runner.stopAndUninstall();
     }
 
     public static void runSyncInRunner(String baseUrl, String eventId, WebHookTester tester) throws Exception

@@ -13,8 +13,6 @@ import org.openqa.selenium.WebElement;
 
 import javax.inject.Inject;
 
-import static com.atlassian.pageobjects.elements.query.Poller.waitUntilTrue;
-
 /**
  *
  */
@@ -88,8 +86,7 @@ public class ConfluenceGeneralPage implements GeneralPage
         {
             browseMenuLink.click();
 
-            linkElement = elementFinder.find(By.linkText(linkText));
-            waitUntilTrue(linkElement.withTimeout(TimeoutType.DEFAULT).timed().isVisible());
+            linkElement = elementFinder.find(By.linkText(linkText), TimeoutType.DEFAULT);
         }
         return linkElement;
     }

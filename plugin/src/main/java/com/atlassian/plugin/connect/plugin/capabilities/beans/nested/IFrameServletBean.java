@@ -29,8 +29,6 @@ public class IFrameServletBean
 
     /**
      * The bean that holds the link which targets the servlet
-     *
-     * @return
      */
     public NameToKeyBean getLinkBean()
     {
@@ -39,8 +37,6 @@ public class IFrameServletBean
 
     /**
      * The pair of UrlTemplates that the servlet supports
-     *
-     * @return
      */
     public AddonUrlTemplatePair getUrlTemplatePair()
     {
@@ -49,14 +45,15 @@ public class IFrameServletBean
 
     /**
      * The page information for the add on page that the servlet supports
-     *
-     * @return
      */
     public PageInfo getPageInfo()
     {
         return pageInfo;
     }
 
+    /**
+     * Parameters for the iFrame that hosts the add on
+     */
     public IFrameParams getiFrameParams()
     {
         return iFrameParams;

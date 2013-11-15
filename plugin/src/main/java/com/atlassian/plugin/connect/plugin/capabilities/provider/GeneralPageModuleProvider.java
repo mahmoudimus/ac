@@ -13,13 +13,15 @@ import static com.atlassian.plugin.connect.plugin.capabilities.provider.Abstract
 @Component
 public class GeneralPageModuleProvider extends AbstractConnectPageModuleProvider
 {
+    private static final String GENERAL_PAGE_DECORATOR = "atl.general";
+
     @Autowired
     public GeneralPageModuleProvider(WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
                                      IFramePageServletDescriptorFactory servletDescriptorFactory,
                                      ProductAccessor productAccessor)
     {
         super(webItemModuleDescriptorFactory, servletDescriptorFactory, productAccessor,
-                "atl.general", "", ImmutableMap.<String, String>of(), new AlwaysDisplayCondition(),
+                GENERAL_PAGE_DECORATOR, "", ImmutableMap.<String, String>of(), new AlwaysDisplayCondition(),
                 withGeneralPage());
     }
 }

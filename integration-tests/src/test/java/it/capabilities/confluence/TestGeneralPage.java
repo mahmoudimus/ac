@@ -22,6 +22,7 @@ import java.net.URI;
 
 import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectPageCapabilityBean.newPageBean;
+import static com.google.common.base.Charsets.UTF_8;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -33,6 +34,7 @@ public class TestGeneralPage extends ConfluenceWebDriverTestBase
 {
     private static final String PLUGIN_KEY = "my-plugin";
     private static final String SPACE = "ds";
+    private static final String ADMIN = "admin";
 
     private static ConnectCapabilitiesRunner remotePlugin;
 
@@ -56,7 +58,7 @@ public class TestGeneralPage extends ConfluenceWebDriverTestBase
     {
         if (remotePlugin != null)
         {
-            remotePlugin.stop();
+            remotePlugin.stopAndUninstall();
         }
     }
 
@@ -74,7 +76,7 @@ public class TestGeneralPage extends ConfluenceWebDriverTestBase
         URI url = new URI(viewProjectPage.getRemotePluginLinkHref());
         assertThat(url.getPath(), is("/confluence/plugins/servlet/ac/my-plugin/pg"));
 
-        assertThat(URLEncodedUtils.parse(url, "UTF-8"),
+        assertThat(URLEncodedUtils.parse(url, UTF_8.name()),
                 containsInAnyOrder(
                         (NameValuePair) new BasicNameValuePair("page_id", confluenceViewPage.getPageId())
                 )
@@ -99,7 +101,7 @@ public class TestGeneralPage extends ConfluenceWebDriverTestBase
 
     private ConfluenceOps.ConfluencePageData createPage() throws MalformedURLException, XmlRpcFault
     {
-        return confluenceOps.setPage(some(new ConfluenceOps.ConfluenceUser("admin", "admin")), SPACE, "A test page", "some page content");
+        return confluenceOps.setPage(some(new ConfluenceOps.ConfluenceUser(ADMIN, ADMIN)), SPACE, "A test page", "some page content");
     }
 
 }

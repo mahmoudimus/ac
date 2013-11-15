@@ -19,6 +19,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectPageCapabilityBean.newPageBean;
+import static com.google.common.base.Charsets.UTF_8;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -52,7 +53,7 @@ public class TestGeneralPage extends JiraWebDriverTestBase
     {
         if (remotePlugin != null)
         {
-            remotePlugin.stop();
+            remotePlugin.stopAndUninstall();
         }
     }
 
@@ -70,7 +71,7 @@ public class TestGeneralPage extends JiraWebDriverTestBase
         URI url = new URI(viewProjectPage.getRemotePluginLinkHref());
         assertThat(url.getPath(), is("/jira/plugins/servlet/ac/my-plugin/pg"));
 
-        assertThat(URLEncodedUtils.parse(url, "UTF-8"),
+        assertThat(URLEncodedUtils.parse(url, UTF_8.name()),
                 containsInAnyOrder(
                         (NameValuePair) new BasicNameValuePair("project_key", project.getKey()),
                         new BasicNameValuePair("project_id", project.getId())

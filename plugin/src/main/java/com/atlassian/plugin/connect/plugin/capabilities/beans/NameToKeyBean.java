@@ -6,6 +6,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nPropert
 import com.google.common.base.Strings;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.util.ModuleKeyGenerator.nameToKey;
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 /**
  * @since 1.0
@@ -49,5 +50,10 @@ public class NameToKeyBean extends BaseCapabilityBean
     public String getRawKey()
     {
         return key;
+    }
+
+    public String getDisplayName()
+    {
+        return (!isNullOrEmpty(getName().getValue()) ? getName().getValue() : getKey());
     }
 }
