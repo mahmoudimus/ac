@@ -25,7 +25,6 @@ public class StaticAddOnScopesReader
 
     /**
      * Parse static resources into the {@link Collection} of {@link AddOnScope}s used to whitelist incoming {@link javax.servlet.http.HttpServletRequest}s.
-     * Configured for Confluence.
      * @param product product name in lower case e.g. "confluence" or "jira"
      * @return the {@link Collection} of {@link AddOnScope}s used to whitelist incoming {@link javax.servlet.http.HttpServletRequest}s
      * @throws IOException if the static resources file could not be read
