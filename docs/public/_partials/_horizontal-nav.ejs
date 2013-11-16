@@ -1,0 +1,29 @@
+<%
+    var isGuideSelected, isCapabilitySelected;
+    if(current.path[0] == 'guides' || current.path[0] == 'index') {
+        isGuideSelected = 'aui-nav-selected';
+    } else {
+        isCapabilitySelected = 'aui-nav-selected';
+    }
+%>
+
+<nav class="aui-navgroup aui-navgroup-horizontal">
+    <div class="aui-navgroup-inner">
+        <div class="aui-navgroup-primary">
+            <ul class="aui-nav">
+                <li class="<%= isGuideSelected %>">
+                    <a href="/index.html">
+                        Guides
+                    </a>
+                </li>
+                <li class="<%= isCapabilitySelected %>">
+                    <a href="/capabilities/index.html">Capabilities</a>
+                </li>
+                <li>
+                    <a href="#">REST API Browser</a>
+                </li>
+            </ul>
+        </div>
+        <!-- .aui-navgroup-primary -->
+    </div>
+</nav>
