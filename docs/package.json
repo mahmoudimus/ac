@@ -1,0 +1,14 @@
+{
+  "name": "atlassian-connect-docs",
+  "version": "0.0.1",
+  "description": "Documentation for Atlassian Connect",
+  "dependencies": {
+    "harp": "*"
+  },
+  "scripts": {
+    "start": "./node_modules/.bin/harp server",
+    "build": "./node_modules/.bin/harp compile",
+    "clean": "rm -rf www"
+  },
+  "author": "ac-dev@atlassian.com"
+}
