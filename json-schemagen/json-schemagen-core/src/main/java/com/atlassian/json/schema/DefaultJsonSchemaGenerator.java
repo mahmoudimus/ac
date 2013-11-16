@@ -9,7 +9,7 @@ import com.atlassian.json.schema.doclet.model.JsonSchemaDocs;
 import com.atlassian.json.schema.model.*;
 import com.atlassian.json.schema.scanner.model.InterfaceList;
 
-import static com.atlassian.json.schema.ReflectionUtil.isParameterizedType;
+import static com.atlassian.json.schema.util.ReflectionUtil.isParameterizedType;
 
 public class DefaultJsonSchemaGenerator extends AbstractJsonSchemaGenerator
 {

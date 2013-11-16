@@ -3,6 +3,7 @@ package com.atlassian.json.schema.scanner.model;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 public class InterfaceList
 {
@@ -23,7 +24,7 @@ public class InterfaceList
         return interfaceList;
     }
     
-    public List<String> getImplementors(Class iface)
+    public Set<String> getImplementors(Class iface)
     {
         for(InterfaceImplementors implList : interfaceList)
         {
@@ -33,6 +34,6 @@ public class InterfaceList
             }
         }
         
-        return Collections.EMPTY_LIST;
+        return Collections.EMPTY_SET;
     }
 }

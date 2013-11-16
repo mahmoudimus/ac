@@ -37,7 +37,7 @@ public class JsonSchemaDoclet
         for (ClassDoc classDoc : rootDoc.classes())
         {
             SchemaClassDoc schemaClassDoc = new SchemaClassDoc();
-            schemaClassDoc.setClassName(classDoc.typeName());
+            schemaClassDoc.setClassName(classDoc.qualifiedTypeName());
             schemaClassDoc.setClassDoc(getDocWithExample(classDoc));
             schemaClassDoc.setClassTitle(getTitle(classDoc));
 

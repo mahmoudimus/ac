@@ -326,7 +326,6 @@
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
         </dependency>
-
     </dependencies>
 
     <build>
@@ -717,36 +716,79 @@
                 </executions>
             </plugin>
 
-            <!-- this MUST run after compilation -->
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.9.1</version>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>json-schemagen-maven-plugin</artifactId>
+                <version>${project.version}</version>
                 <executions>
                     <execution>
-                        <id>json-schema</id>
+                        <id>schema-support</id>
                         <phase>process-classes</phase>
                         <goals>
-                            <goal>javadoc</goal>
+                            <goal>generate-support-docs</goal>
                         </goals>
                         <configuration>
-                            <doclet>com.atlassian.json.schema.doclet.JsonSchemaDoclet</doclet>
-                            <docletArtifact>
-                                <groupId>${project.groupId}</groupId>
-                                <artifactId>json-schemagen-core</artifactId>
-                                <version>${project.version}</version>
-                            </docletArtifact>
-                            <docletPath>${project.build.outputDirectory}</docletPath>
-                            <sourceFileIncludes>
-                                <sourceFileInclude>**\/ConnectAddonBean.java</sourceFileInclude>
-                            </sourceFileIncludes>
-                            <useStandardDocletOptions>false</useStandardDocletOptions>
-                            <additionalparam>-output "${project.basedir}/target/jsonSchemaDocs.json"</additionalparam>
-                            <show>private</show>
+                            <basePackage>com.atlassian.plugin.connect.plugin.capabilities.beans</basePackage>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>jira-schema</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>generate-schema</goal>
+                        </goals>
+                        <configuration>
+                            <generatorProvider>com.atlassian.plugin.connect.schema.JiraSchemaGeneratorProvider</generatorProvider>
+                            <rootClassName>com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean</rootClassName>
+                            <rawOutput>${project.build.outputDirectory}/META-INF/jira-schema.json</rawOutput>
+                            <prettyOutput>${project.build.outputDirectory}/META-INF/jira-schema-pretty.json</prettyOutput>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>confluence-schema</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>generate-schema</goal>
+                        </goals>
+                        <configuration>
+                            <generatorProvider>com.atlassian.plugin.connect.schema.ConfluenceSchemaGeneratorProvider</generatorProvider>
+                            <rootClassName>com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean</rootClassName>
+                            <rawOutput>${project.build.outputDirectory}/META-INF/confluence-schema.json</rawOutput>
+                            <prettyOutput>${project.build.outputDirectory}/META-INF/confluence-schema-pretty.json</prettyOutput>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
+            <!-- this MUST run after compilation -->
+            <!--<plugin>-->
+                <!--<groupId>org.apache.maven.plugins</groupId>-->
+                <!--<artifactId>maven-javadoc-plugin</artifactId>-->
+                <!--<version>2.9.1</version>-->
+                <!--<executions>-->
+                    <!--<execution>-->
+                        <!--<id>json-schema</id>-->
+                        <!--<phase>process-classes</phase>-->
+                        <!--<goals>-->
+                            <!--<goal>javadoc</goal>-->
+                        <!--</goals>-->
+                        <!--<configuration>-->
+                            <!--<doclet>com.atlassian.json.schema.doclet.JsonSchemaDoclet</doclet>-->
+                            <!--<docletArtifact>-->
+                                <!--<groupId>${project.groupId}</groupId>-->
+                                <!--<artifactId>json-schemagen-scanner</artifactId>-->
+                                <!--<version>${project.version}</version>-->
+                            <!--</docletArtifact>-->
+                            <!--<docletPath>${project.build.outputDirectory}</docletPath>-->
+                            <!--<sourceFileIncludes>-->
+                                <!--<sourceFileInclude>**\/ConnectAddonBean.java</sourceFileInclude>-->
+                            <!--</sourceFileIncludes>-->
+                            <!--<useStandardDocletOptions>false</useStandardDocletOptions>-->
+                            <!--<additionalparam>-output "${project.basedir}/target/jsonSchemaDocs.json"</additionalparam>-->
+                            <!--<show>private</show>-->
+                        <!--</configuration>-->
+                    <!--</execution>-->
+                <!--</executions>-->
+            <!--</plugin>-->
         </plugins>
     </build>
 

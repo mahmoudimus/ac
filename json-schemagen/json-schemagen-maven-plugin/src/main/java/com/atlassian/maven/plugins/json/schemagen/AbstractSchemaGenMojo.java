@@ -1,0 +1,94 @@
+package com.atlassian.maven.plugins.json.schemagen;
+
+import java.io.File;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.apache.maven.artifact.DependencyResolutionRequiredException;
+import org.apache.maven.execution.MavenSession;
+import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.BuildPluginManager;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.PluginManager;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.project.MavenProject;
+import org.twdata.maven.mojoexecutor.MojoExecutor;
+
+public abstract class AbstractSchemaGenMojo extends AbstractMojo
+{
+    @Component
+    protected MavenProject project;
+
+    @Component
+    private BuildPluginManager buildPluginManager;
+
+    @Component
+    private PluginManager pluginManager;
+    
+    @Component
+    private MavenSession session;
+
+    public MojoExecutor.ExecutionEnvironment executionEnvironment()
+    {
+        if (buildPluginManager != null)
+        {
+            /* Maven 3 */
+            return MojoExecutor.executionEnvironment(project, session, buildPluginManager);
+        }
+        else
+        {
+            /* Maven 2 */
+            return MojoExecutor.executionEnvironment(project, session, pluginManager);
+        }
+    }
+    
+    protected String getDefaultDocsFile()
+    {
+        StringBuilder outBuilder = new StringBuilder(project.getBuild().getDirectory());
+        outBuilder.append(File.separator).append("jsonSchemaDocs.json");
+        
+        return outBuilder.toString();
+    }
+
+    protected String getDefaultInterfacesFile()
+    {
+        StringBuilder outBuilder = new StringBuilder(project.getBuild().getDirectory());
+        outBuilder.append(File.separator).append("jsonSchemaInterfaces.json");
+        
+        return outBuilder.toString();
+    }
+
+    protected String getClasspath() throws MojoExecutionException
+    {
+        Set<String> docletPaths = new HashSet<String>();
+        StringBuffer docletPath = new StringBuffer(File.pathSeparator + project.getBuild().getOutputDirectory());
+
+        try
+        {
+            docletPaths.addAll(project.getCompileClasspathElements());
+            docletPaths.addAll(project.getRuntimeClasspathElements());
+            docletPaths.addAll(project.getRuntimeClasspathElements());
+            docletPaths.addAll(project.getSystemClasspathElements());
+
+            URL[] pluginUrls = ((URLClassLoader)Thread.currentThread().getContextClassLoader()).getURLs();
+            for(URL pluginUrl : pluginUrls)
+            {
+                docletPaths.add(new File(pluginUrl.getFile()).getPath());
+            }
+
+            for(String path : docletPaths) {
+                docletPath.append(File.pathSeparator);
+                docletPath.append(path);
+            }
+
+            return docletPath.toString();
+        }
+        catch (DependencyResolutionRequiredException e)
+        {
+            throw new MojoExecutionException("Dependencies must be resolved", e);
+        }
+
+    }
+}

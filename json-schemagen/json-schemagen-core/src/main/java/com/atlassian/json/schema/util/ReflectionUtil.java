@@ -1,4 +1,4 @@
-package com.atlassian.json.schema;
+package com.atlassian.json.schema.util;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;

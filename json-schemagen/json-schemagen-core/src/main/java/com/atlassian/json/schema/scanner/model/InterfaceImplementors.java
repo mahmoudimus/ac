@@ -1,19 +1,21 @@
 package com.atlassian.json.schema.scanner.model;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class InterfaceImplementors
 {
     private String interfaceName;
-    private List<String> implementors;
+    private Set<String> implementors;
 
     public InterfaceImplementors()
     {
-        this.implementors = new ArrayList<String>();
+        this.implementors = new HashSet<String>();
     }
     
-    public InterfaceImplementors(String interfaceName, List<String> implementors)
+    public InterfaceImplementors(String interfaceName, Set<String> implementors)
     {
         this.interfaceName = interfaceName;
         this.implementors = implementors;
@@ -24,7 +26,7 @@ public class InterfaceImplementors
         return interfaceName;
     }
 
-    public List<String> getImplementors()
+    public Set<String> getImplementors()
     {
         return implementors;
     }

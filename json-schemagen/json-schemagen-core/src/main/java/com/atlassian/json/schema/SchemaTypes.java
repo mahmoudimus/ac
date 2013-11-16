@@ -1,9 +1,10 @@
 package com.atlassian.json.schema;
 
 import java.math.BigDecimal;
-import java.util.Set;
-
-import com.google.common.collect.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class SchemaTypes
 {
@@ -14,25 +15,49 @@ public class SchemaTypes
     public static final String STRING = "string";
     public static final String ARRAY = "array";
 
-    private static final Multimap<String, Class<?>> typeMappings = ArrayListMultimap.create();
+    private static final Map<String, List<Class<?>>> jsonToJava = createJsonToJava();
 
-    static
+    private static Map<String, List<Class<?>>> createJsonToJava()
     {
-        typeMappings.putAll(INTEGER, Lists.newArrayList(byte.class, Byte.class, short.class, Short.class, int.class, Integer.class, long.class, Long.class));
-        typeMappings.putAll(NUMBER, Lists.newArrayList(float.class, Float.class, double.class, Double.class, BigDecimal.class));
-        typeMappings.putAll(BOOLEAN, Lists.newArrayList(boolean.class, Boolean.class));
-        typeMappings.putAll(STRING, Lists.newArrayList(char.class, Character.class, CharSequence.class, String.class));
+        Map<String, List<Class<?>>> jsonToJava = new HashMap<String, List<Class<?>>>();
+        List<Class<?>> intList = Arrays.<Class<?>>asList(byte.class, Byte.class, short.class, Short.class, int.class, Integer.class, long.class, Long.class);
+        List<Class<?>> numList = Arrays.<Class<?>>asList(float.class, Float.class, double.class, Double.class, BigDecimal.class);
+        List<Class<?>> boolList = Arrays.<Class<?>>asList(boolean.class, Boolean.class);
+        List<Class<?>> strList = Arrays.<Class<?>>asList(char.class, Character.class, CharSequence.class, String.class);
+
+        jsonToJava.put(INTEGER, intList);
+        jsonToJava.put(NUMBER, numList);
+        jsonToJava.put(BOOLEAN, boolList);
+        jsonToJava.put(STRING, strList);
+
+        return jsonToJava;
+
     }
 
     public static boolean isMappedType(Class<?> clazz)
     {
-        return typeMappings.containsValue(clazz);
+        for (Map.Entry<String, List<Class<?>>> entry : jsonToJava.entrySet())
+        {
+            if (entry.getValue().contains(clazz))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public static String getMappedType(Class<?> clazz)
     {
-        Set<String> key = Multimaps.invertFrom(typeMappings, HashMultimap.<Class<?>, String>create()).get(clazz);
-        return (null == key || key.isEmpty()) ? null : key.iterator().next();
+        for (Map.Entry<String, List<Class<?>>> entry : jsonToJava.entrySet())
+        {
+            if (entry.getValue().contains(clazz))
+            {
+                return entry.getKey();
+            }
+        }
+
+        return null;
     }
 
 }

@@ -13,6 +13,8 @@ import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
 
 /**
+ * @schemaTitle Connect Addon Root Descriptor
+ * 
  * The root descriptor for an Atlassian Connect add on
  * 
  * Json Example:
