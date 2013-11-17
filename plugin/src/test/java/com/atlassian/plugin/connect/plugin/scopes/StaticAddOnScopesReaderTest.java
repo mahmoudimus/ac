@@ -19,7 +19,7 @@ public class StaticAddOnScopesReaderTest
     @Test
     public void readsConfluenceScopes() throws IOException
     {
-        assertThat(StaticAddOnScopesReader.buildFor("test"), is(AddOnScopeBuilderForTests.buildReadScope()));
+        assertThat(getTestScopes(), is(AddOnScopeBuilderForTests.buildReadScope()));
     }
 
     @Test
@@ -27,7 +27,7 @@ public class StaticAddOnScopesReaderTest
     {
         Type listType = new TypeToken<List<String>>() {}.getType();
         List<String> scopeReferences = CapabilitiesGsonFactory.getGson().fromJson("[ \"READ\" ]", listType);
-        Collection<AddOnScope> scopes = StaticAddOnScopesReader.dereferenceFor("test", scopeReferences);
+        Collection<AddOnScope> scopes = StaticAddOnScopesReader.dereference(getTestScopes(), scopeReferences);
 
         assertThat(scopes, Is.is(AddOnScopeBuilderForTests.buildReadScope()));
     }
@@ -35,6 +35,11 @@ public class StaticAddOnScopesReaderTest
     @Test(expected = IllegalArgumentException.class)
     public void badScopeReferenceResultsInException() throws IOException
     {
-        StaticAddOnScopesReader.dereferenceFor("test", asList("bad"));
+        StaticAddOnScopesReader.dereference(getTestScopes(), asList("bad"));
+    }
+
+    private Collection<AddOnScope> getTestScopes() throws IOException
+    {
+        return StaticAddOnScopesReader.buildFor("test");
     }
 }

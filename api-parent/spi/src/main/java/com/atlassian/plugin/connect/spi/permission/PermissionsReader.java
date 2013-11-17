@@ -14,4 +14,11 @@ public interface PermissionsReader
     Set<String> getPermissionsForPlugin(Plugin plugin);
 
     Set<String> readPermissionsFromDescriptor(Document document);
+
+    /**
+     * Parse the names of referenced scopes from the {@link Plugin} descriptor of a Connect add-on.
+     * @param plugin the Connect add-on
+     * @return names of scopes in its descriptor (e.g. "READ", "WRITE")
+     */
+    Set<String> readScopesForAddOn(Plugin plugin);
 }

@@ -19,6 +19,7 @@ public class StaticAddOnScopesReader
     /**
      * Parse static resources into the {@link Collection} of {@link AddOnScope}s used to whitelist incoming {@link javax.servlet.http.HttpServletRequest}s.
      * Reads Confluence configuration.
+     * For efficiency call this method sparingly, as repeated calls will all load scopes from file.
      * @return the {@link Collection} of {@link AddOnScope}s used to whitelist incoming {@link javax.servlet.http.HttpServletRequest}s
      * @throws IOException if the static resources file could not be read
      */
@@ -30,6 +31,7 @@ public class StaticAddOnScopesReader
     /**
      * Parse static resources into the {@link Collection} of {@link AddOnScope}s used to whitelist incoming {@link javax.servlet.http.HttpServletRequest}s.
      * Reads JIRA configuration.
+     * For efficiency call this method sparingly, as repeated calls will all load scopes from file.
      * @return the {@link Collection} of {@link AddOnScope}s used to whitelist incoming {@link javax.servlet.http.HttpServletRequest}s
      * @throws IOException if the static resources file could not be read
      */
@@ -40,6 +42,7 @@ public class StaticAddOnScopesReader
 
     /**
      * Parse static resources into the {@link Collection} of {@link AddOnScope}s used to whitelist incoming {@link javax.servlet.http.HttpServletRequest}s.
+     * For efficiency call this method sparingly, as repeated calls will all load scopes from file.
      * @param product product name in lower case e.g. "confluence" or "jira"
      * @return the {@link Collection} of {@link AddOnScope}s used to whitelist incoming {@link javax.servlet.http.HttpServletRequest}s
      * @throws IOException if the static resources file could not be read
@@ -67,14 +70,13 @@ public class StaticAddOnScopesReader
 
     /**
      * Turn lightweight references to scopes into the scopes themselves.
-     * For efficiency call this method sparingly, as repeated calls will all load scopes from file.
-     * @param product product name in lower case e.g. "confluence" or "jira"
+     * @param scopes {@link AddOnScope}s previously read from static configuration
      * @param scopeKeys lightweight references to scopes
      * @return the {@link AddOnScope}s referenced by the {@link String}s
      * @throws IOException if the static scopes cannot be loaded
      * @throws IllegalArgumentException if any of the scopeKeys do not appear amongst the static scopes
      */
-    public static Collection<AddOnScope> dereferenceFor(@Nonnull String product, @Nonnull final Collection<String> scopeKeys) throws IOException
+    public static Collection<AddOnScope> dereference(Collection<AddOnScope> scopes, @Nonnull final Collection<String> scopeKeys)
     {
         // avoid loading scopes from file if unnecessary
         if (scopeKeys.isEmpty())
@@ -82,7 +84,6 @@ public class StaticAddOnScopesReader
             return Collections.<AddOnScope>emptySet();
         }
 
-        Collection<AddOnScope> scopes = buildFor(product);
         final Map<String, AddOnScope> scopeKeyToScope = new HashMap<String, AddOnScope>(scopes.size());
 
         for (AddOnScope scope : scopes)
