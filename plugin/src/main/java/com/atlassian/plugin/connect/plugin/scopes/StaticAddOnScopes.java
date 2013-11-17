@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.scopes;
 
+import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
 import com.atlassian.plugin.connect.plugin.scopes.beans.AddOnScopeBean;
 import com.atlassian.plugin.connect.plugin.scopes.beans.AddOnScopeBeans;
 import com.google.common.base.Function;
@@ -55,6 +56,16 @@ public class StaticAddOnScopes
 
         for (AddOnScopeBean scopeBean : scopeBeans.getScopes())
         {
+            // scope names must be valid
+            try
+            {
+                ScopeName.valueOf(scopeBean.getKey());
+            }
+            catch (IllegalArgumentException e)
+            {
+                throw new InvalidDescriptorException(e);
+            }
+
             AddOnScopeApiPathBuilder pathsBuilder = new AddOnScopeApiPathBuilder();
 
             for (AddOnScopeBean.RestPathBean restPathBean : scopeBean.getRestPaths())

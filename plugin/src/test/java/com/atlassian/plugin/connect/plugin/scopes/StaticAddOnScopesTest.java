@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.plugin.scopes;
 
 import com.atlassian.plugin.connect.plugin.capabilities.gson.CapabilitiesGsonFactory;
+import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
 import com.google.gson.reflect.TypeToken;
 import org.hamcrest.core.Is;
 import org.junit.Test;
@@ -17,7 +18,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class StaticAddOnScopesTest
 {
     @Test
-    public void readsConfluenceScopes() throws IOException
+    public void readsTestScopes() throws IOException
     {
         assertThat(getTestScopes(), is(AddOnScopeBuilderForTests.buildReadScope()));
     }
@@ -33,9 +34,15 @@ public class StaticAddOnScopesTest
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void badScopeReferenceResultsInException() throws IOException
+    public void dereferencingANonExistentScopeReferenceResultsInException() throws IOException
     {
         StaticAddOnScopes.dereference(getTestScopes(), asList("bad"));
+    }
+
+    @Test(expected = InvalidDescriptorException.class)
+    public void readingABadScopeNameResultsInException() throws IOException
+    {
+        StaticAddOnScopes.buildFor("bad_name");
     }
 
     private Collection<AddOnScope> getTestScopes() throws IOException

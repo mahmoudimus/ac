@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.plugin.scopes.AddOnScope;
+import com.atlassian.plugin.connect.plugin.scopes.ScopeName;
 import com.atlassian.plugin.connect.plugin.scopes.StaticAddOnScopes;
 import com.atlassian.plugin.connect.plugin.settings.SettingsManager;
 import com.atlassian.plugin.connect.plugin.util.BundleUtil;
@@ -33,13 +34,14 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 import static com.atlassian.fugue.Option.option;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Collections2.transform;
 import static com.google.common.collect.ImmutableSet.copyOf;
 import static com.google.common.collect.Iterables.any;
-import static com.google.common.collect.Iterables.transform;
 import static java.lang.String.format;
 
 /**
@@ -131,18 +133,41 @@ public final class PermissionManagerImpl implements PermissionManager
 
     private Iterable<? extends ApiScope> getApiScopesForPlugin(String pluginKey)
     {
-        Set<String> scopeReferences = option(pluginAccessor.getPlugin(pluginKey)).fold(
-                Suppliers.ofInstance(ImmutableSet.<String>of()),
-                new Function<Plugin, Set<String>>()
-                {
-                    @Override
-                    public Set<String> apply(Plugin plugin)
-                    {
-                        return permissionsReader.readScopesForAddOn(plugin);
-                    }
-                });
+        return StaticAddOnScopes.dereference(ALL_SCOPES, addImpliedScopesTo(getScopeReferences(pluginKey)));
+    }
 
-        return StaticAddOnScopes.dereference(ALL_SCOPES, scopeReferences);
+    private Collection<String> addImpliedScopesTo(Set<String> scopeReferences)
+    {
+        Set<String> allScopeReferences = new HashSet<String>(scopeReferences);
+
+        for (String scopeReference : scopeReferences)
+        {
+            ScopeName scopeName = ScopeName.valueOf(scopeReference);
+            allScopeReferences.addAll(transform(scopeName.getImplied(), new Function<ScopeName, String>()
+            {
+                @Override
+                public String apply(@Nullable ScopeName input)
+                {
+                    return null == input ? null : input.name();
+                }
+            }));
+        }
+
+        return allScopeReferences;
+    }
+
+    private Set<String> getScopeReferences(String pluginKey)
+    {
+        return option(pluginAccessor.getPlugin(pluginKey)).fold(
+                    Suppliers.ofInstance(ImmutableSet.<String>of()),
+                    new Function<Plugin, Set<String>>()
+                    {
+                        @Override
+                        public Set<String> apply(Plugin plugin)
+                        {
+                            return permissionsReader.readScopesForAddOn(plugin);
+                        }
+                    });
     }
 
     private Set<String> getPermissionsForPlugin(String clientKey)

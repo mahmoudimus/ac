@@ -31,5 +31,6 @@
             },
             "location" : "a-location"
         }]
-    }
+    },
+    "scopes" : []
 }
