@@ -87,6 +87,12 @@ public class GenerateSchemaMojo extends AbstractSchemaGenMojo
             JsonSchemaGenerator generator = provider.provide(lowercaseEnums,interfaceList,schemaDocs);
             JsonSchema schema = generator.generateSchema(getRootClass());
             
+            File rawFile = new File(rawOutput);
+            File prettyFile = new File(prettyOutput);
+            
+            Files.createParentDirs(rawFile);
+            Files.createParentDirs(prettyFile);
+            
             Files.write(gson.toJson(schema),new File(rawOutput),Charsets.UTF_8);
             Files.write(prettyGson.toJson(schema),new File(prettyOutput),Charsets.UTF_8);
         }

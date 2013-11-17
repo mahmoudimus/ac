@@ -13,12 +13,11 @@ import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
 
 /**
- * @schemaTitle Connect Addon Root Descriptor
- * 
  * The root descriptor for an Atlassian Connect add on
  * 
  * Json Example:
  * @exampleJson {@see ConnectJsonExamples#ADDON_EXAMPLE}
+ * @schemaTitle Connect Addon Root Descriptor
  * @since 1.0
  */
 public class ConnectAddonBean extends BaseCapabilityBean
