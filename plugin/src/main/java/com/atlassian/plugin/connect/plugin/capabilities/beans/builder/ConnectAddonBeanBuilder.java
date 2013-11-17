@@ -3,8 +3,10 @@ package com.atlassian.plugin.connect.plugin.capabilities.beans.builder;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.atlassian.plugin.connect.plugin.capabilities.beans.CapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.CapabilityList;
@@ -24,6 +26,7 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extend
     private VendorBean vendor;
     private Map<String, String> links;
     private CapabilityList capabilities;
+    private Set<String> scopes;
 
     public ConnectAddonBeanBuilder()
     {
@@ -37,6 +40,7 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extend
         this.vendor = defaultBean.getVendor();
         this.links = defaultBean.getLinks();
         this.capabilities = defaultBean.getCapabilities();
+        this.scopes = defaultBean.getScopes();
     }
 
     public T withKey(String key)
@@ -88,6 +92,21 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extend
     {
         this.links = links;
 
+        return (T) this;
+    }
+
+    public T withScopes(Set<String> scopes)
+    {
+        if (null == this.scopes)
+        {
+            this.scopes = new HashSet<String>(scopes.size());
+        }
+        else
+        {
+            this.scopes.clear();
+        }
+
+        this.scopes.addAll(scopes);
         return (T) this;
     }
 

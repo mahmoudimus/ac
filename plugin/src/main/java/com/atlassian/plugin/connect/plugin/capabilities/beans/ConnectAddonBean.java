@@ -1,13 +1,12 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConnectAddonBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.VendorBean;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.VendorBean.newVendorBean;
-import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
 
 /**
@@ -25,6 +24,7 @@ public class ConnectAddonBean extends BaseCapabilityBean
     private Map<String,String> links;
     
     private CapabilityList capabilities;
+    private Set<String> scopes;
     
     public ConnectAddonBean()
     {
@@ -35,6 +35,7 @@ public class ConnectAddonBean extends BaseCapabilityBean
         this.vendor = VendorBean.newVendorBean().build();
         this.links = newHashMap();
         this.capabilities = new CapabilityList();
+        this.scopes = new HashSet<String>();
     }
 
     public ConnectAddonBean(ConnectAddonBeanBuilder builder)
@@ -75,6 +76,11 @@ public class ConnectAddonBean extends BaseCapabilityBean
         {
             this.links = newHashMap();
         }
+
+        if (null == scopes)
+        {
+            this.scopes = new HashSet<String>();
+        }
     }
 
     public String getKey()
@@ -110,6 +116,11 @@ public class ConnectAddonBean extends BaseCapabilityBean
     public Map<String, String> getLinks()
     {
         return links;
+    }
+
+    public Set<String> getScopes()
+    {
+        return scopes;
     }
 
     public static ConnectAddonBeanBuilder newConnectAddonBean()
