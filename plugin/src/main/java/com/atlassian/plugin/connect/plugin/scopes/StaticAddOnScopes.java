@@ -14,7 +14,7 @@ import java.util.*;
 
 import static com.google.common.collect.Collections2.transform;
 
-public class StaticAddOnScopesReader
+public class StaticAddOnScopes
 {
     /**
      * Parse static resources into the {@link Collection} of {@link AddOnScope}s used to whitelist incoming {@link javax.servlet.http.HttpServletRequest}s.

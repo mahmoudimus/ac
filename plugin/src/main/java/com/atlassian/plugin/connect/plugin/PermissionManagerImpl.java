@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.plugin;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.plugin.scopes.AddOnScope;
-import com.atlassian.plugin.connect.plugin.scopes.StaticAddOnScopesReader;
+import com.atlassian.plugin.connect.plugin.scopes.StaticAddOnScopes;
 import com.atlassian.plugin.connect.plugin.settings.SettingsManager;
 import com.atlassian.plugin.connect.plugin.util.BundleUtil;
 import com.atlassian.plugin.connect.spi.ConnectAddOnIdentifierService;
@@ -63,7 +63,7 @@ public final class PermissionManagerImpl implements PermissionManager
         try
         {
             // TODO: how do we know which product we are in?
-            ALL_SCOPES = StaticAddOnScopesReader.buildForConfluence();
+            ALL_SCOPES = StaticAddOnScopes.buildForConfluence();
         }
         catch (IOException e)
         {
@@ -142,7 +142,7 @@ public final class PermissionManagerImpl implements PermissionManager
                     }
                 });
 
-        return StaticAddOnScopesReader.dereference(ALL_SCOPES, scopeReferences);
+        return StaticAddOnScopes.dereference(ALL_SCOPES, scopeReferences);
     }
 
     private Set<String> getPermissionsForPlugin(String clientKey)

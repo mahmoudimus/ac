@@ -14,7 +14,7 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class StaticAddOnScopesReaderTest
+public class StaticAddOnScopesTest
 {
     @Test
     public void readsConfluenceScopes() throws IOException
@@ -27,7 +27,7 @@ public class StaticAddOnScopesReaderTest
     {
         Type listType = new TypeToken<List<String>>() {}.getType();
         List<String> scopeReferences = CapabilitiesGsonFactory.getGson().fromJson("[ \"READ\" ]", listType);
-        Collection<AddOnScope> scopes = StaticAddOnScopesReader.dereference(getTestScopes(), scopeReferences);
+        Collection<AddOnScope> scopes = StaticAddOnScopes.dereference(getTestScopes(), scopeReferences);
 
         assertThat(scopes, Is.is(AddOnScopeBuilderForTests.buildReadScope()));
     }
@@ -35,11 +35,11 @@ public class StaticAddOnScopesReaderTest
     @Test(expected = IllegalArgumentException.class)
     public void badScopeReferenceResultsInException() throws IOException
     {
-        StaticAddOnScopesReader.dereference(getTestScopes(), asList("bad"));
+        StaticAddOnScopes.dereference(getTestScopes(), asList("bad"));
     }
 
     private Collection<AddOnScope> getTestScopes() throws IOException
     {
-        return StaticAddOnScopesReader.buildFor("test");
+        return StaticAddOnScopes.buildFor("test");
     }
 }
