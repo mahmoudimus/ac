@@ -612,7 +612,7 @@
         <xvfb.enable>true</xvfb.enable>
         <atlassian.upm.on.demand>false</atlassian.upm.on.demand>
         <buildNumber>SNAPSHOT</buildNumber>
-        <atlassian.spring.scanner.version>1.0-m6</atlassian.spring.scanner.version>
+        <atlassian.spring.scanner.version>1.0-m8</atlassian.spring.scanner.version>
     </properties>
 
     <repositories>
