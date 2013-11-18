@@ -1,0 +1,29 @@
+article
+  header
+    h1 #{name}
+    p #{description}
+  span.container {
+  each property, id in properties
+    section
+      if property.required
+        span.required(title='required') &#9733;
+        - delete property.required
+      h2 "#{id}":
+      div.properties
+        if property.title
+          h3= property.title
+          - delete property.title
+        if property.description
+          p= property.description
+          - delete property.description
+        dl
+          each value, key in property
+            dt
+              "#{key}":
+            dd= value
+  span.container }
+  footer
+    p Built with
+      a(href='https://www.github.com/mattyod/matic/') Matic.js
+      |&nbsp;using
+      a(href='https://www.github.com/mattyod/matic-very-simple-example/') a simple example

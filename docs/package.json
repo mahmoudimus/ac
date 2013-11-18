@@ -3,7 +3,8 @@
   "version": "0.0.1",
   "description": "Documentation for Atlassian Connect",
   "dependencies": {
-    "harp": "*"
+    "harp": "*",
+    "matic": "*"
   },
   "scripts": {
     "start": "./node_modules/.bin/harp server",

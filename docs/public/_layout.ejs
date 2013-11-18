@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/aui/<%= auiVersion %>/css/aui.css" media="all">
     <!--[if lt IE 9]><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/aui/<%= auiVersion %>/css/aui-ie.css" media="all"><![endif]-->
     <!--[if IE 9]><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/aui/<%= auiVersion %>/css/aui-ie9.css" media="all"><![endif]-->
-    <link rel="stylesheet" href="/assets/css/styles.css" media="all">
+    <link rel="stylesheet" href="./assets/css/styles.css" media="all">
     <script src="//code.jquery.com/jquery-1.8.3.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/aui/<%= auiVersion %>/js/aui.js"></script>
     <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/aui/<%= auiVersion %>/js/aui-ie.js"></script><![endif]-->
@@ -30,14 +30,6 @@
                                 <span class="aui-header-logo-device">Atlassian Connect</span>
                             </a>
                         </h1>
-                        <ul class="aui-nav">
-                            <li>
-                                <a href="../capabilities.html">JIRA</a>
-                            </li>
-                            <li>
-                                <a href="../rest.html">Confluence</a>
-                            </li>
-                        </ul>
                     </div>
                 </div>
                 <!-- .aui-header-inner-->
@@ -59,15 +51,9 @@
             </header>
             <!-- .aui-page-header -->
 
-            <%- partial('_partials/_horizontal-nav.ejs') %>
-
             <div class="aui-page-panel">
                 <div class="aui-page-panel-inner">
-                    <% if (current.path[0] == 'guides' || current.path[0] == 'index' ) { %>
-                        <%- partial('_partials/_sidebar-guide.ejs') %>
-                    <% } else if(current.path[0] == 'capabilities') { %>
-                        <%- partial('_partials/_sidebar-capabilities.ejs') %>
-                    <% } %>
+                    <%- partial('_partials/_sidebar.ejs') %>
                     <section class="aui-page-panel-content ac-page">
                         <%- yield %>
                     </section>
