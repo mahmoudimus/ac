@@ -17,6 +17,8 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConnectPro
  * }]
  * </pre>
  * </p>
+ *
+ * @schemaTitle Project Admin Tab Panel
  */
 public class ConnectProjectAdminTabPanelCapabilityBean extends ConnectTabPanelCapabilityBean
 {

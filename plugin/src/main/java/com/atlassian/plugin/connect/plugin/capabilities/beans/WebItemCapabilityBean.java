@@ -28,7 +28,8 @@ import java.util.List;
  *
  * Web links are a simple and useful way to extend Atlassian applications. If you want to extend an Atlassian
  * application and don't know where to start, a web item may be all you need.
- * 
+ *
+ * @schemaTitle Web Item
  * @since 1.0
  */
 public class WebItemCapabilityBean extends BeanWithKeyAndParamsAndConditions

@@ -62,6 +62,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.WebHookCap
  * subscribes and generates each webhook event type available on the running instance of the Atlassian application,
  * and prints the body posted by the instance to the console screen.
  *
+ * @schemaTitle Webhooks
  * @since 1.0
  */
 public class WebHookCapabilityBean extends BeanWithParams
