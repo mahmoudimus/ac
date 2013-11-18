@@ -7,18 +7,21 @@ import java.io.InputStream;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.core.MediaType;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.spring.scanner.ProductFilter;
-import com.atlassian.sal.api.ApplicationProperties;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SchemaFilter implements Filter
 {
+    private static final Logger log = LoggerFactory.getLogger(SchemaFilter.class);
+
+    public static final String JSON_SCHEMA_TYPE = "application/schema+json";
     public static final String RAW = "/schema/%s-schema.json";
     public static final String PRETTY = "/schema/%s-schema-pretty.json";
 
@@ -44,7 +47,7 @@ public class SchemaFilter implements Filter
         HttpServletRequest req = (HttpServletRequest) servletRequest;
         HttpServletResponse res = (HttpServletResponse) servletResponse;
         String jsonFormat;
-        
+
         if (null != servletRequest.getParameter("pretty"))
         {
             jsonFormat = PRETTY;
@@ -55,20 +58,20 @@ public class SchemaFilter implements Filter
         }
 
         String productPath = StringUtils.substringAfterLast(req.getRequestURI(), "/schema/");
-        
+
         try
         {
             ProductFilter requestedProduct = ProductFilter.valueOf(productPath.toUpperCase());
-            
+
             String path = String.format(jsonFormat, requestedProduct.name().toLowerCase());
             System.out.println("path = " + path);
-    
+
             ByteArrayOutputStream bout = new ByteArrayOutputStream();
             InputStream in = plugin.getResourceAsStream(path);
             IOUtils.copy(in, bout);
             byte[] data = bout.toByteArray();
-    
-            res.setContentType(MediaType.APPLICATION_JSON);
+
+            res.setContentType(JSON_SCHEMA_TYPE);
             res.setStatus(HttpServletResponse.SC_OK);
             res.setContentLength(data.length);
             ServletOutputStream sos = res.getOutputStream();
@@ -78,7 +81,8 @@ public class SchemaFilter implements Filter
         }
         catch (Exception e)
         {
-            send404("/schema/" + productPath,res);
+            log.error("Unable to find connect schema at path: /schema/" + productPath, e);
+            send404("/schema/" + productPath, res);
         }
     }
 
@@ -86,7 +90,7 @@ public class SchemaFilter implements Filter
     {
         res.sendError(HttpServletResponse.SC_NOT_FOUND, "Cannot find resource: " + path);
     }
-    
+
     @Override
     public void destroy()
     {
