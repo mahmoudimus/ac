@@ -29,29 +29,29 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.UrlBean;
  * Example workflow post function descriptor block
  * -----------------------------------------------
  *
- *    "workflowPostFunctions": [
- * 	  {
- *       "name": {
- *           "i18n": "my.function",
- *           "value": "My  function"
- *       },
- *       "description": {
- *           "i18n": "my.function.desc",
- *           "value": "My function description"
- *       },
- *       "triggered": {
- *           "url": "/triggered"
- *       },
- *       "create": {
- *           "url": "/create"
- *       },
- *       "edit": {
- *           "url": "/edit"
- *       },
- *       "view": {
- *           "url": "/view"
- *       }
- *    }]
+ *     "workflowPostFunctions": [
+ * 	   {
+ *         "name": {
+ *             "i18n": "my.function",
+ *             "value": "My  function"
+ *         },
+ *         "description": {
+ *             "i18n": "my.function.desc",
+ *             "value": "My function description"
+ *         },
+ *         "triggered": {
+ *             "url": "/triggered"
+ *         },
+ *         "create": {
+ *             "url": "/create"
+ *         },
+ *         "edit": {
+ *             "url": "/edit"
+ *         },
+ *         "view": {
+ *             "url": "/view"
+ *         }
+ *     }]
  *
  * Contents of the HTTP POST
  * -------------------------
