@@ -21,6 +21,14 @@
 
     <dependencies>
         <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>json-schemagen-core</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        
+        
+        <dependency>
             <groupId>com.atlassian.plugin</groupId>
             <artifactId>atlassian-spring-scanner</artifactId>
         </dependency>
@@ -125,7 +133,7 @@
             <artifactId>licensing-api</artifactId>
             <scope>provided</scope>
         </dependency>
-        
+
         <!-- the upm is here just for debugging -->
         <dependency>
             <groupId>com.atlassian.upm</groupId>
@@ -152,7 +160,7 @@
             <artifactId>atlassian-universal-plugin-manager-plugin</artifactId>
             <scope>provided</scope>
         </dependency>
-        
+
         <dependency>
             <groupId>com.atlassian.oauth</groupId>
             <artifactId>atlassian-oauth-api</artifactId>
@@ -311,6 +319,10 @@
                     <groupId>org.skyscreamer</groupId>
                     <artifactId>jsonassert</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.hamcrest</groupId>
+                    <artifactId>hamcrest-core</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
 
@@ -318,9 +330,8 @@
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
         </dependency>
-
     </dependencies>
-    
+
     <build>
         <plugins>
             <plugin>
@@ -458,7 +469,7 @@
                                     <version>${atlassian.jira.testkit.version}</version>
                                 </pluginArtifact>
                             </pluginArtifacts>
-                            
+
                             <bundledArtifacts>
                                 <!-- TODO: remove this once UPM 2.13 is bundled with products -->
                                 <bundledArtifact>
@@ -467,18 +478,18 @@
                                     <version>${atlassian.upm.version}</version>
                                 </bundledArtifact>
                             </bundledArtifacts>
-                            
+
                             <libArtifacts>
                                 <!-- TODO remove this once 3.0.5 is in all products -->
                                 <!--<libArtifact>-->
-                                    <!--<groupId>com.atlassian.plugins</groupId>-->
-                                    <!--<artifactId>atlassian-plugins-core</artifactId>-->
-                                    <!--<version>${atlassian.plugins.version}</version>-->
+                                <!--<groupId>com.atlassian.plugins</groupId>-->
+                                <!--<artifactId>atlassian-plugins-core</artifactId>-->
+                                <!--<version>${atlassian.plugins.version}</version>-->
                                 <!--</libArtifact>-->
                                 <!--<libArtifact>-->
-                                    <!--<groupId>com.atlassian.util.concurrent</groupId>-->
-                                    <!--<artifactId>atlassian-util-concurrent</artifactId>-->
-                                    <!--<version>${atlassian-util-concurrent.version}</version>-->
+                                <!--<groupId>com.atlassian.util.concurrent</groupId>-->
+                                <!--<artifactId>atlassian-util-concurrent</artifactId>-->
+                                <!--<version>${atlassian-util-concurrent.version}</version>-->
                                 <!--</libArtifact>-->
                             </libArtifacts>
                         </product>
@@ -522,14 +533,14 @@
                                     <version>${atlassian.upm.version}</version>
                                 </bundledArtifact>
                             </bundledArtifacts>
-                            
-                            
+
+
                             <libArtifacts>
                                 <!-- TODO remove this once 3.0.5 is in all products -->
                                 <!--<libArtifact>-->
-                                    <!--<groupId>com.atlassian.plugins</groupId>-->
-                                    <!--<artifactId>atlassian-plugins-core</artifactId>-->
-                                    <!--<version>${atlassian.plugins.version}</version>-->
+                                <!--<groupId>com.atlassian.plugins</groupId>-->
+                                <!--<artifactId>atlassian-plugins-core</artifactId>-->
+                                <!--<version>${atlassian.plugins.version}</version>-->
                                 <!--</libArtifact>-->
                             </libArtifacts>
                         </product>
@@ -675,7 +686,9 @@
                 </executions>
                 <configuration>
                     <commands>
-                        <pi>com.atlassian.maven.plugins:maven-amps-plugin:copy-bundled-dependencies com.atlassian.maven.plugins:maven-amps-plugin:compress-resources org.apache.maven.plugins:maven-resources-plugin:resources com.atlassian.maven.plugins:maven-amps-plugin:filter-plugin-descriptor org.codehaus.mojo:xml-maven-plugin:transform compile com.atlassian.maven.plugins:maven-amps-plugin:generate-manifest com.atlassian.maven.plugins:maven-amps-plugin:validate-manifest com.atlassian.maven.plugins:maven-amps-plugin:jar org.apache.maven.plugins:maven-install-plugin:install com.atlassian.maven.plugins:maven-amps-plugin:install</pi>
+                        <pi>com.atlassian.maven.plugins:maven-amps-plugin:copy-bundled-dependencies com.atlassian.maven.plugins:maven-amps-plugin:compress-resources org.apache.maven.plugins:maven-resources-plugin:resources com.atlassian.maven.plugins:maven-amps-plugin:filter-plugin-descriptor org.codehaus.mojo:xml-maven-plugin:transform compile
+                            com.atlassian.maven.plugins:maven-amps-plugin:generate-manifest com.atlassian.maven.plugins:maven-amps-plugin:validate-manifest com.atlassian.maven.plugins:maven-amps-plugin:jar org.apache.maven.plugins:maven-install-plugin:install com.atlassian.maven.plugins:maven-amps-plugin:install
+                        </pi>
                     </commands>
                 </configuration>
             </plugin>
@@ -702,6 +715,51 @@
                                     <filtering>true</filtering>
                                 </resource>
                             </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- this MUST run after compilation -->
+            <plugin>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>json-schemagen-maven-plugin</artifactId>
+                <version>${project.version}</version>
+                <executions>
+                    <execution>
+                        <id>schema-support</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>generate-support-docs</goal>
+                        </goals>
+                        <configuration>
+                            <basePackage>com.atlassian.plugin.connect.plugin.capabilities.beans</basePackage>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>jira-schema</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>generate-schema</goal>
+                        </goals>
+                        <configuration>
+                            <generatorProvider>com.atlassian.plugin.connect.schema.JiraSchemaGeneratorProvider</generatorProvider>
+                            <rootClassName>com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean</rootClassName>
+                            <rawOutput>${project.build.outputDirectory}/schema/jira-schema.json</rawOutput>
+                            <prettyOutput>${project.build.outputDirectory}/schema/jira-schema-pretty.json</prettyOutput>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>confluence-schema</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>generate-schema</goal>
+                        </goals>
+                        <configuration>
+                            <generatorProvider>com.atlassian.plugin.connect.schema.ConfluenceSchemaGeneratorProvider</generatorProvider>
+                            <rootClassName>com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean</rootClassName>
+                            <rawOutput>${project.build.outputDirectory}/schema/confluence-schema.json</rawOutput>
+                            <prettyOutput>${project.build.outputDirectory}/schema/confluence-schema-pretty.json</prettyOutput>
                         </configuration>
                     </execution>
                 </executions>
@@ -735,32 +793,6 @@
                                     <includeGroupIds>com.atlassian.aui</includeGroupIds>
                                     <includeArtifactIds>auiplugin</includeArtifactIds>
                                     <includes>**/*.js</includes>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <!-- npm plugin, used to get plugins for karma testrunner -->
-                    <plugin>
-                        <groupId>org.mule.tools.javascript</groupId>
-                        <artifactId>npm-maven-plugin</artifactId>
-                        <version>1.0</version>
-                        <executions>
-                            <execution>
-                                <phase>generate-sources</phase>
-                                <goals>
-                                    <goal>fetch-modules</goal>
-                                </goals>
-                                <configuration>
-                                    <packages>
-                                        <package>karma:0.10.2</package>
-                                        <package>karma-sinon:0.0.1</package>
-                                        <package>karma-qunit:0.1.1</package>
-                                        <package>karma-requirejs:0.1.0</package>
-                                        <package>karma-chrome-launcher:0.1.0</package>
-                                        <package>qunitjs:1.12.0</package>
-                                        <package>karma-junit-reporter:0.1.0</package>
-                                    </packages>
-                                    <outputDirectory>node_modules</outputDirectory>
                                 </configuration>
                             </execution>
                         </executions>
@@ -811,7 +843,7 @@
             </properties>
         </profile>
     </profiles>
-    
+
     <properties>
         <product>jira</product>
         <skipITs>true</skipITs>

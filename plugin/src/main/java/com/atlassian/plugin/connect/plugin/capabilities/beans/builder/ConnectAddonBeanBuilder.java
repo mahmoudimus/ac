@@ -19,6 +19,7 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extend
     private String key;
     private String name;
     private String version;
+    private String description;
     private VendorBean vendor;
     private Map<String, String> links;
     private CapabilityList capabilities;
@@ -35,6 +36,7 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extend
         this.key = defaultBean.getKey();
         this.name = defaultBean.getName();
         this.version = defaultBean.getVersion();
+        this.description = defaultBean.getDescription();
         this.vendor = defaultBean.getVendor();
         this.links = defaultBean.getLinks();
         this.capabilities = defaultBean.getCapabilities();
@@ -58,6 +60,12 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extend
     public T withVersion(String version)
     {
         this.version = version;
+        return (T) this;
+    }
+
+    public T withDescription(String description)
+    {
+        this.description = description;
         return (T) this;
     }
 

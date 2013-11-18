@@ -96,7 +96,7 @@ public class ConnectCapabilitiesRunner
         server.stop();
     }
 
-    public void stop() throws Exception
+    public void stopAndUninstall() throws Exception
     {
         stopRunnerServer();
         uninstall();

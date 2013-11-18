@@ -1,4 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd" xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <parent>
         <artifactId>atlassian-public-pom</artifactId>
         <groupId>com.atlassian.pom</groupId>
@@ -22,7 +22,9 @@
     <name>Atlassian Connect - Parent POM</name>
     <description>This is the Atlassian Connect parent project</description>
     <packaging>pom</packaging>
+    
     <modules>
+        <module>json-schemagen</module>
         <module>api-parent</module>
         <module>plugin</module>
     </modules>
@@ -124,6 +126,23 @@
                 <artifactId>maven-enforcer-plugin</artifactId>
                 <version>1.1.1</version>
                 <executions>
+                    <execution>
+                        <id>enforce-build-environment</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireMavenVersion>
+                                    <version>[3.0,)</version>
+                                </requireMavenVersion>
+                            </rules>
+                            <skip>
+                                true
+                            </skip>
+                        </configuration>
+                    </execution>
                     <execution>
                         <id>enforce-banned-dependencies</id>
                         <goals>
@@ -506,7 +525,7 @@
                 <artifactId>gson</artifactId>
                 <version>${gson.version}</version>
             </dependency>
-
+            
             <!-- spring scanning -->
             <dependency>
                 <groupId>com.atlassian.plugin</groupId>
@@ -593,7 +612,7 @@
         <xvfb.enable>true</xvfb.enable>
         <atlassian.upm.on.demand>false</atlassian.upm.on.demand>
         <buildNumber>SNAPSHOT</buildNumber>
-        <atlassian.spring.scanner.version>1.0-m6</atlassian.spring.scanner.version>
+        <atlassian.spring.scanner.version>1.0-m8</atlassian.spring.scanner.version>
     </properties>
 
     <repositories>
