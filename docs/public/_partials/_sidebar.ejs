@@ -9,19 +9,38 @@
                     <a href="#">Getting Started</a>
                 </li>
             </ul>
+
+            <div class="aui-nav-heading">
+                <strong>Add-on Descriptor</strong>
+            </div>
+            <ul class="aui-nav">
+                <li>
+                    <a href="#">Overview</a>
+                </li>
+                <li>
+                    <a href="#">Lifecycle</a>
+                </li>
+                <li>
+                    <a href="#">Authentication</a>
+                </li>
+
+            <div class="aui-nav-heading">
+                <strong>JIRA Add-on Modules</strong>
+            </div>
+            <ul class="aui-nav">
+                <% for (var key in jira.properties.capabilities.properties) { %>
+                    <% var module = jira.properties.capabilities.properties[key]; %>
+                    <li>
+                        <a href="#"><%= typeof module.items.title !== 'undefined'  ? module.items.title : key %></a>
+                    </li>
+                <% } %>
+            </ul>
+
+
             <div class="aui-nav-heading">
                 <strong>Guides</strong>
             </div>
             <ul class="aui-nav">
-                <li>
-                    <a href="#">UI extension</a>
-                </li>
-                <li>
-                    <a href="#">Modal dialogs</a>
-                </li>
-                <li>
-                    <a href="#">Webhooks</a>
-                </li>
                 <li>
                     <a href="#">Verifying requests</a>
                 </li>
@@ -30,30 +49,6 @@
                 </li>
                 <li>
                     <a href="#">Testing</a>
-                </li>
-            </ul>
-
-            <div class="aui-nav-heading">
-                <strong>Add-on Capabilities</strong>
-            </div>
-            <ul class="aui-nav">
-                <li>
-                    <a href="#">Admin Page</a>
-                </li>
-                <li>
-                    <a href="#">Configuration Page</a>
-                </li>
-                <li>
-                    <a href="#">General Page</a>
-                </li>
-                <li>
-                    <a href="#">Profile Page</a>
-                </li>
-                <li>
-                    <a href="#">Web Panel</a>
-                </li>
-                <li>
-                    <a href="#">Webhooks</a>
                 </li>
             </ul>
 

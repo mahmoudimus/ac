@@ -4,7 +4,7 @@
   "description": "Documentation for Atlassian Connect",
   "dependencies": {
     "harp": "*",
-    "matic": "*"
+    "lodash": "*"
   },
   "scripts": {
     "start": "./node_modules/.bin/harp server",
