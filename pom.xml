@@ -37,6 +37,12 @@
                 <module>integration-tests</module>
             </modules>
         </profile>
+        <profile>
+            <id>wired</id>
+            <modules>
+                <module>rest-test-plugin</module>
+            </modules>
+        </profile>
     </profiles>
     <build>
         <finalName>${project.artifactId}</finalName>
