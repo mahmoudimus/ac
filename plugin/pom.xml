@@ -454,11 +454,6 @@
                                     <version>3.2.0-m8</version>
                                 </pluginArtifact>
                                 <pluginArtifact>
-                                    <groupId>${project.groupId}</groupId>
-                                    <artifactId>atlassian-connect-rest-test-plugin</artifactId>
-                                    <version>${project.version}</version>
-                                </pluginArtifact>
-                                <pluginArtifact>
                                     <groupId>com.atlassian.jwt</groupId>
                                     <artifactId>jwt-plugin</artifactId>
                                     <version>${atlassian.jwt.version}</version>
@@ -498,11 +493,6 @@
                                     <groupId>com.atlassian.httpclient</groupId>
                                     <artifactId>atlassian-httpclient-plugin</artifactId>
                                     <version>${atlassian.httpclient.version}</version>
-                                </pluginArtifact>
-                                <pluginArtifact>
-                                    <groupId>${project.groupId}</groupId>
-                                    <artifactId>atlassian-connect-rest-test-plugin</artifactId>
-                                    <version>${project.version}</version>
                                 </pluginArtifact>
                                 <pluginArtifact>
                                     <groupId>com.atlassian.jwt</groupId>
