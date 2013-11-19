@@ -5,13 +5,19 @@ import com.atlassian.jira.plugin.searchrequestview.SearchRequestViewModuleDescri
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.SearchRequestViewCapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectAutowireUtil;
+import com.atlassian.plugin.connect.plugin.module.jira.searchrequestview.RemoteSearchRequestView;
+import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import org.dom4j.Element;
+import org.dom4j.dom.DOMElement;
 import org.osgi.framework.BundleContext;
+import org.springframework.beans.factory.annotation.Autowired;
 
+@JiraComponent
 public class ConnectSearchRequestViewModuleDescriptorFactory implements ConnectModuleDescriptorFactory<SearchRequestViewCapabilityBean, SearchRequestViewModuleDescriptor>
 {
     private final ConnectAutowireUtil autoWireUtil;
 
+    @Autowired
     public ConnectSearchRequestViewModuleDescriptorFactory(ConnectAutowireUtil autowireUtil)
     {
         this.autoWireUtil = autowireUtil;
@@ -28,6 +34,15 @@ public class ConnectSearchRequestViewModuleDescriptorFactory implements ConnectM
 
     private Element createElement(SearchRequestViewCapabilityBean bean)
     {
-        return null;  //To change body of created methods use File | Settings | File Templates.
+        DOMElement element = new DOMElement("search-request-view");
+
+        element.setAttribute("key", bean.getKey());
+        element.setAttribute("name", bean.getDisplayName());
+        element.setAttribute("class", RemoteSearchRequestView.class.getName());
+        element.setAttribute("state", "enabled");
+        element.setAttribute("fileExtension", "html");
+        element.setAttribute("contentType", "text/html");
+
+        return element;
     }
 }
