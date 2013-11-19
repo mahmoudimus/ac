@@ -478,20 +478,6 @@
                                     <version>${atlassian.upm.version}</version>
                                 </bundledArtifact>
                             </bundledArtifacts>
-
-                            <libArtifacts>
-                                <!-- TODO remove this once 3.0.5 is in all products -->
-                                <!--<libArtifact>-->
-                                <!--<groupId>com.atlassian.plugins</groupId>-->
-                                <!--<artifactId>atlassian-plugins-core</artifactId>-->
-                                <!--<version>${atlassian.plugins.version}</version>-->
-                                <!--</libArtifact>-->
-                                <!--<libArtifact>-->
-                                <!--<groupId>com.atlassian.util.concurrent</groupId>-->
-                                <!--<artifactId>atlassian-util-concurrent</artifactId>-->
-                                <!--<version>${atlassian-util-concurrent.version}</version>-->
-                                <!--</libArtifact>-->
-                            </libArtifacts>
                         </product>
                         <product>
                             <id>confluence</id>
@@ -533,21 +519,8 @@
                                     <version>${atlassian.upm.version}</version>
                                 </bundledArtifact>
                             </bundledArtifacts>
-
-
-                            <libArtifacts>
-                                <!-- TODO remove this once 3.0.5 is in all products -->
-                                <!--<libArtifact>-->
-                                <!--<groupId>com.atlassian.plugins</groupId>-->
-                                <!--<artifactId>atlassian-plugins-core</artifactId>-->
-                                <!--<version>${atlassian.plugins.version}</version>-->
-                                <!--</libArtifact>-->
-                            </libArtifacts>
                         </product>
                     </products>
-
-                    <pluginDependencies>
-                    </pluginDependencies>
                 </configuration>
             </plugin>
 
@@ -853,6 +826,6 @@
         <toolbox.version>2.0.6</toolbox.version>
         <plugin.testrunner.version>1.1.2</plugin.testrunner.version>
         <test.plugin.artifact> </test.plugin.artifact>
-        <runKaram>false</runKaram>
+        <runKarma>false</runKarma>
     </properties>
 </project>
