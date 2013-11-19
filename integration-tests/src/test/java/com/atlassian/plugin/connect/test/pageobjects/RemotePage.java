@@ -1,24 +1,16 @@
 package com.atlassian.plugin.connect.test.pageobjects;
 
-import java.net.URI;
-import java.util.Map;
-import java.util.concurrent.Callable;
-
-import javax.annotation.Nullable;
-import javax.inject.Inject;
-
 import com.atlassian.pageobjects.binder.WaitUntil;
 import com.atlassian.webdriver.AtlassianWebDriver;
-
 import com.google.common.base.Function;
-
-import org.apache.http.NameValuePair;
-import org.apache.http.client.utils.URLEncodedUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-import static com.google.common.collect.Maps.newHashMap;
+import javax.annotation.Nullable;
+import javax.inject.Inject;
+import java.util.Map;
+import java.util.concurrent.Callable;
 
 /**
  *
@@ -103,7 +95,6 @@ public class RemotePage
             @Override
             public Boolean apply(WebDriver webDriver)
             {
-                System.out.println(iframe().getAttribute("class"));
                 return iframe().getAttribute("class").contains(cssClass);
             }
         });

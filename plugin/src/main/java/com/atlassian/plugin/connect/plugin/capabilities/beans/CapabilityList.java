@@ -7,7 +7,6 @@ import com.atlassian.plugin.spring.scanner.ProductFilter;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.BaseCapabilityBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.*;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.RemoteContainerCapabilityBean.newRemoteContainerBean;
 import static com.google.common.collect.Lists.newArrayList;
 
 /**
@@ -46,8 +45,8 @@ public class CapabilityList extends BaseCapabilityBean
     @CapabilityModuleProvider(WebPanelModuleProvider.class)
     private List<WebPanelCapabilityBean> webPanels;
 
-    @CapabilityModuleProvider(RemoteContainerModuleProvider.class)
-    private RemoteContainerCapabilityBean connectContainer;
+    @CapabilityModuleProvider(GeneralPageModuleProvider.class)
+    private List<ConnectPageCapabilityBean> generalPages;
 
     @CapabilityModuleProvider(WebHookModuleProvider.class)
     private List<WebHookCapabilityBean> webhooks;
@@ -55,13 +54,13 @@ public class CapabilityList extends BaseCapabilityBean
     public CapabilityList()
     {
         this.jiraComponentTabPanels = newArrayList();
-        this.connectContainer = newRemoteContainerBean().build();
         this.jiraIssueTabPanels = newArrayList();
         this.jiraProjectAdminTabPanels = newArrayList();
         this.jiraProjectTabPanels = newArrayList();
         this.jiraVersionTabPanels = newArrayList();
         this.webItems = newArrayList();
         this.webPanels = newArrayList();
+        this.generalPages = newArrayList();
         this.jiraWorkflowPostFunctions = newArrayList();
         this.webhooks = newArrayList();
     }
@@ -73,10 +72,6 @@ public class CapabilityList extends BaseCapabilityBean
         if (null == jiraComponentTabPanels)
         {
             this.jiraComponentTabPanels = newArrayList();
-        }
-        if (null == connectContainer)
-        {
-            this.connectContainer = newRemoteContainerBean().build();
         }
         if (null == jiraIssueTabPanels)
         {
@@ -147,17 +142,18 @@ public class CapabilityList extends BaseCapabilityBean
         return webPanels;
     }
 
-    public List<WebHookCapabilityBean> getWebhooks() {
-        return webhooks;
-    }
-
     public List<WorkflowPostFunctionCapabilityBean> getJiraWorkflowPostFunctions()
     {
         return jiraWorkflowPostFunctions;
     }
 
-    public RemoteContainerCapabilityBean getConnectContainer()
+    public List<ConnectPageCapabilityBean> getGeneralPages()
     {
-        return connectContainer;
+        return generalPages;
+    }
+    
+    public List<WebHookCapabilityBean> getWebhooks() 
+    {
+        return webhooks;
     }
 }

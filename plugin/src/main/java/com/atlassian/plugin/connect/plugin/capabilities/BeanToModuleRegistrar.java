@@ -11,10 +11,13 @@ import com.atlassian.plugin.AutowireCapablePlugin;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.annotation.CapabilityModuleProvider;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.LifecycleBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConnectAddonBeanBuilder;
+import com.atlassian.plugin.connect.plugin.webhooks.PluginsWebHookProvider;
 import com.atlassian.plugin.spring.scanner.ProductFilter;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.CapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.CapabilityList;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.RemoteContainerCapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectModuleProvider;
 import com.atlassian.plugin.connect.plugin.integration.plugins.DescriptorToRegister;
 import com.atlassian.plugin.connect.plugin.integration.plugins.DynamicDescriptorRegistration;
@@ -35,12 +38,16 @@ import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean.newConnectAddonBean;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebHookCapabilityBean.newWebHookBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.util.ConnectReflectionHelper.isParameterizedListWithType;
 import static com.google.common.collect.Lists.newArrayList;
 
 @Component
 public class BeanToModuleRegistrar
 {
+    private static final String WEBHOOKS_FIELD = "webhooks";
+    
     private final DynamicDescriptorRegistration dynamicDescriptorRegistration;
 
     private final ConcurrentHashMap<String, DynamicDescriptorRegistration.Registration> registrations;
@@ -58,7 +65,7 @@ public class BeanToModuleRegistrar
         this.registrations = new ConcurrentHashMap<String, DynamicDescriptorRegistration.Registration>();
     }
 
-    public void registerDescriptorsForBeans(Plugin plugin, CapabilityList capabilityList)
+    public void registerDescriptorsForBeans(Plugin plugin, ConnectAddonBean addon)
     {
         BundleContext addonBundleContext = ((OsgiPlugin) plugin).getBundle().getBundleContext();
         AutowireWithConnectPluginDecorator connectAutowiringPlugin = new AutowireWithConnectPluginDecorator((AutowireCapablePlugin) theConnectPlugin, plugin, Sets.<Class<?>>newHashSet(productAccessor.getConditions().values()));
@@ -66,10 +73,10 @@ public class BeanToModuleRegistrar
 
         BeanTransformContext ctx = new BeanTransformContext(connectAutowiringPlugin, addonBundleContext, ProductFilter.valueOf(applicationProperties.getDisplayName().toUpperCase()));
 
-        //we MUST process the container bean first
-        processContainer(capabilityList, ctx, descriptorsToRegister);
-
-        //now process the other fields
+        //we MUST add in the lifecycle webhooks first
+        CapabilityList capabilityList = getCapabilitiesWithLifecycleWebhooks(addon);
+        
+        //now process the capability fields
         processFields(capabilityList, ctx, descriptorsToRegister);
 
 
@@ -79,39 +86,34 @@ public class BeanToModuleRegistrar
         }
     }
 
-    private void processContainer(CapabilityList capabilityList, BeanTransformContext ctx, List<DescriptorToRegister> descriptorsToRegister)
+    private CapabilityList getCapabilitiesWithLifecycleWebhooks(ConnectAddonBean addon)
     {
-        RemoteContainerCapabilityBean connectContainer = capabilityList.getConnectContainer();
-        if (null != connectContainer && !Strings.isNullOrEmpty(connectContainer.getDisplayUrl()))
+        LifecycleBean lifecycle = addon.getLifecycle();
+        ConnectAddonBeanBuilder builder = newConnectAddonBean(addon);
+        
+        if(!Strings.isNullOrEmpty(lifecycle.getEnabled()))
         {
-            try
-            {
-
-                //just to be safe, use reflection to pull the module provider
-                Field containerField = capabilityList.getClass().getDeclaredField(RemoteContainerCapabilityBean.CONNECT_CONTAINER);
-                CapabilityModuleProvider containerAnno = containerField.getAnnotation(CapabilityModuleProvider.class);
-                if (null != containerAnno)
-                {
-                    descriptorsToRegister.addAll(getDescriptors(ctx, containerField.getName(), containerAnno, newArrayList(connectContainer)));
-                }
-            }
-            catch (NoSuchFieldException e)
-            {
-                //ignore
-            }
+            //add webhook
+            builder.withCapability(WEBHOOKS_FIELD, newWebHookBean().withEvent(PluginsWebHookProvider.CONNECT_ADDON_ENABLED).withUrl(lifecycle.getEnabled()).build());
         }
+        if(!Strings.isNullOrEmpty(lifecycle.getDisabled()))
+        {
+            //add webhook
+            builder.withCapability(WEBHOOKS_FIELD,newWebHookBean().withEvent(PluginsWebHookProvider.CONNECT_ADDON_DISABLED).withUrl(lifecycle.getDisabled()).build());
+        }
+        if(!Strings.isNullOrEmpty(lifecycle.getUninstalled()))
+        {
+            //add webhook
+            builder.withCapability(WEBHOOKS_FIELD, newWebHookBean().withEvent(PluginsWebHookProvider.CONNECT_ADDON_UNINSTALLED).withUrl(lifecycle.getUninstalled()).build());
+        }
+        
+        return builder.build().getCapabilities();
     }
 
     private void processFields(CapabilityList capabilityList, BeanTransformContext ctx, List<DescriptorToRegister> descriptorsToRegister)
     {
         for (Field field : capabilityList.getClass().getDeclaredFields())
         {
-            //ignore the container field since we already processed it
-            if (RemoteContainerCapabilityBean.CONNECT_CONTAINER.equals(field.getName()))
-            {
-                continue;
-            }
-
             if (field.isAnnotationPresent(CapabilityModuleProvider.class))
             {
                 try

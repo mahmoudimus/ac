@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.AbstractConnectTabPanelCapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectTabPanelCapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConditionModuleFragmentFactory;
@@ -26,7 +25,6 @@ import org.osgi.framework.BundleContext;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectTabPanelCapabilityBean.newTabPanelBean;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -37,7 +35,6 @@ public abstract class BaseConnectTabPanelModuleProviderTest
     protected static final String ADDON_NAME = "myName";
     protected static final String ADDON_URL = "/myUrl";
     protected static final String ADDON_I18_NAME_KEY = "myi18key";
-    protected static final int WEIGHT = 99;
 
     @Mock
     protected Plugin plugin;
