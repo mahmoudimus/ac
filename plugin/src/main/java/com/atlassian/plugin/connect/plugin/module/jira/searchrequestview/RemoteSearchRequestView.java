@@ -39,7 +39,6 @@ public class RemoteSearchRequestView implements SearchRequestView
     private final ApplicationProperties applicationProperties;
     private final SearchRequestViewBodyWriterUtil searchRequestViewBodyWriterUtil;
     private final TemplateRenderer templateRenderer;
-    private final String appKey;
     private final URI path;
     private final String name;
     private final RemotablePluginAccessor remotablePluginAccessor;
@@ -47,13 +46,12 @@ public class RemoteSearchRequestView implements SearchRequestView
     public RemoteSearchRequestView(
             ApplicationProperties applicationProperties,
             final SearchRequestViewBodyWriterUtil searchRequestViewBodyWriterUtil,
-            TemplateRenderer templateRenderer, String appKey, URI path, String name,
+            TemplateRenderer templateRenderer, URI path, String name,
             RemotablePluginAccessor remotablePluginAccessor)
     {
         this.applicationProperties = applicationProperties;
         this.searchRequestViewBodyWriterUtil = searchRequestViewBodyWriterUtil;
         this.templateRenderer = templateRenderer;
-        this.appKey = appKey;
         this.path = path;
         this.name = name;
         this.remotablePluginAccessor = checkNotNull(remotablePluginAccessor);

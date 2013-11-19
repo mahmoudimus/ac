@@ -2,6 +2,9 @@ package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.SearchRequestViewCapabilityBeanBuilder;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+
 public class SearchRequestViewCapabilityBean extends BeanWithKeyAndParamsAndConditions
 {
     private Integer weight;
@@ -40,5 +43,10 @@ public class SearchRequestViewCapabilityBean extends BeanWithKeyAndParamsAndCond
     public String getUrl()
     {
         return url;
+    }
+
+    public URI createUri() throws URISyntaxException
+    {
+        return null == url ? null : new URI(url);
     }
 }
