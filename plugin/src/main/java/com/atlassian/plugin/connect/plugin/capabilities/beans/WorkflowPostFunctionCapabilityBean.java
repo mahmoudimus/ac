@@ -175,6 +175,9 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.UrlBean;
  *            "workflowName": "classic default workflow"
  *        }
  *    }
+ *
+ *  @schemaTitle Workflow Post Function
+ *  @since 1.0
  */
 
 public class WorkflowPostFunctionCapabilityBean extends NameToKeyBean
