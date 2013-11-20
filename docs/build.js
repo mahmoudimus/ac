@@ -15,14 +15,16 @@ function sortCapabilities(capabilities) {
 
 jiraSchema.properties.capabilities.properties = sortCapabilities(jiraSchema.properties.capabilities.properties);
 harpGlobals.globals.jira = jiraSchema;
-
 for (var k in jiraSchema.properties.capabilities.properties) {
-    //fs.copySync('./public/_partials/_capability_template.jade','./public/capabilities/jira/'+k+'.jade');
     fs.outputFile('./public/capabilities/jira/'+k+'.md', String(jiraSchema.properties.capabilities.properties[k].items.description).replace(/\n /g,"\n"));
 };
 
 confluenceSchema.properties.capabilities.properties = sortCapabilities(confluenceSchema.properties.capabilities.properties);
 harpGlobals.globals.confluence = confluenceSchema;
+for (var k in confluenceSchema.properties.capabilities.properties) {
+    fs.outputFile('./public/capabilities/confluence/'+k+'.md', String(confluenceSchema.properties.capabilities.properties[k].items.description).replace(/\n /g,"\n"));
+};
+
 
 // Store schema info into Harp globals
 fs.writeFile('./harp.json', JSON.stringify(harpGlobals,null,2), function(err) {
