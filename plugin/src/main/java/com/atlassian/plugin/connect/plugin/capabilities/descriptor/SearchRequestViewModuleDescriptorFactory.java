@@ -75,6 +75,11 @@ public class SearchRequestViewModuleDescriptorFactory implements ConnectModuleDe
         element.setAttribute("state", "enabled");
         element.setAttribute("fileExtension", "html");
         element.setAttribute("contentType", "text/html");
+        element.addElement("order")
+                .addText(Integer.toString(bean.getWeight()));
+        element.addElement("description")
+                .addText(bean.getDescription().getValue())
+                .addAttribute("key", bean.getDescription().getI18n());
 
         return element;
     }

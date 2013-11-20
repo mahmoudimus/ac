@@ -1,14 +1,25 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.SearchRequestViewCapabilityBeanBuilder;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty.emptyI18nProperty;
 
 public class SearchRequestViewCapabilityBean extends BeanWithKeyAndParamsAndConditions
 {
     private Integer weight;
     private String url;
+    private I18nProperty description;
+
+    public SearchRequestViewCapabilityBean()
+    {
+        this.weight = ConnectAddonBean.DEFAULT_WEIGHT;
+        this.url = "";
+        this.description = emptyI18nProperty();
+    }
 
     public SearchRequestViewCapabilityBean(SearchRequestViewCapabilityBeanBuilder builder)
     {
@@ -18,10 +29,13 @@ public class SearchRequestViewCapabilityBean extends BeanWithKeyAndParamsAndCond
         {
             this.weight = ConnectAddonBean.DEFAULT_WEIGHT;
         }
-
         if (null == url)
         {
             url = "";
+        }
+        if (null == description)
+        {
+            description = emptyI18nProperty();
         }
     }
 
@@ -43,6 +57,11 @@ public class SearchRequestViewCapabilityBean extends BeanWithKeyAndParamsAndCond
     public String getUrl()
     {
         return url;
+    }
+
+    public I18nProperty getDescription()
+    {
+        return description;
     }
 
     public URI createUri() throws URISyntaxException

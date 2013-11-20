@@ -23,4 +23,9 @@ public class I18nProperty
     {
         return i18n;
     }
+
+    public static I18nProperty emptyI18nProperty()
+    {
+        return new I18nProperty("", "");
+    }
 }
