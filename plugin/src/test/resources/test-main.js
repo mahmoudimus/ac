@@ -19,6 +19,7 @@ requirejs.config({
     'iframe/host/_ap': '../src/main/resources/js/iframe/host/_ap',
     'iframe/host/_dollar': '../src/main/resources/js/iframe/host/_dollar',
     'dialog/main': '../src/main/resources/js/dialog/main',
+    'inline_dialog/main': '../src/main/resources/js/inline_dialog/main',
     'confluence/macro/editor': '../src/main/resources/js/confluence/macro/editor',
     // shared
     'iframe/_amd': '../src/main/resources/js/iframe/_amd',
@@ -41,6 +42,11 @@ requirejs.config({
         'jquery',
         'aui-atlassian',
         'iframe/_amd'
+      ]
+    },
+    'inline_dialog/main': {
+      deps: [
+        'iframe/host/_dollar'
       ]
     },
     'dialog/main': {
