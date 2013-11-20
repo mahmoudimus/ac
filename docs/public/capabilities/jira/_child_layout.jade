@@ -1,0 +1,41 @@
+- var capability = jira.properties.capabilities.properties[current.source]
+h1
+    = capability.items.title
+
+!= yield
+
+h2 JSON Schema
+textarea.code
+    != JSON.stringify(capability.items,null,2)
+
+script
+    var cmOpts = {
+        mode: "javascript",
+        theme: "neat",
+        lineNumbers:true,
+        gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
+        indentWithTabs:false,
+        electricChars:true,
+        matchBrackets:true,
+        autoCloseBrackets:true,
+        highlightSelectionMatches:true,
+        indentUnit:2,
+        lineWrapping: true,
+        readOnly:true
+    };
+    $('.code').each(function(){
+        CodeMirror.fromTextArea(this, cmOpts);
+    });
+
+    function cmIfyPreCodeBlocks(block){
+        var sample = block;
+        var text = sample.textContent || sample.innerText;
+        var newOpts = cmOpts;
+        newOpts.value = text;
+        CodeMirror(
+            function(node){
+                sample.parentNode.replaceChild(node, sample)
+            }, newOpts
+        );
+    }
+    $('pre code').each(function(){cmIfyPreCodeBlocks(this)});

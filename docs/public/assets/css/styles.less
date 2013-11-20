@@ -23,3 +23,48 @@
 
     }
 }
+
+
+.CodeMirror {
+    margin:10px 0;
+    border:1px solid #ccc;
+    border-radius: 5px;
+    background: #f5f5f5;
+    height:200px;
+    font-family: Menlo, sans-serif;
+    font-size:12px;
+    line-height: 150%;
+    height:auto;
+}
+.CodeMirror-scroll {
+    overflow-y: hidden;
+    overflow-x: auto;
+}
+.CodeMirror-foldmarker {
+    color: blue;
+    text-shadow: #b9f 1px 1px 2px, #b9f -1px -1px 2px, #b9f 1px -1px 2px, #b9f -1px 1px 2px;
+    font-family: arial;
+    line-height: .3;
+    cursor: pointer;
+}
+.CodeMirror-foldgutter {
+    width: .7em;
+}
+.CodeMirror-foldgutter-open,
+.CodeMirror-foldgutter-folded {
+    color: #555;
+    cursor: pointer;
+}
+.CodeMirror-foldgutter-open:after {
+    content: "\25BE";
+}
+.CodeMirror-foldgutter-folded:after {
+    content: "\25B8";
+}
+.cm-searching {
+    border-bottom:1px dotted #000;
+}
+div.CodeMirror span.CodeMirror-matchingbracket {
+    color:red;
+    border-bottom:1px dotted #000;
+}

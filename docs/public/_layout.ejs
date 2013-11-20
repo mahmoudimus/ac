@@ -10,12 +10,16 @@
         <%= title %>
     </title>
     <link rel="icon" type="image/png" href="../docs/img/favicon.png" />
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.19.0/codemirror.min.css" media="all">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.19.0/theme/neat.min.css" media="all">
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/aui/<%= auiVersion %>/css/aui.css" media="all">
     <!--[if lt IE 9]><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/aui/<%= auiVersion %>/css/aui-ie.css" media="all"><![endif]-->
     <!--[if IE 9]><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/aui/<%= auiVersion %>/css/aui-ie9.css" media="all"><![endif]-->
-    <link rel="stylesheet" href="./assets/css/styles.css" media="all">
+    <link rel="stylesheet" href="/assets/css/styles.css" media="all">
     <script src="//code.jquery.com/jquery-1.8.3.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/aui/<%= auiVersion %>/js/aui.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.19.0/codemirror.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.19.0/mode/javascript/javascript.min.js"></script>
     <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/aui/<%= auiVersion %>/js/aui-ie.js"></script><![endif]-->
 </head>
 
@@ -55,7 +59,11 @@
                 <div class="aui-page-panel-inner">
                     <%- partial('_partials/_sidebar.ejs') %>
                     <section class="aui-page-panel-content ac-page">
-                        <%- yield %>
+                        <% if (current.path[1] == 'jira') { %>
+                            <%- partial('/capabilities/jira/_child_layout.jade',{yield: yield}) %>
+                        <% } else { %>
+                            <%- yield %>
+                        <% } %>
                     </section>
                 </div>
             </div>

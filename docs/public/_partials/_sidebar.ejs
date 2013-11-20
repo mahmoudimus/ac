@@ -30,8 +30,9 @@
             <ul class="aui-nav">
                 <% for (var key in jira.properties.capabilities.properties) { %>
                     <% var module = jira.properties.capabilities.properties[key]; %>
-                    <li>
-                        <a href="#"><%= typeof module.items.title !== 'undefined'  ? module.items.title : key %></a>
+                    <% var selected = key === current.source ? "class=aui-nav-selected" : ""; %>
+                    <li <%= selected %>>
+                        <a href="/capabilities/jira/<%= key %>.html"><%= typeof module.items.title !== 'undefined'  ? module.items.title : key %></a>
                     </li>
                 <% } %>
             </ul>
