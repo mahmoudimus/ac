@@ -13,6 +13,10 @@
                         "invert": false
                     }
                 ],
+                "description": {
+                    "i18n": "my.searchRequestView.desc",
+                    "value": "My description"
+                },
                 "name": {
                     "i18n": "my.searchRequestView",
                     "value": "My Search Request View"

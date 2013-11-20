@@ -63,6 +63,7 @@ public class SearchRequestViewCapabilityBeanTest
                 .withVendor(newVendorBean().withName("Atlassian").withUrl("http://www.atlassian.com").build())
                 .withCapability("jiraSearchRequestViews", newSearchRequestViewCapabilityBean()
                         .withName(new I18nProperty("My Search Request View", "my.searchRequestView"))
+                        .withDescription(new I18nProperty("My description", "my.searchRequestView.desc"))
                         .withUrl("/search-request.csv")
                         .withWeight(10)
                         .withParam("delimiter", ",")

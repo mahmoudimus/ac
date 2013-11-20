@@ -30,6 +30,10 @@ public class NameToKeyBean extends BaseCapabilityBean
         {
             this.name = new I18nProperty("","");
         }
+        if(null == key)
+        {
+            this.key = "";
+        }
     }
 
     public String getKey()
