@@ -84,7 +84,7 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
                             .rpcUrl(baseUri)
                             .build();
 
-                    log.info("Creating an application link for the remote plugin container of key '{}'", pluginKey);
+                    log.info("Creating an application link for Connect add-on with key '{}'", pluginKey);
 
                     link = applicationLinkService.addApplicationLink(expectedApplicationId, applicationType, details);
 
