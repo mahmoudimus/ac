@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.plugin.installer;
+package com.atlassian.plugin.connect.plugin.applinks;
 
 import java.net.URI;
 import java.security.GeneralSecurityException;
@@ -27,7 +27,6 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.AuthenticationType
 import com.atlassian.plugin.connect.spi.Permissions;
 import com.atlassian.plugin.connect.spi.applinks.RemotePluginContainerApplicationType;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
-import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.atlassian.sal.api.transaction.TransactionCallback;
@@ -63,7 +62,8 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
     @Override
     public void createAppLink(final Plugin plugin, final String baseUrl, final AuthenticationType authType, final String sharedKey)
     {
-        transactionTemplate.execute(new TransactionCallback<Void>() {
+        transactionTemplate.execute(new TransactionCallback<Void>()
+        {
             @Override
             public Void doInTransaction()
             {
@@ -72,15 +72,14 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
 
                 final ApplicationId expectedApplicationId = ApplicationIdUtil.generate(baseUri);
 
-                ApplicationLink link = null;
+                ApplicationLink link;
                 final RemotePluginContainerApplicationType applicationType = typeAccessor.getApplicationType(RemotePluginContainerApplicationType.class);
 
-                if (!compatibleApplinkExists(pluginKey, expectedApplicationId))
+                if (!compatibleAppLinkExists(pluginKey, expectedApplicationId))
                 {
                     final ApplicationLinkDetails details = ApplicationLinkDetails.builder()
-                                                                                 .displayUrl(baseUri)
+                            .displayUrl(baseUri)
                             .isPrimary(false)
-                                    // todo: support i18n names
                             .name(plugin.getName() != null ? plugin.getName() : plugin.getKey())
                             .rpcUrl(baseUri)
                             .build();
@@ -98,12 +97,12 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
                     ServiceProvider serviceProvider = createServiceProvider();
                     switch (authType)
                     {
-                        case JWT :
-                            //TODO: npt sure what to do here.
+                        case JWT:
+                            //TODO: not sure what to do here.
                             break;
                         case OAUTH:
                             oAuthLinkManager.associateProviderWithLink(link, applicationType.getId().get(), serviceProvider);
-                            registerOAuth(link, plugin, sharedKey,baseUri);
+                            registerOAuth(link, plugin, sharedKey, baseUri);
                             break;
                         default:
                             log.warn("Unknown authType encountered: " + authType.name());
@@ -113,13 +112,56 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
                 return null;
             }
         });
-        
-
     }
 
-    private boolean compatibleApplinkExists(String pluginKey, ApplicationId appId)
+    @Override
+    public void deleteAppLink(final Plugin plugin) throws NotConnectAddonException
     {
-        ApplicationLink link = null;
+        final String key = plugin.getKey();
+        final ApplicationLink link = getAppLink(key);
+
+        if (link != null)
+        {
+            transactionTemplate.execute(new TransactionCallback<Void>()
+            {
+                @Override
+                public Void doInTransaction()
+                {
+                    log.info("Removing application link for {}", key);
+                    applicationLinkService.deleteApplicationLink(link);
+                    return null;
+                }
+            });
+        }
+        else
+        {
+            log.debug("Could not remove application link for {}", key);
+        }
+    }
+
+    @Override
+    public ApplicationLink getAppLink(String key) throws NotConnectAddonException
+    {
+        for (ApplicationLink link : applicationLinkService.getApplicationLinks())
+        {
+            if (key.equals(link.getProperty(PLUGIN_KEY_PROPERTY)))
+            {
+                if (link.getType() instanceof RemotePluginContainerApplicationType)
+                {
+                    return link;
+                }
+                else
+                {
+                    throw new NotConnectAddonException("Plugin " + key + " does not seem to be a Connect add-on. It's type is: " + link.getType().getClass().getSimpleName());
+                }
+            }
+        }
+        return null;
+    }
+
+    private boolean compatibleAppLinkExists(String pluginKey, ApplicationId appId)
+    {
+        ApplicationLink link;
 
         try
         {

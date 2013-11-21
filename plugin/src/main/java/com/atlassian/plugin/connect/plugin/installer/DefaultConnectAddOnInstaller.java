@@ -4,6 +4,7 @@ import java.util.Set;
 
 import com.atlassian.plugin.*;
 import com.atlassian.plugin.connect.plugin.OAuthLinkManager;
+import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.capabilities.BeanToModuleRegistrar;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.AuthenticationType;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
@@ -82,7 +83,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
     @Override
     public Plugin install(String username, String jsonDescriptor)
     {
-        String pluginKey = "unknown";
+        String pluginKey;
         try
         {
             ConnectAddonBean addOn = CapabilitiesGsonFactory.getGson(bundleContext).fromJson(jsonDescriptor, ConnectAddonBean.class);
@@ -100,7 +101,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
                 String sharedKey = addOn.getAuthentication().getSharedKey();
                 
                 //applink MUST be created before any modules
-                connectApplinkManager.createAppLink(installedPlugin,addOn.getBaseUrl(),authType,sharedKey);
+                connectApplinkManager.createAppLink(installedPlugin, addOn.getBaseUrl(), authType, sharedKey);
                 
                 //create the modules
                 beanToModuleRegistrar.registerDescriptorsForBeans(installedPlugin, addOn);
@@ -155,8 +156,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
 
     private Plugin installPlugin(PluginArtifact pluginArtifact, String pluginKey, String username)
     {
-        Plugin installedPlugin = null;
-        int moduleSize = 0;
+        Plugin installedPlugin;
         try
         {
             Set<String> pluginKeys = pluginController.installPlugins(pluginArtifact);
