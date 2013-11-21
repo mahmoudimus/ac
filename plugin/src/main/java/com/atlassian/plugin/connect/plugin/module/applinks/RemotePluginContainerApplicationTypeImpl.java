@@ -45,7 +45,7 @@ public class RemotePluginContainerApplicationTypeImpl implements RemotePluginCon
     {
         try
         {
-            return new URI(webResourceManager.getStaticPluginResource(plugin.getKey() + ":images", "images", UrlMode.ABSOLUTE) + "/atlassian-icon.png");
+            return new URI(webResourceManager.getStaticPluginResource(plugin.getKey() + ":images", "images", UrlMode.ABSOLUTE) + "/atlassian-icon-16.png");
         }
         catch (URISyntaxException e)
         {
