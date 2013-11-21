@@ -1,7 +1,8 @@
 package com.atlassian.plugin.connect.plugin.applinks;
 
 import com.atlassian.applinks.api.ApplicationLink;
-import com.atlassian.applinks.spi.application.TypeId;
+import com.atlassian.applinks.api.application.generic.GenericApplicationType;
+import com.atlassian.applinks.api.application.jira.JiraApplicationType;
 import com.atlassian.applinks.spi.link.MutatingApplicationLinkService;
 import com.atlassian.applinks.spi.util.TypeAccessor;
 import com.atlassian.plugin.connect.plugin.OAuthLinkManager;
@@ -36,8 +37,8 @@ public class DefaultConnectApplinkManagerTest
 
     private ConnectApplinkManager connectApplinkManager;
     @Mock private RemotePluginContainerApplicationType connectApplicationType;
-    @Mock private RemotePluginContainerApplicationType jiraApplicationType;
-    @Mock private RemotePluginContainerApplicationType genericApplicationType;
+    @Mock private JiraApplicationType jiraApplicationType;
+    @Mock private GenericApplicationType genericApplicationType;
 
     @Before
     public void setup()
@@ -46,8 +47,6 @@ public class DefaultConnectApplinkManagerTest
                         pluginSettingsFactory, oAuthLinkManager, permissionManager, transactionTemplate);
 
         when(connectApplicationType.getId()).thenReturn(RemotePluginContainerApplicationTypeImpl.TYPE_ID);
-        when(genericApplicationType.getId()).thenReturn(new TypeId("generic"));
-        when(genericApplicationType.getId()).thenReturn(new TypeId("jira"));
     }
 
     @Test
@@ -99,12 +98,12 @@ public class DefaultConnectApplinkManagerTest
 
         ApplicationLink jiraLink = mock(ApplicationLink.class);
         String jiraKey = "a-jira-plugin";
-        when(connectLink.getProperty(DefaultConnectApplinkManager.PLUGIN_KEY_PROPERTY)).thenReturn(jiraKey);
-        when(connectLink.getType()).thenReturn(jiraApplicationType);
+        when(jiraLink.getProperty(DefaultConnectApplinkManager.PLUGIN_KEY_PROPERTY)).thenReturn(jiraKey);
+        when(jiraLink.getType()).thenReturn(jiraApplicationType);
 
         ApplicationLink genericLink = mock(ApplicationLink.class);
-        when(connectLink.getProperty(DefaultConnectApplinkManager.PLUGIN_KEY_PROPERTY)).thenReturn(null);
-        when(connectLink.getType()).thenReturn(genericApplicationType);
+        when(genericLink.getProperty(DefaultConnectApplinkManager.PLUGIN_KEY_PROPERTY)).thenReturn(null);
+        when(genericLink.getType()).thenReturn(genericApplicationType);
 
         List<ApplicationLink> links = Lists.newArrayList(connectLink, jiraLink, genericLink);
 
