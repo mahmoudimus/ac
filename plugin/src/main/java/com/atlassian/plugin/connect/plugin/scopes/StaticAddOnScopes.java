@@ -64,7 +64,7 @@ public class StaticAddOnScopes
             }
             catch (IllegalArgumentException e)
             {
-                throw new InvalidDescriptorException(e);
+                throw new InvalidDescriptorException(String.format("Scope name '%s' is not valid. Valid scopes are %s", scopeBean.getKey(), Arrays.asList(ScopeName.values())));
             }
 
             AddOnScopeApiPathBuilder pathsBuilder = new AddOnScopeApiPathBuilder();
