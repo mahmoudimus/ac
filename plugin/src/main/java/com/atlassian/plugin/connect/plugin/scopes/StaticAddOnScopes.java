@@ -49,7 +49,7 @@ public class StaticAddOnScopes
      * @return the {@link Collection} of {@link AddOnScope}s used to whitelist incoming {@link javax.servlet.http.HttpServletRequest}s
      * @throws IOException if the static resources file could not be read
      */
-    public static Collection<AddOnScope> buildFor(String product) throws IOException
+    static Collection<AddOnScope> buildFor(String product) throws IOException
     {
         Collection<AddOnScope> scopes = new ArrayList<AddOnScope>();
         String rawJson = FileUtils.readFile(new DefaultResourceLoader().getResource(resourceLocation(product)).getFile());
