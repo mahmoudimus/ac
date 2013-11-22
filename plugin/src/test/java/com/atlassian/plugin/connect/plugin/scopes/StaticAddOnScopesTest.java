@@ -1,14 +1,12 @@
 package com.atlassian.plugin.connect.plugin.scopes;
 
 import com.atlassian.plugin.connect.api.scopes.ScopeName;
-import com.atlassian.plugin.connect.plugin.capabilities.gson.CapabilitiesGsonFactory;
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
-import com.google.gson.reflect.TypeToken;
 import org.hamcrest.core.Is;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -41,6 +39,14 @@ public class StaticAddOnScopesTest
     public void readingABadResourceNameResultsInException() throws IOException
     {
         StaticAddOnScopes.buildFor("bad_name");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void scopesWithDuplicateKeysResultsInAnException() throws IOException
+    {
+        List<AddOnScope> scopes = new ArrayList<AddOnScope>(getTestScopes());
+        scopes.addAll(getTestScopes());
+        StaticAddOnScopes.dereference(scopes, asList(ScopeName.READ));
     }
 
     private Collection<AddOnScope> getTestScopes() throws IOException

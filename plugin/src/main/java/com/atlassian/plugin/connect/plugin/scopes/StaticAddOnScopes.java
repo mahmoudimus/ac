@@ -100,14 +100,21 @@ public class StaticAddOnScopes
 
         for (AddOnScope scope : scopes)
         {
-            scopeKeyToScope.put(ScopeName.valueOf(scope.getKey()), scope); // TODO: handle programmer error of key collisions
+            ScopeName scopeName = ScopeName.valueOf(scope.getKey());
+
+            if (scopeKeyToScope.containsKey(scopeName))
+            {
+                throw new IllegalArgumentException(String.format("Scope name '%s' is specified multiple times.", scope.getKey()));
+            }
+
+            scopeKeyToScope.put(scopeName, scope);
         }
 
         if (!scopeKeyToScope.keySet().containsAll(scopeKeys))
         {
             Set<ScopeName> badKeys = new HashSet<ScopeName>(scopeKeys);
             badKeys.removeAll(scopeKeyToScope.keySet());
-            throw new IllegalArgumentException(String.format("Scope keys %s do not exist. Valid values are: %s", badKeys, scopeKeyToScope.keySet()));
+            throw new IllegalArgumentException(String.format("Scope keys %s do not exist. Valid values are: %s.", badKeys, scopeKeyToScope.keySet()));
         }
 
         return transform(scopeKeys, new Function<ScopeName, AddOnScope>()
