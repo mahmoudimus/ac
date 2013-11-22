@@ -71,7 +71,7 @@ public class StaticAddOnScopes
 
             for (AddOnScopeBean.RestPathBean restPathBean : scopeBean.getRestPaths())
             {
-                pathsBuilder.withRestPaths(restPathBean.getName(), restPathBean.getBasePaths(), restPathBean.getVersions(), restPathBean.getMethods());
+                pathsBuilder.withRestPaths(restPathBean);
             }
 
             scopes.add(new AddOnScope(scopeBean.getKey(), pathsBuilder.build()));

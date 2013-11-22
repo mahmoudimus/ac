@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.scopes;
 
+import com.atlassian.plugin.connect.plugin.scopes.beans.AddOnScopeBean;
 import com.atlassian.plugin.connect.spi.permission.scope.RestApiScopeHelper;
 
 import java.util.ArrayList;
@@ -9,11 +10,11 @@ public class AddOnScopeApiPathBuilder
 {
     Collection<RestApiScopeHelper.RestScope> restResources = new ArrayList<RestApiScopeHelper.RestScope>();
 
-    public AddOnScopeApiPathBuilder withRestPaths(String name, Collection<String> basePaths, Collection<String> versions, Collection<String> methods)
+    public AddOnScopeApiPathBuilder withRestPaths(AddOnScopeBean.RestPathBean restPathBean)
     {
-        for (String basePath : basePaths)
+        for (String basePath : restPathBean.getBasePaths())
         {
-            restResources.add(new RestApiScopeHelper.RestScope(name, versions, basePath, methods));
+            restResources.add(new RestApiScopeHelper.RestScope(restPathBean.getName(), restPathBean.getVersions(), basePath, restPathBean.getMethods()));
         }
 
         return this;
