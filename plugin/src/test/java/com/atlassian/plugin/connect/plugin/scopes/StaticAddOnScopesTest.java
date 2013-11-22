@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.scopes;
 
+import com.atlassian.plugin.connect.api.scopes.ScopeName;
 import com.atlassian.plugin.connect.plugin.capabilities.gson.CapabilitiesGsonFactory;
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
 import com.google.gson.reflect.TypeToken;
@@ -26,21 +27,18 @@ public class StaticAddOnScopesTest
     @Test
     public void referencedScopesAreFound() throws IOException
     {
-        Type listType = new TypeToken<List<String>>() {}.getType();
-        List<String> scopeReferences = CapabilitiesGsonFactory.getGson().fromJson("[ \"READ\" ]", listType);
-        Collection<AddOnScope> scopes = StaticAddOnScopes.dereference(getTestScopes(), scopeReferences);
-
+        Collection<AddOnScope> scopes = StaticAddOnScopes.dereference(getTestScopes(), asList(ScopeName.READ));
         assertThat(scopes, Is.is(AddOnScopeBuilderForTests.buildReadScope()));
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void dereferencingANonExistentScopeReferenceResultsInException() throws IOException
+    public void dereferencingANullScopeReferenceResultsInException() throws IOException
     {
-        StaticAddOnScopes.dereference(getTestScopes(), asList("bad"));
+        StaticAddOnScopes.dereference(getTestScopes(), asList((ScopeName)null));
     }
 
     @Test(expected = InvalidDescriptorException.class)
-    public void readingABadScopeNameResultsInException() throws IOException
+    public void readingABadResourceNameResultsInException() throws IOException
     {
         StaticAddOnScopes.buildFor("bad_name");
     }

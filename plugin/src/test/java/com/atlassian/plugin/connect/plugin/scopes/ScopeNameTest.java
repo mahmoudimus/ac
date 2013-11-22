@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.scopes;
 
+import com.atlassian.plugin.connect.api.scopes.ScopeName;
 import com.google.common.collect.Sets;
 import org.hamcrest.Matcher;
 import org.hamcrest.core.Is;
@@ -9,7 +10,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
-import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class ScopeNameTest

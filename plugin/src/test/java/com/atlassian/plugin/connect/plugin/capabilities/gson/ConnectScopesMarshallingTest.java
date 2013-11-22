@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.plugin.capabilities.gson;
 
-import com.google.gson.Gson;
+import com.atlassian.plugin.connect.api.scopes.ScopeName;
 import com.google.gson.reflect.TypeToken;
 import org.junit.Test;
 
@@ -19,10 +19,17 @@ public class ConnectScopesMarshallingTest
     public void deserializationWorks() throws IOException
     {
         String json = readCapabilitiesTestFile("scopesMarshalling.json");
-        Gson gson = CapabilitiesGsonFactory.getGson();
-        Type listType = new TypeToken<List<String>>() {}.getType();
-        List<String> scopes = gson.fromJson(json, listType);
+        Type listType = new TypeToken<List<ScopeName>>() {}.getType();
+        List<ScopeName> scopeReferences = CapabilitiesGsonFactory.getGson().fromJson(json, listType);
 
-        assertThat(scopes, is(asList("READ")));
+        assertThat(scopeReferences, is(asList(ScopeName.READ)));
+    }
+
+    @Test
+    public void readingABadScopeNameResultsInAnException()
+    {
+        String json = "[ \"fubar\" ]";
+        Type listType = new TypeToken<List<ScopeName>>() {}.getType();
+        CapabilitiesGsonFactory.getGson().fromJson(json, listType);
     }
 }

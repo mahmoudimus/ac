@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.atlassian.plugin.connect.api.scopes.ScopeName;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.CapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.CapabilityList;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
@@ -26,7 +27,7 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extend
     private VendorBean vendor;
     private Map<String, String> links;
     private CapabilityList capabilities;
-    private Set<String> scopes;
+    private Set<ScopeName> scopes;
 
     public ConnectAddonBeanBuilder()
     {
@@ -95,11 +96,11 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extend
         return (T) this;
     }
 
-    public T withScopes(Set<String> scopes)
+    public T withScopes(Set<ScopeName> scopes)
     {
         if (null == this.scopes)
         {
-            this.scopes = new HashSet<String>(scopes.size());
+            this.scopes = new HashSet<ScopeName>(scopes.size());
         }
         else
         {

@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.descriptor;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
+import com.atlassian.plugin.connect.api.scopes.ScopeName;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.capabilities.gson.CapabilitiesGsonFactory;
 import com.atlassian.plugin.connect.plugin.util.BundleLocator;
@@ -44,7 +45,7 @@ import static com.google.common.collect.Sets.newHashSet;
 public final class DescriptorPermissionsReader implements PermissionsReader
 {
     private final Cache<Plugin,Set<String>> permissionsCache;
-    private final Cache<Plugin,Set<String>> scopesCache;
+    private final Cache<Plugin,Set<ScopeName>> scopesCache;
     private final String productKey;
 
     private static final Logger log = LoggerFactory.getLogger(DescriptorPermissionsReader.class);
@@ -63,10 +64,10 @@ public final class DescriptorPermissionsReader implements PermissionsReader
                 return read(bundleLocator.getBundle(plugin.getKey()), productKey);
             }
         });
-        this.scopesCache = CacheBuilder.newBuilder().weakKeys().build(new CacheLoader<Plugin,Set<String>>()
+        this.scopesCache = CacheBuilder.newBuilder().weakKeys().build(new CacheLoader<Plugin,Set<ScopeName>>()
         {
             @Override
-            public Set<String> load(Plugin plugin) throws Exception
+            public Set<ScopeName> load(Plugin plugin) throws Exception
             {
                 return readScopes(bundleLocator.getBundle(plugin.getKey()), productKey);
             }
@@ -94,7 +95,7 @@ public final class DescriptorPermissionsReader implements PermissionsReader
     }
 
     @Override
-    public Set<String> readScopesForAddOn(Plugin plugin)
+    public Set<ScopeName> readScopesForAddOn(Plugin plugin)
     {
         try
         {
@@ -122,7 +123,7 @@ public final class DescriptorPermissionsReader implements PermissionsReader
         }
     }
 
-    private Set<String> readScopes(Bundle bundle, String productKey) throws IOException
+    private Set<ScopeName> readScopes(Bundle bundle, String productKey) throws IOException
     {
         URL sourceUrl = bundle.getEntry(ATLASSIAN_ADD_ON_JSON);
         String json = getStringFromInputStream(FileUtils.getResource(sourceUrl.toString()));

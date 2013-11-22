@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.plugin.scopes;
+package com.atlassian.plugin.connect.api.scopes;
 
 import com.google.common.base.Predicate;
 

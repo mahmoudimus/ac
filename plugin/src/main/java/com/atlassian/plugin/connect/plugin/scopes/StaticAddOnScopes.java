@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.scopes;
 
+import com.atlassian.plugin.connect.api.scopes.ScopeName;
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
 import com.atlassian.plugin.connect.plugin.scopes.beans.AddOnScopeBean;
 import com.atlassian.plugin.connect.plugin.scopes.beans.AddOnScopeBeans;
@@ -87,7 +88,7 @@ public class StaticAddOnScopes
      * @throws IOException if the static scopes cannot be loaded
      * @throws IllegalArgumentException if any of the scopeKeys do not appear amongst the static scopes
      */
-    public static Collection<AddOnScope> dereference(Collection<AddOnScope> scopes, @Nonnull final Collection<String> scopeKeys)
+    public static Collection<AddOnScope> dereference(Collection<AddOnScope> scopes, @Nonnull final Collection<ScopeName> scopeKeys)
     {
         // avoid loading scopes from file if unnecessary
         if (scopeKeys.isEmpty())
@@ -95,24 +96,24 @@ public class StaticAddOnScopes
             return Collections.<AddOnScope>emptySet();
         }
 
-        final Map<String, AddOnScope> scopeKeyToScope = new HashMap<String, AddOnScope>(scopes.size());
+        final Map<ScopeName, AddOnScope> scopeKeyToScope = new HashMap<ScopeName, AddOnScope>(scopes.size());
 
         for (AddOnScope scope : scopes)
         {
-            scopeKeyToScope.put(scope.getKey(), scope); // TODO: handle programmer error of key collisions
+            scopeKeyToScope.put(ScopeName.valueOf(scope.getKey()), scope); // TODO: handle programmer error of key collisions
         }
 
         if (!scopeKeyToScope.keySet().containsAll(scopeKeys))
         {
-            Set<String> badKeys = new HashSet<String>(scopeKeys);
+            Set<ScopeName> badKeys = new HashSet<ScopeName>(scopeKeys);
             badKeys.removeAll(scopeKeyToScope.keySet());
             throw new IllegalArgumentException(String.format("Scope keys %s do not exist. Valid values are: %s", badKeys, scopeKeyToScope.keySet()));
         }
 
-        return transform(scopeKeys, new Function<String, AddOnScope>()
+        return transform(scopeKeys, new Function<ScopeName, AddOnScope>()
         {
             @Override
-            public AddOnScope apply(@Nullable String scopeKey)
+            public AddOnScope apply(@Nullable ScopeName scopeKey)
             {
                 if (null == scopeKey)
                 {

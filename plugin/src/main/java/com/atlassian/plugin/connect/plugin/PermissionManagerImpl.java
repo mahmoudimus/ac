@@ -2,8 +2,8 @@ package com.atlassian.plugin.connect.plugin;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
+import com.atlassian.plugin.connect.api.scopes.ScopeName;
 import com.atlassian.plugin.connect.plugin.scopes.AddOnScope;
-import com.atlassian.plugin.connect.plugin.scopes.ScopeName;
 import com.atlassian.plugin.connect.plugin.scopes.StaticAddOnScopes;
 import com.atlassian.plugin.connect.plugin.settings.SettingsManager;
 import com.atlassian.plugin.connect.plugin.util.BundleUtil;
@@ -136,34 +136,26 @@ public final class PermissionManagerImpl implements PermissionManager
         return StaticAddOnScopes.dereference(ALL_SCOPES, addImpliedScopesTo(getScopeReferences(pluginKey)));
     }
 
-    private Collection<String> addImpliedScopesTo(Set<String> scopeReferences)
+    private Collection<ScopeName> addImpliedScopesTo(Set<ScopeName> scopeReferences)
     {
-        Set<String> allScopeReferences = new HashSet<String>(scopeReferences);
+        Set<ScopeName> allScopeReferences = new HashSet<ScopeName>(scopeReferences);
 
-        for (String scopeReference : scopeReferences)
+        for (ScopeName scopeReference : scopeReferences)
         {
-            ScopeName scopeName = ScopeName.valueOf(scopeReference);
-            allScopeReferences.addAll(transform(scopeName.getImplied(), new Function<ScopeName, String>()
-            {
-                @Override
-                public String apply(@Nullable ScopeName input)
-                {
-                    return null == input ? null : input.name();
-                }
-            }));
+            allScopeReferences.addAll(scopeReference.getImplied());
         }
 
         return allScopeReferences;
     }
 
-    private Set<String> getScopeReferences(String pluginKey)
+    private Set<ScopeName> getScopeReferences(String pluginKey)
     {
         return option(pluginAccessor.getPlugin(pluginKey)).fold(
-                    Suppliers.ofInstance(ImmutableSet.<String>of()),
-                    new Function<Plugin, Set<String>>()
+                    Suppliers.ofInstance(ImmutableSet.<ScopeName>of()),
+                    new Function<Plugin, Set<ScopeName>>()
                     {
                         @Override
-                        public Set<String> apply(Plugin plugin)
+                        public Set<ScopeName> apply(Plugin plugin)
                         {
                             return permissionsReader.readScopesForAddOn(plugin);
                         }

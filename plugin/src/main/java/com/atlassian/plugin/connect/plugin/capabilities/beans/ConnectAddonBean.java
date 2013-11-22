@@ -1,12 +1,16 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
+import com.atlassian.plugin.connect.api.scopes.ScopeName;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConnectAddonBeanBuilder;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.VendorBean;
+import com.google.common.base.Function;
+
+import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConnectAddonBeanBuilder;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.VendorBean;
-
+import static com.google.common.collect.Collections2.transform;
 import static com.google.common.collect.Maps.newHashMap;
 
 /**
@@ -118,9 +122,24 @@ public class ConnectAddonBean extends BaseCapabilityBean
         return links;
     }
 
-    public Set<String> getScopes()
+    public Set<ScopeName> getScopes()
     {
-        return scopes;
+        // I would make the data member a Set of ScopeNames but gson sets bad scope names to null.
+        return new HashSet<ScopeName>(transform(scopes, new Function<String, ScopeName>(){
+
+            @Override
+            public ScopeName apply(@Nullable String input)
+            {
+                try
+                {
+                    return ScopeName.valueOf(input);
+                }
+                catch (IllegalArgumentException e)
+                {
+                    throw new IllegalArgumentException(String.format("Unknown scope name '%s'", input), e);
+                }
+            }
+        }));
     }
 
     public static ConnectAddonBeanBuilder newConnectAddonBean()
