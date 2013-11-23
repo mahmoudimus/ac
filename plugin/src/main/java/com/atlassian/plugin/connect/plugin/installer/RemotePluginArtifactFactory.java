@@ -2,12 +2,9 @@ package com.atlassian.plugin.connect.plugin.installer;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import com.atlassian.plugin.JarPluginArtifact;
-import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginArtifact;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectPluginXmlFactory;
@@ -17,13 +14,9 @@ import com.atlassian.plugin.connect.plugin.util.zip.ZipHandler;
 import com.atlassian.plugin.connect.spi.ConnectAddOnIdentifierService;
 import com.atlassian.plugin.module.ContainerManagedPlugin;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
-import com.atlassian.plugin.osgi.factory.OsgiPlugin;
-import com.atlassian.plugin.osgi.util.OsgiHeaderUtil;
-import com.atlassian.sal.api.ApplicationProperties;
 
 import com.google.common.base.Strings;
 
-import org.apache.commons.io.IOUtils;
 import org.dom4j.Document;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -40,7 +33,7 @@ public class RemotePluginArtifactFactory
     private final ConnectPluginXmlFactory pluginXmlFactory;
     private final BundleContext bundleContext;
     private final ContainerManagedPlugin theConnectPlugin;
-    
+
     public static String CLEAN_FILENAME_PATTERN = "[:\\\\/*?|<> _]";
 
     @Autowired
@@ -48,7 +41,7 @@ public class RemotePluginArtifactFactory
     {
         this.pluginXmlFactory = pluginXmlFactory;
         this.bundleContext = bundleContext;
-        this.theConnectPlugin = (ContainerManagedPlugin)pluginRetrievalService.getPlugin();
+        this.theConnectPlugin = (ContainerManagedPlugin) pluginRetrievalService.getPlugin();
     }
 
     public PluginArtifact create(final Document document, String username)
@@ -73,47 +66,47 @@ public class RemotePluginArtifactFactory
         document.getRootElement()
                 .element("plugin-info")
                 .addElement("bundle-instructions")
-                .addElement(ConnectAddOnIdentifierService.CONNECT_HEADER)
+                .addElement(ConnectAddOnIdentifierService.REMOTE_PLUGIN)
                 .addText("installer;user=\"" + username + "\";date=\"" + System.currentTimeMillis() + "\"");
     }
 
     public PluginArtifact create(ConnectAddonBean addOn, String username) throws IOException
     {
         ConnectAddOnBundleBuilder builder = new ConnectAddOnBundleBuilder();
-        
+
         //create a proper manifest
-        builder.manifest(createManifest(addOn,username));
-        
+        builder.manifest(createManifest(addOn, username));
+
         //create the plugin.xml
-        builder.addResource("atlassian-plugin.xml",pluginXmlFactory.createPluginXml(addOn));
+        builder.addResource("atlassian-plugin.xml", pluginXmlFactory.createPluginXml(addOn));
 
         return new JarPluginArtifact(builder.build(addOn.getKey().replaceAll(CLEAN_FILENAME_PATTERN, "-").toLowerCase()));
     }
 
     private Map<String, String> createManifest(ConnectAddonBean addOn, String username)
     {
-        Map<String,String> manifest = new HashMap<String, String>();
-        manifest.put(ATLASSIAN_PLUGIN_KEY,addOn.getKey());
-        manifest.put(Constants.BUNDLE_SYMBOLICNAME,addOn.getKey());
-        manifest.put(Constants.BUNDLE_VERSION,addOn.getVersion());
-        manifest.put(Constants.BUNDLE_CLASSPATH,".");
-        manifest.put("Spring-Context","*");
-        manifest.put(ConnectAddOnIdentifierService.CONNECT_HEADER,"installer;user=\"" + username + "\";date=\"" + System.currentTimeMillis() + "\"");
+        Map<String, String> manifest = new HashMap<String, String>();
+        manifest.put(ATLASSIAN_PLUGIN_KEY, addOn.getKey());
+        manifest.put(Constants.BUNDLE_SYMBOLICNAME, addOn.getKey());
+        manifest.put(Constants.BUNDLE_VERSION, addOn.getVersion());
+        manifest.put(Constants.BUNDLE_CLASSPATH, ".");
+        manifest.put("Spring-Context", "*");
+        manifest.put(ConnectAddOnIdentifierService.CONNECT_ADDON_HEADER, "down with P2");
 
-        if(null != addOn.getVendor())
+        if (null != addOn.getVendor())
         {
-            if(!Strings.isNullOrEmpty(addOn.getVendor().getName()))
+            if (!Strings.isNullOrEmpty(addOn.getVendor().getName()))
             {
-                manifest.put(Constants.BUNDLE_VENDOR,addOn.getVendor().getName());
+                manifest.put(Constants.BUNDLE_VENDOR, addOn.getVendor().getName());
             }
-            if(!Strings.isNullOrEmpty(addOn.getVendor().getUrl()))
+            if (!Strings.isNullOrEmpty(addOn.getVendor().getUrl()))
             {
-                manifest.put(Constants.BUNDLE_DOCURL,addOn.getVendor().getUrl());
+                manifest.put(Constants.BUNDLE_DOCURL, addOn.getVendor().getUrl());
             }
         }
-        
+
         return manifest;
     }
 
-   
+
 }

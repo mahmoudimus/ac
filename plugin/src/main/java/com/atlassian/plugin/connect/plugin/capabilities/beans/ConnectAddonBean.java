@@ -11,21 +11,34 @@ import java.util.Map;
 import java.util.Set;
 
 import static com.google.common.collect.Collections2.transform;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.AuthenticationBean.newAuthenticationBean;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.LifecycleBean.newLifecycleBean;
 import static com.google.common.collect.Maps.newHashMap;
 
 /**
+ * The root descriptor for an Atlassian Connect add on
+ * 
+ * Json Example:
+ * @exampleJson {@see ConnectJsonExamples#ADDON_EXAMPLE}
+ * @schemaTitle Connect Addon Root Descriptor
  * @since 1.0
  */
 public class ConnectAddonBean extends BaseCapabilityBean
 {
     public static final int DEFAULT_WEIGHT = 100;
 
+    /**
+     * The plugin key for the add on
+     */
     private String key;
     private String name;
     private String version;
     private String description;
     private VendorBean vendor;
     private Map<String,String> links;
+    private LifecycleBean lifecycle;
+    private String baseUrl;
+    private AuthenticationBean authentication;
     
     private CapabilityList capabilities;
     private Set<String> scopes;
@@ -38,8 +51,10 @@ public class ConnectAddonBean extends BaseCapabilityBean
         this.description = "";
         this.vendor = VendorBean.newVendorBean().build();
         this.links = newHashMap();
+        this.lifecycle = newLifecycleBean().build();
         this.capabilities = new CapabilityList();
-        this.scopes = new HashSet<String>();
+        this.baseUrl = "";
+        this.authentication = newAuthenticationBean().build();
     }
 
     public ConnectAddonBean(ConnectAddonBeanBuilder builder)
@@ -85,6 +100,19 @@ public class ConnectAddonBean extends BaseCapabilityBean
         {
             this.scopes = new HashSet<String>();
         }
+        
+        if(null == lifecycle)
+        {
+            this.lifecycle = newLifecycleBean().build();
+        }
+        if(null == baseUrl)
+        {
+            this.baseUrl = "";
+        }
+        if(null == authentication)
+        {
+            this.authentication = newAuthenticationBean().build();
+        }
     }
 
     public String getKey()
@@ -92,6 +120,10 @@ public class ConnectAddonBean extends BaseCapabilityBean
         return key;
     }
 
+    /**
+     * the name of the addon
+     * @return
+     */
     public String getName()
     {
         return name;
@@ -140,6 +172,21 @@ public class ConnectAddonBean extends BaseCapabilityBean
                 }
             }
         }));
+    }
+
+    public LifecycleBean getLifecycle()
+    {
+        return lifecycle;
+    }
+
+    public String getBaseUrl()
+    {
+        return baseUrl;
+    }
+
+    public AuthenticationBean getAuthentication()
+    {
+        return authentication;
     }
 
     public static ConnectAddonBeanBuilder newConnectAddonBean()

@@ -49,7 +49,7 @@ public class TestProjectTabPanel extends JiraWebDriverTestBase
     {
         if (remotePlugin != null)
         {
-            remotePlugin.stop();
+            remotePlugin.stopAndUninstall();
         }
     }
 

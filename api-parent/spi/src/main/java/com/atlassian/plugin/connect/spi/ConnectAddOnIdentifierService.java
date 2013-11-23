@@ -12,7 +12,9 @@ import org.osgi.framework.Bundle;
  */
 public interface ConnectAddOnIdentifierService
 {
-    public static final String CONNECT_HEADER = "Remote-Plugin";
+    public static final String REMOTE_PLUGIN = "Remote-Plugin";
+    
+    public static final String CONNECT_ADDON_HEADER = "Atlassian-Connect-Addon";
     
     boolean isConnectAddOn(Bundle bundle);
 

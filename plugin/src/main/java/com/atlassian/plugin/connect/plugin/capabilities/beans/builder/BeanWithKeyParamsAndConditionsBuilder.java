@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans.builder;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -28,14 +29,23 @@ public class BeanWithKeyParamsAndConditionsBuilder<T extends BeanWithKeyParamsAn
 
     public T withConditions(ConditionalBean ... beans)
     {
-        if(null == conditions)
+        return withConditions(Arrays.asList(beans));
+    }
+
+    public T withConditions(Collection<? extends ConditionalBean> beans)
+    {
+        if (beans != null) // not sure why this comes in as null sometimes
         {
-            conditions = newArrayList();
+            if (null == conditions)
+            {
+                conditions = newArrayList();
+            }
+
+            conditions.addAll(beans);
         }
 
-        conditions.addAll(Arrays.asList(beans));
-
         return (T) this;
+
     }
 
     @Override

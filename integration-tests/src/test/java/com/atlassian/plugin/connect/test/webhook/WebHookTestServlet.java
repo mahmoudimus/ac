@@ -20,6 +20,8 @@ import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeUnit;
 
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.LifecycleBean.newLifecycleBean;
+
 public final class WebHookTestServlet extends HttpServlet
 {
     private volatile BlockingDeque<WebHookBody> webHooksQueue = new LinkedBlockingDeque<WebHookBody>();
@@ -27,7 +29,7 @@ public final class WebHookTestServlet extends HttpServlet
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
     {
-        if (req.getRequestURI().endsWith("/webhook"))
+        if (req.getRequestURI().endsWith("/webhook") || req.getRequestURI().endsWith("-lifecycle"))
         {
             try
             {
@@ -74,6 +76,86 @@ public final class WebHookTestServlet extends HttpServlet
         runInJsonRunner(baseUrl, webHookId, webHookId, tester);
     }
 
+    public static void runInstallInJsonRunner(String baseUrl, WebHookTester tester) throws Exception
+    {
+        final WebHookTestServlet servlet = new WebHookTestServlet();
+        ConnectCapabilitiesRunner runner = new ConnectCapabilitiesRunner(baseUrl, "lifecycle-plugin")
+                .addInstallLifecycle()
+                .addRoute(ConnectCapabilitiesRunner.INSTALLED_PATH, servlet)
+                .start();
+
+        tester.test(new WebHookWaiter()
+        {
+            @Override
+            public WebHookBody waitForHook() throws Exception
+            {
+                return servlet.waitForHook();
+            }
+        });
+
+        runner.stopAndUninstall();
+    }
+
+    public static void runEnableInJsonRunner(String baseUrl, WebHookTester tester) throws Exception
+    {
+        final WebHookTestServlet servlet = new WebHookTestServlet();
+        ConnectCapabilitiesRunner runner = new ConnectCapabilitiesRunner(baseUrl, "lifecycle-plugin")
+                .addEnableLifecycle()
+                .addRoute(ConnectCapabilitiesRunner.ENABLED_PATH, servlet)
+                .start();
+
+        tester.test(new WebHookWaiter()
+        {
+            @Override
+            public WebHookBody waitForHook() throws Exception
+            {
+                return servlet.waitForHook();
+            }
+        });
+
+        runner.stopAndUninstall();
+    }
+
+    public static void runDisableInJsonRunner(String baseUrl, WebHookTester tester) throws Exception
+    {
+        final WebHookTestServlet servlet = new WebHookTestServlet();
+        ConnectCapabilitiesRunner runner = new ConnectCapabilitiesRunner(baseUrl, "lifecycle-plugin")
+                .addDisableLifecycle()
+                .addRoute(ConnectCapabilitiesRunner.DISABLED_PATH, servlet)
+                .start();
+
+        tester.test(new WebHookWaiter()
+        {
+            @Override
+            public WebHookBody waitForHook() throws Exception
+            {
+                return servlet.waitForHook();
+            }
+        });
+
+        runner.stopAndUninstall();
+    }
+
+    public static void runUninstalledInJsonRunner(String baseUrl, WebHookTester tester) throws Exception
+    {
+        final WebHookTestServlet servlet = new WebHookTestServlet();
+        ConnectCapabilitiesRunner runner = new ConnectCapabilitiesRunner(baseUrl, "lifecycle-plugin")
+                .addUninstallLifecycle()
+                .addRoute(ConnectCapabilitiesRunner.UNINSTALLED_PATH, servlet)
+                .start();
+
+        tester.test(new WebHookWaiter()
+        {
+            @Override
+            public WebHookBody waitForHook() throws Exception
+            {
+                return servlet.waitForHook();
+            }
+        });
+
+        runner.stopAndUninstall();
+    }
+
     public static void runInJsonRunner(String baseUrl, String webHookId, String eventId, WebHookTester tester) throws Exception
     {
         final String path = "/webhook";
@@ -92,7 +174,7 @@ public final class WebHookTestServlet extends HttpServlet
             }
         });
 
-        runner.stop();
+        runner.stopAndUninstall();
     }
 
     public static void runSyncInRunner(String baseUrl, String eventId, WebHookTester tester) throws Exception

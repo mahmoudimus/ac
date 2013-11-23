@@ -5,8 +5,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import com.atlassian.plugin.connect.plugin.capabilities.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.CapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConditionalBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.LifecycleBean;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -31,8 +33,11 @@ public class CapabilitiesGsonFactory
         Type mapStringType = new TypeToken<Map<String,String>>(){}.getType();
         return new GsonBuilder()
                 .registerTypeAdapter(conditionalType,new ConditionalBeanSerializer())
+                .registerTypeAdapter(LifecycleBean.class, new LifecycleSerializer())
                 .registerTypeHierarchyAdapter(List.class, new IgnoredEmptyCollectionSerializer())
                 .registerTypeAdapter(mapStringType, new IgnoredEmptyMapSerializer())
+                .registerTypeAdapter(String.class,new EmptyStringIgnoringTypeAdapter().nullSafe())
+                .registerTypeAdapterFactory(new LowercaseEnumTypeAdapterFactory())
                 ;
     }
     

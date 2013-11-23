@@ -6,8 +6,6 @@ import com.atlassian.plugin.connect.api.scopes.ScopeName;
 import com.atlassian.plugin.connect.plugin.scopes.AddOnScope;
 import com.atlassian.plugin.connect.plugin.scopes.StaticAddOnScopes;
 import com.atlassian.plugin.connect.plugin.settings.SettingsManager;
-import com.atlassian.plugin.connect.plugin.util.BundleUtil;
-import com.atlassian.plugin.connect.spi.ConnectAddOnIdentifierService;
 import com.atlassian.plugin.connect.spi.PermissionDeniedException;
 import com.atlassian.plugin.connect.spi.permission.Permission;
 import com.atlassian.plugin.connect.spi.permission.PermissionModuleDescriptor;
@@ -56,7 +54,6 @@ public final class PermissionManagerImpl implements PermissionManager
     private final PermissionsReader permissionsReader;
     private final BundleContext bundleContext;
     private final PluginModuleTracker<Permission, PermissionModuleDescriptor> permissionTracker;
-    private final ConnectAddOnIdentifierService connectIdentifier;
 
     private static final Collection<AddOnScope> ALL_SCOPES;
 
@@ -80,10 +77,9 @@ public final class PermissionManagerImpl implements PermissionManager
             PluginAccessor pluginAccessor,
             PluginEventManager pluginEventManager,
             PermissionsReader permissionsReader,
-            BundleContext bundleContext,
-            ConnectAddOnIdentifierService connectIdentifier)
+            BundleContext bundleContext)
     {
-        this(userManager, settingsManager, pluginAccessor, permissionsReader, bundleContext,connectIdentifier,
+        this(userManager, settingsManager, pluginAccessor, permissionsReader, bundleContext,
                 new DefaultPluginModuleTracker<Permission, PermissionModuleDescriptor>(
                         pluginAccessor, pluginEventManager, PermissionModuleDescriptor.class));
     }
@@ -94,7 +90,6 @@ public final class PermissionManagerImpl implements PermissionManager
             PluginAccessor pluginAccessor,
             PermissionsReader permissionsReader,
             BundleContext bundleContext,
-            ConnectAddOnIdentifierService connectIdentifier,
             PluginModuleTracker<Permission, PermissionModuleDescriptor> pluginModuleTracker)
     {
         this.userManager = checkNotNull(userManager);
@@ -103,7 +98,6 @@ public final class PermissionManagerImpl implements PermissionManager
         this.permissionsReader = checkNotNull(permissionsReader);
         this.bundleContext = checkNotNull(bundleContext);
         this.permissionTracker = checkNotNull(pluginModuleTracker);
-        this.connectIdentifier = checkNotNull(connectIdentifier);
     }
 
     @Override
@@ -220,8 +214,7 @@ public final class PermissionManagerImpl implements PermissionManager
     public boolean canModifyRemotePlugin(String username, String pluginKey)
     {
         return userManager.isAdmin(username)
-                || isDogfoodUser(username)
-                && username.equals(connectIdentifier.getInstallerUser(BundleUtil.findBundleForPlugin(bundleContext, pluginKey)));
+                || isDogfoodUser(username);
     }
 
     private boolean isDogfoodUser(String username)
