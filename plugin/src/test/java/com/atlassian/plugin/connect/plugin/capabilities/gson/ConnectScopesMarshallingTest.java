@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.plugin.capabilities.gson;
 
 import com.atlassian.plugin.connect.api.scopes.ScopeName;
+import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
 import com.google.gson.reflect.TypeToken;
 import org.junit.Test;
 
@@ -25,7 +26,7 @@ public class ConnectScopesMarshallingTest
         assertThat(scopeReferences, is(asList(ScopeName.READ)));
     }
 
-    @Test
+    @Test(expected = InvalidDescriptorException.class)
     public void readingABadScopeNameResultsInAnException()
     {
         String json = "[ \"fubar\" ]";

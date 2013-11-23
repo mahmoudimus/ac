@@ -53,6 +53,7 @@ public class ConnectAddonBean extends BaseCapabilityBean
         this.links = newHashMap();
         this.lifecycle = newLifecycleBean().build();
         this.capabilities = new CapabilityList();
+        this.scopes = new HashSet<String>();
         this.baseUrl = "";
         this.authentication = newAuthenticationBean().build();
     }

@@ -1,20 +1,16 @@
 package com.atlassian.plugin.connect.plugin.capabilities.gson;
 
-import java.lang.reflect.Type;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-
-import com.atlassian.plugin.connect.plugin.capabilities.beans.AuthenticationBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.CapabilityBean;
+import com.atlassian.plugin.connect.api.scopes.ScopeName;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConditionalBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.LifecycleBean;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-
 import org.osgi.framework.BundleContext;
+
+import java.lang.reflect.Type;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @since 1.0
@@ -38,6 +34,7 @@ public class CapabilitiesGsonFactory
                 .registerTypeAdapter(mapStringType, new IgnoredEmptyMapSerializer())
                 .registerTypeAdapter(String.class,new EmptyStringIgnoringTypeAdapter().nullSafe())
                 .registerTypeAdapterFactory(new LowercaseEnumTypeAdapterFactory())
+                .registerTypeAdapter(ScopeName.class, new ScopeNameSerializer())
                 ;
     }
     
