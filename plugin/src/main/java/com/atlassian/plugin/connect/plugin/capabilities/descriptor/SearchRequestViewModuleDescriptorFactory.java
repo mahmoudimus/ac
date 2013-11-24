@@ -32,6 +32,7 @@ public class SearchRequestViewModuleDescriptorFactory implements ConnectModuleDe
     private final JiraAuthenticationContext authenticationContext;
     private final SearchRequestURLHandler urlHandler;
     private final ConditionDescriptorFactory conditionDescriptorFactory;
+    private final ConditionModuleFragmentFactory conditionModuleFragmentFactory;
     private ApplicationProperties applicationProperties;
     private SearchRequestViewBodyWriterUtil searchRequestViewBodyWriterUtil;
     private TemplateRenderer templateRenderer;
@@ -39,6 +40,7 @@ public class SearchRequestViewModuleDescriptorFactory implements ConnectModuleDe
 
     @Autowired
     public SearchRequestViewModuleDescriptorFactory(JiraAuthenticationContext authenticationContext,
+                                                    ConditionModuleFragmentFactory conditionModuleFragmentFactory,
                                                     ApplicationProperties applicationProperties,
                                                     SearchRequestViewBodyWriterUtil searchRequestViewBodyWriterUtil,
                                                     TemplateRenderer templateRenderer,
@@ -48,6 +50,7 @@ public class SearchRequestViewModuleDescriptorFactory implements ConnectModuleDe
         this.authenticationContext = checkNotNull(authenticationContext);
         this.urlHandler = checkNotNull(componentAccessor.getComponent(SearchRequestURLHandler.class));
         this.conditionDescriptorFactory = checkNotNull(componentAccessor.getComponent(ConditionDescriptorFactory.class));
+        this.conditionModuleFragmentFactory = checkNotNull(conditionModuleFragmentFactory);
         this.applicationProperties = checkNotNull(applicationProperties);
         this.searchRequestViewBodyWriterUtil = checkNotNull(searchRequestViewBodyWriterUtil);
         this.templateRenderer = checkNotNull(templateRenderer);
@@ -59,13 +62,13 @@ public class SearchRequestViewModuleDescriptorFactory implements ConnectModuleDe
     {
         SearchRequestViewModuleDescriptorImpl descriptor = new SearchRequestViewModuleDescriptorImpl(authenticationContext,
                 urlHandler, createModuleFactory(bean, plugin), conditionDescriptorFactory);
-        Element element = createElement(bean);
+        Element element = createElement(bean, plugin);
         descriptor.init(plugin, element);
         return descriptor;
     }
 
 
-    private Element createElement(SearchRequestViewCapabilityBean bean)
+    private Element createElement(SearchRequestViewCapabilityBean bean, Plugin plugin)
     {
         DOMElement element = new DOMElement("search-request-view");
 
@@ -80,6 +83,11 @@ public class SearchRequestViewModuleDescriptorFactory implements ConnectModuleDe
         element.addElement("description")
                 .addText(bean.getDescription().getValue())
                 .addAttribute("key", bean.getDescription().getI18n());
+
+        if (!bean.getConditions().isEmpty())
+        {
+            element.add(conditionModuleFragmentFactory.createFragment(plugin.getKey(), bean.getConditions()));
+        }
 
         return element;
     }

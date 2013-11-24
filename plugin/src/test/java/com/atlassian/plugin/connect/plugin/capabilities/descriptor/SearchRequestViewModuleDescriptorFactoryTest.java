@@ -2,16 +2,20 @@ package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
 import com.atlassian.jira.issue.views.util.SearchRequestViewBodyWriterUtil;
 import com.atlassian.jira.plugin.searchrequestview.SearchRequestURLHandler;
-import com.atlassian.jira.plugin.searchrequestview.SearchRequestViewModuleDescriptor;
+import com.atlassian.jira.plugin.searchrequestview.SearchRequestViewModuleDescriptorImpl;
+import com.atlassian.jira.plugin.webfragment.conditions.UserLoggedInCondition;
 import com.atlassian.jira.plugin.webfragment.descriptors.ConditionDescriptorFactory;
+import com.atlassian.jira.plugin.webfragment.descriptors.ConditionDescriptorFactoryImpl;
 import com.atlassian.jira.security.JiraAuthenticationContext;
+import com.atlassian.jira.user.util.UserManager;
+import com.atlassian.mail.queue.MailQueue;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.SearchRequestViewCapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.plugin.capabilities.testobjects.PluginForTests;
 import com.atlassian.plugin.connect.plugin.capabilities.testobjects.RemotablePluginAccessorFactoryForTests;
 import com.atlassian.plugin.connect.plugin.capabilities.util.DelegatingComponentAccessor;
-import com.atlassian.plugin.web.conditions.ConditionLoadingException;
+import com.atlassian.plugin.connect.plugin.product.jira.JiraProductAccessor;
+import com.atlassian.plugin.hostcontainer.HostContainer;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import org.junit.Before;
@@ -24,10 +28,13 @@ import org.osgi.framework.BundleContext;
 import java.io.StringWriter;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.SearchRequestViewCapabilityBean.newSearchRequestViewCapabilityBean;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.SingleConditionBean.newSingleConditionBean;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -35,11 +42,11 @@ import static org.mockito.Mockito.when;
 public class SearchRequestViewModuleDescriptorFactoryTest
 {
     @Mock
+    private Plugin plugin;
+    @Mock
     private JiraAuthenticationContext authenticationContext;
     @Mock
     private SearchRequestURLHandler urlHandler;
-    @Mock
-    private ConditionDescriptorFactory conditionDescriptorFactory;
     @Mock
     private ApplicationProperties applicationProperties;
     @Mock
@@ -48,21 +55,34 @@ public class SearchRequestViewModuleDescriptorFactoryTest
     private TemplateRenderer templateRenderer;
     @Mock
     private DelegatingComponentAccessor componentAccessor;
+    @Mock
+    private UserManager userManager;
+    @Mock
+    private MailQueue mailQueue;
+    @Mock
+    private HostContainer hostContainer;
 
-    private SearchRequestViewModuleDescriptor descriptor;
+    private SearchRequestViewModuleDescriptorImpl descriptor;
 
     @Before
-    public void setup() throws ConditionLoadingException
+    public void beforeEachTest() throws Exception
     {
-        Plugin plugin = new PluginForTests("some-plugin", "Some Plugin");
-
         RemotablePluginAccessorFactoryForTests remotablePluginAccessorFactoryForTests = new RemotablePluginAccessorFactoryForTests();
+
+        when(plugin.getKey()).thenReturn("my-plugin");
+        when(plugin.<UserLoggedInCondition>loadClass(eq("com.atlassian.jira.plugin.webfragment.conditions.UserLoggedInCondition"), any(Class.class)))
+                .thenReturn(UserLoggedInCondition.class);
+
+        ConditionDescriptorFactory conditionDescriptorFactory = new ConditionDescriptorFactoryImpl(hostContainer);
+        ConditionModuleFragmentFactory conditionModuleFragmentFactory = new ConditionModuleFragmentFactory(
+                new JiraProductAccessor(userManager, mailQueue), new ParamsModuleFragmentFactory());
+        when(hostContainer.create(UserLoggedInCondition.class)).thenReturn(new UserLoggedInCondition());
 
         when(componentAccessor.getComponent(SearchRequestURLHandler.class)).thenReturn(urlHandler);
         when(componentAccessor.getComponent(ConditionDescriptorFactory.class)).thenReturn(conditionDescriptorFactory);
 
         SearchRequestViewModuleDescriptorFactory factory = new SearchRequestViewModuleDescriptorFactory(
-                authenticationContext, applicationProperties,
+                authenticationContext, conditionModuleFragmentFactory, applicationProperties,
                 searchRequestViewBodyWriterUtil, templateRenderer, remotablePluginAccessorFactoryForTests, componentAccessor);
 
         SearchRequestViewCapabilityBean bean = newSearchRequestViewCapabilityBean()
@@ -70,16 +90,18 @@ public class SearchRequestViewModuleDescriptorFactoryTest
                 .withUrl("http://foo")
                 .withName(new I18nProperty("A Search Request View", null))
                 .withDescription(new I18nProperty("A description", null))
+                .withConditions(
+                        newSingleConditionBean().withCondition("user_is_logged_in").build())
                 .build();
 
-
-        this.descriptor = factory.createModuleDescriptor(plugin, mock(BundleContext.class), bean);
+        this.descriptor = (SearchRequestViewModuleDescriptorImpl) factory.createModuleDescriptor(plugin, mock(BundleContext.class), bean);
+        this.descriptor.enabled();
     }
 
     @Test
     public void verifyCompleteKeyIsCorrect()
     {
-        assertThat(descriptor.getCompleteKey(), is("some-plugin:a-search-request-view"));
+        assertThat(descriptor.getCompleteKey(), is("my-plugin:a-search-request-view"));
     }
 
     @Test
@@ -135,6 +157,18 @@ public class SearchRequestViewModuleDescriptorFactoryTest
     public void verifyIsEnabledByDefault() throws Exception
     {
         assertThat(descriptor.isEnabledByDefault(), is(true));
+    }
+
+    @Test
+    public void verifyConditionsArePresent() throws Exception
+    {
+        assertThat(descriptor.getCondition(), is(not(nullValue())));
+    }
+
+    @Test
+    public void verifyConditionsAreNotDefault() throws Exception
+    {
+        assertThat(descriptor.getCondition(), is(not(ConditionDescriptorFactory.DEFAULT_CONDITION)));
     }
 
 }
