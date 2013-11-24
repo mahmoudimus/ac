@@ -10,6 +10,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.SearchRequestViewC
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.testobjects.PluginForTests;
 import com.atlassian.plugin.connect.plugin.capabilities.testobjects.RemotablePluginAccessorFactoryForTests;
+import com.atlassian.plugin.connect.plugin.capabilities.util.DelegatingComponentAccessor;
 import com.atlassian.plugin.web.conditions.ConditionLoadingException;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.templaterenderer.TemplateRenderer;
@@ -28,6 +29,7 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SearchRequestViewModuleDescriptorFactoryTest
@@ -44,6 +46,8 @@ public class SearchRequestViewModuleDescriptorFactoryTest
     private SearchRequestViewBodyWriterUtil searchRequestViewBodyWriterUtil;
     @Mock
     private TemplateRenderer templateRenderer;
+    @Mock
+    private DelegatingComponentAccessor componentAccessor;
 
     private SearchRequestViewModuleDescriptor descriptor;
 
@@ -54,9 +58,12 @@ public class SearchRequestViewModuleDescriptorFactoryTest
 
         RemotablePluginAccessorFactoryForTests remotablePluginAccessorFactoryForTests = new RemotablePluginAccessorFactoryForTests();
 
+        when(componentAccessor.getComponent(SearchRequestURLHandler.class)).thenReturn(urlHandler);
+        when(componentAccessor.getComponent(ConditionDescriptorFactory.class)).thenReturn(conditionDescriptorFactory);
+
         SearchRequestViewModuleDescriptorFactory factory = new SearchRequestViewModuleDescriptorFactory(
-                authenticationContext, urlHandler, conditionDescriptorFactory, applicationProperties,
-                searchRequestViewBodyWriterUtil, templateRenderer, remotablePluginAccessorFactoryForTests.get(plugin.getKey()));
+                authenticationContext, applicationProperties,
+                searchRequestViewBodyWriterUtil, templateRenderer, remotablePluginAccessorFactoryForTests, componentAccessor);
 
         SearchRequestViewCapabilityBean bean = newSearchRequestViewCapabilityBean()
                 .withWeight(55)

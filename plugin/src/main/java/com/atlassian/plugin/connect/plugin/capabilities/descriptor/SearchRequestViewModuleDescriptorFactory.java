@@ -10,8 +10,9 @@ import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.SearchRequestViewCapabilityBean;
+import com.atlassian.plugin.connect.plugin.capabilities.util.DelegatingComponentAccessor;
 import com.atlassian.plugin.connect.plugin.module.jira.searchrequestview.RemoteSearchRequestView;
-import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
+import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.sal.api.ApplicationProperties;
@@ -21,9 +22,9 @@ import org.dom4j.dom.DOMElement;
 import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.net.URISyntaxException;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 @JiraComponent
 public class SearchRequestViewModuleDescriptorFactory implements ConnectModuleDescriptorFactory<SearchRequestViewCapabilityBean, SearchRequestViewModuleDescriptor>
@@ -34,31 +35,30 @@ public class SearchRequestViewModuleDescriptorFactory implements ConnectModuleDe
     private ApplicationProperties applicationProperties;
     private SearchRequestViewBodyWriterUtil searchRequestViewBodyWriterUtil;
     private TemplateRenderer templateRenderer;
-    private RemotablePluginAccessor remotablePluginAccessor;
+    private RemotablePluginAccessorFactory remotablePluginAccessorFactory;
 
     @Autowired
     public SearchRequestViewModuleDescriptorFactory(JiraAuthenticationContext authenticationContext,
-                                                    SearchRequestURLHandler urlHandler,
-                                                    ConditionDescriptorFactory conditionDescriptorFactory,
                                                     ApplicationProperties applicationProperties,
                                                     SearchRequestViewBodyWriterUtil searchRequestViewBodyWriterUtil,
                                                     TemplateRenderer templateRenderer,
-                                                    RemotablePluginAccessor remotablePluginAccessor)
+                                                    RemotablePluginAccessorFactory remotablePluginAccessorFactory,
+                                                    DelegatingComponentAccessor componentAccessor)
     {
         this.authenticationContext = checkNotNull(authenticationContext);
-        this.urlHandler = checkNotNull(urlHandler);
-        this.conditionDescriptorFactory = checkNotNull(conditionDescriptorFactory);
+        this.urlHandler = checkNotNull(componentAccessor.getComponent(SearchRequestURLHandler.class));
+        this.conditionDescriptorFactory = checkNotNull(componentAccessor.getComponent(ConditionDescriptorFactory.class));
         this.applicationProperties = checkNotNull(applicationProperties);
         this.searchRequestViewBodyWriterUtil = checkNotNull(searchRequestViewBodyWriterUtil);
         this.templateRenderer = checkNotNull(templateRenderer);
-        this.remotablePluginAccessor = checkNotNull(remotablePluginAccessor);
+        this.remotablePluginAccessorFactory = checkNotNull(remotablePluginAccessorFactory);
     }
 
     @Override
     public SearchRequestViewModuleDescriptor createModuleDescriptor(Plugin plugin, BundleContext addonBundleContext, SearchRequestViewCapabilityBean bean)
     {
         SearchRequestViewModuleDescriptorImpl descriptor = new SearchRequestViewModuleDescriptorImpl(authenticationContext,
-                urlHandler, createModuleFactory(bean), conditionDescriptorFactory);
+                urlHandler, createModuleFactory(bean, plugin), conditionDescriptorFactory);
         Element element = createElement(bean);
         descriptor.init(plugin, element);
         return descriptor;
@@ -84,7 +84,7 @@ public class SearchRequestViewModuleDescriptorFactory implements ConnectModuleDe
         return element;
     }
 
-    private ModuleFactory createModuleFactory(final SearchRequestViewCapabilityBean bean)
+    private ModuleFactory createModuleFactory(final SearchRequestViewCapabilityBean bean, final Plugin plugin)
     {
         return new ModuleFactory()
         {
@@ -94,7 +94,7 @@ public class SearchRequestViewModuleDescriptorFactory implements ConnectModuleDe
                 try
                 {
                     return (T) new RemoteSearchRequestView(applicationProperties, searchRequestViewBodyWriterUtil,
-                            templateRenderer, bean.createUri(), bean.getDisplayName(), remotablePluginAccessor);
+                            templateRenderer, bean.createUri(), bean.getDisplayName(), remotablePluginAccessorFactory.get(plugin.getKey()));
                 }
                 catch (URISyntaxException e)
                 {
