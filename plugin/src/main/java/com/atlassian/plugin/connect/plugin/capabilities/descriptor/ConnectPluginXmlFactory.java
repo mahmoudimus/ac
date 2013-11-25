@@ -28,6 +28,11 @@ public class ConnectPluginXmlFactory
             .addAttribute("name",bean.getVendor().getName())
             .addAttribute("url",bean.getVendor().getUrl());
         
+        if(null != bean.getEnableLicensing() && bean.getEnableLicensing())
+        {
+            info.addElement("param").addAttribute("name","atlassian-licensing-enabled").setText("true");
+        }
+        
         root.add(info);
 
         return doc.asXML();
