@@ -18,7 +18,7 @@ We use a Nodejs based static site generator called [Harp](http://harpjs.com/). I
     ├── build.js (extracts JSON schema and updates harp.json with schema contents)
     ├── harp.json (acts as a global JSON that's available to the templates. Contains JSON schema used for capabilities docs)
     ├── package.json (standard Nodejs package.json)
-    └── public)
+    └── public
         ├── _layout.ejs (global layout)
         ├── _partials
         │   └── _sidebar.ejs
