@@ -15,11 +15,8 @@ We use a Nodejs based static site generator called [Harp](http://harpjs.com/). I
 
     .
     ├── README.md (this file)
-    ├── build.js (extracts JSON schema and updates harp.json 
-                  with schema contents)
-    ├── harp.json (acts as a global JSON that's available to 
-                   the templates. Contains JSON schema used for 
-                   capabilities docs)
+    ├── build.js (extracts JSON schema and updates harp.json with schema contents)
+    ├── harp.json (acts as a global JSON that's available to the templates. Contains JSON schema used for capabilities docs)
     ├── package.json (standard Nodejs package.json)
     └── public)
         ├── _layout.ejs (global layout)
@@ -31,11 +28,9 @@ We use a Nodejs based static site generator called [Harp](http://harpjs.com/). I
         │   ├── images
         │   └── js
         ├── capabilities
-        │   ├── confluence (build.js will populate this with 
-                            capabilities markdown files)
+        │   ├── confluence (build.js will populate this with capabilities markdown files)
         │   ├── index.md
-        │   └── jira (build.js will populate this with 
-                      capabilities markdown files)
+        │   └── jira (build.js will populate this with capabilities markdown files)
         ├── guides
         │   └── index.md (getting started guide)
         └── index.md (homepage)
