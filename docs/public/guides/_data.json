@@ -1,6 +1,5 @@
 {
-    "index": {
-    },
-    "ui-extension": {
+    "index.html": {
+        "title": "Getting Started"
     }
 }

@@ -1,4 +1,4 @@
-- var capability = jira.properties.capabilities.properties[current.source]
+- var capability = schemas[product].properties.capabilities.properties[current.source]
 h1
     = capability.items.title
 
@@ -8,7 +8,7 @@ h2 JSON Schema
 textarea.code
     != JSON.stringify(capability.items,null,2)
 
-script
+script.
     var cmOpts = {
         mode: "javascript",
         theme: "neat",

@@ -15,14 +15,16 @@ function sortCapabilities(capabilities) {
     return obj;
 }
 
+harpGlobals.globals.schemas = {}
+
 jiraSchema.properties.capabilities.properties = sortCapabilities(jiraSchema.properties.capabilities.properties);
-harpGlobals.globals.jira = jiraSchema;
+harpGlobals.globals.schemas.jira = jiraSchema;
 for (var k in jiraSchema.properties.capabilities.properties) {
     fs.outputFile('./public/capabilities/jira/'+k+'.md', String(jiraSchema.properties.capabilities.properties[k].items.description).replace(/\n /g,"\n"));
 };
 
 confluenceSchema.properties.capabilities.properties = sortCapabilities(confluenceSchema.properties.capabilities.properties);
-harpGlobals.globals.confluence = confluenceSchema;
+harpGlobals.globals.schemas.confluence = confluenceSchema;
 for (var k in confluenceSchema.properties.capabilities.properties) {
     fs.outputFile('./public/capabilities/confluence/'+k+'.md', String(confluenceSchema.properties.capabilities.properties[k].items.description).replace(/\n /g,"\n"));
 };
