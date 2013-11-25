@@ -49,7 +49,7 @@ Got it? If not, all you need to know is that you need to write your docs in Mark
 
 To generate these docs, you'll need to make sure you have Nodejs installed. If you're on a mac, I suggest just doing a `brew install node`. Once you've got Nodejs installed, just run the following to install all the dependencies:
 
-    `npm install`
+    npm install
 
 ### Running the server
 
