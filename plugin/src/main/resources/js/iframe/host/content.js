@@ -4,8 +4,12 @@
 _AP.define("host/content", ["_dollar"], function ($) {
     "use strict";
 
+    function getContentUrl(pluginKey, capability){
+        return AJS.contextPath() + "/plugins/servlet/atlassian-connect/" + pluginKey + "/" + capability.key;
+    }
+
     function getIframeHtmlForKey(pluginKey, productContextJson, capability) {
-        var contentUrl = AJS.contextPath() + "/plugins/servlet/atlassian-connect/" + pluginKey + "/" + capability.key;
+        var contentUrl = this.getContentUrl(pluginKey, capability);
         return $.ajax(contentUrl, {
             dataType: "html",
             data: {
@@ -40,6 +44,7 @@ _AP.define("host/content", ["_dollar"], function ($) {
     }
 
     return {
+        getContentUrl: getContentUrl,
         getIframeHtmlForKey: getIframeHtmlForKey,
         eventHandler: eventHandler
     };

@@ -27,10 +27,11 @@
                 },
             });
 
-            test("getIframeHTMLForKey requests the correct path", function(){
-                var ajaxRequest = contentUtilities.getIframeHtmlForKey(pluginKey, productContextJson, capability);
+            test("getContentUrl returns the correct contentURL", function(){
+                var expectedBeginningUrl = new RegExp("https://www.example.com/plugins/servlet/atlassian-connect/foo-plugin-key/bar-capability-key"),
+                url = contentUtilities.getContentUrl(pluginKey, capability);
 
-                equal(0, this.server.requests[0].url.search(new RegExp("https://www.example.com/plugins/servlet/atlassian-connect/foo-plugin-key/bar-capability-key")));
+                equal(0, url.search(expectedBeginningUrl));
             });
 
             test("getIframeHTMLForKey returns an ajax request", function(){
