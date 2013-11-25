@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 var fs = require('fs-extra');
 var harpGlobals = require('./harp.json');
 var jiraSchema = require('../plugin/target/classes/schema/jira-schema.json');

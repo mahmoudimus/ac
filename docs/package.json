@@ -8,8 +8,9 @@
     "fs-extra": "*"
   },
   "scripts": {
-    "start": "./node_modules/.bin/harp server",
-    "build": "./node_modules/.bin/harp compile",
+    "start": "./build.js && ./node_modules/.bin/harp server",
+    "update": "./build.js",
+    "build": "rm -rf www && ./build.js && ./node_modules/.bin/harp compile",
     "clean": "rm -rf www"
   },
   "author": "ac-dev@atlassian.com"
