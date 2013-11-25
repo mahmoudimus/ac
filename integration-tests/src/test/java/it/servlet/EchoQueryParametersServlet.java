@@ -28,6 +28,6 @@ public class EchoQueryParametersServlet extends ContextServlet
 
     public NameValuePairs waitForQueryParameters() throws InterruptedException
     {
-        return queryParameters.poll(10, TimeUnit.SECONDS);
+        return queryParameters.poll(5, TimeUnit.SECONDS);
     }
 }

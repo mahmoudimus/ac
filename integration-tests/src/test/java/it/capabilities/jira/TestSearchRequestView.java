@@ -1,6 +1,5 @@
 package it.capabilities.jira;
 
-import com.atlassian.plugin.connect.plugin.capabilities.beans.CapabilityList;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.pageobjects.jira.IssueNavigatorViewsMenu;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraAdvancedSearchPage;
@@ -78,7 +77,7 @@ public class TestSearchRequestView extends JiraWebDriverTestBase
     public void verifyIssueKeyIsPartOfUrl() throws Exception
     {
         loginAsAdmin();
-        RemoteIssue issue = jiraOps.createIssue(project.getKey(), "test issue");
+        RemoteIssue issue = createIssue();
         findSearchRequestViewEntry().click();
         NameValuePairs queryParameters = searchRequestViewServlet.waitForQueryParameters();
 
@@ -90,6 +89,7 @@ public class TestSearchRequestView extends JiraWebDriverTestBase
     public void verifyPaginationParametersArePartOfUrl() throws Exception
     {
         loginAsAdmin();
+        createIssue();
         findSearchRequestViewEntry().click();
         NameValuePairs queryParameters = searchRequestViewServlet.waitForQueryParameters();
 
@@ -103,6 +103,7 @@ public class TestSearchRequestView extends JiraWebDriverTestBase
     public void verifyOAuthParametersArePartOfUrl() throws Exception
     {
         loginAsAdmin();
+        createIssue();
         findSearchRequestViewEntry().click();
         NameValuePairs queryParameters = searchRequestViewServlet.waitForQueryParameters();
 
@@ -110,12 +111,17 @@ public class TestSearchRequestView extends JiraWebDriverTestBase
         assertThat(queryParameters.allStartingWith("oauth_"), hasSize(greaterThan(1)));
     }
 
-    private IssueNavigatorViewsMenu.ViewEntry findSearchRequestViewEntry()
+    private IssueNavigatorViewsMenu.ViewEntry findSearchRequestViewEntry() throws Exception
     {
         JiraAdvancedSearchPage searchPage = product.visit(JiraAdvancedSearchPage.class);
         searchPage.enterQuery("project = " + project.getKey()).submit();
         IssueNavigatorViewsMenu viewsMenu = searchPage.viewsMenu().open();
         return viewsMenu.entryWithLabel(LABEL);
+    }
+
+    private RemoteIssue createIssue() throws Exception
+    {
+        return jiraOps.createIssue(project.getKey(), "test issue");
     }
 
     private void assertNoTimeout(NameValuePairs queryParameters)
