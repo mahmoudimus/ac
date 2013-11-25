@@ -82,6 +82,7 @@ public class TestSearchRequestView extends JiraWebDriverTestBase
         findSearchRequestViewEntry().click();
         NameValuePairs queryParameters = searchRequestViewServlet.waitForQueryParameters();
 
+        assertNoTimeout(queryParameters);
         assertThat(queryParameters.any("issues").getValue(), containsString(issue.getKey()));
     }
 
@@ -92,6 +93,7 @@ public class TestSearchRequestView extends JiraWebDriverTestBase
         findSearchRequestViewEntry().click();
         NameValuePairs queryParameters = searchRequestViewServlet.waitForQueryParameters();
 
+        assertNoTimeout(queryParameters);
         assertThat(queryParameters.all("startIssue"), hasSize(greaterThan(0)));
         assertThat(queryParameters.all("endIssue"), hasSize(greaterThan(0)));
         assertThat(queryParameters.all("totalIssues"), hasSize(greaterThan(0)));
@@ -104,6 +106,7 @@ public class TestSearchRequestView extends JiraWebDriverTestBase
         findSearchRequestViewEntry().click();
         NameValuePairs queryParameters = searchRequestViewServlet.waitForQueryParameters();
 
+        assertNoTimeout(queryParameters);
         assertThat(queryParameters.allStartingWith("oauth_"), hasSize(greaterThan(1)));
     }
 
@@ -112,6 +115,11 @@ public class TestSearchRequestView extends JiraWebDriverTestBase
         JiraAdvancedSearchPage searchPage = product.visit(JiraAdvancedSearchPage.class);
         IssueNavigatorViewsMenu viewsMenu = searchPage.viewsMenu().open();
         return viewsMenu.entryWithLabel(LABEL);
+    }
+
+    private void assertNoTimeout(NameValuePairs queryParameters)
+    {
+        assertThat("Request did not time out", queryParameters != null);
     }
 
 }
