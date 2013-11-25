@@ -36,7 +36,7 @@ public class TestSearchRequestView extends JiraWebDriverTestBase
         searchRequestViewServlet = new EchoQueryParametersServlet();
 
         remotePlugin = new ConnectCapabilitiesRunner(product.getProductInstance().getBaseUrl(), "my-plugin")
-                .addCapability(CapabilityList.SEARCH_REQUEST_VIEW, newSearchRequestViewCapabilityBean()
+                .addCapability("jiraSearchRequestViews", newSearchRequestViewCapabilityBean()
                         .withWeight(100)
                         .withUrl(SERVLET_URL)
                         .withName(new I18nProperty(LABEL, null))

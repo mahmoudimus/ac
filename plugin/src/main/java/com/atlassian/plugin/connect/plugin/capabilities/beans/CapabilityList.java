@@ -21,8 +21,6 @@ import static com.google.common.collect.Lists.newArrayList;
  */
 public class CapabilityList extends BaseCapabilityBean
 {
-    public static final String SEARCH_REQUEST_VIEW = "jiraSearchRequestViews";
-
     @CapabilityModuleProvider(WebItemModuleProvider.class)
     private List<WebItemCapabilityBean> webItems;
 

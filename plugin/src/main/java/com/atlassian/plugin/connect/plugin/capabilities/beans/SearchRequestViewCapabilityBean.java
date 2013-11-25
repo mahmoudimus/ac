@@ -6,7 +6,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nPropert
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty.emptyI18nProperty;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty.empty;
 
 /**
  * A Search Request View allows you to render a custom representation of a search result. Rendering a custom XML format
@@ -74,7 +74,7 @@ public class SearchRequestViewCapabilityBean extends BeanWithKeyAndParamsAndCond
     {
         this.weight = ConnectAddonBean.DEFAULT_WEIGHT;
         this.url = "";
-        this.description = emptyI18nProperty();
+        this.description = empty();
     }
 
     public SearchRequestViewCapabilityBean(SearchRequestViewCapabilityBeanBuilder builder)
@@ -91,7 +91,7 @@ public class SearchRequestViewCapabilityBean extends BeanWithKeyAndParamsAndCond
         }
         if (null == description)
         {
-            description = emptyI18nProperty();
+            description = empty();
         }
     }
 
