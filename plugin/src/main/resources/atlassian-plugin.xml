@@ -15,7 +15,12 @@
                     location="after-encoding">
         <url-pattern>/atlassian-connect/*</url-pattern>
     </servlet-filter>
-    
+
+    <servlet-filter key="schema-resources" class="com.atlassian.plugin.connect.plugin.capabilities.schema.SchemaFilter"
+                    location="after-encoding">
+        <url-pattern>/atlassian-connect/schema/*</url-pattern>
+    </servlet-filter>
+
     <servlet-filter key="api-scoping" class="com.atlassian.plugin.connect.plugin.module.permission.ApiScopingFilter"
             location="before-decoration">
         <url-pattern>/*</url-pattern>
@@ -91,15 +96,6 @@
         <resource type="download" name="dialog.css" location="css/dialog/dialog.css" />
         <resource type="download" name="main.js" location="js/dialog/main.js" />
         <resource type="download" name="simple.js" location="js/dialog/simple.js" />
-        <dependency>com.atlassian.auiplugin:ajs</dependency>
-        <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-amd</dependency>
-        <dependency>com.atlassian.plugins.atlassian-connect-plugin:ajs-dialog2</dependency>
-    </web-resource>
-
-    <web-resource key="inline-dialog">
-        <resource type="download" name="inline-dialog-main.js" location="js/inline_dialog/main.js" />
-        <resource type="download" name="inline-dialog-binder.js" location="js/inline_dialog/binder.js" />
-        <resource type="download" name="inline-dialog-simple.js" location="js/inline_dialog/simple.js" />
         <dependency>com.atlassian.auiplugin:ajs</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-amd</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:ajs-dialog2</dependency>
