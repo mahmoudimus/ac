@@ -9,7 +9,7 @@ This directory contains everything you need to generate documentation for Atlass
 
 ## How does it all work?
 
-We use a Nodejs based static site generator called [Harp](http://harpjs.com/). It's a very simple tool that acts as a server and generator. When you're writing docs, it's nice to be able to see what it will actually look like. That's what the server is for. When we're ready, to publish the docs, we can generate static HTML files and publish them to DAC.
+We use a Nodejs based static site generator called [Harp](http://harpjs.com/). It's a very simple tool that acts as a server and generator. When you're writing docs, it's nice to be able to see what it will actually look like. That's what the server is for. When we're ready to publish the docs we can generate static HTML files and publish them to DAC.
 
 ### Directory structure
 
