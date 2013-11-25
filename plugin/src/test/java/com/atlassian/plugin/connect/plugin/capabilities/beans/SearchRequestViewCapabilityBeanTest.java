@@ -61,7 +61,7 @@ public class SearchRequestViewCapabilityBeanTest
                 .withVersion("2.0")
                 .withBaseurl("http://www.example.com")
                 .withVendor(newVendorBean().withName("Atlassian").withUrl("http://www.atlassian.com").build())
-                .withCapability("jiraSearchRequestViews", newSearchRequestViewCapabilityBean()
+                .withCapability(CapabilityList.SEARCH_REQUEST_VIEW, newSearchRequestViewCapabilityBean()
                         .withName(new I18nProperty("My Search Request View", "my.searchRequestView"))
                         .withDescription(new I18nProperty("My description", "my.searchRequestView.desc"))
                         .withUrl("/search-request.csv")

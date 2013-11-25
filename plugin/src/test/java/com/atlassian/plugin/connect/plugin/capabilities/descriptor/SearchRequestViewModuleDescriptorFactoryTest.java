@@ -25,8 +25,6 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.osgi.framework.BundleContext;
 
-import java.io.StringWriter;
-
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.SearchRequestViewCapabilityBean.newSearchRequestViewCapabilityBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.SingleConditionBean.newSingleConditionBean;
 import static org.hamcrest.CoreMatchers.is;
@@ -87,7 +85,7 @@ public class SearchRequestViewModuleDescriptorFactoryTest
 
         SearchRequestViewCapabilityBean bean = newSearchRequestViewCapabilityBean()
                 .withWeight(55)
-                .withUrl("http://foo")
+                .withUrl("http://search.example.com")
                 .withName(new I18nProperty("A Search Request View", null))
                 .withDescription(new I18nProperty("A description", null))
                 .withConditions(
@@ -120,13 +118,6 @@ public class SearchRequestViewModuleDescriptorFactoryTest
     public void verifyWeightIsSet() throws Exception
     {
         assertThat(descriptor.getOrder(), is(55));
-    }
-
-    @Test
-    public void verifyUrlIsRendered() throws Exception
-    {
-        StringWriter writer = new StringWriter();
-//        descriptor.getSearchRequestView().writeSearchResults(writer);
     }
 
     @Test

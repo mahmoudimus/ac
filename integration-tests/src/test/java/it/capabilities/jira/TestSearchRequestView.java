@@ -1,0 +1,117 @@
+package it.capabilities.jira;
+
+import com.atlassian.plugin.connect.plugin.capabilities.beans.CapabilityList;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.test.pageobjects.jira.IssueNavigatorViewsMenu;
+import com.atlassian.plugin.connect.test.pageobjects.jira.JiraAdvancedSearchPage;
+import com.atlassian.plugin.connect.test.server.ConnectCapabilitiesRunner;
+import com.atlassian.plugin.connect.test.utils.NameValuePairs;
+import hudson.plugins.jira.soap.RemoteIssue;
+import it.jira.JiraWebDriverTestBase;
+import it.servlet.ConnectAppServlets;
+import it.servlet.EchoQueryParametersServlet;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.SearchRequestViewCapabilityBean.newSearchRequestViewCapabilityBean;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.SingleConditionBean.newSingleConditionBean;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
+
+public class TestSearchRequestView extends JiraWebDriverTestBase
+{
+    private static final String LABEL = "A Search Request View";
+    private static final String SERVLET_URL = "/search";
+
+    private static ConnectCapabilitiesRunner remotePlugin;
+    private static EchoQueryParametersServlet searchRequestViewServlet;
+
+    @BeforeClass
+    public static void startConnectAddOn() throws Exception
+    {
+        searchRequestViewServlet = new EchoQueryParametersServlet();
+
+        remotePlugin = new ConnectCapabilitiesRunner(product.getProductInstance().getBaseUrl(), "my-plugin")
+                .addCapability(CapabilityList.SEARCH_REQUEST_VIEW, newSearchRequestViewCapabilityBean()
+                        .withWeight(100)
+                        .withUrl(SERVLET_URL)
+                        .withName(new I18nProperty(LABEL, null))
+                        .withDescription(new I18nProperty("A description", null))
+                        .withConditions(
+                                newSingleConditionBean().withCondition("user_is_logged_in").build())
+                        .build())
+                .addRoute(SERVLET_URL, ConnectAppServlets.wrapContextAwareServlet(searchRequestViewServlet))
+                .start();
+    }
+
+    @AfterClass
+    public static void stopConnectAddOn() throws Exception
+    {
+        if (remotePlugin != null)
+        {
+            remotePlugin.stopAndUninstall();
+        }
+    }
+
+    @Test
+    public void verifyEntryIsPresentWhenLoggedIn() throws Exception
+    {
+        loginAsAdmin();
+        IssueNavigatorViewsMenu.ViewEntry entry = findSearchRequestViewEntry();
+
+        assertThat(entry.isPresent(), is(true));
+    }
+
+    @Test
+    public void verifyEntryIsNotPresentWhenUnauthenticated() throws Exception
+    {
+        IssueNavigatorViewsMenu.ViewEntry entry = findSearchRequestViewEntry();
+
+        assertThat(entry.isPresent(), is(false));
+    }
+
+    @Test
+    public void verifyIssueKeyIsPartOfUrl() throws Exception
+    {
+        loginAsAdmin();
+        RemoteIssue issue = jiraOps.createIssue(project.getKey(), "test issue");
+        findSearchRequestViewEntry().click();
+        NameValuePairs queryParameters = searchRequestViewServlet.waitForQueryParameters();
+
+        assertThat(queryParameters.any("issues").getValue(), containsString(issue.getKey()));
+    }
+
+    @Test
+    public void verifyPaginationParametersArePartOfUrl() throws Exception
+    {
+        loginAsAdmin();
+        findSearchRequestViewEntry().click();
+        NameValuePairs queryParameters = searchRequestViewServlet.waitForQueryParameters();
+
+        assertThat(queryParameters.all("startIssue"), hasSize(greaterThan(0)));
+        assertThat(queryParameters.all("endIssue"), hasSize(greaterThan(0)));
+        assertThat(queryParameters.all("totalIssues"), hasSize(greaterThan(0)));
+    }
+
+    @Test
+    public void verifyOAuthParametersArePartOfUrl() throws Exception
+    {
+        loginAsAdmin();
+        findSearchRequestViewEntry().click();
+        NameValuePairs queryParameters = searchRequestViewServlet.waitForQueryParameters();
+
+        assertThat(queryParameters.allStartingWith("oauth_"), hasSize(greaterThan(1)));
+    }
+
+    private IssueNavigatorViewsMenu.ViewEntry findSearchRequestViewEntry()
+    {
+        JiraAdvancedSearchPage searchPage = product.visit(JiraAdvancedSearchPage.class);
+        IssueNavigatorViewsMenu viewsMenu = searchPage.viewsMenu().open();
+        return viewsMenu.entryWithLabel(LABEL);
+    }
+
+}
