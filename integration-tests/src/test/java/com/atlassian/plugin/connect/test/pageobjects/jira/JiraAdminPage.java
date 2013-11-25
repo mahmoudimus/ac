@@ -65,10 +65,10 @@ public final class JiraAdminPage implements AdminPage
                 new Function<WebElement, RemotePluginTestPage>()
                 {
                     @Override
-                    public RemotePluginTestPage apply(WebElement l)
+                    public RemotePluginTestPage apply(WebElement linkElement)
                     {
-                        l.click();
-                        logger.debug("Link '{}' was found and clicked.", l);
+                        linkElement.click();
+                        logger.debug("Link '{}' was found and clicked.", linkElement);
                         return pageBinder.bind(RemotePluginTestPage.class, pageKey);
                     }
                 }
@@ -90,9 +90,9 @@ public final class JiraAdminPage implements AdminPage
                 new Function<WebElement, String>()
                 {
                     @Override
-                    public String apply(WebElement l)
+                    public String apply(WebElement linkElement)
                     {
-                        return l.getAttribute("href");
+                        return linkElement.getAttribute("href");
                     }
                 }
         );
