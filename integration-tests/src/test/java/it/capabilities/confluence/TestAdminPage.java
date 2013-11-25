@@ -1,10 +1,12 @@
 package it.capabilities.confluence;
 
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.test.pageobjects.InsufficientPermissionsPage;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceAdminPage;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.FixedConfluenceAdminHomePage;
 import com.atlassian.plugin.connect.test.server.ConnectCapabilitiesRunner;
+import it.TestConstants;
 import it.confluence.ConfluenceWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import org.junit.AfterClass;
@@ -14,6 +16,8 @@ import org.junit.Test;
 import java.net.URI;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectPageCapabilityBean.newPageBean;
+import static org.hamcrest.Matchers.both;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -71,6 +75,15 @@ public class TestAdminPage extends ConfluenceWebDriverTestBase
 
         RemotePluginTestPage addonContentsPage = viewProjectPage.clickRemotePluginLink();
         assertEquals("Hello world", addonContentsPage.getValueBySelector("#hello-world-message"));
+    }
+
+    @Test
+    public void nonAdminCanNotSeePage()
+    {
+        loginAs(TestConstants.BARNEY_USERNAME, TestConstants.BARNEY_USERNAME);
+        InsufficientPermissionsPage page = product.visit(InsufficientPermissionsPage.class, "my-plugin", "pg");
+        assertThat(page.getErrorMessage(),
+                both(containsString("You do not have the correct permissions")).and(containsString("My Admin Page")));
     }
 
 }
