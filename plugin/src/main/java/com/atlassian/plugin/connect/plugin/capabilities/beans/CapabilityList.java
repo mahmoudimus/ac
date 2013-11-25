@@ -48,6 +48,9 @@ public class CapabilityList extends BaseCapabilityBean
     @CapabilityModuleProvider(GeneralPageModuleProvider.class)
     private List<ConnectPageCapabilityBean> generalPages;
 
+    @CapabilityModuleProvider(AdminPageModuleProvider.class)
+    private List<ConnectPageCapabilityBean> adminPages;
+
     @CapabilityModuleProvider(WebHookModuleProvider.class)
     private List<WebHookCapabilityBean> webhooks;
 
@@ -61,6 +64,7 @@ public class CapabilityList extends BaseCapabilityBean
         this.webItems = newArrayList();
         this.webPanels = newArrayList();
         this.generalPages = newArrayList();
+        this.adminPages = newArrayList();
         this.jiraWorkflowPostFunctions = newArrayList();
         this.webhooks = newArrayList();
     }
@@ -96,6 +100,14 @@ public class CapabilityList extends BaseCapabilityBean
         if (null == webPanels)
         {
             this.webPanels = newArrayList();
+        }
+        if (null == generalPages)
+        {
+            this.generalPages = newArrayList();
+        }
+        if (null == adminPages)
+        {
+            this.adminPages = newArrayList();
         }
         if (null == jiraWorkflowPostFunctions)
         {
@@ -151,8 +163,13 @@ public class CapabilityList extends BaseCapabilityBean
     {
         return generalPages;
     }
-    
-    public List<WebHookCapabilityBean> getWebhooks() 
+
+    public List<ConnectPageCapabilityBean> getAdminPages()
+    {
+        return adminPages;
+    }
+
+    public List<WebHookCapabilityBean> getWebhooks()
     {
         return webhooks;
     }

@@ -11,17 +11,17 @@ import org.springframework.stereotype.Component;
 import static com.atlassian.plugin.connect.plugin.capabilities.provider.AbstractConnectPageModuleProvider.ConnectPageIFrameParams.withGeneralPage;
 
 @Component
-public class GeneralPageModuleProvider extends AbstractConnectPageModuleProvider
+public class AdminPageModuleProvider extends AbstractConnectPageModuleProvider
 {
-    private static final String GENERAL_PAGE_DECORATOR = "atl.general";
+    private static final String ADMIN_PAGE_DECORATOR = "atl.admin";
 
     @Autowired
-    public GeneralPageModuleProvider(WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
-                                     IFramePageServletDescriptorFactory servletDescriptorFactory,
-                                     ProductAccessor productAccessor)
+    public AdminPageModuleProvider(WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
+            IFramePageServletDescriptorFactory servletDescriptorFactory,
+            ProductAccessor productAccessor)
     {
-        super(webItemModuleDescriptorFactory, servletDescriptorFactory, GENERAL_PAGE_DECORATOR,
-                productAccessor.getPreferredGeneralSectionKey(), productAccessor.getPreferredGeneralWeight(), "",
+        super(webItemModuleDescriptorFactory, servletDescriptorFactory, ADMIN_PAGE_DECORATOR,
+                productAccessor.getPreferredAdminSectionKey(), productAccessor.getPreferredAdminWeight(), "",
                 ImmutableMap.<String, String>of(), new AlwaysDisplayCondition(), withGeneralPage());
     }
 }
