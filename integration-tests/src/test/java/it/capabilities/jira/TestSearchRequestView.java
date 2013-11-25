@@ -113,6 +113,7 @@ public class TestSearchRequestView extends JiraWebDriverTestBase
     private IssueNavigatorViewsMenu.ViewEntry findSearchRequestViewEntry()
     {
         JiraAdvancedSearchPage searchPage = product.visit(JiraAdvancedSearchPage.class);
+        searchPage.enterQuery("project = " + project.getKey()).submit();
         IssueNavigatorViewsMenu viewsMenu = searchPage.viewsMenu().open();
         return viewsMenu.entryWithLabel(LABEL);
     }

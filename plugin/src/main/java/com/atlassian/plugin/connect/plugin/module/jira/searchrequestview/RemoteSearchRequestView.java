@@ -139,7 +139,10 @@ public class RemoteSearchRequestView implements SearchRequestView
         }
 
         String issueKeysValue = issueKeys.toString();
-        issueKeysValue = issueKeysValue.substring(0, issueKeysValue.length() - 1);
+        if (!issueKeysValue.isEmpty())
+        {
+            issueKeysValue = issueKeysValue.substring(0, issueKeysValue.length() - 1);
+        }
         return issueKeysValue;
     }
 
