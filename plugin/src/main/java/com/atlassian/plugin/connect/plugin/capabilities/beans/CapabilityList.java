@@ -25,19 +25,19 @@ public class CapabilityList extends BaseCapabilityBean
     private List<WebItemCapabilityBean> webItems;
 
     @CapabilityModuleProvider(value = ConnectTabPanelModuleProvider.class, products = {ProductFilter.JIRA})
-    private List<ConnectComponentTabPanelCapabilityBean> jiraComponentTabPanels;
+    private List<ConnectTabPanelCapabilityBean> jiraComponentTabPanels;
 
     @CapabilityModuleProvider(value = ConnectTabPanelModuleProvider.class, products = {ProductFilter.JIRA})
-    private List<ConnectIssueTabPanelCapabilityBean> jiraIssueTabPanels;
+    private List<ConnectTabPanelCapabilityBean> jiraIssueTabPanels;
 
     @CapabilityModuleProvider(value = ConnectProjectAdminTabPanelModuleProvider.class, products = {ProductFilter.JIRA})
     private List<ConnectProjectAdminTabPanelCapabilityBean> jiraProjectAdminTabPanels;
 
     @CapabilityModuleProvider(value = ConnectTabPanelModuleProvider.class, products = {ProductFilter.JIRA})
-    private List<ConnectProjectTabPanelCapabilityBean> jiraProjectTabPanels;
+    private List<ConnectTabPanelCapabilityBean> jiraProjectTabPanels;
 
     @CapabilityModuleProvider(value = ConnectTabPanelModuleProvider.class, products = {ProductFilter.JIRA})
-    private List<ConnectVersionTabPanelCapabilityBean> jiraVersionTabPanels;
+    private List<ConnectTabPanelCapabilityBean> jiraVersionTabPanels;
 
     @CapabilityModuleProvider(value = WorkflowPostFunctionModuleProvider.class, products = {ProductFilter.JIRA})
     private List<WorkflowPostFunctionCapabilityBean> jiraWorkflowPostFunctions;
@@ -46,7 +46,7 @@ public class CapabilityList extends BaseCapabilityBean
     private List<WebPanelCapabilityBean> webPanels;
 
     @CapabilityModuleProvider(GeneralPageModuleProvider.class)
-    private List<ConnectGeneralPageCapabilityBean> generalPages;
+    private List<ConnectPageCapabilityBean> generalPages;
 
     @CapabilityModuleProvider(WebHookModuleProvider.class)
     private List<WebHookCapabilityBean> webhooks;
@@ -112,12 +112,12 @@ public class CapabilityList extends BaseCapabilityBean
         return webItems;
     }
 
-    public List<ConnectComponentTabPanelCapabilityBean> getJiraComponentTabPanels()
+    public List<ConnectTabPanelCapabilityBean> getJiraComponentTabPanels()
     {
         return jiraComponentTabPanels;
     }
 
-    public List<ConnectIssueTabPanelCapabilityBean> getJiraIssueTabPanels()
+    public List<ConnectTabPanelCapabilityBean> getJiraIssueTabPanels()
     {
         return jiraIssueTabPanels;
     }
@@ -127,12 +127,12 @@ public class CapabilityList extends BaseCapabilityBean
         return jiraProjectAdminTabPanels;
     }
 
-    public List<ConnectProjectTabPanelCapabilityBean> getJiraProjectTabPanels()
+    public List<ConnectTabPanelCapabilityBean> getJiraProjectTabPanels()
     {
         return jiraProjectTabPanels;
     }
 
-    public List<ConnectVersionTabPanelCapabilityBean> getJiraVersionTabPanels()
+    public List<ConnectTabPanelCapabilityBean> getJiraVersionTabPanels()
     {
         return jiraVersionTabPanels;
     }
@@ -147,7 +147,7 @@ public class CapabilityList extends BaseCapabilityBean
         return jiraWorkflowPostFunctions;
     }
 
-    public List<ConnectGeneralPageCapabilityBean> getGeneralPages()
+    public List<ConnectPageCapabilityBean> getGeneralPages()
     {
         return generalPages;
     }
