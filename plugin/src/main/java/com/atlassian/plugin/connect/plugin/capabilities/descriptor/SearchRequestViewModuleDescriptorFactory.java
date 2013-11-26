@@ -76,8 +76,12 @@ public class SearchRequestViewModuleDescriptorFactory implements ConnectModuleDe
         element.setAttribute("name", bean.getDisplayName());
         element.setAttribute("class", RemoteSearchRequestView.class.getName());
         element.setAttribute("state", "enabled");
+
+        // The extension and content type refer to the HTML fragment that will be rendered
+        // by {@link RemoteSearchRequestView}, not to the format that the add-on generates.
         element.setAttribute("fileExtension", "html");
         element.setAttribute("contentType", "text/html");
+
         element.addElement("order")
                 .addText(Integer.toString(bean.getWeight()));
         element.addElement("description")
