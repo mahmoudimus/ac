@@ -115,7 +115,6 @@ public final class RemoteSearchRequestViewModuleDescriptor extends AbstractModul
                     return (T) new RemoteSearchRequestView(applicationProperties,
                         searchRequestViewBodyWriterUtil,
                         templateRenderer,
-                        getPluginKey(),
                         url,
                         title,
                         remotablePluginAccessorFactory.get(getPluginKey()));

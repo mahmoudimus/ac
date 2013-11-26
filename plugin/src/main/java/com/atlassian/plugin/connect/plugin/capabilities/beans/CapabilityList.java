@@ -54,6 +54,9 @@ public class CapabilityList extends BaseCapabilityBean
     @CapabilityModuleProvider(WebHookModuleProvider.class)
     private List<WebHookCapabilityBean> webhooks;
 
+    @CapabilityModuleProvider(value = SearchRequestViewModuleProvider.class, products = {ProductFilter.JIRA})
+    private List<SearchRequestViewCapabilityBean> jiraSearchRequestViews;
+
     public CapabilityList()
     {
         this.jiraComponentTabPanels = newArrayList();
@@ -67,6 +70,7 @@ public class CapabilityList extends BaseCapabilityBean
         this.adminPages = newArrayList();
         this.jiraWorkflowPostFunctions = newArrayList();
         this.webhooks = newArrayList();
+        this.jiraSearchRequestViews = newArrayList();
     }
 
     public CapabilityList(BaseCapabilityBeanBuilder builder)
@@ -116,6 +120,10 @@ public class CapabilityList extends BaseCapabilityBean
         if (null == webhooks)
         {
             this.webhooks = newArrayList();
+        }
+        if (null == jiraSearchRequestViews)
+        {
+            this.jiraSearchRequestViews = newArrayList();
         }
     }
 
@@ -172,5 +180,10 @@ public class CapabilityList extends BaseCapabilityBean
     public List<WebHookCapabilityBean> getWebhooks()
     {
         return webhooks;
+    }
+
+    public List<SearchRequestViewCapabilityBean> getJiraSearchRequestViews()
+    {
+        return jiraSearchRequestViews;
     }
 }

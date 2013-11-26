@@ -104,4 +104,10 @@ public class ConnectAppServlets
     {
         return new HttpContextServlet(servlet);
     }
+
+    public static HttpServlet echoQueryParametersServlet()
+    {
+        return wrapContextAwareServlet(new EchoQueryParametersServlet());
+    }
+
 }
