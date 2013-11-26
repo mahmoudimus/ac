@@ -39,6 +39,7 @@ public class ConnectAddonBean extends BaseCapabilityBean
     private LifecycleBean lifecycle;
     private String baseUrl;
     private AuthenticationBean authentication;
+    private Boolean enableLicensing;
     
     private CapabilityList capabilities;
     private Set<String> scopes;
@@ -56,6 +57,7 @@ public class ConnectAddonBean extends BaseCapabilityBean
         this.scopes = new HashSet<String>();
         this.baseUrl = "";
         this.authentication = newAuthenticationBean().build();
+        this.enableLicensing = null;
     }
 
     public ConnectAddonBean(ConnectAddonBeanBuilder builder)
@@ -188,6 +190,11 @@ public class ConnectAddonBean extends BaseCapabilityBean
     public AuthenticationBean getAuthentication()
     {
         return authentication;
+    }
+
+    public Boolean getEnableLicensing()
+    {
+        return enableLicensing;
     }
 
     public static ConnectAddonBeanBuilder newConnectAddonBean()

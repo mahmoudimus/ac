@@ -172,6 +172,11 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons"], function ($, XdmRpc
             dialog.close();
           });
         },
+        hideInlineDialog: function() {
+            _AP.require(["inline-dialog"], function (inlineDialog) {
+                inlineDialog.hideInlineDialog($content, $nexus);
+            });
+        },
         request: function (args, success, error) {
           // add the context path to the request url
           var url = options.cp + args.url;

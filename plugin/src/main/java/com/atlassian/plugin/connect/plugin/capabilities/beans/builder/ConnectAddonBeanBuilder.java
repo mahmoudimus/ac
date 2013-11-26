@@ -33,6 +33,7 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extend
     private LifecycleBean lifecycle;
     private String baseUrl;
     private AuthenticationBean authentication;
+    private Boolean enableLicensing;
 
     public ConnectAddonBeanBuilder()
     {
@@ -51,6 +52,7 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extend
         this.baseUrl = defaultBean.getBaseUrl();
         this.authentication = defaultBean.getAuthentication();
         this.scopes = defaultBean.getScopes();
+        this.enableLicensing = defaultBean.getEnableLicensing();
     }
 
     public T withKey(String key)
@@ -141,6 +143,12 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extend
     public T withAuthentication(AuthenticationBean authentication)
     {
         this.authentication = authentication;
+        return (T) this;
+    }
+
+    public T withLicensing(Boolean enable)
+    {
+        this.enableLicensing = enable;
         return (T) this;
     }
     
