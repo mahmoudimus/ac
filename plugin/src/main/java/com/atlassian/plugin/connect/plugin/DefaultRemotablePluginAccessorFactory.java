@@ -29,6 +29,8 @@ import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -47,6 +49,8 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
     private final JwtService jwtService;
 
     private final Map<String, RemotablePluginAccessor> accessors;
+
+    private static final Logger log = LoggerFactory.getLogger(DefaultRemotablePluginAccessorFactory.class);
 
     @Autowired
     public DefaultRemotablePluginAccessorFactory(ApplicationLinkAccessor applicationLinkAccessor,
@@ -203,7 +207,18 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
 
     private boolean signsWithJwt(String pluginKey)
     {
-        Object authTypeProperty = applicationLinkAccessor.getApplicationLink(pluginKey).getProperty(AuthenticationMethod.PROPERTY_NAME);
+        ApplicationLink appLink = applicationLinkAccessor.getApplicationLink(pluginKey);
+        Object authTypeProperty = null;
+
+        if (null == appLink)
+        {
+            log.error("Found no app link by plugin key '{}'!", pluginKey);
+        }
+        else
+        {
+            authTypeProperty = appLink.getProperty(AuthenticationMethod.PROPERTY_NAME);
+        }
+
         // for backwards compatibility default to "not JWT" if the property does not exist
         return null != authTypeProperty && AuthenticationMethod.JWT.equals(AuthenticationMethod.forName(authTypeProperty.toString()));
     }
