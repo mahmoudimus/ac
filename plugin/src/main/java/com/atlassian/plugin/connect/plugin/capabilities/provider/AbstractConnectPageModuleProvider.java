@@ -8,7 +8,6 @@ import com.atlassian.plugin.connect.plugin.capabilities.descriptor.PageToWebItem
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.module.IFrameParamsImpl;
 import com.atlassian.plugin.connect.spi.module.IFrameParams;
-import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.web.Condition;
 import com.google.common.collect.ImmutableList;
 import org.osgi.framework.BundleContext;
@@ -26,6 +25,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public abstract class AbstractConnectPageModuleProvider implements ConnectModuleProvider<ConnectPageCapabilityBean>
 {
     private final IFrameParams iFrameParams;
+    private final String defaultSection;
+    private final int defaultWeight;
 
     public static class ConnectPageIFrameParams extends IFrameParamsImpl
     {
@@ -47,7 +48,6 @@ public abstract class AbstractConnectPageModuleProvider implements ConnectModule
 
     private final WebItemModuleDescriptorFactory webItemModuleDescriptorFactory;
     private final IFramePageServletDescriptorFactory servletDescriptorFactory;
-    private final ProductAccessor productAccessor;
     private final String decorator;
     private final String templateSuffix;
     private final Map<String, String> metaTagContents;
@@ -55,14 +55,14 @@ public abstract class AbstractConnectPageModuleProvider implements ConnectModule
 
     public AbstractConnectPageModuleProvider(WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
                                              IFramePageServletDescriptorFactory servletDescriptorFactory,
-                                             ProductAccessor productAccessor,
-                                             String decorator, String templateSuffix,
-                                             Map<String, String> metaTagContents, Condition condition,
-                                             @Nullable IFrameParams iFrameParams)
+                                             String decorator, String defaultSection, int defaultWeight,
+                                             String templateSuffix, Map<String, String> metaTagContents,
+                                             Condition condition, @Nullable IFrameParams iFrameParams)
     {
+        this.defaultSection = defaultSection;
+        this.defaultWeight = defaultWeight;
         this.webItemModuleDescriptorFactory = checkNotNull(webItemModuleDescriptorFactory);
         this.servletDescriptorFactory = checkNotNull(servletDescriptorFactory);
-        this.productAccessor = checkNotNull(productAccessor);
         this.decorator = decorator;
         this.templateSuffix = templateSuffix;
         this.metaTagContents = metaTagContents;
@@ -79,7 +79,7 @@ public abstract class AbstractConnectPageModuleProvider implements ConnectModule
         for (ConnectPageCapabilityBean bean : beans)
         {
             PageToWebItemAndServletConverter converter = new PageToWebItemAndServletConverter(bean, plugin.getKey(),
-                    productAccessor, decorator, templateSuffix, metaTagContents, condition, iFrameParams);
+                    defaultWeight, defaultSection, decorator, templateSuffix, metaTagContents, condition, iFrameParams);
             builder.add(webItemModuleDescriptorFactory.createModuleDescriptor(plugin, addonBundleContext, converter.getWebItemBean()));
             builder.add(servletDescriptorFactory.createIFrameServletDescriptor(plugin, converter.getServletBean()));
         }

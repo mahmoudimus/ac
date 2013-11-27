@@ -20,8 +20,8 @@ public class GeneralPageModuleProvider extends AbstractConnectPageModuleProvider
                                      IFramePageServletDescriptorFactory servletDescriptorFactory,
                                      ProductAccessor productAccessor)
     {
-        super(webItemModuleDescriptorFactory, servletDescriptorFactory, productAccessor,
-                GENERAL_PAGE_DECORATOR, "", ImmutableMap.<String, String>of(), new AlwaysDisplayCondition(),
-                withGeneralPage());
+        super(webItemModuleDescriptorFactory, servletDescriptorFactory, GENERAL_PAGE_DECORATOR,
+                productAccessor.getPreferredGeneralSectionKey(), productAccessor.getPreferredGeneralWeight(), "",
+                ImmutableMap.<String, String>of(), new AlwaysDisplayCondition(), withGeneralPage());
     }
 }

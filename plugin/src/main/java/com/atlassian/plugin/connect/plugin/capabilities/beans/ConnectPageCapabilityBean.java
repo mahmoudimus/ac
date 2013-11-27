@@ -16,6 +16,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean;
  * The page module takes care of integrating the add-on content into the application for you. The add-on content
  * automatically gets the page styles and decorators from the host application.
  *
+ * @schemaTitle Page
  * @since 1.0
  */
 public class ConnectPageCapabilityBean extends BeanWithKeyAndParamsAndConditions

@@ -1,0 +1,88 @@
+<% var auiVersion = "5.3-m3" %>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=EDGE">
+    <title>
+        <%= title %>
+    </title>
+    <link rel="icon" type="image/png" href="../docs/img/favicon.png" />
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.19.0/codemirror.min.css" media="all">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.19.0/theme/neat.min.css" media="all">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/aui/<%= auiVersion %>/css/aui.css" media="all">
+    <!--[if lt IE 9]><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/aui/<%= auiVersion %>/css/aui-ie.css" media="all"><![endif]-->
+    <!--[if IE 9]><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/aui/<%= auiVersion %>/css/aui-ie9.css" media="all"><![endif]-->
+    <link rel="stylesheet" href="/assets/css/styles.css" media="all">
+    <script src="//code.jquery.com/jquery-1.8.3.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/aui/<%= auiVersion %>/js/aui.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.19.0/codemirror.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.19.0/mode/javascript/javascript.min.js"></script>
+    <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/aui/<%= auiVersion %>/js/aui-ie.js"></script><![endif]-->
+</head>
+
+<body id="ac" class="aui-layout aui-theme-default aui-page-fixed">
+    <div id="page">
+        <header id="header" role="banner">
+            <nav class="aui-header aui-dropdown2-trigger-group" role="navigation">
+                <div class="aui-header-inner">
+                    <div class="aui-header-primary">
+                        <h1 id="logo" class="aui-header-logo aui-header-logo-ac">
+                            <a href="../index.html">
+                                <span class="aui-header-logo-device">Atlassian Connect</span>
+                            </a>
+                        </h1>
+                    </div>
+                </div>
+                <!-- .aui-header-inner-->
+            </nav>
+            <!-- .aui-header -->
+        </header>
+        <!-- #header -->
+        <section id="content" role="main">
+            <header class="aui-page-header">
+                <div class="aui-page-header-inner">
+                    <div class="aui-page-header-main">
+                        <h1>
+                            <%= subtitle %>
+                        </h1>
+                    </div>
+                    <!-- .aui-page-header-main -->
+                </div>
+                <!-- .aui-page-header-inner -->
+            </header>
+            <!-- .aui-page-header -->
+
+            <div class="aui-page-panel">
+                <div class="aui-page-panel-inner">
+                    <%- partial('_partials/_sidebar.ejs') %>
+                    <section class="aui-page-panel-content ac-page">
+                        <% if (/^jira$|^confluence$/.test(current.path[1])) { %>
+                            <%- partial('/capabilities/_child_layout.jade',{yield: yield, product: current.path[1]}) %>
+                        <% } else { %>
+                            <%- yield %>
+                        <% } %>
+                    </section>
+                </div>
+            </div>
+            <!-- .aui-page-panel -->
+        </section>
+        <!-- #content -->
+        <footer id="footer" role="contentinfo">
+            <section class="footer-body">
+                <ul id="aui-footer-list">
+                    <li>Copyright &copy; 2009-2013 Atlassian</li>
+                </ul>
+                <div id="footer-logo">
+                    <a href="http://www.atlassian.com/">Atlassian</a>
+                </div>
+            </section>
+        </footer>
+        <!-- #footer -->
+    </div>
+    <!-- #page -->
+</body>
+
+</html>

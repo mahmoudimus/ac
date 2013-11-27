@@ -48,8 +48,14 @@ public class CapabilityList extends BaseCapabilityBean
     @CapabilityModuleProvider(GeneralPageModuleProvider.class)
     private List<ConnectPageCapabilityBean> generalPages;
 
+    @CapabilityModuleProvider(AdminPageModuleProvider.class)
+    private List<ConnectPageCapabilityBean> adminPages;
+
     @CapabilityModuleProvider(WebHookModuleProvider.class)
     private List<WebHookCapabilityBean> webhooks;
+
+    @CapabilityModuleProvider(value = SearchRequestViewModuleProvider.class, products = {ProductFilter.JIRA})
+    private List<SearchRequestViewCapabilityBean> jiraSearchRequestViews;
 
     public CapabilityList()
     {
@@ -61,8 +67,10 @@ public class CapabilityList extends BaseCapabilityBean
         this.webItems = newArrayList();
         this.webPanels = newArrayList();
         this.generalPages = newArrayList();
+        this.adminPages = newArrayList();
         this.jiraWorkflowPostFunctions = newArrayList();
         this.webhooks = newArrayList();
+        this.jiraSearchRequestViews = newArrayList();
     }
 
     public CapabilityList(BaseCapabilityBeanBuilder builder)
@@ -97,6 +105,14 @@ public class CapabilityList extends BaseCapabilityBean
         {
             this.webPanels = newArrayList();
         }
+        if (null == generalPages)
+        {
+            this.generalPages = newArrayList();
+        }
+        if (null == adminPages)
+        {
+            this.adminPages = newArrayList();
+        }
         if (null == jiraWorkflowPostFunctions)
         {
             this.jiraWorkflowPostFunctions = newArrayList();
@@ -104,6 +120,10 @@ public class CapabilityList extends BaseCapabilityBean
         if (null == webhooks)
         {
             this.webhooks = newArrayList();
+        }
+        if (null == jiraSearchRequestViews)
+        {
+            this.jiraSearchRequestViews = newArrayList();
         }
     }
 
@@ -151,9 +171,19 @@ public class CapabilityList extends BaseCapabilityBean
     {
         return generalPages;
     }
-    
-    public List<WebHookCapabilityBean> getWebhooks() 
+
+    public List<ConnectPageCapabilityBean> getAdminPages()
+    {
+        return adminPages;
+    }
+
+    public List<WebHookCapabilityBean> getWebhooks()
     {
         return webhooks;
+    }
+
+    public List<SearchRequestViewCapabilityBean> getJiraSearchRequestViews()
+    {
+        return jiraSearchRequestViews;
     }
 }

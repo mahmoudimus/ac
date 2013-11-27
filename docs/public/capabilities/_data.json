@@ -1,0 +1,11 @@
+{
+    "index.html": {
+        "title": "Overview"
+    },
+    "lifecycle.html": {
+        "title": "Lifecycle"
+    },
+    "authentication.html": {
+        "title": "Authentication"
+    }
+}
