@@ -7,6 +7,7 @@ import com.google.common.base.Strings;
 
 /**
  * Allows an addon to register callbacks for plugin lifecycle events.
+ * @schemaTitle Lifecycle
  */
 public class LifecycleBean extends BaseCapabilityBean
 {
