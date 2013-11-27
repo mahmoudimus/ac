@@ -54,8 +54,19 @@
                     <% var module = schemas.confluence.properties.capabilities.properties[key]; %>
                     <% var selected = key === current.source && current.path[1] === 'confluence' ? "class=aui-nav-selected" : ""; %>
                     <li <%= selected %>>
-                        <a href="/capabilities/confluence/<%= key %>.html"><%= typeof module.items.title !== 'undefined'  ? module.items.title : key %></a>
+                        <%
+                            var title = "";
+                            if(typeof module.title !== 'undefined') {
+                                title = module.title;
+                            } else if(typeof module.items.title !== 'undefined') {
+                                title = module.items.title;
+                            } else {
+                                title = key;
+                            }
+                        %>
+                        <a href="/capabilities/confluence/<%= key %>.html"><%= title %></a>
                     </li>
+
                 <% } %>
             </ul>
 

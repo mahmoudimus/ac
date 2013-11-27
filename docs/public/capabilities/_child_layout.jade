@@ -1,6 +1,6 @@
 - var capability = schemas[product].properties.capabilities.properties[current.source]
 h1
-    = capability.items.title
+    = capability.title || capability.items.title
 
 != yield
 
