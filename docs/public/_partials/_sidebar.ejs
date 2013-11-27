@@ -31,7 +31,17 @@
                     <% var module = schemas.jira.properties.capabilities.properties[key]; %>
                     <% var selected = key === current.source && current.path[1] === 'jira' ? "class=aui-nav-selected" : ""; %>
                     <li <%= selected %>>
-                        <a href="/capabilities/jira/<%= key %>.html"><%= typeof module.items.title !== 'undefined'  ? module.items.title : key %></a>
+                        <%
+                            var title = "";
+                            if(typeof module.title !== 'undefined') {
+                                title = module.title;
+                            } else if(typeof module.items.title !== 'undefined') {
+                                title = module.items.title;
+                            } else {
+                                title = key;
+                            }
+                        %>
+                        <a href="/capabilities/jira/<%= key %>.html"><%= title %></a>
                     </li>
                 <% } %>
             </ul>
