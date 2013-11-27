@@ -43,4 +43,16 @@ public class LicenseRetriever
         }).getOrElse(LicenseStatus.NONE);
     }
 
+    public String getServiceEntitlementNumber(String pluginKey)
+    {
+        return getLicense(pluginKey).map(new Function<PluginLicense, String>()
+        {
+            @Override
+            public String apply(final PluginLicense input)
+            {
+                return input.getSupportEntitlementNumber().get();
+            }
+        }).getOrElse((String) null);
+    }
+
 }

@@ -22,6 +22,8 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonEventD
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConnectAddonEventDataBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.gson.CapabilitiesGsonFactory;
 import com.atlassian.plugin.connect.plugin.installer.ConnectDescriptorRegistry;
+import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
+import com.atlassian.plugin.connect.plugin.license.LicenseStatus;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.spi.event.ConnectAddonDisabledEvent;
 import com.atlassian.plugin.connect.spi.event.ConnectAddonEnabledEvent;
@@ -34,14 +36,17 @@ import com.atlassian.plugin.event.events.PluginDisabledEvent;
 import com.atlassian.plugin.event.events.PluginEnabledEvent;
 import com.atlassian.plugin.event.events.PluginUninstalledEvent;
 import com.atlassian.sal.api.ApplicationProperties;
+import com.atlassian.sal.api.UrlMode;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
+import com.atlassian.upm.api.license.entity.PluginLicense;
 import com.atlassian.upm.api.util.Option;
 import com.atlassian.upm.spi.PluginInstallException;
 import com.atlassian.uri.UriBuilder;
 import com.atlassian.webhooks.spi.plugin.RequestSigner;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Function;
 import com.google.common.base.Strings;
 
 import org.osgi.framework.BundleContext;
@@ -66,8 +71,6 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
     public static final String USER_KEY = "user_key";
     private final EventPublisher eventPublisher;
     private final PluginEventManager pluginEventManager;
-    private final PluginAccessor pluginAccessor;
-    private final RemotablePluginAccessorFactory pluginAccessorFactory;
     private final UserManager userManager;
     private final HttpClient httpClient;
     private final RequestSigner requestSigner;
@@ -78,14 +81,26 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
     private final JsonConnectAddOnIdentifierService connectIdentifier;
     private final ConnectDescriptorRegistry descriptorRegistry;
     private final BeanToModuleRegistrar beanToModuleRegistrar;
+    private final LicenseRetriever licenseRetriever;
 
     @Inject
-    public ConnectEventHandler(EventPublisher eventPublisher, PluginEventManager pluginEventManager, PluginAccessor pluginAccessor, RemotablePluginAccessorFactory pluginAccessorFactory, UserManager userManager, HttpClient httpClient, RequestSigner requestSigner, ConsumerService consumerService, ApplicationProperties applicationProperties, ProductAccessor productAccessor, BundleContext bundleContext, JsonConnectAddOnIdentifierService connectIdentifier, ConnectDescriptorRegistry descriptorRegistry, BeanToModuleRegistrar beanToModuleRegistrar)
+    public ConnectEventHandler(EventPublisher eventPublisher,
+                               PluginEventManager pluginEventManager,
+                               UserManager userManager,
+                               HttpClient httpClient,
+                               RequestSigner requestSigner,
+                               ConsumerService consumerService,
+                               ApplicationProperties applicationProperties,
+                               ProductAccessor productAccessor,
+                               BundleContext bundleContext,
+                               JsonConnectAddOnIdentifierService connectIdentifier,
+                               ConnectDescriptorRegistry descriptorRegistry,
+                               BeanToModuleRegistrar beanToModuleRegistrar,
+                               LicenseRetriever licenseRetriever)
     {
         this.eventPublisher = eventPublisher;
         this.pluginEventManager = pluginEventManager;
-        this.pluginAccessor = pluginAccessor;
-        this.pluginAccessorFactory = pluginAccessorFactory;
+        this.licenseRetriever = licenseRetriever;
         this.userManager = userManager;
         this.httpClient = httpClient;
         this.requestSigner = requestSigner;
@@ -230,16 +245,19 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
         final Consumer consumer = consumerService.getConsumer();
 
         ConnectAddonEventDataBuilder dataBuilder = newConnectAddonEventData();
-        dataBuilder.withBaseUrl(nullToEmpty(applicationProperties.getBaseUrl()))
+        String baseUrl = applicationProperties.getBaseUrl(UrlMode.CANONICAL);
+
+        dataBuilder.withBaseUrl(nullToEmpty(baseUrl))
                    .withPluginKey(pluginKey)
                    .withClientKey(nullToEmpty(consumer.getKey()))
                    .withPublicKey(nullToEmpty(RSAKeys.toPemEncoding(consumer.getPublicKey())))
                    .withPluginsVersion(nullToEmpty(getConnectPluginVersion()))
                    .withServerVersion(nullToEmpty(applicationProperties.getBuildNumber()))
+                   .withServiceEntitlementNumber(nullToEmpty(licenseRetriever.getServiceEntitlementNumber(pluginKey)))
                    .withProductType(nullToEmpty(productAccessor.getKey()))
                    .withDescription(nullToEmpty(consumer.getDescription()))
                    .withEventType(eventType)
-                   .withLink("oauth", applicationProperties.getBaseUrl() + "/rest/atlassian-connect/latest/oauth");
+                   .withLink("oauth", baseUrl + "/rest/atlassian-connect/latest/oauth");
 
         UserProfile user = userManager.getRemoteUser();
         if (null != user)
