@@ -1,0 +1,81 @@
+<div class="aui-page-panel-nav">
+    <nav class="aui-navgroup aui-navgroup-vertical">
+        <div class="aui-navgroup-inner">
+            <ul class="aui-nav">
+                <li class=" aui-nav-selected">
+                    <a href="#">Overview</a>
+                </li>
+                <% for (var page in public.guides._data) { %>
+                <li>
+                    <a href="/guides/<%= page %>"><%= public.guides._data[page].title %></a>
+                </li>
+                <% } %>
+            </ul>
+
+            <div class="aui-nav-heading">
+                <strong>Add-on Descriptor</strong>
+            </div>
+            <ul class="aui-nav">
+                <% for (var page in public.capabilities._data) { %>
+                <li>
+                    <a href="/capabilities/<%= page %>"><%= public.capabilities._data[page].title %></a>
+                </li>
+                <% } %>
+            </ul>
+
+            <div class="aui-nav-heading">
+                <strong>JIRA Modules</strong>
+            </div>
+            <ul class="aui-nav">
+                <% for (var key in schemas.jira.properties.capabilities.properties) { %>
+                    <% var module = schemas.jira.properties.capabilities.properties[key]; %>
+                    <% var selected = key === current.source && current.path[1] === 'jira' ? "class=aui-nav-selected" : ""; %>
+                    <li <%= selected %>>
+                        <a href="/capabilities/jira/<%= key %>.html"><%= typeof module.items.title !== 'undefined'  ? module.items.title : key %></a>
+                    </li>
+                <% } %>
+            </ul>
+
+            <div class="aui-nav-heading">
+                <strong>Confluence Modules</strong>
+            </div>
+            <ul class="aui-nav">
+                <% for (var key in schemas.confluence.properties.capabilities.properties) { %>
+                    <% var module = schemas.confluence.properties.capabilities.properties[key]; %>
+                    <% var selected = key === current.source && current.path[1] === 'confluence' ? "class=aui-nav-selected" : ""; %>
+                    <li <%= selected %>>
+                        <a href="/capabilities/confluence/<%= key %>.html"><%= typeof module.items.title !== 'undefined'  ? module.items.title : key %></a>
+                    </li>
+                <% } %>
+            </ul>
+
+            <div class="aui-nav-heading">
+                <strong>REST API Browser</strong>
+            </div>
+            <ul class="aui-nav">
+                <li>
+                    <a href="#">JIRA</a>
+                </li>
+                <li>
+                    <a href="#">Confluence</a>
+                </li>
+            </ul>
+
+            <div class="aui-nav-heading">
+                <strong>Help and Support</strong>
+            </div>
+            <ul class="aui-nav">
+                <li>
+                    <a href="#">FAQ</a>
+                </li>
+                <li>
+                    <a href="#">Contact Us</a>
+                </li>
+                <li>
+                    <a href="#">Atlassian Answers</a>
+                </li>
+            </ul>
+
+        </div>
+    </nav>
+</div>
