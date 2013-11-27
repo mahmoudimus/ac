@@ -1,5 +1,8 @@
 {
-    "index.html": {
+    "introduction.html": {
+        "title": "Introduction"
+    },
+    "getting-started.html": {
         "title": "Getting Started"
     }
 }
