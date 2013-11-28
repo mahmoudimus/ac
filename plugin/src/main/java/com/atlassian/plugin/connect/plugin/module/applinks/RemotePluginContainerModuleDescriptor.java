@@ -14,13 +14,13 @@ import com.atlassian.applinks.spi.link.MutatingApplicationLinkService;
 import com.atlassian.applinks.spi.util.TypeAccessor;
 import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.ServiceProvider;
-import com.atlassian.oauth.serviceprovider.ServiceProviderConsumerStore;
 import com.atlassian.oauth.util.RSAKeys;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginInformation;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.plugin.OAuthLinkManager;
 import com.atlassian.plugin.connect.plugin.PermissionManager;
+import com.atlassian.plugin.connect.plugin.applinks.DefaultConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.service.LegacyAddOnIdentifierService;
 import com.atlassian.plugin.connect.plugin.util.BundleUtil;
 import com.atlassian.plugin.connect.plugin.util.OsgiServiceUtils;
@@ -51,8 +51,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @CannotDisable
 public final class RemotePluginContainerModuleDescriptor extends AbstractModuleDescriptor<Void>
 {
-    public static final String PLUGIN_KEY_PROPERTY = "plugin-key";
-
     private final MutatingApplicationLinkService applicationLinkService;
     private final OAuthLinkManager oAuthLinkManager;
     private final PermissionManager permissionManager;
@@ -158,7 +156,7 @@ public final class RemotePluginContainerModuleDescriptor extends AbstractModuleD
 
         if (link != null)
         {
-            if (getPluginKey().equals(link.getProperty(PLUGIN_KEY_PROPERTY)))
+            if (getPluginKey().equals(link.getProperty(DefaultConnectApplinkManager.PLUGIN_KEY_PROPERTY)))
             {
                 log.info("Application link for remote plugin container '{}' already exists", getPluginKey());
             }
@@ -171,7 +169,7 @@ public final class RemotePluginContainerModuleDescriptor extends AbstractModuleD
             else
             {
                 throw new PluginParseException("Application link already exists for id '" + expectedApplicationId + "' but it isn't the target " +
-                        " plugin '" + getPluginKey() + "': unexpected plugin key is: " + link.getProperty(PLUGIN_KEY_PROPERTY));
+                        " plugin '" + getPluginKey() + "': unexpected plugin key is: " + link.getProperty(DefaultConnectApplinkManager.PLUGIN_KEY_PROPERTY));
             }
         }
         else
@@ -179,7 +177,7 @@ public final class RemotePluginContainerModuleDescriptor extends AbstractModuleD
             // try to find link with old display url
             for (ApplicationLink otherLink : applicationLinkService.getApplicationLinks(RemotePluginContainerApplicationType.class))
             {
-                if (getPluginKey().equals(otherLink.getProperty(PLUGIN_KEY_PROPERTY)))
+                if (getPluginKey().equals(otherLink.getProperty(DefaultConnectApplinkManager.PLUGIN_KEY_PROPERTY)))
                 {
                     log.debug("Old application link for this plugin '{}' found with different display url '{}', removing",
                             getPluginKey(), displayUrl);
@@ -189,7 +187,7 @@ public final class RemotePluginContainerModuleDescriptor extends AbstractModuleD
 
             log.info("Creating an application link for the remote plugin container of key '{}'", getPluginKey());
             link = applicationLinkService.addApplicationLink(expectedApplicationId, applicationType, applicationLinkDetails);
-            link.putProperty(PLUGIN_KEY_PROPERTY, getPluginKey());
+            link.putProperty(DefaultConnectApplinkManager.PLUGIN_KEY_PROPERTY, getPluginKey());
         }
 
         link.putProperty("IS_ACTIVITY_ITEM_PROVIDER", Boolean.FALSE.toString());

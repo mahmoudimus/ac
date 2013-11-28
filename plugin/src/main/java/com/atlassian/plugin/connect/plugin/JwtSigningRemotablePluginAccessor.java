@@ -8,6 +8,8 @@ import com.atlassian.jwt.core.writer.JsonSmartJwtJsonBuilder;
 import com.atlassian.jwt.core.writer.JwtClaimsBuilder;
 import com.atlassian.jwt.httpclient.CanonicalHttpUriRequest;
 import com.atlassian.jwt.writer.JwtJsonBuilder;
+import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
+import com.atlassian.plugin.connect.plugin.applinks.NotConnectAddonException;
 import com.atlassian.plugin.connect.plugin.util.ConfigurationUtils;
 import com.atlassian.plugin.connect.plugin.util.http.HttpContentRetriever;
 import com.atlassian.plugin.connect.spi.http.AuthorizationGenerator;
@@ -22,14 +24,14 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 
 /**
- * Constructs and signs outgoing URLs using the JWT protocol.<p>
- * See {@link JwtService} for more details.<p>
- * Set the system property {@link #JWT_EXPIRY_SECONDS_PROPERTY} with an integer value to control the size of the expiry window (default is {@link #JWT_EXPIRY_WINDOW_SECONDS_DEFAULT}).
+ * Constructs and signs outgoing URLs using the JWT protocol.<p> See {@link JwtService} for more details.<p> Set the
+ * system property {@link #JWT_EXPIRY_SECONDS_PROPERTY} with an integer value to control the size of the expiry window
+ * (default is {@link #JWT_EXPIRY_WINDOW_SECONDS_DEFAULT}).
  */
 public class JwtSigningRemotablePluginAccessor extends DefaultRemotablePluginAccessorBase
 {
     private final JwtService jwtService;
-    private final ApplicationLinkAccessor applicationLinkAccessor;
+    private final ConnectApplinkManager connectApplinkManager;
 
     private static final String JWT_EXPIRY_SECONDS_PROPERTY = "com.atlassian.connect.jwt.expiry_seconds";
     /**
@@ -40,15 +42,15 @@ public class JwtSigningRemotablePluginAccessor extends DefaultRemotablePluginAcc
     private static final AuthorizationGenerator AUTH_GENERATOR = new JwtAuthorizationGenerator(); // it's tiny and does very little, so share this instance
 
     public JwtSigningRemotablePluginAccessor(String pluginKey,
-                                             String pluginName,
-                                             Supplier<URI> baseUrlSupplier,
-                                             JwtService jwtService,
-                                             ApplicationLinkAccessor applicationLinkAccessor,
-                                             HttpContentRetriever httpContentRetriever)
+            String pluginName,
+            Supplier<URI> baseUrlSupplier,
+            JwtService jwtService,
+            ConnectApplinkManager connectApplinkManager,
+            HttpContentRetriever httpContentRetriever)
     {
         super(pluginKey, pluginName, baseUrlSupplier, httpContentRetriever);
         this.jwtService = jwtService;
-        this.applicationLinkAccessor = applicationLinkAccessor;
+        this.connectApplinkManager = connectApplinkManager;
     }
 
     @Override
@@ -57,7 +59,7 @@ public class JwtSigningRemotablePluginAccessor extends DefaultRemotablePluginAcc
         assertThatTargetPathAndParamsDoNotDuplicateParams(targetPath, params);
         final UriBuilder uriBuilder = new UriBuilder(Uri.fromJavaUri(URI.create(createGetUrl(targetPath, params))));
 
-        final ApplicationLink appLink = applicationLinkAccessor.getApplicationLink(getKey());
+        ApplicationLink appLink = connectApplinkManager.getAppLink(getKey());
         JwtJsonBuilder jsonBuilder = new JsonSmartJwtJsonBuilder()
                 .issuedAt(TimeUtil.currentTimeSeconds())
                 .expirationTime(TimeUtil.currentTimePlusNSeconds(JWT_EXPIRY_WINDOW_SECONDS))
