@@ -1,7 +1,7 @@
 _AP.define("inline-dialog", ["_dollar"], function($) {
 
     function getInlineDialog($content){
-        return $content.parents('.contents').data('inlineDialog');
+        return $content.closest('.contents').data('inlineDialog');
     }
 
     function showInlineDialog($content) {
