@@ -48,6 +48,9 @@ import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18n
  * * __startIssue__: The index of the first passed issue key in the list of all issues
  * * __endIssue__: The index of the last passed issue key in the list of all issues
  * * __totalIssues__: The number of issues in the entire search result
+ *
+ * @schemaTitle Search Request View
+ * @since 1.0
  */
 public class SearchRequestViewCapabilityBean extends BeanWithKeyAndParamsAndConditions
 {
