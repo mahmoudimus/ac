@@ -4,12 +4,6 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	$webResourceManager.requireResource("com.atlassian.jira.jira-project-config-plugin:project-config-global")
 	<title>$!title</title>
-	<content tag="breadcrumbs">
-		<ol id="breadcrumbs">
-			<li class="first" ><span><a href="$contextPath/dashboard.action">Dashboard</a></span></li>
-			<li><span>$!title</span></li>
-		</ol>
-	</content>
 	<meta name="tab" content="$!title"/>
 	<meta name="decorator" content="atl.admin"/>
 	<meta name="admin.active.section" content="atl.jira.proj.config"/>
