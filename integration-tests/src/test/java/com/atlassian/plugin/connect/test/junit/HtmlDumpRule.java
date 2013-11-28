@@ -31,7 +31,7 @@ public final class HtmlDumpRule extends TestWatchman
     @Override
     public void starting(FrameworkMethod fm)
     {
-        logger.info("----- Starting {}", getMethodName(fm));
+        logger.debug("----- Starting {}", getMethodName(fm));
 
         destinationFolder = "target/webdriverTests/" + getClassName(fm);
         dumpFileName = getMethodName(fm);
@@ -42,7 +42,7 @@ public final class HtmlDumpRule extends TestWatchman
     @Override
     public void succeeded(FrameworkMethod fm)
     {
-        logger.info("----- Succeeded {}", getMethodName(fm));
+        logger.debug("----- Succeeded {}", getMethodName(fm));
     }
 
     @Override
@@ -59,7 +59,7 @@ public final class HtmlDumpRule extends TestWatchman
     @Override
     public void finished(FrameworkMethod fm)
     {
-        logger.info("----- Finished {}", getMethodName(fm));
+        logger.debug("----- Finished {}", getMethodName(fm));
     }
 
     public void dumpHtml()
