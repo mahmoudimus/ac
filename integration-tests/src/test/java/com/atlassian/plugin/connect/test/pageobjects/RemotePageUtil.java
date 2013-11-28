@@ -1,15 +1,7 @@
 package com.atlassian.plugin.connect.test.pageobjects;
 
-import java.net.URI;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Callable;
-
-import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.webdriver.AtlassianWebDriver;
-
 import com.google.common.base.Function;
-
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.openqa.selenium.By;
@@ -17,6 +9,10 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 import javax.annotation.Nullable;
+import java.net.URI;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Callable;
 
 import static com.google.common.collect.Maps.newHashMap;
 

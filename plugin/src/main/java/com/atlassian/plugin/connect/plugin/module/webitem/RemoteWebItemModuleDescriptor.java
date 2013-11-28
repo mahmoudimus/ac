@@ -99,7 +99,7 @@ public class RemoteWebItemModuleDescriptor extends AbstractModuleDescriptor<Void
 
     private void createIcon(final Element descriptor)
     {
-        String pluginBaseUrl = pluginAccessorFactory.get(plugin.getKey()).getDisplayUrl().toString();
+        String pluginBaseUrl = pluginAccessorFactory.get(plugin.getKey()).getBaseUrl().toString();
         Element iconElement = descriptor.element("icon");
         if (iconElement != null)
         {

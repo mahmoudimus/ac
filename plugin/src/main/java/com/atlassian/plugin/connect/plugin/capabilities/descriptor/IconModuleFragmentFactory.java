@@ -25,7 +25,7 @@ public class IconModuleFragmentFactory implements ConnectModuleFragmentFactory<I
     @Override
     public DOMElement createFragment(String pluginKey, IconBean bean)
     {
-        String pluginBaseUrl = pluginAccessorFactory.get(pluginKey).getDisplayUrl().toString();
+        String pluginBaseUrl = pluginAccessorFactory.get(pluginKey).getBaseUrl().toString();
 
         URI iconUri = URI.create(pluginBaseUrl + bean.getUrl());
 

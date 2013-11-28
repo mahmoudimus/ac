@@ -34,6 +34,7 @@ import com.atlassian.plugin.event.events.PluginDisabledEvent;
 import com.atlassian.plugin.event.events.PluginEnabledEvent;
 import com.atlassian.plugin.event.events.PluginUninstalledEvent;
 import com.atlassian.sal.api.ApplicationProperties;
+import com.atlassian.sal.api.UrlMode;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import com.atlassian.upm.api.util.Option;
@@ -230,7 +231,9 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
         final Consumer consumer = consumerService.getConsumer();
 
         ConnectAddonEventDataBuilder dataBuilder = newConnectAddonEventData();
-        dataBuilder.withBaseUrl(nullToEmpty(applicationProperties.getBaseUrl()))
+        String baseUrl = applicationProperties.getBaseUrl(UrlMode.CANONICAL);
+
+        dataBuilder.withBaseUrl(nullToEmpty(baseUrl))
                    .withPluginKey(pluginKey)
                    .withClientKey(nullToEmpty(consumer.getKey()))
                    .withPublicKey(nullToEmpty(RSAKeys.toPemEncoding(consumer.getPublicKey())))
@@ -239,7 +242,7 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
                    .withProductType(nullToEmpty(productAccessor.getKey()))
                    .withDescription(nullToEmpty(consumer.getDescription()))
                    .withEventType(eventType)
-                   .withLink("oauth", applicationProperties.getBaseUrl() + "/rest/atlassian-connect/latest/oauth");
+                   .withLink("oauth", baseUrl + "/rest/atlassian-connect/latest/oauth");
 
         UserProfile user = userManager.getRemoteUser();
         if (null != user)

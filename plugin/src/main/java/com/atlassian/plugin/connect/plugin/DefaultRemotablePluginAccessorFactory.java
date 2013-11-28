@@ -23,6 +23,7 @@ import com.atlassian.plugin.event.events.PluginDisabledEvent;
 import com.atlassian.plugin.event.events.PluginEnabledEvent;
 import com.atlassian.plugin.event.events.PluginModuleEnabledEvent;
 import com.atlassian.sal.api.ApplicationProperties;
+import com.atlassian.sal.api.UrlMode;
 import com.atlassian.util.concurrent.CopyOnWriteMap;
 
 import com.google.common.base.Function;
@@ -175,7 +176,7 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
                         @Override
                         public String get()
                         {
-                            return applicationProperties.getBaseUrl();
+                            return applicationProperties.getBaseUrl(UrlMode.CANONICAL);
                         }
                     }
             );

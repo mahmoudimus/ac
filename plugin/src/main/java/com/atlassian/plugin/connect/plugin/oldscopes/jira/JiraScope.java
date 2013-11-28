@@ -30,9 +30,9 @@ abstract class JiraScope extends AbstractPermission implements ApiScope
     }
 
     @Override
-    public final boolean allow(HttpServletRequest request, String user)
+    public final boolean allow(HttpServletRequest request, String username)
     {
-        return soapScopeHelper.allow(request, user) || jsonRpcScopeHelper.allow(request, user) || restApiScopeHelper.allow(request, user);
+        return soapScopeHelper.allow(request, username) || jsonRpcScopeHelper.allow(request, username) || restApiScopeHelper.allow(request, username);
     }
 
     @Override

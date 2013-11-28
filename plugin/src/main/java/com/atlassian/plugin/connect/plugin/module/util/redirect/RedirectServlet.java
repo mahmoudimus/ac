@@ -109,6 +109,7 @@ public final class RedirectServlet extends HttpServlet
          To get around this, we need to use the deprecated getRemoteUsername and check that until the products adopt the fixed sal
          */
         UserProfile remoteUser = userManager.getRemoteUser();
+        //noinspection deprecation
         String remoteUsername = userManager.getRemoteUsername();
         if (remoteUser != null && StringUtils.isNotBlank(remoteUsername)) {
             params.put("user_id", new String[]{ remoteUsername });
