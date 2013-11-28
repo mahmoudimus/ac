@@ -75,6 +75,9 @@ public class CapabilityList extends BaseCapabilityBean
     @CapabilityModuleProvider(value = SearchRequestViewModuleProvider.class, products = {ProductFilter.JIRA})
     private List<SearchRequestViewCapabilityBean> jiraSearchRequestViews;
 
+    @CapabilityModuleProvider(value = SpaceAdminTabModuleProvider.class, products = {ProductFilter.CONFLUENCE})
+    private List<ConnectPageCapabilityBean> spaceAdminPanels;
+
     public CapabilityList()
     {
         this.jiraComponentTabPanels = newArrayList();
@@ -89,6 +92,7 @@ public class CapabilityList extends BaseCapabilityBean
         this.jiraWorkflowPostFunctions = newArrayList();
         this.webhooks = newArrayList();
         this.jiraSearchRequestViews = newArrayList();
+        this.spaceAdminPanels = newArrayList();
     }
 
     public CapabilityList(BaseCapabilityBeanBuilder builder)
@@ -142,6 +146,10 @@ public class CapabilityList extends BaseCapabilityBean
         if (null == jiraSearchRequestViews)
         {
             this.jiraSearchRequestViews = newArrayList();
+        }
+        if(null == spaceAdminPanels)
+        {
+            this.spaceAdminPanels = newArrayList();
         }
     }
 
@@ -203,5 +211,10 @@ public class CapabilityList extends BaseCapabilityBean
     public List<SearchRequestViewCapabilityBean> getJiraSearchRequestViews()
     {
         return jiraSearchRequestViews;
+    }
+
+    public List<ConnectPageCapabilityBean> getSpaceAdminPanels()
+    {
+        return spaceAdminPanels;
     }
 }
