@@ -1,0 +1,22 @@
+<div class="aui-nav-heading">
+    <strong><%= product.title %> Modules</strong>
+</div>
+<ul class="aui-nav">
+    <% for (var key in schemas[product.key].properties.capabilities.properties) { %>
+        <% var module = schemas[product.key].properties.capabilities.properties[key]; %>
+        <% var selected = key === current.source && current.path[1] === [product.key] ? "class=aui-nav-selected" : ""; %>
+        <li <%= selected %>>
+            <%
+                var title = "";
+                if(typeof module.title !== 'undefined') {
+                    title = module.title;
+                } else if(typeof module.items.title !== 'undefined') {
+                    title = module.items.title;
+                } else {
+                    title = key;
+                }
+            %>
+            <a href="/modules/jira/<%= key %>.html"><%= title %></a>
+        </li>
+    <% } %>
+</ul>
