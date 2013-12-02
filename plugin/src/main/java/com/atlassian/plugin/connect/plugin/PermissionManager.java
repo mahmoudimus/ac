@@ -42,20 +42,12 @@ public interface PermissionManager
      *
      * @param req the current {@link HttpServletRequest request}
      * @param pluginKey the key of the plugin making the request.
-     * @param user the current logged in user username.
+     * @param username the current logged in user username.
      * @return {@code true} if the request is correctly in the current API scope, {@code false} otherwise
      */
-    boolean isRequestInApiScope(HttpServletRequest req, String pluginKey, String user);
-
-    boolean canInstallRemotePluginsFromMarketplace(String username);
+    boolean isRequestInApiScope(HttpServletRequest req, String pluginKey, String username);
 
     void requirePermission(String pluginKey, String permissionKey) throws PermissionDeniedException;
 
     boolean hasPermission(String pluginKey, String permissionKey) throws PermissionDeniedException;
-
-    boolean canModifyRemotePlugin(String username, String pluginKey);
-
-    boolean canRequestDeclaredPermissions(String username, Document descriptor);
-
-    boolean canInstallArbitraryRemotePlugins(String userName);
 }

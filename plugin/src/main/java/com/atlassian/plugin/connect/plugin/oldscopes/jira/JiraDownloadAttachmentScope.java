@@ -23,9 +23,9 @@ public class JiraDownloadAttachmentScope extends AbstractPermission implements A
     }
 
     @Override
-    public boolean allow(final HttpServletRequest request, @Nullable final String user)
+    public boolean allow(final HttpServletRequest request, @Nullable final String username)
     {
-        return delegate.allow(request, user);
+        return delegate.allow(request, username);
     }
 
     @Override

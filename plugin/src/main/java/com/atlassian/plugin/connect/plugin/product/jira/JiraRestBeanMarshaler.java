@@ -30,6 +30,7 @@ import com.atlassian.plugins.rest.common.interceptor.MethodInvocation;
 import com.atlassian.plugins.rest.common.json.DefaultJaxbJsonMarshaller;
 import com.atlassian.sal.api.ApplicationProperties;
 
+import com.atlassian.sal.api.UrlMode;
 import com.sun.jersey.api.core.ExtendedUriInfo;
 import com.sun.jersey.api.core.HttpContext;
 import com.sun.jersey.api.core.HttpRequestContext;
@@ -357,7 +358,7 @@ public class JiraRestBeanMarshaler implements DisposableBean
         @Override
         public UriBuilder getRequestUriBuilder()
         {
-            return UriBuilder.fromUri(applicationProperties.getBaseUrl());
+            return UriBuilder.fromUri(applicationProperties.getBaseUrl(UrlMode.CANONICAL));
         }
 
         @Override
@@ -381,7 +382,7 @@ public class JiraRestBeanMarshaler implements DisposableBean
         @Override
         public UriBuilder getBaseUriBuilder()
         {
-            return UriBuilder.fromUri(applicationProperties.getBaseUrl());
+            return UriBuilder.fromUri(applicationProperties.getBaseUrl(UrlMode.CANONICAL));
         }
 
         @Override

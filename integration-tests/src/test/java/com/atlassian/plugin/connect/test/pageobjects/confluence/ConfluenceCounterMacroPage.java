@@ -1,12 +1,11 @@
 package com.atlassian.plugin.connect.test.pageobjects.confluence;
 
-import javax.inject.Inject;
-
 import com.atlassian.pageobjects.Page;
 import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.webdriver.AtlassianWebDriver;
-
 import org.openqa.selenium.By;
+
+import javax.inject.Inject;
 
 /**
  *
