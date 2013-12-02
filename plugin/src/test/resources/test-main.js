@@ -18,7 +18,10 @@ requirejs.config({
     // host side
     'iframe/host/_ap': '../src/main/resources/js/iframe/host/_ap',
     'iframe/host/_dollar': '../src/main/resources/js/iframe/host/_dollar',
+    'iframe/host/content': '../src/main/resources/js/iframe/host/content',
     'dialog/main': '../src/main/resources/js/dialog/main',
+    'inline-dialog/main': '../src/main/resources/js/inline-dialog/main',
+    'inline-dialog/simple': '../src/main/resources/js/inline-dialog/simple',
     'confluence/macro/editor': '../src/main/resources/js/confluence/macro/editor',
     // shared
     'iframe/_amd': '../src/main/resources/js/iframe/_amd',
@@ -43,9 +46,29 @@ requirejs.config({
         'iframe/_amd'
       ]
     },
+    'iframe/host/content': {
+        deps: [
+        'jquery',
+        'aui-atlassian',
+        'iframe/_amd'
+        ]
+    },
+    'inline-dialog/simple': {
+      deps: [
+        'iframe/host/_dollar',
+        'iframe/host/content'
+      ]
+    },
+    'inline-dialog/main': {
+      deps: [
+        'iframe/host/_dollar',
+        'iframe/host/content'
+      ]
+    },
     'dialog/main': {
       deps: [
-        'iframe/host/_dollar'
+        'iframe/host/_dollar',
+        'iframe/host/content'
       ]
     },
     'confluence/macro/editor': {

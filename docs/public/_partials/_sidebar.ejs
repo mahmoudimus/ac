@@ -1,0 +1,60 @@
+<div class="aui-page-panel-nav">
+    <nav class="aui-navgroup aui-navgroup-vertical">
+        <div class="aui-navgroup-inner">
+            <ul class="aui-nav">
+                <% for (var page in public.guides._data) { %>
+                <% var selected = page.split('.')[0] === current.source ? "class=aui-nav-selected" : ""; %>
+                <li <%= selected %>>
+                    <a href="/guides/<%= page %>"><%= public.guides._data[page].title %></a>
+                </li>
+                <% } %>
+            </ul>
+
+<!--
+            <div class="aui-nav-heading">
+                <strong>Add-on Descriptor</strong>
+            </div>
+            <ul class="aui-nav">
+                <% for (var page in public.modules._data) { %>
+                <% var selected = page.split('.')[0] === current.source ? "class=aui-nav-selected" : ""; %>
+                <li <%= selected %>>
+                    <a href="/modules/<%= page %>"><%= public.modules._data[page].title %></a>
+                </li>
+                <% } %>
+            </ul>
+ -->
+            <%- partial('_module_list.ejs',{product: { title: "JIRA", key: "jira"}}) %>
+
+            <%- partial('_module_list.ejs',{product: { title: "Confluence", key: "confluence"}}) %>
+
+
+            <div class="aui-nav-heading">
+                <strong>REST API Browser</strong>
+            </div>
+            <ul class="aui-nav">
+                <li>
+                    <a href="#">JIRA</a>
+                </li>
+                <li>
+                    <a href="#">Confluence</a>
+                </li>
+            </ul>
+
+            <div class="aui-nav-heading">
+                <strong>Help and Support</strong>
+            </div>
+            <ul class="aui-nav">
+                <li>
+                    <a href="/faqs.html">FAQs</a>
+                </li>
+                <li>
+                    <a href="/contact-us.html">Contact Us</a>
+                </li>
+                <li>
+                    <a href="https://answers.atlassian.com/tags/atlassian-connect">Atlassian Answers</a>
+                </li>
+            </ul>
+
+        </div>
+    </nav>
+</div>

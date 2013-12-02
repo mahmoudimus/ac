@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectPageCapabilityBean.newPageBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean.newWebItemBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebPanelCapabilityBean.newWebPanelBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.SingleConditionBean.newSingleConditionBean;
@@ -89,25 +90,48 @@ public class AppRunner
                                 ).build())
                     .addCapabilities("webPanels",
                             newWebPanelBean()
-                                .withName(new I18nProperty("clock", "ac.clock"))
-                                .withLocation("atl.jira.view.issue.right.context")
-                                .withWeight(1)
-                                .withUrl("http://free.timeanddate.com/clock/i3w2dcse/n109/fn2/tcccc/bo2/ts1/ta1")
-                                .withConditions(
-                                        newSingleConditionBean().withCondition("user_is_logged_in").build(),
-                                        newSingleConditionBean().withCondition("/onlyBettyCondition").build()
-                                )
-                                .build(),
+                                    .withName(new I18nProperty("clock", "ac.clock"))
+                                    .withLocation("atl.jira.view.issue.right.context")
+                                    .withWeight(1)
+                                    .withUrl("http://free.timeanddate.com/clock/i3w2dcse/n109/fn2/tcccc/bo2/ts1/ta1")
+                                    .withConditions(
+                                            newSingleConditionBean().withCondition("user_is_logged_in").build(),
+                                            newSingleConditionBean().withCondition("/onlyBettyCondition").build()
+                                    )
+                                    .build(),
                             newWebPanelBean()
-                                .withName(new I18nProperty("another clock", "ac.clock"))
-                                .withLocation("atl.jira.view.issue.right.context")
-                                .withWeight(1)
-                                .withUrl("http://free.timeanddate.com/clock/i3w2e3ys/n109/szw110/szh110/hocf00/hbw0/hfcc00/cf100/hnca32/fas20/facfff/fdi86/mqcfff/mqs2/mql3/mqw4/mqd70/mhcfff/mhs2/mhl3/mhw4/mhd70/mmv0/hhcfff/hhs2/hmcfff/hms2/hsv0")
-                                .build()
+                                    .withName(new I18nProperty("another clock", "ac.clock"))
+                                    .withLocation("atl.jira.view.issue.right.context")
+                                    .withWeight(1)
+                                    .withUrl("http://free.timeanddate.com/clock/i3w2e3ys/n109/szw110/szh110/hocf00/hbw0/hfcc00/cf100/hnca32/fas20/facfff/fdi86/mqcfff/mqs2/mql3/mqw4/mqd70/mhcfff/mhs2/mhl3/mhw4/mhd70/mmv0/hhcfff/hhs2/hmcfff/hms2/hsv0")
+                                    .build()
                     )
+                    .addCapabilities("generalPages",
+                            newPageBean()
+                                    .withName(new I18nProperty("My Awesome Page", "my.awesome.page"))
+                                    .withUrl("/pg?page_id=${page.id}")
+                                    .withWeight(1234)
+                                    .build(),
+                            newPageBean()
+                                    .withName(new I18nProperty("Another Awesome Page", "another.awesome.page"))
+                                    .withUrl("/pg?page_id=${page.id}")
+                                    .withWeight(1234)
+                                    .build())
+                    .addCapabilities("adminPages",
+                            newPageBean()
+                                    .withName(new I18nProperty("My Admin Page", "my.admin.page"))
+                                    .withUrl("/pg")
+                                    .withWeight(1234)
+                                    .build(),
+                            newPageBean()
+                                    .withName(new I18nProperty("Another Admin Page", "another.admin.page"))
+                                    .withUrl("/pg")
+                                    .withWeight(1234)
+                                    .build())
                     .addRoute("/onlyBettyCondition", new CheckUsernameConditionServlet("betty"))
                     .addRoute("/irwi?issue_id=${issue.id}&project_key=${project.key}&pid=${project.id}",
                             ConnectAppServlets.helloWorldServlet())
+                    .addRoute("/pg", ConnectAppServlets.helloWorldServlet())
                     .start();
             while (true)
             {

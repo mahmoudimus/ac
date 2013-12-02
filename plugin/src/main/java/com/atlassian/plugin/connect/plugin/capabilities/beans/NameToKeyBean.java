@@ -18,7 +18,7 @@ public class NameToKeyBean extends BaseCapabilityBean
 
     public NameToKeyBean()
     {
-        this.name = new I18nProperty("","");
+        this.name = I18nProperty.empty();
         this.key = "";
     }
 
@@ -28,7 +28,11 @@ public class NameToKeyBean extends BaseCapabilityBean
 
         if(null == name)
         {
-            this.name = new I18nProperty("","");
+            this.name = I18nProperty.empty();
+        }
+        if(null == key)
+        {
+            this.key = "";
         }
     }
 

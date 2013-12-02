@@ -7,7 +7,7 @@ import com.atlassian.plugin.connect.test.pageobjects.RemotePluginEmbeddedTestPag
 
 import org.openqa.selenium.By;
 
-public class JiraAdministrationPage extends AbstractJiraPage
+public class JiraAdministrationHomePage extends AbstractJiraPage
 {
     private static final String JIRA_ADMIN_PAGE_URI = "/secure/admin/ViewApplicationProperties.jspa";
     private static final String JIRA_ADMIN_PAGE_SERVLET = "servlet-jira-admin-page";

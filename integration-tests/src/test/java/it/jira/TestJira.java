@@ -2,10 +2,9 @@ package it.jira;
 
 import com.atlassian.jira.pageobjects.navigator.AdvancedSearch;
 import com.atlassian.jira.plugin.issuenav.pageobjects.IssueDetailPage;
-import com.atlassian.plugin.connect.test.junit.HtmlDumpRule;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginDialog;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginTestPage;
-import com.atlassian.plugin.connect.test.pageobjects.jira.JiraAdministrationPage;
+import com.atlassian.plugin.connect.test.pageobjects.jira.JiraAdministrationHomePage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePageWithRemotePluginIssueTab;
 import com.atlassian.plugin.connect.test.pageobjects.jira.PlainTextView;
 import com.atlassian.plugin.connect.test.pageobjects.jira.ViewChangingSearchResult;
@@ -25,9 +24,6 @@ import static org.junit.Assert.*;
 
 public class TestJira extends JiraWebDriverTestBase
 {
-    @Rule
-    public HtmlDumpRule htmlDump = new HtmlDumpRule(product.getTester().getDriver());
-
     private static AtlassianConnectAddOnRunner remotePlugin;
 
     @BeforeClass
@@ -128,7 +124,7 @@ public class TestJira extends JiraWebDriverTestBase
     public void testAdminPageInJiraSpecificLocation() throws Exception
     {
         loginAsAdmin();
-        final JiraAdministrationPage adminPage = product.visit(JiraAdministrationPage.class);
+        final JiraAdministrationHomePage adminPage = product.visit(JiraAdministrationHomePage.class);
         assertTrue(adminPage.hasJiraRemotableAdminPageLink());
         assertEquals(ADMIN_FULL_NAME, adminPage.clickJiraRemotableAdminPage().getFullName());
     }
@@ -137,7 +133,7 @@ public class TestJira extends JiraWebDriverTestBase
     public void testGeneralAdminPage() throws Exception
     {
         loginAsAdmin();
-        final JiraAdministrationPage adminPage = product.visit(JiraAdministrationPage.class);
+        final JiraAdministrationHomePage adminPage = product.visit(JiraAdministrationHomePage.class);
         assertTrue(adminPage.hasGeneralRemotableAdminPage());
         assertEquals(ADMIN_FULL_NAME, adminPage.clickGeneralRemotableAdminPage().getFullName());
     }

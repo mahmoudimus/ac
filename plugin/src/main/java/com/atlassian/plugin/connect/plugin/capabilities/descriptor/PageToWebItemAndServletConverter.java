@@ -10,7 +10,6 @@ import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.UrlTempla
 import com.atlassian.plugin.connect.plugin.module.IFrameParamsImpl;
 import com.atlassian.plugin.connect.plugin.module.page.PageInfo;
 import com.atlassian.plugin.connect.spi.module.IFrameParams;
-import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.web.conditions.AlwaysDisplayCondition;
 
@@ -29,14 +28,15 @@ public class PageToWebItemAndServletConverter
 
 
     public PageToWebItemAndServletConverter(ConnectPageCapabilityBean pageBean, String pluginKey,
-                                            ProductAccessor productAccessor, String decorator, String templateSuffix,
-                                            Map<String, String> metaTagsContent, Condition condition,
-                                            IFrameParams iFrameParams)
+                                            int defaultWeight, String defaultSection, String decorator,
+                                            String templateSuffix, Map<String, String> metaTagsContent,
+                                            Condition condition, IFrameParams iFrameParams)
     {
         AddonUrlTemplatePair urlTemplatePair = createUrlTemplatePair(pageBean, pluginKey);
 
         // TODO: In ACDEV-498 push the url template into RemoteWebLink
-        webItemBean = createWebItemCapabilityBean(pageBean, urlTemplatePair.getHostUrlPaths().getHostUrlTemplate(), productAccessor);
+        webItemBean = createWebItemCapabilityBean(pageBean, urlTemplatePair.getHostUrlPaths().getHostUrlTemplate(),
+                defaultWeight, defaultSection);
         servletBean = createServletBean(pageBean, urlTemplatePair, decorator, templateSuffix, metaTagsContent,
                 condition, iFrameParams);
     }
@@ -47,10 +47,10 @@ public class PageToWebItemAndServletConverter
     }
 
     private WebItemCapabilityBean createWebItemCapabilityBean(ConnectPageCapabilityBean bean, UrlTemplate hostUrlTemplate,
-                                                              ProductAccessor productAccessor)
+            int defaultWeight, String defaultSection)
     {
-        Integer weight = bean.getWeight() == null ? productAccessor.getPreferredGeneralWeight() : bean.getWeight();
-        String location = isNullOrEmpty(bean.getLocation()) ? productAccessor.getPreferredGeneralSectionKey() : bean.getLocation();
+        Integer weight = bean.getWeight() == null ? defaultWeight : bean.getWeight();
+        String location = isNullOrEmpty(bean.getLocation()) ? defaultSection : bean.getLocation();
 
         return newWebItemBean()
                 .withName(bean.getName())

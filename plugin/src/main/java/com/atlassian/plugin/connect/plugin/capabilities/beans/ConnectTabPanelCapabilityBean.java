@@ -4,6 +4,9 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConnectTab
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+/**
+ * @since 1.0
+ */
 public class ConnectTabPanelCapabilityBean extends BeanWithKeyAndParamsAndConditions
 {
     private String url;

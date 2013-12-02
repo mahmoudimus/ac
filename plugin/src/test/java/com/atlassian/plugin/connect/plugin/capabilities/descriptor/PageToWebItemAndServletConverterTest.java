@@ -30,8 +30,6 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PageToWebItemAndServletConverterTest
@@ -55,7 +53,8 @@ public class PageToWebItemAndServletConverterTest
     private static final ConditionalBean CONDITION_BEAN = new SingleConditionBeanBuilder().withCondition("unconditional").build();
 
     private final ConnectPageCapabilityBean defaultPageBean = createDefaultPageBean();
-    private final PageToWebItemAndServletConverter defaultAdapter = createAdapter(defaultPageBean, IFRAME_PARAMS);
+    private final PageToWebItemAndServletConverter defaultAdapter = createConverter(defaultPageBean, IFRAME_PARAMS);
+
     private PageToWebItemAndServletConverter emptyBeanAdapter;
 
     @Mock
@@ -64,9 +63,7 @@ public class PageToWebItemAndServletConverterTest
     @Before
     public void init()
     {
-        when(productAccessor.getPreferredGeneralSectionKey()).thenReturn(DEFAULT_LOCATION);
-        when(productAccessor.getPreferredGeneralWeight()).thenReturn(DEFAULT_WEIGHT);
-        emptyBeanAdapter = createAdapter(newPageBean().build(), null);
+        emptyBeanAdapter = createConverter(newPageBean().build(), null);
     }
 
     @Test
@@ -112,21 +109,9 @@ public class PageToWebItemAndServletConverterTest
     }
 
     @Test
-    public void fetchesDefaultLocationFromProductAccessorWhenNotSpecified()
-    {
-        verify(productAccessor).getPreferredGeneralSectionKey();
-    }
-
-    @Test
     public void createsWebItemWithDefaultLocationWhenNotSpecified()
     {
         assertThat(emptyBeanAdapter.getWebItemBean().getLocation(), is(DEFAULT_LOCATION));
-    }
-
-    @Test
-    public void fetchesDefaultWeightFromProductAccessorWhenNotSpecified()
-    {
-        verify(productAccessor).getPreferredGeneralWeight();
     }
 
     @Test
@@ -134,7 +119,6 @@ public class PageToWebItemAndServletConverterTest
     {
         assertThat(emptyBeanAdapter.getWebItemBean().getWeight(), is(DEFAULT_WEIGHT));
     }
-
 
     @Test
     public void createsServletBeanWithSameKeyAsPageBean()
@@ -217,9 +201,9 @@ public class PageToWebItemAndServletConverterTest
         return defaultAdapter.getServletBean();
     }
 
-    private PageToWebItemAndServletConverter createAdapter(ConnectPageCapabilityBean pageBean, IFrameParams iFrameParams)
+    private PageToWebItemAndServletConverter createConverter(ConnectPageCapabilityBean pageBean, IFrameParams iFrameParams)
     {
-        return new PageToWebItemAndServletConverter(pageBean, PLUGIN_KEY, productAccessor,
+        return new PageToWebItemAndServletConverter(pageBean, PLUGIN_KEY, DEFAULT_WEIGHT, DEFAULT_LOCATION,
                 DECORATOR, TEMPLATE_SUFFIX, META_TAGS, CONDITION, iFrameParams);
     }
 

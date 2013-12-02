@@ -140,6 +140,12 @@ public class ConnectCapabilitiesRunner
         return addonBuilder.getLifecycle();
     }
 
+    public ConnectCapabilitiesRunner enableLicensing()
+    {
+        addonBuilder.withLicensing(true);
+        return this;
+    }
+    
     public ConnectCapabilitiesRunner addCapability(String fieldName, CapabilityBean bean)
     {
         addonBuilder.withCapability(fieldName, bean);

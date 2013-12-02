@@ -12,6 +12,9 @@ import com.atlassian.jwt.applinks.JwtService;
 import com.atlassian.oauth.ServiceProvider;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
+import com.atlassian.plugin.connect.plugin.applinks.DefaultConnectApplinkManager;
+import com.atlassian.plugin.connect.plugin.applinks.NotConnectAddonException;
+import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.module.applinks.RemotePluginContainerModuleDescriptor;
 import com.atlassian.plugin.connect.plugin.util.http.CachingHttpContentRetriever;
 import com.atlassian.plugin.connect.spi.AuthenticationMethod;
@@ -22,6 +25,7 @@ import com.atlassian.plugin.event.PluginEventListener;
 import com.atlassian.plugin.event.events.PluginDisabledEvent;
 import com.atlassian.plugin.event.events.PluginEnabledEvent;
 import com.atlassian.plugin.event.events.PluginModuleEnabledEvent;
+import com.atlassian.plugin.event.events.PluginUninstalledEvent;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.util.concurrent.CopyOnWriteMap;
 
@@ -29,6 +33,8 @@ import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -38,7 +44,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @Component
 public final class DefaultRemotablePluginAccessorFactory implements RemotablePluginAccessorFactory, DisposableBean
 {
-    private final ApplicationLinkAccessor applicationLinkAccessor;
+    private final ConnectApplinkManager connectApplinkManager;
     private final OAuthLinkManager oAuthLinkManager;
     private final CachingHttpContentRetriever httpContentRetriever;
     private final PluginAccessor pluginAccessor;
@@ -48,16 +54,18 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
 
     private final Map<String, RemotablePluginAccessor> accessors;
 
+    private static final Logger log = LoggerFactory.getLogger(DefaultRemotablePluginAccessorFactory.class);
+
     @Autowired
-    public DefaultRemotablePluginAccessorFactory(ApplicationLinkAccessor applicationLinkAccessor,
-                                                 OAuthLinkManager oAuthLinkManager,
-                                                 CachingHttpContentRetriever httpContentRetriever,
-                                                 PluginAccessor pluginAccessor,
-                                                 ApplicationProperties applicationProperties,
-                                                 EventPublisher eventPublisher,
-                                                 JwtService jwtService)
+    public DefaultRemotablePluginAccessorFactory(ConnectApplinkManager connectApplinkManager,
+            OAuthLinkManager oAuthLinkManager,
+            CachingHttpContentRetriever httpContentRetriever,
+            PluginAccessor pluginAccessor,
+            ApplicationProperties applicationProperties,
+            EventPublisher eventPublisher,
+            JwtService jwtService)
     {
-        this.applicationLinkAccessor = applicationLinkAccessor;
+        this.connectApplinkManager = connectApplinkManager;
         this.oAuthLinkManager = oAuthLinkManager;
         this.httpContentRetriever = httpContentRetriever;
         this.pluginAccessor = pluginAccessor;
@@ -71,8 +79,6 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
 
     /**
      * Clear accessor if a new application link is discovered
-     *
-     * @param event
      */
     @EventListener
     public void onApplicationLinkCreated(ApplicationLinkAddedEvent event)
@@ -87,8 +93,6 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
 
     /**
      * Clear accessor if a application link is deleted
-     *
-     * @param event
      */
     @EventListener
     public void onApplicationLinkRemoved(ApplicationLinkDeletedEvent event)
@@ -101,8 +105,6 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
 
     /**
      * Clear accessor if a plugin is enabled
-     *
-     * @param event
      */
     @EventListener
     public void onPluginEnabled(PluginEnabledEvent event)
@@ -112,13 +114,30 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
 
     /**
      * Clear accessor if a plugin is disabled
-     *
-     * @param event
      */
     @EventListener
     public void onPluginDisabled(PluginDisabledEvent event)
     {
         accessors.remove(event.getPlugin().getKey());
+    }
+
+    @EventListener
+    public void onPluginUninstalled(PluginUninstalledEvent event)
+    {
+        // this method is invoked for every plugin uninstall. The ConnectApplinkManager ensures we only remove applinks
+        // for connect add-ons
+        Plugin plugin = event.getPlugin();
+        String key = plugin.getKey();
+
+        try
+        {
+            connectApplinkManager.deleteAppLink(plugin);
+            accessors.remove(key);
+        }
+        catch (NotConnectAddonException e)
+        {
+            // swallow error, we don't want to do anything for plugins that are not connect add-ons.
+        }
     }
 
     @PluginEventListener
@@ -129,12 +148,12 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
 
     private String getPluginKey(ApplicationLink link)
     {
-        return String.valueOf(link.getProperty(RemotePluginContainerModuleDescriptor.PLUGIN_KEY_PROPERTY));
+        return String.valueOf(link.getProperty(DefaultConnectApplinkManager.PLUGIN_KEY_PROPERTY));
     }
 
     /**
-     * Supplies an accessor for remote plugin operations.  Instances are only meant to be used for the
-     * current operation and should not be cached across operations.
+     * Supplies an accessor for remote plugin operations. Instances are only meant to be used for the current operation
+     * and should not be cached across operations.
      *
      * @param pluginKey The plugin key
      * @return An accessor for either local or remote plugin operations
@@ -158,7 +177,7 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
 
     private Supplier<URI> getDisplayUrl(final String pluginKey)
     {
-        final ApplicationLink link = applicationLinkAccessor.getApplicationLink(pluginKey);
+        final ApplicationLink link = connectApplinkManager.getAppLink(pluginKey);
         if (link != null)
         {
             return Suppliers.ofInstance(link.getDisplayUrl());
@@ -179,14 +198,12 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
     }
 
     /**
-     * Supplies an accessor for remote plugin operations but always creates a new one.  Instances are
-     * still only meant to be used for the current operation and should not be cached across
-     * operations.
+     * Supplies an accessor for remote plugin operations but always creates a new one.  Instances are still only meant
+     * to be used for the current operation and should not be cached across operations.
      * <p/>
-     * This method is useful for when the display url is known but the application link has not yet
-     * been created
+     * This method is useful for when the display url is known but the application link has not yet been created
      *
-     * @param pluginKey  The plugin key
+     * @param pluginKey The plugin key
      * @param displayUrl The display url
      * @return An accessor for a remote plugin
      */
@@ -197,13 +214,24 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
 
         return signsWithJwt(pluginKey)
                 // don't need to get the actual provider as it doesn't really matter
-                ? new JwtSigningRemotablePluginAccessor(pluginKey, plugin.getName(), displayUrl, jwtService, applicationLinkAccessor, httpContentRetriever)
+                ? new JwtSigningRemotablePluginAccessor(pluginKey, plugin.getName(), displayUrl, jwtService, connectApplinkManager, httpContentRetriever)
                 : new OAuthSigningRemotablePluginAccessor(pluginKey, plugin.getName(), displayUrl, getDummyServiceProvider(), httpContentRetriever, oAuthLinkManager);
     }
 
     private boolean signsWithJwt(String pluginKey)
     {
-        Object authTypeProperty = applicationLinkAccessor.getApplicationLink(pluginKey).getProperty(AuthenticationMethod.PROPERTY_NAME);
+        ApplicationLink appLink = connectApplinkManager.getAppLink(pluginKey);
+        Object authTypeProperty = null;
+
+        if (null == appLink)
+        {
+            log.error("Found no app link by plugin key '{}'!", pluginKey);
+        }
+        else
+        {
+            authTypeProperty = appLink.getProperty(AuthenticationMethod.PROPERTY_NAME);
+        }
+
         // for backwards compatibility default to "not JWT" if the property does not exist
         return null != authTypeProperty && AuthenticationMethod.JWT.equals(AuthenticationMethod.forName(authTypeProperty.toString()));
     }

@@ -24,18 +24,30 @@ public class CapabilityList extends BaseCapabilityBean
     @CapabilityModuleProvider(WebItemModuleProvider.class)
     private List<WebItemCapabilityBean> webItems;
 
+    /**
+     * @schemaTitle Component Tab Panel
+     */
     @CapabilityModuleProvider(value = ConnectTabPanelModuleProvider.class, products = {ProductFilter.JIRA})
     private List<ConnectTabPanelCapabilityBean> jiraComponentTabPanels;
 
+    /**
+     * @schemaTitle Issue Tab Panel
+     */
     @CapabilityModuleProvider(value = ConnectTabPanelModuleProvider.class, products = {ProductFilter.JIRA})
     private List<ConnectTabPanelCapabilityBean> jiraIssueTabPanels;
 
     @CapabilityModuleProvider(value = ConnectProjectAdminTabPanelModuleProvider.class, products = {ProductFilter.JIRA})
     private List<ConnectProjectAdminTabPanelCapabilityBean> jiraProjectAdminTabPanels;
 
+    /**
+     * @schemaTitle Project Tab Panel
+     */
     @CapabilityModuleProvider(value = ConnectTabPanelModuleProvider.class, products = {ProductFilter.JIRA})
     private List<ConnectTabPanelCapabilityBean> jiraProjectTabPanels;
 
+    /**
+     * @schemaTitle Version Tab Panel
+     */
     @CapabilityModuleProvider(value = ConnectTabPanelModuleProvider.class, products = {ProductFilter.JIRA})
     private List<ConnectTabPanelCapabilityBean> jiraVersionTabPanels;
 
@@ -45,11 +57,23 @@ public class CapabilityList extends BaseCapabilityBean
     @CapabilityModuleProvider(WebPanelModuleProvider.class)
     private List<WebPanelCapabilityBean> webPanels;
 
+    /**
+     * @schemaTitle General Page
+     */
     @CapabilityModuleProvider(GeneralPageModuleProvider.class)
     private List<ConnectPageCapabilityBean> generalPages;
 
+    /**
+     * @schemaTitle Admin Page
+     */
+    @CapabilityModuleProvider(AdminPageModuleProvider.class)
+    private List<ConnectPageCapabilityBean> adminPages;
+
     @CapabilityModuleProvider(WebHookModuleProvider.class)
     private List<WebHookCapabilityBean> webhooks;
+
+    @CapabilityModuleProvider(value = SearchRequestViewModuleProvider.class, products = {ProductFilter.JIRA})
+    private List<SearchRequestViewCapabilityBean> jiraSearchRequestViews;
 
     public CapabilityList()
     {
@@ -61,8 +85,10 @@ public class CapabilityList extends BaseCapabilityBean
         this.webItems = newArrayList();
         this.webPanels = newArrayList();
         this.generalPages = newArrayList();
+        this.adminPages = newArrayList();
         this.jiraWorkflowPostFunctions = newArrayList();
         this.webhooks = newArrayList();
+        this.jiraSearchRequestViews = newArrayList();
     }
 
     public CapabilityList(BaseCapabilityBeanBuilder builder)
@@ -97,6 +123,14 @@ public class CapabilityList extends BaseCapabilityBean
         {
             this.webPanels = newArrayList();
         }
+        if (null == generalPages)
+        {
+            this.generalPages = newArrayList();
+        }
+        if (null == adminPages)
+        {
+            this.adminPages = newArrayList();
+        }
         if (null == jiraWorkflowPostFunctions)
         {
             this.jiraWorkflowPostFunctions = newArrayList();
@@ -104,6 +138,10 @@ public class CapabilityList extends BaseCapabilityBean
         if (null == webhooks)
         {
             this.webhooks = newArrayList();
+        }
+        if (null == jiraSearchRequestViews)
+        {
+            this.jiraSearchRequestViews = newArrayList();
         }
     }
 
@@ -151,9 +189,19 @@ public class CapabilityList extends BaseCapabilityBean
     {
         return generalPages;
     }
-    
-    public List<WebHookCapabilityBean> getWebhooks() 
+
+    public List<ConnectPageCapabilityBean> getAdminPages()
+    {
+        return adminPages;
+    }
+
+    public List<WebHookCapabilityBean> getWebhooks()
     {
         return webhooks;
+    }
+
+    public List<SearchRequestViewCapabilityBean> getJiraSearchRequestViews()
+    {
+        return jiraSearchRequestViews;
     }
 }
