@@ -4,20 +4,16 @@ import com.atlassian.jira.pageobjects.project.ProjectConfigTabs;
 import com.atlassian.jira.pageobjects.project.summary.ProjectSummaryPageTab;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectProjectAdminTabPanelModuleProvider;
-import com.atlassian.plugin.connect.test.junit.HtmlDumpRule;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraProjectAdministrationTab;
 import com.atlassian.plugin.connect.test.server.ConnectCapabilitiesRunner;
-
+import it.jira.JiraWebDriverTestBase;
+import it.servlet.ConnectAppServlets;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 import org.hamcrest.core.IsCollectionContaining;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
-
-import it.jira.JiraWebDriverTestBase;
-import it.servlet.ConnectAppServlets;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectProjectAdminTabPanelCapabilityBean.newProjectAdminTabPanelBean;
 import static junit.framework.Assert.assertNotNull;
@@ -31,9 +27,6 @@ public class TestProjectAdminTabPanel extends JiraWebDriverTestBase
 {
     private static final String REMOTE_PROJECT_CONFIG_TAB_NAME = "My Connect Project Config";
     private static ConnectCapabilitiesRunner remotePlugin;
-
-    @Rule
-    public HtmlDumpRule htmlDump = new HtmlDumpRule(product.getTester().getDriver());
 
     @BeforeClass
     public static void startConnectAddOn() throws Exception

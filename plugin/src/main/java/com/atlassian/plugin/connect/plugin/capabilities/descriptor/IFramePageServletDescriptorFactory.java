@@ -13,6 +13,7 @@ import com.atlassian.plugin.connect.plugin.module.page.IFrameContextImpl;
 import com.atlassian.plugin.connect.plugin.module.page.IFramePageServlet;
 import com.atlassian.plugin.connect.plugin.module.page.PageInfo;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
+import com.atlassian.plugin.connect.spi.module.IFrameContext;
 import com.atlassian.plugin.connect.spi.module.IFrameParams;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.servlet.ServletModuleManager;
@@ -30,7 +31,6 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServlet;
 import java.util.Map;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AddonUrlTemplatePair.HostUrlPaths;
 import static com.atlassian.plugin.connect.plugin.util.OsgiServiceUtils.getService;
 
 /**
@@ -55,19 +55,6 @@ public class IFramePageServletDescriptorFactory
     }
 
     /**
-     * @return a generic iframe module servlet descriptor.
-     */
-    public ServletModuleDescriptor createIFrameServletDescriptor(final Plugin plugin, final NameToKeyBean bean,
-                                                                 final String localUrl, final String path,
-                                                                 final String decorator, final String templateSuffix,
-                                                                 final Condition condition,
-                                                                 final Map<String, String> metaTagsContent)
-    {
-        return createIFrameServletDescriptor(plugin, bean, localUrl, path, decorator, templateSuffix, condition,
-                metaTagsContent, ModuleFactoryType.PAGE);
-    }
-
-    /**
      * @return an iframe servlet module descriptor suitable for providing a JIRA Project admin tab.
      */
     public ServletModuleDescriptor createIFrameProjectConfigTabServletDescriptor(final Plugin plugin, final NameToKeyBean bean,
@@ -80,6 +67,9 @@ public class IFramePageServletDescriptorFactory
                 metaTagsContent, ModuleFactoryType.JIRA_PROJECT_ADMIN_TAB);
     }
 
+    /**
+     * @return iframe module servlet descriptor suitable for a generic page or panel.
+     */
     public ServletModuleDescriptor createIFrameServletDescriptor(final Plugin plugin, IFrameServletBean servletBean)
     {
         AddonUrlTemplatePair urlTemplatePair = servletBean.getUrlTemplatePair();
@@ -116,18 +106,25 @@ public class IFramePageServletDescriptorFactory
                                                                   IFrameParams iFrameParams)
     {
         final String moduleKey = "servlet-" + bean.getKey();
-
         final Element servletElement = createServletElement(moduleKey, servletUrlPatterns);
-
         final Map<String, String> contextParams = urlVariableSubstitutor.getContextVariableMap(path);
 
-        final ServletModuleDescriptor descriptor = new ServletModuleDescriptor(
-                getModuleFactory(plugin, path, pageInfo, moduleKey, contextParams, iFrameParams, type),
-                getService(bundleContext, ServletModuleManager.class)
-        );
+        // In order to control the construction of the IFrame servlet from our dynamic module descriptor, we provide
+        // our own implementation of ModuleFactory.
+        ModuleFactory moduleFactory = new IFrameServletModuleFactoryBuilder()
+                .withPageInfo(pageInfo)
+                .withIFramePageRenderer(iFramePageRenderer)
+                .withIFrameContext(new IFrameContextImpl(plugin.getKey(), path, moduleKey, iFrameParams))
+                .withUserManager(userManager)
+                .withUrlVariableSubstitutor(urlVariableSubstitutor)
+                .withContextParams(contextParams)
+                .withModuleFactoryType(type)
+                .build();
 
+        ServletModuleManager service = getService(bundleContext, ServletModuleManager.class);
+
+        final ServletModuleDescriptor descriptor = new ServletModuleDescriptor(moduleFactory, service);
         descriptor.init(plugin, servletElement);
-
         return descriptor;
     }
 
@@ -162,48 +159,90 @@ public class IFramePageServletDescriptorFactory
         JIRA_PROJECT_ADMIN_TAB
     }
 
-    private ModuleFactory getModuleFactory(final Plugin plugin, final String path, final PageInfo pageInfo,
-                                           final String moduleKey, final Map<String, String> contextParams,
-                                           final IFrameParams params, final ModuleFactoryType type)
+    private static class IFrameServletModuleFactoryBuilder
     {
-        switch (type)
+        private PageInfo pageInfo;
+        private IFramePageRenderer iFramePageRenderer;
+        private IFrameContext iFrameContext;
+        private UserManager userManager;
+        private UrlVariableSubstitutor urlVariableSubstitutor;
+        private Map<String, String> contextParams;
+        private ModuleFactoryType moduleFactoryType;
+
+        public IFrameServletModuleFactoryBuilder withPageInfo(PageInfo pageInfo)
         {
-            case PAGE:
-                return new ModuleFactory()
-                {
-                    @Override
-                    public <T> T createModule(String name, ModuleDescriptor<T> moduleDescriptor) throws
-                            PluginParseException
-                    {
-
-                        return (T) new IFramePageServlet(
-                                pageInfo,
-                                iFramePageRenderer,
-                                new IFrameContextImpl(plugin.getKey(), path, moduleKey, params), userManager, urlVariableSubstitutor,
-                                contextParams
-                        );
-                    }
-                };
-
-            case JIRA_PROJECT_ADMIN_TAB:
-                return new ModuleFactory()
-                {
-                    @Override
-                    public <T> T createModule(String name, ModuleDescriptor<T> moduleDescriptor) throws
-                            PluginParseException
-                    {
-                        return (T) new IFrameProjectConfigTabServlet(
-                                pageInfo,
-                                iFramePageRenderer,
-                                new IFrameContextImpl(plugin.getKey(), path, moduleKey, params), userManager, urlVariableSubstitutor,
-                                contextParams
-                        );
-                    }
-                };
-
-            default:
-                throw new IllegalStateException("Unrecognized " + ModuleFactoryType.class + ": " + type);
+            this.pageInfo = pageInfo;
+            return this;
         }
 
+        public IFrameServletModuleFactoryBuilder withIFramePageRenderer(IFramePageRenderer iFramePageRenderer)
+        {
+            this.iFramePageRenderer = iFramePageRenderer;
+            return this;
+        }
+
+        public IFrameServletModuleFactoryBuilder withIFrameContext(IFrameContext iFrameContext)
+        {
+            this.iFrameContext = iFrameContext;
+            return this;
+        }
+
+        public IFrameServletModuleFactoryBuilder withUserManager(UserManager userManager)
+        {
+            this.userManager = userManager;
+            return this;
+        }
+
+        public IFrameServletModuleFactoryBuilder withUrlVariableSubstitutor(UrlVariableSubstitutor urlVariableSubstitutor)
+        {
+            this.urlVariableSubstitutor = urlVariableSubstitutor;
+            return this;
+        }
+
+        public IFrameServletModuleFactoryBuilder withContextParams(Map<String, String> contextParams)
+        {
+            this.contextParams = contextParams;
+            return this;
+        }
+
+        public IFrameServletModuleFactoryBuilder withModuleFactoryType(ModuleFactoryType moduleFactoryType)
+        {
+            this.moduleFactoryType = moduleFactoryType;
+            return this;
+        }
+
+        public ModuleFactory build()
+        {
+            final HttpServlet servlet;
+
+            switch (moduleFactoryType) {
+                case PAGE:
+                    servlet = new IFramePageServlet(pageInfo, iFramePageRenderer, iFrameContext, userManager,
+                            urlVariableSubstitutor, contextParams);
+                    break;
+                case JIRA_PROJECT_ADMIN_TAB:
+                    servlet = new IFrameProjectConfigTabServlet(pageInfo, iFramePageRenderer, iFrameContext,
+                            userManager, urlVariableSubstitutor, contextParams);
+                    break;
+                default:
+                    throw new IllegalStateException("Unknown " + ModuleFactoryType.class.getSimpleName() + " " + moduleFactoryType);
+            }
+
+            return new ModuleFactory()
+            {
+                @Override
+                public <T> T createModule(final String s, final ModuleDescriptor<T> tModuleDescriptor)
+                        throws PluginParseException
+                {
+                    // This looks horrific, but in practice the ModuleFactory will only ever be called with a
+                    // ServletModuleDescriptor.
+                    @SuppressWarnings("unchecked")
+                    T module = (T) servlet;
+
+                    return module;
+                }
+            };
+        }
     }
+
 }

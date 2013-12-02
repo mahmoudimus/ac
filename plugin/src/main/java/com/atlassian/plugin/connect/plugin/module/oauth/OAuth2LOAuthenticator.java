@@ -14,6 +14,7 @@ import com.atlassian.plugin.connect.plugin.OAuthLinkManager;
 import com.atlassian.plugin.connect.plugin.module.permission.ApiScopingFilter;
 import com.atlassian.plugin.connect.plugin.util.DefaultMessage;
 import com.atlassian.sal.api.ApplicationProperties;
+import com.atlassian.sal.api.UrlMode;
 import com.atlassian.sal.api.auth.AuthenticationController;
 import com.atlassian.sal.api.auth.Authenticator;
 import com.atlassian.sal.api.user.UserManager;
@@ -125,7 +126,7 @@ public class OAuth2LOAuthenticator implements Authenticator
             logOAuthProblem(message, ope, log);
             try
             {
-                OAuthServlet.handleException(response, ope, applicationProperties.getBaseUrl());
+                OAuthServlet.handleException(response, ope, applicationProperties.getBaseUrl(UrlMode.CANONICAL));
             }
             catch (Exception e)
             {
@@ -271,7 +272,7 @@ public class OAuth2LOAuthenticator implements Authenticator
         try
         {
             response.addHeader("WWW-Authenticate",
-                    message.getAuthorizationHeader(applicationProperties.getBaseUrl()));
+                    message.getAuthorizationHeader(applicationProperties.getBaseUrl(UrlMode.CANONICAL)));
         }
         catch (IOException e)
         {

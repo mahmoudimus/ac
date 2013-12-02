@@ -26,12 +26,6 @@ public class RemotablePluginAccessorFactoryForTests implements RemotablePluginAc
             }
 
             @Override
-            public URI getDisplayUrl()
-            {
-                return URI.create("http://www.example.com/capabilities");
-            }
-
-            @Override
             public URI getBaseUrl()
             {
                 return URI.create("http://www.example.com");

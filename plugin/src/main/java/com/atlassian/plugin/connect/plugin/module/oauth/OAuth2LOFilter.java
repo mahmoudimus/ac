@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin.module.oauth;
 import com.atlassian.oauth.util.Check;
 import com.atlassian.plugin.connect.plugin.product.WebSudoService;
 import com.atlassian.sal.api.ApplicationProperties;
+import com.atlassian.sal.api.UrlMode;
 import com.atlassian.sal.api.auth.AuthenticationController;
 import com.atlassian.sal.api.auth.AuthenticationListener;
 import com.atlassian.sal.api.auth.Authenticator;
@@ -159,7 +160,7 @@ public class OAuth2LOFilter implements Filter
 
     private String getContextPath(HttpServletRequest request)
     {
-        final String baseUrl = applicationProperties.getBaseUrl();
+        final String baseUrl = applicationProperties.getBaseUrl(UrlMode.CANONICAL);
         if (baseUrl == null)
         {
             return request.getContextPath();

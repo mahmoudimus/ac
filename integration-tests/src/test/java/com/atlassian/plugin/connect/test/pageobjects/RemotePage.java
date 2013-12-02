@@ -12,9 +12,6 @@ import javax.inject.Inject;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
-/**
- *
- */
 public class RemotePage
 {
     @Inject

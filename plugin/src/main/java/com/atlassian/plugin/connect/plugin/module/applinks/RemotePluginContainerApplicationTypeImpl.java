@@ -18,8 +18,6 @@ import org.slf4j.LoggerFactory;
  */
 public class RemotePluginContainerApplicationTypeImpl implements RemotePluginContainerApplicationType
 {
-    private final Logger LOG = LoggerFactory.getLogger(this.getClass());
-
     private final WebResourceManager webResourceManager;
     private final Plugin plugin;
 
@@ -40,16 +38,14 @@ public class RemotePluginContainerApplicationTypeImpl implements RemotePluginCon
 
     public String getI18nKey()
     {
-        return "plugin.container.name";
+        return "connect.applinks.container.name";
     }
 
     public final URI getIconUrl()
     {
         try
         {
-            // todo: get a real icon
-            return new URI(webResourceManager.getStaticPluginResource(plugin.getKey() +
-                    ":images", "images", UrlMode.ABSOLUTE) + "/ajax-loader.gif");
+            return new URI(webResourceManager.getStaticPluginResource(plugin.getKey() + ":images", "images", UrlMode.ABSOLUTE) + "/atlassian-icon-16.png");
         }
         catch (URISyntaxException e)
         {

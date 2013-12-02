@@ -3,8 +3,6 @@ package com.atlassian.plugin.connect.test.scope;
 import com.atlassian.plugin.connect.spi.permission.scope.AbstractApiScope;
 import com.atlassian.plugin.connect.spi.permission.scope.RestApiScopeHelper;
 
-import com.google.common.collect.ImmutableSet;
-
 import static java.util.Arrays.asList;
 
 public final class UnrequestedTestApiScope extends AbstractApiScope

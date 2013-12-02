@@ -25,8 +25,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.collect.ImmutableSet.copyOf;
-import static com.google.common.collect.Iterables.filter;
 
 public final class DefaultPermissionModuleDescriptor extends AbstractModuleDescriptor<Permission> implements PermissionModuleDescriptor
 {

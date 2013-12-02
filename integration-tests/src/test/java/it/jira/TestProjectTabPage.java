@@ -3,7 +3,6 @@ package it.jira;
 import com.atlassian.jira.pageobjects.pages.project.BrowseProjectPage;
 import com.atlassian.jira.pageobjects.project.ProjectConfigTabs;
 import com.atlassian.jira.pageobjects.project.summary.ProjectSummaryPageTab;
-import com.atlassian.plugin.connect.test.junit.HtmlDumpRule;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.AbstractRemotablePluginProjectTab;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraProjectAdministrationTab;
@@ -16,7 +15,6 @@ import org.hamcrest.TypeSafeMatcher;
 import org.hamcrest.core.IsCollectionContaining;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
 
 import java.util.concurrent.Callable;
@@ -29,9 +27,6 @@ import static org.junit.Assert.*;
 public class TestProjectTabPage extends JiraWebDriverTestBase
 {
     private static AtlassianConnectAddOnRunner remotePlugin;
-
-    @Rule
-    public HtmlDumpRule htmlDump = new HtmlDumpRule(product.getTester().getDriver());
 
     private static final String REMOTE_PROJECT_CONFIG_TAB_NAME = "Remotable Project Config";
 

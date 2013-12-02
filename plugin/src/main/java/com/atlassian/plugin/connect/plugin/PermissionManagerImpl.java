@@ -5,41 +5,34 @@ import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.api.scopes.ScopeName;
 import com.atlassian.plugin.connect.plugin.scopes.AddOnScope;
 import com.atlassian.plugin.connect.plugin.scopes.StaticAddOnScopes;
-import com.atlassian.plugin.connect.plugin.settings.SettingsManager;
 import com.atlassian.plugin.connect.spi.PermissionDeniedException;
 import com.atlassian.plugin.connect.spi.permission.Permission;
 import com.atlassian.plugin.connect.spi.permission.PermissionModuleDescriptor;
 import com.atlassian.plugin.connect.spi.permission.PermissionsReader;
-import com.atlassian.plugin.connect.spi.permission.scope.AbstractApiScope;
 import com.atlassian.plugin.connect.spi.permission.scope.ApiScope;
-import com.atlassian.plugin.connect.spi.permission.scope.RestApiScopeHelper;
 import com.atlassian.plugin.event.PluginEventManager;
 import com.atlassian.plugin.tracker.DefaultPluginModuleTracker;
 import com.atlassian.plugin.tracker.PluginModuleTracker;
 import com.atlassian.sal.api.user.UserKey;
-import com.atlassian.sal.api.user.UserManager;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableSet;
-import org.dom4j.Document;
-import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
 import static com.atlassian.fugue.Option.option;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.collect.Collections2.transform;
 import static com.google.common.collect.ImmutableSet.copyOf;
 import static com.google.common.collect.Iterables.any;
+import static com.google.common.collect.Iterables.transform;
 import static java.lang.String.format;
 
 /**
@@ -48,11 +41,8 @@ import static java.lang.String.format;
 @Component
 public final class PermissionManagerImpl implements PermissionManager
 {
-    private final UserManager userManager;
-    private final SettingsManager settingsManager;
     private final PluginAccessor pluginAccessor;
     private final PermissionsReader permissionsReader;
-    private final BundleContext bundleContext;
     private final PluginModuleTracker<Permission, PermissionModuleDescriptor> permissionTracker;
 
     private static final Collection<AddOnScope> ALL_SCOPES;
@@ -72,31 +62,22 @@ public final class PermissionManagerImpl implements PermissionManager
 
     @Autowired
     public PermissionManagerImpl(
-            UserManager userManager,
-            SettingsManager settingsManager,
             PluginAccessor pluginAccessor,
             PluginEventManager pluginEventManager,
-            PermissionsReader permissionsReader,
-            BundleContext bundleContext)
+            PermissionsReader permissionsReader)
     {
-        this(userManager, settingsManager, pluginAccessor, permissionsReader, bundleContext,
+        this(pluginAccessor, permissionsReader,
                 new DefaultPluginModuleTracker<Permission, PermissionModuleDescriptor>(
                         pluginAccessor, pluginEventManager, PermissionModuleDescriptor.class));
     }
 
     PermissionManagerImpl(
-            UserManager userManager,
-            SettingsManager settingsManager,
             PluginAccessor pluginAccessor,
             PermissionsReader permissionsReader,
-            BundleContext bundleContext,
             PluginModuleTracker<Permission, PermissionModuleDescriptor> pluginModuleTracker)
     {
-        this.userManager = checkNotNull(userManager);
-        this.settingsManager = checkNotNull(settingsManager);
         this.pluginAccessor = checkNotNull(pluginAccessor);
         this.permissionsReader = checkNotNull(permissionsReader);
-        this.bundleContext = checkNotNull(bundleContext);
         this.permissionTracker = checkNotNull(pluginModuleTracker);
     }
 
@@ -171,30 +152,6 @@ public final class PermissionManagerImpl implements PermissionManager
     }
 
     @Override
-    public boolean canInstallRemotePluginsFromMarketplace(String username)
-    {
-        return username != null &&
-
-                // for OnDemand dogfooding
-                (isDogfoodUser(username) ||
-
-                        // the default
-                        userManager.isAdmin(username));
-    }
-
-    private boolean inDogfoodingGroup(String username)
-    {
-        // for OnDemand dogfooding
-        return userManager.isUserInGroup(username, "developers") ||
-
-                // for internal Atlassian dogfooding
-                userManager.isUserInGroup(username, "atlassian-staff") ||
-
-                // for smoke tests
-                userManager.isUserInGroup(username, "test-users");
-    }
-
-    @Override
     public void requirePermission(String pluginKey, String permissionKey) throws PermissionDeniedException
     {
         if (!getPermissionsForPlugin(pluginKey).contains(permissionKey))
@@ -208,37 +165,6 @@ public final class PermissionManagerImpl implements PermissionManager
     public boolean hasPermission(String pluginKey, String permissionKey) throws PermissionDeniedException
     {
         return getPermissionsForPlugin(pluginKey).contains(permissionKey);
-    }
-
-    @Override
-    public boolean canModifyRemotePlugin(String username, String pluginKey)
-    {
-        return userManager.isAdmin(username)
-                || isDogfoodUser(username);
-    }
-
-    private boolean isDogfoodUser(String username)
-    {
-        return settingsManager.isAllowDogfooding() && inDogfoodingGroup(username);
-    }
-
-    @Override
-    public boolean canRequestDeclaredPermissions(String username, Document descriptor)
-    {
-        if (userManager.isSystemAdmin(username))
-        {
-            return true;
-        }
-
-        Set<String> requestedPermissions = permissionsReader.readPermissionsFromDescriptor(descriptor);
-
-        return getPermissionKeys().containsAll(requestedPermissions);
-    }
-
-    @Override
-    public boolean canInstallArbitraryRemotePlugins(String userName)
-    {
-        return userManager.isSystemAdmin(userName) || isDogfoodUser(userName);
     }
 
     private static final class IsInApiScopePredicate implements Predicate<ApiScope>
@@ -256,16 +182,6 @@ public final class PermissionManagerImpl implements PermissionManager
         public boolean apply(ApiScope scope)
         {
             return scope.allow(request, user);
-        }
-    }
-
-    private static final class MacroCacheApiScope extends AbstractApiScope
-    {
-        public MacroCacheApiScope()
-        {
-            super("clear_macro_cache", new RestApiScopeHelper(Arrays.asList(
-                    new RestApiScopeHelper.RestScope("atlassian-connect", Arrays.asList("latest", "1"), "/macro", Arrays.asList("DELETE"))
-            )));
         }
     }
 }

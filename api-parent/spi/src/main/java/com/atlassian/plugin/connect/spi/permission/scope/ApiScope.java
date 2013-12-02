@@ -16,7 +16,7 @@ public interface ApiScope extends Permission
      *
      *
      * @param request the current request. The body can be read repeatedly via {@link javax.servlet.http.HttpServletRequest#getInputStream()}
-     * @param user    the username of the logged in user
+     * @param user    the logged in user
      * @return {@code true} if allowed
      */
     boolean allow(HttpServletRequest request, @Nullable UserKey user);

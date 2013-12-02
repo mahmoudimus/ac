@@ -4,6 +4,7 @@ import com.atlassian.plugin.connect.plugin.module.IFramePageRenderer;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.spi.module.IFrameContext;
 import com.atlassian.sal.api.user.UserManager;
+import com.atlassian.sal.api.user.UserProfile;
 import com.google.common.collect.ImmutableMap;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -61,10 +62,12 @@ public class IFramePageServlet extends HttpServlet
         paramsFromRequest.putAll(productContext);
         String iFramePath = urlVariableSubstitutor.replace(originalPath, paramsFromRequest);
 
+        UserProfile remoteUser = userManager.getRemoteUser();
+        String remoteUsername = remoteUser == null ? "" : remoteUser.getUsername();
         iFramePageRenderer.renderPage(
                 new IFrameContextImpl(iframeContext.getPluginKey(), iFramePath, iframeContext.getNamespace(),
                 iframeContext.getIFrameParams()), pageInfo, req.getPathInfo(), copyRequestContext(req, originalPath),
-                userManager.getRemoteUsername(req), paramsFromRequest, out);
+                remoteUsername, paramsFromRequest, out);
     }
 
     private Map<String, Object> getProductContext(HttpServletRequest req) throws IOException

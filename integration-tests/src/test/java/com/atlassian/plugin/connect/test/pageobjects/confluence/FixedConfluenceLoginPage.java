@@ -1,26 +1,11 @@
 package com.atlassian.plugin.connect.test.pageobjects.confluence;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-
 import com.atlassian.confluence.pageobjects.page.ConfluenceLoginPage;
 import com.atlassian.plugin.connect.test.BaseUrlLocator;
 import com.atlassian.plugin.connect.test.client.AtlassianConnectRestClient;
-import com.atlassian.plugin.connect.test.pageobjects.OwnerOfTestedProduct;
-
-import org.apache.http.HttpHost;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.AuthCache;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.protocol.ClientContext;
-import org.apache.http.impl.auth.BasicScheme;
-import org.apache.http.impl.client.BasicAuthCache;
 import org.apache.http.impl.client.BasicResponseHandler;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.SingleClientConnManager;
-import org.apache.http.protocol.BasicHttpContext;
 
 public class FixedConfluenceLoginPage extends ConfluenceLoginPage
 {

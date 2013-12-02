@@ -2,52 +2,31 @@
     <nav class="aui-navgroup aui-navgroup-vertical">
         <div class="aui-navgroup-inner">
             <ul class="aui-nav">
-                <li class=" aui-nav-selected">
-                    <a href="#">Overview</a>
-                </li>
                 <% for (var page in public.guides._data) { %>
-                <li>
+                <% var selected = page.split('.')[0] === current.source ? "class=aui-nav-selected" : ""; %>
+                <li <%= selected %>>
                     <a href="/guides/<%= page %>"><%= public.guides._data[page].title %></a>
                 </li>
                 <% } %>
             </ul>
 
+<!--
             <div class="aui-nav-heading">
                 <strong>Add-on Descriptor</strong>
             </div>
             <ul class="aui-nav">
-                <% for (var page in public.capabilities._data) { %>
-                <li>
-                    <a href="/capabilities/<%= page %>"><%= public.capabilities._data[page].title %></a>
+                <% for (var page in public.modules._data) { %>
+                <% var selected = page.split('.')[0] === current.source ? "class=aui-nav-selected" : ""; %>
+                <li <%= selected %>>
+                    <a href="/modules/<%= page %>"><%= public.modules._data[page].title %></a>
                 </li>
                 <% } %>
             </ul>
+ -->
+            <%- partial('_module_list.ejs',{product: { title: "JIRA", key: "jira"}}) %>
 
-            <div class="aui-nav-heading">
-                <strong>JIRA Modules</strong>
-            </div>
-            <ul class="aui-nav">
-                <% for (var key in schemas.jira.properties.capabilities.properties) { %>
-                    <% var module = schemas.jira.properties.capabilities.properties[key]; %>
-                    <% var selected = key === current.source && current.path[1] === 'jira' ? "class=aui-nav-selected" : ""; %>
-                    <li <%= selected %>>
-                        <a href="/capabilities/jira/<%= key %>.html"><%= typeof module.items.title !== 'undefined'  ? module.items.title : key %></a>
-                    </li>
-                <% } %>
-            </ul>
+            <%- partial('_module_list.ejs',{product: { title: "Confluence", key: "confluence"}}) %>
 
-            <div class="aui-nav-heading">
-                <strong>Confluence Modules</strong>
-            </div>
-            <ul class="aui-nav">
-                <% for (var key in schemas.confluence.properties.capabilities.properties) { %>
-                    <% var module = schemas.confluence.properties.capabilities.properties[key]; %>
-                    <% var selected = key === current.source && current.path[1] === 'confluence' ? "class=aui-nav-selected" : ""; %>
-                    <li <%= selected %>>
-                        <a href="/capabilities/confluence/<%= key %>.html"><%= typeof module.items.title !== 'undefined'  ? module.items.title : key %></a>
-                    </li>
-                <% } %>
-            </ul>
 
             <div class="aui-nav-heading">
                 <strong>REST API Browser</strong>
@@ -66,13 +45,13 @@
             </div>
             <ul class="aui-nav">
                 <li>
-                    <a href="#">FAQ</a>
+                    <a href="/faqs.html">FAQs</a>
                 </li>
                 <li>
-                    <a href="#">Contact Us</a>
+                    <a href="/contact-us.html">Contact Us</a>
                 </li>
                 <li>
-                    <a href="#">Atlassian Answers</a>
+                    <a href="https://answers.atlassian.com/tags/atlassian-connect">Atlassian Answers</a>
                 </li>
             </ul>
 
