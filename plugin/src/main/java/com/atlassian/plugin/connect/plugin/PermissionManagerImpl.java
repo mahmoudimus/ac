@@ -184,4 +184,4 @@ public final class PermissionManagerImpl implements PermissionManager
             return scope.allow(request, user);
         }
     }
-}
+    }
