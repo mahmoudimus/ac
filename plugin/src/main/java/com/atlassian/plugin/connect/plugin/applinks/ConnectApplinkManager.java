@@ -2,7 +2,6 @@ package com.atlassian.plugin.connect.plugin.applinks;
 
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.applinks.NotConnectAddonException;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.AuthenticationType;
 
 /**

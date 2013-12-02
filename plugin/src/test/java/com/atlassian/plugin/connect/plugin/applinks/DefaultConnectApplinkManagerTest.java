@@ -12,11 +12,10 @@ import com.atlassian.plugin.connect.spi.applinks.RemotePluginContainerApplicatio
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.atlassian.sal.api.transaction.TransactionTemplate;
 import com.google.common.collect.Lists;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-
-import org.junit.Before;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.List;

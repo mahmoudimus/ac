@@ -1,11 +1,11 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
-import java.util.List;
-
 import com.atlassian.plugin.connect.plugin.capabilities.annotation.CapabilityModuleProvider;
-import com.atlassian.plugin.spring.scanner.ProductFilter;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.BaseCapabilityBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.*;
+import com.atlassian.plugin.spring.scanner.ProductFilter;
+
+import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
 

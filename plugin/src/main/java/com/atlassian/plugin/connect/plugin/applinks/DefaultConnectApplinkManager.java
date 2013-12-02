@@ -1,13 +1,5 @@
 package com.atlassian.plugin.connect.plugin.applinks;
 
-import java.net.URI;
-import java.security.GeneralSecurityException;
-import java.security.PublicKey;
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import com.atlassian.applinks.api.ApplicationId;
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.applinks.api.TypeNotInstalledException;
@@ -31,9 +23,15 @@ import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.atlassian.sal.api.transaction.TransactionCallback;
 import com.atlassian.sal.api.transaction.TransactionTemplate;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.net.URI;
+import java.security.GeneralSecurityException;
+import java.security.PublicKey;
+import java.util.List;
 
 @ExportAsDevService
 @Named

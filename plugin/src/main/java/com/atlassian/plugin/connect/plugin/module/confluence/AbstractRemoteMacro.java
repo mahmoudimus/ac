@@ -1,8 +1,8 @@
 package com.atlassian.plugin.connect.plugin.module.confluence;
 
-import java.net.URI;
-
 import com.atlassian.plugin.connect.plugin.DefaultRemotablePluginAccessorFactory;
+
+import java.net.URI;
 
 /**
  * Base for remote macros

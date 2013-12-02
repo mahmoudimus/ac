@@ -1,10 +1,10 @@
 package com.atlassian.plugin.connect.spi.permission.scope;
 
-import javax.annotation.Nullable;
-import javax.servlet.http.HttpServletRequest;
-
 import com.atlassian.plugin.connect.spi.permission.Permission;
 import com.atlassian.sal.api.user.UserKey;
+
+import javax.annotation.Nullable;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * An api scope for a given set of functionality

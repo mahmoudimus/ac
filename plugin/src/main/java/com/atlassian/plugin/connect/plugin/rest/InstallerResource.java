@@ -1,22 +1,21 @@
 package com.atlassian.plugin.connect.plugin.rest;
 
+import com.atlassian.plugin.connect.plugin.descriptor.DescriptorValidator;
+import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
+import org.bouncycastle.openssl.PEMWriter;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
-
-import javax.ws.rs.*;
-import javax.ws.rs.core.Response;
-
-import com.atlassian.plugin.connect.plugin.descriptor.DescriptorValidator;
-import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
-
-import org.bouncycastle.openssl.PEMWriter;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static com.atlassian.plugin.connect.plugin.rest.InstallerResource.INSTALLER_RESOURCE_PATH;
 

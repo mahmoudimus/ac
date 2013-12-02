@@ -1,13 +1,13 @@
 package com.atlassian.plugin.connect.plugin.capabilities.testobjects;
 
-import java.net.URI;
-import java.util.Map;
-
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.spi.http.AuthorizationGenerator;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.util.concurrent.Promise;
+
+import java.net.URI;
+import java.util.Map;
 
 /**
  * @since 1.0

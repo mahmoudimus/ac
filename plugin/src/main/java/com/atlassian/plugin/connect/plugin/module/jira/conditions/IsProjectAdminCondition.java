@@ -1,7 +1,5 @@
 package com.atlassian.plugin.connect.plugin.module.jira.conditions;
 
-import java.util.Map;
-
 import com.atlassian.jira.bc.project.ProjectAction;
 import com.atlassian.jira.bc.project.ProjectService;
 import com.atlassian.jira.component.ComponentAccessor;
@@ -9,6 +7,8 @@ import com.atlassian.jira.project.Project;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.web.Condition;
+
+import java.util.Map;
 
 /**
  * Verifies if a user has permissions to edit the configuration of a project.
