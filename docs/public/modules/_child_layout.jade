@@ -4,9 +4,29 @@ h1
 
 != yield
 
-h2 JSON Schema
-textarea.code
-    != JSON.stringify(capability.items,null,2)
+h2 Properties
+
+table.aui
+    thead
+        tr
+          th Name
+          th Type
+          th Description
+      tbody
+        - for(var prop in capability.items.properties)
+            tr
+                td
+                    = prop
+                td
+                    span.aui-lozenge
+                        = capability.items.properties[prop].type
+                td
+                    = capability.items.properties[prop].description
+
+
+//- h2 JSON Schema
+//- textarea.code
+//-     != JSON.stringify(capability,null,2)
 
 script.
     var cmOpts = {

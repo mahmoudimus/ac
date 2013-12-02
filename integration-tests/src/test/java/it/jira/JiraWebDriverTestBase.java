@@ -1,8 +1,5 @@
 package it.jira;
 
-import java.rmi.RemoteException;
-import java.util.concurrent.Callable;
-
 import com.atlassian.jira.pageobjects.JiraTestedProduct;
 import com.atlassian.jira.pageobjects.pages.DashboardPage;
 import com.atlassian.pageobjects.TestedProduct;
@@ -10,12 +7,15 @@ import com.atlassian.pageobjects.TestedProductFactory;
 import com.atlassian.pageobjects.page.LoginPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraOps;
 import com.atlassian.webdriver.pageobjects.WebDriverTester;
-
+import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
+import hudson.plugins.jira.soap.RemoteProject;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 
-import hudson.plugins.jira.soap.RemoteProject;
+import java.rmi.RemoteException;
+import java.util.concurrent.Callable;
 
 import static it.TestConstants.ADMIN_USERNAME;
 
@@ -24,6 +24,9 @@ public class JiraWebDriverTestBase
     protected static TestedProduct<WebDriverTester> product;
     protected static JiraOps jiraOps;
     protected RemoteProject project;
+
+    @Rule
+    public WebDriverScreenshotRule screenshotRule = new WebDriverScreenshotRule();
 
     @BeforeClass
     public static void setup() throws RemoteException
