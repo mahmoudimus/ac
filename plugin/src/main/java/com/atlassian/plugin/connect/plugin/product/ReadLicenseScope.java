@@ -26,9 +26,9 @@ public class ReadLicenseScope extends AbstractPermission implements ApiScope
     }
 
     @Override
-    public boolean allow(final HttpServletRequest request, final String user)
+    public boolean allow(final HttpServletRequest request, final String username)
     {
-        return scopeHelper.allow(request, user);
+        return scopeHelper.allow(request, username);
     }
 
     @Override

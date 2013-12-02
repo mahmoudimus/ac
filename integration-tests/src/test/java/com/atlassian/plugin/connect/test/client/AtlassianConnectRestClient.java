@@ -1,10 +1,6 @@
 package com.atlassian.plugin.connect.test.client;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Random;
-
+import cc.plural.jsonij.JSON;
 import org.apache.http.Header;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
@@ -29,7 +25,9 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.util.EntityUtils;
 
-import cc.plural.jsonij.JSON;
+import java.io.IOException;
+import java.net.URI;
+import java.util.Random;
 
 import static java.util.Collections.singletonList;
 
@@ -38,7 +36,7 @@ public final class AtlassianConnectRestClient
     private final String baseUrl;
     private String defaultUsername;
     private String defaultPassword;
-    
+
     public static final String UPM_URL_PATH = "/rest/plugins/1.0/";
     private static final String UPM_TOKEN_HEADER = "upm-token";
     private static final Random RAND = new Random();
@@ -52,8 +50,6 @@ public final class AtlassianConnectRestClient
 
     public void install(String registerUrl) throws Exception
     {
-        DefaultHttpClient httpclient = getDefaultHttpClient(defaultUsername,defaultPassword);
-        
         //get a upm token
         String token = getUpmToken();
 
@@ -64,7 +60,7 @@ public final class AtlassianConnectRestClient
 
         ResponseHandler<String> responseHandler = new BasicResponseHandler();
 
-        String response = sendRequestAsUser(post,responseHandler,defaultUsername,defaultPassword);
+        String response = sendRequestAsUser(post, responseHandler, defaultUsername, defaultPassword);
 
         JSON json = JSON.parse(response);
         boolean done = (null != json.get("enabled"));
@@ -76,7 +72,7 @@ public final class AtlassianConnectRestClient
             String statusUrl = uri.getScheme() + "://" + uri.getHost() + ":" + uri.getPort() + json.get("links").get("self").getString();
             HttpGet statusGet = new HttpGet(statusUrl);
             ResponseHandler<String> statusHandler = new BasicResponseHandler();
-            response = sendRequestAsUser(statusGet,statusHandler,defaultUsername,defaultPassword);
+            response = sendRequestAsUser(statusGet, statusHandler, defaultUsername, defaultPassword);
 
             json = JSON.parse(response);
             done = (null != json.get("enabled"));
@@ -91,11 +87,10 @@ public final class AtlassianConnectRestClient
 
     public void uninstall(String appKey) throws Exception
     {
-        String token = getUpmToken();
         HttpDelete post = new HttpDelete(baseUrl + UPM_URL_PATH + appKey + "-key");
 
         ResponseHandler<String> responseHandler = new BasicResponseHandler();
-        String response = sendRequestAsUser(post,responseHandler,defaultUsername,defaultPassword);
+        sendRequestAsUser(post, responseHandler, defaultUsername, defaultPassword);
     }
 
     private String getUpmToken() throws IOException
@@ -109,7 +104,7 @@ public final class AtlassianConnectRestClient
                         "UTF-8"));
         upmGet.addHeader("Accept", "application/vnd.atl.plugins.installed+json"); // UPM returns custom JSON content types.
         String upmToken;
-        HttpResponse response = getDefaultHttpClient(defaultUsername,defaultPassword).execute(upmGet);
+        HttpResponse response = getDefaultHttpClient(defaultUsername, defaultPassword).execute(upmGet);
         Header[] tokenHeaders = response.getHeaders(UPM_TOKEN_HEADER);
         if (tokenHeaders == null || tokenHeaders.length != 1)
         {
@@ -138,17 +133,17 @@ public final class AtlassianConnectRestClient
         BasicHttpContext localcontext = new BasicHttpContext();
         localcontext.setAttribute(ClientContext.AUTH_CACHE, authCache);
 
-        return getDefaultHttpClient(username,passowrd).execute(targetHost, request, handler, localcontext);
+        return getDefaultHttpClient(username, passowrd).execute(targetHost, request, handler, localcontext);
     }
-    
+
     private DefaultHttpClient getDefaultHttpClient(String username, String password)
     {
         DefaultHttpClient httpclient = new DefaultHttpClient(new SingleClientConnManager());
         httpclient.getCredentialsProvider().setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(username, password));
-        
+
         return httpclient;
     }
-    
+
     private static String getUpmPluginsRestURL(String baseURL, boolean cacheBuster)
     {
         return getURL(baseURL, UPM_URL_PATH, cacheBuster);

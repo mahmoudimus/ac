@@ -74,12 +74,6 @@ public abstract class DefaultRemotablePluginAccessorBase implements RemotablePlu
     }
 
     @Override
-    public URI getDisplayUrl()
-    {
-        return getBaseUrl();
-    }
-
-    @Override
     public URI getBaseUrl()
     {
         return baseUrlSupplier.get();

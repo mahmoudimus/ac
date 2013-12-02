@@ -6,6 +6,7 @@ import com.atlassian.plugin.connect.plugin.module.oauth.OAuth2LOAuthenticator;
 import com.atlassian.plugin.connect.plugin.product.WebSudoService;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
+import com.atlassian.sal.api.user.UserProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -86,16 +87,19 @@ public class ApiScopingFilter implements Filter
     {
         // we consume the input to allow inspection of the body via getInputStream
         InputConsumingHttpServletRequest inputConsumingRequest = new InputConsumingHttpServletRequest(req);
-        String user = userManager.getRemoteUsername(req);
-        if (!permissionManager.isRequestInApiScope(inputConsumingRequest, clientKey, user))
+
+        UserProfile remoteUser = userManager.getRemoteUser();
+        String username = remoteUser == null ? "" : remoteUser.getUsername();
+
+        if (!permissionManager.isRequestInApiScope(inputConsumingRequest, clientKey, username))
         {
             log.warn("Request not in an authorized API scope from app '{}' as user '{}' on URL '{}'",
-                    new Object[]{clientKey, user, req.getRequestURI()});
+                    new Object[]{clientKey, username, req.getRequestURI()});
             res.sendError(HttpServletResponse.SC_FORBIDDEN, "Request not in an authorized API scope");
             return;
         }
         log.info("Authorized app '{}' to access API at URL '{}' for user '{}'",
-                new Object[]{clientKey, req.getRequestURI(), user});
+                new Object[]{clientKey, req.getRequestURI(), username});
         chain.doFilter(inputConsumingRequest, res);
     }
 

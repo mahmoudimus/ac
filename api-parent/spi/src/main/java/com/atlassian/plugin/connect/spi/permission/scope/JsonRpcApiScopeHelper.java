@@ -40,7 +40,7 @@ public final class JsonRpcApiScopeHelper
         });
     }
 
-    public boolean allow(HttpServletRequest request, String user)
+    public boolean allow(HttpServletRequest request, String username)
     {
         final String pathInfo = ServletUtils.extractPathInfo(request);
         if (path.equals(pathInfo))

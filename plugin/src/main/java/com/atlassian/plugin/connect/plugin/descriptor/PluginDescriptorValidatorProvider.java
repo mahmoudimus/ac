@@ -14,6 +14,7 @@ import com.atlassian.plugin.schema.descriptor.DescribedModuleDescriptorFactory;
 import com.atlassian.plugin.schema.spi.Schema;
 import com.atlassian.sal.api.ApplicationProperties;
 
+import com.atlassian.sal.api.UrlMode;
 import com.google.common.base.Function;
 import com.google.common.collect.Sets;
 
@@ -61,7 +62,7 @@ public class PluginDescriptorValidatorProvider implements DescriptorValidatorPro
     public String getSchemaNamespace()
     {
         return format("%s/rest/atlassian-connect/1%s%s",
-                applicationProperties.getBaseUrl(),
+                applicationProperties.getBaseUrl(UrlMode.CANONICAL),
                 INSTALLER_RESOURCE_PATH,
                 ATLASSIAN_PLUGIN_REMOTABLE_SCHEMA_PATH);
     }

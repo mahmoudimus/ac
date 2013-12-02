@@ -1,16 +1,9 @@
 package com.atlassian.plugin.connect.test.pageobjects;
 
+import org.openqa.selenium.By;
+
 import java.util.concurrent.Callable;
 
-import com.google.common.base.Function;
-
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-
-/**
- *
- */
 public class RemotePluginEmbeddedTestPage extends RemotePage
 {
     public RemotePluginEmbeddedTestPage(String pageKey)
@@ -36,11 +29,6 @@ public class RemotePluginEmbeddedTestPage extends RemotePage
     public String getLocale()
     {
         return waitForValue("locale");
-    }
-
-    public String getTimeZoneFromTemplateContext()
-    {
-        return getValue("timeZoneFromTemplateContext");
     }
 
     public String getMessage()
@@ -73,11 +61,6 @@ public class RemotePluginEmbeddedTestPage extends RemotePage
         return waitForValue("client-http-response-text");
     }
 
-    public String getClientHttpUnauthorizedCode()
-    {
-        return waitForValue("client-http-unauthorized-code");
-    }
-
     public String getClientHttpData()
     {
         return waitForValue("client-http-data");
@@ -93,26 +76,6 @@ public class RemotePluginEmbeddedTestPage extends RemotePage
         return waitForValue("client-http-data-xml");
     }
 
-    public String getServerHttpStatus()
-    {
-        return getValue("server-http-status");
-    }
-
-    public String getServerHttpStatusText()
-    {
-        return getValue("server-http-status-text");
-    }
-
-    public String getServerHttpContentType()
-    {
-        return getValue("server-http-content-type");
-    }
-
-    public String getServerHttpEntity()
-    {
-        return getValue("server-http-entity");
-    }
-
     public String getValueBySelector(final String selector)
     {
         return runInFrame(new Callable<String>()
@@ -124,30 +87,5 @@ public class RemotePluginEmbeddedTestPage extends RemotePage
                 return driver.findElement(By.cssSelector(selector)).getText();
             }
         });
-    }
-
-    public String waitForValueBySelector(final String selector)
-    {
-        runInFrame(new Callable<Void>()
-        {
-            @Override
-            public Void call() throws Exception
-            {
-                driver.waitUntil(new Function<WebDriver, Boolean>()
-                {
-
-                    @Override
-                    public Boolean apply(WebDriver webDriver)
-                    {
-                        WebElement element = webDriver.findElement(By.cssSelector(selector));
-                        String text = element.getText();
-                        return text != null && text.length() > 0;
-                    }
-                });
-                return null;
-            }
-        });
-
-        return getValueBySelector(selector);
     }
 }
