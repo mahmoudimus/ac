@@ -2,7 +2,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.beans.builder;
 
 import com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemTarget;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemTargetBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean;
 
@@ -19,7 +19,7 @@ public class WebItemCapabilityBeanBuilder extends BeanWithKeyParamsAndConditions
     private List<String> styleClasses;
     private I18nProperty tooltip;
     private IconBean icon;
-    private WebItemTarget target;
+    private WebItemTargetBean target;
 
     public WebItemCapabilityBeanBuilder()
     {
@@ -58,7 +58,7 @@ public class WebItemCapabilityBeanBuilder extends BeanWithKeyParamsAndConditions
         return this;
     }
 
-    public WebItemCapabilityBeanBuilder withTarget(WebItemTarget target)
+    public WebItemCapabilityBeanBuilder withTarget(WebItemTargetBean target)
     {
         this.target = target;
         return this;

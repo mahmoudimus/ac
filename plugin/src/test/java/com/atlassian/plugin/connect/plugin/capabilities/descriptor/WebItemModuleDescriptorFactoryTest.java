@@ -1,13 +1,12 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemTarget;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemTargetBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.WebItemCapabilityBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean;
@@ -31,6 +30,7 @@ import org.mockito.stubbing.Answer;
 import org.osgi.framework.BundleContext;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean.newWebItemBean;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemTargetBean.newWebItemTargetBean;
 import static com.google.common.collect.Lists.newArrayList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.containsString;
@@ -164,7 +164,7 @@ public class WebItemModuleDescriptorFactoryTest
     public void styleClassIsCorrectWithNoTarget()
     {
         WebItemCapabilityBean bean = createWebItemBeanBuilder()
-                .withTarget(WebItemTarget.none)
+                .withTarget(newWebItemTargetBean().build())
                 .build();
         this.descriptor = webItemFactory.createModuleDescriptor(plugin, mock(BundleContext.class), bean);
         this.descriptor.enabled();
@@ -176,7 +176,7 @@ public class WebItemModuleDescriptorFactoryTest
     public void styleClassIsCorrectWithDialogTarget()
     {
         WebItemCapabilityBean bean = createWebItemBeanBuilder()
-                .withTarget(WebItemTarget.dialog)
+                .withTarget(newWebItemTargetBean().withType(WebItemTargetType.dialog).build())
                 .build();
         this.descriptor = webItemFactory.createModuleDescriptor(plugin, mock(BundleContext.class), bean);
         this.descriptor.enabled();
@@ -188,7 +188,7 @@ public class WebItemModuleDescriptorFactoryTest
     public void styleClassIsCorrectWithInlineDialogTarget()
     {
         WebItemCapabilityBean bean = createWebItemBeanBuilder()
-                .withTarget(WebItemTarget.inlineDialog)
+                .withTarget(newWebItemTargetBean().withType(WebItemTargetType.inlineDialog).build())
                 .build();
         this.descriptor = webItemFactory.createModuleDescriptor(plugin, mock(BundleContext.class), bean);
         this.descriptor.enabled();
@@ -201,7 +201,7 @@ public class WebItemModuleDescriptorFactoryTest
     {
         WebItemCapabilityBean bean = createWebItemBeanBuilder()
                 .withStyleClasses("batman", "robin")
-                .withTarget(WebItemTarget.inlineDialog)
+                .withTarget(newWebItemTargetBean().withType(WebItemTargetType.inlineDialog).build())
                 .build();
         this.descriptor = webItemFactory.createModuleDescriptor(plugin, mock(BundleContext.class), bean);
         this.descriptor.enabled();

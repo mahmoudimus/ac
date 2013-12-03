@@ -8,6 +8,9 @@ import com.google.common.base.Objects;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemTargetBean.newWebItemTargetBean;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean.newIconBean;
+
 /**
  * Adds a web item to a specified location in the application interface. A web item is a hyperlink
  * that’s inserted into some standard place in the Atlassian application interface, such as the
@@ -83,7 +86,7 @@ public class WebItemCapabilityBean extends BeanWithKeyAndParamsAndConditions
      *  Defines the way the link is opened in the browser, such as in a modal or inline dialog.
      *  If omitted, the link behaves as a regular hyperlink.
      */
-    private WebItemTarget target;
+    private WebItemTargetBean target;
 
     /**
      * Specifies custom styles for the web link target page, if desired. By default, the web item content gets
@@ -109,10 +112,10 @@ public class WebItemCapabilityBean extends BeanWithKeyAndParamsAndConditions
         this.location = "";
         this.context = AddOnUrlContext.addon;
         this.weight = 100;
-        this.target = WebItemTarget.none;
+        this.target = newWebItemTargetBean().build();
         this.styleClasses = new ArrayList<String>();
         this.tooltip = new I18nProperty("", "");
-        this.icon = IconBean.newIconBean().withWidth(0).withHeight(0).withUrl("").build();
+        this.icon = newIconBean().withWidth(0).withHeight(0).withUrl("").build();
     }
 
     public WebItemCapabilityBean(WebItemCapabilityBeanBuilder builder)
@@ -136,7 +139,7 @@ public class WebItemCapabilityBean extends BeanWithKeyAndParamsAndConditions
         
         if(null == target)
         {
-            this.target = WebItemTarget.none;
+            this.target = newWebItemTargetBean().build();
         }
         
         if (null == location)
@@ -153,7 +156,7 @@ public class WebItemCapabilityBean extends BeanWithKeyAndParamsAndConditions
         }
         if (null == icon)
         {
-            this.icon = IconBean.newIconBean().withWidth(16).withHeight(16).withUrl("").build();
+            this.icon = newIconBean().withWidth(16).withHeight(16).withUrl("").build();
         }
     }
 
@@ -177,7 +180,7 @@ public class WebItemCapabilityBean extends BeanWithKeyAndParamsAndConditions
         return weight;
     }
     
-    public WebItemTarget getTarget()
+    public WebItemTargetBean getTarget()
     {
         return target;
     }

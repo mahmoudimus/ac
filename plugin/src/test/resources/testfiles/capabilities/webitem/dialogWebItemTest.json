@@ -34,7 +34,9 @@
                 "i18n": "batman.robin"
             },
             "styleClasses": ["clowns", "are-not", "funny"],
-            "target": "dialog"
+            "target": {
+                "type": "dialog"
+            }
         }]
     }
 }

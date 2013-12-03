@@ -16,10 +16,10 @@ import static com.atlassian.plugin.connect.plugin.capabilities.TestFileReader.re
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.AuthenticationBean.newAuthenticationBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean.newWebItemBean;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemTargetBean.newWebItemTargetBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.matchers.SameDeepPropertyValuesAs.sameDeepPropertyValuesAs;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.VendorBean.newVendorBean;
 import static org.junit.Assert.assertThat;
-
 
 public class WebItemCapabilityBeanTest
 {
@@ -58,8 +58,11 @@ public class WebItemCapabilityBeanTest
     {
         Gson gson = CapabilitiesGsonFactory.getGson();
 
+        WebItemTargetBean target = newWebItemTargetBean()
+                .withType(WebItemTargetType.dialog)
+                .build();
         WebItemCapabilityBean webItemBuilder = createWebItemBeanBuilder()
-                .withTarget(WebItemTarget.dialog)
+                .withTarget(target)
                 .build();
         ConnectAddonBean addon = createAddonBeanBuilder(webItemBuilder)
                 .build();
@@ -75,8 +78,11 @@ public class WebItemCapabilityBeanTest
     {
         Gson gson = CapabilitiesGsonFactory.getGson();
 
+        WebItemTargetBean target = newWebItemTargetBean()
+                        .withType(WebItemTargetType.inlineDialog)
+                        .build();
         WebItemCapabilityBean webItemBean = createWebItemBeanBuilder()
-                .withTarget(WebItemTarget.inlineDialog)
+                .withTarget(target)
                 .build();
         ConnectAddonBean addon = createAddonBeanBuilder(webItemBean).build();
 
