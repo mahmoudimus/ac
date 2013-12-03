@@ -159,6 +159,7 @@
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:confluence-macro</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:iframe-host-js</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-amd</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:inline-dialog</dependency>
     </web-resource>
 
     <applinks-application-type name="Remote Plugin Container" key="remote-plugin-container-type"
