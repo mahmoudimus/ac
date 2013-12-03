@@ -80,9 +80,10 @@ public class WebItemCapabilityBean extends BeanWithKeyAndParamsAndConditions
     private Integer weight;
 
     /**
-     *  If true, the link opens a modal dialog. Otherwise the link behaves as a regular hyperlink.
+     *  Defines the way the link is opened in the browser, such as in a modal or inline dialog.
+     *  If omitted, the link behaves as a regular hyperlink.
      */
-    private Boolean dialog;
+    private WebItemTarget target;
 
     /**
      * Specifies custom styles for the web link target page, if desired. By default, the web item content gets
@@ -108,7 +109,7 @@ public class WebItemCapabilityBean extends BeanWithKeyAndParamsAndConditions
         this.location = "";
         this.context = AddOnUrlContext.addon;
         this.weight = 100;
-        this.dialog = false;
+        this.target = WebItemTarget.none;
         this.styleClasses = new ArrayList<String>();
         this.tooltip = new I18nProperty("", "");
         this.icon = IconBean.newIconBean().withWidth(0).withHeight(0).withUrl("").build();
@@ -133,9 +134,9 @@ public class WebItemCapabilityBean extends BeanWithKeyAndParamsAndConditions
             this.weight = 100;
         }
         
-        if(null == dialog)
+        if(null == target)
         {
-            this.dialog = false;
+            this.target = WebItemTarget.none;
         }
         
         if (null == location)
@@ -176,9 +177,9 @@ public class WebItemCapabilityBean extends BeanWithKeyAndParamsAndConditions
         return weight;
     }
     
-    public boolean isDialog()
+    public WebItemTarget getTarget()
     {
-        return dialog;
+        return target;
     }
 
     public List<String> getStyleClasses()
@@ -219,6 +220,7 @@ public class WebItemCapabilityBean extends BeanWithKeyAndParamsAndConditions
                 .add("name", getName())
                 .add("link", getLink())
                 .add("location", getLocation())
+                .add("target", getTarget())
                 .toString();
     }
 }
