@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemTarget;
 import com.atlassian.plugin.connect.plugin.module.webitem.ProductSpecificWebItemModuleDescriptorFactory;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 
@@ -70,6 +71,15 @@ public class WebItemModuleDescriptorFactory implements ConnectModuleDescriptorFa
         if(!bean.getConditions().isEmpty())
         {
             webItemElement.add(conditionModuleFragmentFactory.createFragment(plugin.getKey(),bean.getConditions(),"#" + webItemKey));
+        }
+
+        if(WebItemTarget.dialog.equals(bean.getTarget()))
+        {
+            styles.add("ap-dialog");
+        }
+        else if (WebItemTarget.inlineDialog.equals(bean.getTarget()))
+        {
+            styles.add("ap-inline-dialog");
         }
 
         if(!styles.isEmpty())
