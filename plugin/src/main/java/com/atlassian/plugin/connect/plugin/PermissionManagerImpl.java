@@ -3,27 +3,34 @@ package com.atlassian.plugin.connect.plugin;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.api.scopes.ScopeName;
+import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
 import com.atlassian.plugin.connect.plugin.scopes.AddOnScope;
 import com.atlassian.plugin.connect.plugin.scopes.StaticAddOnScopes;
+import com.atlassian.plugin.connect.spi.ConnectAddOnIdentifierService;
 import com.atlassian.plugin.connect.spi.PermissionDeniedException;
 import com.atlassian.plugin.connect.spi.permission.Permission;
 import com.atlassian.plugin.connect.spi.permission.PermissionModuleDescriptor;
 import com.atlassian.plugin.connect.spi.permission.PermissionsReader;
+import com.atlassian.plugin.connect.spi.permission.scope.AbstractApiScope;
 import com.atlassian.plugin.connect.spi.permission.scope.ApiScope;
+import com.atlassian.plugin.connect.spi.permission.scope.RestApiScopeHelper;
 import com.atlassian.plugin.event.PluginEventManager;
 import com.atlassian.plugin.tracker.DefaultPluginModuleTracker;
 import com.atlassian.plugin.tracker.PluginModuleTracker;
 import com.atlassian.sal.api.user.UserKey;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -31,8 +38,7 @@ import java.util.Set;
 import static com.atlassian.fugue.Option.option;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.ImmutableSet.copyOf;
-import static com.google.common.collect.Iterables.any;
-import static com.google.common.collect.Iterables.transform;
+import static com.google.common.collect.Iterables.*;
 import static java.lang.String.format;
 
 /**
@@ -42,9 +48,11 @@ import static java.lang.String.format;
 public final class PermissionManagerImpl implements PermissionManager
 {
     private final PluginAccessor pluginAccessor;
+    private final ConnectAddOnIdentifierService connectAddOnIdentifierService;
     private final PermissionsReader permissionsReader;
     private final PluginModuleTracker<Permission, PermissionModuleDescriptor> permissionTracker;
 
+    private final Set<ApiScope> DEFAULT_OLD_API_SCOPES = ImmutableSet.<ApiScope>of(new MacroCacheApiScope());
     private static final Collection<AddOnScope> ALL_SCOPES;
 
     static
@@ -63,20 +71,23 @@ public final class PermissionManagerImpl implements PermissionManager
     @Autowired
     public PermissionManagerImpl(
             PluginAccessor pluginAccessor,
+            JsonConnectAddOnIdentifierService connectAddOnIdentifierService,
             PluginEventManager pluginEventManager,
             PermissionsReader permissionsReader)
     {
-        this(pluginAccessor, permissionsReader,
+        this(pluginAccessor, connectAddOnIdentifierService, permissionsReader,
                 new DefaultPluginModuleTracker<Permission, PermissionModuleDescriptor>(
                         pluginAccessor, pluginEventManager, PermissionModuleDescriptor.class));
     }
 
     PermissionManagerImpl(
             PluginAccessor pluginAccessor,
+            JsonConnectAddOnIdentifierService connectAddOnIdentifierService,
             PermissionsReader permissionsReader,
             PluginModuleTracker<Permission, PermissionModuleDescriptor> pluginModuleTracker)
     {
         this.pluginAccessor = checkNotNull(pluginAccessor);
+        this.connectAddOnIdentifierService = checkNotNull(connectAddOnIdentifierService);
         this.permissionsReader = checkNotNull(permissionsReader);
         this.permissionTracker = checkNotNull(pluginModuleTracker);
     }
@@ -108,7 +119,24 @@ public final class PermissionManagerImpl implements PermissionManager
 
     private Iterable<? extends ApiScope> getApiScopesForPlugin(String pluginKey)
     {
-        return StaticAddOnScopes.dereference(ALL_SCOPES, addImpliedScopesTo(getScopeReferences(pluginKey)));
+        return connectAddOnIdentifierService.isConnectAddOn(pluginKey)
+                ? StaticAddOnScopes.dereference(ALL_SCOPES, addImpliedScopesTo(getScopeReferences(pluginKey)))
+                : Iterables.concat(DEFAULT_OLD_API_SCOPES, getApiScopesForPermissions(getPermissionsForPlugin(pluginKey)));
+    }
+
+    private Iterable<ApiScope> getApiScopesForPermissions(final Set<String> permissions)
+    {
+        return castToApiScopes(getApiScopesForPermissionsAsPermissions(permissions));
+    }
+
+    private Iterable<ApiScope> castToApiScopes(Iterable<Permission> permissions)
+    {
+        return transform(permissions, new CastPermissionApiScope());
+    }
+
+    private Iterable<Permission> getApiScopesForPermissionsAsPermissions(Set<String> permissions)
+    {
+        return filter(permissionTracker.getModules(), Predicates.and(new IsApiScope(), new IsInPermissions(permissions)));
     }
 
     private Collection<ScopeName> addImpliedScopesTo(Set<ScopeName> scopeReferences)
@@ -184,4 +212,48 @@ public final class PermissionManagerImpl implements PermissionManager
             return scope.allow(request, user);
         }
     }
+
+    private static final class IsApiScope implements Predicate<Permission>
+    {
+        @Override
+        public boolean apply(@Nullable Permission permission)
+        {
+            return permission instanceof ApiScope;
+        }
     }
+
+    private static final class IsInPermissions implements Predicate<Permission>
+    {
+        private final Set<String> permissions;
+
+        public IsInPermissions(Set<String> permissions)
+        {
+            this.permissions = checkNotNull(permissions);
+        }
+
+        @Override
+        public boolean apply(@Nullable Permission permission)
+        {
+            return permission != null && permissions.contains(permission.getKey());
+        }
+    }
+
+    private static final class CastPermissionApiScope implements Function<Permission, ApiScope>
+    {
+        @Override
+        public ApiScope apply(Permission permission)
+        {
+            return (ApiScope) permission;
+        }
+    }
+
+    private static final class MacroCacheApiScope extends AbstractApiScope
+    {
+        public MacroCacheApiScope()
+        {
+            super("clear_macro_cache", new RestApiScopeHelper(Arrays.asList(
+                    new RestApiScopeHelper.RestScope("atlassian-connect", Arrays.asList("latest", "1"), "/macro", Arrays.asList("DELETE"))
+            )));
+        }
+    }
+}

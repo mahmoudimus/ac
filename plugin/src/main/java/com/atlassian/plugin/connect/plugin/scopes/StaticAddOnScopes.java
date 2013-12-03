@@ -1,13 +1,12 @@
-package com.atlassian.plugin.connect.plugin.scopes;
+    package com.atlassian.plugin.connect.plugin.scopes;
 
 import com.atlassian.plugin.connect.api.scopes.ScopeName;
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
 import com.atlassian.plugin.connect.plugin.scopes.beans.AddOnScopeBean;
 import com.atlassian.plugin.connect.plugin.scopes.beans.AddOnScopeBeans;
+import com.atlassian.plugin.connect.plugin.util.StreamUtil;
 import com.google.common.base.Function;
 import com.google.gson.GsonBuilder;
-import com.opensymphony.util.FileUtils;
-import org.springframework.core.io.DefaultResourceLoader;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -18,6 +17,14 @@ import static com.google.common.collect.Collections2.transform;
 
 public class StaticAddOnScopes
 {
+    /*
+    public static Collection<AddOnScope> buildForCurrentProduct() throws IOException
+    {
+        ApplicationProperties appProps = null; // TODO
+        return buildFor(appProps.getDisplayName()); // TODO: sanitize display name
+    }
+    */
+
     /**
      * Parse static resources into the {@link Collection} of {@link AddOnScope}s used to whitelist incoming {@link javax.servlet.http.HttpServletRequest}s.
      * Reads Confluence configuration.
@@ -52,7 +59,7 @@ public class StaticAddOnScopes
     static Collection<AddOnScope> buildFor(String product) throws IOException
     {
         Collection<AddOnScope> scopes = new ArrayList<AddOnScope>();
-        String rawJson = FileUtils.readFile(new DefaultResourceLoader().getResource(resourceLocation(product)).getFile());
+        String rawJson = StreamUtil.getStringFromInputStream(StaticAddOnScopes.class.getResourceAsStream(resourceLocation(product)));
         AddOnScopeBeans scopeBeans = new GsonBuilder().create().fromJson(rawJson, AddOnScopeBeans.class);
 
         for (AddOnScopeBean scopeBean : scopeBeans.getScopes())
@@ -85,7 +92,6 @@ public class StaticAddOnScopes
      * @param scopes {@link AddOnScope}s previously read from static configuration
      * @param scopeKeys lightweight references to scopes
      * @return the {@link AddOnScope}s referenced by the {@link String}s
-     * @throws IOException if the static scopes cannot be loaded
      * @throws IllegalArgumentException if any of the scopeKeys do not appear amongst the static scopes
      */
     public static Collection<AddOnScope> dereference(Collection<AddOnScope> scopes, @Nonnull final Collection<ScopeName> scopeKeys)
@@ -138,6 +144,6 @@ public class StaticAddOnScopes
      */
     private static String resourceLocation(String product)
     {
-        return "classpath:/com/atlassian/connect/scopes." + product + ".json";
+        return "/com/atlassian/connect/scopes." + product + ".json";
     }
 }

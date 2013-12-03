@@ -6,6 +6,8 @@ import com.atlassian.plugin.connect.api.scopes.ScopeName;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.capabilities.gson.CapabilitiesGsonFactory;
 import com.atlassian.plugin.connect.plugin.util.BundleLocator;
+import com.atlassian.plugin.connect.plugin.util.StreamUtil;
+import com.atlassian.plugin.connect.spi.Filenames;
 import com.atlassian.plugin.connect.spi.host.HostProperties;
 import com.atlassian.plugin.connect.spi.permission.PermissionsReader;
 import com.atlassian.plugin.connect.spi.util.XmlUtils;
@@ -24,11 +26,9 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
@@ -50,7 +50,6 @@ public final class DescriptorPermissionsReader implements PermissionsReader
 
     private static final Logger log = LoggerFactory.getLogger(DescriptorPermissionsReader.class);
     private static final String ATLASSIAN_PLUGIN_XML = "atlassian-plugin.xml";
-    private static final String ATLASSIAN_ADD_ON_JSON = "atlassian-add-on.json";
 
     @Inject
     public DescriptorPermissionsReader(final HostProperties hostProperties, final BundleLocator bundleLocator)
@@ -125,46 +124,16 @@ public final class DescriptorPermissionsReader implements PermissionsReader
 
     private Set<ScopeName> readScopes(Bundle bundle, String productKey) throws IOException
     {
-        URL sourceUrl = bundle.getEntry(ATLASSIAN_ADD_ON_JSON);
-        String json = getStringFromInputStream(FileUtils.getResource(sourceUrl.toString()));
+        URL sourceUrl = bundle.getEntry(Filenames.ATLASSIAN_ADD_ON_JSON);
+
+        if (null == sourceUrl)
+        {
+            return Collections.emptySet();
+        }
+
+        String json = StreamUtil.getStringFromInputStream(FileUtils.getResource(sourceUrl.toString()));
         ConnectAddonBean addOn = CapabilitiesGsonFactory.getGson().fromJson(json, ConnectAddonBean.class);
         return addOn.getScopes();
-    }
-
-    // convert InputStream to String
-    private static String getStringFromInputStream(InputStream inputStream) throws IOException
-    {
-
-        BufferedReader bufReader = null;
-        StringBuilder sb = new StringBuilder();
-        String line;
-
-        try
-        {
-            bufReader = new BufferedReader(new InputStreamReader(inputStream));
-
-            while ((line = bufReader.readLine()) != null)
-            {
-                sb.append(line);
-            }
-
-        }
-        finally
-        {
-            if (bufReader != null)
-            {
-                try
-                {
-                    bufReader.close();
-                }
-                catch (IOException e)
-                {
-                    log.error("Failed to close BufferedReader. Ignoring!", e);
-                }
-            }
-        }
-
-        return sb.toString();
     }
 
     private Set<String> read(Document source, String productKey)
