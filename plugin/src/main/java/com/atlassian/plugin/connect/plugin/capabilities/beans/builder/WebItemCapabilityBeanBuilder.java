@@ -1,16 +1,13 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans.builder;
 
-import java.util.Arrays;
-import java.util.List;
-
-import com.atlassian.plugin.connect.plugin.capabilities.beans.ConditionalBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemTarget;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean;
 
-import static com.google.common.collect.Lists.asList;
+import java.util.List;
+
 import static com.google.common.collect.Lists.newArrayList;
 
 public class WebItemCapabilityBeanBuilder extends BeanWithKeyParamsAndConditionsBuilder<WebItemCapabilityBeanBuilder, WebItemCapabilityBean>

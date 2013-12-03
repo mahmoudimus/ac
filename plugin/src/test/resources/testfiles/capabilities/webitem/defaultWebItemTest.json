@@ -33,9 +33,7 @@
                 "value": "Does batman even need robin?",
                 "i18n": "batman.robin"
             },
-            "context": "addon",
-            "styleClasses": ["clowns", "are-not", "funny"],
-            "target": "none"
+            "styleClasses": ["clowns", "are-not", "funny"]
         }]
     }
 }

@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
+import com.atlassian.jira.util.collect.MapBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConnectAddonBeanBuilder;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.IconBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.WebItemCapabilityBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean;
@@ -10,83 +10,89 @@ import com.google.gson.Gson;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.TestFileReader.readCapabilitiesTestFile;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.AuthenticationBean.newAuthenticationBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean.newWebItemBean;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.matchers.SameDeepPropertyValuesAs.sameDeepPropertyValuesAs;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.VendorBean.newVendorBean;
-import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
-import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
 
 public class WebItemCapabilityBeanTest
 {
-
     @Test
-    public void producesCorrectJSON() throws Exception
+    public void producesCorrectBean() throws Exception
     {
-        Map<String, String> links = new HashMap<String, String>();
-        links.put("self", "http://www.example.com/capabilities");
-        links.put("homepage", "http://www.example.com");
-
-        WebItemCapabilityBean webItemBean = createWebItemBeanBuilder().build();
-        ConnectAddonBean addon = createAddonBeanBuilder(links, webItemBean).build();
-
         Gson gson = CapabilitiesGsonFactory.getGson();
 
-        String json = gson.toJson(addon, ConnectAddonBean.class);
-        String expectedJson = readTestFile("defaultWebItemTest.json");
+        WebItemCapabilityBean webItemBean = createWebItemBeanBuilder().build();
+        ConnectAddonBean addon = createAddonBeanBuilder(webItemBean).build();
 
-        assertThat(json, is(sameJSONAs(expectedJson)));
+        String json = readTestFile("defaultWebItemTest.json");
+        ConnectAddonBean deserializedBean = gson.fromJson(json, ConnectAddonBean.class);
+
+        assertThat(deserializedBean, sameDeepPropertyValuesAs(addon));
     }
 
     @Test
-    public void producesCorrectJSONWithDialogTarget() throws Exception
+    public void producesBeanWithAbsoluteContext() throws Exception
     {
-        Map<String, String> links = new HashMap<String, String>();
-        links.put("self", "http://www.example.com/capabilities");
-        links.put("homepage", "http://www.example.com");
+        Gson gson = CapabilitiesGsonFactory.getGson();
+
+        WebItemCapabilityBean webItemBean = createWebItemBeanBuilder()
+                .withContext(AddOnUrlContext.product)
+                .build();
+        ConnectAddonBean addon = createAddonBeanBuilder(webItemBean).build();
+
+        String json = readTestFile("productContextWebItemTest.json");
+        ConnectAddonBean deserializedBean = gson.fromJson(json, ConnectAddonBean.class);
+
+        assertThat(deserializedBean, sameDeepPropertyValuesAs(addon));
+    }
+
+    @Test
+    public void producesBeanWithDialogTarget() throws Exception
+    {
+        Gson gson = CapabilitiesGsonFactory.getGson();
 
         WebItemCapabilityBean webItemBuilder = createWebItemBeanBuilder()
                 .withTarget(WebItemTarget.dialog)
                 .build();
-        ConnectAddonBean addon = createAddonBeanBuilder(links, webItemBuilder)
+        ConnectAddonBean addon = createAddonBeanBuilder(webItemBuilder)
                 .build();
 
-        Gson gson = CapabilitiesGsonFactory.getGson();
+        String json = readTestFile("dialogWebItemTest.json");
+        ConnectAddonBean deserializedBean = gson.fromJson(json, ConnectAddonBean.class);
 
-        String json = gson.toJson(addon, ConnectAddonBean.class);
-        String expectedJson = readTestFile("dialogWebItemTest.json");
-
-        assertThat(json, is(sameJSONAs(expectedJson)));
+        assertThat(deserializedBean, sameDeepPropertyValuesAs(addon));
     }
 
     @Test
-    public void producesCorrectJSONWithInlineDialogTarget() throws Exception
+    public void producesBeanWithInlineDialogTarget() throws Exception
     {
-        Map<String, String> links = new HashMap<String, String>();
-        links.put("self", "http://www.example.com/capabilities");
-        links.put("homepage", "http://www.example.com");
+        Gson gson = CapabilitiesGsonFactory.getGson();
 
         WebItemCapabilityBean webItemBean = createWebItemBeanBuilder()
                 .withTarget(WebItemTarget.inlineDialog)
                 .build();
-        ConnectAddonBean addon = createAddonBeanBuilder(links, webItemBean).build();
+        ConnectAddonBean addon = createAddonBeanBuilder(webItemBean).build();
 
-        Gson gson = CapabilitiesGsonFactory.getGson();
+        String json = readTestFile("inlineDialogWebItemTest.json");
+        ConnectAddonBean deserializedBean = gson.fromJson(json, ConnectAddonBean.class);
 
-        String json = gson.toJson(addon, ConnectAddonBean.class);
-        String expectedJson = readTestFile("inlineDialogWebItemTest.json");
-
-        assertThat(json, is(sameJSONAs(expectedJson)));
+        assertThat(deserializedBean, sameDeepPropertyValuesAs(addon));
     }
 
-    private ConnectAddonBeanBuilder createAddonBeanBuilder(Map<String, String> links, WebItemCapabilityBean webItemBean)
+    private ConnectAddonBeanBuilder createAddonBeanBuilder(WebItemCapabilityBean webItemBean)
     {
+        Map<String, String> links = MapBuilder.build(
+                "self", "http://www.example.com/capabilities",
+                "homepage", "http://www.example.com"
+        );
+
         return newConnectAddonBean()
                 .withName("My Plugin")
                 .withKey("my-plugin")
