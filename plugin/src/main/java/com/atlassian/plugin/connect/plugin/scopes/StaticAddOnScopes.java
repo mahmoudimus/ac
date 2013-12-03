@@ -17,14 +17,6 @@ import static com.google.common.collect.Collections2.transform;
 
 public class StaticAddOnScopes
 {
-    /*
-    public static Collection<AddOnScope> buildForCurrentProduct() throws IOException
-    {
-        ApplicationProperties appProps = null; // TODO
-        return buildFor(appProps.getDisplayName()); // TODO: sanitize display name
-    }
-    */
-
     /**
      * Parse static resources into the {@link Collection} of {@link AddOnScope}s used to whitelist incoming {@link javax.servlet.http.HttpServletRequest}s.
      * Reads Confluence configuration.

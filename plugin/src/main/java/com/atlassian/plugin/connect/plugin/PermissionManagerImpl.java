@@ -17,6 +17,7 @@ import com.atlassian.plugin.connect.spi.permission.scope.RestApiScopeHelper;
 import com.atlassian.plugin.event.PluginEventManager;
 import com.atlassian.plugin.tracker.DefaultPluginModuleTracker;
 import com.atlassian.plugin.tracker.PluginModuleTracker;
+import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.user.UserKey;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -24,6 +25,7 @@ import com.google.common.base.Predicates;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -51,45 +53,36 @@ public final class PermissionManagerImpl implements PermissionManager
     private final ConnectAddOnIdentifierService connectAddOnIdentifierService;
     private final PermissionsReader permissionsReader;
     private final PluginModuleTracker<Permission, PermissionModuleDescriptor> permissionTracker;
+    private final Collection<AddOnScope> allScopes;
 
     private final Set<ApiScope> DEFAULT_OLD_API_SCOPES = ImmutableSet.<ApiScope>of(new MacroCacheApiScope());
-    private static final Collection<AddOnScope> ALL_SCOPES;
-
-    static
-    {
-        try
-        {
-            // TODO: how do we know which product we are in?
-            ALL_SCOPES = StaticAddOnScopes.buildForConfluence();
-        }
-        catch (IOException e)
-        {
-            throw new ExceptionInInitializerError(e);
-        }
-    }
 
     @Autowired
     public PermissionManagerImpl(
             PluginAccessor pluginAccessor,
             JsonConnectAddOnIdentifierService connectAddOnIdentifierService,
             PluginEventManager pluginEventManager,
-            PermissionsReader permissionsReader)
+            PermissionsReader permissionsReader,
+            ApplicationProperties applicationProperties) throws IOException
     {
         this(pluginAccessor, connectAddOnIdentifierService, permissionsReader,
                 new DefaultPluginModuleTracker<Permission, PermissionModuleDescriptor>(
-                        pluginAccessor, pluginEventManager, PermissionModuleDescriptor.class));
+                        pluginAccessor, pluginEventManager, PermissionModuleDescriptor.class),
+                applicationProperties);
     }
 
     PermissionManagerImpl(
             PluginAccessor pluginAccessor,
             JsonConnectAddOnIdentifierService connectAddOnIdentifierService,
             PermissionsReader permissionsReader,
-            PluginModuleTracker<Permission, PermissionModuleDescriptor> pluginModuleTracker)
+            PluginModuleTracker<Permission, PermissionModuleDescriptor> pluginModuleTracker,
+            ApplicationProperties applicationProperties) throws IOException
     {
         this.pluginAccessor = checkNotNull(pluginAccessor);
         this.connectAddOnIdentifierService = checkNotNull(connectAddOnIdentifierService);
         this.permissionsReader = checkNotNull(permissionsReader);
         this.permissionTracker = checkNotNull(pluginModuleTracker);
+        this.allScopes = buildScopes(applicationProperties.getDisplayName());
     }
 
     @Override
@@ -117,10 +110,34 @@ public final class PermissionManagerImpl implements PermissionManager
         return any(getApiScopesForPlugin(pluginKey), new IsInApiScopePredicate(req, user));
     }
 
+    private Collection<AddOnScope> buildScopes(String applicationDisplayName) throws IOException
+    {
+        if (StringUtils.isEmpty(applicationDisplayName))
+        {
+            throw new IllegalArgumentException("Application display name can be neither null nor blank");
+        }
+
+        String lowerCaseDisplayName = applicationDisplayName.toLowerCase();
+
+        if (lowerCaseDisplayName.contains("confluence"))
+        {
+            return StaticAddOnScopes.buildForConfluence();
+        }
+
+        if (lowerCaseDisplayName.contains("jira"))
+        {
+            return StaticAddOnScopes.buildForJira();
+        }
+
+        // alternately we could send the display name straight through to StaticAddOnScopes.buildFor(String)
+        // but with a name like "display name" I'm not confident that it won't contain formatting or extra characters
+        throw new IllegalArgumentException(String.format("Application display name '%s' is not recognised as either Confluence or JIRA. Please set it to a value that when converted to lower case contains either 'confluence' or 'jira'.", applicationDisplayName));
+    }
+
     private Iterable<? extends ApiScope> getApiScopesForPlugin(String pluginKey)
     {
         return connectAddOnIdentifierService.isConnectAddOn(pluginKey)
-                ? StaticAddOnScopes.dereference(ALL_SCOPES, addImpliedScopesTo(getScopeReferences(pluginKey)))
+                ? StaticAddOnScopes.dereference(allScopes, addImpliedScopesTo(getScopeReferences(pluginKey)))
                 : Iterables.concat(DEFAULT_OLD_API_SCOPES, getApiScopesForPermissions(getPermissionsForPlugin(pluginKey)));
     }
 
