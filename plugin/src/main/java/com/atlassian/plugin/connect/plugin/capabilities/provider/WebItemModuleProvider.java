@@ -49,7 +49,7 @@ public class WebItemModuleProvider implements ConnectModuleProvider<WebItemCapab
 
         if (bean.isAbsolute() || bean.getContext().equals(AddOnUrlContext.product))
         {
-            descriptors.add(webItemFactory.createModuleDescriptor(plugin, addonBundleContext,bean));
+            descriptors.add(webItemFactory.createModuleDescriptor(plugin, addonBundleContext, bean));
         }
         else
         {
