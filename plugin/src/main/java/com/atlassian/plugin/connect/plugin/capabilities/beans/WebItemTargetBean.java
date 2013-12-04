@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
-import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.BaseCapabilityBeanBuilder;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.BeanWithParamsBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.WebItemTargetBeanBuilder;
 
 import java.util.Collections;
@@ -9,7 +9,7 @@ import java.util.Map;
 /**
  * @since 1.0
  */
-public class WebItemTargetBean extends BaseCapabilityBean
+public class WebItemTargetBean extends BeanWithParams
 {
     private WebItemTargetType type;
     private Map<String, Object> options;
@@ -20,7 +20,7 @@ public class WebItemTargetBean extends BaseCapabilityBean
         this.options = Collections.emptyMap();
     }
 
-    public WebItemTargetBean(final BaseCapabilityBeanBuilder builder)
+    public WebItemTargetBean(final BeanWithParamsBuilder builder)
     {
         super(builder);
         if (null == type)

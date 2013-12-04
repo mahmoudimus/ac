@@ -223,6 +223,9 @@ public class WebItemCapabilityBean extends BeanWithKeyAndParamsAndConditions
                 .add("name", getName())
                 .add("link", getLink())
                 .add("location", getLocation())
+                .add("weight", getWeight())
+                .add("styleClasses", getStyleClasses())
+                .add("tooltip", getTooltip())
                 .add("target", getTarget())
                 .toString();
     }
