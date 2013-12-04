@@ -15,6 +15,7 @@ import com.atlassian.jira.plugin.ComponentClassManager;
 import com.atlassian.jira.plugin.workflow.WorkflowFunctionModuleDescriptor;
 import com.atlassian.jira.plugin.workflow.WorkflowPluginFunctionFactory;
 import com.atlassian.jira.security.JiraAuthenticationContext;
+import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.workflow.OSWorkflowConfigurator;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
@@ -177,6 +178,9 @@ public class RemoteWorkflowPostFunctionModuleDescriptor extends WorkflowFunction
             final String uuid = (String) params.get(POST_FUNCTION_CONFIGURATION_UUID);
             final IFrameParams iFrameParams = createIFrameParams(params, uuid);
             final String namespace = moduleKey + uuid;
+            ApplicationUser user = ComponentAccessor.getJiraAuthenticationContext().getUser();
+            String username = user == null ? "" : user.getUsername();
+
             return iFrameRenderer.render(
                     new IFrameContextImpl(getPluginKey(),
                             workflowFunctionActionUris.get(resourceName),
@@ -184,7 +188,7 @@ public class RemoteWorkflowPostFunctionModuleDescriptor extends WorkflowFunction
                             iFrameParams),
                     "",
                     ImmutableMap.of(POST_FUNCTION_CONFIGURATION_UUID, new String[] { uuid }),
-                    ComponentAccessor.getJiraAuthenticationContext().getUser().getDisplayName(),
+                    username,
                     Collections.<String, Object>emptyMap());
         }
         catch (IOException e)
