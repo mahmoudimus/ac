@@ -18,11 +18,18 @@ public class FixedConfluenceSearchResultPage extends SearchResultPage
         // don't check that js variable that only exists in confluence tests
     }
 
-    public SearchResultPage doResultsSearch(String searchTerms)
-    {
+    public void setSearchField(String searchTerms) {
         resultPageSearchInputBox.clear();
         resultPageSearchInputBox.type(searchTerms);
+    }
+
+    public SearchResultPage clickSearchButton() {
         resultPageSearchButton.click();
-        return pageBinder.bind(getClass());
+        return pageBinder.bind(getSearchResultPageClass());
+    }
+
+    protected Class<? extends SearchResultPage> getSearchResultPageClass()
+    {
+        return getClass();
     }
 }

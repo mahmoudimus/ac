@@ -1,6 +1,5 @@
 package it.capabilities.confluence;
 
-import com.atlassian.confluence.pageobjects.page.SearchResultPage;
 import com.atlassian.pageobjects.elements.query.Poller;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.FixedConfluenceSearchResultPage;
 import com.atlassian.plugin.connect.test.webhook.WebHookBody;
@@ -27,8 +26,9 @@ public class TestConfluenceWebHooksUI extends ConfluenceWebDriverTestBase
             {
                 loginAsAdmin();
 
-                SearchResultPage searchResultPage = product.visit(FixedConfluenceSearchResultPage.class);
-                searchResultPage.doResultsSearch(SEARCH_TERMS);
+                FixedConfluenceSearchResultPage searchResultPage = product.visit(FixedConfluenceSearchResultPage.class);
+                searchResultPage.setSearchField(SEARCH_TERMS);
+                searchResultPage.clickSearchButton();
                 Poller.waitUntilTrue(searchResultPage.hasMatchingResults());
 
                 int matchingResults = searchResultPage.getMatchingResults();
