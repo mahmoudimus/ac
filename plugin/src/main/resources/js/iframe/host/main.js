@@ -24,6 +24,7 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons"], function ($, XdmRpc
         initHeight = options.h || "0",
         start = new Date().getTime(),
         isDialog = !!options.dlg,
+        isInlineDialog = ($content.closest('.aui-inline-dialog').length > 0),
         isSimpleDialog = !!options.simpleDlg,
         isGeneral = !!options.general,
         // json string representing product context
@@ -96,6 +97,11 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons"], function ($, XdmRpc
           if (!isDialog) {
             // dialog content plugins do not honor resize requests, since their content size is fixed
             $("iframe", $content).css({width: width, height: height});
+            if(isInlineDialog){
+                _AP.require(["inline-dialog"], function (inlineDialog) {
+                    inlineDialog.resizeInlineDialog($content, width, height);
+                });
+            }
           }
         }),
         sizeToParent: debounce(function() {
