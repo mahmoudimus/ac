@@ -13,6 +13,8 @@ import com.atlassian.jwt.JwtConstants;
 import com.atlassian.jwt.applinks.JwtService;
 import com.atlassian.jwt.core.HttpRequestCanonicalizer;
 import com.atlassian.jwt.httpclient.CanonicalHttpUriRequest;
+import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
+import com.atlassian.plugin.connect.plugin.applinks.DefaultConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.license.LicenseStatus;
 import com.atlassian.plugin.connect.plugin.util.LocaleHelper;
@@ -363,8 +365,8 @@ public class JwtSigningRemotablePluginAccessorTest
     {
         when(applicationLink.getId()).thenReturn(new ApplicationId(UUID.randomUUID().toString()));
         when(jwtService.issueJwt(any(String.class), eq(applicationLink))).thenReturn(MOCK_JWT);
-        ApplicationLinkAccessor applicationLinkAccessor = mock(ApplicationLinkAccessor.class);
-        when(applicationLinkAccessor.getApplicationLink(PLUGIN_KEY)).thenReturn(applicationLink);
+        ConnectApplinkManager connectApplinkManager = mock(DefaultConnectApplinkManager.class);
+        when(connectApplinkManager.getAppLink(PLUGIN_KEY)).thenReturn(applicationLink);
         Supplier<URI> baseUrlSupplier = new Supplier<URI>()
         {
             @Override
@@ -373,7 +375,7 @@ public class JwtSigningRemotablePluginAccessorTest
                 return URI.create(BASE_URL);
             }
         };
-        return new JwtSigningRemotablePluginAccessor(PLUGIN_KEY, PLUGIN_NAME, baseUrlSupplier, jwtService, applicationLinkAccessor, mockCachingHttpContentRetriever());
+        return new JwtSigningRemotablePluginAccessor(PLUGIN_KEY, PLUGIN_NAME, baseUrlSupplier, jwtService, connectApplinkManager, mockCachingHttpContentRetriever());
     }
 
     private HttpContentRetriever mockCachingHttpContentRetriever()

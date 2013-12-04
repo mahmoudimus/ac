@@ -15,6 +15,6 @@
     </plugin-info>
 
     <!-- NOTE, this plugin has to be transformed because there's some magic that makes wired tests work -->
-    <component-import key="connectApplinkManager" interface="com.atlassian.plugin.connect.plugin.installer.ConnectApplinkManager" />
+    <component-import key="connectApplinkManager" interface="com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager" />
 
 </atlassian-plugin>

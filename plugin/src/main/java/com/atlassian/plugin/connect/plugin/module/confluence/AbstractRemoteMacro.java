@@ -40,6 +40,6 @@ public abstract class AbstractRemoteMacro implements RemoteMacro
     @Override
     public URI getBaseUrl()
     {
-        return remotablePluginAccessorFactory.get(remoteMacroInfo.getPluginKey()).getDisplayUrl();
+        return remotablePluginAccessorFactory.get(remoteMacroInfo.getPluginKey()).getBaseUrl();
     }
 }

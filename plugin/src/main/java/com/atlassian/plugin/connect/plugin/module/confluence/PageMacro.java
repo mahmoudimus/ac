@@ -14,6 +14,7 @@ import com.atlassian.plugin.connect.spi.module.IFrameContext;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 
+import com.atlassian.sal.api.user.UserProfile;
 import com.google.common.base.Function;
 import com.google.common.collect.Maps;
 
@@ -39,7 +40,6 @@ public final class PageMacro extends AbstractRemoteMacro
     @Override
     public String execute(Map<String, String> parameters, String storageFormatBody, ConversionContext conversionContext) throws MacroExecutionException
     {
-        String remoteUser = userManager.getRemoteUsername();
         String counter = incrementCounter(conversionContext);
         try
         {
@@ -52,15 +52,16 @@ public final class PageMacro extends AbstractRemoteMacro
                     remoteMacroInfo.getRequestContextParameterFactory(),
                     remotablePluginAccessorFactory.get(remoteMacroInfo.getPluginKey()));
 
-            UserKey userKey = userManager.getRemoteUserKey();
+            UserProfile user = userManager.getRemoteUser();
+            String username = user == null ? "" : user.getUsername();
+            String userKey = user == null ? "" : user.getUserKey().getStringValue();
             IFrameContextImpl iframeContextImpl = new IFrameContextImpl(iframeContext, "-" + counter);
-            Map<String, String[]> queryParams = convertParams(macroInstance.getUrlParameters(userManager.getRemoteUsername(), userKey == null ? "" : userKey.getStringValue()));
+            Map<String, String[]> queryParams = convertParams(macroInstance.getUrlParameters(username, userKey));
 
             if (getOutputType().equals(OutputType.INLINE)){
-                return iFrameRenderer.renderInline(iframeContextImpl, "", queryParams, remoteUser, Collections.<String, Object>emptyMap());
-
+                return iFrameRenderer.renderInline(iframeContextImpl, "", queryParams, username, Collections.<String, Object>emptyMap());
             } else {
-                return iFrameRenderer.render(iframeContextImpl, "", queryParams, remoteUser, Collections.<String, Object>emptyMap());
+                return iFrameRenderer.render(iframeContextImpl, "", queryParams, username, Collections.<String, Object>emptyMap());
             }
 
         } catch (IOException e)

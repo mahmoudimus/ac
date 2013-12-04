@@ -17,9 +17,12 @@
     <!--[if IE 9]><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/aui/<%= auiVersion %>/css/aui-ie9.css" media="all"><![endif]-->
     <link rel="stylesheet" href="/assets/css/styles.css" media="all">
     <script src="//code.jquery.com/jquery-1.8.3.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.2/raphael-min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.3.0/lodash.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/aui/<%= auiVersion %>/js/aui.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.19.0/codemirror.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.19.0/mode/javascript/javascript.min.js"></script>
+    <script src="/assets/js/sequence-diagram-min.js"></script>
     <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/aui/<%= auiVersion %>/js/aui-ie.js"></script><![endif]-->
 </head>
 
@@ -60,7 +63,7 @@
                     <%- partial('_partials/_sidebar.ejs') %>
                     <section class="aui-page-panel-content ac-page">
                         <% if (/^jira$|^confluence$/.test(current.path[1])) { %>
-                            <%- partial('/capabilities/_child_layout.jade',{yield: yield, product: current.path[1]}) %>
+                            <%- partial('/modules/_child_layout.jade',{yield: yield, product: current.path[1]}) %>
                         <% } else { %>
                             <%- yield %>
                         <% } %>
@@ -83,6 +86,9 @@
         <!-- #footer -->
     </div>
     <!-- #page -->
+    <script>
+    $(".diagram").sequenceDiagram({theme: 'simple'});
+    </script>
 </body>
 
 </html>

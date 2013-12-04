@@ -24,18 +24,30 @@ public class CapabilityList extends BaseCapabilityBean
     @CapabilityModuleProvider(WebItemModuleProvider.class)
     private List<WebItemCapabilityBean> webItems;
 
+    /**
+     * @schemaTitle Component Tab Panel
+     */
     @CapabilityModuleProvider(value = ConnectTabPanelModuleProvider.class, products = {ProductFilter.JIRA})
     private List<ConnectTabPanelCapabilityBean> jiraComponentTabPanels;
 
+    /**
+     * @schemaTitle Issue Tab Panel
+     */
     @CapabilityModuleProvider(value = ConnectTabPanelModuleProvider.class, products = {ProductFilter.JIRA})
     private List<ConnectTabPanelCapabilityBean> jiraIssueTabPanels;
 
     @CapabilityModuleProvider(value = ConnectProjectAdminTabPanelModuleProvider.class, products = {ProductFilter.JIRA})
     private List<ConnectProjectAdminTabPanelCapabilityBean> jiraProjectAdminTabPanels;
 
+    /**
+     * @schemaTitle Project Tab Panel
+     */
     @CapabilityModuleProvider(value = ConnectTabPanelModuleProvider.class, products = {ProductFilter.JIRA})
     private List<ConnectTabPanelCapabilityBean> jiraProjectTabPanels;
 
+    /**
+     * @schemaTitle Version Tab Panel
+     */
     @CapabilityModuleProvider(value = ConnectTabPanelModuleProvider.class, products = {ProductFilter.JIRA})
     private List<ConnectTabPanelCapabilityBean> jiraVersionTabPanels;
 
@@ -45,9 +57,15 @@ public class CapabilityList extends BaseCapabilityBean
     @CapabilityModuleProvider(WebPanelModuleProvider.class)
     private List<WebPanelCapabilityBean> webPanels;
 
+    /**
+     * @schemaTitle General Page
+     */
     @CapabilityModuleProvider(GeneralPageModuleProvider.class)
     private List<ConnectPageCapabilityBean> generalPages;
 
+    /**
+     * @schemaTitle Admin Page
+     */
     @CapabilityModuleProvider(AdminPageModuleProvider.class)
     private List<ConnectPageCapabilityBean> adminPages;
 

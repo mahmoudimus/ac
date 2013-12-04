@@ -32,7 +32,7 @@ public final class DownloadScopeHelper
         });
     }
 
-    public boolean allow(final HttpServletRequest request, String user)
+    public boolean allow(final HttpServletRequest request, String username)
     {
         final String pathInfo = ServletUtils.extractPathInfo(request);
         return Iterables.any(pathPrefixes, new Predicate<String>()

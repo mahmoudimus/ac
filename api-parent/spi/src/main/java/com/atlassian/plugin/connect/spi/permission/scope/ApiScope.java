@@ -14,10 +14,10 @@ public interface ApiScope extends Permission
      * Whether to allow the request or not in this scope.
      *
      * @param request the current request. The body can be read repeatedly via {@link HttpServletRequest#getInputStream()}
-     * @param user    the username of the logged in user
+     * @param username the username of the logged in user
      * @return {@code true} if allowed
      */
-    boolean allow(HttpServletRequest request, @Nullable String user);
+    boolean allow(HttpServletRequest request, @Nullable String username);
 
     Iterable<ApiResourceInfo> getApiResourceInfos();
 }
