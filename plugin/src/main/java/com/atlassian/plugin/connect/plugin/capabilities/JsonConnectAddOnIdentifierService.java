@@ -54,7 +54,7 @@ public class JsonConnectAddOnIdentifierService implements ConnectAddOnIdentifier
         }
         catch (Exception e)
         {
-            log.debug("Exception reading from MANIFEST", e);
+            log.debug("Exception reading from MANIFEST.MF", e);
             return false;
         }
     }
