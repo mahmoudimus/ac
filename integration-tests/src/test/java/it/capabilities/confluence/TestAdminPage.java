@@ -63,16 +63,16 @@ public class TestAdminPage extends ConfluenceWebDriverTestBase
         loginAsAdmin();
         product.visit(FixedConfluenceAdminHomePage.class);
 
-        ConfluenceAdminPage viewProjectPage = product.getPageBinder().bind(ConfluenceAdminPage.class, GENERATED_PAGE_KEY);
+        ConfluenceAdminPage adminPage = product.getPageBinder().bind(ConfluenceAdminPage.class, GENERATED_PAGE_KEY);
 
-        assertThat(viewProjectPage.isRemotePluginLinkPresent(), is(true));
+        assertThat(adminPage.isRemotePluginLinkPresent(), is(true));
 
-        URI url = new URI(viewProjectPage.getRemotePluginLinkHref());
+        URI url = new URI(adminPage.getRemotePluginLinkHref());
         assertThat(url.getPath(), is("/confluence/plugins/servlet/ac/my-plugin/pg"));
 
         // TODO Admin page web-item location has incorrect text ("OSGi")
 
-        RemotePluginTestPage addonContentsPage = viewProjectPage.clickRemotePluginLink();
+        RemotePluginTestPage addonContentsPage = adminPage.clickRemotePluginLink();
         assertEquals("Hello world", addonContentsPage.getValueBySelector("#hello-world-message"));
     }
 
