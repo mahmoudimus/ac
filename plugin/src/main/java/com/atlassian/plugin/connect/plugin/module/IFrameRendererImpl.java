@@ -67,15 +67,15 @@ public final class IFrameRendererImpl implements IFrameRenderer
 
     @Override
     @Deprecated
-    public String render(IFrameContext iframeContext, String extraPath, Map<String, String[]> queryParams, String remoteUser) throws IOException
+    public String render(IFrameContext iframeContext, String extraPath, Map<String, String[]> queryParams, String remoteUsername) throws IOException
     {
-        return render(iframeContext, extraPath, queryParams, remoteUser, Collections.<String, Object>emptyMap());
+        return render(iframeContext, extraPath, queryParams, remoteUsername, Collections.<String, Object>emptyMap());
     }
 
     @Override
-    public String render(IFrameContext iframeContext, String extraPath, Map<String, String[]> queryParams, String remoteUser, Map<String, Object> productContext) throws IOException
+    public String render(IFrameContext iframeContext, String extraPath, Map<String, String[]> queryParams, String remoteUsername, Map<String, Object> productContext) throws IOException
     {
-        return renderWithTemplate(prepareContext(iframeContext, extraPath, queryParams, remoteUser, productContext), "velocity/iframe-body.vm");
+        return renderWithTemplate(prepareContext(iframeContext, extraPath, queryParams, remoteUsername, productContext), "velocity/iframe-body.vm");
     }
 
     @Override
@@ -86,9 +86,9 @@ public final class IFrameRendererImpl implements IFrameRenderer
     }
 
     @Override
-    public String renderInline(IFrameContext iframeContext, String extraPath, Map<String, String[]> queryParams, String remoteUser, Map<String, Object> productContext) throws IOException
+    public String renderInline(IFrameContext iframeContext, String extraPath, Map<String, String[]> queryParams, String remoteUsername, Map<String, Object> productContext) throws IOException
     {
-        return renderWithTemplate(prepareContext(iframeContext, extraPath, queryParams, remoteUser, productContext), "velocity/iframe-body-inline.vm");
+        return renderWithTemplate(prepareContext(iframeContext, extraPath, queryParams, remoteUsername, productContext), "velocity/iframe-body-inline.vm");
     }
 
     private String renderWithTemplate(Map<String, Object> ctx, String templatePath) throws IOException
@@ -98,7 +98,7 @@ public final class IFrameRendererImpl implements IFrameRenderer
         return output.toString();
     }
 
-    private Map<String, Object> prepareContext(IFrameContext iframeContext, String extraPath, Map<String, String[]> queryParams, String remoteUser, Map<String, Object> productContext)
+    private Map<String, Object> prepareContext(IFrameContext iframeContext, String extraPath, Map<String, String[]> queryParams, String remoteUsername, Map<String, Object> productContext)
             throws IOException
     {
         RemotablePluginAccessor remotablePluginAccessor = remotablePluginAccessorFactory.get(iframeContext.getPluginKey());
@@ -110,11 +110,11 @@ public final class IFrameRendererImpl implements IFrameRenderer
         final URI iframeUrl = uriBuilder.toUri().toJavaUri();
 
         String[] dialog = queryParams.get("dialog");
-        final String timeZone = userPreferencesRetriever.getTimeZoneFor(remoteUser).getID();
-        UserProfile user = userManager.getUserProfile(remoteUser);
+        final String timeZone = userPreferencesRetriever.getTimeZoneFor(remoteUsername).getID();
+        UserProfile user = userManager.getUserProfile(remoteUsername);
 
         Map<String, String[]> allParams = newHashMap(queryParams);
-        allParams.put("user_id", new String[]{remoteUser});
+        allParams.put("user_id", new String[]{remoteUsername});
         allParams.put("user_key", new String[]{user == null ? "" : user.getUserKey().getStringValue()});
         allParams.put("xdm_e", new String[]{hostUrl.toString()});
         allParams.put("xdm_c", new String[]{"channel-" + iframeContext.getNamespace()});
@@ -140,7 +140,7 @@ public final class IFrameRendererImpl implements IFrameRenderer
         ctx.put("namespace", iframeContext.getNamespace());
         ctx.put("contextPath", iframeHost.getContextPath());
 
-        ctx.put("userId", remoteUser == null ? "" : remoteUser);
+        ctx.put("userId", remoteUsername == null ? "" : remoteUsername);
         ctx.put("userKey", user == null ? "" : user.getUserKey().getStringValue());
 
         ctx.put("data", ImmutableMap.of("timeZone", timeZone));
