@@ -1,18 +1,13 @@
 package it.capabilities;
 
 import com.atlassian.plugin.connect.plugin.capabilities.event.ConnectEventHandler;
-import com.atlassian.plugin.connect.plugin.webhooks.PluginsWebHookProvider;
-import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
 import com.atlassian.plugin.connect.test.server.ConnectCapabilitiesRunner;
-import com.atlassian.plugin.connect.test.server.module.WebhookModule;
 import com.atlassian.plugin.connect.test.webhook.WebHookBody;
 import com.atlassian.plugin.connect.test.webhook.WebHookTestServlet;
 import com.atlassian.plugin.connect.test.webhook.WebHookTester;
 import com.atlassian.plugin.connect.test.webhook.WebHookWaiter;
 import it.AbstractBrowserlessTest;
 
-import org.hamcrest.Matchers;
-import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -69,7 +64,7 @@ public class TestLifecycle extends AbstractBrowserlessTest
         }
     }
 
-    //TODO: un-ignore when we figure out how to get a jar manifest for an uninstalled bundle or add a BeforePluginUninstalled event
+    //TODO: un-ignore when we figure out how to sign a request after a plugin has been uninstalled or add a BeforePluginUninstalled event
     @Ignore
     @Test
     public void testPluginUninstalledFired() throws Exception
@@ -84,7 +79,7 @@ public class TestLifecycle extends AbstractBrowserlessTest
             plugin1.uninstall();
 
             WebHookBody body = servlet.waitForHook();
-            assertWebHookDidFire(body,ConnectEventHandler.UNINSTALLED);
+            assertWebHookDidFire(body, ConnectEventHandler.UNINSTALLED);
         }
         finally
         {
