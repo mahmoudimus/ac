@@ -171,7 +171,7 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
                     }
                     catch (PluginInstallException e)
                     {
-                        log.warn("Failed to notify remote host that add-on was installed.", e);
+                        log.warn("Failed to notify remote host that add-on was uninstalled.", e);
                     }
                 }
             }
