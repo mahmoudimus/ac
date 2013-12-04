@@ -3,7 +3,6 @@ package com.atlassian.plugin.connect.plugin.product.confluence.webhook;
 import com.atlassian.confluence.event.events.ConfluenceEvent;
 import com.atlassian.confluence.event.events.search.SearchPerformedEvent;
 import com.atlassian.confluence.search.service.SpaceCategoryEnum;
-import com.atlassian.confluence.search.v2.query.BooleanQuery;
 import com.atlassian.confluence.search.v2.query.BoostingQuery;
 import com.atlassian.confluence.search.v2.query.InSpaceQuery;
 import com.atlassian.confluence.search.v2.query.SpaceCategoryQuery;
@@ -14,8 +13,6 @@ import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
@@ -25,6 +22,10 @@ import java.util.Set;
 
 public class SearchPerformedEventMapper extends ConfluenceEventMapper
 {
+    private static final String QUERY = "query";
+    private static final String SPACE_KEYS = "spaceKeys";
+    private static final String SPACE_CATEGORIES = "spaceCategories";
+
     public SearchPerformedEventMapper(UserManager userManager, SettingsManager confluenceSettingsManager)
     {
         super(userManager, confluenceSettingsManager);
@@ -68,7 +69,7 @@ public class SearchPerformedEventMapper extends ConfluenceEventMapper
         if (event.getSearchQuery() instanceof BoostingQuery)
         {
             String queryText = ((BoostingQuery) event.getSearchQuery()).getSearchQueryParameters().getQuery();
-            parameterMap.put("query", queryText);
+            parameterMap.put(QUERY, queryText);
         }
         for (Object parameter : event.getSearchQuery().getParameters())
         {
@@ -82,12 +83,12 @@ public class SearchPerformedEventMapper extends ConfluenceEventMapper
         if (query instanceof TextFieldQuery)
         {
             String queryString = ((TextFieldQuery) query).getRawQuery();
-            parameters.put("query", queryString);
+            parameters.put(QUERY, queryString);
         }
         else if (query instanceof InSpaceQuery)
         {
             List<String> spaceParameters = ((InSpaceQuery) query).getParameters();
-            parameters.put("spaceKeys", ImmutableList.copyOf(spaceParameters));
+            parameters.put(SPACE_KEYS, ImmutableList.copyOf(spaceParameters));
         }
         else if (query instanceof SpaceCategoryQuery)
         {
@@ -100,11 +101,7 @@ public class SearchPerformedEventMapper extends ConfluenceEventMapper
                     return spaceCategoryEnum.getRepresentation();
                 }
             });
-            parameters.put("spaceCategories", ImmutableList.copyOf(spaceCategories));
-        }
-        else if (query instanceof BooleanQuery)
-        {
-            ((BooleanQuery) query).
+            parameters.put(SPACE_CATEGORIES, ImmutableList.copyOf(spaceCategories));
         }
     }
 }
