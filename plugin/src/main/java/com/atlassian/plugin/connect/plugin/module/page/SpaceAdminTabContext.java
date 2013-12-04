@@ -8,19 +8,19 @@ import com.atlassian.plugin.web.Condition;
 /**
  * Container for all information required by invocations of {@link com.atlassian.plugin.connect.plugin.module.confluence.SpaceAdminIFrameAction}.
  */
-public class SpaceAdminTabContext extends PageInfo
+public class SpaceAdminTabContext
 {
-    private Plugin plugin;
-    private String url;
-    private String webItemKey;
+    private final Plugin plugin;
+    private final String url;
+    private final String webItemKey;
+    private final PageInfo pageInfo;
 
-    public SpaceAdminTabContext(Plugin plugin, String url, String webItemKey, String decorator, String templateSuffix, String title, Condition condition, Map<String, String> metaTagsContent)
+    public SpaceAdminTabContext(Plugin plugin, String url, String webItemKey, PageInfo pageInfo)
     {
-        super(decorator, templateSuffix, title, condition, metaTagsContent);
-
         this.plugin = plugin;
         this.url = url;
         this.webItemKey = webItemKey;
+        this.pageInfo = pageInfo;
     }
 
     public String getWebItemKey()
@@ -36,5 +36,10 @@ public class SpaceAdminTabContext extends PageInfo
     public String getUrl()
     {
         return url;
+    }
+
+    public PageInfo getPageInfo()
+    {
+        return pageInfo;
     }
 }

@@ -7,8 +7,9 @@ import java.util.Map;
 import com.atlassian.confluence.event.events.plugin.XWorkStateChangeEvent;
 import com.atlassian.confluence.plugin.descriptor.PluginAwareActionConfig;
 import com.atlassian.event.api.EventPublisher;
+import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.SpaceAdminTabActionDescriptorFactory;
+import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.plugin.module.page.SpaceAdminTabContext;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
 import com.atlassian.plugin.module.ModuleFactory;
@@ -33,27 +34,30 @@ import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
 
 /**
- * This is a special case descriptor that models an XWork action to display a space tools page. There is no clean
+ * This is a special-case descriptor that models an XWork action to display a Space Tools page. There is no clean
  * page decorators that can be used to render the space tools pages - they have a hardcoded expectation that they're
- * working from inside an xwork action.
+ * rendering from inside an xwork action context. If at some point this situation changes, it may be feasible to
+ * model Space Tools pages simply using PageToWebItemAndServletConverter
  */
 public class SpaceToolsActionDescriptor extends AbstractModuleDescriptor implements ConfigurationProvider
 {
-    private static final String NAMESPACE_PREFIX = "/plugins/ac/";
+    private static final ModuleFactory NOOP_MODULE_FACTORY = new NoOpModuleFactory();
     private static final String DEFAULT_INTERCEPTOR_STACK = "validatingStack";
     private static final String VELOCITY_TEMPLATE = "/velocity/space-tab-page.vm";
 
     private final EventPublisher eventPublisher;
     private final SpaceAdminTabContext context;
+    private final String namespace;
 
-    public SpaceToolsActionDescriptor(EventPublisher eventPublisher, Plugin plugin, SpaceAdminTabContext context)
+    public SpaceToolsActionDescriptor(EventPublisher eventPublisher, Plugin plugin, String moduleKey, SpaceAdminTabContext context, String namespace)
     {
-        super(ModuleFactory.LEGACY_MODULE_FACTORY);
+        super(NOOP_MODULE_FACTORY);
         this.eventPublisher = eventPublisher;
         this.context = context;
+        this.namespace = namespace;
 
         Element element = new DOMElement("module")
-            .addAttribute("key", "action-" + context.getWebItemKey());
+            .addAttribute("key", moduleKey);
 
         super.init(plugin, element);
     }
@@ -92,10 +96,7 @@ public class SpaceToolsActionDescriptor extends AbstractModuleDescriptor impleme
     @Override
     public void init(Configuration configuration) throws ConfigurationException
     {
-        String key = context.getWebItemKey();
-
         List parentStack = ConfigurationUtil.buildParentsFromString(configuration, "default");
-        String namespace = NAMESPACE_PREFIX + plugin.getKey();
         PackageConfig packageConfig = new PackageConfig(key, namespace, false, null, parentStack);
 
         InterceptorConfig interceptorConfig = new InterceptorConfig("space-tab-context",
@@ -108,8 +109,9 @@ public class SpaceToolsActionDescriptor extends AbstractModuleDescriptor impleme
         ResultConfig resultConfig = new ResultConfig("success", VelocityResult.class, resultParameters);
         results.put(resultConfig.getName(), resultConfig);
 
+        Map<String, Object> actionParameters = ImmutableMap.<String, Object>of("context", context);
         ActionConfig actionConfig = new PluginAwareActionConfig(null, SpaceAdminIFrameAction.class.getName(),
-            ImmutableMap.of("context", context), results, Lists.newArrayList(), plugin);
+            actionParameters, results, Lists.newArrayList(), plugin);
         actionConfig.addInterceptors(InterceptorBuilder.constructInterceptorReference(packageConfig,
             interceptorConfig.getName(), Collections.EMPTY_MAP));
         actionConfig.addInterceptors(InterceptorBuilder.constructInterceptorReference(packageConfig,
@@ -123,5 +125,14 @@ public class SpaceToolsActionDescriptor extends AbstractModuleDescriptor impleme
     public boolean needsReload()
     {
         return true;
+    }
+
+    private static class NoOpModuleFactory implements ModuleFactory
+    {
+        @Override
+        public <T> T createModule(String name, ModuleDescriptor<T> moduleDescriptor) throws PluginParseException
+        {
+            throw new IllegalStateException("The ModuleFactory for " + moduleDescriptor.getModuleClass().getName() + " is expected to never be called.");
+        }
     }
 }

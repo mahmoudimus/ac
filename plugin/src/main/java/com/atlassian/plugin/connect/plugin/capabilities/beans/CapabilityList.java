@@ -75,7 +75,7 @@ public class CapabilityList extends BaseCapabilityBean
     @CapabilityModuleProvider(value = SearchRequestViewModuleProvider.class, products = {ProductFilter.JIRA})
     private List<SearchRequestViewCapabilityBean> jiraSearchRequestViews;
 
-    @CapabilityModuleProvider(value = SpaceAdminTabModuleProvider.class, products = {ProductFilter.CONFLUENCE})
+    @CapabilityModuleProvider(value = SpaceToolsTabModuleProvider.class, products = {ProductFilter.CONFLUENCE})
     private List<ConnectPageCapabilityBean> spaceAdminPanels;
 
     public CapabilityList()

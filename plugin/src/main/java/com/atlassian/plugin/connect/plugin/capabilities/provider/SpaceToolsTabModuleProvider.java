@@ -7,8 +7,9 @@ import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectPageCapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.SpaceAdminTabActionDescriptorFactory;
+import com.atlassian.plugin.connect.plugin.capabilities.descriptor.SpaceToolsActionDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
+import com.atlassian.plugin.connect.plugin.module.page.PageInfo;
 import com.atlassian.plugin.connect.plugin.module.page.SpaceAdminTabContext;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 
@@ -21,17 +22,21 @@ import org.springframework.stereotype.Component;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean.newWebItemBean;
 import static com.google.common.base.Strings.isNullOrEmpty;
 
+/**
+ * Confluence "Space Tools" tabs are modelled as a web-item and an x-work action.
+ */
 @Component
-public class SpaceAdminTabModuleProvider implements ConnectModuleProvider<ConnectPageCapabilityBean>
+public class SpaceToolsTabModuleProvider implements ConnectModuleProvider<ConnectPageCapabilityBean>
 {
     private static final String SPACE_TOOLS_SECTION = "system.space.tools";
+    private static final String DEFAULT_LOCATION = "addons";
 
     private final WebItemModuleDescriptorFactory webItemModuleDescriptorFactory;
-    private final SpaceAdminTabActionDescriptorFactory spaceTabActionDescriptorFactory;
+    private final SpaceToolsActionDescriptorFactory spaceTabActionDescriptorFactory;
     private final ProductAccessor productAccessor;
 
     @Autowired
-    public SpaceAdminTabModuleProvider(WebItemModuleDescriptorFactory webItemModuleDescriptorFactory, SpaceAdminTabActionDescriptorFactory spaceTabActionDescriptorFactory, ProductAccessor productAccessor)
+    public SpaceToolsTabModuleProvider(WebItemModuleDescriptorFactory webItemModuleDescriptorFactory, SpaceToolsActionDescriptorFactory spaceTabActionDescriptorFactory, ProductAccessor productAccessor)
     {
         this.webItemModuleDescriptorFactory = webItemModuleDescriptorFactory;
         this.spaceTabActionDescriptorFactory = spaceTabActionDescriptorFactory;
@@ -44,22 +49,22 @@ public class SpaceAdminTabModuleProvider implements ConnectModuleProvider<Connec
         List<ModuleDescriptor> modules = Lists.newArrayList();
         for (ConnectPageCapabilityBean bean : beans)
         {
-            SpaceAdminTabContext spaceTabContext = new SpaceAdminTabContext(plugin, bean.getUrl(), bean.getKey(), "atl.general", "",
-                bean.getDisplayName(), null, Collections.EMPTY_MAP);
+            String key = bean.getKey();
 
             Integer weight = bean.getWeight() == null ? productAccessor.getPreferredGeneralWeight() : bean.getWeight();
-            String location = isNullOrEmpty(bean.getLocation()) ? "addons" : bean.getLocation();
+            String location = isNullOrEmpty(bean.getLocation()) ? DEFAULT_LOCATION : bean.getLocation();
 
+            String url = SpaceToolsActionDescriptorFactory.NAMESPACE_PREFIX + plugin.getKey() + "/" + key + ".action?key=${space.key}";
             WebItemCapabilityBean webItemCapabilityBean = newWebItemBean()
                 .withName(bean.getName())
                 .withKey(bean.getKey())
-                .withLink("/plugins/ac/" + plugin.getKey() + "/" + bean.getKey() + ".action?key=${space.key}")
+                .withLink(url)
                 .withLocation(SPACE_TOOLS_SECTION + "/" + location)
                 .withWeight(weight)
                 .build();
 
             modules.add(webItemModuleDescriptorFactory.createModuleDescriptor(plugin, addonBundleContext, webItemCapabilityBean));
-            modules.add(this.spaceTabActionDescriptorFactory.create(plugin, spaceTabContext));
+            modules.add(this.spaceTabActionDescriptorFactory.create(plugin, key, bean.getDisplayName(), bean.getUrl()));
         }
         return modules;
     }
