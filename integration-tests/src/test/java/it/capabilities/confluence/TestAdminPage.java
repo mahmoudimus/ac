@@ -16,7 +16,6 @@ import org.junit.Test;
 import java.net.URI;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectPageCapabilityBean.newPageBean;
-import static org.hamcrest.Matchers.both;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
@@ -64,16 +63,16 @@ public class TestAdminPage extends ConfluenceWebDriverTestBase
         loginAsAdmin();
         product.visit(FixedConfluenceAdminHomePage.class);
 
-        ConfluenceAdminPage viewProjectPage = product.getPageBinder().bind(ConfluenceAdminPage.class, GENERATED_PAGE_KEY);
+        ConfluenceAdminPage adminPage = product.getPageBinder().bind(ConfluenceAdminPage.class, GENERATED_PAGE_KEY);
 
-        assertThat(viewProjectPage.isRemotePluginLinkPresent(), is(true));
+        assertThat(adminPage.isRemotePluginLinkPresent(), is(true));
 
-        URI url = new URI(viewProjectPage.getRemotePluginLinkHref());
+        URI url = new URI(adminPage.getRemotePluginLinkHref());
         assertThat(url.getPath(), is("/confluence/plugins/servlet/ac/my-plugin/pg"));
 
         // TODO Admin page web-item location has incorrect text ("OSGi")
 
-        RemotePluginTestPage addonContentsPage = viewProjectPage.clickRemotePluginLink();
+        RemotePluginTestPage addonContentsPage = adminPage.clickRemotePluginLink();
         assertEquals("Hello world", addonContentsPage.getValueBySelector("#hello-world-message"));
     }
 
@@ -82,8 +81,8 @@ public class TestAdminPage extends ConfluenceWebDriverTestBase
     {
         loginAs(TestConstants.BARNEY_USERNAME, TestConstants.BARNEY_USERNAME);
         InsufficientPermissionsPage page = product.visit(InsufficientPermissionsPage.class, "my-plugin", "pg");
-        assertThat(page.getErrorMessage(),
-                both(containsString("You do not have the correct permissions")).and(containsString("My Admin Page")));
+        assertThat(page.getErrorMessage(), containsString("You do not have the correct permissions"));
+        assertThat(page.getErrorMessage(), containsString("My Admin Page"));
     }
 
 }

@@ -2,7 +2,6 @@ package it.jira;
 
 import com.atlassian.jira.pageobjects.navigator.AdvancedSearch;
 import com.atlassian.jira.plugin.issuenav.pageobjects.IssueDetailPage;
-import com.atlassian.plugin.connect.test.junit.HtmlDumpRule;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginDialog;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraAdministrationHomePage;
@@ -25,9 +24,6 @@ import static org.junit.Assert.*;
 
 public class TestJira extends JiraWebDriverTestBase
 {
-    @Rule
-    public HtmlDumpRule htmlDump = new HtmlDumpRule(product.getTester().getDriver());
-
     private static AtlassianConnectAddOnRunner remotePlugin;
 
     @BeforeClass

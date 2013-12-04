@@ -24,6 +24,7 @@ import com.atlassian.plugin.event.PluginEventListener;
 import com.atlassian.plugin.event.PluginEventManager;
 import com.atlassian.plugin.event.events.PluginEnabledEvent;
 import com.atlassian.sal.api.ApplicationProperties;
+import com.atlassian.sal.api.UrlMode;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import com.atlassian.upm.api.util.Option;
@@ -201,12 +202,12 @@ public final class RemoteEventsHandler implements InitializingBean, DisposableBe
 
         ImmutableMap.Builder builder = ImmutableMap.<String, Object>builder()
                                                    .put("links", ImmutableMap.of(
-                                                           "oauth", applicationProperties.getBaseUrl() + "/rest/atlassian-connect/latest/oauth"))
+                                                           "oauth", applicationProperties.getBaseUrl(UrlMode.CANONICAL) + "/rest/atlassian-connect/latest/oauth"))
                                                    .put("clientKey", nullToEmpty(consumer.getKey()))
                                                    .put("publicKey", nullToEmpty(RSAKeys.toPemEncoding(consumer.getPublicKey())))
                                                    .put("serverVersion", nullToEmpty(applicationProperties.getBuildNumber()))
                                                    .put("pluginsVersion", nullToEmpty(getRemotablePluginsPluginVersion()))
-                                                   .put("baseUrl", nullToEmpty(applicationProperties.getBaseUrl()))
+                                                   .put("baseUrl", nullToEmpty(applicationProperties.getBaseUrl(UrlMode.CANONICAL)))
                                                    .put("productType", nullToEmpty(productAccessor.getKey()))
                                                    .put("description", nullToEmpty(consumer.getDescription()));
 

@@ -15,12 +15,6 @@ public interface RemotablePluginAccessor
     String getKey();
 
     /**
-     * @deprecated Use {@link #getBaseUrl()} instead, because that better reflects this URL's usage.
-     */
-    @Deprecated
-    URI getDisplayUrl();
-
-    /**
      * The start of the URL for HTTP calls to this plugin (e.g. "http://server:1234/contextPath").
      * @return {@link URI} URL prefix for HTTP calls
      */

@@ -24,9 +24,9 @@ public abstract class AbstractApiScope extends AbstractPermission implements Api
     }
 
     @Override
-    public final boolean allow(HttpServletRequest request, String user)
+    public final boolean allow(HttpServletRequest request, String username)
     {
-        return restApiScopeHelper.allow(request, user);
+        return restApiScopeHelper.allow(request, username);
     }
 
     @Override

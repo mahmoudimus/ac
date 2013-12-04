@@ -10,9 +10,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 
 import com.atlassian.plugin.connect.plugin.descriptor.DescriptorValidator;
-import com.atlassian.plugin.connect.plugin.settings.SettingsManager;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
-import com.atlassian.sal.api.user.UserManager;
 
 import org.bouncycastle.openssl.PEMWriter;
 import org.json.JSONException;
@@ -27,60 +25,12 @@ public class InstallerResource
 {
     public static final String INSTALLER_RESOURCE_PATH = "/installer";
     public static final String ATLASSIAN_PLUGIN_REMOTABLE_SCHEMA_PATH = "/schema/atlassian-plugin-remotable";
-    public static final String ATLASSIAN_PLUGIN_SCHEMA_PATH = "/schema/atlassian-plugin";
 
-    private static final Logger log = LoggerFactory.getLogger(InstallerResource.class);
-
-    private final UserManager userManager;
     private final DescriptorValidator descriptorValidator;
-    private final SettingsManager settingsManager;
 
-    public InstallerResource(UserManager userManager,
-                             DescriptorValidator descriptorValidator,
-                             SettingsManager settingsManager
-    )
+    public InstallerResource(DescriptorValidator descriptorValidator)
     {
-        this.userManager = userManager;
         this.descriptorValidator = descriptorValidator;
-        this.settingsManager = settingsManager;
-    }
-
-    @PUT
-    @Path("/allow-dogfooding")
-    public Response allowDogfooding()
-    {
-        if (!userManager.isSystemAdmin(userManager.getRemoteUsername()))
-        {
-            return Response.status(Response.Status.FORBIDDEN).build();
-        }
-        settingsManager.setAllowDogfooding(true);
-        return Response.noContent().build();
-    }
-
-    @DELETE
-    @Path("/allow-dogfooding")
-    public Response disallowDogfooding()
-    {
-        if (!userManager.isSystemAdmin(userManager.getRemoteUsername()))
-        {
-            return Response.status(Response.Status.FORBIDDEN).build();
-        }
-        settingsManager.setAllowDogfooding(false);
-        return Response.noContent().build();
-    }
-
-    @GET
-    @Path("/allow-dogfooding")
-    public Response doesAllowDogfooding()
-    {
-        if (settingsManager.isAllowDogfooding())
-        {
-            return Response.noContent().build();
-        }
-        else
-        {
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
     }
 
     @GET
@@ -113,6 +63,5 @@ public class InstallerResource
                 .put("publicKey", publicKeyWriter.toString())
                 .put("privateKey", privateKeyWriter.toString()).toString(2))
                        .build();
-
     }
 }

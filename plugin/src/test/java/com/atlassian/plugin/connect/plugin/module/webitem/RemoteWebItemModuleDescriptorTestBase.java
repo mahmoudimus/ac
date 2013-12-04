@@ -87,7 +87,8 @@ public abstract class RemoteWebItemModuleDescriptorTestBase
         RemoteWebItemModuleDescriptor descriptor = new RemoteWebItemModuleDescriptor(moduleFactory, dynamicDescriptorRegistration, remotePageDescriptorCreator,
                 urlValidator, conditionProcessor, webItemCreator, urlVariableSubstitutor, pluginAccessorFactory);
         RemotablePluginAccessor remotablePluginAccessor = mock(RemotablePluginAccessor.class);
-        when(remotablePluginAccessor.getDisplayUrl()).thenReturn(URI.create("mock"));
+
+        when(remotablePluginAccessor.getBaseUrl()).thenReturn(URI.create("mock"));
         when(pluginAccessorFactory.get(any(String.class))).thenReturn(remotablePluginAccessor);
 
         descriptor.init(mock(Plugin.class), createDescriptorElement());

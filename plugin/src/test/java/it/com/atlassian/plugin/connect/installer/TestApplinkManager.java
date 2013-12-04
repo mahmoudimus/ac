@@ -3,7 +3,7 @@ package it.com.atlassian.plugin.connect.installer;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import com.atlassian.plugin.connect.plugin.installer.ConnectApplinkManager;
+import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 
 import static org.junit.Assert.assertNotNull;

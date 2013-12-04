@@ -16,7 +16,7 @@ public class ConfigurationUtils
         }
         catch (Exception e)
         {
-            log.error(String.format("Failed to retrieve system property '%s' as int due to exception. Returning default value %d.", name, defaultValue), e);
+            log.warn(String.format("Failed to retrieve system property '%s' as int due to exception. Returning default value %d.", name, defaultValue), e);
             return defaultValue;
         }
     }

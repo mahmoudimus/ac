@@ -194,13 +194,13 @@ public class MacroContentManager implements DisposableBean
      */
     public void clearContentByPluginKey(String pluginKey)
     {
-        URI displayUrl = remotablePluginAccessorFactory.get(pluginKey).getDisplayUrl();
+        URI displayUrl = remotablePluginAccessorFactory.get(pluginKey).getBaseUrl();
         cachingHttpContentRetriever.flushCacheByUriPattern(Pattern.compile("^" + displayUrl + "/.*"));
     }
 
     public void clearContentByInstance(String pluginKey, String instanceKey)
     {
-        URI displayUrl = remotablePluginAccessorFactory.get(pluginKey).getDisplayUrl();
+        URI displayUrl = remotablePluginAccessorFactory.get(pluginKey).getBaseUrl();
         cachingHttpContentRetriever.flushCacheByUriPattern(
                 Pattern.compile("^" + displayUrl + "/.*key=" + instanceKey + ".*"));
     }

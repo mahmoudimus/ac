@@ -32,7 +32,7 @@ public class IsProjectAdminCondition implements Condition {
 	public boolean shouldDisplay(Map<String, Object> ctx)
 	{
 		final ProjectService projectService = ComponentAccessor.getComponent(ProjectService.class);
-		return projectService.getProjectByKeyForAction(authenticationContext.getLoggedInUser(),
+		return projectService.getProjectByKeyForAction(authenticationContext.getUser(),
 				project.getKey(), ProjectAction.EDIT_PROJECT_CONFIG).isValid();
 	}
 

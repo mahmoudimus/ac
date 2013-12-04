@@ -12,6 +12,7 @@ import com.atlassian.plugin.connect.plugin.descriptor.util.FormatConverter;
 import com.atlassian.plugin.connect.plugin.service.LegacyAddOnIdentifierService;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.sal.api.user.UserManager;
+import com.atlassian.sal.api.user.UserProfile;
 import com.atlassian.upm.api.util.Option;
 import com.atlassian.upm.spi.PluginInstallException;
 import com.atlassian.upm.spi.PluginInstallHandler;
@@ -88,17 +89,19 @@ public class ConnectUPMInstallHandler implements PluginInstallHandler
             boolean isXml = connectIdentifier.isConnectAddOn(descriptorFile);
             Plugin plugin;
 
+            UserProfile user = userManager.getRemoteUser();
+            String username = user == null ? "" : user.getUsername();
             if (isXml)
             {
                 //TODO: get rid of formatConverter when we go to capabilities
                 Document doc = formatConverter.readFileToDoc(descriptorFile);
 
-                plugin = connectInstaller.install(userManager.getRemoteUsername(), doc);
+                plugin = connectInstaller.install(username, doc);
             }
             else
             {
                 String json = Files.toString(descriptorFile, Charsets.UTF_8);
-                plugin = connectInstaller.install(userManager.getRemoteUsername(), json);
+                plugin = connectInstaller.install(username, json);
             }
 
             return new PluginInstallResult(plugin);

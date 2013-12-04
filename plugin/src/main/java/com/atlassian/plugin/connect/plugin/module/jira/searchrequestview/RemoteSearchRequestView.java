@@ -16,6 +16,7 @@ import com.atlassian.jira.plugin.searchrequestview.SearchRequestViewModuleDescri
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.sal.api.ApplicationProperties;
+import com.atlassian.sal.api.UrlMode;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.atlassian.uri.Uri;
 import com.atlassian.uri.UriBuilder;
@@ -73,7 +74,7 @@ public class RemoteSearchRequestView implements SearchRequestView
     {
         JiraAuthenticationContext jiraAuthenticationContext = ComponentManager.getInstance().getJiraAuthenticationContext();
         Map<String,String> queryParams = newHashMap();
-        String baseUrl = applicationProperties.getBaseUrl();
+        String baseUrl = applicationProperties.getBaseUrl(UrlMode.CANONICAL);
         queryParams.put("link", SearchRequestViewUtils.getLink(searchRequest,
                 baseUrl, jiraAuthenticationContext.getLoggedInUser()));
 
