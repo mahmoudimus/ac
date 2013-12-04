@@ -10,16 +10,16 @@ import javax.inject.Named;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.spi.ConnectAddOnIdentifierService;
-import com.atlassian.plugin.osgi.util.OsgiHeaderUtil;
 
 import org.dom4j.Document;
-import org.dom4j.Element;
-import org.dom4j.io.SAXReader;
 import org.osgi.framework.Bundle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Named("jsonConnectAddOnIdentifierService")
 public class JsonConnectAddOnIdentifierService implements ConnectAddOnIdentifierService
 {
+    private static final Logger log = LoggerFactory.getLogger(JsonConnectAddOnIdentifierService.class);
 
     private final PluginAccessor pluginAccessor;
 
@@ -38,6 +38,7 @@ public class JsonConnectAddOnIdentifierService implements ConnectAddOnIdentifier
         }
         catch (Exception e)
         {
+            log.debug("Exception reading bundle header " + CONNECT_ADDON_HEADER , e);
             return false;
         }
     }
@@ -53,6 +54,7 @@ public class JsonConnectAddOnIdentifierService implements ConnectAddOnIdentifier
         }
         catch (Exception e)
         {
+            log.debug("Exception reading from MANIFEST", e);
             return false;
         }
     }

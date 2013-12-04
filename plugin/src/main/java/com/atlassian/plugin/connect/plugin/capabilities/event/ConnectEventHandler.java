@@ -157,7 +157,7 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
     {
         final Plugin plugin = pluginUninstalledEvent.getPlugin();
         String pluginKey = plugin.getKey();
-        if (connectIdentifier.isConnectAddOn(plugin) && descriptorRegistry.hasDescriptor(pluginKey))
+        if (descriptorRegistry.hasDescriptor(pluginKey))
         {
             ConnectAddonBean addon = CapabilitiesGsonFactory.getGson().fromJson(descriptorRegistry.getDescriptor(pluginKey), ConnectAddonBean.class);
 
@@ -165,7 +165,7 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
             {
                 if (!Strings.isNullOrEmpty(addon.getLifecycle().getUninstalled()))
                 {
-                    callSyncHandler(addon, addon.getLifecycle().getUninstalled(),UNINSTALLED);
+                    callSyncHandler(addon, addon.getLifecycle().getUninstalled(), UNINSTALLED);
                 }
             }
             else
