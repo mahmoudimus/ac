@@ -26,11 +26,6 @@
         <url-pattern>/*</url-pattern>
     </servlet-filter>
 
-    <servlet-filter key="jwt-2lo-authentication" class="com.atlassian.jwt.plugin.servlet.JwtAuthFilter"
-            location="after-encoding" weight="1900">
-        <url-pattern>/*</url-pattern>
-    </servlet-filter>
-
     <servlet-filter key="oauth-2lo-authentication" class="com.atlassian.plugin.connect.plugin.module.oauth.OAuth2LOFilter"
             location="after-encoding" weight="2000">
         <url-pattern>/*</url-pattern>
