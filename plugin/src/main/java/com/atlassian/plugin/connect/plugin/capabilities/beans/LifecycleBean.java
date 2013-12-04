@@ -70,6 +70,7 @@ public class LifecycleBean extends BaseCapabilityBean
     {
         return (Strings.isNullOrEmpty(installed) && Strings.isNullOrEmpty(uninstalled) && Strings.isNullOrEmpty(enabled) && Strings.isNullOrEmpty(disabled));
     }
+
     public static LifecycleBeanBuilder newLifecycleBean()
     {
         return new LifecycleBeanBuilder();
