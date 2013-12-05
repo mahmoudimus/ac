@@ -49,7 +49,7 @@ public class JiraAdministrationHomePage extends AbstractJiraPage
 
     private boolean hasLinkToAdminPage(final String adminPageKey)
     {
-        return findAdminPageLink(adminPageKey) != null;
+        return findAdminPageLink(adminPageKey).isPresent();
     }
 
     private RemotePluginEmbeddedTestPage bindAdminPage(final String adminPageWebItemKey, final String adminPageServletKey)
