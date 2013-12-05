@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.provider;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConditionModuleFragmentFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.IconModuleFragmentFactory;
@@ -29,7 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.ConnectAsserts.assertURIEquals;
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean.newWebItemBean;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemModuleBean.newWebItemBean;
 import static com.google.common.collect.Lists.newArrayList;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
@@ -82,7 +82,7 @@ public class WebItemProviderTest
     @Test
     public void singleAbsoluteLink() throws Exception
     {
-        WebItemCapabilityBean bean = newWebItemBean()
+        WebItemModuleBean bean = newWebItemBean()
                 .withName(new I18nProperty("My Web Item", "my.webitem"))
                 .withLink("http://www.google.com")
                 .withLocation("atl.admin/menu")
@@ -103,7 +103,7 @@ public class WebItemProviderTest
     @Test
     public void singleAbsoluteLinkWithAddOnContext() throws Exception
     {
-        WebItemCapabilityBean bean = newWebItemBean()
+        WebItemModuleBean bean = newWebItemBean()
                 .withName(new I18nProperty("My Web Item", "my.webitem"))
                 .withLink("http://www.google.com")
                 .withLocation("atl.admin/menu")
@@ -125,7 +125,7 @@ public class WebItemProviderTest
     @Test
     public void singleAbsoluteLinkWithProductContext() throws Exception
     {
-        WebItemCapabilityBean bean = newWebItemBean()
+        WebItemModuleBean bean = newWebItemBean()
                 .withName(new I18nProperty("My Web Item", "my.webitem"))
                 .withLink("http://www.google.com")
                 .withLocation("atl.admin/menu")
@@ -147,7 +147,7 @@ public class WebItemProviderTest
     @Test
     public void singleAddOnLink() throws Exception
     {
-        WebItemCapabilityBean bean = newWebItemBean()
+        WebItemModuleBean bean = newWebItemBean()
                 .withName(new I18nProperty("My Web Item", "my.webitem"))
                 .withLink("/some/admin")
                 .withLocation("atl.admin/menu")
@@ -168,7 +168,7 @@ public class WebItemProviderTest
     @Test
     public void singleAddOnLinkWithAddOnContext() throws Exception
     {
-        WebItemCapabilityBean bean = newWebItemBean()
+        WebItemModuleBean bean = newWebItemBean()
                 .withName(new I18nProperty("My Web Item", "my.webitem"))
                 .withLink("/some/admin")
                 .withLocation("atl.admin/menu")
@@ -190,7 +190,7 @@ public class WebItemProviderTest
     @Test
     public void singleProductLink() throws Exception
     {
-        WebItemCapabilityBean bean = newWebItemBean()
+        WebItemModuleBean bean = newWebItemBean()
                 .withName(new I18nProperty("My Web Item", "my.webitem"))
                 .withLink("/local/jira/admin")
                 .withLocation("atl.admin/menu")
@@ -212,13 +212,13 @@ public class WebItemProviderTest
     @Test
     public void multipleWebItems() throws Exception
     {
-        WebItemCapabilityBean bean = newWebItemBean()
+        WebItemModuleBean bean = newWebItemBean()
                 .withName(new I18nProperty("My Web Item", "my.webitem"))
                 .withLink("http://www.google.com")
                 .withLocation("atl.admin/menu")
                 .build();
 
-        WebItemCapabilityBean bean2 = newWebItemBean()
+        WebItemModuleBean bean2 = newWebItemBean()
                 .withName(new I18nProperty("My Other Web Item", "my.other.webitem"))
                 .withLink("/my/addon")
                 .withLocation("atl.admin/menu")

@@ -7,7 +7,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nPropert
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceViewPage;
-import com.atlassian.plugin.connect.test.server.ConnectCapabilitiesRunner;
+import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.google.common.base.Optional;
 import it.capabilities.CheckUsernameConditionServlet;
 import it.confluence.ConfluenceWebDriverTestBase;
@@ -21,7 +21,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import static com.atlassian.fugue.Option.some;
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean.newWebItemBean;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.SingleConditionBean.newSingleConditionBean;
 import static it.TestConstants.BARNEY_USERNAME;
 import static it.TestConstants.BETTY_USERNAME;
@@ -43,12 +43,12 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
     private static final String ABSOLUTE_WEBITEM = "google-link";
     private static final String SPACE = "ds";
 
-    private static ConnectCapabilitiesRunner remotePlugin;
+    private static ConnectRunner remotePlugin;
 
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        remotePlugin = new ConnectCapabilitiesRunner(product.getProductInstance().getBaseUrl(), "my-plugin")
+        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), "my-plugin")
                 .addCapabilities("webItems",
                         newWebItemBean()
                                 .withName(new I18nProperty("AC General Web Item", "ac.gen"))

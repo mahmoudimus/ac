@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans.nested;
 
-import com.atlassian.plugin.connect.plugin.capabilities.beans.BaseCapabilityBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.BaseModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.VendorBeanBuilder;
 
 import com.google.common.base.Objects;
@@ -8,7 +8,7 @@ import com.google.common.base.Objects;
 /**
  * @since 1.0
  */
-public class VendorBean extends BaseCapabilityBean
+public class VendorBean extends BaseModuleBean
 {
     private String name;
     private String url;

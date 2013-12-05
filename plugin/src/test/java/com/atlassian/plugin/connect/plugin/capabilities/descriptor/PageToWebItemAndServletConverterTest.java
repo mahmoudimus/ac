@@ -1,8 +1,8 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConditionalBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectPageCapabilityBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectPageModuleBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.SingleConditionBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IFrameServletBean;
@@ -23,7 +23,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Map;
 
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectPageCapabilityBean.newPageBean;
+import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectPageModuleBean.newPageBean;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
@@ -52,7 +52,7 @@ public class PageToWebItemAndServletConverterTest
     private static final IconBean ICON = IconBean.newIconBean().withUrl("moiImage").build();
     private static final ConditionalBean CONDITION_BEAN = new SingleConditionBeanBuilder().withCondition("unconditional").build();
 
-    private final ConnectPageCapabilityBean defaultPageBean = createDefaultPageBean();
+    private final ConnectPageModuleBean defaultPageBean = createDefaultPageBean();
     private final PageToWebItemAndServletConverter defaultAdapter = createConverter(defaultPageBean, IFRAME_PARAMS);
 
     private PageToWebItemAndServletConverter emptyBeanAdapter;
@@ -185,7 +185,7 @@ public class PageToWebItemAndServletConverterTest
         return iFrameServlet().getPageInfo();
     }
 
-    private WebItemCapabilityBean webItem()
+    private WebItemModuleBean webItem()
     {
         return defaultAdapter.getWebItemBean();
     }
@@ -201,13 +201,13 @@ public class PageToWebItemAndServletConverterTest
         return defaultAdapter.getServletBean();
     }
 
-    private PageToWebItemAndServletConverter createConverter(ConnectPageCapabilityBean pageBean, IFrameParams iFrameParams)
+    private PageToWebItemAndServletConverter createConverter(ConnectPageModuleBean pageBean, IFrameParams iFrameParams)
     {
         return new PageToWebItemAndServletConverter(pageBean, PLUGIN_KEY, DEFAULT_WEIGHT, DEFAULT_LOCATION,
                 DECORATOR, TEMPLATE_SUFFIX, META_TAGS, CONDITION, iFrameParams);
     }
 
-    private static ConnectPageCapabilityBean createDefaultPageBean()
+    private static ConnectPageModuleBean createDefaultPageBean()
     {
         return newPageBean()
                 .withKey(PAGE_BEAN_KEY)

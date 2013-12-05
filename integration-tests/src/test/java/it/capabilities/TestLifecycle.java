@@ -1,18 +1,13 @@
 package it.capabilities;
 
 import com.atlassian.plugin.connect.plugin.capabilities.event.ConnectEventHandler;
-import com.atlassian.plugin.connect.plugin.webhooks.PluginsWebHookProvider;
-import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
-import com.atlassian.plugin.connect.test.server.ConnectCapabilitiesRunner;
-import com.atlassian.plugin.connect.test.server.module.WebhookModule;
+import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.atlassian.plugin.connect.test.webhook.WebHookBody;
 import com.atlassian.plugin.connect.test.webhook.WebHookTestServlet;
 import com.atlassian.plugin.connect.test.webhook.WebHookTester;
 import com.atlassian.plugin.connect.test.webhook.WebHookWaiter;
 import it.AbstractBrowserlessTest;
 
-import org.hamcrest.Matchers;
-import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -52,9 +47,9 @@ public class TestLifecycle extends AbstractBrowserlessTest
     public void testPluginDisabledFired() throws Exception
     {
         final WebHookTestServlet servlet = new WebHookTestServlet();
-        ConnectCapabilitiesRunner plugin1 = new ConnectCapabilitiesRunner(baseUrl, "lifecycle-plugin")
+        ConnectRunner plugin1 = new ConnectRunner(baseUrl, "lifecycle-plugin")
                 .addDisableLifecycle()
-                .addRoute(ConnectCapabilitiesRunner.DISABLED_PATH, servlet);
+                .addRoute(ConnectRunner.DISABLED_PATH, servlet);
         try
         {
             plugin1.start();
@@ -75,9 +70,9 @@ public class TestLifecycle extends AbstractBrowserlessTest
     public void testPluginUninstalledFired() throws Exception
     {
         final WebHookTestServlet servlet = new WebHookTestServlet();
-        ConnectCapabilitiesRunner plugin1 = new ConnectCapabilitiesRunner(baseUrl, "lifecycle-plugin")
+        ConnectRunner plugin1 = new ConnectRunner(baseUrl, "lifecycle-plugin")
                 .addUninstallLifecycle()
-                .addRoute(ConnectCapabilitiesRunner.UNINSTALLED_PATH, servlet);
+                .addRoute(ConnectRunner.UNINSTALLED_PATH, servlet);
         try
         {
             plugin1.start();
