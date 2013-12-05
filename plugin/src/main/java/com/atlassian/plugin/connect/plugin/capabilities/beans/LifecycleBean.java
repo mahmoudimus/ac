@@ -1,8 +1,6 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
-import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.BaseCapabilityBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.LifecycleBeanBuilder;
-
 import com.google.common.base.Strings;
 
 /**
@@ -70,6 +68,7 @@ public class LifecycleBean extends BaseCapabilityBean
     {
         return (Strings.isNullOrEmpty(installed) && Strings.isNullOrEmpty(uninstalled) && Strings.isNullOrEmpty(enabled) && Strings.isNullOrEmpty(disabled));
     }
+
     public static LifecycleBeanBuilder newLifecycleBean()
     {
         return new LifecycleBeanBuilder();

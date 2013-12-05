@@ -29,18 +29,18 @@ public class CapabilitiesGsonFactory
     public static GsonBuilder getGsonBuilder(BundleContext bundleContext)
     {
         Type conditionalType = new TypeToken<List<ConditionalBean>>(){}.getType();
-        Type capabilityList = new TypeToken<List>(){}.getType();
         Type mapStringType = new TypeToken<Map<String,String>>(){}.getType();
+
         return new GsonBuilder()
-                .registerTypeAdapter(conditionalType,new ConditionalBeanSerializer())
+                .registerTypeAdapter(conditionalType, new ConditionalBeanSerializer())
                 .registerTypeAdapter(LifecycleBean.class, new LifecycleSerializer())
                 .registerTypeHierarchyAdapter(List.class, new IgnoredEmptyCollectionSerializer())
                 .registerTypeAdapter(mapStringType, new IgnoredEmptyMapSerializer())
-                .registerTypeAdapter(String.class,new EmptyStringIgnoringTypeAdapter().nullSafe())
+                .registerTypeAdapter(String.class, new EmptyStringIgnoringTypeAdapter().nullSafe())
                 .registerTypeAdapterFactory(new LowercaseEnumTypeAdapterFactory())
                 ;
     }
-    
+
     public static Gson getGson()
     {
         return getGsonBuilder().create();

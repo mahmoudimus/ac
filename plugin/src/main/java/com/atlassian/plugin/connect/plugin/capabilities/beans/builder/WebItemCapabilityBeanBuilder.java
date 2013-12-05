@@ -1,15 +1,13 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans.builder;
 
-import java.util.Arrays;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemTargetBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean;
+
 import java.util.List;
 
-import com.atlassian.plugin.connect.plugin.capabilities.beans.ConditionalBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.AddOnUrlContext;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean;
-
-import static com.google.common.collect.Lists.asList;
 import static com.google.common.collect.Lists.newArrayList;
 
 public class WebItemCapabilityBeanBuilder extends BeanWithKeyParamsAndConditionsBuilder<WebItemCapabilityBeanBuilder, WebItemCapabilityBean>
@@ -21,6 +19,7 @@ public class WebItemCapabilityBeanBuilder extends BeanWithKeyParamsAndConditions
     private List<String> styleClasses;
     private I18nProperty tooltip;
     private IconBean icon;
+    private WebItemTargetBean target;
 
     public WebItemCapabilityBeanBuilder()
     {
@@ -38,6 +37,7 @@ public class WebItemCapabilityBeanBuilder extends BeanWithKeyParamsAndConditions
         this.styleClasses = defaultBean.getStyleClasses();
         this.tooltip = defaultBean.getTooltip();
         this.icon = defaultBean.getIcon();
+        this.target = defaultBean.getTarget();
     }
 
     public WebItemCapabilityBeanBuilder withLink(String link)
@@ -58,6 +58,12 @@ public class WebItemCapabilityBeanBuilder extends BeanWithKeyParamsAndConditions
         return this;
     }
 
+    public WebItemCapabilityBeanBuilder withTarget(WebItemTargetBean target)
+    {
+        this.target = target;
+        return this;
+    }
+
     public WebItemCapabilityBeanBuilder withWeight(int weight)
     {
         this.weight = weight;
@@ -70,7 +76,7 @@ public class WebItemCapabilityBeanBuilder extends BeanWithKeyParamsAndConditions
         return this;
     }
 
-    public WebItemCapabilityBeanBuilder withStyleClasses(String ... styleClasses)
+    public WebItemCapabilityBeanBuilder withStyleClasses(String... styleClasses)
     {
         this.styleClasses = newArrayList(styleClasses);
         return this;

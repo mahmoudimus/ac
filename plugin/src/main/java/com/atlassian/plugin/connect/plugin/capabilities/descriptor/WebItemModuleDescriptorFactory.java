@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean;
+import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemTargetBean;
 import com.atlassian.plugin.connect.plugin.module.webitem.ProductSpecificWebItemModuleDescriptorFactory;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 
@@ -17,8 +18,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.printNode;
 import static com.google.common.collect.Lists.newArrayList;
@@ -70,6 +69,15 @@ public class WebItemModuleDescriptorFactory implements ConnectModuleDescriptorFa
         if(!bean.getConditions().isEmpty())
         {
             webItemElement.add(conditionModuleFragmentFactory.createFragment(plugin.getKey(),bean.getConditions(),"#" + webItemKey));
+        }
+
+        if(bean.getTarget().isDialogTarget())
+        {
+            styles.add("ap-dialog");
+        }
+        else if (bean.getTarget().isInlineDialogTarget())
+        {
+            styles.add("ap-inline-dialog");
         }
 
         if(!styles.isEmpty())

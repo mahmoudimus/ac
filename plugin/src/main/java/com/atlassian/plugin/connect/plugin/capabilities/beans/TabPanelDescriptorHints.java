@@ -11,8 +11,9 @@ public class TabPanelDescriptorHints
 
     public TabPanelDescriptorHints()
     {
-        this("","",ModuleDescriptor.class,null);
+        this("", "", ModuleDescriptor.class, null);
     }
+
     public TabPanelDescriptorHints(String modulePrefix, String domElementName, Class<? extends ModuleDescriptor> descriptorClass, Class<?> moduleClass)
     {
         this.modulePrefix = modulePrefix;

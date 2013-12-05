@@ -1,11 +1,8 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
-/**
- * @since 1.0
- */
-public enum AddOnUrlContext
+public enum WebItemTargetType
 {
-    addon, product;
+    page, dialog, inlineDialog;
 
     @Override
     public String toString()
