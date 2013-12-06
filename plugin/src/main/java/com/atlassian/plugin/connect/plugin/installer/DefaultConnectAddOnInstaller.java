@@ -1,7 +1,5 @@
 package com.atlassian.plugin.connect.plugin.installer;
 
-import java.util.Set;
-
 import com.atlassian.plugin.*;
 import com.atlassian.plugin.connect.plugin.OAuthLinkManager;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
@@ -17,13 +15,15 @@ import com.atlassian.plugin.descriptors.UnloadableModuleDescriptor;
 import com.atlassian.plugin.descriptors.UnrecognisedModuleDescriptor;
 import com.atlassian.plugin.util.WaitUntil;
 import com.atlassian.upm.spi.PluginInstallException;
-
 import org.dom4j.Document;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.Set;
+import java.util.UUID;
 
 @Component
 public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
@@ -98,10 +98,12 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
             try
             {
                 AuthenticationType authType = addOn.getAuthentication().getType();
-                String sharedKey = addOn.getAuthentication().getSharedKey();
+                final boolean useSharedSecret = addOnUsesSymmetricSharedSecret(authType); // TODO ACDEV-378: also check the algorithm
+                String sharedSecret = useSharedSecret ? UUID.randomUUID().toString() : null;
+                String addOnSigningKey = useSharedSecret ? sharedSecret : addOn.getAuthentication().getSharedKey(); // the key stored on the applink: used to sign outgoing requests and verify incoming requests
                 
                 //applink MUST be created before any modules
-                connectApplinkManager.createAppLink(installedPlugin, addOn.getBaseUrl(), authType, sharedKey);
+                connectApplinkManager.createAppLink(installedPlugin, addOn.getBaseUrl(), authType, addOnSigningKey);
                 
                 //create the modules
                 beanToModuleRegistrar.registerDescriptorsForBeans(installedPlugin, addOn);
@@ -110,7 +112,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
                 connectDescriptorRegistry.storeDescriptor(pluginKey,jsonDescriptor);
                 
                 //make the sync callback if needed
-                connectEventHandler.pluginInstalled(addOn);
+                connectEventHandler.pluginInstalled(addOn, sharedSecret);
                 
                 /*
                 We need to manually fire the enabled event because the actual plugin enabled already fired and we ignored it.
@@ -144,6 +146,11 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
             throw new InstallationFailedException(e.getCause() != null ? e.getCause() : e);
         }
 
+    }
+
+    private boolean addOnUsesSymmetricSharedSecret(AuthenticationType authType)
+    {
+        return AuthenticationType.JWT.equals(authType);
     }
 
     private void uninstallWithException(Plugin installedPlugin, Exception e) throws Exception

@@ -1,11 +1,5 @@
 package com.atlassian.plugin.connect.plugin.capabilities.event;
 
-import java.net.URI;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.ws.rs.core.MediaType;
-
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.httpclient.api.HttpClient;
 import com.atlassian.httpclient.api.Request;
@@ -22,8 +16,6 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConnectAdd
 import com.atlassian.plugin.connect.plugin.capabilities.gson.CapabilitiesGsonFactory;
 import com.atlassian.plugin.connect.plugin.installer.ConnectDescriptorRegistry;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
-import com.atlassian.plugin.connect.plugin.license.LicenseStatus;
-import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.spi.event.ConnectAddonDisabledEvent;
 import com.atlassian.plugin.connect.spi.event.ConnectAddonEnabledEvent;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
@@ -37,22 +29,23 @@ import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
-import com.atlassian.upm.api.license.entity.PluginLicense;
 import com.atlassian.upm.api.util.Option;
 import com.atlassian.upm.spi.PluginInstallException;
 import com.atlassian.uri.UriBuilder;
 import com.atlassian.webhooks.spi.plugin.RequestSigner;
-
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Function;
 import com.google.common.base.Strings;
-
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.ws.rs.core.MediaType;
+import java.net.URI;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonEventData.newConnectAddonEventData;
 import static com.google.common.base.Strings.nullToEmpty;
@@ -84,18 +77,18 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
 
     @Inject
     public ConnectEventHandler(EventPublisher eventPublisher,
-            PluginEventManager pluginEventManager,
-            UserManager userManager,
-            HttpClient httpClient,
-            RequestSigner requestSigner,
-            ConsumerService consumerService,
-            ApplicationProperties applicationProperties,
-            ProductAccessor productAccessor,
-            BundleContext bundleContext,
-            JsonConnectAddOnIdentifierService connectIdentifier,
-            ConnectDescriptorRegistry descriptorRegistry,
-            BeanToModuleRegistrar beanToModuleRegistrar,
-            LicenseRetriever licenseRetriever)
+                               PluginEventManager pluginEventManager,
+                               UserManager userManager,
+                               HttpClient httpClient,
+                               RequestSigner requestSigner,
+                               ConsumerService consumerService,
+                               ApplicationProperties applicationProperties,
+                               ProductAccessor productAccessor,
+                               BundleContext bundleContext,
+                               JsonConnectAddOnIdentifierService connectIdentifier,
+                               ConnectDescriptorRegistry descriptorRegistry,
+                               BeanToModuleRegistrar beanToModuleRegistrar,
+                               LicenseRetriever licenseRetriever)
     {
         this.eventPublisher = eventPublisher;
         this.pluginEventManager = pluginEventManager;
@@ -112,11 +105,11 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
         this.beanToModuleRegistrar = beanToModuleRegistrar;
     }
 
-    public void pluginInstalled(ConnectAddonBean addon)
+    public void pluginInstalled(ConnectAddonBean addon, String sharedSecret)
     {
         if (!Strings.isNullOrEmpty(addon.getLifecycle().getInstalled()))
         {
-            callSyncHandler(addon, addon.getLifecycle().getInstalled(), INSTALLED);
+            callSyncHandler(addon, addon.getLifecycle().getInstalled(), INSTALLED, sharedSecret);
         }
     }
 
@@ -151,7 +144,7 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
         final Plugin plugin = pluginDisabledEvent.getPlugin();
         if (connectIdentifier.isConnectAddOn(plugin))
         {
-            eventPublisher.publish(new ConnectAddonDisabledEvent(plugin.getKey(), createEventData(plugin.getKey(), DISABLED)));
+            eventPublisher.publish(new ConnectAddonDisabledEvent(plugin.getKey(), createEventData(plugin.getKey(), DISABLED, null)));
         }
     }
 
@@ -180,7 +173,7 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
             {
                 if (!Strings.isNullOrEmpty(addon.getLifecycle().getUninstalled()))
                 {
-                    callSyncHandler(addon, addon.getLifecycle().getUninstalled(), UNINSTALLED);
+                    callSyncHandler(addon, addon.getLifecycle().getUninstalled(), UNINSTALLED, null);
                 }
             }
             else
@@ -194,7 +187,7 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
 
     public void publishEnabledEvent(String pluginKey)
     {
-        eventPublisher.publish(new ConnectAddonEnabledEvent(pluginKey, createEventData(pluginKey, ENABLED)));
+        eventPublisher.publish(new ConnectAddonEnabledEvent(pluginKey, createEventData(pluginKey, ENABLED, null)));
     }
 
     @Override
@@ -209,14 +202,15 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
         this.pluginEventManager.unregister(this);
     }
 
-    private void callSyncHandler(ConnectAddonBean addon, String path, String eventType)
+    // NB: the sharedSecret should be distributed synchronously and only on installation
+    private void callSyncHandler(ConnectAddonBean addon, String path, String eventType, String sharedSecret)
     {
         Option<String> errorI18nKey = Option.some("connect.remote.upm.install.exception");
         String callbackUrl = addon.getBaseUrl() + path;
         try
         {
             String pluginKey = addon.getKey();
-            String json = createEventData(pluginKey, eventType);
+            String json = createEventData(pluginKey, eventType, sharedSecret);
 
             URI installHandler = getURI(callbackUrl);
 
@@ -244,8 +238,9 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
         }
     }
 
+    // NB: the sharedSecret should be distributed synchronously and only on installation
     @VisibleForTesting
-    String createEventData(String pluginKey, String eventType)
+    String createEventData(String pluginKey, String eventType, String sharedSecret)
     {
         final Consumer consumer = consumerService.getConsumer();
 
@@ -256,6 +251,7 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
                 .withPluginKey(pluginKey)
                 .withClientKey(nullToEmpty(consumer.getKey()))
                 .withPublicKey(nullToEmpty(RSAKeys.toPemEncoding(consumer.getPublicKey())))
+                .withSharedSecret(nullToEmpty(sharedSecret))
                 .withPluginsVersion(nullToEmpty(getConnectPluginVersion()))
                 .withServerVersion(nullToEmpty(applicationProperties.getBuildNumber()))
                 .withServiceEntitlementNumber(nullToEmpty(licenseRetriever.getServiceEntitlementNumber(pluginKey)))

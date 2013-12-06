@@ -2,7 +2,6 @@ package com.atlassian.plugin.connect.plugin.applinks;
 
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.applinks.NotConnectAddonException;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.AuthenticationType;
 
 /**
@@ -15,9 +14,9 @@ public interface ConnectApplinkManager
      * @param plugin The plugin to create the applink for
      * @param baseUrl The baseurl of the connect addon
      * @param authType JWT or OAUTH
-     * @param sharedKey either the JWT shared secret or the OAUTH publicKey depending on auth type
+     * @param signingKey either the JWT shared secret, JWT public key or the OAUTH publicKey depending on auth type and algorithm
      */
-    void createAppLink(Plugin plugin, String baseUrl, AuthenticationType authType, String sharedKey);
+    void createAppLink(Plugin plugin, String baseUrl, AuthenticationType authType, String signingKey);
 
     /**
      * Deletes an {@link ApplicationLink} for an Atlassian Connect add-on.

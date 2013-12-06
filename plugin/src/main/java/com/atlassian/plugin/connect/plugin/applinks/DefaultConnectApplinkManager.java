@@ -1,13 +1,5 @@
 package com.atlassian.plugin.connect.plugin.applinks;
 
-import java.net.URI;
-import java.security.GeneralSecurityException;
-import java.security.PublicKey;
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import com.atlassian.applinks.api.ApplicationId;
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.applinks.api.TypeNotInstalledException;
@@ -24,6 +16,7 @@ import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.plugin.OAuthLinkManager;
 import com.atlassian.plugin.connect.plugin.PermissionManager;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.AuthenticationType;
+import com.atlassian.plugin.connect.spi.AuthenticationMethod;
 import com.atlassian.plugin.connect.spi.Permissions;
 import com.atlassian.plugin.connect.spi.applinks.RemotePluginContainerApplicationType;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
@@ -31,9 +24,15 @@ import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.atlassian.sal.api.transaction.TransactionCallback;
 import com.atlassian.sal.api.transaction.TransactionTemplate;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.net.URI;
+import java.security.GeneralSecurityException;
+import java.security.PublicKey;
+import java.util.List;
 
 @ExportAsDevService
 @Named
@@ -60,7 +59,7 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
     }
 
     @Override
-    public void createAppLink(final Plugin plugin, final String baseUrl, final AuthenticationType authType, final String sharedKey)
+    public void createAppLink(final Plugin plugin, final String baseUrl, final AuthenticationType authType, final String signingKey)
     {
         transactionTemplate.execute(new TransactionCallback<Void>()
         {
@@ -98,11 +97,12 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
                     switch (authType)
                     {
                         case JWT:
-                            //TODO: not sure what to do here.
+                            link.putProperty(AuthenticationMethod.PROPERTY_NAME, AuthenticationMethod.JWT);
+                            link.putProperty(/*ApplinksJwtPeerService.ATLASSIAN_JWT_SHARED_SECRET*/"atlassian.jwt.shared.secret", signingKey); // TODO: extract in ACDEV-663
                             break;
                         case OAUTH:
                             oAuthLinkManager.associateProviderWithLink(link, applicationType.getId().get(), serviceProvider);
-                            registerOAuth(link, plugin, sharedKey, baseUri);
+                            registerOAuth(link, plugin, signingKey, baseUri);
                             break;
                         default:
                             log.warn("Unknown authType encountered: " + authType.name());

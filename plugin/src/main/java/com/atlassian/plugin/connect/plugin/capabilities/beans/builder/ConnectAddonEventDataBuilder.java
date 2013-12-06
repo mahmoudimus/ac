@@ -1,8 +1,8 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans.builder;
 
-import java.util.Map;
-
 import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonEventData;
+
+import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Maps.newHashMap;
@@ -14,6 +14,7 @@ public class ConnectAddonEventDataBuilder extends BaseCapabilityBeanBuilder<Conn
     private String key;
     private String clientKey;
     private String publicKey;
+    private String sharedSecret; // optional
     private String serverVersion;
     private String pluginsVersion;
     private String baseUrl;
@@ -34,6 +35,7 @@ public class ConnectAddonEventDataBuilder extends BaseCapabilityBeanBuilder<Conn
         this.key = defaultBean.getPluginKey();
         this.clientKey = defaultBean.getClientKey();
         this.publicKey = defaultBean.getPublicKey();
+        this.sharedSecret = defaultBean.getSharedSecret();
         this.serverVersion = defaultBean.getServerVersion();
         this.pluginsVersion = defaultBean.getPluginsVersion();
         this.baseUrl = defaultBean.getBaseUrl();
@@ -63,7 +65,7 @@ public class ConnectAddonEventDataBuilder extends BaseCapabilityBeanBuilder<Conn
         this.key = key;
         return this;
     }
-    
+
     public ConnectAddonEventDataBuilder withClientKey(String key)
     {
         this.clientKey = key;
@@ -73,6 +75,12 @@ public class ConnectAddonEventDataBuilder extends BaseCapabilityBeanBuilder<Conn
     public ConnectAddonEventDataBuilder withPublicKey(String key)
     {
         this.publicKey = key;
+        return this;
+    }
+
+    public ConnectAddonEventDataBuilder withSharedSecret(String sharedSecret)
+    {
+        this.sharedSecret = sharedSecret;
         return this;
     }
 

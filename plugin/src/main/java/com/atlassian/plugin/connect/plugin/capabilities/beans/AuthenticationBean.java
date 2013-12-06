@@ -1,7 +1,8 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.AuthenticationBeanBuilder;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.BaseCapabilityBeanBuilder;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * Defines the authentication type to use when signing requests between the host application and the connect add on.
@@ -56,5 +57,37 @@ public class AuthenticationBean extends BaseCapabilityBean
     public static AuthenticationBeanBuilder newAuthenticationBean(AuthenticationBean defaultBean)
     {
         return new AuthenticationBeanBuilder(defaultBean);
+    }
+
+    // don't call super because BaseCapabilityBean has no data
+    @Override
+    public boolean equals(Object otherObj)
+    {
+        if (otherObj == this)
+        {
+            return true;
+        }
+
+        if (!(otherObj instanceof AuthenticationBean))
+        {
+            return false;
+        }
+
+        AuthenticationBean other = (AuthenticationBean) otherObj;
+
+        return new EqualsBuilder()
+                .append(type, other.type)
+                .append(sharedKey, other.sharedKey)
+                .isEquals();
+    }
+
+    // don't call super because BaseCapabilityBean has no data
+    @Override
+    public int hashCode()
+    {
+        return new HashCodeBuilder(59, 5)
+                .append(type)
+                .append(sharedKey)
+                .build();
     }
 }

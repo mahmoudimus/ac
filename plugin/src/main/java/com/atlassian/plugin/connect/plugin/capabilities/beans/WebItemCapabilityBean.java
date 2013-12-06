@@ -4,6 +4,8 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.WebItemCap
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.IconBean;
 import com.google.common.base.Objects;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -228,5 +230,47 @@ public class WebItemCapabilityBean extends BeanWithKeyAndParamsAndConditions
                 .add("tooltip", getTooltip())
                 .add("target", getTarget())
                 .toString();
+    }
+
+    @Override
+    public boolean equals(Object otherObj)
+    {
+        if (otherObj == this)
+        {
+            return true;
+        }
+
+        if (!(otherObj instanceof WebItemCapabilityBean && super.equals(otherObj)))
+        {
+            return false;
+        }
+
+        WebItemCapabilityBean other = (WebItemCapabilityBean) otherObj;
+
+        return new EqualsBuilder()
+                .append(link, other.link)
+                .append(location, other.location)
+                .append(context, other.context)
+                .append(weight, other.weight)
+                .append(target, other.target)
+                .append(styleClasses, other.styleClasses)
+                .append(tooltip, other.tooltip)
+                .append(icon, other.icon)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return new HashCodeBuilder(13, 61)
+                .append(link)
+                .append(location)
+                .append(context)
+                .append(weight)
+                .append(target)
+                .append(styleClasses)
+                .append(tooltip)
+                .append(icon)
+                .build();
     }
 }

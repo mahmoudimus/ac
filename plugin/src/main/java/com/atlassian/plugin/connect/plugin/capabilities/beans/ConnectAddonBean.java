@@ -1,15 +1,14 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
-import java.util.List;
-import java.util.Map;
-
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConnectAddonBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.VendorBean;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
+import java.util.Map;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.AuthenticationBean.newAuthenticationBean;
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.LifecycleBean.newLifecycleBean;
-import static com.atlassian.plugin.connect.plugin.capabilities.beans.nested.VendorBean.newVendorBean;
-import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
 
 /**
@@ -175,5 +174,55 @@ public class ConnectAddonBean extends BaseCapabilityBean
     public static ConnectAddonBeanBuilder newConnectAddonBean(ConnectAddonBean defaultBean)
     {
         return new ConnectAddonBeanBuilder(defaultBean);
+    }
+
+    // don't call super because BaseCapabilityBean has no data
+    @Override
+    public boolean equals(Object otherObj)
+    {
+        if (otherObj == this)
+        {
+            return true;
+        }
+
+        if (!(otherObj instanceof ConnectAddonBean))
+        {
+            return false;
+        }
+
+        ConnectAddonBean other = (ConnectAddonBean) otherObj;
+
+        return new EqualsBuilder()
+                .append(key, other.key)
+                .append(name, other.name)
+                .append(version, other.version)
+                .append(description, other.description)
+                .append(vendor, other.vendor)
+                .append(links, other.links)
+                .append(lifecycle, other.lifecycle)
+                .append(baseUrl, other.baseUrl)
+                .append(authentication, other.authentication)
+                .append(enableLicensing, other.enableLicensing)
+                .append(capabilities, other.capabilities)
+                .isEquals();
+    }
+
+    // don't call super because BaseCapabilityBean has no data
+    @Override
+    public int hashCode()
+    {
+        return new HashCodeBuilder(41, 7)
+                .append(key)
+                .append(name)
+                .append(version)
+                .append(description)
+                .append(vendor)
+                .append(links)
+                .append(lifecycle)
+                .append(baseUrl)
+                .append(authentication)
+                .append(enableLicensing)
+                .append(capabilities)
+                .build();
     }
 }
