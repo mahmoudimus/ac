@@ -1,7 +1,6 @@
 package it.capabilities;
 
 import cc.plural.jsonij.JSON;
-import cc.plural.jsonij.Value;
 import com.atlassian.plugin.connect.plugin.capabilities.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.server.ConnectCapabilitiesRunner;
 import com.google.common.collect.Lists;
@@ -10,11 +9,10 @@ import it.servlet.ConnectAppServlets;
 import org.junit.After;
 import org.junit.Test;
 
-import java.util.List;
-
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectPageCapabilityBean.newPageBean;
-import static org.hamcrest.CoreMatchers.hasItems;
-import static org.hamcrest.core.Is.is;
+import static it.matcher.ValueMatchers.hasProperty;
+import static it.matcher.ValueMatchers.isArrayMatching;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.assertThat;
 
 public class TestUpgrade extends AbstractBrowserlessTest
@@ -57,14 +55,10 @@ public class TestUpgrade extends AbstractBrowserlessTest
 
         // check that the plugin only has two modules: a web item and servlet corresponding to the "Page Two" generalPage
         JSON pluginJson = JSON.parse(plugin1.getUpmPluginJson());
-        Value modules = pluginJson.get("modules");
-        assertThat(modules.getValueType(), is(Value.TYPE.ARRAY));
-        assertThat(modules.size(), is(2));
-        List<String> moduleKeys = Lists.newArrayList(
-            modules.get(0).get("key").getString(),
-            modules.get(1).get("key").getString()
-        );
-        assertThat(moduleKeys, hasItems("page-two", "servlet-page-two"));
+        assertThat(pluginJson.get("modules"), isArrayMatching(
+                containsInAnyOrder(
+                        hasProperty("key", "page-two"),
+                        hasProperty("key", "servlet-page-two"))));
 
         plugin1.stopAndUninstall();
         plugin1 = null;
