@@ -58,7 +58,7 @@ public class ValueMatchers
 
     }
 
-    public static class ValueWithStringPropertyMatcher extends BaseValueMatcher
+    private static class ValueWithStringPropertyMatcher extends BaseValueMatcher
     {
         private final String key;
         private final String value;
