@@ -21,6 +21,9 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonEventD
 import com.atlassian.plugin.connect.plugin.capabilities.beans.builder.ConnectAddonEventDataBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.gson.CapabilitiesGsonFactory;
 import com.atlassian.plugin.connect.plugin.installer.ConnectDescriptorRegistry;
+import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
+import com.atlassian.plugin.connect.plugin.license.LicenseStatus;
+import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.spi.event.ConnectAddonDisabledEvent;
 import com.atlassian.plugin.connect.spi.event.ConnectAddonEnabledEvent;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
@@ -34,12 +37,14 @@ import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
+import com.atlassian.upm.api.license.entity.PluginLicense;
 import com.atlassian.upm.api.util.Option;
 import com.atlassian.upm.spi.PluginInstallException;
 import com.atlassian.uri.UriBuilder;
 import com.atlassian.webhooks.spi.plugin.RequestSigner;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Function;
 import com.google.common.base.Strings;
 
 import org.osgi.framework.BundleContext;
@@ -75,16 +80,26 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
     private final JsonConnectAddOnIdentifierService connectIdentifier;
     private final ConnectDescriptorRegistry descriptorRegistry;
     private final BeanToModuleRegistrar beanToModuleRegistrar;
+    private final LicenseRetriever licenseRetriever;
 
     @Inject
-    public ConnectEventHandler(EventPublisher eventPublisher, PluginEventManager pluginEventManager,
-           UserManager userManager, HttpClient httpClient, RequestSigner requestSigner, ConsumerService consumerService,
-            ApplicationProperties applicationProperties, ProductAccessor productAccessor, BundleContext bundleContext,
-            JsonConnectAddOnIdentifierService connectIdentifier, ConnectDescriptorRegistry descriptorRegistry,
-            BeanToModuleRegistrar beanToModuleRegistrar)
+    public ConnectEventHandler(EventPublisher eventPublisher,
+            PluginEventManager pluginEventManager,
+            UserManager userManager,
+            HttpClient httpClient,
+            RequestSigner requestSigner,
+            ConsumerService consumerService,
+            ApplicationProperties applicationProperties,
+            ProductAccessor productAccessor,
+            BundleContext bundleContext,
+            JsonConnectAddOnIdentifierService connectIdentifier,
+            ConnectDescriptorRegistry descriptorRegistry,
+            BeanToModuleRegistrar beanToModuleRegistrar,
+            LicenseRetriever licenseRetriever)
     {
         this.eventPublisher = eventPublisher;
         this.pluginEventManager = pluginEventManager;
+        this.licenseRetriever = licenseRetriever;
         this.userManager = userManager;
         this.httpClient = httpClient;
         this.requestSigner = requestSigner;
@@ -106,7 +121,7 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
     }
 
     @PluginEventListener
-    @SuppressWarnings("unused")
+    @SuppressWarnings ("unused")
     public void pluginEnabled(PluginEnabledEvent pluginEnabledEvent)
     {
         final Plugin plugin = pluginEnabledEvent.getPlugin();
@@ -130,7 +145,7 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
     }
 
     @PluginEventListener
-    @SuppressWarnings("unused")
+    @SuppressWarnings ("unused")
     public void pluginDisabled(BeforePluginDisabledEvent pluginDisabledEvent)
     {
         final Plugin plugin = pluginDisabledEvent.getPlugin();
@@ -141,7 +156,7 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
     }
 
     @PluginEventListener
-    @SuppressWarnings("unused")
+    @SuppressWarnings ("unused")
     public void pluginDisabled(PluginDisabledEvent pluginDisabledEvent)
     {
         final Plugin plugin = pluginDisabledEvent.getPlugin();
@@ -152,7 +167,7 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
     }
 
     @PluginEventListener
-    @SuppressWarnings("unused")
+    @SuppressWarnings ("unused")
     public void pluginUninstalled(PluginUninstalledEvent pluginUninstalledEvent)
     {
         final Plugin plugin = pluginUninstalledEvent.getPlugin();
@@ -238,15 +253,16 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
         String baseUrl = applicationProperties.getBaseUrl(UrlMode.CANONICAL);
 
         dataBuilder.withBaseUrl(nullToEmpty(baseUrl))
-                   .withPluginKey(pluginKey)
-                   .withClientKey(nullToEmpty(consumer.getKey()))
-                   .withPublicKey(nullToEmpty(RSAKeys.toPemEncoding(consumer.getPublicKey())))
-                   .withPluginsVersion(nullToEmpty(getConnectPluginVersion()))
-                   .withServerVersion(nullToEmpty(applicationProperties.getBuildNumber()))
-                   .withProductType(nullToEmpty(productAccessor.getKey()))
-                   .withDescription(nullToEmpty(consumer.getDescription()))
-                   .withEventType(eventType)
-                   .withLink("oauth", baseUrl + "/rest/atlassian-connect/latest/oauth");
+                .withPluginKey(pluginKey)
+                .withClientKey(nullToEmpty(consumer.getKey()))
+                .withPublicKey(nullToEmpty(RSAKeys.toPemEncoding(consumer.getPublicKey())))
+                .withPluginsVersion(nullToEmpty(getConnectPluginVersion()))
+                .withServerVersion(nullToEmpty(applicationProperties.getBuildNumber()))
+                .withServiceEntitlementNumber(nullToEmpty(licenseRetriever.getServiceEntitlementNumber(pluginKey)))
+                .withProductType(nullToEmpty(productAccessor.getKey()))
+                .withDescription(nullToEmpty(consumer.getDescription()))
+                .withEventType(eventType)
+                .withLink("oauth", baseUrl + "/rest/atlassian-connect/latest/oauth");
 
         UserProfile user = userManager.getRemoteUser();
         if (null != user)

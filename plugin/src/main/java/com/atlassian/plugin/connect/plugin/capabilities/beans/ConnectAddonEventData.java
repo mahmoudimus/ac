@@ -20,8 +20,9 @@ public class ConnectAddonEventData extends BaseCapabilityBean
     private String pluginsVersion;
     private String baseUrl;
     private String productType;
-    private String decription;
+    private String description;
     private String userKey;
+    private String serviceEntitlementNumber;
     private String eventType;
     
     
@@ -35,8 +36,9 @@ public class ConnectAddonEventData extends BaseCapabilityBean
         this.pluginsVersion = "";
         this.baseUrl = "";
         this.productType = "";
-        this.decription = "";
+        this.description = "";
         this.userKey = "";
+        this.serviceEntitlementNumber = "";
         this.eventType = "";
     }
 
@@ -77,13 +79,17 @@ public class ConnectAddonEventData extends BaseCapabilityBean
         {
             this.productType = "";
         }
-        if(null == decription)
+        if(null == description)
         {
-            this.decription = "";
+            this.description = "";
         }
         if(null == userKey)
         {
             this.userKey = "";
+        }
+        if(null == serviceEntitlementNumber)
+        {
+            this.serviceEntitlementNumber = "";
         }
         if(null == eventType)
         {
@@ -131,14 +137,19 @@ public class ConnectAddonEventData extends BaseCapabilityBean
         return productType;
     }
 
-    public String getDecription()
+    public String getDescription()
     {
-        return decription;
+        return description;
     }
 
     public String getUserKey()
     {
         return userKey;
+    }
+
+    public String getServiceEntitlementNumber()
+    {
+        return serviceEntitlementNumber;
     }
 
     public String getEventType()
