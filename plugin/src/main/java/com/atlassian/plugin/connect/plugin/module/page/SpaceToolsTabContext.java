@@ -1,21 +1,18 @@
 package com.atlassian.plugin.connect.plugin.module.page;
 
-import java.util.Map;
-
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.web.Condition;
 
 /**
- * Container for all information required by invocations of {@link com.atlassian.plugin.connect.plugin.module.confluence.SpaceAdminIFrameAction}.
+ * Container for all information required by invocations of {@link com.atlassian.plugin.connect.plugin.module.confluence.SpaceToolsIFrameAction}.
  */
-public class SpaceAdminTabContext
+public class SpaceToolsTabContext
 {
     private final Plugin plugin;
     private final String url;
     private final String webItemKey;
     private final PageInfo pageInfo;
 
-    public SpaceAdminTabContext(Plugin plugin, String url, String webItemKey, PageInfo pageInfo)
+    public SpaceToolsTabContext(Plugin plugin, String url, String webItemKey, PageInfo pageInfo)
     {
         this.plugin = plugin;
         this.url = url;

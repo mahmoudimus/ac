@@ -5,16 +5,16 @@ import java.io.IOException;
 import com.atlassian.confluence.spaces.actions.SpaceAdminAction;
 import com.atlassian.plugin.connect.plugin.module.IFrameParamsImpl;
 import com.atlassian.plugin.connect.plugin.module.page.IFrameContextImpl;
-import com.atlassian.plugin.connect.plugin.module.page.SpaceAdminTabContext;
+import com.atlassian.plugin.connect.plugin.module.page.SpaceToolsTabContext;
 import com.atlassian.plugin.connect.spi.module.IFrameContext;
 import com.atlassian.plugin.connect.spi.module.IFrameParams;
 import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
 
-public class SpaceAdminIFrameAction extends SpaceAdminAction
+public class SpaceToolsIFrameAction extends SpaceAdminAction
 {
     private IFrameRenderer iFrameRenderer;
 
-    private SpaceAdminTabContext context;
+    private SpaceToolsTabContext context;
 
     public String getIframeHtml() throws IOException
     {
@@ -23,7 +23,7 @@ public class SpaceAdminIFrameAction extends SpaceAdminAction
         return iFrameRenderer.render(iFrameContext, this.getAuthenticatedUser().getName());
     }
 
-    public SpaceAdminTabContext getSpaceTabInfo()
+    public SpaceToolsTabContext getSpaceTabInfo()
     {
         return this.context;
     }
@@ -38,7 +38,7 @@ public class SpaceAdminIFrameAction extends SpaceAdminAction
         this.iFrameRenderer = iFrameRenderer;
     }
 
-    public void provideContext(SpaceAdminTabContext context)
+    public void provideContext(SpaceToolsTabContext context)
     {
         this.context = context;
     }

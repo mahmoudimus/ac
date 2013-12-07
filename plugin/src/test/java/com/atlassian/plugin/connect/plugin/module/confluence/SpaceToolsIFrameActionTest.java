@@ -5,11 +5,9 @@ import java.io.IOException;
 import com.atlassian.confluence.user.AuthenticatedUserThreadLocal;
 import com.atlassian.confluence.user.ConfluenceUser;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.module.page.SpaceAdminTabContext;
+import com.atlassian.plugin.connect.plugin.module.page.SpaceToolsTabContext;
 import com.atlassian.plugin.connect.spi.module.IFrameContext;
 import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
-import com.atlassian.sal.api.user.UserManager;
-import com.atlassian.sal.api.user.UserProfile;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -24,18 +22,18 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith (MockitoJUnitRunner.class)
-public class SpaceAdminIFrameActionTest
+public class SpaceToolsIFrameActionTest
 {
     @Mock private IFrameRenderer iFrameRenderer;
-    @Mock private SpaceAdminTabContext context;
+    @Mock private SpaceToolsTabContext context;
     @Mock private ConfluenceUser user;
 
-    private SpaceAdminIFrameAction action;
+    private SpaceToolsIFrameAction action;
 
     @Before
     public void setup()
     {
-        action = new SpaceAdminIFrameAction();
+        action = new SpaceToolsIFrameAction();
         action.setiFrameRenderer(iFrameRenderer);
         action.provideContext(context);
         AuthenticatedUserThreadLocal.set(user);

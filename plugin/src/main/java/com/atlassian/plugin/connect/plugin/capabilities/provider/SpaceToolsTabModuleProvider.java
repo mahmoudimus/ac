@@ -1,6 +1,5 @@
 package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
-import java.util.Collections;
 import java.util.List;
 
 import com.atlassian.plugin.ModuleDescriptor;
@@ -9,8 +8,6 @@ import com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectPageCapabil
 import com.atlassian.plugin.connect.plugin.capabilities.beans.WebItemCapabilityBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.SpaceToolsActionDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
-import com.atlassian.plugin.connect.plugin.module.page.PageInfo;
-import com.atlassian.plugin.connect.plugin.module.page.SpaceAdminTabContext;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 
 import com.google.common.collect.Lists;

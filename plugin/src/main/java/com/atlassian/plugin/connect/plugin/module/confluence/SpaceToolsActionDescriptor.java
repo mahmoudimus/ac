@@ -10,7 +10,7 @@ import com.atlassian.event.api.EventPublisher;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
-import com.atlassian.plugin.connect.plugin.module.page.SpaceAdminTabContext;
+import com.atlassian.plugin.connect.plugin.module.page.SpaceToolsTabContext;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
 import com.atlassian.plugin.module.ModuleFactory;
 
@@ -46,15 +46,17 @@ public class SpaceToolsActionDescriptor extends AbstractModuleDescriptor impleme
     private static final String VELOCITY_TEMPLATE = "/velocity/space-tab-page.vm";
 
     private final EventPublisher eventPublisher;
-    private final SpaceAdminTabContext context;
+    private final SpaceToolsTabContext context;
     private final String namespace;
+    private final String actionName;
 
-    public SpaceToolsActionDescriptor(EventPublisher eventPublisher, Plugin plugin, String moduleKey, SpaceAdminTabContext context, String namespace)
+    public SpaceToolsActionDescriptor(EventPublisher eventPublisher, Plugin plugin, String moduleKey, SpaceToolsTabContext context, String namespace, String actionName)
     {
         super(NOOP_MODULE_FACTORY);
         this.eventPublisher = eventPublisher;
         this.context = context;
         this.namespace = namespace;
+        this.actionName = actionName;
 
         Element element = new DOMElement("module")
             .addAttribute("key", moduleKey);
@@ -100,7 +102,7 @@ public class SpaceToolsActionDescriptor extends AbstractModuleDescriptor impleme
         PackageConfig packageConfig = new PackageConfig(key, namespace, false, null, parentStack);
 
         InterceptorConfig interceptorConfig = new InterceptorConfig("space-tab-context",
-            SpaceAdminTabContextInterceptor.class.getName(), Collections.EMPTY_MAP);
+            SpaceToolsContextInterceptor.class.getName(), Collections.EMPTY_MAP);
         ObjectFactory.getObjectFactory().buildInterceptor(interceptorConfig, Collections.EMPTY_MAP);
         packageConfig.addInterceptorConfig(interceptorConfig);
 
@@ -110,13 +112,13 @@ public class SpaceToolsActionDescriptor extends AbstractModuleDescriptor impleme
         results.put(resultConfig.getName(), resultConfig);
 
         Map<String, Object> actionParameters = ImmutableMap.<String, Object>of("context", context);
-        ActionConfig actionConfig = new PluginAwareActionConfig(null, SpaceAdminIFrameAction.class.getName(),
+        ActionConfig actionConfig = new PluginAwareActionConfig(null, SpaceToolsIFrameAction.class.getName(),
             actionParameters, results, Lists.newArrayList(), plugin);
         actionConfig.addInterceptors(InterceptorBuilder.constructInterceptorReference(packageConfig,
             interceptorConfig.getName(), Collections.EMPTY_MAP));
         actionConfig.addInterceptors(InterceptorBuilder.constructInterceptorReference(packageConfig,
             DEFAULT_INTERCEPTOR_STACK, Collections.EMPTY_MAP));
-        packageConfig.addActionConfig(key, actionConfig);
+        packageConfig.addActionConfig(actionName, actionConfig);
 
         configuration.addPackageConfig(key, packageConfig);
     }
