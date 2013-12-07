@@ -22,7 +22,6 @@ public class ValueMatchers
 
     private static class ArrayValueMatcher extends BaseValueMatcher
     {
-
         private final Matcher<Iterable<Value>> matcher;
 
         protected ArrayValueMatcher(Matcher<Iterable<Value>> matcher)
