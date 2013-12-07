@@ -21,7 +21,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class SpaceToolsTabContextInterceptorTest
+public class SpaceToolsContextInterceptorTest
 {
     @Mock private SpaceToolsIFrameAction action;
     @Mock private ActionInvocation actionInvocation;

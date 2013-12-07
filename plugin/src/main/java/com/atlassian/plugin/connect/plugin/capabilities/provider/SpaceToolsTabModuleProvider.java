@@ -10,6 +10,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.descriptor.SpaceToolsAct
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
 
 import org.osgi.framework.BundleContext;
@@ -25,8 +26,10 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 @Component
 public class SpaceToolsTabModuleProvider implements ConnectModuleProvider<ConnectPageCapabilityBean>
 {
-    private static final String SPACE_TOOLS_SECTION = "system.space.tools";
-    private static final String DEFAULT_LOCATION = "addons";
+    @VisibleForTesting
+    public static final String SPACE_TOOLS_SECTION = "system.space.tools";
+    @VisibleForTesting
+    public static final String DEFAULT_LOCATION = "addons";
 
     private final WebItemModuleDescriptorFactory webItemModuleDescriptorFactory;
     private final SpaceToolsActionDescriptorFactory spaceTabActionDescriptorFactory;
