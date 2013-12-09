@@ -224,17 +224,17 @@ public class CapabilityList extends BaseCapabilityBean
         CapabilityList other = (CapabilityList) otherObj;
 
         return new EqualsBuilder()
+                .append(adminPages, other.adminPages)
+                .append(generalPages, other.generalPages)
                 .append(jiraComponentTabPanels, other.jiraComponentTabPanels)
                 .append(jiraIssueTabPanels, other.jiraIssueTabPanels)
                 .append(jiraProjectAdminTabPanels, other.jiraProjectAdminTabPanels)
                 .append(jiraProjectTabPanels, other.jiraProjectTabPanels)
+                .append(jiraSearchRequestViews, other.jiraSearchRequestViews)
                 .append(jiraVersionTabPanels, other.jiraVersionTabPanels)
-                .append(webItems, other.webItems)
-                .append(generalPages, other.generalPages)
-                .append(adminPages, other.adminPages)
                 .append(jiraWorkflowPostFunctions, other.jiraWorkflowPostFunctions)
                 .append(webhooks, other.webhooks)
-                .append(jiraSearchRequestViews, other.jiraSearchRequestViews)
+                .append(webItems, other.webItems)
                 .build();
     }
 
@@ -243,17 +243,17 @@ public class CapabilityList extends BaseCapabilityBean
     public int hashCode()
     {
         return new HashCodeBuilder(29, 37)
+                .append(adminPages)
+                .append(generalPages)
                 .append(jiraComponentTabPanels)
                 .append(jiraIssueTabPanels)
                 .append(jiraProjectAdminTabPanels)
                 .append(jiraProjectTabPanels)
+                .append(jiraSearchRequestViews)
                 .append(jiraVersionTabPanels)
-                .append(webItems)
-                .append(generalPages)
-                .append(adminPages)
                 .append(jiraWorkflowPostFunctions)
                 .append(webhooks)
-                .append(jiraSearchRequestViews)
+                .append(webItems)
                 .build();
     }
 }
