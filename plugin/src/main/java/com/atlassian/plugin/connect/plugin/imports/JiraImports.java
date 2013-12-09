@@ -1,7 +1,5 @@
 package com.atlassian.plugin.connect.plugin.imports;
 
-import javax.inject.Inject;
-
 import com.atlassian.jira.bc.issue.attachment.AttachmentService;
 import com.atlassian.jira.bc.issue.worklog.WorklogService;
 import com.atlassian.jira.bc.project.ProjectService;
@@ -32,6 +30,8 @@ import com.atlassian.mail.queue.MailQueue;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.spring.scanner.annotation.imports.JiraImport;
 import com.atlassian.plugin.web.WebFragmentHelper;
+
+import javax.inject.Inject;
 
 
 /**
@@ -73,7 +73,7 @@ public class JiraImports
 
     @Inject
     public JiraImports(
-            @JiraImport("jiraApplicationProperties") ApplicationProperties jiraApplicationProperties,
+            @JiraImport ("jiraApplicationProperties") ApplicationProperties jiraApplicationProperties,
             @JiraImport AttachmentService attachmentService,
             @JiraImport FieldManager fieldManager,
             @JiraImport FieldVisibilityManager fieldVisibilityManager,
@@ -94,7 +94,7 @@ public class JiraImports
             @JiraImport TimeZoneService timeZoneService,
             @JiraImport UserIssueHistoryManager userIssueHistoryManager,
             @JiraImport UserPreferencesManager userPreferencesManager,
-            @JiraImport("jiraUserManager") UserManager userManager,
+            @JiraImport ("jiraUserManager") UserManager userManager,
             @JiraImport UserUtil userUtil,
             @JiraImport VelocityRequestContextFactory velocityRequestContextFactory,
             @JiraImport VoteManager voteManager,

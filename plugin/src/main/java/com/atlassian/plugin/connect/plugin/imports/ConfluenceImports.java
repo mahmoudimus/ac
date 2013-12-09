@@ -1,7 +1,5 @@
 package com.atlassian.plugin.connect.plugin.imports;
 
-import javax.inject.Inject;
-
 import com.atlassian.bandana.BandanaManager;
 import com.atlassian.confluence.content.render.xhtml.StorageFormatCleaner;
 import com.atlassian.confluence.pages.PageManager;
@@ -13,9 +11,10 @@ import com.atlassian.confluence.status.service.SystemInformationService;
 import com.atlassian.confluence.util.i18n.I18NBeanFactory;
 import com.atlassian.confluence.xhtml.api.XhtmlContent;
 import com.atlassian.core.task.MultiQueueTaskManager;
-import com.atlassian.plugin.spring.scanner.annotation.component.ClasspathComponent;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ConfluenceImport;
+
+import javax.inject.Inject;
 
 /**
  * This class does nothing but is here to centralize the Confluence component imports.
