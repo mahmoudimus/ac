@@ -51,6 +51,12 @@ public class CapabilityList extends BaseCapabilityBean
     @CapabilityModuleProvider(value = ConnectTabPanelModuleProvider.class, products = {ProductFilter.JIRA})
     private List<ConnectTabPanelCapabilityBean> jiraVersionTabPanels;
 
+    /**
+     * @schemaTitle Version Tab Panel
+     */
+    @CapabilityModuleProvider(value = ConnectTabPanelModuleProvider.class, products = {ProductFilter.JIRA})
+    private List<ConnectTabPanelCapabilityBean> jiraProfileTabPanels;
+
     @CapabilityModuleProvider(value = WorkflowPostFunctionModuleProvider.class, products = {ProductFilter.JIRA})
     private List<WorkflowPostFunctionCapabilityBean> jiraWorkflowPostFunctions;
     
@@ -88,6 +94,7 @@ public class CapabilityList extends BaseCapabilityBean
         this.jiraProjectAdminTabPanels = newArrayList();
         this.jiraProjectTabPanels = newArrayList();
         this.jiraVersionTabPanels = newArrayList();
+        this.jiraProfileTabPanels = newArrayList();
         this.webItems = newArrayList();
         this.webPanels = newArrayList();
         this.generalPages = newArrayList();
@@ -121,6 +128,10 @@ public class CapabilityList extends BaseCapabilityBean
         if (null == jiraVersionTabPanels)
         {
             this.jiraVersionTabPanels = newArrayList();
+        }
+        if (null == jiraProfileTabPanels)
+        {
+            this.jiraProfileTabPanels = newArrayList();
         }
         if (null == webItems)
         {
@@ -184,6 +195,11 @@ public class CapabilityList extends BaseCapabilityBean
     public List<ConnectTabPanelCapabilityBean> getJiraVersionTabPanels()
     {
         return jiraVersionTabPanels;
+    }
+
+    public List<ConnectTabPanelCapabilityBean> getJiraProfileTabPanels()
+    {
+        return jiraProfileTabPanels;
     }
 
     public List<WebPanelCapabilityBean> getWebPanels()
