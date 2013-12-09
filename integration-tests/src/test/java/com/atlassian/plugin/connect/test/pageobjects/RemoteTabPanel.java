@@ -42,9 +42,9 @@ public class RemoteTabPanel
         return webItem;
     }
 
-    public RemotePage click()
+    public RemotePluginEmbeddedTestPage click()
     {
         webItem.click();
-        return pageBinder.bind(RemotePage.class, pageKey);
+        return pageBinder.bind(RemotePluginEmbeddedTestPage.class, pageKey);
     }
 }
