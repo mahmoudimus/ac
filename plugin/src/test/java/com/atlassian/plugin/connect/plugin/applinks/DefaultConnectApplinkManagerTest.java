@@ -48,24 +48,6 @@ public class DefaultConnectApplinkManagerTest
     @Mock private JiraApplicationType jiraApplicationType;
     @Mock private GenericApplicationType genericApplicationType;
 
-    @Before
-    public void setup()
-    {
-        transactionTemplate = new TransactionTemplate()
-        {
-            @Override
-            public <T> T execute(TransactionCallback<T> action)
-            {
-                return action.doInTransaction();
-            }
-        };
-
-        connectApplinkManager = new DefaultConnectApplinkManager(applicationLinkService, typeAccessor,
-                        pluginSettingsFactory, oAuthLinkManager, permissionManager, transactionTemplate);
-
-        when(connectApplicationType.getId()).thenReturn(RemotePluginContainerApplicationTypeImpl.TYPE_ID);
-    }
-
     @Test
     public void testGetAppLinkForConnectAddon() throws Exception
     {
@@ -138,7 +120,7 @@ public class DefaultConnectApplinkManagerTest
         when(applicationLinkService.addApplicationLink(any(ApplicationId.class), any(ApplicationType.class), any(ApplicationLinkDetails.class))).thenReturn(appLink);
         when(applicationLinkService.getApplicationLinks(RemotePluginContainerApplicationType.class)).thenReturn(Collections.<ApplicationLink>emptyList());
         connectApplinkManager.createAppLink(plugin, "/baseUrl", AuthenticationType.JWT, "signing key");
-        verify(appLink).putProperty(AuthenticationMethod.PROPERTY_NAME, AuthenticationMethod.JWT);
+        verify(appLink).putProperty(AuthenticationMethod.PROPERTY_NAME, AuthenticationMethod.JWT.toString());
     }
 
     @Test
@@ -151,5 +133,23 @@ public class DefaultConnectApplinkManagerTest
         when(applicationLinkService.getApplicationLinks(RemotePluginContainerApplicationType.class)).thenReturn(Collections.<ApplicationLink>emptyList());
         connectApplinkManager.createAppLink(plugin, "/baseUrl", AuthenticationType.JWT, "signing key");
         verify(appLink).putProperty("atlassian.jwt.shared.secret", "signing key");
+    }
+
+    @Before
+    public void setup()
+    {
+        transactionTemplate = new TransactionTemplate()
+        {
+            @Override
+            public <T> T execute(TransactionCallback<T> action)
+            {
+                return action.doInTransaction();
+            }
+        };
+
+        connectApplinkManager = new DefaultConnectApplinkManager(applicationLinkService, typeAccessor,
+                pluginSettingsFactory, oAuthLinkManager, permissionManager, transactionTemplate);
+
+        when(connectApplicationType.getId()).thenReturn(RemotePluginContainerApplicationTypeImpl.TYPE_ID);
     }
 }

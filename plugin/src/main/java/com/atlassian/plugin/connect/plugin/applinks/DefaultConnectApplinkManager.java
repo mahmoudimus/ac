@@ -97,7 +97,7 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
                     switch (authType)
                     {
                         case JWT:
-                            link.putProperty(AuthenticationMethod.PROPERTY_NAME, AuthenticationMethod.JWT);
+                            link.putProperty(AuthenticationMethod.PROPERTY_NAME, AuthenticationMethod.JWT.toString());
                             link.putProperty(/*ApplinksJwtPeerService.ATLASSIAN_JWT_SHARED_SECRET*/"atlassian.jwt.shared.secret", signingKey); // TODO: extract in ACDEV-663
                             break;
                         case OAUTH:

@@ -48,6 +48,7 @@ import javax.ws.rs.core.MediaType;
 import java.net.URI;
 
 import static com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectAddonEventData.newConnectAddonEventData;
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.nullToEmpty;
 
 @Named
@@ -242,7 +243,7 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
     @VisibleForTesting
     String createEventData(String pluginKey, String eventType, String sharedSecret)
     {
-        final Consumer consumer = consumerService.getConsumer();
+        final Consumer consumer = checkNotNull(consumerService.getConsumer()); // checkNotNull() otherwise we NPE below
 
         ConnectAddonEventDataBuilder dataBuilder = newConnectAddonEventData();
         String baseUrl = applicationProperties.getBaseUrl(UrlMode.CANONICAL);
@@ -258,7 +259,7 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
                 .withProductType(nullToEmpty(productAccessor.getKey()))
                 .withDescription(nullToEmpty(consumer.getDescription()))
                 .withEventType(eventType)
-                .withLink("oauth", baseUrl + "/rest/atlassian-connect/latest/oauth");
+                .withLink("oauth", nullToEmpty(baseUrl) + "/rest/atlassian-connect/latest/oauth");
 
         UserProfile user = userManager.getRemoteUser();
         if (null != user)
