@@ -110,7 +110,7 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
     {
         if (!Strings.isNullOrEmpty(addon.getLifecycle().getInstalled()))
         {
-            callSyncHandler(addon, addon.getLifecycle().getInstalled(), INSTALLED, sharedSecret);
+            callSyncHandler(addon, addon.getLifecycle().getInstalled(), createEventDataForInstallation(addon.getKey(), INSTALLED, sharedSecret));
         }
     }
 
@@ -145,7 +145,7 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
         final Plugin plugin = pluginDisabledEvent.getPlugin();
         if (connectIdentifier.isConnectAddOn(plugin))
         {
-            eventPublisher.publish(new ConnectAddonDisabledEvent(plugin.getKey(), createEventData(plugin.getKey(), DISABLED, null)));
+            eventPublisher.publish(new ConnectAddonDisabledEvent(plugin.getKey(), createEventData(plugin.getKey(), DISABLED)));
         }
     }
 
@@ -174,7 +174,7 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
             {
                 if (!Strings.isNullOrEmpty(addon.getLifecycle().getUninstalled()))
                 {
-                    callSyncHandler(addon, addon.getLifecycle().getUninstalled(), UNINSTALLED, null);
+                    callSyncHandler(addon, addon.getLifecycle().getUninstalled(), createEventData(pluginKey, UNINSTALLED));
                 }
             }
             else
@@ -188,7 +188,7 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
 
     public void publishEnabledEvent(String pluginKey)
     {
-        eventPublisher.publish(new ConnectAddonEnabledEvent(pluginKey, createEventData(pluginKey, ENABLED, null)));
+        eventPublisher.publish(new ConnectAddonEnabledEvent(pluginKey, createEventData(pluginKey, ENABLED)));
     }
 
     @Override
@@ -204,14 +204,13 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
     }
 
     // NB: the sharedSecret should be distributed synchronously and only on installation
-    private void callSyncHandler(ConnectAddonBean addon, String path, String eventType, String sharedSecret)
+    private void callSyncHandler(ConnectAddonBean addon, String path, String jsonEventData)
     {
         Option<String> errorI18nKey = Option.some("connect.remote.upm.install.exception");
         String callbackUrl = addon.getBaseUrl() + path;
         try
         {
             String pluginKey = addon.getKey();
-            String json = createEventData(pluginKey, eventType, sharedSecret);
 
             URI installHandler = getURI(callbackUrl);
 
@@ -219,7 +218,7 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
             request.setAttribute("purpose", "web-hook-notification");
             request.setAttribute("pluginKey", pluginKey);
             request.setContentType(MediaType.APPLICATION_JSON);
-            request.setEntity(json);
+            request.setEntity(jsonEventData);
 
             //TODO: is there a better way to sign this?
             requestSigner.sign(installHandler, pluginKey, request);
@@ -239,9 +238,19 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
         }
     }
 
-    // NB: the sharedSecret should be distributed synchronously and only on installation
     @VisibleForTesting
-    String createEventData(String pluginKey, String eventType, String sharedSecret)
+    String createEventData(String pluginKey, String eventType)
+    {
+        return createEventDataInternal(pluginKey, eventType, null);
+    }
+
+    String createEventDataForInstallation(String pluginKey, String eventType, String sharedSecret)
+    {
+        return createEventDataInternal(pluginKey, eventType, sharedSecret);
+    }
+
+    // NB: the sharedSecret should be distributed synchronously and only on installation
+    private String createEventDataInternal(String pluginKey, String eventType, String sharedSecret)
     {
         final Consumer consumer = checkNotNull(consumerService.getConsumer()); // checkNotNull() otherwise we NPE below
 
