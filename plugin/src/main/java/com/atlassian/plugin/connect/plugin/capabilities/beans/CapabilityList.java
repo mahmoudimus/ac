@@ -52,7 +52,7 @@ public class CapabilityList extends BaseCapabilityBean
     private List<ConnectTabPanelCapabilityBean> jiraVersionTabPanels;
 
     /**
-     * @schemaTitle Version Tab Panel
+     * @schemaTitle User Profile Tab Panel
      */
     @CapabilityModuleProvider(value = ConnectTabPanelModuleProvider.class, products = {ProductFilter.JIRA})
     private List<ConnectTabPanelCapabilityBean> jiraProfileTabPanels;
@@ -76,7 +76,7 @@ public class CapabilityList extends BaseCapabilityBean
     private List<ConnectPageCapabilityBean> adminPages;
 
     /**
-     * @schemaTitle Profile Page
+     * @schemaTitle User Profile Page
      */
     @CapabilityModuleProvider(value = ProfilePageModuleProvider.class, products = {ProductFilter.CONFLUENCE}) // Note: Jira uses jiraProfileTabPanels instead
     private List<ConnectPageCapabilityBean> profilePages;
