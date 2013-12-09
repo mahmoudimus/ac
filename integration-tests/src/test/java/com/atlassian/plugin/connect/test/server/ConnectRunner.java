@@ -89,6 +89,14 @@ public class ConnectRunner
         installer.uninstall(addon.getKey());
     }
 
+    /**
+     * @return the UPM's JSON representation of this add-on.
+     */
+    public String getUpmPluginJson() throws Exception
+    {
+        return installer.getUpmPluginJson(addon.getKey());
+    }
+
     public void stopRunnerServer() throws Exception
     {
         server.stop();

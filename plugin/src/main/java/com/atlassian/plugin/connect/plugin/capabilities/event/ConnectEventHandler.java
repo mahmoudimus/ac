@@ -177,7 +177,14 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
             {
                 if (!Strings.isNullOrEmpty(addon.getLifecycle().getUninstalled()))
                 {
-                    callSyncHandler(addon, addon.getLifecycle().getUninstalled(), UNINSTALLED);
+                    try
+                    {
+                        callSyncHandler(addon, addon.getLifecycle().getUninstalled(), UNINSTALLED);
+                    }
+                    catch (PluginInstallException e)
+                    {
+                        log.warn("Failed to notify remote host that add-on was uninstalled.", e);
+                    }
                 }
             }
             else
@@ -206,7 +213,7 @@ public class ConnectEventHandler implements InitializingBean, DisposableBean
         this.pluginEventManager.unregister(this);
     }
 
-    private void callSyncHandler(ConnectAddonBean addon, String path, String eventType)
+    private void callSyncHandler(ConnectAddonBean addon, String path, String eventType) throws PluginInstallException
     {
         Option<String> errorI18nKey = Option.some("connect.remote.upm.install.exception");
         String callbackUrl = addon.getBaseUrl() + path;

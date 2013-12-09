@@ -64,7 +64,7 @@ public class TestLifecycle extends AbstractBrowserlessTest
         }
     }
 
-    //TODO: un-ignore when we figure out how to get a jar manifest for an uninstalled bundle or add a BeforePluginUninstalled event
+    //TODO: un-ignore when we figure out how to sign a request after a plugin has been uninstalled or add a BeforePluginUninstalled event
     @Ignore
     @Test
     public void testPluginUninstalledFired() throws Exception
@@ -79,7 +79,7 @@ public class TestLifecycle extends AbstractBrowserlessTest
             plugin1.uninstall();
 
             WebHookBody body = servlet.waitForHook();
-            assertWebHookDidFire(body,ConnectEventHandler.UNINSTALLED);
+            assertWebHookDidFire(body, ConnectEventHandler.UNINSTALLED);
         }
         finally
         {
